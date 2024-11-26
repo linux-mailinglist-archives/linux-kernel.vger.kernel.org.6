@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-421942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173EF9D9266
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:26:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCEA9D926E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:27:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A73B236C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:26:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5EF316632F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56547192D89;
-	Tue, 26 Nov 2024 07:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF77193419;
+	Tue, 26 Nov 2024 07:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uF5l3h4z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ge8MXz1b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29141898FC;
-	Tue, 26 Nov 2024 07:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0964E187FE0;
+	Tue, 26 Nov 2024 07:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732605959; cv=none; b=rL/cAPv0/Tt6liYCi/8+3tr1VtOtf41zLMov2oPOdI28QY4KJY11/PTaiNhNOpbMH4dEYI3YfXCoxnb7y8l5hPW55oUcOc2qfDVuqFJqKvQ7t2vqJObHrqGFLLzu8omv0C0gbXIORgx/nAXMhr6QbrTphVnPyPGdjGiOGZA3KJk=
+	t=1732606039; cv=none; b=J5cf78lFQjti35Qm7Wt/zKmOpT+5BLhCBySxiGnXDQfGz1uY2/FjUulvkCWgb59d3mmp7EU6ayLSDTHLkJF2jLXbEGIhMm1YVEsJmPQaqVBTzTxcA0UkV0apFsBc6kLSEMhUySQ867BJZAQhn6qR50zG+ZCi3cjiT/EjXt0fHEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732605959; c=relaxed/simple;
-	bh=f5ehmnUa2vX7EetkK/2bvgY3rIIXXmDHK/Z2UJ7tvWM=;
+	s=arc-20240116; t=1732606039; c=relaxed/simple;
+	bh=QNmXRH6+/lQlC0NI0i2Ghsp+4+OK+Z276BhLzqpOViY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhCx6vJnwdLIEo6glPIYRuPNAh3EjPc438N263MjmvnIy+EzclAUDKAnMl9oM/3l6cJvQyXZTCyQtYvebeX0mjS7l82jlNE88Rm+p8KEjBcX3hUr5eWh1//N+ABThk5MF3Xy58zyHMJ1cvTOshCHCg/Szzz5P+CePQVjosEKAf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uF5l3h4z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2D3C4CECF;
-	Tue, 26 Nov 2024 07:25:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCf/V2jxwEyVdEJEhlNbm9/oJVKbQlgtDxpdxFAv4+NOppwTH2il/NiNalZXKGofd/KwO5Qf3PZbnoyRoM0JA7vNuHMcrHuqaIQ03ZvkxG0WlBgvm+kW53cMv+gq0XrffHNukAhrPs1YEvH8U5UG6VE2vD4ScxoBnJuSKtGpY8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ge8MXz1b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC28C4CECF;
+	Tue, 26 Nov 2024 07:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732605959;
-	bh=f5ehmnUa2vX7EetkK/2bvgY3rIIXXmDHK/Z2UJ7tvWM=;
+	s=k20201202; t=1732606038;
+	bh=QNmXRH6+/lQlC0NI0i2Ghsp+4+OK+Z276BhLzqpOViY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uF5l3h4z6zGyewhXGZ47Zp5LXtl6tvik7GoxxV6uI6b81yA24LFV8VdUmRUstbrWG
-	 ZjnfWsYJewgbUwHNNqNyBO5WMQjj78fYDDZ7kZp5Dm1e0iJW3j6zcgJ/rP1nIdluWq
-	 gBOIPqhjmbSLkM1iDhDOIt6XYBwQT0guXrAjqtGiKCOycMkuHXqNgvH/dvC6a0Y0C1
-	 +XctH5uAtXuuQ3GDHeYsghIVnVnLNR75rYE2fTnmqboTLgHzwI0HIdg4lB+f8xjyQy
-	 iGnwhzqS8smQt5N0A8Ooi5oCkwTVNTvn4Sb8mZnrqeOX2rO3safUe6FWbLsZOhrYPe
-	 Maj7Kt1z3t6xg==
-Date: Mon, 25 Nov 2024 23:25:57 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/10] objtool: Handle unreachable entry of rodata
-Message-ID: <20241126072557.b6qt7jaiikvkcswn@jpoimboe>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-6-yangtiezhu@loongson.cn>
+	b=ge8MXz1bQMwwxgouGxmFm6I9hG2wMDiFQ5WvBKunH76I4sZfo/ZbnCNsm+xnvDmUf
+	 L1mMW4r0dfKWGNY096+LVYr7qxWLaAfY9Y14kNhM9Cb5c8h7FPFF+35XB2puUOes0/
+	 14IbvacloF7s02mg3zSWPxDlpC9o2wodKnq2e00O6laDGJd4A9Ix6UpO+HTN6J2dtd
+	 Llxtt6DDgx9QYxYpZrqmotin+Gw4uxbqAG8SuoGMGEyKWGu9FypBEqrXKmsdMjuwz7
+	 IYWK2H00ktYTrGBbnjmJEJ+UCMGToJRZ35P7BeGgV9+2ICZ2R39W9gKU00pK/6IjOA
+	 sI8LKSh6O8IAg==
+Date: Tue, 26 Nov 2024 08:27:15 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tobias Sperling <tobias.sperling@softing.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
+Message-ID: <eudovs2ahymft4esojrxvj4dtsbfvwks4huq3sz6rc4tzjmeii@jdlyq4vxzywj>
+References: <20241122-adc_ml-v1-0-0769f2e1bbc1@softing.com>
+ <20241122-adc_ml-v1-1-0769f2e1bbc1@softing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,38 +59,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122045005.14617-6-yangtiezhu@loongson.cn>
+In-Reply-To: <20241122-adc_ml-v1-1-0769f2e1bbc1@softing.com>
 
-On Fri, Nov 22, 2024 at 12:50:00PM +0800, Tiezhu Yang wrote:
-> When compling with Clang on LoongArch, there exists unreachable entry of
-> rodata which points to a position after the function return instruction,
-> this is generated by compiler to fill the non-existent switch case, just
-> skip the entry when parsing the relocation section of rodata.
-> 
-> This is preparation for later patch on LoongArch, there is no effect for
-> the other archs with this patch.
-> 
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  tools/objtool/check.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 8733ca620cca..b21e47d8d3d1 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -2144,6 +2144,13 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
->  		if (!dest_insn)
->  			break;
->  
-> +		/* Handle the special cases compiled with Clang on LoongArch */
-> +		if (file->elf->ehdr.e_machine == EM_LOONGARCH && reloc->sym->type == STT_SECTION &&
-> +		    (!insn_func(dest_insn) || insn_func(dest_insn)->pfunc != pfunc)) {
-> +			prev_offset = reloc_offset(reloc);
-> +			continue;
+On Fri, Nov 22, 2024 at 04:15:36PM +0100, Tobias Sperling wrote:
+> +description: |
+> +  The ADS7128 and ADS7138 chips are 12-bit, 8 channel analog-to-digital
+> +  converters (ADC) with build-in digital window comparator (DWC), using the
+> +  I2C interface.
+> +  ADS7128 differs in the addition of further hardware features, like a
+> +  root-mean-square (RMS) and a zero-crossing-detect (ZCD) module, which are
+> +  not yet supported by the driver.
 
-Are you sure this is specific to loongarch?
+driver in which operating system? If FreeBSD supports them, but Linux
+not, are you going to udpate this text?
 
--- 
-Josh
+Please drop all references to operating system and describe the
+hardware.
+
+With fixed description:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
