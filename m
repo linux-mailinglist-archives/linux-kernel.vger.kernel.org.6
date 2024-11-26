@@ -1,82 +1,49 @@
-Return-Path: <linux-kernel+bounces-422168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B87F9D955C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:20:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEDA9D9565
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F46B2B507
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:20:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48F4CB2B87A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CE81D45E2;
-	Tue, 26 Nov 2024 10:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79141C4A2E;
+	Tue, 26 Nov 2024 10:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c98D9fg0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1CI5tB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CAB1D416B;
-	Tue, 26 Nov 2024 10:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49795195FEF;
+	Tue, 26 Nov 2024 10:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616320; cv=none; b=f24+S8iofUqa6sVxM8nRwlTDJXTidwNRNHDH6+/cWw3MvhirERud8qmJrx8YVs9ZVqpRHkjrx8OGZFTArgze7WEeMTUgAIcpjSnIIEEvv7xhigCB0zfa9sJCmqfWb3FPoIqQvDRAbfAkDQAYSvrHbKDoTMTfPY9BE5gJElJu7QQ=
+	t=1732616417; cv=none; b=iqKh3UEGztkGJfQ2b0zL+uVRqb5W8AEm9o095wSZxyyQK0okPnA3dGCH2xn2o5zJPicvKddfRUFpDZafIeDecj2HkusmwTTgbHmx71PtR/08w7nM01u3+5a63vfznn48plMKtT7gBndxX6Ymih2FKnugmZ2R0L/WJmz63X+9QdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616320; c=relaxed/simple;
-	bh=sN/Lhm/c9ZOH94D/2wwFPRvzgWlfLZNOyiz0mTNtkSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ljZuAoBQvPxv03QjY5f/wsREF3RolDXx8iOaLvmTQJLUAvGKa0n1ujbtR7hSAZ4X3341JxMTc1Gb8Yh07ZzZxx32zHMve7Q1wlghl4taSDbBfpsUburGYS4F7YEWde6Va4GssKSDrxvHz2JcJVIaC1T7pYdz1gIl+g/cdhzeKLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c98D9fg0; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732616319; x=1764152319;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sN/Lhm/c9ZOH94D/2wwFPRvzgWlfLZNOyiz0mTNtkSk=;
-  b=c98D9fg0BHao4DaJUGcEJ0be2IdYTr1KW5N7evOMZs0ZWHF9xIMNwbVR
-   P/UlV3NntoC2OU1Z6WrQVDNBuAVp/Qf//08Pspm3Oma9YDsVnW3gAx8GL
-   k98foSEYidqypzfMxkR1OwGwis6CAS2uiYuiSs18ouUqtW/iymdeGXw3B
-   AL+49hPkUoT2UjmDbAciQcr/dyZDaseY+ptwF5/8OJnX1kVIf+D4W8tPy
-   /FlLMWOwDzXbUsnM+PuqtuZ/LoUKazZZoPUpuaObPZm9iqjuGDYk9Z/g6
-   DuxDfqumHY0RxTavJ2ZEIQaVa4zBK1C0giAlKMEK5wJn2MXMW0cIK4YuQ
-   g==;
-X-CSE-ConnectionGUID: Su/yWf1XTveF+MoYxGtwVA==
-X-CSE-MsgGUID: NvSKWTdzRJSyRrxQpVNXzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32139901"
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="32139901"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 02:18:38 -0800
-X-CSE-ConnectionGUID: OmHFPTkARACT8iy7HmY/vQ==
-X-CSE-MsgGUID: 3E4BJCSrQKaeI8PSKkCU6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="96631866"
-Received: from spr.sh.intel.com ([10.239.53.31])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 02:18:34 -0800
-From: Chao Gao <chao.gao@intel.com>
-To: tglx@linutronix.de,
-	dave.hansen@intel.com,
-	x86@kernel.org,
-	seanjc@google.com,
-	pbonzini@redhat.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: peterz@infradead.org,
-	rick.p.edgecombe@intel.com,
-	mlevitsk@redhat.com,
-	weijiang.yang@intel.com,
-	john.allen@amd.com,
-	Chao Gao <chao.gao@intel.com>
-Subject: [PATCH v2 6/6] x86/fpu/xstate: Warn if CET supervisor state is detected in normal fpstate
-Date: Tue, 26 Nov 2024 18:17:10 +0800
-Message-ID: <20241126101710.62492-7-chao.gao@intel.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241126101710.62492-1-chao.gao@intel.com>
-References: <20241126101710.62492-1-chao.gao@intel.com>
+	s=arc-20240116; t=1732616417; c=relaxed/simple;
+	bh=GQw31RLRUC0dOJjRC3uzMgIMdxNwympXyufBxyCVd4k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LEeRw74/iM1B8/44Bpe1A3vGSIpqGXih1D7cnnggrRmfyqYe3W7ZAUaxmZIEvnWD7uRlGGedDWYuLClnMLzIA18q4WarLaVlxfGgC1QN5vE/lsOAbnHwZB48+BjCGJ8NWWx1kdkY3++L3ZgKVt05EYygHczRjF01lJk/fMcZuac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1CI5tB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB742C4CECF;
+	Tue, 26 Nov 2024 10:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732616416;
+	bh=GQw31RLRUC0dOJjRC3uzMgIMdxNwympXyufBxyCVd4k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=e1CI5tB+jHCT7bZLbmJR3R6FDDco1yhk0W116jTTJ5G9R54PSMATdfITRPRcR9x++
+	 oMGE9iV/HYbudj0boCG8IXS4JxNbdMdRG4BXYJd5Zzuu9Ratsk91wxytkkL2i4xKLZ
+	 0hChVEXxiZYrd3dzcoMprkGtpkT60fLVg0fWEj7KVRz+A9PKMDAtYbTjSDEOFzPcGl
+	 XeONl+/lxlPhmSbjOoBuKwJVXkbhGNR6crAY0+7mitDomsmz/SGt5jczTw5Pbszlwc
+	 krjfW0P4eK1r7hfEHBT0HidGyveOHf4uICdGRFfKmTnbw9jlMOwrop06eSFLAuEO+i
+	 nB8CjKxygvkPw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE9E3809A00;
+	Tue, 26 Nov 2024 10:20:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,37 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCHv2 net] net: mdio-ipq4019: add missing error check
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173261642953.338243.1552834819882094854.git-patchwork-notify@kernel.org>
+Date: Tue, 26 Nov 2024 10:20:29 +0000
+References: <20241121193152.8966-1-rosenp@gmail.com>
+In-Reply-To: <20241121193152.8966-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, quic_luoj@quicinc.com,
+ linux-kernel@vger.kernel.org
 
-From: Yang Weijiang <weijiang.yang@intel.com>
+Hello:
 
-CET supervisor state bit is __ONLY__ enabled for guest fpstate, i.e.,
-never for normal kernel fpstate. The bit is set when guest FPU config
-is initialized.
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-For normal fpstate, the bit should have been removed when initializes
-kernel FPU config settings, WARN_ONCE() if kernel detects normal fpstate
-xfeatures contains CET supervisor state bit before xsaves operation.
+On Thu, 21 Nov 2024 11:31:52 -0800 you wrote:
+> If an optional resource is found but fails to remap, return on failure.
+> Avoids any potential problems when using the iomapped resource as the
+> assumption is that it's available.
+> 
+> Fixes: 23a890d493e3 ("net: mdio: Add the reset function for IPQ MDIO driver")
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> 
+> [...]
 
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- arch/x86/kernel/fpu/xstate.h | 2 ++
- 1 file changed, 2 insertions(+)
+Here is the summary with links:
+  - [PATCHv2,net] net: mdio-ipq4019: add missing error check
+    https://git.kernel.org/netdev/net/c/9cc8d0ecdd2a
 
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index 0b86a5002c84..3b60d3775705 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -187,6 +187,8 @@ static inline void os_xsave(struct fpstate *fpstate)
- 	WARN_ON_FPU(!alternatives_patched);
- 	xfd_validate_state(fpstate, mask, false);
- 
-+	WARN_ON_FPU(!fpstate->is_guest && (mask & XFEATURE_MASK_CET_KERNEL));
-+
- 	XSTATE_XSAVE(&fpstate->regs.xsave, lmask, hmask, err);
- 
- 	/* We should never fault when copying to a kernel buffer: */
+You are awesome, thank you!
 -- 
-2.46.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
