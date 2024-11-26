@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-422306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2673E9D9765
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:47:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18A6166DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:47:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FEA1CD219;
-	Tue, 26 Nov 2024 12:47:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603309D9771
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:51:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B8936C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D866CB24814
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:51:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A71CEE92;
+	Tue, 26 Nov 2024 12:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GAF+8W9C"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F0436C;
+	Tue, 26 Nov 2024 12:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625239; cv=none; b=XLcfo4JxsWGVJKz3Gu7L9QJJnrTss3L5crNCx1iNjEm1BoSnGJOjxojL5P/72iCjLcxEKXXTIVOrmeVJ/YU76jdAsYvk4Np47wZ2mIl00nAjrFxYDoVHmuo/uNxcFUSJiNvADwD5DjR9zNNrIdELJJ0Yd2MmRGdTC8k6giSGImE=
+	t=1732625457; cv=none; b=gfpe4kNVFdFz8LlUweE478OVIUc1g4ecHo3JJhvq91KDtvRmxLB0cz0RWDWB8W+4Z/nsjuaI2BZ4YV4Y/gDi3PAQU4tvVIZsugnBpypsfzDQ0OlB8WvtSXmZnU8iczuTlfL8yy74rLpVNHVoiHooi85FRr5n4L47bN/bM2S524Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625239; c=relaxed/simple;
-	bh=5/je/pEEK2EIqMRb7TVlM1NGq5GXRgZKAQsVg4OHCe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvmfcuieIesEqvsr/St/C0ArfM4YiU0mn+NAkGy9LNnrFaOix8RxYwbuGxRMEq4eEbHdPQdpjyBX0M3yprrs5JdKvaTp+hvG6DTXgleyBStrW7kE8B6LWD+kw9RAQNq4ejs9rUw0/6jjdEoKj/DJHHxRtGfQoBe7KoJQ+h/XSQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFuyC-0004Gh-85; Tue, 26 Nov 2024 13:47:08 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFuyA-000FfK-0g;
-	Tue, 26 Nov 2024 13:47:07 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9E8CB37DA3A;
-	Tue, 26 Nov 2024 12:47:06 +0000 (UTC)
-Date: Tue, 26 Nov 2024 13:47:06 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Leonard =?utf-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>
-Subject: Re: [PATCH 0/6] ARM: dts: stm32: lxa-tac: fix gen{1,2} boards and
- add gen3 board
-Message-ID: <20241126-bald-paper-ringtail-661462-mkl@pengutronix.de>
-References: <20241119-lxa-tac-gen3-v1-0-e0ab0a369372@pengutronix.de>
+	s=arc-20240116; t=1732625457; c=relaxed/simple;
+	bh=1IOZP8hVXzoTsOyuc9uOdk9ukNBErgXzh0dS7l0vY0U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t2jClzmNwUHvNNp0cMgKqmMqK6FV+MW2nCZh0GX4/miQSGedzc46CaSBxox+G7UNjVJDs8heI8FuXXiDHmsHclBLdRPq+ga97yQau9Wvq4JVVE0HCoJlnlq+u4oOYxjqsi+157Hi0t7P53vd2jVCeYxw0Nt1W1j4H9qX7+I/Tec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=GAF+8W9C; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 0f911c10abf511ef99858b75a2457dd9-20241126
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zR28T4HcO7uRDu1sJWB1JUuBH1e3vmJiErnnGI44bIU=;
+	b=GAF+8W9C+XwHpXMEbeMigRrwTGRbIu6Fmwb8J+ygPpGbhznMfXre6+JrpcH3C62uAs7btuHsujXE9vvC4TD3gXA3h220B2DPi3svWsej9RvwVIl2FL/ixNMyXYVTjEcVJ3nlvBqR6gqmtBlOYFFmdobOusasEAta7auNId+VGn0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.44,REQID:fbde0da0-1fe1-4b25-aa8a-97664b4ed414,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:464815b,CLOUDID:ad274ee0-1fe5-4c4a-bdf3-d07f9790da32,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 0f911c10abf511ef99858b75a2457dd9-20241126
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <andy-ld.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 34843188; Tue, 26 Nov 2024 20:50:48 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 26 Nov 2024 20:50:45 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 26 Nov 2024 20:50:45 +0800
+From: Andy-ld Lu <andy-ld.lu@mediatek.com>
+To: <ulf.hansson@linaro.org>, <angelogioacchino.delregno@collabora.com>,
+	<matthias.bgg@gmail.com>, <avri.altman@wdc.com>, <adrian.hunter@intel.com>,
+	<wenbin.mei@mediatek.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Andy-ld Lu <andy-ld.lu@mediatek.com>
+Subject: [PATCH v2 0/2] Add mtk-sd support for ignoring cmd response CRC
+Date: Tue, 26 Nov 2024 20:48:21 +0800
+Message-ID: <20241126125041.16071-1-andy-ld.lu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6c2nwor5larsiucg"
-Content-Disposition: inline
-In-Reply-To: <20241119-lxa-tac-gen3-v1-0-e0ab0a369372@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--0.889200-8.000000
+X-TMASE-MatchedRID: d+baqQ3qUqc9S3IiQd+eNbmR+C0l9vjVc3ewuwbSaG4Y0A95tjAn+9TT
+	TFFPxHv+u2t1gv/FTZu+gPhGSQqXaXAvdl/gU+kWhK8o4aoss8pKPIx+MJF9o5soi2XrUn/J8m+
+	hzBStansUGm4zriL0oQtuKBGekqUpnH7sbImOEBRDozr28CiiojKTexvwXZBrsmqd7uJXrWO/Ml
+	oQ6zIAH/Cy9GvqHOwrPyjHI+FEw3HHHuNqhV1uRVgwOoJTNhLaqeqo7KB4WGHyNp7g4PXe0BXsx
+	z6ujBxUq1f8XSkHBUmNJXmEMVvLtpRMZUCEHkRt
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.889200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	31A115BA487A2D1BB3781A4ED6205A89D2BD525579309D2E70C160360EDFE3AB2000:8
 
+Add the process flow in the host driver to handle the R1B cmd response
+type with ignoring CRC, which comes from mmc_cqe_recovery() in the mmc
+core. Additionally, the response type 'MMC_RSP_R1B_NO_CRC' is introduced
+to simplify code.
 
---6c2nwor5larsiucg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/6] ARM: dts: stm32: lxa-tac: fix gen{1,2} boards and
- add gen3 board
-MIME-Version: 1.0
+---
+Changes in v2:
+- Change mmc_cqe_recovery() to use MMC_RSP_R1B_NO_CRC response type.
+- Remove MMC_RSP_R1_NO_CRC in the host driver after it is dropped.
 
-Hello Alexandre,
+Link to v1:
+https://patchwork.kernel.org/patch/13883787
 
-On 19.11.2024 12:34:57, Marc Kleine-Budde wrote:
-> Hello,
->=20
-> this series fixes some problems found in the lxa-tac generation 1 and
-> 2 boards and add support for the generation 3 board. It's based on an
-> STM32MP153c, while the generation 1 and 2 are based on the
-> STM32MP157c.
+---
+Andy-ld Lu (2):
+  mmc: core: Introduce the MMC_RSP_R1B_NO_CRC response
+  mmc: mtk-sd: Add support for ignoring cmd response CRC
 
-is there an ETA when this series will be merged, is there something
-missing?
+ drivers/mmc/core/core.c   | 6 ++----
+ drivers/mmc/host/mtk-sd.c | 6 ++++--
+ include/linux/mmc/core.h  | 2 ++
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-regards,
-Marc
+-- 
+2.46.0
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---6c2nwor5larsiucg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFw0cACgkQKDiiPnot
-vG9EKwgAi5XkzgfNgY7ixrqcwOoyuuX6KNLwCoxeHNrfzr5giHyilo0qGoi8eoOm
-4gRl8j1NkMCgZl9O5lsUwqelHDQM7yx7sJ1agE2pBTC8NbjhKo/BdqfnQRYxNtST
-t+wpaGLsn6/QH3v0gBrD9Ne5vvkXVEywskzPDZgfnyzBt9XAn0CNRxtdwCK9+uk1
-2Jz5VfSu7MkaFIE9K6ET/oNx589yjTPj6nLpp9vwXndBlJ2v0dxybJ/Mkyf+KxbU
-GtHOPzWyK3aTfdUDFn6w5ssXoErNy2v+HNSgfJt3mUtgAJEMch+URzWR6nkD4Zzi
-N7zolS05uqsPqMNxoFuN1iAx5cC5Dw==
-=EJkB
------END PGP SIGNATURE-----
-
---6c2nwor5larsiucg--
 
