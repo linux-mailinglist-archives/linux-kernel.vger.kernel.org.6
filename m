@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-422668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F6C9D9CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:39:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3CD9D9CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:40:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CFC165FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A555016811A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DE31DACBF;
-	Tue, 26 Nov 2024 17:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8B71DB363;
+	Tue, 26 Nov 2024 17:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vmfkj05t"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cWkskz1Z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LxakA44t"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B80E1D5177
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F67C1CEE9B;
+	Tue, 26 Nov 2024 17:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732642779; cv=none; b=FVKGomeRrPrmWscD14YJRqdfMh7qyx5Wc5pTzx+O8vfEdGc8EvBmTNx5SfXxlw86OLfwpd92t3ZYaT+1b2bbcjngzWO+gV6tkiIbm6eotWnYX1K9LezSzegIpihRE2wgnAYS4nOT0qCR2Z88bIsPBD1aZi/GB2gF/XbxjqfM+94=
+	t=1732642833; cv=none; b=HEok6JdSMkJGk7WBek1hqc0nRu4NGjGiYyKIHeUPyBQ498ybTxgUok4qHZCWsuFTeX2WsrXTmJbzlO8dTOtgcgAFtYHMIH6828wyJb8l2sVbxq62Y852Cno6A8Bk+U+0y8oLFfktFA370XENUuPlM5Kx5gUqQZcbL4RLii4lkZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732642779; c=relaxed/simple;
-	bh=DAKiNiRqUcrlk7qZBWQDMzgwuhNtCOQn4MLzxAx1CSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Qt7oOaMgZpNYejjd4pvmkAe/mntCUCBNfVcCWbLsNeNOwzji0ODsSFF5r/SqJ7KATHMxrxS/izbK++tuvdqWUCHQRlfTPKJSD2NvNJiZWwQYkofBiLRCz8FwZANpQujU5eh+zF0xqhTKxSXRcH/u4flZQceZLvUG2J/aQKpPrnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vmfkj05t; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668194603cso293681cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:39:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732642776; x=1733247576; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LO1R0PYKOlqnWlFJjnkfRK8pDGmHq0P2DPI5kjZRm9U=;
-        b=Vmfkj05t7isaRFHglD1py2yZgZCwpF1r1SD+qB6MpFLzCATosv0cFeKINQ00Oi605D
-         5FR89BztmkInEAzY9LmnI7csE4lgzVoI1Xoa+6t8j+G9oX+hQVr1K22WhrAB/QLQdRDf
-         aBU/sUq5CBjJlc9uIMK0poLPJVOLatFNMYpEo5rEExRRm8kkUwT9p2xSeBK1xjGD3UYw
-         +RnUDHWiWecUJG6axbniQG0V53r26/xwxaZMJzGR9HQmSqPG146nQmd7BLiTBZRYwnGX
-         Bmw1n46JnImHpji1u1THpkxrU+EzyUsovKT6gjK084slRDZAC3Av5LaBBGu3XSCCiV23
-         Hk9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732642776; x=1733247576;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LO1R0PYKOlqnWlFJjnkfRK8pDGmHq0P2DPI5kjZRm9U=;
-        b=sJQLL/2kaKdwIKi0ZpsQ8bu+QW8dOPXeUIsgLk6M7S/YuAHjlGB6Gl81Q/amJO13v4
-         wCAH4FYl8zy2RmzbeTgCGfy1wv1e43fYnXDQ0oFZ9EqcMS0FvZYg7UhByBnvXZAmEAee
-         quutbGvAiwn6BNeOPy3+tcmY3w/wMiGnlL5M37gI6uTu9PlUrxzuAW1cgu4wK/07OZUO
-         XeaG/FkxNvpHuMJXCa9CeBN5c5MLq+24qk6h7RM/w11LNXUrmhSZfZjs83GhgPjm7A18
-         StJFNnVYcX3Ww9+sOA9JaA2N/OvJ23SthovjzP76x0sGMH/wZ8H50fJCaX7jqk2cCO87
-         OzXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXt2IpqyFJtZfSIaPBkSlaEJHrbygT8Qyi/kVRq34aE069hbLrWgI1oB8Ad4Kn0nSVpSpDo1PAXTTTyzOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4BLgy2EnnrXAxOOTUVLP/m6p/fy/dxHa4NRK/aLT7JxiTzYYg
-	CkIiKkgYN0GDpzphnNHq9cwpWJuZMWhZcrY4mmYwNqTtwju3heJsxFpDIQchYLSWCmxAvFfdsmi
-	a8kTnkr/gJ/WHVkJkf/RxMW+v/4xp29aayJ/2
-X-Gm-Gg: ASbGncuaSmmPdaSG8GmQBS+0aUhpZAs1z3MJI8D/yex9lmt1MMQfCwsKkNUkKVRqAHh
-	1E/SeDA4sfnAhkGjvxTy4/pDGSIBd4ZUJifQQH/PhpZLK+K1sZcnIe7MBr+iQ6A==
-X-Google-Smtp-Source: AGHT+IHOx+4krsjByiLlQQVuIAKvTsAzFcNmJG+DBiAa7bOxbqLg19QqXzb+hjk+EC94pyG/DATm0bz/m8Je0/78BtI=
-X-Received: by 2002:a05:622a:5787:b0:466:8c23:823a with SMTP id
- d75a77b69052e-466a7457c35mr3350811cf.17.1732642776087; Tue, 26 Nov 2024
- 09:39:36 -0800 (PST)
+	s=arc-20240116; t=1732642833; c=relaxed/simple;
+	bh=qt3lSk1Z0sFvkcccN2T638/oOpezlfEGW01kL5PatzE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tATRdBWAl0z2JH1JimjDMbL1rwtp5ZQsO459GK4Pa65RkeBep9To2hnJZ4Hl7Kxpg8lvFNImlls+Jd3xIB7XerL5xTUgmbs/+xrQdERhYV4IDI3CgCsc9u4quXQxHjTprkWok0JiWuCr8IJUsaDfhUT02HEFRJh1sH/3iHQGRTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cWkskz1Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LxakA44t; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732642830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f8nVuLKwPdVsdciR71/j+DZiHZoBHMBIVygTw9pRkQU=;
+	b=cWkskz1Zmh1KcTMZwKU29z5enJOPM/LtE1d8dnQg07MPeTWopJ5xmOxGDsS+jc7puWhuQw
+	RtShBvu+JFPUxmfF0Qprwx3rkAAA2GxrFkg2is4khcYkuk3zRhhnkcb3VLo1Yytdn92H5R
+	98jtlNSxbW9Z3VYLyiy/1++GW/ag8TnUncatSSbp4hrBMl9HNe6KGI4BpcJsEijwxSjr6A
+	Dr5kj1SWtuBOOr2c1vDc81CTFunOWkKqIFz9+CIyddppy3GoXEQGkM9V7BaJoq9Tuy+RU2
+	rIunM2psdQC5eDJuFJlq8Ye7s1dxNgxXexiNl5QTXwRxpgG2peueoJBXyYpUrg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732642830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f8nVuLKwPdVsdciR71/j+DZiHZoBHMBIVygTw9pRkQU=;
+	b=LxakA44t7rtVvjFdlqslyEWAqHPE0AMMVDMqsY/qhdD1OFzx2YQwmQLVLAkvm/GIr7SWq1
+	+xSYId5+5pP+AjAg==
+To: David Wang <00107082@163.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
+ for decimal values
+In-Reply-To: <25ddb2c9.4b0e.19347d04c05.Coremail.00107082@163.com>
+References: <20241108160717.9547-1-00107082@163.com>
+ <4ce18851-6e9f-bbe-8319-cc5e69fb45c@linux-m68k.org> <87ed36zon8.ffs@tglx>
+ <25ddb2c9.4b0e.19347d04c05.Coremail.00107082@163.com>
+Date: Tue, 26 Nov 2024 18:40:29 +0100
+Message-ID: <875xo9zyeq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126173409.3728585-1-xur@google.com>
-In-Reply-To: <20241126173409.3728585-1-xur@google.com>
-From: Rong Xu <xur@google.com>
-Date: Tue, 26 Nov 2024 09:39:24 -0800
-Message-ID: <CAF1bQ=QVA8tDM7vyQXr4aaed1g7q8+rguXap-1HNxTzmg1q66w@mail.gmail.com>
-Subject: Re: [PATCH v2] [MIPS] Place __kernel_entry at the beginning of text section
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Klara Modin <klarasmodin@gmail.com>, Rong Xu <xur@google.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Chris Packham <chris.packham@alliedtelesis.co.nz>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-I forgot to add the changelog for this V2: The change was to move __HEAD
-down based on Chris Packham's review.
+On Wed, Nov 20 2024 at 12:24, David Wang wrote:
+> At 2024-11-20 09:20:59, "Thomas Gleixner" <tglx@linutronix.de> wrote:
+>>diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+>>index f36c33bd2da4..9b715ce8cf2e 100644
+>>--- a/kernel/irq/proc.c
+>>+++ b/kernel/irq/proc.c
+>>@@ -501,6 +501,7 @@ int show_interrupts(struct seq_file *p, void *v)
+>> 
+>> 		seq_put_decimal_ull_width(p, " ", cnt, 10);
+>> 	}
+>>+	seq_putc(p, ' ');
+>> 
+>> 	raw_spin_lock_irqsave(&desc->lock, flags);
+>> 	if (desc->irq_data.chip) {
+>
+> On second thought,   considering other paths have already had a leading space, 
+> maybe it is more clean to just add a leading space before irq_print_chip:
+>
+>         raw_spin_lock_irqsave(&desc->lock, flags);
+>         if (desc->irq_data.chip) {
+> -               if (desc->irq_data.chip->irq_print_chip)
+> +               if (desc->irq_data.chip->irq_print_chip) {
+> +                       seq_putc(p, ' ');
+>                         desc->irq_data.chip->irq_print_chip(&desc->irq_data, p);
+> -               else if (desc->irq_data.chip->name)
+> +               } else if (desc->irq_data.chip->name)
+>                         seq_printf(p, " %8s", desc->irq_data.chip->name);
+>                 else
+>                         seq_printf(p, " %8s", "-");
 
--Rong
-
-On Tue, Nov 26, 2024 at 9:34=E2=80=AFAM Rong Xu <xur@google.com> wrote:
->
-> Mark __kernel_entry as ".head.text" and place HEAD_TEXT before
-> TEXT_TEXT in the linker script. This ensures that __kernel_entry
-> will be placed at the beginning of text section.
->
-> Drop mips from scripts/head-object-list.txt.
->
-> Signed-off-by: Rong Xu <xur@google.com>
-> Reported-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Closes: https://lore.kernel.org/lkml/c6719149-8531-4174-824e-a3caf4bc6d0e=
-@alliedtelesis.co.nz/T/
-> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->  arch/mips/kernel/head.S        | 1 +
->  arch/mips/kernel/vmlinux.lds.S | 1 +
->  scripts/head-object-list.txt   | 1 -
->  3 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
-> index e90695b2b60e..c7528d96dd1a 100644
-> --- a/arch/mips/kernel/head.S
-> +++ b/arch/mips/kernel/head.S
-> @@ -59,6 +59,7 @@
->  #endif
->         .endm
->
-> +       __HEAD
->  #ifndef CONFIG_NO_EXCEPT_FILL
->         /*
->          * Reserved space for exception handlers.
-> diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.ld=
-s.S
-> index d575f945d422..c9c1ba85ac7b 100644
-> --- a/arch/mips/kernel/vmlinux.lds.S
-> +++ b/arch/mips/kernel/vmlinux.lds.S
-> @@ -62,6 +62,7 @@ SECTIONS
->         _text =3D .;      /* Text and read-only data */
->         _stext =3D .;
->         .text : {
-> +               HEAD_TEXT
->                 TEXT_TEXT
->                 SCHED_TEXT
->                 LOCK_TEXT
-> diff --git a/scripts/head-object-list.txt b/scripts/head-object-list.txt
-> index fd5d00bac447..f12b4a7b8406 100644
-> --- a/scripts/head-object-list.txt
-> +++ b/scripts/head-object-list.txt
-> @@ -23,7 +23,6 @@ arch/m68k/coldfire/head.o
->  arch/m68k/kernel/head.o
->  arch/m68k/kernel/sun3-head.o
->  arch/microblaze/kernel/head.o
-> -arch/mips/kernel/head.o
->  arch/nios2/kernel/head.o
->  arch/openrisc/kernel/head.o
->  arch/parisc/kernel/head.o
->
-> base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
-> --
-> 2.47.0.338.g60cca15819-goog
->
+I rather keep the seq_putc() and remove the trailing space from the
+other prints.
 
