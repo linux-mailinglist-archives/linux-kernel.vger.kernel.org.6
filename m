@@ -1,173 +1,140 @@
-Return-Path: <linux-kernel+bounces-422711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1832D9D9D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C699D9D51
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FA4AB215FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:23:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B10EB255B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9840E1DDA36;
-	Tue, 26 Nov 2024 18:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D621DDA36;
+	Tue, 26 Nov 2024 18:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dulFAUD8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="DrCj3ZNg"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F201B1DB361
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF6F1DB55C;
+	Tue, 26 Nov 2024 18:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732645418; cv=none; b=iy+UPmpu3svWfxsMzkLNHb8h3VJT/FtlH5RNkENl/wqf7Isy7p+CDioV1EINjzORPfz2Iv6QhqFMndcu8CzJ17lszBSed6FreFSI2B5f2GJgvjqi8A5ec4TuK+LETZC47gEJ/A80Mfdq0wKv2tZXUtgbVLGGrSRsfOW1U8xe73c=
+	t=1732645464; cv=none; b=ka3jD6MkkmjM4EN+lnc0NlqqSSm6zYhcRcC4Bala7MfwRp11T0jVLgxE4PBIUfaHzdohgNjaMg3lo36tRE5uOyhu4nvcHjymhgCXW0v/EdZXAzDsS44GCkjfteHLHf2AqlVASP/1GF6OdkFP9AxSM38xh32HfWrKruVjHezlRoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732645418; c=relaxed/simple;
-	bh=uL4h8AivCvP+xLS42wtF6z/lYnpiZgfmM3LoAprgmZM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qvXZwML/o/XuIsJaBZYiABMyt/qlUBkTUdJoXQ72jmGzBcSGQW5DPVKehqWwuAe1K1UZsZRNWWmGb8lmDCn8VpKHV2kag8obrlAJcFmLDwu9be1ubW5rWiCtYe/32KRYbwyex7bG91MRK8pZb85NgwZxpbBNpNTgq16jjLS/dc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dulFAUD8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60619C4CECF;
-	Tue, 26 Nov 2024 18:23:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732645417;
-	bh=uL4h8AivCvP+xLS42wtF6z/lYnpiZgfmM3LoAprgmZM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dulFAUD8D7wyKtstJm4fzw1Ox9MNiTqX/JsCiGmGeRSuJ6UCSbW+2SujGxuwkhsxr
-	 8nh2b57UZPvWrz/WlszFbHR4kecnUuiheHWkpJyr6SBBpnApAOSQZ85oqmDyX71NDR
-	 Bi2yWi77Qa9stTcsnf3snoFj7oZ/Wx4tSr1xdqhrQHmL9FCcMo+Imm1/2578D8L8Hr
-	 owCBs1InysJA5r9cRluAoa63il0uSvKnUiHgGoHOUSuIhMigKpP7enx6F7RXxgeXUz
-	 +ivv7stZiDa3qHnWnUMkNeBYHe2AqUdvttaRLvUojjRzvo+hYwbhdQJxSlvBSk7y1S
-	 fT4D6F0SVy8WA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tG0Dn-00G5HI-3S;
-	Tue, 26 Nov 2024 18:23:35 +0000
-Date: Tue, 26 Nov 2024 18:23:34 +0000
-Message-ID: <86cyihvopl.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Eliav Farber <farbere@amazon.com>
-Cc: <catalin.marinas@arm.com>,
-	<will@kernel.org>,
-	<akpm@linux-foundation.org>,
-	<bhe@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<jonnyc@amazon.com>
-Subject: Re: [PATCH] arm64: kexec: Check if IRQ is already masked before masking
-In-Reply-To: <20241126050509.4426-1-farbere@amazon.com>
-References: <20241126050509.4426-1-farbere@amazon.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1732645464; c=relaxed/simple;
+	bh=hF79OJOTF3Zhn8zXCNMfZBZW+wmNbw9AS1gO9o5YyZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X3gRk0QDdQTHrITDgeJYzyEbMEaxwA+C+07EoRVQ/bz2bcRvffnCn5JJnhha2B7ElAeBx5m7HVsPDJ7LR4uWBvnzjnKjRWhl5gJWUrXrQY5GzEcpw9sC4Ax9wg1bIKC8HZ0Yk/I0z3rJ8nPQnioseAG7jcSvRArvS06x75sCRm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=DrCj3ZNg; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 056C441EA7;
+	Tue, 26 Nov 2024 18:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1732645452; bh=hF79OJOTF3Zhn8zXCNMfZBZW+wmNbw9AS1gO9o5YyZY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=DrCj3ZNgdTLjEa6WgNpslR3Re7kRLIDW/oSjyfdbX0rhfHJ0NMtMr7MEJE3X0qemC
+	 jMGWqS8HVlaoEQ+GBcLBPC8IdI6jijrOIbFHhuMQqCp3xr5CA3v/MKisPcTbgoz62G
+	 av58lvd/TZ3KUf0e2hzo3w7Ms9Xer9NcHuuf2A5yVX7hG3d42yNe/rBAHQt+NeZ7C6
+	 QSNbywgdmfFTE8fhM839bRIb2gWqFdwSwkpoLrSxSLltENbqhA0LQScpQ1CHh//2xT
+	 sm9B97wLh93yuzi0C6IDiR+Utp9Ny2HYms+SgANp7VHPuWEv0UIx7KspScgs8X0UBA
+	 +ouOVcHInABAQ==
+Message-ID: <3906a62b-3fb0-4ff7-bf0f-ae72009d3bc3@marcan.st>
+Date: Wed, 27 Nov 2024 03:24:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: farbere@amazon.com, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, bhe@redhat.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jonnyc@amazon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: Add Apple pre-DCP display
+ controller bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig
+ <alyssa@rosenzweig.io>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241126-adpdrm-v2-0-c90485336c09@gmail.com>
+ <20241126-adpdrm-v2-1-c90485336c09@gmail.com>
+ <050d1398-cfc2-4921-b82a-95eecbcddba4@kernel.org>
+ <CAMT+MTSwCf=iwmD3t=E7T81K_d+o-5XpCxov9fk=_oUnwooA-A@mail.gmail.com>
+ <e5b9ad58-ab31-4485-a2fe-d622f8e0f31b@kernel.org>
+From: Hector Martin <marcan@marcan.st>
+Content-Language: en-US
+In-Reply-To: <e5b9ad58-ab31-4485-a2fe-d622f8e0f31b@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thanks Catalin for pointing me to this patch.
 
-On Tue, 26 Nov 2024 05:05:09 +0000,
-Eliav Farber <farbere@amazon.com> wrote:
-> 
-> During machine kexec, the function machine_kexec_mask_interrupts() is
-> responsible for masking all interrupts. However, the current
-> implementation unconditionally calls the irq_mask() function for each
-> interrupt descriptor, even if the interrupt is already masked.
-> 
-> This commit adds a check to verify if the interrupt is not already
-> masked before calling the irq_mask() function. This change avoids
-> redundant masking operations and potential issues that might arise from
-> attempting to mask an already masked interrupt.
-> 
-> A specific issue was observed in the crash kernel flow after unbinding a
-> device (prior to kexec) that used a GPIO as an IRQ source. The warning
-> was triggered by the gpiochip_disable_irq() function, which attempted to
-> clear the FLAG_IRQ_IS_ENABLED flag when FLAG_USED_AS_IRQ was not set:
-> 
-> ```
-> void gpiochip_disable_irq(struct gpio_chip *gc, unsigned int offset)
-> {
-> 	struct gpio_desc *desc = gpiochip_get_desc(gc, offset);
-> 
-> 	if (!IS_ERR(desc) &&
-> 	    !WARN_ON(!test_bit(FLAG_USED_AS_IRQ, &desc->flags)))
-> 		clear_bit(FLAG_IRQ_IS_ENABLED, &desc->flags);
-> }
-> ```
-> 
-> This issue began after commit a8173820f441 ("gpio: gpiolib: Allow GPIO
-> IRQs to lazy disable"), which replaced IRQ disable/enable hooks with
-> mask/unmask hooks in some cases. The irq_disable hook was protected
-> against disabling an already disabled IRQ, but the irq_mask hook in
-> machine_kexec_mask_interrupts() was not.
-> 
-> When a driver that uses a GPIO-irq is unbound, the corresponding IRQ is
-> released, invoking __irq_disable() and irq_state_set_masked().
-> Subsequently, machine_kexec_mask_interrupts() attempts to call the
-> chip->irq_mask() function again. This invokes gpiochip_irq_mask() and
-> gpiochip_disable_irq(), and since FLAG_USED_AS_IRQ has already been
-> cleared, this results in a warning being printed.
-> 
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
->  arch/arm64/kernel/machine_kexec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-> index 82e2203d86a3..6f56ec676844 100644
-> --- a/arch/arm64/kernel/machine_kexec.c
-> +++ b/arch/arm64/kernel/machine_kexec.c
-> @@ -230,7 +230,7 @@ static void machine_kexec_mask_interrupts(void)
->  		    chip->irq_eoi)
->  			chip->irq_eoi(&desc->irq_data);
->  
-> -		if (chip->irq_mask)
-> +		if (chip->irq_mask && !irqd_irq_masked(&desc->irq_data))
->  			chip->irq_mask(&desc->irq_data);
 
-Maybe a slightly better approach would be to simplify this code for
-something that actually uses the kernel infrastructure:
+On 2024/11/27 2:20, Krzysztof Kozlowski wrote:
+> On 26/11/2024 18:00, Sasha Finkelstein wrote:
+>> On Tue, 26 Nov 2024 at 17:46, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    items:
+>>>> +      - enum:
+>>>> +          - apple,j293-summit
+>>>> +          - apple,j493-summit
+>>>> +      - const: apple,summit
+>>>
+>>> Summit tells me nothing - no description, title repeats it, so I suggest
+>>> using device specific compatible.
+>>
+>> The j293/j493 are the device-specific compatibles, those are chassis names
+>> for the specific laptops the panel is present in.
+> 
+> This does not address my comment. Use specific compatibles as fallback,
+> just like we recommend for every device. This should not be different.
+> If you do not know the hardware details, using generic is even less
+> appropriate.
 
-diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-index 82e2203d86a31..9b48d952df3ec 100644
---- a/arch/arm64/kernel/machine_kexec.c
-+++ b/arch/arm64/kernel/machine_kexec.c
-@@ -230,11 +230,8 @@ static void machine_kexec_mask_interrupts(void)
- 		    chip->irq_eoi)
- 			chip->irq_eoi(&desc->irq_data);
- 
--		if (chip->irq_mask)
--			chip->irq_mask(&desc->irq_data);
--
--		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
--			chip->irq_disable(&desc->irq_data);
-+		irq_set_status_flags(i, IRQ_DISABLE_UNLAZY);
-+		irq_disable(desc);
- 	}
- }
- 
-This is of course untested.
+The panel is codenamed "summit", and that tells you everything. It's a
+panel sold and marketed by Apple. It is used on two devices, which are
+specifically referred to as the device names "j293" and "j493". There is
+no further information to be added here, the names chosen already
+contain 100% of the available information and are completely and fully
+specific as to what devices are involved here. There is no more specific
+or appropriate compatible possible. "summit" literally comes from
+Apple's own device tree compatible in the macOS world, which is
+"lcd,summit". If Apple uses it as a DT compatible, then it's a good bet
+it is precisely what it needs to be to identify a device. The
+chassis-specific versions are something we added on top of that and
+likely aren't even necessary since it's almost certainly precisely the
+same exact panel in both laptops, but as you know, it's best to be
+specific with DT compatibles just in case.
 
-But a *much* better approach would be to have a way to turn the
-irqchip off altogether and stop this silly "walk 1000s of interrupts
-for no purpose". Unfortunately, we don't have a good way to do this
-today.
+There is plenty of prior art for compatibles that don't look like random
+product code gobbledygook (which I think is what you were expecting?),
+e.g. these panels:
 
-Thanks,
+ti,nspire-cx-lcd-panel
+ste,mcde-dsi
+raspberrypi,7inch-touchscreen-panel
+olimex,lcd-olinuxino
+focaltech,gpt3
 
-	M.
+So yeah, the correct compatible is in fact "apple,summit". Anything else
+would be making things up for no reason. The vendor has chosen to call
+this panel "summit", so "summit" it is. We're not in the business of
+gratuitously assigning our own product names/codes when a suitable one
+already exists here.
 
--- 
-Without deviation from the norm, progress is not possible.
+- Hector
+
 
