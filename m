@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-422355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCFD9D9894
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:33:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630C99D989B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:35:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F09B21C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFE416455D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF3BDF49;
-	Tue, 26 Nov 2024 13:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E111B85E4;
+	Tue, 26 Nov 2024 13:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mikvDnbK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RcSffKCb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770A3B652;
-	Tue, 26 Nov 2024 13:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F607C13D;
+	Tue, 26 Nov 2024 13:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732628002; cv=none; b=Aq9O6NsK0gmUvkLCiFthDwXbFlm8otu/AzN06uJUG/cZzxDpOm22NrIZuGvZ3uaVipZKeJOU67Qd+bHRcGFhKTxdGbyXICu6z/A8azSUiF6yw6aixNOwwudJZT2KejgEljMijuRUVfzW6LAZhdtbxPhm1v83vYBFLGTDekHigVw=
+	t=1732628155; cv=none; b=AVbPmYpJtL6slaWaCMh2+mSDmi0cZgGMzTasmnOwoWRf5NBQhOZaLtEDxJ9WjnbCGJOV/l+c1HD3wHme1zKvQdNbMOvOkmLu1RcebmvhjKCIFizOB1JOO25cbKY9/OT55Q1N3XdllDjL42fPFqWOPfVwWlyM0qFt3QucgKCSOZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732628002; c=relaxed/simple;
-	bh=xfKsoAevVrw3eYrCV3zDJDoJY9EpGFkYsAtur1PbF54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSTAt+6E0KTvrfHs7RfMnmdz+x8/kTIqT2lpwYmMW6esedfFGJsZbcnCu4cgOOxBaJJUYJHNcvh7KV2k+uRwIX/trw0pFjGKo41vSyNOifGv2w8LoYoxYg/CBA3j+/DEmidFAuMNvPKuTbfentZoqtBMyS54Po0phJ7VUDhwtIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mikvDnbK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ75vYU022515;
-	Tue, 26 Nov 2024 13:33:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ztQg2zVAQwGhslLLUkcoUyVTe60KBL
-	qcMI6KHH1mwBA=; b=mikvDnbK1iuI0kYdn8ZDadN768jAE48/xRoBKyZZq+/Bq2
-	quAig4LYQKdBq+g17BzHvTHCeiGHsY94z/BQhfuoYW66ulr1YwSR2hPk8YolNAi8
-	pa+12OW0/mLQot4mhnLBOW0CwZjSK+exsQ8iXgZgtmGHvNllxZRo2U59UoCVJvx3
-	JP5OwEp6eJGItF8aWCBVqaATYDI/9StrzlmRLoVqj/qMCLmtdTgXNTxR5iQgRRJB
-	3tfl+BCbGUwzRmoPuoX81z/9uOOe/+vSGasLCvaawxz94ezkNZ54VPAsYvS0jSC6
-	SrrlvownVBTSdENS+9xePD1Pu1tqIraT2mClobLA==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwsad-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 13:33:16 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ6oUNw005727;
-	Tue, 26 Nov 2024 13:33:16 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 433ukj4e6n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 13:33:16 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQDXC5F40370596
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Nov 2024 13:33:12 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AD9272004D;
-	Tue, 26 Nov 2024 13:33:12 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 88C5620043;
-	Tue, 26 Nov 2024 13:33:12 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 26 Nov 2024 13:33:12 +0000 (GMT)
-Date: Tue, 26 Nov 2024 14:33:10 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: Janosch Frank <frankja@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] KVM: s390: Increase size of union sca_utility to
- four bytes
-Message-ID: <20241126133310.8074-A-hca@linux.ibm.com>
-References: <20241126102515.3178914-1-hca@linux.ibm.com>
- <20241126102515.3178914-4-hca@linux.ibm.com>
- <2d3862ea-4112-4a03-9e4b-ac4e8e23a7f4@linux.ibm.com>
- <20241126132152.3dc746e7@p-imbrenda>
+	s=arc-20240116; t=1732628155; c=relaxed/simple;
+	bh=cUTsPuulG0PR86MomZ5xmUS1HQzMf2A88KFCnA5xvB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UOW1hlb+9VIF1uIVUXf0FMXUN+uR3K8UnQ7ly8Q5JGr4mWY882zyx31a25edOiH4y42r3n58Ge8SdLTqwPEgAzbmtZPe7M/4/C6WtLeyrM6ju9p4WqwyjXGiMWEsZHKV20rqu3YGDu+T2Q/sPwsD7bgo10FAAxi5mYmqGY1Xm84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RcSffKCb; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732628154; x=1764164154;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cUTsPuulG0PR86MomZ5xmUS1HQzMf2A88KFCnA5xvB0=;
+  b=RcSffKCb/HEZgCoOZxDrzFFBv+zXdvihHFFupY4g0DowNVtmahe8eiIa
+   WiZikmLNetlpsM5tYFWfgwGRDPMbsn7nCKNp4SnUVByGubAs/Th7hiVvr
+   Tn455onIDdEXwEph66v6BgZdUmiYipQ9eoy/+BAwqFq/ledy/9RYr4FAt
+   ujIWdTnU2cQ6HkQMbv1GEEgZtG0xZjVpr2Dk21RoxUqTpQ95HJCC2A3RS
+   75bu0ESGJjxk2c7PZaNhkCO/3jSFt8RPAbQHSnfcY10bYrb8s2HvrQAUZ
+   Kf0ZklhdE97v7VCJaXcaXktdrrER47ZaZpAZFus24sLe4GI7eBKUCOe6g
+   A==;
+X-CSE-ConnectionGUID: E6AmRP1ZQn6PiCoj8cbLbA==
+X-CSE-MsgGUID: g+szQH1lTxSB/xBIRr70pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32727801"
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="32727801"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:35:08 -0800
+X-CSE-ConnectionGUID: TknDDEGaT8eG748zBEGg+g==
+X-CSE-MsgGUID: 8GABtZP3R/irwX9tfiy9NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="91782168"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.170])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:35:04 -0800
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: shuah@kernel.org,
+	hpa@zytor.com,
+	x86@kernel.org,
+	dave.hansen@linux.intel.com,
+	bp@alien8.de,
+	mingo@redhat.com,
+	tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kirill@shutemov.name,
+	maciej.wieczor-retman@intel.com
+Subject: [PATCH v4 0/3] selftests/lam: get_user additions and LAM enabled check
+Date: Tue, 26 Nov 2024 14:34:47 +0100
+Message-ID: <cover.1732627541.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126132152.3dc746e7@p-imbrenda>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: en8fffoQ29N7LvOXiFJ5hCZsjhtQA2Me
-X-Proofpoint-GUID: en8fffoQ29N7LvOXiFJ5hCZsjhtQA2Me
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- mlxlogscore=731 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260109
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 01:21:52PM +0100, Claudio Imbrenda wrote:
-> On Tue, 26 Nov 2024 13:09:56 +0100
-> Janosch Frank <frankja@linux.ibm.com> wrote:
-> 
-> > On 11/26/24 11:25 AM, Heiko Carstens wrote:
-> > [...]
-> > >   union sca_utility {  
-> > 
-> > Would you mind adding a comment?
-> > 
-> > 
-> > ""Utility is defined as 2 bytes but having it 4 bytes wide generates 
-> > more efficient code. Since the following bytes are reserved this makes 
-> > no functional difference.""
-> 
-> looks good, thanks!
+Recent change in how get_user() handles pointers [1] has a specific case
+for LAM. It assigns a different bitmask that's later used to check
+whether a pointer comes from userland in get_user().
 
-Thanks a lot! I added the comment and applied the series.
+While currently commented out (until LASS [2] is merged into the kernel)
+it's worth making changes to the LAM selftest ahead of time.
+
+Modify cpu_has_la57() so it provides current paging level information
+instead of the cpuid one.
+
+Add test case to LAM that utilizes a ioctl (FIOASYNC) syscall which uses
+get_user() in its implementation. Execute the syscall with differently
+tagged pointers to verify that valid user pointers are passing through
+and invalid kernel/non-canonical pointers are not.
+
+Also to avoid unhelpful test failures add a check in main() to skip
+running tests if LAM was not compiled into the kernel.
+
+Code was tested on a Sierra Forest Xeon machine that's LAM capable. The
+test was ran without issues with both the LAM lines from [1] untouched
+and commented out. The test was also ran without issues with LAM_SUP
+both enabled and disabled.
+
+4/5 level pagetables code paths were also successfully tested in Simics
+on a 5-level capable machine.
+
+[1] https://lore.kernel.org/all/20241024013214.129639-1-torvalds@linux-foundation.org/
+[2] https://lore.kernel.org/all/20241028160917.1380714-1-alexander.shishkin@linux.intel.com/
+
+Maciej Wieczor-Retman (3):
+  selftests/lam: Move cpu_has_la57() to use cpuinfo flag
+  selftests/lam: Skip test if LAM is disabled
+  selftests/lam: Test get_user() LAM pointer handling
+
+ tools/testing/selftests/x86/lam.c | 122 ++++++++++++++++++++++++++++--
+ 1 file changed, 117 insertions(+), 5 deletions(-)
+
+-- 
+2.47.1
+
 
