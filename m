@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-422836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3831E9D9ED5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 009B09D9EDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:26:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DB5165AD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0CB51631F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2751DF25D;
-	Tue, 26 Nov 2024 21:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B951DF978;
+	Tue, 26 Nov 2024 21:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FXFBPRDw"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SOwXoET+"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E631DF257
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE701DF257
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732656309; cv=none; b=jZQ26dsnXyxi0RoyeGeaBo2QdLODnxaOO/Y2WsaBt/htt+9fWEop0IxUM5FpZ/cExNa2eNg011GketKWxkA+vn6Pd/vsGk+s0L6n1Ij2I478zjByGuglHwasEEP8lplfwAG1G2tM0n7O4bkbZ+2t1MZ5SS97D6LbhwDnb3XVkGA=
+	t=1732656370; cv=none; b=bLutVKM2XcXZS7N34Q878Pz95lcOxNo0czjkbXHzl5/Q4o7FRPuR+1jL6ma6srdiISPFaa8dRItk/S3IwqqN+iga1frh/EzjMKWcOsm03fn8DFEx+/oapLcnyX7bbyR6MGwZL3rsoNH/0yE21jdRT0UcEjfB6Dp05uJLkwRjSGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732656309; c=relaxed/simple;
-	bh=OCbEhyVLJAVes5U0OfNBYmU9gspkQL7a73ulu1r6IXo=;
+	s=arc-20240116; t=1732656370; c=relaxed/simple;
+	bh=Kx/0QWPX+OdEqSNki0YPTvmPzEcNouqLCCl/QMYchKc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c7YgZMnbX7YFg9b2pBVA5k4pspqfJ6oHfDURaJG+G15PjsTgQZ1JsC/TyaZFP0BTmpqgBsdsKr5tU1wRoSU0j8dOjEZY354jeG4fKLd2E55wA6gLDdQ3ffxGAGQflBXG+WpZJk15TzQTnvekHsdwaeptYInkml1PhwpuLLzdsrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FXFBPRDw; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53da209492cso7832151e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:25:07 -0800 (PST)
+	 To:Cc:Content-Type; b=rmV29LXoPvZqPp0trTKz+9xdhcLWFCKMUhMZRrHjT1GTgosi3gNJUUD5v8b/sXLJDdQJGT888JlfRbEy4i3FXdTxj66xaL0EqZZSJd3RHPqSPHZbD4l+WRAcgaF5q7jgMPutphUup1bFVIIUXEnzWGmUKarTuD5eyBxY8a602vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SOwXoET+; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfbeed072dso7717098a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732656306; x=1733261106; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6h3kJfGGhVM0yFSXEKXnzQX8yDxkzOWLSNwlq2YprHM=;
-        b=FXFBPRDwIOvyE2GEhwJvQoG7+kGD6ElmZUqN09deH6bmfrwRSKCAVjsDDyvaOtNW83
-         MxK5ZnDkf4urTjw6xnCeZO1V/JYI6qX6CDCrKMsizIBg6Jjf6al09IPH5sciL6tDUXFy
-         +Krae5Q8gwmNWhIwBRev77La6p5mr+v1ephNSw65tLREqsKmpXprmhqNYqmyJWOvbxYr
-         9cL6xXkKf7iVvs5bLhy2wjPDwowAnOQ590/JaaghCGge4P813lSLEtKc3e+43q84hJ//
-         uHQQ7RnW4qbxMherUqhj877PLflPHbxpJLNsKsW4ygjX2RCGkJkp3ppnCuHKsmRC+GNI
-         9/Kg==
+        d=linux-foundation.org; s=google; t=1732656366; x=1733261166; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2eytn+wn7/zH3xbZzSo5Ejwd3Xq1yRr1L52T1xIuRQ=;
+        b=SOwXoET+GfCNL+cYEDh6oBOGKneOoXLxVX0zkKZF16iKSWFn9fpHYboArQT2TXpmZU
+         U3hV+p8rHt6xCD9cvHvGrNDMyoFT75CsqAdRv+sj2qruYABCLZd0b0DNbr4NkAdnmW3n
+         IY/RgSTszixxnpyioJme5CRbvSaZEetKTeo1A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732656306; x=1733261106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6h3kJfGGhVM0yFSXEKXnzQX8yDxkzOWLSNwlq2YprHM=;
-        b=kJG5eyCteq46h36GGKzpfpBgsnIj2S+LFfUgmA6qvMLWkk3GUfg2GjaNFFpCUkCBLj
-         +V6p7uDKSLpRU4rWxB7J3xRPSbavdIfvcy0+zUe5mAx/ZOsIZMi/XV5d3YzCNcVl3YZA
-         0gi0113cVyCCskkwYtdufnZcrj0ni/1fXPijMpTrMPKj+oU44stmZk0VNWNMbl2B8YDN
-         AWObBKFwWiS2TrxRscPxtmrQeVaQkfvcGZ7sxdV+E7dfyq5wl8YMrgptewvBqHwF/Byi
-         EU0jec5EsPcuV83xXnoG1sBNhk1GV6QyDcXND/FUSQDRoOC6qHdUOfIZQyD3qjOyxNYE
-         fpLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQDY3VR+57DTtroy5FLNpbE5jcqc1HvBBqarJq8zUsasMucjBwTxb5iHQJ9MaKaFJlK5PAOdPPB8nUTpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgUvA3xttIU8e7MTxxplYtKFEPMylTaxvNUftqC0+17Pl573lu
-	IWF+o8kS6iRNH9z02DLbi0c37mEJHnpylsijak7PC2ef5hRHdaa30tzT1tcwMZ79Sy8g05mTNUs
-	Dg8dSa5UHbeSkDlemP/EaKxraGcItcSnQBFwklg==
-X-Gm-Gg: ASbGncv4CT7LYZY65CBqey3C3FT+63GOCcEltJeHv+hK1EZK/tUDm4C4vxNiO34lHxp
-	YluY28/iTAMzvkBlSCVsqL1NIZkYxBA==
-X-Google-Smtp-Source: AGHT+IHSrPR6Pqpyg4e7ER+ek3MH0oeiQVFy40chfxmpilpXRCIjRdoDRTm7U+FqL/Q1H+0po9DrV+HI5wtgsosAtoA=
-X-Received: by 2002:a05:6512:3da3:b0:53d:d3ff:85f1 with SMTP id
- 2adb3069b0e04-53df00ff18dmr264363e87.42.1732656305985; Tue, 26 Nov 2024
- 13:25:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732656366; x=1733261166;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G2eytn+wn7/zH3xbZzSo5Ejwd3Xq1yRr1L52T1xIuRQ=;
+        b=k58UsEW9/iyOTEtj9LXCXOITzIZPHNczR1ta0etzy83/QcrpJdJ+yQy+6q3BSSvLt4
+         Zadl/FKlqMjUS7znFNnuCUKv4+mcdR/9DEvWjyNZFaju/YQNnu0u3zS6v4uYcMa8Mkw4
+         HvtO09JHkSJyIU6JkIW+PELu1afJjNI8Kxva8u63nHgl0w6yj617ywxUZHa0ynSqCcO2
+         6aUkBy6RkUYnwJaiGJgq2SJBk0e7y+t8/LfLOgfgeJ2tTjYJ2bQlmaMIU8Q4+rIfH6F0
+         lB6RhGzOEh+lGIvcjO23EDwayx12CKpQfBepXY3CaGyfgdz37yvPTJESaYo1J9UORK0y
+         615g==
+X-Forwarded-Encrypted: i=1; AJvYcCW6EQc+GkGmv+ChSngVutb4JPtS4lqW3f4Ka+RindL+aJ2b8hLC4FpboBM8uXgKpsFkHm2fDlPYGJoO+HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTIeusPvyzxmXmcshvRYrp3MXpn5gonacN+HQvNGoJ8gH2YuvB
+	a6srCMBoZVV70ZZOhYMBdsvi0I2sXuwhmkq00xzk41EJgQ8H2BQNFCFAj0MCSyCLABrKR6xcOyl
+	KpKC3Sw==
+X-Gm-Gg: ASbGnct83IPgalb/iz+yw12uVvS4/fPmSRGS8d5NcyjXH7FhlJHqLOrC3u93emwWmQT
+	mR1Z8fEFlfE6sHfQk5zWZcYVBmgvFf3TQgp2K06YkqdDNi2EE8GCF7nuR4Bz4tgIQMbDMp5nd8D
+	XpvEYLoYkSb7aOcFcTKA1prHDoi/nQtvzonuwe8/PWAl+sSTkiwbb77aIWVJUVMHgyJ54btJFMX
+	ta5gJ9j3hhlxy6t1Wzw0BBdlMujOLF8GTlUcubrBkx599kys1LGuACKMUXmz5Huxiv3sai7NvjW
+	VQGf3ODw951XdGO441MVJ2ja
+X-Google-Smtp-Source: AGHT+IFqtr+ZcXZikhRhFrbzqbEgHeaZqm/ivIwXpWemXwv5iouaiEzPwChOQtIaK9oFevNJdIUYnA==
+X-Received: by 2002:aa7:d9d0:0:b0:5d0:8111:e94a with SMTP id 4fb4d7f45d1cf-5d08111efa7mr447380a12.8.1732656366312;
+        Tue, 26 Nov 2024 13:26:06 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3a2d15sm5718282a12.11.2024.11.26.13.26.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 13:26:05 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so990149366b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:26:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXC1/UL7HKLWQOaIUOmDpDMdBXfl4ZR8ey92SDFkGaqbAMwXqKXYVnOoG5gAKhEL6hq72r1M4LhRFWC7Hg=@vger.kernel.org
+X-Received: by 2002:a17:906:4ca:b0:aa5:b32:6966 with SMTP id
+ a640c23a62f3a-aa581076b11mr40826366b.50.1732656364133; Tue, 26 Nov 2024
+ 13:26:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
- <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com> <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
-In-Reply-To: <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 26 Nov 2024 22:24:55 +0100
-Message-ID: <CACRpkdaBR5mmj43y_80b9jd3TAqRWMdCyD9EP6AY-Y0-asz4TA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Esben Haabendal <esben@geanix.com>, Russell King <linux@armlinux.org.uk>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20241126-vfs-rust-3af24a3dd7c0@brauner>
+In-Reply-To: <20241126-vfs-rust-3af24a3dd7c0@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 26 Nov 2024 13:25:47 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh81Obo3jzHuB6eg_a8x2ObjRG1Oa7g_B5qWK-uds=thg@mail.gmail.com>
+Message-ID: <CAHk-=wh81Obo3jzHuB6eg_a8x2ObjRG1Oa7g_B5qWK-uds=thg@mail.gmail.com>
+Subject: Re: [GIT PULL] Rust bindings for pid namespaces
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 5:17=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
-> On Mon, May 06, 2024 at 12:23:53PM +0200, Esben Haabendal wrote:
-
-> > Making pinctrl drivers and subsequently the pinctrl framework
-> > user-controllable, allows building a kernel without this.
-> > While in many (most) cases, this could make the system unbootable, it
-> > does allow building smaller kernels for those situations where picntrl
-> > is not needed.
-> >
-> > One such situation is when building a kernel for NXP LS1021A systems,
-> > which does not have run-time controllable pinctrl, so pinctrl framework
-> > and drivers are 100% dead-weight.
-> >
-> >
-> > Signed-off-by: Esben Haabendal <esben@geanix.com>
+On Tue, 26 Nov 2024 at 03:08, Christian Brauner <brauner@kernel.org> wrote:
 >
-> This patch didn't update default configurations, meaning PINCTRL is now
-> disabled by affected configurations such as imx_v4_v5_defconfig or
-> imx_v6_v7_defconfig, making pretty much all imx platforms non-bootable
-> unless the default configuration is changed manually.
+> There'll be a merge conflict that should be resolved as below. The diff
+> looks huge but the resolution hopefully shouldn't be complicated. I also
+> pushed the following branch:
+>
+> gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs rust-v6.13.pid_namespace
+>
+> Where you can just steal the rust/kernel/task.rs file from.
 
-Since the patch tries to add default selects for all drivers I suspect this
-oneliner is the culprit:
+Well, my merge resolution looks a bit different, since I ended up also
+fixing up your self.0.get() to use the new self.as_ptr() model.
 
-@@ -6,7 +6,6 @@ menuconfig ARCH_MXC
-        select CLKSRC_IMX_GPT
-        select GENERIC_IRQ_CHIP
-        select GPIOLIB
--       select PINCTRL
-        select PM_OPP if PM
-        select SOC_BUS
-        select SRAM
+And I ended up putting that as_ptr() definition in a different
+location (just before the first use, like it used to be).
 
-Should we just add that one line back?
+But I think the end result is equivalent.
 
-Yours,
-Linus Walleij
+          Linus
 
