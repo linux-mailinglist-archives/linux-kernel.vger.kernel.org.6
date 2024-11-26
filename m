@@ -1,92 +1,95 @@
-Return-Path: <linux-kernel+bounces-422064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A3C9D9407
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:19:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BF51683AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:19:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D174A1B4122;
-	Tue, 26 Nov 2024 09:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Czb+fui7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D3C9D9406
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:19:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA121BBBF4
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFF05282C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:19:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5901BC07A;
+	Tue, 26 Nov 2024 09:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxHHAf32"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA431B87C0;
+	Tue, 26 Nov 2024 09:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612735; cv=none; b=pPo0lSDu5Z+a2rGrx9mRE5RKlnK56qk2NoJgSavbby+7kH72J5NQm1eSR94tQsaUAiVhBdUmIzJgCxzSYawFzmMzk9wIzKhcv8d3CHSYFHE97MxQeyQABZLH9rR+xUeIRddvGMHwX3dmRa20KwzrNb5WFQ6tew8n2n6AJfW6yoE=
+	t=1732612734; cv=none; b=DKC81/v0WtjoM6ILoLub+L5HMoQnE0FurblGNaQNkv+xnudl2m/bT90BEwm+5VyhIIunxP3TvieeIMkvfzLQpK6xhnmJgpFxTVkrrSJhYWLHksRuPpLAON2QwvMfOidAqzvS05JkGiOUcv8T4yRW5/Med/aNQgoKOTYjJSqyUXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612735; c=relaxed/simple;
-	bh=nkFrveGHjAdm7Zheszf0c6YvWzZ01i1Na0eEUWfYMlQ=;
+	s=arc-20240116; t=1732612734; c=relaxed/simple;
+	bh=H8eF2eXLoEAWy3yZQI4qwWZRVJnCj0BbC/ST/Qo9VCA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qHir5cFlmWQddqGDdzz2LGNiVqXkwuYI76Ex74bAEsK5bFgoR6oiTSyPO3z5JzSZ8qmKci8Yw/pi0bVB6eU+oCazR7CTa/B5x9umERPOz2LNGtWW5VM4JkJCNwHPkWmSYgTqiWTtcNFWNV9jhpKCmABnQ2Q5bmt87MgFVgUSmm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Czb+fui7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B43C4CEDB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732612734;
-	bh=nkFrveGHjAdm7Zheszf0c6YvWzZ01i1Na0eEUWfYMlQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Czb+fui7xAdTkp/RO1SNy4f/P7FS1l2Oz5AitucvJ9uCyatAKHoAJzr0n1xKwCMba
-	 TdVNVYa1SO0n7JpNt1IgZB1r9N/9ospPwcRt2J0Kevp+ypjnNAY9+HV2vAiffMFDre
-	 OBRmv674+d+YaMnfhX8tAmb3w0NkL6E0M94s8h5J45jxJ6DvT/TBXWZO5qqiQCwCI0
-	 DCEYJfv61m4QEQx6NSNZHzkfXKs4T6fT9BvpZLKCSozZi61NfvwSj+4OgNiHmGAj1G
-	 F5kNgMSSqbURVPgV+h/G6MZP8qK4nXuIhQuK6k9UOKkp9nRLuHsmWBykfmvyYUuqEW
-	 DPQMrdac/PxzQ==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso6945189a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:18:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU52qEitM9O6D4FnbV2eZySF7GxmidmJ9mqpSLuS4t75pSi8u1JSIHUxviA9XC3I/C+qu3hj0IuP/r78Tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgeQX4+UXfS1KRwcZv4NiGeJjlw7kDh5Ya+7JWa8on0Ke9Z2Rz
-	SKx2Pqv9uR6m+C6Rv6LkdyZK0CJ569fZVfz+z5OHofayrZ+xj+q5ehQ9HIBOamfiCQmQJwgJ8vT
-	dbDkMHj+jo6Htnyvmam9QG6zdEb8=
-X-Google-Smtp-Source: AGHT+IGlFZeO8LFVIO6z3o2ioziX83pkTu+Zzoccwgrvt/Y0+T/DuXypMPfe7ysPBiuo0OCU504nRfaS/blo6DrTDmE=
-X-Received: by 2002:a17:906:3111:b0:aa5:2f8a:b94f with SMTP id
- a640c23a62f3a-aa52f8ac9c8mr933527766b.54.1732612733263; Tue, 26 Nov 2024
- 01:18:53 -0800 (PST)
+	 To:Cc:Content-Type; b=TOSY3zH1ZihNMpsV5wNRjqVCr3SwBysFbn7cnh+Ry/Fx01EIDZaHu5kKjPxSJI1/GlGYHtctSfWvgq+LGwysSuTjDWX2dvpq/+eQKkSRXPXL/nGigBXaNHyhcgSYryBwx4qO6pjpPszvaNyoh32YXV/jRlLYViORiCrO6Y0R0/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XxHHAf32; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so5065893276.3;
+        Tue, 26 Nov 2024 01:18:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732612732; x=1733217532; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVDCky70auYLWD6XOWEkaP+WV+CoPiiKjrNT7eFkl2U=;
+        b=XxHHAf32kePwdJMjDzJsm2iBBb81HZmEoDCV2djiRv1Hy2MClhN0rmQxcVAgp1TFoz
+         +c0kd/S+Jg0db0bH0QzcPc1E5SpJhzTaR8rTiBavx0MiNBmQxEhLs8non3acJLLxiiGM
+         P0wGymIv+RvkTNWApgCz+8ANrRmhPzSaVXo8WySjGVkVZ/bD5Vp8wAzSmo6ZrKFXql8F
+         d8El0uKLw7H1eK//gWDqNzIJjpSU4BO1zApeX+RTMbm1UCoDuqXLhmoFUy0hI/ie7+ev
+         YWIgj4XsZ0fMT6bVyDr4TWzmMxhMuOhYkKTerITgLKjw0ngzjp4l2O4Tuma6oUSVVtXs
+         7C4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732612732; x=1733217532;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZVDCky70auYLWD6XOWEkaP+WV+CoPiiKjrNT7eFkl2U=;
+        b=ktwt5HTmI4+CaaZGiEwzVRpSWrA9RrFAnzGgOO7uTMpdrcNWz0FNyjWAkOsV/bBGtA
+         8HZSo4ZtXrW1mhSjDbx5TU3hBWoldFl8SnSWF5uM+vD3kMKbocw/ALGjPc8U8de0RYcQ
+         grkWdk7lk6qMqJ6DQEb3lnlX7TUjudJuWQ6Puc1EPgOgRG1HZjPYJEv7r6dtlKzQAd0U
+         hV5rXMsV97Yr863pA0RLL5jyfHBGkOJUew71ERwnGdbJXXIrJ47sdsfjwGNNjqQJLJUO
+         rAZaD6sKKE1jEFLbpiClMn6QHWOkdbB/OTmkaAMg+0ts1ybKpnQ9Ho4g1ZRrl2UgdiDv
+         O0Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuPaTcxnNhAdyOIykZ9XE0X9DgH6FSv5kxgOwXu/qOf9yw+r2MCiwaCoQgnw929pk+II3eX66MfPe2dA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ud41HD9uUSxpNokVBYm4gBufTIzbZCvejiGK2T6eHG39fp0H
+	KmrMttbdH3Qm4LNXR+ERYr5akUhdesWYk1bR1r2TREYvmUqN8Op+ql93QGFUcaDkraKOBw54tAf
+	t0rz23FgrClCs/FzJV5fXjEsSG5M=
+X-Gm-Gg: ASbGnctvB+/+x+FsdAXG9gsHqMdHkXhZjkiyvL0U0lc5Okic0wayw5bIWsPl5ZO/7cj
+	IyV9rcqgDeslOw3ik6G7m25hFVJgiKjM=
+X-Google-Smtp-Source: AGHT+IHV02X2n+cTXOdwOWnWyjBXRCSdI9G0x+XWqC/yRz8lOxPMnte8V4M5zojwdV+Ku0e8hXCcOj0QHix71W+R8dE=
+X-Received: by 2002:a05:6902:33c6:b0:e38:f11c:f04e with SMTP id
+ 3f1490d57ef6-e38f8c27cf1mr11236518276.53.1732612732255; Tue, 26 Nov 2024
+ 01:18:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <CAAhV-H6B_-y6ebR=GJmazzukW8Ad-=VRJPvT=ZF+41+rTX7D1w@mail.gmail.com> <20241126072909.nyvqagvmtnivh36w@jpoimboe>
-In-Reply-To: <20241126072909.nyvqagvmtnivh36w@jpoimboe>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 26 Nov 2024 17:18:41 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5=y=vjOQout7Ct87uAL8FaJzUnSHrkRuosWXH_7CwqLw@mail.gmail.com>
-Message-ID: <CAAhV-H5=y=vjOQout7Ct87uAL8FaJzUnSHrkRuosWXH_7CwqLw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] Add jump table support for objtool on LoongArch
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Peter Zijlstra <peterz@infradead.org>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <CAP-bSRbCo7=wfUBZ8H7c3Q-7XSG+SB=R4MHHNNGPvBoinsVSZg@mail.gmail.com>
+ <CAP-bSRab1C-_aaATfrgWjt9w0fcYUCQCG7u+TCb1FSPSd6CEaA@mail.gmail.com> <20241126065228.GA1133@lst.de>
+In-Reply-To: <20241126065228.GA1133@lst.de>
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+Date: Tue, 26 Nov 2024 09:18:41 +0000
+Message-ID: <CAP-bSRZehc2BxRC_z5MXKQ6qHNPXPgZoOQTtkiK_CFd494D_Fg@mail.gmail.com>
+Subject: Re: [REGRESSION] ioprio performance hangs, bisected
+To: Christoph Hellwig <hch@lst.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, axboe@kernel.dk, bvanassche@acm.org, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, linux-block@vger.kernel.org, 
+	semen.protsenko@linaro.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi, Josh,
-
-On Tue, Nov 26, 2024 at 3:29=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
+On Tue, 26 Nov 2024 at 06:52, Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Sun, Nov 24, 2024 at 01:33:43PM +0800, Huacai Chen wrote:
-> > Series applied, thanks.
-> >
-> > Huacai
->
-> Please don't merge any objtool code without maintainer acks.
-I'm sorry for that, I'll drop it first, and then wait for Tiezhu's new vers=
-ion.
+> Fortunately fixing this is not only easy but also improves the
+> code in mq-deadline.  Can you test the patch below?
 
+Yes, the patch fixes my test case.
 
-Huacai
->
-> --
-> Josh
+Tested-by: Chris Bainbridge <chris.bainbridge@gmail.com>
 
