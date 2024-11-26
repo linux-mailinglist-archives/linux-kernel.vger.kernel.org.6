@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-422863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91279D9F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:10:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584E69D9F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C30CB221C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7FB28350F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365961DFDA8;
-	Tue, 26 Nov 2024 22:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4BF1DFE02;
+	Tue, 26 Nov 2024 22:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XQ3C0bhF"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XNgLAnm+"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E056D1ABED8
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8D91BD9EA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732659007; cv=none; b=noSnGVmfGJPS/z4OdMORy/UXiOxhI2KXeYt4iuaRphMOVz51deX2/Yius6pe9hBFpn4I+YrzWorfKD6gNfwIBL0+EoSs4bN6TZOoneY1tQwXBdCMiXmdwHL6jB3sA2zuusCidVznsJSAT3cSjTuPRvVu3bGpuPWGjF0uRzoBFes=
+	t=1732659021; cv=none; b=uGAXk9DOcr5El9VJxO7TDIsg9V+afMOKhWSuO2vALwwzXKZecTOr+0Gy92gTDVlSyg+s9W6vgKFu7dARzm3cegoLcTZO7as0GCIY3ZnuiOXf0fr7djgt2l7AVSKbS5JOA36Ya4J/Q7efwAK4DjmfIFpgspv86oKIj1Lf5aShuKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732659007; c=relaxed/simple;
-	bh=gD/Fl58jPDD02j64XV/US3xuNiNDOo0k69sMnhhKohA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R90GNbHp7bh4pK1iNCMf8k4OjCLtWdrN+vlOFN1kRlUkiKpvo1cPkRTp9jvyyYb0q0groS7qD6ave4w/ak/6eO2jFMFGHF04c9iy88UROH+/oJjatr5U37gi64JgRhkr2qPlhMHIosB7Zn0a24xRWEZ69HgvxWhlZyvXD0DkK6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XQ3C0bhF; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1732659021; c=relaxed/simple;
+	bh=gSZIaECtCHOKSxXbwE9pVgArPG9n7++k8LrWJNGT3zE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rg2CFUOT64UGZ2NSysZftRRHpjgLH86G16/R8AJGDPYVB+KScRt33yJekMA5gHtN89eoGAPn0NMO/bKVOBbaIvDWYVFKW6pXyLMuh9pELL9WujXMEfKGFpSlng4fEzwOg5EcegoBwbgYrZbgti38pYhCoMnGLhXxNkinuC5NAFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XNgLAnm+; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so1091a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:10:04 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7251d37eac5so1534759b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:10:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732659003; x=1733263803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vTHMkYV876MVEV7+UBcdVp/IpT8KJSz6LBKIAJTo1ww=;
-        b=XQ3C0bhFLtHdyWeNSP9Dluiw5QDApkc7gnAdBZLxk9T8TiL6k9QuKSDAm87UPDM2XY
-         oifh9LMFZLUDACeJromyi/em2asLh5LUc0GCTiBWyAnemRVXnuzPW/fNs5wmeFFk9Ft1
-         6WEK9xGX+dlJpO3rvIdeOHFHrjmQ8P45lODxWS+MwYKMWKJWpZiO+pboFxJFeP8FkIn6
-         aEinyKfisajHoPcmaX4lsFdnTVOUj0LwWwHfdKwCOv3A5yj1XmReiImpCW0HrUkTui8v
-         GkCrpPT9o88ndjKvZPuK+qRvH3Qf0BPBX4weeubYlf78hQ9PqYWQRXr2MWM0WU4zCsck
-         JTLQ==
+        d=google.com; s=20230601; t=1732659019; x=1733263819; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3J7pzs54Wf25x1zIzv3e6zhuB2i9LCT6pm8EAHqawec=;
+        b=XNgLAnm+jz1Fa5CdlWfX5ZrE7ULq/Rv0QC8LrBIe7xyF6J802JYmDWxSx/rOpOFPvB
+         QQgTNTPh7SuIoum9c6CdY/SupNODdY2FqCy1roGQq/OFnYpA7rBkMAYXbxypzoC2nRCB
+         SklJSMoob3inggfHAVvt900llVZQ3wHA5PgVXpqb9h4S6auwWLKB9N1kl6PFs99RZca0
+         9zdzhEXEjoBWvb2i/Px/9KJPU+/TWgWwS9f60j2WufSWnK1vMQWrZcMdeSFfXu6EaQ+c
+         62FpO5sBo4FqsLUisQYoein35mloCOz6U8EEIzTWtuHdjNe9f/G7Auojjx6wbca7WVKv
+         qnrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732659003; x=1733263803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vTHMkYV876MVEV7+UBcdVp/IpT8KJSz6LBKIAJTo1ww=;
-        b=ptVusomAaql1TQzjWC4++LbF6BgD8r9VfnWZROoAEhriuPu04wGLrpNdrXq9jBKZB3
-         PDAjZvCZuedFMmjMrvpNCE+NWlFkTacLYxQ1YXZZ+pvUkgvKcv99ptn4XFhHm8S0TWAk
-         bxEZmO/9yiNefLQ+qDJYjRyWGV06low45EgXL7Cd6zSsfW3pCZQ71XQAM0cQ+DqBjfmv
-         rzyhg2MLpQ8gNWne3Tr8oOTzQ+GV6rAL3EHvZ5KoarPLgxonhcUaGuSQRgtWz96QG1/+
-         9HlRon/4FnQRXukixpVGOpZXqF3cZAkrPVzdNqkAPew8hXR8oduIdUQA0pq253osK+91
-         NsQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSnKlBdECWVUWOKxiOyJ5yYDcSFYP1eiT+/lg7+kQic3qtdU6/ockhHBmXIocJjIEkalSZlfl83JWpeTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9Mym+rDD0WQwLukpBucDQP2+bvoIXyAnR/7W2aFs/dkj0iJAI
-	nQtKYr1PWzam8cvHGdDV83iGWwCRtFmlbOPAoOJrISUOSyQ6lMzYaOmteXFiUfy0JS9BI81jhR3
-	J3fEKmxz8GE47X5umF+hGWmzwKUN+EScZ8pkQ
-X-Gm-Gg: ASbGnctMx/rFFkG/Hogjy466WbKHvsosiFsLpNItm8hy6izlaHTjG1xjzA/MmE6a69L
-	vvseYsYbqa3vEADIxragRCULKNawx5LcmGTiP4hMBT+L+7gb/G46sThcS1s0=
-X-Google-Smtp-Source: AGHT+IE2cdAOzjSAFTZV8v2SjKZv2gEDrSa393KXeU/LpDA2nLaDQHfynGcUNHb+iTrSQ3oWWXDj511vbJbEcsHiScM=
-X-Received: by 2002:a05:6402:1774:b0:5d0:78d0:f845 with SMTP id
- 4fb4d7f45d1cf-5d081159fccmr24776a12.2.1732659002867; Tue, 26 Nov 2024
- 14:10:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732659019; x=1733263819;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3J7pzs54Wf25x1zIzv3e6zhuB2i9LCT6pm8EAHqawec=;
+        b=Ug7ArarntgZpU3/KPumFG66Pma8FcbQfJoi6OE7Dy0YUpWDk+drdc3BYAsuU7xlxiZ
+         0QHvZP+2rLtJssiDthSsxi4DcF/1wD/LwItgxAlC43hkWNlDNlUMk+2xgiguQIOsWmuS
+         W+iDq/wN4y0lyTRWEX0XeztjMj0KdVApNzQChPO+j8Rbj03R65TUMJTIDecAYNrsRXD7
+         Z8pisFsRKBnw9A70cthO4UC9vEMMEI+Wxcse6uggTKPjm9fPxYPAwIZz+HKxCI8dBd1C
+         0aQJ/qLKs2+qg6XoEXtdQDErcJJtmQeLEthbWWIBQ0/O5bsWrOQUNPUor+fUtjafvJEa
+         wLdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg6pdwLbChalCs8tTyzJx9V5/ccsCQ+3xlF8Kt5uiB07FZCz4foz5neb9vVDferI8KTaZ0nTeHQHXuSE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZJnJFOP0uqBt8sGid5Iwo46yHQVBNwQPxVTOhQAXOTWqCZJ/j
+	fdb0vw2m0Ci45Bv3mtFpfU+hBC651rbim/2Ffff4fzqh8JWozbykEwIei7Nofx4q5kLC/L112nb
+	ywA==
+X-Google-Smtp-Source: AGHT+IEEM/tYogue16hPpfa95F5JMzu6HQKiqWHctKXgee1+kfaZo/ff1dsevgRueygNUpWBHwhaBZIY7tI=
+X-Received: from pfbcp5.prod.google.com ([2002:a05:6a00:3485:b0:724:edad:f712])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:22ce:b0:71e:5b92:b036
+ with SMTP id d2e1a72fcca58-7253013e930mr1083280b3a.22.1732659019054; Tue, 26
+ Nov 2024 14:10:19 -0800 (PST)
+Date: Tue, 26 Nov 2024 14:10:16 -0800
+In-Reply-To: <e12ef1ad-7576-4874-8cc2-d48b6619fa95@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-2-7127bfcdd54e@google.com>
-In-Reply-To: <20241122-vma-v9-2-7127bfcdd54e@google.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 26 Nov 2024 23:09:26 +0100
-Message-ID: <CAG48ez28kzjrvMN66Yp9n+WziPzE5LU_Y320405Q=PoOzdzStg@mail.gmail.com>
-Subject: Re: [PATCH v9 2/8] mm: rust: add vm_area_struct methods that require
- read access
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241118130403.23184-1-kalyazin@amazon.com> <ZzyRcQmxA3SiEHXT@google.com>
+ <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com> <Zz-gmpMvNm_292BC@google.com>
+ <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com> <Z0URHBoqSgSr_X5-@google.com>
+ <e12ef1ad-7576-4874-8cc2-d48b6619fa95@amazon.com>
+Message-ID: <Z0ZHSHxpagw_HXDQ@google.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, graf@amazon.de, 
+	jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, nsaenz@amazon.es, 
+	xmarcalx@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Nov 22, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
-> This adds a type called VmAreaRef which is used when referencing a vma
-> that you have read access to. Here, read access means that you hold
-> either the mmap read lock or the vma read lock (or stronger).
->
-> Additionally, a vma_lookup method is added to the mmap read guard, which
-> enables you to obtain a &VmAreaRef in safe Rust code.
->
-> This patch only provides a way to lock the mmap read lock, but a
-> follow-up patch also provides a way to just lock the vma read lock.
->
-> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Tue, Nov 26, 2024, Nikita Kalyazin wrote:
+> On 26/11/2024 00:06, Sean Christopherson wrote:
+> > On Mon, Nov 25, 2024, Nikita Kalyazin wrote:
+> > > In both cases the fault handling code is blocked and the pCPU is free for
+> > > other tasks.  I can't see the vCPU spinning on the IO to get completed if
+> > > the async task isn't created.  I tried that with and without async PF
+> > > enabled by the guest (MSR_KVM_ASYNC_PF_EN).
+> > > 
+> > > What am I missing?
+> > 
+> > Ah, I was wrong about the vCPU spinning.
+> > 
+> > The goal is specifically to schedule() from KVM context, i.e. from kvm_vcpu_block(),
+> > so that if a virtual interrupt arrives for the guest, KVM can wake the vCPU and
+> > deliver the IRQ, e.g. to reduce latency for interrupt delivery, and possible even
+> > to let the guest schedule in a different task if the IRQ is the guest's tick.
+> > 
+> > Letting mm/ or fs/ do schedule() means the only wake event even for the vCPU task
+> > is the completion of the I/O (or whatever the fault is waiting on).
+> 
+> Ok, great, then that's how I understood it last time.  The only thing that
+> is not entirely clear to me is like Vitaly says, KVM_ASYNC_PF_SEND_ALWAYS is
+> no longer set, because we don't want to inject IRQs into the guest when it's
+> in kernel mode, but the "host async PF" case would still allow IRQs (eg
+> ticks like you said).  Why is it safe to deliver them?
 
-Reviewed-by: Jann Horn <jannh@google.com>
+IRQs are fine, the problem with PV async #PF is that it directly injects a #PF,
+which the kernel may not be prepared to handle.
 
-with one comment:
+> > > > > > I have no objection to disabling host async page faults,
+> > > > > > e.g. it's probably a net>>>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling
+> > > > > > needs an opt-in from>>>>> userspace.
+> Back to this, I couldn't see a significant effect of this optimisation with
+> the original async PF so happy to give it up, but it does make a difference
+> when applied to async PF user [2] in my setup.  Would a new cap be a good
+> way for users to express their opt-in for it?
 
-> +    /// Zap pages in the given page range.
-> +    ///
-> +    /// This clears page table mappings for the range at the leaf level,=
- leaving all other page
-> +    /// tables intact, and freeing any memory referenced by the VMA in t=
-his range. That is,
-> +    /// anonymous memory is completely freed, file-backed memory has its=
- reference count on page
-> +    /// cache folio's dropped, any dirty data will still be written back=
- to disk as usual.
-> +    #[inline]
-> +    pub fn zap_page_range_single(&self, address: usize, size: usize) {
-> +        // SAFETY: By the type invariants, the caller has read access to=
- this VMA, which is
-> +        // sufficient for this method call. This method has no requireme=
-nts on the vma flags. Any
-> +        // value of `address` and `size` is allowed.
-
-If we really want to allow any address and size, we might want to add
-an early bailout in zap_page_range_single(). The comment on top of
-zap_page_range_single() currently says "The range must fit into one
-VMA", and it looks like by the point we reach a bailout, we could have
-gone through an interval tree walk via
-mmu_notifier_invalidate_range_start()->__mmu_notifier_invalidate_range_star=
-t()->mn_itree_invalidate()
-for a range that ends before it starts; I don't know how safe that is.
-
-> +        unsafe {
-> +            bindings::zap_page_range_single(
-> +                self.as_ptr(),
-> +                address as _,
-> +                size as _,
-> +                core::ptr::null_mut(),
-> +            )
-> +        };
-> +    }
-> +}
+This probably needs to be handled in the context of the async #PF user series.
+If that series never lands, adding a new cap is likely a waste.  And I suspect
+that even then, a capability may not be warranted (truly don't know, haven't
+looked at your other series).
 
