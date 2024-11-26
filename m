@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-422281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C62B9D9712
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:13:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8769D970B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19298B2BA6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3C8282AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941D91CEE97;
-	Tue, 26 Nov 2024 12:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72711CEE8F;
+	Tue, 26 Nov 2024 12:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJYxmWMr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="DhRRFcUN"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB209193408;
-	Tue, 26 Nov 2024 12:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6283A17;
+	Tue, 26 Nov 2024 12:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732623003; cv=none; b=idHt1QhpqtiV317+fMpQwA2zYGNuUDSHqHVvYUtg3Dfu4qS08A0RlyVEKeclgkc/Wf5HsJt/n4yHEzXMhnnuY8FeK544SfyD5nw3jUp3ZF4sxk+TsuW2I3gfVZUbWf9dsd20lHdaNi+F+uHRnZVs0uHjAcppa5F7fqhrjRR+Df4=
+	t=1732623109; cv=none; b=aKYIXqyhKF1vIRP0znQLYe/YrumDKjtZKCUUJpT3SkZnFa5q+K8dhW3zb5s8fsNVsAIq45GZdwnZDPKvy9gpaYFXTEt+VPfRZyjvRP235rv/jru0iKmiAIU4mH8bg7SXlmZLxhsKeCE87hFEQQ3FWciGajiH2DCoZ0OCYj5QsOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732623003; c=relaxed/simple;
-	bh=X1ZW6fAmw9BsbKNLM84F8Yh9PGsgTv9DvBZGDJRKcPQ=;
+	s=arc-20240116; t=1732623109; c=relaxed/simple;
+	bh=EkMEDba5F2WpAGREpK3BQwlwJJIBaPqQoiXs7RmhjBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QG0DhnRKi6aaOl/hRoGfLH28AOi4NlKCm/B0Gi/Nn1aNekA4CijsA/MkXKGjg1yfFVNMxAHlhI+mB5s8MyUnr4yhvbpNF2c21qswfHy4PZGIo6JT7pjgtTo6j6e7lCQQzuYEZcFDfpOrwrOtSunikd/MYqNlIc+0/cQHw8TFJhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJYxmWMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4227AC4CECF;
-	Tue, 26 Nov 2024 12:10:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732623002;
-	bh=X1ZW6fAmw9BsbKNLM84F8Yh9PGsgTv9DvBZGDJRKcPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZJYxmWMrgHFfFMx4SZZpmRSPoxZkpZdW9Fzl0DNJVl9iZcJ9LACkFNimQ/Zl9Ggy3
-	 SYCmCDCBy3wYS/4BAHyvqBSpdevfR2A8+Cl0poDBsaqFAiVPtYI4ZQNn2Ms/nXmQS5
-	 B/UrH8sh1oOZZQLERhS2NMh5SThIcY98v8FukZxyJm5VP1r2O666m32kVPiCbDWwMI
-	 NeeMi+iCzohnE5XpteEv/7Om1Ca0sbx5DmiPYy2VCMROZDM0dKBJnbXfWeQXAyW6i1
-	 GaqOFZ7w3KO5d/7R8FWJR/goyXglI4rOOwcqF6zVI3DKQH1O1UjUQx+UM9YEv1s9DQ
-	 YGDLHXsFjAikA==
-Date: Tue, 26 Nov 2024 13:09:59 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Sean Nyekjaer <sean@geanix.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=sM+tnQxbMF0PUl/IC0rYty6M6hKDN+qzto9XY0f1dyInaj3Mb0Dj6DuTBk0n8GUEp3N8jstqJGlPv5117/AcIHW+iuwc5d6G5ckdMJbb+Y+ZSeprS28D3/pFWXXCap6JjxxnQl7hmvXr6Cbf7JPSeTdSCwcXwzWBodgoXdT0yZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=DhRRFcUN; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=fPHzRXhcBL/qtJnpL3/OZFvPlNjRqASdJESrY85bw0I=; b=DhRRFc
+	UN0xzU37DjRn1oU1/gBRd8wRXM6sWuUQ0DOLtuxsBOJutpFh4jEMe1pGznBXLYshoP1OFLPXaAxfK
+	tOe7gRdfCFMJexnjnWTA5OH9WvOvcn/Mos8jRMj+F5L4WzmO2Ri0s8tNsxmsNWLhHAtBKVbBBJ4vT
+	TpS+kja1I3YwoflDtW9oX1PpJJRUyd8nnuoEApLCiFAp8c2bovd8TWdFTmTV2z/mTmBPLGIx03izF
+	1qh+GrZRK5ticDbiOxOM+wmwjZL/LuRgYVZQN8vbEyEbNW5qaaOlGUWuH/ORlQ0IvgQVjikK/zK/w
+	mDUNpa3wpkajpiu2lfMnOLvOljhA==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tFuPu-000FS1-0K; Tue, 26 Nov 2024 13:11:42 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tFuPs-000LCg-30;
+	Tue, 26 Nov 2024 13:11:40 +0100
+Date: Tue, 26 Nov 2024 13:11:40 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
 	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
 	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
 	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
@@ -54,70 +65,78 @@ Cc: Sean Nyekjaer <sean@geanix.com>,
 	linux-stm32@st-md-mailman.stormreply.com
 Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
  helper function
-Message-ID: <20241126-spry-wildebeest-of-cubism-da0a9e@houat>
+Message-ID: <ycvevzp46wv4hr6ktexxjkpifav3wi4glat4a5jagghclcpagb@3jpiyehl2fn7>
 References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
  <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
  <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
- <874j3uxptp.fsf@intel.com>
+ <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
+ <20241126-refreshing-slick-pig-baebab@houat>
+ <zmrcuqiyz5gojhusysy7cytluedslqmfgzuslutqeg65iv7ju6@bggk7qbm6eas>
+ <20241126-observant-coyote-of-glee-3b94dd@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="qwww7zw5ccyu53nk"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <874j3uxptp.fsf@intel.com>
+In-Reply-To: <20241126-observant-coyote-of-glee-3b94dd@houat>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27469/Tue Nov 26 10:58:20 2024)
 
+On Tue, Nov 26, 2024 at 01:09:10PM +0100, Maxime Ripard wrote:
+> On Tue, Nov 26, 2024 at 12:34:26PM +0100, Sean Nyekjaer wrote:
+> > Hi,
+> > 
+> > On Tue, Nov 26, 2024 at 09:38:55AM +0100, Maxime Ripard wrote:
+> > > Hi,
+> > > 
+> > > On Tue, Nov 26, 2024 at 08:36:00AM +0100, Sean Nyekjaer wrote:
+> > > > On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
+> > > > > On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
 
---qwww7zw5ccyu53nk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
- helper function
-MIME-Version: 1.0
+[...]
 
-On Tue, Nov 26, 2024 at 12:16:34PM +0200, Jani Nikula wrote:
-> On Mon, 25 Nov 2024, Maxime Ripard <mripard@kernel.org> wrote:
-> > I wonder about the naming though (and prototype). I doesn't really
-> > validates a mode, but rather makes sure that a given rate is a good
-> > approximation of a pixel clock. So maybe something like
-> > drm_mode_check_pixel_clock?
->=20
-> Quoting myself from a few weeks back:
->=20
-> """
-> Random programming thought of the day: "check" is generally a terrible
-> word in a function name.
->=20
-> Checking stuff is great, but what do you expect to happen if the check
-> passes/fails? Do you expect the function to return on fail, or throw an
-> exception? Or just log about it? If you return a value, what should the
-> return value mean? It's hard to know without looking it up.
->=20
-> Prefer predicates instead, is_stuff_okay() is better than
-> check_stuff(). Or assert_stuff() if you don't return on failures.
-> """
+> > > > > 
+> > > > > Thanks a lot for doing that!
+> > > > > 
+> > > > > I wonder about the naming though (and prototype). I doesn't really
+> > > > > validates a mode, but rather makes sure that a given rate is a good
+> > > > > approximation of a pixel clock. So maybe something like
+> > > > > drm_mode_check_pixel_clock?
+> > > > 
+> > > > Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
+> > > > 
+> > > > Would it make sense to have the pixel clock requirement as a input
+> > > > parameter? For HDMI it is 0.5%
+> > > 
+> > > This code was only used for panels so far. It reuses the same tolerance
+> > > than HDMI because we couldn't come up with anything better, but it
+> > > should totally apply to other things.
+> > > 
+> > > > and in my case the LVDS panel 10%.
+> > > 
+> > > 10% is a lot, and I'm not sure we'll want that. The framerate being
+> > > anywhere between 54 and 66 fps will trip a lot of applications too.
+> > > 
+> > > Why do you need such a big tolerance?
+> > 
+> > I don't need it, it was just from the datasheet for the LVDS panel :)
+> 
+> So you mean the panel accepts a pixel clock within +/- 10%?
 
-Both is_stuff_okay() or assert_stuff() return a boolean in my mind. If
-you want to return a mode status enum, I don't think they are better
-names.
+Yes :)
 
-Maxime
+> 
+> That makes sense, but then we should also adjust the mode timings to
+> match so we still keep 60fps. There's much more to *that* than the
+> helpers you try to create though, so let's keep it aside for now.
 
---qwww7zw5ccyu53nk
-Content-Type: application/pgp-signature; name="signature.asc"
+Ok
 
------BEGIN PGP SIGNATURE-----
+> 
+> Maxime
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0W6lwAKCRAnX84Zoj2+
-dpfkAX9rQ95STenTbFaPTqzNs0f3hXHKnVKDzQwlwme3v/FEzAw3GEWZWO1BNFdE
-ChoLbYwBf06ASgUEBRxVk52nFUsJogUobfhi2/VS/xGu8+SOUnSsG50ueId2dS+n
-zeEpgo7ogA==
-=OHka
------END PGP SIGNATURE-----
-
---qwww7zw5ccyu53nk--
+/Sean
 
