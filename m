@@ -1,83 +1,87 @@
-Return-Path: <linux-kernel+bounces-422895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B599D9F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:17:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09E19D9F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:17:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15382282B47
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4B5164C60
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD681DFE25;
-	Tue, 26 Nov 2024 23:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37C81DFD9D;
+	Tue, 26 Nov 2024 23:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="YjbT4NL8"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m2PrvhjS"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A811DE8AE;
-	Tue, 26 Nov 2024 23:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8A61DFE33
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732663061; cv=none; b=FrLNpi6rmk9xGu/LkPIXAqSB1FnCUDnc9/ZctXGXPqmrjdQKF59q6Ds3Yzh+9ckfYmnLSMj8/iViKuyW+3WL8gzjLF/tcWxWM2nnKUGbsfmEsTLyQz2e0ic+XUcgcgb5ExjF1nqv3CTpzJmxewOEkGRsZaVfmLAPk1RgkPXY/8Y=
+	t=1732663048; cv=none; b=OV+Z72prpK9yvGbygpO9uy0BE2gqhW/T+W/59DxScJepKh1BSknxOHV9e+aLk7XqQCHunZaheilEC4o4GWqo3jh9HIkxCu1gFfWuAOZe5GVbjSqG3MGd7HB8IOOGTVBdFGXAFMpWCVgPdVoZobpnQzRLZqznapN6HbByDYtt1+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732663061; c=relaxed/simple;
-	bh=UG0j9jP4clEqcDpOVurpM+p4zKueeealkqG18mOI5Fc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ejSkGmqrVdQfJ9s0/8J9IyCSmXb+NWeHab2voOIB4O4Pqif+VxLaqLexGoszsTrMCQr+ONEtJLafB6DFGSMZHapQs7oNZcFaFaX80ezcXnnUZktN76iVYsKuHypzMyhFKOkxB2RiIMtRCNWVbR7Jl5VWkXjok0cybQBgzTKLSO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=YjbT4NL8; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQM80Ox007975;
-	Tue, 26 Nov 2024 18:17:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=RtKzt
-	Mk+WaSacvWDrWRl7PaF1p+LzKzHwlczSrtztto=; b=YjbT4NL8Zxw71gP3jT5ZX
-	AqNusHoCkgj1luOf7lZ9CyVM9HimJHiOUamlQ+eZ4uq/h2WFeEhLuJ+fTt22GfRy
-	UFgmVTx2Tb2PeUW+MSM4x84sV3umpb5v5UbsUfDGmHhVon+2OcV1Vk4niTzDUg5H
-	XLZSpxhgPiGgEjXj3iirgSRr8nd5U8ZhAerDSnHm/AF+RQShH17fQMeUjQar6bJ+
-	f/WWxeEnaaatjOlMaVrka0jIXPvbZdhfjTxyQdogUYdbLs5ZMRAtr0SL5W4c/pLd
-	6Y7PZlkUo8G/b1E8N7uz2iUGuQTJ0JlPDpQdDdySt1OG/UVurZeR0VcK3BzcTnBa
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 435puwg7ta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 18:17:24 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4AQNHN04016419
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 26 Nov 2024 18:17:23 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 26 Nov 2024 18:17:23 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 26 Nov 2024 18:17:23 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 26 Nov 2024 18:17:23 -0500
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AQNH86f017922;
-	Tue, 26 Nov 2024 18:17:10 -0500
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <marcelo.schmitt1@gmail.com>, David Lechner <dlechner@baylibre.com>
-Subject: [PATCH v4 4/4] iio: adc: ad4000: Add support for PulSAR devices
-Date: Tue, 26 Nov 2024 20:17:06 -0300
-Message-ID: <0212326dd11324be27f30bc7ab04f3545c20a813.1732660478.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1732660478.git.marcelo.schmitt@analog.com>
-References: <cover.1732660478.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1732663048; c=relaxed/simple;
+	bh=QNbYR62kxSihfmWFMFWaLTedOh3rb9Jygh9RH/srjeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOE+LSH5UWvEnhrg2YSo7/0rgFV+vkRXnuzR4C3pmybVYfDY8Qt1g2NrNzCMjFT0BTBQl6jdrHKC5EBK6EeQpJoO76GvpGWsytdXpfOlKI2gwZG2GLTzAb52XuqJCIniRbR2ZWV+9bTTFQ6AaPVCisQOosgtDbSCYKTpuYN0xu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m2PrvhjS; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-724e14b90cfso4285182b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:17:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732663045; x=1733267845; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hgCywYrQljSdmItAV6QYlktlpASShyLs3PqDhCmMUsc=;
+        b=m2PrvhjSoByxMiBRVShFI+V1jlKlo9c6pwHm8HB+W28cT1qFskemlNTJIpRwknpxDe
+         nnpDLipU2fJJVPcBQcia5xEuNb+u+oOfHjt35SLtUIBfg1TWXThkz6x35FiQCDrERt8i
+         CZooR1ASBhqsRm4LsSeopFQHTia8njbm2tdpo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732663045; x=1733267845;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hgCywYrQljSdmItAV6QYlktlpASShyLs3PqDhCmMUsc=;
+        b=dbdUHGMuVBgTRHY/9LyiQBKMkvioeeazXM2yY9qAgQTivNG9SgYlXkWHi2hAozzQb+
+         FVJLMZWzuYAYGkfUkcHa2SAzKKlLK6ekg9aWiya/HNHgFqCPXU23UV9jbEGHBGXUZ0l+
+         gvGiMBcQKU1nKRHiB6moYe82/t4iF76Nirh19aWLWPXFbL6RRSygTW3i/9RulmsUrUum
+         EZ0JlpsRzzOK8fMPHzYIEE5CxK53pZP1AiYvyKZY1WJLjUQn7D4m/T6DC/TPE5Dwqdnp
+         EWku79ksJHiiFt0E3e1ObIdscqHqHlE+bgBLXfbrCb/pbQZqWOhQG6sO2MF2KhPqlNGH
+         Ettw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbp639HV0F+z0VJjZ2zM98xi/1dzS9AV7kugc0isBZ/i8WtknCx31EqWruUaGx3l6DgQlr/w3wPxWq32U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPRGLeCBLBfg0cm5fomq8j0x/0kvGUohTTzqszcxLtLOBTEvky
+	P7iqpfPczpjTaXoqgzrw/KEL9C2ajQEWA3rmqxUv30F90LQ5a89/eB29szeVig==
+X-Gm-Gg: ASbGncsaqZ9d27rix2qvZvzXHUewTbVV5NVQnexdJtjRJpunVEUS8jTgzBjlJau6qwX
+	KDaJ2neN8LAzreWM5ER7464q4gNVwn9+w1SzvxYoBqVyd9L4BIjFNYAZRcZaAxLQxYuSqdNhplY
+	pmdVsn6VoY4bkRZ4OH9AMENEkLmqovwHZGD9Sgzm+KhUFFDWe4f3uS3GIykr0iy31e6CB/+ANDO
+	rQl9BiQH8xDoIqT5lLtm+HvAoKSRccFdMhhn4vbpBQ3KESoO9+1R1eT7yWhOpJ6UdHaO1dseWgV
+	RaO+eY760NE=
+X-Google-Smtp-Source: AGHT+IFrllr2WVrew7Crqeczu1EEMEaxU7u5juTJ2m/FXo18xyEAoy25l2UGzRWh1AwvTk9GJ4EBUw==
+X-Received: by 2002:a17:90b:38cd:b0:2ea:853a:99f7 with SMTP id 98e67ed59e1d1-2ee08e9d4f9mr1396473a91.2.1732663044988;
+        Tue, 26 Nov 2024 15:17:24 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:c93f:3da4:a2a:71ec])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ee0fad041csm96130a91.34.2024.11.26.15.17.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 15:17:24 -0800 (PST)
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Cc: Hsin-Yi Wang <hsinyi@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	lukas@wunner.de,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
+Date: Tue, 26 Nov 2024 15:17:11 -0800
+Message-ID: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,233 +89,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: JSn90s3bJy146yrLCev1QWQFmlRKlk4z
-X-Proofpoint-GUID: JSn90s3bJy146yrLCev1QWQFmlRKlk4z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260187
 
-The ADI PulSAR series of single-channel devices comprises differential and
-pseudo-differential ADCs that don't require any input data from the host
-controller. By not requiring a data input line, PulSAR devices can operate
-with a 3-wire only data bus in some setups.
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-The AD4000 series and the single-channel PulSAR series of devices have
-similar SPI transfer specifications and wiring configurations.
-Single-channel PulSAR devices are slower than AD4000 and don't have a
-configuration register. That taken into account, single-channel PulSARs can
-be supported by the ad4000 driver without any increase in code complexity.
+Unlike ACPI based platforms, there are no known issues with D3Hot for
+the PCI bridges in Device Tree based platforms. Past discussions (Link
+[1]) determined the restrictions around D3 should be relaxed for all
+Device Tree systems. So let's allow the PCI bridges to go to D3Hot
+during runtime.
 
-Extend the AD4000 driver to also support single-channel PulSAR devices.
+To match devm_pci_alloc_host_bridge() -> devm_of_pci_bridge_init(), we
+look at the host bridge's parent when determining whether this is a
+Device Tree based platform. Not all bridges have their own node, but the
+parent (controller) should.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Link: https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/ [1]
+Link: https://lore.kernel.org/linux-pci/20240828210705.GA37859@bhelgaas/ [2]
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+[Brian: look at host bridge's parent, not bridge node; rewrite
+description]
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- drivers/iio/adc/ad4000.c | 162 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 162 insertions(+)
+Based on prior work by Manivannan Sadhasivam that was part of a bigger
+series that stalled:
 
-diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-index c700d51b5637..74b8894d1a2a 100644
---- a/drivers/iio/adc/ad4000.c
-+++ b/drivers/iio/adc/ad4000.c
-@@ -138,6 +138,48 @@ static const struct ad4000_time_spec ad4020_t_spec = {
- 	.t_quiet2_ns = 60,
- };
+[PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
+https://lore.kernel.org/linux-pci/20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org/
+
+I'm resubmitting this single patch, since it's useful and seemingly had
+agreement. I massaged it a bit to relax some restrictions on how the
+Device Tree should look.
+
+Changes in v5:
+- Pulled out of the larger series, as there were more controversial
+  changes in there, while this one had agreement (Link [2]).
+- Rewritten with a relaxed set of rules, because the above patch
+  required us to modify many device trees to add bridge nodes.
+
+ drivers/pci/pci.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e278861684bc..5d898f5ea155 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3018,6 +3018,8 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
+  */
+ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+ {
++	struct pci_host_bridge *host_bridge;
++
+ 	if (!pci_is_pcie(bridge))
+ 		return false;
  
-+/* AD7983, AD7984 */
-+static const struct ad4000_time_spec ad7983_t_spec = {
-+	.t_conv_ns = 500,
-+	.t_quiet2_ns = 0,
-+};
-+
-+/* AD7980, AD7982 */
-+static const struct ad4000_time_spec ad7980_t_spec = {
-+	.t_conv_ns = 800,
-+	.t_quiet2_ns = 0,
-+};
-+
-+/* AD7946, AD7686, AD7688, AD7988-5, AD7693 */
-+static const struct ad4000_time_spec ad7686_t_spec = {
-+	.t_conv_ns = 1600,
-+	.t_quiet2_ns = 0,
-+};
-+
-+/* AD7690 */
-+static const struct ad4000_time_spec ad7690_t_spec = {
-+	.t_conv_ns = 2100,
-+	.t_quiet2_ns = 0,
-+};
-+
-+/* AD7942, AD7685, AD7687 */
-+static const struct ad4000_time_spec ad7687_t_spec = {
-+	.t_conv_ns = 3200,
-+	.t_quiet2_ns = 0,
-+};
-+
-+/* AD7691 */
-+static const struct ad4000_time_spec ad7691_t_spec = {
-+	.t_conv_ns = 3700,
-+	.t_quiet2_ns = 0,
-+};
-+
-+/* AD7988-1 */
-+static const struct ad4000_time_spec ad7988_1_t_spec = {
-+	.t_conv_ns = 9500,
-+	.t_quiet2_ns = 0,
-+};
-+
- struct ad4000_chip_info {
- 	const char *dev_name;
- 	struct iio_chan_spec chan_spec[2];
-@@ -260,6 +302,96 @@ static const struct ad4000_chip_info adaq4003_chip_info = {
- 	.has_hardware_gain = true,
- };
+@@ -3038,6 +3040,15 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+ 		if (pci_bridge_d3_force)
+ 			return true;
  
-+static const struct ad4000_chip_info ad7685_chip_info = {
-+	.dev_name = "ad7685",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
++		/*
++		 * Allow D3 for all Device Tree based systems. We assume a host
++		 * bridge's parent will have a device node, even if this bridge
++		 * may not have its own.
++		 */
++		host_bridge = pci_find_host_bridge(bridge->bus);
++		if (dev_of_node(host_bridge->dev.parent))
++			return true;
 +
-+static const struct ad4000_chip_info ad7686_chip_info = {
-+	.dev_name = "ad7686",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7687_chip_info = {
-+	.dev_name = "ad7687",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7688_chip_info = {
-+	.dev_name = "ad7688",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7690_chip_info = {
-+	.dev_name = "ad7690",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7690_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7691_chip_info = {
-+	.dev_name = "ad7691",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7691_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7693_chip_info = {
-+	.dev_name = "ad7693",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7942_chip_info = {
-+	.dev_name = "ad7942",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 14, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7946_chip_info = {
-+	.dev_name = "ad7946",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 14, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7980_chip_info = {
-+	.dev_name = "ad7980",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7980_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7982_chip_info = {
-+	.dev_name = "ad7982",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7980_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7983_chip_info = {
-+	.dev_name = "ad7983",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7983_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7984_chip_info = {
-+	.dev_name = "ad7984",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7983_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7988_1_chip_info = {
-+	.dev_name = "ad7988-1",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7988_1_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7988_5_chip_info = {
-+	.dev_name = "ad7988-5",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
- struct ad4000_state {
- 	struct spi_device *spi;
- 	struct gpio_desc *cnv_gpio;
-@@ -733,6 +865,21 @@ static const struct spi_device_id ad4000_id[] = {
- 	{ "ad4022", (kernel_ulong_t)&ad4022_chip_info },
- 	{ "adaq4001", (kernel_ulong_t)&adaq4001_chip_info },
- 	{ "adaq4003", (kernel_ulong_t)&adaq4003_chip_info },
-+	{ "ad7685", (kernel_ulong_t)&ad7685_chip_info },
-+	{ "ad7686", (kernel_ulong_t)&ad7686_chip_info },
-+	{ "ad7687", (kernel_ulong_t)&ad7687_chip_info },
-+	{ "ad7688", (kernel_ulong_t)&ad7688_chip_info },
-+	{ "ad7690", (kernel_ulong_t)&ad7690_chip_info },
-+	{ "ad7691", (kernel_ulong_t)&ad7691_chip_info },
-+	{ "ad7693", (kernel_ulong_t)&ad7693_chip_info },
-+	{ "ad7942", (kernel_ulong_t)&ad7942_chip_info },
-+	{ "ad7946", (kernel_ulong_t)&ad7946_chip_info },
-+	{ "ad7980", (kernel_ulong_t)&ad7980_chip_info },
-+	{ "ad7982", (kernel_ulong_t)&ad7982_chip_info },
-+	{ "ad7983", (kernel_ulong_t)&ad7983_chip_info },
-+	{ "ad7984", (kernel_ulong_t)&ad7984_chip_info },
-+	{ "ad7988-1", (kernel_ulong_t)&ad7988_1_chip_info },
-+	{ "ad7988-5", (kernel_ulong_t)&ad7988_5_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(spi, ad4000_id);
-@@ -754,6 +901,21 @@ static const struct of_device_id ad4000_of_match[] = {
- 	{ .compatible = "adi,ad4022", .data = &ad4022_chip_info },
- 	{ .compatible = "adi,adaq4001", .data = &adaq4001_chip_info },
- 	{ .compatible = "adi,adaq4003", .data = &adaq4003_chip_info },
-+	{ .compatible = "adi,ad7685", .data = &ad7685_chip_info },
-+	{ .compatible = "adi,ad7686", .data = &ad7686_chip_info },
-+	{ .compatible = "adi,ad7687", .data = &ad7687_chip_info },
-+	{ .compatible = "adi,ad7688", .data = &ad7688_chip_info },
-+	{ .compatible = "adi,ad7690", .data = &ad7690_chip_info },
-+	{ .compatible = "adi,ad7691", .data = &ad7691_chip_info },
-+	{ .compatible = "adi,ad7693", .data = &ad7693_chip_info },
-+	{ .compatible = "adi,ad7942", .data = &ad7942_chip_info },
-+	{ .compatible = "adi,ad7946", .data = &ad7946_chip_info },
-+	{ .compatible = "adi,ad7980", .data = &ad7980_chip_info },
-+	{ .compatible = "adi,ad7982", .data = &ad7982_chip_info },
-+	{ .compatible = "adi,ad7983", .data = &ad7983_chip_info },
-+	{ .compatible = "adi,ad7984", .data = &ad7984_chip_info },
-+	{ .compatible = "adi,ad7988-1", .data = &ad7988_1_chip_info },
-+	{ .compatible = "adi,ad7988-5", .data = &ad7988_5_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ad4000_of_match);
+ 		/* Even the oldest 2010 Thunderbolt controller supports D3. */
+ 		if (bridge->is_thunderbolt)
+ 			return true;
 -- 
-2.45.2
+2.47.0.338
 
 
