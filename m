@@ -1,184 +1,320 @@
-Return-Path: <linux-kernel+bounces-422576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4A69D9B56
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:24:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184C2163830
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:24:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C11D89EF;
-	Tue, 26 Nov 2024 16:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fri7R9nF"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930069D9B5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:25:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356721D89F0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732638232; cv=none; b=QzjLZPdH371O3Xf43azeq19zBrEEc2nvbWQqO5b0NJda5+FidCwXyAQTYjui7EqWzn70Pkr+/L4U3ciqc+ZRpHZ1st63sxS++MofTgAzfF6wW/cfCCs1w8iDev3WFaOSRtZkgG1nlsGXqs4FazzTPQWmViPi5AOUPJbnoAOCoyE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732638232; c=relaxed/simple;
-	bh=pdn3dCVWJQI01kBevDNp+o2Jfyg9Xrkue9L/rOGJPNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ghmoP0lnKtzK2/JXoikJ7XnAzEYDds6N+EmPBbXACB8wOEJ9veCg4QeBe9W+3VXmOez2Xz44Usvivlm43aWd1irdpU7Q4Yay4uIsZqyUHOmPJQL+xo7KEFs4OYKEBUCfDihJbJan9Rjz53cM8+HLaNjs/K/IQlVzf49PWeG2ObQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fri7R9nF; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 26 Nov 2024 08:23:32 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732638228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ktkZP1TSM5O+zshk14R/JTKvbWeVU6I7FikTokHf+NY=;
-	b=fri7R9nF5gcARbgDooMqc2jGmEtlLuIBMa4n4Ih2zWgLKiu6Pw1kDhVs5mZTc6/0tKnP7F
-	DkqycMW+TIz69cMh7xP1ngCKed5fXxO0nlSsd+RzkreovFRHVJz9h1oTQMPXsmbI7IFGAg
-	LU/zSULINIm1hEoxLR9LxNaBEzStJBk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: James Clark <james.clark@linaro.org>
-Cc: suzuki.poulose@arm.com, coresight@lists.linaro.org,
-	kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>, Fuad Tabba <tabba@google.com>,
-	James Morse <james.morse@arm.com>, Mark Brown <broonie@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 11/12] KVM: arm64: Swap TRFCR on guest switch
-Message-ID: <Z0X2BBBaDejFfATp@linux.dev>
-References: <20241112103717.589952-1-james.clark@linaro.org>
- <20241112103717.589952-12-james.clark@linaro.org>
- <Zz4c5LmQnK2SD5HO@linux.dev>
- <5f2eb0fa-c7ca-4e25-b713-6a9bf3d355b9@linaro.org>
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A71283889
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:25:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59D1D88BF;
+	Tue, 26 Nov 2024 16:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aHfa7Xbg"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010007.outbound.protection.outlook.com [52.103.11.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00918BE46
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732638344; cv=fail; b=PQ+lLBOg2mil4mrfr0zhEIEmGAuw0TLMecKrG3fYjgLpxPaTlMDFFArdVJzxGv7O1QCOD+yvCDBuJDp5YBrhv2JHricrq84x1CgTCqcl9ylbGbinQiVaA2v2lTZmRJ3ogNz+9b2nhcU6knFKx76pVypo5CVoxOG/HDSdUNFFE9c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732638344; c=relaxed/simple;
+	bh=5SrVMorzE4PHK3aIoNBCD2x1xoYiNH4s1ddaSVc/Bhk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=olYKShf6k1ptlnHGPWflSrI+iY1XMXUxg9W2pd5niZtGFkNODW7lrLbJ1SO9EruoCLhERTiSgZ7YoEtzYYu//sqe+KVHSg0F5mWSxXZ9KfEs05oxVzWQmyCBHFHHxkSLPYUmolUpyM9TahNl9Y4fTYBJjKskSRMHNcDD1jtwEWM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aHfa7Xbg; arc=fail smtp.client-ip=52.103.11.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LRPImrE2+ghKA3Wb402H4i9N/Hqk685rHGB5LV0h9m/6JK6t9DYnPCOmlWqm8brXQ1mILrFxaZ0QeuONGWcJVjqGYfz5QkZUO5Z6ZMVBM7bquS9TFoSjyGk5OOn6EXNt/fd30zzFwkpzidGiyVzHWS741eSb31Rg26SYghj1erle0WwIvh8isXVxvBT1Y/F3kioevkpuRE9nJaU5v1DrHBkTVl7loF47oiVv2/p1ParS5t2s4XEjw9D6w9m4dXJYOCBAU99s8xEvRxgoaPDLtYh/Dc/Dk4YFqnRoEpdgtLVjmTr+zB8cw75ZJ1iN3yD7DR9U5qO73Pll/KkUSTBM4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1+JZMhtD0eTQxFo2MDJXbJPB40Y/9TN7VHJ0nmw1t+U=;
+ b=dDSTA2SDyP7ni3+suzB7ARMi5e4m0orz6HGaEZlxjQ06ts3z3N+4d/m+KEHuVE8irGjOAWgz7KZbV4Fi1Gz2cM/DGcQOkpLnebew/b1bULcmNXwu+5vW0b/IlL8PzZMF/pZLru9qiwVIN2eMHVgYyBOotiz7j8yWe+IIooYdlbFgoAR63t5HMm1OdPOd5PaufEO4LqsYShGzAVWVILzLJ+ST5N5jOkrf+Xv7ktu0TxAMs/elb6Wdbwv7k7YArtkVikyNuvS31Zfij/onC+j+rBaH1YUpRRt7LZ5YeqXFk775PCCLJs6PJQf06F6UYelplcxv9Nzdk1WWOlCR5pVCgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1+JZMhtD0eTQxFo2MDJXbJPB40Y/9TN7VHJ0nmw1t+U=;
+ b=aHfa7Xbg028FtG+N+7PeCX+dncMQc+Z4l1YvP0+gvngQ+uRc+vgMW1tUEvy8h0eJX98X/S3XAJLiMihv+4cyalQvIxOghJYjLP7mCsZvPgU3tLNMBR6sqji1KHIGNrvMIMpHuXxNvGzvDQ1WjAOI7BJdYYNIC1sZxU6Bd3n2uoPAtmlDkAxFzIajE3exHymJ4Xr4uOrAUAcYE7Xuf/gZ/aKceJ0oM6hfIVOzH/OJwnatVJdAxVA/yiXXhJ5fwEAKYvWpBRZu0DdjUpuw2mHVDAqQVgqedoJzEPegzIHHqV2RkRxUziU1n0ybtAUeU0/UUKdeghI9EVBFNnXIwUWhHA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by BY5PR02MB6502.namprd02.prod.outlook.com (2603:10b6:a03:1da::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Tue, 26 Nov
+ 2024 16:25:38 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%7]) with mapi id 15.20.8182.018; Tue, 26 Nov 2024
+ 16:25:38 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent
+ Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
+	Vishal Chourasia <vishalc@linux.ibm.com>, samir <samir@linux.ibm.com>
+CC: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
+Subject: RE: [PATCH v2] sched/topology: improve topology_span_sane speed
+Thread-Topic: [PATCH v2] sched/topology: improve topology_span_sane speed
+Thread-Index: AQHbK9UxGRUfYyJZJUmyjFPUnGtxo7LJ5JnA
+Date: Tue, 26 Nov 2024 16:25:38 +0000
+Message-ID:
+ <SN6PR02MB4157493E8AF5661DED4D2A1ED42F2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20241031200431.182443-1-steve.wahl@hpe.com>
+In-Reply-To: <20241031200431.182443-1-steve.wahl@hpe.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|BY5PR02MB6502:EE_
+x-ms-office365-filtering-correlation-id: 0e76fd96-18ef-459e-f6b8-08dd0e36f6ce
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|19110799003|461199028|8060799006|15080799006|3412199025|440099028|10035399004|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?rtxRqGXkzvMa+BTNu223x0hmSQd9ldIcIM3iv5v7s8xKuzze2UTU0atf6b+I?=
+ =?us-ascii?Q?4xFXQnbz12Pc1IDycWrY7Wp1UBCu7rpk9SMlVcEB0M6i6v533Ju8KxTnTKRz?=
+ =?us-ascii?Q?j47gFsO/PMwDIF2Xegm411+FVP4VfnN5c6gv5AytkZQBW348ydB4+dF6qTXc?=
+ =?us-ascii?Q?PIYtgvxTcdVMw411bzQyQOa5IPDwg1tselyXNBwFSJeyR0vV02yQNfl96Nmb?=
+ =?us-ascii?Q?t4j/QRwTVkm4r0omulgGu3YE5UhYnRNsRWaLa/Imx847gY1N1BP86Wy0FJQu?=
+ =?us-ascii?Q?uY4PtmNS0hVFf2WgXcelQkiavc7dps9kBa5iOqbitmX23MQbhwc5XzmltEnP?=
+ =?us-ascii?Q?/4IOy6XfU28DA+5fcvBG+mFMFdkgAqc88D5BnVcheYYmvjyICzz9QGUt+EAE?=
+ =?us-ascii?Q?8gLTDU0/aABkWZoX6DjkOysIRUoLow7iHkJPuX51sl4oAaF2WlsjXtVylFCm?=
+ =?us-ascii?Q?60CNN43pjwntZsCDDuz5UBQVIf9WB5mZxLupEE5knRhX98Tktf/LzjsmTZje?=
+ =?us-ascii?Q?hg+DVjcie6MmFA+M+HJ8/w3tncLeyPV7zQuNrpXMnVvkobHl8lDs5ZaC5ThE?=
+ =?us-ascii?Q?t2sBP9szkDQXK4edF/MIITerVZ9Nt0qjJNn19ZBOQEg+SJdJ50kDmluoZgKs?=
+ =?us-ascii?Q?BqIynzV6qPmIgfEvsk17ktlfaf9tsSpBwKTE2GLTE1yyEJKWcpuZpYz2lFqy?=
+ =?us-ascii?Q?coKjkx9t7JsH6+OqiPQQrlMRgQN9nnUqy9e0FY8DhvPKoWsG+6vaZhcro9kg?=
+ =?us-ascii?Q?GnVjIJDWk8HN8XD845R2rwTduqErhr2ukqZa2+tXAEM1nkVdU/BI0BAYAgT/?=
+ =?us-ascii?Q?ADlbRuyh0jEATQYjAbwsSZXZm+mSX3kx8JiLHpBqgqxXtz2lf5OsO95g99Gb?=
+ =?us-ascii?Q?ml+to3xFXk04/cNQO2hwHqCqpI2uG2j1q34n0hm1FriwBF6YIDXhuVYpNh1C?=
+ =?us-ascii?Q?it2+gnb/u3tZXp8sZvhuLnJre9BOEWkw36MfpmRNjW1GtadCp+hG+WhM/n/F?=
+ =?us-ascii?Q?NqrN20TGcsxcCLldyFO7boYmqTsMQ3jxTB/UeWm4kXRxvJ1U+cMPd2NaUfpn?=
+ =?us-ascii?Q?dzQaUFFKpzaoJ5wK+DhFnVd+SgI2KJH4oh8KvHeKlFYmR6mMgjk=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cpeI0GVbLawquh0FCT1EsUMPdava3mLdVV7V3i5w8BQ/pSjw3svHK9Bl3PfP?=
+ =?us-ascii?Q?AI+VvTpzYrz4p+4Y6RYtyV7u9v433wg5qSzfcWWYorAJeviCfjBtXieLdyfW?=
+ =?us-ascii?Q?QiiPYx3WvFoYsZE3SFtdKuiwwF0dKOcEtzKp9wALSJMefHtyXsNvY21Rbtyl?=
+ =?us-ascii?Q?g6qjSQbQXVL8LvyFxatnRTPDU2JjKAkVgs0sujRwyag0fP6oBGsvyFgL3isu?=
+ =?us-ascii?Q?YvjG4uaYhORg5ZJJk4BnXKeLTtHclDDzY1X9qxafj6kamumRqwncjbkj23Gq?=
+ =?us-ascii?Q?MHnT+mPAPQfVfSGxlaEqghVqlHqsv3FtThEhUg2vdINhGBveFB+YRlzt2tY0?=
+ =?us-ascii?Q?qS7vHqU0lY7hdhPBYd+Gipo7+E4uiG0ouvYua1KV8IgQQEsdHgOPcKF9VhX4?=
+ =?us-ascii?Q?xZbiWIQRGYSu+OL5ryn0FQUsct1om2wwAWhdJ+oSPPPy/+yZYvDBF5/czK+y?=
+ =?us-ascii?Q?diF4uatbIVBI6V8LRDk5OncgdAOiX5CLPWCQN4Jj54cMdhdIopGO+FYJwtdm?=
+ =?us-ascii?Q?ejyPnyXj+PevTO8e9MaguSEFRn0IOYArnMa56eE7kQvWZ74CvayS7+px6AeV?=
+ =?us-ascii?Q?/gXcKR2HRyT19xnN45lYuos/6392bbweAVmHBO3QhxeTSXFQMUjjphO5Au+e?=
+ =?us-ascii?Q?QPtYJzIKjTwSt0ex/Mdn3/rVX+5jhez+PwHJeM9g/Px27/H8GKbraYCbqysP?=
+ =?us-ascii?Q?qGlwhICFH0HPaD5Rhw6HTVt/y2VY0+7Ry4i++HNx8xsoyX6INMOiq8LqFCm+?=
+ =?us-ascii?Q?JaDIY/lbx/Z8jV7QuLVKTemnRj/9n4JjxYXipR71CCQPcC7Q+5+4ItNVWxuX?=
+ =?us-ascii?Q?oCGVP/RcDo0SiwEyhSrPXmEQnfxGVidK869n8cQJCpyrxMLRIC1oa5L8wwFh?=
+ =?us-ascii?Q?v2o/sCZZ4aX9HAcqxC5/N7mPHX9Th2NDwPsUS/6F7vi2ecwmQBoIdAVZ5cGi?=
+ =?us-ascii?Q?Zl8NXG8JYtRsOCLU3+21KW4lXDjFxZ1kCwfIbJOx+Z8Q2mMBDD9RDDVv68He?=
+ =?us-ascii?Q?3ySaSUbeEIVHin+Ix5RmteNc18YDd9PmHViUCdvJM8HtdBw+s/CGlzINmh/3?=
+ =?us-ascii?Q?v1oEQVLIo/2/BuscQo+oK/N/sjlgHepB21wRVD5a9WI0AA7joimTVBo1cZrh?=
+ =?us-ascii?Q?4KxJ3yZ4Y1Fmud+8EK3ydngW203YDCb1uI/YohZJ/HOdWUo4u12+Bfi+z2uY?=
+ =?us-ascii?Q?ALMD+57bgrVTEOGQVotZi+AcFideiGsQ/GCncgTfchg9js0H1Fram4CvNg4?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f2eb0fa-c7ca-4e25-b713-6a9bf3d355b9@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e76fd96-18ef-459e-f6b8-08dd0e36f6ce
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2024 16:25:38.8081
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6502
 
-On Thu, Nov 21, 2024 at 12:50:10PM +0000, James Clark wrote:
-> 
-> 
-> On 20/11/2024 5:31 pm, Oliver Upton wrote:
-> > On Tue, Nov 12, 2024 at 10:37:10AM +0000, James Clark wrote:
-> > > +void kvm_set_trfcr(u64 host_trfcr, u64 guest_trfcr)
-> > > +{
-> > > +	if (kvm_arm_skip_trace_state())
-> > > +		return;
-> > > +
-> > > +	if (has_vhe())
-> > > +		write_sysreg_s(guest_trfcr, SYS_TRFCR_EL12);
-> > > +	else
-> > > +		if (host_trfcr != guest_trfcr) {
-> > > +			*host_data_ptr(host_debug_state.trfcr_el1) = guest_trfcr;
-> > 
-> > Huh? That's going into host_debug_state, which is the dumping grounds
-> > for *host* context when entering a guest.
-> > 
-> > Not sure why we'd stick a *guest* value in there...
-> > 
-> 
-> Only to save a 3rd storage place for trfcr when just the register and one
-> place is technically enough. But yes if it's more readable to have
-> guest_trfcr_el1 separately then that makes sense.
+From: Steve Wahl <steve.wahl@hpe.com> Sent: Thursday, October 31, 2024 1:05=
+ PM
+>=20
+> Use a different approach to topology_span_sane(), that checks for the
+> same constraint of no partial overlaps for any two CPU sets for
+> non-NUMA topology levels, but does so in a way that is O(N) rather
+> than O(N^2).
+>=20
+> Instead of comparing with all other masks to detect collisions, keep
+> one mask that includes all CPUs seen so far and detect collisions with
+> a single cpumask_intersects test.
+>=20
+> If the current mask has no collisions with previously seen masks, it
+> should be a new mask, which can be uniquely identified ("id") by the
+> lowest bit set in this mask.  Mark that we've seen a mask with this
+> id, and add the CPUs in this mask to the list of those seen.
+>=20
+> If the current mask does collide with previously seen masks, it should
+> be exactly equal to a mask seen before, identified once again by the
+> lowest bit the current mask has set.  It's an error if we haven't seen
+> a mask with that id, or if the current mask doesn't match the one we
+> get by looking up that id.
+>=20
+> Move the topology_span_sane() check out of the existing topology level
+> loop, let it do its own looping to match the needs of this algorithm.
+>=20
+> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
+> the average time to take one processor offline is reduced from 2.18
+> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
+> 34m49.765s without this change, 16m10.038s with this change in place.)
+>=20
+> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+> ---
+>=20
+> Version 2: Adopted suggestion by K Prateek Nayak that removes an array an=
+d
+> simplifies the code, and eliminates the erroneous use of
+> num_possible_cpus() that Peter Zijlstra noted.
+>=20
+> Version 1 discussion:
+> https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/=20
+>=20
+>  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
+>  1 file changed, 48 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 9748a4c8d668..6a2a3e91d59e 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(st=
+ruct sched_domain_topology_leve
+>=20
+>  /*
+>   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps=
+) for
+> - * any two given CPUs at this (non-NUMA) topology level.
+> + * any two given CPUs on non-NUMA topology levels.
+>   */
+> -static bool topology_span_sane(struct sched_domain_topology_level *tl,
+> -			      const struct cpumask *cpu_map, int cpu)
+> +static bool topology_span_sane(const struct cpumask *cpu_map)
+>  {
+> -	int i =3D cpu + 1;
+> +	struct sched_domain_topology_level *tl;
+> +	struct cpumask *covered, *id_seen;
+> +	int cpu;
+>=20
+> -	/* NUMA levels are allowed to overlap */
+> -	if (tl->flags & SDTL_OVERLAP)
+> -		return true;
+> +	lockdep_assert_held(&sched_domains_mutex);
+> +	covered =3D sched_domains_tmpmask;
+> +	id_seen =3D sched_domains_tmpmask2;
+> +
+> +	for_each_sd_topology(tl) {
+> +
+> +		/* NUMA levels are allowed to overlap */
+> +		if (tl->flags & SDTL_OVERLAP)
+> +			continue;
+> +
+> +		cpumask_clear(covered);
+> +		cpumask_clear(id_seen);
+>=20
+> -	/*
+> -	 * Non-NUMA levels cannot partially overlap - they must be either
+> -	 * completely equal or completely disjoint. Otherwise we can end up
+> -	 * breaking the sched_group lists - i.e. a later get_group() pass
+> -	 * breaks the linking done for an earlier span.
+> -	 */
+> -	for_each_cpu_from(i, cpu_map) {
+>  		/*
+> -		 * We should 'and' all those masks with 'cpu_map' to exactly
+> -		 * match the topology we're about to build, but that can only
+> -		 * remove CPUs, which only lessens our ability to detect
+> -		 * overlaps
+> +		 * Non-NUMA levels cannot partially overlap - they must be either
+> +		 * completely equal or completely disjoint. Otherwise we can end up
+> +		 * breaking the sched_group lists - i.e. a later get_group() pass
+> +		 * breaks the linking done for an earlier span.
+>  		 */
+> -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
+> -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
+> -			return false;
+> +		for_each_cpu(cpu, cpu_map) {
+> +			const struct cpumask *tl_cpu_mask =3D tl->mask(cpu);
+> +			int id;
+> +
+> +			/* lowest bit set in this mask is used as a unique id */
+> +			id =3D cpumask_first(tl_cpu_mask);
+> +
+> +			/* if this mask doesn't collide with what we've already seen */
+> +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
+> +				/* Really odd case when cpu !=3D id, likely not sane */
+> +				if ((cpu !=3D id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
+> +					return false;
+> +				if (cpumask_test_and_set_cpu(id, id_seen))
+> +					return false;
+> +				cpumask_or(covered, tl_cpu_mask, covered);
+> +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
+> +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
+> +				/*
+> +				 * a collision with covered should have exactly matched
+> +				 * a previously seen mask with the same id
+> +				 */
+> +				return false;
+> +			}
+> +		}
+>  	}
+> -
+>  	return true;
+>  }
+>=20
+> @@ -2417,9 +2440,6 @@ build_sched_domains(const struct cpumask *cpu_map, =
+struct sched_domain_attr *att
+>  		sd =3D NULL;
+>  		for_each_sd_topology(tl) {
+>=20
+> -			if (WARN_ON(!topology_span_sane(tl, cpu_map, i)))
+> -				goto error;
+> -
+>  			sd =3D build_sched_domain(tl, cpu_map, attr, sd, i);
+>=20
+>  			has_asym |=3D sd->flags & SD_ASYM_CPUCAPACITY;
+> @@ -2433,6 +2453,9 @@ build_sched_domains(const struct cpumask *cpu_map, =
+struct sched_domain_attr *att
+>  		}
+>  	}
+>=20
+> +	if (WARN_ON(!topology_span_sane(cpu_map)))
+> +		goto error;
+> +
+>  	/* Build the groups for the domains */
+>  	for_each_cpu(i, cpu_map) {
+>  		for (sd =3D *per_cpu_ptr(d.sd, i); sd; sd =3D sd->parent) {
+> --
+> 2.26.2
+>=20
 
-Yeah, since this is all per-cpu data at this point rather than per-vCPU,
-it isn't the end of the world to use a few extra bytes.
+FWIW, I tried this patch against linux-next-20241107 in an Azure public clo=
+ud
+VM (x86/x64) with 832 vCPUs (8 sockets * 52 cores/node * 2 threads/core).
 
-> That works, it would be nice to have it consistent and have it that way for
-> filtering, like kvm_set_guest_trace_filters(bool kernel, bool user). But I
-> suppose we can justify not doing it there because we're not really
-> interpreting the TRFCR value just writing it whole.
+In a simple test taking a single CPU offline and back online, the elapsed t=
+ime
+is about 0.61 seconds without the patch. With the patch, this is reduced to
+0.29 seconds. These times are stable across multiple iterations, and the
+improvement is consistent with what you reported.
 
-Agreed, the biggest thing I'd want to see in the exported interfaces
-like this is to have enable/disable helpers to tell KVM when a driver
-wants KVM to start/stop managing a piece of state while in a guest.
+My test is pretty limited. I mainly wanted to confirm that nothing unexpect=
+ed
+happens in a VM on the Hyper-V hypervisor. So,=20
 
-Then the hypervisor code can blindly save/restore some opaque values to
-whatever registers it needs to update.
-
-> > What if trace is disabled in the guest or in the host? Do we need to
-> > synchronize when transitioning from an enabled -> disabled state like we
-> > do today?
-> > 
-> 
-> By synchronize do you mean the tsb_csync()? I can only see it being
-> necessary for the TRBE case because then writing to the buffer is fatal.
-> Without TRBE the trace sinks still work and the boundary of when exactly
-> tracing is disabled in the kernel isn't critical.
-
-Ack, I had the blinders on that we cared only about TRBE here.
-
-> > I took a stab at this, completely untested of course && punts on
-> > protected mode. But this is _generally_ how I'd like to see everything
-> > fit together.
-> > 
-> 
-> Would you expect to see the protected mode stuff ignored if I sent another
-> version more like yours below? Or was that just skipped to keep the example
-> shorter?
-
-Skipped since I slapped this together in a hurry.
-
-> I think I'm a bit uncertain on that one because removing HAS_TRBE means you
-> can't check if TRBE is enabled or not in protected mode and it will go wrong
-> if it is.
-
-The protected mode hypervisor will need two bits of information.
-Detecting that the feature is present can be done in the kernel so long
-as the corresponding static key / cpucap is toggled before we drop
-privileges.
-
-Whether or not it is programmable + enabled is a decision that must be
-made by observing hardware state from the hypervisor before entering a
-guest.
-
-[...]
-
-> > +void kvm_enable_trbe(u64 guest_trfcr)
-> > +{
-> > +	if (WARN_ON_ONCE(preemptible()))
-> > +		return;
-> > +
-> > +	if (has_vhe()) {
-> > +		write_sysreg_s(guest_trfcr, SYS_TRFCR_EL12);
-> > +		return;
-> > +	}
-> > +
-> > +	*host_data_ptr(guest_trfcr_el1) = guest_trfcr;
-> > +	host_data_set_flag(HOST_TRBE_ENABLED);
-> 
-> FWIW TRBE and TRF are separate features, so this wouldn't do the filtering
-> correctly if TRBE wasn't in use, but I can split it out into
-> separate kvm_enable_trbe(void) and kvm_set_guest_filters(u64 guest_trfcr).
-
-KVM manages the same piece of state (TRFCR_EL1) either way though right?
-
-The expectation I had is that KVM is informed any time a trace session
-(TRBE or otherwise) is enabled/disabled on a CPU, likely with a TRFCR_EL1
-of 0 if guest mode is excluded.
-
-The function names might need massaging, but I was hoping to have a
-single set of enable/disable knobs to cover all bases here.
-
--- 
-Thanks,
-Oliver
+Tested-by: Michael Kelley <mhklinux@outlook.com>
 
