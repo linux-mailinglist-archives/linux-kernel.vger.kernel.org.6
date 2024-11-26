@@ -1,173 +1,142 @@
-Return-Path: <linux-kernel+bounces-422492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A85F9D9A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:17:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC8A1655C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:17:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36F31D63C5;
-	Tue, 26 Nov 2024 15:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mENdPAck"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403DC9D9A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:19:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB73B17591;
-	Tue, 26 Nov 2024 15:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0549D2826DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:19:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999AC1D61A1;
+	Tue, 26 Nov 2024 15:19:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88CB17591
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732634250; cv=none; b=baLu7Oh9Yfx7trxQswlhczEsXD4I0DCr5Fb7+526UrynFhCA+La0TOexAro7HQxc/mkzfLCwkr8mJVzlAFGyoOYm9GCS2w0X2nbL6B4+TedzckHd0sitAibP5Vp1ZiyfeT1BYSNQDSB3BtvbvEEQfUHZXrbMqrAu5Mippc7VU40=
+	t=1732634344; cv=none; b=h5V5x03wYbLUYEp7zuLmNM+BdMyxhvCkm4Y2QCVkzSLswATMYsUobkpWjS7RHP8Ts2+TQaiDF4Ba/4AGO2YGOQgoE8TEm5fMgOjPX6+S5uJugXMV45OtAkAX1vs34RefyKF5uwa8waoF3qRbAAq/eR9y6/FBusz3xXmuuzM/XVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732634250; c=relaxed/simple;
-	bh=31VYdU13LysCO/yvKvq+N5wabf3c68mQyQuU1zSGNlA=;
+	s=arc-20240116; t=1732634344; c=relaxed/simple;
+	bh=xrPTT7KJv2b4DPJS5VTnxOhvuA8MYTq84S6PSgv3ozA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6xcPBDtIX6Ypm7fiB5TMc5KLUk4+6FtnM6j8ztVMbJOBy4vnOb8Uai6aWRYSupAmcgNL2NUEwcssWYNDiY5WSJ2wD2r4jsI7QcSJNBKDH5Ns8wNNOmZr6E6YbJJPVTG3F/7zyp/cmNG6mcQ1yF+MOCQpf/jj0R9OoGs22hOVLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mENdPAck; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59871C4CECF;
-	Tue, 26 Nov 2024 15:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732634249;
-	bh=31VYdU13LysCO/yvKvq+N5wabf3c68mQyQuU1zSGNlA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mENdPAcka6aUcWnm2cD849yzIT163GdRQ45x0k2OeyEQe2W8IUskkxqt6Neba6i6X
-	 f3TpOZbIQx/dQphGvL7P2mff/j/oYry1r1ZJELlVoM5Ba8S6ur6aFDwW+Av6VAcQ9R
-	 Eo4yB67IXhNJys+zdEeaVyZs6BrNBIk0xV7PMIMcBTheMmzl4K6lMNgtxF20h5W3cu
-	 QeOuw7udZoe3C2b9GnB6DW0PSXbLS8j4ccKB+nt/bujFJZTtrMwJbqsylRAyZE1p4H
-	 Jd/bBPr1Uk3yiG9Bh0E3F9jMTgeVaqHLFkRwXi/sJzCavRpR5AGqvuuz1810n22dRK
-	 jKxwwE2XA2DjQ==
-Date: Tue, 26 Nov 2024 16:17:21 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
- driver abstractions
-Message-ID: <Z0XmgXwwNikW6oJw@cassiopeiae>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-16-dakr@kernel.org>
- <20241022234712.GB1848992-robh@kernel.org>
- <ZxibWpcswZxz5A07@pollux>
- <20241023142355.GA623906-robh@kernel.org>
- <Zx9kR4OhT1pErzEk@pollux>
- <CAL_JsqLVdoQNSSDCfGcf0wCZE9VQphRhHKANxhpei_UoFzkN9g@mail.gmail.com>
- <Z0XBbLb8NRQg_dek@cassiopeiae>
- <CAL_Jsq+TV486zw=hAWkFnNbPeA08mJh_4kVVJLSXiYkzWcOVDg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYpSg1gSGA69Eq8Rk5OyQwJYwRRUd4Ok5cCXB283hGPQmMRIMBW1/yXER5AjTIPvrRJYrag14woksX66xv5NvhVtIgikKNb/mfofy3tWd9QhCn1XsOOZqsl0Mf/FRIX4uTzHN8lQFHt5McsB65e5+SB64Z3qj/tn5iVbCYCzXso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFxKs-0004YV-DN; Tue, 26 Nov 2024 16:18:42 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFxKr-000Gs6-0H;
+	Tue, 26 Nov 2024 16:18:41 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6BB0837DC17;
+	Tue, 26 Nov 2024 15:18:41 +0000 (UTC)
+Date: Tue, 26 Nov 2024 16:18:41 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, 
+	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
+	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
+ SoC support
+Message-ID: <20241126-aquatic-brawny-shrimp-b3cc0e-mkl@pengutronix.de>
+References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
+ <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
+ <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
+ <20241126-independent-crocodile-of-finesse-106009-mkl@pengutronix.de>
+ <01a7de95-24e2-4c75-a818-bbc363e89844@oss.nxp.com>
+ <20241126-capable-vagabond-tody-8b3717-mkl@pengutronix.de>
+ <1a9281ec-3a4f-4175-8892-ee2e1ce1308a@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zoosu5ek2bwbfp6a"
 Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+TV486zw=hAWkFnNbPeA08mJh_4kVVJLSXiYkzWcOVDg@mail.gmail.com>
+In-Reply-To: <1a9281ec-3a4f-4175-8892-ee2e1ce1308a@oss.nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2024 at 08:44:19AM -0600, Rob Herring wrote:
-> > > > > The DT type and name fields are pretty much legacy, so I don't think the
-> > > > > rust bindings need to worry about them until someone converts Sparc and
-> > > > > PowerMac drivers to rust (i.e. never).
-> > > > >
-> > > > > I would guess the PCI cases might be questionable, too. Like DT, drivers
-> > > > > may be accessing the table fields, but that's not best practice. All the
-> > > > > match fields are stored in pci_dev, so why get them from the match
-> > > > > table?
-> > > >
-> > > > Fair question, I'd like to forward it to Greg. IIRC, he explicitly requested to
-> > > > make the corresponding struct pci_device_id available in probe() at Kangrejos.
-> 
-> Making it available is not necessarily the same thing as passing it in
-> via probe.
 
-IIRC, that was exactly the request.
+--zoosu5ek2bwbfp6a
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
+ SoC support
+MIME-Version: 1.0
 
-> I agree it may need to be available in probe(), but that
-> can be an explicit call to get it.
+On 26.11.2024 17:15:10, Ciprian Marian Costea wrote:
+> > > > > > +        interrupt-names:
+> > > > > > +          items:
+> > > > > > +            - const: mb_0-7
+> >=20
+> > I was wondering if it makes sense to have an interrupt name not
+> > mentioning the exact mailbox numbers, so that the same interrupt name
+> > can be used for a different IP core, too. On the coldfire SoC the 1st
+> > IRQ handles mailboxes 0...15.
+> >=20
+>=20
+> I am ok with proposing a more generic name for mailboxes in order to
+> increase reusability among FlexCAN enabled SoCs.
+> Further specific mailbox numbers could be mentioned in the actual
+> S32G2/S32G3 dtsi flexcan node.
+>=20
+> One proposal could be:
+> - mb-1: First Range of Mailboxes
+> - mb-2: Second Range of Mailboxes
+>=20
+> Let me know if you agree to update as proposed in V3.
 
-Sure, I did exactly that for the platform abstraction, because there we may
-probe through different ID tables.
+Looks good to me!
 
-A `struct pci_driver`'s probe function has the following signature [1] though:
+regards,
+Marc
 
-`int (*probe)(struct pci_dev *dev, const struct pci_device_id *id)`
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-[1] https://elixir.bootlin.com/linux/v6.12/source/include/linux/pci.h#L950
+--zoosu5ek2bwbfp6a
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> > > Which table gets passed in though? Is the IdInfo parameter generic and
-> > > can be platform_device_id, of_device_id or acpi_device_id? Not sure if
-> > > that's possible in rust or not.
-> >
-> > Not sure I can follow you here.
-> >
-> > The `IdInfo` parameter is of a type given by the driver for driver specific data
-> > for a certain ID table entry.
-> >
-> > It's analogue to resolving `pci_device_id::driver_data` in C.
-> 
-> As I said below, the PCI case is simpler than for platform devices.
-> Platform devices have 3 possible match tables. The *_device_id type we
-> end up with is determined at runtime (because matching is done at
-> runtime), so IdInfo could be any of those 3 types.
+-----BEGIN PGP SIGNATURE-----
 
-`IdInfo` is *not* any of the three *_device_id types. It's the type of the
-drivers private data associated with an entry of any of the three ID tables.
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdF5s0ACgkQKDiiPnot
+vG9B9Qf/T4Fj9Yq5Yqd3fE9w4scQuvsbvXGelsZ0gNp3mTWjZOtDDLCsZUYuy1LR
+/uHLsDvDUNR1GOPDK7ub5uKb7JfvI3Xi9AVjAvD/geMBnQzAadqj8vjYq/tdhqU5
+F59iVgbBlGLIby23Lrd6hGWz4hldnZOmuRE3MUSLLJHEMA9C9tuQgottxWrDTuQL
+MX/mi5kXzsfdYZ8kUnjBzQlgT97p+F0kns8DjX+oWe4BHVJ+jmsZ9egG+BpDw6tU
+Ps13x1dn26oxWSPUh/Q/kO473SeNcBGYPMm/MxIntQz6Idm4zg/AafIRo7WvCLOU
+vwwx94rtYvLaHzsbA9YhEFkMi3PyhA==
+=K2QF
+-----END PGP SIGNATURE-----
 
-It is true that a driver, which registers multiple out of those three tables is
-currently forced to have the same private data type for all of them.
-
-I don't think this is a concern, is it? If so, it's easily resolvable by just
-adding two more associated types, e.g. `PlatformIdInfo`, `DtIdInfo` and
-`AcpiIdInfo`.
-
-In this case we would indeed need accessor functions like `dt_match_data`,
-`platform_match_data`, `acpi_match_data`, since we don't know the type at
-compile time anymore.
-
-I don't think that's necessary though.
-
-> Is the exact type
-> opaque to probe() and will that magically work in rust? Or do we need
-> to pass in the 'driver_data' ptr (or reference) itself? The matched
-> driver data is generally all the driver needs or cares about. We can
-> probably assume that it is the same type no matter which match table
-> is used whether it is platform_device_id::driver_data,
-> of_device_id::data, or acpi_device_id::driver_data. Nothing in the C
-> API guarantees that, but that's just best practice. Best practice in C
-> looks like this:
-> 
-> my_probe()
-> {
->   struct my_driver_data *data = device_get_match_data();
->   ...
-> }
-> 
-> device_get_match_data() is just a wrapper to handle the 3 possible match tables.
-> 
-> The decision for rust is whether we pass in "data" to probe or have an
-> explicit call. There is a need to get to the *_device_id entry, but
-> that's the exception. I would go as far as saying we may never need
-> that in rust drivers.
-> 
-> Rob
-> 
-> > > PCI is the exception, not the rule here, in that it only matches with
-> > > pci_device_id. At least I think that is the case currently, but it is
-> > > entirely possible we may want to do ACPI/DT matching like every other
-> > > bus. There are cases where PCI devices are described in DT.
-> > >
-> > > Rob
-> > >
-> 
+--zoosu5ek2bwbfp6a--
 
