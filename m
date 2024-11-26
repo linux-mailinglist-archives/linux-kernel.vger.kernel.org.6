@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-421789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD469D9028
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:51:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DD39D9031
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:56:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BFE91622B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:56:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4497314012;
+	Tue, 26 Nov 2024 01:56:43 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4652898C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:51:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0413FFC;
-	Tue, 26 Nov 2024 01:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PqU1a3Xb"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67E3D26D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1BBDF60;
+	Tue, 26 Nov 2024 01:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732585888; cv=none; b=lwM3CgEwiT/b8gHP85lBimOTXg06USmROy3fvq8zzqWl0MPjD4q/NiZNqx1cwdnroIDaiVpb7zLOxOMl7qAeS5ynFPCZiRqsGjkdl/JvjLDPqjvRkMUn2azbfP6b09/+Dvn8ah2A+E8J/4ePvCt3g6/Zr/HXdpGioB7Vaj1JFWA=
+	t=1732586202; cv=none; b=JMFswWWdvsYUE5IWh61fuV+y6cbI1lzZ/zVokX0NkXed/OXoegP1M1zX987gI4KAtf1rZjORw02IXFrbssfJYlB8dK8yuXwI+XBDuCnNk625caVXnuRM8d4b7P3pKEGSY4Noi2ZvA3kzrxMr9R1XAo2fEdY1JuzdR3ydpN5PKNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732585888; c=relaxed/simple;
-	bh=H0mFerbMaGcm5YSo+5mHe3ECjJkRkraKwOcgif5R6ss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UfV0VYyaD+t4Uqiq+zfYH/ECkt0pMU1JpEDy0Wb3MAiU2T2V3VNcwPrJw5h4NjSKI7JffRrt0nRGKLc9knsYGKbfwaJCbdm5hDIvc5IzFX9M1t33eNLUHQ/PkCe+tsTbl30VIi1F4KNdui6i99lMN4aVB0JVhSdPrYo7E78sG/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PqU1a3Xb; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso4025616a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:51:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732585886; x=1733190686; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aJoYAYmeRsJLY19PSmXmZzQLTbquFpEYT2ck8bCoKAI=;
-        b=PqU1a3XbCqjDSYisdnmuZyaIv3+5Cm7HNYtDBappyUWInOHCiabYAok7MSmUCvRezL
-         +ozomiVBnWY4liwcb3eTXABilckrMbvc4JSaC9QgN4UfqbZM/UeZ3XHTsqo2gf/gzLW/
-         3BcjNlPT1wAfbtTM100BQrKqBzXe1fhT5+ueVT2+xGXaSul7se5zx01mJwizMRFgeL0V
-         WEHHUReb4yA+99bGIsMuajpnFy+OCxCCA6ywInHMiDEAl2vakNeH4kKYX2Fuamgn485Y
-         zwNzl1F/XQjUfGwc/mTb6o76+8VZuzWg3q7omrsJlcVASfhQ1O0dbsrCaDra4v5UBuyO
-         yQsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732585886; x=1733190686;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aJoYAYmeRsJLY19PSmXmZzQLTbquFpEYT2ck8bCoKAI=;
-        b=K1YFP8Z+6eeJDAxR3Lj7szJZShTJEaSG3un+JtHo+iizYjw409K7uytqKwFbbku89x
-         2NOgKfF51frp7NVKm3iOBbO2jFpdjpvRlXqJ6LLkdJChtkvjSDKpbhS6K5UnAFGUvF1P
-         WG9zWe7hbJR5LxyD5hnnuHpImLK7lwoUm2yKsvICbVDuCGnWO6tmJv2mBml/gWQznMlp
-         PdvUmary/yu85mLn9XSvXfK0MksWxVW83WsRdBK5pxaitHwjYYg9jT2Cuvw2P52SVmQd
-         Js3fwvx8CXoYfeDJX9JdHlbZ+DC+Rwq9KnzyKXO2u4Ln7+Gy+9Sv0W3yYQXUhVKIi/EJ
-         3LHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXx76QHHwq/4eJs+wdbMuPTwXUKDNq3gx1d1yFnCqLVg1Jj7wkX+kbeVb5f55eCfUN16iWRfbFBLQ369Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwdKTZiFLdszpmTnc4G4iLir0Swpuwzi45q0s6yP36U4gv/hec
-	zlJV+S+SVlxAzqFWbSqTvjjYoHgN2SChboZptiKi6pX4KI8Phw3LXjqMXi+U55hRaayBJXC7R2k
-	oOyBPIgA5pF3+x22cydAfESt3j6s=
-X-Gm-Gg: ASbGncu+u1eYOMMnt9uVEZIs2K6ozeIvh5zcrWsCSNqbFyYl61jINnUpeBx07E3CXkj
-	AGaPo6jcE2ZcsLTakMJh6UklZb6OQ0A==
-X-Google-Smtp-Source: AGHT+IECCVnij2z/+srsyPC3YUKSlek8iSKr3GS456+2J0fRCkz1dFnAzFpIUD+FnI6gkzr8aPDBr+QNAg5FE/vVq9A=
-X-Received: by 2002:a17:90b:3805:b0:2ea:aa30:5edf with SMTP id
- 98e67ed59e1d1-2eb0e024afemr18190299a91.5.1732585885720; Mon, 25 Nov 2024
- 17:51:25 -0800 (PST)
+	s=arc-20240116; t=1732586202; c=relaxed/simple;
+	bh=OxJe9T4YNUqcUJuE7w/XKLYO21BA2S9yyd1HdvrUy0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aUZ7hhm4YIvASQRyuAsz6yByOclbGYb5538A8a9Ffmi0YWqgYGXUgS9ZoNbqgdI5tOw3pstj+VtLaKnvbvS0Ee8Om1Df0P/i0zo4oYta3i5qlM/q40/9Cv0hm5l7JNF3HiccWlfa6UrwoWlkCvAwYQNzwbeDzea9Ko0HC9U6D0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xy5G54WVVzxT1x;
+	Tue, 26 Nov 2024 09:53:49 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 86C88140154;
+	Tue, 26 Nov 2024 09:56:35 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 26 Nov 2024 09:56:35 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Nov
+ 2024 09:56:34 +0800
+Message-ID: <b801388b-6bc7-5e96-dd29-e68ed8c970df@huawei.com>
+Date: Tue, 26 Nov 2024 09:56:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJwJo6bu3vfogmzxpfzFV_guf5GS_1TsqdB29NZoUr-_6fd8pg@mail.gmail.com>
-In-Reply-To: <CAJwJo6bu3vfogmzxpfzFV_guf5GS_1TsqdB29NZoUr-_6fd8pg@mail.gmail.com>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Tue, 26 Nov 2024 01:51:14 +0000
-Message-ID: <CAJwJo6ZvS3B3b927zO1PpKX7p+7N75gE-44g2mVKkLXiaDBfPQ@mail.gmail.com>
-Subject: Re: [git pull] IOMMU Updates for Linux v6.13
-To: pr-tracker-bot@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>, 
-	open list <linux-kernel@vger.kernel.org>, Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v1 1/4] hwmon: (acpi_power_meter) Fix using uninitialized
+ variables
+To: Guenter Roeck <linux@roeck-us.net>, <linux-hwmon@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jdelvare@suse.com>, <liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>
+References: <20241125093415.21719-1-lihuisong@huawei.com>
+ <20241125093415.21719-2-lihuisong@huawei.com>
+ <aa6e1c02-b8bf-4d25-ad21-2018af72e16f@roeck-us.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <aa6e1c02-b8bf-4d25-ad21-2018af72e16f@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Tue, 26 Nov 2024 at 01:45, Dmitry Safonov <0x7f454c46@gmail.com> wrote:
+Hi Guente,
+
+Thanks for your timely review.
+
+在 2024/11/26 0:03, Guenter Roeck 写道:
+> On 11/25/24 01:34, Huisong Li wrote:
+>> The 'power1_alarm' attribute uses the 'power' and 'cap' in the
+>> acpi_power_meter_resource structure. However, these two fields are just
+>> updated when user query 'power' and 'cap' attribute, or hardware 
+>> enforced
+>> limit. If user directly query the 'power1_alarm' attribute without 
+>> queryng
+>> above two attributes, driver will use the uninitialized variables to 
+>> judge.
+>> In addition, the 'power1_alarm' attribute needs to update power and 
+>> cap to
+>> show the real state.
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   drivers/hwmon/acpi_power_meter.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/hwmon/acpi_power_meter.c 
+>> b/drivers/hwmon/acpi_power_meter.c
+>> index 2f1c9d97ad21..4c3314e35d30 100644
+>> --- a/drivers/hwmon/acpi_power_meter.c
+>> +++ b/drivers/hwmon/acpi_power_meter.c
+>> @@ -396,6 +396,9 @@ static ssize_t show_val(struct device *dev,
+>>       struct acpi_device *acpi_dev = to_acpi_device(dev);
+>>       struct acpi_power_meter_resource *resource = 
+>> acpi_dev->driver_data;
+>>       u64 val = 0;
+>> +    int ret;
+>> +
+>> +    guard(mutex)(&resource->lock);
+>>         switch (attr->index) {
+>>       case 0:
+>> @@ -423,6 +426,13 @@ static ssize_t show_val(struct device *dev,
+>>               val = 0;
+>>           break;
+>>       case 6:
+>> +        ret = update_meter(resource);
+>> +        if (ret)
+>> +            return ret;
+>> +        ret = update_cap(resource);
+>> +        if (ret)
+>> +            return ret;
+>> +
+>>           if (resource->power > resource->cap)
+>>               val = 1;
+>>           else
 >
-> > The pull request you sent on Fri, 22 Nov 2024 09:17:47 +0100:
-> >
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.13
-> >
-> > has been merged into torvalds/linux.git:
-> > https://git.kernel.org/torvalds/c/ceba6f6f33f29ab838b23a567621b847e527d085
 >
-> It seems to have a minor merge resolution artefact: iommu_present() now
-> has a header declaration with no definition.
-
-[Apparently, when you choose gmail option in chromium from the mail-to link,
- it erases In-Reply-To header, sorry about it, I'll avoid using it]
-
-Thanks,
-             Dmitry
+> While technically correct, the implementation of this attribute 
+> defeats its
+> purpose. It is supposed to reflect the current status as reported by the
+> hardware. A real fix would be to use the associated notification to 
+> set or
+> reset a status flag, and to report the current value of that flag as 
+> reported
+> by the hardware.
+I know what you mean.
+The Notify(power_meter, 0x83) is supposed to meet your proposal IIUC.
+It's good, but it depands on hardware support notification.
+>
+> If there is no notification support, the attribute should not even exist,
+> unless there is a means to retrieve its value from ACPI (the status 
+> itself,
+> not by comparing temperature values).
+Currently, the 'power1_alarm' attribute is created just when platform 
+support the power meter meassurement(bit0 of the supported capabilities 
+in _PMC).
+And it doesn't see if the platform support notifications.
+ From the current implementation of this driver, this sysfs can also 
+reflect the status by comparing power and cap,
+which is good to the platform that support hardware limit from some 
+out-of-band mechanism but doesn't support any notification.
 
