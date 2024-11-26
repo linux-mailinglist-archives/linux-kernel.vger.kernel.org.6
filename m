@@ -1,164 +1,121 @@
-Return-Path: <linux-kernel+bounces-422655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9529D9C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:26:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9589D9C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FCCD283869
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E132128413B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59C91E04A9;
-	Tue, 26 Nov 2024 17:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EAE1DB372;
+	Tue, 26 Nov 2024 17:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxJ5Kt3T"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVqKCbRJ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C21DE880;
-	Tue, 26 Nov 2024 17:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BF51AC8A6;
+	Tue, 26 Nov 2024 17:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641845; cv=none; b=q2vqdQHfypL1+vf3G/rPAmofHn1j3RZBF8y65UypKbEnZ57gkqmcWV66qYmBToo51NMqFyy7C0vPYC6UGJhRbe3+Ibb4AITRRyjyYkaBaB2BpA5UDoDP5GXV7I5rUDDj434BZWBTDsQBYEUPYZ634puZzV5prporOWYrKrG/D2U=
+	t=1732641714; cv=none; b=WX5tgeWimZmQKjbpIFeeiqH85i6FVGpyZuemwPqylVpr43/x//lgwTwnrxunjTb1wRvgErUvpacn9CLEE8f2blCyYavZaP4mL/uHd/eALI5IT8/xRdNRpg7jc2Pqg1WtZoM4wp+iXNc0uqgq14IE3BKPm/+GeyJhhjek1paMJj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641845; c=relaxed/simple;
-	bh=4OHFcqeT2AuYq8OOGzyp2EVumvns8aqChYzt49dh7GI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FM3Fhpcy2+FP0U4ojPkCepnm7Qi/I9mrbt/9SPV6PnOsYhPHj0lUcOvGohHh6z71ZISAbIHNzI4okZXQP396/yqpggs6sJFgq1j5qy1bOoaMP0917yNo5tyop4tEPZjIEtRMsZ4uM8NQEs0Va6cdvxXaxR3HMy4QCGKBi/6S9Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxJ5Kt3T; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1732641714; c=relaxed/simple;
+	bh=gTqypcj+EFFG6uzzQzavl7F2GsO61n5vFJ3OynM84xQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hR01KjrKWdQlQ2NQdnGvexmNenbV1rWLqFITHz7qKoBHszrYhZIx9goUe4NNyMxZboX+qBjRyAZJ0WvoEFxTriybwJErLavds+VRdiHUkhVGLXLmCHzWU5qXge+MDWFCLEbt6CcwgIFsKyzYEn2m7V6Ku6sxgSMqEQGvxe8luUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVqKCbRJ; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa52edbcb63so607612466b.1;
-        Tue, 26 Nov 2024 09:24:03 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21269c8df64so60051345ad.2;
+        Tue, 26 Nov 2024 09:21:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732641841; x=1733246641; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vYQhfY8XS5QoJJ9ROocmWAxArKh2nECE5yY90QqkfaM=;
-        b=DxJ5Kt3TjyZCKe4FdtR+FlKe+nypTY20rap7N+7ElE9SJ2jwWDI/4OZls/pnafXGxw
-         A1VeeBx2+sPjNvSwftPac77KHG+nsWFnumIdIW1heQ4jWZpf1kc7YPmtgF3/TQuwXCgt
-         YZG5j38j5BFCS9o9ehoRkXAlQv7ie0QJJgIXQqAfOACdDOGzDLc3Zs618dl7uarR2yC1
-         flYQE69f887Ic9526A9xdpt3Jfd2jH5ZscWZtmmIHCXFB4lkAzyOOrx+yNAN+eI241ef
-         NiiaxEjpuH8AwlQlCO93SQB1uUbb1NlAPByCdMyGeEpHXOLTHLh6U3L4xpFetk7LwwMF
-         ydWg==
+        d=gmail.com; s=20230601; t=1732641713; x=1733246513; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FrIkH1MB0v8Z6/W9Ggvj9owJF6rjo+GqVtj/jimhV98=;
+        b=eVqKCbRJ9kosNacAgK/uya9aWmbiZJfzxGlYTtOxBQvzCTTe/uTXNTSQwBq7ucvW3N
+         Oruk6FLgsshXiJkcswnifitlzcjwYgK9g4kmbiWLaPaiBUCWe6hJBxkzsg7enBlsCWVa
+         RZW5RDtsbGKX2xb/EE4L+eBMLxYYvMx2kuFJw+oWGcTdmWZ4CpB4A3AdE1cCmuiaGSIl
+         C5Xc5VRxWL+N4tRoCNXI3mtI/YHZt6rZNspb5DCxZcFOYb1wrNPlorjuY2gbx8211dIQ
+         M2ELLW+cR8QQDud5K/RaZ89QxaGV5eQhxidwuhL3mcmYFWKRqBWkUvbgjYHUIU/O98PZ
+         ha4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732641841; x=1733246641;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vYQhfY8XS5QoJJ9ROocmWAxArKh2nECE5yY90QqkfaM=;
-        b=FryF+cxf7oez3yrh+qpRJ3vq85HJbRaJYZWChtSvlGHAjHj+0QVbRdzAspyXnQ1h16
-         nPvfEqxN8quu+NqMHbN3HJTJHRlDqQZ4wcGh3uf7oEBoLXuyNvziiv061o4W+FKLqUGW
-         QUjBOJyScEbcrqoCOiEeIIWqGmyRj8/SIF0eWj3tGd6LjpBL9zszrAhqjBqc3Co/BxuD
-         hXF7cxuFYGHJBVXQR/D930GN1d4PpEJQ9dBaq/aVqZvyu6uUeOGISpuQ622OHfIRlEJC
-         crYCcWqDC/FEhPaTokcakkDjuFzXir1DyI/xvlH/jhLgw0pOjnb1u2kudBalCKyIdN8a
-         NmjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5LzB9ZS06BLdO4lVxTsGzkGnPVHcGhgkhQKewGTgUO5BgG4Lho+X7Xi787WfGg0RLejSs937gpHMCdx67@vger.kernel.org, AJvYcCVBZ993GV2K8b0iycgDp+o4GG7BLV9WW2/vAnfNnPDcU6384eQiuSWrigBkl+VlLdlMNXe0t7we@vger.kernel.org, AJvYcCWL7P7J0di343GjVNVNnqT78XXhRbnoOVSA3yHJ0b69dmVswMIV/q7HQl2H6hStwS+4LbrvO2nIc9B4Zn2i@vger.kernel.org, AJvYcCXIRtOaQyuQwX+hOkpBt/tG0yfllpsvjABB+y61h5mTVwOpc34DAf4Tds1ngTwH+jVZqq0Va6Ggy8R81ee5wVI=@vger.kernel.org, AJvYcCXLguZcCsJroTTRzXoC63WRgmlrj63fdk724ejyxbYD7FhHSoLOnjhjZtmXBH3rtwMfLFBtjkNQ7Cw5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZXwa6cxyqN9H7J+f03R5kag6CqdSicrqAVR7+6wBVhyrhHrs7
-	EZNYdHwovsA1SjcPVbi+WjQU2FVnn8EPaYS/eC7Z5UmucJCo4J9F
-X-Gm-Gg: ASbGnct5eNeAz39VYC6K+PS26/TScZtq7H7JqLVeVBD2nvsCL3E71tDOk3DA5d+z9Np
-	9P7HE57A0TfK8IPCbuJ5B3SF3o6hyagbkx3nz+s5h231VpenALxflhWkNTmvK2I0Kc4qh2CRTce
-	PCFp529JfphlVMFp5USdOdGs93uQOTUm1N2h9V0bBLBeHBO5fG+s8cTOIecb3W9I/p8UrXlWjRw
-	ew/mu3vY01NwLWbGO22R4rNqpzPTyDZDivUB2ccIihbJXHBS1NpEf8gsCg=
-X-Google-Smtp-Source: AGHT+IGyDslpGnIuA7EaGQJjOGzUF02XOkLJcH+fA/4c2TgsR6qaqxDya98ILXBrNs7h8xnzOadyXQ==
-X-Received: by 2002:a17:906:3d22:b0:aa5:26ac:18e2 with SMTP id a640c23a62f3a-aa57fbba709mr3970966b.23.1732641841517;
-        Tue, 26 Nov 2024 09:24:01 -0800 (PST)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa534232086sm473832866b.42.2024.11.26.09.24.00
+        d=1e100.net; s=20230601; t=1732641713; x=1733246513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FrIkH1MB0v8Z6/W9Ggvj9owJF6rjo+GqVtj/jimhV98=;
+        b=Xthnq5LbGtW4w2y2MVUxKGpZYlZwH8UvWeChQz35H4j17B/tPXZZmsg95uxoPdJcpt
+         QIZwcRCRaGNIV60Fphg1gr5ej4OSad3BxSteXEmUXRZ9bUW0bp9KXJ+OPLPJuQZdbHsY
+         bYWDK1/adYrveYTlgueYLGHRP9fr+21ddeCzvFzs8CrZdKOUrGqlqOMEU69a+Nez7/Zx
+         4ODqsCSQ8HlcjoCdBIsmAo4xrYndugsFgpZw4WcB67b7uQlMM7ZBXdyBZU0QdWecQCzY
+         oCZVY8TJWh0pEWQD7N/XwrnsINUusJ7fgMm98GK7+qaAD1mP7Cmu9U6rQj8/kIc4EFpw
+         gRpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVrt8GpIlY/7ca7IWgPucEiNw0TxGLOIYXGHFKrQk3kw1A3FpkiBeVkjvw91lIKo0GvOr0z3cSfcT6ZfoU@vger.kernel.org, AJvYcCXXTSF4ZUeMria8OQPOII0C1kSaKD2/iZ3p04QlvPXDNpaiM83nXi5R5ljvICH+/Hz5qSwjaiVsYW80MfjN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRKVnISNGYBb/+NpGLNRJdcVf7VPIEuT3kMuO+5Dtvy9HxMnNb
+	CA7dpuV91uUfVQJb8LlXtuPVET48cogrNfaFQcd9oKS0oiX5sB0s
+X-Gm-Gg: ASbGnctsqX9wQHTkgZpWx3m4MY8pSUolj2qkFkjFyNa52J4do1l7XSaTe0lr+W5PB5S
+	KrixDO3MBvBJzLnPdwitoSRDslzd+FsYGM19HdNCXtjO4MCpwYZOD2rEMcnTFkiOHU1+i8JzAop
+	4msIqNindmt+0luNGsB5CeUKNMfvtvBUs+83moD6wEq+BIfuOa4kQLGrhQPXdBzG2x/RP7/7T35
+	O69DEDJXVLs2ynB4avAiw0waDEwaetLw/g81dU=
+X-Google-Smtp-Source: AGHT+IHDsecHndF7b5QQvziiPU8XMujZpFiJZlmKy8xy3DeBm0CZkoaKQrenwPUxLW7TY5QKxmJa3w==
+X-Received: by 2002:a17:902:d490:b0:212:4582:37fa with SMTP id d9443c01a7336-2129f7c1863mr231606055ad.53.1732641712688;
+        Tue, 26 Nov 2024 09:21:52 -0800 (PST)
+Received: from tc ([2601:1c2:c104:170:3e9e:9bc4:e80c:2141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc13f8bsm87243285ad.184.2024.11.26.09.21.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 09:24:01 -0800 (PST)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-sparse@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Nadav Amit <nadav.amit@gmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 6/6] percpu/x86: Enable strict percpu checks via named AS qualifiers
-Date: Tue, 26 Nov 2024 18:21:23 +0100
-Message-ID: <20241126172332.112212-7-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20241126172332.112212-1-ubizjak@gmail.com>
-References: <20241126172332.112212-1-ubizjak@gmail.com>
+        Tue, 26 Nov 2024 09:21:52 -0800 (PST)
+Date: Tue, 26 Nov 2024 09:21:50 -0800
+From: Leo Stone <leocstone@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com, 
+	brauner@kernel.org, quic_jjohnson@quicinc.com, viro@zeniv.linux.org.uk, 
+	sandeen@redhat.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, shuah@kernel.org, anupnewsmail@gmail.com, 
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] hfs: Sanity check the root record
+Message-ID: <wzxs6mjqlpf2eszoaw2ozvocqg3lpaqx7mzog4tygxexugrbsu@3pxs2vthfagb>
+References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
+ <20241123194949.9243-1-leocstone@gmail.com>
+ <20241126093313.2t7nu67e6cjvbe7b@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126093313.2t7nu67e6cjvbe7b@quack3>
 
-This patch declares percpu variables in __seg_gs/__seg_fs named AS
-and keeps them named AS qualified until they are dereferenced with
-percpu accessor. This approach enables various compiler check
-for cross-namespace variable assignments.
+Hello,
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- arch/x86/include/asm/percpu.h | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+On Tue, Nov 26, 2024 at 10:33:13AM +0100, Jan Kara wrote:
+> 
+> This certainly won't hurt but shouldn't we also add some stricter checks
+> for entry length so that we know we've loaded enough data to have full info
+> about the root dir?
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 27f668660abe..61b875243ea3 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -95,9 +95,19 @@
- 
- #endif /* CONFIG_SMP */
- 
--#define __my_cpu_type(var)	typeof(var) __percpu_seg_override
--#define __my_cpu_ptr(ptr)	(__my_cpu_type(*(ptr))*)(__force uintptr_t)(ptr)
--#define __my_cpu_var(var)	(*__my_cpu_ptr(&(var)))
-+#if defined(CONFIG_USE_X86_SEG_SUPPORT) && \
-+    defined(CONFIG_CC_HAS_TYPEOF_UNQUAL) && !defined(__CHECKER__)
-+# define __my_cpu_type(var)	typeof(var)
-+# define __my_cpu_ptr(ptr)	(ptr)
-+# define __my_cpu_var(var)	(var)
-+
-+# define __per_cpu_qual		__percpu_seg_override
-+#else
-+# define __my_cpu_type(var)	typeof(var) __percpu_seg_override
-+# define __my_cpu_ptr(ptr)	(__my_cpu_type(*(ptr))*)(__force uintptr_t)(ptr)
-+# define __my_cpu_var(var)	(*__my_cpu_ptr(&(var)))
-+#endif
-+
- #define __percpu_arg(x)		__percpu_prefix "%" #x
- #define __force_percpu_arg(x)	__force_percpu_prefix "%" #x
- 
--- 
-2.42.0
+Yes, that would be a good idea. Do we want to keep the existing checks
+and just make sure we have at least enough to initialize the struct:
 
+if (fd.entrylength > sizeof(rec) || fd.entrylength < 0 ||
+    fd.entrylength < sizeof(rec.dir)) {
+	res = -EIO;
+	goto bail_hfs_find;
+}
+
+Or be even stricter and only accept the exact length:
+
+if (fd.entrylength != sizeof(rec.dir)) {
+	res = -EIO;
+	goto bail_hfs_find;
+}
+
+Thanks for your feedback,
+Leo
 
