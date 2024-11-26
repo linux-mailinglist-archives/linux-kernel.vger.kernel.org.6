@@ -1,242 +1,92 @@
-Return-Path: <linux-kernel+bounces-421898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B529D91AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:11:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937FE9D91B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:18:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBEB6B22E05
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3149E1647C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8AB12CDA5;
-	Tue, 26 Nov 2024 06:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="DMbacLy/"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazolkn19012070.outbound.protection.outlook.com [52.103.14.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C0515575F;
+	Tue, 26 Nov 2024 06:18:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB45B67A;
-	Tue, 26 Nov 2024 06:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732601475; cv=fail; b=oKGxKE5IngKCN/UaRMm9YFb3h7IzwjvCkCByFM8dsyNDb203Qau7VNtT0mmZDXUWflnGDL+FsbV+iIEaEcbSwnF62WG2LxPHuDjnZWegNh+V90jSn7wLimwc9pGo4dH3+o5eOmoordzSqrEjQ1ouU8rwLZsrYdAf/9MHg+MlymA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732601475; c=relaxed/simple;
-	bh=cDvVgBZ6PHdX4bM5CYkjLtEZruROYX3mQ+rQ7wJDn2o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dz19H7G+9OIHgTrx5/EwaU932UNWqN3nAZgz2lkEJ+HmYukfVnIX1tcpd991v7uR7fs/tQKWLKOp8io30HBAPS62l733ZNwdyiugmbOoiGm5M+RQ2grFSK7hciYbBxAdYGTMgv6qC+bJ2BCumq8d6YF0HldLtvSczWhMhhoDftw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=DMbacLy/; arc=fail smtp.client-ip=52.103.14.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=toUflsZz6IK4S2JAHEsMe1A7rs5M20UcgQ0g1mxoBg51wHt4uLJdVMsTUjmdK5s4p65IIu5FKLCNq8+vNFCRIN4N3mCLEBKYYsZN5slKA1nGhiiKTNXopdsd5xPIbZS4xA4BjR2agUeVf6/9CSrz9I/QR2kXO5nSdUiBQ/p4JtANob4Vk8rDdXFUn2s/B5DaCj7ASenx/ZxqNhxeBG4pSY72du+qDPAvQ5KFutyAtDX4kK9qyqEMICTmBuWhFDm8YJAu2qIrJJD+lN8otYHlUrPIyYV/+jaGlVsgQlms31VCIH4EvduYLSIZiguF7tcAOP18rkjAS9HwFO/rXdbXrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GvEi4prI50cVh5w+x4vmek596cwOorGDkrc9ogDbpkM=;
- b=nSLEvcoWgYT5E53Wqn5ianM4+O/84SdlYzv8qCZE6ssMDOWINN3DWyAnwSHTdYLzlOWs6qCckAl8SFlIb/EAr3Hy/pqSvHMaE7xptPZgeH/lUhcq2EG4LYFljds2Ug2IPLpUWrFy6jytIcTbCs14KXElCRxr+bLxBZJNJ/YDGoQBhDpxCgSbRsvcakgzAOBlwj6K16VwWI0ds0ejf2HxGCm8suA3GM5TXy4ZiodbxsCdkAtRt1ifPTaBVn2kxd8VUSGu1ZqfIZGss4Le8ft4FrVBx1jnsXvOb0Eq6DJEddL84JUdSKW8Pwgqm7VFPOVIWUAWd+WXNhggFAg02faa9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GvEi4prI50cVh5w+x4vmek596cwOorGDkrc9ogDbpkM=;
- b=DMbacLy/l09kahl3+plTXd/DlNAY/MVnBC0RZsFo0wy/eTuyOH8R04B6+LQEcZMW7weDMxYfQlln6G0nlmvjVWtEssevl7AVc9KPua9ioTPJUUDoICPQ6jaY3Ibk+S9DnkgqFI1y6ITworC3qP5xJQKsc6FzcNj7wi83HlML/PeUt9ohsFMWIGsiIR0DLgKcoH3mNXTaXb97INtjw7+1x8O3xUnbquEl/EGD7nLWHeROD3BNYomrUhw6TrG45qY6nR27Nkpd53dUxIRQ8Pgydg3/80IoBeHhRafiADtlncWZc1cPZRslaD6LmcavRqsVdEnLMEtQc2P2F/rEj1AUXg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SA1PR02MB8447.namprd02.prod.outlook.com (2603:10b6:806:1f6::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
- 2024 06:11:11 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%7]) with mapi id 15.20.8182.018; Tue, 26 Nov 2024
- 06:11:11 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] x86/hyperv: Set X86_FEATURE_TSC_RELIABLE unconditionally
-Thread-Topic: [PATCH] x86/hyperv: Set X86_FEATURE_TSC_RELIABLE unconditionally
-Thread-Index: AQHbNS9UbXwh5KJBoU2oxHpKRgf4mrK0CjPAgAtX/gCABEfyYIAE/TWAgAB/NKA=
-Date: Tue, 26 Nov 2024 06:11:10 +0000
-Message-ID:
- <SN6PR02MB4157344DE32DF479543CC2CED42F2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References:
- <173143547242.3415.16207372030310222687.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <SN6PR02MB41575A98314B82C498A3D312D4592@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20241120005106.GA18115@skinsburskii.>
- <SN6PR02MB4157121B6CD9F5CAAFB39637D4232@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20241125222457.GA28630@skinsburskii.>
-In-Reply-To: <20241125222457.GA28630@skinsburskii.>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA1PR02MB8447:EE_
-x-ms-office365-filtering-correlation-id: ba9215af-d044-467c-a93b-08dd0de11fda
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|8060799006|461199028|8062599003|15080799006|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?e6lEXR0mbR2yBac2aEUaK9fgQfHyRqlabiE+opf7Bwr/9UtUuX94eacR6gBQ?=
- =?us-ascii?Q?e7DI+rQDoVQsG27j7f6o74j9xyv5S4LUZjGs6CpIAn1Ggu4XQw3cVa+nM323?=
- =?us-ascii?Q?BJ/StO7LTiGjEi+Hn9HIK072WgHyvhHc4tfJX9Ckg3DRCfBDguEXa9fu5wjy?=
- =?us-ascii?Q?8GBzKbl3AtTdLW+699dwrG00SPNphsGaehll3qV6Op9dOe9WquS8tnlQb2lg?=
- =?us-ascii?Q?0rm9kH+zyhsaeDNE5GQ7Xro+lA6RMkQWj6+lAziJ9MyFxJXLAL963KE0SRMh?=
- =?us-ascii?Q?DmV/8IfMcPX4n2Qm1TU9rq730ypnOOmBLXQaXjX6F0NrmSDAIBkkieY0ROKJ?=
- =?us-ascii?Q?Tjg23JTLEEFoGkXZ1HTmEph6l+452mzQYmnBildV0jqhbPowm9hVdkNQ7c6M?=
- =?us-ascii?Q?7X1Hvv+F65RY/wMGNB4ReIsdR30c8gS1+lHRqPpZkHFZKiGEdHYcVKtpH/b0?=
- =?us-ascii?Q?WDN08Tkum5xC7aa+CUgDfxPtt9YFIAGaWQ7wPZs2ukL4DIOTUhY3Vaw0RmeC?=
- =?us-ascii?Q?4La5Qc5IsicjX7zkDgS4U4aN/Dk58P64OAvjyIcagJNmFUqjFFaE9EAOVjeK?=
- =?us-ascii?Q?bK4wepGh63F5ia7OfNPUpcT3GhvfBUVRTUwEV2wKa7w2Ni5YfsJmnCRGggS4?=
- =?us-ascii?Q?fhDOneG7vrFOGTsVsWlbRlisv4GpM9bKZC3fFjDM6ugstoR40q2fbyCHxLji?=
- =?us-ascii?Q?POGRHKZliwCJXegiS/r81vPbngcuYChqfp7lRaxO7SDAhM179jBBv5dMm9T8?=
- =?us-ascii?Q?Amy+hzO73P1A2edTS0rAdMDl9pMqoLTkJsYQvz74DzJUwd5Lwg49wefc9NCp?=
- =?us-ascii?Q?rEyuHZvzIPjHu2k7XqoBzfcSdZef9Fcd4nRibXs/HAJgu/5FzWmnggW1HqQH?=
- =?us-ascii?Q?Uc4HleI/vG0IE267bOQr8Fw9jZEnJnyobdzLGmspM28fCu8ILEo33kP3S+el?=
- =?us-ascii?Q?/cEaETpEyK0eNV/cGK17Imu9NMibsjqFcH6/BamEXQ+Z3kr/XSznj4adKGxU?=
- =?us-ascii?Q?V/7P4hyIT2OFc1lecDuw8lZMSw=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?BWbf6P1OOHMqzyI2ibxVaKGT/o55bthjHoLql1Rk9r9wevod+lKOTGlDeRKD?=
- =?us-ascii?Q?aCQ+Po+zmMQBaA5CP4/24uovEj8JhhOrJ043dNEuESIpGfKsdtlYDGsjPkW/?=
- =?us-ascii?Q?p0unugFgVJDvJOpZCKC22hssXTjQB3uCYBoCOcQZ6y+Fm1wpb3M2UYzqdG7S?=
- =?us-ascii?Q?LExgJ6+DkvJ4MhznysAaroo3Mh2R2QOzfmTo2NqaErpRE8KGkG/KUKPUAdip?=
- =?us-ascii?Q?V78yjyaZbh56IszytlDx+4uYMKiwI3D+ZaCoUVHUOlyFAEyLSMZydIx2iWmk?=
- =?us-ascii?Q?Mdq0MUFru+JRQGdAmlM+EOP8vQ7tWmVhurPpRrNS54RYUnijt+BqsEi9o91J?=
- =?us-ascii?Q?DmMlXeNDDiLoYXk8Zqt9SfiBa2sl4rG4GOVqnqUFnZEoVUuvbjFqa5XS0fif?=
- =?us-ascii?Q?df8AHJanuIVlng0cycL2k3COVnXyFOh6qBrDQsl3M6kOmTKzHRIaKyuWPCjf?=
- =?us-ascii?Q?Rb/i0KDF0yQap6rTwKSCrDE/RIjQQ7Y+9vUwTbsTtXhdJZM/4ToPR+zisIsL?=
- =?us-ascii?Q?Rd1SMxhkToOJ7DK5omtkkgRaFqdDgI5DJI1+Krpcn04ArroAaDbjIJLEOcM8?=
- =?us-ascii?Q?/7Qq/fgjFATsL10XELJlKqEl9ytOD6Wd6Sqw8C4VRgycQi+CYz9DI3pBKDHh?=
- =?us-ascii?Q?1jWEJZb6aN6CCjdhFQinQludWEqokxAD5yeko2dy45ySRX6jRUVaUKGToJaS?=
- =?us-ascii?Q?2a5YOHRI3kzWq50nExP+0bLT4ypHij8nW23FGkOeo8v1zDi4ObiPGjeC8GRL?=
- =?us-ascii?Q?4j6CDgG+5u82TLAHf20uYQLLkVQPd7s3LpPN1b0t7SONfcnDI8jkmDxhzBLw?=
- =?us-ascii?Q?BVJ0DavIZ0A04npPIvYnJoxAetRM9/luKLP30NNyTXeKF8+6L/S3R27AgOXL?=
- =?us-ascii?Q?ZsaipJuyLPrEDx8u4MAnuI8xGczcof/AAZHqWiC71DY8UY50/ZqCyz6ysNF+?=
- =?us-ascii?Q?FcOmlKRBAZQp1eV0NNymJQw/Y2/SYbSi0nNVpCOUn3c47Y82c3Oxy9zsKIXj?=
- =?us-ascii?Q?O4knK+mx49Mjrh8H+3RhsZdJi1vjZIzy1Xfux1+UHGjH3+X3sDpULhI/cwBF?=
- =?us-ascii?Q?dDv/e/DfsQBjqvTo2EJS9+IJCnQBUR4jDXY6a2ijrI6qQeKOWlc/0SHqsApO?=
- =?us-ascii?Q?ZMw0cwlaYC4jMSnx1H1iCJXtIgtZnKA/AJVgKKmBwfE0VXOioD5BW+3daynW?=
- =?us-ascii?Q?JJiuA+3E8HmmRQ2ODNrmpP4LuiiJyNLlD0n6qv0GtvGvFsad2ZdlqylfaU8?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10E14C8E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732601885; cv=none; b=hWbSJsp90pLA+qwQu0eSfvSxiyOH/CNnfHgdSc2NgxWxUOeuooG39M8KHwzEuFutjFKlKT9XSowLYf6pNPVF9U7/7ph4+oCm+7Vmo8mz1/dwSSjhxO1BxWFdO+zzVmrvAwMFhEB9oNfsVrAjF3tvL+WzZx+PHkUm5RJ/peG/zb0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732601885; c=relaxed/simple;
+	bh=Qpm9QckVXXb1I47uG9Cbd0F9B7qgMLOqlrzqwDWvSi0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W1OCUVF4jeEoWrB+3XGCAf4hBmhUGJboFy5F89RSCjKJueaQsANVG+2bApruWq4aZbOf3ogvOwjdVv+3Z6v8+7+H8X5Qvce4LJ1XnSqwgsC3Slwks9Tw6WfWMInnWF3NPCqLkyODV5Gkn8eTS48bCqgGXdb/Bhj8aPLtoZ3bt/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7bfddbfbdso1907965ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:18:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732601883; x=1733206683;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pL2C14kac8GxQPAK0YBWf+8pIClL7rO8LcoNOTLxqyw=;
+        b=sZLZxy8bCXoDBIZLhv4GEaiJLuWhbe3uphRl61//P9wgjBrawqgVIJ4P/qD545Nqg9
+         4vr4LKGwkfvHEVDywlV4SFWU7DNn+FS7vuds81RQ840Y0stu044VeUfspCW5qUXzusTF
+         0JtjmASn6d6Rsa6LLq2JPjUXGF8+nPSB67sz+JCjiDHyW3irh0aqoA9bVklLYkSyb0Pz
+         wBdN+9JaFgQAyj2nLnmhVWKjw16V16m9cjEUBjcPJIsl9BTKRPChT3Psl+3cUR+jGvOb
+         Mi+LWRfp0BiIrlNPiFytIhTIZ4WT1kQ//ug2hz2UwPU1dGdc29MA6sAPmV/R7OTJnCuY
+         Fc+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXMKO9RLnQAnHE/l7CWOMCDMYb0pxLql1IT5KLZvIsQamh+v1UgYsI9Bcq4oL2k3MQMNUz/GxXO9qZ1oig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJKfoaN7w5fRUY1cHiHKUtsgPdrhCkvrCyaN29w1R3B17/QZnk
+	VJ9ivaCugJyVP3VhDH07DVE8YSRiuxKD823jSd+YvIbQSJ1U0WmEx2o4XkUuPcHeHEYYS5S9Rt+
+	F2nz8OPfKO0cxOpNIzgbEZvzi9AfTPi0Qi5hP/9Z9IrrdgyOw03qIELk=
+X-Google-Smtp-Source: AGHT+IHHuq1eA3d/8v5iJGzp/2kIAPVqTOHn3ot2tTzc6xBRcSU0Ootp/4mSOLTvkGzObB+BmF/GaR+5C5nepmxcl8Pnkc+StMwI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba9215af-d044-467c-a93b-08dd0de11fda
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2024 06:11:10.9418
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR02MB8447
+X-Received: by 2002:a05:6e02:164d:b0:3a7:7811:1101 with SMTP id
+ e9e14a558f8ab-3a79af1e894mr172826015ab.20.1732601883112; Mon, 25 Nov 2024
+ 22:18:03 -0800 (PST)
+Date: Mon, 25 Nov 2024 22:18:03 -0800
+In-Reply-To: <67447614.050a0220.1cc393.007f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6745681b.050a0220.1286eb.0010.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_evacuate_bucket
+From: syzbot <syzbot+bd56952613b5dae47ca4@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Monday=
-, November 25, 2024 2:25 PM
->=20
-> On Fri, Nov 22, 2024 at 06:33:12PM +0000, Michael Kelley wrote:
-> > From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Tu=
-esday,
-> November 19, 2024 4:51 PM
-> > >
-> > > On Tue, Nov 12, 2024 at 07:48:06PM +0000, Michael Kelley wrote:
-> > > > From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent=
-: Tuesday,
-> > > November 12, 2024 10:18 AM
-> > > > >
-> > > > > Enable X86_FEATURE_TSC_RELIABLE by default as X86_FEATURE_TSC_REL=
-IABLE
-> is
-> > > > > independent from invariant TSC and should have never been gated b=
-y the
-> > > > > HV_ACCESS_TSC_INVARIANT privilege.
-> > > >
-> > > > I think originally X86_FEATURE_TSC_RELIABLE was gated by the Hyper-=
-V
-> > > > TSC Invariant feature because otherwise VM live migration may cause
-> > > > the TSC value reported by the RDTSC/RDTSCP instruction in the guest
-> > > > to abruptly change frequency and value. In such cases, the TSC isn'=
-t
-> > > > useable by the kernel or user space.
-> > > >
-> > > > Enabling the Hyper-V TSC Invariant feature fixes that by using the
-> > > > hardware scaling available in more recent processors to automatical=
-ly
-> > > > fixup the TSC value returned by RDTSC/RDTSCP in the guest.
-> > > >
-> > > > Is there a practical problem that is fixed by always enabling
-> > > > X86_FEATURE_TSC_RELIABLE?
-> > > >
-> > >
-> > > The particular problem is that HV_ACCESS_TSC_INVARIANT is not set for=
- the
-> > > nested root, which in turn leads to keeping tsc clocksource watchdog
-> > > thread and TSC sycn check timer around.
-> >
-> > I have trouble keeping all the different TSC "features" conceptually
-> > separate. :-( The TSC frequency not changing (and the value not
-> > abruptly jumping?) should already be represented by
-> > X86_FEATURE_TSC_CONSTANT.  In the kernel, X86_FEATURE_TSC_RELIABLE
-> > effectively only controls whether the TSC clocksource watchdog is
-> > enabled, and in spite of the live migration foibles, I don't see a need
-> > for that watchdog in a Hyper-V VM. So maybe it's OK to always set
-> > X86_FEATURE_TSC_RELIABLE in a Hyper-V VM, as you have
-> > proposed.
-> >
-> > The "tsc_reliable" flag is also exposed to user space as part of the
-> > /proc/cpuinfo "flags" output, so theoretically some user space
-> > program could change behavior based on that flag. But that seems
-> > a bit far-fetched. I know there are user space programs that check
-> > the CPUID INVARIANT_TSC flag to know whether they can use
-> > the raw RDTSC instruction output to do start/stop timing. The
-> > Hyper-V TSC Invariant feature makes that work correctly, even
-> > across live migrations.
-> >
->=20
-> It sounds to me that if X86_FEATURE_TSC_CONSTANT is available
-> on Hyper-V, then we can set X86_FEATURE_TSC_RELIABLE.
-> Is it what you are saying?
->=20
+syzbot has bisected this issue to:
 
-No. Sorry I wasn't clear. X86_FEATURE_TSC_CONSTANT will
-be set only when the Hyper-V TSC Invariant feature is enabled, so
-tying X86_FEATURE_TSC_RELIABLE to that is what happens now.
+commit 33dfafa90285c0873a24d633877d505ab8e3fc20
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Jun 19 13:55:48 2024 +0000
 
-What I'm suggesting is to take your patch "as is". In other words,
-always enable X86_FEATURE_TSC_RELIABLE. From what I can tell,
-TSC_RELIABLE is only used to disable the TSC watchdog. Since I
-can't see a use for the TSC watchdog in a VM, always setting
-TSC_RELIABLE probably makes sense. TSC_RELIABLE doesn't
-say anything about whether the TSC frequency might change, such
-as across a VM live migration. TSC_CONSTANT is what tells you that
-the frequency won't change.
+    bcachefs: Fix safe errors by default
 
-My caveat is that I don't know the history of TSC_RELIABLE. I
-don't see any documentation on the details of what it is supposed
-to convey, especially in a VM. Maybe someone on the "To:" list
-who knows for sure can confirm what I'm thinking.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=117715c0580000
+start commit:   9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=137715c0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=157715c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
+dashboard link: https://syzkaller.appspot.com/bug?extid=bd56952613b5dae47ca4
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124c25c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164c25c0580000
 
-Michael
+Reported-by: syzbot+bd56952613b5dae47ca4@syzkaller.appspotmail.com
+Fixes: 33dfafa90285 ("bcachefs: Fix safe errors by default")
 
-
-
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
