@@ -1,189 +1,184 @@
-Return-Path: <linux-kernel+bounces-422488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88C39D9A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:12:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBD39D9A3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:13:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C2F165278
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CD32842B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065A71D61A1;
-	Tue, 26 Nov 2024 15:12:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448711B85E4;
-	Tue, 26 Nov 2024 15:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5F51D61A5;
+	Tue, 26 Nov 2024 15:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwYkzVdj"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037D71B85E4;
+	Tue, 26 Nov 2024 15:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633943; cv=none; b=ujxegoQi0HSpGIcf4wLvEzDlMAbZd7Jvw64UcBY4xDnZAKv1yNAjK97cF50ntnC6jWOqKjp523+uUConYdtQw8emBAjaBPNSrCD3J6Qp79dNcgWnqJtDiquEZwLyrZ4U+HbMnwZQpg3ppSJgDntATLAkKcR/yt/pCWrSJCa79Rc=
+	t=1732633973; cv=none; b=uc+Tshq0cGLK+hOMVtXKUJFAt9aElbh0125lahTcrmhqQskQ0ncu8VRz+RdMKGVIAqPlQSIemCQrTVg55019vf9TsYU5E3okkdMpFCRcx7+q8UDz6Q9pLHbJ4t429qMi6r4lY1rPlG6KLoNlcLtaUglNYIr8FbaNfnfJZuyAMFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633943; c=relaxed/simple;
-	bh=6yIrsDo7uuH/Wh2L9KpZduZHTrnXxRZBbM8iSiV9dB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6qmfiY4XGt1uoskzRMB1yK8ZZRPoU/WxdowQJMPPaux9H4NOLM/WDYzt2TthMZqG4JauKO36TsTE1Cs7khE7rSl9Oisz9rdIYQ8Kp/T3DOb0eNuYGc2O7l2HGz/qyrbcUzSMEvKiVvoFRJkTmKZN5bU74t3yw/0+WPQ9awd1sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0591150C;
-	Tue, 26 Nov 2024 07:12:49 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EE053F5A1;
-	Tue, 26 Nov 2024 07:12:17 -0800 (PST)
-Message-ID: <9aa93862-932c-4a17-a3ba-f6335649e555@arm.com>
-Date: Tue, 26 Nov 2024 16:12:04 +0100
+	s=arc-20240116; t=1732633973; c=relaxed/simple;
+	bh=1cDWZTRMPL38LJP5sGJcBCBhpS/kHENxHbMHPpkOpeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=teXUxUtjMSTvdBSzXVEnRhulYjw2ZS3K7dxyf5Y7HiVnP4tFL/v8vuT+98qScpTnH+9Xbuwoq8c7m1llE80WVNVqkzjnMl2uUYgaKHs6jCTYNuooUjC+sw8iGDaprDwTNlM6Y/Iv/RkcHGVkCp+Okpjbo7G2PzH7DCrgLVIfTg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwYkzVdj; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso26393721fa.2;
+        Tue, 26 Nov 2024 07:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732633970; x=1733238770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MgEjlw55Z49/v6BoNwsnoX/cUraYKdi/pNCtZCSB7Ko=;
+        b=BwYkzVdjR9G/W+cgGSMt7Cf9aQyvppQPnrR5ZwDepJMXXY2yh6CUrCZZY17uhOX7MG
+         iWo/vBJpcgxiE2ssXc71001fwBLhWj8nj2wjM2zvwOE+G1I9MIjrkx9mklWPdExNWnH1
+         wvnwafcqbenXsoRkJOYjvbGqKe1MynKAIQ6zvWvY7b6TRmom+q5XGVnU6pAcfiTeRyML
+         jGRUS91Fmmi8Det6mDiuYdy8REZLsv6/qY6+urD56MEvANujdUTTmNGbSNL+hj/C2mAh
+         QkgCxhggGSvf+Ld1qEVuPk1pGl3TFdr1dJosSCtFFohkdQm7ZUT9Zaf8wkkwGZbkPqwX
+         z3Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732633970; x=1733238770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MgEjlw55Z49/v6BoNwsnoX/cUraYKdi/pNCtZCSB7Ko=;
+        b=vQDxZjy4PCV/imx9oE8ujVLVuXZeeEPnabkFhSCYL+ZYYo+rZ6m+Z+6S3CIHMZ0l+P
+         rL+ksHIDpuxNwgr4oUsMkoBeCAdZFhNdscUoiE2FILWeqkKqJUlCVxn99JNbrdMeKdZe
+         ak8yJNycW84pIzslMry78qt2wiuvzC+n0k5U7LtVVvIlaHVMUsY0XsJr+S0BapCNrhXV
+         GJ6TXoCbGyyjGn1HDgwBgWN3yMO61Jdyljx/aHxMu86ISJqIMVcKecPnsOvP9rPSHqNo
+         20R635VvQHrBXOM5csgIG3FEMprsQ1SMp/mOL0Pg/V5aF1l/gRPVbEdMEH3F7kuERzD3
+         UhOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdYem0lEsT04UP44KToZcqAgNf3PnbSVncPSvuaDHKrdT56RBV3oNLP39DrIyiBJkCR/0eW5sMlcczPRyN@vger.kernel.org, AJvYcCVJLvzsW0XZsh+mjhBL8KtmO70e0fonozHwHKbmVSSKAx4clqR5XzFLt5epr/09PRj+/cf2L4Rr+XVitaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuKH8oTjXUvWdAoxWQjrAcVuWQ7X67KXXncSUnJ9qAe0vGkBzi
+	9O4B8DKCd0vkP0BPIOtqkpkrLITwSxcefYSqB5D80q58HQ8k7swrXQOum/pnsWH4Z/wflStFodE
+	u2e2ekdmCKRJP4w1Kcs9b55+IVls=
+X-Gm-Gg: ASbGnctbvGStRDLwLDGIAAghpzVkbL8z3dopG9/Cf1w/aPCYyE5ECIFEUk0AWShq958
+	AxlRu+KJQyCI4aAqQl27lYN5MZj7f0ChU6A==
+X-Google-Smtp-Source: AGHT+IEx8aBvyUxwX4KhjDAPapgTtn8RVsUoKeJKHRReDtlqe14IiV4PkqpM5iqQHZaEknXnRRjDkrEE1MjdQDxEFHE=
+X-Received: by 2002:a05:651c:905:b0:2ff:5e46:ab04 with SMTP id
+ 38308e7fff4ca-2ffa71905d7mr104011571fa.22.1732633969766; Tue, 26 Nov 2024
+ 07:12:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-To: Cristian Prundeanu <cpru@amazon.com>
-Cc: kprateek.nayak@amd.com, abuehaze@amazon.com, alisaidi@amazon.com,
- benh@kernel.crashing.org, blakgeof@amazon.com, csabac@amazon.com,
- doebel@amazon.com, gautham.shenoy@amd.com, joseph.salisbury@oracle.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tip-commits@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
- x86@kernel.org
-References: <20241017052000.99200-1-cpru@amazon.com>
- <20241125113535.88583-1-cpru@amazon.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20241125113535.88583-1-cpru@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241123132237.15700-1-sedat.dilek@gmail.com> <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
+In-Reply-To: <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Tue, 26 Nov 2024 16:12:15 +0100
+Message-ID: <CA+icZUV9Wbpw5DbGgkd3BYrU5xA9A9rHnX85Mc_4u6PajygjiA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Fix names of .tmp_vmlinux kallsyms files
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/11/2024 12:35, Cristian Prundeanu wrote:
-> Here are more results with recent 6.12 code, and also using SCHED_BATCH.
-> The control tests were run anew on Ubuntu 22.04 with the current pre-built
-> kernels 6.5 (baseline) and 6.8 (regression out of the box).
-> 
-> When updating mysql from 8.0.30 to 8.4.2, the regression grew even larger.
-> Disabling PLACE_LAG and RUN _TO_PARITY improved the results more than
-> using SCHED_BATCH.
-> 
-> Kernel   | default  | NO_PLACE_LAG and | SCHED_BATCH | mysql
->          | config   | NO_RUN_TO_PARITY |             | version
-> ---------+----------+------------------+-------------+---------
-> 6.8      | -15.3%   |                  |             | 8.0.30
-> 6.12-rc7 | -11.4%   | -9.2%            | -11.6%      | 8.0.30
->          |          |                  |             |
-> 6.8      | -18.1%   |                  |             | 8.4.2
-> 6.12-rc7 | -14.0%   | -10.2%           | -12.7%      | 8.4.2
-> ---------+----------+------------------+-------------+---------
-> 
-> Confidence intervals for all tests are smaller than +/- 0.5%.
-> 
-> I expect to have the repro package ready by the end of the week. Thank you
-> for your collective patience and efforts to confirm these results.
+On Tue, Nov 26, 2024 at 4:01=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Sat, Nov 23, 2024 at 10:22=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.c=
+om> wrote:
+> >
+> > For details, see thread "kbuild-next: .tmp vmlinux syms files"
+> >
+> > INFO: This patch is against Linux v6.12.
+> >
+> > Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkj=
+tm4vSVKkXPTg+Q@mail.gmail.com/
+>
+> This is not the right way to input a commit description.
+>
 
-The results I got look different:
+Hi Masahiro,
 
-SUT kernel arm64 (mysql-8.4.0)
+I can add a proper commit description in v2.
 
-(1) 6.5.13					    baseline	
-
-(2) 6.12.0-rc4 					    -12.9%
-	
-(3) 6.12.0-rc4 NO_PLACE_LAG			     +6.4%		
-
-(4) v6.12-rc4 SCHED_BATCH			    +10.8%
-
-5 test runs each: confidence level (95%) <= ±0.56%
-
-(2) is still in sync but (3)/(4) looks way better for me.
-
-Maybe a difference in our test setup can explain the different test results:
-
-I use:
-
-HammerDB Load Generator <-> MySQL SUT
-192 VCPUs               <-> 16 VCPUs
-
-Virtual users: 256
-Warehouse count: 64
-3 min rampup
-10 min test run time
-performance data: NOPM (New Operations Per Minute)
-
-So I have 256 'connection' tasks running on the 16 SUT VCPUS.
-
-> On 2024-11-01, Peter Zijlstra wrote:
-> 
->>> (At the risk of stating the obvious, using SCHED_BATCH only to get back to 
->>> the default CFS performance is still only a workaround,
->>
->> It is not really -- it is impossible to schedule all the various
->> workloads without them telling us what they really like. The quest is to
->> find interfaces that make sense and are implementable. But fundamentally
->> tasks will have to start telling us what they need. We've long since ran
->> out of crystal balls.
-> 
-> Completely agree that the best performance is obtained when the tasks are
-> individually tuned to the scheduler and explicitly set running parameters.
-> This isn't different from before.
-> 
-> But shouldn't our gold standard for default performance be CFS? There is a
-> significant regression out of the box when using EEVDF; how is seeking
-> additional tuning just to recover the lost performance not a workaround?
-> 
-> (Not to mention that this additional tuning means shifting the burden on
-> many users who may not be familiar enough with scheduler functionality.
-> We're essentially asking everyone to spend considerable effort to maintain
-> status quo from kernel 6.5.)
-> 
-> 
-> On 2024-11-14, Joseph Salisbury wrote:
-> 
->> This is a confirmation that we are also seeing a 9% performance
->> regression with the TPCC benchmark after v6.6-rc1.  We narrowed down the
->> regression was caused due to commit:
->> 86bfbb7ce4f6 ("sched/fair: Add lag based placement")
->>
->> This regression was reported via this thread:
->> https://lore.kernel.org/lkml/1c447727-92ed-416c-bca1-a7ca0974f0df@oracle.com/
->>
->> Phil Auld suggested to try turning off the PLACE_LAG sched feature. We
->> tested with NO_PLACE_LAG and can confirm it brought back 5% of the
->> performance loss.  We do not yet know what effect NO_PLACE_LAG will have
->> on other benchmarks, but it indeed helps TPCC.
-> 
-> Thank you for confirming the regression. I've been monitoring performance
-> on the v6.12-rcX tags since this thread started, and the results have been
-> largely constant.
-> 
-> I've also tested other benchmarks to verify whether (1) the regression
-> exists and (2) the patch proposed in this thread negatively affects them.
-> On postgresql and wordpress/nginx there is a regression which is improved
-> when applying the patch; on mongo and mariadb no regression manifested, and
-> the patch did not make their performance worse.
-> 
-> 
-> On 2024-11-19, Dietmar Eggemann wrote:
-> 
->> #cat /etc/systemd/system/mysql.service
->>
->> [Service]
->> CPUSchedulingPolicy=batch
->> ExecStart=/usr/local/mysql/bin/mysqld_safe
-> 
-> This is the approach I used as well to get the results above.
+>
+> >
+> > Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > ---
+> >  scripts/link-vmlinux.sh | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> > index a9b3f34a78d2..c9088436baff 100755
+> > --- a/scripts/link-vmlinux.sh
+> > +++ b/scripts/link-vmlinux.sh
+> > @@ -203,8 +203,8 @@ kallsymso=3D
+> >  strip_debug=3D
+> >
+> >  if is_enabled CONFIG_KALLSYMS; then
+> > -       true > .tmp_vmlinux.kallsyms0.syms
+> > -       kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
+> > +       true > .tmp_vmlinux0.kallsyms.syms
+> > +       kallsyms .tmp_vmlinux0.kallsyms.syms .tmp_vmlinux0.kallsyms
+>
+> If you aim for naming consistency, this should be
+>
+> .tmp_vmlinux0.syms
+>
 
 OK.
+I was thinking of this, too.
+I can change this as well.
 
->> My hunch is that this is due to the 'connection' threads (1 per virtual
->> user) running in SCHED_BATCH. I yet have to confirm this by only
->> changing the 'connection' tasks to SCHED_BATCH.
-> 
-> Did you have a chance to run with this scenario?
+The rest below is OK?
 
-Yeah, I did. The results where worse than running all mysqld threads in
-SCHED_BATCH but still better than the baseline.
+Thanks for your comments.
 
-(5) v6.12-rc4 'connection' tasks in SCHED_BATCH		+6.8%
+Best regards,
+-Sedat-
+
+>
+>
+> >  fi
+> >
+> >  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; the=
+n
+> > @@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
+> >         # Generate section listing all symbols and add it into vmlinux
+> >         # It's a four step process:
+> >         # 0)  Generate a dummy __kallsyms with empty symbol list.
+> > -       # 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and sec=
+tions,
+> > +       # 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and sec=
+tions,
+> >         #     with a dummy __kallsyms.
+> > -       #     Running kallsyms on that gives us .tmp_kallsyms1.o with
+> > +       #     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.=
+o with
+> >         #     the right size
+> > -       # 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms se=
+ction of
+> > +       # 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms se=
+ction of
+> >         #     the right size, but due to the added section, some
+> >         #     addresses have shifted.
+> > -       #     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
+> > +       #     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
+> >         # 3)  That link may have expanded the kernel image enough that
+> >         #     more linker branch stubs / trampolines had to be added, w=
+hich
+> >         #     introduces new names, which further expands kallsyms. Do =
+another
+> > --
+> > 2.45.2
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
