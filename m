@@ -1,83 +1,202 @@
-Return-Path: <linux-kernel+bounces-421767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E57F9D8FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:15:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5583E9D8FE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:26:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C316A17F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:15:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AD128AEB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13847462;
-	Tue, 26 Nov 2024 01:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47710C2C6;
+	Tue, 26 Nov 2024 01:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="YV+FjsIW"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB7366
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732583708; cv=none; b=COB1ti6XffBWcbSZ9KP3T2MktkF4IKKQisxfQRRCZ49YU96Sww6SRxJbglDP2r61JUwgZJjWvJPgS6kP9TKJe2MZSk+8GXqmmTqDI0pPvR9CVHpjuMkn7kH5P7ZIYCney4yyDuQF6mdHI4QqUiR6QUv7cihQs7IFjR2f6yJ+N9U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732583708; c=relaxed/simple;
-	bh=2yuysnV02a4CzIOOVXofXYfXtfARaO94j3uteMW9WFU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=S8J6yPa+LLk5OV4pJbu6qZlSQb/lmgRyiSP+eXbkxvCnsq2bE/jAobw2eticMFQN1WAJDnBtV0CFHXwJAjJicxyyQSnND0IxF2FU+7cxEe6HQMXSlmmf534IcB+EZPOpHLnBHEuorrzAx7ACl769TJH2Ee6CAyOB066oJagON+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=YV+FjsIW reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=ry8fBf6FGCzsakWdDXXWiUm/M0LoMji6G/q4p0tzlp8=; b=Y
-	V+FjsIW7EXRef7LA0okBKVT8+SbsO/GuaEhMgdtfzorA08g5AHs5cVz1p7rRJJR1
-	McFepmiCY4c0VbxFl0wvl6lhIA/rqE0ucCIJ2zGz9NTHFS6N0IkoxZ4UFpPrVsZN
-	Cv7y3Zz1ICwigpiGyBEnzQgpxTFvYSUJ9UTslBRy2U=
-Received: from 00107082$163.com ( [111.35.191.191] ) by
- ajax-webmail-wmsvr-40-142 (Coremail) ; Tue, 26 Nov 2024 09:14:50 +0800
- (CST)
-Date: Tue, 26 Nov 2024 09:14:50 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Suren Baghdasaryan" <surenb@google.com>
-Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: Abnormal values show up in /proc/allocinfo
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
-References: <20241124074318.399027-1-00107082@163.com>
- <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
- <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com>
- <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
- <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
-X-NTES-SC: AL_Qu2YAPmTvE4i5imRZukXn0oTju85XMCzuv8j3YJeN500uCbc4yoqcnBcEH374sOXLyCSvxeaWQFCz+FBfaRjYaMOKRQeBQ55hIiLtGgzIMvY
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MWPx1a7/"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E4D15E96
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732584393; cv=fail; b=Iu/Y6vCq3iY5OTKBazqWcQcRBYU/djLO2l9KatwFKcFNlDBnCIpSuLYpvLHeujYm2MC2VxJVntNkSeIFmk5eLcNqbQfmCLYVykXEvrB6tcVNQiT2E61W+OeE+dzZRgEedHx3YRsZKM2mwoIwySumgu+t7TO5fS2lV7FsLcg/Jbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732584393; c=relaxed/simple;
+	bh=5TO1j03OSgJd5ybMDhzQGtqvzuhhYyR5T4eyIaIjUno=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ADxjI52MexNoyNUPGTwmf8buAsD3I78tCzKAnTsgO87BTClaLmjRyFxMhh67f4DdkMchwAgSeSqx3iSRvFrutcn75efwNsNLbPg4ue946X3TthgoRjEq1esf4O/8SWU9OqdxvZ78wJPBL90JWXhHeOy04TDzpcrjKY6Gjbvqqc4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MWPx1a7/; arc=fail smtp.client-ip=40.107.94.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X6VK4k8uKVQabLrZICQTgoUyMbeCwjyId/n0r+hMR7B4/6m/DtMFjNBMTtPoGnGMlXr15lg5y1/lHRKliTRvXoL4mflDG/g+97+UiLGX7nNuMH92nqbM9M7fvnYAJNZwp16E/dYLjt2Ivqv1KC/6uk/FAIFeLY1Ata52C8rptfBLfd3oVWvrsFqDBPKdO4hUh8yLCN8l8pID6AYoBItf9PFasAwG+QugCrshGNF/Jt9DKk3wzLCYEeIY4OUBqxk+iu09Zkg6pRemTwKI+ijgVecGuLjuImm9qwrYoRjqrpppnY16KY1/EsIT/g61ODhnfIK2lZSVSHIixrSuzF3Fxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RG+NXP5URyDs0Bq4CdYuf5CHHwZB8EVnXDECY1MLU+4=;
+ b=hg7nARiFRPgiWYqG0o2/COuD+lXTw9Ij3C7u3VAfzdhmV4xuprdvMcADNGtAS42vQjV8wM5DxDe2vj8HDAR1UrNDkF3xx6nByyvNyMh0kcX4jkUJ59TtziEVtRLxNZV5C8vcwh/d0qG0cws0UeBmz7dxVohIKEYuX/avI+DKViX2G4wZDQuuEBQYWtQjnIhWiBPjupAfHcgUaTM23cW4pUTcl2S9xq7p+2YV9jKchtyzPpqvNnk8Qw8AlkRo/JdDnfkot0nH+/1/NucnmbUxyKJCzX5+5g99gxvDmG4sWYW7sWvtVUdy1U4Bipyrf9hNXv+FfcOssg55znch1S/JoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RG+NXP5URyDs0Bq4CdYuf5CHHwZB8EVnXDECY1MLU+4=;
+ b=MWPx1a7/1NGzxItWV7BLj1zznMpKum1teiOlSdZoNAJh6I5XCAWAM4u/ySBCevFLPLkxJvdqVBudH7cWa6QbSnQ+btgpnZjy1DSMaQ9dQL64NvO/2YdPH0Hd/Y2vb1ZZ2OAKS3bmWkO3Bcmep3PBE++JhZqkytt2IfWJtIJj9zs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
+ by MN0PR12MB6295.namprd12.prod.outlook.com (2603:10b6:208:3c0::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
+ 2024 01:26:29 +0000
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf%3]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
+ 01:26:28 +0000
+Message-ID: <4c32e1f4-dc2f-4d56-a757-deef151fbea9@amd.com>
+Date: Tue, 26 Nov 2024 06:56:20 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soundwire: amd: clear wake enable register for power off
+ mode
+To: vkoul@kernel.org
+Cc: yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+ sanyog.r.kale@intel.com, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, Basavaraj.Hiregoudar@amd.com,
+ Sunil-kumar.Dommati@amd.com, venkataprasad.potturu@amd.com,
+ mario.limonciello@amd.com
+References: <20241112185138.3235375-1-Vijendar.Mukunda@amd.com>
+Content-Language: en-US
+From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+In-Reply-To: <20241112185138.3235375-1-Vijendar.Mukunda@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0230.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:eb::15) To DM6PR12MB4123.namprd12.prod.outlook.com
+ (2603:10b6:5:21f::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <51c19b31.eaf.193660912f7.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:jigvCgD3f6wMIUVn14AvAA--.59668W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxWjqmdFF+DfvQACsa
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|MN0PR12MB6295:EE_
+X-MS-Office365-Filtering-Correlation-Id: d604e12b-13c0-412f-20b5-08dd0db959d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R0dlcHplaGZ6SDdCMlFQZlAzRzBub29TcExDYStaT1JKcHZ2YXhGTUNaMzhT?=
+ =?utf-8?B?aXBlekZNd29ZZllHTTI4VGtyWjZxWGVQckhhK0RERHBsR1ovbE85RFphOStF?=
+ =?utf-8?B?THVvMGp0T1ZqeUdkUjFHQ3A5aU01ekRoL1lKUkwwYm40S0R1Vmc3N0lwN29L?=
+ =?utf-8?B?N0dRRTU4U2RwQnR3TkVpekt2eDVuc1FVQmtsdy9oZUdnNlJQN3BPWDB3TGho?=
+ =?utf-8?B?a0lzWWR1VzR0MTNtVWQybkd0dHM1VGdlT1dMTTJpVXRqSTVGZGdLeS8xSmkz?=
+ =?utf-8?B?K2tyeFFVWmtTZ3JsMzlXaU1LOHdYVWxEZVlTZTRGWjFkelhwWUVKNU82akg3?=
+ =?utf-8?B?d0pMUGlBenhNbFg2cjI5cnl3bDkwZU9aMHhxVXZzcFdIWUhYYklVYWxoTnVq?=
+ =?utf-8?B?dUs5NjZTeFUyWllVM29IRTd1cC9vcWJoU0lOYXZWZ3VWcEtVZWt4b1ZHRTVj?=
+ =?utf-8?B?eUdlaGpyRUVSZndBbkFkN0kzakJ1UHR3Lys1NU5ackhwTmpDZnhMTnRUd09L?=
+ =?utf-8?B?bG9xYzVDRzVBU2dXN2J3VElFd0RSQm9MOW9KQWl3YTE3K01CUytuTHVCNzhD?=
+ =?utf-8?B?RFJIYkJMSDVzWi9XN2w4WVlKVHl3MXZyYmw3UEFNNHUySmFTSGpSQnRPbmdT?=
+ =?utf-8?B?T2RoVnlINmUzckNGM0lZeHNhZmlwaGZSbjlXdHFaQWlsTkpVMWxoVHhid2kv?=
+ =?utf-8?B?czVJQzBxU1BRM0F2clRqaDBTcG9wUU00d0IrL001WTVpTjMzTHJYZ2ErUDFP?=
+ =?utf-8?B?V3NVME5pQWszZGxPc3l5L0JhOS82cGJTQ0JYM2hkTDhHSklLY3NXS0E5aXgx?=
+ =?utf-8?B?SjExMlNkVWdLMDZHMERtVENLQ2RVNG9IK3FjbXUzMGxtWi9CcFVIYUZabzdH?=
+ =?utf-8?B?OGk4eHRWck9JN01CMlFhcFVFR2tJOWNLNjB4ODhjMFI3ME4yL2RiRGRkTEhW?=
+ =?utf-8?B?Z2Ixb2hibmVIQjZFMnh5NjBWejMxQzYxMU52UFhtd0w3VHNkb0x6UEFxZHRR?=
+ =?utf-8?B?SmpLQStUWmdTUXRWcXlkT3IvdTBwdFd6Qlp4VVFaNXZCN0dHb2hoa3BpY2pU?=
+ =?utf-8?B?ZEhQSHh1N3ZRV08yOXVETmlRcUVIVHl0bVI3RDlFZ2NvZ1RhZEc1ZExIanVR?=
+ =?utf-8?B?Q05DUmRBbGxtUWtVYk5jMkpmMFg3eU5UUjZVLy9rMGJoK1RBR21nL0piV0N6?=
+ =?utf-8?B?SHc3VEJTcWNWNXRVL1RrUkZwMnZzSmZrWDB4cjdYWXF4RDA4OWxiRHdHdlM4?=
+ =?utf-8?B?YVZZZjRhVk9NNEllUGk2cGgxdWJGcU9rd3haMVMwUHFtQlBlS2Q4eUNhWVVo?=
+ =?utf-8?B?M3ltRExlYk1NbjZnMUZYYWtaazJzc3VnaHZUU1FaeitObVgvNVBQaWFqSjl3?=
+ =?utf-8?B?bmJqbzJibG9FRWRoc3VDWWkvQW1idmtJUC9BSzh1QUswbURrQktNM3lqOEp5?=
+ =?utf-8?B?NUF2Ui9OaWZ3V1l2ZEtWMStBQU4zWXYzV0lncXZtT09EcGFoRWJOSEJWT0ZC?=
+ =?utf-8?B?VXR2bUErOUxhM0ZoR0VFWUVoUmplZmRMM1dmZ0VEN3F1aXpraGVlRE9OcGtG?=
+ =?utf-8?B?WHArTGlkMXlWR1dCMjVSbisyNERET0JtZENTbms4czgvTVFGOUpZVEdCUE00?=
+ =?utf-8?B?MmZuZjdHeW9Ta3M0SFNSaCtEeUhlcUxFZ0hDS0hsU1EyV3pGZnZ0aklQTTZn?=
+ =?utf-8?B?NFdVTnAyMFpWVDNyVnhndWFjRVo0RUpGWWgycmV3Ny83R1BpRWI5SVhrd3ZL?=
+ =?utf-8?B?Q0xEeGh4YWNEZlNETmZqU0NlZXA0bmVTNS9sc2tTNmYzUzl0dnU5WVhDTmRv?=
+ =?utf-8?B?YjdXS2R2RUJRSU8wK0tvdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z05JVk5hR3d4djZrdXhEWG16U1lsSExlcXVIS2RwNjlxY0tESjB1OFZIU3BK?=
+ =?utf-8?B?ZlJJemNRTjRRdnBwMkZYMjZ6eGVoMVBGWDdBRXh0SDhCNURQMENPelY1bUdw?=
+ =?utf-8?B?eENLVWp3ekMvN3NuNnlneHpGTHR3d3pYT002Rm05NGJJeHh1K2xFcEVZRitB?=
+ =?utf-8?B?cmU2SnpyMlN5SkMvb2hWNDhQRHBISzV6TE9mK200Y3huamJFRENTYWltOVRw?=
+ =?utf-8?B?NmhTeGNzbkNKenJaVHRaY1pvUzhuNEdDMEY5OER3SnpmUG51TitreTBNSlpL?=
+ =?utf-8?B?RmlmcEV6UnMzeFJSbi82U3loSnV0ZzJ1UjIvWThYeUFjL2puMENpK3ExblJx?=
+ =?utf-8?B?SzE0Q3BGZkNKUDQvSFNlZDlBdFFEN04yVEh3MUUwSmFyQmRkTzJqWnNYMkxD?=
+ =?utf-8?B?L05IRWhycEJKSXhxemlVVGh2U09JbzhnOUg5VkxydzBQeExERWdrWm1OdC9T?=
+ =?utf-8?B?cThMc3NHNDFYQ3llV25VN2FwWnNFVk5Sby9UQTVFa2tFTlY0dHJvakw3cEZo?=
+ =?utf-8?B?KzgrbEVWVFRWcC9UbXZiM2U4U3pKSzZTY2NOVUZFTHpYTFk5ZlM0bTZob000?=
+ =?utf-8?B?Q2htMjMwYTcySTg2eDJBbldhRHFHNjNvVTRRU2NBd2JHQ2JXdXZiU1h4Z0Qw?=
+ =?utf-8?B?OG5rYlZjUkNFQW1pY0xIOUhrSExoMXFQbFlYWldka25xVllqd0QzSGJSWXNo?=
+ =?utf-8?B?VTVvOVA5blY4T0p2TDRabjF5NW0ySzBMTXhvNS9wZmMwQ3NWRmx6RDNQNXJi?=
+ =?utf-8?B?N25XUHZOaFRJbFRwd0dLNTM4UWJiT2JnUTloMTg2QVFMRVpRV3NXNjc3Qjl2?=
+ =?utf-8?B?UFB1TG1nU2tFcnMrckIvdTRPUFMwZUtramw1b2daUVozMnZKZEUyd1hta3B5?=
+ =?utf-8?B?RjVnckhXRDlKL0xwdThTVzlLWUZmazJLVVJ3ZjRPRmk3RUtIVHlHLy9CRVJh?=
+ =?utf-8?B?NnBMdHJoNFo5WmJ5Y3E2YjZFZy9jRThmUjF6akZuZURIL0dWNFZZa08rNXlr?=
+ =?utf-8?B?TWZQWHo2T2Q2QjZUeDgrYVVKYnFCayt2UjhwdnRVK01JM05SR0t0dlBQaXp1?=
+ =?utf-8?B?NEVXd0pZU0YrSUhMTjJLQkd3T2s4UDdFL3ExUS8rWm9keTRwTFVJUnh6L2RK?=
+ =?utf-8?B?eW5HYUVqaUFwdnBoUityOGFlZGF3cHVFS3J1bU1QdXdpMmptRGFvblZGa2pY?=
+ =?utf-8?B?VGVKVEpQWm9RV1ZuZTNIRFQ4K2s1M0RsZHpKU05OaWJzVStkM0prSU5Ka0lx?=
+ =?utf-8?B?TjllTXdWTDhTaTEyUmVPVVVqY0RwcjVOb0s0MEVXNmkvL3krRGlEYlZSRFNQ?=
+ =?utf-8?B?Si90WmhoT2FWd2htZTJ3aGoxNG1VTnZLQS9DVXNOblZjRkR1elQwQno4dEhS?=
+ =?utf-8?B?YzY3MFYycmNER3BEQUh1a0lRbDRpa2pWdURZbEdmekQ2SmdCM2xMZzZGSnl1?=
+ =?utf-8?B?a1N5MEdKbGlQRWFyb2EyYVZOcW8rdkpBT3JhYlN3SWxycFFiMFdza09SMXhV?=
+ =?utf-8?B?bW5pOElBZmRPZmQ1UWZKakIwUHBvV2dGbzRxSk10NFR5MXpSVjRFVHRjNFVV?=
+ =?utf-8?B?YjA3QUFMZG8zanhKeVl0alI2bVZRdm1WL2YxK1lidTFRSTdsNGtZRGN4Sm95?=
+ =?utf-8?B?c1VNTGlkeEdSRG9NSnJKVldBRlBTdG1zUFNvMVR0TWdBeFcyd0J2OTVOdytw?=
+ =?utf-8?B?dDB0bStCN002cTZ4bnNwNDlvajE0RHJ5SHhMeFZYVW9hNWk3WlNNQ0QxY2Zz?=
+ =?utf-8?B?NXNqUy9qZ3NaUStIN3NsY1lDTHo5ZTNmQXViYlJwWnFWSEV1SFo0OVFLdUwv?=
+ =?utf-8?B?QzdBY28vRmtna1B2ZVI1dnRIYnVRUWMzMU9wZDVYTUhWUGNVY3g3aDhzcmhE?=
+ =?utf-8?B?ZG5Wc0J4MVAwU1o5SVd5WGJkTXA2ZitxUVhIZ2hIemt0RGNYckdUZm5sQVlk?=
+ =?utf-8?B?bTF3S2xqNzFhVTVReDVjMGxSMGRobEpvVjZ3QktSSHcwMmwyS0pzR2M2UmN1?=
+ =?utf-8?B?RVd3eGhlSmlLSjlEQWlPajFmTSt1N1ZhWHpDdUNuNXZNTjNtck9kanNkSGxO?=
+ =?utf-8?B?RmVOTis5V1VDa1BJWmsvVWlPVDI2WWJrR2liMmxWcDN0YTIwb3E5dzhVckRr?=
+ =?utf-8?Q?pnY1+e6RVsclVZkgyJZxr7Ekl?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d604e12b-13c0-412f-20b5-08dd0db959d2
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 01:26:28.8847
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kL8CPU5pvgQfEzajFeuaB8fqnHQoVlhWtKMMMFEB3X1yFwJJKjEPt27SwKnAR65NwptNcybPXGu6oNHBb37TbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6295
 
-CkhpLCAKCgoKQXQgMjAyNC0xMS0yNiAwNDozMTozOSwgIlN1cmVuIEJhZ2hkYXNhcnlhbiIgPHN1
-cmVuYkBnb29nbGUuY29tPiB3cm90ZToKPgo+SGkgRGF2aWQsCj5Db3VsZCB5b3UgcGxlYXNlIGNo
-ZWNrIGlmIHlvdSBoYXZlIHRoaXMgZml4Ogo+Cj5lZDI2NTUyOWQzOWEgIm1tL2NvZGV0YWc6IGZp
-eCBhcmcgaW4gcGdhbGxvY190YWdfY29weSBhbGxvY190YWdfc3ViIgo+Cj5JdCB3YXMgbWVyZ2Vk
-IGFmdGVyIHY2LjEyLXJjNiBhbmQgaXQgZml4ZXMgYW4gYWNjb3VudGluZyBidWcgaW5zaWRlCj5w
-Z2FsbG9jX3RhZ19jb3B5KCksIHdoaWNoIGlzIHVzZWQgZHVyaW5nIGNvbXBhY3Rpb24uCj5UaGFu
-a3MsCj5TdXJlbi4KPgo+Cj5odHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA5MDYwNDIx
-MDguMTE1MDUyNi0zLXl1emhhb0Bnb29nbGUuY29tLwo+aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcv
-YWxsLzIwMjQxMDIyMjMyNDQwLjMzNDgyMC0xLXNvdXJhdnBhbmRhQGdvb2dsZS5jb20vCgoKTm8s
-IGVkMjY1NTI5ZDM5YSBpcyBub3QgaW4gNi4xMi4wOyBJdCBpcyBub3cgaW4gTGludXMnIHRyZWUu
-Ckkgd2lsbCBwdWxsIHRoZSBjb2RlIGFuZCBtYWtlIHNvbWUgdGVzdHMuCgpXaWxsIHVwZGF0ZSBs
-YXRlci4KClRoYW5rc34KRGF2aWQKCj4KPj4gPiA+VGhhbmtzLAo+PiA+ID5TdXJlbi4KPj4gPiA+
-Cj4+ID4gPj4KPj4gPiA+Pgo+PiA+ID4+IFRoYW5rcwo+PiA+ID4+IERhdmlkCj4+ID4gPj4KPj4g
-PiA+Pgo+PiA+ID4+Cj4+ID4gPj4K
+On 13/11/24 00:21, Vijendar Mukunda wrote:
+> As per design for power off mode, clear the wake enable register during
+> resume sequence.
+Hi Vinod,
+
+Could you please review the patch?
+
+Thanks,
+Vijendar
+>
+> Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+> ---
+>  drivers/soundwire/amd_manager.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+> index 5a4bfaef65fb..96a3aa6da711 100644
+> --- a/drivers/soundwire/amd_manager.c
+> +++ b/drivers/soundwire/amd_manager.c
+> @@ -1190,6 +1190,7 @@ static int __maybe_unused amd_resume_runtime(struct device *dev)
+>  	if (amd_manager->power_mode_mask & AMD_SDW_CLK_STOP_MODE) {
+>  		return amd_sdw_clock_stop_exit(amd_manager);
+>  	} else if (amd_manager->power_mode_mask & AMD_SDW_POWER_OFF_MODE) {
+> +		writel(0x00, amd_manager->acp_mmio + ACP_SW_WAKE_EN(amd_manager->instance));
+>  		val = readl(amd_manager->mmio + ACP_SW_CLK_RESUME_CTRL);
+>  		if (val) {
+>  			val |= AMD_SDW_CLK_RESUME_REQ;
+
 
