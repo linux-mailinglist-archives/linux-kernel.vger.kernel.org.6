@@ -1,140 +1,217 @@
-Return-Path: <linux-kernel+bounces-422482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD99D9D9A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:06:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DFB9D9A2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F572832D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:06:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 960CFB283F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F061D63C1;
-	Tue, 26 Nov 2024 15:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J4SVtbVO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C361D61BB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633586; cv=none; b=s6td+4tGoSom+VdIU81pTqrthwag/9o5hFuUw3NfGcqRMklxoBXzQZGjNRK00quKr8pX3dxW3EeEYMqkhq50jMKmD6M1Z42b54NiV/Nif3dY/TvdU5pqyiy7LBjMI41Y/dYqd2N9RiTnpTnFC7sD437qgx9/aYER6aJRt2IIN60=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633586; c=relaxed/simple;
-	bh=ehLuUdS4SLOrCgvmAb9TDza9lD6vN7Opo54S0M6wZ+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jGv1MKIcHTkotTsV8FVArrds8D/kmjbYOHD2Qxg4tu0izr0q/EDJNR9YrKqQgfRkW39xMimQFWN+M3O6Ywo+Bd126y+/lPUed7M94ZLvuODU0R2fz7zk4mhvSrAKQ5uOahkJc3htxSa+zF3wJuk24LHPaD+DryxL2l7bzkJLGBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J4SVtbVO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732633583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aWtzZaH0bLct3rhvon/rPVAtnCGovq5FTEt4jgcwO18=;
-	b=J4SVtbVOMWqOG0m+t6zr8CGHco5sLIOF6FgkMWXynb9fOtdEwX/V9ip4Dd7PdukAe1HOCZ
-	4xUPERe6+PeELptGYzvfXCPuDdF/SqNpoLR5Lfhh5wEPzxIK3K0pkPmu/hpBl401krcpOr
-	wTAJSLmtjBD1yrWpUETyWkpj4JM+2DU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-igZIsYMENM6pU3lOFbNPrg-1; Tue,
- 26 Nov 2024 10:06:19 -0500
-X-MC-Unique: igZIsYMENM6pU3lOFbNPrg-1
-X-Mimecast-MFC-AGG-ID: igZIsYMENM6pU3lOFbNPrg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3F471955F45;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48461D63F5;
 	Tue, 26 Nov 2024 15:06:18 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.64.33])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CEFA7196BC05;
-	Tue, 26 Nov 2024 15:06:16 +0000 (UTC)
-From: Seiji Nishikawa <snishika@redhat.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	snishika@redhat.com
-Subject: [PATCH] mm: vmscan: ensure kswapd is woken up if the wait queue is active
-Date: Wed, 27 Nov 2024 00:06:12 +0900
-Message-ID: <20241126150612.114561-1-snishika@redhat.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HyZF2pJ8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="01JgX4tr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HyZF2pJ8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="01JgX4tr"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F851D63C9;
+	Tue, 26 Nov 2024 15:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732633578; cv=none; b=Xh3K8rCxP15uCo3HxKbvvGedFKC+GRuiEaWDPeTfnIVelo/Wbo/CQK96v/FF3j16nK55LrZ0p5WVJFU+ODQa1muti+YsM6UGPIZzYvWzbFSRVA12Fe651vIkHi68JkO0NDvugdfU7eJz575ER/rL/lkfZThAfHPqEolGgd0c3i0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732633578; c=relaxed/simple;
+	bh=d4EdCWOYSpcJGfSHosjzNM2Bb9Ur0uc2muOhBPpTyZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3ysdZmLDZE+5pcCF9ilNi7GBCcHTyHVQIfpkiKyv7O/SyWSyTPSe+VvflzfJ38fxCgEDJz2sVy86c9A/V2QkniWHEvPat350OqWy5DPbXxVNCsd+IEH8aJykjn/mKToFSEz5lFyeUlkuYVxdH5+e5DlIle8ud+vmYXWNb0fGk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HyZF2pJ8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=01JgX4tr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HyZF2pJ8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=01JgX4tr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2A87621170;
+	Tue, 26 Nov 2024 15:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732633574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
+	b=HyZF2pJ8z82qfdrkKDwXLNMWnqxueAVQbN8agZantfhA78SUv72ZNTn8y/Ss9fhovfBj4a
+	eTK2702HWqxh/jOxFkvfe4K0GIV6blWS1b8XddOu9d4r57qdIdoj9S6GxSg6EHDKguRuRf
+	Btuw7uu+qOr5CR9G0Cb9vlrTrhb5MvU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732633574;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
+	b=01JgX4tr2v4KbW7ChJ+qGclNIpDdMoZR5SigniMqlbmQk9xSgaThONJVwO+jN1o0La6pbr
+	HwgbPcE9qpWN5dAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732633574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
+	b=HyZF2pJ8z82qfdrkKDwXLNMWnqxueAVQbN8agZantfhA78SUv72ZNTn8y/Ss9fhovfBj4a
+	eTK2702HWqxh/jOxFkvfe4K0GIV6blWS1b8XddOu9d4r57qdIdoj9S6GxSg6EHDKguRuRf
+	Btuw7uu+qOr5CR9G0Cb9vlrTrhb5MvU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732633574;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
+	b=01JgX4tr2v4KbW7ChJ+qGclNIpDdMoZR5SigniMqlbmQk9xSgaThONJVwO+jN1o0La6pbr
+	HwgbPcE9qpWN5dAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 180FA13890;
+	Tue, 26 Nov 2024 15:06:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WtZ0BebjRWeaBQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 15:06:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B01C0A08CA; Tue, 26 Nov 2024 16:06:13 +0100 (CET)
+Date: Tue, 26 Nov 2024 16:06:13 +0100
+From: Jan Kara <jack@suse.cz>
+To: Anders Blomdell <anders.blomdell@gmail.com>
+Cc: Philippe Troin <phil@fifi.org>, Jan Kara <jack@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+Message-ID: <20241126150613.a4b57y2qmolapsuc@quack3>
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126103719.bvd2umwarh26pmb3@quack3>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Even after commit 501b26510ae3 ("vmstat: allow_direct_reclaim should use
-zone_page_state_snapshot"), a task may remain indefinitely stuck in
-throttle_direct_reclaim() while holding mm->rwsem.
+On Tue 26-11-24 11:37:19, Jan Kara wrote:
+> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> > On 2024-11-26 02:48, Philippe Troin wrote:
+> > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > > responding).
+> > > > What triggered this problem was virtual machines with NFS-mounted
+> > > > qcow2 disks
+> > > > that often triggered large readaheads that generates long streaks of
+> > > > disk I/O
+> > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > > area of the
+> > > > machine.
+> > > > 
+> > > > A git bisect gave the following suspect:
+> > > > 
+> > > > git bisect start
+> > > 
+> > > 8< snip >8
+> > > 
+> > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > > readahead: properly shorten readahead when falling back to
+> > > > do_page_cache_ra()
+> > > 
+> > > Thank you for taking the time to bisect, this issue has been bugging
+> > > me, but it's been non-deterministic, and hence hard to bisect.
+> > > 
+> > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > > slightly different setups:
+> > > 
+> > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > > "nfs server XXX not responding, still trying" that never recovers
+> > > (while the server remains pingable and other NFSv3 volumes from the
+> > > hanging server can be mounted).
+> > > 
+> > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > > several minutes) on random I/O. These stalls eventually recover.
+> > > 
+> > > I've built a 6.11.10 kernel with
+> > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > > normal (no more NFS hangs, no more VM stalls).
+> > > 
+> > Some printk debugging, seems to indicate that the problem
+> > is that the entity 'ra->size - (index - start)' goes
+> > negative, which then gets cast to a very large unsigned
+> > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> > bug is still eludes me, though.
+> 
+> Thanks for the report, bisection and debugging! I think I see what's going
+> on. read_pages() can go and reduce ra->size when ->readahead() callback
+> failed to read all folios prepared for reading and apparently that's what
+> happens with NFS and what can lead to negative argument to
+> do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> ra->size / ra->async_size does more harm than good (because those values
+> show *desired* readahead to happen, not exact number of pages read),
+> furthermore it is problematic because ra can be shared by multiple
+> processes and so updates are inherently racy. If we indeed need to store
+> number of read pages, we could do it through ractl which is call-site local
+> and used for communication between readahead generic functions and callers.
+> But I have to do some more history digging and code reading to understand
+> what is using this logic in read_pages().
 
-__alloc_pages_nodemask
- try_to_free_pages
-  throttle_direct_reclaim
+Hum, checking the history the update of ra->size has been added by Neil two
+years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
+process all pages"). Neil, the changelog seems as there was some real
+motivation behind updating of ra->size in read_pages(). What was it? Now I
+somewhat disagree with reducing ra->size in read_pages() because it seems
+like a wrong place to do that and if we do need something like that,
+readahead window sizing logic should rather be changed to take that into
+account? But it all depends on what was the real rationale behind reducing
+ra->size in read_pages()...
 
-This can cause numerous other tasks to wait on the same rwsem, leading
-to severe system hangups:
+								Honza
 
-[1088963.358712] INFO: task python3:1670971 blocked for more than 120 seconds.
-[1088963.365653]       Tainted: G           OE     -------- -  - 4.18.0-553.el8_10.aarch64 #1
-[1088963.373887] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[1088963.381862] task:python3         state:D stack:0     pid:1670971 ppid:1667117 flags:0x00800080
-[1088963.381869] Call trace:
-[1088963.381872]  __switch_to+0xd0/0x120
-[1088963.381877]  __schedule+0x340/0xac8
-[1088963.381881]  schedule+0x68/0x118
-[1088963.381886]  rwsem_down_read_slowpath+0x2d4/0x4b8
-
-The issue arises when allow_direct_reclaim(pgdat) returns false,
-preventing progress even when the pgdat->pfmemalloc_wait wait queue is
-empty. Despite the wait queue being empty, the condition,
-allow_direct_reclaim(pgdat), may still be returning false, causing it to
-continue looping.
-
-In some cases, reclaimable pages exist (zone_reclaimable_pages() returns
- > 0), but calculations of pfmemalloc_reserve and free_pages result in
-wmark_ok being false.
-
-And then, despite the pgdat->kswapd_wait queue being non-empty, kswapd
-is not woken up, further exacerbating the problem:
-
-crash> px ((struct pglist_data *) 0xffff00817fffe540)->kswapd_highest_zoneidx
-$775 = __MAX_NR_ZONES
-
-This patch modifies allow_direct_reclaim() to wake kswapd if the
-pgdat->kswapd_wait queue is active, regardless of whether wmark_ok is
-true or false. This change ensures kswapd does not miss wake-ups under
-high memory pressure, reducing the risk of task stalls in the throttled
-reclaim path.
-
-Signed-off-by: Seiji Nishikawa <snishika@redhat.com>
----
- mm/vmscan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 76378bc257e3..b1b3e5a116a8 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -6389,8 +6389,8 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
- 
- 	wmark_ok = free_pages > pfmemalloc_reserve / 2;
- 
--	/* kswapd must be awake if processes are being throttled */
--	if (!wmark_ok && waitqueue_active(&pgdat->kswapd_wait)) {
-+	/* Always wake up kswapd if the wait queue is not empty */
-+	if (waitqueue_active(&pgdat->kswapd_wait)) {
- 		if (READ_ONCE(pgdat->kswapd_highest_zoneidx) > ZONE_NORMAL)
- 			WRITE_ONCE(pgdat->kswapd_highest_zoneidx, ZONE_NORMAL);
- 
 -- 
-2.47.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
