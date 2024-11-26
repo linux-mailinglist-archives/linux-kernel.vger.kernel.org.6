@@ -1,70 +1,67 @@
-Return-Path: <linux-kernel+bounces-421735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39D59D8F5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:00:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228F09D8F64
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:01:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84518285809
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D859166230
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7140A1CB528;
-	Tue, 26 Nov 2024 00:00:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCDF63CB;
+	Tue, 26 Nov 2024 00:01:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16121C13D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59B064A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732579229; cv=none; b=D4KETCDssLiumUY0hl+2KcFz2EyP/zLfQKp3X8clQX1CMLMwCh3kih3LgEYvVvmlmUbREnwMMsSD410fzQ+tm2Ig6/lQcZcJMYfHix+buQn/pftIK1o8xVcBryjO6EWNCmNr7c74kIwbKwKkIJzFc/7iAua6eFwoymj6o31buZA=
+	t=1732579289; cv=none; b=pIZfnGr+BORjiRvUdLxoVG6QC5MphqWolFZ2LBjuo3Pw4YHjpBbhJki5KgH8ixuFMCjY+pCpOf9A90LoPWn4Ci25JqI4qZ2IVAG8w/ydJeb3Upw6DFtXR8XXttFdWI68pErVjIKhGh7RvVUhfW6JKOhjkWM+vp8twwigC77ymm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732579229; c=relaxed/simple;
-	bh=4m1ssMz3/t+GieMLL0Q/VCdzvq2A5qK5Zm4q4ehLqcE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PtzGe2YLiBLxAMLRqM1to7kIKn9y1n3TxdylRDM7lKLyaBfvOsVsNLLo+MpO3TqHhovuUYPHcVfQPywLrok7tDtIexpQO9Zvv8q57iRN4dGlHOQ7sBzcsESuZ5e84NIhklW79tILyQoKY4I5r83wbE7hLdqipVvVfEhdUHvTg1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+	s=arc-20240116; t=1732579289; c=relaxed/simple;
+	bh=zxM6zYZhc4zVuFVg7hX5SOalPZ8wa3jgGbf9xz0kQEA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T56iu+KCtkmQrEIsqrrSkGvo+TicT2HMYiGjrEhQib2JWNEl0l5fim+/kZxVbuij+qy7fB5UEdeWieAkD6hOylagOcKmypXsH7eGbHJhlBReIZV9OhId4MstAaBIgX92myq4ZCGU4Azky/fp44n1QrCaZHjd6slJvAvkdzXZF8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-843671e13c0so56847339f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:00:27 -0800 (PST)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7634d8538so43455575ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:01:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732579227; x=1733184027;
+        d=1e100.net; s=20230601; t=1732579285; x=1733184085;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MXMmFPLNOHJFet4BKgZrdk1dVxmzIou58hNCe/DcTK8=;
-        b=GKXC8Xin216hoqaLddQE0SYnyhiQppTmz8HZYxrIrvX2msfxvvl0ua7IIkpIyemoqC
-         RWOYP0Ivn2Th5TJjNgupZx2fLVnSFx2c7MOXzXTlxdUofoAI2vNtUqHEsqvrFxxi9rj5
-         VB+AYr9y5UoB2JgYykFHR9yKwXTv/WcXy1qFD8o46tw6nBDIhUaKvMW0QNTlHFv2Fcmc
-         Z97EqHrgMgFL7gFa4S0fJgsl6TR/XXe35YZ3K159KuuSP0ChTXJEjV3hPyUYTnlT9G09
-         4wmI2cNRkpRRskILIEBWKReT0ImqHNyxz0+wBCjfmP43VDbXhG9ZtZON9SiH/X2eQ+rs
-         iCYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGjr6TxLwODnDd4GWFHox897efZlXKjHmY7RJP2I65Er46Jl0noxTQ8Wofq1z5Aywmrsi8JLZJBYO9bg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaxbxLde21ByVV/ujYuV5ZJ7ZUK4iPvmB1ClRKSahbD/UK2auA
-	GhzL0PVeoxLZaQvrnCFY/NT/rKUcmpSxe8GYy9nvtn37L06nCp00cFpjcX1/lFmtC6ZxpuSBjdX
-	17jGsoM3IO2oCz1FYd4eFoZvzJt2kBMXA4Xw1lhEsN+nITGWDFJpqDmQ=
-X-Google-Smtp-Source: AGHT+IHCxAFW40TR2VledobhdZPBqzCrJmq5KcjhkSb/VpbG1riEHP/I8gRJ9iOe/N25lNo5T9C5J2wEZkwV0Re+eq92srT/1HXt
+        bh=92USXR7bbQYiLfixUHSYEdokYc7CucAYCL5IOWlbYNA=;
+        b=ucSnvCmiDak+Lp1KLeNwYUhLgDPK91tBN8yKoMpoTfhjTpgDCq2TSN4VKC2vAN+QlW
+         fxcxq6AKWoqnXcg2WSVDph/ghKDhrNCxXpNvC/aBphwFUNUellMjBLtwCE3n1iZg9frX
+         pbpxL1XVP37aYUtDp9bKMMFK1u12YZsTTN8j66amUKznFnGQ8grPZoG3dFtF7FoIcpd7
+         Zbx7I/MsLe126XnMFRxHEG07b06tehS3dpDvxvrQk//bLc5ieDJqg4DJZ/yPMUnLNYgk
+         zOaN5kZ/8B7jw39sWgp7XDcwBnuuK4TTAlwh/zBrtG1imkxnpHPK/VaKPA/LNKcwRVDd
+         /PRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8AqgWiAfiERDR5eT3CvQ+nRc+E0RBdo9B+lS0dn3rCBHbAwqybK3DYDv4YrIVL4dihsoAGmFu7MuX3Bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7DTNQD95ciwZeYResChPcGfWYIxEDUt56K0kU6b6GaIoGGo/h
+	FAW1gOlOCgrdSgI/jsUK+bQxQan7norqgd2KjZpwgH/+X1/AJ18wXjupCuZRLaO5NhiTNQdQv1b
+	I2KFOpO9XOIVPotq6J1vI5Ebm8/oOSr5tAk3KMD0vNOsxo+OdiZi5864=
+X-Google-Smtp-Source: AGHT+IFqcsdHv6IjMuU/R1rl0DNH9CgIV9rsgV7+axQwgKp5az8bgT2RDKtTz2YvTiaFlbCjgXNAy7KN5hYv4tyjiuPxlz5Rc8Qq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d12:b0:3a7:70a4:6872 with SMTP id
- e9e14a558f8ab-3a79ad203ebmr136732745ab.9.1732579227104; Mon, 25 Nov 2024
- 16:00:27 -0800 (PST)
-Date: Mon, 25 Nov 2024 16:00:27 -0800
+X-Received: by 2002:a05:6e02:12cc:b0:3a7:2204:c83e with SMTP id
+ e9e14a558f8ab-3a79ae044b4mr160710885ab.10.1732579285007; Mon, 25 Nov 2024
+ 16:01:25 -0800 (PST)
+Date: Mon, 25 Nov 2024 16:01:24 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67450f9b.050a0220.21d33d.0004.GAE@google.com>
-Subject: [syzbot] [bpf?] KASAN: vmalloc-out-of-bounds Write in push_insn_history
-From: syzbot <syzbot+5ca500b6e0bdb0d11dbc@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Message-ID: <67450fd4.050a0220.1286eb.0007.GAE@google.com>
+Subject: [syzbot] [block?] possible deadlock in blk_unregister_queue
+From: syzbot <syzbot+91585b36b538053343e4@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
@@ -73,142 +70,210 @@ syzbot found the following issue on:
 
 HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e13ee8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b193f152f0257905
-dashboard link: https://syzkaller.appspot.com/bug?extid=5ca500b6e0bdb0d11dbc
+console output: https://syzkaller.appspot.com/x/log.txt?x=15542778580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7393f07275e8e571
+dashboard link: https://syzkaller.appspot.com/bug?extid=91585b36b538053343e4
 compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
 disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e4af736be07e/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8b23128a7c9e/bzImage-9f16d5e6.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8a4ab7536099/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a94d1bc43eff/bzImage-9f16d5e6.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5ca500b6e0bdb0d11dbc@syzkaller.appspotmail.com
+Reported-by: syzbot+91585b36b538053343e4@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: vmalloc-out-of-bounds in push_insn_history+0x615/0x690 kernel/bpf/verifier.c:3579
-Write of size 4 at addr ffffc90002db9010 by task syz.0.4094/25926
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-syzkaller-09073-g9f16d5e6f220 #0 Not tainted
+------------------------------------------------------
+kworker/0:0/8 is trying to acquire lock:
+ffff88802671fb38 (&q->sysfs_lock){+.+.}-{4:4}, at: blk_unregister_queue+0x125/0x2e0 block/blk-sysfs.c:869
 
-CPU: 3 UID: 0 PID: 25926 Comm: syz.0.4094 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+but task is already holding lock:
+ffff88802671fbc8 (&q->sysfs_dir_lock){+.+.}-{4:4}, at: blk_unregister_queue+0xdb/0x2e0 block/blk-sysfs.c:860
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #5 (&q->sysfs_dir_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+       blk_mq_sysfs_unregister_hctxs+0x92/0x2d0 block/blk-mq-sysfs.c:278
+       __blk_mq_update_nr_hw_queues+0x93f/0x14e0 block/blk-mq.c:4930
+       blk_mq_update_nr_hw_queues+0x2a/0x40 block/blk-mq.c:4985
+       nbd_start_device+0x15b/0xd70 drivers/block/nbd.c:1413
+       nbd_start_device_ioctl drivers/block/nbd.c:1464 [inline]
+       __nbd_ioctl drivers/block/nbd.c:1539 [inline]
+       nbd_ioctl+0x21a/0xfd0 drivers/block/nbd.c:1579
+       blkdev_ioctl+0x276/0x6d0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #4 (&q->q_usage_counter(io)#49){++++}-{0:0}:
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1fb6/0x24c0 block/blk-mq.c:3092
+       __submit_bio+0x384/0x540 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x698/0xd70 block/blk-core.c:739
+       submit_bio_noacct+0x93a/0x1e20 block/blk-core.c:868
+       submit_bh fs/buffer.c:2819 [inline]
+       block_read_full_folio+0x812/0xa50 fs/buffer.c:2446
+       filemap_read_folio+0xc6/0x2a0 mm/filemap.c:2366
+       filemap_update_page mm/filemap.c:2450 [inline]
+       filemap_get_pages+0x155f/0x1be0 mm/filemap.c:2571
+       filemap_read+0x3ca/0xd70 mm/filemap.c:2646
+       blkdev_read_iter+0x187/0x480 block/fops.c:767
+       new_sync_read fs/read_write.c:484 [inline]
+       vfs_read+0x87f/0xbe0 fs/read_write.c:565
+       ksys_read+0x12b/0x250 fs/read_write.c:708
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (mapping.invalidate_lock#2){++++}-{4:4}
+:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+       filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
+       filemap_fault+0x2e0/0x2820 mm/filemap.c:3332
+       __do_fault+0x10a/0x490 mm/memory.c:4907
+       do_shared_fault mm/memory.c:5386 [inline]
+       do_fault mm/memory.c:5460 [inline]
+       do_pte_missing+0x1a8/0x3e70 mm/memory.c:3979
+       handle_pte_fault mm/memory.c:5801 [inline]
+       __handle_mm_fault+0x103c/0x2a40 mm/memory.c:5944
+       handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6112
+       faultin_page mm/gup.c:1187 [inline]
+       __get_user_pages+0x8d9/0x3b50 mm/gup.c:1485
+       __get_user_pages_locked mm/gup.c:1751 [inline]
+       faultin_page_range+0x24a/0x980 mm/gup.c:1975
+       madvise_populate mm/madvise.c:951 [inline]
+       do_madvise+0x504/0x770 mm/madvise.c:1681
+       __do_sys_madvise mm/madvise.c:1700 [inline]
+       __se_sys_madvise mm/madvise.c:1698 [inline]
+       __x64_sys_madvise+0xa9/0x110 mm/madvise.c:1698
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&mm->mmap_lock){++++}-{4:4}:
+       __might_fault mm/memory.c:6751 [inline]
+       __might_fault+0x11b/0x190 mm/memory.c:6744
+       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
+       _copy_from_user+0x29/0xd0 lib/usercopy.c:18
+       copy_from_user include/linux/uaccess.h:212 [inline]
+       __blk_trace_setup+0xa8/0x180 kernel/trace/blktrace.c:626
+       blk_trace_setup+0x47/0x70 kernel/trace/blktrace.c:648
+       sg_ioctl_common drivers/scsi/sg.c:1121 [inline]
+       sg_ioctl+0x65e/0x2750 drivers/scsi/sg.c:1163
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&q->debugfs_mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+       blk_register_queue+0x13c/0x550 block/blk-sysfs.c:774
+       add_disk_fwnode+0x785/0x1300 block/genhd.c:493
+       add_disk include/linux/blkdev.h:751 [inline]
+       brd_alloc.isra.0+0x5a2/0x840 drivers/block/brd.c:399
+       brd_init+0x12b/0x1d0 drivers/block/brd.c:479
+       do_one_initcall+0x128/0x700 init/main.c:1266
+       do_initcall_level init/main.c:1328 [inline]
+       do_initcalls init/main.c:1344 [inline]
+       do_basic_setup init/main.c:1363 [inline]
+       kernel_init_freeable+0x5c7/0x900 init/main.c:1577
+       kernel_init+0x1c/0x2b0 init/main.c:1466
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (&q->sysfs_lock){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+       blk_unregister_queue+0x125/0x2e0 block/blk-sysfs.c:869
+       del_gendisk+0x2de/0xb20 block/genhd.c:710
+       md_kobj_release+0xb2/0x100 drivers/md/md.c:5742
+       kobject_cleanup lib/kobject.c:689 [inline]
+       kobject_release lib/kobject.c:720 [inline]
+       kref_put include/linux/kref.h:65 [inline]
+       kobject_put+0x1e4/0x5a0 lib/kobject.c:737
+       process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+       process_scheduled_works kernel/workqueue.c:3310 [inline]
+       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &q->sysfs_lock --> &q->q_usage_counter(io)#49 --> &q->sysfs_dir_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&q->sysfs_dir_lock);
+                               lock(&q->q_usage_counter(io)#49);
+                               lock(&q->sysfs_dir_lock);
+  lock(&q->sysfs_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by kworker/0:0/8:
+ #0: ffff88801c79fd48 ((wq_completion)md_misc){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
+ #1: ffffc900000b7d80 ((work_completion)(&mddev->del_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+ #2: ffff88802671fbc8 (&q->sysfs_dir_lock){+.+.}-{4:4}, at: blk_unregister_queue+0xdb/0x2e0 block/blk-sysfs.c:860
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: md_misc mddev_delayed_delete
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:94 [inline]
  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:489
- kasan_report+0xd9/0x110 mm/kasan/report.c:602
- push_insn_history+0x615/0x690 kernel/bpf/verifier.c:3579
- do_check kernel/bpf/verifier.c:18594 [inline]
- do_check_common+0xb78/0xd540 kernel/bpf/verifier.c:21848
- do_check_main kernel/bpf/verifier.c:21939 [inline]
- bpf_check+0x77c2/0xc9b0 kernel/bpf/verifier.c:22656
- bpf_prog_load+0xe3f/0x2670 kernel/bpf/syscall.c:2947
- __sys_bpf+0x5677/0x57a0 kernel/bpf/syscall.c:5790
- __do_sys_bpf kernel/bpf/syscall.c:5897 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5895 [inline]
- __ia32_sys_bpf+0x76/0xe0 kernel/bpf/syscall.c:5895
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf740e579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f50d555c EFLAGS: 00000296 ORIG_RAX: 0000000000000165
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00000000200017c0
-RDX: 0000000000000048 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-
-The buggy address belongs to the virtual mapping at
- [ffffc90002d99000, ffffc90002dbb000) created by:
- kvrealloc_noprof+0xfc/0x150 mm/util.c:755
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880741c9e88 pfn:0x741c9
-flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: ffff8880741c9e88 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102cc2(GFP_HIGHUSER|__GFP_NOWARN), pid 25926, tgid 25924 (syz.0.4094), ts 1129383943138, free_ts 1129046992178
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
- __alloc_pages_slowpath mm/page_alloc.c:4286 [inline]
- __alloc_pages_noprof+0x6a6/0x25a0 mm/page_alloc.c:4764
- alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
- vm_area_alloc_pages mm/vmalloc.c:3589 [inline]
- __vmalloc_area_node mm/vmalloc.c:3667 [inline]
- __vmalloc_node_range_noprof+0x724/0x1530 mm/vmalloc.c:3844
- __kvmalloc_node_noprof+0x14f/0x1a0 mm/util.c:680
- kvrealloc_noprof+0xfc/0x150 mm/util.c:755
- push_insn_history+0x2ac/0x690 kernel/bpf/verifier.c:3571
- do_check kernel/bpf/verifier.c:18594 [inline]
- do_check_common+0xb78/0xd540 kernel/bpf/verifier.c:21848
- do_check_main kernel/bpf/verifier.c:21939 [inline]
- bpf_check+0x77c2/0xc9b0 kernel/bpf/verifier.c:22656
- bpf_prog_load+0xe3f/0x2670 kernel/bpf/syscall.c:2947
- __sys_bpf+0x5677/0x57a0 kernel/bpf/syscall.c:5790
- __do_sys_bpf kernel/bpf/syscall.c:5897 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5895 [inline]
- __ia32_sys_bpf+0x76/0xe0 kernel/bpf/syscall.c:5895
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-page last free pid 29 tgid 29 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
- rcu_do_batch kernel/rcu/tree.c:2567 [inline]
- rcu_core+0x79d/0x14d0 kernel/rcu/tree.c:2823
- handle_softirqs+0x213/0x8f0 kernel/softirq.c:554
- run_ksoftirqd kernel/softirq.c:943 [inline]
- run_ksoftirqd+0x3a/0x60 kernel/softirq.c:935
- smpboot_thread_fn+0x661/0xa30 kernel/smpboot.c:164
+ print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+ blk_unregister_queue+0x125/0x2e0 block/blk-sysfs.c:869
+ del_gendisk+0x2de/0xb20 block/genhd.c:710
+ md_kobj_release+0xb2/0x100 drivers/md/md.c:5742
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x1e4/0x5a0 lib/kobject.c:737
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
  kthread+0x2c1/0x3a0 kernel/kthread.c:389
  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffffc90002db8f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90002db8f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90002db9000: 00 00 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-                         ^
- ffffc90002db9080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
- ffffc90002db9100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-==================================================================
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+ </TASK>
 
 
 ---
