@@ -1,178 +1,202 @@
-Return-Path: <linux-kernel+bounces-422510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BED49D9A7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:35:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B722B9D9A81
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3ECDB24AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D8F2828AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D981D63E6;
-	Tue, 26 Nov 2024 15:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516571D63E3;
+	Tue, 26 Nov 2024 15:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="j16/TB3W"
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="otySuYr0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HdnzXvoP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="otySuYr0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HdnzXvoP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D40C1917E6;
-	Tue, 26 Nov 2024 15:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B5C1CD219;
+	Tue, 26 Nov 2024 15:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732635324; cv=none; b=IxQME6pukUEW7OnV8I7a2QXvW7lq9lVt/uWiNdqhpd/dJxG8TPovAq1U1R67wACnDghjfzf9iA8dd8Ldm25vrnUQeU6hPnrOcStyPNiRvunmXI7UC1sqNkBaJipoUNbzNPR9332jADnQU56mUxejK4hQWawhN16FP2s5Vml1UKY=
+	t=1732635551; cv=none; b=mbcnVv4h5D8ptaoopXHmJwziPOB9/Kp4UtK3Up+HlbHOHMDoQEMxOPuDBZ6ecQ3k6ZoPqKrAaKcG/3fznM+9bN+wfxTgEW7psWjW6nyU8R+bqBEVUqR+/AiRMn/vGHtpBgN/Y3iWtMqcDEtRHqExU1PtATL6rMFNJpa5vtndk9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732635324; c=relaxed/simple;
-	bh=oI//W4q1UMMY9xK64Hq9RXynxX8RgQYpcbtg2vbzkF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JsCgm+uPtXb4SlAUARGMDjwa4Wd4hZ7/1GQEEf+5wefkMSz8ANVGgTS5zUaoBRozm2iLxy47SwGuH0gEEe4203PazwUqTTPvkg224kUrU0bxgAWdSypgDuP8++ZyZej9H/JG7UkLUq6wNYBzVOiIRaPTy2jCoMHhs6gCM6tPA7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=j16/TB3W; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732635323; x=1764171323;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=YSd8nei3PrOGgIB4bIkXJ6q/2Rw2Qbesj7W0KxlRtBg=;
-  b=j16/TB3W4SALtBvCicjzkfcaYXupYidI2wVoO3Uro6PubHaoPFvwHklY
-   maamJXHVCANP3eIgQWgsUdOovnMYIFHWwHi+kLeGOjyDILoRwVLD+6p1H
-   /lWaqla2tTc6CL9+dLno5ZOijZnOQWlbDYTfSjg59zRpWYEudGExOgPhg
-   A=;
-X-IronPort-AV: E=Sophos;i="6.12,186,1728950400"; 
-   d="scan'208";a="44662394"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 15:35:19 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:5477]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.116:2525] with esmtp (Farcaster)
- id a4f8f8de-06c1-46ac-9916-65f718e2f8b5; Tue, 26 Nov 2024 15:35:18 +0000 (UTC)
-X-Farcaster-Flow-ID: a4f8f8de-06c1-46ac-9916-65f718e2f8b5
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 26 Nov 2024 15:35:17 +0000
-Received: from [192.168.5.6] (10.106.82.29) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Tue, 26 Nov 2024
- 15:35:16 +0000
-Message-ID: <e12ef1ad-7576-4874-8cc2-d48b6619fa95@amazon.com>
-Date: Tue, 26 Nov 2024 15:35:15 +0000
+	s=arc-20240116; t=1732635551; c=relaxed/simple;
+	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=EF57KkOiC395cDyEufCpoIviyhJ/SUSEWElHPLMtoFoZd6r7Eu9Efe6YUxBjSUWOSaNur3/KWVnoRLVnIMK3KAfoL99eeTHKFIHaBI8fnwnoIo1iOnlZTvivQoHiTMgWdaSDmhOMuLhM57X2OeFcagf9dY5CSO27E7XLZj8dzrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=otySuYr0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HdnzXvoP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=otySuYr0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HdnzXvoP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4A4861F74C;
+	Tue, 26 Nov 2024 15:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732635548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
+	b=otySuYr0A8ktry9wWYUPoQyyi/KqsDtMBDeZq1t1t9+USfCtigQyi7dFW2n6cELSN6CcDu
+	ZttZGEtFuzOgtqIakqIqXFRkM1BImR9PhMQyvMvSPK4JuUBJ8bpvLjpb3aDUw3liTit4Ae
+	H4u74ISnwY1/DOX9AXjRYeu4dnpOF8Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732635548;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
+	b=HdnzXvoPXUmGjiXEMram6r9II66DqANjyD0b7uJUhKawl8AjdXYu1hBtRsm7T83MLbCQxr
+	6/jS63/pKovK4nAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732635548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
+	b=otySuYr0A8ktry9wWYUPoQyyi/KqsDtMBDeZq1t1t9+USfCtigQyi7dFW2n6cELSN6CcDu
+	ZttZGEtFuzOgtqIakqIqXFRkM1BImR9PhMQyvMvSPK4JuUBJ8bpvLjpb3aDUw3liTit4Ae
+	H4u74ISnwY1/DOX9AXjRYeu4dnpOF8Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732635548;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
+	b=HdnzXvoPXUmGjiXEMram6r9II66DqANjyD0b7uJUhKawl8AjdXYu1hBtRsm7T83MLbCQxr
+	6/jS63/pKovK4nAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8635B13890;
+	Tue, 26 Nov 2024 15:39:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nNrfBZrrRWc+EQAAD6G6ig
+	(envelope-from <colyli@suse.de>); Tue, 26 Nov 2024 15:39:06 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
-To: Sean Christopherson <seanjc@google.com>
-CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <david@redhat.com>,
-	<peterx@redhat.com>, <oleg@redhat.com>, <vkuznets@redhat.com>,
-	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
-	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
-	<xmarcalx@amazon.com>
-References: <20241118130403.23184-1-kalyazin@amazon.com>
- <ZzyRcQmxA3SiEHXT@google.com>
- <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
- <Zz-gmpMvNm_292BC@google.com>
- <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com>
- <Z0URHBoqSgSr_X5-@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <Z0URHBoqSgSr_X5-@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D004EUC004.ant.amazon.com (10.252.51.191) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] bcache:fix oops in cache_set_flush
+From: Coly Li <colyli@suse.de>
+In-Reply-To: <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
+Date: Tue, 26 Nov 2024 23:38:52 +0800
+Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0CFF2B9E-4E40-480D-9F3B-F7631FE3CEA5@suse.de>
+References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+ <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
+ <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
+ <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
+ <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
+ <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
+To: liequan che <liequanche@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[easystack.cn,gmail.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	APPLE_MAILER_COMMON(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
 
 
-On 26/11/2024 00:06, Sean Christopherson wrote:
-> On Mon, Nov 25, 2024, Nikita Kalyazin wrote:
->> On 21/11/2024 21:05, Sean Christopherson wrote:
->>> On Thu, Nov 21, 2024, Nikita Kalyazin wrote:
->>>> On 19/11/2024 13:24, Sean Christopherson wrote:
->>>>> None of this justifies breaking host-side, non-paravirt async page faults.  If a
->>>>> vCPU hits a missing page, KVM can schedule out the vCPU and let something else
->>>>> run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
->>>>> even enter a low enough sleep state to let other cores turbo a wee bit.
->>>>>
->>>>> I have no objection to disabling host async page faults, e.g. it's probably a net
->>>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
->>>>> userspace.
->>>>
->>>> That's a good point, I didn't think about it.  The async work would still
->>>> need to execute somewhere in that case (or sleep in GUP until the page is
->>>> available).
->>>
->>> The "async work" is often an I/O operation, e.g. to pull in the page from disk,
->>> or over the network from the source.  The *CPU* doesn't need to actively do
->>> anything for those operations.  The I/O is initiated, so the CPU can do something
->>> else, or go idle if there's no other work to be done.
->>>
->>>> If processing the fault synchronously, the vCPU thread can also sleep in the
->>>> same way freeing the pCPU for something else,
->>>
->>> If and only if the vCPU can handle a PV async #PF.  E.g. if the guest kernel flat
->>> out doesn't support PV async #PF, or the fault happened while the guest was in an
->>> incompatible mode, etc.
->>>
->>> If KVM doesn't do async #PFs of any kind, the vCPU will spin on the fault until
->>> the I/O completes and the page is ready.
->>
->> I ran a little experiment to see that by backing guest memory by a file on
->> FUSE and delaying response to one of the read operations to emulate a delay
->> in fault processing.
-> 
-> ...
-> 
->> In both cases the fault handling code is blocked and the pCPU is free for
->> other tasks.  I can't see the vCPU spinning on the IO to get completed if
->> the async task isn't created.  I tried that with and without async PF
->> enabled by the guest (MSR_KVM_ASYNC_PF_EN).
->>
->> What am I missing?
-> 
-> Ah, I was wrong about the vCPU spinning.
-> 
-> The goal is specifically to schedule() from KVM context, i.e. from kvm_vcpu_block(),
-> so that if a virtual interrupt arrives for the guest, KVM can wake the vCPU and
-> deliver the IRQ, e.g. to reduce latency for interrupt delivery, and possible even
-> to let the guest schedule in a different task if the IRQ is the guest's tick.
-> 
-> Letting mm/ or fs/ do schedule() means the only wake event even for the vCPU task
-> is the completion of the I/O (or whatever the fault is waiting on).
+> 2024=E5=B9=B411=E6=9C=8819=E6=97=A5 12:19=EF=BC=8Cliequan che =
+<liequanche@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
 
-Ok, great, then that's how I understood it last time.  The only thing 
-that is not entirely clear to me is like Vitaly says, 
-KVM_ASYNC_PF_SEND_ALWAYS is no longer set, because we don't want to 
-inject IRQs into the guest when it's in kernel mode, but the "host async 
-PF" case would still allow IRQs (eg ticks like you said).  Why is it 
-safe to deliver them?
+[snipped]
 
->>>>> I have no objection to disabling host async page faults,
->>>>> e.g. it's probably a net>>>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling
->>>>> needs an opt-in from>>>>> userspace.
-Back to this, I couldn't see a significant effect of this optimisation 
-with the original async PF so happy to give it up, but it does make a 
-difference when applied to async PF user [2] in my setup.  Would a new 
-cap be a good way for users to express their opt-in for it?
+>>> 7. Repartition again, triggering kernel panic again.
+>>> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
+>>> The same operation was performed on the other two servers, and no
+>>> panic was triggered.
+>=20
+>> I guess this is another undefine operation. I assume the cache device =
+is still references somewhere. A reboot should follow the wipefs.
+> Your guess is correct. In addition, after erasing the superblock
+> information in CD rescue mode,
+> I rebooted into the system where the original panic kernel was =
+located.
+>=20
 
-[1]: 
-https://lore.kernel.org/kvm/20241118130403.23184-1-kalyazin@amazon.com/T/#ma719a9cb3e036e24ea8512abf9a625ddeaccfc96
-[2]: 
-https://lore.kernel.org/kvm/20241118123948.4796-1-kalyazin@amazon.com/T/
+Please try latest upstream kernel and try whether you can see the issue.
+
+c->root is allocated by __bch_btree_node_alloc(), it doesn=E2=80=99t =
+return NULL pointer.=20
+
+Your kernel is 5.10 based distribution kernel, I am not able to help =
+much here. If you may reproduce the oops in latest upstream kernel, it =
+will be a surprise and please let me know.
+
+
+
+>>> The server with the problem was able to enter the system normally
+>>> after the root of the cache_set structure was determined to be =
+empty.
+>>> I updated the description of the problem in the link below.
+>=20
+>> No, if you clean up the partition, no cache device will exist. Cache =
+registration won=E2=80=99t treat it as a bcache device.
+>=20
+>> OK, from the above description, I see you replace the backing device =
+(and I don=E2=80=99t know where the previous data was), then you extend =
+the cache device size. They are all unsupported operations.
+> The behavior here is a bit strange. After partitioning, I may have
+> recreated the bcache device here,
+> which triggered the bcache rigister operation. Then the kernel =
+panicked again.
+
+When you mention your operations, it is better to provide exact detailed =
+command lines, otherwise maybe I will misunderstand you.
+
+After all, please try the latest upstream kernel. Not the distro kernel. =
+Otherwise I am not able to help.
+
+Coly Li
+
 
