@@ -1,147 +1,169 @@
-Return-Path: <linux-kernel+bounces-422022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB079D937B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:43:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E9E9D937F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:44:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A346EB2517D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AB51655B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EFE1A4AB3;
-	Tue, 26 Nov 2024 08:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F8B1B412C;
+	Tue, 26 Nov 2024 08:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LysdB1sj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BCiDhwyd"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF2714A85;
-	Tue, 26 Nov 2024 08:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA5619340F;
+	Tue, 26 Nov 2024 08:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732610600; cv=none; b=JsLc0tRIJbnk68FNXRkioYMFV0Y0zEqS3yZfZqu45odOpz7O3tEAVXXcx8bUeMJcEzJKvB3rh+R4gURrCbZqe1NFC8t4WtbB61MzlE43+7hKCD8U809ZeKowI69mNTyoojmwU+zzppC5y/4F8/AJk4IMbTiTY/Sb0/KjZI9lleA=
+	t=1732610629; cv=none; b=jm3m56HXH+nLkwSVZusdo8caZokrzY+63zY55FNQS0R2FYjE0oqTc/BSBFg094l/xgjK3ZalSP1dg0iymi3GojRiIHW98R2nnTHANtTcexZEYvl9y/j9SxjdXM0q9qffhopCOlDQOGYO0bezcH8/kfezLNxtFZ/DGl0hGOf4BeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732610600; c=relaxed/simple;
-	bh=KO4QChkeXAG6Ye9voL0kF1b9b0iezByykeh0B91eWOU=;
+	s=arc-20240116; t=1732610629; c=relaxed/simple;
+	bh=HuVyRClXhaSM8ZVR7Ab7Zv4aE1vJq8Al5X5SpC1lklE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDSW44T/WkQ1jaxCmjRWXrqhZVKlaZo27ienQeXGbP+MaDGD+tbgacrmm08RbwUoU19JnstWkqAwN34r12fTjhuMNhJ3ae16PropSEj5Fum/XDJOrsWaL1QrMgnFBGJkR0BE0cXYaDsB8D3cZspoBBNe2GAQj+6Dxb0O2Rj48CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LysdB1sj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADDDC4CECF;
-	Tue, 26 Nov 2024 08:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732610599;
-	bh=KO4QChkeXAG6Ye9voL0kF1b9b0iezByykeh0B91eWOU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNHE78gQ4Jx0Frfvs4bxCh36IeMEoqLVkkmOZVK1FEem+WW6+VcT9vQ0rJlCSUqxkB1/0QaO2CpNTOXKALFtys6omwxq6YTivzS2gkS5dEtbNRA4MNuzo+Rr8FTd7k1QCzNdObWHviPaKOFBrws3I1IwFODbOd0/WJ3woNRdaYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BCiDhwyd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3D3C46BE;
+	Tue, 26 Nov 2024 09:43:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732610603;
+	bh=HuVyRClXhaSM8ZVR7Ab7Zv4aE1vJq8Al5X5SpC1lklE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LysdB1sjC85kARHi4P1uA6mphsyY2WNeU6Uoxlf4hYuWmaSplc0EO98GwvqXyuGtj
-	 eC67M2vKoBHT0dpJxsNGcS0A87DyoJOWyZ1PUfXZhYL0J82fETMOmOlOT5+9iFh75F
-	 G43EGLPROxWeYcr2AXeve0GXF3zj4UdtjYPFQVkpd1yTceukMTw5xY91uef8jFiEua
-	 0u3ARhK5hIugNZ0UiPnvbhYm/ZxOMmZ7CQm3urOdgFDnaFK0cxWD9jyaM4S9gsTk4P
-	 Mm1fbOdhSW3QDg3zZcP8RpjamEowa7SlewSs+efHysJ/fvyV1o7iEVn1iGlgGTvP8L
-	 ZwuS+fw6CB1+g==
-Date: Tue, 26 Nov 2024 09:43:17 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	p.zabel@pengutronix.de, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, glx@linutronix.de, vkoul@kernel.org, 
-	kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org, frank.li@nxp.com, 
-	dmitry.baryshkov@linaro.org
-Subject: Re: [DO NOT MERGE PATCH v4 16/19] arm64: dts: imx8qxp: Add display
- controller subsystem
-Message-ID: <20241126-overjoyed-futuristic-saluki-cb6cc7@houat>
-References: <20241125093316.2357162-1-victor.liu@nxp.com>
- <20241125093316.2357162-17-victor.liu@nxp.com>
- <Z0RXCYZ_7fBvpcvd@gaggiata.pivistrello.it>
- <d004dfe7-d019-4f53-8373-c8c4e031748c@nxp.com>
+	b=BCiDhwyd7bsawseyl+EETONYSAC2fM3pjjuVWJLYNtZCHfXtpItr347dxf5EVG4rE
+	 c0R32mk/65WqbkxhWjivJ9bI4oC1xYIOz4cm2IWlstsn7v+XUtkmqHMEfoKpALBLJU
+	 ub61xODGZOIdPauVVzMqh4mHH458PjpRW/UlBycU=
+Date: Tue, 26 Nov 2024 10:43:36 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	Andy Hsieh =?utf-8?B?KOisneaZuueakyk=?= <Andy.Hsieh@mediatek.com>,
+	Julien Stephan <jstephan@baylibre.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>,
+	"pnguyen@baylibre.com" <pnguyen@baylibre.com>
+Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
+ ISP3.0 camsv
+Message-ID: <20241126084336.GC19381@pendragon.ideasonboard.com>
+References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
+ <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com>
+ <0e14e1d92be90c838ab097268a3674b38d48e51a.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fgeuvrs34ws7krrf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d004dfe7-d019-4f53-8373-c8c4e031748c@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0e14e1d92be90c838ab097268a3674b38d48e51a.camel@mediatek.com>
 
+On Tue, Nov 26, 2024 at 02:07:35AM +0000, CK Hu (胡俊光) wrote:
+> On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
+> >
+> > From: Phi-bang Nguyen <pnguyen@baylibre.com>
+> >
+> > This driver provides a path to bypass the SoC ISP so that image data
+> > coming from the SENINF can go directly into memory without any image
+> > processing. This allows the use of an external ISP.
+> >
+> > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
+> > [Paul Elder fix irq locking]
+> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > ---
+> 
+> [snip]
+> 
+> > +static const u32 mtk_cam_mbus_formats[] = {
+> > +       MEDIA_BUS_FMT_SBGGR8_1X8,
+> > +       MEDIA_BUS_FMT_SGBRG8_1X8,
+> > +       MEDIA_BUS_FMT_SGRBG8_1X8,
+> > +       MEDIA_BUS_FMT_SRGGB8_1X8,
+> > +       MEDIA_BUS_FMT_SBGGR10_1X10,
+> > +       MEDIA_BUS_FMT_SGBRG10_1X10,
+> > +       MEDIA_BUS_FMT_SGRBG10_1X10,
+> > +       MEDIA_BUS_FMT_SRGGB10_1X10,
+> > +       MEDIA_BUS_FMT_SBGGR12_1X12,
+> > +       MEDIA_BUS_FMT_SGBRG12_1X12,
+> > +       MEDIA_BUS_FMT_SGRBG12_1X12,
+> > +       MEDIA_BUS_FMT_SRGGB12_1X12,
+> > +       MEDIA_BUS_FMT_UYVY8_1X16,
+> > +       MEDIA_BUS_FMT_VYUY8_1X16,
+> > +       MEDIA_BUS_FMT_YUYV8_1X16,
+> > +       MEDIA_BUS_FMT_YVYU8_1X16,
+> > +};
+> > +
+> 
+> Format in mtk_cam_mbus_formats[] is more than mtk_cam_format_info[].
+> I would like these two to be consistent.
+> Reduce mtk_cam_mbus_formats[] or enlarge mtk_cam_format_info[].
+> Once these two are consistent, they could be merged into one array.
 
---fgeuvrs34ws7krrf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [DO NOT MERGE PATCH v4 16/19] arm64: dts: imx8qxp: Add display
- controller subsystem
-MIME-Version: 1.0
+And the array could then be extended with fields to replace the
+fmt_to_sparams() function.
 
-On Tue, Nov 26, 2024 at 10:08:26AM +0800, Liu Ying wrote:
-> On 11/25/2024, Francesco Dolcini wrote:
-> > On Mon, Nov 25, 2024 at 05:33:13PM +0800, Liu Ying wrote:
-> >> Add display controller subsystem in i.MX8qxp SoC.
-> >>
-> >> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >=20
-> > ...
-> >=20
-> >> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/b=
-oot/dts/freescale/imx8qxp.dtsi
-> >> index 05138326f0a5..35cc82cbbcd1 100644
-> >> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> >> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> >> @@ -20,6 +20,27 @@ / {
-> >>  	#size-cells =3D <2>;
-> >> =20
-> >>  	aliases {
-> >> +		dc0 =3D &dc0;
-> >> +		dc0-constframe0 =3D &dc0_constframe0;
-> >> +		dc0-constframe1 =3D &dc0_constframe1;
-> >> +		dc0-constframe4 =3D &dc0_constframe4;
-> >> +		dc0-constframe5 =3D &dc0_constframe5;
-> >> +		dc0-display-engine0 =3D &dc0_display_engine0;
-> >> +		dc0-display-engine1 =3D &dc0_display_engine1;
-> >> +		dc0-extdst0 =3D &dc0_extdst0;
-> >> +		dc0-extdst1 =3D &dc0_extdst1;
-> >> +		dc0-extdst4 =3D &dc0_extdst4;
-> >> +		dc0-extdst5 =3D &dc0_extdst5;
-> >> +		dc0-fetchlayer0 =3D &dc0_fetchlayer0;
-> >> +		dc0-fetchwarp2 =3D &dc0_fetchwarp2;
-> >> +		dc0-framegen0 =3D &dc0_framegen0;
-> >> +		dc0-framegen1 =3D &dc0_framegen1;
-> >> +		dc0-layerblend0 =3D &dc0_layerblend0;
-> >> +		dc0-layerblend1 =3D &dc0_layerblend1;
-> >> +		dc0-layerblend2 =3D &dc0_layerblend2;
-> >> +		dc0-layerblend3 =3D &dc0_layerblend3;
-> >> +		dc0-tcon0 =3D &dc0_tcon0;
-> >> +		dc0-tcon1 =3D &dc0_tcon1;
-> >=20
-> > what would you use those aliases for?
->=20
-> They are used to get the instance numbers of display controller
-> and display controller's internal processing units from display
-> driver, e.g., patch 9 & 10 get instance numbers of some display
-> controller's internal processing units.
+> > +static const struct mtk_cam_format_info mtk_cam_format_info[] = {
+> > +       {
+> > +               .fourcc = V4L2_PIX_FMT_SBGGR8,
+> > +               .code = MEDIA_BUS_FMT_SBGGR8_1X8,
+> > +               .bpp = 8,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_SGBRG8,
+> > +               .code = MEDIA_BUS_FMT_SGBRG8_1X8,
+> > +               .bpp = 8,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_SGRBG8,
+> > +               .code = MEDIA_BUS_FMT_SGRBG8_1X8,
+> > +               .bpp = 8,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_SRGGB8,
+> > +               .code = MEDIA_BUS_FMT_SRGGB8_1X8,
+> > +               .bpp = 8,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_YUYV,
+> > +               .code = MEDIA_BUS_FMT_YUYV8_1X16,
+> > +               .bpp = 16,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_YVYU,
+> > +               .code = MEDIA_BUS_FMT_YVYU8_1X16,
+> > +               .bpp = 16,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_UYVY,
+> > +               .code = MEDIA_BUS_FMT_UYVY8_1X16,
+> > +               .bpp = 16,
+> > +       }, {
+> > +               .fourcc = V4L2_PIX_FMT_VYUY,
+> > +               .code = MEDIA_BUS_FMT_VYUY8_1X16,
+> > +               .bpp = 16,
+> > +       },
+> > +};
+> > +
 
-AFAIK, it's not listed anywhere in your bindings. Did you get an
-acked-by from a DT maintainer for those aliases as well?
+-- 
+Regards,
 
-Maxime
-
---fgeuvrs34ws7krrf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0WKJAAKCRAnX84Zoj2+
-dv4FAX967eYE5R0RWLQVTJQQ3qJdNEVy6ugNTjWr8xtIy2N8MIIRzNEYEwwM1k4I
-4XQfvwoBgKYYryHo1ibtm7ah1MNmHl1h0R5wMhd+pMQv6UR7szQ8hWR4Bz3qc4SU
-9QJkkLsfPQ==
-=oNFh
------END PGP SIGNATURE-----
-
---fgeuvrs34ws7krrf--
+Laurent Pinchart
 
