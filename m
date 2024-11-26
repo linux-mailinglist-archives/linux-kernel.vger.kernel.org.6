@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-421909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1229D91D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:42:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254819D91DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 693CFB22B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D753528655D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D782189B94;
-	Tue, 26 Nov 2024 06:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0109E1898FC;
+	Tue, 26 Nov 2024 06:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EaQHk0U+"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6tlioGs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D2616C687
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F16653;
+	Tue, 26 Nov 2024 06:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732603338; cv=none; b=lHCC+BBHrsAGrcsJobgusudtAbblVLmLwaXj4TnZ4yT6meVYgKjQ+OPbZe4RhAyPbul408vdJblh17GQMEIJdZxvCSoQUV5ONeD+MwXZ4+A/5bY7xyf2Mp+rNbZkVIdsv/GbopqGVFuSmpWjEv34WJg0juidD6IXCxatYlgizVs=
+	t=1732603366; cv=none; b=CdsQFj8EX4n+V7KZDNcVH2yGP+GigVBSdRnBmlZVuD4S3hWK4VHIpdGR4EH70d7ziASopHWPO9Z+UWHWU807ovfje+UCq8qS1zXuuyXye+VFZQdmEgjP9wkyhJ1YrulinXGQJEzlCZoPCjD4aryplE8a/qMTKt5KuS2xOMoYltg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732603338; c=relaxed/simple;
-	bh=a1SaBbFjj8vFjXF+hzM/MCE4FeI4If0MgdsmduAW6JM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Z4qnZUG+tV1qxmwY3sJfv8R2bmpLed6HzDzhqMnhYzACqBmpvgwobV8n8qW0MYulNuVnwKZC8ju8kns8cHMjqLEYvlkbK2jKIy50LtEThN+1+neoaRAaJ0VTfXkBnJPqM+PwWvd/yrbucGcDyba024jhEgmJ9Y1h/YuesaRaFHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EaQHk0U+; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382423e1f7aso3690654f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732603334; x=1733208134; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8KOAUraYnH/3B7SG/rrcwF+vLVSxd81CrBd34HxjJTU=;
-        b=EaQHk0U+DOrb5dtZh7S+wF7mX8OAvlO5NOKwCH/tNDDV27tqL8hFzXEmv+ZmsOh/bo
-         PVrczcoIZtCvS8TfZidjG6Q21/i7EsPZEgAxuKsAT+EEBJ7UxY9u4bX5+Yt5fpO0dVPy
-         KZdmY9GqPzqgayY8aEg8c250mV5xBslsHn3Jww2rYtkBkaxsEfQ7qtEYWV47ch2zR+9W
-         E3+uwIvpxGxyyvRlOw+QafZ8dxqDkqFlrXlJ2WE1wLjrcPkCpW2oQaQ3vOoxgAsAq+L6
-         5wSRFZuu8Z80Z45M75irvoJqIUG/Gehnfl/9VwSf6xKxCh2oWLj4C/sy2vsIKwFZO05y
-         HZBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732603334; x=1733208134;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8KOAUraYnH/3B7SG/rrcwF+vLVSxd81CrBd34HxjJTU=;
-        b=rRaNM6RuCVn0f3aifCKqz6ZQLnhklMfMEl7vEBMuNt1iqLqz26WLccHxd4qW8ONMOU
-         ARLUPk/nPZwg44jenubyjIeIimJudeWKfJ20NlZ8lbK8LNnGxa0Oh4WbZMVIAvfvajja
-         PVcZb9Kt5iUecTmK+NM7YUP27WLGyG8TdRMsywcNMv1mWvftDc2AkckWHM9HjzP0hs3v
-         bhGpUyb4er9nOIEUB94kCKgHbS34ZCq4DXA413hfZkZyLMX2XmQQtBwRANPm8fLgGCql
-         rhZcPZmzc1BER4+LGwCPjUtVTaMiJUaP6DlZIylMyOfiCCT/8hlrzsedITFcWju9A0Ui
-         NS/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXsMGElfDCQUL2jiHEWlenTTv4uBBPYdEDl/nd5bOlfe8hmbaE9zP2m1gNIvgvf2r4ip9s9hxHiZ0YmXvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgTx2nOuOW+jHxO2LKIYS1jaA0zZgtjcx7DJwqM79OWao/yxlI
-	M0cRDdTUVvNMQ94ng+s7BgHKA46TiXBN0fIQLXgpvmgeTPr3kuAjFRWl0l0WnCV70vfBLpQPxzB
-	0
-X-Gm-Gg: ASbGncsy4PJfjlv6zRca/abRscuncWRCwQh6cTtgIqSzXmHRKbWwQBpb1Ar9mr9ZANo
-	Zyz0w3E76UbRS+sVNpafCAG3WXAF7+ys5MmQHiOeDpaCrrthkbXdST+TCNFwUprpK6ZzELBU8ou
-	seflupwPvrYJPtMQAiP/FZT94J+pM1SQSyjWhgpf0kEbC/5+hYhRW2MIaGa/ETQSDV9+L38IeWZ
-	SP+VvJdV5elfeaDq1rkuDJem8BisPVgsGa3KR5vT1lWxXWrYOgLCd182MWUMDYl44/EKpMXso6W
-	XA==
-X-Google-Smtp-Source: AGHT+IHnbR8REp+WErD3OFT1sJwjeJpiIyUdAt2OppaR+CKra/V6w1lmdL2j31PjU/IV0YR4/L7Xeg==
-X-Received: by 2002:a5d:588e:0:b0:382:383e:84e2 with SMTP id ffacd0b85a97d-38260bc93acmr15280642f8f.46.1732603333300;
-        Mon, 25 Nov 2024 22:42:13 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc13babsm76938505ad.176.2024.11.25.22.42.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 22:42:12 -0800 (PST)
-Message-ID: <43dc0351-7220-4326-ac07-ef37f6e5605a@suse.com>
-Date: Tue, 26 Nov 2024 17:12:07 +1030
+	s=arc-20240116; t=1732603366; c=relaxed/simple;
+	bh=8ZbNyjVm35zLAUZ9wINtxezmg9NeriQrGO0zeqDP4Ng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=amhmWYnd1wYXkbKaL1apig1WrnPVEQ6N4pLnTI6NPHLpw62jNy/IIkpjGHouK9ie0SSC6o5nMuYS62jISRBsTRn6X67sBPVW0zn3Vxk+5UrBxjka0XG/7nbyU4vLO2P1E5W1unrnpF2eGb0Pb/zsQ+gpRsvdMnnydMPcjw9Glyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6tlioGs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A56C4CECF;
+	Tue, 26 Nov 2024 06:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732603365;
+	bh=8ZbNyjVm35zLAUZ9wINtxezmg9NeriQrGO0zeqDP4Ng=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R6tlioGsDg+5Fkw69WEBUi5xgGOJjHyaz3slojfuLHInMgTaRQs+KmNCFOpGNnS4M
+	 NHSjYYeK3CbP07zB7MtBYe1t634Ly6gC7r21GPmHgs32pzP18JfBsFsMG+pWx9Q/Jl
+	 Xc+L+XuGZrgi+LBlAHqLRnFD8m8Kv7ISfAAWC5w/b7c8xY17bjmbK65VR0dsYbA4ER
+	 7Ug2H2ZAAzC3f5ile3JzW00d5mM2PlaAuRhGtRiBCXEyZXmjvgo/EXimattc3024lv
+	 JlcV4/Mpuqmy3c6o1i5XIIWVzcYXP4e21OTHtr0a3bSGJDqfmxujkZCebl8boH04rg
+	 rcubQF0/BL6PQ==
+Message-ID: <b2729bde-a12c-4662-897b-18bbea66d2f6@kernel.org>
+Date: Tue, 26 Nov 2024 07:42:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,152 +49,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
-To: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
- josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
-References: <67432dee.050a0220.1cc393.0041.GAE@google.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
+ video hardware
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
+ "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ quic_qiweil@quicinc.com
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
+ <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
+ <18cc654b4377463e8783de0b4659a27d@quicinc.com>
+ <474cef98-4644-4838-b07c-950ad7515b73@kernel.org>
+ <8c60696c-df14-4300-8a92-59eb134a96d2@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <67432dee.050a0220.1cc393.0041.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <8c60696c-df14-4300-8a92-59eb134a96d2@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-#syz test: https://github.com/btrfs/linux.git for-next
+On 26/11/2024 07:07, Renjiang Han wrote:
+> 
+> On 11/25/2024 11:55 PM, Krzysztof Kozlowski wrote:
+>> On 25/11/2024 16:49, Renjiang Han (QUIC) wrote:
+>>>>> +  video-decoder:
+>>>>> +    type: object
+>>>>> +
+>>>>> +    additionalProperties: false
+>>>>> +
+>>>>> +    properties:
+>>>>> +      compatible:
+>>>>> +        const: venus-decoder
+>>>>> +
+>>>>> +    required:
+>>>>> +      - compatible
+>>>>> +
+>>>>> +  video-encoder:
+>>>>> +    type: object
+>>>> Both nodes are useless - no resources here, nothing to control.
+>>>> Do not add nodes just to instantiate Linux drivers. Drop them.
+>>> Do you mean I should remove video-decoder and video-encoder from here?
+>> Yes, that's my suggestion.
+>>
+>>> If so, do I also need to remove these two nodes from the dtsi file and add
+>> Yes
+>>
+>>> them in the qcs615-ride.dts file?
+>> Well, no, how would it pass dtbs_check?
+>>
+>> Don't add nodes purely for Linux driver instantiation.
+> OK, I got it. I'll update like this. If video-decoder and video-encoder are
+> 
+> removed from dtsi file and not added to qcs615-ride.dts file, then the
+> 
+> video decoder and encoder functions will not be available on the qcs615
+> 
+> platform. So I think these two nodes should be added to the
+> 
+> qcs615-ride.dts file to ensure that the qcs615 platform can enable the
+> 
+> video decoder and encoder functions.
+You just repeated the same sentences. Address my comment instead - empty
+device nodes should not be used just to instantiate Linux device drivers.
 
-在 2024/11/25 00:15, syzbot 写道:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    228a1157fb9f Merge tag '6.13-rc-part1-SMB3-client-fixes' o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13820530580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=aac7bff85be224de5156
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13840778580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17840778580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/d32a8e8c5aae/disk-228a1157.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/28d5c070092e/vmlinux-228a1157.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/45af4bfd9e8e/bzImage-228a1157.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/69603aa12e8f/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com
-> 
->   __fput+0x5ba/0xa50 fs/file_table.c:458
->   task_work_run+0x24f/0x310 kernel/task_work.c:239
->   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->   exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->   syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
->   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ------------[ cut here ]------------
-> kernel BUG at mm/page-writeback.c:3119!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-syzkaller-08446-g228a1157fb9f #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: btrfs-delalloc btrfs_work_helper
-> RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:3119
-> Code: 25 ff 0f 00 00 0f 84 d3 00 00 00 e8 14 ae c3 ff e9 ba f5 ff ff e8 0a ae c3 ff 4c 89 f7 48 c7 c6 00 2e 14 8c e8 8b 4f 0d 00 90 <0f> 0b e8 f3 ad c3 ff 4c 89 f7 48 c7 c6 60 34 14 8c e8 74 4f 0d 00
-> RSP: 0018:ffffc90000117500 EFLAGS: 00010246
-> RAX: ed413247a2060f00 RBX: 0000000000000002 RCX: 0000000000000001
-> RDX: dffffc0000000000 RSI: ffffffff8c0ad620 RDI: 0000000000000001
-> RBP: ffffc90000117670 R08: ffffffff942b2967 R09: 1ffffffff285652c
-> R10: dffffc0000000000 R11: fffffbfff285652d R12: 0000000000000000
-> R13: 1ffff92000022eac R14: ffffea0001cab940 R15: ffff888077139710
-> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6661870000 CR3: 00000000792b2000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   process_one_folio fs/btrfs/extent_io.c:187 [inline]
->   __process_folios_contig+0x31c/0x540 fs/btrfs/extent_io.c:216
->   submit_one_async_extent fs/btrfs/inode.c:1229 [inline]
->   submit_compressed_extents+0xdb3/0x16e0 fs/btrfs/inode.c:1632
->   run_ordered_work fs/btrfs/async-thread.c:245 [inline]
->   btrfs_work_helper+0x56b/0xc50 fs/btrfs/async-thread.c:324
->   process_one_work kernel/workqueue.c:3229 [inline]
->   process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
->   worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->   kthread+0x2f0/0x390 kernel/kthread.c:389
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:3119
-> Code: 25 ff 0f 00 00 0f 84 d3 00 00 00 e8 14 ae c3 ff e9 ba f5 ff ff e8 0a ae c3 ff 4c 89 f7 48 c7 c6 00 2e 14 8c e8 8b 4f 0d 00 90 <0f> 0b e8 f3 ad c3 ff 4c 89 f7 48 c7 c6 60 34 14 8c e8 74 4f 0d 00
-> RSP: 0018:ffffc90000117500 EFLAGS: 00010246
-> RAX: ed413247a2060f00 RBX: 0000000000000002 RCX: 0000000000000001
-> RDX: dffffc0000000000 RSI: ffffffff8c0ad620 RDI: 0000000000000001
-> RBP: ffffc90000117670 R08: ffffffff942b2967 R09: 1ffffffff285652c
-> R10: dffffc0000000000 R11: fffffbfff285652d R12: 0000000000000000
-> R13: 1ffff92000022eac R14: ffffea0001cab940 R15: ffff888077139710
-> FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055ec8463e668 CR3: 000000007ed5e000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
-
+Best regards,
+Krzysztof
 
