@@ -1,114 +1,175 @@
-Return-Path: <linux-kernel+bounces-422231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D00C9D9639
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D489D9644
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C8F165B7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E150165840
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A58A1CEAD5;
-	Tue, 26 Nov 2024 11:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028751C8FBA;
+	Tue, 26 Nov 2024 11:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuqMzKAh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="IYjLxIra"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02514139D07;
-	Tue, 26 Nov 2024 11:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D207E9;
+	Tue, 26 Nov 2024 11:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732620379; cv=none; b=iSFB2uTvq7zftq1q4M71SZobDSmdjRkGtCzyiawHFHrdQknL051MspL+5A+Q1VXcPEoDtQGaL0uFlvL9ucH9f1kxGAyq3z2hdjO7I9VR7Pppyy7nndS+qBn55CH6cpvReR85qJ9lcnQEOJHccQWKyiVTicj1cXMjvnBOrEgNtsw=
+	t=1732620879; cv=none; b=hlKbERq7Bdp2QCOzekVY/+6RQ7HSzQ8pRXlwtovUsBa+CDqg0wbaOuird5KMm86LLtjstONAZ4Qj5bTLPEa7Lw1i0i8Naaqj0nAV58vVOvsUfAEaZ/CNky8GWWx93B5io5h+B7iXHb/vUIOMCN/1hYsyDjgTGqwCCyxSalQfJ74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732620379; c=relaxed/simple;
-	bh=3uT0PT2l/EMNqqJ+IljppA8Zcm78dK8fD25uA3im1Vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MRJ+uCxlOIDyMSWIcwNKEHRttz2kyiEix89qECFpwi5gmDtaNL+sgQqJ/ICfEZmooCtg2fsTAipOJnKaTUVk4x2sNxnj/xxzq3Tw8+7PcuFcZb+lr5oOFI9ADyKMudyp2MgA6OU/XHG3icAMM812ZPEzjs+dG0hQtc5t8VVxAT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuqMzKAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E69CC4CECF;
-	Tue, 26 Nov 2024 11:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732620378;
-	bh=3uT0PT2l/EMNqqJ+IljppA8Zcm78dK8fD25uA3im1Vo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RuqMzKAhUhEfzY1flCqit/P2+fpsu1IwmCeNO5QcxWSbhmIuWjMdyC1kgxJW+ie5m
-	 Qw2TTnI/OkKRP99w237QnMz9RGpHvUTUkdffwgqnzIs+lnmemqMTF9HX2Y0GnLVWHj
-	 7CBs5By7g4o0UXjDa/tPuaPOdMIRyFpXO0O6JPaa/ANZ5d9yKtmwn175tBEWswpqvU
-	 ptmfLDWBOLuETX83Ep/swMmG1RpnuuZ3qNhXUn9RmWMLYrF6hFIGt8HSxkImDfHrPp
-	 mlxh+MnlscUX1YRWtjeRy2neHnFxx/qrxnisofBAwOD3FneSxoyn66x/UWS/5u+iDw
-	 bzZ3/uqMI3YqA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs ecryptfs mount api
-Date: Tue, 26 Nov 2024 12:26:04 +0100
-Message-ID: <20241126-vfs-ecryptfs-f20bc3c7b06e@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732620879; c=relaxed/simple;
+	bh=4OvW6g/NEl66yAFlswTcYgZc7o5V4hnWLTsy9+wtjLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IO16PsSnfMGw7cYu2cJE64UL1Yk/vDuwQ4mEM3LE3OIGo6bFgrHCyuBKI6MSa9dagi+zh9XskAKGIrZjL1LF4VTDGBu67vsfMhdqgNi0uCkThqj33Dx4Q5MLHhGgNdTMyzUYzb/WyKi80/X7bW3H66fXZ+p5A4p/jD2p48rHIfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=IYjLxIra; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=i8aAJG0E0LQ869T/BkdOg6biqlcLfLrnW6kcsgQo+rg=; b=IYjLxI
+	racD1Hfp9/3fmYI4DPBBK6GoSfOG/NV0Du+imWjwCZo/uWJeVZsT7IcGW7b3jGFb/tbXS0HNlVFm9
+	qU7rBvtHbAlmsY/IT/F9UD96NN2oBlZGGhYT1LV50/nodVxCC1dj3NMVSktE/aNLrCd36HQMOdut3
+	uuspr8X6v5lhdg4GmudtZ/S98ai3ZP+VFGPkGLXHl3+wsyGcK+hY9SAnb/Quv+6pdrJlFJUlB4bw6
+	kn2+wX78fU12sVnobvWwFeNbonB5rT7zWueM2LU9QYI87AF8Aay5Am97RMoUYipNZFJ5gFgMk6rOK
+	fWEWYQteYuK5+v1v3I+fQ3YXDbiA==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tFtps-00082H-Nc; Tue, 26 Nov 2024 12:34:28 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tFtpr-0000HD-2M;
+	Tue, 26 Nov 2024 12:34:27 +0100
+Date: Tue, 26 Nov 2024 12:34:26 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
+ helper function
+Message-ID: <zmrcuqiyz5gojhusysy7cytluedslqmfgzuslutqeg65iv7ju6@bggk7qbm6eas>
+References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
+ <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
+ <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
+ <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
+ <20241126-refreshing-slick-pig-baebab@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1571; i=brauner@kernel.org; h=from:subject:message-id; bh=3uT0PT2l/EMNqqJ+IljppA8Zcm78dK8fD25uA3im1Vo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7bgjsXKFRFXys5z+nddahA3wVSluf+pdml24ofvrQ+ DSXtKlVRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETeHGX47yfKn/+xhufwxxcP LKW+6DTPt1N0OvqAN+HFyyWLZyxUa2ZkuGJmWzwl+vUS9S1b5Oz0BdKFXIIEv7RsC1stvCdc1uI JEwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241126-refreshing-slick-pig-baebab@houat>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27469/Tue Nov 26 10:58:20 2024)
 
-Hey Linus,
+Hi,
 
-/* Summary */
-This contains the work to convert ecryptfs to the new mount api.
+On Tue, Nov 26, 2024 at 09:38:55AM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> On Tue, Nov 26, 2024 at 08:36:00AM +0100, Sean Nyekjaer wrote:
+> > On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
+> > > On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
+> > > > Check if the required pixel clock is in within .5% range of the
+> > > > desired pixel clock.
+> > > > This will match the requirement for HDMI where a .5% tolerance is allowed.
+> > > > 
+> > > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > > > ---
+> > > >  drivers/gpu/drm/drm_modes.c | 34 ++++++++++++++++++++++++++++++++++
+> > > >  include/drm/drm_modes.h     |  2 ++
+> > > >  2 files changed, 36 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> > > > index 6ba167a3346134072d100af0adbbe9b49e970769..4068b904759bf80502efde6e4d977b297f5d5359 100644
+> > > > --- a/drivers/gpu/drm/drm_modes.c
+> > > > +++ b/drivers/gpu/drm/drm_modes.c
+> > > > @@ -1623,6 +1623,40 @@ bool drm_mode_equal_no_clocks_no_stereo(const struct drm_display_mode *mode1,
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
+> > > >  
+> > > > +/**
+> > > > + * drm_mode_validate_mode
+> > > > + * @mode: mode to check
+> > > > + * @rounded_rate: output pixel clock
+> > > > + *
+> > > > + * VESA DMT defines a tolerance of 0.5% on the pixel clock, while the
+> > > > + * CVT spec reuses that tolerance in its examples, so it looks to be a
+> > > > + * good default tolerance for the EDID-based modes. Define it to 5 per
+> > > > + * mille to avoid floating point operations.
+> > > > + *
+> > > > + * Returns:
+> > > > + * The mode status
+> > > > + */
+> > > > +enum drm_mode_status drm_mode_validate_mode(const struct drm_display_mode *mode,
+> > > > +					    unsigned long long rounded_rate)
+> > > > +{
+> > > > +	enum drm_mode_status status;
+> > > > +	unsigned long long rate = mode->clock * 1000;
+> > > > +	unsigned long long lowest, highest;
+> > > > +
+> > > > +	lowest = rate * (1000 - 5);
+> > > > +	do_div(lowest, 1000);
+> > > > +	if (rounded_rate < lowest)
+> > > > +		return MODE_CLOCK_LOW;
+> > > > +
+> > > > +	highest = rate * (1000 + 5);
+> > > > +	do_div(highest, 1000);
+> > > > +	if (rounded_rate > highest)
+> > > > +		return MODE_CLOCK_HIGH;
+> > > > +
+> > > > +	return MODE_OK;
+> > > > +}
+> > > > +EXPORT_SYMBOL(drm_mode_validate_mode);
+> > > 
+> > > Thanks a lot for doing that!
+> > > 
+> > > I wonder about the naming though (and prototype). I doesn't really
+> > > validates a mode, but rather makes sure that a given rate is a good
+> > > approximation of a pixel clock. So maybe something like
+> > > drm_mode_check_pixel_clock?
+> > 
+> > Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
+> > 
+> > Would it make sense to have the pixel clock requirement as a input
+> > parameter? For HDMI it is 0.5%
+> 
+> This code was only used for panels so far. It reuses the same tolerance
+> than HDMI because we couldn't come up with anything better, but it
+> should totally apply to other things.
+> 
+> > and in my case the LVDS panel 10%.
+> 
+> 10% is a lot, and I'm not sure we'll want that. The framerate being
+> anywhere between 54 and 66 fps will trip a lot of applications too.
+> 
+> Why do you need such a big tolerance?
 
-/* Testing */
+I don't need it, it was just from the datasheet for the LVDS panel :)
 
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
+> 
+> Maxime
 
-All patches have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit b4201b51d93eac77f772298a96bfedbdb0c7150c:
-
-  Merge patch series "Convert ecryptfs to use folios" (2024-11-05 17:20:17 +0100)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.ecryptfs.mount.api
-
-for you to fetch changes up to 7ff3e945a35ac472c6783403eae1e7519d96f1cf:
-
-  ecryptfs: Fix spelling mistake "validationg" -> "validating" (2024-11-15 11:51:29 +0100)
-
-----------------------------------------------------------------
-vfs-6.13.ecryptfs.mount.api
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Merge patch series "ecryptfs: convert to the new mount API"
-
-Colin Ian King (1):
-      ecryptfs: Fix spelling mistake "validationg" -> "validating"
-
-Eric Sandeen (2):
-      ecryptfs: Factor out mount option validation
-      ecryptfs: Convert ecryptfs to use the new mount API
-
- fs/ecryptfs/main.c | 401 +++++++++++++++++++++++++++--------------------------
- 1 file changed, 205 insertions(+), 196 deletions(-)
+/Sean
 
