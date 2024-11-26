@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-421826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FB69D909D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:03:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3DF91686EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:03:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C4F38F91;
-	Tue, 26 Nov 2024 03:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BaExCHVK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C999E9D90A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:06:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F821BE65
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE96286F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:06:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA70433AD;
+	Tue, 26 Nov 2024 03:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HYEyTPPT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D2C27735
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732590231; cv=none; b=c9/ccBkA/09NfHUGPYIjrYCrx/GmLotaD+3tg4ESDsMT4Ei01/ACb/qMJbqh7COBPSgb/eDpxOP4XIjNgP73A1rOMBZ+qjC08YV8m91iYY4yfaNlIrITVWWu6WRE8OE0tXKf627OWissieSJC+tLeBjueRXdykkfloCKCQGy068=
+	t=1732590360; cv=none; b=AiIxMRMknZLLwJDsxjg5jVCn97CGQGVZ9f6wY//vSurR3vcHBOsivW5aoR2fcr8GwVXVZ7Kjvztew8wBDKeTLPZCGBF/BkuFGs1FZ3aJzphvSWIBOrlxjUaFnP+Oi4Kz7fJqE97I6BtKZYhwA4gSkU9OTleKy2BOEe8qo+6GFUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732590231; c=relaxed/simple;
-	bh=n9BkLfzwG42gWfSjQFjBekrQh2+TDVjOr7ijh6ur4bc=;
+	s=arc-20240116; t=1732590360; c=relaxed/simple;
+	bh=DsCFz8XoXAvhqPENyzKQF0ndJQTmjAZPWAc4WNaCERg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfgVteUGte+fjHIzpdMFRQgCDPTIIrW6/bjvKQaacEITJQz9F21JN9jA2/WEcSmgRpcThgXyJgbc4pcdHN50NRwE1ekXSMSH7b2hY4yBDSCWPlBKY+eMzucHHwcHFEmFLBV0Pf1RCPmS5G1dursh0rEog0wo3XM8V/js7Cjs/40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BaExCHVK; arc=none smtp.client-ip=198.175.65.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=oaVn3i6fwTz7hBEkk+B10wi6qHmndbevzLWANDTroO/97Ghu6pTQyvPl4+71te3BiTFTFIWcEQuvm2++WpNfRgWncJBZlfiGoa4BGdBKHJ4tk2R3J7YqW892xJTcPOp6PpcHIbPfsWmv5nhXy9vdUlbaigABALMSHmz5ruRhqWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HYEyTPPT; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732590230; x=1764126230;
+  t=1732590359; x=1764126359;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=n9BkLfzwG42gWfSjQFjBekrQh2+TDVjOr7ijh6ur4bc=;
-  b=BaExCHVKtc+6PZ57vJzJ4E0fmS44u+zXJ2172yJLB7jlxkVpcgEzwR5M
-   BY2XzQFDi3ejgqGQ89KBVn83qNWf6dSgdeDr81EDxhn8mRIv6RRq76m1j
-   UalTM+0TxMoSYfK0ySTAaihYutJNIz1zJfMhoxnm6hZtHVC1SFCO50vhw
-   JLurAcdPg1W3GRXbVWdBfofH5Kt0O8+fZ+l+8G5KkuMdgry/pi86ax1xu
-   7euF3fhaBmI0zFXQCYm7tIdRQ6tfsYk2FJVw0BEVIRI83A1gE68SnOcut
-   GjnT1GRFOpRn5VfhNlx884eXKfOqNoc754JQnpr15LJrh7xxmJI6izp+H
-   g==;
-X-CSE-ConnectionGUID: Ap2/vllWTCGBh2gEdOJAVw==
-X-CSE-MsgGUID: 7m1hsrTiQpK7+v36Hq1P7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43224259"
+  bh=DsCFz8XoXAvhqPENyzKQF0ndJQTmjAZPWAc4WNaCERg=;
+  b=HYEyTPPTlE03g862j9NbxGMaUYhGMUTnXWC2JQUS3wDUFwnll9BRVLM3
+   xZZNp5PTAYVZvzvqoMdbGUa6opPYabMVEjl3MhR9jExxxaSJCz4U1NOKm
+   Ut51e7SjlrUyHYfuv+NUB/qLE0Yow7q8sDyItLaj65uV7FPPxBAFUBJu0
+   K6EqdDdqBCue9Qa0wBKm0qDJegnSQ312MbjApmnvJMaEKqKPXP89Apnur
+   WaY8rKy6ilXnAXgRFVhMvX6Gc6pOXrDDdsGdTydcG82xJeOESrkMrQvx7
+   4rKdIkkFCj1AivuoIJ8uUHobpCeeD45xOioc8SyrYGrTyOR6ftajYUJ8d
+   A==;
+X-CSE-ConnectionGUID: C8/9l859S0WkPkCkPi2kWw==
+X-CSE-MsgGUID: LTJpPu6jRF6UCyQfF4kqgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="36514951"
 X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="43224259"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 19:03:50 -0800
-X-CSE-ConnectionGUID: WNjJFlo2QiGTbaQLqvbZ0g==
-X-CSE-MsgGUID: 2bL02DWGQkOKdxUAD7OVIw==
+   d="scan'208";a="36514951"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 19:05:58 -0800
+X-CSE-ConnectionGUID: NavKi4/uRuajw1tnH6RCTA==
+X-CSE-MsgGUID: 9IEU1xGaSvKWa8TKEPGGDg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="91270265"
+   d="scan'208";a="92281736"
 Received: from liuzhao-optiplex-7080.sh.intel.com (HELO localhost) ([10.239.160.36])
-  by fmviesa007.fm.intel.com with ESMTP; 25 Nov 2024 19:01:53 -0800
-Date: Tue, 26 Nov 2024 11:20:02 +0800
+  by orviesa008.jf.intel.com with ESMTP; 25 Nov 2024 19:05:56 -0800
+Date: Tue, 26 Nov 2024 11:24:04 +0800
 From: Zhao Liu <zhao1.liu@intel.com>
 To: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
 	bp@alien8.de, rafael@kernel.org, lenb@kernel.org,
 	dave.jiang@intel.com, irenic.rajneesh@gmail.com,
 	david.e.box@intel.com
-Subject: Re: [PATCH 01/11] x86/cpu: Move MWAIT leaf definition to common
- header
-Message-ID: <Z0U+Yt7eS9DYw37c@intel.com>
+Subject: Re: [PATCH 02/11] x86/cpu: Use MWAIT leaf definition
+Message-ID: <Z0U/VC2uyC1zcBjZ@intel.com>
 References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
- <20241120195328.4C71D0A5@davehans-spike.ostc.intel.com>
+ <20241120195329.25931E2D@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,35 +76,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120195328.4C71D0A5@davehans-spike.ostc.intel.com>
+In-Reply-To: <20241120195329.25931E2D@davehans-spike.ostc.intel.com>
 
-On Wed, Nov 20, 2024 at 11:53:28AM -0800, Dave Hansen wrote:
-> Date: Wed, 20 Nov 2024 11:53:28 -0800
+On Wed, Nov 20, 2024 at 11:53:30AM -0800, Dave Hansen wrote:
+> Date: Wed, 20 Nov 2024 11:53:30 -0800
 > From: Dave Hansen <dave.hansen@linux.intel.com>
-> Subject: [PATCH 01/11] x86/cpu: Move MWAIT leaf definition to common header
+> Subject: [PATCH 02/11] x86/cpu: Use MWAIT leaf definition
 > 
 > 
 > From: Dave Hansen <dave.hansen@linux.intel.com>
 > 
-> Begin constructing a common place to keep all CPUID leaf definitions.
-> Move CPUID_MWAIT_LEAF to the CPUID header and include it where
-> needed.
+> The leaf-to-feature dependency array uses hard-coded leaf numbers.
+> Use the new common header definition for the MWAIT leaf.
 > 
 > Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 > ---
 > 
->  b/arch/x86/include/asm/cpuid.h  |    2 ++
->  b/arch/x86/include/asm/mwait.h  |    1 -
->  b/arch/x86/kernel/acpi/cstate.c |    1 +
->  b/arch/x86/kernel/hpet.c        |    1 +
->  b/arch/x86/kernel/process.c     |    1 +
->  b/arch/x86/kernel/smpboot.c     |    1 +
->  b/arch/x86/xen/enlighten_pv.c   |    1 +
->  b/drivers/acpi/acpi_pad.c       |    1 +
->  b/drivers/idle/intel_idle.c     |    1 +
->  9 files changed, 9 insertions(+), 1 deletion(-)
+>  b/arch/x86/kernel/cpu/common.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff -puN arch/x86/kernel/cpu/common.c~mwait-leaf-checks-1 arch/x86/kernel/cpu/common.c
+> --- a/arch/x86/kernel/cpu/common.c~mwait-leaf-checks-1	2024-11-20 11:44:16.169610481 -0800
+> +++ b/arch/x86/kernel/cpu/common.c	2024-11-20 11:44:16.169610481 -0800
+> @@ -29,6 +29,7 @@
 
-Look straightforward to me, so,
+LGTM,
 
 Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
 
