@@ -1,184 +1,108 @@
-Return-Path: <linux-kernel+bounces-422303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F669D975D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:41:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB229D975E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 466CDB22AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E3EEB23C29
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA6E1D2B11;
-	Tue, 26 Nov 2024 12:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964F71CEE8A;
+	Tue, 26 Nov 2024 12:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aGmmZvTk"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XKhkOKt9"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601327442;
-	Tue, 26 Nov 2024 12:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBE41BD012
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732624893; cv=none; b=N0OBmAttwardYfsScDN+SDXQBYyK0ZG1BU/Yr78+u7NyFkbdHeZYvC/FxeYuOzhk7dj1Km3qe7/3vGxAMU+guTgiQOzQ9bQ9Nkf2FD2DJEamVeFBRdjKM7xI+qXTOHP8IpIRbI+MzFsUZphO5BuukSS3N1TBcz/bIQgXcaIkUMY=
+	t=1732624901; cv=none; b=gbcgtFpyCWcdyUCWUFUVFpwruBZHpRajzZABo3GgdhHxmxsyyh8qOFXn9p8QnvvLqYmwAJ+Hnm17VlGxax8JrDeWguasrVq+khow3Uia4SZD9IKWzUJ2UOkCGIdfGI71bMt2sv2W97IOr2W7+fPrntH5TSKYjsodh42srrKFvZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732624893; c=relaxed/simple;
-	bh=3++F0CPGlSPV7VHDSu5UkQCDjvkmtFv4Il2HnX9bZow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfUjxrwnKYportvkN11gBCUec35kr72OSMK7R3/YQRih0+m7BfwyhPbyqGw6Z5KzePb6BPMWN//bIrOYlQc8Bug+8oQra9A72UIwigiRzbfpUywZk+49GJkCtUim7vX6zI54/+oawsO5i4XGPgGvM8+ZR9qih4xtUdMU4fs7Stg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aGmmZvTk; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ8eBha018106;
-	Tue, 26 Nov 2024 12:41:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=gI7lf1d2YuHEgZ8p/4OjqQ4L7QiJ9z
-	JUd/FwFOMA2p4=; b=aGmmZvTkHQ3RUf99D8ivAqhfnNj/XKEP1pBfJJplCLW0WC
-	8bG2e/0J3GC5mMhobFMpQWtCtNnedwwC77iMkmw6YQiBA3iiiz3dlxlYZp2ebhpX
-	/pJIWwrfJd2KCmhm9Yup/ts3tS65OJuPbuAXF4PcaZYxqUtfrJMMAuVYd0sex+Hd
-	SV8P4bj8gthDhHebz5ys/WzjVuRt1cRDYvjzvvvPaKYJOsNDfrDTmn1z4K17UjhF
-	dYMUElBvYicTHEbsLb/aI240PW8urn0GR9hcBZNWnYT4Z7Er0dTsP6B3CRYyMpNv
-	YBXC9c5Oqo36Ptss2QEmHRmPaRokXEW7EuV5INqA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwje3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AQCZ0Yo028031;
-	Tue, 26 Nov 2024 12:41:21 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwjdx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ79qF9012370;
-	Tue, 26 Nov 2024 12:41:20 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 433scrvg77-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 12:41:20 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQCfJmk17170736
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Nov 2024 12:41:19 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15A7D2004E;
-	Tue, 26 Nov 2024 12:41:19 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A44AC2005A;
-	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
-Date: Tue, 26 Nov 2024 18:11:14 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
-Message-ID: <Z0XB6uLUkwDWLV8E@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
- <20241121123855.645335-3-ojaswin@linux.ibm.com>
- <20241126090452.ohggr3daqskllxjk@quack3>
+	s=arc-20240116; t=1732624901; c=relaxed/simple;
+	bh=cPTLukRRkvaGSB00X3hsgqrDjbaD+cNjKIgDNOefcOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axArfMJ9+/+3W52o7vH34NO3XKTwP7nP9Rre4eeoCenaz0hiYEJHtIAkkn1+lMFoxJ8TK8/0XITl7pMaG0umBHOe1EOukmIm+JaoRIGs9MEQOz3+Sc0wIf877EJT19PN/ndTo3KQtYKvhttCX1+6HA/g8WMxA6nnlnKerIbh3ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XKhkOKt9; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ee676b4e20so56833667b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732624898; x=1733229698; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPTLukRRkvaGSB00X3hsgqrDjbaD+cNjKIgDNOefcOk=;
+        b=XKhkOKt9s0Y+ktsLJ7nOA6W8tFY9+gflqtV+KS+cspuiaN9S3hjKic5OEc5XUcud6b
+         ViqsikGnTIUd27TXmq/4TDzc30czyiaQkoUom+Wganbtyg2gM4fDs3IVtjSHw4TEXIYg
+         TSsV9yti2NATSuMLZlqhpZh0NQMjmurXRkoTqpnt+mch0QIS4uk6yeU3rH0bdWxUZ5Jc
+         ieG5iFuXdRuyA/YFsOTp0lAPgsIrw+vcNSN7BE8gNaiLxoNgCDXeqa9WCcAsCXtmlxew
+         KFMck9/sOCSWIeZyPUi3nkuZ2MWRVhNLyLzD9FrL7cu/brk0jMFpq8AZoHNopXBNVQ3p
+         eNXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732624898; x=1733229698;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cPTLukRRkvaGSB00X3hsgqrDjbaD+cNjKIgDNOefcOk=;
+        b=JsqDu7kVSUNIQr5Md9J4UJkcSZet8YEiMtae09Hk2hB9kUWCcBZZ4YcIhkRokGVTMr
+         76FP5yoEMUg+wrsyaHsX0jUR5TTLo5kiICtY0rpSiENq0bdDiHtvgw2A74NnUI1vzw+N
+         /aGcD9O36BFvoondIHw992APvyWYJXWM454fvWH3Qk4mP5HHfO9gWysElDK4qVItmJWO
+         zqloSmsl7UITIBSsL49+0RyHXCkCVCNDdsYZsjSnAAOn0yleVh7WZkHFyJ5eoxMIhk+A
+         lGqjD7MFHsiYV6QsiH8s43rgCc7jmfoVFNdxYREH/vviYrazMRdYE6aeYM6nhHZw4CUF
+         62eQ==
+X-Gm-Message-State: AOJu0YzQ4+mVOyhDG0/qngj12ti/rsIxakM9oPX2UqRDYmhZgYFvSBiM
+	Vj6SMhPBpt6LoVag55U5tICk6v/Ep0n+uLW2VG20Q4ghuLWKR4csXHOh49NsbyNmRwcwU/qnC7M
+	k3NaJ63J6BQNuUbQJG8p8wW4oOATuxxpZ5z4juZCiAOs02ri9roE=
+X-Gm-Gg: ASbGncu7IneTpz+6m39eJIdVLW0NAwbzb6gLKDcgmjWUDvZCobEU2o5GSCnN6uC7sff
+	66fI0Vs/uYD3AdWBns5lQXTkuYAd3uj4Kb/CKEkEjq9D+YwMDbH7k3KLjuV8X36Y=
+X-Google-Smtp-Source: AGHT+IF6l4+hBDV+putwVYiDk0qugPERHe+upMe++6V3UcZ5/+gbIZmfJ4RQdC8Lpth0bOqnEm38/6mER962cgmW0UQ=
+X-Received: by 2002:a05:690c:2504:b0:6ea:8d6f:b1bf with SMTP id
+ 00721157ae682-6eee0779a6dmr182254577b3.0.1732624898603; Tue, 26 Nov 2024
+ 04:41:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126090452.ohggr3daqskllxjk@quack3>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1nRQjSqdA0HDfy838ABRw0pKv6Qm4RYg
-X-Proofpoint-GUID: SZz5FBwk32IcPVu-fs9KsAnJtaIjJpxp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- mlxlogscore=817 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260101
+References: <20241124124919.3338752-1-sashal@kernel.org> <20241124124919.3338752-21-sashal@kernel.org>
+In-Reply-To: <20241124124919.3338752-21-sashal@kernel.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Tue, 26 Nov 2024 13:41:27 +0100
+Message-ID: <CACMJSevZVPcHaEfromwLu1mM5kXE4sVz6f92u5HKLpM65ypbeQ@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.12 21/23] USB: gadget: pxa27x_udc: Avoid using GPIOF_ACTIVE_LOW
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, daniel@zonque.org, 
+	haojian.zhuang@gmail.com, robert.jarzmik@free.fr, 
+	linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 26, 2024 at 10:04:52AM +0100, Jan Kara wrote:
-> On Thu 21-11-24 18:08:55, Ojaswin Mujoo wrote:
-> > Protect ext4_release_dquot against freezing so that we
-> > don't try to start a transaction when FS is frozen, leading
-> > to warnings.
-> > 
-> > Further, avoid taking the freeze protection if a transaction
-> > is already running so that we don't need end up in a deadlock
-> > as described in
-> > 
-> >   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
-> > 
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> Looks good to me (the 0-day reports seem to be due to wrong merge). Feel
-> free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> 								Honza
+On Sun, 24 Nov 2024 at 13:50, Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> [ Upstream commit 62d2a940f29e6aa5a1d844a90820ca6240a99b34 ]
+>
+> Avoid using GPIOF_ACTIVE_LOW as it's deprecated and subject to remove.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Link: https://lore.kernel.org/r/20241104093609.156059-6-andriy.shevchenko@linux.intel.com
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
 
-Thanks Jan, yes it does seem like an incorrect merge.
+All these GPIOF_ACTIVE_LOW patches are not fixes and should be dropped
+from stable branches.
 
-> 
-> > ---
-> >  fs/ext4/super.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> > 
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 16a4ce704460..f7437a592359 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
-> >  {
-> >  	int ret, err;
-> >  	handle_t *handle;
-> > +	bool freeze_protected = false;
-> > +
-> > +	/*
-> > +	 * Trying to sb_start_intwrite() in a running transaction
-> > +	 * can result in a deadlock. Further, running transactions
-> > +	 * are already protected from freezing.
-> > +	 */
-> > +	if (!ext4_journal_current_handle()) {
-> > +		sb_start_intwrite(dquot->dq_sb);
-> > +		freeze_protected = true;
-> > +	}
-> >  
-> >  	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
-> >  				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
-> >  	if (IS_ERR(handle)) {
-> >  		/* Release dquot anyway to avoid endless cycle in dqput() */
-> >  		dquot_release(dquot);
-> > +		if (freeze_protected)
-> > +			sb_end_intwrite(dquot->dq_sb);
-> >  		return PTR_ERR(handle);
-> >  	}
-> >  	ret = dquot_release(dquot);
-> > @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
-> >  	err = ext4_journal_stop(handle);
-> >  	if (!ret)
-> >  		ret = err;
-> > +
-> > +	if (freeze_protected)
-> > +		sb_end_intwrite(dquot->dq_sb);
-> > +
-> >  	return ret;
-> >  }
-> >  
-> > -- 
-> > 2.43.5
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Thanks,
+Bartosz
 
