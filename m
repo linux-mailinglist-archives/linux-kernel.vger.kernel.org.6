@@ -1,325 +1,251 @@
-Return-Path: <linux-kernel+bounces-422555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E5F9D9B26
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:15:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53EC5166BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:15:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D9F1D86D6;
-	Tue, 26 Nov 2024 16:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="md8ezxIP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2319D9B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:16:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186421CEE97;
-	Tue, 26 Nov 2024 16:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5DA2835C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:16:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7F21D86F6;
+	Tue, 26 Nov 2024 16:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NaNJUPm0"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F551D63C5;
+	Tue, 26 Nov 2024 16:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732637744; cv=none; b=Czd65gm9q3gAy34ZOaI0zX6Thh4e6o35dZ/NPxdDf+kWXC4FLNniipkOzogaeOl9GuDqYfK+JyM9miPzih7L7A4q4fEr/MXgee3GhNwarfpBUpl8gWkViGOeuoVKFcpQ7XreB3IhnAkG7S+aeh4n97mqn3fJxUBKIYj9O3XZTs4=
+	t=1732637805; cv=none; b=PR3JZo+O/KMTX6JY4Wg7JtxxU9+R3tymCOFdiTe7RDzg7ABphyaI1a8hcC2IrQDDVtrqBLAhKr3mF0pKCkrEbDEwI46xa7lW866P8zs5qaQKPeOF8x07w8EbIGU5fRLFn8dpl/PfbhSVM1SjijWXz23MWKcc/5BSzYSbbzRoGSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732637744; c=relaxed/simple;
-	bh=Q8+hLtay609WgkxG3vjfhTRZ0BgS11x/Zs/Jc4NviAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oWZWy9TckAVOsT5q/byf8hAPwAS8YGMJwn4kvy3MtvSc6HMggZ3LGvONR703h4rFgiCe242OmpQba9w3y1XWrgdrnKOBV7H5X4/XlKXxIlbaQjIhimb0C18E83VbfheQD1rGYcyJl0Y/HFWYLJ71toijJxPN2sDN2QsgHyfuhWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=md8ezxIP; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732637741; x=1764173741;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Q8+hLtay609WgkxG3vjfhTRZ0BgS11x/Zs/Jc4NviAU=;
-  b=md8ezxIPGMwLuR3nJoMNC1q82Rvrf433zsN58agtPS6FW7XkjEWfZpE3
-   wZmq3yOIc8WrxcA7ym5ej4xrl5AjpdkJgHjxyC2/mm2l3rKxEHcr2tYaq
-   ATQksLYxTiqc+S9Cwvi+/aXdnF3AeA6MhU0Iy6ZSzsE8KqBhocqaebpm+
-   wrDlCnp2lkq6Le2eHXTT8zgw8AMpducGxRC4xbIVME89uxSizGRLdqOVM
-   Q67ACM66upPBDjpoAJ76vN8H7icRg5gPseFuhBeg/AonUQxJfvd6q4hw4
-   eeH0PqkRmNDHCEWpoi25/NYTex/FE+WMxuGfCiyLueiyTb8JCZ6ijSakd
-   w==;
-X-CSE-ConnectionGUID: RY58rTYGR3O8uLNjn8fBEw==
-X-CSE-MsgGUID: R8JJ1w7uQYSTmAcO0fKAHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="44197604"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="44197604"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 08:15:40 -0800
-X-CSE-ConnectionGUID: ol9POM1YRhiZjB+nBN1sVQ==
-X-CSE-MsgGUID: 7SLcTtLsRnCcgmJVF5QX9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="96719465"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 08:15:35 -0800
-Message-ID: <dfa5fd77-09e2-4133-a757-8c407593c6c9@intel.com>
-Date: Tue, 26 Nov 2024 18:15:28 +0200
+	s=arc-20240116; t=1732637805; c=relaxed/simple;
+	bh=Dbyw7U5sqrgbYNScLc4DjI9NTlFG+sAGSpwI5sWsaSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7nkoMpcQFjaohdaejzuneuICr93mJHT6ePIpXkD8+CweeHeC80hC5l80GNQ+n3vrIi6O+0eWHVhNdmFVyYq7VoW19GVqVpINKc5Daz491KaPiFYXtub+8QcRiF6RaEIqu1ASlXgemv5vudJgtkGL6PuQLZbWVTiPd/q3M8HN9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NaNJUPm0; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e387ad888baso929088276.2;
+        Tue, 26 Nov 2024 08:16:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732637803; x=1733242603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rVXUwfpRCmIBduUQWVjFg3vyB+Y4BDopksHA87CHiQA=;
+        b=NaNJUPm02wPrAWEqIXaetzB8ea9Pnv06FA4vNILCXPQjYqVss/D0bB+az4tJJd1NfL
+         6RoFooLpQOcW/2DXoxU0x5YUz/H4NZDa+K5xq6MdQYh+0b+j+LZEVjUIJ+qTP3Do+T38
+         xH9Q6qwH0YvA1mki9pZlLaBCS+/anZJDMKq9KPEHuvlhRnn0ZAXtk9w8b56qClktyhch
+         MW5eBgM9c+xoM4mPE+UHJgEEldKRpOm9k0D6U85y8LPqnOAK+jIottfAkS5n/aRLe6KI
+         nta3s1eUe/Z9egPX3Zli+Yv321AKRDLqIZxCQDLObNcpPbTjiN0J//WohqyLzvc8IOqp
+         tDrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732637803; x=1733242603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rVXUwfpRCmIBduUQWVjFg3vyB+Y4BDopksHA87CHiQA=;
+        b=nju0/6b1CjxtKUwZ39zPM8JILU20v9GA+IROpQenyuKikCesrzUGxYeZ0dL34y9IRe
+         TzRLasCzp5jk3hUu0AsyPqtw25lEH7NPK5uLNdZX0Y4HeXkizU1SWq7nYQfvqd4d0Q6W
+         IWRSEOH3P2pSNexG+yDCLmOchx9iq3QldVQ+yxD+sDnenke1V4bekdgp1mC91A5SNw6b
+         hJJYxLnZ5FCKy7/KEypC313/Ks1J/F+xJOpTJKwuN/TuHh0szk74YuojC5rdNEmhYako
+         Q5eZBCX3rCZEN903XOjMfoxhd1/qcbHkszPz6/Qism8ZciPAHY/Jjd32KdD3Fe93PUBv
+         ZElw==
+X-Forwarded-Encrypted: i=1; AJvYcCVN5YeoqZWmwyjK195w8nBMzRI0qaL61kweQK6CEUtmdXjZJ3v0l0SXz7JRnhlSSHuIPlW4/n4aDx0=@vger.kernel.org, AJvYcCX8Jqajs+5z9aihMFzdMawJjsY6S18Ia9QSXOYsngWvypU/xeTYQeprpTxhzhpxJhP6+z1F2iiQ2uPYPh7W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdu/a+sZmtBtk6ONVQhRRE0Ld3b/QVO1J1hPqwns6qXQSB7ZmY
+	5LJvoewMte29SqYDR8a0fkzeK4Lu+/SNKU79JxlyCytydenx3yZl6oSxFtv+9ky6lQZVuu/cFdb
+	iHJOvW2gWyWE3gCfw+ICfb3ZFmX0=
+X-Gm-Gg: ASbGnctMeGi62Zh2R3qcDrGxgKUIoZYLh96mXPsv/x3A6dgFE4p5lQtzgbxMhfZ1N2h
+	BIlzoClm8UgF+pRX91n2rEzGggUuj4XE=
+X-Google-Smtp-Source: AGHT+IEtg5/CqQiGFcs/5tqwlgT8SGILbVeougiak7zpXf8sV76zeqsR23e8stO1Uk3NDs24P0qRtrI2H+YJenPBXQw=
+X-Received: by 2002:a05:690c:fc5:b0:6ee:eebc:2663 with SMTP id
+ 00721157ae682-6ef2282c6d9mr20068487b3.6.1732637803055; Tue, 26 Nov 2024
+ 08:16:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] KVM: TDX: vcpu_run: save/restore host state(host
- kernel gs)
-To: Nikolay Borisov <nik.borisov@suse.com>, pbonzini@redhat.com,
- seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, linux-kernel@vger.kernel.org,
- x86@kernel.org, yan.y.zhao@intel.com, chao.gao@intel.com,
- weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-4-adrian.hunter@intel.com>
- <657c5837-2b65-4f56-afa3-3fad2cd47c5e@suse.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <657c5837-2b65-4f56-afa3-3fad2cd47c5e@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241117182651.115056-1-l.rubusch@gmail.com> <20241117182651.115056-8-l.rubusch@gmail.com>
+ <20241124181428.59b85176@jic23-huawei>
+In-Reply-To: <20241124181428.59b85176@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 26 Nov 2024 17:16:07 +0100
+Message-ID: <CAFXKEHbLg9COcKkv2AX-TfdW+-RO7CpJjMLQ3YJtcNbnXcs9xA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/22] iio: accel: adxl345: initialize IRQ number
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/11/24 16:12, Nikolay Borisov wrote:
-> 
-> 
-> On 21.11.24 г. 22:14 ч., Adrian Hunter wrote:
->> From: Isaku Yamahata <isaku.yamahata@intel.com>
->>
->> On entering/exiting TDX vcpu, preserved or clobbered CPU state is different
->> from the VMX case. Add TDX hooks to save/restore host/guest CPU state.
->> Save/restore kernel GS base MSR.
->>
->> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
->> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->> TD vcpu enter/exit v1:
->>   - Clarify comment (Binbin)
->>   - Use lower case preserved and add the for VMX in log (Tony)
->>   - Fix bisectability issue with includes (Kai)
->> ---
->>   arch/x86/kvm/vmx/main.c    | 24 ++++++++++++++++++--
->>   arch/x86/kvm/vmx/tdx.c     | 46 ++++++++++++++++++++++++++++++++++++++
->>   arch/x86/kvm/vmx/tdx.h     |  4 ++++
->>   arch/x86/kvm/vmx/x86_ops.h |  4 ++++
->>   4 files changed, 76 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
->> index 44ec6005a448..3a8ffc199be2 100644
->> --- a/arch/x86/kvm/vmx/main.c
->> +++ b/arch/x86/kvm/vmx/main.c
->> @@ -129,6 +129,26 @@ static void vt_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->>       vmx_vcpu_load(vcpu, cpu);
->>   }
->>   +static void vt_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
->> +{
->> +    if (is_td_vcpu(vcpu)) {
->> +        tdx_prepare_switch_to_guest(vcpu);
->> +        return;
->> +    }
->> +
->> +    vmx_prepare_switch_to_guest(vcpu);
->> +}
->> +
->> +static void vt_vcpu_put(struct kvm_vcpu *vcpu)
->> +{
->> +    if (is_td_vcpu(vcpu)) {
->> +        tdx_vcpu_put(vcpu);
->> +        return;
->> +    }
->> +
->> +    vmx_vcpu_put(vcpu);
->> +}
->> +
->>   static int vt_vcpu_pre_run(struct kvm_vcpu *vcpu)
->>   {
->>       if (is_td_vcpu(vcpu))
->> @@ -250,9 +270,9 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
->>       .vcpu_free = vt_vcpu_free,
->>       .vcpu_reset = vt_vcpu_reset,
->>   -    .prepare_switch_to_guest = vmx_prepare_switch_to_guest,
->> +    .prepare_switch_to_guest = vt_prepare_switch_to_guest,
->>       .vcpu_load = vt_vcpu_load,
->> -    .vcpu_put = vmx_vcpu_put,
->> +    .vcpu_put = vt_vcpu_put,
->>         .update_exception_bitmap = vmx_update_exception_bitmap,
->>       .get_feature_msr = vmx_get_feature_msr,
->> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
->> index 5fa5b65b9588..6e4ea2d420bc 100644
->> --- a/arch/x86/kvm/vmx/tdx.c
->> +++ b/arch/x86/kvm/vmx/tdx.c
->> @@ -1,6 +1,7 @@
->>   // SPDX-License-Identifier: GPL-2.0
->>   #include <linux/cleanup.h>
->>   #include <linux/cpu.h>
->> +#include <linux/mmu_context.h>
->>   #include <asm/tdx.h>
->>   #include "capabilities.h"
->>   #include "mmu.h"
->> @@ -9,6 +10,7 @@
->>   #include "vmx.h"
->>   #include "mmu/spte.h"
->>   #include "common.h"
->> +#include "posted_intr.h"
->>     #include <trace/events/kvm.h>
->>   #include "trace.h"
->> @@ -605,6 +607,9 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->>       if ((kvm_tdx->xfam & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE)
->>           vcpu->arch.xfd_no_write_intercept = true;
->>   +    tdx->host_state_need_save = true;
->> +    tdx->host_state_need_restore = false;
-> 
-> nit: Rather than have 2 separate values which actually work in tandem, why not define a u8 or even u32 and have a mask of the valid flags.
-> 
-> So you can have something like:
-> 
-> #define SAVE_HOST BIT(0)
-> #define RESTORE_HOST BIT(1)
-> 
-> tdx->state_flags = SAVE_HOST
-> 
-> I don't know what are the plans for the future but there might be cases where you can have more complex flags composed of more simple ones.
-> 
+On Sun, Nov 24, 2024 at 7:14=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Sun, 17 Nov 2024 18:26:36 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Add the possibility to claim an interrupt and init the state structure
+> > with interrupt number and interrupt line to use. The adxl345 can use
+> > two different interrupt lines, mainly to signal FIFO watermark events,
+> > single or double tap, activity, etc. Hence, having the interrupt line
+> > available is crucial to implement such features.
+>
+> If there are two interrupt lines, you need to be more clever.
+> Imagine only one of them is wired. How do you know which one it is?
+>
+> The query needs to be done by name.  When there are multiple interrupts
+> the ones found in spi and i2c structures could be anything, so don't use
+> those.
+>
+> See fwnode_irq_get_by_name()
 
-There are really only 3 possibilities:
+One of my bigger question marks is this here: The sensor has two
+possible interrupt lines, INT1 or INT2, on which it will notify. But,
+only one is connected. Hence, the irq passed e.g. by SPI will
+automatically refer to the used one. Only this one is going to be
+configured as irq. Or, am I getting this wrong? Alternatively, no
+interrupt line is connected. This was the initial driver setup. In
+this case, it's generally BYPASS-mode for the FIFO and any further
+feature is not possible due to a lack of notification.
 
-	initial state (or after tdx_prepare_switch_to_host())
-		tdx->host_state_need_save = true;
-		tdx->host_state_need_restore = false;
-	After save (i.e. after tdx_prepare_switch_to_guest())
-		tdx->host_state_need_save = false
-		tdx->host_state_need_restore = false;
-	After enter/exit (i.e. after tdx_vcpu_enter_exit())
-		tdx->host_state_need_save = false
-		tdx->host_state_need_restore = true;
+My questions now arise, when it comes to configure the IRQ line in the
+sensor registers. The sensor needs to be configured, that the used
+interrupt line for notifiction is INT1 or INT2. In the later patch of
+this series - "set interrupt line to INT1" - I init it with "INT1".
+But, this actually then can be configured. I can think of yet another
+/sysfs handle (could be dynamically changed at runtime, I'm not sure
+if this makes sense); by an additional devicetree binding (currently
+my preferred idea, I'd default to INT1, but let it configure to INT1
+or INT2 - or better default to bypass mode?), or is there an IIO way
+of configuring it to INT1/2, or a better way? I rather tend to DT. But
+this is still not part of this patch set.
 
-I can't think of good names, perhaps:
+Do I miss a point here and should still apply the
+fwnode_irq_get_by_name()? This looks a bit like the DT approach, isn't
+it?
 
-enum tdx_prepare_switch_state {
-	TDX_PREP_UNSAVED,
-	TDX_PREP_SAVED,
-	TDX_PREP_UNRESTORED,
-};
+Lothar
 
->>       tdx->state = VCPU_TD_STATE_UNINITIALIZED;
->>         return 0;
->> @@ -631,6 +636,45 @@ void tdx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->>       local_irq_enable();
->>   }
->>   +/*
->> + * Compared to vmx_prepare_switch_to_guest(), there is not much to do
->> + * as SEAMCALL/SEAMRET calls take care of most of save and restore.
->> + */
->> +void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
->> +{
->> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
->> +
->> +    if (!tdx->host_state_need_save)
-> if (!(tdx->state_flags & SAVE_HOST))
-
-	if (tdx->prep_switch_state != TDX_PREP_UNSAVED)
-
->> +        return;
->> +
->> +    if (likely(is_64bit_mm(current->mm)))
->> +        tdx->msr_host_kernel_gs_base = current->thread.gsbase;
->> +    else
->> +        tdx->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
->> +
->> +    tdx->host_state_need_save = false;
-> 
-> tdx->state &= ~SAVE_HOST
-
-	tdx->prep_switch_state = TDX_PREP_SAVED;
-
->> +}
->> +
->> +static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
->> +{
->> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
->> +
->> +    tdx->host_state_need_save = true;
->> +    if (!tdx->host_state_need_restore)
-> if (!(tdx->state_flags & RESTORE_HOST)
-
-	if (tdx->prep_switch_state != TDX_PREP_UNRESTORED)
-
-> 
->> +        return;
->> +
->> +    ++vcpu->stat.host_state_reload;
->> +
->> +    wrmsrl(MSR_KERNEL_GS_BASE, tdx->msr_host_kernel_gs_base);
->> +    tdx->host_state_need_restore = false;
-
-	tdx->prep_switch_state = TDX_PREP_UNSAVED;
-
->> +}
->> +
->> +void tdx_vcpu_put(struct kvm_vcpu *vcpu)
->> +{
->> +    vmx_vcpu_pi_put(vcpu);
->> +    tdx_prepare_switch_to_host(vcpu);
->> +}
->> +
->>   void tdx_vcpu_free(struct kvm_vcpu *vcpu)
->>   {
->>       struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
->> @@ -732,6 +776,8 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->>         tdx_vcpu_enter_exit(vcpu);
->>   +    tdx->host_state_need_restore = true;
-> 
-> tdx->state_flags |= RESTORE_HOST
-
-	tdx->prep_switch_state = TDX_PREP_UNRESTORED;
-
-> 
->> +
->>       vcpu->arch.regs_avail &= ~VMX_REGS_LAZY_LOAD_SET;
->>       trace_kvm_exit(vcpu, KVM_ISA_VMX);
->>   diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
->> index ebee1049b08b..48cf0a1abfcc 100644
->> --- a/arch/x86/kvm/vmx/tdx.h
->> +++ b/arch/x86/kvm/vmx/tdx.h
->> @@ -54,6 +54,10 @@ struct vcpu_tdx {
->>       u64 vp_enter_ret;
->>         enum vcpu_tdx_state state;
->> +
->> +    bool host_state_need_save;
->> +    bool host_state_need_restore;
-> 
-> this would save having a discrete member for those boolean checks.
-> 
->> +    u64 msr_host_kernel_gs_base;
->>   };
->>     void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err);
->> diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
->> index 3d292a677b92..5bd45a720007 100644
->> --- a/arch/x86/kvm/vmx/x86_ops.h
->> +++ b/arch/x86/kvm/vmx/x86_ops.h
->> @@ -130,6 +130,8 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu);
->>   void tdx_vcpu_free(struct kvm_vcpu *vcpu);
->>   void tdx_vcpu_load(struct kvm_vcpu *vcpu, int cpu);
->>   fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit);
->> +void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu);
->> +void tdx_vcpu_put(struct kvm_vcpu *vcpu);
->>     int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp);
->>   @@ -161,6 +163,8 @@ static inline fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediat
->>   {
->>       return EXIT_FASTPATH_NONE;
->>   }
->> +static inline void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu) {}
->> +static inline void tdx_vcpu_put(struct kvm_vcpu *vcpu) {}
->>     static inline int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp) { return -EOPNOTSUPP; }
->>   
-> 
-
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > ---
+> >  drivers/iio/accel/adxl345.h      | 1 +
+> >  drivers/iio/accel/adxl345_core.c | 6 ++++++
+> >  drivers/iio/accel/adxl345_i2c.c  | 2 +-
+> >  drivers/iio/accel/adxl345_spi.c  | 8 ++++++--
+> >  4 files changed, 14 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
+> > index 3d5c8719db..cf4132715c 100644
+> > --- a/drivers/iio/accel/adxl345.h
+> > +++ b/drivers/iio/accel/adxl345.h
+> > @@ -62,6 +62,7 @@ struct adxl345_chip_info {
+> >  };
+> >
+> >  int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+> > +                    int irq,
+> >                      int (*setup)(struct device*, struct regmap*));
+> >
+> >  #endif /* _ADXL345_H_ */
+> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
+45_core.c
+> > index 81688a9eaf..902bd3568b 100644
+> > --- a/drivers/iio/accel/adxl345_core.c
+> > +++ b/drivers/iio/accel/adxl345_core.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/property.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/units.h>
+> > +#include <linux/interrupt.h>
+> >
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> > @@ -18,6 +19,7 @@
+> >  #include "adxl345.h"
+> >
+> >  struct adxl34x_state {
+> > +     int irq;
+> >       const struct adxl345_chip_info *info;
+> >       struct regmap *regmap;
+> >  };
+> > @@ -196,12 +198,14 @@ static const struct iio_info adxl345_info =3D {
+> >   *                        also covers the adxl375 and adxl346 accelero=
+meter
+> >   * @dev:     Driver model representation of the device
+> >   * @regmap:  Regmap instance for the device
+> > + * @irq:     Interrupt handling for async usage
+>
+> This is an integer, not a handling.   See if you can come up with clearer=
+ comment.
+>
+> >   * @setup:   Setup routine to be executed right before the standard de=
+vice
+> >   *           setup
+> >   *
+> >   * Return: 0 on success, negative errno on error
+> >   */
+> >  int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+> > +                    int irq,
+> >                      int (*setup)(struct device*, struct regmap*))
+> >  {
+> >       struct adxl34x_state *st;
+> > @@ -224,6 +228,8 @@ int adxl345_core_probe(struct device *dev, struct r=
+egmap *regmap,
+> >
+> >       st =3D iio_priv(indio_dev);
+> >       st->regmap =3D regmap;
+> > +
+> > +     st->irq =3D irq;
+> >       st->info =3D device_get_match_data(dev);
+> >       if (!st->info)
+> >               return -ENODEV;
+> > diff --git a/drivers/iio/accel/adxl345_i2c.c b/drivers/iio/accel/adxl34=
+5_i2c.c
+> > index 4065b8f7c8..604b706c29 100644
+> > --- a/drivers/iio/accel/adxl345_i2c.c
+> > +++ b/drivers/iio/accel/adxl345_i2c.c
+> > @@ -27,7 +27,7 @@ static int adxl345_i2c_probe(struct i2c_client *clien=
+t)
+> >       if (IS_ERR(regmap))
+> >               return dev_err_probe(&client->dev, PTR_ERR(regmap), "Erro=
+r initializing regmap\n");
+> >
+> > -     return adxl345_core_probe(&client->dev, regmap, NULL);
+> > +     return adxl345_core_probe(&client->dev, regmap, client->irq, NULL=
+);
+> >  }
+> >
+> >  static const struct adxl345_chip_info adxl345_i2c_info =3D {
+> > diff --git a/drivers/iio/accel/adxl345_spi.c b/drivers/iio/accel/adxl34=
+5_spi.c
+> > index 61fd9a6f5f..39e7d71e1d 100644
+> > --- a/drivers/iio/accel/adxl345_spi.c
+> > +++ b/drivers/iio/accel/adxl345_spi.c
+> > @@ -39,9 +39,13 @@ static int adxl345_spi_probe(struct spi_device *spi)
+> >               return dev_err_probe(&spi->dev, PTR_ERR(regmap), "Error i=
+nitializing regmap\n");
+> >
+> >       if (spi->mode & SPI_3WIRE)
+> > -             return adxl345_core_probe(&spi->dev, regmap, adxl345_spi_=
+setup);
+> > +             return adxl345_core_probe(&spi->dev, regmap,
+> > +                                       spi->irq,
+> > +                                       adxl345_spi_setup);
+> Very early wrap. I think spi->irq fits on the line above.
+>
+> >       else
+> > -             return adxl345_core_probe(&spi->dev, regmap, NULL);
+> > +             return adxl345_core_probe(&spi->dev, regmap,
+> > +                                       spi->irq,
+> > +                                       NULL);
+> >  }
+> >
+> >  static const struct adxl345_chip_info adxl345_spi_info =3D {
+>
 
