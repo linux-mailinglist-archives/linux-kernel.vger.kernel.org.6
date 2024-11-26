@@ -1,224 +1,200 @@
-Return-Path: <linux-kernel+bounces-422610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95609D9BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:49:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DAB9D9BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:49:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE88161224
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:49:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080861D9A76;
+	Tue, 26 Nov 2024 16:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TG5kujaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F872819A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:49:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0B21D88C4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F231D90B1;
 	Tue, 26 Nov 2024 16:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsDaQiqq"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAD4DF60;
-	Tue, 26 Nov 2024 16:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732639787; cv=none; b=FQDKoVJLQvzTXm+hDphg2JOZN1YCTmnDvBKRPdBxrHIQgkdgDsgIq4L1rbK/6wdRds6DW3Q3zO8ZL6KIqFAZG6XE0WrgYoRcYxVlStidvglArS9DoUuVtdOxyb5/zdggQdr+pc5EepHas8VyeY9XIBiHqmeIymaNIXkCNVacRgA=
+	t=1732639788; cv=none; b=UVlEB3HQUA2UWzF29njnuYQFUpu3MEABinJz6ShZ/aZ5aAAxwHudUmx8CxI2LHjqBnvRbXWRqHPCDmJ8CglpLI3c5av8GuQ00dfby8Ekyen7ZS4op1kUtxLKraltJc0iB3BK3hL62whcF1N1DhM48pUHCdlfO5aUs/2XSjKjv/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732639787; c=relaxed/simple;
-	bh=ULVZkUVpPyuoV/jx7FwrJg9O52Q/jEMQNSXnmwgn79s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AC8TYY5BwWtUGW/cwnqM8ElYBhoPmZeqdj1/pFKL+Vk9LCgN7v6WQzeIU2MRY7hzof+vn2VYQ3pArQf0AijwsTsnXaats4qwq2PxSiu5x55vDfKJ0fiU3TrDuOZbnKPvw0DB8DhFrj0r8qMDNa1BnAuoPlB+ca4OmKNB1BlY8bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZsDaQiqq; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffd4c03a32so1733521fa.2;
-        Tue, 26 Nov 2024 08:49:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732639783; x=1733244583; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oADn+iPT5XDeRAFUULaljb47zne7h8r5+7JZ961sH5g=;
-        b=ZsDaQiqqktWI+7gNfECrISd3iI1PWT8wc67cTS3O1bMlA6t1oBtnvbsxJmSVmelk09
-         im3av0X2NiCaJFx52L7bwVkeo/yzC1MJih+ic8a/662YiYgw1wsfXLpgqpSJP2nfmE4b
-         HCwd7MOCYqOYNDfjjaneTGu2SWVE5JaFYueSr1qoSwHS2flXDD+Ow3hMnVxcZyiyGeSc
-         fSXDbqRZVqDFBcbVcjQ6XPakiLSE5icySU9ST5TFnG/NGiHEUdx78/eMq98YXhkGno1O
-         lRFMkeNPBFa+2K4IXMA2hdhxcU62JRNJOJFwZNactNTHUARjfkNTW/bP6QdBzWQ3gHna
-         ub8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732639783; x=1733244583;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oADn+iPT5XDeRAFUULaljb47zne7h8r5+7JZ961sH5g=;
-        b=q2DejbujzoF261miWEizClfufkpjbqKVgDKhoG4BPRUQ1gD/MRupe3Jlb03tfSlRI9
-         fakMPAuWBx9Y5Wf0Ad+enDZQ9I+Er/lFideU9xtgmYBmQqfO0MtLqrVyG8+T348f7qSS
-         WHvwb3b5at3etgsdBIzz68WHvOTwLpsUdvcfuxxCXV+rz8s5xiG6LF201ErbrEklpQ3r
-         TReHxaCADU8qFl2YQy2pEqv6By2OrcsUX6Wk6hCSQcJJH2TGJOIKOAz9HTU4Y803ehs6
-         grmxpYv++K3lbzgWycrO63WRu4tDPJMBekT+A/EfaOzo+V57H096dV1L6Hb30xiZP9BT
-         hpqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEikXWunQWN8ujnQi08vz4N/ilxl3jaEJ3+24Q2QVBsDrCE75+T2R7KaKS+wkFvy4297zCq/ld86CiKZY=@vger.kernel.org, AJvYcCXGxgEH4yjEU1zvJNgErl64UKgJNpsyatf1anY3pUwyKpXGD8Wki1sDCT0Tc11t/rjAL32kQVGHBtJXMq/B@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAinKPa2W6xRUpDXSPR8EOEBqSUk/zZ9easHWZlV5hJEUnVuoV
-	giXaJ1uon9UMsyKzG5IMl98YtP8LYAgOW1FcUsKRUiHmdu9HVh3+YtwKOY/xn/CvCQHaALvTeRR
-	dxey8w5mUi6NhFwSvHv35GeNAnOqnFtIW
-X-Gm-Gg: ASbGnct97cT6Klq0Z/uzgYjh0AGUkCHGUJ1Lc29bi3V3AC7Ut4lkpSTdXdbuOw8pumd
-	b0TbT2LyHLYuIQp95TikLtOoQH7JgKG0FtLpcGAE+8VURus0QZ21O9BZrE5dn
-X-Google-Smtp-Source: AGHT+IHv/dmJqwBNoJ26KNKACfA2CpfTA1jKhep/gdg7DDIKfmr+HqNEwlEqOLmiovrcQV+A5iBJ/TLTx59KtCbWGNM=
-X-Received: by 2002:ac2:410d:0:b0:53d:d3f1:2f4b with SMTP id
- 2adb3069b0e04-53dd3f12f92mr7100520e87.30.1732639783148; Tue, 26 Nov 2024
- 08:49:43 -0800 (PST)
+	s=arc-20240116; t=1732639788; c=relaxed/simple;
+	bh=fUFOTs7mH3cBCL51Q+pyuhcwq/5vErsOBXqvsEUDzdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BOQOOXe6tPD26pd9RZMcylPyZaqDn+U+Ge7Wwp7dNDSy0qSrsrWPK5gT9qOFoxxptWqb48JkWjqiL7SheyQXqaAt7XZ7gfIQ07Xg7EMIC69yt0kXEIxJ1XdzcglaJNaJoKYMcbM17ngDyHOcvj3VViIeVnwzq/ztBKEnGXakBkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TG5kujaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643A4C4CECF;
+	Tue, 26 Nov 2024 16:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732639787;
+	bh=fUFOTs7mH3cBCL51Q+pyuhcwq/5vErsOBXqvsEUDzdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TG5kujaX41hkOEUSdMgyNFVULy107EeWWbzaoqV1rfT/ZiEmPJygSIHi+w0wpiLT7
+	 DibDV0SlIWXTvULX2znU7By9HQu23hUz7Ue3VF8x18w9UcuxZ1QH0basrMJ+ATeg7p
+	 SG42E8ZEsaDQRLXLEi/tuBqspVHFYCtfmt5anLliVZEPR8u14rImZmJPuX0CH3D+fi
+	 0yHZzNx/L2BQRuussO+KwR3rKQ9Yo79eS0xWJ1HjEv7moJnZ+SQVhmGtvT8sFpKX8G
+	 TAWrYY8TMapMWs4frppqCN6RUghIskHHBQZ4ZjvGsvmFr5WfzqrCaFYepTXziO4Ius
+	 SKhe5TZDcr8Yg==
+Date: Tue, 26 Nov 2024 13:49:44 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf trace: Add tests for BTF general augmentation
+Message-ID: <Z0X8KJd5LYrgUJUh@x1>
+References: <20241123005512.342079-1-howardchu95@gmail.com>
+ <20241123005512.342079-2-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126155832.15560-1-sedat.dilek@gmail.com> <CAK7LNAQh1VqXmw=zTJaAbDum0G0CweDHzQZ-eJgfBR6ZinnC6Q@mail.gmail.com>
-In-Reply-To: <CAK7LNAQh1VqXmw=zTJaAbDum0G0CweDHzQZ-eJgfBR6ZinnC6Q@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Tue, 26 Nov 2024 17:49:06 +0100
-Message-ID: <CA+icZUVqrtw0QkDEQ8OX9bH8uX3cg98jSV1kOyOeOa-3Qsp49A@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: Fix names of .tmp_vmlinux {kall,}syms files
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241123005512.342079-2-howardchu95@gmail.com>
 
-On Tue, Nov 26, 2024 at 5:46=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Wed, Nov 27, 2024 at 12:58=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail.c=
-om> wrote:
-> >
-> > When playing with gendwarfksyms v6 from Sami Tolvanen I noticed:
->
-> The gendwarfksyms is unrelated.
->
-> >
-> > $ LC_ALL=3DC ls -alth .tmp_vmlinux*
-> >
-> > -rw-rw-r-- 1 dileks dileks 3.1M Nov 22 20:52 .tmp_vmlinux2.kallsyms.o
-> > -rw-rw-r-- 1 dileks dileks  34M Nov 22 20:52 .tmp_vmlinux2.kallsyms.S
-> > -rw-rw-r-- 1 dileks dileks 6.5M Nov 22 20:52 .tmp_vmlinux2.syms
-> > -rwxrwxr-x 1 dileks dileks 101M Nov 22 20:52 .tmp_vmlinux2
-> >
-> > -rw-rw-r-- 1 dileks dileks 3.1M Nov 22 20:52 .tmp_vmlinux1.kallsyms.o
-> > -rw-rw-r-- 1 dileks dileks  34M Nov 22 20:52 .tmp_vmlinux1.kallsyms.S
-> > -rw-rw-r-- 1 dileks dileks 6.5M Nov 22 20:52 .tmp_vmlinux1.syms
-> > -rwxrwxr-x 1 dileks dileks  52M Nov 22 20:52 .tmp_vmlinux1.btf.o
-> > -rwxrwxr-x 1 dileks dileks 514M Nov 22 20:52 .tmp_vmlinux1
-> >
-> > -rw-rw-r-- 1 dileks dileks 2.1K Nov 22 20:51 .tmp_vmlinux0.kallsyms.o
-> > -rw-rw-r-- 1 dileks dileks 6.3K Nov 22 20:51 .tmp_vmlinux0.kallsyms.S
-> > -rw-rw-r-- 1 dileks dileks    0 Nov 22 20:51 .tmp_vmlinux.kallsyms0.sym=
-s
-> >
-> > .tmp_vmlinux.kallsyms0.syms is NULL byte - it's a dummy file.
-> >
-> > Further looking at the other .tmp_vmlinux syms files:
-> >
-> > .tmp_vmlinux2.syms
-> > .tmp_vmlinux1.syms
-> > .tmp_vmlinux.kallsyms0.syms
-> >
-> > Change the naming of file
-> >
-> > .tmp_vmlinux.kallsyms0.syms -> .tmp_vmlinux0.syms
-> >
-> > While at this, fix the comments in scripts/link-vmlinux.sh.
-> >
-> > INFO: v2 is based on Linux v6.12
-> >
-> > Link: https://github.com/samitolvanen/linux/commits/gendwarfksyms-v6
-> > Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkj=
-tm4vSVKkXPTg+Q@mail.gmail.com/
-> > Link: https://lore.kernel.org/all/20241123132237.15700-1-sedat.dilek@gm=
-ail.com/ (v1)
->
->
->
->
-> I removed unnecessary information.
->
-> I left only the following description.
->
-> ------------>8------------------
-> kbuild: rename .tmp_vmlinux.kallsyms0.syms to .tmp_vmlinux0.syms
->
-> Change the naming for consistency.
->
-> While at this, fix the comments in scripts/link-vmlinux.sh.
-> ------------>8------------------
->
->
-> Applied to linux-kbuild.
-> Thanks.
->
+On Fri, Nov 22, 2024 at 04:55:10PM -0800, Howard Chu wrote:
+> Currently, we only have perf trace augmentation tests for enum
+> arguments. This patch adds tests for more general syscall arguments,
+> such as struct pointers, strings, and buffers.
 
-Cool, thanks!
+scripts/checkpatch.pl has some warnings here I think we can address
+easily, some not so much, like the SPDX that we need to add logic to
+'perf test' to noticed its the SPDX and skip it, looking at the next
+line for the test description.
 
--Sedat-
 
->
-> > Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > ---
-> > v1 -> v2:
-> > - Add commit description and follow naming consistency
-> >   as requested by Masahiroy san. -dileks
-> >
-> >  scripts/link-vmlinux.sh | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> > index a9b3f34a78d2..239fe036606f 100755
-> > --- a/scripts/link-vmlinux.sh
-> > +++ b/scripts/link-vmlinux.sh
-> > @@ -203,8 +203,8 @@ kallsymso=3D
-> >  strip_debug=3D
-> >
-> >  if is_enabled CONFIG_KALLSYMS; then
-> > -       true > .tmp_vmlinux.kallsyms0.syms
-> > -       kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
-> > +       true > .tmp_vmlinux0.syms
-> > +       kallsyms .tmp_vmlinux0.syms .tmp_vmlinux0.kallsyms
-> >  fi
-> >
-> >  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; the=
-n
-> > @@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
-> >         # Generate section listing all symbols and add it into vmlinux
-> >         # It's a four step process:
-> >         # 0)  Generate a dummy __kallsyms with empty symbol list.
-> > -       # 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and sec=
-tions,
-> > +       # 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and sec=
-tions,
-> >         #     with a dummy __kallsyms.
-> > -       #     Running kallsyms on that gives us .tmp_kallsyms1.o with
-> > +       #     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.=
-o with
-> >         #     the right size
-> > -       # 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms se=
-ction of
-> > +       # 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms se=
-ction of
-> >         #     the right size, but due to the added section, some
-> >         #     addresses have shifted.
-> > -       #     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
-> > +       #     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
-> >         # 3)  That link may have expanded the kernel image enough that
-> >         #     more linker branch stubs / trampolines had to be added, w=
-hich
-> >         #     introduces new names, which further expands kallsyms. Do =
-another
-> > --
-> > 2.45.2
-> >
-> >
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+The long lines we can just make them multiple lines with the first ones
+ending in \
+
+
+⬢ [acme@toolbox perf-tools-next]$ rm -f 0001-* ; git format-patch --no-cover-letter HEAD~ ; scripts/checkpatch.pl 0001-*
+0001-perf-trace-Add-tests-for-BTF-general-augmentation.patch
+WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+#31: 
+new file mode 100755
+
+WARNING: Missing or malformed SPDX-License-Identifier tag in line 2
+#37: FILE: tools/perf/tests/shell/trace_btf_general.sh:2:
++# perf trace BTF general tests
+
+WARNING: Misplaced SPDX-License-Identifier tag - use line 2 instead
+#38: FILE: tools/perf/tests/shell/trace_btf_general.sh:3:
++# SPDX-License-Identifier: GPL-2.0
+
+WARNING: line length of 252 exceeds 100 columns
+#55: FILE: tools/perf/tests/shell/trace_btf_general.sh:20:
++  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
+
+WARNING: line length of 203 exceeds 100 columns
+#65: FILE: tools/perf/tests/shell/trace_btf_general.sh:30:
++  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +echo\/[0-9]+ write\(fd: [0-9]+, buf: ${buffer}.*, count: [0-9]+\) += +[0-9]+$"
+
+WARNING: line length of 275 exceeds 100 columns
+#74: FILE: tools/perf/tests/shell/trace_btf_general.sh:39:
++  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +sleep\/[0-9]+ clock_nanosleep\(rqtp: \(struct __kernel_timespec\)\{\.tv_sec = \(__kernel_time64_t\)1,\}, rmtp: 0x[0-9a-f]+\) += +[0-9]+$"
+
+total: 0 errors, 6 warnings, 68 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+0001-perf-trace-Add-tests-for-BTF-general-augmentation.patch has style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+⬢ [acme@toolbox perf-tools-next]$
+
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/tests/shell/trace_btf_general.sh | 68 +++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+> 
+> diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tests/shell/trace_btf_general.sh
+> new file mode 100755
+> index 000000000000..7bcca81a40d8
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> @@ -0,0 +1,68 @@
+> +#!/bin/bash
+> +# perf trace BTF general tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +err=0
+> +set -e
+> +
+> +. "$(dirname $0)"/lib/probe.sh
+> +skip_if_no_perf_trace || exit 2
+> +
+> +file1=$(mktemp /tmp/file1_XXXXX)
+> +file2=$(echo $file1 | sed 's/file1/file2/g')
+> +
+> +buffer="the content of the buffer"
+> +
+> +trap cleanup EXIT TERM INT HUP
+> +
+> +trace_test_string() {
+> +  echo "Testing perf trace's string augmentation"
+> +  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
+> +  then
+> +    echo "String augmentation test failed"
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_test_buffer() {
+> +  echo "Testing perf trace's buffer augmentation"
+> +  # echo will insert a newline (\10) at the end of the buffer
+> +  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +echo\/[0-9]+ write\(fd: [0-9]+, buf: ${buffer}.*, count: [0-9]+\) += +[0-9]+$"
+> +  then
+> +    echo "Buffer augmentation test failed"
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_test_struct_btf() {
+> +  echo "Testing perf trace's struct augmentation"
+> +  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +sleep\/[0-9]+ clock_nanosleep\(rqtp: \(struct __kernel_timespec\)\{\.tv_sec = \(__kernel_time64_t\)1,\}, rmtp: 0x[0-9a-f]+\) += +[0-9]+$"
+> +  then
+> +    echo "BTF struct augmentation test failed"
+> +    err=1
+> +  fi
+> +}
+> +
+> +cleanup() {
+> +	rm -rf ${file1} ${file2}
+> +}
+> +
+> +trap_cleanup() {
+> +	echo "Unexpected signal in ${FUNCNAME[1]}"
+> +	cleanup
+> +	exit 1
+> +}
+> +
+> +trace_test_string
+> +
+> +if [ $err = 0 ]; then
+> +  trace_test_buffer
+> +fi
+> +
+> +if [ $err = 0 ]; then
+> +  trace_test_struct_btf
+> +fi
+> +
+> +cleanup
+> +
+> +exit $err
+> -- 
+> 2.43.0
 
