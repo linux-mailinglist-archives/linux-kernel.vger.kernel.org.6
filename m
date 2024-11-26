@@ -1,229 +1,190 @@
-Return-Path: <linux-kernel+bounces-422367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455DF9D98B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:41:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0A79D98B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:42:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2DB4B26A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81EE016568D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695A81D4613;
-	Tue, 26 Nov 2024 13:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aQBbhhzK"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798221D514C;
+	Tue, 26 Nov 2024 13:42:21 +0000 (UTC)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA25D53C;
-	Tue, 26 Nov 2024 13:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576271D52B;
+	Tue, 26 Nov 2024 13:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732628432; cv=none; b=l5nn2Fbco/k9O9WryEIfEgMLM+mO3S5iyyKyBckgImTXkDIiy9a5OFtOiCf6o/Ztq7Z1QBM9er3QAmrG+32D7GOSupwyV/2smntpjCbQtWRWWWgAfGoWWfRQ52qDGzkMnv1zkx0EZ+F7500NZjhL4kGa5ftwt4urwlzJS6/foJE=
+	t=1732628541; cv=none; b=Tqy00tEjZU6rfLumsNp8GvOfo6OtAPob6zRCXBMZDM2tvm2FT+1Q3Pw8lsU7/Kc3HfKfGbjyo58NrUWf494Z4dMeYg4BkIaBd4X6WRP7FT1+N1LloogxsN9k/jxI2BvW4Gy+ggdJRSundVfi+6ub7XErlIZp0J5RrXpCpf5Mm0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732628432; c=relaxed/simple;
-	bh=FRUEJx/YtX/HxlBaOoXiJn5e8TVV7GoapIGo4oBAoEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6ni4L1HlMVJfEN1e5G+VdYNEj1ZLZsGon5dVrK9e06lUEswNGt1xY1J18C9n7TABFsqAe4QcyKxXt18AF8HiZ/5a877EMR6FvKg7hxMj1+kWpb9IgAaL3KuJLXYXRiL+cEFDMhFIdGKXsFYYZbFG0JKLLylnj9wqWgKd+A+lWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aQBbhhzK; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A44876BE;
-	Tue, 26 Nov 2024 14:40:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732628406;
-	bh=FRUEJx/YtX/HxlBaOoXiJn5e8TVV7GoapIGo4oBAoEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aQBbhhzKja6KK7Ka/uY51Cltx0Hq+AiykrFfGAbhhvQJAPsEHqEgLvvn3ADhCSiHi
-	 /aFAidwvflM6TO8uMPdtcyIcioUFNpELaTrolXrHN7l84uCxmzRTpAZU3KkpN04Qeb
-	 YMeJmjo756+sjpOtWw85Qllx+tZTNS0mSs5uDD8o=
-Date: Tue, 26 Nov 2024 15:40:19 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v3 2/3] media: i2c: imx219: make HBLANK r/w to allow
- longer exposures
-Message-ID: <20241126134019.GG5461@pendragon.ideasonboard.com>
-References: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
- <20241125-imx219_fixes-v3-2-434fc0b541c8@ideasonboard.com>
- <20241126121640.GE5461@pendragon.ideasonboard.com>
- <CAPY8ntDAnj1uf-fBRbioZSwRm9zO4=e4-E+Rd-PAz0N3cmad-A@mail.gmail.com>
+	s=arc-20240116; t=1732628541; c=relaxed/simple;
+	bh=Nqp+tSKa5TBc0GFn3kfkMzj6rtuwiH6tAT8BgyAa5Zc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ly2keNgMp7OCBFEzqqfUp9hQunTq9jFWRrf644MzcKBraVoHK3JpMKmizfe3SHaWBivSGGCHz6Jxndifgo9UlNVHNqikhkvkCv4WK+enMRnF3McwYpeQFRSzEci26UmKOmzih6mvkHdErHDRYfbdoeUw10BcovkIL04aNfed3Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ef0cee54daso22593907b3.3;
+        Tue, 26 Nov 2024 05:42:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732628536; x=1733233336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vwzB/qcs+FEe5xmAoaiq0XfbUwF5QZEVDjPtTScGPCA=;
+        b=Whv8RJI59/wH5/TUqt1mnhQPZAlZBMH6WTJVqi8nhi0W7iSBe4lsRIkv5XtQXP2n+K
+         zmFIWA4mQO95lkkjglh1PXU1s7HBKTy8dWcahbwBTbTCk3T/zUu9SkYGEVw8whJExJKY
+         3V43N6Yjg0B+kT5MsdexPJEMeEW38BloMzxmWLHlLr8IYV9gl9hJ26Zja1jGnuN1misi
+         PfXtZpd4F5nl7h7eIxddluuZy5hcGdf1U5x1Yd2uqLFq4Vh+diKvkljUr5GZCyORQUFO
+         n4qj+Sv27jhq6th0rQyAFtUZJ7AFwMvgBjOhfIy8JCGKCbb17GUtE8y675pRO4c7+uzI
+         cE1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUeeNfZfrWm5/g2zCqdIVnDyqUWsTiT5stMGyOQRjtRwTqpe5GMZ8a8L4xZDyQ0EMyqiCMH12a6K7eGxndSJsmmeg8=@vger.kernel.org, AJvYcCW5ZDbH1V/0SR9l07C8lArvPiBOeDV1P5IvfkPXIoQ8VmA/6CWbZWLku07u8WCzPTpSE1Z3wp0aFDJg@vger.kernel.org, AJvYcCXRGM07vxbIr4RIxxNcJVzGicwLCBfOKQk+Ncyl7p2OFPJIbHpl817pD484J8BIijZ3ESzN+HRDC6zGrg/Y@vger.kernel.org, AJvYcCXcZIRp6P/g802CWp2mZLV433J2T3QZuD2BSIaAxPuHGieLSnr1doG9KElVq0L5xf+ouOR8B/UqoEUh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwxgPm8cRE+maCnBlTSdSVeI/hodDjxOtv0Zs2OUK+HXHeF+bN
+	CBHpf5zrxXZjsRyYcowDSuPQpMX/+bYz7HOr+A6xDuSyaL0VBv9VhS3neobB
+X-Gm-Gg: ASbGncvf1gIx3kgvUv6hfAzOy6Nsu/GgoXd49M5ulytcULps/mG+UpHYCSkVxrdfXkZ
+	ajJBAVpRY2jUi1trUdFX5+dgLNvmWVXe5YxJphO+BUtY22grN3ZC+jH6yr88OOPeV200fC6jllY
+	SEoK9r4SBEdibfjIUDtUtr0n/WIte6eW1plkFHqT8oQUmzGo5ieP6PgD+iTCcTu5n1eWWeyG2Fr
+	y15QWQ7yhcHe9EtNigBa5+D118r2GyThT666cjoyE22p218J1jcWnd4ZF2PKIOGwvoHlbhyMdwc
+	4ERUw0Js1VZCq4Ly
+X-Google-Smtp-Source: AGHT+IFSpRNSa8EM7brwKud9YrFpNQe2U0pZSD52kVm/5mffIyhBE9hZxo8AsuxNu8Uk/bOfv8/zUQ==
+X-Received: by 2002:a05:690c:6f81:b0:6e3:32e2:ecbf with SMTP id 00721157ae682-6eee08ea243mr173968207b3.24.1732628536086;
+        Tue, 26 Nov 2024 05:42:16 -0800 (PST)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe2a150sm22445107b3.30.2024.11.26.05.42.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 05:42:14 -0800 (PST)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6eeb66727e7so54824267b3.2;
+        Tue, 26 Nov 2024 05:42:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVdx5IGn1yfeUul1zcMCHIqyGDosPaOdKp4qDRFgt1OIxzA5CK+tNAp9MdK0EuK0NaDaPy3cbOzD8cc4ESu@vger.kernel.org, AJvYcCVemDdZvTqzVZvxbXe6OB5bPw+CamdLdMzatvoHyBRCEtsqN5IseZ6tDU95pYd+QywR/QGqcA/sm99F@vger.kernel.org, AJvYcCX1e5lZ+8bDFKbZPxDzVJ0Fj0161E3qGR1q6EVHIyPeTAvjiGDKOD0mOyCZGqR6rJAKG/CW7ulRQ5TFamVJ6ERyeEc=@vger.kernel.org, AJvYcCXeaCE9RtmsD0+joMFcBar7DOdb2uuBbeAlU3DpG0HuUkY/QdkI6esY/qSu9u4IhYJ3SswTXgVdDjPg@vger.kernel.org
+X-Received: by 2002:a05:690c:67c1:b0:6ea:95f5:2607 with SMTP id
+ 00721157ae682-6eee08a90a2mr143879177b3.5.1732628534112; Tue, 26 Nov 2024
+ 05:42:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntDAnj1uf-fBRbioZSwRm9zO4=e4-E+Rd-PAz0N3cmad-A@mail.gmail.com>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-3-claudiu.beznea.uj@bp.renesas.com> <TY3PR01MB11346C9A56B483666575EB23A862F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346C9A56B483666575EB23A862F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 26 Nov 2024 14:42:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVkXo=HSqoF2hur8Nvder6yOg_Aqgzq=aFvfti+9=PnJA@mail.gmail.com>
+Message-ID: <CAMuHMdVkXo=HSqoF2hur8Nvder6yOg_Aqgzq=aFvfti+9=PnJA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ family
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, "vkoul@kernel.org" <vkoul@kernel.org>, 
+	"kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	"christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Biju,
 
-On Tue, Nov 26, 2024 at 01:21:27PM +0000, Dave Stevenson wrote:
-> On Tue, 26 Nov 2024 at 12:16, Laurent Pinchart wrote:
-> > On Mon, Nov 25, 2024 at 08:36:26PM +0530, Jai Luthra wrote:
-> > > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > >
-> > > The HBLANK control was read-only, and always configured such
-> > > that the sensor HTS register was 3448. This limited the maximum
-> > > exposure time that could be achieved to around 1.26 secs.
-> > >
-> > > Make HBLANK read/write so that the line time can be extended,
-> > > and thereby allow longer exposures (and slower frame rates).
-> > > Retain the overall HTS setting when changing modes rather than
-> > > resetting it to a default.
-> > >
-> > > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > > ---
-> > >  drivers/media/i2c/imx219.c | 37 ++++++++++++++++++++++++-------------
-> > >  1 file changed, 24 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > > index f98aad74fe584a18e2fe7126f92bf294762a54e3..970e6362d0ae3a9078daf337155e83d637bc1ca1 100644
-> > > --- a/drivers/media/i2c/imx219.c
-> > > +++ b/drivers/media/i2c/imx219.c
-> > > @@ -76,8 +76,10 @@
-> > >
-> > >  #define IMX219_VBLANK_MIN            32
-> > >
-> > > -/* HBLANK control - read only */
-> > > -#define IMX219_PPL_DEFAULT           3448
-> > > +/* HBLANK control range */
+On Tue, Nov 26, 2024 at 10:28=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+> > -----Original Message-----
+> > From: Claudiu <claudiu.beznea@tuxon.dev>
+> > Sent: 26 November 2024 09:21
+> > Subject: [PATCH v2 02/15] soc: renesas: Add SYSC driver for Renesas RZ =
+family
 > >
-> > Just drop the comment, and drop the blank lines, this belongs to the
-> > "V_TIMING internal" section.
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > >
-> > > +#define IMX219_PPL_MIN                       0x0d78
+> > The RZ/G3S system controller (SYSC) has various registers that control =
+signals specific to individual
+> > IPs. IP drivers must control these signals at different configuration p=
+hases.
 > >
-> > Why PPL and not HTS ?
-> 
-> The IMX219 datasheet defines the register as LINE_LENGTH_A, with
-> comment line_length_pck.
-> 
-> HTS is not a term used in the imx219 datasheet, so why introduce it to
-> the driver? I'd go along with a rename to LLP if you wish.
-> (HTS is more commonly an Omnivision term, not a Sony one).
-
-I thought the datasheet used HTS, my bad. Now that you mention it, HTS
-is indeed more of an OmniVision term. Sorry for the oversight.
-
-I would then name the macro IMX219_REG_LINE_LENGTH, and rename
-IMX219_REG_VTS to IMX219_REG_FRM_LENGTH.
-
-> > > +#define IMX219_PPL_MAX                       0x7ff0
-> > > +#define IMX219_REG_HTS                       CCI_REG16(0x0162)
+> > Add SYSC driver that allows individual SYSC consumers to control these =
+signals. The SYSC driver
+> > exports a syscon regmap enabling IP drivers to use a specific SYSC offs=
+et and mask from the device
+> > tree, which can then be accessed through regmap_update_bits().
 > >
-> > The min/max should go below the register definition.
+> > Currently, the SYSC driver provides control to the USB PWRRDY signal, w=
+hich is routed to the USB PHY.
+> > This signal needs to be managed before or after powering the USB PHY of=
+f or on.
 > >
-> > >
-> > >  #define IMX219_REG_LINE_LENGTH_A     CCI_REG16(0x0162)
-> > >  #define IMX219_REG_X_ADD_STA_A               CCI_REG16(0x0164)
-> > > @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> > >               cci_write(imx219->regmap, IMX219_REG_VTS,
-> > >                         format->height + ctrl->val, &ret);
-> > >               break;
-> > > +     case V4L2_CID_HBLANK:
-> > > +             cci_write(imx219->regmap, IMX219_REG_HTS,
-> > > +                       format->width + ctrl->val, &ret);
-> > > +             break;
-> > >       case V4L2_CID_TEST_PATTERN_RED:
-> > >               cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
-> > >                         ctrl->val, &ret);
-> > > @@ -496,12 +502,10 @@ static int imx219_init_controls(struct imx219 *imx219)
-> > >                                          V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
-> > >                                          IMX219_VTS_MAX - mode->height, 1,
-> > >                                          mode->vts_def - mode->height);
-> > > -     hblank = IMX219_PPL_DEFAULT - mode->width;
-> > > +     hblank = IMX219_PPL_MIN - mode->width;
-> > >       imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
-> > >                                          V4L2_CID_HBLANK, hblank, hblank,
+> > Other SYSC signals candidates (as exposed in the the hardware manual of=
+ the RZ/G3S SoC) include:
 > >
-> > The minimum and maximum are identical, is this intentional ?
-> 
-> The limits should be updated when the format is set, so the values
-> shouldn't matter when created. However I'd want to check that did
-> happen seeing as vblank computes the limits here.
-> It is as easy to set them correctly here too (max = IMX219_PPL_MAX -
-> mode->width), so you may as well.
-
-I would at least handle hblank and vblank the same way. If we expect the
-values to be updated, a comment to indicate so would be good. The
-current code states
-
-	/* Initial vblank/hblank/exposure parameters based on current mode */
-
-> > >                                          1, hblank);
-> > > -     if (imx219->hblank)
-> > > -             imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > >       exposure_max = mode->vts_def - 4;
-> > >       exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
-> > >               exposure_max : IMX219_EXPOSURE_DEFAULT;
-> > > @@ -817,6 +821,10 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> > >       struct v4l2_mbus_framefmt *format;
-> > >       struct v4l2_rect *crop;
-> > >       unsigned int bin_h, bin_v;
-> > > +     u32 prev_hts;
-> > > +
-> > > +     format = v4l2_subdev_state_get_format(state, 0);
-> > > +     prev_hts = format->width + imx219->hblank->val;
-> > >
-> > >       mode = v4l2_find_nearest_size(supported_modes,
-> > >                                     ARRAY_SIZE(supported_modes),
-> > > @@ -824,8 +832,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> > >                                     fmt->format.width, fmt->format.height);
-> > >
-> > >       imx219_update_pad_format(imx219, mode, &fmt->format, fmt->format.code);
-> > > -
-> > > -     format = v4l2_subdev_state_get_format(state, 0);
-> > >       *format = fmt->format;
-> > >
-> > >       /*
-> > > @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> > >                                        exposure_max, imx219->exposure->step,
-> > >                                        exposure_def);
-> > >               /*
-> > > -              * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
-> > > -              * depends on mode->width only, and is not changeble in any
-> > > -              * way other than changing the mode.
-> > > +              * Retain PPL setting from previous mode so that the
+> > * PCIe:
+> > - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+> > - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+> >   register
+> > - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
 > >
-> > Rename PPL to HTS here too.
-> 
-> Disagree as above. The local variable here should be renamed prev_ppl
-> or prev_llp.
+> > * SPI:
+> > - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+> >   register
+> >
+> > * I2C/I3C:
+> > - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+> >   (x=3D0..3)
+> > - af_bypass I3C signal controlled through SYS_I3C_CFG register
+> >
+> > * Ethernet:
+> > - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+> >   registers (x=3D0..1)
+> >
+> > As different Renesas RZ SoC shares most of the SYSC functionalities ava=
+ilable on the RZ/G3S SoC, the
+> > driver if formed of a SYSC core part and a SoC specific part allowing i=
+ndividual SYSC SoC to provide
+> > functionalities to the SYSC core.
+> >
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Or prev_line_length. I agree that hts isn't a good name here.
+Thanks for your review!
 
-> > > +              * line time does not change on a mode change.
-> > > +              * Limits have to be recomputed as the controls define
-> > > +              * the blanking only, so PPL values need to have the
-> > > +              * mode width subtracted.
-> > >                */
-> > > -             hblank = IMX219_PPL_DEFAULT - mode->width;
-> > > -             __v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
-> > > -                                      hblank);
-> > > +             hblank = prev_hts - mode->width;
-> > > +             __v4l2_ctrl_modify_range(imx219->hblank,
-> > > +                                      IMX219_PPL_MIN - mode->width,
-> > > +                                      IMX219_PPL_MAX - mode->width,
-> > > +                                      1, IMX219_PPL_MIN - mode->width);
-> > > +             __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> > >       }
-> > >
-> > >       return 0;
+> > ---
+> >
+> > Change in v2:
+> > - this was patch 04/16 in v1
+> > - dropped the initial approach proposed in v1 where a with a reset
+> >   controller driver was proposed to handle the USB PWRRDY signal
+> > - implemented it with syscon regmap and the SYSC signal concept
+> >   (introduced in this patch)
 
--- 
-Regards,
+[...]
 
-Laurent Pinchart
+When reviewing, please trim your response, so other people don't have
+to scroll through hundreds of lines of quoted text, to find any other
+comments (if any).
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
