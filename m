@@ -1,362 +1,175 @@
-Return-Path: <linux-kernel+bounces-422675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5423E9D9CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 064989D9CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E360F1654B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1724F167D6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906811DD87C;
-	Tue, 26 Nov 2024 17:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EB01DC1A7;
+	Tue, 26 Nov 2024 17:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="V2WCb+Ql"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NiNBDnRH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965AB1DCB2B;
-	Tue, 26 Nov 2024 17:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732642928; cv=pass; b=CE9vwapWIaepCPKa4Iw89nOtHUnRpQnDzKL1kNWhdL9TKpr5OKoa//4s8KZvW1ucFKI6/hVjrH5QtJ0qSkW8GBTb+jxkU/CAqz0eVkKPE//BJiKpdmLEG+iZcol9sc3DohjpQtbWLQy/TS0Q+ir3twA1a0czKzb6fbO8yGZjxAw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732642928; c=relaxed/simple;
-	bh=VcRpWYVBqsvODLd2j0NmxlNTKDK1paBpiVl6Wb3+EDQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Mq86NXgUFshz8Nu3OtwCnvsbTACowtM0Sn4RApDf51nseL6U8JvIzk0Sn9yvMXNU6a9WaYkNxdHyStJdmPGOzxMNY7ZeWHN6i2hZv9lYBTnbhUbI5tPwcqXd5eEt5W1rjsgswliKRcJ3htEdt869ehuGOTi1VDjUGBXdbbVodLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=V2WCb+Ql; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732642873; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mU8ObQ/OAasMBkzcFvPwQKo4sBO2cC9gkN/zJB906dZtgy4L6dh0j5lIrqsuYhqu6u1KB75AxOkYsb8KNZXALxyyfSiEd6hoEAm6FD8F4M+UwGfl2+zeTyqTtGMjmhY+tjhVKUZ9npGu/rrLqm92JZwKXKMYi2TKiKFh8AVXIuU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732642873; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AAZ0ziV0Ps+SEYxmzXSmejq4AyrtN53riw5JdtP05F0=; 
-	b=ECae4fssoCytQMK457kvWbYJzVj3z1p/Wm+3kaAe9EPdTNwCoOiGSHM6BkJDNPKrpVP+kvXv5ZLEkjUBqG4T+HZk62lo2U+yvYD9PH283IR84iju4BzDXm8UXfL2GKcObuUK5g/o7r+izamzrDFnRSLyyCGJoLdryYfObcQ7QI0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732642873;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=AAZ0ziV0Ps+SEYxmzXSmejq4AyrtN53riw5JdtP05F0=;
-	b=V2WCb+QlhgmujqFmfJJ01mbCKOmqJTsbtM8Oq44IrsxKyXukcU7ee1jt1hO4TM4S
-	57CCwcpTu8xcheP8z5GYjUhXjwmZsJXeUXlv5w45y6Y0pQfDSESL47PIo6JdnKLYM2/
-	P6O1yMUds34rgkKQCbxoLoZTFN4b20B0tmITeiUY=
-Received: by mx.zohomail.com with SMTPS id 1732642870668244.09361775176467;
-	Tue, 26 Nov 2024 09:41:10 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180841DACB4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732642880; cv=none; b=XBdXcPoj0o/AFaNIrCiRdTGPpIKWmc70CZObt+rpv29AoOQ6ghja6FXYaV6y4LSnCK5cCb5RqPlkfKAvCSa1sm/T0zAK97fb+WjMiYs1gQ5ahAY+m4nROAgkJa9kH3oa+d2k6aWqtSaa1LatVWUoPpsh2+yhj4ZidH5YOvpRyzI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732642880; c=relaxed/simple;
+	bh=2VA5r14k1YmFRvRtLFEcH3a/zWqGggcmq7A2YmH4w0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOjKCbPM+XgkGAYpnqRM2MqZGltw9cLr+3eOUqA6Z6o1C/OyHBivEe/GS4+aitnZyqgXsHRo0rCiX35Tx82qe3Oe1stvV0pqlpUWBX1XFZasOW4snt8876l7hGB0VJs7V6U8SK5fxNmo3IRHHkKJSrOf2F4WvjGzf4GsIRdR4r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NiNBDnRH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732642877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yy4BXFb6cimidAgaEvPnIiXK/EfHWyMt9+bAsPsgZUE=;
+	b=NiNBDnRH2fNQ5YYqDU3UP9PlIfcm2/CDPWncHIppiQaEtyMpyI/VUN4sSWTxcVLWzm5DFi
+	lxWcYZOyMHyAWQt3R6PFTdpYAJcvd4gjO/KSgoe2JcZ3DNEpxgtxaG1cxR/58HSn7nCCXG
+	7kS+17eJNZME74O0oW2R5F6QdzreX5U=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-Un2ViudoPVyR6c6SIL4-Pw-1; Tue, 26 Nov 2024 12:41:16 -0500
+X-MC-Unique: Un2ViudoPVyR6c6SIL4-Pw-1
+X-Mimecast-MFC-AGG-ID: Un2ViudoPVyR6c6SIL4-Pw
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78421a2e1so65744725ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:41:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732642875; x=1733247675;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yy4BXFb6cimidAgaEvPnIiXK/EfHWyMt9+bAsPsgZUE=;
+        b=Bgd7lQVgB9ZCI+2hg7p66I3tlQUOQ7SIi5JNR7jB954q2odq+gXZXK2Z6sBJzpF9AO
+         6Tes+uws4oDufr8euPag1sb7U+musrgUC5LFkxjrao1+ciiGFNd0yE521DQ4Oit86/uk
+         ZeU0h7GaF1rkTQSlXrnmzLxFD5oH7mrAiyfcve4kac6uJWr5XsAW0UDW/9uSsRXGcBt3
+         oG85QgDzV6WlxPDIA+VaMeV/dHYXR+RCZgYrLe6Wa4zqCg2gyw5chhgREqToXIZr3Ats
+         birri/y9fUNDKM3eJzq2wp1PawDFB4+dXto1IRw1ncrGsy0fJq3mcs/4WPRpfTOvShnP
+         Yu7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU485udFCjXGfYVEaQ4PG8fYOBAy2Cbihi7TPoKMsPGsy2Rgbo6BIw+4E3qqvii/aKA+Y1q1TxJhQvGZEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx59Kg3lT4Gxm5KL7v3n0b5Edq2Sr461q29H+fMfr0X9YH40Tsk
+	ytvjaTOc4oreTiAJ50K5PL757GamQDQ84QhlGWzFOR9SdMf9tzsnDFfqO4X/K2Ie/2xdpoJ7W0x
+	uS6jGdcM7Oyfd6tScoM/43RY293I72BfOQ4NdHwcXp5fjpAfp9bkkLw/ZvO+7CwQuUzCK2w==
+X-Gm-Gg: ASbGnculXdOVT/MQmwrYbipFiSw8TLhzTo8epl9hyxRA6s9e1qykvHrwDIMBxsg+EDj
+	X0W2p5jUk6IIWezmR8XUHgbw0HlvOnL5KB7ws2eXnOLNgs2uWorqs7V1H/z/oU+yWTRTzrOKZoc
+	MVYogrYtsPu3U5hOgQ0LYSRx+m7og3K3WtMO6z5ZQ6tQivyYVcDL/+P910uN+LBrql4+BogmE4t
+	/f6M9ijZT6hkgjvDs6OezHOoYuUU/rL2Dk55CzQ1hkyQy1s4w+fMcgSmiHw9FPIY7EfeHsIwXUy
+	TOt/oKw8UWY=
+X-Received: by 2002:a05:6e02:440d:20b0:3a7:a3a4:2cb3 with SMTP id e9e14a558f8ab-3a7a3a42d9fmr104815425ab.15.1732642875713;
+        Tue, 26 Nov 2024 09:41:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEung3vr4gfOD06sw0eHZp93kuMsajiVz5nPY5nn7aeOWDKXy2xMKmY5PcOvsXODB/cYeSpeg==
+X-Received: by 2002:a05:6e02:440d:20b0:3a7:a3a4:2cb3 with SMTP id e9e14a558f8ab-3a7a3a42d9fmr104815325ab.15.1732642875442;
+        Tue, 26 Nov 2024 09:41:15 -0800 (PST)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a79acb762asm22770595ab.73.2024.11.26.09.41.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 09:41:14 -0800 (PST)
+Date: Tue, 26 Nov 2024 12:41:12 -0500
+From: Peter Xu <peterx@redhat.com>
+To: stsp <stsp2@yandex.ru>
+Cc: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
+	Linux kernel <linux-kernel@vger.kernel.org>
+Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
+Message-ID: <Z0YIOOfxr14tp8Am@x1n>
+References: <Z0Ssq15MQd3rimBr@x1n>
+ <da978e8c-2a72-4b7b-ae67-41e6ff0d5089@yandex.ru>
+ <Z0SwOILi4R4g9JBa@x1n>
+ <9b68a811-ffed-4595-83a6-0ef78a7de806@yandex.ru>
+ <Z0S3isgc-QlEF7oW@x1n>
+ <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
+ <20a1d49a-1f5d-4d3d-b59d-29b9791b72bd@collabora.com>
+ <2dd0bcee-a594-4de9-b499-a8ad37be155c@yandex.ru>
+ <Z0XvwitcZ6ujoV9Y@x1n>
+ <3d4c1c59-4b01-4fa3-af84-e2d84f4ebf44@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 01/35] WIP: rust/drm: Add fourcc bindings
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-2-lyude@redhat.com>
-Date: Tue, 26 Nov 2024 14:40:54 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@redhat.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5A7B3FCB-0A97-4818-9AE4-A1911EA55B90@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-2-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d4c1c59-4b01-4fa3-af84-e2d84f4ebf44@yandex.ru>
 
-Hi Lyude, sorry for the late review!
+On Tue, Nov 26, 2024 at 07:16:19PM +0300, stsp wrote:
+> 26.11.2024 18:56, Peter Xu пишет:
+> > This doesn't sound like the right thing to do.. as the fd (returned from
+> > syscall(userfaultfd)) should be linked to a specific mm.  If the parent
+> > invoked that syscall, it's linked to the parent address space, not child.
+> > You may want to do syscall(userfalut) in child process, then pass it over
+> > with scm rights.  Otherwise IIUC the trap will be armed on parent virtual
+> > address space.
+> Ok, thanks for info.
+> man page doesn't seem to describe
+> the multi-process case, so both fork()
+> and SCM_RIGHTS were just a guesses
+> on my side, one of which worked.
+> Probably something to add to the doc.
+> 
+> The last problem I had (last one, I promise! :)
+> is that if I remove O_NONBLOCK, then
+> the entire app hangs. It turns out, w/o
+> O_NONBLOCK, userfaultfd's fd awakes
+> the select() call with the ready-to-read
+> descriptor at the very beginning, long
 
-> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> This adds some very basic rust bindings for fourcc. We only have a =
-single
-> format code added for the moment, but this is enough to get a driver
-> registered.
->=20
-> TODO:
-> * Write up something to automatically generate constants from the =
-fourcc
->  headers
+I highly suspect it's not a real POLLIN, but POLLERR.  See:
 
-I assume this is blocked on [0], right?
+userfaultfd_poll():
+	/*
+	 * poll() never guarantees that read won't block.
+	 * userfaults can be waken before they're read().
+	 */
+	if (unlikely(!(file->f_flags & O_NONBLOCK)))
+		return EPOLLERR;
 
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/bindings/bindings_helper.h |   1 +
-> rust/kernel/drm/fourcc.rs       | 127 ++++++++++++++++++++++++++++++++
-> rust/kernel/drm/mod.rs          |   1 +
-> 3 files changed, 129 insertions(+)
-> create mode 100644 rust/kernel/drm/fourcc.rs
->=20
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index b2e05f8c2ee7d..04898f70ef1b8 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -9,6 +9,7 @@
-> #include <drm/drm_device.h>
-> #include <drm/drm_drv.h>
-> #include <drm/drm_file.h>
-> +#include <drm/drm_fourcc.h>
-> #include <drm/drm_gem.h>
-> #include <drm/drm_gem_shmem_helper.h>
-> #include <drm/drm_ioctl.h>
-> diff --git a/rust/kernel/drm/fourcc.rs b/rust/kernel/drm/fourcc.rs
-> new file mode 100644
-> index 0000000000000..b80eba99aa7e4
-> --- /dev/null
-> +++ b/rust/kernel/drm/fourcc.rs
-> @@ -0,0 +1,127 @@
-> +use bindings;
-> +use core::{ops::*, slice, ptr};
-> +
-> +const fn fourcc_code(a: u8, b: u8, c: u8, d: u8) -> u32 {
-> +    (a as u32) | (b as u32) << 8 | (c as u32) << 16 | (d as u32) << =
-24
-> +}
-> +
-> +// TODO: Figure out a more automated way of importing this
-> +pub const XRGB888: u32 =3D fourcc_code(b'X', b'R', b'2', b'4');
-> +
-> +#[derive(Copy, Clone)]
-> +#[repr(C)]
-> +pub struct FormatList<const COUNT: usize> {
-> +    list: [u32; COUNT],
-> +    _sentinel: u32,
-> +}
-> +
-> +impl<const COUNT: usize> FormatList<COUNT> {
-> +    /// Create a new [`FormatList`]
-> +    pub const fn new(list: [u32; COUNT]) -> Self {
-> +        Self {
-> +            list,
-> +            _sentinel: 0
-> +        }
-> +    }
-> +
-> +    /// Returns the number of entries in the list, including the =
-sentinel.
-> +    ///
-> +    /// This is generally only useful for passing [`FormatList`] to C =
-bindings.
-> +    pub const fn raw_len(&self) -> usize {
-> +        COUNT + 1
-> +    }
-> +}
-> +
-> +impl<const COUNT: usize> Deref for FormatList<COUNT> {
-> +    type Target =3D [u32; COUNT];
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        &self.list
-> +    }
-> +}
-> +
-> +impl<const COUNT: usize> DerefMut for FormatList<COUNT> {
-> +    fn deref_mut(&mut self) -> &mut Self::Target {
-> +        &mut self.list
-> +    }
-> +}
-> +
-> +#[derive(Copy, Clone)]
-> +#[repr(C)]
-> +pub struct ModifierList<const COUNT: usize> {
-> +    list: [u64; COUNT],
-> +    _sentinel: u64
-> +}
-> +
-> +impl<const COUNT: usize> ModifierList<COUNT> {
-> +    /// Create a new [`ModifierList`]
-> +    pub const fn new(list: [u64; COUNT]) -> Self {
-> +        Self {
-> +            list,
-> +            _sentinel: 0
-> +        }
-> +    }
-> +}
-> +
-> +impl<const COUNT: usize> Deref for ModifierList<COUNT> {
-> +    type Target =3D [u64; COUNT];
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        &self.list
-> +    }
-> +}
-> +
-> +impl<const COUNT: usize> DerefMut for ModifierList<COUNT> {
-> +    fn deref_mut(&mut self) -> &mut Self::Target {
-> +        &mut self.list
-> +    }
-> +}
-> +
-> +#[repr(transparent)]
-> +#[derive(Copy, Clone)]
-> +pub struct FormatInfo {
-> +    inner: bindings::drm_format_info,
-> +}
-> +
-> +impl FormatInfo {
-> +    // SAFETY: `ptr` must point to a valid instance of a =
-`bindings::drm_format_info`
-> +    pub(super) unsafe fn from_raw<'a>(ptr: *const =
-bindings::drm_format_info) -> &'a Self {
+I suppose select() will report that in readfds[].
 
-I think FormatInfoRef would be more appropriate, since you seem to be =
-creating a reference type (IIUC)
-for a type that can also be owned.
+> before any fault is detected. Then it
+> goes to read() and blocks forever. My
+> code is not prepared for read() blocking
+> after select().
+> I then checked and double-checked
+> and re-checked that with O_NONBLOCK
+> nothing like that happens at all: select()
+> is not awaken until the faults are coming.
+> It could be that select awakes anyway
+> but read() doesn block, but no, its not
+> the case. In nonblock mode select()
+> awakes only when it should. And in
+> blocking mode - it awakes immediately,
+> leading to a hang.
+> Is this a bug?
 
-This would be more in line with the GEM [1] patch, for example.
+Not a bug, but, AFAIU, a design decision.  If you're interested, you can
+read commit ba85c702e4b.
 
-In other words, using `Ref` here will allow for both an owned =
-`FormatInfo` and a `FormatInfoRef<=E2=80=98_>`.
+Userfaultfd is a special kind of fd, and poll()/select() doesn't always
+mean that the next read() is not going to block.  Fundamentally it's
+because data-ready event is based on waitqueue, while waitqueue can change
+between a select() v.s. a read() later, so the waited entry can be removed
+within the short period.
 
-I am not sure about the role of lifetime =E2=80=98a here. If you wanted =
-to tie the lifetime of &Self to that of the pointer,
-this does not do it, specially considering that pointers do not have =
-lifetimes associated with them.
+In short, please stick with NONBLOCK on userfaultfd.
 
-> +        // SAFETY: Our data layout is identical
-> +        unsafe { &*ptr.cast() }
+Thanks,
 
-It=E2=80=99s hard to know what is going on with both the reborrow and =
-the cast in the same statement.
-
-I am assuming that cast() is transforming to *Self, and the reborrow to =
-&Self.
-
-To be honest, I dislike this approach. My suggestion here is to rework =
-it to be similar to, e.g., what
-Alice did here for `ShrinkControl` [2].
-
-+/// This struct is used to pass information from page reclaim to the =
-shrinkers.
-+///
-+/// # Invariants
-+///
-+/// `ptr` has exclusive access to a valid `struct shrink_control`.
-+pub struct ShrinkControl<'a> {
-+ ptr: NonNull<bindings::shrink_control>,
-+ _phantom: PhantomData<&'a bindings::shrink_control>,
-+}
-+
-+impl<'a> ShrinkControl<'a> {
-+ /// Create a `ShrinkControl` from a raw pointer.
-+ ///
-+ /// # Safety
-+ ///
-+ /// The pointer should point at a valid `shrink_control` for the =
-duration of 'a.
-+ pub unsafe fn from_raw(ptr: *mut bindings::shrink_control) -> Self {
-+ Self {
-+ // SAFETY: Caller promises that this pointer is valid.
-+ ptr: unsafe { NonNull::new_unchecked(ptr) },
-+ _phantom: PhantomData,
-+ }
-+ }
-
-Notice the use of PhantomData in her patch.
-
-By the way, Alice, I wonder if we can just use Opaque here?
-
-> +    }
-
-> +
-> +    /// The number of color planes (1 to 3)
-> +    pub const fn num_planes(&self) -> u8 {
-> +        self.inner.num_planes
-> +    }
-> +
-> +    /// Does the format embed an alpha component?
-> +    pub const fn has_alpha(&self) -> bool {
-> +        self.inner.has_alpha
-> +    }
-> +
-> +    /// The total number of components (color planes + alpha channel, =
-if there is one)
-> +    pub const fn num_components(&self) -> u8 {
-> +        self.num_planes() + self.has_alpha() as u8
-> +    }
-> +
-> +    /// Number of bytes per block (per plane), where blocks are =
-defined as a rectangle of pixels
-> +    /// which are stored next to each other in a byte aligned memory =
-region.
-> +    pub fn char_per_block(&self) -> &[u8] {
-> +        // SAFETY: The union we access here is just for descriptive =
-purposes on the C side, both
-> +        // members are identical in data layout
-> +        unsafe { =
-&self.inner.__bindgen_anon_1.char_per_block[..self.num_components() as =
-_] }
-> +    }
-> +}
-> +
-> +impl AsRef<bindings::drm_format_info> for FormatInfo {
-> +    fn as_ref(&self) -> &bindings::drm_format_info {
-> +        &self.inner
-> +    }
-> +}
-> +
-> +impl From<bindings::drm_format_info> for FormatInfo {
-> +    fn from(value: bindings::drm_format_info) -> Self {
-> +        Self { inner: value }
-> +    }
-> +}
-> diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
-> index c44760a1332fa..2c12dbd181997 100644
-> --- a/rust/kernel/drm/mod.rs
-> +++ b/rust/kernel/drm/mod.rs
-> @@ -5,5 +5,6 @@
-> pub mod device;
-> pub mod drv;
-> pub mod file;
-> +pub mod fourcc;
-> pub mod gem;
-> pub mod ioctl;
-> --=20
-> 2.46.1
-
-=E2=80=94 Daniel
-
-[0]: https://github.com/rust-lang/rust-bindgen/issues/753
-
-
-[1]: =
-https://gitlab.freedesktop.org/drm/nova/-/commit/cfd66f531af29e0616c58b4cd=
-4c72770a5ac4081#71321381cbaa87053942373244bffe230e69392a_0_306
-
-[2]: =
-https://lore.kernel.org/rust-for-linux/20241014-shrinker-v2-1-04719efd2342=
-@google.com/
-
+-- 
+Peter Xu
 
 
