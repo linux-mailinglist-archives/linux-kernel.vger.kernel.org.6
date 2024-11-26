@@ -1,184 +1,151 @@
-Return-Path: <linux-kernel+bounces-422489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBD39D9A3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:13:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 799499D9A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CD32842B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB432841D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5F51D61A5;
-	Tue, 26 Nov 2024 15:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4438A1D61BB;
+	Tue, 26 Nov 2024 15:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwYkzVdj"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mY9cqW6S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fGHa8JY0"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037D71B85E4;
-	Tue, 26 Nov 2024 15:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967191D54E3;
+	Tue, 26 Nov 2024 15:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633973; cv=none; b=uc+Tshq0cGLK+hOMVtXKUJFAt9aElbh0125lahTcrmhqQskQ0ncu8VRz+RdMKGVIAqPlQSIemCQrTVg55019vf9TsYU5E3okkdMpFCRcx7+q8UDz6Q9pLHbJ4t429qMi6r4lY1rPlG6KLoNlcLtaUglNYIr8FbaNfnfJZuyAMFo=
+	t=1732633991; cv=none; b=qDU9Wy37zmNFq0RVhoapaAYFtR44MMr61kj2k+zMz5vj4zm4iOwGjCeXXbg2JG8HIPigBZpYz9O8KzkK7khx37WwYu9beFn2FAtJM91u29OaXGMchzW2LJr6Wu47HeHPHL0/1a/+a9zfOU14zSkJYLNMEwHZnpoSNTziOy6nsEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633973; c=relaxed/simple;
-	bh=1cDWZTRMPL38LJP5sGJcBCBhpS/kHENxHbMHPpkOpeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=teXUxUtjMSTvdBSzXVEnRhulYjw2ZS3K7dxyf5Y7HiVnP4tFL/v8vuT+98qScpTnH+9Xbuwoq8c7m1llE80WVNVqkzjnMl2uUYgaKHs6jCTYNuooUjC+sw8iGDaprDwTNlM6Y/Iv/RkcHGVkCp+Okpjbo7G2PzH7DCrgLVIfTg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwYkzVdj; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso26393721fa.2;
-        Tue, 26 Nov 2024 07:12:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732633970; x=1733238770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MgEjlw55Z49/v6BoNwsnoX/cUraYKdi/pNCtZCSB7Ko=;
-        b=BwYkzVdjR9G/W+cgGSMt7Cf9aQyvppQPnrR5ZwDepJMXXY2yh6CUrCZZY17uhOX7MG
-         iWo/vBJpcgxiE2ssXc71001fwBLhWj8nj2wjM2zvwOE+G1I9MIjrkx9mklWPdExNWnH1
-         wvnwafcqbenXsoRkJOYjvbGqKe1MynKAIQ6zvWvY7b6TRmom+q5XGVnU6pAcfiTeRyML
-         jGRUS91Fmmi8Det6mDiuYdy8REZLsv6/qY6+urD56MEvANujdUTTmNGbSNL+hj/C2mAh
-         QkgCxhggGSvf+Ld1qEVuPk1pGl3TFdr1dJosSCtFFohkdQm7ZUT9Zaf8wkkwGZbkPqwX
-         z3Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732633970; x=1733238770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MgEjlw55Z49/v6BoNwsnoX/cUraYKdi/pNCtZCSB7Ko=;
-        b=vQDxZjy4PCV/imx9oE8ujVLVuXZeeEPnabkFhSCYL+ZYYo+rZ6m+Z+6S3CIHMZ0l+P
-         rL+ksHIDpuxNwgr4oUsMkoBeCAdZFhNdscUoiE2FILWeqkKqJUlCVxn99JNbrdMeKdZe
-         ak8yJNycW84pIzslMry78qt2wiuvzC+n0k5U7LtVVvIlaHVMUsY0XsJr+S0BapCNrhXV
-         GJ6TXoCbGyyjGn1HDgwBgWN3yMO61Jdyljx/aHxMu86ISJqIMVcKecPnsOvP9rPSHqNo
-         20R635VvQHrBXOM5csgIG3FEMprsQ1SMp/mOL0Pg/V5aF1l/gRPVbEdMEH3F7kuERzD3
-         UhOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdYem0lEsT04UP44KToZcqAgNf3PnbSVncPSvuaDHKrdT56RBV3oNLP39DrIyiBJkCR/0eW5sMlcczPRyN@vger.kernel.org, AJvYcCVJLvzsW0XZsh+mjhBL8KtmO70e0fonozHwHKbmVSSKAx4clqR5XzFLt5epr/09PRj+/cf2L4Rr+XVitaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuKH8oTjXUvWdAoxWQjrAcVuWQ7X67KXXncSUnJ9qAe0vGkBzi
-	9O4B8DKCd0vkP0BPIOtqkpkrLITwSxcefYSqB5D80q58HQ8k7swrXQOum/pnsWH4Z/wflStFodE
-	u2e2ekdmCKRJP4w1Kcs9b55+IVls=
-X-Gm-Gg: ASbGnctbvGStRDLwLDGIAAghpzVkbL8z3dopG9/Cf1w/aPCYyE5ECIFEUk0AWShq958
-	AxlRu+KJQyCI4aAqQl27lYN5MZj7f0ChU6A==
-X-Google-Smtp-Source: AGHT+IEx8aBvyUxwX4KhjDAPapgTtn8RVsUoKeJKHRReDtlqe14IiV4PkqpM5iqQHZaEknXnRRjDkrEE1MjdQDxEFHE=
-X-Received: by 2002:a05:651c:905:b0:2ff:5e46:ab04 with SMTP id
- 38308e7fff4ca-2ffa71905d7mr104011571fa.22.1732633969766; Tue, 26 Nov 2024
- 07:12:49 -0800 (PST)
+	s=arc-20240116; t=1732633991; c=relaxed/simple;
+	bh=09qdqt8gx+Pt0FyVLcARJoCsRJAEPy9MkT4OKKUAsqk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=A8u/6llaMLI3nu1hLk1s1pNssEZCGw+z9y3k438Tla/P0cHurs3FCq3Nf0G4ozObV26/eyIsQF/YN9tfgMqkofz98ea5cl0X8TYJs5zzIr3fpm7o1f9Ps7HRTkaK10nfn4sriFjbf74TFS79L1pkgUVVvoVNmzamXVPo+bwVALw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mY9cqW6S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fGHa8JY0; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 5D6FE1140094;
+	Tue, 26 Nov 2024 10:13:07 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 26 Nov 2024 10:13:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732633987;
+	 x=1732720387; bh=KArY+wRAq4+tAmshhSnviX78KHjT0+xunqtTv5VSLzU=; b=
+	mY9cqW6S0UDCwVWDNEnXZNERlef8V8q8vGN00snn5hoxRRgkQq8kPDW9y3HwLn5+
+	s+XINfbgssAVFLnS0JFBXxH75f+AQao0Rhp721saYUEiVl+JIe2Llp+hqGcZIHCn
+	jgFNFqJUWHfQL4PFDxrwCElwNn9vmFstvt+Rknlthhv88Advard3NM6BFteJBZBd
+	fQH3hz3y5VNASwjxpaTnDij87QhGEHdgrmOz9ugBT9J4fJokUJYfrxU/BF2pfXmp
+	e0XoDNoGzPDXQ46Z3IvBBMXiEnyfCsuoThN6/Sjy4q6ES/th+RcLJG9ivemiVggv
+	Coukv+dO7ttbehr+OetUNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732633987; x=
+	1732720387; bh=KArY+wRAq4+tAmshhSnviX78KHjT0+xunqtTv5VSLzU=; b=f
+	GHa8JY0fM0z9st5fsN7CILUwxegd5o2UmRRmNrlks4eOA1iUMTZdZn9xnHZbfd1O
+	p0MRJh1zOQb6HOezWbV0h07ucYspzhubCSz3nPvrEkJeEU+9fMZA2Ut8MpWmftAx
+	oWvUdD4+qIgNPggB5ROvBBDW16dlUqYGD34WlAEJqKqlmtEplGo0C1lSLJFuFsPH
+	L+z4eUIyjdO3bO6YFseJbYXVkm6bQ5TsRz5RFvlZd1/oOZG7Q728OFDivOoow5dP
+	C0EXC5e/5R8CDWK6swdv4eslwwlU/14rE+uphg2FKfkXonoYcRTbsEqmgAbEkp4+
+	54M1EDhHn/lkVK4S3Ouhg==
+X-ME-Sender: <xms:guVFZ21d6S-LoZAnorRnQO2brWaAzN_SIi1G8SmTelTIaaXvDNhtgA>
+    <xme:guVFZ5HRvv7rgANytyfHFtApasnKcbzXOBbsRf66zZwQK0VMKbtp1IEPuXcVvg08I
+    fF1xwRX3yJFcT16dIA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeejgdejtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeek
+    leffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhn
+    uggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehlrghorghrrdhshhgrohesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgu
+    vghrshdrrhhogigvlhhlsehlihhnrghrohdrohhrghdprhgtphhtthhopegurghnrdgtrg
+    hrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehnrghrvghshhdrkhgr
+    mhgsohhjuheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhkfhhtqdhtrhhirghgvg
+    eslhhishhtshdrlhhinhgrrhhordhorhhgpdhrtghpthhtoheprhgvghhrvghsshhiohhn
+    sheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehprghulhesphgruhhlqd
+    hmohhorhgvrdgtohhmpdhrtghpthhtohepvghprghrihhssehrvgguhhgrthdrtghomhdp
+    rhgtphhtthhopegruhguihhtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:guVFZ-7Yk84joLjezYyGmV8VZTv1lHAS62S9RMb9Qy0Ks4jJg6yhsA>
+    <xmx:guVFZ32dJG7VVuMvxBy-g9KP1CBKMr4Ame4FyzGbKDSkqdL77PuIdg>
+    <xmx:guVFZ5EglZwbcplgR_vL7I4fajKZfY2xJhNRDBFe1_Vby0T3lVWaeQ>
+    <xmx:guVFZw_AU-vnqPl25-S3doEEDlcaASVNznivic2zVI_fX3flLhwCLw>
+    <xmx:g-VFZ4AXQJr_Ou9N66JhAEIlhWocwcZeW2D6q3_R_SJiMMbBDfdG2Bx1>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6C0CC2220071; Tue, 26 Nov 2024 10:13:06 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123132237.15700-1-sedat.dilek@gmail.com> <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
-In-Reply-To: <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Tue, 26 Nov 2024 16:12:15 +0100
-Message-ID: <CA+icZUV9Wbpw5DbGgkd3BYrU5xA9A9rHnX85Mc_4u6PajygjiA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Fix names of .tmp_vmlinux kallsyms files
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Tue, 26 Nov 2024 16:12:45 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>, audit@vger.kernel.org,
+ "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ "Linux Regressions" <regressions@lists.linux.dev>
+Cc: "Eric Paris" <eparis@redhat.com>, "Paul Moore" <paul@paul-moore.com>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Yafang Shao" <laoar.shao@gmail.com>
+Message-Id: <29ab783d-86e2-4528-a6ad-083f8baf56d1@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYvWkS-8f9kOBTzixjGSNN8262StoVv2ERk7mRKcU+p+BA@mail.gmail.com>
+References: 
+ <CA+G9fYvWkS-8f9kOBTzixjGSNN8262StoVv2ERk7mRKcU+p+BA@mail.gmail.com>
+Subject: Re: include/linux/fortify-string.h:293:17: error: call to '__write_overflow'
+ declared with attribute error: detected write beyond size of object (1st
+ parameter)
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 4:01=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Sat, Nov 23, 2024 at 10:22=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.c=
-om> wrote:
-> >
-> > For details, see thread "kbuild-next: .tmp vmlinux syms files"
-> >
-> > INFO: This patch is against Linux v6.12.
-> >
-> > Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkj=
-tm4vSVKkXPTg+Q@mail.gmail.com/
->
-> This is not the right way to input a commit description.
->
+On Tue, Nov 26, 2024, at 15:58, Naresh Kamboju wrote:
+> Build error:
+> ---------
+> In function 'sized_strscpy',
+>     inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
+> include/linux/fortify-string.h:293:17: error: call to
+> '__write_overflow' declared with attribute error: detected write
+> beyond size of object (1st parameter)
+>   293 |                 __write_overflow();
+>       |                 ^~~~~~~~~~~~~~~~~~
+> In function 'sized_strscpy',
+>     inlined from 'audit_signal_info_syscall' at kernel/auditsc.c:2759:3:
+> include/linux/fortify-string.h:293:17: error: call to
+> '__write_overflow' declared with attribute error: detected write
+> beyond size of object (1st parameter)
+>   293 |                 __write_overflow();
+>       |                 ^~~~~~~~~~~~~~~~~~
+> make[4]: *** [scripts/Makefile.build:229: kernel/auditsc.o] Error 1
 
-Hi Masahiro,
+I have run into this specific one before but failed to
+come up with a working fix.
 
-I can add a proper commit description in v2.
+I think the specific warning started with
 
->
-> >
-> > Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > ---
-> >  scripts/link-vmlinux.sh | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> > index a9b3f34a78d2..c9088436baff 100755
-> > --- a/scripts/link-vmlinux.sh
-> > +++ b/scripts/link-vmlinux.sh
-> > @@ -203,8 +203,8 @@ kallsymso=3D
-> >  strip_debug=3D
-> >
-> >  if is_enabled CONFIG_KALLSYMS; then
-> > -       true > .tmp_vmlinux.kallsyms0.syms
-> > -       kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
-> > +       true > .tmp_vmlinux0.kallsyms.syms
-> > +       kallsyms .tmp_vmlinux0.kallsyms.syms .tmp_vmlinux0.kallsyms
->
-> If you aim for naming consistency, this should be
->
-> .tmp_vmlinux0.syms
->
+https://lore.kernel.org/all/20240828030321.20688-3-laoar.shao@gmail.com/
 
-OK.
-I was thinking of this, too.
-I can change this as well.
+but reverting that just replaces it with a slightly different
+warning. In my randconfig tree I have a patch that comments out
+the two security_task_getlsmprop_obj(), and I don't think I get
+warnings at the moment, but I no longer see why I would have done
+that.
 
-The rest below is OK?
-
-Thanks for your comments.
-
-Best regards,
--Sedat-
-
->
->
-> >  fi
-> >
-> >  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; the=
-n
-> > @@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
-> >         # Generate section listing all symbols and add it into vmlinux
-> >         # It's a four step process:
-> >         # 0)  Generate a dummy __kallsyms with empty symbol list.
-> > -       # 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and sec=
-tions,
-> > +       # 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and sec=
-tions,
-> >         #     with a dummy __kallsyms.
-> > -       #     Running kallsyms on that gives us .tmp_kallsyms1.o with
-> > +       #     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.=
-o with
-> >         #     the right size
-> > -       # 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms se=
-ction of
-> > +       # 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms se=
-ction of
-> >         #     the right size, but due to the added section, some
-> >         #     addresses have shifted.
-> > -       #     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
-> > +       #     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
-> >         # 3)  That link may have expanded the kernel image enough that
-> >         #     more linker branch stubs / trampolines had to be added, w=
-hich
-> >         #     introduces new names, which further expands kallsyms. Do =
-another
-> > --
-> > 2.45.2
-> >
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+      Arnd
 
