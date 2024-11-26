@@ -1,81 +1,130 @@
-Return-Path: <linux-kernel+bounces-422098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B4C9D94AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:38:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C401E9D948E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86DFEB27FA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:33:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827842816FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131CF1BC07E;
-	Tue, 26 Nov 2024 09:33:03 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B952C1B87DE;
-	Tue, 26 Nov 2024 09:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA731BC9FE;
+	Tue, 26 Nov 2024 09:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkXeTszj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B8E194C61;
+	Tue, 26 Nov 2024 09:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613582; cv=none; b=LfjLJ2U0IfjE2oQaBDABF/tNVAHajVYDRvaQVBg5UdBEMvsif6XVbrWs++bcSjVik+sJRj2KB3UkpNu76wexKMylvADHEXZJ7KSnIfdJ9d8LyP7oGIml3CjtHaiM79MOF5TW/uNOaYsvch1UfFg7BcDCMIsSR+XpWIpva8yUxDA=
+	t=1732613571; cv=none; b=XbnM5q2fkpNwAn1S96siGzHA7YxDtsujCqNUNRbDNbTAkADlwaJAzgcr/lHqqX+pLfBe2Az/hKdNAvj2gGkYJt5QA97s8Hq5S8dICIlmhdfLWnAOPq9InO0VGeasKn4p+QttVib2WIDzdLA8vORHLmRk34bGcMqujKolCGrkw0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613582; c=relaxed/simple;
-	bh=vmb0LVU7VYZ5D72G8ZNIEvuV+aZ8kSkVuOA6QAl5Q4I=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=tighDA+ZMOFa/kqD3ZcH87kAGmdUJJ66hEn+zT5kDeladjdOvlJIrt2amfGf6di4Ox6u1hIkYkLPHp+HnsiqROqAACJqaff5spe+q5QGGreOUkgqAWLgq1B7kkwFlg8aiB8xPa12Pd7H9iz5xQtamTBxmNvjk3RfSejcddKGXsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1674595bec2c-56543;
-	Tue, 26 Nov 2024 17:32:49 +0800 (CST)
-X-RM-TRANSID:2ee1674595bec2c-56543
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee5674595c0746-2b847;
-	Tue, 26 Nov 2024 17:32:49 +0800 (CST)
-X-RM-TRANSID:2ee5674595c0746-2b847
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: perex@perex.cz
-Cc: tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] ALSA: asihpi: Remove unused variable
-Date: Tue, 26 Nov 2024 01:32:45 -0800
-Message-Id: <20241126093245.3228-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1732613571; c=relaxed/simple;
+	bh=ShVU0G5DfymgPVyV2Iz7gTpXF10ABLXVYroQX3OlmaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hjr8ojhiNf/pCT+9DaPQczkuEfnkSG72Kxnwr4WZINfaAh6IAQJ4zcmBfnSrHvW6+XGZv0mEMACJ+mY00R696a7wJF9jBjhKrrYgKHo/IPxIYmeRrn+Vy29M+VCoHCl9GsJdwnDFRJN4KzUGdtrWfClqhZYGFhbpJS5FBTs4Jyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkXeTszj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E23C4CED0;
+	Tue, 26 Nov 2024 09:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732613570;
+	bh=ShVU0G5DfymgPVyV2Iz7gTpXF10ABLXVYroQX3OlmaM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MkXeTszjj7SEOOZjeULG0o/c3KJ79l2pJpTOQTNJ+2/LTWnMjc88a5jo47UrtvGBP
+	 suuo2Z6komsUbUTHgqlJyg/iPiXt6b3IsLNW8gop6PKDhzJYok2IUpzyPR3X53XtSx
+	 OAQ2FZEcpI4OLB6IIWnUt5VPQHBOZTb55YtFEYeEtqdI/ZELT/gq2tTKONt65ty3fe
+	 an6f3mCyLF/8zEW6SCgTCOvDIf+uAmlB9mN01euy68kVW5Lfw3StPyd9N6P9vLVM7d
+	 bXltKqG3PKOG5BrT+1HlodXJ0uEetS1VSGdQMEh1QRzIdltrT+OFUDGqs1jj8VwZX9
+	 Nl6Dmna/dfn3A==
+Message-ID: <05a4fd39-d53a-49c3-b236-01ba16fb193e@kernel.org>
+Date: Tue, 26 Nov 2024 10:32:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: gpu: add reset control property
+To: Parthiban Nallathambi <parthiban@linumiz.com>,
+ Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
+ <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-the variable is never referenced in the code, just remove it.
+On 25/11/2024 17:37, Parthiban Nallathambi wrote:
+> GE8300 in Allwinner A133 have reset control from the ccu.
+> Add the resets property as optional one to control it.
+> 
+> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+> ---
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- sound/pci/asihpi/asihpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
-index fdd4fe162..5a84591b1 100644
---- a/sound/pci/asihpi/asihpi.c
-+++ b/sound/pci/asihpi/asihpi.c
-@@ -464,7 +464,7 @@ static int snd_card_asihpi_pcm_hw_params(struct snd_pcm_substream *substream,
- 			return -ENOMEM;
- 		}
- 
--		err = hpi_stream_get_info_ex(dpcm->h_stream, NULL,
-+		hpi_stream_get_info_ex(dpcm->h_stream, NULL,
- 				&dpcm->hpi_buffer_attached, NULL, NULL, NULL);
- 	}
- 	bytes_per_sec = params_rate(params) * params_channels(params);
--- 
-2.17.1
+Missing prefix for the device. You are not adding reset to all GPU devices.
 
-
-
+Best regards,
+Krzysztof
 
