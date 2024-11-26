@@ -1,176 +1,259 @@
-Return-Path: <linux-kernel+bounces-422545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2616F9D9AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:04:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE5F9D9B04
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4F9163EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:04:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050C5163BED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6B31D89F1;
-	Tue, 26 Nov 2024 16:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxATP0Be"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA491D61BC;
+	Tue, 26 Nov 2024 16:05:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ED61D86F6;
-	Tue, 26 Nov 2024 16:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5183EA69;
+	Tue, 26 Nov 2024 16:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732637028; cv=none; b=A4qnHVBnlNpKXbXHWzjVJXMQZB1ahUyIpFRnkQgBjVq8wvyCd/qwpnVrjz5N/cgYqbUaWYz/BbAY/1PZk3DUfWDIA/rW8oyq9iXbgM3N6FI/C1/wbIE/nuoaDkLeMQAHQjmPoPZp/N1saGXJjl7t9PmCYUJve1UNVcGdLDB8X9M=
+	t=1732637135; cv=none; b=U8gzSKKrI/nGuhzd15sxIw42F1rPCscURS4Uo4IDtVi4beOkqeag/B6bLNXjWZHgiJAqDXPEQSNduGmKOWqtaQY2HYzmSY3aRoTOoxzB3s8UXiZ8z79WJUW7FDhxtN53cIygfoUnXn+m9Pr4e9HXzj/+oi5q6zxYKp80hx1BQGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732637028; c=relaxed/simple;
-	bh=FpUNHisF0kc5uQOfxRQln2JgUAQH9TL8aMKg2gXJBcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K/0sEX+PeUAeC1yEC4Tc5zAGcUfJ/oQdjH0GPGodKmX3mwHwOUJS+KFNnnf0vx5pgdTWzqlYOdQetw/diE6ChY/ysJDwmwJej7kNJDkm6FhBZWMqFjCiXwHKZx66fEiG87zA5FK0Je1o6yjOBxovl1MIWuwxYEkSSeyMMTExw+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxATP0Be; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6811C4CED2;
-	Tue, 26 Nov 2024 16:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732637027;
-	bh=FpUNHisF0kc5uQOfxRQln2JgUAQH9TL8aMKg2gXJBcs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GxATP0BeIVmYie2oYXToHqMcdtk5Wu+PYF9P20B594yHAPHl8PAgokdJVLLxnKPb8
-	 B9oTu7dpac0Yjrn50VG/TdvEEdj16xNdwAZReidgtufbeQWpIpr+wW2QNPsD0u3PGq
-	 oXPn/DNSWBrvM6mOlsMirOnAVOpZpF7m/tsrqUXK55LvOB3hnWVPT9O9QavlCPpZHQ
-	 ZwjrETlRLa6FB5qQ6rqqdwhRwGHwwdKVexKXsevV09kxXfWopNKwE8XCEuQQ0l7F9m
-	 842Hez7MzAZ902PqOG6k7oAcdm8Iojzd/9rMw8j06IwtcCBO6FyaooqKIeB/oSz39Q
-	 n21cMlyAMCG2g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Balaji Pothunoori <quic_bpothuno@quicinc.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Markus Elfring <elfring@users.sourceforge.net>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Yuesong Li <liyuesong@vivo.com>
-Subject: [GIT PULL] remoteproc updates for v6.13
-Date: Tue, 26 Nov 2024 08:05:20 -0800
-Message-ID: <20241126160536.3286933-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732637135; c=relaxed/simple;
+	bh=1NhmZODDYwbjPMaQbrUwa3JIy5Pk0sfwrE7dv/SdACw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NWpDGc84kvr5llLoNpod2RYby0nFHsCI25znJS8oJI7uAUXHTzefZDsnYJS/r2OwswdXvDmbu9yetXZt7NGOBzwxv54rjPer5VMo3P/kwA5lqQTn7Fp2E1PiBy62xXhDEzFNyJugLndO4cyQnKXP/YzBSJ0yu+254nsT6/H90Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XyS893nVMz6L6t4;
+	Wed, 27 Nov 2024 00:04:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E2BE140A9C;
+	Wed, 27 Nov 2024 00:05:29 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Nov
+ 2024 17:05:28 +0100
+Date: Tue, 26 Nov 2024 16:05:27 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+CC: <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, "Terry
+ Bowman" <terry.bowman@amd.com>
+Subject: Re: [PATCH v3 7/7] acpi/ghes, cxl/pci: Process CXL CPER Protocol
+ Errors
+Message-ID: <20241126160527.00005c2d@huawei.com>
+In-Reply-To: <20241119003915.174386-8-Smita.KoralahalliChannabasappa@amd.com>
+References: <20241119003915.174386-1-Smita.KoralahalliChannabasappa@amd.com>
+	<20241119003915.174386-8-Smita.KoralahalliChannabasappa@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
+
+On Tue, 19 Nov 2024 00:39:15 +0000
+Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
+
+> When PCIe AER is in FW-First, OS should process CXL Protocol errors from
+> CPER records. Introduce support for handling and logging CXL Protocol
+> errors.
+> 
+> The defined trace events cxl_aer_uncorrectable_error and
+> cxl_aer_correctable_error trace native CXL AER endpoint errors, while
+> cxl_cper_trace_corr_prot_err and cxl_cper_trace_uncorr_prot_err
+> trace native CXL AER port errors. Reuse both sets to trace FW-First
+> protocol errors.
+> 
+> Since the CXL code is required to be called from process context and
+> GHES is in interrupt context, use workqueues for processing.
+> 
+> Similar to CXL CPER event handling, use kfifo to handle errors as it
+> simplifies queue processing by providing lock free fifo operations.
+> 
+> Add the ability for the CXL sub-system to register a workqueue to
+> process CXL CPER protocol errors.
+> 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+
+A few minor comments inline.
+
+Thanks
+
+Jonathan
+
+> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+> index 4ede038a7148..c992b34c290b 100644
+> --- a/drivers/cxl/core/pci.c
+> +++ b/drivers/cxl/core/pci.c
+> @@ -650,6 +650,56 @@ void read_cdat_data(struct cxl_port *port)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(read_cdat_data, CXL);
+>  
+> +void cxl_cper_trace_corr_prot_err(struct pci_dev *pdev, bool flag,
+> +				  struct cxl_ras_capability_regs ras_cap)
+> +{
+> +	struct cxl_dev_state *cxlds;
+> +	u32 status;
+> +
+> +	status = ras_cap.cor_status & ~ras_cap.cor_mask;
+> +
+> +	if (!flag) {
+
+As below. Name of flag is not very helpful when reading the code.
+Perhaps we can rename?
+
+> +		trace_cxl_port_aer_correctable_error(&pdev->dev, status);
+> +		return;
+> +	}
+> +
+> +	cxlds = pci_get_drvdata(pdev);
+> +	if (!cxlds)
+> +		return;
+> +
+> +	trace_cxl_aer_correctable_error(cxlds->cxlmd, status);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_cper_trace_corr_prot_err, CXL);
+> +
+> +void cxl_cper_trace_uncorr_prot_err(struct pci_dev *pdev, bool flag,
+> +				    struct cxl_ras_capability_regs ras_cap)
+> +{
+> +	struct cxl_dev_state *cxlds;
+> +	u32 status, fe;
+> +
+> +	status = ras_cap.uncor_status & ~ras_cap.uncor_mask;
+> +
+> +	if (hweight32(status) > 1)
+> +		fe = BIT(FIELD_GET(CXL_RAS_CAP_CONTROL_FE_MASK,
+> +				   ras_cap.cap_control));
+> +	else
+> +		fe = status;
+> +
+> +	if (!flag) {
+
+Why does  a bool named flag indicate it's a port error?
+
+> +		trace_cxl_port_aer_uncorrectable_error(&pdev->dev, status, fe,
+> +						       ras_cap.header_log);
+> +		return;
+> +	}
+> +
+> +	cxlds = pci_get_drvdata(pdev);
+> +	if (!cxlds)
+> +		return;
+> +
+> +	trace_cxl_aer_uncorrectable_error(cxlds->cxlmd, status, fe,
+> +					  ras_cap.header_log);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_cper_trace_uncorr_prot_err, CXL);
+> +
+>  static void __cxl_handle_cor_ras(struct device *dev,
+>  				 void __iomem *ras_base)
+>  {
+> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
+> index 4da07727ab9c..5e4aa8681937 100644
+> --- a/drivers/cxl/cxlpci.h
+> +++ b/drivers/cxl/cxlpci.h
+> @@ -129,4 +129,10 @@ void read_cdat_data(struct cxl_port *port);
+>  void cxl_cor_error_detected(struct pci_dev *pdev);
+>  pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+>  				    pci_channel_state_t state);
+> +
+> +struct cxl_ras_capability_regs;
+> +void cxl_cper_trace_corr_prot_err(struct pci_dev *pdev, bool flag,
+> +				  struct cxl_ras_capability_regs ras_cap);
+> +void cxl_cper_trace_uncorr_prot_err(struct pci_dev *pdev, bool flag,
+> +				    struct cxl_ras_capability_regs ras_cap);
+>  #endif /* __CXL_PCI_H__ */
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index 88a14d7baa65..e261abe60e90 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -1067,6 +1067,53 @@ static void cxl_cper_work_fn(struct work_struct *work)
+>  }
+>  static DECLARE_WORK(cxl_cper_work, cxl_cper_work_fn);
+>  
+> +static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
+> +{
+> +	unsigned int devfn = PCI_DEVFN(data->prot_err.agent_addr.device,
+> +				       data->prot_err.agent_addr.function);
+> +	struct pci_dev *pdev __free(pci_dev_put) =
+> +		pci_get_domain_bus_and_slot(
+> +			data->prot_err.agent_addr.segment,
+> +			data->prot_err.agent_addr.bus,
+> +			devfn
+> +		);
+		pci_get_domain_bus_and_slot(data->prot_err.agent_addr.segment,
+					    data->prot_err.agent_addr.bus,
+					    devfn);
+
+> +	int port_type;
+> +
+> +	if (!pdev)
+> +		return;
+> +
+> +	guard(device)(&pdev->dev);
+> +	if (pdev->driver != &cxl_pci_driver)
+> +		return;
+> +
+> +	port_type = pci_pcie_type(pdev);
+> +	if (port_type == PCI_EXP_TYPE_ROOT_PORT ||
+> +	    port_type == PCI_EXP_TYPE_DOWNSTREAM ||
+> +	    port_type == PCI_EXP_TYPE_UPSTREAM) {
+> +		if (data->severity == AER_CORRECTABLE)
+> +			cxl_cper_trace_corr_prot_err(pdev, false, data->ras_cap);
+> +		else
+> +			cxl_cper_trace_uncorr_prot_err(pdev, false, data->ras_cap);
+> +
+> +		return;
+> +	}
+> +
+> +	if (data->severity == AER_CORRECTABLE)
+> +		cxl_cper_trace_corr_prot_err(pdev, true, data->ras_cap);
+> +	else
+> +		cxl_cper_trace_uncorr_prot_err(pdev, true, data->ras_cap);
+> +
+> +}
+
+>  static int __init cxl_pci_driver_init(void)
+>  {
+>  	int rc;
+> @@ -1079,13 +1126,21 @@ static int __init cxl_pci_driver_init(void)
+>  	if (rc)
+>  		pci_unregister_driver(&cxl_pci_driver);
+>  
+> +	rc = cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
+> +	if (rc) {
+> +		cxl_cper_unregister_event_work(&cxl_cper_work);
+> +		pci_unregister_driver(&cxl_pci_driver);
+I'd switch this to a goto style for error handling.
 
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+> +	}
+> +
+>  	return rc;
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+that is
+	return 0;
 
-are available in the Git repository at:
+err_unregister_event_work:
+	cxl_cper_unregister_event_work(&cxl_cper_work);
+err_unreg:
+	pci_unregister_driver(&cxl_pci_driver);
+	return rc;
+>  }
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.13
-
-for you to fetch changes up to 44024ebf25918efb8c771e1b496250bc9c4ef893:
-
-  remoteproc: qcom: wcss: Remove double assignment in q6v5_wcss_probe() (2024-11-15 20:36:27 -0800)
-
-----------------------------------------------------------------
-remoteproc updates for v6.13
-
-Make Qualcomm TrustZone Peripherial Authentication Service-remoteproc
-identifier/name human friendly. Add audio DSP support for the Qualcomm
-SAR2130P. Ensure IMEM access in the Qualcomm modem remoteproc driver is
-performed prior to the firmware enabling the XPU and locking us out.
-
-Improve error handling, error logging, compile testing support, and a
-few other stylistic things across a variety of the drivers.
-
-----------------------------------------------------------------
-Andrew Davis (5):
-      remoteproc: k3-dsp: Add compile testing support
-      remoteproc: k3-r5: Add compile testing support
-      remoteproc: k3-r5: Use IO memset to clear TCMs
-      remoteproc: k3-r5: Force cast from iomem address space
-      remoteproc: k3-dsp: Force cast from iomem address space
-
-Arnd Bergmann (1):
-      mailbox, remoteproc: k3-m4+: fix compile testing
-
-Balaji Pothunoori (1):
-      remoteproc: qcom_q6v5_pas: disable auto boot for wpss
-
-Bjorn Andersson (1):
-      remoteproc: qcom: pas: Make remoteproc name human friendly
-
-Dmitry Baryshkov (3):
-      dt-bindings: remoteproc: qcom,sm8350-pas: add SAR2130P aDSP compatible
-      remoteproc: qcom: pas: add minidump_id to SM8350 resources
-      remoteproc: qcom: pas: enable SAR2130P audio DSP support
-
-Joe Hattori (3):
-      remoteproc: qcom: pas: Remove subdevs on the error path of adsp_probe()
-      remoteproc: qcom: adsp: Remove subdevs on the error path of adsp_probe()
-      remoteproc: qcom: wcss: Remove subdevs on the error path of q6v5_wcss_probe()
-
-Krzysztof Kozlowski (11):
-      remoteproc: da8xx: Handle deferred probe
-      remoteproc: da8xx: Simplify with dev_err_probe()
-      remoteproc: ti_k3_r5: Simplify with dev_err_probe()
-      remoteproc: ti_k3_r5: Simplify with scoped for each OF child loop
-      dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
-      remoteproc: qcom_q6v5_adsp: Simplify with dev_err_probe()
-      remoteproc: qcom_q6v5_mss: Simplify with dev_err_probe()
-      remoteproc: qcom_q6v5_mss: Drop redundant error printks in probe
-      remoteproc: qcom_q6v5_pas: Simplify with dev_err_probe()
-      remoteproc: qcom_q6v5_wcss: Simplify with dev_err_probe()
-      remoteproc: qcom_wcnss_iris: Simplify with dev_err_probe()
-
-Lu Baolu (1):
-      remoteproc: Use iommu_paging_domain_alloc()
-
-Markus Elfring (1):
-      remoteproc: k3: Call of_node_put(rmem_np) only once in three functions
-
-Sibi Sankar (1):
-      remoteproc: qcom_q6v5_mss: Re-order writes to the IMEM region
-
-Uwe Kleine-König (1):
-      remoteproc: Switch back to struct platform_driver::remove()
-
-Yuesong Li (1):
-      remoteproc: qcom: wcss: Remove double assignment in q6v5_wcss_probe()
-
- .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   3 +
- .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  48 ++++++---
- drivers/remoteproc/Kconfig                         |  12 ++-
- drivers/remoteproc/da8xx_remoteproc.c              |  31 ++----
- drivers/remoteproc/imx_dsp_rproc.c                 |   2 +-
- drivers/remoteproc/imx_rproc.c                     |   2 +-
- drivers/remoteproc/keystone_remoteproc.c           |   2 +-
- drivers/remoteproc/meson_mx_ao_arc.c               |   2 +-
- drivers/remoteproc/mtk_scp.c                       |   2 +-
- drivers/remoteproc/pru_rproc.c                     |   2 +-
- drivers/remoteproc/qcom_q6v5_adsp.c                |  30 +++---
- drivers/remoteproc/qcom_q6v5_mss.c                 |  56 ++++------
- drivers/remoteproc/qcom_q6v5_pas.c                 |  51 ++++-----
- drivers/remoteproc/qcom_q6v5_wcss.c                | 114 +++++++++------------
- drivers/remoteproc/qcom_wcnss.c                    |   2 +-
- drivers/remoteproc/qcom_wcnss_iris.c               |   5 +-
- drivers/remoteproc/rcar_rproc.c                    |   2 +-
- drivers/remoteproc/remoteproc_core.c               |   6 +-
- drivers/remoteproc/remoteproc_virtio.c             |   2 +-
- drivers/remoteproc/st_remoteproc.c                 |   2 +-
- drivers/remoteproc/stm32_rproc.c                   |   2 +-
- drivers/remoteproc/ti_k3_dsp_remoteproc.c          |  10 +-
- drivers/remoteproc/ti_k3_m4_remoteproc.c           |   6 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c           |  83 ++++++---------
- drivers/remoteproc/wkup_m3_rproc.c                 |   2 +-
- 25 files changed, 215 insertions(+), 264 deletions(-)
 
