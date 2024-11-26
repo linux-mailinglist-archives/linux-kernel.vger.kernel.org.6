@@ -1,193 +1,118 @@
-Return-Path: <linux-kernel+bounces-422658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01ACB9D9C8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:27:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D236A9D9C8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:28:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B7F280FF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B4E28155A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A40C1DDC0A;
-	Tue, 26 Nov 2024 17:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57421DB52D;
+	Tue, 26 Nov 2024 17:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fm6RLIjI"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moeazF86"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD771DACBF;
-	Tue, 26 Nov 2024 17:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045B11AC8A6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732642033; cv=none; b=Fnh6UEm6jxZ8mVWBjFiEPCxOfp4WuC9EokyC+RIzei/2YDeMtVlmJ7vklgvzVL2cjqA9iwsi7vw1pto350R2H9POC2npHdZpzrfNWut4sPam0RaXj/UrM3SiuV1SiGSdssR7LSQjanrpyiHRSXeb/br0tJasrDIdqnMwOEG3nKE=
+	t=1732642118; cv=none; b=WZ8zOtfx+zY5bYvMzdfPdhR47aocA+5IBAzZFTGRbvTCMPbA/9e2py8KczxnjL/e5wuzR8Z+/E5Vki9RFhbWFu/dAv5qUepH4GQAwE9csTtHndoG6lOUK50useYAclOMi9RbMqPL9gwCmp12Utlx4mv5mrByxiyNdvWyS7Ts/dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732642033; c=relaxed/simple;
-	bh=15Ie3c0nMKk7FwI6ERY8A7cw9NxduQnjCWk/i7XFKAA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QFyIGrGDis6hMEUfrYCPeH2u4JnoQBbkHnVNeY9YuPt/hdDke/4vGwF1EMICSJXBXuyiPHSEOhNlk9rshJZm41J8yXzpEuoH2JkAxifFtCwdyFD5bqtzgc6CcPJv5x9PEF3ngYcdbSow5hdpm8H8zqwBcbMxctFHeJkSJwIHkdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fm6RLIjI; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1732642118; c=relaxed/simple;
+	bh=9wbT7KvarKSMuXpGlgNLQC85YPVjzdKnj22wj2HilKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bYdkc3yRcsHGrSww01mlUJxBy9YGCXqK5sQYMuSUx+WDDHNaHcwRaXVFVD279zzq/O11izfKISSD1Z5NEOlP9gWS511PiAt0CckzmqP6SZWTJc0yWWdIX43tr1GN8sDPlTgIVQZpn7L3DJjx+2Hamuiz7DlNQA18FOkRX5vPjUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=moeazF86; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f71f2b136eso4750416a12.1;
-        Tue, 26 Nov 2024 09:27:12 -0800 (PST)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724f383c5bfso2924368b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:28:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732642032; x=1733246832; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NatBUjdFy+3pOZ5W0mNTPAtwCcyaMloJIAxq7lkMslY=;
-        b=Fm6RLIjI9gkfTRwmfde8BYH/ar2JgDD1lThT6GMHUnvqPllOIK4qdIMBLF8Md6AjV3
-         GBVbOnGOmKDFHDBVuz0GFCc1+TCcD0LLwYhyIrfXIq4dhTl3oZmX/7jQeTXTAbuuRdhZ
-         gbmWkU/tN/LNgG7B/i8yGdof1jDMX+IpK71lyOnSmf+p5I6++Y9kxnF2TWurqhjg1h5/
-         7YolB1dlD38vVdswbOE2WneK3mfU6Vg8AVUhxP/ErgkgYga30VowtQ/Ox7iBeqe8R8UW
-         FBSXCzUlXgOImeQIneNShLidD8x1bGlgxtuf5xIFLzJZ4Jo4vBYRZNu9guWSBB6avSwd
-         NiiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732642032; x=1733246832;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732642116; x=1733246916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NatBUjdFy+3pOZ5W0mNTPAtwCcyaMloJIAxq7lkMslY=;
-        b=rRd7DVTMkdV7xrOWs9WNDjk3N1bUhFnBh18YD9XwY4MjkcdX8bFqbL6ZxPs3hJ3YDm
-         xIuP8GThk2+0ScSglQ1OxxwT6c4l9DTQ+ze4PHVXkEm9spSueJ/huS9XR4oCkI1/Jt03
-         APr4A/AS744gxi95UPThtWM5kQzQWhUVTYl9dfV51aRCVOxdUMoB17GMy0MLaQNMGpvJ
-         APZ+DDakYBzMPKeU+7dkUfzjuIiuBPDBX3U2xbFKRA5sFYQA71rqbMdv4ihAm9P2egTr
-         E8cXGI303CfPt4iTuAMRj4xy6w+BJeJ+yVcNvqxNAELtyrm4qtid93oY7w/ECn4xsJzB
-         8/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWl10Bryk3QxtTB8EjASSc6VxM7yU+t0C8bsZx6mU6vCe1q4ud/ttXOmHUtkeknS/9lsBAyVKf4gX0=@vger.kernel.org, AJvYcCX68BllZrhgO+QDcQlOM087U4yq/yUBOfTxPI+2jpy+QFGOfpHsg5PLdc9Vo0m5UXBv/ZHdjBAV+vyMQjC5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzAsDSZSrsB32eiwRZmUuu7JeUuPu6jnaVv9ikE7jBmDFXemHE
-	aFIDDuIiUqz7Ad8aPgWAF5rLxwAhUMnCenBAvn3BmrMEcbXCRrIc
-X-Gm-Gg: ASbGncvb/113dlokmBdNnB020GUXRhwblpaBfpFoQ6m+JaVGftLbRGeOk6xJlx1C32P
-	B2GHjRjx7MOpTXdzUuyUy3W2bz7AgelHfzc4Wd0oUfnk4gTNrku2WfRV7sFjj+Buv2pmbjciwNX
-	sRHR9C0dw+1KiMlXttRYGJQQk0XBOJA0ZYdVOfPXAu28A20PIfRYxg7GbA19Jj3I2XvR0Uz3Ooi
-	DOyhyRvu39N+LG/T/Wlra2OBVjEhzf3V59YZrc7tVTeTiIIZKIt6A==
-X-Google-Smtp-Source: AGHT+IE4F39SUwpnVdVJgUqEIrLanQrTvy1ank0oKkqfYwUXI4hYQTFsAczXPZZshnMFcsaaEP9RtQ==
-X-Received: by 2002:a05:6a21:33a9:b0:1e0:c0fa:e088 with SMTP id adf61e73a8af0-1e0e0b4e91bmr325771637.18.1732642031498;
-        Tue, 26 Nov 2024 09:27:11 -0800 (PST)
-Received: from smc-140338-bm01 ([149.97.161.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3fb290sm8977528a12.74.2024.11.26.09.27.10
+        bh=2jdvil7J0bZhAA4aaOyViWI8sU7Jc49WXcGpRWqWHNM=;
+        b=moeazF86855ohy43rge4dsQSXTN6mrJXk5ix8piiEYXQi2A/BJIA8/sazGIJM75Qwq
+         9ktDsrgk/3an1Qm7Zd1Xo2uE+pa2nGKfI8gLvyDeJ2mvZVoLktaJAPLF5hhd1q1nhxbJ
+         XgrFO9FYKiiKuzExe+DT0ADXXOXGvUMqsigvgE6a34UkqNfU1yYL5zy89k3f+ycY9x47
+         Pt6JuMGUsvgKe9Z2pKQDjDPzU2scp8iTgQ++r3FHOCVkTlKLnKqmd3OD7Lu67oJleeIH
+         3ECuUfpMtVNZn1V4HCVhptT4iFUqfknNlA23EV8WetWwMhHKQQhIN+09P7Zv7uBEy28X
+         cGog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732642116; x=1733246916;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2jdvil7J0bZhAA4aaOyViWI8sU7Jc49WXcGpRWqWHNM=;
+        b=ko4oJn3bifQYTU0xmKGZ1aDd7j7oxpTg+gihzrC/vhN+yXBGn0/3ZYJ/T/pEhNkuBe
+         dBnPGlxCL4Gvdno7CscAiGEKGJWqw04hKeiz2AjkSI2Rm7xQ23UEU0djCnTiRULO/fd6
+         A82pvMNYN9Q51e9uNZkFC7iWsNe9qfWzUwQpBSWNKBPpHu5WyN8vvpECq47SvHmU3/XU
+         Li53V5S12j80mIBy07mN9Yzz4lsDrCbRFT7E7c3tBmV6tJ5mChkmu4KQtUndNjX+E6om
+         2qM8JdUB1U3t5mQoa/IL9XyrK8DkcM75ogFx/sJ4GPaLSZITxKqoQpQJ0+DLdGHYCuyQ
+         +QNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZibBcY4diliokt7csw3ar4nHogEPXD2TSLfED6CBiG16+oQ2hsUkUHSxy3b/AhcMS7YV4dDdqMLKgPAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQKWs8+LAvvpIdKmP6Nm/ZzPC031Wu3tTecxOvoTl8LRTnvbmT
+	oeDTqPBuDJ0yPg5uC3JHnYTg4OtrmP0kteplE7r8jZU6xtYtRhos
+X-Gm-Gg: ASbGnctLWM0CuZcNgBJcwB2fHxiqQmqNd8rjVV25edC10QqPJjf5kOIhJ3z34SwvAmS
+	QmlXhK2BAp+AUm3gxIpMbbkWxzP3xR6qysuCBr3Fc/X5krT/8pg0aVUzjHk7RC50vFULiFWwPAV
+	p/uAlUycZFrMsknEetyMBgb3CP0Kr9TheDvouFfAYA6X3Qq1SdpCQOEZp9NaV5mV7SkAgoMl0MZ
+	1KHqb3H0Dm7w6jPS1hI7OX93u14E8Ssxa48UrqPsaSuwm86/NXy84ObBzj92Bl/8Q==
+X-Google-Smtp-Source: AGHT+IEYbOFZv4S1J8DJ8sJmOXBTQ14kgVvt8ItV0Izei3KknmQuhhpcmuVRc8pbsYQFvCRP/m8BSA==
+X-Received: by 2002:a05:6a00:1390:b0:71e:7174:3ae with SMTP id d2e1a72fcca58-724df5ed802mr21202721b3a.11.1732642116324;
+        Tue, 26 Nov 2024 09:28:36 -0800 (PST)
+Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:3e9e:9bc4:e80c:2141])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724e8852fe8sm8013211b3a.187.2024.11.26.09.28.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 09:27:10 -0800 (PST)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Tue, 26 Nov 2024 17:27:08 +0000
-To: shiju.jose@huawei.com
-Cc: dave.jiang@intel.com, dan.j.williams@intel.com,
-	jonathan.cameron@huawei.com, alison.schofield@intel.com,
-	nifan.cxl@gmail.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dave@stgolabs.net, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	tanxiaofei@huawei.com, prime.zeng@hisilicon.com
-Subject: Re: [PATCH v4 1/6] cxl/events: Update Common Event Record to CXL
- spec rev 3.1
-Message-ID: <Z0YE7C5NkyydjiRR@smc-140338-bm01>
-References: <20241120093745.1847-1-shiju.jose@huawei.com>
- <20241120093745.1847-2-shiju.jose@huawei.com>
+        Tue, 26 Nov 2024 09:28:36 -0800 (PST)
+From: Leo Stone <leocstone@gmail.com>
+To: syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com
+Cc: chao@kernel.org,
+	jaegeuk@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	yuchao0@huawei.com
+Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_rename2 
+Date: Tue, 26 Nov 2024 09:28:34 -0800
+Message-ID: <20241126172834.78149-1-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67450f9a.050a0220.21d33d.0003.GAE@google.com>
+References: <67450f9a.050a0220.21d33d.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120093745.1847-2-shiju.jose@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 09:37:40AM +0000, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec 3.1 section 8.2.9.2.1 Table 8-42, Common Event Record format has
-> updated with Maintenance Operation Subclass information.
-The table reference is incorrect, should be Table 8-43 based on spec r3.1,
-v1.0, Auguest 7, 2023.
+This looks like the same image with a deleted inode as in:
+https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
 
-Other than that,
+#syz test
 
-
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
-
-> 
-> Add updates for the above spec change in the CXL events record and CXL
-> common trace event implementations.
-> 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> ---
->  drivers/cxl/core/trace.h | 13 +++++++++----
->  include/cxl/event.h      |  3 ++-
->  2 files changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-> index 8389a94adb1a..7305974e2301 100644
-> --- a/drivers/cxl/core/trace.h
-> +++ b/drivers/cxl/core/trace.h
-> @@ -166,11 +166,13 @@ TRACE_EVENT(cxl_overflow,
->  #define CXL_EVENT_RECORD_FLAG_MAINT_NEEDED	BIT(3)
->  #define CXL_EVENT_RECORD_FLAG_PERF_DEGRADED	BIT(4)
->  #define CXL_EVENT_RECORD_FLAG_HW_REPLACE	BIT(5)
-> +#define CXL_EVENT_RECORD_FLAG_MAINT_OP_SUB_CLASS_VALID	BIT(6)
->  #define show_hdr_flags(flags)	__print_flags(flags, " | ",			   \
->  	{ CXL_EVENT_RECORD_FLAG_PERMANENT,	"PERMANENT_CONDITION"		}, \
->  	{ CXL_EVENT_RECORD_FLAG_MAINT_NEEDED,	"MAINTENANCE_NEEDED"		}, \
->  	{ CXL_EVENT_RECORD_FLAG_PERF_DEGRADED,	"PERFORMANCE_DEGRADED"		}, \
-> -	{ CXL_EVENT_RECORD_FLAG_HW_REPLACE,	"HARDWARE_REPLACEMENT_NEEDED"	}  \
-> +	{ CXL_EVENT_RECORD_FLAG_HW_REPLACE,	"HARDWARE_REPLACEMENT_NEEDED"	},  \
-> +	{ CXL_EVENT_RECORD_FLAG_MAINT_OP_SUB_CLASS_VALID,	"MAINT_OP_SUB_CLASS_VALID" }	\
->  )
->  
->  /*
-> @@ -197,7 +199,8 @@ TRACE_EVENT(cxl_overflow,
->  	__field(u16, hdr_related_handle)			\
->  	__field(u64, hdr_timestamp)				\
->  	__field(u8, hdr_length)					\
-> -	__field(u8, hdr_maint_op_class)
-> +	__field(u8, hdr_maint_op_class)				\
-> +	__field(u8, hdr_maint_op_sub_class)
->  
->  #define CXL_EVT_TP_fast_assign(cxlmd, l, hdr)					\
->  	__assign_str(memdev);				\
-> @@ -209,17 +212,19 @@ TRACE_EVENT(cxl_overflow,
->  	__entry->hdr_handle = le16_to_cpu((hdr).handle);			\
->  	__entry->hdr_related_handle = le16_to_cpu((hdr).related_handle);	\
->  	__entry->hdr_timestamp = le64_to_cpu((hdr).timestamp);			\
-> -	__entry->hdr_maint_op_class = (hdr).maint_op_class
-> +	__entry->hdr_maint_op_class = (hdr).maint_op_class;			\
-> +	__entry->hdr_maint_op_sub_class = (hdr).maint_op_sub_class
->  
->  #define CXL_EVT_TP_printk(fmt, ...) \
->  	TP_printk("memdev=%s host=%s serial=%lld log=%s : time=%llu uuid=%pUb "	\
->  		"len=%d flags='%s' handle=%x related_handle=%x "		\
-> -		"maint_op_class=%u : " fmt,					\
-> +		"maint_op_class=%u maint_op_sub_class=%u : " fmt,		\
->  		__get_str(memdev), __get_str(host), __entry->serial,		\
->  		cxl_event_log_type_str(__entry->log),				\
->  		__entry->hdr_timestamp, &__entry->hdr_uuid, __entry->hdr_length,\
->  		show_hdr_flags(__entry->hdr_flags), __entry->hdr_handle,	\
->  		__entry->hdr_related_handle, __entry->hdr_maint_op_class,	\
-> +		__entry->hdr_maint_op_sub_class,	\
->  		##__VA_ARGS__)
->  
->  TRACE_EVENT(cxl_generic_event,
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index 0bea1afbd747..e1d485ad376b 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -18,7 +18,8 @@ struct cxl_event_record_hdr {
->  	__le16 related_handle;
->  	__le64 timestamp;
->  	u8 maint_op_class;
-> -	u8 reserved[15];
-> +	u8 maint_op_sub_class;
-> +	u8 reserved[14];
->  } __packed;
->  
->  struct cxl_event_media_hdr {
-> -- 
-> 2.43.0
-> 
-
--- 
-Fan Ni (From gmail)
+---
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 1ed86df343a5..65f1dc32f173 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -372,6 +372,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+ 		return false;
+ 	}
+ 
++	if (inode->i_nlink == 0) {
++		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
++			  __func__, inode->i_ino);
++		return false;
++	}
++
+ 	return true;
+ }
+ 
 
