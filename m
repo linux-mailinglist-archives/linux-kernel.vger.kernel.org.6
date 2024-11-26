@@ -1,203 +1,140 @@
-Return-Path: <linux-kernel+bounces-422793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281AA9D9E3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:10:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55C116412A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:09:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC041DF247;
-	Tue, 26 Nov 2024 20:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TMmFxRvJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47809D9E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:11:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F861AAD7;
-	Tue, 26 Nov 2024 20:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732651793; cv=none; b=OVBWYemKsxWE7ojKWPZSN8vOC2N/jJx+PtikuSPyduT7R0Hq1URTRZUFIYUrHo9JdCSK7EbcUQBOqp6ZSNkXvroN+j1EFk71XfduFw13RhIsLNfWj0gk24O0Xz62mJI1NqdlX/QihkHJSjXnV7OkxaT/gS/CJ3XkP4r/nRxIkvY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732651793; c=relaxed/simple;
-	bh=Ft7Hps8cVn5oFfsG0zN5jTRhSDFJ4zRVat3qnNXJlmw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jH+Uug8s0XEYB5flqC5QFhP66Bm2SCZvKHb579n6MkzHWrW56sEa38Hb0BjncMUorK79pTHyukwXlj0iZ6Vn1LNlL8vHp46L3bZVFIEmKcrO1qGe3TWx3QVXHd9rGC4xfLCqZZ5bu53og0J8vA+nJ5quavP76Uh+amVi261tBdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TMmFxRvJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732651789;
-	bh=Ft7Hps8cVn5oFfsG0zN5jTRhSDFJ4zRVat3qnNXJlmw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=TMmFxRvJXsflouuAgDPUFIqGHGGSMonQR72pyt4rQ7Khxzp7poIjBv3M64aWSVhai
-	 +QQcjDWCsHcCEbBO9iszt6Ej6eOZC4RbO5CUKPV8RVINvYzMMPx9YSSlnmetYowMDz
-	 Ihf4nOcvYNxwA9pPDE+Zn91vopOjik1qRkG4Yp3TWpLMb5cBnGQgl8bzvlhSLXwUdl
-	 n0gpXRZcHRWFF1XLW6apg1hEFvKjVv/wHXMIJ0VM4UubbovywvqHVKlonrsQdDbjvw
-	 Zy0oDlrIB8whALsU+dtSAYrJrGiIqCeieZdL1SGQLZ9WXNS/ol532LPmjCFkpi+T+b
-	 VGDHv1XCQsacQ==
-Received: from [192.168.1.63] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935FB283F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:11:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEA71DED7F;
+	Tue, 26 Nov 2024 20:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d8+r9LOh"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 65AB717E37B1;
-	Tue, 26 Nov 2024 21:09:48 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 26 Nov 2024 15:09:43 -0500
-Subject: [PATCH] ASoC: mediatek: Check num_codecs is not zero to avoid
- panic during probe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021661AAD7
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732651888; cv=none; b=XNviMbOgwmem504w6mZemc1uSk3A9t3RDa8Kh/Hr5Ah0nEAkljCPcA4m20+lY01tiAEjK/BrvKmiqYJNRNGHn/mWdiLoO+pC7dHHilah8tUeaIgsmWstuCbbUGEC3qB3Ly4/l1gj0HKkruHkcRuFreoBrZ84XdviY9T8YQR+LVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732651888; c=relaxed/simple;
+	bh=SeH7OIHiUg3z8Wf2hqJkp+pQtUuB6QfuZSWj7tBe97s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MK9mT5GQCGG6OODexR2Y3U2V+moVsh7E+/uosxNMnmTIj2aGEVBhxWgXTM4D7a/izn6LbDQyP1hYSKiQ8PZyfieOmN8mgDbIQO9f6Q4SqgE+sAOferr7KGD9DbIbNVVnQEBLGvxp7SG4Whe8L/EdTJhwMgTLpM7hOsyUvlsNA8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d8+r9LOh; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d071f70b51so1168026a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:11:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732651884; x=1733256684; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wBieZ/H43H1parSNnvMLRoyFZN/PdHvN6lrqybfxtdA=;
+        b=d8+r9LOhkV+JUSTJLowweRNej7tVGFJ1Uoef8EJQa2nWLGVRzylzcaZCwrMK9TtRAb
+         prBNA/yKkxwzDDyxjOtNTIt5R9h0xvPVXol1eHImrrs9YjjZicp8auW8YexgulevTDdQ
+         AOCDTMbWBcym/WNtFn/yqg7W2R4LBp+QRCaZ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732651884; x=1733256684;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wBieZ/H43H1parSNnvMLRoyFZN/PdHvN6lrqybfxtdA=;
+        b=N11GroMEIPEeJCl0QiHJ7fjeLxbIpdXGMjl0CSkvgEmvt4rIfJGfxL3JicJu0fWvfx
+         lvrtbN5/sFMzmyEfXNiq3RQNFxnaBx7+3KLSFYXzNkoVEBym1TmIZu6+KXHCD1QYHvHR
+         7IJ0qQyVOv45Mm9ACvGAk66NAaIwVsFBJvTlnwETgtfTcRcxNR2HlFRFsyEq3T8VCOCv
+         lVvXnHA2dJXFvlDSZnl9mPXpISFnBdGc+lCVGMApJ0datnpSSqWDqqLLjhIQyDOjkgG3
+         KWz1u+/m6rohwFp4uesMzxgnEjJe6z+OT+H1LvKdeIFJ7/409YY9iaH3eFnd+2bYs+tI
+         qwVA==
+X-Gm-Message-State: AOJu0YzhpMXQqHHtO0jKzW+LYGfB73zNTsbfhBQj5KYfLwW0rBvdNVAk
+	o263bmeIneFql6K8xsc+yMp9ML8SaZqU5ZmO+xkystEQ/fHKIZR4hQc3maS1QpUGwZaoy8fuZXw
+	7TZu+pQ==
+X-Gm-Gg: ASbGncs6biAnIpmaknHBoYwrzY1j2VH+tw1Q4Y5TxZ9ax5KBjAtQwoqS6sgDA4DOu+y
+	PPXyEj1tO857WxErv07dhVamB2RckXUXoHTyyK0bJxapPUqpTIgCSYr9x8Og9H2NW0awyQ5CsiB
+	kzZQ/1N0M1VP5XL8TFHuNcmf84AuqA7ohej0dXfM+SZm/3Bv2VovaJSJetTI8TO58kO5mx1SjVY
+	uYP8FyJFH2NIMS3/bNWW0929N43Z2gq+Nk6RsSz+OMPHHXv8b0HyscdTzuHIfWJMw5qKYzoHXGL
+	Ny6JopUmWyPH7lOPsuMst31k
+X-Google-Smtp-Source: AGHT+IFuablBweluNoAErF8Ts6izUCEqEiWd2XIkTPhB1CIl+koFc48f3twKc4y0CmIZJ86ZwyhYew==
+X-Received: by 2002:a17:906:3299:b0:aa5:2237:67af with SMTP id a640c23a62f3a-aa580edf62dmr18804866b.9.1732651884050;
+        Tue, 26 Nov 2024 12:11:24 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa51ae7e5a3sm591107866b.160.2024.11.26.12.11.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 12:11:23 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa545dc7105so473403666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:11:23 -0800 (PST)
+X-Received: by 2002:a17:907:c0d:b0:a9a:1437:3175 with SMTP id
+ a640c23a62f3a-aa58106648cmr22735266b.51.1732651882967; Tue, 26 Nov 2024
+ 12:11:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241126-asoc-mtk-dummy-panic-v1-1-42d53e168d2e@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAAYrRmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyMz3cTi/GTd3JJs3ZTS3NxK3YLEvMxkXcM0c0szw7Tk1OSUJCWg1oK
- i1LTMCrCx0bG1tQBJs4MhZgAAAA==
-X-Change-ID: 20241126-asoc-mtk-dummy-panic-1f7961fcecdb
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+References: <202411210651.CD8B5A3B98@keescook> <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
+ <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
+In-Reply-To: <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 26 Nov 2024 12:11:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
+Message-ID: <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Following commit 13f58267cda3 ("ASoC: soc.h: don't create dummy
-Component via COMP_DUMMY()"), COMP_DUMMY() became an array with zero
-length, and only gets populated with the dummy struct after the card is
-registered. Since the sound card driver's probe happens before the card
-registration, accessing any of the members of a dummy component during
-probe will result in undefined behavior.
+On Mon, 25 Nov 2024 at 21:10, Kees Cook <kees@kernel.org> wrote:
+>
+> For the new implementation, do you want to wait a full dev cycle for
+> it to bake in -next or should I send what I proposed based on your and
+> Al's suggestions for this merge window?
 
-This can be observed in the mt8188 and mt8195 machine sound drivers. By
-omitting a dai link subnode in the sound card's node in the Devicetree,
-the default uninitialized dummy codec is used, and when its dai_name
-pointer gets passed to strcmp() it results in a null pointer dereference
-and a kernel panic.
+So honestly, the more I look at our current implementation, the more I
+dislike this code.
 
-In addition to that, set_card_codec_info() in the generic helpers file,
-mtk-soundcard-driver.c, will populate a dai link with a dummy codec when
-a dai link node is present in DT but with no codec property.
+And it looks like __set_task_comm() is actually buggy right now,
+because while we have a comment in linux/sched.h that says
 
-The result is that at probe time, a dummy codec can either be
-uninitialized with num_codecs = 0, or be an initialized dummy codec,
-with num_codecs = 1 and dai_name = "snd-soc-dummy-dai". In order to
-accommodate for both situations, check that num_codecs is not zero
-before accessing the codecs' fields but still check for the codec's dai
-name against "snd-soc-dummy-dai" as needed.
+ *   The strscpy_pad() in __set_task_comm() can ensure that the task comm is
+ *   always NUL-terminated and zero-padded.
 
-While at it, also drop the check that dai_name is not null in the mt8192
-driver, introduced in commit 4d4e1b6319e5 ("ASoC: mediatek: mt8192:
-Check existence of dai_name before dereferencing"), as it is actually
-redundant given the preceding num_codecs != 0 check.
+that isn't actually true, because it looks like sized_strscpy()
+actually adds the final NUL at the end. I think that's because Andrew
+only merged a partial patch series.
 
-Fixes: 13f58267cda3 ("ASoC: soc.h: don't create dummy Component via COMP_DUMMY()")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- sound/soc/mediatek/mt8188/mt8188-mt6359.c               | 9 +++++++--
- sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c | 4 ++--
- sound/soc/mediatek/mt8195/mt8195-mt6359.c               | 9 +++++++--
- 3 files changed, 16 insertions(+), 6 deletions(-)
+The task_lock() doesn't help that issue, because readers don't take it
+(and never really did: the '%s'+tsk->comm pattern has always existed).
 
-diff --git a/sound/soc/mediatek/mt8188/mt8188-mt6359.c b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
-index 08ae962afeb92965109b303439419bc6e7c2a896..4eed90d13a53262f0df99384494c6992b0341471 100644
---- a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
-+++ b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
-@@ -1279,10 +1279,12 @@ static int mt8188_mt6359_soc_card_probe(struct mtk_soc_card_data *soc_card_data,
- 
- 	for_each_card_prelinks(card, i, dai_link) {
- 		if (strcmp(dai_link->name, "DPTX_BE") == 0) {
--			if (strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
-+			if (dai_link->num_codecs &&
-+			    strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
- 				dai_link->init = mt8188_dptx_codec_init;
- 		} else if (strcmp(dai_link->name, "ETDM3_OUT_BE") == 0) {
--			if (strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
-+			if (dai_link->num_codecs &&
-+			    strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
- 				dai_link->init = mt8188_hdmi_codec_init;
- 		} else if (strcmp(dai_link->name, "DL_SRC_BE") == 0 ||
- 			   strcmp(dai_link->name, "UL_SRC_BE") == 0) {
-@@ -1294,6 +1296,9 @@ static int mt8188_mt6359_soc_card_probe(struct mtk_soc_card_data *soc_card_data,
- 			   strcmp(dai_link->name, "ETDM2_OUT_BE") == 0 ||
- 			   strcmp(dai_link->name, "ETDM1_IN_BE") == 0 ||
- 			   strcmp(dai_link->name, "ETDM2_IN_BE") == 0) {
-+			if (!dai_link->num_codecs)
-+				continue;
-+
- 			if (!strcmp(dai_link->codecs->dai_name, MAX98390_CODEC_DAI)) {
- 				/*
- 				 * The TDM protocol settings with fixed 4 slots are defined in
-diff --git a/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c b/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
-index db00704e206d6d3f500a5c8533e0159f16cf77b4..943f8116840373a563f5f10a7bd0f5870c331b67 100644
---- a/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
-+++ b/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
-@@ -1099,7 +1099,7 @@ static int mt8192_mt6359_legacy_probe(struct mtk_soc_card_data *soc_card_data)
- 			dai_link->ignore = 0;
- 		}
- 
--		if (dai_link->num_codecs && dai_link->codecs[0].dai_name &&
-+		if (dai_link->num_codecs &&
- 		    strcmp(dai_link->codecs[0].dai_name, RT1015_CODEC_DAI) == 0)
- 			dai_link->ops = &mt8192_rt1015_i2s_ops;
- 	}
-@@ -1127,7 +1127,7 @@ static int mt8192_mt6359_soc_card_probe(struct mtk_soc_card_data *soc_card_data,
- 		int i;
- 
- 		for_each_card_prelinks(card, i, dai_link)
--			if (dai_link->num_codecs && dai_link->codecs[0].dai_name &&
-+			if (dai_link->num_codecs &&
- 			    strcmp(dai_link->codecs[0].dai_name, RT1015_CODEC_DAI) == 0)
- 				dai_link->ops = &mt8192_rt1015_i2s_ops;
- 	}
-diff --git a/sound/soc/mediatek/mt8195/mt8195-mt6359.c b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-index 2832ef78eaed7283eaad822931ce0b515fa44d0a..8ebf6c7502aa3dedd213471b8968e2958f28c4a3 100644
---- a/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-+++ b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-@@ -1380,10 +1380,12 @@ static int mt8195_mt6359_soc_card_probe(struct mtk_soc_card_data *soc_card_data,
- 
- 	for_each_card_prelinks(card, i, dai_link) {
- 		if (strcmp(dai_link->name, "DPTX_BE") == 0) {
--			if (strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
-+			if (dai_link->num_codecs &&
-+			    strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
- 				dai_link->init = mt8195_dptx_codec_init;
- 		} else if (strcmp(dai_link->name, "ETDM3_OUT_BE") == 0) {
--			if (strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
-+			if (dai_link->num_codecs &&
-+			    strcmp(dai_link->codecs->dai_name, "snd-soc-dummy-dai"))
- 				dai_link->init = mt8195_hdmi_codec_init;
- 		} else if (strcmp(dai_link->name, "DL_SRC_BE") == 0 ||
- 			   strcmp(dai_link->name, "UL_SRC1_BE") == 0 ||
-@@ -1396,6 +1398,9 @@ static int mt8195_mt6359_soc_card_probe(struct mtk_soc_card_data *soc_card_data,
- 			   strcmp(dai_link->name, "ETDM2_OUT_BE") == 0 ||
- 			   strcmp(dai_link->name, "ETDM1_IN_BE") == 0 ||
- 			   strcmp(dai_link->name, "ETDM2_IN_BE") == 0) {
-+			if (!dai_link->num_codecs)
-+				continue;
-+
- 			if (!strcmp(dai_link->codecs->dai_name, MAX98390_CODEC_DAI)) {
- 				if (!(codec_init & MAX98390_CODEC_INIT)) {
- 					dai_link->init = mt8195_max98390_init;
+End result: I think we should get rid of the pointless task_lock,
+explicitly make sure it's NUL-terminated, and do the actual comm[]
+setup in alloc_bprm() where we make all these decisions anyway.
 
----
-base-commit: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
-change-id: 20241126-asoc-mtk-dummy-panic-1f7961fcecdb
+So something like the attached. But it's *ENTIRELY* untested.  It
+looks ObviouslyCorrect(tm), but hey, things always do until somebody
+finds some obvious bug. If this tests ok, I think it could make 6.13,
+but ...
 
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+And I'm looking at the other uses of bprm->filename for the fdpath
+case, and it's all horrible. Yes, it's the scripting, but it's also
+bprm->exec + AT_EXECFN. So we're passing in those fake pathnames that
+won't actually work if the fd is used for something else, and that I
+think could be used as an attack vector if any user space actually
+trusts them.
 
+That all looks horrid. I *really* wish we generated the real pathname instead.
+
+Oh well. That's a separate issue.
+
+      Linus
 
