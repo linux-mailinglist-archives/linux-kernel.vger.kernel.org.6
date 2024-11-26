@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-421906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828519D91D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:35:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D749D91B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:27:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F793286528
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:35:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10582B23DD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753A11684A4;
-	Tue, 26 Nov 2024 06:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BA314A617;
+	Tue, 26 Nov 2024 06:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="vM8eFXd3"
-Received: from mail.tkos.co.il (golan.tkos.co.il [84.110.109.230])
+	dkim=pass (2048-bit key) header.d=mailfence.com header.i=falaichte@mailfence.com header.b="qVIOdvn/"
+Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CBC653
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8B83208;
+	Tue, 26 Nov 2024 06:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.3.242.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732602948; cv=none; b=cjcMu3jfGpl0c8lODRpMEXL6ia72yhpPY5n5Pm5h6gBte59wEz3YkUXlD26jUPqFcnPYH/3R68JMTbjU8gG9diuMW2tFHpU/Ai1xOeGPqj7h/mK36ys9pvAwRG1bkXo4Qv6OZuL3WKNIUa2nCMnQAbKgG8NZLeQaxPjkiAAqjfU=
+	t=1732602448; cv=none; b=e1GnJzunVJPIhwO/tyCwtrbG8yafgaf48VLMxANlwwFzJmeLLytNbcyc1gU9cZ2obIHy9HUmaQ6l7MTabpuma8WPcytrdsLhr9XRczSMrlZkt6Fbq6biJbe5Sd99lxwoIqb19Uvy0nxxxi35tBn6OE/inaYnYc1s9xOMudpxvAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732602948; c=relaxed/simple;
-	bh=udoK2qW83uXeBOCAIZ44JnfDHyuvD0+EsOfZ541mR6E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CXT38kaoDr36OUNayCNGuP3HWIZU1FgGAmA2Q9GmBXIpEgruLEQO9uz9IMMd4t/Z59j3KXF6qQjxWPXVzOOgbCrAXjw4Y1KfO0KvP3m5bSuH9q1yHFNc8Do+VWYP2w0u3/c+sgEEjKWqv6LUMHnmyRH2RMUrUzty8H53vAUK86A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=vM8eFXd3; arc=none smtp.client-ip=84.110.109.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
-Received: from localhost (unknown [10.0.8.2])
-	by mail.tkos.co.il (Postfix) with ESMTP id EE487441037;
-	Tue, 26 Nov 2024 08:23:33 +0200 (IST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1732602214;
-	bh=udoK2qW83uXeBOCAIZ44JnfDHyuvD0+EsOfZ541mR6E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=vM8eFXd3nNwLJ8ZpNyfsru415A8oDTaFWKjBfHADSHIC+BTsvqynp6XC+UaDS/dJy
-	 ey/oagwRLiTq6cR2MpOXLS52XKovgga+T091fC60LrKZ3E1U3qRJxmraIAvFsTOCfo
-	 //7yf4kC08/45gHQvQ2PjRHoznOZRbez0YJyZjcI/hjVVqh3FrGqF+r5f0PL1VV4gD
-	 vVuezGRLbsqheA/zG/36tLjijOKXpDOqjka2wjPMf5vz3xOttWOtYNbuRv4Zqp+evU
-	 Tde2QbddyL3b14tZzttIilm0a1RddJnazsQRMmtBFntdLjaUWGMn/Y0IwXALs3sIkj
-	 2Wrod0Wmq6LYw==
-From: Baruch Siach <baruch@tkos.co.il>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: catalin.marinas@arm.com,  will@kernel.org,  ptesarik@suse.com,
-  hch@lst.de,  jiangyutang@os.amperecomputing.com,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: fix zone_dma_limit calculation
-In-Reply-To: <20241125171650.77424-1-yang@os.amperecomputing.com> (Yang Shi's
-	message of "Mon, 25 Nov 2024 09:16:50 -0800")
-References: <20241125171650.77424-1-yang@os.amperecomputing.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 26 Nov 2024 08:27:19 +0200
-Message-ID: <87ttbu8q7s.fsf@tarshish>
+	s=arc-20240116; t=1732602448; c=relaxed/simple;
+	bh=UlO7t7b9uptyFYeH6BbOgjSWlkU5vvwVNEeLCtPAiAA=;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type:Cc; b=nJJp+ukJ3Oi6o22SgiiS5czPPQ/00mFs8cV11IoT8Ol59zBRkq7h0uH5yDEHyDVn0HEm35UwjUPMIh+VlDvZMPyzunGo6VMcO3i18L639d+MjuSImM5oT2DrAy+bBDTQyqcfCehuwWIrsSx8CIwp938MUOk7wjMIyJ4QTovOhRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailfence.com; spf=pass smtp.mailfrom=mailfence.com; dkim=pass (2048-bit key) header.d=mailfence.com header.i=falaichte@mailfence.com header.b=qVIOdvn/; arc=none smtp.client-ip=212.3.242.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailfence.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailfence.com
+Received: from fidget.co-bxl (fidget.co-bxl [10.2.0.33])
+	by wilbur.contactoffice.com (Postfix) with ESMTP id E9C316D4D;
+	Tue, 26 Nov 2024 07:27:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732602443;
+	s=20240605-akrp; d=mailfence.com; i=falaichte@mailfence.com;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Cc:Content-Transfer-Encoding;
+	bh=4d2OucsJr+i4BIPoqG8I3DVx/83M6LVwokgDc0xnD1o=;
+	b=qVIOdvn/eo+MJiJHppJvhgS+NCcrSzZCQtLmVlGXO7CZtvdm629KwDJcizSsfhDJ
+	eCgYMjUHkMZNXdc2OQN0D3LmyR6a0JOKvpE8X3bTBFHoLShYwSlDQln4VcY6iAHtjHp
+	HK8xTLe5k8zIeNZt1d8Ec7XDdyKN6l+UH8vvJQk/Q5p7bX0mwNpezxjjktXne60dMOn
+	Vhz3NddVoHUaNO2Zv6V/C+suWFpHfTqeT5+5mgQWMfebmxFH1cmuWMjRrZ7qFw75cBm
+	NdpiPsvCi3gnwi98osMoeu2K1MMS1+qEnPnse4Ehg5N5PMqWETabx/a8p5c2OnfGT+L
+	dyA/VEq6nQ==
+Date: Tue, 26 Nov 2024 07:27:21 +0100 (CET)
+From: =?utf-8?Q?Dylan_=E2=80=8E_=E2=80=8E?= <falaichte@mailfence.com>
+To: Michal Hocko <mhocko@suse.com>, Dan Williams <dan.j.williams@intel.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Message-ID: <1027126957.1379993.1732602441355@fidget.co-bxl>
+In-Reply-To: <1592065022.1379875.1732602282945@fidget.co-bxl>
+References: <Zs6jFb953AR2Raec@dread.disaster.area> <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy> <ZtBzstXltxowPOhR@dread.disaster.area> <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg> <ZtUFaq3vD+zo0gfC@dread.disaster.area> <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm> <ZtV6OwlFRu4ZEuSG@tiehlicka> <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq> <ZtWH3SkiIEed4NDc@tiehlicka> <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk> <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch> <1592065022.1379875.1732602282945@fidget.co-bxl>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+X-Mailer: ContactOffice Mail
+X-ContactOffice-Account: com:490142097
 
-Hi Yang,
+When do you plan on addressing the Code of Conduct violation done by Greg Kroah-Hartman and the rest of the Linux Foundation by banning all Russians from contributing to the Linux kernel and in doing so discriminating against nationality and ethnicity?
 
-On Mon, Nov 25 2024, Yang Shi wrote:
-> The commit ba0fb44aed47 ("dma-mapping: replace zone_dma_bits by
-> zone_dma_limit") changed how zone_dma_limit was calculated.  Now it
-> returns the memsize limit in IORT or device tree instead of U32_MAX if
-> the memsize limit is greater than U32_MAX.
+*Apologies in advance for not replying to everyone, my service provider has a cap on recipients I can reply to.
 
-Can you give a concrete example of memory layout and dma-ranges that
-demonstrates this issue?
+On Nov 22, 2024 at 9:48 PM, Dan Williams <dan.j.williams@intel.com> wrote:Kent Overstreet wrote:
+> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+> > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+> > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+> > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+[..]
 
-> This resulted in DMA allocations may use GFP_DMA even though the devices
-> don't require it.  It caused regression on our two sockets systems due
-> to excessive remote memory access.
+Kent,
 
-That is, DMA zone used to cover all memory before commit ba0fb44aed47,
-but now DMA zone is limited to the smallest dma-ranges. Is that correct?
+The Code of Conduct Committee received reports about your conduct in
+this email discussion.
 
-Thanks,
-baruch
+Link to email where the violation took place:
 
-> Fixes: ba0fb44aed47 ("dma-mapping: replace zone_dma_bits by zone_dma_limit")
-> Cc: <stable@vger.kernel.org>    [6.12+]
-> Reported-by: Yutang Jiang <jiangyutang@os.amperecomputing.com>
-> Tested-by: Yutang Jiang <jiangyutang@os.amperecomputing.com>
-> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-> ---
->  arch/arm64/mm/init.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index d21f67d67cf5..ccdef53872a0 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -117,15 +117,6 @@ static void __init arch_reserve_crashkernel(void)
->  
->  static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
->  {
-> -	/**
-> -	 * Information we get from firmware (e.g. DT dma-ranges) describe DMA
-> -	 * bus constraints. Devices using DMA might have their own limitations.
-> -	 * Some of them rely on DMA zone in low 32-bit memory. Keep low RAM
-> -	 * DMA zone on platforms that have RAM there.
-> -	 */
-> -	if (memblock_start_of_DRAM() < U32_MAX)
-> -		zone_limit = min(zone_limit, U32_MAX);
-> -
->  	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
->  }
->  
-> @@ -141,6 +132,14 @@ static void __init zone_sizes_init(void)
->  	acpi_zone_dma_limit = acpi_iort_dma_get_max_cpu_address();
->  	dt_zone_dma_limit = of_dma_get_max_cpu_address(NULL);
->  	zone_dma_limit = min(dt_zone_dma_limit, acpi_zone_dma_limit);
-> +	/*
-> +	 * Information we get from firmware (e.g. DT dma-ranges) describe DMA
-> +	 * bus constraints. Devices using DMA might have their own limitations.
-> +	 * Some of them rely on DMA zone in low 32-bit memory. Keep low RAM
-> +	 * DMA zone on platforms that have RAM there.
-> +	 */
-> +	if (memblock_start_of_DRAM() < U32_MAX)
-> +		zone_dma_limit = min(zone_dma_limit, U32_MAX);
->  	arm64_dma_phys_limit = max_zone_phys(zone_dma_limit);
->  	max_zone_pfns[ZONE_DMA] = PFN_DOWN(arm64_dma_phys_limit);
->  #endif
+https://lore.kernel.org/citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk
+
+Our community works on trust and respect and has agreed to abide by the
+Code of Conduct:
+
+Reference: https://docs.kernel.org/process/code-of-conduct.html
+
+The code of Conduct Committee has determined that your written abuse
+of another community member required action on your part to repair the
+damage to the individual and the community. You took insufficient action
+to restore the community's faith in having otherwise productive technical
+discussions without the fear of personal attacks.
+
+Following the Code of Conduct Interpretation process the TAB has approved
+has approved the following recommendation:
+
+-- Restrict Kent Overstreet's participation in the kernel development
+   process during the Linux 6.13 kernel development cycle.
+
+       - Scope: Decline all pull requests from Kent Overstreet during
+         the Linux 6.13 kernel development cycle.
 
 -- 
-                                                     ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+Sent with https://mailfence.com  
+Secure and private email
+
+-- 
+Sent with https://mailfence.com  
+Secure and private email
 
