@@ -1,188 +1,175 @@
-Return-Path: <linux-kernel+bounces-422743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4CC9D9D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8468D9D9D9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4640E28326A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A02228413A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FAA1DE3A3;
-	Tue, 26 Nov 2024 18:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD5A1DE2A5;
+	Tue, 26 Nov 2024 18:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ObMkY4gM"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3vA+Q7f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05D81DD55A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B86A1D45EF;
+	Tue, 26 Nov 2024 18:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732646777; cv=none; b=B67Z+yXWfsmTtdLa41Bc/DLx3Izf6TTfgxuT25y94mM6DZwrvVmX01pzjWrJ06wEhi3XtzpIbJsd0E+LpuHBmD8KyuCVe1A6Jt3PrE4GPVYo25Do97hNsJrHgjj5Ia0+vUNwlah8ZP+AHsaOsV+0EZICl8MiYC6wzIzusjMlabU=
+	t=1732646771; cv=none; b=HNJwdlsN91d4HashKyHYveAhexKcmvSbM5Qohd9+8sXVeIvGosGn4H/7MsdK1+LxSMS2nbOkH3jZ24hvv3l/NzGUge+UBTB2CcXiYkJGXtjsOml3bT/RbHa/A1azOfOcuvfaIxLXa+IYBIfz+pnHALYrYGtjc2kOPKJfa6wmcvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732646777; c=relaxed/simple;
-	bh=KzaH9VaK2P6cdLznIv73O6E5pwQjyAhQu3VJLdy7c+E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bOr7LuYX07vgFfvD3+/qrQpEGQp7tMLX2nnbRfFtfZNcDyG3sLbhzaSyoDeH3Qsrfix+XNHL49Z6j4vbuc/be2Fm6RJaqrUbAuntoXrkUw9EDd6V/tEKgroWxDVVJ7mgeUBFt8Kj6Dqx7U+3Amn58859bPQ0eK3ORlsxljKojTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ObMkY4gM; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4668caacfb2so17381cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:46:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732646775; x=1733251575; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DFJu1j/wkqiOvCGVYMAIdwsL+syJswetP7zrQTT0cYk=;
-        b=ObMkY4gMW67+tHAjCWib3H5Jxor4JC49VQnPBTF0sZfv+p71bLz4eYw9bU90ccqU7G
-         Lwqj+8soQ3DQQUsKENytgOhvj1IuwVFdGKwS6Ao/GqY05RC1V7coP9PkhTGIvcL2JTOu
-         I6l4WcXvx5CViu8D0QgiJHuEsEdmcgBmJZ7Tp7QHBekCbk+mzpPt5AxMPa13edW0KRvi
-         AP+ff/zvQCzwAwmw9JAjW+3X7tMkCrGcMrHhNkr3M1IWKlBbJvGB6RQDS7FuLn1IkktC
-         eyknf/YrBwT6lNaAgEMZmmGFBAn3PECgF+H9lRKBk1/iLBz1QlH5eQsJb15Gw36xDPX0
-         TVFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732646775; x=1733251575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DFJu1j/wkqiOvCGVYMAIdwsL+syJswetP7zrQTT0cYk=;
-        b=WsZcNvadSTv6jobBPmwdSxBKY9kH2uJStDCuHrSoNdO4puGkmoq99531tqFExppM/D
-         c7pOX6gNxIesp8d7dNMGXiTgiE6LU76i/iE0og5/zhfhlVBaBL3Y2/mE7zbkMCHhDwPG
-         aea4o6yBHGrF30ArGkzKJEsYkNUIsBMem0ehCLGCOzstVLEUDmt39vPFoG6NSiERugGd
-         rHsSfF8c2D5RSOB3t9ewgv7Fk74eCZGp/MjVfsoUXU73XvS1up4F94Pw5CoG6NGC6PZJ
-         BwvZ++7X30+Fi4TTXuo5XBdHoyKXRO7qst+aSESLrnSFXJP5Ng5GhIWtyEx4f5sCYcbd
-         KroA==
-X-Forwarded-Encrypted: i=1; AJvYcCWW9h3+e+/057HNHBuByX9jsrTLgN7SRqbYmoNcC9H4YLCRp2AqRa072NTsPa8F6R4ejxxc9meHwme+a+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPXP+dRE5uwrssetKA6urGMNfTB68J4gWeDaE8T3EXjz/lKGmj
-	aB26tJJ5G6SeFz8MStVU7qpW8eOyIhXqYtU15ETtd1a1FrjWCyJ/Px1Wx504u4ee0H8653R/gLu
-	uUTQf/yHut8oD8tDww5fYWBzVFk9QCRL1lttN
-X-Gm-Gg: ASbGncu0YdJdE0Geip12VkYNbxsHyxMXTPc56p8Zle394OEOcebvlSeph6SwkZISicr
-	fViyabQI7RHArePwq6riASKQmLsNVe32nhEmLZPt0UUzVQc9dGgoHH2bKBbvn
-X-Google-Smtp-Source: AGHT+IGORmM49kQetY05s3ECfzIEdchhMoxdcPBJAuTlbqo9wAZfTt2LJwU8dHau3kLQ/7T67Ts879jLyAGyCrb6HKM=
-X-Received: by 2002:a05:622a:4c85:b0:463:95e2:71f8 with SMTP id
- d75a77b69052e-466a741c804mr4249451cf.15.1732646774433; Tue, 26 Nov 2024
- 10:46:14 -0800 (PST)
+	s=arc-20240116; t=1732646771; c=relaxed/simple;
+	bh=Xg5aw9e03x+ZlE/v5a5yHAHcVA7j7eBH74adS6n67Jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eJomgkou9vQR+a52TkBbeRfcjExzf7/6FHRhEBwVDTdUmJnNiW0TBe67CbQ92O3u9bJb9Be/ptTMu0BiR8UePaCakafglUI2DO7hiEiPKImKfkbcjDnVSghD5+LO6xRWxWLO0KasdA8zhCeoTpRim8ir9fAU8XAkKqS9eqF31eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3vA+Q7f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65499C4CED0;
+	Tue, 26 Nov 2024 18:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732646771;
+	bh=Xg5aw9e03x+ZlE/v5a5yHAHcVA7j7eBH74adS6n67Jo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=U3vA+Q7fRbeKWW5CNLjKkut9m6IvDVoxVxWgvxqbE4GsD0IixqDEUqd9RTEkqV1Ec
+	 f9smkPnKE3QEbkbt5+J2nJhFF7aZysuTb7X7kfcnEvIOgDELRSzX8apWo6LRduyfNT
+	 HxVwcGeUjOzbye25ABIVTz2NBHkHE4w5QX1kAulnyq50HoA+XSyYO8utqkZjWrzK/r
+	 Ncmb1G9XURcDRG7UuRQFV4Z929w9T38T94H9nGf9+wuMwOao63asLyoJKrEMmmOxjo
+	 w/BAveUVL8oBdWtnmubjjuRD7yTDms8Fn5Zg+rA3hfx4xerhOqn3nm8l2dSE/+LtyU
+	 T91kPXqzLSQjA==
+Date: Tue, 26 Nov 2024 18:46:04 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
+ aardelean@baylibre.com, adureghello@baylibre.com
+Subject: Re: [PATCH 8/9] iio: adc: ad7606: Simplify channel macros
+Message-ID: <20241126184604.5a4c74d0@jic23-huawei>
+In-Reply-To: <20241121-ad7606_add_iio_backend_software_mode-v1-8-8a693a5e3fa9@baylibre.com>
+References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
+	<20241121-ad7606_add_iio_backend_software_mode-v1-8-8a693a5e3fa9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126184021.45292-1-cmllamas@google.com> <20241126184021.45292-10-cmllamas@google.com>
- <CAJuCfpH+B1HrzXtM_3+H9m8NPkTzAX8S4oSwhTEW+07g9JceeQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpH+B1HrzXtM_3+H9m8NPkTzAX8S4oSwhTEW+07g9JceeQ@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 26 Nov 2024 10:46:03 -0800
-Message-ID: <CAJuCfpHdYPf-WgheBSCK6Md1WakEy_XCiPrw6xTFmPHr7TgnqA@mail.gmail.com>
-Subject: Re: [PATCH v5 9/9] binder: use per-vma lock in page reclaiming
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 10:45=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
-com> wrote:
->
-> On Tue, Nov 26, 2024 at 10:40=E2=80=AFAM Carlos Llamas <cmllamas@google.c=
-om> wrote:
-> >
-> > Use per-vma locking in the shrinker's callback when reclaiming pages,
-> > similar to the page installation logic. This minimizes contention with
-> > unrelated vmas improving performance. The mmap_sem is still acquired if
-> > the per-vma lock cannot be obtained.
-> >
-> > Cc: Suren Baghdasaryan <surenb@google.com>
-> > Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> > Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> > ---
-> >  drivers/android/binder_alloc.c | 29 ++++++++++++++++++++++-------
-> >  1 file changed, 22 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_al=
-loc.c
-> > index 339db88c1522..8c10c1a6f459 100644
-> > --- a/drivers/android/binder_alloc.c
-> > +++ b/drivers/android/binder_alloc.c
-> > @@ -1128,19 +1128,28 @@ enum lru_status binder_alloc_free_page(struct l=
-ist_head *item,
-> >         struct mm_struct *mm =3D alloc->mm;
-> >         struct vm_area_struct *vma;
-> >         unsigned long page_addr;
-> > +       int mm_locked =3D 0;
-> >         size_t index;
-> >
-> >         if (!mmget_not_zero(mm))
-> >                 goto err_mmget;
-> > -       if (!mmap_read_trylock(mm))
-> > -               goto err_mmap_read_lock_failed;
-> > -       if (!mutex_trylock(&alloc->mutex))
-> > -               goto err_get_alloc_mutex_failed;
-> >
-> >         index =3D page->index;
-> >         page_addr =3D alloc->vm_start + index * PAGE_SIZE;
-> >
-> > -       vma =3D vma_lookup(mm, page_addr);
-> > +       /* attempt per-vma lock first */
-> > +       vma =3D lock_vma_under_rcu(mm, page_addr);
-> > +       if (!vma) {
-> > +               /* fall back to mmap_lock */
-> > +               if (!mmap_read_trylock(mm))
-> > +                       goto err_mmap_read_lock_failed;
-> > +               mm_locked =3D 1;
-> > +               vma =3D vma_lookup(mm, page_addr);
-> > +       }
-> > +
-> > +       if (!mutex_trylock(&alloc->mutex))
-> > +               goto err_get_alloc_mutex_failed;
-> > +
-> >         /* ensure the vma corresponds to the binder mapping */
->
-> You did add a clarifying comment I asked for in
-> https://lore.kernel.org/all/CAJuCfpESdY4L_sSwiCYVCX+5y1WOuAjLNPw35pEGzTSy=
-oHFYPA@mail.gmail.com/
+On Thu, 21 Nov 2024 10:18:30 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-s/did/did not
+> This is a preparation to add the new channels for software mode and
+> hardware mode in iio backend mod more easily.
 
+I'm not sure this 'simplifies' anything!  Maybe change title.
 
->
-> >         if (vma && !binder_alloc_is_mapped(alloc))
-> >                 goto err_invalid_vma;
-> > @@ -1163,7 +1172,10 @@ enum lru_status binder_alloc_free_page(struct li=
-st_head *item,
-> >         }
-> >
-> >         mutex_unlock(&alloc->mutex);
-> > -       mmap_read_unlock(mm);
-> > +       if (mm_locked)
-> > +               mmap_read_unlock(mm);
-> > +       else
-> > +               vma_end_read(vma);
-> >         mmput_async(mm);
-> >         __free_page(page);
-> >
-> > @@ -1172,7 +1184,10 @@ enum lru_status binder_alloc_free_page(struct li=
-st_head *item,
-> >  err_invalid_vma:
-> >         mutex_unlock(&alloc->mutex);
-> >  err_get_alloc_mutex_failed:
-> > -       mmap_read_unlock(mm);
-> > +       if (mm_locked)
-> > +               mmap_read_unlock(mm);
-> > +       else
-> > +               vma_end_read(vma);
-> >  err_mmap_read_lock_failed:
-> >         mmput_async(mm);
-> >  err_mmget:
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7606.h | 51 ++++++++++++++++++++++++------------------------
+>  1 file changed, 25 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+> index eca7ea99e24d..74896d9f1929 100644
+> --- a/drivers/iio/adc/ad7606.h
+> +++ b/drivers/iio/adc/ad7606.h
+> @@ -40,37 +40,19 @@
+>  #define AD7606_RANGE_CH_ADDR(ch)	(0x03 + ((ch) >> 1))
+>  #define AD7606_OS_MODE			0x08
+>  
+> -#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all, bits) {	\
+> +#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all,	\
+> +		mask_sep_avail, mask_all_avail, bits) {		\
+>  		.type = IIO_VOLTAGE,				\
+>  		.indexed = 1,					\
+>  		.channel = num,					\
+>  		.address = num,					\
+>  		.info_mask_separate = mask_sep,			\
+> +		.info_mask_separate_available =			\
+> +			mask_sep_avail,				\
+>  		.info_mask_shared_by_type = mask_type,		\
+>  		.info_mask_shared_by_all = mask_all,		\
+> -		.scan_index = num,				\
+> -		.scan_type = {					\
+> -			.sign = 's',				\
+> -			.realbits = (bits),			\
+> -			.storagebits = (bits) > 16 ? 32 : 16,	\
+> -			.endianness = IIO_CPU,			\
+> -		},						\
+> -}
+> -
+> -#define AD7606_SW_CHANNEL(num, bits) {				\
+> -		.type = IIO_VOLTAGE,				\
+> -		.indexed = 1,					\
+> -		.channel = num,					\
+> -		.address = num,					\
+> -		.info_mask_separate =				\
+> -			BIT(IIO_CHAN_INFO_RAW) |		\
+> -			BIT(IIO_CHAN_INFO_SCALE),		\
+> -		.info_mask_separate_available =			\
+> -			BIT(IIO_CHAN_INFO_SCALE),		\
+> -		.info_mask_shared_by_all =			\
+> -			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
+>  		.info_mask_shared_by_all_available =		\
+> -			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
+> +			mask_all_avail,				\
+>  		.scan_index = num,				\
+>  		.scan_type = {					\
+>  			.sign = 's',				\
+> @@ -82,12 +64,28 @@
+>  
+>  #define AD7605_CHANNEL(num)				\
+>  	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),	\
+> -		BIT(IIO_CHAN_INFO_SCALE), 0, 16)
+> +		BIT(IIO_CHAN_INFO_SCALE), 0, 0, 0, 16)
+>  
+>  #define AD7606_CHANNEL(num, bits)			\
+>  	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),	\
+>  		BIT(IIO_CHAN_INFO_SCALE),		\
+> -		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), bits)
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
+> +		0, 0, bits)
+> +
+> +#define AD7606_SW_CHANNEL(num, bits)			\
+> +	AD760X_CHANNEL(num,				\
+> +		/* mask separate */			\
+> +		BIT(IIO_CHAN_INFO_RAW) |		\
+> +		BIT(IIO_CHAN_INFO_SCALE),		\
+
+Maybe use some longer lines to avoid so much wrapping.
+
+> +		/* mask type */				\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
+> +		/* mask all */				\
+> +		0,					\
+> +		/* mask separate available */		\
+> +		BIT(IIO_CHAN_INFO_SCALE),		\
+> +		/* mask all available */		\
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
+> +		bits)
+>  
+>  #define AD7616_CHANNEL(num)	AD7606_SW_CHANNEL(num, 16)
+>  
+> @@ -95,7 +93,8 @@
+>  	AD760X_CHANNEL(num, 0,				\
+>  		BIT(IIO_CHAN_INFO_SCALE),		\
+>  		BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
+> -		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), 16)
+> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),  \
+> +		0, 0, 16)
+>  
+>  struct ad7606_state;
+>  
+> 
+
 
