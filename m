@@ -1,95 +1,132 @@
-Return-Path: <linux-kernel+bounces-422349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACBF9D987E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:25:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0939D9881
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:27:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B862841F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87894164FB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15301D47C7;
-	Tue, 26 Nov 2024 13:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9742C1D5140;
+	Tue, 26 Nov 2024 13:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="EgIvM93B"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="c5tppiRr"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68F4522F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732627547; cv=pass; b=Uzyv2wYfmxnK743tJ2Lxs2NdiE9FKWH6ItkC4auPOxV6tsLRpTEmodBdHKaYN/5wnMXCma3W7iQ/CW4iMOw7Jhm1CGHmMDtrO1IM235gBhxD0cQPizys3mpywieOkTB9LimlflRt9kt5IexUiJ3NXrYOEXAzdAiAUX3xiBpk9Xs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732627547; c=relaxed/simple;
-	bh=l4N6qZBbRn8EAvIL6JyA3SOFSqp1Yvwj3SmVUH9iUas=;
-	h=Message-ID:Date:MIME-Version:Cc:From:To:Subject:Content-Type; b=I/yCE8czZpJzCSFk99d65DH9U8Ld89RQkMgxA0MYunynFbD4yR6VqmBJiwISL18zQW3/cXVP73qGBWznxtgLuNsEQa8uNcliLqd6I8yB0XDnxQ8Q/yoMTnNr8cu+7sIq2BoXw6N27aIz2z6zdweXirrVVlryku0g+gtsbHlP08A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=EgIvM93B; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732627543; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lASto6zWShqfXPlBO2VCdPnMH35iSQTUMOKaNqmOnOvQmGEj5Un3LeB2F9aOBfz145RR9sD47B+RvDckuFdiHolehAr+vXj1bq4YGzThh+oIfQb8tiLUSfAcGxVMr1ySn6Nrl/bZtH8JgF33ciz7fp6VgNVNm+ICt9uxAigCvwU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732627543; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fCKHoPx+L0qkIMAC8WPcrHW9BZSoJ0Y2i0s5upJx++I=; 
-	b=SthTrKHd6DCQ5Dxg/+6ciHjUKi4keIl99QijDna9qCSJ/Yyvgx4bYLAArmTVB3YTsvsYrJGPpQ8Yo+USVnm5/uxRg99nYHCzV4bUNIJqwO7UblAVo1qU7CreivUgAGzlX3TJSEq9Bhd5PI9v2EwtB7UbWdJg1b1VmNt++LMunQ4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732627543;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:From:From:To:To:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=fCKHoPx+L0qkIMAC8WPcrHW9BZSoJ0Y2i0s5upJx++I=;
-	b=EgIvM93BL1FImZF3PwgCRuyk8KkmUqOFBWACxPL3re6OVwGUond6GiHtwXLiHaCu
-	r56FsdrSvSDMYIIgRK42qBhBkKRYFeohfiPK/7Dj01Q+74qu2TJzEsdebY7cguvhSLg
-	sexNK/Up8zh3/J/4h6I9xu0lCkie/BtxwUS0Ltyg=
-Received: by mx.zohomail.com with SMTPS id 1732627541192283.3545783377284;
-	Tue, 26 Nov 2024 05:25:41 -0800 (PST)
-Message-ID: <91c041ac-5491-4c97-9afc-9eb11c8e686c@collabora.com>
-Date: Tue, 26 Nov 2024 18:25:44 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A358522F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732627642; cv=none; b=QAYpiDmf+QO+laYsG/cSkT3NsFG+v6WYJy3+9s1Ijej5vk/2DHhJaQs24v6CzKxvtmNTTCPqBShETv0MMDRAZ1CBaKQ58JnG105zUwCQcjtkc3rw+MIiXdnLzA7Xbvy/l++XAp+S1g1jY8cibnvYxlt9czu5E550TxGpxxOORn4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732627642; c=relaxed/simple;
+	bh=Y7lKJoNHmIeclml5dMftpGEKrOWFHjqsEI1mt8d2OJE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ez20kD+Y/2Acig/ZUa6x80C326vvApY9sBaN1kqKlQcJL0airq9Ro+KP43+fO354tGTLKi8QCAj9IQmiFl+ySTXu5Ve8ut+MeZ27arU/Ir/EBpZp5sV+n3hRSGylr7zWtR7Vta19hDcKYqDdnaff+1x7vTMEE9xLuLpFPKEOz0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=c5tppiRr; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PCYjy73HuYFntkPiDGBkHEccdajNYD1R0CFtq8zFieg=; t=1732627638; x=1733232438; 
+	b=c5tppiRrQ5rg69B8UHiuJYGhvQekqamJiOjs4j3m6VYV61UvPNNsXsn8UhimmY5PPvY5GR2ICWo
+	7x0OA4DisIufO9GPjetUlWIOtkSYAP3I25vnR0UNI7ur6GqlR/RrplwYoJuIYLUaAdscU18SD5lMJ
+	fjfywq0qSh5sj6LBS97SEZs4fbgHURD4tPgcrZx6NBRBa0E/R+9xEuHm7PY85gAPgBzwD2j/JsmeT
+	YzpcbKtaefVLtFD+SwnojYVJS8iozOj6O/9ThXYNcSu3uzS/DJNCXc+guu1+bkfd+bOBRA9NL/x42
+	igmkfesUuuXjEmTSO6w/gacuC2HuDH7hVTfQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tFvau-000000046Jp-1nCv; Tue, 26 Nov 2024 14:27:08 +0100
+Received: from p57bd904e.dip0.t-ipconnect.de ([87.189.144.78] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tFvau-00000000PFp-0rGA; Tue, 26 Nov 2024 14:27:08 +0100
+Message-ID: <a981939be1ad279ef11014d93446762cdaa93823.camel@physik.fu-berlin.de>
+Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: arnd@arndb.de, geert@linux-m68k.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Date: Tue, 26 Nov 2024 14:27:07 +0100
+In-Reply-To: <87sere7jyc.fsf@mpe.ellerman.id.au>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+	 <20241121083846.3648473-1-glaubitz@physik.fu-berlin.de>
+	 <87sere7jyc.fsf@mpe.ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Subject: [Bug Report] Depmod is failing on allmodconfig for arm64 and x86_64
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
 Hi,
 
-The depmod is failing on 9f16d5e6f2206 (mainline) arm64 and x86_64 because of:
-```
-depmod: ERROR: Cycle detected: libphy
+On Tue, 2024-11-26 at 14:27 +1100, Michael Ellerman wrote:
+> > > The Linux CHRP code only supports a handful of machines, all 32-bit, =
+eg.
+> > > IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possib=
+ly
+> > > some from Motorola? No Apple machines should be affected.
+> >=20
+> > I have a Pegasos 2 and I planned on keeping it.
+>=20
+> OK great. You're the first user we've heard from in quite a while :)
 
-depmod: ERROR: Cycle detected: lan969x_switch -> sparx5_switch -> lan969x_switch
-depmod: ERROR: Cycle detected: ptp
-depmod: ERROR: Cycle detected: stp
-depmod: ERROR: Cycle detected: ipv6
-depmod: ERROR: Cycle detected: bridge
-depmod: ERROR: Found 2 modules in dependency cycles!
-make[2]: *** [scripts/Makefile.modinst:132: depmod] Error 1
-make[1]: *** [/tmp/kci/linux/Makefile:1844: modules_install] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-```
+Well, as I said, you won't find the people using that hardware on the LKML
+as most of these people aren't developers but just users.
 
-This issue wasn't present until c66fbc6c3df9. 
+> Any idea what is the latest kernel version you have run on it?
 
-[1] https://kcidb.kernelci.org/d/build/build?orgId=1&var-datasource=default&var-build_architecture=arm64&var-build_config_name=defconfig+allmodconfig&var-id=maestro:67427d2a923416c0c993033a
-[2] https://kcidb.kernelci.org/d/build/build?orgId=1&var-datasource=default&var-build_architecture=x86_64&var-build_config_name=x86_64_defconfig%20allmodconfig&var-id=maestro:67427d2c923416c0c9930358&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=yes
+I don't remember. But I'm planning to test a current kernel in the near fut=
+ure.
 
--- 
-BR,
-Muhammad Usama Anjum
+There is just so much other stuff on my plate, including that debian-instal=
+ler
+regression on all PowerPC targets introduced by a recent change.
+
+> > Have you asked among the Amiga community whether they plan on discardin=
+g
+> > your hardware? I think it's always ill-fated to ask for popularity of
+> > hardware on just the LKML. Most users are not on the LKML.
+>=20
+> I haven't because I don't really know anything about the Amiga
+> community, who they are, where they hang out, etc.
+>=20
+> Please cross post this to any Amiga folks you know, or tell me where I
+> should post it.
+
+I will.
+
+> We've maintained this code for over 20 years, at some point if there's
+> no one in the *Linux community* who cares about it then it's hard to
+> justify keeping it.
+
+The problem is that you don't reach the whole Linux community over the
+Linux PPC kernel development mailing list ;-).
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
