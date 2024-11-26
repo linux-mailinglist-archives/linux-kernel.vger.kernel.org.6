@@ -1,64 +1,76 @@
-Return-Path: <linux-kernel+bounces-421847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E5A9D90DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:55:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C309164BEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:55:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652681720;
-	Tue, 26 Nov 2024 03:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIbfaqaX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5287D9D90E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:59:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81842940D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732593354; cv=none; b=MAyAMPHlRUgn+oUVfm+Cve70/nJ924cjEsPEYQVG+nLBVzAqLHQjwR2jlrXRgtc94u1A3dVUEf9TmdjaTrp4IdHljBnFeq0a8uyJ7iUZgaeKyp+XXd/RKCvBXj+05yQ8N1Wt19nGgEKGV7fFL9uXO6tmczTsEMmhhCZ28rbqN7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732593354; c=relaxed/simple;
-	bh=gTDqH0pKmE6/OvbUr7cjGe7E+cUB8sK96Z+x8YcsOi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RurPMvN5+oTOIhRWTNrmP48prmYChvBszGiYcGQ4niBx+8cH0/hOfa09lG9361URrGVpOeaLjjdofOdc6g7A8F+fWlKb5cr20OQrCuvCgj8R3pCIRNh9od2qLwMcgy3lIQXmPtUW5jLB2MMhea7tIYKuhQKVbdn3dHc5/iWEh2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIbfaqaX; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732593353; x=1764129353;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gTDqH0pKmE6/OvbUr7cjGe7E+cUB8sK96Z+x8YcsOi0=;
-  b=hIbfaqaXjLcNdaVPa2XcCfOy3nAp1jfafTkafVzPXtRP3tyCjzOzAWFZ
-   VfTXLnzeI31oJ0Qt2yvrMSDTXkIWqPi5zdvy1L22bOR0PyvbTmlUAVaES
-   jUYJbPUxs8wi6w2mkkWd9yr/2fQXldm/zH4G2U78VAv4QgQvTnalF1ixY
-   xOI/QOZYUSK324OY1qZFvGpoUI/XeYnejO4P4S0cnHvKi+qKNgpyPcvYq
-   anaRfh1s5z8r2sPsdit/6IN/NOhfu7gYd8EoR9LU3K37vzUikH/M2bq+F
-   Lf97DL7IIde/LTxZi0RsMKfNZsQ6V05yuRLu1YccxPX7iTI+5rdszOJh+
-   A==;
-X-CSE-ConnectionGUID: 6uCqrAxsSOuzBn5KWABGzg==
-X-CSE-MsgGUID: pX+bCa//QpSnu3/mgbdAyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32590666"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="32590666"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 19:55:52 -0800
-X-CSE-ConnectionGUID: yo/beAy5Ruq+A/blZmyfBw==
-X-CSE-MsgGUID: Bn/B+7anRx+WqWiwOCxaww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="91280376"
-Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.221.82]) ([10.124.221.82])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 19:55:51 -0800
-Message-ID: <6590827b-d4cc-45eb-9608-6be5d354eb57@intel.com>
-Date: Mon, 25 Nov 2024 19:55:50 -0800
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE161288F5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:59:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B22984A22;
+	Tue, 26 Nov 2024 03:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F9mxYniX"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7222940D;
+	Tue, 26 Nov 2024 03:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732593566; cv=fail; b=edJIt8xhxEFTM3koMYuyXJoMdQ9rcbq28SvC3FX3bUEQHWxYANLKR8+JGjVXFstCwKonavgSNbyCm6/zkuuVgbxn1ZQqydFaR+SHSjgtrM4JrX89+9a1MoUXSjwv285UQBW+9suOE1hPqPEcsLGGXb7BK9+79Nag32IDL59J+EA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732593566; c=relaxed/simple;
+	bh=hTSb0f7a9irnY0lP7vx0BHaVNy7fvBMFck/b0Gv2bJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kMJ4Lr1Gg/pNYCDWhDMpE5RRzCh0oIUXxLJ0cJpWStGboiMWQh66AExp13dqekZY2wdmbzTAaZShcgGk08zk9xbAaj5d/qcqQyN9I2zkYUZOy6iaFDUDh3ch8RHOpxu5NUgLIkJf/Mk1he0i3Z5wK0Nef64rv2SJVOM4zGSxSJI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F9mxYniX; arc=fail smtp.client-ip=40.107.236.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kBw7pW52Lh/cNF/NHSVKeY2wTI7c/xKIAaWnMbbO/vhphjYrG9WXnodc2QUXxOiCls7zKudkvJFgE6ylVObE51I9eTz5UNEsGQ0c2azHsl7CeUGMpGzlJ41HAXXEEnd2n7kHePaAnxa4hvwQs6SfAB6JxuNWR8Svvk8f9jEqkk43Ty8RHiqJOPFKpMFGbU5n/Zf67w1EJgkNAE8cgjWfk3fT7aXqHxfMMDaLsHKFMg44Njso7ZjUYYYotYkCTdOnutQhOd76D+jmz/t3wyQzcAjdvsdixF7v7uAFMt8yZBhSw3RlonHvlRhOBn/BD+BziVhpshnT+XiixdL+ExxZKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DBJPSBxVgkzbC+wLCIZfApLVh7wEB/aUC0AtF86Rx4Y=;
+ b=Ja5P+rCe1O9llmrvYWQfcFcSiJDd4k4glnRU9CViMC7I9O4UWpvdaslySRRYDwy8jei+iREmaEnvcljBLD6DzlbWaO8odAA+bZAXymmWBmedd8tzKNZA5LiSu1j41m0ZpKMIjX70zJjyzTPLX/+C1zL/51ORf7dPQCwKIDJwLyxPjCpG3nqX4ECvNe9S8HInt8jDFCjbe/NMricxc6SYjl93d1oalEtcO2JZcNkK3v6K0TBS4satzho4i+b3ZF83ufXY4PP2oGmMcMUWaFmj9GPgwdMjfgwMsiyMeIJalr7+VaXCEAHruRgEp8ZPtARva9pDViUs7Xhh6FDe9+YJ+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=amazon.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DBJPSBxVgkzbC+wLCIZfApLVh7wEB/aUC0AtF86Rx4Y=;
+ b=F9mxYniXg4vO0O2y0nBl9vqZXv15B15iArZcstaNyPZ8urn+s2CnZR6Eq7igBXmGu2Iv7k6cBDYwjYLwDTx0oPPXzJjz4yujjtTGACTHpPGZoI7mIB7faOrdhO4fm2JVfJ2bhVfClxWReHRRfYJE5BKNEqVYZsxwnf12MCHODvE=
+Received: from BYAPR02CA0009.namprd02.prod.outlook.com (2603:10b6:a02:ee::22)
+ by CY5PR12MB6324.namprd12.prod.outlook.com (2603:10b6:930:f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Tue, 26 Nov
+ 2024 03:59:20 +0000
+Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
+ (2603:10b6:a02:ee:cafe::67) by BYAPR02CA0009.outlook.office365.com
+ (2603:10b6:a02:ee::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.17 via Frontend Transport; Tue,
+ 26 Nov 2024 03:59:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8207.12 via Frontend Transport; Tue, 26 Nov 2024 03:59:20 +0000
+Received: from [10.136.45.86] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Nov
+ 2024 21:59:03 -0600
+Message-ID: <41d0bc96-2e42-4fa1-85df-a6a93611240c@amd.com>
+Date: Tue, 26 Nov 2024 09:28:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,69 +78,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] x86/cpu: Refresh DCA leaf reading code
-To: Zhao Liu <zhao1.liu@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
- bp@alien8.de, rafael@kernel.org, lenb@kernel.org, dave.jiang@intel.com,
- irenic.rajneesh@gmail.com, david.e.box@intel.com
-References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
- <20241120195334.2F676736@davehans-spike.ostc.intel.com>
- <Z0VKZ+AxQdcnaEax@intel.com>
+Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
+ RUN_TO_PARITY and move them to sysctl
+To: Cristian Prundeanu <cpru@amazon.com>
+CC: <abuehaze@amazon.com>, <alisaidi@amazon.com>, <benh@kernel.crashing.org>,
+	<blakgeof@amazon.com>, <csabac@amazon.com>, <doebel@amazon.com>,
+	<gautham.shenoy@amd.com>, <joseph.salisbury@oracle.com>,
+	<dietmar.eggemann@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <x86@kernel.org>
+References: <20241017052000.99200-1-cpru@amazon.com>
+ <20241125113535.88583-1-cpru@amazon.com>
 Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <Z0VKZ+AxQdcnaEax@intel.com>
-Content-Type: text/plain; charset=UTF-8
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20241125113535.88583-1-cpru@amazon.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|CY5PR12MB6324:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea1f27d8-6618-4f53-9ed2-08dd0dceb4aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TnN3QzdXZzNLYlNtN1Yyam8vbjY2TE1yVjNRRy9WcUhlMGR6Wk1PY2NtMnlH?=
+ =?utf-8?B?dnpPenQvRzhCQmFGb0taYWowc3NiMzQ3NUZVM1ZXcFVJb0tzdlNwNTJIekl5?=
+ =?utf-8?B?NkVFT2d1R2NTVSs0V0w5YVdJb0pSL0lJZGMzbUMyNkxUUkxrWk0yMWNycjVJ?=
+ =?utf-8?B?MWxxOGpTU2lKMkdwL0tmUUFwVnNwN2dYVjRrQTViY25QZFczMWZvaHBCZlIr?=
+ =?utf-8?B?ZGRhc25WYVFKOXdrTzZPb05iTHlxWS80dHR5WkF6am9DQzN6bmZSWURtWjNq?=
+ =?utf-8?B?UzlNRE96NFdMQUdMc3cxcUg2cnluRUdxRmFuTGVucmIwR1duSjJtQWpOSEZJ?=
+ =?utf-8?B?WEd1Uit5YTJYZiswYXNJdmMxVFlkek5TM2JsWmhoWVhFS0Z0cHFlSjBzK1F2?=
+ =?utf-8?B?Kys0L3U5NzcyVklMelg2eUxWL1JzUmREaW9IYUVPWmlJSkpxRnJtVWxvZmVh?=
+ =?utf-8?B?cXMrRkE5OFM2SEt2SUtUQ0ZYeGtWTGtUZ2RWUzlabDlEcUJDSE5adXVSSFRF?=
+ =?utf-8?B?em5OVHg4Mkcyd0l0a05UY3N3elQrKyswK0luR05aMlZCNExlRE8xNUxSdmFq?=
+ =?utf-8?B?TzREckdUakJKWmtqUkNsWHFnTFBKUTlVRlhtaXdTekxyeElKcHcrYVczcDVS?=
+ =?utf-8?B?V3hnbUMxb0pDaThYWUFEbmZSUXBCUzFTOHBQdE9UUXk2dmt1UjVPKzJTK0J6?=
+ =?utf-8?B?b1BRdkJOQmJMTGFTbER2cTA3blJSbVJhNTl2cjVITzdENUM2dzBZUnhtRGFW?=
+ =?utf-8?B?bXBMLzdNNHlZTDFOazMwdmRlU2h1bHVtelorc3RjZ0FvT1dkazAxOExlRTVT?=
+ =?utf-8?B?VWE4dTZEOXNCUHlzajVobXFWaE1nN1gyREhJcEg1YWNPNzRILzRjRU43WDdm?=
+ =?utf-8?B?MUZlYzg4TkVUeXFoR3pVTW9qNTlkYmlYME8yWTlXY1dtYkJXVFJnenBLSita?=
+ =?utf-8?B?c1c3NzdoM05lUjZqb3RNK1h5OElCNnFHdkJBZVQvaS9hbFEzVTBkNzl0M0tO?=
+ =?utf-8?B?ZHFZZ1cyQWQwT2pwbkZJMWE3MEYvZkVkdmxFbjcwZXUxaDhBVC9YZmdpdDVH?=
+ =?utf-8?B?bWJPeUY0bGsrbDZuUi9mcVJUMEhIUVRPWS9jRldGRGdUT2N2U0VDRHhQWE55?=
+ =?utf-8?B?TGFiVWJhRG93UmtmTTkyQzlmZU0xNXEzaERqcEpmam1nTDlncFlSZkprcXdi?=
+ =?utf-8?B?RGx0bkl5OUk4dkRaUGpuN2NBUnVlVEVJQ1RtOVRXbXJ4MmhwNDlhRmNpZ0tM?=
+ =?utf-8?B?eDUwVWRTODNTcUw3SktpOVpva2ZKYnk2aHNzQ05ubFFZYjN1V2dUNU11Zlpr?=
+ =?utf-8?B?dVlOZDFRVk1xNWQ2Zlh3TWxXd2Y0U0Z6dm05N2RGZGI3ZklIVHBKVFB4QWJp?=
+ =?utf-8?B?YzRzUGtzRitDTlJYTW5WWVJWSUxNSzhNWk5BWk1XcHlMeXl1Z1g3bFNJY1BO?=
+ =?utf-8?B?Tmw4eDhHbmZySUhRakMwalBMbldUL3FwUGdTdElTYmVMWmI5K05iVllrWkF4?=
+ =?utf-8?B?VzlIRXhjbkFETG53ME8yd050WnY1SjF2Y0p6SnFzVHZ2L0l4SGg1MHk2cnBl?=
+ =?utf-8?B?S21UbVRjajZXb05TZGVVMjNLVnVsVFJORVQrQVM4VXMzTTV1QXYrdGh5ZmVK?=
+ =?utf-8?B?Y1RxREN4ZmhXZjJ5OGRNZmQyeSs2RDd3dUIyZ0RGcEM5dUhKcWcwb3IxZGY0?=
+ =?utf-8?B?SnAyWHRrMTRTWnYzSVFIQTJDanovNTRzTXhCTng5SnlwS01sSWoyQ2pDS0xz?=
+ =?utf-8?B?dFgzSW9GUnBnNnVRS2s2aWp1ZlRqWHVVREhkSnB1OEZnRXZrQ1dsdStXam1U?=
+ =?utf-8?B?RXFnN3huSVZvbW1NMy9QZGZ5K3FHanUrS1UrR1dxd3lyWW93eWQ3QnZXQWM3?=
+ =?utf-8?B?eWUzTHlqZEJvMVdoVjdYMWw1clJ4K3pVUythM2JISm41aE5Ha0lpWEJMMVVU?=
+ =?utf-8?Q?AsVw3S+RLUMut6+7+ZhDYdMKeKCuoedx?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 03:59:20.0420
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea1f27d8-6618-4f53-9ed2-08dd0dceb4aa
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6324
 
-On 11/25/24 20:11, Zhao Liu wrote:
->> -#define CPUID_MWAIT_LEAF		5
->> +#define CPUID_MWAIT_LEAF	0x5
-> Nit, this change can be merged into patch 1?
+Hello Cristian,
 
-Except that it doesn't make any sense in patch 1. At least in this patch
-you can tell that the change is being made for consistency. If it's in
-patch 1, it looks like a random, arbitrary change.
+On 11/25/2024 5:05 PM, Cristian Prundeanu wrote:
+> Here are more results with recent 6.12 code, and also using SCHED_BATCH.
+> The control tests were run anew on Ubuntu 22.04 with the current pre-built
+> kernels 6.5 (baseline) and 6.8 (regression out of the box).
+> 
+> When updating mysql from 8.0.30 to 8.4.2, the regression grew even larger.
+> Disabling PLACE_LAG and RUN _TO_PARITY improved the results more than
+> using SCHED_BATCH.
+> 
+> Kernel   | default  | NO_PLACE_LAG and | SCHED_BATCH | mysql
+>           | config   | NO_RUN_TO_PARITY |             | version
+> ---------+----------+------------------+-------------+---------
+> 6.8      | -15.3%   |                  |             | 8.0.30
+> 6.12-rc7 | -11.4%   | -9.2%            | -11.6%      | 8.0.30
+>           |          |                  |             |
+> 6.8      | -18.1%   |                  |             | 8.4.2
+> 6.12-rc7 | -14.0%   | -10.2%           | -12.7%      | 8.4.2
+> ---------+----------+------------------+-------------+---------
+> 
+> Confidence intervals for all tests are smaller than +/- 0.5%.
+> 
+> I expect to have the repro package ready by the end of the week. Thank you
+> for your collective patience and efforts to confirm these results.
+
+Thank you! In the meantime, there is a new enhancement to perf-tool
+being proposed to use the data from /proc/schedstat to profile workloads
+and spot any obvious changes in the scheduling behavior at
+https://lore.kernel.org/lkml/20241122084452.1064968-1-swapnil.sapkal@amd.com/
+
+It applies cleanly on tip:sched/core at tag "sched-core-2024-11-18"
+Would it be possible to use the perf-tool built there to collect
+the scheduling stats for MySQL benchmark runs on both v6.5 and v6.8 and
+share the output of "perf sched stats diff" and the two perf.data files
+recorded?
+
+It would help narrow down the regression if this can be linked to a
+system-wide behavior. Data from a run with NO_PLACE_LAG and
+NO_RUN_TO_PARITY can also help look at metrics that are helping
+improve the performance combared to vanilla v6.8 case. The proposed
+perf-tools changes are arch agnostic and should work on any system
+as long as it has /proc/schedstats with version 15 and above.
+
+> 
+> [..snip..] 
+>
+
+-- 
+Thanks and Regards,
+Prateek
+
 
