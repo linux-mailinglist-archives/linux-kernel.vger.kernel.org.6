@@ -1,148 +1,141 @@
-Return-Path: <linux-kernel+bounces-422196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8087B9D95B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0A69D95C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:42:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4097D2831FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65E82830EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEAB1C878E;
-	Tue, 26 Nov 2024 10:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CbEw++6G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129EF1CDA15;
+	Tue, 26 Nov 2024 10:42:29 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6271B6CE6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DF11CCB4B;
+	Tue, 26 Nov 2024 10:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617707; cv=none; b=cby3WzafIE+ZIDV0aj7GK4USr0ztTIJYtwjRI+lzvFB3NAgyceyMbLNBcSYyMlTgY5HMBSjo6tqX1t1GOEh8BUiSfRBXPdMPjrN85JRxbeQ1bMiee7dBdIdqN2p2S/790R0jkPM8p+ga11bIt+ZqedaJ2ZdjPin1heHhZr+g/3g=
+	t=1732617748; cv=none; b=WJpb5XOFwb8PKTtrvjGz+TjgaZChYBgY2UrUfzc7OtVWTm0VwWLe2V7f05sFRtAwSF0wdnetUkqA4NAEFsIuz9I1Nu910GMfDs+jzV4ImialcPWYsdUut81nrvxrazhre/TprnEl1XqRp8NT+B64PtkwbPIfqVFOCuVcyKaDPH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617707; c=relaxed/simple;
-	bh=SB9RVzpPrIASoDg3bpjPyfTi6AefWnYI0OM14bBB/fw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hV41E191pxBQ85T28FuLh7lcIgNc7cTlNbpcXcmWk34yHgJ5OFzhaYGUaC3C5/Z1+/h5VrU82noQ/KQIsHo8JOl/utn+Bu/L7C51cK4hMTTi0BQc9Zvwgntbfhy85cErq7g4HHm1JvAUUitJ95O/xNGblOWDjItV7lMu6o7wCIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CbEw++6G; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732617704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c10oVoNw574UgZa8BPhDkAjnTCWOGhdZy0d+349O0RI=;
-	b=CbEw++6GfCNUNg0hBsfhibcJ1UFW09b/ND7GeAtrPsgZS/RQgtNBCdV84oKScIraKjmcVY
-	hfw8YAtEEnucaxrE74VN0b2466404HV3ONkmvY2udGGfUMUjzVdYctWvsMt9AmGADy4atw
-	nKtnqcv6XAAu8Hq/os4xz7ottzxaUqs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-199-TMn25tl0N4-cJVVzXZSb8A-1; Tue, 26 Nov 2024 05:41:42 -0500
-X-MC-Unique: TMn25tl0N4-cJVVzXZSb8A-1
-X-Mimecast-MFC-AGG-ID: TMn25tl0N4-cJVVzXZSb8A
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-382341057e6so2735699f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:41:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732617701; x=1733222501;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c10oVoNw574UgZa8BPhDkAjnTCWOGhdZy0d+349O0RI=;
-        b=GsA5sk1ca4Mx4JVE7Nyc8ZUciDrYt4lOHdSKDXuK8p+SksuAScaqAXobbma3OYgpw8
-         gT2IDokuFwjzIPP4enLlPJqGmzirSavc2bWObR5TJV44pQQbt9AahG3GXNHC16l0y4iO
-         7XIQRfPJCvg0I+TaTuUg6iWC05kZD+1/VW4ilzRDbJztV4Cw06VwQvHGN03SxBi1L0Gz
-         G4WNZduZBBTOsdbtoSk3/WwioEcjfKjex5/OPgIfikdAdF5FO5tpX8rPjD2f8xxfeRBg
-         yjsRYZ4VcgAZ8gq+rtGpkg1cXYyCH3siBxDHXlDdBq478vFLVzDoW1zlsYMd4B1KN07Y
-         KGlw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7+DR4Jb/zcXdQt9RdDHVIUwwLyuurlSU/RD9eOoMs2B8jz4ckSBZKrc7ES8f8WiqUdF371nvaK3aEYfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpP84ayyPdfW9F8nzID/kwQgnFYqwEfNvL1sU1q374iLojsd1Q
-	v+uBQ27v+0KT0yG4WphdeYo2L3EXRyVYxK+uWhgIhxSWcT+9SzqaUvh7/o9zFkuSMEXmcKwTpqw
-	G8sHB4U8fsYRkpaO0lrRnyMq1fID52MZhrrOxlxmNWFiHPjl0AMKhkEoSBhYl/g==
-X-Gm-Gg: ASbGncu2ho+kvHnu8n3VkBCBNenEmWfdQ8soj2CtLyWGE+DAeV5GE8PMa+CY8Jy7Cds
-	Cyqydl7t81UjtPSSZCu7VMDnc3ALOSmrqNGv0vF6EM6ttsrgti6uPTpk7raIZ7VByaBk/8UfVDj
-	zJlmqwHKULC2BRPcpwtnc71S6998MvNNkyg4ZUG/R+tTtvDd+YJg86GqeZczHpjhttUEtvUzS7W
-	9NN6URuoqKoZb1pMeK6POeveZyxQKYF8ilWBYfIfd/6w3qHFI28/NsuQypNyQyke1ZYa/wzCB0c
-X-Received: by 2002:a5d:5f4b:0:b0:382:4a1b:16de with SMTP id ffacd0b85a97d-38260b6b627mr14762631f8f.21.1732617701356;
-        Tue, 26 Nov 2024 02:41:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFb5Dbp1esF0ba97VSbOBzEQDfodzxC6H9YqoKX1VC2tWE64+bs74QfkZMoN9Is771saUdIEg==
-X-Received: by 2002:a5d:5f4b:0:b0:382:4a1b:16de with SMTP id ffacd0b85a97d-38260b6b627mr14762614f8f.21.1732617701055;
-        Tue, 26 Nov 2024 02:41:41 -0800 (PST)
-Received: from [192.168.88.24] (146-241-94-87.dyn.eolo.it. [146.241.94.87])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434a0c889c5sm54013395e9.2.2024.11.26.02.41.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 02:41:40 -0800 (PST)
-Message-ID: <1d7f6fbc-bc3c-4a21-b55e-80fcd575e618@redhat.com>
-Date: Tue, 26 Nov 2024 11:41:39 +0100
+	s=arc-20240116; t=1732617748; c=relaxed/simple;
+	bh=HcXBZKhKro8Mrm0E19xPfTjpRCVC9cZacjQApk3mIXk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m12FSE4yYU18QM2PmTUsb62/zqTusnM+ci3yZyvTSmFmXhHvyxCRJSY7emOEoH0wAPjf+ZvYyDBgHWijjMe2C4Q5R7cPtL1Ggh9CDz1hEG8tysqV6WnNpjIA0HYnH0LbJEKAXAxOEzK7TPdw9MFIzpT1BHZhdp+RMq0kGchhEB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XyJWh21vLz9v7Vv;
+	Tue, 26 Nov 2024 18:21:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 5937B140535;
+	Tue, 26 Nov 2024 18:42:13 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwB3IyTspUVnG6xSAg--.24828S2;
+	Tue, 26 Nov 2024 11:42:07 +0100 (CET)
+Message-ID: <17ef4f662e594c8431a00fe423507af4f6a82286.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+ "mcgrof@kernel.org" <mcgrof@kernel.org>, "petr.pavlu@suse.com"
+ <petr.pavlu@suse.com>,  "samitolvanen@google.com"
+ <samitolvanen@google.com>, "da.gomez@samsung.com" <da.gomez@samsung.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, "paul@paul-moore.com"
+ <paul@paul-moore.com>, "jmorris@namei.org" <jmorris@namei.org>,
+ "serge@hallyn.com" <serge@hallyn.com>, "shuah@kernel.org"
+ <shuah@kernel.org>, "mcoquelin.stm32@gmail.com"
+ <mcoquelin.stm32@gmail.com>,  "alexandre.torgue@foss.st.com"
+ <alexandre.torgue@foss.st.com>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-api@vger.kernel.org"
+ <linux-api@vger.kernel.org>, "linux-modules@vger.kernel.org"
+ <linux-modules@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+ <linux-kselftest@vger.kernel.org>, "wufan@linux.microsoft.com"
+ <wufan@linux.microsoft.com>, "pbrobinson@gmail.com" <pbrobinson@gmail.com>,
+  "zbyszek@in.waw.pl" <zbyszek@in.waw.pl>, "hch@lst.de" <hch@lst.de>,
+ "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>, "pmatilai@redhat.com"
+ <pmatilai@redhat.com>,  "jannh@google.com" <jannh@google.com>,
+ "dhowells@redhat.com" <dhowells@redhat.com>,  "jikos@kernel.org"
+ <jikos@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
+ "ppavlu@suse.com" <ppavlu@suse.com>, "petr.vorel@gmail.com"
+ <petr.vorel@gmail.com>,  "mzerqung@0pointer.de" <mzerqung@0pointer.de>,
+ "kgold@linux.ibm.com" <kgold@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Tue, 26 Nov 2024 11:41:44 +0100
+In-Reply-To: <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	 <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] net: ethernet: oa_tc6: fix tx skb race
- condition between reference pointers
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- UNGLinuxDriver@microchip.com, jacob.e.keller@intel.com
-References: <20241122102135.428272-1-parthiban.veerasooran@microchip.com>
- <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwB3IyTspUVnG6xSAg--.24828S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7JF15KFWxWFWrtrWxJryUtrb_yoW8JF13pa
+	ySga4UKr9Y9r10yF13Aa15ZryFkwsrtr1DZrn8Jry5ArWruryI9348Ca15uFykKr1kJw1a
+	qw12ga4xGan8C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
+	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUVZ2-UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBGdFMjUC7gAAsf
 
+On Tue, 2024-11-26 at 00:13 +0000, Eric Snowberg wrote:
+>=20
+> > On Nov 19, 2024, at 3:49=E2=80=AFAM, Roberto Sassu <roberto.sassu@huawe=
+icloud.com> wrote:
+> >=20
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > The Integrity Digest Cache can also help IMA for appraisal. IMA can sim=
+ply
+> > lookup the calculated digest of an accessed file in the list of digests
+> > extracted from package headers, after verifying the header signature. I=
+t is
+> > sufficient to verify only one signature for all files in the package, a=
+s
+> > opposed to verifying a signature for each file.
+>=20
+> Is there a way to maintain integrity over time?  Today if a CVE is discov=
+ered=20
+> in a signed program, the program hash can be added to the blacklist keyri=
+ng.=20
+> Later if IMA appraisal is used, the signature validation will fail just f=
+or that=20
+> program.  With the Integrity Digest Cache, is there a way to do this? =
+=20
 
+As far as I can see, the ima_check_blacklist() call is before
+ima_appraise_measurement(). If it fails, appraisal with the Integrity
+Digest Cache will not be done.
 
-On 11/22/24 11:21, Parthiban Veerasooran wrote:
-> There are two skb pointers to manage tx skb's enqueued from n/w stack.
-> waiting_tx_skb pointer points to the tx skb which needs to be processed
-> and ongoing_tx_skb pointer points to the tx skb which is being processed.
-> 
-> SPI thread prepares the tx data chunks from the tx skb pointed by the
-> ongoing_tx_skb pointer. When the tx skb pointed by the ongoing_tx_skb is
-> processed, the tx skb pointed by the waiting_tx_skb is assigned to
-> ongoing_tx_skb and the waiting_tx_skb pointer is assigned with NULL.
-> Whenever there is a new tx skb from n/w stack, it will be assigned to
-> waiting_tx_skb pointer if it is NULL. Enqueuing and processing of a tx skb
-> handled in two different threads.
-> 
-> Consider a scenario where the SPI thread processed an ongoing_tx_skb and
-> it moves next tx skb from waiting_tx_skb pointer to ongoing_tx_skb pointer
-> without doing any NULL check. At this time, if the waiting_tx_skb pointer
-> is NULL then ongoing_tx_skb pointer is also assigned with NULL. After
-> that, if a new tx skb is assigned to waiting_tx_skb pointer by the n/w
-> stack and there is a chance to overwrite the tx skb pointer with NULL in
-> the SPI thread. Finally one of the tx skb will be left as unhandled,
-> resulting packet missing and memory leak.
-> To overcome the above issue, protect the moving of tx skb reference from
-> waiting_tx_skb pointer to ongoing_tx_skb pointer so that the other thread
-> can't access the waiting_tx_skb pointer until the current thread completes
-> moving the tx skb reference safely.
+In the future, we might use the Integrity Digest Cache for blacklists
+too. Since a digest cache is reset on a file/directory change, IMA
+would have to revalidate the program digest against a new digest cache.
 
-A mutex looks overkill. Why don't you use a spinlock? why locking only
-one side (the writer) would be enough?
+Thanks
 
-Could you please report the exact sequence of events in a time diagram
-leading to the bug, something alike the following?
-
-CPU0					CPU1
-oa_tc6_start_xmit
- ...
-					oa_tc6_spi_thread_handler
-					 ...
-
-Thanks,
-
-Paolo
+Roberto
 
 
