@@ -1,161 +1,174 @@
-Return-Path: <linux-kernel+bounces-422701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7799D9D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:13:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EBF9D9D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3379FB22B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:12:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC442830BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869601DD9AB;
-	Tue, 26 Nov 2024 18:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF761DDA17;
+	Tue, 26 Nov 2024 18:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFnY6pgS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LZqBIgWX"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D655C11187;
-	Tue, 26 Nov 2024 18:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EEA11187
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732644755; cv=none; b=n6qKhM/9E6xJXuqKC9xGBl7fBXKkjzziz1ScBFAjnWvlxSPGX1myPxFRs5CjftMHdYLT0sri0+IvPVM6ecBT+OEGNv71luI5HJD8900ZklXgZp7rfJFC7l3nDGgkf5rcBauzVRCs7i8NGP4RFP70gsaRFc739H7XE7Kb6L+3uFA=
+	t=1732644789; cv=none; b=T4LUyCp/x/y5sqR4tOJOX5z6pVWmDkGbept89FD5tkcK7239dUcjsvUrQWdEBiu8JAW9U0Tp2CjqUPMaDHfdAlhAWtm7r6UvMCS7FWWW3ha7KZAHByIwyU/QicdtO8DwzxJolZvjWtTlFyXZ5wM3LbSueFv3OcpApQRMpgMwazc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732644755; c=relaxed/simple;
-	bh=JpFz0akJMPNHum+sk0nTfJd76Mo2Hn9b+Le2jMIwLko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4Fmj1z8Bgm4wOrkoOcFRq5ghDiu2sYo375iMTc7YVINzR1PFS7DCAvMgeSDpC+kJe3HJmEkksBewwM2ZMEjkgAB8OjXXAudnAzWgQw8LVV5a1AyE7wiqJ54fhM0t3VX5z/d21g9oGY3p4EKFYd0dqeqRo0rZz/UzDWxGqZJ4Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFnY6pgS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96788C4CECF;
-	Tue, 26 Nov 2024 18:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732644754;
-	bh=JpFz0akJMPNHum+sk0nTfJd76Mo2Hn9b+Le2jMIwLko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YFnY6pgSUcJClHffVaQg1C0FaOeog58eqj37DHSrJBrnNYrBVqi5fkErlh5avzuA0
-	 +ZS6hmzWcQ4i1IvhJTmnpeN1iSX/8cQquSnMj6nyb4OI60XusHiJ4/Wirruyp+obPW
-	 tPRQYrNbxL53BOqIBJ1e+L77DYCyr9Gs0elrlweMQQn3wRq8VMyQOdNtq667+/HP+M
-	 Embx/xJQnznlpb9ne391nh+c80e7HyJLJiaETuXO7G8ddvmsZYKs15WthzbXTO1UuR
-	 jN+sT/oFoR3C3EWTVrUZwASpLSpyuHU1xkCLhbGTpCl+6F3NhfF0S5BJ8iB4CEJBb5
-	 UnPxKXOfDibIw==
-Date: Tue, 26 Nov 2024 18:12:29 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, jstephan@baylibre.com,
-	aardelean@baylibre.com, adureghello@baylibre.com
-Subject: Re: [PATCH 2/9] dt-bindings: iio: dac: adi-axi-adc: Add ad7606
- variant
-Message-ID: <20241126-tiptoeing-humiliate-8c88f185942f@spud>
-References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
- <20241121-ad7606_add_iio_backend_software_mode-v1-2-8a693a5e3fa9@baylibre.com>
- <49bc9ec4-f252-4903-b5be-1d35ee8d48be@baylibre.com>
- <20241121-wackiness-threaten-b53d2a27fbd9@spud>
- <20241126175931.4645dbe3@jic23-huawei>
+	s=arc-20240116; t=1732644789; c=relaxed/simple;
+	bh=N5DXqLLENJurn1n1t0P92WWNwx35eWFGM+6sfF7P2Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tHT5Avwp1YsBFBtPeaBRlI9N8fuh0pyyZBfK6WqZ+MlSdMaP3an/V0KGY82ph7k6zN8N1FkOmhPXJ6RtLNHvnxjfxaQ/VXz0IWooJ+VTx4sgOSWtTIKzRU+tPd/Ysb5ISI+TfYEeBOF+qRc85t7HYfDuksd2nL9TX7rZ3++TzBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LZqBIgWX; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ede8c4fedeso1171364a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:13:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732644787; x=1733249587; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRDHH9mII91Onr/ViRKZaUWx6zHyVw0QRYxvAkTS5oQ=;
+        b=LZqBIgWXXELEi5P1qyZGXH8IxW7yB1LRjBbqvguAOnFsjrBRHIxoDyTrQNsKQVcgu8
+         pfB/si+MBFJxOxnVlZmubTR006Pue8ORxqxWVSLTg6ysdr5L2HKndPTjhaFm/7vSsvCj
+         EX8SHUvrFlnMDJK5bKt4dXN9/5hbe0mMI8jfQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732644787; x=1733249587;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DRDHH9mII91Onr/ViRKZaUWx6zHyVw0QRYxvAkTS5oQ=;
+        b=icVVZW0D3psn1dqDAG/LNXtzL6z7K+jUyTav+nWD47BTfmcz5S5OG0jLNIxgNi6Ut7
+         hx7hq7Bs3X+5GkWkKPZuzmBZ/HyjWhtv+JRLHdtVGiA38y7BjlH4Io4aOewyETw/cJ5S
+         yGBsURUb+UFunreV+YH2idni0vHMT/2IB4bcBEm7luoJTBRMwjl3CWZ9SNmAwZtsO6Sw
+         GQPFrlGPaqfcaebP5rLd0N3Ci9s5W0kGCVnkPRBn6dwweRMPqD869ktLaBIVDg+MNXVP
+         HAOe4GzPe9Hr1H74HNZf6XLptq7uIpNYcJRniTXjpqDXYh+NQR0gn4O8EVyVgIiB2mrE
+         VYTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUb2HVhOoWz0U98l0zTwVqaqe5dqTdNr08CUFZgsJckpCHQqtVtXv+plOvJUFRmET5kDcQ0AlToA5Ag9wM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkkAobIIE8dXzbG74DuLd0h33GMoGfA0vnaZuOVmmlN1qPNwOi
+	CUKncUwOP1XAoqkIjzzMJOw9ggLc0S7Haq8aXnZgtzTPdbmLXk2bJnteqENJH3lmUUbIxFzp2qQ
+	=
+X-Gm-Gg: ASbGncv2S9xINz66kte+vX/wBLHs7eN9yD0QAFXpwOb/w3Bf724Eq7J1mkk+qs7Dkxw
+	3s7BW+Ff5vqFFM4bRhu1WGxbopvavpWOp4580qZSJFonB+uycaQaPsItuEtI91WuHTmQpWW6tTt
+	3JPzNwu5tJcT06MEHhWYLIrXcRF9JCE9tZzW9yLZ5DkniG4pbG2ApGQ15Yu28MP7hiMDkEoVRkv
+	1JP9lHHDo9VLTDDc1OZ3lWkEH9GG1xT/+nPgUC3eMw0pB7LkTqD9BtAiH1yk7wguDhlpJVKgOTn
+	sosb/mkN2gqbuVMU
+X-Google-Smtp-Source: AGHT+IFwfUozuObImAAUQW3j6Nqw44jtV1bUEVQwlhZNFMX43/TJEPvqNbQRtGLNzAwGnd0zXlnorQ==
+X-Received: by 2002:a17:90b:3a82:b0:2eb:140d:f6dc with SMTP id 98e67ed59e1d1-2ee08e9d257mr338062a91.7.1732644786776;
+        Tue, 26 Nov 2024 10:13:06 -0800 (PST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com. [209.85.215.179])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0d0623e9sm9158987a91.46.2024.11.26.10.13.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 10:13:06 -0800 (PST)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so4872819a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:13:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXT6Jq+TsNTk1jtT6/YbNe9dG5MBHyQk6Dfln/nvhNhHzFvG0HaF3ha5Wn78Ded5OrnITaogv61ZptPK7E=@vger.kernel.org
+X-Received: by 2002:a05:6a21:39a:b0:1e0:dbfd:d254 with SMTP id
+ adf61e73a8af0-1e0e0b8cbf0mr485269637.41.1732644785584; Tue, 26 Nov 2024
+ 10:13:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mtIRv2w5CtHuPvfM"
-Content-Disposition: inline
-In-Reply-To: <20241126175931.4645dbe3@jic23-huawei>
+References: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
+ <20241120-uvc-readless-v4-1-4672dbef3d46@chromium.org> <20241126180616.GL5461@pendragon.ideasonboard.com>
+In-Reply-To: <20241126180616.GL5461@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 26 Nov 2024 19:12:53 +0100
+X-Gmail-Original-Message-ID: <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com>
+Message-ID: <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] media: uvcvideo: Support partial control reads
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, 26 Nov 2024 at 19:06, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Wed, Nov 20, 2024 at 03:26:19PM +0000, Ricardo Ribalda wrote:
+> > Some cameras, like the ELMO MX-P3, do not return all the bytes
+> > requested from a control if it can fit in less bytes.
+> > Eg: Returning 0xab instead of 0x00ab.
+> > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
+> >
+> > Extend the returned value from the camera and return it.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
+> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> > index cd9c29532fb0..482c4ceceaac 100644
+> > --- a/drivers/media/usb/uvc/uvc_video.c
+> > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > @@ -79,6 +79,22 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+> >       if (likely(ret == size))
+> >               return 0;
+> >
+> > +     /*
+> > +      * In UVC the data is usually represented in little-endian.
+>
+> I had a comment about this in the previous version, did you ignore it on
+> purpose because you disagreed, or was it an oversight ?
+
+I rephrased the comment. I added "usually" to make it clear that it
+might not be the case for all the data types. Like composed or xu.
+I also r/package/packet/
+
+Did I miss another comment?
+
+>
+> > +      * Some devices return shorter USB control packets that expected if the
+> > +      * returned value can fit in less bytes. Zero all the bytes that the
+> > +      * device have not written.
+>
+> s/have/has/
+>
+> And if you meant to start a new paragraph here, a blank line is missing.
+> Otherwise, no need to break the line before 80 columns.
+
+The patch is already in the uvc tree. How do you want to handle this?
+
+>
+> > +      * We exclude UVC_GET_INFO from the quirk. UVC_GET_LEN does not need to
+> > +      * be excluded because its size is always 1.
+> > +      */
+> > +     if (ret > 0 && query != UVC_GET_INFO) {
+> > +             memset(data + ret, 0, size - ret);
+> > +             dev_warn_once(&dev->udev->dev,
+> > +                           "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
+> > +                           uvc_query_name(query), cs, unit, ret, size);
+> > +             return 0;
+> > +     }
+> > +
+> >       if (ret != -EPIPE) {
+> >               dev_err(&dev->udev->dev,
+> >                       "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
 
---mtIRv2w5CtHuPvfM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 05:59:31PM +0000, Jonathan Cameron wrote:
-> On Thu, 21 Nov 2024 19:53:53 +0000
-> Conor Dooley <conor@kernel.org> wrote:
->=20
-> > On Thu, Nov 21, 2024 at 10:57:44AM -0600, David Lechner wrote:
-> > > On 11/21/24 4:18 AM, Guillaume Stols wrote: =20
-> > > > A new compatible is added to reflect the specialized version of the=
- HDL
-> > > > that is not covered by the IIO backend paradigm: We use the paralle=
-l =20
-> > >=20
-> > > It still is being used as an IIO backend, so I would leave out the
-> > > phrase "that is not covered by the IIO backend paradigm".
-> > >  =20
-> > > > interface to write the ADC's registers, and accessing this interface
-> > > > requires to use ADI_AXI_REG_CONFIG_RD,ADI_AXI_REG_CONFIG_WR and
-> > > > ADI_AXI_REG_CONFIG_CTRL in a custom fashion.
-> > > >=20
-> > > > Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml | 7 +++=
-++++
-> > > >  1 file changed, 7 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.=
-yaml b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> > > > index e1f450b80db2..43bc0440c678 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> > > > @@ -17,13 +17,20 @@ description: |
-> > > >    interface for the actual ADC, while this IP core will interface
-> > > >    to the data-lines of the ADC and handle the streaming of data in=
-to
-> > > >    memory via DMA.
-> > > > +  In some cases, the AXI ADC interface is used to perform speciali=
-zed
-> > > > +  operation to a particular ADC, e.g access the physical bus throu=
-gh
-> > > > +  some special register to write ADC registers.
-> > > > +  In this case, a different compatible is used, and the driver beh=
-aves =20
-> > >=20
-> > > Quick, delete the word "driver" before Krzysztof sees it. :-p =20
-> >=20
-> > And also perhaps worth mentioning under the --- line that the x in the
-> > compatible is not a wildcard, for similar reasons ;)
->=20
-> Well it is, just one that is used for the IP naming to cover all
-> the different ADCs it works with.
-
-In "our" terms, when talking about bindings, is not a wildcard.
-As you say below, the x refers to a specific IP that works with several
-different ADCs, rather than attempting to use a single compatible for
-multiple different IPs.
-
-> "The AXI AD7606x IP core can be used to interface the AD7606B, AD7606C-16,
-> AD7606C-18, AD7605-4, AD7606, AD7606-6, AD7606-4, AD7607, AD7608 and AD76=
-09 devices using an FPGA."
->=20
-> Given that's what ADI calls the IP though we are stuck with it - however
-> 'wrong' they may be :)
->=20
-> But agreed, something to call out to keep me away from the x as well!
->=20
-> Jonathan
->=20
-
---mtIRv2w5CtHuPvfM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YPjQAKCRB4tDGHoIJi
-0o0mAP9eMQn+s7a+nwThGQcGXUZk3MxtSyhd97ETN+/FCdpAnwD/TjydttMpZlx7
-H0cHGADUZ/iWOgOCSL15f0/lAuASKQE=
-=+O5v
------END PGP SIGNATURE-----
-
---mtIRv2w5CtHuPvfM--
+-- 
+Ricardo Ribalda
 
