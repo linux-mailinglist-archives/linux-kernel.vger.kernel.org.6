@@ -1,121 +1,187 @@
-Return-Path: <linux-kernel+bounces-421844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B269D90D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:53:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C2D1649E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:53:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936416A33F;
-	Tue, 26 Nov 2024 03:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BVxtvhhA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F439D90F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:13:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6824E13A26F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C03289308
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:13:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C52413BAD7;
+	Tue, 26 Nov 2024 04:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQTECpwG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEB042A80;
+	Tue, 26 Nov 2024 04:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732593196; cv=none; b=lUgElt8XV0+IEPezC7GY7kRixwH2qDgfzCdD5OnjVZp8Ulb3yf5rfuXaeL44TTQy4sYPiwCAiGCuqa+BOv4saJy4zt2ugky/49DVwv6d+eMg3x3I808c+tNJmStW3HDndi0DclSjGUkSt4kh4TwKAxFdSv3ogcNqLHbcVVPrcnQ=
+	t=1732594392; cv=none; b=HFKhKPTDnXr6RsmdmoXwhR8D5M7vC98h4G3ZeTiN4eLsfwY8XIfj5xqDjq2nTceARoTEvfmpeQ+Yzc7hGGATtNESLrf4dwoRGRSMghFrlDPifRduKwHDMw2xuiggEyjGjdU2oKTeFri1bAoAUiL+7G6UYfqhuSJ/io7+/H+sn1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732593196; c=relaxed/simple;
-	bh=YX+92HzQxfeYlPYQFM0WstRDzwu80SSNNFTq5dHLS3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6Kar2dc7wX6nbRIZBhBNYhqUfVa0IgOptBg7J1QAvl8tLrf2k7d9Vmx5DNwTNsGnpeCXG7y0z68Y7sj5IDz+o8IGJdTuqKZSNLU1qzAq+RhZ6ONTIv+yKZNM2d7Hai7wJhx61ymHAzvtnGkU4jFGoDsAKRk4c3VWU03n38oeHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BVxtvhhA; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732593194; x=1764129194;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YX+92HzQxfeYlPYQFM0WstRDzwu80SSNNFTq5dHLS3g=;
-  b=BVxtvhhAkqD6l895oleQ/lkP590mxK9Ar3S6ekbiovO1Jp3LDYbIl+Kc
-   IxAvqhdCQuNYTqdkfr7gY6AhjBLnOQfKGb5ujU5sB+Um08xcOT3Gmpuwy
-   fsaVVpTBtVjlN3Lr/Wiuptnk4SvinI6v8DzdLN/ipQwympk3K3LQ9BDM/
-   BxsrH9eYZ3SQWMQ71FPU19qhJVadCQk2e0w3SQrDTqWyqCnQpHLp8cpPl
-   4CFSktzcPKH906XkXbTbWCVAGEFbTCABbWQPrBsPwgPqfXgUvKu0XJslk
-   F3yLSvdcOw0i5F7lKKQh3M144cLMlgnYdnTaVbDqdBb0UWXjtLIOa7BaP
-   g==;
-X-CSE-ConnectionGUID: eOgr3FqfTlGUstVYN4PX3g==
-X-CSE-MsgGUID: 7EwnPO4DROOV1Y0Li7xp4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43799552"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="43799552"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 19:53:13 -0800
-X-CSE-ConnectionGUID: TUsG2ZKKRLyduH54znYe5A==
-X-CSE-MsgGUID: UmwoPz8tTcK06k4i+lDp9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="96401973"
-Received: from liuzhao-optiplex-7080.sh.intel.com (HELO localhost) ([10.239.160.36])
-  by orviesa005.jf.intel.com with ESMTP; 25 Nov 2024 19:53:11 -0800
-Date: Tue, 26 Nov 2024 12:11:19 +0800
-From: Zhao Liu <zhao1.liu@intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	bp@alien8.de, rafael@kernel.org, lenb@kernel.org,
-	dave.jiang@intel.com, irenic.rajneesh@gmail.com,
-	david.e.box@intel.com
-Subject: Re: [PATCH 05/11] x86/cpu: Refresh DCA leaf reading code
-Message-ID: <Z0VKZ+AxQdcnaEax@intel.com>
-References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
- <20241120195334.2F676736@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1732594392; c=relaxed/simple;
+	bh=wvE1j6jYlustZGPgO4za1DJpvm8S+eQ4rSParDa6Lgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ubKQbR0FPLhCecU31WHHpShmcYEufta14YzKuvKj7tyTQjoyNgMwlzXeDT/AeoQWJCyToSKgqF7NIjjGc0XGhZVnai1lD/2Z5PSDfChBZidB3K0NyoGtDjmMAguB8e9CZW3JA9lUrQ8amuBCg/2XtC4Dr/+wMzd+G39aqss7ckE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQTECpwG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FB4C4CED7;
+	Tue, 26 Nov 2024 04:13:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732594392;
+	bh=wvE1j6jYlustZGPgO4za1DJpvm8S+eQ4rSParDa6Lgg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uQTECpwGCtXvgW65bmiUP/yGxJvz0r7mVGsCCqF/XcRfiIuZv42jYE+QPSuePckeG
+	 dVbnsZ00LE3d97xJR0ePFq8U2Yna8qZuuLQRvwb8eQI1wxd3k/KmMWjdEoDku2wqsM
+	 5TBjzWODkEd91uKinwhXClwNwOgrMStAMcYizAy7nilQEqoHOb5j+YoNl+se83vScv
+	 +42ovPaLlv1+IrKOuv6MgCjlDvHiXubKEt15Twjb9yqSSaQbJexzFs2nkEel1m063j
+	 NmiD8mcuO+uw07c8qlCBNtJ2U/ke+no1KjokLVaCPMMy7AyeXY4qgL1/BNNqPb5+Jm
+	 gINg2xT+7LbPQ==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffced84ba8so1223721fa.2;
+        Mon, 25 Nov 2024 20:13:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV36tjH5IWTg9U+yoJeP5cYMlIP0nOgwTMW9TM8ZRlRdHhacAvVHb2TomybLNz2KJCh1l+FmUmxZCCILk5G@vger.kernel.org, AJvYcCWiMo8rBXeRyO5pFfoVRCDqxRRNdbQIgAuAaUds1NqNU+jl3LJBlZvVL7EJP5EvlxLY4tLOwobeLMA8p69O@vger.kernel.org, AJvYcCWtm+xh8j5ZfA3+nzo23vWjc8319gOuzC7GRtjOiCI1XnbYDIAtyVub5qN9UetOcmkFuof5rysE8j3PjhJX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVR/6jAzLqJhdnCWtxqPC/69VG8h1t4z1SKm/CAdD6ZzXSLUZo
+	di+BFhvig6VY1Uz11gVSBVQkAAeYyyjwuEHFn7ckVEKmLDxkN2OJ2rO3sLOUb+C2yxFmBDBDCGk
+	tKjkyg8AXVKVvUwfawyIwynHGVRM=
+X-Google-Smtp-Source: AGHT+IGax4HC8zIQqLB8xrI0moZd82uV5VPNJpszQ12dMOodNR4A+EElpdPN8bJ83seoA/fkNz8n4WUh6BTdRHvKAZE=
+X-Received: by 2002:a05:6512:b86:b0:53d:d0f0:ad0d with SMTP id
+ 2adb3069b0e04-53dd39b55bemr7255517e87.46.1732594390702; Mon, 25 Nov 2024
+ 20:13:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120195334.2F676736@davehans-spike.ostc.intel.com>
+References: <20241120204125.52644-1-pvorel@suse.cz> <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
+ <20241121011720.GA69389@pevik> <CAF6AEGuzFNVd5fE+b+hKcC8xAOg7CrkPaYuWC6tCVmioutoOOw@mail.gmail.com>
+ <CAK7LNAQDMJUYUF7BaN10bwctW7fuHmSMrrAjMmn4s7P2ys5P+Q@mail.gmail.com> <20241122204157.GA125569@pevik>
+In-Reply-To: <20241122204157.GA125569@pevik>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 26 Nov 2024 13:12:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARDWAw6Yo9HdO-Sba=G_bohr_0uXuKtgNZSr1YLeQE2ug@mail.gmail.com>
+Message-ID: <CAK7LNARDWAw6Yo9HdO-Sba=G_bohr_0uXuKtgNZSr1YLeQE2ug@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
+To: Petr Vorel <pvorel@suse.cz>
+Cc: Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 11:53:34AM -0800, Dave Hansen wrote:
-> Date: Wed, 20 Nov 2024 11:53:34 -0800
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> Subject: [PATCH 05/11] x86/cpu: Refresh DCA leaf reading code
-> 
-> 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> The DCA leaf number is also hard-coded in the CPUID level dependency
-> table. Move its definition to common code and use it.
-> 
-> While at it, fix up the naming and types in the probe code.  All
-> CPUID data is provided in 32-bit registers, not 'unsigned long'.
-> Also stop referring to "level_9".  Move away from test_bit()
-> because the type is no longer an 'unsigned long'.
-> 
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> ---
-> 
->  b/arch/x86/include/asm/cpuid.h |    3 ++-
->  b/arch/x86/kernel/cpu/common.c |    2 +-
->  b/drivers/dma/ioat/dca.c       |    8 +++++---
->  3 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff -puN arch/x86/include/asm/cpuid.h~dca-leaf-checks-1 arch/x86/include/asm/cpuid.h
-> --- a/arch/x86/include/asm/cpuid.h~dca-leaf-checks-1	2024-11-20 11:44:17.721669887 -0800
-> +++ b/arch/x86/include/asm/cpuid.h	2024-11-20 11:44:17.725670041 -0800
-> @@ -19,7 +19,8 @@ enum cpuid_regs_idx {
->  	CPUID_EDX,
->  };
->  
-> -#define CPUID_MWAIT_LEAF		5
-> +#define CPUID_MWAIT_LEAF	0x5
+On Sat, Nov 23, 2024 at 5:42=E2=80=AFAM Petr Vorel <pvorel@suse.cz> wrote:
+>
+> > On Thu, Nov 21, 2024 at 10:49=E2=80=AFAM Rob Clark <robdclark@gmail.com=
+> wrote:
+>
+> > > On Wed, Nov 20, 2024 at 5:17=E2=80=AFPM Petr Vorel <pvorel@suse.cz> w=
+rote:
+>
+> > > > > On Thu, Nov 21, 2024 at 5:41=E2=80=AFAM Petr Vorel <pvorel@suse.c=
+z> wrote:
+>
+> > > > > > It will be used in the next commit for DRM_MSM.
+>
+> > > > > > Suggested-by: Rob Clark <robdclark@gmail.com>
+> > > > > > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > > > > > ---
+> > > > > > Changes v3->v4:
+> > > > > > * Move definition to the end of the file
+>
+>
+> > > > > I prefer to not check the tool.
+>
+> > > > Ack.
+>
+> > > > > Why don't you install python3?
+>
+> > > > Everybody installs it when it's required, the question is how to in=
+form about
+> > > > the dependency.
+>
+> > > > There build environments are minimal environments:
+> > > > * chroot (e.g. cross compilation)
+> > > > * container
+>
+> > > > These are used by both developers and distros.
+>
+> > > I don't think py3 is an _onerous_ dependency, but it has come up as a
+> > > surprise in minimal distro build environments at least once.. so I'd
+> > > be a fan of surfacing this dependency in a predictable/understandable
+> > > way (ie. I'm in favor of this patchset)
+>
+>
+> > "once" is a keyword here.
+>
+> > "/bin/sh: python3: not found" provides sufficient information
+> > about why the compilation failed, and you know what to do
+> > to fix the problem.
+> > This is good.
+>
+> > If you hide CONFIG_DRM_MSM silently
+> > due to missing python3, you may scratch your head
+> > "why drm/msm was not compiled?".
+> It's not on the list, but still visible in help (via search).
+>
+> > This is worse.
+>
+> I'm ok with this being refused. Yes, it's a trivial thing to find that py=
+thon3
+> is not installed. I wasn't sure myself if this is really better. Having
+> something like "requires $(PYTHON3)" would be best solution (e.g. not dis=
+able
+> the config, but exit before starting to build), but of course unless this
+> feature is needed for many modules it does not make sense to have it.
+> It's because kernel mostly contains everything (unless languages like pyt=
+hon
+> or any other dependency starts to be added). For this reason I like that
+> mconf-cfg.sh warns when missing ncurses devel files (even suggesting pack=
+age
+> names).
+>
+> Just to explain what was my motivation. CONFIG_DRM_MSM in in arm64 defcon=
+fig,
+> thus it will affect anybody who uses the defconfig (any distro will need =
+to add
+> it).
 
-Nit, this change can be merged into patch 1?
 
-Otherwise,
+arch/arm64/configs/defconfig is a multi-platform config.
 
-Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
+If CONFIG_DRM_MSM exists in arch/arm64/configs/defconfig
+and if you want to build arm64 defconfig, you need to install
+all necessary tools for that.
 
+
+
+>
+> It's needed only for Qualcomm arm64 devices only. But only for these devi=
+ces
+> which are mainlined enough to really use CONFIG_DRM_MSM (many of them are=
+n't in
+> that state).
+>
+> postmarketOS is the distribution which supports Qualcomm. It stores kerne=
+l
+> config for each device and devices often have individual maintainer. E.g.=
+ 175x
+> "once" :).
+
+
+If you do not want to be bothered by unnecessary drivers,
+you need to disable the relevant CONFIG option.
+(e.g, scripts/config -d  CONFIG_DRM_MSM)
+
+
+This is the standard way we have for many years.
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
