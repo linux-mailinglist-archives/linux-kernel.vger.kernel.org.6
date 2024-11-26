@@ -1,149 +1,217 @@
-Return-Path: <linux-kernel+bounces-422258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D13C9D96D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C06389D96E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:00:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E7FDB2A41A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:50:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28B99B2B784
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC401D4358;
-	Tue, 26 Nov 2024 11:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5301A1CEE8C;
+	Tue, 26 Nov 2024 11:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgty/1G3"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mtHb6wYa"
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E721D2F54
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D150C17B506;
+	Tue, 26 Nov 2024 11:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732621807; cv=none; b=D5Eeg4zV2tSZaT0xmx+dOdpYDZj5qXqd2tcv0biZOqqUgpSkwUxphFRnt/TO1E3dmWuvI8lAMd8a0cv1bnmHsi7NCxEnoc7+iWxH2dpj58vj28jrYdktT2e0c25GGaWh+aU2TnEg+n0i4u21FEAKKTN2M0wYZQjGt3CHOiuIQVM=
+	t=1732621995; cv=none; b=ClGYV1skS3S7ZTIlg/etbaLQHut1UMQEZ7nwk0QrKQ5y5K2C/1JJyQnYrO3KG7lcgY2sxgvI92unpZOqUCnY2GfVa1zUWLnfeQGG2Bgp6yagOb5zSDHQjNb+5D7mLZaoyK+myvE+WrD5BeA5FqSZ72Wji4Dgde9J6V7Vxq/iubs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732621807; c=relaxed/simple;
-	bh=GYAzIZYJriJDarwMYPy3fKsBjVIGPFVq3v3Ist4Cv34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=coqSWh+3ZQqpwXaTCLbYv6Hka0BZLTk/YYmdufong5iVqt5gF5tTx3ZN8UfTAqpFNZfu6Hg73/4zN6NKO79gwaiu+Hfl9MKGpIgfNQihZqPRXSbdkpyrkJei4iVRpMZrF58ZzOuiknp53HvSoSq9cGxIwWj24JC7fI0+XA2r1sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fgty/1G3; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dde5262fdso3289584e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:50:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732621804; x=1733226604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fqYIWnr/9c6FYDv/gsnp+xSAjuU0BBzGVs1Fhk5SJV0=;
-        b=fgty/1G3+JduMg/z5XrvcG6pDVwmtIDfGUNOGd8Kjf3RZ6zbC0wu8VkV0Gjy/tcQJt
-         ZxF1am5GU4QFXHKHXQ4YMs+iu9fqe6z7e0TWM3n/OEUPDb+ClLdT5TtjZDR8bXeorkne
-         lLw1QxRAenMTEkBptsWaZgdkET+iwbVLwd4wZEQ1TnL9ihaosJSXE8sLcRfegmKPoWAL
-         iCVN3II+CBlm5tUy0vpwIneOtFBF96UAHuSmDyEkbDABCfr4Ldx0gd1Vlqz1LkcTCFwZ
-         LRDILU2bGJN7Es1R2ePeyxsL+1qP52HSP+VLrznRCsBTjGeeMkRdUmEaxlkd92Sv2wIU
-         IQDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732621804; x=1733226604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fqYIWnr/9c6FYDv/gsnp+xSAjuU0BBzGVs1Fhk5SJV0=;
-        b=JG71ZPiYE1bb+1TAUBYkc2QKQ8sa7LAIqXYN4S7MzY2UM6/bVMZKbDP9Za0V9ogFm/
-         EHroXoKcvWI85tTUaYBhQdv1a+I0JUkGEaCKJY0b4IqeV/hmvChMnPOWVtuuNUpShDeU
-         f4M7IhnqyxqeNFNtxJlN+TCQKYHbIsrKL7DhCDhGynRmrY3fDxzGRMxq/DeeYXVfWqcV
-         TIFSRu1z0Qyw2FkJcK6CG043UOtzCSDVsHq8skq7nUwM8VT7OJXlaZvOW43LC8SFrDeW
-         6z0K2KqUbQx/G/pu/Ay99VZEIejKLPNBRA40+mPUeCdYsgvBgrxh3U537G2BKuDCumbO
-         p/5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsSA7TnQ34UwvhVxe3GJio7+DzMkko+GaIDPuTMc8tzeUEL2Mf/xBdVNhhhq4AezFjYoAd4lH7SAKP9CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr3alrDdiOqHrphYCwf2/oaKMKfmLNxDGNphFYtxhdpxWJ590+
-	eMTgkMPmTyBQ8nHdtWV7Exr9Kw7RIR0/0wuHDzSnzdvfuHqXlsue/per9EnlPGA=
-X-Gm-Gg: ASbGnctgcaeVeDobcWFCE0wIDjIHordF149aud7UH2ZfHLD6H9sj8BbtlqIU5iuhvA+
-	6x9gQ8Azv5/jHUVQw2OkMCuBj/BYRm+c9dDsWAef5EBiGtvxAUpr3mj0J/3noAKzSM+On0LY86Q
-	ch5UKdbyqIasGfiDjIQrZZ31ysKcal0OiobIgI5uKqqlb+ndNuvZbqNY3VDOgE3gmfyHOHF0S56
-	2PHsVfv5Ncv51+rpiEArcyq8UNQ5FYnEyPdryjG4aUrWX7j/TfEtTyJb/mHxWwuhccF1hDiyCvq
-	YgX8vPxAN9uiOfh5X/sZj/TWty2mNQ==
-X-Google-Smtp-Source: AGHT+IEwf7KXQVYfNFV+slWuA7VhV7yv3ijg8DCFUFvdFn5VXpHwrc27agE1AMv36gPa8ClDyuq3tQ==
-X-Received: by 2002:a05:6512:3e1f:b0:53d:d45d:a1f3 with SMTP id 2adb3069b0e04-53dd45da218mr7996168e87.22.1732621803839;
-        Tue, 26 Nov 2024 03:50:03 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd5d22347sm1807939e87.28.2024.11.26.03.50.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 03:50:02 -0800 (PST)
-Date: Tue, 26 Nov 2024 13:50:00 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
-	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcs8300: Adds SPMI support
-Message-ID: <wtnsepmoulfhm5ydbu7udtsrexaogaiqjyt737g6a2bhf4drnv@jwmktibj2swd>
-References: <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-0-28af84cb86f8@quicinc.com>
- <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-1-28af84cb86f8@quicinc.com>
+	s=arc-20240116; t=1732621995; c=relaxed/simple;
+	bh=QSLJPYKeKE/LW8VaQ2MUFPC8r6A3KNMXvW0CPu9ia88=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZOr5bX/hL1xy69sWbDkT+xvnd77cTDDt7ohL5F4atOkZ12kEx5+f/rS/dkmkmLxrX03NO+QngQl8m/LGzlXBngrIwH2I4z98bdm52QDmd8/eY3A8A/mj2m5bw5oXg4TP7Xd0hUVJYPpX2zyf7ghleuTK/ZxzbQaRnCsb89brQmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mtHb6wYa; arc=none smtp.client-ip=114.132.67.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1732621857;
+	bh=3IyYNYKhg9cg25HtN1zMBL24Lt/oEEdr6e1xvLsqY8c=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=mtHb6wYaBzsYhe9ymhPgOl1HEFRDpG4Pnykzth6TRCjDFffyZpAJ3F81OTjCr8yXP
+	 aQb/33xlqvKoeWfVxY5nvtNLJCqnKzdCoHoBeidsv6t/snG0INXfDtITy0ChhNEojb
+	 STxah+NRyDN+RJYbliNcqA3qvJX9WTdklcff3F8g=
+X-QQ-mid: bizesmtpip2t1732621841t6aj03c
+X-QQ-Originating-IP: neFej1rtBNIXVcsVuveykptdyWygG6LPVAwryrloF2U=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 26 Nov 2024 19:50:39 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10749667539244190580
+From: Qiang Ma <maqianga@uniontech.com>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	axboe@kernel.dk,
+	dwagner@suse.de,
+	ming.lei@redhat.com,
+	hare@suse.de
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Ma <maqianga@uniontech.com>
+Subject: [PATCH] scsi: Don't wait for completion of in-flight requests
+Date: Tue, 26 Nov 2024 19:50:08 +0800
+Message-Id: <20241126115008.31272-1-maqianga@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-1-28af84cb86f8@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: M/ypFxmAP/2/qKK9gOF+WhseRQBsRXYaKjMZzuJ8BIA8CMR4XsU6nzNQ
+	rM6cOW8+clCH0QV0yXSbXNgKU9D7usICQuiG+Iiz4ipYL1AyIArop8Z5IH4YxW3+mlqigYz
+	FSg4ggdhGoZJHBetGjZngL02/gdMw28fGdB6mW8kIyv0Q4c+xkiEi6bv7Plz3IRhDiHWjwL
+	AVp72zSMtlYwOnx3MGHBagahKujmxro13I6wynnQZpBEVDaqBzosJf28ytWMdy+8/8vAugk
+	q4fNVU4uXuAwX08u4Mfrb0vsvDGm7238pZgHWoGGW0Ojpx3Ojte7rrvd0FLw2CP+WQLbfnP
+	YFF2CJnoUqtWfAWMbIjfKzaNSQSYfL1NrDqI79lDqB33yWptuG2o+A8ghtPHjql7kR5qqGA
+	Iterta8UAvMt5G6106aJXOsZXN1wriLXDtYfKGyNGufiMpWOSaldglGPftI/eedKCbO8ZuP
+	zhA9sgLkecZjMIVTEvwYlFBrGZkWuY+Fkj+EXyJuJp7NXqXqAuZOPxylh1ghYNNScz7j8ei
+	dNjPOFd3RoscQsODgpaQXPUngs5pg5igaDVx3JDSFjesZ5h4q5jS7NdJci/S0vcknAkQXZQ
+	SUN5mwWet2h1wqs8EFlKmiq3gD+NoEslrKLgKRdY9GXec4ypVYm1Jo5V2mdTRUpDbNc2d7t
+	tFQAmSVhBGJBsRbsdKVcYuUJwPEYigyUq+BxUNG8ZwbOS5ysS0uQ7+QJB+S8rvSkOsA30db
+	d0enLX6oVuSt9a+eCHf0C/c2WKmGDddwkhfiox9OK7N6QqQjx8KL7ekllCl5C8qm51An7Zd
+	XJIxoxxKR514ps+Om3gz8mrDh+vAYLnR+oZdCvFfwYug6pN1dyx71yC2UfhJxDHvZC07Syt
+	83J6TcDCLwN2mz9m4j5FJ3q8ypnWn8B1XdZohqSe/HdaK/CVnlkH61OpKx36wgLDfQOk3My
+	XNZ9IVmmOAnVjbA==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Nov 26, 2024 at 05:35:05PM +0800, Tingguo Cheng wrote:
-> Add the SPMI bus arbiter node for QCS8300 SoC which connected
-> with PMICs on QCS8300 boards.
+Problem:
+When the system disk uses the scsi disk bus, The main
+qemu command line includes:
+...
+-device virtio-scsi-pci,id=scsi0 \
+-device scsi-hd,scsi-id=1,drive=drive-virtio-disk
+-drive id=drive-virtio-disk,if=none,file=/home/kvm/test.qcow2
+...
 
-Could you please comment, what is the version of the SPMI controller /
-arbiter?
+The dmesg log is as follows::
 
-> 
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 2c35f96c3f289d5e2e57e0e30ef5e17cd1286188..03bf72d6ec5c9ec92f6f53df9253c8c5953e13c4 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -939,6 +939,28 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
->  			#clock-cells = <0>;
->  		};
->  
-> +		spmi_bus: spmi@c440000 {
-> +			compatible = "qcom,spmi-pmic-arb";
-> +			reg = <0x0 0x0c440000 0x0 0x1100>,
-> +			      <0x0 0x0c600000 0x0 0x2000000>,
-> +			      <0x0 0x0e600000 0x0 0x100000>,
-> +			      <0x0 0x0e700000 0x0 0xa0000>,
-> +			      <0x0 0x0c40a000 0x0 0x26000>;
-> +			reg-names = "core",
-> +				    "chnls",
-> +				    "obsrvr",
-> +				    "intr",
-> +				    "cnfg";
-> +			qcom,channel = <0>;
-> +			qcom,ee = <0>;
-> +			interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "periph_irq";
-> +			interrupt-controller;
-> +			#interrupt-cells = <4>;
-> +			#address-cells = <2>;
-> +			#size-cells = <0>;
-> +		};
-> +
->  		tlmm: pinctrl@f100000 {
->  			compatible = "qcom,qcs8300-tlmm";
->  			reg = <0x0 0x0f100000 0x0 0x300000>;
-> 
-> -- 
-> 2.34.1
-> 
+[   50.304591][ T4382] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[   50.377002][ T4382] kexec_core: Starting new kernel
+[   50.669775][  T194] psci: CPU1 killed (polled 0 ms)
+[   50.849665][  T194] psci: CPU2 killed (polled 0 ms)
+[   51.109625][  T194] psci: CPU3 killed (polled 0 ms)
+[   51.319594][  T194] psci: CPU4 killed (polled 0 ms)
+[   51.489667][  T194] psci: CPU5 killed (polled 0 ms)
+[   51.709582][  T194] psci: CPU6 killed (polled 0 ms)
+[   51.949508][   T10] psci: CPU7 killed (polled 0 ms)
+[   52.139499][   T10] psci: CPU8 killed (polled 0 ms)
+[   52.289426][   T10] psci: CPU9 killed (polled 0 ms)
+[   52.439552][   T10] psci: CPU10 killed (polled 0 ms)
+[   52.579525][   T10] psci: CPU11 killed (polled 0 ms)
+[   52.709501][   T10] psci: CPU12 killed (polled 0 ms)
+[   52.819509][  T194] psci: CPU13 killed (polled 0 ms)
+[   52.919509][  T194] psci: CPU14 killed (polled 0 ms)
+[  243.214009][  T115] INFO: task kworker/0:1:10 blocked for more than 122 seconds.
+[  243.214810][  T115]       Not tainted 6.6.0+ #1
+[  243.215517][  T115] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  243.216390][  T115] task:kworker/0:1     state:D stack:0     pid:10    ppid:2      flags:0x00000008
+[  243.217299][  T115] Workqueue: events vmstat_shepherd
+[  243.217816][  T115] Call trace:
+[  243.218133][  T115]  __switch_to+0x130/0x1e8
+[  243.218568][  T115]  __schedule+0x660/0xcf8
+[  243.219013][  T115]  schedule+0x58/0xf0
+[  243.219402][  T115]  percpu_rwsem_wait+0xb0/0x1d0
+[  243.219880][  T115]  __percpu_down_read+0x40/0xe0
+[  243.220353][  T115]  cpus_read_lock+0x5c/0x70
+[  243.220795][  T115]  vmstat_shepherd+0x40/0x140
+[  243.221250][  T115]  process_one_work+0x170/0x3c0
+[  243.221726][  T115]  worker_thread+0x234/0x3b8
+[  243.222176][  T115]  kthread+0xf0/0x108
+[  243.222564][  T115]  ret_from_fork+0x10/0x20
+...
+[  243.254080][  T115] INFO: task kworker/0:2:194 blocked for more than 122 seconds.
+[  243.254834][  T115]       Not tainted 6.6.0+ #1
+[  243.255529][  T115] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  243.256378][  T115] task:kworker/0:2     state:D stack:0     pid:194   ppid:2      flags:0x00000008
+[  243.257284][  T115] Workqueue: events work_for_cpu_fn
+[  243.257793][  T115] Call trace:
+[  243.258111][  T115]  __switch_to+0x130/0x1e8
+[  243.258541][  T115]  __schedule+0x660/0xcf8
+[  243.258971][  T115]  schedule+0x58/0xf0
+[  243.259360][  T115]  schedule_timeout+0x280/0x2f0
+[  243.259832][  T115]  wait_for_common+0xcc/0x2d8
+[  243.260287][  T115]  wait_for_completion+0x20/0x38
+[  243.260767][  T115]  cpuhp_kick_ap+0xe8/0x278
+[  243.261207][  T115]  cpuhp_kick_ap_work+0x5c/0x188
+[  243.261688][  T115]  _cpu_down+0x120/0x378
+[  243.262103][  T115]  __cpu_down_maps_locked+0x20/0x38
+[  243.262609][  T115]  work_for_cpu_fn+0x24/0x40
+[  243.263059][  T115]  process_one_work+0x170/0x3c0
+[  243.263533][  T115]  worker_thread+0x234/0x3b8
+[  243.263981][  T115]  kthread+0xf0/0x108
+[  243.264405][  T115]  ret_from_fork+0x10/0x20
+[  243.264846][  T115] INFO: task kworker/15:2:639 blocked for more than 122 seconds.
+[  243.265602][  T115]       Not tainted 6.6.0+ #1
+[  243.266296][  T115] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  243.267143][  T115] task:kworker/15:2    state:D stack:0     pid:639   ppid:2      flags:0x00000008
+[  243.268044][  T115] Workqueue: events_freezable_power_ disk_events_workfn
+[  243.268727][  T115] Call trace:
+[  243.269051][  T115]  __switch_to+0x130/0x1e8
+[  243.269481][  T115]  __schedule+0x660/0xcf8
+[  243.269903][  T115]  schedule+0x58/0xf0
+[  243.270293][  T115]  schedule_timeout+0x280/0x2f0
+[  243.270763][  T115]  io_schedule_timeout+0x50/0x70
+[  243.271245][  T115]  wait_for_common_io.constprop.0+0xb0/0x298
+[  243.271830][  T115]  wait_for_completion_io+0x1c/0x30
+[  243.272335][  T115]  blk_execute_rq+0x1d8/0x278
+[  243.272793][  T115]  scsi_execute_cmd+0x114/0x238
+[  243.273267][  T115]  sr_check_events+0xc8/0x310 [sr_mod]
+[  243.273808][  T115]  cdrom_check_events+0x2c/0x50 [cdrom]
+[  243.274408][  T115]  sr_block_check_events+0x34/0x48 [sr_mod]
+[  243.274994][  T115]  disk_check_events+0x44/0x1b0
+[  243.275468][  T115]  disk_events_workfn+0x20/0x38
+[  243.275939][  T115]  process_one_work+0x170/0x3c0
+[  243.276410][  T115]  worker_thread+0x234/0x3b8
+[  243.276855][  T115]  kthread+0xf0/0x108
+[  243.277241][  T115]  ret_from_fork+0x10/0x20
 
+ftrace finds that it enters an endless loop, code as follows:
+
+if (percpu_ref_tryget(&hctx->queue->q_usage_counter)) {
+	while (blk_mq_hctx_has_requests(hctx))
+		msleep(5);
+	percpu_ref_put(&hctx->queue->q_usage_counter);
+}
+
+Solution:
+Refer to the loop and dm-rq in patch commit bf0beec0607d
+("blk-mq: drain I/O when all CPUs in a hctx are offline"),
+add a BLK_MQ_F_STACKING and set it for scsi, so we don't need
+to wait for completion of in-flight requests  to avoid a potential
+hung task.
+
+Fixes: bf0beec0607d ("blk-mq: drain I/O when all CPUs in a hctx are offline")
+
+Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+---
+ drivers/scsi/scsi_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index adee6f60c966..0a2d5d9327fc 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -2065,7 +2065,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
+ 	tag_set->queue_depth = shost->can_queue;
+ 	tag_set->cmd_size = cmd_size;
+ 	tag_set->numa_node = dev_to_node(shost->dma_dev);
+-	tag_set->flags = BLK_MQ_F_SHOULD_MERGE;
++	tag_set->flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_STACKING;
+ 	tag_set->flags |=
+ 		BLK_ALLOC_POLICY_TO_MQ_FLAG(shost->hostt->tag_alloc_policy);
+ 	if (shost->queuecommand_may_block)
 -- 
-With best wishes
-Dmitry
+2.20.1
+
 
