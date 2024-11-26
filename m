@@ -1,226 +1,149 @@
-Return-Path: <linux-kernel+bounces-422471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E529D9A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:00:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308A29D9A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:01:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECE916636F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D9828480C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E041D54E3;
-	Tue, 26 Nov 2024 15:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A641C1D5CDD;
+	Tue, 26 Nov 2024 15:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TChG3feU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Sqpc3IL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TChG3feU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Sqpc3IL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwU225ko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A84282F4;
-	Tue, 26 Nov 2024 15:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E278C6D;
+	Tue, 26 Nov 2024 15:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633207; cv=none; b=S/iekmv8tW65qtZR1ogoTZmOpyiNWMJRULojznUaSsizshBq1zbOYVlofOvQ0NmPy0BQrWIFYtVNUWF4kDKS6r5hNaBhoc+etwNKV1W7F89mrO+TSM9H2Xxxc0MN8Rt2HolrFXBuxkAnOE7HZwobPCXxIXWcVJbYX/HUOYRCEcQ=
+	t=1732633260; cv=none; b=dZOaK+OVYv+9BKFla0IRkjwgUYpdcfi94V5CSNkK3jWaIC5UzLIj6NTtTdQg6J6yp0NxQ4WIUdQqrZY0eq5TcmFlU23QbbqoQ+369F3ERofUAyJxF7aZ+TcmK1e10nI8rHUrqfdd+A9FfDI6WjsS7kZ62ZwsCUp1baELpXwydck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633207; c=relaxed/simple;
-	bh=DoiGgy2GMpffChB6xoMC8Rr15TKbfFL7c12ogdkKVuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTTaxvl90C0a9aMsy1PW8W0SknMAKUlhpQU39ZtFRX8YpAKzNrBqXfs2DzqMQeVSDbvc1eEEIo6zGWyA+517CRCckDh1lpwD8w3FV3jd2ymcXynlTFT+TgaSRWnAtCkmfpUBSh6DTELcW8HYwEsIAL38iCfFEy+Te3wCzBtjWWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TChG3feU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Sqpc3IL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TChG3feU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Sqpc3IL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 42BE81F74C;
-	Tue, 26 Nov 2024 15:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732633203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
-	b=TChG3feUYThOQm4JDiUtpNkqC1yV8f6e0mhls/rC9zPb/HGJ5DQEtG8OYc74ZqXbezMlf2
-	eWy3ml/5OJq/HiwkNRr1L0aOMvH3zkfBdKsdlTiY6WwwhKPkBYRkHNrqIVNOreGUDr/sXT
-	aojfr1VwGKh0ncbqwcsu2Citly6/A34=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732633203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
-	b=3Sqpc3IL5ebxP+hr9y+HcYlkeTFg2RP7wnyJLvAgJTPCTx4Ms8DDJvhqk2C/wB++RuiisF
-	sYVGnnm+Rw2KvOBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TChG3feU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3Sqpc3IL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732633203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
-	b=TChG3feUYThOQm4JDiUtpNkqC1yV8f6e0mhls/rC9zPb/HGJ5DQEtG8OYc74ZqXbezMlf2
-	eWy3ml/5OJq/HiwkNRr1L0aOMvH3zkfBdKsdlTiY6WwwhKPkBYRkHNrqIVNOreGUDr/sXT
-	aojfr1VwGKh0ncbqwcsu2Citly6/A34=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732633203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
-	b=3Sqpc3IL5ebxP+hr9y+HcYlkeTFg2RP7wnyJLvAgJTPCTx4Ms8DDJvhqk2C/wB++RuiisF
-	sYVGnnm+Rw2KvOBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36F5813890;
-	Tue, 26 Nov 2024 15:00:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ymBnDXPiRWesAwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 15:00:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DE02BA08CA; Tue, 26 Nov 2024 16:00:02 +0100 (CET)
-Date: Tue, 26 Nov 2024 16:00:02 +0100
-From: Jan Kara <jack@suse.cz>
-To: Anders Blomdell <anders.blomdell@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-Message-ID: <20241126150002.o6fbe4yei4fwsehz@quack3>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
- <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
+	s=arc-20240116; t=1732633260; c=relaxed/simple;
+	bh=NZzthVN5SkVCoTAI/WKvZ9z79jq+ZgEOlT7DZBX4Evc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DCeRcwb/Qs1MMdLiNeWm/R8+rMC+c0ROfmnbMvbv0dT8dD6iuv1FrRq8OeRg1TVpgFGXRHiaKaYIwmRcF+m+xGk5uceiS8sU2djZ+ztDMsUsxi8AvQnKK1pWN4KP91/8L11yozqE6OnhQZisr4goWokDsfxqzhw5TxhVrs8bQb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwU225ko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86C1BC4CECF;
+	Tue, 26 Nov 2024 15:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732633259;
+	bh=NZzthVN5SkVCoTAI/WKvZ9z79jq+ZgEOlT7DZBX4Evc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JwU225ko3PUOE7f0K643j8d3l6gXk5/X0t9Kb0cUOxuVf+LtsCMNMAGFr2JitGwfO
+	 SsV1wWMDzojyFxWDOkCa5NaRUaIkQ0n8Z6Rw+UaqpO08vsC2V+hRdemmq0xdbW9d+w
+	 z0espEbReBnDE8Ee/uSo17qCk+5+Gq/ndGBi9CqfraK8qO8iigt0JGxmHxuO9CKQiH
+	 YWcSLbRKNfQe6sCa0pVwHTJ/yTqvASvmZw+o8G2pbr3QvT/iRtaevxZE08TZxpvvew
+	 3VYTd85y4mmxd3Dp1+nSmyt+M0gHBrysrolwukRyaPc7Xzs92DUaoDSBpICGpLrGNp
+	 qvp9irEg0o0dw==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso56573811fa.1;
+        Tue, 26 Nov 2024 07:00:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2WDKvFHexji203y/CG5i6lTJcE3PhwhiFcpTa4ZQsFlPFcsAcTGsGWNcIm7nH0OmlNc+3fbeV00GBgmfP@vger.kernel.org, AJvYcCUgzlm5b50wLDQaRMLst/ArIWjc5pDAXnZag6rsw/Vq4SjkbbTuMWKmvtTgPop+NvUSfYUuOGNRGf/Z6v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjtWn3F90IImCM/6qY7BzIPwHTe30LFzvIs1v7YA0MkmhAXIyI
+	lb3PKYMGkw7APAXDGLxe40ksJruRnyHF0z0Gs4KL2bX3waljZqNOrzIiVvqPBw/80sA5p+kRfOk
+	fSwN/rkm3GnSafwBc4HTEuOHNv9c=
+X-Google-Smtp-Source: AGHT+IFZKLqpk2nX/urDuc5LTJL9ji5a+4EoVsoyepR9zHosSRwN3nRtO71BzIO+tcYyqaLjABLdAt5gBeQdlVM0CtU=
+X-Received: by 2002:a05:6512:3b0c:b0:53d:ed3e:4dbb with SMTP id
+ 2adb3069b0e04-53ded3e4ed3mr1198443e87.21.1732633258202; Tue, 26 Nov 2024
+ 07:00:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
-X-Rspamd-Queue-Id: 42BE81F74C
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241123132237.15700-1-sedat.dilek@gmail.com>
+In-Reply-To: <20241123132237.15700-1-sedat.dilek@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 27 Nov 2024 00:00:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
+Message-ID: <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Fix names of .tmp_vmlinux kallsyms files
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 26-11-24 13:49:09, Anders Blomdell wrote:
-> 
-> 
-> On 2024-11-26 11:37, Jan Kara wrote:
-> > On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
-> > > On 2024-11-26 02:48, Philippe Troin wrote:
-> > > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
-> > > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
-> > > > > we got terrible performance (lots of nfs: server x.x.x.x not
-> > > > > responding).
-> > > > > What triggered this problem was virtual machines with NFS-mounted
-> > > > > qcow2 disks
-> > > > > that often triggered large readaheads that generates long streaks of
-> > > > > disk I/O
-> > > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
-> > > > > area of the
-> > > > > machine.
-> > > > > 
-> > > > > A git bisect gave the following suspect:
-> > > > > 
-> > > > > git bisect start
-> > > > 
-> > > > 8< snip >8
-> > > > 
-> > > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
-> > > > > readahead: properly shorten readahead when falling back to
-> > > > > do_page_cache_ra()
-> > > > 
-> > > > Thank you for taking the time to bisect, this issue has been bugging
-> > > > me, but it's been non-deterministic, and hence hard to bisect.
-> > > > 
-> > > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
-> > > > slightly different setups:
-> > > > 
-> > > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
-> > > > "nfs server XXX not responding, still trying" that never recovers
-> > > > (while the server remains pingable and other NFSv3 volumes from the
-> > > > hanging server can be mounted).
-> > > > 
-> > > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
-> > > > several minutes) on random I/O. These stalls eventually recover.
-> > > > 
-> > > > I've built a 6.11.10 kernel with
-> > > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
-> > > > normal (no more NFS hangs, no more VM stalls).
-> > > > 
-> > > Some printk debugging, seems to indicate that the problem
-> > > is that the entity 'ra->size - (index - start)' goes
-> > > negative, which then gets cast to a very large unsigned
-> > > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
-> > > bug is still eludes me, though.
-> > 
-> > Thanks for the report, bisection and debugging! I think I see what's going
-> > on. read_pages() can go and reduce ra->size when ->readahead() callback
-> > failed to read all folios prepared for reading and apparently that's what
-> > happens with NFS and what can lead to negative argument to
-> > do_page_cache_ra(). Now at this point I'm of the opinion that updating
-> > ra->size / ra->async_size does more harm than good (because those values
-> > show *desired* readahead to happen, not exact number of pages read),
-> > furthermore it is problematic because ra can be shared by multiple
-> > processes and so updates are inherently racy. If we indeed need to store
-> > number of read pages, we could do it through ractl which is call-site local
-> > and used for communication between readahead generic functions and callers.
-> > But I have to do some more history digging and code reading to understand
-> > what is using this logic in read_pages().
-> > 
-> > 								Honza
-> Good, look forward to a quick revert, and don't forget to CC GKH, so I
-> get kernels recent  that work ASAP.
+On Sat, Nov 23, 2024 at 10:22=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com=
+> wrote:
+>
+> For details, see thread "kbuild-next: .tmp vmlinux syms files"
+>
+> INFO: This patch is against Linux v6.12.
+>
+> Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkjtm=
+4vSVKkXPTg+Q@mail.gmail.com/
 
-Well, Greg won't merge any patch until it gets upstream. I've sent the
-revert now to Andrew (MM maintainer), once it lands in Linus' tree, Greg
-will take it since stable tree is CCed.
+This is not the right way to input a commit description.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+
+
+>
+> Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
+> ---
+>  scripts/link-vmlinux.sh | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index a9b3f34a78d2..c9088436baff 100755
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -203,8 +203,8 @@ kallsymso=3D
+>  strip_debug=3D
+>
+>  if is_enabled CONFIG_KALLSYMS; then
+> -       true > .tmp_vmlinux.kallsyms0.syms
+> -       kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
+> +       true > .tmp_vmlinux0.kallsyms.syms
+> +       kallsyms .tmp_vmlinux0.kallsyms.syms .tmp_vmlinux0.kallsyms
+
+If you aim for naming consistency, this should be
+
+.tmp_vmlinux0.syms
+
+
+
+>  fi
+>
+>  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; then
+> @@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
+>         # Generate section listing all symbols and add it into vmlinux
+>         # It's a four step process:
+>         # 0)  Generate a dummy __kallsyms with empty symbol list.
+> -       # 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and secti=
+ons,
+> +       # 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and secti=
+ons,
+>         #     with a dummy __kallsyms.
+> -       #     Running kallsyms on that gives us .tmp_kallsyms1.o with
+> +       #     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.o =
+with
+>         #     the right size
+> -       # 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms sect=
+ion of
+> +       # 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms sect=
+ion of
+>         #     the right size, but due to the added section, some
+>         #     addresses have shifted.
+> -       #     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
+> +       #     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
+>         # 3)  That link may have expanded the kernel image enough that
+>         #     more linker branch stubs / trampolines had to be added, whi=
+ch
+>         #     introduces new names, which further expands kallsyms. Do an=
+other
+> --
+> 2.45.2
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
