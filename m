@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-421938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5678E9D9253
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:19:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D70E9D9254
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:19:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA297B230F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0421A166B59
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AB192D8C;
-	Tue, 26 Nov 2024 07:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A7F1922E1;
+	Tue, 26 Nov 2024 07:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RG7ZnBH4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJX82s/I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6981898FC;
-	Tue, 26 Nov 2024 07:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB31539A;
+	Tue, 26 Nov 2024 07:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732605549; cv=none; b=W8NqpT2FyPgZ4UIw1BUubMBasQqSCyku28ELiO5Pa/+nTMQbjU4OpmSKnzFQq8pn3BqCw3t4S9jVcVYu6bk5ya87p9aek3mz0S4VpUUPKTi3qMxKDPsbjJu5KmVLvPb3fIbkS22cGG2vLZze/29wVANlH/ukd7kvedYF2k1AEfE=
+	t=1732605578; cv=none; b=PtZ6yOVFA8iuS0Any+UpEBUOsDTxsP+d1aWQXqRGZQyrSCp444Eoy+fGU4Gct3RiW7+dh1beYFaLKKGmbcYMqVhzZt7JMmhYTAymZzryvqoml3E4Jsrl149NL8cPmxyMQuu9PgYclCcqxh+LyQHhIv/IySeCxdylM1rMpLaZjUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732605549; c=relaxed/simple;
-	bh=/h87k1FDp1WC2VzUI6S8sjWKocwTaIiJ1ZT69Aei16k=;
+	s=arc-20240116; t=1732605578; c=relaxed/simple;
+	bh=HSomVyHl0gtcUf54AJ+XL9F74D3YV9PujHFyv/ZbvGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvFlNy7nOH8SmNTAHgBLxUtmon2pCBVcwhcI0m7QQYI8VKlUnGUTvggJ8f7lGnqiNq73/NhvPZw/47aARnYNZijMkN+tqZdvoRz2m5/tzSOGzj37ZJfGWcAIKEAbQAl5EP7h45Gg+OJYhIxq2H/8GP02MIe0Vvo408tNg6o25X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RG7ZnBH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A12C4CED2;
-	Tue, 26 Nov 2024 07:19:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZPPDvWLpmcjR2gil5xupjR7RMlftBvyOLKQqHOlpTd3m9C13At9TDp2kDJC2vVy56Sbt2Vp0IGdUe46CzORx/Eoh7IqkakzObty8zwDCwROJyRH3nlSRNvRya9M8GueoXszYwMxXskq+ImYUCE3UDS5q+63aHM5iaiZrJZ5b/sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJX82s/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41931C4CECF;
+	Tue, 26 Nov 2024 07:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732605548;
-	bh=/h87k1FDp1WC2VzUI6S8sjWKocwTaIiJ1ZT69Aei16k=;
+	s=k20201202; t=1732605577;
+	bh=HSomVyHl0gtcUf54AJ+XL9F74D3YV9PujHFyv/ZbvGQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RG7ZnBH4LTJCfQ9mUNJN180Zjq5tHx7KY2IjU+qmvWBydXBh513L/x12lTxEhqXPx
-	 yPkWsZ4p3wQdICvAlp3ax2IO92HcRrNbU8JqDLQmTsfymbRaJr0ls/rU/oRy1Y8j7s
-	 9nwgeJapxwrPHjK1YkGwjJDJuS+OwiIccdw+qZRwkeQiv6MKNDsx0CZ+QMMghXOHw4
-	 SHTjeHsy3kJGLiQIHRO6UuNI3cT5dUxXmr09kNiyM5fqzM+RVKSapE7lS3R7pey0WE
-	 Jp8ZEsD0e9KbQu9mdPUc3FWpiDrAYtSsuC8UdYUZm5AWclxgj+2wpw3uQ6WY4vbEiB
-	 DmlKuQvrq+yQA==
-Date: Tue, 26 Nov 2024 08:19:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, 
-	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
- SoC support
-Message-ID: <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
-References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
- <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
+	b=VJX82s/IWBG7H86Bj8DsrRXuTAeeAWOqExr3Wr55zI5snB4kKIONrKgb17d9fIqCG
+	 iO0tECJMaGeeVzGINz72YzHnlUiLmmRYkii4lT1HEklTQi2o5InZUoRq51qT8KrxUO
+	 Ma9Nj1fOsTVT6wDk8dMESsOpNs6xRWCT/X4/jTs1hS6jOIBTE3RjN6D3WdQyzBNIBD
+	 lGzpU9pl3ZpQYbn4+Q/M45feAs2dW9S/NNEDDI4fd12rt/qMBuQv1PAzuHG6CWtIyR
+	 5+tYjtJ3HuCortyAReG6KAT7Ia3MKDJVMrtOwfQ9SB+YGbHtk6SCYKKqhAgI7fX2EI
+	 J8VimtJLVyP2w==
+Date: Mon, 25 Nov 2024 23:19:35 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 04/10] objtool: Handle PC relative relocation type
+Message-ID: <20241126071935.2vmsna54zsa5cdho@jpoimboe>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-5-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,91 +58,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <20241122045005.14617-5-yangtiezhu@loongson.cn>
 
-On Mon, Nov 25, 2024 at 06:31:00PM +0200, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+On Fri, Nov 22, 2024 at 12:49:59PM +0800, Tiezhu Yang wrote:
+> When compling with Clang on LoongArch, there exists 32 bit PC relative
+> relocation type, it needs to get the offset with "S + A - PC" according
+> to the spec of "ELF for the LoongArch Architecture".
 > 
-> Add S32G2/S32G3 SoCs compatible strings.
+> This is preparation for later patch on LoongArch, there is no effect for
+> the other archs with this patch.
 > 
-> A particularity for these SoCs is the presence of separate interrupts for
-> state change, bus errors, MBs 0-7 and MBs 8-127 respectively.
-> 
-> Increase maxItems of 'interrupts' to 4 for S32G based SoCs and keep the
-> same restriction for other SoCs.
-> 
-> Also, as part of this commit, move the 'allOf' after the required
-> properties to make the documentation easier to read.
-> 
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
-You made multiple changes afterwards, which invalidated the review. See
-submitting-patches which explain what to do in such case.
-
+> Link: https://github.com/loongson/la-abi-specs/blob/release/laelf.adoc
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 > ---
->  .../bindings/net/can/fsl,flexcan.yaml         | 46 +++++++++++++++++--
->  1 file changed, 42 insertions(+), 4 deletions(-)
+>  tools/objtool/check.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 19d1263e64e4..8733ca620cca 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2126,6 +2126,11 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>  		if (reloc->sym->type == STT_SECTION) {
+>  			/* Addend field in the relocation entry associated with the symbol */
+>  			offset = reloc_addend(reloc);
+> +			/* Handle the special cases compiled with Clang on LoongArch */
+> +			if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
+> +			    reloc_type(reloc) == R_LARCH_32_PCREL)
+> +				offset = reloc->sym->offset + reloc_addend(reloc) -
+> +					 (reloc_offset(reloc) - reloc_offset(table));
 
-...
+Please, no more "special cases".  It makes the common code unreadable.
+We should avoid checking 'elf->ehdr.e_machine' in check.c.
 
->      maxItems: 2
-> @@ -136,6 +143,37 @@ required:
->    - reg
->    - interrupts
->  
-> +allOf:
-> +  - $ref: can-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nxp,s32g2-flexcan
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          items:
-> +            - description:
-> +                Message Buffer interrupt for mailboxes 0-7
+Maybe there should be an arch-specific function arch_adjusted_addend().
 
-Keep it in one line.
-
-> +            - description:
-> +                Interrupt indicating that the CAN bus went to Buss Off state
-
-s/Interrupt indicating that//
-Buss Off state status?
-
-> +            - description:
-> +                Interrupt indicating that errors were detected on the CAN bus
-
-Error detection?
-
-> +            - description:
-> +                Message Buffer interrupt for mailboxes 8-127 (ored)
-> +        interrupt-names:
-> +          items:
-> +            - const: mb_0-7
-
-Choose one: either underscores or hyphens. Keep it consistent in your
-bindings.
-
-> +            - const: state
-> +            - const: berr
-> +            - const: mb_8-127
-
-Choose one: either underscores or hyphens. Keep it consistent in your
-bindings.
-
-> +      required:
-> +        - compatible
-> +        - reg
-> +        - interrupts
-> +        - interrupt-names
-
-What happened to "else:"? Why all other devices now have up to 4 interrupts?
-
-Best regards,
-Krzysztof
-
+-- 
+Josh
 
