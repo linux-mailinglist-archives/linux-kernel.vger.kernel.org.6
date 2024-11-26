@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-422693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140399D9D0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD359D9D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A537C1643FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A82D163ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F091DC1BD;
-	Tue, 26 Nov 2024 18:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2F81DC19D;
+	Tue, 26 Nov 2024 18:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzTY7WiW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Zidi2ytE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A128BA3F;
-	Tue, 26 Nov 2024 18:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53B2BA3F;
+	Tue, 26 Nov 2024 18:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732644046; cv=none; b=pHjs7zfPQ0olQVVMqTjDdSzReB+51KtzCCYFaH+QP2Rr81xGgWtuROLSTMryHj+8q3cZyhSh1xN4ge2BDbyaWYh/0DkzZWUj5r1gElGPIsvHiDNCRsNS19aAHmEQO9nwjjlP8yBS9o19bYiRI3yW5WKTDHsR/6I42JWr9wYodOY=
+	t=1732644205; cv=none; b=DbilFGQsX9kmu70Nv1avLhVkLadldexoBKmSV33uGtIREOp+RK3VhFdAAyimojTcEK9ob9W+UrJJdYpfvEMao1O+s56YXKWCaLLDRuOdvhZpOS9HgrCAnX31XMXuV5J8HloNM3O3iz8kJ+eRNpgxRRSAbZy+2TWfttLSSMIPfYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732644046; c=relaxed/simple;
-	bh=G8Ue2YK7XyQ4L5ZvfEYu5UVIaIPbpJF33cbai+gBe8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fOyWI0UUeknMvcF+BmSgjxlG420FvMoH1hDRamLccqeGj1HbHHEQwlydCpMQQG8fptmUgrAQlYMwgrcgyYM8h9574ZZcGiUS2FOiUuqsiScrStF/Ygc9ON/gSmYQovpUgi7eZ4FPC7bx0tBiGtAMPn7jEcS2XifIKhip0t3yYSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzTY7WiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8754C4CECF;
-	Tue, 26 Nov 2024 18:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732644046;
-	bh=G8Ue2YK7XyQ4L5ZvfEYu5UVIaIPbpJF33cbai+gBe8A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DzTY7WiW6agFtu1F9rj3T0NU74qthQblOg/IUQc0WeDagJTIFEDPv3M3HdS65PzP2
-	 rYZsSXDWF//Nz3Bi5AiuP40qkSwjwaxG4G6cPAalOcMWY4mU7G6KU65amdxslHENDB
-	 ERxsiPCJ75CHZg4CBdVXokuwtIzw9F9VhKgp0+k8USTzPyFVyuitfegIZ7qFBZz81V
-	 8LiFBQEDXUEZYp+jqJ40rtwJ6Ldy9FNfWHgJXDR/QvxC2KYyZSwFB/ZcgO9R+mBy0C
-	 GmWufpQMv+2ytlRnxviUtvrdDyBewmCw8UnLnob5QrruFBAb0jHzxY4QJIMsJAvGFT
-	 wBeqoAAzXfrVQ==
-Date: Tue, 26 Nov 2024 18:00:35 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
- aardelean@baylibre.com, adureghello@baylibre.com
-Subject: Re: [PATCH 0/9] Add support for Software mode on AD7606's iio
- backend driver
-Message-ID: <20241126180035.4a2afb01@jic23-huawei>
-In-Reply-To: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
-References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732644205; c=relaxed/simple;
+	bh=pdTTYo9kWZLupUThwzWLuDxQW1iSfan8aDIdO59wlHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Emp2do7jzZt3Zm1E5EN2pJOkooo//OJ1n7Kg7Gp9I4QmzMV3cQEIqYre59xwq03t/E7eEsjr4oMGi+vQU0Fq138rFJH/D2qLGLUur9itukJS84bNmytTn3w9boD8D3YB0VabsMTHeAbatRpsK9s4qKASUF3G6TD3dcKXao7utYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Zidi2ytE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D33440E021C;
+	Tue, 26 Nov 2024 18:03:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id f21JIecHF2Fy; Tue, 26 Nov 2024 18:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732644195; bh=Bsaddr8mpxbj3IJtqOhkqhnOoXM0E17G8MEuaDojGgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zidi2ytEhPpWQcHKUSX8k4v//KDnDq+1A7lILhnoHDD82yxmurlw3wsUwKCKvGadX
+	 BJHnNhX9vjnnL2lXTavQ2A9GkxXUChuQ+tUMMof0JnL/tGKvnPHi5dxEB+o7vZYH/2
+	 hM101JTChjbT7fvWRckcwj1c0NM1ZLrkwuedb3gYQ4WtN7ZD/WEALcRsZGb4k5ifcp
+	 3uBk9lYqd9H9ZFZq7x3Vj97IbhfLa6I6NYkHw5zR8wM4AX7NQ5aAb4d1XZvKjjKviy
+	 X0H5RP4h2tvDoXxgH8lkdWY+ezJSExpEm2d8KH0joDt+Qhhud6IkcT9phY/scZABG8
+	 4+dOWfwJnNhWztZ+iC2cDLBKoOAiCzzdgUAPIugzUQMj6qN335cVlF/7Hzb9cluRY/
+	 kmORErgng+wwhs6iBn+vpPg5Pyu2iiCN1k0NiKsncyQSJ5zWYL6y9PHymUsLHZrpAc
+	 EOhc4VRzep6tHukAX3OZaYzd4ogPcEXyecInHuUIauPGTaisd8mYeWtlb1saX68DRJ
+	 b3wGKvUgrDUSV2Cz7gQmx3UI67K3bhF1Hcxs7DcquXJgpzWzMS5DtHsR7TH1wzDKnL
+	 fz07IlPkpJPw0dKDNISrwdh88526n64ur20yV79VFXG7AleySGeO8L56NPncC/LKM3
+	 0bRAmvpTyg+vELArFUkKhNJY=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C0C1740E01A8;
+	Tue, 26 Nov 2024 18:02:59 +0000 (UTC)
+Date: Tue, 26 Nov 2024 19:02:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
+ MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
+Message-ID: <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-10-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241001050110.3643764-10-xin@zytor.com>
 
-On Thu, 21 Nov 2024 10:18:22 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
-
-> This series adds the support for software mode when the ADC is used in
-> iio_backend mode.
-
-I'm not sure form this description what "software mode" means.
-
-Perhaps some more info on that for v2?
-
-> The bus access is based on Angelo's ad3552 implementation, that is we
-> have a particular compatible for the backend (here axi-adc) version
-> supporting the ad7606's register writing, and the ad7606 is defined as a
-> child node of the backend in the devicetree.
-> Small changes are added to make the code a bit more straightforward to
-> understand, and more compact.
+On Mon, Sep 30, 2024 at 10:00:52PM -0700, Xin Li (Intel) wrote:
+> No need to use MAX_POSSIBLE_PASSTHROUGH_MSRS in the definition of array
+> vmx_possible_passthrough_msrs, as the macro name indicates the _possible_
+> maximum size of passthrough MSRs.
 > 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
-> Guillaume Stols (9):
->       iio: adc: ad7606: Fix hardcoded offset in the ADC channels
->       dt-bindings: iio: dac: adi-axi-adc: Add ad7606 variant
->       iio:adc: ad7606: Move the software mode configuration
->       iio: adc: ad7606: Move software functions into common file
->       iio: adc: adi-axi-adc: Add platform children support
->       iio: adc: adi-axi-adc: Add support for AD7606 register writing
->       iio: adc: ad7606: change r/w_register signature
->       iio: adc: ad7606: Simplify channel macros
->       iio: adc: ad7606: Add support for writing registers when using backend
-> 
->  .../devicetree/bindings/iio/adc/adi,axi-adc.yaml   |   7 +
->  drivers/iio/adc/ad7606.c                           | 202 +++++++++++++++++----
->  drivers/iio/adc/ad7606.h                           | 113 ++++++++----
->  drivers/iio/adc/ad7606_bi.h                        |  16 ++
->  drivers/iio/adc/ad7606_par.c                       |  58 +++++-
->  drivers/iio/adc/ad7606_spi.c                       | 141 +-------------
->  drivers/iio/adc/adi-axi-adc.c                      | 178 +++++++++++++++++-
->  7 files changed, 500 insertions(+), 215 deletions(-)
-> ---
-> base-commit: 33d38f912d5ca05501c9bbfe14e0150da9ca85b6
-> change-id: 20241009-ad7606_add_iio_backend_software_mode-567d9c392243
-> 
-> Best regards,
-> --
-> Guillaume Stols <gstols@baylibre.com>
-> 
-> 
+> Use ARRAY_SIZE instead of MAX_POSSIBLE_PASSTHROUGH_MSRS when the size of
+> the array is needed and add a BUILD_BUG_ON to make sure the actual array
+> size does not exceed the possible maximum size of passthrough MSRs.
 
+This commit message needs to talk about the why - not the what. Latter should
+be visible from the diff itself.
+
+What you're not talking about is the sneaked increase of
+MAX_POSSIBLE_PASSTHROUGH_MSRS to 64. Something you *should* mention because
+the array is full and blablabla...
+
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index e0d76d2460ef..e7409f8f28b1 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -356,7 +356,7 @@ struct vcpu_vmx {
+>  	struct lbr_desc lbr_desc;
+>  
+>  	/* Save desired MSR intercept (read: pass-through) state */
+> -#define MAX_POSSIBLE_PASSTHROUGH_MSRS	16
+> +#define MAX_POSSIBLE_PASSTHROUGH_MSRS	64
+						^^^
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
