@@ -1,286 +1,195 @@
-Return-Path: <linux-kernel+bounces-422770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB1C9D9DF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:19:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6FF9D9DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5A42836A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9014E282EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7AE1DE3DE;
-	Tue, 26 Nov 2024 19:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y2mXsQ6h";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ANhDph5O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042CD1DE894;
+	Tue, 26 Nov 2024 19:20:34 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205AE18858E;
-	Tue, 26 Nov 2024 19:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA31DE2AA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 19:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732648790; cv=none; b=dJgvVrIDaar0O1+kWYJ0CXCE76F5AEz4cjXap3U7Ze2AFBtGmcrH4brk1unbv71IH+xvEuHg6pW5OVMCp5dPptDdCmSHVvlsxNuZZx/oy+wecFC4mOVzXSi8OsiZnDUQAKFNkT0XfjO9txdv+ZC4XqFZ984GBWcY6bk127fpxK0=
+	t=1732648833; cv=none; b=Dd6u09Y/tWvC75BEcAl6lo7V0qdbP49T87Eh9m51jI4eNh/iyC9iRxpnmPBj9xkzI5u/GNlYir7db/aChXcWBfVWRQcrVYydcHsgEViBa/KwYW/CHAsvdknArtR5CpIWn181mhgCNBewgNrF1zEDK9oeaGcZeY2wVfA91ZAJd84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732648790; c=relaxed/simple;
-	bh=Bi199jctiM2exmO/SsyMikZ+Iwzu20xhIHBWn5X9604=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=X5zq4dDwOl/CzDE7M/C4qrtZ1DJnJUlanFVzB+milq0Tu/gHWw1sgmYrQy3eBj42tKiXqQedZbvVY2Lzwk4oYIVgQhdUNuuQkz1TAmsOSyIc3etpLDOwf3oEs/neO6E/EixLFO6FlIUuuIZl9a8+xc4kjxCI2ttVga4ZB51JHAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y2mXsQ6h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ANhDph5O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 26 Nov 2024 19:19:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732648787;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qiiVOw6VUTuBXa3p1meDtG4n71kgXSDbg0KApYqx8oI=;
-	b=Y2mXsQ6hyCLgXfad+xZVNx5tP0j0B/pU4uSBJxKZSeGr2j/vLRFDfkrJaZvJN+1GPGyDQW
-	avGE/UkdkTpF2EUJR3ftQhnxkFTYBYA8anqjf7yyWFndJu0+hb5rg1isXzsa+nVZp7bAIc
-	HQtYfBRr1NLsQo4FCZ8+VeoIjH0T8yA9LpqMpjcbDbdWo0me7GUNz4x4H+BLh0TX5SDcAj
-	NAoegUP8vMl8U+xqr4Ev4cwBhSS2KYf33vS+UYdRQoVWlgeUQZjcIORBiwozp1+S67onFz
-	G7b77wInNkKAAEexcUwGV9wCBUrymvV8CA1grxDxugvbDhqzlTK/9IfNzX1lAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732648787;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qiiVOw6VUTuBXa3p1meDtG4n71kgXSDbg0KApYqx8oI=;
-	b=ANhDph5OPDXuPDdtRFSzxYS+7O1jOfFq48hmDGSroNEUzSToJOKhj+29lcPqlXKarVo7hD
-	EU1SK+QMteL54uAw==
-From:
- tip-bot2 for Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/urgent] irqchip: Switch back to struct platform_driver::remove()
-Cc: u.kleine-koenig@baylibre.com, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241109173828.291172-2-u.kleine-koenig@baylibre.com>
-References: <20241109173828.291172-2-u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1732648833; c=relaxed/simple;
+	bh=jFyZwsGMCU8FrvPZWoFpE+DRWymecF9cykm/vJJKUuc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Um0yU6J6ZAyxSuEHSIgUIc80a0eil9P/yJ73/l63dJMbICQp5m1CamE6tIFdqo7JHD6cg9Egq/8hG8u04VBcuMsCxwM51FUm5W8VPj8a4/hJdiPulysRu43bA14ZZi+W/kTYJVJ7uMgSXMYGiofCBGOgruOsYsvoBSHPzUxnweA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-84386a9b7e2so179144239f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:20:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732648831; x=1733253631;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t1S8FvUc7VFQlT6fVHyI7KjfQfQED//ewUahkBiaLpU=;
+        b=QguvCsmJIRlrlNk4rUH9MhaVR3lfbyPfsYnU6/omqDKjVQMhThRLkvM81mLohyruKG
+         N7ei7CVE21X/gIwDIaqYvtIT3xyw1dZZLJevA3wFhsv6B4XYZIletjCTn49CK6SlJgwY
+         3ME44VxxbmeRtzVIR5jvFfXbtH6GziAOZ3HXuj16fpVd89awv5Wrl6XkRinOrTaqCjz/
+         NE1lhaS9ai/Xh0jYKugfMbuoWgPZqLYOjWKyK3Dw/ktWhjPwQvXlJxX+5ugk78CAl/RQ
+         MGBTfyqME23TgapqxXJscXEm/vCRX3RrzpELElzW9YLscKINPBE2oJ2K2OMfBnoT5OGX
+         9ljw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvQroN6STPPWwSRwSTP0BtaNwP4wbojzOKmy6zspvpCOWGCFEFKHRf32RxKg4nX8NtJxNavw7hsG6Ib2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfvbfXu/2l7oHRZoW6/Dy7r6rrOJTzL8I2TOtXXoL8elXbaUwz
+	uSD6WG4iD22gRJfClo1UsOoIfKjnMOHWs68n1bNZBpZPnPZL6mYlL5EmVxQPWb4Lm+asliBDuK/
+	6MyKjEv8HyBJZzEMytivD3NzyKzCETmVMTNgCyvWEdSfW9tzKACZY5VM=
+X-Google-Smtp-Source: AGHT+IFNW3dg0ifccr/8C83+Wzy+xf77E2fHLFU6G9uJNr38nFIEFwUfwR+rwz0nb8o5Uv15WMfLvwdc/fvzWxSbUU70F1Lg744u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173264878636.412.16179759316815548729.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1a87:b0:3a7:7ec0:a3dc with SMTP id
+ e9e14a558f8ab-3a7c557d4abmr2159745ab.14.1732648831107; Tue, 26 Nov 2024
+ 11:20:31 -0800 (PST)
+Date: Tue, 26 Nov 2024 11:20:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67461f7f.050a0220.1286eb.0021.GAE@google.com>
+Subject: [syzbot] [net?] general protection fault in modify_prefix_route
+From: syzbot <syzbot+1de74b0794c40c8eb300@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the irq/urgent branch of tip:
+Hello,
 
-Commit-ID:     cc47268cb4841c84d54f0ac73858986bcd515eb4
-Gitweb:        https://git.kernel.org/tip/cc47268cb4841c84d54f0ac73858986bcd5=
-15eb4
-Author:        Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-AuthorDate:    Sat, 09 Nov 2024 18:38:27 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 26 Nov 2024 20:09:06 +01:00
+syzbot found the following issue on:
 
-irqchip: Switch back to struct platform_driver::remove()
+HEAD commit:    7eef7e306d3c Merge tag 'for-6.13/dm-changes' of git://git...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12f4d778580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c44a32edb32752c
+dashboard link: https://syzkaller.appspot.com/bug?extid=1de74b0794c40c8eb300
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142375c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146f1530580000
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove() return
-void") .remove() is (again) the right callback to implement for platform
-drivers.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9177dd9a0902/disk-7eef7e30.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f090c1d25c15/vmlinux-7eef7e30.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1a031b77d55e/bzImage-7eef7e30.xz
 
-Convert all platform drivers below drivers/irqchip/ to use .remove(), with
-the eventual goal to drop struct platform_driver::remove_new(). As
-.remove() and .remove_new() have the same prototypes, conversion is done by
-just changing the structure member name in the driver initializer.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1de74b0794c40c8eb300@syzkaller.appspotmail.com
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241109173828.291172-2-u.kleine-koenig@bay=
-libre.com
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+CPU: 1 UID: 0 PID: 5837 Comm: syz-executor888 Not tainted 6.12.0-syzkaller-09567-g7eef7e306d3c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__lock_acquire+0xe4/0x3c40 kernel/locking/lockdep.c:5089
+Code: 08 84 d2 0f 85 15 14 00 00 44 8b 0d ca 98 f5 0e 45 85 c9 0f 84 b4 0e 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 96 2c 00 00 49 8b 04 24 48 3d a0 07 7f 93 0f 84
+RSP: 0018:ffffc900035d7268 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000006 RSI: 1ffff920006bae5f RDI: 0000000000000030
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff90608e17 R11: 0000000000000001 R12: 0000000000000030
+R13: ffff888036334880 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000555579e90380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc59cc4278 CR3: 0000000072b54000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+ __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+ _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
+ spin_lock_bh include/linux/spinlock.h:356 [inline]
+ modify_prefix_route+0x30b/0x8b0 net/ipv6/addrconf.c:4831
+ inet6_addr_modify net/ipv6/addrconf.c:4923 [inline]
+ inet6_rtm_newaddr+0x12c7/0x1ab0 net/ipv6/addrconf.c:5055
+ rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6920
+ netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2541
+ netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
+ netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1347
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1891
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg net/socket.c:726 [inline]
+ ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2583
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2637
+ __sys_sendmsg+0x16e/0x220 net/socket.c:2669
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd1dcef8b79
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc59cc4378 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fd1dcef8b79
+RDX: 0000000000040040 RSI: 0000000020000140 RDI: 0000000000000004
+RBP: 00000000000113fd R08: 0000000000000006 R09: 0000000000000006
+R10: 0000000000000006 R11: 0000000000000246 R12: 00007ffc59cc438c
+R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0xe4/0x3c40 kernel/locking/lockdep.c:5089
+Code: 08 84 d2 0f 85 15 14 00 00 44 8b 0d ca 98 f5 0e 45 85 c9 0f 84 b4 0e 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 96 2c 00 00 49 8b 04 24 48 3d a0 07 7f 93 0f 84
+RSP: 0018:ffffc900035d7268 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000006 RSI: 1ffff920006bae5f RDI: 0000000000000030
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff90608e17 R11: 0000000000000001 R12: 0000000000000030
+R13: ffff888036334880 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000555579e90380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc59cc4278 CR3: 0000000072b54000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	08 84 d2 0f 85 15 14 	or     %al,0x1415850f(%rdx,%rdx,8)
+   7:	00 00                	add    %al,(%rax)
+   9:	44 8b 0d ca 98 f5 0e 	mov    0xef598ca(%rip),%r9d        # 0xef598da
+  10:	45 85 c9             	test   %r9d,%r9d
+  13:	0f 84 b4 0e 00 00    	je     0xecd
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	4c 89 e2             	mov    %r12,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 96 2c 00 00    	jne    0x2cca
+  34:	49 8b 04 24          	mov    (%r12),%rax
+  38:	48 3d a0 07 7f 93    	cmp    $0xffffffff937f07a0,%rax
+  3e:	0f                   	.byte 0xf
+  3f:	84                   	.byte 0x84
+
+
 ---
- drivers/irqchip/irq-imgpdc.c              | 2 +-
- drivers/irqchip/irq-imx-intmux.c          | 2 +-
- drivers/irqchip/irq-imx-irqsteer.c        | 2 +-
- drivers/irqchip/irq-keystone.c            | 2 +-
- drivers/irqchip/irq-ls-scfg-msi.c         | 2 +-
- drivers/irqchip/irq-madera.c              | 2 +-
- drivers/irqchip/irq-mvebu-pic.c           | 2 +-
- drivers/irqchip/irq-pruss-intc.c          | 2 +-
- drivers/irqchip/irq-renesas-intc-irqpin.c | 2 +-
- drivers/irqchip/irq-renesas-irqc.c        | 2 +-
- drivers/irqchip/irq-renesas-rza1.c        | 2 +-
- drivers/irqchip/irq-ts4800.c              | 2 +-
- 12 files changed, 12 insertions(+), 12 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/irqchip/irq-imgpdc.c b/drivers/irqchip/irq-imgpdc.c
-index b42ed68..85f80ba 100644
---- a/drivers/irqchip/irq-imgpdc.c
-+++ b/drivers/irqchip/irq-imgpdc.c
-@@ -479,7 +479,7 @@ static struct platform_driver pdc_intc_driver =3D {
- 		.of_match_table	=3D pdc_intc_match,
- 	},
- 	.probe		=3D pdc_intc_probe,
--	.remove_new	=3D pdc_intc_remove,
-+	.remove		=3D pdc_intc_remove,
- };
-=20
- static int __init pdc_intc_init(void)
-diff --git a/drivers/irqchip/irq-imx-intmux.c b/drivers/irqchip/irq-imx-intmu=
-x.c
-index 511adfa..787543d 100644
---- a/drivers/irqchip/irq-imx-intmux.c
-+++ b/drivers/irqchip/irq-imx-intmux.c
-@@ -361,6 +361,6 @@ static struct platform_driver imx_intmux_driver =3D {
- 		.pm		=3D &imx_intmux_pm_ops,
- 	},
- 	.probe		=3D imx_intmux_probe,
--	.remove_new	=3D imx_intmux_remove,
-+	.remove		=3D imx_intmux_remove,
- };
- builtin_platform_driver(imx_intmux_driver);
-diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irq=
-steer.c
-index 75a0e98..b0e9788 100644
---- a/drivers/irqchip/irq-imx-irqsteer.c
-+++ b/drivers/irqchip/irq-imx-irqsteer.c
-@@ -328,6 +328,6 @@ static struct platform_driver imx_irqsteer_driver =3D {
- 		.pm		=3D &imx_irqsteer_pm_ops,
- 	},
- 	.probe		=3D imx_irqsteer_probe,
--	.remove_new	=3D imx_irqsteer_remove,
-+	.remove		=3D imx_irqsteer_remove,
- };
- builtin_platform_driver(imx_irqsteer_driver);
-diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
-index 30f1979..808c781 100644
---- a/drivers/irqchip/irq-keystone.c
-+++ b/drivers/irqchip/irq-keystone.c
-@@ -211,7 +211,7 @@ MODULE_DEVICE_TABLE(of, keystone_irq_dt_ids);
-=20
- static struct platform_driver keystone_irq_device_driver =3D {
- 	.probe		=3D keystone_irq_probe,
--	.remove_new	=3D keystone_irq_remove,
-+	.remove		=3D keystone_irq_remove,
- 	.driver		=3D {
- 		.name	=3D "keystone_irq",
- 		.of_match_table	=3D of_match_ptr(keystone_irq_dt_ids),
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-=
-msi.c
-index 1aef5c4..c0e1aaf 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -418,7 +418,7 @@ static struct platform_driver ls_scfg_msi_driver =3D {
- 		.of_match_table	=3D ls_scfg_msi_id,
- 	},
- 	.probe		=3D ls_scfg_msi_probe,
--	.remove_new	=3D ls_scfg_msi_remove,
-+	.remove		=3D ls_scfg_msi_remove,
- };
-=20
- module_platform_driver(ls_scfg_msi_driver);
-diff --git a/drivers/irqchip/irq-madera.c b/drivers/irqchip/irq-madera.c
-index acceb6e..b32982c 100644
---- a/drivers/irqchip/irq-madera.c
-+++ b/drivers/irqchip/irq-madera.c
-@@ -236,7 +236,7 @@ static void madera_irq_remove(struct platform_device *pde=
-v)
-=20
- static struct platform_driver madera_irq_driver =3D {
- 	.probe		=3D madera_irq_probe,
--	.remove_new	=3D madera_irq_remove,
-+	.remove		=3D madera_irq_remove,
- 	.driver =3D {
- 		.name	=3D "madera-irq",
- 		.pm	=3D &madera_irq_pm_ops,
-diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
-index 08b0cc8..bd1e06e 100644
---- a/drivers/irqchip/irq-mvebu-pic.c
-+++ b/drivers/irqchip/irq-mvebu-pic.c
-@@ -183,7 +183,7 @@ MODULE_DEVICE_TABLE(of, mvebu_pic_of_match);
-=20
- static struct platform_driver mvebu_pic_driver =3D {
- 	.probe		=3D mvebu_pic_probe,
--	.remove_new	=3D mvebu_pic_remove,
-+	.remove		=3D mvebu_pic_remove,
- 	.driver =3D {
- 		.name		=3D "mvebu-pic",
- 		.of_match_table	=3D mvebu_pic_of_match,
-diff --git a/drivers/irqchip/irq-pruss-intc.c b/drivers/irqchip/irq-pruss-int=
-c.c
-index 060eb00..bee0198 100644
---- a/drivers/irqchip/irq-pruss-intc.c
-+++ b/drivers/irqchip/irq-pruss-intc.c
-@@ -648,7 +648,7 @@ static struct platform_driver pruss_intc_driver =3D {
- 		.suppress_bind_attrs	=3D true,
- 	},
- 	.probe		=3D pruss_intc_probe,
--	.remove_new	=3D pruss_intc_remove,
-+	.remove		=3D pruss_intc_remove,
- };
- module_platform_driver(pruss_intc_driver);
-=20
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-=
-renesas-intc-irqpin.c
-index 9ad3723..954419f 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -584,7 +584,7 @@ static SIMPLE_DEV_PM_OPS(intc_irqpin_pm_ops, intc_irqpin_=
-suspend, NULL);
-=20
- static struct platform_driver intc_irqpin_device_driver =3D {
- 	.probe		=3D intc_irqpin_probe,
--	.remove_new	=3D intc_irqpin_remove,
-+	.remove		=3D intc_irqpin_remove,
- 	.driver		=3D {
- 		.name		=3D "renesas_intc_irqpin",
- 		.of_match_table	=3D intc_irqpin_dt_ids,
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas=
--irqc.c
-index 76026e0..cbce8ff 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -247,7 +247,7 @@ MODULE_DEVICE_TABLE(of, irqc_dt_ids);
-=20
- static struct platform_driver irqc_device_driver =3D {
- 	.probe		=3D irqc_probe,
--	.remove_new	=3D irqc_remove,
-+	.remove		=3D irqc_remove,
- 	.driver		=3D {
- 		.name		=3D "renesas_irqc",
- 		.of_match_table	=3D irqc_dt_ids,
-diff --git a/drivers/irqchip/irq-renesas-rza1.c b/drivers/irqchip/irq-renesas=
--rza1.c
-index f05afe8..d4e6a68 100644
---- a/drivers/irqchip/irq-renesas-rza1.c
-+++ b/drivers/irqchip/irq-renesas-rza1.c
-@@ -259,7 +259,7 @@ MODULE_DEVICE_TABLE(of, rza1_irqc_dt_ids);
-=20
- static struct platform_driver rza1_irqc_device_driver =3D {
- 	.probe		=3D rza1_irqc_probe,
--	.remove_new	=3D rza1_irqc_remove,
-+	.remove		=3D rza1_irqc_remove,
- 	.driver		=3D {
- 		.name		=3D "renesas_rza1_irqc",
- 		.of_match_table	=3D rza1_irqc_dt_ids,
-diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
-index b5dddb3..cc219f2 100644
---- a/drivers/irqchip/irq-ts4800.c
-+++ b/drivers/irqchip/irq-ts4800.c
-@@ -154,7 +154,7 @@ MODULE_DEVICE_TABLE(of, ts4800_ic_of_match);
-=20
- static struct platform_driver ts4800_ic_driver =3D {
- 	.probe		=3D ts4800_ic_probe,
--	.remove_new	=3D ts4800_ic_remove,
-+	.remove		=3D ts4800_ic_remove,
- 	.driver =3D {
- 		.name		=3D "ts4800-irqc",
- 		.of_match_table	=3D ts4800_ic_of_match,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
