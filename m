@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-422101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E509D94E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:50:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F86F9D94A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EB56B2AD24
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C923E2830F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08D01BC07E;
-	Tue, 26 Nov 2024 09:34:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB241369B6;
-	Tue, 26 Nov 2024 09:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0E31BDA8F;
+	Tue, 26 Nov 2024 09:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i483S0mZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7061BB6B3;
+	Tue, 26 Nov 2024 09:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613687; cv=none; b=JJ8XlRL9RxD/7jztgvUTbGvvxagAvHkQn9mKXbn+rglGm0jVFYKfnLrt1pBY8awk050ug245fyjVqONfr7A/TzrCqrC0aOyFtyKbQ2loD6zB7MaGaLPud+d9E9zG1YTQ9b+Pgv1CDcTCThedMVvtKeqxVZQUEoY1+6bCi7KQcms=
+	t=1732613780; cv=none; b=qD86TGTK+N47KHUjnGZ1l40faNsneEJcHhU6u/DLJFzoJWpGft0fjiRDpTpfPEt67HKMSXP6WYJ5c7tNRb/5VaUyaWjbaP5rmUeSiPpkdQOvWhv+ovcIVgWyJWjo7KXmHGuZ6tZbjZkgb4Q10J7d8ywRRdt1Q4di7MX/oUEFQ8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613687; c=relaxed/simple;
-	bh=UahU0DzMS9RcitMW/jlUfz5kwn8zFLVl1/zgoYQR+fE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbVEftKibuHcfB5SaH43B29XNNx8H4pKpRqfz3e4zHctCBtWabwienUf3/s0MSihBmWIkR8D514Jj3+Mg+Biicgavpxa6LviZtqQZkN/a/DZFqn1mABYK4X7Osh8B2QK/slSsGqMcRUVbPR3Mstu6sUaKD8uzjSPo3+pQX/gQ3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADCC01682;
-	Tue, 26 Nov 2024 01:35:13 -0800 (PST)
-Received: from [10.57.69.222] (unknown [10.57.69.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F9E13F5A1;
-	Tue, 26 Nov 2024 01:34:42 -0800 (PST)
-Message-ID: <11359a2f-6573-4b07-b333-e20683d690fa@arm.com>
-Date: Tue, 26 Nov 2024 09:36:11 +0000
+	s=arc-20240116; t=1732613780; c=relaxed/simple;
+	bh=KVIfCGQmDp6Zc3maWEFRnxe4bj7QJ4bEIv2RSq4VTCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WmRDIWb3xLft6AfZSwqndAzaiuKR7AwrBMMnyN8SAdkMiVcllkH7/gfbeMHZjzeP3OeJpgULtYeLduqGa4Asqv6dMKNGtyPLXxcR2VwqFql4TVoF96Gu7vdDkq3DfBjHLz9p2vq3GcCrZAVyUegFWa8BUE700A5QGMyvl8TNebU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i483S0mZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B88C4CECF;
+	Tue, 26 Nov 2024 09:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732613780;
+	bh=KVIfCGQmDp6Zc3maWEFRnxe4bj7QJ4bEIv2RSq4VTCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i483S0mZ90NIOez44lmtrk07Ib+MFFXS0ndoi0HcksmC2pemfEIJ0sWA+wO+4bv9X
+	 iTKq3YFgrWNF1eYgCesIo1VxYaJnn/EtyhLlGLybxSkeBFUnuDRsQJymBWMbAoAceo
+	 j7/wIK9Iu2AG2lCnSbiQToGKNvsy8sMxe6qlNgIWHs/V14AD2N4BXvHciQcjs14cuD
+	 k1AYLvqRRUXaXKegtZzlxzyFqSuMP6aR4gpXDuTfJplxGcDVJFQ+R+6ltNT4JNRk6i
+	 NrvtwUcwIHDSELdeUDEhnFRg3S692pOpWxv+W1Eu+xjf8/CLCAanfreCv+qxxkGAbS
+	 rL9mxFS35Fgqw==
+Date: Tue, 26 Nov 2024 10:36:14 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Frank Li <Frank.li@nxp.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v8 3/6] PCI: endpoint: Add pci_epf_align_addr() helper
+ for address alignment
+Message-ID: <Z0WWjiamjkWfQXKk@ryzen>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
+ <20241116-ep-msi-v8-3-6f1f68ffd1bb@nxp.com>
+ <20241124073239.5yl5zsmrrcrhmibh@thinkpad>
+ <Z0TOb0ErwuGQwF8G@lizhi-Precision-Tower-5810>
+ <20241126041903.lq6zunvzoc2mmgbl@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] thermal: gov_power_allocator: Add missing NULL pointer
- check
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Sasha Levin <sashal@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Linus Torvalds <torvalds@linuxfoundation.org>
-References: <2761105.mvXUDI8C0e@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <2761105.mvXUDI8C0e@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126041903.lq6zunvzoc2mmgbl@thinkpad>
 
-
-
-On 11/25/24 11:24, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Nov 26, 2024 at 09:49:03AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Nov 25, 2024 at 02:22:23PM -0500, Frank Li wrote:
+> > On Sun, Nov 24, 2024 at 01:02:39PM +0530, Manivannan Sadhasivam wrote:
+> > > On Sat, Nov 16, 2024 at 09:40:43AM -0500, Frank Li wrote:
+> > > > Introduce the helper function pci_epf_align_addr() to adjust addresses
+> > >
+> > > pci_epf_align_inbound_addr()?
+> > >
+> > > > according to PCI BAR alignment requirements, converting addresses into base
+> > > > and offset values.
+> > > >
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > ---
+> > > > change from v7 to v8
+> > > > - change name to pci_epf_align_inbound_addr()
+> > > > - update comment said only need for memory, which not allocated by
+> > > > pci_epf_alloc_space().
+> > > >
+> > > > change from v6 to v7
+> > > > - new patch
+> > > > ---
+> > > >  drivers/pci/endpoint/pci-epf-core.c | 45 +++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/pci-epf.h             | 14 ++++++++++++
+> > > >  2 files changed, 59 insertions(+)
+> > > >
+> > > > diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> > > > index 8fa2797d4169a..4dfc218ebe20b 100644
+> > > > --- a/drivers/pci/endpoint/pci-epf-core.c
+> > > > +++ b/drivers/pci/endpoint/pci-epf-core.c
+> > > > @@ -464,6 +464,51 @@ struct pci_epf *pci_epf_create(const char *name)
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(pci_epf_create);
+> > > >
+> > > > +/**
+> > > > + * pci_epf_align_inbound_addr() - Get base address and offset that match bar's
+> > >
+> > > BAR's
+> > >
+> > > > + *			  alignment requirement
+> > > > + * @epf: the EPF device
+> > > > + * @addr: the address of the memory
+> > > > + * @bar: the BAR number corresponding to map addr
+> > > > + * @base: return base address, which match BAR's alignment requirement, nothing
+> > > > + *	  return if NULL
+> > >
+> > > Below, you are updating 'base' only if it is not NULL. Why would anyone call
+> > > this API with 'base' and 'offset' set to NULL?
+> > 
+> > Some time, they may just want one of two.
+> > 
 > 
-> Commit 0dc23567c206 ("thermal: core: Move lists of thermal instances
-> to trip descriptors") overlooked the case in which the Power Allocator
-> governor attempts to bind to a tripless thermal zone and params->trip_max
-> is NULL in check_power_actors().
+> What would be the purpose? I fail to see it.
 
-That corner case sneaked in...
+Currently, the only user of this function is the call:
+ret = pci_epf_align_inbound_addr_lo_hi(epf, bar, msg->address_lo, msg->address_hi,
+				       &db_bar.phys_addr, &offset);
 
-> 
-> No power actors can be found in that case, so check_power_actors() needs
-> to be made return 0 then to restore its previous behavior.
-> 
-> Fixes: 0dc23567c206 ("thermal: core: Move lists of thermal instances to trip descriptors")
-> Closes: https://lore.kernel.org/linux-pm/Z0NeGF4ryCe_b5rr@sashalap/
-> Reported-by: Sasha Levin <sashal@kernel.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->   drivers/thermal/gov_power_allocator.c |    7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/thermal/gov_power_allocator.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/gov_power_allocator.c
-> +++ linux-pm/drivers/thermal/gov_power_allocator.c
-> @@ -588,10 +588,15 @@ static void allow_maximum_power(struct t
->   static int check_power_actors(struct thermal_zone_device *tz,
->   			      struct power_allocator_params *params)
->   {
-> -	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
-> +	const struct thermal_trip_desc *td;
->   	struct thermal_instance *instance;
->   	int ret = 0;
->   
-> +	if (!params->trip_max)
-> +		return 0;
+Which doesn't send in NULL as either 'base' or 'offset', so these NULL
+checks do currently look meaningless to me. I suggest to just kill them.
 
-Yes, 0 is the right thing to return here, since we might get later some
-trip points.
 
-> +
-> +	td = trip_to_trip_desc(params->trip_max);
-> +
->   	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
->   		if (!cdev_is_power_actor(instance->cdev)) {
->   			dev_warn(&tz->device, "power_allocator: %s is not a power actor\n",
-> 
-> 
-> 
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Kind regards,
+Niklas
 
