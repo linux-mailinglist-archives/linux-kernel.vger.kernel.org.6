@@ -1,150 +1,140 @@
-Return-Path: <linux-kernel+bounces-422291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5169D9725
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:18:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29FB9D9727
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C6828320E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:18:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6554B250B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C431D0B82;
-	Tue, 26 Nov 2024 12:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537E1CFEA4;
+	Tue, 26 Nov 2024 12:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xrm0r4Z9"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oMZhZaIz"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426207DA68
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E72C1CBE8C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732623508; cv=none; b=VPCRYOHiRpUWELkhC4AyfdpQ+dvEhvCvbJqSd5CBqf02vBZX2VLB6cZ+QChv01vZbzl4nfE1S0XnU1mi8xK0fLNV+rIJpeDkPwWsKSlVdIUUpr5y+v5++sZ8jyL+FgS0mXYLgu8vX5N/+mf00VQmdqlVPQPt51hThfylXiChSHg=
+	t=1732623479; cv=none; b=jlRV1co5kXfZt5V2+zqDvOcZB4UpjBt55bYmlRMxKJqaw2oOxXB42ZY07vxjWIRlJwux5ilib2ZJwGSFCGn5Sb/h7jiv1nhX18I6CLIOuFWpe5P19fZ0jzXfe142RVAwh0tlIUSWfIvKha/j2JY0xPhAjZojBu/gSbp3UYp9/d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732623508; c=relaxed/simple;
-	bh=NsOkQNizfy7L6gUL++EqJf4pjp0B+QFz5IwWcPxP0v4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARnQGj6TG/ry5LlxHPy0Kot1prRZ1urv/Ae+6P9oGkFmAbNSa64xlGFsZ2UERtaGT73JCbBUA6dt60FtTa7VlZGpgLKopHqg/J3HdWPl+h2Szh544pw4Gt39Ubux7l0v9j1eJRNIxm8Jb5kYLo4Sbo7ovqUI9iJYnTk7/Nq+47A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xrm0r4Z9; arc=none smtp.client-ip=209.85.219.182
+	s=arc-20240116; t=1732623479; c=relaxed/simple;
+	bh=A6FseKMXYrE/gymKDoYli8XDXiRXwIQNGUcDMIEhP+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VL40Hlzm2vJivwTCM7FbahXEOMfsppiX5rEyrDoKoNP3hZTqbAsxlgad3g34E5quq5ii5ABOMFaHPkcm9qUkASjEDkJGMv54GfvGNvwkPHy/i2GAB585z55SrMrCiUHkVTzG42CIYlO1GUxFALHGslEopyTtOE+rOwSVZ8KH5S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oMZhZaIz; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e382ed3ee45so4813220276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:18:27 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de79c2be4so1640086e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:17:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732623506; x=1733228306; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1t2bdLsphO4qv8lX65ai1ApZKPwIzSeCFPg10eL8iQU=;
-        b=Xrm0r4Z9plqyu6EMaQ33HU3gA15VUn/9eXRZVDYz+yMWMUDJd/SsM+cLxql5xOWWL3
-         fKNVrQy/iWj2iMb2NlWu2oZRCK9n0EvmOBRVaVciynw9+F8P3AhxnXIEMl2oGtuIK0ge
-         zNu4/NFlYiGx/z19tABn4P7IeThn/WnGB0Vxqx9Tt2OAEahOFtwcw6eF9/nm42OnzRl1
-         zoneEr0r9Pg2fksLuYLRYg/Cxg4ga3uA5NN993xTIoEnV+4vvzL0RRBCiQkhyhM3r0Uq
-         aONtdUf0334ih3xDgu3Vlp2z/5rRICseXyVzMOfA0DMm/t2/5gusABvOAJaBFtgQgp8r
-         +nWA==
+        d=linaro.org; s=google; t=1732623476; x=1733228276; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIiJZ55i8NdMGDjfrOdk3DfZs/tLxD9oconoLO+oq+A=;
+        b=oMZhZaIzWkPtIelMC3oIlDlHY4MO54NHfOp2+JKR/P9y0xxTVoq+dg77cVwqDIpKCr
+         Zb2Ujjk2AxNe/Y13pbmW0U9CxU9Ipr4KRlZ/b5+B9T5kY4oz+CKXllWJgy77AGxJwhTl
+         c2BZsA9WA43J3yEKdvYVW11FruSTdjjSJbl712MxMcl5ch09nEQtl9AbGKtKpo6HnRJa
+         eHQrB1VPBjUnaYL36S7N7E1F5pNNTsGLxjy/h+ri5DoiAhvoRCpaKCwV6rSE8y/ruWKo
+         SBHSum0SwTgchsu7OR7XmNirzR8CkSawIdMBCaQQJaOTS30Q1oPR30AmRq7ZJM54n5F2
+         tONg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732623506; x=1733228306;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1t2bdLsphO4qv8lX65ai1ApZKPwIzSeCFPg10eL8iQU=;
-        b=R6FST7Y88AyGnOjctV9gJIUy6AjLh3eHh1NUcDoxZT/YLF7qmGpppr6O5z5d3uhcpl
-         lqKh2Pg+MXLYOka5t+dkkInEKMdcBp5oJx8sUg1v31l8yduhYUr26g5NxVxdl5alGLk9
-         2oCdsAToii+527hC03HP8h3xFevwFhv2JsAp+lnplKm2L52RwYDSJzAgEr2d0YVEk17t
-         fSpMi+0gQzO2L4uqkmGTh9U880j3mKr8sNxq76FbsDb6dLOOEWPapbld5ZWWg/IFaUK2
-         3ppZETmjrRgVrmqyx6W93/abNjwA0Bp4aeBthk/FPJ1K8TIgrfrFiwTBQHHmA79g7+s4
-         abdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnQCr7/U0i/aLBvlXtBJDoXwBBnP0z91qd8CC/HlE1Vy2xcqyCzVCjkUlTfkw+A+TfNjYcAvC5GuA3rZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxce8ciRrByDdjHeJs+raNTFYFFH1GVUVoVnfl5S8tBZxuUMyUj
-	t0rvNTqBwYEoxUGQ1kVGmq4bPnahwbe/qeMtPKZydFcAslFhCS316eXgmY6HSmnhic32KmARgIp
-	mstGAyF+0zQIqnyJOaM/aG3q8V7AL1iA/NP2suwHAHwTYEyH7
-X-Gm-Gg: ASbGncsi6o4wE766ZyYsVaGsNS7V3VpUxI35EPRgu1Eh96mDE7pwiDR1QhiXH1YoTeY
-	xMRYHZTWqRweGnWeoNKr4vXfP+vOeK1Qa
-X-Google-Smtp-Source: AGHT+IGd5+wBDRxy/P2XFJDCWgoDYm0J6RIEhVEBraMx8w2/LeSUu3keiz9cNbvZe3rDWYJygxSUe3J10dUdOJanJ80=
-X-Received: by 2002:a05:6902:310b:b0:e38:8ea6:2abf with SMTP id
- 3f1490d57ef6-e38f8c05130mr12064188276.46.1732623506153; Tue, 26 Nov 2024
- 04:18:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732623476; x=1733228276;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zIiJZ55i8NdMGDjfrOdk3DfZs/tLxD9oconoLO+oq+A=;
+        b=UakxYxJKBz1oZotP1v0bKz5yPJttCRG/OjKmct7r39fYCd1G8HYb8VEcCNLdC0iQp6
+         J3ZpyEzv6yb4cEQ20dkgB4g/tz20nfV7ECi0yCJU2qBAJEHVgmo8WRKrJeNtGtJ7jg/3
+         f8qt0Ba7sdO0WWb5Q03j1Aa6d+yw7lDyLyze/VRODBL98ywltbRXFILvE9BkJUVtKaOC
+         6cGK6CWGXSd9Pna0R+yN2v9a9CmNUNYby/jC67yT/7z17I8/eaCpdYKQkqQft3H9/yGn
+         Vr/rQ+6MxMe0/riz2mrADGiujBaXHWcayc57DEe0eFUEMzxNXu0M1RnThYXZJ2XI0Qr+
+         oT7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUSaLxHimYlPm3oUYnjDiX08W1qHtfPvFKQo/OiwVDywQVzY8hKhADXvQu2rPCgYOc4UbQmRUTyfnyAjXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJRZsXmjpTMRbXKfwQ2GPiotEqqeaznOzxamcaoALWQzgl5sqF
+	qDyCI7ajvKH2tvn0YnX9XTq/GlXPa3TCQVdJLR3ZuI472VS3VC/72dSpTYBSVwc/Ed+qwo8Hv+/
+	c
+X-Gm-Gg: ASbGncvnR0tuJHwCMNIXRk2rwEUmKMYVv+PIvxHAtws5uVyD1BjGWPzYN18nAuqmOjF
+	/G2wx9SxnX9m+3rZ2MIG1XOwBmz+6kbyy9COQh9DnyIc5sgUNOavxRCSJDB6K/Y6PnRs7s/fbm8
+	3R2nS2PiCuwHYWGI8mGxXmbm0Om8xtSIs5NkJyg/DHk3sn1fRzSVq0yOpQmrHlav8PjuDPQ23+U
+	6RaBn+DmuI1dxigZzcvGWudyGIZc+SNYZpeLTAiFMIMQR1fHwgAle0jXROxZvAbQFIto6gbzefx
+	iYuulzh1vdC65d5HdUTM5RhsQb2HWg==
+X-Google-Smtp-Source: AGHT+IGNnMnzJzSH4csFVqMWLKW+PYj2pG4i5xQYfHjEXv1hvwV2rJVchkFPFu5thqmIhO3VCJ0s5A==
+X-Received: by 2002:a05:6512:3c84:b0:53b:1526:3a63 with SMTP id 2adb3069b0e04-53dd39b564bmr7770105e87.56.1732623475913;
+        Tue, 26 Nov 2024 04:17:55 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd68c64c7sm1790045e87.114.2024.11.26.04.17.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 04:17:54 -0800 (PST)
+Date: Tue, 26 Nov 2024 14:17:51 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Connor Abbott <cwabbott0@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/3] drm/msm/mdss: define bitfields for the
+ UBWC_STATIC register
+Message-ID: <bclvvuo3i4icx5kraqsvmpdtokx46pnjmdhliz2mhsmdm256vm@rbkwhkhjvjtc>
+References: <20241123-msm-mdss-ubwc-v2-0-41344bc6ef9c@linaro.org>
+ <20241123-msm-mdss-ubwc-v2-1-41344bc6ef9c@linaro.org>
+ <784a7813-b024-452e-8d7e-8cbaea761bcd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125122446.18684-1-ulf.hansson@linaro.org> <113cb538-f337-464e-9854-3a6dcb5b95e6@intel.com>
-In-Reply-To: <113cb538-f337-464e-9854-3a6dcb5b95e6@intel.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 26 Nov 2024 13:17:50 +0100
-Message-ID: <CAPDyKFowPmNKDhn2Mb8QCGkO1cC1jkdHbMk94fxAur2D1fXqZA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: Further prevent card detect during shutdown
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, Anthony Pighin <anthony.pighin@nokia.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <784a7813-b024-452e-8d7e-8cbaea761bcd@quicinc.com>
 
-On Tue, 26 Nov 2024 at 12:57, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 25/11/24 14:24, Ulf Hansson wrote:
-> > Disabling card detect from the host's ->shutdown_pre() callback turned out
-> > to not be the complete solution. More precisely, beyond the point when the
-> > mmc_bus->shutdown() has been called, to gracefully power off the card, we
-> > need to prevent card detect. Otherwise the mmc_rescan work may poll for the
-> > card with a CMD13, to see if it's still alive, which then will fail and
-> > hang as the card has already been powered off.
-> >
-> > To fix this problem, let's disable mmc_rescan prior to power off the card
-> > during shutdown.
-> >
-> > Reported-by: Anthony Pighin <anthony.pighin@nokia.com>
->
-> Could add a closes tag here
-
-Good point, I will add it when applying!
-
->
-> > Fixes: 66c915d09b94 ("mmc: core: Disable card detect during shutdown")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->
-> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-
-Thanks!
-
-Kind regards
-Uffe
-
->
+On Mon, Nov 25, 2024 at 06:03:52PM -0800, Abhinav Kumar wrote:
+> 
+> 
+> On 11/22/2024 9:44 PM, Dmitry Baryshkov wrote:
+> > Rather than hand-coding UBWC_STATIC value calculation, define
+> > corresponding bitfields and use them to setup the register value.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > > ---
-> >  drivers/mmc/core/bus.c  | 2 ++
-> >  drivers/mmc/core/core.c | 3 +++
-> >  2 files changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-> > index 9283b28bc69f..1cf64e0952fb 100644
-> > --- a/drivers/mmc/core/bus.c
-> > +++ b/drivers/mmc/core/bus.c
-> > @@ -149,6 +149,8 @@ static void mmc_bus_shutdown(struct device *dev)
-> >       if (dev->driver && drv->shutdown)
-> >               drv->shutdown(card);
-> >
-> > +     __mmc_stop_host(host);
-> > +
-> >       if (host->bus_ops->shutdown) {
-> >               ret = host->bus_ops->shutdown(host);
-> >               if (ret)
-> > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> > index a499f3c59de5..d996d39c0d6f 100644
-> > --- a/drivers/mmc/core/core.c
-> > +++ b/drivers/mmc/core/core.c
-> > @@ -2335,6 +2335,9 @@ void mmc_start_host(struct mmc_host *host)
-> >
-> >  void __mmc_stop_host(struct mmc_host *host)
-> >  {
-> > +     if (host->rescan_disable)
-> > +             return;
-> > +
-> >       if (host->slot.cd_irq >= 0) {
-> >               mmc_gpio_set_cd_wake(host, false);
-> >               disable_irq(host->slot.cd_irq);
->
+> >   drivers/gpu/drm/msm/msm_mdss.c                 | 38 +++++++++++++++-----------
+> >   drivers/gpu/drm/msm/msm_mdss.h                 |  3 +-
+> >   drivers/gpu/drm/msm/registers/display/mdss.xml | 11 +++++++-
+> >   3 files changed, 34 insertions(+), 18 deletions(-)
+> > 
+> 
+> <snip>
+> 
+> > diff --git a/drivers/gpu/drm/msm/registers/display/mdss.xml b/drivers/gpu/drm/msm/registers/display/mdss.xml
+> > index ac85caf1575c7908bcf68f0249da38dccf4f07b6..b6f93984928522a35a782cbad9de006eac225725 100644
+> > --- a/drivers/gpu/drm/msm/registers/display/mdss.xml
+> > +++ b/drivers/gpu/drm/msm/registers/display/mdss.xml
+> > @@ -21,7 +21,16 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+> >   	<reg32 offset="0x00058" name="UBWC_DEC_HW_VERSION"/>
+> > -	<reg32 offset="0x00144" name="UBWC_STATIC"/>
+> > +	<reg32 offset="0x00144" name="UBWC_STATIC">
+> > +		<bitfield name="UBWC_SWIZZLE" low="0" high="2"/>
+> > +		<bitfield name="UBWC_BANK_SPREAD" pos="3"/>
+> > +		<!-- high=5 for UBWC < 4.0 -->
+> > +		<bitfield name="HIGHEST_BANK_BIT" low="4" high="6"/>
+> > +		<bitfield name="UBWC_MIN_ACC_LEN" pos="8"/>
+> 
+> MIN_ACC_LEN OR MALSIZE has 2 bits , bits 8 and 9.
+> 
+> But bit 9 is unused today. Hence we were using it as a 1 or 0 today.
+> 
+> Its unused on all the chipsets I checked. Do you want to continue using the
+> same way or correct this?
+
+Let's correct it. I will send next iteration.
+
+-- 
+With best wishes
+Dmitry
 
