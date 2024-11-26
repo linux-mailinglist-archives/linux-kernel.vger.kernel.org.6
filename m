@@ -1,180 +1,107 @@
-Return-Path: <linux-kernel+bounces-422740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521569D9D99
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C4F9D9D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F552283332
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4723C2832CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65981DD55A;
-	Tue, 26 Nov 2024 18:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705A21DDC05;
+	Tue, 26 Nov 2024 18:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zvkBU+uF"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEdWpo8H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8841D45EF
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CC41D45EF;
+	Tue, 26 Nov 2024 18:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732646748; cv=none; b=geDV0s6i9GTYE3qZUznka6/pOh7e0fQI98p4Yijei+0+v5vQtCfT0Suj91y95cv4SmgHanE3srDTe5WDsF2YRWCEGjLPtcU+wh/+3eMK1iIHKn2gDNWjMS7xflHvTRSj66T2e/h54w1NZiiKygyHqqwlUOy4ERL162J1V3V0/2Q=
+	t=1732646762; cv=none; b=X3Ok6H6MiqlbyLEgWAmd5Jb6f4KhRZugjV4MIWJro6559oFUsAyvFvknQqgznzmNSygOijsrF2LfO7VoGJOVqZ0qYM6jIdcByMfx9j3JtFY6ifZr5zY3MsU9lg98ScSSqDfMwUY+Jv0mJHlFWAaAMKlUYdhlIY6A+l2YDKFD/5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732646748; c=relaxed/simple;
-	bh=S5ZPWNcRig2nzYKuWB6cD8RvjU7VkWsbUy8mMaHEwpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nInpXVLUB/iXtNH+Yi03u6Ty0gYK879dL8QscnjJvaC3sxbkilx6zT3RxVPR3KxrEV03Su+LD7DUlq/dEGoElTGSCfUYXS9vTgbeuv5bQD5/uwkfBuWHSZfRo/VzbQy9l9oDO9cdlSkCSNYwEPFku/Z26B1YyB/5USGtDLhjAY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zvkBU+uF; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-466ab386254so11431cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:45:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732646745; x=1733251545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/yin/AHK0HjOHEQ6OVFguR+JKUqHw/4L0Lx/VgQ292o=;
-        b=zvkBU+uFmPCJooj9LYlyDSMdqsn8TQ7N8LNo0FMmu+fdXU4U9vNvH1pCfKj2+RnSeK
-         AzmTQgiSi27yiDWgxB+2rwR9eVwPILVcneKdnU+1hw88QzqubIBULKuYdfCnlpX8z3Dc
-         xWy0QXCNxeq0pvVn/877STCL60LmEWRfvba7LwFqRek0lFJ/5Tmx+5alixuO64BuR6QT
-         ZYHXAIx71SC41A1ji+GQkgYdIjei7wtXm5FuXSDZ93WwcBrPkaImUFRdKlQKVAniA3eL
-         brdjDNdL2qt7e/ZS4tBHx4jsO7jdnBQMJPCq3abkWq7MVHcIAYSUP09l71TRAFf25Tbu
-         Ougg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732646745; x=1733251545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/yin/AHK0HjOHEQ6OVFguR+JKUqHw/4L0Lx/VgQ292o=;
-        b=j9nEnxdI1nskCwvKLDaqYACBe0kD4MKrFX9JPbDyBNWK12mJmpdCZHVC4dKqZlped0
-         ZgYYs04rqu7lRcqOdoYFnT3FWEmzaVpqczO5g9OOU5bOJKrCLtP862jkll8dR5xX9h3E
-         P17I+f59FJZWl/EPT3cCE/3nm+X8pOTpTFsIeV+OMch3GrLFKB/FLGgkhrkyTerughvE
-         LU/Fec/wuDJIfuMIankaYKVTAslieUu/NSVzE6iF2/2lKgRLPKbcbSGDGHpr4OSOsJJz
-         Kea/bAJEJTxftTJKwq2Hv12YsOSkM8nbp6HH2WTEz8rAqaHF03fi8eAWknCKdW9TGMnM
-         W7+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXHG3oj6Z+S9ELHsaBF5BshpaMEfI6cp9B989ySuZNInr3igyCvuiR546xK/oTopAcTyLAUpli401YbJZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyReL/8nu8eCENh/c3uhUX86Oo+T6pD1Di7ORcxbC8lDffzCfsK
-	4BBei3CFrQXf5+2UrTo2H5784mCEM5eNQGmHeEG2DnfMjYMdd4cOAZMJP9kkBLK/mt3jGzGFKHP
-	51l3SbGxM2en0B5nkwWbfC+h3IRGzD/02xQbH
-X-Gm-Gg: ASbGnct3pxBsE8il+BVb0WorNoO2v96iT1yMvsH0fCcMhCZFt3UjtTp3w+CSHL0RDmx
-	cLkc+5yNXu8TzMaCbg1Vc+EvtfpIjfouaJWEg32djl8nHtT3leaENZKjtEzsl
-X-Google-Smtp-Source: AGHT+IHSGIv3YuZT5lZ9n65aGjDVk9hd28J1BK1WWOgNYHR8YG1L9KAUbQRAvajhGDQ0oKrMOieegbgOBVRiOUNH6rk=
-X-Received: by 2002:a05:622a:1919:b0:460:f093:f259 with SMTP id
- d75a77b69052e-466b3e13498mr31021cf.22.1732646744819; Tue, 26 Nov 2024
- 10:45:44 -0800 (PST)
+	s=arc-20240116; t=1732646762; c=relaxed/simple;
+	bh=Pokx8t1BVIEDen+c8yz2MWmOH0ECe7Yvn4d7gHgLk1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u5tqqG30HHG7J2bo3NP2RfVhe9uNrhyxjLFK3kwUphEWZaMPxg0Feb65jN4hr51BRkYFv+vRUC+PBkz+KdZLQLAkKJR70lx+ILXPvnLPmaSZyd/FuZGG9qvyk0GrK/rLgtZ9rjF5I6WSPEXXUXGbfVH1IPc01Q+kg9IFf1f4o8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEdWpo8H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C272C4CECF;
+	Tue, 26 Nov 2024 18:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732646762;
+	bh=Pokx8t1BVIEDen+c8yz2MWmOH0ECe7Yvn4d7gHgLk1I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DEdWpo8HiZ1zL2rudJC6okCbAnW4JcGCE+lC3dX9ESQIgjlQ5CuKTEItiXemMqd0p
+	 TF9bqGvP49IgpyMYxLl/UJLQRyErlIhdZwTZLs3M/Gw771YU78jji4bdytXd4jVHCt
+	 zrjm4x3ZbLpx+psssTZse9C8uttm2x2lKqP+5zSHyrOLGg/sfN6yJO8g79COfZ/4gU
+	 DFxKjULhZt9y+bGviQII7B2m6AbyLK7B4etW1SCHyIjiC5KdjY7Hvk3ehBfksJrZ17
+	 fPvgmDpgd1eCV5xMxA+5lv4TUg61AIV/ffBbIEQaRNTl+pX8qwkcb6l8DXZXRLJIhC
+	 NE0UWGxDE1A5A==
+Date: Tue, 26 Nov 2024 10:46:00 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Song Chen <chensong_2000@189.cn>, samitolvanen@google.com,
+	da.gomez@samsung.com, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH] kmod: verify module name before invoking modprobe
+Message-ID: <Z0YXaN1dHnEFUluE@bombadil.infradead.org>
+References: <20241110114233.97169-1-chensong_2000@189.cn>
+ <21423aea-65c3-430e-932d-2ba70b6b9ac3@suse.com>
+ <524b444f-4b81-4005-b93a-39b7d3fd3db1@189.cn>
+ <8ea8dfed-608f-44b9-8adb-fb1798619215@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126184021.45292-1-cmllamas@google.com> <20241126184021.45292-10-cmllamas@google.com>
-In-Reply-To: <20241126184021.45292-10-cmllamas@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 26 Nov 2024 10:45:33 -0800
-Message-ID: <CAJuCfpH+B1HrzXtM_3+H9m8NPkTzAX8S4oSwhTEW+07g9JceeQ@mail.gmail.com>
-Subject: Re: [PATCH v5 9/9] binder: use per-vma lock in page reclaiming
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ea8dfed-608f-44b9-8adb-fb1798619215@suse.com>
 
-On Tue, Nov 26, 2024 at 10:40=E2=80=AFAM Carlos Llamas <cmllamas@google.com=
-> wrote:
->
-> Use per-vma locking in the shrinker's callback when reclaiming pages,
-> similar to the page installation logic. This minimizes contention with
-> unrelated vmas improving performance. The mmap_sem is still acquired if
-> the per-vma lock cannot be obtained.
->
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> ---
->  drivers/android/binder_alloc.c | 29 ++++++++++++++++++++++-------
->  1 file changed, 22 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_allo=
-c.c
-> index 339db88c1522..8c10c1a6f459 100644
-> --- a/drivers/android/binder_alloc.c
-> +++ b/drivers/android/binder_alloc.c
-> @@ -1128,19 +1128,28 @@ enum lru_status binder_alloc_free_page(struct lis=
-t_head *item,
->         struct mm_struct *mm =3D alloc->mm;
->         struct vm_area_struct *vma;
->         unsigned long page_addr;
-> +       int mm_locked =3D 0;
->         size_t index;
->
->         if (!mmget_not_zero(mm))
->                 goto err_mmget;
-> -       if (!mmap_read_trylock(mm))
-> -               goto err_mmap_read_lock_failed;
-> -       if (!mutex_trylock(&alloc->mutex))
-> -               goto err_get_alloc_mutex_failed;
->
->         index =3D page->index;
->         page_addr =3D alloc->vm_start + index * PAGE_SIZE;
->
-> -       vma =3D vma_lookup(mm, page_addr);
-> +       /* attempt per-vma lock first */
-> +       vma =3D lock_vma_under_rcu(mm, page_addr);
-> +       if (!vma) {
-> +               /* fall back to mmap_lock */
-> +               if (!mmap_read_trylock(mm))
-> +                       goto err_mmap_read_lock_failed;
-> +               mm_locked =3D 1;
-> +               vma =3D vma_lookup(mm, page_addr);
-> +       }
-> +
-> +       if (!mutex_trylock(&alloc->mutex))
-> +               goto err_get_alloc_mutex_failed;
-> +
->         /* ensure the vma corresponds to the binder mapping */
+On Mon, Nov 18, 2024 at 01:54:14PM +0100, Petr Pavlu wrote:
+> I'm however not sure about rejecting empty strings as is also done by
+> the patch. Consider a call to request_module("mod%s", suffix) where the
+> suffix could be empty to select the default variant, or non-empty to
+> select e.g. some optimized version of the module. Only the caller knows
+> if the suffix being empty is valid or not.
+> 
+> I've checked if this pattern is currently used in the kernel and wasn't
+> able to find anything, so that is good. However, I'm not sure if
+> request_module() should flat-out reject this use.
 
-You did add a clarifying comment I asked for in
-https://lore.kernel.org/all/CAJuCfpESdY4L_sSwiCYVCX+5y1WOuAjLNPw35pEGzTSyoH=
-FYPA@mail.gmail.com/
+This patch also fails to pass a simple boot test with our Linux kernel
+modules CI:
 
->         if (vma && !binder_alloc_is_mapped(alloc))
->                 goto err_invalid_vma;
-> @@ -1163,7 +1172,10 @@ enum lru_status binder_alloc_free_page(struct list=
-_head *item,
->         }
->
->         mutex_unlock(&alloc->mutex);
-> -       mmap_read_unlock(mm);
-> +       if (mm_locked)
-> +               mmap_read_unlock(mm);
-> +       else
-> +               vma_end_read(vma);
->         mmput_async(mm);
->         __free_page(page);
->
-> @@ -1172,7 +1184,10 @@ enum lru_status binder_alloc_free_page(struct list=
-_head *item,
->  err_invalid_vma:
->         mutex_unlock(&alloc->mutex);
->  err_get_alloc_mutex_failed:
-> -       mmap_read_unlock(mm);
-> +       if (mm_locked)
-> +               mmap_read_unlock(mm);
-> +       else
-> +               vma_end_read(vma);
->  err_mmap_read_lock_failed:
->         mmput_async(mm);
->  err_mmget:
-> --
-> 2.47.0.338.g60cca15819-goog
->
+https://github.com/linux-kdevops/kdevops/blob/main/docs/kernel-ci/linux-modules-kdevops-ci.md
+https://patchwork.kernel.org/project/linux-modules/patch/20241110114233.97169-1-chensong_2000@189.cn/
+
+For persistent results see this and download the tarball for results:
+
+https://github.com/search?q=repo%3Alinux-kdevops%2Fkdevops-results-archive+is%3Acommit+%22linux-modules-kpd%3A%22&type=commits
+
+So please boot test any future patch before posting and make sure its
+based on modules-next:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/
+modules-next
+
+You can reproduce yourself with kdevops [0]:
+
+make selftests-modules
+make -j80
+make bringup
+make linux # it fails here with your patch applied
+make selftests-baseline
+
+For a more elaborate description of our CI setup:
+
+https://github.com/linux-kdevops/kdevops/blob/main/docs/kernel-ci/README.md
+
+[0] https://github.com/linux-kdevops/kdevops
+
+  Luis
 
