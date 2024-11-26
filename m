@@ -1,167 +1,357 @@
-Return-Path: <linux-kernel+bounces-422441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0029B9D99B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9409D99B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:37:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F66B2A461
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:34:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70DC8B243A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD0D1D5CC5;
-	Tue, 26 Nov 2024 14:34:41 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304A1D5CE8;
+	Tue, 26 Nov 2024 14:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F4PxRDSx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06D8BE46
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49578BE46;
+	Tue, 26 Nov 2024 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732631681; cv=none; b=E67GduHMQm6NSXqvLaOXYK2uHsFMuRZ3LdHmxst4hXsySZBGr0UFI/pC6VcCMb3cyS6D/OzNsNNXTyAodK4fDkZweV7ZktTLTZJuL4Y+HvRjh2JqHxLmyrzUEjaorv4rt/Cnki4XyMtYNXM8ZF+MyFtMTPHE4I3re7Z3kPf0OcM=
+	t=1732631792; cv=none; b=ajQ2IrUaoHtKG4WPRwGlLXxJnpnozBxuYVguzdRTa4wCDcATf51upkBXY6jgtiQWw6NT/LDdOI6y8FsYo8TATpqtMeabyD3sToxmATgFAui7XIj1GXQ8CFxP2glGP/NiDaH1KwlYzlf3D0Q4FoEfHM3cOCKLt6xbJ0fRDayMKfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732631681; c=relaxed/simple;
-	bh=SwCLUDoCn1zSFH0ezygDJUTXfuTmbMkj3R+icj9Rb78=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H7VQOKqJbQUsNbvkH8/pGQQLSe+m+xhYlcSHoLWGydPjr6T2CmoId8o7d4/TPauZJoYiJqeLo5GgE1Lv27MGv8xqwGm8619Mhg7HwmeK45QvidP3K/GLa0qR5ilEvhwVSBI+ThuFTUAeRVDMIXRP3Qsv1kIXwkPTF+AFkGiI/UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8418307b4f9so270255339f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:34:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732631679; x=1733236479;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ppzdMjBrQKtYQbXhvhZNE8f0sJO6PN9v2KluOrYgajk=;
-        b=KP0FNsz5H4DDq8pEfrduXcqJnMHBH+Rlfz8BPWZRxeniG7PETNdPw8JFOwdX16akCU
-         l26PDNzKwMTNRjUdfTl4yZrPi5lzNDyrcGk3Ppqh2T85tfJoqr+YhwhFFeaH9ixnUtYd
-         +AzBHaVe4zWtW4sXp4j1JRdHCToZKMcAqkmwj4Kz3QoaZ0g982t4ldT63i3MsSLXB5DC
-         dK/OyaEJjB7LFbO8tDxNa2BJQXSRCjCGpy8A6ZWLig2dh7/h7BcCsvxGAD/imCgM1PPp
-         eW3uW5mx46GsAYRGr+Wg8JDIOQhY6oDG6DkG2MOsBuZyCjoVhlvGz81nSyBDrVBbGfAk
-         PLlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAky6ln+GaotzvXuloGtlpn/XbfeS5sgwXuIjZaITyUT6kRuLDXW/ejczpYjxcK3ydkUP6Tb3Vw0Jb6ME=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3aau7WeNuwtyQIZZ7atQ+4doEvC1e1s2MiFgSRwadNlZXwMNF
-	AWb/28XSBUVKnLPmmQg/uYDu+gBSSTvzWr6+9ux38YaMgs9IMxo+FvJr0uD09+sZrGAE1e0HmuB
-	DUwbFboaRHKfqVR7fhVi9svG9GMlFqULSvT6ZBpmP7MmR9m+J35NR85I=
-X-Google-Smtp-Source: AGHT+IHnzYCZfVidcmEg7JPBJoVVbmQX8ycrZwy0QxfGPNjhFvMHtJLyWSIDRK1Glon6Xp2u54iOuEOEOU0rm6JWXzPmhmYCvdIh
+	s=arc-20240116; t=1732631792; c=relaxed/simple;
+	bh=JzXU9P99AoLbjBAGR3owoxTTsTfX3Nf4vjrC0RWhLP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hl6yW9Q8/ULseSpfpfyfAk0M6aCFZAZUtKfKunqqYRpMd+3idXNW0Ge/LAICjIl8V7sRC4RNfya2ZZzKrs6NAua1RyvvxpS7zqJ7IULyG1cyl4sZsH23WYoccTT+HSRNcsGNtkbKyQxsuCmKBrbFSy+p0xzHd9dGZvGGoxITBrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F4PxRDSx; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732631790; x=1764167790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JzXU9P99AoLbjBAGR3owoxTTsTfX3Nf4vjrC0RWhLP8=;
+  b=F4PxRDSx81A22eIT4mydQPZczfsjBlA9xdCaUJf1NTgD4mqnsJHr0p12
+   GkSEatmLMOHgRx5s2GWtqBOAQ3eQgYmw3Zh+4ZjjzWuWKnMmv7XHCfzFN
+   B9mXHP2qo9J7/rbh6GBFpBqZRVDjkfK0B3HQVnMOKzgTaTwFk96EpIRKP
+   PxGM9HuXH2npDWgWfT7SX+S8+j2YBZhi+AIGsTaeAZEqeeyEpEpr1SmZ5
+   06UB8MTrOdfXhqI12yqHvpxT5veiGJlW8F1DwSs+UUC8NQmGNKjYEMY0X
+   TwIrSukFGUMqIL3VzivhQHmx7dqlMRVQNxJM8FEVDY5L+8n1RUv18ftcd
+   Q==;
+X-CSE-ConnectionGUID: Yog4g+YHR3OaOnvjPbBkcg==
+X-CSE-MsgGUID: W90zYwE1RvCYImoaH/mkEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36721744"
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="36721744"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 06:36:29 -0800
+X-CSE-ConnectionGUID: TysiTX2+TTOav5xFiJH8Vg==
+X-CSE-MsgGUID: q5eQ2L3yTROPnkk4j9RfSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="91249597"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 06:36:27 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id DC4C011F89A;
+	Tue, 26 Nov 2024 16:36:24 +0200 (EET)
+Date: Tue, 26 Nov 2024 14:36:24 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Vinay Varma <varmavinaym@gmail.com>
+Subject: Re: [PATCH v3 3/3] media: i2c: imx219: Scale the pixel rate for
+ analog binning
+Message-ID: <Z0Xc6FYyYdLTUfll@kekkonen.localdomain>
+References: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
+ <20241125-imx219_fixes-v3-3-434fc0b541c8@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e03:b0:3a7:98c4:8d55 with SMTP id
- e9e14a558f8ab-3a79afc807cmr182909555ab.20.1732631679143; Tue, 26 Nov 2024
- 06:34:39 -0800 (PST)
-Date: Tue, 26 Nov 2024 06:34:39 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6745dc7f.050a0220.21d33d.0018.GAE@google.com>
-Subject: [syzbot] [net?] KMSAN: uninit-value in hsr_forward_skb (2)
-From: syzbot <syzbot+671e2853f9851d039551@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125-imx219_fixes-v3-3-434fc0b541c8@ideasonboard.com>
 
-Hello,
+Hi Jai,
 
-syzbot found the following issue on:
+On Mon, Nov 25, 2024 at 08:36:27PM +0530, Jai Luthra wrote:
+> When the analog binning mode is used for high framerate operation,
+> the pixel rate is effectively doubled. Account for this when setting up
+> the pixel clock rate, and applying the vblank and exposure controls.
+> 
+> The previous logic only used analog binning for 8-bit modes, but normal
+> binning limits the framerate on 10-bit 480p [1]. So with this patch we
+> switch to using special binning (with 2x pixel rate) for all formats of
+> 480p mode and 8-bit 1232p.
+> 
+> [1]: https://github.com/raspberrypi/linux/issues/5493
+> 
+> Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
+> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
+> Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> ---
+>  drivers/media/i2c/imx219.c | 120 ++++++++++++++++++++++++++++-----------------
+>  1 file changed, 76 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index 970e6362d0ae3a9078daf337155e83d637bc1ca1..39b85cdee58318b080c867afd68ca33d14d3eda7 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -149,6 +149,12 @@
+>  #define IMX219_PIXEL_ARRAY_WIDTH	3280U
+>  #define IMX219_PIXEL_ARRAY_HEIGHT	2464U
+>  
+> +enum binning_mode {
+> +	BINNING_NONE = IMX219_BINNING_NONE,
+> +	BINNING_X2 = IMX219_BINNING_X2,
+> +	BINNING_ANALOG_X2 = IMX219_BINNING_X2_ANALOG,
+> +};
+> +
+>  /* Mode : resolution and related config&values */
+>  struct imx219_mode {
+>  	/* Frame width */
+> @@ -337,6 +343,10 @@ struct imx219 {
+>  
+>  	/* Two or Four lanes */
+>  	u8 lanes;
+> +
+> +	/* Binning mode */
+> +	enum binning_mode bin_h;
+> +	enum binning_mode bin_v;
+>  };
+>  
+>  static inline struct imx219 *to_imx219(struct v4l2_subdev *_sd)
+> @@ -362,6 +372,36 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
+>  	return imx219_mbus_formats[i];
+>  }
+>  
+> +static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
+> +{
+> +	switch (format->code) {
+> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
+> +	case MEDIA_BUS_FMT_SGRBG8_1X8:
+> +	case MEDIA_BUS_FMT_SGBRG8_1X8:
+> +	case MEDIA_BUS_FMT_SBGGR8_1X8:
+> +		return 8;
+> +
+> +	case MEDIA_BUS_FMT_SRGGB10_1X10:
+> +	case MEDIA_BUS_FMT_SGRBG10_1X10:
+> +	case MEDIA_BUS_FMT_SGBRG10_1X10:
+> +	case MEDIA_BUS_FMT_SBGGR10_1X10:
+> +	default:
+> +		return 10;
+> +	}
+> +}
+> +
+> +static int imx219_get_rate_factor(struct imx219 *imx219)
+> +{
+> +	switch (imx219->bin_v) {
+> +	case BINNING_NONE:
+> +	case BINNING_X2:
+> +		return 1;
+> +	case BINNING_ANALOG_X2:
+> +		return 2;
 
-HEAD commit:    fc39fb56917b Merge tag 'jfs-6.13' of github.com:kleikamp/l..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12483930580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1a5c320d506b5745
-dashboard link: https://syzkaller.appspot.com/bug?extid=671e2853f9851d039551
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130abec0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1026d7f7980000
+FWIW, what the CCS driver does is that it exposes different horizontal
+blanking ranges for devices that use analogue binning. The rate is really
+about reading pixels and with analogue binning the rate is the same, it's
+just that fewer pixels are being (digitally) read (as they are binned). I
+wonder if this would be a workable approach for this sensor, too. Of course
+if the LLP behaves differently for this sensor, then we should probably
+just accept that.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c35bd17a0dc5/disk-fc39fb56.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/900f3f8ce653/vmlinux-fc39fb56.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fae5edad1eaf/bzImage-fc39fb56.xz
+> +	}
+> +	return -EINVAL;
+> +}
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Controls
+>   */
+> @@ -373,10 +413,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+>  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
+>  	const struct v4l2_mbus_framefmt *format;
+>  	struct v4l2_subdev_state *state;
+> +	int rate_factor;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+671e2853f9851d039551@syzkaller.appspotmail.com
+u32?
 
-=====================================================
-BUG: KMSAN: uninit-value in fill_frame_info net/hsr/hsr_forward.c:709 [inline]
-BUG: KMSAN: uninit-value in hsr_forward_skb+0x9ee/0x3b10 net/hsr/hsr_forward.c:724
- fill_frame_info net/hsr/hsr_forward.c:709 [inline]
- hsr_forward_skb+0x9ee/0x3b10 net/hsr/hsr_forward.c:724
- hsr_dev_xmit+0x2f0/0x350 net/hsr/hsr_device.c:235
- __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
- netdev_start_xmit include/linux/netdevice.h:5011 [inline]
- xmit_one net/core/dev.c:3590 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3606
- __dev_queue_xmit+0x366a/0x57d0 net/core/dev.c:4434
- dev_queue_xmit include/linux/netdevice.h:3168 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3146 [inline]
- packet_sendmsg+0x91ae/0xa6f0 net/packet/af_packet.c:3178
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:726
- __sys_sendto+0x594/0x750 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
- x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>  	int ret = 0;
+>  
+>  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
+>  	format = v4l2_subdev_state_get_format(state, 0);
+> +	rate_factor = imx219_get_rate_factor(imx219);
+>  
+>  	if (ctrl->id == V4L2_CID_VBLANK) {
+>  		int exposure_max, exposure_def;
+> @@ -405,7 +447,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+>  		break;
+>  	case V4L2_CID_EXPOSURE:
+>  		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
+> -			  ctrl->val, &ret);
+> +			  ctrl->val / rate_factor, &ret);
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4091 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4186
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
- __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1323 [inline]
- alloc_skb_with_frags+0xc8/0xd00 net/core/skbuff.c:6612
- sock_alloc_send_pskb+0xa81/0xbf0 net/core/sock.c:2881
- packet_alloc_skb net/packet/af_packet.c:2995 [inline]
- packet_snd net/packet/af_packet.c:3089 [inline]
- packet_sendmsg+0x74c6/0xa6f0 net/packet/af_packet.c:3178
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:726
- __sys_sendto+0x594/0x750 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
- x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Isn't the exposure in lines? It shouldn't be affected by the rate change,
+shouldn't it?
 
-CPU: 0 UID: 0 PID: 5821 Comm: syz-executor335 Not tainted 6.12.0-syzkaller-05676-gfc39fb56917b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
+>  		break;
+>  	case V4L2_CID_DIGITAL_GAIN:
+>  		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
+> @@ -422,7 +464,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+>  		break;
+>  	case V4L2_CID_VBLANK:
+>  		cci_write(imx219->regmap, IMX219_REG_VTS,
+> -			  format->height + ctrl->val, &ret);
+> +			  (format->height + ctrl->val) / rate_factor, &ret);
 
+The same for vertical blanking.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  		break;
+>  	case V4L2_CID_HBLANK:
+>  		cci_write(imx219->regmap, IMX219_REG_HTS,
+> @@ -463,7 +505,8 @@ static const struct v4l2_ctrl_ops imx219_ctrl_ops = {
+>  
+>  static unsigned long imx219_get_pixel_rate(struct imx219 *imx219)
+>  {
+> -	return (imx219->lanes == 2) ? IMX219_PIXEL_RATE : IMX219_PIXEL_RATE_4LANE;
+> +	return ((imx219->lanes == 2) ? IMX219_PIXEL_RATE :
+> +		IMX219_PIXEL_RATE_4LANE) * imx219_get_rate_factor(imx219);
+>  }
+>  
+>  /* Initialize control handlers */
+> @@ -592,29 +635,12 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+>  {
+>  	const struct v4l2_mbus_framefmt *format;
+>  	const struct v4l2_rect *crop;
+> -	unsigned int bpp;
+> -	u64 bin_h, bin_v;
+> +	u32 bpp;
+>  	int ret = 0;
+>  
+>  	format = v4l2_subdev_state_get_format(state, 0);
+>  	crop = v4l2_subdev_state_get_crop(state, 0);
+> -
+> -	switch (format->code) {
+> -	case MEDIA_BUS_FMT_SRGGB8_1X8:
+> -	case MEDIA_BUS_FMT_SGRBG8_1X8:
+> -	case MEDIA_BUS_FMT_SGBRG8_1X8:
+> -	case MEDIA_BUS_FMT_SBGGR8_1X8:
+> -		bpp = 8;
+> -		break;
+> -
+> -	case MEDIA_BUS_FMT_SRGGB10_1X10:
+> -	case MEDIA_BUS_FMT_SGRBG10_1X10:
+> -	case MEDIA_BUS_FMT_SGBRG10_1X10:
+> -	case MEDIA_BUS_FMT_SBGGR10_1X10:
+> -	default:
+> -		bpp = 10;
+> -		break;
+> -	}
+> +	bpp = imx219_get_format_bpp(format);
+>  
+>  	cci_write(imx219->regmap, IMX219_REG_X_ADD_STA_A,
+>  		  crop->left - IMX219_PIXEL_ARRAY_LEFT, &ret);
+> @@ -625,28 +651,8 @@ static int imx219_set_framefmt(struct imx219 *imx219,
+>  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
+>  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
+>  
+> -	switch (crop->width / format->width) {
+> -	case 1:
+> -	default:
+> -		bin_h = IMX219_BINNING_NONE;
+> -		break;
+> -	case 2:
+> -		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
+> -		break;
+> -	}
+> -
+> -	switch (crop->height / format->height) {
+> -	case 1:
+> -	default:
+> -		bin_v = IMX219_BINNING_NONE;
+> -		break;
+> -	case 2:
+> -		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
+> -		break;
+> -	}
+> -
+> -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
+> -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
+> +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, imx219->bin_h, &ret);
+> +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, imx219->bin_v, &ret);
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Please run:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+$ ./scripts/checkpatch.pl --strict --max-line-length=80
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>  
+>  	cci_write(imx219->regmap, IMX219_REG_X_OUTPUT_SIZE,
+>  		  format->width, &ret);
+> @@ -851,6 +857,27 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  		int exposure_max;
+>  		int exposure_def;
+>  		int hblank;
+> +		int pixel_rate;
+> +		u32 bpp = imx219_get_format_bpp(format);
+> +		enum binning_mode binning = BINNING_NONE;
+> +
+> +		/*
+> +		 * For 8-bit formats, analog horizontal binning is required,
+> +		 * else the output image is garbage.
+> +		 * For 10-bit formats, analog horizontal binning is optional,
+> +		 * but still useful as it doubles the effective framerate.
+> +		 * We can only use it with width <= 1624, as for higher values
+> +		 * there are blocky artefacts.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+This comment would benefit from rewrapping.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> +		 *
+> +		 * Vertical binning should match the horizontal binning mode.
+> +		 */
+> +		if (bin_h == 2 && (format->width <= 1624 || bpp == 8))
+> +			binning = BINNING_ANALOG_X2;
+> +		else
+> +			binning = BINNING_X2;
+> +
+> +		imx219->bin_h = (bin_h == 2) ? binning : BINNING_NONE;
+> +		imx219->bin_v = (bin_v == 2) ? binning : BINNING_NONE;
 
-If you want to undo deduplication, reply with:
-#syz undup
+It'd be also nice to move the state information to sub-device state.
+
+>  
+>  		/* Update limits and set FPS to default */
+>  		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
+> @@ -879,6 +906,11 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  					 IMX219_PPL_MAX - mode->width,
+>  					 1, IMX219_PPL_MIN - mode->width);
+>  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
+> +
+> +		/* Scale the pixel rate based on the mode specific factor */
+> +		pixel_rate = imx219_get_pixel_rate(imx219);
+> +		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
+> +					 pixel_rate, 1, pixel_rate);
+>  	}
+>  
+>  	return 0;
+> 
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
