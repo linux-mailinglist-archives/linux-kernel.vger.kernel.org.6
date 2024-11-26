@@ -1,146 +1,179 @@
-Return-Path: <linux-kernel+bounces-422418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE819D9979
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:20:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B4F9D9976
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD78AB2CDA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAF47B2CFF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096C1D63DB;
-	Tue, 26 Nov 2024 14:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131531D61AA;
+	Tue, 26 Nov 2024 14:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKC1m2el"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="USfKaUw7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6F7168B1;
-	Tue, 26 Nov 2024 14:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9352C168B1
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732630505; cv=none; b=EMqIoR3Bl+37upP9/e8I4ylYqdNCtK1e8gi1wH8WUnv66ZXxNIW+GosMdCh2LA41AsADfCN0qjhKRL1WuPLa7JdLO24D5L7FudD7Uoa/0aUiDBFgZzRUyzaMuRAEQrhIi+6C7EHnOlTqFOcoWy6JjDF1vkSdxislyVEVQ59v/hk=
+	t=1732630523; cv=none; b=txupsoue13vC4dv+e1Ry7KmCLlD7P9NvxrUu2b10z4eBMW1nIOax4up64xvOYRldYQGdalBLucrJn2PPdm4o0f9rZ9Wck3ZibsehKAO2rllR3709Dl5rBeihORttYfXlE2860Zy06j0qiA6tc0/3NIONsewQyKSOX8QB4Qmttiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732630505; c=relaxed/simple;
-	bh=H9zJ275NOohexzkWShV69p1m/fjJ/1cYjKsZnXgrn34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MNRhOd/mlqlGoiPSdcIXHgIrvT0FuZ5iByd7nHhTrfFLaqWYIdVkFoiEOz0SGmWvKYaNCgEo5WRKAGtJnh394SX+ANUSfDvghvhT27h+YHAoWQG+kLxgajc0RF5ybMA1NbM0mt4Jdmp0OnsKiDxqmfUaSoK8Q6wNfIlMGRXIsPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKC1m2el; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8A8C4CED0;
-	Tue, 26 Nov 2024 14:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732630504;
-	bh=H9zJ275NOohexzkWShV69p1m/fjJ/1cYjKsZnXgrn34=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dKC1m2elZfCk2tGhN4zFvUJzc+W2I40kBJ/KiUPJ6sIQlIrarJTwWVDSkUVLJYTyj
-	 UPnAD3TofL7hpX+MRJWVK5WeIVe04QaGrSq6pkN7o5LjEgvWK1FEpXB1zmA89nBNVG
-	 IpfDZzOMh0qOFTNzfCESFH++Vi+G5pSyKhhkXATu2FH9BL6RMdXig/h2tXSn7Q1vtP
-	 GUfvxFmnlx/BAzDqZOChbxwAQ4w5uKmCQ1GBKQLNiqvHPcqU0cYCvNQwU5ykYyhDZy
-	 oJxymIhBjHSMwb7lRpsP7/eFHTkPUrU1jOGDRqaF8Gsm4YnPrYGijLZ8zRUl+KzQXn
-	 pW/XZrLDAHrOA==
-Message-ID: <0c5929f6-6210-4b36-95ef-79bc7028b351@kernel.org>
-Date: Tue, 26 Nov 2024 15:15:00 +0100
+	s=arc-20240116; t=1732630523; c=relaxed/simple;
+	bh=KGsXrX1qAgWUV2J4o9NOVGsSuKterTunNEPgArxUBuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5zJnrOylEGiEmJL+YcqEy3qIfATYfiPipd3vjVF7uUgdjLdSCYUduJg5t4QoLIRWoVLi4kjPxJ/DiuOhWZPwkZYUGwzMIP7/C0VUSXL+ltMG9KGagYo1Vyh0OfHG7UYveRGlU3vuGSXuFo0VaApk2Vn6jtpQKQmaTbyl1F+uWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=USfKaUw7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732630520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z2W4Ssfimb/qOh9l2XaBzKk4OQ1NBpXK08fbyiSEULo=;
+	b=USfKaUw7TGOH7Fkk2LtjZQWvo+/lJkbqS1BkDb/kQFRowTH0pjkKN8f3wLv0h+EKygmwLb
+	y5KYG5uS1cFqBX/fOY+1/2HR+wzOUYfg6VNXetDFBX12cBe/mH/O2qa9TcbmLBffqM/iPF
+	a4oSVjrEc3TjVQyBkNYPxZElwdROwD0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-gyfrhSUnNyuxMJYoMiW5EQ-1; Tue,
+ 26 Nov 2024 09:15:16 -0500
+X-MC-Unique: gyfrhSUnNyuxMJYoMiW5EQ-1
+X-Mimecast-MFC-AGG-ID: gyfrhSUnNyuxMJYoMiW5EQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA3E21955E9F;
+	Tue, 26 Nov 2024 14:15:13 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.45])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EF1181956054;
+	Tue, 26 Nov 2024 14:15:07 +0000 (UTC)
+Date: Tue, 26 Nov 2024 22:15:02 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	axboe@kernel.dk, dwagner@suse.de, hare@suse.de,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: Don't wait for completion of in-flight requests
+Message-ID: <Z0XX5ts2yTO7Frl8@fedora>
+References: <20241126115008.31272-1-maqianga@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/2] Support for Texas Instruments OPT4060 RGBW Color
- sensor.
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, rickard.andersson@axis.com, kernel@axis.com
-References: <20241126140002.1564564-1-perdaniel.olsson@axis.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241126140002.1564564-1-perdaniel.olsson@axis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126115008.31272-1-maqianga@uniontech.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 26/11/2024 15:00, Per-Daniel Olsson wrote:
-> This patch series adds support for Texas Instruments OPT4060 RGBW Color sensor
-> using the i2c interface.
+On Tue, Nov 26, 2024 at 07:50:08PM +0800, Qiang Ma wrote:
+> Problem:
+> When the system disk uses the scsi disk bus, The main
+> qemu command line includes:
+> ...
+> -device virtio-scsi-pci,id=scsi0 \
+> -device scsi-hd,scsi-id=1,drive=drive-virtio-disk
+> -drive id=drive-virtio-disk,if=none,file=/home/kvm/test.qcow2
+> ...
 > 
-> The driver exposes raw adc values for red, green, blue and clear. The
-> illuminance is exposed as a calculated value in lux, the calculation uses the
-> wide spectrum green channel as base. The driver supports scaled values for red,
-> green and blue. The raw values are scaled so that for a particular test light
-> source, typically white, the measurement intensity is the same across the
-> different color channels. Integration time can be configured through sysfs as
-> well. The OPT4060 sensor supports both rising and falling threshold interrupts.
-> These interrupts are exposed as IIO events. The driver also implements an IIO
-> triggered buffer with a trigger for conversion ready interrupts.
+> The dmesg log is as follows::
 > 
-> Changes in v7:
-> - Calculation for scaled values changed to remove normalization.
-> - Fixed alignment in opt4060_write_ev_period(...).
-> - Fixed alignment in opt4060_read_ev_period(...).
-> - Updates state to bool in opt4060_write_event_config(...).
-> - dt-bindings: Define vdd-supply as required.
-> - dt-bindings: Removed description of vdd-supply.
-> - dt-bindings: Removed "Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>"
->   due to changes.
-This is a bug surprise. Because you dropped description of vdd-supply?
-No, that's not a reason to request a re-review.
+> [   50.304591][ T4382] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> [   50.377002][ T4382] kexec_core: Starting new kernel
+> [   50.669775][  T194] psci: CPU1 killed (polled 0 ms)
+> [   50.849665][  T194] psci: CPU2 killed (polled 0 ms)
+> [   51.109625][  T194] psci: CPU3 killed (polled 0 ms)
+> [   51.319594][  T194] psci: CPU4 killed (polled 0 ms)
+> [   51.489667][  T194] psci: CPU5 killed (polled 0 ms)
+> [   51.709582][  T194] psci: CPU6 killed (polled 0 ms)
+> [   51.949508][   T10] psci: CPU7 killed (polled 0 ms)
+> [   52.139499][   T10] psci: CPU8 killed (polled 0 ms)
+> [   52.289426][   T10] psci: CPU9 killed (polled 0 ms)
+> [   52.439552][   T10] psci: CPU10 killed (polled 0 ms)
+> [   52.579525][   T10] psci: CPU11 killed (polled 0 ms)
+> [   52.709501][   T10] psci: CPU12 killed (polled 0 ms)
+> [   52.819509][  T194] psci: CPU13 killed (polled 0 ms)
+> [   52.919509][  T194] psci: CPU14 killed (polled 0 ms)
+> [  243.214009][  T115] INFO: task kworker/0:1:10 blocked for more than 122 seconds.
+> [  243.214810][  T115]       Not tainted 6.6.0+ #1
+> [  243.215517][  T115] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  243.216390][  T115] task:kworker/0:1     state:D stack:0     pid:10    ppid:2      flags:0x00000008
+> [  243.217299][  T115] Workqueue: events vmstat_shepherd
+> [  243.217816][  T115] Call trace:
+> [  243.218133][  T115]  __switch_to+0x130/0x1e8
+> [  243.218568][  T115]  __schedule+0x660/0xcf8
+> [  243.219013][  T115]  schedule+0x58/0xf0
+> [  243.219402][  T115]  percpu_rwsem_wait+0xb0/0x1d0
+> [  243.219880][  T115]  __percpu_down_read+0x40/0xe0
+> [  243.220353][  T115]  cpus_read_lock+0x5c/0x70
+> [  243.220795][  T115]  vmstat_shepherd+0x40/0x140
+> [  243.221250][  T115]  process_one_work+0x170/0x3c0
+> [  243.221726][  T115]  worker_thread+0x234/0x3b8
+> [  243.222176][  T115]  kthread+0xf0/0x108
+> [  243.222564][  T115]  ret_from_fork+0x10/0x20
+> ...
+> [  243.254080][  T115] INFO: task kworker/0:2:194 blocked for more than 122 seconds.
+> [  243.254834][  T115]       Not tainted 6.6.0+ #1
+> [  243.255529][  T115] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  243.256378][  T115] task:kworker/0:2     state:D stack:0     pid:194   ppid:2      flags:0x00000008
+> [  243.257284][  T115] Workqueue: events work_for_cpu_fn
+> [  243.257793][  T115] Call trace:
+> [  243.258111][  T115]  __switch_to+0x130/0x1e8
+> [  243.258541][  T115]  __schedule+0x660/0xcf8
+> [  243.258971][  T115]  schedule+0x58/0xf0
+> [  243.259360][  T115]  schedule_timeout+0x280/0x2f0
+> [  243.259832][  T115]  wait_for_common+0xcc/0x2d8
+> [  243.260287][  T115]  wait_for_completion+0x20/0x38
+> [  243.260767][  T115]  cpuhp_kick_ap+0xe8/0x278
+> [  243.261207][  T115]  cpuhp_kick_ap_work+0x5c/0x188
+> [  243.261688][  T115]  _cpu_down+0x120/0x378
+> [  243.262103][  T115]  __cpu_down_maps_locked+0x20/0x38
+> [  243.262609][  T115]  work_for_cpu_fn+0x24/0x40
+> [  243.263059][  T115]  process_one_work+0x170/0x3c0
+> [  243.263533][  T115]  worker_thread+0x234/0x3b8
+> [  243.263981][  T115]  kthread+0xf0/0x108
+> [  243.264405][  T115]  ret_from_fork+0x10/0x20
+> [  243.264846][  T115] INFO: task kworker/15:2:639 blocked for more than 122 seconds.
+> [  243.265602][  T115]       Not tainted 6.6.0+ #1
+> [  243.266296][  T115] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  243.267143][  T115] task:kworker/15:2    state:D stack:0     pid:639   ppid:2      flags:0x00000008
+> [  243.268044][  T115] Workqueue: events_freezable_power_ disk_events_workfn
+> [  243.268727][  T115] Call trace:
+> [  243.269051][  T115]  __switch_to+0x130/0x1e8
+> [  243.269481][  T115]  __schedule+0x660/0xcf8
+> [  243.269903][  T115]  schedule+0x58/0xf0
+> [  243.270293][  T115]  schedule_timeout+0x280/0x2f0
+> [  243.270763][  T115]  io_schedule_timeout+0x50/0x70
+> [  243.271245][  T115]  wait_for_common_io.constprop.0+0xb0/0x298
+> [  243.271830][  T115]  wait_for_completion_io+0x1c/0x30
+> [  243.272335][  T115]  blk_execute_rq+0x1d8/0x278
+> [  243.272793][  T115]  scsi_execute_cmd+0x114/0x238
+> [  243.273267][  T115]  sr_check_events+0xc8/0x310 [sr_mod]
+> [  243.273808][  T115]  cdrom_check_events+0x2c/0x50 [cdrom]
+> [  243.274408][  T115]  sr_block_check_events+0x34/0x48 [sr_mod]
+> [  243.274994][  T115]  disk_check_events+0x44/0x1b0
+> [  243.275468][  T115]  disk_events_workfn+0x20/0x38
+> [  243.275939][  T115]  process_one_work+0x170/0x3c0
+> [  243.276410][  T115]  worker_thread+0x234/0x3b8
+> [  243.276855][  T115]  kthread+0xf0/0x108
+> [  243.277241][  T115]  ret_from_fork+0x10/0x20
 
-Please read submitting patches document.
+Question is why this scsi command can't be completed?
 
-Keep the tag. I really do not expect more changes to the binding at
-point of v6 or v7, especially ones so serious that result in dropping tags.
+When blk_mq_hctx_notify_offline() is called, the CPU isn't shutdown yet,
+and it still can handle interrupt of this SCSI command.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+Thanks,
+Ming
+
 
