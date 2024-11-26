@@ -1,142 +1,153 @@
-Return-Path: <linux-kernel+bounces-422283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8769D970B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:11:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF85B9D970F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:12:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3C8282AEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F45E164803
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72711CEE8F;
-	Tue, 26 Nov 2024 12:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC4A1D1724;
+	Tue, 26 Nov 2024 12:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="DhRRFcUN"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JOj/lRRc"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6283A17;
-	Tue, 26 Nov 2024 12:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5935483A17;
+	Tue, 26 Nov 2024 12:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732623109; cv=none; b=aKYIXqyhKF1vIRP0znQLYe/YrumDKjtZKCUUJpT3SkZnFa5q+K8dhW3zb5s8fsNVsAIq45GZdwnZDPKvy9gpaYFXTEt+VPfRZyjvRP235rv/jru0iKmiAIU4mH8bg7SXlmZLxhsKeCE87hFEQQ3FWciGajiH2DCoZ0OCYj5QsOY=
+	t=1732623115; cv=none; b=bztPd98aKfeuLadrP6i9/Nnt6B3W0c4Pvz3BGO7wMm2VybEWozF5y32atbwMOD36jrnURFagK332untuxooY1mIxlN3FKgHkCplQeoe2Tnz1NRt7Cgr9oYumaZYLLGMPQN1cM13agpAHKS75HAycms8MrjEL1d+qZoVQ67qjlVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732623109; c=relaxed/simple;
-	bh=EkMEDba5F2WpAGREpK3BQwlwJJIBaPqQoiXs7RmhjBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sM+tnQxbMF0PUl/IC0rYty6M6hKDN+qzto9XY0f1dyInaj3Mb0Dj6DuTBk0n8GUEp3N8jstqJGlPv5117/AcIHW+iuwc5d6G5ckdMJbb+Y+ZSeprS28D3/pFWXXCap6JjxxnQl7hmvXr6Cbf7JPSeTdSCwcXwzWBodgoXdT0yZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=DhRRFcUN; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID; bh=fPHzRXhcBL/qtJnpL3/OZFvPlNjRqASdJESrY85bw0I=; b=DhRRFc
-	UN0xzU37DjRn1oU1/gBRd8wRXM6sWuUQ0DOLtuxsBOJutpFh4jEMe1pGznBXLYshoP1OFLPXaAxfK
-	tOe7gRdfCFMJexnjnWTA5OH9WvOvcn/Mos8jRMj+F5L4WzmO2Ri0s8tNsxmsNWLhHAtBKVbBBJ4vT
-	TpS+kja1I3YwoflDtW9oX1PpJJRUyd8nnuoEApLCiFAp8c2bovd8TWdFTmTV2z/mTmBPLGIx03izF
-	1qh+GrZRK5ticDbiOxOM+wmwjZL/LuRgYVZQN8vbEyEbNW5qaaOlGUWuH/ORlQ0IvgQVjikK/zK/w
-	mDUNpa3wpkajpiu2lfMnOLvOljhA==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tFuPu-000FS1-0K; Tue, 26 Nov 2024 13:11:42 +0100
-Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tFuPs-000LCg-30;
-	Tue, 26 Nov 2024 13:11:40 +0100
-Date: Tue, 26 Nov 2024 13:11:40 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
- helper function
-Message-ID: <ycvevzp46wv4hr6ktexxjkpifav3wi4glat4a5jagghclcpagb@3jpiyehl2fn7>
-References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
- <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
- <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
- <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
- <20241126-refreshing-slick-pig-baebab@houat>
- <zmrcuqiyz5gojhusysy7cytluedslqmfgzuslutqeg65iv7ju6@bggk7qbm6eas>
- <20241126-observant-coyote-of-glee-3b94dd@houat>
+	s=arc-20240116; t=1732623115; c=relaxed/simple;
+	bh=oK74cs31TwNFDwrGbGtC0jLLF04cMI4xgHDEe49zBEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O3wZdlg6OaS8AHziIiLwOA9j2lpIb4wUbPG5z6tIkhxGYKwGE+J6Y1M+3c57jeHa0tYW/nKVES1uRCIpgY/fYIONWDBHW488omv94I/Ml8GJdIZ56I2NYAAZehqN1/0o3Sbb+jJ+0flTYZDD/shuvEYlO2EAATNn3Y1X6+aUelE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JOj/lRRc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQA7JTi026552;
+	Tue, 26 Nov 2024 12:11:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=z1IU+0
+	x4b4dxL2eBll1QY/bWdljyFYdCzH0R4nmZI34=; b=JOj/lRRchtBEDZwelC/v5S
+	u0aWib7fqfXU2t0El3Gt4Yd/i4PuKQydHZY+OHK3mjTmbvHwHE/10vmf373IbOtA
+	gNsR+MreMCOSZxOu75YwTzEn2EJWM5WGywRDWz2+W2wRjoS1Yz7o3D6fmjHg8aBV
+	yE+ur/81fRvkL3N2yu5/DpWi62kZez6snXYT3maAPJ+1xr6BiMKwnvHcOAWvhz1d
+	AGhFrAZfo/3doQPBXXwxLDMHCrJAbZjZk4mef3K9nfemzCRl3izU10PHX8Y1jfvM
+	vKyrzInCaNQ6qoI+1CtA9tfUk/XS0ptbVv21U1Si6js3CdMyWoqZU32PwDjoFKIA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4350rhk7m0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:11:51 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ3xdB7027470;
+	Tue, 26 Nov 2024 12:11:50 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 433ukj4aw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:11:50 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQCBke955771500
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 12:11:46 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BBECF20043;
+	Tue, 26 Nov 2024 12:11:46 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 89F2820040;
+	Tue, 26 Nov 2024 12:11:46 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.152.224.66])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Nov 2024 12:11:46 +0000 (GMT)
+Date: Tue, 26 Nov 2024 13:11:44 +0100
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank
+ <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] KVM: s390: Couple of small cmpxchg()
+ optimizations
+Message-ID: <20241126131144.0a076101@p-imbrenda>
+In-Reply-To: <20241126102515.3178914-1-hca@linux.ibm.com>
+References: <20241126102515.3178914-1-hca@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241126-observant-coyote-of-glee-3b94dd@houat>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27469/Tue Nov 26 10:58:20 2024)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: IZ6z6AJwRAl1qDa--NiJF6Vnq671tAeO
+X-Proofpoint-ORIG-GUID: IZ6z6AJwRAl1qDa--NiJF6Vnq671tAeO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=767 bulkscore=0
+ spamscore=0 impostorscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260097
 
-On Tue, Nov 26, 2024 at 01:09:10PM +0100, Maxime Ripard wrote:
-> On Tue, Nov 26, 2024 at 12:34:26PM +0100, Sean Nyekjaer wrote:
-> > Hi,
-> > 
-> > On Tue, Nov 26, 2024 at 09:38:55AM +0100, Maxime Ripard wrote:
-> > > Hi,
-> > > 
-> > > On Tue, Nov 26, 2024 at 08:36:00AM +0100, Sean Nyekjaer wrote:
-> > > > On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
-> > > > > On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
+On Tue, 26 Nov 2024 11:25:12 +0100
+Heiko Carstens <hca@linux.ibm.com> wrote:
 
-[...]
+looks good, and it's a follow-up of your cmpxchg series, so I think it
+should go through the s390 kernel tree
 
-> > > > > 
-> > > > > Thanks a lot for doing that!
-> > > > > 
-> > > > > I wonder about the naming though (and prototype). I doesn't really
-> > > > > validates a mode, but rather makes sure that a given rate is a good
-> > > > > approximation of a pixel clock. So maybe something like
-> > > > > drm_mode_check_pixel_clock?
-> > > > 
-> > > > Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
-> > > > 
-> > > > Would it make sense to have the pixel clock requirement as a input
-> > > > parameter? For HDMI it is 0.5%
-> > > 
-> > > This code was only used for panels so far. It reuses the same tolerance
-> > > than HDMI because we couldn't come up with anything better, but it
-> > > should totally apply to other things.
-> > > 
-> > > > and in my case the LVDS panel 10%.
-> > > 
-> > > 10% is a lot, and I'm not sure we'll want that. The framerate being
-> > > anywhere between 54 and 66 fps will trip a lot of applications too.
-> > > 
-> > > Why do you need such a big tolerance?
-> > 
-> > I don't need it, it was just from the datasheet for the LVDS panel :)
+(but please try to add the comment in patch 3)
+
+> v2:
+> - Replace broken WRITE_ONCE(..., 9) with intended WRITE_ONCE(..., 0).
 > 
-> So you mean the panel accepts a pixel clock within +/- 10%?
-
-Yes :)
-
+> v1:
+> Use try_cmpxchg() instead of cmpxchg() so compilers with flag output
+> operand support (gcc 14 and newer) can generate slightly better code.
 > 
-> That makes sense, but then we should also adjust the mode timings to
-> match so we still keep 60fps. There's much more to *that* than the
-> helpers you try to create though, so let's keep it aside for now.
-
-Ok
-
+> Also get rid of two cmpxchg() usages on one/two byte memory areas
+> which generates inefficient code.
 > 
-> Maxime
+> bloat-o-meter statistics of the kvm module:
+> 
+> add/remove: 0/0 grow/shrink: 0/11 up/down: 0/-318 (-318)
+> Function                                     old     new   delta
+> kvm_s390_handle_wait                         886     880      -6
+> kvm_s390_gisa_destroy                        226     220      -6
+> kvm_s390_gisa_clear                           96      90      -6
+> ipte_unlock                                  380     372      -8
+> kvm_s390_gisc_unregister                     270     260     -10
+> kvm_s390_gisc_register                       290     280     -10
+> gisa_vcpu_kicker                             200     190     -10
+> account_mem                                  250     232     -18
+> ipte_lock                                    416     368     -48
+> kvm_s390_update_topology_change_report       174     122     -52
+> kvm_s390_clear_local_irqs                    420     276    -144
+> Total: Before=316521, After=316203, chg -0.10%
+> 
+> Heiko Carstens (3):
+>   KVM: s390: Use try_cmpxchg() instead of cmpxchg() loops
+>   KVM: s390: Remove one byte cmpxchg() usage
+>   KVM: s390: Increase size of union sca_utility to four bytes
+> 
+>  arch/s390/include/asm/kvm_host.h | 10 +++++-----
+>  arch/s390/kvm/gaccess.c          | 16 ++++++++--------
+>  arch/s390/kvm/interrupt.c        | 25 ++++++++-----------------
+>  arch/s390/kvm/kvm-s390.c         |  4 ++--
+>  arch/s390/kvm/pci.c              |  5 ++---
+>  5 files changed, 25 insertions(+), 35 deletions(-)
+> 
 
-/Sean
 
