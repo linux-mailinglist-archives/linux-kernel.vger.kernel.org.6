@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-422214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370699D95F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:04:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D729D95F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:04:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F16FA2844B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18E6166D8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31E51CDA19;
-	Tue, 26 Nov 2024 11:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfcPKMQ0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892281BD517;
-	Tue, 26 Nov 2024 11:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42CD1CD214;
+	Tue, 26 Nov 2024 11:04:44 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6780F7DA68
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732619066; cv=none; b=Hx3lACQ19a7gyOVhdYl0FROP0PbhcydzJ9o/IySl7bDKXviT9RFW4QSajceaju8k2Oh+eE5Dd9jms1HuYBpZ9MB7SzxxhnwfEJl6WtnPASHRql4lGPJxpjA7Qn8TbyExwVPXPLjZXMojgDrnoT9BtXi24YWcPQ+vAmj/miw/OG4=
+	t=1732619084; cv=none; b=OykoOzNw+qbAuzIcobMsvTCaDf87ITZqJHGEB00JL7feOj4nk8VV6OSYSR5PgjtjCdZfiqJI0XLqDs1MbOEcpuTrnyW5JOB+8bfzygK9D0PNtnjb6ZbMa6LbJqHtdEB/U9LRDylDzbPsHMvlL7O6p+PEWRPA/CZB8ho9ZwNe1wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732619066; c=relaxed/simple;
-	bh=3UYSpdBhhScmFfwNokk9SRyhw7PvbAn+Go6uW15ExwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SS4exOnOOKQ1gBdvPq1TMxkGJ7L9u3GCNN0VPJmfwHVPRrS1ooy1079wfj0dBCPZmOHgRskzX2/LhsMhfmac87T+Gd6JthzCFWA5xMES/ptJ9HxDHmdzMSAe/Hnk7q04vJDkDD3nenrDyks/kW0lIsDHjElPIopJF/TC3CJn69U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfcPKMQ0; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732619065; x=1764155065;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3UYSpdBhhScmFfwNokk9SRyhw7PvbAn+Go6uW15ExwY=;
-  b=cfcPKMQ0gy2DCmpoE0vJmzyrEMt7OTaSBlWh8YteJSnjb+a2lb/+Iwa0
-   sEK2D7wa+XylEVScBx8SY/3ds/QlIXdnk3bPtOFW8Ce9lxeE5bEi0REpZ
-   5aTAlXjjoDDpjGpuAg13nZfIcfD/A81pJbQh9hVqOPf3oN1RwB1V5vP72
-   aOnpQpOljHHa3vqM2gbBpkpYo3HeW4lVenqoDgVowOXGHbKBJqMTvLBM+
-   Hy2EjAU6nkuV0vVCnnBLQASnnQ4XTmx3VQ/3g9rr3FstP6AZvHZF8KkDd
-   pMk40/LwFif0gP+fwZIw54+0ZSv1XvtSJEgLvJPceGSRkDyaPrNx05y1t
-   g==;
-X-CSE-ConnectionGUID: JARBdAiWTniczbqY6c/ZQQ==
-X-CSE-MsgGUID: 7OT8y3kmSlm639QxNFcZMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="35629881"
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="35629881"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:04:24 -0800
-X-CSE-ConnectionGUID: dpQhF7GvSayMgKDQ+Av3Xw==
-X-CSE-MsgGUID: hxYvGCnPRcitHFZ1a19nuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="114841348"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 26 Nov 2024 03:04:22 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFtMh-0007EX-1P;
-	Tue, 26 Nov 2024 11:04:19 +0000
-Date: Tue, 26 Nov 2024 19:04:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen Ridong <chenridong@huaweicloud.com>, steffen.klassert@secunet.com,
-	daniel.m.jordan@oracle.com, herbert@gondor.apana.org.au
-Cc: oe-kbuild-all@lists.linux.dev, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: Re: [PATCH 1/2] padata: add pd get/put refcnt helper
-Message-ID: <202411261818.iINyAe83-lkp@intel.com>
-References: <20241123080509.2573987-2-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1732619084; c=relaxed/simple;
+	bh=Qjj4TlnexTrYfYx0Fb86z88nPbDi3KHCHpXW+CWZSMo=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ah+sqxMEQQfO7BwyQLyRoOrGaFSn5eeM5s6I1J2sVc1CFOu894r1zCrCX07muphwKohxobpCj+jM32zk7N9Nzp094xk59g6g5FttWGeBxp1NNwRlQC5MbvxUTSHgOV/C5ma9AuT4Km0rcW02yXs4amerMcFAc3VwiQay6fAOZPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxG+JIq0VnsRFJAA--.11302S3;
+	Tue, 26 Nov 2024 19:04:40 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxyOJHq0VnunJoAA--.23008S3;
+	Tue, 26 Nov 2024 19:04:39 +0800 (CST)
+Subject: Re: [PATCH v4 05/10] objtool: Handle unreachable entry of rodata
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-6-yangtiezhu@loongson.cn>
+ <20241126072557.b6qt7jaiikvkcswn@jpoimboe>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <20537f77-e105-317b-7f95-8a72533c8e43@loongson.cn>
+Date: Tue, 26 Nov 2024 19:04:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241123080509.2573987-2-chenridong@huaweicloud.com>
+In-Reply-To: <20241126072557.b6qt7jaiikvkcswn@jpoimboe>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMCxyOJHq0VnunJoAA--.23008S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ArykKr43KFW8Kw48tr1kJFc_yoW8uFyDpF
+	15Way2kF4jqryIk3ZrK3Wjgry5Gws7Gry8Gryvyr4UG347Zrn5tFWSka12va47Ww15u3WI
+	vFWYgryUWF4jyagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4AhLUUUUU
 
-Hi Chen,
+On 11/26/2024 03:25 PM, Josh Poimboeuf wrote:
+> On Fri, Nov 22, 2024 at 12:50:00PM +0800, Tiezhu Yang wrote:
+>> When compling with Clang on LoongArch, there exists unreachable entry of
+>> rodata which points to a position after the function return instruction,
+>> this is generated by compiler to fill the non-existent switch case, just
+>> skip the entry when parsing the relocation section of rodata.
+>>
+>> This is preparation for later patch on LoongArch, there is no effect for
+>> the other archs with this patch.
+>>
+>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+>> ---
+>>  tools/objtool/check.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+>> index 8733ca620cca..b21e47d8d3d1 100644
+>> --- a/tools/objtool/check.c
+>> +++ b/tools/objtool/check.c
+>> @@ -2144,6 +2144,13 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>>  		if (!dest_insn)
+>>  			break;
+>>
+>> +		/* Handle the special cases compiled with Clang on LoongArch */
+>> +		if (file->elf->ehdr.e_machine == EM_LOONGARCH && reloc->sym->type == STT_SECTION &&
+>> +		    (!insn_func(dest_insn) || insn_func(dest_insn)->pfunc != pfunc)) {
+>> +			prev_offset = reloc_offset(reloc);
+>> +			continue;
+>
+> Are you sure this is specific to loongarch?
 
-kernel test robot noticed the following build warnings:
+I am not sure, I only found this issue on LoongArch compiled with Clang,
+but I think there is no effect if make it generic, like this:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.12 next-20241126]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index f7586f82b967..87302e6fc07f 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -2103,9 +2103,10 @@ static int add_jump_table(struct objtool_file 
+*file, struct instruction *insn,
+                 if (!dest_insn)
+                         break;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Ridong/padata-add-pd-get-put-refcnt-helper/20241125-111043
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241123080509.2573987-2-chenridong%40huaweicloud.com
-patch subject: [PATCH 1/2] padata: add pd get/put refcnt helper
-config: x86_64-randconfig-122-20241125 (https://download.01.org/0day-ci/archive/20241126/202411261818.iINyAe83-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411261818.iINyAe83-lkp@intel.com/reproduce)
+-               /* Make sure the destination is in the same function: */
+-               if (!insn_func(dest_insn) || insn_func(dest_insn)->pfunc 
+!= pfunc)
+-                       break;
++               if (!insn_func(dest_insn) || insn_func(dest_insn)->pfunc 
+!= pfunc) {
++                       prev_offset = reloc_offset(reloc);
++                       continue;
++               }
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411261818.iINyAe83-lkp@intel.com/
+                 alt = malloc(sizeof(*alt));
+                 if (!alt) {
 
-sparse warnings: (new ones prefixed by >>)
->> kernel/padata.c:1142:25: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct parallel_data *pd @@     got struct parallel_data [noderef] __rcu *pd @@
-   kernel/padata.c:1142:25: sparse:     expected struct parallel_data *pd
-   kernel/padata.c:1142:25: sparse:     got struct parallel_data [noderef] __rcu *pd
-   kernel/padata.c: note: in included file (through include/linux/swait.h, include/linux/completion.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+If you are OK, I will modify it.
 
-vim +1142 kernel/padata.c
+Thanks,
+Tiezhu
 
-  1126	
-  1127	/**
-  1128	 * padata_free_shell - free a padata shell
-  1129	 *
-  1130	 * @ps: padata shell to free
-  1131	 */
-  1132	void padata_free_shell(struct padata_shell *ps)
-  1133	{
-  1134		struct parallel_data *pd;
-  1135	
-  1136		if (!ps)
-  1137			return;
-  1138	
-  1139		mutex_lock(&ps->pinst->lock);
-  1140		list_del(&ps->list);
-  1141		pd = rcu_dereference_protected(ps->pd, 1);
-> 1142		padata_put_pd(ps->pd);
-  1143		mutex_unlock(&ps->pinst->lock);
-  1144	
-  1145		kfree(ps);
-  1146	}
-  1147	EXPORT_SYMBOL(padata_free_shell);
-  1148	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
