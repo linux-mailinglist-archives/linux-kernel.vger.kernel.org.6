@@ -1,164 +1,108 @@
-Return-Path: <linux-kernel+bounces-422619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CECD9D9BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369A79D9BF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D87164246
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:59:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515811643DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CEA1D90A2;
-	Tue, 26 Nov 2024 16:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1B01DA0ED;
+	Tue, 26 Nov 2024 17:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZyTJJTAA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2ZfD/a+"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4EA11187
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0604C11187;
+	Tue, 26 Nov 2024 16:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732640356; cv=none; b=Y++04DX18bJWiB5qFEq9H2BmsaeToobqMXTi+GnbHN2MwMrEQ8znIamVvoYo7b3zYD+2ScCJFWR4I36brSdVprrlhxfoVb0R3V+61GHrm0d7mWDmpTaxwt6pDszsOgydLq152xJoaWdIzH3Y7ctNGRau+eUuk6vaTLyWI/3chkU=
+	t=1732640401; cv=none; b=GxBy2mUAW0nvOjCKln9gameFRkKIsE5qixuTGFX+J4EBLNR7PdfmzYLuyglLNYcD6OAMTb6i25GVipcl1FnA2Cp8GbPOXIAM4un8JxommoxFB7hnw/QLJ1ck2cFmbyzSCAZe376ZsL7BQECBMMb/hBX11ZNKqHyjdSrka69XTG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732640356; c=relaxed/simple;
-	bh=Wwm5m98lf1T8S9SwxIBtlmeTtv/4D+EhhHes4WNOA2E=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Snm+h9KdYUJy+aKLMFOhC9WmTjvfe7Bg/RIEhiD2iG7MXFYuLZSqL1sq3pwGUuKvMbzlRc1KTsk0yXrfAcnNLOvcTsUAqKQVdwbofSd9LLcSVeTCHsjNg1nCQp2qDGgxhVXL9iS3xBSeF9mIYxK6kUpgukjLX3+EvOupbfRH5mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZyTJJTAA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732640353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FfwAUTEkCBSJRetY/z93FAYZhUtOgtlO/ePiMJ03JhU=;
-	b=ZyTJJTAABVOgxde4miSSwnSUpeNL3sdGXrf7L2dhf2uw3vr4WwApRydnPjai9mZQGB3pKY
-	OGj0xc0/UXnCT1LEeEBSvD3gHppCj9QC2HZOfZcZdAU/Q/nckNO3BBKfuZuR/qbLyhp7hB
-	D2ngTTBOTrycXEyY6V84mj/5lbRJ+og=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-554-gP1m_xFtNDy5Vvo_uNR9BQ-1; Tue, 26 Nov 2024 11:59:11 -0500
-X-MC-Unique: gP1m_xFtNDy5Vvo_uNR9BQ-1
-X-Mimecast-MFC-AGG-ID: gP1m_xFtNDy5Vvo_uNR9BQ
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-843eb4505e7so32593839f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:59:11 -0800 (PST)
+	s=arc-20240116; t=1732640401; c=relaxed/simple;
+	bh=MtRv4oOaXfK8SLIiralC2PpKvgtDrqnVngZfjWifN7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LqLy5hmc76fe/cDmm1GDxBMtTYRqhhKvzJ3hLOPjgmACAJHiywnfEferb53vpr7WZ2asfri9mPQlbaviIkKyci+3IYOhlT52XBNFXyvF7g3eRRVrv5P27M10COPryHceLx3renyp9LdjrC9HUS2GMio2Wo/ud11PlwtkYqKs1Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2ZfD/a+; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ea501acd25so974899a91.2;
+        Tue, 26 Nov 2024 08:59:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732640399; x=1733245199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MtRv4oOaXfK8SLIiralC2PpKvgtDrqnVngZfjWifN7k=;
+        b=I2ZfD/a+FYE7UQR8DHpg10LEcumh4TDjteSfUHyZPLkP8V0+iF48nufS8rKDn8fzPu
+         bB6ha247M5B8dP0Iso/4LegIiC/eqQ/KzscIJDh/gor6zSDZ9qXwMpyQXE10aiFtTyzP
+         X4avYwp5/jSV1f/r3LydDZh5IcitGVHGS28nhprTu1S1j/IMkM8dRJRpJj2sRsAKC4rS
+         C5NJEtPythShbKgRwIfFGMaiGr8b7iEFiz3Y1T2aRJsqtwmvbgExn2fs0qrCkPhrLsF9
+         Gl3IP4F2RroaZLrGRq5NscU3mT2fRQqVvnI14szCF270RArWvXHit/tzKMrwR3KmNuM2
+         wiWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732640351; x=1733245151;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FfwAUTEkCBSJRetY/z93FAYZhUtOgtlO/ePiMJ03JhU=;
-        b=aeKj0n/LUKKSi46ZghZlBOvOv4TEkB+4duxFQtEi8IwLKs/l8KBMqu/CqHKSC4z1fn
-         eYi0um+HiQDqkDDSel2scLsl6fG9/9D1CSXaLejR2veXiPK6DgO2lDO/qyVtni5vy7AX
-         QQVI/kQx4zGjyxdp2w5ybtzwqTQ2M8VO3LnSnnRi1pR6TrbASQgKsJSKS84I+3PSpyuQ
-         KbPds5Kcdad7Iy1eST2LmDgp7ZlwFePf4klX2o11N/74Ex2j0UQnuw3QJ2n0vAaKy3ED
-         wLHkN+FjOOPtfKwzfeVR8gkFpE7tm9gjK38YZqtKnFJz5BrmhCMc67S564xtyHkG6tmq
-         aDog==
-X-Forwarded-Encrypted: i=1; AJvYcCXxzFoj/Mg/JAmyyPylT76r2e3OD4Lvf0a/+G5jM6gDg5aGXt2l17EdcdVxZHy8+7eOcx/izKOOU/O5bFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJFJcMa18DFH2jBdfYgYNNwqdzinJ4M5dk9my3UnPWDTrtKXsb
-	rSNbL02mmS9jbLz7ab1x/TegwQNioukSRmqX0pvAlZpycU/8IgrDjFi17FiEX6U+LM5xfKaGInJ
-	uCxZMFeXLY0D8JU7gj2aFuVmbB/k/A2AHB3csrfel1plXkRpcs9WQFu2ObIX+sQ==
-X-Gm-Gg: ASbGncv+KMU9347kJYWKtfm+nWYIype5BTTloPp02xFVSeLT2+tYMkl09jh2Oj7tiuN
-	Ttw0tQveVD8FHsmsJ9nE5tenOrvizbYza4o7D6QQVoilSEwQwO2eUWvmONhqx73gbns1upf671y
-	MoUxvofiabFHODw+o89VlVzVXR8ca4KRaeBpI7MuzQmiQEWy9Vz+EnZhhAGC4UjEMmGFepl2hDz
-	4+8rcOj4SPgqAPrOZtt+Km4aCqxpkdctYibMjfR4ao3T6PnDj7Kb1WwxhsB10VUdNzQyM/P/CrB
-	FReCoYIev7c6sdqt8soY
-X-Received: by 2002:a05:6602:3416:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-843eceaecf4mr11257739f.2.1732640351291;
-        Tue, 26 Nov 2024 08:59:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHGuUIrsmpD2nyyr2nlz0r/65HSulSWQ8fTKZWOuQhPW1NivEiWGecHiw9sP62ticKt/lJs8A==
-X-Received: by 2002:a05:6602:3416:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-843eceaecf4mr11256039f.2.1732640350992;
-        Tue, 26 Nov 2024 08:59:10 -0800 (PST)
-Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8419e23255asm101800839f.35.2024.11.26.08.59.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 08:59:10 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <48b9d642-9739-4333-b4b9-319df8a85e2d@redhat.com>
-Date: Tue, 26 Nov 2024 11:59:09 -0500
+        d=1e100.net; s=20230601; t=1732640399; x=1733245199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MtRv4oOaXfK8SLIiralC2PpKvgtDrqnVngZfjWifN7k=;
+        b=h/uCvSpqxZPz+wp+hExnEyHjegalHEYXGlZai7fV9D8sGKV39OEyclAFNL1vcZm7Al
+         Iyfp2hdPi0b0fvoV8eIKobcNZHEBGbRAX3dv1vS1Ys1jsSdB1oHNPKyCWJCFpGc1ZK3t
+         QuQtLBnEBeyQdYcUzzOwbzU5Mi54Nwro3bC40O/qQIzHJJwdhWuEOCaCb8dDkUI6zcjr
+         h0tKLWoJJcyyk7xZPKCphuZAI4BKPK43qs8GJSyAdzp8xGKXOuV1IdNJj+pl+uMU9y4R
+         Ap6WhtNmmFw2jONU1WpfUg3Xyc2nUDdjhBrkaqJuzhxOj5xuP4QHzi7MQv3pTcz00lUv
+         qyug==
+X-Forwarded-Encrypted: i=1; AJvYcCVah0f9f+DLhLmmvpn6MRj7SZ+yMguQQSRT8j5U2Aoo/tgyVA62aqHyorHVH4pgvwB1GbQv0yHztYC2d3mtxfM=@vger.kernel.org, AJvYcCXNZYMRciBpnPjyGqIcTCU52L8o7BxI171LEs+OgxpGU5GnaKdJRvcCZBHET3HNAcVPqzjuc1Yt9i0NJKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvHPQi0QTcyCvT+qEHxVW4+JAYeZCwkDDSHqkRd/X6sw7L005z
+	apbhe/c0UVd1Z7a6w0ZdCAQ8TCsOulCIuYzb/ceGJH5HyNX5AQdhtTgb+5Djj6mZvDR0/lcDtez
+	8it6AwzpokaiPRpcBgEFTml8AOxP87ns4
+X-Gm-Gg: ASbGncukTdReQQpPlpC5Gn2N99lI7C5StWo2vYL2wWXBrhWiQKKr4nRMphFc9hg8H9Y
+	bDKTJRKSwEcXchrLAK8kjh6vCTZiu2WA=
+X-Google-Smtp-Source: AGHT+IEI+qtdaIzBJqZlcFjlRD4+3ro4LBUFICzngU+d2ahdoLPo6qN9okcbJjaWdGONAYbUKMV83McdQFypPctu1gA=
+X-Received: by 2002:a17:90b:1e0c:b0:2ea:9850:b2a with SMTP id
+ 98e67ed59e1d1-2ee08e9e84emr2322a91.2.1732640399273; Tue, 26 Nov 2024 08:59:59
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Waiman Long <llong@redhat.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>
-References: <20241125085314.1iSDFulg@linutronix.de>
- <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
- <20241125174336.8nEhFXIw@linutronix.de>
- <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
- <20241125181231.XpOsxxHx@linutronix.de>
- <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
- <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
- <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
- <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
- <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
- <20241126112000.UkTwR0Iv@linutronix.de>
-Content-Language: en-US
-In-Reply-To: <20241126112000.UkTwR0Iv@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
+In-Reply-To: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 26 Nov 2024 17:59:46 +0100
+Message-ID: <CANiq72n2Js7gftu+56FYF-eGFmX+VxVW5tEpxF3v9RiBHxM2Vg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] rust: Add pr_*_once macros
+To: jens.korinth@tuta.io
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Dirk Behme <dirk.behme@gmail.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 26, 2024 at 5:41=E2=80=AFPM Jens Korinth via B4 Relay
+<devnull+jens.korinth.tuta.io@kernel.org> wrote:
+>
+> Co-developed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Jens Korinth <jens.korinth@tuta.io>
 
-On 11/26/24 6:20 AM, Sebastian Andrzej Siewior wrote:
-> On 2024-11-25 15:54:48 [-0500], Waiman Long wrote:
->>> FWIW, the description of commit 560af5dc839 is misleading. It says
->>> "Enable
->>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not what
->>> the
->>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if PROVE_LOCKING is
->>> enabled. It is all or nothing.
->>>
->> I think we can relax it by
->>
->> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
->> index 5d9eca035d47..bfdbd3fa2d29 100644
->> --- a/lib/Kconfig.debug
->> +++ b/lib/Kconfig.debug
->> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
->>   config PROVE_RAW_LOCK_NESTING
->>          bool
->>          depends on PROVE_LOCKING
->> -       default y
->> +       default y if ARCH_SUPPORTS_RT
->>          help
->>           Enable the raw_spinlock vs. spinlock nesting checks which ensure
->>           that the lock nesting rules for PREEMPT_RT enabled kernels are
->>
->> Sebastian, what do you think?
-> All the changes Guenter proposed make sense and were limited to sparc.
-> So we could apply that. Limiting the option to the RT architectures
-> would silence the warnings. If there is no interest in getting RT on
-> sparc there is probably no interest in getting the lock ordering
-> straight.
-> I remember PeterZ did not like the option in the beginning but there was
-> no way around it especially since printk triggered it on boot.
-> I'm fine with both solutions (fixing sparc or limiting
-> PROVE_RAW_LOCK_NESTING). I leave the final judgment to the locking
-> people.
+I guess these tags are meant to be informative, but just in case, I
+thought I would ask if they are here for some other reason, i.e. if
+you somehow want them to end in the kernel log.
 
-Right now, ARCH_SUPPORTS_RT is defined for most of the major arches 
-where most of the testings are being done. So even if we limit this to 
-just those arches, we will not lose much testing anyway. This does have 
-the advantage of not forcing other legacy arches from doing extra works 
-with no real gain from their point of view.
+(It may be less confusing to simply mention in the letter who worked on wha=
+t.)
 
 Cheers,
-Longman
-
+Miguel
 
