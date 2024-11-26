@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-422695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD359D9D12
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:03:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A82D163ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:03:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2F81DC19D;
-	Tue, 26 Nov 2024 18:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Zidi2ytE"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C599D9D11
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:03:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53B2BA3F;
-	Tue, 26 Nov 2024 18:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732644205; cv=none; b=DbilFGQsX9kmu70Nv1avLhVkLadldexoBKmSV33uGtIREOp+RK3VhFdAAyimojTcEK9ob9W+UrJJdYpfvEMao1O+s56YXKWCaLLDRuOdvhZpOS9HgrCAnX31XMXuV5J8HloNM3O3iz8kJ+eRNpgxRRSAbZy+2TWfttLSSMIPfYs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732644205; c=relaxed/simple;
-	bh=pdTTYo9kWZLupUThwzWLuDxQW1iSfan8aDIdO59wlHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Emp2do7jzZt3Zm1E5EN2pJOkooo//OJ1n7Kg7Gp9I4QmzMV3cQEIqYre59xwq03t/E7eEsjr4oMGi+vQU0Fq138rFJH/D2qLGLUur9itukJS84bNmytTn3w9boD8D3YB0VabsMTHeAbatRpsK9s4qKASUF3G6TD3dcKXao7utYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Zidi2ytE; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D33440E021C;
-	Tue, 26 Nov 2024 18:03:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id f21JIecHF2Fy; Tue, 26 Nov 2024 18:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732644195; bh=Bsaddr8mpxbj3IJtqOhkqhnOoXM0E17G8MEuaDojGgE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zidi2ytEhPpWQcHKUSX8k4v//KDnDq+1A7lILhnoHDD82yxmurlw3wsUwKCKvGadX
-	 BJHnNhX9vjnnL2lXTavQ2A9GkxXUChuQ+tUMMof0JnL/tGKvnPHi5dxEB+o7vZYH/2
-	 hM101JTChjbT7fvWRckcwj1c0NM1ZLrkwuedb3gYQ4WtN7ZD/WEALcRsZGb4k5ifcp
-	 3uBk9lYqd9H9ZFZq7x3Vj97IbhfLa6I6NYkHw5zR8wM4AX7NQ5aAb4d1XZvKjjKviy
-	 X0H5RP4h2tvDoXxgH8lkdWY+ezJSExpEm2d8KH0joDt+Qhhud6IkcT9phY/scZABG8
-	 4+dOWfwJnNhWztZ+iC2cDLBKoOAiCzzdgUAPIugzUQMj6qN335cVlF/7Hzb9cluRY/
-	 kmORErgng+wwhs6iBn+vpPg5Pyu2iiCN1k0NiKsncyQSJ5zWYL6y9PHymUsLHZrpAc
-	 EOhc4VRzep6tHukAX3OZaYzd4ogPcEXyecInHuUIauPGTaisd8mYeWtlb1saX68DRJ
-	 b3wGKvUgrDUSV2Cz7gQmx3UI67K3bhF1Hcxs7DcquXJgpzWzMS5DtHsR7TH1wzDKnL
-	 fz07IlPkpJPw0dKDNISrwdh88526n64ur20yV79VFXG7AleySGeO8L56NPncC/LKM3
-	 0bRAmvpTyg+vELArFUkKhNJY=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB25DB24636
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:03:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00331DC1BD;
+	Tue, 26 Nov 2024 18:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QQQqCRPe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C0C1740E01A8;
-	Tue, 26 Nov 2024 18:02:59 +0000 (UTC)
-Date: Tue, 26 Nov 2024 19:02:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
- MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
-Message-ID: <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-10-xin@zytor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A906BBA3F;
+	Tue, 26 Nov 2024 18:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732644195; cv=none; b=YHpBQNu64wNbWvgUQ4d1QVQU0DyYsktE3A4MdSe8M8yKtOdGVj1j9BSv4nLZIXi3zM/z2bKuMlBBY/rlHkBT3FPQJtn6AGFWqUp7dFlw5izlsO4VBNCTZHtLDfxykwcFgUaXEjkI9u9kVCqp2MeF3PyQa7tBeuebDj4x2wrRFQc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732644195; c=relaxed/simple;
+	bh=5PqnkY0UT/Y8RerUW9AMiSamToUq+LkOdwsrcV1qTrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X3WMSi1MREBM/CGA5b4Eku+scjMnIjQdHLppjO7x+DmOOtjjQWcd5ABgnyni9TImorU2VCkUZ31kZVuKBCnEf6kdASSZswu0zbXMnfc6hBvtJKK0a4ScCNpe0GxOkKsX2jchp0UrRIAiJNvqN/QAIWLlwbZYKm1w/6GSiLHpMlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQQqCRPe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQGNRVh014563;
+	Tue, 26 Nov 2024 18:03:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eLFfmwMNX8oACc1OcseR0boZkSPFH7gQpMUdOiOOJSc=; b=QQQqCRPeEDNqE9c4
+	bpVe7DaFJ/sRgOp3FJtvlqDqGdwzeINRNoKX03RfVS65xNUPEgcg5qnP+UHAnfz1
+	BI+B2CSjaOizS+KU2ByvM0CCsed5/YfvZklV4kPTEYg2OvAIOVbgP2CSNyWoyDOQ
+	fEyWRnXM4PhPs72JFkPpC1AoZ+TyDAqyy+QAJsBfbHg4raq+Ai3Ii0lTNCpt6xf4
+	ZHQGK+OkU1j5In4Z6xTEdt0sMMNyRqQ1r2a/BKx/UKcoxYSrFp/lWm3JU+j7H7lC
+	A+P9jalBPzwn9nscnnaC1JHjZr8TcRWnO2lXA3zV02ohvLLHlYHL1y72TWmewxhq
+	HbBWvA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434nyg52gy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 18:03:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQI38Nu017639
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 18:03:08 GMT
+Received: from [10.216.42.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
+ 2024 10:03:04 -0800
+Message-ID: <ff7c9b83-0ac7-43a0-a86a-2fed66728a32@quicinc.com>
+Date: Tue, 26 Nov 2024 23:32:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241001050110.3643764-10-xin@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] arm64: dts: qcom: sar2130p: add support for
+ SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>
+References: <20241102-sar2130p-dt-v4-0-60b7220fd0dd@linaro.org>
+ <20241102-sar2130p-dt-v4-2-60b7220fd0dd@linaro.org>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <20241102-sar2130p-dt-v4-2-60b7220fd0dd@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rAmCluWhWbtDopzYsEijdRKagTKcDR2Y
+X-Proofpoint-ORIG-GUID: rAmCluWhWbtDopzYsEijdRKagTKcDR2Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260143
 
-On Mon, Sep 30, 2024 at 10:00:52PM -0700, Xin Li (Intel) wrote:
-> No need to use MAX_POSSIBLE_PASSTHROUGH_MSRS in the definition of array
-> vmx_possible_passthrough_msrs, as the macro name indicates the _possible_
-> maximum size of passthrough MSRs.
+
+
+On 11/2/2024 8:33 AM, Dmitry Baryshkov wrote:
+> Add DT file for the Qualcomm SAR2130P platform.
 > 
-> Use ARRAY_SIZE instead of MAX_POSSIBLE_PASSTHROUGH_MSRS when the size of
-> the array is needed and add a BUILD_BUG_ON to make sure the actual array
-> size does not exceed the possible maximum size of passthrough MSRs.
+> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sar2130p.dtsi | 3123 ++++++++++++++++++++++++++++++++
+>   1 file changed, 3123 insertions(+)
+> 
 
-This commit message needs to talk about the why - not the what. Latter should
-be visible from the diff itself.
+[...]
 
-What you're not talking about is the sneaked increase of
-MAX_POSSIBLE_PASSTHROUGH_MSRS to 64. Something you *should* mention because
-the array is full and blablabla...
+> +		usb_dp_qmpphy: phy@88e8000 {
+> +			compatible = "qcom,sar2130p-qmp-usb3-dp-phy";
+> +			reg = <0x0 0x088e8000 0x0 0x3000>;
+> +
+> +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
+> +				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+> +			clock-names = "aux", "ref", "com_aux", "usb3_pipe";
+> +
+> +			power-domains = <&gcc USB3_PHY_GDSC>;
+> +
+> +			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
+> +				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			#clock-cells = <1>;
+> +			#phy-cells = <1>;
+> +
+> +			orientation-switch;
+> +
+> +			status = "disabled";
+> +
 
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index e0d76d2460ef..e7409f8f28b1 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -356,7 +356,7 @@ struct vcpu_vmx {
->  	struct lbr_desc lbr_desc;
->  
->  	/* Save desired MSR intercept (read: pass-through) state */
-> -#define MAX_POSSIBLE_PASSTHROUGH_MSRS	16
-> +#define MAX_POSSIBLE_PASSTHROUGH_MSRS	64
-						^^^
+Hi Dmitry,
 
--- 
-Regards/Gruss,
-    Boris.
+  Sorry for asking this question after code got merged. I forgot about 
+asking this last time when I commented on your patch and provided the HS 
+Phy IRQ value.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+  In SAR2130P, I remember that the lane orientation is reversed. As in 
+on normal targets, if the orientatin GPIO reads "0" it means LANE_A but 
+on SAR2130 it means LANE_B. Can you confirm if superspeed was tested 
+only in one orientation only.
+
+  I can push code for setting orienation properly for this target if you 
+can confirm that orienation is read reverse on SAR2130P.
+
+Regards,
+Krishna,
 
