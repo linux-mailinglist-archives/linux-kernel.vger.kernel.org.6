@@ -1,230 +1,121 @@
-Return-Path: <linux-kernel+bounces-422050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA119D93DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:12:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5A5168006
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:12:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC331B652C;
-	Tue, 26 Nov 2024 09:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aolo43+F"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C419D93DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:12:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7318F2DA;
-	Tue, 26 Nov 2024 09:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1F42866E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:12:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09FD1B0F30;
+	Tue, 26 Nov 2024 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W1YD4CUE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6629E18F2DA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612335; cv=none; b=pEheGsTjXQGhZkPGQhY1gMiKvUWVSpDjHMKr1LFvq02pXf0viyWLbLDAUOwp8A3DJdwYqoroaq39lPrkZN0qiscggoqB4aDkwU08LQwLatE02bXMMnpaQvChzx50uNDzfxh/cwl3zZ5bK/4Ws+2q2RcyqS0yKb7xCD5UPfUNdC0=
+	t=1732612347; cv=none; b=qUWGO0avZ4NUomLETQqYAgQDIOVn4hT0lXHYfFWe587pdtwZlxMomD4fx+CfaIN33pXbqvciv4TDhMROy/R334XO70CoE6L/Bi5mVPbxMbN+qE4TQDTaUyZg6tGKJmEIMSl27EFjsuz9Q1gHbaZeRN1+CxWqVIV0T7wFwwncU4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612335; c=relaxed/simple;
-	bh=pgxmLvW9WLvgyz7HGd8H/GF8TfGm0yXATnuchUZHPAA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRobWSiOXQIJ1SEZuL3uj1yXIy11kSJOMXFjz+cSx2kyFoP5apBW7jOONAqIRJIddcijG7ULOS0Kqze77ysrSBjRM/p9076Il6UQd9MIU8TTvBiRHHO8MNWDJghaaysQXDzWrue/XRWBRvuD+EqpFv52SYWPH1d55Hkf9AbPan4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aolo43+F; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APKotq9007724;
-	Tue, 26 Nov 2024 09:12:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=MkD+Z6LHmgclGH3CFg9mcX2y
-	iQceJOzzPcOnUTDDwyQ=; b=aolo43+F9zkZn4MPfV809nhF7KxSzqIsrIm3Y2zn
-	s38VAjwt5B7bEsXIZ70yLYhiP5Cll0ORBEZZqylsL3zc357DEJhg6SnwlJp2fYnY
-	D6/Ejzw9RvzzNIbxsvwWm9ZNki75dFX3J+Uk+hdfgdY9g/zxxkaGmFVbwlg78bOJ
-	7iaIwpJJEire1yOxICN1UjENvSNGkOGepYdw1mbtQ60Pc0+fgeOb51rw+/nB9UH+
-	jlWTsmfKZxVFi2cW3YG5oK43WB6/f5IFnH0izQmlOy7EygEgTT9eBlMuF1O0qMHJ
-	4t0sBMpq+Q/o2LlSsAkiaXpUCLdU0ASxvcelVszoO5nAvg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626fj12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 09:12:05 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ9C1i1007065
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 09:12:02 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 26 Nov 2024 01:11:57 -0800
-Date: Tue, 26 Nov 2024 17:11:53 +0800
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <ulf.hansson@linaro.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <bhupesh.sharma@linaro.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
-Message-ID: <Z0WQ2evD5AmhF4nr@cse-cd02-lnx.ap.qualcomm.com>
-References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
- <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
- <7c0c1120-c2b2-40dd-8032-339cc4d4cda4@oss.qualcomm.com>
- <Z0WPv3ygWQa/G+mD@cse-cd02-lnx.ap.qualcomm.com>
+	s=arc-20240116; t=1732612347; c=relaxed/simple;
+	bh=CsbZ28X3tP4QJFN3nurdyAAkbNcTudhsz38xFjwoTBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NLh5chIb6V2mQqmh6r9hS5SGz2Iroe7VaVDTYowSdxAtcL4hodnDZyFormJdFmb3iLz5aM0HSZ+rqMCnnO0CGUOq6gOT94NVmynX05uqi+iI9sPphXC3YO0v+BmaFr16lU04u213DHyAtlSGqjl6qaSbm44wEjNgpImYBmp3t3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W1YD4CUE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732612344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V99pFvhNgiMUcl2l0eAcTsg6ck1zEiuF3RXoVuVQE9o=;
+	b=W1YD4CUEZuHGLqUNh+O4Sd/PkXDT//uShhYRHyU6DOKN6snNqCJweiKku/HwB+aTKoJwSc
+	VCuB1andWM6PBAl/9UULW3kLpCl0KsBdnuxussFqF6heGRSXE2GONcXENlziQaOV1xURVb
+	vaXj++Np7M/l1vP1SNA4wWPeHyNcCgU=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-t-gbUQ3jO4CE-yLhzeTTdg-1; Tue, 26 Nov 2024 04:12:22 -0500
+X-MC-Unique: t-gbUQ3jO4CE-yLhzeTTdg-1
+X-Mimecast-MFC-AGG-ID: t-gbUQ3jO4CE-yLhzeTTdg
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-53daaf10af1so4205341e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:12:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732612341; x=1733217141;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V99pFvhNgiMUcl2l0eAcTsg6ck1zEiuF3RXoVuVQE9o=;
+        b=dJVbVt8fbahn5H4C2UVmkcvNuZbr2tU1ol9EK6DipcKOVU3iUxmv4A0oMQw4aKE643
+         yaPgRdzctCbQBQdLa8PKM2TzSnrAoo4fSnrbyr6E4G8XUTSi4p6vkcYN9glhzybflzKy
+         zFDWxBCmPOS4wFcs+GEjB2xH39/f52WjIh56teMbOi4guR2Ft61CnzTnWXimqCH9M05N
+         wpL2J0PpstFLrhYoUhL1r0oY1LqBnuO1zS30/bUJlsTJW4OcccpYBM08qsHCmUlvZdod
+         segCEcDp69kBu0INj8qZ2ajdu165Ku8W/2gVU/6EC+a3CgV3Gf01QtTiKcVV8KkawPnH
+         E26g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+V4jjag/IQbnntRAzs19VVj90rYfENyy4IB5zF/eakZrcm5v9zpoUOuc0gCy3iCGlfElGdODb2Ux060I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMVyjipZ8h/Gwwy+nxUBRGm1jhRp0pG5gx2q0oN7hgYf+C1EhJ
+	U6kUTZvVDXRrM5LQitOlj7O0Lx0mhKlDpLaeBh5FYiLp+QoPC0597gncihB4KcHkNyOzvHhufxc
+	spfNvB0YzuN4i4tbFvpJms7CBIqb/WNs8V1MLrZ7Es9xDjrQHpa+mr9VrbG9J/A==
+X-Gm-Gg: ASbGncsUTmuy1Y4+j8wOWGzRWn/YRbYod2fdP2Lp9XyxHB6zeXJpm1FthleEVFgof4h
+	w1QhJ8/ox6SolPtI4zxJwEgJr6RzNehPTxrYDA9yBz6FCwUpuFtDdC/DJTKzg+CHjgUYwRbxsvZ
+	Jbr4/JZp04nuF86T7LRyjnw+p2lks5HI5uKkdYIQ6vE4F5szwXvh38/WBYOtpwDTdSHjgbllUhm
+	6BP5HNXLIZX7p1yQjBg7Iq//HZ89cwU5+AFTY2m6iReyHvC5/VM62jr5dfTxyjSKO9E0Ikn7tpB
+X-Received: by 2002:ac2:4e09:0:b0:53d:e544:3fd6 with SMTP id 2adb3069b0e04-53de54441a9mr3348085e87.56.1732612340816;
+        Tue, 26 Nov 2024 01:12:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5HwldS99O3ZAEDUq+f4MJDYeNU8gBLmyj9eZdMjoxwaKTjy/KM0iGuvHYmTrG1iI5aRzXhA==
+X-Received: by 2002:ac2:4e09:0:b0:53d:e544:3fd6 with SMTP id 2adb3069b0e04-53de54441a9mr3348066e87.56.1732612340420;
+        Tue, 26 Nov 2024 01:12:20 -0800 (PST)
+Received: from [192.168.88.24] (146-241-94-87.dyn.eolo.it. [146.241.94.87])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad60b8sm12654879f8f.17.2024.11.26.01.12.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 01:12:19 -0800 (PST)
+Message-ID: <29d8c41d-ea21-4c35-9ec7-e7d5ef8aa55c@redhat.com>
+Date: Tue, 26 Nov 2024 10:12:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z0WPv3ygWQa/G+mD@cse-cd02-lnx.ap.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uZbjmKjYUsmvQQXFba7ESStf18Yq8LOp
-X-Proofpoint-ORIG-GUID: uZbjmKjYUsmvQQXFba7ESStf18Yq8LOp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260072
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v5 3/3] rtase: Corrects error handling of the
+ rtase_check_mac_version_valid()
+To: Justin Lai <justinlai0215@realtek.com>, kuba@kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, andrew+netdev@lunn.ch,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, horms@kernel.org,
+ michal.kubiak@intel.com, pkshih@realtek.com, larry.chiu@realtek.com
+References: <20241120075624.499464-1-justinlai0215@realtek.com>
+ <20241120075624.499464-4-justinlai0215@realtek.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241120075624.499464-4-justinlai0215@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 05:07:11PM +0800, Yuanjie Yang wrote:
-> On Mon, Nov 25, 2024 at 02:13:22PM +0100, Konrad Dybcio wrote:
-> > On 22.11.2024 7:51 AM, Yuanjie Yang wrote:
-> > > Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
-> > > 
-> > > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
-> > >  1 file changed, 198 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > > index 590beb37f441..37c6ab217c96 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > > @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
-> > >  			#size-cells = <1>;
-> > >  		};
-> > >  
-> > > +		sdhc_1: mmc@7c4000 {
-> > > +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
-> > > +			reg = <0x0 0x007c4000 0x0 0x1000>,
-> > > +			      <0x0 0x007c5000 0x0 0x1000>;
-> > > +			reg-names = "hc",
-> > > +				    "cqhci";
-> > 
-> > There's an "ice" region at 0x007c8000
-> Thanks, I check doc again, I miss "ice" region at 0x007c8000.
+On 11/20/24 08:56, Justin Lai wrote:
+> Previously, when the hardware version ID was determined to be invalid,
+> only an error message was printed without any further handling. Therefore,
+> this patch makes the necessary corrections to address this.
 > 
-> > > +
-> > > +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			interrupt-names = "hc_irq",
-> > > +					  "pwr_irq";
-> > > +
-> > > +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> > > +				 <&gcc GCC_SDCC1_APPS_CLK>,
-> > > +				 <&rpmhcc RPMH_CXO_CLK>,
-> > > +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
-> > > +			clock-names = "iface",
-> > > +				      "core",
-> > > +				      "xo",
-> > > +				      "ice";
-> > > +
-> > > +			resets = <&gcc GCC_SDCC1_BCR>;
-> > > +
-> > > +			power-domains = <&rpmhpd RPMHPD_CX>;
-> > > +			operating-points-v2 = <&sdhc1_opp_table>;
-> > > +			iommus = <&apps_smmu 0x02c0 0x0>;
-> > > +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
-> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > > +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
-> > > +			interconnect-names = "sdhc-ddr",
-> > > +					     "cpu-sdhc";
-> > > +
-> > > +			bus-width = <8>;
-> > > +			qcom,dll-config = <0x000f642c>;
-> > > +			qcom,ddr-config = <0x80040868>;
-> > > +			supports-cqe;
-> > > +			dma-coherent;
-> > > +			mmc-ddr-1_8v;
-> > > +			mmc-hs200-1_8v;
-> > > +			mmc-hs400-1_8v;
-> > > +			mmc-hs400-enhanced-strobe;
-> > > +			status = "disabled";
-> > > +
-> > > +			sdhc1_opp_table: opp-table {
-> > > +				compatible = "operating-points-v2";
-> > > +
-> > > +				opp-100000000 {
-> > > +					opp-hz = /bits/ 64 <100000000>;
-> > > +					required-opps = <&rpmhpd_opp_svs>;
-> > > +				};
-> > 
-> > I'm seeing 25/50 MHz OPPs in the docs as well
-> Thanks, I check doc again, I miss 50MHz OPPs, but I don't find 25MHz.
-> 
-> > [...]
-> > 
-> > > +
-> > > +		sdhc_2: mmc@8804000 {
-> > > +			compatible = "qcom,qcs615-sdhci","qcom,sdhci-msm-v5";
-> > 
-> > Missing space 
-Thanks, I will add space in next version.
+> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
 
-> > > +			reg = <0x0 0x08804000 0x0 0x1000>;
-> > > +			reg-names = "hc";
-> > > +
-> > > +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-> > > +				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			interrupt-names = "hc_irq",
-> > > +					  "pwr_irq";
-> > > +
-> > > +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-> > > +				 <&gcc GCC_SDCC2_APPS_CLK>,
-> > > +				 <&rpmhcc RPMH_CXO_CLK>;
-> > > +			clock-names = "iface",
-> > > +				      "core",
-> > > +				      "xo";
-> > > +
-> > > +			power-domains = <&rpmhpd RPMHPD_CX>;
-> > > +			operating-points-v2 = <&sdhc2_opp_table>;
-> > > +			iommus = <&apps_smmu 0x02a0 0x0>;
-> > > +			resets = <&gcc GCC_SDCC2_BCR>;
-> > > +			interconnects = <&aggre1_noc MASTER_SDCC_2 QCOM_ICC_TAG_ALWAYS
-> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > > +					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ALWAYS>;
-> > > +			interconnect-names = "sdhc-ddr",
-> > > +					     "cpu-sdhc";
-> > > +
-> > > +			bus-width = <4>;
-> > > +			qcom,dll-config = <0x0007642c>;
-> > > +			qcom,ddr-config = <0x80040868>;
-> > > +			dma-coherent;
-> > > +			status = "disabled";
-> > > +
-> > > +			sdhc2_opp_table: opp-table {
-> > > +				compatible = "operating-points-v2";
-> > > +
-> > 
-> > Similarly, it can operate at 25/50 MHz too
-> Thanks, I check doc again, I miss 50MHz OPPs, but I don't find 25MHz.
-> 
-> > 
-> > Konrad
-> 
-> Thanks,
-> Yuanjie
-> 
+Note that you should have retained the Acked-by tag provided by Andrew
+on v3.
+
+No need to repost, I'm applying the series, but please keep in mind for
+the next submission.
+
 Thanks,
-Yuanjie
+
+Paolo
 
 
