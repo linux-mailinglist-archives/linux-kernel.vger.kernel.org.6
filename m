@@ -1,262 +1,187 @@
-Return-Path: <linux-kernel+bounces-422857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D59D9F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:53:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191999D9F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC392851B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:53:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75F7EB24DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3A81DFD9B;
-	Tue, 26 Nov 2024 21:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FD01DFE00;
+	Tue, 26 Nov 2024 21:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfZgouHG"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KN+iYs5P"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65169160884;
-	Tue, 26 Nov 2024 21:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BAD160884;
+	Tue, 26 Nov 2024 21:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732658031; cv=none; b=TA08qqoT9wNxco8cVXcIx1mV8joM9CqY9YCMnvRlhOcPnPf69RAstmHOO0jkUtouy5rhs9oRlMy5vEIFXTsrbasEAf36t2t6UPsKla4GxnvoYhBJ1egRgzEErPBeJIIvdw41JB6CkAD287MrEcdXYm115dFtggBdx3pMlhiTSFo=
+	t=1732658261; cv=none; b=DYFh0eUcQsRv7jcdwiAy2VV1Yv8crnRH4l5ExLXiktEWw/bnnakZ0rv7Mo/YfgAnJyQXWfbE0O8Y8mHYgKFfeKxY7TJv8WgLcroFCyTF05q178ldrbRjP/jwlQ8UX71N0QYfhN+9k4CNdOKB+MqntA2+P3KSZdankdGe+vJPuu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732658031; c=relaxed/simple;
-	bh=XxW2iLPt+XhAQeApRQrQFEcEYbCZ/dJ9uwj2LSxxDLU=;
+	s=arc-20240116; t=1732658261; c=relaxed/simple;
+	bh=Dp5qgVwH2Wn4DlYsogcy6crwO7UfleNlMb2CxQX4kws=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZzwFFDnJdV0VICrKAiBHPwfIBF4BnYpLnAtSAcvx8Uu5EXc576AZLkD4Ve6k9gZ86ZWJGUjFY6OdEAr4Hhku+wf+hCruU0S4ki2OC+eD5SFMh2gHuSTiClBSv4o41n1j+V0KqRne9dGQj37bcVSrN6wSSGvJ8uLNDAN+vkIKPLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfZgouHG; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=OeeP0Gs0zzE0K1aT9IVow/JAORelV6Sg+c9ZJxQWVB0CNNkkfvHiHhtRXEjgeiGrZVDxlwoq18t8/Ji0l4sjch8erDip1jInjFCCRf6j9jT6lIUS1osCBVy8TY8soOuzdPqQ8CPi0y00sr+cC3BAGrQVU0kqDlf/unHKfDm8dF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KN+iYs5P; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e387ad888baso985676276.2;
-        Tue, 26 Nov 2024 13:53:49 -0800 (PST)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e59746062fso5157448a91.2;
+        Tue, 26 Nov 2024 13:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732658028; x=1733262828; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732658259; x=1733263059; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pt1v0cwAYnSlT9foVL6cUW5pg9vb/kHtLuwjuwqBLxw=;
-        b=gfZgouHG+oMeOBWs16MADv/mvZkOfJoC69yAsfqu1XTsblExeCR8V44ZdKR+l8AlEJ
-         nl1i0mLdVPWcW5FP9aAS7zG0FURqKDE8UnFi8bhlXsmRyIDKIYwQ/+2JxPrtNxLzd7wR
-         7CFN0NCkQCHJH06ID1kq6QQscZWq5eZMgLhTQ7enGZ8euzQVzTwJ+zMUUz91S1Qd6Ssz
-         MEUdvFgTsI2T5iUwlZ5Z5OIfe9dChKAjkXXKVFm66zISjR4dEQJy/Qi2EymOqQpn1My/
-         RMvuw2uCUgVdzaCKsG/CMlCyTvNJgdW8uysHRrmU5bptIYPh2Xyv9g3DLNd+0+/N3NqO
-         LTpw==
+        bh=5ufDCCX3o1NSN5Ox0hb1sfs+jmvb8aR7jXtagn20Bjg=;
+        b=KN+iYs5PvtXw7Jbay7tfk289A+yDHVeKEhRZ/bufUoDuYDkfPKU6ox93+QrLZnvQuS
+         bRD1tk6zAW1Kl9Zhug6+cJCInLIzebvjD24ZSTOneg6DyAVG04820zeQkhY7Genv6sgU
+         82y4B5Uuvd8JLkHeTJuy7O7Q+njxRUQMv94fKqpQq8Oap92IqHwRUKAV9a8koO50ggiB
+         Rq9wWODhKTtsuSg7T4BRDu7Sjd4xYnCsM1UxyqpT7ulcUaAFh0yYWU1WY5rnUD248EIn
+         hRKNPEVfG4V7DfQyV5vWNuU8ngjhIN4AsIrXeOOfxhR6J4HL+dZyY20PyQCRTfzvIU/x
+         RquQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732658028; x=1733262828;
+        d=1e100.net; s=20230601; t=1732658259; x=1733263059;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pt1v0cwAYnSlT9foVL6cUW5pg9vb/kHtLuwjuwqBLxw=;
-        b=Qy6e3W6Mzij6KybZGHK507JnPULTTkjpuOWj95y+sPVz18dABVI9FsOxxVfY4vNhdV
-         4f5ssuf81zXpXhJwFNADY9Cf2oSGsfsqk+dB+7qaa2QR1YEiG4UnoiOyK24pis4OS4iF
-         0n/t/ATDP1/iI5gtigTjK5u9Hkx5oPFa/K5QfhtloW7fqjrxnJqx9Iqwt+cIVrfpB1He
-         Tq/yhJpHe5IEj+cCxerpuRtLgGlNLrRp4xV9Dc7YlNQFzxTVMgFOkCqoP23SxfXPEqnc
-         vHM+lqhHxlSLG+qNpDHd4E9kcbxD1QkAOp5h9Hel9dEzVfPBfx3hWABmU3fgyR10l+K5
-         hBqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVphZc/dHvPZ7DdZ2cCi983tWPx/MSeQX22aHt+LvK/i7YzmPWEAYKDYx7OrIrCgMTa2l9fEGFSZR/ZWRZM@vger.kernel.org, AJvYcCXBWj56kB+uhjzbkTeJL8yR7OUBbYtAAjDd/fbXZxn2H9jpMfmnqLLvg7iJHVubeTJhJdtiyPq1Rfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGsIA8EzFxqTBr17ydKPjjihEzM5DaJz8j1MybyL/r8efOpTjR
-	8vIe9GGsP/xRUb2t4WwVMJncfy3S75WOuI66bbooBPm9duj0pAyDcE7IexIh5ndCUtkAX43ksuc
-	Zkv6rrfDc0Ce3yIf7EwjnS8/V2qc=
-X-Gm-Gg: ASbGnctxHWECuUUAl9fr08lCVwhQFRgMIwCHFm/Np4hkboGJLtKevzGqU7DFbhA7dzS
-	fvEz6jg/35giqUIWWaX1KF9t6gGhpAV0=
-X-Google-Smtp-Source: AGHT+IH7Oj7o8LbEu9AaD2P92tfHV+6MKCPIYSj99qZ6FcSbX3JDztvHRpUsR7nR76PLszA8002PwdFqwzWg2odqIgU=
-X-Received: by 2002:a05:690c:dc3:b0:6e2:ada7:ab3a with SMTP id
- 00721157ae682-6ef372752bdmr4240007b3.5.1732658028344; Tue, 26 Nov 2024
- 13:53:48 -0800 (PST)
+        bh=5ufDCCX3o1NSN5Ox0hb1sfs+jmvb8aR7jXtagn20Bjg=;
+        b=WBuZ9SYoYjkp4U8iZ9PFuktAxTCh6sMY5qiMfBy2nMEAU3dCsGXtXCmG/0uzRgRy/m
+         h02+cZutoQugtAnmFtnWjF37QxGbueC24D7WYzvVvHXnqz9PW82a3AfD08hjMK+Jakna
+         Qu9DgjJ7tS3iE2wWowpfFhwln5G/gVPCk0CJE4hcx7rUwJIYtzZL/HyoEqKWbeu9R9Dk
+         4ri866dzqbeKd1tNvdleJovgwTfsxm1RvBrAXngAsZPBa3VpX2FRB4zccMmZnQDAlRU0
+         LpEvMH7yhgosJp96BenhqdSKN0bJBudASGjXV7s8+XIdOWlIgc+Hi/SEWVJ8qfeH7yE9
+         MlvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViAKsVlE4LPhOCTTnY05C72r8H9Qez1s+C8ArCLIP45F16c9JE0ZcPcavy/sbzqJ4LQXM=@vger.kernel.org, AJvYcCWBn60MKjvLrg10aAhLitCWlX2eetP93s/TTVcYxkjRQpfRuBo8skcwCxONMmt+MxKsm0o4YqWPsSw+C60k@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxWHVSOU6lTP9OL7JlIB9wWvZM+ABPqPj/thyy/UUpwn4hMrpB
+	dXD0M8az6qWQaM+i8dgj92RcVLAPZy3SQwIajG7dZMezfsHO6Vmys78TB2Q4t8uywSaVCmrDmYK
+	oe9ejkgYAk8Q7JTOXNe6dt/fhUm5MPA==
+X-Gm-Gg: ASbGncvEjYZQ4kFElxFX16ur1OFwDbyl4iWz5pTpTpytT+6HdSZC3oHDtcTxmHTN9ZU
+	K+cwnphKoozWoRkL5+gNyBldwWvu68hIPTwToBYOlDa7BaxA=
+X-Google-Smtp-Source: AGHT+IFjO03QcnfyIpWHLHAda0KZSa+YkVCJf6maxj8PTZeoo6zzH3Apdbvph1b0zvQ8FeeSRi8Hp3v5cvzoEoPWmZE=
+X-Received: by 2002:a17:90b:224b:b0:2ea:5054:6c48 with SMTP id
+ 98e67ed59e1d1-2ee097bd271mr816422a91.28.1732658259243; Tue, 26 Nov 2024
+ 13:57:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117182651.115056-1-l.rubusch@gmail.com> <20241117182651.115056-16-l.rubusch@gmail.com>
- <20241124185449.6f81ade1@jic23-huawei>
-In-Reply-To: <20241124185449.6f81ade1@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Tue, 26 Nov 2024 22:53:12 +0100
-Message-ID: <CAFXKEHZtG-y0xq=ejHg66N-gztukzVQRaGDjzaN5sdAJOL_G5g@mail.gmail.com>
-Subject: Re: [PATCH v2 15/22] iio: accel: adxl345: reset the FIFO on error
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+References: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
+ <CAEf4BzbNs=MVNDztRW_76f8aQkm44ykiibqGa2REThWM4dVa_g@mail.gmail.com> <5307ea3b-6720-4ca9-827e-7338f255908f@t-8ch.de>
+In-Reply-To: <5307ea3b-6720-4ca9-827e-7338f255908f@t-8ch.de>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 26 Nov 2024 13:57:26 -0800
+Message-ID: <CAEf4BzYStc6gaPqHzuP4FhTi4gSCsX65Eq6Zd73p9wVjHisiuQ@mail.gmail.com>
+Subject: Re: [PATCH] btf: Use BIN_ATTR_SIMPLE_RO() to define vmlinux attribute
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 24, 2024 at 7:54=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
+On Tue, Nov 26, 2024 at 1:42=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
 >
-> On Sun, 17 Nov 2024 18:26:44 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> On 2024-11-26 13:37:26-0800, Andrii Nakryiko wrote:
+> > On Fri, Nov 22, 2024 at 4:57=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@we=
+issschuh.net> wrote:
+> > >
+> > > The usage of the macro allows to remove the custom handler function,
+> > > saving some memory. Additionally the code is easier to read.
+> > >
+> > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > ---
+> > > Something similar can be done to btf_module_read() in kernel/bpf/btf.=
+c.
+> > > But doing it here and now would lead to some conflicts with some othe=
+r
+> > > sysfs refactorings I'm doing. It will be part of a future series.
+> > > ---
+> > >  kernel/bpf/sysfs_btf.c | 21 +++++----------------
+> > >  1 file changed, 5 insertions(+), 16 deletions(-)
+> > >
+> >
+> > Nice, let's simplify. But why change the name to generic "vmlinux" if
+> > it's actually btf_vmlinux? Can we keep the original btf-specific name?
 >
-> > Add a function to empty the FIFO and reset the INT_SOURCE register.
-> > Reading out is used to reset the fifo again. For cleanup also a read
-> > on the INT_SOURCE register is needed to allow the adxl345 to issue
-> > interrupts again. Without clearing the fields no further interrupts
-> > will happen.
-> >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> > ---
-> >  drivers/iio/accel/adxl345_core.c | 75 ++++++++++++++++++++++++++++----
-> >  1 file changed, 67 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
-45_core.c
-> > index 40e78dbdb0..82bd5c2b78 100644
-> > --- a/drivers/iio/accel/adxl345_core.c
-> > +++ b/drivers/iio/accel/adxl345_core.c
-> > @@ -356,6 +356,61 @@ static int adxl345_get_fifo_entries(struct adxl34x=
-_state *st, int *fifo_entries)
-> >       return 0;
-> >  }
-> >
-> > +/**
-> > + * adxl345_read_fifo_elements() - Read fifo_entries number of elements=
-.
-> > + * @st: The instance of the state object of this sensor.
-> > + * @fifo_entries: The number of lines in the FIFO referred to as fifo_=
-entry,
-> > + * a fifo_entry has 3 elements for X, Y and Z direction of 2 bytes eac=
-h.
-> > + *
-> > + * The FIFO of the sensor is read linewise. The read measurement value=
-s are
-> > + * queued in the corresponding data structure in *st.
-> > + *
-> > + * It is recommended that a multiple-byte read of all registers be per=
-formed to
-> > + * prevent a change in data between reads of sequential registers. Tha=
-t is to
-> > + * read out the data registers X0, X1, Y0, Y1, Z0, Z1 at once.
+> The file in sysfs is named "vmlinux", /sys/kernel/btf/vmlinux.
+> This is what needs to be passed to the macro, it will name both the
+> variable and the file after it.
 >
-> To ensure this, set avail_scan_modes.
-> Then if the user requests a subset, the IIO core code will extract what i=
-s necessary
-> from the read of everythign.
+> One alternative would be to use __BIN_ATTR_SIMPLE_RO() which allows a
+> custom name.
+>
 
-Very intersting. Unfortunately, I could not find "avail_scan_modes".
-Did you mean "avail_scan_masks"? I saw some drivers operating with
-such. Could you give me some more keywords, that I could have a look
-how this is done, pls?
+Probably not worth it, ok, I'm fine with the name change, it's a local
+name anyways.
 
-This must be (one of) the reason(s) why with noinc read I only managed
-to read 3 directions from the FIFO at a time. Actually, I guess, it
-should be possible to dump the entire FIFO.
-
-Lothar
-
-> > + *
-> > + * Return: 0 or error value.
-> > + */
-> > +static int adxl345_read_fifo_elements(struct adxl34x_state *st, int fi=
-fo_entries)
-> > +{
-> > +     size_t count, ndirs =3D 3;
-> > +     int i, ret;
-> > +
-> > +     count =3D 2 * ndirs; /* 2 byte per direction */
-> sizeof(st->fifo_buf[0] * ndirs);
->
-> > +     for (i =3D 0; i < fifo_entries; i++) {
-> > +             ret =3D regmap_noinc_read(st->regmap, ADXL345_REG_XYZ_BAS=
-E,
-> > +                             st->fifo_buf + (i * count / 2), count);
-> > +             if (ret) {
-> > +                     pr_warn("%s(): regmap_noinc_read() failed\n", __f=
-unc__);
-> > +                     return -EFAULT;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +/**
-> > + * adxl345_empty_fifo() - Empty the FIFO.
-> > + * @st: The instance to the state object of the sensor.
-> > + *
-> > + * Reading all elements of the FIFO linewise empties the FIFO. Reading=
- th
-> > + * interrupt source register resets the sensor. This is needed also in=
- case of
-> > + * overflow or error handling to reenable the sensor to issue interrup=
-ts.
-> > + */
-> > +static void adxl345_empty_fifo(struct adxl34x_state *st)
-> > +{
-> > +     int regval;
-> > +     int fifo_entries;
-> > +
-> > +     /* In case the HW is not "clean" just read out remaining elements=
- */
-> > +     adxl345_get_fifo_entries(st, &fifo_entries);
-> > +     if (fifo_entries > 0)
-> > +             adxl345_read_fifo_elements(st, fifo_entries);
-> > +
-> > +     /* Reset the INT_SOURCE register by reading the register */
-> > +     regmap_read(st->regmap, ADXL345_REG_INT_SOURCE, &regval);
-> > +}
-> > +
-> >  static const struct iio_buffer_setup_ops adxl345_buffer_ops =3D {
-> >  };
 > >
-> > @@ -401,30 +456,34 @@ static irqreturn_t adxl345_trigger_handler(int ir=
-q, void *p)
+> > pw-bot: cr
 > >
-> >       ret =3D adxl345_get_status(st, &int_stat);
-> >       if (ret < 0)
-> > -             goto done;
-> > +             goto err;
-> All this churn just makes things less readable.  Better to have the bulk
-> of the addition of fifo handling in one patch. It won't be too large
-> for review.
-> >
-> >       /* Ignore already read event by reissued too fast */
-> >       if (int_stat =3D=3D 0x0)
-> > -             goto done;
-> > +             goto err;
-> >
-> >       /* evaluation */
-> >
-> >       if (int_stat & ADXL345_INT_OVERRUN) {
-> >               pr_debug("%s(): OVERRUN event detected\n", __func__);
-> > -             goto done;
-> > +             goto err;
-> >       }
-> >
-> >       if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) =
-{
-> >               pr_debug("%s(): WATERMARK or DATA_READY event detected\n"=
-, __func__);
-> >               if (adxl345_get_fifo_entries(st, &fifo_entries) < 0)
-> > -                     goto done;
-> > -     }
-> > -     goto done;
-> > -done:
-> > +                     goto err;
-> >
-> > -     if (indio_dev)
-> >               iio_trigger_notify_done(indio_dev->trig);
-> > +     }
-> >
-> > +     goto done;
-> > +err:
-> > +     iio_trigger_notify_done(indio_dev->trig);
-> > +     adxl345_empty_fifo(st);
-> > +     return IRQ_NONE;
-> NONE is probably a bad idea. Something went wrong but that doesn't
-> mean it wasn't our interrupt.  In most cases it is better to just
-> return that we handled it.  IRQ_NONE might be valid if the status
-> said it wasn't ours.
->
-> > +
-> > +done:
-> >       return IRQ_HANDLED;
-> return where you have goto done and get rid of this.
->
-> >  }
-> >
->
+> > > diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
+> > > index fedb54c94cdb830a4890d33677dcc5a6e236c13f..a24381f933d0b80b11116=
+d05463c35e9fa66acb1 100644
+> > > --- a/kernel/bpf/sysfs_btf.c
+> > > +++ b/kernel/bpf/sysfs_btf.c
+> > > @@ -12,34 +12,23 @@
+> > >  extern char __start_BTF[];
+> > >  extern char __stop_BTF[];
+> > >
+> > > -static ssize_t
+> > > -btf_vmlinux_read(struct file *file, struct kobject *kobj,
+> > > -                struct bin_attribute *bin_attr,
+> > > -                char *buf, loff_t off, size_t len)
+> > > -{
+> > > -       memcpy(buf, __start_BTF + off, len);
+> > > -       return len;
+> > > -}
+> > > -
+> > > -static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init =3D=
+ {
+> > > -       .attr =3D { .name =3D "vmlinux", .mode =3D 0444, },
+> > > -       .read =3D btf_vmlinux_read,
+> > > -};
+> > > +static __ro_after_init BIN_ATTR_SIMPLE_RO(vmlinux);
+> > >
+> > >  struct kobject *btf_kobj;
+> > >
+> > >  static int __init btf_vmlinux_init(void)
+> > >  {
+> > > -       bin_attr_btf_vmlinux.size =3D __stop_BTF - __start_BTF;
+> > > +       bin_attr_vmlinux.private =3D __start_BTF;
+> > > +       bin_attr_vmlinux.size =3D __stop_BTF - __start_BTF;
+> > >
+> > > -       if (bin_attr_btf_vmlinux.size =3D=3D 0)
+> > > +       if (bin_attr_vmlinux.size =3D=3D 0)
+> > >                 return 0;
+> > >
+> > >         btf_kobj =3D kobject_create_and_add("btf", kernel_kobj);
+> > >         if (!btf_kobj)
+> > >                 return -ENOMEM;
+> > >
+> > > -       return sysfs_create_bin_file(btf_kobj, &bin_attr_btf_vmlinux)=
+;
+> > > +       return sysfs_create_bin_file(btf_kobj, &bin_attr_vmlinux);
+> > >  }
+> > >
+> > >  subsys_initcall(btf_vmlinux_init);
+> > >
+> > > ---
+> > > base-commit: 28eb75e178d389d325f1666e422bc13bbbb9804c
+> > > change-id: 20241122-sysfs-const-bin_attr-bpf-737286bb9f27
+> > >
+> > > Best regards,
+> > > --
+> > > Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > >
 
