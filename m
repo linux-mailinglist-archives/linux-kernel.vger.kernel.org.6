@@ -1,276 +1,330 @@
-Return-Path: <linux-kernel+bounces-422667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35919D9CB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:38:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDF09D9CB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A20E6B22508
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5412D2834AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856901DB363;
-	Tue, 26 Nov 2024 17:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D721DC197;
+	Tue, 26 Nov 2024 17:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="iTU+HnQB"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2091.outbound.protection.outlook.com [40.107.94.91])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Am/I0vO7"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6161CEE9B
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.91
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732642715; cv=fail; b=AddRwTd40osZNh8W8EcX5jLJQwxac/EHN+oBA1yAT9FwU1kIsh7VibG9aXoZ/jfy4B6BueumCcgMDm+lbZjL5/5ouRpab0vIE0USCbbNSBGH6kXL2hcpTIWjn4fxvrKAz1G5SrX/6+D0caDw7uPmetBt0w95M0Jrkknp9YD3DRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732642715; c=relaxed/simple;
-	bh=T8fCtsrvhn+nxnGtOD4WzZH+vQBV/EzWs2dABYQM5v8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=myjYhJQm6hcA2LM/dHuW4gRzS4sX4aIkA9jQJ3mLwAeuTEPx/8zxpiRMfZxxGXu9Q8I+4yB2v7dfzAO1HegwT4fB7NJ2GlyDY9QbVySqTdfRP3qZgqObAmoVFOAdx9lm/wFdA6MnEIA1gmnCSuJ46SmSbwjvIcfchQTrjf0LI68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=iTU+HnQB; arc=fail smtp.client-ip=40.107.94.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m6Oih/MyvfUAtYGY56L9brR+PzPEFnQW9MAchKM9zx/v/hNj2niCMhvnb9HqKkPSRqvqP7biyXMEsfhFgFiVv6CzEx9blxmdRMFdzJj7f0iN9nb2nvUuKjlYoen6BqFlYUMVToEjEg/sh9RKz4kGfWRkY1rNKPfY96EprSEGHWNpBmiLNzkGwDhVSQIRKoskDuXWTtimYgfXDD8YLhbkvVNR8phww8YmIuD1CJ8IBm+x0p2eINLph4XeM8p6CK03mPORjTIQwlODyLp2joUvfUBdpDJRyeT2yuJJOiY00apHHRkzqcQ9sZTW37380diDbaqiwh4pOsuZXlg5YflWjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=68OMM+4gfbJv2m8Pua0a3cV/a103vSPfTEaaUEW620Y=;
- b=DmoP8bBplccz5ClDms6c8Xf8+thUPWAHp7KicdRGfE3M9NSuOhIZeVraU+a4rDHalWNQBzKaWAmFWO2GAn3M3DL2CUWNsImt8mSvcRwQ6EX8/t+8T85stApPSCHd5a9hBYZapNGdJL+/XrCbcGD4pLdnABS+8FZmQXSZfnMUGBROgUFjCDPqkAZQpOEn7c0mLpaQYIqI88p65J4EkFBdxxE8MFHrcbPQS2WFX4VaNwqFiOydnex8rbDZKQHXcp8CmhDNr44ycULWbC7IHxqq7WCCmcVRB9y6Z4g/SgP9IU+dXKSxMY+6bApt9FrdDqH+yIsQAh6CaN1uTop3uQBi0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8781CEE9B;
+	Tue, 26 Nov 2024 17:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732642786; cv=none; b=t/9KeF6jBss0EouK0DcYeHbXL7045ECu6BlcbeYkKow2nzHKe7+7/7fBhYnUdGH5e4xfaUVm0IE8H2J7bXKt3bznWVW+NgmcG/G4l+tG2JX2SreJ4llodbU9x2jAHw2qIWeaSTiVVgbOwLHQDKA4Ejd7gx/IeYvwYFW1N1xLujk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732642786; c=relaxed/simple;
+	bh=XvL33wYrLJctvq+rtELeVqyu2cYPnyOESVDz2V6Sq0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eighs4Dx4TA/Gf9nDT2Sr3vVZ8M9ekv/LEu/ZrvTFfODhWa7BsLMIPcBZ8iI9PGLq1cWfsHQwjijp33eYnYDJY2KYsOHfZY03uncu/zyw+HvpixeUZR/Qio9gerfr2z/WSv3heluvLPWdPjP4j0vz6j+gyb2hvOKO4NU7b3T8vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Am/I0vO7; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d41dbf6cfbso44335576d6.3;
+        Tue, 26 Nov 2024 09:39:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=68OMM+4gfbJv2m8Pua0a3cV/a103vSPfTEaaUEW620Y=;
- b=iTU+HnQBkECWw0Pj6EoCVsAA1hbxU+eE3mDdDMik0MUDo0x4hb3CrAyCFzVDgNoh1iq+TwbvEmvKs1J235HxGW2V0zTHX1BjnVH0EENo4ooG0UqmB4OAw+ar/sNx0HGAsxyWttyeJYh6/zaqx/wbfPGHAemY4pwvoPXdWe5UbpE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- SJ0PR01MB6480.prod.exchangelabs.com (2603:10b6:a03:295::24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.12; Tue, 26 Nov 2024 17:38:27 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%4]) with mapi id 15.20.8207.010; Tue, 26 Nov 2024
- 17:38:27 +0000
-Message-ID: <98583682-a95e-440e-bd89-03828998b48e@os.amperecomputing.com>
-Date: Tue, 26 Nov 2024 09:38:22 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: fix zone_dma_limit calculation
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: catalin.marinas@arm.com, will@kernel.org, ptesarik@suse.com, hch@lst.de,
- jiangyutang@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241125171650.77424-1-yang@os.amperecomputing.com>
- <87ttbu8q7s.fsf@tarshish>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <87ttbu8q7s.fsf@tarshish>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0202.namprd05.prod.outlook.com
- (2603:10b6:a03:330::27) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+        d=gmail.com; s=20230601; t=1732642783; x=1733247583; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZz8BIWiBCDGwfxMrWmOOQtjQ9sxBN7OfQRH+DijiqM=;
+        b=Am/I0vO7nMT6WbxWgNiIUUiooGcIsNjxho32xOhhkxtlKDGf+DaVL0PTNlNMWMzSkU
+         2+OrSH8FE+z6v1wZCnMGSE1mhrbDRJLG/Sly7Vo+p1GiEhUlvRH5FTwfpa8L003htDHU
+         SLuZ+kK4/mZx0QvEr9bnrrvy7c5Cwyo1P9QRaYsauvgRG/TDOu2LD6qhRsVKZuBqJ9GJ
+         ECx3sy4BDHYY9AFmlyZ2PDvj2BzS4sS+ZRO5TCXlQBh+ufZ7fcUZT60ahJnDFg7xHOmV
+         /2g9CdMTtea+nzxRPBPNyqOqfS+75RYQpHjb8AReGi4iIjPhT4x9OI4yob0Ej2y6p0ep
+         8GWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732642783; x=1733247583;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tZz8BIWiBCDGwfxMrWmOOQtjQ9sxBN7OfQRH+DijiqM=;
+        b=duHK4gGK/c59T0XhLqpIRB2VWfo1jSnU0/szv9wm0BPT8Xx2O2JI021tq3Mjrw2xJv
+         Pwj1zTdBwy75KJPtXjyWGNWB6SjrXCALi8EVObsorzRMryFh04T1hinKbENVDgbUDamX
+         zUJNjnRrmIHBOGTLE/WeeduTAosOYQsSh2lVhdesQBrxjealsJ7ToHgzcGLDMtJlqrPW
+         6LmDfwb0mCvtz/AxbGWymfb1czPOI6adbMlpL/N6ewscuEYJ+vknlyRqoYD+zRqX8S6Y
+         nC4yXBqWC5Mu2+B093eBzKIm9u0Y2aeXCGuKuNL/LTZPrYLv6l/sAUxxLWdY9eCi12ZV
+         /2iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJl6Cwa7PPFC+3AWztc56XK9gHinzMTRTN2CX/MabMqm7rPyAqVGNYyQKFwvOot6eDSk4=@vger.kernel.org, AJvYcCWdQno0t5clq1GClc/LBPycAl0wzZ1kvjSWPxkmUwvAoIuv/vAh8JiZCqlPcCirEnSSUubrwMNQ8UYgoIbe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqqxWiCjh0A35VWd4oJR1HFqELa/U9dHG66lpI5TTYSD6/pGVL
+	z0FuIdyDM8mc1JZ1N+f7iTB2o6De4Rdi3PUqWR4F47MzatteBcPA
+X-Gm-Gg: ASbGnctYyXlUHKsNqze8zl4dqU543YnOROuET6+Bustc4v6f4JAVoWfaSOcAISq+wOM
+	R+VQRv+UkXgT7RrZZg2A1uh7fuh3YOZYFmNTbuun3dpKv4Tk/oP9LnLslB6TAby1KuE333G2AJ3
+	Mu1qORqqXPdzzaHg7FqL+TC0tHfXQWPbVuoyZqHQVi41vi+WmP5lZhGtLa7v9A1H6sGts5K3Tec
+	Q8+HrwEqVVM/q2qafOA3xhlYfGy7y9XBEo2Ij0tewzycyXLZXqV7/FJkuGQTekENWw8NjI8w6pV
+	RlHiu2MnaoL0mA4po0UB9vgGoSg=
+X-Google-Smtp-Source: AGHT+IEEaqWvwVL5esJWhQolAfKBcn2hYSal6WKY9t7lrnvufkZQFIKC3Is2Ec3iyANHj9q3ASxZkg==
+X-Received: by 2002:ad4:5cc2:0:b0:6d4:25c4:e772 with SMTP id 6a1803df08f44-6d451344cbdmr314281526d6.36.1732642783259;
+        Tue, 26 Nov 2024 09:39:43 -0800 (PST)
+Received: from Matan-Desktop.localdomain (ool-457a37de.dyn.optonline.net. [69.122.55.222])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6d451b259e9sm57990586d6.93.2024.11.26.09.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 09:39:42 -0800 (PST)
+From: Matan Shachnai <m.shachnai@gmail.com>
+X-Google-Original-From: Matan Shachnai <m.shachnai@rutgers.edu>
+To: ast@kernel.org
+Cc: Matan Shachnai <m.shachnai@rutgers.edu>,
+	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
+	Srinivas Narayana <srinivas.narayana@rutgers.edu>,
+	Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf, verifier: Improve precision of BPF_MUL
+Date: Tue, 26 Nov 2024 12:38:43 -0500
+Message-Id: <20241126173844.29680-1-m.shachnai@rutgers.edu>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|SJ0PR01MB6480:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d0ae939-2c0c-4fc5-723a-08dd0e412276
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L1A1dzVXRm83Ni9PcGhaNFF2cCsyNzBLZVpab0orQkFTYkVCYnBWYlFOdHhk?=
- =?utf-8?B?VERMMnJtZVNkL2dsNFhPWkxUYzg1RUl0T0hpWndGdXVUQlVhSFRKVnY3MzVN?=
- =?utf-8?B?Z2tnUHlvWW5RNGZKNHU0cDVuNUtzQ251VzAxVlR4NmZVKy9uSmtUNU1MQ1FF?=
- =?utf-8?B?cWk3STdrRHVyM0g2TWtVZGkwNTZHNUxXNHR0bTlTZW9JVzRsNjRwd1VER2Zh?=
- =?utf-8?B?NE43cEk0dmFxaFBtSFBZSloyRVl4TEpyeDhnR3lKM1Z2MXRiSTVGdE0zajJD?=
- =?utf-8?B?eFNYeWxvelg2MlorVEh6RUVTdVVHKzkzZ08wOFU1WWxhVzVJME9uMlV4MDda?=
- =?utf-8?B?N1h5emhVenpnYi9oVGhUY0lRTkEyL2ZiVk5QdDhBdVdJdTN1VFM1ZldQckpH?=
- =?utf-8?B?UUxyZmFHOG16V3VtM09FV1VhTWlJc3dRMXc3VzUraXhNZ0ZRcHplYWVDL3hi?=
- =?utf-8?B?QjNReFFONU8xMFhBWUovMnBEbDkzdWE0RVl5azM4eFFhWktuMFNrK2FYRUNq?=
- =?utf-8?B?Mnc1ZG5wb0xndU1wY1NDSzVwTkYzYUpGUXMxNTJhUTRNeWd0Z2JIZDNUYjN3?=
- =?utf-8?B?dVNGVVFuRWQyMWZQWGlBUDB2ZitETHVFUThpbWVSNlE1K0lpYURpSEhjOGZC?=
- =?utf-8?B?NUMzYzNXUEMxVWw3T1lCbC9qRk02V2ljWW05dktQWWY0Y1JpdWxZUDdMaXlX?=
- =?utf-8?B?RkJ4WElLWU5VMFJNYyt5Q0s1SzJ3U1UybmRvRTdBeHdaUVZYTC9PakhDN1Fj?=
- =?utf-8?B?Y20wVU5BN0FTMGVMUDQ5dHl4S3JrSDgwQWxpNzVxcDRPVzdVeDE3dWJiVHlF?=
- =?utf-8?B?WjZsaUdnL3BiTDAxbmxKUXYyRG1IbCt0U0xmdXFlSHNjKzJXdDIrRC83UEYw?=
- =?utf-8?B?WEhUUUVpbjd4UkFGWFNxZVB3djlXMTJ3S0dySXJDQ2VaZzZjQzN4UHJFYW1B?=
- =?utf-8?B?NnVxZlBhcjlBbmx2d0NNN0NzYTlGUEFNbnQ1cCs1SWJERWVVR1Y2Zmp2ZzJD?=
- =?utf-8?B?QVZadG1HZGxBTW02dDJrZGxIaDJ4NlR4M2hiVnBhSVpqN3RKRFB0S2RPWlZV?=
- =?utf-8?B?QitUVittMjZEckRsb3dxaVE3TzM3SmxaazllMG1iZ3ZLUnRnSlRTYzdMS3dO?=
- =?utf-8?B?UVFQclRKaXRrOVRYUnlwMnZ5d2FvNlJ0SzFNU1UxeitkMVI5RDZLKzRYcW1m?=
- =?utf-8?B?MnFobmhyZWdiaW5jMHVrTUlXY1pFbjEvanRqaVY0Zkl5ckdLWDEzb3pwU3Vj?=
- =?utf-8?B?TWNxTG84NFRlNElYaVNuYlU0OUJnMmorVzZnYXlaRjZWdDk3RXR1ckttamxN?=
- =?utf-8?B?NllZZEt3c1ZKa0EwZ2hrQXR1SHlad09OeURmYzFHM2ZVRTkrdG1xSWF3OSs0?=
- =?utf-8?B?bVlmUjdwWGlwNk5uU0FCVHhFZmdLcHZINGh0RnkvaVBtTkNudVh1SUZvWnhR?=
- =?utf-8?B?QzZoL2thL0F0ZTlvSHBFMThCV2kxSmFVQndvNytiNzFhQmNrZi9RSXMzUjBP?=
- =?utf-8?B?azhMZitZMlpHS0Y1ZU9WdEkyUXQxZzZ1aEt3a3BoZVkyRm5aalQzSjByWFFv?=
- =?utf-8?B?Uk4xMjBmOVgvVkVMeHFJRmZ5YVR2NXNHdzBHUVVnYzFXbXRmekV3VCtsbjhQ?=
- =?utf-8?B?MThTMGhFZ2RVQ1NCeURncTFlRHFJV09sd25oOHM2S1JXQnlQS0hSd3BJUjg1?=
- =?utf-8?B?RjNjYTZWaTA3Ti9LaWdMQlV0Y0tiR2UzYVMvcERJZFdpSWtZMFNDU3hTWWR1?=
- =?utf-8?B?cXRRN2E0MTQwbjB6QW5rV2hlcm1oSWNBMEZ1U2VNcGcwMVBlS2hGUkhucytG?=
- =?utf-8?B?R1ExSEFkaDQ0bzdtOTN6Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bW1GdmJOL3JvSWgrdlhXczhzMVEwMTE0QlBMcERxQmhuQ3JTZVRwSmg0R1Jh?=
- =?utf-8?B?cTV1dHJ5bElabGtXYzJKd2hhSzNkOWR2bytuOEFTUENmNUE5QTlaOVpaTU9h?=
- =?utf-8?B?b1o0L0NMcDVHTXV0NmxWTHRuMS9KQ0lFZVJZb2ZPejZSdHhEZnZKbldYcFRV?=
- =?utf-8?B?eXVqNEhnbG9CTVVTUTh2REU0cW5RSjAxRjR4Yzd2R3Y4NWRFVC9FcXJUY09K?=
- =?utf-8?B?VXZ4VEJIdk1UanlMcEN2Q2hnVFg5NzdoL2swVUtKY0dQNWFKYkxDbENyR2tQ?=
- =?utf-8?B?eTZubFF4SXhmOFMrTTE1Y2FTQWdRNUJUdWROZUpBVi9PQXdsSUNjU2tKaVpI?=
- =?utf-8?B?STNlRDRNcHhZQnJrOVBMMmZDK29WVkYvbDkwelU3TzFTUGgvMVByZm5LS2hZ?=
- =?utf-8?B?R3lBbVlLcVdEMWk0TWtsZU5jZmVDcWdnSWNEb0NuTHR5RE14TVBRYzFVbFRm?=
- =?utf-8?B?bkp3WWdqSFhUWEJEcUFiV2haWjRQKzhFei9zYkFZS09XY3djMEx4TG8zZG1Y?=
- =?utf-8?B?c0t0MEljRmNpMitYcE1NN241aG1oNVk1T3FLYkwzOXJTajhNVE9DSVNZSkh1?=
- =?utf-8?B?UW5KMHlMaFpTZzBvcFpRajFuTmhRdmNlTmsvMGRZU0RSNDhpSkVxR3pYUWV1?=
- =?utf-8?B?TCtFcUhMZ3BWQzdyaDIxZVZFQjNXZHg4NDEvSkhLZWxGNWVVTDlySUtkS2xF?=
- =?utf-8?B?S21BcHZZYkpKbDEyZGFJMW5uR3c1dU1DNzFYN0lkTU9pVEV6Tk9hcFp4NVhs?=
- =?utf-8?B?bndnZkJpbXJlVmY4M29TUk1Xdm5GdnpFeDhYTXdjdlc0LytUeXBJNkNMVVgx?=
- =?utf-8?B?WFNZeCtnQU0wSjBkd1Z3LzF4WUFrcmdkU3BQYVliN2Q2TkdmR0hNWWt5Wkh4?=
- =?utf-8?B?eXBMVU5SOXdoNU5OZ2RsQXA1Z1JORGgwQXFzcEVub1BQVmFGZ1Q0NUY3UTEr?=
- =?utf-8?B?Nk9vZElCT3JmMEVvc3BXT2o4cTkvSk1IbTBtd2ZxcXJHbkFTMGtBNkM5QVNX?=
- =?utf-8?B?VXBZWURwcUdoaXBmeENpZE9mcE1McUtlRGYwUWh4UmJXTUs3TG9ScE9yZEQy?=
- =?utf-8?B?T1U0M0dpbnZFRGpGek80SlltY2dLVkF4MWp0RC9ORDdTMW90UDJKRXpJY012?=
- =?utf-8?B?OGxid0pNL0NPUDlHcklSQ1MxWmpHb1kwdFZ2dGRQRmJvY1RpK25jYnd0eWdF?=
- =?utf-8?B?Zy9VRVJqbE9VVVR3QXJuMnJLZ3Z1Mkp1cHpwZUtrTTNKYzBRdVZvZ3pYL1da?=
- =?utf-8?B?MmoydXFwRmFUamJoWkFncEJVTlRaVFE4bXcyY0ErOFE0VFBTOUcrYXFYT1A1?=
- =?utf-8?B?M3NEU0hIMkg3K042bTNhcXRpU09pSFlOZ1ZJTWRVYTBOZ1duUzlDM2kwaThx?=
- =?utf-8?B?cWZkZEYva3phRUN4Zyt0dnl0UjJpQXBZVUNZbDIyeS8vdWJ4cHFkM2twM0Fx?=
- =?utf-8?B?eE9JMUFXNXEyV0ZrZDhmMUpUMDcrdUZXOHg1dndiM1A1N2NSVVFER3lFVG8x?=
- =?utf-8?B?cHdOSndWRU5zVE91LzROKysvS3hUNXZ4cEpYRFh5aVMwSlZsRUgyZTNXMDRl?=
- =?utf-8?B?a0ljMklzYWkvTTJpSmkrR1ptNjFMZU55V1ZHZkV0UVZjalNDbzJHdDNIVjJ3?=
- =?utf-8?B?Z1JjRDZGeURwaVdxcVMxM1FGY0hLZ2J0TlFXN0VLMEJ2blJNZGZHRkRFYWRm?=
- =?utf-8?B?a3FPRUNLZzRWeGJlS1FRMmlwU1VOVnVKcnBmUnBaay9mVlRiWndoNmRxRjdR?=
- =?utf-8?B?eXZrVUY4aVVGa0d4NG5CTDVkSFUxdGVPRFVJY01Kc3BiZTliMHBWUWR2MEtq?=
- =?utf-8?B?UHkyT0lOSUxNdksvK09jUTFjNDdvTURRUll0TmhHZGNNRjJoVEd3SUdoNzkx?=
- =?utf-8?B?Umx5aCtmYmxUR1FyMXAxd1dYVzVjTFliR1oxMC9wVTI1UzJUVEd0VnJyT254?=
- =?utf-8?B?VnRBMlFqVzBHQjJjZFBTdEdTekFNSWc1alU5L1IrS3ZCUlJEbnZGWFlleitm?=
- =?utf-8?B?OWZoVFVuSG5CMXY0b3IrcWwyZnRvUEVkRjR2Y0dIS29KVndsZlJiTUxvcVBO?=
- =?utf-8?B?SytmdVR5bmFiMStxSVJNNVdBcGdrbkFwV1BONG9BY0xlL2NycEU5dGhsR3dm?=
- =?utf-8?B?ajFmdXZhK0RGQkQ4d0xGNU55NlJ0OE9DRVN5cVkvaDl1N2xKc0V1aW9XLzRZ?=
- =?utf-8?Q?98Y7BxZQZhUK0AtjO7TZ1hg=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d0ae939-2c0c-4fc5-723a-08dd0e412276
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 17:38:27.2318
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W++pVRVUFOyuw4gOJmOPLdpUT1NDbmS8S8lSSLurGk0bUXDADpXM6InlTgbGb1pT0x5SLEdkvg3XlenZ2feLnMUWtBBtdK6k9KWms6ECpQ8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB6480
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+This patch improves (or maintains) the precision of register value tracking
+in BPF_MUL across all possible inputs. It also simplifies
+scalar32_min_max_mul() and scalar_min_max_mul().
 
+As it stands,BPF_MUL is composed of three functions:
 
-On 11/25/24 10:27 PM, Baruch Siach wrote:
-> Hi Yang,
->
-> On Mon, Nov 25 2024, Yang Shi wrote:
->> The commit ba0fb44aed47 ("dma-mapping: replace zone_dma_bits by
->> zone_dma_limit") changed how zone_dma_limit was calculated.  Now it
->> returns the memsize limit in IORT or device tree instead of U32_MAX if
->> the memsize limit is greater than U32_MAX.
-> Can you give a concrete example of memory layout and dma-ranges that
-> demonstrates this issue?
+case BPF_MUL:
+  tnum_mul();
+  scalar32_min_max_mul();
+  scalar_min_max_mul();
 
-Our 2 sockets system has physical memory starts at 0x0 on node 0 and 
-0x200000000000 on node 1. The memory size limit defined in IORT is 0x30 
-(48 bits).
+The current implementation of scalar_min_max_mul() restricts the u64 input
+ranges of dst_reg and src_reg to be within [0, U32_MAX]:
 
-The DMA zone is:
+    /* Both values are positive, so we can work with unsigned and
+     * copy the result to signed (unless it exceeds S64_MAX).
+     */
+    if (umax_val > U32_MAX || dst_reg->umax_value > U32_MAX) {
+        /* Potential overflow, we know nothing */
+        __mark_reg64_unbounded(dst_reg);
+        return;
+    }
 
-pages free     887722
-         boost    0
-         min      229
-         low      1108
-         high     1987
-         promo    2866
-         spanned  983040
-         present  982034
-         managed  903238
-         cma      16384
-         protection: (0, 0, 124824, 0, 0)
-  start_pfn:           65536
+This restriction is done to avoid unsigned overflow, which could otherwise
+wrap the result around 0, and leave an unsound output where umin > umax. We
+also observe that limiting these u64 input ranges to [0, U32_MAX] leads to
+a loss of precision. Consider the case where the u64 bounds of dst_reg are
+[0, 2^34] and the u64 bounds of src_reg are [0, 2^2]. While the
+multiplication of these two bounds doesn't overflow and is sound [0, 2^36],
+the current scalar_min_max_mul() would set the entire register state to
+unbounded.
 
-When allocating DMA buffer, dma_direct_optimal_gfp_mask() is called to 
-determine the proper zone constraints. If the phys_limit is less than 
-zone_dma_limit, it will use GFP_DMA. But zone_dma_limit is 
-0xffffffffffff on v6.12 instead of 4G prior v6.12, it means all DMA 
-buffer allocation will go to DMA zone even though the devices don't 
-require it.
+The key idea of our patch is that if there’s no possibility of overflow, we
+can multiply the unsigned bounds; otherwise, we set the 64-bit bounds to
+[0, U64_MAX], marking them as unbounded.
 
-DMA zone is on node 0, so we saw excessive remote access on 2 sockets 
-system.
+if (check_mul_overflow(*dst_umax, src_reg->umax_value, dst_umax) ||
+       (check_mul_overflow(*dst_umin, src_reg->umin_value, dst_umin))) {
+        /* Overflow possible, we know nothing */
+        dst_reg->umin_value = 0;
+        dst_reg->umax_value = U64_MAX;
+    }
+  ...
 
->
->> This resulted in DMA allocations may use GFP_DMA even though the devices
->> don't require it.  It caused regression on our two sockets systems due
->> to excessive remote memory access.
-> That is, DMA zone used to cover all memory before commit ba0fb44aed47,
-> but now DMA zone is limited to the smallest dma-ranges. Is that correct?
+Now, to update the signed bounds based on the unsigned bounds, we need to
+ensure that the unsigned bounds don't cross the signed boundary (i.e., if
+((s64)reg->umin_value <= (s64)reg->umax_value)). We observe that this is
+done anyway by __reg_deduce_bounds later, so we can just set signed bounds
+to unbounded [S64_MIN, S64_MAX]. Deferring the assignment of s64 bounds to
+reg_bounds_sync removes the current redundancy in scalar_min_max_mul(),
+which currently sets the s64 bounds based on the u64 bounds only in the
+case where umin <= umax <= 2^(63)-1.
 
-The physical addr range for DMA zone is correct, the problem is wrong 
-zone_dma_limit. Before commit ba0fb44aed47 zone_dma_limit was 4G, after 
-it it is the whole memory even though DMA zone just covers low 4G. 
-Thanks, Yang
->
-> Thanks,
-> baruch
->
->> Fixes: ba0fb44aed47 ("dma-mapping: replace zone_dma_bits by zone_dma_limit")
->> Cc: <stable@vger.kernel.org>    [6.12+]
->> Reported-by: Yutang Jiang <jiangyutang@os.amperecomputing.com>
->> Tested-by: Yutang Jiang <jiangyutang@os.amperecomputing.com>
->> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->> ---
->>   arch/arm64/mm/init.c | 17 ++++++++---------
->>   1 file changed, 8 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->> index d21f67d67cf5..ccdef53872a0 100644
->> --- a/arch/arm64/mm/init.c
->> +++ b/arch/arm64/mm/init.c
->> @@ -117,15 +117,6 @@ static void __init arch_reserve_crashkernel(void)
->>   
->>   static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
->>   {
->> -	/**
->> -	 * Information we get from firmware (e.g. DT dma-ranges) describe DMA
->> -	 * bus constraints. Devices using DMA might have their own limitations.
->> -	 * Some of them rely on DMA zone in low 32-bit memory. Keep low RAM
->> -	 * DMA zone on platforms that have RAM there.
->> -	 */
->> -	if (memblock_start_of_DRAM() < U32_MAX)
->> -		zone_limit = min(zone_limit, U32_MAX);
->> -
->>   	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
->>   }
->>   
->> @@ -141,6 +132,14 @@ static void __init zone_sizes_init(void)
->>   	acpi_zone_dma_limit = acpi_iort_dma_get_max_cpu_address();
->>   	dt_zone_dma_limit = of_dma_get_max_cpu_address(NULL);
->>   	zone_dma_limit = min(dt_zone_dma_limit, acpi_zone_dma_limit);
->> +	/*
->> +	 * Information we get from firmware (e.g. DT dma-ranges) describe DMA
->> +	 * bus constraints. Devices using DMA might have their own limitations.
->> +	 * Some of them rely on DMA zone in low 32-bit memory. Keep low RAM
->> +	 * DMA zone on platforms that have RAM there.
->> +	 */
->> +	if (memblock_start_of_DRAM() < U32_MAX)
->> +		zone_dma_limit = min(zone_dma_limit, U32_MAX);
->>   	arm64_dma_phys_limit = max_zone_phys(zone_dma_limit);
->>   	max_zone_pfns[ZONE_DMA] = PFN_DOWN(arm64_dma_phys_limit);
->>   #endif
+Below, we provide an example BPF program (below) that exhibits the
+imprecision in the current BPF_MUL, where the outputs are all unbounded. In
+contrast, the updated BPF_MUL produces a bounded register state:
+
+BPF_LD_IMM64(BPF_REG_1, 11),
+BPF_LD_IMM64(BPF_REG_2, 4503599627370624),
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0),
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0),
+BPF_ALU64_REG(BPF_AND, BPF_REG_1, BPF_REG_2),
+BPF_LD_IMM64(BPF_REG_3, 809591906117232263),
+BPF_ALU64_REG(BPF_MUL, BPF_REG_3, BPF_REG_1),
+BPF_MOV64_IMM(BPF_REG_0, 1),
+BPF_EXIT_INSN(),
+
+Verifier log using the old BPF_MUL:
+
+func#0 @0
+0: R1=ctx() R10=fp0
+0: (18) r1 = 0xb                      ; R1_w=11
+2: (18) r2 = 0x10000000000080         ; R2_w=0x10000000000080
+4: (87) r2 = -r2                      ; R2_w=scalar()
+5: (87) r2 = -r2                      ; R2_w=scalar()
+6: (5f) r1 &= r2                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R2_w=scalar()
+7: (18) r3 = 0xb3c3f8c99262687        ; R3_w=0xb3c3f8c99262687
+9: (2f) r3 *= r1                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R3_w=scalar()
+...
+
+Verifier using the new updated BPF_MUL (more precise bounds at label 9)
+
+func#0 @0
+0: R1=ctx() R10=fp0
+0: (18) r1 = 0xb                      ; R1_w=11
+2: (18) r2 = 0x10000000000080         ; R2_w=0x10000000000080
+4: (87) r2 = -r2                      ; R2_w=scalar()
+5: (87) r2 = -r2                      ; R2_w=scalar()
+6: (5f) r1 &= r2                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R2_w=scalar()
+7: (18) r3 = 0xb3c3f8c99262687        ; R3_w=0xb3c3f8c99262687
+9: (2f) r3 *= r1                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R3_w=scalar(smin=0,smax=umax=0x7b96bb0a94a3a7cd,var_off=(0x0; 0x7fffffffffffffff))
+...
+
+Finally, we proved the soundness of the new scalar_min_max_mul() and
+scalar32_min_max_mul() functions. Typically, multiplication operations are
+expensive to check with bitvector-based solvers. We were able to prove the
+soundness of these functions using Non-Linear Integer Arithmetic (NIA)
+theory. Additionally, using Agni [2,3], we obtained the encodings for
+scalar32_min_max_mul() and scalar_min_max_mul() in bitvector theory, and
+were able to prove their soundness using 16-bit bitvectors (instead of
+64-bit bitvectors that the functions actually use).
+
+In conclusion, with this patch,
+
+1. We were able to show that we can improve the overall precision of
+   BPF_MUL. We proved (using an SMT solver) that this new version of
+   BPF_MUL is at least as precise as the current version for all inputs.
+
+2. We are able to prove the soundness of the new scalar_min_max_mul() and
+   scalar32_min_max_mul(). By leveraging the existing proof of tnum_mul
+   [1], we can say that the composition of these three functions within
+   BPF_MUL is sound.
+
+[1] https://ieeexplore.ieee.org/abstract/document/9741267
+[2] https://link.springer.com/chapter/10.1007/978-3-031-37709-9_12
+[3] https://people.cs.rutgers.edu/~sn349/papers/sas24-preprint.pdf
+
+Co-developed-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+Signed-off-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+Co-developed-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
+Signed-off-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
+Co-developed-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
+Signed-off-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
+Signed-off-by: Matan Shachnai <m.shachnai@rutgers.edu>
+---
+ kernel/bpf/verifier.c | 72 +++++++++++++++----------------------------
+ 1 file changed, 24 insertions(+), 48 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 1c4ebb326785..172816e8f1a4 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -13827,65 +13827,41 @@ static void scalar_min_max_sub(struct bpf_reg_state *dst_reg,
+ static void scalar32_min_max_mul(struct bpf_reg_state *dst_reg,
+ 				 struct bpf_reg_state *src_reg)
+ {
+-	s32 smin_val = src_reg->s32_min_value;
+-	u32 umin_val = src_reg->u32_min_value;
+-	u32 umax_val = src_reg->u32_max_value;
++	u32 *dst_umin = &dst_reg->u32_min_value;
++	u32 *dst_umax = &dst_reg->u32_max_value;
+ 
+-	if (smin_val < 0 || dst_reg->s32_min_value < 0) {
+-		/* Ain't nobody got time to multiply that sign */
+-		__mark_reg32_unbounded(dst_reg);
+-		return;
+-	}
+-	/* Both values are positive, so we can work with unsigned and
+-	 * copy the result to signed (unless it exceeds S32_MAX).
+-	 */
+-	if (umax_val > U16_MAX || dst_reg->u32_max_value > U16_MAX) {
+-		/* Potential overflow, we know nothing */
+-		__mark_reg32_unbounded(dst_reg);
+-		return;
+-	}
+-	dst_reg->u32_min_value *= umin_val;
+-	dst_reg->u32_max_value *= umax_val;
+-	if (dst_reg->u32_max_value > S32_MAX) {
++	if (check_mul_overflow(*dst_umax, src_reg->u32_max_value, dst_umax) ||
++	    check_mul_overflow(*dst_umin, src_reg->u32_min_value, dst_umin)) {
+ 		/* Overflow possible, we know nothing */
+-		dst_reg->s32_min_value = S32_MIN;
+-		dst_reg->s32_max_value = S32_MAX;
+-	} else {
+-		dst_reg->s32_min_value = dst_reg->u32_min_value;
+-		dst_reg->s32_max_value = dst_reg->u32_max_value;
++		dst_reg->u32_min_value = 0;
++		dst_reg->u32_max_value = U32_MAX;
+ 	}
++
++	/* Set signed bounds to unbounded and improve precision in
++	 * reg_bounds_sync()
++	 */
++	dst_reg->smin_value = S32_MIN;
++	dst_reg->smax_value = S32_MAX;
+ }
+ 
+ static void scalar_min_max_mul(struct bpf_reg_state *dst_reg,
+ 			       struct bpf_reg_state *src_reg)
+ {
+-	s64 smin_val = src_reg->smin_value;
+-	u64 umin_val = src_reg->umin_value;
+-	u64 umax_val = src_reg->umax_value;
++	u64 *dst_umin = &dst_reg->umin_value;
++	u64 *dst_umax = &dst_reg->umax_value;
+ 
+-	if (smin_val < 0 || dst_reg->smin_value < 0) {
+-		/* Ain't nobody got time to multiply that sign */
+-		__mark_reg64_unbounded(dst_reg);
+-		return;
+-	}
+-	/* Both values are positive, so we can work with unsigned and
+-	 * copy the result to signed (unless it exceeds S64_MAX).
+-	 */
+-	if (umax_val > U32_MAX || dst_reg->umax_value > U32_MAX) {
+-		/* Potential overflow, we know nothing */
+-		__mark_reg64_unbounded(dst_reg);
+-		return;
+-	}
+-	dst_reg->umin_value *= umin_val;
+-	dst_reg->umax_value *= umax_val;
+-	if (dst_reg->umax_value > S64_MAX) {
++	if (check_mul_overflow(*dst_umax, src_reg->umax_value, dst_umax) ||
++	    check_mul_overflow(*dst_umin, src_reg->umin_value, dst_umin)) {
+ 		/* Overflow possible, we know nothing */
+-		dst_reg->smin_value = S64_MIN;
+-		dst_reg->smax_value = S64_MAX;
+-	} else {
+-		dst_reg->smin_value = dst_reg->umin_value;
+-		dst_reg->smax_value = dst_reg->umax_value;
++		dst_reg->umin_value = 0;
++		dst_reg->umax_value = U64_MAX;
+ 	}
++
++	/* Set signed bounds to unbounded and improve precision in
++	 * reg_bounds_sync()
++	 */
++	dst_reg->smin_value = S64_MIN;
++	dst_reg->smax_value = S64_MAX;
+ }
+ 
+ static void scalar32_min_max_and(struct bpf_reg_state *dst_reg,
+-- 
+2.25.1
 
 
