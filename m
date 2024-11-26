@@ -1,62 +1,38 @@
-Return-Path: <linux-kernel+bounces-421832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06FD9D90AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:14:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874F89D90B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60022B2637E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:14:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5422856D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1837B3E1;
-	Tue, 26 Nov 2024 03:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nGD81mL1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F1A7DA68;
+	Tue, 26 Nov 2024 03:15:57 +0000 (UTC)
+Received: from out28-221.mail.aliyun.com (out28-221.mail.aliyun.com [115.124.28.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF1628E3F;
-	Tue, 26 Nov 2024 03:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AE613FFC;
+	Tue, 26 Nov 2024 03:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732590879; cv=none; b=nreGn/7qxTHrHrweoUqiArO5U474s4gEOoOHpMefys7aCZNtZGzGqQ2rbITDWu7Y2ookvKOjSrjG5/dJXwv320w/wAKg8r79QOCsDlaJVyEc3wsI5bDV+vHEb7yt5twWUJRv9NAwdK0Pd79rTmWrw3OFUCCow4/u1VXV8+6BnSI=
+	t=1732590956; cv=none; b=fy+BkqA2ifVH/nIVgasgiTPV3ONuRj43AksgemcCTVeKrU0pYFhmEej7PELgoiSfZ6EkHqP5pEJ6VvmHnzDdcTI2oyXQH6Zq7YvHTtE3w2Ud+qHf/T3QMI4x870e4MQNv8K6ftBsncJPxraz+T1/gXaukXKC08C+SnWBI58N/AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732590879; c=relaxed/simple;
-	bh=Sk9kkwCuCy8PUE33oshNHfMfKY7r0BCRIeH31kF8TLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EDJwOVAUevDIbFBqo+sx1L4HRdEGxvM1NYLp3sjp+cEHlmEcWna1u3hHWycnnmSSkFJ6FEWoD+kd+7ru4Cxlq0M3nu0pa6/KSoubwNp0xIJqV7Hqo8vjG/ecZ5rOyunuuXnOpOPRZQx/Cpy8xxduRapRgLkFE4rX8dSXWd+yUzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nGD81mL1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ3DMWb010309;
-	Tue, 26 Nov 2024 03:14:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5Co7QXRqtHi1nYPU4uviM4aDdYR7Kosy6nTvXKt1uu8=; b=nGD81mL1eRmVMvy/
-	qrfKbRoFn9Uczvzr3B1yvlK7HhBqDY5bF+ezYGs0F26TTOoyIvXJHw2rM2yInGgt
-	aaUwctUfSXwMcVbzsFE/DOdfnRw2elG0rDNRhUW9szZwmba2REfMFzltPJsg8o0V
-	0OazVgryeRJZWKeE9p5uQ7rzDiaoxqrYCrWlZxGsHXPahnmSocNQa1LGnqPwxAQn
-	OmO+Wp01ew9pz1ioEkb/BpEQ9poFTI80xs/CI4Kw0DK0p0VZs05cHF8Mrydu1sit
-	lZrwPb7fLcJxERyXZUltUJ8L3NLBZvG7fIL7Foi0x4AyvRCb6E/uUIkZHHctgSRu
-	2nKNTA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw99tp4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 03:14:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ3EXTC012414
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 03:14:33 GMT
-Received: from [10.64.68.72] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
- 2024 19:14:27 -0800
-Message-ID: <c77d69d3-d809-4996-b203-e9496e169a8f@quicinc.com>
-Date: Tue, 26 Nov 2024 11:14:25 +0800
+	s=arc-20240116; t=1732590956; c=relaxed/simple;
+	bh=cSfp93QI3T8iQ8KLjNyaYF65vPVLOGKUcgQ2HC7Pqg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SKvh2Wj0/HKKMFCt0iKGvkqjd84rMh4wSK8KXUT25KbteV52L8EORHfWiONWSD9ntx8KwdppY+JJ3OeiyrNdWjrquu0aHcNVBtjFD3Aimg5Q0ZXMHIf9sVjdWKh1bVzY2ktirpnzUPqjVtPTZpxGkNggzt+VtXNJqv6AH5KYS+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.aMT7QzV_1732590947 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 26 Nov 2024 11:15:48 +0800
+Message-ID: <43341290-15e3-4784-9b69-7f3f13f34e01@motor-comm.com>
+Date: Tue, 26 Nov 2024 11:15:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,49 +40,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: qcs8300-ride: Add watchdog node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, <quic_jiegan@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_tingweiz@quicinc.com>
-References: <20241125093503.1162412-1-quic_liuxin@quicinc.com>
- <20241125093503.1162412-4-quic_liuxin@quicinc.com>
- <wty3opxcapeesat2bnai6ntbk4utwxk2hf56w4hymwjxj57ora@6f7f2lwtdcpo>
-From: Xin Liu <quic_liuxin@quicinc.com>
-In-Reply-To: <wty3opxcapeesat2bnai6ntbk4utwxk2hf56w4hymwjxj57ora@6f7f2lwtdcpo>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 74L2HVY5EriYyKUuj4CBFEbctOnxFFdy
-X-Proofpoint-ORIG-GUID: 74L2HVY5EriYyKUuj4CBFEbctOnxFFdy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=633 adultscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411260025
+Subject: Re: [PATCH net-next v2 05/21] motorcomm:yt6801: Implement the
+ fxgmac_start function
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+ <20241120105625.22508-6-Frank.Sae@motor-comm.com>
+ <95675880-1b93-4916-beee-e5feb6531009@lunn.ch>
+ <ba24293a-77b1-4106-84d2-81ff343fc90f@motor-comm.com>
+ <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
+Content-Language: en-US
+From: Frank Sae <Frank.Sae@motor-comm.com>
+In-Reply-To: <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Andrew,
 
+On 2024/11/25 22:18, Andrew Lunn wrote:
+>>> RGMII is unusual, you normally want RGMII_ID. Where are the 2ns delays
+>>> added?
+>>>
+>>
+>> Yes, you are right. PHY_INTERFACE_MODE_RGMII should be PHY_INTERFACE_MODE_RGMII_ID.
+>> YT6801 NIC integrated with YT8531S phy, and the 2ns delays added in the phy driver.
+>> https://elixir.bootlin.com/linux/v6.12/source/drivers/net/phy/motorcomm.c#L895
+> 
+> But if you pass PHY_INTERFACE_MODE_RGMII to the PHY it is not adding
+> the 2ns delay. So how does this work now?
 
-在 2024/11/26 0:45, Dmitry Baryshkov 写道:
-> I'd really prefer to have this in the SoC dtsi. It's not a part that can
-> change between boards.
+I'm sorry. Maybe PHY_INTERFACE_MODE_RGMII is enough.
+YT6801 is a pcie NIC chip that integrates one yt8531s phy.
+Therefore, a delay of 2ns is unnecessary, as the hardware has
+ already ensured this.
 
-I think you're right, this clock won't change because of the board The 
-reason for placing it on the board is that sleep_clk is defined on the 
-board. The following link is the suggestion you once provided:
-https://lore.kernel.org/all/4kopdkvbkrpcpzwteezm427ml5putqvzsnfkpmg76spsple7l5@mg7v3ihwxnit/
+> 
+>>>> +int fxgmac_start(struct fxgmac_pdata *pdata)
+>>>> +{
+>>>> +	struct fxgmac_hw_ops *hw_ops = &pdata->hw_ops;
+>>>> +	u32 val;
+>>>> +	int ret;
+>>>> +
+>>>> +	if (pdata->dev_state != FXGMAC_DEV_OPEN &&
+>>>> +	    pdata->dev_state != FXGMAC_DEV_STOP &&
+>>>> +	    pdata->dev_state != FXGMAC_DEV_RESUME) {
+>>>> +		yt_dbg(pdata, " dev_state err:%x\n", pdata->dev_state);
+>>>> +		return 0;
+>>>> +	}
+>>>> +
+>>>> +	if (pdata->dev_state != FXGMAC_DEV_STOP) {
+>>>> +		hw_ops->reset_phy(pdata);
+>>>> +		hw_ops->release_phy(pdata);
+>>>> +		yt_dbg(pdata, "reset phy.\n");
+>>>> +	}
+>>>> +
+>>>> +	if (pdata->dev_state == FXGMAC_DEV_OPEN) {
+>>>> +		ret = fxgmac_phy_connect(pdata);
+>>>> +		if (ret < 0)
+>>>> +			return ret;
+>>>> +
+>>>> +		yt_dbg(pdata, "fxgmac_phy_connect.\n");
+>>>> +	}
+>>>> +
+>>>> +	phy_init_hw(pdata->phydev);
+>>>> +	phy_resume(pdata->phydev);
+>>>
+>>> The MAC should not be doing this.
+>>
+>> Does this mean deleting 'phy_resume(pdata->phydev)'?
+> 
+> There are only a few phylib API calls you should be using
+> 
+> phy_connect() or one of its variants.
+> phy_start()
+> phy_stop()
+> phy_disconnect()
+> 
+> Those four are the core. Those should be all you need to minimum
+> support.
+> 
+> phy_support_asym_pause()
+> phy_support_eee()
+> phy_speed_up()
+> phy_speed_down()
+> 
+> and these are just nice to have to let phylib know about things the
+> MAC supports, so phylib can manage the PHY to make them available to
+> the MAC. This is the API between the MAC driver and phylib. phylib
+> will then manage the PHY. Any time you want to use a phy_* function,
+> look to see if other MAC drivers do. If they don't you should not
+> either.
 
+Tanks for your clear explanation.
+
+> 
+>>>> +	hw_ops->pcie_init(pdata);
+>>>> +	if (test_bit(FXGMAC_POWER_STATE_DOWN, &pdata->powerstate)) {
+>>>> +		yt_err(pdata,
+>>>> +		       "fxgmac powerstate is %lu when config power up.\n",
+>>>> +		       pdata->powerstate);
+>>>> +	}
+>>>> +
+>>>> +	hw_ops->config_power_up(pdata);
+>>>> +	hw_ops->dismiss_all_int(pdata);
+>>>> +	ret = hw_ops->init(pdata);
+>>>> +	if (ret < 0) {
+>>>> +		yt_err(pdata, "fxgmac hw init error.\n");
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	fxgmac_napi_enable(pdata);
+>>>> +	ret = fxgmac_request_irqs(pdata);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>> +
+>>>> +	/* Config interrupt to level signal */
+>>>> +	val = rd32_mac(pdata, DMA_MR);
+>>>> +	fxgmac_set_bits(&val, DMA_MR_INTM_POS, DMA_MR_INTM_LEN, 2);
+>>>> +	fxgmac_set_bits(&val, DMA_MR_QUREAD_POS, DMA_MR_QUREAD_LEN, 1);
+>>>> +	wr32_mac(pdata, val, DMA_MR);
+>>>> +
+>>>> +	hw_ops->enable_mgm_irq(pdata);
+>>>> +	hw_ops->set_interrupt_moderation(pdata);
+>>>> +
+>>>> +	if (pdata->per_channel_irq) {
+>>>> +		fxgmac_enable_msix_irqs(pdata);
+>>>> +		ret = fxgmac_phy_irq_enable(pdata, true);
+>>>> +		if (ret < 0)
+>>>> +			goto dis_napi;
+>>>> +	}
+>>>> +
+>>>> +	fxgmac_enable_rx_tx_ints(pdata);
+>>>> +	phy_speed_up(pdata->phydev);
+>>>> +	genphy_soft_reset(pdata->phydev);
+>>>
+>>> More things the MAC driver should not be doing.
+>>
+>> Does this mean deleting 'phy_speed_up(pdata->phydev);' and 'genphy_soft_reset(pdata->phydev);' ?
+> 
+> Two things here:
+> 
+> phy_speed_up()/phy_speed_down() is part of suspend/resume when using
+> WoL. This code has nothing to do with that. So why is it here?
+> 
+> There should not be any need to call genphy_soft_reset(). You should
+> figure out why you need it, because it could be a PHY driver bug, or a
+> MAC driver bug.
+> 
+> 	Andrew
 
