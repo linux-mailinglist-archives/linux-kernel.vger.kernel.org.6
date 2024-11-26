@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-422363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9F29D98A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:37:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992561635D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:37:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2381D5170;
-	Tue, 26 Nov 2024 13:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S+iwmXm2"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E1B9D98AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:39:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96008BEA;
-	Tue, 26 Nov 2024 13:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732628251; cv=none; b=bsvobb5RvLEKuuoAjw64qveGxCpTfvvZ9O3AvMw4DiEmfxZKK6t9vAWU9lX+5kS4Mfn2Y2E3I+tZkIjGg07BcsKFy9KE4cRQQc/xbTYQ9li+H6XaccsyMv1IbBIVaHwDO/Z4+x55bLhsnnci8X5lD9U8ZpO9iFxv1VWCfN9A4zA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732628251; c=relaxed/simple;
-	bh=feL856Z/U/ZJKcQL9qTcJgDYB4dVhf8sRnNbDu/43A4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyWeo9QetjJdPp1geR7Ot58mQPEZizXbmY9KufwSOsRjATZcPF8qrpgdKlT2Bcxbxxgh5jTYp04a0PZfE55kuTzeWAZmNEEX0I1kciNv2f0kEEH71oKjmhB8RTaFCJJSJzV1/HsfaAgHx8ErkbrgBwBNEXYvXAkaAICb7+Lk5p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S+iwmXm2; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732628247;
-	bh=feL856Z/U/ZJKcQL9qTcJgDYB4dVhf8sRnNbDu/43A4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S+iwmXm2zgbLIiuraQyUO/tZ2d5bScahmmRI2x6Q5US+CxTwuR/hKnMoXa4kN87hw
-	 P9JjVeOSQ72XUjReluFbAJIvK4RYuakk8sb7zEj6/sihkEkdcgpFsgvwgXOhubqm1u
-	 SgXK2zYPwB4PiJs0dzYeDYp4N7LNpYYl3IiAJfCpgNxEHtbwTucngyeL7LZbswNUXc
-	 DdacJtkmfV7WU36E5NIWGwaaChCxTcmaIuCN/dkHzh9MkvygQ9XY7el8RW9fnZwON7
-	 BmWoTq3dxg4IqsWWLKk62bFgdHkKoUkA4yEdLHx/a9MWSyh6/+mQTq7muh7Vtj+pOK
-	 YqIIt1G/2+lRw==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC7928351C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:39:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5902B1865E3;
+	Tue, 26 Nov 2024 13:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gl/0L3+7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 72C1D17E3686;
-	Tue, 26 Nov 2024 14:37:25 +0100 (CET)
-Date: Tue, 26 Nov 2024 08:37:23 -0500
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Balsam CHIHI <bchihi@baylibre.com>, kernel@collabora.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Bernhard =?utf-8?Q?Rosenkr=C3=A4nzer?= <bero@baylibre.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/5] thermal/drivers/mediatek/lvts: Disable monitor mode
- during suspend
-Message-ID: <f38e4283-7133-4865-b4fe-eafb6bd30534@notapiano>
-References: <20241125-mt8192-lvts-filtered-suspend-fix-v1-0-42e3c0528c6c@collabora.com>
- <20241125-mt8192-lvts-filtered-suspend-fix-v1-1-42e3c0528c6c@collabora.com>
- <CAHc4DNKmGA-MjTWdZhKygiaRwN7mHnMCf8UPUxH_V16uZifzFg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4446CD53C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732628353; cv=none; b=k7wEOF5YxlUNyecs5Pl9tXmtRBqg2pK/81vDkqp+Ja6fg2Ek1m+TVIBdo593Zo5xeH8cW1rxa5GtPMSHfLRDaf6M0trKXESRC8VMG0/7eJiu2e19bb91jqH9EN6nS3cGI0Wc/pjaUIs6Zldq+9wTtJcGKE3693YEWIRpWdr58Q8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732628353; c=relaxed/simple;
+	bh=M39yVHSjSGjuRWJPdgSgtGq4dSUaAz0FQ0qvPonJlko=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ti2shKe4EbgZEfkTzbPmSY79KCjkIGg+mfRG+9rKRXeJwmaqifDmNS7fnguE5KaexJKYCU69U4bBWn4+cP7a4cpAJkoG7ZiPhdjTFeI9m3YBLPncxDorKaqiXF6SZ8faOrAiAJF5JbuxsBpzPQU5CZZnyzCpqoz+XJBWz7ooA1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gl/0L3+7; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732628352; x=1764164352;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=M39yVHSjSGjuRWJPdgSgtGq4dSUaAz0FQ0qvPonJlko=;
+  b=Gl/0L3+7+thc73seWh16I9mfGJZXB83fiLuWvG9bjNZgmrtI7k0DZpYP
+   ZGUXHThe/ucHsK/2fRkbXQJFM6Go49Gd5TjHVO1n85inh6uuryEHXzz4o
+   JL1tyKQSLYTFMRDMxulr+D4+wz0RnqaDchkv1nma2LOeaQV8yBbX++6hd
+   xpWqCgrT51j7SZt9rMk2v3sc/6dRotjy4f8I4quEJy3xcp0Qh6ux0Vm0P
+   8xLnxGvn4Ph3RctQtA7xKR4sa2A39r8qvhz1uUQaQANa8BTIS3DqWvu1X
+   nk+Qv0k7HYoCuZLPjnLhHgetlBHno4ItT8ZueKzYg/fQV5c8hy7dUaGzl
+   Q==;
+X-CSE-ConnectionGUID: TiBIpiuRR6a5TaP00lxCSg==
+X-CSE-MsgGUID: AGc7J7D2TIuOgvVc1mxq5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32946437"
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="32946437"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:39:09 -0800
+X-CSE-ConnectionGUID: GvP5Qg93TaCsRvuuj6Tc7g==
+X-CSE-MsgGUID: 8j1TsWguS4ayCxJkK3ilSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="96545581"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 26 Nov 2024 05:39:06 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFvmS-0007JT-1T;
+	Tue, 26 Nov 2024 13:39:04 +0000
+Date: Tue, 26 Nov 2024 21:38:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>
+Subject: rust/helpers/mutex.c:11:6: sparse: sparse: symbol
+ 'rust_helper___mutex_init' was not declared. Should it be static?
+Message-ID: <202411262123.zw9MlOvN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHc4DNKmGA-MjTWdZhKygiaRwN7mHnMCf8UPUxH_V16uZifzFg@mail.gmail.com>
 
-On Tue, Nov 26, 2024 at 04:00:42PM +0800, Hsin-Te Yuan wrote:
-> On Tue, Nov 26, 2024 at 5:21 AM Nícolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
-> >
-> > When configured in filtered mode, the LVTS thermal controller will
-> > monitor the temperature from the sensors and trigger an interrupt once a
-> > thermal threshold is crossed.
-> >
-> > Currently this is true even during suspend and resume. The problem with
-> > that is that when enabling the internal clock of the LVTS controller in
-> > lvts_ctrl_set_enable() during resume, the temperature reading can glitch
-> > and appear much higher than the real one, resulting in a spurious
-> > interrupt getting generated.
-> >
-> This sounds weird to me. On my end, the symptom is that the device
-> sometimes cannot suspend.
-> To be more precise, `echo mem > /sys/power/state` returns almost
-> immediately. I think the irq is more
-> likely to be triggered during suspension.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
+commit: d065cc76054d21e48a839a2a19ba99dbc51a4d11 rust: mutex: fix __mutex_init() usage in case of PREEMPT_RT
+date:   9 weeks ago
+config: um-randconfig-r111-20241126 (https://download.01.org/0day-ci/archive/20241126/202411262123.zw9MlOvN-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411262123.zw9MlOvN-lkp@intel.com/reproduce)
 
-Hi Hsin-Te,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411262123.zw9MlOvN-lkp@intel.com/
 
-please also check the first paragraph of the cover letter, and patch 2, that
-should clarify it. But anyway, I can explain it here too:
+sparse warnings: (new ones prefixed by >>)
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+>> rust/helpers/mutex.c:11:6: sparse: sparse: symbol 'rust_helper___mutex_init' was not declared. Should it be static?
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/helpers.c: note: in included file:
+   rust/helpers/spinlock.c:16:6: sparse: sparse: context imbalance in 'rust_helper_spin_lock' - wrong count at exit
+   rust/helpers/spinlock.c:21:6: sparse: sparse: context imbalance in 'rust_helper_spin_unlock' - unexpected unlock
 
-The issue you observed is caused by two things combined:
-* When returning from resume with filtered mode enabled, the sensor temperature
-  reading can glitch, appearing much higher. (fixed by this patch)
-* Since the Stage 3 threshold is enabled and configured to take the maximum
-  reading from the sensors, it will be triggered by that glitch and bring the
-  system into a state where it can no longer suspend, it will just resume right
-  away. (fixed by patch 2)
+vim +/rust_helper___mutex_init +11 rust/helpers/mutex.c
 
-So currently, every so often, during resume both these things will happen, and
-any future suspend will resume right away. That's why this was never observed by
-me when testing a single suspend/resume. It only breaks on resume, and only
-affects future suspends, so you need to test multiple suspend/resumes on the
-same run to observe this issue.
+    10	
+  > 11	void rust_helper___mutex_init(struct mutex *mutex, const char *name,
 
-And also since both things are needed to cause this issue, if you apply only
-patch 1 or only patch 2, it will already fix the issue.
-
-Hope this clarifies it.
-
-Thanks,
-Nícolas
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
