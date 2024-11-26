@@ -1,109 +1,255 @@
-Return-Path: <linux-kernel+bounces-422197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5D19D95C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:42:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB969D95C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC666B24458
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:42:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11886B259C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DD01C8FB5;
-	Tue, 26 Nov 2024 10:42:21 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ED31B21AD
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D01CACF7;
+	Tue, 26 Nov 2024 10:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDtwA68v"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110F5185955;
+	Tue, 26 Nov 2024 10:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617741; cv=none; b=kBzd+ni4ecLJeUqxAtRvlzVAx8Fz7HaZcYbLGNKr1qfibNJae17glfQ7KvEq0jKH3IhOdqynTlyIMb5HG/Y7HkL7efbShzf3fcsz5/o58L8Jlf52EUrnACM8mk1WCfgwOvk8Fb694wdgrN8EF9MChUPuktR1SPY9o8qPlirihcU=
+	t=1732617805; cv=none; b=OF64XjBnI6brpDfedrmgZfNyHf9KGrTiNG9i2HdX9Mw+WRTP1+5jLWSjT5r3Te18UzY59bzEyWxMFzU3WGWXA9lhp5hzhu/8lPUZq5rzRjEcSf8JBbkgp9w9POMLwEkpL+4dQxmgtHtdLTBlmI25pXft7xGL36vqsbLAZ4uokak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617741; c=relaxed/simple;
-	bh=GY571ipN4IC/7DIKMKZTGzIvBiV4jFXyz1rcN9yqAeQ=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BZ3BUG5Zb5ebuUrV0PHXx637knOSlfESCOGB1vrC7SR7fmtALtw4FyGME098Z0Ju7c2fzlkEC70wUrUx8pkiFnxQ5C6Wj5raEvnE0BUlH+OteV6ren+JajphfBruw1S5uDI0oRS+i5dojPxs7riARq3XQs5/ZcLHinKpNGRFt5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxaeEIpkVnKQ9JAA--.10964S3;
-	Tue, 26 Nov 2024 18:42:16 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMBxXUcHpkVnA25oAA--.42495S3;
-	Tue, 26 Nov 2024 18:42:15 +0800 (CST)
-Subject: Re: [PATCH v4 02/10] objtool: Handle special cases of dead end insn
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-3-yangtiezhu@loongson.cn>
- <20241126064513.bf6yq56eklyo4xvt@jpoimboe>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <bb36374e-aca2-92e1-209d-1524e31147ab@loongson.cn>
-Date: Tue, 26 Nov 2024 18:42:15 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1732617805; c=relaxed/simple;
+	bh=HLvUTAv0P3FwIwDGfZTeBiyPVEhWQwukjLmE50Kv1/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLDD9o+6e6B2K63PgByr80IFiGYy3TEmiDeKEfMthe3tc1SgqO1HMohk9IltFmrayyzrSoRJ0sHTekPiGMM32z5Gq8BakJdrwTSWoEq4Ki/wgDC/ob0xrs1bjlKjWdsMEc8JlBaPs5Rqo8+SB+1LMCcEcVEokoUfnVxdMH4wefs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDtwA68v; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732617803; x=1764153803;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=HLvUTAv0P3FwIwDGfZTeBiyPVEhWQwukjLmE50Kv1/4=;
+  b=eDtwA68vA7m9uC31lHhLGXV3aDwE+4eO6Q3UOrQszhGMACUm+pq1mcAm
+   9NHM0GSRQC+OaI+WFpQxxvjyFDTryt/iq91lci4A6vTpisi9uexcPP/yp
+   5w/cA2/0BhrgZFUckPlAVuOJWasYgjrPgF0y0B0SirUpITAA2PbHbF8qr
+   d3Y517IwBo7XnNhDObdshAVXbiZhXFrGTNB44rSv3CI3cbf13Eltcg8Ck
+   XsCaFHjNuL+PC6TRTv8yAxf1jx2lMw3mra43/o2Qm9fVA70BMpUKflRUk
+   Yk1gICdLPcz2DmXuiXZsfy5QzYtAC+oTspWOAHYvFMDcmfxwRtrIZ35Pm
+   A==;
+X-CSE-ConnectionGUID: 2WGictS/RdyJKOuKH9tENg==
+X-CSE-MsgGUID: Ciu8iq+1SBq63U32PZsOmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="35626373"
+X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
+   d="scan'208";a="35626373"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 02:43:22 -0800
+X-CSE-ConnectionGUID: qYu6erpHQy6nNwlrFgiVuA==
+X-CSE-MsgGUID: oS12Wfu1RAK8dyMQge9kzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
+   d="scan'208";a="114838744"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 02:43:19 -0800
+Message-ID: <10836ece-7ea9-47d6-ad0c-25ae36e5051b@intel.com>
+Date: Tue, 26 Nov 2024 12:43:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241126064513.bf6yq56eklyo4xvt@jpoimboe>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMBxXUcHpkVnA25oAA--.42495S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CF4fCrW5Wr17uF4DGFWxuFX_yoW8XryxpF
-	ZxAay5AF4qvrWkWF17Zr48Zryftw4fJw4UXFn5J34fK3yUJwn3tF1kta1jyasxCr4S9F1a
-	qF1Sg34DWFy5A3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU466zUUUUU
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mmc: sdhci-msm: Correctly set the load for the
+ regulator
+To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: quic_tengfan@quicinc.com, quic_tingweiz@quicinc.com,
+ quic_zhgao@quicinc.com
+References: <20241122075048.2006894-1-quic_yuanjiey@quicinc.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241122075048.2006894-1-quic_yuanjiey@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 11/26/2024 02:45 PM, Josh Poimboeuf wrote:
-> On Fri, Nov 22, 2024 at 12:49:57PM +0800, Tiezhu Yang wrote:
->> There are some "unreachable instruction" objtool warnings when compling
->> with Clang on LoongArch, this is because the "break" instruction is set
->> as dead end due to its type is INSN_BUG in decode_instructions() at the
->> beginning, and it does not set insn->dead_end of the "break" instruction
->> as false after checking ".rela.discard.reachable" in add_dead_ends(), so
->> the next instruction of "break" is marked as unreachable.
->>
->> Actually, it can find the reachable instruction after parsing the section
->> ".rela.discard.reachable", in some cases, the "break" instruction may not
->> be the first previous instruction with scheduling by Machine Instruction
->> Scheduler of LLVM, it should find more times and then set insn->dead_end
->> of the "break" instruction as false.
->>
->> This is preparation for later patch on LoongArch, there is no effect for
->> the other archs with this patch.
->>
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
->
-> I'm having trouble understanding this commit log, is the problem that
-> the compiler is sometimes inserting code between 'break' and the
-> unreachable() inline asm?
->
-> If so, this sounds like a problem that was already solved for x86 with:
->
->   bfb1a7c91fb7 ("x86/bug: Merge annotate_reachable() into _BUG_FLAGS() asm")
->
-> Can you check if that fixes it?
+On 22/11/24 09:50, Yuanjie Yang wrote:
+> Qualcomm regulator supports two power supply modes: HPM and LPM.
+> Currently, the sdhci-msm.c driver does not set the load to adjust
+> the current for eMMC and SD. Therefore, if the regulator set load
+> in LPM state, it will lead to the inability to properly initialize
+> eMMC and SD.
+> 
+> Set the correct regulator current for eMMC and SD to ensure that the
+> device can work normally even when the regulator is in LPM.
+> 
+> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 91 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 89 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index e00208535bd1..f2a2260d54c6 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -134,9 +134,22 @@
+>  /* Timeout value to avoid infinite waiting for pwr_irq */
+>  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
+>  
+> +/* Max load for eMMC Vdd supply */
+> +#define MMC_VMMC_MAX_LOAD_UA	570000
+> +
+>  /* Max load for eMMC Vdd-io supply */
+>  #define MMC_VQMMC_MAX_LOAD_UA	325000
+>  
+> +/* Max load for SD Vdd supply */
+> +#define SD_VMMC_MAX_LOAD_UA	800000
+> +
+> +/* Max load for SD Vdd-io supply */
+> +#define SD_VQMMC_MAX_LOAD_UA	22000
+> +
+> +#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
+> +
+> +#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
+> +
+>  #define msm_host_readl(msm_host, host, offset) \
+>  	msm_host->var_ops->msm_readl_relaxed(host, offset)
+>  
+> @@ -147,6 +160,11 @@
+>  #define CQHCI_VENDOR_CFG1	0xA00
+>  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+>  
+> +enum {
 
-I will try, thank you.
+This could be a named type and used instead of 'int'
+e.g.
+
+enum msm_reg_type {
+
+> +	VMMC_REGULATOR,
+> +	VQMMC_REGULATOR,
+> +};
+> +
+>  struct sdhci_msm_offset {
+>  	u32 core_hc_mode;
+>  	u32 core_mci_data_cnt;
+> @@ -1403,11 +1421,70 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
+>  	return ret;
+>  }
+>  
+> -static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
+> +static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current, int type)
+
+Then 'int type' could be 'enum msm_reg_type type'
+
+> +{
+> +	int load = 0;
+> +
+> +	/*
+> +	 * When eMMC and SD are powered on for the first time, select a higher
+> +	 * current value from the corresponding current for eMMC and SD to
+> +	 * ensure that the eMMC and SD cards start up properly and complete
+> +	 * initialization. After the initialization process is finished, use
+> +	 * the corresponding current to set the eMMC and SD to ensure the
+> +	 * normal work of the device.
+> +	 */
+> +
+> +	if (!mmc->card)
+> +		return max_current;
+> +
+> +	if (mmc_card_is_removable(mmc) && mmc_card_mmc(mmc->card))
+
+The comment mentions eMMC but here there is 'mmc_card_is_removable()'
+whereas eMMC's are not removable.  If this is right it needs some
+clarification.
+
+> +		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
+> +	else if (mmc_card_sd(mmc->card))
+> +		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
+> +
+> +	return load;
+> +}
+> +
+> +static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
+> +				     bool hpm, int max_current, int type)
+
+Again 'int type' could be 'enum msm_reg_type type'
+
+> +{
+> +	int ret;
+> +	int load = 0;
+> +
+> +	/*
+> +	 * After the initialization process is finished, Once the type of card
+> +	 * is determined，only set the corresponding current for SD and eMMC.
+> +	 */
+> +
+> +	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
+> +		return 0;
+> +
+> +	if (hpm)
+> +		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
+> +
+> +	if (type == VMMC_REGULATOR)
+> +		ret = regulator_set_load(mmc->supply.vmmc, load);
+> +	else
+> +		ret = regulator_set_load(mmc->supply.vqmmc, load);
+> +	if (ret)
+> +		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
+> +			mmc_hostname(mmc), ret);
+> +	return ret;
+> +}
+> +
+> +static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
+> +			      struct mmc_host *mmc, bool hpm)
+>  {
+> +	int ret;
+> +
+>  	if (IS_ERR(mmc->supply.vmmc))
+>  		return 0;
+>  
+> +	ret = msm_config_regulator_load(msm_host, mmc, hpm,
+> +					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
+>  }
+>  
+> @@ -1435,6 +1512,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
+>  				goto out;
+>  			}
+>  		}
+> +
+> +		ret = msm_config_regulator_load(msm_host, mmc, level,
+> +						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
+> +		if (ret < 0) {
+> +			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
+> +				mmc_hostname(mmc), ret);
+> +			goto out;
+> +		}
+> +
+>  		ret = regulator_enable(mmc->supply.vqmmc);
+>  	} else {
+>  		ret = regulator_disable(mmc->supply.vqmmc);
+> @@ -1642,7 +1728,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+>  	}
+>  
+>  	if (pwr_state) {
+> -		ret = sdhci_msm_set_vmmc(mmc);
+> +		ret = sdhci_msm_set_vmmc(msm_host, mmc,
+> +					 pwr_state & REQ_BUS_ON);
+>  		if (!ret)
+>  			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
+>  					pwr_state & REQ_BUS_ON);
 
 
