@@ -1,72 +1,63 @@
-Return-Path: <linux-kernel+bounces-422716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A2D9D9D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:29:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3120C9D9D64
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E230164B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FA0164B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406A31DDC00;
-	Tue, 26 Nov 2024 18:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D161DDC3F;
+	Tue, 26 Nov 2024 18:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpDxYPfc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMdrxGfx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922961DDC05;
-	Tue, 26 Nov 2024 18:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E165AD26D;
+	Tue, 26 Nov 2024 18:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732645790; cv=none; b=NomFU4u1hPsrfzXTo9i3+uZLdeZGjtD6lZABJ2lNM5MCIuw8yC2g1kNcR4bJjgNOdudn8TwJwCOirLTafjz2qMyn9u3OuE6PtJYCiQ7OJx/TKim0pTQxKjszAjXii08JtosoivKUL2b3h369RRfzsBj50diPeIeDAa8uEuoywjQ=
+	t=1732645810; cv=none; b=WhGw3jJGsosXRM5vYVDDba6XuDApy5Tjw4P3pMzDVZf52aUMEDK+ylLi8zLmIUI244II4Zu3+ULRm3f3+XK8i/qNcdV++fkIISZho4xkTMC7Xy7JWHm//sIB2GSh5lldIAWqaRcIDFBPZ3zpNeF1KpnzewO3pkPAOR3AmH2K7ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732645790; c=relaxed/simple;
-	bh=iohwLySxzBUL3SHrHutQ/bJn3BNIDjL9Rfaikvvg65s=;
+	s=arc-20240116; t=1732645810; c=relaxed/simple;
+	bh=xJxnjepxK0AEdfOi6g9/KK12La2nbdJnN04DFsBA1UU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4UwQDqWg0h/wmtlJGsKv0q5ZlzzFLEENNU8pgRQz7wEh7lsOeElq9KgU7BX4HJOx8sk/0/3JHjqvRRhZMiEgVK1WggbaM5fkCJaVqChYye6UiBFOw3nFc2MDeodNpaWqY5cN4AWn/pznJEbfqCr2d3moPKgX3Frg6Yc3aFek/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VpDxYPfc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA42C4CECF;
-	Tue, 26 Nov 2024 18:29:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8JVCcI0qZVU1o5udfJ9CnEU7TC2j6n+7/AkfZ67Z31MD4v3qu/wTDOvEigfh8xx5NmtgKEJtTslkaeNaGOeezeYfEBQdRww1V9rsic6mcEND+MKMF2WywS08pyEcagZ3GscRaCWvGJgv3R/zfPtW1FIYDQi9+6tv2ndDbv7XaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMdrxGfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF45CC4CED0;
+	Tue, 26 Nov 2024 18:30:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732645790;
-	bh=iohwLySxzBUL3SHrHutQ/bJn3BNIDjL9Rfaikvvg65s=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=VpDxYPfcaGkbEahFxItT6WIbWqLnne8BVmW8rybYDAoFWfuKhaJjWBpFfsCJVDent
-	 GdD1PPvC4pvXERY1NuVt68g4B56AVIiEFw4pVZ0cSUvI+B91+idNcv8jcpeK2+RvrV
-	 Dk9/bsshxQI3ax37Q8gKNdgBtQuQjkSidNm4e0qP1Jbrex3lQLWSwzsRv24VojO0bR
-	 ChgtEwxve5K6RaYB17wIU/53Kx4yNp4x63teJZdxZhFGpGReDJayCiseQK1oXzDLG6
-	 uMC0KjDPY0gWGHiZmo8Wg1WFHFu6Z9pq/pzPdWpeZRbsyNdI0pUItrDmn6Dj6MAg6+
-	 +E/cw7WxywJRw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A7C18CE0EA5; Tue, 26 Nov 2024 10:29:49 -0800 (PST)
-Date: Tue, 26 Nov 2024 10:29:49 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jordan Rife <jrife@google.com>, linux-trace-kernel@vger.kernel.org
-Subject: Re: [for-next][PATCH 4/6] rcupdate_trace: Define rcu_tasks_trace
- lock guard
-Message-ID: <95a1c581-0107-4d6d-a751-565add025b91@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241124234940.017394686@goodmis.org>
- <20241124235019.106333158@goodmis.org>
+	s=k20201202; t=1732645809;
+	bh=xJxnjepxK0AEdfOi6g9/KK12La2nbdJnN04DFsBA1UU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QMdrxGfxApaLT6JB8X+787BYq9pDSG9WhjeCG55VdqH+w/RUWwLHLhVS0W9U2s902
+	 TkBJC8WDKfGLDKQBmymw7OOJjWOE9wGowLBeZ+gmybqPXtuKajzpg8xcveo7BCwOgl
+	 yMlaDb717UxCNP7AHYZvpbYqOArsNXZ+ooBmMaqDkcQBESl5M2fH+fXpBYjsYdfsuJ
+	 3HBqORXD3W67Jr/IzZjhLbk90+uMUKI1KgTRKtCATSg16L7z0fVjmBQgchOqJqfyXd
+	 XiyHiBzLSXi4CeBE8O4sTA7xvd23Z27/mItW3ib5I9pjmKEXwQ6SV2Xf7s5IaCOV6K
+	 8e0wmuXHhiYzw==
+Date: Tue, 26 Nov 2024 10:30:07 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Asahi Linux <asahi@lists.linux.dev>,
+	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v6 00/18] Implement DWARF modversions
+Message-ID: <Z0YTrwR67-5T86E6@bombadil.infradead.org>
+References: <20241121204220.2378181-20-samitolvanen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,65 +66,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241124235019.106333158@goodmis.org>
+In-Reply-To: <20241121204220.2378181-20-samitolvanen@google.com>
 
-On Sun, Nov 24, 2024 at 06:49:44PM -0500, Steven Rostedt wrote:
-> From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> 
-> Define a rcu_tasks_trace lock guard for use by the syscall enter/exit
-> tracepoints.
-> 
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Jordan Rife <jrife@google.com>
-> Cc: linux-trace-kernel@vger.kernel.org
-> Link: https://lore.kernel.org/20241123153031.2884933-4-mathieu.desnoyers@efficios.com
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+On Thu, Nov 21, 2024 at 08:42:21PM +0000, Sami Tolvanen wrote:
+> If you also want to test the series with actual Rust modules, this
+> branch adds Matt's latest modversion_info series:
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+The merge window for v6.13 is now open so this is too late for that, so
+this is all work to be queued up after, so in about 2 weeks or so. Given
+that, considering this and the extended modversions patches what I don't
+see is actual selftests to easily test this and extended modversions.
+Could you guys add tests for this? Since we have automated tests for
+modules and we now extended it with another new test for kallsyms under
+the modules directly it should be fairly easy I think to add tests for
+this. Think about how we can easily grow these tests to ensure we don't
+break things with future kernel regressions.
 
-> ---
->  include/linux/rcupdate_trace.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/include/linux/rcupdate_trace.h b/include/linux/rcupdate_trace.h
-> index eda493200663..e6c44eb428ab 100644
-> --- a/include/linux/rcupdate_trace.h
-> +++ b/include/linux/rcupdate_trace.h
-> @@ -10,6 +10,7 @@
->  
->  #include <linux/sched.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/cleanup.h>
->  
->  extern struct lockdep_map rcu_trace_lock_map;
->  
-> @@ -98,4 +99,8 @@ static inline void rcu_read_lock_trace(void) { BUG(); }
->  static inline void rcu_read_unlock_trace(void) { BUG(); }
->  #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
->  
-> +DEFINE_LOCK_GUARD_0(rcu_tasks_trace,
-> +	rcu_read_lock_trace(),
-> +	rcu_read_unlock_trace())
-> +
->  #endif /* __LINUX_RCUPDATE_TRACE_H */
-> -- 
-> 2.45.2
-> 
-> 
+  Luis
 
