@@ -1,180 +1,242 @@
-Return-Path: <linux-kernel+bounces-422455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88479D99E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:46:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B869D99E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996EC281189
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F30A2B27194
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420941D2B22;
-	Tue, 26 Nov 2024 14:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7EE1D54FE;
+	Tue, 26 Nov 2024 14:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m318xW/1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TuPA1sWR"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE4C9454;
-	Tue, 26 Nov 2024 14:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9BC28F5;
+	Tue, 26 Nov 2024 14:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632388; cv=none; b=mi+wrO+VWUvZ7ve81wemlXEV/vLK3oG7SkbLfxTSiis+WqMiMBx66AznmkgXFN0y6DNSuvcyAwqBOahmMUYSf8YMOKuzLqDEyicqMIdXX/GkfLJAE0FvfeIkY5FiSIwDWp2tCj0Y+hkCqVf8XxmxdARz/OTHw6RobUgxqOqkyqI=
+	t=1732632456; cv=none; b=qT6PstM7DtJr7xkAKAqshYN91kbvC7e0SCrKFyJd28GeuAIiF6nLUE0lIGct37ClbqhcWmLmp/7DBZ0dIDC5NHER5myuYXLC9zc93EoJ6qUzW7CVCIWusPzE4T2++PRyaAqnsWL+dKXybC6lY5D7PlVijwMEm/cbu2TN13Ts+OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632388; c=relaxed/simple;
-	bh=NpNbGj2wCM4uMUQYVG23W3gG/IV2i2QDerO7ztqkj/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KcrHghsgLnXxps6Df/LXO9wP5EF4OkFoB4riFniVmDhni8xJXU+vPI3xES8FEjIjq2VsCjg386+hnTWgAw0i/72hEOaIbz0VfDY1KdcP0DJzrTkF7vknUWcy62Ei0jhtpT5tQANzp/QfnqxfMDbtVEW3nioScpKaCZHeXOaMo5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m318xW/1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135C3C4CECF;
-	Tue, 26 Nov 2024 14:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732632388;
-	bh=NpNbGj2wCM4uMUQYVG23W3gG/IV2i2QDerO7ztqkj/0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m318xW/1yhki4YyczvznEGKEG0kad3EBI59+7rVvvWWMSOnH7ZMNR4VtN9AWD2AAp
-	 mtZuflRw93LCnE0i103tlXOdNizq9H4C3HveCpFLdhgCRx76z12DLPqLCGNZOFD9ks
-	 3iXn5MWL4MP4VS5piKrOLbq6THdlF9K5ydUr0J+BrJ2JROiF/m87mzip5bd2Yk5BKu
-	 5fFP0+Swb10LgM8c5zvxHiGXQlucismDguf4vbHPXz5OL2i4Tvf20FN/jw/cyMKe+M
-	 T6GFePJrzcmYwj/FKSePYG9PjX9KW16xBXFIZHy6JSv8+WDUZdhvXL6UnKxjfgOoJ5
-	 8g6JfLUtPqEzQ==
-Message-ID: <550d80c9-3a7a-4db4-96fa-758cb34dc746@kernel.org>
-Date: Tue, 26 Nov 2024 15:46:23 +0100
+	s=arc-20240116; t=1732632456; c=relaxed/simple;
+	bh=wAz1xDCKhJgqk5DwEqBMcBkCLcJyc51V1pm8kWdzdAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W1Pm/lB0WOiphHvTD52ExlkQJ1o6Ij2kuCZ7b73ljxfL91foRFQHyYzCvYzZ4Ue+n4tsx2IUctx6MARLwwLErtapOFCsmTQ+KDChaSUj1E453/+2s4gfqdmLF7v51polYPUU2lgpwpjf9vxgu8upFYvFc7b4kOmXpZVhC7kpkHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TuPA1sWR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OwjmPcSu14wQCPYgJgge82L9Ll6baGo005ISnWVoQlM=; b=TuPA1sWR/GwtWBHkIHSECIpxQi
+	Ghc2I/6IumfrTaeGyMaVa8vs0aaH6NeLNexkbnar4QlVWgmaOUelJYUl9h0nj9Y7u+t2lpgt6zeL+
+	fwxZCNj+4sivu83rVU0tYihZoea1gWRDTE7/VeOPMMFTXhbDjzN2LckhvCYJbB9pNpuN/ZmrAytBd
+	2Uf5gT0UPncgU4ZqzK9ZOW80lIaYRJFt8DR64Se0/qd3qHcqkPewXV3hxws/FAB/HEYlPDa8z0yR9
+	bCGeKwhsjK2FIBJyiC2wiQySkPTz0D9AIIhlxTZhtvDLHSK1B/rYU3HAcOFCibU9JmW+2Rh75cFBG
+	jHqwEgKA==;
+Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tFwq3-0000rm-TY; Tue, 26 Nov 2024 15:46:51 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: neil.armstrong@linaro.org
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andrzej.hajda@intel.com, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, quentin.schulz@cherry.de,
+ Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject:
+ Re: [PATCH 1/3] drm/bridge/synopsys: Add MIPI DSI2 host controller bridge
+Date: Tue, 26 Nov 2024 15:46:50 +0100
+Message-ID: <1909309.CQOukoFCf9@diego>
+In-Reply-To: <881f2820-ff18-4d60-8bf3-f8cca1be5914@linaro.org>
+References:
+ <20241106123304.422854-1-heiko@sntech.de>
+ <20241106123304.422854-2-heiko@sntech.de>
+ <881f2820-ff18-4d60-8bf3-f8cca1be5914@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
- Jisheng Zhang <jszhang@kernel.org>
-References: <20241126143125.9980-2-heylenay@4d2.org>
- <20241126143125.9980-5-heylenay@4d2.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241126143125.9980-5-heylenay@4d2.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 26/11/2024 15:31, Haylen Chu wrote:
-> Add documentation to describe Spacemit K1 system controller registers.
+Hi,
+
+Am Mittwoch, 6. November 2024, 14:54:39 CET schrieb neil.armstrong@linaro.org:
+> > +#define UPDATE(v, h, l)			(((v) << (l)) & GENMASK((h), (l)))
 > 
-> Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> ---
->  .../soc/spacemit/spacemit,k1-syscon.yaml      | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> I'm not super fan of this macro, overall I thinkg you should switch to
+> regmap and make use of regmap_update_bits and drop dsi2_write/read wrappers
+> to readl/writel.
+
+Yep you're right. That macro acutally is just FIELD_PREP in disguise ;-)
+So I've gone with that (and regmap).
+
+
+> <snip>
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> new file mode 100644
-> index 000000000000..b9f20190a70a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Spacemit K1 SoC System Controller
-> +
-> +maintainers:
-> +  - Haylen Chu <heylenay@4d2.org>
-> +
-> +description:
-> +  The Spacemit K1 SoC system controller provides access to shared register files
-> +  for related SoC modules, such as clock controller and reset controller.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - spacemit,k1-apbc-syscon
-> +          - spacemit,k1-apbs-syscon
-> +          - spacemit,k1-apmu-syscon
-> +          - spacemit,k1-mpmu-syscon
-> +      - const: syscon
-> +      - const: simple-mfd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-controller:
-> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
-> +    type: object
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-Nothing improved. That's a no-go.
+> > +
+> > +static struct dw_mipi_dsi2 *
+> > +__dw_mipi_dsi2_probe(struct platform_device *pdev,
+> > +		     const struct dw_mipi_dsi2_plat_data *plat_data)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct reset_control *apb_rst;
+> > +	struct dw_mipi_dsi2 *dsi2;
+> > +	int ret;
+> > +
+> > +	dsi2 = devm_kzalloc(dev, sizeof(*dsi2), GFP_KERNEL);
+> > +	if (!dsi2)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	dsi2->dev = dev;
+> > +	dsi2->plat_data = plat_data;
+> > +
+> > +	if (!plat_data->phy_ops->init || !plat_data->phy_ops->get_lane_mbps ||
+> > +	    !plat_data->phy_ops->get_timing)
+> > +		return dev_err_ptr_probe(dev, -ENODEV, "Phy not properly configured\n");
+> > +
+> > +	if (!plat_data->base) {
+> > +		dsi2->base = devm_platform_ioremap_resource(pdev, 0);
+> > +		if (IS_ERR(dsi2->base))
+> > +			return ERR_PTR(-ENODEV);
+> > +	} else {
+> > +		dsi2->base = plat_data->base;
+> > +	}
+> > +
+> > +	dsi2->pclk = devm_clk_get(dev, "pclk");
+> > +	if (IS_ERR(dsi2->pclk))
+> > +		return dev_err_cast_probe(dev, dsi2->pclk, "Unable to get pclk\n");
+> > +
+> > +	dsi2->sys_clk = devm_clk_get(dev, "sys");
+> > +	if (IS_ERR(dsi2->sys_clk))
+> > +		return dev_err_cast_probe(dev, dsi2->sys_clk, "Unable to get sys_clk\n");
+> > +
+> > +	/*
+> > +	 * Note that the reset was not defined in the initial device tree, so
+> > +	 * we have to be prepared for it not being found.
+> > +	 */
+> > +	apb_rst = devm_reset_control_get_optional_exclusive(dev, "apb");
+> > +	if (IS_ERR(apb_rst))
+> > +		return dev_err_cast_probe(dev, apb_rst, "Unable to get reset control\n");
+> > +
+> > +	if (apb_rst) {
+> > +		ret = clk_prepare_enable(dsi2->pclk);
+> > +		if (ret) {
+> > +			dev_err(dev, "%s: Failed to enable pclk\n", __func__);
+> > +			return ERR_PTR(ret);
+> > +		}
+> > +
+> > +		reset_control_assert(apb_rst);
+> > +		usleep_range(10, 20);
+> > +		reset_control_deassert(apb_rst);
+> > +
+> > +		clk_disable_unprepare(dsi2->pclk);
+> > +	}
+> > +
+> > +	pm_runtime_enable(dev);
+> > +
+> > +	dsi2->dsi_host.ops = &dw_mipi_dsi2_host_ops;
+> > +	dsi2->dsi_host.dev = dev;
+> > +	ret = mipi_dsi_host_register(&dsi2->dsi_host);
+> > +	if (ret) {
+> > +		dev_err(dev, "Failed to register MIPI host: %d\n", ret);
+> > +		pm_runtime_disable(dev);
+> > +		return ERR_PTR(ret);
+> > +	}
+> > +
+> > +	dsi2->bridge.driver_private = dsi2;
+> > +	dsi2->bridge.funcs = &dw_mipi_dsi2_bridge_funcs;
+> > +	dsi2->bridge.of_node = pdev->dev.of_node;
+> > +
+> > +	return dsi2;
+> > +}
+> > +
+> > +static void __dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2)
+> > +{
+> > +	mipi_dsi_host_unregister(&dsi2->dsi_host);
+> > +
+> > +	pm_runtime_disable(dsi2->dev);
+> > +}
+> > +
+> > +/*
+> > + * Probe/remove API, used from platforms based on the DRM bridge API.
+> > + */
+> > +struct dw_mipi_dsi2 *
+> > +dw_mipi_dsi2_probe(struct platform_device *pdev,
+> > +		   const struct dw_mipi_dsi2_plat_data *plat_data)
+> > +{
+> > +	return __dw_mipi_dsi2_probe(pdev, plat_data);
+> > +}
+> > +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_probe);
+> > +
+> > +void dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2)
+> > +{
+> > +	__dw_mipi_dsi2_remove(dsi2);
+> > +}
+> > +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_remove);
+> 
+> Since it's not use yet, you should probably drop those since it's dead
+> code.
 
-<form letter>
-This is a friendly reminder during the review process.
+Though it is used. The Rockchip glue in patch 3 calls 
+	dsi2->dmd = dw_mipi_dsi2_probe(pdev, &dsi2->pdata);
+in its dw_mipi_dsi2_rockchip_probe() and
+	dw_mipi_dsi2_remove(dsi2->dmd);
+in its dw_mipi_dsi2_rockchip_remove() for the whole bridge setup
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+Similarly the below bind/unbind functions are called for the bridge-attach
+from the component part of the Rockchip glue.
 
-Thank you.
-</form letter>
+Which is the same way the dsi1 driver handles things right now.
 
-Best regards,
-Krzysztof
+
+> > +
+> > +/*
+> > + * Bind/unbind API, used from platforms based on the component framework.
+> > + */
+> > +int dw_mipi_dsi2_bind(struct dw_mipi_dsi2 *dsi2, struct drm_encoder *encoder)
+> > +{
+> > +	return drm_bridge_attach(encoder, &dsi2->bridge, NULL, 0);
+> > +}
+> > +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_bind);
+> > +
+> > +void dw_mipi_dsi2_unbind(struct dw_mipi_dsi2 *dsi2)
+> > +{
+> > +}
+> > +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_unbind);
+
+[...]
+
+> > +struct dw_mipi_dsi2 *dw_mipi_dsi2_probe(struct platform_device *pdev,
+> > +					const struct dw_mipi_dsi2_plat_data *plat_data);
+> > +void dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2);
+> > +int dw_mipi_dsi2_bind(struct dw_mipi_dsi2 *dsi2, struct drm_encoder *encoder);
+> > +void dw_mipi_dsi2_unbind(struct dw_mipi_dsi2 *dsi2);
+> > +
+> > +#endif /* __DW_MIPI_DSI2__ */
+> 
+> Overall the driver is very close to dw-mipi-dsi, si it's overall good!
+
+that was the intention ... so that I don't introduce issues that were
+already solved elsewhere ;-) .
+
+Heiko
+
+
 
