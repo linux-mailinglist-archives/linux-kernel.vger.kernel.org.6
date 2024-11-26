@@ -1,253 +1,349 @@
-Return-Path: <linux-kernel+bounces-421932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67CE9D921E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:06:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7709D9220
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662F7282D96
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:05:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41133B24FDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ACC1922E5;
-	Tue, 26 Nov 2024 07:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D80619258B;
+	Tue, 26 Nov 2024 07:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ef++cCF6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ET/2CrRv"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C7F1898FC;
-	Tue, 26 Nov 2024 07:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610831898FC;
+	Tue, 26 Nov 2024 07:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732604753; cv=none; b=mhyoIaZiZdnEOXsWqMbRjbdvp5B08z7rSgTrNzXVZk+UIyr3I8dyf40eb1pK2nAinEaa21MpfN+uLNFh7LAlUy8vFIdZMrOeh8RDqera9FnvuCRkE7U+kb0Uv7uS1HENxqbx2I5izb/BBfbmynVpVly616tZtLuyD/iT2oDheYE=
+	t=1732604762; cv=none; b=u+7aKZHIukxesp3uJcKwGINLgYVNXzj9MPUujzWZVT6cK7mXdA7ynG0Sf1NbaokbwEF0AR9CjKcC4H9gU8scE14attpDZjYhERWIyFJR7berwg0hE6caAKgL6IhRrGsovyEagKvrzKf9tA4PbJS8RQWRQl9B3oXlg/z2bzwz/ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732604753; c=relaxed/simple;
-	bh=xaU5B8y8EM6Iu+8Y+nodl+0QKfUC5iXarFMjzNAmxAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0bGZMquBGOHtt1DE56vKN+ZMuaCOSpRjIFtPn4cXvOOEO71goTeijUg6HBRV5XtKhVN57DHoY78PEzZbhV4gH/mN2vx4ur+GQ/FWdmN7e8pGtYwkhsoYx9zagv5983ZlBhC+l2eq1VRSa1YKOh7frROPXu+0H7P0MpeJyrhVPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ef++cCF6; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732604752; x=1764140752;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xaU5B8y8EM6Iu+8Y+nodl+0QKfUC5iXarFMjzNAmxAY=;
-  b=Ef++cCF6rZ0P3RjuQGU5ACog6vtcL5XoavojuRo/q18EjO9WD/OMJI+3
-   aJitMKiFUKCAdrmf2/ksPmuHzam9nhsWBrogxiijK7SoxggiOSwIume+j
-   S8tsRKNJAz7dRUSc4UVKWNCzK7ZuUehRb6EndEqCd8oAaGfr+3jOfFhtq
-   v+yfg58mU2N/JBie35NOpYSa9Cfq/mXHz6Kk/L3Uj6Fbi01LaRJV10ydq
-   Ty0mnQ6RZXQ9ozX53LzRygXvxtPpVdBMfZszTPweZBNYK6esWAp6I8PO+
-   mxkrdf7bYMlcujA7C4vPyGt1tpZ/TI9oca9vSnGbEABvrWkwEr+bO6E4n
-   A==;
-X-CSE-ConnectionGUID: s+tLOdDaTHqRBBIJ3Yd0iQ==
-X-CSE-MsgGUID: nRmRhh1jSBWddYqyebdn9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43362866"
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="43362866"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 23:05:50 -0800
-X-CSE-ConnectionGUID: w66V3T7bToG0BdscdNGQUA==
-X-CSE-MsgGUID: rT27KM6WS+WO0v3so3eARg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="91459250"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 25 Nov 2024 23:05:44 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFpdl-00078v-2d;
-	Tue, 26 Nov 2024 07:05:41 +0000
-Date: Tue, 26 Nov 2024 15:05:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
-	chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
-	surenb@google.com, kristen.c.accardi@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com, kanchana.p.sridhar@intel.com
-Subject: Re: [PATCH v4 03/10] crypto: iaa - Implement batch_compress(),
- batch_decompress() API in iaa_crypto.
-Message-ID: <202411261737.ozFff8Ym-lkp@intel.com>
-References: <20241123070127.332773-4-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1732604762; c=relaxed/simple;
+	bh=0tDDt6mdzrI9HIgeA9rdneXlh3XSrKVoiUse3OjmLes=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cOktvIZSBmvp7C66ISie6XUd4uK792jWPEymkMCwqyXdJwI3+FSWRBpcm5l0XQZcH6oynMZhZVsAUcTPtYmHvKdbshft2O9RTGe5V+jlnxm7ILmO6lS55MI99HVwXGnjN07G0FReqmfeILtzYLQkn69PfOBKt2jFzusQNumrOgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ET/2CrRv; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AQ75oMeA648380, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1732604750; bh=0tDDt6mdzrI9HIgeA9rdneXlh3XSrKVoiUse3OjmLes=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=ET/2CrRvQST7rpYPR8lk7G99e8ebEjqYjyF8FNde8BMYldpp8y6zQzYy41YauWX+N
+	 vvL16PJOziAtMX3FBED8ZM3JgEOiTibUfKA8zYrxtEt9PBen7KWQ9kOo2JjhVsJNJU
+	 uLEN0PK92By/bbcvrsd9JW40whofTy3rh6XDS0uYXafrSN6HP056kMnEnI6qqLCp8l
+	 iTRa6UcWbaiwe5S6YJbB/FTSVX1zIdFcMzOfEeSFk6AC3Ygqjm5JdarvQ5jJbilYr6
+	 nUOKC7Yj4kaLDcw5JKafNM3RkHFc73mzrjwdLVKxJ1Xa+rsBRSqX9bM+noXZJDHIaW
+	 h9tSlvGVVCZ0A==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AQ75oMeA648380
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 15:05:50 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 26 Nov 2024 15:05:50 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 26 Nov
+ 2024 15:05:48 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
+        <alex_lu@realsil.com.cn>, <kidman@realtek.com>
+Subject: [PATCH v3] Bluetooth: add quirk using packet size 60
+Date: Tue, 26 Nov 2024 15:05:42 +0800
+Message-ID: <20241126070542.3828431-1-hildawu@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241123070127.332773-4-kanchana.p.sridhar@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Hi Kanchana,
+The RTL8852BE-VT supports USB alternate setting 6.
+However, its descriptor does not report this capability to the host.
+Therefore, a quirk is needed to bypass the RTL8852BE-VT's descriptor
+and allow it to use USB ALT 6 directly.
 
-kernel test robot noticed the following build warnings:
+The btmon log below shows the case that WBS with the USB alternate
+setting 6.
 
-[auto build test WARNING on 5a7056135bb69da2ce0a42eb8c07968c1331777b]
+< HCI Command: Enhanced.. (0x01|0x003d) plen 59  #2123 [hci0] 82.701813
+        Handle: 1 Address: 78:A7:EB:4C:53:4D (1MORE)
+        Transmit bandwidth: 8000
+        Receive bandwidth: 8000
+        Max latency: 13
+        Packet type: 0x0380
+          3-EV3 may not be used
+          2-EV5 may not be used
+          3-EV5 may not be used
+        Retransmission effort: Optimize for link quality (0x02)
+< ACL Data TX: Handle 1 flags 0x00 dlen 22       #2124 [hci0] 82.701825
+      Channel: 65 len 18 [PSM 3 mode Basic (0x00)] {chan 1}
+      RFCOMM: Unnumbered Info with Header Check (UIH) (0xef)
+         Address: 0x0b cr 1 dlci 0x02
+         Control: 0xef poll/final 0
+         Length: 14
+         FCS: 0x9a
+        0d 0a 2b 43 49 45 56 3a 20 32 2c 31 0d 0a 9a     ..+CIEV: 2,1..>
+> HCI Event: Command Status (0x0f) plen 4        #2125 [hci0] 82.703812
+      Enhanced Setup Synchronous Connection (0x01|0x003d) ncmd 2
+        Status: Success (0x00)
+> HCI Event: Number of Complete.. (0x13) plen 5  #2126 [hci0] 82.710834
+        Num handles: 1
+        Handle: 1 Address: 78:A7:EB:4C:53:4D (1MORE)
+        Count: 1
+        #2124: len 22 (19 Kb/s)
+        Latency: 9 msec (3-56 msec ~13 msec)
+        Channel: 65 [PSM 3 mode Basic (0x00)] {chan 1}
+        Channel Latency: 9 msec (4-27 msec ~15 msec)
+> HCI Event: Synchronous Conne.. (0x2c) plen 17  #2127 [hci0] 82.741840
+        Status: Success (0x00)
+        Handle: 2
+        Address: 78:A7:EB:4C:53:4D (1MORE)
+        Link type: eSCO (0x02)
+        Transmission interval: 0x0c
+        Retransmission window: 0x04
+        RX packet length: 60
+        TX packet length: 60
+        Air mode: Transparent (0x03)
+@ RAW Open: btmon (privileged) version 2.22          {0x0002} 82.742580
+@ RAW Close: btmon                                   {0x0002} 82.742594
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2128 [hci0] 82.764812
+< ACL Data TX: Handle 1 flags 0x00 dlen 19       #2129 [hci0] 82.764994
+      Channel: 65 len 15 [PSM 3 mode Basic (0x00)] {chan 1}
+      RFCOMM: Unnumbered Info with Header Check (UIH) (0xef)
+         Address: 0x0b cr 1 dlci 0x02
+         Control: 0xef poll/final 0
+         Length: 11
+         FCS: 0x9a
+        0d 0a 2b 56 47 53 3a 20 36 0d 0a 9a              ..+VGS: 6...  >
+> HCI Event: Max Slots Change (0x1b) plen 3      #2130 [hci0] 82.765814
+        Handle: 1 Address: 78:A7:EB:4C:53:4D (1MORE)
+        Max slots: 1
+< SCO Data TX: Handle 2 flags 0x00 dlen 60       #2131 [hci0] 82.765897
+> HCI Event: Number of Complete.. (0x13) plen 5  #2132 [hci0] 82.771855
+        Num handles: 1
+        Handle: 1 Address: 78:A7:EB:4C:53:4D (1MORE)
+        Count: 1
+        #2129: len 19 (25 Kb/s)
+        Latency: 6 msec (3-56 msec ~10 msec)
+        Channel: 65 [PSM 3 mode Basic (0x00)] {chan 1}
+        Channel Latency: 6 msec (4-27 msec ~11 msec)
+< SCO Data TX: Handle 2 flags 0x00 dlen 60       #2133 [hci0] 82.773344
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2134 [hci0] 82.774836
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2135 [hci0] 82.774839
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2136 [hci0] 82.784840
+< SCO Data TX: Handle 2 flags 0x00 dlen 60       #2137 [hci0] 82.787175
+< SCO Data TX: Handle 2 flags 0x00 dlen 60       #2138 [hci0] 82.788282
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2139 [hci0] 82.794812
+< SCO Data TX: Handle 2 flags 0x00 dlen 60       #2140 [hci0] 82.795797
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2141 [hci0] 82.804838
+> SCO Data RX: Handle 2 flags 0x00 dlen 60       #2142 [hci0] 82.804840
+< SCO Data TX: Handle 2 flags 0x00 dlen 60       #2143 [hci0] 82.808554
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/crypto-acomp-Define-two-new-interfaces-for-compress-decompress-batching/20241125-110412
-base:   5a7056135bb69da2ce0a42eb8c07968c1331777b
-patch link:    https://lore.kernel.org/r/20241123070127.332773-4-kanchana.p.sridhar%40intel.com
-patch subject: [PATCH v4 03/10] crypto: iaa - Implement batch_compress(), batch_decompress() API in iaa_crypto.
-config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20241126/202411261737.ozFff8Ym-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411261737.ozFff8Ym-lkp@intel.com/reproduce)
+Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411261737.ozFff8Ym-lkp@intel.com/
+---
+Change:
+V3: Fixed SubjectPrefix, use quirk instead of btrealtek_*_flag()
+v2: Use btusb_find_altsetting replace duplicating logic, add tested log.
+---
+---
+ drivers/bluetooth/btrtl.c |  3 ++
+ drivers/bluetooth/btrtl.h |  1 +
+ drivers/bluetooth/btusb.c | 86 ++++++++++++++++++++++++++++++---------
+ 3 files changed, 70 insertions(+), 20 deletions(-)
 
-All warnings (new ones prefixed by >>):
-
->> drivers/crypto/intel/iaa/iaa_crypto_main.c:1882: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * This API provides IAA compress batching functionality for use by swap
-   drivers/crypto/intel/iaa/iaa_crypto_main.c:2010: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * This API provides IAA decompress batching functionality for use by swap
-
-
-vim +1882 drivers/crypto/intel/iaa/iaa_crypto_main.c
-
-  1880	
-  1881	/**
-> 1882	 * This API provides IAA compress batching functionality for use by swap
-  1883	 * modules.
-  1884	 *
-  1885	 * @reqs: @nr_pages asynchronous compress requests.
-  1886	 * @wait: crypto_wait for synchronous acomp batch compress. If NULL, the
-  1887	 *        completions will be processed asynchronously.
-  1888	 * @pages: Pages to be compressed by IAA in parallel.
-  1889	 * @dsts: Pre-allocated destination buffers to store results of IAA
-  1890	 *        compression. Each element of @dsts must be of size "PAGE_SIZE * 2".
-  1891	 * @dlens: Will contain the compressed lengths.
-  1892	 * @errors: zero on successful compression of the corresponding
-  1893	 *          req, or error code in case of error.
-  1894	 * @nr_pages: The number of pages, up to CRYPTO_BATCH_SIZE,
-  1895	 *            to be compressed.
-  1896	 */
-  1897	static void iaa_comp_acompress_batch(
-  1898		struct acomp_req *reqs[],
-  1899		struct crypto_wait *wait,
-  1900		struct page *pages[],
-  1901		u8 *dsts[],
-  1902		unsigned int dlens[],
-  1903		int errors[],
-  1904		int nr_pages)
-  1905	{
-  1906		struct scatterlist inputs[CRYPTO_BATCH_SIZE];
-  1907		struct scatterlist outputs[CRYPTO_BATCH_SIZE];
-  1908		bool compressions_done = false;
-  1909		bool poll = (async_mode && !use_irq);
-  1910		int i;
-  1911	
-  1912		BUG_ON(nr_pages > CRYPTO_BATCH_SIZE);
-  1913		BUG_ON(!poll && !wait);
-  1914	
-  1915		if (poll)
-  1916			iaa_set_req_poll(reqs, nr_pages, true);
-  1917		else
-  1918			iaa_set_req_poll(reqs, nr_pages, false);
-  1919	
-  1920		/*
-  1921		 * Prepare and submit acomp_reqs to IAA. IAA will process these
-  1922		 * compress jobs in parallel if async-poll mode is enabled.
-  1923		 * If IAA is used in sync mode, the jobs will be processed sequentially
-  1924		 * using "wait".
-  1925		 */
-  1926		for (i = 0; i < nr_pages; ++i) {
-  1927			sg_init_table(&inputs[i], 1);
-  1928			sg_set_page(&inputs[i], pages[i], PAGE_SIZE, 0);
-  1929	
-  1930			/*
-  1931			 * Each dst buffer should be of size (PAGE_SIZE * 2).
-  1932			 * Reflect same in sg_list.
-  1933			 */
-  1934			sg_init_one(&outputs[i], dsts[i], PAGE_SIZE * 2);
-  1935			acomp_request_set_params(reqs[i], &inputs[i],
-  1936						 &outputs[i], PAGE_SIZE, dlens[i]);
-  1937	
-  1938			/*
-  1939			 * If poll is in effect, submit the request now, and poll for
-  1940			 * a completion status later, after all descriptors have been
-  1941			 * submitted. If polling is not enabled, submit the request
-  1942			 * and wait for it to complete, i.e., synchronously, before
-  1943			 * moving on to the next request.
-  1944			 */
-  1945			if (poll) {
-  1946				errors[i] = iaa_comp_acompress(reqs[i]);
-  1947	
-  1948				if (errors[i] != -EINPROGRESS)
-  1949					errors[i] = -EINVAL;
-  1950				else
-  1951					errors[i] = -EAGAIN;
-  1952			} else {
-  1953				acomp_request_set_callback(reqs[i],
-  1954							   CRYPTO_TFM_REQ_MAY_BACKLOG,
-  1955							   crypto_req_done, wait);
-  1956				errors[i] = crypto_wait_req(iaa_comp_acompress(reqs[i]),
-  1957							    wait);
-  1958				if (!errors[i])
-  1959					dlens[i] = reqs[i]->dlen;
-  1960			}
-  1961		}
-  1962	
-  1963		/*
-  1964		 * If not doing async compressions, the batch has been processed at
-  1965		 * this point and we can return.
-  1966		 */
-  1967		if (!poll)
-  1968			goto reset_reqs_wait;
-  1969	
-  1970		/*
-  1971		 * Poll for and process IAA compress job completions
-  1972		 * in out-of-order manner.
-  1973		 */
-  1974		while (!compressions_done) {
-  1975			compressions_done = true;
-  1976	
-  1977			for (i = 0; i < nr_pages; ++i) {
-  1978				/*
-  1979				 * Skip, if the compression has already completed
-  1980				 * successfully or with an error.
-  1981				 */
-  1982				if (errors[i] != -EAGAIN)
-  1983					continue;
-  1984	
-  1985				errors[i] = iaa_comp_poll(reqs[i]);
-  1986	
-  1987				if (errors[i]) {
-  1988					if (errors[i] == -EAGAIN)
-  1989						compressions_done = false;
-  1990				} else {
-  1991					dlens[i] = reqs[i]->dlen;
-  1992				}
-  1993			}
-  1994		}
-  1995	
-  1996	reset_reqs_wait:
-  1997		/*
-  1998		 * For the same 'reqs[]' and 'wait' to be usable by
-  1999		 * iaa_comp_acompress()/iaa_comp_deacompress():
-  2000		 * Clear the CRYPTO_ACOMP_REQ_POLL bit on the acomp_reqs.
-  2001		 * Reset the crypto_wait "wait" callback to reqs[0].
-  2002		 */
-  2003		iaa_set_req_poll(reqs, nr_pages, false);
-  2004		acomp_request_set_callback(reqs[0],
-  2005					   CRYPTO_TFM_REQ_MAY_BACKLOG,
-  2006					   crypto_req_done, wait);
-  2007	}
-  2008	
-
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 83025f457ca0..7efd733f9e84 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -1312,6 +1312,9 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+ 		    btrtl_dev->project_id == CHIP_ID_8852C)
+ 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
+ 
++		if (btrtl_dev->project_id == CHIP_ID_8852BT)
++			btrealtek_set_flag(hdev, REALTEK_ALT6_FORCE);
++
+ 		hci_set_aosp_capable(hdev);
+ 		break;
+ 	default:
+diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
+index a2d9d34f9fb0..ffec2fca88ec 100644
+--- a/drivers/bluetooth/btrtl.h
++++ b/drivers/bluetooth/btrtl.h
+@@ -105,6 +105,7 @@ struct rtl_vendor_cmd {
+ 
+ enum {
+ 	REALTEK_ALT6_CONTINUOUS_TX_CHIP,
++	REALTEK_ALT6_FORCE,
+ 
+ 	__REALTEK_NUM_FLAGS,
+ };
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 279fe6c115fa..6acdff772ca5 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -814,6 +814,8 @@ struct qca_dump_info {
+ #define BTUSB_USE_ALT3_FOR_WBS	15
+ #define BTUSB_ALT6_CONTINUOUS_TX	16
+ #define BTUSB_HW_SSR_ACTIVE	17
++#define BTUSB_ALT6_QUIRK	18
++#define BTUSB_ISOC_ALT_CHANGED	19
+ 
+ struct btusb_data {
+ 	struct hci_dev       *hdev;
+@@ -866,6 +868,7 @@ struct btusb_data {
+ 	unsigned int air_mode;
+ 	bool usb_alt6_packet_flow;
+ 	int isoc_altsetting;
++	u16 isoc_mps;
+ 	int suspend_count;
+ 
+ 	int (*recv_event)(struct hci_dev *hdev, struct sk_buff *skb);
+@@ -2140,16 +2143,58 @@ static void btusb_notify(struct hci_dev *hdev, unsigned int evt)
+ 	}
+ }
+ 
++static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
++							int alt)
++{
++	struct usb_interface *intf = data->isoc;
++	int i;
++
++	BT_DBG("Looking for Alt no :%d", alt);
++
++	if (!intf)
++		return NULL;
++
++	for (i = 0; i < intf->num_altsetting; i++) {
++		if (intf->altsetting[i].desc.bAlternateSetting == alt)
++			return &intf->altsetting[i];
++	}
++
++	return NULL;
++}
++
+ static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
+ {
+ 	struct btusb_data *data = hci_get_drvdata(hdev);
+ 	struct usb_interface *intf = data->isoc;
+ 	struct usb_endpoint_descriptor *ep_desc;
++	struct usb_host_interface *alt;
+ 	int i, err;
+ 
+ 	if (!data->isoc)
+ 		return -ENODEV;
+ 
++	/* For some Realtek chips, they actually have the altsetting 6, but its
++	 * altsetting descriptor is not exposed. We can activate altsetting 6 by
++	 * replacing the altsetting 5.
++	 */
++	if (altsetting == 6 && !btusb_find_altsetting(data, 6) &&
++	    test_bit(BTUSB_ALT6_QUIRK, &data->flags)) {
++		alt = btusb_find_altsetting(data, 5);
++		if (alt) {
++			data->isoc_mps = 49;
++			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
++				ep_desc = &alt->endpoint[i].desc;
++				if (!usb_endpoint_xfer_isoc(ep_desc))
++					continue;
++				data->isoc_mps =
++					le16_to_cpu(ep_desc->wMaxPacketSize);
++				ep_desc->wMaxPacketSize = cpu_to_le16(63);
++			}
++			alt->desc.bAlternateSetting = 6;
++			set_bit(BTUSB_ISOC_ALT_CHANGED, &data->flags);
++		}
++	}
++
+ 	err = usb_set_interface(data->udev, data->isoc_ifnum, altsetting);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "setting interface failed (%d)", -err);
+@@ -2161,6 +2206,22 @@ static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
+ 	data->isoc_tx_ep = NULL;
+ 	data->isoc_rx_ep = NULL;
+ 
++	/* Recover alt 5 desc if alt 0 is set. */
++	if (!altsetting && test_bit(BTUSB_ISOC_ALT_CHANGED, &data->flags)) {
++		alt = btusb_find_altsetting(data, 6);
++		if (alt) {
++			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
++				ep_desc = &alt->endpoint[i].desc;
++				if (!usb_endpoint_xfer_isoc(ep_desc))
++					continue;
++				ep_desc->wMaxPacketSize =
++					cpu_to_le16(data->isoc_mps);
++			}
++			alt->desc.bAlternateSetting = 5;
++			clear_bit(BTUSB_ISOC_ALT_CHANGED, &data->flags);
++		}
++	}
++
+ 	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
+ 		ep_desc = &intf->cur_altsetting->endpoint[i].desc;
+ 
+@@ -2223,25 +2284,6 @@ static int btusb_switch_alt_setting(struct hci_dev *hdev, int new_alts)
+ 	return 0;
+ }
+ 
+-static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
+-							int alt)
+-{
+-	struct usb_interface *intf = data->isoc;
+-	int i;
+-
+-	BT_DBG("Looking for Alt no :%d", alt);
+-
+-	if (!intf)
+-		return NULL;
+-
+-	for (i = 0; i < intf->num_altsetting; i++) {
+-		if (intf->altsetting[i].desc.bAlternateSetting == alt)
+-			return &intf->altsetting[i];
+-	}
+-
+-	return NULL;
+-}
+-
+ static void btusb_work(struct work_struct *work)
+ {
+ 	struct btusb_data *data = container_of(work, struct btusb_data, work);
+@@ -2279,7 +2321,8 @@ static void btusb_work(struct work_struct *work)
+ 			 * MTU >= 3 (packets) * 25 (size) - 3 (headers) = 72
+ 			 * see also Core spec 5, vol 4, B 2.1.1 & Table 2.1.
+ 			 */
+-			if (btusb_find_altsetting(data, 6))
++			if (btusb_find_altsetting(data, 6) ||
++			    test_bit(BTUSB_ALT6_QUIRK, &data->flags))
+ 				new_alts = 6;
+ 			else if (btusb_find_altsetting(data, 3) &&
+ 				 hdev->sco_mtu >= 72 &&
+@@ -2611,6 +2654,9 @@ static int btusb_setup_realtek(struct hci_dev *hdev)
+ 	if (btrealtek_test_flag(data->hdev, REALTEK_ALT6_CONTINUOUS_TX_CHIP))
+ 		set_bit(BTUSB_ALT6_CONTINUOUS_TX, &data->flags);
+ 
++	if (btrealtek_test_flag(data->hdev, REALTEK_ALT6_FORCE))
++		set_bit(BTUSB_ALT6_QUIRK, &data->flags);
++
+ 	return ret;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
