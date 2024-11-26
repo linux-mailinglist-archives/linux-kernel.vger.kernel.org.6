@@ -1,187 +1,225 @@
-Return-Path: <linux-kernel+bounces-421853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F439D90F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:13:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC279D90F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C03289308
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:13:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66282B23839
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C52413BAD7;
-	Tue, 26 Nov 2024 04:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BE013B29F;
+	Tue, 26 Nov 2024 04:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQTECpwG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FsuDURRr"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEB042A80;
-	Tue, 26 Nov 2024 04:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129A012FB0A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732594392; cv=none; b=HFKhKPTDnXr6RsmdmoXwhR8D5M7vC98h4G3ZeTiN4eLsfwY8XIfj5xqDjq2nTceARoTEvfmpeQ+Yzc7hGGATtNESLrf4dwoRGRSMghFrlDPifRduKwHDMw2xuiggEyjGjdU2oKTeFri1bAoAUiL+7G6UYfqhuSJ/io7+/H+sn1c=
+	t=1732594497; cv=none; b=ZEIfECgbGSQ+fA1Q27978TkAcwVP8Ba/40DHgYiPaAJNJ3OlS14OF+u17VuEW2KoTHF69sa9MtBSJeKD/KrDKUrQVqnOlUPRqcA3+z0NR9ZLZ3qwZgsbmo4809niJPTCSrsVp16EdS5lrcpeAv35rqA7GDSH5l3tsp7SmLgFuGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732594392; c=relaxed/simple;
-	bh=wvE1j6jYlustZGPgO4za1DJpvm8S+eQ4rSParDa6Lgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ubKQbR0FPLhCecU31WHHpShmcYEufta14YzKuvKj7tyTQjoyNgMwlzXeDT/AeoQWJCyToSKgqF7NIjjGc0XGhZVnai1lD/2Z5PSDfChBZidB3K0NyoGtDjmMAguB8e9CZW3JA9lUrQ8amuBCg/2XtC4Dr/+wMzd+G39aqss7ckE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQTECpwG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FB4C4CED7;
-	Tue, 26 Nov 2024 04:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732594392;
-	bh=wvE1j6jYlustZGPgO4za1DJpvm8S+eQ4rSParDa6Lgg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uQTECpwGCtXvgW65bmiUP/yGxJvz0r7mVGsCCqF/XcRfiIuZv42jYE+QPSuePckeG
-	 dVbnsZ00LE3d97xJR0ePFq8U2Yna8qZuuLQRvwb8eQI1wxd3k/KmMWjdEoDku2wqsM
-	 5TBjzWODkEd91uKinwhXClwNwOgrMStAMcYizAy7nilQEqoHOb5j+YoNl+se83vScv
-	 +42ovPaLlv1+IrKOuv6MgCjlDvHiXubKEt15Twjb9yqSSaQbJexzFs2nkEel1m063j
-	 NmiD8mcuO+uw07c8qlCBNtJ2U/ke+no1KjokLVaCPMMy7AyeXY4qgL1/BNNqPb5+Jm
-	 gINg2xT+7LbPQ==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffced84ba8so1223721fa.2;
-        Mon, 25 Nov 2024 20:13:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV36tjH5IWTg9U+yoJeP5cYMlIP0nOgwTMW9TM8ZRlRdHhacAvVHb2TomybLNz2KJCh1l+FmUmxZCCILk5G@vger.kernel.org, AJvYcCWiMo8rBXeRyO5pFfoVRCDqxRRNdbQIgAuAaUds1NqNU+jl3LJBlZvVL7EJP5EvlxLY4tLOwobeLMA8p69O@vger.kernel.org, AJvYcCWtm+xh8j5ZfA3+nzo23vWjc8319gOuzC7GRtjOiCI1XnbYDIAtyVub5qN9UetOcmkFuof5rysE8j3PjhJX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVR/6jAzLqJhdnCWtxqPC/69VG8h1t4z1SKm/CAdD6ZzXSLUZo
-	di+BFhvig6VY1Uz11gVSBVQkAAeYyyjwuEHFn7ckVEKmLDxkN2OJ2rO3sLOUb+C2yxFmBDBDCGk
-	tKjkyg8AXVKVvUwfawyIwynHGVRM=
-X-Google-Smtp-Source: AGHT+IGax4HC8zIQqLB8xrI0moZd82uV5VPNJpszQ12dMOodNR4A+EElpdPN8bJ83seoA/fkNz8n4WUh6BTdRHvKAZE=
-X-Received: by 2002:a05:6512:b86:b0:53d:d0f0:ad0d with SMTP id
- 2adb3069b0e04-53dd39b55bemr7255517e87.46.1732594390702; Mon, 25 Nov 2024
- 20:13:10 -0800 (PST)
+	s=arc-20240116; t=1732594497; c=relaxed/simple;
+	bh=IVJScJ5LLOG2ZZe5UUUCNU3AFBhVFaRuJQr7LpEuu7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rsOmNY09un8bv6DMQMuNmFofT6aK7j+pMYHW47HXYD+VGWuBzueXKwfZEE/9VIlMzr+yl9vWXPCcs+Gs/xlHBlZGIFo5mE5NlpH3gFOhdAv5slNGZR//A1swd8MjKuX1J+Nx68N7Deb2jQCdbjmJFN3cUJlM2Avx9olZj+8POno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FsuDURRr; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fc2b80c845so1055548a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732594495; x=1733199295; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bjfYZcfFoIgejKOTai2BXSjSoln7dLiZ6K/mQw5KOGs=;
+        b=FsuDURRr+YnhHWB2FhXBlUzWV93SK6L6tUCfsCyfhRSHKOsGZJBR2srP8t0CibHqKh
+         OCeYuoTdW0MCs8j4nu/6RG8GD6z2qcbC4t5RKDlW/k3/mpStMFE0IIa1eQBUGuGIlaGE
+         uE/d6bvEe5zhKF3mF3mYp6TIFSHnKcq2mRjOqq696gatuIWe/06IyzLJR7iS9HXfVYXd
+         DkQlCnFa5eolW1KaH5w5Lxtpt6XXn4gDtkZNNdBLokhI4QBJsW6eVgnajsNTiC8AfYrh
+         V3k2WOAyVXtuxzzCjQkxK3L3gkenHso2UGf8GPknUMfeflIZBW6FtYy9Kkip1lRqgult
+         4ucw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732594495; x=1733199295;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjfYZcfFoIgejKOTai2BXSjSoln7dLiZ6K/mQw5KOGs=;
+        b=bciH0VaK3UREt87ybelzBZF64ZWqTWg878OOktvvOYuUqN3blEweddpXlpjVHhlenp
+         fnfP+hu6CRNKNamK4wJkeGfmvpYP0IOwhvGjomMEy/7sLLnKCR5KpxQzq0HeIcWX/ABm
+         3KplyiQnJ2pUvKGcPAxZcjfKkJnlbmMD+vKO1HJrWggeME0uPacO48WGHpA3xG0te33f
+         DWii/N0oRucQr46A31VNF2VQyZwBJkvzgpOVpF/Y4o78H6Q6VRs7ox3NgHEoGHntM92Y
+         8ParDoyBXVIybx26txsqBFS4ISCLyLkLeaXHwiMrzFTK94m2NlczoJABPhDhPlK34tk3
+         jmBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXO3uwj9vQTc8vpMDowKEGOZIJa9S5G08ngxK8+/CULubpJPqHGOoDVf2jTiIEO/1i+amZ7FI+Lq5rm+U8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLokpqbFQbijIeE1IiCxSOfz6sQ55oujjCroRVlk+pPxhLMFlR
+	EwP/AiOB1HQp5U433LKbpGwh8q/sbecu+4iIr4ktMtkPYXaI9jVixNruZymIag==
+X-Gm-Gg: ASbGncs3CV9Bk47gTSFUkU6mROQ0I7WzE0UyFSuXQ3Amc4e5qZ1zsAw439l2b6PpLoi
+	PdAhJhmKE6ZjOm7ShLtqBeT4TUX2oKWuJfhZVrWWaSue3f5Kv9BYvZHwHChShc/a9Ro8YioqtJh
+	zFbPBZMYvirel+sogBbZeaA7FlShIedZ2Fi5ygcXMAKL+c0pSAsmxweMuYhXPdtMsYvKGRsN/vO
+	BhLnZUSv/z7+b82u/BXVJOMLogzGzsZDhhtd7Cyoza7FhhJIqNfDztDrahp+jE=
+X-Google-Smtp-Source: AGHT+IGBN2N4F1GfDt8KuzITj8DNuTr31Dc8O0N+EbL438LAAPd1KGs/DWjPbgnEJWryxXsx8CfJ2A==
+X-Received: by 2002:a05:6a20:7349:b0:1db:e870:7b19 with SMTP id adf61e73a8af0-1e09e3f9cf5mr23633557637.10.1732594495290;
+        Mon, 25 Nov 2024 20:14:55 -0800 (PST)
+Received: from thinkpad ([220.158.156.172])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724e8abf2e9sm6637791b3a.146.2024.11.25.20.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 20:14:54 -0800 (PST)
+Date: Tue, 26 Nov 2024 09:44:49 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
+	jdmason@kudzu.us
+Subject: Re: [PATCH v8 2/6] PCI: endpoint: Add RC-to-EP doorbell support
+ using platform MSI controller
+Message-ID: <20241126041449.qouyatajd5rie5o2@thinkpad>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
+ <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com>
+ <20241124071100.ts34jbnosiipnx2x@thinkpad>
+ <Z0S7+U5W2DOmzdJL@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120204125.52644-1-pvorel@suse.cz> <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
- <20241121011720.GA69389@pevik> <CAF6AEGuzFNVd5fE+b+hKcC8xAOg7CrkPaYuWC6tCVmioutoOOw@mail.gmail.com>
- <CAK7LNAQDMJUYUF7BaN10bwctW7fuHmSMrrAjMmn4s7P2ys5P+Q@mail.gmail.com> <20241122204157.GA125569@pevik>
-In-Reply-To: <20241122204157.GA125569@pevik>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 26 Nov 2024 13:12:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARDWAw6Yo9HdO-Sba=G_bohr_0uXuKtgNZSr1YLeQE2ug@mail.gmail.com>
-Message-ID: <CAK7LNARDWAw6Yo9HdO-Sba=G_bohr_0uXuKtgNZSr1YLeQE2ug@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
-To: Petr Vorel <pvorel@suse.cz>
-Cc: Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z0S7+U5W2DOmzdJL@lizhi-Precision-Tower-5810>
 
-On Sat, Nov 23, 2024 at 5:42=E2=80=AFAM Petr Vorel <pvorel@suse.cz> wrote:
->
-> > On Thu, Nov 21, 2024 at 10:49=E2=80=AFAM Rob Clark <robdclark@gmail.com=
-> wrote:
->
-> > > On Wed, Nov 20, 2024 at 5:17=E2=80=AFPM Petr Vorel <pvorel@suse.cz> w=
-rote:
->
-> > > > > On Thu, Nov 21, 2024 at 5:41=E2=80=AFAM Petr Vorel <pvorel@suse.c=
-z> wrote:
->
-> > > > > > It will be used in the next commit for DRM_MSM.
->
-> > > > > > Suggested-by: Rob Clark <robdclark@gmail.com>
-> > > > > > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > > > > > ---
-> > > > > > Changes v3->v4:
-> > > > > > * Move definition to the end of the file
->
->
-> > > > > I prefer to not check the tool.
->
-> > > > Ack.
->
-> > > > > Why don't you install python3?
->
-> > > > Everybody installs it when it's required, the question is how to in=
-form about
-> > > > the dependency.
->
-> > > > There build environments are minimal environments:
-> > > > * chroot (e.g. cross compilation)
-> > > > * container
->
-> > > > These are used by both developers and distros.
->
-> > > I don't think py3 is an _onerous_ dependency, but it has come up as a
-> > > surprise in minimal distro build environments at least once.. so I'd
-> > > be a fan of surfacing this dependency in a predictable/understandable
-> > > way (ie. I'm in favor of this patchset)
->
->
-> > "once" is a keyword here.
->
-> > "/bin/sh: python3: not found" provides sufficient information
-> > about why the compilation failed, and you know what to do
-> > to fix the problem.
-> > This is good.
->
-> > If you hide CONFIG_DRM_MSM silently
-> > due to missing python3, you may scratch your head
-> > "why drm/msm was not compiled?".
-> It's not on the list, but still visible in help (via search).
->
-> > This is worse.
->
-> I'm ok with this being refused. Yes, it's a trivial thing to find that py=
-thon3
-> is not installed. I wasn't sure myself if this is really better. Having
-> something like "requires $(PYTHON3)" would be best solution (e.g. not dis=
-able
-> the config, but exit before starting to build), but of course unless this
-> feature is needed for many modules it does not make sense to have it.
-> It's because kernel mostly contains everything (unless languages like pyt=
-hon
-> or any other dependency starts to be added). For this reason I like that
-> mconf-cfg.sh warns when missing ncurses devel files (even suggesting pack=
-age
-> names).
->
-> Just to explain what was my motivation. CONFIG_DRM_MSM in in arm64 defcon=
-fig,
-> thus it will affect anybody who uses the defconfig (any distro will need =
-to add
-> it).
+On Mon, Nov 25, 2024 at 01:03:37PM -0500, Frank Li wrote:
+> On Sun, Nov 24, 2024 at 12:41:00PM +0530, Manivannan Sadhasivam wrote:
+> > On Sat, Nov 16, 2024 at 09:40:42AM -0500, Frank Li wrote:
+> > > Doorbell feature is implemented by mapping the EP's MSI interrupt
+> > > controller message address to a dedicated BAR in the EPC core. It is the
+> > > responsibility of the EPF driver to pass the actual message data to be
+> > > written by the host to the doorbell BAR region through its own logic.
+> > >
+> > > Tested-by: Niklas Cassel <cassel@kernel.org>
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > change from v5 to v8
+> > > -none
+> > >
+> > > Change from v4 to v5
+> > > - Remove request_irq() in pci_epc_alloc_doorbell() and leave to EP function
+> > > driver, so ep function driver can register differece call back function for
+> > > difference doorbell events and set irq affinity to differece CPU core.
+> > > - Improve error message when MSI allocate failure.
+> > >
+> > > Change from v3 to v4
+> > > - msi change to use msi_get_virq() avoid use msi_for_each_desc().
+> > > - add new struct for pci_epf_doorbell_msg to msi msg,virq and irq name.
+> > > - move mutex lock to epc function
+> > > - initialize variable at declear place.
+> > > - passdown epf to epc*() function to simplify code.
+> > > ---
+> > >  drivers/pci/endpoint/Makefile     |  2 +-
+> > >  drivers/pci/endpoint/pci-ep-msi.c | 99 +++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/pci-ep-msi.h        | 15 ++++++
+> > >  include/linux/pci-epf.h           | 16 +++++++
+> > >  4 files changed, 131 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/pci/endpoint/Makefile b/drivers/pci/endpoint/Makefile
+> > > index 95b2fe47e3b06..a1ccce440c2c5 100644
+> > > --- a/drivers/pci/endpoint/Makefile
+> > > +++ b/drivers/pci/endpoint/Makefile
+> > > @@ -5,4 +5,4 @@
+> > >
+> > >  obj-$(CONFIG_PCI_ENDPOINT_CONFIGFS)	+= pci-ep-cfs.o
+> > >  obj-$(CONFIG_PCI_ENDPOINT)		+= pci-epc-core.o pci-epf-core.o\
+> > > -					   pci-epc-mem.o functions/
+> > > +					   pci-epc-mem.o pci-ep-msi.o functions/
+> > > diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
+> > > new file mode 100644
+> > > index 0000000000000..7868a529dce37
+> > > --- /dev/null
+> > > +++ b/drivers/pci/endpoint/pci-ep-msi.c
+> > > @@ -0,0 +1,99 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * PCI Endpoint *Controller* (EPC) MSI library
+> > > + *
+> > > + * Copyright (C) 2024 NXP
+> > > + * Author: Frank Li <Frank.Li@nxp.com>
+> > > + */
+> > > +
+> > > +#include <linux/cleanup.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/slab.h>
+> >
+> > Please sort alphabetically.
+> >
+> > > +#include <linux/module.h>
+> > > +#include <linux/msi.h>
+> > > +#include <linux/pci-epc.h>
+> > > +#include <linux/pci-epf.h>
+> > > +#include <linux/pci-ep-cfs.h>
+> > > +#include <linux/pci-ep-msi.h>
+> > > +
+> > > +static bool pci_epc_match_parent(struct device *dev, void *param)
+> > > +{
+> > > +	return dev->parent == param;
+> > > +}
+> > > +
+> > > +static void pci_epc_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
+> > > +{
+> > > +	struct pci_epc *epc __free(pci_epc_put) = NULL;
+> > > +	struct pci_epf *epf;
+> > > +
+> > > +	epc = pci_epc_get_fn(pci_epc_match_parent, desc->dev);
+> >
+> > You were passing 'epc->dev.parent' to platform_device_msi_init_and_alloc_irqs().
+> > So 'desc->dev' should be the EPC parent, right? If so, you can do:
+> >
+> > 	epc = pci_epc_get(dev_name(msi_desc_to_dev(desc)));
+> >
+> > since we are reusing the parent dev name for EPC.
+> 
+> I think it is not good to depend on hidden situation, "name is the same."
+> May it change in future because no one will realize here depend on the same
+> name and just think it is trivial update for device name.
+> 
 
+No one should change the EPC name just like that. The name is exposed to
+configfs interface and the existing userspace scripts rely on that. So changing
+the name will break them.
 
-arch/arm64/configs/defconfig is a multi-platform config.
+I'd strongly suggest you to use the existing API instead of adding a new one for
+the same purpose.
 
-If CONFIG_DRM_MSM exists in arch/arm64/configs/defconfig
-and if you want to build arm64 defconfig, you need to install
-all necessary tools for that.
+> >
+> > > +	if (!epc)
+> > > +		return;
+> > > +
+> > > +	/* Only support one EPF for doorbell */
+> > > +	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
+> >
+> > Why don't you impose this restriction in pci_epf_alloc_doorbell() itself?
+> 
+> This is callback from platform_device_msi_init_and_alloc_irqs(). So it is
+> actually restriction at pci_epf_alloc_doorbell().
+> 
 
+I don't know how to parse this last sentence. But my question was why don't you
+impose this one EPF restriction in pci_epf_alloc_doorbell() before allocating
+the MSI domain using platform_device_msi_init_and_alloc_irqs()? This way if
+someone calls pci_epf_alloc_doorbell() multi EPF, it will fail.
 
+- Mani
 
->
-> It's needed only for Qualcomm arm64 devices only. But only for these devi=
-ces
-> which are mainlined enough to really use CONFIG_DRM_MSM (many of them are=
-n't in
-> that state).
->
-> postmarketOS is the distribution which supports Qualcomm. It stores kerne=
-l
-> config for each device and devices often have individual maintainer. E.g.=
- 175x
-> "once" :).
-
-
-If you do not want to be bothered by unnecessary drivers,
-you need to disable the relevant CONFIG option.
-(e.g, scripts/config -d  CONFIG_DRM_MSM)
-
-
-This is the standard way we have for many years.
-
-
-
---
-Best Regards
-Masahiro Yamada
+-- 
+மணிவண்ணன் சதாசிவம்
 
