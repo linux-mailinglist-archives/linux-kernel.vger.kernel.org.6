@@ -1,84 +1,39 @@
-Return-Path: <linux-kernel+bounces-422134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA059D9517
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:05:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FFC9D9518
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FBEEB28BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:56:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E8BFB295AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CC31C3023;
-	Tue, 26 Nov 2024 09:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fbyws1c2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA07B1CACE2;
+	Tue, 26 Nov 2024 09:56:33 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FD8195FEF
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087641C9B7A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732614989; cv=none; b=rOVJyZ3HZoTg7487c3LZ3R2AOU+iWw4/2QK3T/uNiPWtIP1egEm3GrFtsRBbZFlbfme0X8LgrbN51ogMCPzpuQeTuDRVgxb6IQpHGSvmJRsWpqZp1KKbEmOMYIthYVVsGVLlFY9gfzpIJYXAWEMbVY7pMBNmuuUyEmhVSyoZ69k=
+	t=1732614993; cv=none; b=i97TTfnYgNwCCyLS/7f/gwgyXlCyrj31JgMjouKbmf/TxjUJr3SJrm6XiIsQa9KseYq8F3+MTmlvXywn2LW4ZkaMe13aDhGd/O//NxNRqt7rXS037QxctHr2BpLNcQtsKS7Cp1jYBOex8dWROHjE05LBfmfKjP5fwxdeuXzn4jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732614989; c=relaxed/simple;
-	bh=qTXEGV1NqvoB9oYQRL651OM5jxH+Id9oPw0Gr+SEBnY=;
+	s=arc-20240116; t=1732614993; c=relaxed/simple;
+	bh=+feGJRjcfPwbPpHmyp0x7CL0HRq3+5VOgfkum0dgPQ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xw/PfXal9ZHlQFChjUt908ZmdosoVGGRkz+G9ARAQV51BiKatsh3F66vDXonY0Ry1UWtN9fKqe+FQr0N+hHGoqxDRmFaFCZ3/oUuCupXw1L2ORLGfBpm243u30RJB7yMm9OVxyicJPykpmYVfUEmmoIPbc8kLgesIBHGMjhu0oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fbyws1c2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732614985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oKQIRQM0DHbMs6DhX26g6JtTMb0P+1aEq6LX6Prz7ww=;
-	b=Fbyws1c2A0HDLitlM8hGmf6l2mUmy7N9C9EJA3tdLhffHdLBRrCb+ePp4s3TvYgAE1XgFN
-	QN4cYjqXNm0XPP+0YQqODEoDuMEjyJ17WxjHPtQmVZLIPnKxzAD7jL71jFHInRE3IZiodO
-	2IGdObkTRbbMWmRVLC0M0OXMEO+bye0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-sSGrKW87Mki00uaOM1Wy9g-1; Tue, 26 Nov 2024 04:56:24 -0500
-X-MC-Unique: sSGrKW87Mki00uaOM1Wy9g-1
-X-Mimecast-MFC-AGG-ID: sSGrKW87Mki00uaOM1Wy9g
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-382299520fdso3420004f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:56:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732614983; x=1733219783;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKQIRQM0DHbMs6DhX26g6JtTMb0P+1aEq6LX6Prz7ww=;
-        b=B5SN3iuj6hZ+HHF2zRKnw43k10QQDZvF0YGf+/WmmyG/s3961epxKNCFYJLfUFW4jV
-         DNOBpnXD4VscAy7+oC3dRFeLEbbxHgCRpa11GHnPNg3ZRkWa83m7bNvxmGZj6qqtE/an
-         rFnGNJ73P/e/XZvf+bhQy86cUUcSYen0aHHWFHVDRCeqTYUH+w6JNBUXaP16ip9CGSiw
-         Am4OV/Oq4OmFv1ID07+o/iRi+Bmh1998vWDEltTxfNG7QVG1zAw5YbhMwbDazMjZs1XA
-         wF7yjD7cJ4Xw4Fl0xaBhfublVuwRIMHa8maV8PZOawjceR5oyu1+Dz3PJ1K3zmubF+nE
-         1Fgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsB0viD+/VAmfzkdO+whJt42j40PVNlcWOoEm2BLYpoQBTakOBfvwRAIWJCYzltmzNEOVEV41IGsMwM0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHXlg8Au1wxjjNgHyGK1GVyprrceo9DJh0Wjl4olo2gnvnmhmK
-	pFWA8b4ScH4Ah/coa8YWN5q+eaIu38S0RDin5MGmLkfY+WQZv7pNPNCn5l3k684p8riGsIqO6XT
-	P1+nH8TpZbf8yOSewe5SqwfXdf2ryBIvdt1LG2j75FL1EJ/Sc21DJa9oxm9JgMg==
-X-Gm-Gg: ASbGnctNAusqzVehYFhowmgGda4ZWicGuDYNe8+CP1obnh+7o2RO17TkbvzjRngGlcy
-	U2PEvrUaNKm8ZG5Gj4tGuuRuNnQxAqJeKsVdSL5hZVDJhFY7USGkKyBOAjAP5FGJ8C3yYyH7Tcr
-	Ha/32VoZnhzTC/uQb2z1ZelrT/cKoOmuMu/+e29pZMsEl3Xqmf874QzFVqrdpuzgK0oz6/NfP5Y
-	QBE/Sk+CYRj1iGK3XblAA5lmFlU7BY+6cWksUoxf27PGYPxJZjQCQoPvEammTOXCpNoxSqL8U0f
-X-Received: by 2002:a5d:5f53:0:b0:382:4b80:abc8 with SMTP id ffacd0b85a97d-38260bccddcmr13487968f8f.46.1732614982806;
-        Tue, 26 Nov 2024 01:56:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG7er+9nxXHPAG3ENsKoLjcP60A9V+9a0RO/xgQmaA3KSqpNdUGKqVrkbSnBm+ieOOasQsuZQ==
-X-Received: by 2002:a5d:5f53:0:b0:382:4b80:abc8 with SMTP id ffacd0b85a97d-38260bccddcmr13487949f8f.46.1732614982505;
-        Tue, 26 Nov 2024 01:56:22 -0800 (PST)
-Received: from [192.168.88.24] (146-241-94-87.dyn.eolo.it. [146.241.94.87])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbe9013sm13078237f8f.88.2024.11.26.01.56.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 01:56:21 -0800 (PST)
-Message-ID: <9a2b27d0-c65c-4954-875c-65ad144bc584@redhat.com>
-Date: Tue, 26 Nov 2024 10:56:20 +0100
+	 In-Reply-To:Content-Type; b=L26Zx0vE2yWRnUBYIq3pGZDzutVUCvHjkDlCToS7tK8GpuHv3HRcxoBoAIX4FglxLH6Y5d+fhCBhwDv7ukecNw21u0woMFtEi4lUwHipm/VAITfy/deQhx5KXJMrJetN/ukmItvOy9RkOM1RL5H7Hkl7UmVb59hIE4OSlvdvp3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tFsIv-00011x-Vm; Tue, 26 Nov 2024 10:56:22 +0100
+Message-ID: <19a43db4-db5c-4638-9778-d94fb571a206@pengutronix.de>
+Date: Tue, 26 Nov 2024 10:56:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,55 +41,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/qed: allow old cards not supporting "num_images" to
- work
-To: Louis Leseur <louis.leseur@gmail.com>, Manish Chopra
- <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Florian Forestier <florian@forestier.re>
-References: <20241121172821.24003-1-louis.leseur@gmail.com>
+Subject: Re: [PATCH v2] i2c: imx: support DMA defer probing
+To: carlos.song@nxp.com, frank.li@nxp.com, o.rempel@pengutronix.de,
+ kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, festevam@gmail.com
+Cc: imx@lists.linux.dev, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241126082535.1878554-1-carlos.song@nxp.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241121172821.24003-1-louis.leseur@gmail.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20241126082535.1878554-1-carlos.song@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 11/21/24 18:26, Louis Leseur wrote:
-> Commit 43645ce03e0063d7c4a5001215ca815188778881 added support for
+Hello Carlos,
 
-Please use the following format to reference an exiting commit:
-
-commit <first 12 chars from commit hash> ("<commit title>")
-
-> populating flash image attributes, notably "num_images". However, some
-> cards were not able to return this information. In such cases, the
-> driver would return EINVAL, causing the driver to exit.
+On 26.11.24 09:25, carlos.song@nxp.com wrote:
+> From: Carlos Song <carlos.song@nxp.com>
 > 
-> We added a check to return EOPNOTSUPP when the card is not able to
-> return these information, allowing the driver continue instead of
-> returning an error.
+> Return -EPROBE_DEFER when dma_request_slave_channel() because DMA driver
+> have not ready yet.
 > 
-> Co-developed-by: Florian Forestier <florian@forestier.re>
-> Signed-off-by: Florian Forestier <florian@forestier.re>
-> Signed-off-by: Louis Leseur <louis.leseur@gmail.com>
+> Move i2c_imx_dma_request() before registering I2C adapter to avoid
+> infinite loop of .probe() calls to the same driver, see "e8c220fac415
+> Revert "i2c: imx: improve the error handling in i2c_imx_dma_request()""
+> and "Documentation/driver-api/driver-model/driver.rst".
+> 
+> Use CPU mode to avoid stuck registering i2c adapter when DMA resources
+> are unavailable.
 
-This is a fix, as such it should target the 'net' tree in the subj
-prefix and should include a suitable Fixes tag.
+Wouldn't this break probe for all i2c-imx users who have CONFIG_IMX_SDMA
+disabled?
 
-See:
+Also I am wondering on what kernel version and what configuration
+(CONFIG_I2C_IMX=?, CONFIG_IMX_SDMA=?) you have that made you run into
+this situation.
 
-https://elixir.bootlin.com/linux/v6.12/source/Documentation/process/maintainer-netdev.rst
+I'd have expected that with fw_devlink enabled, the I2C controller wouldn't
+be probed before the DMA provider is available.
 
-for the details.
+Cheers,
+Ahmad
 
-Since you have to repost, I suggest re-phrasing the last paragraph,
-noting that the caller already handle EOPNOTSUPP without failing, and
-using imperative mood.
+> 
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> ---
+> Change for V2:
+> - According to Frank's comments, wrap at 75 char and Simplify fix code
+>   at i2c_imx_dma_request().
+> - Use strict patch check, fix alignment warning at i2c_imx_dma_request()
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index 5ed4cb61e262..4e5633166a1e 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -397,17 +397,16 @@ static void i2c_imx_reset_regs(struct imx_i2c_struct *i2c_imx)
+>  }
+>  
+>  /* Functions for DMA support */
+> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> -						dma_addr_t phy_addr)
+> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx, dma_addr_t phy_addr)
+>  {
+>  	struct imx_i2c_dma *dma;
+>  	struct dma_slave_config dma_sconfig;
+> -	struct device *dev = &i2c_imx->adapter.dev;
+> +	struct device *dev = i2c_imx->adapter.dev.parent;
+>  	int ret;
+>  
+>  	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+>  	if (!dma)
+> -		return;
+> +		return -ENOMEM;
+>  
+>  	dma->chan_tx = dma_request_chan(dev, "tx");
+>  	if (IS_ERR(dma->chan_tx)) {
+> @@ -452,7 +451,7 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+>  	dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
+>  		dma_chan_name(dma->chan_tx), dma_chan_name(dma->chan_rx));
+>  
+> -	return;
+> +	return 0;
+>  
+>  fail_rx:
+>  	dma_release_channel(dma->chan_rx);
+> @@ -460,6 +459,8 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+>  	dma_release_channel(dma->chan_tx);
+>  fail_al:
+>  	devm_kfree(dev, dma);
+> +
+> +	return ret;
+>  }
+>  
+>  static void i2c_imx_dma_callback(void *arg)
+> @@ -1803,6 +1804,13 @@ static int i2c_imx_probe(struct platform_device *pdev)
+>  	if (ret == -EPROBE_DEFER)
+>  		goto clk_notifier_unregister;
+>  
+> +	/* Init DMA config if supported */
+> +	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
+> +	if (ret == -EPROBE_DEFER) {
+> +		dev_err(&pdev->dev, "DMA not ready, go defer probe!\n");
+> +		goto clk_notifier_unregister;
+> +	}
+> +
+>  	/* Add I2C adapter */
+>  	ret = i2c_add_numbered_adapter(&i2c_imx->adapter);
+>  	if (ret < 0)
+> @@ -1817,9 +1825,6 @@ static int i2c_imx_probe(struct platform_device *pdev)
+>  		i2c_imx->adapter.name);
+>  	dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
+>  
+> -	/* Init DMA config if supported */
+> -	i2c_imx_dma_request(i2c_imx, phy_addr);
+> -
+>  	return 0;   /* Return OK */
+>  
+>  clk_notifier_unregister:
 
-Thanks,
 
-Paolo
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
