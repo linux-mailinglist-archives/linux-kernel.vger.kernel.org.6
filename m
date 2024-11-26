@@ -1,202 +1,140 @@
-Return-Path: <linux-kernel+bounces-422511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B722B9D9A81
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:39:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1E79D9A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:40:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D8F2828AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:39:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80791645B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516571D63E3;
-	Tue, 26 Nov 2024 15:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="otySuYr0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HdnzXvoP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="otySuYr0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HdnzXvoP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724131D63E6;
+	Tue, 26 Nov 2024 15:40:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B5C1CD219;
-	Tue, 26 Nov 2024 15:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912171CD219
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732635551; cv=none; b=mbcnVv4h5D8ptaoopXHmJwziPOB9/Kp4UtK3Up+HlbHOHMDoQEMxOPuDBZ6ecQ3k6ZoPqKrAaKcG/3fznM+9bN+wfxTgEW7psWjW6nyU8R+bqBEVUqR+/AiRMn/vGHtpBgN/Y3iWtMqcDEtRHqExU1PtATL6rMFNJpa5vtndk9g=
+	t=1732635630; cv=none; b=IF4dUIFzNd0xQXmqZLXpunEOMO0ecLA69FbzMdAqzE6xujSTAuWgjTtKJyxqNCIw2IwuBpcLACRruidsuUKA0Q4HdU1dQ2F3mcXXM7uaL8jn6GW9ibQXXKopP1SyQ0Z01qJsScNA+zx+mZaZFGNc8RJ09NXXBconzA5GpkguGuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732635551; c=relaxed/simple;
-	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=EF57KkOiC395cDyEufCpoIviyhJ/SUSEWElHPLMtoFoZd6r7Eu9Efe6YUxBjSUWOSaNur3/KWVnoRLVnIMK3KAfoL99eeTHKFIHaBI8fnwnoIo1iOnlZTvivQoHiTMgWdaSDmhOMuLhM57X2OeFcagf9dY5CSO27E7XLZj8dzrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=otySuYr0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HdnzXvoP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=otySuYr0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HdnzXvoP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4A4861F74C;
-	Tue, 26 Nov 2024 15:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732635548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
-	b=otySuYr0A8ktry9wWYUPoQyyi/KqsDtMBDeZq1t1t9+USfCtigQyi7dFW2n6cELSN6CcDu
-	ZttZGEtFuzOgtqIakqIqXFRkM1BImR9PhMQyvMvSPK4JuUBJ8bpvLjpb3aDUw3liTit4Ae
-	H4u74ISnwY1/DOX9AXjRYeu4dnpOF8Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732635548;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
-	b=HdnzXvoPXUmGjiXEMram6r9II66DqANjyD0b7uJUhKawl8AjdXYu1hBtRsm7T83MLbCQxr
-	6/jS63/pKovK4nAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732635548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
-	b=otySuYr0A8ktry9wWYUPoQyyi/KqsDtMBDeZq1t1t9+USfCtigQyi7dFW2n6cELSN6CcDu
-	ZttZGEtFuzOgtqIakqIqXFRkM1BImR9PhMQyvMvSPK4JuUBJ8bpvLjpb3aDUw3liTit4Ae
-	H4u74ISnwY1/DOX9AXjRYeu4dnpOF8Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732635548;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QSuLfzieJyxHmLpdpnck/AUeIFMZ4v6AVU8TSsTHAhw=;
-	b=HdnzXvoPXUmGjiXEMram6r9II66DqANjyD0b7uJUhKawl8AjdXYu1hBtRsm7T83MLbCQxr
-	6/jS63/pKovK4nAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8635B13890;
-	Tue, 26 Nov 2024 15:39:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nNrfBZrrRWc+EQAAD6G6ig
-	(envelope-from <colyli@suse.de>); Tue, 26 Nov 2024 15:39:06 +0000
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1732635630; c=relaxed/simple;
+	bh=W8YjC2DyqMXnbXnURBuez3FEKX7yhXHR64tiytMcwo4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VIh9r/lKUFB5bYsgJpCRswnBbvHy8frCkWci5wjD3nkFskr22niNfwwW6KuIl05eukZemXyVch+FSCNAN0z8y7ZyXNk0L6cjXpvXHXbONrmAW4CoiK7ctAICyo1zUcgCnrcWEl0XU7K4d4T6nBScwUa8p4Rg7j1cwMU5+/xzVpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a79039ae30so60242875ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 07:40:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732635627; x=1733240427;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z4QBDfWEQeb8YUkuhnZ6Q5DhtW2P4YOASMyrlS+sQXg=;
+        b=RXnRIxGarllogygqKQoSy7yM6eqns/5VDoOZAqxtgva+x8Pajh3l9by3v1rwGxkuLM
+         smnXUiJqEJMW4Elmuus7DNT7D3pszgGfSwciNt9adPsMQkKxZDgiNFxyN8td9HCm9fl5
+         eQuun866FRzwIMu25ffMYUNn8yqOo6QptJdm250LP+RvAQ+MOclkR4wTj23eo9Rq0ieS
+         5FhaPne8eEmKokl7zqzoMCCEPVSXeOTD9zSBk1WM6FTU/VqVvPStWK/H1GnmYyHNlA9N
+         rguxsDlWKBJFsSG/RCiQzOx6diMhDXVvLAyxxS5Rq2ZAqkusvJNpKTOwFlVoC1CBo8kq
+         WAEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJEJm+d3FGqk8LMxKHhVLoRdlXwSROu4c/fvadOCLJYMr/g5q62ROmvx5iTAHPSbT3Tq7nS9ZZxalQ2yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMx6qj72LetmEpORlP6md1qp291nynH/DAVQG/+K1QPNldD7fi
+	I8nzMNlXTWUoEpVpXKLmpSbfSx/W23o7GwvSy9MFElfsH+Szzlaaw0vtf95oSMACyLrKLzj9J8I
+	xRXJjuejJHFG1B2g7W1ecm2Y/xTWKo8i8O+PIq563GQFDdcQHi9WhEkE=
+X-Google-Smtp-Source: AGHT+IHKDaAZbHO3wvggDIf5bxCayMcjPpK0wV3kgAF/t/qqDTCmnWW572bIUSIb+1qNzK8yrB7ay7zk+9Zzoptpa6FPqIwktPkC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] bcache:fix oops in cache_set_flush
-From: Coly Li <colyli@suse.de>
-In-Reply-To: <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
-Date: Tue, 26 Nov 2024 23:38:52 +0800
-Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- linux-bcache <linux-bcache@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0CFF2B9E-4E40-480D-9F3B-F7631FE3CEA5@suse.de>
-References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
- <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
- <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
- <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
- <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
- <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
-To: liequan che <liequanche@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[easystack.cn,gmail.com,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	APPLE_MAILER_COMMON(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:12e7:b0:3a7:86ab:bebe with SMTP id
+ e9e14a558f8ab-3a79af75dc2mr178942175ab.16.1732635627585; Tue, 26 Nov 2024
+ 07:40:27 -0800 (PST)
+Date: Tue, 26 Nov 2024 07:40:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6745ebeb.050a0220.21d33d.001a.GAE@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in add_missing_indices
+From: syzbot <syzbot+b974bd41515f770c608b@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ad3930580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b974bd41515f770c608b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e3c9c97af7d9/disk-28eb75e1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1e22f3d29103/vmlinux-28eb75e1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8ff56ec30fa6/bzImage-28eb75e1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b974bd41515f770c608b@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:2649:28
+index -128 is out of range for type 'struct dtslot[128]'
+CPU: 1 UID: 0 PID: 9494 Comm: syz.7.422 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ add_missing_indices+0x824/0xbf0 fs/jfs/jfs_dtree.c:2649
+ jfs_readdir+0x1fc5/0x3c50 fs/jfs/jfs_dtree.c:3019
+ wrap_directory_iterator+0x91/0xd0 fs/readdir.c:65
+ iterate_dir+0x571/0x800 fs/readdir.c:108
+ __do_sys_getdents64 fs/readdir.c:403 [inline]
+ __se_sys_getdents64+0x1e2/0x4b0 fs/readdir.c:389
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbaf317e819
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbaf3f2d038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007fbaf3335fa0 RCX: 00007fbaf317e819
+RDX: 0000000000001000 RSI: 0000000020000f80 RDI: 0000000000000004
+RBP: 00007fbaf31f175e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fbaf3335fa0 R15: 00007fff928fc148
+ </TASK>
+---[ end trace ]---
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> 2024=E5=B9=B411=E6=9C=8819=E6=97=A5 12:19=EF=BC=8Cliequan che =
-<liequanche@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-[snipped]
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->>> 7. Repartition again, triggering kernel panic again.
->>> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
->>> The same operation was performed on the other two servers, and no
->>> panic was triggered.
->=20
->> I guess this is another undefine operation. I assume the cache device =
-is still references somewhere. A reboot should follow the wipefs.
-> Your guess is correct. In addition, after erasing the superblock
-> information in CD rescue mode,
-> I rebooted into the system where the original panic kernel was =
-located.
->=20
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Please try latest upstream kernel and try whether you can see the issue.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-c->root is allocated by __bch_btree_node_alloc(), it doesn=E2=80=99t =
-return NULL pointer.=20
-
-Your kernel is 5.10 based distribution kernel, I am not able to help =
-much here. If you may reproduce the oops in latest upstream kernel, it =
-will be a surprise and please let me know.
-
-
-
->>> The server with the problem was able to enter the system normally
->>> after the root of the cache_set structure was determined to be =
-empty.
->>> I updated the description of the problem in the link below.
->=20
->> No, if you clean up the partition, no cache device will exist. Cache =
-registration won=E2=80=99t treat it as a bcache device.
->=20
->> OK, from the above description, I see you replace the backing device =
-(and I don=E2=80=99t know where the previous data was), then you extend =
-the cache device size. They are all unsupported operations.
-> The behavior here is a bit strange. After partitioning, I may have
-> recreated the bcache device here,
-> which triggered the bcache rigister operation. Then the kernel =
-panicked again.
-
-When you mention your operations, it is better to provide exact detailed =
-command lines, otherwise maybe I will misunderstand you.
-
-After all, please try the latest upstream kernel. Not the distro kernel. =
-Otherwise I am not able to help.
-
-Coly Li
-
+If you want to undo deduplication, reply with:
+#syz undup
 
