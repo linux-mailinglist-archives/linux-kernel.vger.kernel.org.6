@@ -1,96 +1,79 @@
-Return-Path: <linux-kernel+bounces-422786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF829D9E22
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:56:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF519D9E25
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F47166EBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:56:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35437166D93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5391DEFEC;
-	Tue, 26 Nov 2024 19:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845241DE8AC;
+	Tue, 26 Nov 2024 19:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBGFP9kP"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bW94JTtd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677C1DE4FF;
-	Tue, 26 Nov 2024 19:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86751CF284;
+	Tue, 26 Nov 2024 19:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732650998; cv=none; b=bNm8G681VChH5FeRjAEIcS5Th6hJ/F5tpTnwBHkyQCYhStHfJlYJh9BAajYcHlKcKB8Yd+4LW/NBDqCWWp2lV2VQ+ZdoHEuc0QUL93nMIWIRMT65kA1DS6Hia0TPzYztwjg+jnL09q7nQHf7o4A8suu+qHX9RWVg2lUVZHyrlOM=
+	t=1732651086; cv=none; b=FA7AWBmOq9LtoDQbai3YH+4ckn/qBAK9jL+Npx9KQp6Nt28EyJ9mOoYFRsBKGj7wWDhvGCG/FYctWJTui/mG9Q3RN4exrLcLLSpwWmRp7fuMy3sndrYHXVo25NlIta/+eaFeWlOslJYfDh+NLHqkNKnRXtHNSb2/ZmQf8Q3pT40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732650998; c=relaxed/simple;
-	bh=VGkyr0KqJCkxfU95x+cMx7RyBH0/dieElDzoNvSFXUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=APEkx8TUpCVV3RkVa6lU+jH0uZdSWvJSIKbdf1wNLeWQFtwchpR6u3TUVYeIeyF7Nxy+xFh+R0iGHSXwTz7tF02N6w2UcaY+8oyI2q69s51cfAV1XnWBOQQIFUIqfcoh9CIs+68I9xO9v8jR3TULfIdnGM4qM+67tG2qpffWZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBGFP9kP; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53de8ecafeeso1327883e87.1;
-        Tue, 26 Nov 2024 11:56:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732650995; x=1733255795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0xQ0j+0GPxTIxCI2SDK13a8DSfyq5mTc8ur8YhTeShY=;
-        b=kBGFP9kP+1oRxHizntDXajXU9LIey9yz8xwX0QvU4K3SS5e5H/bvLqCya+yfStkpOY
-         fHZZTqd8StK2NnUllyPSKsE59qW74s0VHLSJAg2+V81nR1px7BYM/s8dTnKrGigO4q+p
-         sqxSfh7LLwSO9wvhJtUpDezEx8DyPmZMTV9+XHcsLF4RjTsosrPOehTgHYo3KeyQhq0Y
-         QTvqI1Kz4w9joP5fou8+cxoB2fe7ejpnLQ2So4pFkDUBMkZPZPYS89B4KHomCzXzCYGK
-         RO761+LNQ2DR4DwCOfyitGqoocg+Nuw37vqzd/B3lormhTr4X+/uSXOeq5SgQw5CQ5g9
-         aO0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732650995; x=1733255795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0xQ0j+0GPxTIxCI2SDK13a8DSfyq5mTc8ur8YhTeShY=;
-        b=e7TzYLOMQRQ3I1LyB0NHW46+OWJx5Y2GHcb2SilCCxEYlySC6m9gi0RBjRTkw6Zc/A
-         8BYoV6oFcZeol9rtDlE+MIYX2M/mjzq1D2iT9u6JfrfFr//h4aAjfrvTuWwu+1Xv1fOU
-         6qwSXe5039p+I5ruOg7Ti6ED/ujY3SaDCNWbI/VXTX0rkpFMih7kEJH6gzq2MYgPBhex
-         SzKDd6kHki77ynxDFbN4nreJZ4dzvxdy10kP5OVwWwFhW3jw6fdF1jyQeOmMTivJxVGu
-         cQ7a1QeOF5mrOoJQwHXoAc0dgjwCt1Z6v4VpY9O9FmRRTFbzNbsPw/gdSUlA8Cyr4lQ+
-         E3pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe9sHKlYCToo7LHyv7ncmppx6OiUvAOgEABmfDEwa8NvBHqaVibPGDnrbU0DIPvusbDKq8mn6fYoa75MnA@vger.kernel.org, AJvYcCWKYdQ7vkQHzcwebdAyu/6RGG7nkg56tpeMWOFPgCM+f8bUj0xOnQQfFdbLJajCilZDZQvyc03LF3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfga78UPXECYda81pxHUvmz97nhopUlxixe8PtkidYvSvb5FH7
-	UMsMW4EEqVj5GC9wYt1CzNUZyg1vvtq3qlK2wYsQuk7aEsjlKxyUNlnqtoyBosJSbXOZSV8cBLC
-	w7Ec8Y3ltQn8MHgGUqoZ3PLmpW2E3sA==
-X-Gm-Gg: ASbGncumbhxAkCKz5aHW1GKGv4JmjApbgzLHldR6eGG8Ev8MLi7Vas+qrobiipW4jW9
-	7NBYbw8FDdDjNtz5aT6P5IwATsd/4y4B+4KttQ80WT4g7sZq9VxYb8m1IcCExBSY=
-X-Google-Smtp-Source: AGHT+IHRCkqCpu4EP2m8a5f0SIbZRGGOJkHFNp5nvbOOTzS3jxCURg1GTmPDbw94b45oJGKAsgVT5lQidAMPOeW4EF8=
-X-Received: by 2002:a05:6512:3c82:b0:53d:edf5:1db1 with SMTP id
- 2adb3069b0e04-53df00ff1e0mr184421e87.35.1732650994656; Tue, 26 Nov 2024
- 11:56:34 -0800 (PST)
+	s=arc-20240116; t=1732651086; c=relaxed/simple;
+	bh=dWUZ64bCRV/Y+gcm4cJBoHTThoGpVSgCTCr7MIBr9IU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yo/CoQ91aEZrvUcDP9nBSosRkk3pbElq+u/Q28VrWDcr6azPUCycgS28Mel+9KZ9EcmVQApfFksRg66WZCO3aeRoSnDIJFkkle/OPMt0YFR2miZn7AXejdD/7ZGC7IKKW5wv6+9+HYIScTRcxmy30YAPx7LEvnjFxp2B3/vw2Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bW94JTtd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F358C4CECF;
+	Tue, 26 Nov 2024 19:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732651085;
+	bh=dWUZ64bCRV/Y+gcm4cJBoHTThoGpVSgCTCr7MIBr9IU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bW94JTtdNb5bW1Ty3xyLF+eg/qDhd/JRrUtfR93+jB/5IFrtMV0zfzhjIm0AFYsMJ
+	 xPNvM+OC8ydfoTVZJ3WBdguS7iQJRghr+U89wnvw3kAVnmFfYr903HSBkBX7T8A/66
+	 WLYQzK5sploB1XIj01WslWf6beJkI0TWQHugMXIcvXN/7uUOU2UFVg4vtbICjZ2DZu
+	 fv6csQGcOhM6cT4wHk6itEw8UJd3z9Gs4RYmhrF0FbPJ71wbgbYV5zVODXPT6QSqLo
+	 nlm5XyMlfQj87pSjG6rS69DhD2V04DGX0NH1GgqNgTQJCwtOycHcAWQCpgwR7SB64e
+	 N7Ms9mJXGOMng==
+Date: Tue, 26 Nov 2024 11:58:02 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 1/3] module: Split module_enable_rodata_ro()
+Message-ID: <Z0YoSrSNCIcvHsBl@bombadil.infradead.org>
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126195256.2441622-1-Frank.Li@nxp.com> <20241126195256.2441622-2-Frank.Li@nxp.com>
-In-Reply-To: <20241126195256.2441622-2-Frank.Li@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 26 Nov 2024 16:56:23 -0300
-Message-ID: <CAOMZO5AVyubQUpEhm-oRb8bmAH=5w2TxTnuuvoY_+HLhpnBaTw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] iio: adc: vf610_adc: limit i.MX6SX's channel
- number to 4
-To: Frank Li <Frank.Li@nxp.com>
-Cc: jic23@kernel.org, haibo.chen@nxp.com, imx@lists.linux.dev, lars@metafoo.de, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
 
-On Tue, Nov 26, 2024 at 4:53=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+On Sat, Nov 09, 2024 at 11:35:35AM +0100, Christophe Leroy wrote:
+> module_enable_rodata_ro() is called twice, once before module init
+> to set rodata sections readonly and once after module init to set
+> rodata_after_init section readonly.
+> 
+> The second time, only the rodata_after_init section needs to be
+> set to read-only, no need to re-apply it to already set rodata.
+> 
+> Split module_enable_rodata_ro() in two.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-> +       chip_info =3D device_get_match_data(dev);
-> +       if (!chip_info)
+Didn't see a respin so this will have to be a post v6.13-rc1 fix.
 
-This NULL check is not needed.
-
-If the code entered probe(), a compatible was matched.
+  Luis
 
