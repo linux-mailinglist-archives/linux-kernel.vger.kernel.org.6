@@ -1,166 +1,418 @@
-Return-Path: <linux-kernel+bounces-422844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83C19D9EED
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:37:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5E39D9EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A76DB24556
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:37:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A9D284DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA851DFD95;
-	Tue, 26 Nov 2024 21:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA411DF996;
+	Tue, 26 Nov 2024 21:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmXwpQd2"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QaxmnhJf"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2102D1DEFC2;
-	Tue, 26 Nov 2024 21:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7032B1DDA24
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732657060; cv=none; b=AodbcehptoGAWp4S2/xf0jrPRhhuI2lKWkKELOLcjQcCvHjFt/WvmXpEts6vlgP1ccRB9aBNYekg0gKq9T2pHJGvQb6lHvxu7p84N2gUJYnsyu8lK3FvG2t84rCl6OUDhu4Nb6RN15Hvd7nI0zlB6zL9egD4n5svR3TVy9qp8aU=
+	t=1732657256; cv=none; b=u+b64+DU6vnG6caA4F109T0R1yuimNsEGmcukmMLrfaASgJ2VLGNTOl1hiMTJv5K6ToSKGgp4G4v/w3MVpEGcmSHOPa6CwGqJMJPDqAerOQaeP8rO5TuucYvQ2SrMfj+BwSIXp86C1WKWyQgQhj78NUnam5sIkwUN9bMAWBde7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732657060; c=relaxed/simple;
-	bh=Edaq0YV7KCobl0pdRamgzeOa/dTyNw3+ki5UWqeHEQQ=;
+	s=arc-20240116; t=1732657256; c=relaxed/simple;
+	bh=belh2CV8APzbS9dXWHLOhUBIRwdrOI2hkzBGAxoY46E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LM3AUbgl9yboA5u95AhrHLzwlLZnPhxqEqS4pXAnLOqMRIXFjylMDE1c2Rq5vlj9CFOLM7AGjOrx8YuKmn00/JtKtAIxVKM8u/GgjwnD9AKv3fOBFPkYusTkVv4i1Dq2HiRm94d0ruANhu6mD72iHtJewwHOQJQZZlbeSyPEvt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmXwpQd2; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21260209c68so1317495ad.0;
-        Tue, 26 Nov 2024 13:37:38 -0800 (PST)
+	 To:Cc:Content-Type; b=kyk8CS8oiJf3bds2FfpIcsaeUcO3QH56QXPApGvVui2nQQX1VMcRHYMsRhocpxWyuFXrKr54mcjnHH1Xhq8l2MA8EM3YoDGUaPIM1N/lecs9U9zVYty64JqvSmne8bfhXHb48fWQZU/tDBw+RF7NEzHO2nwiPXNRz6IvEhbsjck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QaxmnhJf; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3822ba3cdbcso3795311f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:40:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732657058; x=1733261858; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732657253; x=1733262053; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qVUE01ZRI/rfSEVGvignn3JqcJ39zeoDSJpc7F20e9k=;
-        b=YmXwpQd2f+L452i4TTWkwRYR6x6Jl44ZL2i104riWQhrAlzOxSMolvY0+wblKIIheu
-         cHUF0mwnFK+DK439kyjLun1aof1+bamwITU5tKANAophzp0NkKMB8RKEDI2wix8Tk3dp
-         PPrT3oazw4LQghxlKKkrSuayjEc8bdEF4HMQ6jVvkKcYcC6JOSjKKwZFVaVB00b04Jnq
-         5PkcUsd/OgPmMo+8+BnsL5LXccBTpEDchsMQuu+U4Hx03zvpj1pe4sb6XD+oPZDFulBH
-         bxJQy5/n7E7UWzWxxYwNNupAF8MfNOaLVc1pxFpQu/Ko0jTYc8oZHlHYzRD2TUoGg67w
-         mSng==
+        bh=oexzxl/eFGfdwHCHd7BSU9VYXC+atjXizjV/OPIWL38=;
+        b=QaxmnhJfCRcIugOEzpT1qQCXzxwm4N/FwEb9pciy5Q3nGTUGxW/LPF5HV9FMsuH7IQ
+         3vFsj6QcjA2VPH7tst2jl0HnwkypYLklkljUCAvaJjU9ChCn4RSDpHf3F9qUfdMKQAIw
+         LEOm6mmYdj1tvT/DmLsXowcc8FmRRA/WpjhbD9e+xoLzM+B2bJdF/vXqmQqwNRSV5CnP
+         83wq4YDxJnujYypgMfkGzL4Shz4lLwm1q6+KnLhK5aBcSMn9bm0hb3/Y3PSUSy57FR38
+         pMOjsH2/m0BaMrJNiBEUb0fOmm1l9jSgXcBPmyfKBVAVlfy+pWDjJWpwx58igAbJmdxe
+         opag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732657058; x=1733261858;
+        d=1e100.net; s=20230601; t=1732657253; x=1733262053;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qVUE01ZRI/rfSEVGvignn3JqcJ39zeoDSJpc7F20e9k=;
-        b=AX/dGwrWYDP1JROkr0oHe85LscitvBEiXtZVfzSGReADB/w96kKdVio5K7YP9LotNC
-         J1Rr/uFz+fYbmVeqHyy+z/nuVIz5o2tripCzPJIlIqX6tjSihCf3w2yoDyhe8kcBWTah
-         8iuqvc+64rJHp9iWcTNgN3GYXDpT4QQwNCNEHMu89f7YEicAtlSDrAakX2TtznMcyKHh
-         wEvtXQTkrR5ivIiEz7soxWUDxBUw2Dxv7eTHys49gpd0mZMMTYa6xQQDR9F2pmUMHYXr
-         9Qcpg4avqb9RybKgZPJ0laNbe1jWQ9h9NeaTsbH4wdDaX1jiBB1z9DHQqbUMyoF34a7K
-         c2dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbBBZt4u0QrNm5ghQ3tO620JVIJyMiyF/M01f5mP7NH8DAUBEUzXyeQO6uGvZfeuA4Pbw=@vger.kernel.org, AJvYcCXyO4jPvokt+MCvd4mpRHzguq0Ey05L3bgB6/jpOG+1rNC2vlBrlYlznUHUiAi1BjJcWm9PcPHVGZU1y7EH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/YhAIekjFOLZlyNWnP1JYnRtClyRFGjI/PAXjIyGNxqCtgGvs
-	y6ZVxPqQKTDpwU7pK7q8P7ibsXKjB00YyNhlSSLVOYixcdnp/3O+F3X+FO3kh2jzA05TZMSah9t
-	P0hnYls/itu3U72KTiQAGWpZZkqQ=
-X-Gm-Gg: ASbGncvVEo7tQYcY6wAIACjppyniu30lM7CUyR/gLGLiRu5xVPKpa7EuwbE60LUt0cc
-	6zFAyIS7d4iklJFe865GwVz3kziXpFZlor5CGsMVjdctvMTE=
-X-Google-Smtp-Source: AGHT+IGKRiBb5wAaSZsfoPYNFd0wWAnY+KOIaIANYcNA5TIyK8E3wnl6J5EnzkJxdTO579y4i6CEma+IcXiU2kFrN0I=
-X-Received: by 2002:a17:90b:17c9:b0:2ea:45d3:a73a with SMTP id
- 98e67ed59e1d1-2edebf3ea41mr7344995a91.16.1732657058233; Tue, 26 Nov 2024
- 13:37:38 -0800 (PST)
+        bh=oexzxl/eFGfdwHCHd7BSU9VYXC+atjXizjV/OPIWL38=;
+        b=dVcjNiP37dBWw4MnnKNwb54zdWfTXc34La9+6J+zZCdYZysGeAaQeeVyCkCCIw+Q37
+         Ov1qSku7A5+TCUdIj3o2RJoiOtZBu5qbtFsr0JBSdWrFAgq6WGsG1vrwdr9PGelY+kHa
+         Uz1G300BpPF+4Z78fRwajYOOZ1NdWaYdjTwMwX3E3pzDHUgFY2A8kLUXx0Uh+ThEq6GO
+         Mp0hCzylTMlF3qWpIUTzkg8ByR2hkhL93v4+PzreIKrccSQvYJD+WDCeyrLQgC/P7VtU
+         S3UCZCMIfW9eTHkyqx5AwI5a1kaPFx2rILKzEWZ8rztmfKpXmdzkLx0ft5s0uKWRgI/t
+         bwbA==
+X-Gm-Message-State: AOJu0YwY+B5JCGKw/hItfSY3URvIa7kWLmrmhZ3Xr6K/NZddbJpxhk1d
+	RyOzU5nlLlI/t0gbPIWgKIxM10KdUWC64Po6Caj6fL5dBGoI0f7VfUU2O9IUj3EtoSuKfEsEp4V
+	YTs/4MaKZT84JusCBkGsGBWPTr+DUbmrIBsBd
+X-Gm-Gg: ASbGncs9UZxnUzIvYKGekGdojiVZHMcGnx9sPAhSSiXEReXeQCWwY2bcTRej4CrIjLV
+	yms0XfANFmBiNF54d0Yb/8CVX1QJoaHWbr89/rvwhRlIGLXn/2wlYoNUJTXsh50I=
+X-Google-Smtp-Source: AGHT+IHtbB68ic/1ReybhYMyq1GPGuAL9P82gcwJIu8iFqYJ/7OftXpYkHHpyB2Oy6vvrkImns7wROBKCUFwOT45Ap0=
+X-Received: by 2002:a05:6000:2a9:b0:382:49c4:ef54 with SMTP id
+ ffacd0b85a97d-385c6ebd749mr352736f8f.23.1732657252537; Tue, 26 Nov 2024
+ 13:40:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
-In-Reply-To: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 26 Nov 2024 13:37:26 -0800
-Message-ID: <CAEf4BzbNs=MVNDztRW_76f8aQkm44ykiibqGa2REThWM4dVa_g@mail.gmail.com>
-Subject: Re: [PATCH] btf: Use BIN_ATTR_SIMPLE_RO() to define vmlinux attribute
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241122002752.4179915-1-ctshao@google.com> <Z0VljcVm4ni-lJrE@google.com>
+In-Reply-To: <Z0VljcVm4ni-lJrE@google.com>
+From: Chun-Tse Shao <ctshao@google.com>
+Date: Tue, 26 Nov 2024 13:40:41 -0800
+Message-ID: <CAJpZYjXTnnEHvqjw_ph5fruNVe-t4bFcJa_SFR5kLyGCzmJxRw@mail.gmail.com>
+Subject: Re: [PATCH v2] perf lock: Fix parse_lock_type which only retrieve one
+ lock flag
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, 
+	Ian Rogers <irogers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 4:57=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
+Thanks Namhyung! please check my v3 patches:
+https://lore.kernel.org/all/20241126212255.3793822-1-ctshao@google.com/
+
+On Mon, Nov 25, 2024 at 10:07=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> The usage of the macro allows to remove the custom handler function,
-> saving some memory. Additionally the code is easier to read.
+> Hello,
 >
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> Something similar can be done to btf_module_read() in kernel/bpf/btf.c.
-> But doing it here and now would lead to some conflicts with some other
-> sysfs refactorings I'm doing. It will be part of a future series.
-> ---
->  kernel/bpf/sysfs_btf.c | 21 +++++----------------
->  1 file changed, 5 insertions(+), 16 deletions(-)
+> On Fri, Nov 22, 2024 at 12:27:51AM +0000, Chun-Tse Shao wrote:
+> > `parse_lock_type` can only add the first lock flag in `lock_type_table`
+> > given input `str`. For example, for `Y rwlock`, it only adds `rwlock:R`
+> > into this perf session. Another example is for `-Y mutex`, it only adds
+> > the mutex without `LCB_F_SPIN` flag. The patch fixes this issue, makes
+> > sure both `rwlock:R` and `rwlock:W` will be added with `-Y rwlock`, and
+> > so on.
+> >
+> > Testing:
+> >   $ ./perf lock con -ab -Y mutex,rwlock -- perf bench sched pipe
+> >   # Running 'sched/pipe' benchmark:
+> >   # Executed 1000000 pipe operations between two processes
+> >
+> >        Total time: 8.425 [sec]
+> >
+> >          8.425402 usecs/op
+> >            118688 ops/sec
+> >    contended   total wait     max wait     avg wait         type   call=
+er
+> >
+> >          194      1.68 ms     44.16 us      8.66 us        mutex   pipe=
+_read+0x57
+> >           10    423.03 us     44.27 us     42.30 us     rwlock:W   do_e=
+xit+0x365
+> >           54    254.67 us     58.87 us      4.72 us        mutex   pipe=
+_write+0x50
+> >           21    146.64 us     11.54 us      6.98 us        mutex   pipe=
+_read+0x282
+> >           10    141.27 us     20.62 us     14.13 us     rwlock:W   rele=
+ase_task+0x6f
+> >            5     58.92 us     16.37 us     11.78 us        mutex   do_e=
+poll_wait+0x24d
+> >            3     29.81 us     17.66 us      9.94 us        mutex   do_e=
+poll_ctl+0x6c1
+> >            4     26.82 us     11.02 us      6.70 us        mutex   do_e=
+poll_wait+0x24d
+> >            2     18.32 us     12.49 us      9.16 us     rwlock:W   do_e=
+poll_wait+0x255
+> >            1     11.34 us     11.34 us     11.34 us     rwlock:W   ep_d=
+one_scan+0x2d
+> >            1     11.02 us     11.02 us     11.02 us     rwlock:R   mm_u=
+pdate_next_owner+0x4e
+> >            1     10.60 us     10.60 us     10.60 us     rwlock:W   do_e=
+poll_ctl+0xb65
+> >            1      9.90 us      9.90 us      9.90 us     rwlock:W   do_e=
+xit+0x365
+> >
+> > Fixes: d783ea8f62c4 ("perf lock contention: Simplify parse_lock_type()"=
+)
+> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+> > ---
+> >  tools/perf/builtin-lock.c | 93 ++++++++++++++++++++++++++-------------
+> >  1 file changed, 62 insertions(+), 31 deletions(-)
+> >
+> > diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> > index 062e2b56a2ab..052dbf423efd 100644
+> > --- a/tools/perf/builtin-lock.c
+> > +++ b/tools/perf/builtin-lock.c
+> > @@ -15,6 +15,7 @@
+> >  #include "util/lock-contention.h"
+> >  #include "util/bpf_skel/lock_data.h"
+> >
+> > +#include <string.h>
+> >  #include <subcmd/pager.h>
+> >  #include <subcmd/parse-options.h>
+> >  #include "util/trace-event.h"
+> > @@ -1575,8 +1576,13 @@ static void sort_result(void)
+> >
+> >  static const struct {
+> >       unsigned int flags;
+> > -     const char *str;
+> > +     /* Name of the lock. */
+> >       const char *name;
+>
+> I think this is the name of flag or access - read or write.
 >
 
-Nice, let's simplify. But why change the name to generic "vmlinux" if
-it's actually btf_vmlinux? Can we keep the original btf-specific name?
+Rename to `flags_name`.
 
-pw-bot: cr
+>
+> > +     /*
+> > +      * Name of the group this lock belongs to.
+> > +      * For example, both rwlock:R and rwlock:W belong to rwlock.
+> > +      */
+> > +     const char *group;
+>
+> And this is the name of the lock (type) - rwlock or rwsem.
+>
 
-> diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
-> index fedb54c94cdb830a4890d33677dcc5a6e236c13f..a24381f933d0b80b11116d054=
-63c35e9fa66acb1 100644
-> --- a/kernel/bpf/sysfs_btf.c
-> +++ b/kernel/bpf/sysfs_btf.c
-> @@ -12,34 +12,23 @@
->  extern char __start_BTF[];
->  extern char __stop_BTF[];
+Rename to `lock_name`.
+
 >
-> -static ssize_t
-> -btf_vmlinux_read(struct file *file, struct kobject *kobj,
-> -                struct bin_attribute *bin_attr,
-> -                char *buf, loff_t off, size_t len)
-> -{
-> -       memcpy(buf, __start_BTF + off, len);
-> -       return len;
-> -}
-> -
-> -static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init =3D {
-> -       .attr =3D { .name =3D "vmlinux", .mode =3D 0444, },
-> -       .read =3D btf_vmlinux_read,
-> -};
-> +static __ro_after_init BIN_ATTR_SIMPLE_RO(vmlinux);
+> >  } lock_type_table[] =3D {
+> >       { 0,                            "semaphore",    "semaphore" },
+> >       { LCB_F_SPIN,                   "spinlock",     "spinlock" },
+> > @@ -1591,42 +1597,38 @@ static const struct {
+> >       { LCB_F_PERCPU | LCB_F_WRITE,   "pcpu-sem:W",   "percpu-rwsem" },
+> >       { LCB_F_MUTEX,                  "mutex",        "mutex" },
+> >       { LCB_F_MUTEX | LCB_F_SPIN,     "mutex",        "mutex" },
+> > -     /* alias for get_type_flag() */
+> > -     { LCB_F_MUTEX | LCB_F_SPIN,     "mutex-spin",   "mutex" },
+> >  };
+> >
+> > -static const char *get_type_str(unsigned int flags)
+> > +static const char *get_type_name(unsigned int flags)
+> >  {
+> >       flags &=3D LCB_F_MAX_FLAGS - 1;
+> >
+> >       for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table); i++) =
+{
+> >               if (lock_type_table[i].flags =3D=3D flags)
+> > -                     return lock_type_table[i].str;
+> > +                     return lock_type_table[i].name;
+> >       }
+> >       return "unknown";
+> >  }
+> >
+> > -static const char *get_type_name(unsigned int flags)
+> > +static const char *get_type_group(unsigned int flags)
+> >  {
+> >       flags &=3D LCB_F_MAX_FLAGS - 1;
+> >
+> >       for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table); i++) =
+{
+> >               if (lock_type_table[i].flags =3D=3D flags)
+> > -                     return lock_type_table[i].name;
+> > +                     return lock_type_table[i].group;
+> >       }
+> >       return "unknown";
+> >  }
+> >
+> > -static unsigned int get_type_flag(const char *str)
+> > +static unsigned int get_type_flags_by_name(const char *name)
+> >  {
+> >       for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table); i++) =
+{
+> > -             if (!strcmp(lock_type_table[i].name, str))
+> > -                     return lock_type_table[i].flags;
+> > -     }
+> > -     for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table); i++) =
+{
+> > -             if (!strcmp(lock_type_table[i].str, str))
+> > +             if (!strcmp(lock_type_table[i].name, name))
+> >                       return lock_type_table[i].flags;
+> >       }
+> > +
+> > +     pr_err("Unknown lock flags: %s\n", name);
 >
->  struct kobject *btf_kobj;
+> I'm not sure if there will be another caller, but it seems better to
+> have this error message in the parse function directly.
 >
->  static int __init btf_vmlinux_init(void)
->  {
-> -       bin_attr_btf_vmlinux.size =3D __stop_BTF - __start_BTF;
-> +       bin_attr_vmlinux.private =3D __start_BTF;
-> +       bin_attr_vmlinux.size =3D __stop_BTF - __start_BTF;
+
+Done. I removed this function since imo it did not help readability,
+and was only used for once.
+
 >
-> -       if (bin_attr_btf_vmlinux.size =3D=3D 0)
-> +       if (bin_attr_vmlinux.size =3D=3D 0)
->                 return 0;
+> >       return UINT_MAX;
+> >  }
+> >
+> > @@ -1732,7 +1734,8 @@ static void print_lock_stat_stdio(struct lock_con=
+tention *con, struct lock_stat
+> >
+> >       switch (aggr_mode) {
+> >       case LOCK_AGGR_CALLER:
+> > -             fprintf(lock_output, "  %10s   %s\n", get_type_str(st->fl=
+ags), st->name);
+> > +             fprintf(lock_output, "  %10s   %s\n",
+> > +                     get_type_name(st->flags), st->name);
+> >               break;
+> >       case LOCK_AGGR_TASK:
+> >               pid =3D st->addr;
+> > @@ -1742,7 +1745,7 @@ static void print_lock_stat_stdio(struct lock_con=
+tention *con, struct lock_stat
+> >               break;
+> >       case LOCK_AGGR_ADDR:
+> >               fprintf(lock_output, "  %016llx   %s (%s)\n", (unsigned l=
+ong long)st->addr,
+> > -                     st->name, get_type_name(st->flags));
+> > +                     st->name, get_type_group(st->flags));
+> >               break;
+> >       case LOCK_AGGR_CGROUP:
+> >               fprintf(lock_output, "  %s\n", st->name);
+> > @@ -1783,7 +1786,8 @@ static void print_lock_stat_csv(struct lock_conte=
+ntion *con, struct lock_stat *s
+> >
+> >       switch (aggr_mode) {
+> >       case LOCK_AGGR_CALLER:
+> > -             fprintf(lock_output, "%s%s %s", get_type_str(st->flags), =
+sep, st->name);
+> > +             fprintf(lock_output, "%s%s %s",
+> > +                     get_type_name(st->flags), sep, st->name);
+> >               if (verbose <=3D 0)
+> >                       fprintf(lock_output, "\n");
+> >               break;
+> > @@ -1795,7 +1799,7 @@ static void print_lock_stat_csv(struct lock_conte=
+ntion *con, struct lock_stat *s
+> >               break;
+> >       case LOCK_AGGR_ADDR:
+> >               fprintf(lock_output, "%llx%s %s%s %s\n", (unsigned long l=
+ong)st->addr, sep,
+> > -                     st->name, sep, get_type_name(st->flags));
+> > +                     st->name, sep, get_type_group(st->flags));
+> >               break;
+> >       case LOCK_AGGR_CGROUP:
+> >               fprintf(lock_output, "%s\n",st->name);
+> > @@ -2338,41 +2342,68 @@ static bool add_lock_type(unsigned int flags)
+> >       unsigned int *tmp;
+> >
+> >       tmp =3D realloc(filters.types, (filters.nr_types + 1) * sizeof(*f=
+ilters.types));
+> > -     if (tmp =3D=3D NULL)
+> > +     if (tmp =3D=3D NULL) {
+> > +             pr_err("Failed to add lock flags: %u\n", flags);
+> >               return false;
+> > +     }
+> >
+> >       tmp[filters.nr_types++] =3D flags;
+> >       filters.types =3D tmp;
+> >       return true;
+> >  }
+> >
+> > -static int parse_lock_type(const struct option *opt __maybe_unused, co=
+nst char *str,
+> > -                        int unset __maybe_unused)
+> > +static int parse_lock_type(const struct option *opt __maybe_unused,
+> > +                        const char *str, int unset __maybe_unused)
+> >  {
+> >       char *s, *tmp, *tok;
+> > -     int ret =3D 0;
+> >
+> >       s =3D strdup(str);
+> >       if (s =3D=3D NULL)
+> >               return -1;
+> >
+> > -     for (tok =3D strtok_r(s, ", ", &tmp); tok; tok =3D strtok_r(NULL,=
+ ", ", &tmp)) {
+> > -             unsigned int flags =3D get_type_flag(tok);
+> > +     for (tok =3D strtok_r(s, ", ", &tmp); tok;
+> > +          tok =3D strtok_r(NULL, ", ", &tmp)) {
 >
->         btf_kobj =3D kobject_create_and_add("btf", kernel_kobj);
->         if (!btf_kobj)
->                 return -ENOMEM;
+> I think you changed this because of the 80 column limit.  But I think
+> it's recently increased to 100 so you don't need to change this line
+> uncessarily.
 >
-> -       return sysfs_create_bin_file(btf_kobj, &bin_attr_btf_vmlinux);
-> +       return sysfs_create_bin_file(btf_kobj, &bin_attr_vmlinux);
->  }
+> Other lines containing actual changes may be accceptable.  It's up to
+> you but I generally prefer smaller changes.
 >
->  subsys_initcall(btf_vmlinux_init);
+
+Done.
+
 >
-> ---
-> base-commit: 28eb75e178d389d325f1666e422bc13bbbb9804c
-> change-id: 20241122-sysfs-const-bin_attr-bpf-737286bb9f27
+> > +             bool found =3D false;
+> >
+> > -             if (flags =3D=3D -1U) {
+> > -                     pr_err("Unknown lock flags: %s\n", tok);
+> > -                     ret =3D -1;
+> > -                     break;
+> > +             /* `tok` is a lock name if it contains ':'. */
+> > +             if (strchr(tok, ':')) {
+> > +                     unsigned int flags =3D get_type_flags_by_name(tok=
+);
+> > +
+> > +                     if (flags =3D=3D UINT_MAX || !add_lock_type(flags=
+)) {
+> > +                             free(s);
+> > +                             return -1;
+> > +                     }
+> > +                     continue;
+> >               }
+> >
+> > -             if (!add_lock_type(flags)) {
+> > -                     ret =3D -1;
+> > -                     break;
+> > +             /* Otherwise look up flags by lock group */
+> > +             /*
+> > +              * By documentation, `percpu-rwmem` should be `pcpu-sem`.
+> > +              * For backward compatibility, we replace pcpu-sem with p=
+ercpu-rwmem.
+> > +              */
+> > +             if (!strcmp(tok, "pcpu-sem"))
+> > +                     tok =3D (char *)"percpu-rwsem";
 >
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Can you please split this into a separate fix?
 >
+
+Done. Now I have two patches, the first one is for renaming, the
+second one is for parsing logic.
+
+> Thanks,
+> Namhyung
+>
+> > +
+> > +             for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table=
+); i++) {
+> > +                     if (!strcmp(lock_type_table[i].group, tok)) {
+> > +                             if (add_lock_type(lock_type_table[i].flag=
+s)) {
+> > +                                     found =3D true;
+> > +                             } else {
+> > +                                     free(s);
+> > +                                     return -1;
+> > +                             }
+> > +                     }
+> > +             }
+> > +
+> > +             if (!found) {
+> > +                     pr_err("Unknown lock flags: %s\n", tok);
+> > +                     free(s);
+> > +                     return -1;
+> >               }
+> >       }
+> >
+> >       free(s);
+> > -     return ret;
+> > +     return 0;
+> >  }
+> >
+> >  static bool add_lock_addr(unsigned long addr)
+> > --
+> > 2.47.0.371.ga323438b13-goog
+> >
 
