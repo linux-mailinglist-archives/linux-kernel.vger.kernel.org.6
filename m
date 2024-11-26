@@ -1,154 +1,131 @@
-Return-Path: <linux-kernel+bounces-422514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC9D9D9A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:44:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DC79D9C98
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:32:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5EE1679F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:32:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1F21DAC92;
+	Tue, 26 Nov 2024 17:32:25 +0000 (UTC)
+Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1062D28317D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:44:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2081A1D63FD;
-	Tue, 26 Nov 2024 15:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="loPOIVvE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BU4H/zto";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="loPOIVvE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BU4H/zto"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82821D63C3;
-	Tue, 26 Nov 2024 15:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40ADE1CEE9B
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732635862; cv=none; b=BCJFY2cKK3z5drzHcci+rZkFx6cm+LVPcUdZYaTf0s46wTVyzc/yvoLF/KhGjuaAhN9OBT+9sOWfnYjA7ne5mhIFXuq170f1vOpH61TK6ARvDI6C+Q9A2amkLdBk5eF8psFjoJHl4ttSTuvwReVqbK2Y+oxc3rHTu3WuO38A7Cs=
+	t=1732642345; cv=none; b=c/zj+r2gu6JCpZGPBY1uvWAdfEIC5UNtPYxkG2S8GzUrZ5Wg65NtU3esbRdOsheFpZWGn4OrEupNZBzpwjvkSrCQ0BiKAY4wQndZ7SMdUrtLFJ4AOrVPzIN4S9MQC/hFtZYWxUry8u6CMkVW8EGGCsleCyNkU/4FUymNYctDq54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732635862; c=relaxed/simple;
-	bh=dV0BEZJ/fiejNnZb0FPDN9jZtJGMik4VX1qbNbpd/Hs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTkD71BMd5ybHHt5S9RhVEbqtrhNSDH8VhmdYO94jMK8eD7NzCsXv+RtiTbOni2hSdj7E/WpNK8HPME9lGLBzSnu4vGv5OQYfeDvrLzp7igV2gwVE7L5O5eZzF6zgXymG6i3VzXcW5Yog35rKDLlPBeZkOGLGmH9Ep+yJIn36mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=loPOIVvE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BU4H/zto; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=loPOIVvE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BU4H/zto; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A6A0E1F750;
-	Tue, 26 Nov 2024 15:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732635858;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atQ1JLuzHbiSllcjUkI9N7vpjUs/iyWBVdUWMvFT+aU=;
-	b=loPOIVvECIHZf2qZar1WBhELBbvsDiIZSUgHk1edhXl6es2DC0rWpIoGXQr9tmHVyMXsIc
-	9cigwcBp5scU1bMECTdebLE0FDiZ48gKVlK+E1frBz1klwZlOYa2rc79v+0zuIvJGtvhwF
-	Dj0YeBZc1oGWAoHVHWt60sOEde0ejXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732635858;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atQ1JLuzHbiSllcjUkI9N7vpjUs/iyWBVdUWMvFT+aU=;
-	b=BU4H/ztoPCT4G+Z+cJhfmUoRK6RrYNKwZ0Gwr8koLav29qv2xZ8qzA9TAz2WFVyDJQG16L
-	LwtJUbZJT9zv8dDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=loPOIVvE;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="BU4H/zto"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732635858;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atQ1JLuzHbiSllcjUkI9N7vpjUs/iyWBVdUWMvFT+aU=;
-	b=loPOIVvECIHZf2qZar1WBhELBbvsDiIZSUgHk1edhXl6es2DC0rWpIoGXQr9tmHVyMXsIc
-	9cigwcBp5scU1bMECTdebLE0FDiZ48gKVlK+E1frBz1klwZlOYa2rc79v+0zuIvJGtvhwF
-	Dj0YeBZc1oGWAoHVHWt60sOEde0ejXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732635858;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=atQ1JLuzHbiSllcjUkI9N7vpjUs/iyWBVdUWMvFT+aU=;
-	b=BU4H/ztoPCT4G+Z+cJhfmUoRK6RrYNKwZ0Gwr8koLav29qv2xZ8qzA9TAz2WFVyDJQG16L
-	LwtJUbZJT9zv8dDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8743713890;
-	Tue, 26 Nov 2024 15:44:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ojqfINLsRWcDEwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 26 Nov 2024 15:44:18 +0000
-Date: Tue, 26 Nov 2024 16:44:17 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] btrfs: send: remove redundant assignments to
- variable ret
-Message-ID: <20241126154417.GH31418@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241113130012.1370782-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1732642345; c=relaxed/simple;
+	bh=aWGUioyBdDVmDz4hVyW9bnKkVDvJDYVi2ZmD6ZbuumM=;
+	h=From:Date:Subject:To:Cc:Message-Id; b=jG+yV+l39EgqbNs4ZZmPO4in9TpIrJdI7uc9nc5S7+sS1DPVojntGyboOTyt4ChUs5Cejcj8OQUZITQo7N7qvMjK74JqBRzqZ2RopTG4R3pmXAbM7i9T74Vn8xMmQKQyrXxsYswWkbetnAtqpQL1BdOKFdwdBvoEG2RUm0md34s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+	id AD8B51622C; Tue, 26 Nov 2024 18:26:10 +0100 (CET)
+From: Nikolaus Voss <nv@vosn.de>
+Date: Tue, 26 Nov 2024 16:45:54 +0100
+Subject: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+To: Alexander Stein <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>, Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nikolaus.voss@haag-streit.com
+Message-Id: <20241126172610.AD8B51622C@mail.steuer-voss.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113130012.1370782-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: A6A0E1F750
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,twin.jikos.cz:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.71
-X-Spam-Flag: NO
 
-On Wed, Nov 13, 2024 at 01:00:12PM +0000, Colin Ian King wrote:
-> The variable ret is being initialized to zero and also later
-> re-assigned to zero. In both cases the assignment is redundant
-> since the value is never read after the assignment and hence
-> they can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+LDB clock has to be a fixed multiple of the pixel clock.
+As LDB and pixel clock are derived from different clock sources
+(at least on imx8mp), this constraint cannot be satisfied for
+any pixel clock, which leads to flickering and incomplete
+lines on the attached display.
 
-Added to for-next, thanks.
+To overcome this, check this condition in mode_fixup() and
+adapt the pixel clock accordingly.
+
+Cc: <stable@vger.kernel.org>
+
+Signed-off-by: Nikolaus Voss <nv@vosn.de>
+---
+ drivers/gpu/drm/bridge/fsl-ldb.c | 40 ++++++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+index 0e4bac7dd04ff..e341341b8c600 100644
+--- a/drivers/gpu/drm/bridge/fsl-ldb.c
++++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+@@ -104,12 +104,14 @@ static inline struct fsl_ldb *to_fsl_ldb(struct drm_bridge *bridge)
+ 	return container_of(bridge, struct fsl_ldb, bridge);
+ }
+ 
++static unsigned int fsl_ldb_link_freq_factor(const struct fsl_ldb *fsl_ldb)
++{
++	return fsl_ldb_is_dual(fsl_ldb) ? 3500 : 7000;
++}
++
+ static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int clock)
+ {
+-	if (fsl_ldb_is_dual(fsl_ldb))
+-		return clock * 3500;
+-	else
+-		return clock * 7000;
++	return clock * fsl_ldb_link_freq_factor(fsl_ldb);
+ }
+ 
+ static int fsl_ldb_attach(struct drm_bridge *bridge,
+@@ -121,6 +123,35 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
+ 				 bridge, flags);
+ }
+ 
++static bool fsl_ldb_mode_fixup(struct drm_bridge *bridge,
++				const struct drm_display_mode *mode,
++				struct drm_display_mode *adjusted_mode)
++{
++	const struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
++	unsigned long requested_link_freq =
++		mode->clock * fsl_ldb_link_freq_factor(fsl_ldb);
++	unsigned long freq = clk_round_rate(fsl_ldb->clk, requested_link_freq);
++
++	if (freq != requested_link_freq) {
++		/*
++		 * this will lead to flicker and incomplete lines on
++		 * the attached display, adjust the CRTC clock
++		 * accordingly.
++		 */
++		int pclk = freq / fsl_ldb_link_freq_factor(fsl_ldb);
++
++		if (adjusted_mode->clock != pclk) {
++			dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -> %d kHz)!\n",
++				 adjusted_mode->clock, pclk);
++
++			adjusted_mode->clock = pclk;
++			adjusted_mode->crtc_clock = pclk;
++		}
++	}
++
++	return true;
++}
++
+ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+ 				  struct drm_bridge_state *old_bridge_state)
+ {
+@@ -280,6 +311,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
+ 
+ static const struct drm_bridge_funcs funcs = {
+ 	.attach = fsl_ldb_attach,
++	.mode_fixup = fsl_ldb_mode_fixup,
+ 	.atomic_enable = fsl_ldb_atomic_enable,
+ 	.atomic_disable = fsl_ldb_atomic_disable,
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+-- 
+2.43.0
+
 
