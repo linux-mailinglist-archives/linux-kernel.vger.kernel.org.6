@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-422223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969939D9617
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:19:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2E216706D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:19:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1CA1CEAC7;
-	Tue, 26 Nov 2024 11:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajFXKJcn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C594F9D9623
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:23:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EA11B413C;
-	Tue, 26 Nov 2024 11:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62576B287DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:20:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DD21CDFBE;
+	Tue, 26 Nov 2024 11:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rdjzgIB1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NtG0SDPr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17729139D07;
+	Tue, 26 Nov 2024 11:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732619985; cv=none; b=JfsZVq8pPhXGAGMHBLSca8ljpwUbEfsPUv78F7P952PoVuULptKNIwgfzMedu4DOg9DQRPNaSE4PdFVd05uRFiovWOlqhVWgpohfqMaX/OGXzbLQFB+Z9d18SpBnQU7eCg3IS6dQ3hIuLOJf7vJtF6DR91AFnAlnMdYXUtcPXCQ=
+	t=1732620012; cv=none; b=JnNq8ErSCT2K87MNLalbDeYdoqCZPme2LJcCs4uXBrOkDRDtsrewr5B43lz0oAOY1ztTZcWhkXtji/R5jc+Yol5T3xX3UO4/rY0R1ESuTu03pCPFcYjfYCBzaZwQdX4DqHMokoSPM1x1cVABcSCWITYY64Smq4xzcMv11kc/CTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732619985; c=relaxed/simple;
-	bh=NffSGB0/3jaoI6CiPUrqqm3Y5XXiaQ/3NQ71HIuAceQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HZKFpAQZ0JVeEhFc4+glqIbsoQUG/pXAj2MqnadMAZiGFnY62rWU4u3KO6Lout7OpVYa1zIxfLum/6yeWPq/tK0mWN9DLVUmQIAYjq6KRGEHmSL+7RArdizQGZoZf8SCQDktyn6OcG793eFg1cPO5tJsbG5ouOZBH3kcaYdSfyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajFXKJcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098F5C4CECF;
-	Tue, 26 Nov 2024 11:19:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732619984;
-	bh=NffSGB0/3jaoI6CiPUrqqm3Y5XXiaQ/3NQ71HIuAceQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ajFXKJcndLvUDBvo0ANrXdPe13/D4NGrnWWkvG7xKVHlqaI61i39aKkdU8usIYiJV
-	 g5SFrhH5cJFe9X6jlNKq84wOEJIYozpipGKYWkGkb1YL5f8w6y1LhjHno2ssQmW7pj
-	 +gJqE0mmL97i8Eq9hlP/eVI73hBY7rsRXRpV9SJ24ENYyWKuq8YA+IPllBNYsfhtBU
-	 JfyjiFr3wNjnvLMq7hMOcmi5lUbL47NPKBIyLjfmKUx1+dzk0SpPUPi4F8/7AMhp+h
-	 hlxwSZyvHThvWUNOqhhEQh1SpmjccMvxNd1Xpp6Xb2nD9mIYJIbIo40kiamEcAYhkU
-	 azjSSSMjfuONQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs exportfs
-Date: Tue, 26 Nov 2024 12:19:34 +0100
-Message-ID: <20241126-vfs-exportfs-e57e12e4b3cf@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732620012; c=relaxed/simple;
+	bh=ud+eH7yG+oOTmRuS7cdQfVegR1yQ0UWl53am1ZPomwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLvWQjn4kCViy/LMNHlFQn1+ovTkVHHJPanA07sROX3V0uDamwfy88MqL8IPmEJUmOqmMgl3k7xUqPBrdajicoPu2t+5eH4ijPexZ4xLQ+TgYP/BMZCoQxeuv00zs1TgwPWs/OyppUld8kEgTiLG5VPyZe64DkI0yrXHlR8TC6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rdjzgIB1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NtG0SDPr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 26 Nov 2024 12:20:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732620002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ud+eH7yG+oOTmRuS7cdQfVegR1yQ0UWl53am1ZPomwY=;
+	b=rdjzgIB1gdAAPeUW9PwasFAAz2Sn9T+MWkjh1d4XKOQ7AhmUfJOzB9Y1/oipRQKmGACI3z
+	qSAaBOI26NdsPW3ZV/AsBOgq17V4d2j3fDgL2rR75e0heIrYNrEFDDJqdOoakUFa9lQ8qR
+	AqjRBdxZB+zCDUZC1BGZ8Pz+ciLTeVScosCO9qCRuymps4CosDwTB9fvlYb/PK7C7gwXZ0
+	74pDhn+I4MLJuMST1WQoFhf/ygOT+fM2JHLcEVks+n/lkGC0L7XEmo0mVsXipGLz0SjAEe
+	KGB3dlA+gu8eEY2P2IGj8vf7wW5GkzSoSUixaom3XAyW4S85kGCHefeU/ptHcg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732620002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ud+eH7yG+oOTmRuS7cdQfVegR1yQ0UWl53am1ZPomwY=;
+	b=NtG0SDPrjEZ7HbAezRxXGee3gWzrdq1YN830e8xKAxI77Np1C6LEcxQ6P84QKhJQ9ew/AN
+	YsDoK98yQUImMxAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Waiman Long <llong@redhat.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+Message-ID: <20241126112000.UkTwR0Iv@linutronix.de>
+References: <20241125085314.1iSDFulg@linutronix.de>
+ <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
+ <20241125174336.8nEhFXIw@linutronix.de>
+ <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+ <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+ <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+ <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
+ <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
+ <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2231; i=brauner@kernel.org; h=from:subject:message-id; bh=NffSGB0/3jaoI6CiPUrqqm3Y5XXiaQ/3NQ71HIuAceQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7rjtRe1qicc1dplORr8reCph05DkId+yRzTr/8bfYs SuWzhVfO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZi+5Lhr4DOwpVtte/vxT0N TFT5Y3aDadLHjr4w2XmpTbnbsqQNtRn+p+3i+Xb682TGo5/nTuZnX/ed76iG4yrduWlzFofbLjB 8zAsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
 
-Hey Linus,
+On 2024-11-25 15:54:48 [-0500], Waiman Long wrote:
+> > FWIW, the description of commit 560af5dc839 is misleading. It says
+> > "Enable
+> > PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not what
+> > the
+> > commit does. It force-enables PROVE_RAW_LOCK_NESTING if PROVE_LOCKING is
+> > enabled. It is all or nothing.
+> >=20
+> I think we can relax it by
+>=20
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 5d9eca035d47..bfdbd3fa2d29 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
+> =C2=A0config PROVE_RAW_LOCK_NESTING
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on PROVE_LOCKING
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y if ARCH_SUPPORTS_RT
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Enable the raw_spinlock =
+vs. spinlock nesting checks which ensure
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 that the lock nesting ru=
+les for PREEMPT_RT enabled kernels are
+>=20
+> Sebastian, what do you think?
 
-/* Summary */
-This contains work to bring NFS connectable file handles to userspace
-servers.
+All the changes Guenter proposed make sense and were limited to sparc.
+So we could apply that. Limiting the option to the RT architectures
+would silence the warnings. If there is no interest in getting RT on
+sparc there is probably no interest in getting the lock ordering
+straight.
+I remember PeterZ did not like the option in the beginning but there was
+no way around it especially since printk triggered it on boot.
+I'm fine with both solutions (fixing sparc or limiting
+PROVE_RAW_LOCK_NESTING). I leave the final judgment to the locking
+people.
 
-The name_to_handle_at() system call is extended to encode connectable
-file handles. Such file handles can be resolved to an open file with a
-connected path. So far userspace NFS servers couldn't make use of this
-functionality even though the kernel does already support it. This is
-achieved by introducing a new flag for name_to_handle_at().
+> Cheers,
+> Longman
 
-Similarly, the open_by_handle_at() system call is tought to understand
-connectable file handles explicitly created via name_to_handle_at().
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.12-rc3 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
-
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.exportfs
-
-for you to fetch changes up to a312c10c0186b3fa6e6f9d4ca696913372804fae:
-
-  Merge patch series "API for exporting connectable file handles to userspace" (2024-11-15 11:35:16 +0100)
-
-----------------------------------------------------------------
-vfs-6.13.exportfs
-
-----------------------------------------------------------------
-Amir Goldstein (3):
-      fs: prepare for "explicit connectable" file handles
-      fs: name_to_handle_at() support for "explicit connectable" file handles
-      fs: open_by_handle_at() support for decoding "explicit connectable" file handles
-
-Christian Brauner (1):
-      Merge patch series "API for exporting connectable file handles to userspace"
-
- fs/exportfs/expfs.c        | 17 +++++++++--
- fs/fhandle.c               | 75 ++++++++++++++++++++++++++++++++++++++++++----
- include/linux/exportfs.h   | 13 ++++++++
- include/uapi/linux/fcntl.h |  1 +
- 4 files changed, 98 insertions(+), 8 deletions(-)
+Sebastian
 
