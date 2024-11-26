@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-421814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439539D907D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5289D9086
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABDC287C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 220FC28B70C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387313A1CD;
-	Tue, 26 Nov 2024 02:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2F58624B;
+	Tue, 26 Nov 2024 02:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3rTNPXV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XkcRNG+1"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD10D26D;
-	Tue, 26 Nov 2024 02:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043CD78C6D;
+	Tue, 26 Nov 2024 02:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732589584; cv=none; b=KRLidAaXDb0oXJRqVxbVBxH+Umou/tP37N+F67g1dkFi2rKBaneeuANXV9OLDV2trusNtwC3P22lSktZ/Wlt1ltOrvVEH+BiiKTfi+8U9OZPK7qm/UK0FErN7UM/4fZHNUd+6rdta0i+4DI2dc50halHEYVD+d1sMMnljGWhYX8=
+	t=1732589724; cv=none; b=XMlHoJCpRbiLJQeThwO9bSntQsqVse5af4xt7cwre/abMAAPg1a8SW6+0dsWDlZJrajVAiAV6qZDAHa03v3ihpglZw8LYsW8qCFADrQci1YlM/rC3XXDGBCmoVIHXe5k7HQHxtMJbzktJqRJu+GEovKGOvBsftUbUbzmOvyfAOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732589584; c=relaxed/simple;
-	bh=1bIygSuurKVJrm+y5RfLrB2t6e7qykl+uo3eNRNLbjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kI6qpLFft2YfJ+Ip1F1xdgK+1kCgQ88BJ9R9W8sZXgJ/mCScGyKVIadOEZH0n41M2TOPNc+TuLu48cXaMo/A/FpwZiS4X8EusqCn0AiJB398pIx16eDnmt7gD7dhuOduWQJP6sOzvYHdZ8xte34HKLjN7rcSbXF/n0IiQKqtqYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3rTNPXV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC569C4CECE;
-	Tue, 26 Nov 2024 02:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732589584;
-	bh=1bIygSuurKVJrm+y5RfLrB2t6e7qykl+uo3eNRNLbjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K3rTNPXVnGRB6NrRGj/9gkVo+mcDS3GtlW6Am6UPKohLNg3+SHII5ytecyO/WB8ZJ
-	 5B+UPqXvNfRRiNqlKsa0wOx8fWSKFNXY4pl6y4q8J6e/HbY8UGqL2gwfk7iRVqFW5n
-	 TC6AGbURM8lb3A3iubF/b7XXLE1yZJyBBreKYFior488W2zp0G1L+cqHKh7N86jjIM
-	 AL9T94JIY6ratimMkTdxotxIkn8XtIfXpjh6No0TZx5QYwhXN8TRXexescIFhmGRFI
-	 A2nFU7u+1Blj9p5oJvz27ujfColVv2jk1+Twvq/V4d64XDO6M+k0/5riSTsjm/LFzu
-	 jzXkEdQeLKHSw==
-Date: Mon, 25 Nov 2024 18:53:02 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [GIT PULL] perf-tools changes for v6.13
-Message-ID: <Z0U4Dk_W30x4JSXG@google.com>
-References: <20241125071653.1350621-1-namhyung@kernel.org>
- <Z0TK9aqrQO1PremH@sashalap>
+	s=arc-20240116; t=1732589724; c=relaxed/simple;
+	bh=pVGK68kkhVBx8WHADijrFjPwqBP4GgoV/FX8GCytV6k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mkHHgrAyfb2aFcNJHDFHn4TxQvDy/EdPZNBIfyPDL5WHjWDoOqT/v7g3Q6sh+UitjVSg2dXiSvwfC/NdcGiWdXmP9XDHb4YOIU/iZzrhhZllNb+Oh9tDnaTSsQDFPdTE1o2BTZFNKbB92HLXMuGP3uy1Jc1KsdhvobohmkOPImM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XkcRNG+1; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: da0325d2aba111efbd192953cf12861f-20241126
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=SOOB9//00E+5n2Y6cMQgrLRG0YVHofF21Uc+aFw1d4s=;
+	b=XkcRNG+1DaI2/ybzz4DFruRlUGso9NF8O2WrphJv/8Qtp1HotwQoi9P+zzmIUNW+enpIiue4wddYz9PVjqRAQd7Oi2KVPg5OJS1T7VIqzYW69thAKPKIr6Z69wqDBPbu1LJU5/53UAVWJRqWZa9oJlBbu6pLaId2P9PR2bjwu/g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.44,REQID:044b7b39-c97b-4905-9a4e-b04373f341d5,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:464815b,CLOUDID:8c977f23-634f-4016-85ba-2d63e55c9400,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: da0325d2aba111efbd192953cf12861f-20241126
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <chunfeng.yun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1002050674; Tue, 26 Nov 2024 10:55:10 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 26 Nov 2024 10:55:09 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 26 Nov 2024 10:55:08 +0800
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>
+CC: Chunfeng Yun <chunfeng.yun@mediatek.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mathias Nyman
+	<mathias.nyman@intel.com>, <linux-usb@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] dt-bindings: usb: mtk-xhci: add support mt8196
+Date: Tue, 26 Nov 2024 10:55:06 +0800
+Message-ID: <20241126025507.29605-1-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0TK9aqrQO1PremH@sashalap>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Hello,
+There are 2 USB controllers on mt8196, each controller's wakeup control is
+different, add some specific versions for them, and add compatilbe for it.
 
-On Mon, Nov 25, 2024 at 02:07:33PM -0500, Sasha Levin wrote:
-> On Sun, Nov 24, 2024 at 11:16:53PM -0800, Namhyung Kim wrote:
-> > Hi Linus,
-> > 
-> > Please consider pulling the following changes in perf tools for v6.13.
-> > 
-> > Thanks,
-> > Namhyung
-> > 
-> > 
-> > The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
-> > 
-> >  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
-> > 
-> > are available in the Git repository at:
-> > 
-> >  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.13-2024-11-24
-> 
-> Hey Namhyung,
-> 
-> After merging this PR into linus-next, the "Simple expression parser"
-> test has started failing:
-> 
-> --- start ---
-> test child forked, pid 292
-> Using CPUID GenuineIntel-6-1A-3
-> division by zero
-> syntax error
-> Failed to find TSC frequency in /proc/cpuinfo
-> FAILED tests/expr.c:250 #system_tsc_freq > 0
-> ---- end(-1) ----
->   7: Simple expression parser                         : FAILED!
-> 
-> Here's a full log of the run: https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-24716-gab16e9af2ff9/testrun/26045681/suite/perf/test/_7_Simple_expression_parser/log
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thanks for the report, I'll take a look.
-
-Namhyung
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
+index ef3143f4b794..03f7c226675e 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml
+@@ -36,6 +36,7 @@ properties:
+           - mediatek,mt8188-xhci
+           - mediatek,mt8192-xhci
+           - mediatek,mt8195-xhci
++          - mediatek,mt8196-xhci
+           - mediatek,mt8365-xhci
+       - const: mediatek,mtk-xhci
+ 
+@@ -164,7 +165,9 @@ properties:
+             104 - used by mt8195, IP1, specific 1.04;
+             105 - used by mt8195, IP2, specific 1.05;
+             106 - used by mt8195, IP3, specific 1.06;
+-          enum: [1, 2, 101, 102, 103, 104, 105, 106]
++            107 - used by mt8196, IP0, specific 1.07;
++            108 - used by mt8196, IP1, specific 1.08;
++          enum: [1, 2, 101, 102, 103, 104, 105, 106, 107, 108]
+ 
+   mediatek,u3p-dis-msk:
+     $ref: /schemas/types.yaml#/definitions/uint32
+-- 
+2.46.0
 
 
