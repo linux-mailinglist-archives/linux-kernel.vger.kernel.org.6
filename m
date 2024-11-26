@@ -1,116 +1,167 @@
-Return-Path: <linux-kernel+bounces-422815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B9E9D9E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:48:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37449D9E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:58:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293C41689A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9951528381E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDFF1DFE02;
-	Tue, 26 Nov 2024 20:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF711DF72C;
+	Tue, 26 Nov 2024 20:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQlEL2RN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjZseJfI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E75C1DF74F;
-	Tue, 26 Nov 2024 20:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C889C1DA631;
+	Tue, 26 Nov 2024 20:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732654094; cv=none; b=MfhyBm7W4k6crWGLOpBatUDrzTvsPA8HITz83gW/6kxtIfApwoWj/jmDcLnDP7uMNlvCwjc44u8ZKjUH6X5hobG5ZNFnYaVJPQFZDL0ok+XcAM9TcQwcvk41tsKahESWMDt372e9f52Lg0XG5T5jswR0RZDZ2ymkDRVn/0KeZSE=
+	t=1732654716; cv=none; b=DPfp/xuTfALHE74koKOVzpsd/VsRMSVcg8T02S+LWgH7RmiweYEfjORmQiVCfz72qc16RqQ+9h9Tn7vAHG+KIGs+JaHZM5Bc73QipeXRUc/yysqoBhRacwrWg7HPqemTCTTss0Ri2WRXRKXXO0fMTGDvr+la+8NeYeub1BM3xVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732654094; c=relaxed/simple;
-	bh=4El0kQkrRlr/CEy5dm9S79SsYdqflPKE+Y43lCIJcaQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qdUPE/gZzIsqSK7KO/KJnIzZac6nIKd/BjBXdrh3oWXyNR1SdsFGaljcXcB1jZOIhA2kKj0iX6cyfnvaiarLXqECBCDMu0fsJogMzpJWWDvKKTnK5yuIzSTvlk2KcyuSLzd2MsuTRUU+vias/W1pOPQXbPOUXCPEZUfB5sJwmMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQlEL2RN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E5EDCC4CEDB;
-	Tue, 26 Nov 2024 20:48:13 +0000 (UTC)
+	s=arc-20240116; t=1732654716; c=relaxed/simple;
+	bh=8O2hKszepkS2sl+knMvKoTgyr2VnkgLcts+rvzU52Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OpLfJ9upRMS4qwhE1j5C0+IhorClRRU3ogt9ef9wKEN0olb3c6z7+mK7C7GVTbS07Ex+ep1K4TlCSMZKSh4JmaN92vNxkbnwHhWKW/dQu/mba2Bq0aFItvPwD3lNDSZ2Ue7BBPCDZNE5mn93ccPV9Ah/pHjfC3OQTMwD159hlZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjZseJfI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C19FC4CECF;
+	Tue, 26 Nov 2024 20:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732654094;
-	bh=4El0kQkrRlr/CEy5dm9S79SsYdqflPKE+Y43lCIJcaQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UQlEL2RNBHDHMuwoN3QCs0DnB98E6jQ/0NwC8lNh/CXmmPF9CDQjJ7yuVaGp8okjY
-	 EpG/qZaYI79Ip7ucaltMasSH1iqdouLfMu0XvFIhMc0CB0opcu5Gy1RBWzkF2h/rS1
-	 QFAqGp6PJaFnVuZfWctgi7H6q+IwO81nUl2Ia7Oy6QiOrD/FxrLowQTvTy45mC4iJ9
-	 h+AMaxDTVrZOqcW0uwBPOzJPWtJ5Vjeks+sMG/7vfvRVitHaOFw8FnswyVExZl3m2t
-	 7bdInh/ZPymcQgOwPM/95BSOTZWWtJvrtrGq6HVkfVlahgnj13QjSnKQrhBH0W+Uj+
-	 AsqzTLJsXoReQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA82ED65555;
-	Tue, 26 Nov 2024 20:48:13 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Tue, 26 Nov 2024 21:48:02 +0100
-Subject: [PATCH 4/4] MAINTAINERS: Add entries for Apple Z2 touchscreen
- driver
+	s=k20201202; t=1732654716;
+	bh=8O2hKszepkS2sl+knMvKoTgyr2VnkgLcts+rvzU52Rs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=HjZseJfIzeBtDxWVVRK7ZHG8kwcvQOfWqGZwoZCoaPzzFOgs5/fN//L43IbDuxukG
+	 6McSPPcI7fUCzq2Ha8Vt+RQU3tZ8BbHUa868hL+TlvBGaDsk5eTdK3LFPcXAZQ5fZo
+	 YxEg+9f+BgMrD5Zypom+1/mXH2KRgH3R+bDNIFlHIZfGgNIGmdQ1upaF1BGy4yVxSu
+	 dDT8yWxJ7Hu6eiidYndWJ9AeAPwYO+IZRPqkh8PhGF3vtKtYRDTsl+bx9Qd/+BCu8b
+	 Q0krkL77s+aVj7SVlatas/PvEa9j7+ALjkb+JUF9MphM/u2z7p+KtMNMSJxdWudnG5
+	 E3BeEaF+rwU/Q==
+Date: Tue, 26 Nov 2024 14:58:34 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+Cc: joro@8bytes.org, suravee.suthikulpanit@amd.com, will@kernel.org,
+	robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, vasant.hegde@amd.com
+Subject: Re: [PATCH v2 2/8] iommu/amd: Add debugfs support to dump IOMMU MMIO
+ registers
+Message-ID: <20241126205834.GA2651046@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-z2-v1-4-c43c4cc6200d@gmail.com>
-References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
-In-Reply-To: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sasha Finkelstein <fnkl.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732654092; l=1218;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=5VgCgIUSJDHHHfv8AULS59dx+V2ZROTDT6FjcyDo/sU=;
- b=Ir5WYIz0L4uxDNqP4Iy7InHtKEJmKl90BhcHI3EpOmGhvc+koHFn6UlkCO9LEZdWpqqMjrxn0
- bgIC/fxwW36CBu2f+H+IjVj9O1oIm9ZeDSEOaIOg5bBm1onJ8WeFmfB
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106074639.2039-3-dheerajkumar.srivastava@amd.com>
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+On Wed, Nov 06, 2024 at 01:16:33PM +0530, Dheeraj Kumar Srivastava wrote:
+> Analyzing IOMMU MMIO registers gives a view of what IOMMU is
+> configured with on the system and is helpful to debug issues
+> with IOMMU.
+> 
+> eg.
+> 1. To get mmio registers value for iommu<x>
 
-Add the MAINTAINERS entries for the driver
+s/mmio/MMIO/ to match usage above.
 
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+>    # echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
+>    # cat /sys/kernel/debug/iommu/amd/iommu00/mmio_dump
+> 
+> Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+> ---
+>  drivers/iommu/amd/debugfs.c | 58 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/drivers/iommu/amd/debugfs.c b/drivers/iommu/amd/debugfs.c
+> index ff9520e002be..e56c050eb7c8 100644
+> --- a/drivers/iommu/amd/debugfs.c
+> +++ b/drivers/iommu/amd/debugfs.c
+> @@ -15,6 +15,59 @@
+>  static struct dentry *amd_iommu_debugfs;
+>  
+>  #define	MAX_NAME_LEN	20
+> +#define	OFS_IN_SZ	8
+> +
+> +static int mmio_offset = -1;
+> +
+> +static ssize_t iommu_mmio_write(struct file *filp, const char __user *ubuf,
+> +				size_t cnt, loff_t *ppos)
+> +{
+> +	struct seq_file *m = filp->private_data;
+> +	struct amd_iommu *iommu = m->private;
+> +	int ret;
+> +
+> +	if (cnt > OFS_IN_SZ)
+> +		return -EINVAL;
+> +
+> +	ret = kstrtou32_from_user(ubuf, cnt, 0, &mmio_offset);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (mmio_offset > iommu->mmio_phys_end - 4) {
+> +		mmio_offset = -1;
+> +		return  -EINVAL;
+> +	}
+> +
+> +	return cnt;
+> +}
+> +
+> +static int iommu_mmio_show(struct seq_file *m, void *unused)
+> +{
+> +	if (mmio_offset >= 0)
+> +		seq_printf(m, "0x%x\n", mmio_offset);
+> +	else
+> +		seq_puts(m, "No or invalid input provided\n");
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_STORE_ATTRIBUTE(iommu_mmio);
+> +
+> +static int iommu_mmio_dump_show(struct seq_file *m, void *unused)
+> +{
+> +	struct amd_iommu *iommu = m->private;
+> +	u32 value;
+> +
+> +	if (mmio_offset < 0) {
+> +		seq_puts(m, "Please provide mmio register's offset\n");
+> +		return 0;
+> +	}
+> +
+> +	value = readl(iommu->mmio_base + mmio_offset);
+> +	seq_printf(m, "0x%08x\n", value);
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(iommu_mmio_dump);
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7f0170977013889ca7c39b17727ba36d32e92dc..9f75fff12fa1912b70251cade845d6b3d5e28c48 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2166,6 +2166,7 @@ F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
- F:	Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
- F:	Documentation/devicetree/bindings/dma/apple,admac.yaml
- F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
-+F:	Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
- F:	Documentation/devicetree/bindings/iommu/apple,dart.yaml
- F:	Documentation/devicetree/bindings/iommu/apple,sart.yaml
-@@ -2186,6 +2187,7 @@ F:	drivers/dma/apple-admac.c
- F:	drivers/pmdomain/apple/
- F:	drivers/i2c/busses/i2c-pasemi-core.c
- F:	drivers/i2c/busses/i2c-pasemi-platform.c
-+F:	drivers/input/touchscreen/apple_z2.c
- F:	drivers/iommu/apple-dart.c
- F:	drivers/iommu/io-pgtable-dart.c
- F:	drivers/irqchip/irq-apple-aic.c
+I think this would be much simpler and more user-friendly if you made
+this a single read-only file to dump all the registers, as
+/sys/kernel/debug/iommu/intel/iommu_regset does.  Having to write
+"mmio" and then read "mmio_dump" makes it hard to use, and it means
+that two users can race with each other and confuse things.
 
--- 
-2.47.1
+This is part of the AMD IOMMU driver, which should know what registers
+are of interest and how to dump and possibly even decode them.
 
-
+>  void amd_iommu_debugfs_setup(void)
+>  {
+> @@ -26,5 +79,10 @@ void amd_iommu_debugfs_setup(void)
+>  	for_each_iommu(iommu) {
+>  		snprintf(name, MAX_NAME_LEN, "iommu%02d", iommu->index);
+>  		iommu->debugfs = debugfs_create_dir(name, amd_iommu_debugfs);
+> +
+> +		debugfs_create_file("mmio", 0644, iommu->debugfs, iommu,
+> +				    &iommu_mmio_fops);
+> +		debugfs_create_file("mmio_dump", 0444, iommu->debugfs, iommu,
+> +				    &iommu_mmio_dump_fops);
+>  	}
+>  }
+> -- 
+> 2.25.1
+> 
 
