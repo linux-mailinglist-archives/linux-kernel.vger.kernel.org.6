@@ -1,92 +1,110 @@
-Return-Path: <linux-kernel+bounces-421914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFFD9D91E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EE69D91E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11EC165333
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0283165157
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843A0187FE0;
-	Tue, 26 Nov 2024 06:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC0A183CCA;
+	Tue, 26 Nov 2024 06:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="KrJZHpH0"
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3741917FB;
-	Tue, 26 Nov 2024 06:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lx15ylj7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE916653;
+	Tue, 26 Nov 2024 06:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732603528; cv=none; b=bwTTBr+Uz128D3yCM1ojUSvxM88kgaF9nkBmD6CQ4Nz2w7dROJO20pmCly8vpwsV7AQ+fCrW0kiK7eYqz6DtXYQVJbrJ2JVdkIAsQ14Q8r4BFnD+QRfIY+98TaVmz57g6jGL0ZLJESijXAs2+jAH/SrlppmUx6bJmyeTpAXBXFg=
+	t=1732603500; cv=none; b=LCZXJzxlwQ0mS4YOUWpTFhrJoVZdU+WqNtf+cHwQvLCl/RrL23eJ2iTycITM3iTCnBw8mcLKwjDcsiVbwLrSoHfDEHBH5RqAULTiwz9zHpED5e3e+Pv7zG2WPXF8kWXuv+451tUNLig2wP082lxxsMPEuhBzGWlaVa8YTL3cBE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732603528; c=relaxed/simple;
-	bh=GlmaecMtzF5B6glEExZ++UTpLtGB4mL15efGLcv+9k0=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=f+R+42cCjDJeARnGCLgf19FePFmdhmMGGkxrMizgy3Wi2zce61Vgw/2CWjtMNBPOwItu5BxoJXhHubMjIRjKXSUloT4GdKN1MmdF5H88LUSGpf3kx4WQyBLfeYrG6tFKhOSU2zjTiVqb1x4e+4269RVi6XzLBekCULVEmE0yln4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=KrJZHpH0 reason="key not found in DNS"; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=buaa.edu.cn; s=buaa; h=Received:Date:From:To:Cc:Subject:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID;
-	bh=R2iaO5paQXkgJxCmCqiSqSvlFqF90j3KJ2Ra0z+ibCY=; b=KrJZHpH05DtLz
-	fN/s+7JBl9SnoZVOOc9DLk1jjS0d3l+R6HvNoAPqBqBDu69ByoVHsUhSR5HD0x6L
-	qRB3V3vpJLOuzs+nPiyJd7cu0kCQc+es4WCCegef1z2qILpBkUYP/DXJylnrBgyp
-	EU2xUh5s421jDvjLlozTX1lpFN9mdI=
-Received: from zhenghaoran$buaa.edu.cn ( [211.90.238.32] ) by
- ajax-webmail-coremail-app1 (Coremail) ; Tue, 26 Nov 2024 14:44:52 +0800
- (GMT+08:00)
-Date: Tue, 26 Nov 2024 14:44:52 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6YOR5rWp54S2?= <zhenghaoran@buaa.edu.cn>
-To: torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, mjguzik@gmail.com, willy@infradead.org,
-	linux@treblig.org, djwong@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 21371365@buaa.edu.cn, baijiaju1990@gmail.com, zhenghaoran@buaa.edu.cn
-Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
- data race in inode_set_ctime_to_ts)
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
- 20240305(0ac2fdd1) Copyright (c) 2002-2024 www.mailtech.cn
- mispb-63b7ebb9-fa87-40c1-9aec-818ec5a006d9-buaa.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1732603500; c=relaxed/simple;
+	bh=2DisQXb4NDMxUR1QYsipn2a3FuJxfxdcJ40z1OKpeBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZbfCmptv/4KhHzNSR3b5ULiSQBh1qUP9ZV7d/CehzrmBsBwh6K+D3OgmYMMRrrLnTjo558SNM6hETE8a0KPTd4CGMKH/zDBq/fwyo6gx3eKqTMAhWZlVtXl0Ap+iYd2iruuZBkky8PfsfIgMQOENX7l3qM2QHYncRhQ3f6fUJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lx15ylj7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23567C4CECF;
+	Tue, 26 Nov 2024 06:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732603500;
+	bh=2DisQXb4NDMxUR1QYsipn2a3FuJxfxdcJ40z1OKpeBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lx15ylj7Xu49oGQTr3JJCDR7bNIaWj4pgXDPvwZWmDsdKVgI554r6Df5wm48SqeWg
+	 tCHMpoAB7HHkCvzX/xbJ06QA42aYRDDXsHHWE04X4Hc0cz6DyICvotEhA5gSmDUSHS
+	 M5gVu6Zu8cH0sQMffeAvWI9saXvtociyZpP50tX2Qu3rhJzaq/n9q2Bi1tapTJaka2
+	 IoWkZ4rd4yd4j1tq9Z+ysOgG3IkEgKNhMa8AFx7j+7bA6ZbEz0cRxSnM1QY6y3s78Z
+	 RFhdRvo5v5Z3+ExyVhdXaGkZdqTSL+Um3ZAUlSd4az/mTY1jQ+YLtqBTsdiuKWZ3Z0
+	 Tn3IFeodrkubA==
+Date: Mon, 25 Nov 2024 22:44:58 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
+Message-ID: <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-2-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7ed332aa.d50.193673739e3.Coremail.zhenghaoran@buaa.edu.cn>
-X-Coremail-Locale: zh_TW
-X-CM-TRANSID:OCz+CgB3_ONlbkVnCL4HAA--.1461W
-X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/1tbiAgQNA2dEcUNJxAABsV
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241122045005.14617-2-yangtiezhu@loongson.cn>
 
-U29ycnkgZm9yIHRoZSBwcmV2aW91cyBlbWFpbCBpbiBodG1sIGZvcm1hdCwgaGVyZSBpcyB0aGUg
-cmVzZW50IAplbWFpbCBpbiBwbGFpbiBBU0NJSSB0ZXh0IGZvcm1hdC4KClRoYW5rcyBmb3IgeW91
-ciByZXBsaWVzLiBEdXJpbmcgZnVydGhlciB0ZXN0aW5nLCBJIGZvdW5kIHRoYXQgdGhlIApzYW1l
-IHByb2JsZW0gYWxzbyBvY2N1cnJlZCB3aXRoIGBtdGltZWAgYW5kIGBhdGltZWAuIEkgYWxyZWFk
-eSAKdW5kZXJzdGFuZCB0aGF0IHRoaXMgYnVnIG1heSBoYXZlIGxpbWl0ZWQgaW1wYWN0LCBidXQg
-c2hvdWxkIEkgZG8gCnNvbWV0aGluZyBlbHNlIHRvIGRlYWwgd2l0aCB0aGlzIHNlcmllcyBvZiB0
-aW1lc3RhbXAtcmVsYXRlZCBpc3N1ZXM/CgpUaGUgbmV3IGNhbGwgc3RhY2sgaXMgYXMgZm9sbG93
-cwo9PT09PT09PT09PT1EQVRBX1JBQ0U9PT09PT09PT09PT0KIGJ0cmZzX3dyaXRlX2NoZWNrKzB4
-ODQxLzB4MTNmMCBbYnRyZnNdCiBidHJmc19idWZmZXJlZF93cml0ZSsweDZhOS8weDJjOTAgW2J0
-cmZzXQogYnRyZnNfZG9fd3JpdGVfaXRlcisweDRiNy8weDE2ZDAgW2J0cmZzXQogYnRyZnNfZmls
-ZV93cml0ZV9pdGVyKzB4NDEvMHg2MCBbYnRyZnNdCiBhaW9fd3JpdGUrMHg0NDUvMHg2MDAKIGlv
-X3N1Ym1pdF9vbmUrMHhkNjgvMHgxY2YwCiBfX3NlX3N5c19pb19zdWJtaXQrMHhjNC8weDI3MAog
-ZG9fc3lzY2FsbF82NCsweGM5LzB4MWEwCiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUr
-MHg3Ny8weDdmCiAweDAKPT09PT09PT09PT09T1RIRVJfSU5GTz09PT09PT09PT09PQogYnRyZnNf
-ZGVsYXllZF91cGRhdGVfaW5vZGUrMHgxZTI0LzB4ODBlMCBbYnRyZnNdCiBidHJmc191cGRhdGVf
-aW5vZGUrMHg0NzgvMHhiYzAgW2J0cmZzXQogYnRyZnNfZmluaXNoX29uZV9vcmRlcmVkKzB4MjRk
-Ni8weDM2YTAgW2J0cmZzXQogYnRyZnNfZmluaXNoX29yZGVyZWRfaW8rMHgzNy8weDYwIFtidHJm
-c10KIGZpbmlzaF9vcmRlcmVkX2ZuKzB4M2UvMHg1MCBbYnRyZnNdCiBidHJmc193b3JrX2hlbHBl
-cisweDljOS8weDI3YTAgW2J0cmZzXQogcHJvY2Vzc19zY2hlZHVsZWRfd29ya3MrMHg3MTYvMHhm
-MTAKIHdvcmtlcl90aHJlYWQrMHhiNmEvMHgxMTkwCiBrdGhyZWFkKzB4MjkyLzB4MzMwCiByZXRf
-ZnJvbV9mb3JrKzB4NGQvMHg4MAogcmV0X2Zyb21fZm9ya19hc20rMHgxYS8weDMwCj09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PQ==
+On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
+> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>  		if (prev_offset && reloc_offset(reloc) != prev_offset + 8)
+>  			break;
+>  
+> +		if (reloc->sym->type == STT_SECTION) {
+> +			/* Addend field in the relocation entry associated with the symbol */
+> +			offset = reloc_addend(reloc);
+> +		} else {
+> +			/* The address of the symbol in the relocation entry */
+> +			offset = reloc->sym->offset;
+
+The comments don't seem helpful.
+
+In the case of STT_SECTION, sym->offset is always zero.  Therefore the
+if-else can be converted to a simple unconditional statement:
+
+	offset = reloc->sym->offset + reloc_addend(reloc);
+
+'prev_offset' needs to be updated as well.
+
+> @@ -2137,6 +2145,7 @@ static struct reloc *find_jump_table(struct objtool_file *file,
+>  {
+>  	struct reloc *table_reloc;
+>  	struct instruction *dest_insn, *orig_insn = insn;
+> +	unsigned long offset;
+>  
+>  	/*
+>  	 * Backward search using the @first_jump_src links, these help avoid
+> @@ -2160,7 +2169,16 @@ static struct reloc *find_jump_table(struct objtool_file *file,
+>  		table_reloc = arch_find_switch_table(file, insn);
+>  		if (!table_reloc)
+>  			continue;
+> -		dest_insn = find_insn(file, table_reloc->sym->sec, reloc_addend(table_reloc));
+> +
+> +		if (table_reloc->sym->type == STT_SECTION) {
+> +			/* Addend field in the relocation entry associated with the symbol */
+> +			offset = reloc_addend(table_reloc);
+> +		} else {
+> +			/* The address of the symbol in the relocation entry */
+> +			offset = table_reloc->sym->offset;
+> +		}
+
+Same comment here.
+
+-- 
+Josh
 
