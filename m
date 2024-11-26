@@ -1,214 +1,138 @@
-Return-Path: <linux-kernel+bounces-422192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0F99D95AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:37:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B518B9D95AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:38:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC7251674EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:37:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB6F28509D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557A71CD215;
-	Tue, 26 Nov 2024 10:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112C61C8FBA;
+	Tue, 26 Nov 2024 10:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rfiP8Yxh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+XCtD2e";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rfiP8Yxh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G+XCtD2e"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xMxj/S/t"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D642B1B87E1;
-	Tue, 26 Nov 2024 10:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CAF1C4A13
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617449; cv=none; b=Vv4Ru3EdGgxfP3PEBE7Dw3bZ9H1y3iZPxLOPDnI9osJUwXf5eqM+LPxJIvaYOTrrUfXxm3tR2pDUbi6gibma8/V6ZGGglmRRpZnrpK/S7AXZWxNWZcYK6j2xzXrFz4HltIx3pZrqaC5XkVlu6HL4me2MoLwx3Y8iHQrTJyxExV8=
+	t=1732617462; cv=none; b=bzFJrFt9JdIdyCE+257l3QtIRBueW8pxf+ajfFVErgNQMX5KRJGjM1W9DauqywYnaD9oCB8wzlAUIrr7+imTkhDqD3Fyz03C2El9Jo13s29nrWAn6YBgaJ5xaZ4Yn31e6l9BZgWF0DoB3EGIHWkybHmavdmQ0pa4rGHsEmR5PoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617449; c=relaxed/simple;
-	bh=9ThnDP1v7dyLT6f20id/Djbtem9d/7q/+o/s3bWhPfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r96VPjVxFD8flllMTyKV6OC0gmuYjfT8JyKKgprmwXlEPQ1nQG+zyEDwJaPcmJBHQpukPjoRigf1gm+AwcDo0V5kF3iibGnfpx5cd8Sx2+qLS2Ltw1EgtE2wt+MW9ejBSoj7nKmGXUq4qpFd/zC2dz2VzPeVpeYqCMfRyRl5ewA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rfiP8Yxh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+XCtD2e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rfiP8Yxh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G+XCtD2e; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B1F21F45E;
-	Tue, 26 Nov 2024 10:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732617439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
-	b=rfiP8YxhK+69HUCUmk7T3SqRPQ8XO+Awe2UviO4G7H4atvkCI2CfZOUJNteet+tz4Iq19W
-	JanDkwWnP3Ky7LyyQFLznK8e53/tBOK3zlOdmQpWjS+R2USwOfPw+Br1iTV8Q96YRgegrM
-	2RJYYENsME9kIY+u6W5+TqXdg6Zv5ik=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732617439;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
-	b=G+XCtD2ebUyOCoetbKyPdjBM0EOVsy/mHtPI2+zaEOjGcok9uSyzqQaO8m3XR8EyNmKekD
-	T+b/7U6yQlaimDCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rfiP8Yxh;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=G+XCtD2e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732617439; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
-	b=rfiP8YxhK+69HUCUmk7T3SqRPQ8XO+Awe2UviO4G7H4atvkCI2CfZOUJNteet+tz4Iq19W
-	JanDkwWnP3Ky7LyyQFLznK8e53/tBOK3zlOdmQpWjS+R2USwOfPw+Br1iTV8Q96YRgegrM
-	2RJYYENsME9kIY+u6W5+TqXdg6Zv5ik=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732617439;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdQC6j8zPVleA81o2pdIMBkbwZFyTWol19ahvIa+B20=;
-	b=G+XCtD2ebUyOCoetbKyPdjBM0EOVsy/mHtPI2+zaEOjGcok9uSyzqQaO8m3XR8EyNmKekD
-	T+b/7U6yQlaimDCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73C96139AA;
-	Tue, 26 Nov 2024 10:37:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wbs9HN+kRWcMKQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 10:37:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 24CA6A08CA; Tue, 26 Nov 2024 11:37:19 +0100 (CET)
-Date: Tue, 26 Nov 2024 11:37:19 +0100
-From: Jan Kara <jack@suse.cz>
-To: Anders Blomdell <anders.blomdell@gmail.com>
-Cc: Philippe Troin <phil@fifi.org>, Jan Kara <jack@suse.cz>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-Message-ID: <20241126103719.bvd2umwarh26pmb3@quack3>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+	s=arc-20240116; t=1732617462; c=relaxed/simple;
+	bh=bsvH9kSUCwHWawfblNJ3PAi3vG5GvJUBddlpJRrsx3g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G5iBBNytFWy9JCZ64xbaBQ2jxKpL6SYflltCEbFbUFKuYXfaLymBZtiwoXI8F5Mw/PJoFkhqkZViaUvJYE4t/FAp6tfXZb1fzkEzAb/vUR/oraAqBLYtJz2c3zDbv5V/YUNe/8Hj5qIq/CmsglurV7Y0H6TVCrg9L0zilzpzwFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xMxj/S/t; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd8b7796dso4004796e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732617457; x=1733222257; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DL8n6YXE9oeQeCSKnUhWjhtX76X8Z5GX8Xt7bIlqK5s=;
+        b=xMxj/S/tOPbUkbqCLLckSQb5XvgUMAJfI2BfNGc00Q775+EYirZitoj16d630Y9gWT
+         TWdvQibP0Ef8eStRRoeVtbp/NdlKkZo1Gls7JkLDT+aZkXbolf/vI+RlhJKvkHvdEoji
+         5CCGTQSuNiaT2IwQ0gbDO5+8ahH1S4im04Z4+f9cfl4rFEtfGUpb9w0mWDsdqjASPMHd
+         isF+Uf8EQnHa7XSX86QQD4Tzmx+kPzXS/W8aFv+ypRuLOQh5B7xoOV5b2JB6i36ayCx4
+         3M4u+kKZJvry9z9YniN2zuoloB1ZucvNiw+Xit7WpXun2fcVQVWtVWgv5cPVpDR6Kif+
+         upKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732617457; x=1733222257;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DL8n6YXE9oeQeCSKnUhWjhtX76X8Z5GX8Xt7bIlqK5s=;
+        b=tMK3MVX2XtazJ75CBSl0Nse3T1rkH1V/nygGALfQjixS2mfU1TgCoBjC0YLPoJGrVb
+         1OSNuNcVKPaonxhEfTtQAzm2m++qcIZy3eO30eWHVHkPeJipbmVD+rEBW+ESblD13amH
+         SfLmddZMtUBxKxcOpIUkvarCEI0JKCrfFxkIt+nGr9kt0s39hjmjaNKmjVtU/UcVHlaX
+         PkUGPN8tfVP7etV8VVe3F9hSOow2qs+HG7kR6ehednZaV883UbBbzHftO+i52U28UPqI
+         dg4gap6lpf2l44824tqP3U6dvu18+ITprG7ynDHggkYHjbv/Jxy9gt5BClbIN1ZTy9Lc
+         Ohhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy0sRtYjyNoxx+c59MRhH7bJwKxIBVTKqz+fRZ0v4eMz+gM8wdGCft500FA/KhdAaHj+wp0MJDVIcMFTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCV2y3z8Cj0tbBT8VZ3WiVybHAv0KEuhYmZFn23mtAHaEFc+AC
+	g53gMADl6Ej48IIgk9F/KKuDbjSqMw4suPRtCyXBqT9YziB/UJFXGjWQUYSO5lw=
+X-Gm-Gg: ASbGnctYB3GVy00PKvhqIRpBa3LQN228MFoj5cOJofe4JRezO6v3ggMeOPe499wGAwe
+	oJO15UD9JXgjfIfHenjlKFhEODq2XwwWKB/jF3LvVC2ahbyDEEHsueZavsKAc+B6N9IeT28X+qy
+	DVwW6IjiYJ2MifPG0JkPiqaiiTXoGpuJQhnaDlGXvik3CaHhPcypjOotZuSjJk+WYVhUJ5ItGNW
+	EYRqr9EDq0pdeJENV6vjVN9aqeoRmMt7a5sLAeGoibEdHyk9Bb9sg5H7qPjECqfB6x2sZrkSI+s
+	XXaDD3vx/GwThg==
+X-Google-Smtp-Source: AGHT+IGm9T8BP8eFPLu32fca54MvgO0F+vLQWk0tpYQ0ycW//DTGAHcftsM6xJdvIIJ/40Jr4imMYA==
+X-Received: by 2002:a05:6512:39cb:b0:53d:ec92:2968 with SMTP id 2adb3069b0e04-53dec922a7cmr947039e87.17.1732617457163;
+        Tue, 26 Nov 2024 02:37:37 -0800 (PST)
+Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad658esm13229915f8f.8.2024.11.26.02.37.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 02:37:36 -0800 (PST)
+Message-ID: <49fa1677-db35-497b-afae-caa5dccf3747@baylibre.com>
+Date: Tue, 26 Nov 2024 11:37:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
-X-Rspamd-Queue-Id: 8B1F21F45E
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
+From: Alexandre Mergnat <amergnat@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, Nicolas Belin <nbelin@baylibre.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
+ <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
+ <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
+ <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
+ <Z0RkaqfID9v0age_@smile.fi.intel.com>
+ <ed50c130-076c-4697-9f11-fe602c7ca03d@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <ed50c130-076c-4697-9f11-fe602c7ca03d@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
-> On 2024-11-26 02:48, Philippe Troin wrote:
-> > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
-> > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
-> > > we got terrible performance (lots of nfs: server x.x.x.x not
-> > > responding).
-> > > What triggered this problem was virtual machines with NFS-mounted
-> > > qcow2 disks
-> > > that often triggered large readaheads that generates long streaks of
-> > > disk I/O
-> > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
-> > > area of the
-> > > machine.
-> > > 
-> > > A git bisect gave the following suspect:
-> > > 
-> > > git bisect start
-> > 
-> > 8< snip >8
-> > 
-> > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
-> > > readahead: properly shorten readahead when falling back to
-> > > do_page_cache_ra()
-> > 
-> > Thank you for taking the time to bisect, this issue has been bugging
-> > me, but it's been non-deterministic, and hence hard to bisect.
-> > 
-> > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
-> > slightly different setups:
-> > 
-> > (1) On machines mounting NFSv3 shared drives. The symptom here is a
-> > "nfs server XXX not responding, still trying" that never recovers
-> > (while the server remains pingable and other NFSv3 volumes from the
-> > hanging server can be mounted).
-> > 
-> > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
-> > several minutes) on random I/O. These stalls eventually recover.
-> > 
-> > I've built a 6.11.10 kernel with
-> > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
-> > normal (no more NFS hangs, no more VM stalls).
-> > 
-> Some printk debugging, seems to indicate that the problem
-> is that the entity 'ra->size - (index - start)' goes
-> negative, which then gets cast to a very large unsigned
-> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
-> bug is still eludes me, though.
 
-Thanks for the report, bisection and debugging! I think I see what's going
-on. read_pages() can go and reduce ra->size when ->readahead() callback
-failed to read all folios prepared for reading and apparently that's what
-happens with NFS and what can lead to negative argument to
-do_page_cache_ra(). Now at this point I'm of the opinion that updating
-ra->size / ra->async_size does more harm than good (because those values
-show *desired* readahead to happen, not exact number of pages read),
-furthermore it is problematic because ra can be shared by multiple
-processes and so updates are inherently racy. If we indeed need to store
-number of read pages, we could do it through ractl which is call-site local
-and used for communication between readahead generic functions and callers.
-But I have to do some more history digging and code reading to understand
-what is using this logic in read_pages().
 
-								Honza
+On 26/11/2024 11:29, Alexandre Mergnat wrote:
+> On 25/11/2024 12:50, Andy Shevchenko wrote:
+>> On Mon, Nov 25, 2024 at 12:32:13PM +0100, Alexandre Mergnat wrote:
+>>> Hello Andy.
+>>>
+>>> Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
+>>>
+>>> That mean all added include in this patch aren't required.
+>> Do you mean the driver doesn't not use types from types.h or dev_*() macros
+>> from dev_printk.h? I don't believe this, sorry.
+> 
+>>
+>> Basically what you are trying to say is "let's move of_gpio.h implicit
+>> includes to become something else's problem". It's not what this patch
+>> intended to do.
+> 
+> I'm just saying that I've test a build/boot with "linux/of_gpio.h" removed and without all
+> include added in you patch. My understand is "linux/of_gpio.h" act as proxy
+> for the includes added in your patch, my first idea was "if I remove it, build should fail cause
+> of lack of other includes". I can understand these missing includes are mandatory, that
+> probably means there is another proxy header ?
+> Maybe my test isn't consistent because it isn't possible to clear all proxy ?
+> 
+> If that's the case, consider my review-by.
+
+Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+
+> I've validated some include manually. Are you using a script to parse the file and raise all 
+> necessary "linux/*" include ?
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Alexandre
 
