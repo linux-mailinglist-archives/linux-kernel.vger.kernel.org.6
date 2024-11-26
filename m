@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-422690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6254D9D9D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:00:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3607F9D9D04
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:59:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67455B2A21D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47EA162CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DFB1DD0D5;
-	Tue, 26 Nov 2024 17:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC5BD299;
+	Tue, 26 Nov 2024 17:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lplMH45K"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWpGsXB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3693D299;
-	Tue, 26 Nov 2024 17:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DFD1DDA18;
+	Tue, 26 Nov 2024 17:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643965; cv=none; b=s+XBNCActOIcWUfmkFkX1EiBebmO3KJIlMZrBzlkGWwxK2gz4eHPqVAAgoZRR8I8uCml8DSsB5SFq2ZvqWCt/S6rm0+qaonJ/bq8uJqZ4gY55dnXJtKBq2mvxyp7ORjA8XRvOdiGmbL1sHAz7reURdKmAFHFPMq7W25qgWB94vs=
+	t=1732643968; cv=none; b=mWGWox7vp7+j1h6+LIAYZyp673gUKoEYPjyrrRcRw7E76CbUWP5uxiwAQtF5CMXguiiIRCg8tLv5NqwmzlDFxGnzbGlk/dRABxSI+jTMxGji1wv4u6R0tFj5IXhVQ1UKo5HjU2ub8Ao9MK4Mcw3i3XauVRPXKxvLJztfu24pdjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643965; c=relaxed/simple;
-	bh=AePAptw5GNTnJr9g9/5jWQF7IlRxU7KulzI2pSmiQh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CoLe5HK/X8Ndun1XlqrHss2jvVCdJ1khljqRbkMxqb8lYA4/n/B9pv+DHduWPnMJr472CZHth5VgKBeLDC0HJnnA9a1407dsst9CWl1WtmWZsu+1jQoTvgNWasNC0wgGiB3M5EYygwFocIWQBb4rLwyzNCc3Tx36M6CA2XMQRbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lplMH45K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ9X6X3013213;
-	Tue, 26 Nov 2024 17:59:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tpIuyVXVx4kLvCmwcAVpsnjn058HMqx3WLUP/HjyD+A=; b=lplMH45KC6PuUPOk
-	8vlq732iDsYYOOKSuc6OoFP3+Gq5VycHou2BPN0Q5O/tj7eElKWoYmmH2nOKRnGs
-	Bd02y3c984sOpqHgtggPJ6jev85iDCD7A9M9h9tOdarUiBSpCJAU8gtWYQN9jtQl
-	NStYEbgzjiwCqFNKkzGPQcTpSlH9JSNLHE0T6eYvkRgWidx3G9qqfL6S7vjXIltI
-	F2UTltELerhcPxNLXDf37CBKA7JNQHua2pYPfg0r+EiqYA0pu2qqrSf3wjC6XAe3
-	7qXBabz4OvL5XvhkG8JEbk9xLEwIktJI1C6ANAT6VP9z1dtdzXCGLr5VanuLUrcN
-	mY6Mag==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334rd964b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 17:59:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQHxDc0013756
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 17:59:13 GMT
-Received: from [10.216.46.102] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
- 2024 09:59:09 -0800
-Message-ID: <c2a8984f-e67f-4e29-93ed-32d908ffef58@quicinc.com>
-Date: Tue, 26 Nov 2024 23:29:05 +0530
+	s=arc-20240116; t=1732643968; c=relaxed/simple;
+	bh=NM3GF0xN32aTABQBi5Mj0ioGDDh9e9apDg1yImcCgn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFrHe4SOhSV/T7So56SyujQFsTjWHDV0Q3vImQr0LdF42TvUW6NajuYT2gItd4m6Gz8z1NiXCblz8YRRXPUqXWslKXA1VV9I5yM2C0Vg2XlsYGNN5cSxy0EwQVpmYK4TKec0qkYTHmg/i1+CSubVZaPsXn0NlOS3f3140vVD0EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWpGsXB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC7AC4CED3;
+	Tue, 26 Nov 2024 17:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732643967;
+	bh=NM3GF0xN32aTABQBi5Mj0ioGDDh9e9apDg1yImcCgn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dWpGsXB6ODZuGGJaNJGPLS9JojBHYCb0M8cziC4ZF0gAs88bnpKU+4wP4sy09NOFM
+	 AAvvEUujDVqwt9nrTqwsO4wR9V/FkIEXmwPCRQDiOqncETST7NwW9K3kPctLLmAINu
+	 pIChB5+HKrhiWMrCqpYeiVQd5S+w3+VWeD1dAKcioATZUyNTaECUBZOaM4hehcLR8L
+	 x4182JuTOpPM78EYpfGK6zUVc82c+PNIxc1pvIpnjDN144OhKuqHF3RsGpL+491ea+
+	 PiHw1GUmLK8aJ6ZfB+ytiL6iT9mDs1IXf26TZ0Q6Eiz6wHlEzRWAcSaN9WlL2s+VGc
+	 JEjCjWHtNcnzg==
+Date: Tue, 26 Nov 2024 17:59:23 +0000
+From: Conor Dooley <conor@kernel.org>
+To: E Shattow <e@freeshell.de>
+Cc: Henry Bell <dmoo_dv@protonmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] riscv: dts: starfive: jh7110-pine64-star64:
+ enable usb0 host function
+Message-ID: <20241126-unbraided-underhand-680b9482a24f@spud>
+References: <20241126073836.17208-1-e@freeshell.de>
+ <20241126073836.17208-2-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/2] arm64: dts: qcom: qcs8300: add TRNG node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20241122074346.4084606-1-quic_yrangana@quicinc.com>
- <20241122074346.4084606-3-quic_yrangana@quicinc.com>
- <40c49e6d-dbbd-49cf-b59b-10e10b24da22@kernel.org>
- <0bdaa2ef-3979-4963-be75-0a5a89728f44@quicinc.com>
- <2vc6tg77qpi5vz7tmmlwgnlxjg62l6vsipjivygiapl4dhqupv@vrpbk3kcdrd3>
-Content-Language: en-US
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-In-Reply-To: <2vc6tg77qpi5vz7tmmlwgnlxjg62l6vsipjivygiapl4dhqupv@vrpbk3kcdrd3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0rBr0xhn_LdEsmcb02XCF9hedUtcq3ai
-X-Proofpoint-GUID: 0rBr0xhn_LdEsmcb02XCF9hedUtcq3ai
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 clxscore=1011 suspectscore=0 priorityscore=1501 malwarescore=0
- spamscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=831
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411260143
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/78djKjc2HyFsLhU"
+Content-Disposition: inline
+In-Reply-To: <20241126073836.17208-2-e@freeshell.de>
 
-On 11/26/2024 4:05 AM, Dmitry Baryshkov wrote:
-> On Sun, Nov 24, 2024 at 09:17:40AM +0530, Yuvaraj Ranganathan wrote:
->> Hi Krzysztof,
->>
->> I sincerely apologize for the inconvenience. I added the "Reviewed-by"
->> tag without fully understanding its implications. I will remove the tag
->> in the next patch series.
-> 
-> First of all, please don't top-post. Put your text under the phrases
-> that you are responding to, not at the top of the message. Otherwise the
-> logic is a bit broken.
-> 
-> Second, may I ask, what made you add that tag at all? I went on and
-> checked. Krzysztof didn't repond at all to v3 and didn't respond to v2
-> of this patch. So why?
-> 
-> Third, if you are unsure about what you are doing and as you seem to be
-> using b4 tool, please just use `b4 trailers -u`. It has its own
-> drawbacks so in some cases one should be careful, but at least it
-> doesn't invent tags on its own.
-> 
->>
->> Thanks,
->> Yuvaraj.
->>
->> On 11/22/2024 8:30 PM, Krzysztof Kozlowski wrote:
->>> On 22/11/2024 08:43, Yuvaraj Ranganathan wrote:
->>>> The qcs8300 SoC has a True Random Number Generator, add the node with
->>>> the correct compatible set.
->>>>
->>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
->>>
->>> NAK, stop adding fake tags. It is impossible to receive above tag from
->>> me written that way.
->>>
->>> Best regards,
->>> Krzysztof
->>
-> 
 
-I've added the "Reviewed-by" tag without a proper understanding as I got
-few comments
-(https://lore.kernel.org/all/4009f4ee-2c55-4a4f-8805-eafe7efc0147@kernel.org/)
- on the earlier patches and tagged the reviewers under "Reviewed-by". I
-sincerely apologize on this and will ensure to avoid such mistakes in
-future.
+--/78djKjc2HyFsLhU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Emil,
+
+On Mon, Nov 25, 2024 at 11:38:17PM -0800, E Shattow wrote:
+> Pine64 Star64 set JH7110 on-chip USB host mode and vbus pin assignment
+>=20
+
+Looks like the same thing here, so same thing here :)
 
 Thanks,
-Yuvaraj.
+Conor.
+
+> Signed-off-by: E Shattow <e@freeshell.de>
+> ---
+>  .../boot/dts/starfive/jh7110-pine64-star64.dts | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch=
+/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> index fe4a490ecc61..b764d4d92fd9 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> @@ -80,7 +80,23 @@ &spi0 {
+>  	status =3D "okay";
+>  };
+> =20
+> +&sysgpio {
+> +	usb0_pins: usb0-0 {
+> +		vbus-pins {
+> +			pinmux =3D <GPIOMUX(25,  GPOUT_SYS_USB_DRIVE_VBUS,
+> +					       GPOEN_ENABLE,
+> +					       GPI_NONE)>;
+> +			bias-disable;
+> +			input-disable;
+> +			input-schmitt-disable;
+> +			slew-rate =3D <0>;
+> +		};
+> +	};
+> +};
+> +
+>  &usb0 {
+> -	dr_mode =3D "peripheral";
+> +	dr_mode =3D "host";
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&usb0_pins>;
+>  	status =3D "okay";
+>  };
+> --=20
+> 2.45.2
+>=20
+
+--/78djKjc2HyFsLhU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YMewAKCRB4tDGHoIJi
+0t66AP9HW0g6caIUNUVKF8Jw63De+iutnLDrv834ASt0W0V3GAEAtxo18pDD1ecG
+rfcvf12D+s54jpd8Jz4LCOmqhzdusgs=
+=vZzk
+-----END PGP SIGNATURE-----
+
+--/78djKjc2HyFsLhU--
 
