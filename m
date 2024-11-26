@@ -1,240 +1,126 @@
-Return-Path: <linux-kernel+bounces-422341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DAD9D986D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:21:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193109D9870
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:22:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313E5164A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8222840C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AAE1D27BB;
-	Tue, 26 Nov 2024 13:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5201D516E;
+	Tue, 26 Nov 2024 13:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="LBpmAm9A"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLdIGSG5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8741D2B22
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F51D5151;
+	Tue, 26 Nov 2024 13:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732627309; cv=none; b=ErNV05YqVSSleUYrXVx0jiWWBL54GkjTy3ZBAchzisEoBlyM27pVXB8WDHrnJALnGl4Nl1HjL/vcWo6PjISm8R2XUgdZKUH5Ij8/Mb39yRVfNLSE6KKJOp4uyKtZqpnSJWkk+dO/KoaeWa9ivmFjoQrF7xvGBBvsQSECaoXM+mk=
+	t=1732627311; cv=none; b=PSCca/NNu/nlJJhE4bPxvIUzkDnT9T/667Ua/5OaCxObcfY1wooZfqqo6zJfZe6K7yMzFcXxTJxv5qwUbv9dMlO32/appI/fFTjiBA3gJd8Ln1OZ6JrmbujWmNpx0OoJ/tEZT/5POjM//NtBiD3dHN+Wv/ijOsBuXS21Kl8YU9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732627309; c=relaxed/simple;
-	bh=xam+gvTlNePOXWmvE6HJc/zjRx3Kw98Dpn1CFhvSyqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m63cUgCJh7XIEVp/VP53teehVGf6eFUxl1n74w7siiTME11hX2Zfz9YeW4Qk8CQ4BlRUt+PSmXra3/gHuaDUdEX9Ikg4Yph7pv7e2nK0E4S2lMcUcY+4dQSn3YYzuP3V4tIhVMK7APi9O/t7GiC7URvz/MlO+CIukhMLT+Ocvfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=LBpmAm9A; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e388ff24cfeso4973275276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 05:21:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1732627306; x=1733232106; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JfBuef27ultxtQ0QhYJwcn92wHDcp/POc68y8FNaif0=;
-        b=LBpmAm9AObLUzKerHSxN8trff1CqKfxODm7k9UylEpBFQGkD5Sd0hy+st+DT1FpXCh
-         klq2v16ibdOsT2orIfQAJR/5C3g3XB3GMBSoGun4NHF1030nBRBCSA3QEZtoltFS7Vxr
-         gsSBLqhuWBjB9lLTCAuL7O1ePNzEJiWw7+bxoHe9NnWrLo0+hE1N2eGvzP5HymxBIX58
-         MshmXZvziqyVG/UHNgMihx/PfqLjUbG1CT0xilDvZGyIB7jNGUdIHGbN05LGYKCdF/Sl
-         1DU5sWBYzTQJ9IRwsG0HhEJvOkmi3+9HMB1FSCL0wpCSE/0qoNbOCEf7JaRF5qs5g+hM
-         uoLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732627306; x=1733232106;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JfBuef27ultxtQ0QhYJwcn92wHDcp/POc68y8FNaif0=;
-        b=MLH1wikDq28toksrjXVla18x9lcD38vhrtHVDUCdTv83EFPxf9NlTWNUBHozpypgbL
-         TKgwa179yzCosO4oDbbmc5dN4OPAQBPHwxF55cMIx9JZZR8K23YVF3pymZgNMlf11aVy
-         GqBMnuNs1YRR7CI8zDUO2QeYNFCJOCKbXgudaz4ZJQ0yQN8NqPkZCNRlmvr+DFD8eh38
-         lVW2KRM2mAJ5fxQtJgF5XiY5Xwb3/WdRuBDHAQT6BDpVlOjSTT6uicFYoJxO5nv6B9kl
-         +n2LUcE151D2VAzAcChrRicQrDONtNVy05vIriFrP/n7QPsoSGeMohzw/cCO07c/CQWC
-         ZkRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlmU6w0iTakltKkCIaLnCuPHrR72TAGdwiTCALkXbnmUHue0pxMQKO/SQvGThykSVkDWwRiDHRZwoK4cw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxprZQcSI8Yj7lbmPJ0bzMlA2th/sfRRIKyBoQsZU+6+yB/RtZe
-	55PWay1x8+gDvPI9Cd8aj4vTWF9y3VkgmqVrYyC0q/X6sJXSv490gBN5EXT7crufjVI+cDlR7vp
-	U1z3b6GVmYd83sfIpHgMLIF8GzDchU7W6ohOmNg==
-X-Gm-Gg: ASbGncuYZbgMO0yTatPS54KmIZ4RAh3DPYIrlBt7VUaS9ybmFmFQ2/T+RJhyY5c3Mv0
-	mppGa+xPHW/cOWG4fjXGYCFK/IjXYGv0=
-X-Google-Smtp-Source: AGHT+IHfhcF4QUWpiCk5PqoluUphXMfbjozdMDmHBwlDT1LoH8pl43N8YjZscxunkeOuUY8uIJhg9aIdBNlj/hHa588=
-X-Received: by 2002:a05:6902:3411:b0:e30:8568:9d20 with SMTP id
- 3f1490d57ef6-e38f8c0c808mr12517464276.53.1732627305045; Tue, 26 Nov 2024
- 05:21:45 -0800 (PST)
+	s=arc-20240116; t=1732627311; c=relaxed/simple;
+	bh=r7WixRalsMhPOVvhc77DI2Yr24fjHE72bC6gsIMtJyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L+09PEXdjjcuCthZVCzJ3CEcg+dVZyfUDEZSF3NG6Tp3iWl36BoOSRkW6lneJpfIH8dJeN7c0ulTbo2/rk3jhKytw89CU1rDPsUOC0uyBwYJLJjYTsUjfbd3y37DA+f71czUHJQoGos+wNxNDHwzcaocSsSh4j7ffcSnht7dd7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLdIGSG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B3FC4AF09;
+	Tue, 26 Nov 2024 13:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732627311;
+	bh=r7WixRalsMhPOVvhc77DI2Yr24fjHE72bC6gsIMtJyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MLdIGSG5gufIjX6wy+iMi+jmUtoBFw6sFScNNNMe+IKmP0B75VZbJDsDkfvkwZROC
+	 iN5CedH370QQwomB5bvVsKGqiX6kXXx5b0DkbUfkv47Mqm0yeaoiiyn9q5GBu1kSLg
+	 INHAIZlt9uxB4EoD/kiM8h+C2i104eJCHcuxgD7aU/+whYP7r5ltYuFjVIg98H64yP
+	 D+LcNELTpebOUJ7NKvljwcK2hAAZoxS92GkeGDboazb+dXkWPWIMdt9I/zMchJjcKD
+	 FUlW3Tg0FuHANpD6EIe/yxRNdSy+6N+45w5Cwl9ZjG/+zsPgAushp9YhMPEI9/UhqU
+	 jDaxCWMPEuxYg==
+Date: Tue, 26 Nov 2024 15:21:45 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Ilia Lin <ilia.lin@kernel.org>, herbert@gondor.apana.org.au,
+	David Miller <davem@davemloft.net>, dsahern@kernel.org,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, netdev@vger.kernel.org,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfrm: Add pre-encap fragmentation for packet offload
+Message-ID: <20241126132145.GA1245331@unreal>
+References: <20241124093531.3783434-1-ilia.lin@kernel.org>
+ <20241124120424.GE160612@unreal>
+ <CA+5LGR2n-jCyGbLy9X5wQoUT5OXPkAc3nOr9bURO6=9ObEZVnA@mail.gmail.com>
+ <20241125194340.GI160612@unreal>
+ <CA+5LGR0e677wm5zEx9yYZDtsCUL6etMoRB2yF9o5msqdVOWU8w@mail.gmail.com>
+ <20241126083513.GL160612@unreal>
+ <Z0XGMxSou3AZrB2f@gauss3.secunet.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
- <20241125-imx219_fixes-v3-2-434fc0b541c8@ideasonboard.com> <20241126121640.GE5461@pendragon.ideasonboard.com>
-In-Reply-To: <20241126121640.GE5461@pendragon.ideasonboard.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 26 Nov 2024 13:21:27 +0000
-Message-ID: <CAPY8ntDAnj1uf-fBRbioZSwRm9zO4=e4-E+Rd-PAz0N3cmad-A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] media: i2c: imx219: make HBLANK r/w to allow
- longer exposures
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z0XGMxSou3AZrB2f@gauss3.secunet.de>
 
-Hi Laurent
+On Tue, Nov 26, 2024 at 01:59:31PM +0100, Steffen Klassert wrote:
+> On Tue, Nov 26, 2024 at 10:35:13AM +0200, Leon Romanovsky wrote:
+> > On Tue, Nov 26, 2024 at 09:09:03AM +0200, Ilia Lin wrote:
+> > > On Mon, Nov 25, 2024 at 9:43 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > > >
+> > > > On Mon, Nov 25, 2024 at 11:26:14AM +0200, Ilia Lin wrote:
+> > > > > On Sun, Nov 24, 2024 at 2:04 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > > > > >
+> > > > > > On Sun, Nov 24, 2024 at 11:35:31AM +0200, Ilia Lin wrote:
+> > > > > > > In packet offload mode the raw packets will be sent to the NiC,
+> > > > > > > and will not return to the Network Stack. In event of crossing
+> > > > > > > the MTU size after the encapsulation, the NiC HW may not be
+> > > > > > > able to fragment the final packet.
+> > > > > >
+> > > > > > Yes, HW doesn't know how to handle these packets.
+> > > > > >
+> > > > > > > Adding mandatory pre-encapsulation fragmentation for both
+> > > > > > > IPv4 and IPv6, if tunnel mode with packet offload is configured
+> > > > > > > on the state.
+> > > > > >
+> > > > > > I was under impression is that xfrm_dev_offload_ok() is responsible to
+> > > > > > prevent fragmentation.
+> > > > > >
+> > > https://elixir.bootlin.com/linux/v6.12/source/net/xfrm/xfrm_device.c#L410
+> > > > >
+> > > > > With my change we can both support inner fragmentation or prevent it,
+> > > > > depending on the network device driver implementation.
+> > > >
+> > > > The thing is that fragmentation isn't desirable thing. Why didn't PMTU
+> > > > take into account headers so we can rely on existing code and do not add
+> > > > extra logic for packet offload?
+> > > 
+> > > I agree that PMTU is preferred option, but the packets may be routed from
+> > > a host behind the VPN, which is unaware that it transmits into an IPsec
+> > > tunnel,
+> > > and therefore will not count on the extra headers.
+> > 
+> > My basic web search shows that PMTU works correctly for IPsec tunnels too.
+> 
+> Yes, at least SW and crypto offload IPsec PMTU works correctly.
+> 
+> > 
+> > Steffen, do we need special case for packet offload here? My preference is
+> > to make sure that we will have as less possible special cases for packet
+> > offload.
+> 
+> Looks like the problem on packet offload is that packets
+> bigger than MTU size are dropped before the PMTU signaling
+> is handled.
 
-On Tue, 26 Nov 2024 at 12:16, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Mon, Nov 25, 2024 at 08:36:26PM +0530, Jai Luthra wrote:
-> > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> >
-> > The HBLANK control was read-only, and always configured such
-> > that the sensor HTS register was 3448. This limited the maximum
-> > exposure time that could be achieved to around 1.26 secs.
-> >
-> > Make HBLANK read/write so that the line time can be extended,
-> > and thereby allow longer exposures (and slower frame rates).
-> > Retain the overall HTS setting when changing modes rather than
-> > resetting it to a default.
-> >
-> > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >  drivers/media/i2c/imx219.c | 37 ++++++++++++++++++++++++-------------
-> >  1 file changed, 24 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > index f98aad74fe584a18e2fe7126f92bf294762a54e3..970e6362d0ae3a9078daf337155e83d637bc1ca1 100644
-> > --- a/drivers/media/i2c/imx219.c
-> > +++ b/drivers/media/i2c/imx219.c
-> > @@ -76,8 +76,10 @@
-> >
-> >  #define IMX219_VBLANK_MIN            32
-> >
-> > -/* HBLANK control - read only */
-> > -#define IMX219_PPL_DEFAULT           3448
-> > +/* HBLANK control range */
->
-> Just drop the comment, and drop the blank lines, this belongs to the
-> "V_TIMING internal" section.
->
-> > +#define IMX219_PPL_MIN                       0x0d78
->
-> Why PPL and not HTS ?
+But PMTU should be less or equal to MTU, even before first packet was
+sent. Otherwise already first packet will be fragmented.
 
-The IMX219 datasheet defines the register as LINE_LENGTH_A, with
-comment line_length_pck.
+Thanks
 
-HTS is not a term used in the imx219 datasheet, so why introduce it to
-the driver? I'd go along with a rename to LLP if you wish.
-(HTS is more commonly an Omnivision term, not a Sony one).
-
-> > +#define IMX219_PPL_MAX                       0x7ff0
-> > +#define IMX219_REG_HTS                       CCI_REG16(0x0162)
->
-> The min/max should go below the register definition.
->
-> >
-> >  #define IMX219_REG_LINE_LENGTH_A     CCI_REG16(0x0162)
-> >  #define IMX219_REG_X_ADD_STA_A               CCI_REG16(0x0164)
-> > @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> >               cci_write(imx219->regmap, IMX219_REG_VTS,
-> >                         format->height + ctrl->val, &ret);
-> >               break;
-> > +     case V4L2_CID_HBLANK:
-> > +             cci_write(imx219->regmap, IMX219_REG_HTS,
-> > +                       format->width + ctrl->val, &ret);
-> > +             break;
-> >       case V4L2_CID_TEST_PATTERN_RED:
-> >               cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
-> >                         ctrl->val, &ret);
-> > @@ -496,12 +502,10 @@ static int imx219_init_controls(struct imx219 *imx219)
-> >                                          V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
-> >                                          IMX219_VTS_MAX - mode->height, 1,
-> >                                          mode->vts_def - mode->height);
-> > -     hblank = IMX219_PPL_DEFAULT - mode->width;
-> > +     hblank = IMX219_PPL_MIN - mode->width;
-> >       imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
-> >                                          V4L2_CID_HBLANK, hblank, hblank,
->
-> The minimum and maximum are identical, is this intentional ?
-
-The limits should be updated when the format is set, so the values
-shouldn't matter when created. However I'd want to check that did
-happen seeing as vblank computes the limits here.
-It is as easy to set them correctly here too (max = IMX219_PPL_MAX -
-mode->width), so you may as well.
-
-> >                                          1, hblank);
-> > -     if (imx219->hblank)
-> > -             imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> >       exposure_max = mode->vts_def - 4;
-> >       exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
-> >               exposure_max : IMX219_EXPOSURE_DEFAULT;
-> > @@ -817,6 +821,10 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >       struct v4l2_mbus_framefmt *format;
-> >       struct v4l2_rect *crop;
-> >       unsigned int bin_h, bin_v;
-> > +     u32 prev_hts;
-> > +
-> > +     format = v4l2_subdev_state_get_format(state, 0);
-> > +     prev_hts = format->width + imx219->hblank->val;
-> >
-> >       mode = v4l2_find_nearest_size(supported_modes,
-> >                                     ARRAY_SIZE(supported_modes),
-> > @@ -824,8 +832,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >                                     fmt->format.width, fmt->format.height);
-> >
-> >       imx219_update_pad_format(imx219, mode, &fmt->format, fmt->format.code);
-> > -
-> > -     format = v4l2_subdev_state_get_format(state, 0);
-> >       *format = fmt->format;
-> >
-> >       /*
-> > @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >                                        exposure_max, imx219->exposure->step,
-> >                                        exposure_def);
-> >               /*
-> > -              * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
-> > -              * depends on mode->width only, and is not changeble in any
-> > -              * way other than changing the mode.
-> > +              * Retain PPL setting from previous mode so that the
->
-> Rename PPL to HTS here too.
-
-Disagree as above. The local variable here should be renamed prev_ppl
-or prev_llp.
-
-  Dave
-
-> > +              * line time does not change on a mode change.
-> > +              * Limits have to be recomputed as the controls define
-> > +              * the blanking only, so PPL values need to have the
-> > +              * mode width subtracted.
-> >                */
-> > -             hblank = IMX219_PPL_DEFAULT - mode->width;
-> > -             __v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
-> > -                                      hblank);
-> > +             hblank = prev_hts - mode->width;
-> > +             __v4l2_ctrl_modify_range(imx219->hblank,
-> > +                                      IMX219_PPL_MIN - mode->width,
-> > +                                      IMX219_PPL_MAX - mode->width,
-> > +                                      1, IMX219_PPL_MIN - mode->width);
-> > +             __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> >       }
-> >
-> >       return 0;
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
