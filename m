@@ -1,149 +1,143 @@
-Return-Path: <linux-kernel+bounces-421742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BC49D8F70
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F2D9D8F72
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 727C2B2660A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:06:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93516B26BBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C840E23D7;
-	Tue, 26 Nov 2024 00:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0C1392;
+	Tue, 26 Nov 2024 00:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHtWPsj3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dpa33jkQ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1394B161;
-	Tue, 26 Nov 2024 00:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD8E629
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732579575; cv=none; b=siBkNM+N3L3AS2Fww9k8Iww+OR1ih7PBvuWkxP/HlyPtoLHbnCh8sPbt1LDimCTS71RZXdfx6KzZzIHEGg6APz+BvT4w+lbdBcHmLYac3vVoSWx97RZ+FfSRth91rBOJZTC5eM3hR0mQZxChOyfLFedGOFZ1uRDhTM3Z/bMOzyk=
+	t=1732579615; cv=none; b=HzUUtrnd38wucooLY6DLcV+Tj5Qnokloip1o3dHL18VshmtoMKPvJKdQvTgEUZhBAGeMPiG+BcQUpsufIGDfWPFZ6Nlw4BWTSdw+M/SkZgxyduwXl4BTmmN0MaX8fcrp4uYi10gSQ59tzCSzfY6z0ZkouPy4rB5PE8jbKNqrcyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732579575; c=relaxed/simple;
-	bh=vrRKihhsrhqCl3rAoB+x53rxs7JaO8EdE8B7zyiayBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJfS4l2cSMDpUOS5TH6P7hLNaRnWRXaVqydrqc/PYxg+QcZ6l+/NmpeobpQ4Z7R8N/pSXP4ZqglgMXnzpRjZYqM2C18QWn6fZYwz6yWt/Y+6jdGFQittyEq93mgqebA/Wn1HzaH6+Ynx2wfhLThOvo5/qhIecJDrxY0AzX0RJ7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHtWPsj3; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732579573; x=1764115573;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vrRKihhsrhqCl3rAoB+x53rxs7JaO8EdE8B7zyiayBU=;
-  b=NHtWPsj36I/MZ0WmrAF81YgBt76PvNXen6HCvJoolNNO9QS8xxSPbBcN
-   z9Gy1sZd+VpFrLLJKQd5+/cNoQ81LH+T9g6oHmX0bqpjVle63JOX4Zc1k
-   g74u0kPRKzvfstE8t2ZW6h/cXPiVmOtbmfqEVuBi+NaQ/UXZ1cKkEmIdO
-   buhi165psLTrntOGrcZMzigARK+ZEiS+ihJMwmvPE9Dsf3NEjDcpIRkzR
-   dJRP3MDbkgf+29qFiB68feh9o9wfUrkOprFCtzeoEFYeeukf6kEMUsd9N
-   nKPUxbHYuCmocYZcTpMfenqUSTFTZGfZI/HDNbH9emprsVW5SJPN6up0y
-   Q==;
-X-CSE-ConnectionGUID: GhhPh86rSqeaLRRc8Rec3w==
-X-CSE-MsgGUID: Zh3/kPVeTmWyZ7M4juQ8Pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="35567880"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="35567880"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 16:06:12 -0800
-X-CSE-ConnectionGUID: za6kESCNSF+4W0HO68MYwQ==
-X-CSE-MsgGUID: 1wPFI6ZMQsy74p/HsKNWwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="122286713"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 25 Nov 2024 16:06:07 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFj5f-0006ur-2T;
-	Tue, 26 Nov 2024 00:06:03 +0000
-Date: Tue, 26 Nov 2024 08:06:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
-	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
-Message-ID: <202411260746.XEdTrLMj-lkp@intel.com>
-References: <20241122225958.1775625-2-song@kernel.org>
+	s=arc-20240116; t=1732579615; c=relaxed/simple;
+	bh=M5Co9uthH1gnhd3RN0apUr1JSaNbeWOyJUNf+j9Ky/k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lR1rBowN9FXpMYFoa6PWvqyO4Jt1Hdj0WWpNewXuK8Ei+RctG6zSaMgGRbVAm+FFJtbmDNd1zIccpLOYi0Nf+5bpRmaU8lPHuQaTpNwKyn3lGc2EU2WTUIfg7YecRAKk2XHtGsyhBXAVGwc1h8WwnU8CVeERIkFlfNXAbsgrqDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dpa33jkQ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea050e557dso5942754a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:06:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732579613; x=1733184413; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ugon1neLTS7p3z4YTPYc8MJMYZy7L4ypwCsQUtXZKYM=;
+        b=dpa33jkQSiyQ8y92Jlvk1+/2D/vgGqntoggfBx4BhtBhFNHNwT6GKy6Ke2MAkdkQMC
+         FxMMQq4Xx08U10aQFUVCqemCMh8Ix9/9Vc4JXBBJXfBgARg5CI4gsYf7rqWOiElN+6b0
+         NP8DGrE2a3DHjy4GDhfKBoF0mkfo7kPYhW3vlF0SedQetQqTxHRwpxbz4YxvUXTFRWgC
+         xockf/ETNHNYAVlpcV980ynL2CH0ICoBOAoI4qMb+lNgsJvsoUEt4Sq21kfi3RZgkDVJ
+         LIFJ1XPF3Yj+/8hHD1nvlKPhO9bGaj0UrF8umItBVYdbc2Ei89yN4FzK6MWxFCciSc1x
+         ZCQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732579613; x=1733184413;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ugon1neLTS7p3z4YTPYc8MJMYZy7L4ypwCsQUtXZKYM=;
+        b=Db7xaDgdqF+aF+8eRciGNyZOPCfvfw18/nYmb0l8Uv19sPGscIBNxk7GwDtmpjffDt
+         V3JLve3+XLzPmR/RTPFZmEOPe4J9lcArlEiTzjiqfkRfQs5XjzXmEz/aEF+HGY5D3TqT
+         xgSQya5CDkIVlk0KPNYDwwT29llgu9k+3hlM6uEc0RjI8UuDfrBmKg82K96HgVUHGLkq
+         rBmgTl+gYowzWnWPLCFlG9m5DjHVWUfAzF+u6MSr3zfnFMp66lY+XOQChsCwfVqCBg1o
+         3z1lOvnzsk1fTHK4LiWHi3JERg2c9oLKCr6qxYkkoR/zo/JOk0/Izu0nxN02jjqgpQtw
+         92cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWphYHO7ruTskPVaH3DrX38QiZe7m5sBmPyqDZT+/FmK7KKpK/FbkCf9sk7MqrYjJNYUy2WhamffQKRZwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE4bp7EJ3y6Rxa8Q/JhdaikFosNAPFidKslM96NJVmxkVwZrvb
+	OCJZAz2W40BR8P3xJW0kCbpofL1pUMl9oiu42BAJn99ePv5UlLV3XMAAa1Hj2+KmJ7VIzR3fDxC
+	dww==
+X-Google-Smtp-Source: AGHT+IG9PKWc+g14McheU5BkRkSI/aTn5PquV13KcWCYV3a7A5r9c+gWMln98TaoHNW0Ap5dQ27lIcklU4M=
+X-Received: from pjbta12.prod.google.com ([2002:a17:90b:4ecc:b0:2ea:3a1b:f493])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d81:b0:2ea:aa69:1077
+ with SMTP id 98e67ed59e1d1-2eb0e02b69cmr18708951a91.6.1732579613575; Mon, 25
+ Nov 2024 16:06:53 -0800 (PST)
+Date: Mon, 25 Nov 2024 16:06:52 -0800
+In-Reply-To: <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122225958.1775625-2-song@kernel.org>
+Mime-Version: 1.0
+References: <20241118130403.23184-1-kalyazin@amazon.com> <ZzyRcQmxA3SiEHXT@google.com>
+ <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com> <Zz-gmpMvNm_292BC@google.com>
+ <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com>
+Message-ID: <Z0URHBoqSgSr_X5-@google.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, graf@amazon.de, 
+	jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, nsaenz@amazon.es, 
+	xmarcalx@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Song,
+On Mon, Nov 25, 2024, Nikita Kalyazin wrote:
+> On 21/11/2024 21:05, Sean Christopherson wrote:
+> > On Thu, Nov 21, 2024, Nikita Kalyazin wrote:
+> > > On 19/11/2024 13:24, Sean Christopherson wrote:
+> > > > None of this justifies breaking host-side, non-paravirt async page faults.  If a
+> > > > vCPU hits a missing page, KVM can schedule out the vCPU and let something else
+> > > > run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
+> > > > even enter a low enough sleep state to let other cores turbo a wee bit.
+> > > > 
+> > > > I have no objection to disabling host async page faults, e.g. it's probably a net
+> > > > negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
+> > > > userspace.
+> > > 
+> > > That's a good point, I didn't think about it.  The async work would still
+> > > need to execute somewhere in that case (or sleep in GUP until the page is
+> > > available).
+> > 
+> > The "async work" is often an I/O operation, e.g. to pull in the page from disk,
+> > or over the network from the source.  The *CPU* doesn't need to actively do
+> > anything for those operations.  The I/O is initiated, so the CPU can do something
+> > else, or go idle if there's no other work to be done.
+> > 
+> > > If processing the fault synchronously, the vCPU thread can also sleep in the
+> > > same way freeing the pCPU for something else,
+> > 
+> > If and only if the vCPU can handle a PV async #PF.  E.g. if the guest kernel flat
+> > out doesn't support PV async #PF, or the fault happened while the guest was in an
+> > incompatible mode, etc.
+> > 
+> > If KVM doesn't do async #PFs of any kind, the vCPU will spin on the fault until
+> > the I/O completes and the page is ready.
+> 
+> I ran a little experiment to see that by backing guest memory by a file on
+> FUSE and delaying response to one of the read operations to emulate a delay
+> in fault processing.
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on jack-fs/fsnotify]
-[also build test WARNING on linus/master v6.12 next-20241125]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> In both cases the fault handling code is blocked and the pCPU is free for
+> other tasks.  I can't see the vCPU spinning on the IO to get completed if
+> the async task isn't created.  I tried that with and without async PF
+> enabled by the guest (MSR_KVM_ASYNC_PF_EN).
+> 
+> What am I missing?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/fanotify-Introduce-fanotify-filter/20241125-110818
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-patch link:    https://lore.kernel.org/r/20241122225958.1775625-2-song%40kernel.org
-patch subject: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
-config: x86_64-randconfig-123-20241125 (https://download.01.org/0day-ci/archive/20241126/202411260746.XEdTrLMj-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411260746.XEdTrLMj-lkp@intel.com/reproduce)
+Ah, I was wrong about the vCPU spinning.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411260746.XEdTrLMj-lkp@intel.com/
+The goal is specifically to schedule() from KVM context, i.e. from kvm_vcpu_block(),
+so that if a virtual interrupt arrives for the guest, KVM can wake the vCPU and
+deliver the IRQ, e.g. to reduce latency for interrupt delivery, and possible even
+to let the guest schedule in a different task if the IRQ is the guest's tick.
 
-sparse warnings: (new ones prefixed by >>)
->> fs/notify/fanotify/fanotify_filter.c:271:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct fanotify_filter_hook *filter_hook @@     got struct fanotify_filter_hook [noderef] __rcu *filter_hook @@
-   fs/notify/fanotify/fanotify_filter.c:271:21: sparse:     expected struct fanotify_filter_hook *filter_hook
-   fs/notify/fanotify/fanotify_filter.c:271:21: sparse:     got struct fanotify_filter_hook [noderef] __rcu *filter_hook
-   fs/notify/fanotify/fanotify_filter.c: note: in included file (through include/linux/kobject.h, include/linux/fanotify.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
---
->> fs/notify/fanotify/fanotify.c:1015:63: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct fanotify_filter_hook *filter_hook @@     got struct fanotify_filter_hook [noderef] __rcu *filter_hook @@
-   fs/notify/fanotify/fanotify.c:1015:63: sparse:     expected struct fanotify_filter_hook *filter_hook
-   fs/notify/fanotify/fanotify.c:1015:63: sparse:     got struct fanotify_filter_hook [noderef] __rcu *filter_hook
-
-vim +271 fs/notify/fanotify/fanotify_filter.c
-
-   262	
-   263	/*
-   264	 * fanotify_filter_del - Delete a filter from fsnotify_group.
-   265	 */
-   266	void fanotify_filter_del(struct fsnotify_group *group)
-   267	{
-   268		struct fanotify_filter_hook *filter_hook;
-   269	
-   270		fsnotify_group_lock(group);
- > 271		filter_hook = group->fanotify_data.filter_hook;
-   272		if (!filter_hook)
-   273			goto out;
-   274	
-   275		rcu_assign_pointer(group->fanotify_data.filter_hook, NULL);
-   276		fanotify_filter_hook_free(filter_hook);
-   277	
-   278	out:
-   279		fsnotify_group_unlock(group);
-   280	}
-   281	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Letting mm/ or fs/ do schedule() means the only wake event even for the vCPU task
+is the completion of the I/O (or whatever the fault is waiting on).
 
