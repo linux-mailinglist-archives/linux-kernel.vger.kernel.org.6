@@ -1,39 +1,63 @@
-Return-Path: <linux-kernel+bounces-422508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EC89D9A74
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:33:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BED49D9A7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:35:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD5D163E15
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:33:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3ECDB24AE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7621D63D8;
-	Tue, 26 Nov 2024 15:33:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3761D5ADA
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D981D63E6;
+	Tue, 26 Nov 2024 15:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="j16/TB3W"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D40C1917E6;
+	Tue, 26 Nov 2024 15:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732635188; cv=none; b=Av3NzKP8orU+a96OkvVh+CWXx+H9OiRlxRjCioUErktk3ZTH23bLMKYjZ+zawZwcsuzrFZF+uqfjv6TsYZQQ8C5eU8xuvkTdHyw579DjytXSD18fDqaOrMWrPHtQPqj3jMeKShj53rgszzgcWJ6nUXASnVkSx8BfEt4S02+Waw0=
+	t=1732635324; cv=none; b=IxQME6pukUEW7OnV8I7a2QXvW7lq9lVt/uWiNdqhpd/dJxG8TPovAq1U1R67wACnDghjfzf9iA8dd8Ldm25vrnUQeU6hPnrOcStyPNiRvunmXI7UC1sqNkBaJipoUNbzNPR9332jADnQU56mUxejK4hQWawhN16FP2s5Vml1UKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732635188; c=relaxed/simple;
-	bh=R79lM4HV1OWAjCFPl5G7jfaHtWzMgQCSNApuLL39ulQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=er7t6dxQCy7E9Rz6/174KhZ25kPVSrnBcFwwGPlOtcHuYUsFo40w/bUH50Rqbzi5bPLy4gK9vHTvq46wTKfihHC9sIUcB9jkeac8T/0EdzkXqW9/pLqU+Qioy2C7w7HDafErDM+3OdI0lxu7BShXqsjSUISO7HQ5CK9LcTfqv1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97E84153B;
-	Tue, 26 Nov 2024 07:33:34 -0800 (PST)
-Received: from [10.1.29.199] (XHFQ2J9959.cambridge.arm.com [10.1.29.199])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C4473F5A1;
-	Tue, 26 Nov 2024 07:33:02 -0800 (PST)
-Message-ID: <569f1417-0b5a-4360-930f-f7e8c9c6e605@arm.com>
-Date: Tue, 26 Nov 2024 15:33:01 +0000
+	s=arc-20240116; t=1732635324; c=relaxed/simple;
+	bh=oI//W4q1UMMY9xK64Hq9RXynxX8RgQYpcbtg2vbzkF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JsCgm+uPtXb4SlAUARGMDjwa4Wd4hZ7/1GQEEf+5wefkMSz8ANVGgTS5zUaoBRozm2iLxy47SwGuH0gEEe4203PazwUqTTPvkg224kUrU0bxgAWdSypgDuP8++ZyZej9H/JG7UkLUq6wNYBzVOiIRaPTy2jCoMHhs6gCM6tPA7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=j16/TB3W; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732635323; x=1764171323;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=YSd8nei3PrOGgIB4bIkXJ6q/2Rw2Qbesj7W0KxlRtBg=;
+  b=j16/TB3W4SALtBvCicjzkfcaYXupYidI2wVoO3Uro6PubHaoPFvwHklY
+   maamJXHVCANP3eIgQWgsUdOovnMYIFHWwHi+kLeGOjyDILoRwVLD+6p1H
+   /lWaqla2tTc6CL9+dLno5ZOijZnOQWlbDYTfSjg59zRpWYEudGExOgPhg
+   A=;
+X-IronPort-AV: E=Sophos;i="6.12,186,1728950400"; 
+   d="scan'208";a="44662394"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 15:35:19 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:5477]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.116:2525] with esmtp (Farcaster)
+ id a4f8f8de-06c1-46ac-9916-65f718e2f8b5; Tue, 26 Nov 2024 15:35:18 +0000 (UTC)
+X-Farcaster-Flow-ID: a4f8f8de-06c1-46ac-9916-65f718e2f8b5
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 26 Nov 2024 15:35:17 +0000
+Received: from [192.168.5.6] (10.106.82.29) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Tue, 26 Nov 2024
+ 15:35:16 +0000
+Message-ID: <e12ef1ad-7576-4874-8cc2-d48b6619fa95@amazon.com>
+Date: Tue, 26 Nov 2024 15:35:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,132 +65,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/slab: Avoid build bug for calls to kmalloc with a
- large constant
-Content-Language: en-GB
-To: Vlastimil Babka <vbabka@suse.cz>, Dave Kleikamp
- <dave.kleikamp@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-6-ryan.roberts@arm.com>
- <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
- <cb9cabed-0038-42b3-b9fc-c9ba62b12781@suse.cz>
- <7fb6c5a2-b9ae-4a29-a871-2f0bdc636e41@arm.com>
- <9675f4f0-6290-43aa-bf17-6b9c2b461485@suse.cz>
- <69746c3a-72af-4c28-8f04-bcfae7a78107@arm.com>
- <ba2a3841-6dbc-4920-81f9-2fc0518ec1d3@suse.cz>
- <36577539-bff6-476e-8d6b-ca20e3de2391@suse.cz>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <36577539-bff6-476e-8d6b-ca20e3de2391@suse.cz>
-Content-Type: text/plain; charset=UTF-8
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <david@redhat.com>,
+	<peterx@redhat.com>, <oleg@redhat.com>, <vkuznets@redhat.com>,
+	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
+	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
+	<xmarcalx@amazon.com>
+References: <20241118130403.23184-1-kalyazin@amazon.com>
+ <ZzyRcQmxA3SiEHXT@google.com>
+ <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
+ <Zz-gmpMvNm_292BC@google.com>
+ <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com>
+ <Z0URHBoqSgSr_X5-@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <Z0URHBoqSgSr_X5-@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D004EUC004.ant.amazon.com (10.252.51.191) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On 26/11/2024 15:27, Vlastimil Babka wrote:
-> On 11/26/24 16:09, Vlastimil Babka wrote:
->> On 11/26/24 15:53, Ryan Roberts wrote:
->>> On 26/11/2024 12:36, Vlastimil Babka wrote:
->>>> On 11/26/24 13:18, Ryan Roberts wrote:
->>>>> On 14/11/2024 10:09, Vlastimil Babka wrote:
->>>>>> On 11/1/24 21:16, Dave Kleikamp wrote:
->>>>>>> When boot-time page size is enabled, the test against KMALLOC_MAX_CACHE_SIZE
->>>>>>> is no longer optimized out with a constant size, so a build bug may
->>>>>>> occur on a path that won't be reached.
->>>>>>
->>>>>> That's rather unfortunate, the __builtin_constant_p(size) part of
->>>>>> kmalloc_noprof() really expects things to resolve at compile time and it
->>>>>> would be better to keep it that way.
->>>>>>
->>>>>> I think it would be better if we based KMALLOC_MAX_CACHE_SIZE itself on
->>>>>> PAGE_SHIFT_MAX and kept it constant, instead of introducing
->>>>>> KMALLOC_SHIFT_HIGH_MAX only for some sanity checks.
->>>>>>
->>>>>> So if the kernel was built to support 4k to 64k, but booted as 4k, it would
->>>>>> still create and use kmalloc caches up to 128k. SLUB should handle that fine
->>>>>> (if not, please report it :)
+
+
+On 26/11/2024 00:06, Sean Christopherson wrote:
+> On Mon, Nov 25, 2024, Nikita Kalyazin wrote:
+>> On 21/11/2024 21:05, Sean Christopherson wrote:
+>>> On Thu, Nov 21, 2024, Nikita Kalyazin wrote:
+>>>> On 19/11/2024 13:24, Sean Christopherson wrote:
+>>>>> None of this justifies breaking host-side, non-paravirt async page faults.  If a
+>>>>> vCPU hits a missing page, KVM can schedule out the vCPU and let something else
+>>>>> run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
+>>>>> even enter a low enough sleep state to let other cores turbo a wee bit.
 >>>>>
->>>>> So when PAGE_SIZE_MAX=64K and PAGE_SIZE=4K, kmalloc will support up to 128K
->>>>> whereas before it only supported up to 8K. I was trying to avoid that since I
->>>>> assumed that would be costly in terms of extra memory allocated for those higher
->>>>> order buckets that will never be used. But I have no idea how SLUB works in
->>>>> practice. Perhaps memory for the cache is only lazily allocated so we won't see
->>>>> an issue in practice?
+>>>>> I have no objection to disabling host async page faults, e.g. it's probably a net
+>>>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
+>>>>> userspace.
 >>>>
->>>> Yes the e.g. 128k slabs themselves will be lazily allocated. There will be
->>>> some overhead with the management structures (struct kmem_cache etc) but
->>>> much smaller.
->>>> To be completely honest, some extra overhead might come to be when the slabs
->>>> are allocated ans later the user frees those allocations. kmalloc_large()
->>>> wwould return them immediately, while a regular kmem_cache will keep one or
->>>> more per cpu for reuse. But if that becomes a visible problem we can tune
->>>> those caches to discard slabs more aggressively.
+>>>> That's a good point, I didn't think about it.  The async work would still
+>>>> need to execute somewhere in that case (or sleep in GUP until the page is
+>>>> available).
 >>>
->>> Sorry to keep pushing on this, now that I've actually looked at the code, I feel
->>> I have a slightly better understanding:
+>>> The "async work" is often an I/O operation, e.g. to pull in the page from disk,
+>>> or over the network from the source.  The *CPU* doesn't need to actively do
+>>> anything for those operations.  The I/O is initiated, so the CPU can do something
+>>> else, or go idle if there's no other work to be done.
 >>>
->>> void *kmalloc_noprof(size_t size, gfp_t flags)
->>> {
->>> 	if (__builtin_constant_p(size) && size) {
->>> 		
->>> 		if (size > KMALLOC_MAX_CACHE_SIZE)
->>> 			return __kmalloc_large_noprof(size, flags); <<< (1)
+>>>> If processing the fault synchronously, the vCPU thread can also sleep in the
+>>>> same way freeing the pCPU for something else,
 >>>
->>> 		index = kmalloc_index(size);
->>> 		return __kmalloc_cache_noprof(...);   <<< (2)
->>> 	}
->>> 	return __kmalloc_noprof(size, flags);   <<< (3)
->>> }
+>>> If and only if the vCPU can handle a PV async #PF.  E.g. if the guest kernel flat
+>>> out doesn't support PV async #PF, or the fault happened while the guest was in an
+>>> incompatible mode, etc.
 >>>
->>> So if size and KMALLOC_MAX_CACHE_SIZE are constant, we end up with this
->>> resolving either to a call to (1) or (2), decided at compile time. If
->>> KMALLOC_MAX_CACHE_SIZE is not constant, (1), (2) and the runtime conditional
->>> need to be kept in the function.
->>>
->>> But intuatively, I would have guessed that given the choice between the overhead
->>> of keeping that runtime conditional vs keeping per-cpu slab caches for extra
->>> sizes between 16K and 128K, then the runtime conditional would be preferable. I
->>> would guess that quite a bit of memory could get tied up in those caches?
->>>
->>> Why is your preference the opposite? What am I not understanding?
+>>> If KVM doesn't do async #PFs of any kind, the vCPU will spin on the fault until
+>>> the I/O completes and the page is ready.
 >>
->> +CC more slab people.
+>> I ran a little experiment to see that by backing guest memory by a file on
+>> FUSE and delaying response to one of the read operations to emulate a delay
+>> in fault processing.
+> 
+> ...
+> 
+>> In both cases the fault handling code is blocked and the pCPU is free for
+>> other tasks.  I can't see the vCPU spinning on the IO to get completed if
+>> the async task isn't created.  I tried that with and without async PF
+>> enabled by the guest (MSR_KVM_ASYNC_PF_EN).
 >>
->> So the above is an inline function, but constructed in a way that it should,
->> without further inline code, become
->> - a call to __kmalloc_large_noprof() for build-time constant size larger
->> than KMALLOC_MAX_CACHE_SIZE
->> - a call to __kmalloc_cache_noprof() for build-time constant size smaller
->> than KMALLOC_MAX_CACHE_SIZE, where the cache is picked from an array with
->> compile-time calculated index
->> - call to __kmalloc_noprof() for non-constant sizes otherwise
->>
->> If KMALLOC_MAX_CACHE_SIZE stops being build-time constant, the sensible way
->> to handle it would be to #ifdef or otherwise compile out away the whole "if
->> __builtin_constant_p(size)" part and just call __kmalloc_noprof() always, so
->> we don't blow the inline paths with a KMALLOC_MAX_CACHE_SIZE check leading
->> to choice between calling __kmalloc_large_noprof() or __kmalloc_cache_noprof().
+>> What am I missing?
 > 
-> Or maybe we could have PAGE_SIZE_MAX derived KMALLOC_MAX_CACHE_SIZE_MAX
-> behave as the code above currently does with KMALLOC_MAX_CACHE_SIZE, and
-> additionally have PAGE_SIZE_MIN derived KMALLOC_MAX_CACHE_SIZE_MIN, where
-> build-time-constant size larger than KMALLOC_MAX_CACHE_SIZE_MIN (which is a
-> compile-time test) is redirected to __kmalloc_noprof() for a run-time test.
+> Ah, I was wrong about the vCPU spinning.
 > 
-> That seems like the optimum solution :)
+> The goal is specifically to schedule() from KVM context, i.e. from kvm_vcpu_block(),
+> so that if a virtual interrupt arrives for the guest, KVM can wake the vCPU and
+> deliver the IRQ, e.g. to reduce latency for interrupt delivery, and possible even
+> to let the guest schedule in a different task if the IRQ is the guest's tick.
+> 
+> Letting mm/ or fs/ do schedule() means the only wake event even for the vCPU task
+> is the completion of the I/O (or whatever the fault is waiting on).
 
-Yes; that feels like the better approach to me. I'll implement this by default
-unless anyone else objects.
+Ok, great, then that's how I understood it last time.  The only thing 
+that is not entirely clear to me is like Vitaly says, 
+KVM_ASYNC_PF_SEND_ALWAYS is no longer set, because we don't want to 
+inject IRQs into the guest when it's in kernel mode, but the "host async 
+PF" case would still allow IRQs (eg ticks like you said).  Why is it 
+safe to deliver them?
 
-> 
->> I just don't believe we would waste so much memory with caches the extra
->> sizes for sizes between 16K and 128K, so would do that suggestion only if
->> proven wrong. But I wouldn't mind it that much if you chose it right away.
->> The solution earlier in this thread to patch __kmalloc_index() would be
->> worse than either of those two alternatives though.
-> 
-> 
+>>>>> I have no objection to disabling host async page faults,
+>>>>> e.g. it's probably a net>>>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling
+>>>>> needs an opt-in from>>>>> userspace.
+Back to this, I couldn't see a significant effect of this optimisation 
+with the original async PF so happy to give it up, but it does make a 
+difference when applied to async PF user [2] in my setup.  Would a new 
+cap be a good way for users to express their opt-in for it?
 
+[1]: 
+https://lore.kernel.org/kvm/20241118130403.23184-1-kalyazin@amazon.com/T/#ma719a9cb3e036e24ea8512abf9a625ddeaccfc96
+[2]: 
+https://lore.kernel.org/kvm/20241118123948.4796-1-kalyazin@amazon.com/T/
 
