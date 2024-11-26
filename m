@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-422084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8770F9D9451
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:25:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F0F9D9493
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22659283D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:25:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3DCB2C631
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB78F1C2323;
-	Tue, 26 Nov 2024 09:22:21 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B292B1CEE9B;
+	Tue, 26 Nov 2024 09:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRdmqkdv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFC51B4F08
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9DD1B86F6;
+	Tue, 26 Nov 2024 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612941; cv=none; b=MY1rv8AYvTxyibvBZ2WqaO+SbyjOEF8J6Ggae/RMaqhVDFdoCvMDdGV80CRap9XPSA5ojyoVum1sHRyVdq05cNtRFnQdM43iP6rWHGnhLdSXfIg8pqveCX8uBHmJRuGScWsoMi7zlEOvLQ240AjAusVi3HtCR0Xiz8NfiCG747Q=
+	t=1732612961; cv=none; b=dbCJ+Y6T89WE+V4DMy0ecOwONe3haOp86j7GhvFr6LhIZf85dfAn7uDxt4US2p/O8dXFFu7QF+K0gtNWMHfa4dONKuDdkwxePl2igkjCZ/oRiZF9ARoxcaD1UcW33q2JzN2lPSJWlf/580W+P6N9SPTEU/hYmDrqR/8gvLG8u2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612941; c=relaxed/simple;
-	bh=rBuLrPc3xzjgkqlUnknHGr0EQxbbCWBO/qnIC6uzYhE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dSSYdDOZDzBmyw1e9Fon35pzKGV40kVEEmAziJ9dmVDskZpjcxLrTrqo4rubaF7nOqI+ZMQSeI0jS4r3FJEXAht2XxlLw5k6PtqPzjyCybZochjIGTuhnSmP3rQMR0tI/PrmRrWyjAZJj42+3tLp9ShyiMlr3AuJFlezqip17wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1tFrlu-0005uB-Fr; Tue, 26 Nov 2024 10:22:14 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1tFrlt-000DzL-1d;
-	Tue, 26 Nov 2024 10:22:14 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1tFrlt-00B5zE-1v;
-	Tue, 26 Nov 2024 10:22:14 +0100
-From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
-Date: Tue, 26 Nov 2024 10:22:15 +0100
-Subject: [PATCH 3/3] ARM: dts: imx6sx: add phy-3p0-supply to usb phys
+	s=arc-20240116; t=1732612961; c=relaxed/simple;
+	bh=GBcyARXkKoNMEyqq/V5fd/VtS1EBYhW5+R2Nxpn7CEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HDtB1nVOZyk6Fo+mGgFGH+fWUsQEKIV5dwI/DsGmNEqI5esPtnqYf2JwELSqVL64N2xj9SZ2LgrFhWqr4tMOvRg/klYErrTfK6UsUSA6eGqVeG3j0vsdL4Szg51KEgtv5P7Eeh2zc7YiI5jDck1R6T3m4hnlJL4FjXjotGpoZaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRdmqkdv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584BAC4CECF;
+	Tue, 26 Nov 2024 09:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732612960;
+	bh=GBcyARXkKoNMEyqq/V5fd/VtS1EBYhW5+R2Nxpn7CEo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WRdmqkdv58VpHRoBiXWm3uSwNFdmQc/LSxibzdBLBTzrbLw/gRivQCkWZgdhXIkCx
+	 6SJYUYI82lKSOszSczyOmWVWHWffEbVsBjjO/P8yUDWlyMV7xl39AJajZ2IxQpWlDy
+	 MwpHiybipuNRETZ4LsXXFEG/RxcU18N/aXtDqRvMR91M1sCM8larLmnZuOr5deqR2U
+	 lPSZ9tSNF/RJRR99q2oWck+vvo0CCwkBgq0Zg6KnjMmOSNZcrVxxiSZqLCLIqPgD+o
+	 cuK7DqCu4ZOhVDWSSKmQbPoxx0Sugb8iUgp47MklUhzNx2JkfpFtdgxfg74ootA8yO
+	 y1LUhsl2dgAug==
+Message-ID: <5ad018d8-a2a2-4bf3-86d0-47bbe2c3d94d@kernel.org>
+Date: Tue, 26 Nov 2024 10:22:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nfc: s3fwrn5: Prefer strscpy() over strcpy()
+To: Abdul Rahim <abdul.rahim@myyahoo.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <8e68e02a-2c58-485c-a13e-a4b52616e63e@kernel.org>
+ <20241125204111.39844-1-abdul.rahim@myyahoo.com>
+ <47915021-e5f5-4104-88ee-229a04ae765b@kernel.org>
+ <myr4qk4h7pkvvsqzn4rpp2dqpuwkqwqllb6jgblkhwrzfy22r4@hozqqltux5om>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <myr4qk4h7pkvvsqzn4rpp2dqpuwkqwqllb6jgblkhwrzfy22r4@hozqqltux5om>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-v6-12-topic-imx-3p0-regulator-v1-3-c618ed111c75@pengutronix.de>
-References: <20241126-v6-12-topic-imx-3p0-regulator-v1-0-c618ed111c75@pengutronix.de>
-In-Reply-To: <20241126-v6-12-topic-imx-3p0-regulator-v1-0-c618ed111c75@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Stefan Kerkmann <s.kerkmann@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The integrated usb phys are supplied by the 3p0 regulator, which has a
-voltage range of 2.625V to 3.4V. Thus the min and max values are
-corrected and the regulator added as a proper supply for the usb phys.
+On 26/11/2024 09:49, Abdul Rahim wrote:
+> On Tue, Nov 26, 2024 at 07:38:43AM +0100, Krzysztof Kozlowski wrote:
+>> On 25/11/2024 21:41, Abdul Rahim wrote:
+>>> Do i need to resend it. What additional information do I need to
+>>> provide?
+>>
+>>
+>> You cut entire email, no clue what's this.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Do I need to resend this patch [1]. You gave it `Reviewed-by` tag. But
+> it's not applied yet.
+> 
+> [1]: https://lore.kernel.org/lkml/20241029221641.15726-1-abdul.rahim@myyahoo.com/
+First, it is merge window, no point to ping during that time. It is
+actually highly discouraged, unless this is a fix. And it is not a fix.
 
-This fixes the following warnings during the probe of the mxs_phy
-driver:
+Second, this should have net-next PATCH prefix, see subsystem profile
+for networking.
 
-mxs_phy 20c9000.usbphy: supply phy-3p0 not found, using dummy regulator
-mxs_phy 20ca000.usbphy: supply phy-3p0 not found, using dummy regulator
+I asked to change things in commit msg, so I expect next version, not
+resend.
 
-The regulator handling was introduced by commit `966d73152078 (usb: phy:
-mxs: enable regulator phy-3p0 to improve signal qualilty, 2024-07-26)`.
-
-Signed-off-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
----
- arch/arm/boot/dts/nxp/imx/imx6sx.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sx.dtsi b/arch/arm/boot/dts/nxp/imx/imx6sx.dtsi
-index a9550f115f82699336f62c33214c9a9bb04e79e0..5132b575b001564b9767605ae7ff044701516673 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sx.dtsi
-@@ -637,8 +637,8 @@ reg_vdd1p1: regulator-1p1 {
- 				reg_vdd3p0: regulator-3p0 {
- 					compatible = "fsl,anatop-regulator";
- 					regulator-name = "vdd3p0";
--					regulator-min-microvolt = <2800000>;
--					regulator-max-microvolt = <3150000>;
-+					regulator-min-microvolt = <2625000>;
-+					regulator-max-microvolt = <3400000>;
- 					regulator-always-on;
- 					anatop-reg-offset = <0x120>;
- 					anatop-vol-bit-shift = <8>;
-@@ -731,6 +731,7 @@ usbphy1: usbphy@20c9000 {
- 				reg = <0x020c9000 0x1000>;
- 				interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX6SX_CLK_USBPHY1>;
-+				phy-3p0-supply = <&reg_vdd3p0>;
- 				fsl,anatop = <&anatop>;
- 			};
- 
-@@ -739,6 +740,7 @@ usbphy2: usbphy@20ca000 {
- 				reg = <0x020ca000 0x1000>;
- 				interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&clks IMX6SX_CLK_USBPHY2>;
-+				phy-3p0-supply = <&reg_vdd3p0>;
- 				fsl,anatop = <&anatop>;
- 			};
- 
-
--- 
-2.39.5
-
+Best regards,
+Krzysztof
 
