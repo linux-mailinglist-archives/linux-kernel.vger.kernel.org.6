@@ -1,177 +1,93 @@
-Return-Path: <linux-kernel+bounces-421787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14B69D9021
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:44:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296F29D9023
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:46:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770BA282198
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9A628984F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79610940;
-	Tue, 26 Nov 2024 01:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DA6DDA9;
+	Tue, 26 Nov 2024 01:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VxSpwR3n"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7W7cMMc"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D54811712;
-	Tue, 26 Nov 2024 01:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9D79D2
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732585477; cv=none; b=SMl/FAmr9R+jRFyqJvyqmjdW4PNHGZ0BeWv0tftRAreSZgdrc+ruGwXy9F67DWaBOG5/f74THOOJ9hMMGQWzbuzeneJ3FcLKR6eBeAzNsqZHcBDhPynk9RO5Qqh3kggMglt2/Bn2qgwro0b8Q90RP40hYsQCTOSdalDKEwLX4HU=
+	t=1732585570; cv=none; b=AFI0lsIpojUWFN3IdBthk5AADkHnSZDh6H7toWVmaAQvw5yh0F2UmgXiWLMNPm3yvs7Wy0hPpoY5LQWFsi2WI6gf1GCJo8HjT99p3a0VYoHXanXK+nB9eLw3MR7tiS15FFWhAktwN3LUpNiWhAvYfHH+oiKVpKLKJpcG1uPfqLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732585477; c=relaxed/simple;
-	bh=Z1MfXI+7J5O/Z/+IMb1ubuLYsxon/6Weg0mWusfqz58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ndrijRVsY/tkF/EoM3Oedu/CK6WBpEfxmUaUFLaL4cYTlyAb4EfVm+Cx0Wqs3a2uFSmwVBFw4q+XI0ik+tn9T2UFJqBbFUqiK+n0T29XkU7VmfV3BI1Z0uDR/ay7iAizrH46FtljbWgZWIwFyHMqmYB5F9+dJX2mID+FX/bS5xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VxSpwR3n; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732585476; x=1764121476;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Z1MfXI+7J5O/Z/+IMb1ubuLYsxon/6Weg0mWusfqz58=;
-  b=VxSpwR3nStZN7DDVACKX6zZ5iLNVYXkpOzDkIvWquGowRv8tdDCkYrgG
-   6z7W3HDzJ/3x2Gy2k6GV3XmFRwP7LYJHNF3Hsu3rHtZXMMSCSp1MltHVn
-   mxRPMb6M9KbNN6A+R1cvQ6kluMN6HihdqMKIf4QCxnRkD8z1R6EAKWYRt
-   mfzGDzqjKNMAd9hrMcr7St4kE/jZcCwMtx+/flco53lCNRK7BqSc40f6q
-   Mx/VS5wZjpjqVJjAYZeLOvukGIKt+WWfdYXAreR3KK+74s69HJADNbWHk
-   GwDRrRC0Cx/DYV8G/0th0DsuWPD/y37rd2Ck6tlTt1TrmSZkkF+rWZBkg
-   Q==;
-X-CSE-ConnectionGUID: 6Y9tXlaOR4638ck19eh1lw==
-X-CSE-MsgGUID: 6XtR9JSuRQ+IpTmvBPoDJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43216939"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="43216939"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 17:44:35 -0800
-X-CSE-ConnectionGUID: 59mmIaKJSaqr8IaifxUMBg==
-X-CSE-MsgGUID: udwNEhFYSZCcf+km8NIa8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="91393496"
-Received: from unknown (HELO [10.238.10.67]) ([10.238.10.67])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 17:44:31 -0800
-Message-ID: <57aab3bf-4bae-4956-a3b7-d42e810556e3@linux.intel.com>
-Date: Tue, 26 Nov 2024 09:44:28 +0800
+	s=arc-20240116; t=1732585570; c=relaxed/simple;
+	bh=v2ZZeeqqoeqVVBwfwGHzwBc28rv9kX8O4U3pgllvZMU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AayxSewZyGetG6UZVy5wEcAlmHORto6958T8XPEciLSsaAW47+oVfBpXRzoFc2WIZ56CdoF6ys22L6aT45qDuPRs2Q6JbBV8zFojrFAlcIdBC0TFh8ZOC3drxpeF8UWiG8Ox9QYH5iXW5XeMSb63Rsh2nCXyq7jQkOsAwQPBDKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7W7cMMc; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e59746062fso4305111a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:46:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732585569; x=1733190369; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FeXIRz+voy9oY0ahmpzmVjvKjLMTGNrTBZYjONA26RI=;
+        b=A7W7cMMchXYgh1WzMLCIRkwKC3LyACDe65+hQI0VpjMNp9hCF3Dlvip1cCwgELUCaS
+         7dvlNA1fLXRf/xJK4JI/fptnCuCmcpNi3qz7HDPUbKkGVyXVSfRC1TWx0cnyaKYZP1QR
+         skd4EuhqztJfKVd6u9uUohOLDGEsrs91cBVMEQw/4jCeBxPToQNECgEWVKgJsR96wZpk
+         9HXBT900yAVkKo5tLEVZ1KN2cTpRZsPkEX8tuM8KCMrNphzQkQGXVVNKvdWjfdY/Ld8L
+         mLgIXX79JTn1Momh00WZ58cvFleWFVCqqpY63oHbWA4lUsUi5+k7LdntRUjthpB14RN7
+         fUbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732585569; x=1733190369;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FeXIRz+voy9oY0ahmpzmVjvKjLMTGNrTBZYjONA26RI=;
+        b=MV/pKT2taS3FJIzOggdJvzbyRrTm8uKuwzGCUnhn3cQ8PMDIfcmIDylsbD4WzA9ebt
+         r5EMYPFs9kHGZ2LcO9vzCUC5YvQrlJVdZOf1iNMczfjLIWfN2ZUu0xsDCAQlMLXG3khT
+         FY9CWP6ngGD1HFKBHJ7mEwlTMveQlrjdMQrLHXv+k7qoNE1yOeiBE+srqy/7OKLg6CmB
+         YuR4g7kxIIMTOASdg6ge3j+HOw/139Uj9dARjJRip3yl9ziDKaUcNiOPz3/NTOdVAvUe
+         YUn+cjHBHq0TbGShXWWhPq8bmCDV80rFSt5NOLjmws1PQBSGaYsYdKBZQjx4M7EhKiKm
+         NvfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMzhJ8y+REFDqEVARsZGkmpAxnLlQMehYBNVgC0/67x6J2+q1xLtEA6QcVSkfiaivXshFCRiJC/EwLiyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkEi1TY+MvS5Fl44IRuOugXOXnGQAgYEprR4bABDuyUc7gttnH
+	KgGh3buPdad/djCBxWLLSRbLarrKpClEUu9VYTSx4j6Kvsp6wWY3Fr1rhHnFuqiTEo4EL8PoUt7
+	EjCgiBlNSfWa8tBHzPJmVexolsZl7B2WX
+X-Gm-Gg: ASbGncuNutV3JYXKxt6yofLrjrqMDOyFlSOKF5yFTbO5+OFjyPiUAyoiJll1dThZJNf
+	9jBSAurYOpUN7XOOXrZWYF1vme7gJfA==
+X-Google-Smtp-Source: AGHT+IG8EzAshG5okGmZG0whAC5I9ZPfewmJR9vy3whIx2vYnEC0yhECfkL0T9p39NwZgLHb4d1+IfK3/+2wKMMPEMA=
+X-Received: by 2002:a17:90b:4c8c:b0:2ea:7755:a108 with SMTP id
+ 98e67ed59e1d1-2eb0e12c9admr18324964a91.4.1732585568782; Mon, 25 Nov 2024
+ 17:46:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] KVM: TDX: TD vcpu enter/exit
-To: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Weijiang Yang <weijiang.yang@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- "dmatlack@google.com" <dmatlack@google.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- Chao Gao <chao.gao@intel.com>, Rick P Edgecombe
- <rick.p.edgecombe@intel.com>, "x86@kernel.org" <x86@kernel.org>
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <86d71f0c-6859-477a-88a2-416e46847f2f@linux.intel.com>
- <Z0SVf8bqGej_-7Sj@google.com>
- <735d3a560046e4a7a9f223dc5688dcf1730280c5.camel@intel.com>
- <Z0T_iPdmtpjrc14q@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <Z0T_iPdmtpjrc14q@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Tue, 26 Nov 2024 01:45:57 +0000
+Message-ID: <CAJwJo6bu3vfogmzxpfzFV_guf5GS_1TsqdB29NZoUr-_6fd8pg@mail.gmail.com>
+Subject: Re: [git pull] IOMMU Updates for Linux v6.13
+To: pr-tracker-bot@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>, 
+	open list <linux-kernel@vger.kernel.org>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-
-On 11/26/2024 6:51 AM, Sean Christopherson wrote:
-
-[...]
-> When an NMI happens in non-root, the NMI is acknowledged by the CPU prior to
-> performing VM-Exit.  In regular VMX, NMIs are blocked after such VM-Exits.  With
-> TDX, that blocking happens for SEAM root, but the SEAMRET back to VMX root will
-> load interruptibility from the SEAMCALL VMCS, and I don't see any code in the
-> TDX-Module that propagates that blocking to SEAMCALL VMCS.
-I see, thanks for the explanation!
-
+> The pull request you sent on Fri, 22 Nov 2024 09:17:47 +0100:
 >
-> Hmm, actually, this means that TDX has a causality inversion, which may become
-> visible with FRED's NMI source reporting.  E.g. NMI X arrives in SEAM non-root
-> and triggers a VM-Exit.  NMI X+1 becomes pending while SEAM root is active.
-> TDX-Module SEAMRETs to VMX root, NMIs are unblocked, and so NMI X+1 is delivered
-> and handled before NMI X.
-
-This example can also cause an issue without FRED.
-1. NMI X arrives in SEAM non-root and triggers a VM-Exit.
-2. NMI X+1 becomes pending while SEAM root is active.
-3. TDX-Module SEAMRETs to VMX root, NMIs are unblocked.
-4. NMI X+1 is delivered and handled before NMI X.
-    (NMI handler could handle all NMI source events, including the source
-     triggered NMI X)
-5. KVM calls exc_nmi() to handle the VM Exit caused by NMI X
-In step 5, because the source event caused NMI X has been handled, and NMI X
-will not be detected as a second half of back-to-back NMIs, according to
-Linux NMI handler, it will be considered as an unknown NMI.
-
-Actually, the issue could happen if NMI X+1 occurs after exiting to SEAM root
-mode and before KVM handling the VM-Exit caused by NMI X.
-
-
+> > git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.13
 >
-> So the TDX-Module needs something like this:
->
-> diff --git a/src/td_transitions/td_exit.c b/src/td_transitions/td_exit.c
-> index eecfb2e..b5c17c3 100644
-> --- a/src/td_transitions/td_exit.c
-> +++ b/src/td_transitions/td_exit.c
-> @@ -527,6 +527,11 @@ void td_vmexit_to_vmm(uint8_t vcpu_state, uint8_t last_td_exit, uint64_t scrub_m
->           load_xmms_by_mask(tdvps_ptr, xmm_select);
->       }
->   
-> +    if (<is NMI VM-Exit => SEAMRET)
-> +    {
-> +        set_guest_inter_blocking_by_nmi();
-> +    }
-> +
->       // 7.   Run the common SEAMRET routine.
->       tdx_vmm_post_dispatching();
->
->
-> and then KVM should indeed handle NMI exits prior to leaving the noinstr section.
->   
->>> TDX is also different because KVM isn't responsible for context switching guest
->>> state.  Specifically, CR2 is managed by the TDX Module, and so there is no window
->>> where KVM runs with guest CR2, and thus there is no risk of clobbering guest CR2
->>> with a host value, e.g. due to take a #PF due instrumentation triggering something.
->>>
->>> All that said, I did forget that code that runs between guest_state_enter_irqoff()
->>> and guest_state_exit_irqoff() can't be instrumeneted.  And at least as of patch 2
->>> in this series, the simplest way to make that happen is to tag tdx_vcpu_enter_exit()
->>> as noinstr.  Just please make sure nothing else is added in the noinstr section
->>> unless it absolutely needs to be there.
->> If NMI is not a concern, is below also an option?
-> No, because instrumentation needs to be prohibited for the entire time between
-> guest_state_enter_irqoff() and guest_state_exit_irqoff().
->
->> 	guest_state_enter_irqoff();
->>
->> 	instructmentation_begin();
->> 	tdh_vp_enter();
->> 	instructmentation_end();
->>
->> 	guest_state_exit_irqoff();
->>
+> has been merged into torvalds/linux.git:
+> https://git.kernel.org/torvalds/c/ceba6f6f33f29ab838b23a567621b847e527d085
 
+It seems to have a minor merge resolution artefact: iommu_present() now
+has a header declaration with no definition.
+
+Thanks,
+             Dmitry
 
