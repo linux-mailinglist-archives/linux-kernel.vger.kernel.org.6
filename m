@@ -1,217 +1,222 @@
-Return-Path: <linux-kernel+bounces-422481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52DFB9D9A2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:07:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28ADD9D9A31
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:09:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 960CFB283F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:06:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBD2DB26233
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48461D63F5;
-	Tue, 26 Nov 2024 15:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552451D619F;
+	Tue, 26 Nov 2024 15:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HyZF2pJ8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="01JgX4tr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HyZF2pJ8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="01JgX4tr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Khlp0DLt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F851D63C9;
-	Tue, 26 Nov 2024 15:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F471D6199
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633578; cv=none; b=Xh3K8rCxP15uCo3HxKbvvGedFKC+GRuiEaWDPeTfnIVelo/Wbo/CQK96v/FF3j16nK55LrZ0p5WVJFU+ODQa1muti+YsM6UGPIZzYvWzbFSRVA12Fe651vIkHi68JkO0NDvugdfU7eJz575ER/rL/lkfZThAfHPqEolGgd0c3i0=
+	t=1732633706; cv=none; b=GsNK34SIy1//AhQCsYGkSWvE9hZHYDk4HwSxy4rtrhUr/9Xx7e5HWem/h39ZggQeT41etPI7nTB2bdsNbpV/9Pt37ahFRHI/XpozYgidzdc16i9rVpahCP+shkGVjBty5pv2booMagpDHkZQQcbCYxDi6xLkW6Of1ItxrKUDiGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633578; c=relaxed/simple;
-	bh=d4EdCWOYSpcJGfSHosjzNM2Bb9Ur0uc2muOhBPpTyZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3ysdZmLDZE+5pcCF9ilNi7GBCcHTyHVQIfpkiKyv7O/SyWSyTPSe+VvflzfJ38fxCgEDJz2sVy86c9A/V2QkniWHEvPat350OqWy5DPbXxVNCsd+IEH8aJykjn/mKToFSEz5lFyeUlkuYVxdH5+e5DlIle8ud+vmYXWNb0fGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HyZF2pJ8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=01JgX4tr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HyZF2pJ8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=01JgX4tr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2A87621170;
-	Tue, 26 Nov 2024 15:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732633574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
-	b=HyZF2pJ8z82qfdrkKDwXLNMWnqxueAVQbN8agZantfhA78SUv72ZNTn8y/Ss9fhovfBj4a
-	eTK2702HWqxh/jOxFkvfe4K0GIV6blWS1b8XddOu9d4r57qdIdoj9S6GxSg6EHDKguRuRf
-	Btuw7uu+qOr5CR9G0Cb9vlrTrhb5MvU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732633574;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
-	b=01JgX4tr2v4KbW7ChJ+qGclNIpDdMoZR5SigniMqlbmQk9xSgaThONJVwO+jN1o0La6pbr
-	HwgbPcE9qpWN5dAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732633574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
-	b=HyZF2pJ8z82qfdrkKDwXLNMWnqxueAVQbN8agZantfhA78SUv72ZNTn8y/Ss9fhovfBj4a
-	eTK2702HWqxh/jOxFkvfe4K0GIV6blWS1b8XddOu9d4r57qdIdoj9S6GxSg6EHDKguRuRf
-	Btuw7uu+qOr5CR9G0Cb9vlrTrhb5MvU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732633574;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WC+RV5XxHoTaNHixzjyTfL7/6NAbrCIXiFN286SXR5M=;
-	b=01JgX4tr2v4KbW7ChJ+qGclNIpDdMoZR5SigniMqlbmQk9xSgaThONJVwO+jN1o0La6pbr
-	HwgbPcE9qpWN5dAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 180FA13890;
-	Tue, 26 Nov 2024 15:06:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WtZ0BebjRWeaBQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 15:06:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B01C0A08CA; Tue, 26 Nov 2024 16:06:13 +0100 (CET)
-Date: Tue, 26 Nov 2024 16:06:13 +0100
-From: Jan Kara <jack@suse.cz>
-To: Anders Blomdell <anders.blomdell@gmail.com>
-Cc: Philippe Troin <phil@fifi.org>, Jan Kara <jack@suse.cz>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-Message-ID: <20241126150613.a4b57y2qmolapsuc@quack3>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
+	s=arc-20240116; t=1732633706; c=relaxed/simple;
+	bh=G2kTCSAuPZahn6188nP12kBMHaX0KTT0GIc9AgAjBGo=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ce02hTqmZIvRDz8ogNPpafS773QxqyhPb9OeM6YoV+rLt8Y03kwNkq33i8+JB81WiXGRluKCRNjz4w5ELb1RtvEnyHRB+fRgvF+ua4/Geuv2ApuzEPuuw9+KtnKr1edBTwl1DB8MtFLE7yoz7ezc2xN/no9g841EmftARwYMALs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Khlp0DLt; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732633705; x=1764169705;
+  h=date:from:to:cc:subject:message-id;
+  bh=G2kTCSAuPZahn6188nP12kBMHaX0KTT0GIc9AgAjBGo=;
+  b=Khlp0DLt7+tBIZabrYDQGntUsoLc1HOn2mCLZTDvvJWnqPR0azmKLQGO
+   KDkGacD7kb6TMNf1v45xSkR2uVCbm9WiWMEelXY9XtYB7bxIZArgrqxgi
+   AAhVAzJF0cX7yXkBpQzZRlSj8+Dnmf+tMOU1qzkNrAEUoEBtRGMOPE4Yq
+   y+NXixmXqmme7NEj0SOPgumKK7EjmjWKIq5WZV2Uj7aBdREfKWG32ZWhj
+   8OAFLV3etRJUT+G5lw/pru3Eaz5FToZq4I3zlOn0og/jO45UBillKKm6D
+   0grEMJJ2ZlMDmCCl2eo+zfrcasBJxRU+lkQEr6v/wqoPxj8QbpVcYGoo5
+   A==;
+X-CSE-ConnectionGUID: r1f4MdWoQRq8s4jmNHetDQ==
+X-CSE-MsgGUID: NVXq8vR1RMCiOKWafxLIZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32173646"
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="32173646"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 07:08:23 -0800
+X-CSE-ConnectionGUID: 8tnGkzjHSRqkYCRpVWPzOg==
+X-CSE-MsgGUID: 6wAkeN05RDqztlppvkygVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="91578270"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 26 Nov 2024 07:08:22 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFxAp-0007Lp-1k;
+	Tue, 26 Nov 2024 15:08:19 +0000
+Date: Tue, 26 Nov 2024 23:06:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ be4ca6c53e66cb275cf0d71f32dac0c4606b9dc0
+Message-ID: <202411262337.WR1h01sY-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126103719.bvd2umwarh26pmb3@quack3>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Tue 26-11-24 11:37:19, Jan Kara wrote:
-> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
-> > On 2024-11-26 02:48, Philippe Troin wrote:
-> > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
-> > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
-> > > > we got terrible performance (lots of nfs: server x.x.x.x not
-> > > > responding).
-> > > > What triggered this problem was virtual machines with NFS-mounted
-> > > > qcow2 disks
-> > > > that often triggered large readaheads that generates long streaks of
-> > > > disk I/O
-> > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
-> > > > area of the
-> > > > machine.
-> > > > 
-> > > > A git bisect gave the following suspect:
-> > > > 
-> > > > git bisect start
-> > > 
-> > > 8< snip >8
-> > > 
-> > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
-> > > > readahead: properly shorten readahead when falling back to
-> > > > do_page_cache_ra()
-> > > 
-> > > Thank you for taking the time to bisect, this issue has been bugging
-> > > me, but it's been non-deterministic, and hence hard to bisect.
-> > > 
-> > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
-> > > slightly different setups:
-> > > 
-> > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
-> > > "nfs server XXX not responding, still trying" that never recovers
-> > > (while the server remains pingable and other NFSv3 volumes from the
-> > > hanging server can be mounted).
-> > > 
-> > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
-> > > several minutes) on random I/O. These stalls eventually recover.
-> > > 
-> > > I've built a 6.11.10 kernel with
-> > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
-> > > normal (no more NFS hangs, no more VM stalls).
-> > > 
-> > Some printk debugging, seems to indicate that the problem
-> > is that the entity 'ra->size - (index - start)' goes
-> > negative, which then gets cast to a very large unsigned
-> > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
-> > bug is still eludes me, though.
-> 
-> Thanks for the report, bisection and debugging! I think I see what's going
-> on. read_pages() can go and reduce ra->size when ->readahead() callback
-> failed to read all folios prepared for reading and apparently that's what
-> happens with NFS and what can lead to negative argument to
-> do_page_cache_ra(). Now at this point I'm of the opinion that updating
-> ra->size / ra->async_size does more harm than good (because those values
-> show *desired* readahead to happen, not exact number of pages read),
-> furthermore it is problematic because ra can be shared by multiple
-> processes and so updates are inherently racy. If we indeed need to store
-> number of read pages, we could do it through ractl which is call-site local
-> and used for communication between readahead generic functions and callers.
-> But I have to do some more history digging and code reading to understand
-> what is using this logic in read_pages().
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: be4ca6c53e66cb275cf0d71f32dac0c4606b9dc0  x86/Documentation: Update algo in init_size description of boot protocol
 
-Hum, checking the history the update of ra->size has been added by Neil two
-years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
-process all pages"). Neil, the changelog seems as there was some real
-motivation behind updating of ra->size in read_pages(). What was it? Now I
-somewhat disagree with reducing ra->size in read_pages() because it seems
-like a wrong place to do that and if we do need something like that,
-readahead window sizing logic should rather be changed to take that into
-account? But it all depends on what was the real rationale behind reducing
-ra->size in read_pages()...
+elapsed time: 1075m
 
-								Honza
+configs tested: 130
+configs skipped: 19
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    clang-20
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                              allyesconfig    gcc-13.2.0
+arc                          axs101_defconfig    gcc-14.2.0
+arc                      axs103_smp_defconfig    gcc-13.2.0
+arc                            hsdk_defconfig    gcc-14.2.0
+arm                              allmodconfig    clang-20
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                              allyesconfig    gcc-14.2.0
+arm                       aspeed_g5_defconfig    gcc-13.2.0
+arm                          ep93xx_defconfig    clang-14
+arm                       multi_v4t_defconfig    gcc-13.2.0
+arm                       multi_v4t_defconfig    gcc-14.2.0
+arm                        mvebu_v5_defconfig    gcc-13.2.0
+arm                             mxs_defconfig    gcc-14.2.0
+arm                             pxa_defconfig    clang-14
+arm                         vf610m4_defconfig    gcc-14.2.0
+arm                    vt8500_v6_v7_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+i386        buildonly-randconfig-001-20241126    gcc-12
+i386        buildonly-randconfig-002-20241126    gcc-12
+i386        buildonly-randconfig-003-20241126    clang-19
+i386        buildonly-randconfig-003-20241126    gcc-12
+i386        buildonly-randconfig-004-20241126    gcc-12
+i386        buildonly-randconfig-005-20241126    clang-19
+i386        buildonly-randconfig-005-20241126    gcc-12
+i386        buildonly-randconfig-006-20241126    gcc-12
+i386                  randconfig-001-20241126    gcc-12
+i386                  randconfig-002-20241126    gcc-12
+i386                  randconfig-003-20241126    gcc-12
+i386                  randconfig-004-20241126    gcc-11
+i386                  randconfig-004-20241126    gcc-12
+i386                  randconfig-005-20241126    clang-19
+i386                  randconfig-005-20241126    gcc-12
+i386                  randconfig-006-20241126    clang-19
+i386                  randconfig-006-20241126    gcc-12
+i386                  randconfig-011-20241126    clang-19
+i386                  randconfig-011-20241126    gcc-12
+i386                  randconfig-012-20241126    clang-19
+i386                  randconfig-012-20241126    gcc-12
+i386                  randconfig-013-20241126    clang-19
+i386                  randconfig-013-20241126    gcc-12
+i386                  randconfig-014-20241126    gcc-12
+i386                  randconfig-015-20241126    clang-19
+i386                  randconfig-015-20241126    gcc-12
+i386                  randconfig-016-20241126    clang-19
+i386                  randconfig-016-20241126    gcc-12
+loongarch                        alldefconfig    gcc-14.2.0
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+m68k                             alldefconfig    clang-14
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                       bvme6000_defconfig    gcc-14.2.0
+m68k                        stmark2_defconfig    gcc-13.2.0
+m68k                           sun3_defconfig    clang-20
+m68k                          sun3x_defconfig    clang-14
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+microblaze                      mmu_defconfig    gcc-13.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                          ath79_defconfig    clang-14
+mips                           xway_defconfig    clang-14
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                      pcm030_defconfig    gcc-14.2.0
+powerpc                      pmac32_defconfig    clang-14
+powerpc                      ppc6xx_defconfig    gcc-14.2.0
+powerpc                     redwood_defconfig    clang-20
+powerpc                    socrates_defconfig    gcc-13.2.0
+powerpc                     tqm8541_defconfig    gcc-14.2.0
+riscv                            allmodconfig    clang-20
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+s390                             allmodconfig    clang-20
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+sh                               alldefconfig    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                         ap325rxa_defconfig    gcc-13.2.0
+sh                            hp6xx_defconfig    clang-14
+sh                          kfr2r09_defconfig    gcc-13.2.0
+sh                          landisk_defconfig    gcc-13.2.0
+sh                          landisk_defconfig    gcc-14.2.0
+sh                     magicpanelr2_defconfig    gcc-13.2.0
+sh                          rsk7203_defconfig    gcc-13.2.0
+sh                        sh7763rdp_defconfig    gcc-13.2.0
+sparc                            allmodconfig    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-17
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+x86_64                                  kexec    clang-19
+x86_64                               rhel-9.4    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
