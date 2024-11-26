@@ -1,145 +1,193 @@
-Return-Path: <linux-kernel+bounces-422768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475399D9DE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFEC9D9DEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E52DB27282
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:13:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495A3B23037
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252611DE4C6;
-	Tue, 26 Nov 2024 19:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CE91DE880;
+	Tue, 26 Nov 2024 19:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxItrClj"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoEjGWG5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264D11DAC8A;
-	Tue, 26 Nov 2024 19:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251A318858E;
+	Tue, 26 Nov 2024 19:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732648417; cv=none; b=uGh6Ur+cMrlaK65yFWMFJmN1n9Q2yFL/O5Ex5ZIuR8SJGmnhMxtbEy+B7RcF/WSk03L/FLn/0sTtuXK5WeziSG4mduc0Sg1J9f8l1afklGOv+Hxl/m8ou2cSCNcyLx8+3nKeOqS/xuJlAXyYqdyBlzKlARkupldWqWw/BCy7x3o=
+	t=1732648572; cv=none; b=SBlaERuG1xpHxS80i3PmIq5Nx9dG2Hsj7r2XaMh5/CJsOptH28YfZk6VzYpwjkwuuRafQns8barB9/PGhhmm5lpu0WZKjUfEZzdeACXquxh8M8a4gCz3Hh4ylN1bcdxZh9RQnWwBrZrk1qVkADShl/68KgtYWgE/fVSdIFNstpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732648417; c=relaxed/simple;
-	bh=QCR/Vp+Xml9sdSSp1Q61LSN07q3Va3I/wbUhG9WAoZY=;
+	s=arc-20240116; t=1732648572; c=relaxed/simple;
+	bh=1TUlJKf5nQjkOH60EGQT6g00V3SndGrR+iyif5lajog=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p3zU/U2jqIWlWO07AskNWYvO6JGpp0IZg+INniNkmlAcxrXSuKOZ+OmaNA5pL4LLtvJqPy+dPWVPmnubGFtY09uYTF1laIB9z5md9Fiv2yzoMd9exwku2lFAFcerDg38uN4qmwDFxyiwQBTDnw32g+gF2hzul6kNT0zzfSvxN3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxItrClj; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-212a3067b11so51269875ad.3;
-        Tue, 26 Nov 2024 11:13:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732648415; x=1733253215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+DVAOLhrbGi8jum3karNef7IcoBGxiL98ArEHqKf4PM=;
-        b=KxItrCljDYSF15ZVeXlApSeij8tbaFsswj/A2fN3VwAKteEf6QwyZyHsS8V9z2STdr
-         W1EBIf/6UqgNRUfd6hnctTtLAH0HTg8LbXqvkPw2t8qt6JIeKsxekrRA8ZOXTgQ87qRt
-         R0yzoxA0d7qWptfHx64ml7Ca78JU4IGFt8Gr40Znequn2K8NcdaSG/cnB9DrsmBsaBfA
-         jL44Vm4yKAMqfqph1G6H1Me4WFk2fbxHB7QX20uz8/BwdB/J/ym0L296eiuBzEeh2QDm
-         gkO4ojdRRpYFuOlZ9zOUEOzVSndyw7wbeLkMh5bn+L8UcVfgNVXSpF62xiS7IL7q2Yol
-         TMfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732648415; x=1733253215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+DVAOLhrbGi8jum3karNef7IcoBGxiL98ArEHqKf4PM=;
-        b=tPfWz1mEAYaGC9OM3nGKX005ZW58EoA5LWu88i5Ygny+eiGo1Njc8LuDBQxd6HkVyO
-         g4d09cVZrN3NmmlnvaIf6oWHewblPXJONJD7Z6xC29vR8aBb6/TiU26kr61uit3UJujM
-         1+OcX1S7QcizHHZqVVzJz2mMU68Rm8vJjzOE7xbFkQm+uyLRIVzdVDp9mI9+UNrWyV5Z
-         STHd5QMyMvmngTa+6ryynZj0cRLBIcF7p3ui4k5e3Ra7BWWsi5KqYHI/pcVIRCtU/tUJ
-         W4ky5EuIyNKnq0t934HMjg6MF0u/bRgRXRetvW/GoJMaBEJTwupvfWWIRT+ok9gNKTm+
-         ofqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhMz4aubBjHxKVOBAtfTtEYAr0O+rk3Rdyq7yY0gvBNH3A9ApQh88UQu+QJGQxcJYS+gc=@vger.kernel.org, AJvYcCW06lZOmOpO1Esg4ofS7luA7ud0vfedKqwI7JIIpMgd8e2Hc4uaIY0DHFmqNhQzf9u9BXB3Nq1pF8RioGGA@vger.kernel.org, AJvYcCWeZqEQI2IjA7bHNodZSHbPSNzX44Xd3pmY1fleBHPluyGrh/RUu3UrQ7/TUMb8EITJMPgiKCFVmFcM93/hkXEt7fgt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz+PQwQwkz5U95blknxsJTzuCrHuMpFe3cCqYsbbKlp/vgvDaq
-	BBPWUNWdVv4m5Z3sfuyuYPBu7IOvEF1PqCmvrtE/wrL3RBPb5UC2g1QFjZ77JP/36SQyJdtzTjE
-	Qf2YS0lPOqBUoFsIyxYgyGLKW21ThfA==
-X-Gm-Gg: ASbGncvalYZDNozb4XLUIzBnZxcgzQj+HB3fdJiDE2viVw/XhUkxwiH+4ATm261Mmpz
-	LjC52h2wzvEcPkNrEFD/nvoGL0XxKvpFq2UOB4FaG74C0Mkw=
-X-Google-Smtp-Source: AGHT+IHfu+fT5zfF3DAnsl3ePjUgszCAqr2LVqByX7g1cOz4bYKIk1DFvz9urAi7eP5+0pFn014qIVRK/I1V0X28dj8=
-X-Received: by 2002:a17:90b:4a11:b0:2ea:61de:3903 with SMTP id
- 98e67ed59e1d1-2ee097bf2cfmr451311a91.27.1732648415376; Tue, 26 Nov 2024
- 11:13:35 -0800 (PST)
+	 To:Cc:Content-Type; b=gAslMTgZJAwl/0tbv2UqUpJReQpKgr6cxmtVU2AK9gVlqKtG3li86wgdcHBRKd+830S1AvXsdl5/1CguSD/gF2n7BaJFHVg4QsXa6zLSg7Bkw3dV5Ib3fJV6Q/c+4QgnXrA29CItctCQizGJMpGi9JP7QUE1HGQ9orP5ch5DWGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoEjGWG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A334CC4CEDE;
+	Tue, 26 Nov 2024 19:16:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732648571;
+	bh=1TUlJKf5nQjkOH60EGQT6g00V3SndGrR+iyif5lajog=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hoEjGWG5m4OidOkXh3CuRiD5M+R1koohQf3ZG7SeTyPQjWJQByP8NK0jLdOGEDpIH
+	 l9XklPzFRqQ1FH9DBeN5hoHlVHQH7VuLyZBRyDSOyTotnx94GMwBDKTKpbqyKwxm0p
+	 91H7NITpW7H8XGKXBS8j3L7kgfK7wlMP2cYMbRjHBHNR1BlcKYrpwlzYD3/hFep7Op
+	 ESEuTJikK6Ysc625JG4R97ykuKZ0qgbl5wNSctVKRdXJLoX4lRBotUhL3K6Qn5syYW
+	 Z/MqWtXjmsjkY4z6RNQ/x88vldOIxps1XiFH1qoXzMVaO2GsBLMWrCwzT4bkoFWd7w
+	 rfMlBgUqRVA9w==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ee7a48377cso56273417b3.3;
+        Tue, 26 Nov 2024 11:16:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUG/UJJDByr1W83Lxv8K9yfz31lzyuMK5jajCHdfie0nb+95gZCG+JlLlig66rjvkOSvLvVLsyNwWdZ+v40@vger.kernel.org, AJvYcCVg436dEOk3Z4HHyHBbqBSMO39WMUdotg2/M6L5HsVRlZM6ZTt54TMvizj2cZd3gZF8LC+JzOi7LD+G@vger.kernel.org, AJvYcCWzJgZYl8NY8XoGDtCaQFJjJ4IOgHt9yM+38eyixCX6fbd1vfekRT7GugPBK+otsXm9K7/v1AHikWLi@vger.kernel.org, AJvYcCXArw7azpaSDY7+539yMbsKJ9Cufp4Z3skdl2Nc0Bill+VlhQZxkhV+YGNEXGygmt0hCJcoICl2edCqpljqBK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywra98NW4T8nONqP2nFlrMDAT8ZKA8FVmRckCmjqm7YuuPUeYNX
+	wZhTlmyXQtkZhoG8fmKKnzf8EwJrkkiANcJfB+8C+EN6n5B4ZZwukfXYQOa+y1NzquFVPL5Q+4e
+	ofwLQy3yCBv5TsGwZqqDDODgEJA==
+X-Google-Smtp-Source: AGHT+IETEyEPXVtA8SN5jspf5+8jw4sIaeRGhfLum4QaxlBpG1gledPn1oBWZED7v15tAMHRuQ9YyLA2/RSuZ+ZVqsY=
+X-Received: by 2002:a05:690c:7009:b0:6e2:313a:a01e with SMTP id
+ 00721157ae682-6ef3727a856mr4520407b3.32.1732648570631; Tue, 26 Nov 2024
+ 11:16:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105133405.2703607-1-jolsa@kernel.org> <20241117114946.GD27667@noisy.programming.kicks-ass.net>
- <ZzsRfhGSYXVK0mst@J2N7QTR9R3> <CAEf4BzbXYrZLF+WGBvkSmKDCvVLuos-Ywx1xKqksdaYKySB-OQ@mail.gmail.com>
- <Zz95aiWM5cN6MDED@J2N7QTR9R3.cambridge.arm.com>
-In-Reply-To: <Zz95aiWM5cN6MDED@J2N7QTR9R3.cambridge.arm.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 26 Nov 2024 11:13:22 -0800
-Message-ID: <CAEf4BzZS_2w42Vxy6Cj89OXQqAOYdm+kbTX_VEjF-zL0HrZU9Q@mail.gmail.com>
-Subject: Re: [RFC 00/11] uprobes: Add support to optimize usdt probes on x86_64
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-16-dakr@kernel.org>
+ <20241022234712.GB1848992-robh@kernel.org> <ZxibWpcswZxz5A07@pollux>
+ <20241023142355.GA623906-robh@kernel.org> <Zx9kR4OhT1pErzEk@pollux>
+ <CAL_JsqLVdoQNSSDCfGcf0wCZE9VQphRhHKANxhpei_UoFzkN9g@mail.gmail.com>
+ <Z0XBbLb8NRQg_dek@cassiopeiae> <CAL_Jsq+TV486zw=hAWkFnNbPeA08mJh_4kVVJLSXiYkzWcOVDg@mail.gmail.com>
+ <Z0XmgXwwNikW6oJw@cassiopeiae>
+In-Reply-To: <Z0XmgXwwNikW6oJw@cassiopeiae>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 26 Nov 2024 13:15:59 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLohzzxDrJPFiQ6v8X=2i7pPUJdwzVLxShbcX-SCz_3Jg@mail.gmail.com>
+Message-ID: <CAL_JsqLohzzxDrJPFiQ6v8X=2i7pPUJdwzVLxShbcX-SCz_3Jg@mail.gmail.com>
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 10:18=E2=80=AFAM Mark Rutland <mark.rutland@arm.com=
-> wrote:
+On Tue, Nov 26, 2024 at 9:17=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
 >
-> On Mon, Nov 18, 2024 at 10:13:04PM -0800, Andrii Nakryiko wrote:
-> > On Mon, Nov 18, 2024 at 2:06=E2=80=AFAM Mark Rutland <mark.rutland@arm.=
-com> wrote:
-> > > Yep, on arm64 we definitely can't patch in branches reliably; using B=
-RK
-> > > (as we do today) is the only reliable option, and it *shouldn't* be
-> > > slower than a syscall.
-> > >
-> > > Looking around, we have a different latent issue with uprobes on arm6=
-4
-> > > in that only certain instructions can be modified while being
-> > > concurrently executed (in addition to the atomictiy of updating the
+> On Tue, Nov 26, 2024 at 08:44:19AM -0600, Rob Herring wrote:
+> > > > > > The DT type and name fields are pretty much legacy, so I don't =
+think the
+> > > > > > rust bindings need to worry about them until someone converts S=
+parc and
+> > > > > > PowerMac drivers to rust (i.e. never).
+> > > > > >
+> > > > > > I would guess the PCI cases might be questionable, too. Like DT=
+, drivers
+> > > > > > may be accessing the table fields, but that's not best practice=
+. All the
+> > > > > > match fields are stored in pci_dev, so why get them from the ma=
+tch
+> > > > > > table?
+> > > > >
+> > > > > Fair question, I'd like to forward it to Greg. IIRC, he explicitl=
+y requested to
+> > > > > make the corresponding struct pci_device_id available in probe() =
+at Kangrejos.
 > >
-> > What does this mean for the application in practical terms? Will it
-> > crash? Or will there be some corruption? Just curious how this can
-> > manifest.
+> > Making it available is not necessarily the same thing as passing it in
+> > via probe.
 >
-> It can result in a variety of effects including crashes, corruption of
-> memory, registers, issuing random syscalls, etc.
+> IIRC, that was exactly the request.
 >
-> The ARM ARM (ARM DDI 0487K.a [1]) says in section B2.2.5:
+> > I agree it may need to be available in probe(), but that
+> > can be an explicit call to get it.
 >
->   Concurrent modification and execution of instructions can lead to the
->   resulting instruction performing any behavior that can be achieved by
->   executing any sequence of instructions that can be executed from the
->   same Exception level [...]
->
-> Which is to say basically anything might happen, except that this can't
-> corrupt any state userspace cannot access, and cannot provide a
-> mechanism to escalate privilege to a higher exception level.
->
-> So that's potentially *very bad*, and we're just getting lucky that most
-> implementations don't happen to do that for most instructions, though
-> I'm fairly certain there are implementations out there which do exhibit
-> this behaviour (and it gets more likely as implementations get more
-> aggressive).
->
+> Sure, I did exactly that for the platform abstraction, because there we m=
+ay
+> probe through different ID tables.
 
-I see. I wonder if the fact that we do __replace_page() saves us here?
-Either way, if that's a problem, it would be good for someone familiar
-with ARM64 to try to address it. Ideally in a way that won't ruin the
-multi-uprobe attachment speeds (i.e., not doing stop-the-world for
-each of many uprobe locations to be attached, but rather do that once
-for all uprobes).
+TBC, I think of_match_device() (both calling the C API and the method)
+should not be part of this series. I think we agreed on that already.
+Only if there is a need at some point later should we add it.
 
-> Mark.
+> A `struct pci_driver`'s probe function has the following signature [1] th=
+ough:
 >
-> [1] https://developer.arm.com/documentation/ddi0487/ka/?lang=3Den
+> `int (*probe)(struct pci_dev *dev, const struct pci_device_id *id)`
+>
+> [1] https://elixir.bootlin.com/linux/v6.12/source/include/linux/pci.h#L95=
+0
+
+We have a mixture of probe with and without the _device_id parameter.
+I'd question if we really want to keep that for PCI when we have a
+chance to align things with Rust. We can't really with C as it would
+be too many drivers to change. Passing the _device_id only works if
+firmware matching is never used which can change over time. But if
+aligning things is not something we want to do, then I'll shut up.
+
+> > > > Which table gets passed in though? Is the IdInfo parameter generic =
+and
+> > > > can be platform_device_id, of_device_id or acpi_device_id? Not sure=
+ if
+> > > > that's possible in rust or not.
+> > >
+> > > Not sure I can follow you here.
+> > >
+> > > The `IdInfo` parameter is of a type given by the driver for driver sp=
+ecific data
+> > > for a certain ID table entry.
+> > >
+> > > It's analogue to resolving `pci_device_id::driver_data` in C.
+> >
+> > As I said below, the PCI case is simpler than for platform devices.
+> > Platform devices have 3 possible match tables. The *_device_id type we
+> > end up with is determined at runtime (because matching is done at
+> > runtime), so IdInfo could be any of those 3 types.
+>
+> `IdInfo` is *not* any of the three *_device_id types. It's the type of th=
+e
+> drivers private data associated with an entry of any of the three ID tabl=
+es.
+
+Ah yes, indeed. So no issue with the probe method.
+
+> It is true that a driver, which registers multiple out of those three tab=
+les is
+> currently forced to have the same private data type for all of them.
+
+I think that's a feature actually as it enforces best practices.
+
+> I don't think this is a concern, is it? If so, it's easily resolvable by =
+just
+> adding two more associated types, e.g. `PlatformIdInfo`, `DtIdInfo` and
+> `AcpiIdInfo`.
+>
+> In this case we would indeed need accessor functions like `dt_match_data`=
+,
+> `platform_match_data`, `acpi_match_data`, since we don't know the type at
+> compile time anymore.
+
+Do we need to split those out in rust or can we just call
+device_get_match_data()?
+
+>
+> I don't think that's necessary though.
+
+Even if you don't support all 3 tables now, at a minimum I think you
+need to rename things to be clear what table type is supported and
+allow for adding the other types. For example, T::ID_TABLE needs to be
+renamed to be clear it's the of_device_id table.
+
+Rob
 
