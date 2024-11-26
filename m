@@ -1,78 +1,137 @@
-Return-Path: <linux-kernel+bounces-422825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2B19D9EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:05:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354469D9EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:15:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EFD7B25F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89059166D3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBF31DFDBB;
-	Tue, 26 Nov 2024 21:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EA81DF96B;
+	Tue, 26 Nov 2024 21:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IN1yAbfU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="lBu2E4/z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rtkRwH0d"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBF61DF99D;
-	Tue, 26 Nov 2024 21:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8211B87D0;
+	Tue, 26 Nov 2024 21:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732655102; cv=none; b=KCpfV6ITS8xw1UJx0QgCcFWGP0PcsG5hSf8HHA9r+jFPgLVvTsuZR8OAdI0I/6pOw+Q61WfEW4kLdJ5BEe/8QgMJaKMLBZT1Ymqxpo0hxIj4Mp6nYukvMqz4pEYJzB4nbLz13qmVgXAX2RcySNEG1r35mLZhE75P81TnxhroTbE=
+	t=1732655694; cv=none; b=KIHsvC8us77xyhhVzuBLfbxJjL4uZXwHzvO8Oov9XTxGAGPzx+B2dH605knb6x8U6YaZU7BjQ/GIzPm9aFhuzcgXyatpDXuUJrIROnHuoWg4kBAiDLN5TqWHhf/iA1MfOPzLrUYbPW8NgtarxaQ3zKcx+ks2wrIHr3eiDHk5QRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732655102; c=relaxed/simple;
-	bh=i0LxOvfK28Z52U25B2ST3QcbhpVu57HLMVODFi7SE0c=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Rgd5gdYD7eVsCaIl2FaByhNMrJqWoXBFsxXJTLSN/LECB6UENQ2gvrwWj/rvzgu5rb2oAHYcmmwkk+juTGlZrlhFgYjp1Wh+/dM+IrceBH6qTOXXzfD1j9PEHjLQ13miuIrH/1/NXOwlEzEk2I5TX0OHBEz81E1UirLfm7V29kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IN1yAbfU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D229C4CED0;
-	Tue, 26 Nov 2024 21:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732655102;
-	bh=i0LxOvfK28Z52U25B2ST3QcbhpVu57HLMVODFi7SE0c=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=IN1yAbfUrrFe741mGXvG0efCCqtCCuyxeDVBRMbLvdHQEQMKh6NOADyLvDbdbptW0
-	 vbmSZ0OdzWOVXDeCn4oJifJv7UKEW48t/08KUCX57wgxCnBcY3eFOxUEowSv+2szsL
-	 v9gKikfngQv48IolTb1ImeX9nsTG0cNTHsG3yjS1Pah7RCKbzOn6sBBdO8AI7PGOYV
-	 Uv9BXT9AtBGngwAD5+ORYPeBRzoAZcvC4Oz7S7jVq/5bBdFhurVk0FOetxuS1j8buq
-	 aEX6KQH4q14NKOeJLvCytxCzZfLLCHEsulMZhWkYRfkUY1KYuoMErGCPPtaL/sO6lA
-	 nMDMCQtg8xwOg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1203809A00;
-	Tue, 26 Nov 2024 21:05:16 +0000 (UTC)
-Subject: Re: [GIT PULL] NFSD changes for v6.13
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z0Xg7A1J/CkYiENR@tissot.1015granger.net>
-References: <Z0Xg7A1J/CkYiENR@tissot.1015granger.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z0Xg7A1J/CkYiENR@tissot.1015granger.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.13
-X-PR-Tracked-Commit-Id: 583772eec7b0096516a8ee8b1cc31401894f1e3a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 445d9f05fa149556422f7fdd52dacf487cc8e7be
-Message-Id: <173265511521.539328.8368166461221509113.pr-tracker-bot@kernel.org>
-Date: Tue, 26 Nov 2024 21:05:15 +0000
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+	s=arc-20240116; t=1732655694; c=relaxed/simple;
+	bh=ZB7Q8EEDQ5v9izbjOswDLmoKdV8o6G2P6LvqbjXJHSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzCCwarLZ7NUYHwuu2jVeuhcYc9lHvHUW3BSoRrYXUJ2XbjOgoYZEzsLCRhCEqy5n9yv+Nu2a9pltI2XzfpY2Tm5dGc3B5vDXLektNWH+6NbdWUZhG+Fw7SF1WBKuTmLgytzerw/zYV+at4s1VvKTrYNejIEAu8zDR4Gc628ifg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=lBu2E4/z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rtkRwH0d; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id DB14B11401E0;
+	Tue, 26 Nov 2024 16:14:50 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Tue, 26 Nov 2024 16:14:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1732655690; x=1732742090; bh=MaXb4heZ4E
+	PnEKRXMD9E8/ioruljb7zXBz5GaHOjAgc=; b=lBu2E4/zs0WgHUJoQajbt+gZuE
+	yqjTlQ4rQR4Y3+bjRLp3GtmBtnNE5mzAbET4DSQIU7QxeTU5bSyGnGkA9m2GGBxQ
+	iJbxdPQnkfRVStL74ulUtxv4SJINwh8AsvWd6cmdg2YAImUjaedxLHUsoNEcNVT4
+	ZW230QDCDF3voT746WIm9CM+qO9SiC0+T6SuxRTx+ySo7KcrT5y+jEAyR+oYM8Dz
+	sLm/Kw5fBvJeNgiUDQLZ/x0b568T3jEIdaKX9spIrQhpKDitcV3K0HjjvaQu54Md
+	bBNQ5e/9rMtxjMrlffAwF9DCMIEmvkOm9cHujCC+3AMcVcWTEEUBiTBj6G9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732655690; x=1732742090; bh=MaXb4heZ4EPnEKRXMD9E8/ioruljb7zXBz5
+	GaHOjAgc=; b=rtkRwH0dtRSFGOsJepoew66M3vMRe7ZB80Us9I5IHnMMuY3RI2T
+	RSsjjjkjCkwWh7Yl98yXST1sOcfwGXw8zUm+sPyfJu8qwLTN3HL0UBDZ3anNyQHD
+	XQe133SkGIzlNhPPUzjUqY7aMofvba45jwYzf17oAXU4mzqqqbgf7qSoQKu8p295
+	a3e3R81mk7enM6uje8wIcIEYGAvFLA7neB/FPdFqGnxKC5aFvV8pAsZfIlO2Jj7+
+	B7b8zshClGjBNWpQnM5yj29oZ3VBHARoq1pk/NxgRcZspr06HKl7lyYpHjqyp0A6
+	DwBgXmGPfoiqjX/noQoPzzsNeWrttRzH57A==
+X-ME-Sender: <xms:STpGZygne0mCYayUw16B08xX97doriCb8l2xJGLNgpEZN1HAaMNvzA>
+    <xme:STpGZzC4c_-5idzsWIEuBaNvCp6KpqqmPymGi2M3oYyCps8vrdYKPEKmMsmGZ956f
+    ZBkIaldho37a6SqElM>
+X-ME-Received: <xmr:STpGZ6HkYB9sM6kTxTubh13I0MnNCl1JlvwdvHDyYcKSo1uZjuM7NsKPgEjuy2iQ_NcuGxr2AK-2Cjlsv5MMiOg4tTmkgfYgQX0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeejgddugedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
+    ucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpefgudeuffelfeekgeeukedtheekjeettdfftddujefhvdehtefg
+    iefgledtueefjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvght
+    pdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfh
+    hnkhhlrdhkvghrnhgvlhesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrtggrnhes
+    mhgrrhgtrghnrdhsthdprhgtphhtthhopehsvhgvnhesshhvvghnphgvthgvrhdruggvvh
+    dprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtthho
+    pegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprh
+    hosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprhihuggsvghrghessghithhmrghthhdrohhrgh
+X-ME-Proxy: <xmx:SjpGZ7Rq-RBSf09Ib4ULSHmIxrbx_bj_eHcVdiKAcmth01EgkKknbQ>
+    <xmx:SjpGZ_zqQwIVwyWJpWBVa6inzMm3faUMvqQTNkcE5qKuGeXdPpYSng>
+    <xmx:SjpGZ54RQKUb6QuBu5Us9q-yBTctgFRCpDPE4q5Zrtr98iDCQaeDQQ>
+    <xmx:SjpGZ8wFYaBNKgwtefQA8bZIfAARZHMet2pCc-1i0wpoGgA0BUgFNg>
+    <xmx:SjpGZ0KSsMX1BWZR0TMY8r_z3ZpRt1RWRqfrUxYcqySUndNuBUjgchjq>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 26 Nov 2024 16:14:49 -0500 (EST)
+Date: Tue, 26 Nov 2024 22:14:47 +0100
+From: Janne Grunau <j@jannau.net>
+To: fnkl.kernel@gmail.com
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: apple: Add touchbar digitizer nodes
+Message-ID: <20241126211447.GA3782493@robin.jannau.net>
+References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
+ <20241126-z2-v1-3-c43c4cc6200d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241126-z2-v1-3-c43c4cc6200d@gmail.com>
 
-The pull request you sent on Tue, 26 Nov 2024 09:53:32 -0500:
+On Tue, Nov 26, 2024 at 09:48:01PM +0100, Sasha Finkelstein via B4 Relay wrote:
+> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> 
+> Adds device tree entries for the touchbar digitizer
+> 
+> Co-developed-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  arch/arm64/boot/dts/apple/t8103-j293.dts | 24 ++++++++++++++++++++++++
+>  arch/arm64/boot/dts/apple/t8103.dtsi     | 19 +++++++++++++++++++
+>  arch/arm64/boot/dts/apple/t8112-j493.dts | 20 ++++++++++++++++++++
+>  arch/arm64/boot/dts/apple/t8112.dtsi     | 14 ++++++++++++++
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.13
+The changes in t8103.dtsi and t8112.dtsi conflict with my "Add Apple SPI
+controller and spi-nor dt nodes" in
+https://lore.kernel.org/asahi/20241102-asahi-spi-dt-v1-0-7ac44c0a88f9@jannau.net/
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/445d9f05fa149556422f7fdd52dacf487cc8e7be
+I think it makes more sense to add the spi controller nodes in one go
+instead of piece by piece based on device support.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Janne
 
