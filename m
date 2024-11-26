@@ -1,211 +1,183 @@
-Return-Path: <linux-kernel+bounces-422018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FD59D936D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:39:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D0D9D936B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:39:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E790165689
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:39:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47338B224E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54361B6CF0;
-	Tue, 26 Nov 2024 08:39:00 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6E719F410;
+	Tue, 26 Nov 2024 08:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSGeqoOn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC5518C332;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CAE18E37B;
 	Tue, 26 Nov 2024 08:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732610340; cv=none; b=AiRA4NKZlIebCmmZXwcppgJRluTCcTeyBoi9oCYLoutg0ZXMuVCXDQckm+3snaMEQ2/2Bk/6TkPeO+memuTZNEKqxNOnlcC32g9HeRCkTZcBKLOfD0vj2+i9KxscvsZLhrs7vsfhNYaR2+STxxmKQ8nxI2nz0bjZDgf268LcQjs=
+	t=1732610338; cv=none; b=O2zYVU/TGvEg+oQHipMIfBQVAYT1qT7o6y6ozCL2O3yAB26R1WokkkybQttsJASxLPiE7enq5nk8V/W+hzGlxGK1Vkd23PawqmcLNmKFt9IFudf6CVaB/xaFXXTr/MIOLMJWD0EVNuSDksWpJ6lKnhBAAGIRH4KG1PgJ0+K6rL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732610340; c=relaxed/simple;
-	bh=YUKKRY7A2nE2FhB3ESXaNOsgnyAfymvw5W7zwhIFgMs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CAXZKm7LVZT6LosARFMhDyNCpC8UrWER8avOurFeZSEpesWDrM4vboasRcL5tyqJM2GmzwmPKjJqpTZareMTLtisDe5xFSkhd1eyymOwgiBpmpWddBoM/Fx8YBpL0v5vRvnfEnGBZoNcaqyIu5ZCXJCHOEgy2NvcGxZ+jQXcZ78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6eeb31b10ceso54685537b3.1;
-        Tue, 26 Nov 2024 00:38:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732610336; x=1733215136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SjBErQLBEug3e9Mj9PlNyLOsB+0cCc+2zRG7fLFw9Bk=;
-        b=nQ+wWmiQD5Yu6VukbPpYqDe+bEW2lKk5sufinN09M6KtIuNjQG4kqY14i1Fli1F8Gw
-         K8MtLvOKg8zx7GwHuoPKF4HmGYrm+Ul9fOBpOppW893uRuLRsB05pVEi/wfP6xNfCsBT
-         zQXFAkTVTlaDQCrPIXguPOPHGdnV995ZrUFkcL0WO9d3L8/Pg6lF//dIPfznRTvDLf7+
-         ATRnbTKOVb1fRnBMwIuD1x37f7qQ51FKRB01YR8me4A5J4M6J5trGrDsYOsgv60z6bmW
-         NSBypv6o6k2jBJ2BkTST+ZMpI6pnUFKN3CScaPOQjgWf3YelP6ttx8O2PwDSbTzeDhVw
-         uZMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUo8LRVS7UtmBQE7Sl95T7n6qC0jzPk2uZfhRBQnf4oFzOUNC6ZAnJrPveTnYtgqxp0reALN8ia8qMp3hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2SspLEvQVUFKQV1jLAKenRqCpMtV/GBo5o/su2eUVwKRx+Q3n
-	c/8UMCHADNDBn1Gicu8VKC2mFg71WTqsJo/h2Wx4F9lgaHkBn1zssnEYTFPz
-X-Gm-Gg: ASbGnctIU6NHpxAEUnf5BvgatG44TIycglS/zDu8mgz11IwwPcJZhrfQkiosgkzTSVY
-	6e8+PEGt1O0As9OClBLRe7x/WiQWwk85Gbnv6nt/E0IXoq3qShGf1zUbwXwRDmIDiHnFKOzvhTW
-	KsSiWneZJpckrCH9E63MEH+dQU1O9fk9Wnov1SMuVU4/pCwt80lKZ3VFO1ZUL+uSky09gopUxAe
-	26v1akkKePVWWAQ977ND36XFbPP8P0twz+2vySZGT2zXqCDDVLUWznGmn5xEcxSP40drbOgnSwj
-	HGMH9V4OQxy0Jqsj
-X-Google-Smtp-Source: AGHT+IFkSHQmpSQVux66+DSg/d2jSO1uuc9fOdkblYsuHcM7FN6X7AC317/LY3nfBTx2m7p6Dhvv6Q==
-X-Received: by 2002:a05:690c:688a:b0:6ee:4bee:d912 with SMTP id 00721157ae682-6eee09e9881mr152116967b3.21.1732610336234;
-        Tue, 26 Nov 2024 00:38:56 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe2c142sm22368897b3.48.2024.11.26.00.38.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 00:38:55 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ee994218d9so47765467b3.0;
-        Tue, 26 Nov 2024 00:38:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVFWKNycsWsNRnr5FDDYIDGsll/RJIirjCqrs+dnzhUTppY1OmoaL/vtQNuV/v0o2tPJO0GmhFtNnK8BUs=@vger.kernel.org
-X-Received: by 2002:a05:690c:62ca:b0:6ee:b43b:62f4 with SMTP id
- 00721157ae682-6eee09e9dc5mr153772817b3.19.1732610335371; Tue, 26 Nov 2024
- 00:38:55 -0800 (PST)
+	s=arc-20240116; t=1732610338; c=relaxed/simple;
+	bh=np3gVh2vdVMzwJbdelK/6cS6+cbSugtEMQAtU2/XSG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmoxvPIQBD5oLO3sidcqFmSKF64elChmcydoclSgZKB8rqWVSsQG+1C9WS3ncNxM0uXUkT3UL45ZT2NT9/6xgkJ/AqIw+jaumDTG4gr/f5zz+iSFwhQOeNEptdIMOZ3zRrfwM+Zs3EV/U/rYO7p5vjoE6pa/E8nsEPYmIn7J7Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSGeqoOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1860C4CED2;
+	Tue, 26 Nov 2024 08:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732610338;
+	bh=np3gVh2vdVMzwJbdelK/6cS6+cbSugtEMQAtU2/XSG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nSGeqoOn1S3dD4mvA4bOozPQKUShhg1mWWMrX9sdkefP4KreZ5C12Lvw13dCIlF8o
+	 dBax9EngjiuB2f3zEbgw3yXwgrIPUef8ZT1q0Un11iqeJx3tcTJtqEURMF15ZZNqUP
+	 CWmTLCHLhGw5sJVGMd4MjASQsdDnT6i1Kj3qRj0ehClBz0uRhDRmZZbriJjx9ul450
+	 YVp5bDU5Y2piARlIPhRDCulRvmgGCPLExHoKIUfWzkoK4lVFRBNsJTf9OmHlKCTUVz
+	 XTM+V5WBnj0mx8jrGJkSazCeedawve01dDdUTxnkdM2zemIF222ICHxzmoeNZ85EjD
+	 cUg84GF5JgSKg==
+Date: Tue, 26 Nov 2024 09:38:55 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
+ helper function
+Message-ID: <20241126-refreshing-slick-pig-baebab@houat>
+References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
+ <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
+ <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
+ <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022151838.26f9925fb959.Ia80b55e934bbfc45ce0df42a3233d34b35508046@changeid>
- <CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 26 Nov 2024 09:38:43 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXbnZc7rYc7ibRNWY6EfRLh-7g0yDeZ3Zk5OXCQ9Cr=cA@mail.gmail.com>
-Message-ID: <CAMuHMdXbnZc7rYc7ibRNWY6EfRLh-7g0yDeZ3Zk5OXCQ9Cr=cA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] debugfs: add small file operations for most files
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Johannes Berg <johannes.berg@intel.com>, 
-	linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="lhbvkcbp3c3gosel"
+Content-Disposition: inline
+In-Reply-To: <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
+
+
+--lhbvkcbp3c3gosel
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
+ helper function
+MIME-Version: 1.0
 
-Hi Johannes,
+Hi,
 
-On Mon, Nov 25, 2024 at 1:37=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Tue, Oct 22, 2024 at 3:19=E2=80=AFPM Johannes Berg <johannes@sipsoluti=
-ons.net> wrote:
-> > From: Johannes Berg <johannes.berg@intel.com>
-> >
-> > As struct file_operations is really big, but (most) debugfs
-> > files only use simple_open, read, write and perhaps seek, and
-> > don't need anything else, this wastes a lot of space for NULL
-> > pointers.
-> >
-> > Add a struct debugfs_short_fops and some bookkeeping code in
-> > debugfs so that users can use that with debugfs_create_file()
-> > using _Generic to figure out which function to use.
-> >
-> > Converting mac80211 to use it where possible saves quite a
-> > bit of space:
-> >
-> > 1010127  205064    1220 1216411  128f9b net/mac80211/mac80211.ko (befor=
-e)
-> >  981199  205064    1220 1187483  121e9b net/mac80211/mac80211.ko (after=
-)
-> > -------
-> >  -28928 =3D ~28KiB
-> >
-> > With a marginal space cost in debugfs:
-> >
-> >    8701     550      16    9267    2433 fs/debugfs/inode.o (before)
-> >   25233     325      32   25590    63f6 fs/debugfs/file.o  (before)
-> >    8914     558      16    9488    2510 fs/debugfs/inode.o (after)
-> >   25380     325      32   25737    6489 fs/debugfs/file.o  (after)
-> > ---------------
-> >    +360      +8
-> >
-> > (All on x86-64)
-> >
-> > A simple spatch suggests there are more than 300 instances,
-> > not even counting the ones hidden in macros like in mac80211,
-> > that could be trivially converted, for additional savings of
-> > about 240 bytes for each.
-> >
-> > Signed-off-by: Johannes Berg <johannes.berg@intel.com>
->
-> Thanks for your patch, which is now commit 8dc6d81c6b2acc43 ("debugfs:
-> add small file operations for most files") upstream.
->
-> > --- a/fs/debugfs/inode.c
-> > +++ b/fs/debugfs/inode.c
->
-> > -struct dentry *debugfs_create_file(const char *name, umode_t mode,
-> > -                                  struct dentry *parent, void *data,
-> > -                                  const struct file_operations *fops)
-> > +struct dentry *debugfs_create_file_full(const char *name, umode_t mode=
-,
-> > +                                       struct dentry *parent, void *da=
-ta,
-> > +                                       const struct file_operations *f=
-ops)
-> >  {
-> > +       if (WARN_ON((unsigned long)fops &
-> > +                   (DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT |
-> > +                    DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)))
-> > +               return ERR_PTR(-EINVAL);
-> >
->
-> This warning is triggered during boot on m68k:
->
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at fs/debugfs/inode.c:457
+On Tue, Nov 26, 2024 at 08:36:00AM +0100, Sean Nyekjaer wrote:
+> On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
+> > On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
+> > > Check if the required pixel clock is in within .5% range of the
+> > > desired pixel clock.
+> > > This will match the requirement for HDMI where a .5% tolerance is all=
+owed.
+> > >=20
+> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_modes.c | 34 ++++++++++++++++++++++++++++++++++
+> > >  include/drm/drm_modes.h     |  2 ++
+> > >  2 files changed, 36 insertions(+)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> > > index 6ba167a3346134072d100af0adbbe9b49e970769..4068b904759bf80502efd=
+e6e4d977b297f5d5359 100644
+> > > --- a/drivers/gpu/drm/drm_modes.c
+> > > +++ b/drivers/gpu/drm/drm_modes.c
+> > > @@ -1623,6 +1623,40 @@ bool drm_mode_equal_no_clocks_no_stereo(const =
+struct drm_display_mode *mode1,
+> > >  }
+> > >  EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
+> > > =20
+> > > +/**
+> > > + * drm_mode_validate_mode
+> > > + * @mode: mode to check
+> > > + * @rounded_rate: output pixel clock
+> > > + *
+> > > + * VESA DMT defines a tolerance of 0.5% on the pixel clock, while the
+> > > + * CVT spec reuses that tolerance in its examples, so it looks to be=
+ a
+> > > + * good default tolerance for the EDID-based modes. Define it to 5 p=
+er
+> > > + * mille to avoid floating point operations.
+> > > + *
+> > > + * Returns:
+> > > + * The mode status
+> > > + */
+> > > +enum drm_mode_status drm_mode_validate_mode(const struct drm_display=
+_mode *mode,
+> > > +					    unsigned long long rounded_rate)
+> > > +{
+> > > +	enum drm_mode_status status;
+> > > +	unsigned long long rate =3D mode->clock * 1000;
+> > > +	unsigned long long lowest, highest;
+> > > +
+> > > +	lowest =3D rate * (1000 - 5);
+> > > +	do_div(lowest, 1000);
+> > > +	if (rounded_rate < lowest)
+> > > +		return MODE_CLOCK_LOW;
+> > > +
+> > > +	highest =3D rate * (1000 + 5);
+> > > +	do_div(highest, 1000);
+> > > +	if (rounded_rate > highest)
+> > > +		return MODE_CLOCK_HIGH;
+> > > +
+> > > +	return MODE_OK;
+> > > +}
+> > > +EXPORT_SYMBOL(drm_mode_validate_mode);
+> >=20
+> > Thanks a lot for doing that!
+> >=20
+> > I wonder about the naming though (and prototype). I doesn't really
+> > validates a mode, but rather makes sure that a given rate is a good
+> > approximation of a pixel clock. So maybe something like
+> > drm_mode_check_pixel_clock?
+>=20
+> Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
+>=20
+> Would it make sense to have the pixel clock requirement as a input
+> parameter? For HDMI it is 0.5%
 
-> > --- a/fs/debugfs/internal.h
-> > +++ b/fs/debugfs/internal.h
-> > @@ -18,6 +18,7 @@ extern const struct file_operations debugfs_full_prox=
-y_file_operations;
-> >
-> >  struct debugfs_fsdata {
-> >         const struct file_operations *real_fops;
-> > +       const struct debugfs_short_fops *short_fops;
-> >         union {
-> >                 /* automount_fn is used when real_fops is NULL */
-> >                 debugfs_automount_t automount;
-> > @@ -39,6 +40,11 @@ struct debugfs_fsdata {
-> >   * pointer gets its lowest bit set.
-> >   */
-> >  #define DEBUGFS_FSDATA_IS_REAL_FOPS_BIT BIT(0)
-> > +/*
-> > + * A dentry's ->d_fsdata, when pointing to real fops, is with
-> > + * short fops instead of full fops.
-> > + */
-> > +#define DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT BIT(1)
->
-> As the minimum alignment is 2 on m68k, you cannot use bit 1 in pointers
-> for your own private use.  See also the comment at
-> https://elixir.bootlin.com/linux/v6.12.1/source/include/linux/maple_tree.=
-h#L44
+This code was only used for panels so far. It reuses the same tolerance
+than HDMI because we couldn't come up with anything better, but it
+should totally apply to other things.
 
-If you want to support truncated debugfs_fops structures, I am
-afraid there is no other option than storing a flag, structure type,
-or structure size inside the structure. The latter would allow us
-to support not just full and short structures, but also arbitrary
-truncation, given even more opportunities for size reduction.
+> and in my case the LVDS panel 10%.
 
-E.g. something like
+10% is a lot, and I'm not sure we'll want that. The framerate being
+anywhere between 54 and 66 fps will trip a lot of applications too.
 
-    #define get_method(_ops, _op, _op_fallback) \
-            ((_ops->size > offsetof(struct debugfs_fops, _op)) ?
-_ops->_op : _op_fallback)
+Why do you need such a big tolerance?
 
-Gr{oetje,eeting}s,
+Maxime
 
-                        Geert
+--lhbvkcbp3c3gosel
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0WJGgAKCRAnX84Zoj2+
+dgyFAYDpVbD0+B1OXcBahhvUgiMgYgY8W64szTv09wv/4HohtzWS1pIp3K2R38QQ
+wOL5h3QBf0hLFnVFqmeGdio6nM2Us2phuUAbokXf6Z7YXiUN8CVJPQw1vBRsPHG9
+zYgs3yNCQA==
+=bqF0
+-----END PGP SIGNATURE-----
+
+--lhbvkcbp3c3gosel--
 
