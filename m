@@ -1,183 +1,194 @@
-Return-Path: <linux-kernel+bounces-422017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D0D9D936B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:39:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E87F9D9375
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47338B224E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F02283913
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6E719F410;
-	Tue, 26 Nov 2024 08:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688671B4122;
+	Tue, 26 Nov 2024 08:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSGeqoOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3VzyJhP"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CAE18E37B;
-	Tue, 26 Nov 2024 08:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CB8194A75;
+	Tue, 26 Nov 2024 08:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732610338; cv=none; b=O2zYVU/TGvEg+oQHipMIfBQVAYT1qT7o6y6ozCL2O3yAB26R1WokkkybQttsJASxLPiE7enq5nk8V/W+hzGlxGK1Vkd23PawqmcLNmKFt9IFudf6CVaB/xaFXXTr/MIOLMJWD0EVNuSDksWpJ6lKnhBAAGIRH4KG1PgJ0+K6rL4=
+	t=1732610442; cv=none; b=NkAnIB9wS/OAG5o134/5VF5QK2WYlmGEXSaLvLA9Cd3+/UWc9GoBIQjKoj3O2oQX5Ac/XGICDL0OIR9yct8/4SQRkYchvywHLk+P3k3fYm9krhQp6HnmoYppXaj+CkztlF5MqjXJUw3GDoOG1TzsIDq/vPOem4xjNeta7zWvaiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732610338; c=relaxed/simple;
-	bh=np3gVh2vdVMzwJbdelK/6cS6+cbSugtEMQAtU2/XSG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmoxvPIQBD5oLO3sidcqFmSKF64elChmcydoclSgZKB8rqWVSsQG+1C9WS3ncNxM0uXUkT3UL45ZT2NT9/6xgkJ/AqIw+jaumDTG4gr/f5zz+iSFwhQOeNEptdIMOZ3zRrfwM+Zs3EV/U/rYO7p5vjoE6pa/E8nsEPYmIn7J7Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSGeqoOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1860C4CED2;
-	Tue, 26 Nov 2024 08:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732610338;
-	bh=np3gVh2vdVMzwJbdelK/6cS6+cbSugtEMQAtU2/XSG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSGeqoOn1S3dD4mvA4bOozPQKUShhg1mWWMrX9sdkefP4KreZ5C12Lvw13dCIlF8o
-	 dBax9EngjiuB2f3zEbgw3yXwgrIPUef8ZT1q0Un11iqeJx3tcTJtqEURMF15ZZNqUP
-	 CWmTLCHLhGw5sJVGMd4MjASQsdDnT6i1Kj3qRj0ehClBz0uRhDRmZZbriJjx9ul450
-	 YVp5bDU5Y2piARlIPhRDCulRvmgGCPLExHoKIUfWzkoK4lVFRBNsJTf9OmHlKCTUVz
-	 XTM+V5WBnj0mx8jrGJkSazCeedawve01dDdUTxnkdM2zemIF222ICHxzmoeNZ85EjD
-	 cUg84GF5JgSKg==
-Date: Tue, 26 Nov 2024 09:38:55 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
- helper function
-Message-ID: <20241126-refreshing-slick-pig-baebab@houat>
-References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
- <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
- <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
- <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
+	s=arc-20240116; t=1732610442; c=relaxed/simple;
+	bh=4/jGPyL/3u3yhDTB4NpPx6N/Pb9fNOscghgs7DOlaEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xcj2QDbl6J6x+SuE2plRlaPWVMhyPeH+whJoMIMHBzgurgDpkle76+HqpnqqWy6NP35msQXQFumAj1OQz+4CslHuA2PlZpcGhBNPezGzTyjkY3/iYgp4K7fbpj3y4JVAMAfge/XKGtz/wv3wUSunTBuPYUPqfNVlkE+FwFIuX3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3VzyJhP; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e9ed2dbfc8so930622a91.1;
+        Tue, 26 Nov 2024 00:40:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732610440; x=1733215240; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nZbkyUg3DJojK6s7+U9GX4KB3joCQxD93TIhVy5Jp/Q=;
+        b=d3VzyJhP3lYvpZ9lz93D8jeWIPcW3YaxkX7p9qIFx6epNUgWcewWVOCeOvWLdmZ0w8
+         ltMdvpJYtuSfvj7jnOdyfKHjZVVgHYMJQIRxTktdUhzlmmQtW19oYJ6zBIyrUTtT1NMO
+         pFM9XmkFRKAcX7DU0N6UQe6CDv5SrxyZc4J+kzrhqXtCZlF/TyKy5XuKlaFRHqY4NCch
+         ML/HY3faxHS9kkbaqjafqAq5d3zuwV2wqSazefe0uOyHD9/asMx5VmvXNVh6rJMBgR9I
+         ww8mYYRxR1qr9RUn3CVejjOFnfKhhofnZ6hMIPvFSL16Nki7rKFeW3Hxy5oCV+eARkwz
+         B6QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732610440; x=1733215240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZbkyUg3DJojK6s7+U9GX4KB3joCQxD93TIhVy5Jp/Q=;
+        b=qKZzMlwzh4oA+LLF2g1WAxqU2/yhwUVQBCwbKH4IEb8VxldA6ZdB/3gxnKpbEIyAj4
+         RRXL+rt5umZHwmDKFLoqnMbI1lbGpe4TUa5lY22X+vyKzmI4KCcYT+t1IaINSHayJUki
+         1+cxhYb/1GglwvhxnsCUiviUX/0YITbLfNnN3YpBd2uCQr4s8yWLGia+/WMEiqZ8Rcxc
+         pZ1ywXGdPBcOPHm3GioW/YeHL7CDlLy1eRvA839wZ6m/GVnKHQoBK6vuP0IquCrCMc5B
+         Tk51BiCIUc8g/akuZ2HUjygYvMMPqVjBpDZ5dOPmKHC8CcI00QaKMzGgSTcp05zX9SZS
+         /QKA==
+X-Forwarded-Encrypted: i=1; AJvYcCULzWBVhSWAQx/QdaDhWJ2hNNNHJQQoK3QEQdpdJFj2MTBe844eladVeRwPNJakEIxsazsAnaM5lC19@vger.kernel.org, AJvYcCVlAfWcRWsX2Vl/Gd3zHPUQbqY8elTWe6gp0GTV+RstNWT1a3cTkOsmYIjjo1ro+kgXl27Bkis/wSACfZvW@vger.kernel.org, AJvYcCWsDq2X3CnPzOgQoGkw2q9WKKpAWikK+pCMWnaeqXFXE1XSZSqah7HIvcMiJ1KuTF96QR/bYZUpLR1I@vger.kernel.org
+X-Gm-Message-State: AOJu0YywVAb+juFQUevCAqvsGFSi8vOUViw1EXaEvl+jhKz2LWQQSRna
+	yMqOmSTAbvfspFF+hANxIwzvhPie5OI7Ji/gBk6XTrJHf+/UXNbE
+X-Gm-Gg: ASbGncuXq1jowuTr6q3KHwmxku074K46ixJPpYq9zQ2fpyAyvVqt9Vl9w1U/CrwNpac
+	bXSJRD52AAXlM9iMd1ax2qgOiUqsGs/oi+nrfFjzRff1HW/3u7AApS4NmvXkpiTvNwOxQMKpI6h
+	b0T4d/J9jvXovip5QZl2EuGilW70pyVJlbQVXx/WQG2qp/cvx8ypxEh7pPUsskfCP3Naml4SugA
+	Ll0iIW1mHP61fY6ZuO6MYabhxgbDubEVF4yF64YDWIXs/02TFJrNOeXFw==
+X-Google-Smtp-Source: AGHT+IF73PAhzAjUuYL9DhFf8aYaTBl/YTsoSJ+wi/AHDobSA/YfTuwlQrt5I17R1mJE9tAyni/nlA==
+X-Received: by 2002:a17:90b:4c45:b0:2ea:853a:99e0 with SMTP id 98e67ed59e1d1-2ede7e40e93mr1800169a91.5.1732610440452;
+        Tue, 26 Nov 2024 00:40:40 -0800 (PST)
+Received: from [100.116.227.126] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02eca46sm11706500a91.7.2024.11.26.00.40.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 00:40:39 -0800 (PST)
+Message-ID: <ea141f1f-b0b0-4bcd-ac30-8ee533860f5d@gmail.com>
+Date: Tue, 26 Nov 2024 16:40:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="lhbvkcbp3c3gosel"
-Content-Disposition: inline
-In-Reply-To: <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: tyhx,hx9023s: Add performance
+ tuning configuration
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, yasin.lee.x@outlook.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241017-add-performance-tuning-configuration-v3-0-e7289791f523@gmail.com>
+ <20241017-add-performance-tuning-configuration-v3-1-e7289791f523@gmail.com>
+ <20241020140638.127a9dbf@jic23-huawei>
+ <b59f6933-e1f1-49e9-be61-3e3b4323da87@gmail.com>
+ <20241123132110.15570171@jic23-huawei>
+Content-Language: en-US
+From: Yasin Lee <yasin.lee.x@gmail.com>
+In-Reply-To: <20241123132110.15570171@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---lhbvkcbp3c3gosel
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
- helper function
-MIME-Version: 1.0
+On 11/23/24 21:21, Jonathan Cameron wrote:
+> On Thu, 14 Nov 2024 23:16:51 +0800
+> Yasin Lee <yasin.lee.x@gmail.com> wrote:
+>
+>> On 10/20/24 21:06, Jonathan Cameron wrote:
+>>> On Thu, 17 Oct 2024 18:36:44 +0800
+>>> Yasin Lee <yasin.lee.x@gmail.com> wrote:
+>>>   
+>>>> When hardware design introduces significant sensor data noise,
+>>>> performance can be improved by adjusting register settings.
+>>> Questions inline. Mostly around why these controls belong in DT.
+>>> What do they have to do with hardware / wiring etc rather than being
+>>> appropriate for userspace controls.
+>>>
+>>> So almost all are definite no to being suitable for device tree bindings.
+>>>
+>>> Jonathan
+>>>   
+>> Hi Jonathan,
+>>
+>> Thank you for the suggestions in your recent email. Following your
+>> advice, I discussed these configurations in detail with engineers from
+>> the HX9023S supplier. Based on their feedback, these settings are not
+>> intended to be exposed to end-users. Typically, these configurations are
+>> adjusted during the DVT phase of the end product by the supplier to
+>> optimize performance, after which they are finalized and not meant to be
+>> modified dynamically at the user level.
+>>
+>> Given this approach, it seems more appropriate to provide these settings
+>> as part of a firmware file, allowing the configuration to be kept
+>> internal and managed without user-level access. If this approach aligns
+>> with your thoughts, I can prepare and submit a new patch focused on
+>> firmware parsing and handling for these configurations.
+> Whilst I agree that a typical user may well not modify these settings
+> that doesn't necessarily make them suitable for control from the
+> Device Tree. Some may be but settings like ODR are about use case
+> not physical hardware. Average and OSR are normally a question of
+> trading off noise against data rate - that's policy not a fundamental
+> characteristic of the hardware. Filter controls are similar.
+>
+> For other such as Dither, there may hardware configurations where it
+> doesn't need to be turned, only but does it do any harm? I'd be
+> somewhat surprised if the right thing to do there isn't to just hard
+> code it to turned on.
+>
+> The enabling of dataready interrupt is entirely down to how the
+> device is being used, not the platform.
+>
+> If these devices are being used in embedded platforms for a specific
+> purpose, then a simple udev rule or similar can configure the
+> defaults whilst still allowing them to be easily tweaked.
+> If you are dealing with standardized software it will already understand
+> many of the userspace ABI calls and have appropriate configuration files.
+>
+> That is the appropriate level for such control, not device
+> tree.
+>
+> If you have a strong case why a setting is never a policy decision
+> but rather a hard characteristic of the system, then that one may
+> be appropriate for DT.  Examples of this in the past have been things
+> like output voltage ranges for DACs because the hardware beyond
+> this device may only cope with some settings.
+>
+> Jonathan
+>
+Hi Jonathan,
 
-Hi,
+Thank you for your detailed explanation and insights. I fully agree with 
+your point that settings such as ODR, Average, OSR, and filter-related 
+configurations, being policy-driven, should not be included in the 
+Device Tree.
 
-On Tue, Nov 26, 2024 at 08:36:00AM +0100, Sean Nyekjaer wrote:
-> On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
-> > On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
-> > > Check if the required pixel clock is in within .5% range of the
-> > > desired pixel clock.
-> > > This will match the requirement for HDMI where a .5% tolerance is all=
-owed.
-> > >=20
-> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > > ---
-> > >  drivers/gpu/drm/drm_modes.c | 34 ++++++++++++++++++++++++++++++++++
-> > >  include/drm/drm_modes.h     |  2 ++
-> > >  2 files changed, 36 insertions(+)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-> > > index 6ba167a3346134072d100af0adbbe9b49e970769..4068b904759bf80502efd=
-e6e4d977b297f5d5359 100644
-> > > --- a/drivers/gpu/drm/drm_modes.c
-> > > +++ b/drivers/gpu/drm/drm_modes.c
-> > > @@ -1623,6 +1623,40 @@ bool drm_mode_equal_no_clocks_no_stereo(const =
-struct drm_display_mode *mode1,
-> > >  }
-> > >  EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
-> > > =20
-> > > +/**
-> > > + * drm_mode_validate_mode
-> > > + * @mode: mode to check
-> > > + * @rounded_rate: output pixel clock
-> > > + *
-> > > + * VESA DMT defines a tolerance of 0.5% on the pixel clock, while the
-> > > + * CVT spec reuses that tolerance in its examples, so it looks to be=
- a
-> > > + * good default tolerance for the EDID-based modes. Define it to 5 p=
-er
-> > > + * mille to avoid floating point operations.
-> > > + *
-> > > + * Returns:
-> > > + * The mode status
-> > > + */
-> > > +enum drm_mode_status drm_mode_validate_mode(const struct drm_display=
-_mode *mode,
-> > > +					    unsigned long long rounded_rate)
-> > > +{
-> > > +	enum drm_mode_status status;
-> > > +	unsigned long long rate =3D mode->clock * 1000;
-> > > +	unsigned long long lowest, highest;
-> > > +
-> > > +	lowest =3D rate * (1000 - 5);
-> > > +	do_div(lowest, 1000);
-> > > +	if (rounded_rate < lowest)
-> > > +		return MODE_CLOCK_LOW;
-> > > +
-> > > +	highest =3D rate * (1000 + 5);
-> > > +	do_div(highest, 1000);
-> > > +	if (rounded_rate > highest)
-> > > +		return MODE_CLOCK_HIGH;
-> > > +
-> > > +	return MODE_OK;
-> > > +}
-> > > +EXPORT_SYMBOL(drm_mode_validate_mode);
-> >=20
-> > Thanks a lot for doing that!
-> >=20
-> > I wonder about the naming though (and prototype). I doesn't really
-> > validates a mode, but rather makes sure that a given rate is a good
-> > approximation of a pixel clock. So maybe something like
-> > drm_mode_check_pixel_clock?
->=20
-> Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
->=20
-> Would it make sense to have the pixel clock requirement as a input
-> parameter? For HDMI it is 0.5%
+As you mentioned, the dither setting is typically left disabled in most 
+cases. This device is indeed used for specific purposes in embedded 
+platforms, and there is no requirement for runtime flexibility in 
+adjusting these configurations.
 
-This code was only used for panels so far. It reuses the same tolerance
-than HDMI because we couldn't come up with anything better, but it
-should totally apply to other things.
+Given this, I have decided to drop this submission. Moving forward, I 
+plan to address varying hardware requirements by adapting these 
+configurations using a firmware-based approach.
 
-> and in my case the LVDS panel 10%.
+Thank you again for your guidance and support!
 
-10% is a lot, and I'm not sure we'll want that. The framerate being
-anywhere between 54 and 66 fps will trip a lot of applications too.
-
-Why do you need such a big tolerance?
-
-Maxime
-
---lhbvkcbp3c3gosel
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0WJGgAKCRAnX84Zoj2+
-dgyFAYDpVbD0+B1OXcBahhvUgiMgYgY8W64szTv09wv/4HohtzWS1pIp3K2R38QQ
-wOL5h3QBf0hLFnVFqmeGdio6nM2Us2phuUAbokXf6Z7YXiUN8CVJPQw1vBRsPHG9
-zYgs3yNCQA==
-=bqF0
------END PGP SIGNATURE-----
-
---lhbvkcbp3c3gosel--
+Best regards,
+Yasin Lee
+>
+>> Thank you again for your valuable guidance, and I look forward to your
+>> feedback.
+>>
+>> Best regards,
+>> Yasin Lee
+>>
+>>
 
