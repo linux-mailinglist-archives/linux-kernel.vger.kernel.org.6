@@ -1,111 +1,105 @@
-Return-Path: <linux-kernel+bounces-422598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92119D9BA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:41:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4DD9D9BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:42:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEED286AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D07166B54
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB151DA612;
-	Tue, 26 Nov 2024 16:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59831D90D7;
+	Tue, 26 Nov 2024 16:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVGTn06X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCSso/Uz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDF119F410;
-	Tue, 26 Nov 2024 16:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCF11DD0D4;
+	Tue, 26 Nov 2024 16:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732639282; cv=none; b=DqXyhtJKltTPJRnaqSrE7iyN99qwD/aIggJarCehsU+Ac6Duym5RBUnIdUCXuhd8i8uzyXqmpvl4dcAZWLhJ0hQB9OVFOxvIxIfLbtEBnlPMrE1ZutWT35qfBeAANyXjYulOuT4ELUXu0eLh/yWhxQJ/n+PNdD9FHzI/HQaoDvQ=
+	t=1732639292; cv=none; b=dcPSb/vg/PAa01XHN+WnE/BQvRi50HaTM0zv0vcRaNDGo9XOwOTzj1gBe3sWkC2wiMkHjL58kywSQXkQ47aNm2Rd7Ag6tS6kXS2YcjM3RTWfMEVWv5rD7x1IUTF+U3qxPQk0fHCTPN9s+9nm93NsoHvUWUFE7E3smJCF+ZEs2/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732639282; c=relaxed/simple;
-	bh=S5PgWcf5k5x487bSWpv1A5GU8RveioFsB4grSMq9X6c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HXrQio22hfBDDNJOMSjVdrQt+S5B0mT3Mjn2bpyT5fDO+XeZ2kheEfLi/62vBTGWQVUntJNuhI3jGvpawMS/cZfozDKBZWEdrvQ5tva374HTu8WZvn7TUU3NGhdip5L3h/rf0fU5mLdU76E8PiwHJpriMqLkvPt1qBJzEDW8PgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVGTn06X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 37560C4CED8;
-	Tue, 26 Nov 2024 16:41:22 +0000 (UTC)
+	s=arc-20240116; t=1732639292; c=relaxed/simple;
+	bh=oKW7VgwpjCE+pqhHdDGaMLxz+CglQ45JWptkt0Up+RM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B36Sa/eh8eJiVDFkZWmBBjBu3dHXSrjbXKkQrNj5D0ivnlSHLsplFbU18goSNwIFrB4rnM0UBn8hNEJdsRbB9x7JTbGccWP3k1hGwWwyZL/X3xGgxCYmQ6mXgJ+ITlQ7M3ZoC97oWR11L74BCYxqZ2INMkwOG+B2S5qOgqh3osk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCSso/Uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2B8C4CECF;
+	Tue, 26 Nov 2024 16:41:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732639282;
-	bh=S5PgWcf5k5x487bSWpv1A5GU8RveioFsB4grSMq9X6c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=tVGTn06XAgs2xNL+/yLrm/4pLscBnPur5fVsTMkORf/6uWhW4kzWGp9HoAzZB1N4x
-	 VT/YavZ+yyM5lRXLCeDlknmEEaeuipf8oN9hZRl3S4lcSfOEj6CXs0z1rIQYNQ6W+H
-	 cDcam5b6qL2sLFw5p9VRjhtt4r6bwwyJCX0rV1PCw945PoG6tOp+j2ZFBTWUY72NDy
-	 1igagVv0UqhaKpfFPdYlQBA6CWA2Irbce53SXa2NwzdVYhkpsFJkPPHpfm1dW3uLtG
-	 +MfM+z2g8xnZwLzUelxM5h/lZxYWF6m+1A5MvRzLTjUjy8fAB2/Q9B4V8DJmPDiyTS
-	 3kH1BLrwgaGjA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E71D65522;
-	Tue, 26 Nov 2024 16:41:22 +0000 (UTC)
-From: Jens Korinth via B4 Relay <devnull+jens.korinth.tuta.io@kernel.org>
-Date: Tue, 26 Nov 2024 17:40:59 +0100
-Subject: [PATCH v4 3/3] rust: error: Replace pr_warn by pr_warn_once
+	s=k20201202; t=1732639291;
+	bh=oKW7VgwpjCE+pqhHdDGaMLxz+CglQ45JWptkt0Up+RM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bCSso/UzJsnV9+MCDkXJwXjo0iQXxCTWTdU6YhVEVuD6b7R8P/yeXHwWJx6sS/jOR
+	 +M8MzvDUJqrj3ahEhSeYnuaLRgURJ0HAQO79PMKA9irK2IHvbseA6FMpLh2a4m758z
+	 wHNzcn33D6hpxw3kzTOhxEQ3niAUqrIsyA427MtokJKbGZVN+zrT4589L+U6N9v82Y
+	 FsnRAvf6cwuDatKgGowEjB83aEAfRS68g2rlmiIcqczD88/aaXG9GvDhOVY8KxWc64
+	 wNqGUNSLe09UYyMg0zzEqNvc/tHgXdGx5S5Xvuu5TEBX9D7CQm2zwMNl/k2lZOmFi/
+	 FTVeNe2bRXROw==
+Date: Tue, 26 Nov 2024 13:41:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf trace: Add tests for BTF general augmentation
+Message-ID: <Z0X6OTPsWOHgmvMr@x1>
+References: <20241123005512.342079-1-howardchu95@gmail.com>
+ <20241123005512.342079-2-howardchu95@gmail.com>
+ <CAH0uvojmPp4-0xb6sObr8Tcw=ujysLMBeebpwON0Ygy=LH63Zg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-pr_once_macros-v4-3-410b8ca9643e@tuta.io>
-References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
-In-Reply-To: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: rust-for-linux@vger.kernel.org, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Dirk Behme <dirk.behme@gmail.com>, linux-kernel@vger.kernel.org, 
- Jens Korinth <jens.korinth@tuta.io>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732639280; l=872;
- i=jens.korinth@tuta.io; s=20241107; h=from:subject:message-id;
- bh=Ibn3wEyptEN6rItZsMxTwWDZUjDEMOkNcZSR4EQjX4M=;
- b=MnERlW0iiP5yuqZAjJpBuHzt97f3tAqsZl9SVLCPvMjRPTJAHSg/fNl90GinoaOYCJ1wtfdys
- j90U8UUchUDCAGgCqNYJEStmvh62yiv5Zit+gDB4ftZJURYincQqO8c
-X-Developer-Key: i=jens.korinth@tuta.io; a=ed25519;
- pk=bG0q4Zyj3o4d/r326zKL7ym+/tXzyykcjh+U0M13iyc=
-X-Endpoint-Received: by B4 Relay for jens.korinth@tuta.io/20241107 with
- auth_id=270
-X-Original-From: Jens Korinth <jens.korinth@tuta.io>
-Reply-To: jens.korinth@tuta.io
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvojmPp4-0xb6sObr8Tcw=ujysLMBeebpwON0Ygy=LH63Zg@mail.gmail.com>
 
-From: Jens Korinth <jens.korinth@tuta.io>
+On Fri, Nov 22, 2024 at 04:58:00PM -0800, Howard Chu wrote:
+> For the first patch, there is:
+> 
+> 
+> Suggested-by: Ian Rogers <irogers@google.com>
 
-Use new pr_warn_once macro to resolve TODO in error.rs.
+b4 somehow didn't like parts of this process:
 
-Signed-off-by: Jens Korinth <jens.korinth@tuta.io>
+⬢ [acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers 20241123005512.342079-1-howardchu95@gmail.com
+Grabbing thread from lore.kernel.org/all/20241123005512.342079-1-howardchu95@gmail.com/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 4 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+Checking attestation on all messages, may take a moment...
 ---
- rust/kernel/error.rs | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 52c5024324474fc1306047f3fd7516f0023d0313..f6813dace1128b7ef91f64e79cd83bb64995bf97 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -102,8 +102,7 @@ impl Error {
-     /// be returned in such a case.
-     pub fn from_errno(errno: crate::ffi::c_int) -> Error {
-         if errno < -(bindings::MAX_ERRNO as i32) || errno >= 0 {
--            // TODO: Make it a `WARN_ONCE` once available.
--            crate::pr_warn!(
-+            crate::pr_warn_once!(
-                 "attempted to create `Error` with out of range `errno`: {}",
-                 errno
-             );
-
--- 
-2.47.0
-
-
+  ✓ [PATCH v1 1/2] perf trace: Add tests for BTF general augmentation
+    + Link: https://lore.kernel.org/r/20241123005512.342079-2-howardchu95@gmail.com
+    + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  ✓ [PATCH v1 2/2] perf docs: Add documentation for --force-btf option
+    + Link: https://lore.kernel.org/r/20241123005512.342079-3-howardchu95@gmail.com
+    + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  ---
+  ✓ Signed: DKIM/gmail.com
+---
+Total patches: 2
+---
+NOTE: some trailers ignored due to from/email mismatches:
+    ! Trailer: Suggested-by: Ian Rogers <irogers@google.com>
+     Msg From: Howard Chu <howardchu95@gmail.com>
+NOTE: Rerun with -S to apply them anyway
+---
+Cover: ./20241122_howardchu95_perf_trace_add_tests_for_btf_general_augmentation.cover
+ Link: https://lore.kernel.org/r/20241123005512.342079-1-howardchu95@gmail.com
+ Base: applies clean to current tree
+       git checkout -b 20241122_howardchu95_gmail_com HEAD
+       git am ./20241122_howardchu95_perf_trace_add_tests_for_btf_general_augmentation.mbx
+⬢ [acme@toolbox perf-tools-next]$
 
