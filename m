@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-421935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A419D924A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:16:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A562F9D924C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B722837EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:16:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3187BB23EAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29F213AA2A;
-	Tue, 26 Nov 2024 07:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C821917EB;
+	Tue, 26 Nov 2024 07:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DoBzocZ5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938F88F54;
-	Tue, 26 Nov 2024 07:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="K6588PsN"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2678E8F54
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 07:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732605362; cv=none; b=uYPGRykW52g7atWrzX4EGYR/4lqR/0f+bfH6TM/UVyBJAOLKSEQZPvgOKH1l9JT5LcixnzI9pUsm3bmeGs7eHyPrmTdxVty3wzTFzbeco7SnQHTezm4wpzxwZLd3dyqJjaR9G60kBu9ZgzCAou9XovfuYtoNLx6Dib8JtSMHGpw=
+	t=1732605464; cv=none; b=nWY5ekGaI2SU2BgtZYLOS4f1/63Hu+SDyxKJRP4DkXpQhKp+y4NNwlMg5U0pUMH/p/z2Ttwmf/vkOd+sLcNsJvEbiZUFHi3xCjFWj5104aXP1bmE34z8mErgv1LxMJUClG8wtWRHn24lVQCESNND5WUuwpzkf4h/gYcdCldPFws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732605362; c=relaxed/simple;
-	bh=SalpNVycsXOdStRp7sEYPqOWh1/eh+t4LqNMJC0wAto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZL5ueXwKra2bsyPvkAVf2QquAMIpbl2mZVNwYhR3l0UL3OuO4nb5LqKaQ/WufSzH06EJX2KuPy9jsetpY1dcpqnl0sjG1P0EMHz0XHHAx5n4sZ/CqFM2v8gONCXBntctzybVCMGViE3Vg2Udlwe+kvM9NlCe8W8p4Y/wBR6wZAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DoBzocZ5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ3oNM5010336;
-	Tue, 26 Nov 2024 07:15:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7g6XLmM4hbthvCgpSK+EOyqhePvgSura3/T5/LCII0Y=; b=DoBzocZ50opxXuBH
-	jaQICIaLUVofv1hql732VhLqRTyAmPNrz+NIoemBhZSZaTOauSXSCpGG7cPoJoCJ
-	drRNo6fLaMAn2pQhtFDw8pH2dg1QjKLfX14nIzAZnMENRHusrVG9+Xeyuc2blcvN
-	8PJafumijbb5hTTUB+7aIMZ2QuQdDYgrrW23E1Xnlupk8qh41QU5/ujNuzKDj14t
-	NwAcuIoMfLsRbb+GMnTgS7BkqMYk6tNLazwXlAXSWr9oajZcMopO1OnCrI39djvv
-	KJMsBN384ZJK6+8O3h4BwO7lZCYE20ioCnstDRV/uMkAk9xxRs8vi0JDjFSZAYhV
-	aukU7Q==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw9abmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 07:15:47 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ7FlOY026452
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 07:15:47 GMT
-Received: from [10.217.218.192] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
- 2024 23:15:42 -0800
-Message-ID: <35395249-7aeb-459c-9c78-2cfdaad2bb6a@quicinc.com>
-Date: Tue, 26 Nov 2024 12:45:39 +0530
+	s=arc-20240116; t=1732605464; c=relaxed/simple;
+	bh=HpK19tY59xiKlLPs11JAC6mwo+cs0Yf+xayYBAQgZe0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ZXLE5E80BQl/o7E0yZG9R9K1PBlQRnA1ZXexyqq76KRRF+Uh60G3UYrR4bD4zUaPhvhHoCKaC+XNPfFfZcYPjjPJ3lZqzHweCgUjCoM4D3C4UXz8FWXjMcBv8BjsjgkvZDeAYNhk9iwt/Qiojb7xCN/ncBMFwq86C2imQTA6TkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=K6588PsN reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=TmwN6MDgR1O/TVJW1LLnw7Xg59ao/Xd7j9yUeqMu1Vo=; b=K
+	6588PsNo6uqKUXaD2WKPaSn2nYxc0DVV2numl8yipdaidasrsJxr2oCcyYvuQBXX
+	/eZMNvbbfFXvTKHSWqOkk7NNewdBjdq1akfAvUg131QuxtXaLn48+Qip8QAYxyE4
+	+XNVYwjja5MKv4pG3x9OG2YY+01AXTjcLww91k0Ywc=
+Received: from 00107082$163.com ( [111.35.191.191] ) by
+ ajax-webmail-wmsvr-40-101 (Coremail) ; Tue, 26 Nov 2024 15:16:03 +0800
+ (CST)
+Date: Tue, 26 Nov 2024 15:16:03 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Suren Baghdasaryan" <surenb@google.com>
+Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, yuzhao@google.com
+Subject: Re: Abnormal values show up in /proc/allocinfo
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <51c19b31.eaf.193660912f7.Coremail.00107082@163.com>
+References: <20241124074318.399027-1-00107082@163.com>
+ <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
+ <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com>
+ <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
+ <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
+ <51c19b31.eaf.193660912f7.Coremail.00107082@163.com>
+X-NTES-SC: AL_Qu2YAPqbukst5SCdZukXn0oTju85XMCzuv8j3YJeN500syTq1CEpcm9zDUb6+s6AAQKhoAiRXzF+xsFkUqR1Xo2udTj8HZZMUfQ9MYfRQjN8
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Add support for RAS DES feature in PCIe DW
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-        Shradha Todi
-	<shradha.t@samsung.com>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-CC: <manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <jingoohan1@gmail.com>, <fancer.lancer@gmail.com>,
-        <yoshihiro.shimoda.uh@renesas.com>, <conor.dooley@microchip.com>,
-        <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-References: <CGME20240625094434epcas5p2e48bda118809ccb841c983d737d4f09d@epcas5p2.samsung.com>
- <20240625093813.112555-1-shradha.t@samsung.com>
- <03c5bf0e-d65b-7ebb-d12d-3f9b3bae2a4c@quicinc.com>
-Content-Language: en-US
-From: Nitesh Gupta <quic_nitegupt@quicinc.com>
-In-Reply-To: <03c5bf0e-d65b-7ebb-d12d-3f9b3bae2a4c@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vG7WqxJuRQnWwWoDasVK4EMFJVKppoC-
-X-Proofpoint-ORIG-GUID: vG7WqxJuRQnWwWoDasVK4EMFJVKppoC-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 adultscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1011 mlxscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411260056
+Message-ID: <337c721a.70d1.1936753c377.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZSgvCgD3P4u3dUVntTcwAA--.14453W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0h+jqmdFcGAoWwAEsB
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Shradha,
-
-Can you please update on status of this Patch?
-
-Are you going to take it up or is it fine for us to take it up?
-
--Nitesh Gupta
-
-On 11/26/2024 10:47 AM, Krishna Chaitanya Chundru wrote:
->
-> forgot to add the email in the previous mail.
->
-> - Krishna chaitanya.
-> On 6/25/2024 3:08 PM, Shradha Todi wrote:
->> DesignWare controller provides a vendor specific extended capability
->> called RASDES as an IP feature. This extended capability provides
->> hardware information like:
->>   - Debug registers to know the state of the link or controller.
->>   - Error injection mechanisms to inject various PCIe errors including
->>     sequence number, CRC
->>   - Statistical counters to know how many times a particular event
->>     occurred
->>
->> However, in Linux we do not have any generic or custom support to be
->> able to use this feature in an efficient manner. This is the reason we
->> are proposing this framework. Debug and bring up time of high-speed IPs
->> are highly dependent on costlier hardware analyzers and this solution
->> will in some ways help to reduce the HW analyzer usage.
->>
->> The debugfs entries can be used to get information about underlying
->> hardware and can be shared with user space. Separate debugfs entries has
->> been created to cater to all the DES hooks provided by the controller.
->> The debugfs entries interacts with the RASDES registers in the required
->> sequence and provides the meaningful data to the user. This eases the
->> effort to understand and use the register information for debugging.
->>
->> v2: https://lore.kernel.org/lkml/20240319163315.GD3297@thinkpad/T/
->>
->> v1: 
->> https://lore.kernel.org/all/20210518174618.42089-1-shradha.t@samsung.com/T/
->>
->> Shradha Todi (3):
->>    PCI: dwc: Add support for vendor specific capability search
->>    PCI: debugfs: Add support for RASDES framework in DWC
->>    PCI: dwc: Create debugfs files in DWC driver
->>
->>   drivers/pci/controller/dwc/Kconfig            |   8 +
->>   drivers/pci/controller/dwc/Makefile           |   1 +
->>   .../controller/dwc/pcie-designware-debugfs.c  | 474 ++++++++++++++++++
->>   .../controller/dwc/pcie-designware-debugfs.h  |   0
->>   .../pci/controller/dwc/pcie-designware-host.c |   2 +
->>   drivers/pci/controller/dwc/pcie-designware.c  |  20 +
->>   drivers/pci/controller/dwc/pcie-designware.h  |  18 +
->>   7 files changed, 523 insertions(+)
->>   create mode 100644 
->> drivers/pci/controller/dwc/pcie-designware-debugfs.c
->>   create mode 100644 
->> drivers/pci/controller/dwc/pcie-designware-debugfs.h
->>
+SGksIAoKCkF0IDIwMjQtMTEtMjYgMDk6MTQ6NTAsICJEYXZpZCBXYW5nIiA8MDAxMDcwODJAMTYz
+LmNvbT4gd3JvdGU6Cj4KPkhpLCAKPgo+Cj4KPkF0IDIwMjQtMTEtMjYgMDQ6MzE6MzksICJTdXJl
+biBCYWdoZGFzYXJ5YW4iIDxzdXJlbmJAZ29vZ2xlLmNvbT4gd3JvdGU6Cj4+Cj4+SGkgRGF2aWQs
+Cj4+Q291bGQgeW91IHBsZWFzZSBjaGVjayBpZiB5b3UgaGF2ZSB0aGlzIGZpeDoKPj4KPj5lZDI2
+NTUyOWQzOWEgIm1tL2NvZGV0YWc6IGZpeCBhcmcgaW4gcGdhbGxvY190YWdfY29weSBhbGxvY190
+YWdfc3ViIgo+Pgo+Pkl0IHdhcyBtZXJnZWQgYWZ0ZXIgdjYuMTItcmM2IGFuZCBpdCBmaXhlcyBh
+biBhY2NvdW50aW5nIGJ1ZyBpbnNpZGUKPj5wZ2FsbG9jX3RhZ19jb3B5KCksIHdoaWNoIGlzIHVz
+ZWQgZHVyaW5nIGNvbXBhY3Rpb24uCj4+VGhhbmtzLAo+PlN1cmVuLgo+Pgo+Pgo+Pmh0dHBzOi8v
+bG9yZS5rZXJuZWwub3JnL2FsbC8yMDI0MDkwNjA0MjEwOC4xMTUwNTI2LTMteXV6aGFvQGdvb2ds
+ZS5jb20vCj4+aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQxMDIyMjMyNDQwLjMzNDgy
+MC0xLXNvdXJhdnBhbmRhQGdvb2dsZS5jb20vCj4KPgo+Tm8sIGVkMjY1NTI5ZDM5YSBpcyBub3Qg
+aW4gNi4xMi4wOyBJdCBpcyBub3cgaW4gTGludXMnIHRyZWUuCj5JIHdpbGwgcHVsbCB0aGUgY29k
+ZSBhbmQgbWFrZSBzb21lIHRlc3RzLgo+Cj5XaWxsIHVwZGF0ZSBsYXRlci4KCgpJIGJ1aWxkIGEg
+a2VybmVsIGJhc2VkIG9uIGEgdHJlZSB3aXRoIHRvcCBjb21taXQgOWYxNmQ1ZTZmMjIwLCAKbm8g
+YWJub3JtYWwgdmFsdWUgb2JzZXJ2ZWQgZm9yIGNvbXBhY3Rpb25fYWxsb2M6CgokIHN1ZG8gY2F0
+IC9wcm9jL2FsbG9jaW5mbyAgfCBncmVwIGNvbXBhY3Rpb25fYWxsb2MKICAgICAgICAgICAwICAg
+ICAgICAwIG1tL2NvbXBhY3Rpb24uYzoxODgwIGZ1bmM6Y29tcGFjdGlvbl9hbGxvYyAyNTAwOTgK
+KFRoZSBsYXN0IGNvbHVtbiBpcyBhY2N1bXVsYXRpdmUgY2FsbCBjb3VudGVycyBJIHBhdGNoZWQg
+d2l0aCBteSBzeXN0ZW0sIG1lYW5pbmcgY29tcGFjdGlvbl9hbGxvYyBkbyBoYXBwZW4pCgoKQnV0
+LCAgc3RpbGwgZ290IHVuZGVyZmxvd2VkIHZhbHVlczoKCiAgICAgICAtNDA5NiAxODQ0Njc0NDA3
+MzcwOTU1MTYxNSBtbS9maWxlbWFwLmM6Mzc4OCBmdW5jOmRvX3JlYWRfY2FjaGVfZm9saW8gMTgg
+CiAgIC04NjI0MTI4MCAxODQ0Njc0NDA3MzcwOTUzMDU2MSBtbS9maWxlbWFwLmM6MTk1MSBmdW5j
+Ol9fZmlsZW1hcF9nZXRfZm9saW8gODY5MTAxNSAKCkZpbmFsbHkgYSBwcm9jZWR1cmUgdG8gcmVw
+cm9kdWNlIGl0OiAgKHRoYW5rcyBmb3IgdGhlIHRpcCBhYm91dCBjb21wYWN0X21lbW9yeSkKMS4g
+cG9wdWxhdGUgZmlsZSBjYWNoZXMsIGUuZy4gZ3JlcCBzb21ldGhpbmcgaW4ga2VybmVsIHNvdXJj
+ZS4KMi4gZWNobyAxID4vcHJvYy9zeXMvdm0vY29tcGFjdF9tZW1vcnkKMy4gZWNobyAzID4gL3By
+b2Mvc3lzL3ZtL2Ryb3BfY2FjaGVzCgpUaGVyZSB3b3VsZCBiZSBuZWdhdGl2ZSB2YWx1ZXMgc2hv
+dyB1cC4KQSBzaW1wbGUgcHl0aG9uIHNjcmlwdCB0byBjaGVjayBhYm5vcm1hbCB2YWx1ZXM6Cgp3
+aXRoIG9wZW4oIi9wcm9jL2FsbG9jaW5mbyIpIGFzIGY6CiAgICBmb3IgbCBpbiBmOgogICAgICAg
+IHRyeToKICAgICAgICAgICAgdnMgID0gbC5zcGxpdCgpCiAgICAgICAgICAgIHYxLCB2MiA9IGlu
+dCh2c1swXSksIGludCh2c1sxXSkKICAgICAgICAgICAgaWYgdjE8MCBvciB2MjwwIG9yICh2MT09
+MCBhbmQgdjIhPTApIG9yICh2MSE9MCBhbmQgdjI9PTApOiBwcmludCBsLAogICAgICAgIGV4Y2Vw
+dDogcGFzcwoKCk1vc3QgbGlrZWx5LCBtZW1vcnkgcmVsZWFzZSBpcyBhY2NvdW50ZWQgKnR3aWNl
+KiBmb3IgdGhvc2UgbWVtb3J5LgpSZWFkaW5nIHRocm91Z2ggdGhlIGNvZGUsIEkgZmVlbCB0aGUg
+bW9zdCBzdXNwZWN0ZWQgY29kZSB3b3VsZCBiZToKICAgIGNsZWFyX3BhZ2VfdGFnX3JlZigmb2xk
+LT5wYWdlKTsKVGhpcyBsaW5lIG9mIGNvZGUgbWF5IG5vdCB3b3JrIGFzIGV4cGVjdGVkLgoKVGhl
+IGNvZGUgaW4gcGdhbGxvY190YWdfY29weSBpbnZvbHZlcyB0b28gbWFueSBsb3cgbGV2ZWwgcGx1
+bWJpbmcgZGV0YWlscywgSSB0aGluayBpdCAKaXMgc2ltcGxlciB0byBqdXN0IGltcGxlbWVudCBh
+ICpzd2FwKiBsb2dpYzoganVzdCBzd2FwIHRoZSB0YWdzLgoKSSBtYWRlIGZvbGxvd2luZyBjaGFu
+Z2VzIGFuZCBpdCB3b3Jrcywgbm8gYWJub3JtYWwgdmFsdWVzIGRldGVjdGVkLCBzbyBmYXIuCihw
+Z2FsbG9jX3RhZ19jb3B5IHNob3VsZCBiZSByZW5hbWVkIHRvIHBnYWxsb2NfdGFnX3N3YXApCgoK
+ZGlmZiAtLWdpdCBhL2xpYi9hbGxvY190YWcuYyBiL2xpYi9hbGxvY190YWcuYwppbmRleCAyNDE0
+YTdlZTdlYzcuLjdkNmQxMDE1ZjRiMSAxMDA2NDQKLS0tIGEvbGliL2FsbG9jX3RhZy5jCisrKyBi
+L2xpYi9hbGxvY190YWcuYwpAQCAtMTkxLDI0ICsxOTIsMzAgQEAgdm9pZCBwZ2FsbG9jX3RhZ19z
+cGxpdChzdHJ1Y3QgZm9saW8gKmZvbGlvLCBpbnQgb2xkX29yZGVyLCBpbnQgbmV3X29yZGVyKQog
+CiB2b2lkIHBnYWxsb2NfdGFnX2NvcHkoc3RydWN0IGZvbGlvICpuZXcsIHN0cnVjdCBmb2xpbyAq
+b2xkKQogewotCXVuaW9uIHBndGFnX3JlZl9oYW5kbGUgaGFuZGxlOwotCXVuaW9uIGNvZGV0YWdf
+cmVmIHJlZjsKLQlzdHJ1Y3QgYWxsb2NfdGFnICp0YWc7CisJdW5pb24gcGd0YWdfcmVmX2hhbmRs
+ZSBoYW5kbGVfbmV3LCBoYW5kbGVfb2xkOworCXVuaW9uIGNvZGV0YWdfcmVmIHJlZl9uZXcsIHJl
+Zl9vbGQ7CisJc3RydWN0IGFsbG9jX3RhZyAqdGFnX25ldywgKnRhZ19vbGQ7CiAKLQl0YWcgPSBw
+Z2FsbG9jX3RhZ19nZXQoJm9sZC0+cGFnZSk7Ci0JaWYgKCF0YWcpCisJdGFnX29sZCA9IHBnYWxs
+b2NfdGFnX2dldCgmb2xkLT5wYWdlKTsKKwlpZiAoIXRhZ19vbGQpCisJCXJldHVybjsKKwl0YWdf
+bmV3ID0gcGdhbGxvY190YWdfZ2V0KCZuZXctPnBhZ2UpOworCWlmICghdGFnX25ldykKIAkJcmV0
+dXJuOwogCi0JaWYgKCFnZXRfcGFnZV90YWdfcmVmKCZuZXctPnBhZ2UsICZyZWYsICZoYW5kbGUp
+KQorCWlmICghZ2V0X3BhZ2VfdGFnX3JlZigmb2xkLT5wYWdlLCAmcmVmX29sZCwgJmhhbmRsZV9v
+bGQpKQorCQlyZXR1cm47CisJaWYgKCFnZXRfcGFnZV90YWdfcmVmKCZuZXctPnBhZ2UsICZyZWZf
+bmV3LCAmaGFuZGxlX25ldykpCiAJCXJldHVybjsKIAotCS8qIENsZWFyIHRoZSBvbGQgcmVmIHRv
+IHRoZSBvcmlnaW5hbCBhbGxvY2F0aW9uIHRhZy4gKi8KLQljbGVhcl9wYWdlX3RhZ19yZWYoJm9s
+ZC0+cGFnZSk7Ci0JLyogRGVjcmVtZW50IHRoZSBjb3VudGVycyBvZiB0aGUgdGFnIG9uIGdldF9u
+ZXdfZm9saW8uICovCi0JYWxsb2NfdGFnX3N1YigmcmVmLCBmb2xpb19zaXplKG5ldykpOwotCV9f
+YWxsb2NfdGFnX3JlZl9zZXQoJnJlZiwgdGFnKTsKLQl1cGRhdGVfcGFnZV90YWdfcmVmKGhhbmRs
+ZSwgJnJlZik7Ci0JcHV0X3BhZ2VfdGFnX3JlZihoYW5kbGUpOworCS8qIHN3YXAgdGFnICovCisJ
+X19hbGxvY190YWdfcmVmX3NldCgmcmVmX25ldywgdGFnX29sZCk7CisJdXBkYXRlX3BhZ2VfdGFn
+X3JlZihoYW5kbGVfbmV3LCAmcmVmX25ldyk7CisJcHV0X3BhZ2VfdGFnX3JlZihoYW5kbGVfbmV3
+KTsKKworCV9fYWxsb2NfdGFnX3JlZl9zZXQoJnJlZl9vbGQsIHRhZ19uZXcpOworCXVwZGF0ZV9w
+YWdlX3RhZ19yZWYoaGFuZGxlX29sZCwgJnJlZl9vbGQpOworCXB1dF9wYWdlX3RhZ19yZWYoaGFu
+ZGxlX29sZCk7CiB9CiAKIHN0YXRpYyB2b2lkIHNodXRkb3duX21lbV9wcm9maWxpbmcoYm9vbCBy
+ZW1vdmVfZmlsZSkKCgoKRllJCkRhdmlkCgoKPgo+VGhhbmtzfgo+RGF2aWQKPgo+Pgo+Pj4gPiA+
+VGhhbmtzLAo+Pj4gPiA+U3VyZW4uCj4+PiA+ID4KPj4+ID4gPj4KPj4+ID4gPj4KPj4+ID4gPj4g
+VGhhbmtzCj4+PiA+ID4+IERhdmlkCj4+PiA+ID4+Cj4+PiA+ID4+Cj4+PiA+ID4+Cj4+PiA+ID4+
+Cg==
 
