@@ -1,141 +1,98 @@
-Return-Path: <linux-kernel+bounces-422877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F899D9F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:34:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEC39D9F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 097DBB24177
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74397284750
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278041DFDBB;
-	Tue, 26 Nov 2024 22:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BF31DF984;
+	Tue, 26 Nov 2024 22:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+dGqiBS"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fQ3jtbyV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3767F1CBE9D;
-	Tue, 26 Nov 2024 22:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3852B11185;
+	Tue, 26 Nov 2024 22:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732660446; cv=none; b=tNA3F8iXUMCS6Ic4e5VBJ1Dj3gfu20sloGHYvdK0WOe/Yjx+HYmVW1R8Q0XZJH9s6GLN1ofsxxgXDyzJBpVx16vQO6Z3BfHlUc4zF+2dHOAiM8sSRVe4P/bN5XHuOSlGULuBJt70wc50QnFQYwmuU0e96d/3A7ozrFsErZZ/yok=
+	t=1732660636; cv=none; b=efZVVAbyu6bfksHubG1J36y0RiAfdK1nOSOSUiYMScu679ksgMFN37bttA643wYX9HEXaQYTk6AvrYFKudPbTKk5nMEH1s+tnMseAjq7QiLugf1iSz4cZvKTiXiuc5tNJsAbns+1uSO5bSod1qdY+Ua63k26zFXDKRQsfgMJR/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732660446; c=relaxed/simple;
-	bh=4vrbf3mKf+jSzEqVixBjqytq08FEluiMcVcJeXf93+8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwZOhDfqtNTV/wflaBeWzvNX7roevtRmul0FXjbkRhV/Y1VO/CPUZRndi18TigzOhpqtPRNGEeYnwdtzxCdftcw8eMYgU4pZvrDBA/RgiI0PeoU9IFhwpqkXEyzpk76roTW+UIhazIaq3s0sn1kovPjmRgbMU2CC07gOi4TKB9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+dGqiBS; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-84194e90c0fso123116939f.2;
-        Tue, 26 Nov 2024 14:34:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732660444; x=1733265244; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4vrbf3mKf+jSzEqVixBjqytq08FEluiMcVcJeXf93+8=;
-        b=D+dGqiBSEFePukhT5RaWzIgRT8o5/VgaMFzLgevJTwRXsimCm6abaWhwzfbfK+6mIZ
-         QwJss65RHgap6hWcXfvZ2pz1+jVyMOK2XAzNvQ9o1fWsRq72KYQBgu/eWBeSO8YU/qNH
-         B7sCFUyYiMMBRgJJtQ8vmHxT73tfURmYvDJyITg7kbYaWdQW07OwJ2WMUa8GCgfm/Ruj
-         TIdZQIxqTC/uuH0EqD1TWophSOC/aHDCKT53WwKcLMp5AdNdXe3uXZB8TOctgBWhOCNh
-         HsYySkj1HXiFoLrZySaAGMEjUVdiagzLp9UpEy4lHmd+H7TyBL9QgUsZM5v0Zhsom/ey
-         3Qeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732660444; x=1733265244;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4vrbf3mKf+jSzEqVixBjqytq08FEluiMcVcJeXf93+8=;
-        b=R9szL1+YGBIoCgiJ/lxXqoM1YPOacWeYOtuBnFZlOGC/IXrrlyXNXKQsqO5BNn0A6m
-         z1f8KtzRA+U1+ZdNdz8Oo4FE/bIZOtkoXGWljTZH6TqEv1cPIE24I+W8NRZsHJnwbM3z
-         GSMN8B3py/mLsAi8EWdJHBOqxfk/ocMtSAWbWO0HnIlDhYPAmm/6l4sHqtH4/NB2uBLr
-         EPFGPfR8i4629TjhI5rNqVuHKyder4bnszLZXoGayJb5VSDzJ+m7RspqM8cjMMEXLZVt
-         ZBO4pqSvwv/i0KWG7sqB4M7UBG/8xjxBvJ01RgT18458LHrpQthejssPex9SGJfNLQGZ
-         FpFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvJTIwyAfuivX2kdDdpah/Kxl7jGDdL8bnp5eevLtsZpqgGhHgOqAt/Vc48XABowFn9xowasGaqH4W5/tI@vger.kernel.org, AJvYcCXK68E93Ev/BwLkhzzcWNdQbABfTfR/STxs6M3nEgsl8MEI4RLtzGFS4cQ5EyUrPfF+aP9V7igZEYpk3hCn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOm8DW/W8h+I9MvZ0exT00V/c95/FElx2oUqsbjtTggetZPkoM
-	Pr2BhoPuDL3jeIZBOoT/7DU47LXzcX2luYpmji4i7g6PY+z47nApdIcft0jn3YlE85nD/SEBzLQ
-	g9UYbrvGpSqVJer7OTLu0EZKc3SI=
-X-Gm-Gg: ASbGnctmp1tttNVzL1Mq2VEVjqFqrLszxOLWEyU7WD/W9dA0Ep9W0uRSu+y0Tswngsh
-	adiwuNMedPvCFmmeBvEnDvsEHGcMalYpQxg4EjrWRywK8VP35Ip55n5OSh+CSSMaDOg==
-X-Google-Smtp-Source: AGHT+IE+KUQpYGQR7ThM04qKSHGTtBIabX470BMpqzPPr8fqZPNqxQz01x1yzva22I6zYbnxaT+nJXD+77U1WbkVJHo=
-X-Received: by 2002:a05:6602:3416:b0:83a:872f:4b98 with SMTP id
- ca18e2360f4ac-843eceaecf4mr113347839f.2.1732660444317; Tue, 26 Nov 2024
- 14:34:04 -0800 (PST)
+	s=arc-20240116; t=1732660636; c=relaxed/simple;
+	bh=3v5DyQUQ8SKX6A97x/6MOm1ejSRScIxuCNnsEsdbG6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMX5806XH3XJE+CIUaQZrhhleevBRXuy5zb94h+WdieKX92fS2MFrgpXyTVtShDfPiGbbPXdA+IeizsmdkFwqQMYF000h8i+ys3qk3Ww2VG6brcXiMkQ8KgsTWnABsIYG7AOGh5OgRopSa1xiBtfRESRBxdSCPzm4G3s3mtfdFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fQ3jtbyV; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732660635; x=1764196635;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3v5DyQUQ8SKX6A97x/6MOm1ejSRScIxuCNnsEsdbG6s=;
+  b=fQ3jtbyV1sYKsawsXt+OOsp1odzvN/Y9sVsmHHsP3vbEutsIOWA+apBZ
+   kQNHOW9o/Ly43oaOWJ2O+93M69x27O8qHvE639JhAgEsah4Fqc99OF35A
+   8I8AKsRx55znLYUUF5YS2yzJrttpoYO/f1ajcyD6ROsLCXeNrdJCIYlsI
+   0CQQPQmdqbAW+jbT6gzhjrkgEn2Iqtt4rY3rwxkX4DfEx8TapbfjNNvSD
+   u0ah58WjaRvTjCJoQPxR89u8olUgDT31VUunfNgcC1etDJLky9TBHqiDV
+   QUjnQC0j9gcGNuXQilw6vdNXnLn6Wtd/OMCZHFwCzr7dSpMWQxFauthUp
+   Q==;
+X-CSE-ConnectionGUID: HbToUjJ9TdeICePmVlb7yg==
+X-CSE-MsgGUID: bD7GaM2dRv+Me2Bh8Hx0mw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32994613"
+X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
+   d="scan'208";a="32994613"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 14:37:15 -0800
+X-CSE-ConnectionGUID: qzQDlkpES9+yq7nDsS9qVg==
+X-CSE-MsgGUID: g1lNK6nwSyGdwuyC/ExJrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
+   d="scan'208";a="91561421"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 14:37:12 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tG4BB-00000001Rda-1Etn;
+	Wed, 27 Nov 2024 00:37:09 +0200
+Date: Wed, 27 Nov 2024 00:37:09 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: gregkh@linuxfoundation.org, linus.walleij@linaro.org,
+	mika.westerberg@linux.intel.com, dmitry.torokhov@gmail.com,
+	broonie@kernel.org, pierre-louis.bossart@linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] pinctrl: intel: copy communities using
+ devm_kmemdup_array()
+Message-ID: <Z0ZNlY2uJn3d4VYs@smile.fi.intel.com>
+References: <20241126172240.6044-1-raag.jadav@intel.com>
+ <20241126172240.6044-3-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACKH++YAtEMYu2nTLUyfmxZoGO37fqogKMDkBpddmNaz5HE6ng@mail.gmail.com>
- <4a2bc207-76be-4715-8e12-7fc45a76a125@leemhuis.info>
-In-Reply-To: <4a2bc207-76be-4715-8e12-7fc45a76a125@leemhuis.info>
-From: Rui Ueyama <rui314@gmail.com>
-Date: Wed, 27 Nov 2024 07:33:53 +0900
-Message-ID: <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
-Subject: Re: [REGRESSION] mold linker depends on ETXTBSY, but open(2) no
- longer returns it
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: brauner@kernel.org, regressions@lists.linux.dev, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126172240.6044-3-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Nov 11, 2024 at 9:02=E2=80=AFPM Thorsten Leemhuis
-<regressions@leemhuis.info> wrote:
->
-> [adding a few CCs, dropping stable]
->
-> On 28.10.24 12:15, Rui Ueyama wrote:
-> > I'm the creator and the maintainer of the mold linker
-> > (https://github.com/rui314/mold). Recently, we discovered that mold
-> > started causing process crashes in certain situations due to a change
-> > in the Linux kernel. Here are the details:
-> >
-> > - In general, overwriting an existing file is much faster than
-> > creating an empty file and writing to it on Linux, so mold attempts to
-> > reuse an existing executable file if it exists.
-> >
-> > - If a program is running, opening the executable file for writing
-> > previously failed with ETXTBSY. If that happens, mold falls back to
-> > creating a new file.
-> >
-> > - However, the Linux kernel recently changed the behavior so that
-> > writing to an executable file is now always permitted
-> > (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/com=
-mit/?id=3D2a010c412853).
->
-> FWIW, that is 2a010c41285345 ("fs: don't block i_writecount during
-> exec") [v6.11-rc1] from Christian Brauner.
->
-> > That caused mold to write to an executable file even if there's a
-> > process running that file. Since changes to mmap'ed files are
-> > immediately visible to other processes, any processes running that
-> > file would almost certainly crash in a very mysterious way.
-> > Identifying the cause of these random crashes took us a few days.
-> >
-> > Rejecting writes to an executable file that is currently running is a
-> > well-known behavior, and Linux had operated that way for a very long
-> > time. So, I don=E2=80=99t believe relying on this behavior was our mist=
-ake;
-> > rather, I see this as a regression in the Linux kernel.
-> >
-> > Here is a bug report to the mold linker:
-> > https://github.com/rui314/mold/issues/1361
->
-> Thx for the report. I might be missing something, but from here it looks
-> like nothing happened. So please allow me to ask:
->
-> What's the status? Did anyone look into this? Is this sill happening?
+On Tue, Nov 26, 2024 at 10:52:36PM +0530, Raag Jadav wrote:
+> Copy communities using devm_kmemdup_array() instead of doing it manually.
 
-Ping? I think this is a fairly major kernel regression. We can't ask
-all our mold linker users to upgrade their linker before upgrading
-their kernel. Isn't "Never break userland" the kernel's policy? I
-wonder why no action or even a discussion has taken place so far.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
