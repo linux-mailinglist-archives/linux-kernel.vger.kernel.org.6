@@ -1,168 +1,122 @@
-Return-Path: <linux-kernel+bounces-422248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E918D9D966D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:47:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4439D966B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A42B27BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F332879CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071511CB337;
-	Tue, 26 Nov 2024 11:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrhDWaUx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF471917E6;
+	Tue, 26 Nov 2024 11:46:39 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4819785270;
-	Tue, 26 Nov 2024 11:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D034811185;
+	Tue, 26 Nov 2024 11:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732621573; cv=none; b=a4/JGHx3Nav1s7HFgIsAP1MYfIpxIbTEbA0pKhgwO750DjOhcC0WQdlVWn6txf161U5olMa6F1HS3nH1M7IwtUUa0jLUKeeM4htFIvEw+MLx4HljzXOVvqN2wa3N3DoH29vtSYX+FFAe++Hte8u3SoXsrZqASjmVI69JTvUJ5Gw=
+	t=1732621599; cv=none; b=FxZxeHDcUPxxq+NjtclWYLJJJneEv91GqHMAKDFAqZ/qaj3WpOSBtk/DT70F6m2UlPOqbFxcDOgZDzk1ZmE+QYvE86AIMNHimu/NaB3XeuTGk3LmW/AI061BXtufeSL/jWiUQMk/dZix1jrEg3+RfnQjcSvywGwwD4qDz3VubJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732621573; c=relaxed/simple;
-	bh=REThgyDlgyyVP5tex9MMoroU0GNEA9fyxCuO98fSg54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=et+L2jQmw3yhf9AXFfHjSltjsMwkkCUcECO0tqvJ7RVDl9mJnsT4Dx7EtO5JDt+/bRMYpp4RijJkx18caIXukHV9umUMbdw6n1gF/TJy9vUN7l1azh1w5WlMtY79jzxOn+9f7hgRpy1JnR3N1cyw0SEAcFNeWNxlESIRTRw1C+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrhDWaUx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98B8C4CECF;
-	Tue, 26 Nov 2024 11:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732621572;
-	bh=REThgyDlgyyVP5tex9MMoroU0GNEA9fyxCuO98fSg54=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lrhDWaUxBsDePpkepCSBDYwLQ9DVA0K17Za+gD1Gu+slRceGz3z/Su/NqHw/yCzlo
-	 Zd+4jN7/R42rYGg8HVk2mnZoQ98GclaR18uh0DQgKTynaQRQnjbXOdUVTuv6mKoDYr
-	 ikLaV5afwJ8ZgnK1fBeLnXlfJFna0L0R6+NrAZ49e0VCmN5OG7cVSEpq5+T6XXQ4BH
-	 FMt5TxyVSFqaCUZxqoNI0xp9XYOG5K5sF//62fWe3si5E0HdNKOC/hDtRGLS9FWOok
-	 n/oOSLMIP8WymGltar/6DKUD7yl8vzFJygfaPp/C7VdKPBR8BuKmkKPKu007Hhm1Sq
-	 Z64AgTlZS8xeA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2976afeb682so1224018fac.0;
-        Tue, 26 Nov 2024 03:46:12 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWRMPMVdCVDlyPFCm+jwAFxheKcxnJgtX0KmVQ5uTR3Urheln/Dw8hSMb60+1bAv1QQIVVLduqFMdBti+0=@vger.kernel.org, AJvYcCWyWnnVx86Cv4RK1bpylCDka4yPgfRj7wa58td2Hda+AJv3XIoykdsMIl7kW9bfV04xdQpuX9Ns5+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG8IMviuZgDyYOaTYrLtTR/DqN7Mk+ms2H0TQ68BqpMKAlZyuN
-	8PhmsBUp4fmO6aM5Cvm+96zUGY84luUE4dDpqAwAbIHktk21+a5tMteBAmVid+PUvNFlx+ryJVG
-	q/Vnmg4bmI5vNWTwKG4LkxgjsTgE=
-X-Google-Smtp-Source: AGHT+IGXSZeifjYgi0GU80vBtCBB8upzp1KpRPE3UNlwsF5+qp3vLgi9aeGnNAbTchherNzd1dlGovNdq5vwvngV6Hc=
-X-Received: by 2002:a05:6870:4689:b0:297:2974:4fa9 with SMTP id
- 586e51a60fabf-29729747f79mr12551989fac.1.1732621572007; Tue, 26 Nov 2024
- 03:46:12 -0800 (PST)
+	s=arc-20240116; t=1732621599; c=relaxed/simple;
+	bh=PZlwZxdHF7frqU3MGDyp+2mGn8PBWwE2iXqb6SNufIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s8JEIzUNvzLlujtfrdb1vj+4UqfYrngkUALOXnkimL4GSPd4n4X/1JlnHSwyYqrQ06hjavWZPtbG3OVKuSaADqR3V5ekgXdjQt2XG6KOI6QTMxLF4d2fo//IxSKM1bNFgLlJ6LCynDivYmCa/TZEx/FJzL6fNbGUrS6noFp24Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XyLLq74MwzxVZX;
+	Tue, 26 Nov 2024 19:43:47 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6CABD180105;
+	Tue, 26 Nov 2024 19:46:34 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 Nov 2024 19:46:34 +0800
+Message-ID: <caabd226-e80b-4cd7-acdf-0f1355e04b4f@huawei.com>
+Date: Tue, 26 Nov 2024 19:46:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
- <20241125132029.7241-5-patryk.wlazlyn@linux.intel.com> <CAJZ5v0iBCKmp-Hs25chq_-z7-VB_+MqTPVmowACJkTz7KOUtEg@mail.gmail.com>
- <1023ee1a-1fc5-498f-be5b-a59a7317ef5a@linux.intel.com>
-In-Reply-To: <1023ee1a-1fc5-498f-be5b-a59a7317ef5a@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 26 Nov 2024 12:45:59 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jyPb7Qy81RKsuCmwQrbdGMCO71OtzxaCSnwY4f9T-SQw@mail.gmail.com>
-Message-ID: <CAJZ5v0jyPb7Qy81RKsuCmwQrbdGMCO71OtzxaCSnwY4f9T-SQw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 4/8] x86/smp: Allow calling mwait_play_dead with
- arbitrary hint
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
-	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Jesper Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
+	<zhangkun09@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
+ Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-3-linyunsheng@huawei.com>
+ <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
+ <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
+ <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
+ <6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawei.com>
+ <554e768b-e990-49ff-bad4-805ee931597f@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <554e768b-e990-49ff-bad4-805ee931597f@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue, Nov 26, 2024 at 12:37=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> >> The MWAIT instruction needs different hints on different CPUs to reach
-> >> the most specific idle states. The current hint calculation* in
-> >> mwait_play_dead() code works in practice on current hardware, but it
-> >> fails on a recent one, Intel's Sierra Forest and possibly some future =
-ones.
-> >> Those newer CPUs' power efficiency suffers when the CPU is put offline=
-.
-> >>
-> >>  * The current calculation is the for loop inspecting edx in
-> >>    mwait_play_dead()
-> >>
-> >> The current implementation for looking up the mwait hint for the deepe=
-st
-> >> cstate, in mwait_play_dead() code works by inspecting CPUID leaf 0x5 a=
-nd
-> >> calculates the mwait hint based on the number of reported substates.
-> >> This approach depends on the hints associated with them to be continuo=
-us
-> >> in the range [0, NUM_SUBSTATES-1]. This continuity is not documented a=
-nd
-> >> is not met on the recent Intel platforms.
-> >>
-> >> For example, Intel's Sierra Forest report two cstates with two substat=
-es
-> >> each in cpuid leaf 5:
-> >>
-> >>   Name*   target cstate    target subcstate (mwait hint)
-> >>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>   C1      0x00             0x00
-> >>   C1E     0x00             0x01
-> >>
-> >>   --      0x10             ----
-> >>
-> >>   C6S     0x20             0x22
-> >>   C6P     0x20             0x23
-> >>
-> >>   --      0x30             ----
-> >>
-> >>   /* No more (sub)states all the way down to the end. */
-> >>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >>    * Names of the cstates are not included in the CPUID leaf 0x5, they=
- are
-> >>      taken from the product specific documentation.
-> >>
-> >> Notice that hints 0x20 and 0x21 are skipped entirely for the target
-> >> cstate 0x20 (C6), being a cause of the problem for the current cpuid
-> >> leaf 0x5 algorithm.
-> >>
-> >> Allow cpuidle code to provide mwait play dead loop with known, mwait
-> >> hint for the deepest idle state on a given platform, skipping the cpui=
-d
-> >> based calculation.
-> >>
-> >> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-> >
-> > I'm going to risk saying that the changelog doesn't match the code
-> > changes in the patch any more.
-> >
-> > The code changes are actually relatively straightforward: The bottom
-> > half of mwait_play_dead() is split off, so it can be called from
-> > multiple places.
-> >
-> > The other places from which to call it are cpuidle drivers
-> > implementing :enter_dead() callbacks that may want to use MWAIT as the
-> > idle state entry method.  The ACPI processor_idle driver and
-> > intel_idle will be updated by subsequent patches to do so.
-> >
-> > The reason for it is mostly consistency: If the cpuidle driver uses a
-> > specific idle state for things like suspend-to-idle, it is better to
-> > let it decide what idle state to use for "play_dead" because it may
-> > know better.
-> >
-> > Another reason is what mwait_play_dead() does to determine the MWAIT
-> > argument (referred to as a "hint"), but IMO it belongs in a changelog
-> > of a later patch because this one doesn't actually do anything about
-> > it.  In fact, it is not expected to change the behavior of the code.
->
-> The commit message here is to justify the change. I thought that giving
-> some context is important. Do you suggest moving this under a
-> different commit or don't mention the SRF and C6 states at all?
+On 2024/11/26 18:22, Jesper Dangaard Brouer wrote:
 
-I would move it to the patch that actually makes a difference for SRF.
-This one doesn't do that.
+...
+
+>>>
+>>> Once the a page is release from a page pool it becomes a normal page,
+>>> that adhere to normal page refcnt'ing. That is how it worked before with
+>>> page_pool_release_page().
+>>> The later extensions with page fragment support and devmem might have
+>>> complicated this code path.
+>>
+>> As page_pool_return_page() and page_pool_destroy() both try to "release"
+>> the page concurrently for a specific page, I am not sure how using some
+>> simple *atomic* can avoid this kind of concurrency even before page
+>> fragment and devmem are supported, it would be good to be more specific
+>> about that by using some pseudocode.
+>>
+> 
+> Okay, some my simple atomic idea will not work.
+> 
+> NEW IDEA:
+> 
+> So, the my concern in this patchset is that BH-disabling spin_lock pool->destroy_lock is held in the outer loop of page_pool_inflight_unmap() that scans all pages.  Disabling BH for this long have nasty side-effects.
+> 
+> Will it be enough to grab the pool->destroy_lock only when we detect a page that belongs to our page pool?  Of-cause after obtaining the lock. the code need to recheck if the page still belongs to the pool.
+> 
+
+That means there will be page_pool_return_page() called between the scanning,
+it seems like a lot like the idea of 'page_pool_get_dma_addr() need to be
+checked to decide if the mapping is already done or not for each page.' as
+there are two cases when page_pool_return_page() is called during scanning:
+1. page_pool_get_dma_addr() returns non-zero dma address, which means the dma
+   unmapping is not done by scanning yet, page_pool_return_page() need to do
+   the dma unmapping before calling put_page()
+2. page_pool_get_dma_addr() returns zero dma address, which means the dma
+   unmapping is done by scanning, page_pool_return_page() just skip the dma
+   unmapping and only call put_page().
+
+It seems there is only one case for scanning:
+1. page_pool_get_dma_addr() for a page_pool owned page returns non-zero dma
+   address, which means page_pool_return_page() is not called for that page yet,
+   scanning will the do the mapping for page_pool_return_page() and reset the
+   dma address of the page to indicate the dma unmapping is done for that page.
+
+It seems there is no case of page_pool owned page having zero dma address during
+scanning, as both page->pp_magic is cleared and dma unmapping is already done in
+page_pool_return_page().
 
