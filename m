@@ -1,133 +1,213 @@
-Return-Path: <linux-kernel+bounces-422186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1559D9598
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:31:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1707B9D95A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AFA2B24091
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:29:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FDB2840AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA271C4A1E;
-	Tue, 26 Nov 2024 10:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806EA1B6CE6;
+	Tue, 26 Nov 2024 10:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZfhKKIs9"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rPoj7Ew6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00F51865E3
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85A218FDBA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616974; cv=none; b=HkpvgpOQPQ5FaZIIBWUlm94O1ClGY4E/jDTpG3+fLkNd6axJ8QsF9FgDPcy2rlBhUxLJ6rkWg7LlmZRZgfBjT3LGVX8c7Mvi36yjKEkRAvydsIfKtMGsuE5nEv9IYzyCpHh3LvHZnjUGq+UDmxHAMBJSEhqCK0PuCLyEOzET8RI=
+	t=1732617326; cv=none; b=XC0bfcCKby2sMnBQAiaqBDfpfwqte1poaQM5ftqRnAR+TQz+g/xEh60WL3WCVWHcyt+yCzeRlTMXUzK43wXLGLaVQOh0nOx+Z/Gb/L96yaQ122bX0HBbOzLdVtLQU7PWln9v0mOxzWMeKXibLe9QxziG/XYc8bQUvjphmzlV81M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616974; c=relaxed/simple;
-	bh=NjyGHAc2oi2KnpU+ygfb/gz2HMXg+H1wEaeSlojCR3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t2nRxW3usIEO8fe6b3ITbVcmQ/8CT+nX7yeR8xJgPJxv1sZxgH3QRitNIFZSgMVZG3xNjwwqZz80ksZl7OwDuJoZg7sSnseDudJkxhatgcqaaK1Dat2tQQcDOLYcFbEkqv6st0NkJ3BqaD+e3ztmoCfcgiA2kkUi4j/6wETKtxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZfhKKIs9; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4349e4e252dso19405235e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:29:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732616970; x=1733221770; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VDslh+ljpVvNODtMmRwl8AAxwmvJGoBek7yI5XWC5Bw=;
-        b=ZfhKKIs9ee7qrNgXwe62rmxzIBu4nbCtLtSnk5m2+/DlY3HuS2iGuU9Vr8g7UOGoB6
-         3wYWwzi2tIiZxSHdjDXe8hQ60LzAtJ37Y2AvNC4N+zxuuud01hZviokyEyXSyNsuMmD3
-         qhLhlT9TxamMdXuKvx3NDwc8CXyEvtnVTILJHqVe8pAVu4olOjMMOTcO15/+BKHA0RnI
-         MLv5dfI1iJQ9MstmzWSDj13uVT/x0P4idvt8j4Mxh4IaUuQn0eBS2o4FK+AgqA9r0ur9
-         eyVswcMljopGBZjQjDV7iNdf02WMkUnxh1rzWDak1xjASh+VuxBqoPXSGa/O/lTIzFmz
-         g7kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732616970; x=1733221770;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDslh+ljpVvNODtMmRwl8AAxwmvJGoBek7yI5XWC5Bw=;
-        b=I+udGBWHOyYbLvlBijnCofqsWT22PA63SrtH7rMpAIRXKnGZoMbVXQzLMJ5nfCd1FS
-         Yf9i5E66xedcgJwcwvQM7Xe6mDKAHgEZJRoGOlXKB33Djk8hontSOvlIw3bstpnD+8wN
-         kx9LwEwl0iAueway3v/KsBf+lWt2DLX3iX8NIu+Dc5WcVlgWgw9WNLLLk3r0Wf94hpkd
-         XgL/o0HFT6QDNl0eE7JX+tw9cqmAKaQyVqTIFKnkQTDcrtl+TzCo9mOE8S0qYOKX4Kk1
-         Q/fsQCMVK5qClKG6G8AuAB4qrGA7k1p4FwD4+VadDQ9revb3xrrqP7Ak5xY1wqTIPhSC
-         FKpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsM/BZ0i/ooVO7SRfg3ckX/AgOI3SSxwWZ+rFsreGgU0SILbp09eERvJ/SD13yUSmPWwP9hgltWLBAjzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyugTDfkSA94D+JXx8bGs0gFVNBsszeTbZMEyeaea/uSZS5SDRE
-	8x2i4V+YmlBboAeGho5apindIwdlVDpTvPCGoenWQr8/KAHB4VCXjn7BZkg87EY=
-X-Gm-Gg: ASbGncu6QoLrGgI1bLC3VupZnp0grcUJXYew4gPXhaXBQAMqR+3oXJp9Lic7awORtfk
-	jQSIckDH8IqZ+Id3TX3oURnHYUj5/bCKYzmS9vmz2T67zIO6WYzIe36YughcsbO7fa6dxu62ysq
-	tseDZBNhu4IhK7hJt489S3XNFgtA3ioDjWw8n2CU8uUPUpxltxscRPI04zGfWnttv6heH9JpwHW
-	va6xPOujnxf/20zswkM9jUszW4oMZmoL3sJIFenQvXayGJ+hfwpIyJGPJWPf82JXf58+5m/jymI
-	5zRl0oQzHMwr9Q==
-X-Google-Smtp-Source: AGHT+IFgeqqkJ6wjR9SgxT1xrYJ0KahQXa7sIHvXaict/TpEQq8UBgqk2qQhjj3zdFl3pgNOycsAVA==
-X-Received: by 2002:a05:6000:1866:b0:382:4a3b:5139 with SMTP id ffacd0b85a97d-38260bed0dcmr13711723f8f.59.1732616970162;
-        Tue, 26 Nov 2024 02:29:30 -0800 (PST)
-Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde8c804sm159339195e9.30.2024.11.26.02.29.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 02:29:29 -0800 (PST)
-Message-ID: <ed50c130-076c-4697-9f11-fe602c7ca03d@baylibre.com>
-Date: Tue, 26 Nov 2024 11:29:28 +0100
+	s=arc-20240116; t=1732617326; c=relaxed/simple;
+	bh=y93tEDv5fAv1KkU3Qza4g5+eIlFj915qWP77fp4NLrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j669jXCyg3OuI0nSaQ/6qH7XEKnuVvVlDZSjJ1dKzMIgwqs/fQ5vO12HFs8Tc1m7CFzyP15XwPbRNCKBlIi/qV3a9G7ssilY0+SzRQJ157NwJbCOYLuBFyHpkDoG8regCAeoqdXAeAJpa606Bo5/j6d1O6yq6yN8Ady9JoxKYDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rPoj7Ew6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=z5lZ2GvZn3dj2gon3+Y9QLrft5m3fyX3gDJoTynvWEA=; b=rPoj7Ew6ImsFI1zUw5rmSMGloA
+	Ue+NzTk0uvZDi6Rp9jLx3/Dh/mHR9JT7atxr+3hyXbJ1gkwDzy6HscTuqnmIBjheI4UVyoqVUOEEl
+	CdLMBlRynLR1IZ0iT/vXwfINn8+J4dJ6gx5Fznx9Uezdvloer0CDGJhoNUwiP4OyXamECULmoolUp
+	rZ5Bjk7hvo/O6kDBNOyhrWtskVZRlbkh765gJg8vjI/FvCu64DeZ9yqPUlNgnGFXW+blLgbypeA+u
+	Xa+7Rr6gxmYtY6Kqy2R9GI6qOTrsxEIL892ulZHGeXb/oQVWhnZTu/6oNCt21401E5BmB+oirh1x4
+	tvb1qPnQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFsuW-0000000DQQq-3d1Q;
+	Tue, 26 Nov 2024 10:35:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3CDA23002A2; Tue, 26 Nov 2024 11:35:13 +0100 (CET)
+Date: Tue, 26 Nov 2024 11:35:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: zhouzihan30 <15645113830zzh@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	zhouzihan30 <zhouzihan30@jd.com>, yaozhenguo <yaozhenguo@jd.com>
+Subject: Re: [PATCH] sched: Forward deadline for early tick
+Message-ID: <20241126103513.GK38837@noisy.programming.kicks-ass.net>
+References: <20241126062350.88183-1-zhouzihan30@jd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Nicolas Belin <nbelin@baylibre.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
- <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
- <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
- <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
- <Z0RkaqfID9v0age_@smile.fi.intel.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <Z0RkaqfID9v0age_@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126062350.88183-1-zhouzihan30@jd.com>
 
-Hi Andy
-
-On 25/11/2024 12:50, Andy Shevchenko wrote:
-> On Mon, Nov 25, 2024 at 12:32:13PM +0100, Alexandre Mergnat wrote:
->> Hello Andy.
->>
->> Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
->>
->> That mean all added include in this patch aren't required.
-> Do you mean the driver doesn't not use types from types.h or dev_*() macros
-> from dev_printk.h? I don't believe this, sorry.
+On Tue, Nov 26, 2024 at 02:23:50PM +0800, zhouzihan30 wrote:
+> Due to the problem of tick time accuracy, 
+> the eevdf scheduler exhibits unexpected behavior.
+> For example, a machine with sysctl_sched_base_slice=3ms, CONFIG_HZ=1000
+>  should trigger a tick every 1ms. 
+> A se (sched_entity) with default weight 1024 should
+>  theoretically reach its deadline on the third tick. 
+> However, the tick often arrives a little faster than expected. 
+> In this case, the se can only wait until the next tick to
+>  consider that it has reached its deadline, and will run 1ms longer.
+> 
+> vruntime + sysctl_sched_base_slice =     deadline
+>         |-----------|-----------|-----------|-----------|
+>              1ms          1ms         1ms         1ms
+>                    ^           ^           ^           ^
+>                  tick1       tick2       tick3       tick4(nearly 4ms)
+> 
+> Here is a simple example of this scenario, 
+> where sysctl_sched_base_slice=3ms, CONFIG_HZ=1000, 
+> the CPU is Intel(R) Xeon(R) Platinum 8338C CPU @ 2.60GHz, 
+> and "while :; do :; done &" is run twice with pids 72112 and 72113.
+> According to the design of eevdf,
+> both should run for 3ms each, but often they run for 4ms.
 
 > 
-> Basically what you are trying to say is "let's move of_gpio.h implicit
-> includes to become something else's problem". It's not what this patch
-> intended to do.
+> The reason for this problem is that
+>  the actual time of each tick is less than 1ms.
+> We believe there are two reasons:
+> Reason 1:
+> Hardware error. 
+> The clock of an ordinary computer cannot guarantee its own accurate time.
+> Reason 2:
+> Calculation error.
+> Many clocks calculate time indirectly through the number of cycles, 
+> which will definitely have errors and be smaller than the actual value,
+>  the kernel code is:
+> 
+> clc= ((unsignedlonglong) delta*dev->mult) >>dev->shift;
+> dev->set_next_event((unsignedlong) clc, dev);
+> 
+> To solve this problem,
+> we add a sched feature FORWARD_DEADLINE,
+> consider forwarding the deadline appropriately. 
+> When vruntime is very close to the deadline,
+> we consider that the deadline has been reached.
+> This tolerance is set to vslice/128.
+> On our machine, the tick error will not be greater than this tolerance,
+> and an error of less than 1%
+>  should not affect the fairness of the scheduler.
 
-I'm just saying that I've test a build/boot with "linux/of_gpio.h" removed and without all
-include added in you patch. My understand is "linux/of_gpio.h" act as proxy
-for the includes added in your patch, my first idea was "if I remove it, build should fail cause
-of lack of other includes". I can understand these missing includes are mandatory, that
-probably means there is another proxy header ?
-Maybe my test isn't consistent because it isn't possible to clear all proxy ?
+*sigh*
 
-If that's the case, consider my review-by.
-I've validated some include manually. Are you using a script to parse the file and raise all 
-necessary "linux/*" include ?
+So yeah, discrete system, we get to quantize things. Timing has an
+error proportional to the quantum chosen.
 
--- 
-Regards,
-Alexandre
+Current setup is the trivial whole integer or floor function. As such
+the absolute error e is 0<e<q -- for a reason, see below.
+
+You then introduce an additional error of: r/128 in order to minimize
+the total error, except you made it worse. Consider case where r/128>q.
+
+The only semi sane thing to do here is to replace floor with rounding,
+then the absolute error changes to 0<e<q/2.
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fbdca89c677f..d01b73e3f5aa 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1006,7 +1006,9 @@ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
+  */
+ static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+-	if ((s64)(se->vruntime - se->deadline) < 0)
++	s64 v_half_tick = calc_delta_fair(TICK_NSEC/2, se);
++
++	if ((s64)(se->vruntime - se->deadline) < -v_half_tick)
+ 		return false;
+ 
+ 	/*
+
+Now the consequence of doing this are that you will end up pushing a
+task's (virtual) deadline into the future before it will have had time
+to consume its full request, meaning its effective priority drops before
+completion.
+
+While it does not harm fairness, it does harm to the guarantees provided
+by EEVDF such as they are.
+
+Additionally, since update_deadline() is not proper (see its comment),
+you're making the cumulative error significantly worse. A better version
+would be something like:
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fbdca89c677f..377e61be2cf6 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1000,13 +1000,12 @@ int sched_update_scaling(void)
+ 
+ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
+ 
+-/*
+- * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
+- * this is probably good enough.
+- */
+ static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+-	if ((s64)(se->vruntime - se->deadline) < 0)
++	s64 v_half_tick = calc_delta_fair(TICK_NSEC/2, se);
++	s64 v_slice;
++
++	if ((s64)(se->vruntime - se->deadline) < -v_half_tick)
+ 		return false;
+ 
+ 	/*
+@@ -1017,10 +1016,14 @@ static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ 	if (!se->custom_slice)
+ 		se->slice = sysctl_sched_base_slice;
+ 
++	v_slice = calc_delta_fair(se->slice, se);
++
+ 	/*
+-	 * EEVDF: vd_i = ve_i + r_i / w_i
++	 * EEVDF: vd_i += r_i / w_i
+ 	 */
+-	se->deadline = se->vruntime + calc_delta_fair(se->slice, se);
++	do {
++		se->deadline += v_slice;
++	} while ((s64)(se->vruntime - se->deadline) < v_half_tick);
+ 
+ 	/*
+ 	 * The task has consumed its request, reschedule.
+
+
+Now, if all this is worth it I've no idea.
+
+Since you clearly do not care about the request size, your simplest
+solution is to simply decrease it.
+
+
+Also, none of this has been near a compiler, and please double check the
+math if you want to proceed with any of this, I've given that about as
+much thought as compile time :-)
+
+
 
