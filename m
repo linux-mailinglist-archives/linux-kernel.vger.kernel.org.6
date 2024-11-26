@@ -1,167 +1,137 @@
-Return-Path: <linux-kernel+bounces-422810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EBF9D9E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:44:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493E89D9E7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:47:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E2A282E98
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF7A216462C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A16F1DF243;
-	Tue, 26 Nov 2024 20:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8A11DF72C;
+	Tue, 26 Nov 2024 20:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f+K6b2/u"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1tZ6HHP"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EA38831
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728B3946C;
+	Tue, 26 Nov 2024 20:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732653844; cv=none; b=UP2sCWlW/2mBehvHT79qdVxsPgmStYfh6m8v1+D6YzfZjzUa1RA4qOGWsz8gQGCFRv1TkyxYW2By0B0N1sB1irnRVOnLE7bcgpMvDeAo6d1QuId91Uv05umXBJ+a7+ZIiCAJb8m8fvZWqfnLWrxnkMP6mngktNXagO7hCAMYdiA=
+	t=1732654065; cv=none; b=guLlJsutemi31AERSxd6ligIe++tXMsTAG3I5osGE2/ow6RZQuDoybst82OCphGN7WEgsUFTntqOgBt/g0QI1PCNBDKLRzpOrYjfWI7UNd5Fk8fCrXASYQyZ3fArR36WnIHZx947lfVIPo/fgpKgNLbh69KePp6n9fgeePtQmaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732653844; c=relaxed/simple;
-	bh=eUMuQ9gASBpqqRZLzUIvbphLbyhWIfaPRCa8oZFZqbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ths6jOaGQQtnUFTD/HWqKlOUz6XEeR0DOMM4ZrErexHommjTdwOVnxPA7jnBPl3gsl2BvLL4k3aLr0MfE2XeceSJUxEola7Zt7wNbYGf3yQKmfY8+jXjdUwlfw0jtrgwRb9PVDR6ceQbGh1QQU6dEXBxH3Fd15xom580MPZVUM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f+K6b2/u; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so54a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:44:02 -0800 (PST)
+	s=arc-20240116; t=1732654065; c=relaxed/simple;
+	bh=faBfcmymGPSFibu9nkUfQwNarQQpruvPOzB3wGv4z0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwZ1RGSWnYMPVsKONy79csuDmqmZqNrVgtdMO7ty/3hxAKjkvWZYjJtXaB0Z6A0drEvSnRw6IU1BoNKKd2djCl6xlg9D9ZWVuZiVowNdH3DBKuPXd//3+sr2VMGFg6TT2GaLQbUET8AsAa+AGFC7olWAVTksHFJKFk0jBbBNjaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1tZ6HHP; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso5222753a12.3;
+        Tue, 26 Nov 2024 12:47:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732653841; x=1733258641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Knumxb+ipa3/QWPd1lEfjlfQFOTdrGiNogqlwZ9Cmps=;
-        b=f+K6b2/us9NIa8jFHAYhSxzpIu1dSgGnkwhG54PAu1WQz/xim8+wB7MuWMPFednuqb
-         xPFwK4SvaljWSKO46GR6RlOd4n/lrWQ4BFDrqWi9ejLGp76LbD10DnXoHQ94pualFh7q
-         3fgynEZUTRzK85GnJTacGNFkNk515miDdz8ZxwuqlKHEUL3+mooOqrRTizG9rBZ490en
-         xAPq5GD02jIrOOKECMUMuf/5WKC1BgdjKJ91mwRhzU3d04/cnjj06yzzGv51FUaoQji8
-         RI9c4hpm5SXvXQg5GfzY+lZFVjuswu0SauFW/83aGOej3UslsTp+Ad3HUjHocjjHJxJ5
-         884Q==
+        d=gmail.com; s=20230601; t=1732654064; x=1733258864; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BrfGITBt+MpPudeTvWz/BGOrTPxjx+M/EOPqV0lY91c=;
+        b=P1tZ6HHPc9pZS2/sbMYn0rQf6XNuaskRE1jCzy4sx9SEMcwkGeiInFAeV07GEQOLNr
+         FQyD3xABBH49QTxTzhJ5I7fWP5nxkHXAATyP6tXnS0jdBrb+0SRLPt6mDBrPA64YxRBn
+         6y0lbb6nDIoUGFQnnJNBfDixY4XTSFmq2bBpu2DpaSS+Z7M21Is+RHZmWovfPKkV3zpx
+         qrzxOi9cbcPEv/fvfUauloi6mI751CRB4IRe6ghthFxWiI587TPTBNTqV6JNYE1LukHP
+         5a+aTbKC1V8UZ7+b8GiorkZcp1ZFQOjKa0vaPqF4QFsjW0B/pWlooc8uvcLtK9DURgjD
+         Mtsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732653841; x=1733258641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Knumxb+ipa3/QWPd1lEfjlfQFOTdrGiNogqlwZ9Cmps=;
-        b=CTjAbwGkYTdoF95U0HDNLPfSIBUMWNMteelQCSooeiFEVlJjhpE8g9lRgI27LdAppV
-         z+BlnQZY9cuci76Wg+wRkZ6MvmZhcA3dqMJxY9sOdv+SngKx36IDs3RXvNLaTK/ydqsz
-         UXzzk3z4tRZ/HgYkBN0rICNQmwse79ehmzOGIU8uZoMqe0+JMZfTD1WljyW7wUzPH5ox
-         V0d2u+Zxk3Qia/T7NDCS3klytZifxjWhaB/B37MPJ3v74pY60Vp6DpZVxa7UyFgP084e
-         YbtIfea+cBwVBHoNBxHx8g8v1Av09zmT5WfGzMeY5PAlVtZttkbMY+GpRSL6khW2q3fl
-         TB5w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/NOm2G65iL5WMRPDuA2C71xqnxjHof4jsPjhYAHCDPgfVOZgiJ+VLt7Xy3Zn7dQVHhYtX4CIlidVIAXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAcsVbnGZz/gkH2EhzrN7hDIY4i2mX+OqooC3DAN7S5ABQvNrI
-	dvDJ1VrS4DZID+Qvk1Qu1T8P3chrBEApMhDhBtnJuV1DxKqBOKiJfL+dSZKFrbGQHy4vSsYYvPr
-	14XRZ4mnapWx/wwYpxryz743xj7yXP/cb8v45
-X-Gm-Gg: ASbGncvz5vLGqealoyiTdDMmxQKevmUK6Bou8zNLXiJQPrSPsNzIOMwlzFFhCMZ1jPM
-	yvu9BVSq/jjZV62O3lEcUpPieRO+mUdsWLWAYJUCqxFKwywg1zHnalGegwdc=
-X-Google-Smtp-Source: AGHT+IGWR89iYFiAgSPZ12ezMJJKqp8c3+6xErZv5QF6yYfwDocCF/qoTNo0Vi8c1TDce/+jAUrcLpa9cJl3TwT6E6g=
-X-Received: by 2002:a05:6402:1c91:b0:5d0:3bfb:c479 with SMTP id
- 4fb4d7f45d1cf-5d081abf56cmr8356a12.3.1732653840751; Tue, 26 Nov 2024 12:44:00
- -0800 (PST)
+        d=1e100.net; s=20230601; t=1732654064; x=1733258864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BrfGITBt+MpPudeTvWz/BGOrTPxjx+M/EOPqV0lY91c=;
+        b=wOAu4gyxj2LYbZmpYjvG65UWoy2tftwcChtNoke18eHMzQBhFS/QgX2TDyrj5vf3Tc
+         P6o8BbYUlM15RZ9x6xmjpHXYFakXXUqOz8a6FgdllICo376t54RQ4k2xZgkti+eCs+IG
+         BQ54ZHDa26zJF8bi9N9vGJxIknLfy617KRGjjSsjBjwStDay+blz1gqZsMcOA8AbzjGb
+         sqE/GDJgKOpBtzLrCfV0+N31RS+BqPwcnKcB2r/IENbDsjmK3MbsgYQEmC5SznLbDEDQ
+         b/RhcWSKmxsIskyUS/mGjZ8jnSTbJKkfbXYjDXWz74n7cQw6CBu5981K/imLPCNHTS1Q
+         wseg==
+X-Forwarded-Encrypted: i=1; AJvYcCUm1xK2nl9jd++1csBOEG+0e8SUOpek1Q29HmtVEvJK1GyQgpO23GoQQVAxOO/mHUGHZ9dh9U50OA0BklK4vH51F4MK@vger.kernel.org, AJvYcCVYCsngNxz8IFlaL/XWG663LH2eFP9cEAg8r8FBQI/35bN/8KjlR3x1VV2TINeB5MTaff4=@vger.kernel.org, AJvYcCWgt1dK2v2G9yhYzE268JOh8lo2W07D2OaNo7DPuSHR8T48oUUwZyDQ/EQGTmoUa2d/kbrRLGShA8A+nwBu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu2be70I3FEkI2kyRiGJ16awWImOSXUlJteNVH4LWIeN0/LqjH
+	phpUqqvl1pJqb4JfBNxTlOyHYOulL7/8OEZhAf8FYhTpcY1qE1ts
+X-Gm-Gg: ASbGncuei2z+SfyYUqDkVIeZWEWJci6MDLWHrwbqHlqEg8Zjl/d+Xs9rL0Qq3ezs5s7
+	qym7L1viU7ALebve1E6F1DBK0Ga//EFkzd1lIaIox/K/yR8u8M+8CNtGttydu71pPb6g/sBhxJu
+	/7fg5/AuYm2jf2ne84PAWvwQROWM3n+n3pb0dKeFzwp1z6PfPDAwGjGZ9Dv4O1QDr3nf/zn20+Q
+	anc4aJ0ixCHuLxi8kyIqLDwQBEK5FpEx0rAwmvLQk7Bm7RvA2k=
+X-Google-Smtp-Source: AGHT+IHZkU5tXESbsQSufn4K2TA1C1VRT8pQfJ+DevuvUAtbNf2cvrlWnN7YFd0lhrglkU4YceNZQg==
+X-Received: by 2002:a05:6a21:78b:b0:1e0:df27:10b9 with SMTP id adf61e73a8af0-1e0e0b004c3mr1123625637.18.1732654063605;
+        Tue, 26 Nov 2024 12:47:43 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:5155:e4b9:67db:7078])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de47e941sm8824806b3a.78.2024.11.26.12.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 12:47:43 -0800 (PST)
+Date: Tue, 26 Nov 2024 12:47:39 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Jeanson <mjeanson@efficios.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Jordan Rife <jrife@google.com>, linux-trace-kernel@vger.kernel.org,
+	Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [RFC PATCH 4/5] tracing: Remove conditional locking from
+ __DO_TRACE()
+Message-ID: <Z0Yz6xffDjL6m_KZ@google.com>
+References: <20241123153031.2884933-1-mathieu.desnoyers@efficios.com>
+ <20241123153031.2884933-5-mathieu.desnoyers@efficios.com>
+ <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
+ <d36281ef-bb8f-4b87-9867-8ac1752ebc1c@efficios.com>
+ <20241125142606.GG38837@noisy.programming.kicks-ass.net>
+ <c70b4864-737b-4604-a32e-38e0b087917d@intel.com>
+ <CAHk-=wjcCQ4-0f68bWMLuFnj9r9Hwg4YnXDBg8-K7z6ygq=iEQ@mail.gmail.com>
+ <20241126084556.GI38837@noisy.programming.kicks-ass.net>
+ <CAHk-=wg9yCQeGK+1MdSd3RydYApkPuVnoXa0TOGiaO388Nhg0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
- <Zz1sHZLruF5sv7JT@casper.infradead.org> <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
- <Zz4MQO79vVFhgfJZ@tardis.local> <Zz4WFnyTWUDPsH4m@casper.infradead.org> <CAG48ez3YBvSQ0zHY-t8NK2RWthR-GsEv6O5pVwA44LGJaEGeSQ@mail.gmail.com>
-In-Reply-To: <CAG48ez3YBvSQ0zHY-t8NK2RWthR-GsEv6O5pVwA44LGJaEGeSQ@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 26 Nov 2024 21:43:24 +0100
-Message-ID: <CAG48ez2Sn=w=e9AoNC6giMHP=ndRa0aYNn5oO3VeYBFC8Pg60A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page mappings
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
-	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg9yCQeGK+1MdSd3RydYApkPuVnoXa0TOGiaO388Nhg0g@mail.gmail.com>
 
-On Tue, Nov 26, 2024 at 9:31=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
-> On Wed, Nov 20, 2024 at 6:02=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> > On Wed, Nov 20, 2024 at 08:20:16AM -0800, Boqun Feng wrote:
-> > > On Wed, Nov 20, 2024 at 10:10:44AM +0100, Alice Ryhl wrote:
-> > > > On Wed, Nov 20, 2024 at 5:57=E2=80=AFAM Matthew Wilcox <willy@infra=
-dead.org> wrote:
-> > > > > We don't have a fully formed destination yet, so I can't give you=
- a
-> > > > > definite answer to a lot of questions.  Obviously I don't want to=
- hold
-> > > > > up the Rust project in any way, but I need to know that what we'r=
-e trying
-> > > > > to do will be expressible in Rust.
-> > > > >
-> > > > > Can we avoid referring to a page's refcount?
-> > > >
-> > > > I don't think this patch needs the refcount at all, and the previou=
-s
-> > > > version did not expose it. This came out of the advice to use put_p=
-age
-> > > > over free_page. Does this mean that we should switch to put_page bu=
-t
-> > > > not use get_page?
+On Tue, Nov 26, 2024 at 10:13:43AM -0800, Linus Torvalds wrote:
+> On Tue, 26 Nov 2024 at 00:46, Peter Zijlstra <peterz@infradead.org> wrote:
 > >
-> > Did I advise using put_page() over free_page()?  I hope I didn't say
-> > that.  I don't see a reason why binder needs to refcount its pages (nor
-> > use a mapcount on them), but I don't fully understand binder so maybe
-> > it does need a refcount.
->
-> I think that was me, at
-> <https://lore.kernel.org/all/CAG48ez32zWt4mcfA+y2FnzzNmFe-0ns9XQgp=3DQYeF=
-pRsdiCAnw@mail.gmail.com/>.
-> Looking at the C binder version, binder_install_single_page() installs
-> pages into userspace page tables in a VM_MIXEDMAP mapping using
-> vm_insert_page(), and when you do that with pages from the page
-> allocator, userspace can grab references to them through GUP-fast (and
-> I think also through GUP). (See how vm_insert_page() and
-> vm_get_page_prot() don't use pte_mkspecial(), which is pretty much the
-> only thing that can stop GUP-fast on most architectures.)
->
-> My understanding is that the combination VM_IO|VM_MIXEDMAP would stop
-> normal GUP, but currently the only way to block GUP-fast is to use
-> VM_PFNMAP. (Which, as far as I understand, is also why GPU drivers use
-> VM_PFNMAP so much.) Maybe we should change that, so that VM_IO and/or
-> VM_MIXEDMAP blocks GUP in the region and causes installed PTEs to be
-> marked with pte_mkspecial()?
->
-> I am not entirely sure about this stuff, but I was recently looking at
-> net/packet/af_packet.c, and I tested that vmsplice() can grab
-> references to the high-order compound pages that
-> alloc_one_pg_vec_page() allocates with __get_free_pages(GFP_KERNEL |
-> __GFP_COMP | __GFP_ZERO | __GFP_NOWARN | __GFP_NORETRY, order),
-> packet_mmap() inserts with vm_insert_page(), and free_pg_vec() drops
-> with free_pages(). (But that all happens to actually work fine,
-> free_pages() actually handles refcounted compound pages properly.)
+> > Using that (old) form results in:
+> >
+> >     error: control reaches end of non-void function [-Werror=return-type]
+> 
+> Ahh. Annoying, but yeah.
+> 
+> > Except of course, now we get that dangling-else warning, there is no
+> > winning this :-/
+> 
+> Well, was there any actual problem with the "jump backwards" version?
+> Przemek implied some problem, but ..
 
-And also, the C binder driver wants to free pages in its shrinker
-callback, but those pages might still be mapped into userspace. Binder
-tries to zap such userspace mappings, but it does that by absolute
-virtual address instead of going through the rmap (see
-binder_alloc_free_page()), so it will miss page mappings in VMAs that
-have been mremap()'d (though legitimate userspace never does that with
-binder VMAs) or are concurrently being torn down by munmap(); so
-currently the thing that keeps this from falling apart is that if page
-mappings are left over somewhere, the page refcount ensures that this
-userspace-mapped page doesn't get freed.
+No, it was based on my feedback with "jump backwards" looking confusing
+to me.  But if it gets rid of a warning then we should use it instead.
 
-(I think the C binder code does its job, but is not exactly a great
-model for how to write a clean driver that integrates nicely with the
-rest of the kernel.)
+Thanks.
+
+-- 
+Dmitry
 
