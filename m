@@ -1,177 +1,155 @@
-Return-Path: <linux-kernel+bounces-422851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C703D9D9EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:51:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA219D9F01
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48476B22079
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:51:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D152FB22D82
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC431DFD9D;
-	Tue, 26 Nov 2024 21:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D45F1DFDBB;
+	Tue, 26 Nov 2024 21:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dAF5SO5u"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lb+EdiDa"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1B3160884
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98281DF978;
+	Tue, 26 Nov 2024 21:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732657886; cv=none; b=i8UyTEcGBVTinR7lWbrVKSvxIJCYEpJG72QaB2B6KlCeb7A57guagMQkm7kE8uG61x/ecvMdXavYQkaOGu+OsefWZnGL0qmYWrgCS3gVTgs78FBBrSjcAn6DOIIs6czF79w0YeUmNQDNKxSTymYMMDpjekZXxLSdvAPl96wpXyA=
+	t=1732657934; cv=none; b=KyYv3gNBUlk/EazVTIo46M3a8Epfkzf7zjes6TiEXoPvHmwBvgbjjpnlxdo/iuL43BYcclE/W60vYT6bkH5SUQBc/dPJPCly28YRPFoCe4KNL2f/1j7HAIfJaOjLp3ku7mknQVE2OdyjYCAAD5NcB3a4tRqspbxkyLHbLqykNlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732657886; c=relaxed/simple;
-	bh=845xXqnB33nlJjULLO/nrCqGOfiZyHwIgYSmqaNLCHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ScYU4joY2OOi3iMsTtxKEf8T0neZA7UjRTj5kMzmP+nyd/Goz5921dJNAYoM6o1MbeE1TfuP+firQagUcv2Y9TurVGBVtCuE0wLvDx9Y30dvwNDPFePmfZdXXBu0M3xa1ZPfOohNkm8hGkPD1saBz6NckzyZmqUpMnl+9O/8mGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dAF5SO5u; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4668194603cso12791cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:51:24 -0800 (PST)
+	s=arc-20240116; t=1732657934; c=relaxed/simple;
+	bh=60YY1uJHN5RmyPT0N3NyyFjI+6rugN3T5a91BrLQmog=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rlcDuukrfq2P9y4B8XWN72MnPqVZGpUIQgcdbcE9t/ibRW/iOOMB0bEvW0m0MM5xYR/J94g8zo5l5otzq/c4tUGoHWiivgeTji2LKLdLPBxuWuOQoDrfl/dXlnjQuH3jITF8f0+RTQvMjZHM9M8mr6bNsw0wzZwhEJXCF6JrwdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lb+EdiDa; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38248b810ffso4622460f8f.0;
+        Tue, 26 Nov 2024 13:52:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732657883; x=1733262683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4n8OSPqRkLvx2KI0lecepo254y3Ft1HLiSCqdymG99Q=;
-        b=dAF5SO5ucAefSepms13lo3ST4YpuQjgkSHLNKPlhs4aUmKbCELCSmotfi/3f4+5cMx
-         aZcqp0bTR1zuENQ2BXm2BEEWjBitIu7LC+TxrBWu57Ro+RRac9hWX+J+AJPVObkpYzGg
-         PWjq2W7xvF1s6ElP00pulcIddpyr3eLPcoLHD1VKKoNDx3m4FynbKJUJLchLm7kBAwIB
-         szKgjOOX8C5J89oXaYcvEOxirJN2PVVp3Q41882qprGO64pOL1ugj5XSujYQLwYPxRW/
-         h9Y9l94jerxzfjfqAJvpBdg0+0+bxuZOwDNBU5zlRbxvSFTaQSz7GKdlZhKDStmsEXT/
-         kL5w==
+        d=gmail.com; s=20230601; t=1732657931; x=1733262731; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g5gX/28xeOa4H8evb/+QhxlU0Ge1xRM184LPoeNAkm0=;
+        b=Lb+EdiDavA2rbwtelhVd9LFRFxUpp7Gsy2R299kHaBQWQNMjL3FYrf8VusKoYYwaJb
+         gP+9bcv1WGPsmAfAHdUagWl9RNYJG3DGvh3hKrIkVdbj8v93/G1EMxL7MzmECfTz9wA9
+         FEGfj6yU0hnjzAdxtAaUlFEf/LXP+Wq4Bv9qbGf5nvMP7lq/tPBgKbxDcdEaEK79s4OQ
+         /cmpEWO9JOj15fD9uKkkUJS2DC6YhkszBPNUcb7cK0sbqOI61yB3le3IKHNkqFPad/pW
+         mBLszGEBmt7j4mlDhDOwKjXpusPvieN6yNay+dUbdxLFMwWgtR1Qx2sjFakkTFjY/BtM
+         KkIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732657883; x=1733262683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4n8OSPqRkLvx2KI0lecepo254y3Ft1HLiSCqdymG99Q=;
-        b=reSQegqOjF3JrVZhUtIau4SzYRK7tf11Jt66MIN//VqPReE9agG0fL/xm+bhh5jzXq
-         MeX8KszYy5fbTpM6TfBQ2059zA3Wqn9Zer2ibkqmF2RP68eNNuA+FS4oj3aUbmTMncHg
-         TBvMh4T/s5b2ZrZK5Y0MfwZiCnROSeFHsqOj9Glt0zKIq8OaE1YLHxgtioC4G0/7RDo4
-         EB6I+1gQfkk4bkwv7WwO1a7Uds0xxiyRKQ6vgO0j3Sg9v88Bi+dI9dYnvWM1tExh7Dtl
-         C3hhaU5O7Pal75YQtRr07T8En20cjV3j4O+Zymc5NH20KFE/JAWog7Z8rJPIppyu98CH
-         N8SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAZ25nmh0H6zhVVrdGPu2RYu0/2TvzAo/92/bqrI2Om3iXXsSCdmRjOSTqrolDEqTGwCUyyeMuywaFT3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQzEInfB42CpFpXmnls4jHOZtYgYLQDZU4vQiaP0be5GwtzSAU
-	RblCbqvVaRfF8k4PeSXcEqAs5BW7RFqxizsy1FQaa+GSVGCWl9sCqM4mk5H6Sr86Bqg5jlIZU9F
-	8gV7+82ixibpI+wUwrbsqRqU3I3lNCrR3f6Ym
-X-Gm-Gg: ASbGncvnHlGsY4hdxmTTdiH0ZbYlacBB5g4XssWPGtnU2+8CtkevzTcBZSSXHYZRugi
-	BoHPuwukMa74zJX3qK9vaDOgr3DSydLp9qRSHRu0qtEKxYgVVkvurAM+Ub1y7Qw==
-X-Google-Smtp-Source: AGHT+IEEk5aN1eOwnEFKq2VpTSyQGdQBHpkfnICA0k0tDUjJ3oDS7OJn1bkFEhhsrwVy9UKRgNHio5nOyVpIPjmGRwc=
-X-Received: by 2002:a05:622a:5e83:b0:461:48f9:4852 with SMTP id
- d75a77b69052e-466b3dc63bcmr655761cf.28.1732657883030; Tue, 26 Nov 2024
- 13:51:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732657931; x=1733262731;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g5gX/28xeOa4H8evb/+QhxlU0Ge1xRM184LPoeNAkm0=;
+        b=hiMY2mpASeQsc5rOn0AmEaKKVpn/X5CTgqB0hNz34W7dH4WpTmG05vgW3/rW2vY7u8
+         w98FKsSuCGDZJKG/xYdQKOJ17gNF/1TZIXj/hmSzSGvN3MbDclrZ6tFjS8dz8ApdJ2ww
+         C4hL+e3ivddWqKvVI4QAdu4vBZiAwklBUsyDDaRi6h978NOTuXqUiOZNKZwLRM/Ov4BB
+         mLDe2bUXoa9nF10mzX1MYPM1bz8uEcTdrb2D2Imdo9PbchMllXre8cQoQhJqPRl6eYsw
+         j6WIirBSu1sNMM0uuh3Nf/PE8LR7E2LmM2Qw02oj3fdn6q6ufc7vmx6MuHC0qbR2CErf
+         KAtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQbycl4rDnDSDOHKght0H+S6M3BNSUTWKhy10e4RmRQP1QJcsNx5ZYDFbNTxbdm1zudK7aydLBzuf@vger.kernel.org, AJvYcCXQvEeCVzBbqDi6ncaSp4wgoOHGN1+GjwMBDcjRbfoEfJV2Fzx8LP64hedmemJn2LMVZm4Ib94dIj9kWgeM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJz3U25/E3RbfzaMGJCMbYzu8pC/fScGplGPG4ZOAPx07w7vIe
+	p1t/j1Ew+Buu8HZE2EIkacy8lzZx5sXHx5up4+SUDPzW82cv9Xf6zwms7Q==
+X-Gm-Gg: ASbGnct2vC9ofcm2yKfHosgtzrIvNqV5Dtz/mPkppeS8mJnt+AxiNB9GDCs4zn8YDDE
+	/9DtZzFrCq3QgZuwS1rQyFiCb0cQbiy0104eRRhDJkdUSHWW/F1KSnVVQN7rFjUKyqrcmHJixeC
+	yvOHS9Vt4MRto4azEmZP/nAyLh53daZcLm3pveB40ENNemhZXEVk/kWtZp+wE+QNDK5yR9AFhOB
+	iQnxXdC/0fDE6Mk+C/dxyX3qPGRnrBG3h9NrlH7O9gfjObrZJPSlk7oy2NqehhlA012EUb43qaA
+	ps336HMYtones6G6oCjRtMCK/k1kdEwxQBy6BxAepWw4Zci9zViVEhV9eZ8xtwAyP1q+Wuc=
+X-Google-Smtp-Source: AGHT+IHx9E6n645bJw+ZZMCpLPj3WAsAZR5gALncm6d5O3N4akt8jlgIOb9O5YKY5Ed0Cyk35sfEvA==
+X-Received: by 2002:a05:6000:491a:b0:385:bc42:52e4 with SMTP id ffacd0b85a97d-385c6eba8bemr439856f8f.24.1732657930933;
+        Tue, 26 Nov 2024 13:52:10 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-d42c-04c9-936b-d14b.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:d42c:4c9:936b:d14b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafedbcsm14570297f8f.41.2024.11.26.13.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 13:52:10 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] iio: light: add support for veml6031x00 ALS series
+Date: Tue, 26 Nov 2024 22:51:53 +0100
+Message-Id: <20241126-veml6031x00-v1-0-4affa62bfefd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
- <20241120103456.396577-3-linyunsheng@huawei.com> <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
- <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
-In-Reply-To: <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 26 Nov 2024 13:51:11 -0800
-Message-ID: <CAHS8izM+sK=48gfa3gRNffu=T6t6-2vaS60QvH79zFA3gSDv9g@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
-	zhangkun09@huawei.com, Robin Murphy <robin.murphy@arm.com>, 
-	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPlCRmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwNL3bLU3BwzA2PDCgMD3cRESxMz45REAzOTRCWgjoKi1LTMCrBp0bG
+ 1tQDIlbMgXQAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732657929; l=2445;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=60YY1uJHN5RmyPT0N3NyyFjI+6rugN3T5a91BrLQmog=;
+ b=nLvxAp1Flieg+ccgqL+pbACAzaYRC5dw+toK4qOvYTs3/tt7l0V3fBDyk2t9xVu5l3TiQ9v8q
+ 7tNtE33MXayDhk0Ok9wl7MvMSdC5eE6MhYnlzZ1wupurSG6xFVUFWRA
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, Nov 21, 2024 at 12:03=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.c=
-om> wrote:
->
-> On 2024/11/20 23:10, Jesper Dangaard Brouer wrote:
-> >
-> >>       page_pool_detached(pool);
-> >>       pool->defer_start =3D jiffies;
-> >>       pool->defer_warn  =3D jiffies + DEFER_WARN_INTERVAL;
-> >> @@ -1159,7 +1228,7 @@ void page_pool_update_nid(struct page_pool *pool=
-, int new_nid)
-> >>       /* Flush pool alloc cache, as refill will check NUMA node */
-> >>       while (pool->alloc.count) {
-> >>           netmem =3D pool->alloc.cache[--pool->alloc.count];
-> >> -        page_pool_return_page(pool, netmem);
-> >> +        __page_pool_return_page(pool, netmem);
-> >>       }
-> >>   }
-> >>   EXPORT_SYMBOL(page_pool_update_nid);
-> >
-> > Thanks for continuing to work on this :-)
->
-> I am not sure how scalable the scanning is going to be if the memory size=
- became
-> bigger, which is one of the reason I was posting it as RFC for this versi=
-on.
->
-> For some quick searching here, it seems there might be server with max ra=
-m capacity
-> of 12.3TB, which means the scanning might take up to about 10 secs for th=
-ose systems.
-> The spin_lock is used to avoid concurrency as the page_pool_put_page() AP=
-I might be
-> called from the softirq context, which might mean there might be spinning=
- of 12 secs
-> in the softirq context.
->
-> And it seems hard to call cond_resched() when the scanning and unmapping =
-takes a lot
-> of time as page_pool_put_page() might be called concurrently when pool->d=
-estroy_lock
-> is released, which might means page_pool_get_dma_addr() need to be checke=
-d to decide
-> if the mapping is already done or not for each page.
->
-> Also, I am not sure it is appropriate to stall the driver unbound up to 1=
-0 secs here
-> for those large memory systems.
->
-> https://www.broadberry.com/12tb-ram-supermicro-servers?srsltid=3DAfmBOorC=
-PCZQBSv91mOGH3WTg9Cq0MhksnVYL_eXxOHtHJyuYzjyvwgH
->
+These ambient light sensors with I2C interface provide two light
+channels (ALS and IR), high/low threshold alarms with configurable
+persistence, and a data ready signal.
 
-FWIW I'm also concerned about the looping of all memory on the system.
-In addition to the performance, I think (but not sure), that
-CONFIG_MEMORY_HOTPLUG may mess such a loop as memory may appear or
-disappear concurrently. Even if not, the CPU cost of this may be
-significant. I'm imagining the possibility of having many page_pools
-allocated on the system for many hardware queues, (and maybe multiple
-pp's per queue for applications like devmem TCP), and each pp looping
-over the entire xTB memory on page_pool_destroy()...
+The devices covered by this driver have the same resolution and they
+share most of their functionality. These are the differences between
+them:
 
-My 2 cents here is that a more reasonable approach is to have the pp
-track all pages it has dma-mapped, without the problems in the
-previous iterations of this patch:
+ - Device ID: accessible via two 8-byte registers, different values for
+   veml6031x00/veml6031x01 and veml60311x00/veml60311x01.
+ - I2C address: same grouping, 0x29 and 0x10 I2C addresses.
+ - AEC qualification: AEC-Q100 for veml6031x00/veml60311x00 and
+   AEC-Q101 for veml6031x01/veml60311x01.
 
-1. When we dma-map a page, we add it to some pp->dma_mapped data
-structure (maybe xarray or rculist).
-2. When we dma-unmap a page, we remove it from pp->dma_mapped.
-3 When we destroy the pp, we traverse pp->dma_mapped and unmap all the
-pages there.
+The alarms and the data ready signals share the interrupt pin, and an
+interrupt status register must be accessed to identify the source. Such
+multiplexing is not new in IIO, and I have followed existing examples
+for it. The persistence setting (own attribute) to trigger the alarms
+uses the pattern that has already been used for the veml6030.
 
-I haven't looked deeply, but with the right data structure we may be
-able to synchronize 1, 2, and 3 without any additional locks. From a
-quick skim it seems maybe rculist and xarray can do this without
-additional locks, maybe.
+The device configuration is in general documented in the datasheet and
+the application note. There is an exception, though: the activation of
+the "active force" mode that is required for the data ready signal must
+be carried out in two steps even though the affected bits are located in
+the same register: first ALS_AF (active force mode enable) must be set,
+and then ALS_TRIG (active force trigger setting) must be enabled. I have
+added a brief commentary in the code to explain this behavior, which has
+been confirmed by the manufacturer.
 
-Like stated in the previous iterations of this approach, we should not
-be putting any hard limit on the amount of memory the pp can allocate,
-and we should not have to mess with the page->pp entry in struct page.
+This driver has been tested with the four supported devices separately
+as well as in pairs where the I2C addresses don't overlap.
 
---=20
-Thanks,
-Mina
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      dt-bindings: iio: light: veml6030: add veml6031x00 ALS series
+      iio: light: add support for veml6031x00 ALS series
+
+ .../bindings/iio/light/vishay,veml6030.yaml        |   23 +-
+ MAINTAINERS                                        |    6 +
+ drivers/iio/light/Kconfig                          |   13 +
+ drivers/iio/light/Makefile                         |    1 +
+ drivers/iio/light/veml6031x00.c                    | 1129 ++++++++++++++++++++
+ 5 files changed, 1171 insertions(+), 1 deletion(-)
+---
+base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
+change-id: 20241109-veml6031x00-aa9463da064a
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
