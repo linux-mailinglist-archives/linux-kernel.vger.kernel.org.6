@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-421838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0359D90C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:43:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8479D90C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0475BB25037
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B232287F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9017B3E1;
-	Tue, 26 Nov 2024 03:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D126BB5B;
+	Tue, 26 Nov 2024 03:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdTkgm8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="oUmp80/1"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD19D51C;
-	Tue, 26 Nov 2024 03:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677263FB31
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732592584; cv=none; b=pBcJk8FrLCNpqFg7s27CgrdJ29Y9xNRFRnU6hqgye9DDsaK74sQObRuU5cz3tANjQI5HMqt52M7bViYI8Gp6l+4BCJrpme1F/8x7YittJSCsnmHNqZ86NERRXNbfJafZeOlDSIuiouiyNf4AI+/pILT3tSn+1EYWUKy6uND0b84=
+	t=1732592780; cv=none; b=iIrbSNwLNNWYsqWbXLP1WtqQJvrRWCYGKhDDwvkd3N5hGosa9CkRBT6WfskAgMiRMdc33+ZBRJT5vgQMR+LH2+PxU8FLqP7RZKTVfNPjiEj7M/yt4TPdpOn9DwSjOL2SQ94HmLwH56rs0CHnzNqKDzgkrzhn3bxkjPu1Ogyv+s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732592584; c=relaxed/simple;
-	bh=coU6IBfT0ptME5r8k6EBPWODOMkjYnPJZewhEgS4WKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oaoU9r2AMz9yYrVCnQth+4P76ZJkcjopZv6ioBkoOWQCWKQ5d++YvjcmwYiZmxs9YePFH4HLjFfMUBinoIegAlg76QNbv3znhsEy/ZaQNX/2qrsAMT9QjW8f/8DEbzspTOUOqCMUzOLkSNttvPBcWbnwL4K9J0xNTLzqSKjxZ7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdTkgm8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 541C6C4CED9;
-	Tue, 26 Nov 2024 03:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732592584;
-	bh=coU6IBfT0ptME5r8k6EBPWODOMkjYnPJZewhEgS4WKI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EdTkgm8MaFvF7699I1jAEPZaEkXG5WCz9+QTv4vohZfiT0KoHvBIKjyTPnbXeUitn
-	 XFl7GCBQJhzVxb4LVsSxV/twZqpQIlkwAsAACumvL++6vnZ3ZbsciVHtbIPaA2VmAB
-	 BdZTfzyRGaB5+6DX6gdJlUkdOoUvITK7L0WpmO6H/BzAshEdGDag7LLKlDeQz8dS1e
-	 YkwI7xrYZkegmvyIDWCFhTsYSt3xFsMz4HGHg9n53dZMKXPXdXLO0g9Qb3gTVwU21z
-	 E7Sue+6YSvrztrW6X2bZViURnkVQlpqP3qh26zatH0k43WGDHeCAb6ESYUjXt+l9O7
-	 Dyi7rHvBTLn0A==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53de579f775so2157737e87.2;
-        Mon, 25 Nov 2024 19:43:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUFDFrDuuVyyTjA51eCyozGZBvRlB2ChYxi0bbyasptdJWLI24GEWTspgPdX7qNZizTZP72bAG0Xl2Qbw==@vger.kernel.org, AJvYcCUfeOFi7k0ZCxBijlGl7BX6cHmYKIoLGyWSRt2VADd/lSDb9ekf1QTjyqGauV6QL6uihnIuxUnZv6GcW7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4xkGolATIJG55UfoCXxuRVVe5SumNSxjKlcQeJ6ZaOTPoMKtM
-	tXW26+kSL8l8a8PWQlLqWThGAojPbrr/7XxTGpo3+sHaXUMdWIlRW1TnK0mJ+PpaI+XjuemUSLe
-	dfKePiN9Oz56B255IpDskeGS6WII=
-X-Google-Smtp-Source: AGHT+IEQpZv/hujVQNHXaxcIW6GTzjb5penaCdidZiUAGFfpA0i1KjvGv3vy9KvflJV0w6RzGHdd8L2R2qyiJ36t9Po=
-X-Received: by 2002:a05:6512:281d:b0:53d:e602:c0ec with SMTP id
- 2adb3069b0e04-53de602c105mr3668096e87.49.1732592582919; Mon, 25 Nov 2024
- 19:43:02 -0800 (PST)
+	s=arc-20240116; t=1732592780; c=relaxed/simple;
+	bh=YSkrqxKh9N5elFAjOCiYXy17rR2p3vfhcaMtMubZGys=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jE/KfJTXCei32SWsyIRzTEWTjgDgpfdPJcGfavw968Kdp3RizV3CqarEuUKPBio5uZo3ylEe2toKKpPrP6O9v3p0228fQfgKq0Er+JpNN8wsQ9otm0cD/TZkpAiuK1bFJYpm4j6RQRemglUsWKU53ScYph1ZsP6WkfODzJAbYS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=oUmp80/1; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
+	by cmsmtp with ESMTPS
+	id FizvtPnUPg2lzFmWntnEse; Tue, 26 Nov 2024 03:46:17 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id FmWktKiK5XDcgFmWmt1ryD; Tue, 26 Nov 2024 03:46:16 +0000
+X-Authority-Analysis: v=2.4 cv=MedquY/f c=1 sm=1 tr=0 ts=67454488
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
+ a=Uhfq17CCtucz6BUgXkYA:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
+ a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EpVOpGc4bJDTukR4641wyoZUQ4tkmW15trkijARXKjE=; b=oUmp80/1hLyTPIV/hVQpxZ79Y/
+	gJSI0jk/GnzimzQi+FvvxMT8ObK3qQFjXdUblR6oWeKbqu0LRORQceJJ6atxp9+WaIqHs/Ivw/LRV
+	9H9teytC78wPq2Y8+YE6PEjUPRYq0kPl6/BxIU3z46s51nBUXZ8MDBSVuYg/sc5BbG+qj5zpKDHR8
+	28DgJW4lWsTjsqvefcup0KcP4lTx8J07KKB3OXrFFjC+KPQRjEE0a5hqtrKQ241TO9FgtX7ZrzM14
+	phf7hHHDnHpgynzGbGChboT/YjRTjzBqAv9ysTY3lxB0pPfH9/VZoiyB6fNWDO81leXjCgnf101fi
+	bHblG8sA==;
+Received: from [122.165.245.213] (port=40090 helo=[192.168.1.5])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1tFmWe-003Oct-33;
+	Tue, 26 Nov 2024 09:16:08 +0530
+Message-ID: <ec0c0a4f-9555-42bb-adac-3ba574fe82cc@linumiz.com>
+Date: Tue, 26 Nov 2024 09:16:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125230953.3090508-1-xur@google.com> <66daf1a8-efb7-4fef-92cd-eb680c7832fa@alliedtelesis.co.nz>
-In-Reply-To: <66daf1a8-efb7-4fef-92cd-eb680c7832fa@alliedtelesis.co.nz>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 26 Nov 2024 12:42:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQi_R_ppZu3Y7ZBEbGpGviCYoD=vBUvt9rgaPLkaLZ9Xw@mail.gmail.com>
-Message-ID: <CAK7LNAQi_R_ppZu3Y7ZBEbGpGviCYoD=vBUvt9rgaPLkaLZ9Xw@mail.gmail.com>
-Subject: Re: [PATCH] [MIPS] Place __kernel_entry at the beginning of text section
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, Rong Xu <xur@google.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Klara Modin <klarasmodin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicolas Schier <nicolas@fjasle.eu>, "Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: parthiban@linumiz.com, Frank Binns <frank.binns@imgtec.com>,
+ Matt Coster <matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: gpu: add reset control property
+To: Conor Dooley <conor@kernel.org>
+References: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
+ <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
+ <20241125-dress-disliking-2bf22dd4450e@spud>
+Content-Language: en-US
+From: Parthiban <parthiban@linumiz.com>
+Organization: Linumiz
+In-Reply-To: <20241125-dress-disliking-2bf22dd4450e@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1tFmWe-003Oct-33
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:40090
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 1
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFzmQz6jtcOph3QZm/q0wwkvEOyShcQPjQm+2Mnlvdc6zVhtVxHzcv/ZpCV0fy4l3kyGWTNJT1WKTZr1IC4rQV145BBCwvy9o9QXoDCo/OYm19EdRfwC
+ Mnqy58ucCNdfkDu9giHZV2bKEKyQK1NgUkr8SRCgxtZnpGq2+ONWK8KsNoFRFzj28isfiUXlb/+hSjPW7orohqIxqEH/KIlkdsw=
 
-On Tue, Nov 26, 2024 at 8:42=E2=80=AFAM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
->
->
-> On 26/11/24 12:09, Rong Xu wrote:
-> > Mark __kernel_entry as ".head.text" and place HEAD_TEXT before
-> > TEXT_TEXT in the linker script. This ensures that __kernel_entry
-> > will be placed at the beginning of text section.
-> >
-> > Drop mips from scripts/head-object-list.txt.
-> >
-> > Signed-off-by: Rong Xu <xur@google.com>
-> > Reported-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->
-> Works for me on my RTL9302C based board
->
-> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->
-> > ---
-> >   arch/mips/kernel/head.S        | 1 +
-> >   arch/mips/kernel/vmlinux.lds.S | 1 +
-> >   scripts/head-object-list.txt   | 1 -
-> >   3 files changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
-> > index e90695b2b60e..6d5fc498c6f9 100644
-> > --- a/arch/mips/kernel/head.S
-> > +++ b/arch/mips/kernel/head.S
-> > @@ -26,6 +26,7 @@
-> >
-> >   #include <kernel-entry-init.h>
-> >
-> > +     __HEAD
->
-> I'm not and expert on any of this but... should this go below the
-> setup_c0_status_* macros (just before the CONFIG_NO_EXCEPT_FILL) line? I
-> don't think it makes any actual difference but as a reader it feels more
-> logical that the __HEAD annotation is applying to the .fill and
-> __kernel_entry.
+On 11/25/24 11:37 PM, Conor Dooley wrote:
+> On Mon, Nov 25, 2024 at 10:07:03PM +0530, Parthiban Nallathambi wrote:
+>> GE8300 in Allwinner A133 have reset control from the ccu.
+>> Add the resets property as optional one to control it.
+> 
+> There's no specific compatible here for an a133, but the binding
+> requires one. Where is your dts patch?
+A133 GPU is still work in progress in both Kernel and Mesa3D. Also power
+domain support needs an additional driver.
 
+But reset control is independent of those changes. Should reset control
+needs to be clubbed GPU dts changes?
 
-Agree.
+Thanks,
+Parthiban
+> 
+>>
+>> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
+>> ---
+>>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+>> index 256e252f8087..bb607d4b1e07 100644
+>> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+>> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+>> @@ -37,6 +37,9 @@ properties:
+>>    power-domains:
+>>      maxItems: 1
+>>  
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>>  required:
+>>    - compatible
+>>    - reg
+>>
+>> -- 
+>> 2.39.2
+>>
 
-Having __HEAD right before the allocated code would be better.
-
-
-We have one more section marker, __REF, some lines below.
-This is placed right before the affected code.
-
-
-Rong, could please send v2 as Chris suggested?
-
-Then, I will insert this to my tree to avoid regression.
-
-I will drop the previous commit
-(MIPS: move _stext definition to vmlinux.lds.S).
-It changed the location of _stext when
-CONFIG_NO_EXCEPT_FILL is disabled.
-
-Thanks.
-
-
-
-
->
-> >       /*
-> >        * For the moment disable interrupts, mark the kernel mode and
-> >        * set ST0_KX so that the CPU does not spit fire when using
-> > diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.=
-lds.S
-> > index d575f945d422..c9c1ba85ac7b 100644
-> > --- a/arch/mips/kernel/vmlinux.lds.S
-> > +++ b/arch/mips/kernel/vmlinux.lds.S
-> > @@ -62,6 +62,7 @@ SECTIONS
-> >       _text =3D .;      /* Text and read-only data */
-> >       _stext =3D .;
-> >       .text : {
-> > +             HEAD_TEXT
-> >               TEXT_TEXT
-> >               SCHED_TEXT
-> >               LOCK_TEXT
-> > diff --git a/scripts/head-object-list.txt b/scripts/head-object-list.tx=
-t
-> > index fd5d00bac447..f12b4a7b8406 100644
-> > --- a/scripts/head-object-list.txt
-> > +++ b/scripts/head-object-list.txt
-> > @@ -23,7 +23,6 @@ arch/m68k/coldfire/head.o
-> >   arch/m68k/kernel/head.o
-> >   arch/m68k/kernel/sun3-head.o
-> >   arch/microblaze/kernel/head.o
-> > -arch/mips/kernel/head.o
-> >   arch/nios2/kernel/head.o
-> >   arch/openrisc/kernel/head.o
-> >   arch/parisc/kernel/head.o
-> >
-> > base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
