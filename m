@@ -1,332 +1,184 @@
-Return-Path: <linux-kernel+bounces-422302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FC09D975A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:41:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F669D975D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3370DB21B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 466CDB22AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27021D0E36;
-	Tue, 26 Nov 2024 12:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA6E1D2B11;
+	Tue, 26 Nov 2024 12:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M3uBYfLu"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aGmmZvTk"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210DE27442
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601327442;
+	Tue, 26 Nov 2024 12:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732624880; cv=none; b=UPAL/z7Z6lc/onUDsg6rLJjnJa/HEqhmsC51axopHmAzKLeYeb9KrVFP1L5YBjCysJbRc5IajfighkE4vHQdmxAMz1I64esK2e0Jj+zDcMO8GPX93zEnDd5ggzminN2vlRxAG3C3rgnoUImdE8xhnLwh3C8vxXnUb0D/w8sSXjo=
+	t=1732624893; cv=none; b=N0OBmAttwardYfsScDN+SDXQBYyK0ZG1BU/Yr78+u7NyFkbdHeZYvC/FxeYuOzhk7dj1Km3qe7/3vGxAMU+guTgiQOzQ9bQ9Nkf2FD2DJEamVeFBRdjKM7xI+qXTOHP8IpIRbI+MzFsUZphO5BuukSS3N1TBcz/bIQgXcaIkUMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732624880; c=relaxed/simple;
-	bh=5QGqLgj7ult2KpL1mhiCaa8OlPSUKLYv0B9W4FZ6P0Y=;
+	s=arc-20240116; t=1732624893; c=relaxed/simple;
+	bh=3++F0CPGlSPV7VHDSu5UkQCDjvkmtFv4Il2HnX9bZow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHh2ZDu5zUWBAI7mKHDbSrMhQodgdL/Mn+LwX1KxrlKRD8CSTxp2y8vsLd66QtoYPVgjcuH6Ld+gv3u/PKhZ6kgh7o1TJLCac0sbN1WCMVZNgvrhazkdIY7ZG3rWAj9n2C+5Q5IAHPukrd3QGTJ4UZGDd5nVkcaDBS7UH/t+F88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M3uBYfLu; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21207f0d949so52948315ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:41:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732624878; x=1733229678; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MxF+aV1Hv4QY3oDIZgKkkm4GIfDo73DrZkwY5UF6N5I=;
-        b=M3uBYfLu5WKiE83Ye0ENonv/Oe0GfDOt0hX6RMT4rFAfDCnAlKvpq1TQQigv+nf1rb
-         DbdjIA41TQeU/i3Vs/FVdXhK0oj8bkv+A+LAICvlIAhxzEruvD6p7X0jwUt8M5CNEt3a
-         k3BhnoVUzwwgS8hOzAq2c8TDcepK9uE0EO7RuMLjeuwgcgRHFDN7P37Wo2bhfi7c87Fv
-         kq4uXAjgFoiEQhUudNAALRXag/bfo3yir0l1jCQZgk0Mjf3HOC9Vr62SW0ZWNvAio5TJ
-         2X9QxNnE9PHxiBW8iw456c0W3TApeWDqi+Nh0yWgLRBfZyTMs4oFPUf9g20uT8pq1aIF
-         tVDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732624878; x=1733229678;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MxF+aV1Hv4QY3oDIZgKkkm4GIfDo73DrZkwY5UF6N5I=;
-        b=Q7R+Bq6qn8zIXz4ZOE4XLp8DRQsR+8s17QDhLecI12VqzjZXF3cWw7+/AWAYEZbztP
-         JHpaR3KLPXy4b+ZtNZQmFM0Lr+jzg6gJofNJwXkSQbMeTZljhGllSSnako8tzK4s8uw9
-         g1KAz/GR7wbM3yHgzHHZMBmL1pWLg5q3oVZq8p4AJpDPHuZnPQwf8/lJ3Kt9A6JtuoJA
-         MF8NadThew2PWD0keiyq+YDkJc9zUFFTkWQFjmu2sp1CZZtz/PVD3BMqmbI1eYXG0IRW
-         dymBjCuU6oGMaGLzsgIDD0+8mmZLPF2gD9+kRxuWTJAJM7Kcr9VpSikt17EiVD9yOclk
-         KVaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiC3W91vysbWDTmSkFiE2yMt9t8p/5ju/5eqsyUSdJUeLHtTV2cES1A5gJOqEgIqkfWmHNucLpCeWS3vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlxdBvxFJzjSKluqKf8Hs7UtMu6nITwgm80ov1JnjI2aqSt/7/
-	h5toJuDpZEbgOrKXdXEE6n5nmiGmwoj8XjiEm/QY6T4kpVHB6a5LomonnDJfUg==
-X-Gm-Gg: ASbGncuSwtz/lpC35rz2uCDipvC/uit9k71z6GctvrwJPdX6ra9k3AB9fAfMTUIHBLz
-	yUuvajayBsa9pacXst2yMWZ5fhSiECF9NzV64jKJC5i0UpDAWBqqxpXrHVmq3AZYjY8IYf2cJZQ
-	SS07/++1qkczcDog76hBCQ5AFZOKh9wzkq/vxcukIxagCsyczhkaUwAhD1ICVjS/WHL/A4DJdpI
-	v8/3CTax9JEFmyAE2O/TBXdHTa0h6asyNg9p4n++eeXrnmp2T77irlfkhyh
-X-Google-Smtp-Source: AGHT+IHNkV0w1MtKgqBXdudpD0c62ethWhe9CLuXm06H3Scg2apzmGTe2RkEFVHEhLbz5G18I7I10Q==
-X-Received: by 2002:a17:902:dac5:b0:212:500:74e with SMTP id d9443c01a7336-2129f51d2c6mr233343125ad.11.1732624878328;
-        Tue, 26 Nov 2024 04:41:18 -0800 (PST)
-Received: from thinkpad ([120.60.136.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc22237sm83758345ad.243.2024.11.26.04.41.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 04:41:17 -0800 (PST)
-Date: Tue, 26 Nov 2024 18:11:12 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Frank Li <Frank.li@nxp.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v8 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
- support
-Message-ID: <20241126124112.5o4c3lzem72lkvdw@thinkpad>
-References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
- <20241116-ep-msi-v8-4-6f1f68ffd1bb@nxp.com>
- <20241124075645.szue5nzm4gcjspxf@thinkpad>
- <Z0TNMIX4ehaB+mSn@lizhi-Precision-Tower-5810>
- <20241126042523.6qlmhkjfl5kwouth@thinkpad>
- <Z0WcKeM2630u_xSK@ryzen>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HfUjxrwnKYportvkN11gBCUec35kr72OSMK7R3/YQRih0+m7BfwyhPbyqGw6Z5KzePb6BPMWN//bIrOYlQc8Bug+8oQra9A72UIwigiRzbfpUywZk+49GJkCtUim7vX6zI54/+oawsO5i4XGPgGvM8+ZR9qih4xtUdMU4fs7Stg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aGmmZvTk; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ8eBha018106;
+	Tue, 26 Nov 2024 12:41:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=gI7lf1d2YuHEgZ8p/4OjqQ4L7QiJ9z
+	JUd/FwFOMA2p4=; b=aGmmZvTkHQ3RUf99D8ivAqhfnNj/XKEP1pBfJJplCLW0WC
+	8bG2e/0J3GC5mMhobFMpQWtCtNnedwwC77iMkmw6YQiBA3iiiz3dlxlYZp2ebhpX
+	/pJIWwrfJd2KCmhm9Yup/ts3tS65OJuPbuAXF4PcaZYxqUtfrJMMAuVYd0sex+Hd
+	SV8P4bj8gthDhHebz5ys/WzjVuRt1cRDYvjzvvvPaKYJOsNDfrDTmn1z4K17UjhF
+	dYMUElBvYicTHEbsLb/aI240PW8urn0GR9hcBZNWnYT4Z7Er0dTsP6B3CRYyMpNv
+	YBXC9c5Oqo36Ptss2QEmHRmPaRokXEW7EuV5INqA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwje3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AQCZ0Yo028031;
+	Tue, 26 Nov 2024 12:41:21 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jwjdx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:41:21 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ79qF9012370;
+	Tue, 26 Nov 2024 12:41:20 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 433scrvg77-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 12:41:20 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQCfJmk17170736
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 12:41:19 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 15A7D2004E;
+	Tue, 26 Nov 2024 12:41:19 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A44AC2005A;
+	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 26 Nov 2024 12:41:17 +0000 (GMT)
+Date: Tue, 26 Nov 2024 18:11:14 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <Z0XB6uLUkwDWLV8E@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
+ <20241126090452.ohggr3daqskllxjk@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0WcKeM2630u_xSK@ryzen>
+In-Reply-To: <20241126090452.ohggr3daqskllxjk@quack3>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1nRQjSqdA0HDfy838ABRw0pKv6Qm4RYg
+X-Proofpoint-GUID: SZz5FBwk32IcPVu-fs9KsAnJtaIjJpxp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=817 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260101
 
-On Tue, Nov 26, 2024 at 11:00:09AM +0100, Niklas Cassel wrote:
-> On Tue, Nov 26, 2024 at 09:55:23AM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Nov 25, 2024 at 02:17:04PM -0500, Frank Li wrote:
-> > > On Sun, Nov 24, 2024 at 01:26:45PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Sat, Nov 16, 2024 at 09:40:44AM -0500, Frank Li wrote:
-> > > > > Add three registers: doorbell_bar, doorbell_addr, and doorbell_data,
-> > > > > along with doorbell_done. Use pci_epf_alloc_doorbell() to allocate a
-> > > >
-> > > > I don't see 'doorbell_done' defined anywhere.
-> > > >
-> > > > > doorbell address space.
-> > > > >
-> > > > > Enable the Root Complex (RC) side driver to trigger pci-epc-test's doorbell
-> > > > > callback handler by writing doorbell_data to the mapped doorbell_bar's
-> > > > > address space.
-> > > > >
-> > > > > Set doorbell_done in the doorbell callback to indicate completion.
-> > > > >
-> > > >
-> > > > Same here.
-> > > >
-> > > > > To avoid broken compatibility, add new command COMMAND_ENABLE_DOORBELL
-> > > >
-> > > > 'avoid breaking compatibility between host and endpoint,...'
-> > > >
-> > > > > and COMMAND_DISABLE_DOORBELL. Host side need send COMMAND_ENABLE_DOORBELL
-> > > > > to map one bar's inbound address to MSI space. the command
-> > > > > COMMAND_DISABLE_DOORBELL to recovery original inbound address mapping.
-> > > > >
-> > > > > 	 	Host side new driver	Host side old driver
-> > > > >
-> > > > > EP: new driver      S				F
-> > > > > EP: old driver      F				F
-> > > >
-> > > > So the last case of old EP and host drivers will fail?
-> > > 
-> > > doorbell test will fail if old EP.
-> > > 
+On Tue, Nov 26, 2024 at 10:04:52AM +0100, Jan Kara wrote:
+> On Thu 21-11-24 18:08:55, Ojaswin Mujoo wrote:
+> > Protect ext4_release_dquot against freezing so that we
+> > don't try to start a transaction when FS is frozen, leading
+> > to warnings.
 > > 
-> > How come there would be doorbell test if it is an old host driver?
-> 
-> I also don't understand this.
-> 
-> The new commands: DOORBELL_ENABLE / DOORBELL_DISABLE
-> can only be sent if there is a new host driver.
-> 
-> Sending DOORBELL_ENABLE / DOORBELL_DISABLE will obviously
-> return "Invalid command" if the EP driver is old.
-> 
-> If EP driver is new, DOORBELL_ENABLE will only return success if the SoC
-> has support for GIC ITS and has configured DTS with msi-parent
-> (i.e. if the pci_epf_alloc_doorbell() call was successful).
-> 
-> 
+> > Further, avoid taking the freeze protection if a transaction
+> > is already running so that we don't need end up in a deadlock
+> > as described in
 > > 
-> > > >
-> > > > >
-> > > > > S: If EP side support MSI, 'pcitest -B' return success.
-> > > > >    If EP side doesn't support MSI, the same to 'F'.
-> > > > >
-> > > > > F: 'pcitest -B' return failure, other case as usual.
-> > > > >
-> > > > > Tested-by: Niklas Cassel <cassel@kernel.org>
-> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > > ---
-> > > > > Change from v7 to v8
-> > > > > - rename to pci_epf_align_inbound_addr_lo_hi()
-> > > > >
-> > > > > Change from v6 to v7
-> > > > > - use help function pci_epf_align_addr_lo_hi()
-> > > > >
-> > > > > Change from v5 to v6
-> > > > > - rename doorbell_addr to doorbell_offset
-> > > > >
-> > > > > Chagne from v4 to v5
-> > > > > - Add doorbell free at unbind function.
-> > > > > - Move msi irq handler to here to more complex user case, such as differece
-> > > > > doorbell can use difference handler function.
-> > > > > - Add Niklas's code to handle fixed bar's case. If need add your signed-off
-> > > > > tag or co-developer tag, please let me know.
-> > > > >
-> > > > > change from v3 to v4
-> > > > > - remove revid requirement
-> > > > > - Add command COMMAND_ENABLE_DOORBELL and COMMAND_DISABLE_DOORBELL.
-> > > > > - call pci_epc_set_bar() to map inbound address to MSI space only at
-> > > > > COMMAND_ENABLE_DOORBELL.
-> > > > > ---
-> > > > >  drivers/pci/endpoint/functions/pci-epf-test.c | 117 ++++++++++++++++++++++++++
-> > > > >  1 file changed, 117 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > > > index ef6677f34116e..410b2f4bb7ce7 100644
-> > > > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > > > @@ -11,12 +11,14 @@
-> > > > >  #include <linux/dmaengine.h>
-> > > > >  #include <linux/io.h>
-> > > > >  #include <linux/module.h>
-> > > > > +#include <linux/msi.h>
-> > > > >  #include <linux/slab.h>
-> > > > >  #include <linux/pci_ids.h>
-> > > > >  #include <linux/random.h>
-> > > > >
-> > > > >  #include <linux/pci-epc.h>
-> > > > >  #include <linux/pci-epf.h>
-> > > > > +#include <linux/pci-ep-msi.h>
-> > > > >  #include <linux/pci_regs.h>
-> > > > >
-> > > > >  #define IRQ_TYPE_INTX			0
-> > > > > @@ -29,6 +31,8 @@
-> > > > >  #define COMMAND_READ			BIT(3)
-> > > > >  #define COMMAND_WRITE			BIT(4)
-> > > > >  #define COMMAND_COPY			BIT(5)
-> > > > > +#define COMMAND_ENABLE_DOORBELL		BIT(6)
-> > > > > +#define COMMAND_DISABLE_DOORBELL	BIT(7)
-> > > > >
-> > > > >  #define STATUS_READ_SUCCESS		BIT(0)
-> > > > >  #define STATUS_READ_FAIL		BIT(1)
-> > > > > @@ -39,6 +43,11 @@
-> > > > >  #define STATUS_IRQ_RAISED		BIT(6)
-> > > > >  #define STATUS_SRC_ADDR_INVALID		BIT(7)
-> > > > >  #define STATUS_DST_ADDR_INVALID		BIT(8)
-> > > > > +#define STATUS_DOORBELL_SUCCESS		BIT(9)
-> > > > > +#define STATUS_DOORBELL_ENABLE_SUCCESS	BIT(10)
-> > > > > +#define STATUS_DOORBELL_ENABLE_FAIL	BIT(11)
-> > > > > +#define STATUS_DOORBELL_DISABLE_SUCCESS BIT(12)
-> > > > > +#define STATUS_DOORBELL_DISABLE_FAIL	BIT(13)
-> > > > >
-> > > > >  #define FLAG_USE_DMA			BIT(0)
-> > > > >
-> > > > > @@ -74,6 +83,9 @@ struct pci_epf_test_reg {
-> > > > >  	u32	irq_type;
-> > > > >  	u32	irq_number;
-> > > > >  	u32	flags;
-> > > > > +	u32	doorbell_bar;
-> > > > > +	u32	doorbell_offset;
-> > > > > +	u32	doorbell_data;
-> > > > >  } __packed;
-> > > > >
-> > > > >  static struct pci_epf_header test_header = {
-> > > > > @@ -642,6 +654,63 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test,
-> > > > >  	}
-> > > > >  }
-> > > > >
-> > > > > +static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
-> > > > > +{
-> > > > > +	enum pci_barno bar = reg->doorbell_bar;
-> > > > > +	struct pci_epf *epf = epf_test->epf;
-> > > > > +	struct pci_epc *epc = epf->epc;
-> > > > > +	struct pci_epf_bar db_bar;
-> > > >
-> > > > db_bar = {};
-> > > >
-> > > > > +	struct msi_msg *msg;
-> > > > > +	size_t offset;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg) {
-> > > >
-> > > > What is the need of BAR check here and below? pci_epf_alloc_doorbell() should've
-> > > > allocated proper BAR already.
-> > > 
-> > > Not check it at call pci_epf_alloc_doorbell() because it optional feature.
+> >   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
 > > 
-> > What is 'optional feature' here? allocating doorbell?
-> > 
-> > > It return failure when it actually use it.
-> > > 
-> > 
-> > So host can call pci_epf_enable_doorbell() without pci_epf_alloc_doorbell()?
+> > Suggested-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 > 
-> This patch calls pci_epf_alloc_doorbell() in pci_epf_test_bind(), so at
-> .bind() time.
+> Looks good to me (the 0-day reports seem to be due to wrong merge). Feel
+> free to add:
 > 
-> DOORBELL_ENABLE and DOORBELL_DISABLE are two new commands, so the host driver
-> could theoretically send these even if pci_epf_alloc_doorbell() failed.
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > 
-> 
-> pci_epf_test_cmd_handler() additions looks like this:
-> 
-> +	case COMMAND_ENABLE_DOORBELL:
-> +		pci_epf_enable_doorbell(epf_test, reg);
-> +		pci_epf_test_raise_irq(epf_test, reg);
-> +		break;
-> +	case COMMAND_DISABLE_DOORBELL:
-> +		pci_epf_disable_doorbell(epf_test, reg);
-> +		pci_epf_test_raise_irq(epf_test, reg);
-> +		break;
-> 
-> so they will call pci_epf_enable_doorbell()/pci_epf_disable_doorbell()
-> unconditionally, without any check to see if the doorbell was allocated.
-> 
-> We could move the was doorbell allocated check (if (!epf->db_msg)) to
-> pci_epf_test_cmd_handler(), but that would make pci_epf_test_cmd_handler()
-> more messy, so personally I think it is fine to keep the doorbell allocated
-> check in pci_epf_enable_doorbell()/pci_epf_disable_doorbell().
-> 
-> 
-> I did earlier suggest to Frank to move the pci_epf_alloc_doorbell() call
-> to pci_epf_enable_doorbell():
-> https://lore.kernel.org/linux-pci/Zy02mPTvaPAFFxGi@ryzen/
-> 
-> His reply is here::
-> https://lore.kernel.org/linux-pci/Zy1CxtKSgRuEPX5A@lizhi-Precision-Tower-5810/
-> 
-> "it may be too frequent to allocate and free msi resources when call
-> pci_epf_enable_doorbell()/pci_epf_disable_doorbell()."
-> 
-> I don't think that is a good argument, as presumably (in the normal case) an
-> EPF driver will enable doorbell in the beginning, and then keep it enabled.
-> 
-> However, one point could be that pci-epf-test currently does all allocations
-> (the allocations for the backing memory) in .bind(), so in one way it makes
-> sense to also allocate the doorbell in .bind().
-> 
-> To play devil's advocate, I guess you could argue that doorbell feature is
-> optional, while allocating backing memory for BARs is not, so it makes sense
-> that they are not allocated at the same time.
-> 
+> 								Honza
 
-I like the idea of calling pci_epf_alloc_doorbell() in
-pci_epf_{enable/disable}_doorbell() APIs. And as you said, it doesn't make sense
-to call these APIs too frequently.
+Thanks Jan, yes it does seem like an incorrect merge.
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> 
+> > ---
+> >  fs/ext4/super.c | 17 +++++++++++++++++
+> >  1 file changed, 17 insertions(+)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 16a4ce704460..f7437a592359 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+> >  {
+> >  	int ret, err;
+> >  	handle_t *handle;
+> > +	bool freeze_protected = false;
+> > +
+> > +	/*
+> > +	 * Trying to sb_start_intwrite() in a running transaction
+> > +	 * can result in a deadlock. Further, running transactions
+> > +	 * are already protected from freezing.
+> > +	 */
+> > +	if (!ext4_journal_current_handle()) {
+> > +		sb_start_intwrite(dquot->dq_sb);
+> > +		freeze_protected = true;
+> > +	}
+> >  
+> >  	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+> >  				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+> >  	if (IS_ERR(handle)) {
+> >  		/* Release dquot anyway to avoid endless cycle in dqput() */
+> >  		dquot_release(dquot);
+> > +		if (freeze_protected)
+> > +			sb_end_intwrite(dquot->dq_sb);
+> >  		return PTR_ERR(handle);
+> >  	}
+> >  	ret = dquot_release(dquot);
+> > @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+> >  	err = ext4_journal_stop(handle);
+> >  	if (!ret)
+> >  		ret = err;
+> > +
+> > +	if (freeze_protected)
+> > +		sb_end_intwrite(dquot->dq_sb);
+> > +
+> >  	return ret;
+> >  }
+> >  
+> > -- 
+> > 2.43.5
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
