@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-422149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A909D9539
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:12:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C789D9535
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:11:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C789B28926
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:09:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8226BB26A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DC61C3F00;
-	Tue, 26 Nov 2024 10:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885701C3F00;
+	Tue, 26 Nov 2024 10:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGIWVjyo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYjFnX4y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1A1BC9EE;
-	Tue, 26 Nov 2024 10:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03801BC063;
+	Tue, 26 Nov 2024 10:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615740; cv=none; b=iP3j1qTfk2j8mu6HO4P1Mi7rrru6dEyEo2QVqyZCGkGqvExp9IcJ+BkuH+D5dwnQs19eI4fk99bAWWX9Z6ZCqdSR6QLX5gJAxesAD9mslV6aumjC4Jo4phF82m0UUHqBjvKiahOh9F8a0yJOlbAaCh1zAjrpFRa4svofhhaYD+Q=
+	t=1732615851; cv=none; b=mnZRBD79xwSgGY+dkzPeen59BKjVPJWHS/tV4QD+yWDPLNhUyA+AmX8C5CbLxJXrgps5lXYWtlCl+J7Ai4CWaoEZugQeUU3JhbzoF2lx2VqOkI518EWoxZQy77si7rhO5BzrsC8Re9oxfkt5gCoT3IflhF/ul9+BK+PVnkunLKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615740; c=relaxed/simple;
-	bh=Tebs3ugs2aGJ3acWfA3ph5gJOpJqpLnIB3l/SR+YbG8=;
+	s=arc-20240116; t=1732615851; c=relaxed/simple;
+	bh=Byra4Kx0/QZ5Uz0Ky2GZAawD0zrEdfweETc4Lk5nnIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U2R0BNsN/VrgFtCk2CXQaEdb8Mbju7/wWsP2Lr7dURjpuLH71M6sZrNBdYOOxCuSdk6zkXKs/jGv3qF5LTSQxCKy8RH2RyIMeM0fdsgDdcd0bCdWP0FkOzr0TL5v19h9qJBpJsRyWyXoFsJrToAC/8rqTIzrCVseSS/NTg6R41U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGIWVjyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB49AC4CECF;
-	Tue, 26 Nov 2024 10:08:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=hXnbtnWg2j0dXJfiKS2toNLT2Iahgk3Q2sPGLUUf7Qf94TJ17i9d25LgjPPp3AnDnXXhjBkBtjm81FamPLFpOvfYPnHAU2kbmO/CCDVXB09ctQmhiZu3OX/I1zNMtr3rCXsz0A05JpaZIjYmVCCnbw18eHj2tABYM7cXUiDUjRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYjFnX4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CABDC4CED0;
+	Tue, 26 Nov 2024 10:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732615739;
-	bh=Tebs3ugs2aGJ3acWfA3ph5gJOpJqpLnIB3l/SR+YbG8=;
+	s=k20201202; t=1732615851;
+	bh=Byra4Kx0/QZ5Uz0Ky2GZAawD0zrEdfweETc4Lk5nnIs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EGIWVjyoydTiJvuc1ZUZhSqpAeY2sZhNEWLCA3S+X192vYeq/MGk9N88dM90Kiqpg
-	 9Fip6SmUHoaaz0oBlJUlxS2Sm8Aj6CffgLn97xP3pxowQi7EdJaeZjGBrd4Z0UHCV1
-	 39ce8gA0M8IOnhCygwQilpJKL9utKk58XsuLh3uv6AHhmMqOkuJOqsZjieQyfo7K56
-	 aa3eCn24N5EaGaA8gVSXSnXcyjO/RtjRpO4HEIW3d7hp12a35pY2AHEDD//kx5zcCT
-	 RsJTN9FtPzcatXkydp2p3tnhOnwY8qBQzPb40EOqjBVv3L04GeF7Tf1Ts5MeBEiVIj
-	 vc0PcOJeRXC2w==
-Message-ID: <a220d407-de40-4398-a837-de11e01d2381@kernel.org>
-Date: Tue, 26 Nov 2024 11:08:52 +0100
+	b=WYjFnX4y0o0UuVhysolvR/eLfEB1pJTaXWYL0wyi9+r7CdSRSi23fWiMoWP8CBomE
+	 dZE+1qYJt0RUXqHdXAr+TCkgxG6es0uDy+lyZoF+xdTQrtDklmEi+lrJWed9vzZwFB
+	 TS0WhOvTkxr0KFoUasehLvvJyKutxDxHnLwU4v0cfx/oYoxA8xY/2q1uzfxYa3c7UM
+	 fLJRMa603+pw2x6cxUh33PIRsR0RPPa4HFtEnX1Jk4naJr62Gvm38dUbN0oj6T9Qyx
+	 q36MswkTleWWmlU8fep9hpgmDid2VsU7r2qoV2Amia3F3AleJCP2iC+uiT2Ap5D70b
+	 466l6Gl+C0G7Q==
+Message-ID: <7c132784-87db-44f9-8be4-a0805e438735@kernel.org>
+Date: Tue, 26 Nov 2024 11:10:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] arm64: dts: nuvoton: Add Ethernet nodes
+Subject: Re: [PATCH v3 3/3] net: stmmac: dwmac-nuvoton: Add dwmac glue for
+ Nuvoton MA35 family
 To: Joey Lu <a0987203069@gmail.com>, andrew+netdev@lunn.ch,
  davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
  pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -60,7 +61,7 @@ Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
 References: <20241118082707.8504-1-a0987203069@gmail.com>
- <20241118082707.8504-3-a0987203069@gmail.com>
+ <20241118082707.8504-4-a0987203069@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,35 +107,63 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241118082707.8504-3-a0987203069@gmail.com>
+In-Reply-To: <20241118082707.8504-4-a0987203069@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 18/11/2024 09:27, Joey Lu wrote:
-> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-> index e51b98f5bdce..2e0071329309 100644
-> --- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
-> @@ -379,5 +379,57 @@ uart16: serial@40880000 {
->  			clocks = <&clk UART16_GATE>;
->  			status = "disabled";
->  		};
 > +
-> +		gmac0: ethernet@40120000 {
-> +			compatible = "nuvoton,ma35d1-dwmac";
-> +			reg = <0x0 0x40120000 0x0 0x10000>;
-> +			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "macirq";
-> +			clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
-> +			clock-names = "stmmaceth", "ptp_ref";
+> +static struct nvt_priv_data *
+> +nuvoton_gmac_setup(struct platform_device *pdev, struct plat_stmmacenet_data *plat)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct nvt_priv_data *bsp_priv;
+> +	phy_interface_t phy_mode;
+> +	u32 tx_delay, rx_delay;
+> +	u32 macid, arg, reg;
 > +
-> +			nuvoton,sys = <&sys 0>;
-> +			resets = <&sys MA35D1_RESET_GMAC0>;
-> +			reset-names = "stmmaceth";
-> +			status = "disabled";
+> +	bsp_priv = devm_kzalloc(dev, sizeof(*bsp_priv), GFP_KERNEL);
+> +	if (!bsp_priv)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	bsp_priv->regmap =
+> +		syscon_regmap_lookup_by_phandle_args(dev->of_node, "nuvoton,sys", 1, &macid);
+> +	if (IS_ERR(bsp_priv->regmap)) {
+> +		dev_err(dev, "Failed to get sys register\n");
 
-Status is always, always the last property. Please read and follow DTS
-coding style.
+Syntax is: return dev_err_probe
+
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +	if (macid > 1) {
+> +		dev_err(dev, "Invalid sys arguments\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+
+
+
+...
+
+
+> +
+> +	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* We support WoL by magic packet, override pmt to make it work! */
+> +	plat_dat->pmt = 1;
+> +	dev_info(&pdev->dev, "Wake-Up On Lan supported\n");
+
+
+Drop, driver should be silent on success.
+
+> +	device_set_wakeup_capable(&pdev->dev, 1);
+> +
+> +	return 0;
+> +}
+
+
 
 Best regards,
 Krzysztof
