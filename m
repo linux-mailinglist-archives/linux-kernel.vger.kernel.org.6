@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-421783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688309D9019
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:41:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A329D901A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:42:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082ABB27E1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E1816A007
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD77B47F53;
-	Tue, 26 Nov 2024 01:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089087D3F4;
+	Tue, 26 Nov 2024 01:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8tzAy7p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fORciMI3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7C33FBA7
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3A018622
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732585282; cv=none; b=N7SDb639a3NyXieb3jObH/M+OskHhng8T1p9qgwefX4/a/wzXStTk/lzXsXL5oAlwb2wVZSjA/8eU3Pc7XtzJZR8kHH1ZHl0eHw3FvcBEIMARLoDROZ+cjmGac44mt/dbAXv1gi/LR1mfypKInOxccNpxEuwxIrHbTn3xdVfKC8=
+	t=1732585284; cv=none; b=e1PQWxarmitREG2Jtqs+JeC5wCL4QxL20S4u+F7jrVmTTIPpRnpgafT9Ej10SvTQ8ISBTqNOjWh9wm8qze4TayNtBv952NlKyXYeKH/MN8gtpq1h9fzvG1ZrjT0kjkS00A41HJTBaYo6Tar7Pb4LtjFCHbwp7LzQURRMmKe21Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732585282; c=relaxed/simple;
-	bh=dPLFM8fuL1iT9cW9RGNA9kmHMGk4K6BuS4jfs1juxKQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FXDuTgPQ9EvKneSaTg3HF7K+/WLINg+SWmcqRKden0BEMl6qj8kEQH3Cu3ab9SWLR+xF4av3CG237teqlBVJWYjXFOd4cN3/8OIb2FnC42XGKJE2bmT7UZ1H6O2aHneqkiz14is7p33Tuf3Isb4dezvGoMtP0lzwKLRmV5uLqvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8tzAy7p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4206C4CECF;
-	Tue, 26 Nov 2024 01:41:21 +0000 (UTC)
+	s=arc-20240116; t=1732585284; c=relaxed/simple;
+	bh=7PuI44X71CbHmt/+DuN2sdZGGoMpJuV58E/jpknDVPg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kxyTC0j/RxUFzdycaK8wCUUBahBcirKZm/8/WQBbSWPddguMxXgyjV5dlvkwo7nhVOIZuYG9I4Kohw8pnS75oRudrBW7LQnQqwTbFtZa6G9p3vgGTKolhY27BEAuCpIkHpxnMhS8pQyY/U8yzWJdqbMw9+n5mTOORk9troThe9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fORciMI3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 339F5C4CECE;
+	Tue, 26 Nov 2024 01:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732585281;
-	bh=dPLFM8fuL1iT9cW9RGNA9kmHMGk4K6BuS4jfs1juxKQ=;
+	s=k20201202; t=1732585284;
+	bh=7PuI44X71CbHmt/+DuN2sdZGGoMpJuV58E/jpknDVPg=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=e8tzAy7pUVFiumnWY8TxeRLZRAFzTxcAkXaWoOSzjGGYAFrm6qPda8LkoHeUz2eym
-	 3u2WpW6c0NQPwsdgYUJ3bJESAJzO0n3O9QfEh0AhXcKARqhiVvT1F2BVZyNCdMvNbF
-	 IXPfds9gA0OXNO5BmsUoug922w/FIlpNaVcpgcyfeLh/pN39RHBR491zEnrT+zUEFq
-	 0ScXzpWwsWpqcuZKPWxZhJFjVZHKwELsGK/4R5V8KJofDsv+Nku7+r+AyyBQWR6fGP
-	 5B2l7UkVetHQAEPqh6BgnFLwAY31DsgSCq2OZ0VlBTNpqh6WWvRLHXgKRo55g7MsJK
-	 yaUDefmZAgaNA==
+	b=fORciMI3MAHY0zEQlOTZmghNh88xenXNDrtxyhzxtPuWC7CIYM5wpDqVjK6aT8EMs
+	 IH95E1cuzWiKK3KCBOzpWchg0kSOyomED4QZJVXWYnB4RV8kL/0deq3cg0Wji3pQFg
+	 7Z9UXHV6ACStxBjHNeMJ/fS4AQ01fYYASic4D5C8oQwAV7oxsR4uT3RYrZITcXCDDd
+	 q+yVMIXyjZb1CNj1GmKs8ZrxmWx3qOCFfjfK9F9MzxA7UEdeV7eHS76bnoBd1+StSe
+	 H+Hi+LzqFRicFjXFdmpEBZjc70/WVRu3UWbqdSFJdpWvclIg+/zZl5AGEvo6RO/4YA
+	 we34eigzGLb1Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE7DA3809A00;
-	Tue, 26 Nov 2024 01:41:35 +0000 (UTC)
-Subject: Re: [GIT PULL] firewire updates for v6.13-rc1
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3423A3809A00;
+	Tue, 26 Nov 2024 01:41:38 +0000 (UTC)
+Subject: Re: [GIT PULL] slab updates for 6.13 v2
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241123071306.GA108525@workstation.local>
-References: <20241123071306.GA108525@workstation.local>
+In-Reply-To: <1e81a4f1-a3f0-4131-8515-cecfdc3b001a@suse.cz>
+References: <1e81a4f1-a3f0-4131-8515-cecfdc3b001a@suse.cz>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241123071306.GA108525@workstation.local>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.13
-X-PR-Tracked-Commit-Id: 4752e8cde8344cb8673abdefe0dd74e9a2fe23ad
+X-PR-Tracked-Message-Id: <1e81a4f1-a3f0-4131-8515-cecfdc3b001a@suse.cz>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.13-v2
+X-PR-Tracked-Commit-Id: 9008fe8fad8255edfdbecea32d7eb0485d939d0d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5d38cb9bee73969125c7818a9f9e3358e0db07d6
-Message-Id: <173258529439.4103683.11822463336371572539.pr-tracker-bot@kernel.org>
-Date: Tue, 26 Nov 2024 01:41:34 +0000
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+X-PR-Merge-Commit-Id: e06635e26cd8144eee17e9f256e8fde8aed3ba4f
+Message-Id: <173258529679.4103683.16924741987891806302.pr-tracker-bot@kernel.org>
+Date: Tue, 26 Nov 2024 01:41:36 +0000
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sat, 23 Nov 2024 16:13:06 +0900:
+The pull request you sent on Mon, 25 Nov 2024 10:56:52 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.13
+> git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.13-v2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5d38cb9bee73969125c7818a9f9e3358e0db07d6
+https://git.kernel.org/torvalds/c/e06635e26cd8144eee17e9f256e8fde8aed3ba4f
 
 Thank you!
 
