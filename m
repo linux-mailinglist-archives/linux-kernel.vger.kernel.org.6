@@ -1,118 +1,375 @@
-Return-Path: <linux-kernel+bounces-422886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C08D9D9F4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFB79D9F4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7EFB22A8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:49:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B0DB2452A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149251DFE03;
-	Tue, 26 Nov 2024 22:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D0C1DC197;
+	Tue, 26 Nov 2024 22:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ln7f3+Ma"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280461B394E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="rZPLSEqw"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0BC19CC02
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732661390; cv=none; b=NgZ2qCZ78RSAMGOw6UEZRYaZU+ZR3ycoVPlEKcSWe5pukPDjaY2+Adz1DppCRlJ+RRZa11D/VpPGtUA0Z2nu9ip+x8AddwA2mCxIDCCwlRrt3WXo82RUxT7xsEYsJH9lANs8/tG4DuduH1Bcx2JghItjArHAnKCmsUz0lzIIHB0=
+	t=1732661565; cv=none; b=rzooZz6RZziW3Y6CSSPYzIbycUOq67OI/bwGiC67FhzCCHqEK3L9mpPhwfQRTlzCToeBeDiH8xcn2cBTSDoVEAZbN0G21gWTFSAZDHneLvVEqGB5AdMkJ9a3S3q1kzORzvojCYeM9XYEO9oib7AAg4KHmO6RxAZGk0ZrW+ymhDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732661390; c=relaxed/simple;
-	bh=HO4kGLHdZ46KJzFqmtjTFi+nQsgV3QcEAv4sUsSt5xo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=d1Rfax241Y1cWS2zz+ClmXiOGEKmbqTeVv2sMLXDqSRkyMSunczsgkLJ0vrtGEidI8rYgwl8qEA9x7O6h8O28MUZWD2OAXehqbwjaLCo5SfumItYUWhL0WEf5tApAg9YtlHMK5sjrAmmv1Zji3EnAg5WULVNWuFo92ehhrpgANs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ln7f3+Ma; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-724f7c09c58so3338541b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:49:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732661387; x=1733266187; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9P7Y6hO1KRaALzgNc/8yHI8FvE407ycTLKy/FIi5bOI=;
-        b=ln7f3+ManIYlw+pGafejt5GaRFRJhYVVVni6KW1VnVAtDfbMr7zVNRrDNvMf/td2Hj
-         ceChdLN5T9mQsGlkZ32Al+cL7RJAk2kJ2E9H5sTeQ9H9/nsFFr49Hj/uRtMIim2GeCxW
-         /p8YvlQOqOQggLnt+BVVlGUXYfcHQKf7xAPBD2Ln6OOB5TZah/Z7HIpVRscEcOmYUrjL
-         GRNQAdn/7WmGpKG+lvDgi8D6yqBopFOKWy8qovACqH+h70c6px8EcsLhzCfSFFnBAaoR
-         BMjnlrQ5x+qGzFvOQiQESt/b3c6ZYkxUVWMapxjKsad4AWcGZDnAeOoPMoWq7qsoTQm2
-         AbuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732661387; x=1733266187;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9P7Y6hO1KRaALzgNc/8yHI8FvE407ycTLKy/FIi5bOI=;
-        b=eyv4mJA2y0FmIdp+UlAoV33te3B8Gpq670d9HPw1CUGvqCS6Nr5q1TSpD3yyGFwwNF
-         5dE4BJhaY8n7+2nqApA+Adrm6LQFYEhjXD+uKuT9VAX7EK5tJIo4XKhwzOhMOrS2wzSY
-         rPyZlpI/nMsgQ+WVy5zTp/Cjn7PrZf11wyMpoq/PPggJYsAQwpXPtzATvJ5tykCcx1Ig
-         DPmDk24SAwhLttJexlxcc9+bmzCjA1MPAV1odoOeXI/EW6SahgiSaKJFkuT2hL6G+mjc
-         JkSJPtMaPUMCper8J2cOTX/2LVYcqVtij1lBO8N0yOKrJylpFDwWzon5WnVc0om0Fy6h
-         scUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVy4oyrsReKk4wSRv1mqf0Izig7dxRn1Nf30UQm1SZ+I4gxqQdCv5JLpFb6lM8NfnSJbgn6kOszYbSrEtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1yVV3vtLzVRuq9DRyYXJXyZ6ouGhVFgPKf9q0Tz0DDpj0pnc6
-	FSd7xs/mrEPgzacfKCkrafcUATs95qpnIbCouaedQs7OFmmX9dLG29IqFHoAzFeVGzXKe9rUfp4
-	lU05uUoVcBS3PAFEhTp55nQ==
-X-Google-Smtp-Source: AGHT+IGBAWYeOEhaz87TjdeEOr5B5hoQsFgmzgO/CGWAO8M7kpMSblZXDhBBLm/oE/W0R77+i9RRo26nBAsOi90Pdw==
-X-Received: from pfau6.prod.google.com ([2002:a05:6a00:aa86:b0:725:31af:9cfb])
- (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:230b:b0:71e:2a0:b0b8 with SMTP id d2e1a72fcca58-7252ffd2b20mr996637b3a.1.1732661387475;
- Tue, 26 Nov 2024 14:49:47 -0800 (PST)
-Date: Tue, 26 Nov 2024 22:49:23 +0000
+	s=arc-20240116; t=1732661565; c=relaxed/simple;
+	bh=EuGaJ/mZjaH7jxVupFZcPBWvhV2IcdiVCjvTI/XbS0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQm2AlKkURzpVuPwEguyzLuhk9fAP3qG0SOjvG80OkUjmKfitKMHm33eCG4vhVoETTqw+uFV3B0C+ZembDWtMP/kuNn7vEixEr3yJOHsj2/s62Dr3E0itdZZzqBa5AkumG0j6gN5K1PBxfomr1OWSpD/CwHJOG535S8fIFpt2Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=rZPLSEqw; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 9F4CE14C1E1;
+	Tue, 26 Nov 2024 23:52:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1732661555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dyaRRZ0tTk1QQVewkHdtrvnitidFGtwFZBAQhVsH+MY=;
+	b=rZPLSEqwSzh2jGGTDujnbqRFYoU/QRv+GIAmdyxT+GTkoeTZ+9TBYoQFWTGtbTvqs2Y0SE
+	gEWqg2YC5naCkddKhzZqc/hF1wnAjuMsylsPBA7jB4BghDuADoA8HXAn9Ey9l+1VrT6xD6
+	Zcpla/xuHBzcke5adY3e1R0YTNgVpxoEme1JpiS2r/NCJPnZL+QngekPloQDdg4bIEyrkC
+	4bIvx63rBbqXcvMex0tEW53E67k0+yy0NDyG7aOXpnRcp2jLP7BWQR68n2d7RPFsjicOig
+	wLe3dwOgmydxmNxGJM6o0bNXOTMEmbURABSw6ZoY1R9/wjUv5iXzMvv3dy0TgA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 36b02ea3;
+	Tue, 26 Nov 2024 22:52:30 +0000 (UTC)
+Date: Wed, 27 Nov 2024 07:52:15 +0900
+From: asmadeus@codewreck.org
+To: David Howells <dhowells@redhat.com>
+Cc: syzbot <syzbot+f86e49ba96853e315c26@syzkaller.appspotmail.com>,
+	ericvh@kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Subject: Re: [syzbot] [v9fs?] BUG: stack guard page was hit in io_uring_enter
+Message-ID: <Z0ZRH-gUl59t5AHa@codewreck.org>
+References: <6745dced.050a0220.1286eb.0019.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241126224923.973528-1-salomondush@google.com>
-Subject: [PATCH] scsi: pm80xx: Increase reserved tags from 8 to 128
-From: Salomon Dushimirimana <salomondush@google.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>, Salomon Dushimirimana <salomondush@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6745dced.050a0220.1286eb.0019.GAE@google.com>
 
-From: Igor Pylypiv <ipylypiv@google.com>
+I guess it's another dup
+#syz dup: [syzbot] [v9fs?] BUG: stack guard page was hit in sys_open
 
-Increase the number of reserved tags to prevent command processing
-failures when the driver is under stress. 8 reserved tags are quickly
-getting all used up leading to errors when command completions are
-delayed.
+Leaving quote below for David
+syzbot wrote on Tue, Nov 26, 2024 at 06:36:29AM -0800:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    05b92660cdfe Merge tag 'pci-v6.12-fixes-2' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=155e9630580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=728f7ffd25400452
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f86e49ba96853e315c26
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-05b92660.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/240ba8a2a878/vmlinux-05b92660.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/fed8acdd322e/bzImage-05b92660.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f86e49ba96853e315c26@syzkaller.appspotmail.com
+> 
+> BUG: TASK stack guard page was hit at ffffc90001717fd8 (stack is ffffc90001718000..ffffc90001720000)
+> Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 3 UID: 0 PID: 8268 Comm: syz.0.692 Not tainted 6.12.0-rc5-syzkaller-00291-g05b92660cdfe #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:unwind_next_frame+0x76/0x20c0 arch/x86/kernel/unwind_orc.c:470
+> Code: 41 5f c3 cc cc cc cc 49 8d 6d 48 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 00 18 00 00 49 8b 45 48 <48> 89 44 24 08 49 8d 45 38 48 89 c2 48 89 04 24 48 b8 00 00 00 00
+> RSP: 0018:ffffc90001717fe8 EFLAGS: 00010046
+> RAX: ffffffff813d7404 RBX: 0000000000000001 RCX: ffffc90001718140
+> RDX: 1ffff920002e301e RSI: ffff888022fc0000 RDI: ffffc900017180a8
+> RBP: ffffc900017180f0 R08: 0000000000000001 R09: 0000000000000000
+> R10: ffffc900017180a8 R11: 0000000000000000 R12: fffff520002e3017
+> R13: ffffc900017180a8 R14: ffffc900017180a8 R15: ffffc900017180b0
+> FS:  00007f483b1d36c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffc90001717fd8 CR3: 000000004e7f6000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <#DF>
+>  </#DF>
+>  <TASK>
+>  __unwind_start+0x45f/0x7f0 arch/x86/kernel/unwind_orc.c:760
+>  unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+>  arch_stack_walk+0x74/0x100 arch/x86/kernel/stacktrace.c:24
+>  stack_trace_save+0x95/0xd0 kernel/stacktrace.c:122
+>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  unpoison_slab_object mm/kasan/common.c:319 [inline]
+>  __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:345
+>  kasan_slab_alloc include/linux/kasan.h:247 [inline]
+>  slab_post_alloc_hook mm/slub.c:4085 [inline]
+>  slab_alloc_node mm/slub.c:4134 [inline]
+>  kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4141
+>  radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
+>  idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
+>  idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
+>  idr_alloc+0xc1/0x130 lib/idr.c:87
+>  p9_tag_alloc+0x394/0x870 net/9p/client.c:321
+>  p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
+>  p9_client_rpc+0x1c3/0xc10 net/9p/client.c:691
+>  p9_client_read_once+0x24f/0x820 net/9p/client.c:1575
+>  p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
+>  v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
+>  netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
+>  netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+>  netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
+>  netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
+>  netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
+>  netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
+>  v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+>  io_iter_do_read io_uring/rw.c:771 [inline]
+>  __io_read+0x320/0x1190 io_uring/rw.c:865
+>  io_read+0x1e/0x70 io_uring/rw.c:943
+>  io_issue_sqe+0x175/0x13d0 io_uring/io_uring.c:1739
+>  io_queue_sqe io_uring/io_uring.c:1953 [inline]
+>  io_submit_sqe io_uring/io_uring.c:2209 [inline]
+>  io_submit_sqes+0x9b4/0x2530 io_uring/io_uring.c:2324
+>  __do_sys_io_uring_enter+0xc0f/0x1170 io_uring/io_uring.c:3343
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f483a37e719
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f483b1d3038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+> RAX: ffffffffffffffda RBX: 00007f483a536058 RCX: 00007f483a37e719
+> RDX: 0000000000000000 RSI: 0000000000000567 RDI: 0000000000000007
+> RBP: 00007f483a3f132e R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f483a536058 R15: 00007ffc2e04f068
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:unwind_next_frame+0x76/0x20c0 arch/x86/kernel/unwind_orc.c:470
+> Code: 41 5f c3 cc cc cc cc 49 8d 6d 48 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 00 18 00 00 49 8b 45 48 <48> 89 44 24 08 49 8d 45 38 48 89 c2 48 89 04 24 48 b8 00 00 00 00
+> RSP: 0018:ffffc90001717fe8 EFLAGS: 00010046
+> RAX: ffffffff813d7404 RBX: 0000000000000001 RCX: ffffc90001718140
+> RDX: 1ffff920002e301e RSI: ffff888022fc0000 RDI: ffffc900017180a8
+> RBP: ffffc900017180f0 R08: 0000000000000001 R09: 0000000000000000
+> R10: ffffc900017180a8 R11: 0000000000000000 R12: fffff520002e3017
+> R13: ffffc900017180a8 R14: ffffc900017180a8 R15: ffffc900017180b0
+> FS:  00007f483b1d36c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffc90001717fd8 CR3: 000000004e7f6000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:	41 5f                	pop    %r15
+>    2:	c3                   	ret
+>    3:	cc                   	int3
+>    4:	cc                   	int3
+>    5:	cc                   	int3
+>    6:	cc                   	int3
+>    7:	49 8d 6d 48          	lea    0x48(%r13),%rbp
+>    b:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+>   12:	fc ff df
+>   15:	48 89 ea             	mov    %rbp,%rdx
+>   18:	48 c1 ea 03          	shr    $0x3,%rdx
+>   1c:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+>   20:	0f 85 00 18 00 00    	jne    0x1826
+>   26:	49 8b 45 48          	mov    0x48(%r13),%rax
+> * 2a:	48 89 44 24 08       	mov    %rax,0x8(%rsp) <-- trapping instruction
+>   2f:	49 8d 45 38          	lea    0x38(%r13),%rax
+>   33:	48 89 c2             	mov    %rax,%rdx
+>   36:	48 89 04 24          	mov    %rax,(%rsp)
+>   3a:	48                   	rex.W
+>   3b:	b8 00 00 00 00       	mov    $0x0,%eax
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-The driver needs ~512 ccbs/tags for maximum I/O utilization:
-16 (max disks) * 32 (max SATA queue depth) = ~512 ccbs/tags.
-
-By reserving 128 tags the driver will still have plenty of tags/ccbs
-left: 1024 (max ccbs) - 128 (reserved slot) = 896 tags/ccbs left.
-
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
----
- drivers/scsi/pm8001/pm8001_defs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_defs.h b/drivers/scsi/pm8001/pm8001_defs.h
-index 501b574239e8..abe6560a5817 100644
---- a/drivers/scsi/pm8001/pm8001_defs.h
-+++ b/drivers/scsi/pm8001/pm8001_defs.h
-@@ -90,7 +90,7 @@ enum port_type {
- #define	PM8001_MAX_PORTS	 16	/* max. possible ports */
- #define	PM8001_MAX_DEVICES	 2048	/* max supported device */
- #define	PM8001_MAX_MSIX_VEC	 64	/* max msi-x int for spcv/ve */
--#define	PM8001_RESERVE_SLOT	 8
-+#define	PM8001_RESERVE_SLOT	 128
- 
- #define	CONFIG_SCSI_PM8001_MAX_DMA_SG	528
- #define PM8001_MAX_DMA_SG	CONFIG_SCSI_PM8001_MAX_DMA_SG
 -- 
-2.47.0.338.g60cca15819-goog
-
+Dominique Martinet | Asmadeus
 
