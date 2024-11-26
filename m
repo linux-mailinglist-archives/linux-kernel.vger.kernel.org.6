@@ -1,99 +1,164 @@
-Return-Path: <linux-kernel+bounces-422618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705289D9BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:58:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CECD9D9BF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40699B2D51B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D87164246
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D901DA0E0;
-	Tue, 26 Nov 2024 16:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CEA1D90A2;
+	Tue, 26 Nov 2024 16:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C3OyJxhw"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZyTJJTAA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106D11D89EF;
-	Tue, 26 Nov 2024 16:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4EA11187
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732640139; cv=none; b=tOD2o0F0Mcsm6ts+jgc17ruCKNbEDGDX8lg0yzgmw2pHP/aTxTCPigAFovVScwMVOIjxTMHnsycV+zVLZXNhxw7aem6ASP1HoRPy6W8xZVAmYGRZrUkL3m3Gy8PHbfgaOAbNsG55PvFC7wWCucNZTkw2I40LzoTpweSpHnOEF1s=
+	t=1732640356; cv=none; b=Y++04DX18bJWiB5qFEq9H2BmsaeToobqMXTi+GnbHN2MwMrEQ8znIamVvoYo7b3zYD+2ScCJFWR4I36brSdVprrlhxfoVb0R3V+61GHrm0d7mWDmpTaxwt6pDszsOgydLq152xJoaWdIzH3Y7ctNGRau+eUuk6vaTLyWI/3chkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732640139; c=relaxed/simple;
-	bh=l1b3y3+GF+OuiSeMYjg7qeU3V5AsSZoO9SwNjdTD8s8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LervaLXT63S5qRhZYUYmL+65FBO2+6g7cTx688FTlmyXN0JgzF91rBIBw5/Spbn3nd3plnAWYtJPpLV5TxbSHiAZtDjzBDoQXLZe4Tnfp5YeLKoBQZKYm3YD42lS5Gps9WxHafDZX9iO3rRGbAmyJm1HFv1djXtrVVODabQWXtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C3OyJxhw; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tPsdjbpH4KrZ7VjJrvC7Z+8yrw3XNOthduOr07lzPY4=; b=C3OyJxhw6Gkjv74IJwN11by+uL
-	+OPjlPpcUN4X035iTxfQrqjK0S+J+paHb4Eaqxq5xhy2lZllttZSXFPK5jP0DSIc5/+YuzeSt3h55
-	Wu0whn1fufvvr2lwtCIMOHt3bq+tsTyEY7tqDXESh+96gYGuqGTu0LIrvv81RLD975dq9n9gpKdNK
-	brL0zcDSvtZXZSEPt0HNJhLCtxBrRKdUiibjsifNt7rmr7dfCrOnJ+Q4C0IRj53KyRv4+Hri2ldc9
-	ity2Z76mVG0llOxHIayxzm0JWB2qr3SVcGuhK6kUy9iJbRu7YC4QMX5YfMj0Bs8MOQwR89S7D387I
-	c6iSvTFQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFyqc-00000000CcE-3Loj;
-	Tue, 26 Nov 2024 16:55:34 +0000
-Date: Tue, 26 Nov 2024 16:55:34 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Anders Blomdell <anders.blomdell@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-Message-ID: <Z0X9hnjBEWXcVms-@casper.infradead.org>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
- <20241126150613.a4b57y2qmolapsuc@quack3>
- <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
+	s=arc-20240116; t=1732640356; c=relaxed/simple;
+	bh=Wwm5m98lf1T8S9SwxIBtlmeTtv/4D+EhhHes4WNOA2E=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Snm+h9KdYUJy+aKLMFOhC9WmTjvfe7Bg/RIEhiD2iG7MXFYuLZSqL1sq3pwGUuKvMbzlRc1KTsk0yXrfAcnNLOvcTsUAqKQVdwbofSd9LLcSVeTCHsjNg1nCQp2qDGgxhVXL9iS3xBSeF9mIYxK6kUpgukjLX3+EvOupbfRH5mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZyTJJTAA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732640353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FfwAUTEkCBSJRetY/z93FAYZhUtOgtlO/ePiMJ03JhU=;
+	b=ZyTJJTAABVOgxde4miSSwnSUpeNL3sdGXrf7L2dhf2uw3vr4WwApRydnPjai9mZQGB3pKY
+	OGj0xc0/UXnCT1LEeEBSvD3gHppCj9QC2HZOfZcZdAU/Q/nckNO3BBKfuZuR/qbLyhp7hB
+	D2ngTTBOTrycXEyY6V84mj/5lbRJ+og=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-gP1m_xFtNDy5Vvo_uNR9BQ-1; Tue, 26 Nov 2024 11:59:11 -0500
+X-MC-Unique: gP1m_xFtNDy5Vvo_uNR9BQ-1
+X-Mimecast-MFC-AGG-ID: gP1m_xFtNDy5Vvo_uNR9BQ
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-843eb4505e7so32593839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:59:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732640351; x=1733245151;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FfwAUTEkCBSJRetY/z93FAYZhUtOgtlO/ePiMJ03JhU=;
+        b=aeKj0n/LUKKSi46ZghZlBOvOv4TEkB+4duxFQtEi8IwLKs/l8KBMqu/CqHKSC4z1fn
+         eYi0um+HiQDqkDDSel2scLsl6fG9/9D1CSXaLejR2veXiPK6DgO2lDO/qyVtni5vy7AX
+         QQVI/kQx4zGjyxdp2w5ybtzwqTQ2M8VO3LnSnnRi1pR6TrbASQgKsJSKS84I+3PSpyuQ
+         KbPds5Kcdad7Iy1eST2LmDgp7ZlwFePf4klX2o11N/74Ex2j0UQnuw3QJ2n0vAaKy3ED
+         wLHkN+FjOOPtfKwzfeVR8gkFpE7tm9gjK38YZqtKnFJz5BrmhCMc67S564xtyHkG6tmq
+         aDog==
+X-Forwarded-Encrypted: i=1; AJvYcCXxzFoj/Mg/JAmyyPylT76r2e3OD4Lvf0a/+G5jM6gDg5aGXt2l17EdcdVxZHy8+7eOcx/izKOOU/O5bFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJFJcMa18DFH2jBdfYgYNNwqdzinJ4M5dk9my3UnPWDTrtKXsb
+	rSNbL02mmS9jbLz7ab1x/TegwQNioukSRmqX0pvAlZpycU/8IgrDjFi17FiEX6U+LM5xfKaGInJ
+	uCxZMFeXLY0D8JU7gj2aFuVmbB/k/A2AHB3csrfel1plXkRpcs9WQFu2ObIX+sQ==
+X-Gm-Gg: ASbGncv+KMU9347kJYWKtfm+nWYIype5BTTloPp02xFVSeLT2+tYMkl09jh2Oj7tiuN
+	Ttw0tQveVD8FHsmsJ9nE5tenOrvizbYza4o7D6QQVoilSEwQwO2eUWvmONhqx73gbns1upf671y
+	MoUxvofiabFHODw+o89VlVzVXR8ca4KRaeBpI7MuzQmiQEWy9Vz+EnZhhAGC4UjEMmGFepl2hDz
+	4+8rcOj4SPgqAPrOZtt+Km4aCqxpkdctYibMjfR4ao3T6PnDj7Kb1WwxhsB10VUdNzQyM/P/CrB
+	FReCoYIev7c6sdqt8soY
+X-Received: by 2002:a05:6602:3416:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-843eceaecf4mr11257739f.2.1732640351291;
+        Tue, 26 Nov 2024 08:59:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHGuUIrsmpD2nyyr2nlz0r/65HSulSWQ8fTKZWOuQhPW1NivEiWGecHiw9sP62ticKt/lJs8A==
+X-Received: by 2002:a05:6602:3416:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-843eceaecf4mr11256039f.2.1732640350992;
+        Tue, 26 Nov 2024 08:59:10 -0800 (PST)
+Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8419e23255asm101800839f.35.2024.11.26.08.59.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 08:59:10 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <48b9d642-9739-4333-b4b9-319df8a85e2d@redhat.com>
+Date: Tue, 26 Nov 2024 11:59:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Waiman Long <llong@redhat.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>
+References: <20241125085314.1iSDFulg@linutronix.de>
+ <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
+ <20241125174336.8nEhFXIw@linutronix.de>
+ <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+ <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+ <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+ <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
+ <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
+ <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
+ <20241126112000.UkTwR0Iv@linutronix.de>
+Content-Language: en-US
+In-Reply-To: <20241126112000.UkTwR0Iv@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 04:28:04PM +0100, Anders Blomdell wrote:
-> On 2024-11-26 16:06, Jan Kara wrote:
-> > Hum, checking the history the update of ra->size has been added by Neil two
-> > years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
-> > process all pages"). Neil, the changelog seems as there was some real
-> > motivation behind updating of ra->size in read_pages(). What was it? Now I
-> > somewhat disagree with reducing ra->size in read_pages() because it seems
-> > like a wrong place to do that and if we do need something like that,
-> > readahead window sizing logic should rather be changed to take that into
-> > account? But it all depends on what was the real rationale behind reducing
-> > ra->size in read_pages()...
->
-> My (rather limited) understanding of the patch is that it was intended to read those pages
-> that didn't get read because the allocation of a bigger folio failed, while not redoing what
-> readpages already did; how it was actually going to accomplish that is still unclear to me,
-> but I even don't even quite understand the comment...
-> 
-> 	/*
-> 	 * If there were already pages in the page cache, then we may have
-> 	 * left some gaps.  Let the regular readahead code take care of this
-> 	 * situation.
-> 	 */
-> 
-> the reason for an unchanged async_size is also beyond my understanding.
 
-This isn't because we couldn't allocate a folio, this is when we
-allocated folios, tried to read them and we failed to submit the I/O.
-This is a pretty rare occurrence under normal conditions.
+On 11/26/24 6:20 AM, Sebastian Andrzej Siewior wrote:
+> On 2024-11-25 15:54:48 [-0500], Waiman Long wrote:
+>>> FWIW, the description of commit 560af5dc839 is misleading. It says
+>>> "Enable
+>>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not what
+>>> the
+>>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if PROVE_LOCKING is
+>>> enabled. It is all or nothing.
+>>>
+>> I think we can relax it by
+>>
+>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>> index 5d9eca035d47..bfdbd3fa2d29 100644
+>> --- a/lib/Kconfig.debug
+>> +++ b/lib/Kconfig.debug
+>> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
+>>   config PROVE_RAW_LOCK_NESTING
+>>          bool
+>>          depends on PROVE_LOCKING
+>> -       default y
+>> +       default y if ARCH_SUPPORTS_RT
+>>          help
+>>           Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>>           that the lock nesting rules for PREEMPT_RT enabled kernels are
+>>
+>> Sebastian, what do you think?
+> All the changes Guenter proposed make sense and were limited to sparc.
+> So we could apply that. Limiting the option to the RT architectures
+> would silence the warnings. If there is no interest in getting RT on
+> sparc there is probably no interest in getting the lock ordering
+> straight.
+> I remember PeterZ did not like the option in the beginning but there was
+> no way around it especially since printk triggered it on boot.
+> I'm fine with both solutions (fixing sparc or limiting
+> PROVE_RAW_LOCK_NESTING). I leave the final judgment to the locking
+> people.
+
+Right now, ARCH_SUPPORTS_RT is defined for most of the major arches 
+where most of the testings are being done. So even if we limit this to 
+just those arches, we will not lose much testing anyway. This does have 
+the advantage of not forcing other legacy arches from doing extra works 
+with no real gain from their point of view.
+
+Cheers,
+Longman
+
 
