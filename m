@@ -1,176 +1,262 @@
-Return-Path: <linux-kernel+bounces-422856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B759D9F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:53:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D59D9F0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52278B248B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC392851B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211581DFE05;
-	Tue, 26 Nov 2024 21:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3A81DFD9B;
+	Tue, 26 Nov 2024 21:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XGh6OLvY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H44sR6X+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XGh6OLvY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H44sR6X+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfZgouHG"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9A21DF963;
-	Tue, 26 Nov 2024 21:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65169160884;
+	Tue, 26 Nov 2024 21:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732657983; cv=none; b=hNcLXEDWCrUcNjbCdU0GKKe88gRQ4kWJSVLw72K20jSUYk1ekD2RqQzDiaukafKbYRllecPHf7ga9nSJ6sLtR/JcADc0KSkUABQPUiFoWwr9UEJfZXp6XXzaus4P+j44UyuBNkXruI+UNTHfc6T3RKaerU7GGjgmrhJyWh1lo0E=
+	t=1732658031; cv=none; b=TA08qqoT9wNxco8cVXcIx1mV8joM9CqY9YCMnvRlhOcPnPf69RAstmHOO0jkUtouy5rhs9oRlMy5vEIFXTsrbasEAf36t2t6UPsKla4GxnvoYhBJ1egRgzEErPBeJIIvdw41JB6CkAD287MrEcdXYm115dFtggBdx3pMlhiTSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732657983; c=relaxed/simple;
-	bh=69DPGXRRD6vnJLCIbhUorKtysrQega8K0jloXx4xx5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKMxNgozuqzsQgmBmg5oeeCfVjIum+JPYP+O6oAZx/tjTAsKqPmtd7XNkmpGzb2//E99aqZVreXxtMELImL2/0IZjHVV50ZO8dgTTV1mbHgFKICHYUrNvpG5F3FfhXAZ11cmQjWo7tRhfzuZCUo1AcZvoN5ynStW/0/vdApJgF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XGh6OLvY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H44sR6X+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XGh6OLvY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H44sR6X+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C1721F74C;
-	Tue, 26 Nov 2024 21:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732657979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rUwnW+riNOlPcoIf5dTIXLLyN6QLQwQ56rLHFvxfGJE=;
-	b=XGh6OLvY83bNwtrgfeYifzBtlsll5XYGLZx9JGykkfnp+wTlxS17OJXqu15ES7MOY2J/kD
-	n3pWaeKVkIe7Uao2B6QSsbUgFzJvnryulEBb3ubh87j39fIXpIwIbJQm6kAFUZtVq5aahk
-	tjxpjtW/QJD1f92yfcQrL0MihSa1DD4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732657979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rUwnW+riNOlPcoIf5dTIXLLyN6QLQwQ56rLHFvxfGJE=;
-	b=H44sR6X+PyFxEgWia7pkNehDcty+Nlx4zGjCW2MYXtlgKH8CR9Mp41/F70j9YTaFbAZLWF
-	yJs/L2cYGwHrmSDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732657979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rUwnW+riNOlPcoIf5dTIXLLyN6QLQwQ56rLHFvxfGJE=;
-	b=XGh6OLvY83bNwtrgfeYifzBtlsll5XYGLZx9JGykkfnp+wTlxS17OJXqu15ES7MOY2J/kD
-	n3pWaeKVkIe7Uao2B6QSsbUgFzJvnryulEBb3ubh87j39fIXpIwIbJQm6kAFUZtVq5aahk
-	tjxpjtW/QJD1f92yfcQrL0MihSa1DD4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732657979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rUwnW+riNOlPcoIf5dTIXLLyN6QLQwQ56rLHFvxfGJE=;
-	b=H44sR6X+PyFxEgWia7pkNehDcty+Nlx4zGjCW2MYXtlgKH8CR9Mp41/F70j9YTaFbAZLWF
-	yJs/L2cYGwHrmSDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C6E913890;
-	Tue, 26 Nov 2024 21:52:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QfGLFjtDRmfbfwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 21:52:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 014AAA08CA; Tue, 26 Nov 2024 22:52:54 +0100 (CET)
-Date: Tue, 26 Nov 2024 22:52:54 +0100
-From: Jan Kara <jack@suse.cz>
-To: Leo Stone <leocstone@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
-	syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
-	brauner@kernel.org, quic_jjohnson@quicinc.com,
-	viro@zeniv.linux.org.uk, sandeen@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, shuah@kernel.org,
-	anupnewsmail@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] hfs: Sanity check the root record
-Message-ID: <20241126215254.aw7l7k3tgx2tawzu@quack3>
-References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
- <20241123194949.9243-1-leocstone@gmail.com>
- <20241126093313.2t7nu67e6cjvbe7b@quack3>
- <wzxs6mjqlpf2eszoaw2ozvocqg3lpaqx7mzog4tygxexugrbsu@3pxs2vthfagb>
+	s=arc-20240116; t=1732658031; c=relaxed/simple;
+	bh=XxW2iLPt+XhAQeApRQrQFEcEYbCZ/dJ9uwj2LSxxDLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZzwFFDnJdV0VICrKAiBHPwfIBF4BnYpLnAtSAcvx8Uu5EXc576AZLkD4Ve6k9gZ86ZWJGUjFY6OdEAr4Hhku+wf+hCruU0S4ki2OC+eD5SFMh2gHuSTiClBSv4o41n1j+V0KqRne9dGQj37bcVSrN6wSSGvJ8uLNDAN+vkIKPLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfZgouHG; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e387ad888baso985676276.2;
+        Tue, 26 Nov 2024 13:53:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732658028; x=1733262828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pt1v0cwAYnSlT9foVL6cUW5pg9vb/kHtLuwjuwqBLxw=;
+        b=gfZgouHG+oMeOBWs16MADv/mvZkOfJoC69yAsfqu1XTsblExeCR8V44ZdKR+l8AlEJ
+         nl1i0mLdVPWcW5FP9aAS7zG0FURqKDE8UnFi8bhlXsmRyIDKIYwQ/+2JxPrtNxLzd7wR
+         7CFN0NCkQCHJH06ID1kq6QQscZWq5eZMgLhTQ7enGZ8euzQVzTwJ+zMUUz91S1Qd6Ssz
+         MEUdvFgTsI2T5iUwlZ5Z5OIfe9dChKAjkXXKVFm66zISjR4dEQJy/Qi2EymOqQpn1My/
+         RMvuw2uCUgVdzaCKsG/CMlCyTvNJgdW8uysHRrmU5bptIYPh2Xyv9g3DLNd+0+/N3NqO
+         LTpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732658028; x=1733262828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pt1v0cwAYnSlT9foVL6cUW5pg9vb/kHtLuwjuwqBLxw=;
+        b=Qy6e3W6Mzij6KybZGHK507JnPULTTkjpuOWj95y+sPVz18dABVI9FsOxxVfY4vNhdV
+         4f5ssuf81zXpXhJwFNADY9Cf2oSGsfsqk+dB+7qaa2QR1YEiG4UnoiOyK24pis4OS4iF
+         0n/t/ATDP1/iI5gtigTjK5u9Hkx5oPFa/K5QfhtloW7fqjrxnJqx9Iqwt+cIVrfpB1He
+         Tq/yhJpHe5IEj+cCxerpuRtLgGlNLrRp4xV9Dc7YlNQFzxTVMgFOkCqoP23SxfXPEqnc
+         vHM+lqhHxlSLG+qNpDHd4E9kcbxD1QkAOp5h9Hel9dEzVfPBfx3hWABmU3fgyR10l+K5
+         hBqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVphZc/dHvPZ7DdZ2cCi983tWPx/MSeQX22aHt+LvK/i7YzmPWEAYKDYx7OrIrCgMTa2l9fEGFSZR/ZWRZM@vger.kernel.org, AJvYcCXBWj56kB+uhjzbkTeJL8yR7OUBbYtAAjDd/fbXZxn2H9jpMfmnqLLvg7iJHVubeTJhJdtiyPq1Rfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGsIA8EzFxqTBr17ydKPjjihEzM5DaJz8j1MybyL/r8efOpTjR
+	8vIe9GGsP/xRUb2t4WwVMJncfy3S75WOuI66bbooBPm9duj0pAyDcE7IexIh5ndCUtkAX43ksuc
+	Zkv6rrfDc0Ce3yIf7EwjnS8/V2qc=
+X-Gm-Gg: ASbGnctxHWECuUUAl9fr08lCVwhQFRgMIwCHFm/Np4hkboGJLtKevzGqU7DFbhA7dzS
+	fvEz6jg/35giqUIWWaX1KF9t6gGhpAV0=
+X-Google-Smtp-Source: AGHT+IH7Oj7o8LbEu9AaD2P92tfHV+6MKCPIYSj99qZ6FcSbX3JDztvHRpUsR7nR76PLszA8002PwdFqwzWg2odqIgU=
+X-Received: by 2002:a05:690c:dc3:b0:6e2:ada7:ab3a with SMTP id
+ 00721157ae682-6ef372752bdmr4240007b3.5.1732658028344; Tue, 26 Nov 2024
+ 13:53:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wzxs6mjqlpf2eszoaw2ozvocqg3lpaqx7mzog4tygxexugrbsu@3pxs2vthfagb>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[2db3c7526ba68f4ea776];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,syzkaller.appspotmail.com,kernel.org,quicinc.com,zeniv.linux.org.uk,redhat.com,vger.kernel.org,googlegroups.com,gmail.com,lists.linuxfoundation.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+References: <20241117182651.115056-1-l.rubusch@gmail.com> <20241117182651.115056-16-l.rubusch@gmail.com>
+ <20241124185449.6f81ade1@jic23-huawei>
+In-Reply-To: <20241124185449.6f81ade1@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 26 Nov 2024 22:53:12 +0100
+Message-ID: <CAFXKEHZtG-y0xq=ejHg66N-gztukzVQRaGDjzaN5sdAJOL_G5g@mail.gmail.com>
+Subject: Re: [PATCH v2 15/22] iio: accel: adxl345: reset the FIFO on error
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 26-11-24 09:21:50, Leo Stone wrote:
-> Hello,
-> 
-> On Tue, Nov 26, 2024 at 10:33:13AM +0100, Jan Kara wrote:
-> > 
-> > This certainly won't hurt but shouldn't we also add some stricter checks
-> > for entry length so that we know we've loaded enough data to have full info
-> > about the root dir?
-> 
-> Yes, that would be a good idea. Do we want to keep the existing checks
-> and just make sure we have at least enough to initialize the struct:
-> 
-> if (fd.entrylength > sizeof(rec) || fd.entrylength < 0 ||
->     fd.entrylength < sizeof(rec.dir)) {
-> 	res = -EIO;
-> 	goto bail_hfs_find;
-> }
-> 
-> Or be even stricter and only accept the exact length:
-> 
-> if (fd.entrylength != sizeof(rec.dir)) {
-> 	res = -EIO;
-> 	goto bail_hfs_find;
-> }
+On Sun, Nov 24, 2024 at 7:54=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Sun, 17 Nov 2024 18:26:44 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Add a function to empty the FIFO and reset the INT_SOURCE register.
+> > Reading out is used to reset the fifo again. For cleanup also a read
+> > on the INT_SOURCE register is needed to allow the adxl345 to issue
+> > interrupts again. Without clearing the fields no further interrupts
+> > will happen.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > ---
+> >  drivers/iio/accel/adxl345_core.c | 75 ++++++++++++++++++++++++++++----
+> >  1 file changed, 67 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
+45_core.c
+> > index 40e78dbdb0..82bd5c2b78 100644
+> > --- a/drivers/iio/accel/adxl345_core.c
+> > +++ b/drivers/iio/accel/adxl345_core.c
+> > @@ -356,6 +356,61 @@ static int adxl345_get_fifo_entries(struct adxl34x=
+_state *st, int *fifo_entries)
+> >       return 0;
+> >  }
+> >
+> > +/**
+> > + * adxl345_read_fifo_elements() - Read fifo_entries number of elements=
+.
+> > + * @st: The instance of the state object of this sensor.
+> > + * @fifo_entries: The number of lines in the FIFO referred to as fifo_=
+entry,
+> > + * a fifo_entry has 3 elements for X, Y and Z direction of 2 bytes eac=
+h.
+> > + *
+> > + * The FIFO of the sensor is read linewise. The read measurement value=
+s are
+> > + * queued in the corresponding data structure in *st.
+> > + *
+> > + * It is recommended that a multiple-byte read of all registers be per=
+formed to
+> > + * prevent a change in data between reads of sequential registers. Tha=
+t is to
+> > + * read out the data registers X0, X1, Y0, Y1, Z0, Z1 at once.
+>
+> To ensure this, set avail_scan_modes.
+> Then if the user requests a subset, the IIO core code will extract what i=
+s necessary
+> from the read of everythign.
 
-Yes, this strict check would make sense to me. I just don't know HFS good
-enough whether this is a safe assumption to make so it would be good to
-test with some HFS filesystem.
+Very intersting. Unfortunately, I could not find "avail_scan_modes".
+Did you mean "avail_scan_masks"? I saw some drivers operating with
+such. Could you give me some more keywords, that I could have a look
+how this is done, pls?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This must be (one of) the reason(s) why with noinc read I only managed
+to read 3 directions from the FIFO at a time. Actually, I guess, it
+should be possible to dump the entire FIFO.
+
+Lothar
+
+> > + *
+> > + * Return: 0 or error value.
+> > + */
+> > +static int adxl345_read_fifo_elements(struct adxl34x_state *st, int fi=
+fo_entries)
+> > +{
+> > +     size_t count, ndirs =3D 3;
+> > +     int i, ret;
+> > +
+> > +     count =3D 2 * ndirs; /* 2 byte per direction */
+> sizeof(st->fifo_buf[0] * ndirs);
+>
+> > +     for (i =3D 0; i < fifo_entries; i++) {
+> > +             ret =3D regmap_noinc_read(st->regmap, ADXL345_REG_XYZ_BAS=
+E,
+> > +                             st->fifo_buf + (i * count / 2), count);
+> > +             if (ret) {
+> > +                     pr_warn("%s(): regmap_noinc_read() failed\n", __f=
+unc__);
+> > +                     return -EFAULT;
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +/**
+> > + * adxl345_empty_fifo() - Empty the FIFO.
+> > + * @st: The instance to the state object of the sensor.
+> > + *
+> > + * Reading all elements of the FIFO linewise empties the FIFO. Reading=
+ th
+> > + * interrupt source register resets the sensor. This is needed also in=
+ case of
+> > + * overflow or error handling to reenable the sensor to issue interrup=
+ts.
+> > + */
+> > +static void adxl345_empty_fifo(struct adxl34x_state *st)
+> > +{
+> > +     int regval;
+> > +     int fifo_entries;
+> > +
+> > +     /* In case the HW is not "clean" just read out remaining elements=
+ */
+> > +     adxl345_get_fifo_entries(st, &fifo_entries);
+> > +     if (fifo_entries > 0)
+> > +             adxl345_read_fifo_elements(st, fifo_entries);
+> > +
+> > +     /* Reset the INT_SOURCE register by reading the register */
+> > +     regmap_read(st->regmap, ADXL345_REG_INT_SOURCE, &regval);
+> > +}
+> > +
+> >  static const struct iio_buffer_setup_ops adxl345_buffer_ops =3D {
+> >  };
+> >
+> > @@ -401,30 +456,34 @@ static irqreturn_t adxl345_trigger_handler(int ir=
+q, void *p)
+> >
+> >       ret =3D adxl345_get_status(st, &int_stat);
+> >       if (ret < 0)
+> > -             goto done;
+> > +             goto err;
+> All this churn just makes things less readable.  Better to have the bulk
+> of the addition of fifo handling in one patch. It won't be too large
+> for review.
+> >
+> >       /* Ignore already read event by reissued too fast */
+> >       if (int_stat =3D=3D 0x0)
+> > -             goto done;
+> > +             goto err;
+> >
+> >       /* evaluation */
+> >
+> >       if (int_stat & ADXL345_INT_OVERRUN) {
+> >               pr_debug("%s(): OVERRUN event detected\n", __func__);
+> > -             goto done;
+> > +             goto err;
+> >       }
+> >
+> >       if (int_stat & (ADXL345_INT_DATA_READY | ADXL345_INT_WATERMARK)) =
+{
+> >               pr_debug("%s(): WATERMARK or DATA_READY event detected\n"=
+, __func__);
+> >               if (adxl345_get_fifo_entries(st, &fifo_entries) < 0)
+> > -                     goto done;
+> > -     }
+> > -     goto done;
+> > -done:
+> > +                     goto err;
+> >
+> > -     if (indio_dev)
+> >               iio_trigger_notify_done(indio_dev->trig);
+> > +     }
+> >
+> > +     goto done;
+> > +err:
+> > +     iio_trigger_notify_done(indio_dev->trig);
+> > +     adxl345_empty_fifo(st);
+> > +     return IRQ_NONE;
+> NONE is probably a bad idea. Something went wrong but that doesn't
+> mean it wasn't our interrupt.  In most cases it is better to just
+> return that we handled it.  IRQ_NONE might be valid if the status
+> said it wasn't ours.
+>
+> > +
+> > +done:
+> >       return IRQ_HANDLED;
+> return where you have goto done and get rid of this.
+>
+> >  }
+> >
+>
 
