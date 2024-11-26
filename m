@@ -1,158 +1,157 @@
-Return-Path: <linux-kernel+bounces-422236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCCF9D964F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:37:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5129D9651
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:38:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D046281D12
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E008167D06
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391041CEE88;
-	Tue, 26 Nov 2024 11:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AC71CEAC3;
+	Tue, 26 Nov 2024 11:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hLLcg3GQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="COyXZxg9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E7911185;
-	Tue, 26 Nov 2024 11:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CAC1CBE8C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732621020; cv=none; b=qngFZa2NEhHF+IhNKpHWXQriJp5M8V+3SRPHIjRqxVLg6TWKJZTMAJNgLFlY3DtcrUeCVve8NVNhD5eqs+U2Cudb1AhonBNKiqNf+TPQti/U8NRRvjCdmp0zie/CpPqmny+W9z/KJ7hOG7paRXk17OcWKas8OcpVlNcfBILiTJk=
+	t=1732621102; cv=none; b=Zim/S+6YSXaC/0kBgqLzpWD3OYA8+dWJ82H9lJl2+1/mvaG2uViWYRLS+2ATalO8rkkWBQ5wQ6xQMVsLOZ6p4rNRI4tueJp9M3gCZeog+6Bx0B7pE7W+xsuBBdkTvuDoh9mfHDcDtmIIezdIGbbMFR3gFiAOpPvC+NpfwtGZpoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732621020; c=relaxed/simple;
-	bh=pUWdZ6jxOCTRPS8yC3hdSTdixCm1nvL0Sd0s8pDzsTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oBXxsUK5DJPYLuSIAC8A+AI/JH2O73Zw6o/5CcoqkRyAQ4ehiw/6JMfYhabL2rt/HkkfqqVwJhYw/e9X7JK14sf3BliIytLktKGIC11fUdbyCXVtoQbX8HtnGx+Wr3LGq0DSWrmaCAwwSI6WeLzaoHnmYZ3mwcBG+B5D2JjcPQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hLLcg3GQ; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732621019; x=1764157019;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pUWdZ6jxOCTRPS8yC3hdSTdixCm1nvL0Sd0s8pDzsTc=;
-  b=hLLcg3GQ4momEz60DhNyxaXHaVLUTzGH/UJQPJHj6hsCY7LrG4aWZ4fX
-   7HGgchHBa/YVqTuhWEpXPM7l6DzqI5HCEj6ZdsK0g9WI0hmub82AT5D08
-   P77z/yOkRsUDdcjMSURpSetwv+5nZYbc35aA8tbScU+PeusySVEU3nQlv
-   AzVyP6NxVEpiuCLYQZ3a75EH+afgYYof1iig6p9NDzdI137qlp8jbGXtC
-   I2lHDQvTGZFV3hVW7VAIp1MTptRYpe7MSQDZWXRPsj5KZQd57mGAnhU5z
-   DvmbpfuVEfMfSmmrsFfGiwrNPCLPyz5ZnHFV8iy/OSNhnYA+ucmlyveJ9
-   g==;
-X-CSE-ConnectionGUID: SnZRud76T8+A0N+gDk5LQQ==
-X-CSE-MsgGUID: i/Var80kRv+n1b5LVnTk9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32922382"
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="32922382"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:36:58 -0800
-X-CSE-ConnectionGUID: rOgyn9C3Srik6pe/Sc9bCA==
-X-CSE-MsgGUID: Mktzgut5QlSGukI8Fkvu2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="96013702"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.245.172]) ([10.245.245.172])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:36:56 -0800
-Message-ID: <1023ee1a-1fc5-498f-be5b-a59a7317ef5a@linux.intel.com>
-Date: Tue, 26 Nov 2024 12:36:45 +0100
+	s=arc-20240116; t=1732621102; c=relaxed/simple;
+	bh=xQSoE2fGzVRGaRojfci1MKJePtHomuV4kjdRhwy73EA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcjuHIaHZEXXuui/mGO66LXIScmmeSF6O9YiV2+52vnx6tuGaVAeCqWzAgUS4NnA6SJqs0Q3BTvBm0EBzVCIpey03wu+z6fAd/y9ng6p7/O6VBFgqynDTFr+vcAm2EiwbWYASLoUuVfntsAHkFE1nKov5ht1aBK5FoG27q2FEjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=COyXZxg9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732621099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8SlxkVrFF9+w/Hc6R6JHl5eJHzWUPo6rcRHWt3F4SyQ=;
+	b=COyXZxg9zH6ncllDlvujlfORrhujB3w3XCe3UbrIvF5hM/X6NixAaF8pMIhyFS/3Qlnvk8
+	JIiv5AA78HRGG7ed40xpHvy6wG3wI3egluIPX6QkHAX7RI8icBwLIWjsY9T8zZSOxSOadl
+	24FDLblvolX2V8rYMGSMJuq9nXCejT4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-ZzkRq5zLMQ2LY9jFI9rV5Q-1; Tue,
+ 26 Nov 2024 06:38:14 -0500
+X-MC-Unique: ZzkRq5zLMQ2LY9jFI9rV5Q-1
+X-Mimecast-MFC-AGG-ID: ZzkRq5zLMQ2LY9jFI9rV5Q
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3D5219541A0;
+	Tue, 26 Nov 2024 11:38:11 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19EF0195DF81;
+	Tue, 26 Nov 2024 11:38:09 +0000 (UTC)
+Date: Tue, 26 Nov 2024 19:38:05 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev, x86@kernel.org,
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+Message-ID: <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
+References: <20241021034553.18824-1-yan.y.zhao@intel.com>
+ <87frop8r0y.fsf@email.froward.int.ebiederm.org>
+ <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+ <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
+ <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/8] x86/smp: Allow calling mwait_play_dead with
- arbitrary hint
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com,
- peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
- <20241125132029.7241-5-patryk.wlazlyn@linux.intel.com>
- <CAJZ5v0iBCKmp-Hs25chq_-z7-VB_+MqTPVmowACJkTz7KOUtEg@mail.gmail.com>
-Content-Language: en-US
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <CAJZ5v0iBCKmp-Hs25chq_-z7-VB_+MqTPVmowACJkTz7KOUtEg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
->> The MWAIT instruction needs different hints on different CPUs to reach
->> the most specific idle states. The current hint calculation* in
->> mwait_play_dead() code works in practice on current hardware, but it
->> fails on a recent one, Intel's Sierra Forest and possibly some future ones.
->> Those newer CPUs' power efficiency suffers when the CPU is put offline.
->>
->>  * The current calculation is the for loop inspecting edx in
->>    mwait_play_dead()
->>
->> The current implementation for looking up the mwait hint for the deepest
->> cstate, in mwait_play_dead() code works by inspecting CPUID leaf 0x5 and
->> calculates the mwait hint based on the number of reported substates.
->> This approach depends on the hints associated with them to be continuous
->> in the range [0, NUM_SUBSTATES-1]. This continuity is not documented and
->> is not met on the recent Intel platforms.
->>
->> For example, Intel's Sierra Forest report two cstates with two substates
->> each in cpuid leaf 5:
->>
->>   Name*   target cstate    target subcstate (mwait hint)
->>   ===========================================================
->>   C1      0x00             0x00
->>   C1E     0x00             0x01
->>
->>   --      0x10             ----
->>
->>   C6S     0x20             0x22
->>   C6P     0x20             0x23
->>
->>   --      0x30             ----
->>
->>   /* No more (sub)states all the way down to the end. */
->>   ===========================================================
->>
->>    * Names of the cstates are not included in the CPUID leaf 0x5, they are
->>      taken from the product specific documentation.
->>
->> Notice that hints 0x20 and 0x21 are skipped entirely for the target
->> cstate 0x20 (C6), being a cause of the problem for the current cpuid
->> leaf 0x5 algorithm.
->>
->> Allow cpuidle code to provide mwait play dead loop with known, mwait
->> hint for the deepest idle state on a given platform, skipping the cpuid
->> based calculation.
->>
->> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
->
-> I'm going to risk saying that the changelog doesn't match the code
-> changes in the patch any more.
->
-> The code changes are actually relatively straightforward: The bottom
-> half of mwait_play_dead() is split off, so it can be called from
-> multiple places.
->
-> The other places from which to call it are cpuidle drivers
-> implementing :enter_dead() callbacks that may want to use MWAIT as the
-> idle state entry method.  The ACPI processor_idle driver and
-> intel_idle will be updated by subsequent patches to do so.
->
-> The reason for it is mostly consistency: If the cpuidle driver uses a
-> specific idle state for things like suspend-to-idle, it is better to
-> let it decide what idle state to use for "play_dead" because it may
-> know better.
->
-> Another reason is what mwait_play_dead() does to determine the MWAIT
-> argument (referred to as a "hint"), but IMO it belongs in a changelog
-> of a later patch because this one doesn't actually do anything about
-> it.  In fact, it is not expected to change the behavior of the code.
+On 10/24/24 at 08:15am, Yan Zhao wrote:
+> On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
+> > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
+> > 
+> > > Waiting minutes to get VM booted to shell is not feasible for most
+> > > deployments. Lazy is sane default to me.
+> > 
+> > Huh?
+> > 
+> > Unless my guesses about what is happening are wrong lazy is hiding
+> > a serious implementation deficiency.  From all hardware I have seen
+> > taking minutes is absolutely ridiculous.
+> > 
+> > Does writing to all of memory at full speed take minutes?  How can such
+> > a system be functional?
+> > 
+> > If you don't actually have to write to the pages and it is just some
+> > accounting function it is even more ridiculous.
+> > 
+> > 
+> > I had previously thought that accept_memory was the firmware call.
+> > Now that I see that it is just a wrapper for some hardware specific
+> > calls I am even more perplexed.
+> > 
+> > 
+> > Quite honestly what this looks like to me is that someone failed to
+> > enable write-combining or write-back caching when writing to memory
+> > when initializing the protected memory.  With the result that everything
+> > is moving dog slow, and people are introducing complexity left and write
+> > to avoid that bad implementation.
+> > 
+> > 
+> > Can someone please explain to me why this accept_memory stuff has to be
+> > slow, why it has to take minutes to do it's job.
+> This kexec patch is a fix to a guest(TD)'s kexce failure.
+> 
+> For a linux guest, the accept_memory() happens before the guest accesses a page.
+> It will (if the guest is a TD)
+> (1) trigger the host to allocate the physical page on host to map the accessed
+>     guest page, which might be slow with wait and sleep involved, depending on
+>     the memory pressure on host.
+> (2) initializing the protected page.
+> 
+> Actually most of guest memory are not accessed by guest during the guest life
+> cycle. accept_memory() may cause the host to commit a never-to-be-used page,
+> with the host physical page not even being able to get swapped out.
 
-The commit message here is to justify the change. I thought that giving
-some context is important. Do you suggest moving this under a
-different commit or don't mention the SRF and C6 states at all?
+So this sounds to me more like a business requirement on cloud platform,
+e.g if one customer books a guest instance with 60G memory, while the
+customer actually always only cost 20G memory at most. Then the 40G memory
+can be saved to reduce pressure for host. I could be shallow, just a wild
+guess.
+
+If my guess is right, at least those cloud service providers must like this
+accept_memory feature very much.
+
+> 
+> That's why we need a lazy accept, which does not accept_memory() until after a
+> page is allocated by the kernel (in alloc_page(s)).
+
+By the way, I have two questions, maybe very shallow.
+
+1) why can't we only find those already accepted memory to put kexec
+kernel/initrd/bootparam/purgatory?
+
+2) why can't we accept memory for (kernel, boot params/cmdline/initrd)
+in 2nd kernel? Surely this purgatory still need be accepted in 1st kernel.
+Sorry, I just read accept_memory() code, haven't gone through x86 boot
+code flow.
+
+Thanks
+Baoquan
 
 
