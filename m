@@ -1,222 +1,230 @@
-Return-Path: <linux-kernel+bounces-422057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E519D93EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:14:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA119D93DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:12:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9502867E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5A5168006
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E331B87C0;
-	Tue, 26 Nov 2024 09:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC331B652C;
+	Tue, 26 Nov 2024 09:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CemEy3rc"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aolo43+F"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A43A1B6CFB;
-	Tue, 26 Nov 2024 09:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C7318F2DA;
+	Tue, 26 Nov 2024 09:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612429; cv=none; b=spYM7j+f4J0rOBnEQlksrW2HisCAC78Ox0IMLcB5CzQoJ9cO6fpO73LYe24thLNkvVBcKuMkSI02y6i3PXV6gn6Nar03kJBUalaW61QLDgfOZiAcSj8OY4vjukrTSgj3rq9AHaHlFNv1DAQCQQZd3BJN723Y9VwiwKOr2Jxol9A=
+	t=1732612335; cv=none; b=pEheGsTjXQGhZkPGQhY1gMiKvUWVSpDjHMKr1LFvq02pXf0viyWLbLDAUOwp8A3DJdwYqoroaq39lPrkZN0qiscggoqB4aDkwU08LQwLatE02bXMMnpaQvChzx50uNDzfxh/cwl3zZ5bK/4Ws+2q2RcyqS0yKb7xCD5UPfUNdC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612429; c=relaxed/simple;
-	bh=kj1hfdWSVjSnNWbE7Aa7J7Ymzw8bom7kkF0XyMlA3cc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jFLgRf/lH1NdYJ8X3SnGgclqFEWw48oxhU7E8npWPGTFVQOl4ewPDXD7EXcpM3aR++IULX/XOK5Sv9fGESIm5V8ZyzMyWwRVQg45fHar4OOxWR1PwkSH/z0VDMP2zQVIc9QFcol/40ZVm9VfSg2YhejioEYGFsTSW3gq66VrcZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CemEy3rc; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ1uJmR007632;
-	Tue, 26 Nov 2024 10:13:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	XDQDGSReDFtTs5dS4somR8H6zR6+6yKYIEpiiGNll7s=; b=CemEy3rc4ZCSTFtS
-	aVEntbGWR11tyZfaxTatyNca1FzRUFmJRnj/VEuZ7XqP4C3CDNifk3epHrMehnFj
-	W0QjOSCVBFUFDrj91gjn9VmEdB9rxV/X6UWgZmj2lwyjdaz321cHS4RYbEhZWhW8
-	fRSbP9Fw149LdBrkx/Yw7tEslE0AVN9KHVmQpBlQQOCb1Qv6PrApkKE+ci+2Q31P
-	GKAGlyH4b68EAxpFoCU8i17gsvhFGL4PxV5PX5WHHpdZzdZ8Jw5IgcL7jQVV8mYC
-	7K4ovgPdY/PuhtLpyCQhLbV8TMjtRrsYT0Dvnl9DQWh206FSbF67Vs7HmhiwNy5z
-	ZYbqrw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4336tfksud-1
+	s=arc-20240116; t=1732612335; c=relaxed/simple;
+	bh=pgxmLvW9WLvgyz7HGd8H/GF8TfGm0yXATnuchUZHPAA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRobWSiOXQIJ1SEZuL3uj1yXIy11kSJOMXFjz+cSx2kyFoP5apBW7jOONAqIRJIddcijG7ULOS0Kqze77ysrSBjRM/p9076Il6UQd9MIU8TTvBiRHHO8MNWDJghaaysQXDzWrue/XRWBRvuD+EqpFv52SYWPH1d55Hkf9AbPan4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aolo43+F; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APKotq9007724;
+	Tue, 26 Nov 2024 09:12:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=MkD+Z6LHmgclGH3CFg9mcX2y
+	iQceJOzzPcOnUTDDwyQ=; b=aolo43+F9zkZn4MPfV809nhF7KxSzqIsrIm3Y2zn
+	s38VAjwt5B7bEsXIZ70yLYhiP5Cll0ORBEZZqylsL3zc357DEJhg6SnwlJp2fYnY
+	D6/Ejzw9RvzzNIbxsvwWm9ZNki75dFX3J+Uk+hdfgdY9g/zxxkaGmFVbwlg78bOJ
+	7iaIwpJJEire1yOxICN1UjENvSNGkOGepYdw1mbtQ60Pc0+fgeOb51rw+/nB9UH+
+	jlWTsmfKZxVFi2cW3YG5oK43WB6/f5IFnH0izQmlOy7EygEgTT9eBlMuF1O0qMHJ
+	4t0sBMpq+Q/o2LlSsAkiaXpUCLdU0ASxvcelVszoO5nAvg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626fj12-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 10:13:32 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1010340078;
-	Tue, 26 Nov 2024 10:12:34 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AF31A26B65D;
-	Tue, 26 Nov 2024 10:11:18 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
- 2024 10:11:18 +0100
-Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
- 2024 10:11:18 +0100
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v14 8/8] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-Date: Tue, 26 Nov 2024 10:10:39 +0100
-Message-ID: <20241126091042.918144-9-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241126091042.918144-1-arnaud.pouliquen@foss.st.com>
-References: <20241126091042.918144-1-arnaud.pouliquen@foss.st.com>
+	Tue, 26 Nov 2024 09:12:05 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ9C1i1007065
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 09:12:02 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 26 Nov 2024 01:11:57 -0800
+Date: Tue, 26 Nov 2024 17:11:53 +0800
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <ulf.hansson@linaro.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <bhupesh.sharma@linaro.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_tingweiz@quicinc.com>, <quic_yuanjiey@quicinc.com>
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+Message-ID: <Z0WQ2evD5AmhF4nr@cse-cd02-lnx.ap.qualcomm.com>
+References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
+ <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
+ <7c0c1120-c2b2-40dd-8032-339cc4d4cda4@oss.qualcomm.com>
+ <Z0WPv3ygWQa/G+mD@cse-cd02-lnx.ap.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
- (10.75.90.17)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z0WPv3ygWQa/G+mD@cse-cd02-lnx.ap.qualcomm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uZbjmKjYUsmvQQXFba7ESStf18Yq8LOp
+X-Proofpoint-ORIG-GUID: uZbjmKjYUsmvQQXFba7ESStf18Yq8LOp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260072
 
-The new TEE remoteproc driver is used to manage remote firmware in a
-secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
-introduced to delegate the loading of the firmware to the trusted
-execution context. In such cases, the firmware should be signed and
-adhere to the image format defined by the TEE.
+On Tue, Nov 26, 2024 at 05:07:11PM +0800, Yuanjie Yang wrote:
+> On Mon, Nov 25, 2024 at 02:13:22PM +0100, Konrad Dybcio wrote:
+> > On 22.11.2024 7:51 AM, Yuanjie Yang wrote:
+> > > Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
+> > > 
+> > > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
+> > >  1 file changed, 198 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> > > index 590beb37f441..37c6ab217c96 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> > > @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
+> > >  			#size-cells = <1>;
+> > >  		};
+> > >  
+> > > +		sdhc_1: mmc@7c4000 {
+> > > +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
+> > > +			reg = <0x0 0x007c4000 0x0 0x1000>,
+> > > +			      <0x0 0x007c5000 0x0 0x1000>;
+> > > +			reg-names = "hc",
+> > > +				    "cqhci";
+> > 
+> > There's an "ice" region at 0x007c8000
+> Thanks, I check doc again, I miss "ice" region at 0x007c8000.
+> 
+> > > +
+> > > +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			interrupt-names = "hc_irq",
+> > > +					  "pwr_irq";
+> > > +
+> > > +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+> > > +				 <&gcc GCC_SDCC1_APPS_CLK>,
+> > > +				 <&rpmhcc RPMH_CXO_CLK>,
+> > > +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
+> > > +			clock-names = "iface",
+> > > +				      "core",
+> > > +				      "xo",
+> > > +				      "ice";
+> > > +
+> > > +			resets = <&gcc GCC_SDCC1_BCR>;
+> > > +
+> > > +			power-domains = <&rpmhpd RPMHPD_CX>;
+> > > +			operating-points-v2 = <&sdhc1_opp_table>;
+> > > +			iommus = <&apps_smmu 0x02c0 0x0>;
+> > > +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
+> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> > > +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
+> > > +			interconnect-names = "sdhc-ddr",
+> > > +					     "cpu-sdhc";
+> > > +
+> > > +			bus-width = <8>;
+> > > +			qcom,dll-config = <0x000f642c>;
+> > > +			qcom,ddr-config = <0x80040868>;
+> > > +			supports-cqe;
+> > > +			dma-coherent;
+> > > +			mmc-ddr-1_8v;
+> > > +			mmc-hs200-1_8v;
+> > > +			mmc-hs400-1_8v;
+> > > +			mmc-hs400-enhanced-strobe;
+> > > +			status = "disabled";
+> > > +
+> > > +			sdhc1_opp_table: opp-table {
+> > > +				compatible = "operating-points-v2";
+> > > +
+> > > +				opp-100000000 {
+> > > +					opp-hz = /bits/ 64 <100000000>;
+> > > +					required-opps = <&rpmhpd_opp_svs>;
+> > > +				};
+> > 
+> > I'm seeing 25/50 MHz OPPs in the docs as well
+> Thanks, I check doc again, I miss 50MHz OPPs, but I don't find 25MHz.
+> 
+> > [...]
+> > 
+> > > +
+> > > +		sdhc_2: mmc@8804000 {
+> > > +			compatible = "qcom,qcs615-sdhci","qcom,sdhci-msm-v5";
+> > 
+> > Missing space 
+Thanks, I will add space in next version.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
-updates vs previous version
-- register load_fw() ops instead of load() to call rproc_tee_load_fw()
----
- drivers/remoteproc/stm32_rproc.c | 57 ++++++++++++++++++++++++++++++--
- 1 file changed, 54 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 1586978c5757..c155822324d8 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -18,6 +18,7 @@
- #include <linux/pm_wakeirq.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-+#include <linux/remoteproc_tee.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
-@@ -255,6 +256,19 @@ static int stm32_rproc_release(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int stm32_rproc_tee_stop(struct rproc *rproc)
-+{
-+	int err;
-+
-+	stm32_rproc_request_shutdown(rproc);
-+
-+	err = rproc_tee_stop(rproc);
-+	if (err)
-+		return err;
-+
-+	return stm32_rproc_release(rproc);
-+}
-+
- static int stm32_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -691,8 +705,20 @@ static const struct rproc_ops st_rproc_ops = {
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- };
- 
-+static const struct rproc_ops st_rproc_tee_ops = {
-+	.prepare	= stm32_rproc_prepare,
-+	.start		= rproc_tee_start,
-+	.stop		= stm32_rproc_tee_stop,
-+	.kick		= stm32_rproc_kick,
-+	.load_fw	= rproc_tee_load_fw,
-+	.parse_fw	= rproc_tee_parse_fw,
-+	.find_loaded_rsc_table = rproc_tee_find_loaded_rsc_table,
-+	.release_fw	= rproc_tee_release_fw,
-+};
-+
- static const struct of_device_id stm32_rproc_match[] = {
- 	{ .compatible = "st,stm32mp1-m4" },
-+	{ .compatible = "st,stm32mp1-m4-tee" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, stm32_rproc_match);
-@@ -853,15 +879,36 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct rproc *rproc;
- 	unsigned int state;
-+	u32 proc_id;
- 	int ret;
- 
- 	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
- 	if (ret)
- 		return ret;
- 
--	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
--	if (!rproc)
--		return -ENOMEM;
-+	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-+		/*
-+		 * Delegate the firmware management to the secure context.
-+		 * The firmware loaded has to be signed.
-+		 */
-+		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
-+		if (ret) {
-+			dev_err(dev, "failed to read st,rproc-id property\n");
-+			return ret;
-+		}
-+
-+		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
-+		if (!rproc)
-+			return -ENOMEM;
-+
-+		ret = rproc_tee_register(dev, rproc, proc_id);
-+		if (ret)
-+			return dev_err_probe(dev, ret,  "signed firmware not supported by TEE\n");
-+	} else {
-+		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-+		if (!rproc)
-+			return -ENOMEM;
-+	}
- 
- 	ddata = rproc->priv;
- 
-@@ -913,6 +960,8 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 		dev_pm_clear_wake_irq(dev);
- 		device_init_wakeup(dev, false);
- 	}
-+	rproc_tee_unregister(rproc);
-+
- 	return ret;
- }
- 
-@@ -933,6 +982,8 @@ static void stm32_rproc_remove(struct platform_device *pdev)
- 		dev_pm_clear_wake_irq(dev);
- 		device_init_wakeup(dev, false);
- 	}
-+
-+	rproc_tee_unregister(rproc);
- }
- 
- static int stm32_rproc_suspend(struct device *dev)
--- 
-2.25.1
+> > > +			reg = <0x0 0x08804000 0x0 0x1000>;
+> > > +			reg-names = "hc";
+> > > +
+> > > +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			interrupt-names = "hc_irq",
+> > > +					  "pwr_irq";
+> > > +
+> > > +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+> > > +				 <&gcc GCC_SDCC2_APPS_CLK>,
+> > > +				 <&rpmhcc RPMH_CXO_CLK>;
+> > > +			clock-names = "iface",
+> > > +				      "core",
+> > > +				      "xo";
+> > > +
+> > > +			power-domains = <&rpmhpd RPMHPD_CX>;
+> > > +			operating-points-v2 = <&sdhc2_opp_table>;
+> > > +			iommus = <&apps_smmu 0x02a0 0x0>;
+> > > +			resets = <&gcc GCC_SDCC2_BCR>;
+> > > +			interconnects = <&aggre1_noc MASTER_SDCC_2 QCOM_ICC_TAG_ALWAYS
+> > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> > > +					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ALWAYS>;
+> > > +			interconnect-names = "sdhc-ddr",
+> > > +					     "cpu-sdhc";
+> > > +
+> > > +			bus-width = <4>;
+> > > +			qcom,dll-config = <0x0007642c>;
+> > > +			qcom,ddr-config = <0x80040868>;
+> > > +			dma-coherent;
+> > > +			status = "disabled";
+> > > +
+> > > +			sdhc2_opp_table: opp-table {
+> > > +				compatible = "operating-points-v2";
+> > > +
+> > 
+> > Similarly, it can operate at 25/50 MHz too
+> Thanks, I check doc again, I miss 50MHz OPPs, but I don't find 25MHz.
+> 
+> > 
+> > Konrad
+> 
+> Thanks,
+> Yuanjie
+> 
+Thanks,
+Yuanjie
 
 
