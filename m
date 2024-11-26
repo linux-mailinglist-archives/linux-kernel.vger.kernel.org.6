@@ -1,175 +1,154 @@
-Return-Path: <linux-kernel+bounces-422638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DD79D9C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:21:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFA59D9C6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D356B1655D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF6E1674D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1111DB372;
-	Tue, 26 Nov 2024 17:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBD11DD55A;
+	Tue, 26 Nov 2024 17:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKUo4AUW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blsAnjk7"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D534E1D63FD;
-	Tue, 26 Nov 2024 17:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B5E1AC8A6;
+	Tue, 26 Nov 2024 17:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641660; cv=none; b=IdPgzd8rbEn1pZh23+xsO4uZCJ5a9u4arJj0zot92Q68QtBNSxI/v3sJG8xN2UvK8uiQ67jM3O8jN6HX9R6xCkI63GVVdkDGi6Wh9WhwkbM6/MV2dkupmlqFpNOWEC7xRAm3Y4Sm57SBSKQt1GlHx6noYmsrSUHCTuUIW+O1AfY=
+	t=1732641836; cv=none; b=Zgs+mlhPWLKwm/9j0EyebIk7XYMkgKYxmUUVUc1e8G6/1FKII6BiNGQSkikf7RiKB83xrBzuapBuB26lsCO+EcZ31wwyJmv6xnv8A5lqkMMVc58ugOcuVyPR3PfA/ukiUkT1NZ6PyN1lAxkKrODtu9L+Ol/PCv+pDAHJCDfjndw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641660; c=relaxed/simple;
-	bh=HC+vl7/DBwGqbZ5r3+JrPsKVS/tT8M2IrQGD/R4uK10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prcKUG8soGQ8d6yDNzUMu0OnettAhoHE+gRCLJbN36VQBXOwLjIkYCvUT4Vx1N/fbo0c0vX9mYTe4uE7vNPxZOgrJ92y8r8ODD5PaZQ7Bdx4Og8ytOadclUmNIkyqaGywy4Y3Hc+/TOvZFJU0yc2kwo5a9NaniqZdggupQ4MSnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKUo4AUW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA19BC4CECF;
-	Tue, 26 Nov 2024 17:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732641659;
-	bh=HC+vl7/DBwGqbZ5r3+JrPsKVS/tT8M2IrQGD/R4uK10=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vKUo4AUWUqgyr3tNszGEBeFlv4CqYDiy84iSx7kY9FsdyPVVATZPe8WQ5TAM+J1T5
-	 ya0iAvKRLh0w9jsrCquEHPMxjVV8Py2Z4vSNRn5oOG4Kdg1AOfyfZQ+8dkMMARZCU6
-	 NX6lH7fGTJKe59i5Ku3csAQhfYjyrgryoqwaCUjHbuYHqg50CZZiRPj3DqiOwBGPE9
-	 2Q9RFnp3DNG9nGszuGejmxGhvYBEe73PqVYPLX1vV8hj7o1KAUR1cSMvfg3WBAZcS0
-	 PSS6Zt5P0B1uc1ckNkSFNSfZ2FdkDmYKbfj0xKcSzAwRFgpy92leyPlde7uvrSmKCw
-	 WlRDSbIGfhdPQ==
-Message-ID: <e5b9ad58-ab31-4485-a2fe-d622f8e0f31b@kernel.org>
-Date: Tue, 26 Nov 2024 18:20:51 +0100
+	s=arc-20240116; t=1732641836; c=relaxed/simple;
+	bh=U2qWLpvmvrNRc7fBpmJACAoXp45wDX7aSHeyAukM69w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RWS09tV1RY0cYsN24yqE3DeVT4hHUAX0kkM14KudCPSODWitV7HmSCAOWnMjlvrZ5f0drP5PdD85V/B2L+nzITHWcULDvIKlin+PkEBHJ+1H8EAVn+Xa6TkGt16fsfgEEFGW+u5AA7LqijaXPc3NXaGIKGRKKmN8XXajC0f2qx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=blsAnjk7; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9e44654ae3so792399866b.1;
+        Tue, 26 Nov 2024 09:23:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732641833; x=1733246633; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Erh3kDkyyLqMgBRTpctsP9hRptfdoHadkYL68Kj+DE=;
+        b=blsAnjk70GyW/Q4EyY5ilD/7rNsNXCfdWulDT/Da0yKClNXSO/0Xr5KwbqdbGMuvpJ
+         begI2oRdbw0VBXHRDJ7XKA1A+1Y9WNUUjnTrdQ8sv0HA/TcYErgJJvgcKjKPl4YpiUje
+         Vvk7ql+ZyWPk46Egq+fTOnyQzC6J0kC8RWvdKIzDS0vGK9c0QCXH44RVQ1XLyUFb08MI
+         Ui7gAbI1++7yoYe60CAG4lC0hT7fBpeA0JT184EIJU4Bf5l72kLTfO7S3TmID9DYFLT/
+         8qslenLo2lBEZzULqILX4DILIXxAMiTbQl9mOzCoCHSqWDH5MOkJaWbABzsb7gUzbCQO
+         64Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732641833; x=1733246633;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Erh3kDkyyLqMgBRTpctsP9hRptfdoHadkYL68Kj+DE=;
+        b=wFm9T/F2+Mxn/xao/iO6xJ6VkgqrncgbiBvimaVZ8yEWpO9FrsLB/cCsFps4L3jYLy
+         cYBGrkP0TR6p2yHBElfbk1Hpe3HMgDyNydg4PgcjUcc2yNgOwZioTMmhqhXK7+yi36jW
+         WZH2IYW5/l7yDVsCt8QwpWDxCOI8y4dCboL6uEi6c3z0s2El3a8uURXslksCLKlxL+Tr
+         6TuTPSuRb5pXDrBwfS1JxGBb9LbrwtILQQokgkeS/uZUcFXom6M1zyrHMOaMpE4sLuUq
+         v9R4YSf3uqRVwn79hkZaQl+6HSxqpCjxbWWeWcXqzAe0vGAJ4JGa0nS4OWSLx2vukzjN
+         l0wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtxn/JWZrteI4HT/fVuR/yeyrazO88SqmUQcaIAgpAvNf+k1kQwltwMFnQpyFCI8wQ5rU+OwefaBdu@vger.kernel.org, AJvYcCV0Vp9JTjZLO+Q2MJMt9s7DTKQOioA66k2lYpidZF9kOf/p+CkpKg06jJ56AJ5qZYExHt2aQ2uM@vger.kernel.org, AJvYcCVIXEALO9+yybyfWaAuiDcPx9BkjCQqgvHpQoUhZ5dQ8uQNRwAjZB5fapjATkr5UDHJMmk97PEl7VpIaOBx@vger.kernel.org, AJvYcCWmkxgaGV3O54K7zxZb5LEWDz/NSsprs1YgXKMb7UV3HO/+9zNrXAFloQoXpDi/prUauOcFhMObjV/XfU0Yi7Q=@vger.kernel.org, AJvYcCWq0J1UwnSYWGCjkjxIZwE4un5GIVFeLbVTVDV2iblAtdtD+oK3HQkwVGeJRCNYdXwGkvkGSTUvz+C+dtrE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6kqSFeySwb2H2DX3O7DVfYS3azVF97fOWAfoI07BSXnbfZJCO
+	XwwcTM36N+JPjzMcqeytyOr0yp31V4kyA2NHOhszaWPx1Ty7xkjE
+X-Gm-Gg: ASbGncueS+j/UWtaDH+dETCBGfjWKgtkcpwozuBNKSV5NptpWmlFvxQHMGnzligK202
+	W1lNE55IS8RUPhAbQIq90aGAlHyximpsGjBoUBcFx6mHqNsu3nKl4MOnk7cd6zxsli2dmqkKVj0
+	IXi+dLFFu380ffZKjtguSVB/1m1qh15IHL0NZkWrtEvp5mC3UQXmJMPtfiylPK+HYlT+7YwAErw
+	ZxOW/l+bCldx9RCkK8cZqm+Hej5SHtcH3D/YwJvkh2NUvsbUDsXEoKqUk4=
+X-Google-Smtp-Source: AGHT+IECV1SfPk75kkOO3nyGfh6AJfPnfs9z/0KCVg6p2LbUtu1npUxOUG5Li3TZL6yCbXfXk+iKng==
+X-Received: by 2002:a17:906:314f:b0:aa4:9ab1:196c with SMTP id a640c23a62f3a-aa50990b24emr1417865366b.9.1732641832663;
+        Tue, 26 Nov 2024 09:23:52 -0800 (PST)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa534232086sm473832866b.42.2024.11.26.09.23.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 09:23:52 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-sparse@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 0/6] Enable strict percpu address space checks
+Date: Tue, 26 Nov 2024 18:21:17 +0100
+Message-ID: <20241126172332.112212-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: display: Add Apple pre-DCP display
- controller bindings
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241126-adpdrm-v2-0-c90485336c09@gmail.com>
- <20241126-adpdrm-v2-1-c90485336c09@gmail.com>
- <050d1398-cfc2-4921-b82a-95eecbcddba4@kernel.org>
- <CAMT+MTSwCf=iwmD3t=E7T81K_d+o-5XpCxov9fk=_oUnwooA-A@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAMT+MTSwCf=iwmD3t=E7T81K_d+o-5XpCxov9fk=_oUnwooA-A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/11/2024 18:00, Sasha Finkelstein wrote:
-> On Tue, 26 Nov 2024 at 17:46, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> +allOf:
->>> +  - $ref: dsi-controller.yaml#
-> ...
->>> +patternProperties:
->>> +  "^panel@[0-3]$": true
->>
->> These look unusual. Is this a DSI controller? If so, then reference
->> dsi-controller. See other bindings how this is done.
-> 
-> This is a DSI controller, as referenced above. Those properties are from
-> dsi-controller.yaml
+This patchset enables strict percpu address space checks via x86 named 
+address space qualifiers. Percpu variables are declared in
+__seg_gs/__seg_fs named AS and kept named AS qualified until they
+are dereferenced via percpu accessor. This approach enables various
+compiler checks for cross-namespace variable assignments.
 
-Ahh, indeed, I missed that and focused on the additionalProperties.
-Instead use unevaluatedProperties: false and drop all properties already
-in dsi-controller.yaml.
+Please note that current version of sparse doesn't know anything about
+__typeof_unqual__() operator. Avoid the usage of __typeof_unqual__()
+when sparse checking is active to prevent sparse errors with unknowing
+keyword.
 
-> 
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - apple,j293-summit
->>> +          - apple,j493-summit
->>> +      - const: apple,summit
->>
->> Summit tells me nothing - no description, title repeats it, so I suggest
->> using device specific compatible.
-> 
-> The j293/j493 are the device-specific compatibles, those are chassis names
-> for the specific laptops the panel is present in.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 
-This does not address my comment. Use specific compatibles as fallback,
-just like we recommend for every device. This should not be different.
-If you do not know the hardware details, using generic is even less
-appropriate.
+Uros Bizjak (6):
+  x86/kgdb: Use IS_ERR_PCPU() macro
+  compiler.h: Introduce TYPEOF_UNQUAL() macro
+  percpu: Use TYPEOF_UNQUAL() in variable declarations
+  percpu: Use TYPEOF_UNQUAL() in *_cpu_ptr() accessors
+  percpu: Repurpose __percpu tag as a named address space qualifier
+  percpu/x86: Enable strict percpu checks via named AS qualifiers
 
-> 
-> 
->> No, these cannot be true without definition. Again, please open existing
->> bindings and use them as example. You probably miss here some reference,
->> but max-brightness for panel is a bit confusing. I asked already and did
->> not get answer: isn't this backlight property? What is this device -
->> backlight or panel? If panel, then what bus?
-> 
-> Per my response on previous version, it's both, kind of. This is a
-> self-emissive panel on
+ arch/x86/include/asm/percpu.h  | 34 +++++++++++++++++++---------
+ arch/x86/kernel/kgdb.c         |  2 +-
+ fs/bcachefs/util.h             |  2 +-
+ include/asm-generic/percpu.h   | 41 +++++++++++++++++++++++-----------
+ include/linux/compiler.h       | 13 +++++++++++
+ include/linux/compiler_types.h |  2 +-
+ include/linux/part_stat.h      |  2 +-
+ include/linux/percpu-defs.h    |  6 ++---
+ include/net/snmp.h             |  5 ++---
+ init/Kconfig                   |  3 +++
+ kernel/locking/percpu-rwsem.c  |  2 +-
+ net/mpls/internal.h            |  4 ++--
+ 12 files changed, 80 insertions(+), 36 deletions(-)
 
-I see, I think I again totally missed that you have there references to
-backlight, so binding is in general fine. Describe the hardware in
-description field (see commit for mentioned Samsung panel).
+-- 
+2.42.0
 
-
-Best regards,
-Krzysztof
 
