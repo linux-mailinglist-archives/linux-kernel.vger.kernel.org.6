@@ -1,181 +1,186 @@
-Return-Path: <linux-kernel+bounces-422099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13809D94E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:52:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02939D94A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F7EB2A34D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:33:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F302BB2B6D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316FF1B87EF;
-	Tue, 26 Nov 2024 09:33:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593791BD4FD;
+	Tue, 26 Nov 2024 09:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0kRHeVaY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnOK01oO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0kRHeVaY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UnOK01oO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592571B85CC
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A701BCA0D;
+	Tue, 26 Nov 2024 09:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613587; cv=none; b=GmDA4TSjdPkQrY8WMIoDNKKyns9wtjbK6X1hVVtl54U9y1VNAoGYg/zTLTMSDDL9beqRIpteNo2au4ajqLNIJ/xSHzEg8CuQIOS6OjvVxVCCfCSjQ8+QaHUR+rEzKcx/aM3228IOi7nYCNEchVNgLaq5ZDSX9FLNTOTe4M7fySs=
+	t=1732613597; cv=none; b=iZqEq5aaUFCqOXZBOOXcALA0EVVlfyc1LzwzFYuIP+T8M3nlFBxfrHtQQt48NnqWlcY5Ph0+o5k2lAAznEEWARLl1aQkkofGJn8alPzUiuojzt4RUt/LAwE4ErCGPzXt1NFdp+YwrMnz1wAkF4dr9/wgpEiMNEUNgO89jyNXS4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613587; c=relaxed/simple;
-	bh=TBrtZgyKnnU1P9E7tLN8IwvrhdqvwuujbduCkf/8HyA=;
+	s=arc-20240116; t=1732613597; c=relaxed/simple;
+	bh=Wbc0vvzr9PT5ZxEVvtI2ydNZZVXz5EN4F+RXZpsUZiQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFO5i7tgUdbPj+B7BYv+tduhA2FvsnU4zEuCRggwSWwUAn4lQEIh7dofPeZKGbvhyVPPKrHWH5LKDhscj4mPH0uTBzTZ7YQZHlg868ZEcQyws4e0GGl2VGuB4aeAG1m1BLQBGpkzStYw5z8lRmAH7hM0FuHUDWmhwbYdVGSoBkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFrwF-0007eA-Bj; Tue, 26 Nov 2024 10:32:55 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFrwD-000E1G-2n;
-	Tue, 26 Nov 2024 10:32:54 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/tevB/t+SLKvoO0z2bMcstRUJUkEIlfWMUM30W97ay2fjUJpJ5CBv7HwLpiIDEUBxz61EMp15s7RQFD1genAYpmWsy0PKDEVAynzolvq5Cp7TI6PazCStc0mUlzY6NDAlMgYnKBOSFCweyQk0tKtJlwBzKCYo0TD+f3oFsYx+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0kRHeVaY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnOK01oO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0kRHeVaY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UnOK01oO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 4E53737D824;
-	Tue, 26 Nov 2024 09:32:54 +0000 (UTC)
-Date: Tue, 26 Nov 2024 10:32:54 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Chen-Yu Tsai <wens@csie.org>, Gerhard Bertelsmann <info@gerhard-bertelsmann.de>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 10/12] can: sun4i_can: fix {rx,tx}_errors statistics
-Message-ID: <20241126-illegal-prehistoric-mongoose-1a61ad-mkl@pengutronix.de>
-References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
- <20241122221650.633981-11-dario.binacchi@amarulasolutions.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DF981F45E;
+	Tue, 26 Nov 2024 09:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732613593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=0kRHeVaYBbzOAlXngQITnQbd3EdoBXaP+A0ortzEHiGZlcUb3Q/IRKY71ovjITR2kM2v1U
+	4voQw7C+mIwmqCwmkWDZgd/4vCOQWacu7lyU0ikpeiVe682VuPhy4AKR1MeCcQBvoQoves
+	ut2L4xNWMxzL4NkVOp2bP3ckv51YNwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732613593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=UnOK01oOMUBomYCFcj9NdcCrUb1m87naRo1+/JsfWUI76dE+LlwKt3TpnPa2yhlV08xajn
+	vl+v+IUMuNGfEDAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732613593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=0kRHeVaYBbzOAlXngQITnQbd3EdoBXaP+A0ortzEHiGZlcUb3Q/IRKY71ovjITR2kM2v1U
+	4voQw7C+mIwmqCwmkWDZgd/4vCOQWacu7lyU0ikpeiVe682VuPhy4AKR1MeCcQBvoQoves
+	ut2L4xNWMxzL4NkVOp2bP3ckv51YNwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732613593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qEeCeTbcmNgP4kZTcR728RzH4D8VWMJ/56QxE4hH38=;
+	b=UnOK01oOMUBomYCFcj9NdcCrUb1m87naRo1+/JsfWUI76dE+LlwKt3TpnPa2yhlV08xajn
+	vl+v+IUMuNGfEDAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8DD9013890;
+	Tue, 26 Nov 2024 09:33:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZYOOItmVRWeLCAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 09:33:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3CCD8A08CA; Tue, 26 Nov 2024 10:33:13 +0100 (CET)
+Date: Tue, 26 Nov 2024 10:33:13 +0100
+From: Jan Kara <jack@suse.cz>
+To: Leo Stone <leocstone@gmail.com>
+Cc: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
+	brauner@kernel.org, quic_jjohnson@quicinc.com, jack@suse.cz,
+	viro@zeniv.linux.org.uk, sandeen@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, shuah@kernel.org,
+	anupnewsmail@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] hfs: Sanity check the root record
+Message-ID: <20241126093313.2t7nu67e6cjvbe7b@quack3>
+References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
+ <20241123194949.9243-1-leocstone@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ua6dubftl2fle6kp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241122221650.633981-11-dario.binacchi@amarulasolutions.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241123194949.9243-1-leocstone@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[2db3c7526ba68f4ea776];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,kernel.org,quicinc.com,suse.cz,zeniv.linux.org.uk,redhat.com,vger.kernel.org,googlegroups.com,gmail.com,lists.linuxfoundation.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
+On Sat 23-11-24 11:49:47, Leo Stone wrote:
+> In the syzbot reproducer, the hfs_cat_rec for the root dir has type
+> HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
+> This indicates it should be used as an hfs_cat_file, which is 102 bytes.
+> Only the first 70 bytes of that struct are initialized, however,
+> because the entrylength passed into hfs_bnode_read() is still the length of
+> a directory record. This causes uninitialized values to be used later on,
+> when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
+> 
+> Add a check to make sure the retrieved record has the correct type
+> for the root directory (HFS_CDR_DIR).
 
---ua6dubftl2fle6kp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 10/12] can: sun4i_can: fix {rx,tx}_errors statistics
-MIME-Version: 1.0
+This certainly won't hurt but shouldn't we also add some stricter checks
+for entry length so that we know we've loaded enough data to have full info
+about the root dir?
 
-On 22.11.2024 23:15:51, Dario Binacchi wrote:
-> The sun4i_can_err() function only incremented the receive error counter
-> and never the transmit error counter, even if the STA_ERR_DIR flag
-> reported that an error had occurred during transmission. Increment the
-> receive/transmit error counter based on the value of the STA_ERR_DIR
-> flag.
->=20
-> Fixes: 0738eff14d81 ("can: Allwinner A10/A20 CAN Controller support - Ker=
-nel module")
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+								Honza
 
-Fails to build from source:
-
-| drivers/net/can/sun4i_can.c:583:7: error: variable 'ecc' is used uninitia=
-lized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-|   583 |                 if (likely(skb)) {
-|       |                     ^~~~~~~~~~~
-| include/linux/compiler.h:76:20: note: expanded from macro 'likely'
-|    76 | # define likely(x)      __builtin_expect(!!(x), 1)
-|       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-| drivers/net/can/sun4i_can.c:606:8: note: uninitialized use occurs here
-|   606 |                 if ((ecc & SUN4I_STA_ERR_DIR) =3D=3D 0) {
-|       |                      ^~~
-| drivers/net/can/sun4i_can.c:583:3: note: remove the 'if' if its condition=
- is always true
-|   583 |                 if (likely(skb)) {
-|       |                 ^~~~~~~~~~~~~~~~
-| drivers/net/can/sun4i_can.c:534:9: note: initialize the variable 'ecc' to=
- silence this warning
-|   534 |         u32 ecc, alc;
-|       |                ^
-|       |                 =3D 0
-| 1 error generated.
-
-Fixes by moving the "ecc =3D readl();":
-
---- a/drivers/net/can/sun4i_can.c
-+++ b/drivers/net/can/sun4i_can.c
-@@ -579,11 +579,9 @@ static int sun4i_can_err(struct net_device *dev, u8 is=
-rc, u8 status)
-                 /* bus error interrupt */
-                 netdev_dbg(dev, "bus error interrupt\n");
-                 priv->can.can_stats.bus_error++;
--                stats->rx_errors++;
-+                ecc =3D readl(priv->base + SUN4I_REG_STA_ADDR);
-=20
-                 if (likely(skb)) {
--                        ecc =3D readl(priv->base + SUN4I_REG_STA_ADDR);
--
-                         cf->can_id |=3D CAN_ERR_PROT | CAN_ERR_BUSERROR;
-=20
-                         switch (ecc & SUN4I_STA_MASK_ERR) {
-@@ -601,9 +599,15 @@ static int sun4i_can_err(struct net_device *dev, u8 is=
-rc, u8 status)
-                                                >> 16;
-                                 break;
-                         }
--                        /* error occurred during transmission? */
--                        if ((ecc & SUN4I_STA_ERR_DIR) =3D=3D 0)
-+                }
-+
-+                /* error occurred during transmission? */
-+                if ((ecc & SUN4I_STA_ERR_DIR) =3D=3D 0) {
-+                        if (likely(skb))
-                                 cf->data[2] |=3D CAN_ERR_PROT_TX;
-+                        stats->tx_errors++;
-+                } else {
-+                        stats->rx_errors++;
-                 }
-         }
-         if (isrc & SUN4I_INT_ERR_PASSIVE) {
-
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ua6dubftl2fle6kp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFlcMACgkQKDiiPnot
-vG86uggAk5nDid8uwxMZDtzRp+kfJaz/cngmez1n0624cpt7FCh1bKx4sitruzsm
-BChsdETbPalV4234FJa9f7EzXe1OLeKUBCM99TweVhlBicNH4ZIISjaDmsQlPktu
-me63etuNtH+JQFAJlPPaPx3vbodfsQ51MSftLL/ag70lroEpuusPaIBW+L/yODl1
-fbL+G7Qc3oaKL6s0wl+ldjDnEFuA+i+jGZDaCWqSKsNsnBFiZa9Z32IiyC16AA+C
-V4hqyhDju4ButdrRDmrrwBlBlw0nddXD8DqZwLvHCf3EYdZ03J096EgEu7WyoA0V
-BfMSxcAOzP1Vma5mZ7noy0TEXV/OTw==
-=m367
------END PGP SIGNATURE-----
-
---ua6dubftl2fle6kp--
+> 
+> Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
+> Tested-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> ---
+>  fs/hfs/super.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index 3bee9b5dba5e..02d78992eefd 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -354,6 +354,8 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  			goto bail_hfs_find;
+>  		}
+>  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+> +		if (rec.type != HFS_CDR_DIR)
+> +			res = -EIO;
+>  	}
+>  	if (res)
+>  		goto bail_hfs_find;
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
