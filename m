@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-422835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1402E9D9ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:23:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D16165880
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:23:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506801DF961;
-	Tue, 26 Nov 2024 21:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3O6Q6zH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB379D9ED7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:25:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFCD1BBBC9;
-	Tue, 26 Nov 2024 21:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED484B26D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:25:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E69F1DF96B;
+	Tue, 26 Nov 2024 21:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U28rJGjd"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943DF1BBBC9;
+	Tue, 26 Nov 2024 21:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732656225; cv=none; b=Fr+JMeK9Q8nFrhvp9CwWHzhHaFSdNWALKbjQ3fMoqyJaSMw3WTogSpxHPhdR1o/Kth2GAOkLpeIObA74HLcou56br5/JfrkLiVUtJ2DWGtSvsRvRMocbm+i+romPD2hIgn1wv7r672kVUbFRw9+Y3hSwVbxQzqpl08T4s8xBcvM=
+	t=1732656318; cv=none; b=JITbQV/nuCym5iINQboUVDzpoZSf279rlXJEt4WkWfL42ONK/siux95Kv7UnWs/YT6bsZdoQ7yD+Ti+E4K3F5AMe7NksGz3u1EjvDw1wZiWRWm1ukWLLFGv9J7R+RRlWhGtDDdAkbYG5LV3GlzZ3txmiRyPzm57wn8du314T2F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732656225; c=relaxed/simple;
-	bh=+4cak4AD+EKtDVgADHKyTvjrNEL4RZ5ds2BhcayRHUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SHoQO4I/31i/HPUX99kGsLA30/+W8Aos8f88VZhTCNKXKf0FOuJqNDQ1bjpYL1snavYAh/e67KlQwH0wZjz3uoTh6c22Ne4STvLhzeg/P6Yf1ia3mZE7ziuMqChlbhsuqeda1TmkhHoptLBO2G39OiU2ah7oDFUqrx/mWYO4u6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3O6Q6zH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2EA3C4CECF;
-	Tue, 26 Nov 2024 21:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732656225;
-	bh=+4cak4AD+EKtDVgADHKyTvjrNEL4RZ5ds2BhcayRHUY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=s3O6Q6zHaFeNNhd5cooYjdl8yCNs7VhpmTZkfinbg8OzcIKfGVdqoZLbVNVjKEapn
-	 bu7JgY6yBvbAJzcpLj+FEy/T9lydZheJ6Z4YB5B4N02p16BrW2yEGzH6x7pQdZI/O8
-	 8Uh8nRaID+2URpjlsSUpHo0ph7DUVi8UXqg7yTbmjRFEMfWiQLxsZf61w8tL+seSP0
-	 5RLK3fxKEfwSxg5XeSlOwod6uGNDB4i9nHtZxl3PNgsQM9M5qpthB0nVjuWWdMUQbu
-	 2vAcETMoEUmR2Nrzre8rV+Do8zmPeemMh2Vwkw5aod+MOnss2Ywr2EgP0/v++CweuU
-	 LGVOio94/WZ/Q==
-Date: Tue, 26 Nov 2024 18:23:41 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Charlie Jenkins <charlie@rivosinc.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1 perf-tools] tools riscv: Include fence.h from the same
- directory barrier.h lives
-Message-ID: <Z0Y8XQMBXT5JdOAG@x1>
+	s=arc-20240116; t=1732656318; c=relaxed/simple;
+	bh=xjS1sv7ZycCWokpZNmVAJ4ZyUQYgz7W7vOLsr0yLyTU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FNEfC0nTXc7wFw+BeIzMLgdDyLn0xmLRtG4qNvLe3IaRafeiqnfVowxxetWQusiqCSCB7JN6qJqR0C95u7HF874JchG6jcb3NFhpDguBWNDrPnR27gAy0jonrE0cZpAy9g31v5Gmt2Ad4btTyhV0DsrNLLTzHIbe0E8nBbGFy8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U28rJGjd; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-211fb27cc6bso60274695ad.0;
+        Tue, 26 Nov 2024 13:25:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732656316; x=1733261116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2TKsl83AnwP2PjSI65VRG64wOcj8ly05hFtripK2Pw=;
+        b=U28rJGjdLS2KLybAYRGXgzL/hG3PIhSNd/mWD+fstTHvtCdJcSiuZdGFf0ngA/4wcK
+         hloxYE5aZbXKVt7BzkjGR+maF5amA4W3DeqYVIokMFPxSSqgqMLosM5lHjbE6d2qWZSj
+         xSXqX2Dxg7rOvQGQFkYBu4IYtH5FLWEpQasueGJXQWRuMQ2GlQ9CPytFiF1ukWD1X8o2
+         LjoPAJE2M4XBB5DPyF3r3aXlSLYeDuYFXyj5/AtlFbSlbBa+iTe4O45kfcMR0iUY21Pz
+         F5uDcqTnzg6jTbaBNV9fQJ4yPU1OAwMVEC4ipyjd2oMFXy1OG7iknbqz+nIFYp12tVxv
+         QQ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732656316; x=1733261116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2TKsl83AnwP2PjSI65VRG64wOcj8ly05hFtripK2Pw=;
+        b=v3bH60wSL2silyC3KNEd7CJ7g2+St4jliYz6QlW42lFgagbWnRbBJc4ryHEMq0MAfo
+         6/ATm3QPzvVd8C5juWD+7p/57Yt++c4xWef+8ioNgK3sVq8WejLonH8Ms4pWZDsGGFJo
+         mCW3kmcxc8VPUSXmXuZbQeNMFIoGxglf/6lqtj/oupUGvkLYK4xNfx9S8V9P10JnXedc
+         Vf7SQgcpmMh1ieQdF4GecJxgZmnztB7tbunjvXXyic8kO9S+G0LAM2TLNvebOY9baTDD
+         GpOxGtOo6PcbAlv8JYMuqwh9dKp+NZYOfEpSCnJr7Uzay81lWbnBj4KjED0AIplgb8MI
+         Ykmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlRTaphSc3vjbfUiWwESSLqvw/poXyU2vupnXpkSw7ZGxjOOkHgnQCGkjqg8D35Dj2OUAn4uePGlYv4K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHGzpAVIrn1pXzeIzwNR1RzOSbbahrchot5O3eLW3kZ4ALGhBf
+	epzlxATomsNFOS3ybghCaGeedvdBt2EAa86bPavN36r8m44kNjo8
+X-Gm-Gg: ASbGncvHPjz8f6J/FmheuUllzeN+PzrgxO+FE8iXs8O/np1xhI7xW5uEpTsDm6GZ3YX
+	IFkcQVWpoqU43GnHeVH5so86zZ+l3w5atrU8UXmmpUepcJh2QiH1Qp5oGDfemWeoa6QIUYa2OLC
+	F7uXZxAiDXedqe4vmBxCzu0X9gvTZ8OcQF5VwmV3z6X3ShXv6VszuQQ1XLbZGXirQh/znNE3aK8
+	ajuc9fpFK0tryIAIhMAH3b/K8hTdUhjnb0T2ImlxZ265JG9MyvOjjnWvw5K9Fi7R8WUBSOTbDEh
+X-Google-Smtp-Source: AGHT+IFiE6mBthTh6/Xk493ZDQ+wpHrF+Kc29cYBJgz9mge4KCwyWFynJxSWYy/r1lnU6AgvZTV/yg==
+X-Received: by 2002:a17:902:ea0e:b0:20b:4f95:932d with SMTP id d9443c01a7336-2150108ca34mr8490985ad.3.1732656315856;
+        Tue, 26 Nov 2024 13:25:15 -0800 (PST)
+Received: from localhost.localdomain ([177.174.195.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8ca1csm89431075ad.20.2024.11.26.13.25.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 13:25:15 -0800 (PST)
+From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+Subject: [PATCH 2/2] pwm: correct pwm->state.enabled handling to allow fops control
+Date: Tue, 26 Nov 2024 18:24:14 -0300
+Message-Id: <20241126212414.15165-1-rafael.v.volkmer@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-When cross building perf to riscv I noticed that it isn't finding the
-asm/fence.h file included from tools/arch/riscv/include/asm/barrier.h,
-since both live in the same directory, load it from there instead of
-from asm/fence.h, fixing the libbpf build in such environment:
+Ensure pwm->state.enabled is consistently updated during enable and
+disable operations in ehrpwm_pwm_apply() to resolve this issue.
 
-  perfbuilder@number:~$ time dm ubuntu:22.04-x-riscv64
-     1     4.32 ubuntu:22.04-x-riscv64        : FAIL gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04)
-                       from mmap.c:7:
-      /git/perf-6.12.0-rc6/tools/include/asm/../../arch/riscv/include/asm/barrier.h:13:10: fatal error: asm/fence.h: No such file or directory
-         13 | #include <asm/fence.h>
-            |          ^~~~~~~~~~~~~
-      compilation terminated.
-  <SNIP other similar errors>
+Previously, when attempting to interact with the ti PWM driver through
+fops, the pwm->state.enabled field was not updated correctly after
+applying enable or disable. This led to a state mismatch where the
+driver's state detection logic prevented disabling the PWM through
+fops once it had been activated.
 
-This probably should work in other systems where the right asm/fence.h
-is available, but in the above scenario, it fails. Probably we should
-fix the perf build system to find it in tools/arch/riscv/include/asm/,
-but this one-liner should be a stop gap solution till we get there.
-
-Testing it:
-
-  perfbuilder@number:~$ time dm ubuntu:22.04-x-riscv64
-     1    21.65 ubuntu:22.04-x-riscv64        : Ok   riscv64-linux-gnu-gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0  flex 2.6.4
-  BUILD_TARBALL_HEAD=800d169e2d39e4e81ade326d73ae7c4343c12b45
-  $ git log --oneline -1 800d169e2d39e4e81ade326d73ae7c4343c12b45
-  800d169e2d39e4e8 tools riscv: Include fence.h from the same directory barrier.h lives
-  toolsbuilder@number:~/perf-6.12.0-rc6$ ls -la /tmp/build/perf/perf
-  -rwxr-xr-x. 1 toolsbuilder toolsbuilder 3278728 Nov 26 21:12 /tmp/build/perf/perf
-  toolsbuilder@number:~/perf-6.12.0-rc6$ file /tmp/build/perf/perf
-  /tmp/build/perf/perf: ELF 64-bit LSB pie executable, UCB RISC-V, RVC, double-float ABI, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-riscv64-lp64d.so.1, BuildID[sha1]=9b77bbf51da74cee24c6d5fc5814343cc7e9a652, for GNU/Linux 4.15.0, with debug_info, not stripped
-  toolsbuilder@number:~/perf-6.12.0-rc6$
-  toolsbuilder@number:~/perf-6.12.0-rc6$ readelf -d /tmp/build/perf/perf | head
-  Dynamic section at offset 0x242db0 contains 33 entries:
-    Tag        Type                         Name/Value
-   0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
-   0x0000000000000001 (NEEDED)             Shared library: [libz.so.1]
-   0x0000000000000001 (NEEDED)             Shared library: [libelf.so.1]
-   0x0000000000000001 (NEEDED)             Shared library: [libdw.so.1]
-   0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-   0x0000000000000001 (NEEDED)             Shared library: [ld-linux-riscv64-lp64d.so.1]
-   0x0000000000000020 (PREINIT_ARRAY)      0x238740
-  toolsbuilder@number:~/perf-6.12.0-rc6$
-
-Fixes: 6d74d178fe6eaf61 ("tools: Add riscv barrier implementation")
-Cc: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
 ---
- tools/arch/riscv/include/asm/barrier.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pwm/pwm-tiehrpwm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/arch/riscv/include/asm/barrier.h b/tools/arch/riscv/include/asm/barrier.h
-index 6997f197086ddf61..e78241632e2f1301 100644
---- a/tools/arch/riscv/include/asm/barrier.h
-+++ b/tools/arch/riscv/include/asm/barrier.h
-@@ -10,7 +10,7 @@
- #ifndef _TOOLS_LINUX_ASM_RISCV_BARRIER_H
- #define _TOOLS_LINUX_ASM_RISCV_BARRIER_H
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index 0125e73b98df..9f939d535440 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -420,6 +420,7 @@ static int ehrpwm_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	if (!state->enabled) {
+ 		if (enabled)
+ 			ehrpwm_pwm_disable(chip, pwm);
++			pwm->state.enabled = false;
+ 		return 0;
+ 	}
  
--#include <asm/fence.h>
-+#include "fence.h"
- #include <linux/compiler.h>
+@@ -429,6 +430,7 @@ static int ehrpwm_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
  
- /* These barriers need to enforce ordering on both devices and memory. */
+ 	if (!enabled)
+ 		err = ehrpwm_pwm_enable(chip, pwm);
++		pwm->state.enabled = true;
+ 
+ 	return err;
+ }
 -- 
-2.47.0
+2.25.1
 
 
