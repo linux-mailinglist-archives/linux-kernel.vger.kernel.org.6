@@ -1,193 +1,147 @@
-Return-Path: <linux-kernel+bounces-421833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874F89D90B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:16:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288CB9D90B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5422856D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:16:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32ACFB28A54
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F1A7DA68;
-	Tue, 26 Nov 2024 03:15:57 +0000 (UTC)
-Received: from out28-221.mail.aliyun.com (out28-221.mail.aliyun.com [115.124.28.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1067A61FFE;
+	Tue, 26 Nov 2024 03:16:04 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AE613FFC;
-	Tue, 26 Nov 2024 03:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA52313FFC;
+	Tue, 26 Nov 2024 03:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732590956; cv=none; b=fy+BkqA2ifVH/nIVgasgiTPV3ONuRj43AksgemcCTVeKrU0pYFhmEej7PELgoiSfZ6EkHqP5pEJ6VvmHnzDdcTI2oyXQH6Zq7YvHTtE3w2Ud+qHf/T3QMI4x870e4MQNv8K6ftBsncJPxraz+T1/gXaukXKC08C+SnWBI58N/AE=
+	t=1732590963; cv=none; b=sGLm2tKAzegcWKKpXqlq3Px+L01WoPSXoFTooK8x32b6mdvz0E3q/Y6GOmrnP9v/9Uo8kTScwOb9sa+1w3B6Ub8FSpAAvo2yb9p+lwF/8EZK0HGYi40jHLumI+xYBWMY52G79i8FqUXAX4sYaGcbO8hb8HI8c7vfAMCG2YgU7vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732590956; c=relaxed/simple;
-	bh=cSfp93QI3T8iQ8KLjNyaYF65vPVLOGKUcgQ2HC7Pqg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKvh2Wj0/HKKMFCt0iKGvkqjd84rMh4wSK8KXUT25KbteV52L8EORHfWiONWSD9ntx8KwdppY+JJ3OeiyrNdWjrquu0aHcNVBtjFD3Aimg5Q0ZXMHIf9sVjdWKh1bVzY2ktirpnzUPqjVtPTZpxGkNggzt+VtXNJqv6AH5KYS+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
-Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.aMT7QzV_1732590947 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 26 Nov 2024 11:15:48 +0800
-Message-ID: <43341290-15e3-4784-9b69-7f3f13f34e01@motor-comm.com>
-Date: Tue, 26 Nov 2024 11:15:46 +0800
+	s=arc-20240116; t=1732590963; c=relaxed/simple;
+	bh=xcnPI9TUgTHcMBQHI2bOmcVwS+vUJr/MFNjNe43dVS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V+Usl7hVsY2+wMj6GZZ3PuWDgL7UAJdJw49SPwjYkxZzR3qRRF8Bt0dEcD3ZnZU3bkhH30Dx/ZT72X91Dqc1x2w1GK7o3mQOps8/g/hESDYvNzFE5EMANdsuReekh5jjd+yj5J8hN8vEscFoqbAlaMj3mvmjmXAv6VFsMbVqdlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xy6z84WLRz1JB6V;
+	Tue, 26 Nov 2024 11:11:00 +0800 (CST)
+Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
+	by mail.maildlp.com (Postfix) with ESMTPS id 24C771400D5;
+	Tue, 26 Nov 2024 11:15:58 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 26 Nov 2024 11:15:57 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Nov
+ 2024 11:15:57 +0800
+Message-ID: <1e7e5737-8dd8-172f-f5f7-9cc7967e129e@huawei.com>
+Date: Tue, 26 Nov 2024 11:15:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 05/21] motorcomm:yt6801: Implement the
- fxgmac_start function
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
- <20241120105625.22508-6-Frank.Sae@motor-comm.com>
- <95675880-1b93-4916-beee-e5feb6531009@lunn.ch>
- <ba24293a-77b1-4106-84d2-81ff343fc90f@motor-comm.com>
- <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
-Content-Language: en-US
-From: Frank Sae <Frank.Sae@motor-comm.com>
-In-Reply-To: <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v1 4/4] hwmon: (acpi_power_meter) Add the print of no
+ notification that hardware limit is enforced
+To: Guenter Roeck <linux@roeck-us.net>, <linux-hwmon@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jdelvare@suse.com>, <liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>
+References: <20241125093415.21719-1-lihuisong@huawei.com>
+ <20241125093415.21719-5-lihuisong@huawei.com>
+ <f7274b8d-cb91-4975-be94-69f041e9c4ee@roeck-us.net>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <f7274b8d-cb91-4975-be94-69f041e9c4ee@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-Hi Andrew,
 
-On 2024/11/25 22:18, Andrew Lunn wrote:
->>> RGMII is unusual, you normally want RGMII_ID. Where are the 2ns delays
->>> added?
->>>
+在 2024/11/26 0:13, Guenter Roeck 写道:
+> On 11/25/24 01:34, Huisong Li wrote:
+>> As ACPI spec said, the bit3 of the supported capabilities in _PMC 
+>> indicates
+>> that the power meter supports notifications when the hardware limit is
+>> enforced. If one platform doesn't report this bit, but support hardware
+>> forced limit through some out-of-band mechanism. Driver wouldn't receive
+>> the related notifications to notify the OSPM to re-read the hardware 
+>> limit.
+>> So add the print of no notifcation that hardware limit is enforced.
 >>
->> Yes, you are right. PHY_INTERFACE_MODE_RGMII should be PHY_INTERFACE_MODE_RGMII_ID.
->> YT6801 NIC integrated with YT8531S phy, and the 2ns delays added in the phy driver.
->> https://elixir.bootlin.com/linux/v6.12/source/drivers/net/phy/motorcomm.c#L895
-> 
-> But if you pass PHY_INTERFACE_MODE_RGMII to the PHY it is not adding
-> the 2ns delay. So how does this work now?
-
-I'm sorry. Maybe PHY_INTERFACE_MODE_RGMII is enough.
-YT6801 is a pcie NIC chip that integrates one yt8531s phy.
-Therefore, a delay of 2ns is unnecessary, as the hardware has
- already ensured this.
-
-> 
->>>> +int fxgmac_start(struct fxgmac_pdata *pdata)
->>>> +{
->>>> +	struct fxgmac_hw_ops *hw_ops = &pdata->hw_ops;
->>>> +	u32 val;
->>>> +	int ret;
->>>> +
->>>> +	if (pdata->dev_state != FXGMAC_DEV_OPEN &&
->>>> +	    pdata->dev_state != FXGMAC_DEV_STOP &&
->>>> +	    pdata->dev_state != FXGMAC_DEV_RESUME) {
->>>> +		yt_dbg(pdata, " dev_state err:%x\n", pdata->dev_state);
->>>> +		return 0;
->>>> +	}
->>>> +
->>>> +	if (pdata->dev_state != FXGMAC_DEV_STOP) {
->>>> +		hw_ops->reset_phy(pdata);
->>>> +		hw_ops->release_phy(pdata);
->>>> +		yt_dbg(pdata, "reset phy.\n");
->>>> +	}
->>>> +
->>>> +	if (pdata->dev_state == FXGMAC_DEV_OPEN) {
->>>> +		ret = fxgmac_phy_connect(pdata);
->>>> +		if (ret < 0)
->>>> +			return ret;
->>>> +
->>>> +		yt_dbg(pdata, "fxgmac_phy_connect.\n");
->>>> +	}
->>>> +
->>>> +	phy_init_hw(pdata->phydev);
->>>> +	phy_resume(pdata->phydev);
->>>
->>> The MAC should not be doing this.
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   drivers/hwmon/acpi_power_meter.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
 >>
->> Does this mean deleting 'phy_resume(pdata->phydev)'?
-> 
-> There are only a few phylib API calls you should be using
-> 
-> phy_connect() or one of its variants.
-> phy_start()
-> phy_stop()
-> phy_disconnect()
-> 
-> Those four are the core. Those should be all you need to minimum
-> support.
-> 
-> phy_support_asym_pause()
-> phy_support_eee()
-> phy_speed_up()
-> phy_speed_down()
-> 
-> and these are just nice to have to let phylib know about things the
-> MAC supports, so phylib can manage the PHY to make them available to
-> the MAC. This is the API between the MAC driver and phylib. phylib
-> will then manage the PHY. Any time you want to use a phy_* function,
-> look to see if other MAC drivers do. If they don't you should not
-> either.
+>> diff --git a/drivers/hwmon/acpi_power_meter.c 
+>> b/drivers/hwmon/acpi_power_meter.c
+>> index 3500859ff0bf..d3f144986fae 100644
+>> --- a/drivers/hwmon/acpi_power_meter.c
+>> +++ b/drivers/hwmon/acpi_power_meter.c
+>> @@ -712,6 +712,10 @@ static int setup_attrs(struct 
+>> acpi_power_meter_resource *resource)
+>>               goto skip_unsafe_cap;
+>>           }
+>>   +        if (resource->caps.flags & POWER_METER_CAN_NOTIFY == 0)
+>
+> == has higher precedence than &, so this expression will never be true.
+Indeed.
+>
+> And, indeed:
+>
+> drivers/hwmon/acpi_power_meter.c: In function ‘setup_attrs’:
+> drivers/hwmon/acpi_power_meter.c:701:42: error: suggest parentheses 
+> around comparison in operand of ‘&’
+What compilation parameters did you use to intercept this?😁
+>
+>> + dev_info(&resource->acpi_dev->dev,
+>> +                 "no notifcation when the hardware limit is 
+>> enforced.\n");
+>> +
+>>           if (resource->caps.configurable_cap)
+>>               res = register_attrs(resource, rw_cap_attrs);
+>>           else
+>
+> On top of that, I don't see the value in this patch.
+ From the current implement, the value of this patch is little. It's 
+just telling the user that he won't be notified. Notifications are not 
+available.
 
-Tanks for your clear explanation.
-
-> 
->>>> +	hw_ops->pcie_init(pdata);
->>>> +	if (test_bit(FXGMAC_POWER_STATE_DOWN, &pdata->powerstate)) {
->>>> +		yt_err(pdata,
->>>> +		       "fxgmac powerstate is %lu when config power up.\n",
->>>> +		       pdata->powerstate);
->>>> +	}
->>>> +
->>>> +	hw_ops->config_power_up(pdata);
->>>> +	hw_ops->dismiss_all_int(pdata);
->>>> +	ret = hw_ops->init(pdata);
->>>> +	if (ret < 0) {
->>>> +		yt_err(pdata, "fxgmac hw init error.\n");
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	fxgmac_napi_enable(pdata);
->>>> +	ret = fxgmac_request_irqs(pdata);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	/* Config interrupt to level signal */
->>>> +	val = rd32_mac(pdata, DMA_MR);
->>>> +	fxgmac_set_bits(&val, DMA_MR_INTM_POS, DMA_MR_INTM_LEN, 2);
->>>> +	fxgmac_set_bits(&val, DMA_MR_QUREAD_POS, DMA_MR_QUREAD_LEN, 1);
->>>> +	wr32_mac(pdata, val, DMA_MR);
->>>> +
->>>> +	hw_ops->enable_mgm_irq(pdata);
->>>> +	hw_ops->set_interrupt_moderation(pdata);
->>>> +
->>>> +	if (pdata->per_channel_irq) {
->>>> +		fxgmac_enable_msix_irqs(pdata);
->>>> +		ret = fxgmac_phy_irq_enable(pdata, true);
->>>> +		if (ret < 0)
->>>> +			goto dis_napi;
->>>> +	}
->>>> +
->>>> +	fxgmac_enable_rx_tx_ints(pdata);
->>>> +	phy_speed_up(pdata->phydev);
->>>> +	genphy_soft_reset(pdata->phydev);
->>>
->>> More things the MAC driver should not be doing.
->>
->> Does this mean deleting 'phy_speed_up(pdata->phydev);' and 'genphy_soft_reset(pdata->phydev);' ?
-> 
-> Two things here:
-> 
-> phy_speed_up()/phy_speed_down() is part of suspend/resume when using
-> WoL. This code has nothing to do with that. So why is it here?
-> 
-> There should not be any need to call genphy_soft_reset(). You should
-> figure out why you need it, because it could be a PHY driver bug, or a
-> MAC driver bug.
-> 
-> 	Andrew
+Actually, I'd like to add some necessary updates in the notification 
+handler when OSPM receive some notifications, like 0x82, 0x83 event.
+These updates are necessary for this driver, which more follow ACPI spec.
+But I don't know how do handle the notify 0x81 to fix the trip points, 
+so I don't modify it yet.
+>
+> Overall, really, this driver could benefit from a complete overhaul.
+> Its use of the deprecated hwmon_device_register() should tell it all.
+Yes, I also found it.
+But I don't know how to handle struct hwmon_chip_info and if it is 
+appropriate to this driver yet.
+It will be a big modification if it is ok.
+> There is lots of questionable code, such as the unprotected calls to
+> remove_attrs() followed by setup_attrs() in the notification handler.
+Agreed.
+In addition, using struct sensor_template  to create sysfs interface is 
+hard to maintain and not good to me.
+The show_val and show_str are to display based on the index in struct 
+sensor_template.
+> Any updates should be limited to bug fixes and not try to make minor
+> improvements for little if any gain.
+>
+Yes
+>
+> .
 
