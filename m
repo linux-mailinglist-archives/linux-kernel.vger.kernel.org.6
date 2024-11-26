@@ -1,150 +1,179 @@
-Return-Path: <linux-kernel+bounces-422677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CC59D9CCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:45:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A44D9D9CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B513F1657EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E691636E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF211DB95D;
-	Tue, 26 Nov 2024 17:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60442C6A3;
+	Tue, 26 Nov 2024 17:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDk1Edz2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FC1QMaIc"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C6480C02;
-	Tue, 26 Nov 2024 17:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA60182BC;
+	Tue, 26 Nov 2024 17:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643099; cv=none; b=A6MPKUimjrOa/uY/QQRiSOHNMRcfKohmU+y2xZMRCtqmzpsQHhDUT4pLYC1kBqAX8/3c1Mbg3MXbd+diuYzMyWs5cVLRHbVyhERl/M7FfHj81mza0sZ8obKgS6yZM4u+tg1OhI3wQgTP+n4wQV07KkF9j80kVDqH26IHjnViepQ=
+	t=1732643161; cv=none; b=MNcXwyy1Tk2Oawlya9f0yAXBslvoLjgUpcjWIe1AogVaDO7RLFMiBxK34RKht1OhQ/s7XjkYsi+bkqmlr9Fhak+rs6QhlwRJmpHxOmeb1UAhKv4XJGpo7gKsyFOavaPjdJvWWqwv14eG8sI3uendw8JuHhR90Hg03huTnS/aORw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643099; c=relaxed/simple;
-	bh=ZRjQTN090pSjajN8dRrfrXBdguDng5VtE1Oo8OqMlAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NwZqzwTK3zgl+YBsLK2fa2rm3qhsCM6Pcl0mewSSf1dfYT4jjBHB+dWTmzYQwbeXeVutMboZA7cTL7a06D2gA7xMDzK3xydeCaHlJgG85kyfXu4TtICg6VU+R8WZcR9r8mXHNCeLodz85S16xTBMgIJKBtkHj+0iWNrwJpZ/m4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDk1Edz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FDB6C4CECF;
-	Tue, 26 Nov 2024 17:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732643099;
-	bh=ZRjQTN090pSjajN8dRrfrXBdguDng5VtE1Oo8OqMlAk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gDk1Edz2zLxRR0ZRr0nLRoIyDDX/RebryZblI/FHRba27n8C66+A514PozXhGX5zI
-	 u0YNfZCLcjuxQ2rBy+aQM6N2N0c53Mnmp6WAeeH6/wnSfcw0Ne8sw/nyZcAgPC8cRg
-	 8A3O0RugZguwu0OS8rFgMKD4bL486hqBWCDtgGLVONYsiVr0oQUT5fnLLL80QdFpt6
-	 7rKM40vVGwDP/21JTteYenuPAENDtsMVRUvJqZugyWlZUuww1rb7fzVg5fmtmUtFC1
-	 l5gKrt2kNXDj2bbbCoAo0AvMwT8s25hA6s0rDD77I0X/CbPSju4qpJstyWc0l80mbw
-	 blOGCkySb+hIg==
-Date: Tue, 26 Nov 2024 17:44:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 05/22] iio: accel: adxl345: measure right-justified
-Message-ID: <20241126174451.51580219@jic23-huawei>
-In-Reply-To: <CAFXKEHZdp7cSnE8fj8y9ek0x6zev3Up918B-Ox=WS0bv9KhviA@mail.gmail.com>
-References: <20241117182651.115056-1-l.rubusch@gmail.com>
-	<20241117182651.115056-6-l.rubusch@gmail.com>
-	<20241124180733.2925eaa7@jic23-huawei>
-	<CAFXKEHZdp7cSnE8fj8y9ek0x6zev3Up918B-Ox=WS0bv9KhviA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732643161; c=relaxed/simple;
+	bh=mY03VpsJJqMELHECKen20IGCRx/WgeuV9DS5VVd2Kmo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QA5l5xj6+Jt7NRlMU2UZr7Gg9xVoahbhOx1MqQJ6pm3TJvWNwVMC6Hfoi8lOetpMWHU5q/euN4bksf1my2XAqJyFRxaTtLYVsRFCMGBUT4STY/+AuVqm490+Pg9pKAajVDSYkr6ttPozujmr3/PWBgiugRoywa1Bl03xC99r/7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FC1QMaIc; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ee79e82361so57911087b3.1;
+        Tue, 26 Nov 2024 09:45:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732643158; x=1733247958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fDFaDoaUbU0YDEV8A2N95UPpOXgvTMECrJUgSiq7MTo=;
+        b=FC1QMaIc8lfvlFqW9H/tHiTRn+xt5Yg9ESgyyyvD86ptHsHNE5RPtPnzqzXsYhGrZ+
+         0lzJSv6+FSJrB/8SjfzHEaayexqsLBBP2h/JqmCObf8mkLAl+N0Ia7i0v49ZyeGtDwC5
+         BPTAqPtcNT6+kYbh0SJAkUgwEcEU0zt+UoF8Pfb1NYk8tImgakHHQk7ZjH5AdKc1UXzE
+         lAD2Ou81WMz3byF9oVJ0+C3iDIQ8GRnSFbDi5qluYTA1MMdIvu7FYKOLT6gVZ/S6hErQ
+         KCf5BDoxpvO5e++LwVLIAq54eGkBtxEzNb14pdkas2BvX+wBG7gaX7zMHK1X3m3TzGey
+         Tfkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732643158; x=1733247958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fDFaDoaUbU0YDEV8A2N95UPpOXgvTMECrJUgSiq7MTo=;
+        b=egjFThA0ZYzV5ggq17wTwRl7OQypst1/qDg9YrjK3yE/IS055ATK4pIpbTZ72mta3F
+         hpi+dVmN/XBDfclcg1HHITIiortmMZH9inCBB6+enPnbPRE22imrr21nH1UUNXwaPuMR
+         8RjY7a1sjoP4yOEJ++HcUXWAPJJixYh347NmB1xQrOK4EN8Q1TPd+L9ynB0S1XUSiXER
+         KTI0NVjfj/PzoWxaycBMc82opedIjj2BpyOWfQDzPhrJN7rLT/sqDFLceWYaJ+Q879ex
+         U4Do71thQjauoq9Jcn5cp/I4y8RvhUAFR6GjVLr6Xfg5V6WINx6D37FnPiOBsJtdRZMZ
+         7DQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTUQbG7St7CavjOAhWyaPjmCdK7+cQteDi67ebm/i5EZlrWRVqToOOShPP8Kmsg14FT6FsugSQt17reMg=@vger.kernel.org, AJvYcCXv/2aI7wlHMUB9EDwhcAOlYxt2X/EpgRETgaXlwle5Mj++Q2XZyY4qDrsi62Yq4tusjGRBACzPEn0yN9f1d3rlCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvVTRq4AbYJZUbVQQHKDQV9B9jISUWfJjhA51IXkYS+X7dvJqm
+	89Lwr8RQqRHQwa7AlYtgjMpm713XkCuwYr6min2YsH+pAlnMWFBiWEuBb5OOHsNd9k6ShC3Bh7d
+	aZxUSFxoBtvzRG/2KAAGmKO8zHAU=
+X-Gm-Gg: ASbGncuj5+nalu+z+IRNZB/YvZ5WmgHV6ASTJstXJ4SzlB1ISE0KOM4c62AyJhI2NQT
+	wg4ZzyYgrOUkRLs1zEOewBM4SzIlpVlr/
+X-Google-Smtp-Source: AGHT+IH5Mbh/SMLM2wJi9RWhj0dwkJbVOV3z/saPgVQM+PC70Knl18Y/CK9eMOdmqxyHeWEx6a4Kd2hfazmGPktIC9I=
+X-Received: by 2002:a05:690c:380a:b0:6ee:4855:45de with SMTP id
+ 00721157ae682-6ef23dcfa06mr38894167b3.9.1732643158464; Tue, 26 Nov 2024
+ 09:45:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241123005512.342079-1-howardchu95@gmail.com>
+ <20241123005512.342079-2-howardchu95@gmail.com> <Z0X8KJd5LYrgUJUh@x1> <Z0YBiu9XdstHmjWr@x1>
+In-Reply-To: <Z0YBiu9XdstHmjWr@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 26 Nov 2024 09:45:47 -0800
+Message-ID: <CAH0uvojGDUwSzMmf2FE8He9DB59H0R0p2bHKGJRDs9eJjRXFhw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf trace: Add tests for BTF general augmentation
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Nov 2024 14:51:19 +0100
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+Hello Arnaldo,
 
-> Dear IIO Mailing-List, Hi Jonathan!
->=20
-> Thank you so much for the review. As you probably saw, most (all?) of
-> my commits have a huge invisible question mark attached. Most of my
-> questions you answered clearly. On particular topics I'd like to get
-> back, though. Generally I will try to apply the requested changes to
-> best of my understanding.
->=20
-> On Sun, Nov 24, 2024 at 7:07=E2=80=AFPM Jonathan Cameron <jic23@kernel.or=
-g> wrote:
+On Tue, Nov 26, 2024 at 9:12=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Tue, Nov 26, 2024 at 01:49:44PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Fri, Nov 22, 2024 at 04:55:10PM -0800, Howard Chu wrote:
+> > > Currently, we only have perf trace augmentation tests for enum
+> > > arguments. This patch adds tests for more general syscall arguments,
+> > > such as struct pointers, strings, and buffers.
 > >
-> > On Sun, 17 Nov 2024 18:26:34 +0000
-> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
-> > =20
-> > > Make measurements right-justified, since it is the default for the
-> > > driver and sensor. By not setting the ADXL345_DATA_FORMAT_JUSTIFY bit,
-> > > the data becomes right-judstified. This was the original setting, the=
-re
-> > > is no reason to change it to left-justified, where right-justified
-> > > simplifies working on the registers. =20
+> > scripts/checkpatch.pl has some warnings here I think we can address
+> > easily, some not so much, like the SPDX that we need to add logic to
+> > 'perf test' to noticed its the SPDX and skip it, looking at the next
+> > line for the test description.
 > >
-> > Surely this can't be changed independent of other changes as it will
-> > change the format of the data we are processing?
 > >
-> > Each change must stand on it's own so that I can apply up to any
-> > point in your patch set and have everything continue to work. =20
->=20
-> This is probably not quite clear. Originally the driver was
-> right-justified. One of my last commits
-> (f68ebfe1501bf1110eebf5e968c4d9186cba8706) changed the driver to work
-> with left-justified measurements. So, I feel changing the orginal
-> behavior is wrong, and here I try to re-establish the original driver
-> behavior.
->=20
-> When looking at the datasheet right-justified data seems to be easier
-> to handle, but I don't have any personal preference.
-Ok.  I'm still a little confused. Can userspace see any result from either
-the earlier patch or this one?
+> > The long lines we can just make them multiple lines with the first ones
+> > ending in \
 
-Jonathan
+Sure, thanks.
 
->=20
-> Lothar
->=20
-> [...]
-> > > ---
-> > >  drivers/iio/accel/adxl345_core.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adx=
-l345_core.c
-> > > index 2b62e79248..926e397678 100644
-> > > --- a/drivers/iio/accel/adxl345_core.c
-> > > +++ b/drivers/iio/accel/adxl345_core.c
-> > > @@ -184,8 +184,13 @@ int adxl345_core_probe(struct device *dev, struc=
-t regmap *regmap,
-> > >       struct adxl34x_state *st;
-> > >       struct iio_dev *indio_dev;
-> > >       u32 regval;
-> > > +
-> > > +     /* NB: ADXL345_DATA_FORMAT_JUSTIFY or 0: =20
-> >         /*
-> >          * NB: AD...
-> >
-> > is the multiline comment style all IIO drivers use (and most of the ker=
-nel
-> > except for networking.
-> > =20
-> > > +      * do right-justified: 0, then adjust resolution according to 1=
-0-bit
-> > > +      * through 13-bit in channel - this is the default behavior, an=
-d can
-> > > +      * be modified here by oring ADXL345_DATA_FORMAT_JUSTIFY
-> > > +      */
-> > >       unsigned int data_format_mask =3D (ADXL345_DATA_FORMAT_RANGE |
-> > > -                                      ADXL345_DATA_FORMAT_JUSTIFY |
-> > >                                        ADXL345_DATA_FORMAT_FULL_RES |
-> > >                                        ADXL345_DATA_FORMAT_SELF_TEST);
-> > >       int ret; =20
-> > =20
+>
+> And while testing it with -vv:
+>
+> root@number:~# perf test -vv btf
+> 110: perf trace BTF general tests:
+> --- start ---
+> test child forked, pid 242944
+> Testing perf trace's string augmentation
+> grep: warning: stray \ before /
+> Testing perf trace's buffer augmentation
+> grep: warning: stray \ before /
+> Testing perf trace's struct augmentation
+> grep: warning: stray \ before /
+> ---- end(0) ----
+> 110: perf trace BTF general tests                                    : Ok
+> root@number:~#
+>
+> The long lines can be solved like:
+>
+> +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> @@ -17,7 +17,8 @@ trap cleanup EXIT TERM INT HUP
+>
+>  trace_test_string() {
+>    echo "Testing perf trace's string augmentation"
+> -  if ! perf trace -e renameat* --max-events=3D1 -- mv ${file1} ${file2} =
+2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ r=
+enameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${fi=
+le2}\", flags: .*\) +=3D +[0-9]+$"
+> +  if ! perf trace -e renameat* --max-events=3D1 -- mv ${file1} ${file2} =
+2>&1 | \
+> +     grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ =
+renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${f=
+ile2}\", flags: .*\) +=3D +[0-9]+$"
+>    then
+>      echo "String augmentation test failed"
+>      err=3D1
+>
+> And that " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ : +"
+>
+> part is common to several such greps, so you could have it as:
+>
+> prefix=3D" +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ : +"
+>
+> And then use
+>
+> grep -q -E "%{prefix}mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${fi=
+le1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) +=3D +[0-9]+$"
+>
+> Or, since this part isn't interesting for what this test checks, BPF
+> augmentation, we could make it all more compact, i.e.:
+>
+> From the default that is:
+>
+> root@number:~# rm -f before after ; touch before ; perf trace -e renameat=
+2 mv before after
+>      0.000 ( 0.037 ms): mv/243278 renameat2(olddfd: CWD, oldname: "before=
+", newdfd: CWD, newname: "after", flags: NOREPLACE) =3D 0
+> root@number:~#
+>
+> We point perf to a temporary config file, using mktemp, then tell it to
+> not output the stuff we don't need while test BPF augmentation, making
+> the output more compact and thus the regexps in the perf test shorter.
 
+Sure I'll do that.
+
+Thanks,
+Howard
 
