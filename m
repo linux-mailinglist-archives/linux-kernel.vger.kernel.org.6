@@ -1,144 +1,167 @@
-Return-Path: <linux-kernel+bounces-422440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF01A9D99AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:33:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0029B9D99B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51E1281FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:33:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F66B2A461
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB91D5CDD;
-	Tue, 26 Nov 2024 14:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c/q26viF"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD0D1D5CC5;
+	Tue, 26 Nov 2024 14:34:41 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2781D5AC2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06D8BE46
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732631571; cv=none; b=Y28FaxlKzllwNK5atteayzLYbhVO4Jjj8swzreoeEXN+7oBMRQOuK3oDkQmc1o7/SBFrin0dj8oLMrcSsBWRIKebZNHPcW4Uc12KQyqpY+X/IgqMgPFvK5EizS21ZdF+BVbbJqmTaqN5p//+VQbCXgQaoxCW5XdK6MZ2QT96S9c=
+	t=1732631681; cv=none; b=E67GduHMQm6NSXqvLaOXYK2uHsFMuRZ3LdHmxst4hXsySZBGr0UFI/pC6VcCMb3cyS6D/OzNsNNXTyAodK4fDkZweV7ZktTLTZJuL4Y+HvRjh2JqHxLmyrzUEjaorv4rt/Cnki4XyMtYNXM8ZF+MyFtMTPHE4I3re7Z3kPf0OcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732631571; c=relaxed/simple;
-	bh=dQRhJy3Wh/XAeespnPYlzWHTBZvlLsZVW/rgRLQ331k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSrtOqJukdMPtSp06R9yDYU3alcMmKdmrREdph1Ckp7EHLp19wefTU4gVvY/9m8SCKbhnO6QWrskEfGmnjVliEoTQtfwcNlL3gZma99OK0uUYd/Gg8IMyYBEsRv8238w1XxaYb4ZKLabveiAwZA5mNiPlgLnmkZUsDy2eUNgpD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c/q26viF; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=J+ieYSkNG6qdtjOppQ0piLEhSHHCuA2LQgzIKmNMU7k=; b=c/q26viF8OKVC2MKdaH6X7QSmt
-	J9jlqCV4YgL35D3gyqySLbyoV0XRwNgGIc4IdEs5u9zt8i3iu7EpK1taJ5A5ccat1hOZib4VP/Qtt
-	H8DLyHAkM7tdQtcqcF6cT2R+diW1czdRdho3SjBsINeiBRilKr1+Vzsy75F/uXfeM6wadQ5/uyUGA
-	Ju58M6kLCrcT1Dww+VLb1H4u84p9GHVVgka9PsFqVFMFA6tPfhxpG1Vi0yD5uU71jLC1SzsSjILhp
-	ybMIdqm8a+Xc1ptPKCcohtIrVWw4I3T8TXmbchrfXPBVIsPdmDB1jO0uk1xgrmJcKSsIOzShMA24u
-	nkyPReoA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFwcO-00000001DpV-37NG;
-	Tue, 26 Nov 2024 14:32:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E883E3002A2; Tue, 26 Nov 2024 15:32:43 +0100 (CET)
-Date: Tue, 26 Nov 2024 15:32:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/10] objtool: Handle special cases of dead end insn
-Message-ID: <20241126143243.GN38837@noisy.programming.kicks-ass.net>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-3-yangtiezhu@loongson.cn>
- <20241126064513.bf6yq56eklyo4xvt@jpoimboe>
- <bb36374e-aca2-92e1-209d-1524e31147ab@loongson.cn>
+	s=arc-20240116; t=1732631681; c=relaxed/simple;
+	bh=SwCLUDoCn1zSFH0ezygDJUTXfuTmbMkj3R+icj9Rb78=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H7VQOKqJbQUsNbvkH8/pGQQLSe+m+xhYlcSHoLWGydPjr6T2CmoId8o7d4/TPauZJoYiJqeLo5GgE1Lv27MGv8xqwGm8619Mhg7HwmeK45QvidP3K/GLa0qR5ilEvhwVSBI+ThuFTUAeRVDMIXRP3Qsv1kIXwkPTF+AFkGiI/UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8418307b4f9so270255339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:34:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732631679; x=1733236479;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ppzdMjBrQKtYQbXhvhZNE8f0sJO6PN9v2KluOrYgajk=;
+        b=KP0FNsz5H4DDq8pEfrduXcqJnMHBH+Rlfz8BPWZRxeniG7PETNdPw8JFOwdX16akCU
+         l26PDNzKwMTNRjUdfTl4yZrPi5lzNDyrcGk3Ppqh2T85tfJoqr+YhwhFFeaH9ixnUtYd
+         +AzBHaVe4zWtW4sXp4j1JRdHCToZKMcAqkmwj4Kz3QoaZ0g982t4ldT63i3MsSLXB5DC
+         dK/OyaEJjB7LFbO8tDxNa2BJQXSRCjCGpy8A6ZWLig2dh7/h7BcCsvxGAD/imCgM1PPp
+         eW3uW5mx46GsAYRGr+Wg8JDIOQhY6oDG6DkG2MOsBuZyCjoVhlvGz81nSyBDrVBbGfAk
+         PLlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAky6ln+GaotzvXuloGtlpn/XbfeS5sgwXuIjZaITyUT6kRuLDXW/ejczpYjxcK3ydkUP6Tb3Vw0Jb6ME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3aau7WeNuwtyQIZZ7atQ+4doEvC1e1s2MiFgSRwadNlZXwMNF
+	AWb/28XSBUVKnLPmmQg/uYDu+gBSSTvzWr6+9ux38YaMgs9IMxo+FvJr0uD09+sZrGAE1e0HmuB
+	DUwbFboaRHKfqVR7fhVi9svG9GMlFqULSvT6ZBpmP7MmR9m+J35NR85I=
+X-Google-Smtp-Source: AGHT+IHnzYCZfVidcmEg7JPBJoVVbmQX8ycrZwy0QxfGPNjhFvMHtJLyWSIDRK1Glon6Xp2u54iOuEOEOU0rm6JWXzPmhmYCvdIh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bb36374e-aca2-92e1-209d-1524e31147ab@loongson.cn>
+X-Received: by 2002:a05:6e02:1e03:b0:3a7:98c4:8d55 with SMTP id
+ e9e14a558f8ab-3a79afc807cmr182909555ab.20.1732631679143; Tue, 26 Nov 2024
+ 06:34:39 -0800 (PST)
+Date: Tue, 26 Nov 2024 06:34:39 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6745dc7f.050a0220.21d33d.0018.GAE@google.com>
+Subject: [syzbot] [net?] KMSAN: uninit-value in hsr_forward_skb (2)
+From: syzbot <syzbot+671e2853f9851d039551@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 26, 2024 at 06:42:15PM +0800, Tiezhu Yang wrote:
-> On 11/26/2024 02:45 PM, Josh Poimboeuf wrote:
-> > On Fri, Nov 22, 2024 at 12:49:57PM +0800, Tiezhu Yang wrote:
-> > > There are some "unreachable instruction" objtool warnings when compling
-> > > with Clang on LoongArch, this is because the "break" instruction is set
-> > > as dead end due to its type is INSN_BUG in decode_instructions() at the
-> > > beginning, and it does not set insn->dead_end of the "break" instruction
-> > > as false after checking ".rela.discard.reachable" in add_dead_ends(), so
-> > > the next instruction of "break" is marked as unreachable.
-> > > 
-> > > Actually, it can find the reachable instruction after parsing the section
-> > > ".rela.discard.reachable", in some cases, the "break" instruction may not
-> > > be the first previous instruction with scheduling by Machine Instruction
-> > > Scheduler of LLVM, it should find more times and then set insn->dead_end
-> > > of the "break" instruction as false.
-> > > 
-> > > This is preparation for later patch on LoongArch, there is no effect for
-> > > the other archs with this patch.
-> > > 
-> > > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > 
-> > I'm having trouble understanding this commit log, is the problem that
-> > the compiler is sometimes inserting code between 'break' and the
-> > unreachable() inline asm?
-> > 
-> > If so, this sounds like a problem that was already solved for x86 with:
-> > 
-> >   bfb1a7c91fb7 ("x86/bug: Merge annotate_reachable() into _BUG_FLAGS() asm")
-> > 
-> > Can you check if that fixes it?
-> 
-> I will try, thank you.
-> 
+Hello,
 
-I was poking at the reachable annotations and ended up with this:
+syzbot found the following issue on:
 
---- a/arch/loongarch/include/asm/bug.h
-+++ b/arch/loongarch/include/asm/bug.h
-@@ -4,6 +4,7 @@
- 
- #include <asm/break.h>
- #include <linux/stringify.h>
-+#include <linux/objtool.h>
- 
- #ifndef CONFIG_DEBUG_BUGVERBOSE
- #define _BUGVERBOSE_LOCATION(file, line)
-@@ -37,21 +38,21 @@
- 
- #define ASM_BUG()	ASM_BUG_FLAGS(0)
- 
--#define __BUG_FLAGS(flags)					\
--	asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags)));
-+#define __BUG_FLAGS(flags, extra)					\
-+	asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags))		\
-+			     extra);
- 
- #define __WARN_FLAGS(flags)					\
- do {								\
- 	instrumentation_begin();				\
--	__BUG_FLAGS(BUGFLAG_WARNING|(flags));			\
--	annotate_reachable();					\
-+	__BUG_FLAGS(BUGFLAG_WARNING|(flags), ASM_REACHABLE);	\
- 	instrumentation_end();					\
- } while (0)
- 
- #define BUG()							\
- do {								\
- 	instrumentation_begin();				\
--	__BUG_FLAGS(0);						\
-+	__BUG_FLAGS(0, "");					\
- 	unreachable();						\
- } while (0)
- 
+HEAD commit:    fc39fb56917b Merge tag 'jfs-6.13' of github.com:kleikamp/l..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12483930580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1a5c320d506b5745
+dashboard link: https://syzkaller.appspot.com/bug?extid=671e2853f9851d039551
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130abec0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1026d7f7980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c35bd17a0dc5/disk-fc39fb56.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/900f3f8ce653/vmlinux-fc39fb56.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fae5edad1eaf/bzImage-fc39fb56.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+671e2853f9851d039551@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in fill_frame_info net/hsr/hsr_forward.c:709 [inline]
+BUG: KMSAN: uninit-value in hsr_forward_skb+0x9ee/0x3b10 net/hsr/hsr_forward.c:724
+ fill_frame_info net/hsr/hsr_forward.c:709 [inline]
+ hsr_forward_skb+0x9ee/0x3b10 net/hsr/hsr_forward.c:724
+ hsr_dev_xmit+0x2f0/0x350 net/hsr/hsr_device.c:235
+ __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5011 [inline]
+ xmit_one net/core/dev.c:3590 [inline]
+ dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3606
+ __dev_queue_xmit+0x366a/0x57d0 net/core/dev.c:4434
+ dev_queue_xmit include/linux/netdevice.h:3168 [inline]
+ packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
+ packet_snd net/packet/af_packet.c:3146 [inline]
+ packet_sendmsg+0x91ae/0xa6f0 net/packet/af_packet.c:3178
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:726
+ __sys_sendto+0x594/0x750 net/socket.c:2197
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
+ x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4091 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4186
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1323 [inline]
+ alloc_skb_with_frags+0xc8/0xd00 net/core/skbuff.c:6612
+ sock_alloc_send_pskb+0xa81/0xbf0 net/core/sock.c:2881
+ packet_alloc_skb net/packet/af_packet.c:2995 [inline]
+ packet_snd net/packet/af_packet.c:3089 [inline]
+ packet_sendmsg+0x74c6/0xa6f0 net/packet/af_packet.c:3178
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:726
+ __sys_sendto+0x594/0x750 net/socket.c:2197
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0x125/0x1d0 net/socket.c:2200
+ x64_sys_call+0x346a/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:45
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 5821 Comm: syz-executor335 Not tainted 6.12.0-syzkaller-05676-gfc39fb56917b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
