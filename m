@@ -1,92 +1,129 @@
-Return-Path: <linux-kernel+bounces-422141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03D39D9503
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:00:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EBDB165DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:00:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD1B1BFE0C;
-	Tue, 26 Nov 2024 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUiTCEP5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0A59D951A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:06:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B141AA1C7;
-	Tue, 26 Nov 2024 10:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3416B26317
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:02:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D0E1BC9EE;
+	Tue, 26 Nov 2024 10:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YCWzKZc6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863AA18052;
+	Tue, 26 Nov 2024 10:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615239; cv=none; b=h2xYWIyZ1EA5fywKVrARBHWvwRs1LHVu2apzIBEO3u/4W/MGHf++5yfdTusqr4P9/kBjMmPFBSbALruRLzLU2lsJe1QgNfe5SP3B8HcVzSuYH+yTeBiiIggR4FUZ5gfsTfjNk+nw/a8Fbq/CjsMLkLJXj6KksGKEZB+FRd6DJ/U=
+	t=1732615317; cv=none; b=i3iQAv2wuBvLNh8AG/f9QCwgupnjt09vOnN9WPKWATL/XS17yXDCRkDGeXUm69b2vg1Kr6E0+JDMlsZ31pJS06lFqEG9jINbzcN0dkwOnswZabpyORpC43L5xE4HNm1xDn9gtKMTPVJSEnOjUCZbuB8HYe0DCi/OpC8NYP+dSO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615239; c=relaxed/simple;
-	bh=zjJxTzYmbA4PD3jtrZYRkLj4BSVO+DgQZ2QluOPMmjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ggb0AVXT6vYwDASD8eGoJhHw9zmyTEw/r7SzMlvUIlQIkCGrNM2P0kcc8LA71nBjQiMoUzKUPDKC6OJwl7szMzmyG4Tew4un/nQ3j/62K+oatIn41+b25N8mvmrDgGdQPsF7risydr1AWemghSv5Q5F1MC/67QYQLnrAMGC4XKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUiTCEP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F71C4CECF;
-	Tue, 26 Nov 2024 10:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732615238;
-	bh=zjJxTzYmbA4PD3jtrZYRkLj4BSVO+DgQZ2QluOPMmjc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mUiTCEP5TODWV1tB1sNomcw3JzamMoAw8AeZNLO0Rw0YIEhOwlvfG/UD2WA3IAeQ3
-	 znjZ2Q1q1nzdpgE194DoHxqDbefC3T4jyJedOlpV8iVVFan6KoLESMlTpbn2SkO4NF
-	 I3fXpFVVKW9n2VE0gVpk3nHv/njwmKGts0zNS/qFe+N9luJS8S+5xucz2rtvURIyLV
-	 iutJd4BguWtfYhcZfZf7kOvCqqFJUNePFEhVakzBIZLViGbKyAXafym65hROoHJFTW
-	 EUA4Y8qrRzk61gPzqYjWWOBiIIgKwLwlKsB1tEVtB7rjWXNBctrl+ImvQOJddX9A16
-	 +v1VB6MMjuJtg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	adobriyan@gmail.com
-Subject: Re: [PATCH] fs: fix proc_handler for sysctl_nr_open
-Date: Tue, 26 Nov 2024 11:00:24 +0100
-Message-ID: <20241126-weitschuss-jawohl-122aa4ed31d3@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241124034636.325337-1-alexjlzheng@tencent.com>
-References: <20241124034636.325337-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1732615317; c=relaxed/simple;
+	bh=4Jb0ttyJsI1EWBp+8DC3RHDoQ0nIAAZKrCWsBCsVcs0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ms0YZcyFKVU6cioFxtHRMruQfWVqMj1hn1HE066WGbetqITRI9heT8CoVOkm2Nmqk5tbX5sEGLijjLAip73gfrXfIAudWDJ6bRuZ8jQtksCwqMZoy2Byj1ltqz+Kb/OcdRsWa3C1+o+2GfoMm/rOVqdlpIMABKPW23Tk7TLc+Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YCWzKZc6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APLwvFk018283;
+	Tue, 26 Nov 2024 10:01:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=RPD/df3gmCnndHiCN5R9rY
+	ucR7QClZhtnjHTvVNgpA8=; b=YCWzKZc6G5+VQl7ETCs7FXEGn8v4iY2GFn/vKG
+	pft0kgFIgPN4k6MH5YpSrhkwbtXX46YAUiCHJDlzEdwqo6H0yPMy4EAk+9KGiMWZ
+	obykTsOEP09OH+0ZcU4TDDB3R5wMF8o8xiDWmy9ZFJbcnTCgk0ybpkusKUGFIo85
+	PIVnj4KIHs054Zr2qnc+Q4/HUPnoHMFwRkPWsC0Zv2I7xGn8oDobgIfo2fJh3amh
+	fqYO+ynlaa9b72oUIzOMvKI8FzN0uKtF5RyoPHT8EsnQfvJ/XBgSWr1n3bLTZZHT
+	rnO1JjX28YIk0D/iyYXntxxRKqyg9ww+lk2vcOgtY8GGlmGA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336cfqr1x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 10:01:50 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQA1nkd006536
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 10:01:49 GMT
+Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 26 Nov 2024 02:01:43 -0800
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: [PATCH v4 0/2] media: qcom: camss: Re-structure camss_link_entities 
+Date: Tue, 26 Nov 2024 15:31:24 +0530
+Message-ID: <20241126100126.2743795-1-quic_vikramsa@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=975; i=brauner@kernel.org; h=from:subject:message-id; bh=zjJxTzYmbA4PD3jtrZYRkLj4BSVO+DgQZ2QluOPMmjc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7zrFvseB1rT6XebC1YVteSyPr1cWXSlcqZaz1Nf1re Ci4NX9ORykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESqXzL8MyhR+nJZTKTJ0TO+ p5tpovzR2z+VrY/kTLm6MSawa55kEiPDc5b2qJNznnuWeTrO+/k2Vnuny7X3rx3EL4WHsJ+eLHC SCQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9OABl63SUQxaIJwvqB2QgUfWS8UdKnjU
+X-Proofpoint-ORIG-GUID: 9OABl63SUQxaIJwvqB2QgUfWS8UdKnjU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=860 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411260079
 
-On Sun, 24 Nov 2024 11:46:36 +0800, Jinliang Zheng wrote:
-> Use proc_douintvec_minmax() instead of proc_dointvec_minmax() to handle
-> sysctl_nr_open, because its data type is unsigned int, not int.
-> 
-> 
+Refactor the camss_link_entities function by breaking it down into
+three distinct functions. Each function will handle the linking of
+a specific entity separately.
+SC7280 and later targets mandates for 1:1 linking for csid -> vfe.
+i.e. csid0 can be mapped to vfe0 only.
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+Changes in V4:
+- removed null check from camss_link_err.
+- Link to v3: https://lore.kernel.org/lkml/20241125103457.1970608-3-quic_vikramsa@quicinc.com/
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Changes in V3:
+- Broke down the change in 2 patches. first one to functionally
+decompose link error message. second to restrcture the link
+function.
+- Removed the declarion of camss_link_error from header file.
+- Link to v2: https://lore.kernel.org/linux-arm-msm/20241112133846.2397017-1-quic_vikramsa@quicinc.com/
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Changes in V2:
+- Declared variables in reverse christmas tree order.
+- Functionally decomposed link error message.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20241111173845.1773553-1-quic_vikramsa@quicinc.com/ 
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+  To: Robert Foss <rfoss@kernel.org>
+  To: Todor Tomov <todor.too@gmail.com>
+  To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+  Cc: linux-media@vger.kernel.org
+  Cc: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
+Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-[1/1] fs: fix proc_handler for sysctl_nr_open
-      https://git.kernel.org/vfs/vfs/c/d6528c80de02
+
+Vikram Sharma (2):
+  media: qcom: camss: reducing the repitious error message string
+  media: qcom: camss: Restructure camss_link_entities
+
+ drivers/media/platform/qcom/camss/camss.c | 193 ++++++++++++++--------
+ 1 file changed, 128 insertions(+), 65 deletions(-)
+
+-- 
+2.25.1
+
 
