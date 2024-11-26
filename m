@@ -1,238 +1,221 @@
-Return-Path: <linux-kernel+bounces-421994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78B69D9303
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:03:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7AF9D9307
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:05:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6605A165E7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:04:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF67B1991C1;
+	Tue, 26 Nov 2024 08:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="WWtHciXm"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54CDBB24A89
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:03:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9521B190072;
-	Tue, 26 Nov 2024 08:03:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64664143748
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732608185; cv=none; b=jOzVm880XSdjAR+v8BfDJ7Iq9gvYj12P8IXazGrk7hSzSEucFuOWVl3pG6Sz43e0oFfMHXLUS1rx61Enp7YJ1pE3yjwl0WnMk76bLqmuj74vFpY3Kc5O6IO5SBWtRuczzGWGeqnMc+hoh9XKzk82dVj1HVea3BU6hFYLYzr/K5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732608185; c=relaxed/simple;
-	bh=rgQRTlp5HJ8EycX45gDQvugfetWO31DEQjd3014jrDQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZCBV4MxSRNdR5RhB5uHMYq+dDPzhtcw4qym3aanPd3vaaroXta4pLbhNjWblEshVKHKzNJSWc6zaqyZvy2VSDJVNXiQrGRr2sZvcohumBjxNvM9NHvYoqe2LbTW7HrE12oU7NWSFppVQd9sIxpqFu/SO39AsmNw5CdtIsStl4/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a0ca771so37331145ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:03:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732608182; x=1733212982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/CB/cpl92LzEHbPaYsTh/uURIg4ljI7Sokgz4uTg08=;
-        b=fQwDGeQ8WYrEiqDDYg/VpzDOgZOHWxfrCxQK1TZaBHkCn9Tt/cGBMN5pe9KCvR7b+V
-         wdld91bANHWyOmfG3HhHvxAlEpaTG8PiwKcI4LCjS5C9PabtXKqJaP/Be3Iiwg7PhilD
-         LDNfHGkfJbJ+w5TA6mxWG3Og20OL+PhlNrM38XYQNV/Ve0W2Gyc5QoX8Muj0t2xcjJrq
-         qf/OHsxQ49tH9REU30zJYf9k8b2cahczeocKDTzASBhWuGg6A7dEKgog7wzcqtDJXP5N
-         g+f9F6qps4nwPtbo2HzCQH0OLaAAk4Jy3IXvIEevBZnO3m4BjNqm4RhzNxhmIWPk7wqf
-         Xgig==
-X-Forwarded-Encrypted: i=1; AJvYcCUKjmUJLcDX7q5zV0LBcwliUGs1+L1dKQJQ0hpzqHb59GWFG+S0OJAKztGQUhDlCh6nZ4wIxEByLUgRf6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvn5hq75Lm2yPC7gU42+5ZmQAYgmGnFMRx/FwpsrFwzxMtr4ey
-	feFEeZ0INGyCBLe3xR5ZfddV9IxQDl05PdJwyM+679MMnfdYPX9iR1YFBJNZa1h9TBB5YZ/aLX4
-	1A+dFBXfBGQnh8BDJaF+BUkOaUXWHvXv47bmM2aJ+oFJo6rMZIPSbgIE=
-X-Google-Smtp-Source: AGHT+IEvRMG2ifwsTfzj4SSD+fii4f3iRe9c65vDVUznt8I7+8JiR3AO9qz4X2f6eJIq1zqlbcjvwDk8vjJhrQ7+9NLquzUIn6bC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2598156F5D;
+	Tue, 26 Nov 2024 08:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732608292; cv=pass; b=uLm7StrYeoX7yn/XwWgWjQmhaWcbe4Un96OBj0OqUwZHnDs2AY+NZbCmLbB/geYOSRbp4g+YGxc+s480+LpV3xAHLuFEaHnMGm93hvg3STfcyAMcPaDWKAXKBbx1aazJhk2kCZRodHV4r1ACbnoagieM7QtXPShlctaW+J8NTCA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732608292; c=relaxed/simple;
+	bh=uPjuZD0WxVaKd84sycXdBP3a/7AXiaWanBS3NX0DSZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2uRuPauQf9VfKBLvCzGlbfFpIkqnamMV3zCZxiwyfwIuPUYnVRZeN1J+ViCZjv8h4+SZigA0CEP8p63x50xPs3yV2nI8WBBXP8PwaOjhLVcMPQA7uiCA4WNCZIMErvzQpqHb+yctWe/YwZ+yMoxYT0MTdmAgxAn5zOECu80HrI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=WWtHciXm; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732608265; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UvvLFPJqE1oeeNGaBSnKujv4XjJ/NfXb3AOu0V2VL2pxeg0XRF2kpKyu3L3IF03Z2Vc114osM7k+pfS79zqhZH95p45U0Q1NkCeiO9W1M6LgumK3+r/Zxf6uYb5cc0bmGrj8X+JS+p8RE8FrMzSQ5rYJGABTu5cCRQ9Y+GgACGw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732608265; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oyeX0uBYtM9HvUPxJZMO7niMsetQIUIDkY6DvJRVK/c=; 
+	b=oJ5cb4LwlJ8pB+OSP9a1Bd8MWFUH8eqbbszFybu4zo2IQlwGGEA7T9dHzjWUGo2LFHLObzPQ11VLRYbOUSciJxXlZOtKG8YLhfaMkmVkzyCBFkMIBQEkDOni3CIMunkchizdpIsgSj6mLyEf0rK0BF4qU5qeFLvujhH7ea/JR7M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732608265;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=oyeX0uBYtM9HvUPxJZMO7niMsetQIUIDkY6DvJRVK/c=;
+	b=WWtHciXmaATXFOS5oxEkABTQix2ArX5vRwxb80Ig5p/WqQl8B8lViIt5m/AKq3bp
+	Kjox92J1a3KJ51ZGpX2zIqSVRatA+2E807R4OP007PAmnPn6jzSbbc36gRGtVqKt9v0
+	fzxCJU+NeG8oyI4l9hCHZ5PUk1NAHA4wIUiR+DA8=
+Received: by mx.zohomail.com with SMTPS id 1732608259305773.6767418297189;
+	Tue, 26 Nov 2024 00:04:19 -0800 (PST)
+Date: Tue, 26 Nov 2024 09:04:13 +0100
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: =?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Nathan Hebert <nhebert@chromium.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Hsin-Yi Wang <hsinyi@chromium.org>,
+	Fritz Koenig <frkoenig@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v7 1/5] media: mediatek: vcodec: support manual request
+ completion
+Message-ID: <20241126080413.kr7jty7oz3ylfxsu@basti-XPS-13-9310>
+References: <20241116031724.15694-1-yunfei.dong@mediatek.com>
+ <20241116031724.15694-2-yunfei.dong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1524:b0:3a7:87f2:b00e with SMTP id
- e9e14a558f8ab-3a79af7b337mr159748145ab.19.1732608182474; Tue, 26 Nov 2024
- 00:03:02 -0800 (PST)
-Date: Tue, 26 Nov 2024 00:03:02 -0800
-In-Reply-To: <tencent_5ED3752374297923ADA44E776F777CC6C005@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674580b6.050a0220.1286eb.0012.GAE@google.com>
-Subject: Re: [syzbot] [overlayfs?] KASAN: slab-out-of-bounds Read in ovl_inode_upper
-From: syzbot <syzbot+8d1206605b05ca9a0e6a@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241116031724.15694-2-yunfei.dong@mediatek.com>
+X-ZohoMailClient: External
 
-Hello,
+Hey Yunfei,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-out-of-bounds Read in ovl_inode_upper
+On 16.11.2024 11:17, Yunfei Dong wrote:
+>There is only a buffer object for some codecs, the request is marked
+>as completed if the buffer is set to done. Framework will add a new
+>control handler object to the request with latest control values, will
+>get below warning if the driver calling v4l2_ctrl_request_complete to
+>set media request complete again. Using manual request completion to
+>fix this issue.
 
-loop0: detected capacity change from 0 to 2048
-==================================================================
-BUG: KASAN: slab-out-of-bounds in ovl_upperdentry_dereference fs/overlayfs/ovl_entry.h:195 [inline]
-BUG: KASAN: slab-out-of-bounds in ovl_i_dentry_upper fs/overlayfs/util.c:366 [inline]
-BUG: KASAN: slab-out-of-bounds in ovl_inode_upper+0x36/0x80 fs/overlayfs/util.c:386
-Read of size 8 at addr ffff8880728b3f40 by task syz.0.15/6652
+Thank you for working on this.
+I am currently working on this as well, so I would like to ask you for a
+bit more patience, once I am finished with my testing and have a working
+patch I'll send that patch and then we can discuss on the basis of that.
 
-CPU: 0 UID: 0 PID: 6652 Comm: syz.0.15 Not tainted 6.12.0-syzkaller-09567-g7eef7e306d3c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- ovl_upperdentry_dereference fs/overlayfs/ovl_entry.h:195 [inline]
- ovl_i_dentry_upper fs/overlayfs/util.c:366 [inline]
- ovl_inode_upper+0x36/0x80 fs/overlayfs/util.c:386
- ovl_file_accessed+0x7e/0x370 fs/overlayfs/file.c:307
- backing_file_mmap+0x1f8/0x260 fs/backing-file.c:345
- ovl_mmap+0x1c9/0x220 fs/overlayfs/file.c:487
- call_mmap include/linux/fs.h:2183 [inline]
- mmap_file mm/internal.h:124 [inline]
- __mmap_new_file_vma mm/vma.c:2291 [inline]
- __mmap_new_vma mm/vma.c:2355 [inline]
- __mmap_region+0x2204/0x2cd0 mm/vma.c:2456
- mmap_region+0x1d0/0x2c0 mm/mmap.c:1347
- do_mmap+0x8f0/0x1000 mm/mmap.c:496
- vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:580
- ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f111e37e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f111f22f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007f111e535fa0 RCX: 00007f111e37e819
-RDX: 0000000000000000 RSI: 0000000000004000 RDI: 0000000020ffc000
-RBP: 00007f111e3f175e R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000012 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f111e535fa0 R15: 00007ffc35013e98
- </TASK>
+Regards,
+Sebastian
 
-Allocated by task 6652:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_lru_noprof+0x1dd/0x390 mm/slub.c:4172
- nilfs_alloc_inode+0x2e/0x110 fs/nilfs2/super.c:158
- alloc_inode+0x65/0x1a0 fs/inode.c:336
- iget5_locked+0x4a/0xa0 fs/inode.c:1404
- nilfs_iget_locked fs/nilfs2/inode.c:535 [inline]
- nilfs_iget+0x130/0x810 fs/nilfs2/inode.c:544
- nilfs_lookup+0x198/0x210 fs/nilfs2/namei.c:69
- __lookup_slow+0x28c/0x3f0 fs/namei.c:1791
- lookup_slow fs/namei.c:1808 [inline]
- lookup_one_unlocked+0x1a4/0x290 fs/namei.c:2966
- ovl_lookup_positive_unlocked fs/overlayfs/namei.c:210 [inline]
- ovl_lookup_single+0x200/0xbd0 fs/overlayfs/namei.c:240
- ovl_lookup_layer+0x417/0x510 fs/overlayfs/namei.c:333
- ovl_lookup+0xcf7/0x2a60 fs/overlayfs/namei.c:1124
- lookup_open fs/namei.c:3627 [inline]
- open_last_lookups fs/namei.c:3748 [inline]
- path_openat+0x11a7/0x3590 fs/namei.c:3984
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_open fs/open.c:1425 [inline]
- __se_sys_open fs/open.c:1421 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1421
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880728b3960
- which belongs to the cache nilfs2_inode_cache of size 1504
-The buggy address is located 0 bytes to the right of
- allocated 1504-byte region [ffff8880728b3960, ffff8880728b3f40)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x728b0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff88807e515401
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff888140fa9140 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080140014 00000001f5000000 ffff88807e515401
-head: 00fff00000000040 ffff888140fa9140 dead000000000122 0000000000000000
-head: 0000000000000000 0000000080140014 00000001f5000000 ffff88807e515401
-head: 00fff00000000003 ffffea0001ca2c01 ffffffffffffffff 0000000000000000
-head: 0000000700000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 6652, tgid 6651 (syz.0.15), ts 115182091449, free_ts 67917668748
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2408
- allocate_slab+0x5a/0x2f0 mm/slub.c:2574
- new_slab mm/slub.c:2627 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
- __slab_alloc+0x58/0xa0 mm/slub.c:3905
- __slab_alloc_node mm/slub.c:3980 [inline]
- slab_alloc_node mm/slub.c:4141 [inline]
- kmem_cache_alloc_lru_noprof+0x26c/0x390 mm/slub.c:4172
- nilfs_alloc_inode+0x2e/0x110 fs/nilfs2/super.c:158
- alloc_inode+0x65/0x1a0 fs/inode.c:336
- iget5_locked+0x4a/0xa0 fs/inode.c:1404
- nilfs_iget_locked+0x113/0x160 fs/nilfs2/inode.c:535
- nilfs_dat_read+0xc3/0x320 fs/nilfs2/dat.c:511
- nilfs_load_super_root fs/nilfs2/the_nilfs.c:118 [inline]
- load_nilfs+0x56f/0x1090 fs/nilfs2/the_nilfs.c:299
- nilfs_fill_super+0x31e/0x720 fs/nilfs2/super.c:1067
-page last free pid 5825 tgid 5825 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_folios+0xf37/0x1a20 mm/page_alloc.c:2704
- folios_put_refs+0x76c/0x860 mm/swap.c:962
- free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- vms_clear_ptes+0x437/0x530 mm/vma.c:1143
- vms_complete_munmap_vmas+0x210/0x8f0 mm/vma.c:1185
- do_vmi_align_munmap+0x5ef/0x6f0 mm/vma.c:1444
- do_vmi_munmap+0x24e/0x2d0 mm/vma.c:1492
- __vm_munmap+0x24c/0x480 mm/mmap.c:1367
- __do_sys_munmap mm/mmap.c:1384 [inline]
- __se_sys_munmap mm/mmap.c:1381 [inline]
- __x64_sys_munmap+0x60/0x70 mm/mmap.c:1381
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff8880728b3e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff8880728b3e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff8880728b3f00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-                                           ^
- ffff8880728b3f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880728b4000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         7eef7e30 Merge tag 'for-6.13/dm-changes' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a50f5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=929ae6e898cb218f
-dashboard link: https://syzkaller.appspot.com/bug?extid=8d1206605b05ca9a0e6a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+>
+>Workqueue: core-decoder vdec_msg_queue_core_work [mtk_vcodec_dec]
+>pstate: 80c00089 (Nzcv daIf +PAN +UAO -TCO BTYPE=--)
+>pc : media_request_object_bind+0xa8/0x124
+>lr : media_request_object_bind+0x50/0x124
+>sp : ffffffc011393be0
+>x29: ffffffc011393be0 x28: 0000000000000000
+>x27: ffffff890c280248 x26: ffffffe21a71ab88
+>x25: 0000000000000000 x24: ffffff890c280280
+>x23: ffffff890c280280 x22: 00000000fffffff0
+>x21: 0000000000000000 x20: ffffff890260d280
+>x19: ffffff890260d2e8 x18: 0000000000001000
+>x17: 0000000000000400 x16: ffffffe21a4584a0
+>x15: 000000000053361d x14: 0000000000000018
+>x13: 0000000000000004 x12: ffffffa82427d000
+>x11: ffffffe21ac3fce0 x10: 0000000000000001
+>x9 : 0000000000000000 x8 : 0000000000000003
+>x7 : 0000000000000000 x6 : 000000000000003f
+>x5 : 0000000000000040 x4 : ffffff89052e7b98
+>x3 : 0000000000000000 x2 : 0000000000000001
+>x1 : 0000000000000000 x0 : 0000000000000000
+>Call trace:
+> media_request_object_bind+0xa8/0x124
+> v4l2_ctrl_request_bind+0xc4/0x168
+> v4l2_ctrl_request_complete+0x198/0x1f4
+> mtk_vdec_stateless_cap_to_disp+0x58/0x8c [mtk_vcodec_dec 245a7c1e48ff1b2451a50e1dfcb174262b6b462c]
+> vdec_vp9_slice_core_decode+0x1c0/0x268 [mtk_vcodec_dec 245a7c1e48ff1b2451a50e1dfcb174262b6b462c]
+> vdec_msg_queue_core_work+0x60/0x11c [mtk_vcodec_dec 245a7c1e48ff1b2451a50e1dfcb174262b6b462c]
+> process_one_work+0x140/0x480
+> worker_thread+0x12c/0x2f8
+> kthread+0x13c/0x1d8
+> ret_from_fork+0x10/0x30
+>
+>Fixes: 7b182b8d9c852 ("media: mediatek: vcodec: Refactor get and put capture buffer flow")
+>Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+>---
+> .../mediatek/vcodec/decoder/mtk_vcodec_dec.c    |  8 +++++---
+> .../vcodec/decoder/mtk_vcodec_dec_stateless.c   | 17 ++++++++++++++---
+> 2 files changed, 19 insertions(+), 6 deletions(-)
+>
+>diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+>index 98838217b97d..d2146724f5de 100644
+>--- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+>+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
+>@@ -887,10 +887,12 @@ void vb2ops_vdec_stop_streaming(struct vb2_queue *q)
+> 			if (src_buf != &ctx->empty_flush_buf.vb) {
+> 				struct media_request *req =
+> 					src_buf->vb2_buf.req_obj.req;
+>-				v4l2_m2m_buf_done(src_buf,
+>-						VB2_BUF_STATE_ERROR);
+>-				if (req)
+>+
+>+				v4l2_m2m_buf_done(src_buf, VB2_BUF_STATE_ERROR);
+>+				if (req) {
+> 					v4l2_ctrl_request_complete(req, &ctx->ctrl_hdl);
+>+					media_request_manual_complete(req);
+>+				}
+> 			}
+> 		}
+> 		return;
+>diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
+>index afa224da0f41..1e11c08d708f 100644
+>--- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
+>+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
+>@@ -264,8 +264,10 @@ static void mtk_vdec_stateless_cap_to_disp(struct mtk_vcodec_dec_ctx *ctx, int e
+> 		mtk_v4l2_vdec_err(ctx, "dst buffer is NULL");
+> 	}
+>
+>-	if (src_buf_req)
+>+	if (src_buf_req) {
+> 		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
+>+		media_request_manual_complete(src_buf_req);
+>+	}
+> }
+>
+> static struct vdec_fb *vdec_get_cap_buffer(struct mtk_vcodec_dec_ctx *ctx)
+>@@ -308,6 +310,7 @@ static void vb2ops_vdec_buf_request_complete(struct vb2_buffer *vb)
+> 	struct mtk_vcodec_dec_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+>
+> 	v4l2_ctrl_request_complete(vb->req_obj.req, &ctx->ctrl_hdl);
+>+	media_request_manual_complete(vb->req_obj.req);
+> }
+>
+> static void mtk_vdec_worker(struct work_struct *work)
+>@@ -375,8 +378,10 @@ static void mtk_vdec_worker(struct work_struct *work)
+> 	if (!IS_VDEC_LAT_ARCH(dev->vdec_pdata->hw_arch) ||
+> 	    ctx->current_codec == V4L2_PIX_FMT_VP8_FRAME) {
+> 		v4l2_m2m_buf_done_and_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx, state);
+>-		if (src_buf_req)
+>+		if (src_buf_req) {
+> 			v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
+>+			media_request_manual_complete(src_buf_req);
+>+		}
+> 	} else {
+> 		if (ret != -EAGAIN) {
+> 			v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
+>@@ -731,9 +736,15 @@ static int fops_media_request_validate(struct media_request *mreq)
+> 	return vb2_request_validate(mreq);
+> }
+>
+>+static void fops_media_request_queue(struct media_request *req)
+>+{
+>+	media_request_mark_manual_completion(req);
+>+	v4l2_m2m_request_queue(req);
+>+}
+>+
+> const struct media_device_ops mtk_vcodec_media_ops = {
+> 	.req_validate	= fops_media_request_validate,
+>-	.req_queue	= v4l2_m2m_request_queue,
+>+	.req_queue	= fops_media_request_queue,
+> };
+>
+> static void mtk_vcodec_add_formats(unsigned int fourcc,
+>-- 
+>2.46.0
+>
+>
 
