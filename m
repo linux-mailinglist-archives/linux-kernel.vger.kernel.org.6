@@ -1,194 +1,150 @@
-Return-Path: <linux-kernel+bounces-422287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818E99D971F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:17:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5169D9725
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E0D28353E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C6828320E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34B11CFEB5;
-	Tue, 26 Nov 2024 12:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C431D0B82;
+	Tue, 26 Nov 2024 12:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MUGqfbKS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xrm0r4Z9"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DD7DA68;
-	Tue, 26 Nov 2024 12:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426207DA68
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732623423; cv=none; b=S6L6i49VVDOLeLnmyYHRrFMwUS77/31PKiER4MYxVTxIvx2i9SD46q9fDAfGfpyJSsg5AvzqQb0z9Ggu3Xz4SfwmdRZs+rNMIslCFBytHRk1HfPnqqHJyjdIHTU1cQtWsesvYzLAXxaQPDqrme/1pfdfLWnE2s5p9qWkLGGZ5TM=
+	t=1732623508; cv=none; b=VPCRYOHiRpUWELkhC4AyfdpQ+dvEhvCvbJqSd5CBqf02vBZX2VLB6cZ+QChv01vZbzl4nfE1S0XnU1mi8xK0fLNV+rIJpeDkPwWsKSlVdIUUpr5y+v5++sZ8jyL+FgS0mXYLgu8vX5N/+mf00VQmdqlVPQPt51hThfylXiChSHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732623423; c=relaxed/simple;
-	bh=JgtSrzwBoVxAP4G+cC9I6TsNal0IjSkC3+A/SwDW1+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X4no+tVFhy/OZ8U5q/Ge2j5W3xbf0JWZhuDoY9cHWsJxCEQyZqWclLjkwZ8zp5k3y9AOiJ7/UMFkc4tJOQxLkxbd1Uv53QLfW4JG7QffleRSX/V7dn40T4zRIMTNuvBhCTfaY93hk7LixLpLHT9tLPyuU4kffwYIFqPyLTU9gnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MUGqfbKS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2E789526;
-	Tue, 26 Nov 2024 13:16:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732623387;
-	bh=JgtSrzwBoVxAP4G+cC9I6TsNal0IjSkC3+A/SwDW1+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUGqfbKS/W7RwKlDYOrh3waQ7P55mi/Qk8NOGdLmw+fGbVoOfnssLs/pjxzZZzAW+
-	 wXTbojSa5WSuWkbQLDTaSp96fhkU1EGvC4wyRf1riHn1lWhoqoQgnoFVgjbtBTIzqN
-	 lcMLHmK7oW5/j7W3+OrD3mA1k5jiFnXM9M8IBzug=
-Date: Tue, 26 Nov 2024 14:16:40 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v3 2/3] media: i2c: imx219: make HBLANK r/w to allow
- longer exposures
-Message-ID: <20241126121640.GE5461@pendragon.ideasonboard.com>
-References: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
- <20241125-imx219_fixes-v3-2-434fc0b541c8@ideasonboard.com>
+	s=arc-20240116; t=1732623508; c=relaxed/simple;
+	bh=NsOkQNizfy7L6gUL++EqJf4pjp0B+QFz5IwWcPxP0v4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ARnQGj6TG/ry5LlxHPy0Kot1prRZ1urv/Ae+6P9oGkFmAbNSa64xlGFsZ2UERtaGT73JCbBUA6dt60FtTa7VlZGpgLKopHqg/J3HdWPl+h2Szh544pw4Gt39Ubux7l0v9j1eJRNIxm8Jb5kYLo4Sbo7ovqUI9iJYnTk7/Nq+47A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xrm0r4Z9; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e382ed3ee45so4813220276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:18:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732623506; x=1733228306; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1t2bdLsphO4qv8lX65ai1ApZKPwIzSeCFPg10eL8iQU=;
+        b=Xrm0r4Z9plqyu6EMaQ33HU3gA15VUn/9eXRZVDYz+yMWMUDJd/SsM+cLxql5xOWWL3
+         fKNVrQy/iWj2iMb2NlWu2oZRCK9n0EvmOBRVaVciynw9+F8P3AhxnXIEMl2oGtuIK0ge
+         zNu4/NFlYiGx/z19tABn4P7IeThn/WnGB0Vxqx9Tt2OAEahOFtwcw6eF9/nm42OnzRl1
+         zoneEr0r9Pg2fksLuYLRYg/Cxg4ga3uA5NN993xTIoEnV+4vvzL0RRBCiQkhyhM3r0Uq
+         aONtdUf0334ih3xDgu3Vlp2z/5rRICseXyVzMOfA0DMm/t2/5gusABvOAJaBFtgQgp8r
+         +nWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732623506; x=1733228306;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1t2bdLsphO4qv8lX65ai1ApZKPwIzSeCFPg10eL8iQU=;
+        b=R6FST7Y88AyGnOjctV9gJIUy6AjLh3eHh1NUcDoxZT/YLF7qmGpppr6O5z5d3uhcpl
+         lqKh2Pg+MXLYOka5t+dkkInEKMdcBp5oJx8sUg1v31l8yduhYUr26g5NxVxdl5alGLk9
+         2oCdsAToii+527hC03HP8h3xFevwFhv2JsAp+lnplKm2L52RwYDSJzAgEr2d0YVEk17t
+         fSpMi+0gQzO2L4uqkmGTh9U880j3mKr8sNxq76FbsDb6dLOOEWPapbld5ZWWg/IFaUK2
+         3ppZETmjrRgVrmqyx6W93/abNjwA0Bp4aeBthk/FPJ1K8TIgrfrFiwTBQHHmA79g7+s4
+         abdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnQCr7/U0i/aLBvlXtBJDoXwBBnP0z91qd8CC/HlE1Vy2xcqyCzVCjkUlTfkw+A+TfNjYcAvC5GuA3rZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxce8ciRrByDdjHeJs+raNTFYFFH1GVUVoVnfl5S8tBZxuUMyUj
+	t0rvNTqBwYEoxUGQ1kVGmq4bPnahwbe/qeMtPKZydFcAslFhCS316eXgmY6HSmnhic32KmARgIp
+	mstGAyF+0zQIqnyJOaM/aG3q8V7AL1iA/NP2suwHAHwTYEyH7
+X-Gm-Gg: ASbGncsi6o4wE766ZyYsVaGsNS7V3VpUxI35EPRgu1Eh96mDE7pwiDR1QhiXH1YoTeY
+	xMRYHZTWqRweGnWeoNKr4vXfP+vOeK1Qa
+X-Google-Smtp-Source: AGHT+IGd5+wBDRxy/P2XFJDCWgoDYm0J6RIEhVEBraMx8w2/LeSUu3keiz9cNbvZe3rDWYJygxSUe3J10dUdOJanJ80=
+X-Received: by 2002:a05:6902:310b:b0:e38:8ea6:2abf with SMTP id
+ 3f1490d57ef6-e38f8c05130mr12064188276.46.1732623506153; Tue, 26 Nov 2024
+ 04:18:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241125-imx219_fixes-v3-2-434fc0b541c8@ideasonboard.com>
+References: <20241125122446.18684-1-ulf.hansson@linaro.org> <113cb538-f337-464e-9854-3a6dcb5b95e6@intel.com>
+In-Reply-To: <113cb538-f337-464e-9854-3a6dcb5b95e6@intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 26 Nov 2024 13:17:50 +0100
+Message-ID: <CAPDyKFowPmNKDhn2Mb8QCGkO1cC1jkdHbMk94fxAur2D1fXqZA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Further prevent card detect during shutdown
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, Anthony Pighin <anthony.pighin@nokia.com>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 25, 2024 at 08:36:26PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> 
-> The HBLANK control was read-only, and always configured such
-> that the sensor HTS register was 3448. This limited the maximum
-> exposure time that could be achieved to around 1.26 secs.
-> 
-> Make HBLANK read/write so that the line time can be extended,
-> and thereby allow longer exposures (and slower frame rates).
-> Retain the overall HTS setting when changing modes rather than
-> resetting it to a default.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx219.c | 37 ++++++++++++++++++++++++-------------
->  1 file changed, 24 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index f98aad74fe584a18e2fe7126f92bf294762a54e3..970e6362d0ae3a9078daf337155e83d637bc1ca1 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -76,8 +76,10 @@
->  
->  #define IMX219_VBLANK_MIN		32
->  
-> -/* HBLANK control - read only */
-> -#define IMX219_PPL_DEFAULT		3448
-> +/* HBLANK control range */
+On Tue, 26 Nov 2024 at 12:57, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 25/11/24 14:24, Ulf Hansson wrote:
+> > Disabling card detect from the host's ->shutdown_pre() callback turned out
+> > to not be the complete solution. More precisely, beyond the point when the
+> > mmc_bus->shutdown() has been called, to gracefully power off the card, we
+> > need to prevent card detect. Otherwise the mmc_rescan work may poll for the
+> > card with a CMD13, to see if it's still alive, which then will fail and
+> > hang as the card has already been powered off.
+> >
+> > To fix this problem, let's disable mmc_rescan prior to power off the card
+> > during shutdown.
+> >
+> > Reported-by: Anthony Pighin <anthony.pighin@nokia.com>
+>
+> Could add a closes tag here
 
-Just drop the comment, and drop the blank lines, this belongs to the
-"V_TIMING internal" section.
+Good point, I will add it when applying!
 
-> +#define IMX219_PPL_MIN			0x0d78
+>
+> > Fixes: 66c915d09b94 ("mmc: core: Disable card detect during shutdown")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Why PPL and not HTS ?
+Thanks!
 
-> +#define IMX219_PPL_MAX			0x7ff0
-> +#define IMX219_REG_HTS			CCI_REG16(0x0162)
+Kind regards
+Uffe
 
-The min/max should go below the register definition.
-
->  
->  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
->  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
-> @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		cci_write(imx219->regmap, IMX219_REG_VTS,
->  			  format->height + ctrl->val, &ret);
->  		break;
-> +	case V4L2_CID_HBLANK:
-> +		cci_write(imx219->regmap, IMX219_REG_HTS,
-> +			  format->width + ctrl->val, &ret);
-> +		break;
->  	case V4L2_CID_TEST_PATTERN_RED:
->  		cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
->  			  ctrl->val, &ret);
-> @@ -496,12 +502,10 @@ static int imx219_init_controls(struct imx219 *imx219)
->  					   V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
->  					   IMX219_VTS_MAX - mode->height, 1,
->  					   mode->vts_def - mode->height);
-> -	hblank = IMX219_PPL_DEFAULT - mode->width;
-> +	hblank = IMX219_PPL_MIN - mode->width;
->  	imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
->  					   V4L2_CID_HBLANK, hblank, hblank,
-
-The minimum and maximum are identical, is this intentional ?
-
->  					   1, hblank);
-> -	if (imx219->hblank)
-> -		imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
->  	exposure_max = mode->vts_def - 4;
->  	exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
->  		exposure_max : IMX219_EXPOSURE_DEFAULT;
-> @@ -817,6 +821,10 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  	struct v4l2_mbus_framefmt *format;
->  	struct v4l2_rect *crop;
->  	unsigned int bin_h, bin_v;
-> +	u32 prev_hts;
-> +
-> +	format = v4l2_subdev_state_get_format(state, 0);
-> +	prev_hts = format->width + imx219->hblank->val;
->  
->  	mode = v4l2_find_nearest_size(supported_modes,
->  				      ARRAY_SIZE(supported_modes),
-> @@ -824,8 +832,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  				      fmt->format.width, fmt->format.height);
->  
->  	imx219_update_pad_format(imx219, mode, &fmt->format, fmt->format.code);
-> -
-> -	format = v4l2_subdev_state_get_format(state, 0);
->  	*format = fmt->format;
->  
->  	/*
-> @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  					 exposure_max, imx219->exposure->step,
->  					 exposure_def);
->  		/*
-> -		 * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
-> -		 * depends on mode->width only, and is not changeble in any
-> -		 * way other than changing the mode.
-> +		 * Retain PPL setting from previous mode so that the
-
-Rename PPL to HTS here too.
-
-> +		 * line time does not change on a mode change.
-> +		 * Limits have to be recomputed as the controls define
-> +		 * the blanking only, so PPL values need to have the
-> +		 * mode width subtracted.
->  		 */
-> -		hblank = IMX219_PPL_DEFAULT - mode->width;
-> -		__v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
-> -					 hblank);
-> +		hblank = prev_hts - mode->width;
-> +		__v4l2_ctrl_modify_range(imx219->hblank,
-> +					 IMX219_PPL_MIN - mode->width,
-> +					 IMX219_PPL_MAX - mode->width,
-> +					 1, IMX219_PPL_MIN - mode->width);
-> +		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
->  	}
->  
->  	return 0;
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+>
+> > ---
+> >  drivers/mmc/core/bus.c  | 2 ++
+> >  drivers/mmc/core/core.c | 3 +++
+> >  2 files changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
+> > index 9283b28bc69f..1cf64e0952fb 100644
+> > --- a/drivers/mmc/core/bus.c
+> > +++ b/drivers/mmc/core/bus.c
+> > @@ -149,6 +149,8 @@ static void mmc_bus_shutdown(struct device *dev)
+> >       if (dev->driver && drv->shutdown)
+> >               drv->shutdown(card);
+> >
+> > +     __mmc_stop_host(host);
+> > +
+> >       if (host->bus_ops->shutdown) {
+> >               ret = host->bus_ops->shutdown(host);
+> >               if (ret)
+> > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> > index a499f3c59de5..d996d39c0d6f 100644
+> > --- a/drivers/mmc/core/core.c
+> > +++ b/drivers/mmc/core/core.c
+> > @@ -2335,6 +2335,9 @@ void mmc_start_host(struct mmc_host *host)
+> >
+> >  void __mmc_stop_host(struct mmc_host *host)
+> >  {
+> > +     if (host->rescan_disable)
+> > +             return;
+> > +
+> >       if (host->slot.cd_irq >= 0) {
+> >               mmc_gpio_set_cd_wake(host, false);
+> >               disable_irq(host->slot.cd_irq);
+>
 
