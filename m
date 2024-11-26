@@ -1,175 +1,118 @@
-Return-Path: <linux-kernel+bounces-422232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D489D9644
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:34:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98FB9D964C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E150165840
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719261655FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028751C8FBA;
-	Tue, 26 Nov 2024 11:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C781CEE82;
+	Tue, 26 Nov 2024 11:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="IYjLxIra"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJ3+ifjv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D207E9;
-	Tue, 26 Nov 2024 11:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA911BD9F6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732620879; cv=none; b=hlKbERq7Bdp2QCOzekVY/+6RQ7HSzQ8pRXlwtovUsBa+CDqg0wbaOuird5KMm86LLtjstONAZ4Qj5bTLPEa7Lw1i0i8Naaqj0nAV58vVOvsUfAEaZ/CNky8GWWx93B5io5h+B7iXHb/vUIOMCN/1hYsyDjgTGqwCCyxSalQfJ74=
+	t=1732620940; cv=none; b=nLejPrsXYgTMlTJgPrBLB6YROUaKS5eg+C8O2HFqBHXav2K49C+rZbZ8xyYM/nmXEOHK++BsHCBDbmSjQgAVFqc9H81CTb4qaQShm1wlbsL7BTKNxpbaM10snsFtW9ZKf6vQoHmGm498GTn+Zg3NCwveTUzFaJd3XLlzRZ6TtnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732620879; c=relaxed/simple;
-	bh=4OvW6g/NEl66yAFlswTcYgZc7o5V4hnWLTsy9+wtjLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IO16PsSnfMGw7cYu2cJE64UL1Yk/vDuwQ4mEM3LE3OIGo6bFgrHCyuBKI6MSa9dagi+zh9XskAKGIrZjL1LF4VTDGBu67vsfMhdqgNi0uCkThqj33Dx4Q5MLHhGgNdTMyzUYzb/WyKi80/X7bW3H66fXZ+p5A4p/jD2p48rHIfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=IYjLxIra; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID; bh=i8aAJG0E0LQ869T/BkdOg6biqlcLfLrnW6kcsgQo+rg=; b=IYjLxI
-	racD1Hfp9/3fmYI4DPBBK6GoSfOG/NV0Du+imWjwCZo/uWJeVZsT7IcGW7b3jGFb/tbXS0HNlVFm9
-	qU7rBvtHbAlmsY/IT/F9UD96NN2oBlZGGhYT1LV50/nodVxCC1dj3NMVSktE/aNLrCd36HQMOdut3
-	uuspr8X6v5lhdg4GmudtZ/S98ai3ZP+VFGPkGLXHl3+wsyGcK+hY9SAnb/Quv+6pdrJlFJUlB4bw6
-	kn2+wX78fU12sVnobvWwFeNbonB5rT7zWueM2LU9QYI87AF8Aay5Am97RMoUYipNZFJ5gFgMk6rOK
-	fWEWYQteYuK5+v1v3I+fQ3YXDbiA==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tFtps-00082H-Nc; Tue, 26 Nov 2024 12:34:28 +0100
-Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tFtpr-0000HD-2M;
-	Tue, 26 Nov 2024 12:34:27 +0100
-Date: Tue, 26 Nov 2024 12:34:26 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
- helper function
-Message-ID: <zmrcuqiyz5gojhusysy7cytluedslqmfgzuslutqeg65iv7ju6@bggk7qbm6eas>
-References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
- <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
- <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
- <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
- <20241126-refreshing-slick-pig-baebab@houat>
+	s=arc-20240116; t=1732620940; c=relaxed/simple;
+	bh=eH53wsMVQPlQ0fmVO0rypqiDRDp+VgRxHjhyYOXvwVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mSC1wiNqz51rbkrfNCaRZW1HvkELp3QsQ5EkHSHu/gkbTBh3ExYmvvj4QMKir1+MYsIjPt81ZFTCxZj1LNA2HN5xwpLyeuuDFSm1hX0/Hc9d2LMxKIx0iAOLj0kKVSEhDmAOj/j/nGvzVzs4ZcaT1XDNQU2Y9p0ay/qtIXLu37U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJ3+ifjv; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732620938; x=1764156938;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=eH53wsMVQPlQ0fmVO0rypqiDRDp+VgRxHjhyYOXvwVM=;
+  b=KJ3+ifjvlNN/MAdGLla0i4wAkzByyMbXaS/NgNcPRZrn5dJzExQmph7u
+   zde6/rWIg/VGlZlSmBHtfSYSSY0muUXbN9K/VOTJAfwY545ZMX/8wwWTO
+   5RdHNZx4uM11gVqF72LEAjsAQq/JMsClCtVcuKiCHMY/pQblIo5TsAZRe
+   9mgZqSit7JRxp+IKR1ojSQS6jsrrwJwTHrYI02qv1DobkWGmEnpc9BX5J
+   0tW0DkBgdn5YdZhhmmRn8PkfBaKm4HvpAar1ySlDU8MTd9il1q5cxQcvd
+   wtKUNdbko9/maCzC7C7riTX7xBEhFdbsBIp1YXUON0k5fKVJE3uOq+v1p
+   g==;
+X-CSE-ConnectionGUID: WG8jCHVnQDSOBDpYTS421w==
+X-CSE-MsgGUID: q+OGXG+3Tmeqs6z7imU+YQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="50183504"
+X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
+   d="scan'208";a="50183504"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:35:37 -0800
+X-CSE-ConnectionGUID: zp5L7RjZTgOSClGGL03bmw==
+X-CSE-MsgGUID: OYt6dTIYTb29yGg8tVcRkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
+   d="scan'208";a="91994898"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 26 Nov 2024 03:35:37 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFtqw-0007Ff-07;
+	Tue, 26 Nov 2024 11:35:34 +0000
+Date: Tue, 26 Nov 2024 19:34:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: include/linux/device.h:381:23: sparse: sparse: incorrect type in
+ return expression (different address spaces)
+Message-ID: <202411261939.0W2NYIG0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241126-refreshing-slick-pig-baebab@houat>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27469/Tue Nov 26 10:58:20 2024)
 
-Hi,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
+commit: f6bb3e9d98c2e8d70587d5ddaf9426ef30d7865c net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
+date:   5 months ago
+config: s390-randconfig-r132-20241126 (https://download.01.org/0day-ci/archive/20241126/202411261939.0W2NYIG0-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241126/202411261939.0W2NYIG0-lkp@intel.com/reproduce)
 
-On Tue, Nov 26, 2024 at 09:38:55AM +0100, Maxime Ripard wrote:
-> Hi,
-> 
-> On Tue, Nov 26, 2024 at 08:36:00AM +0100, Sean Nyekjaer wrote:
-> > On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
-> > > On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
-> > > > Check if the required pixel clock is in within .5% range of the
-> > > > desired pixel clock.
-> > > > This will match the requirement for HDMI where a .5% tolerance is allowed.
-> > > > 
-> > > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > > > ---
-> > > >  drivers/gpu/drm/drm_modes.c | 34 ++++++++++++++++++++++++++++++++++
-> > > >  include/drm/drm_modes.h     |  2 ++
-> > > >  2 files changed, 36 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-> > > > index 6ba167a3346134072d100af0adbbe9b49e970769..4068b904759bf80502efde6e4d977b297f5d5359 100644
-> > > > --- a/drivers/gpu/drm/drm_modes.c
-> > > > +++ b/drivers/gpu/drm/drm_modes.c
-> > > > @@ -1623,6 +1623,40 @@ bool drm_mode_equal_no_clocks_no_stereo(const struct drm_display_mode *mode1,
-> > > >  }
-> > > >  EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
-> > > >  
-> > > > +/**
-> > > > + * drm_mode_validate_mode
-> > > > + * @mode: mode to check
-> > > > + * @rounded_rate: output pixel clock
-> > > > + *
-> > > > + * VESA DMT defines a tolerance of 0.5% on the pixel clock, while the
-> > > > + * CVT spec reuses that tolerance in its examples, so it looks to be a
-> > > > + * good default tolerance for the EDID-based modes. Define it to 5 per
-> > > > + * mille to avoid floating point operations.
-> > > > + *
-> > > > + * Returns:
-> > > > + * The mode status
-> > > > + */
-> > > > +enum drm_mode_status drm_mode_validate_mode(const struct drm_display_mode *mode,
-> > > > +					    unsigned long long rounded_rate)
-> > > > +{
-> > > > +	enum drm_mode_status status;
-> > > > +	unsigned long long rate = mode->clock * 1000;
-> > > > +	unsigned long long lowest, highest;
-> > > > +
-> > > > +	lowest = rate * (1000 - 5);
-> > > > +	do_div(lowest, 1000);
-> > > > +	if (rounded_rate < lowest)
-> > > > +		return MODE_CLOCK_LOW;
-> > > > +
-> > > > +	highest = rate * (1000 + 5);
-> > > > +	do_div(highest, 1000);
-> > > > +	if (rounded_rate > highest)
-> > > > +		return MODE_CLOCK_HIGH;
-> > > > +
-> > > > +	return MODE_OK;
-> > > > +}
-> > > > +EXPORT_SYMBOL(drm_mode_validate_mode);
-> > > 
-> > > Thanks a lot for doing that!
-> > > 
-> > > I wonder about the naming though (and prototype). I doesn't really
-> > > validates a mode, but rather makes sure that a given rate is a good
-> > > approximation of a pixel clock. So maybe something like
-> > > drm_mode_check_pixel_clock?
-> > 
-> > Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
-> > 
-> > Would it make sense to have the pixel clock requirement as a input
-> > parameter? For HDMI it is 0.5%
-> 
-> This code was only used for panels so far. It reuses the same tolerance
-> than HDMI because we couldn't come up with anything better, but it
-> should totally apply to other things.
-> 
-> > and in my case the LVDS panel 10%.
-> 
-> 10% is a lot, and I'm not sure we'll want that. The framerate being
-> anywhere between 54 and 66 fps will trip a lot of applications too.
-> 
-> Why do you need such a big tolerance?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411261939.0W2NYIG0-lkp@intel.com/
 
-I don't need it, it was just from the datasheet for the LVDS panel :)
+sparse warnings: (new ones prefixed by >>)
+   drivers/net/pcs/pcs-xpcs-plat.c: note: in included file:
+>> include/linux/device.h:381:23: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
+   include/linux/device.h:381:23: sparse:     expected void [noderef] __iomem *
+   include/linux/device.h:381:23: sparse:     got void *
 
-> 
-> Maxime
+vim +381 include/linux/device.h
 
-/Sean
+da7c07b1083809 Mark Brown 2023-07-18  376  
+da7c07b1083809 Mark Brown 2023-07-18  377  static inline
+da7c07b1083809 Mark Brown 2023-07-18  378  void __iomem *devm_ioremap_resource(struct device *dev,
+da7c07b1083809 Mark Brown 2023-07-18  379  				    const struct resource *res)
+da7c07b1083809 Mark Brown 2023-07-18  380  {
+da7c07b1083809 Mark Brown 2023-07-18 @381  	return ERR_PTR(-EINVAL);
+da7c07b1083809 Mark Brown 2023-07-18  382  }
+da7c07b1083809 Mark Brown 2023-07-18  383  
+
+:::::: The code at line 381 was first introduced by commit
+:::::: da7c07b1083809888c82522e74370f962fb7685e driver core: Provide stubs for !IOMEM builds
+
+:::::: TO: Mark Brown <broonie@kernel.org>
+:::::: CC: Mark Brown <broonie@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
