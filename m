@@ -1,171 +1,154 @@
-Return-Path: <linux-kernel+bounces-422307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A2F9D976D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:49:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E31F59D9779
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7114285C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F82D285CFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2972D1CEE8A;
-	Tue, 26 Nov 2024 12:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DF31CEE92;
+	Tue, 26 Nov 2024 12:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b20KNGKv"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="ho+hNTOD"
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB357194A66;
+	Tue, 26 Nov 2024 12:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732625514; cv=none; b=UxLxr3ZHZ2dAGJAUZAtTn8MvQ8hKvsPbAC+jjUW04H8anRN8LeiVibJrNU6kjAC6F3YPAyhfFrQbQsnnR9+Y9Aj1i/MKKgf8xHpSRPTckX4vR7L1AsrQQdK9sDnlfl7URWI3w9NmW9MFjbs6csXsx5I0U4+5i+9QG+cWwOZ+3uA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732625514; c=relaxed/simple;
+	bh=8LGlOIUGhQV0u96KZLm1OBFo+UPE9uRQUj6RRD1HUIg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCZJmzI9in5iPiv2ga2b2p+WrCpUFd0yIYt02Ju9+7KgE4QQ1P09ERmoqL5qQqjPwMGyI3ic1ltJxptuuqB7DMClRKgrNrWu8r4IHBEfZk4wkNaj8sIfTAosCgYMObT2uGKPlg7oX96BEaZMwx3Sbwyd2ct1M/FQVK07ZjAw2fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=ho+hNTOD; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by a.mx.secunet.com (Postfix) with ESMTP id 6C412206E9;
+	Tue, 26 Nov 2024 13:51:43 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id lYgrauiUCBbs; Tue, 26 Nov 2024 13:51:42 +0100 (CET)
+Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9EE36C;
-	Tue, 26 Nov 2024 12:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625356; cv=none; b=RXc5BbjSIcVxka9D54dbTOP/NdTr68dqqWiF4NmelXYbACIG3X0D+mxhkcjNre9lyO3ooY7NW5+7MArlLff0+m76nVZDyeLQb/Gm08JRoc66CGEcBMVA5jWBktUCKttC7hyh2Nvwn2ZE8csD8UgpTHHM5XJm8xtLiKOQvIRWx44=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625356; c=relaxed/simple;
-	bh=VUoMqXVLY+GmVKqlO0TpKf0FJrvF6KvhdzOUouz0N/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBtBeQL1E3WnOzIaJKgraXwLmG8rDsLFSgyTJFMflsOFet/6FiaWmxmIMeg7Q+JXF1lOP9Q1wbgepZbgl4CHFvyx3ywDBVMuVZn13SE5u40HG/70yHdd5K/NkRCU2vMZhJqsY3joxPkix2XeKrH6wmhee8K6DT/0YH0UUzZwHtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b20KNGKv; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so2734321e87.0;
-        Tue, 26 Nov 2024 04:49:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732625353; x=1733230153; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=arVq5sYPtBHjzPOt7CSX/eUWHNFhe4Yu0pMFs73XXFc=;
-        b=b20KNGKvaT0M0cznNB5nOBRBUQXvLMT20fOPWbmihLSHqVLqBDCjh4PmEeTNGcweqd
-         kGES+YRYm5zYBVNad0j2T4qiaV8+RI/nr7OKlNe2ADerbVJeu/4gj/UjCocBJAjpDFW9
-         itzhhvnYaXuy/QVncyIM4Uuys2N1Cj4ugt+8sWjx7NQDgljOVZm1BUKohulHzRhe9caF
-         HAqLRWL6ZOJn6Fh3PQQl5uztZPCACCTOvd6MVG5p4aFl5RH+BLRZ7EnsMnZlLLu+kykX
-         bMkoaEf/N1njLdf9IN/pjw31EMFCsXkjxjO4nvNTPUKGY86ZHV4Wp2OwepR/qC9kOiqq
-         ZthA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732625353; x=1733230153;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=arVq5sYPtBHjzPOt7CSX/eUWHNFhe4Yu0pMFs73XXFc=;
-        b=Gjxc0pbf7QWOWkJntiXMtuSES+kUbxJCW3D2mqr9M99bPa5Vm+sLMHQT8eY6x2CTfo
-         CQoL+Fxt4KcHCGLTPxAEl0XabtNevOlmd1dpvYCNcGq+Jt4xXi0pl83B6gC1210dLksD
-         z2kL4u5PagiCPLVrT69DizzQVgrHUX1osB1UlQvq5Xbrv4zmIcatMl4os6FfFe2nzs16
-         S2nJjG/AsZLEbAoXsZCz+hsgDP18pmkOMaq7ifAHyNLuS9ZwcPFgmlAzEaBtsIhG0yh+
-         8eqXVt/DbuO3upKHBgdzqJUC7kogZVcRvnOX7bOk7X2E5OA/RtSsh6AGSWReMky3tZU0
-         n3nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6A0s9NKQ8jxdbhSAOKgT/trffxDyzmL1Igp61R+7c5Y2dkJZtNqOwmBIWuMRcQuiIvpmtQwg0SkcgW/E1@vger.kernel.org, AJvYcCWlsZ1FYZDoXHiECtQs6/NVdnuoyv+yYJ1MTcUX30+kQAwAIoAHpQltDNZInXoUOt3fn+BKzKXLvVsKCdDy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv44NCwrGkgiPFbhIyC1OVnygqsooA1EeFYBsEg05aEm2tjOjs
-	5Xlk3cyCLlcrntTztfDiEgHaWOG+/G7HVOtsw7i62PWsDkVQ6aOKB01i7EbO
-X-Gm-Gg: ASbGncstkfTc28YFUhuz68o4C8xkX61cIzWTubcIUBrJqP+2U5HVo+suTdZjyrM9qan
-	G9HdNFdZ8Jr+80rpu9PTk8X8F2t57UUYm6lDgWS5NlsixSSXk3h8I6BMcZ3Htm6lgZcAvoa3TyN
-	zZZc0q/9Xyq1MARou54IUfyHK5gFqlHuhyk8ElIIgS+sVLBEYg9+F8enfga65U2pY8WHDrxIl+0
-	pX5gEc0XCQHXwZq55NKO0T55Dd3A8ijEUw7fDXKsuHZzD5hYveDSQz/p01fdGEIzn08PLQhL4HU
-	vx9+mwpq
-X-Google-Smtp-Source: AGHT+IFVpS4FmtsdmagtZddlo7pfwq3eSDGmyAJK0KYwfojtIIFI/sDvVOq140czgbRRX3zvdTroeA==
-X-Received: by 2002:a05:6512:3b06:b0:53d:d06c:cdf8 with SMTP id 2adb3069b0e04-53de8800269mr1074256e87.1.1732625352549;
-        Tue, 26 Nov 2024 04:49:12 -0800 (PST)
-Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2497e60sm2004772e87.256.2024.11.26.04.49.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 04:49:11 -0800 (PST)
-Message-ID: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
-Date: Tue, 26 Nov 2024 13:49:09 +0100
+	by a.mx.secunet.com (Postfix) with ESMTPS id CF749201AE;
+	Tue, 26 Nov 2024 13:51:42 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com CF749201AE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1732625502;
+	bh=Z5mXv8QGvkVhiIVXeNoGTPBJEBa77o+JeFI9zmSaylI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=ho+hNTODkgxwtwi0boZnCwU3BbIwM91nzdEaQyxMrAX/dSgBMKDkwSUCelfKcdvHj
+	 00zq4GQYOkxsTm28Sza3XAAmN5E80r9a3CbL1jDtUfo/f22JWNbLRHVbjVNrlOLE1l
+	 nZjffMsVhWmb9r0xUyiyTxNBRQHUNwaVziHQRHsuh9ugi2bT0ReqbL8EJJmgG3E669
+	 sH0Z3V/WPQg0lkcUfDCvDerl52SDJJom3GuvwzRvDY7lVW+meJuySdLiTixnvuAdZp
+	 lh2pfAT7/6i2OmrlV2z9ZWRU/RWip35bejeNZRWx4DfjZj3yOjOse7S+JWvECts7+3
+	 85P1azXhgCeFw==
+Received: from mbx-essen-02.secunet.de (10.53.40.198) by
+ cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 26 Nov 2024 13:51:42 +0100
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
+ (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Nov
+ 2024 13:51:42 +0100
+Received: by gauss2.secunet.de (Postfix, from userid 1000)
+	id 41F183184178; Tue, 26 Nov 2024 13:51:42 +0100 (CET)
+Date: Tue, 26 Nov 2024 13:51:42 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Ilia Lin <ilia.lin@kernel.org>
+CC: <leonro@nvidia.com>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<dsahern@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfrm: Add pre-encap fragmentation for packet offload
+Message-ID: <Z0XEXqe38O5lcsq5@gauss3.secunet.de>
+References: <20241124093531.3783434-1-ilia.lin@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-To: Jan Kara <jack@suse.cz>
-Cc: Philippe Troin <phil@fifi.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
-Content-Language: en-US
-From: Anders Blomdell <anders.blomdell@gmail.com>
-In-Reply-To: <20241126103719.bvd2umwarh26pmb3@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241124093531.3783434-1-ilia.lin@kernel.org>
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ mbx-essen-02.secunet.de (10.53.40.198)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 
-
-
-On 2024-11-26 11:37, Jan Kara wrote:
-> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
->> On 2024-11-26 02:48, Philippe Troin wrote:
->>> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
->>>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
->>>> we got terrible performance (lots of nfs: server x.x.x.x not
->>>> responding).
->>>> What triggered this problem was virtual machines with NFS-mounted
->>>> qcow2 disks
->>>> that often triggered large readaheads that generates long streaks of
->>>> disk I/O
->>>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
->>>> area of the
->>>> machine.
->>>>
->>>> A git bisect gave the following suspect:
->>>>
->>>> git bisect start
->>>
->>> 8< snip >8
->>>
->>>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
->>>> readahead: properly shorten readahead when falling back to
->>>> do_page_cache_ra()
->>>
->>> Thank you for taking the time to bisect, this issue has been bugging
->>> me, but it's been non-deterministic, and hence hard to bisect.
->>>
->>> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
->>> slightly different setups:
->>>
->>> (1) On machines mounting NFSv3 shared drives. The symptom here is a
->>> "nfs server XXX not responding, still trying" that never recovers
->>> (while the server remains pingable and other NFSv3 volumes from the
->>> hanging server can be mounted).
->>>
->>> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
->>> several minutes) on random I/O. These stalls eventually recover.
->>>
->>> I've built a 6.11.10 kernel with
->>> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
->>> normal (no more NFS hangs, no more VM stalls).
->>>
->> Some printk debugging, seems to indicate that the problem
->> is that the entity 'ra->size - (index - start)' goes
->> negative, which then gets cast to a very large unsigned
->> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
->> bug is still eludes me, though.
+On Sun, Nov 24, 2024 at 11:35:31AM +0200, Ilia Lin wrote:
+> In packet offload mode the raw packets will be sent to the NiC,
+> and will not return to the Network Stack. In event of crossing
+> the MTU size after the encapsulation, the NiC HW may not be
+> able to fragment the final packet.
+> Adding mandatory pre-encapsulation fragmentation for both
+> IPv4 and IPv6, if tunnel mode with packet offload is configured
+> on the state.
 > 
-> Thanks for the report, bisection and debugging! I think I see what's going
-> on. read_pages() can go and reduce ra->size when ->readahead() callback
-> failed to read all folios prepared for reading and apparently that's what
-> happens with NFS and what can lead to negative argument to
-> do_page_cache_ra(). Now at this point I'm of the opinion that updating
-> ra->size / ra->async_size does more harm than good (because those values
-> show *desired* readahead to happen, not exact number of pages read),
-> furthermore it is problematic because ra can be shared by multiple
-> processes and so updates are inherently racy. If we indeed need to store
-> number of read pages, we could do it through ractl which is call-site local
-> and used for communication between readahead generic functions and callers.
-> But I have to do some more history digging and code reading to understand
-> what is using this logic in read_pages().
+> Signed-off-by: Ilia Lin <ilia.lin@kernel.org>
+> ---
+>  net/ipv4/xfrm4_output.c | 31 +++++++++++++++++++++++++++++--
+>  net/ipv6/xfrm6_output.c |  8 ++++++--
+>  2 files changed, 35 insertions(+), 4 deletions(-)
 > 
-> 								Honza
-Good, look forward to a quick revert, and don't forget to CC GKH, so I get kernels recent  that work ASAP.
+> diff --git a/net/ipv4/xfrm4_output.c b/net/ipv4/xfrm4_output.c
+> index 3cff51ba72bb0..a4271e0dd51bb 100644
+> --- a/net/ipv4/xfrm4_output.c
+> +++ b/net/ipv4/xfrm4_output.c
+> @@ -14,17 +14,44 @@
+>  #include <net/xfrm.h>
+>  #include <net/icmp.h>
+>  
+> +static int __xfrm4_output_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
+> +{
+> +	return xfrm_output(sk, skb);
+> +}
+> +
+>  static int __xfrm4_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+>  {
+> -#ifdef CONFIG_NETFILTER
+> -	struct xfrm_state *x = skb_dst(skb)->xfrm;
+> +	struct dst_entry *dst = skb_dst(skb);
+> +	struct xfrm_state *x = dst->xfrm;
+> +	unsigned int mtu;
+> +	bool toobig;
+>  
+> +#ifdef CONFIG_NETFILTER
+>  	if (!x) {
+>  		IPCB(skb)->flags |= IPSKB_REROUTED;
+>  		return dst_output(net, sk, skb);
+>  	}
+>  #endif
+>  
+> +	if (x->props.mode != XFRM_MODE_TUNNEL || x->xso.type != XFRM_DEV_OFFLOAD_PACKET)
+> +		goto skip_frag;
+> +
+> +	mtu = xfrm_state_mtu(x, dst_mtu(skb_dst(skb)));
+> +
+> +	toobig = skb->len > mtu && !skb_is_gso(skb);
+> +
+> +	if (!skb->ignore_df && toobig && skb->sk) {
+> +		xfrm_local_error(skb, mtu);
+> +		kfree_skb(skb);
+> +		return -EMSGSIZE;
+> +	}
+> +
+> +	if (toobig) {
+> +		IPCB(skb)->frag_max_size = mtu;
+> +		return ip_do_fragment(net, sk, skb, __xfrm4_output_finish);
+> +	}
 
-Regards
+This would fragment the packet even if the DF bit is set.
 
-/Anders
-
+Please no further packet offload stuff in generic code.
 
