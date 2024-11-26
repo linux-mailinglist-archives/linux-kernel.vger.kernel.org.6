@@ -1,123 +1,140 @@
-Return-Path: <linux-kernel+bounces-422590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082379D9B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:35:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5871168A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:35:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829481DD9AD;
-	Tue, 26 Nov 2024 16:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R53crlIB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E089D9B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:36:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54861DB53A;
-	Tue, 26 Nov 2024 16:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F56D287412
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:36:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E2F1D90D7;
+	Tue, 26 Nov 2024 16:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RV4SReY5"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7A51DDC1F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732638868; cv=none; b=DTVIFn24G4blmJuGHkgK8EywQC5Z/da048xGGeLQDrGjNtJNMCaQH5nySHD14WD9cuRWEOq9To5MipgBWyszooqXJuco2PjA3YOPaMS7Zhu6m4NYO2gC8tBePqYxBd50P/eFXI5N7o43tdE8hgwOZHFLE3nJf40l3Ge88MfV9Qk=
+	t=1732638880; cv=none; b=M/UiHotjXLkq1MLqutnsEpTfYSG5nhllRMqbjs0pCPAXXZQjv8fSdLanjvrJTPcrInDxJihCoCtin85srGfJRC2cldblRBzKZNJKUTNHLFcKWU/ZVT9rc/CFgEvSvUIFQSrVCEDMt6N0pPNhvI/jPX+jBtMTCJgGtZmK+scjO2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732638868; c=relaxed/simple;
-	bh=h9Mb//jTwhw6dmAjiMzB+Z99YVN1LTkAwMywBD7EGYU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UFZh4npfs8nHoOweu0YqkJNc76RZw9oyEpGmA1dHYpjaMay4jyOI677lNyWVXJSnjmXfBAr7r9xW8Ygp2e0evvM8nA8pXer+PN8U+wB7DZFvOOxv5I1WwteP7eiZo17LlyhODENIRuU0Z4mRfs+at0v29PzZZqHbldUwqhYF6DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R53crlIB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 19122C4CEE3;
-	Tue, 26 Nov 2024 16:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732638866;
-	bh=h9Mb//jTwhw6dmAjiMzB+Z99YVN1LTkAwMywBD7EGYU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=R53crlIBLXpNPoUzF1cfZhqLHGSJhJQQvLwy0xoedGGOpRlJ4kVfNm5Cj4Z76LY00
-	 y0hqHw0N3xobVuaj/xIiziOZb6r8+3RK/E5x27jDh3S2BOoNycrWr1HBiU2qREC2Es
-	 zB07nbSFi9meld1YnrhrKomweAeXxyY6gr7BzFkgAmj7wCuI6NunKs2gDRdKexyT6o
-	 UHFpXkHp+Fnp1XJ35RIwxnCSV5Z1anDTI8fZnKQ0fQ5yL7sAX6Pi8D+3D3STQzHZ7E
-	 km0IoNtZyBQiTGhp+L+n1gcgpfSGdAc/L+o6Ia7D5FUE177tuDaw33faUteP/AfjHT
-	 wSVfI73TTcfOQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA12D65522;
-	Tue, 26 Nov 2024 16:34:26 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Tue, 26 Nov 2024 17:34:24 +0100
-Subject: [PATCH v2 5/5] MAINTAINERS: Add entries for touchbar display
- driver
+	s=arc-20240116; t=1732638880; c=relaxed/simple;
+	bh=TXVf5aghMkk5lLOsaKen0+U62rxPqbqpiZ2RWoN80PY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTL7RHGOo3x58oPHxXjVEElKlThttMU+RbjPc4AYNggPPh2NFW97YRiu2LYN5GAM6ps0RKU4PXzk9FLGeJ88b3vChqgiooSK2udeIkoBbR3BM4vJ7Z8PXTfPMrrjdKiScHbHYjXeA+f8iwZ7jGxa+F/f03yUtvP3eiTW5Rx9ZV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RV4SReY5; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a75eaaab59so22163715ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1732638877; x=1733243677; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O1cIVYaGGiuPjPdvf2AzaRUaWEWvFQN9Etc3wCujg1s=;
+        b=RV4SReY5qpXd50mXEplzBBEklkp+M7lOyQEAsKaUnsvya4J2DR25JpQckCvt5egT7i
+         lbPeJznaUvwDr+DhAjzgTTaOuQalYQF0boNpBO7Tczuzs4nzDHDDzUp1hQ2RgwW/ajSm
+         igQtFnDjllT662m9E3kZ/xYk6S2Dwpu1t0PtI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732638877; x=1733243677;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1cIVYaGGiuPjPdvf2AzaRUaWEWvFQN9Etc3wCujg1s=;
+        b=tpkpnFQX8F1FmglHJyq8SvIGc64sY5bQFw71LJ+re/eskNnkRPAP1DVhABDhIq3WuK
+         IYTVKamBNjP/URgj8f6kq3/l6yQWFtEZnfE8ioGwgE4IUtkyAxpyuTgM2YbkBpBFsPdF
+         AAdkUJEIrSiLRmWKjiEMEdEGrjjxORZ//MkLAS4JfW/2XnaKzQJT3EQXQIlFo3NpfnL6
+         0I8wnVsDC0V7ZaSmmqbtR1+10BLULi8SHtk44wMC9g6JuP1/DMSx7fplqpQoovSyLh1E
+         Oh5vlBMZTSPy3vGaJutpIVFVVhPwCAgpb6AmgkSzHuvzFgog1lTpAGUrW4sJSKQ/3oon
+         Sl3g==
+X-Gm-Message-State: AOJu0YyLHdlrQ7jnCCpa4S6fV+tYDYnItKQNcfDcl86yyrx3DNAKhYS9
+	L50D0FJUMpRaN+6jTeIaAH2LSyiufvPoEqu3sQbr5xPZ7Ze8U+X2xu7LHirzL7M=
+X-Gm-Gg: ASbGncu5PPenJRJjVEv0MMzmZsHCvAeAKorTmqmeVkJods22tkB4k0yRkda5/VZ2vNH
+	sgOFGvRO5IgyAemn6QsYtjWUSYvU0l3ZKLk1jCbJpVjh2tibfoS/aRdPIPs2/ZTC2zlNM0aDjcR
+	tiQ1aeqRNq0l7lxAvnTA2C83et7tuTXJAkd7olQlJqFZJ1CGV3BO6znWVyc1sVLbWOFXihPqK+M
+	CCfseBWZjdlrJc5O5AfoxsFDC/+ZuaqVBLrOUAnbxIraE4B88jDYOc168uokg==
+X-Google-Smtp-Source: AGHT+IF1bM8YOHeyNxWLeWROzQ5WUzpNFonYVXa7+vScq9cJJ0YtMxigQcE6XBhmNeA0DlAeMZ7jug==
+X-Received: by 2002:a05:6e02:1aa6:b0:3a7:c436:cdca with SMTP id e9e14a558f8ab-3a7c436e46dmr5980065ab.6.1732638877456;
+        Tue, 26 Nov 2024 08:34:37 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a79ab86adbsm22540535ab.14.2024.11.26.08.34.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 08:34:37 -0800 (PST)
+Message-ID: <2cff1613-9fd0-4c9e-ad02-970ac8614cec@linuxfoundation.org>
+Date: Tue, 26 Nov 2024 09:34:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] selftests/lam: get_user additions and LAM enabled
+ check
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ shuah@kernel.org, hpa@zytor.com, x86@kernel.org,
+ dave.hansen@linux.intel.com, bp@alien8.de, mingo@redhat.com,
+ tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kirill@shutemov.name, Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1732627541.git.maciej.wieczor-retman@intel.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <cover.1732627541.git.maciej.wieczor-retman@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-adpdrm-v2-5-c90485336c09@gmail.com>
-References: <20241126-adpdrm-v2-0-c90485336c09@gmail.com>
-In-Reply-To: <20241126-adpdrm-v2-0-c90485336c09@gmail.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732638864; l=1377;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=057O2QJ+HomyrdJxEs81SKNbrttf8RRSnPZG4/DJono=;
- b=fsafhQ9T/0iPVL1f2ug/lulQ4LAEiGM8pEMFL6tskRpMzrAEhThtjvm5FUNrO8cFEn+v+D617
- 5KX46QgKejRCPaXEtpWa/PGqCGL9lCoVMHsJYdwzjBkEw2HKJsS1CvH
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+On 11/26/24 06:34, Maciej Wieczor-Retman wrote:
+> Recent change in how get_user() handles pointers [1] has a specific case
+> for LAM. It assigns a different bitmask that's later used to check
+> whether a pointer comes from userland in get_user().
+> 
+> While currently commented out (until LASS [2] is merged into the kernel)
+> it's worth making changes to the LAM selftest ahead of time.
+> 
+> Modify cpu_has_la57() so it provides current paging level information
+> instead of the cpuid one.
+> 
+> Add test case to LAM that utilizes a ioctl (FIOASYNC) syscall which uses
+> get_user() in its implementation. Execute the syscall with differently
+> tagged pointers to verify that valid user pointers are passing through
+> and invalid kernel/non-canonical pointers are not.
+> 
+> Also to avoid unhelpful test failures add a check in main() to skip
+> running tests if LAM was not compiled into the kernel.
+> 
+> Code was tested on a Sierra Forest Xeon machine that's LAM capable. The
+> test was ran without issues with both the LAM lines from [1] untouched
+> and commented out. The test was also ran without issues with LAM_SUP
+> both enabled and disabled.
+> 
+> 4/5 level pagetables code paths were also successfully tested in Simics
+> on a 5-level capable machine.
+> 
+> [1] https://lore.kernel.org/all/20241024013214.129639-1-torvalds@linux-foundation.org/
+> [2] https://lore.kernel.org/all/20241028160917.1380714-1-alexander.shishkin@linux.intel.com/
+> 
+> Maciej Wieczor-Retman (3):
+>    selftests/lam: Move cpu_has_la57() to use cpuinfo flag
+>    selftests/lam: Skip test if LAM is disabled
+>    selftests/lam: Test get_user() LAM pointer handling
+> 
+>   tools/testing/selftests/x86/lam.c | 122 ++++++++++++++++++++++++++++--
+>   1 file changed, 117 insertions(+), 5 deletions(-)
+> 
 
-Add the MAINTAINERS entries for the driver
+Looks good to me. For selftests if it is going through x86 tree.
 
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7f0170977013889ca7c39b17727ba36d32e92dc..9a2fb7cd80e09f24932b91cd33d0cd2b3514b31c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2164,6 +2164,9 @@ F:	Documentation/devicetree/bindings/arm/apple.yaml
- F:	Documentation/devicetree/bindings/arm/apple/*
- F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
- F:	Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
-+F:	Documentation/devicetree/bindings/display/apple,h7-display-pipe-mipi.yaml
-+F:	Documentation/devicetree/bindings/display/apple,h7-display-pipe.yaml
-+F:	Documentation/devicetree/bindings/display/panel/apple,summit.yaml
- F:	Documentation/devicetree/bindings/dma/apple,admac.yaml
- F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
-@@ -2183,6 +2186,8 @@ F:	drivers/bluetooth/hci_bcm4377.c
- F:	drivers/clk/clk-apple-nco.c
- F:	drivers/cpufreq/apple-soc-cpufreq.c
- F:	drivers/dma/apple-admac.c
-+F:	drivers/gpu/drm/adp/
-+F:	drivers/gpu/drm/panel/panel-summit.c
- F:	drivers/pmdomain/apple/
- F:	drivers/i2c/busses/i2c-pasemi-core.c
- F:	drivers/i2c/busses/i2c-pasemi-platform.c
+If you want me to take this through selftest tree, I can do that.
 
--- 
-2.47.1
-
-
+thanks,
+-- Shuah
 
