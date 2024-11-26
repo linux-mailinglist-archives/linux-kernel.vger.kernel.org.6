@@ -1,60 +1,75 @@
-Return-Path: <linux-kernel+bounces-422136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E5A9D94F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:57:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D464D164C2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:57:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E64B1BD9E4;
-	Tue, 26 Nov 2024 09:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivdsSqOk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD04A9D9504
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:00:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB81A3042;
-	Tue, 26 Nov 2024 09:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72D58B2998E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:57:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAD11C4A13;
+	Tue, 26 Nov 2024 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RQTjzqYR"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5F63A268
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615065; cv=none; b=YOGS+AL7IVPHXy0kZyAw2uuFuPQvvDqJuGwtfzqcbf4EfjYj3ETHH6M/dXCLE3VAWuN54fL80LX6kygaGGifm93vB9cyfzQhq5oIKR34SeDci7qi3l25FTjUUiCQHTSGUllmjJ72und42gnwCIHku4E22w5C47WeX4Pykz/IfcI=
+	t=1732615066; cv=none; b=U0sK3Nhm3YQDVyFmuzb8TbLcJjOiGT+kwCRlKx+nnjlxRuPYB+c0dJ8Ivs0t/sZeGf+osf7jexZwnnWZApCN3vu0SvEqhCdw37ZdlzJEtqbPql0yJkKsydD5FGqR2eH/T5Mwy/+R6eY3A3ct4GBG0UKtwWhAWqFgKYEPxg6wY5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615065; c=relaxed/simple;
-	bh=C77GYZf+MMmOa2Q8HzVYnSBsG/ck0v9xBH9rZLhGZdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ohmnol0cHKf3xzriGIw8u0G4MaBxUEJ3mm8FWIr3An5FhwojDnk9quFColyvJ2UL46ckVsRVBCVTab1HO1WVCm3ELT72VWaxAiMHg2ldwWUvCubTD88SQFYSbwoPyNmMo6V/3q9sIOQwG6R9l97vYocvQdld+vK/Lr46aAguDlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivdsSqOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 498D5C4CED2;
-	Tue, 26 Nov 2024 09:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732615065;
-	bh=C77GYZf+MMmOa2Q8HzVYnSBsG/ck0v9xBH9rZLhGZdk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ivdsSqOky2Zy6omW/jxIhPasjEkBEw+VS1nY9KjMyUXbob2KHuXDzcMf/2RY59p1i
-	 HTXTUqmmPmCmhuLNmh6wc4+JMNQETDdw7S/k0ZJecPxOCjHVOqiF+0Q+5GNFsAJgfz
-	 mFB0S6787IxHGCwwKTUcGQstVm52xvUDPLsyE2P5htLDVqO7KoX2qrPJTqesHXejj/
-	 9PLawAeW/Oms4X9L3ofnDiulHCcmJOmopIUiylKnkGI9RTCZLdB0ofPRKezehKI2Uk
-	 SLKmmzxOW7cgNlusy75UfjdnfH27rM3PhCx7Tj384PONgppNEg9aiSyhd25rXLbFc+
-	 266/Muf2ItRBA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/29] cred: rework {override,revert}_creds()
-Date: Tue, 26 Nov 2024 10:57:23 +0100
-Message-ID: <20241126-bedarf-klonen-fa5955090f83@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
-References: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
+	s=arc-20240116; t=1732615066; c=relaxed/simple;
+	bh=EkEuIRKJ+kwix625DNAR61cZ3wXWJ1POlV/hdGwN4lM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lXL2Mqcgy0hbO7M2PjtN6jdPaPt/9QYnSsmnjXkSiZhSoEE4/IMM3tv4azWotsMRD86TvLTwVuSiRM4EAAbHQYj+G366T4BRSF3cDpBSGy8RbNwT8qQj02SfULwdX6uU71G9XnVNLqmctblRNAEbvlJBqGQ/GRvu3v06Og33KDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RQTjzqYR; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21207f0d949so51547145ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:57:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732615064; x=1733219864; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Mk54wWOTxtnUjWD4fc+DJyfim3lSux+/TbFhyd5wc4=;
+        b=RQTjzqYRe4hSTDD6/QN3WDtv0KkAdJ0Wh2MkEpRDFvCgyOMvEEjVJP1pgnaZhwynhI
+         mEQ/hpbHm6ds3rACxG9Ylh0x44KMqS8/rpwM3jRnSQn7Ka6SDXFZJnqEPeSnQGnF+PPX
+         gN5dWINNhQWaLw5iT/me9KNCmZ1Lee0jy/Too=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732615064; x=1733219864;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Mk54wWOTxtnUjWD4fc+DJyfim3lSux+/TbFhyd5wc4=;
+        b=Pn51ft2OkikfIyIqWzeMVog0xiC0B0B0XS/nRq44x3Gpy8xhj0Whu4Io3YPKvEe2SQ
+         KX8OKOkcpG6lcc/UpbzMtE9PSTXASJG5FKkEz+3bDxuXbdGudlxYO5UFFELpC5N9Xs31
+         rAhS4jY/YAXgw9CjLaR2eTwBBJo29G96idTLe6K1ljAULpOSLYlQ6+q07aEUOGo2WiXr
+         CIxsNifqf3HpBPIEZIX9P4vYfzNRCo5tC4IYUZZiXabxPzJZcifl92RrPMWMcU9AEDRx
+         xnFWYaWG0ho4a80byKwLuRC8lhCs9jA/oD78GWwbWhxIhX3oqm9l3keAXbxiInHBWpqu
+         MMYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXH8WkY6P3Z888ZzdnQPYG9g7ZqNCDTRE4W+sbIU1wMqWM5k8EzdR4Xw932DF6SWdL6RvUOjgIbJR2OQw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm8u4B+lqTzE5Y7nHKXcweKccyX9EWN35J2ojxLXQUeCpnmSvt
+	quoamiECnk8RcQorAxZHqenOtZnqIpvb+q/eiC+fOBS9Em/rhu5EagLcsFr9iQ==
+X-Gm-Gg: ASbGncvQJyZFLsuIsTZa0MEJzWeLJ5F9Mem6ju50xwQFRSZGH6jGFHYAAKecAzAiQ9f
+	7QvtiG4HX/kHYZfpmgTNAPDWt7UpQqaFGNGICLdhwKfkK7Gjlcr06DOiqLtUYxlR1WdCiTEsRYW
+	tRN56T75Uo7aARLg8J4kdbTVyvjOoB5o5Kiv8+Q/c0oH5WrATVObdxO4WhBktw9qZDF+9EuFsfR
+	G56F03l+Ep9hxWmAHjOjiDDKJqqv9RLUwBRdlC5HaYIoWVLTUPTuemulJyiV7NMc5rMxtunAuf/
+	vLKgmziNZA==
+X-Google-Smtp-Source: AGHT+IFSDVH3rH4UFp5xBcT+SP0jqNRzEoGUEI6ov6sZL9QTnujK3nAAwyk2B7XeTcH6vPgj3iPXZg==
+X-Received: by 2002:a17:903:228d:b0:211:f335:aba with SMTP id d9443c01a7336-2129f5790edmr273271445ad.31.1732615064355;
+        Tue, 26 Nov 2024 01:57:44 -0800 (PST)
+Received: from yuanhsinte-p620-1.tpe.corp.google.com ([2401:fa00:1:10:a3c8:df68:1f94:539c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db890b7sm80908485ad.9.2024.11.26.01.57.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 01:57:43 -0800 (PST)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Tue, 26 Nov 2024 17:57:40 +0800
+Subject: [PATCH RESEND v4] arm64: dts: mt8183: set DMIC one-wire mode on
+ Damu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,94 +77,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4590; i=brauner@kernel.org; h=from:subject:message-id; bh=C77GYZf+MMmOa2Q8HzVYnSBsG/ck0v9xBH9rZLhGZdk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7zu43UPRby77Zk9Xnn1S9rn+D5eZlhjUT6+t8TS++8 trwVe9SRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQ+HGNkuH8yaNnn0EXJHh/N N+zZX7vEReB5MlPPwj2bulVajrQcdmdk+MoU2bF/XnXV+xqeyakOt/jbr62959051fniS3Vj1bu qPAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241126-damu-v4-1-e746eec2cb52@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAJObRWcC/72PMW/DIBSE/0rEXCoeYAyZMjRrh3asMoB5xAw2E
+ U5oosj/vcRD1ahZunS8p7vv3V3JhDniRNarK8lY4hTTWIV8WpGut+MeafRVE864BMYM9XY4USs
+ CD0K2WjJDqvWQMcTzgvkgb9v37esL2dV7yGmgxz6j/YYwA4ymEelnzEgLp0C5c5L5xoou6E3X1
+ 0w8Dc8p72/oPk7HlC9LwSKWB/ddiqgI4EZ2GkFpbu4RtxpFPsrJmmu1cS04rxqufr3+Fz+A+OF
+ XBsApo4B5/2BH8/cdu3mevwCVSffi5gEAAA==
+X-Change-ID: 20241009-damu-a3f2f3478409
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-2a633
 
-On Mon, 25 Nov 2024 15:09:56 +0100, Christian Brauner wrote:
-> For the v6.13 cycle we switched overlayfs to a variant of
-> override_creds() that doesn't take an extra reference. To this end I
-> suggested introducing {override,revert}_creds_light() which overlayfs
-> could use.
-> 
-> This seems to work rather well. This series follow Linus advice and
-> unifies the separate helpers and simply makes {override,revert}_creds()
-> do what {override,revert}_creds_light() currently does. Caller's that
-> really need the extra reference count can take it manually.
-> 
-> [...]
+From: Hsin-Yi Wang <hsinyi@chromium.org>
 
-Applied to the kernel.cred branch of the vfs/vfs.git tree.
-Patches in the kernel.cred branch should appear in linux-next soon.
+Sets DMIC one-wire mode on Damu.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+Changes in v4:
+- Add Reviewed-by tag back, which is dropped in v3
+- Link to v3: https://lore.kernel.org/r/20241009-damu-v3-1-1294c8e16829@chromium.org
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Changes in v3:
+- Add missing Sign-off-by tag
+- Link to v2: https://lore.kernel.org/r/20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Changes in v2:
+- Add fixes tag 
+- Link to v1: https://lore.kernel.org/r/20240910-one-wire-v1-1-d25486a6ba6d@chromium.org
+---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: kernel.cred
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+index 65860b33c01fe832f3a4b2e21d24ea6b4f0cba2b..3935d83a047e0827b6feddceb3e4dcb4fc3407cc 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+@@ -26,6 +26,10 @@ &touchscreen {
+ 	hid-descr-addr = <0x0001>;
+ };
+ 
++&mt6358codec {
++	mediatek,dmic-mode = <1>; /* one-wire */
++};
++
+ &qca_wifi {
+ 	qcom,ath10k-calibration-variant = "GO_DAMU";
+ };
 
-[01/29] tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
-        https://git.kernel.org/vfs/vfs/c/166096e12ea2
-[02/29] cred: return old creds from revert_creds_light()
-        https://git.kernel.org/vfs/vfs/c/0f8b3bd1b3cc
-[03/29] tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
-        https://git.kernel.org/vfs/vfs/c/eb194f385c7a
-[04/29] cred: remove old {override,revert}_creds() helpers
-        https://git.kernel.org/vfs/vfs/c/eeb9c41696a9
-[05/29] tree-wide: s/override_creds_light()/override_creds()/g
-        https://git.kernel.org/vfs/vfs/c/8b9b75bc7a7f
-[06/29] tree-wide: s/revert_creds_light()/revert_creds()/g
-        https://git.kernel.org/vfs/vfs/c/5e0c1ca92141
-[07/29] firmware: avoid pointless reference count bump
-        https://git.kernel.org/vfs/vfs/c/0fc8b46c9698
-[08/29] sev-dev: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/6fb26cb0712b
-[09/29] target_core_configfs: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/2a7cf8f44396
-[10/29] aio: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/01d3402ff15e
-[11/29] binfmt_misc: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/0d80b0eeca95
-[12/29] coredump: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/1c51da6bee5b
-[13/29] nfs/localio: avoid pointless cred reference count bumps
-        https://git.kernel.org/vfs/vfs/c/b5c4d8852ca4
-[14/29] nfs/nfs4idmap: avoid pointless reference count bump
-        https://git.kernel.org/vfs/vfs/c/5549222d7969
-[15/29] nfs/nfs4recover: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/95c7b08dc110
-[16/29] nfsfh: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/9b7d4076e164
-[17/29] open: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/a58084535085
-[18/29] ovl: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/70545c2bb39e
-[19/29] cifs: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/2225ba3d36a0
-[20/29] cifs: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/2225ba3d36a0
-[21/29] smb: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/55545232890f
-[22/29] io_uring: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/bf8820866809
-[23/29] acct: avoid pointless reference count bump
-        https://git.kernel.org/vfs/vfs/c/11c99d734a22
-[24/29] cgroup: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/f9844cf85703
-[25/29] trace: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/5f10fe797c1d
-[26/29] dns_resolver: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/97f0beb2aa35
-[27/29] cachefiles: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/b25b2b31265a
-[28/29] nfsd: avoid pointless cred reference count bump
-        https://git.kernel.org/vfs/vfs/c/c45990a2e032
-[29/29] cred: remove unused get_new_cred()
-        https://git.kernel.org/vfs/vfs/c/d9bf032c76d9
+---
+base-commit: 7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
+change-id: 20241009-damu-a3f2f3478409
+
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
+
 
