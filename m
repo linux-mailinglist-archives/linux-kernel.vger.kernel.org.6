@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-422195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8803E9D95B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:41:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8087B9D95B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:41:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02DBE1631D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4097D2831FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DB01C4A24;
-	Tue, 26 Nov 2024 10:41:42 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42861B6CE6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEAB1C878E;
+	Tue, 26 Nov 2024 10:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CbEw++6G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6271B6CE6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617702; cv=none; b=b46ISA84X83hJKFyVVALQAT3imqnUohzjwriII8JGelKzK2M3pjOcxv3+hcxrQN7p0OP5Q6tMu4xYZagsYZFtyIDnoBUXM31yRshGVOZmJaguTxh7qa3r9TSMkZCrgkVoSU0sYFjS5oyTZr1D1J+sf7siV/jHcNHAElebDeVSPI=
+	t=1732617707; cv=none; b=cby3WzafIE+ZIDV0aj7GK4USr0ztTIJYtwjRI+lzvFB3NAgyceyMbLNBcSYyMlTgY5HMBSjo6tqX1t1GOEh8BUiSfRBXPdMPjrN85JRxbeQ1bMiee7dBdIdqN2p2S/790R0jkPM8p+ga11bIt+ZqedaJ2ZdjPin1heHhZr+g/3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617702; c=relaxed/simple;
-	bh=rZgQ1Njr68VVfkq+9rHYrCubwJeIuwgzf6q8PwPHA+g=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=J/ZZdq8/9CdAh026xp330nbXxBJq5fy2XBs2qTp/qsCDfnSn2LNoO2njj3MheCWnVGt6KM/DQgV8e9ueaJCGEUdzKuGFKRUgis+Fr1N1mwyahw6vruhHAgJ9ERpHcV0rGb5yihvLGrfzBnhyH4UnUOpE9sNw5f4fpgLJjS7f4cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxQK_apUVn8g5JAA--.53087S3;
-	Tue, 26 Nov 2024 18:41:30 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMAxTUfZpUVn4W1oAA--.42852S3;
-	Tue, 26 Nov 2024 18:41:29 +0800 (CST)
-Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-2-yangtiezhu@loongson.cn>
- <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <75f6e90b-4d04-5627-395e-58982a84d7c1@loongson.cn>
-Date: Tue, 26 Nov 2024 18:41:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1732617707; c=relaxed/simple;
+	bh=SB9RVzpPrIASoDg3bpjPyfTi6AefWnYI0OM14bBB/fw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hV41E191pxBQ85T28FuLh7lcIgNc7cTlNbpcXcmWk34yHgJ5OFzhaYGUaC3C5/Z1+/h5VrU82noQ/KQIsHo8JOl/utn+Bu/L7C51cK4hMTTi0BQc9Zvwgntbfhy85cErq7g4HHm1JvAUUitJ95O/xNGblOWDjItV7lMu6o7wCIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CbEw++6G; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732617704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c10oVoNw574UgZa8BPhDkAjnTCWOGhdZy0d+349O0RI=;
+	b=CbEw++6GfCNUNg0hBsfhibcJ1UFW09b/ND7GeAtrPsgZS/RQgtNBCdV84oKScIraKjmcVY
+	hfw8YAtEEnucaxrE74VN0b2466404HV3ONkmvY2udGGfUMUjzVdYctWvsMt9AmGADy4atw
+	nKtnqcv6XAAu8Hq/os4xz7ottzxaUqs=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-199-TMn25tl0N4-cJVVzXZSb8A-1; Tue, 26 Nov 2024 05:41:42 -0500
+X-MC-Unique: TMn25tl0N4-cJVVzXZSb8A-1
+X-Mimecast-MFC-AGG-ID: TMn25tl0N4-cJVVzXZSb8A
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-382341057e6so2735699f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:41:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732617701; x=1733222501;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c10oVoNw574UgZa8BPhDkAjnTCWOGhdZy0d+349O0RI=;
+        b=GsA5sk1ca4Mx4JVE7Nyc8ZUciDrYt4lOHdSKDXuK8p+SksuAScaqAXobbma3OYgpw8
+         gT2IDokuFwjzIPP4enLlPJqGmzirSavc2bWObR5TJV44pQQbt9AahG3GXNHC16l0y4iO
+         7XIQRfPJCvg0I+TaTuUg6iWC05kZD+1/VW4ilzRDbJztV4Cw06VwQvHGN03SxBi1L0Gz
+         G4WNZduZBBTOsdbtoSk3/WwioEcjfKjex5/OPgIfikdAdF5FO5tpX8rPjD2f8xxfeRBg
+         yjsRYZ4VcgAZ8gq+rtGpkg1cXYyCH3siBxDHXlDdBq478vFLVzDoW1zlsYMd4B1KN07Y
+         KGlw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7+DR4Jb/zcXdQt9RdDHVIUwwLyuurlSU/RD9eOoMs2B8jz4ckSBZKrc7ES8f8WiqUdF371nvaK3aEYfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpP84ayyPdfW9F8nzID/kwQgnFYqwEfNvL1sU1q374iLojsd1Q
+	v+uBQ27v+0KT0yG4WphdeYo2L3EXRyVYxK+uWhgIhxSWcT+9SzqaUvh7/o9zFkuSMEXmcKwTpqw
+	G8sHB4U8fsYRkpaO0lrRnyMq1fID52MZhrrOxlxmNWFiHPjl0AMKhkEoSBhYl/g==
+X-Gm-Gg: ASbGncu2ho+kvHnu8n3VkBCBNenEmWfdQ8soj2CtLyWGE+DAeV5GE8PMa+CY8Jy7Cds
+	Cyqydl7t81UjtPSSZCu7VMDnc3ALOSmrqNGv0vF6EM6ttsrgti6uPTpk7raIZ7VByaBk/8UfVDj
+	zJlmqwHKULC2BRPcpwtnc71S6998MvNNkyg4ZUG/R+tTtvDd+YJg86GqeZczHpjhttUEtvUzS7W
+	9NN6URuoqKoZb1pMeK6POeveZyxQKYF8ilWBYfIfd/6w3qHFI28/NsuQypNyQyke1ZYa/wzCB0c
+X-Received: by 2002:a5d:5f4b:0:b0:382:4a1b:16de with SMTP id ffacd0b85a97d-38260b6b627mr14762631f8f.21.1732617701356;
+        Tue, 26 Nov 2024 02:41:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFb5Dbp1esF0ba97VSbOBzEQDfodzxC6H9YqoKX1VC2tWE64+bs74QfkZMoN9Is771saUdIEg==
+X-Received: by 2002:a5d:5f4b:0:b0:382:4a1b:16de with SMTP id ffacd0b85a97d-38260b6b627mr14762614f8f.21.1732617701055;
+        Tue, 26 Nov 2024 02:41:41 -0800 (PST)
+Received: from [192.168.88.24] (146-241-94-87.dyn.eolo.it. [146.241.94.87])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434a0c889c5sm54013395e9.2.2024.11.26.02.41.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 02:41:40 -0800 (PST)
+Message-ID: <1d7f6fbc-bc3c-4a21-b55e-80fcd575e618@redhat.com>
+Date: Tue, 26 Nov 2024 11:41:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 2/2] net: ethernet: oa_tc6: fix tx skb race
+ condition between reference pointers
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, jacob.e.keller@intel.com
+References: <20241122102135.428272-1-parthiban.veerasooran@microchip.com>
+ <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMAxTUfZpUVn4W1oAA--.42852S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CFy7Kw1Uury5uryDJw1DJwc_yoW8CFWUpF
-	sxtw45Kr4Fyr12gw4IqF4v9F93uws3WF17J3s8WrWrA3sFyF1rKayxGw43Ca4kJrn2vF47
-	Ja1YkryfZrWkA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8yr
-	W7UUUUU==
 
-On 11/26/2024 02:44 PM, Josh Poimboeuf wrote:
-> On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
->> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
->>  		if (prev_offset && reloc_offset(reloc) != prev_offset + 8)
->>  			break;
->>
->> +		if (reloc->sym->type == STT_SECTION) {
->> +			/* Addend field in the relocation entry associated with the symbol */
->> +			offset = reloc_addend(reloc);
->> +		} else {
->> +			/* The address of the symbol in the relocation entry */
->> +			offset = reloc->sym->offset;
->
-> The comments don't seem helpful.
 
-Will remove it.
 
->
-> In the case of STT_SECTION, sym->offset is always zero.  Therefore the
-> if-else can be converted to a simple unconditional statement:
->
-> 	offset = reloc->sym->offset + reloc_addend(reloc);
+On 11/22/24 11:21, Parthiban Veerasooran wrote:
+> There are two skb pointers to manage tx skb's enqueued from n/w stack.
+> waiting_tx_skb pointer points to the tx skb which needs to be processed
+> and ongoing_tx_skb pointer points to the tx skb which is being processed.
+> 
+> SPI thread prepares the tx data chunks from the tx skb pointed by the
+> ongoing_tx_skb pointer. When the tx skb pointed by the ongoing_tx_skb is
+> processed, the tx skb pointed by the waiting_tx_skb is assigned to
+> ongoing_tx_skb and the waiting_tx_skb pointer is assigned with NULL.
+> Whenever there is a new tx skb from n/w stack, it will be assigned to
+> waiting_tx_skb pointer if it is NULL. Enqueuing and processing of a tx skb
+> handled in two different threads.
+> 
+> Consider a scenario where the SPI thread processed an ongoing_tx_skb and
+> it moves next tx skb from waiting_tx_skb pointer to ongoing_tx_skb pointer
+> without doing any NULL check. At this time, if the waiting_tx_skb pointer
+> is NULL then ongoing_tx_skb pointer is also assigned with NULL. After
+> that, if a new tx skb is assigned to waiting_tx_skb pointer by the n/w
+> stack and there is a chance to overwrite the tx skb pointer with NULL in
+> the SPI thread. Finally one of the tx skb will be left as unhandled,
+> resulting packet missing and memory leak.
+> To overcome the above issue, protect the moving of tx skb reference from
+> waiting_tx_skb pointer to ongoing_tx_skb pointer so that the other thread
+> can't access the waiting_tx_skb pointer until the current thread completes
+> moving the tx skb reference safely.
 
-OK, let me test it.
+A mutex looks overkill. Why don't you use a spinlock? why locking only
+one side (the writer) would be enough?
 
->
-> 'prev_offset' needs to be updated as well.
+Could you please report the exact sequence of events in a time diagram
+leading to the bug, something alike the following?
 
-I am not sure I understand your comment correctly, I can not see
-what should to do about 'prev_offset'.
-
->
->> @@ -2137,6 +2145,7 @@ static struct reloc *find_jump_table(struct objtool_file *file,
->>  {
->>  	struct reloc *table_reloc;
->>  	struct instruction *dest_insn, *orig_insn = insn;
->> +	unsigned long offset;
->>
->>  	/*
->>  	 * Backward search using the @first_jump_src links, these help avoid
->> @@ -2160,7 +2169,16 @@ static struct reloc *find_jump_table(struct objtool_file *file,
->>  		table_reloc = arch_find_switch_table(file, insn);
->>  		if (!table_reloc)
->>  			continue;
->> -		dest_insn = find_insn(file, table_reloc->sym->sec, reloc_addend(table_reloc));
->> +
->> +		if (table_reloc->sym->type == STT_SECTION) {
->> +			/* Addend field in the relocation entry associated with the symbol */
->> +			offset = reloc_addend(table_reloc);
->> +		} else {
->> +			/* The address of the symbol in the relocation entry */
->> +			offset = table_reloc->sym->offset;
->> +		}
->
-> Same comment here.
-
-OK, will do it.
+CPU0					CPU1
+oa_tc6_start_xmit
+ ...
+					oa_tc6_spi_thread_handler
+					 ...
 
 Thanks,
-Tiezhu
+
+Paolo
 
 
