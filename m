@@ -1,95 +1,121 @@
-Return-Path: <linux-kernel+bounces-422428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DB79D9998
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:28:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71959D9991
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C01C3B22881
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D140282854
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A101D5AC2;
-	Tue, 26 Nov 2024 14:24:09 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68741D5AB6;
+	Tue, 26 Nov 2024 14:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FnSXrwD2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MmIZHcEt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7441E2EAE6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CF33398E;
+	Tue, 26 Nov 2024 14:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732631048; cv=none; b=qNQRfXdx27jtzOUAF/oRFQty82aeFsgSSpKYOOTi2iTdxkaJmaM/vrZtCj0lwICTgPtczL6vQAzURAsuiX47Kc9RJZCY0YLNNWpk+Rp42bKlhw3/xUtoI+FWvD9SZ7CQFydbyZ/4azu+dR7MPvzn1c3BbJkmTiG+uDSmC1bfTsQ=
+	t=1732631110; cv=none; b=rzQjgxKMP1sTzC8ELvkwAq35p1/CfbyPE0bbyBxANGl9xz3Hb318VN/rwLKVeO7YPA89sFlabn21ZrmyP5S3bysDTmgwa0rCi94o4KxEK68/0748jWTz9c9GTBiR7aA+CCXQPzEmIqsaKI2cDd0CV24J3hbPczOq4Mzio4aaFjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732631048; c=relaxed/simple;
-	bh=zbXV+L7MwoLZKChDBfQNPpwIHPvIgYaxAMf9TaNMm6E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=otv8o2+wiKr9S3y0KlCdjKSnVBFsC4vd3RTGUEXI2XFtyGE/FdeTWySmh/T2cRvpXycLDW11cDRxZn95lE/nbL2gOQUQe99VrxkDuVuJE08BPOZUgPGeUA01c5Tg2ZdfcxU+q0W7Pm6bV/DIfm58W6ty/h/68L9KMDCYLgSik7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a0ca771so39358115ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:24:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732631046; x=1733235846;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbwSlpx0JxOOG/QIfPBgxR7FjegQyCdVo54JAHKqNU4=;
-        b=Qb8SgMbh71mnGBcyYW/Hts13Yd4WDdgxl+4mMFX/dXqOVxguOIhwJa7Zo8lDDxZfBA
-         A5Mgd13jpW1nr5jTrzQrimLphnOb4jxg7IOLZispjLLwIMSqDTTa1m5DZGJssZp437g/
-         G69qlrFio8+DPZnEQG0181TVgfrMLa9EOnV82BZHohIJ3TEXGnbCnfD4HIBMbPfGRz3v
-         QYtqmVRjZAIUNMYGpBQiefkwU72mWdKh4HTNxE9kXLBEp+i4nxnvhU64TvloW3i/lbR4
-         xLgtA4NmvHQjqodH5tJnbpuoCmTxCaIAq+XlgtTxTLUEW0h+FbsmsBoFtrfCUhExjW60
-         V8bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+DPP3UtN1etbcj3ThJGIsRyDb/JMzP4noCPlIiJ6iumyVVKMvlVDyf2Sc0CowmLvDXNDgc6O4AbEZLWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk36EzPeynIWALTQhvmw0rh0bVKlzs9c/5qq0vFKn4Z3ByDFr/
-	vExYZAvoX+07q78DsiR6TQhb/X1UQ7R8A96kxXyOJ02yhCtO0sco+IDG9uTxm0gr/NTLbIcChbJ
-	c9xlQz4bKq8rWBG2VJXgVF1kWF2QCXcIttcERRRMep/JHocdcR47Thfs=
-X-Google-Smtp-Source: AGHT+IGFP+jT1z0zEfotOxocuElKBVsiZu+rEtdAdSP45JbOgsdPy+Gm91Sy5bDiK+msbCwzbgDUFbDFaTU+8Me573D36Okj1pYM
+	s=arc-20240116; t=1732631110; c=relaxed/simple;
+	bh=ZBVHJnPVFyOj8QosdJhPayaLotx+2VTGJuwtIsepeWk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=kTCkMeygsDACpnYSCrfUGMT4Uf+Zcxxvu1bAhqlYW7o0/d/0i0qa72bFK+tq+F8F9aYAElKcvh/2A3SwTi5dpIsK/WMthunhlF/Bc5KSjKlDqbHzUDP6WppjB8K7PDk2q3zjDcoIp78rKYi5tzVXRktO8pUPdl7to8i9pMHVp7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FnSXrwD2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MmIZHcEt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 26 Nov 2024 14:25:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732631106;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kCD1ZHjwz01Rbei/j//jE5hm6Kci+8lyaIpiJFEDpE=;
+	b=FnSXrwD2n9F5l9xmIYJl+tFBYqRDoV1Op3tzX1eO9XIDSclNLdrD24oUl3AtGYWHJ8BzmA
+	g2/ApYo3rLr+lIJqcj0sMRaOPn+ap38SrkeDh9I/X5/Moz5vzwWzGMsYVq8IhmYwl/rIUQ
+	SImy5lUMYHc0MTCTowWx9c8bE1EmC+aNiHBgX+S+7lXp2ybN9Qa69DX3JSVFsm4F1yUcJQ
+	ixMibboRcpkEDS54wmmmedIRFyTOav/zp5jkpLcja2CwQuXa5ei+R0+5R3aEDgECsEcWDK
+	2DCsa2pYlRCmHgInlyDzHn4xmVPHyvQpiA6rhftca1ARizir+f/dzahEulGYSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732631106;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kCD1ZHjwz01Rbei/j//jE5hm6Kci+8lyaIpiJFEDpE=;
+	b=MmIZHcEtuQfSCU+d7Yf2VYeL+oaU3bFWsmLu45i+6915d0vKvMTG3uc2u1kSuewEOp7ydk
+	dQXWcXPBd3k3WoAQ==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/CPU/AMD: Terminate the erratum_1386_microcode array
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,  <stable@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241126134722.480975-1-bigeasy@linutronix.de>
+References: <20241126134722.480975-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1789:b0:3a6:ac4e:2659 with SMTP id
- e9e14a558f8ab-3a79ad6917bmr191836395ab.6.1732631046684; Tue, 26 Nov 2024
- 06:24:06 -0800 (PST)
-Date: Tue, 26 Nov 2024 06:24:06 -0800
-In-Reply-To: <673f4bbc.050a0220.3c9d61.0174.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6745da06.050a0220.1286eb.0018.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
-From: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>
-To: bigeasy@linutronix.de, boqun.feng@gmail.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, dwmw2@infradead.org, hdanton@sina.com, 
-	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	longman@redhat.com, mingo@redhat.com, paul@xen.org, pbonzini@redhat.com, 
-	seanjc@google.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <173263110574.412.1382588433469886673.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+The following commit has been merged into the x86/urgent branch of tip:
 
-commit 560af5dc839eef08a273908f390cfefefb82aa04
-Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date:   Wed Oct 9 15:45:03 2024 +0000
+Commit-ID:     ff6cdc407f4179748f4673c39b0921503199a0ad
+Gitweb:        https://git.kernel.org/tip/ff6cdc407f4179748f4673c39b0921503199a0ad
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Tue, 26 Nov 2024 14:47:22 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 26 Nov 2024 15:12:00 +01:00
 
-    lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING.
+x86/CPU/AMD: Terminate the erratum_1386_microcode array
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=162ef5c0580000
-start commit:   06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=152ef5c0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=112ef5c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
-dashboard link: https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142981c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1371975f980000
+The erratum_1386_microcode array requires an empty entry at the end.
+Otherwise x86_match_cpu_with_stepping() will continue iterate the array after
+it ended.
 
-Reported-by: syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com
-Fixes: 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING.")
+Add an empty entry to erratum_1386_microcode to its end.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Fixes: 29ba89f189528 ("x86/CPU/AMD: Improve the erratum 1386 workaround")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: <stable@kernel.org>
+Link: https://lore.kernel.org/r/20241126134722.480975-1-bigeasy@linutronix.de
+---
+ arch/x86/kernel/cpu/amd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 823f44f..d8408aa 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -798,6 +798,7 @@ static void init_amd_bd(struct cpuinfo_x86 *c)
+ static const struct x86_cpu_desc erratum_1386_microcode[] = {
+ 	AMD_CPU_DESC(0x17,  0x1, 0x2, 0x0800126e),
+ 	AMD_CPU_DESC(0x17, 0x31, 0x0, 0x08301052),
++	{},
+ };
+ 
+ static void fix_erratum_1386(struct cpuinfo_x86 *c)
 
