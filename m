@@ -1,133 +1,229 @@
-Return-Path: <linux-kernel+bounces-422130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E7B9D94DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:48:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C81635C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:48:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A70E1BD517;
-	Tue, 26 Nov 2024 09:48:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780ED9D9510
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:03:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF841B0F26
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CB66B250B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:51:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0411BC9F6;
+	Tue, 26 Nov 2024 09:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jSwhb/+x"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF3E186E58
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732614526; cv=none; b=nnxq/MH7kHvtZSkHLnh4P/8fIHbc6CC5+5pY4QW2Zgi6EfkDuISK+VCVlvb2fXnHcxxZ8PRn9vElZg+eSjjaFP0ihfn+vMAmsGO3y/tIlFpUJ2YCYQx0CgujjU7/GmngOD++qEcuIKRmLNqHrK4JSvo+LczKcTRxRGxdB5yUN+k=
+	t=1732614705; cv=none; b=Ba/YWttyeO8RFVUpz/jjf+i4Ys+7DbgxMHDefaJB3s26EuJTrrQiaFVaN5kZ8AvXN7AiwvsU+OzkZFkGUStg90plOuIhSObAtXpmujqnD/erMZru+FgI7KninEO3xBvmEA840mk8rfkWC4151HEN4Kiiqk/Jbua/BKUr3/ZC1RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732614526; c=relaxed/simple;
-	bh=oDPWtoPMXNgFwHFMLeNLa9T2A6HBoy6LgbNyilvHNSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AS0HNDZ4gI0EksWUNFZeeD6H46NePjbXN0psTDxVxFuuDLgXZQAas/CcvbMGIaTbN5lfWHfeFl2t+NBABOlsgfNp6uqDYFxs35cVKWIXhKezKxrNlZes/ZTrsBkb3xdFLFhS8b6csNpSI3qUrM35K8R7Gj363RNXvl2OGv0cYKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFsBW-0000br-7b; Tue, 26 Nov 2024 10:48:42 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFsBU-000E7a-3D;
-	Tue, 26 Nov 2024 10:48:41 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 7572B37D869;
-	Tue, 26 Nov 2024 09:48:41 +0000 (UTC)
-Date: Tue, 26 Nov 2024 10:48:41 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-can@vger.kernel.org
-Subject: Re: [PATCH v2 04/12] can: hi311x: fix txerr and rxerr reporting
-Message-ID: <20241126-saffron-angelfish-of-unity-31108e-mkl@pengutronix.de>
-References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
- <20241122221650.633981-5-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1732614705; c=relaxed/simple;
+	bh=QL+jsKpJlz5b4P+2bQcbr5zSIL44zoHSmizxnSBuhFo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ndLRQky3zIvy8AStDI7fzedbaaxwL8TH41F1xu4HRytmnpUf3nhD1JmoCz2QV3p0XYVbZ/btgOsw9509+xdKF189VJMhwxpJSu50DMDvecDp/7nQQrywLflW6dsKnAg/xK4IIt1LbL9CoMC6GMjI9hv9qyK99UffIcTLXGZcLtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jSwhb/+x; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so49776975e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1732614701; x=1733219501; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UO4mSSBKzizqKXO9HWAu5xtTzjjab3K6hG1bXe5LLuo=;
+        b=jSwhb/+xJGkmRpcDV5yeW4ZHr7qKmu8gg0TsF6fQ/WyLEgCk+J6w4yJlOEpwGWfQvc
+         Px1u0FRQRU5O+EAZKwd1NtilFiUd+G83fb3urpPmz1Sihdoro1R3QyQk9bGWgI/LFMTW
+         X8rZzBLoflUoWaDYDJWGmNkEOBn9pkoZpYT3pEVLIENYrDJK2QoPoCeW6d1I8YcGs9AY
+         mSE3Nr77RVmmqbGsFIGFsoBPPlrzvEP1NzCwApCg0mvIm/tY8omeBUyZziC2QEwboZaX
+         /+a2mw77BlIUipmLafYNZhlRST/0+FOOHAHC5Ppzk8yvx8bsAKeaavzTkBchVTgjMmsP
+         vXGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732614701; x=1733219501;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UO4mSSBKzizqKXO9HWAu5xtTzjjab3K6hG1bXe5LLuo=;
+        b=kTOpcq6dJ7vIKDe2azb+in/671GYfCuKpqfDGVkJMTcTCMbQTOsQ7xDV3S8WA51BFE
+         MScAZp2mgw+TIighzLA+ZmrqDn5V67V9mZeCGkrBegwzzg7Ap/xUsIXGsHB526UWtmc/
+         khg0juQCQCBK7Vs2+3w4H+rkz+yfoPXY/LPJG6pvgri5Yc1P4Uv5SiBPyK2+fKBd3t1M
+         E4len/ECQ5RnJi9kzyAVrLsPAOi5B55ZUpzb4oHI4PA7f3MffKxDGqXWOKx8T8qdIi/n
+         ios/1NNwZGPlDuxH3mfFo/Ozby+s+yOP74JR+4mzikw9EM+XMfTcGBGRLpwtGbHAMDMp
+         GGdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUk6iGTzQ9rFJ6UoPjBg4OmZhI2bnETpDufselY9JIzrHuH4Mef0hBCq0vUla8QHXSc+GmOSC4tUpeOYLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy8EAN5BmxdNO8H5YddRDqcQO1afrulNt9HmSqJQjP9HyEeIlk
+	JPhy8Jby8GeRHn/haK0JAcLddCU3cLD0dAxIjlzWgrtf0oePFDEdLsjUhKsZWF4=
+X-Gm-Gg: ASbGnctvh2hJSaOXTrAuClxAIsLUW4/5pfotpaltLbP3Z25qC6XuT4rvLzaSrURIPm8
+	HH6bNKHH6pXbtJUJzyvr5PdTEI5K2j4cJZ87L6dWFr9aRGVgpBM4lDyNdOwZ7pIRUug+RzKOoU2
+	V4ZnRIAHlrIjdrvIsuADy7tgeM8Vmxn3W3zNqr/5wr9reY1G7Bw3n9s/F9v1gOuaXQlmzxFsynD
+	mavNqHdqVn85Wn1gGpYGPAz/4YejCbQIwTlfqOMoqefewTaTh8UO1SSqNVwrvrS6uSSbYTuW+yH
+	oIc=
+X-Google-Smtp-Source: AGHT+IGy1fknfYw17Hs9F6ZticKpVJz4vkS8NC2H5qrqchJz9nfNpZvrSiMCMB7eggn/X6U7IKtd2g==
+X-Received: by 2002:a5d:64c3:0:b0:37c:cc67:8b1f with SMTP id ffacd0b85a97d-38260be3f72mr12341731f8f.48.1732614701364;
+        Tue, 26 Nov 2024 01:51:41 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb271ffsm12745475f8f.53.2024.11.26.01.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 01:51:40 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: corbet@lwn.net,
+	akpm@linux-foundation.org,
+	thuth@redhat.com,
+	rostedt@goodmis.org,
+	paulmck@kernel.org,
+	xiongwei.song@windriver.com,
+	ying.huang@intel.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	claudiu.beznea@tuxon.dev,
+	geert+renesas@glider.be,
+	wsa+renesas@sang-engineering.com,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [RFC PATCH] mm: page_alloc: Add kernel parameter to select maximum PCP batch scale number
+Date: Tue, 26 Nov 2024 11:51:38 +0200
+Message-Id: <20241126095138.1832464-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eqv5zvhfl65aq6jc"
-Content-Disposition: inline
-In-Reply-To: <20241122221650.633981-5-dario.binacchi@amarulasolutions.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
---eqv5zvhfl65aq6jc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 04/12] can: hi311x: fix txerr and rxerr reporting
-MIME-Version: 1.0
+Commit 52166607ecc9 ("mm: restrict the pcp batch scale factor to avoid
+too long latency") introduced default PCP (Per-CPU Pageset) batch size as
+a configuration flag. The configuration flag is CONFIG_PCP_BATCH_SCALE_MAX.
 
-On 22.11.2024 23:15:45, Dario Binacchi wrote:
-> The commit a22bd630cfff ("can: hi311x: do not report txerr and rxerr
-> during bus-off") removed the reporting of rxerr and txerr even in case
-> of correct operation (i. e. not bus-off). The CAN frame is unnecessarily
-> set since netif_rx() has already been called. The patch fixes the issue
-> by postponing the netif_rx() call in case of txerr and rxerr reporting.
+The ARM64 defconfig has CONFIG_PCP_BATCH_SCALE_MAX=5. This defconfig
+is used by a high range of SoCs.
 
-re-phrased to:
+The Renesas RZ/G3S SoC is a single CPU SoC, with L1$ (I-cache 32Kbytes,
+D-cache 32 Kbytes), L3$ (256 Kbytes), but no L2$. It is currently used in
+a configuration with 1 GiB RAM size. In this configuration, starting with
+commit 52166607ecc9 ("mm: restrict the pcp batch scale factor to avoid too
+long latency") the "bonnie++ -d /mnt -u root" benchmark takes ~14 minutes
+while previously it took ~10 minutes. The /mnt directory is mounted on SD
+card. Same behavior is reproduced on similar Renesas single core devices
+(e.g., Renesas RZ/G2UL).
 
-can: hi311x: hi3110_can_ist(): fix potential use-after-free
+Add a new kernel parameter to allow systems like Renesas RZ/G3S to
+continue have the same performance numbers with the default mainline
+ARM64 config. With pcp_batch_scale_max=5 (the default value) the bonnie++
+benchmark takes ~14 minutes while with pcp_batch_scale_max=0 it takes
+~10 minutes.
 
-The commit a22bd630cfff ("can: hi311x: do not report txerr and rxerr
-during bus-off") removed the reporting of rxerr and txerr even in case
-of correct operation (i. e. not bus-off).
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  6 +++++
+ mm/page_alloc.c                               | 26 ++++++++++++++-----
+ 2 files changed, 26 insertions(+), 6 deletions(-)
 
-The error count information added to the CAN frame after netif_rx() is
-a potential use after free, since there is no guarantee that the skb
-is in the same state. It might be freed or reused.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e7bfe1bde49e..ce745ea78470 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4716,6 +4716,12 @@
+ 			for debug and development, but should not be
+ 			needed on a platform with proper driver support.
+ 
++	pcp_batch_scale_max=n
++			Format: <integer>
++			Range: 0,6 : number
++			Default : CONFIG_PCP_BATCH_SCALE_MAX
++			Used for setting the scale number for PCP batch scale algorithm.
++
+ 	pdcchassis=	[PARISC,HW] Disable/Enable PDC Chassis Status codes at
+ 			boot time.
+ 			Format: { 0 | 1 }
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index bc55d39eb372..ef1d37cefb43 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -163,6 +163,20 @@ static DEFINE_MUTEX(pcp_batch_high_lock);
+ #define pcp_spin_unlock(ptr)						\
+ 	pcpu_spin_unlock(lock, ptr)
+ 
++static unsigned int pcp_batch_scale_max = CONFIG_PCP_BATCH_SCALE_MAX;
++#define MAX_PCP_BATCH	6
++
++static int __init setup_pcp_batch_scale_max(char *str)
++{
++	get_option(&str, (unsigned int *)&pcp_batch_scale_max);
++
++	if (pcp_batch_scale_max > MAX_PCP_BATCH)
++		pcp_batch_scale_max = MAX_PCP_BATCH;
++
++	return 1;
++}
++__setup("pcp_batch_scale_max=", setup_pcp_batch_scale_max);
++
+ #ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
+ DEFINE_PER_CPU(int, numa_node);
+ EXPORT_PER_CPU_SYMBOL(numa_node);
+@@ -2362,7 +2376,7 @@ int decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
+ 	 * control latency.  This caps pcp->high decrement too.
+ 	 */
+ 	if (pcp->high > high_min) {
+-		pcp->high = max3(pcp->count - (batch << CONFIG_PCP_BATCH_SCALE_MAX),
++		pcp->high = max3(pcp->count - (batch << pcp_batch_scale_max),
+ 				 pcp->high - (pcp->high >> 3), high_min);
+ 		if (pcp->high > high_min)
+ 			todo++;
+@@ -2412,7 +2426,7 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+ 		count = pcp->count;
+ 		if (count) {
+ 			int to_drain = min(count,
+-				pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
++				pcp->batch << pcp_batch_scale_max);
+ 
+ 			free_pcppages_bulk(zone, to_drain, pcp, 0);
+ 			count -= to_drain;
+@@ -2540,7 +2554,7 @@ static int nr_pcp_free(struct per_cpu_pages *pcp, int batch, int high, bool free
+ 
+ 	/* Free as much as possible if batch freeing high-order pages. */
+ 	if (unlikely(free_high))
+-		return min(pcp->count, batch << CONFIG_PCP_BATCH_SCALE_MAX);
++		return min(pcp->count, batch << pcp_batch_scale_max);
+ 
+ 	/* Check for PCP disabled or boot pageset */
+ 	if (unlikely(high < batch))
+@@ -2572,7 +2586,7 @@ static int nr_pcp_high(struct per_cpu_pages *pcp, struct zone *zone,
+ 		return 0;
+ 
+ 	if (unlikely(free_high)) {
+-		pcp->high = max(high - (batch << CONFIG_PCP_BATCH_SCALE_MAX),
++		pcp->high = max(high - (batch << pcp_batch_scale_max),
+ 				high_min);
+ 		return 0;
+ 	}
+@@ -2642,7 +2656,7 @@ static void free_unref_page_commit(struct zone *zone, struct per_cpu_pages *pcp,
+ 	} else if (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) {
+ 		pcp->flags &= ~PCPF_PREV_FREE_HIGH_ORDER;
+ 	}
+-	if (pcp->free_count < (batch << CONFIG_PCP_BATCH_SCALE_MAX))
++	if (pcp->free_count < (batch << pcp_batch_scale_max))
+ 		pcp->free_count += (1 << order);
+ 	high = nr_pcp_high(pcp, zone, batch, free_high);
+ 	if (pcp->count >= high) {
+@@ -2984,7 +2998,7 @@ static int nr_pcp_alloc(struct per_cpu_pages *pcp, struct zone *zone, int order)
+ 		 * subsequent allocation of order-0 pages without any freeing.
+ 		 */
+ 		if (batch <= max_nr_alloc &&
+-		    pcp->alloc_factor < CONFIG_PCP_BATCH_SCALE_MAX)
++		    pcp->alloc_factor < pcp_batch_scale_max)
+ 			pcp->alloc_factor++;
+ 		batch = min(batch, max_nr_alloc);
+ 	}
+-- 
+2.39.2
 
-Fix the issue by postponing the netif_rx() call in case of txerr and
-rxerr reporting.
-
-> Fixes: a22bd630cfff ("can: hi311x: do not report txerr and rxerr during b=
-us-off")
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---eqv5zvhfl65aq6jc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFmXYACgkQKDiiPnot
-vG+pdAf+Ni/CTEuTV5xnQix+yopxg4s2OwTR6Y1wDlEUE87+PlEODrcorPjaz/PP
-jqpqQhAF9ijZXfAVuuwsN9Z3ywpbYJeQNVsgzVrmS8zMzb/ScZamsVZb3kDQ7cd0
-st+asE02+J/kYUXQn8OTGybxpMyuP+O/QBakH0ZAEAqafKD7Z2t9GjHvU2YyCCgQ
-HkRyN98Ip0DGrEHFwYT9zEraZ8M0FmWvM6DPnGTRbatbIdbUJhsAYWM01ZGG17lR
-kLGrWQOqcd0F8+B98SoaQLCy+Q/CIJEcq1DTAuKnDdHxT2nHPbSgjGnuCG9tKOrV
-t+/xTClfor2+RC7GoOGsMr6/M2cMTA==
-=Dnos
------END PGP SIGNATURE-----
-
---eqv5zvhfl65aq6jc--
 
