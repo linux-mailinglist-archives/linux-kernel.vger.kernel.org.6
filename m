@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-422079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286B39D9441
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:24:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D1D9D9470
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0B5283A01
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:24:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14ABDB2ACFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8A21D5ADB;
-	Tue, 26 Nov 2024 09:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2951C1D63E9;
+	Tue, 26 Nov 2024 09:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ghPR0LO2"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NrfxCNhi"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809F21D54D8
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1081D5ABE
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612889; cv=none; b=f1BfVDeMDs7LOCxDml0Atac6c7QBsgSWTmPC9WLQBtbYAApb9Oe4jli1SCpQCIOyHc2s5Edx3wcl1oqU3L5hvwUlyGfPk9qSbume20Ds/OPNb6RbZsgqZtHU1QhI0OThtEOei27Zm6MNa9XsA0mNN7OEPuFery42et4EoljTJ7E=
+	t=1732612893; cv=none; b=GUX8JhfkDWYsezY9v7+Bsl3VPo6ZciJrjKaZpxhVjBsQiuqB4ubIM7byk6zylQZskXrF8joloyOvN1Ey6UUH0/G2JrSh6Q1HgAA/mvpB6xavbzIA1qxcdZF2XXz6/U5qKo6UN2tdJT5KtiPYlT9VtosnSaxjwWpHNimHVbyXmyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612889; c=relaxed/simple;
-	bh=pvmXne3/GLaL56C23pmxfpzVcVguFUnVL4SSDyD6KWQ=;
+	s=arc-20240116; t=1732612893; c=relaxed/simple;
+	bh=yx8G5kN1dPvXv5haopV3811q4NYnuaEFQqxgpb3NT9U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RuUWj8NJEPjfC1Sfoqcjr8hb0bNXFle352fzPYuMI2U3XPJtNyuwb4P6XbFFLj7TDKSr7Pee5K1rI5Dc8U+zC1hlN3VrT01m1wxgfzGkWUejTaAZSBsVICV2o95yadb39yNk+hYv4PuBggUDvrIXgiwpKB4MAE8VgtYJL8p35qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ghPR0LO2; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=HdhzetlB4VJxFJUg+OQcDnxDbavcAiVNa9ze7bMHZwGMWTSn0xaZ9X5lTzsZSpwDnsviidqtFXR2K4vO2jjuXJdt1EYcQRjOj6ukg9ecJhL2gppT7tDcKQzl6hrRMWAu0z1dAmbCxQPfjZZM5zn2L5wppuoA+q7VtAMSHGqmM7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NrfxCNhi; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-382610c7116so2821227f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:21:27 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53da209492cso6811283e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:21:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732612886; x=1733217686; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1732612887; x=1733217687; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E4M5g4cOSJdZAIQtrKw1Bn/YMzw7ikJ/cpvkoOSwCx8=;
-        b=ghPR0LO2pC6YkkfzaTqUNsLDZUcp9bERyEyb9YOZEMdOiWVbT9ZUFiF4YmBxMB+D0h
-         Oub/hGH9PTI18stx8oUicM9Zv//kTIHFTaJtBABe/I3aRfGmPoLTemuM3YvtiS+7KenF
-         4etSN6/T1d+xHmpNRl2gQ2wJflLDShKIhTM8DEsq3IEBl+VW2rNNIJ6/mP5pXZ7lH5k3
-         lWbWjKdZZaU3XAhS2/3vObsoLDHHN/fZ+64m0/8cHOgfGUhrCaE+r/ZFB9lpkc6CP6c0
-         OGv6geeuXZTSrY93GlZvKwdyTt3Hn4StKrUnGsFGMOsPjmoCujOlRkDXis81DAb8yqy0
-         s1TA==
+        bh=YL9Ut0Si+rVh2q7F4JB/asIqIrf6jT+s8Jqs0j7Utvw=;
+        b=NrfxCNhilBiejXHT9F52bpfhlKI8cP9bJGB16MQHlKRZvZwLiRszjJ90dAXJHV2zue
+         VnJV35XznayLZuWj+EUz+sY9/XHmgGqjziXqcjSTzs+zUZ4Oh2HGpGWJicTe/jv9aw5i
+         zKXCZHUQAO7SN2TmaGYUx5K8ioS4bH/T40pMN+WVMo3A9NAOu6iL4jSjycvU5FIOgKyu
+         glDKSLCbYapA1ZzM5HtN+VR7zqxtLgVt1xDTlSPaXJpUMEmF0+rJQif9qTNO4xyMgb5E
+         eGrF3e71XVu8bB5N/ms7UHFyUjoP9NdCjY2HrQ2vUoeBoE20kBz8lpr0gSW69LHIiEa9
+         Su4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732612886; x=1733217686;
+        d=1e100.net; s=20230601; t=1732612887; x=1733217687;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E4M5g4cOSJdZAIQtrKw1Bn/YMzw7ikJ/cpvkoOSwCx8=;
-        b=vBkgh/I5r2uljVEy0moSLgt1v8nRFm2HSA5WVN9Q2Lr/PfA23OCWRi+QrghYAd1yaz
-         D3suZDQXWT6pQLsJ7GO7FQG4lv8+0UN0LRBFXEUMEcs0RKHYzinCgJXPKR27+GH0Igzy
-         l0pkf0hOyy1Jvdb4z5Tq0b/bKBmg8A6/NLZoW7iz6g+02Q4CHue6/FoFeffKAczX1BOU
-         Y0hqdzDMjqrOjEaQYjYNEu3aCMmS9ICp3dsNZ6A/Qps/kx17Sx2lzMYyupceo7njFcxb
-         ujf4i0BFaWegz16/B0UV7/kNgnGDS+s6JW0xkb2FGB7rgZJRabM/8hcagpxZmnPRgtTG
-         yQ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVjBFLobP8AwJ3jMB457KSAHLbg8d3qOET5yFfVT1EgboDco+rWmi2yRzA3HxQRC6PSPPeoddCZBVjTITU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZYMwVlZilVHNgmqdgFRS/70k1R0oWJC9/DqODR9SpxY7cCXnI
-	DRLCob8WMolWtbPHfG/kp5pv1C5xMRZFtHCFFQJQZkAOyTSGX8OtzKIOvbDcssM=
-X-Gm-Gg: ASbGnctRXmRtg6f0OZuapS5W+tfgJMzVlQllrfWVK7xs9jPAf+rFuPV8T9L4YobpBPA
-	/0F6ZeTRUkLFA/JaX2P05dPTJPaO5L0fkeX6nlI2S16sa0TPeAi3eLFq409Pg/tNKZcJP69GYZd
-	1vmw9MgbKACyLonba6fJNUANv6v5Te3TbUbu9w/rNlMwI/bVqMNiuxhOkTo6BvlyGGUQ2hL4JSW
-	YrZYrFlOq5HWuevKKkDoN58lTXXDbuK505oJI3IisEfSeqBCgLn+PHgOhB4GTrxXJfLSNqm8AA/
-	v84=
-X-Google-Smtp-Source: AGHT+IFFCuS7xBS3otNkuGr2IzoMyH/CTvsuJMT+O34OiuKVD91ks7D0BrVopsaLaBF4QZUasDuXXQ==
-X-Received: by 2002:a05:6000:18ac:b0:37c:d1bc:2666 with SMTP id ffacd0b85a97d-38260b502dcmr12951812f8f.4.1732612885919;
-        Tue, 26 Nov 2024 01:21:25 -0800 (PST)
+        bh=YL9Ut0Si+rVh2q7F4JB/asIqIrf6jT+s8Jqs0j7Utvw=;
+        b=rdx7blbhY/D7A7Mdy7DPfV5lHYSeRYLVlRZ/g7tExo9PZZzAjRij6FmSHEuy37sJHe
+         go+3610qY2e3jsGlQSFIEQDPBIEmwYmd9RbBocwcH/IjUpmIUIrzbc6vkIH5dnTMLrkZ
+         9Vx3fKaxj++LwpfSz1v5zfx0Hkr+3Fc8HDvQDnp1k5IVZVLs8kNRBuzJKAb0xw2hbP1r
+         QgFoI4aYkrIsbC1KqXNamduP80ubUA2ZGAeEltb6wPNHDB+kA9XyhES78MuGtnqK/idZ
+         nVfitHDS5yCo57DzAEG+Qq3LinlEkWH/9B+hi/GIb3E6St+C9h1NnrDKg2+YLnS+tiHb
+         Oo+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVOoldWk/9unLrmymyLWHD9IhYa7H4D5GXCaGgMtyrS04hmtS6ZieIxOGlZq+keyA0qF6HlfPTx7y/Dlnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBzlZxRQ0WYWzNYf9Tbx+GOlfMoxunpvYXVhOrkzfCvIaKenRN
+	HiIzYn8/5B0B1OsCtTLJFtJvi5v9HGAs7L263Sc1/wdizPMN6mZurUVxkH6UAU0=
+X-Gm-Gg: ASbGnct32gBtbABpRwOG2hEJL83zSrrpEqB4s9LFxTnsX9Xz30GWPq3wseHS0apQauM
+	CYTQel/pCTFhFUlRmUFDSUuxpW0oShgnGo7Uwq4zeu8noy4HcE0KC53RdABuilcF93c1eS8KhZh
+	ZNTpZf1SKXEOL603N/MvHdY3WIfeIGHyAym5fGuOxjpGFK5xIJpX9xA/j9P00bDPF0tedXa8PBU
+	QHPEqIj1vX1cpxKDafQuYnXbmpZLcfz2+VOC2RpR5QXxJq6582CMEsofnOBcHA8IdflQlnTzZTo
+	3Pw=
+X-Google-Smtp-Source: AGHT+IEqjpoyWsGOaOphc9gwJtzIyZu0gka779JBN5g8gKK1cf1hZ2MPQM9ajRauQ6fRNW3ZJEX2Wg==
+X-Received: by 2002:a05:6512:e86:b0:53d:de36:7069 with SMTP id 2adb3069b0e04-53dde36707cmr4605894e87.6.1732612887547;
+        Tue, 26 Nov 2024 01:21:27 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3a47sm13027694f8f.73.2024.11.26.01.21.24
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3a47sm13027694f8f.73.2024.11.26.01.21.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 01:21:25 -0800 (PST)
+        Tue, 26 Nov 2024 01:21:27 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: vkoul@kernel.org,
@@ -91,9 +91,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-usb@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 12/15] arm64: dts: renesas: Add #renesas,sysc-signal-cells to system controller node
-Date: Tue, 26 Nov 2024 11:20:47 +0200
-Message-Id: <20241126092050.1825607-13-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 13/15] arm64: dts: renesas: r9a08g045: Enable the system controller
+Date: Tue, 26 Nov 2024 11:20:48 +0200
+Message-Id: <20241126092050.1825607-14-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,10 +107,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The system controller on RZ/G3S can provide control access to its signals.
-To enable this, add the #renesas,sysc-signal-cells DT property. Consumers
-can use the renesas,sysc-signal DT property to reference the specific SYSC
-signal that needs to be controlled.
+Enable the system controller. It is needed for USB and SoC
+identification.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
@@ -118,91 +116,21 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Changes in v2:
 - none; this patch is new
 
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 3 ++-
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 3 ++-
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 3 ++-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 3 ++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-index 593c66b27ad1..2ebb951e6a39 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-@@ -585,8 +585,9 @@ cpg: clock-controller@11010000 {
- 		};
- 
- 		sysc: system-controller@11020000 {
--			compatible = "renesas,r9a07g043-sysc";
-+			compatible = "renesas,r9a07g043-sysc", "syscon";
- 			reg = <0 0x11020000 0 0x10000>;
-+			#renesas,sysc-signal-cells = <2>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 6b1c77cd8261..9dd229cbf288 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -877,7 +877,7 @@ cpg: clock-controller@11010000 {
- 		};
- 
- 		sysc: system-controller@11020000 {
--			compatible = "renesas,r9a07g044-sysc";
-+			compatible = "renesas,r9a07g044-sysc", "syscon";
- 			reg = <0 0x11020000 0 0x10000>;
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-@@ -885,6 +885,7 @@ sysc: system-controller@11020000 {
- 				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "lpm_int", "ca55stbydone_int",
- 					  "cm33stbyr_int", "ca55_deny";
-+			#renesas,sysc-signal-cells = <2>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-index 01f59914dd09..31550b8c3143 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-@@ -884,7 +884,7 @@ cpg: clock-controller@11010000 {
- 		};
- 
- 		sysc: system-controller@11020000 {
--			compatible = "renesas,r9a07g054-sysc";
-+			compatible = "renesas,r9a07g054-sysc", "syscon";
- 			reg = <0 0x11020000 0 0x10000>;
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-@@ -892,6 +892,7 @@ sysc: system-controller@11020000 {
- 				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "lpm_int", "ca55stbydone_int",
- 					  "cm33stbyr_int", "ca55_deny";
-+			#renesas,sysc-signal-cells = <2>;
- 			status = "disabled";
- 		};
- 
 diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index be8a0a768c65..169561386f35 100644
+index 169561386f35..89cf57eb8389 100644
 --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -198,7 +198,7 @@ cpg: clock-controller@11010000 {
- 		};
- 
- 		sysc: system-controller@11020000 {
--			compatible = "renesas,r9a08g045-sysc";
-+			compatible = "renesas,r9a08g045-sysc", "syscon";
- 			reg = <0 0x11020000 0 0x10000>;
- 			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-@@ -206,6 +206,7 @@ sysc: system-controller@11020000 {
- 				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+@@ -207,7 +207,6 @@ sysc: system-controller@11020000 {
  			interrupt-names = "lpm_int", "ca55stbydone_int",
  					  "cm33stbyr_int", "ca55_deny";
-+			#renesas,sysc-signal-cells = <2>;
- 			status = "disabled";
+ 			#renesas,sysc-signal-cells = <2>;
+-			status = "disabled";
  		};
  
+ 		pinctrl: pinctrl@11030000 {
 -- 
 2.39.2
 
