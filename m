@@ -1,240 +1,101 @@
-Return-Path: <linux-kernel+bounces-422274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2BC9D96ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:04:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8884C9D9715
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:14:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BE21641EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:03:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B683CB2CD2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724261CF2A5;
-	Tue, 26 Nov 2024 12:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B0B1CEE82;
+	Tue, 26 Nov 2024 12:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aMRvF+Lc"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8QUjS93"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD11194AE2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478321A260;
+	Tue, 26 Nov 2024 12:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732622632; cv=none; b=BkHVIzBvcRaez7gaxUw/nyNppFCcwqgHte2JWxuxhrGx8+WOZfaYKkoU8nXHPXrWPkTUTaExnp3HEfC7CEe8burRf6e3x/cmTUynp8u+GSLb4J3rcY4383uOxoAloVBplrCe6KdcrzAstQGn+63s41XgTUH9jIgU1R6ckdL21f0=
+	t=1732622705; cv=none; b=N0ZrmMePkkCPGslQDmBRaSCpnDcryZyYyj7f2CbhduXQKwNJVM0sy3wZa4pOm3Hc0ya2iIfAkUOn5Q4Ixta8NyU9eHZjRQtFNCsHNZTj4KYlctOjl1l6mrQ1MDTSBdsr6xHVgbX0Am/mZsrFhwMAnv19FI34LwXziLp9R8gunCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732622632; c=relaxed/simple;
-	bh=ZhxTRNp1iOgVhb1TJcCAisZHc1T27MAe32itSCII+vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvRmsqLRzJEZML3GUYn4LZMUBIQaY1w/krewG/yKnxEbt1gPPhgL+e3GrpBdoxTOBQ1KJQtVtdm4IeaYkJAHNB2tilRihQ85/gvpq/ujKzxYETkfIXBAKqcvy6vdpt5aHzju1f0A3F1xmzGzi5Mi0HhqoJc2lrNFarwWsmENShQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aMRvF+Lc; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso88290791fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:03:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732622629; x=1733227429; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zpyYn15MUH66vkZULVZR7JEeL4VUeZ1EeEi+VMRTwas=;
-        b=aMRvF+LcLW15oEp/Rv3q6VoUFJvAPxY7NZTncH0Gx3KLN9djaJavrly9eW8m2s8oAv
-         TQApWdZ7NGvsgm1IeeeBuhyPsQ+33uG+WfDUAvKf8hKoP33N0Dzq6NVHdUIWgV4U9npq
-         agEYDiU5pyBzs7pR+5AR6sryUY1QwF+02e2fC7DjKBdwlEFuVGZ+VkcTXpP4PAYJwJ0U
-         dAHUHUf8teeY8cfZ7QqpJViu/ve4BPHRO36P3konWgNdRN7jMXOy7Eu7CiK5lF2Tivvq
-         7YQCgKnRrOkS2eT3zuNT3elXwqBs8P6bLJniZK0ZBlJJNAzTFCbbVHmex1cw/KewxfYP
-         cgAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732622629; x=1733227429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zpyYn15MUH66vkZULVZR7JEeL4VUeZ1EeEi+VMRTwas=;
-        b=lUsDsN0sMblZJ+uNiBiOzLClx1C2irW8TMB2bvA9pn72WQoG0BcZAIaEKT/fMLIcNJ
-         2BOe7YOtuedtdF7WADg7WAUFzwGWfnI7w93xi1d/N13GvXwguitMCqn0ta/ICP0r/4Wj
-         98wrl6w0rj4YvNyAI+l1wK+0Z+rY1cYMEQ5ZuhROhxQsG4KSsvwtKln+z/xZ3aEuZOfT
-         RnjsNshUtgjj/xietWkrAPKfjA4YgiILgaYUyDljp80CImIwqg2j48HnJKMk1cC0xIdm
-         9o3CCfU5EP3VJlcoQ38R14Q1j67tAtbNHG4ndyjBE7K4QdmYX4v2wlOcbbAyeJz6SukR
-         NWfg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/jB0ayfMzTel7cK/HZPkfEbUF8wiknEaKBiq9POSLg4B0epzWwvCpWb6JIvaPdxQ2bGmwAQNky3azsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ6fRJGH295XbAqP8vFLLovyg8pMYoujCb2qeeWRFfCk6m9U71
-	rBdQGKt69GJZWD/NyR+EvzgCuUxiuLKYDOX5Q8XjhOLwgChloXprjOE9zEoMGM0=
-X-Gm-Gg: ASbGncvWCSCB4pLVQpR6maSOtPghNEzhBcS8+ghd6FMZT+sBk7PqcByEcz71GGzyfk2
-	FpojkPeyRmXWeJF+UPGDaW9KM/om9zkEucEE2sy3pnHGRs8bxj/+WMt28Gn68Fv+0tt142BPoaL
-	+g5Hx4yWVXJPSA0Nmj8I/CM/sNQ1YUGLSq0t2y/wqQOsODcpY1aRCILEMcXPkAuzO2XMgyI1qgM
-	45g2Dz9sFdyCI+yvDgtSUak1v/mHQaT8YcKmIzwRsiSjak8XjYiMheIrMvgDEEqgLukqDoFylQY
-	SLY+yhjzf5frE/ARiT5ir1aT2NshKQ==
-X-Google-Smtp-Source: AGHT+IFUMY1WY3yagazW3F3+TQd2N1V070AvMKUcYn8VzRKtEiMJ3VZP4mf3lCBn6xadKdz1w9sp2w==
-X-Received: by 2002:a2e:be9f:0:b0:2ff:c77c:c71e with SMTP id 38308e7fff4ca-2ffc77cc9dfmr50021991fa.20.1732622628941;
-        Tue, 26 Nov 2024 04:03:48 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d1746bsm18581581fa.12.2024.11.26.04.03.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 04:03:47 -0800 (PST)
-Date: Tue, 26 Nov 2024 14:03:45 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	"Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>, "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	quic_qiweil@quicinc.com
-Subject: Re: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
-Message-ID: <l4mnw6fu3cdbmqs4bxeykm73p2pb5u7vr5wh6zq5gf5y3fydsw@t3pijaf7qymf>
-References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
- <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
- <j4nnlbstclwgoy2cr4dvoebd62by7exukvo6nfekg4lt6vi3ib@tevifuxaawua>
- <da432de1369e4ce799c72ce98c9baaf1@quicinc.com>
- <ro5nx6brovd7inyy6tkrs7newszcxrzymfbsftejgpglz3gs6v@pscij26xmmco>
- <36fdb3d7-fd48-43a9-a392-336038db71a2@quicinc.com>
+	s=arc-20240116; t=1732622705; c=relaxed/simple;
+	bh=ixYsko9FNATKwd1BbIBMn/KEfxtTvnWT3vwfn3kXOiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rX7S9cWljqWD0IBaNepGKAdQ0y7C6OU0aOm7CBmN/QXSysPFs+kCIRZn9QcsKZWQF/E+VUUL0Dzdj3wfhVTHjVhenLpQU9lQ0fnt3aSYC+sCGmZxzKr9TtOcfqsCag6bpJJH1sk2MrUD4C9y1StnX6PQOOaT/aZgM2WcdMJGuhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8QUjS93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4DCC4AF09;
+	Tue, 26 Nov 2024 12:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732622704;
+	bh=ixYsko9FNATKwd1BbIBMn/KEfxtTvnWT3vwfn3kXOiM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Q8QUjS934NKKn33HbdQRDjS86JTvNPuy/qfmy0FTQ6RBzbUFSTnP0OoM39lzdWGHf
+	 YY/9kjxAiEGsE3Bf5t9j2sAVS0H+sUkaNp/wDKKkVSHnb8iGzva7BwByVBloF8mBLV
+	 hsJQI6YoCeCY9JT4UumNxM8HZYR0Yyz+1XU+Dx0ucKTSTJiAoTAy7p1thcPb87Rrmg
+	 Cjo4b0rw0MS6BFmvfv/y9WKdbE/FFwSqxqH5y82Vuac5q4/Hz4vMUOxIdyt4CBITBE
+	 nkrL8xgM8B2zAXjRCV/ne3X0PyNTrs3V9eE/CdI6nB6mjVYxio6z1G7cP64meeHa2g
+	 yp8aZbLjm820w==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-297078d8eaeso3739277fac.1;
+        Tue, 26 Nov 2024 04:05:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU4LvRZUzpgS4jeE5v9iJXMR0rFeGYLD2ENvIvx42IVSgrCpDXzLxHd4eFzGzaBcCe5mtKsdUv8iZwxXvc=@vger.kernel.org, AJvYcCUtw1RNdMAbhKmpSGJ3alr3GCLaoj8M7EF82F28jpTBY9h8KcslpRybJ84LszTTadrQ+k9SRyQ7gSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQD97ZOZcBQP5Hy/zJaYJWH8G7D606Vf2pCuR+zKkG1nvPGP07
+	TgY7G3fUp13ApXMHcTXD3/vQ1MeDkIf5EqGHZnhjD3B0LYA+5yAIRVldUJy59fUnL548Kib7wK8
+	Isr8+R6lhPdjRmvU7j33NAkUf1uI=
+X-Google-Smtp-Source: AGHT+IH/DFq6/c2TqMFz5Gv/miKzQztO1F0pPOZDULXGqlHivzUaYMP3dA4FuaAuQAcUeomf0N+pj2Wey1XvNCQW+9k=
+X-Received: by 2002:a05:6870:670c:b0:25e:e6d:5247 with SMTP id
+ 586e51a60fabf-29720cef3dcmr13413112fac.14.1732622704108; Tue, 26 Nov 2024
+ 04:05:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36fdb3d7-fd48-43a9-a392-336038db71a2@quicinc.com>
+References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
+ <20241125132029.7241-6-patryk.wlazlyn@linux.intel.com> <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
+ <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com> <CAJZ5v0hZ8ajccb=B7P5g1+KJ+tsw5vP-e9ix7j_65WgT34H1XQ@mail.gmail.com>
+ <a8d53d86-d658-4e18-bfd6-b37a2656b180@linux.intel.com>
+In-Reply-To: <a8d53d86-d658-4e18-bfd6-b37a2656b180@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 26 Nov 2024 13:04:51 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
+Message-ID: <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 5/8] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
+	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 03:40:47PM +0800, Renjiang Han wrote:
-> 
-> On 11/26/2024 12:20 AM, Dmitry Baryshkov wrote:
-> > On Mon, Nov 25, 2024 at 03:34:19PM +0000, Renjiang Han (QUIC) wrote:
-> > > On Monday, November 25, 2024 9:36 PM, Dmitry Baryshkov wrote:
-> > > > On Mon, Nov 25, 2024 at 11:04:50AM +0530, Renjiang Han wrote:
-> > > > > Initialize the platform data and enable venus driver probe of QCS615
-> > > > > SoC.
-> > > > > 
-> > > > > Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com> >
-> > > > > ---
-> > > > >   drivers/media/platform/qcom/venus/core.c | 50
-> > > > > ++++++++++++++++++++++++++++++++
-> > > > >   1 file changed, 50 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/media/platform/qcom/venus/core.c
-> > > > > b/drivers/media/platform/qcom/venus/core.c
-> > > > > index
-> > > > > 423deb5e94dcb193974da23f9bd2d905bfeab2d9..39d8bcf62fe4f72674746b75994c
-> > > > > ce6cbaee94eb 100644
-> > > > > --- a/drivers/media/platform/qcom/venus/core.c
-> > > > > +++ b/drivers/media/platform/qcom/venus/core.c
-> > > > > @@ -630,6 +630,55 @@ static const struct venus_resources msm8998_res = {
-> > > > >   	.fwname = "qcom/venus-4.4/venus.mbn",  };
-> > > > > +static const struct freq_tbl qcs615_freq_table[] = {
-> > > > > +	{ 0, 460000000 },
-> > > > > +	{ 0, 410000000 },
-> > > > > +	{ 0, 380000000 },
-> > > > > +	{ 0, 300000000 },
-> > > > > +	{ 0, 240000000 },
-> > > > > +	{ 0, 133333333 },
-> > > > > +};
-> > > > > +
-> > > > > +static const struct bw_tbl qcs615_bw_table_enc[] = {
-> > > > > +	{  972000,  951000, 0, 1434000, 0 },	/* 3840x2160@30 */
-> > > > > +	{  489600,  723000, 0,  973000, 0 },	/* 1920x1080@60 */
-> > > > > +	{  244800,  370000, 0,	495000, 0 },	/* 1920x1080@30 */
-> > > > > +};
-> > > > > +
-> > > > > +static const struct bw_tbl qcs615_bw_table_dec[] = {
-> > > > > +	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
-> > > > > +	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
-> > > > > +	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
-> > > > > +};
-> > > > > +
-> > > > > +static const struct venus_resources qcs615_res = {
-> > > > > +	.freq_tbl = qcs615_freq_table,
-> > > > > +	.freq_tbl_size = ARRAY_SIZE(qcs615_freq_table),
-> > > > > +	.bw_tbl_enc = qcs615_bw_table_enc,
-> > > > > +	.bw_tbl_enc_size = ARRAY_SIZE(qcs615_bw_table_enc),
-> > > > > +	.bw_tbl_dec = qcs615_bw_table_dec,
-> > > > > +	.bw_tbl_dec_size = ARRAY_SIZE(qcs615_bw_table_dec),
-> > > > > +	.clks = {"core", "iface", "bus" },
-> > > > > +	.clks_num = 3,
-> > > > > +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
-> > > > > +	.vcodec_clks_num = 2,
-> > > > > +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
-> > > > > +	.vcodec_pmdomains_num = 2,
-> > > > > +	.opp_pmdomain = (const char *[]) { "cx" },
-> > > > > +	.vcodec_num = 1,
-> > > > > +	.hfi_version = HFI_VERSION_4XX,
-> > > > > +	.vpu_version = VPU_VERSION_AR50,
-> > > > > +	.vmem_id = VIDC_RESOURCE_NONE,
-> > > > > +	.vmem_size = 0,
-> > > > > +	.vmem_addr = 0,
-> > > > > +	.dma_mask = 0xe0000000 - 1,
-> > > > > +	.cp_start = 0,
-> > > > > +	.cp_size = 0x70800000,
-> > > > > +	.cp_nonpixel_start = 0x1000000,
-> > > > > +	.cp_nonpixel_size = 0x24800000,
-> > > > > +	.fwname = "qcom/venus-5.4/venus_s6.mbn",
-> > > > I really want the firmware discussion of linux-firmware to be solved first,
-> > > > before we land this patch.
-> > > > SHort summary: can we use a single image for all 5.4 platforms (by using
-> > > > v5 signatures, by using v6 signatures, v3 or any other kind of quirk).
-> > > Thanks for your comment. We have discussed with the firmware team and
-> > > other teams if we can use the same firmware binary. The result is we'd better
-> > > use different firmware files. They should respond in the firmware binary
-> > > thread. I will push them and hope them respond as quickly as possible and
-> > > give reasons.
-> > > > > +};
-> > > > > +
-> > > > >   static const struct freq_tbl sdm660_freq_table[] = {
-> > > > >   	{ 979200, 518400000 },
-> > > > >   	{ 489600, 441600000 },
-> > > > > @@ -937,6 +986,7 @@ static const struct of_device_id venus_dt_match[] = {
-> > > > >   	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
-> > > > >   	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
-> > > > >   	{ .compatible = "qcom,msm8998-venus", .data = &msm8998_res, },
-> > > > > +	{ .compatible = "qcom,qcs615-venus", .data = &qcs615_res, },
-> > > > The hardware seems to be the same as sc7180, only the frequencies differ.
-> > > > Can we change the driver in a way that we don't have to add another
-> > > > compat entry just for the sake of changing freqs / bandwidths?
-> > > Thank you for your comment. I agree with you. But based on the Venus code
-> > > architecturE ANd the distinction between different platforms, I think the
-> > > current changes are the simplest.
-> > Well, it is simplest, correct. But not the best one. There is no plan no
-> > migrate these platforms to the iris driver. So instead, please improve
-> > the venus driver instead of just pushing the simplest change. I should
-> > have been more explicit about it earlier.
-> 
-> Based on the current code architecture, I don't know if there is a better
-> way. If we
-> 
-> refactor the code, it will take a lot of effort.
+On Tue, Nov 26, 2024 at 12:56=E2=80=AFPM Patryk Wlazlyn
+<patryk.wlazlyn@linux.intel.com> wrote:
+>
+> >>> If you first make intel_idle provide :enter_dead() for all CPUs on al=
+l
+> >>> platforms and implement it by calling mwait_play_dead_with_hint(), yo=
+u
+> >>> won't need mwait_play_dead() any more.
+> >> Crossed my mind, but because mwait_play_dead doesn't filter on Intel
+> >> vendor specifically,
+> >
+> > In practice, it does.
+> >
+> > The vendor check in it is equivalent to "if Intel".
+>
+> Actually, what about INTEL_IDLE=3Dn?
+> We might hit acpi_idle, which would call mwait_play_dead_with_hint() now,=
+ but
+> if we don't, don't we want to try mwait_play_dead before hlt or is it too
+> unrealistic to happen?
 
-Yes, please. The freq_tbl contents is a duplicate of the OPP table in
-DT. Drop it from the driver.
-
-> Therefore, I submit this change. Do you have a better approach?
-
-NAK for this submission. Please spend some time and improve the driver
-instead.
-
-> 
-> Also, the driver architecture of iris is implemented as you said.
-
-Irrelevant. You are patching venus, not iris.
-
-> > > > >   	{ .compatible = "qcom,sdm660-venus", .data = &sdm660_res, },
-> > > > >   	{ .compatible = "qcom,sdm845-venus", .data = &sdm845_res, },
-> > > > >   	{ .compatible = "qcom,sdm845-venus-v2", .data = &sdm845_res_v2, },
-> > > > > 
-> > > > > --
-> > > > > 2.34.1
-> > > > > 
-> > > > -- 
-> > > > With best wishes
-> > > > Dmitry
-> 
-> -- 
-> Best Regards,
-> Renjiang
-> 
-
--- 
-With best wishes
-Dmitry
+In that case the hint to use would not be known anyway, so
+hlt_play_dead() is the right choice IMV.
 
