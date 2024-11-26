@@ -1,106 +1,74 @@
-Return-Path: <linux-kernel+bounces-422828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7219D9EB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:17:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B25E9D9EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:19:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 279C2B2407E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CA3161F80
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A91DF973;
-	Tue, 26 Nov 2024 21:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567811DF27B;
+	Tue, 26 Nov 2024 21:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QHZIu4z6"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbWRYta0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99511DE2B3;
-	Tue, 26 Nov 2024 21:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29EB1DCB0E;
+	Tue, 26 Nov 2024 21:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732655848; cv=none; b=GbGdjRMpYLGqDOHQyCUenIUsZ8M0OUV4//TZMUg9E4eFLdTRsf9zP1J9K0QQBG+RcIoLCwr6alzzycsRKJceKfuciu9XSIBUoPKyRBdC8YBlHVWKv7EFFjnMoYHJY1C0s/bI1gNNkZmMY4PU6TZuYtG24qImRbuR+E/wamzm4Dk=
+	t=1732655989; cv=none; b=Fi6JcfTP6Fs+Qx8tB2ETHmmVSB7L+Sal7CHjQPxEDrTKHmHc0AGyvH/kwlQcM+HG4fe3HN8VkEaMRFvM2t7YxV0m2MrudwWrdnqC2sDAt/5kCGHnf72xYGc/XLpVn7X1N9zMw0luUbxwpGdyGsJVIrcvXj0J9xEhqV0BaH51N4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732655848; c=relaxed/simple;
-	bh=qUel6NrnvGwtQ1zz0ZBdXrr8Q3TIOXkey8rp6qUc4OQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IyLLVNSCR4EM9d3HtqE2GBxHWJdDD+8/w8Wm/wLNac4pRDknFO9rXLO+R4plhcXBO5iNuhWvXiFGIvWyLGh9a7JS4PPyan12Skmql9npa6tVtA08ptUD/PdAMyKPElj2x32Y4Ip/t1skiHnwAT9/NCzj5JOICIvdYKFp3U30pDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QHZIu4z6; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1732655836;
-	bh=qUel6NrnvGwtQ1zz0ZBdXrr8Q3TIOXkey8rp6qUc4OQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QHZIu4z619/ko/QCySe/Cx8g6kNrefkJOlxIQ2tYOF5PMW4sMOmMppLOxVcLgTX0b
-	 kQO8cSS6zprdxGuXDcIT/L/FGEDDZ7MmI8zcUkwW0fu4fasPL7hbLqLy3y/aV21gWy
-	 Pv2G3SodHMH1c6BEWWN6Ok3kLk8Jf1xY6q0ZK6A0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 26 Nov 2024 22:17:10 +0100
-Subject: [PATCH v2 2/2] kbuild: propagate CONFIG_WERROR to resolve_btfids
+	s=arc-20240116; t=1732655989; c=relaxed/simple;
+	bh=mmuFtOHabxwPpmephB/M1yuaSQ1Oc5r5dI4eOHy148w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tfOhyCaTef5jZRkGFWuVIMQPEYlztiYGMxi+O7mBzSHt0WlR1Wv1noZ+7KwRVF21iGJT5SNzyr2pRvwuoJAmLyrJZWN69DBRHTdPCeqI32n0FW+Ad1JUJFgv2f8b96N3uEhmOmqxIE2dxt1z2/Qt3Qq3Z291UzkM/AjGBJjWqUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbWRYta0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037A8C4CECF;
+	Tue, 26 Nov 2024 21:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732655989;
+	bh=mmuFtOHabxwPpmephB/M1yuaSQ1Oc5r5dI4eOHy148w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UbWRYta0wqlWJCgOLWxqJ4VShVyIYWDu+TdifwElbVlovS6elfJTDI4nnqFFsiYez
+	 dJwNc1416sj04W1k4cENRGdu7WD4ruG3S1kEmWe0r5BWs59BH3AXVDqoXGG884Nn4s
+	 oP914tTDEuE4QHG+LBijmz3Sf/WpHdpFGGQTMV5t9M4slCfUJgAehkDNwrZ1WjEe0j
+	 9QR4v01FStpYwZn9rHInHXXMLyFp4yTX1fynT0RSiZUr7iX8QJq/AeT6i5+qd4toPL
+	 qU2iOFwr4H6NcwhitCIlZ3kkFTM/xCjlb0NCGCcyQ2slB/+aFGAOMcML9pjP98Yx13
+	 flC3irWDBM0FA==
+Date: Tue, 26 Nov 2024 15:19:47 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+Cc: joro@8bytes.org, suravee.suthikulpanit@amd.com, will@kernel.org,
+	robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, vasant.hegde@amd.com
+Subject: Re: [PATCH v2 8/8] iommu/amd: Add documentation for AMD IOMMU
+ debugfs support
+Message-ID: <20241126211947.GA2654254@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241126-resolve_btfids-v2-2-288c37cb89ee@weissschuh.net>
-References: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
-In-Reply-To: <20241126-resolve_btfids-v2-0-288c37cb89ee@weissschuh.net>
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732655835; l=928;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=qUel6NrnvGwtQ1zz0ZBdXrr8Q3TIOXkey8rp6qUc4OQ=;
- b=iZdeC9osjgnTQJeB05GcRBFuABstvQYxT1en54Otzg5IdShYnTxMrytV6i8py/pEsc7i7Yv3E
- gNCSMRTpGLzBTAfGjeW3ol7NpqQ+VnIstIBGtrf3ToH/rqFthLpV+7F
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106074639.2039-9-dheerajkumar.srivastava@amd.com>
 
-Use CONFIG_WERROR to also fail on warnings emitted by resolve_btfids.
-Allow the CI bots to prevent the introduction of new warnings.
+On Wed, Nov 06, 2024 at 01:16:39PM +0530, Dheeraj Kumar Srivastava wrote:
+> Add documentation describing how to use AMD IOMMU debugfs support to
+> dump IOMMU data structures - IRT table, Device table, Registers (MMIO and
+> Capability) and command buffer.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
----
- scripts/link-vmlinux.sh | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> +What:		/sys/kernel/debug/iommu/devtbl
 
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index a3c634b2f348f9c976cff9693caf290db7f31666..7288fe501b57e29003d922441c8d5e2f48dee6ad 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -279,7 +279,11 @@ vmlinux_link vmlinux
- # fill in BTF IDs
- if is_enabled CONFIG_DEBUG_INFO_BTF; then
- 	info BTFIDS vmlinux
--	${RESOLVE_BTFIDS} vmlinux
-+	RESOLVE_BTFIDS_ARGS=""
-+	if is_enabled CONFIG_WERROR; then
-+		RESOLVE_BTFIDS_ARGS=" --fatal-warnings "
-+	fi
-+	${RESOLVE_BTFIDS} ${RESOLVE_BTFIDS_ARGS} vmlinux
- fi
- 
- mksysmap vmlinux System.map
+I guess you meant /sys/kernel/debug/iommu/amd/devtbl here?
 
--- 
-2.47.1
+> +What:		/sys/kernel/debug/iommu/irqtbl
 
+and /sys/kernel/debug/iommu/amd/irqtbl here?
 
