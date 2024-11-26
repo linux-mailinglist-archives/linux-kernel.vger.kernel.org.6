@@ -1,157 +1,155 @@
-Return-Path: <linux-kernel+bounces-422237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5129D9651
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6199D9652
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E008167D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07161167CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AC71CEAC3;
-	Tue, 26 Nov 2024 11:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="COyXZxg9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB10F1CEE82;
+	Tue, 26 Nov 2024 11:38:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CAC1CBE8C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA58C1CEAD4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732621102; cv=none; b=Zim/S+6YSXaC/0kBgqLzpWD3OYA8+dWJ82H9lJl2+1/mvaG2uViWYRLS+2ATalO8rkkWBQ5wQ6xQMVsLOZ6p4rNRI4tueJp9M3gCZeog+6Bx0B7pE7W+xsuBBdkTvuDoh9mfHDcDtmIIezdIGbbMFR3gFiAOpPvC+NpfwtGZpoE=
+	t=1732621110; cv=none; b=d1WjtA7IRLVJe6lhib1K7FMHMbAm3aWMp5SHCFoxzecD3AggjtPdCWGC2nWWUzygvWhagz2DgPiBzXVjfsmW3eJ19WPYJyxUEzYOQoDbbbH4gR0tZhT4f/FrtnWwJE3VI5V+1elSQHUCJPaDSUC89soNyIJHtY6zwFmSSCHfGsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732621102; c=relaxed/simple;
-	bh=xQSoE2fGzVRGaRojfci1MKJePtHomuV4kjdRhwy73EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XcjuHIaHZEXXuui/mGO66LXIScmmeSF6O9YiV2+52vnx6tuGaVAeCqWzAgUS4NnA6SJqs0Q3BTvBm0EBzVCIpey03wu+z6fAd/y9ng6p7/O6VBFgqynDTFr+vcAm2EiwbWYASLoUuVfntsAHkFE1nKov5ht1aBK5FoG27q2FEjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=COyXZxg9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732621099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8SlxkVrFF9+w/Hc6R6JHl5eJHzWUPo6rcRHWt3F4SyQ=;
-	b=COyXZxg9zH6ncllDlvujlfORrhujB3w3XCe3UbrIvF5hM/X6NixAaF8pMIhyFS/3Qlnvk8
-	JIiv5AA78HRGG7ed40xpHvy6wG3wI3egluIPX6QkHAX7RI8icBwLIWjsY9T8zZSOxSOadl
-	24FDLblvolX2V8rYMGSMJuq9nXCejT4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-84-ZzkRq5zLMQ2LY9jFI9rV5Q-1; Tue,
- 26 Nov 2024 06:38:14 -0500
-X-MC-Unique: ZzkRq5zLMQ2LY9jFI9rV5Q-1
-X-Mimecast-MFC-AGG-ID: ZzkRq5zLMQ2LY9jFI9rV5Q
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3D5219541A0;
-	Tue, 26 Nov 2024 11:38:11 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19EF0195DF81;
-	Tue, 26 Nov 2024 11:38:09 +0000 (UTC)
-Date: Tue, 26 Nov 2024 19:38:05 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	"Kirill A. Shutemov" <kirill@shutemov.name>,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev, x86@kernel.org,
-	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
-Message-ID: <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
-References: <20241021034553.18824-1-yan.y.zhao@intel.com>
- <87frop8r0y.fsf@email.froward.int.ebiederm.org>
- <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
- <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
- <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1732621110; c=relaxed/simple;
+	bh=d04pFtjp3aB6UVCibWCR/sDgJ7z94d5RgrcgLgKxCbE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=u5dYhmvUHcttn8hb3hywdliv69SO3gDzMHYpYvmUcbk0o33QZvJ/wZsQpKwsjMWPgXlwbuQ8JfbHEhS1dXzTp7c/31mGZv59V6k6owW6qPN/ixnSHvLpcYvlbQToduzLvWnGWmSFtYQzHohfZisI9bELyg+V2cIyoBF4GF5HURM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7932544c4so52413525ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:38:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732621107; x=1733225907;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FEmnuJrlOTw7VDUs9t4zoFz+7BAxEM5wGCiCwqDzQLw=;
+        b=D26i+AGUGqK3zuVcQKHBLm0HcS9KaD1F8tzkgR4lYBo02+nhWxiijUs4xsh7kff+zP
+         shlKYBOzLH3NA+TSruOcZr3oJ0VFxaBv5XFXioCryIRcWNeDb6NjuIMhSveCgwQcI5ro
+         DxDLCFmxAf3g72rO/ItNgjGnnepXpRPeYIFkikrVv5JHQ8BqkIzgWq0VaB47XFJWOXGy
+         5HSbXZGkTu3cnxuQHy/iPss/KNpl1n7737NQX39Fg1cFNlUaXdaeH0MohA6rVXLp/0xp
+         wSSIT1OGHKliMZ24PqaWchNl8E1MSKl+iHSCz/DG4A8UZUIWfALTgVcMrLjh8g97/scD
+         p5wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXqeKDAX47L5uiHt/OK8Q+0GAUMTx7kMTBoTRtteK/KKDRfZDrVRBOgq2ZiTaIwFp+QSmloZaFTuLx2Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz0ON/lBOmdA6gqxF2Mk+ZYtPYEUUKqbzCwP4mdxh0MEt6AowB
+	AX6YI6gCBTK15boH/9CrASZ9H9oTuYy26lyS/CiM3SW1lVgj3Bfa8hYBU9+kNhSoqtiTBVkdnVu
+	BTg+gcfFwzh+YEf8Zjc+n+/kSdtk1xmYhzh6DrIDs6dQI2tMovj5dNpA=
+X-Google-Smtp-Source: AGHT+IG0BSO+ApdsgG/2//bSnwoh9SH5pSX4ESapIr7O85ULYLfBU7NOZRFKUV0yl5EAHFzjd3HDeREE9/aUpJA2oR4XXWBLML2f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Received: by 2002:a05:6e02:16c5:b0:3a7:87f2:b010 with SMTP id
+ e9e14a558f8ab-3a79acf9b88mr178413885ab.5.1732621106822; Tue, 26 Nov 2024
+ 03:38:26 -0800 (PST)
+Date: Tue, 26 Nov 2024 03:38:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6745b332.050a0220.1286eb.0016.GAE@google.com>
+Subject: [syzbot] [udf?] WARNING in udf_rename (2)
+From: syzbot <syzbot+3ff7365dc04a6bcafa66@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/24/24 at 08:15am, Yan Zhao wrote:
-> On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
-> > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
-> > 
-> > > Waiting minutes to get VM booted to shell is not feasible for most
-> > > deployments. Lazy is sane default to me.
-> > 
-> > Huh?
-> > 
-> > Unless my guesses about what is happening are wrong lazy is hiding
-> > a serious implementation deficiency.  From all hardware I have seen
-> > taking minutes is absolutely ridiculous.
-> > 
-> > Does writing to all of memory at full speed take minutes?  How can such
-> > a system be functional?
-> > 
-> > If you don't actually have to write to the pages and it is just some
-> > accounting function it is even more ridiculous.
-> > 
-> > 
-> > I had previously thought that accept_memory was the firmware call.
-> > Now that I see that it is just a wrapper for some hardware specific
-> > calls I am even more perplexed.
-> > 
-> > 
-> > Quite honestly what this looks like to me is that someone failed to
-> > enable write-combining or write-back caching when writing to memory
-> > when initializing the protected memory.  With the result that everything
-> > is moving dog slow, and people are introducing complexity left and write
-> > to avoid that bad implementation.
-> > 
-> > 
-> > Can someone please explain to me why this accept_memory stuff has to be
-> > slow, why it has to take minutes to do it's job.
-> This kexec patch is a fix to a guest(TD)'s kexce failure.
-> 
-> For a linux guest, the accept_memory() happens before the guest accesses a page.
-> It will (if the guest is a TD)
-> (1) trigger the host to allocate the physical page on host to map the accessed
->     guest page, which might be slow with wait and sleep involved, depending on
->     the memory pressure on host.
-> (2) initializing the protected page.
-> 
-> Actually most of guest memory are not accessed by guest during the guest life
-> cycle. accept_memory() may cause the host to commit a never-to-be-used page,
-> with the host physical page not even being able to get swapped out.
+Hello,
 
-So this sounds to me more like a business requirement on cloud platform,
-e.g if one customer books a guest instance with 60G memory, while the
-customer actually always only cost 20G memory at most. Then the 40G memory
-can be saved to reduce pressure for host. I could be shallow, just a wild
-guess.
+syzbot found the following issue on:
 
-If my guess is right, at least those cloud service providers must like this
-accept_memory feature very much.
+HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=149e7930580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ff7365dc04a6bcafa66
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f8975f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129e7930580000
 
-> 
-> That's why we need a lazy accept, which does not accept_memory() until after a
-> page is allocated by the kernel (in alloc_page(s)).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/77e67e959031/disk-06afb0f3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ef29cbe930b4/vmlinux-06afb0f3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/430d1fe2c7b0/bzImage-06afb0f3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0f103b2b0acc/mount_0.gz
 
-By the way, I have two questions, maybe very shallow.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3ff7365dc04a6bcafa66@syzkaller.appspotmail.com
 
-1) why can't we only find those already accepted memory to put kexec
-kernel/initrd/bootparam/purgatory?
+UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2022/11/22 14:59 (1000)
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5834 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
+Modules linked in:
+CPU: 1 UID: 0 PID: 5834 Comm: syz-executor342 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
+Code: bb 70 07 00 00 be 08 00 00 00 e8 27 d8 e5 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 40 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
+RSP: 0018:ffffc90003ab7610 EFLAGS: 00010293
+RAX: ffffffff82170c43 RBX: 1ffff1100e413100 RCX: ffff88807e470000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82170bc3 R09: 1ffffffff2038026
+R10: dffffc0000000000 R11: fffffbfff2038027 R12: ffff888072098800
+R13: ffffc90003ab77d0 R14: ffff8880720987b8 R15: dffffc0000000000
+FS:  000055556dfec380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564225f57310 CR3: 00000000770da000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inode_dec_link_count include/linux/fs.h:2521 [inline]
+ udf_rename+0x969/0xe10 fs/udf/namei.c:867
+ vfs_rename+0xbdb/0xf00 fs/namei.c:5067
+ do_renameat2+0xd94/0x13f0 fs/namei.c:5224
+ __do_sys_rename fs/namei.c:5271 [inline]
+ __se_sys_rename fs/namei.c:5269 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5269
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f25e8587ad9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdbb95b938 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007f25e8587ad9
+RDX: 00007f25e8587ad9 RSI: 0000000020000f00 RDI: 00000000200000c0
+RBP: 00007f25e85fb5f0 R08: 000055556dfed4c0 R09: 000055556dfed4c0
+R10: 000055556dfed4c0 R11: 0000000000000246 R12: 00007ffdbb95b960
+R13: 00007ffdbb95bb88 R14: 431bde82d7b634db R15: 00007f25e85d003b
+ </TASK>
 
-2) why can't we accept memory for (kernel, boot params/cmdline/initrd)
-in 2nd kernel? Surely this purgatory still need be accepted in 1st kernel.
-Sorry, I just read accept_memory() code, haven't gone through x86 boot
-code flow.
 
-Thanks
-Baoquan
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
