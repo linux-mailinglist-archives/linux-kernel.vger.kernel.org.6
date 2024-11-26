@@ -1,197 +1,142 @@
-Return-Path: <linux-kernel+bounces-422170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4429D9562
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:22:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5719D9571
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B98282CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31828B2A1AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F451C4A2E;
-	Tue, 26 Nov 2024 10:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD061CDFBE;
+	Tue, 26 Nov 2024 10:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaAVXfs+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a8+b3FQc"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95548195FEF;
-	Tue, 26 Nov 2024 10:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5364A1AC44C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616565; cv=none; b=myzR6X5hSoYbjbUQqbEUHrbzIPCWyRcC0rCFoZd/dt6S6vsyP4sO4azQPaLtnblQDJnagInsvmwTBsfa42BUQ6NhG3vI1k1tNmUUfau5i+wJ+LrT9+hPpQ6vhzdB5y/yeSoGxUPxLsBfDfMrFT5gg8vjQbxkM7sqrAkN36gmtbI=
+	t=1732616580; cv=none; b=U53zvBwniQ+gpI4SjN2zWl+8KvcORkyjjWW+t8u43QY2tDW37N+ex1Z/MO9xe5xyS04NaLyGjx06paZ6YmB6N3VNeGl/gXlxMUAyC4JVLeXfNPc4SirwqBzweGxRtJsrF0pLtrRxMsh+trU/swEhDljDbIDuq/PvSorJ2QkOHF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616565; c=relaxed/simple;
-	bh=Fk/PTflTbAr/9jycZ02Vdv38Z0hd7Vu1hxIPifBY4gM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cR3mwQYQVLUeicJaQnaT6VFGcHpaoDtE5TozxCics6QxKN/AsLvFINyi4eNIddQvv7qeBGDgAiqydSSP/uiappPooQXnwO+JRApdZt1id5KSPHeVa+uloZlnPw2wYZHSPYsZUbw9X/XSLPcOIryVB9DB+G3gNOqNB2CYpdX6r9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaAVXfs+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31267C4CED0;
-	Tue, 26 Nov 2024 10:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732616565;
-	bh=Fk/PTflTbAr/9jycZ02Vdv38Z0hd7Vu1hxIPifBY4gM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DaAVXfs+Iqh4zfXvT8lyskUt0jbaig1eQU+y41vxLnpS5Z533x5RHK896FfnH908J
-	 bRAMMpZn5xuxb9nV7ImC+60mU15o6sT1bq7C7HrvONmeSjZlws2J0VNGoHwROW4+E3
-	 plvUycQ7ws5ZrVLmkqIkCMA8hJNm1gIqySmT/6OlAEKjUSTqTVW3P0oQP3sPm7JRzJ
-	 4WbssJKAwvcAMa2r47cf5zDkfU7raW83+3XwM+pvpoTOvsfcG0gleRqpwh51FToUMr
-	 WTK/FBPZtf6WkOwwhduXUEs2xn0kdz2Qbmn0sTfb6M4GHel8uzJw+3gskohTFOe7ps
-	 VrN3glT5Pcz8w==
-Message-ID: <554e768b-e990-49ff-bad4-805ee931597f@kernel.org>
-Date: Tue, 26 Nov 2024 11:22:39 +0100
+	s=arc-20240116; t=1732616580; c=relaxed/simple;
+	bh=1/Q61X77d+wJnDnxSzR1szzWu1q7VOUzcUHJ7AVCSHs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Bf+F5zTnU/1OFgTQN8mxIRmxFLW905/ORqVuCvSUHSM0z+pJlFCdG27aGcN++NT3/WZk6vn1u/3gr7PR7oAB/TAL5cvyputy66qn/nc0JOUFsFTDUhuG0bG2NRHN7aRWafllNB8tGuGHqeNbIX5/pqlL2VoMlgQleI7+ujLgdbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a8+b3FQc; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso49880775e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:22:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732616576; x=1733221376; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k0xLkYt2qRmhHcxTp08v9mIoJ8dCMB1v2JskS0o4438=;
+        b=a8+b3FQc03Ual1vUYqZp53I6txKAUHCZLRzy4JUhmGaxSarMa0KkYzSXVLBFyAHdV8
+         8QdC6x1svRO/5uLyQdJnzqKOFNT88js7G6ej0LsdXYOMCG8jYbQFklc9P2YlfDjZGOSh
+         QL4D2pzwxh1eQHSG0nwgohQk4xP8pynVY9wZWzKeJEp2d8VNQucIv7eH8zOcnitYr25/
+         tooE2ddUniyf5CljY1ijQatdPuaoHM0wfO2Z30gkl2DiCaORbL9MQ43dKyDDXvKLNbqd
+         O2JjsIrkQQvRMDln9w/5a0dz7QqdJjxu8xrJ+tA9kuZGBEeUowieVPaxVS212lH9mLPN
+         QZQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732616576; x=1733221376;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k0xLkYt2qRmhHcxTp08v9mIoJ8dCMB1v2JskS0o4438=;
+        b=kRJVWM5zsNMrtMwEqJk+kJLpLLtaHgQgWL/n4Lqfwa+LN78yUo8Q5shex6WGZEXDyK
+         w4NSRu0To0dnzvxMvNSAjXUI7ioaZM0knpGBPGG+aThyIKbijoHVdosIF9yet4BdrxOd
+         f8v9NHHIvQVZcG1DUuh48btlDQIb3gRiBtoeKYMjbDyPA3XtbH7JFwKdNx+3dZqnTqMG
+         /+aZLk4OWtSAZH/dKcoOj0S4I2bzZQksL/DOp5zBEKd+TAbbHegNCPecETZ3sIK4LgSQ
+         DVJtZJtTs2JKl62BGA2DZoD3O3AcNPL+Z7fjaJBjbzySmkHDT+gdnvDUWHzG+jmaJ27f
+         Qwig==
+X-Forwarded-Encrypted: i=1; AJvYcCVSYjGYprJB36rGfUSldE5NfYBswG52Trg2c3M8w1Vhb175nk4lfZHRMP9fOkLPuXPrt2NJY/9ZFcSR7cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNW58AFvJBGQrxkULOff4CrL+GHIe1UqtA/PYfAj5G81/a8oif
+	G0dZu5jlDJ4qSL0HFA8DkntCEUop2lWlxLWiw3svki3VYbzNDx53AkE00Dbzw8A=
+X-Gm-Gg: ASbGncseOT+pctqJaGJJXKD8IOprEKvdpHDqv/HNJRficKnQbzi0IqZP5cAd+Kw+c1i
+	qr9UElwjpepuWaFQUHDPuQu0Ikc2FhyIK4NDTW0H/QU6GiGV+dAJAtg0juhqT/gObCw7r9GVC6i
+	OCacD/qQT3EpJGUHItt3yRgc7M/opUuse77/jHg8tiuKt6H99oxEVOY/m3A+Kl9lnXRcac0oJ2R
+	BVXQHJr/3ASYmlpS2r4wNVcqtDNKt3dM6J++4WRAaRKQWH6mK1Ud7JIcE820ywEQb1iioA=
+X-Google-Smtp-Source: AGHT+IHEmm5r+ZACNObMId0YdkCRExn4aSTNKuXwdL5JuzF4jUF9M5xtk4DUMu5W/U1bD4v2974C7Q==
+X-Received: by 2002:a05:600c:3b91:b0:434:a29d:6c71 with SMTP id 5b1f17b1804b1-434a29d6d6bmr37700835e9.27.1732616575739;
+        Tue, 26 Nov 2024 02:22:55 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1046sm228378075e9.4.2024.11.26.02.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 02:22:55 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/3] PCI: qcom-sm8[56]50: document and add 'global'
+ interrupt
+Date: Tue, 26 Nov 2024 11:22:48 +0100
+Message-Id: <20241126-topic-sm8x50-pcie-global-irq-v1-0-4049cfccd073@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org, pabeni@redhat.com
-Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
- Robin Murphy <robin.murphy@arm.com>,
- Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
- <20241120103456.396577-3-linyunsheng@huawei.com>
- <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
- <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
- <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
- <6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawei.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHihRWcC/x3MQQ5AMBAAwK/Inm2iG0p8RRyoxSZotSKSxt81j
+ nOZCIG9cIA2i+D5liD2SFB5BmYdjoVRpmSggkqlSONlnRgMe/NUBTojjMtmx2FD8SfWiiZdN2N
+ FpCEVzvMsz993/ft+VptvZm4AAAA=
+X-Change-ID: 20241126-topic-sm8x50-pcie-global-irq-712d678b5226
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1054;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=1/Q61X77d+wJnDnxSzR1szzWu1q7VOUzcUHJ7AVCSHs=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnRaF9Li69UPAhTjUCO90AsqcZajhzFAsAYvJ/Qtaj
+ L4YUEVaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ0WhfQAKCRB33NvayMhJ0a5mEA
+ DQxIFxszCHIR66PIquhim8mW52Dc00Hwhwck0ElHJFzg3yTZBTClFgly2fq2QwDr8LIanA34qXR7xb
+ 1CK1kMoWSuJfAqg5kY+YaKBFrEKMiUb6PsjoLSUt/jRRV81wN2+hqSO8QRzTsGKblS2sFMy5vFnVyy
+ vTE8n20//6Q4txgXNubnlEdRnWG7Tn3BhtHTugkaLEZ19gpl7DXiamMR+YafbngHL+mxd6B6D+yiBP
+ X+4aX45qMvEKjvQpgEIC0DWgbhOQCmDcRVasqX6vjsJ0WHnZQ9RBb8LheC7aJ0phJHh1ZzNe0IhDRv
+ 3pCYjazWOu7JKI1xSGz7TRvtIxRHG5l5rXXBSo88dPqqiOP+C0y49oI10jrVxK0EgnC5dji2Iqab86
+ XPfF/isbTlXibM8YuPUkydkBcFHoHSSZOjuxq3D1erbJUBdRbdhmgEEMPCE7KYNoLWlWKPNRrQLlgo
+ EdL5FeQtpvu0rEkOHZ3jy8xeBP/yHsoJ4h1wUG8zNjX6qj5oirNthznB4NfPolm6w0cYBlQ2O2cqIl
+ 6YqzA+uCzf2Sve+h4sejJiuh6+f/OwfGqlFBQ9pKz911RCIqNpTBFRlIOu+nGWOC4u0EDc9fyesz1I
+ JMLwigtevzn/WNL1Qr4FVyxqH6WcbHuP8gGafllu0QiJmGGArXMKgPN75EsQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+Following [1], document the global irq for the PCIe RC and
+add the interrupt for the SM8550 & SM8650 PCIe RC nodes.
 
+Tested on SM8550-QRD, SM8650-QRD and SM8650-HDK.
 
-On 26/11/2024 09.22, Yunsheng Lin wrote:
-> On 2024/11/25 23:25, Jesper Dangaard Brouer wrote:
-> 
-> ...
-> 
->>>>> +
->>>>>     void page_pool_destroy(struct page_pool *pool)
->>>>>     {
->>>>>         if (!pool)
->>>>> @@ -1139,6 +1206,8 @@ void page_pool_destroy(struct page_pool *pool)
->>>>>          */
->>>>>         synchronize_rcu();
->>>>>     +    page_pool_inflight_unmap(pool);
->>>>> +
->>>>
->>>> Reaching here means we have detected in-flight packets/pages.
->>>>
->>>> In "page_pool_inflight_unmap" we scan and find those in-flight pages to
->>>> DMA unmap them. Then below we wait for these in-flight pages again.
->>>> Why don't we just "release" (page_pool_release_page) those in-flight
->>>> pages from belonging to the page_pool, when we found them during scanning?
->>>>
->>>> If doing so, we can hopefully remove the periodic checking code below.
->>>
->>> I thought about that too, but it means more complicated work than just
->>> calling the page_pool_release_page() as page->pp_ref_count need to be
->>> converted into page->_refcount for the above to work, it seems hard to
->>> do that with least performance degradation as the racing against
->>> page_pool_put_page() being called concurrently.
->>>
->>
->> Maybe we can have a design that avoid/reduce concurrency.  Can we
->> convert the suggested pool->destroy_lock into an atomic?
->> (Doing an *atomic* READ in page_pool_return_page, should be fast if we
->> keep this cache in in (cache coherence) Shared state).
->>
->> In your new/proposed page_pool_return_page() when we see the
->> "destroy_cnt" (now atomic READ) bigger than zero, then we can do nothing
->> (or maybe we need decrement page-refcnt?), as we know the destroy code
-> 
-> Is it valid to have a page->_refcount of zero when page_pool still own
-> the page if we only decrement page->_refcount and not clear page->pp_magic?
+[1] https://lore.kernel.org/all/20240731-pci-qcom-hotplug-v3-0-a1426afdee3b@linaro.org/
 
-No, page_pool keeps page->_refcount equal 1 (for "release") and also 
-clears page->pp_magic.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (3):
+      dt-bindings: PCI: qcom,pcie-sm8550: document 'global' interrupt
+      arm64: dts: qcom: sm8550: Add 'global' interrupt to the PCIe RC nodes
+      arm64: dts: qcom: sm8650: Add 'global' interrupt to the PCIe RC nodes
 
-> What happens if put_page() is called from other subsystem for a page_pool
-> owned page, isn't that mean the page might be returned to buddy page
-> allocator, causing use-after-free problem?
-> 
+ Documentation/devicetree/bindings/pci/qcom,pcie-sm8550.yaml |  9 ++++++---
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 12 ++++++++----
+ arch/arm64/boot/dts/qcom/sm8650.dtsi                        | 12 ++++++++----
+ 3 files changed, 22 insertions(+), 11 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241126-topic-sm8x50-pcie-global-irq-712d678b5226
 
-Notice that page_pool_release_page() didn't decrement page refcnt.
-It disconnects a page (from a page_pool). To allow it to be used as
-a regular page (that will eventually be returned to the normal
-page-allocator via put_page).
-
-
->> will be taking care of "releasing" the pages from the page pool.
-> 
-> If page->_refcount is not decremented in page_pool_return_page(), how
-> does page_pool_destroy() know if a specific page have been called with
-> page_pool_return_page()? Does an extra state is needed to indicate that?
-> 
-
-Good point. In page_pool_return_page(), we will need to handle the two 
-cases. (1) page still belongs to a page_pool, (2) page have been 
-released to look like a normal page. For (2) we do need to call 
-put_page().  For (1) yes we would either need some extra state, such 
-that page_pool_destroy() knows, or a lock like this patchset.
-
-
-> And there might still be concurrency between checking/handling of the extra
-> state in page_pool_destroy() and the setting of extra state in
-> page_pool_return_page(), something like lock might still be needed to avoid
-> the above concurrency.
-> 
-
-I agree, we (likely) cannot avoid this lock.
-
->>
->> Once the a page is release from a page pool it becomes a normal page,
->> that adhere to normal page refcnt'ing. That is how it worked before with
->> page_pool_release_page().
->> The later extensions with page fragment support and devmem might have
->> complicated this code path.
-> 
-> As page_pool_return_page() and page_pool_destroy() both try to "release"
-> the page concurrently for a specific page, I am not sure how using some
-> simple *atomic* can avoid this kind of concurrency even before page
-> fragment and devmem are supported, it would be good to be more specific
-> about that by using some pseudocode.
-> 
-
-Okay, some my simple atomic idea will not work.
-
-NEW IDEA:
-
-So, the my concern in this patchset is that BH-disabling spin_lock 
-pool->destroy_lock is held in the outer loop of 
-page_pool_inflight_unmap() that scans all pages.  Disabling BH for this 
-long have nasty side-effects.
-
-Will it be enough to grab the pool->destroy_lock only when we detect a 
-page that belongs to our page pool?  Of-cause after obtaining the lock. 
-the code need to recheck if the page still belongs to the pool.
-
-
-> I looked at it more closely, previously page_pool_put_page() seemed to
-> not be allowed to be called after page_pool_release_page() had been
-> called for a specific page mainly because of concurrently checking/handlig
-> and clearing of page->pp_magic if I understand it correctly:
-> https://elixir.bootlin.com/linux/v5.16.20/source/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c#L5316
-
-As I said above
-The page_pool_release_page() didn't decrement page refcnt.
-It disconnects a page (from a page_pool). To allow it to be used as
-a regular page (that will eventually be returned to the normal
-page-allocator via put_page).
-
---Jesper
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
