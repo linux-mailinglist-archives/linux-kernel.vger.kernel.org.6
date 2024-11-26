@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-422773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFFA9D9DFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:22:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B7A9D9DFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E359B2476A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:21:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80360B2491C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511341DED56;
-	Tue, 26 Nov 2024 19:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848401DE8A1;
+	Tue, 26 Nov 2024 19:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avmpcmAe"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="LaSbl+o3"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586C81DE4F8;
-	Tue, 26 Nov 2024 19:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AB0155321;
+	Tue, 26 Nov 2024 19:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732648896; cv=none; b=jqV5prKcVnEpBHaEeo8sqAvcjgTaGeHbzBC6uO7km+D7xBb6OOMFQWhfjz6Lk3zXSDWfcedxnVhnXPSlpmcCflIjtSJ+webMappSHNlyEJsra960epXQkhrVA0c4nocbXO1GWYE1vn0WLhbnBnRq1oq3WeECJ29BhGKOqZch2NM=
+	t=1732648997; cv=none; b=LcaTY9HXu6A/9ZETam4LU0gJ0zlyosnqGn/MmS0xAqwlbrTgsF4Oxc48MBq7XRIoVaO9Q614J/fInNsBflBIo4exrVbFOBuNZcq3gDicwjxSlX5JK6xeP8YTGEMuff9L6IvZqiNiz5BFeVtqUhElTJGuAVtQ7NF9LkRVB4Jw/lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732648896; c=relaxed/simple;
-	bh=U6myVqWdQYYw26A+8XnZ8Z55i2Z4AyLhIWH6ewmuI20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o30CpU2m8ejrZAXABq1opo3NKytEPn3vsha7vZwtZ5ldJol+fdy/aUUDyMQ/NapysInfT40MB6IA4jbyt9R5LtKFvwjETI6KKrQ4x1lII41Ult4gi8XVU05qZBpNQVcXZpT9DuRUyItEBT5yj5nzBjjOpxAyOiLjA00e/lugSSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avmpcmAe; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724f42c1c38so3060292b3a.1;
-        Tue, 26 Nov 2024 11:21:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732648894; x=1733253694; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vOqAjlFCyaRT9qFIJXMcAiIJBo03YE98V6U0eNLQrFE=;
-        b=avmpcmAeBs6DgDfNopIZZNiaD2eJfQKHpdTn1Kc0xKwC3sJ/f3xpHUYdrnRlHEoDMq
-         cNTKd1by0iqkI/S4pR/iDQ8i2fUgJNumczH2LQsgmuFW6xL//dm77QX6MR7h2FELaqPa
-         GEb85IEBvA/Ui3lWkkIfCJ0b2g9ij6FUpcaQHCqY3J1j9Z6gDTHdMs5DuGzwIZ8zUXNn
-         DBRB0Q0imqjFQHpBfPPNNwc33sOzG0+K7TbaqziZqKp6b9MeoD+61q6TMU5vhe/2A7/V
-         I6qLvk5hOfaVRELQ8iAcq0jtSuYlX8kl+DMp26JdDj/BQScDCfHXW/J7eRHa8xvo59d+
-         B95w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732648894; x=1733253694;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vOqAjlFCyaRT9qFIJXMcAiIJBo03YE98V6U0eNLQrFE=;
-        b=t0Jk8I+tzUa8vNfJIb3VXrDJwpasus48D2jdjHlFB57qq1nuPWq4tZA87dW8Ze8cNj
-         P1faI4CKZkTsdlDmfCOuU9ZrnBxKkxY6UGfHVXI57L0eQPRVcENDwCxdgsV7G0IWrUR5
-         nbmNqJqFjjrnBpt4WUPImQRvimGTyABDUOWtrZkoSGq5bXJOFv53CheKYsdgpNouMZTb
-         thoSQjUfIieHm9hMP9Bjmq1LwN0UXC2M0xnpQ6ya5Okad3czbWPULzersdqJT9KJ6xpG
-         q/wXPdjlPcXDEWO2qVDZ4OSGT2qrbiFCIwDMqjNzr2xAiFdsByblTHX34OXizWl6o4+V
-         X7aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGW7ZvL94Sn3zqujgw/kWVoWn3pi9t6NrfSpHdZnsnA3w86zfQD17vSXJmEyD13fL662E3ZF81WF4hJQ+/@vger.kernel.org, AJvYcCXDkIO2pIRVuVqG6008dud9ApXOfi8J7otQ4VYBFFBYrvDH75/1D0SRNvneYQsW9dvzBCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWNO1Yn8lYRivUnXMDT3HsfvTGNKGQRmfGoUrEssh27fTRoESw
-	cEaNKM2To/Xb/537cOoIG48hSguQH/+m6alygK8BD7n3CjK6d1iEbvMQyQQA4G1DLsd8LrBlfcs
-	Cy3tZfRBho7JSYv6+oL7N/UiWTeU=
-X-Gm-Gg: ASbGncvPV20kr0o1krVTial55pcLe2J2jHPUOG/5PWHjXXrjpm4mkYFt4N38WP9t5s+
-	xUqjlMS01W7yuawx6euTfi7G0q/wNYEZMLDB8tC09tuKL96s=
-X-Google-Smtp-Source: AGHT+IEGuxvW0XuYyEglyuKW4iAJqUq+E4GjmtaCkswWLVsgV1XqOleebfe2aIibrw8rYkkA9f4X1pqY49zCAoLCJT0=
-X-Received: by 2002:a17:90b:4e8e:b0:2ea:4578:46e0 with SMTP id
- 98e67ed59e1d1-2ee08ec815amr620054a91.17.1732648894586; Tue, 26 Nov 2024
- 11:21:34 -0800 (PST)
+	s=arc-20240116; t=1732648997; c=relaxed/simple;
+	bh=Zfhini+GVv5bq6VOaUi1V1RUEDaYr0lOcPsJ6obU1tM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XPeRoOJ7ovEdGA940UAOLK0h2ZYfhDQ2+zMSBrNdZgcUK9hysQsa+0Vw1IOeB4oeJ0Fn/Th0Ztb+zQKlmhJPF2E/tMh5Y9CPo2WfcHXmEG3sGDwv5mqIidPh2lFZe2GvXYpvXhAmM8nFBBuNpYbYzG7w/r9O+6MT+vOIEvV4ZH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=LaSbl+o3; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4AQJMjF51617016
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 26 Nov 2024 11:22:46 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4AQJMjF51617016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1732648967;
+	bh=Tr04QomOx3lXyUJ8bNdm/pa60hf4Db7a7UcA66jhfgc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LaSbl+o3KD3YPZYPJ8p1ms14vOdw0V3gvNOWqMUOOpmdX18u6CUNu4p92qX1cCN3g
+	 hSsNkLRPvl2CRAhIpqrsQnozikLXFHqGpLhJAEljRSUoEt94IaVJYgw5zGOyskwtNY
+	 XPDqt4Plr2OIMrPD2sjq7PxKS5R7A2qMtz+xkWwU1y92Scw2ji8zwovuHJ59ok7CTG
+	 XdYQ9/Zino6gRi8oWxq08CO0rkxWrOtVJioF0Z+fcxYa1g2nMyy0Sy9JW0FMHtG2M2
+	 Yq351SPW2VcTVQWbGTrcYZWgNaKFJjbrcjIFmW0m1EgsZJdz+W5YvrHtY4oC+Jlmj8
+	 w2G15euEkyJtQ==
+Message-ID: <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
+Date: Tue, 26 Nov 2024 11:22:45 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zz-uG3hligqOqAMe@bolson-desk> <Zz_YBK3SWnZnze-n@bolson-desk>
-In-Reply-To: <Zz_YBK3SWnZnze-n@bolson-desk>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 26 Nov 2024 11:21:21 -0800
-Message-ID: <CAEf4BzZtD2Dge4EV+ehKLk+-DVRNxTc4YfuJ+W5ytTVwgwFHjw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next] libbpf: Improve debug message when the base
- BTF cannot be found
-To: "Olson, Matthew" <matthew.olson@intel.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, bpf@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
+ MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
+To: Borislav Petkov <bp@alien8.de>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-10-xin@zytor.com>
+ <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 21, 2024 at 5:07=E2=80=AFPM Olson, Matthew <matthew.olson@intel=
-.com> wrote:
->
-> From 22ed11ee2153fc921987eac7de24f564da9f9230 Mon Sep 17 00:00:00 2001
-> From: Ben Olson <matthew.olson@intel.com>
-> Date: Thu, 21 Nov 2024 11:26:35 -0600
-> Subject: [PATCH v2 bpf-next] libbpf: Improve debug message when the base =
-BTF
->  cannot be found
->
-> When running `bpftool` on a kernel module installed in `/lib/modules...`,
-> this error is encountered if the user does not specify `--base-btf` to
-> point to a valid base BTF (e.g. usually in `/sys/kernel/btf/vmlinux`).
-> However, looking at the debug output to determine the cause of the error
-> simply says `Invalid BTF string section`, which does not point to the
-> actual source of the error. This just improves that debug message to tell
-> users what happened.
->
-> Signed-off-by: Ben Olson <matthew.olson@intel.com>
-> ---
->
-> Changed in v2:
->   * Made error message better reflect the condition
->
->  tools/lib/bpf/btf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 12468ae0d573..a4ae2df68b91 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -283,7 +283,7 @@ static int btf_parse_str_sec(struct btf *btf)
->      return -EINVAL;
->    }
->    if (!btf->base_btf && start[0]) {
-> -    pr_debug("Invalid BTF string section\n");
-> +    pr_debug("Malformed BTF string section, did you forget to provide ba=
-se BTF?\n");
+On 11/26/2024 10:02 AM, Borislav Petkov wrote:
+> On Mon, Sep 30, 2024 at 10:00:52PM -0700, Xin Li (Intel) wrote:
+>> No need to use MAX_POSSIBLE_PASSTHROUGH_MSRS in the definition of array
+>> vmx_possible_passthrough_msrs, as the macro name indicates the _possible_
+>> maximum size of passthrough MSRs.
+>>
+>> Use ARRAY_SIZE instead of MAX_POSSIBLE_PASSTHROUGH_MSRS when the size of
+>> the array is needed and add a BUILD_BUG_ON to make sure the actual array
+>> size does not exceed the possible maximum size of passthrough MSRs.
+> 
+> This commit message needs to talk about the why - not the what. Latter should
+> be visible from the diff itself.
 
-I'm not sure why, but this v2 didn't make it into patchworks, so I
-can't apply it. Can you please resend?
+I should not write such a changelog...
 
-Also please make sure you don't change indentation (tabs -> spaces),
-because it looks like that's what happened here.
+> What you're not talking about is the sneaked increase of
+> MAX_POSSIBLE_PASSTHROUGH_MSRS to 64. Something you *should* mention because
+> the array is full and blablabla...
 
->      return -EINVAL;
->    }
->    return 0;
-> --
-> 2.47.0
+It's still far from full in a bitmap on x86-64, but just that the
+existing use of MAX_POSSIBLE_PASSTHROUGH_MSRS tastes bad.
+
+
+A better one?
+
+Per the definition, a bitmap on x86-64 is an array of 'unsigned long',
+and is at least 64-bit long.
+
+#define DECLARE_BITMAP(name,bits) \
+	unsigned long name[BITS_TO_LONGS(bits)]
+
+It's not accurate and error-prone to use a hard-coded possible size of
+a bitmap, Use ARRAY_SIZE with an overflow build check instead.
+
+> 
+>> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+>> index e0d76d2460ef..e7409f8f28b1 100644
+>> --- a/arch/x86/kvm/vmx/vmx.h
+>> +++ b/arch/x86/kvm/vmx/vmx.h
+>> @@ -356,7 +356,7 @@ struct vcpu_vmx {
+>>   	struct lbr_desc lbr_desc;
+>>   
+>>   	/* Save desired MSR intercept (read: pass-through) state */
+>> -#define MAX_POSSIBLE_PASSTHROUGH_MSRS	16
+>> +#define MAX_POSSIBLE_PASSTHROUGH_MSRS	64
+> 						^^^
+> 
+
 
