@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-422009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860CD9D9337
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:22:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CED416609D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:22:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0BD1AC44C;
-	Tue, 26 Nov 2024 08:22:50 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076FB9D9338
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:25:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837F61A00F4;
-	Tue, 26 Nov 2024 08:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656CCB21309
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:25:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCBE19CC32;
+	Tue, 26 Nov 2024 08:24:58 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8174918FC8F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732609370; cv=none; b=fdIyKvu8A5l4r14PYMqCBEIChRFs0EEk89spZX+OGnaA1COpD4R9MuKrE3BnGHtVvqqStkcb79f0kVChLdzLh8eflIk1Xvn6xGlFGz6odpZS6zWVRYVhMld4NUmci3o9QUHEjyZrEz6yqHBeGtDSSnHrkgzBBzIVkYLxjo8m6mU=
+	t=1732609498; cv=none; b=QLAExqOuFegSCnQnmVPJFu+cjKiuin5PNVXE460ULengnaGnO11dkhgGPflwb/NYkoYGqfsLoSiWjof1eIpAckOIur/7g2uivFKbJ/Kh7hM9hddBZvrYalC7YLeUHkmx6zvVZbwN+pUDvwYxs3kABoU/ZyPKGftiE64D3B8MOi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732609370; c=relaxed/simple;
-	bh=NZzFxGiqYDUqL29nURG2k2e9QAvCV2Jo0ezb0nUvxqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nCZ24PuaSpoMF+NkD0MEW1KOVypAHbGNPgShg6Q6XvZ8S2uDCp6/lNPHrDTTqBo8mx70yJLOdWxMenLsliEnvvavRcPRRfGJQEuu2DUrLvIu0AosXbBnsMsbuJzDRQ6EwWZvRpndUsYvE5Q9SxEBfocOtg4QypgsJovoKNUD0Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XyFrH24FZz10WNr;
-	Tue, 26 Nov 2024 16:20:31 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 94B9718009B;
-	Tue, 26 Nov 2024 16:22:39 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 26 Nov 2024 16:22:39 +0800
-Message-ID: <6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawei.com>
-Date: Tue, 26 Nov 2024 16:22:30 +0800
+	s=arc-20240116; t=1732609498; c=relaxed/simple;
+	bh=wfwOevp8Not+xqFXsHWDcBF+bs9RRHns3SGuKdPD4tk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qgY65kSbcXmfU6+GrbJzjpUzD7ZQsxD1wEHZuS6KuSfD9jmScUlLkeDwgQkQnp5o8m9SPhH7Z5S2fP94ofFX2uNbHFJnuxDrMQ7QSez2DxuFaUKnGv/T2V2LxfKvy4AOuLLfdrCK8QoQz7F53+fbzYf4Vyy3HS42GnIgeB8TkE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-8c-674585cb1f22
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yunjeong Mun <yunjeong.mun@sk.com>,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH] mm/damon: explain "effective quota" on kernel-doc comment
+Date: Tue, 26 Nov 2024 17:24:33 +0900
+Message-ID: <20241126082436.1491-1-honggyu.kim@sk.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20241126002921.50035-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Jesper Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
-	<zhangkun09@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
-	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Ilias Apalodimas
-	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
- Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
- <20241120103456.396577-3-linyunsheng@huawei.com>
- <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
- <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
- <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsXC9ZZnke6ZVtd0g3WzWC2e/P/NanF51xw2
+	i3tr/rNaHP76hsmBxWPTqk42j02fJrF7vNg8k9Hj8ya5AJYoLpuU1JzMstQifbsErozbr6az
+	FnQIVbz/cZq5gXETXxcjJ4eEgInEuzfT2boYOcDsnn+qIGE2ATWJKy8nMYHYIgKKEuceX2Tt
+	YuTiYBbYwihx4elnZpCEsECQxIkbR1hAelkEVCXWnZMECfMKmEnMeDqfBWK8psTj7T/ZQWxO
+	AWOJeeeWM4LYQgI8Eq827GeEqBeUODnzCVg9s4C8RPPW2cwguyQEZrBJbP04lw1ikKTEwRU3
+	WCYw8s9C0jMLSc8CRqZVjEKZeWW5iZk5JnoZlXmZFXrJ+bmbGIFBuKz2T/QOxk8Xgg8xCnAw
+	KvHw3qh2SRdiTSwrrsw9xCjBwawkwssn7pwuxJuSWFmVWpQfX1Sak1p8iFGag0VJnNfoW3mK
+	kEB6YklqdmpqQWoRTJaJg1OqgbHrQsXf/I03458Yy0Xse1pZqq4R0P5Y4HDGfJdTrru1trcJ
+	LZ/p9viUc+PTSzdU3XoiFOqcPXmcGe7Pn9Y+b5U820KRCx9Xhm4qSstj8XtbE8cWve702dLr
+	k79KrtbVO10kIPIi30VXe80bs2unUoOLSmXWJWYv1X55tu6qMq+0LXfH2UO/k5VYijMSDbWY
+	i4oTAXF3Wiw+AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrALMWRmVeSWpSXmKPExsXCNUNLT/d0q2u6wa+XFhZP/v9mtfj87DWz
+	xeG5J1ktLu+aw2Zxb81/VovDX98wWfzetoLNgd1j06pONo9Nnyaxe7zYPJPR49ttD4/FLz4w
+	eXzeJBfAFsVlk5Kak1mWWqRvl8CVcfvVdNaCDqGK9z9OMzcwbuLrYuTgkBAwkej5p9rFyMnB
+	JqAmceXlJCYQW0RAUeLc44usXYxcHMwCWxglLjz9zAySEBYIkjhx4wgLSC+LgKrEunOSIGFe
+	ATOJGU/ns4DYEgKaEo+3/2QHsTkFjCXmnVvOCGILCfBIvNqwnxGiXlDi5MwnYPXMAvISzVtn
+	M09g5JmFJDULSWoBI9MqRpHMvLLcxMwcU73i7IzKvMwKveT83E2MwHBbVvtn4g7GL5fdDzEK
+	cDAq8fDeqHZJF2JNLCuuzD3EKMHBrCTCyyfunC7Em5JYWZValB9fVJqTWnyIUZqDRUmc1ys8
+	NUFIID2xJDU7NbUgtQgmy8TBKdXAyJD81G/TWbbYgwen5lXv3bC9W3lPfy1PjuFWW6e6o5OF
+	jNx+nWk8n8EvN8mZ88/PdU6doT1nVimcNA7693nx53IF93774/YTv8wrFN3tLTJt3s2Y6K2x
+	3y48PfR88oIcGSWTM3dsY8Rfzzwfuzy2NkNl8aXHoapdmsxHPfnMQ69suP0nyolPS4mlOCPR
+	UIu5qDgRANtq0EUzAgAA
+X-CFilter-Loop: Reflected
 
-On 2024/11/25 23:25, Jesper Dangaard Brouer wrote:
+Hi SeongJae,
 
-...
+Thanks very much for the quick response.  I think it looks great but I
+have some minor comments so please see my inline comments below.
 
->>>> +
->>>>    void page_pool_destroy(struct page_pool *pool)
->>>>    {
->>>>        if (!pool)
->>>> @@ -1139,6 +1206,8 @@ void page_pool_destroy(struct page_pool *pool)
->>>>         */
->>>>        synchronize_rcu();
->>>>    +    page_pool_inflight_unmap(pool);
->>>> +
->>>
->>> Reaching here means we have detected in-flight packets/pages.
->>>
->>> In "page_pool_inflight_unmap" we scan and find those in-flight pages to
->>> DMA unmap them. Then below we wait for these in-flight pages again.
->>> Why don't we just "release" (page_pool_release_page) those in-flight
->>> pages from belonging to the page_pool, when we found them during scanning?
->>>
->>> If doing so, we can hopefully remove the periodic checking code below.
->>
->> I thought about that too, but it means more complicated work than just
->> calling the page_pool_release_page() as page->pp_ref_count need to be
->> converted into page->_refcount for the above to work, it seems hard to
->> do that with least performance degradation as the racing against
->> page_pool_put_page() being called concurrently.
->>
+Thanks,
+Honggyu
+
+On Mon, 25 Nov 2024 16:29:21 -0800 SeongJae Park <sj@kernel.org> wrote:
+> The kernel-doc comment for 'struct damos_quota' describes how "effective
+> quota" is calculated, but does not explain what it is.  Actually there
+> was an input[1] about it.  Add the explanation on the comment.
 > 
-> Maybe we can have a design that avoid/reduce concurrency.  Can we
-> convert the suggested pool->destroy_lock into an atomic?
-> (Doing an *atomic* READ in page_pool_return_page, should be fast if we
-> keep this cache in in (cache coherence) Shared state).
+> [1] https://github.com/damonitor/damo/issues/17#issuecomment-2497525043
 > 
-> In your new/proposed page_pool_return_page() when we see the
-> "destroy_cnt" (now atomic READ) bigger than zero, then we can do nothing
-> (or maybe we need decrement page-refcnt?), as we know the destroy code
-
-Is it valid to have a page->_refcount of zero when page_pool still own
-the page if we only decrement page->_refcount and not clear page->pp_magic?
-What happens if put_page() is called from other subsystem for a page_pool
-owned page, isn't that mean the page might be returned to buddy page
-allocator, causing use-after-free problem?
-
-> will be taking care of "releasing" the pages from the page pool.
-
-If page->_refcount is not decremented in page_pool_return_page(), how
-does page_pool_destroy() know if a specific page have been called with
-page_pool_return_page()? Does an extra state is needed to indicate that?
-
-And there might still be concurrency between checking/handling of the extra
-state in page_pool_destroy() and the setting of extra state in
-page_pool_return_page(), something like lock might still be needed to avoid
-the above concurrency.
-
+> Cc: Yunjeong Mun <yunjeong.mun@sk.com>
+> Cc: Honggyu Kim <honggyu.kim@sk.com>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  include/linux/damon.h | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> Once the a page is release from a page pool it becomes a normal page,
-> that adhere to normal page refcnt'ing. That is how it worked before with
-> page_pool_release_page().
-> The later extensions with page fragment support and devmem might have
-> complicated this code path.
+> diff --git a/include/linux/damon.h b/include/linux/damon.h
+> index a67f2c4940e9..a01bfe2ff616 100644
+> --- a/include/linux/damon.h
+> +++ b/include/linux/damon.h
+> @@ -193,9 +193,13 @@ struct damos_quota_goal {
+>   * size quota is set, DAMON tries to apply the action only up to &sz bytes
+>   * within &reset_interval.
+>   *
+> - * Internally, the time quota is transformed to a size quota using estimated
+> - * throughput of the scheme's action.  DAMON then compares it against &sz and
+> - * uses smaller one as the effective quota.
+> + * To convince the different types of quotas and goals, DAMON internally
+> + * converts those into one single size quota called "effective quota".  DAMON
 
-As page_pool_return_page() and page_pool_destroy() both try to "release"
-the page concurrently for a specific page, I am not sure how using some
-simple *atomic* can avoid this kind of concurrency even before page
-fragment and devmem are supported, it would be good to be more specific
-about that by using some pseudocode.
+Could we use "effective size quota" instead of "effective quota"?
+IMHO, it will better give an idea this is related to "esz" in the code,
+which means effective size.
 
-I looked at it more closely, previously page_pool_put_page() seemed to
-not be allowed to be called after page_pool_release_page() had been
-called for a specific page mainly because of concurrently checking/handlig
-and clearing of page->pp_magic if I understand it correctly:
-https://elixir.bootlin.com/linux/v5.16.20/source/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c#L5316
+> + * internally uses it as only one real quota.  The convert is made as follows.
+
+(nit) "as only one" can be "as the only one".
+(another nit) "The convert is made" can be "The conversion is made".
+
+> + *
+> + * The time quota is transformed to a size quota using estimated throughput of
+> + * the scheme's action.  DAMON then compares it against &sz and uses smaller
+> + * one as the effective quota.
+>   *
+>   * If @goals is not empt, DAMON calculates yet another size quota based on the
+
+We better fix "empt" to "empty" together.
+
+>   * goals using its internal feedback loop algorithm, for every @reset_interval.
+> -- 
+> 2.39.5
+> 
 
