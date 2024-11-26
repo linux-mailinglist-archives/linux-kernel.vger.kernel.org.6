@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-422235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98FB9D964C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:35:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719261655FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:35:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C781CEE82;
-	Tue, 26 Nov 2024 11:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJ3+ifjv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976B09D9649
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:35:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA911BD9F6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D01C285724
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:35:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBDE1CEAD4;
+	Tue, 26 Nov 2024 11:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BnJSnDeD"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414647EF09;
+	Tue, 26 Nov 2024 11:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732620940; cv=none; b=nLejPrsXYgTMlTJgPrBLB6YROUaKS5eg+C8O2HFqBHXav2K49C+rZbZ8xyYM/nmXEOHK++BsHCBDbmSjQgAVFqc9H81CTb4qaQShm1wlbsL7BTKNxpbaM10snsFtW9ZKf6vQoHmGm498GTn+Zg3NCwveTUzFaJd3XLlzRZ6TtnE=
+	t=1732620930; cv=none; b=aAqBtvxhfCsxCqWDc7pP6+5sYAEvBjP1Iqt0AeyuqrWNP7DdP6yuHpft9JMvhyPQm/S3JEtGMlJBrs+xa6mDX4kNlmFgpvdxkdCfzFflA8QxfsAMX0mBOJcJ9kgjjxsCKEhh/CaMjzukmqWihVPDaUd9rCuLBrJ3s02PnhsTAJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732620940; c=relaxed/simple;
-	bh=eH53wsMVQPlQ0fmVO0rypqiDRDp+VgRxHjhyYOXvwVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mSC1wiNqz51rbkrfNCaRZW1HvkELp3QsQ5EkHSHu/gkbTBh3ExYmvvj4QMKir1+MYsIjPt81ZFTCxZj1LNA2HN5xwpLyeuuDFSm1hX0/Hc9d2LMxKIx0iAOLj0kKVSEhDmAOj/j/nGvzVzs4ZcaT1XDNQU2Y9p0ay/qtIXLu37U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJ3+ifjv; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732620938; x=1764156938;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=eH53wsMVQPlQ0fmVO0rypqiDRDp+VgRxHjhyYOXvwVM=;
-  b=KJ3+ifjvlNN/MAdGLla0i4wAkzByyMbXaS/NgNcPRZrn5dJzExQmph7u
-   zde6/rWIg/VGlZlSmBHtfSYSSY0muUXbN9K/VOTJAfwY545ZMX/8wwWTO
-   5RdHNZx4uM11gVqF72LEAjsAQq/JMsClCtVcuKiCHMY/pQblIo5TsAZRe
-   9mgZqSit7JRxp+IKR1ojSQS6jsrrwJwTHrYI02qv1DobkWGmEnpc9BX5J
-   0tW0DkBgdn5YdZhhmmRn8PkfBaKm4HvpAar1ySlDU8MTd9il1q5cxQcvd
-   wtKUNdbko9/maCzC7C7riTX7xBEhFdbsBIp1YXUON0k5fKVJE3uOq+v1p
-   g==;
-X-CSE-ConnectionGUID: WG8jCHVnQDSOBDpYTS421w==
-X-CSE-MsgGUID: q+OGXG+3Tmeqs6z7imU+YQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="50183504"
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="50183504"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:35:37 -0800
-X-CSE-ConnectionGUID: zp5L7RjZTgOSClGGL03bmw==
-X-CSE-MsgGUID: OYt6dTIYTb29yGg8tVcRkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="91994898"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 26 Nov 2024 03:35:37 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFtqw-0007Ff-07;
-	Tue, 26 Nov 2024 11:35:34 +0000
-Date: Tue, 26 Nov 2024 19:34:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: include/linux/device.h:381:23: sparse: sparse: incorrect type in
- return expression (different address spaces)
-Message-ID: <202411261939.0W2NYIG0-lkp@intel.com>
+	s=arc-20240116; t=1732620930; c=relaxed/simple;
+	bh=CV+EAh560LJIoimDrOBgkVVzf9cbXH8VFS1iu4pNypc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nYVKqVHtP2Vb3dOp5rbFY5sRYXh50mlH4JryPHpQfolWpyFl1FgqR6OtDRSmBzE92grivkXfTXOKPlW5Pwu8X4memW/4vE6UUuvUKEEn+01dCqX1TffUj6/WQCXR5o83qMHDz+yaYWq8ZwlSpryqPVAkMcPEXAH2+YGk2yL3Bm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BnJSnDeD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732620925;
+	bh=CV+EAh560LJIoimDrOBgkVVzf9cbXH8VFS1iu4pNypc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=BnJSnDeD2UWN82nsol4KcZwcYGcKpTLWn5VI0kfzd46qp7ZJltWhoiJBn+q7Wx/98
+	 bsPB7usIlFjU9YhgPIhjsEcJnzNX8mR4HFm70dm/3nz3WP1MfyB2wX9c5cOSpO/W6s
+	 Qb8j4amAmvPIBQhX+W8dnlF7yGuWoiuPGJM2cqyiZy798ZC4pyEOdcpjSTgRngPGua
+	 hQq6i+fwon3/Eu9kYfCZR6psQFPGJUGQTa5Ivs2k3RNknJL9N3xUsrXs49gvHN70Zp
+	 TluYai6VaROKZmWxY7A3pYvWZCZCAw0kDNcSK1vA8rdUbZLhTZN01LYFpMT//kJGPK
+	 GNbXq3Rg4rPgg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C4E9317E3625;
+	Tue, 26 Nov 2024 12:35:24 +0100 (CET)
+Message-ID: <3e485c19-7298-47ab-a2a7-dd94a7ac1a7c@collabora.com>
+Date: Tue, 26 Nov 2024 12:35:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: mediatek: Add MT8186 Starmie
+ Chromebooks
+To: Wojciech Macek <wmacek@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Rafal Milecki <rafal@milecki.pl>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Sean Wang <sean.wang@mediatek.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241126103632.419469-1-wmacek@chromium.org>
+ <20241126103632.419469-2-wmacek@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241126103632.419469-2-wmacek@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
-commit: f6bb3e9d98c2e8d70587d5ddaf9426ef30d7865c net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
-date:   5 months ago
-config: s390-randconfig-r132-20241126 (https://download.01.org/0day-ci/archive/20241126/202411261939.0W2NYIG0-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241126/202411261939.0W2NYIG0-lkp@intel.com/reproduce)
+Il 26/11/24 11:36, Wojciech Macek ha scritto:
+> Add an entry for the MT8186 based Starmie Chromebooks, also known as the
+> ASUS Chromebook Enterprise CM30 Detachable (CM3001). The device is
+> a tablet style chromebook.
+> 
+> Signed-off-by: Wojciech Macek <wmacek@chromium.org>
+> ---
+> Changelog v3-v2:
+>   - No changes
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411261939.0W2NYIG0-lkp@intel.com/
+Why have you dropped by R-b tag if there's no change here?
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/net/pcs/pcs-xpcs-plat.c: note: in included file:
->> include/linux/device.h:381:23: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
-   include/linux/device.h:381:23: sparse:     expected void [noderef] __iomem *
-   include/linux/device.h:381:23: sparse:     got void *
+Regards,
+Angelo
 
-vim +381 include/linux/device.h
+> Changelog v2-v1:
+>   - Fixed items/const bidings description in mediatek.yaml
+> 
+>   Documentation/devicetree/bindings/arm/mediatek.yaml | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> index 1d4bb50fcd8d..6191a5320c14 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> @@ -263,6 +263,19 @@ properties:
+>             - const: google,steelix-sku196608
+>             - const: google,steelix
+>             - const: mediatek,mt8186
+> +      - description: Google Starmie (ASUS Chromebook Enterprise CM30 (CM3001))
+> +        items:
+> +          - const: google,starmie-sku0
+> +          - const: google,starmie-sku2
+> +          - const: google,starmie-sku3
+> +          - const: google,starmie
+> +          - const: mediatek,mt8186
+> +      - description: Google Starmie (ASUS Chromebook Enterprise CM30 (CM3001))
+> +        items:
+> +          - const: google,starmie-sku1
+> +          - const: google,starmie-sku4
+> +          - const: google,starmie
+> +          - const: mediatek,mt8186
+>         - description: Google Steelix (Lenovo 300e Yoga Chromebook Gen 4)
+>           items:
+>             - enum:
 
-da7c07b1083809 Mark Brown 2023-07-18  376  
-da7c07b1083809 Mark Brown 2023-07-18  377  static inline
-da7c07b1083809 Mark Brown 2023-07-18  378  void __iomem *devm_ioremap_resource(struct device *dev,
-da7c07b1083809 Mark Brown 2023-07-18  379  				    const struct resource *res)
-da7c07b1083809 Mark Brown 2023-07-18  380  {
-da7c07b1083809 Mark Brown 2023-07-18 @381  	return ERR_PTR(-EINVAL);
-da7c07b1083809 Mark Brown 2023-07-18  382  }
-da7c07b1083809 Mark Brown 2023-07-18  383  
 
-:::::: The code at line 381 was first introduced by commit
-:::::: da7c07b1083809888c82522e74370f962fb7685e driver core: Provide stubs for !IOMEM builds
-
-:::::: TO: Mark Brown <broonie@kernel.org>
-:::::: CC: Mark Brown <broonie@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
