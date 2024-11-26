@@ -1,153 +1,105 @@
-Return-Path: <linux-kernel+bounces-421921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610D49D91F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:50:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078AA1660E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:50:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DC318C33C;
-	Tue, 26 Nov 2024 06:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aMEhKCAp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9599D91F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:52:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8131A260;
-	Tue, 26 Nov 2024 06:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B2128321D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:52:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA063187876;
+	Tue, 26 Nov 2024 06:52:43 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554CA17BB0D;
+	Tue, 26 Nov 2024 06:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732603850; cv=none; b=r1tK4dxlcQlAly22HlN4mjbaGUls5yjOcUcWD+Iybd7Elp0pBiR2U3DOAuSryNi+GgZW2bNWhbV8X4sZ0UIlbIv8KQCgraRCfblMXuL/TS3Xr8kxg0Ka6los7qM/pMdPL/kaugiAhGjIgNDAkb5fsX8qpJScYigAaLo5eGO7N4M=
+	t=1732603963; cv=none; b=iZXcRchH3D72bmp1iC+w19Yqxd1rWDAIqAg4LF8be0QtSe/rw30T/UEkHoqD2jxP44DqsocflbvmAh3nn1QZOCF/jJX2WiiUMwwI6vcTFVQIwNsOB0RyVAH007jkeqpE4CG60pkzV+I2oep1hoGkLs3uSb0pUeenuFxaMlb4se0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732603850; c=relaxed/simple;
-	bh=P8PZRcNd4tTQCge9mgB4g9bdXLpi4U9nQjjtlVEv4d8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TUJE7lJ5ImxtSLaqhNcy/HSVrlgjut9DmnvQd5p4K9GNa0TNbm4Ixvc6shJCiQsPmjmq201yVy8Bh1xr1GZbHzevmcw1nQ/llrNwctESHq1cvkX2Z7dHVNAlBD97WGRXwNe3uqi/0y9MV4rxcofnvd57H6Csd0wY0pOB0lBKAwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aMEhKCAp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ5bdgl010667;
-	Tue, 26 Nov 2024 06:50:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	srMcnyxoj0w+hwEi9C3TsBzhfGs038zKSSvCCggophM=; b=aMEhKCApviaoiC7a
-	eAZDpQfQSvEdCZqmiT//wkKRBolFVwvGG5B0ZZ4dt8dtGvr94K/sAKMi9sRBDYoa
-	RvnskO0PAdByaLr1wy0W6CWnfNkamLgZu3jEGScDb2snAsyZyS6UNmUVPq1LflW9
-	VYsGvjedy+BzSqEdCxHZxpny+JXrWuiuoupaBORqWe8268QFEb55ZPXtRlUmJVrB
-	xEYt4sfOG04Ady1fXB0LAp0IfN57/ENcGk+VIEytx27FHhFNMzRoeUWANORjQFEh
-	vjKnSerhZYaD/Ckymf7zBtDsCj+U3zFENhNk5Mp2Sdi0VUIAJ6de/9T8JDCz8+lN
-	UZCkOg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434mx73ddw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 06:50:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ6obg6003071
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 06:50:37 GMT
-Received: from [10.216.8.10] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
- 2024 22:50:31 -0800
-Message-ID: <cce7507f-a2c4-6f96-f993-b9a7e9217ffa@quicinc.com>
-Date: Tue, 26 Nov 2024 12:20:28 +0530
+	s=arc-20240116; t=1732603963; c=relaxed/simple;
+	bh=fZ3MdI0uHsT8GRAXYo0ivhqyqC0NqYb3/xfCtKxRiJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ail/0e0qmy2wQeuveA/dyLzsQpdRfnT7VPvDZF/J9XZi+gfc0owqIhpvVYlMVt/Tf3DyBxVshBf5tw408kFhYVOOKA2j62m+th3osy9choMOjlmW+/cmVh0O9Xtx0rzcPQZZFMHzC2DT12cLCd19FOIJi2PZ+YyHGXQujskv3+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id DB08668D80; Tue, 26 Nov 2024 07:52:28 +0100 (CET)
+Date: Tue, 26 Nov 2024 07:52:28 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Chris Bainbridge <chris.bainbridge@gmail.com>
+Cc: hch@lst.de, LKML <linux-kernel@vger.kernel.org>, axboe@kernel.dk,
+	bvanassche@acm.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-block@vger.kernel.org, semen.protsenko@linaro.org
+Subject: Re: [REGRESSION] ioprio performance hangs, bisected
+Message-ID: <20241126065228.GA1133@lst.de>
+References: <CAP-bSRbCo7=wfUBZ8H7c3Q-7XSG+SB=R4MHHNNGPvBoinsVSZg@mail.gmail.com> <CAP-bSRab1C-_aaATfrgWjt9w0fcYUCQCG7u+TCb1FSPSd6CEaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 1/6] dt-bindings: PCI: Add binding for qps615
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
- <20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com>
- <poruhxgxnkhvqij5q7z4toxzcsk2gvkyj6ewicsfxj6xl3i3un@msgyeeyb6hsf>
- <42425b92-6e0d-a77b-8733-e50614bcb3a8@quicinc.com>
- <b203d90d-91bc-437b-9b91-1085034ed716@kernel.org>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <b203d90d-91bc-437b-9b91-1085034ed716@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -3kNUEx0cSXvKgCcmrqpIVjVDgvfqwiQ
-X-Proofpoint-ORIG-GUID: -3kNUEx0cSXvKgCcmrqpIVjVDgvfqwiQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- mlxlogscore=671 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-bSRab1C-_aaATfrgWjt9w0fcYUCQCG7u+TCb1FSPSd6CEaA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
+On Mon, Nov 25, 2024 at 05:16:39PM +0000, Chris Bainbridge wrote:
+> I did a bit of debugging.
 
+Thanks, this was extremely helpful!
 
-On 11/25/2024 1:10 PM, Krzysztof Kozlowski wrote:
-> On 24/11/2024 02:41, Krishna Chaitanya Chundru wrote:
->>> ...
->>> 
->>>> +  qps615,axi-clk-freq-hz:
->>> 
->>> That's a downstream code you send us.
->>> 
->>> Anyway, why assigned clock rates do not work for you? You are 
->>> re-implementing legacy property now under different name :/
->>> 
->>> The assigned clock rates comes in to the picture when we are 
->>> using clock
->> framework to control the clocks. For this switch there are no 
->> clocks needs to be control, the moment we power on the switch 
->> clocks are enabled by default. This switch provides a mechanism to 
->> control the frequency using i2c. And switch supports only two 
->> frequencies i.e
-> 
-> 
-> frequency of what, since there are no clocks?
-> 
-The axi clock frequency internal to the switch, host can't control
-the enablement of the clocks it can control only the frequency.
+mq-deadlink not only looks at the priority in the submission path,
+but also in the completion path, which is rather unexpected.  Now
+for drivers that consume bios, req->bio will eventually become
+NULL before the completion.
 
-we already had a discussion on this on v2[1], and we taught you agreed
-on this property.
+Fortunately fixing this is not only easy but also improves the
+code in mq-deadline.  Can you test the patch below?
 
-[1] 
-https://lore.kernel.org/netdev/d1af1eac-f9bd-7a8e-586b-5c2a76445145@codeaurora.org/T/#m3d5864c758f2e05fa15ba522aad6a37e3417bd9f
-
-- Krishna Chaitanya.
->> 125MHz and 250MHZ by default it runs on 250MHz, we can do one i2c 
->> write with which switch runs in 125MHz.
-> 
-> How doing a write is relevant? Or you want to say you can control 
-> clock?
-> 
-> 
-> 
-> Best regards, Krzysztof
+diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+index acdc28756d9d..91b3789f710e 100644
+--- a/block/mq-deadline.c
++++ b/block/mq-deadline.c
+@@ -685,10 +685,9 @@ static void dd_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 
+ 	prio = ioprio_class_to_prio[ioprio_class];
+ 	per_prio = &dd->per_prio[prio];
+-	if (!rq->elv.priv[0]) {
++	if (!rq->elv.priv[0])
+ 		per_prio->stats.inserted++;
+-		rq->elv.priv[0] = (void *)(uintptr_t)1;
+-	}
++	rq->elv.priv[0] = per_prio;
+ 
+ 	if (blk_mq_sched_try_insert_merge(q, rq, free))
+ 		return;
+@@ -753,18 +752,14 @@ static void dd_prepare_request(struct request *rq)
+  */
+ static void dd_finish_request(struct request *rq)
+ {
+-	struct request_queue *q = rq->q;
+-	struct deadline_data *dd = q->elevator->elevator_data;
+-	const u8 ioprio_class = dd_rq_ioclass(rq);
+-	const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
+-	struct dd_per_prio *per_prio = &dd->per_prio[prio];
++	struct dd_per_prio *per_prio = rq->elv.priv[0];
+ 
+ 	/*
+ 	 * The block layer core may call dd_finish_request() without having
+ 	 * called dd_insert_requests(). Skip requests that bypassed I/O
+ 	 * scheduling. See also blk_mq_request_bypass_insert().
+ 	 */
+-	if (rq->elv.priv[0])
++	if (per_prio)
+ 		atomic_inc(&per_prio->stats.completed);
+ }
+ 
 
