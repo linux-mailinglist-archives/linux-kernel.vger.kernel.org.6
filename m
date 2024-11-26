@@ -1,115 +1,180 @@
-Return-Path: <linux-kernel+bounces-422421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40A09D996C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:16:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18D59D9972
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:17:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A7DD281F5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEA6168534
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3296A1D5AC3;
-	Tue, 26 Nov 2024 14:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="YXvTH1yh"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8841D5AB7;
+	Tue, 26 Nov 2024 14:17:16 +0000 (UTC)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6298F7D;
-	Tue, 26 Nov 2024 14:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732630597; cv=pass; b=iGC/zVB+TTDpepD3xBCXYISRsv1/7HSUHVg2WCs7n5OLOBMEkR801kgswsS50S6J2YssTChwX8/DNISNmvIhnCBzuGn8soQBThS3VwbQaX2xq9vrNCbllkFnCaKkGwVFsWk9N09rmozezvI6WhZlECLlkJCxzb6t0Ap040YGqqA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732630597; c=relaxed/simple;
-	bh=B9k6MTD6fOeGx25XEYTqhPgp8cqKVCPhc9vmAF0n/ZA=;
-	h=Message-ID:Date:MIME-Version:Cc:To:From:Subject:Content-Type; b=J91cyvAsByR202HlrODPvU8Mz7JkVk0tJyk+lzcaJSNIUWU64aDcwRq5lBRkMzObe589sdY8Znk83vPZwGulL1ZVc8CjUB4I/0CEJO8cu9Dn0gQgZqy0+xtTpD5kFaXX1nEigWF5sZ8J2+jDInElsm7gmnC/pJi8OlpVqZGxTjM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=YXvTH1yh; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732630586; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cjmqaF/GIZj6aAUKbpn1mZEAsalC1q89ejEthPd74jo8R1iebUeg98jd0bTOMExrBnOMbzWzeXXRTQE35VDqCRCRssfjMrbuigal9yU1u6+WP61tWSxJx1zqA4j9bM6K1G1H22zSR++VqvQBa1Uuld0E7GPAqY7dlCbYlwSAQCU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732630586; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FDO7eDQHyNV+5Ifxde9MtWfXA0DBzyust/9vl90ohIY=; 
-	b=iZNYqAK6TlOeaX6gasgsysCoS1KoOYQUZ0qbNZB7vEC27KwDf5npR3Xr0vsp0YMDjx+01pE1cGYxkxV9Ti2CTs+1fQsmH2vH5T79IFHyMEU4ltGOT0D47oOwELaVygigs903+oNjlcqglEWbQ+jtlnhccfAjQ6D5y2aYSt2Jxfk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732630586;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:To:To:From:From:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=FDO7eDQHyNV+5Ifxde9MtWfXA0DBzyust/9vl90ohIY=;
-	b=YXvTH1yhgRYSkp9fDzujm/yuQ6cqmNb4PF/7tgtPFAS6/JEHx/s3u+1qUmr6rl46
-	7x0hcoslnKQbJnOr8pacYpoprbOrVANoxp6AdXRW9vzUXpxb80KkDnk6mbNqBa6+Mun
-	NonstgqcmVsoV/TSrDvlX1uzDb3+h2rrIZcydzes=
-Received: by mx.zohomail.com with SMTPS id 1732630582504831.1595780791179;
-	Tue, 26 Nov 2024 06:16:22 -0800 (PST)
-Message-ID: <bd40847e-e277-4f0f-b158-87c581192cef@collabora.com>
-Date: Tue, 26 Nov 2024 19:16:19 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1736AD515;
+	Tue, 26 Nov 2024 14:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732630635; cv=none; b=JCekQQOWVfoIjhfjyfi1myw9VDESCbEa76kpAxBwq2FnYj9R3Umyj4e8ex6SPkQ+raM7Zsj6QVzAgsD/1Src9MWKqqwOeEBhZw0IHo+Qb7iC7/4INBVSAJHwj7XSiVHHD7nrLhTG6F9zDylTyaHIPstMcGzhS53TBDzfQTI8n1U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732630635; c=relaxed/simple;
+	bh=Af8h1x2GkRXVSShLvaf0DhS8aMbO/cKYrKI0lw1igO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NIOcc5p18hVb/ZpJSCMop8J4/yCyHlAms2MNnx9Lw7oBsOXBw8W20fffezW2eVRP4VCVE1SD8aaFxcSdLZ+88F4RVnFXC5yMtRrzhljU/QK8jlDr1BZIGStMWOOe9mrPUe/unm7kqWfhWrwMCIVqeN2VD7BzNf1f9CkFcTCgYgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6eeb2680092so56530477b3.1;
+        Tue, 26 Nov 2024 06:17:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732630632; x=1733235432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DMlKAosx+8F5oQA944QEaviPdmzNr2nURUNr2vUH2Fg=;
+        b=cPyTszDipHNPhx1JvUT91zmmYnq1JdRRZOFWU1Wuq/IvZzIq+V6q8RQqiD3By5W7zp
+         D3LAQBBrTpiUhm0jOE5e1NXbz1MAH0oENuwuUgAWGYr85F5wmKE2pvR6nMDFukKdM2Ih
+         wwKZLjDy7QVALWTl210Q8+KHZ0oH5e28QF6KnCn/kSapYUY8Z6pS+2CFeEhZOvH0mKLt
+         h0EVcxPYgtM9riMvNu76MqTFBroyQLkNd1UUpgZIpMjwO6F4oZh4DnTvv5I/bTB+4xHQ
+         Cacv27MNaW9suUHoL7xED1e9qZBlpemPVxwx3GVsQjCKkh0CLu2WoKxQuK+GvDwZtFGh
+         slhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw3eGkmVXqmfPZ7R7GwwA1MwpgSZ/Qv7a0RrUlXjzUQvAWlTaTkLqgQR9kQSkQQSMxzRRSiwKzokbaN7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1/E37FhOcQS2VhiHo/uHdITs3jqNo7DkIuF2doqianoI7qWFL
+	/sFfu6QacXBZE14yXWLCjlQkiVojbuiPrwlxS0N2j34YKwFswmqi4e1RI4Sb
+X-Gm-Gg: ASbGncuTbQ7cne7lnALjYT5wI4wCqDR1/Hf7bNK7SYSo6NqIlQEm0394db0SjWlRXJf
+	6Zk2mfF1YHjG9pbyREMWE3AVB5Nf9IJS7sHScxas2Yn3IbG3CqaUTpLo3DJ7gLTMV1/ik6+DLlQ
+	Btt8fBCUs84DT4oQOvnG3X0z0djHz8nQhIFM1/6Y3E0FYkmdLgF9dR2962MEeMnqWtHNQ4IlkKM
+	acITh+M9zKkBGCX5eKtodQxKFi6Dqm1eE6kQDadwga0kucXjEMvPHgBS+MEWgSaXddXa0D14JmZ
+	nPl1MiVXsGxAwmj5
+X-Google-Smtp-Source: AGHT+IFBchqzOT0RNGF3KcSaIzd2T7wuyqBh2cE/WpfXrfrI1EMnCRKUUnKTc+qC/InZyC8KP2I2Cg==
+X-Received: by 2002:a05:690c:4512:b0:6e3:ca30:25f with SMTP id 00721157ae682-6eee08e8ce4mr163739067b3.25.1732630632459;
+        Tue, 26 Nov 2024 06:17:12 -0800 (PST)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee00835e1sm22950947b3.93.2024.11.26.06.17.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 06:17:12 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ee7a48377cso52524837b3.3;
+        Tue, 26 Nov 2024 06:17:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWj1SCjrkHHrbVsKxQpmZ1e3eU3nPgWKyKQ20hP5Lu+Fy5Xv4ZifZRK0UyU84JLnqpvG81kH2Tej/Vaw4c=@vger.kernel.org
+X-Received: by 2002:a05:690c:3193:b0:6ee:f2fa:b8a3 with SMTP id
+ 00721157ae682-6eef2fab97emr74621687b3.5.1732630631703; Tue, 26 Nov 2024
+ 06:17:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com
-Content-Language: en-US
-To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sunil Khatri <sunil.khatri@amd.com>,
- Ma Jun <Jun.Ma2@amd.com>, Vitaly Prosyak <vitaly.prosyak@amd.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Jack Xiao <Jack.Xiao@amd.com>,
- Friedrich Vock <friedrich.vock@gmx.de>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-Subject: [Bug Report] Warning from __flush_work() on next-20241126
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20241022151838.26f9925fb959.Ia80b55e934bbfc45ce0df42a3233d34b35508046@changeid>
+ <CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com>
+ <CAMuHMdXbnZc7rYc7ibRNWY6EfRLh-7g0yDeZ3Zk5OXCQ9Cr=cA@mail.gmail.com> <8221a4a01cb838159828961b6d8d99753ecc31b9.camel@sipsolutions.net>
+In-Reply-To: <8221a4a01cb838159828961b6d8d99753ecc31b9.camel@sipsolutions.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 26 Nov 2024 15:16:59 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXbCaMBwjrb+ZJj+MMQvOm8Y=xKfaxVhYVb79WyO4Z-4Q@mail.gmail.com>
+Message-ID: <CAMuHMdXbCaMBwjrb+ZJj+MMQvOm8Y=xKfaxVhYVb79WyO4Z-4Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] debugfs: add small file operations for most files
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, 
+Hi Johannes,
 
-We are getting this warning on x86_64 and i386 targets:
-[    8.677157] amdgpu 0000:03:00.0: [drm:amdgpu_ib_ring_tests] *ERROR* IB test failed on sdma0 (-110).
-[    8.698661] ------------[ cut here ]------------
-[    8.703310] WARNING: CPU: 1 PID: 49 at kernel/workqueue.c:4192 __flush_work+0xb8/0xd0
-[    8.711206] Modules linked in:
-[    8.714285] CPU: 1 UID: 0 PID: 49 Comm: kworker/1:1 Tainted: G        W          6.12.0-next-20241126 #1
-[    8.723790] Tainted: [W]=WARN
-[    8.726781] Hardware name: Google Shuboz/Shuboz, BIOS Google_Shuboz.13434.780.2022_10_13_1418 09/12/2022
-[    8.736273] Workqueue: events amdgpu_device_delayed_init_work_handler
-[    8.742768] EIP: __flush_work+0xb8/0xd0
-[    8.746632] Code: 00 00 f3 90 8d 45 c0 e8 92 1d 04 00 84 c0 74 f2 eb d2 8d b4 26 00 00 00 00 90 0f 0b c6 45 9b 00 eb c2 8d b4 26 00 00 00 00 90 <0f> 0b eb ee 8d 74 26 00 0f 0b eb a6 8d 74 26 00 e8 8f c4 8d 01 8d
-[    8.765410] EAX: 00000000 EBX: c272ee01 ECX: 00000001 EDX: 00000000
-[    8.771726] ESI: c272eea8 EDI: c194d77c EBP: c17bbd64 ESP: c17bbcfc
-[    8.778011] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010246
-[    8.784829] CR0: 80050033 CR2: 00000000 CR3: 1355b000 CR4: 003506d0
-[    8.791120] Call Trace:
-[    8.793591]  ? show_regs+0x51/0x58
-[    8.797028]  ? __flush_work+0xb8/0xd0
-[    8.800724]  ? __warn+0x8d/0x1b8
-[    8.804024]  ? __flush_work+0xb8/0xd0
-[    8.807710]  ? __flush_work+0xb8/0xd0
-[    8.811403]  ? report_bug+0x186/0x1b0
-[    8.815094]  ? __flush_work+0xb9/0xd0
-[    8.818785]  ? exc_overflow+0x50/0x50
-[    8.822474]  ? handle_bug+0x56/0x90
+On Tue, Nov 26, 2024 at 10:37=E2=80=AFAM Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Tue, 2024-11-26 at 09:38 +0100, Geert Uytterhoeven wrote:
+> > > Thanks for your patch, which is now commit 8dc6d81c6b2acc43 ("debugfs=
+:
+> > > add small file operations for most files") upstream.
+>
+> Or rather "no thanks" ;-)
+>
+> > > > +#define DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT BIT(1)
+> > >
+> > > As the minimum alignment is 2 on m68k, you cannot use bit 1 in pointe=
+rs
+> > > for your own private use.
+>
+> D'oh. Sorry about that. Though honestly even if I _had_ seen such a
+> comment deep in maple tree code, on that struct I'd probably have
+> assumed it's because there's no pointer in it and thus no alignment
+> anyway...
+>
+> But sounds like you're pointers don't need to be naturally aligned, and
+> so 2-byte alignment is sufficient.
+>
+> I guess we _could_ solve that by __aligned(4) on the fops structs, but
+> ... I'm not sure that makes sense.
+>
+> > Reverting commit 8dc6d81c6b2acc43 fixes the issue,
+>
+> Clearly. Though have to also revert the related patch in wireless :)
+>
+> > and reduces the
+> > atari_defconfig kernel size by 447 bytes, according to bloat-o-meter.
+>
+> Well, fair point, but if we care about size then we can win back more
+> than this by converting about a handful of debugfs files to short ops,
+> and if there are no debugfs files then we wouldn't need debugfs either,
+> I'd think.
+>
+> So I think in a way the size argument goes the other way (with a little
+> bit of extra work), if that was meant to be an argument at all? :-)
 
-For complete details:
-[1] https://kcidb.kernelci.org/d/test/test?orgId=1&var-datasource=default&var-build_architecture=i386&var-build_config_name=defconfig&var-id=maestro:67455b9a3be6da94b19fde77&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=$__all
-[2]https://kcidb.kernelci.org/d/test/test?orgId=1&var-datasource=default&var-build_architecture=x86_64&var-build_config_name=cros:%2F%2Fchromeos-6.6%2Fx86_64%2Fchromeos-amd-stoneyridge.flavour.config&var-id=maestro:67455b923be6da94b19fde4b&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=$__all
-[3]https://kcidb.kernelci.org/d/test/test?orgId=1&var-datasource=default&var-build_architecture=x86_64&var-build_config_name=cros:%2F%2Fchromeos-6.6%2Fx86_64%2Fchromeos-amd-stoneyridge.flavour.config&var-id=maestro:67455b923be6da94b19fde48&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=$__all
-[4]https://kcidb.kernelci.org/d/test/test?orgId=1&var-datasource=default&var-build_architecture=x86_64&var-build_config_name=cros:%2F%2Fchromeos-6.6%2Fx86_64%2Fchromeos-amd-stoneyridge.flavour.config&var-id=maestro:67455b8c3be6da94b19fde34&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=$__all
+Assuming non-wireless drivers can be converted, too?  As none of the
+classical m68k machines support wireless, so far nothing is gained...
 
--- 
-BR,
-Muhammad Usama Anjum
+> From: Johannes Berg <johannes.berg@intel.com>
+> Date: Tue, 26 Nov 2024 10:29:23 +0100
+> Subject: [PATCH] fs: debugfs: differentiate short fops with proxy ops
+>
+> Geert reported that my previous short fops debugfs changes
+> broke m68k, because it only has mandatory alignement of two,
+> so we can't stash the "is it short" information into the
+> pointer (as we already did with the "is it real" bit.)
+>
+> Instead, exploit the fact that debugfs_file_get() called on
+> an already open file will already find that the fsdata is
+> no longer the real fops but rather the allocated data that
+> already distinguishes full/short ops, so only open() needs
+> to be able to distinguish. We can achieve that by using two
+> different open functions.
+>
+> Unfortunately this requires another set of full file ops,
+> increasing the size by 536 bytes (x86-64), but that's still
+
+226 on m68k.
+
+> a reasonable trade-off given that only converting some of
+> the wireless stack gained over 28k. This brings the total
+> cost of this to around 1k, for wins of 28k (all x86-64).
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Link: https://lore.kernel.org/CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJ=
+faPWDKiQ@mail.gmail.com
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+
+Thanks, that fixed the issue!
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
