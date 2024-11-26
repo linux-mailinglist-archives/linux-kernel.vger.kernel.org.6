@@ -1,174 +1,97 @@
-Return-Path: <linux-kernel+bounces-422541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DB99D9AEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:59:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748CB9D9B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8321C285996
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:59:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7A52B2C5FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33101D6DBC;
-	Tue, 26 Nov 2024 15:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911AE1D6DA1;
+	Tue, 26 Nov 2024 15:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYnrILdj"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LhvdyQnB"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430871D5CEE;
-	Tue, 26 Nov 2024 15:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EF01D0DEC
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732636722; cv=none; b=JUsFBHOCVRfwgP1y8nRrkeicX+CYbumKCSYHfysuHeqEcOJJnKkXGW5g6gUQBk0VrCXt6YTxM7lV28T8UCY4pGCefpiz/E/MOzwkE6jagAk5X2Pti3QNCrYr/mCo5LBgDYbrQJk01WPEUTtQwJ5s2qt/8TD7lKmkBGAGYlHxlew=
+	t=1732636784; cv=none; b=pKnIrTygJcAL/XcO/uPceRCHrmm+rGa/Rkp0wg2g8SG3U+Ghq1iDvFPj/+L3lu9uC/sf3eAq1j38TrT3eWP/7bh1cqli7eDV+Sovb54Meo4Frpb61Y2UDJYrk3dSI7WLcb/0019Ewe9jRtYuuPXBroCYxfiXsfF0k8P1y9Hjd10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732636722; c=relaxed/simple;
-	bh=OTycc2XgyJHTw70iWBJjpBngBVT+yBZQqdAmzsv/iE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=elHdQQYIgOC68LWyMUXFgfs8gmYVejIu6J/sCrk8HaxO3wcWBRVsmPwJJlh73csa6PMLEVfcJSnmMrroIdl+pEHeIzr/J0tLgAhPwC91itSmOBjAUdxn/lHSFXrfsA7Rp1ZFuNl7ilfS3Oej41muy7kxzcPyKpFMtEzMcC+X//s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYnrILdj; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa549f2f9d2so346595366b.3;
-        Tue, 26 Nov 2024 07:58:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732636718; x=1733241518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T8n2wI4oeSut/Jjcn1/Mxbg5PONj2bv4bv/HeAUJ8aI=;
-        b=bYnrILdjs1WxVi1FUdJeakb0MKVmpphuklje0MEyttUlE/8z7Tb8Ul1N7dVR9k/23C
-         dN8NGVaVOGfyXn0EB5RhFyV4BAPrYlw2WW8gLJNasZllQvz1AOMMNXk9uuQqiyJoPIXu
-         5ch+2t2OVyCZ0NgTNwy08WoT6Hjb4Dr3uZ5KUzFmu7toBMKwrGTuofqSHzrud6aqFTom
-         uaorX9WZ7CVYzdt03VaD1gb1ilUcU1QR35zWJyFre+LOMgNeccFl34US5ltleAPT39Kp
-         hR3vdT9B6FhpnbxvsdJ1oR86FsroNavfS9oFry9W9BHDe0y8TPlRlky0gSSX6W+URl7k
-         W0yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732636718; x=1733241518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T8n2wI4oeSut/Jjcn1/Mxbg5PONj2bv4bv/HeAUJ8aI=;
-        b=YQlo0CRfzJJVYZBmJDQYjH2eYy2329gf3VoZWEBb2RNVwuuqkxHir8xGrv++gcUSh+
-         zOft2sMa0K6O6pK3dNi951wp9dspCbpzormkhr1t+O4pBNKpPeS9vSp/bsrPUJHhVWtd
-         Wqi10XPmnoeQDCGwyoIDmGBc/qMHtl+o7mMcms/+JX0lZlRgn/r4VDT1x2AKgxyeXjnm
-         /xmHMjumXTIjDhnnxFRV6cmFgtPF/o8evEQ+a5tCBavVh0YBSgeuo4oU47QOzwIJBt8S
-         62di34h8sQc+VSwWKc+XhEDdGPm6TDA3jk2jJQGSemFdfEJHMXlxtq9zyHGIqzr4As1T
-         G19A==
-X-Forwarded-Encrypted: i=1; AJvYcCVHoE0PWSYZosYp976BVKfIK7MsNJ9yjobTqmOZ2Bm9ROoHkC5n3Qwx24aqAS06N6AaLz2uF3O0CyUrMLaZ@vger.kernel.org, AJvYcCVvzpRgJ0Rwk+phDAD3/nwBSr5J8lxZJk3xEYmW9rwRnmD2s+lqwXTGYt0MZMSbUrz27ZmxYQqPol/Dg3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmqT9GVryVYIGcgr/mkDdMdZ2c0fuOw7bUsdWJOwJY0eAXtzCh
-	DSvIr5ty0G8dyVY5rIMiq9IZFWpY/7xUZt+sAuXw+av7gWLWmDdP
-X-Gm-Gg: ASbGncuVrfO8A9AklT/wzLryqtT7zWeIoPwRyrNxWqcNQoKMumMv1Lw1eQwad7hMVSK
-	7mFc1OKhsh4VFcwHm5D31Nq3XwDS9T3ky77SSU2JmDDg8XUI1q1au6CwRiqydh4yDq8Ms1jC198
-	U5y2iAQ2+yWWHNqTHTSLvF/kebD4zK3H5Fb/QJdFecGzVrBqkhd2Je9QP2nwdDQxl8xv1QTGMjI
-	2RLmcT9s61hmHizVgu6VTBh8N3gsD7zmXjO/uXJtqJ29KAhmXGwGKb0CdodFioa
-X-Google-Smtp-Source: AGHT+IG7gvH38k1p+fjTdzKM7b5HW2QekEurfaXpzofSVDWfAKvRG7yTEYHLW+DsYixuM84MPc04Xg==
-X-Received: by 2002:a17:906:1da9:b0:aa5:3950:10ea with SMTP id a640c23a62f3a-aa5395015ddmr991928466b.36.1732636718222;
-        Tue, 26 Nov 2024 07:58:38 -0800 (PST)
-Received: from localhost.localdomain ([2a02:3030:6:ac03:ccb:c3be:6eb4:edf9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50c305f56sm612095766b.181.2024.11.26.07.58.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 07:58:37 -0800 (PST)
-From: Sedat Dilek <sedat.dilek@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	linux-kbuild@vger.kernel.org,
+	s=arc-20240116; t=1732636784; c=relaxed/simple;
+	bh=3tV9aRSKikT8zMp5zCwaFs8edwtZuaY6P8FxCJluN2A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HoEDXw8+GhHGxZWWIi+Cu9xX4eLzvkAYpJ6Wu4zMy14Ic6fqjaSwCVBFWAPZo9/uQS4oA8zJpFvybDW62OifpwQqGxTX7HUhWkg32jge4XMZv2zm1PXvgRel1q9id/q+8ICzefNsQzCto6oscG8qsoF0qq1jYM/9DDS83OinmBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LhvdyQnB; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732636780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OmF/6x31FfYxPFDBDRNPF1RJ1ndUJpnTkS2ByH7P/BY=;
+	b=LhvdyQnBtXR72Imp/QRtE+uP3eXpCVDl/VxdZdgRJi86CAOlTjndAOiogcAVC9bKZRiKXS
+	qhzTBM47YfdE8BvF/TRXp9KwSUL0O3R58NQ7ti0oXtSZk8N9puq2eimm9MfCWYtgaTwZSB
+	jM/QtcWCt1YMfedRxX8O7N8mgJE78Uw=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: will@kernel.org,
+	maz@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	James Clark <james.clark@linaro.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	James Morse <james.morse@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Quentin Perret <qperret@google.com>,
 	linux-kernel@vger.kernel.org
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: [PATCH v2] kbuild: Fix names of .tmp_vmlinux {kall,}syms files
-Date: Tue, 26 Nov 2024 16:58:01 +0100
-Message-ID: <20241126155832.15560-1-sedat.dilek@gmail.com>
-X-Mailer: git-send-email 2.45.2
+Subject: Re: [PATCH] arm64: Fix usage of new shifted MDCR_EL2 values
+Date: Tue, 26 Nov 2024 07:59:25 -0800
+Message-Id: <173263668481.68510.14862173366195490038.b4-ty@linux.dev>
+In-Reply-To: <20241122164636.2944180-1-james.clark@linaro.org>
+References: <20241122164636.2944180-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-When playing with gendwarfksyms v6 from Sami Tolvanen I noticed:
+On Fri, 22 Nov 2024 16:46:35 +0000, James Clark wrote:
+> Since the linked fixes commit, these masks are already shifted so remove
+> the shifts. One issue that this fixes is SPE and TRBE not being
+> available anymore:
+> 
+>  arm_spe_pmu arm,spe-v1: profiling buffer owned by higher exception level
+> 
+> 
+> [...]
 
-$ LC_ALL=C ls -alth .tmp_vmlinux*
+Applied to fixes, thanks!
 
--rw-rw-r-- 1 dileks dileks 3.1M Nov 22 20:52 .tmp_vmlinux2.kallsyms.o
--rw-rw-r-- 1 dileks dileks  34M Nov 22 20:52 .tmp_vmlinux2.kallsyms.S
--rw-rw-r-- 1 dileks dileks 6.5M Nov 22 20:52 .tmp_vmlinux2.syms
--rwxrwxr-x 1 dileks dileks 101M Nov 22 20:52 .tmp_vmlinux2
+[1/1] arm64: Fix usage of new shifted MDCR_EL2 values
+      https://git.kernel.org/kvmarm/kvmarm/c/d798bc6f3c17
 
--rw-rw-r-- 1 dileks dileks 3.1M Nov 22 20:52 .tmp_vmlinux1.kallsyms.o
--rw-rw-r-- 1 dileks dileks  34M Nov 22 20:52 .tmp_vmlinux1.kallsyms.S
--rw-rw-r-- 1 dileks dileks 6.5M Nov 22 20:52 .tmp_vmlinux1.syms
--rwxrwxr-x 1 dileks dileks  52M Nov 22 20:52 .tmp_vmlinux1.btf.o
--rwxrwxr-x 1 dileks dileks 514M Nov 22 20:52 .tmp_vmlinux1
-
--rw-rw-r-- 1 dileks dileks 2.1K Nov 22 20:51 .tmp_vmlinux0.kallsyms.o
--rw-rw-r-- 1 dileks dileks 6.3K Nov 22 20:51 .tmp_vmlinux0.kallsyms.S
--rw-rw-r-- 1 dileks dileks    0 Nov 22 20:51 .tmp_vmlinux.kallsyms0.syms
-
-.tmp_vmlinux.kallsyms0.syms is NULL byte - it's a dummy file.
-
-Further looking at the other .tmp_vmlinux syms files:
-
-.tmp_vmlinux2.syms
-.tmp_vmlinux1.syms
-.tmp_vmlinux.kallsyms0.syms
-
-Change the naming of file
-
-.tmp_vmlinux.kallsyms0.syms -> .tmp_vmlinux0.syms
-
-While at this, fix the comments in scripts/link-vmlinux.sh.
-
-INFO: v2 is based on Linux v6.12
-
-Link: https://github.com/samitolvanen/linux/commits/gendwarfksyms-v6
-Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkjtm4vSVKkXPTg+Q@mail.gmail.com/
-Link: https://lore.kernel.org/all/20241123132237.15700-1-sedat.dilek@gmail.com/ (v1)
-Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
----
-v1 -> v2:
-- Add commit description and follow naming consistency
-  as requested by Masahiroy san. -dileks
-
- scripts/link-vmlinux.sh | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index a9b3f34a78d2..239fe036606f 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -203,8 +203,8 @@ kallsymso=
- strip_debug=
- 
- if is_enabled CONFIG_KALLSYMS; then
--	true > .tmp_vmlinux.kallsyms0.syms
--	kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
-+	true > .tmp_vmlinux0.syms
-+	kallsyms .tmp_vmlinux0.syms .tmp_vmlinux0.kallsyms
- fi
- 
- if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; then
-@@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
- 	# Generate section listing all symbols and add it into vmlinux
- 	# It's a four step process:
- 	# 0)  Generate a dummy __kallsyms with empty symbol list.
--	# 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and sections,
-+	# 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and sections,
- 	#     with a dummy __kallsyms.
--	#     Running kallsyms on that gives us .tmp_kallsyms1.o with
-+	#     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.o with
- 	#     the right size
--	# 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms section of
-+	# 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms section of
- 	#     the right size, but due to the added section, some
- 	#     addresses have shifted.
--	#     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
-+	#     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
- 	# 3)  That link may have expanded the kernel image enough that
- 	#     more linker branch stubs / trampolines had to be added, which
- 	#     introduces new names, which further expands kallsyms. Do another
--- 
-2.45.2
-
+--
+Best,
+Oliver
 
