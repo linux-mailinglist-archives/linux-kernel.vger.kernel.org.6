@@ -1,146 +1,226 @@
-Return-Path: <linux-kernel+bounces-422470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B56C9D9A0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:58:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E529D9A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93B0166167
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECE916636F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E43A1D5CC5;
-	Tue, 26 Nov 2024 14:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E041D54E3;
+	Tue, 26 Nov 2024 15:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mOWb5iT4"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TChG3feU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Sqpc3IL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TChG3feU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3Sqpc3IL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CA61D5ADB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A84282F4;
+	Tue, 26 Nov 2024 15:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633133; cv=none; b=XN3ecjad4+KfLXvZJJr3c8oRk07RfS9LdcMu8S5WAkBLGnhsA7GToGaD+bH7PXnghA2xlaa7xEBzSfbbr+74JLGqgnYse40xfRi+8lG4mOxMvVboh6JbfLDs/TECW/WB/FknRSRKmcvulj0SE/fbPKdrlbwh7vYhTWxsDUefwu8=
+	t=1732633207; cv=none; b=S/iekmv8tW65qtZR1ogoTZmOpyiNWMJRULojznUaSsizshBq1zbOYVlofOvQ0NmPy0BQrWIFYtVNUWF4kDKS6r5hNaBhoc+etwNKV1W7F89mrO+TSM9H2Xxxc0MN8Rt2HolrFXBuxkAnOE7HZwobPCXxIXWcVJbYX/HUOYRCEcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633133; c=relaxed/simple;
-	bh=f1O+zS6/2cw4GKBLIQEa42J3lPvxfz8RoK+Zaaqew1w=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=HrYChbyl9ev54S2Q5utPGhovMAvCcOTnP4LIDVEjD9MGeoQP8isdwHv2ikz5Ky4itVkrGZ2URLW1YCEdIXf2x5ETNjdmFR1+QvIy4MrsQXIb2JRZEVB8f3AL+sXtXrzXU8nxk6PoW0xuDFc0lrWm5FXQdnofTiURoNe5UEbCKA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mOWb5iT4; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5f1d1fdb328so1189352eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:58:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732633131; x=1733237931; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7nCMLG4jiyHQ5656b8U7nuMRUbyTISDMqgTqAM6PrCg=;
-        b=mOWb5iT4UilRxYkfdkukAvLULyE1yRBQK3wV8iSQnkJyBoehWibRwzW9U6XkbZKQeF
-         TX2CbeVqsPaPee7k2BOJKv5U+pi2Dd18wyYysZcQtJTDJZ5gkkHjNdD/KHeZj+ZxP6i8
-         E/dwaJBcYli0ld7dqYe+AO5nEFCPKzqBqdAzCs9vaQ1mVQZKsb47NkUo3dNShv+4mffk
-         +GxLvDBhGkiCWZv3c22KuiT5iOrKxZjFy3naDl+1zvHDOKWxfM2Ynb0MT4Na/qy4wWl5
-         1Gw35i1HcV5iwzZW8ZWW5v+ZcwouKeUMxYl9a9+nulZ9t/xuGmx8NKpq9DSiVl/uOL1h
-         /KBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732633131; x=1733237931;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7nCMLG4jiyHQ5656b8U7nuMRUbyTISDMqgTqAM6PrCg=;
-        b=i7dG8MNcEIV8jCucXeDcrSP0KKyua7Gu6J0q6V72Ky0Amfbp6nRBRlrUDAtKSySZoO
-         Q+FV0ZW+J+w1VaZTr1wrb9LXq+4rjzmPURXn9DSfmI5eKJr/GV5NvwOjPoBTmG+577wy
-         rl5ewlAetrq3cUYKwg5uTEx6RBbDTytbIelcPHfNrSfWwOjS8Y8oBiv9icDmh4g6nemc
-         3sQgzCWNg/dBfuLFiEGer+DnSpHrOZ3EtMQq+F9yigXi2BMmlFIkHJDVoCR3H2S9pifj
-         9qfX+ULkvnxZAkduSxxO5ytccJfsMiNAd+HUJnXv8UOjO/Fz7FuBCgKXP7ve/4Q2tf0L
-         ElvA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2mQAi/UTULFydoGD5LoZkbo6TpDDUqOtIqQ2durw3u48x7rdzULeRsyun82bK6GsWmylHCSb67Id48Oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGG6oHQ6RSYQDDeg0huID+PgjX78TPEdY6MTSAk207lUfIeKds
-	pljvAQ2hK4dLmelUWfheBZ26+WawzhPuNBCkNJAPy9IYv5iPnYhRY9NAHPMgddn4RsKcI01Vf7L
-	rhKBOYsgJx1twWkJ5ETPE2kOa0GvMwV2fU215iA==
-X-Gm-Gg: ASbGnctmVe3sISqD55R63MxmGtT8/LgcZRvplPbDLsQfLtwPtSe8Po5XA5YdIKistPD
-	EsSLwJ9fwPoN37OsZaoPbcKzWA1gqfAAbbI/S7G6ASSyD7AOmzo78k+gwiTud
-X-Google-Smtp-Source: AGHT+IGRSy8nLCOB5VUyzmDCr9fGOBYudcymDUxbY3GaTKPYQmQrsAEqrNE0VfI0dc92xgcP+9l1NMxeYbAjVcNZnXQ=
-X-Received: by 2002:a05:6358:3120:b0:1c3:7275:491 with SMTP id
- e5c5f4694b2df-1ca796d0650mr815761355d.1.1732633131139; Tue, 26 Nov 2024
- 06:58:51 -0800 (PST)
+	s=arc-20240116; t=1732633207; c=relaxed/simple;
+	bh=DoiGgy2GMpffChB6xoMC8Rr15TKbfFL7c12ogdkKVuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTTaxvl90C0a9aMsy1PW8W0SknMAKUlhpQU39ZtFRX8YpAKzNrBqXfs2DzqMQeVSDbvc1eEEIo6zGWyA+517CRCckDh1lpwD8w3FV3jd2ymcXynlTFT+TgaSRWnAtCkmfpUBSh6DTELcW8HYwEsIAL38iCfFEy+Te3wCzBtjWWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TChG3feU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Sqpc3IL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TChG3feU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3Sqpc3IL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 42BE81F74C;
+	Tue, 26 Nov 2024 15:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732633203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=TChG3feUYThOQm4JDiUtpNkqC1yV8f6e0mhls/rC9zPb/HGJ5DQEtG8OYc74ZqXbezMlf2
+	eWy3ml/5OJq/HiwkNRr1L0aOMvH3zkfBdKsdlTiY6WwwhKPkBYRkHNrqIVNOreGUDr/sXT
+	aojfr1VwGKh0ncbqwcsu2Citly6/A34=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732633203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=3Sqpc3IL5ebxP+hr9y+HcYlkeTFg2RP7wnyJLvAgJTPCTx4Ms8DDJvhqk2C/wB++RuiisF
+	sYVGnnm+Rw2KvOBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TChG3feU;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3Sqpc3IL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732633203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=TChG3feUYThOQm4JDiUtpNkqC1yV8f6e0mhls/rC9zPb/HGJ5DQEtG8OYc74ZqXbezMlf2
+	eWy3ml/5OJq/HiwkNRr1L0aOMvH3zkfBdKsdlTiY6WwwhKPkBYRkHNrqIVNOreGUDr/sXT
+	aojfr1VwGKh0ncbqwcsu2Citly6/A34=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732633203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHu/1ga8UiXrMPcTRTq0z7k/C/XRWuMzHOuhMSugtAM=;
+	b=3Sqpc3IL5ebxP+hr9y+HcYlkeTFg2RP7wnyJLvAgJTPCTx4Ms8DDJvhqk2C/wB++RuiisF
+	sYVGnnm+Rw2KvOBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36F5813890;
+	Tue, 26 Nov 2024 15:00:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ymBnDXPiRWesAwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 15:00:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DE02BA08CA; Tue, 26 Nov 2024 16:00:02 +0100 (CET)
+Date: Tue, 26 Nov 2024 16:00:02 +0100
+From: Jan Kara <jack@suse.cz>
+To: Anders Blomdell <anders.blomdell@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+Message-ID: <20241126150002.o6fbe4yei4fwsehz@quack3>
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
+ <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 26 Nov 2024 20:28:40 +0530
-Message-ID: <CA+G9fYvWkS-8f9kOBTzixjGSNN8262StoVv2ERk7mRKcU+p+BA@mail.gmail.com>
-Subject: include/linux/fortify-string.h:293:17: error: call to
- '__write_overflow' declared with attribute error: detected write beyond size
- of object (1st parameter)
-To: audit@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: eparis@redhat.com, Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
+X-Rspamd-Queue-Id: 42BE81F74C
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-The arm64 hardening.config builds failed on the Linux mainline master
-for the arm64 architectures.
+On Tue 26-11-24 13:49:09, Anders Blomdell wrote:
+> 
+> 
+> On 2024-11-26 11:37, Jan Kara wrote:
+> > On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> > > On 2024-11-26 02:48, Philippe Troin wrote:
+> > > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > > > responding).
+> > > > > What triggered this problem was virtual machines with NFS-mounted
+> > > > > qcow2 disks
+> > > > > that often triggered large readaheads that generates long streaks of
+> > > > > disk I/O
+> > > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > > > area of the
+> > > > > machine.
+> > > > > 
+> > > > > A git bisect gave the following suspect:
+> > > > > 
+> > > > > git bisect start
+> > > > 
+> > > > 8< snip >8
+> > > > 
+> > > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > > > readahead: properly shorten readahead when falling back to
+> > > > > do_page_cache_ra()
+> > > > 
+> > > > Thank you for taking the time to bisect, this issue has been bugging
+> > > > me, but it's been non-deterministic, and hence hard to bisect.
+> > > > 
+> > > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > > > slightly different setups:
+> > > > 
+> > > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > > > "nfs server XXX not responding, still trying" that never recovers
+> > > > (while the server remains pingable and other NFSv3 volumes from the
+> > > > hanging server can be mounted).
+> > > > 
+> > > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > > > several minutes) on random I/O. These stalls eventually recover.
+> > > > 
+> > > > I've built a 6.11.10 kernel with
+> > > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > > > normal (no more NFS hangs, no more VM stalls).
+> > > > 
+> > > Some printk debugging, seems to indicate that the problem
+> > > is that the entity 'ra->size - (index - start)' goes
+> > > negative, which then gets cast to a very large unsigned
+> > > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> > > bug is still eludes me, though.
+> > 
+> > Thanks for the report, bisection and debugging! I think I see what's going
+> > on. read_pages() can go and reduce ra->size when ->readahead() callback
+> > failed to read all folios prepared for reading and apparently that's what
+> > happens with NFS and what can lead to negative argument to
+> > do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> > ra->size / ra->async_size does more harm than good (because those values
+> > show *desired* readahead to happen, not exact number of pages read),
+> > furthermore it is problematic because ra can be shared by multiple
+> > processes and so updates are inherently racy. If we indeed need to store
+> > number of read pages, we could do it through ractl which is call-site local
+> > and used for communication between readahead generic functions and callers.
+> > But I have to do some more history digging and code reading to understand
+> > what is using this logic in read_pages().
+> > 
+> > 								Honza
+> Good, look forward to a quick revert, and don't forget to CC GKH, so I
+> get kernels recent  that work ASAP.
 
-First seen on Linux mainline master 7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5.
-  Good: 9f16d5e6f220661f73b36a4be1b21575651d8833
-  Bad:  7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
+Well, Greg won't merge any patch until it gets upstream. I've sent the
+revert now to Andrew (MM maintainer), once it lands in Linus' tree, Greg
+will take it since stable tree is CCed.
 
-arm64:
-  build:
-    * gcc-8-lkftconfig-hardening
-    * gcc-13-lkftconfig-hardening
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Build error:
----------
-In function 'sized_strscpy',
-    inlined from '__audit_ptrace' at kernel/auditsc.c:2732:2:
-include/linux/fortify-string.h:293:17: error: call to
-'__write_overflow' declared with attribute error: detected write
-beyond size of object (1st parameter)
-  293 |                 __write_overflow();
-      |                 ^~~~~~~~~~~~~~~~~~
-In function 'sized_strscpy',
-    inlined from 'audit_signal_info_syscall' at kernel/auditsc.c:2759:3:
-include/linux/fortify-string.h:293:17: error: call to
-'__write_overflow' declared with attribute error: detected write
-beyond size of object (1st parameter)
-  293 |                 __write_overflow();
-      |                 ^~~~~~~~~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:229: kernel/auditsc.o] Error 1
-
-Build image:
------------
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNLRwWNgNgfh4C67CGISDtalxY/
-- https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.12-9567-g7eef7e306d3c/testrun/26066025/suite/build/test/gcc-13-lkftconfig-hardening/log
-- https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.12-9567-g7eef7e306d3c/testrun/26066025/suite/build/test/gcc-13-lkftconfig-hardening/details/
-- https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.12-9567-g7eef7e306d3c/testrun/26066025/suite/build/test/gcc-13-lkftconfig-hardening/history/
-
-Steps to reproduce:
-------------
-- # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13 \
---kconfig defconfig \
---kconfig-add https://gitlab.com/Linaro/lkft/kernel-fragments/-/raw/main/netdev.config
-\
---kconfig-add hardening.config
-
-metadata:
-----
-  git describe: v6.12-9567-g7eef7e306d3c
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-  git sha: 7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNLRwWNgNgfh4C67CGISDtalxY/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pNLRwWNgNgfh4C67CGISDtalxY/
-  toolchain: gcc-13 and gcc-8
-  config: hardening.config
-  arch: arm64
-
---
-Linaro LKFT
-https://lkft.linaro.org
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
