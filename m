@@ -1,196 +1,108 @@
-Return-Path: <linux-kernel+bounces-422472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447549D9A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:00:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073DA9D9A13
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:01:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E3B166F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:00:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD1C1D5CDD;
+	Tue, 26 Nov 2024 15:00:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057A8282C93
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:00:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28B1282F4;
-	Tue, 26 Nov 2024 15:00:32 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDF978C6D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A078282F4;
+	Tue, 26 Nov 2024 15:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633232; cv=none; b=sSkb4X6crCdWtZn+L/a/qslIezBlCBOQcel+RXmvR2vN6RJcXIB9a71WnxUPbHyzC1nxg2dWAVceb+b76jb9+ettis3SGAEYEzkPfUzUiFQ5vSyjZaXoiKXz1d9ei15AXkBvMSHE3kq3H8R+oq4ZHdiMUpLVWND/2cPnozDYmdM=
+	t=1732633252; cv=none; b=ZQYmEPsjy3ILLPjoTAmevA94gLMNGCZuKbqBmLKA/3PP5Bxb6azI5F8NP8mFbilAKBevzDuDtQx1FfpJXrQJAejdBqlui9+GYGuGqjCobanXqO+/g7ydaq+ZmDsNFJJxL7StyG9plYRKXuzNMSC+PxsN5q1l5+14hDTXboigQio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633232; c=relaxed/simple;
-	bh=GC9iqk70tSEgFNqOzMWsBYvRtSMtmUJxKFihz35MT1E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=If1QRkdEPxXXyZW3mZvxNOBAaiFo/fDGgRwsXu9e8strnCFxalAmF6PiyIwtMGoJ+biYHzboayrxgKU9Sa9DkCHJmMutkMmzlEJHXxGcQ0Pv/2QtpBMsJkTxg6Koj8I6ZskLYoTZZF/VANuNSCajVvomSKxQ9Mk74kBCkDsqNho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7bfddbfbdso6831885ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 07:00:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732633230; x=1733238030;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=su2WCsY/sMIgvzRO+AQtv1gt0oL6li6aXAIe6ZKuOB0=;
-        b=SsB7r8rbRjPo1FbuA1I0Q1Gcuc7pQTZ1CXm3HZV3HFzaMyhxW4pJjVH2e0Z6QmlJPC
-         LB8ZZ5qOLcKLJ1Y7PclyMNufa7ok/r4xQ77aqmTZ3OZpNYdZjvhbce5ovL+qXKQ6+mr6
-         q/zzqXd9CZzB/AOw4F/1sjNfIQP/07rnZe4/KOGlCU/aRngEK2qxdGuRPrevAd+vcMj9
-         NSDBIbFSYkAac5792Y27PDcWAO4QdUN9tDD5XuvInIWXVCjsFAqUrPFYPYUVRy0T/Ucn
-         IgWozXamrOKM8+P5JSecnPALhA1quLNvMry58AqfBjWLhZYm5wH6ducLP6fq7+IsqK15
-         IfyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVk2Gmam28fx+jUVrcYkavWdM/eBDlH2U/dZ45MqUuJ7YJS1nBilEvJ7s3f9CuhTr8DW/oCiogDjvJ2io=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL2VxzVWixexTqWoh3zMrKDpQH0G4X3YGhCdL5Z4c/D/IodYBx
-	+0zGFiD0JxGxNgQ14HnndNs4e+ruvTe+gZv+i+PgcFlgSQsdsuC7kcBO/bwTtCaPiQY0pmJ3baC
-	H4BSJTjnG0PkUbJACESOXniACWUAj9UffZvngMWQrlmY18V1LOHz3Ynk=
-X-Google-Smtp-Source: AGHT+IFLBt1ZGfN48llJgJ2x/XK+b/1cPYvRzEvOmYKtmeQ7bUZx/7BfXb3EMAJEsBYK5W+SCxOcRg3V2/mHXwj8BPdMf9PJG8fh
+	s=arc-20240116; t=1732633252; c=relaxed/simple;
+	bh=zI5YOT8XnDtvtAIsnkbSBvefKhsLLJTfl9Nr7998J78=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=upMBDAiaFc6QuSFsrHr+gkWKjHCNnjLORpHtqbUQBQyo/im1SDanz+B9jbiFZn7as9Uk8ijJ8l9ot1CHinn7dnn+Nq58NKLxDnG8Efvjsaoj1OHf0V7A3FLExSN+7Zqb2MeLQRd8fOd53V3CQNTP20cb9ukTtDP2wkJV5sr1q1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XyQg76FQpz6K8qh;
+	Tue, 26 Nov 2024 22:58:11 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 308FD140447;
+	Tue, 26 Nov 2024 23:00:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Nov
+ 2024 16:00:45 +0100
+Date: Tue, 26 Nov 2024 15:00:44 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Huang Ying <ying.huang@intel.com>, Yao Xingtao
+	<yaoxt.fnst@fujitsu.com>, Li Ming <ming4.li@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH 3/3] cxl/test: Simulate an x86 Low Memory Hole for tests
+Message-ID: <20241126150044.0000273b@huawei.com>
+In-Reply-To: <20241122155226.2068287-4-fabio.m.de.francesco@linux.intel.com>
+References: <20241122155226.2068287-1-fabio.m.de.francesco@linux.intel.com>
+	<20241122155226.2068287-4-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152d:b0:3a7:8d8e:e730 with SMTP id
- e9e14a558f8ab-3a79af23627mr152483875ab.22.1732633229653; Tue, 26 Nov 2024
- 07:00:29 -0800 (PST)
-Date: Tue, 26 Nov 2024 07:00:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6745e28d.050a0220.1286eb.001e.GAE@google.com>
-Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_clear_inode
-From: syzbot <syzbot+b61ccbb38392c822082b@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hello,
+On Fri, 22 Nov 2024 16:51:54 +0100
+"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-syzbot found the following issue on:
+> Simulate an x86 Low Memory Hole for the CXL tests by changing
+> mock_cfmws[0] range size to 768MB and CXL Endpoint Decoder HPA range size
+> to 1GB and have get_cfmws_range_start() return two different addresses
+> which depend on whether the passed device is real or mock.
+> 
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
 
-HEAD commit:    0a9b9d17f3a7 Merge tag 'pm-6.12-rc8' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=127161a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c3a3896a92fb300b
-dashboard link: https://syzkaller.appspot.com/bug?extid=b61ccbb38392c822082b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+> index 050725afa45d..b61c3d78fed3 100644
+> --- a/tools/testing/cxl/test/cxl.c
+> +++ b/tools/testing/cxl/test/cxl.c
+> @@ -212,7 +212,7 @@ static struct {
+>  			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+>  			.qtg_id = FAKE_QTG_ID,
+> -			.window_size = SZ_256M * 4UL,
+> +			.window_size = SZ_256M * 3UL,
+This is changing the test whether or not we have ARCH_LOW_MEMORY_HOLE.
+Doesn't that result in failures on arm64 etc?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Jonathan
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4675f27017d1/disk-0a9b9d17.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/880b676fc240/vmlinux-0a9b9d17.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b54f7f03e699/bzImage-0a9b9d17.xz
+>  		},
+>  		.target = { 0 },
+>  	},
+> @@ -744,7 +744,7 @@ static void mock_init_hdm_decoder(struct cxl_decoder *cxld)
+>  	struct cxl_endpoint_decoder *cxled;
+>  	struct cxl_switch_decoder *cxlsd;
+>  	struct cxl_port *port, *iter;
+> -	const int size = SZ_512M;
+> +	const int size = SZ_1G;
+>  	struct cxl_memdev *cxlmd;
+>  	struct cxl_dport *dport;
+>  	struct device *dev;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b61ccbb38392c822082b@syzkaller.appspotmail.com
-
-RBP: 00007ffc6312dab0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc6312eb30
-R13: 00007fc0479f15fc R14: 0000000000044f12 R15: 00007ffc6312eb70
- </TASK>
-ocfs2: Unmounting device (7,3) on (node local)
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 UID: 0 PID: 8245 Comm: syz-executor Not tainted 6.12.0-rc7-syzkaller-00070-g0a9b9d17f3a7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:ocfs2_clear_inode+0x571/0x1430 fs/ocfs2/inode.c:1208
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 b7 07 00 00 49 8b 9e 90 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d9 07 00 00 48 8b 7b 08 e8 7c 7b f7 fe 48 8b 4c
-RSP: 0018:ffffc90002fdf890 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff836d638d
-RDX: 0000000000000001 RSI: ffff888079b6d440 RDI: 0000000000000008
-RBP: ffff888079b6cf50 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888079b6cea0
-R13: 0000000000000000 R14: ffff88802a14c000 R15: ffff888079b6cb38
-FS:  00005555850a7500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000562453259680 CR3: 000000005e430000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ocfs2_evict_inode+0x8d6/0x15d0 fs/ocfs2/inode.c:1220
- evict+0x40c/0x970 fs/inode.c:725
- iput_final fs/inode.c:1877 [inline]
- iput fs/inode.c:1903 [inline]
- iput+0x530/0x890 fs/inode.c:1889
- __ocfs2_free_slot_info.part.0+0x3e/0x210 fs/ocfs2/slot_map.c:307
- __ocfs2_free_slot_info fs/ocfs2/slot_map.c:304 [inline]
- ocfs2_free_slot_info+0x47/0x60 fs/ocfs2/slot_map.c:443
- ocfs2_delete_osb+0x52/0x1f0 fs/ocfs2/super.c:2502
- ocfs2_dismount_volume+0x442/0xa00 fs/ocfs2/super.c:1936
- generic_shutdown_super+0x15f/0x3d0 fs/super.c:642
- kill_block_super+0x3b/0x90 fs/super.c:1710
- deactivate_locked_super+0xc1/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1373
- task_work_run+0x151/0x250 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc04797fa47
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffc6312d9f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fc04797fa47
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc6312dab0
-RBP: 00007ffc6312dab0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc6312eb30
-R13: 00007fc0479f15fc R14: 0000000000044f12 R15: 00007ffc6312eb70
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_clear_inode+0x571/0x1430 fs/ocfs2/inode.c:1208
-Code: 48 c1 ea 03 80 3c 02 00 0f 85 b7 07 00 00 49 8b 9e 90 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d9 07 00 00 48 8b 7b 08 e8 7c 7b f7 fe 48 8b 4c
-RSP: 0018:ffffc90002fdf890 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff836d638d
-RDX: 0000000000000001 RSI: ffff888079b6d440 RDI: 0000000000000008
-RBP: ffff888079b6cf50 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888079b6cea0
-R13: 0000000000000000 R14: ffff88802a14c000 R15: ffff888079b6cb38
-FS:  00005555850a7500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f8a5916131 CR3: 000000005e430000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	48 c1 ea 03          	shr    $0x3,%rdx
-   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   8:	0f 85 b7 07 00 00    	jne    0x7c5
-   e:	49 8b 9e 90 02 00 00 	mov    0x290(%r14),%rbx
-  15:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  1c:	fc ff df
-  1f:	48 8d 7b 08          	lea    0x8(%rbx),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 d9 07 00 00    	jne    0x80d
-  34:	48 8b 7b 08          	mov    0x8(%rbx),%rdi
-  38:	e8 7c 7b f7 fe       	call   0xfef77bb9
-  3d:	48                   	rex.W
-  3e:	8b                   	.byte 0x8b
-  3f:	4c                   	rex.WR
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
