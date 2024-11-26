@@ -1,317 +1,162 @@
-Return-Path: <linux-kernel+bounces-422175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA109D957F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:25:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047329D9575
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:24:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4BA8B2BD04
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BECD5282A6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492201CCB50;
-	Tue, 26 Nov 2024 10:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="V6V9czr/"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010070.outbound.protection.outlook.com [52.101.228.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF5D1CD214;
+	Tue, 26 Nov 2024 10:24:05 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBBA1BFE0C;
-	Tue, 26 Nov 2024 10:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616606; cv=fail; b=EIrmQT/FGaS/5DZZDK5wGRVqmVL2X5y7vYCqshHERQo0Ag8Zh+T+pZqo94uweDKEE7ciBnN9keUE+rGCC8xCkrTTKvJmXwZ99W3HASEvJdU9bbt9DzYCtow5XVNTd229AgO/AdUDHWJFDxbxR6NN2xpRr94F7yxif2TU8pD7FrA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616606; c=relaxed/simple;
-	bh=U7IJ6mWhS3rr9dXtXhojinGB5mT6H4ByevWexNkTjc0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=i0YEIOo4qMv3QNzF9Zk36ryCfpadkDh+dBsnYtD3pPxChwunc2VNgQnBBQqTyzlsmBC6WJglzL0+F4nbr21lC2h0nUDVbjoUSRNVIKG4HbPH39AXQ2VFI5ccTBQJetHGpFStdQ1QWOw+su8g+5W830ePenP3x0gClm50aAH3X5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=V6V9czr/; arc=fail smtp.client-ip=52.101.228.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S1cit3xagZptxEeZAiaqk8Gl+payXxvkfBIwuvkr/ZhwlNfiCP6VGt/jqaRCcaVV4wYLBo+VXWtiUjFoy3wtfIGZzh1jGp46Tyc24+KDzc50q1lTB9nqtOkOUkozdHbbf71iAG3liwoIbce0PZ5p0lFyejUmdcvCCthaiNLjs4FaruxcNy7KT8CrTuJ12QRbKjvVQQtHKgh9de29VkmTtPscXkAohojCj3xG36zfXqqU5hvEjnjL2Q0tna8T0nXedZE7nacJr8Ed3hWjJnVpDRCMBCMntMwExAln1MBsth1+/K43RO+FKTCGQo2u2Q8cNMZBI4PXHjGfJdRYyd5Htg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dE8QcP644uTUsP76Ro6Yl/9c2ACCMXIgyyq/OUoBQ9U=;
- b=nsdSSyefbuXEx4ROZhQWLE2xTW4XmmUG1ZKeJbBp0R1hBVVy96N2Ab/TTefLlDMPGRh/r9Apii9VP22gddWUH4OZlRox6pwx90YMVTUb8ciDT/PrSOxlesGEV9I7mf4rxycaW2pquNxvSb3H/5tu24hBkfO2eQF3Ncrb8SYHDeH4upfJsOc0AKeRkjScCfCD++ePpFFZ7YcOktJa2nrofN5kgkpWSR2LKaGs541JZGo+dx/YHBW9sx5Td1fvH0KcAlWlNLW6kslEja2NxREDMhv47O4DcXxi5tchL39yQBlMdo7p4JNCg2YgDF5t6y1H6jvai5emc7OodF0DraKGWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dE8QcP644uTUsP76Ro6Yl/9c2ACCMXIgyyq/OUoBQ9U=;
- b=V6V9czr/heUcKWMhofTgdwhNdt202v4cTFpXnFE0a9uI/8S7gBrswKoOHi/tXt+COnyWBveiasxdmeGJqX0qHOBGOIAar6/Et92kHo1hIat7lnP0XNICmO/BcZ25BIw8bdVQY1XJ+hsEuS0HWQu62A/gVOVasIZiQyR+Zs/B0pQ=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB10326.jpnprd01.prod.outlook.com (2603:1096:604:1fa::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
- 2024 10:23:17 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
- 10:23:17 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>, laurent.pinchart
-	<laurent.pinchart@ideasonboard.com>
-CC: Kieram Bingham <kieran.bingham+renesas@ideasonboard.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: hints around rcar_lvds.c :)
-Thread-Topic: hints around rcar_lvds.c :)
-Thread-Index: AQHbP+wmeo3akYZTEEyehR1OdpPnK7LJWnkw
-Date: Tue, 26 Nov 2024 10:23:17 +0000
-Message-ID:
- <TY3PR01MB1134637A719B9278566422667862F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <Z0WfwMJVCQOEZM3c@tom-desktop>
-In-Reply-To: <Z0WfwMJVCQOEZM3c@tom-desktop>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB10326:EE_
-x-ms-office365-filtering-correlation-id: a9845fb0-6a51-457f-84a9-08dd0e045808
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?7xYeX8TzhDPEA7YOsDeGkSkCffGO+SSPCD2fX4miUvdKRBz+ju98VFUvsnwR?=
- =?us-ascii?Q?DPfFSDM/qLH65QOXEjbuq4s05PIWKhkUM60NWzpGcQTt6g3BC0GpMVxfJw5W?=
- =?us-ascii?Q?EQeoTXHrp94c0UQv4BGnWImydJzTNLM/VakWOyRilnvS1pjqJlkECbttVH76?=
- =?us-ascii?Q?O4p9cuIOp29QtVRmPLUupnKTVQ6sxm2IIwcA4lIV+Tw4rQONWS7bS6Rl9VD9?=
- =?us-ascii?Q?2q7ggrZJW2Rh7QifvZFDp6ZPqCn6nnmoTyX2EobT8WGdjz/hDwUxIELkOye0?=
- =?us-ascii?Q?VksgkBvvVBpDn1VN0LtNW6vcqse5/4LDoqzv9Ki+Rq/Z6Or5FKPmhYZWqCRu?=
- =?us-ascii?Q?EcaB83nvYrALuYX22Df594RIJW7tSXe2v300FnayghQ6b1Sv3DraepzsI8z7?=
- =?us-ascii?Q?rytW/2X/Wadr9DWO4EnWbRiFBRGiyVOm4lwv7whS6v1iyp0IdW1W2t2zPJks?=
- =?us-ascii?Q?D/Up+0pT5GzTdlNeGJNZkl2W3sLaQocVVEW509UkgsbR61yAS5A4kGZeIxfu?=
- =?us-ascii?Q?XGUKKpvEQcGI6x2SgCfN/PhIWwQ6HzJy4pYYIdRCgrA7D5WfjS7dWwQF/JfP?=
- =?us-ascii?Q?dQ11NSSTu4971cH1J8oo0iFEJJI6G6b1Qz7qn9K0X+Bd2o1E8g+hDqD7oNfb?=
- =?us-ascii?Q?Jh3nVNVyf5lBQSuNfPMuBHJq2onGj6u2HuX5vuuayjeMQT4RddAkWM6mv+73?=
- =?us-ascii?Q?uJWM30AR1OJ1eR/OEgYqGuwkCgBOQ+JzLnPWVUv2Z/7rKys741fnkts+BuJV?=
- =?us-ascii?Q?xb4rgTFKBMgaheDz5053M+DVIGtboHgjzrWH9iMd36hvdXaY560qGb3+I/Jq?=
- =?us-ascii?Q?BirYcOTthMOyj3wCd8xPCSGrYL23r0qfoiGsmfzC+z+plIpkG3AMysV7bz8M?=
- =?us-ascii?Q?cLT7psrf4KsCqtmFp3I/S2FM9EdgjxpH1/g3aVmbkM35b3KgW/ZBhsnSuSx0?=
- =?us-ascii?Q?l+uyjUiQppORxgJ7fK2BH99YxZY9cfjxQGihKzpDO8S98Xk98L2B9Zcyne3U?=
- =?us-ascii?Q?txencqczgOKe22FpFN/Gs1XvSrZpmuPckUD7MJt/EWOipZtJFDA99myqguOt?=
- =?us-ascii?Q?lVkxoEabRwoI7qqUT40asJyk8kmfLISrlU6hbPhUI4iKxPTPN69on7aE4lSV?=
- =?us-ascii?Q?CTVtl/S7l9TFhPMNBiCWxXxAf4XjUZfJAa/8CR9nhCbKEJf8vb0A4UhuBZd2?=
- =?us-ascii?Q?NoZsc5hMZ5Sbc6jqIBHv8CP3dZka7ul7DAS+N9owyNHdep/donO60wCdy7Og?=
- =?us-ascii?Q?mpNg/PdRG4E2XMk2+89O57RnJeYzkI++V+YInPI3apOUZXDcPoV1xki0n+MQ?=
- =?us-ascii?Q?niprgF5FHzRth6yZhuG/m34b83eAkfJ4ZStEjz8XFUvaCu7fTTQ2EjmHU0/A?=
- =?us-ascii?Q?QPKopzTudfBYGVplqxSUBR6ufqT+J4JIg5q0hIB0xskIajmmGQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?yXtqTUeq0KOGUETa6ZgJViKulfj6e886tLVpzI8v13rU1pzMO7QrCpz/fsbn?=
- =?us-ascii?Q?9bCtTh6TSaIM3AWhBDfqD8Eb9qdkOo0BXB56eaxgrO4nfGDYNyA6IYgTJikX?=
- =?us-ascii?Q?y6xq9UoRrxmEtHyOGwDuj6XqNy0nXPuAkxfozxglRgYaYsUqz0OC4SgHmt6x?=
- =?us-ascii?Q?hB5u9JjmJjttgXgEuGzmkdtNxt6xJhU3dg2T1/PQM0R276uBsbpcA3sw1Fet?=
- =?us-ascii?Q?ctPUo6nxpTw9mfzscRcwT5bD496X7lnIhFT7FuOl2Nxo9DeaYL00zdRUzgU9?=
- =?us-ascii?Q?+Kw3KnEjsjRfIRe9YVytFonJl3Dt+agpfUUEGMlQQRerY/wUzGNZdUmrdCTF?=
- =?us-ascii?Q?zRigNkp89NEw0EPFF2Ht400lKBrdxBdhMzFxMHhVesRTpGYOhc4yUpmll2bZ?=
- =?us-ascii?Q?EWQb4+jLpbgYk8qtgB24T31R0FhxKeeG1jdpYmjF3M2JXUSYPKCKqAOZd+ai?=
- =?us-ascii?Q?zvnjX5jJ2oo004IcDmSbX5Ujv7QEnZw674XdpnHtPiYpsqy5wJIAwc/0wFEe?=
- =?us-ascii?Q?6ApXjPypAU7+Qxmg7vRJdpcIVYQvY2uy/u6LSxPfQCmVyuuyeNFjBZO8azSF?=
- =?us-ascii?Q?jUZ35pGd+ANDQJKwhlU1TwmCPQLY3LTuO6EgBAtm/uaGSVwiGY0JRZyML0Wi?=
- =?us-ascii?Q?MB8n+zKlWaiDTVvlBuvSIwJp1U0TZ8/H9oCJVTxdPuwydnTxqgqDkmNDNgwr?=
- =?us-ascii?Q?+ftfQwBTT0jwZcoTMzjS85924sc+4uKuK8gtNw+huFMXaY9GSc47MCVJ+b7V?=
- =?us-ascii?Q?kN/BoOdvMDv9TPt1FIjcjOZTuOi2BbpK6Rj5pZvLWFn4DWGBK7FnnZbHoYOb?=
- =?us-ascii?Q?gDlIqF4Hw0EcLnikY98l/E4bP4u7ufqfvU2nye+HjPPjPPsF799WBg+CIZeM?=
- =?us-ascii?Q?qGvP6vQSkuVb6gH7NDcl7exMk5ouP9V8HpqpNimqRcjCdCS7loc/PzFQPqpl?=
- =?us-ascii?Q?E8DQ0yVGNKBm4l5SlVhk/M5J3gxFK62H1O96/qFgHyjsc9HN0a0PXqFewc9u?=
- =?us-ascii?Q?I5gbh6kKbKO84McBgrIY4WMTjXu4fviHF1RNGBSiYjIgXT0NjuTYXD7VIjKJ?=
- =?us-ascii?Q?mkUTAsDRw3e/+9jdYuqkiMGx7CVy6Cu3WPGZpL6F2ZkhEnCI43puWp6Cf/tJ?=
- =?us-ascii?Q?g/1nYW16ngahZG1LyZabx+PTh7km40rmyH8Px2236H7i+/b1pkKLwIZ8zeo2?=
- =?us-ascii?Q?/fAe+0P2u5CEgpiMlkU4j3meljAaKIoqRbWuiIUow8g4qxGOYvz1v7iXjqob?=
- =?us-ascii?Q?010xVyusbFE6Pc+o7vRdCJGkvrjzYNr1zBwYL1ZtL1IUvxfPD1qj+gJDgMiz?=
- =?us-ascii?Q?en9EoSYASPmWYDXCIAfyef5+Pi+ALIMaBzztBDeULTgkcrzVKavi0ASsd8+g?=
- =?us-ascii?Q?+kld0FG88JZpNJ8krGp8I/BMjPeWWqFWEtO17oQDodWlO53M7BbDz4H1PJUD?=
- =?us-ascii?Q?vi1UwwQ8Xtv6qZMoH8LbOUzzdb7Y06dt1MdfAURW7PJxvYFbC6xvi96AWrDE?=
- =?us-ascii?Q?nqTqpmp9imBSLbTRM77ww/5bF14R1vgnS4B7NdlpzNIt40mFKE34B+b13x39?=
- =?us-ascii?Q?LFxRzKqieeQ9mM90+0USA/lH90ZbrVWGKztbroy0u9BV2a28rmxlpyBLX37K?=
- =?us-ascii?Q?AQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8EC1BFE0C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732616645; cv=none; b=eMhEHe48Y2o/yeUdu/qjNx6hnTDds8wOu46A1gpeAGCKOZBQf+22SrXwzErIzBkVZFNI7qDLeoto4Pj60cSpCL16BqK70YmOfh1Lal7SDyE9eHIFc2O7/9Cmk+HxNmpy5dVEgNR2rOcMR5RBZ0f4fLatGxmKGyyYxO7XKhD+kFE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732616645; c=relaxed/simple;
+	bh=Gl1YzyF45JshhprewtQzalCtCwzj+O7eTYyonCHwwWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmbUfbOiQjOtMpi/p0iasHbhwtab7J1krVPh4w3Dpzexm9FCa2IDxFXR4zsE3wSvr/YJFlLJqCI1E/N1hCe6pZkb3qrBIiv309TMb5/XKHMIsmt5Onop7MO7HNiQelTO28yKfViu0MMKl8Oaj+UcKJnXaZbSUFhIoOU5WbAj4+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFsja-00033P-Dp; Tue, 26 Nov 2024 11:23:54 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFsjZ-000ERt-18;
+	Tue, 26 Nov 2024 11:23:54 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C120437D8B6;
+	Tue, 26 Nov 2024 10:23:53 +0000 (UTC)
+Date: Tue, 26 Nov 2024 11:23:53 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Carlos Song <carlos.song@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, 
+	"o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: imx: support DMA defer probing
+Message-ID: <20241126-paper-nightingale-of-wealth-de17e7-mkl@pengutronix.de>
+References: <20241126082535.1878554-1-carlos.song@nxp.com>
+ <20241126-economic-energetic-junglefowl-5197a9-mkl@pengutronix.de>
+ <AM0PR0402MB39372380307BC4252BD131ACE82F2@AM0PR0402MB3937.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9845fb0-6a51-457f-84a9-08dd0e045808
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2024 10:23:17.5955
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FWJgv9N6e+2lPs9SpSnkhs1/NZ+DLktLxlYBHKhvSEaiBrv/mFZLM4tAuQZnRaUXD4ZQ1WVNdbf+ECy5Bw3Dv7fTeC4tflL6DBscMXpbRJ8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10326
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pvifcaczcjfl73wu"
+Content-Disposition: inline
+In-Reply-To: <AM0PR0402MB39372380307BC4252BD131ACE82F2@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-+ renesas-soc
 
-> -----Original Message-----
-> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of To=
-mmaso Merciai
-> Sent: 26 November 2024 10:15
-> To: laurent.pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Kieram Bingham <kieran.bingham+renesas@ideasonboard.com>; David Airli=
-e <airlied@gmail.com>; Simona
-> Vetter <simona@ffwll.ch>; dri-devel@lists.freedesktop.org; linux-kernel@v=
-ger.kernel.org
-> Subject: hints around rcar_lvds.c :)
+--pvifcaczcjfl73wu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] i2c: imx: support DMA defer probing
+MIME-Version: 1.0
+
+On 26.11.2024 10:15:27, Carlos Song wrote:
+> > >  static void i2c_imx_dma_callback(void *arg) @@ -1803,6 +1804,13 @@
+> > > static int i2c_imx_probe(struct platform_device *pdev)
+> > >  	if (ret =3D=3D -EPROBE_DEFER)
+> > >  		goto clk_notifier_unregister;
+> > >
+> > > +	/* Init DMA config if supported */
+> > > +	ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
+> > > +	if (ret =3D=3D -EPROBE_DEFER) {
+> > > +		dev_err(&pdev->dev, "DMA not ready, go defer probe!\n");
+> > > +		goto clk_notifier_unregister;
+> > > +	}
+> >=20
+> > Don't spam the logs if the driver defers probing, it's not a error. And=
+ it looks
+> > strange to ignore all other errors here. Either add a comment here, som=
+ething
+> > like "continue without DMA", or let the function return
+> > 0 in case the driver should continue and propagate the error if the cal=
+ler should
+> > take care of it.
+> >=20
 >=20
-> Hi Laurent, All,
+> Hi,
+> Thank you for your suggestion! I agree with you.
+> I will change to this logic:
+> 	ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
+> 	if (ret) {
+> 		if (ret =3D=3D -EPROBE_DEFER)
+> 			goto clk_notifier_unregister;
+> 		dev_info(&pdev->dev, "use pio mode\n");
+> 	}
 >=20
-> Sorry for bothering.
-> Looking for some feedback :)
+> Ret =3D 0  ----->  enable DMA successfully  -------> no print
+> Ret!=3D0  ----->  defer probe ---------> no print and try again
+> Ret!=3D0  ----->  fail to enable DMA ------> remind now is using pio mode
 >=20
-> I have a similar rcar_lvds.c IP's to handle but in my case:
-> I have lvds0 and lvds1 that are sharing some common regs (lvds_cmn).
->=20
->  ----------------------
-> |    -------------     |
-> |   |lvds_cmn_regs|    |
-> |    -------------     |
-> |                      |
-> |    -----------       |
-> |   | lvds0_regs |     |-----> ch0
-> |    ------------      |
-> |                      |
-> |    -----------       |
-> |   | lvds1_regs |     |-----> ch1
-> |    ------------      |
->  ----------------------
->=20
->=20
-> So I'm checking 2 drm dts/driver architecture:
->=20
-> 1st architecture:
->  - Using a single lvds driver to handle both lvds0 and lvds1.
->=20
-> 		 ----------------------
-> 		|                      |
-> 		|                      |
-> 		|                      |
-> du_lvds0 ------>|                      |----> ch0_lvds
-> 		|      lvds_bridge     |
-> 		|                      |
-> 		|                      |
-> du_lvds1 ------>|                      |----> ch1_lvds
-> 		|                      |
-> 		 ----------------------
->=20
->=20
-> Issue:
->=20
-> Problem here is the 1 single link 2ch mode.
-> lvds0 and lvds1 can drive 2 display with 2 differents fb (fb0 and fb1).
->=20
-> Having a single drm_bridge to drive both channel give me the following is=
-sue:
->=20
-> In single link 2ch mode when for the first time the du encoder drm_attach=
-() the lvds bridge to the
-> encoder(du) all goes fine and fb0 is created correctly.
->=20
-> Then again the du encoder is trying again to drm_attach() the lvds bridge=
- but this return -EBUSY
-> obviously because is already attached.
->=20
-> Then I think this is not the way to follow because I need 2 drm_bridges f=
-rom the same drm drive, and I
-> think this is not correct.
-> ----------
->=20
-> 2nd architecture:
->  - Follow rcar_lvds.c way using 2 nodes for lvds0 and lvds1:
->=20
-> 		 ------------
-> du_lvds0 -----> |lvds0_bridge|----> ch0_lvds
-> 		 ------------
->=20
-> 		 ------------
-> du_lvds1 -----> |lvds1_bridge|----> ch1_lvds
-> 		 ------------
->=20
-> Issue:
-> I thinks this is an optimal approach but in my case here the problem is t=
-hat lvds0 and lvds1 share a
-> set of common registers some common clocks and common reset:
->=20
-> My plan is to manipulate those common regs (lvds_cmn) using compatible =
-=3D "simple-mfd", "syscon"; as
-> follow:
->=20
-> lvds_cmn: lvds-cmn {
-> 	compatible =3D "simple-mfd", "syscon";
-> 	reg =3D <common_regs>;
->=20
-> 	lvds0: lvds0-encoder {
->=20
-> 		ports {
-> 			#address-cells =3D <1>;
-> 			#size-cells =3D <0>;
-> 			clocks =3D <&common_clk>, <&dotclok0>, <&phyclock0>;
-> 			resets =3D <&common_rst>;
->=20
-> 			port@0 {
-> 				reg =3D <0>;
-> 				lvds0_in: endpoint {
-> 					remote-endpoint =3D <&du_out_lvds0>;
-> 				};
-> 			};
->=20
-> 			port@1 {
-> 				reg =3D <1>;
-> 				lvds_ch0: endpoint {
-> 				};
-> 			};
-> 		};
-> 	};
->=20
-> 	lvds1: lvds1-encoder {
->=20
-> 		ports {
-> 			#address-cells =3D <1>;
-> 			#size-cells =3D <0>;
-> 			clocks =3D <&common_clk>, <&dotclok1>, <&phyclock1>;
->                         resets =3D <&common_rst>;
->=20
-> 			port@0 {
-> 				reg =3D <0>;
-> 				lvds1_in: endpoint {
-> 					remote-endpoint =3D <&du_out_lvds1>;
-> 				};
-> 			};
->=20
-> 			port@1 {
-> 				reg =3D <1>;
-> 				lvds_ch1: endpoint {
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> ----------
->=20
-> I'm asking to find the best way to represent those IP's.
-> What do you think?
-> Any hints/tips would be nice.
-> Thanks in advance.
->=20
-> Thanks & Regards,
-> Tommaso
+> Do you think the logic is acceptable?
+
+Yes, the other option is to move the logic into i2c_imx_dma_request()
+and let it return 0 in case of DMA or fallback to PIO, or an error in
+case of probe defer or a fatal error.
+
+This way the probe function will look like this:
+
+     ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
+     if (ret)
+                return dev_err_probe(&pdev->dev, ret, "Failed to setup DMA\=
+n");
+
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--pvifcaczcjfl73wu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFobYACgkQKDiiPnot
+vG9Llwf/Wiv7XC46iia/74g2fDIJu4YvYXnAdteDyubnJwlpk/staezEgeh11+FB
+V7BahH36iz1E3w0phN/JpzgZxKjpHDACgm7iDoil6/VHUZFJYbxFCiwQnbGYBpTv
+ekAyLcdsfDhSEP8sPTaraAiCQVZT/7C7Vjxk6kMrqaOEELTkZ+nRl5OW0Ym0SWhZ
+ID8m4rQyNzbxUMZg0/dEbyCcf6E2CJzUe8diixOc4DT1VtLWqEW0qHvZdsBMn7fW
+a6+F68O4oQD8pPC1lm1/yvUmwMY/RqWfXhT9cJU3ArxfqJsEFKeLEI5I0DIymosh
+p/S7I/1xEjQhBCPW0NTMyMUBqsdoAg==
+=L7AI
+-----END PGP SIGNATURE-----
+
+--pvifcaczcjfl73wu--
 
