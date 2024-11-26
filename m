@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-422323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C099D97DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC9E9D97CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8E728279D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC8E285F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7E71D4605;
-	Tue, 26 Nov 2024 13:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824001D45FC;
+	Tue, 26 Nov 2024 12:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e17Ru0lW"
-Received: from lelvem-ot05.ext.ti.com (lelvem-ot05.ext.ti.com [198.47.23.236])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SM8e16LO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72517489;
-	Tue, 26 Nov 2024 13:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614951D4169;
+	Tue, 26 Nov 2024 12:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732626038; cv=none; b=jPNbfCtIJYpcbz1BIsodjxNBZqB1/0BrhSl+b/20O6Dabpbo3RzQ24MMvBCg+Mw3XSM5g2uofyVIAbbFIWFx5W8nBmpZIXrA9bC0cEDQqGO93Ycj1D6Dl7Mphg7o93kJbfU79qrBhs2of7iDkY25Lz0wEhnaHPk9qzZhbLzS9p8=
+	t=1732625955; cv=none; b=N8+yPb2M9DAjHNvQX0qXwv/n+W/++hsdIzhhMqcCs/m3XBDrsHPlKo82ixDZHKV5Y1rii0EYjaKvoGupS0GxNLYOXS95XNDhBfKN9sXgZclwGMwFa7W2Y/mG3j+NICmOpYoswMNaY2e6X3+rFdJfyMQdt7GamQabeAVaHUsT7oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732626038; c=relaxed/simple;
-	bh=rb4RKEfu0UEtBVz6z1dX9J6uuYRBunQZLoY/ueS2YSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P+3xTOLXST2DjilIgoO/FMmFCb3jglGxnk/7CjlBe8DyoELVZp37pqpYGTsDsDSMQJnfx6OCcTRVWiFjrRpfgJJCZkHLUezSfJKf9xL5cbNZhw/tB3N0kZ+SO7BzXNST0I9Ln7JQ8322rH3f8g7im09wM/cpX/HEyFS+oeXbSn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e17Ru0lW; arc=none smtp.client-ip=198.47.23.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot05.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AQCwYKb675617
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 26 Nov 2024 06:58:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732625914;
-	bh=J0JZ8DiQ4nkkyJ4v4OOJuFMwA5FpDWZfEAp+egaaJ/U=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=e17Ru0lW+ltXO0ID357PPUFJetmCJqUhSb40sfMFUG6PK4pAlkQ2w6zaxAP7bsWm6
-	 +6/bTppQj4KWTgKH+HpzpW+/oQdk6FNSKIybzgrhrWdG4SwiR1ffl5BzUjTL0BJOwt
-	 kh44V6Bbgm+cN/C4wfyXk9dPAKMFOlrPfaA27o/8=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AQCwY0a026953;
-	Tue, 26 Nov 2024 06:58:34 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 26
- Nov 2024 06:58:34 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 26 Nov 2024 06:58:34 -0600
-Received: from [10.24.69.142] ([10.24.69.142])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AQCwUaP106029;
-	Tue, 26 Nov 2024 06:58:30 -0600
-Message-ID: <8fe8eb6c-2ec7-4f07-9043-99a8d87e2613@ti.com>
-Date: Tue, 26 Nov 2024 18:28:29 +0530
+	s=arc-20240116; t=1732625955; c=relaxed/simple;
+	bh=fsaOC/+JPOgtwlDwpkvd9NvolL4P4q4NK24BU2LbZrc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MEK4BKcdKMVd3SHUNUq/jImiJu83Kdi7umIt34lsfEktVegQ3f1GUdp9R/U8e5KVPcAAObgGnYMDjSwcK6ZM38JGvbU0wtB8WwSQASd67A/kDdivS4K52MvNX2TU/Vy/hGcUxcKVb7dfdIABUE9I4n39g+ERL1FqqV4WlZkyVPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SM8e16LO; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732625953; x=1764161953;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=fsaOC/+JPOgtwlDwpkvd9NvolL4P4q4NK24BU2LbZrc=;
+  b=SM8e16LOKYZiFN97pP4stRyOGLG3sbgQFrARU9MB2H5NFhGV0B6B+qAO
+   5ygx6zYbwS3ElNeZtoJUM+dhl05yMfaGR/HTw1gSdYHOwgZs5+mHLwTCW
+   h1bWzXPBMGcw2OI/KplFZko0TyMJXfikaZrVzqVcXntHRbLP6UwND7l1A
+   n4f3W7x6EhpAhQyPsIJpDMvuZAaZuqethPlyRS6fd229Ln56dhgGuNikQ
+   ke30s/v4cE/BZI1onLHYNUzCJetwac8p9uzRw7JEx8sl9BIy8yRdcTlCh
+   MVzBaRckUN6hXDYlHnOo/xIUAyQAZraYfvLqCIaqS66aKYWuCnyc1QHX1
+   w==;
+X-CSE-ConnectionGUID: cXWb1p6rRnqnHLMUwO4MuA==
+X-CSE-MsgGUID: WlELuNg7QRGyKr8RxN3DBw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36445304"
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="36445304"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 04:59:12 -0800
+X-CSE-ConnectionGUID: BW970He9TCSnX/PnepyHog==
+X-CSE-MsgGUID: vRXzaO8rTvaYkN2mZeVxrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
+   d="scan'208";a="92079702"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 04:59:10 -0800
+Message-ID: <9bb112f8-0af1-4517-a4b8-bd2edacce07c@intel.com>
+Date: Tue, 26 Nov 2024 14:59:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,81 +66,280 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dmaengine: ti: k3-udma: Add TX channel data in AM62A
- CSIRX DMSS
-To: Conor Dooley <conor@kernel.org>
-CC: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
-        <j-choudhary@ti.com>, <vigneshr@ti.com>
-References: <20241125083914.2934815-1-vaishnav.a@ti.com>
- <20241125083914.2934815-2-vaishnav.a@ti.com>
- <20241125-hardener-jockey-d8d57f6a9430@spud>
+Subject: Re: [PATCH V15 0/7] perf/core: Add ability for an event to "pause" or
+ "resume" AUX area tracing
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20241114101711.34987-1-adrian.hunter@intel.com>
 Content-Language: en-US
-From: Vaishnav Achath <vaishnav.a@ti.com>
-In-Reply-To: <20241125-hardener-jockey-d8d57f6a9430@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241114101711.34987-1-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Conor,
-
-On 26/11/24 00:01, Conor Dooley wrote:
-> On Mon, Nov 25, 2024 at 02:09:14PM +0530, Vaishnav Achath wrote:
->> J722S/AM67 uses the same BCDMA CSIRX IP as AM62A, but it supports
->> TX channels as well in addition to RX.
+On 14/11/24 12:17, Adrian Hunter wrote:
+> Hi
 > 
-> This doesn't make sense. You say that the am62a doesn't have a tx
-> channel ("but it supports TX as well") but then modify the struct for
-> the am62a to add a tx channel. Does that not break things on the am62a?
-> 
+> Note for V15:
+> 	Same as V14 but without kernel patches because they have been
+> 	applied, and updated "missing_features" patch for the new way
+> 	of detecting missing features.
 
-Thank you for the review, I have sent a v2 of this series adding new 
-compatible as suggested, after looking at it again, the J722S BCDMA CSI
-is more similar to J721S2 in terms of having RX and TX support, so 
-updated in that way.
-
-The below changes did not really break AM62A since the driver checks 
-hardware capability registers (TCHAN_CNT) to detect presence of TX 
-channels and then only use the Output Event Steering(OES) data below.
-
-V2:
-
-https://lore.kernel.org/all/20241126125158.37744-1-vaishnav.a@ti.com/
-
-Thanks and Regards,
-Vaishnav
+Still apply
 
 > 
->> Add the BCDMA TCHAN information
->> in the am62a_dmss_csi_soc_data so as to support all the platforms in the
->> family with same compatible. UDMA_CAP2_TCHAN_CNT indicates the presence
->> of TX channels and it will be 0 for platforms without TX support.
->>
->> Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
->> ---
->>
->> CSI2RX capture test results on J722S EVM with IMX219:
->> https://gist.github.com/vaishnavachath/e2eaed62ee8f53428ee9b830aaa02cc3
->>
->>   drivers/dma/ti/k3-udma.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
->> index b3f27b3f9209..4130f50979d4 100644
->> --- a/drivers/dma/ti/k3-udma.c
->> +++ b/drivers/dma/ti/k3-udma.c
->> @@ -4340,6 +4340,8 @@ static struct udma_match_data j721e_mcu_data = {
->>   
->>   static struct udma_soc_data am62a_dmss_csi_soc_data = {
->>   	.oes = {
->> +		.bcdma_tchan_data = 0x800,
->> +		.bcdma_tchan_ring = 0xa00,
->>   		.bcdma_rchan_data = 0xe00,
->>   		.bcdma_rchan_ring = 0x1000,
->>   	},
->> -- 
->> 2.34.1
->>
+> Hardware traces, such as instruction traces, can produce a vast amount of
+> trace data, so being able to reduce tracing to more specific circumstances
+> can be useful.
+> 
+> The ability to pause or resume tracing when another event happens, can do
+> that.
+> 
+> These patches add such a facilty and show how it would work for Intel
+> Processor Trace.
+> 
+> Maintainers of other AUX area tracing implementations are requested to
+> consider if this is something they might employ and then whether or not
+> the ABI would work for them.  Note, thank you to James Clark (ARM) for
+> evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
+> positively to the RFC.
+> 
+> Changes to perf tools are now (since V4) fleshed out.
+> 
+> Please note, Intel® Architecture Instruction Set Extensions and Future
+> Features Programming Reference March 2024 319433-052, currently:
+> 
+> 	https://cdrdv2.intel.com/v1/dl/getContent/671368
+> 
+> introduces hardware pause / resume for Intel PT in a feature named
+> Intel PT Trigger Tracing.
+> 
+> For that more fields in perf_event_attr will be necessary.  The main
+> differences are:
+> 	- it can be applied not just to overflows, but optionally to
+> 	every event
+> 	- a packet is emitted into the trace, optionally with IP
+> 	information
+> 	- no PMI
+> 	- works with PMC and DR (breakpoint) events only
+> 
+> Here are the proposed additions to perf_event_attr, please comment:
+> 
+> diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+> index 0c557f0a17b3..05dcc43f11bb 100644
+> --- a/tools/include/uapi/linux/perf_event.h
+> +++ b/tools/include/uapi/linux/perf_event.h
+> @@ -369,6 +369,22 @@ enum perf_event_read_format {
+>  	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
+>  };
+>  
+> +enum {
+> +	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
+> +	PERF_AUX_ACTION_PAUSE			=   1U << 1,
+> +	PERF_AUX_ACTION_RESUME			=   1U << 2,
+> +	PERF_AUX_ACTION_EMIT			=   1U << 3,
+> +	PERF_AUX_ACTION_NR			= 0x1f << 4,
+> +	PERF_AUX_ACTION_NO_IP			=   1U << 9,
+> +	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
+> +	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
+> +	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
+> +	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
+> +	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
+> +	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
+> +	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
+> +};
+> +
+>  #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
+>  #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
+>  #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
+> @@ -515,10 +531,19 @@ struct perf_event_attr {
+>  	union {
+>  		__u32	aux_action;
+>  		struct {
+> -			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
+> -				aux_pause        :  1, /* on overflow, pause AUX area tracing */
+> -				aux_resume       :  1, /* on overflow, resume AUX area tracing */
+> -				__reserved_3     : 29;
+> +			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
+> +				aux_pause         :  1, /* on overflow, pause AUX area tracing */
+> +				aux_resume        :  1, /* on overflow, resume AUX area tracing */
+> +				aux_emit          :  1, /* generate AUX records instead of events */
+> +				aux_nr            :  5, /* AUX area tracing reference number */
+> +				aux_no_ip         :  1, /* suppress IP in AUX records */
+> +				/* Following apply to event occurrence not overflows */
+> +				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
+> +				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
+> +				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
+> +				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
+> +				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
+> +				__reserved_3      : 13;
+>  		};
+>  	};
+> 
+> 
+> Changes in V15:
+>       perf/x86/intel/pt: Fix buffer full but size is 0 case
+>       perf/core: Add aux_pause, aux_resume, aux_start_paused
+>       perf/x86/intel/pt: Add support for pause / resume
+>       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
+> 	Dropped kernel patches because they have been applied
+> 
+>       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
+> 	Re-base on new API probe method of missing feature detection
+> 	and add probe for aux_action.
+> 
+> Changes in V14:
+>       Dropped KVM patches
+> 
+>       perf/x86/intel/pt: Add support for pause / resume
+> 	Set pt->handle_nmi after configuration is completed instead of during
+> 
+> Changes in V13:
+>       perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Do aux_resume at the end of __perf_event_overflow() so as to trace
+> 	less of perf itself
+> 
+>       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
+> 	Add error message also in EOPNOTSUPP case (Leo)
+> 
+> Changes in V12:
+> 	Add previously sent patch "perf/x86/intel/pt: Fix buffer full
+> 	but size is 0 case"
+> 
+> 	Add previously sent patch set "KVM: x86: Fix Intel PT Host/Guest
+> 	mode when host tracing"
+> 
+> 	Rebase on current tip plus patch set "KVM: x86: Fix Intel PT Host/Guest
+> 	mode when host tracing"
+> 
+> Changes in V11:
+>       perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Make assignment to event->hw.aux_paused conditional on
+> 	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
+> 
+>       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
+> 	Remove definition of has_aux_action() because it has
+> 	already been added as an inline function.
+> 
+>       perf/x86/intel/pt: Fix sampling synchronization
+>       perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
+>       perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
+> 	Dropped because they have already been applied
+> 
+> Changes in V10:
+>       perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Move aux_paused into a union within struct hw_perf_event.
+> 	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
+> 	Factor out has_aux_action() as an inline function.
+> 	Use scoped_guard for irqsave.
+> 	Move calls of perf_event_aux_pause() from __perf_event_output()
+> 	to __perf_event_overflow().
+> 
+> Changes in V9:
+>       perf/x86/intel/pt: Fix sampling synchronization
+> 	New patch
+> 
+>       perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Move aux_paused to struct hw_perf_event
+> 
+>       perf/x86/intel/pt: Add support for pause / resume
+> 	Add more comments and barriers for resume_allowed and
+> 	pause_allowed
+> 	Always use WRITE_ONCE with resume_allowed
+> 
+> 
+> Changes in V8:
+> 
+>       perf tools: Parse aux-action
+> 	Fix clang warning:
+> 	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
+> 	     821 |         {NULL},
+> 	         |              ^
+> 
+> Changes in V7:
+> 
+> 	Add Andi's Reviewed-by for patches 2-12
+> 	Re-base
+> 
+> Changes in V6:
+> 
+>       perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
+> 	Expanded comment about guarding against NMI
+> 
+> Changes in V5:
+> 
+>     perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Added James' Ack
+> 
+>     perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
+> 	New patch
+> 
+>     perf tools
+> 	Added Ian's Ack
+> 
+> Changes in V4:
+> 
+>     perf/core: Add aux_pause, aux_resume, aux_start_paused
+> 	Rename aux_output_cfg -> aux_action
+> 	Reorder aux_action bits from:
+> 		aux_pause, aux_resume, aux_start_paused
+> 	to:
+> 		aux_start_paused, aux_pause, aux_resume
+> 	Fix aux_action bits __u64 -> __u32
+> 
+>     coresight: Have a stab at support for pause / resume
+> 	Dropped
+> 
+>     perf tools
+> 	All new patches
+> 
+> Changes in RFC V3:
+> 
+>     coresight: Have a stab at support for pause / resume
+> 	'mode' -> 'flags' so it at least compiles
+> 
+> Changes in RFC V2:
+> 
+> 	Use ->stop() / ->start() instead of ->pause_resume()
+> 	Move aux_start_paused bit into aux_output_cfg
+> 	Tighten up when Intel PT pause / resume is allowed
+> 	Add an example of how it might work for CoreSight
+> 
+> 
+> Adrian Hunter (7):
+>       perf tools: Add aux_start_paused, aux_pause and aux_resume
+>       perf tools: Add aux-action config term
+>       perf tools: Parse aux-action
+>       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
+>       perf intel-pt: Improve man page format
+>       perf intel-pt: Add documentation for pause / resume
+>       perf intel-pt: Add a test for pause / resume
+> 
+>  tools/include/uapi/linux/perf_event.h      |  11 +-
+>  tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
+>  tools/perf/Documentation/perf-record.txt   |   4 +
+>  tools/perf/builtin-record.c                |   4 +-
+>  tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
+>  tools/perf/util/auxtrace.c                 |  67 +++-
+>  tools/perf/util/auxtrace.h                 |   6 +-
+>  tools/perf/util/evsel.c                    | 101 ++++-
+>  tools/perf/util/evsel.h                    |   1 +
+>  tools/perf/util/evsel_config.h             |   1 +
+>  tools/perf/util/parse-events.c             |  10 +
+>  tools/perf/util/parse-events.h             |   1 +
+>  tools/perf/util/parse-events.l             |   1 +
+>  tools/perf/util/perf_event_attr_fprintf.c  |   3 +
+>  tools/perf/util/pmu.c                      |   1 +
+>  15 files changed, 594 insertions(+), 241 deletions(-)
+> 
+> 
+> Regards
+> Adrian
+
 
