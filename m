@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-422383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA459D98EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:56:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160279D98EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:56:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E5C165EAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:56:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99969B2339F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0247B1D54D8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBC61D54DA;
 	Tue, 26 Nov 2024 13:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNvB5qGx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvTU8Dtq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC3A1D47BB;
-	Tue, 26 Nov 2024 13:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBDA1D4613;
+	Tue, 26 Nov 2024 13:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732629386; cv=none; b=a2spxdRWSmtygSicKqc3CU3yeviSZXMEitrIWjTEK26P/fSENCoX2eN7lr7oj5LSGiDyB5gJ2QLHf5oFa4SZLYASibiavTuVw/rFyFVsV/Na7ScOYCX7vpET5wgr4yAOp2YJF+5TGoCdwErARpQysDUWhdk9CBjK8ea+reX96oA=
+	t=1732629386; cv=none; b=LCxTVXeeL6+hyWhP7WhS7F4ohcThiOijXC0ihpVpH7/cW/j1Q0cVzMpfagdbclbRzXWz95rPUb/m3+n7WNVnR66JqiDu60U/ae778AUD+zjH2Qwhz3HPLwbjKvZJc/i0VxYmHijcnJqA9srN7Gcow4bY3wkIwGQpAgWn4jxT6OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732629386; c=relaxed/simple;
-	bh=OUbH2yDyiXtr4xG2OF1k8+O5wk66wGWYCe1qQImrZI0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=czJuIJAxxw0ghDF6MAeIRe2OQTBn+mPPkJfr0G5iktx+CPK2ag0/P3STJ+ouU2k3mMbRwAsY2ZreyvumXaGt3E3mpib/hmMFrTIdtPfmUqTDJVMYmHcBMcol9IuQ7240jemWQ01pVCUPLTzLSujOZiel3Ggd+WlVdD6Q/2l4UWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PNvB5qGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F39C4CECF;
+	bh=C9NMuo+SvuNaXmn9OIOSkE3ItSsS1LiS+HH4lO+wEeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Am47g2W7q+n5T3sGD8eWuUP7M2BACLorx0AH1FY7Hj9kyNFmKj1FdBQBYZHu3rLRLWE52MVulegdllhINga52qmB/+X9mxf2qt8vuFfeGmIw6WnHz8B5ZQE40cWmyUJEIQ9+gY2p5Yl9atZBKjsHmzkv0oqSq7xaOmLplkH8Zv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvTU8Dtq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50C0C4CED0;
 	Tue, 26 Nov 2024 13:56:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1732629385;
-	bh=OUbH2yDyiXtr4xG2OF1k8+O5wk66wGWYCe1qQImrZI0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PNvB5qGxkMNMPpgENn88EzW6wKqBuxVfktpw+UlSL1DN8fj01aEQ+omj2wgmzAMcA
-	 FrbmVYaxHyrODODktD1rPV/Loyg5qGu4lCeLYVx4Gj91zDdZhEi/k/g+lx/fLnZogy
-	 RsdwsOK4iR8tEoBMmqrVDWrZ15q3EFA1CSMokXo/Wmj5MWqVY8Zhb2KHZGBKo4dLt0
-	 fNRyApydx7+C3Bp6/4HQFrfvm1nrQMb7Q5bFni7mGgUTc4zSBf3ArP0NtZb38GlXDs
-	 URiNfliX/vc+4tZ2NxaV4lIWnxYhCZw+rgtnwfcjVWoxQn4NTdzkQAWnxu6ESyNp8w
-	 fdMySC9BXeHLA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH 1/6] tracing/eprobe: Fix to release eprobe when failed to add dyn_event
-Date: Tue, 26 Nov 2024 22:56:20 +0900
-Message-ID: <173262938070.8323.5243664675318084969.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <173262937038.8323.5774362855789721936.stgit@devnote2>
-References: <173262937038.8323.5774362855789721936.stgit@devnote2>
-User-Agent: StGit/0.19
+	bh=C9NMuo+SvuNaXmn9OIOSkE3ItSsS1LiS+HH4lO+wEeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KvTU8DtqMtBuDqsRKmNuSiWVC9Agza7lm0PrMQCug3dy9u39kT29bfjj8qOrvD7hx
+	 BY1nN/S4RBd0b8lbkipTxJ21a9bIIGA/vpFjn3At3t545NbswG6GXTFgJoSE7TIvaQ
+	 5MnrKcx52XRK7lNpYesUq1/B1E09+DbAcHDiTRj7gcIeZF9JVco9JqzAnTphoqYQ+m
+	 rAFkDwew5FiNe/7fc0I0+r12VAk5s5HGkBvQXcNb0kocD8EIrRowC13f/pM6iXmDqP
+	 ElRRUaNxb19eRrHn6KzAouIWPDsN0/4lpdw1OjaZmFUmdh37ZPFTeRN75ByNTImsvQ
+	 281Q8YZC3RRqQ==
+Date: Tue, 26 Nov 2024 13:56:20 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Vishwaroop A <va@nvidia.com>
+Cc: robh@kernel.org, jonathanh@nvidia.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+Message-ID: <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
+References: <20241126134529.936451-1-va@nvidia.com>
+ <20241126134529.936451-3-va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5zPrq4ac1/5/O6cB"
+Content-Disposition: inline
+In-Reply-To: <20241126134529.936451-3-va@nvidia.com>
+X-Cookie: Have a taco.
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Fix eprobe event to unregister event call and release eprobe when it fails
-to add dynamic event correctly.
+--5zPrq4ac1/5/O6cB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 7491e2c44278 ("tracing: Add a probe that attaches to trace events")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/trace_eprobe.c |    5 +++++
- 1 file changed, 5 insertions(+)
+On Tue, Nov 26, 2024 at 01:45:28PM +0000, Vishwaroop A wrote:
 
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index ebda68ee9abf..be8be0c1aaf0 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -963,6 +963,11 @@ static int __trace_eprobe_create(int argc, const char *argv[])
- 		goto error;
- 	}
- 	ret = dyn_event_add(&ep->devent, &ep->tp.event->call);
-+	if (ret < 0) {
-+		trace_probe_unregister_event_call(&ep->tp);
-+		mutex_unlock(&event_mutex);
-+		goto error;
-+	}
- 	mutex_unlock(&event_mutex);
- 	return ret;
- parse_error:
+> +            # NVIDIA Tegra SPIDEV Controller device
+> +          - nvidia,tegra-spidev
 
+All the issues with having spidev nodes directly in the DT also apply if
+you add a prefix onto it.  Whatever is attached to the SPI controller
+needs to be described, not just a placeholder like this.
+
+--5zPrq4ac1/5/O6cB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdF04QACgkQJNaLcl1U
+h9DH0QgAhFw9HsOEMjXknGj8jIozaFPshlKWOQeoD4XHd7Qq0nzGFhQU7v2UsGli
+tq0hQ4N/V5sSXAXu+dCaIDLgdXBOiQ5uKWKhtY8dbmuagY5x97NdQ0QNTPiVunDO
+FYPknnKD8ge3I0A53eJ0CiWiFC59re4TjgkaUa3A0v7ortkzcEjbk8TpN7qmClUw
+lYRalFMj6kEmDCrWFTWOvf+IYBOxFJbOWC2sK1+suogXEI4JuAnswTZN8XKX5SnS
+LoKdhTOG1wLdYzTaj7e8efVqQ8ZxcCC+IE/6cbxwVrWMu9/8coFaVeuJ84vsarrM
+buJ6d9B8N5t/lqAcnq26wmzLR/atsg==
+=kDYG
+-----END PGP SIGNATURE-----
+
+--5zPrq4ac1/5/O6cB--
 
