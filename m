@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-422021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638B89D9377
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:42:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB079D937B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262472839BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:42:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A346EB2517D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E886D19D8B2;
-	Tue, 26 Nov 2024 08:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EFE1A4AB3;
+	Tue, 26 Nov 2024 08:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5+SU8It"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LysdB1sj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D614A85
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF2714A85;
+	Tue, 26 Nov 2024 08:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732610525; cv=none; b=qeTvcTCQFS6Si6DwdHNc54VNd3hsM4h1GVU6w56x1zDBwPk3x4vKMqjcKxoPtJHS1w4P39J/ck475k/PpGsob4QY4G9bWW2ikXLmPXDVAM5R94LKMk+aJBaHiLst1jDed06duX/Mu0F+oCN0D4/YJUz0z6wzz6jN43/z+NM16oo=
+	t=1732610600; cv=none; b=JsLc0tRIJbnk68FNXRkioYMFV0Y0zEqS3yZfZqu45odOpz7O3tEAVXXcx8bUeMJcEzJKvB3rh+R4gURrCbZqe1NFC8t4WtbB61MzlE43+7hKCD8U809ZeKowI69mNTyoojmwU+zzppC5y/4F8/AJk4IMbTiTY/Sb0/KjZI9lleA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732610525; c=relaxed/simple;
-	bh=V/yPxtYnSXeUAycUhW+5heG32rTY664RPc7ZwK/MLOg=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLJhWteDfBA9IGnNj6L2N2WBMgONgK8M8NNKv3R58/2zZOIeZrnkiayxctqN400rCfdaTO3hqp7DxECk1M4B15gHKBLkyhuiYpeo6sLE2U0OPDp4mSDxgY5LcUXNghJ/PeuDHG+FCjxL8IxuKib6aQ5039cvS1gfD6Ok8n2hZcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5+SU8It; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86160C4CED0;
-	Tue, 26 Nov 2024 08:42:04 +0000 (UTC)
+	s=arc-20240116; t=1732610600; c=relaxed/simple;
+	bh=KO4QChkeXAG6Ye9voL0kF1b9b0iezByykeh0B91eWOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDSW44T/WkQ1jaxCmjRWXrqhZVKlaZo27ienQeXGbP+MaDGD+tbgacrmm08RbwUoU19JnstWkqAwN34r12fTjhuMNhJ3ae16PropSEj5Fum/XDJOrsWaL1QrMgnFBGJkR0BE0cXYaDsB8D3cZspoBBNe2GAQj+6Dxb0O2Rj48CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LysdB1sj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADDDC4CECF;
+	Tue, 26 Nov 2024 08:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732610524;
-	bh=V/yPxtYnSXeUAycUhW+5heG32rTY664RPc7ZwK/MLOg=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=N5+SU8Itke6cV9eeV1LK6jEDRblhjXUlpBGkqf014uNsxXTKUsXnX0Q3ZLMQylyKX
-	 OiEdDw96IrWbvWcibkwA5M1w3zb80e8Uj7QOGsXvHFk6+4Bkkm4zNlukDLD3O/Mo6N
-	 QjQeUKZpCR/JcenNB9uNrJC6dVx+yCcWQyU0rXjvqM1g8FM/wJYl/m4otG0EkVvHxh
-	 YRYCuU0GS64mIQol9zjA+uUHIug8gXBfAOldsrtkWGXNTb/tJf998P5KrDFbZuMJ1c
-	 q7y1hu7n48r8hY2U5RpW7QcXO+9zG47A9Rab0iQNmcTUjggxg0vYWws8iEEvwxG9vr
-	 4+YTBD3M3pr3w==
-Date: Tue, 26 Nov 2024 09:42:02 +0100
+	s=k20201202; t=1732610599;
+	bh=KO4QChkeXAG6Ye9voL0kF1b9b0iezByykeh0B91eWOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LysdB1sjC85kARHi4P1uA6mphsyY2WNeU6Uoxlf4hYuWmaSplc0EO98GwvqXyuGtj
+	 eC67M2vKoBHT0dpJxsNGcS0A87DyoJOWyZ1PUfXZhYL0J82fETMOmOlOT5+9iFh75F
+	 G43EGLPROxWeYcr2AXeve0GXF3zj4UdtjYPFQVkpd1yTceukMTw5xY91uef8jFiEua
+	 0u3ARhK5hIugNZ0UiPnvbhYm/ZxOMmZ7CQm3urOdgFDnaFK0cxWD9jyaM4S9gsTk4P
+	 Mm1fbOdhSW3QDg3zZcP8RpjamEowa7SlewSs+efHysJ/fvyV1o7iEVn1iGlgGTvP8L
+	 ZwuS+fw6CB1+g==
+Date: Tue, 26 Nov 2024 09:43:17 +0100
 From: Maxime Ripard <mripard@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, =?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, 
-	Haneen Mohammed <hamohammed.sa@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	jose.exposito89@gmail.com, dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
-	thomas.petazzoni@bootlin.com, seanpaul@google.com, nicolejadeyee@google.com
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
-Message-ID: <20241126-overjoyed-knowing-cuttlefish-c8d0f6@houat>
-References: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
- <Z0DC8nd1ZFN4A82-@louis-chauvet-laptop>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	p.zabel@pengutronix.de, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, glx@linutronix.de, vkoul@kernel.org, 
+	kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org, frank.li@nxp.com, 
+	dmitry.baryshkov@linaro.org
+Subject: Re: [DO NOT MERGE PATCH v4 16/19] arm64: dts: imx8qxp: Add display
+ controller subsystem
+Message-ID: <20241126-overjoyed-futuristic-saluki-cb6cc7@houat>
+References: <20241125093316.2357162-1-victor.liu@nxp.com>
+ <20241125093316.2357162-17-victor.liu@nxp.com>
+ <Z0RXCYZ_7fBvpcvd@gaggiata.pivistrello.it>
+ <d004dfe7-d019-4f53-8373-c8c4e031748c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,123 +66,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xrwipcbs3gmonqgv"
+	protocol="application/pgp-signature"; boundary="fgeuvrs34ws7krrf"
 Content-Disposition: inline
-In-Reply-To: <Z0DC8nd1ZFN4A82-@louis-chauvet-laptop>
+In-Reply-To: <d004dfe7-d019-4f53-8373-c8c4e031748c@nxp.com>
 
 
---xrwipcbs3gmonqgv
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--fgeuvrs34ws7krrf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
+Subject: Re: [DO NOT MERGE PATCH v4 16/19] arm64: dts: imx8qxp: Add display
+ controller subsystem
 MIME-Version: 1.0
 
-Hi,
+On Tue, Nov 26, 2024 at 10:08:26AM +0800, Liu Ying wrote:
+> On 11/25/2024, Francesco Dolcini wrote:
+> > On Mon, Nov 25, 2024 at 05:33:13PM +0800, Liu Ying wrote:
+> >> Add display controller subsystem in i.MX8qxp SoC.
+> >>
+> >> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> >=20
+> > ...
+> >=20
+> >> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/b=
+oot/dts/freescale/imx8qxp.dtsi
+> >> index 05138326f0a5..35cc82cbbcd1 100644
+> >> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> >> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> >> @@ -20,6 +20,27 @@ / {
+> >>  	#size-cells =3D <2>;
+> >> =20
+> >>  	aliases {
+> >> +		dc0 =3D &dc0;
+> >> +		dc0-constframe0 =3D &dc0_constframe0;
+> >> +		dc0-constframe1 =3D &dc0_constframe1;
+> >> +		dc0-constframe4 =3D &dc0_constframe4;
+> >> +		dc0-constframe5 =3D &dc0_constframe5;
+> >> +		dc0-display-engine0 =3D &dc0_display_engine0;
+> >> +		dc0-display-engine1 =3D &dc0_display_engine1;
+> >> +		dc0-extdst0 =3D &dc0_extdst0;
+> >> +		dc0-extdst1 =3D &dc0_extdst1;
+> >> +		dc0-extdst4 =3D &dc0_extdst4;
+> >> +		dc0-extdst5 =3D &dc0_extdst5;
+> >> +		dc0-fetchlayer0 =3D &dc0_fetchlayer0;
+> >> +		dc0-fetchwarp2 =3D &dc0_fetchwarp2;
+> >> +		dc0-framegen0 =3D &dc0_framegen0;
+> >> +		dc0-framegen1 =3D &dc0_framegen1;
+> >> +		dc0-layerblend0 =3D &dc0_layerblend0;
+> >> +		dc0-layerblend1 =3D &dc0_layerblend1;
+> >> +		dc0-layerblend2 =3D &dc0_layerblend2;
+> >> +		dc0-layerblend3 =3D &dc0_layerblend3;
+> >> +		dc0-tcon0 =3D &dc0_tcon0;
+> >> +		dc0-tcon1 =3D &dc0_tcon1;
+> >=20
+> > what would you use those aliases for?
+>=20
+> They are used to get the instance numbers of display controller
+> and display controller's internal processing units from display
+> driver, e.g., patch 9 & 10 get instance numbers of some display
+> controller's internal processing units.
 
-On Fri, Nov 22, 2024 at 06:44:18PM +0100, Louis Chauvet wrote:
-> On 22/11/24 - 18:38, Louis Chauvet wrote:
-> > VKMS is manly used to test userspace program and its behavior. The curr=
-ent=20
-> > implementation is not very configurable as you can only have one device=
-,=20
-> > with few specific planes.
-> >=20
-> > This series aims to introduce a new interface, using ConfigFS, to creat=
-e=20
-> > and configure more devices. This will introduce:
-> > - Device creation
-> > - Plane creation
-> > - Plane configuration (type, color encoding, color range, rotations)
-> > - Encoder creation
-> > - CRTC creation
-> > - Linking between CRTC and planes/encoders
-> >=20
-> > The proposition is:
-> > /config/vkms
-> > 	DEVICE_1
-> > 	=E2=94=A3=E2=94=81 enable
-> > 	=E2=94=A3=E2=94=81 writeback
-> > 	=E2=94=A3=E2=94=81 planes
-> > 	=E2=94=83  =E2=94=A3=E2=94=81 PLANE_1
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 type
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 supported_rotations
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 color_range
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 color_encoding
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 default_color_encoding
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 default_rotations
-> > 	=E2=94=83  =E2=94=83  =E2=94=A3=E2=94=81 default_color_range
-> > 	=E2=94=83  =E2=94=83  =E2=94=97=E2=94=81 possible_crtcs
-> > 	=E2=94=83  =E2=94=83     =E2=94=97=E2=94=81 >> /config/vkms/DEVICE_1/c=
-rtc/CRTC_1=20
-> > 	=E2=94=83  =E2=94=A3=E2=94=81 PLANE_2
-> > 	=E2=94=83  =E2=94=83  =E2=94=97=E2=94=81 ditto
-> > 	=E2=94=83  =E2=94=97=E2=94=81 PLANE_3
-> > 	=E2=94=83     =E2=94=97=E2=94=81 ditto
-> > 	=E2=94=83
-> > 	=E2=94=A3=E2=94=81 encoders
-> > 	=E2=94=83  =E2=94=A3=E2=94=81 ENCODER_1
-> > 	=E2=94=83  =E2=94=83  =E2=94=97=E2=94=81 possible_crtcs
-> > 	=E2=94=83  =E2=94=83     =E2=94=97=E2=94=81 >> /config/vkms/DEVICE_1/c=
-rtc/CRTC_1
-> > 	=E2=94=83  =E2=94=97=E2=94=81 ENCODER_2
-> > 	=E2=94=83     =E2=94=97=E2=94=81 ditto
-> > 	=E2=94=83
-> > 	=E2=94=97=E2=94=81 crtc
-> > 	   =E2=94=97=E2=94=81 CRTC_1
-> > =09
-> > This interface aims to be extendable (new property can easly be added i=
-n=20
-> > objects) and easy to use (objects are created simply by creating folder=
-s,=20
-> > and configured by writing files).
-> >=20
-> > This series depends on=20
-> > https://lore.kernel.org/all/20241122-google-remove-crtc-index-from-para=
-meter-v2-0-81540742535a@bootlin.com
-> > but as this is a bit complex to rebase, you can find a working branch=
-=20
-> > here:
-> > https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-confi=
-gfs
-> >=20
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->=20
-> Hi all,
->=20
-> I am also currently working on MST emulation for VKMS. If someone can rea=
-d=20
-> what I already did and at tell me if my implementation seems on the right=
-=20
-> track it could be nice.
->=20
-> The current status is not very advanced: I can emulate a mst HUB, but not=
-=20
-> a screen. I am currently working on properly emulating the HUB by using a=
-n=20
-> other hub.
->=20
-> You can find the branch for this work here:
-> https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-mst
-
-I think this is exactly the kind of things where we'll want eBPF I
-think. There's no way you'll be able to model each possible test
-scenarios for MST through configfs, even more so with a stable
-interface.
+AFAIK, it's not listed anywhere in your bindings. Did you get an
+acked-by from a DT maintainer for those aliases as well?
 
 Maxime
 
---xrwipcbs3gmonqgv
+--fgeuvrs34ws7krrf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0WJ2QAKCRAnX84Zoj2+
-drsbAX98D4pY1sEdKCD7Z8mgxWgEHD3aUX6925/SBQt8pDMZ+HVuSbzMHr2jhyCV
-Jjm5t80BfR7PeV64r1jr5sqCEguDw5iLM04n9Zv6ILWCxSrstT0Z0IxuHnZsWLLb
-A2nJIVqueA==
-=v8th
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0WKJAAKCRAnX84Zoj2+
+dv4FAX967eYE5R0RWLQVTJQQ3qJdNEVy6ugNTjWr8xtIy2N8MIIRzNEYEwwM1k4I
+4XQfvwoBgKYYryHo1ibtm7ah1MNmHl1h0R5wMhd+pMQv6UR7szQ8hWR4Bz3qc4SU
+9QJkkLsfPQ==
+=oNFh
 -----END PGP SIGNATURE-----
 
---xrwipcbs3gmonqgv--
+--fgeuvrs34ws7krrf--
 
