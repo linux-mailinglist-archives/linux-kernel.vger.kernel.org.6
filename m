@@ -1,130 +1,181 @@
-Return-Path: <linux-kernel+bounces-422097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C401E9D948E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:32:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13809D94E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827842816FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:32:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F7EB2A34D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA731BC9FE;
-	Tue, 26 Nov 2024 09:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkXeTszj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316FF1B87EF;
+	Tue, 26 Nov 2024 09:33:08 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B8E194C61;
-	Tue, 26 Nov 2024 09:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592571B85CC
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613571; cv=none; b=XbnM5q2fkpNwAn1S96siGzHA7YxDtsujCqNUNRbDNbTAkADlwaJAzgcr/lHqqX+pLfBe2Az/hKdNAvj2gGkYJt5QA97s8Hq5S8dICIlmhdfLWnAOPq9InO0VGeasKn4p+QttVib2WIDzdLA8vORHLmRk34bGcMqujKolCGrkw0w=
+	t=1732613587; cv=none; b=GmDA4TSjdPkQrY8WMIoDNKKyns9wtjbK6X1hVVtl54U9y1VNAoGYg/zTLTMSDDL9beqRIpteNo2au4ajqLNIJ/xSHzEg8CuQIOS6OjvVxVCCfCSjQ8+QaHUR+rEzKcx/aM3228IOi7nYCNEchVNgLaq5ZDSX9FLNTOTe4M7fySs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613571; c=relaxed/simple;
-	bh=ShVU0G5DfymgPVyV2Iz7gTpXF10ABLXVYroQX3OlmaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hjr8ojhiNf/pCT+9DaPQczkuEfnkSG72Kxnwr4WZINfaAh6IAQJ4zcmBfnSrHvW6+XGZv0mEMACJ+mY00R696a7wJF9jBjhKrrYgKHo/IPxIYmeRrn+Vy29M+VCoHCl9GsJdwnDFRJN4KzUGdtrWfClqhZYGFhbpJS5FBTs4Jyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkXeTszj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E23C4CED0;
-	Tue, 26 Nov 2024 09:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732613570;
-	bh=ShVU0G5DfymgPVyV2Iz7gTpXF10ABLXVYroQX3OlmaM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MkXeTszjj7SEOOZjeULG0o/c3KJ79l2pJpTOQTNJ+2/LTWnMjc88a5jo47UrtvGBP
-	 suuo2Z6komsUbUTHgqlJyg/iPiXt6b3IsLNW8gop6PKDhzJYok2IUpzyPR3X53XtSx
-	 OAQ2FZEcpI4OLB6IIWnUt5VPQHBOZTb55YtFEYeEtqdI/ZELT/gq2tTKONt65ty3fe
-	 an6f3mCyLF/8zEW6SCgTCOvDIf+uAmlB9mN01euy68kVW5Lfw3StPyd9N6P9vLVM7d
-	 bXltKqG3PKOG5BrT+1HlodXJ0uEetS1VSGdQMEh1QRzIdltrT+OFUDGqs1jj8VwZX9
-	 Nl6Dmna/dfn3A==
-Message-ID: <05a4fd39-d53a-49c3-b236-01ba16fb193e@kernel.org>
-Date: Tue, 26 Nov 2024 10:32:46 +0100
+	s=arc-20240116; t=1732613587; c=relaxed/simple;
+	bh=TBrtZgyKnnU1P9E7tLN8IwvrhdqvwuujbduCkf/8HyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFO5i7tgUdbPj+B7BYv+tduhA2FvsnU4zEuCRggwSWwUAn4lQEIh7dofPeZKGbvhyVPPKrHWH5LKDhscj4mPH0uTBzTZ7YQZHlg868ZEcQyws4e0GGl2VGuB4aeAG1m1BLQBGpkzStYw5z8lRmAH7hM0FuHUDWmhwbYdVGSoBkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFrwF-0007eA-Bj; Tue, 26 Nov 2024 10:32:55 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFrwD-000E1G-2n;
+	Tue, 26 Nov 2024 10:32:54 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4E53737D824;
+	Tue, 26 Nov 2024 09:32:54 +0000 (UTC)
+Date: Tue, 26 Nov 2024 10:32:54 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Chen-Yu Tsai <wens@csie.org>, Gerhard Bertelsmann <info@gerhard-bertelsmann.de>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 10/12] can: sun4i_can: fix {rx,tx}_errors statistics
+Message-ID: <20241126-illegal-prehistoric-mongoose-1a61ad-mkl@pengutronix.de>
+References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
+ <20241122221650.633981-11-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: gpu: add reset control property
-To: Parthiban Nallathambi <parthiban@linumiz.com>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
- <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ua6dubftl2fle6kp"
+Content-Disposition: inline
+In-Reply-To: <20241122221650.633981-11-dario.binacchi@amarulasolutions.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 25/11/2024 17:37, Parthiban Nallathambi wrote:
-> GE8300 in Allwinner A133 have reset control from the ccu.
-> Add the resets property as optional one to control it.
-> 
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+--ua6dubftl2fle6kp
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 10/12] can: sun4i_can: fix {rx,tx}_errors statistics
+MIME-Version: 1.0
 
-Missing prefix for the device. You are not adding reset to all GPU devices.
+On 22.11.2024 23:15:51, Dario Binacchi wrote:
+> The sun4i_can_err() function only incremented the receive error counter
+> and never the transmit error counter, even if the STA_ERR_DIR flag
+> reported that an error had occurred during transmission. Increment the
+> receive/transmit error counter based on the value of the STA_ERR_DIR
+> flag.
+>=20
+> Fixes: 0738eff14d81 ("can: Allwinner A10/A20 CAN Controller support - Ker=
+nel module")
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-Best regards,
-Krzysztof
+Fails to build from source:
+
+| drivers/net/can/sun4i_can.c:583:7: error: variable 'ecc' is used uninitia=
+lized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+|   583 |                 if (likely(skb)) {
+|       |                     ^~~~~~~~~~~
+| include/linux/compiler.h:76:20: note: expanded from macro 'likely'
+|    76 | # define likely(x)      __builtin_expect(!!(x), 1)
+|       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+| drivers/net/can/sun4i_can.c:606:8: note: uninitialized use occurs here
+|   606 |                 if ((ecc & SUN4I_STA_ERR_DIR) =3D=3D 0) {
+|       |                      ^~~
+| drivers/net/can/sun4i_can.c:583:3: note: remove the 'if' if its condition=
+ is always true
+|   583 |                 if (likely(skb)) {
+|       |                 ^~~~~~~~~~~~~~~~
+| drivers/net/can/sun4i_can.c:534:9: note: initialize the variable 'ecc' to=
+ silence this warning
+|   534 |         u32 ecc, alc;
+|       |                ^
+|       |                 =3D 0
+| 1 error generated.
+
+Fixes by moving the "ecc =3D readl();":
+
+--- a/drivers/net/can/sun4i_can.c
++++ b/drivers/net/can/sun4i_can.c
+@@ -579,11 +579,9 @@ static int sun4i_can_err(struct net_device *dev, u8 is=
+rc, u8 status)
+                 /* bus error interrupt */
+                 netdev_dbg(dev, "bus error interrupt\n");
+                 priv->can.can_stats.bus_error++;
+-                stats->rx_errors++;
++                ecc =3D readl(priv->base + SUN4I_REG_STA_ADDR);
+=20
+                 if (likely(skb)) {
+-                        ecc =3D readl(priv->base + SUN4I_REG_STA_ADDR);
+-
+                         cf->can_id |=3D CAN_ERR_PROT | CAN_ERR_BUSERROR;
+=20
+                         switch (ecc & SUN4I_STA_MASK_ERR) {
+@@ -601,9 +599,15 @@ static int sun4i_can_err(struct net_device *dev, u8 is=
+rc, u8 status)
+                                                >> 16;
+                                 break;
+                         }
+-                        /* error occurred during transmission? */
+-                        if ((ecc & SUN4I_STA_ERR_DIR) =3D=3D 0)
++                }
++
++                /* error occurred during transmission? */
++                if ((ecc & SUN4I_STA_ERR_DIR) =3D=3D 0) {
++                        if (likely(skb))
+                                 cf->data[2] |=3D CAN_ERR_PROT_TX;
++                        stats->tx_errors++;
++                } else {
++                        stats->rx_errors++;
+                 }
+         }
+         if (isrc & SUN4I_INT_ERR_PASSIVE) {
+
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--ua6dubftl2fle6kp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFlcMACgkQKDiiPnot
+vG86uggAk5nDid8uwxMZDtzRp+kfJaz/cngmez1n0624cpt7FCh1bKx4sitruzsm
+BChsdETbPalV4234FJa9f7EzXe1OLeKUBCM99TweVhlBicNH4ZIISjaDmsQlPktu
+me63etuNtH+JQFAJlPPaPx3vbodfsQ51MSftLL/ag70lroEpuusPaIBW+L/yODl1
+fbL+G7Qc3oaKL6s0wl+ldjDnEFuA+i+jGZDaCWqSKsNsnBFiZa9Z32IiyC16AA+C
+V4hqyhDju4ButdrRDmrrwBlBlw0nddXD8DqZwLvHCf3EYdZ03J096EgEu7WyoA0V
+BfMSxcAOzP1Vma5mZ7noy0TEXV/OTw==
+=m367
+-----END PGP SIGNATURE-----
+
+--ua6dubftl2fle6kp--
 
