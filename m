@@ -1,148 +1,336 @@
-Return-Path: <linux-kernel+bounces-422807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D379D9E68
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:32:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534B69D9E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84BD8285A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:32:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97AF2B23F0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4E21DF243;
-	Tue, 26 Nov 2024 20:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730DD1DF251;
+	Tue, 26 Nov 2024 20:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nCjgHONy"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="WBHFgiRk"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293551A76B7
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732653145; cv=none; b=h2n+BmyiB7cyLo5nOyEIQJ//BD1fIwqvAsz2WOuK/mCt3P3kvAU733mV6E07rMEkQrqXllgEqpAHenI6SOnIV1URz8MpTzfoFogBVrfEmLWbxhJ6k+tfgGuHLeME3dB2z7xVsPSjT3qQKEW5oP1ocwvPP2cKosZJyOQcKBdchkc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732653145; c=relaxed/simple;
-	bh=nx4h0UfwGy/Xhxwaj52odLilzACf8JBjVoXxa3cImu0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8BnMXDimGz9ad2ZssO38x9l5hixiXD4EbvQE4AtXAOvdpRcenVv7hhw5iWG3FFGmC0vXBoqYXuxZ/2DvHWblbEsL6L/Jw3kixuj3vhUsJA0OeXEsNHlk92/+C4DcFmbD4LkRKMFUOsKDC9M3WBLWbJcm0XZrHck5Ur9TEsijl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nCjgHONy; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so2536a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:32:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732653142; x=1733257942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UiouVvQy1ysSNzucyHX39VpOdsi6a4Dd/ylDP/YY+tM=;
-        b=nCjgHONy217Oi3mxKCjW1vTvjZ+6XNMPaWmfCD1EnW/8VjXfrPrZMlEkwvoi8p2k0B
-         L9t/Z56X4BzCaqfhyLAyaYmErMuROla9Sk5bw0MObK2toUuTw3DhPn3I65TVmjfZZzcS
-         tYsO7z4PQr7IU2ypSa9QLMG5Tz8JtnKaqYd9EipM20YdvgNCpo1WxuoCGWSwrtyfIqML
-         qZlMPeZgy9NvxaAMDFUYFg246PSo4hidecduyFYoTsg9b27rD5U6IqO9p93vQXbtAnib
-         hszSNuPlsqmRYjYM/j17wY3xefz/bRfHAPv6m+PxdGJYr95cIsVwiGfenOz8qcqJEVTx
-         R8pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732653142; x=1733257942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UiouVvQy1ysSNzucyHX39VpOdsi6a4Dd/ylDP/YY+tM=;
-        b=HByf6gEf5bmIeBEpuRcsfVoCNkktK4RW8u7HIylx7nv7w+SgmPoc1yLrAYVg95a2av
-         Yog3At1qibFIzycydAoEmsSrbOhCM41iX8p4envvrK7AU+6LKNi1inxC6XZswIg+QAJq
-         lM8sXs8DsyYkId3HaB8Zs1rjMN9UPTa9Akdz/+PJte9Qm7uEgxLOsI2/IFjNAOxyJkjL
-         PO//DYqbBzEXTRYK2jLEfROVBV5RTzqxYZ0IGU7r2wG3przkVsyO+MdvXqSRR9pyu1eA
-         aLSFepXigJ96NMXKHAQhuDpRL0RM6F3VKcGZlXyk/9lnOSY97tP/s35QI1pXfmMdcTwe
-         VGlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVovsDxjTNSMIRwlcec/n5u0iJGpQypx8x4QZvq6+9AwR2rIzbIeMOnuxfZnjl0rzxjtTm8wc1Ro6B7FuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIfxZQh2asFtkxBMKdkUQfBBnHvUNKb6VnvlT/42Nq5O6sBWNQ
-	7qYNhBn8aNUZAYffmpPHJ/3vsZgjHEXZbDLJT9Mt4XQePUxHLwMQtv3VclAt+2IaDKNawkEtlV1
-	V5evG70F0mKgXIrwjM9jd8yo0sBRhNMmFc8vz
-X-Gm-Gg: ASbGncu3WyuY43bszsA/qIq1CBP9yV6JeeYFw5+kMcH08gAeSu0HtAGD7iZ+whTCh8B
-	CbEku/MI7UED4rfuN+ttypIOuuqfDE5E4r8QPbM/Kabn+02pbRAxdFPRDRNM=
-X-Google-Smtp-Source: AGHT+IFLGtY2k1/yQLTkkaMGF/8QTmikGJDbPMCtQvYW3IFdPIMrHqR0uhIysGxFKp0f4Ab0QhOn0doTUEbLkLZBzts=
-X-Received: by 2002:aa7:d80b:0:b0:5d0:3ddd:c773 with SMTP id
- 4fb4d7f45d1cf-5d0819b8bf8mr11824a12.4.1732653141887; Tue, 26 Nov 2024
- 12:32:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895448831;
+	Tue, 26 Nov 2024 20:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732653355; cv=pass; b=rfSsn9hOsS+alSWRSG0WmRb8wlmuhN+QuaZCE7pMfCzgmLWja7efBaPuDPHc0JjwE6zEWnyxUJeA0nTNMOsh4+1qzK/86NY1qKlRmYO095MAcWSm6DZhNXGFcha9O+toc7/+XvsXJhmQXOhXFEhygMcnzgR614I7eu+6EdVjLuA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732653355; c=relaxed/simple;
+	bh=oYOtntpDvZDcAE1axDzAgwBAetq/xAM+8HYHGR6qVnc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=T46VP8ODJUC7ZFlBqL5Y0pXdxXX8RaNT9f0O9fFsGaZVf4xJ8uB8fxSIuLKIRC1febdzVG+2rJSmVVI6bWYZyBk1HUs9v1UPkUgBO1hBUBXGv3Uafo6ktnIojftZNf6ZeOuErGFtX+sYThYYKCXgSWlr9Q4k2yzoOrkgojVNr7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=WBHFgiRk; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732653310; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=d41CKAubd5L90gTgWCJQBtLtwpcTZlFqvUjYkFrqXiiU00ThSJfV2QtBcIVXiPK/6CCw97tpVR9tqdDqwfucR+V7kVW/Z5R1krfn2rGOMXakDwMQL392cBoK74jQD5HJemUr3PzkJ5H6pG7joQtQTq2Dg6pR82wv8ksxJiZhxfY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732653310; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SAJtL7Uot7Tvvtn5TFr/p1Mn40JIW9WD6CuXpqLxZAY=; 
+	b=AGde0CyTeA4rr1E7VxgoJ7LYTjH52zK90bzjRFnfrApO9NPI81TwuCRchYYiPm6jOs6XIh+zOsVduoFBtSiQxW19xmk7gTxiVWQq0YSqDxjCmP6h9Thq7Yk1BGXbZEUDjLW76IFxibH7uoOEppRq8L7vWOdLmUobT9R5xCHZqVU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732653310;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=SAJtL7Uot7Tvvtn5TFr/p1Mn40JIW9WD6CuXpqLxZAY=;
+	b=WBHFgiRklD+93GzjOJFOjK31F8UnV2wY6LiY5nmux0uute+Y+xdyPSJoh0OTUAVW
+	b3v4HnMq4b8q1P/VaNKOMbwfDXO05qA1D2zJF1REiOw+ZfBMGDwQABktRxoLx5y83x9
+	ACGas3AMdCdtf0WsSGf0NN89gkYoe2Mwy5kCWd6c=
+Received: by mx.zohomail.com with SMTPS id 1732653306963110.44702479474108;
+	Tue, 26 Nov 2024 12:35:06 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
- <Zz1sHZLruF5sv7JT@casper.infradead.org> <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
- <Zz4MQO79vVFhgfJZ@tardis.local> <Zz4WFnyTWUDPsH4m@casper.infradead.org>
-In-Reply-To: <Zz4WFnyTWUDPsH4m@casper.infradead.org>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 26 Nov 2024 21:31:46 +0100
-Message-ID: <CAG48ez3YBvSQ0zHY-t8NK2RWthR-GsEv6O5pVwA44LGJaEGeSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page mappings
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
-	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 04/35] rust: drm/kms: Introduce the main
+ ModeConfigObject traits
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-5-lyude@redhat.com>
+Date: Tue, 26 Nov 2024 17:34:50 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@redhat.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ open list <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <4D4D46ED-62C0-4B6A-A560-68D5F546AE21@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-5-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Wed, Nov 20, 2024 at 6:02=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
-> On Wed, Nov 20, 2024 at 08:20:16AM -0800, Boqun Feng wrote:
-> > On Wed, Nov 20, 2024 at 10:10:44AM +0100, Alice Ryhl wrote:
-> > > On Wed, Nov 20, 2024 at 5:57=E2=80=AFAM Matthew Wilcox <willy@infrade=
-ad.org> wrote:
-> > > > We don't have a fully formed destination yet, so I can't give you a
-> > > > definite answer to a lot of questions.  Obviously I don't want to h=
-old
-> > > > up the Rust project in any way, but I need to know that what we're =
-trying
-> > > > to do will be expressible in Rust.
-> > > >
-> > > > Can we avoid referring to a page's refcount?
-> > >
-> > > I don't think this patch needs the refcount at all, and the previous
-> > > version did not expose it. This came out of the advice to use put_pag=
-e
-> > > over free_page. Does this mean that we should switch to put_page but
-> > > not use get_page?
->
-> Did I advise using put_page() over free_page()?  I hope I didn't say
-> that.  I don't see a reason why binder needs to refcount its pages (nor
-> use a mapcount on them), but I don't fully understand binder so maybe
-> it does need a refcount.
+Hi Lyude,
 
-I think that was me, at
-<https://lore.kernel.org/all/CAG48ez32zWt4mcfA+y2FnzzNmFe-0ns9XQgp=3DQYeFpR=
-sdiCAnw@mail.gmail.com/>.
-Looking at the C binder version, binder_install_single_page() installs
-pages into userspace page tables in a VM_MIXEDMAP mapping using
-vm_insert_page(), and when you do that with pages from the page
-allocator, userspace can grab references to them through GUP-fast (and
-I think also through GUP). (See how vm_insert_page() and
-vm_get_page_prot() don't use pte_mkspecial(), which is pretty much the
-only thing that can stop GUP-fast on most architectures.)
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> The KMS API has a very consistent idea of a "mode config object", =
+which
+> includes any object with a drm_mode_object struct embedded in it. =
+These
+> objects have their own object IDs which DRM exposes to userspace, and =
+we
+> introduce the ModeConfigObject trait to represent any object matching =
+these
+> characteristics.
+>=20
+> One slightly less consistent trait of these objects however: some mode
+> objects have a reference count, while others don't. Since rust =
+requires
+> that we are able to define the lifetime of an object up-front, we =
+introduce
+> two other super-traits of ModeConfigObject for this:
+>=20
+> * StaticModeObject - this trait represents any mode object which does =
+not
+>  have a reference count of its own. Such objects can be considered to
+>  share the lifetime of their parent KMS device
+> * RcModeObject - this trait represents any mode object which does have =
+its
+>  own reference count. Objects implementing this trait get a free =
+blanket
+>  implementation of AlwaysRefCounted, and as such can be used with the =
+ARef
+>  container without us having to implement AlwaysRefCounted for each
+>  individual mode object.
+>=20
+> This will be able to handle most lifetimes we'll need with one =
+exception:
+> it's entirely possible a driver may want to hold a "owned" reference =
+to a
+> static mode object. We allow for this by introducing the KmsRef =
+container,
+> which grabs an owned refcount to the parent KMS device of a
+> StaticModeObject and holds a pointer to said object - essentially =
+allowing
+> it to act identically to an owned refcount by preventing the device's
+> lifetime from ending until the KmsRef is dropped. I choose not to use
+> AlwaysRefCounted for this as holding a refcount to the device has its =
+own
+> set of implications since if you forget to drop the KmsRef the device =
+will
+> never be destroyed.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/bindings/bindings_helper.h |   1 +
+> rust/kernel/drm/kms.rs          | 107 ++++++++++++++++++++++++++++++++
+> 2 files changed, 108 insertions(+)
+>=20
+> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+> index 9803e0ecac7c1..ba1871b05b7fa 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -17,6 +17,7 @@
+> #include <drm/drm_gem.h>
+> #include <drm/drm_gem_framebuffer_helper.h>
+> #include <drm/drm_gem_shmem_helper.h>
+> +#include <drm/drm_mode_object.h>
+> #include <drm/drm_ioctl.h>
+> #include <kunit/test.h>
+> #include <linux/blk-mq.h>
+> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
+> index d3558a5eccc54..f1a8ba4b7e296 100644
+> --- a/rust/kernel/drm/kms.rs
+> +++ b/rust/kernel/drm/kms.rs
+> @@ -228,3 +228,110 @@ impl<T, K> KmsDriver for T
+> where
+>     T: Driver<Kms =3D K>,
+>     K: Kms<Driver =3D T> {}
+> +
+> +/// A modesetting object in DRM.
+> +///
+> +/// This is any type of object where the underlying C object contains =
+a [`struct drm_mode_object`].
+> +///
+> +/// [`struct drm_mode_object`]: srctree/include/drm/drm_mode_object.h
+> +pub trait ModeObject: Sealed + Send + Sync {
 
-My understanding is that the combination VM_IO|VM_MIXEDMAP would stop
-normal GUP, but currently the only way to block GUP-fast is to use
-VM_PFNMAP. (Which, as far as I understand, is also why GPU drivers use
-VM_PFNMAP so much.) Maybe we should change that, so that VM_IO and/or
-VM_MIXEDMAP blocks GUP in the region and causes installed PTEs to be
-marked with pte_mkspecial()?
+Can you briefly document why these bounds are needed?
 
-I am not entirely sure about this stuff, but I was recently looking at
-net/packet/af_packet.c, and I tested that vmsplice() can grab
-references to the high-order compound pages that
-alloc_one_pg_vec_page() allocates with __get_free_pages(GFP_KERNEL |
-__GFP_COMP | __GFP_ZERO | __GFP_NOWARN | __GFP_NORETRY, order),
-packet_mmap() inserts with vm_insert_page(), and free_pg_vec() drops
-with free_pages(). (But that all happens to actually work fine,
-free_pages() actually handles refcounted compound pages properly.)
+> +    /// The parent driver for this [`ModeObject`].
+> +    type Driver: KmsDriver;
+> +
+> +    /// Return the [`Device`] for this [`ModeObject`].
+> +    fn drm_dev(&self) -> &Device<Self::Driver>;
+> +
+> +    /// Return a pointer to the [`struct drm_mode_object`] for this =
+[`ModeObject`].
+> +    ///
+> +    /// [`struct drm_mode_object`]: =
+(srctree/include/drm/drm_mode_object.h)
+> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object;
+> +}
+> +
+> +/// A trait for modesetting objects which don't come with their own =
+reference-counting.
+> +///
+> +/// Some [`ModeObject`] types in DRM do not have a reference count. =
+These types are considered
+> +/// "static" and share the lifetime of their parent [`Device`]. To =
+retrieve an owned reference to
+> +/// such types, see [`KmsRef`].
+> +///
+> +/// # Safety
+> +///
+> +/// This trait must only be implemented for modesetting objects which =
+do not have a refcount within
+> +/// their [`struct drm_mode_object`], otherwise [`KmsRef`] can't =
+guarantee the object will stay
+> +/// alive.
+> +///
+> +/// [`struct drm_mode_object`]: =
+(srctree/include/drm/drm_mode_object.h)
+> +pub unsafe trait StaticModeObject: ModeObject {}
+> +
+> +/// An owned reference to a [`StaticModeObject`].
+> +///
+> +/// Note that since [`StaticModeObject`] types share the lifetime of =
+their parent [`Device`], the
+> +/// parent [`Device`] will stay alive as long as this type exists. =
+Thus, users should be aware that
+> +/// storing a [`KmsRef`] within a [`ModeObject`] is a circular =
+reference.
+> +///
+> +/// # Invariants
+> +///
+> +/// `self.0` points to a valid instance of `T` throughout the =
+lifetime of this type.
+> +pub struct KmsRef<T: StaticModeObject>(NonNull<T>);
+> +
+> +// SAFETY: Owned references to DRM device are thread-safe.
+> +unsafe impl<T: StaticModeObject> Send for KmsRef<T> {}
+> +unsafe impl<T: StaticModeObject> Sync for KmsRef<T> {}
+> +
+> +impl<T: StaticModeObject> From<&T> for KmsRef<T> {
+> +    fn from(value: &T) -> Self {
+> +        // We will drop the reference we leak here in Drop
+> +        value.drm_dev().inc_ref();
+> +
+> +        Self(value.into())
+> +    }
+> +}
+> +
+> +impl<T: StaticModeObject> Drop for KmsRef<T> {
+> +    fn drop(&mut self) {
+> +        // SAFETY: We're reclaiming the reference we leaked in =
+From<&T>
+> +        drop(unsafe { ARef::from_raw(self.drm_dev().into()) })
+> +    }
+> +}
+> +
+> +impl<T: StaticModeObject> Deref for KmsRef<T> {
+> +    type Target =3D T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: We're guaranteed object will point to a valid =
+object as long as we hold dev
+> +        unsafe { self.0.as_ref() }
+> +    }
+> +}
+> +
+> +impl<T: StaticModeObject> Clone for KmsRef<T> {
+> +    fn clone(&self) -> Self {
+> +        self.drm_dev().inc_ref();
+> +
+> +        Self(self.0)
+> +    }
+> +}
+> +
+> +/// A trait for [`ModeObject`] which is reference counted.
+> +///
+> +/// This trait is implemented by DRM for any [`ModeObject`] which has =
+a reference count provided by
+> +/// [`struct drm_mode_object`]. It provides a common implementation =
+of [`AlwaysRefCounted`], since
+> +/// all [`RcModeObject`] types use the same functions for =
+refcounting.
+> +///
+> +/// # Safety
+> +///
+> +/// The [`ModeObject`] must initialize the refcount in its [`struct =
+drm_mode_object`] field.
+> +///
+> +/// [`struct drm_mode_object`]: =
+(srctree/include/drm/drm_mode_object.h)
+> +pub unsafe trait RcModeObject: ModeObject {}
+> +
+> +unsafe impl<T: RcModeObject> AlwaysRefCounted for T {
+> +    fn inc_ref(&self) {
+> +        // SAFETY: FFI call with no special requirements
+> +        unsafe { bindings::drm_mode_object_get(self.raw_mode_obj()) }
+
+Well, at least the pointer has to be valid. I assume that passing =
+core::ptr::null_mut() here will crash,
+for example. Also, do we have to worry about races? T is Sync, so I =
+assume you mean to have
+this call reachable from multiple threads.
+
+The kref docs seem to indicate this is not a problem:
+
+```
+This way, it doesn=E2=80=99t matter what order the two threads handle =
+the data, the kref_put() handles knowing when the data is not referenced =
+any more and releasing it. The kref_get() does not require a lock, since =
+we already have a valid pointer that we own a refcount for. The put =
+needs no lock because nothing tries to get the data without already =
+holding a pointer.
+```
+
+Regardless, IMHO it=E2=80=99s good to document it here as well.
+=20
+> +    }
+> +
+> +    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+> +        // SAFETY: We never expose modesetting objects in our =
+interfaces to users before they're
+> +        // initialized
+> +        unsafe { =
+bindings::drm_mode_object_put(obj.as_ref().raw_mode_obj()) }
+
+Same here, pointer must be valid.
+
+> +    }
+> +}
+> --=20
+> 2.46.1
+>=20
+>=20
+
+=E2=80=94 Daniel
+
 
