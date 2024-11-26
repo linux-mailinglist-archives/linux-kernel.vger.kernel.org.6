@@ -1,191 +1,129 @@
-Return-Path: <linux-kernel+bounces-422351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEA49D9889
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:28:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295D99D988C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFE5EB24F56
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:27:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6AB8B235FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B381D47DC;
-	Tue, 26 Nov 2024 13:27:31 +0000 (UTC)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCA81D47D2;
-	Tue, 26 Nov 2024 13:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4871A1D5147;
+	Tue, 26 Nov 2024 13:28:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4066522F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732627650; cv=none; b=QvPaKvcJAxEQl+IIYJX78Ze+jJcGMflqQVWtHHEGyMJUqIsNr33UBYqthp64jfPCKAJ/6f/fui8aATlGCt4TulsFs07U8cH+z+PaNLqVNdGBLQfa9YxTJsySkY8uHsa+5UECgfXuolSLeThAxeUGN1q97H9ExANBY3mQXwtirSo=
+	t=1732627705; cv=none; b=Qa7tmkSUOiRhlBi3bp7WghC+TMMi++z/cMFhiX8HgyDg7MMNlcSIG1hYZKIRykSKtTz7WDFwGBhzA7FywupJkqAuwEpZ8lzFZNTLiDMz4zWbWM8EEWHhNOqNKNB2lMqypjZL9UfNN7EE4wCGaplSspgKb/WCWEr2KFoEGeCzvZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732627650; c=relaxed/simple;
-	bh=kB14QwEsljC+Ih1ESFLNWeIU3yAv12TYYWftsJsDocU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TIALUs60UqUAKGMwjYegKJ2q+MRTg/PIsY/Z0yWT84vvtHuBfc9tILIcoLhsVRsQR6Aai4i7rLDLX76CPx5enWfDUpcSIeXxF2DJfwkZiys7L94mG30+SayIE2mAJtdsey2N94EUc+8lf4ISKVnj8MUAQTZ4KXvnn3vlqok140Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6eebae6f013so57425817b3.0;
-        Tue, 26 Nov 2024 05:27:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732627647; x=1733232447;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UdSJmr80vU+P2PQ4iahpq7fx/jHhWG8mOuWEpt3bZZI=;
-        b=j7/Lw2C1T0DD+h7tLbug1n2miFbzTRfbg50jUMRIPBkAq/Y8RMZb+Bw7+P6P9Cs0sn
-         80mjGvjD5v8olabMSAUuO9INRxW+Qw75+1CAYyuhl6DQ0e6Zx0/Q0zVRrA1ADSrf+Rr9
-         Ahmy2UOToVutM+yITwRVxXvbbnb2DgueMK/KMhtCjfPbc7olBQNqcd9jhS6CikEvnNWE
-         1WyaxznxvI7oS3jipGxMGOUGxdK5Qg7mCcc515YqNIzxQYhvqNj4d9CeXs51Hl1dbV6D
-         9iUs4CwJCjuo5Qlb0TdNRYWZIex3VSzrCO5+rk4t3VtWSgRSmB3I6VXYLloD+2RkpcK7
-         Uhbw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4dFcK1FEf/YM6LqcAGSXAtdBNGPDB15AtDAutjwf1/qUOIdocWTgma3WGY37ZqAWATTeyXQGTVi85aaU8N90=@vger.kernel.org, AJvYcCUN44AT3lg0nEQ3/p0O4oT2aq2HFh4t2ll8NcAE1xKUiVoRw9CI/Ejf9hk4DXI5mLUG/DxaNQQtXMLx8vU=@vger.kernel.org, AJvYcCUnDUpNEv1+71VeDeBohmuJA4MDFB6z3t1ZOtL+9d8LqFc5QlYNzsUHI7Rp8oBVc9d7S6o/0/rg2CLuexakXbyakA==@vger.kernel.org, AJvYcCWLQc5DFEE/yke+akJpm1C5oz0pxK4a5Ta5kCX40hXBXabuJS8FAywyyaVVUz9lL4tDOrRi/369XJtr@vger.kernel.org, AJvYcCWfMjcNAqMrmp+MorxKOQZbQ0iskLDrmh+u4N9dyoTYcvPMIC9zQU6mwxzMqKAdviKu+YagoK5HwBlQpUdD@vger.kernel.org, AJvYcCWvC8WdQz1jzbCQUC8sSZmMSjBzS327pwxDb5uZAv2apDGdgJENsI0R0pbW4KFhnQwfrBVAeQqfY8Si+UCzX+2W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2/CeNClzXI2IyPuau0fuo4mF71uoJn5eRneYTDd8C+etG1Ptx
-	aaxkEUdaHO9AsK6BxBidPeB+NaH+yPxUvVQPmsxPwoLnmAoym8dQ82qp0Y9t
-X-Gm-Gg: ASbGnctYGa63TPPUnOuQWTOfiVdUwXyxd4T9RfDNd6SFOs1077otuapvnzzpqtOXFG1
-	YDyR8bdk169mYHzy7FzYD+lRWd9HIN4CPR9lMO+HApnBkgPfL1H75CiuGDXeqQ9JWKvZiSVIetp
-	K1VPEuoRFNv6vQMOZkIKBYgm/ef2gE+z6wEr/4xivwUNvZxWnYgW4dmu8qKpOxY9uH5F0cMfSwA
-	6RsSvMMMmxYQm0R0mgJNf1t7hopFR3ujkCObejd9VfVa70PIZsWGmoUN6qtoVDimfKrxtVKLq3V
-	xLXYq/DOG0aa/axp
-X-Google-Smtp-Source: AGHT+IEU7w+iQBaxVEpuVxQiYxuZJz6AN66EtR8TI0rlVs459R3/WIFwJpdtGv3oJRYiwRN+nKXjXg==
-X-Received: by 2002:a05:690c:690e:b0:6ee:d9a3:c85a with SMTP id 00721157ae682-6eee0a26568mr137840547b3.27.1732627645299;
-        Tue, 26 Nov 2024 05:27:25 -0800 (PST)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee009cb80sm22674607b3.117.2024.11.26.05.27.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 05:27:23 -0800 (PST)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6eebae6f013so57424537b3.0;
-        Tue, 26 Nov 2024 05:27:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUHUZ5Z9nkes+JDwwL6K40DlxVaPP4qTnNNq+xt88ormFiKMcLZjUvK/PGbj6mmYNTMvVxzBQTrWWVPqCE2nPSadA==@vger.kernel.org, AJvYcCUaz+4uQFe4DU9QJdq+AhTMo4VpWq8IbaAAfTUTRddhRgJF/WNd+FVqLmPyRO0qgb7Mpr+LJKo6tOk+@vger.kernel.org, AJvYcCWaZGV9GHV6WJf4jBRhBHPMmyjb4hG4l0xJ4J0sS0892/7T3P951dWIWyvVddsRGOmZW7rpyDrlSsAXL0+C2UKn@vger.kernel.org, AJvYcCWpp7codf5NJZDrQPf0j9k0yHYfNic9JKnU3H7G0bmFlqJhyoJmIRG0ol+kroXp3hZV6o0Do364PnurywQY@vger.kernel.org, AJvYcCXm0bMAo4OuUokLXaUI1AG0BODTkdoOg/uOyBKJ8r304SHzBgjn9sDzgSKAc42KVvH5SH2sIuGCYNdg0pQ=@vger.kernel.org, AJvYcCXvYKfHEC+DDZcLEmvVF7I9dnTJ3T6YS7IOpO67hFUFV8NTCoEybyClVJPrca6cUv5jS1ANDOlf6IY8Aj7WdSs=@vger.kernel.org
-X-Received: by 2002:a0d:d303:0:b0:6ea:807c:bbaa with SMTP id
- 00721157ae682-6eee08825d3mr111480937b3.5.1732627641261; Tue, 26 Nov 2024
- 05:27:21 -0800 (PST)
+	s=arc-20240116; t=1732627705; c=relaxed/simple;
+	bh=UUN3gOvLpf58dKTpbNxydZfnuewhbHmOk4miccwmw44=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JLeG3sH5bDh8jog019dBjkhM63iW8CKw9FQot0UiZ2lBMHQOGOYLZ6rTlSacHtr55iNkT7kTYWFO2g9DP+o7Lasjv+ok3l031+6O1N4uOInafqh8on2EZm5rjEVrjLpMiWDMGMG/J6sp/1+1lF7weGSjBPCn71b8xw5lEYkyuE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxEK_1zEVngyNJAA--.38337S3;
+	Tue, 26 Nov 2024 21:28:21 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCx98DzzEVnWJZoAA--.42998S3;
+	Tue, 26 Nov 2024 21:28:20 +0800 (CST)
+Subject: Re: [PATCH v4 06/10] objtool: Handle unsorted table offset of rodata
+To: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-7-yangtiezhu@loongson.cn>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <8cb35ab7-56d0-8e8d-5e18-1bc2b94aeeeb@loongson.cn>
+Date: Tue, 26 Nov 2024 21:28:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020040200.939973-1-visitorckw@gmail.com> <20241020040200.939973-2-visitorckw@gmail.com>
-In-Reply-To: <20241020040200.939973-2-visitorckw@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 26 Nov 2024 14:27:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVO5DPuD9HYWBFqKDHphx7+0BEhreUxtVC40A=8p6VAhQ@mail.gmail.com>
-Message-ID: <CAMuHMdVO5DPuD9HYWBFqKDHphx7+0BEhreUxtVC40A=8p6VAhQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] lib/min_heap: Introduce non-inline versions of
- min heap API functions
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com, 
-	corbet@lwn.net, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, akpm@linux-foundation.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, willy@infradead.org, 
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, 
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-doc@vger.kernel.org, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241122045005.14617-7-yangtiezhu@loongson.cn>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMCx98DzzEVnWJZoAA--.42998S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7KF1kWrWxur47Xr4Uur45Jwc_yoW8CF4xpF
+	15CayUtrs0qryxK3Zrt3W0k343Gw47GryxJr4xtry8t34qvrnYqFW3Cay2kFyDWw4Y9a1I
+	va98KFyxCF4kAFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4AhLUUUUU
 
-Hi Kuan-Wei,
-
-On Sun, Oct 20, 2024 at 6:02=E2=80=AFAM Kuan-Wei Chiu <visitorckw@gmail.com=
-> wrote:
-> All current min heap API functions are marked with '__always_inline'.
-> However, as the number of users increases, inlining these functions
-> everywhere leads to a increase in kernel size.
+On 11/22/2024 12:50 PM, Tiezhu Yang wrote:
+> When compling with Clang on LoongArch, there are unsorted table offset
+> of rodata if there exist many jump tables, it will get the wrong table
+> end and find the wrong jump destination instructions in add_jump_table(),
+> so it needs to check the table size of rodata to break the process when
+> parsing the relocation section of rodata.
 >
-> In performance-critical paths, such as when perf events are enabled and
-> min heap functions are called on every context switch, it is important
-> to retain the inline versions for optimal performance. To balance this,
-> the original inline functions are kept, and additional non-inline
-> versions of the functions have been added in lib/min_heap.c.
+> This is preparation for later patch on LoongArch, there is no effect for
+> the other archs with this patch.
 >
-> Link: https://lore.kernel.org/20240522161048.8d8bbc7b153b4ecd92c50666@lin=
-ux-foundation.org
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-
-Thanks for your patch, which is now commit 92a8b224b833e82d
-("lib/min_heap: introduce non-inline versions of min heap API
-functions") upstream.
-
-> --- a/include/linux/min_heap.h
-> +++ b/include/linux/min_heap.h
-
-> @@ -50,33 +50,33 @@ void __min_heap_init(min_heap_char *heap, void *data,=
- int size)
->                 heap->data =3D heap->preallocated;
->  }
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  tools/objtool/check.c                 | 7 +++++++
+>  tools/objtool/include/objtool/check.h | 1 +
+>  2 files changed, 8 insertions(+)
 >
-> -#define min_heap_init(_heap, _data, _size)     \
-> -       __min_heap_init((min_heap_char *)_heap, _data, _size)
-> +#define min_heap_init_inline(_heap, _data, _size)      \
-> +       __min_heap_init_inline((min_heap_char *)_heap, _data, _size)
-
-Casting macro parameters without any further checks prevents the
-compiler from detecting silly mistakes.  Would it be possible to
-add safety-nets here and below, using e.g. container_of() or typeof()
-checks?
-
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -777,3 +777,6 @@ config POLYNOMIAL
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index b21e47d8d3d1..3b2d94c90011 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2101,6 +2101,7 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>  	struct alternative *alt;
+>  	unsigned long offset;
+>  	unsigned long rodata_entry_size;
+> +	unsigned long rodata_table_size = insn->table_size;
 >
->  config FIRMWARE_TABLE
->         bool
-> +
-> +config MIN_HEAP
-> +       bool
+>  	/*
+>  	 * Each @reloc is a switch table relocation which points to the target
+> @@ -2112,6 +2113,12 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>  		if (reloc != table && reloc == next_table)
+>  			break;
+>
+> +		/* Handle the special cases compiled with Clang on LoongArch */
+> +		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
+> +		    reloc->sym->type == STT_SECTION && reloc != table &&
+> +		    reloc_offset(reloc) == reloc_offset(table) + rodata_table_size)
+> +			break;
 
-Perhaps tristate? See also below.
+I think it can be generic, like this:
 
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2279,6 +2279,7 @@ config TEST_LIST_SORT
->  config TEST_MIN_HEAP
->         tristate "Min heap test"
->         depends on DEBUG_KERNEL || m
-> +       select MIN_HEAP
+                 /* Check for the end of the table: */
+                 if (reloc != table && reloc == next_table)
+                         break;
 
-Ideally, tests should not select functionality, to prevent increasing the
-attack vector by merely enabling (modular) tests.
+                 if (reloc != table &&
+                     reloc_offset(reloc) == reloc_offset(table) + 
+rodata_table_size)
+                         break;
 
-In this particular case, just using "depends on MIN_HEAP" is not an
-option, as MIN_HEAP is not user-visible, and thus cannot be enabled
-by the user on its own.  However, making MIN_HEAP tristate could be
-a first step for the modular case.
+What do you think?
 
-The builtin case is harder to fix, as e.g.
+Thanks,
+Tiezhu
 
-        depends on MIN_HEAP || COMPILE_TEST
-        select MIN_HEAP if COMPILE_TEST
-
-would still trigger a recursive dependency error.
-
-Alternatively, the test could just keep on using the inline variants,
-unless CONFIG_MIN_HEAP=3Dy? Or event test both for the latter?
-
->         help
->           Enable this to turn on min heap function tests. This test is
->           executed only once during system boot (so affects only boot tim=
-e),
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
