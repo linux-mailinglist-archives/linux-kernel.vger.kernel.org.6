@@ -1,199 +1,417 @@
-Return-Path: <linux-kernel+bounces-422606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114439D9BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:01:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8959D9C0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7CAB2BEEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06059B2E263
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8181D8E16;
-	Tue, 26 Nov 2024 16:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2891DA619;
+	Tue, 26 Nov 2024 16:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8NHYhSs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AkBBxW/C"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2078.outbound.protection.outlook.com [40.107.105.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F4B137E;
-	Tue, 26 Nov 2024 16:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732639579; cv=none; b=atvznJDSsKCnQ9PIzeoBMc4x70YcZh+O3NDnGXcNBFfPK5e6mnZh/ORTDLzs7dk77iKkGhuN1PydTiIG6Zx/i7OL06xGfU0HqUVEDDojODnfrx4bEVDHLwu6LoC0jZ2YfwyJs1SBcSTlZr1D2lPP+2c+zCGhIVg/m7bjFTnKCDk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732639579; c=relaxed/simple;
-	bh=yMANaMcesapzJvjCjzbtaXzLfhNw5im5CXYaJ5o+Nbc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sTy50Oob2mjPUAGJph+RKnMAaPUTGPh4uD9o7peeHKaGOer0N887h9Yu0zgQK3nwUKN3UfL6pyrbiuZ7ifliP/AGZHYY8F7/ZveeNw6R6soYjRtLdbBiek9jx5vfaACrLIdAMsg+ZVhWdUxnnoORIOrlbKTe9tXa2j2IkaCYzpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8NHYhSs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B67A8C4CED3;
-	Tue, 26 Nov 2024 16:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732639578;
-	bh=yMANaMcesapzJvjCjzbtaXzLfhNw5im5CXYaJ5o+Nbc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h8NHYhSs5KtwyY1Kxj/8MWlOY/MkCKyV42RDAx5yzE0VJdHEeqY1LNcvC3vEeoFCl
-	 iJfBPbgw/I6Z2JCOy5/vAP2xuDZm0ab965iMcR5maY9qtefVdhCuB1MO2fdq7Otoz+
-	 gpdkN+gkL3sOsAfQslu6VmOtSInmyYPjS+5OfFI70QYu8WulX2R3Uxhy8EEkbEnc6b
-	 0tc3QnZjIez1/I9E5H8obTiCoWaRQ302KlUx9BOWk2fwILwdrSEaueDdc4z27sAFqj
-	 KfO025j715ObWz4NYDPSPpdTab3occyf6+2ihZLLCVj7r6QSncW48Vy4INmVaqL2sc
-	 iVvLSwPvgO6GQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53def60f809so310510e87.1;
-        Tue, 26 Nov 2024 08:46:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUMdbK7rtIEsHsCqNZ8KPAsb1VrBcMWBdhGl8jjuj7jW83+yDBa8k2P5tgO3mjB1dj2ldzQy7tpDtW0wOA/@vger.kernel.org, AJvYcCWkE+ib4g2Os2DHomiyHYUSuaelU9enisTDNSIeCXMBWbJZPW20eCm0PjOj7+Tz9fxvi9Hin82rnTdJHBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypms172SxE4T/Sw6vuGLpqYbS4H4/SsxlEEeozYwbyAuy53ERe
-	VIKsFvnzbaBiA8MdwJeIWci7NtUPd/7H9SX21lZIQrH+TI+uVEHlxoa1xwkLZnksFkWOGryDdCM
-	K4+fDG4OOm/Q2wJM7/KAncKtqfVE=
-X-Google-Smtp-Source: AGHT+IEP04EDSIK8jQTaVnyziNcXnwJjciZJI+DZnFe7XClLGfTVlqr6Jitbjf5/Jkyre/2NceDR1wHtgUrvSCQrk4U=
-X-Received: by 2002:a05:6512:b12:b0:53d:a2a6:ef67 with SMTP id
- 2adb3069b0e04-53dd39b5620mr8250403e87.49.1732639577337; Tue, 26 Nov 2024
- 08:46:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921AC1D90A2;
+	Tue, 26 Nov 2024 16:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732639581; cv=fail; b=ICpPbDIRrYltd4nXsrA9ZS/9iQ/F+LVk5CR3ypUhvk6M6iBrTVyh4YDGXqWA+PJAqWydydxBTcEPa12baqDFWufrLzK3T78Y2E1CqmGLmuEKLpY3ClZ0gKXXz1hfo9Z1MJlHC4c78PrKF0bW0cXdh1SvfqYMl+QgZH7ujZTzTRU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732639581; c=relaxed/simple;
+	bh=N9SNzGKabgOgnB5SOIgJke5FTD5udBIFGdzwUZ/H6+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=djBEquYFDqmL/6N+j6QmCZ0ngt9DeBQQ7K/9fpRevoisYOhXbBIoPfLh5dkwBqEv4PsYgXWjCZ6Ko+YuBEzrQ7h3Erub9vvfq3nZ5KQrSdQBaNZzWE05tXhIc9MOBL+NHiQAHf4IF2XxiZi7CGlo556NQBcbf9WTKaGLP+TxFDI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AkBBxW/C; arc=fail smtp.client-ip=40.107.105.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TzVCYa63744BZcZEOzpTtillwujMNcl+2Z1PE2Cm1cJfiiN6tBDnrWuC6cJOrAxUvESghaXl2UEiIAMxR9j33TJ4ztIQ1mbONKy+EWoH6Dow6nwRYD9dQ56TrlA5oOJw6ymdyaV5R2u/zhy7edEA8h24Kq72saDmdQ+C3ra+kJH4xjvRDTmvsOD3znmyUFkWobVT442k0ZRMnkct7XsDJ6gQ/EAxjVLd/fhkpiJccqy0Gdj+ANEJcfRjycBdjQH2V/uJiRum6k1qJMhBzF85tNHE6DbGfNwz3t2z3PJelCqmQmQ0Bi1gwM58iBzVccSPo2x5ilWk13mPapSh+jo+hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ToF9R6NnNYHKxTW+A3i2bIYtlFPHkaI4vtlxf86dCE8=;
+ b=PvSeWPQ9w1dKSr0aoXVC6+TNlFC2z8fi/GQ1gPyGv4YiP2U+35SSe5RjdG+Wbeudo2ueeoeZ5AwKzetu364t7b3+E3SrYw0nyJuetCS4Se9tdkP0DjjmMwi3XqtqCgSnUpaOpHQ3l1n0hBRte1Llc394fGOSfxCHrSMC9YBiQV/ZU6dAsaslblqAA4DmZIK+0/S/L4HT4vFANFEPdSO1wbKGpX2dXw/v2k6rTASV2s0iQf3CQ/6D+dH+jNTNP9A850gMjttWvE8xcK/ml3cWZyLJKl8NvVtfVnm+vthIwm9u66Ku01raLJ/IxDHO7gvusgtxD/g9qe6XmsFqvVxD9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ToF9R6NnNYHKxTW+A3i2bIYtlFPHkaI4vtlxf86dCE8=;
+ b=AkBBxW/C1+VcmcC5qC6HbzInnifsEZ2OHdezYDUyHB3UtlhfIFb4QDBW+/SZVu04KqPSJP/SSHO2ePPwD1cyqAadbeLFRE4O1SIkSD8x/paY5AItILDxktPLUhwbUn0oMzO8y70GqHhav+O/TTc9Dmh/v3TVx8igRpaPsfabItnH2abN5a5E4nq9A+SD8UWzPBvH4FNMk1WG4YKXdJGfSrGP4ayXVM5lewFsQDFWwKD2Lm/YwJybFD//4EO3JtnT4HTEkLYt3RXY2/ZJs0UJbsApwvCfEsuEZVAk8Wt5plQgs5kDFvzI2gjEjgZVYD3v3Sd+7vWtRhoaOrXPHWgvZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS1PR04MB9682.eurprd04.prod.outlook.com (2603:10a6:20b:472::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
+ 2024 16:46:16 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
+ 16:46:16 +0000
+Date: Tue, 26 Nov 2024 11:46:08 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
+	jdmason@kudzu.us
+Subject: Re: [PATCH v8 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
+ support
+Message-ID: <Z0X7UE/ZfM6fgL1r@lizhi-Precision-Tower-5810>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
+ <20241116-ep-msi-v8-4-6f1f68ffd1bb@nxp.com>
+ <20241124075645.szue5nzm4gcjspxf@thinkpad>
+ <Z0TNMIX4ehaB+mSn@lizhi-Precision-Tower-5810>
+ <20241126042523.6qlmhkjfl5kwouth@thinkpad>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241126042523.6qlmhkjfl5kwouth@thinkpad>
+X-ClientProxiedBy: SJ0PR03CA0127.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::12) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126155832.15560-1-sedat.dilek@gmail.com>
-In-Reply-To: <20241126155832.15560-1-sedat.dilek@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 27 Nov 2024 01:45:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQh1VqXmw=zTJaAbDum0G0CweDHzQZ-eJgfBR6ZinnC6Q@mail.gmail.com>
-Message-ID: <CAK7LNAQh1VqXmw=zTJaAbDum0G0CweDHzQZ-eJgfBR6ZinnC6Q@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: Fix names of .tmp_vmlinux {kall,}syms files
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS1PR04MB9682:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50a1612c-a671-4ec1-db14-08dd0e39d889
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RFNaZFRtQ3VNL0duaUpUbkhXMmpNdk1seWFOd09XQTZscy9qMWhLWTJyNXpz?=
+ =?utf-8?B?SjI2Z1BwVFVtS2hxQ2hsU0FtN2ZOSTVzSlhhZnpOMW55MjdwY0xIaStKUmM3?=
+ =?utf-8?B?d0VIdkVpVmFZelhIdm1mTTBRenFZakh0eG8rbFJQOE9KQ2luWFRLSUJOOGt3?=
+ =?utf-8?B?dkVKRXdIZk5nWDluYm9GaUdXUXZlUGdURXBjTU1LQ01CRVU5WndVZzVnbTFX?=
+ =?utf-8?B?MEkzZVcwV25LTTFONGsrUlgwN1BoLzRYMGJhQy9hdE5VcmFHaWk4NlF3cTRO?=
+ =?utf-8?B?ck1lTm5kL2xRK2NMRk1TR2FlM3lxNUNlWEdiSk9mRUFVUzdaSEw0Mmtab0VN?=
+ =?utf-8?B?cUNwS21nM2hCOGpzYlZJcS9kRzZZZ2xiWFhscnEwaVRVS3E5T2tjdUdiRlB6?=
+ =?utf-8?B?S3JxdnBjMDYrMkNCMHdNaTlDcVZ4cnphSDhCNjN3WkliNFM0blQvQnJZbnNo?=
+ =?utf-8?B?VXNFV0JtV25mdytRSXNLbmhGbnRtT2lNODhTTU5vWUcxcjZqNlFJSkk4em1P?=
+ =?utf-8?B?cDlWWXJIYWxaNWlNcXVjOGZVMEI5OVdzRVB3dGI3UnU5TWZHei93Q0dBdnl1?=
+ =?utf-8?B?UUJzUS9qYlBkNCtMdmtFeXlvcXVvdmp3T0ZwRUx6S0pPSkFsWFNJakUrTHhD?=
+ =?utf-8?B?MFVQUGlKNmRFK0VWRk5oQzhMSE5JWHF2N2pFcWNPYUp5THMyMWMvdFJObm5w?=
+ =?utf-8?B?VC9pbkFzd0dRekpJMjROTkl6d1gzQUE4ejVYbzlhdGFzdUNQUTA1T2RyN1ZD?=
+ =?utf-8?B?M29Dbk5XL1IxUExJMkQ0SmFJUEVGZ0lOcWpla1FSazBkUmVkNzBKZkdLL21O?=
+ =?utf-8?B?UDNod1lRSW56TUhLWnlrakZ6YWtONmZqZnlyaVFMdEU3ejhyT2s3N1RmYjZx?=
+ =?utf-8?B?QktBS29PMEx3b01FNWg1ZE90aXNyYjV4blpMOFZHQUJzejR0QTNHZ1BIbTZW?=
+ =?utf-8?B?eHMyNzdUZzhnaTU5R3hZaE5BYkNyNGVPK2dRRXd5RSt0ZFNBVEpwK0tPYk04?=
+ =?utf-8?B?S2ZXSlFUaUJwN0tycVJHZmIvcHp0bWIyb1FyQkNRM1NVNGhCaVZtME9OcVc4?=
+ =?utf-8?B?WUY2TVVpelV3bmgyckR6eTNNQjdxYkM4VXBCZ1pEMXdNclJEbWM4WjJtbDg1?=
+ =?utf-8?B?Q3I3NDdJQkk0OVZyL29ZcGRNZFp4L0xZazV1Y1B5aHV4V1BkMWZ5NjZSTmlK?=
+ =?utf-8?B?RnpyTDRmQmJPaWtSU0ROUjNsN0g3OFFpUmpKaWkwTmU1SlJ2RzVEbkJGdVBa?=
+ =?utf-8?B?cTFpZ3JURnY2Y0JjbkV0NDR4K1IxQi9SRnMvbWU1Q2hXdlZrRzRVcFJsMkhQ?=
+ =?utf-8?B?ZWhESEt6V0dCZWFrTHFtWktZMkdhVUVPOGJtZEJvYVNHSXNxcm50cmpERkhL?=
+ =?utf-8?B?ajljQ3JsYU82ZStiNHZld1FDWFVmdDdmNTI4M2k5WlczYmFpMWE5U1V4SUFn?=
+ =?utf-8?B?c2RDWDM2a2QrY3VuL29pd0o3Y3BZVUYzTkNQc05aU01OVDlabk0xa25oZUVh?=
+ =?utf-8?B?WjdoaytMSU1pZ25YTVgrTlhjaStWd0RTQWVJdWx1YmNoSnJLNENxbVFKVnJG?=
+ =?utf-8?B?M25VOTd2KzhuM1p1R254SUtYazZucmNpRlpzQUxHTDNSN3E0OUhCM0ZsR1Np?=
+ =?utf-8?B?OUdDVHE5VU1ZaE5sVmY3RTJFRXFlRWNOM25QUWtNTjE5NTBCcHAyek9hNjA1?=
+ =?utf-8?B?NWdZNWkrNGh6eDQ3Nk03Ull3UXAyN3R0alNLMVNkakwveHEvd1F2djFuYUVr?=
+ =?utf-8?B?WlZhQ3hUdFEzUDJFcjlLKythU0NqMCtMdWtUUG9LeEVPVmpvNHhISHFCY2kv?=
+ =?utf-8?B?NVdvMXdBMHNsMFUzajdPblhhZ3k1TlVqZDJnRTJ6b2xuM2dueTgzd2s3c25Y?=
+ =?utf-8?B?SGc2QUxZZXlkUFphZEV1cjh0dHRmdWUyLzQ2czBuelRBWXc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MytsMVpITnZOR0p0WTh4TnIwWCsrc2dRSGpLS2tzZDdDcXRwdHdpeXdTMmFS?=
+ =?utf-8?B?VDhSMVpWdkRxZUNMbU5QZFlsMmswUHp4VU9zOCs5anN2THF3Z1NPM3pCVEZz?=
+ =?utf-8?B?akZuUm02SEVUN1VaUEY2dmVxN0xyNUY0TGZrcG9uQi9TcTMzNGMwN1hqNFZp?=
+ =?utf-8?B?bU1NQUxpMWwwekZoelU1SGJCU21lZ2NxZGdYb2srZTZ4NXM5SkJXSDZkL01I?=
+ =?utf-8?B?WDJrMVp5MTVZclBaY2ZrSzlqcXB6Ri9ZOFBFR24vZTdlNHNTTG1CRVMrOEoy?=
+ =?utf-8?B?c0hSZ3RBUy9sS3M2NVMyVGY5ZjZtSTZEWDFTaVdIMlNyZHdIQy9oejVMb2k2?=
+ =?utf-8?B?ZWZ4YXEvUGxwbUhUQ0tPUUVCck5qdkxQZGJVYmlScXN6N2lHazVhM1g5bm52?=
+ =?utf-8?B?ZEp4VVduWjVXYXFuWnI0aklQSHFzV1ZHblkyc2NCeDBmYU83K2trNktHV0RB?=
+ =?utf-8?B?L2Y4OEZwOXFBZkk3Ky9FZElKNHpYK01US0xXU0EvVUVLS1pTNFFpSVB0VlZZ?=
+ =?utf-8?B?OEw5Tzk0cXl0SXBWVnJSYmhXZnd3NVpyMXZESmE4aXFwR1oxUzcyY2NjRUJx?=
+ =?utf-8?B?SHpPRnJvbjRjaDhQanRxSnpOMkxQS0tkcEZuWWV1eXJ1M3A0SUw0VkxmMWxw?=
+ =?utf-8?B?cURSazZ0YXc5Ty85c3VJRzJUU2M0cDQyZCtsbTVqVzFZbkJnZ0U0SmtjVFVX?=
+ =?utf-8?B?ai9kOTVsNTBkUHZ1RUpTazM3eTczQ3dqQlFrODlCTGg4YTVwd3A4dmJvbmVM?=
+ =?utf-8?B?YnlXN3hXcS9sQkxISjdHSFJiS1h2TXo5a1dTWmVqcndXTzdrWmhRT1RsdEsy?=
+ =?utf-8?B?WHQxMDRXbXNWWTEzbDFjekMwb1NJSTJZMlBDcHB2RHkvRVJZZXNxTHNER0J3?=
+ =?utf-8?B?QzRiL1lwak50VUlvYkQvK1A0R0RadER6ZWk5VHM1bW5wMVJrTEM2OHZUZkhO?=
+ =?utf-8?B?UUlFKzc0TnlPd3AxT0JoVnNKdkkwOVhVcVE1bmhCMC9lMjJRUndHNmxacXhn?=
+ =?utf-8?B?a3RrWHYvRDVHdERjS1ozS2Q0L2Fib1U4RGsvUGVuTXRrWkY3d1dGL3RYWDF6?=
+ =?utf-8?B?RUEvazdwQWRCeGVZYWpobnVkenVyWjQrd1lUby9meXpQdm1RdFkwRE1tdmtD?=
+ =?utf-8?B?SVVVK1NCT0kzSXdaWWFSajgzYmlwV2l6WklKV2VsQ0xvTVJzNmlvNHpZeWxa?=
+ =?utf-8?B?SnRJcTRQRjQ3NURxdVZVa3pUazVDM2hjZjlnMEQ0dnhlZy93eVF1bnNCVTBy?=
+ =?utf-8?B?VHRPanI4UC8zYmhZaUUvNUE3ckdyYVRSeUEvYkxDa0JUKysramRzNmVtaWt2?=
+ =?utf-8?B?TUhnd1RRZGNHRVpTQzNIYXBpcCtWN1RhaFN3QStwdUtERGRJczJYOWhSWWhk?=
+ =?utf-8?B?WEo2SEY5OTlXWG9vMll4RnlRUk1rdHVJejBobk9GVjEzdGxDakhQZzQ0MTBw?=
+ =?utf-8?B?R0JneUtsVnNpZHhoVHNZU285Z0M0RlJnMTVNa2FpZTViaW1qR1A0c1MvOTE2?=
+ =?utf-8?B?K1NQMGZCTDFDT3lnL0Jkcjd2M3REZHd4YWlMQWJKMHFQczV3U25LWmFJdnlX?=
+ =?utf-8?B?SVU4Vi9nL0lTdGdOcGZ6aFdUY2g4VVN2T0sycENLVGFhU2VDUm04UDlPSk1r?=
+ =?utf-8?B?bkRhTzhaMVRlMWpyYXlFekFBYlVwOE9xaytnNWlUZEdXYkI0eHdzamFGZUJM?=
+ =?utf-8?B?VnVNWlJtcC96UjZRZmpZamdZSW1oSm95TVlha2s2VlVMVFNHN0NLODJwOUV1?=
+ =?utf-8?B?bm1ZdVVoZllOcFg3VkRKenh5cTNUUXpHQ2UvRCtEYWJLdFhUaHNZV28rMlIw?=
+ =?utf-8?B?SEp1NTJ6dHFJYWdlR21zTy9zRjJlV1lEY21hbmwvZ2dVVTVoOGtRUlZaQTc3?=
+ =?utf-8?B?d1B2RUxzV2QrYThzTzhxeVdjYnNMbXRqSUdzaDRFRmhHeFZrUzg0d0FkaWVV?=
+ =?utf-8?B?Q3hibkJQZWEyM1NzdnVYUFY2ZENXTndRYmtvNjFabElwWU92b3g3TktjNklk?=
+ =?utf-8?B?dGo0QjRoUUtwMzJJbFdJRVZDb0dya3BVTmtuK1Uxb3J0c0F2Q3pZWVFRYWM3?=
+ =?utf-8?B?bG53d3EzSFd1ZmRWNERqOG9UKy9PUDJmR3o1bzJ2Y2p6NHp5OUtlVXRMbjRt?=
+ =?utf-8?Q?B5A0S/pO8ldvkykepjZ0dSBL4?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50a1612c-a671-4ec1-db14-08dd0e39d889
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 16:46:16.6989
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: E5iSgKzm3PTliODejiWix+T82nqh82yWWtt2DRjXnMBSI25V4j9hispefOEwyvYj4qGP1RXVQ6GtClMHe0778Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9682
 
-On Wed, Nov 27, 2024 at 12:58=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail.com=
-> wrote:
+On Tue, Nov 26, 2024 at 09:55:23AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Nov 25, 2024 at 02:17:04PM -0500, Frank Li wrote:
+> > On Sun, Nov 24, 2024 at 01:26:45PM +0530, Manivannan Sadhasivam wrote:
+> > > On Sat, Nov 16, 2024 at 09:40:44AM -0500, Frank Li wrote:
+> > > > Add three registers: doorbell_bar, doorbell_addr, and doorbell_data,
+> > > > along with doorbell_done. Use pci_epf_alloc_doorbell() to allocate a
+> > >
+> > > I don't see 'doorbell_done' defined anywhere.
+> > >
+> > > > doorbell address space.
+> > > >
+> > > > Enable the Root Complex (RC) side driver to trigger pci-epc-test's doorbell
+> > > > callback handler by writing doorbell_data to the mapped doorbell_bar's
+> > > > address space.
+> > > >
+> > > > Set doorbell_done in the doorbell callback to indicate completion.
+> > > >
+> > >
+> > > Same here.
+> > >
+> > > > To avoid broken compatibility, add new command COMMAND_ENABLE_DOORBELL
+> > >
+> > > 'avoid breaking compatibility between host and endpoint,...'
+> > >
+> > > > and COMMAND_DISABLE_DOORBELL. Host side need send COMMAND_ENABLE_DOORBELL
+> > > > to map one bar's inbound address to MSI space. the command
+> > > > COMMAND_DISABLE_DOORBELL to recovery original inbound address mapping.
+> > > >
+> > > > 	 	Host side new driver	Host side old driver
+> > > >
+> > > > EP: new driver      S				F
+> > > > EP: old driver      F				F
+> > >
+> > > So the last case of old EP and host drivers will fail?
+> >
+> > doorbell test will fail if old EP.
+> >
 >
-> When playing with gendwarfksyms v6 from Sami Tolvanen I noticed:
+> How come there would be doorbell test if it is an old host driver?
 
-The gendwarfksyms is unrelated.
+fail by unsupport ioctrl(). It should "implicit default behavior".
+
+Frank
 
 >
-> $ LC_ALL=3DC ls -alth .tmp_vmlinux*
+> > >
+> > > >
+> > > > S: If EP side support MSI, 'pcitest -B' return success.
+> > > >    If EP side doesn't support MSI, the same to 'F'.
+> > > >
+> > > > F: 'pcitest -B' return failure, other case as usual.
+> > > >
+> > > > Tested-by: Niklas Cassel <cassel@kernel.org>
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > ---
+> > > > Change from v7 to v8
+> > > > - rename to pci_epf_align_inbound_addr_lo_hi()
+> > > >
+> > > > Change from v6 to v7
+> > > > - use help function pci_epf_align_addr_lo_hi()
+> > > >
+> > > > Change from v5 to v6
+> > > > - rename doorbell_addr to doorbell_offset
+> > > >
+> > > > Chagne from v4 to v5
+> > > > - Add doorbell free at unbind function.
+> > > > - Move msi irq handler to here to more complex user case, such as differece
+> > > > doorbell can use difference handler function.
+> > > > - Add Niklas's code to handle fixed bar's case. If need add your signed-off
+> > > > tag or co-developer tag, please let me know.
+> > > >
+> > > > change from v3 to v4
+> > > > - remove revid requirement
+> > > > - Add command COMMAND_ENABLE_DOORBELL and COMMAND_DISABLE_DOORBELL.
+> > > > - call pci_epc_set_bar() to map inbound address to MSI space only at
+> > > > COMMAND_ENABLE_DOORBELL.
+> > > > ---
+> > > >  drivers/pci/endpoint/functions/pci-epf-test.c | 117 ++++++++++++++++++++++++++
+> > > >  1 file changed, 117 insertions(+)
+> > > >
+> > > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > > index ef6677f34116e..410b2f4bb7ce7 100644
+> > > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > > > @@ -11,12 +11,14 @@
+> > > >  #include <linux/dmaengine.h>
+> > > >  #include <linux/io.h>
+> > > >  #include <linux/module.h>
+> > > > +#include <linux/msi.h>
+> > > >  #include <linux/slab.h>
+> > > >  #include <linux/pci_ids.h>
+> > > >  #include <linux/random.h>
+> > > >
+> > > >  #include <linux/pci-epc.h>
+> > > >  #include <linux/pci-epf.h>
+> > > > +#include <linux/pci-ep-msi.h>
+> > > >  #include <linux/pci_regs.h>
+> > > >
+> > > >  #define IRQ_TYPE_INTX			0
+> > > > @@ -29,6 +31,8 @@
+> > > >  #define COMMAND_READ			BIT(3)
+> > > >  #define COMMAND_WRITE			BIT(4)
+> > > >  #define COMMAND_COPY			BIT(5)
+> > > > +#define COMMAND_ENABLE_DOORBELL		BIT(6)
+> > > > +#define COMMAND_DISABLE_DOORBELL	BIT(7)
+> > > >
+> > > >  #define STATUS_READ_SUCCESS		BIT(0)
+> > > >  #define STATUS_READ_FAIL		BIT(1)
+> > > > @@ -39,6 +43,11 @@
+> > > >  #define STATUS_IRQ_RAISED		BIT(6)
+> > > >  #define STATUS_SRC_ADDR_INVALID		BIT(7)
+> > > >  #define STATUS_DST_ADDR_INVALID		BIT(8)
+> > > > +#define STATUS_DOORBELL_SUCCESS		BIT(9)
+> > > > +#define STATUS_DOORBELL_ENABLE_SUCCESS	BIT(10)
+> > > > +#define STATUS_DOORBELL_ENABLE_FAIL	BIT(11)
+> > > > +#define STATUS_DOORBELL_DISABLE_SUCCESS BIT(12)
+> > > > +#define STATUS_DOORBELL_DISABLE_FAIL	BIT(13)
+> > > >
+> > > >  #define FLAG_USE_DMA			BIT(0)
+> > > >
+> > > > @@ -74,6 +83,9 @@ struct pci_epf_test_reg {
+> > > >  	u32	irq_type;
+> > > >  	u32	irq_number;
+> > > >  	u32	flags;
+> > > > +	u32	doorbell_bar;
+> > > > +	u32	doorbell_offset;
+> > > > +	u32	doorbell_data;
+> > > >  } __packed;
+> > > >
+> > > >  static struct pci_epf_header test_header = {
+> > > > @@ -642,6 +654,63 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test,
+> > > >  	}
+> > > >  }
+> > > >
+> > > > +static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
+> > > > +{
+> > > > +	enum pci_barno bar = reg->doorbell_bar;
+> > > > +	struct pci_epf *epf = epf_test->epf;
+> > > > +	struct pci_epc *epc = epf->epc;
+> > > > +	struct pci_epf_bar db_bar;
+> > >
+> > > db_bar = {};
+> > >
+> > > > +	struct msi_msg *msg;
+> > > > +	size_t offset;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg) {
+> > >
+> > > What is the need of BAR check here and below? pci_epf_alloc_doorbell() should've
+> > > allocated proper BAR already.
+> >
+> > Not check it at call pci_epf_alloc_doorbell() because it optional feature.
 >
-> -rw-rw-r-- 1 dileks dileks 3.1M Nov 22 20:52 .tmp_vmlinux2.kallsyms.o
-> -rw-rw-r-- 1 dileks dileks  34M Nov 22 20:52 .tmp_vmlinux2.kallsyms.S
-> -rw-rw-r-- 1 dileks dileks 6.5M Nov 22 20:52 .tmp_vmlinux2.syms
-> -rwxrwxr-x 1 dileks dileks 101M Nov 22 20:52 .tmp_vmlinux2
->
-> -rw-rw-r-- 1 dileks dileks 3.1M Nov 22 20:52 .tmp_vmlinux1.kallsyms.o
-> -rw-rw-r-- 1 dileks dileks  34M Nov 22 20:52 .tmp_vmlinux1.kallsyms.S
-> -rw-rw-r-- 1 dileks dileks 6.5M Nov 22 20:52 .tmp_vmlinux1.syms
-> -rwxrwxr-x 1 dileks dileks  52M Nov 22 20:52 .tmp_vmlinux1.btf.o
-> -rwxrwxr-x 1 dileks dileks 514M Nov 22 20:52 .tmp_vmlinux1
->
-> -rw-rw-r-- 1 dileks dileks 2.1K Nov 22 20:51 .tmp_vmlinux0.kallsyms.o
-> -rw-rw-r-- 1 dileks dileks 6.3K Nov 22 20:51 .tmp_vmlinux0.kallsyms.S
-> -rw-rw-r-- 1 dileks dileks    0 Nov 22 20:51 .tmp_vmlinux.kallsyms0.syms
->
-> .tmp_vmlinux.kallsyms0.syms is NULL byte - it's a dummy file.
->
-> Further looking at the other .tmp_vmlinux syms files:
->
-> .tmp_vmlinux2.syms
-> .tmp_vmlinux1.syms
-> .tmp_vmlinux.kallsyms0.syms
->
-> Change the naming of file
->
-> .tmp_vmlinux.kallsyms0.syms -> .tmp_vmlinux0.syms
->
-> While at this, fix the comments in scripts/link-vmlinux.sh.
->
-> INFO: v2 is based on Linux v6.12
->
-> Link: https://github.com/samitolvanen/linux/commits/gendwarfksyms-v6
-> Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkjtm=
-4vSVKkXPTg+Q@mail.gmail.com/
-> Link: https://lore.kernel.org/all/20241123132237.15700-1-sedat.dilek@gmai=
-l.com/ (v1)
+> What is 'optional feature' here? allocating doorbell?
 
+Not all platform support ITS. If hardware have not ITS support,
+pci_epf_alloc_doorbell() will return fail.
 
-
-
-I removed unnecessary information.
-
-I left only the following description.
-
------------->8------------------
-kbuild: rename .tmp_vmlinux.kallsyms0.syms to .tmp_vmlinux0.syms
-
-Change the naming for consistency.
-
-While at this, fix the comments in scripts/link-vmlinux.sh.
------------->8------------------
-
-
-Applied to linux-kbuild.
-Thanks.
-
-
-
-> Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
-> ---
-> v1 -> v2:
-> - Add commit description and follow naming consistency
->   as requested by Masahiroy san. -dileks
 >
->  scripts/link-vmlinux.sh | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> > It return failure when it actually use it.
+> >
 >
-> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> index a9b3f34a78d2..239fe036606f 100755
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -203,8 +203,8 @@ kallsymso=3D
->  strip_debug=3D
+> So host can call pci_epf_enable_doorbell() without pci_epf_alloc_doorbell()?
+
+Suppose yes because host don't know if EP support doorbell.
+
 >
->  if is_enabled CONFIG_KALLSYMS; then
-> -       true > .tmp_vmlinux.kallsyms0.syms
-> -       kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
-> +       true > .tmp_vmlinux0.syms
-> +       kallsyms .tmp_vmlinux0.syms .tmp_vmlinux0.kallsyms
->  fi
+> > >
+> > > > +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	msg = &epf->db_msg[0].msg;
+> > > > +	ret = pci_epf_align_inbound_addr_lo_hi(epf, bar, msg->address_lo, msg->address_hi,
+> > > > +					       &db_bar.phys_addr, &offset);
+> > > > +
+> > > > +	if (ret) {
+> > > > +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	reg->doorbell_offset = offset;
+> > > > +
+> > > > +	db_bar.barno = bar;
+> > > > +	db_bar.size = epf->bar[bar].size;
+> > > > +	db_bar.flags = epf->bar[bar].flags;
+> > > > +	db_bar.addr = NULL;
+> > >
+> > > Not needed if you initialize above.
+> > >
+> > > > +
+> > > > +	ret = pci_epc_set_bar(epc, epf->func_no, epf->vfunc_no, &db_bar);
+> > > > +	if (!ret)
+> > > > +		reg->status |= STATUS_DOORBELL_ENABLE_SUCCESS;
+> > > > +	else
+> > > > +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
+> > > > +}
+> > > > +
+> > >
+> > > [...]
+> > >
+> > > >  static const struct pci_epc_event_ops pci_epf_test_event_ops = {
+> > > >  	.epc_init = pci_epf_test_epc_init,
+> > > >  	.epc_deinit = pci_epf_test_epc_deinit,
+> > > > @@ -921,12 +1010,34 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+> > > >  	if (ret)
+> > > >  		return ret;
+> > > >
+> > > > +	ret = pci_epf_alloc_doorbell(epf, 1);
+> > > > +	if (!ret) {
+> > > > +		struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
+> > > > +		struct msi_msg *msg = &epf->db_msg[0].msg;
+> > > > +		enum pci_barno bar;
+> > > > +
+> > > > +		bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
+> > >
+> > > NO_BAR check?
+> >
+> > This is optional feature, It should check when use it.
+> >
 >
->  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; then
-> @@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
->         # Generate section listing all symbols and add it into vmlinux
->         # It's a four step process:
->         # 0)  Generate a dummy __kallsyms with empty symbol list.
-> -       # 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and secti=
-ons,
-> +       # 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and secti=
-ons,
->         #     with a dummy __kallsyms.
-> -       #     Running kallsyms on that gives us .tmp_kallsyms1.o with
-> +       #     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.o =
-with
->         #     the right size
-> -       # 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms sect=
-ion of
-> +       # 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms sect=
-ion of
->         #     the right size, but due to the added section, some
->         #     addresses have shifted.
-> -       #     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
-> +       #     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
->         # 3)  That link may have expanded the kernel image enough that
->         #     more linker branch stubs / trampolines had to be added, whi=
-ch
->         #     introduces new names, which further expands kallsyms. Do an=
-other
+> NO. Why would you call request_irq() if the doorbell BAR is not available? It
+> doesn't make sense.
+
+Maybe reasonable now. But it will be not true if we support map two
+seperate memory regions to a bar in future.  Anyway I can add check here.
+
+Frank
+
+>
+> - Mani
+>
 > --
-> 2.45.2
->
->
-
-
---
-Best Regards
-Masahiro Yamada
+> மணிவண்ணன் சதாசிவம்
 
