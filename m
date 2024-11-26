@@ -1,318 +1,100 @@
-Return-Path: <linux-kernel+bounces-421860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E5F9D9104
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:25:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5569D910B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:32:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52B5AB24B42
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736DD169CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78479169397;
-	Tue, 26 Nov 2024 04:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F1769D31;
+	Tue, 26 Nov 2024 04:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7PXLdPB"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bN81gMN6"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF391369B6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9953EC0
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732595130; cv=none; b=b1S1rPhY4MlUZRf/qOWLplkarH8Jr0RPtEJVDKWAIVCiWruaoaqfY4H3RCkgN/dGTqOr3AKZj9HwUDn0110upoPELR3E2FGm2crh7Blx4r9wLgTdjZ59Yh80vBAjIl+HnHRq8wmYVarAV/NYSjRzEvz7LhiJxBAgv0sZrMxiTe8=
+	t=1732595562; cv=none; b=AZJrJuTqs+BacfGiEKqA34poGLvOvglWe4fKu2Ri9Y6Jw1un0uqiWR1+P/YV3Hptuf4IkhWENH4RLY38KJIhiQ6kD/Yv14ZU9ZA8yvRE29vwpBM7c2G3OIfLgy07P5CLUsffvz5FZymkR61r++XOfHIuZ4SfjDyo0MuHFPjc4KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732595130; c=relaxed/simple;
-	bh=49b5KPFCGeG4jqIym4dKnHwbJ2y+WKZuLkN9bMY/JZk=;
+	s=arc-20240116; t=1732595562; c=relaxed/simple;
+	bh=wugeIFVZuQ9tQQCNyCWGQ5BTAZDhDWii7izA/Hi1bVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuJNSdwA3ssmEXBzqh+4Qr8izPHKSrgB4bDvofbwmOZFRWk20OetZmNzm0Q/rVfgMBUR+0SamOJQbAups2bRr0/F6RoAU3TsFfZFj/DiR4Jz3a3rgEe8htnXiPWbzKyBZJWVYWYOF5TJlOPpfdf+QMUXCVhwFt667+y1Y8SBENU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7PXLdPB; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7f43259d220so3809151a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:25:28 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj/nnXeVabMZFPW3QAQ15WD2e6q5Q+DnBigxh7N9joNPNL/8Vle7odH7/pfahT8ziULWMEfeoxsI/Px5MEcsn1/41mark2Joga8mv5b2rW0DbLPRNLPOrlfeoYEtHdEL+Ao8NIYoJzMWfF3oarUYya1bdgpkf2H+g0b3cvEzwz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bN81gMN6; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2eade1cad26so4102948a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:32:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732595128; x=1733199928; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M18YC0Kp65Lfw3d4dxJ4qs4YXSEhWbUDO3Hpb2pZiiY=;
-        b=I7PXLdPBBHqofjsSwx5HoPaZbrbXBaz1GYYNudet36KXBEp1IdntRM3ihvusNqLz3b
-         NG2bZpO8ZZXE12Ty7nFd9jmSaXVBN2PdvbQb9ZKeeAdCkhZMpClD3QXE3MCEIsSi86Bx
-         9OAUd6QmFnBseWZbr4MWG8OAGbfQY8GaR5jk4WlgJ0QBpZyQrcCU0Sh2FJBmqBEuMWqX
-         FEX6vAHWnglp4K/4ekayMadBRSAhndFwwLnpSFf6wboy+LeuxSfXMl1PHC40FCAkI4c6
-         1XCwghSw99wHguUSjgYF9BHp6TbwYV06DRanr++pQ0h/xCcMRitcJ5GMEKq+RMV6QaM7
-         +bkQ==
+        d=chromium.org; s=google; t=1732595560; x=1733200360; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dj9qgfhpew+joz5eAIS43G7ysXnxDcyXL0gGD9SLu88=;
+        b=bN81gMN6SOebynFEKNUKEGrwcLFNKzwN/AuCuGKzsbVIFybIBc7XTcQaEpEooCKvvX
+         YEbnZZjLFl5P0YnVm8m03jfGiilaHaQyqFl2H8fws7L5TkgzWaY4NkpsnOJ4IlhrJevo
+         C55CKWITD8lMpTpZ0n60R3Ovbox0RGrZ98IME=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732595128; x=1733199928;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M18YC0Kp65Lfw3d4dxJ4qs4YXSEhWbUDO3Hpb2pZiiY=;
-        b=R6twSdRNB7wITSIOMKD7eC80qvxwDjhnSZEnXVydmxnsyqojSF43kG0Im/tXfRDCtD
-         z8kd8ipcXco4X/h27SZRhrMVT0hTs0zMBFyOtCUd9RQ2oL0y43NZTlFf/xAeXuT4bfIB
-         igaSxWoXT3x9/HF7G6cmJv+Y2lsYjSZ+TxN7YIQPoeorll59iK2s3aDuTnhf2SFVZZl1
-         CGbDJ4Y1mEurju9Yh2Y672UkzQTO8a2id5uEtKWf1o6wN1TXptDwatZOv09u4j1A9KqY
-         ivMDBBjHnnuM2iFsIDDNwAT2DTgTbZugaKD9vrec7kqhzIf+NUkrQIFyx0WwDVJLxUDb
-         vjqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkfETRFYcUmngqBBww5n1whpIANquRPE8wcPccK1Eum2u5avW9dJb1ytn5PnqJhhNF0EYFVqCCbH/zu0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAJSeIOZnV4YX/v9w0i7g9JBVAZ7W0fGQtrjKdDCfiBXs7bKOt
-	8HVumn/3ezLwgiIvAqceXukgUbqLDN5M3S5XZAeX9GEooZGsXVA69uIXptw7bA==
-X-Gm-Gg: ASbGnctob4VDQsJHCxePqIzF3zTgQGgspJ6ifadmo3GTsbFxHgGPalQjjn/2j3RK6tj
-	1QHxptUfiX0Q7OBVKZ7u/OdO6bIV+Fv7kTSJIPV0QlPS52reW7hLU5NjUOaPvrc2TRyQ4SByr5G
-	mN0vMc036aYldXIuWrc3ZBz7G0xQBjgX/le7V1UvoiTG15tRhF+TagkTxOF2Gg8tLGy1h7cK0Ws
-	KDMVIiowIHV1dw9IPin0czDs1nLhAhMZibgCfyMLLg7ElkhZNRTkfKbHG7en8k=
-X-Google-Smtp-Source: AGHT+IHXYEVRCc1r40Dr+vrjcLn4v+Y2xzjJi8l6gRqNViOcoudZsio00+eNjNpeLC1iSpTxfFOYJg==
-X-Received: by 2002:a05:6a20:9143:b0:1e0:cbcf:8917 with SMTP id adf61e73a8af0-1e0cbcf8eeemr8491232637.21.1732595128183;
-        Mon, 25 Nov 2024 20:25:28 -0800 (PST)
-Received: from thinkpad ([220.158.156.172])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3de2cfsm6453059a12.65.2024.11.25.20.25.24
+        d=1e100.net; s=20230601; t=1732595560; x=1733200360;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dj9qgfhpew+joz5eAIS43G7ysXnxDcyXL0gGD9SLu88=;
+        b=oVP4zytqSYTeW2c52rDY54D7sch0cIdLUiorGW5S7GWb3aRxkDHTUyAFRpbHOO1GjH
+         8QrCqj63PeepmX4dEEvr7Bh7hnr1fwFhx+BG5zTIhg8kts30MfsZr9Sss4WV5oLFsBCE
+         1a8QlhmJC+M/stColLWt/ls7j733zjxWxTbXGexQblghYlZvPuJJtkcbRU2VJO1AJLEz
+         UZXRjXxya7eEapzzQ3RFPG7Aq6e2pwWms7fz6/g+IagLYWi7Z9dJ6fFa4c2HJCR6zXCy
+         Kuf3lj0G5UNWB5HKs57otg+dr7upUwq6n0bN0aZtp5o3lWSiju1Ctx5JmUdLlZHo17jx
+         Kgkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT7vhEalvJ7v1WhDLOvczePuyXuknaBTrbHcSPDDQ6Aa/MXhbQYFiWuE2RQXl20KgDmxJFljrSEWvgopk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDp1cZW9ZISx9hdhIw8WwALsQPnGQNvWa6F3ne9dATo/88y0py
+	2WlDt4hH9ttlUTLQ1tm25j2EnxjcOrG9QTVOpeW0wH8iXe6BPoCMREiPl3jZuA==
+X-Gm-Gg: ASbGncsHPYOH4lotOSFO/whMuYumyiw/YDOqE3PzG63NCSl6HhfEQjdXcqah9ID/QwS
+	NePvwjhAEcSv9y8zI+Yslf2uFKjHHSP9Tx2QCIIX8qYsRTopw5MESK+PAH7kjH5n+BauZ0Hj+HD
+	tfJ6ixt6v7L62bZiFiCz2pBheRBAwbMEoBsmUx0m154SsRXo7sceK0Fp3NuaI57FIpFa+bJ3WIH
+	WqdRZEBgFDyXoXuCeBmzt/Gy78uBVyZEdeTIls6+n7e2wq/tdVK
+X-Google-Smtp-Source: AGHT+IE6782zuODFee99BheWhco6CMCToJMqye6QDHvuZHHJs8+0En7RLAL1hfPEuaUYRDTNmCBDDA==
+X-Received: by 2002:a17:90b:1d81:b0:2e2:e31a:220e with SMTP id 98e67ed59e1d1-2eb0e1256f9mr20707685a91.8.1732595559907;
+        Mon, 25 Nov 2024 20:32:39 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:7631:203f:1b91:cbb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0d0451afsm7641478a91.32.2024.11.25.20.32.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 20:25:27 -0800 (PST)
-Date: Tue, 26 Nov 2024 09:55:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
-	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
-	jdmason@kudzu.us
-Subject: Re: [PATCH v8 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
- support
-Message-ID: <20241126042523.6qlmhkjfl5kwouth@thinkpad>
-References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
- <20241116-ep-msi-v8-4-6f1f68ffd1bb@nxp.com>
- <20241124075645.szue5nzm4gcjspxf@thinkpad>
- <Z0TNMIX4ehaB+mSn@lizhi-Precision-Tower-5810>
+        Mon, 25 Nov 2024 20:32:39 -0800 (PST)
+Date: Tue, 26 Nov 2024 13:32:34 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Saru2003 <sarvesh20123@gmail.com>
+Cc: minchan@kernel.org, senozhatsky@chromium.org,
+	philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
+	christoph.boehmwalder@linbit.com, corbet@lwn.net, terrelln@fb.com,
+	linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: zram: fix dictionary spelling
+Message-ID: <20241126043234.GB440697@google.com>
+References: <20241125024927.GA440697@google.com>
+ <20241125165122.17521-1-sarvesh20123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0TNMIX4ehaB+mSn@lizhi-Precision-Tower-5810>
+In-Reply-To: <20241125165122.17521-1-sarvesh20123@gmail.com>
 
-On Mon, Nov 25, 2024 at 02:17:04PM -0500, Frank Li wrote:
-> On Sun, Nov 24, 2024 at 01:26:45PM +0530, Manivannan Sadhasivam wrote:
-> > On Sat, Nov 16, 2024 at 09:40:44AM -0500, Frank Li wrote:
-> > > Add three registers: doorbell_bar, doorbell_addr, and doorbell_data,
-> > > along with doorbell_done. Use pci_epf_alloc_doorbell() to allocate a
-> >
-> > I don't see 'doorbell_done' defined anywhere.
-> >
-> > > doorbell address space.
-> > >
-> > > Enable the Root Complex (RC) side driver to trigger pci-epc-test's doorbell
-> > > callback handler by writing doorbell_data to the mapped doorbell_bar's
-> > > address space.
-> > >
-> > > Set doorbell_done in the doorbell callback to indicate completion.
-> > >
-> >
-> > Same here.
-> >
-> > > To avoid broken compatibility, add new command COMMAND_ENABLE_DOORBELL
-> >
-> > 'avoid breaking compatibility between host and endpoint,...'
-> >
-> > > and COMMAND_DISABLE_DOORBELL. Host side need send COMMAND_ENABLE_DOORBELL
-> > > to map one bar's inbound address to MSI space. the command
-> > > COMMAND_DISABLE_DOORBELL to recovery original inbound address mapping.
-> > >
-> > > 	 	Host side new driver	Host side old driver
-> > >
-> > > EP: new driver      S				F
-> > > EP: old driver      F				F
-> >
-> > So the last case of old EP and host drivers will fail?
+On (24/11/25 22:21), Saru2003 wrote:
 > 
-> doorbell test will fail if old EP.
+> Fixes a typo in the ZRAM documentation where 'dictioary' was
+> misspelled. Corrected it to 'dictionary' in the example usage
+> of 'algorithm_params'.
 > 
+> Signed-off-by: Sarveshwaar SS <sarvesh20123@gmail.com>
 
-How come there would be doorbell test if it is an old host driver?
-
-> >
-> > >
-> > > S: If EP side support MSI, 'pcitest -B' return success.
-> > >    If EP side doesn't support MSI, the same to 'F'.
-> > >
-> > > F: 'pcitest -B' return failure, other case as usual.
-> > >
-> > > Tested-by: Niklas Cassel <cassel@kernel.org>
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > > Change from v7 to v8
-> > > - rename to pci_epf_align_inbound_addr_lo_hi()
-> > >
-> > > Change from v6 to v7
-> > > - use help function pci_epf_align_addr_lo_hi()
-> > >
-> > > Change from v5 to v6
-> > > - rename doorbell_addr to doorbell_offset
-> > >
-> > > Chagne from v4 to v5
-> > > - Add doorbell free at unbind function.
-> > > - Move msi irq handler to here to more complex user case, such as differece
-> > > doorbell can use difference handler function.
-> > > - Add Niklas's code to handle fixed bar's case. If need add your signed-off
-> > > tag or co-developer tag, please let me know.
-> > >
-> > > change from v3 to v4
-> > > - remove revid requirement
-> > > - Add command COMMAND_ENABLE_DOORBELL and COMMAND_DISABLE_DOORBELL.
-> > > - call pci_epc_set_bar() to map inbound address to MSI space only at
-> > > COMMAND_ENABLE_DOORBELL.
-> > > ---
-> > >  drivers/pci/endpoint/functions/pci-epf-test.c | 117 ++++++++++++++++++++++++++
-> > >  1 file changed, 117 insertions(+)
-> > >
-> > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > index ef6677f34116e..410b2f4bb7ce7 100644
-> > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > @@ -11,12 +11,14 @@
-> > >  #include <linux/dmaengine.h>
-> > >  #include <linux/io.h>
-> > >  #include <linux/module.h>
-> > > +#include <linux/msi.h>
-> > >  #include <linux/slab.h>
-> > >  #include <linux/pci_ids.h>
-> > >  #include <linux/random.h>
-> > >
-> > >  #include <linux/pci-epc.h>
-> > >  #include <linux/pci-epf.h>
-> > > +#include <linux/pci-ep-msi.h>
-> > >  #include <linux/pci_regs.h>
-> > >
-> > >  #define IRQ_TYPE_INTX			0
-> > > @@ -29,6 +31,8 @@
-> > >  #define COMMAND_READ			BIT(3)
-> > >  #define COMMAND_WRITE			BIT(4)
-> > >  #define COMMAND_COPY			BIT(5)
-> > > +#define COMMAND_ENABLE_DOORBELL		BIT(6)
-> > > +#define COMMAND_DISABLE_DOORBELL	BIT(7)
-> > >
-> > >  #define STATUS_READ_SUCCESS		BIT(0)
-> > >  #define STATUS_READ_FAIL		BIT(1)
-> > > @@ -39,6 +43,11 @@
-> > >  #define STATUS_IRQ_RAISED		BIT(6)
-> > >  #define STATUS_SRC_ADDR_INVALID		BIT(7)
-> > >  #define STATUS_DST_ADDR_INVALID		BIT(8)
-> > > +#define STATUS_DOORBELL_SUCCESS		BIT(9)
-> > > +#define STATUS_DOORBELL_ENABLE_SUCCESS	BIT(10)
-> > > +#define STATUS_DOORBELL_ENABLE_FAIL	BIT(11)
-> > > +#define STATUS_DOORBELL_DISABLE_SUCCESS BIT(12)
-> > > +#define STATUS_DOORBELL_DISABLE_FAIL	BIT(13)
-> > >
-> > >  #define FLAG_USE_DMA			BIT(0)
-> > >
-> > > @@ -74,6 +83,9 @@ struct pci_epf_test_reg {
-> > >  	u32	irq_type;
-> > >  	u32	irq_number;
-> > >  	u32	flags;
-> > > +	u32	doorbell_bar;
-> > > +	u32	doorbell_offset;
-> > > +	u32	doorbell_data;
-> > >  } __packed;
-> > >
-> > >  static struct pci_epf_header test_header = {
-> > > @@ -642,6 +654,63 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test,
-> > >  	}
-> > >  }
-> > >
-> > > +static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
-> > > +{
-> > > +	enum pci_barno bar = reg->doorbell_bar;
-> > > +	struct pci_epf *epf = epf_test->epf;
-> > > +	struct pci_epc *epc = epf->epc;
-> > > +	struct pci_epf_bar db_bar;
-> >
-> > db_bar = {};
-> >
-> > > +	struct msi_msg *msg;
-> > > +	size_t offset;
-> > > +	int ret;
-> > > +
-> > > +	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg) {
-> >
-> > What is the need of BAR check here and below? pci_epf_alloc_doorbell() should've
-> > allocated proper BAR already.
-> 
-> Not check it at call pci_epf_alloc_doorbell() because it optional feature.
-
-What is 'optional feature' here? allocating doorbell?
-
-> It return failure when it actually use it.
-> 
-
-So host can call pci_epf_enable_doorbell() without pci_epf_alloc_doorbell()?
-
-> >
-> > > +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	msg = &epf->db_msg[0].msg;
-> > > +	ret = pci_epf_align_inbound_addr_lo_hi(epf, bar, msg->address_lo, msg->address_hi,
-> > > +					       &db_bar.phys_addr, &offset);
-> > > +
-> > > +	if (ret) {
-> > > +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	reg->doorbell_offset = offset;
-> > > +
-> > > +	db_bar.barno = bar;
-> > > +	db_bar.size = epf->bar[bar].size;
-> > > +	db_bar.flags = epf->bar[bar].flags;
-> > > +	db_bar.addr = NULL;
-> >
-> > Not needed if you initialize above.
-> >
-> > > +
-> > > +	ret = pci_epc_set_bar(epc, epf->func_no, epf->vfunc_no, &db_bar);
-> > > +	if (!ret)
-> > > +		reg->status |= STATUS_DOORBELL_ENABLE_SUCCESS;
-> > > +	else
-> > > +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
-> > > +}
-> > > +
-> >
-> > [...]
-> >
-> > >  static const struct pci_epc_event_ops pci_epf_test_event_ops = {
-> > >  	.epc_init = pci_epf_test_epc_init,
-> > >  	.epc_deinit = pci_epf_test_epc_deinit,
-> > > @@ -921,12 +1010,34 @@ static int pci_epf_test_bind(struct pci_epf *epf)
-> > >  	if (ret)
-> > >  		return ret;
-> > >
-> > > +	ret = pci_epf_alloc_doorbell(epf, 1);
-> > > +	if (!ret) {
-> > > +		struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-> > > +		struct msi_msg *msg = &epf->db_msg[0].msg;
-> > > +		enum pci_barno bar;
-> > > +
-> > > +		bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
-> >
-> > NO_BAR check?
-> 
-> This is optional feature, It should check when use it.
-> 
-
-NO. Why would you call request_irq() if the doorbell BAR is not available? It
-doesn't make sense.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
