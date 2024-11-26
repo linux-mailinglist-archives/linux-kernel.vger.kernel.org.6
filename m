@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-422569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5873A9D9B46
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:22:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7869D9B49
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:22:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F9B168057
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E12282343
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356D21DDA0F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E343D1DDC1E;
 	Tue, 26 Nov 2024 16:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cGVCOFTA"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jtS5RrYw"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1761DB52D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65F41DC04A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732638033; cv=none; b=F8afPUgqfboEIFFbxF3Wggc1jt+7CdD6PElR6Key14b82rS9kTPSHEaSg7UMwi3zwdoaNPIP03Pd2uijmQW1xiYCVRJFIwxJp3J57+4q0yj7+9Wa+u8Z6xb6tntHQGQDGGKq1ZOlKk4PUNywCMPzKdKqkAYTC6bKaF5JPAnA/xY=
+	t=1732638034; cv=none; b=aeQrDyzywXzN6qv9vsExkQEXAOBj5N8dodnO1bfoPMHahVWqhgTryViEL6AD8rBmlIy1XUDBROFp75H4SlHxMAfseWABwoxdfY6EX4ASwQfczA/Z2AWrVHf+mcEV30hl5tudGw+dGbOc1VyQmiUQsCxW8XO1WnH8/Niksc5XZuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732638033; c=relaxed/simple;
-	bh=3Dzgzh4yU33ztM7bLdskr2zw4uRmtMH9ym8FV6irr3o=;
+	s=arc-20240116; t=1732638034; c=relaxed/simple;
+	bh=3AS4904ZrJWWmtzo+XQDjxmA+Exv2p0QUHnWYejIDuM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NLy7gEeQpmrzyAzwqOEgcsbf+kJTXprouS7IL0brANddVwYov2HJN7I3Tf7QCq5QhKdbKC1xs0UxE8FxKVQBZf7B6LL7ve1i1BuFgTCE5oqs4gwWYs5Ewb+hYz63Bn+VlNQ/C6NaG8zfJaz/ZX2lUBwpXy+APpe1+UrlE6WTAAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cGVCOFTA; arc=none smtp.client-ip=209.85.161.52
+	 In-Reply-To:To:Cc; b=NDTJOqj3Tj3eD9RZuTQKDjaG017IYCpVY2uj4+NehX27ujz1IhzT17WUqXNN9ZaQop6LY0yrAbirwc8OyIe39VeBuLqXhy0yttaAyvwMIDNhQ55ioUKVV7Bs0+UpE6JhHOpp7+veQYC+wkWFUlXtNU159bpDes1sEqTiP2nwUj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jtS5RrYw; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5f1d1068451so1184164eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:20:31 -0800 (PST)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d42b87aceaso60756326d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:20:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732638031; x=1733242831; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1732638032; x=1733242832; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=j/lu/EGVVDXuMSIzdRCxVlnfxSM4yuT3W6HrMPORjdo=;
-        b=cGVCOFTAmJgqnFtFVRgf0nmNWSofQXtS1eTM85jrTLPQ2LrLa3KCDgBcGKiPRor7pB
-         3mEUg5dO7E4dBDzwuAyUm9c7rXNTJ+yIc+g+nW5F40S0P4Ld6y0iu6WPwnFxoRMHW1TN
-         KundA9BsmwBPjYx1YoxQWFtmESbXHur5EkwAU=
+        bh=38DVVdNZ+9OXPNjKWQaX+5zY7dH2BnytoxnJmJsLz5s=;
+        b=jtS5RrYw9EeCtS2ZR2MwAnH1UDCU407zwTtDCQKj3ekRSvqxLdi6ftIBIOwPrZBZq4
+         0VDChiwy+jBjcz7V5VIzhsL6AHlxXjBza4rzkDdCyIv9YlC75i7jLswYisWdcMlgb19U
+         8QHMY0f9AK0qy7RTvtP4CsB2oYjcBcTlThnxs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732638031; x=1733242831;
+        d=1e100.net; s=20230601; t=1732638032; x=1733242832;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j/lu/EGVVDXuMSIzdRCxVlnfxSM4yuT3W6HrMPORjdo=;
-        b=mj7Uib/LHI7z11J75PWvrCm6tAC4DCTzEhSJ8nGCy7JBgPYUw0HvEgwghqjeF8CdkX
-         wkVwVIbXkLeVChWgNrgSUM+l9CugxscAVPWRn+qExdSPrxw2h6kttHtVBHPNAvt4eCvH
-         82Ez3uCxK952C06Ecs6++XXnjYe7p8Ose+DFYK5u+lJobqiCfFNk5eHmAz5SH4VyjQng
-         uT1lTBaptuYBIr6pxj0xFNp17zvvxEFuWD9R02JsIgG+HW8ae3LbcUVp+z9V0shEGCC/
-         O4gFtjyea34HWIJwa0q3gcf5T8wadOyjMairRYP+OVBK3dY5Oz7TUUNT3KUx9SY4S4pV
-         tbAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXi/vNLkYTNYWSfRJFzASP1Hyp/8x9Q7a/p+0mtZ4dabJwFujfR5oFcc1Rod0K9smBoaZQFmvMh7oxF/WY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSm174TnyKbYCb2WRf5seGGpU8cdtFlS08eQR+vSmqVYek3G1t
-	nY7HE2mxgRWUxYjXvahRAP2AoRRgO34W0ouHXK+skVSesX9aDtOGa+0bnZt6hg==
-X-Gm-Gg: ASbGncsOzEE2HgQLpUYnAXONNjm0kNjRrILHHIQuW5rhtrrd5vZrg0tqW9O7/Q+sXS9
-	mLGavBjI0CEYFvWmnOaeBD13APvNK3k1r+rcfwEeS07YkelBz2+/o1IPeCpOPFtBjUib2jWika9
-	jLFfD/6paPdU0hFW5TXWaTAtn50dr9x2ZrMS6slIx8Ud1XEcj/iLaJCBlkodv+wzrTK12f8DNSP
-	9obTgXQxeEORvdLLlf7xRYY0VxOT7ZZeFnFKVFFgXDN1R4NlCkqDHXXiu9eiN9FTrNJn1ruaH1f
-	nY0r6sSHcfi/QK+/uGDjDlpL
-X-Google-Smtp-Source: AGHT+IFPBjhCNlx/WOQpP/DrR9JEp90XgxFyirfWiypz7tV1QsQQ+4YXuQ598fwfKwMo0jUvpfnh+Q==
-X-Received: by 2002:a05:6359:5cc2:b0:1ca:a77a:e9b8 with SMTP id e5c5f4694b2df-1caa77aeac9mr318229855d.17.1732638030982;
-        Tue, 26 Nov 2024 08:20:30 -0800 (PST)
+        bh=38DVVdNZ+9OXPNjKWQaX+5zY7dH2BnytoxnJmJsLz5s=;
+        b=v+oGk8/Ms4NBVqJPxWHjCrLK7oHbybpHWgazXSe6FgUueq5fZvG9nRcnWaaIKzS4EU
+         F2E8Ic7mYQDuuESG8o0uNQkZ29W1gvQ1W+S1P8YM1G74Djmk39xg+B/cgp1SwrRyWdh6
+         /SRM57RU1TVh90oe1eBaR5CztimLhscd4Jw3nSD7Re4/M4OFQJyzbWFn+NbphGj412jE
+         +KunACDZSeqBqzMXztKRwnSyl3h+Bz25kV4IDbldVjwGzbEYQkiai+V2bbBrVvzRGsdB
+         mmxG9Q1BqNdu3TupqqzbN9xIAHXCvJTcIMKgb4s8rHAX5hHO+n6KjbOINO6mfW7Lcxt1
+         s92A==
+X-Forwarded-Encrypted: i=1; AJvYcCXS70Fa+NpMU0+FapOGrEpHLkDCDSW6eLgEOnsp5ISFuxWUepPaWqZPcnSp1XnF2IYeHlklvtB4xSOPZkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTlfMD1ZdJOLRJ2dYBebQIoAUOfznCM0Tv2E0etbaIa2kS9DVP
+	G+awE9Z/2FJe8l/eby+Bfj0M72YUih0sFqgkP6HveMqO8thFGc5XjGrafPE2dw==
+X-Gm-Gg: ASbGncsXk2Y6o69rnpPOiqrAgxHgDn8RXd8Cp30u049GhTaf9npvBdU5Eocopk3M0p9
+	i+wZu9mpy9TWqSiIJrewO6ziZq4V0P/8LHmNqFUhrgBpB6l10VhcXeFs1GOb4u4XevFzWAgvwMX
+	82998t5MNV0ySUT5dvAdXG5Dzxeq3D6QZbYg3ioLCvbWFgcznRAqXklkYvG+ZnPR5iaqcIG3NaK
+	OaL0VYkU8INV5akBs0gS51RZt3Ca9ZbxH6C08E4OQlrIv2g5/h/LD5PYVxWtxpoBl/vIzGl+YOq
+	22kfZaJdafHQ9PwSzYdWVXEc
+X-Google-Smtp-Source: AGHT+IGr/+2B6+LJ1kyUP+IBLvQ2LLQlOOS30Ru02Ofx3ziT/PGCoQW+M+Ou9DSuWC6URGy5iQFp+g==
+X-Received: by 2002:a05:6214:268f:b0:6cb:c9cf:cd40 with SMTP id 6a1803df08f44-6d856bd1e51mr59641196d6.8.1732638031784;
+        Tue, 26 Nov 2024 08:20:31 -0800 (PST)
 Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85b4e8205fdsm346532241.1.2024.11.26.08.20.30
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85b4e8205fdsm346532241.1.2024.11.26.08.20.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 08:20:30 -0800 (PST)
+        Tue, 26 Nov 2024 08:20:31 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 26 Nov 2024 16:18:57 +0000
-Subject: [PATCH 7/9] media: uvcvideo: Make power management granular
+Date: Tue, 26 Nov 2024 16:18:58 +0000
+Subject: [PATCH 8/9] media: uvcvideo: Do not turn on the camera for some
+ ioctls
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +80,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-uvc-granpower-ng-v1-7-6312bf26549c@chromium.org>
+Message-Id: <20241126-uvc-granpower-ng-v1-8-6312bf26549c@chromium.org>
 References: <20241126-uvc-granpower-ng-v1-0-6312bf26549c@chromium.org>
 In-Reply-To: <20241126-uvc-granpower-ng-v1-0-6312bf26549c@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -91,56 +92,45 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-Now that every ioctl takes care of their power management we can remove
-the "global" power management.
-
-Despite its size, this is a relatively big change. We hope that there
-are no size effects of it. If there are some specific devices that
-miss-behave, we can add a small quirk for them.
-
-This patch introduces a behavioral change for the uvc "trigger" button.
-It will not work unless the camera is streaming. We consider that this
-the most common (if not the only) usecase and therefore we do not consider
-it a regression.
+There are some ioctls that do not need to turn on the camera. Do not
+call uvc_status_get in those cases.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_v4l2.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/media/usb/uvc/uvc_v4l2.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 1972ede38c70..3595f67fd7e2 100644
+index 3595f67fd7e2..0a058798d075 100644
 --- a/drivers/media/usb/uvc/uvc_v4l2.c
 +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -612,7 +612,6 @@ static int uvc_v4l2_open(struct file *file)
+@@ -1455,6 +1455,26 @@ static long uvc_v4l2_video_ioctl2(struct file *file,
  {
- 	struct uvc_streaming *stream;
- 	struct uvc_fh *handle;
--	int ret = 0;
+ 	struct uvc_fh *handle = file->private_data;
  
- 	stream = video_drvdata(file);
- 	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
-@@ -622,12 +621,6 @@ static int uvc_v4l2_open(struct file *file)
- 	if (!handle)
- 		return -ENOMEM;
++	/* The following IOCTLs do not need to turn on the camera. */
++	switch (cmd) {
++	case VIDIOC_CREATE_BUFS:
++	case VIDIOC_DQBUF:
++	case VIDIOC_ENUM_FMT:
++	case VIDIOC_ENUM_FRAMEINTERVALS:
++	case VIDIOC_ENUM_FRAMESIZES:
++	case VIDIOC_ENUMINPUT:
++	case VIDIOC_EXPBUF:
++	case VIDIOC_G_FMT:
++	case VIDIOC_G_PARM:
++	case VIDIOC_G_SELECTION:
++	case VIDIOC_QBUF:
++	case VIDIOC_QUERYCAP:
++	case VIDIOC_REQBUFS:
++	case VIDIOC_SUBSCRIBE_EVENT:
++	case VIDIOC_UNSUBSCRIBE_EVENT:
++		return video_ioctl2(file, cmd, arg);
++	}
++
+ 	guard(uvc_status)(handle->stream->dev);
  
--	ret = uvc_status_get(stream->dev);
--	if (ret) {
--		kfree(handle);
--		return ret;
--	}
--
- 	v4l2_fh_init(&handle->vfh, &stream->vdev);
- 	v4l2_fh_add(&handle->vfh);
- 	handle->chain = stream->chain;
-@@ -661,7 +654,6 @@ static int uvc_v4l2_release(struct file *file)
- 	kfree(handle);
- 	file->private_data = NULL;
- 
--	uvc_status_put(stream->dev);
- 	return 0;
- }
- 
+ 	return video_ioctl2(file, cmd, arg);
 
 -- 
 2.47.0.338.g60cca15819-goog
