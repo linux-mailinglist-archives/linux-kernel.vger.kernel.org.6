@@ -1,216 +1,147 @@
-Return-Path: <linux-kernel+bounces-421999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF449D9315
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:08:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E7E9D92FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB03E283A7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0FB928178A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68526195FEF;
-	Tue, 26 Nov 2024 08:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E51194A44;
+	Tue, 26 Nov 2024 08:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QJiaRvGr"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WI8KUgV3"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA9B194C78
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7E6143748;
+	Tue, 26 Nov 2024 08:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732608513; cv=none; b=keNTiHY+TE7nDCD3O3aU3OmOrBMFvbhyN1KzK+O9Gdhf5T9UF8z47ln3VeL4OgSVi9vbYcez7DKXeAVIeIC2Sh38hkmZfdABQrJVCdtnrNfaIM82+qTXfX9/JyOiFuwnEa0cwksb52SWZJ70S0BmfmLkmXexmqLriS75qb9/85s=
+	t=1732608103; cv=none; b=k/ssENpniGXVpl3mGz/l+0IGwsTVeGRKY0aR8P0VlwpqepXuA1FVMNLneXNEL0o6A1aqyX799PXA4E7MT/d2MGElIIhucz3W4UrjMimKMb0llZtMBk0ZKKPK4JljJxjHWs+yoBNgYNkd3DehpAwvJioQnHlt3Yg0Gl12MVeyBN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732608513; c=relaxed/simple;
-	bh=jkeljPLfrEpojU1eb20valfuJzKAWnOgVQg12Lj7VQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tgRuwIP/AJiF+w62KzbuhR7gRDTkqKbFiCSlZ+iCroSb6XtQfRVzBUWKntP2JxfhzNovUbqSlwXvUkTcTJPFzEuvbl+KBz5tDr0cwGCqGzTtCSXx/5qh6dtWbEOHdb6uQ/kz6/3G5wYzOE4gFDol3ip3CJiAuk9RTM37RXByb4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QJiaRvGr; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so11813471a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:08:31 -0800 (PST)
+	s=arc-20240116; t=1732608103; c=relaxed/simple;
+	bh=Qr/taxXz3vGfl/Nx+zsxIithDFdRIadoA3c15spbSLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NJ8tSWml/SE0oxggVnEBVOCnJ8f3yaFZEeOq5hOyqZ0HxRavQhWznTastf9ZTG5bwJefXa6yD8FjeDZAbocwZB0lESKZOf+vcn4BnzMO5pd855/HHrAAiB2pgpInLNxKOxnl2JGCSAP7S9rLbjS1Wjlzp38LIkqt++xJKPnaxaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WI8KUgV3; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so25678831fa.0;
+        Tue, 26 Nov 2024 00:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732608510; x=1733213310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmcqT3bZQMcjsucg2dQtWpXidNuyx+XXM3544HAZF0U=;
-        b=QJiaRvGrqDfEdJRnp9XDrhyQJVu+qINFn2Gq75nljpMdh7d9h04Bz503UtyHUKOZqz
-         3exdPegcKpb5OesyCk63CHLhwGPdrNaTdhuCwB1Sjmh3f1atusuI8Aq2FEGlO8BnZJhn
-         mtINLhi+xWKyhGOGRB1CiowAfdTN7ufifsKYU=
+        d=gmail.com; s=20230601; t=1732608099; x=1733212899; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TLhcUgcaehzCh657DFQOY7eTZBplqKp16QE7H3wG/RI=;
+        b=WI8KUgV3k/vm8f45by5qTUXPXsu8SuTQTJle5glaKkq8a7puSNHTjNu76j0xKNqwzd
+         NRMuGRDxd9CjNO+tKM0UOL3LPlY07YY/Q1qIE6Qcyv3PRE8tGrjC4T3HrqLTPQXNUGDL
+         PaoNUg3QVkqT2mCXbm4LSuTkeJt/vvZn8IasOToANmbwGGWHPPkfXJSoPFe/SX4aAQEm
+         k3YpQd41R2YRu5Cc7CpE9Ul4NMU8+IH7jPUIM4wmyY0aYoy6F3+mx0hgo4QiQtuj1aks
+         43DahBQbXaWsywQ3jNvOtNJ4XeHQpviH7pIWxbytDpV7x/fUUGI3cQNgtwmrnbo8sy5r
+         NbtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732608510; x=1733213310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gmcqT3bZQMcjsucg2dQtWpXidNuyx+XXM3544HAZF0U=;
-        b=mfebnFeGYf8Tds2dtKhLQy1bxBiATqT6Uchc5CiI3n+zteJTdAq0Iv4HHHk6Tu1F8t
-         wUMGkPxXFapFMhCaRl3cng8cQGWGcn0nOXFX8/oG9hMy+tx1zbxKBDQ02LdtcIP2mO11
-         I0xVOErJE3XszUW6qwg3Hoz8MSSI2yLdhFGpOwKBPyArm5zlnFZ32YCyln026hnxBrsj
-         VlWVQjxSbftDgDFVUFWd3+drZCBdN4wamzPYQEtT6HDHf8mvBKYG31tVYByJ2XGJvPeD
-         ri08u2B+MdMGQmxcVxMi3kmn9/LUSdXqeOiAJ0pTxbknP2iwItm0p94Bo3qOa56B6gMr
-         0img==
-X-Forwarded-Encrypted: i=1; AJvYcCX8NXlh1U9wGyead2vRlov3nlUg1h25GCyotgQFpHWrP03QdnglboUNsF3sMjV1ajUs3+zvwMixbkbhTQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK66txrA7767pGEMFrTCHUbugOaQ3N9LMjerChhDvjKSwmxcPU
-	AWl8I7vs12JFJxCivycv1Q+r05mwPNARePe4mKTvyh88M9ee3N4c07w7w1Ww9hfxN5KYxSGcvrg
-	=
-X-Gm-Gg: ASbGnctP4mpku+bqeEU/xAWKSrz8p+AQwIi/OMtx8Hkaiv1gDlfbqst6jpmwsWyIuej
-	jYoHr6qX2iCM/FoBiiMfhmBfETqB985ctQd7YkIZddirKO8c+Bxgrwv832OqN26M7dzYKXkQ3hA
-	jQWwQu/8F0Q11zCN6fslbAXQp6qENYyswhfkySTydz48/8zmwg9LPBCiD7RLhVmWB7UwIqeCTBO
-	VD7YFDwOx7gwPyVRNyt1khm/9DN3VPtt0Srge64cXd/9vXs7fsjx8GMJ8eDBaPW0emshuUv/qEX
-	3Wx0ayg2+EnPY2eK
-X-Google-Smtp-Source: AGHT+IFNY/gp1qd57hEY8ib0VodU4fzc6Gr+ALAOcoL/qEdo/lQDkTAsnWSd/h14bhr8n7aQb+s6Aw==
-X-Received: by 2002:a17:906:c502:b0:aa5:438b:513e with SMTP id a640c23a62f3a-aa5648ff74bmr219726366b.30.1732608509977;
-        Tue, 26 Nov 2024 00:08:29 -0800 (PST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57d4d5sm565269666b.163.2024.11.26.00.08.29
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1732608099; x=1733212899;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TLhcUgcaehzCh657DFQOY7eTZBplqKp16QE7H3wG/RI=;
+        b=XPplNLIa722m1pcE+yCnyFmLhzzHi78WhyObTy6uyTpZbyukwoxYo1xpFl3ji+rNWQ
+         lLcF7zuCqWEO+4cHV2Qj1fZINl+RsY2yzOtjpPo3bX0DU0b4q9ifd+Nhlf7LVCpPqpb/
+         27EEhR0d/6lMh8OyLJT42SyDcDTRSeH05bIspxNAHXjdUwePFa7j2twCHAR2owL7G8Jk
+         m/iW6GvXcbUHLciGQT8/O0EXUUHCI+/LXrPpjFXewSwPScBShj6vFqwIQjkEF57wBHTW
+         N19R0jxQm8KryNiVjvAwarCs7MJedKOZFf5FloMzSlUipLtvweM7H+QB+ig/Z+piResB
+         ceyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkWyuoaKNsM3jXDjUeL4/psXcF1sPdJTa8yp8mSXTgE3UhUb+9ySWjw1s7cdjRawj78r/v1a/uEq9cPNXO@vger.kernel.org, AJvYcCXhV3svlFrf6OWYJwA/9pDlMUBbS35ix7oNldq+oEPAm/deLUkjQv3LftNlG3jUmSSDcjMvgaAzwF91L939@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywavzgi1lRZhB4jNW6astvHd//k5/IuMEJ/gdfXWs7rn5HJLTD0
+	QrsIh3cjCAKrS8TWURK07O3yOBnQG63+SBccb9VvHiNtK/p6N+GL
+X-Gm-Gg: ASbGncsF3eBBaSWdDjekXzh6x/NiwXiXWXhGfj3f7Jfkk7fPXctETg0Zso21XXR5dH0
+	AhfJmXfQNpkTPbkvRNJ4VI9xUM7XFTpGolepnnjv6de5f8OyIbr3UbS+RmMrBegi7I/7bRYfATV
+	wS0ry3ygDpMbg5NyLMGi5qYwxoL4PmkNqBukpW7f/bD1AVUzW3UxMV3+Jk+a8ToxxJGj/gfPYLd
+	OX9dSBJ/9CEcEmM14ISDp1EfP8S1Ni7xPv7KP/QMEgpdozjFB8KBj5Rs8SztpfjrINCp1Gsdb1n
+	It9Xj5qDdezPHFisxWfnsll+MfU=
+X-Google-Smtp-Source: AGHT+IE4dWqX6FYS8GpTyQPwG7QbFUjZkKoqX8mHebeNCaYOS/7Fu3gJfNC6CUKQ2XORHy1/kXb/oA==
+X-Received: by 2002:a05:651c:888:b0:2fb:3df8:6a8c with SMTP id 38308e7fff4ca-2ffa71259cdmr113863541fa.23.1732608098684;
+        Tue, 26 Nov 2024 00:01:38 -0800 (PST)
+Received: from ?IPV6:2a00:801:2f3:e48d:c8bb:deb3:99d1:7504? ([2a00:801:2f3:e48d:c8bb:deb3:99d1:7504])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa538f23csm17380591fa.111.2024.11.26.00.01.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 00:08:29 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d027dc53ccso4909a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:08:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUOBzzljU/cLEmPSALVcFpcTwP++fOyMF9VV7LY6tmG91vH9cyUp3yrvbO3uEdOgazU1a79ABwqQNW/Z6I=@vger.kernel.org
-X-Received: by 2002:aa7:c48d:0:b0:5cf:c93f:36f3 with SMTP id
- 4fb4d7f45d1cf-5d06f511712mr30786a12.7.1732608078885; Tue, 26 Nov 2024
- 00:01:18 -0800 (PST)
+        Tue, 26 Nov 2024 00:01:38 -0800 (PST)
+Message-ID: <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+Date: Tue, 26 Nov 2024 09:01:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125-mt8192-lvts-filtered-suspend-fix-v1-0-42e3c0528c6c@collabora.com>
- <20241125-mt8192-lvts-filtered-suspend-fix-v1-1-42e3c0528c6c@collabora.com>
-In-Reply-To: <20241125-mt8192-lvts-filtered-suspend-fix-v1-1-42e3c0528c6c@collabora.com>
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Tue, 26 Nov 2024 16:00:42 +0800
-X-Gmail-Original-Message-ID: <CAHc4DNKmGA-MjTWdZhKygiaRwN7mHnMCf8UPUxH_V16uZifzFg@mail.gmail.com>
-Message-ID: <CAHc4DNKmGA-MjTWdZhKygiaRwN7mHnMCf8UPUxH_V16uZifzFg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] thermal/drivers/mediatek/lvts: Disable monitor mode
- during suspend
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Balsam CHIHI <bchihi@baylibre.com>, kernel@collabora.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, 
-	=?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 26, 2024 at 5:21=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
->
-> When configured in filtered mode, the LVTS thermal controller will
-> monitor the temperature from the sensors and trigger an interrupt once a
-> thermal threshold is crossed.
->
-> Currently this is true even during suspend and resume. The problem with
-> that is that when enabling the internal clock of the LVTS controller in
-> lvts_ctrl_set_enable() during resume, the temperature reading can glitch
-> and appear much higher than the real one, resulting in a spurious
-> interrupt getting generated.
->
-This sounds weird to me. On my end, the symptom is that the device
-sometimes cannot suspend.
-To be more precise, `echo mem > /sys/power/state` returns almost
-immediately. I think the irq is more
-likely to be triggered during suspension.
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+To: Philippe Troin <phil@fifi.org>, Jan Kara <jack@suse.cz>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-> Disable the temperature monitoring and give some time for the signals to
-> stabilize during suspend in order to prevent such spurious interrupts.
->
-> Cc: stable@vger.kernel.org
-> Reported-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> Closes: https://lore.kernel.org/all/20241108-lvts-v1-1-eee339c6ca20@chrom=
-ium.org/
-> Fixes: 8137bb90600d ("thermal/drivers/mediatek/lvts_thermal: Add suspend =
-and resume")
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  drivers/thermal/mediatek/lvts_thermal.c | 36 +++++++++++++++++++++++++++=
-++++--
->  1 file changed, 34 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/me=
-diatek/lvts_thermal.c
-> index 1997e91bb3be94a3059db619238aa5787edc7675..a92ff2325c40704adc537af69=
-95b34f93c3b0650 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -860,6 +860,32 @@ static int lvts_ctrl_init(struct device *dev, struct=
- lvts_domain *lvts_td,
->         return 0;
->  }
->
-> +static void lvts_ctrl_monitor_enable(struct device *dev, struct lvts_ctr=
-l *lvts_ctrl, bool enable)
-> +{
-> +       /*
-> +        * Bitmaps to enable each sensor on filtered mode in the MONCTL0
-> +        * register.
-> +        */
-> +       u32 sensor_filt_bitmap[] =3D { BIT(0), BIT(1), BIT(2), BIT(3) };
-> +       u32 sensor_map =3D 0;
-> +       int i;
-> +
-> +       if (lvts_ctrl->mode !=3D LVTS_MSR_FILTERED_MODE)
-> +               return;
-> +
-> +       if (enable) {
-> +               lvts_for_each_valid_sensor(i, lvts_ctrl)
-> +                       sensor_map |=3D sensor_filt_bitmap[i];
-> +       }
-> +
-> +       /*
-> +        * Bits:
-> +        *      9: Single point access flow
-> +        *    0-3: Enable sensing point 0-3
-> +        */
-> +       writel(sensor_map | BIT(9), LVTS_MONCTL0(lvts_ctrl->base));
-> +}
-> +
->  /*
->   * At this point the configuration register is the only place in the
->   * driver where we write multiple values. Per hardware constraint,
-> @@ -1381,8 +1407,11 @@ static int lvts_suspend(struct device *dev)
->
->         lvts_td =3D dev_get_drvdata(dev);
->
-> -       for (i =3D 0; i < lvts_td->num_lvts_ctrl; i++)
-> +       for (i =3D 0; i < lvts_td->num_lvts_ctrl; i++) {
-> +               lvts_ctrl_monitor_enable(dev, &lvts_td->lvts_ctrl[i], fal=
-se);
-> +               usleep_range(100, 200);
->                 lvts_ctrl_set_enable(&lvts_td->lvts_ctrl[i], false);
-> +       }
->
->         clk_disable_unprepare(lvts_td->clk);
->
-> @@ -1400,8 +1429,11 @@ static int lvts_resume(struct device *dev)
->         if (ret)
->                 return ret;
->
-> -       for (i =3D 0; i < lvts_td->num_lvts_ctrl; i++)
-> +       for (i =3D 0; i < lvts_td->num_lvts_ctrl; i++) {
->                 lvts_ctrl_set_enable(&lvts_td->lvts_ctrl[i], true);
-> +               usleep_range(100, 200);
-> +               lvts_ctrl_monitor_enable(dev, &lvts_td->lvts_ctrl[i], tru=
-e);
-> +       }
->
->         return 0;
->  }
->
-> --
-> 2.47.0
->
+
+On 2024-11-26 02:48, Philippe Troin wrote:
+> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+>> we got terrible performance (lots of nfs: server x.x.x.x not
+>> responding).
+>> What triggered this problem was virtual machines with NFS-mounted
+>> qcow2 disks
+>> that often triggered large readaheads that generates long streaks of
+>> disk I/O
+>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+>> area of the
+>> machine.
+>>
+>> A git bisect gave the following suspect:
+>>
+>> git bisect start
+> 
+> 8< snip >8
+> 
+>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+>> readahead: properly shorten readahead when falling back to
+>> do_page_cache_ra()
+> 
+> Thank you for taking the time to bisect, this issue has been bugging
+> me, but it's been non-deterministic, and hence hard to bisect.
+> 
+> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> slightly different setups:
+> 
+> (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> "nfs server XXX not responding, still trying" that never recovers
+> (while the server remains pingable and other NFSv3 volumes from the
+> hanging server can be mounted).
+> 
+> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> several minutes) on random I/O. These stalls eventually recover.
+> 
+> I've built a 6.11.10 kernel with
+> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> normal (no more NFS hangs, no more VM stalls).
+> 
+> Phil.
+Some printk debugging, seems to indicate that the problem
+is that the entity 'ra->size - (index - start)' goes
+negative, which then gets cast to a very large unsigned
+'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+bug is still eludes me, though.
+
+/Anders
 
