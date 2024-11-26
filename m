@@ -1,218 +1,234 @@
-Return-Path: <linux-kernel+bounces-422475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064D29D9A1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:02:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043EF9D9A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E88B161F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E0E16817A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFADE282F4;
-	Tue, 26 Nov 2024 15:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CmfIlC6S"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C831D61B5;
+	Tue, 26 Nov 2024 15:02:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB5F1AC44C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6786E1D6199
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633346; cv=none; b=YAo27BRfVCC2IAORMyrTzFfb/Rzt4vzsptP4ZxnTMGByRqn3oWPqM0U7m2oQ0HY6eQ6c409+bHPSws6fwEaxIv2k5QyoeDSg7/qZ4f6eRHltuBGLgUnmy9QYmz8VQ9JQkZVZk5QwwmaVFa5SBRlwYEnfQvMcRg8SByLzCBuYXNk=
+	t=1732633355; cv=none; b=e7QMcLWiKqv5QFs9jQCOI6oMziQS+Z3diP7OhP9GYdtixyFGVvTXgVui75QqMY9p9OnBHbKBk1za8WTG75kGML+LRvq0jEW3FSpHE3Q/xQ4kkZMUaq5yEflQ7SXzBK0WOSiXaKGKCCikbON3IvGcxPxphn8N9UTj6UoFtOCN6no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633346; c=relaxed/simple;
-	bh=ZaLjxDUqtOfh5cEdPJcETrCiLtKfDmIlpm1oI9p++C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SKmdg6koe+X5S39lyhPhmkrIX3JkIcdiLlXPhbF9KRbq4RYHy5KlXBfzGwG8kEDyJvcJT29I8I7Y2yI8jzi9FfrnwWDxyVRpi4yJdIK6LYhsuWtcE8a8N9yyb5oQrltHsLjnb6yTy/+0oqUXrguRaYCMCwqT/trKhop0fHwbKHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CmfIlC6S; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732633344; x=1764169344;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZaLjxDUqtOfh5cEdPJcETrCiLtKfDmIlpm1oI9p++C8=;
-  b=CmfIlC6So2ezHPu0GiSh/PnpbnRrqVhKapiN58pD44PZHESwGYvg7Zbe
-   JFtEypNJU05Yvtn2taIAa+2AV1YLskTd9qZ8NbCIVwvx4V83oMwGNzrW8
-   NN9tmR26nGqsqWuXBd2fLa4+Xl3yp/8J+VwW25Mkok60f6zMv3ai2L0+2
-   xyjSTRFdVR/ttTrGT9OxtJCiyD1fFZUpW75YvcZILZDTpTciBpbWvp41Q
-   yBbZjkeb5BrWanQoKG+v9HTzGuSDcnGS/4G12cn8v0olha+3KJB2bZCoo
-   d5raqiHI2RA/EIeR/BBuvzflERS9Vnk4iAaW4d1Pyt5kOTrIuh1c+IoL3
-   w==;
-X-CSE-ConnectionGUID: YjNWEsj9QmS+WjuEyd5FwQ==
-X-CSE-MsgGUID: xOtxJMgVTS2O7oxuZtkoZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="44182821"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="44182821"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 07:02:23 -0800
-X-CSE-ConnectionGUID: nuR5Vg74QEmyMxacumX9og==
-X-CSE-MsgGUID: CCR5whhZRnC61JscerTePw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="91752553"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 26 Nov 2024 07:02:22 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFx51-0007Lj-0T;
-	Tue, 26 Nov 2024 15:02:19 +0000
-Date: Tue, 26 Nov 2024 23:01:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: drivers/net/ethernet/intel/i40e/i40e_ddp.c:53:1: warning: the frame
- size of 1040 bytes is larger than 1024 bytes
-Message-ID: <202411262240.7uamxDkb-lkp@intel.com>
+	s=arc-20240116; t=1732633355; c=relaxed/simple;
+	bh=4MuCRYTzrI6+DACM8ZYOAL0amwgFcD/iI483sfyCq2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1+GksIVC2FT9IDDueyoFoopW3BdSY89ftnBCUit7anfXNFcuE5QRgUrlQUo28yMnjTXgEXA4woSfWxDF3N6gr8SmXRa21zxYm5cuQy1Ou/MnOiQRVHVOQVaT2ZdhvW7qCHLKvSg4/3eKv5HEtCbNwG+lnE4oUHHaCUV9yU2S0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFx4v-0006oE-0x; Tue, 26 Nov 2024 16:02:13 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFx4t-000GZo-0z;
+	Tue, 26 Nov 2024 16:02:12 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id A8CAB37DBF1;
+	Tue, 26 Nov 2024 15:02:11 +0000 (UTC)
+Date: Tue, 26 Nov 2024 16:02:11 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, 
+	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
+	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
+ SoC support
+Message-ID: <20241126-capable-vagabond-tody-8b3717-mkl@pengutronix.de>
+References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
+ <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
+ <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
+ <20241126-independent-crocodile-of-finesse-106009-mkl@pengutronix.de>
+ <01a7de95-24e2-4c75-a818-bbc363e89844@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="undj4rwjdiuemcef"
 Content-Disposition: inline
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
-commit: cdc594e00370e153c323cf8aa9c43b66679e09a0 i40e: Implement DDP support in i40e driver
-date:   6 years ago
-config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20241126/202411262240.7uamxDkb-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411262240.7uamxDkb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411262240.7uamxDkb-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/kernel.h:11,
-                    from include/linux/list.h:9,
-                    from include/net/tcp.h:23,
-                    from drivers/net/ethernet/intel/i40e/i40e.h:7,
-                    from drivers/net/ethernet/intel/i40e/i40e_ddp.c:4:
-   include/linux/scatterlist.h: In function 'sg_set_buf':
-   arch/xtensa/include/asm/page.h:182:16: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
-     182 |         ((pfn) >= ARCH_PFN_OFFSET && ((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
-         |                ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/scatterlist.h:143:9: note: in expansion of macro 'BUG_ON'
-     143 |         BUG_ON(!virt_addr_valid(buf));
-         |         ^~~~~~
-   arch/xtensa/include/asm/page.h:190:33: note: in expansion of macro 'pfn_valid'
-     190 | #define virt_addr_valid(kaddr)  pfn_valid(__pa(kaddr) >> PAGE_SHIFT)
-         |                                 ^~~~~~~~~
-   include/linux/scatterlist.h:143:17: note: in expansion of macro 'virt_addr_valid'
-     143 |         BUG_ON(!virt_addr_valid(buf));
-         |                 ^~~~~~~~~~~~~~~
-   In file included from ./arch/xtensa/include/generated/asm/bug.h:1,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:12,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/xtensa/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:78,
-                    from include/linux/spinlock.h:51,
-                    from include/linux/seqlock.h:36,
-                    from include/linux/time.h:6,
-                    from include/linux/skbuff.h:19,
-                    from include/linux/tcp.h:21,
-                    from include/net/tcp.h:24:
-   include/linux/dma-mapping.h: In function 'dma_map_resource':
-   arch/xtensa/include/asm/page.h:182:16: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
-     182 |         ((pfn) >= ARCH_PFN_OFFSET && ((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
-         |                ^~
-   include/asm-generic/bug.h:148:34: note: in definition of macro 'WARN_ON_ONCE'
-     148 |         int __ret_warn_once = !!(condition);                    \
-         |                                  ^~~~~~~~~
-   include/linux/dma-mapping.h:359:26: note: in expansion of macro 'pfn_valid'
-     359 |         if (WARN_ON_ONCE(pfn_valid(PHYS_PFN(phys_addr))))
-         |                          ^~~~~~~~~
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c: In function 'i40e_ddp_does_profile_exist':
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c:49:70: warning: array subscript i is outside array bounds of 'struct i40e_profile_info[0]' [-Warray-bounds=]
-      49 |                 if (i40e_ddp_profiles_eq(pinfo, &profile_list->p_info[i]))
-         |                                                  ~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/net/ethernet/intel/i40e/i40e.h:338:34: note: while referencing 'p_info'
-     338 |         struct i40e_profile_info p_info[0];
-         |                                  ^~~~~~
-   In function 'i40e_ddp_profiles_eq',
-       inlined from 'i40e_ddp_does_profile_exist' at drivers/net/ethernet/intel/i40e/i40e_ddp.c:49:7:
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c:20:38: warning: array subscript i is outside array bounds of 'struct i40e_profile_info[0]' [-Warray-bounds=]
-      20 |                 !memcmp(&a->version, &b->version, sizeof(a->version)) &&
-         |                                      ^~~~~~~~~~~
-   drivers/net/ethernet/intel/i40e/i40e.h: In function 'i40e_ddp_does_profile_exist':
-   drivers/net/ethernet/intel/i40e/i40e.h:338:34: note: while referencing 'p_info'
-     338 |         struct i40e_profile_info p_info[0];
-         |                                  ^~~~~~
-   In function 'i40e_ddp_profiles_eq',
-       inlined from 'i40e_ddp_does_profile_exist' at drivers/net/ethernet/intel/i40e/i40e_ddp.c:49:7:
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c:21:35: warning: array subscript i is outside array bounds of 'struct i40e_profile_info[0]' [-Warray-bounds=]
-      21 |                 !memcmp(&a->name, &b->name, I40E_DDP_NAME_SIZE);
-         |                                   ^~~~~~~~
-   drivers/net/ethernet/intel/i40e/i40e.h: In function 'i40e_ddp_does_profile_exist':
-   drivers/net/ethernet/intel/i40e/i40e.h:338:34: note: while referencing 'p_info'
-     338 |         struct i40e_profile_info p_info[0];
-         |                                  ^~~~~~
->> drivers/net/ethernet/intel/i40e/i40e_ddp.c:53:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-      53 | }
-         | ^
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c: In function 'i40e_ddp_does_profile_overlap':
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c:104:21: warning: array subscript i is outside array bounds of 'struct i40e_profile_info[0]' [-Warray-bounds=]
-     104 |                 if (i40e_ddp_profiles_overlap(pinfo,
-         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     105 |                                               &profile_list->p_info[i]))
-         |                                               ~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ethernet/intel/i40e/i40e.h:338:34: note: while referencing 'p_info'
-     338 |         struct i40e_profile_info p_info[0];
-         |                                  ^~~~~~
-   drivers/net/ethernet/intel/i40e/i40e_ddp.c:109:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-     109 | }
-         | ^
+In-Reply-To: <01a7de95-24e2-4c75-a818-bbc363e89844@oss.nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-vim +53 drivers/net/ethernet/intel/i40e/i40e_ddp.c
+--undj4rwjdiuemcef
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
+ SoC support
+MIME-Version: 1.0
 
-    23	
-    24	/**
-    25	 * i40e_ddp_does_profile_exist - checks if DDP profile loaded already
-    26	 * @hw: HW data structure
-    27	 * @pinfo: DDP profile information structure
-    28	 *
-    29	 * checks if DDP profile loaded already.
-    30	 * Returns >0 if the profile exists.
-    31	 * Returns  0 if the profile is absent.
-    32	 * Returns <0 if error.
-    33	 **/
-    34	static int i40e_ddp_does_profile_exist(struct i40e_hw *hw,
-    35					       struct i40e_profile_info *pinfo)
-    36	{
-    37		struct i40e_ddp_profile_list *profile_list;
-    38		u8 buff[I40E_PROFILE_LIST_SIZE];
-    39		i40e_status status;
-    40		int i;
-    41	
-    42		status = i40e_aq_get_ddp_list(hw, buff, I40E_PROFILE_LIST_SIZE, 0,
-    43					      NULL);
-    44		if (status)
-    45			return -1;
-    46	
-    47		profile_list = (struct i40e_ddp_profile_list *)buff;
-    48		for (i = 0; i < profile_list->p_count; i++) {
-    49			if (i40e_ddp_profiles_eq(pinfo, &profile_list->p_info[i]))
-    50				return 1;
-    51		}
-    52		return 0;
-  > 53	}
-    54	
+On 26.11.2024 15:48:15, Ciprian Marian Costea wrote:
+> Thank you for taking time in reviewing this patchset.
+>=20
+> I will update description for the first irq as:
+> 'Message Buffer interrupt for mailboxes 0-7 and Enhanced RX FIFO'
+>=20
+> > >=20
+> > > > +            - description:
+> > > > +                Interrupt indicating that the CAN bus went to Buss=
+ Off state
+> > >=20
+> > > s/Interrupt indicating that//
+> > > Buss Off state status?
+> >=20
+> > What about: "Device went into Bus Off state"
+> >=20
+> > However from the excel sheet I read it as a device changes state, to Bus
+> > Off, finished Bus Off or transition from error counters from < 96 to >=
+=3D 96.
+> >=20
+> > So "Device state change" would be a more complete description?
+> >=20
+>=20
+> I agree "Device state change" would be a more suitable description. I will
+> update accordingly in V3.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks.
+
+> > > > +            - description:
+> > > > +                Interrupt indicating that errors were detected on =
+the CAN bus
+> > >=20
+> > > Error detection?
+> > >=20
+> > > > +            - description:
+> > > > +                Message Buffer interrupt for mailboxes 8-127 (ored)
+> >=20
+> > nitpick: all these different events for the other interrupts are ored,
+> > so IMHO you can omit the "(ored)".
+> >=20
+>=20
+> True. I will update.
+
+Thanks
+
+> > > > +        interrupt-names:
+> > > > +          items:
+> > > > +            - const: mb_0-7
+
+I was wondering if it makes sense to have an interrupt name not
+mentioning the exact mailbox numbers, so that the same interrupt name
+can be used for a different IP core, too. On the coldfire SoC the 1st
+IRQ handles mailboxes 0...15.
+
+> > > Choose one: either underscores or hyphens. Keep it consistent in your
+> > > bindings.
+> >=20
+> > > > +            - const: state
+> > > > +            - const: berr
+> >=20
+> > The order of IRQ names is not consistent with the description.
+
+Sorry, I misread the interrupt names and was under the misconception
+that the interrupt names have a different order than the interrupt
+descriptions.
+
+> Good point. Indeed the order which is in the S32G3 interrupt map excel is
+> not consistent with the bindings.
+>=20
+> The reason is that in the flexcan driver, reusing the
+> 'FLEXCAN_QUIRK_NR_IRQ_3' quirk forces the probing of irqs to be done in t=
+he
+> following order:
+> mailbox (irq) -> state (irq_boff) -> berr (irq_err)
+>=20
+> Hence in order to maintain ABI compatibility I am proposing the following
+> order for irqs in case of S32G2/S32G3 SoCs:
+> mb-0-7 -> state -> berr -> mb-8-127
+
+That makes totally sense!
+
+>=20
+> > > > +            - const: mb_8-127
+
+same here
+
+> > > Choose one: either underscores or hyphens. Keep it consistent in your
+> > > bindings.
+> > >=20
+> > > > +      required:
+> > > > +        - compatible
+> > > > +        - reg
+> > > > +        - interrupts
+> > > > +        - interrupt-names
+> > >=20
+> > > What happened to "else:"? Why all other devices now have up to 4 inte=
+rrupts?
+> >=20
+> > Do you already have a dtsi snippet for the flexcan nodes? Please make
+> > sure that the interrupts are correctly mapped.
+>=20
+> Yes, I am testing using the following dtsi snippet:
+>=20
+> can0: can@401b4000 {
+>     compatible =3D "nxp,s32g3-flexcan",
+>                  "nxp,s32g2-flexcan";
+>     reg =3D <0x401b4000 0xa000>;
+>     interrupts =3D <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+>                  <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
+>                  <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
+>                  <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+>     interrupt-names =3D "mb-0-7", "state", "berr", "mb-8-127";
+>     clocks =3D <&clks 9>, <&clks 11>;
+>     clock-names =3D "ipg", "per";
+> };
+
+looks good to me!
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--undj4rwjdiuemcef
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdF4vAACgkQKDiiPnot
+vG9kXgf/aAbe27McJaFq9XHYf6CY/m6U7DLysA8e4qHZLW69Ht2XYnXhYGTDzI4Q
+F92kX7CDcsiy6U0XiLtWhHslABIxx1pq6uW5c83IWsQHtp15HIgRdWeEEiQK51us
+5RumAKQmbaZhSeaFGEofIaCIHpdSWpVfZF9ecSKUEQDpzF1IJqEXvMaVq4X9yFyD
+ZEobf+nToO46iNVARScak0AzF5KbngipOKicG1nE2g2cQfXMRUQBPQtMbl1uaFyW
+5PtdtUR+sFdwRcPebFzUXPQWB+DBIjiM2jO6ycjgt1G5090/FmhBg/tNaZPcIMLv
+9anedHnWqxRIuSXCcUPQKksuuoVuQg==
+=izOt
+-----END PGP SIGNATURE-----
+
+--undj4rwjdiuemcef--
 
