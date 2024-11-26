@@ -1,225 +1,174 @@
-Return-Path: <linux-kernel+bounces-422157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036149D9546
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:15:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611FC9D954A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91560165A3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0850C165ABB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0342619CC32;
-	Tue, 26 Nov 2024 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NY9yMLs4"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974A4170A13
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696011B6CFB;
+	Tue, 26 Nov 2024 10:15:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EC21C303A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616134; cv=none; b=CBnQK8h1s0bosVdFEDhqdM5HiKOp6Fzzqvn7YJ+uD/jlogwoJsdw5g8i/hVXyFMs/ajcyvw29V3mgDY3DYnphA3qxa48R7GQ0g1k5alzAVWDmVI/RU0a4vDMqBR7xcx3qgpOOzschx1sOMagLJPWkoOkjDS/W6jUlAB1k0HB+84=
+	t=1732616142; cv=none; b=jb/6aVmAcFjapsRG1kzhB29XGp314qCqTfXGuyZT5CvurgpwZBauk1K/CQljehxjL1qmgWTYl3R55K6SP1uaJDOGopB8C4lItGK0O9zHuKlYjnGpdP55C5Tz9JdBAZVAcINdo/RCRH/oTWo2acxj7f25MDsn/rzKhIvhx2g9zpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616134; c=relaxed/simple;
-	bh=YnwFrioJuWXkitIwNjlEjn9YMCR+Fc+k1bOVT8WkKt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l7FJ1IVKbAGW83GRTE9Qh5GHA/WrNgpjCzGB1eI9bvnOG4YefIcT05Cr9enD8n6meVHY5ScwkntV8me4s4KoEEuX3sfHS+08mL4cipr32S0AxINLGZFZDck6oZ4hiLEqrghSKVi5sqUoHxkKbY/vW0teaA604HF0IslzDWtcUdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NY9yMLs4; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a044dce2so20917955e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:15:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732616131; x=1733220931; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iMHlNehhUeJtZXiuS3qHdRgWnpyVBbD3di8vAnUvhDQ=;
-        b=NY9yMLs4HSNOamt4FPmU8Qhv+C5KMnRWIskZjGi+O0K5Lpvbekx0OwQHL20EVEYwC9
-         f/jtY/GsNbJHTh6BrKjye/gImVc5j70dxIP0pKSpllp9sftIo/tSmmer5hIjqAFFdzcu
-         4X69tyubIBH8BmoN/w6pSWHKuA6DsCtikx/xf3sGwgspVPjZZwNbSKHWGrnP/wwNuU2i
-         Ywr8Q/D7+kvX7wpoivjmW+b8cv2ejy+yKVRVeie5gvqhPx7+EQ/T7NUkk8JDSYptt+p/
-         Kd3JcEOnx8W4IgnVU/hv4QXC3IPQZdJFV2gRdbZzqE7xdWwTlAHr1gWeYt+8M8biFJpc
-         7G2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732616131; x=1733220931;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iMHlNehhUeJtZXiuS3qHdRgWnpyVBbD3di8vAnUvhDQ=;
-        b=DhdBPWTojpeOKawvw7zknpy+jRf7EXxOCzlLOwEG+2qjJTX1U/wANGx827CK4248CW
-         gYbzBCl0h1R44WdgBh/0j2siQCYP4tDpC86X1gb6pYLsht5em2aQXuGi4O9SND8lHdIP
-         XMF4lxIVZZIa30XQDl4gj8llD7uAFe56D0OCrhTXk/s4naWXOQrTtdqFZ9qcIfkI13YF
-         hMH2dmGV8RZL1l83QLUpREcuLjGL+32luSF4AcMI1IrxCI58xw8z99xATWVDXkRi0j0/
-         UEsqH860UeZcQG0Xc3eld6J8bCMVIqKgzC0lqRMNI7Wgnhc8i2yqXFbtrn8cBn++d/3U
-         ry8A==
-X-Forwarded-Encrypted: i=1; AJvYcCU13YBhlnEMuWApImZ2ZORrqEylpiBegr/xRiLX0T9Kjw3YbMnRH5EFu5YpVcRUJRxJkMjXWsTDe7SiIBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkJks9q3anleN+sEJjruuUbI/URnBzjoF9HZo/nmZNL9/lQN4v
-	K0UX0lEsxQK7ba4A1kt67FkjMTOEMrwCUpPzubZlw7kzciyebLLA
-X-Gm-Gg: ASbGnctIRdIUa+TXxs022CfJttaZNiq2wDILTQ48lkCSn0blvjNmfCDebrjzlA06AJz
-	tHxkahkfZKr41X2w34h/Sm/aXie/z6SmD1p8Pg4wNMUeRglL6VBbe9dPlXEoXwoEGxcVpGZkjsr
-	xzA4uR/1BXoZ2aq9xqp6LJs2te3oHvhMpvHlSwO7Xl4sleRSMOy7+2kNvtN3a8TB5dtjO8LhJMU
-	aoWeZys+lXMW9lolCahpkwVn8V8fjxK/nWt6WbPNlgcEfMot8ihXqMPahgwkD5b0OXA4VLIakrR
-	MVGQEYT4fDUYhGntvj1n
-X-Google-Smtp-Source: AGHT+IGSUVR4ktjx520waynJHg6uz+q+sQ70n8ebOF0pRuJy89VrdCGC9kyQeWZfvcRuqeeAHVawjA==
-X-Received: by 2002:a05:600c:4f06:b0:431:5f8c:ccb9 with SMTP id 5b1f17b1804b1-433ce426a01mr176891285e9.17.1732616130901;
-        Tue, 26 Nov 2024 02:15:30 -0800 (PST)
-Received: from tom-desktop (net-188-217-53-234.cust.vodafonedsl.it. [188.217.53.234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434a0876a41sm56191495e9.11.2024.11.26.02.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 02:15:30 -0800 (PST)
-Date: Tue, 26 Nov 2024 11:15:28 +0100
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieram Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: hints around rcar_lvds.c :)
-Message-ID: <Z0WfwMJVCQOEZM3c@tom-desktop>
+	s=arc-20240116; t=1732616142; c=relaxed/simple;
+	bh=B1P47g9kbqVW/1eHB2moBXMzurexuBseMk6vIoeEUa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pe3NHRAwDZVUl2TVlTiEyQCJTRnL2Qgn6BbosxhNYe+bDw7B8jUd/HtdfsOr0xFdfDuo8E5j1bFrSnGL99+1Y3Mp676W4hrZYs0F5Jr07EsLhNgs8Hd4a6NVuoSuUz2cU3Bt9j4KMc19sNsym0/jJdrGRr+oyh/p5/3vDTnuN88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C2B81682;
+	Tue, 26 Nov 2024 02:16:08 -0800 (PST)
+Received: from [10.57.89.250] (unknown [10.57.89.250])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22E3E3F5A1;
+	Tue, 26 Nov 2024 02:15:36 -0800 (PST)
+Message-ID: <9a61c179-7c06-412f-a09f-0593151eb107@arm.com>
+Date: Tue, 26 Nov 2024 10:15:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 15/57] stackdepot: Remove PAGE_SIZE compile-time
+ constant assumption
+Content-Language: en-GB
+To: Vlastimil Babka <vbabka@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ David Hildenbrand <david@redhat.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-15-ryan.roberts@arm.com>
+ <2510b50b-4178-4c14-b2cc-db5a77a1c8d7@suse.cz>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <2510b50b-4178-4c14-b2cc-db5a77a1c8d7@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent, All,
+On 14/11/2024 11:15, Vlastimil Babka wrote:
+> On 10/14/24 12:58, Ryan Roberts wrote:
+>> To prepare for supporting boot-time page size selection, refactor code
+>> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+>> intended to be equivalent when compile-time page size is active.
+>>
+>> "union handle_parts" previously calculated the number of bits required
+>> for its pool index and offset members based on PAGE_SHIFT. This is
+>> problematic for boot-time page size builds because the actual page size
+>> isn't known until boot-time.
+>>
+>> We could use PAGE_SHIFT_MAX in calculating the worst case offset bits,
+>> but bits would be wasted that could be used for pool index when
+>> PAGE_SIZE is set smaller than MAX, the end result being that stack depot
+>> can address less memory than it should.
+>>
+>> To avoid needing to dynamically define the offset and index bit widths,
+>> let's instead fix the pool size and derive the order at runtime based on
+>> the PAGE_SIZE. This means that the fields' widths can remain static,
+>> with the down side being slightly increased risk of failing to allocate
+>> the large folio.
+>>
+>> This only affects boot-time page size builds. compile-time page size
+>> builds will still always allocate order-2 folios.
+>>
+>> Additionally, wrap global variables that are initialized with PAGE_SIZE
+>> derived values using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their
+>> initialization can be deferred for boot-time page size builds.
+> 
+> This is done for pool_offset but given it's initialized by DEPOT_POOL_SIZE,
+> it doesn't look derived from PAGE_SIZE?
 
-Sorry for bothering.
-Looking for some feedback :)
+Good spot; I think I initially did this when DEPOT_POOL_SIZE was still based on
+PAGE_SIZE. But then I've subsequently re-defined DEPOT_POOL_SIZE to be
+independent of PAGE_SIZE. I'll remove this part of the change.
+> 
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> Other than that,
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-I have a similar rcar_lvds.c IP's to handle but in my case:
-I have lvds0 and lvds1 that are sharing some common regs (lvds_cmn).
+Thanks!
 
- ----------------------
-|    -------------     |
-|   |lvds_cmn_regs|    |
-|    -------------     |
-|                      |
-|    -----------       |
-|   | lvds0_regs |     |-----> ch0
-|    ------------      |
-|                      |
-|    -----------       |
-|   | lvds1_regs |     |-----> ch1
-|    ------------      |
- ----------------------
+> 
+> 
+>> ---
+>>
+>> ***NOTE***
+>> Any confused maintainers may want to read the cover note here for context:
+>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+>>
+>>  include/linux/stackdepot.h | 6 +++---
+>>  lib/stackdepot.c           | 6 +++---
+>>  2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/include/linux/stackdepot.h b/include/linux/stackdepot.h
+>> index e9ec32fb97d4a..ac877a4e90406 100644
+>> --- a/include/linux/stackdepot.h
+>> +++ b/include/linux/stackdepot.h
+>> @@ -32,10 +32,10 @@ typedef u32 depot_stack_handle_t;
+>>  
+>>  #define DEPOT_HANDLE_BITS (sizeof(depot_stack_handle_t) * 8)
+>>  
+>> -#define DEPOT_POOL_ORDER 2 /* Pool size order, 4 pages */
+>> -#define DEPOT_POOL_SIZE (1LL << (PAGE_SHIFT + DEPOT_POOL_ORDER))
+>> +#define DEPOT_POOL_ORDER 2 /* Pool size order, 4 pages of PAGE_SIZE_MAX */
+>> +#define DEPOT_POOL_SIZE (1LL << (PAGE_SHIFT_MAX + DEPOT_POOL_ORDER))
+>>  #define DEPOT_STACK_ALIGN 4
+>> -#define DEPOT_OFFSET_BITS (DEPOT_POOL_ORDER + PAGE_SHIFT - DEPOT_STACK_ALIGN)
+>> +#define DEPOT_OFFSET_BITS (DEPOT_POOL_ORDER + PAGE_SHIFT_MAX - DEPOT_STACK_ALIGN)
+>>  #define DEPOT_POOL_INDEX_BITS (DEPOT_HANDLE_BITS - DEPOT_OFFSET_BITS - \
+>>  			       STACK_DEPOT_EXTRA_BITS)
+>>  
+>> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+>> index 5ed34cc963fc3..974351f0e9e3c 100644
+>> --- a/lib/stackdepot.c
+>> +++ b/lib/stackdepot.c
+>> @@ -68,7 +68,7 @@ static void *new_pool;
+>>  /* Number of pools in stack_pools. */
+>>  static int pools_num;
+>>  /* Offset to the unused space in the currently used pool. */
+>> -static size_t pool_offset = DEPOT_POOL_SIZE;
+>> +static DEFINE_GLOBAL_PAGE_SIZE_VAR(size_t, pool_offset, DEPOT_POOL_SIZE);
+>>  /* Freelist of stack records within stack_pools. */
+>>  static LIST_HEAD(free_stacks);
+>>  /* The lock must be held when performing pool or freelist modifications. */
+>> @@ -625,7 +625,7 @@ depot_stack_handle_t stack_depot_save_flags(unsigned long *entries,
+>>  	 */
+>>  	if (unlikely(can_alloc && !READ_ONCE(new_pool))) {
+>>  		page = alloc_pages(gfp_nested_mask(alloc_flags),
+>> -				   DEPOT_POOL_ORDER);
+>> +				   get_order(DEPOT_POOL_SIZE));
+>>  		if (page)
+>>  			prealloc = page_address(page);
+>>  	}
+>> @@ -663,7 +663,7 @@ depot_stack_handle_t stack_depot_save_flags(unsigned long *entries,
+>>  exit:
+>>  	if (prealloc) {
+>>  		/* Stack depot didn't use this memory, free it. */
+>> -		free_pages((unsigned long)prealloc, DEPOT_POOL_ORDER);
+>> +		free_pages((unsigned long)prealloc, get_order(DEPOT_POOL_SIZE));
+>>  	}
+>>  	if (found)
+>>  		handle = found->handle.handle;
+> 
 
-
-So I'm checking 2 drm dts/driver architecture:
-
-1st architecture:
- - Using a single lvds driver to handle both lvds0 and lvds1.
-
-		 ----------------------
-		|                      |
-		|                      |
-		|                      |
-du_lvds0 ------>|                      |----> ch0_lvds
-		|      lvds_bridge     |
-		|                      |
-		|                      |
-du_lvds1 ------>|                      |----> ch1_lvds
-		|                      |
-		 ----------------------
-
-
-Issue:
-
-Problem here is the 1 single link 2ch mode.
-lvds0 and lvds1 can drive 2 display with 2 differents fb (fb0 and fb1).
-
-Having a single drm_bridge to drive both channel give me the following issue:
-
-In single link 2ch mode when for the first time the du encoder drm_attach()
-the lvds bridge to the encoder(du) all goes fine and fb0 is created correctly.
-
-Then again the du encoder is trying again to drm_attach() the lvds bridge
-but this return -EBUSY obviously because is already attached.
-
-Then I think this is not the way to follow because I need 2 drm_bridges
-from the same drm drive, and I think this is not correct.
-----------
-
-2nd architecture:
- - Follow rcar_lvds.c way using 2 nodes for lvds0 and lvds1:
-
-		 ------------
-du_lvds0 -----> |lvds0_bridge|----> ch0_lvds
-		 ------------
-
-		 ------------
-du_lvds1 -----> |lvds1_bridge|----> ch1_lvds
-		 ------------
-
-Issue:
-I thinks this is an optimal approach but in my case here
-the problem is that lvds0 and lvds1 share a set of common registers
-some common clocks and common reset:
-
-My plan is to manipulate those common regs (lvds_cmn) using
-compatible = "simple-mfd", "syscon"; as follow:
-
-lvds_cmn: lvds-cmn {
-	compatible = "simple-mfd", "syscon";
-	reg = <common_regs>;
-
-	lvds0: lvds0-encoder {
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			clocks = <&common_clk>, <&dotclok0>, <&phyclock0>;
-			resets = <&common_rst>;
-
-			port@0 {
-				reg = <0>;
-				lvds0_in: endpoint {
-					remote-endpoint = <&du_out_lvds0>;
-				};
-			};
-
-			port@1 {
-				reg = <1>;
-				lvds_ch0: endpoint {
-				};
-			};
-		};
-	};
-
-	lvds1: lvds1-encoder {
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			clocks = <&common_clk>, <&dotclok1>, <&phyclock1>;
-                        resets = <&common_rst>;
-
-			port@0 {
-				reg = <0>;
-				lvds1_in: endpoint {
-					remote-endpoint = <&du_out_lvds1>;
-				};
-			};
-
-			port@1 {
-				reg = <1>;
-				lvds_ch1: endpoint {
-				};
-			};
-		};
-	};
-};
-----------
-
-I'm asking to find the best way to represent those IP's.
-What do you think?
-Any hints/tips would be nice.
-Thanks in advance.
-
-Thanks & Regards,
-Tommaso
 
