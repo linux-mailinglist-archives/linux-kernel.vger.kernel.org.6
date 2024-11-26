@@ -1,367 +1,177 @@
-Return-Path: <linux-kernel+bounces-422443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F9E9D99B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D65F9D99BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827C82832A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF83283698
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406591D5CF2;
-	Tue, 26 Nov 2024 14:36:33 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E4B1D47AF;
+	Tue, 26 Nov 2024 14:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FROfX+c1"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2043.outbound.protection.outlook.com [40.107.94.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817381D47AF
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732631792; cv=none; b=cUr0CptivmR04CWidLjV1KTM3gcFdAksfJwl8ZfEOQoHdbawdaPFOCgBI3td9RzdATe3cp1xKRv6GZXkOjxCKG4EH3oJ/tu1iG//wgZc9lea2wmxP7prNvViL5MBOUnRFo6f4Eu3SM0WrUQNrl26j072IXxeT5wb51eHLWxW6pU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732631792; c=relaxed/simple;
-	bh=JkWiPuGbsRmxY/4TCBLyQ6LHLdUEMNuofuVdplXHy1Q=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F7ZqveEyx+LT5TVSyVFdVEgy50ZGlSVmhTVfJZ+wioRTdi+qvqjs4PvbCp+JqKasHiju2LoO8A3hrJLAb1HYbQ1sANGUtNDfKc+oIHv8MmluW/p6qvyVpROCzOIsbMJU5qJ+ZA1vXNU4MSo/Vsk5q0Dyx23DG1VZ8JhKAAikkbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a54a6603so217574139f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:36:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732631790; x=1733236590;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3tqfRNzH64ajg6sb1Q/f3N5cNiFWUjatFOU9F9Kh2hA=;
-        b=QNq/zxVKeYg5/ZapxSUSpN42ArGCtyNXNMBFSNuGP09Q4/Jxwae+crFIlzGK7spuLS
-         IXKnaF/yCDeEAaLRMj13H0UNQ1BfGPrqUs8h+eaZJa5TIhuvUMieZ1o+2duKmTsad6ZF
-         G38JIOORQED63IAfxXbGFtWFojCy/tBdGvKwdkeIv3hur+76086AaInaCVOX0CqMYNuQ
-         nY0nqyPiQmB/5T7oiTJ47mC2VwPExcJVm/YCk3iIxuQEZ28VCb1KAGN5PU5x5tVbxOLX
-         ltb2uIyw/iV7FRCefkWSIZ9Ct1HIGF9U/DCEwmas5/dB4TzQWriOJ0z23ftFd6i+jx7f
-         d7Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgwJXP5lj2AtTScHFCp8k0AmBzSG/Qe12zk1n4F94jt7W18Wx9YSsae4HCRJPHMUCLl4CozRWOD9gZq/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX9urv6j3SNsdsdnxURpuvQqQNW2HL7rdP8LaMdyb2idbrdXyv
-	tvxioOJQoYDXHyNRjj1p0VuzZ+rlPl46LjZzuC7x6XdIBA0CCvOGcMatl3wbq40avOPArv9xmEK
-	Y6RPyaIx30T3KHdPrywDMKB2L0UOuk1AJQt1qqvjw1QRPfvCMI4xUig4=
-X-Google-Smtp-Source: AGHT+IEKH9pp8BNlTnl8ttMYDt/9wl+Qouyr/McrIuU6rGILui1G9FDqMGvyKqza7ZdDCyyx8fXMOHEiDs0egv/JZMkm0Px8bnMd
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CF0BE46
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732631893; cv=fail; b=nScsCqCdASbPN83svklWRO9BvQZ9TGMW1N3+jDaNNYr0Jwm+XbKj+XHKg5X81IpUd7AFxzhGxmv4PqHvaA3e7LO4yaBPFr//sMM09FVtRSA8/ItyhrtCVDr8caS3Yw1FoOxPM/ZckN4rah4oNi7o0mt1zIbAef/6VGMF81EWkEU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732631893; c=relaxed/simple;
+	bh=SUiTsWsGqsD9oK3oP/HM9UxljbGbnA6oWs11eyGz2/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sQBwyfDg/c1wxt6iYVvSGxPR6Zi/Ay/hdh1LQa/GV7OAbbCUXT2OiW96IUZwxn9vxOgp0r4eHtPCiYXvo+WI/83+bIXd9AT3plKoDVG5je2lz01sNikmsSW/p/k+6eMT55KmHVT8lxuTNfmQT4wOAHXsnNLY68kpq4D7YjY7EhI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FROfX+c1; arc=fail smtp.client-ip=40.107.94.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XMSLvsiyCXNAfj/VDKEOJfZE1X+F9YTIIEwRPQKr0w1HY+LnV4d1q74DGwPg9EkwjqhgDcxnv13lpPRUqeRm5IsPxeuLCOE8NokN7pLX6nU16SdSlfCxrXD92gWExBzoLY0l3bqZ2Z6uiGbUvXfkHGycO/m0Mtx5nxwbE9miK1Kd5c4IGFYwnY2OCcTxFpWCMuq5c0UqaQjYURgZK5aDUNKWRipChXSvY6Yxv7rWEACmVKaw5qvl6M0aUzSOrL21UgH3qtJjjG4qVf688Wor3OusZ89QbgynmotXIGyCPWeJ2/OcLPgl1LH7Jm5biOJ7BEuxq5+p2xwftHLoueJ8bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l3sMW7dOzeT96ZZJs2Lq8mha0Vn6R+Yvq+ri8vwINDo=;
+ b=UK10k5/tBWNqN14W7aO6Y9Fj+fzZ12Zy3CNGVmo3KRft3A8UgrH7HA2pJh4Qty4QgqaWnccASQzIg0KSRcbZqUUWXIaLep+igjq+BnSbPRd2x9JhF0++gpAtdNpNzIblx82FeCZD+j+MXzilGoSByZT2gHoaapCpTgTyBbcs2Sh5Om04PiixEonjyN2RSpRcWtNQ+cdCXKzHfCjEzfXiTaVFkETfBO+wxNdeK3tb4aKQhQgjZdLUpWjYLUV3qalnfJlkWvGTWqSzZDtI+WvuJS54Tg5Y09F8O3F/4dQ/iFFSHXSaL/HR3D9xibf5f1LfbqybVtyaj39doxanDL94jA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l3sMW7dOzeT96ZZJs2Lq8mha0Vn6R+Yvq+ri8vwINDo=;
+ b=FROfX+c10X7lOUo/HP82YBUxANAbkd/haTEm7JctuOFB3c3J7OVyl9Q2vDoVbeGLiTZ+oWv6vBwejI7pKG4XyUdWtycBkP9zP/KRLDTgZGTfGYDW6kNHlagq+aNsn2wm/9A9OBWTeIDNS1Q30NtbjWpd6bYzcwdFb1hd3JB9w+skaq6O0i4Pub7eq1GCnnVsQTG8jwGezijZRwAUwl37LDCjlg1+D2GbbYgiPF1jTKpfoheU6DMUOn1f80zRUv20GkX6b3yhxyRV5BBe7oNt/N8CDWzXJzGXPyq+TStZJ0tk+6hiIM5w6Lvt4v3GndbaXME9RpojXmlfTcIeqe3eHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA0PR12MB8280.namprd12.prod.outlook.com (2603:10b6:208:3df::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.19; Tue, 26 Nov
+ 2024 14:38:08 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%7]) with mapi id 15.20.8158.024; Tue, 26 Nov 2024
+ 14:38:08 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Donet Tom <donettom@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH] Removed unused argument vma from migrate_misplaced_folio
+Date: Tue, 26 Nov 2024 09:38:06 -0500
+X-Mailer: MailMate (1.14r6065)
+Message-ID: <DDB8CFE4-D53C-456B-847D-5190053FA478@nvidia.com>
+In-Reply-To: <20241125075731.176573-1-donettom@linux.ibm.com>
+References: <20241125075731.176573-1-donettom@linux.ibm.com>
+Content-Type: text/plain
+X-ClientProxiedBy: BN8PR16CA0034.namprd16.prod.outlook.com
+ (2603:10b6:408:4c::47) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184a:b0:3a7:776e:93fb with SMTP id
- e9e14a558f8ab-3a79ad10bd3mr205470205ab.8.1732631789681; Tue, 26 Nov 2024
- 06:36:29 -0800 (PST)
-Date: Tue, 26 Nov 2024 06:36:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6745dced.050a0220.1286eb.0019.GAE@google.com>
-Subject: [syzbot] [v9fs?] BUG: stack guard page was hit in io_uring_enter
-From: syzbot <syzbot+f86e49ba96853e315c26@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA0PR12MB8280:EE_
+X-MS-Office365-Filtering-Correlation-Id: e29ea3af-2cb6-480b-90c8-08dd0e27f20a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PowVVNuFzrlDk0Kb6ouHK88V5hxo/y13eIMUQEVOQHOJrd0vOl8G9krqzGRL?=
+ =?us-ascii?Q?nAJvzkk6DD7BGk0BzZ/jzNwJH8iC6BVHGDe0aJQEM021Zo0J3HxOOCg1bU6h?=
+ =?us-ascii?Q?auHWHWLQSRdUyXGxFAXx+zISRfX0tfAbpKQgUieDu1slIIL4N/rOgqU5NxCo?=
+ =?us-ascii?Q?7ghskWO3FxDklGJsOaQCQ5ZZpxvTJStfctWzz5MZg1vdt3XZpWjGh190Iygj?=
+ =?us-ascii?Q?JUBo2LyXR8o+cEafY0MCRv7M5MzOu2qOlPlUzkHQk2dvJOK1osffJfV0/EZK?=
+ =?us-ascii?Q?PqoB9t5fmuGM+/IR5/nUt1zvTUyUxgYs2LJqFXtE5Fpx1x3CNYfGRSeneiqd?=
+ =?us-ascii?Q?mxACA30Xt+zTKBg7+EY5lEu8qWfz4OT48zgu7YEUL8vlSF5jd+G4mrOXFXIM?=
+ =?us-ascii?Q?kFuygjGFX3PCDt79q/+jq+UnBdx1kMlwj0YBRA66X55Y0TSnveOl0lYKsQAf?=
+ =?us-ascii?Q?Pb1q3snD2SyDG0sE/goROMAsmJdqgZIcdEpta4czyBnExjvjrZVP51Q0xlXG?=
+ =?us-ascii?Q?ix0XqOH35c83DN4hm0UF6SjX/yfwzMLdxHBp7pUuYoKLdEpyqZgiD4uDdkC4?=
+ =?us-ascii?Q?0pLqOVxo4pzAt3U7MlnJupsgm3J1qB1fob9afB45Y8A2WUT9ErF85Qz8Dn9f?=
+ =?us-ascii?Q?nsxvaX32rKwQL6mVNlf4XhA8lhPygqQIFIT+jloyTpIlb2Q2RNP9HzDr4q0s?=
+ =?us-ascii?Q?Owj/nlJCAiwy32gXDuovzbj4DifO4/ub8wtGwnuIo6ebnuidPThlod5HObMV?=
+ =?us-ascii?Q?+xoKMA/JU2JBy4SN50sREnmHj/leME2+q0bY+Uf27V+Wgck3wxX1waDkcP/t?=
+ =?us-ascii?Q?4LYoZHN1PIxpWI9gnB+8Bq1eQhFESLlSPZ4pjyneErcz9yoDozhhaJdnyAvW?=
+ =?us-ascii?Q?VAfBTF23Y024B4+AnoyOUECIEG2G1BBc6tW2G1YHjtfEQzkxTdP/GUaqAYVn?=
+ =?us-ascii?Q?cIpXZH1sVQMiJnzHVVbCc87KuR7rtTvlvQ6uXYSr1oIQk3jIduFv79o9Mo79?=
+ =?us-ascii?Q?xY6LtUhkmVl518NGfO8FchJd9AfVh4AlMXnnu4XyDll93cSMs8dKJ688SRFs?=
+ =?us-ascii?Q?pMkotuPkdfORmhtOF68uTCEsGnPWdnFddhFmooukWw/YRC6Xb8YVSm3P5Y8Y?=
+ =?us-ascii?Q?vSVnNynfPrANvzb1+q90UMjFIu6Waz43EjNJSFEF4PSuBknCzvw7tEnW1zIn?=
+ =?us-ascii?Q?zrIL1oj2GHKsv7H2LSgdS675lthdxLttLwQt+vBG5wF+DxRl918U4VCfHQFM?=
+ =?us-ascii?Q?czWgmPAM1gqYiZ9Jsj2/UHUmB8tZ6ebyfj/nXLqU0n2b5e51wg8JSKrR6JqB?=
+ =?us-ascii?Q?k6A/pUw1uVL8iyS/SgpHQ//VDxjlak5D4GhQDFKwKCfoyA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?te+hBx5JyhlIq9w5wKbthtqMfZ4t9crmrYsBK8dzQ0+BRSnhUGXvdSFpwC4p?=
+ =?us-ascii?Q?gO8jUIxV/C6sdrnhmKZVP0AbhPATrCkJmlnWFaIE4yAm5c5JvskSb0TItPD+?=
+ =?us-ascii?Q?F4xDtDmqXymfBKwv9NJq2Zqem+pF+Z2fGnl0bdQ7/ax2fTF3W4oEYd4wXuVe?=
+ =?us-ascii?Q?8V63zaYR5Uf3nuuTNqCTfNoKdRYqa3prqkgiO03M7msg0ydXld8eH+SQUl/R?=
+ =?us-ascii?Q?GPMEwo2PB3Uxb1LzpxUo+mDxrxJHR6MWE9p3TB9WSStF+OggC1HT3IvzY8YX?=
+ =?us-ascii?Q?AkSW0jW6vBK/YgiXaDx4CYqa7llLGEHZqbzmRj0YNne3F6D5+w4EbNAuFhK7?=
+ =?us-ascii?Q?x3Dwq9S4gLl7gTb0pMkkl+C8ptn/eLgxl7+LPc80ytNQPnRowY5E92+7Wzpy?=
+ =?us-ascii?Q?WY066ACnN1EnD/7oLfkFNweXfbGAGurdp0GOjcPYCaB98e52CR9soYURvAYW?=
+ =?us-ascii?Q?SG9wLoFWIaJ16XEGyrx3uL/iWstr8ep09UddUvdFZ1vP1o2EJpwq+bHVKTrJ?=
+ =?us-ascii?Q?UlEGgaHdofNUTGDStcretpKsoCtxJ7C9JV63a9B24uQ0ZSyQDolmLDF62XlT?=
+ =?us-ascii?Q?gK8qS9U2mDz9VrH5lvO8Cn3wWInlfEb8VEOJOsLiPfzwjXmpr+AB7Po4X+Wz?=
+ =?us-ascii?Q?N4HHL209h40pMrVSl6nMsGEYGn32l3xizZxPPtt6yIdPmKlWfdHBZ2nQ1dvC?=
+ =?us-ascii?Q?kCjyD3qszucKyhy0O7I/ytZwO24atLJWDG6B5BxF46Lm9MuOF15Biyekraub?=
+ =?us-ascii?Q?kxNQEpHJOXK2wk0d9PVZniu5/0RDta4887Q36zbie6oOqbWtT2UXtjx1DoYq?=
+ =?us-ascii?Q?AHMBEH8QTgdWtRp/H8Gvzit6DKhpbxQfm74arm87ZLBYWuof2vf/wtXsGlp3?=
+ =?us-ascii?Q?aSUnLpuvl6SUWNiqKKzfJBOUCgYnjgT6oJ8iw8/6fotrAJgfeVU8/P669CMR?=
+ =?us-ascii?Q?OpGzvZuyKYyITUYmy6nJCcbxE4ECP9GR8rDLqBYhbSLz849bHJ+y8xeBZ1tU?=
+ =?us-ascii?Q?i4rPIClCVGhHnhAFPURyAY4iE05vJPGOhGh1dqTkhrMneAFT0Wq9v7Gpaj12?=
+ =?us-ascii?Q?SKUrwLCIjwNPT9MP5dARTKcLeXkaRb0z4n08ZGjyS5dnH3U9IG8zrOQT/glB?=
+ =?us-ascii?Q?ejbI7i7CUQotwSGHKwjZqY2NxV6O2fXNqzTgiUXp6oeZ7rh013Mi9vMCtFlB?=
+ =?us-ascii?Q?xMMpOiZwA2sn3UvTNE8QuNyqsJgrfaMZt9HDIg+wckGeqjQua4+Yatg9eIJ5?=
+ =?us-ascii?Q?a8bFL1QqVCW2080u4WlL872EjIomI3EaCZrMjSoXqeqLYtXWT+pK3L8wRrkU?=
+ =?us-ascii?Q?k9TmCk7RFUunjLbampKFanQ36EyZFerBe1pm/yS5t+bBJyO3d21yowg4voYe?=
+ =?us-ascii?Q?rsRX8pGy4PK2YU0AyRKJcaHTQndqaioNTgAA+4I/0+0mHNhDtaV3WfbO1/aY?=
+ =?us-ascii?Q?wYXnxBlkT8CBDkAks+zKdq6csQ4snnzz+x0tTd72QTv4yJ3CAHYfCr+oxtMe?=
+ =?us-ascii?Q?rHHh9Uu/oYGKRYolYCMgQ+npRbMxafHKLeDLr0WEGG2Y2OsC1+JxlTmQdROO?=
+ =?us-ascii?Q?048q+7bERKAOsO/DjPQ=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e29ea3af-2cb6-480b-90c8-08dd0e27f20a
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 14:38:08.4807
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 71H4lhtLPa9+WTM0lNGeLfS95gC3H/I6kYHXFq7kwV3wuJ5NLJDtA522HfLjFHfi
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8280
 
-Hello,
+On 25 Nov 2024, at 2:57, Donet Tom wrote:
 
-syzbot found the following issue on:
+> Commit ee86814b0562 ("mm/migrate: move NUMA hinting fault folio
+> isolation + checks under PTL") removed the code that had used
+> the vma argument in migrate_misplaced_folio.
+>
+> Since the vma argument was no longer used in migrate_misplaced_folio,
+> this patch removed it.
+>
+> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+> ---
+>  include/linux/migrate.h | 6 ++----
+>  mm/huge_memory.c        | 2 +-
+>  mm/memory.c             | 2 +-
+>  mm/migrate.c            | 3 +--
+>  4 files changed, 5 insertions(+), 8 deletions(-)
 
-HEAD commit:    05b92660cdfe Merge tag 'pci-v6.12-fixes-2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=155e9630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=728f7ffd25400452
-dashboard link: https://syzkaller.appspot.com/bug?extid=f86e49ba96853e315c26
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Like Baolin suggested in another email, "mm/migrate:" prefix should be
+used. Otherwise, LGTM. Thanks. Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-05b92660.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/240ba8a2a878/vmlinux-05b92660.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fed8acdd322e/bzImage-05b92660.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f86e49ba96853e315c26@syzkaller.appspotmail.com
-
-BUG: TASK stack guard page was hit at ffffc90001717fd8 (stack is ffffc90001718000..ffffc90001720000)
-Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 8268 Comm: syz.0.692 Not tainted 6.12.0-rc5-syzkaller-00291-g05b92660cdfe #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:unwind_next_frame+0x76/0x20c0 arch/x86/kernel/unwind_orc.c:470
-Code: 41 5f c3 cc cc cc cc 49 8d 6d 48 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 00 18 00 00 49 8b 45 48 <48> 89 44 24 08 49 8d 45 38 48 89 c2 48 89 04 24 48 b8 00 00 00 00
-RSP: 0018:ffffc90001717fe8 EFLAGS: 00010046
-RAX: ffffffff813d7404 RBX: 0000000000000001 RCX: ffffc90001718140
-RDX: 1ffff920002e301e RSI: ffff888022fc0000 RDI: ffffc900017180a8
-RBP: ffffc900017180f0 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc900017180a8 R11: 0000000000000000 R12: fffff520002e3017
-R13: ffffc900017180a8 R14: ffffc900017180a8 R15: ffffc900017180b0
-FS:  00007f483b1d36c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90001717fd8 CR3: 000000004e7f6000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <#DF>
- </#DF>
- <TASK>
- __unwind_start+0x45f/0x7f0 arch/x86/kernel/unwind_orc.c:760
- unwind_start arch/x86/include/asm/unwind.h:64 [inline]
- arch_stack_walk+0x74/0x100 arch/x86/kernel/stacktrace.c:24
- stack_trace_save+0x95/0xd0 kernel/stacktrace.c:122
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4141
- radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
- idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
- idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
- idr_alloc+0xc1/0x130 lib/idr.c:87
- p9_tag_alloc+0x394/0x870 net/9p/client.c:321
- p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
- p9_client_rpc+0x1c3/0xc10 net/9p/client.c:691
- p9_client_read_once+0x24f/0x820 net/9p/client.c:1575
- p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
- v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
- netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
- netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
- netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
- netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
- netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
- v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
- io_iter_do_read io_uring/rw.c:771 [inline]
- __io_read+0x320/0x1190 io_uring/rw.c:865
- io_read+0x1e/0x70 io_uring/rw.c:943
- io_issue_sqe+0x175/0x13d0 io_uring/io_uring.c:1739
- io_queue_sqe io_uring/io_uring.c:1953 [inline]
- io_submit_sqe io_uring/io_uring.c:2209 [inline]
- io_submit_sqes+0x9b4/0x2530 io_uring/io_uring.c:2324
- __do_sys_io_uring_enter+0xc0f/0x1170 io_uring/io_uring.c:3343
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f483a37e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f483b1d3038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 00007f483a536058 RCX: 00007f483a37e719
-RDX: 0000000000000000 RSI: 0000000000000567 RDI: 0000000000000007
-RBP: 00007f483a3f132e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f483a536058 R15: 00007ffc2e04f068
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:unwind_next_frame+0x76/0x20c0 arch/x86/kernel/unwind_orc.c:470
-Code: 41 5f c3 cc cc cc cc 49 8d 6d 48 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 00 18 00 00 49 8b 45 48 <48> 89 44 24 08 49 8d 45 38 48 89 c2 48 89 04 24 48 b8 00 00 00 00
-RSP: 0018:ffffc90001717fe8 EFLAGS: 00010046
-RAX: ffffffff813d7404 RBX: 0000000000000001 RCX: ffffc90001718140
-RDX: 1ffff920002e301e RSI: ffff888022fc0000 RDI: ffffc900017180a8
-RBP: ffffc900017180f0 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc900017180a8 R11: 0000000000000000 R12: fffff520002e3017
-R13: ffffc900017180a8 R14: ffffc900017180a8 R15: ffffc900017180b0
-FS:  00007f483b1d36c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90001717fd8 CR3: 000000004e7f6000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	41 5f                	pop    %r15
-   2:	c3                   	ret
-   3:	cc                   	int3
-   4:	cc                   	int3
-   5:	cc                   	int3
-   6:	cc                   	int3
-   7:	49 8d 6d 48          	lea    0x48(%r13),%rbp
-   b:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  12:	fc ff df
-  15:	48 89 ea             	mov    %rbp,%rdx
-  18:	48 c1 ea 03          	shr    $0x3,%rdx
-  1c:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-  20:	0f 85 00 18 00 00    	jne    0x1826
-  26:	49 8b 45 48          	mov    0x48(%r13),%rax
-* 2a:	48 89 44 24 08       	mov    %rax,0x8(%rsp) <-- trapping instruction
-  2f:	49 8d 45 38          	lea    0x38(%r13),%rax
-  33:	48 89 c2             	mov    %rax,%rdx
-  36:	48 89 04 24          	mov    %rax,(%rsp)
-  3a:	48                   	rex.W
-  3b:	b8 00 00 00 00       	mov    $0x0,%eax
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--
+Best Regards,
+Yan, Zi
 
