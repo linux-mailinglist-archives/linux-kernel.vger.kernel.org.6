@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-422333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A509D980B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:10:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C4016311F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:10:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401DB1D45EF;
-	Tue, 26 Nov 2024 13:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQ8SeIu3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A059D980D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:11:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD2D2F32;
-	Tue, 26 Nov 2024 13:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC4C281F86
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:11:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D61E1D4354;
+	Tue, 26 Nov 2024 13:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEX0bfHM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890C82F32;
+	Tue, 26 Nov 2024 13:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732626626; cv=none; b=hffbzqjeHf/DgHzviBfcgvi1iV1OSzO32ZdzohXLXu5JlLTmEdCbnqG/A53pnxfiftxaPx71UQXYlYEByJlY9zIYx17WYaqqjlGzU59gMibL4fcUhCUAoDRr6nnjgYIh5eShWNayPZEn9mA3bZtXr/+CEQGmI5tsBvCZxr9IYX8=
+	t=1732626682; cv=none; b=QTLQFyv1iedr3e+pJ7UiYf69tG2DKMZggIBcoRiFltzPyMsak8obX+NkK9Q/j2KvBpbYqDBgWajZx3u+ZZXOjeJzmmXxm4kghnaJbDKeEgllSHVsUn747J/uXF5Qs4ZfDLhAUVQKFGX8PFHWzP9rvwLAuAZo60VN2472Ktq6TME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732626626; c=relaxed/simple;
-	bh=1OD/sS92a2krXuM4uujLs3lV6TX2gz9Vq9QjNdCTj+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RwEjfqQbzqz9/eZHPSnVKShMLrswYKd1Z0M3/Lb5cxLYFhIeLDRrtyOpdT/QbsUqyYh66I/J7mw1gqLXfwHOR/DV8+FRZAOYidt85e7Y9t/6AEP5IruiJ8xXw+L5zEXTZF/vdJGHh2Ivvz+mUQJ7yjJky7mP8zH0e7BfdxsxWXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQ8SeIu3; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732626626; x=1764162626;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1OD/sS92a2krXuM4uujLs3lV6TX2gz9Vq9QjNdCTj+g=;
-  b=TQ8SeIu3v+4DyeTqdAxfAP9+/Aer4C1K/wjpuUMz328xWpVvCY6LOx3s
-   bzLH2F41WgtiQoAU8yrflrsEn915/m/PqWRcTYEXJbMGeJSLTd7S8J8Nk
-   Dp73qzzLeeYdsswK7u8KbkS/5CsvOlDG28q3hLZl6hWECcaO/tzy50YDr
-   j4Z5JmxDn/utoh1Xxyin+qjwoF8wnr1Dy6+BptL6L5t3sIo+1yKSK6jES
-   GAN3c1Y/I78PcSRzgRbVTdTIbq/hsqTtPKzowD5dJecN6LT/avUzdWhOJ
-   wbiqGxb6Ls1yv+IsRCzXyEZuXs0cBpYf2uuA5KdmsA7Wm+8XVUmqLhthk
-   A==;
-X-CSE-ConnectionGUID: usVuv1mJSLaAkoYTbfgmmg==
-X-CSE-MsgGUID: LCaJELWFSkigrFv3at13mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32942266"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="32942266"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:10:25 -0800
-X-CSE-ConnectionGUID: C/+eW+SeRx+SjjCjwcyQyA==
-X-CSE-MsgGUID: BtKDLzmfSGqMSmpMSO0lYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="91779150"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.245.172]) ([10.245.245.172])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:10:21 -0800
-Message-ID: <706408b6-fd2c-475a-bde6-c95d0cab7360@linux.intel.com>
-Date: Tue, 26 Nov 2024 14:10:17 +0100
+	s=arc-20240116; t=1732626682; c=relaxed/simple;
+	bh=RdjUtNInTsN8apkRc/h7zF3wy/MPjPH8qpjS0p1IL6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KUJQH1i++b6+FKN/6vDCIJz4MBbhz3PW7OrYU1EaXCQySbBu2UD2CWR1XE5Y+5ndxf+o6MDMDeSNVYadMRPi2l3UXPYPO9D1UVh1+GL9HzCR7dfjdWpxcLvF5anZKMG9DASmiFAfN00vAJ32LkMr257/ppD/OBYqMGMi4DQFrio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEX0bfHM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 155AFC4CED7;
+	Tue, 26 Nov 2024 13:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732626682;
+	bh=RdjUtNInTsN8apkRc/h7zF3wy/MPjPH8qpjS0p1IL6k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jEX0bfHM+FJjTGvb6Or9Qpt2kk5GiTngdW5QfL5w31L7b+M3QgwD3PRG1WL4Z7vde
+	 7QRRT6I1JFhco+51ZPPOR1KG2Cy6tj09fNouA+wTk+R/O/4XmOcPfVIsMg9q1yuN/T
+	 Y1iun4k4BQcADSLb4BN7SAqfzUfJKCp85JB1N2tPyu8p+1EZ5sX4NaBJkFrf5FhCMZ
+	 J0V3Noo03yW78vi0x3TkiiO0L0IScsWwtxAcrj8yw8YZGe/f0C7KHQSDSsGI3YCt6Q
+	 qMHVeO+xvpJrv3Q6ka5g25yVKERbsbVuXTTBdCavv1eF34M7qePfs2YfUF8+iKGUrt
+	 Nq/lBPIJ86Zew==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da209492cso7108110e87.3;
+        Tue, 26 Nov 2024 05:11:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV7mXJD6UU+xviRpr64nxfKjeDxwnA/B1FuVTMrQmLnAnpZd2s3+wgMHbUkMJlQ+OAuDJmN1vYUvRyIvtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyotumSKwIncHJpa/ZqDehW+rshIx9rG5qOMmzgy7fHcmh7OMk6
+	kz0T9eQGH3X8vFvSXhhMR5b8k9jDFozWC8jmLAvQC3XJ4vdplfBLxHLdMpByn+J8D58O10cgNld
+	wPvcijSSOPOA6gHU1tMe6cNxqvkw=
+X-Google-Smtp-Source: AGHT+IFMdAIk8+GOf0m05hit04T6P6AJVYnAl49cueMqRPgyEQ9iG01ZtIfmibIFby1H97bbVezBYOnMioxez5EwPns=
+X-Received: by 2002:a05:6512:3e19:b0:53d:d431:74fc with SMTP id
+ 2adb3069b0e04-53dd4317532mr8313907e87.10.1732626680734; Tue, 26 Nov 2024
+ 05:11:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 5/8] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com,
- peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
- <20241125132029.7241-6-patryk.wlazlyn@linux.intel.com>
- <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
- <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com>
- <CAJZ5v0hZ8ajccb=B7P5g1+KJ+tsw5vP-e9ix7j_65WgT34H1XQ@mail.gmail.com>
- <a8d53d86-d658-4e18-bfd6-b37a2656b180@linux.intel.com>
- <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
-Content-Language: en-US
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241118110154.3711777-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20241118110154.3711777-1-linux@rasmusvillemoes.dk>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 26 Nov 2024 22:10:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ_gapAfOrReKwzjixszmCXMhCEnqVgRegJ7smCQKMm5g@mail.gmail.com>
+Message-ID: <CAK7LNAQ_gapAfOrReKwzjixszmCXMhCEnqVgRegJ7smCQKMm5g@mail.gmail.com>
+Subject: Re: [PATCH v3] setlocalversion: work around "git describe" performance
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jeff King <peff@peff.net>, Sean Christopherson <seanjc@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>>>> If you first make intel_idle provide :enter_dead() for all CPUs on all
->>>>> platforms and implement it by calling mwait_play_dead_with_hint(), you
->>>>> won't need mwait_play_dead() any more.
->>>> Crossed my mind, but because mwait_play_dead doesn't filter on Intel
->>>> vendor specifically,
->>>
->>> In practice, it does.
->>>
->>> The vendor check in it is equivalent to "if Intel".
->>
->> Actually, what about INTEL_IDLE=n?
->> We might hit acpi_idle, which would call mwait_play_dead_with_hint() now, but
->> if we don't, don't we want to try mwait_play_dead before hlt or is it too
->> unrealistic to happen?
+On Mon, Nov 18, 2024 at 8:01=E2=80=AFPM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
 >
-> In that case the hint to use would not be known anyway, so
-> hlt_play_dead() is the right choice IMV.
+> Contrary to expectations, passing a single candidate tag to "git
+> describe" is slower than not passing any --match options.
+>
+>   $ time git describe --debug
+>   ...
+>   traversed 10619 commits
+>   ...
+>   v6.12-rc5-63-g0fc810ae3ae1
+>
+>   real    0m0.169s
+>
+>   $ time git describe --match=3Dv6.12-rc5 --debug
+>   ...
+>   traversed 1310024 commits
+>   v6.12-rc5-63-g0fc810ae3ae1
+>
+>   real    0m1.281s
+>
+> In fact, the --debug output shows that git traverses all or most of
+> history. For some repositories and/or git versions, those 1.3s are
+> actually 10-15 seconds.
+>
+> This has been acknowledged as a performance bug in git [1], and a fix
+> is on its way [2]. However, no solution is yet in git.git, and even
+> when one lands, it will take quite a while before it finds its way to
+> a release and for $random_kernel_developer to pick that up.
+>
+> So rewrite the logic to use plumbing commands. For each of the
+> candidate values of $tag, we ask: (1) is $tag even an annotated
+> tag? (2) Is it eligible to describe HEAD, i.e. an ancestor of
+> HEAD? (3) If so, how many commits are in $tag..HEAD?
+>
+> I have tested that this produces the same output as the current script
+> for ~700 random commits between v6.9..v6.10. For those 700 commits,
+> and in my git repo, the 'make -s kernelrelease' command is on average
+> ~4 times faster with this patch applied (geometric mean of ratios).
+>
+> For the commit mentioned in Josh's original report [3], the
+> time-consuming part of setlocalversion goes from
+>
+> $ time git describe --match=3Dv6.12-rc5 c1e939a21eb1
+> v6.12-rc5-44-gc1e939a21eb1
+>
+> real    0m1.210s
+>
+> to
+>
+> $ time git rev-list --count --left-right v6.12-rc5..c1e939a21eb1
+> 0       44
+>
+> real    0m0.037s
+>
+> [1] https://lore.kernel.org/git/20241101113910.GA2301440@coredump.intra.p=
+eff.net/
+> [2] https://lore.kernel.org/git/20241106192236.GC880133@coredump.intra.pe=
+ff.net/
+> [3] https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b109b2=
+.1730337435.git.jpoimboe@kernel.org/
+>
+> Reported-by: Sean Christopherson <seanjc@google.com>
+> Closes: https://lore.kernel.org/lkml/ZPtlxmdIJXOe0sEy@google.com/
+> Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Tested-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Closes: https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b1=
+09b2.1730337435.git.jpoimboe@kernel.org/
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+> v3:
 
-Fair, it's not known, but we could fallback to the old, cpuid leaf 0x5 based
-algorithm, which works on a lot of hardware.
+Applied to linux-kbuild because this is better than v4 at least.
 
-That being said, I think it's cleaner to get rid of the old algorithm entirely
-and rely on idle drivers to do the right thing from this point forward.
-
-If we could bring the CPU out of the mwait loop into the hlt loop somehow (via
-interrupt for example) we could remove the old kexec hack altogether.
+Thanks.
 
 
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
