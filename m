@@ -1,195 +1,170 @@
-Return-Path: <linux-kernel+bounces-423886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031399DADEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:32:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA739DADEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BDE3B2782F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C072849B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668C202F72;
-	Wed, 27 Nov 2024 19:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2BtrIqN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFF8201270;
+	Wed, 27 Nov 2024 19:32:32 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164CA6A8D2;
-	Wed, 27 Nov 2024 19:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18A8201116
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735931; cv=none; b=t2gIUWEqmL7qf4ygF/FKPkEeNTyrx+ZLK9c5UtKb2iBmASreoq2lp/gLjUIT3nCU/ieC13j8RCidRw1mZRJGfvydtaXLM4bfpOH6cL8dtY3EB4oCdqxEma59EZz5WaeuXKcwqrhUJcwVYMAdk1U4YpANYyhZzd6B7i5UG3jqLck=
+	t=1732735952; cv=none; b=ceSim2xbFTLb0cMRjVQXceN0t9MxCJPta0T/255Y85PHtVzCTXb6scuKdwtTgOnyLTdZoKWrJSvGVDpGbCJUUtBqAdq56jgc2AT1h5PVZUOIEHAJuyWaStCAvBkx4hU/yj3Xaw1j9iCYDVPojfmWm+ZEJ1IVFBNXh/tSvuriqa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735931; c=relaxed/simple;
-	bh=xrciW+EMhZ5UEofbJw9NwB4YNk6WJ7ZsUg3ugalAKtY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JGydcpK62W4yA/BawQoJzSI8k5mru11GP6tVcjQiqEre9YwwCvgb4q05Lv7rmHOeb39M2OArWZoAzxTFIgP+FuOf18ToGWudbNlHuTxmBNsXSbDp0mdl1XFP4zvaEX+zKsRuSD+BB7Glk0+CbMg/qvVVr3g3FquYGbozBK3rp+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X2BtrIqN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD69C4CED2;
-	Wed, 27 Nov 2024 19:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732735930;
-	bh=xrciW+EMhZ5UEofbJw9NwB4YNk6WJ7ZsUg3ugalAKtY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X2BtrIqNGPOvV+49M5YnEnvMfq90m+ylhD7PzWNtlQWXRcWLiIC9o7ibIu7Z+6NCF
-	 kcXzlV4NXbHYexopnI8wyMqZtXl1aARG1Kv+1kHo2QdWtEH8r51A6kx0Z+b8YMEuGQ
-	 KkVWB5pfPFETZ3jygkOvTt1oTUJ7ox8ovqX6d1E+iA+5p2Dg3oRun7qGKNbz7lmsz9
-	 P2yGA8boYanYTYFxQR6QsePoSp98SjRizDnHD/Y6HoJ2E4HX1u+AiXq7pnGqhQjajY
-	 UFL0t9n5dlc0Yh9Rql7BGoHCScG0i7PhlQ+71XDRGrapyLXfaRB16QrJ7c3W0qJT2C
-	 zsuLVCEMA8n/A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tGNlf-00GLsr-Kw;
-	Wed, 27 Nov 2024 19:32:07 +0000
-Date: Wed, 27 Nov 2024 19:32:06 +0000
-Message-ID: <867c8ov5ft.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Will Deacon <will@kernel.org>,
-	Zi Yan <ziy@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev,
-	nvdimm@lists.linux.dev,
-	sparclinux@vger.kernel.org,
-	x86@kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v4 24/26] arch_numa: switch over to numa_memblks
-In-Reply-To: <20240807064110.1003856-25-rppt@kernel.org>
-References: <20240807064110.1003856-1-rppt@kernel.org>
-	<20240807064110.1003856-25-rppt@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1732735952; c=relaxed/simple;
+	bh=RIGEfs9cNJ/9uv+5pAUE8pSQD4FYzRXcbgOfF0nVgqA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GmW5FBMaNwUWXMwRBRPIbfI7XsujllHQu8lfej75FfFw2wZ/HP3I+SBcYfKDOPAykxQIerPHOx4wYc9HL4bbxamKbsHFB1uJmQRTao9SDDxNWid5hJ8CykmL2bvvd/0kHcXX/gK88wuJ4IpUdewfPx3BPuT0xnGRQCs9gJdMKF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a768b62268so595385ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:32:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732735950; x=1733340750;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4NFRVBAF5tccxDKcM9k5a2o73zbgAoDuTHDRA7ssiBA=;
+        b=L4OQ2qB0mXKKRpUzjnKhuz+Fs6XLVzVQ5PunKB8vvFiJ5wjr23hAV03kplflVTphJU
+         OgrzEInlCiGdNGYlu/EiuNdzoaM0HLRMFrbtvvk6gCpopvOE+HhZ1/nJ/YkOldTPQjC7
+         sd6wW1dTl+/XuT43MU+ZIuj2qaqWMmPEjw6bnj7SySHc2MD4YPupWXiLuQMZNgOe9fjB
+         3qPySRwCVPmXKWld1FX0/lmmfjIp3e5ru6uU+gBNbV83iLLvY6WAt5ufKa77HsUEyrxj
+         2Ll3S2T/gU0rup/WTIaUQw2iDNMaS90L+/H6W0F/ZMOMkqYSchEV2d4gl627ElQ3AeYU
+         OoKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYq69iRX4zhCbJs2p0ENg9gBCxuzyeERBSrtqEZqISbIaU3wDLvXQkYZyHq2yVbGgobvgm/Wemp8cAl4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIMT0/M+zrzc1W21f6XhxKAX/kNZ9D8uXkR7NCIQbqaTEAiaIf
+	c4NPv1Js6cod7+E4Ra18DrR8vFT60BcO5h4/QI5sOi+7HzkKGtDIUekvfc6E9KxV6DW6CxYaG2Z
+	oiFaDvMYljOoH+71g36RIpGRrBNDf1h01EHtimvl2GpnsxyxCVsS2ZY4=
+X-Google-Smtp-Source: AGHT+IGbZHRFmksDmqi20oW+VFs2UopXzQs78egsJs6/YZom6e5Wu2t+G1qo/c0uxnF9JbE1+f66IQz4Mxua0OWUY1bBUGJHzaqg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rppt@kernel.org, linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, andreas@gaisler.com, akpm@linux-foundation.org, arnd@arndb.de, bp@alien8.de, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, dan.j.williams@intel.com, dave.hansen@linux.intel.com, david@redhat.com, davem@davemloft.net, dave@stgolabs.net, gregkh@linuxfoundation.org, hca@linux.ibm.com, chenhuacai@kernel.org, mingo@redhat.com, jiaxun.yang@flygoat.com, glaubitz@physik.fu-berlin.de, jonathan.cameron@huawei.com, corbet@lwn.net, mpe@ellerman.id.au, palmer@dabbelt.com, rafael@kernel.org, robh@kernel.org, samuel.holland@sifive.com, tsbogend@alpha.franken.de, tglx@linutronix.de, gor@linux.ibm.com, will@kernel.org, ziy@nvidia.com, devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, linux-riscv@lists.infradead.org, linux-s390@vger.k
- ernel.org, linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org, Jonathan.Cameron@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:156f:b0:3a7:172f:1299 with SMTP id
+ e9e14a558f8ab-3a7c5567d12mr44645235ab.12.1732735949811; Wed, 27 Nov 2024
+ 11:32:29 -0800 (PST)
+Date: Wed, 27 Nov 2024 11:32:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674773cd.050a0220.21d33d.0027.GAE@google.com>
+Subject: [syzbot] [gfs2?] KMSAN: uninit-value in gfs2_quota_init (2)
+From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mike,
+Hello,
 
-Sorry for reviving a rather old thread.
+syzbot found the following issue on:
 
-On Wed, 07 Aug 2024 07:41:08 +0100,
-Mike Rapoport <rppt@kernel.org> wrote:
-> 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Until now arch_numa was directly translating firmware NUMA information
-> to memblock.
-> 
-> Using numa_memblks as an intermediate step has a few advantages:
-> * alignment with more battle tested x86 implementation
-> * availability of NUMA emulation
-> * maintaining node information for not yet populated memory
-> 
-> Adjust a few places in numa_memblks to compile with 32-bit phys_addr_t
-> and replace current functionality related to numa_add_memblk() and
-> __node_distance() in arch_numa with the implementation based on
-> numa_memblks and add functions required by numa_emulation.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> [arm64 + CXL via QEMU]
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->  drivers/base/Kconfig       |   1 +
->  drivers/base/arch_numa.c   | 201 +++++++++++--------------------------
->  include/asm-generic/numa.h |   6 +-
->  mm/numa_memblks.c          |  17 ++--
->  4 files changed, 75 insertions(+), 150 deletions(-)
->
+HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=140fe530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ce1e2eda2213557
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fb37b567267511a9e11
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120fe530580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119ae778580000
 
-[...]
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2fcdec73c0f3/disk-9f16d5e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d4dc8d1847e1/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/db0e04822d2c/bzImage-9f16d5e6.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/c42d45c3f3cb/mount_0.gz
 
->  static int __init numa_register_nodes(void)
->  {
->  	int nid;
-> -	struct memblock_region *mblk;
-> -
-> -	/* Check that valid nid is set to memblks */
-> -	for_each_mem_region(mblk) {
-> -		int mblk_nid = memblock_get_region_node(mblk);
-> -		phys_addr_t start = mblk->base;
-> -		phys_addr_t end = mblk->base + mblk->size - 1;
-> -
-> -		if (mblk_nid == NUMA_NO_NODE || mblk_nid >= MAX_NUMNODES) {
-> -			pr_warn("Warning: invalid memblk node %d [mem %pap-%pap]\n",
-> -				mblk_nid, &start, &end);
-> -			return -EINVAL;
-> -		}
-> -	}
->  
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com
 
-This hunk has the unfortunate side effect of killing my ThunderX
-extremely early at boot time, as this sorry excuse for a machine
-really relies on the kernel recognising that whatever NUMA information
-the FW offers is BS.
+gfs2: fsid=syz:syz.0: first mount done, others may mount
+syz-executor205: attempt to access beyond end of device
+loop0: rw=12288, sector=2251799813685248, nr_sectors = 8 limit=32768
+=====================================================
+BUG: KMSAN: uninit-value in gfs2_metatype_check_i fs/gfs2/util.h:125 [inline]
+BUG: KMSAN: uninit-value in gfs2_quota_init+0x22c4/0x2950 fs/gfs2/quota.c:1432
+ gfs2_metatype_check_i fs/gfs2/util.h:125 [inline]
+ gfs2_quota_init+0x22c4/0x2950 fs/gfs2/quota.c:1432
+ gfs2_make_fs_rw+0x4cf/0x6a0 fs/gfs2/super.c:159
+ gfs2_fill_super+0x43f5/0x45a0 fs/gfs2/ops_fstype.c:1274
+ get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
+ get_tree_bdev+0x37/0x50 fs/super.c:1659
+ gfs2_get_tree+0x5c/0x340 fs/gfs2/ops_fstype.c:1330
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Reverting this hunk restores happiness (sort of).
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4774
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2344 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2351
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1009
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1951
+ gfs2_getbuf+0x23f/0xcd0 fs/gfs2/meta_io.c:142
+ gfs2_meta_ra+0x17f/0x7b0 fs/gfs2/meta_io.c:532
+ gfs2_quota_init+0x78d/0x2950 fs/gfs2/quota.c:1429
+ gfs2_make_fs_rw+0x4cf/0x6a0 fs/gfs2/super.c:159
+ gfs2_fill_super+0x43f5/0x45a0 fs/gfs2/ops_fstype.c:1274
+ get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
+ get_tree_bdev+0x37/0x50 fs/super.c:1659
+ gfs2_get_tree+0x5c/0x340 fs/gfs2/ops_fstype.c:1330
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-FWIW, I've posted a patch with such revert at [1].
+CPU: 0 UID: 0 PID: 5797 Comm: syz-executor205 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
-Thanks,
 
-	M.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[1] https://lore.kernel.org/r/20241127193000.3702637-1-maz@kernel.org
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Without deviation from the norm, progress is not possible.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
