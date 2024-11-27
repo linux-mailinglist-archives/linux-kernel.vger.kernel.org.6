@@ -1,255 +1,167 @@
-Return-Path: <linux-kernel+bounces-423597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 427959DAA28
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 386929DAA2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DCA3B21E1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:50:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA494B21C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12D91FF7AA;
-	Wed, 27 Nov 2024 14:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC171FF7BF;
+	Wed, 27 Nov 2024 14:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+KtNtRM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="cqc0hW1u"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11527B652;
-	Wed, 27 Nov 2024 14:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A871FF7AB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732719021; cv=none; b=Kh+5HHfpNMdRMdKOpnPRepA9pFq+p0UriRp949ruDp2YzQp3/Gjp9kP9wLkTZE7lRp7vy4XCUL/7F37dR/pacJeF+TWhtmvzunvV9kGS54aKxfH5fAL5HVNIKIxY6VItFgX+ns3OutUuIFxouSh8xu/6XmhqIL9qE/7wRQpTRBA=
+	t=1732719090; cv=none; b=PahgRd6kWy0zvIy8eGExt7k7guhTbOsPyoPGGmAfYZELA+GaL19vhz9LE0Xpz0mp9FtswYeUAovLo0oNyu2UavEeui+K34X9BqzuvafzEnTU8u0PIggR8fCVsrO5IRjYyvQLqmHsH4/qnsOFDan1GprQ+GqJaKV59Tn+pF+9wLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732719021; c=relaxed/simple;
-	bh=U2ecL/KEEP79Jt7wprQzaK3Tla/TiL0FGSn6os/og+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9QZrzYYiLQA3V6MP7R7GM1bQK+ffS0MQ55eCki5u8ty7bp9k3cUmXBuPK5KDeJsguP/HTrj2qcyzevPJn+jYCSoE++znDpJIQ0tA/jqNWBpaAzeuPjFNsmutHLnLI2znWo/fLeBc4Cok9JRo/DKoA5BVVBQNNK8n44bNRO2N44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+KtNtRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 605F3C4CECC;
-	Wed, 27 Nov 2024 14:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732719019;
-	bh=U2ecL/KEEP79Jt7wprQzaK3Tla/TiL0FGSn6os/og+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X+KtNtRMvjSlNWfdV06UDwOYFuqvopZwRoBM/jIUmaqaSKpf52pvM5vDZyzy+hybL
-	 PuCerNneQGz29SjTYigCYcZ24ofVthHPnJAa7oSNFJMBHyTkr8H7ifieAund5XEYlL
-	 ONjQIjvW97MQNc72Xw5ogC568FuZS+pgjCNsJbpE0sR/y05Sd4ubcqCd1OnZ8ggKb4
-	 aCRi0VV21Tc76qzMyaXVBF7H3DNTDdQ1r/OlGIT6MQfWJRp3tMlHEa/6SRweHcioCW
-	 BXg68Ai7dXus9d5tOuWPJFoZi6sLZ+OwaeYi9D1vdIzc/dTId1CwvbEbWcYuFWau5a
-	 Pd0+lB8LvUTsA==
-Date: Wed, 27 Nov 2024 08:50:17 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	p.zabel@pengutronix.de, cassel@kernel.org,
-	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
- bindings
-Message-ID: <20241127145017.GA3473844-robh@kernel.org>
-References: <20241126155119.1574564-1-christian.bruel@foss.st.com>
- <20241126155119.1574564-2-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1732719090; c=relaxed/simple;
+	bh=8IPmXPA9vlrfIWt+Un6Qmb35TWs/KQ1dfAq90W49uMg=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C74OEYUsGesYZYZdppG/7ojBKor8xOp/E35+6EuJ8WNmlcNA9EZpryeHey6gNgwPUSIpdWoNdP4lSHklAWjey5OxVxvqxpwlTmY02vGYra1yELpUab88HUAghp6BWj2f/ttjzZR8wAUiXSc8lu/FhZfnjV+Ev6F+OW4gLKRYCr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=cqc0hW1u; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5747340CE5
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1732719083;
+	bh=ddTmmaktStUX+KyiWQA7QlRxka08sVdAlnNv34gi4rQ=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=cqc0hW1uD0jRhYLJnPXSGUFUDywfizbkPvUkImeQQTLFw7g3vMnMX7TC8B8F1h9Qs
+	 nO/3eFpVNdln4gZWZE5brKmpoyrIuXvscAUoYC7uzXJr3LqhhHuraMzWacRBbkRaqb
+	 iT0lNFSW83dappjtk0AN4aj2aVSqC8LcHt18bnmJmMoxrCozq4pVYEigbF9op+ZVX9
+	 YOXm1R4Y3vXBXZ6Y+gspd3arqac7YButyD4EEshSG5fc8AYlCqM70612zbwnU7wAI6
+	 nIXRT55O9rDcStbxIcbP+rsVyEXBvvdmVPhsOahj4N66+jzf+xa9lbBdTnYl3wGpIB
+	 BYyZb/bXq8SUA==
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5f1d5f7afd4so650127eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:51:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732719081; x=1733323881;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ddTmmaktStUX+KyiWQA7QlRxka08sVdAlnNv34gi4rQ=;
+        b=WfyihaaOkDhsOnj4URRja7rTN46VWbwGdJPN/wQJ8wL8VVH67cqC6WAbP29Au57y3K
+         tO54eOAyVdJmI8OggB/unQlZtYWNlpxZYS3Bs+UkHljpHcsAYFnF2CRQwWCNElm845o0
+         XLFTqYBLjkmFzzQYx1SXt5jYBDPcHx61Q42iJCAjKElD2M8uYIDo3xQsbQGcSpDx8XGW
+         zIgHL/sVZqai8yq7E4vMVROStV4fMN3I7CR8Qfuyw2xzC0xEdJWDgNWKdXXl9Sp0Jzby
+         jq1U0EpBn4BpCD92Z8MEO2/EqcQJNEDElIra/K6hLSKUbTVHLU2tCGPCZuEhAUGk/iB7
+         x00Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXvRLHqhOjZ8f2EYYm0dHekSizkOGb8bYhaVyUCiOJuP9fLjMjpsrTBohi6yytK1F211mFZ8uWTG2cWWok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzq/GUN1a3uBKw3aMH1khROxrHt6D/MV9tCcVyys5Q3qA3F3aV
+	bZsdqJ5iKDGmwWPf56eK5q/E6Ayzdx5Xae91u/W/KoXYisgqWEpzWuAsutltQ3aF31QwhD4cvjk
+	G1CFLvC2Vyjoo+syNzaNeCk8Bv5v5eUUrWoPiQ0m084UCpMlUwuF8d7QojsZ6Jw6JY772yUW8Pm
+	xnbgSEg5qjfstYke1bWJCVbqvf4/v9RzB70L/YkN1gprljy9vo2utc
+X-Gm-Gg: ASbGncuUrqrz9vlq/+z+gbzB87jzFF3fHwTav3W3PNutNjkeesqFkLoVZL7J5NNta6L
+	D2N7G178FO8/ceSFfjogFSEHeFXsYRh+QiJ7In4HwVV495aUX6OFsMDg9hRLa
+X-Received: by 2002:a05:6820:4981:b0:5f1:fbef:c868 with SMTP id 006d021491bc7-5f1fc43a130mr3684977eaf.0.1732719081288;
+        Wed, 27 Nov 2024 06:51:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEfFJGOrjEK1lKzXEW/QXPfJgWZfDO/+kYkPBQ8RDpwNJVjReUG8X0KbLCz17ehyjwvJu+WybHbfVyct/J5soQ=
+X-Received: by 2002:a05:6820:4981:b0:5f1:fbef:c868 with SMTP id
+ 006d021491bc7-5f1fc43a130mr3684952eaf.0.1732719080947; Wed, 27 Nov 2024
+ 06:51:20 -0800 (PST)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 27 Nov 2024 06:51:20 -0800
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20241124-upstream_s32cc_gmac-v6-9-dc5718ccf001@oss.nxp.com>
+References: <20241124-upstream_s32cc_gmac-v6-0-dc5718ccf001@oss.nxp.com> <20241124-upstream_s32cc_gmac-v6-9-dc5718ccf001@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126155119.1574564-2-christian.bruel@foss.st.com>
+Mime-Version: 1.0
+Date: Wed, 27 Nov 2024 06:51:20 -0800
+Message-ID: <CAJM55Z9PZH3797=gvRWquHFSE7YOsO0-bcOBFjBETCiQW-YURw@mail.gmail.com>
+Subject: Re: [PATCH RFC net-next v6 09/15] net: dwmac-starfive: Use helper rgmii_clock
+To: Jan Petrous via B4 Relay <devnull+jan.petrous.oss.nxp.com@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Vinod Koul <vkoul@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>, 
+	Minda Chen <minda.chen@starfivetech.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>, 
+	Keyur Chudgar <keyur@os.amperecomputing.com>, Quan Nguyen <quan@os.amperecomputing.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, 
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 26, 2024 at 04:51:15PM +0100, Christian Bruel wrote:
-> Document the bindings for STM32MP25 PCIe Controller configured in
-> root complex mode.
-> 
-> Supports 4 legacy interrupts and MSI interrupts from the ARM
-> GICv2m controller.
-> 
-> STM32 PCIe may be in a power domain which is the case for the STM32MP25
-> based boards.
-> 
-> Supports wake# from wake-gpios
-> 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+>
+> Utilize a new helper function rgmii_clock().
+>
+
+Thanks!
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
 > ---
->  .../bindings/pci/st,stm32-pcie-common.yaml    | 45 +++++++++
->  .../bindings/pci/st,stm32-pcie-host.yaml      | 99 +++++++++++++++++++
->  2 files changed, 144 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
->  create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
-> new file mode 100644
-> index 000000000000..479c03134da3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/st,stm32-pcie-common.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STM32MP25 PCIe RC/EP controller
-> +
-> +maintainers:
-> +  - Christian Bruel <christian.bruel@foss.st.com>
-> +
-> +description:
-> +  STM32MP25 PCIe RC/EP common properties
-> +
-> +properties:
-> +  clocks:
-> +    maxItems: 1
-> +    description: PCIe system clock
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  phy-names:
-> +    const: pcie-phy
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  access-controllers:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    description: GPIO controlled connection to PERST# signal
-> +    maxItems: 1
-> +
-> +required:
-> +  - clocks
-> +  - resets
-> +  - phys
-> +  - phy-names
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-> new file mode 100644
-> index 000000000000..18083cc69024
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/st,stm32-pcie-host.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STM32MP25 PCIe root complex driver
-> +
-> +maintainers:
-> +  - Christian Bruel <christian.bruel@foss.st.com>
-> +
-> +description:
-> +  PCIe root complex controller based on the Synopsys DesignWare PCIe core.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> +  - $ref: /schemas/pci/st,stm32-pcie-common.yaml#
-> +
-> +select:
-
-You don't need select.
-
-> +  properties:
-> +    compatible:
-> +      const: st,stm32mp25-pcie-rc
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  compatible:
-> +    const: st,stm32mp25-pcie-rc
-> +
-> +  reg:
-> +    items:
-> +      - description: Data Bus Interface (DBI) registers.
-> +      - description: PCIe configuration registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: config
-> +
-> +  num-lanes:
-> +    const: 1
-
-Not required, so what's the default? If it can only ever be 1, then why 
-do you need the property?
-
-> +
-> +  msi-parent:
-> +    maxItems: 1
-> +
-> +  wake-gpios:
-> +    description: GPIO controlled connection to WAKE# input signal
-> +    maxItems: 1
-> +
-> +  wakeup-source: true
-> +
-> +dependentRequired:
-> +  wakeup-source: [ wake-gpios ]
-> +
-> +required:
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +  - ranges
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/phy/phy.h>
-> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
-> +
-> +    pcie@48400000 {
-> +        compatible = "st,stm32mp25-pcie-rc";
-> +        device_type = "pci";
-> +        num-lanes = <1>;
-> +        reg = <0x48400000 0x400000>,
-> +              <0x10000000 0x10000>;
-> +        reg-names = "dbi", "config";
-> +        #interrupt-cells = <1>;
-> +        interrupt-map-mask = <0 0 0 7>;
-> +        interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <0 0 0 2 &intc 0 0 GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <0 0 0 3 &intc 0 0 GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <0 0 0 4 &intc 0 0 GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +        ranges = <0x01000000 0 0x10010000 0x10010000 0 0x10000>,
-> +                 <0x02000000 0 0x10020000 0x10020000 0 0x7fe0000>,
-> +                 <0x42000000 0 0x18000000 0x18000000 0 0x8000000>;
-> +        clocks = <&rcc CK_BUS_PCIE>;
-> +        phys = <&combophy PHY_TYPE_PCIE>;
-> +        phy-names = "pcie-phy";
-> +        resets = <&rcc PCIE_R>;
-> +        msi-parent = <&v2m0>;
-> +        wakeup-source;
-> +        wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-> +        reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-> +        access-controllers = <&rifsc 68>;
-> +        power-domains = <&CLUSTER_PD>;
-> +    };
-> +
-> -- 
-> 2.34.1
-> 
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c | 19 ++++---------------
+>  1 file changed, 4 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+> index 421666279dd3..0a0a363d3730 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+> @@ -34,24 +34,13 @@ struct starfive_dwmac {
+>  static void starfive_dwmac_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+>  {
+>  	struct starfive_dwmac *dwmac = priv;
+> -	unsigned long rate;
+> +	long rate;
+>  	int err;
+>
+> -	rate = clk_get_rate(dwmac->clk_tx);
+> -
+> -	switch (speed) {
+> -	case SPEED_1000:
+> -		rate = 125000000;
+> -		break;
+> -	case SPEED_100:
+> -		rate = 25000000;
+> -		break;
+> -	case SPEED_10:
+> -		rate = 2500000;
+> -		break;
+> -	default:
+> +	rate = rgmii_clock(speed);
+> +	if (rate < 0) {
+>  		dev_err(dwmac->dev, "invalid speed %u\n", speed);
+> -		break;
+> +		return;
+>  	}
+>
+>  	err = clk_set_rate(dwmac->clk_tx, rate);
+>
+> --
+> 2.47.0
+>
+>
 
