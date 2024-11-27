@@ -1,155 +1,154 @@
-Return-Path: <linux-kernel+bounces-424045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AB89DAFE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:35:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA1E162968
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:35:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358F61990D8;
-	Wed, 27 Nov 2024 23:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iV8hwQfJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E7E9DAFE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:38:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795B1193432
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732750539; cv=none; b=c+qs45Yiyqh/cxuF0uKYwVG2T8h0IkBYU9UA/87o3lb82E5z7DHXD0O2EzDbJQyvqX67mwcqt8LKwAVDqzSVCqhVPAB5xEsWpDfKQd9tZ9MsfE+wA4HmGla8wThRE1bTaC2Da64WBCj/QFXWo3KJ0Q94Oua+24R2NLfUDhN+/x0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732750539; c=relaxed/simple;
-	bh=liH9zGaIWgK7a5JT7Q4wKhBA1YpRT8vrGoOgfa2R1lE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kKZSP9tUd7KDIKfvQe0O9awesZGoDIy2gNficTAa1liqTK7lr2dDZmMRmYfKy4YKvaeRE7yj49vmbdaU5QrsHcyfOUERFvWwcv/J1ew6wfgo2z9vdb8ft3TfNONE6+tEVZFrZD1tikxZOfkG5Q7qdqk3/0cPtpIsRAUdDVpaZg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iV8hwQfJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732750536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wDyrVpPbQdpGgZ56QjXDlJ+uyzgClDFKcgQedrvZBNo=;
-	b=iV8hwQfJIx4QznuRykKt98QA9HJHBQZRuuwxexL4b6UCRvaKgmZWh7rpxV04Qp2jtg4u15
-	6gFawi//hn3OKARRZbrGHl3mXuQjwIm3xVf7pfEoc42TEL+nrXYo1znv3yUe6vkXBxagsK
-	wLpjsRZ9jcGC2/7VDOVDPt7eaG02Bqg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-Tqq-A3j9PaWhkh-iUqufLQ-1; Wed,
- 27 Nov 2024 18:35:32 -0500
-X-MC-Unique: Tqq-A3j9PaWhkh-iUqufLQ-1
-X-Mimecast-MFC-AGG-ID: Tqq-A3j9PaWhkh-iUqufLQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096C8281D7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:38:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70C11993B9;
+	Wed, 27 Nov 2024 23:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K6wUeIa4"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B3001953942;
-	Wed, 27 Nov 2024 23:35:31 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.88.24])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1A7E619560A3;
-	Wed, 27 Nov 2024 23:35:20 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] x86/nmi: Use trylock in __register_nmi_handler() when in_nmi()
-Date: Wed, 27 Nov 2024 18:34:55 -0500
-Message-ID: <20241127233455.76904-1-longman@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B4F197A82
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732750728; cv=none; b=KUbw7Si+hPHosKFXBz2WWdwArqc8H6aiK5VDenhzlzDE3fYAnOyEudfJq9K+nfePAOvkJq9AWKFJheA2VwpQaPea9cMDkAwDTYQsN5tQyjrRzSBb8ko1R02jcoLNgOlvoZLOsrpmd6DeItOxlPG7QKS0g2nVnVCNwZd30CTkRHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732750728; c=relaxed/simple;
+	bh=wWxmOxXxJwf00+naJRgY3wwuTvdFhzk21ESuvkmq7a0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fmwm019qf+bzmWVw82/f6GvS4X5PkoYfcOwbfpB+hjvQINrn5B3nHIiTbcNYNx2CiK4v6zUx4n880bT+5ch7/BUsW7FopRRlKOy/GVq/SC49YpCQYRCyB1BZaJayEGwgUXkUC4tvPmYxca16TGutL8zs/9fCEU2iJdWcUE1sZ0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K6wUeIa4; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-211eb2be4a8so9205ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:38:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732750726; x=1733355526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E3WtH4trghzSdXXPfTxGxbair0NPafuCGwouqPLkhJM=;
+        b=K6wUeIa4zq75yNdS86uyL1sn9GSlwvgstwcGKNhdJDGXdh+zalQFQmUd8jildBnRS/
+         7+eLe1Umu9OWrOHV7DzPjzv7zzeffRPbeVAWSFbnPD93WtXaftHwv6nHyQqV13IdVyUt
+         kD6ewDT57RoJSf//Gr8wLolaiuFHYE+HcspaFtf/VDXxoKGvra32XmlTOS3eipfpXP1V
+         IK/p+it1wVuqh3wGpB4m3Ie9GGMKWTrPXEx9KRSVHsNDJGbc9jxeT0pHj44/8RyGKB9Y
+         SqU+23XEQVKKe3ZRlwh8PyAb40sU6mZCrzlK6dhFVM9e/uktOI3gaavf/2gv80HqC+Qn
+         Lytg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732750726; x=1733355526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E3WtH4trghzSdXXPfTxGxbair0NPafuCGwouqPLkhJM=;
+        b=slnBl4r+Qmqbc1GoExS1NbU0duGoy8znSH32OvkR6TO4Vi/56LITo5E4YbQ21xJQAx
+         apf1BmGQaDzQ/92qDnfHovn2Ktrnkr9oos+6Pe6g4LzKauQcFO1YEUCMk7Z4Cip48Cro
+         OYEVtsPu5PGQzn2ZSZbc7gGLinmYkWFQNo4w6maq55uQk4Ojs7hqKNcdd3HHWc4hEphT
+         DYJhXdGPCvjWA0JsLv3JRnlF8lapBAL4LpqdgB7D4IUWqVqTc1PrVd8/TBWNMHPdfVqB
+         H5fjs4RY13G3+lgCWuUy0Jh32M2N3rYm/oWpMJ+ZG90u0nYcv1ZHxHZIln+s4StfVzb/
+         CA2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWMGL47G9C8/MfY/CPmyyJ6RJWKCZItn2yFVh5mjmusuHHFtYEFd4u7oh9nWcreqb91nH5kVUzjEmG3d5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yynvwcasplw/JmZDuMZvgRo7ccTjris2tg+PwPn/lS83Wv9GEZ2
+	ZTOVuvJoPlOXV/ZYT/5xHKt78Z2c7aSO11yVcf0bhbLxvQFH2Z3Rp9vOfrnwCDWmsZUZOuWiq7l
+	l6267y7rQEbRjjGU3+SC/rOgZ/WB+9ktnNaPV
+X-Gm-Gg: ASbGncsSjKMKpSuQR5CVMldrkxZopOSRU2Ve85/Deh9OzxBBMEH/PbfFsS/mTKXHluw
+	qN5Jdkp0l6rzF87zgp8D11lsB7AWOAW3aS8gMUAdbQWE58nFnsXbR3BsQn48=
+X-Google-Smtp-Source: AGHT+IGbmo+NCTIyHSzrGZMJ1PCr9HDG5gkQ1VMf9lBo06pyyRaJckR1C2O+1rCJt37WnntNz5FmHQXMt81lGEnrPtg=
+X-Received: by 2002:a17:903:947:b0:215:1659:1721 with SMTP id
+ d9443c01a7336-2151f408939mr742585ad.12.1732750725717; Wed, 27 Nov 2024
+ 15:38:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20241127025728.3689245-1-yuanchu@google.com> <20241127025728.3689245-10-yuanchu@google.com>
+ <CABVzXAnbSeUezF_dqk2=6HGTCd09T4rd6AssP7-dbCgZSkZgiw@mail.gmail.com>
+In-Reply-To: <CABVzXAnbSeUezF_dqk2=6HGTCd09T4rd6AssP7-dbCgZSkZgiw@mail.gmail.com>
+From: Yuanchu Xie <yuanchu@google.com>
+Date: Wed, 27 Nov 2024 15:38:29 -0800
+Message-ID: <CAJj2-QHZvSKoErQq-oQoZLbDMuJwwdAQef-B5=WKQS9iUE+gTQ@mail.gmail.com>
+Subject: Re: [PATCH v4 9/9] virtio-balloon: add workingset reporting
+To: Daniel Verkamp <dverkamp@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, Khalid Aziz <khalid.aziz@oracle.com>, 
+	Henry Huang <henry.hj@antgroup.com>, Yu Zhao <yuzhao@google.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Gregory Price <gregory.price@memverge.com>, 
+	Huang Ying <ying.huang@intel.com>, Lance Yang <ioworker0@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Mike Rapoport <rppt@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Daniel Watson <ozzloy@each.do>, cgroups@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The __register_nmi_handler() function can be called in NMI context from
-nmi_shootdown_cpus() leading to a lockdep splat like the following.
+On Wed, Nov 27, 2024 at 3:15=E2=80=AFPM Daniel Verkamp <dverkamp@chromium.o=
+rg> wrote:
+> >   * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN A=
+NY WAY
+> >   * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY=
+ OF
+> >   * SUCH DAMAGE. */
+> > +#include "linux/workingset_report.h"
+> >  #include <linux/types.h>
+> >  #include <linux/virtio_types.h>
+> >  #include <linux/virtio_ids.h>
+>
+> This seems to be including a non-uapi header
+> (include/linux/workingset_report.h) from a uapi header
+> (include/uapi/linux/virtio_balloon.h), which won't compile outside the
+> kernel. Does anything in the uapi actually need declarations from
+> workingset_report.h?
+Good point. I should move the relevant constants over.
 
-[ 1123.133573] ================================
-[ 1123.137845] WARNING: inconsistent lock state
-[ 1123.142118] 6.12.0-31.el10.x86_64+debug #1 Not tainted
-[ 1123.147257] --------------------------------
-[ 1123.151529] inconsistent {INITIAL USE} -> {IN-NMI} usage.
-  :
-[ 1123.261544]  Possible unsafe locking scenario:
-[ 1123.261544]
-[ 1123.267463]        CPU0
-[ 1123.269915]        ----
-[ 1123.272368]   lock(&nmi_desc[0].lock);
-[ 1123.276122]   <Interrupt>
-[ 1123.278746]     lock(&nmi_desc[0].lock);
-[ 1123.282671]
-[ 1123.282671]  *** DEADLOCK ***
-  :
-[ 1123.314088] Call Trace:
-[ 1123.316542]  <NMI>
-[ 1123.318562]  dump_stack_lvl+0x6f/0xb0
-[ 1123.322230]  print_usage_bug.part.0+0x3d3/0x610
-[ 1123.330618]  lock_acquire.part.0+0x2e6/0x360
-[ 1123.357217]  _raw_spin_lock_irqsave+0x46/0x90
-[ 1123.366193]  __register_nmi_handler+0x8f/0x3a0
-[ 1123.374401]  nmi_shootdown_cpus+0x95/0x120
-[ 1123.378509]  kdump_nmi_shootdown_cpus+0x15/0x20
-[ 1123.383040]  native_machine_crash_shutdown+0x54/0x160
-[ 1123.388095]  __crash_kexec+0x10f/0x1f0
+> > +
+> > +struct virtio_balloon_working_set_notify {
+> > +       /* REQUEST or CONFIG */
+> > +       __le16 op;
+> > +       __le16 node_id;
+> > +       /* the following fields valid iff op=3DCONFIG */
+> > +       __le32 report_threshold;
+> > +       __le32 refresh_interval;
+> > +       __le32 idle_age[WORKINGSET_REPORT_MAX_NR_BINS];
+> > +};
+> > +
+> > +struct virtio_balloon_working_set_report_bin {
+> > +       __le64 idle_age;
+> > +       /* bytes in this bucket for anon and file */
+> > +       __le64 anon_bytes;
+> > +       __le64 file_bytes;
+> > +};
+> > +
+> > +struct virtio_balloon_working_set_report {
+> > +       __le32 error;
+> > +       __le32 node_id;
+> > +       struct virtio_balloon_working_set_report_bin
+> > +               bins[WORKINGSET_REPORT_MAX_NR_BINS];
+> > +};
+> > +
+> >  #endif /* _LINUX_VIRTIO_BALLOON_H */
+>
+> Have the spec changes been discussed in the virtio TC?
+They have not. Thanks for bringing this up. I'll post in the VIRTIO TC.
 
-In this particular case, a panic had just happened.
-
-[ 1122.808188] Kernel panic - not syncing: Fatal hardware error!
-
-It can be argued that a lockdep splat after a panic is not a big deal,
-but it can still confuse users. Fix that by using trylock in NMI context
-to avoid the lockdep splat. If trylock fails, we still need to acquire
-the lock on the best effort basis to avoid potential NMI descriptor
-list corruption.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- arch/x86/kernel/nmi.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index ed163c8c8604..0b8ad64be117 100644
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -171,8 +171,23 @@ int __register_nmi_handler(unsigned int type, struct nmiaction *action)
- 	if (WARN_ON_ONCE(!action->handler || !list_empty(&action->list)))
- 		return -EINVAL;
- 
-+	if (in_nmi()) {
-+		/*
-+		 * register_nmi_handler() can be called in NMI context from
-+		 * nmi_shootdown_cpus(). In this case, we use trylock to
-+		 * acquire the NMI descriptor lock to avoid potential lockdep
-+		 * splat. If that fails, we still acquire the lock on the best
-+		 * effort basis, but a real deadlock may happen if the CPU is
-+		 * acquiring that lock when NMI happens.
-+		 */
-+		if (raw_spin_trylock_irqsave(&desc->lock, flags))
-+			goto locked;
-+		pr_err("%s: trylock of NMI desc lock failed in NMI context, may deadlock!\n",
-+			__func__);
-+	}
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 
-+locked:
- 	/*
- 	 * Indicate if there are multiple registrations on the
- 	 * internal NMI handler call chains (SERR and IO_CHECK).
--- 
-2.47.0
-
+Thanks,
+Yuanchu
 
