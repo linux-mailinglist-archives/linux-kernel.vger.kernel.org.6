@@ -1,165 +1,176 @@
-Return-Path: <linux-kernel+bounces-423883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514549DADD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:30:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7D99DADDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:31:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C42B27108
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43AF0284BC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF541201116;
-	Wed, 27 Nov 2024 19:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7878202F6B;
+	Wed, 27 Nov 2024 19:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fD2zUlVD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H5pOV3yH"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZnkUFkVW"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA012E1E0;
-	Wed, 27 Nov 2024 19:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735832; cv=none; b=A9zp4sxKW5feynABNgbXGehHtDVvwTbTY0TTESsu2PLa955eYc89b+NqqTY/5IJMfIL4YJHI6rFR/1TvVB6qyH0NWwYmCPTj68BEXh8yGt+L3a2rB8RGZAH1xaFeuTNHmg8qOmaDcZl9ZwseRZWSI9HfiAFSYxcwVP4/UWMcMvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735832; c=relaxed/simple;
-	bh=Bj/s6PT34SkAI6ztbW67uRqPMcWds4OjshAmxkBD6/s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IrvnbMyKeHXYYgCf0qsa/x9GtrHweDvbfFwI9bJ38YrN4XdZtJ3JtR+2EhfxzMuTUvU4H1sffHdXfJaACj5zLbVv6fn625XLixTZVgsFcB/393o7TA8/SXkRCteUdiO6a37wrUr7SpBCT4gKB+EaXjNwyVOtIfGJg0LkY5gpHqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fD2zUlVD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H5pOV3yH; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0A9F51380756;
-	Wed, 27 Nov 2024 14:30:29 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 27 Nov 2024 14:30:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732735829;
-	 x=1732822229; bh=PMTKICLAk8Ul19wYWrq/UHHGVaNn10wFQLO8Ht338L4=; b=
-	fD2zUlVDRIa6UFm+LgOzMT9Zp9jJvynzA2AtXaUueyiT1VXO0MHD0GHhMHfyCICt
-	mTeuNlqUl2p6BX3M9tcPG4Egw8L4SYmcdKDrQQxYPy8sE+oE08fj9cPUUJzBEbRh
-	Gf51HgGfDcJE+O2czHENn4LQ4HuyXQ3SL2XwQ8xbZDXIfORO9Xe3M+H0B3sIFWeR
-	9uM1TD9ufZsT4WzTwdiODGBNs/mSXV+R9I2/8/OvcoJYnYYBxQ/PoBj4cSLEE+5/
-	lqMS9+GVWRWyKrbhC6RPqb0JB5roS41BjNUtwpUhij4FdMSUiemlSNU0XnRfxKg9
-	4dtkBKPpqKxE6QhBAoGBGg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732735829; x=
-	1732822229; bh=PMTKICLAk8Ul19wYWrq/UHHGVaNn10wFQLO8Ht338L4=; b=H
-	5pOV3yHAV1aXVBIGJ8YQfrresq2YqIFjtLtk/Fvp/XOj+Kv4v1SPbk3zFZRySLBV
-	LJcxdnyBlc+keML7Yn5jCPmXjKvygEp16dKnymIdFyOk74Gs0ynICO/sgEe5zL2r
-	uOZhhiiKEjnhGDs4YMmtakiqoEF8axEJHBcZllBkP5WCO+GlnfzSQZQV6LqJAJ+P
-	CWGCdpkfmrbn2mykq1XNq06ss2ZhtsKFMB+yWhInrf6KT9WEfz9HLzw4krbu5gGy
-	HwA2rlysZk3IV2LH+eeQtjHEZlw/AR5pjR9ZkQLKV4Pjar9J1I3ZokxEJEiz8Ipr
-	GaC6aK8AiK4LyB6I8NcrA==
-X-ME-Sender: <xms:VHNHZymJ-B8FSBgSfNQtcO69NdeQHxiqYGUcfnlKXKRESNgSDlNTXA>
-    <xme:VHNHZ51Yzy9o5AQpK6W2dCEGc1soTxW8zeBaqrdPpNhc9-IcaqEG3TdqRQAHTyHCq
-    O5SkLpHzd23bbilMpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisg
-    hrvgdrtghomhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdp
-    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
-    htohepmhgrrhhtihhnrdgslhhumhgvnhhsthhinhhglhesghhoohhglhgvmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshht
-    rhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrmhhlohhgih
-    gtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    rghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:VHNHZwohAnM6qcGvYt57x8rZYujNQDRAXuOvGZJFQ7FzDqB3MRsTTg>
-    <xmx:VHNHZ2l5skdIkAlbpfZ3uoruVk1hadaOboTgL5v2EayCDq2mudDMKg>
-    <xmx:VHNHZw3MIRdevzqJejuGzilVwfBFRQvJJD21Nq8Tcdx4pbpz708zvA>
-    <xmx:VHNHZ9srmhntVifpTVlUnu8iACTzYA1YER8tWYne4F4_YrwFUAa9Ww>
-    <xmx:VHNHZ5t7dwmXGd_wtkgHJ4-mlfxy7bHCgRhToztkEPC_dHMpKqOizRo3>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 7D7EF2220071; Wed, 27 Nov 2024 14:30:28 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695F13D89D;
+	Wed, 27 Nov 2024 19:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732735900; cv=pass; b=HJHiMPJtVtXlc2bPdHLIMEsDkDROceA1dL6rmiSF3YbYTOVEjjdVKgCiNeqv+ZmhVf7SxTAT/vwnc40Vgvr34U1rb6WJXHpkSiHgMDdEJVhz2KmzStDP93WJ6T82ggOnF9n5XAMMkX+v6KDRl4X5ZCfeeTG21dHtHPqnQSjypvw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732735900; c=relaxed/simple;
+	bh=Dv2qljR+WQMx1v46rWerpe+tYNyL/J2PUmxNUjH5/o0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=liJr9FOiA8mYco2wYHmc2ae0va6ucbenidIvlUaXmBa34rI2GRppb8hTXf5Jo3pWEt1dqS7xxCdJOTr0DnK1hr05njQLPwZ62Vci/mg1iQjJcds2kDE1qHjcP78i+GDoBaU5owxidH4CNz9fOAjUyfO1YUiQl8h/D+NXj6OXViI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZnkUFkVW; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732735865; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HlSAK+vbChOESf6CajiRJQzPO42oC6fQF8pUfas81XKOr+xR5fLMG/omzasec3da//DwPZUJYv+29U4qBpY8kwxtsMEfkAuk85rHfDI0//3ZrpMqc5503elUf7bQYhVYwByYq+Er1CgVBYLoHOXNSGfCeENutMAmzh29h2akmHQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732735865; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=puooQMdPcEt9xW6FRzJ4TgjZrgpqYcoxpKKozms2RUw=; 
+	b=W0zxjR6y+Y4Vmge8IC2KrZCujeb8ZOPcJJ9NtvX87PZjjuX6xGvwzQkgnzlmJ5tfmH67qXOYcBokRwwLdybYXj8gwXbjkVLWqCw4IeJHtCd4F4ItE05xne2KaECZdX0dL7rqb8mu7MeZj2nU4dtwtbHaDxHLw9N5q1GKtuYDXDY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732735865;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=puooQMdPcEt9xW6FRzJ4TgjZrgpqYcoxpKKozms2RUw=;
+	b=ZnkUFkVWDHoRYWqTDiEHh//Sa20UD/qIMEaKaqlGh7/j1VeCrmV6f5CzQbIkUoC9
+	xs+RzZbz3vLfIPThxdyZUG3oXdYogWXrA75WzEeMS6kccRYw2kxDa8mBNR5Zf0r5AI3
+	TpcWC6SImF93XY766EB8npTueOhymHNdRkG3nnDE=
+Received: by mx.zohomail.com with SMTPS id 1732735864391797.9845788869264;
+	Wed, 27 Nov 2024 11:31:04 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Wed, 27 Nov 2024 20:30:07 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
-In-Reply-To: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 18/35] rust: drm/kms: Add RawPlane and RawPlaneState
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-19-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 16:30:49 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FC63978F-BAC0-4294-999E-9BA31FA39490@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-19-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Wed, Nov 27, 2024, at 19:47, Jerome Brunet wrote:
-> Depending on RESET_MESON_AUX result in axg-audio support being turned
-> off by default for the users of arm64 defconfig, which is kind of a
-> regression for them.
->
-> RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
-> COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
-> necessary for every axg audio devices. Those are now deferring.
->
-> Select RESET_MESON_AUX rather than just depending on it.
-> With this, the audio subsystem of the affected platform should probe
-> correctly again
->
-> Cc: Mark Brown <broonie@kernel.org>
-> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency 
-> on RESET_MESON_AUX")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Hi Lyude
 
+> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Same thing as RawCrtc and RawCrtcState, but for DRM planes now
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/plane.rs | 35 +++++++++++++++++++++++++++++++++++
+> 1 file changed, 35 insertions(+)
+>=20
+> diff --git a/rust/kernel/drm/kms/plane.rs =
+b/rust/kernel/drm/kms/plane.rs
+> index 3ace487316d46..1c151ae3b3dcc 100644
+> --- a/rust/kernel/drm/kms/plane.rs
+> +++ b/rust/kernel/drm/kms/plane.rs
+> @@ -312,6 +312,27 @@ unsafe impl<T: DriverPlane> Send for Plane<T> {}
+> // SAFETY: Our interface is thread-safe.
+> unsafe impl<T: DriverPlane> Sync for Plane<T> {}
+>=20
+> +/// Common methods available on any type which implements =
+[`AsRawPlane`].
+> +///
+> +/// This is implemented internally by DRM, and provides many of the =
+basic methods for working with
+> +/// planes.
+> +pub trait RawPlane: AsRawPlane {
+> +    /// Return the index of this DRM plane
+> +    #[inline]
+> +    fn index(&self) -> u32 {
+> +        // SAFETY: The index is initialized by the time we expose =
+`Plane` objects to users, and is
+> +        // invariant throughout the lifetime of the `Plane`
+> +        unsafe { (*self.as_raw()).index }
+> +    }
+> +
+> +    /// Return the index of this DRM plane in the form of a bitmask
+> +    #[inline]
+> +    fn mask(&self) -> u32 {
+> +        1 << self.index()
+> +    }
+> +}
+> +impl<T: AsRawPlane> RawPlane for T {}
+> +
+> /// A [`struct drm_plane`] without a known [`DriverPlane`] =
+implementation.
+> ///
+> /// This is mainly for situations where our bindings can't infer the =
+[`DriverPlane`] implementation
+> @@ -426,6 +447,20 @@ pub trait FromRawPlaneState: AsRawPlaneState {
+>     unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) -> =
+&'a mut Self;
+> }
+>=20
+> +/// Common methods available on any type which implements =
+[`AsRawPlane`].
+> +///
+> +/// This is implemented internally by DRM, and provides many of the =
+basic methods for working with
+> +/// the atomic state of [`Plane`]s.
+> +pub trait RawPlaneState: AsRawPlaneState {
+> +    /// Return the plane that this plane state belongs to.
+> +    fn plane(&self) -> &Self::Plane {
+> +        // SAFETY: The index is initialized by the time we expose =
+Plane objects to users, and is
+> +        // invariant throughout the lifetime of the Plane
+> +        unsafe { Self::Plane::from_raw(self.as_raw().plane) }
+> +    }
+> +}
+> +impl<T: AsRawPlaneState + ?Sized> RawPlaneState for T {}
+> +
+> /// The main interface for a [`struct drm_plane_state`].
+> ///
+> /// This type is the main interface for dealing with the atomic state =
+of DRM planes. In addition, it
+> --=20
+> 2.46.1
+>=20
 
-febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 
-> 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
->  	select COMMON_CLK_MESON_SCLK_DIV
->  	select COMMON_CLK_MESON_CLKC_UTILS
->  	select REGMAP_MMIO
-> -	depends on RESET_MESON_AUX
-> +	select RESET_MESON_AUX
->  	help
->  	  Support for the audio clock controller on AmLogic A113D devices,
->  	  aka axg, Say Y if you want audio subsystem to work.
+LGTM
 
-You should generally not 'select' a symbol from another
-subsystem, as this risks introducing dependency loops,
-and missing dependencies.
+=E2=80=94 Daniel
 
-It looks like RESET_MESON_AUX is a user-visible symbol,
-so you can simply ask users to turn it on, and add it to
-the defconfig.
-
-I also see some silliness going on in the
-include/soc/amlogic/reset-meson-aux.h, which has a
-non-working 'static inline' definition of the exported
-function. Before my fix, that would have caused the
-problem auf a non-working audio driver.
-
-      Arnd
 
