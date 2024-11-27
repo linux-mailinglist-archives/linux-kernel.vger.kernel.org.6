@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-423007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3FD9DA126
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:32:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61419DA128
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:33:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 521F7B23BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6247F1683D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B8377F10;
-	Wed, 27 Nov 2024 03:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57AE84A3E;
+	Wed, 27 Nov 2024 03:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNTWuzW6"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xpu6TYAE"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9641DFFC;
-	Wed, 27 Nov 2024 03:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D32126BF5;
+	Wed, 27 Nov 2024 03:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732678336; cv=none; b=b/kCo+ByZ5pR8hhVJHlfMzWkbZZ6h9IVSZUddp3EuJn5ueJvFZbWfqSCrDrIsunjSKx23AhnJ50rOg+dZRu2mTBFRup2OTCKMB5q8v+lzL+3caGAFT7s5Stm3ZdhON2Qfhd4tNkdQPzR1YmGkWjC5OV3rQ3Qsq3d+PVvpDvgLKw=
+	t=1732678400; cv=none; b=HtNb3w7sI81m5ugo20951m6Z58GCMBrIsbSukeMm2UWSCHNQPhgxubUH4o8DQFQnWAUEMyMRrgBoC9Jid85n/CfaF/qiHr/kVFaUqfL3tRT3EXQwY/Qtbxm4Ons02WcajHjpmgBPgxF4meNXSDEAt7r/KOirM+N1j8hnpUdBe74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732678336; c=relaxed/simple;
-	bh=whLrwTDQh9Q1vAtIf5Ue5wkiYoi+msqtQm0tKNkrgkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LHpP7EtSsvDvhw8FRg17zz+NK/c8EhgvuAizwrjU02FuDGy8v643uBDEU31GKmUV6ZhhwCmRKgrT0cQ7++psRPMXfFOGvyzOOyU9z5OXrtwjwJI1kcbxLbo18QWBX8oSUjYKgLjLPBkSpRu9DodRX/SZzTc3orcy5hj9MOiZ9eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNTWuzW6; arc=none smtp.client-ip=209.85.128.169
+	s=arc-20240116; t=1732678400; c=relaxed/simple;
+	bh=gLNb4J6oJ9RFFWk09zFtGKaYReuRMraK2dS7HiIQghQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=U1R4SLmHj6HuIAgDQ5oWcswiNsKhVr42VMCBCpcWV1EfCNV8Q2wUKT9GePm5a/q3lAJvNIeiX2z+6IvjqH4bvx8dxLLldfaWUV4k4+TQklcNdA1ygiJg/GGK0JdU7OCVwuQr3DSB7l3f6BIR4lixViQ6JGj2zubIS8s8px3BIbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xpu6TYAE; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ef0cee54daso29981137b3.3;
-        Tue, 26 Nov 2024 19:32:15 -0800 (PST)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-724e5fb3f9dso4192685b3a.3;
+        Tue, 26 Nov 2024 19:33:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732678334; x=1733283134; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=whLrwTDQh9Q1vAtIf5Ue5wkiYoi+msqtQm0tKNkrgkc=;
-        b=HNTWuzW6Or+122PhKS0i/D+jISBh+txZg7clmr7KePjoLchE/rRxkYGDmRdvbKetuH
-         78qkO+BD6/fCjchVsRoQ8ArIgmVmNEDWau3Ch/Ef4BqsLsLyKklNAAXQbcehgIJKVjL8
-         pVqUa5s/CTTu0mU2Dt7100tV8DWckfcQJlaOhckydQWEL9liI0e6MEIeDodJ2ESuTFu6
-         3duPnEIaRB6Z2OUYWJZsgkPfoWEOvHeZDsjukKJNlBcQS4NzZcpR1qzldebaRHbBxYLN
-         pqN0brqF6T7sSUGyNriOYJZMbftVvFC7emPBnDHcnoAYhy4gc0HaRtI7HXSvZMfs5KDS
-         nUrw==
+        d=gmail.com; s=20230601; t=1732678398; x=1733283198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DNFL0BV7Mb4x6Fh0ZaK/xjfKcHVlGKbOO70Q78B2CSM=;
+        b=Xpu6TYAEQbd6ABooN2VugXS+g545yMHwEWOB2V3S3Prs6rOfcic4lyWmm61DYXpb/c
+         1Dd1FGqAyTfF+e5uuE7HT4ls9G4Rf5m31vYVY1enG5/duK0K6ww3nVVJ1a0LdBwcNHHT
+         lTyf9ct/8eRN6NNbdG2K+dTfORcKF0tEmz+/VFetmQPykjIjWWKAfoBoNSrwIE7aHRl6
+         RMyqUms3p+w7Hu87haJUuKhuAACN4LADdYIR5MRjMdUuRvfJZL8ah9dAUA4tGusOyQoD
+         fFIaNgbqXRZJxiAhGQveVDDJ/3QgChqa1Y2o+yfdGVpfURl6pJpaP6kV3EuRpHeexifd
+         37gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732678334; x=1733283134;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=whLrwTDQh9Q1vAtIf5Ue5wkiYoi+msqtQm0tKNkrgkc=;
-        b=w1EkEVN0yHIlMTwveray5p+jJ6DT4hcbYso6cR8ZMk5uDIVnkIhxn+rVWQpNwnzNg/
-         e21AMOlb9mKRSj8dV79c1nwXIMKjoY+iitbulA59fJTV7yGT62ADBbiCGsL0DcS2zquq
-         6tgtCezZrdmkmwn6zTATMRMrY79Wf6nyuK/AhrHlRUkb8GNN7VjS8z8uJGinHWf/igce
-         K38mBvrXZad7iVAlbt2zsRAtGNNQREoUfExt+0TMD7dcBBwijzjvXd+ZkGjeMg975xRx
-         FngC0F4gppzlaSzMDufsmXWbWW0kAEpXL8nZC9A2PeQGp4FKjCAlqH4a5/4aO5/oaOdR
-         awNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh/6xS8ZxLLeGuYcpTa2azB8IbjLeamXoUgX3qLqI0hSIU30VAVkBOoVtokNwTjPE+Q8UyNk8WFJsS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+nkpkiTQaagGiyX/s1yqSR9FxXGKvl1k6+BSutGDxOEBXRg7m
-	D+OFLYTSmFtB82tR7xxUulxSS6JAZaNYHoTpRYu7wzNm/bS4EPBVGwx9ykTNncvVxM0/XzkNGZq
-	t6rHcvJBWpfNC5/spo0PSmkslzdw=
-X-Gm-Gg: ASbGncuxeKQXv47I2LtpN/bA5rnktxGgn0vNGBrUOq4P9qm4p89S5/YzckzJpSF7SN0
-	yZqVXcLbksqqUfrabnOcp0P4sHrvyRyvo7fuP0GYxMzO2tVqppiTOimcHlRoYZwNu
-X-Google-Smtp-Source: AGHT+IHJCdr9O45hf+S6imwyWvr7pTvHFpMglC2qsULtDAO0dw5VM3D7UbhCff2gplz1CWWQtUTkOpjnHRrkcXyhwow=
-X-Received: by 2002:a05:690c:23c5:b0:6e3:b6c:d114 with SMTP id
- 00721157ae682-6ef37281d02mr21558447b3.38.1732678334297; Tue, 26 Nov 2024
- 19:32:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732678398; x=1733283198;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DNFL0BV7Mb4x6Fh0ZaK/xjfKcHVlGKbOO70Q78B2CSM=;
+        b=ZdJJsxZmVT3xnivG2U5nsyIwkjfP2FgxJ66cxrpEm6DpJhqoiwlocQf3WOKjoupvmq
+         HPfU/Ne4gNMusxxUZv72mXkwx808F273TOpHvGRSwYneta3NxOIhA0oAHaANrds0eB2v
+         MXv6U0YxaHhP58rgvr7INgIX9SIm49gw6QLWjXV9LNMHHkFXlSX7HTdu8oT3P9BA7eqb
+         ca25U/mK/yDxzMw1asAxB7n66ewYHPh1iD+todpRzIz4Ra/+SoomZ2tkPn6tsWaOm98f
+         GlVtzbLVxFUHV6Mi6ELPrzhG3NuHJXcusuA3jq4CbB+tbGtdIgo5s6/DRC5Orq13TRqP
+         r20g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOse2P4b0mocooOYV5sDXN59wOuB/SI4grfRVJFh+lMJZ0IDYJ5WJlQGFUOJ+U8LyI36Z2ThpKMQnnJvij4Yw=@vger.kernel.org, AJvYcCVlUwn2QRGRtEaMNlTcd6zyXsGGFWOLs4q7Z5L975fhNrcZG9KvuQRCJ62YZtjAfJp1Fld5nYKqXjfLBRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZHh8sq2LkB8ALQUayLpkFWFWl73UZEv2BKP/TjZTmGuAb4XaB
+	Gu8gZlr1MgofG+DMo33OMJgqKvda7jLx89pVJcDTBXEIqhuJG4Dz
+X-Gm-Gg: ASbGncvkwpgFG+zC3m6LMoIP5glAA8KAJPxwy0PCZYVE02GQICfPVC3+AV0wgm7D/R8
+	G6+FAUCiUxCRC/xMsSsBTGXp6PqjRbTEAiR8NOYs3m84kBTfZwmdC1oJExj4iQ+SKIFC6+B9QaZ
+	7kHscr5ZRZOJaMrVOe8kvqFqomgNR7cMfRO3iqTNHqle56kvljzIxbAsFDjDK/WpzdgF1YtV7Qx
+	wGeI9F4JRMwia7HUeIet9q820atxiXshXRSbK69Q2I6xNHEBN/aDx/itAA=
+X-Google-Smtp-Source: AGHT+IF9h1tM8BSdg93H0W+/CAgEXZ1IPcpLB/cuUojd4Nyan4flXiS5rwt4tMHeQhfpdoI8SqUjtQ==
+X-Received: by 2002:a05:6a20:3945:b0:1e0:cc01:43e4 with SMTP id adf61e73a8af0-1e0e0b12154mr2723008637.27.1732678397396;
+        Tue, 26 Nov 2024 19:33:17 -0800 (PST)
+Received: from LAPTOP-SQ5KB8RN.lan ([222.249.179.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de47e941sm9168699b3a.78.2024.11.26.19.33.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 19:33:16 -0800 (PST)
+From: Baichuan Qi <zghbqbc@gmail.com>
+To: markus.elfring@web.de
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	zghbqbc@gmail.com
+Subject: [PATCH v2 1/1] wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
+Date: Wed, 27 Nov 2024 11:32:41 +0800
+Message-Id: <20241127033241.60478-1-zghbqbc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de>
+References: <a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241124080220.1657238-1-kikuchan98@gmail.com>
- <20241124080220.1657238-2-kikuchan98@gmail.com> <f0d983f7-5f60-4cb7-9522-ef4429359c52@kernel.org>
- <945786cc-1d6d-4a45-b9df-26d9335fd271@kernel.org> <CAG40kxH8bQHauBAd1B=UpC7LLAJoS=ETKczL=QWBKqvk=VKh_w@mail.gmail.com>
- <d1e8b3e9-526d-4910-8b15-6cce2c8526db@kernel.org>
-In-Reply-To: <d1e8b3e9-526d-4910-8b15-6cce2c8526db@kernel.org>
-From: Hironori KIKUCHI <kikuchan98@gmail.com>
-Date: Wed, 27 Nov 2024 12:32:03 +0900
-Message-ID: <CAG40kxGZ=BKU4H5D=XhzTkMYMNqEsJuHMpaTh2awVd60jCjrMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: display: panel: Add another panel for
- RG35XX Plus (Rev6)
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Christophe Branchereau <cbranchereau@gmail.com>, 
-	Ryan Walklin <ryan@testtoast.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello Krzysztof,
+This patch fixes the NON-NULL check by changing the OR (||)
+to AND (&&), ensuring that the function only proceeds
+when both `dest_ring` and `status_ring` are NON-NULL.
 
-Thank you for your reply.
+The current implementation of `ath11k_ce_rx_post_pipe` checks for
+NON-NULL of either `dest_ring` or `status_ring` using a
+logical OR (||). However, both rings, especially `dest_ring`,
+should be ensured to be NON-NULL in this function.
+If only one of the rings is valid, such as `dest_ring` is NULL
+and `status_ring` is NON-NULL, the subsequent call to
+`ath11k_ce_rx_buf_enqueue_pipe()` will access the NULL pointer,
+resulting in a driver crash.
 
-> > The old schemas "leadtek,ltk035c5444t", "fascontek,fs035vg158", and
-> > "anbernic,rg35xx-plus-panel" exist independently.
-> So you duplicate them. I wrote: Don't duplicate.
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Baichuan Qi <zghbqbc@gmail.com>
+---
+ drivers/net/wireless/ath/ath11k/ce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ok, thanks. I won't duplicate.
+diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+index e66e86bdec20..cc9ad014d800 100644
+--- a/drivers/net/wireless/ath/ath11k/ce.c
++++ b/drivers/net/wireless/ath/ath11k/ce.c
+@@ -324,7 +324,7 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pipe *pipe)
+ 	dma_addr_t paddr;
+ 	int ret = 0;
+ 
+-	if (!(pipe->dest_ring || pipe->status_ring))
++	if (!(pipe->dest_ring && pipe->status_ring))
+ 		return 0;
+ 
+ 	spin_lock_bh(&ab->ce.ce_lock);
+-- 
+2.34.1
 
-They are already duplicated in the tree with their own file names.
-The panels I want to add are not directly relevant to them, so there
-is no single file suitable for the panels.
-
-Should I merge these files into a single file with a file name such as
-`newvision,nv3052c.yaml`, taken from the driver name?
-
-Best regards,
-kikuchan
 
