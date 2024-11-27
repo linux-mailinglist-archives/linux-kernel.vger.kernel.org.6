@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-423726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CEE9DABF6
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E829DABF5
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBC7B23DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:44:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B5C281B8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0932A200BB8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8EE200BBF;
 	Wed, 27 Nov 2024 16:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="PhfuUTss"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="DqMa2xbP"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AB2200BA3;
-	Wed, 27 Nov 2024 16:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8884200BAE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732725884; cv=none; b=OEzPzqt7L5mXpdyIhkI/Roybzqk0UBCbiMO8/Ko4W7pT5avUr7CveQnD9HOt1ETHVejnE/x2M2fDReNDGdpaB9/YMFMK3u4Nv0WPHbFR1P/tFWhyr1/g4k2vOPgg4zj7AWvqPIXWoFMsF1iSqvLXIHOH0QZnUdwy7DWWXTwuahY=
+	t=1732725884; cv=none; b=i88nOLuRY1fIY3kUKwrKvJtC8iDZFhcTKCHXvu44J8K2gHDtSKpOskGWzrpYdXH7eV8k/9sOOe1QMuR4PZ31gsInIco3MmnFU7rmKeqzvIPqyvYc6Hn4azXQIU67QRP0gK2TdJPe6rBP3KNyT01HRFlBd1+byFc6fekjaKF2kBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732725884; c=relaxed/simple;
-	bh=gUjM1dpIwBdlgK1gcDpU85tOGxsJBAbOWJnShHwzhL4=;
+	bh=1on6ivOx/h86syEfLDL3bCAbyzFwZwyNNwg5A0/EQ0o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P2IklXyZWYIHCS8EsHe2iNmNfJ+Sag5xF3q6+EuOo7Hhyzphd5q8YpztAhb9yMqOHl14YFj8iKIhe8a7hLnwNvlAe/m7iq81whxN+2/x1tcSSQqFD+ko7Orl8o44jZ2fPOpKmSs2moP9Y5eGRntGRJ7HEgej6ycFTAgDdq0sbGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=PhfuUTss; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=e7o+78TkDKpASym0YzReSb6avVnyBdMOhDW07J7hIwSE7dhAFOJdS9OFSNHtmQnc723wXBrBbo+3PDXG2oF47R8tUVtEK/5oGjLj6+FlyuG5m3tsUOFoURUjh9fJhNtlydNv3otTmsAZoGzSKsALU/Kh4hEeTxvDGkvB5LW8HJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=DqMa2xbP; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6433CBFB98;
-	Wed, 27 Nov 2024 17:44:38 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A9FDCBFBA9;
+	Wed, 27 Nov 2024 17:44:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1732725878; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1732725880; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=X1oXhqEsz9Br6MRzf1dH+hH5nzNYl1h9TOKMungz6pU=;
-	b=PhfuUTss9WT1lTnktA3gwOzlukMBwMCL5XxMcHMzvuVZxzw405Yu/EdBKcgLpLs1oPRium
-	nsAfKe5cPl97Dciy8rJfBUmw8kpqbQSgkDy7/GQLwBNAZuyu6xAIbvH95woGjV2dENQopq
-	7Uryj0YpuJFClA31uUMIHAQuxSYgSgTqsjKZwjHhBO3gMAHITVBXmEOCD26WmaN90wcux6
-	QfsoZHeHe7bwQPSBJL+1iAS+CIpDwd9rL7YNWInh8z1jOaXt31Y6Uy0YUlmY16Gytz8qdN
-	vkY17uogNSb5XKx4N/FsvE/O35tnVY+QpitvfIJaGyuGtaWnKs3GHmN3mzRwhw==
+	bh=lCaePtDQjPCLIdCcCr6OunaIwfPqBEUXNIZ/ElYG08g=;
+	b=DqMa2xbPOiYHmB00M8XGgKAx+DjXCOxQkjFDsSbLtpaxs1rfWfr8YLsgudXjw4NS5o3IZ5
+	/8vmDOKhHvoFfhMwPvGAbh2d8OKAa5WfVolOiGbJyJwPdOzhj7m5yB58rVpYi/CadXHUCW
+	wyX0t8/mhW1SV1EkKFJSj2aBiZFVa+B72sUHF6N40ATzo5FfKOIJ8OJKAq4rufg7GGJF2/
+	myUD1A+WjC4vALZpQ7BNJS/l8tmEgHNcrpNn8S4/BxhamWj4HO1u3K6Lqm0muEoCrDce2P
+	gqojdd5I4KeFqOEz/WEIalPVFZoOeQv1LJHYMABpVbJzAACU2DUTiAN/IIl7UQ==
 From: Frieder Schrempf <frieder@fris.de>
 To: linux-arm-kernel@lists.infradead.org,
 	Marek Vasut <marex@denx.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>
+	Mark Brown <broonie@kernel.org>
 Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v2 04/11] arm64: dts: imx8mp-skov-reva: Use hardware signal for SD card VSELECT
-Date: Wed, 27 Nov 2024 17:42:20 +0100
-Message-ID: <20241127164337.613915-5-frieder@fris.de>
+	Bo Liu <liubo03@inspur.com>,
+	Joy Zou <joy.zou@nxp.com>
+Subject: [PATCH v2 05/11] Revert "regulator: pca9450: Add SD_VSEL GPIO for LDO5"
+Date: Wed, 27 Nov 2024 17:42:21 +0100
+Message-ID: <20241127164337.613915-6-frieder@fris.de>
 In-Reply-To: <20241127164337.613915-1-frieder@fris.de>
 References: <20241127164337.613915-1-frieder@fris.de>
 Precedence: bulk
@@ -72,61 +66,67 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-The USDHC controller is able to control the IO voltage of the SD card.
-There is no reason to use a GPIO to control it.
+This reverts commit 8c67a11bae889f51fe5054364c3c789dfae3ad73.
+
+It turns out that all boards using the PCA9450 actually have the
+SD_VSEL input connected to the VSELECT signal of the SoCs SD/MMC
+interface or use a fixed level.
+
+The assumptions on which this was implemented were wrong. There
+is no need for a GPIO-only-based approach and keeping this will
+cause confusion and lead people to implement non-standard setups.
+
+All in-tree users of this have been migrated and we can savely
+remove this now and allow for a more future-proof approach
+of syncing the actual status of SD_VSEL and the PMIC driver.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
 Changes for v2:
-* new patch
+* rebase to current master
 ---
- arch/arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/regulator/pca9450-regulator.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi
-index 59813ef8e2bb3..33031e946329d 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi
-@@ -232,7 +232,6 @@ pmic@25 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_pmic>;
- 		interrupts-extended = <&gpio1 3 IRQ_TYPE_EDGE_RISING>;
--		sd-vsel-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
+index 9714afe347dcc..0f8a515a0b11a 100644
+--- a/drivers/regulator/pca9450-regulator.c
++++ b/drivers/regulator/pca9450-regulator.c
+@@ -5,7 +5,6 @@
+  */
  
- 		regulators {
- 			reg_vdd_soc: BUCK1 {
-@@ -555,7 +554,6 @@ MX8MP_IOMUXC_I2C4_SDA__I2C4_SDA				0x400001c3
- 	pinctrl_pmic: pmicirqgrp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03			0x41
--			MX8MP_IOMUXC_GPIO1_IO04__GPIO1_IO04			0x41
- 		>;
- 	};
+ #include <linux/err.h>
+-#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+@@ -32,7 +31,6 @@ struct pca9450_regulator_desc {
+ struct pca9450 {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+-	struct gpio_desc *sd_vsel_gpio;
+ 	enum pca9450_chip_type type;
+ 	unsigned int rcnt;
+ 	int irq;
+@@ -1015,18 +1013,6 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
+ 		}
+ 	}
  
-@@ -623,6 +621,7 @@ MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0			0x1d0
- 			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1			0x1d0
- 			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2			0x1d0
- 			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3			0x1d0
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT			0xc0
- 		>;
- 	};
- 
-@@ -634,6 +633,7 @@ MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0			0x1d4
- 			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1			0x1d4
- 			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2			0x1d4
- 			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3			0x1d4
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT			0xc0
- 		>;
- 	};
- 
-@@ -645,6 +645,7 @@ MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0			0x1d6
- 			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1			0x1d6
- 			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2			0x1d6
- 			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3			0x1d6
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT			0xc0
- 		>;
- 	};
- 
+-	/*
+-	 * The driver uses the LDO5CTRL_H register to control the LDO5 regulator.
+-	 * This is only valid if the SD_VSEL input of the PMIC is high. Let's
+-	 * check if the pin is available as GPIO and set it to high.
+-	 */
+-	pca9450->sd_vsel_gpio = gpiod_get_optional(pca9450->dev, "sd-vsel", GPIOD_OUT_HIGH);
+-
+-	if (IS_ERR(pca9450->sd_vsel_gpio)) {
+-		dev_err(&i2c->dev, "Failed to get SD_VSEL GPIO\n");
+-		return PTR_ERR(pca9450->sd_vsel_gpio);
+-	}
+-
+ 	dev_info(&i2c->dev, "%s probed.\n",
+ 		type == PCA9450_TYPE_PCA9450A ? "pca9450a" :
+ 		(type == PCA9450_TYPE_PCA9451A ? "pca9451a" : "pca9450bc"));
 -- 
 2.46.1
 
