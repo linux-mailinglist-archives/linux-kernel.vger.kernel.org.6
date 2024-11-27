@@ -1,324 +1,204 @@
-Return-Path: <linux-kernel+bounces-423105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5727E9DA2EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:15:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA89116916C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:15:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B0014EC60;
-	Wed, 27 Nov 2024 07:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTT/hOEq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474E59DA2F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:18:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FA78F5C;
-	Wed, 27 Nov 2024 07:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0B48B24DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:18:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BAF1494D9;
+	Wed, 27 Nov 2024 07:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k62TuT0G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DE01114
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732691717; cv=none; b=Hgt0nZ0nzpHWkwMVueMynN+ONw2anCPZSuOk0yuRZlS05DymeP1Hew/HMeH6lVE0PosyOqCHwxxvuskHs4TCgCHS5pOsfQ3Tx2bN+HL8ZuS9KWX9ykOJOH6978YBT+D89Bg48DmSoBCiKA2Yz49XrB2NSE2SdPn4VOTXprqxI/Y=
+	t=1732691887; cv=none; b=oiK5BNwy2VQ1Xtyt1i/V+Nzg4Vgiazg1IiBhnYP0uiukm5CAaEx4iTrmmvr/Hd1b50zhP3sdT4ARZ+/lxNukkJgEJRVnTI+BZjCMUsST6IOLqlf6f/9oXwzk+UEwAcT22XaXXZlykMv68zhSh7M6HCpsdQoT9y1U3H1SZgOB1zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732691717; c=relaxed/simple;
-	bh=XZWQ9oZ2HZ5yV4Z16lWMIhYwZGdeiyPdxl0C9N9vkGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y0a1JeyXPMzwTR+puXRxSIAXH7zahAf40EBL/ai/Pjuvys7gK5DMPWYkMWdGlYqeaWTPNe6ys20h/Blu0yAKfXzMRa5Z+14i2V5PiLLW8OqxfHI26JLJbJgwN269J5fYcDFX8CtNzGYgKEQ/z9dMRKfOQpjmvGzPtZADuNoH+v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTT/hOEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32B0C4CECC;
-	Wed, 27 Nov 2024 07:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732691716;
-	bh=XZWQ9oZ2HZ5yV4Z16lWMIhYwZGdeiyPdxl0C9N9vkGA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FTT/hOEqOJTMxAF6cZD9+rwSEUxOsNmpBu+MGdcyLbHv1uLfGk6H63xWcXfgpyklP
-	 y9W7MSTcQjs7Re4LxJxkPz9lTtysN3p9m/lIzcfBRk4TaYhmwSO0F6n0Y/VefF01Qk
-	 g++onz1YITqdo6Fr9ysXmxS+LwtmAvcqShSlTkwf9aSqd4acNp8xBJZlvTkkOqLYE/
-	 yMtfSZelFVvcH6id4CMVjGw25OWqsLDuBgrphR1plyY6bMCEkyukRYnfFJX3LSvTqt
-	 phm2PJk6LAzOdycM0ofx7HfcNGygEreY3fAocDHWWp63BX5hjQx/snpKBiBL1TjKMY
-	 KVk5oNAEIa6+g==
-Message-ID: <70abadbf-b796-4434-b2d8-0675c18eee07@kernel.org>
-Date: Wed, 27 Nov 2024 08:15:08 +0100
+	s=arc-20240116; t=1732691887; c=relaxed/simple;
+	bh=lr/lDykdy6jpDT3TM0G0EUg/YE9Ns/vSKeKOYYYxmbU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jyQjQ6ZeILLy5N2JsNKIDsxXLOm8xWZOP2TWOCzIPTuyQv7JUCX9WLgXxDV63GJYKE/AB/aWU79bJmqEBt8hek5w4rXGUFe9A3TvwCSYAElwbhtCKsOdBBjlj1JoegByePnuUAgwJryoquneLjPWkQCNWXzL2wXcwzUW8DlIT3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k62TuT0G; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732691885; x=1764227885;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=lr/lDykdy6jpDT3TM0G0EUg/YE9Ns/vSKeKOYYYxmbU=;
+  b=k62TuT0GDz4/X/1t98tRXmp+/Ywu20Nis8jH8YRCbF6u3dd7Msnojode
+   HMLzyNo1tKWpydzsMH+CVeuSeGkrb1p3hZWBcWz6wOyYHRgjPn/LduMsR
+   Njz7XNMILzjoabfrkfLwgWrvJBtFulMdRcyc3je/3QeaqSGrTznqZhqi5
+   dU/vlSyY6EU4FLx+BAREcS4O0tBHxnTP9LdU5fSZ28w67jz5bnJR5ntmT
+   bNSLzJZ5zrVvFplEhIImygnTSYHKRAmKWT1HWHNjxOtbsZjexvxNNQOAX
+   G+5+gSue6gbfQx56hd2hMc0Cl8Hby1zxPZ3rEUr4916NM1bblns6nyY3g
+   w==;
+X-CSE-ConnectionGUID: bVIKZRRSTyiFnxbylPrU9g==
+X-CSE-MsgGUID: i1jKaWF+QZqBBZG/vHnkNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="43944725"
+X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
+   d="scan'208";a="43944725"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 23:18:05 -0800
+X-CSE-ConnectionGUID: inUx6KLYQtWiAHYMhmwrzg==
+X-CSE-MsgGUID: Y4p+qTFUTNqA4SEFmSso0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
+   d="scan'208";a="91663107"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO [10.245.246.103]) ([10.245.246.103])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 23:18:02 -0800
+Message-ID: <013e32f0915219421a2db666994a7e11fa2e04c3.camel@linux.intel.com>
+Subject: Re: Unexpected lockdep selftest failures
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Boqun Feng <boqun.feng@gmail.com>, Bart Van Assche <bvanassche@acm.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ linux-kernel@vger.kernel.org
+Date: Wed, 27 Nov 2024 08:17:59 +0100
+In-Reply-To: <Z0ZKUByBtv4aPXOP@boqun-archlinux>
+References: <9025e912-7151-4a1e-b1ba-91eafde12179@acm.org>
+	 <Z0ZKUByBtv4aPXOP@boqun-archlinux>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.50.4 (3.50.4-3.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on QCS8300
-To: Yongxing Mou <quic_yongmou@quicinc.com>,
- Ritesh Kumar <quic_riteshk@quicinc.com>, Rob Clark <robdclark@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
- <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 27/11/2024 08:05, Yongxing Mou wrote:
-> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+T24gVHVlLCAyMDI0LTExLTI2IGF0IDE0OjIzIC0wODAwLCBCb3F1biBGZW5nIHdyb3RlOgo+IEhp
+LAo+IAo+IE9uIEZyaSwgTm92IDIyLCAyMDI0IGF0IDEyOjE4OjQwUE0gLTA4MDAsIEJhcnQgVmFu
+IEFzc2NoZSB3cm90ZToKPiA+IEhpLAo+ID4gCj4gPiBXaXRoIHRoZSBmb3ItbmV4dCBicmFuY2gg
+b2YgdGhpcyB0cmVlOiBnaXQ6Ly9naXQua2VybmVsLmRrL2xpbnV4LQo+ID4gYmxvY2sKPiA+IChj
+b21taXQgMTJhYjJjMTNjYTc3ICgiTWVyZ2UgYnJhbmNoICdmb3ItNi4xMy9ibG9jaycgaW50byBm
+b3ItCj4gPiBuZXh0IikpIEkKPiA+IHNlZSB0aGUgZm9sbG93aW5nOgo+ID4gCj4gPiAKPiA+IFvC
+oMKgwqAgMC44ODc2MDNdW8KgwqDCoCBUMF0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IC0tLS0tLS0KPiA+
+IFvCoMKgwqAgMC44ODg3NjNdW8KgwqDCoCBUMF3CoMKgIHwgV291bmQvd2FpdCB0ZXN0cyB8Cj4g
+PiBbwqDCoMKgIDAuODg5MzEwXVvCoMKgwqAgVDBdwqDCoCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiA+IFvCoMKgwqAgMC44ODk4NjddW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgd3cgYXBpIGZhaWx1cmVzOsKgIG9rwqAKPiA+IHxGQUlMRUR8IG9rCj4gPiA+
+IAo+ID4gW8KgwqDCoCAwLjg5MjU5N11bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB3dyBjb250ZXh0cyBtaXhpbmc6wqAgb2vCoCB8wqAKPiA+IG9rwqAgfAo+ID4gW8Kg
+wqDCoCAwLjg5NDYzOF1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZpbmlz
+aGluZyB3dyBjb250ZXh0OsKgIG9rwqAgfMKgCj4gPiBva8KgIHwgb2sKPiA+ID4gwqBva8KgIHwK
+PiA+IFvCoMKgwqAgMC44OTgwMjBdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgbG9ja2luZyBtaXNtYXRjaGVzOsKgIG9rwqAgfMKgCj4gPiBva8KgIHwgb2sKPiA+ID4g
+Cj4gPiBbwqDCoMKgIDAuOTAwNjg5XVvCoMKgwqAgVDBdwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBFREVBRExLIGhhbmRsaW5nOsKgIG9rwqAgfMKgCj4gPiBva8KgIHwgb2sKPiA+
+ID4gwqBva8KgIHzCoCBva8KgIHzCoCBva8KgIHzCoCBva8KgIHzCoCBva8KgIHzCoCBva8KgIHzC
+oCBva8KgIHwKPiA+IFvCoMKgwqAgMC45MDgxNzJdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHNwaW5sb2NrIG5lc3QgdW5sb2NrZWQ6wqAgb2vCoCB8Cj4gPiBbwqDCoMKgIDAuOTA5
+NDg0XVvCoMKgwqAgVDBdwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNwaW5sb2NrIG5l
+c3QgdGVzdDrCoCBva8KgIHwKPiA+IFvCoMKgwqAgMC45MTA5MDJdW8KgwqDCoCBUMF0gLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IC0tLS0tLS0tLQo+ID4g
+W8KgwqDCoCAwLjkxMTgyNF1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8YmxvY2sgfAo+ID4gdHJ5Cj4g
+PiA+IGNvbnRleHR8Cj4gPiBbwqDCoMKgIDAuOTEyOTcwXVvCoMKgwqAgVDBdIC0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiAtLS0tLS0tLS0KPiA+IFvCoMKg
+wqAgMC45MTM4OTBdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIGNvbnRleHQ6wqAgb2vCoCB8wqAKPiA+IG9rwqAgfCBvawo+ID4g
+PiAKPiA+IFvCoMKgwqAgMC45MTY2MTNdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdHJ5OsKgIG9rwqAgfMKgCj4g
+PiBva8KgIHwgb2sKPiA+ID4gCj4gPiBbwqDCoMKgIDAuOTE5MjM1XVvCoMKgwqAgVDBdwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYmxvY2s6
+wqAgb2vCoCB8wqAKPiA+IG9rwqAgfCBvawo+ID4gPiAKPiA+IFvCoMKgwqAgMC45MjE4NTJdW8Kg
+wqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBzcGlubG9jazrCoCBva8KgIHzCoAo+ID4gb2sKPiA+ID4gRkFJTEVEfAo+ID4gW8KgwqDCoCAw
+LjkyNDY2Nl1bwqDCoMKgIFQwXQo+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gLS0tLS0tLQo+ID4gW8KgwqDC
+oCAwLjkyNTg1Ml1bwqDCoMKgIFQwXcKgwqAgfCBxdWV1ZWQgcmVhZCBsb2NrIHRlc3RzIHwKPiA+
+IFvCoMKgwqAgMC45MjY1MDZdW8KgwqDCoCBUMF3CoMKgIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQo+ID4gW8KgwqDCoCAwLjkyNzEzMl1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoCBoYXJkaXJx
+IHJlYWQtbG9jay9sb2NrLXJlYWQ6wqAgb2vCoCB8Cj4gPiBbwqDCoMKgIDAuOTI4NDk2XVvCoMKg
+wqAgVDBdwqDCoMKgwqDCoMKgIGhhcmRpcnEgbG9jay1yZWFkL3JlYWQtbG9jazrCoCBva8KgIHwK
+PiA+IFvCoMKgwqAgMC45Mjk4NjBdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBoYXJkaXJxIGludmVyc2lvbjrCoCBva8KgIHwKPiA+IFvCoMKgwqAgMC45MzEyNjld
+W8KgwqDCoCBUMF3CoMKgIC0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBbwqDCoMKgIDAuOTMxODI3
+XVvCoMKgwqAgVDBdwqDCoCB8IGZzX3JlY2xhaW0gdGVzdHMgfAo+ID4gW8KgwqDCoCAwLjkzMjM4
+M11bwqDCoMKgIFQwXcKgwqAgLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IFvCoMKgwqAgMC45MzI5
+MzJdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29ycmVj
+dCBuZXN0aW5nOsKgIG9rwqAgfAo+ID4gW8KgwqDCoCAwLjkzNDI1Ml1bwqDCoMKgIFQwXcKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgd3JvbmcgbmVzdGluZzrCoCBva8Kg
+IHwKPiA+IFvCoMKgwqAgMC45MzU1MThdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBwcm90ZWN0ZWQgbmVzdGluZzrCoCBva8KgIHwKPiA+IFvCoMKgwqAgMC45MzY3
+ODRdW8KgwqDCoCBUMF0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IC0tLS0tLS0KPiA+IFvCoMKgwqAgMC45
+Mzc5MzZdW8KgwqDCoCBUMF3CoMKgIHwgd2FpdCBjb250ZXh0IHRlc3RzIHwKPiA+IFvCoMKgwqAg
+MC45Mzg1MTZdW8KgwqDCoCBUMF0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IC0tLS0tLS0KPiA+IFvCoMKg
+wqAgMC45Mzk2NjFdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCByY3XCoCB8Cj4gPiByYXfCoCB8IHNw
+aW4KPiA+ID4gbXV0ZXggfAo+ID4gW8KgwqDCoCAwLjk0MDY0Nl1bwqDCoMKgIFQwXQo+ID4gLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLQo+ID4gLS0tLS0tLQo+ID4gW8KgwqDCoCAwLjk0MTc5OF1bwqDCoMKgIFQwXcKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbiBoYXJkaXJxIGNvbnRleHQ6wqAgb2vCoCB8wqAK
+PiA+IG9rwqAgfCBvawo+ID4gPiDCoG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk0NDk0Nl1bwqDCoMKg
+IFQwXSBpbiBoYXJkaXJxIGNvbnRleHQgKG5vdCB0aHJlYWRlZCk6wqAgb2vCoCB8wqAKPiA+IG9r
+wqAgfCBvawo+ID4gPiDCoG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk0ODA3Ml1bwqDCoMKgIFQwXcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbiBzb2Z0aXJxIGNvbnRleHQ6wqAgb2vCoCB8
+wqAKPiA+IG9rwqAgfCBvawo+ID4gPiDCoG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk1MTIwNl1bwqDC
+oMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGluIFJDVSBjb250
+ZXh0OsKgIG9rwqAgfMKgCj4gPiBva8KgIHwgb2sKPiA+ID4gwqBva8KgIHwKPiA+IFvCoMKgwqAg
+MC45NTQzNDVdW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbiBS
+Q1UtYmggY29udGV4dDrCoCBva8KgIHzCoAo+ID4gb2vCoCB8IG9rCj4gPiA+IMKgb2vCoCB8Cj4g
+PiBbwqDCoMKgIDAuOTU3NDc3XVvCoMKgwqAgVDBdwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+aW4gUkNVLXNjaGVkIGNvbnRleHQ6wqAgb2vCoCB8wqAKPiA+IG9rwqAgfCBvawo+ID4gPiDCoG9r
+wqAgfAo+ID4gW8KgwqDCoCAwLjk2MDYxMl1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDCoMKg
+IGluIFJBV19TUElOTE9DSyBjb250ZXh0OsKgIG9rwqAgfMKgCj4gPiBva8KgIHwgb2sKPiA+ID4g
+wqBva8KgIHwKPiA+IFvCoMKgwqAgMC45NjM5MjddW8KgwqDCoCBUMF3CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGluIFNQSU5MT0NLIGNvbnRleHQ6wqAgb2vCoCB8wqAKPiA+IG9rwqAgfCBv
+awo+ID4gPiDCoG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk2NzI1Ml1bwqDCoMKgIFQwXcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW4gTVVURVggY29udGV4dDrCoCBva8KgIHzCoAo+
+ID4gb2vCoCB8IG9rCj4gPiA+IMKgb2vCoCB8Cj4gPiBbwqDCoMKgIDAuOTcwNTcxXVvCoMKgwqAg
+VDBdCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCj4gPiAtLS0tLS0tCj4gPiBbwqDCoMKgIDAuOTcxNzAyXVvCoMKg
+wqAgVDBdwqDCoCB8IGxvY2FsX2xvY2sgdGVzdHMgfAo+ID4gW8KgwqDCoCAwLjk3MjQyMl1bwqDC
+oMKgIFQwXcKgwqAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBbwqDCoMKgIDAuOTcyOTY1XVvC
+oMKgwqAgVDBdwqDCoMKgwqDCoMKgwqDCoMKgwqAgbG9jYWxfbG9jayBpbnZlcnNpb27CoCAyOsKg
+IG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk3NDMxOV1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGxvY2FsX2xvY2sgaW52ZXJzaW9uIDNBOsKgIG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk3NTcw
+OF1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoMKgwqDCoMKgIGxvY2FsX2xvY2sgaW52ZXJzaW9uIDNC
+OsKgIG9rwqAgfAo+ID4gW8KgwqDCoCAwLjk3NzEwNl1bwqDCoMKgIFQwXcKgwqDCoMKgwqDCoCBo
+YXJkaXJxX3Vuc2FmZV9zb2Z0aXJxX3NhZmU6wqAgb2vCoCB8Cj4gPiBbwqDCoMKgIDAuOTc4NTk1
+XVvCoMKgwqAgVDBdCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiAtLS0tLS0tCj4gPiBbwqDCoMKgIDAuOTc5
+NzIzXVvCoMKgwqAgVDBdwqDCoCB8IGxvY2tkZXBfc2V0X3N1YmNsYXNzKCkgbmFtZSB0ZXN0fAo+
+ID4gW8KgwqDCoCAwLjk4MDQyNF1bwqDCoMKgIFQwXcKgwqAgLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KPiA+IFvCoMKgwqAgMC45ODExMjNdW8KgwqDCoCBUMF3CoMKgwqDCoCBj
+b21wYXJlIG5hbWUgYmVmb3JlIGFuZCBhZnRlcjrCoCBva8KgIHwKPiA+IFvCoMKgwqAgMC45ODI0
+MjNdW8KgwqDCoCBUMF0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBbwqDCoMKgIDAuOTgzNDM0XVvCoMKgwqAg
+VDBdIEJVRzrCoMKgIDIgdW5leHBlY3RlZCBmYWlsdXJlcyAob3V0IG9mIDM5NSkgLQo+ID4gZGVi
+dWdnaW5nCj4gPiBkaXNhYmxlZCEgfAo+ID4gW8KgwqDCoCAwLjk4NDQ0MV1bwqDCoMKgIFQwXQo+
+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KPiA+IAo+ID4gCj4gPiBJcyB0aGlzIGEga25vd24gaXNzdWU/Cj4gPiAKPiAK
+PiBZZXMsIHRoZXNlIHdlcmUgcmVwb3J0ZWQgYXQ6Cj4gCj4gCQo+IGh0dHBzOi8vbG9yZS5rZXJu
+ZWwub3JnL2xrbWwvWncxOXNNdG5LZHlPVlFvaEBib3F1bi1hcmNobGludXgvCj4gCj4gYW5kIFRo
+b21hcyAoQ2NlZCkgc2VuZCBhbiB1cGRhdGVkIHZlcnNpb246Cj4gCj4gCQo+IGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2xrbWwvMjAyNDEwMTcxNTEwMDcuOTIyMTUtMS10aG9tYXMuaGVsbHN0cm9t
+QAo+IGxpbnV4LmludGVsLmNvbS8KPiAKPiAsIHdoaWNoIHdhc24ndCBwaWNrZWQgdXAuIDooCj4g
+Cj4gVGhvbWFzLCBjb3VsZCB5b3Ugc2VuZCBhIGZpeCBvbnRvcD8gSSdtIGhhcHB5IHRvIHJldmll
+dyBhbmQgdGVzdCBpdC4KPiBUaGFua3MhCj4gCj4gUmVnYXJkcywKPiBCb3F1bgoKWWVzLCBJJ2xs
+IGRvIHRoYXQuCgpGb3Igc29tZSByZWFzb24gdGhlIGluY29ycmVjdCB2ZXJzaW9uIHdhcyBhbHNv
+IHF1ZXVlZCBmb3Igc3RhYmxlCmJhY2twb3J0LiBJIHJlcGxpZWQgdG8gdGhvc2UgYmFja3BvcnQg
+cGF0Y2hlcyBhbmQgYXNrZWQgdGhlbSBub3QgdG8gYmUKYmFja3BvcnRlZCwgYnV0IGhhcyBub3Qg
+c2VlbiBhbnkgcmVwbGllcyB5ZXQuCgpUaGFua3MsClRob21hcwoKCgo+IAo+ID4gVGhhbmtzLAo+
+ID4gCj4gPiBCYXJ0LgoK
 
-
-Will fail testing, so only limited review.
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interconnect/qcom,icc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
-> +    #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
-> +    #include <dt-bindings/interconnect/qcom,qcs8300-rpmh.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    mdss: display-subsystem@ae00000 {
-> +        compatible = "qcom,qcs8300-mdss";
-> +        reg = <0 0x0ae00000 0 0x1000>;
-> +        reg-names = "mdss";
-> +
-> +        interconnects = <&mmss_noc MASTER_MDP0 QCOM_ICC_TAG_ACTIVE_ONLY
-> +                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +                        <&mmss_noc MASTER_MDP1 QCOM_ICC_TAG_ACTIVE_ONLY
-> +                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +                        <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +                         &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
-> +        interconnect-names = "mdp0-mem",
-> +                             "mdp1-mem",
-> +                             "cpu-cfg";
-> +
-> +        power-domains = <&dispcc0 MDSS_DISP_CC_MDSS_CORE_GDSC>;
-> +
-> +        clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +                 <&gcc GCC_DISP_HF_AXI_CLK>,
-> +                 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>;
-> +
-> +        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <1>;
-> +
-> +        iommus = <&apps_smmu 0x1000 0x402>;
-> +
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        ranges;
-> +
-> +        status = "disabled";
-
-No, your code cannot be disabled.
-
-> +
-> +        mdss_mdp: display-controller@ae01000 {
-> +            compatible = "qcom,qcs8300-dpu";
-> +            reg = <0 0x0ae01000 0 0x8f000>,
-> +                  <0 0x0aeb0000 0 0x2008>;
-> +            reg-names = "mdp", "vbif";
-> +
-> +            clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
-> +                     <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +                     <&dispcc0 MDSS_DISP_CC_MDSS_MDP_LUT_CLK>,
-> +                     <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>,
-> +                     <&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
-> +            clock-names = "bus",
-> +                          "iface",
-> +                          "lut",
-> +                          "core",
-> +                          "vsync";
-> +
-> +            assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
-> +            assigned-clock-rates = <19200000>;
-> +            operating-points-v2 = <&mdp_opp_table>;
-> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
-> +
-> +            interrupt-parent = <&mdss>;
-> +            interrupts = <0>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                port@0 {
-> +                    reg = <0>;
-> +                    dpu_intf0_out: endpoint {
-> +                         remote-endpoint = <&mdss_dp0_in>;
-> +                    };
-> +                };
-> +            };
-> +
-> +            mdp_opp_table: opp-table {
-> +                compatible = "operating-points-v2";
-> +
-> +                opp-375000000 {
-> +                    opp-hz = /bits/ 64 <375000000>;
-> +                    required-opps = <&rpmhpd_opp_svs_l1>;
-> +                };
-> +
-> +                opp-500000000 {
-> +                    opp-hz = /bits/ 64 <500000000>;
-> +                    required-opps = <&rpmhpd_opp_nom>;
-> +                };
-> +
-> +                opp-575000000 {
-> +                    opp-hz = /bits/ 64 <575000000>;
-> +                    required-opps = <&rpmhpd_opp_turbo>;
-> +                };
-> +
-> +                opp-650000000 {
-> +                    opp-hz = /bits/ 64 <650000000>;
-> +                    required-opps = <&rpmhpd_opp_turbo_l1>;
-> +                };
-> +            };
-> +        };
-> +
-> +        mdss_dp0: displayport-controller@af54000 {
-> +            compatible = "qcom,qcs8300-dp";
-> +
-> +            pinctrl-0 = <&dp_hot_plug_det>;
-> +            pinctrl-names = "default";
-> +
-> +            reg = <0 0xaf54000 0 0x104>,
-> +                <0 0xaf54200 0 0x0c0>,
-> +                <0 0xaf55000 0 0x770>,
-> +                <0 0xaf56000 0 0x09c>;
-> +
-> +            interrupt-parent = <&mdss>;
-> +            interrupts = <12>;
-> +            clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +                <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
-
-Messed alignment in multiple places.
-
-> +                <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
-> +                <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
-> +                <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-> +            clock-names = "core_iface",
-> +                "core_aux",
-> +                "ctrl_link",
-> +                "ctrl_link_iface",
-> +                "stream_pixel";
-> +            assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
-> +                 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-> +            assigned-clock-parents = <&mdss_edp_phy 0>, <&mdss_edp_phy 1>;
-> +            phys = <&mdss_edp_phy>;
-> +            phy-names = "dp";
-> +            operating-points-v2 = <&dp_opp_table>;
-> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
-> +
-> +            #sound-dai-cells = <0>;
-> +            status = "disabled";
-
-No, your code cannot be disabled.
-
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    mdss_dp0_in: endpoint {
-> +                        remote-endpoint = <&dpu_intf0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                   reg = <1>;
-> +                   mdss_dp_out: endpoint { };
-> +                };
-> +            };
-> +
-> +            dp_opp_table: opp-table {
-> +                compatible = "operating-points-v2";
-> +
-> +                opp-160000000 {
-> +                    opp-hz = /bits/ 64 <160000000>;
-> +                    required-opps = <&rpmhpd_opp_low_svs>;
-> +                };
-> +
-> +                opp-270000000 {
-> +                    opp-hz = /bits/ 64 <270000000>;
-> +                    required-opps = <&rpmhpd_opp_svs>;
-> +                };
-> +
-> +                opp-540000000 {
-> +                    opp-hz = /bits/ 64 <540000000>;
-> +                    required-opps = <&rpmhpd_opp_svs_l1>;
-> +                };
-> +
-> +                opp-810000000 {
-> +                    opp-hz = /bits/ 64 <810000000>;
-> +                    required-opps = <&rpmhpd_opp_nom>;
-> +                };
-> +            };
-> +
-
-Drop stray blank lines.
-
-> +    };
-> +...
-> 
-
-
-Best regards,
-Krzysztof
 
