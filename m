@@ -1,136 +1,236 @@
-Return-Path: <linux-kernel+bounces-423831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1D19DAD5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:49:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17919DAD5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:51:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B00AB21427
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:49:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 237BFB2146D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4915613B2A2;
-	Wed, 27 Nov 2024 18:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC1220110D;
+	Wed, 27 Nov 2024 18:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oiKJsSbH"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="bxQdiNYV"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31EF1448E6
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A720309
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732733364; cv=none; b=kA1HfebJkymFXTWLXeDea0UWEg0/ZCNXflLyg17ARMRp7BfeG0qkV/H1R9VzAm2b6lvb1dp/pOZBn9O81zbz7SXAvANSQ4rMFqIAf22XJOC7OGag8wIr5hYgB/ldotE69GK30xu0Ss0uA/TT+2PpMN7MhlWAeQjKru3uuzxZVKs=
+	t=1732733482; cv=none; b=azK24J9muZ7O3lcak+v3UVdTbBIgqGCj0nG24BzF75r+DKHVnJ+UTlYGgdAxC5YKzv16OukEAe0fXU/rG1s4g+kzjlffGZ//JuejFvnAx6Iws+MuMYM/36Q6Zgc7/L72wErTkrCkkNXqw+FoSAoIBMzXb1CsLD0AUFweznN/760=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732733364; c=relaxed/simple;
-	bh=sjoyiG2Hp2mqoPO+fxRY3EiUOYbL8A159VrQnsMQDMc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=e7sgcWyDn7DrWgjhZgHxjw8uc5X7EhAo968wHAU/nOSMIhB+61k8OK7AzrDCMRf+HQAqnDXXn/Q5x+RmWmkupiqYqh5kKdmJa+jNhLD5v5jrU9bl6TfEYGhYShfxRT+XE3g9rShD2unW65rzQziZIpaXg6W/BpOzbAoCnCoyFNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oiKJsSbH; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de771c5ebso3838784e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:49:22 -0800 (PST)
+	s=arc-20240116; t=1732733482; c=relaxed/simple;
+	bh=fPfgZwnSLS2kQoF5+M1p4U2PsLLTNWNdyf0KSRk/2Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ciImLwDD8yP9otkohefPojUYDYKBDNadMM65lkkijkSOqOyiL4lcCHrgUdkdlOkqq8xiXDTQPEKh1VdVYBYeU0O3A49qcQ0UUeoLiq+LxskhGHvh/1um/CRjR9+cztk/Tz6ffEHQaLt3q1/iFiZCxaD3dHiUNFxvDmw8fLP6Hms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=bxQdiNYV; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21285c1b196so75015ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:51:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732733361; x=1733338161; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sjoyiG2Hp2mqoPO+fxRY3EiUOYbL8A159VrQnsMQDMc=;
-        b=oiKJsSbHk8orAOWZJnxuZrGBtiebLC9PpNlRs6R9lvwQC12I3y6LKCYDDJpIt3gk8c
-         pqVo++P4mYR4w5KUAi4FivHHRr4ZT6yqQ4sbcenrESSA5mEQamh/0kz7Xc2DOTQ8KKUv
-         bDEj6e1MZ/MGowLqpLb+3zCFywrW3V5XDSYEniEhX0yQdUDstKIyhOSaxkV3vVqGFQWJ
-         VuLbapmhmbGmZrSHw2Jzp3uXqUkjDfWjtiTxwAmDLKHqwA9io63X2GR9rtGuVAgqdQn7
-         Sqn1DxAHJdPxNorHEJT6peMPk8hAKasb/pu/jTKjwhWTxU4rd8VXBN9ey1uro/FIDh6l
-         9TAQ==
+        d=fastly.com; s=google; t=1732733480; x=1733338280; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VsL5lh4/mMVU/3l2rG4YRwXPxx1DY2vb0Xku31fNN8c=;
+        b=bxQdiNYVOCoV86TNypKTMtHh5xZE7IcTPty5DaA0c1XveT92yI3GTHGH0uhmQXaFaF
+         V12FF1UtlJIipXL0UOnxy7F4YlybM2J8itU8o7m0papgTBdjhXX0rkkbpl9tSDmfjUuK
+         YUhBGyEMfA0Jf/ge4NrQFR9xK+Ry31untqYKM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732733361; x=1733338161;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sjoyiG2Hp2mqoPO+fxRY3EiUOYbL8A159VrQnsMQDMc=;
-        b=pqiBTVH7PcnzzFzBLeXEQadKtt6LoZCkqmCOyS/bcDRqsuTpWkvMPMifYgsoiBYbcG
-         Om27MIduPfqN8qB/h2yPDMc61Uv/kNI8TAXN/P4tQnpxZ96n6ZD8ARNJcrneGEUqkPbc
-         9x/NyWMxP44TdG67+nuA6s4IMeRNG0GH+Ph0AQEcEF/uSTCyQveo2XkQ8Ri7rC5QmoZP
-         9mphgJpKm7ocQ+8SxuVC9Heq9xdmi9Jqx1NWLhfkqBV2DXshkuNTT+RgNZAQgYH7pdDv
-         2d86SoUOg7yxEIaByyiK/EC7T2o56dcFxd/MYLzuvjEa6AhgpqnSJMroHFQYUOPayA4o
-         I/iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdM3/VFp4VYcnST1ssPRCn35qxOzILX4sDFEtv+immy9g3iPjSQUMeU0AnjsRu8H9/8RPkux4SuPbQhng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2hrRpYFNA3vcys8HT6+tPowE0O70z8dfzDyPq/tmdaDkJhFoT
-	NEtEt6K1lUO1XsWvJVpV4t68ibzdL74B0/kmcynC5z2cW4IVOH9edZ9MzdUKvRU=
-X-Gm-Gg: ASbGnct0XGY8QG2ce+OsHTPs75E2HsxB1blCa81yb/rr2oZFqUrH5CKV4d2XGV3ro5g
-	XRQU5HBUwvtTR84gOsPJ53D6NAIN9MosBsGRWYjgfenIWBf+iWqrrGPUs8Fug195haDG0wWM6EY
-	stYonGX79h3NU4dj4qPm+thyuUKu8K6CU/YDIEyBgeE7yMx44rvyGqewg64ueWG+6Y1lulOKk/j
-	NBkN5Fjy1UTVcceh+3alGGaxBEHJ2kqXoOEM27v23iSXdcudNnSWG+KCyT41Z5N9MmWhmpNt8Z4
-	6iIixvt3cbP8/uU=
-X-Google-Smtp-Source: AGHT+IEmUi+ANH8PnjVcprPLiJ6h5cts7vEPzcxELANUAmqnDFEgXsap5gI2kW5PmEmhDomAWBibaw==
-X-Received: by 2002:a05:6512:3b25:b0:53d:ed0d:1d14 with SMTP id 2adb3069b0e04-53df00d1ae2mr3023434e87.16.1732733360922;
-        Wed, 27 Nov 2024 10:49:20 -0800 (PST)
-Received: from [127.0.0.1] (85-76-116-93-nat.elisa-mobile.fi. [85.76.116.93])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24812besm2308319e87.121.2024.11.27.10.49.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 10:49:19 -0800 (PST)
-Date: Wed, 27 Nov 2024 20:49:16 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
-CC: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Odelu Kukatla <quic_okukatla@quicinc.com>,
- Mike Tipton <quic_mdtipton@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_V6_3/4=5D_dt-bindings=3A_interconnec?=
- =?US-ASCII?Q?t=3A_Add_generic_compatible_qcom=2Cepss-l3-perf?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <0ba0f4af-5075-4bb1-a7f6-815ef95bbda7@kernel.org>
-References: <20241125174511.45-1-quic_rlaggysh@quicinc.com> <20241125174511.45-4-quic_rlaggysh@quicinc.com> <20241127142304.GA3443205-robh@kernel.org> <zchtx32wtii2mzy2pp4lp4gdaim7w56kih7jcqes4tyhu24r3n@dagazlsdgdcv> <0ba0f4af-5075-4bb1-a7f6-815ef95bbda7@kernel.org>
-Message-ID: <538761B6-5C8D-4600-AB9E-687F91B855FF@linaro.org>
+        d=1e100.net; s=20230601; t=1732733480; x=1733338280;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VsL5lh4/mMVU/3l2rG4YRwXPxx1DY2vb0Xku31fNN8c=;
+        b=ijppG+o8at2we3pJBxtNZ/Nw+aEHcwvYqDTtakDhVnbwCtwzhitcvKMScnLZlfffaw
+         xXj+HMacK8i6QW+IjmdvtPA2goVgPL9bvDpOPnI7E4nQlYgLKiBGJdGLlwxq4fT/3VX2
+         ZDyHo3DjxcVT6YPePqX88+ZP5pEy/BTaKCX7E3dR9Ls1bv1DAQ1v7cgan675xQZg2zir
+         Jv/09/PIdsZhP3Dni/pVnUslYkAilv/wCO6si11Uz6f5EWv/gsqQaH/2UTnzSqjjV9cU
+         +AiEb2L872spRyGufMBeMFydxITThqPM8yYIEH7f2TBt25dvev/ZTFVryUMgnzvGM98W
+         GHTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBSAiqy7t3cTVjlTbUvh/Q40CSxzZOlAVPipDrpzXaIFqzYimxHvIGg0ZZAT4R2Wfmf10nBa5GXPlJxXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrAUS/YOKGNE0RKWvgyJg+u3YDasdf92VQxrU8LidU4HVJ33H0
+	R7549cjZI8eH5saMMQelZlrCvTvtxuT0ExcTtlqBJgbEJvdl/Ht5ex65aKMP0P8=
+X-Gm-Gg: ASbGncts0UN5NYqjAiXwZPjOD0Goo06cqWNYdPmEfgiWoYV1okGRu+Y2Z3QXSExCk4W
+	YyBBLUKodwMcUBvYOFNnM96LXBhdATmq4seWbkAJxoThar1XsUxr6PdAjxERDfFcEfx4wtBaJBq
+	N80gw7LdirbvXZCgAt+RpF04QzSSOEjdsxSTk3SClM9OXIxK9E2wetgQNxnChp0h31vGYwVyPhN
+	BGGhoKjObNpMMrC/swdWpiDDcUTYOAzWSj3eM3wOqVTIvPAoF1MVn5JGSC6eF1PubQ7PpvEAbvL
+	nhN0arSZrYITS7rD
+X-Google-Smtp-Source: AGHT+IFkJr9GlfDzMfKesKE8ace4E8O09xxP/zgehp8g1sOlhe/RbcBXYI45O4OUnl3dYJmueQxa4g==
+X-Received: by 2002:a17:902:d48c:b0:20c:5404:ed69 with SMTP id d9443c01a7336-21501a43fc5mr51658525ad.31.1732733479954;
+        Wed, 27 Nov 2024 10:51:19 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2150b4d9abasm15364505ad.35.2024.11.27.10.51.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 10:51:19 -0800 (PST)
+Date: Wed, 27 Nov 2024 10:51:16 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	edumazet@google.com, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
+Subject: Re: [net-next v6 5/9] net: napi: Add napi_config
+Message-ID: <Z0dqJNnlcIrvLuV6@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	edumazet@google.com, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
+References: <20241011184527.16393-1-jdamato@fastly.com>
+ <20241011184527.16393-6-jdamato@fastly.com>
+ <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
 
-On 27 November 2024 20:27:27 EET, Krzysztof Kozlowski <krzk@kernel=2Eorg> w=
-rote:
->On 27/11/2024 17:53, Dmitry Baryshkov wrote:
->> On Wed, Nov 27, 2024 at 08:23:04AM -0600, Rob Herring wrote:
->>> On Mon, Nov 25, 2024 at 05:45:10PM +0000, Raviteja Laggyshetty wrote:
->>>> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register instead=
- of
->>>> REG_L3_VOTE to scale L3 clocks, hence adding a new generic compatible
->>>> "qcom,epss-l3-perf" for these targets=2E
->>>
->>> Is this a h/w difference from prior blocks or you just want to use B=
-=20
->>> instead of A while the h/w has both A and B? The latter sounds like=20
->>> driver policy=2E
->>>
->>> It is also an ABI break for s/w that didn't understand=20
->>> qcom,epss-l3-perf=2E
->>=20
->> As the bindings keep old compatible strings in addition to the new
->> qcom,epss-l3-perf, where is the ABI break? Old SW will use old entries,
->> newer can use either of those=2E
->No, this change drops qcom,epss-l3 and adds new fallback=2E How old
->software can work in such case? It's broken=2E
+On Wed, Nov 27, 2024 at 09:43:54AM -0800, Guenter Roeck wrote:
+> Hi,
+> 
+> On Fri, Oct 11, 2024 at 06:45:00PM +0000, Joe Damato wrote:
+> > Add a persistent NAPI config area for NAPI configuration to the core.
+> > Drivers opt-in to setting the persistent config for a NAPI by passing an
+> > index when calling netif_napi_add_config.
+> > 
+> > napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
+> > (after the NAPIs are deleted).
+> > 
+> > Drivers which call netif_napi_add_config will have persistent per-NAPI
+> > settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
+> > 
+> > Per-NAPI settings are saved in napi_disable and restored in napi_enable.
+> > 
+> > Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+> 
+> This patch triggers a lock inversion message on pcnet Ethernet adapters.
 
-Oh, I see=2E We had a platform-specific overrides for those two=2E Then I =
-think we should completely drop the new qcom,epss-l3-perf idea and follow t=
-he sm8250 / sc7280 example=2E This means compatible =3D "qcom,sa8775p-perf"=
-, "qcom,epss-l3"=2E=20
+Thanks for the report. I am not familiar with the pcnet driver, but
+took some time now to read the report below and the driver code.
+
+I could definitely be reading the output incorrectly (if so please
+let me know), but it seems like the issue can be triggered in this
+case:
+
+CPU 0:
+pcnet32_open
+   lock(lp->lock)
+     napi_enable
+       napi_hash_add
+         lock(napi_hash_lock)
+         unlock(napi_hash_lock)
+   unlock(lp->lock)
 
 
->
->Best regards,
->Krzysztof
+Meanwhile on CPU 1:
+  pcnet32_close
+    napi_disable
+      napi_hash_del
+        lock(napi_hash_lock)
+        unlock(napi_hash_lock)
+    lock(lp->lock)
+    [... other code ...]
+    unlock(lp->lock)
+    [... other code ...]
+    lock(lp->lock)
+    [... other code ...]
+    unlock(lp->lock)
 
+In other words: while the close path is holding napi_hash_lock (and
+before it acquires lp->lock), the enable path takes lp->lock and
+then napi_hash_lock.
+
+It seems this was triggered because before the identified commit,
+napi_enable did not call napi_hash_add (and thus did not take the
+napi_hash_lock).
+
+So, I agree there is an inversion; I can't say for sure if this
+would cause a deadlock in certain situations. It seems like
+napi_hash_del in the close path will return, so the inversion
+doesn't seem like it'd lead to a deadlock, but I am not an expert in
+this and could certainly be wrong.
+
+I wonder if a potential fix for this would be in the driver's close
+function? 
+
+In pcnet32_open the order is:
+  lock(lp->lock)
+    napi_enable
+    netif_start_queue
+    mod_timer(watchdog)
+  unlock(lp->lock)
+
+Perhaps pcnet32_close should be the same?
+
+I've included an example patch below for pcnet32_close and I've CC'd
+the maintainer of pcnet32 that is not currently CC'd.
+
+Guenter: Is there any change you might be able to test the proposed
+patch below?
+
+Don: Would you mind taking a look to see if this change is sensible?
+
+Netdev maintainers: at a higher level, I'm not sure how many other
+drivers might have locking patterns like this that commit
+86e25f40aa1e ("net: napi: Add napi_config") will break in a similar
+manner. 
+
+Do I:
+  - comb through drivers trying to identify these, and/or
+  - do we find a way to implement the identified commit with the
+    original lock ordering to avoid breaking any other driver?
+
+I'd appreciate guidance/insight from the maintainers on how to best
+proceed.
+
+diff --git a/drivers/net/ethernet/amd/pcnet32.c b/drivers/net/ethernet/amd/pcnet32.c
+index 72db9f9e7bee..ff56a308fec9 100644
+--- a/drivers/net/ethernet/amd/pcnet32.c
++++ b/drivers/net/ethernet/amd/pcnet32.c
+@@ -2623,13 +2623,13 @@ static int pcnet32_close(struct net_device *dev)
+        struct pcnet32_private *lp = netdev_priv(dev);
+        unsigned long flags;
+
++       spin_lock_irqsave(&lp->lock, flags);
++
+        del_timer_sync(&lp->watchdog_timer);
+
+        netif_stop_queue(dev);
+        napi_disable(&lp->napi);
+
+-       spin_lock_irqsave(&lp->lock, flags);
+-
+        dev->stats.rx_missed_errors = lp->a->read_csr(ioaddr, 112);
+
+        netif_printk(lp, ifdown, KERN_DEBUG, dev,
 
