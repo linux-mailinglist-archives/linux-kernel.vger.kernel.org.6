@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-423304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2956C9DA596
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:18:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8A19DA59A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:19:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9AAF284CC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0BB5162FAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7050B196C6C;
-	Wed, 27 Nov 2024 10:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A401C196C86;
+	Wed, 27 Nov 2024 10:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoGE+gOZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+ePnnc+"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD2433C8;
-	Wed, 27 Nov 2024 10:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC248188014;
+	Wed, 27 Nov 2024 10:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732702682; cv=none; b=E+gHwWXcNrZwOQQAwC4saE37TyMmZ/ufXhLjbk+7ZRwmAQj5tSns+FTPGiu1JFNBdSEymgYoSXnXYuwobGQx7v1HjSZLgSYAdUlBE8fe5qSjjKfIItLEZ4BEbd5WnbrCV8uGQETKMWaY/U+LoB06PMQIHumrc/vGng3Re5sIwcY=
+	t=1732702792; cv=none; b=RL+GevSkWMNcsZmgm8OYFiCLtZBMv40M3gFF7Aw6nHq8GgWUbzJWIG4GgF5SW0+fEwbQjD7ebaskpE1eCEfxvj7Kg2RKWJnnla2u6V4oa1+fC0gyHGjKDjgpTJuwAenujkoo+HAgZKBcghEevGbDPmrw41/fmiW9sJ4fMSco+Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732702682; c=relaxed/simple;
-	bh=D3cgGvnrdPxZeZ3kksJOk9iv4alQOS4qpqxciK9Y+b0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gHm4JdowueYI3GD1E5o5XogpaVtzFHYIHfC1ud2ruBTQH7R+CL6QnI7rPJBJC3CnUOBxn1zOCB5sS5/ivhutFS0/BNMKp6gtA/KBWkEr931yclzNVdJZCloK8rqFGk2ptwm3e4BrkP+7GwRrPo4s4jU4y58ihv7lQ2IvGHFBbus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoGE+gOZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6599EC4CECC;
-	Wed, 27 Nov 2024 10:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732702682;
-	bh=D3cgGvnrdPxZeZ3kksJOk9iv4alQOS4qpqxciK9Y+b0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VoGE+gOZqDu7IiKN5xke6GUIgqivy6zpdKiN189F0MFZ7/u3udStYsgUHM2oIW9cl
-	 sfa8gYh7MlCVl7k0ZP6wWAFbk2BqH6T+mxumBMqoNDZGoDXDJ5Mi5mff1rZ8Zn7D0T
-	 vRlWn/TTw4PEq0KHVmtVedfKAJCyA5/hv/O20yYJjEtiHvzRzZ0QNaHAT07BBq2Elc
-	 gCjX7r8T0B6eGiQSI28ljBgajzPNFoCEHqguW3fxjamwo5hWXIs3aNk/1VghxMJTOZ
-	 bjHMzb6OJAUvGD6MxtT3ZSTuEgxL6NLUhUj7e7qZfWzFSQdNrm60nNiuaXbi5oFkl/
-	 XoxYqLf9PaovA==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Quentin Monnet <qmo@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	David Abdurachmanov <davidlt@rivosinc.com>,
-	"Namhyung Kim" <namhyung@kernel.org>
-Subject: [PATCH bpf v2] tools: Override makefile ARCH variable if defined, but empty
-Date: Wed, 27 Nov 2024 11:17:46 +0100
-Message-ID: <20241127101748.165693-1-bjorn@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732702792; c=relaxed/simple;
+	bh=7UQTftw7QAt6/lAVbxDq9qH6ith2CFWANV32+FQ9m34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rGxGdUzVr69/SWe7U3o+CsaER57ydL6EgQlD6ATAHZMsIeKzaE9Xooa+FoW92cgD6t6f9d17eS6n2Fal3OWvjNzyPGml9JmThX6mp+67ef3CByR9xTYYtuHc5kSjWEaV6YJg1biDLzBPm+2xvPgf4hrHQiOn9BbH3CHTttOg1XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+ePnnc+; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so6263566276.3;
+        Wed, 27 Nov 2024 02:19:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732702789; x=1733307589; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=F4ZFZN9NxmPUE6vqicmzpkTPnRTjKFXzlxg+bLBGC5k=;
+        b=C+ePnnc+Ck5qJb0IBFD80z8wTfEeDAoEqraybpNU0WFUeull6XKb25hFbqdiC6V6Wg
+         puPDrK/B9dRcOdpNSmXfg9lIw7ycPan5JzXfoeWsMfGE3aAXaIr/DcCeTd4nHlVdceYF
+         p9kcyBpKplP9QOTJi9oeOWwAhEC2JyIWy66Rpbs29rROxiDMTOJpuVnM+RFa1TcdpySx
+         OnQubbN48JGfMhantzFFC7u4S48AnppSQSjj/N8CPf61J7c40lZo4npuiJfCRbyZjKJq
+         LIDHVZ3nqnQpJ37i3zNuPRC6pdQOQhxGZwpwwTf4zVG6+d0FnlTX7HczRk0Dc9CcRsst
+         8MUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732702789; x=1733307589;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F4ZFZN9NxmPUE6vqicmzpkTPnRTjKFXzlxg+bLBGC5k=;
+        b=MkhDFIAQBePHi9pLAJGlMBOaK1dFV6Wm3FqINfwPg3buHC2PeiRG5D+aEu9H2S8Ztd
+         MbIkuBnRWuwr7+wyT7ZCWy3yya1XQZcGZQP//9FbWaKaOLeIiA/xmonLVm9zfWbEnz+P
+         8/2yDFYSCoekFUpqw2U5mN+tpcoQPwblZI1nkWGv21Ruy6EFmBs1Jjtvbw/warWFJcoZ
+         MKRjz2xwcBkIvD6QOUMm9svcpylWcwBtVHFKvBGOwav+CjOFtVumOvRQJ4W5xZ2DKaIX
+         UXxyazathl43jZOp6uB79gjXnMQJfvSrOSeRDRhE4wB808Vo3HojUJ/LvJuDR5B1cvnM
+         baEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUheQ56oCU0BxwYw19gGagN5QpBT82WtvDrhV44rY/BKkrO8G8f/N/G9uGZRCqHiCUgpa/FdStfu26OTIY=@vger.kernel.org, AJvYcCVwnbmLp8Irjf872Hrxk5MJ2vwMriGYktiyDIdn1wn6MlsJ3z7JnRgfn6p7hxLuhbXQq+F8kn1QbxWC@vger.kernel.org, AJvYcCWCIBXPcu9eK9jtGRMpjuLgewh0zolbCqxU6pcgGt6pA16EooN0uuSw5ZpMo9V8MZQ7URLwgwQ7HPhshcDX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7389j/q5sWmFFOFa6iFbKTpPTebkpA5bUOAOtpBnlu7265NPw
+	CKi9uM+q9J+FNSaseUYhk06wTOhO6NTEeAk6L80YJoTsTk56pwpvNd4fn00q6P8Qrtkfeb7I2c9
+	PSFUjtahqYqiXi1q1TO0ogLH2kFM=
+X-Gm-Gg: ASbGncsUKKfL6P+ymkwV0B9eAa4wdU9mXFeLJDLPyCXuMxo9jpufMvDUKlTjmmrFQ9p
+	VtTwYbzMB5Fle9xtaAa2O7mQsWP8mYM5G
+X-Google-Smtp-Source: AGHT+IEYW50AkDoUBavXeClBq8yM9JWwAWazhdC2aIw8o67QfCzF5n/O5RVYRddcvSnH0Wwfl/8Zz40gZy3rpxRED/M=
+X-Received: by 2002:a05:6902:118a:b0:e30:8440:8162 with SMTP id
+ 3f1490d57ef6-e395b8c279fmr2534137276.28.1732702789657; Wed, 27 Nov 2024
+ 02:19:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com> <20241126-z2-v1-2-c43c4cc6200d@gmail.com>
+ <27amnmlm52igidlv23h3d3bvaezbdumedfkqicbtreka3llhqs@fafepduxgv43>
+In-Reply-To: <27amnmlm52igidlv23h3d3bvaezbdumedfkqicbtreka3llhqs@fafepduxgv43>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Wed, 27 Nov 2024 11:19:38 +0100
+Message-ID: <CAMT+MTRTzPwo7QveP5Zt_4Zycu1qohe5g8srC8O8Jo+O+-wLJw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] input: apple_z2: Add a driver for Apple Z2 touchscreens
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Janne Grunau <j@jannau.net>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Björn Töpel <bjorn@rivosinc.com>
+On Wed, 27 Nov 2024 at 10:00, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > +             dev_err(dev, "unable to get reset");
+>
+> Syntax is: return dev_err_probe, almost everywhere here.
 
-There are a number of tools (bpftool, selftests), that require a
-"bootstrap" build. Here, a bootstrap build is a build host variant of
-a target. E.g., assume that you're performing a bpftool cross-build on
-x86 to riscv, a bootstrap build would then be an x86 variant of
-bpftool. The typical way to perform the host build variant, is to pass
-"ARCH=" in a sub-make. However, if a variable has been set with a
-command argument, then ordinary assignments in the makefile are
-ignored.
-
-This side-effect results in that ARCH, and variables depending on ARCH
-are not set.
-
-Workaround by overriding ARCH to the host arch, if ARCH is empty.
-
-Fixes: 8859b0da5aac ("tools/bpftool: Fix cross-build")
-Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-Acked-by: Quentin Monnet <qmo@kernel.org>
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
----
-v2: Proper tree tag "bpf".
-    Collected *-by tags.
-
-Andrii,
-
-Apologies for missing out the tree tag in the patch. Here's a respin,
-and thanks for routing it via the BPF tree.
-
-
-Björn
-
----
- tools/scripts/Makefile.arch | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/scripts/Makefile.arch b/tools/scripts/Makefile.arch
-index f6a50f06dfc4..eabfe9f411d9 100644
---- a/tools/scripts/Makefile.arch
-+++ b/tools/scripts/Makefile.arch
-@@ -7,8 +7,8 @@ HOSTARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-                                   -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
-                                   -e s/riscv.*/riscv/ -e s/loongarch.*/loongarch/)
- 
--ifndef ARCH
--ARCH := $(HOSTARCH)
-+ifeq ($(strip $(ARCH)),)
-+override ARCH := $(HOSTARCH)
- endif
- 
- SRCARCH := $(ARCH)
-
-base-commit: 3448ad23b34e43a2526bd0f9e1221e8de876adec
--- 
-2.45.2
-
+Per discussion on previous version of this series, input asks
+dev_err_probe to not be used.
 
