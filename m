@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-423026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BCB9DA18A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:43:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C859DA18C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:45:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E0D168179
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08456B244D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CC181AD7;
-	Wed, 27 Nov 2024 04:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8652382D66;
+	Wed, 27 Nov 2024 04:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d6H4XFUU"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRNANRtd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B672314F90
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80C3320E;
+	Wed, 27 Nov 2024 04:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732682596; cv=none; b=G0ZDiVmtGBPli8WCAGnqiptuH5YBGF8tAvBv1hRyDH60cENDaiTC1WwAtPekpASdWXn8HI1Qrt6C/xvOpShKBztOnq8UQwstSxwUlm9k+W8yHdxfPVuD7OZJwuAg3Q6SeGxtvPg5xuAPClTM1QeRM8SZoKHsCmfe76CP+twMQWI=
+	t=1732682741; cv=none; b=ayliHncRATRmJGN9mpMxiFOBPh8zQ3sgZSD5+HKMS5IEgL+A0slg2dsKbIhGhnyBuzw1K4HVz9OLxkp4LZ/RZlgWczKTnsoY4jCmEfixdyRfLUO1ZcK86LMHEJdS8MRRh6UZ7iViiRdwepcg8wSa3rXN9JHcmAj2fzzzV0xSlJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732682596; c=relaxed/simple;
-	bh=b0a9mbaAx6zBnaux2dFdVBPuuQxiQ0zP49OgKzFZRRk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMStwCSjtI+rnDYQgRuGPNnqd66iuTJiZXXWaW6OwhieE24lL6RFy354OaCyzSLTE+Mu/0Fv6gCWV9E5TLJx6ivnMzJDro96hqWldtCv7sv4wkehFEUqRn9gJ2IulTJpwvK9cov07V7ge+BpVKN1chWSn4LGEBnAt9xrv5Ei47M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d6H4XFUU; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5f1d1068451so1462413eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:43:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732682593; x=1733287393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=buIj9lD4l7EjMTWNqbbtXYSQ2Eo8RWol7XgFHIWEhAQ=;
-        b=d6H4XFUUyPoqKF4kCp+wHDF7NA5T6GSzjisgasyCWkJGuPzgN7dOz4z7SzmS6EqjzZ
-         EjlUdTAqawJ4NyD4UfmaeNaPAbWHcEC+MCb07RUbjFoSPqjN8YjBmNS7nmnL+3jJanNX
-         KCdvz5YBM2bozxeTwl9rSzCCmXOgb7U9n3i+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732682593; x=1733287393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=buIj9lD4l7EjMTWNqbbtXYSQ2Eo8RWol7XgFHIWEhAQ=;
-        b=VDVHhhIrZNIaRKE1nNt5RnOcdpCHW2o9lgIU9o/+2DYGL7IwZvo4RyRCVhRE5OczW0
-         rnnveT8Zi09+YlkX9Fk6JjcTw+hhtAvDBYVmYfP/1ElKFUs8R959Xql+W+UeyUo0re4n
-         nKanmlIOyMzW+Pvlp5lKiLwORepYNr1Kx5nUmoZEZLbkfPLVEnuuCtqAHubZ9bMaAkfg
-         X2NKFGwDEEiXc9j8kWqajIwMCBy58oskcOkQVB/OplN2/DqN8beK+9Z7xMLv+5T101Xj
-         /wd0DyhQommzG8NPgQG9HfgFNYYnk3QgyPxIQ/pbazS/g8pPcG0P9QlAS3OY5GDABS1i
-         SiXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGYnA9cY4W53r/2Vi//XJeZw8lboEgDF1gr6l+HV3ggD9jl2jvaAkSqbGvFVwtE5lfcuQRVs1CpF5uCdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKi7C+vmmdBO2Lk1neD/PK1eVjpns3M+RKEVV4PfiB7YTnH1BP
-	a4u+ErQZcGrEF1mhkxrVUWadPlt5Rdm288usy+1Wefkpggqa9c19UVkM2plJPUGmwxY/enNXV/a
-	njy+3UIxMHFTu0s8wW+xkZYFiBF/MAF/QOyzP
-X-Gm-Gg: ASbGncuJaGWuQu1lUUIzg53ks9jIErMHgbuQ3krtATywcjyES4U8yWcxZsFu89ehvR7
-	2Jw96Drp1/I4OXEXMJaOnkD4gB6WkC2z7zdu7byaOV6UifVooR20TD8zEOQM=
-X-Google-Smtp-Source: AGHT+IHzVwgmp24HNWYR9QgilyN0+vKnYnhsqeCOo3U9Uzr8ko0VEjMW3SCABnxFA+zY3W8ifSeKNUAKmHsycZau8KU=
-X-Received: by 2002:a05:6808:3082:b0:3ea:5a0e:941c with SMTP id
- 5614622812f47-3ea6dbc8cb9mr1709943b6e.10.1732682592979; Tue, 26 Nov 2024
- 20:43:12 -0800 (PST)
+	s=arc-20240116; t=1732682741; c=relaxed/simple;
+	bh=jwWouk2doTDSnMPVqlNYcds+EY7AkvBTULO2Iq6KJeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fz30R7BabbKANfxpzmr+6YeVZWHdPzV0rCey6SEVnzC5KDiouxCR5vVEOsQjAHL3LV9xzPuGdVTlbvRF8sx0LhK6jorepeeFIM6fsYOIv/5w0DemRDA1tB+ECKegyDoRWrW1QD3Prx10oAe2TZIlrtctFw30lOyuKA9Jl5ISs1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRNANRtd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67EBCC4CECC;
+	Wed, 27 Nov 2024 04:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732682741;
+	bh=jwWouk2doTDSnMPVqlNYcds+EY7AkvBTULO2Iq6KJeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lRNANRtdQlYm6Z4c34jUJUtU6S5BKJVLPJFE2ZSv1X8IlqoeaDp2dlA2spQx2X/9/
+	 jwqxfV155bpTVixnIwP+frf13Pfwf49ZaS8p5QqIhOeHk/0qMS72zOq3DGhhySackH
+	 b5VoXFb8DiOWm/EJwkMkG3X5UAplVIIbMYNFHhpVzjTh7mm7k9LeA1+1koY98HyCGd
+	 LRm+iFXFvBhNlhjhYJiiY46Di0SuLfV0Faz29hpANM0oJlwxwil/NEMaZ8jSsWspaC
+	 nHMmS8kHg+AG8Hs0aDUoqvcJJAzKm4TJJwR1ag8MBKUvV7ymBb6uFfh/3wQ6j6EkJQ
+	 j0OsYqy9K8hbw==
+Date: Tue, 26 Nov 2024 22:45:38 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kuldeep Singh <quic_kuldsing@quicinc.com>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
+	Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>, Andy Gross <andy.gross@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] firmware: qcom: scm: Handle various probe ordering
+ for qcom_scm_assign_mem()
+Message-ID: <oq7on5krzvq2lsla4irfi4cr2lwnzejpowglzmovon7ye4dgsm@yqibu2el6j3l>
+References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
+ <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-3-7056127007a7@linaro.org>
+ <CAMRc=Me=Eu6+SpdguKurWgQDrpuo4qTCwWO6GfzS=YuA9vUzOw@mail.gmail.com>
+ <a5343627-a325-465e-b744-747d4c1b2cae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127030221.1586352-1-xji@analogixsemi.com>
-In-Reply-To: <20241127030221.1586352-1-xji@analogixsemi.com>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Wed, 27 Nov 2024 12:43:02 +0800
-Message-ID: <CAEXTbpe=3mN-wCJGRVe7SSbzr5J=zFhWOF30jm5HH4cN_GyK_w@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge:anx7625: Update HDCP status at atomic_disable()
-To: Xin Ji <xji@analogixsemi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	bliang@analogixsemi.com, qwen@analogixsemi.com, treapking@google.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5343627-a325-465e-b744-747d4c1b2cae@linaro.org>
 
-On Wed, Nov 27, 2024 at 11:02=E2=80=AFAM Xin Ji <xji@analogixsemi.com> wrot=
-e:
->
-> Update HDCP content_protection to DRM_MODE_CONTENT_PROTECTION_UNDESIRED
-> in bridge .atomic_disable().
->
-> Signed-off-by: Xin Ji <xji@analogixsemi.com>
+On Wed, Nov 20, 2024 at 03:19:00PM +0100, Krzysztof Kozlowski wrote:
+> On 20/11/2024 15:07, Bartosz Golaszewski wrote:
+> >> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> >> index 5d91b8e22844608f35432f1ba9c08d477d4ff762..93212c8f20ad65ecc44804b00f4b93e3eaaf8d95 100644
+> >> --- a/drivers/firmware/qcom/qcom_scm.c
+> >> +++ b/drivers/firmware/qcom/qcom_scm.c
+> >> @@ -1075,6 +1075,9 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+> >>         int ret, i, b;
+> >>         u64 srcvm_bits = *srcvm;
+> >>
+> >> +       if (!qcom_scm_is_available())
+> >> +               return -EPROBE_DEFER;
+> >> +
+> > 
+> > Should we be returning -EPROBE_DEFER from functions that are not
+> > necessarily limited to being used in probe()? For instance ath10k uses
+> > it in a workqueue job. I think this is why this driver is probed in
+> > subsys_initcall() rather than module_initcall().
+> Uh, good point. To my understanding, every resource like function can do
+> it, e.g. clk_get. Whether drivers call it in probe() or somewhere else -
+> e.g. some startup call like there is plenty in the ASoC or DMA
+> device_alloc_chan_resources() - is responsibility of the
+> driver/consumer, not the provider of that resource.
+> 
+> With such explanation returning EPROBE_DEFER is ok, just like returning
+> anything else (e.g. EINVAL).
+> 
+> Now about this function: it is not exactly "get a resource" one, but
+> still the caller might want to call it again later, which is implied by
+> EPROBE_DEFER. Maybe this should be EAGAIN instead? Just like
+> power-supply is doing in power_supply_get_property().
+> 
 
-Tested-by: Pin-yen Lin <treapking@chromium.org>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/=
-bridge/analogix/anx7625.c
-> index a2675b121fe4..a75f519ddcb8 100644
-> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data =
-*ctx)
->                                  TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
->  }
->
-> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
-> +{
-> +       struct device *dev =3D ctx->dev;
-> +
-> +       if (!ctx->connector)
-> +               return;
-> +
-> +       anx7625_hdcp_disable(ctx);
-> +
-> +       ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> +       drm_hdcp_update_content_protection(ctx->connector,
-> +                                          ctx->hdcp_cp);
-> +
-> +       dev_dbg(dev, "update CP to UNDESIRE\n");
-> +}
-> +
->  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
->  {
->         u8 bcap;
-> @@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct a=
-nx7625_data *ctx,
->                         dev_err(dev, "current CP is not ENABLED\n");
->                         return -EINVAL;
->                 }
-> -               anx7625_hdcp_disable(ctx);
-> -               ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> -               drm_hdcp_update_content_protection(ctx->connector,
-> -                                                  ctx->hdcp_cp);
-> -               dev_dbg(dev, "update CP to UNDESIRE\n");
-> +
-> +               anx7625_hdcp_disable_and_update_cp(ctx);
->         }
->
->         if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> @@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct dr=
-m_bridge *bridge,
->
->         dev_dbg(dev, "drm atomic disable\n");
->
-> +       anx7625_hdcp_disable_and_update_cp(ctx);
-> +
->         ctx->connector =3D NULL;
->         anx7625_dp_stop(ctx);
->
+The return value here will wander up the stack and I'm not convinced
+that all callers will handle an EAGAIN in a favourable way.
+
+The way we've dealt with this before is to say that if a client will
+call qcom_scm_*() they must call qcom_scm_is_available() during their
+initialization and handle the EPROBE_DEFER accordingly.
+
+Regards,
+Bjorn
+
+> Best regards,
+> Krzysztof
 
