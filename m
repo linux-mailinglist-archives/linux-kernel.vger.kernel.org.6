@@ -1,78 +1,226 @@
-Return-Path: <linux-kernel+bounces-423894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48DE9DADF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:37:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F48A9DADF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA1D282170
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:37:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F5D282164
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D0B201259;
-	Wed, 27 Nov 2024 19:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDAB20127B;
+	Wed, 27 Nov 2024 19:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD+alSBc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0YOqD0Tg"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F027200BA4
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B732201116
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732736266; cv=none; b=YyPjpyxPIyt+uEOdFjkLX3klud80jWJ+6tumriExfK8FtWdYldR/k7QWs5o8GR50SbFx8vTegFKmc9OXTryKXdC342KJbuRjepTbmMuk3dQBYK2E7B7CjrNHKpQ7jm4pybd1QBRQZevIjieDePRKmH7AqS6l9yQcqphz7TR+1XI=
+	t=1732736407; cv=none; b=XIeD3bTcQBQIIvNGYqNXuugy5L1s8pt8Mjev2vLgt2bXjsqibSj7jTlmp+uTS4QCkJk4MYEF5EiDDjBlGS9wVXTkwGm63m5Aq8ePw7YuCr0EpT/N8jnaK7EfhxFp53LrpOtt0pGCPl0L5EakSGndX2+6SK08Try8DFW7ZuO/sco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732736266; c=relaxed/simple;
-	bh=xOy4gHNO5JIJFgfga3dQs7yqxGP6WQS/t+SkkuLBS7c=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tU+suSiMGWGyRdveDDknRVOTIfkDLNVqg6I1vNSrT/dQAp3MN/ywkVmUE8k866f5tM7G0W1IPNPzmJ7ZOQ5Be5zjHt5qw7vt+KWZrnP74nhb6ow0H+0UYAAOxEvDaTPZqMsr17MvYVDRWcn45iNO5ZNkVPCXkbHzpmR5sBJKknI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD+alSBc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25575C4CECC;
-	Wed, 27 Nov 2024 19:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732736266;
-	bh=xOy4gHNO5JIJFgfga3dQs7yqxGP6WQS/t+SkkuLBS7c=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=iD+alSBcaxQ5qSC634aXXGlziELBaajTF2haTCcvnUA7iJPCmhgT3M85okY0E9/Mb
-	 ygIBaNiM+ojUe3k0EKm72bQ5Yg2PvglVfHKvXeVoggJG4PZ5KMSHPHdG2VO1xIcP0q
-	 9EPSu8xMzPoytWVwW/L5oLMKang48KOl+bxMyKNUpxCauHeqKCH4NMRxP5mOmLocep
-	 hiKs1pM25GcSfPEq2DN08z4MLUeSVOBiRxa1fi4xXVIQH+wrdGjjojzttTGqwBkplC
-	 BxszWiOVc1Pw3/86OT6aHWnFJ6asoJ3n7Yg/rzGWmeJ+w8MnoTGhnSIkgvUrT5txau
-	 rm1QjAm0sNJ+g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FA7380A944;
-	Wed, 27 Nov 2024 19:38:00 +0000 (UTC)
-Subject: Re: [GIT PULL] memblock updates for 6.13-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z0bTBc6aoyOpuhU1@kernel.org>
-References: <Z0bTBc6aoyOpuhU1@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z0bTBc6aoyOpuhU1@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.13-rc1
-X-PR-Tracked-Commit-Id: 98b7beba1ee6fb4ee755812e6c06cfc9084e7430
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ab952fc5c736c54e3ffd577c3ffd54a2a1eb7803
-Message-Id: <173273627912.1191875.4832554107621692281.pr-tracker-bot@kernel.org>
-Date: Wed, 27 Nov 2024 19:37:59 +0000
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Hua Su <suhua.tanke@gmail.com>, Mike Rapoport <rppt@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1732736407; c=relaxed/simple;
+	bh=x9dS7oAYleHRajlJ27xlcRqC5Yg8HnsAAlu88HSzn04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/N61hWf1QjYQWiQUkO5sQBBydmYGKpm+HFGUWIz9DTPW7RzlrknvWJZlzbRKHqGtB+guB7UKKx+d8ES6UMUlIsaAW6SFJogOjieok/6lfA/6Ji2spY4PqjzrJTo97mwUmYp7et3teA+sStcXVzPAbAFRvT3OPfifs/1RPRqqbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0YOqD0Tg; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668caacfb2so15431cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:40:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732736405; x=1733341205; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJl9SLmf8+tDJzXXlxRiqoHwxpxlnvk1n/BWGDuOZZo=;
+        b=0YOqD0TgQGN7+R44KaCStW6dxHvnYvSWWcWBDhM+2mbdwOBy7BH5YrfhE74qCOHwgh
+         8uovI7ZhKgGBeu+4oEDe4DIQb/WDxzxD11F9RzE7YTylWhlwalTn4VeE9GA1Gn45s0k5
+         XjYOTVMjIqUun6Atv+hHFhza37Wl9lZj/ziD4JHk1c7N+grMeSRoCRgP4c0wgPpfDe0i
+         4/ACh0IxY3oQ2GRTaMeDIDvp04Aj8fq/RtgY8fu16XREE0CwfG+XvbVbdRDOd5tfKmuo
+         K1zo04H8IjwVpIhFBWuyd6/2Pc9ZTE9ViIGVL0X/T18FbXD64cKp2EmS1v7e0jU9YTx3
+         WhJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732736405; x=1733341205;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJl9SLmf8+tDJzXXlxRiqoHwxpxlnvk1n/BWGDuOZZo=;
+        b=P6vpnNzjaOsGZGU+9ujVD3FKBkleE/TwGswI7P+HxflssY3HDai6VlTACxvyqMJu0C
+         9kTFVKQrArbYNHy+glR5VTGxUfSju+O3brJY3FDSJ+hcmLyqxUFxAodJtHH1ctWRDwaS
+         apA1cUnE35XMjZPhHzRExuPMKbDKUgm5fh+1OO3q+DsIyhoKjcxGs+TNBem98i1KZ4ny
+         +vMm8Hw4133Czp5JbHyz6lslxCmN+2MGyvvMvs2lWzQrY9CECIUHF10xQJ+vf1Q6Xua8
+         +RwGmXsOyhHi2iUZ2TiPIDb+ItyS4p2oC+3M/D7OpMdSO+loG4NITWy34bIW70PMWq/6
+         LM2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd7UuqkQTmRpvLroVnSPAv3L/MB3beZjy6fey2jqATRGftTVubNwaMw3fT8Glfjt5SZCuHIflEescTBEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq6zg+S4nPQ7fJx9iGS3MtmjbqAZEFgzJoJQnDjiVtHFSWPM8K
+	Pm5iLtK92yQlhTwcyG2leSkGYJAjrNfYPJJEhMyBTs+ey+KP9aMbzoPrFrKXUdi4vOhk4EGzdmu
+	l/UJjW4VIp5mztYBzqd92EiC6DwbAOX1EDQhP
+X-Gm-Gg: ASbGncvOpXmYH052gMAdFUefD8HsX51myRVQX63+uiMlAaSpTr9Wfch4fEP9XIbA45M
+	/JtsgYEUfvNbijlVFDRAiTozTan+7qhM=
+X-Google-Smtp-Source: AGHT+IFpU3rekOtcEw5rS4VDu/+FdfyXUn4njkcrc7z2/l5oaizj3tMziVrc1xraWFLbxEOWRGr6r/J9olDf9amauwU=
+X-Received: by 2002:a05:622a:5e83:b0:461:48f9:4852 with SMTP id
+ d75a77b69052e-466c2a6b1a2mr134761cf.28.1732736404883; Wed, 27 Nov 2024
+ 11:40:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-3-linyunsheng@huawei.com> <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
+ <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com> <CAHS8izM+sK=48gfa3gRNffu=T6t6-2vaS60QvH79zFA3gSDv9g@mail.gmail.com>
+ <CAKgT0Uc-SDHsGkgmLeAuo5GLE0H43i3h7mmzG88BQojfCoQGGA@mail.gmail.com> <8f45cc4f-f5fc-4066-9ee1-ba59bf684b07@huawei.com>
+In-Reply-To: <8f45cc4f-f5fc-4066-9ee1-ba59bf684b07@huawei.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 27 Nov 2024 11:39:53 -0800
+Message-ID: <CAHS8izPg7B5DwKfSuzz-iOop_YRbk3Sd6Y4rX7KBG9DcVJcyWg@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>, Jesper Dangaard Brouer <hawk@kernel.org>, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, liuyonglong@huawei.com, 
+	fanghaiqing@huawei.com, zhangkun09@huawei.com, 
+	Robin Murphy <robin.murphy@arm.com>, IOMMU <iommu@lists.linux.dev>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Wed, 27 Nov 2024 10:06:29 +0200:
+On Wed, Nov 27, 2024 at 1:35=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> On 2024/11/27 7:53, Alexander Duyck wrote:
+> > On Tue, Nov 26, 2024 at 1:51=E2=80=AFPM Mina Almasry <almasrymina@googl=
+e.com> wrote:
+> >>
+> >> On Thu, Nov 21, 2024 at 12:03=E2=80=AFAM Yunsheng Lin <linyunsheng@hua=
+wei.com> wrote:
+> >>>
+> >>> On 2024/11/20 23:10, Jesper Dangaard Brouer wrote:
+> >>>>
+> >>>>>       page_pool_detached(pool);
+> >>>>>       pool->defer_start =3D jiffies;
+> >>>>>       pool->defer_warn  =3D jiffies + DEFER_WARN_INTERVAL;
+> >>>>> @@ -1159,7 +1228,7 @@ void page_pool_update_nid(struct page_pool *p=
+ool, int new_nid)
+> >>>>>       /* Flush pool alloc cache, as refill will check NUMA node */
+> >>>>>       while (pool->alloc.count) {
+> >>>>>           netmem =3D pool->alloc.cache[--pool->alloc.count];
+> >>>>> -        page_pool_return_page(pool, netmem);
+> >>>>> +        __page_pool_return_page(pool, netmem);
+> >>>>>       }
+> >>>>>   }
+> >>>>>   EXPORT_SYMBOL(page_pool_update_nid);
+> >>>>
+> >>>> Thanks for continuing to work on this :-)
+> >>>
+> >>> I am not sure how scalable the scanning is going to be if the memory =
+size became
+> >>> bigger, which is one of the reason I was posting it as RFC for this v=
+ersion.
+> >>>
+> >>> For some quick searching here, it seems there might be server with ma=
+x ram capacity
+> >>> of 12.3TB, which means the scanning might take up to about 10 secs fo=
+r those systems.
+> >>> The spin_lock is used to avoid concurrency as the page_pool_put_page(=
+) API might be
+> >>> called from the softirq context, which might mean there might be spin=
+ning of 12 secs
+> >>> in the softirq context.
+> >>>
+> >>> And it seems hard to call cond_resched() when the scanning and unmapp=
+ing takes a lot
+> >>> of time as page_pool_put_page() might be called concurrently when poo=
+l->destroy_lock
+> >>> is released, which might means page_pool_get_dma_addr() need to be ch=
+ecked to decide
+> >>> if the mapping is already done or not for each page.
+> >>>
+> >>> Also, I am not sure it is appropriate to stall the driver unbound up =
+to 10 secs here
+> >>> for those large memory systems.
+> >>>
+> >>> https://www.broadberry.com/12tb-ram-supermicro-servers?srsltid=3DAfmB=
+OorCPCZQBSv91mOGH3WTg9Cq0MhksnVYL_eXxOHtHJyuYzjyvwgH
+> >>>
+> >>
+> >> FWIW I'm also concerned about the looping of all memory on the system.
+> >> In addition to the performance, I think (but not sure), that
+> >> CONFIG_MEMORY_HOTPLUG may mess such a loop as memory may appear or
+> >> disappear concurrently. Even if not, the CPU cost of this may be
+> >> significant. I'm imagining the possibility of having many page_pools
+> >> allocated on the system for many hardware queues, (and maybe multiple
+> >> pp's per queue for applications like devmem TCP), and each pp looping
+> >> over the entire xTB memory on page_pool_destroy()...
+> >>
+> >> My 2 cents here is that a more reasonable approach is to have the pp
+> >> track all pages it has dma-mapped, without the problems in the
+> >> previous iterations of this patch:
+> >>
+> >> 1. When we dma-map a page, we add it to some pp->dma_mapped data
+> >> structure (maybe xarray or rculist).
+> >> 2. When we dma-unmap a page, we remove it from pp->dma_mapped.
+> >> 3 When we destroy the pp, we traverse pp->dma_mapped and unmap all the
+> >> pages there.
+> >
+> > The thing is this should be a very rare event as it should apply only
+> > when a device is removed and still has pages outstanding shouldn't it?
+> > The problem is that maintaining a list of in-flight DMA pages will be
+> > very costly and will make the use of page pool expensive enough that I
+> > would worry it might be considered less than useful. Once we add too
+> > much overhead the caching of the DMA address doesn't gain us much on
+> > most systems in that case.
+> >
+> >> I haven't looked deeply, but with the right data structure we may be
+> >> able to synchronize 1, 2, and 3 without any additional locks. From a
+> >> quick skim it seems maybe rculist and xarray can do this without
+> >> additional locks, maybe.
+>
+> I am not sure how the above right data structure without any additional
+> locks will work, but my feeling is that the issues mentioned in [1] will
+> likely apply to the above right data structure too.
+>
+> 1. https://lore.kernel.org/all/6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawe=
+i.com/
+>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.13-rc1
+I don't see the issues called out in the above thread conflict with
+what I'm proposing. In fact, I think Jesper's suggestion works
+perfectly with what I'm proposing. Maybe I'm missing something.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ab952fc5c736c54e3ffd577c3ffd54a2a1eb7803
+We can use an atomic pool->destroy_count to synchronize steps 2 and 3.
+I.e. If destroy_count > 0, we don't unmap the page in
+__page_pool_release_page(), and instead count on the page_pool_destroy
+unmapping all the pages in the pp->dma_mapped list.
 
-Thank you!
+> >>
+> >> Like stated in the previous iterations of this approach, we should not
+> >> be putting any hard limit on the amount of memory the pp can allocate,
+> >> and we should not have to mess with the page->pp entry in struct page.
+>
+> It would be good to be more specific about how it is done without 'messin=
+g'
+> with the page->pp entry in struct page using some pseudocode or RFC if yo=
+u
+> call the renaming as messing.
+>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Yeah, I don't think touching the page->pp entry is needed if you use
+an xarray or rculist which hangs off the pp.
+
+I'm currently working on a few bug fixes already and the devmem TCP TX
+which is waiting on by a few folks; I don't think I can look into this
+right now, but I'll try. If this issue hasn't been resolved by the
+time I get some bandwidth, sure, I'll take a stab at it.
+
+--=20
+Thanks,
+Mina
 
