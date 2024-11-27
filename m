@@ -1,56 +1,47 @@
-Return-Path: <linux-kernel+bounces-423102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6BD9DA2DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:12:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29099DA2E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AECF16918C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF041690DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE1B149E1A;
-	Wed, 27 Nov 2024 07:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DD214A4F0;
+	Wed, 27 Nov 2024 07:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="R6hqUfMX"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+TW2wZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1722681AD7;
-	Wed, 27 Nov 2024 07:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8F881AD7;
+	Wed, 27 Nov 2024 07:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732691547; cv=none; b=pqVIPTTAFQtrybb3ySscVUqHmGcnOBf/ijDtqVt/kmUq2T8owffTCgt35v0zMdKgf0IGZ2tVjnOXYuq8+0YyKFbT2NQwHmseBs0JchfsSwaAMF3+hPRWuh0jrrwfH1IN7gyO3AJ71Hk0lCZZqgwMZ1jHfdsUYvuGfM0Ay1SkuUM=
+	t=1732691631; cv=none; b=khDhC/LIY7ylEdxbDvZAm/7DVFelP3yITh5WDyZS9Fj32cwaWMNKHRwfbg3LtoWOQMLMEp550PZ7OuypG7W8bsSwd1mdvZq6R1mJKbYKzSL+oRg1ar8+8qpoij7HftnXi47d3Q+AslXtxuVKs3GS91qsvFwcX5H3IzjxrOswdro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732691547; c=relaxed/simple;
-	bh=DQ8NgbSKIk2393Iv25ChBGcnvTgnFEGSnzdzgr0SRUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mjo8+SDKf1JLDWwb2hYmPymqe/HCrQoDWrkIGqFWtnLiKo5W2BQtjJZZLZb1wrwbgDQfbj9O4ZVymdZaD7eVQ1uLYT4om9PyHDn6uyVJDHdf9R0nwRQ4uVRLLur5uKfZsAV0j3zdpe1MoUbY+Ax5uNuaOI5KcEFIBhXWDfjEAKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=R6hqUfMX; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A1DB3A06EB;
-	Wed, 27 Nov 2024 08:12:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=BH5mL4wRTiW49fY5TXH3
-	cCb7VB9lpyJqEtwCttH2FW4=; b=R6hqUfMXnZ+Zn7nY1F21IEQ2ivu4jGDH+c36
-	eeIia4n3sF3imo7exXZM6JEBkP7zeDYRHAO+xCgYHIQti4y8UZKCEKnhiLxDN+78
-	kIBmYJt0j+RC6pLDHRQubvjs35YAKuYaVDuC1/O4ZK+1HQ6NNNrWSIYPURZPsr/t
-	r7BLhAHAnb60rCVIWNuaIdmKSsqR7CqkGGedvePUYG51HnAE3BKNsIM357djU2BD
-	34d+PRao6xV4X4SpPzPGYHl423Ts8hhLaS+uBy0aYZo2D6KdZvEZr5NEuOhWnboP
-	JiaOeuwyFUd3wrqJIcPgDDHDlN+eAGsZAeDa+mbViP9dthwA3KBMEfHvWmr1aT2+
-	U3q9x86pGNdLwNmsSrOkYbIFpGIaz6OLrmOQ3FGeJItWt5ULfpMo7hItNXCtt6sa
-	Ewx+5bCTjOrlMQ24wcsTVBLjU82t1GLlvwHvIdaXsU04xpR+7KAgAmr/X3bHsEgG
-	kuZ9+me9UtKV4Sw7Lx9RnrXe6+uzuHAaas5n6X1kUo67sd1I+/WZP3hM6fWad69P
-	6VUyCdljZ2bwYJJc6ek6LqOskboWgoZzpZbnSxb/fEwUFWbVZoqAqF2LlnVxHcgJ
-	658L38zIuTluCn2jhn3DXyCcV3/aBrQ9upWh9jHJxVPTabLILaBg/ATmu8xLTz4C
-	Jhk007o=
-Message-ID: <60f52d54-da36-4223-9063-b833451781ea@prolan.hu>
-Date: Wed, 27 Nov 2024 08:12:11 +0100
+	s=arc-20240116; t=1732691631; c=relaxed/simple;
+	bh=1uUXpX4t3W4XPfS7S0fTBz1q4sHqU8ahUALoVGa4Qls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a8xQasidG74ZdVV7QAemmmlTMPLy0jPDGh1IU5BjnPGMoGsNIpf+BPKCDMVospM2w33D2ZZzyUnO7WTs3ZilVSIChRndLAPokGf0jd3G4swZNvlH/NS2UL51ud+nMFxwMnlrXzvvwg5ImRTIPDcKDkuirEZjBQYtaZP1vh/1km4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+TW2wZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29BDEC4CECC;
+	Wed, 27 Nov 2024 07:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732691630;
+	bh=1uUXpX4t3W4XPfS7S0fTBz1q4sHqU8ahUALoVGa4Qls=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U+TW2wZR+ZIPPb5yGqd6lRVqZxGSz1VMUbHZibSDvao/QxAe3DbcNWrfzZaUgy0rg
+	 hFXv8xUdpKrO0JMZ0LY+jyrflhnrYqSvhI1nq1B2gEL0/lvE6rUg0+KhZsDtAU4x7A
+	 mBa0Z1ai3y9BmQwDrHan0Ak+T44rVCPJvakrxT54YkYRsM3f3k2EP9yh4KT6bAtKFw
+	 djFWv6qAP6V5+QCoZcrEaz1X5snPxzGDfXrwOnCTnDl+nKCM0hrmsHqPXVs30ITj4o
+	 uby3jIR5z96FWMLTH2ZHtSeba3ReAnm+wiqHMJrFr7Vf7TwmbmAoUZiyGBV4xKF6aR
+	 wSstHm4XBY4Vg==
+Message-ID: <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
+Date: Wed, 27 Nov 2024 08:13:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,51 +49,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] ASoC: sun4i-codec: Add support for Allwinner suniv
- F1C100s
-To: Mark Brown <broonie@kernel.org>
-CC: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Mesih Kilinc
-	<mesihkilinc@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela
-	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>
-References: <20241123123900.2656837-1-csokas.bence@prolan.hu>
- <20241123123900.2656837-4-csokas.bence@prolan.hu>
- <d0ecce33-25e2-4711-8311-7788c77b7d2d@sirena.org.uk>
+Subject: Re: [PATCH 0/5] Display enablement changes for Qualcomm QCS8300
+ platform
+To: Yongxing Mou <quic_yongmou@quicinc.com>,
+ Ritesh Kumar <quic_riteshk@quicinc.com>, Rob Clark <robdclark@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
 Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <d0ecce33-25e2-4711-8311-7788c77b7d2d@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855637465
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 2024. 11. 26. 13:18, Mark Brown wrote:
-> On Sat, Nov 23, 2024 at 01:39:02PM +0100, Csókás, Bence wrote:
+On 27/11/2024 08:05, Yongxing Mou wrote:
+> This series introduces support to enable the Mobile Display Subsystem (MDSS)
+> and Display Processing Unit (DPU) for the Qualcomm QCS8300 target. It
+> includes the addition of the hardware catalog, compatible string,
+> relevant device tree changes, and their YAML bindings.
 > 
->> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
-> 
-> When you write your signoffs like this with the , but no "" (like in
-> your From:) it confuses software and causes everything after the , to
-> get deleted.  Probably just including the quotes is the best option to
-> match the email header.
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> ---
+> This series depends on following series:
+> https://lore.kernel.org/all/20241114-qcs8300-mm-cc-dt-patch-v1-1-7a974508c736@quicinc.com/
+> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+Above was not part of this merge window, so nothing from your patchset
+can be merged for this v6.14.
 
-Git handles it fine since 2.46, before that there was some weirdness in 
-send-email not adding it to the Cc: correctly, but git am & co. worked 
-fine. b4 still has issues with it unfortunately.
-Link: https://github.com/mricon/b4/issues/50
+If you want things to get merged, I suggest decoupling dependencies.
 
-However, the real problem I think is that git format-patch doesn't add 
-the quotes. What's worse, you'll have a real hard time trying to git 
-config --global user.name "a quoted string". Git tries *really* hard to 
-remove surrounding quotation (and is further aided by the shell). I'll 
-see what I can do.
-
-Bence
-
+Best regards,
+Krzysztof
 
