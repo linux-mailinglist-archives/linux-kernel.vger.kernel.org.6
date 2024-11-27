@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-423774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83739DAC83
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:33:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0958E9DAC86
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:33:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33EA8B22C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59AE7167102
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557E8201029;
-	Wed, 27 Nov 2024 17:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D656201101;
+	Wed, 27 Nov 2024 17:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRLZ7uix"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UfiPBUMI"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A48A41;
-	Wed, 27 Nov 2024 17:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917C414EC73
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728787; cv=none; b=Qvyv+xyy9T5bxVfiMAuEtaDelbg20oJHKpAqm7YqjypK5+rpbA8FptuUJVcsOzNViNM//6VPC/3+HfkyczYiP65xmfCx1d5f84FG9VBQdM8KU6xuLdusTww/KUSBOTTHUt/X1lSVMkpfXY1Xraa3MB1XX0OY5tit1vh7YwR2P3E=
+	t=1732728795; cv=none; b=BGcUZcwKktT3v36G1/4NVfhhRzOTncdvi3uZI754jUPjUvUTfkHmgju49rZZiyMOURDWuDAI78xlm/eE7xBUQWPdo+L8/EXNYR0bJB6fAdy0yY9g5I86QRyv5pylrQ7Q5F1CvA5J+cRqOs3m8FDiYrZFTV8eaByT/XuUsXQwI74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728787; c=relaxed/simple;
-	bh=ROCiRi/yYhXsqy0A3hG8CWASE+jjM3H03lGX9OJe7DQ=;
+	s=arc-20240116; t=1732728795; c=relaxed/simple;
+	bh=WHpE9eR5UhlUSBcB5vf5FzyYI2xQkCKts8Gpzp1P+K0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQR1wuDrGWwesiQliwzOjIYiP9MTjnzKICqGhRhbWU6mdKOw6QWjU0733SkUAv8+yghZua+pLv01CGslOMPRdc+XRjGwj2I972fzOWZQOBIbmeoi/fQDlPOc9TKiVeJ7IH8iUQT9JVu+PAzEGeRUqXq3z0qDEIOQ3rG2InMnPXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRLZ7uix; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cf7aa91733so3894956a12.2;
-        Wed, 27 Nov 2024 09:33:05 -0800 (PST)
+	 In-Reply-To:Content-Type; b=n6YB40EYWT7Ac8T6p/Ueir64xy2DFnF7kH4NGaL2E8rA+w8v5cNyEFBJOvoK4JYuisOWb2xC1LDRCiOCo0GEdemQkw7MVw/I12NhpJf8LtM4leV2EAmfDerPa0y85AHqXrOhOz+eaP5wno5RgNl29nJi5rAcp/CzCl/+YngMtq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UfiPBUMI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434aabd688fso6393425e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:33:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732728784; x=1733333584; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kzYUqODO47hR/WQO2uQfWUqA0kWqjEwrdbtM/DTVfuU=;
-        b=MRLZ7uix585zlTPNXMltB1nT+QCHTB/Ng2nXTHxA4vYqX8/eImV48eWVP8/mDU98G5
-         defPT5t0zwnKHt0MNYsGtE+2AFvo4PaOa6qTX0zPRw6g9+3mEh++i3LVDPRsuaBT1AR7
-         GlHnisXGDqyjL4y/6IqaHBkljWB43GAJT+DJzRJJP4rmKs7FP2xkEku3j0I2IWNuG0Bm
-         4cqsJikFbKuJRgavf+rOKgpuF9iCXVfeuQ4vwyi0U38EsvEXrTGy9b822N+ZFQ05FgqU
-         386OaFmA3whHiOYzyBB0LxH9MKt4y55C1s6FvRA7dt8mBvZM/vIcJQxzYPhH7Fn2TnpK
-         W97Q==
+        d=tuxon.dev; s=google; t=1732728792; x=1733333592; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W2Dvzpd6/ofo2QAO5d3vYdwlkF2Kp83/EUc916PDQGo=;
+        b=UfiPBUMI+WGc2LvyveaWleEzRnGRqEtBSw67Vr2gQtsyOZtwdoP7rUYgxUgwX8F+fM
+         /iaFFi15EgWS5fo7lLxBbrUyDGgfIy1MzLj6KWmtpN36MVRH0Cc9wTrTZl7H3LDcQ9Al
+         MnmpV9eU/VHQd3otwAwAlZa+FSsWd75iqQIATcryMMsF6VwemiTJ9BZbcz7hmN/uioHo
+         CQP2oXuPWw3JSaDEFVO52Z7skiTN4xPLYpHxqgyyUBkMF2xMlK89CENTTLQhq5SedySk
+         aDJM7JH/XyZ/CRWU6oVL7Ji+sjF2RKsqsGEudQIF5Hr1cUfbG+EVtydJtQ63coo/3UeF
+         HG1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728784; x=1733333584;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kzYUqODO47hR/WQO2uQfWUqA0kWqjEwrdbtM/DTVfuU=;
-        b=uMllxvw8l5HTBcMU4GMQycR20EoU7ibM54yOzVaoveiCrSBnjxTBmfA9wABQqo7Km4
-         vBybyG1i41g0XyCSwfIjqedjdb+ewgPyj5CVdbiqXsa9a7uvR/ScXPyOkIbF7do5H0xN
-         VuLU/DxCsSxN1QqMAX7p+ySWkU27QFPNJ40L8u7yAT20doOyhSERI6WTc9YVHmElERqf
-         cGxvE8T5USqSxVu/Vdxnu5vYf8yUx8RzQwwcnZjvXGTvmc62+RV1X2ZfPPx0I6lsz4LP
-         VQlW+h4IXOtDAbTTPurd33l4Of0dj00TfEjwBH/gRVt8ZiaUiqfaiY7G1T+5H2ekPFEf
-         uxxw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2ObpYwzNFKzcwtHIKA1Vch7eljT2JzTfbkBKcLtdxiaktZ31Ze+JU+fRPbKnHQEVXcqKQKoBn@vger.kernel.org, AJvYcCX0jKyJ+1accxJJ385x2c9GdFqSsZNDulrkZfP4cl3Be80AcwrB0HkhE2UV2lVIul85Q5Wxomn1j7Y/5mE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqOROoHC/J3fnjCQm83VMYSEy46oCTF1gJ/bHtsevvL5vSkVnN
-	6f+WX6f8geXLgl+uMhNTBhRmTmnOH1195E24E6biB1EZYTdhRKhr
-X-Gm-Gg: ASbGncu+WBvGcP7CRkzgkundXSqFzL5UAyGqG4guJ31IUQ1/UraOYEUwnDuB65sTGea
-	BLSEOT9omguJ/hKkiUYS2q9TYD0Dt0MbtaoO/nX47igEXp+dnvApdKuQKftetUfifGXZBynN+W2
-	MMwzy+/fmkjIcjNv/JowDJs6xLrpQnmhQZKWOFqBDPWuy9MH6dA/LHcesF9wgQ+vHaNvESpRXqQ
-	iUISmOmxvmLrmCwp8cDXZ1be3SpxGNvhBTN4ZPKecilPQ6l2+9xJ+R+4Om9p3c2SB1Zc7Ejgl21
-	1E7NyCwvwi8bhTWdJ297fHDkliYqfhtVOWu7bQrEaL0RsEypDG2tymneK7h3fI0EuYDwZ7rG8ky
-	bvH402ZjBjSgr+2GAYsi5j8aFUwijGpUzKcpBWwYDfQ==
-X-Google-Smtp-Source: AGHT+IElZ8X7hhb3RjqL7Mk6thv/lcV/e3xD1JUsnyVdd+rC7/1j3EqdIhv1BaEeptNXbzA5nSihFA==
-X-Received: by 2002:a05:6402:26c3:b0:5d0:8f07:eceb with SMTP id 4fb4d7f45d1cf-5d08f07f079mr2572908a12.10.1732728783642;
-        Wed, 27 Nov 2024 09:33:03 -0800 (PST)
-Received: from ?IPV6:2a02:3100:b12f:4200:648f:850f:5e23:bc2f? (dynamic-2a02-3100-b12f-4200-648f-850f-5e23-bc2f.310.pool.telefonica.de. [2a02:3100:b12f:4200:648f:850f:5e23:bc2f])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d8603dfsm6357269a12.26.2024.11.27.09.33.01
+        d=1e100.net; s=20230601; t=1732728792; x=1733333592;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2Dvzpd6/ofo2QAO5d3vYdwlkF2Kp83/EUc916PDQGo=;
+        b=Tw0WFirWWQbL96UC96w9NRGH21579ajUTkpl77TgNOlG8OznXhqiHT7u1foUASQFC9
+         YgS5uviXdzn/4JLcNCXqXa3rt648wFsZvg79F5j6ErHjB2+AhRHYqHZ74/cRgqshXSg3
+         W6eJHLxzPPrKvF1xGKYLxInxlJWnjvBUj8AqcTxhbWFXB93khIJmB0ze+6AVnnAYa/Uf
+         b6M2DlxMXMPZO/egAIwYw8qbU4CXDDRhro4ZCkHnuHkc8M/kG+lTCQCz2odiWkLNggwf
+         TjsI2l10s7V+z4rAEeSSlg72wmLXMVlSHcyhKtav3Y0RmKpIWWBSkpQP9I6D/SoXHmfH
+         f0hA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFBg9er3NVUeXg93X85M98fr4DuGcojjVBZbyATMKIUzcNxXUKkmXdzuAvmJf9tFk5d7fMzu/7w0tVXNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA6IVn2sS9EIyyBjqPq5tfv+8dxfSqwCukL85Q+61A8drfPQVC
+	Jpk58a9vLGB7HTtUBgTrScGQ2QKQDgFBeYr2RpfldUUOq4VKKVZ0o6JWvrsp854=
+X-Gm-Gg: ASbGncvXzQDc535UvI+tKhsIjwYX43kt+eDjUf+zvbz0lcVJGs/o59wCi5M6HL94kHy
+	tnBTi+V+OV//zAvfTAf2/Jvxi3hZjElWR3opSXGOgCIUYIRIyrx538s8nnC3b0vXjH9GSJn4ZcX
+	f3IAwUkeT31tRsON5Yko+EBL5ZoNxwDjfYAxcRPiXAAf59xprYkh2zYR0BmtyqWNdqDsgYFHOGe
+	NarrHU+91/n1Rt50L7DjL+7FFOEF5dY3DgOCAADc4EFZFsgDGK+2NRazw==
+X-Google-Smtp-Source: AGHT+IGtStnjKDVkWM4W4FfoiuUvanyDA4yxgbzn7BtijkP8yZgwoZcYmJJU95zF2wDM50TaHo+h3w==
+X-Received: by 2002:a05:6000:2704:b0:382:42c3:83e4 with SMTP id ffacd0b85a97d-385c6ec0a39mr2605026f8f.33.1732728791999;
+        Wed, 27 Nov 2024 09:33:11 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafeceesm16864453f8f.37.2024.11.27.09.33.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 09:33:02 -0800 (PST)
-Message-ID: <dabcacd6-6e51-489c-b8f1-bd104ac4186f@gmail.com>
-Date: Wed, 27 Nov 2024 18:33:03 +0100
+        Wed, 27 Nov 2024 09:33:11 -0800 (PST)
+Message-ID: <29b0e509-69a5-4098-bccf-d53cc6593c49@tuxon.dev>
+Date: Wed, 27 Nov 2024 19:33:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,202 +79,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next v1 2/2] net. phy: dp83tg720: Add randomized polling
- intervals for unstable link detection
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20241127131011.92800-1-o.rempel@pengutronix.de>
- <20241127131011.92800-2-o.rempel@pengutronix.de>
+Subject: Re: [PATCH 3/9] serial: sh-sci: Clean sci_ports[0] after at earlycon
+ exit
 Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <20241127131011.92800-2-o.rempel@pengutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+ lethal@linux-sh.org, g.liakhovetski@gmx.de, ysato@users.sourceforge.jp,
+ ulrich.hecht+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106120118.1719888-4-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdX57_AEYC_6CbrJn-+B+ivU8oFiXR0FXF7Lrqv5dWZWYA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27.11.2024 14:10, Oleksij Rempel wrote:
-> Address the limitations of the DP83TG720 PHY, which cannot reliably detect or
-> report a stable link state. To handle this, the PHY must be periodically reset
-> when the link is down. However, synchronized reset intervals between the PHY
-> and its link partner can result in a deadlock, preventing the link from
-> re-establishing.
-> 
-Out of curiosity: This PHY isn't normally quirky, but completely broken.
-Why would anybody use it?
+Hi, Geert,
 
-> This change introduces a randomized polling interval when the link is down to
-> desynchronize resets between link partners.
+On 27.11.2024 18:28, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/net/phy/dp83tg720.c | 76 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
+> Thanks for your patch, which is now commit 3791ea69a4858b81 ("serial:
+> sh-sci: Clean sci_ports[0] after at earlycon exit") in tty/tty-next.
 > 
-> diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-> index f56659d41b31..64c65454cf94 100644
-> --- a/drivers/net/phy/dp83tg720.c
-> +++ b/drivers/net/phy/dp83tg720.c
-> @@ -4,12 +4,31 @@
->   */
->  #include <linux/bitfield.h>
->  #include <linux/ethtool_netlink.h>
-> +#include <linux/jiffies.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/phy.h>
-> +#include <linux/random.h>
+> On Wed, Nov 6, 2024 at 1:02 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The early_console_setup() function initializes the sci_ports[0].port with
+>> an object of type struct uart_port obtained from the object of type
+>> struct earlycon_device received as argument by the early_console_setup().
+>>
+>> It may happen that later, when the rest of the serial ports are probed,
+>> the serial port that was used as earlycon (e.g., port A) to be mapped to a
+>> different position in sci_ports[] and the slot 0 to be used by a different
+>> serial port (e.g., port B), as follows:
+>>
+>> sci_ports[0] = port A
+>> sci_ports[X] = port B
 > 
->  #include "open_alliance_helpers.h"
+> Haven't you mixed A and B?
 > 
-> +/*
-> + * DP83TG720S_POLL_ACTIVE_LINK - Polling interval in milliseconds when the link
-> + *				 is active.
-> + * DP83TG720S_POLL_NO_LINK_MIN - Minimum polling interval in milliseconds when
-> + *				 the link is down.
-> + * DP83TG720S_POLL_NO_LINK_MAX - Maximum polling interval in milliseconds when
-> + *				 the link is down.
-> + *
-> + * These values are not documented or officially recommended by the vendor but
-> + * were determined through empirical testing. They achieve a good balance in
-> + * minimizing the number of reset retries while ensuring reliable link recovery
-> + * within a reasonable timeframe.
-> + */
-> +#define DP83TG720S_POLL_ACTIVE_LINK		1000
-> +#define DP83TG720S_POLL_NO_LINK_MIN		100
-> +#define DP83TG720S_POLL_NO_LINK_MAX		1000
-> +
->  #define DP83TG720S_PHY_ID			0x2000a284
+>> In this case, the new port mapped at index zero will have associated data
+>> that was used for earlycon.
 > 
->  /* MDIO_MMD_VEND2 registers */
-> @@ -355,6 +374,11 @@ static int dp83tg720_read_status(struct phy_device *phydev)
->  		if (ret)
->  			return ret;
-> 
-> +		/* The sleep value is based on testing with the DP83TG720S-Q1
-> +		 * PHY. The PHY needs some time to recover from a link loss.
-> +		 */
-What is the issue during this "time to recover"?
-Is errata information available from the vendor?
+> Oops, do you have a simple reproducer for this?
 
-> +		msleep(600);
-> +
->  		/* After HW reset we need to restore master/slave configuration.
->  		 * genphy_c45_pma_baset1_read_master_slave() call will be done
->  		 * by the dp83tg720_config_aneg() function.
-> @@ -482,6 +506,57 @@ static int dp83tg720_probe(struct phy_device *phydev)
->  	return 0;
->  }
-> 
-> +/**
-> + * dp83tg720_phy_get_next_update_time - Determine the next update time for PHY
-> + *                                      state
-> + * @phydev: Pointer to the phy_device structure
-> + *
-> + * This function addresses a limitation of the DP83TG720 PHY, which cannot
-> + * reliably detect or report a stable link state. To recover from such
-> + * scenarios, the PHY must be periodically reset when the link is down. However,
-> + * if the link partner also runs Linux with the same driver, synchronized reset
-> + * intervals can lead to a deadlock where the link never establishes due to
-> + * simultaneous resets on both sides.
-> + *
-> + * To avoid this, the function implements randomized polling intervals when the
-> + * link is down. It ensures that reset intervals are desynchronized by
-> + * introducing a random delay between a configured minimum and maximum range.
-> + * When the link is up, a fixed polling interval is used to minimize overhead.
-> + *
-> + * This mechanism guarantees that the link will reestablish within 10 seconds
-> + * in the worst-case scenario.
-> + *
-> + * Return: Time (in milliseconds) until the next update event for the PHY state
-> + * machine.
-> + */
-> +static unsigned int dp83tg720_phy_get_next_update_time(struct phy_device *phydev)
-> +{
-> +	unsigned int jiffy_ms = jiffies_to_msecs(1); /* Jiffy granularity in ms */
-> +	unsigned int next_time_ms;
-> +
-> +	if (phydev->link) {
-> +		/* When the link is up, use a fixed 1000ms interval */
-> +		next_time_ms = DP83TG720S_POLL_ACTIVE_LINK;
-> +	} else {
-> +		unsigned int min_jiffies, max_jiffies, rand_jiffies;
-> +		/* When the link is down, randomize interval between
-> +		 * configured min/max
-> +		 */
-> +
-> +		/* Convert min and max to jiffies */
-> +		min_jiffies = msecs_to_jiffies(DP83TG720S_POLL_NO_LINK_MIN);
-> +		max_jiffies = msecs_to_jiffies(DP83TG720S_POLL_NO_LINK_MAX);
-> +
-> +		/* Randomize in the jiffie range and convert back to ms */
-> +		rand_jiffies = min_jiffies +
-> +			get_random_u32_below(max_jiffies - min_jiffies + 1);
-> +		next_time_ms = jiffies_to_msecs(rand_jiffies);
-> +	}
-> +
-> +	/* Ensure the polling time is at least one jiffy */
-> +	return max(next_time_ms, jiffy_ms);
-> +}
-> +
->  static struct phy_driver dp83tg720_driver[] = {
->  {
->  	PHY_ID_MATCH_MODEL(DP83TG720S_PHY_ID),
-> @@ -500,6 +575,7 @@ static struct phy_driver dp83tg720_driver[] = {
->  	.get_link_stats	= dp83tg720_get_link_stats,
->  	.get_phy_stats	= dp83tg720_get_phy_stats,
->  	.update_stats	= dp83tg720_update_stats,
-> +	.get_next_update_time = dp83tg720_phy_get_next_update_time,
-> 
->  	.suspend	= genphy_suspend,
->  	.resume		= genphy_resume,
-> --
-> 2.39.5
-> 
+It is reproducible with patches:
+- [PATCH 6/9] arm64: dts: renesas: rzg3s-smarc: Fix the debug serial alias
+- [PATCH 9/9] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for
+SCIF1
 
+After boot, cat /dev/ttySC0 will lead to the issue described.
+
+> 
+>> In case this happens, after Linux boot, any access to the serial port that
+>> maps on sci_ports[0] (port A) will block the serial port that was used as
+>> earlycon (port B).
+> 
+> Again, A <-> B?
+> 
+>> To fix this, add early_console_exit() that clean the sci_ports[0] at
+>> earlycon exit time.
+>>
+>> Fixes: 0b0cced19ab1 ("serial: sh-sci: Add CONFIG_SERIAL_EARLYCON support")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> This causes a crash (lock-up without any output) when
+> CONFIG_DEBUG_SPINLOCK=y (e.g. CONFIG_PROVE_LOCKING=y).
+
+I missed to check this. Thank you for testing it.
+
+> 
+>> --- a/drivers/tty/serial/sh-sci.c
+>> +++ b/drivers/tty/serial/sh-sci.c
+>> @@ -3546,6 +3546,32 @@ sh_early_platform_init_buffer("earlyprintk", &sci_driver,
+>>  #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
+>>  static struct plat_sci_port port_cfg __initdata;
+>>
+>> +static int early_console_exit(struct console *co)
+>> +{
+>> +       struct sci_port *sci_port = &sci_ports[0];
+>> +       struct uart_port *port = &sci_port->port;
+>> +       unsigned long flags;
+>> +       int locked = 1;
+>> +
+>> +       if (port->sysrq)
+>> +               locked = 0;
+>> +       else if (oops_in_progress)
+>> +               locked = uart_port_trylock_irqsave(port, &flags);
+>> +       else
+>> +               uart_port_lock_irqsave(port, &flags);
+>> +
+>> +       /*
+>> +        * Clean the slot used by earlycon. A new SCI device might
+>> +        * map to this slot.
+>> +        */
+>> +       memset(sci_ports, 0, sizeof(*sci_port));
+> 
+> Nit: I'd rather use "*sci_port" instead of "sci_ports".
+
+That would be better, indeed.
+
+> 
+>> +
+>> +       if (locked)
+>> +               uart_port_unlock_irqrestore(port, flags);
+> 
+> "BUG: spinlock bad magic", as you've just cleared the port, including
+> the spinlock.
+> 
+> I guess we can just remove all locking from this function to fix this?
+
+I'll look to it.
+
+> 
+> However, could it happen that the new device taking slot 0 is probed
+> before the early console is terminated?
+
+I don't know to answer this. In my testing I haven't encountered it.
+
+> In that case, its active
+> sci_ports[] entry would be cleared when early_console_exit() is called.
+> 
+> Also, what happens if "earlycon keep_bootcon" is passed on the kernel
+> command line, and the new device takes slot 0?
+
+I checked it with earlycon and the serial device being on slot 0. In this
+case it was OK.
+
+> 
+> Thanks!
+> 
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>  static int __init early_console_setup(struct earlycon_device *device,
+>>                                       int type)
+>>  {
+>> @@ -3562,6 +3588,8 @@ static int __init early_console_setup(struct earlycon_device *device,
+>>                        SCSCR_RE | SCSCR_TE | port_cfg.scscr);
+>>
+>>         device->con->write = serial_console_write;
+>> +       device->con->exit = early_console_exit;
+>> +
+>>         return 0;
+>>  }
+>>  static int __init sci_early_console_setup(struct earlycon_device *device,
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
