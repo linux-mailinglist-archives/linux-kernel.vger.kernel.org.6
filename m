@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-423692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544079DAB83
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:14:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061659DAB94
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:15:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F64B21E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B681650B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E1200BA2;
-	Wed, 27 Nov 2024 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C236200B82;
+	Wed, 27 Nov 2024 16:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yzy7GJrB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KOaUIeOP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91A0200B8B;
-	Wed, 27 Nov 2024 16:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E86288D1;
+	Wed, 27 Nov 2024 16:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724075; cv=none; b=PXPSu2Lick5gb1+XgoAn5OMamE7Mqkkj+GXRQAh/zM60s+5FwViqCSjSZowFWpOGHrsB7jLd6+JGWgQhrhMmBie6KraKL1t4RzZsSxLc/r6glmepWfw3Py8NtTkeQfEMZJe9PfACRZRhGTIU5J4N7+OEYqhWp+hR/BfcfQzyOkE=
+	t=1732724146; cv=none; b=aCK5g7KNacGx5T7p1Yf8CjIimYNbJIeBjEUxwKsyr0mqsXE+kZcR75oGnhjrbIbVfCJ8lEvOP6n/WCLwslW0asOBWW6qFnZ+M8aaESSNsuczb3Sm+oWemFkdphn0bhzthFBn18Vole38cArkSZ3cgBRRyjObajes8cDlqCO3cn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724075; c=relaxed/simple;
-	bh=t/t+qxjEE72ckgaetIew3I8k7tV0KGgHqs4PPn6lneU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XItcoaryFH4hZ42pwElRWWl1p46Mj0JwrPSNMujSrbpeOw0OvFBYPsF/vwP641nW5RHC9HvqGQNWVYlsOt1zS0lSwK1Jk0N05vGmVbfxm8Qb30trMLxch0cZXJev3g1bTGwsa59kV8rWcIOK7cPksPt2o2aYnKgABI1wQQ32tKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yzy7GJrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1F2C4CECC;
-	Wed, 27 Nov 2024 16:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732724075;
-	bh=t/t+qxjEE72ckgaetIew3I8k7tV0KGgHqs4PPn6lneU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yzy7GJrBd/e3ed1KEIowTju/iUvh/T9yE4tGSE0foVfkz5XPzXIOav9a3ecTJoRt5
-	 moLU8F3FSksk54D/GR/HMeNLeuUuKh3NiYt2bnkveJbvFmKh0fRGHABUGUbsZ9FriC
-	 ZTUUjasE8OBdmpR7GkUMGtwjrFU+3VOiB+UijToRHYzP/qVaWiQoI22LUiD2adoIUe
-	 6ANGhB0IE2OfxqeDIOQbHvGef7jPGS8zPibk4MFBmqNmk215695V7uGLXiUPItOMIv
-	 EfDTid/dN/dhSFUnjvKfQh9oCGv4ZQsc6tA/55cUwZw/kBHf8zQju+TwCHdhHSgtVg
-	 GCogrBmNZzflQ==
-Date: Wed, 27 Nov 2024 16:14:30 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jason Hsu <jasonhell19@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joel@jms.id.au, andrew@codeconstruct.com.au, patrick@stwcx.xyz,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	yang.chen@quantatw.com, jerry.lin@quantatw.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: arm: aspeed: add Meta Ventura board
-Message-ID: <20241127-resupply-tanned-1410c026f127@spud>
-References: <20241127073409.147714-1-jason-hsu@quantatw.com>
- <20241127073409.147714-2-jason-hsu@quantatw.com>
+	s=arc-20240116; t=1732724146; c=relaxed/simple;
+	bh=YWlkXJIsGagPzo4kTE5UAbAO9a3MxHYvMz18T+D5YWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YPXZgFkSU26rWJkG6pmbKfouMNEJxxV39PeicG4AwFCYTCbfoOXF0HqLanjwJy3Z+fC5oLaDKhW0lVhgpDxdlK8HiiinjVHL4DKTK7I7G7bPXybgK0BCEQNaxGrEewCg3qFi++JPryeyQBZe+PD0dL1GswJBjk85H/M7s7AoPZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KOaUIeOP; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732724144; x=1764260144;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YWlkXJIsGagPzo4kTE5UAbAO9a3MxHYvMz18T+D5YWk=;
+  b=KOaUIeOPgk/vGLB1acRslIP2tFUYKR80B9SM3Kb66ltlxNCXzcY5Tbho
+   iwypywIQiUV6TUhwcCn10d+3Kf6IfVJzHUwJzRXQoxusK0bt80rm2M9ZX
+   52nx6sTpTLFFDYERu2uOIJnWixISfXt1DqjdJzSaWXBdazPpdO/i7TDO5
+   y8gXvY0eURSCMZzJPFm++5BqIeH6a3KVbgaqP21jugxQnhxiq/Q0G+jyY
+   lm7BHp66vQ8UPnG0SkOy24U8ctSKvuPW2QUkcS3uFLf496zeSd90abVeK
+   5Kw77D5XMM9N7vDHZHEF03c7tAKGSXsHjFt1Fc+x3W2H0D1cWt8/xDgR9
+   A==;
+X-CSE-ConnectionGUID: iVb6yPxLQmGtIOLs9hTxdA==
+X-CSE-MsgGUID: vJDpwgCESua5IvV5e2MY3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43597578"
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="43597578"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 08:15:44 -0800
+X-CSE-ConnectionGUID: IKn7hU2CSfOWkyIXB3QiIQ==
+X-CSE-MsgGUID: 35A76Us9QT+Ik5IuGeyfjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="97042399"
+Received: from mlehtone-mobl.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.244.148])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 08:15:40 -0800
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com,
+	peterz@infradead.org,
+	dave.hansen@linux.intel.com,
+	gautham.shenoy@amd.com,
+	tglx@linutronix.de,
+	len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com,
+	patryk.wlazlyn@linux.intel.com
+Subject: [PATCH v6 0/4] SRF: Fix offline CPU preventing pc6 entry
+Date: Wed, 27 Nov 2024 17:15:14 +0100
+Message-ID: <20241127161518.432616-1-patryk.wlazlyn@linux.intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jmHGxiniHzsUH9Y8"
-Content-Disposition: inline
-In-Reply-To: <20241127073409.147714-2-jason-hsu@quantatw.com>
+Content-Transfer-Encoding: 8bit
 
+Changes since v5:
+ * Split 1/3 from v5 into two commits, as suggestem by Gautham.
+   1/4 splits wait_play_dead into mwait_play_dead_with_hint.
+   2/4 and 3/4 uses the new mwait_play_dead_with_hint
+   4/4 removes mwait_play_dead and calls cpuidle_play_dead right away
 
---jmHGxiniHzsUH9Y8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ * Reword 1-3/4 changelog slightly.
 
-On Wed, Nov 27, 2024 at 03:34:08PM +0800, Jason Hsu wrote:
-> From: Jason-Hsu <jasonhell19@gmail.com>
->=20
-> Document the new compatibles used on Meta Ventura.
-> Add subject prefix for the patch.
->=20
-> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
+ * Move changelog from v5 1/3 into v6 4/4
 
-I acked this on v1:
-https://lore.kernel.org/all/20241022-purgatory-modify-fdcc5f1cff23@spud/
+Patryk Wlazlyn (4):
+  x86/smp: Allow calling mwait_play_dead with an arbitrary hint
+  ACPI: processor_idle: Add FFH state handling
+  intel_idle: Provide the default enter_dead() handler
+  x86/smp native_play_dead: Prefer cpuidle_play_dead() over
+    mwait_play_dead()
 
-Where did that ack go?
+ arch/x86/include/asm/smp.h    |  4 ++-
+ arch/x86/kernel/acpi/cstate.c |  9 +++++++
+ arch/x86/kernel/smpboot.c     | 50 ++++-------------------------------
+ drivers/acpi/processor_idle.c |  2 ++
+ drivers/idle/intel_idle.c     | 18 +++++++++++--
+ include/acpi/processor.h      |  5 ++++
+ 6 files changed, 40 insertions(+), 48 deletions(-)
 
-> ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/D=
-ocumentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> index 2f92b8ab08fa..98ea2b3e0eb1 100644
-> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> @@ -86,6 +86,7 @@ properties:
->                - facebook,greatlakes-bmc
->                - facebook,harma-bmc
->                - facebook,minerva-cmc
-> +              - facebook,ventura-rmc
->                - facebook,yosemite4-bmc
->                - ibm,blueridge-bmc
->                - ibm,everest-bmc
-> --=20
-> 2.34.1
->=20
+-- 
+2.47.1
 
---jmHGxiniHzsUH9Y8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0dFZgAKCRB4tDGHoIJi
-0mIfAQCayJEyg/gpu7kW1AsnuurZqhAYXJ0x4zKzE2K1FAFASQD7BAOqyd6ui9uH
-b6YBGxhPSq91ve2zVGXLlpN06U7rIAY=
-=Gnpn
------END PGP SIGNATURE-----
-
---jmHGxiniHzsUH9Y8--
 
