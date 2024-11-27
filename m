@@ -1,45 +1,62 @@
-Return-Path: <linux-kernel+bounces-423377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D633E9DA67E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:04:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34E8163996
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:04:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F41EE029;
-	Wed, 27 Nov 2024 11:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FcE8UKPS"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92539DA6B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:18:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59C81EBA0D;
-	Wed, 27 Nov 2024 11:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6037B2D6F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:04:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2101EF09C;
+	Wed, 27 Nov 2024 11:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LwvgfM4Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5B01EBA0D;
+	Wed, 27 Nov 2024 11:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732705344; cv=none; b=tpql2jTcC4FijB1YzbRLPJmBkv/Jsn9H7IEOmNHT+sJgmmqfRyUNcDampRGCn63rvYucmLD+w3xxZn+GBo3HvniQfbf9ZT8i0zpqnHx2s3CMWPcYwqK672lbVAG2yMlXYCz0X6Q/73ltYm0VkBikVxRfP9La7o/3iGL7SDGBYM0=
+	t=1732705389; cv=none; b=HfBB2gHeUGXMveY/XeEfQVAXcagMwyQlEl9ktEAUvobpF7cIY7jB5hIT67c0EWo2H1uAqRu5+xwW7n9aKpUp5m77Gnbg81kryCniV5auRPw8YpxAuKzP3r8m7MVMkBpccAzfLGHBExkF8j9c4qjtO/OPUWshMUESQi26ULAZiUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732705344; c=relaxed/simple;
-	bh=SR0ePwHp0GA795M/9GcPHbpC2ijsjfg2DaxIWwZJC8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZMeLFkREoW5p65suVeQf9M6TvKJZSAKlUg7Bj/Lgnhg2Ad8eQu6zD/si5gQNv46nILCaEOJv1aUBPobDojeddMX+FZIwCnb9udE2uYBWiz94USGGyxKwg24gGbtOz0JrYSxAPk5wGj9vj25ThPSYFLTP6+Hd1m2v6WdlFV0we0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FcE8UKPS; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732705333; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=SoaB6C5PEyN7YaAPt3mcEv/MO65XKYDAh7oA1Qdc11A=;
-	b=FcE8UKPSDVIzc0wRFiYTOjdKU1lviOP3doMjFMN3SqBGcb0ktD1FcEOPpvtegohU9/WG8x0mIWOMfCgoFykaFnUv0s3xbRU3zKPVmV8je3pipN6D09TPkRPZtSKgTaZGnz7VGARGtssTwtwpnR/QQbkRVpVpeob+y0+pqdYqwbw=
-Received: from 30.221.101.175(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WKMQX7n_1732705331 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 27 Nov 2024 19:02:12 +0800
-Message-ID: <3d005186-1e63-4d57-b73f-230d1ded72f2@linux.alibaba.com>
-Date: Wed, 27 Nov 2024 19:02:10 +0800
+	s=arc-20240116; t=1732705389; c=relaxed/simple;
+	bh=zfB/B7j33O0/ulmzReco0gyH/xx2bX4xd7XmtrWGZoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iHLUtbuKUSkv5tWw3GPPqh9R3OBG/8YWvvlxXelL8huJ5KLMtifKE3g2GiKiznDg75TvGrB/qxMAUgY6dxa09ILDbFW3mK85eLn6BSX3sExo/eef4q35Zt5HTw9XEwuhx9wF5FTbIWi5f8/20FmXe0zFoSIySDkW+aDu7pWa9ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LwvgfM4Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR8VR3L014036;
+	Wed, 27 Nov 2024 11:02:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xxTVMs7EiXRpQddOUj2sdWVYYc7JjTdN36bHFOB8yKs=; b=LwvgfM4Q3GBPUUVx
+	VmLI7+nb/xywNu4cBojhxosuivySKcfG7uEMuEef71TbaRu9csFd6mG9M9cedqzO
+	1LoXLTfc6IYes9G4OvW+zwU5RNrfOXmYq8W1orzauNmLvjVpvLtKTQOEyN4Qjn2l
+	gUAEMu2OsQ9FJxUe0uduB4ilGk0ssKcyPPSqVEa459eNYxE7E0zCB+/Q/oqkowJA
+	whbTXvFPPh1+xhgvL+I4lD+FMmZBiTfU2xpJiIp7MJDYWRn7/yrzssJPQE33hkfL
+	tM08M0UeCLuNTBzRIQ5/ZCwrzwSHgiJRqOVzY4wBpEK6yX5pbuL+LUzt8DnRAlC0
+	WUHeSw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435epqb8tq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 11:02:55 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARB2s8Z030733
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 11:02:54 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 03:02:48 -0800
+Message-ID: <f433283d-e203-41f7-acc6-59fe606722a5@quicinc.com>
+Date: Wed, 27 Nov 2024 19:02:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,136 +64,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
-To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
- <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
- <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
- <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
- <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
+Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on QCS8300
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: Maxime Ripard <mripard@kernel.org>, <dri-devel@lists.freedesktop.org>,
+        Ritesh Kumar <quic_riteshk@quicinc.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Rob
+ Clark" <robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, <freedreno@lists.freedesktop.org>,
+        "Simona
+ Vetter" <simona@ffwll.ch>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <devicetree@vger.kernel.org>
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
+ <173269567235.2233485.7286772244329561840.robh@kernel.org>
 Content-Language: en-US
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <173269567235.2233485.7286772244329561840.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: asWNzpC9PAqHrSdI-5PoY-sJBBxeMZ-4
+X-Proofpoint-ORIG-GUID: asWNzpC9PAqHrSdI-5PoY-sJBBxeMZ-4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270089
 
 
 
-On 2024/8/10 05:07, Wenjia Zhang wrote:
+On 2024/11/27 16:21, Rob Herring (Arm) wrote:
 > 
-> 
-> On 08.08.24 08:26, Guangguan Wang wrote:
->> On 2024/7/15 10:53, Guangguan Wang wrote:
->>>
->>>
->>> On 2024/7/11 23:57, Wenjia Zhang wrote:
->>>>
->>>>
->>>> On 09.07.24 18:05, Guangguan Wang wrote:
->>>>> When sending large size data in TCP, the data will be split into
->>>>> several segments(packets) to transfer due to MTU config. And in
->>>>> the receive side, application can be woken up to recv data every
->>>>> packet arrived, the data transmission and data recv copy are
->>>>> pipelined.
->>>>>
->>>>> But for SMC-R, it will transmit as many data as possible in one
->>>>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
->>>>> size, the application only be woken up to recv data when all RDMA
->>>>> WRITE data and the followed CDC msg arrived. The data transmission
->>>>> and data recv copy are sequential.
->>>>>
->>>>> This patch introduce autosplit for SMC, which can automatic split
->>>>> data into several segments and every segment transmitted by one RDMA
->>>>> WRITE when sending large size data in SMC. Because of the split, the
->>>>> data transmission and data send copy can be pipelined in the send side,
->>>>> and the data transmission and data recv copy can be pipelined in the
->>>>> receive side. Thus autosplit helps improving latency performance when
->>>>> sending large size data. The autosplit also works for SMC-D.
->>>>>
->>>>> This patch also introduce a sysctl names autosplit_size for configure
->>>>> the max size of the split segment, whose default value is 128KiB
->>>>> (128KiB perform best in my environment).
->>>>>
->>>>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
->>>>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
->>>>> for SMC-D with smc-loopback.
->>>>>
->>>>> Test command:
->>>>> sockperf sr --tcp -m 1048575
->>>>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
->>>>>
->>>>> Test config:
->>>>> sysctl -w net.smc.wmem=524288
->>>>> sysctl -w net.smc.rmem=524288
->>>>>
->>>>> Test results:
->>>>> SMC-R
->>>>> msgsize   noautosplit    autosplit
->>>>> 128KB       55.546 us     55.763 us
->>>>> 256KB       83.537 us     69.743 us (17% improve)
->>>>> 512KB      138.306 us    100.313 us (28% improve)
->>>>> 1MB        273.702 us    197.222 us (28% improve)
->>>>>
->>>>> SMC-D with smc-loopback
->>>>> msgsize   noautosplit    autosplit
->>>>> 128KB       14.672 us     14.690 us
->>>>> 256KB       28.277 us     23.958 us (15% improve)
->>>>> 512KB       63.047 us     45.339 us (28% improve)
->>>>> 1MB        129.306 us     87.278 us (32% improve)
->>>>>
->>>>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
->>>>> ---
->>>>>    Documentation/networking/smc-sysctl.rst | 11 +++++++++++
->>>>>    include/net/netns/smc.h                 |  1 +
->>>>>    net/smc/smc_sysctl.c                    | 12 ++++++++++++
->>>>>    net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
->>>>>    4 files changed, 42 insertions(+), 1 deletion(-)
->>>>>
->>>>
->>>> Hi Guangguan,
->>>>
->>>> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
->>>>
->>>
->>> Did you mean too many partial stores will result in some issue? What's the issue?
->>>
-> Forget it, I did verify that the partial stores should not be problem now.
->>>
->>>> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
->>>
->>> Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
->>> For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
->>>
->>> Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
->>>
-> mhhh, that could be a good reason to use sysctl.
->>> Thanks,
->>> Guangguan Wang
->>>
+> On Wed, 27 Nov 2024 15:05:01 +0800, Yongxing Mou wrote:
+>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
 >>
->> Hi Wenjia,
+>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>> ---
+>>   .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 239 +++++++++++++++++++++
+>>   1 file changed, 239 insertions(+)
 >>
->> Is there any update comment or information about this patch?
 > 
-> Hi Guangguan,
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> sorry for the delayed answer. In the last time it is really difficult for me to find time to look into it and test it. With more thinking, I'm kind of convinced with this idea. But test is still needed. I'll be in vacation next 3 weeks. I hope it is okay for you that I'll test it as soon as possible when I'm back. If everything is ok, I think we can let it go upstream.
+> yamllint warnings/errors:
 > 
-> Thanks,
-> Wenjia
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dts:26:18: fatal error: dt-bindings/clock/qcom,qcs8300-gcc.h: No such file or directory
+>     26 |         #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+>        |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
+Thank you for your checking. I rechecked this file and indeed found some 
+issues. I will fix them in the next patchset. But i did not see issues 
+related to this header file in local. Maybe it is dependency or tool 
+issues. I will and update tool and recheck this issue and fix it in the 
+next patchset.
 
-Hi Wenjia,
-
-Is there any update comment or information about this patch?
-
-> 
-> 
->>
->>>>
->>>> Thanks,
->>>> Wenjia
 
