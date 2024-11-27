@@ -1,128 +1,409 @@
-Return-Path: <linux-kernel+bounces-423005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C69A9DA121
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:30:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA48168349
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:30:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E966126BF5;
-	Wed, 27 Nov 2024 03:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mV4eMxIS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2CD9DA11A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:24:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCBD2907;
-	Wed, 27 Nov 2024 03:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53905284BEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:24:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7662AE6C;
+	Wed, 27 Nov 2024 03:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jKv+i8I/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567B7581A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 03:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732678230; cv=none; b=FthB71UCapJJybj3Z18lRgDBQfNvNNTeq+w5v20w9jleCbNaE25HdPIlav7UsSHhUlti+yZStVTcDcnjgFD+ZKh8/rSWsKiTgjnl7XTlYf6lHQ44KJBx33IpX31PNxZHEZUnSjzv7MO/a/st2WVayJQfte4WYxc4i60JtuzspsY=
+	t=1732677878; cv=none; b=cu78fUg0ZOwHKWRErzQFsjG14YRNOxO9+24taz+GMGk/ZgaIJ4RezsLUcLpE/wqIDlG/CtUfl7ofIl1fr5YMQpOHFC2rH5FqJLBb674fdmOUQjOrswQEIjdC8ujNh4AIQR1P3XgpdK1s08vhPzn0sk/h1udHLy47pqb4S18Ekj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732678230; c=relaxed/simple;
-	bh=kAoUKD6I9Idt9A7gBnC+EIuGZjgnMDBWAWNSrbzJe48=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nHg+4ZvBRhqh2WZ0ACYo589I61GH8LZNqRu27y0erSlyDrmmtdMgX876amv76RIVGuTKjKWEoUeCiiJ+Ix8qKc2AvZFOkL5nZZfHb1cen7zNR3P3FZkRJdvRAeeec9o6ibIvrhR3kjmbexhm6bY64nvA5kBwh8hfG0i3TUTgLqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mV4eMxIS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKLNpo002279;
-	Wed, 27 Nov 2024 03:30:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=H/ZqM4m6sxQEHNM7Z0bOJ7ATOmXavcpjuro
-	rZKZnNiE=; b=mV4eMxISw4EKNqMHEoHQg3bXWq7QiyOOeUM/Lq6Tk/YXOKnIesr
-	/JkJv5roHwTO0GkYykkhrYervrbaigRyhiRqf7m2mByL2wsTtjLSRIkIW8/FBmH5
-	3CxeWTGYrxjyAwXvPsktl7NDPf/2/DvRtjLbx0BQPIO5ydkB35+vPBc20hSHYXaH
-	+22cf+Q3cQzMO9vaQg8oQWEXVy1lehenqxA2Zbu2SXlXoica0pybBdiZUhf5AoJW
-	nNLQAHfk+gGdpZ2o/sDnq3x7hPoPZZHejLf1Fek7E5fACz1j5574kbG/pJCzfqc1
-	iV7/WGf371u5Yaou6QWnxjTbGTPk9SKM2KA==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336cft7mm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 03:30:25 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR3UMxj015635;
-	Wed, 27 Nov 2024 03:30:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 43384kk8nf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 03:30:22 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AR3UMqm015630;
-	Wed, 27 Nov 2024 03:30:22 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4AR3ULrV015629
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 03:30:22 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
-	id 07F2C18BF; Wed, 27 Nov 2024 11:18:34 +0800 (CST)
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: quic_tingweiz@quicinc.com, quic_zhgao@quicinc.com,
-        quic_yuanjiey@quicinc.com
-Subject: [PATCH v1] mmc: sdhci-msm: Enable aggressive PM
-Date: Wed, 27 Nov 2024 11:17:08 +0800
-Message-Id: <20241127031708.2343727-1-quic_yuanjiey@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732677878; c=relaxed/simple;
+	bh=1/u+UcElI+MPPVSNKfLQzRGy86qxjLSXFbU0VpGBKGI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mHf5+tnW3DWSSZebu6bcBfOiAUTVKQmgP9J1Q1esiyv/8e4QQV1yM+NaJPaNSNY++VaaAN8TZyuZy6bA4HiIdQUEbFFzbNSKUxNQnjfwRaY+yv3szrj/yyKaFNhtgNrk60EcJf2FBQUey4SP3pDGW1euhf9/Snwj/76tjUOMlFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jKv+i8I/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732677875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q91fMjk0/N0rHJS1h9TgFKLdHdt3dGavzSTZjaXJDGw=;
+	b=jKv+i8I/JN3vPhLkVNOR9mZWQ4svYLnWuntvCNScdWZ0YgyfNMFQctlWGnzqZ28sGBlDfi
+	4PwAPqWuWYjPI86DNpo/zCAwVQp9L4uTszXyuz/8MB/otxZkdzja6F6fIuWr0Dxz6D5WV9
+	i6UmQ6kyDDcO40XcxXg4z6k9Dm1yww8=
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
+ [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-377-wX1NZUIaPWaa0HoCO5jqVw-1; Tue, 26 Nov 2024 22:24:29 -0500
+X-MC-Unique: wX1NZUIaPWaa0HoCO5jqVw-1
+X-Mimecast-MFC-AGG-ID: wX1NZUIaPWaa0HoCO5jqVw
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-514f2d9359aso1721422e0c.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 19:24:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732677868; x=1733282668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q91fMjk0/N0rHJS1h9TgFKLdHdt3dGavzSTZjaXJDGw=;
+        b=p9ZJbZgIKLH73QVP3PtH9Qed97Q4p4Gfo8yXH9lugDLNBuEyUEnxXDqb/pst0FhUsg
+         1i0BZSkucTL/f0fJsfLG/pYYlly7xxbQhYpQJM88yFOrC2bCXzYjy3o2Kdu7dyJuTFig
+         AtKmfnlW6oWuMnihMilkZGBdVUpKqWeI8z83ik6bli6g8s26oKyA40A2R3sQH7izz2HX
+         XmmR/KFcUcvPkBhjPAg9lT9gXwe2PVMtrdL3OznBrouUImolL0fUJavnz2/g7eTT3l/H
+         xt6uNDyfz/99WxPgT7jRgcHJjRPLPmLtSLCraaqLrUxctZOcecsBauKEn8XI0KdNMfDU
+         NYWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMam8U3XqiB9wR4wRe8XFe/nS2HM//xz8YV/8bkBZhr/OviSy3O8Imoya7MFCxK24oHg6uVPXknA2Suf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymAloejYyQXU27vj7SbPgqYH0mW2y9h9qMn3VwY/hnXe7vJiqv
+	/98CdVpduGA1andJmo4m2KiM2g+AzUtfQstkokAtWI1MJUtHNaR8xXm0QwPeqnEI1+hptw5DI4z
+	MrYxYRGD3EisHPjZfxyCGcOj1tFMS3AF6JUmMVXIVL3NkR2IH5tmAM+JyQoGoHchYSfvd/PFNPR
+	qgZpPvoeDdLSA57iBDU1xnOaa0mDRJLvzXvnhk
+X-Gm-Gg: ASbGncusfkSc4kW3R+GY1YBAbR4q08rs2MzfHatzXcQcKaRoDBHSW4C3qAXGtGX8EXH
+	rZzqbIkotTgfdL5n0nj6SgK/rfdNJV6ui
+X-Received: by 2002:a05:6102:f0a:b0:4af:3f3c:515d with SMTP id ada2fe7eead31-4af447ba11amr2480010137.4.1732677868412;
+        Tue, 26 Nov 2024 19:24:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IENLpNHXVdEJkHfKOZ6y3NH0owSwITH1IrhuBh+8vAIoAuNm3dDd/e+WuEr/MLMpgiQz6hr18VjYjytXU3cWrU=
+X-Received: by 2002:a05:6102:f0a:b0:4af:3f3c:515d with SMTP id
+ ada2fe7eead31-4af447ba11amr2479984137.4.1732677867940; Tue, 26 Nov 2024
+ 19:24:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ONVPp5CovT5fwPcWP_OjEzHflgxIIyRJ
-X-Proofpoint-ORIG-GUID: ONVPp5CovT5fwPcWP_OjEzHflgxIIyRJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0
- mlxscore=0 suspectscore=0 mlxlogscore=969 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411270027
+References: <20241126024200.2371546-1-koichiro.den@canonical.com>
+ <CACGkMEsJ1X-u=djO2=kJzZdpZH5SX560V9osdpDuySXtfBMpuw@mail.gmail.com> <6lkdqvbnlntx3cno5qi7c4nks2ub3bkaycsuq7p433c4vemcmf@fwnhqbo5ehaw>
+In-Reply-To: <6lkdqvbnlntx3cno5qi7c4nks2ub3bkaycsuq7p433c4vemcmf@fwnhqbo5ehaw>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 27 Nov 2024 11:24:15 +0800
+Message-ID: <CACGkMEvR4+_iRAFACkXLgX-hGwjfOgd3emiyquzxUHL9wC-b=g@mail.gmail.com>
+Subject: Re: [PATCH] virtio_net: drain unconsumed tx completions if any before dql_reset
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: virtualization@lists.linux.dev, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
+	eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The sdhci-msm driver supports the device in both RUNNING
-and IDLE states, when eMMC/SD are not reading or writing,
-eMMC/SD are in IDLE state, the power management module
-will suspend the device(power off and reduce frequency,
-etc.), putting the device into a low-power mode. But the
-current sdhci-msm driver cannot put device enter into
-low-power mode.
+On Tue, Nov 26, 2024 at 12:44=E2=80=AFPM Koichiro Den
+<koichiro.den@canonical.com> wrote:
+>
+> On Tue, Nov 26, 2024 at 11:50:17AM +0800, Jason Wang wrote:
+> > On Tue, Nov 26, 2024 at 10:42=E2=80=AFAM Koichiro Den
+> > <koichiro.den@canonical.com> wrote:
+> > >
+> > > When virtnet_close is followed by virtnet_open, there is a slight cha=
+nce
+> > > that some TX completions remain unconsumed. Those are handled during =
+the
+> > > first NAPI poll, but since dql_reset occurs just beforehand, it can l=
+ead
+> > > to a crash [1].
+> > >
+> > > This issue can be reproduced by running: `while :; do ip l set DEV do=
+wn;
+> > > ip l set DEV up; done` under heavy network TX load from inside of the
+> > > machine.
+> > >
+> > > To fix this, drain unconsumed TX completions if any before dql_reset,
+> > > allowing BQL to start cleanly.
+> > >
+> > > ------------[ cut here ]------------
+> > > kernel BUG at lib/dynamic_queue_limits.c:99!
+> > > Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > > CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+=
+ #2
+> > > Tainted: [N]=3DTEST
+> > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+> > > BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > > RIP: 0010:dql_completed+0x26b/0x290
+> > > Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff =
+0d
+> > > 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 0=
+1
+> > > d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+> > > RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+> > > RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+> > > RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+> > > RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+> > > R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+> > > R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+> > > FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+> > > knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+> > > PKRU: 55555554
+> > > Call Trace:
+> > >  <IRQ>
+> > >  ? die+0x32/0x80
+> > >  ? do_trap+0xd9/0x100
+> > >  ? dql_completed+0x26b/0x290
+> > >  ? dql_completed+0x26b/0x290
+> > >  ? do_error_trap+0x6d/0xb0
+> > >  ? dql_completed+0x26b/0x290
+> > >  ? exc_invalid_op+0x4c/0x60
+> > >  ? dql_completed+0x26b/0x290
+> > >  ? asm_exc_invalid_op+0x16/0x20
+> > >  ? dql_completed+0x26b/0x290
+> > >  __free_old_xmit+0xff/0x170 [virtio_net]
+> > >  free_old_xmit+0x54/0xc0 [virtio_net]
+> > >  virtnet_poll+0xf4/0xe30 [virtio_net]
+> > >  ? __update_load_avg_cfs_rq+0x264/0x2d0
+> > >  ? update_curr+0x35/0x260
+> > >  ? reweight_entity+0x1be/0x260
+> > >  __napi_poll.constprop.0+0x28/0x1c0
+> > >  net_rx_action+0x329/0x420
+> > >  ? enqueue_hrtimer+0x35/0x90
+> > >  ? trace_hardirqs_on+0x1d/0x80
+> > >  ? kvm_sched_clock_read+0xd/0x20
+> > >  ? sched_clock+0xc/0x30
+> > >  ? kvm_sched_clock_read+0xd/0x20
+> > >  ? sched_clock+0xc/0x30
+> > >  ? sched_clock_cpu+0xd/0x1a0
+> > >  handle_softirqs+0x138/0x3e0
+> > >  do_softirq.part.0+0x89/0xc0
+> > >  </IRQ>
+> > >  <TASK>
+> > >  __local_bh_enable_ip+0xa7/0xb0
+> > >  virtnet_open+0xc8/0x310 [virtio_net]
+> > >  __dev_open+0xfa/0x1b0
+> > >  __dev_change_flags+0x1de/0x250
+> > >  dev_change_flags+0x22/0x60
+> > >  do_setlink.isra.0+0x2df/0x10b0
+> > >  ? rtnetlink_rcv_msg+0x34f/0x3f0
+> > >  ? netlink_rcv_skb+0x54/0x100
+> > >  ? netlink_unicast+0x23e/0x390
+> > >  ? netlink_sendmsg+0x21e/0x490
+> > >  ? ____sys_sendmsg+0x31b/0x350
+> > >  ? avc_has_perm_noaudit+0x67/0xf0
+> > >  ? cred_has_capability.isra.0+0x75/0x110
+> > >  ? __nla_validate_parse+0x5f/0xee0
+> > >  ? __pfx___probestub_irq_enable+0x3/0x10
+> > >  ? __create_object+0x5e/0x90
+> > >  ? security_capable+0x3b/0x70
+> > >  rtnl_newlink+0x784/0xaf0
+> > >  ? avc_has_perm_noaudit+0x67/0xf0
+> > >  ? cred_has_capability.isra.0+0x75/0x110
+> > >  ? stack_depot_save_flags+0x24/0x6d0
+> > >  ? __pfx_rtnl_newlink+0x10/0x10
+> > >  rtnetlink_rcv_msg+0x34f/0x3f0
+> > >  ? do_syscall_64+0x6c/0x180
+> > >  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > >  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+> > >  netlink_rcv_skb+0x54/0x100
+> > >  netlink_unicast+0x23e/0x390
+> > >  netlink_sendmsg+0x21e/0x490
+> > >  ____sys_sendmsg+0x31b/0x350
+> > >  ? copy_msghdr_from_user+0x6d/0xa0
+> > >  ___sys_sendmsg+0x86/0xd0
+> > >  ? __pte_offset_map+0x17/0x160
+> > >  ? preempt_count_add+0x69/0xa0
+> > >  ? __call_rcu_common.constprop.0+0x147/0x610
+> > >  ? preempt_count_add+0x69/0xa0
+> > >  ? preempt_count_add+0x69/0xa0
+> > >  ? _raw_spin_trylock+0x13/0x60
+> > >  ? trace_hardirqs_on+0x1d/0x80
+> > >  __sys_sendmsg+0x66/0xc0
+> > >  do_syscall_64+0x6c/0x180
+> > >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > RIP: 0033:0x7f41defe5b34
+> > > Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 =
+00
+> > > f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 0=
+0
+> > > f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> > > RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002=
+e
+> > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+> > > RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+> > > RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+> > > R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+> > > R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+> > >  </TASK>
+> > > [...]
+> > > ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]--=
+-
+> > >
+> > > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
+> > > Cc: <stable@vger.kernel.org> # v6.11+
+> > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > > ---
+> > >  drivers/net/virtio_net.c | 37 +++++++++++++++++++++++++++++--------
+> > >  1 file changed, 29 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > index 64c87bb48a41..3e36c0470600 100644
+> > > --- a/drivers/net/virtio_net.c
+> > > +++ b/drivers/net/virtio_net.c
+> > > @@ -513,7 +513,7 @@ static struct sk_buff *virtnet_skb_append_frag(st=
+ruct sk_buff *head_skb,
+> > >                                                struct sk_buff *curr_s=
+kb,
+> > >                                                struct page *page, voi=
+d *buf,
+> > >                                                int len, int truesize)=
+;
+> > > -static void virtnet_xsk_completed(struct send_queue *sq, int num);
+> > > +static void virtnet_xsk_completed(struct send_queue *sq, int num, bo=
+ol drain);
+> > >
+> > >  enum virtnet_xmit_type {
+> > >         VIRTNET_XMIT_TYPE_SKB,
+> > > @@ -580,7 +580,8 @@ static void sg_fill_dma(struct scatterlist *sg, d=
+ma_addr_t addr, u32 len)
+> > >  }
+> > >
+> > >  static void __free_old_xmit(struct send_queue *sq, struct netdev_que=
+ue *txq,
+> > > -                           bool in_napi, struct virtnet_sq_free_stat=
+s *stats)
+> > > +                           bool in_napi, struct virtnet_sq_free_stat=
+s *stats,
+> > > +                           bool drain)
+> > >  {
+> > >         struct xdp_frame *frame;
+> > >         struct sk_buff *skb;
+> > > @@ -620,7 +621,8 @@ static void __free_old_xmit(struct send_queue *sq=
+, struct netdev_queue *txq,
+> > >                         break;
+> > >                 }
+> > >         }
+> > > -       netdev_tx_completed_queue(txq, stats->napi_packets, stats->na=
+pi_bytes);
+> > > +       if (!drain)
+> > > +               netdev_tx_completed_queue(txq, stats->napi_packets, s=
+tats->napi_bytes);
+> > >  }
+> > >
+> > >  static void virtnet_free_old_xmit(struct send_queue *sq,
+> > > @@ -628,10 +630,21 @@ static void virtnet_free_old_xmit(struct send_q=
+ueue *sq,
+> > >                                   bool in_napi,
+> > >                                   struct virtnet_sq_free_stats *stats=
+)
+> > >  {
+> > > -       __free_old_xmit(sq, txq, in_napi, stats);
+> > > +       __free_old_xmit(sq, txq, in_napi, stats, false);
+> > >
+> > >         if (stats->xsk)
+> > > -               virtnet_xsk_completed(sq, stats->xsk);
+> > > +               virtnet_xsk_completed(sq, stats->xsk, false);
+> > > +}
+> > > +
+> > > +static void virtnet_drain_old_xmit(struct send_queue *sq,
+> > > +                                  struct netdev_queue *txq)
+> > > +{
+> > > +       struct virtnet_sq_free_stats stats =3D {0};
+> > > +
+> > > +       __free_old_xmit(sq, txq, false, &stats, true);
+> > > +
+> > > +       if (stats.xsk)
+> > > +               virtnet_xsk_completed(sq, stats.xsk, true);
+> > >  }
+> >
+> > Are we sure this can drain the queue? Note that the device is not stopp=
+ed.
+>
+> Thanks for reviewing. netif_tx_wake_queue can be invoked before the "drai=
+n"
+> point I added e.g. via virtnet_config_changed_work, so it seems that I ne=
+ed
+> to ensure it's stopped (DRV_XOFF) before the "drain" and wake it afterwar=
+ds.
+> Please let me know if I=E2=80=99m mistaken.
 
-Enable aggressive PM capability to support runtime PM
-functionality, allowing the eMMC/SD card to enter
-lowe-power mode.
+Not sure I get you, but I meant we don't reset the device so it can
+keep raising tx interrupts:
 
-Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
----
- drivers/mmc/host/sdhci-msm.c | 1 +
- 1 file changed, 1 insertion(+)
+virtnet_drain_old_xmit()
+netdev_tx_reset_queue()
+skb_xmit_done()
+napi_enable()
+netdev_tx_completed_queue() // here we might still surprise the bql?
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e00208535bd1..e3444d223513 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -2627,6 +2627,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	}
- 
- 	msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
-+	msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
- 
- 	/* Set the timeout value to max possible */
- 	host->max_timeout_count = 0xF;
--- 
-2.34.1
+Thanks
+
+>
+> >
+> > >
+> > >  /* Converting between virtqueue no. and kernel tx/rx queue no.
+> > > @@ -1499,7 +1512,8 @@ static bool virtnet_xsk_xmit(struct send_queue =
+*sq, struct xsk_buff_pool *pool,
+> > >         /* Avoid to wakeup napi meanless, so call __free_old_xmit ins=
+tead of
+> > >          * free_old_xmit().
+> > >          */
+> > > -       __free_old_xmit(sq, netdev_get_tx_queue(dev, sq - vi->sq), tr=
+ue, &stats);
+> > > +       __free_old_xmit(sq, netdev_get_tx_queue(dev, sq - vi->sq), tr=
+ue,
+> > > +                       &stats, false);
+> > >
+> > >         if (stats.xsk)
+> > >                 xsk_tx_completed(sq->xsk_pool, stats.xsk);
+> > > @@ -1556,10 +1570,13 @@ static int virtnet_xsk_wakeup(struct net_devi=
+ce *dev, u32 qid, u32 flag)
+> > >         return 0;
+> > >  }
+> > >
+> > > -static void virtnet_xsk_completed(struct send_queue *sq, int num)
+> > > +static void virtnet_xsk_completed(struct send_queue *sq, int num, bo=
+ol drain)
+> > >  {
+> > >         xsk_tx_completed(sq->xsk_pool, num);
+> > >
+> > > +       if (drain)
+> > > +               return;
+> > > +
+> > >         /* If this is called by rx poll, start_xmit and xdp xmit we s=
+hould
+> > >          * wakeup the tx napi to consume the xsk tx queue, because th=
+e tx
+> > >          * interrupt may not be triggered.
+> > > @@ -3041,6 +3058,7 @@ static void virtnet_disable_queue_pair(struct v=
+irtnet_info *vi, int qp_index)
+> > >
+> > >  static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp=
+_index)
+> > >  {
+> > > +       struct netdev_queue *txq =3D netdev_get_tx_queue(vi->dev, qp_=
+index);
+> > >         struct net_device *dev =3D vi->dev;
+> > >         int err;
+> > >
+> > > @@ -3054,7 +3072,10 @@ static int virtnet_enable_queue_pair(struct vi=
+rtnet_info *vi, int qp_index)
+> > >         if (err < 0)
+> > >                 goto err_xdp_reg_mem_model;
+> > >
+> > > -       netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, qp_index))=
+;
+> > > +       /* Drain any unconsumed TX skbs transmitted before the last v=
+irtnet_close */
+> > > +       virtnet_drain_old_xmit(&vi->sq[qp_index], txq);
+> > > +
+> > > +       netdev_tx_reset_queue(txq);
+> > >         virtnet_napi_enable(vi->rq[qp_index].vq, &vi->rq[qp_index].na=
+pi);
+> > >         virtnet_napi_tx_enable(vi, vi->sq[qp_index].vq, &vi->sq[qp_in=
+dex].napi);
+> > >
+> > > --
+> > > 2.43.0
+> > >
+> > >
+> >
+> > Thanks
+> >
+>
 
 
