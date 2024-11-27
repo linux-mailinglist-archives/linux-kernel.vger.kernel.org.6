@@ -1,215 +1,135 @@
-Return-Path: <linux-kernel+bounces-423021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5019DA16A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:18:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B18116773D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:18:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967E36A8D2;
-	Wed, 27 Nov 2024 04:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HwnFokOC"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1B19DA16E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:21:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C51335C7;
-	Wed, 27 Nov 2024 04:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732681097; cv=fail; b=KC7tuwTZt9DR2Z/nhZt5yd8BCTRoKdIhv9oxF8LJRiTsN7MBlcVnDsQmtlCD7L34hXHqSIIo93iX02URm/NQUXvz+im+I/Xyqx+fKOBe7Zp5j1xAl+AmO5cMLkvSy3Gjef1w4SmwTcZ3tdUxlA37RYl6yKJianaCqJ4G1Ml3MgE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732681097; c=relaxed/simple;
-	bh=itCxEcPe/CZpdPF59n3SrlZm5QOOderS+SaGx1nOQmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pnt8BhqZH10Qalf8W/SHb2LwzXegyKsT43vvI0VSPxGAHSH1AqDgP2ZlN90bbjMS/I9e9Uitrj8RP50LDgcBZyM/JcIbvj+7S52dxZP30aBbFa1L8rXOohMQxngL+3dXkSs5o0CxptzmfXlTKOi4L4x9elBaTne4ehVWNEbMRE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HwnFokOC; arc=fail smtp.client-ip=40.107.94.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sj8CWp2cHM/EMVhrW5oQ0jeVYMpnXOOi9VX+FokNef3+Hj+sKJuxIozpXcvsEsl1qb5S2q6FaHRGCpltGjGMdXVRoAymqBoO9CTYfvKcZG5tjzmp6MwfmN+smKT0FlFz+ofu/q+U5F9PI9ZaPy6epkTEoPnHSfu2vfZkx/sGhhcRndcxMoM272S1QXGLWd4HTOFS543LDq1ObH8tSVOvaNRvBZh1yy+D0hWcF1ZBdcEwDW+mysl8IL4pQfn/MXqcfZDSi1Ww/NTGvwuVGWzWcvRZ+kZ5QrRpxgcZdJbaLXl7tD/czlM27BTtsuAbIrGN0T078bjyOG7MYvLgX5f9Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vLFte9NJHWGKFwgw7WyKBSLb9MQICnc6QTE3GZUo5E8=;
- b=V0v0X2VcATjxOAkrPqvDB+U73/VkGdxeZXuX0vRoOT0zD832czS7gZ3XkG9+Ys4wggxuLEa2R+u+9C9cHVlfHW0ut7ccrl3TZgyIEpphlw6yjteSkEji5Qq5rVjSus86KBJYU+S4yb3Y2Me1l5DS6HDdlfJ4EFLeB0RcqWKAljRxbMnD3xdWQ9XWNr+u4WlpRi5D6ChikY4OM/2uhfRC/DWLqZ7K194hvjmnL2gKlbakxd1Z+ceaixRCCw/YveWU6hL3+zLoAGkr/2q3gt7GIezW5Ma6HhkQJ+Ew+iO8vb3lSqN4NlttrEaO96AynPRWw/NvOKRtov3eH9B91w98lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vLFte9NJHWGKFwgw7WyKBSLb9MQICnc6QTE3GZUo5E8=;
- b=HwnFokOCtCgjcRt9HXAzRnlTjr66Fl++KjG+6Nq9lSF3huCsnsa+lpUlFh6yra550qAizQKgSyxt1qTfdd5yO5Hkw/jRhqtx5SuRlCpotHSDhy1QbW3PeuUAY2KXl4YnKS9eHidrRyQw7tC08wpJz1226rpyAfbqP5VIDGxC04c=
-Received: from MW4PR03CA0032.namprd03.prod.outlook.com (2603:10b6:303:8e::7)
- by MN0PR12MB6271.namprd12.prod.outlook.com (2603:10b6:208:3c1::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Wed, 27 Nov
- 2024 04:18:11 +0000
-Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
- (2603:10b6:303:8e:cafe::69) by MW4PR03CA0032.outlook.office365.com
- (2603:10b6:303:8e::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.22 via Frontend Transport; Wed,
- 27 Nov 2024 04:18:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8207.12 via Frontend Transport; Wed, 27 Nov 2024 04:18:10 +0000
-Received: from [10.136.45.86] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Nov
- 2024 22:18:08 -0600
-Message-ID: <ee2feb3b-0a1f-4276-b6fd-f36014654cbf@amd.com>
-Date: Wed, 27 Nov 2024 09:47:54 +0530
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696D2B24877
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:21:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42BF13AA4C;
+	Wed, 27 Nov 2024 04:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHxQG5sL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4327D10E6;
+	Wed, 27 Nov 2024 04:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732681273; cv=none; b=n0+DDyasqWG67SLeSuYjNN0u6c86IghUbc79lHaHyc+YwoV6Dhp+m2PDfkr2HjJ8eAG4mNGlV0RxqvGYyrkDLB8MjNx27TJLOj2yWRmhppTkPal74bz99IwzPxCZq6ZZW44iz+FySHSLVKaxPfNiJEvEXoLx6opB/9LUTiKWSDs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732681273; c=relaxed/simple;
+	bh=eHOLQKunbk8Z3giDEIVHC1DnAyRTlQQ9KQn/cuoZS7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VgKsIWd9KEk6keNVN8MJsjurSBcjQ9CzTPNodl1TXGMm2BlcaeyxmFXI7QAL8iT0EU0FYKGb4mySIPJFtx3gUQm5eVE/DHqEaDdfy4S4Mt3ZT9z9QydQx7sJUIaHTWt3CdjeY5I7UrZava78XCcIuBwVGKGwa1kNJQqg1myTGik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHxQG5sL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADF5C4CECC;
+	Wed, 27 Nov 2024 04:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732681273;
+	bh=eHOLQKunbk8Z3giDEIVHC1DnAyRTlQQ9KQn/cuoZS7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KHxQG5sLVqZUZTAiOvTwoSBEJAQfVtGniz0PQwBIE1txYPDdeZ5Ic6WNRzeGQcgQO
+	 dSDtnCfBI4DmJs1SUxqb8zN9WxQ0NeOGrCo/V/OtPio9W02z9iTS/qyYU+ewU98Iva
+	 TlKHdFs7vGL7uHayaDq+pPqYw3ztw7aazAR12KXjGwK+4q5LKWhfuKXo8ExmvRr4RC
+	 3VSMDDZhVfcvz6beZcxdo9GC7P4RFcPEildaDZgrQUtLyri2wC1U30PIBsIzKHgbIo
+	 6FuDLPfyMiY2zZMSJn6ee54mOsCnB85ax/kwtuofA9ucTI5L45qD30KXgvspfAdOQQ
+	 Qe4OE9J2BGghw==
+Date: Tue, 26 Nov 2024 22:21:10 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, 
+	Nitin Rawat <quic_nitirawa@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
+Message-ID: <tebgud2k4bup35e7rkfpx5kt7m5jxgw3yo3myjzfushnmdecsj@e4cb44jqoevp>
+References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
+ <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: sched/core] sched/eevdf: More PELT vs DELAYED_DEQUEUE
-To: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>
-References: <20240906104525.GG4928@noisy.programming.kicks-ass.net>
- <172595576232.2215.18027704125134691219.tip-bot2@tip-bot2>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <172595576232.2215.18027704125134691219.tip-bot2@tip-bot2>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|MN0PR12MB6271:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ee1b81c-fb21-4f54-c205-08dd0e9a80dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NlMwMDB6bXNvNXExV0w4Mm5kZm9oTmViY2JOdmlHVjVjNVdWTEsxRFBsRTZN?=
- =?utf-8?B?cTdtY05TRXFPUXR6NHZDYzRwbVRFUW5SU1J6YUFzMnJyaFgzVkFJdDNTNkxN?=
- =?utf-8?B?Rk4rZjc2SzR0WjFrUk1jaVBJMUtiUjZ0NWlCY2FXL1JVdUF0elEwa3NJVHFj?=
- =?utf-8?B?YnNDSk90bmQzbTBFVjk0blVrakkyU2ZSeERRME1aN3hhc0d5TVdUZzVlV1lS?=
- =?utf-8?B?ZnlmM0cyVWJoQzQvZW00Q2RTNERUVmNWR0duN2Q4OHBSZ0N5QlVyblRYeS91?=
- =?utf-8?B?cGkxbldyYVEvRjZHRHRmWCtsUXFvZ3RYYkhCOEtPbVpvNEJUbEVrRjlocVZD?=
- =?utf-8?B?bHZmNHVDQUYrTWNPWklqL1IzWE1jNWJ1MVV1OHVoQlpJeXBLdmZqTVlFUnNq?=
- =?utf-8?B?NXAwOW9tcUFsd3ZyZjAyMnBIN2VBNFFiNWVxNWZjNE9jN3ZkTzIzZHhnRDBl?=
- =?utf-8?B?aUZxc04xcXM2dU53enVpWVVaTTBYZmhuTVVuQ3ZVTjJJcDZGMFRidUVxVlpB?=
- =?utf-8?B?QmpzNFdmYS9ndjkyeGYveTRHNFhCVWtUNDJ5eUFOV3VDNS82Q0RESE9IdXV3?=
- =?utf-8?B?Zm9Remt6U2kyRzJ3NGtnaTVNdEFPUVY2dk83SGlWNWhETy96UVVxcXlqbDcz?=
- =?utf-8?B?dEwyMVNvNVZmYW9HdGcxSDVrNGh2b1hwSFJMN0cramh1Q2xURWwyMC9tazFQ?=
- =?utf-8?B?dHllTUN5cnQyY2JqWktkWDF0clF6T1lYNVBtays1RW16dE5YTkduZW9LbmdB?=
- =?utf-8?B?WFFlU0c5Vnlmd3JSWDJZaFg0VmI5ZnhDUXo5UFlpa3oya0ltM1Z0bUxiNTBp?=
- =?utf-8?B?ODFDcHRpdFNrNFhQZHdMQm9ZNDRtaTF4U3ZVSmpCcXByc2VGbzVZb3J6REtG?=
- =?utf-8?B?b1JFQnVkR3psejEzaXVyTFRvbk5DWGlkeTRqOHpYQnhwZUNtU2MwdWVieE1p?=
- =?utf-8?B?UGtpdklJWXdKRmYyb1Qzdmd1Q3ZkdkZYVEZZUTA2UnRnejNKaTF2Yy90WWIz?=
- =?utf-8?B?MktBOVpyOTM0ZUZQK0RUKzBmZlNXd2l3dno2Y3BsZDh3K21tSVJ6cW1NbUQz?=
- =?utf-8?B?RmE0MXdNWlpiRmdFbFhVTGx1V280enRVcmtwaFBzTFRpRFN5MVc1ZFVNRFZu?=
- =?utf-8?B?ZDd6MUtlNVhLUVZoRDdqT0RsZC9mNlRONkNucjdnakRrQzhRdUw3ZWdBQ0Ro?=
- =?utf-8?B?WVpjaXVLT1ZZemNnWXZPd0xMRDl4Z1NmRkVhRlgwQVRZSGtRVGVTTHI4OTNk?=
- =?utf-8?B?SGdOdDVMbEZVWnRoMWxPTVltR2F5ejlrcVdKaFRLR1BLeFlNR0E4Z1B4dzBk?=
- =?utf-8?B?M29oZWxVeGdUUjFUYWRKdXk5TlNudnk0NzR4MnN0dS9JL2sxSDJVbjA0OVd1?=
- =?utf-8?B?VU04MytCYjNCS2ZsOGVlNzZrQ3JQZXQ4ZlVtd2tMK2I3UWY5QjlrSjZwb09s?=
- =?utf-8?B?SmJyWFRyWDFVTkowdnlNYndNUEc2Sm1zQnozaytWNmJLTGFsbU1TUU5ESitY?=
- =?utf-8?B?ajMxbzU5ZTNNMThobzl6dmpnMHVpU1RrSURUSDVMRjlyVzV5MmxoN09TN0N3?=
- =?utf-8?B?TWdWeDFuZEpxc2xpRWhBU050Q3ZXQ0l4OU10aFJkV0hBNkx4M3N6aStoMW5X?=
- =?utf-8?B?UzBWODJoczM2VExOaW5zUnBVU2x6Q1hwajlEODl1dkEvQnZxakVvbDdLV21V?=
- =?utf-8?B?NGlRQTU5bksvTWtIRWQ2Unk4Z1JlRGZCcEg0WTlQdzFSdFRxU2trL2RDWFAv?=
- =?utf-8?B?T004ajYyNzBpWTFZVmZQKzF5VnRtdUFwZFhqOENMRGlvM2pGdU1wTlFUMGRM?=
- =?utf-8?B?UHgyNVF5NG4vSHMrSlRNbkJZZmFvM1pYeHVqTTZleXAyQmcxUlgvbUJnVUsv?=
- =?utf-8?B?TjhLSnhPaGVNZWpqNkZ3TmhYR3UrbDE1bndjN1pOcW9pQ3c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 04:18:10.4463
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ee1b81c-fb21-4f54-c205-08dd0e9a80dc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6271
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
 
-Hello Peter,
-
-On 9/10/2024 1:39 PM, tip-bot2 for Peter Zijlstra wrote:
-> The following commit has been merged into the sched/core branch of tip:
+On Thu, Nov 07, 2024 at 11:58:09AM +0000, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> Commit-ID:     2e05f6c71d36f8ae1410a1cf3f12848cc17916e9
-> Gitweb:        https://git.kernel.org/tip/2e05f6c71d36f8ae1410a1cf3f12848cc17916e9
-> Author:        Peter Zijlstra <peterz@infradead.org>
-> AuthorDate:    Fri, 06 Sep 2024 12:45:25 +02:00
-> Committer:     Peter Zijlstra <peterz@infradead.org>
-> CommitterDate: Tue, 10 Sep 2024 09:51:15 +02:00
+> Starting from SM8550, UFS PHY GDSCs doesn't support hardware retention. So
+> using RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs
+> will get powered down during suspend, causing the UFS PHY to loose its
+> state. And this will lead to below UFS error during resume as observed on
+> SM8550-QRD:
 > 
-> sched/eevdf: More PELT vs DELAYED_DEQUEUE
+
+Unless I'm mistaken, ALWAYS_ON makes GDSC keep the gendpd ALWAYS_ON as
+well, which in turn would ensure that any parent power-domain is kept
+active - which in the case of GCC would imply CX.
+
+The way we've dealt with this elsewhere is to use the PWRSTS_RET_ON flag
+in pwrsts; we then keep the GDSC active, but release any votes to the
+parent and rely on hardware to kick in MX when we're shutting down CX.
+Perhaps this can't be done for some reason?
+
+
+PS. In contrast to other platforms where we've dealt with issues of
+under voltage crashes, I see &gcc in sm8550.dtsi doesn't specify a
+parent power-domain, which would mean that the required-opps = <&nom> of
+&ufs_mem_hc is voting for nothing.
+
+Regards,
+Bjorn
+
+> ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
+> ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
+> ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
+> ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
+> ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
 > 
-> Vincent and Dietmar noted that while commit fc1892becd56 fixes the
-> entity runnable stats, it does not adjust the cfs_rq runnable stats,
-> which are based off of h_nr_running.
+> Cc: stable@vger.kernel.org # 6.8
+> Fixes: 1fe8273c8d40 ("clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag")
+> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-sm8550.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Track h_nr_delayed such that we can discount those and adjust the
-> signal.
+> diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
+> index 5abaeddd6afc..7dd08e175820 100644
+> --- a/drivers/clk/qcom/gcc-sm8550.c
+> +++ b/drivers/clk/qcom/gcc-sm8550.c
+> @@ -3046,7 +3046,7 @@ static struct gdsc ufs_phy_gdsc = {
+>  		.name = "ufs_phy_gdsc",
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
+>  };
+>  
+>  static struct gdsc ufs_mem_phy_gdsc = {
+> @@ -3055,7 +3055,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
+>  		.name = "ufs_mem_phy_gdsc",
+>  	},
+>  	.pwrsts = PWRSTS_OFF_ON,
+> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
+>  };
+>  
+>  static struct gdsc usb30_prim_gdsc = {
 > 
-> Fixes: fc1892becd56 ("sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE")
-> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20240906104525.GG4928@noisy.programming.kicks-ass.net
-
-I've been testing this fix for a while now to see if it helps the
-regressions reported around EEVDF complete. The issue with negative
-"h_nr_delayed" reported by Luis previously seem to have been fixed as a
-result of commit 75b6499024a6 ("sched/fair: Properly deactivate
-sched_delayed task upon class change")
-
-I've been running stress-ng for a while and haven't seen any cases of
-negative "h_nr_delayed". I'd also added the following WARN_ON() to see
-if there are any delayed tasks on the cfs_rq before switching to idle in
-some of my previous experiments and I did not see any splat during my
-benchmark runs.
-
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 621696269584..c19a31fa46c9 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -457,6 +457,9 @@ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct t
-  
-  static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool first)
-  {
-+	/* All delayed tasks must be picked off before switching to idle */
-+	SCHED_WARN_ON(rq->cfs.h_nr_delayed);
-+
-  	update_idle_core(rq);
-  	scx_update_idle(rq, true);
-  	schedstat_inc(rq->sched_goidle);
---
-
-If you are including this back, feel free to add:
-
-Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-
-> [..snip..]
-
--- 
-Thanks and Regards,
-Prateek
-
+> -- 
+> 2.25.1
+> 
+> 
 
