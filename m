@@ -1,140 +1,175 @@
-Return-Path: <linux-kernel+bounces-423017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1979DA14D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:05:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CFF9DA155
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B9D283CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:05:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B14E8B23D76
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F367C13A869;
-	Wed, 27 Nov 2024 04:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F613B293;
+	Wed, 27 Nov 2024 04:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWSDBNHP"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlGgdzMB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAF128EB;
-	Wed, 27 Nov 2024 04:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEACE42AB3;
+	Wed, 27 Nov 2024 04:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732680350; cv=none; b=VlddcrBqT8XKco7X8T1vUerUsUU4/GoMx0yAcFy9VZdlHlRp0vpXYaiAgwFbaL4X3qzUdUpVe/vLR7YQuRvMvOca10t2Efu1J6Re3/jPf1xwsIaNLPBmYmsXKYvNu13kgbI8qPVdMD2PLQSInY+r6WpxJnhZyEdq5Di1QBn46Jc=
+	t=1732680434; cv=none; b=OeQkSoohurHBV5MutV3MqYEu426Fs/iqyYfmA/FnZ6HaAnMTz5xdkN40WsOvcTF/NWio8yfwv9oJzfenMYvuTPaqbpehBIb/R9N1rd87pFOl8heetViXjTrN3TtlJydoZJ2sCWf4dM3IT1LBZreLktIfsrKRUcrKr/0YDjHLz98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732680350; c=relaxed/simple;
-	bh=eGMgbMDKyJQFsX2FhhmL+N7rAH4Be2hXmFG8guEZ4I4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=BgdPi4gveb3yXvEzs9X5mA1sD0JYrZfkVUsRih+pA2kUviPKy9Ast/3Kul0rETmKkvp3pRvtKDGFpxDolR0uCL7APGzIEhyGDMcmzTvIbtpPh4pwQdFwZ3rJMuJCKJZK7PG1M9qXQwopB2M7zsh6cHv1XOABZxUuJY3YqRmY4Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWSDBNHP; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3822ba3cdbcso3931556f8f.0;
-        Tue, 26 Nov 2024 20:05:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732680347; x=1733285147; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eGMgbMDKyJQFsX2FhhmL+N7rAH4Be2hXmFG8guEZ4I4=;
-        b=DWSDBNHPZk9lVUMnWDMJQQ2stuGjqio+OTlF6yvE2Z012k0rOYuKaHhfHUe9be2kkC
-         42hgVl7RGDuAZzAh6/5mXJOmAcB/uz/evWP4IBexY7rdXqyRMZ0BLqiB9wZY0FYoA/Pa
-         yzBf46zxjGxsgxFCoXBGZxOvijlhs+aJRQbVX9gAwMoEp0QwgftYxYPmkK1UWzcK1YD6
-         7EoxPKQC3BblJ+th+tEy7KjUID2dvOvHGbUrk59tA0fbwHPOhMxy+4L/z7JywJYCC+15
-         RO+bRBib/ucdHK8Cm5kbghEkB/WLdiYmeg07/HAIaRSZmpEtEwiD6Zn1JkRU5WDe0YKJ
-         JMGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732680347; x=1733285147;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eGMgbMDKyJQFsX2FhhmL+N7rAH4Be2hXmFG8guEZ4I4=;
-        b=mr/szQyVA6M6WXRyx9WBwYD8w6M5ZM5P2IC6eHppqutSYWh1S12Pj7nirlJTKZHDI3
-         18KJSjFdJXtsPjr76I/RJrx+gkvOCt9zrLgLcx+sqBwHzOGcJZhoO+mVVF17H7fd96zz
-         2UZjTjW8nS7grNmz5guF0e4+Rg1jT5JsjKeu3b2fxQSdfzEDlhSKhba7xiIGTMyc9fUj
-         4Adlk8ivVocR4oq/dohO8kP/GbKeTCGFHbRpmdj9friQhr+R5QUezPSEXH2cWUwCv93P
-         qD3FOUm7s62Py343R0mz/VUpkaSAG/NUXOaNf3w50fUm4wHFYTcki6wF/lPY/nwjrzUh
-         +B1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdoIqQfl+o0cY7U/y4kM9kg23KlV47PRnIIT6MJ5jbsQnSBJ+U0bUnCV6+t8U6y6pu7GqcPdH+ei25@vger.kernel.org, AJvYcCXLmjl03fBJoxZPdGiS66K8JZLAdlHXQnNHr3QS5VRSkQaIGJJEEpG1NRqG/EWiaoJrOSfvR09IkFp+DaME@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz8HhJRVK58l1K5wwW7zSisbpHID7zSDjHHoLcA8HoTthEcMsD
-	CCl6QppqsaeSeSbcwoplQmAMA4uGEUAGBFv0HtEa54pEiApbFHs/
-X-Gm-Gg: ASbGnctQsFfc+ccfYex+RkSzzY4ly7CKUhDKErJIf/b1Al9VbDQFjMKldG9wnfji+O9
-	7q6AcPupa72b1zD5heEsn1ANQQseUEE7raxtvenhV6EGj9zR/QWxuORNduszyDYzNcVGkErrqMq
-	EcTJ382b2e+frfOEf73WJq6xrx3pzrHi3heuiJU7XBruL+oOVGfkChtzIuK2/13twT3D1YKpgn5
-	OGfe8KiE4fbKhGab9Fgzs/nQXqipf4t0LtZRHdwaqaCJ4A2M67dBF352KDk6bkIMlbfe+wy
-X-Google-Smtp-Source: AGHT+IHc99eGtijXfEAq6+Nq0ctt6V5ES855jF/j39G6AUo9KVVVWLSlAJEn/iJyJYwFhVzX13IpTQ==
-X-Received: by 2002:a5d:59a3:0:b0:37c:cc67:8b1f with SMTP id ffacd0b85a97d-385c6ef477amr1008941f8f.48.1732680346883;
-        Tue, 26 Nov 2024 20:05:46 -0800 (PST)
-Received: from smtpclient.apple ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe504sm14932923f8f.25.2024.11.26.20.05.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Nov 2024 20:05:46 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1732680434; c=relaxed/simple;
+	bh=OmVtOoVnhc+wKXNqr18xMEkfBDu8J0aIQTO6c6iNU2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQuC8/7PSKkYHYm1+rtBR/ZUXapPG45Jh4xpVJ/vk4QfMO6zAsF8+WB2tZ2wQKkHRsqO5v3DOEkuONrpdKKGDgQ3t+njwqBJa7ntb0Yl6hgKaAxOOYgvJPRqxJ6i7m1RRYWD8jTpiNSBLwTxGXOAM7eTg3zBMDP2/EuGMZdG2eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlGgdzMB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDBC1C4CECC;
+	Wed, 27 Nov 2024 04:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732680433;
+	bh=OmVtOoVnhc+wKXNqr18xMEkfBDu8J0aIQTO6c6iNU2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qlGgdzMBLMKqs29v7ugGZDliNCaXlq7KOlvDfdz9qCJuPzsHE/a9gvOInMis7VvQc
+	 UiAlp/V7F5RxilpLBTLdlOzFBauFrnFo/oC7lmRrcAefXnFqDT75ibgTIvDnAQF/Nh
+	 09y3P5V95mYGo1Hoey+0W0Kcc8tyY5Lfv6uTTyAO7BMYylpy0zkq18KroE8nMRiqYR
+	 FOijftzVAQsMME0omtOEBh8VeFmFWXhLRatr+M1J5KKfQaJAE10KG06RbL0KK9q6Q9
+	 9V9WtuyeTcN9fKHP8dNt4hmaJ6ibq3yQHp+dlsDlFdgQQ+bx1AbTRdF9IAtdSMurp+
+	 4Y/HaNgRDdyMA==
+Date: Tue, 26 Nov 2024 22:07:11 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] driver: clk: qcom: Support attaching subdomain
+ list to multiple parents
+Message-ID: <fs4lj5a3n52yx5bskizsthjw3egr73u6v3cuili46ef24owb2a@jff4l5uz2pn3>
+References: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org>
+ <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-3-836dad33521a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH] WIP: arm64: dts: meson: drop broadcom compatible from
- reference board SDIO nodes
-From: Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <027767d4-89e7-4665-b840-294a84a89869@linaro.org>
-Date: Wed, 27 Nov 2024 08:05:33 +0400
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2B479B54-2784-4D75-BEE8-23A52EEFBF17@gmail.com>
-References: <20241124083453.900368-1-christianshewitt@gmail.com>
- <027767d4-89e7-4665-b840-294a84a89869@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-3-836dad33521a@linaro.org>
 
-> On 24 Nov 2024, at 8:11=E2=80=AFpm, Krzysztof Kozlowski =
-<krzysztof.kozlowski@linaro.org> wrote:
->=20
-> On 24/11/2024 09:34, Christian Hewitt wrote:
->> Drop the Broadcom compatible and use a generic sdio identifier with =
-the Amlogic
->=20
-> 1. Heh, what? Why? This is not really explained and does not look
-> sensible at all.
-> 2. What is "generioc sdio identifier"?
->=20
->> reference boards. This allows a wider range of Android STB devices =
-with QCA9377
->> and RTL8189ES/FS chips to have working WiFi when booting from the =
-reference dtb
->=20
-> Please wrap commit message according to Linux coding style / =
-submission
-> process (neither too early nor over the limit):
-> =
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/sub=
-mitting-patches.rst#L597
->=20
->=20
->> files. There is no observed impact on Broadcom devices.
->=20
-> So how does it allow wider range of devices to have working wifi?
+On Tue, Nov 26, 2024 at 11:44:29PM +0000, Bryan O'Donoghue wrote:
+> When a clock-controller has multiple power-domains we need to attach parent
+> GDSCs in that clock-controller as subdomains of each of the power-domains.
+> 
 
-Sending patches while recovering from a 100km Triathlon last weekend
-resulted in some formatting and submission mistakes - sorry for that :(
+This is a bit sparse, in particular it would be nice to capture the open
+questions about whether every GDSC always should be parented by all
+defined power-domains, and if performance-state should be applied
+equally across all those power-domains (and/or if this actually
+happens).
 
-I=E2=80=99ll send a v2 shortly with reduced subject/line length and a =
-better
-description of the change and reasoning.
+PS. Please drop "drivers: " and s/subdomain list/GDSC/ in subject.
 
-Christian=
+Regards,
+Bjorn
+
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  drivers/clk/qcom/common.c |  1 +
+>  drivers/clk/qcom/gdsc.c   | 35 +++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h   |  1 +
+>  3 files changed, 37 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 7727295c57c8f6672d46d2380e1ff5ec2ac68d42..58a8397eefe51da237a4285d4e7cee967e19948f 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -338,6 +338,7 @@ int qcom_cc_really_probe(struct device *dev,
+>  		scd->dev = dev;
+>  		scd->scs = desc->gdscs;
+>  		scd->num = desc->num_gdscs;
+> +		scd->pd_list = cc->pd_list;
+>  		ret = gdsc_register(scd, &reset->rcdev, regmap);
+>  		if (ret)
+>  			return ret;
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 4fc6f957d0b846cc90e50ef243f23a7a27e66899..cb4afa6d584899f3dafa380d5e01be6de9711737 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -506,6 +506,36 @@ static int gdsc_init(struct gdsc *sc)
+>  	return ret;
+>  }
+>  
+> +static int gdsc_add_subdomain_list(struct dev_pm_domain_list *pd_list,
+> +				   struct generic_pm_domain *subdomain)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < pd_list->num_pds; i++) {
+> +		struct device *dev = pd_list->pd_devs[i];
+> +		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +
+> +		ret = pm_genpd_add_subdomain(genpd, subdomain);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void gdsc_remove_subdomain_list(struct dev_pm_domain_list *pd_list,
+> +				       struct generic_pm_domain *subdomain)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < pd_list->num_pds; i++) {
+> +		struct device *dev = pd_list->pd_devs[i];
+> +		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +
+> +		pm_genpd_remove_subdomain(genpd, subdomain);
+> +	}
+> +}
+> +
+>  int gdsc_register(struct gdsc_desc *desc,
+>  		  struct reset_controller_dev *rcdev, struct regmap *regmap)
+>  {
+> @@ -558,6 +588,9 @@ int gdsc_register(struct gdsc_desc *desc,
+>  			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+>  		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+>  			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+> +		else if (desc->pd_list)
+> +			ret = gdsc_add_subdomain_list(desc->pd_list, &scs[i]->pd);
+> +
+>  		if (ret)
+>  			return ret;
+>  	}
+> @@ -580,6 +613,8 @@ void gdsc_unregister(struct gdsc_desc *desc)
+>  			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
+>  		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+>  			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+> +		else if (desc->pd_list)
+> +			gdsc_remove_subdomain_list(desc->pd_list, &scs[i]->pd);
+>  	}
+>  	of_genpd_del_provider(dev->of_node);
+>  }
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..dd843e86c05b2f30e6d9e978681580016333839d 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -80,6 +80,7 @@ struct gdsc_desc {
+>  	struct device *dev;
+>  	struct gdsc **scs;
+>  	size_t num;
+> +	struct dev_pm_domain_list *pd_list;
+>  };
+>  
+>  #ifdef CONFIG_QCOM_GDSC
+> 
+> -- 
+> 2.45.2
+> 
 
