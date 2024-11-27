@@ -1,231 +1,139 @@
-Return-Path: <linux-kernel+bounces-423493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3339DA857
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:17:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E47A9DA85A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93001B235A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03885282443
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2A01FCF40;
-	Wed, 27 Nov 2024 13:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6D01FCF49;
+	Wed, 27 Nov 2024 13:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="mIPPFrLV"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZSFlWUI"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95081FCF57
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A32D1FC119;
+	Wed, 27 Nov 2024 13:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732713420; cv=none; b=GJcn0DrBh1Vv9iWmLr2RFGcNSSZx1EbNa9lsD5jMOsftbZxHuzRBst03fEVmwo5ylLT0+jOAnjlZBpRfESakCrXzAuP8AxiUraW+RnJCja4hxrJ0tGr1pZdVNKQwI3+ORVrCxLz9cUD3eNwp80XUPl0eMEtiAgs0R7WzDmT+i+o=
+	t=1732713492; cv=none; b=RIeqXfEzKw5oV6GMbTft7fW4+aoxilFmobQYGzEZULjhheYjLc1Odr6zAPyVuswwLWcE/gtdCm+LBrV2QhA7vISiW2YC/0nST1ZMgz8QmosZSa4y0bU9RRCghCjq0Vb7HOtUSVsrpILBiqDpaXtyIt+CaiULuE3bx79sMsfoGBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732713420; c=relaxed/simple;
-	bh=EGyWHmJTSV7pbykiNfZwPD2oyHOk1MIHEzsSCH0wzUs=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HZl7ZzqDFZjWTD0fYzjGqDjMYmrk+nlzGyAWlb/hFPOnU8cfhWfVeN41F/+UihcwpEMwE8qyAqDCT8BHpib0gpkTYYMQZ1m4lxORSfF6BSKVztltZGsOYUXmhyXc3bbObJ04l2fd3oqDApqITSuFc/kUDlKOGcKnjeFvekynI2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=mIPPFrLV; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D230940593
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1732713415;
-	bh=iwaW/TBd1DZvqORzmh0XX/eem1/Tsj5JT9Lyugc/UYw=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=mIPPFrLVNvQMYtwcKU+9ENc/9Wnj08UoIMRESwWgS7LIVOmQu/NrlQh4wS2uS+BWk
-	 mJRurwsfRyY/3RU20i6Y0FFJUFTENhMqn/Cbo98XqJgK82LnbQyQbnTmv1nmWybmMS
-	 7dArNIetSayUuQ1bHWow3tPwGJGgTlRsgfc+WNq/1x5Olo+zWtjTFsPOPZ8gQC4ZUH
-	 HuGmUvbhoqKErIUdsv+2UsSDHtxYIRJViNAzXzB6bdh9HqKTUE5aOns12UzwOetQ5Y
-	 UnViJ5WsNQYYsyw30sJeJN9E5HHfvNK4foWmTUIjYWLVGUABLCfKunJU8WdqVEmp54
-	 NXDBxjhTQRA1Q==
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5f06787ea2eso5203251eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:16:55 -0800 (PST)
+	s=arc-20240116; t=1732713492; c=relaxed/simple;
+	bh=i0TQGAHi6uYX4HxoRa3zUstErM9WDdUW2RSIM/o3Xs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LSBcQRGUHred/osS78Eax+zx/NJpFK3Y5Czd8NegfDqY0jkaDKtrW+yj0uEmueHwZy38gtgf3405VAHdUB98UOtnIl/EqSi8pniI5KrhrgmHXDS/Tn/ouEVPIznT6LAoSazYu2955A6MuN4dMMrtQuAXb4v+fRWk+skC0TFxfdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZSFlWUI; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5154fab9889so413450e0c.0;
+        Wed, 27 Nov 2024 05:18:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732713490; x=1733318290; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3EMmZPv4ipiCAMOYRilXOFtwDUZhRsTLrhd6cKnwqMA=;
+        b=MZSFlWUIDWw2n1LbmCO9R0+SGcrp7YlAo/0Zpitm2fZG9OnphY/NdUyCBm7U0Rd+0d
+         6MfK0LJwanF2yCdsaRl1emOPe3yqD3P1b1uF8VHjssdako4XqdoskotscGnmNLxsnZ28
+         b1P5pgNVojv+bw9qFJUEqa8ENYT5Ze3dl7okoa4o/vyd//Hrw9vwz+YiMP0NKlJdtwwM
+         FrGa6EAkqa6u9c9X9+0ik0sgT1qEQq1rRRAMS2lLApcaODPrDicwcXBJU66rAqB6WZxZ
+         WgK16m43U1RVIWzkhLhkHgEBU+D5Vdun4WN+CijMxVv3xkkY5Vl/VkK7eiEAocd/iw02
+         RsCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732713414; x=1733318214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iwaW/TBd1DZvqORzmh0XX/eem1/Tsj5JT9Lyugc/UYw=;
-        b=cBH6uNovt0cYKdxPOdMlz+9XU9KgiGlWQKJo+R94KwHDUku5dOdI88aZ0JJ/TborRU
-         DtcGMpY5ObD94JZMJWeDvPNukikJCvvzfGhh33VfwOTFvzZVHol6e7ccJicmvbK9PyHX
-         8G18lkB/+Kj/M404yioemrXdJoPT6tuWhSH3jImHDCZu/25ibEf6RqBJMIfWbowuJlyZ
-         AWJx2dR7mSAzN5PiN4HbLTf0SoVPiAs4/HN4pDemlSd/KrnWrBRUkI5a0vYPANrDAxoL
-         uQ5UQ8BRzf5j58nHnoc1jWQIlw/VKF79qYmByKiHOqYjIZrW62jFig67cHgE2ilfLwhw
-         i/uA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Y8DT0BE3C1Se6p7jKQ/10a7u6s1TBWu84Gmimol5Czi458EVtTMu94c9GAKdwh9WvP4ABfV5ZFdy8AA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcDNh+CvmzNThUAFDwIKql/SjwSIucSB/oKX06O62x+sofd8D+
-	3kNBlu9U9eDFIjBdAb8VU4gk0X3xp/MT68+TmLpdfG++uZzqTa23Crgx2pez5WKmzAEHStD96X+
-	ewKJ2301YSMxO9opCik5hVZSQ9tG1LIan6iSjpwLrg+rABehYMxi33f2VwV6y+GTb1nTL/N+Svl
-	BLXWenzs98avFB8WHiNNyDTjyt6/USzOy30tuqM7qr72zkY3eANJAj
-X-Gm-Gg: ASbGncvtKm+XNvd+M4jfkyyL3gF1Fh3LsAbzFF180ZIlpPKm8evHweJaeeFcRD67X4X
-	M5oJLzHM+OIhk0vs+HZZnEuhOFMyS7hoFhuVCFwYpf1TmSbaFJjiP9rTdF2Y=
-X-Received: by 2002:a05:6820:990:b0:5f1:d944:a1da with SMTP id 006d021491bc7-5f20a260420mr2574577eaf.8.1732713414622;
-        Wed, 27 Nov 2024 05:16:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFgvI4G/R8CkY5gCpIzdZnZ+b6xMkQcpKRM2Isgs7llekCi3qkMcr148jobX6y9XRGTw+h7uqaqlCHpgS0GqDo=
-X-Received: by 2002:a05:6820:990:b0:5f1:d944:a1da with SMTP id
- 006d021491bc7-5f20a260420mr2574547eaf.8.1732713414302; Wed, 27 Nov 2024
- 05:16:54 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 27 Nov 2024 05:16:53 -0800
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <eb06c8e0-ebda-47b9-94f6-6e6eca21097d@freeshell.de>
-References: <20241126075740.17419-1-e@freeshell.de> <CAJM55Z9wWCaS+FxZ=Gg_RfXXafNEJZC1zHZoPWQ2Y9QYDf9OyA@mail.gmail.com>
- <eb06c8e0-ebda-47b9-94f6-6e6eca21097d@freeshell.de>
+        d=1e100.net; s=20230601; t=1732713490; x=1733318290;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3EMmZPv4ipiCAMOYRilXOFtwDUZhRsTLrhd6cKnwqMA=;
+        b=VubvfXQSGmcEz8/sVjUuachZ1yjcgssH7D+sK0ZySXt/Xel/itdRC6p25Vyzc6czui
+         /fZQkA8Fy2wYBr2JV11qgpqtjqhb4a1kSMcKo5eirfX+EyFp4jYq7om/4cJFk0Ers9DD
+         gox+NI0J8xTfJn03UEOVVwN5QiZQOBF0hJlgoBGIYHRe0OgJxY3awyMIzeYjTfuMroVy
+         C70//06LUju1DM/R5vEPbkDesaQIKBHCod1PQ0jXgD/prQUnR36NdRDmgPVZpATMyL/u
+         QRQ0g9bGqbx2OvldKqS/7Ol/tQzoflMFYVctOECxpDo408sQlzdEE8xz+B+SMTf/+okJ
+         AJxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV034JsS7UvvZRQJLAsE88muLJSqf8C/uPIzUtHpctTHGLNCcLwMW4tp5yculM42u66J6ze9MB400opY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzugf88PkYNpCwQoAecmNG9+O/haCmHMrHG4OBqqDUPmLqVoRv
+	DO4Xbvq2eIzDbCcHmoCqrnWTsSD5putWjRw2bVD8D0vhcAuzGTuL
+X-Gm-Gg: ASbGncs5uScUXk+vhQmCAGTHJpfqfUjLQClGnIs5U5WBD189u3Rs9B2D0mQPEn2ghzR
+	N7ocLD13/8PG1IIOlPLFkEbLpXDD2dOJORPA7VMNizYPUzqaesxI8CoxeO8jxkxg54IXC3WdSu4
+	nzBYzkJUA2u04kUvAm3Xoro+3Ka6qA7lSBFR1mq9lC4dJlPRcPC486uliy5FLc4ba+MuyPv+f9M
+	3mJHD83IqMy2TzRF0q19ImDGcqXc8TgNrKP43un0GavhJqYsL8pWpLxVlyYRD4TUQLBgDM2N3gT
+	ZmP+Utyxst8AQ0L/ng5s9RyVzCbT0zIxBA72bP8=
+X-Google-Smtp-Source: AGHT+IFcuvzq8pRpuA23JDCL1/XjslFt5AKvwpMZNpXtw4Cpy024+w/ZM79+cagxl2QLc7Bt8qe9sg==
+X-Received: by 2002:a05:6122:1d12:b0:50d:3ec1:1537 with SMTP id 71dfb90a1353d-515568dd0b5mr3415597e0c.1.1732713489949;
+        Wed, 27 Nov 2024 05:18:09 -0800 (PST)
+Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51544450691sm425503e0c.5.2024.11.27.05.18.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 05:18:08 -0800 (PST)
+Message-ID: <fe9de0fe-b069-49b8-b7a3-cfb81c82199a@gmail.com>
+Date: Wed, 27 Nov 2024 08:18:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 27 Nov 2024 05:16:53 -0800
-Message-ID: <CAJM55Z_Cy2aAfWY-6csKBuv3AJ44h4fCCvJ0ZSbLOYcKw6g=bA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/1] riscv: dts: starfive: jh7110-milkv-mars: enable
- usb0 host function
-To: E Shattow <e@freeshell.de>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Jisheng Zhang <jszhang@kernel.org>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, minda.chen@starfivetech.com, 
-	hal.feng@starfivetech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] streamline_config.pl: fix: implement choice for
+ kconfigs
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, javier.carrasco.cruz@gmail.com,
+ Steven Rostedt <rostedt@goodmis.org>
+References: <20241014141345.5680-1-david.hunter.linux@gmail.com>
+ <20241014141345.5680-6-david.hunter.linux@gmail.com>
+ <CAK7LNAQmV=CGzEyJtBRSfz+YW6yTfWza7mf1dPXEiaJDT7z5xQ@mail.gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <CAK7LNAQmV=CGzEyJtBRSfz+YW6yTfWza7mf1dPXEiaJDT7z5xQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-E Shattow wrote:
-> Hi Emil, thanks for taking time to review!
->
-> Added CC: Minda Chen, Hal Feng
->
-> Please Minda and Hal can you follow-up on Emil's comments as well?
->
-> On 11/27/24 03:00, Emil Renner Berthing wrote:
-> > E Shattow wrote:
-> >> Enable host mode JH7110 on-chip USB for Milk-V Mars by setting host mo=
-de
-> >> and connect vbus pinctrl.
-> >>
-> >> This functionality depends on setting the USB over-current register to
-> >> disable at bootloader phase, for example U-Boot:
-> >> https://patchwork.ozlabs.org/project/uboot/patch/20241012031328.4268-6=
--minda.chen@starfivetech.com/
-> > Hi E,
-> >
-> > Ideally the JH7110 pinctrl driver would be updated, so Linux can do thi=
-s itself
-> > and doesn't need to rely on u-boot doing it. I already asked for this h=
-ere:
-> >
-> > https://lore.kernel.org/all/CAJM55Z-+Cxdebcn4MLXfQdOVhx4c2SQ+zMH8cjn-Yq=
-35xO8g0A@mail.gmail.com/
->
-> Yes, I agree, and Linux is not the only consumer of devicetree. I would
-> like USB function to work for users of Linux and U-Boot on these boards
-> by copying what the vendor Board Support Package does what is shipped
-> with the products. If it is more in-depth than this I will defer to Hal
-> or Minda.
->
->
-> For some wider context, upstream U-Boot is about to adopt the
-> dt-rebasing via Hal's OF_UPSTREAM for JH7110 boards series and then also
-> there is a patch set from Minda Chen to add the on-chip JH7110 USB
-> support to U-Boot, and so then and there it will depend on these dts
-> changes. If you have Milk-V Mars then already there are three of four
-> USB-A receptacle ports which are functional on PCIe-connected VL805 USB
-> chipset.
->
-> >
-> >> If the over-current register is not prepared for us then the result is=
- no
-> >> change in functional outcome with this patch applied; there is an erro=
-r
-> >> visible to the user and this additional usb configuration fails (same =
-as
-> >> it is now). On Milk-V Mars with four USB-A ports this applies to one o=
-f the
-> >> ports and the remaining three VL805-connected ports via PCIe are not c=
-hanged.
-> > Thanks for the patches. I don't quite understand when you write "no cha=
-nge in
-> > functional outcome with this patch applied". The USB-C port is already
-> > configured as a peripheral, and I just tried setting up an ethernet gad=
-get on
-> > my VF2 running 6.12 and that works quite well. Does it not work on the =
-Milk-V
-> > Mars board? If it does then these patches would break that functionalit=
-y.
-> >
-> > Here is the script I used for that:
-> > https://paste.c-net.org/BravoLonely
-> >
-> > At the very least you'll need to explain in the commit message itself w=
-hy
-> > changing the USB-C port from peripheral mode to host mode is OK. But id=
-eally
-> > maybe you could make it work in OTG mode, so userspace can choose how t=
-hey want
-> > to use the port. The same goes for the PINE64 board too.
-> >
-> > /Emil
->
-> USB-C port on Mars is not wired for data here, that is only true for
-> VisionFive2. If the user wants to use their USB-A receptacle as OTG port
-> I will not object to a future improvement, but here we want the basic
-> expectations of users covered that they should have four working USB-A
-> receptacle ports in U-Boot (and possibly in Linux, depending on the
-> overcurrent register wherever it is set). This is what I am meaning,
-> there may be somebody using a male-male USB-A USB-A cable for OTG but
-> more likely is that people just want to plug in USB peripherals to host
-> ports and use their mouse / keyboard / flash memory, I think.
+On 11/5/24 18:33, Masahiro Yamada wrote:
+> I previously suggested checking how the 'if' statement is handled.
+> https://lore.kernel.org/lkml/CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4J-vCZZN=g@mail.gmail.com/
+> 
+I think I understand now what you were saying. I misunderstood what you 
+were saying because I thought that you were saying that the "if" blocks 
+were not implemented.
 
-You're right, sorry. I'm so used to the JH7110 boards being similar, but th=
-is
-is actually one of the few differences between the Mars and VF2 that was no=
-t
-caught when the Mars dts was first upstreamed.
+To paraphrase, I believe that you are saying that the "choice" blocks 
+should have a similar style to the "if" blocks.
 
-Yes, with 4 similar USB-A ports you'd definitely expect all of them to work=
- in
-host mode. With an explanation like the above in the commit message I (now)
-think your changes makes sense.
+I will take a look at the patch that you sent and figure out how it 
+would work. I would like some clarification on the information in the 
+choice blocks that are not "depends." Should those also have the same 
+style as the "if" block?
 
-Thanks!
-/Emil
+I am not sure if you saw this email:
+https://lore.kernel.org/all/994efba2-2829-4874-b5fa-9f5317f6ea6b@gmail.com/
 
->
->
-> There is no USB-C port on Star64.
->
-> >
-> >> Changes since v4:
-> >>   - Rebase on latest master
-> >>
-> >> Changes since v3:
-> >>   - Rebase on linux-next/master
-> >>   - use tabs for code indent
-> >>
-> >> Changes since v2:
-> >>   - Rebase on 6.12
-> >>
-> >> E Shattow (1):
-> >>    riscv: dts: starfive: jh7110-milkv-mars: enable usb0 host function
-> >>
-> >>   .../boot/dts/starfive/jh7110-milkv-mars.dts    | 18 ++++++++++++++++=
-+-
-> >>   1 file changed, 17 insertions(+), 1 deletion(-)
-> >>
-> >> --
-> >> 2.45.2
-> >>
-> Thanks again Emil.=C2=A0 -E
->
+There are lots of information, specifically "prompts" and "defaults" 
+that are distributed to each of the config options in the "choice" blocks.
+
+> 
+> BTW, 'menu' also can have 'depends on'.
+> 
+> 
+> menu "menu"
+>           depends on FOO
+> config A
+>             bool "A"
+> config B
+>             bool "B"
+> endmenu
+> 
+> 
+> This is not implemented, either.
+> 
+> I am not sure how much effort should be invested in this script, though.
+> 
+> 
+I will look into distributing the "menu" information.
 
