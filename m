@@ -1,131 +1,91 @@
-Return-Path: <linux-kernel+bounces-423753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCF29DAC35
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:05:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449519DAC41
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:09:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1191B2342A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE9C166B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7165F200BB9;
-	Wed, 27 Nov 2024 17:05:26 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074A9201002;
+	Wed, 27 Nov 2024 17:09:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8981F8F1A;
-	Wed, 27 Nov 2024 17:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02881F8F1A;
+	Wed, 27 Nov 2024 17:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732727126; cv=none; b=qti1HAqi6N8qHoGO5njZR1G+tMyjBF0FvrgEZWkyT0jlNnSHUJUv1NHkQHqpuQ6MDoEkQogtQt6oT3JHVZ1BuTc3rWNAI34cdfLhPigr9/vNeCi2BZIvCSUTI0Xt6IehkeUSo9xsbfGxk4l4+LmiEZJVJliNS0or1IehF3smRqs=
+	t=1732727344; cv=none; b=aoUjhoTZputcts8XL3w+UW9n+WMGX5PleLZSay/ff/XuoNF3g9izj9VaFN/iH0BY2f9ZvOshkfJ2U801HwN2k8BlE4kPiwlj8if8jVKMXxFJGaXonZsVbT5UQKERnHxBXccP23XmXNwFfD0Luf+vj4h3v/gNv9kNy4rZgIYn5f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732727126; c=relaxed/simple;
-	bh=ercSyPeyYpT/8fKtZokf9SXq+xP8iulo3R4DX9zRtGQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MDn0zJ0OGj2SZs1bWttwDCebLb2/Qjhg7reIGfMstpHyXrvLDtdasxH1X10TlGOEwURP3cBtONS3dbfbW6Xl8V+IJNS9WzCq8eXHsnjd8FWdjQnnr2c4TsAqVDtjRHZ1uq/0Q/pDl7fJFueR7NYJz/e9AH2QMxRK+RuJihiz7Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xz5Qk6Mptz6D9Cw;
-	Thu, 28 Nov 2024 01:04:46 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 43FC7140390;
-	Thu, 28 Nov 2024 01:05:20 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 27 Nov
- 2024 18:05:19 +0100
-Date: Wed, 27 Nov 2024 17:05:18 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Bowman, Terry" <terry.bowman@amd.com>
-CC: Lukas Wunner <lukas@wunner.de>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<nifan.cxl@gmail.com>, <ming4.li@intel.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>, "Shuai
- Xue" <xueshuai@linux.alibaba.com>, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v3 06/15] PCI/AER: Change AER driver to read UCE fatal
- status for all CXL PCIe port devices
-Message-ID: <20241127170518.00003966@huawei.com>
-In-Reply-To: <c7c9d417-5c32-4354-825e-58f736726114@amd.com>
-References: <20241113215429.3177981-1-terry.bowman@amd.com>
-	<20241113215429.3177981-7-terry.bowman@amd.com>
-	<ZzcVzpCXk2IpR7U3@wunner.de>
-	<c7c9d417-5c32-4354-825e-58f736726114@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732727344; c=relaxed/simple;
+	bh=8VEm8aUEJUZUBfqieyeV6sPe94ptDwIYS4xqe8ZQD00=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O9aEiK9uODuil6BlRc9NsYat/pZjs1u7pxX7YqFdPqIRcoPpiZHrIfKA0srUs1iwzH8F+v6B/oXeTmMJdy8v/gMXh1tWc9CickiBoefC9XOsyr11gTp9yEprYLNCAIzx4t2jOic3gUiKWDavpeX2J+nlSsP2QA4L/OTBRsyfOj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D015C4CECC;
+	Wed, 27 Nov 2024 17:09:02 +0000 (UTC)
+Date: Wed, 27 Nov 2024 12:09:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
+ alexander.shishkin@linux.intel.com, bigeasy@linutronix.de,
+ clrkwllms@kernel.org, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, nd@arm.com
+Subject: Re: [PATCH 1/9] coresight: change coresight_device lock type to
+ raw_spinlock_t
+Message-ID: <20241127120954.0facd34f@gandalf.local.home>
+In-Reply-To: <20241125094816.365472-2-yeoreum.yun@arm.com>
+References: <20241125094816.365472-1-yeoreum.yun@arm.com>
+	<20241125094816.365472-2-yeoreum.yun@arm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, 21 Nov 2024 14:24:17 -0600
-"Bowman, Terry" <terry.bowman@amd.com> wrote:
+On Mon, 25 Nov 2024 09:48:08 +0000
+Yeoreum Yun <yeoreum.yun@arm.com> wrote:
 
-> On 11/15/2024 3:35 AM, Lukas Wunner wrote:
-> > On Wed, Nov 13, 2024 at 03:54:20PM -0600, Terry Bowman wrote:  
-> >> The AER service driver's aer_get_device_error_info() function doesn't read
-> >> uncorrectable (UCE) fatal error status from PCIe upstream port devices,
-> >> including CXL upstream switch ports. As a result, fatal errors are not
-> >> logged or handled as needed for CXL PCIe upstream switch port devices.
-> >>
-> >> Update the aer_get_device_error_info() function to read the UCE fatal
-> >> status for all CXL PCIe port devices. Make the change to not affect
-> >> non-CXL PCIe devices.
-> >>
-> >> The fatal error status will be used in future patches implementing
-> >> CXL PCIe port uncorrectable error handling and logging.  
-> > [...]  
-> >> --- a/drivers/pci/pcie/aer.c
-> >> +++ b/drivers/pci/pcie/aer.c
-> >> @@ -1250,7 +1250,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
-> >>  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
-> >>  		   type == PCI_EXP_TYPE_RC_EC ||
-> >>  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
-> >> -		   info->severity == AER_NONFATAL) {
-> >> +		   info->severity == AER_NONFATAL ||
-> >> +		   (pcie_is_cxl(dev) && type == PCI_EXP_TYPE_UPSTREAM)) {
-> >>  
-> >>  		/* Link is still healthy for IO reads */
-> >>  		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,  
-> > Just a heads-up, there's another patch pending by Shuai Xue (+cc)
-> > which touches the same code lines.  It re-enables error reporting
-> > for PCIe Upstream Ports (as well as Endpoints) under certain
-> > conditions:
-> >
-> > https://lore.kernel.org/all/20241112135419.59491-3-xueshuai@linux.alibaba.com/
-> >
-> > That was originally disabled by Keith Busch (+cc) with commit
-> > 9d938ea53b26 ("PCI/AER: Don't read upstream ports below fatal errors").
-> >
-> > There's some merge conflict potential here if your series goes into
-> > the cxl tree and Shuai's patch into the pci tree in the next cycle.
-> >
-> > Thanks,
-> >
-> > Lukas  
-> Thanks Lukas I took a look at the patchset and reached out to Shuai (you're CC'd). Sorry, I thought
-> I responded here earlier.
+> @@ -853,17 +851,14 @@ EXPORT_SYMBOL_GPL(cscfg_unregister_csdev);
+>  void cscfg_csdev_reset_feats(struct coresight_device *csdev)
+>  {
+>  	struct cscfg_feature_csdev *feat_csdev;
+> -	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+> +	guard(raw_spinlock_irqsave)(&csdev->cscfg_csdev_lock);
+> +
+>  	if (list_empty(&csdev->feature_csdev_list))
+> -		goto unlock_exit;
+> +		return;
+>  
+>  	list_for_each_entry(feat_csdev, &csdev->feature_csdev_list, node)
+>  		cscfg_reset_feat(feat_csdev);
 
-I'm guessing we might not need this change if we can base querying on the
-link being good.  If the error is on the CXL protocol side, the link should
-still be fine I think?
+We should start documenting what is not real-time "safe". That is, if this
+code is executed, we have a loop here that holds a raw spin lock. This
+appears to make the time the raw spin lock held to be non deterministic.
 
-Jonathan
+If someone is running PREEMPT_RT and expects deterministic behavior, they
+cannot be using this code. That is fine, but we should probably create a
+document somewhere that notes this.
 
-> 
-> Regards,
-> Terry
+-- Steve
 
+
+> -
+> -unlock_exit:
+> -	spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
+>  
 
