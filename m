@@ -1,228 +1,106 @@
-Return-Path: <linux-kernel+bounces-423003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF6F9DA11D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:25:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8229DA11F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:29:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0ED8B22C7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E47F2282242
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46AB7581A;
-	Wed, 27 Nov 2024 03:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AED126BF5;
+	Wed, 27 Nov 2024 03:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWrmdKks"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQd290ef"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1871A11713;
-	Wed, 27 Nov 2024 03:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971AC11713;
+	Wed, 27 Nov 2024 03:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732677911; cv=none; b=iIphFed1ZMNwC+N3xOwfu/NbEbvv9Tacqkn+dFWawljwixGWdldML4QBj6fBYceTg+7KBO7xhgoG0ZKroqsJ0boC5yXeULKRwIYPlgr4rXQ8rVogZvbS3CRKvzafrvfSz6Kp9if5QM0r4IixwvSWyzuN1bw+haykH4ZfvkIPqJo=
+	t=1732678139; cv=none; b=N9fCfbonc2FALutQ0VjUjUGp0bbW1+XtZHL+fUjPZr8ERuYIx0WO0yIeHZJTL6/Z59iXWvT/u7RrAsng6CUn0Iss007x/3accHHdLTk3XR4stwgTa8hdHPwInl4myEUGpArfTgk3QqH6irG4pEAsShQ2KhTbPI+uVahOmohDD6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732677911; c=relaxed/simple;
-	bh=Nt+qRwBre/tMaFXQVXIA1hP+U+Vo7L3Jk/R7KRL6iII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmwmx2dC99rRy2oDptk2SsiZxBBJdhpj/J8r7xT/W+YOsvFeA1xJrXmo8RfzcHddao2+woR9jw7TH/GR7uUETOTd3fNqXJhCiFf9oXjHKxmDoP2ujQ7seiEuQG5lcEzmShUPSQi7s0zlS1mRXtmU0P2UxQiACsbNE2+n4FyFL0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWrmdKks; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1C7C4CECF;
-	Wed, 27 Nov 2024 03:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732677910;
-	bh=Nt+qRwBre/tMaFXQVXIA1hP+U+Vo7L3Jk/R7KRL6iII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWrmdKksgGgUszP44bpY5I2DLDfmJYSeFtDdEddnq+SEUBOBzrU9y6PZcYGRHbni3
-	 U5W4EIM8H7le/ynWyo9HRBgYOgeXpu3YtVINuujPMclR21fKZBIG/GjVSeBCvRwyKZ
-	 PUr16qXqbODtBStv1zPHgzaygjhQAeE0mgN3mvLo7kOJxmfAgZQ0gBsHZmuxsUQDZw
-	 yAcSDyIHyudbCQYDMiEErwP0pjSBnuP7tSJJcAdsHcpW16Y72F0G1dTGNbwFyAhTYc
-	 NezsSbGRnj/6WoRbcTY7KNGhrVd5IfCfDRreyHHAyVCyXfUgSQ8pmzGxPqU9cvXitT
-	 +pnSAwTD9OqPA==
-Date: Tue, 26 Nov 2024 19:25:08 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [GIT PULL] perf-tools changes for v6.13
-Message-ID: <Z0aRFFW9xMh3mqKB@google.com>
-References: <20241125071653.1350621-1-namhyung@kernel.org>
- <CAHk-=whQ_yeRDh_zZjhz-4q8G=vu5Ypb-Y3f=efHQSwd5Kas3w@mail.gmail.com>
- <Z0ZhDHXxHKoE2Nrl@google.com>
- <Z0ZvAB0vcL-D-a6f@x1>
+	s=arc-20240116; t=1732678139; c=relaxed/simple;
+	bh=qtjJS5S9d7iRXTmqTHVEpQ3V/a7tVsVH/VFWvkaXMP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZerJcvIBKWXXEv+mBpVQUAGJtx0HOULe1fFHdKN9m6DiJdnS1xtplNEs3ZLYVMNB9o6ZtnCj30e9XcIqnm/z4djnoobqlq3MX4wIqaY1Zz3p4tKMyOrHdwjHkAYuNBxEkiSERAr4EMRwgZChxrS+xXkU2VpxD9Hzr+iK5ij6JtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQd290ef; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-71d551855c2so1224594a34.3;
+        Tue, 26 Nov 2024 19:28:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732678136; x=1733282936; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EXkezjBItwFS84EsFcYZBkVvSdJtp9PC1f5y3QrDEwE=;
+        b=DQd290ef5zN/CrwqZbTp/9Dd8UuPFyG4Qku2wNpzwo9kma24K/LlbKRQj7HRNiW/Wu
+         rnkCBwdfFHx2xnOh9LMEWdNJbJWHHF87DPK5lPH0c2DPkLTWKyvJWYJkGqzdE4uFPMRE
+         n6Agb+pKtdKHX8H2Mj0LMa81NJuLIKoPLWjd5ZmfNOWCnvmpoMdzRI5Y5Uiwxw4PfOnP
+         KuMTRln+rgCwsjlGPAT8JM4p+PnifhLcC7ZYC4cH3Y84hayh9VnJyp6MPQfulp7zK1RL
+         eA3vSyxPSEDkBOUFmo3Oqim6rp0eMM8QVxm0fjmyR6w+ZvKqYNPjJ8hd3Z9Fe9ewHWqZ
+         h6zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732678136; x=1733282936;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EXkezjBItwFS84EsFcYZBkVvSdJtp9PC1f5y3QrDEwE=;
+        b=gu34qcRHbFieUliNndILUdNQjnglvT5hNJCfNDQ/JUoA4bymb2JGesV+V0RQdgERbu
+         FCa5d5S7HIWK7px0UMDH1GKCn4ybvGyXb9pyGfnVbgzE4XCpJFkYYw++HowccfjeDVMN
+         ugM340RGJ6tJX3+fjDCreQ3q5v73fRrIj7iAK4Pk0s8rRUbRuWGvg+SgqLgK3h6GT7eA
+         fCM4JM7kEqBu0K6geui+Sh9UuW1pPDGoXwAy3UV3ezAP4lx4Mb4ltXrv+hKQ2GLhQUg3
+         fE71ouvxl5tyRXJlufSwXoAxiraO6pJm66LB8u0XvihgBhZT/Qd03MQjXuSySsXK1RoM
+         PdrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHmFBf8HTeP05+puYPZ6MbIZyV039945QjeNv6SWouuQLUrUWZDUxE0Q0U6LMf0YOpWRBErlo3+3KCCWU/YBA=@vger.kernel.org, AJvYcCWVf+X+/KJfjgsch5IWgs0dJpvwlT7Ow4U+gzm3Y6UgFxZ6FHcUC10zM/q6GRWuuUUpmTCZQHGmfo0Ud3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiJCwEXJkDR+ETEZF8k+Hyyzsllbhm+98OKoWFzpWAExGkH6a6
+	F7/+pQG5gP4EaIhe8eWS3+J86kySOBc0AqawcgjtBzXult5QjGJv
+X-Gm-Gg: ASbGncsK3biJR2VF0sWuW3HVKDRHtixtfHboh8w33eJ2+ql11L6KNC+hPYtcfqo0677
+	BMiX3WNufyyFLggw+JXRQND1HAsvpNAZBfsMKl9xHlwLMdXedNR9mUZlRtfXMPHOTg/A3NQ/+iR
+	I9vM5+8SEOAEFjgv4/jJDgl2i6naBAJWqdeZOB2orntP7nbjWBGL7xiNvnjklTz/m/fywg4IVwj
+	GFK7v7/7ntk/8+J8A4NUwMswXS6gsH+bablVkYA+q+csvv7QR8BAfqO
+X-Google-Smtp-Source: AGHT+IG+5uTiwcOWjsWrsStnJeepttuhfxKuCGJ7NLB7+bGxe8Bt9UDRSsvgK1Ld4hoxOBhmASKnsA==
+X-Received: by 2002:a05:6830:6e99:b0:71d:62bc:85ec with SMTP id 46e09a7af769-71d65caea6dmr1506440a34.13.1732678136236;
+        Tue, 26 Nov 2024 19:28:56 -0800 (PST)
+Received: from LAPTOP-SQ5KB8RN.lan ([222.249.179.118])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3dee7asm9562849a12.61.2024.11.26.19.28.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 19:28:55 -0800 (PST)
+From: zgBCQ <zghbqbc@gmail.com>
+X-Google-Original-From: zgBCQ <hbczqbc@163.com>
+To: markus.elfring@web.de
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	zghbqbc@gmail.com
+Subject: Re: Re: [PATCH] wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
+Date: Wed, 27 Nov 2024 11:28:21 +0800
+Message-Id: <20241127032821.57468-1-hbczqbc@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de>
+References: <a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0ZvAB0vcL-D-a6f@x1>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 09:59:44PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Nov 26, 2024 at 04:00:12PM -0800, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Tue, Nov 26, 2024 at 03:33:10PM -0800, Linus Torvalds wrote:
-> > > On Sun, 24 Nov 2024 at 23:17, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > Please consider pulling the following changes in perf tools for v6.13.
-> > > 
-> > > Hmm. Has the default search path for the vmlinux image changed?
-> > 
-> > I don't think so.
->  
-> > > Doing profiling with this, I get
-> > > 
-> > >     openat(AT_FDCWD, "vmlinux", O_RDONLY)   = 5
-> > > 
-> > > which is very very wrong for my kernel build - it basically picks up
-> > > the vmlinux image from the build directory, which has absolutely
-> > > *nothign* to do with the image that is being run at the moment.
-> > 
-> > Sure, at least it should match the build-id before use.
-> 
-> I tried it here and at first I reproduced Linus results, which I found
-> very strange, then I tried to bisect it, and all the previous versions
-> were producing this:
-> 
-> root@number:/home/acme/git/perf-tools# perf -v ; perf report -vv |& grep -A5 "^Looking at the vmlinux_path"
-> perf version 6.12.gb50ecc5aca4d
-> Looking at the vmlinux_path (8 entries long)
-> symsrc__init: build id mismatch for vmlinux.
-> symsrc__init: cannot get elf header.
-> overlapping maps:
->  ffffffffc034b75c-ffffffffc034b89b 0 bpf_prog_40ddf486530245f5_sd_devices
->  ffffffffc0000000-ffffffffff000000 7fffc0004000 vmlinux
-> root@number:/home/acme/git/perf-tools#
-> 
-> Which is what I got from the perf-tools branch you asked him to pull.
-> 
-> The algorithm in perf is similar to the one in pahole (that stole it
-> from perf):
-> 
-> root@number:/home/acme/git/perf-tools# strace -e openat pahole --running_kernel_vmlinux |& tail -12
-> openat(AT_FDCWD, "/sys/kernel/notes", O_RDONLY) = 3
-> openat(AT_FDCWD, "vmlinux", O_RDONLY)   = 3
-> openat(AT_FDCWD, "/boot/vmlinux", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/boot/vmlinux-6.11.8-200.fc40.x86_64", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/usr/lib/debug/boot/vmlinux-6.11.8-200.fc40.x86_64", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/lib/modules/6.11.8-200.fc40.x86_64/build/vmlinux", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/usr/lib/debug/lib/modules/6.11.8-200.fc40.x86_64/vmlinux", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/usr/lib/debug/boot/vmlinux-6.11.8-200.fc40.x86_64.debug", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/root/.cache/debuginfod_client/55152ddca5da77ca62deb3dd0db105e82b3711e0/debuginfo", O_RDONLY) = -1 ENOENT (No such file or directory)
-> pahole: couldn't find a vmlinux that matches the running kernel
-> HINT: Maybe you're inside a container or missing a debuginfo package?
-> +++ exited with 1 +++
-> root@number:/home/acme/git/perf-tools#
-> 
-> The one in perf does very much the same:
-> 
-> root@number:/home/acme/git/perf-tools# perf -v ; strace -e openat -o /tmp/strace.output perf report -vv |& grep -A5 "^Looking at the vmlinux_path" ; grep '"vmlinux"' -B1 -A10 /tmp/strace.output 
-> perf version 6.12.gb50ecc5aca4d
-> Looking at the vmlinux_path (8 entries long)
-> symsrc__init: build id mismatch for vmlinux.
-> symsrc__init: cannot get elf header.
-> overlapping maps:
->  ffffffffc034b75c-ffffffffc034b89b 0 bpf_prog_40ddf486530245f5_sd_devices
->  ffffffffc0000000-ffffffffff000000 7fffc0004000 vmlinux
-> openat(AT_FDCWD, "/root/.debug/.build-id/55/152ddca5da77ca62deb3dd0db105e82b3711e0/elf", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "vmlinux", O_RDONLY)   = 142
-> openat(AT_FDCWD, "/boot/vmlinux", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/boot/vmlinux-6.11.8-200.fc40.x86_64", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/usr/lib/debug/boot/vmlinux-6.11.8-200.fc40.x86_64", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/lib/modules/6.11.8-200.fc40.x86_64/build/vmlinux", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/usr/lib/debug/lib/modules/6.11.8-200.fc40.x86_64/vmlinux", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/usr/lib/debug/boot/vmlinux-6.11.8-200.fc40.x86_64.debug", O_RDONLY) = -1 ENOENT (No such file or directory)
-> openat(AT_FDCWD, "/root/.debug/.build-id/55/152ddca5da77ca62deb3dd0db105e82b3711e0/kallsyms", O_RDONLY) = 142
-> openat(AT_FDCWD, "/sys/kernel/notes", O_RDONLY) = 142
-> openat(AT_FDCWD, "/proc/kcore", O_RDONLY) = 142
-> openat(AT_FDCWD, "/proc/kallsyms", O_RDONLY) = 142
-> root@number:/home/acme/git/perf-tools# 
-> root@number:/home/acme/git/perf-tools# perf buildid-list -h -k
-> 
->  Usage: perf buildid-list [<options>]
-> 
->     -k, --kernel          Show current kernel build id
-> 
-> root@number:/home/acme/git/perf-tools# perf buildid-list -k
-> 55152ddca5da77ca62deb3dd0db105e82b3711e0
-> root@number:/home/acme/git/perf-tools# file vmlinux 
-> vmlinux: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=e86cad482822bd4b4caabb01e7cd00161fd51a38, with debug_info, not stripped
-> root@number:/home/acme/git/perf-tools#
-> 
-> And it ends up using /proc/kallsyms
-> 
-> Today I did some bisects, etc, but even with at first reproducing what
-> Linus described, i.e. it used the non-matching vmlinux in the current
-> directory to resolve symbols, I couldn't reproduce it after trying to
-> bisect it :-\
->  
-> > > So now I need to point "perf report" at the actual image, which I
-> > > didn't need to do before.
-> > 
-> > Ok, I'll try to reproduce it and take a look.
-> 
-> Hope you root cause this, late in this part of the world, going AFK now.
+thanks for your reply
 
-I think it's a bug in perf record since v6.12.  I found the build-id
-event in the header area is broken.  Can you verify if this works?
+> Is there a need to reconsider also such a return value?
 
-Thanks,
-Namhyung
+According to the current code (commit d5c65159f289) of 
+this function, this function should be terminated directly
+after checking the null pointer, the return value may be 
+meaningless.
 
----8<---
-From 62ebc7de4c306d99f39af847bee4a2aab05b0f93 Mon Sep 17 00:00:00 2001
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 26 Nov 2024 19:13:31 -0800
-Subject: [PATCH] perf tools: Fix build-id event recording
-
-The build-id events written at the end of the record session are broken
-due to unexpected data.  The write_buildid() writes the fixed length
-event first and then variable length filename.
-
-But a recent change made it write more data in the padding area
-accidentally.  So readers of the event see zero-filled data for the
-next entry and treat it incorrectly.   This resulted in wrong kernel
-symbols because the kernel DSO loaded a random vmlinux image in the
-path as it didn't have a valid build-id.
-
-Fixes: ae39ba16554e ("perf inject: Fix build ID injection")
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/build-id.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 8982f68e7230cd64..e763e8d99a4367d7 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -277,7 +277,7 @@ static int write_buildid(const char *name, size_t name_len, struct build_id *bid
- 	struct perf_record_header_build_id b;
- 	size_t len;
- 
--	len = sizeof(b) + name_len + 1;
-+	len = name_len + 1;
- 	len = PERF_ALIGN(len, sizeof(u64));
- 
- 	memset(&b, 0, sizeof(b));
-@@ -286,7 +286,7 @@ static int write_buildid(const char *name, size_t name_len, struct build_id *bid
- 	misc |= PERF_RECORD_MISC_BUILD_ID_SIZE;
- 	b.pid = pid;
- 	b.header.misc = misc;
--	b.header.size = len;
-+	b.header.size = sizeof(b) + len;
- 
- 	err = do_write(fd, &b, sizeof(b));
- 	if (err < 0)
--- 
-2.47.0.338.g60cca15819-goog
-
+Baichuan Qi
 
