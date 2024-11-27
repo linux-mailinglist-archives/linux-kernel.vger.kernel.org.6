@@ -1,218 +1,124 @@
-Return-Path: <linux-kernel+bounces-423299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BD29DA585
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:16:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35049DA360
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:55:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD06B24FDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E21D1661EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E5E198E80;
-	Wed, 27 Nov 2024 10:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9740615B102;
+	Wed, 27 Nov 2024 07:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="dnjei5et"
-Received: from mail-m1973187.qiye.163.com (mail-m1973187.qiye.163.com [220.197.31.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bucSP35A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C699198850;
-	Wed, 27 Nov 2024 10:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7018E0E;
+	Wed, 27 Nov 2024 07:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732702541; cv=none; b=MskZ0urpAJBwSJVPAQjyntDWCBllwIZWbptuX5nsrfIcT6ZKmvBz3FNTcs0v7TJIrr8hGfQvEBoYl7iqXW8BwOv602tHzZu7ieYHq8INYnDW1V7tjH/4d9I/gwByJbahyZJnQ1XUBxOjtFEn9+azUILUFKJDindDr5OwYiZ3c3E=
+	t=1732694113; cv=none; b=tnmK7FOdzZ7OTxb3LY2s2xDD8AfyHcjuHn66wRT9wtdoOHjzVAKo510e5/0xLUlfO/rlRPunU566b/FbB5cTPyX85FZmwULWMfHCFH68Ie8IRskjCDR2ZfIQrC6ZydbGcZ+UiG9Bzxvqa7LLCT820YGKu3Uesb+r7HopvUipHec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732702541; c=relaxed/simple;
-	bh=ahbFPS7bMbfKwoknAFTBlNDEBMcmaXvJsWASm5Tt6HQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AOdqe28AON/r7RtngAiCcCuSaw+NuYoQdlBSgMrrm0N0E2seY35l1u0+Yulk5WfMzZkzPUdbcdAUwVJ8d4iSDIUtRqq+nrWxp2tVkeSrLCTN43QBNp6m9tk8kUqBJLrm3wz+Ux0gJXNrqu0/NqS8Bd9bSy8Pxf0BC2u2AXVsFzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=dnjei5et; arc=none smtp.client-ip=220.197.31.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3f86cdd5;
-	Wed, 27 Nov 2024 15:53:13 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: heiko@sntech.de
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	rfoss@kernel.org,
-	vkoul@kernel.org,
-	sebastian.reichel@collabora.com,
-	cristian.ciocaltea@collabora.com,
-	l.stach@pengutronix.de,
-	andy.yan@rock-chips.com,
-	hjc@rock-chips.com,
-	algea.cao@rock-chips.com,
-	kever.yang@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v1 10/10] arch64: dts: rockchip: Enable eDP0 display on RK3588S EVB1 board
-Date: Wed, 27 Nov 2024 15:51:57 +0800
-Message-Id: <20241127075157.856029-11-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241127075157.856029-1-damon.ding@rock-chips.com>
-References: <20241127075157.856029-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1732694113; c=relaxed/simple;
+	bh=x0xX5vYSBWllewRjPzdfK0c874WVsNj5qAoWrojVTGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYuDsypKvwkjC7mUNPQMAl1mJG2hhAyzJwFSLWUWxeMe5ApCS8R5LdFSarJrBm/xbouz2kzYHIDlq4Eh3G9LER5/kXGHI/ZKtJIeoQDSX4X99vj5/aEOnNeDRMTN5ruREwA9IpsCjguDZhVDzAnUfZR7tNyaOFrVCO5H2USWzyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bucSP35A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6B3C4CECC;
+	Wed, 27 Nov 2024 07:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732694112;
+	bh=x0xX5vYSBWllewRjPzdfK0c874WVsNj5qAoWrojVTGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bucSP35AKAy65nI+BITULDx0+C9mvIKCfCDFgHIyv84XK+74qXxwFqUbTN41rkK+C
+	 Ra6tp1daRWkSizWrHnXH10FW7w58tZ2kX8hBinj8iFiX1chlQzHLXzCN+l4ncSQR03
+	 OnPHmh97RjPzSeDuH/4EE01NtM3RfoJgytMQdFBrt2uZX5X3MUhBxpKV/tKlolYwP2
+	 AAPuj17Gfvw2HqlZy5FOkO4Dv2lqO62E3NZ22t36PrOPbxmBz/MoM46QZS/72X63i3
+	 4rCESMHIqtId3GjebgFlSCLkaOZ8aJEJHy9tLVB3HTM8J+Qb7joF3gswz/if9EU4DG
+	 43V0+UResU/dA==
+Date: Wed, 27 Nov 2024 08:55:09 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof Wilczynski <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+Message-ID: <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh9KHVZPGUMfHU9PSRhLHR1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a936c9c270903a3kunm3f86cdd5
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PCI6Qww4STIfMy8iEU8#NUtP
-	QygwCjZVSlVKTEhJTUJIQkJOS0JNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFIT0tONwY+
-DKIM-Signature:a=rsa-sha256;
-	b=dnjei5etpGEHdhGMjRGWTAgtwLK/iTwJjbPPT4XDM3jS4dZuxomv9FreZuTX93uhC5jguN1NBOW1RXDJyaCSZL+es5n+9zTnmrH3z4OTX+F6P70WM8WvapgXkJC3cgqoTBsvu3YjCq8Wn4bG+LQGsfpiPiD7uHJYJEX6oH3yty4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=sioxF1NdgyQSNAjeamAjESnnjQ0qvH8YfVdqavo4yZc=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
 
-Add the necessary DT changes to enable eDP0 on RK3588S EVB1 board.
+On Sun, Nov 24, 2024 at 11:51:39AM +0100, Andrea della Porta wrote:
+> +  '#interrupt-cells':
+> +    description:
+> +      Specifies the Bank number [0, 1, 2] and Flags as defined in
+> +      include/dt-bindings/interrupt-controller/irq.h.
+> +    const: 2
+> +
+> +  interrupt-controller: true
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/raspberrypi-rp1-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/raspberrypi-rp1-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  raspberrypi-rp1-state:
+> +    allOf:
+> +      - $ref: pincfg-node.yaml#
+> +      - $ref: pinmux-node.yaml#
+> +
+> +    description:
+> +      Pin controller client devices use pin configuration subnodes (children
+> +      and grandchildren) for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          pattern: "^gpio([0-9]|[1-5][0-9])$"
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 84 +++++++++++++++++++
- 1 file changed, 84 insertions(+)
+You have 54 GPIOs, so up to 53.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-index bc4077575beb..67c2e6d1bece 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-@@ -9,6 +9,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
- #include <dt-bindings/usb/pd.h>
- #include "rk3588s.dtsi"
- 
-@@ -116,10 +117,56 @@ masterdai: simple-audio-card,codec {
- 
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
-+		brightness-levels = <
-+			  0   1   2   3   4   5   6   7
-+			  8   9  10  11  12  13  14  15
-+			 16  17  18  19  20  21  22  23
-+			 24  25  26  27  28  29  30  31
-+			 32  33  34  35  36  37  38  39
-+			 40  41  42  43  44  45  46  47
-+			 48  49  50  51  52  53  54  55
-+			 56  57  58  59  60  61  62  63
-+			 64  65  66  67  68  69  70  71
-+			 72  73  74  75  76  77  78  79
-+			 80  81  82  83  84  85  86  87
-+			 88  89  90  91  92  93  94  95
-+			 96  97  98  99 100 101 102 103
-+			104 105 106 107 108 109 110 111
-+			112 113 114 115 116 117 118 119
-+			120 121 122 123 124 125 126 127
-+			128 129 130 131 132 133 134 135
-+			136 137 138 139 140 141 142 143
-+			144 145 146 147 148 149 150 151
-+			152 153 154 155 156 157 158 159
-+			160 161 162 163 164 165 166 167
-+			168 169 170 171 172 173 174 175
-+			176 177 178 179 180 181 182 183
-+			184 185 186 187 188 189 190 191
-+			192 193 194 195 196 197 198 199
-+			200 201 202 203 204 205 206 207
-+			208 209 210 211 212 213 214 215
-+			216 217 218 219 220 221 222 223
-+			224 225 226 227 228 229 230 231
-+			232 233 234 235 236 237 238 239
-+			240 241 242 243 244 245 246 247
-+			248 249 250 251 252 253 254 255>;
-+		default-brightness-level = <200>;
- 		power-supply = <&vcc3v3_lcd_edp>;
- 		pwms = <&pwm12 0 25000 0>;
- 	};
- 
-+	edp_panel: edp-panel {
-+		compatible = "lg,lp079qx1-sp0v";
-+		backlight = <&backlight>;
-+		power-supply = <&vcc3v3_lcd_edp>;
-+
-+		port {
-+			panel_in_edp: endpoint {
-+				remote-endpoint = <&edp_out_panel>;
-+			};
-+		};
-+	};
-+
- 	combophy_avdd0v85: regulator-combophy-avdd0v85 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "combophy_avdd0v85";
-@@ -238,6 +285,27 @@ &combphy2_psu {
- 	status = "okay";
- };
- 
-+&edp0 {
-+	force-hpd;
-+	status = "okay";
-+};
-+
-+&edp0_in {
-+	edp0_in_vp2: endpoint {
-+		remote-endpoint = <&vp2_out_edp0>;
-+	};
-+};
-+
-+&edp0_out {
-+	edp_out_panel: endpoint {
-+		remote-endpoint = <&panel_in_edp>;
-+	};
-+};
-+
-+&hdptxphy0 {
-+	status = "okay";
-+};
-+
- &i2c3 {
- 	status = "okay";
- 
-@@ -399,6 +467,7 @@ usbc0_int: usbc0-int {
- };
- 
- &pwm12 {
-+	pinctrl-0 = <&pwm12m1_pins>;
- 	status = "okay";
- };
- 
-@@ -1168,3 +1237,18 @@ usbdp_phy0_dp_altmode_mux: endpoint@1 {
- 		};
- 	};
- };
-+
-+&vop_mmu {
-+	status = "okay";
-+};
-+
-+&vop {
-+	status = "okay";
-+};
-+
-+&vp2 {
-+	vp2_out_edp0: endpoint@ROCKCHIP_VOP2_EP_EDP0 {
-+		reg = <ROCKCHIP_VOP2_EP_EDP0>;
-+		remote-endpoint = <&edp0_in_vp2>;
-+	};
-+};
--- 
-2.34.1
+Use also consistent quotes, either ' or ".
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
