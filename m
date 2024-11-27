@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-423165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EAD9DA3C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:20:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1725E1666C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:20:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06E41885AD;
-	Wed, 27 Nov 2024 08:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QsCPjwDS"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7439DA3CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:21:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787DD13C816;
-	Wed, 27 Nov 2024 08:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAB38B2607D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:21:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2921865F0;
+	Wed, 27 Nov 2024 08:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewpMAi6M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA0413C816;
+	Wed, 27 Nov 2024 08:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732695639; cv=none; b=IWyl9P6ayG/V8IZGkUFPG+Urq7/ddRQR5tAdr5hAQUM7VbXeBhthTuo8VMR+XyJWJlJlWE9CV24dfUEMjYYWeOhXi+OVUAkYt4nQaJ32TB5TEYjuQ6jsqazE9+cJreUQ6/nXXOVCmob/stcX7fJ4KL1pT71WYJQvdEAR4WkjsXA=
+	t=1732695675; cv=none; b=WtukqwekgtQmGIfsT3sUos/J0yfLGfZAA2dW5UXHewT/5AKmZso84/uysx96T/hKWQEWkTFlTMN2hPnD7wvwbTlVGD/vvY44ZUkWfO9dVC51JtfBY8cowcpZiN62ThU1owsCQvG0Gen1k5V2tVl2Uii2SY5/nDvaR+6nBMkf+dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732695639; c=relaxed/simple;
-	bh=TJMspgLIAfQfEO+bmJU8NLexuKEQCktJ3J1jXkLkl+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ctxrpY5nig3Tu8CpjK2XzlVopaSInuKf5TBTrtUQMMkIEIStBry8Iw1KpCYsk3rNyRF6IXtpErJpGBlrVpZE6FtqRkhN0O+lv4JRmk5MVFmF0aAP4vIgher4KN7krvTbtEv0L/ISUBvdyzLVjCjugr9y4z+EfWA6+uAdPHb6u4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QsCPjwDS; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 196281C0006;
-	Wed, 27 Nov 2024 08:20:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732695628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TJMspgLIAfQfEO+bmJU8NLexuKEQCktJ3J1jXkLkl+k=;
-	b=QsCPjwDSdqfFGctHU8kmHHbZbQAC0XTlMYph8wEKJXseCnyHu4P/M9cWTHdgspaKSo3rJQ
-	cPJ3m9s8zgkluTc0foCsaK88Vt12KrOgohLdeuvGjIlaxdt+lnkB4TYP0yOPgn8n61uQXN
-	HJfr5umpbJVT0RqMzXh0jtx+hSqLYOGwNfCnfDNukNggy0BxOFkZyQL4YTU9z/tozLazhf
-	6hJvFVBKEIVg5et/KmPw+IcEz9LLv2myfrwlYCyatUVat65i0gQGCL+fsIxFA07eZirZny
-	yg2dFGJVrf9OpHN1Ej3Z5Tr2bFib2aSOkCINjOE3oRN9oMOGG+ijwKyk+Xdz5w==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject:
- Re: [PATCH v3 1/9] dt-bindings: misc: Describe TI FPC202 dual port controller
-Date: Wed, 27 Nov 2024 09:20:26 +0100
-Message-ID: <3923123.7gsWKXV4c1@fw-rgant>
-In-Reply-To: <20241126-precinct-corrode-516d3a476479@spud>
-References:
- <20241125-fpc202-v3-0-34e86bcb5b56@bootlin.com> <2072150.UuDqf3iUMg@fw-rgant>
- <20241126-precinct-corrode-516d3a476479@spud>
+	s=arc-20240116; t=1732695675; c=relaxed/simple;
+	bh=id+aTLaJGkl5TLeYDuyrx5kMCJuL6YRs6MH/F+wlEOI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=IxBBeTi81Pj2l+oHA/g9u5oelNNcyl32nyDm5jg9umJ5rG/OFt8mmN5WDg83ZSadNpLswUsHUHlOCnXI2WLxv104RMO3rs9WAoLZ+pYQZEiuyn9yaIKhTMtfMzdlRJuInSmGSPB4MI+vT7xIRldW4WY/1276V2KRFz0a64NlNwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewpMAi6M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CE5C4CECC;
+	Wed, 27 Nov 2024 08:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732695674;
+	bh=id+aTLaJGkl5TLeYDuyrx5kMCJuL6YRs6MH/F+wlEOI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ewpMAi6MGGWdMkdebEubYl1DCfaacM++ANTuAZSa7N0oVKYmhw9hf/VLbvFPUp0V2
+	 PG+KRKTyE8GuSrESVPfDLxO7uhKPNBTQAazlNDrO751JylvbyA6U6lv/dtX2a9m86w
+	 vnf67ND7Or5ae7sTJoceHsYFLWOjmEK9Oaf5LJJN2KRO0FaqMMH0kb2cIIoIxHdp1b
+	 DBQ+4q0GTQwPFAyv5kLuaIN4r6BS9ao/sSBozNeSAx2AyFfhxh38tISvolaidUXfbP
+	 92Un52aKvvsriH1Qa7AAzHYkSniu1b4i1mT3RmsARtwEBCHxnyGS6oRHD3o3QTjnAW
+	 MrKCIQH/mv4Hw==
+Date: Wed, 27 Nov 2024 02:21:12 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-Sasl: romain.gantois@bootlin.com
-
-On mardi 26 novembre 2024 19:09:43 heure normale d=E2=80=99Europe centrale =
-Conor Dooley wrote:
-> On Tue, Nov 26, 2024 at 09:05:42AM +0100, Romain Gantois wrote:
-> > Hello Conor,
-=2E..
-> >=20
-> > But then again, you could consider that DT bindings should only describe
-> > what is possible, and not only what makes sense as a use case. I don't
-> > really know how to answer this question myself, so I'll refer to the
-> > maintainers' opinions.
-> I don't really know what how this device works, which is why I am asking
-> questions. If there is no use case were someone would only wire up one
-> of the downstream ports then making both required is fine. I was just
-> thinking that someone might only hook devices up to one side of it and
-> leave the other unused entirely. Seemed like it could serve its role
-> without both sides being used based on the diagram in
-> https://docs.kernel.org/i2c/i2c-address-translators.html
-> unless it is not possible for the atr to share the "parent" i2c bus with
-> other devices?
-
-It is possible for the FPC202 to share it's parent bus with other devices. =
-And I
-guess you could wire up only one port and use the component as a simple
-address translator and GPIO aggregator.
-
-So indeed, requiring both ports to be described seems unnecessary.
-
-Thanks,
-
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
+ Ritesh Kumar <quic_riteshk@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, freedreno@lists.freedesktop.org, 
+ Simona Vetter <simona@ffwll.ch>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
+Message-Id: <173269567235.2233485.7286772244329561840.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on QCS8300
 
 
+On Wed, 27 Nov 2024 15:05:01 +0800, Yongxing Mou wrote:
+> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
+> 
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> ---
+>  .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 239 +++++++++++++++++++++
+>  1 file changed, 239 insertions(+)
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dts:26:18: fatal error: dt-bindings/clock/qcom,qcs8300-gcc.h: No such file or directory
+   26 |         #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
