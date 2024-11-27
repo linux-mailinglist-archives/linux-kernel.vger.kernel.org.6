@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-423388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597239DA6AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:16:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3819DA6AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:16:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 288A51604A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F692821CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012F31F4280;
-	Wed, 27 Nov 2024 11:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8551B19538D;
+	Wed, 27 Nov 2024 11:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZYOOX5Y+"
-Received: from mail-wm1-f99.google.com (mail-wm1-f99.google.com [209.85.128.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CdtAx3KB"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB871EF0BA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CDE1E1A16
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732706125; cv=none; b=szLGzF88jC35qZFBuBWp71h8RU3KdRshOAe5kbBWhqOtQ23RXRBH0oij3ypBxsFEdsoSY/KP19idHga+Z6P1iKmo9quNYK4u8xEWQi4CeaxdFmM3rw0Jwbsw4+R6fY98hJa1trnA3yKoT9Iv57s6m4qIe+/wJUPug/1sKbzm4ug=
+	t=1732706187; cv=none; b=une9WLQWXA3uOf6bOfA5zFGnsRfkyYErm0m21anbbTkZikHV8z3E8+hfOSNbUlGcx1IjhfZUrg0y2gfp/p8faobZzo1C6nK2C9wPn10ITAXZO/Am+qHtGPed7Nv7S29v7Lj5qK8os3wOZcGaZIHiX8C5rFxRaLfF2tzFyO8lnz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732706125; c=relaxed/simple;
-	bh=2NOMVN6qGPtVqsDC17KQHFq1EI6laocjfEVCvcsOBBg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sp57WpJl6bkYgTetQOJU9Yuj47B4C+Rmk5GxH9q9ao6case7sq8gmUZeElAjesKeZe+aOJCbQzBtFAvleDOBTi/iUS0B4cjxRLTNjIoBRzzc//CkD+10o9m//gvVYCziK3sLZYqc4ogymAh4mqGB82+QJBmPZXKcLY4GEDv4Z2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZYOOX5Y+; arc=none smtp.client-ip=209.85.128.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wm1-f99.google.com with SMTP id 5b1f17b1804b1-434a752140eso13510885e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 03:15:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1732706122; x=1733310922; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5OeHJ5VmorUPFsKfp3L5ZEPCj51aQDOtY3qfB7PKLqU=;
-        b=ZYOOX5Y+se1tjjUYxEZHrGnY/yP9C2leTZbrej6Qztnuf88JZLSq6jFxCEpqfK1/KI
-         HAsiLtv6QOtcmebU7wmnRx5SaxTVnyrasAw1siS0RAZFgkQrRSLsU624aD8HNa0lnxtO
-         rI7A/8zC+6IonQy73W68FpT02Ol5uRLgt7clK6ZBeIRK/yhu2YS5JWSJ2bctiBDfjN89
-         pltH5kCFbfc3GarmzUbPr5JFdJx7PoYvE4jJ3SqZX8TkRSBtBYCQaXtwoyZfwZwhMqru
-         GXWTkcJhMQZ7Mp6MeTm7YtiU7/ftN4OKGzLar9kfpbxvRXZ9LBRwXjOmeNTbM5pLrAYn
-         BFCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732706122; x=1733310922;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5OeHJ5VmorUPFsKfp3L5ZEPCj51aQDOtY3qfB7PKLqU=;
-        b=V7ecI0mwGZCEEvYtVM+2QxOoop3bMlcVxscnBEiPBhgFuVc6zf3TvPx5h5KFfcqhkw
-         S7rfTCIG/ksX8UA4JPJSGu0bxlWjp6B8QDrT6ZTfu1lOxRxrp5DaJnxFC8qxNcdwby/r
-         pVYqxIYGjVe5iPZUOCLx7H0h1O/IEfVIj+HH4KUOgeV1rYskcD5aBFActTsY0Q4s9J8i
-         P5AbeG/7Qw0Shtxyl3FbjRSjNcfLCSaJDgD3j2VayPvtxqZ4RaKICwX1s0/kEQfM+yYF
-         GTebcbJvmfua8dUgDfcxLSsORxeMNsbht3JU5ZB2sxV0jjOdtYTc6QCCEvYN+IQT3mNv
-         uBew==
-X-Forwarded-Encrypted: i=1; AJvYcCXzfixUf43d6rpZNIccoXllsnr2ibCCnh9HWqXSBWo5HTADzaeZG19OFsJs9veWFB8pwxC2EeJ6C3SPyBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdRtdH7oLjp4aweTiOyYIVxwtZwK4IQUxbjXwKnkWRO0qL3KJo
-	hSGL4iQ50MiIFduPfZqgdrqWTVYryFxQ98n/4DM1tCbEjNi8mIsnmh1c8N7mr00fYxo6gxi2GEW
-	hNH8qarJxk67cfEG74BStTJ/Aby6QxaOv
-X-Gm-Gg: ASbGnctCg9kAUttyNThJGp5FUONEnfRjnrGeaeIHev0x/W1L78fFLKU6c8k8ZLDHla0
-	Eg4TJrfzO8ZuDUxgtDjHNB+kaAUcDpFah/6hrOW/v0zrOrYZy5eMe6dlU8RKjHSj72SgKV/WP/J
-	VHBhZl+s/P6a3pq36IPUFDnbR5S7q82kYOBL+Osem8DNWanW+/uTnRr4ac+m0fYv0t6T54Gs6r0
-	NLbTH/LmooECe7iY593WAtr7MXW0oi7Hpyt51ck0/PfDOY/o1xbI7bj/m7vr7N+tA==
-X-Google-Smtp-Source: AGHT+IG8NIxF+WfvLMMyexhQ4F78Jja+ecK4xzKxkdy9lOD0O56mEG25LOMSGylsAkrpJskIxuI6TCXFkAK1
-X-Received: by 2002:a5d:47a4:0:b0:382:5066:326f with SMTP id ffacd0b85a97d-385c6eb72bamr1917091f8f.17.1732706121697;
-        Wed, 27 Nov 2024 03:15:21 -0800 (PST)
-Received: from raspberrypi.com ([93.93.133.154])
-        by smtp-relay.gmail.com with ESMTPS id ffacd0b85a97d-3825fae4853sm441870f8f.4.2024.11.27.03.15.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 03:15:21 -0800 (PST)
-X-Relaying-Domain: raspberrypi.com
-From: Naushir Patuck <naush@raspberrypi.com>
-To: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>
-Cc: linux-media@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+	s=arc-20240116; t=1732706187; c=relaxed/simple;
+	bh=12DqePLKoTrEy4MFBKf2pq2QIO8hf39o64WQAb2Jn8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0BTVk1Vcgq6gwTWlpu8hZxDbPBdSn3AdryHGNTEBd2Qs6TrJGxmpZdDBkFVjrVAlLGWhDw82Ye8E240iqiSM46tV8im2lofVhwA7iVIw2JQuRYSCjbCgu3qkriVv8OkZ4dgcFXuAnKpx374gE1XthfGG8+RP/fO5GYDNno5Qek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CdtAx3KB; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=12Dq
+	ePLKoTrEy4MFBKf2pq2QIO8hf39o64WQAb2Jn8w=; b=CdtAx3KB0YICFDFVfczE
+	4JUiYove8hph0vLsd7cIgmSUVQ+pr+9AoP41cqJHm+SsNM3lvPdNimaJOBFD9oSM
+	H4CoVY6deMuSbMAd+6wiQ9CCGhSgQgvg74txg9RB3uSKqgQAKBg0JmQPIgfpUBsI
+	YnAfUy7D1LChHIKnSabgTcywPNL1py9dTZdHOmDj2Fd+RUkk3sC5Ag2DnAFewOXn
+	yn7nEGSFSUHEKFYhQPm1bHZVl5jZXPjnSe0ovLcfltTFHiUgHYviFDxn17jM1gel
+	Fxj6ic1I5bbDlpYz0ATLWSQIpuhTFklXtxOHShGNbB4426S9gEHtjkgHlXG+lV55
+	+w==
+Received: (qmail 533524 invoked from network); 27 Nov 2024 12:16:16 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Nov 2024 12:16:16 +0100
+X-UD-Smtp-Session: l3s3148p1@hlggGOMnatMujntz
+Date: Wed, 27 Nov 2024 12:16:15 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Wolfram Sang <wsa@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v11 0/7] platform/chrome: Introduce DT hardware prober
+Message-ID: <Z0b_f0gg9KgSozPH@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, Wolfram Sang <wsa@kernel.org>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jacopo.mondi@ideasonboard.com,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Naushir Patuck <naush@raspberrypi.com>
-Subject: [PATCH v2 4/4] drivers: media: bcm2835-unicam: Fix for possible dummy buffer overrun
-Date: Wed, 27 Nov 2024 11:15:15 +0000
-Message-Id: <20241127111515.565992-5-naush@raspberrypi.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241127111515.565992-1-naush@raspberrypi.com>
-References: <20241127111515.565992-1-naush@raspberrypi.com>
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+References: <20241106093335.1582205-1-wenst@chromium.org>
+ <CAGXv+5Fzrz9sBvE=FpV6URpcZtxvchxfY9WE4k4s+S3BzMWw2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HQnyox1fdhJ456xp"
+Content-Disposition: inline
+In-Reply-To: <CAGXv+5Fzrz9sBvE=FpV6URpcZtxvchxfY9WE4k4s+S3BzMWw2g@mail.gmail.com>
 
-The Unicam hardware has been observed to cause a buffer overrun when
-using the dummy buffer as a circular buffer. The conditions that cause
-the overrun are not fully known, but it seems to occur when the memory
-bus is heavily loaded.
 
-To avoid the overrun, program the hardware with a buffer size of 0 when
-using the dummy buffer. This will cause overrun into the allocated dummy
-buffer, but avoid out of bounds writes.
+--HQnyox1fdhJ456xp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
- drivers/media/platform/broadcom/bcm2835-unicam.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-index 550eb1b064f1..f10064107d54 100644
---- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-+++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-@@ -640,7 +640,14 @@ static inline void unicam_reg_write_field(struct unicam_device *unicam, u32 offs
- static void unicam_wr_dma_addr(struct unicam_node *node,
- 			       struct unicam_buffer *buf)
- {
--	dma_addr_t endaddr = buf->dma_addr + buf->size;
-+	/*
-+	 * Due to a HW bug causing buffer overruns in circular buffer mode under
-+	 * certain (not yet fully known) conditions, the dummy buffer allocation
-+	 * is set to a a single page size, but the hardware gets programmed with
-+	 * a buffer size of 0.
-+	 */
-+	dma_addr_t endaddr = buf->dma_addr +
-+			     (buf != &node->dummy_buf ? buf->size : 0);
- 
- 	if (node->id == UNICAM_IMAGE_NODE) {
- 		unicam_reg_write(node->dev, UNICAM_IBSA0, buf->dma_addr);
--- 
-2.34.1
+> Just checking in. I just wanted to make sure that this is still on
+> track for v6.13-rc1.
 
+Eeeks, not only Andi was so busy that he lost track of patches. Please
+accept my apologies, I was under the impression that this series was
+still under discussion. I sadly missed that it was ready for prime time.
+
+That being said, I applied it now and will send it to Linus by the end
+of the week. Sadly, this series was not exposed to -next before, so I
+hope a few days of -next will work for him.
+
+But I will surely try. Sorry again!
+
+
+--HQnyox1fdhJ456xp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdG/3wACgkQFA3kzBSg
+KbaO8Q//YQ/9g1dt8JdYH661u4RqF4lC38vtKoaZJEADzExdg71xeJQx5nw4Ucg7
+wdvlvIVqq2quH31KM5oOz04t7bglWhsqGlLUUG5CAe3W55tjNpJYgBEnBQs+9ylf
+VdxC/3js3Z2K07RQmCiCGDZuyF7eLkc0AOYrWg6vnGKpnZWO8aTsDRSe6XsDXFPF
+saOY5F3nwjwpoOmUT/qY2ezh/Cls0qClCdXbvoSj5p6+XHcRObtGuMBCSdiYo9uU
+Ec+25hpHSYChlEA0PdlXzw2jObBfp0fOUNWBqadOgAuYsLwK02jI90fvhymPRsiM
+HJD8H1L2oulpK3VayJtRhjQowUW3UrdcdleoOwq91TY32vrlZ6SDtO/C8WphUqT+
+ORaJHqIeBZSW2nwAXBOepoid1JR2pPYiEWZ02kfaKvG0g/sMFoHyXV9OB9GAWyRT
+hNQPXZBFS0LV+6J7pIzmxjXxugwrTnI7AWJlGHGjxYxjc42Y9C8H7H8JfkadRuAW
+w3wcqoPXRJUZsg3GZHBCwIDYtXgr3q7J2iwDPe5h/cDFE5CbtsCL8O8iV9NNqrjF
+T928c/gxQjsRotHFRUBfihhIia/M2zLB8M6Rq+KRzaCCy78UiZkRhiDinstbzlki
+sI0XLrvQAEQVgoJNDsr7K2orxIcijqjlZ0k6pqNf4roXjJJ8Hxc=
+=h8vf
+-----END PGP SIGNATURE-----
+
+--HQnyox1fdhJ456xp--
 
