@@ -1,164 +1,176 @@
-Return-Path: <linux-kernel+bounces-423449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F17A9DA77A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:12:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5619DA778
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B7F2828C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4812823E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99F31FBCB2;
-	Wed, 27 Nov 2024 12:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF83A1FBC92;
+	Wed, 27 Nov 2024 12:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="r92Kl2md";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5Ok6EUPv"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rpr2eo4z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024851FBCA7;
-	Wed, 27 Nov 2024 12:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2586A1F9EBB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709511; cv=none; b=q8Jj2pC42biXTjsxqvzHp3e/Y6zJrUG729AqHojD9oLKWbkYx/2vGW36bbHmqB//84GPWqYN3AepaHDuaAFuF6/ctZZrIQSvd2fA1OYzx9Zyoro/FwiEsdq2IO/iDNL2eyYMFWSBUkupK6/aIzgzhFOJZ7rzfscAhplIKWbXU68=
+	t=1732709506; cv=none; b=F8aAXUMaPAGBWHaoaNpTgxGzokduqHGYFBvsoje4tYImmjeKB3LiYdejJWX4WkL36ZnnftE9fI75uSJg1RsR0A4BM4PTfUgHEhuHmCe815ibqBG6vHtEN7fPRUgmpA/81jUY5RkkX/HSYHKPQNoWpl9f7IVT6scWuCwl4tNbcxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709511; c=relaxed/simple;
-	bh=jzXiWxyCibDahW4FWBCnt++CATpAWgnwTob3s6EhX1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFF0n2dcRw0ZmD1PRo5vESBwz+u7OSMp1ppE4mqazNmrgowM5YT2YiV15rGNo2LHE3IgyrMYbWS4vCOqmGul65H28CG39oaw58Ho4uk1NfS1nS2C/Q2v4aJTwnOuvnTNSCwLBfnQdzndCaucV5NH3kzagbqLcY3XvpR7l4NrYZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=r92Kl2md; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5Ok6EUPv; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B8CEC2540072;
-	Wed, 27 Nov 2024 07:11:47 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 27 Nov 2024 07:11:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1732709507; x=
-	1732795907; bh=3blg7EFfpE4vkXvFpR4yFVjJmH1gJFZZGLgmEe/FrLQ=; b=r
-	92Kl2mdbB7MQSS/OYx2J7FaxG7RGB+rJ2opdgVWsrauQUxP1R9UKURWGMk4Sgy6D
-	Hy3VvCwDrLbV9WLbwyW3XS5K3MPISolYAP8FE34TDHpJBZWfyMxPLVoqjJ0oQohx
-	zDKPSps3kySeOow5tTSe0bdc5c77MaHrTfkchpJo9go6McjucCcupA5o9JWj6e8d
-	akcuhRUdsDoGwu3TnjsC8ksZ0FF1vht46iatKiKEryuyTGocRzVSXPzfnwpLVWzK
-	wsWD+ao/JEJsoLzDj+KF6ECUkLSpxZCPEwHEIDmepro3cQkEd5n2YmmK1ggyCLlm
-	5TNMFnz2qj8p7ttqNJQgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732709507; x=1732795907; bh=3blg7EFfpE4vkXvFpR4yFVjJmH1gJFZZGLg
-	mEe/FrLQ=; b=5Ok6EUPv4W3E+86ly6MTj646iphZE5wh39OT0XlnGD6zMifZVX6
-	61CuLvas9D4P6QiKBTyIiLwOiwHeIpoh58j3qdKLcsrIJScu+0ZWJRlY1KU/aRGV
-	VXOYwFYkcMClK6qTK4HTHy5LZ+5bA6AyxUiwGICmFJ5qm/vNCQrgQYTZTky2G4/F
-	OlMN7jI7nx/kZTYx29ejyx/k8oZAIVgxneAlg+JQIIxPzygY8x3zjO8OJOkuUys5
-	dU0iP/oH1w5KhznOnJU5KZU1+fdJOVPxI3Bu9m38rSEhfLxUUc7axOvVTKixBhn5
-	B5bbFnXxL9bkELzwTx870ZETQBvY+4C2oeg==
-X-ME-Sender: <xms:gQxHZ9cPIQMhvlrfw7ukEFjBWQCjXbfbLKPtibs0SrsODWSDs5dOFw>
-    <xme:gQxHZ7MEeV3tnUAe2LWbNFbmbnGnFQldhs8dO4nA3P3AL-V4w0nlxwETYIqrcu1_F
-    y4l6_EKtkCITlVm92k>
-X-ME-Received: <xmr:gQxHZ2gqJA0ewDdKrhMGszWxK3eagRdUMT6rcgRfJKQzm3jFG8FrSBzvg6T9BVWGEPyUIw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdefgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
-    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
-    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnheptddvkeduhfeggeduheef
-    hedtffefudfghefgfeevveelueeufffhvdelueevvedvnecuffhomhgrihhnpehsvghrih
-    gvshdrthhoohhlshenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtoh
-    epuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrggtihgvjhdrfihivggt
-    iihorhdqrhgvthhmrghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphht
-    thhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvgdrhhgrnhhsvg
-    hnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedr
-    uggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepth
-    hglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:gQxHZ2_qQqMhvC_1J1mvY9t39ia2LDjDXuWPu3DNT0RYNo_2h9BhIQ>
-    <xmx:gQxHZ5tPtT6jUvhgPxhOeJHNiNLZSNNn-HcbpUqx2GT5Xbgz9OtkMQ>
-    <xmx:gQxHZ1HDguZcTK93FA8Teeiu_jijpBJ7ucFFRjr1PWq04xprqX4XhA>
-    <xmx:gQxHZwOBcWCc3MdI5faqvzBW9U3YO09WngXRnwrlrbYlLC0u7t2ShA>
-    <xmx:gwxHZ6n-ShnUolqwu1bI3ur7mUmXxaqEchFUXJ4a5NfYgw5fxTzPOKf1>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Nov 2024 07:11:42 -0500 (EST)
-Date: Wed, 27 Nov 2024 14:11:38 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: shuah@kernel.org, hpa@zytor.com, x86@kernel.org, 
-	dave.hansen@linux.intel.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] selftests/lam: Move cpu_has_la57() to use cpuinfo
- flag
-Message-ID: <6kfafs7wio7ruth3p54pezqwcultxqqpnjvehjzaz7hlba4rp3@6kb5zdqfglsl>
-References: <cover.1732627541.git.maciej.wieczor-retman@intel.com>
- <4979b3de7021f34cbef22d44799e28c914f993ca.1732627541.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1732709506; c=relaxed/simple;
+	bh=JN2wPJZx2zdhQFaSk5PktlR218KRyw8uJMfJmU+wUIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fQeK63zMywZaaQToikATDsKPKq277GlwT6FS9t8juFpVYzZVCn5gJDj1mGVhchQJiktYsHdOUku28DbBFBTFYI6KOoYdQGHoKUlKkdSZhb0IGD4D8MC/2relVZrUfNLB2ODOiBNJABEAFK565vzwlbrn6TZFQkbGEinHh+B0HHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rpr2eo4z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DCFC4CECC;
+	Wed, 27 Nov 2024 12:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732709505;
+	bh=JN2wPJZx2zdhQFaSk5PktlR218KRyw8uJMfJmU+wUIU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Rpr2eo4zYJMkSvFKp4oNu2T/cXGWG1Lj+0GaZHbW/CI+eOgaDH6ri8wmOMiYYdFhd
+	 dOYwOwXe2NjieUmBbu8bEHm7tNpozNCh61ZpquyMyLwdb0L4XsZ4zbdaxON9Fla5JK
+	 vgpb6STbGI20uUY3lblC1o3DsI5ogPbBNu14vJvpZsJY127aTkVVhozaFYyY5tVfsw
+	 zZJgh4/gXInuk+i0bYMRFVWZ2mQBE/GGKu/dfIKaInJo1hTCqUaZGz8UaSyxXOSdoA
+	 mxOIEF/PDq4mr4oafB1EivymJ7vsOhLRRq8/LyciBY/3l4H3iTWBYwtMTPqqotjggO
+	 bmMJQbON601/w==
+Date: Wed, 27 Nov 2024 17:41:41 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: Soundwire subsystem updates for v6.13
+Message-ID: <Z0cMfSejvRoYihYJ@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8LSQKTx+M1qPNAWY"
+Content-Disposition: inline
+
+
+--8LSQKTx+M1qPNAWY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4979b3de7021f34cbef22d44799e28c914f993ca.1732627541.git.maciej.wieczor-retman@intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 02:34:48PM +0100, Maciej Wieczor-Retman wrote:
-> In current form cpu_has_la57() reports platform's support for LA57
-> through reading the output of cpuid. A much more useful information is
-> whether 5-level paging is actually enabled on the running system.
-> 
-> Presence of the la57 flag in /proc/cpuinfo signifies that 5-level paging
-> was compiled into the kernel, is supported by the platform and wasn't
-> disabled by kernel command line argument.
-> 
-> Use system() with cat and grep to figure out if la57 is enabled on the
-> running system.
-> 
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> ---
-> Changelog v4:
-> - Add this patch to the series.
-> 
->  tools/testing/selftests/x86/lam.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
-> index 0ea4f6813930..0ac805125ab2 100644
-> --- a/tools/testing/selftests/x86/lam.c
-> +++ b/tools/testing/selftests/x86/lam.c
-> @@ -124,14 +124,11 @@ static inline int cpu_has_lam(void)
->  	return (cpuinfo[0] & (1 << 26));
->  }
->  
-> -/* Check 5-level page table feature in CPUID.(EAX=07H, ECX=00H):ECX.[bit 16] */
->  static inline int cpu_has_la57(void)
->  {
-> -	unsigned int cpuinfo[4];
-> -
-> -	__cpuid_count(0x7, 0, cpuinfo[0], cpuinfo[1], cpuinfo[2], cpuinfo[3]);
-> +	int ret = !!system("cat /proc/cpuinfo | grep -wq la57\n");
+Hello Linus,
 
-Heh. grep can read files on its own :P
+Please pull to receive the last request for the evening to get soundwire
+subsystem updates which include bus structure optimization, support for
+soundwire 2.0 disco spec and updates to amd and cadence drivers.
 
-	return !system("grep -wq la57 /proc/cpuinfo");
+With this also, you might see a merge conflict with sound tree. Again,
+the resolution should be simple and one exists in the next tree as well.
 
->  
-> -	return (cpuinfo[2] & (1 << 16));
-> +	return !ret;
->  }
->  
->  /*
-> -- 
-> 2.47.1
-> 
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
+undwire-6.13-rc1
+
+for you to fetch changes up to dd690b31de0ed46adc5856698880560b900386ba:
+
+  soundwire: Minor formatting fixups in sdw.h header (2024-11-14 12:11:17 +=
+0530)
+
+----------------------------------------------------------------
+soundwire updates for 6.13
+
+ - structure optimization of few bus structures and header updates
+ - support for 2.0 disco spec
+ - amd driver updates for acp revision, refactoring code and support for
+   acp6.3
+ - soft reset support for cadence driver
+
+----------------------------------------------------------------
+Charles Keepax (2):
+      soundwire: Update the includes on the sdw.h header
+      soundwire: Minor formatting fixups in sdw.h header
+
+Pierre-Louis Bossart (17):
+      soundwire: mipi_disco: add MIPI-specific property_read_bool() helpers
+      soundwire: optimize sdw_stream_runtime memory layout
+      soundwire: optimize sdw_master_prop
+      soundwire: optimize sdw_bus structure
+      soundwire: optimize sdw_slave_prop
+      soundwire: optimize sdw_dp0_prop
+      soundwire: optimize sdw_dpn_prop
+      soundwire: mipi-disco: remove DPn audio-modes
+      soundwire: mipi-disco: add error handling for property array read
+      soundwire: mipi_disco: add support for clock-scales property
+      soundwire: mipi-disco: add support for peripheral channelprepare time=
+out
+      soundwire: mipi-disco: add comment on DP0-supported property
+      soundwire: mipi-disco: add new properties from 2.0 spec
+      soundwire: mipi-disco: add support for DP0/DPn 'lane-list' property
+      soundwire: intel_auxdevice: add kernel parameter for mclk divider
+      soundwire: cadence: add soft-reset on startup
+      soundwire: cadence: clear MCP BLOCK_WAKEUP in init
+
+Shen Lichuan (1):
+      soundwire: Correct some typos in comments
+
+Vijendar Mukunda (4):
+      soundwire: amd: pass acp pci revision id as resource data
+      soundwire: amd: refactor existing code for acp 6.3 platform
+      ASoC: SOF: amd: pass acp_rev as soundwire resource data
+      ASoC: amd: ps: pass acp pci revision id as soundwire resource data
+
+ Documentation/admin-guide/kernel-parameters.rst |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |   4 +
+ drivers/soundwire/amd_init.c                    |   1 +
+ drivers/soundwire/amd_manager.c                 |  99 ++++++----
+ drivers/soundwire/amd_manager.h                 |  16 +-
+ drivers/soundwire/bus.c                         |   2 +-
+ drivers/soundwire/cadence_master.c              |  30 +++
+ drivers/soundwire/cadence_master.h              |   1 +
+ drivers/soundwire/intel_auxdevice.c             |  12 +-
+ drivers/soundwire/intel_bus_common.c            |   6 +
+ drivers/soundwire/mipi_disco.c                  | 144 +++++++++++---
+ drivers/soundwire/qcom.c                        |   2 +-
+ drivers/soundwire/sysfs_slave.c                 |   2 +-
+ include/linux/soundwire/sdw.h                   | 245 +++++++++++---------=
+----
+ include/linux/soundwire/sdw_amd.h               |   6 +
+ sound/soc/amd/ps/acp63.h                        |   2 +
+ sound/soc/amd/ps/pci-ps.c                       |   2 +
+ sound/soc/sof/amd/acp.c                         |   1 +
+ 18 files changed, 368 insertions(+), 208 deletions(-)
+
+--=20
+~Vinod
+
+--8LSQKTx+M1qPNAWY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmdHDH0ACgkQfBQHDyUj
+g0dEOA/+LmZutrFaozY/OonmP97ThjdksqdULamh3ZcJ61lrKoKM6Dg2ygRg8xw0
+ZTGXUXWywl0FWptsXlx/PehyJoaEcNFgyPM16D/gqFl3RdLXqsw8j/9Wh/y21YIt
+66lQsa2AVtv5NuRt7xmlglO3kD5jsPMcyvpjC6xb/XIZ3GmL5wSVZvYpMiEDmtYA
+MYTMdkV4WGmApS9+c0GoqBRqlaoeOcWJuhlTGilCQbmusQZnefrFngApTBEHvg2R
+gTzN8wGid0QAmusVl+2zQd8/Gkv6kmxyUYoLn+I3e8BxG4JhNDmFjvVJ8JPi8kYK
+lbyzBkw/k02MJMw5b+EYOv+L4ZksDFGQoxx8Ecu9OGm7A98GaPMfL7RepBLB5VKL
+TsCDy7Ogof7mgzKmXeKVeZvoEe8h7eDFY6p7vZLegAMTJh8JQumgrLRvR3f8Au2t
+e413tDHYwYYptd3Dj2v6h6cQE7Hp+dvYPqM4tHZJgZp8Rm5xjNpVp+BSPOQsxB5r
+I62QX+zwf2goKY0I2MavMImupqHmpKv2kmfZJVeFojwcyuzlcAb9UrS/hUnXbN58
+1Dh5F1jZzn6Ilts3qy3Gy+stv3d/Ect+tfapRaLGybvjZmYF3YLicMwXkpwZy63Y
+YULjEDFFN5vguTl87geW2K0CmsXcBGEc5LBewemwYmDHzJ9KUls=
+=qjnC
+-----END PGP SIGNATURE-----
+
+--8LSQKTx+M1qPNAWY--
 
