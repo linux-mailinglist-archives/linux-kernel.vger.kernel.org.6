@@ -1,209 +1,132 @@
-Return-Path: <linux-kernel+bounces-423039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479109DA1C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:43:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC019DA1CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:46:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE13B169032
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918E02844EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20F913D8B5;
-	Wed, 27 Nov 2024 05:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bS8j9MwL"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E25A13C661
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AA413D245;
+	Wed, 27 Nov 2024 05:46:09 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA093FB9C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732686189; cv=none; b=kVlv4KXQnOOZlD7x64M8pqDAZYTDUdrJNMJIi3Nx+AIWKgo2leVzfpkJemvaHs2IC5wW2MPW6DNUnEMuQQa/T546XNc6tW22/OTQJI8sAfBxEny9206WETzRMOP5h1oeMhEl41zdAYTpRprfO0s1EtsK6BeHItmBprQMpmGkzOU=
+	t=1732686369; cv=none; b=LlL016NcSbpswuc33hkzlZC7Dj0veL1nPr1+XnrEw7m7HXkrjWwdrC+MxaE2BgEL24Z/rrUBlo4xKXwmhx9UlFBP2OTIIgUPVAaDXJ/2oZNrupL0YYW5vya0bZLwHsGSzU1/Phcn3Ffq6b+5rZNVqsFQmbnyNzpQGoWx+0YNoyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732686189; c=relaxed/simple;
-	bh=eFQXbOKlo4QI9fdpsg6S7Lp8wDnYBlKqK3Tc2d4MUy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P03QggPHT7U5YnXSs9GvqNyenHb4NwwheQKxE6q/hZaw6MmRuGnIPyJx/DU+nQtym8joLIMGt4mHJDa2jKyMmhzmfRpQMpScBJWi+J99gwu43wpkQV1K48IJSG2uDKWOGxnM+qPvNvfH7WYgZzGqN18j4xynMKAlLajSZ6XF/hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bS8j9MwL; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef15421050so31043497b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:43:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1732686186; x=1733290986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5aaAX4RZQ1xLyXXEaIAjcxe7Kvkm0fdu7E5v2P3w9co=;
-        b=bS8j9MwL83KFVahhEHuR+MLqtRZJBC5ekXQNqJ/MedMrsqFMJtvK1YRzdnhuVScdEc
-         ITIEP0K4o5wPHwIgkMko/5Oxw+jDMAx7yOc5FjZ9gadlQlCnngWrs7mddiywdLX8FNbR
-         ONRjNRL4p+npsGakz0/t6TK50mdmF8QDkSIdFTlnuej0brWl3MqppmwkEW+W6tkWnIDB
-         gKglTcY6il8466l59mvYOsNAqNXa0tN5Mm6HVtoiw8ZFGxCxRUWo7vbRRtaFmz0nniL4
-         /w+B7kp1fvjDoLBA8W81U1CElKXOE6NyCc6aPlZiaRo2gsS7exwb56pqcUVem3vehJUf
-         kPaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732686186; x=1733290986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5aaAX4RZQ1xLyXXEaIAjcxe7Kvkm0fdu7E5v2P3w9co=;
-        b=DFu795Ek69FzVU3lkpgnIlk/elut3JDVkqElBmvxSxRJVe2XHhmgJEntQpqdluESp3
-         O5qeCJPgnEx7eUyw8qZQiKDSgW75pYcMRiK4v7c806AjrCcrL7lg04DCNYphb1x9Vzzt
-         3C0ot/hDuq4q19Hr2zQWemwggf2uLjLusWsupv1q4gsVXCJDmJzv5kqToAlga9mLB4fz
-         yS/MCvoFovEa1TkmdErWxx2i0HPGa0Bqzlqt4sVfB/9qMwdN8dUzv/Dy1S3kJpCMC4UV
-         HgpCzBE4J+rksSbh0+QW0wjGBvBCU1jXBlU+M66yNJZd30WABLcd6DdDHVehH/uRhv1G
-         cOnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO4+DKxQZaIT7NqhZIYVsCyrbDwuIIEfV4QkKTRmx87+md+TdeFb00utapulVSb0XVySpQPqZuiNCQ68M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBKjZUCtW2yK+M0bJFwVKAS93+NjZuY1QLvAVNkEaOZlRzxZXg
-	8qt4cPPJvJwkApLq4XUaCG1jPiifqyEtXOd9Wz45UCU8ADhtKJ9KGjI+ohTii9XZ+HF+ZP7EbO0
-	fCLCZBK3hlzbpfpjS69gwgZls2J8Hi/9XkMHO
-X-Gm-Gg: ASbGncuBm04N48F5b/MqrCTBWd+ySLftRMGrWM+0MVA7fuJbs5wGmefodD8lTHlFePI
-	s2XhjTKqhWnJZWnxnet+kT8/MtgxixQ==
-X-Google-Smtp-Source: AGHT+IEfi5hkYi2FmLWoEuKrh1fKpnEV3WPMq0hcFnZS8ZxKTwfYhJ2oW3fPYtzBTSWpy0L6yeV6LzTMjR/NV6TC0W8=
-X-Received: by 2002:a05:690c:4d09:b0:6ee:86da:3a55 with SMTP id
- 00721157ae682-6ef3727ab7cmr25755157b3.28.1732686186260; Tue, 26 Nov 2024
- 21:43:06 -0800 (PST)
+	s=arc-20240116; t=1732686369; c=relaxed/simple;
+	bh=8fv1MB373KyTosRdU+u2ouvKsd0zalAEc8ZFd1eAENI=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Ey6lU9SkkPd7r42yMNbNsmKryzziP2FAoLLTq1h6LRLeHf6qcdXOse1BGcycfhKsZloAcyD7smBTXUvvbZNNx4c0zTksw17V93pUZPQvMXwRsynsvWVe3agPuAw2dpJnJ8YFuVvhirsD344c4+kM+dllqLR1W94ZImYW3u2xmCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxC+IXskZnQ51JAA--.12405S3;
+	Wed, 27 Nov 2024 13:45:59 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxS+AUskZny4BpAA--.23652S3;
+	Wed, 27 Nov 2024 13:45:57 +0800 (CST)
+Subject: Re: [PATCH v4 02/10] objtool: Handle special cases of dead end insn
+To: Peter Zijlstra <peterz@infradead.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-3-yangtiezhu@loongson.cn>
+ <20241126064513.bf6yq56eklyo4xvt@jpoimboe>
+ <bb36374e-aca2-92e1-209d-1524e31147ab@loongson.cn>
+ <20241126143243.GN38837@noisy.programming.kicks-ass.net>
+ <20241126152207.GR38972@noisy.programming.kicks-ass.net>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <e05c2f25-c378-be47-1138-a1a86b03fad6@loongson.cn>
+Date: Wed, 27 Nov 2024 13:45:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105123807.1257948-1-rrobaina@redhat.com> <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
- <20241113230425.GJ3387508@ZenIV> <19328b27f98.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <20241114040948.GK3387508@ZenIV>
-In-Reply-To: <20241114040948.GK3387508@ZenIV>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 27 Nov 2024 00:42:55 -0500
-Message-ID: <CAHC9VhTyp6ao8n0EVp_JdgRXFfP0nLkf0YMKPmiAurFJ_CM0fQ@mail.gmail.com>
-Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in __audit_inode_child()
-To: Al Viro <viro@zeniv.linux.org.uk>, Ricardo Robaina <rrobaina@redhat.com>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, eparis@redhat.com, 
-	rgb@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241126152207.GR38972@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxS+AUskZny4BpAA--.23652S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7CFy8KFW3XFy7XF1ruw45Arc_yoW8Xw48pF
+	Z7C3WkAF48WrW0y3ZFyryxWFW7Jr4xGr12ga48WrykA3WjqFnaqrsagws0kFy8WwnaqFy0
+	qFyFg3s0qFyjy3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
+	UUUUU
 
-On Wed, Nov 13, 2024 at 11:09=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
-> On Wed, Nov 13, 2024 at 10:23:55PM -0500, Paul Moore wrote:
-> > > And while we are at it,
-> > > parentlen =3D parentlen =3D=3D AUDIT_NAME_FULL ? parent_len(path) : p=
-arentlen;
-> > > is a bloody awful way to spell
-> > > if (parentlen =3D=3D AUDIT_NAME_FULL)
-> > >  parentlen =3D parent_len(path);
-> > > What's more, parent_len(path) starts with *yet* *another* strlen(path=
-),
-> > > followed by really awful crap - we trim the trailing slashes (if any)=
-,
-> > > then search for the last slash before that...  is that really worth
-> > > the chance to skip that strncmp()?
-> >
-> > Pretty much all of the audit code is awkward at best Al, you should kno=
-w
-> > that.
+On 11/26/2024 11:22 PM, Peter Zijlstra wrote:
 >
-> Do I ever...
+>> I was poking at the reachable annotations and ended up with this:
 >
-> > We're not going to fix it all in one patch, and considering the nature
-> > of this patch effort, I think there is going to be a lot of value in ke=
-eping
-> > the initial fix patch to a minimum to ease backporting.  We can improve=
- on
-> > some of those other issues in a second patch or at a later time.
-> >
-> > As a reminder to everyone, patches are always welcome.  Fixing things i=
-s a
-> > great way to channel disgust into something much more useful.
+> Also see here:
 >
-> > >
-> > > > +       if (p[pathlen - 1] =3D=3D '/')
-> > > > +               pathlen--;
-> > > > +
-> > > > +       if (pathlen !=3D dlen)
-> > > > +               return 1;
-> > > >
-> > > > return strncmp(p, dname->name, dlen);
-> > >
-> > > ... which really should've been memcmp(), at that.
-> >
-> > Agreed. See above.
+>   https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=objtool/core
 >
-> OK, my primary interest here is to separate struct filename from that stu=
-ff
-> as much as possible.  So we will end up stomping on the same ground for
-> a while here.  FWIW, my current filename-related pile is in #next.filenam=
-e;
-> there will be a lot more on the VFS side, but one of the obvious targets =
-is
-> ->aname, so __audit_inode() and its vicinity will get affected.  We'll ne=
-ed
-> to coordinate that stuff.
+> Once the robots agree it all compiles, I'll post.
 
-[Sorry for the delay, it took me a bit longer than expected to get
-through my inbox upon returning home, but I should be mostly caught up
-now.]
+There are many changes of tools/objtool/check.c in your tree,
+I assume the patches in objtool/core tree is to target 6.13-rc1,
+it failed when compiling on LoongArch:
 
-We've talked a bit in other threads about the struct filename changes
-you're working on, and while I haven't looked at your next.filename
-branch, the stuff you were talking about doing made sense.  As far as
-cross-tree conflicts go, I don't think we'll have too many problems
-there as I don't foresee any major audit work happening in the
-immediate future; sure we'll likely have a small number of fixes but
-those should be easy enough to manage with your changes.  I'm assuming
-your next.filename finds its way into linux-next?  If so, that should
-give us a heads-up regarding conflicts.  If there is a nasty
-collision, I'm confident we can figure something out.
+   arch/loongarch/include/asm/bug.h:49:60: error: expected ‘:’ or ‘)’ 
+before ‘;’ token
+   {standard input}:682: Error: no match insn: break	1.pushsection 
+.discard.annotate_insn,"M",@progbits,8
 
-> Anyway, regarding audit_compare_dname_path(), handling just the last '/' =
-is
-> not enough - there might be any number of trailing slashes, not just one.
+I think it needs to do the following changes, please squash them to
+your original commit if possible, thanks.
 
-Good reminder, thanks.  I see that Ricardo has sent an updated patch,
-I haven't looked at it yet (waiting for the merge window to close),
-but hopefully he has taken that into account (hint: now would be a
-good time to verify that Ricardo <g>).
+diff --git a/arch/loongarch/include/asm/bug.h 
+b/arch/loongarch/include/asm/bug.h
+index dfb0cfccf36e..e5d888cb738f 100644
+--- a/arch/loongarch/include/asm/bug.h
++++ b/arch/loongarch/include/asm/bug.h
+@@ -40,13 +40,14 @@
 
-> Another fun issue with looking for matches is this:
->
-> mkdir /tmp/foo
-> mkdir /tmp/foo/bar
-> mkdir /tmp/blah
-> ln -s ../foo/bar/baz /tmp/blah/barf
-> echo crap > /tmp/blah/barf
->
-> The last one will create a regular file "baz" in /tmp/foo/bar and write
-> "crap\n" into it.  With the only pathname passed to open(2) being
-> "/tmp/blah/barf".  And there may be a longer chain of symlinks like that.
->
-> What do you want to see reported in such case?
+  #define __BUG_FLAGS(flags, extra)                                      \
+         asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags))          \
++                            "\n"                                       \
+                              extra);
 
-In the absence of anyone pushing third party requirements on the audit
-subsystem to meet various security certification goals, my guiding
-light has been to try and do the simplest thing that makes sense.
-Looking at this quickly, there are three different types of events:
-mkdir, symlink, and a file lookup/write.
+  #define __WARN_FLAGS(flags)                                    \
+  do {                                                           \
+         instrumentation_begin();                                \
+         __BUG_FLAGS(BUGFLAG_WARNING|(flags),                    \
+-                   __ANNOTATE_REACHABLE(__ASM_BREF(10001));    \
++                   __ANNOTATE_REACHABLE(__ASM_BREF(10001)));   \
+         instrumentation_end();                                  \
+  } while (0)
 
-The mkdir events in the example above are trivial, you log the usual
-info when walking the pathname and call it good.
+By the way, there are a lot of new objtool warnings
 
-The symlink is mostly the same as mkdir, but you've got the relative
-path to contend with so the current working directory is more
-important and should be logged as well.
+   Unkonwn annotation type: 8
 
-The file lookup/write can be a bit more complicated if we have all of
-the symlink information as part of the pathname lookup/walk, but if we
-don't have that I think we can manage with just the "/tmp/blah/barf".
-Users/admins that really care about links will likely be logging the
-various link*/symlink*/unlink* syscalls for the directories/files they
-care about.
+on LoongArch when compiling the code of your tree.
 
-Of course if anyone has any requirements or reasoned opinions about
-what we should log here, I'd love to hear it.  This includes you Al.
+Thanks,
+Tiezhu
 
---=20
-paul-moore.com
 
