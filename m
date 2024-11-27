@@ -1,130 +1,160 @@
-Return-Path: <linux-kernel+bounces-423932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0976E9DAE6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:18:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C929DAE7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:21:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003FC1639E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:21:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089A6202F72;
+	Wed, 27 Nov 2024 20:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C/Gwgo7J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69823B21C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:18:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D2C202F8F;
-	Wed, 27 Nov 2024 20:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AMeMUaKt"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724322CCC0
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A763C2CCC0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732738695; cv=none; b=jhvrh0TeKthKsopcu4iGA3Ltzh4guf4Gf3huscVgZjGTrcjhXuqH8XyaYtyrOv9n8denq6XHXL4T0nhK0+Ck6iqCdrgTWEhfNfATsMRQ3/OBJSeMal6ug8eEd4UofehchjqFWemJa05egKrS7ruH2/pjdPRvhWOE3OWJJgCNcbc=
+	t=1732738882; cv=none; b=aIGxX3naDKV4CjDsvGDePMWHDHC4h/pfR3MXL06HCeF9UrB/pMsylJi9P4jec151edhEifhiN4OdKHGwJrazrDGSRaUhpuuXMKkG3lzx+axrnSD/bc8prFJhM8/UbTwk2NhG6dSJrVyC1du3lkVc72ihr8Lb0Rqv1EyatEQ3nMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732738695; c=relaxed/simple;
-	bh=iWtkanQFn3k+fKIRSNxoYkPRygqwiMfMeBcnm452Abs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BmgbGAqLLaBO7iRQEZ67vTewk8++hSFFqvoeOwg8Q95QdkFuJxLMTfrbDsNm3I31VqNs8mB4wnY4Dx/Sjmk/sXmMl88wj2NfF3qR1k0J7M66V1w6M0koC4Z4Ie5yha1RavbS0FCV7euBlzneSGstrZyPC/2E+GjVRmTGi46cifA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AMeMUaKt; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4349f160d62so455705e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:18:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732738692; x=1733343492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iWtkanQFn3k+fKIRSNxoYkPRygqwiMfMeBcnm452Abs=;
-        b=AMeMUaKt3QsFa39ogSqPp6Oc/AcKYoNViXooYROSzFWcpO3jP0tDrttOBTWsF1mwoL
-         TafuVeB0jy5ft1IZGIzIIggtse63RoOvBghFUWbxovjrHtxjBPGfcCbtwIVwIMXXYe30
-         JjHPbzy9XZ8AuLhAJYlHDk6TLigBah85mhZt9rZbdPmd9Ok768zGEIdsrIfiHp+fAhgt
-         Ue9QFDIUzSf3i7r62QDyYPn4xMEImCeKazkjm1gkPck/RqZQBh+AKFUz2mJ1sFF9EDXl
-         rBTKdh1MJlyNFG70t1fX03dAehZPJuG+hWWVipCPlrpgaLT+n26QaF/5Se1S1X23p21Q
-         Igww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732738692; x=1733343492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iWtkanQFn3k+fKIRSNxoYkPRygqwiMfMeBcnm452Abs=;
-        b=o5IRZlYRGrJGXoH9e0hlRt3r5RtDdValPawAhIvyJsGZTNdUVOW4PCXndm1vL5GBfn
-         vx9fgXZItbP5FRu86ZQC8jSdKlIZ/GO2oucfhe1NmOItHaDg/mg5CVooknlODEA0bSNE
-         094kC4f81xv/nRl06X++pFN+WdcSCV8ISiTCP4exSwArBtwLbLZY3Pgf1vIYboNbN9la
-         iBAZtBsQL5w5G8tv55Bps0KCgWFACMQ+Dlqwwf6hGVnb5gIj5klmFkNqLvsRwSq/hy0a
-         B7E8ajAp3CQcMiOWtu+62bb56oxYjJShUc+B5bHJ21RMcOa/TZnkk6KvHJHYCbHeN5VV
-         ZaKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMYb8Q3oPalHPAZO1crmy+3WftQUfCc29vx1bEBlwB0LFl32XRR3Ds8mN1f3UwnWx1H2saZCL36RvrFzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+rQxcufkQgMIu1O75iENm6RFqoppvqPMvmv5NDT2WrAotPOlA
-	qF/hX7jRbqUryUnwP4q/4sfc2ei13xHP5Ajt8yBgniiIZayywIwmsRXsP0jC+0wubGMeDFHx8gi
-	ejPxp1b0+qA+mBYJdHZGvelslyW4AQpqVER5b
-X-Gm-Gg: ASbGncvnU1Y1+rwYI2UuG/Jxf7WDscBuhhNwRi4y454/c0s6/ZEYEQOtGnZXn/tu4KU
-	aL4WaYIrjsT+ilvfveQwjBYAFDf+wlqIR
-X-Google-Smtp-Source: AGHT+IGD3V+zmlg4ABEyFcJfFxdiSI3Xa9A1GIeQcefTQjzHie72TsmbhflHR68CenkvJh+FNnmRJuABJwSXf+d4wUs=
-X-Received: by 2002:a05:600c:45c9:b0:434:a196:6377 with SMTP id
- 5b1f17b1804b1-434a9dbed9bmr45626625e9.14.1732738691743; Wed, 27 Nov 2024
- 12:18:11 -0800 (PST)
+	s=arc-20240116; t=1732738882; c=relaxed/simple;
+	bh=H8seXUe/eRMaHx0BuL08kr/UFvhuKtwPm8qMsyQPpFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jVKQD3Exe5vzv1vkhxqizhN39980XV7lWknxSlR2AqHtE7aUkyigfh9TxKgSnq6ucRKRkB7QnzhP+FexUkxK9oM6yfxsanxMnie8KMfXuXJGvPseu3OfHIML6lwgZTR2BkUJpxbJc9ucQLKi93kDgdXXbj4XR+GxFXXERvKm4l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C/Gwgo7J; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732738880; x=1764274880;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=H8seXUe/eRMaHx0BuL08kr/UFvhuKtwPm8qMsyQPpFE=;
+  b=C/Gwgo7JJC496s1dC8rklkVioLWmQTShhfhLuZPrivNcPxW6vzZn+fLw
+   MhfaPadJfUddp0M6Wm3eQQbuWx7yu+tzJmGEyIZ8q5Jx6lAH9iIkWuwsR
+   RmzkGxFFDI95KeGWPFiOz6t/Qp+uxNE7EPx0bLNUW/vtcu90A8QtJukYX
+   BVR2rKoi2idAjRGRTU+BmHc0Lfk9dv5zq9uJtQDZz0I/B9knLev85E1os
+   RFcCOtiCJbTWPsdlPdi3sGgQtqzvThFsMhoPIrvagd5iaVrfMlR4UWVI+
+   J897ySlOl4HYIPFlSiRkoZp9UV1oi3zNVdOKtU2SN3tjaSp2rvN2mxQrO
+   w==;
+X-CSE-ConnectionGUID: z2vjZjnjScKZepAAJwA06w==
+X-CSE-MsgGUID: sd/FwAUjQcW8uPh/avXEvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="36886806"
+X-IronPort-AV: E=Sophos;i="6.12,190,1728975600"; 
+   d="scan'208";a="36886806"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 12:21:20 -0800
+X-CSE-ConnectionGUID: cZCNryF2THSnu1sHBptssA==
+X-CSE-MsgGUID: wKm1xg/xQiSitu6i2FMu9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,190,1728975600"; 
+   d="scan'208";a="92875829"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 27 Nov 2024 12:21:18 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tGOXE-0008L5-0K;
+	Wed, 27 Nov 2024 20:21:16 +0000
+Date: Thu, 28 Nov 2024 04:20:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Stanislaw Gruszka <sgruszka@redhat.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: drivers/net/wireless/realtek/rtw88/rtw8822c.c:329:1: warning: the
+ frame size of 1072 bytes is larger than 1024 bytes
+Message-ID: <202411280441.XgddHSn0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io>
- <20241126-pr_once_macros-v4-1-410b8ca9643e@tuta.io> <CAH5fLgj30AmuobugAgzG9vOhSOrk5SqWwguOoNeh3J2fmLRHCA@mail.gmail.com>
- <OCjFF0---F-9@tuta.io>
-In-Reply-To: <OCjFF0---F-9@tuta.io>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 27 Nov 2024 21:18:00 +0100
-Message-ID: <CAH5fLgj2qHjYj=heYi55qWz7=LxyHeUPyhbgVe0QLjzH0S34bw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] rust: Add `OnceLite` for executing code once
-To: jens.korinth@tuta.io
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Rust For Linux <rust-for-linux@vger.kernel.org>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Dirk Behme <dirk.behme@gmail.com>, 
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Nov 27, 2024 at 9:12=E2=80=AFPM <jens.korinth@tuta.io> wrote:
->
-> > What is the use-case for this function?
->
-> `DO_ONCE_LITE` has very few uses in C; frankly, the only other use I coul=
-d think
-> of was initialization. But since `OnceLite` cannot block or guarantee vis=
-ibility
-> of the side-effects of the `call_once` expression in other threads, it ca=
-n't be
-> used for this case, either. _Unless_ there is some mechanism to wait
-> voluntarily when this is required, hence `is_completed`. (And it also exi=
-sts in
-> `std::sync::Once`.)
->
-> `DO_ONCE_LITE_IF` has more uses in C, but this is a bit harder to do well=
- with
-> `OnceLite`: A `do_once_lite_if` Rust macro can't short-circuit the condit=
-ion to
-> avoid the evaluation if the atomic load already shows that it has been do=
-ne / is
-> being done rn. Maybe a
-> `pub fn call_once<C: FnOnce() -> bool, F: FnOnce()>(cond: C, f: F)` could=
- be
-> used to simulate the effect. Thoughts?
->
-> > Why not just have one atomic?
->
-> Do you also have an `AtomicU32` state var in mind, as Daniel suggested?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7d4050728c83aa63828494ad0f4d0eb4faf5f97a
+commit: e3037485c68ec1a299ff41160d8fedbd4abc29b9 rtw88: new Realtek 802.11ac driver
+date:   6 years ago
+config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20241128/202411280441.XgddHSn0-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411280441.XgddHSn0-lkp@intel.com/reproduce)
 
-What I had in mind was to use a single AtomicBool and get rid of the
-`is_completed` logic entirely. The purpose is to use this for printing
-once, and printing doesn't need `is_completed`. We can have another
-helper for other purposes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411280441.XgddHSn0-lkp@intel.com/
 
-Alice
+All warnings (new ones prefixed by >>):
+
+   In file included from include/asm-generic/bug.h:5,
+                    from ./arch/xtensa/include/generated/asm/bug.h:1,
+                    from include/linux/bug.h:5,
+                    from include/net/mac80211.h:19,
+                    from drivers/net/wireless/realtek/rtw88/main.h:8,
+                    from drivers/net/wireless/realtek/rtw88/rtw8822c.c:5:
+   include/linux/scatterlist.h: In function 'sg_set_buf':
+   arch/xtensa/include/asm/page.h:182:16: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+     182 |         ((pfn) >= ARCH_PFN_OFFSET && ((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
+         |                ^~
+   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
+      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+         |                                             ^
+   include/linux/scatterlist.h:143:9: note: in expansion of macro 'BUG_ON'
+     143 |         BUG_ON(!virt_addr_valid(buf));
+         |         ^~~~~~
+   arch/xtensa/include/asm/page.h:190:33: note: in expansion of macro 'pfn_valid'
+     190 | #define virt_addr_valid(kaddr)  pfn_valid(__pa(kaddr) >> PAGE_SHIFT)
+         |                                 ^~~~~~~~~
+   include/linux/scatterlist.h:143:17: note: in expansion of macro 'virt_addr_valid'
+     143 |         BUG_ON(!virt_addr_valid(buf));
+         |                 ^~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h: In function 'dma_map_resource':
+   arch/xtensa/include/asm/page.h:182:16: warning: comparison of unsigned expression in '>= 0' is always true [-Wtype-limits]
+     182 |         ((pfn) >= ARCH_PFN_OFFSET && ((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
+         |                ^~
+   include/asm-generic/bug.h:148:34: note: in definition of macro 'WARN_ON_ONCE'
+     148 |         int __ret_warn_once = !!(condition);                    \
+         |                                  ^~~~~~~~~
+   include/linux/dma-mapping.h:359:26: note: in expansion of macro 'pfn_valid'
+     359 |         if (WARN_ON_ONCE(pfn_valid(PHYS_PFN(phys_addr))))
+         |                          ^~~~~~~~~
+   drivers/net/wireless/realtek/rtw88/rtw8822c.c: In function 'rtw8822c_dac_cal_rf_mode':
+>> drivers/net/wireless/realtek/rtw88/rtw8822c.c:329:1: warning: the frame size of 1072 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+     329 | }
+         | ^
+
+
+vim +329 drivers/net/wireless/realtek/rtw88/rtw8822c.c
+
+   312	
+   313	static void rtw8822c_dac_cal_rf_mode(struct rtw_dev *rtwdev,
+   314					     u32 *i_value, u32 *q_value)
+   315	{
+   316		u32 iv[DACK_SN_8822C], qv[DACK_SN_8822C];
+   317		u32 rf_a, rf_b;
+   318	
+   319		mdelay(10);
+   320	
+   321		rf_a = rtw_read_rf(rtwdev, RF_PATH_A, 0x0, RFREG_MASK);
+   322		rf_b = rtw_read_rf(rtwdev, RF_PATH_B, 0x0, RFREG_MASK);
+   323	
+   324		rtw_dbg(rtwdev, RTW_DBG_RFK, "[DACK] RF path-A=0x%05x\n", rf_a);
+   325		rtw_dbg(rtwdev, RTW_DBG_RFK, "[DACK] RF path-B=0x%05x\n", rf_b);
+   326	
+   327		rtw8822c_dac_cal_iq_sample(rtwdev, iv, qv);
+   328		rtw8822c_dac_cal_iq_search(rtwdev, iv, qv, i_value, q_value);
+ > 329	}
+   330	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
