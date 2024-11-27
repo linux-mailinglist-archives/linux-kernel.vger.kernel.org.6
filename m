@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-423846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBD69DAD82
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:05:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00799DAD80
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:04:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907D5282202
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7444B166367
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A60203718;
-	Wed, 27 Nov 2024 19:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBBF202F64;
+	Wed, 27 Nov 2024 19:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j+btQi7C"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c6yI3hXu"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7F1FF7DF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E4F1FE45C
 	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732734246; cv=none; b=A5BYwTolX+qqr3RV6G4QzWDiDGUpU1DA7mIGnGredpTUl1aw+HMjj8QRIlwssjE0heXtrZNOL4WbSbms3LqlJUPYAQqqQr9jeQ0ri4ids3YHwXjmw+A4J8fcUYqh/DZIZmpk9oxbJYOgu6pPH1M4VFMeXu714t4xnraCZ5DF3G8=
+	t=1732734246; cv=none; b=G+AwEVGvv8Zcu5Dk1bEV1HD8/O7M056KLNfYwBGpa0oMUnBXqabb+Ua6wJjTCSpCDeOzJe4mcDKUigNrO5axnEZOKImP0wN42BVW6sQS2L8fp7YDVI3/35EcDJkMEFCekmREOlTlZhhKo0VRC+YcEtdhAHBRevmSpn9LQn2yn6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732734246; c=relaxed/simple;
-	bh=QJxzlm/nn8Yq8Tsj0Zor4e8z8UaVsFNQs4U9DwetKYs=;
+	bh=D+JloHBMt0oC8r70FErtjAFnRxiGxH8EaihhtPNVCeI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BLoeigsdjoKiI6TAjjTiKasL2yiAywdl1eUJYYXML+6K/JlJB9zbauulBxXIFs73h2GdyvCzkJTzecaKVGLCk9/d+z0zTftUuPOnnJEiQqRsFmebIzxJtCfy/jutT1ID87k0mNdHJu+i2tmGpn8u+IrumMdVAjw8EBCH+0O6rAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j+btQi7C; arc=none smtp.client-ip=90.155.92.199
+	 MIME-Version; b=uJmomyjQDBljsuFJ0a1/JASVU2CY6VOKxQD5+i6tvSzEQCkhR3ZhXb7yHJAKfV3ZitlZPO9jA5ZL6p3JH5PquO/sR4/7AEtENDgAdvy1EGHLkpV/TuSNsaC5FUzjUjMOAfCOqrg5aMT/fBbtvK+RVA4QnZJpdxqgQ6249im7xTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c6yI3hXu; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=uDB0B/y8BEIJAdSME/L53tegScvP1ehfXftaZ5ENwBE=; b=j+btQi7CSOsAF3Gyz7jFumIZOU
-	KeEFCMmvjqMLuQeNRJTuchluRVGy+eur5LdE4UJbyXwOEadgZN4KTqsD9XB8/0sWMQUNHyiryNi3A
-	7jJXxoMJ/YJ001YgGCPGwHbk77IVw98cOSx1+4Hiy6+5FVhKveEmtSE15ambQzMRPNuMequKw7Aat
-	CN4vqpQtTBR4H9bYJECES/lA6Je9LFsA5OFaN3G70abwOHTFpw6Krw3pNxbxDQrAc1pkrFzDk8TLO
-	6JiMbTb6amoMjaHor7IeII2h42eBoV7oegiM316Le4bAJ33sUTu83mFkF7p/qsxFmk7GBQ8o5myql
-	gdoEcNeQ==;
+	bh=r3AYqthkhqE/hpsX8OlsrIm8YbRRATEjfUq8IVBi2fg=; b=c6yI3hXuTHaVrvxd1yVnHBVNij
+	96A37jM/iCQUDKVKAlMQN8W8+Yr5+O/MCkQEvvGDHyzlceX95tnVQ54UTGjTo95FsiCzt8tHlqxjc
+	c7qG6T1XRoLA4sUABomX1yNBJDmi7TQO5p1nmcSXdtWaeC40ulDx7Om9isCCmryt1PDt9CFinKN6D
+	unqbwGZsLVdRZlU1D5ss+qnhvrbroS/4iJgXIL6lrH23QI6ZibbR1wH16QYsNmVFcgNrYbypb3sVK
+	etkrF/ftkKgYc/ACKnfRrGfJFJ1B6aUf/mUu/cX/rfcI0BSjIRQHATtN5B0LP33wtqiSTfY2TMOKx
+	wN42K1VA==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGNKF-00000001Suk-17q2;
+	id 1tGNKF-00000001Sul-17l5;
 	Wed, 27 Nov 2024 19:03:47 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGNKE-00000000BjP-38M8;
+	id 1tGNKE-00000000BjT-3JcL;
 	Wed, 27 Nov 2024 19:03:46 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -65,9 +65,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [RFC PATCH v4 19/20] x86/kexec: Add 8250 serial port output
-Date: Wed, 27 Nov 2024 19:00:33 +0000
-Message-ID: <20241127190343.44916-20-dwmw2@infradead.org>
+Subject: [RFC PATCH v4 20/20] [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
+Date: Wed, 27 Nov 2024 19:00:34 +0000
+Message-ID: <20241127190343.44916-21-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241127190343.44916-1-dwmw2@infradead.org>
 References: <20241127190343.44916-1-dwmw2@infradead.org>
@@ -83,118 +83,24 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-If a serial port was configured for early_printk, use it for debug output
-from the relocate_kernel exception handler too.
-
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/include/asm/kexec.h         |  1 +
- arch/x86/kernel/early_printk.c       |  6 +++++
- arch/x86/kernel/relocate_kernel_64.S | 37 +++++++++++++++++++++++-----
- 3 files changed, 38 insertions(+), 6 deletions(-)
+ arch/x86/kernel/relocate_kernel_64.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index c14b0a2704c0..f37d2d9fda3f 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -63,6 +63,7 @@ extern unsigned long kexec_pa_table_page;
- extern unsigned long kexec_pa_swap_page;
- extern gate_desc kexec_debug_idt[];
- extern unsigned char kexec_debug_exc_vectors[];
-+extern uint16_t kexec_debug_8250_port;
- #endif
- 
- /*
-diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-index 44f937015e1e..bf06866ee90a 100644
---- a/arch/x86/kernel/early_printk.c
-+++ b/arch/x86/kernel/early_printk.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/console.h>
- #include <linux/kernel.h>
-+#include <linux/kexec.h>
- #include <linux/init.h>
- #include <linux/string.h>
- #include <linux/screen_info.h>
-@@ -141,6 +142,11 @@ static __init void early_serial_hw_init(unsigned divisor)
- 	serial_out(early_serial_base, DLL, divisor & 0xff);
- 	serial_out(early_serial_base, DLH, (divisor >> 8) & 0xff);
- 	serial_out(early_serial_base, LCR, c & ~DLAB);
-+
-+#ifdef CONFIG_KEXEC_DEBUG
-+	if (serial_in == io_serial_in)
-+		kexec_debug_8250_port = early_serial_base;
-+#endif
- }
- 
- #define DEFAULT_BAUD 9600
 diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index cd349b6d34a7..01a31e4a0664 100644
+index 01a31e4a0664..ff8a813a9f9b 100644
 --- a/arch/x86/kernel/relocate_kernel_64.S
 +++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -38,6 +38,7 @@ SYM_DATA(kexec_va_control_page, .quad 0)
- SYM_DATA(kexec_pa_table_page, .quad 0)
- SYM_DATA(kexec_pa_swap_page, .quad 0)
- SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
-+SYM_DATA(kexec_debug_8250_port, .word 0)
+@@ -152,7 +152,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	lidt	(%rsp)
+ 	addq	$10, %rsp
  
- #ifdef CONFIG_KEXEC_DEBUG
- 	.balign 16
-@@ -364,23 +365,47 @@ SYM_CODE_END(swap_pages)
+-	//int3
++	int3
+ #endif /* CONFIG_KEXEC_DEBUG */
  
- #ifdef CONFIG_KEXEC_DEBUG
- /*
-- * Generic 'print character' routine (as yet unimplemented)
-+ * Generic 'print character' routine
-  *  - %al: Character to be printed (may clobber %rax)
-  *  - %rdx: MMIO address or port.
-  */
--SYM_CODE_START_LOCAL_NOALIGN(pr_char)
-+#define XMTRDY          0x20
-+
-+#define TXR             0       /*  Transmit register (WRITE) */
-+#define LSR             5       /*  Line Status               */
-+
-+SYM_CODE_START_LOCAL_NOALIGN(pr_char_8250)
- 	UNWIND_HINT_FUNC
-+	addw	$LSR, %dx
-+	xchg	%al, %ah
-+.Lxmtrdy_loop:
-+	inb	%dx, %al
-+	testb	$XMTRDY, %al
-+	jnz	.Lready
-+	rep nop
-+	jmp .Lxmtrdy_loop
-+
-+.Lready:
-+	subw	$LSR, %dx
-+	xchg	%al, %ah
-+	outb	%al, %dx
-+pr_char_null:
- 	ANNOTATE_UNRET_SAFE
- 	ret
--SYM_CODE_END(pr_char)
-+SYM_CODE_END(pr_char_8250)
- 
- /*
-  * Load pr_char function pointer into %rsi and load %rdx with whatever
-  * that function wants to see there (typically port/MMIO address).
-  */
--.macro	pr_setup
--	/* No output; pr_char just returns */
--	leaq	pr_char(%rip), %rsi
-+.macro pr_setup
-+	leaq	pr_char_8250(%rip), %rsi
-+	movw	kexec_debug_8250_port(%rip), %dx
-+	testw	%dx, %dx
-+	jnz	1f
-+
-+	leaq	pr_char_null(%rip), %rsi
-+1:
- .endm
- 
- /* Print the nybble in %bl, clobber %rax */
+ 	/*
 -- 
 2.47.0
 
