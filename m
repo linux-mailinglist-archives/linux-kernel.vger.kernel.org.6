@@ -1,148 +1,177 @@
-Return-Path: <linux-kernel+bounces-423183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDE69DA405
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:35:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BA79DA407
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:37:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36A8284311
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40493167B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6EF18CBE8;
-	Wed, 27 Nov 2024 08:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ePtpbDGd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660F818C03E;
+	Wed, 27 Nov 2024 08:37:26 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E2C1114;
-	Wed, 27 Nov 2024 08:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3497E1114;
+	Wed, 27 Nov 2024 08:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732696499; cv=none; b=OxUE8TpoJIK6gKbZoYm6/UOWtfSwApdhi7qT39n2nZxG/bB13Y4Y0R2cGvLOQNzUesqY57jbGsqN8qrWqwleRejoOUk8s8Zg6PhUXAFlrs0LldEt8n/IQu1l2RPLxcAIZl8IEtGNuF9UmCaRWCkz8ZlpJ/lgESaCt64MpMLePMU=
+	t=1732696646; cv=none; b=GrzU5VYbJt6HvX+tp4J/ptIwCCQRrYC1TQJyWaXlA3ldqtOBDeAbb6HIzyEYm9m8V7Z9V2vweZ+L07owf4M4hEt6Ln2FTc/AnZYjN17QkBg8GxVmacwrBNvnb8EEcKEUy0718VDe+wSKSGXZhPQtgaPiGCU5cQZSF9KGHygrZpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732696499; c=relaxed/simple;
-	bh=Ze4jFSr20glq2KKoEzubGfLgmXPognZt9fc7rqvDDaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBq9WDon5MGo9zXqhTNRCBNhQpS1v2RztySelBZO+U6cgbAdvrjj26vn0cGAK8THvK16I4zt3uxrlp9+egY9cuf6/qQT3OFXjzybqUdzGSkwE55W3Oe629ga2ecZbX+9qlsyJUHLHiKH/aZyvmlTD5Vb8YMuEEwYU3qzE8IOk48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ePtpbDGd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4E3B978C;
-	Wed, 27 Nov 2024 09:34:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732696472;
-	bh=Ze4jFSr20glq2KKoEzubGfLgmXPognZt9fc7rqvDDaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePtpbDGd5oHd9r6b/JsfGFZvqas1LznKEs6X1vKa1qcmKnQLQp3TQD8JtXcGebyCh
-	 6o3XIuysKyPIYxmn1GTLSr+fwiYw6RMEvsl3JQh0n40EmDScnr2L32RYx9VapGSepm
-	 w/Z67XwZhBCAhKVX2na5J+dCBSoNjBaGzEmRIy+o=
-Date: Wed, 27 Nov 2024 10:34:44 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] media: uvcvideo: Support partial control reads
-Message-ID: <20241127083444.GV5461@pendragon.ideasonboard.com>
-References: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
- <20241120-uvc-readless-v4-1-4672dbef3d46@chromium.org>
- <20241126180616.GL5461@pendragon.ideasonboard.com>
- <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com>
+	s=arc-20240116; t=1732696646; c=relaxed/simple;
+	bh=r/4spSDsO2Eq03HHcRzuwsSHv01JdyKPJ0trxriIq2s=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Uh9A7gbLcPbgPiUY5kixOc/TNzCafT3kuB9U7L2rOXKo1mPS2axYZnOcGFjm3lYCSMKvAJIU9kfkIoULCyA+ttGMpDOm6IPl9pH8aDQl8Vl2qtq4GaMNwwvkvGVEUCSZfGz9cFlO4U4sAvQNZKRzQS+XQLetjAYG299uJuADvQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 67ECD1F74D;
+	Wed, 27 Nov 2024 08:37:22 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2067813941;
+	Wed, 27 Nov 2024 08:37:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Vl/SLT7aRmfsLAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 27 Nov 2024 08:37:18 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com>
+From: "NeilBrown" <neilb@suse.de>
+To: "Jan Kara" <jack@suse.cz>
+Cc: "Anders Blomdell" <anders.blomdell@gmail.com>,
+ "Philippe Troin" <phil@fifi.org>, "Jan Kara" <jack@suse.cz>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+In-reply-to: <20241126150613.a4b57y2qmolapsuc@quack3>
+References: <>, <20241126150613.a4b57y2qmolapsuc@quack3>
+Date: Wed, 27 Nov 2024 19:37:10 +1100
+Message-id: <173269663098.1734440.13407516531783940860@noble.neil.brown.name>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 67ECD1F74D
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
 
-On Tue, Nov 26, 2024 at 07:12:53PM +0100, Ricardo Ribalda wrote:
-> On Tue, 26 Nov 2024 at 19:06, Laurent Pinchart wrote:
-> > On Wed, Nov 20, 2024 at 03:26:19PM +0000, Ricardo Ribalda wrote:
-> > > Some cameras, like the ELMO MX-P3, do not return all the bytes
-> > > requested from a control if it can fit in less bytes.
-> > > Eg: Returning 0xab instead of 0x00ab.
-> > > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
-> > >
-> > > Extend the returned value from the camera and return it.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
-> > > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++++
-> > >  1 file changed, 16 insertions(+)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > > index cd9c29532fb0..482c4ceceaac 100644
-> > > --- a/drivers/media/usb/uvc/uvc_video.c
-> > > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > > @@ -79,6 +79,22 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
-> > >       if (likely(ret == size))
-> > >               return 0;
-> > >
-> > > +     /*
-> > > +      * In UVC the data is usually represented in little-endian.
-> >
-> > I had a comment about this in the previous version, did you ignore it on
-> > purpose because you disagreed, or was it an oversight ?
-> 
-> I rephrased the comment. I added "usually" to make it clear that it
-> might not be the case for all the data types. Like composed or xu.
+On Wed, 27 Nov 2024, Jan Kara wrote:
+> On Tue 26-11-24 11:37:19, Jan Kara wrote:
+> > On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> > > On 2024-11-26 02:48, Philippe Troin wrote:
+> > > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > > > responding).
+> > > > > What triggered this problem was virtual machines with NFS-mounted
+> > > > > qcow2 disks
+> > > > > that often triggered large readaheads that generates long streaks of
+> > > > > disk I/O
+> > > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > > > area of the
+> > > > > machine.
+> > > > >=20
+> > > > > A git bisect gave the following suspect:
+> > > > >=20
+> > > > > git bisect start
+> > > >=20
+> > > > 8< snip >8
+> > > >=20
+> > > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > > > readahead: properly shorten readahead when falling back to
+> > > > > do_page_cache_ra()
+> > > >=20
+> > > > Thank you for taking the time to bisect, this issue has been bugging
+> > > > me, but it's been non-deterministic, and hence hard to bisect.
+> > > >=20
+> > > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > > > slightly different setups:
+> > > >=20
+> > > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > > > "nfs server XXX not responding, still trying" that never recovers
+> > > > (while the server remains pingable and other NFSv3 volumes from the
+> > > > hanging server can be mounted).
+> > > >=20
+> > > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > > > several minutes) on random I/O. These stalls eventually recover.
+> > > >=20
+> > > > I've built a 6.11.10 kernel with
+> > > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > > > normal (no more NFS hangs, no more VM stalls).
+> > > >=20
+> > > Some printk debugging, seems to indicate that the problem
+> > > is that the entity 'ra->size - (index - start)' goes
+> > > negative, which then gets cast to a very large unsigned
+> > > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> > > bug is still eludes me, though.
+> >=20
+> > Thanks for the report, bisection and debugging! I think I see what's going
+> > on. read_pages() can go and reduce ra->size when ->readahead() callback
+> > failed to read all folios prepared for reading and apparently that's what
+> > happens with NFS and what can lead to negative argument to
+> > do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> > ra->size / ra->async_size does more harm than good (because those values
+> > show *desired* readahead to happen, not exact number of pages read),
+> > furthermore it is problematic because ra can be shared by multiple
+> > processes and so updates are inherently racy. If we indeed need to store
+> > number of read pages, we could do it through ractl which is call-site loc=
+al
+> > and used for communication between readahead generic functions and caller=
+s.
+> > But I have to do some more history digging and code reading to understand
+> > what is using this logic in read_pages().
+>=20
+> Hum, checking the history the update of ra->size has been added by Neil two
+> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
+> process all pages"). Neil, the changelog seems as there was some real
+> motivation behind updating of ra->size in read_pages(). What was it? Now I
+> somewhat disagree with reducing ra->size in read_pages() because it seems
+> like a wrong place to do that and if we do need something like that,
+> readahead window sizing logic should rather be changed to take that into
+> account? But it all depends on what was the real rationale behind reducing
+> ra->size in read_pages()...
+>=20
 
-Ah, that's what you meant by "usually". I read it as "usually in
-little-endian, but could be big-endian too", which confused me.
+I cannot tell you much more than what the commit itself says.
+If there are any pages still in the rac, then we didn't try read-ahead
+and shouldn't pretend that we did. Else the numbers will be wrong.
 
-Data types that are not integers will not work nicely with the
-workaround below. How do you envision that being handled ? Do you
-consider that the device will return too few bytes only for integer data
-types, or that affected devices don't have controls that use compound
-data types ? I don't see what else we could do so I'd be fine with such
-a heuristic for this workaround, but it needs to be clearly explained.
+I think the important part of the patch was the
+delete_from_page_cache().
+Leaving pages in the page cache which we didn't try to read will cause
+a future read-ahead to skip those pages and they can only be read
+synchronously.
 
-> I also r/package/packet/
-> 
-> Did I miss another comment?
-> 
-> > > +      * Some devices return shorter USB control packets that expected if the
-> > > +      * returned value can fit in less bytes. Zero all the bytes that the
-> > > +      * device have not written.
-> >
-> > s/have/has/
-> >
-> > And if you meant to start a new paragraph here, a blank line is missing.
-> > Otherwise, no need to break the line before 80 columns.
-> 
-> The patch is already in the uvc tree. How do you want to handle this?
+But maybe you are right that ra, being shared, shouldn't be modified
+like this.
 
-The branch shared between Hans and me can be rebased, it's a staging
-area.
-
-> > > +      * We exclude UVC_GET_INFO from the quirk. UVC_GET_LEN does not need to
-> > > +      * be excluded because its size is always 1.
-> > > +      */
-> > > +     if (ret > 0 && query != UVC_GET_INFO) {
-> > > +             memset(data + ret, 0, size - ret);
-> > > +             dev_warn_once(&dev->udev->dev,
-> > > +                           "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
-> > > +                           uvc_query_name(query), cs, unit, ret, size);
-> > > +             return 0;
-> > > +     }
-> > > +
-> > >       if (ret != -EPIPE) {
-> > >               dev_err(&dev->udev->dev,
-> > >                       "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+NeilBrown
 
