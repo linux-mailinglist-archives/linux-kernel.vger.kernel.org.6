@@ -1,191 +1,382 @@
-Return-Path: <linux-kernel+bounces-423461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5069DA7A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:19:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CFD9DA7AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB3B285D16
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01C0281DAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A0F1FBE87;
-	Wed, 27 Nov 2024 12:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5FB1FBEAE;
+	Wed, 27 Nov 2024 12:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YSOfCDAx"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CeNwc5A1"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929DF1FBC85;
-	Wed, 27 Nov 2024 12:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B8B1FBE9D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709986; cv=none; b=K30N8HwQx7dStrjJ7SNWERfH2Kitf4B4MLEOgw9tVTTIqznZTPbdzQ6cqcZJt3WtVpue0T0B9R3FYleBCGI+9wYL7Ta9cxSgLWQunZN3LlX0PXXZukirNSG0lT3w14/oKpQLOSO8yOqDuRRKXTDGkwUZi05KCmjeFCjEV+aa7HA=
+	t=1732710127; cv=none; b=j6ptbMx2NTVcg4SOavvvU/U68Bun2rgVujSs6X4qNv93R+iaz3tD/m5/f1r0Sn8I1RB90loYUNb/+0UHGkHiYCQK4w2+RXKVa9Uuvkj7wERfTJXMT5hjZfrBdg8QMthoS2f7/OQI/o2tGV9feVsOlKPeJpgpR5k+92nyXLCvaZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709986; c=relaxed/simple;
-	bh=NWuNC3c43uhkrT8zGwzntrXaqdQzB8Qesf5TVf78OZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jZTwslO1mh12x0VnPynay13wtDRfb0ly4L+CDgEONcZ/V7B+8Ffoh8CxBDPzEq8VFIy2z/MXggwbuqXsBop+GQP2XqNI0auVNzogEVyIZWaRYkwD3QduydqgXxIJ5myTef3YWxrGqfqHW+ZX5S43A/jAjo7o2Oqcf5ZQVb7BR3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YSOfCDAx; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B42F440004;
-	Wed, 27 Nov 2024 12:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732709975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WcD8l6qNeOtVuGNjTvtgZIbqX/5fA+izqq4+iRk8MXY=;
-	b=YSOfCDAxn+aRLY448U6U8JyuDpXKPTQ08yVVB8zCXZuVFOeQaiiUWx1qQihwDzvGdRlMVu
-	/76BIyRYFcTF6RFTz3OLT/Uye3IOkuFYMP/aH4KmfmJQmFAWvvq9i6dNXaSp2b/sy0ADnl
-	EqDWhBLIhHk1qDRF9+fdv1a9uLZGY+4YaEY3Aoe+vv35MHLzSnavNfru/W621Vw892rVa4
-	QWqfoYa00fBmxoY+v7QhAg4GXooACqH0ST1xoBT+JrbQwpe0Uk4/pBqs1bXTTS0PGCzTRX
-	ebcr0VAgYDvI77odRX6Qveu9l4jhghB8CopOpCUmeadibwlGNY3KsX0OpchAug==
-Date: Wed, 27 Nov 2024 13:19:31 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wolfram Sang <wsa@kernel.org>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Cosmin Tanislav <demonsingur@gmail.com>, Tomi
- Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH v2 2/3] i2c: atr: Allow unmapped addresses from nested
- ATRs
-Message-ID: <20241127131931.19af84c2@booty>
-In-Reply-To: <b954c7b7-1094-48f9-afd9-00e386cd2443@ideasonboard.com>
-References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
-	<20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
-	<20241126091610.05e2d7c7@booty>
-	<b954c7b7-1094-48f9-afd9-00e386cd2443@ideasonboard.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732710127; c=relaxed/simple;
+	bh=3e/5P/6ZHWK40zH/Dgceg6zafXwzBI/F2osZqJio/IQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TL4fmTtjw0MkzJmQ4sYF61nl7/vkXhVNs+2KzmzbxZP3IEsN97qRrA5/+muTQ4rcFRKqiuc7eysftW/1rlvcrrRAstsF3Xpv9WNyBDeD/Dh67iFEozwMDscjDGhPJE6dV4O3pJoLUZvcwsVJyD2uoyJtzyevdvJhc/rQhzCMvXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CeNwc5A1; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4349e1467fbso29037635e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:22:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732710123; x=1733314923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZG7A1UTDNMC4Ry/XuOcOHO26vqI6CqsjaZF79UCoUIc=;
+        b=CeNwc5A1OalYpSdafHpstSfAbDPsLBHI9bRRcE1k2NSfLkCdnyGmxas1OiqGBatJgK
+         FtkeM4TixfNe2+0peH9bomYg9IdmZuJIvE3hYM893kyK3dpLbY7noanfgzicegNTNh91
+         Ci4ginvskPeo9ghKJrLZaggjzMu2BrQjL0FPkJrxejRTbWjOahxLxf5IpvQvcQyM1QEu
+         IXwXfM05dZ8bJVT7N98NZxcIT3/oxfIDb7KYKC06j72eOMxrjKi+R6P/jRcihTTkkYX1
+         rCKApU5BzBQHYqe0GQ8NgoCEkOAEevPxHtxZ69FDuetUwx54LXV12OhwGq6N2E12bqG3
+         xnCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732710123; x=1733314923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZG7A1UTDNMC4Ry/XuOcOHO26vqI6CqsjaZF79UCoUIc=;
+        b=jVnDqb0moTk57hAaUcn4TpxUZDuRWz7mavB9GQValHxR5h+kElsXP1uM0VjzzMys+p
+         B52f6Nh7JMgdr0kHYuNtgHHqAjUtolRjqA/Zmwfh/8aO22qQTbQ1zdDOpSFy0j5SvhYR
+         lL8eLXFAEo1JRo0CDL0MT7rP7XQDIU7dlC+nv9XNMvm3yKa+fS2odB5O1TGH0nAS7kiY
+         O129sOBmteoVvpxSXr5uXNdfXZovAGC4tmitOW//TyvoXTEi711oGOW6bxse9ikfMKPZ
+         rJBXZ2TQXtGW6i9AqC0+YrIaWsD4Oquw5OY0mGfTypD9no72hPt5K3+J9gChCWrBQTCq
+         HnMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeXruspwGuMFV6pGZ3g2OA2YjdD5KBR7nZhitbjr0ww6YTVw+CZ4OhglOf6JgcO6Suq66mDLdy7M/RGh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh7lBRLAxHO3aooqIs+H4+WDhAlh0cI5wDvWqOZytjiLw1AvRT
+	cHiANNeXaBsZVJ//+sSngpdhaVHS1VYwGwX1nPd7j1PX3MlEN0PqNtFDR9YilaMrx5JEVxVdsHf
+	nVxwSu00qUo35G4SF3q2m92pChqzcQSzKva9F
+X-Gm-Gg: ASbGnct4eNEVKV429H3HPJgzt+zNimBIQWvaRMJKX3lQc3G3sU2YP/Uf9XvxAEqWwLO
+	sw9PLzqF2BKHBOQGIFHVvHA6nc+0MX1tD6dZvYo3dTonAtRxYXAfLiEEs8EnETw==
+X-Google-Smtp-Source: AGHT+IF4+wdI5JKdr3K6j1/1J51foaLydV2KUfE3ySjw3J47y7YMvldrRsWmH+nugd6eg3J2lJ9qERnCsRyrN6lqbhI=
+X-Received: by 2002:a5d:64c6:0:b0:382:5112:562f with SMTP id
+ ffacd0b85a97d-385c6cca152mr2118376f8f.11.1732710122796; Wed, 27 Nov 2024
+ 04:22:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-11-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-11-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 27 Nov 2024 13:21:50 +0100
+Message-ID: <CAH5fLgjdKRCECmZbjC-+6SQffFtgimfxhDJ3grVw1_hbQec1-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 10/16] rust: add devres abstraction
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Tomi,
+On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> Add a Rust abstraction for the kernel's devres (device resource
+> management) implementation.
+>
+> The Devres type acts as a container to manage the lifetime and
+> accessibility of device bound resources. Therefore it registers a
+> devres callback and revokes access to the resource on invocation.
+>
+> Users of the Devres abstraction can simply free the corresponding
+> resources in their Drop implementation, which is invoked when either the
+> Devres instance goes out of scope or the devres callback leads to the
+> resource being revoked, which implies a call to drop_in_place().
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  MAINTAINERS            |   1 +
+>  rust/helpers/device.c  |  10 +++
+>  rust/helpers/helpers.c |   1 +
+>  rust/kernel/devres.rs  | 180 +++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs     |   1 +
+>  5 files changed, 193 insertions(+)
+>  create mode 100644 rust/helpers/device.c
+>  create mode 100644 rust/kernel/devres.rs
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0a8882252257..97914d0752fb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6983,6 +6983,7 @@ F:        include/linux/property.h
+>  F:     lib/kobj*
+>  F:     rust/kernel/device.rs
+>  F:     rust/kernel/device_id.rs
+> +F:     rust/kernel/devres.rs
+>  F:     rust/kernel/driver.rs
+>
+>  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+> diff --git a/rust/helpers/device.c b/rust/helpers/device.c
+> new file mode 100644
+> index 000000000000..b2135c6686b0
+> --- /dev/null
+> +++ b/rust/helpers/device.c
+> @@ -0,0 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/device.h>
+> +
+> +int rust_helper_devm_add_action(struct device *dev,
+> +                               void (*action)(void *),
+> +                               void *data)
+> +{
+> +       return devm_add_action(dev, action, data);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index e2f6b2197061..3acb2b9e52ec 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -11,6 +11,7 @@
+>  #include "bug.c"
+>  #include "build_assert.c"
+>  #include "build_bug.c"
+> +#include "device.c"
+>  #include "err.c"
+>  #include "io.c"
+>  #include "kunit.c"
+> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> new file mode 100644
+> index 000000000000..b23559f55214
+> --- /dev/null
+> +++ b/rust/kernel/devres.rs
+> @@ -0,0 +1,180 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Devres abstraction
+> +//!
+> +//! [`Devres`] represents an abstraction for the kernel devres (device r=
+esource management)
+> +//! implementation.
+> +
+> +use crate::{
+> +    alloc::Flags,
+> +    bindings,
+> +    device::Device,
+> +    error::{Error, Result},
+> +    prelude::*,
+> +    revocable::Revocable,
+> +    sync::Arc,
+> +};
+> +
+> +use core::ffi::c_void;
+> +use core::ops::Deref;
+> +
+> +#[pin_data]
+> +struct DevresInner<T> {
+> +    #[pin]
+> +    data: Revocable<T>,
+> +}
+> +
+> +/// This abstraction is meant to be used by subsystems to containerize [=
+`Device`] bound resources to
+> +/// manage their lifetime.
+> +///
+> +/// [`Device`] bound resources should be freed when either the resource =
+goes out of scope or the
+> +/// [`Device`] is unbound respectively, depending on what happens first.
+> +///
+> +/// To achieve that [`Devres`] registers a devres callback on creation, =
+which is called once the
+> +/// [`Device`] is unbound, revoking access to the encapsulated resource =
+(see also [`Revocable`]).
+> +///
+> +/// After the [`Devres`] has been unbound it is not possible to access t=
+he encapsulated resource
+> +/// anymore.
+> +///
+> +/// [`Devres`] users should make sure to simply free the corresponding b=
+acking resource in `T`'s
+> +/// [`Drop`] implementation.
+> +///
+> +/// # Example
+> +///
+> +/// ```no_run
+> +/// # use kernel::{bindings, c_str, device::Device, devres::Devres, io::=
+Io};
+> +/// # use core::ops::Deref;
+> +///
+> +/// // See also [`pci::Bar`] for a real example.
+> +/// struct IoMem<const SIZE: usize>(Io<SIZE>);
+> +///
+> +/// impl<const SIZE: usize> IoMem<SIZE> {
+> +///     /// # Safety
+> +///     ///
+> +///     /// [`paddr`, `paddr` + `SIZE`) must be a valid MMIO region that=
+ is mappable into the CPUs
+> +///     /// virtual address space.
+> +///     unsafe fn new(paddr: usize) -> Result<Self>{
+> +///
+> +///         // SAFETY: By the safety requirements of this function [`pad=
+dr`, `paddr` + `SIZE`) is
+> +///         // valid for `ioremap`.
+> +///         let addr =3D unsafe { bindings::ioremap(paddr as _, SIZE.try=
+_into().unwrap()) };
+> +///         if addr.is_null() {
+> +///             return Err(ENOMEM);
+> +///         }
+> +///
+> +///         // SAFETY: `addr` is guaranteed to be the start of a valid I=
+/O mapped memory region of
+> +///         // size `SIZE`.
+> +///         let io =3D unsafe { Io::new(addr as _, SIZE)? };
+> +///
+> +///         Ok(IoMem(io))
+> +///     }
+> +/// }
+> +///
+> +/// impl<const SIZE: usize> Drop for IoMem<SIZE> {
+> +///     fn drop(&mut self) {
+> +///         // SAFETY: Safe as by the invariant of `Io`.
+> +///         unsafe { bindings::iounmap(self.0.base_addr() as _); };
+> +///     }
+> +/// }
+> +///
+> +/// impl<const SIZE: usize> Deref for IoMem<SIZE> {
+> +///    type Target =3D Io<SIZE>;
+> +///
+> +///    fn deref(&self) -> &Self::Target {
+> +///        &self.0
+> +///    }
+> +/// }
+> +///
+> +/// # fn no_run() -> Result<(), Error> {
+> +/// # // SAFETY: Invalid usage; just for the example to get an `ARef<Dev=
+ice>` instance.
+> +/// # let dev =3D unsafe { Device::from_raw(core::ptr::null_mut()) };
+> +///
+> +/// // SAFETY: Invalid usage for example purposes.
+> +/// let iomem =3D unsafe { IoMem::<{ core::mem::size_of::<u32>() }>::new=
+(0xBAAAAAAD)? };
+> +/// let devres =3D Devres::new(&dev, iomem, GFP_KERNEL)?;
+> +///
+> +/// let res =3D devres.try_access().ok_or(ENXIO)?;
+> +/// res.writel(0x42, 0x0);
+> +/// # Ok(())
+> +/// # }
+> +/// ```
+> +pub struct Devres<T>(Arc<DevresInner<T>>);
+> +
+> +impl<T> DevresInner<T> {
+> +    fn new(dev: &Device, data: T, flags: Flags) -> Result<Arc<DevresInne=
+r<T>>> {
+> +        let inner =3D Arc::pin_init(
+> +            pin_init!( DevresInner {
+> +                data <- Revocable::new(data),
+> +            }),
+> +            flags,
+> +        )?;
+> +
+> +        // Convert `Arc<DevresInner>` into a raw pointer and make devres=
+ own this reference until
+> +        // `Self::devres_callback` is called.
+> +        let data =3D inner.clone().into_raw();
+> +
+> +        // SAFETY: `devm_add_action` guarantees to call `Self::devres_ca=
+llback` once `dev` is
+> +        // detached.
+> +        let ret =3D unsafe {
+> +            bindings::devm_add_action(dev.as_raw(), Some(Self::devres_ca=
+llback), data as _)
+> +        };
+> +
+> +        if ret !=3D 0 {
+> +            // SAFETY: We just created another reference to `inner` in o=
+rder to pass it to
+> +            // `bindings::devm_add_action`. If `bindings::devm_add_actio=
+n` fails, we have to drop
+> +            // this reference accordingly.
+> +            let _ =3D unsafe { Arc::from_raw(data) };
+> +            return Err(Error::from_errno(ret));
+> +        }
+> +
+> +        Ok(inner)
+> +    }
+> +
+> +    #[allow(clippy::missing_safety_doc)]
+> +    unsafe extern "C" fn devres_callback(ptr: *mut c_void) {
+> +        let ptr =3D ptr as *mut DevresInner<T>;
+> +        // Devres owned this memory; now that we received the callback, =
+drop the `Arc` and hence the
+> +        // reference.
+> +        // SAFETY: Safe, since we leaked an `Arc` reference to devm_add_=
+action() in
+> +        //         `DevresInner::new`.
+> +        let inner =3D unsafe { Arc::from_raw(ptr) };
+> +
+> +        inner.data.revoke();
+> +    }
+> +}
+> +
+> +impl<T> Devres<T> {
+> +    /// Creates a new [`Devres`] instance of the given `data`. The `data=
+` encapsulated within the
+> +    /// returned `Devres` instance' `data` will be revoked once the devi=
+ce is detached.
+> +    pub fn new(dev: &Device, data: T, flags: Flags) -> Result<Self> {
+> +        let inner =3D DevresInner::new(dev, data, flags)?;
+> +
+> +        Ok(Devres(inner))
+> +    }
+> +
+> +    /// Same as [`Devres::new`], but does not return a `Devres` instance=
+. Instead the given `data`
+> +    /// is owned by devres and will be revoked / dropped, once the devic=
+e is detached.
+> +    pub fn new_foreign_owned(dev: &Device, data: T, flags: Flags) -> Res=
+ult {
+> +        let _ =3D DevresInner::new(dev, data, flags)?;
+> +
+> +        Ok(())
+> +    }
+> +}
+> +
+> +impl<T> Deref for Devres<T> {
+> +    type Target =3D Revocable<T>;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.0.data
+> +    }
+> +}
+> +
+> +impl<T> Drop for Devres<T> {
+> +    fn drop(&mut self) {
+> +        // Revoke the data, such that it gets dropped already and the ac=
+tual resource is freed.
+> +        // `DevresInner` has to stay alive until the devres callback has=
+ been called. This is
+> +        // necessary since we don't know when `Devres` is dropped and ca=
+lling
+> +        // `devm_remove_action()` instead could race with `devres_releas=
+e_all()`.
+> +        self.revoke();
 
-On Tue, 26 Nov 2024 10:35:46 +0200
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+When the destructor runs, it's guaranteed that nobody is accessing the
+inner resource since the only way to do that is through the Devres
+handle, but its destructor is running. Therefore, you can skip the
+synchronize_rcu() call in this case.
 
-> Hi Luca,
-> 
-> On 26/11/2024 10:16, Luca Ceresoli wrote:
-> > Hello Tomi,
-> > 
-> > On Fri, 22 Nov 2024 14:26:19 +0200
-> > Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
-> >   
-> >> From: Cosmin Tanislav <demonsingur@gmail.com>
-> >>
-> >> i2c-atr translates the i2c transactions and forwards them to its parent
-> >> i2c bus. Any transaction to an i2c address that has not been mapped on
-> >> the i2c-atr will be rejected with an error.
-> >>
-> >> However, if the parent i2c bus is another i2c-atr, the parent i2c-atr
-> >> gets a transaction to an i2c address that is not mapped in the parent
-> >> i2c-atr, and thus fails.  
-> > 
-> > Nested ATRs are "interesting", to say the least! :-)
-> > 
-> > I must say I don't understand the problem here. If this is the picture:
-> > 
-> >    adapter ---->     ATR1     ---->     ATR2     ----> leaf device
-> >                      map:               map:              addr:
-> >                   alias addr         alias addr           0x10
-> >                   0x30  0x20         0x20  0x10
-> > 
-> > Then I'd expect this:
-> > 
-> >   1. the leaf device asks ATR2 for a transaction to 0x10
-> >   2. 0x10 is in ATR2 map, ATR2 translates address 0x10 to 0x20
-> >   3. ATR2 asks ATR1 for a transaction to 0x20
-> >   4. 0x20 is in ATR1 map, ATR1 translates address 0x20 to 0x30
-> >   5. ATR1 asks adapter for transaction on 0x30
-> > 
-> > So ATR1 is never asked for 0x10.  
-> 
-> Yes, that case would work. But in your example the ATR1 somehow has 
-> created a mapping for ATR2's alias.
-
-You're of course right. I had kind of assumed ATR1 is somehow
-configured to map 0x30 on 0x20, but this is not going to happen
-magically and there is no code AFAIK to do that. So of course my
-comment is bogus, thanks for taking time to explain.
-
-> Generally speaking, ATR1 has aliases only for devices in its master bus 
-> (i.e. the i2c bus where the ATR1 is the master, not slave), and 
-> similarly for ATR2. Thus I think a more realistic example is:
-> 
->      adapter ---->     ATR1     ---->     ATR2     ----> leaf device
->                     addr: 0x50         addr: 0x30
->                        map:               map:              addr:
->                     alias addr         alias addr           0x10
->                     0x40  0x30         0x20  0x10
-> 
-> So, both ATRs create the alias mapping based on the i2c-aliases given to 
-> them in the DT, for the slave devices in their i2c bus. Assumption is, 
-> of course, that the aliases are not otherwise used, and not overlapping.
-> 
-> Thus the aliases on ATR2 are not present in the alias table of ATR1.
-
-OK, so the above is what now I'd expect to be configured in the ATR
-alias tables.
-
-I still fail to understand how that would work. This is the actions I'd
-expect:
-
-  1. the leaf device asks ATR2 for a transaction to 0x10
-  2. 0x10 is in ATR2 map, ATR2 translates address 0x10 to 0x20
-  3. ATR2 asks ATR1 for a transaction to 0x20
-  4. 0x20 is *not* in ATR1 map, *but* this patch is applied
-      => i2c-atr lets the transaction through, unmodified
-  5. ATR1 asks adapter for transaction on 0x20
-  6. adapter sends transaction for 0x20 on wires
-  7. ATR1 chip receives transaction for 0x20
-      => 0x20 not in its tables, ignores it
-
-Note steps 1-5 are in software (kernel). Step 7 may work if ATR1 were
-configured to let all transactions for unknown addresses go through
-unmodified, but I don't remember having seen patches to allow that in
-i2c-atr.c and I'm not even sure the hardware allows that, the DS90UB9xx
-at least.
-
-And even in case that were possible, that would seems a bit fragile.
-What if two child ATRs attached to two different ports of the parent
-ATR use the same alias, and the parent ATR let transactions for such
-alias go through both ports unmodified? Sure, the alias pools can be
-carefully crafted to avoid such duplicated aliases, but pools have long
-been considered a non-optimal solution, and they make no sense at all
-in cases like the FPC202 that Romain is working to support.
-
-Again, I'm pretty sure I'm missing something here. If you could
-elaborate with a complete example, including the case of two child ATRs
-attached to two ports of the same parent ATR, I'm sure that would be
-very helpful.
-
-At my current level of understanding, it looks like the only correct
-way to manage nested ATRs is to add a "recursive alias mapping", i.e.
-to add for each alias another alias to all parent ATRs, up to the top
-one, like in my initial picture. I realize that would imply several
-complications, though.
-
-Best regards,
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Alice
 
