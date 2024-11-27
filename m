@@ -1,154 +1,191 @@
-Return-Path: <linux-kernel+bounces-423636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60B19DAAB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:23:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660E3166EBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:23:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CBC1FF7D7;
-	Wed, 27 Nov 2024 15:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lKN3ZFe/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C94D9DAAB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:23:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2F61FF7C0;
-	Wed, 27 Nov 2024 15:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732721004; cv=none; b=IOg7rb/R0u++qGN+nyr7NuyP9KvmymqxRPDetkm69rM+jhfTbg0utwTKtS84isgCkHeZ5hcV8jCyIslBSjSGLo7CisCl4TgAsda+LAlwOSUtakjdgGlMVvXbrPuxFysy/N40bwtbiwgWFP4MnnMaE7Meq8s2op/zqbpkSl+tBXg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732721004; c=relaxed/simple;
-	bh=NYhwksv5Pxsyvcsc4XKuWCWXnkZX3QeMCw80wDvn12w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QWc6rLKqvjFVnkrv2XrV/PuDbxRbVM6ZqfQecUIgE/oX4cDrTMNjk1BEkoVRgP0AIEww6+IIpoKHZiQm4f01tLCf7m60bT9xMr2fwXun/qXCWJ62TSyYW7JaQapwyZcn4OcGuPOe7Ypn9Tjve+Yfudqnlz2lHA6ht/VKFwxrv4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lKN3ZFe/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARAgRUA018284;
-	Wed, 27 Nov 2024 15:23:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SHYAX+xAbeW/GuhoTfgzvsc/2BcrL6l2T6Lxp5gCdD4=; b=lKN3ZFe/eg6DG5DI
-	2+mKeRd93up7hbmsVhcnP1Wb6HNVPZKNYM87ygdg6Eab0JPfTY90dReEfS+AwUAs
-	5gzRn4tnO3shxYsatcoK2Jr3kODo/5ZOgWNXwMMp1eF5mxFY/cZ9u7vndeIF+f0i
-	AieDO708Xr1krHPCWy1wN/9R+nd3i/jNv9cdi3u0qbePB5iA7QUTWM1JZd+sjZmn
-	M+4V40g366VX7RFhi7ttz45kYe+dBKus5sbY29PbNXW06ZkD8h1ERr8y+GPajS83
-	/XKnPnzjyNzs+XybImuP5h0+ZGtI+L/uF6YqOZ0uNzsIG8wFBZ2XcziPTCzVIXC/
-	xYnauw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4361wcgtdu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 15:23:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARFNEXs017002
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 15:23:14 GMT
-Received: from [10.216.34.221] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
- 2024 07:23:11 -0800
-Message-ID: <f0077f4f-922d-56b1-a5b7-bb01e4462e87@quicinc.com>
-Date: Wed, 27 Nov 2024 20:53:07 +0530
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C180281F1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:23:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0061FF7D5;
+	Wed, 27 Nov 2024 15:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="At7PgdAq"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2051.outbound.protection.outlook.com [40.107.21.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C6A1E51D;
+	Wed, 27 Nov 2024 15:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732721011; cv=fail; b=mCQx4P1V+a257gmTQ7nZtFFABw8gD4puf2718ZPgZ2GDErf1R2pc1jsJ9+CxcSgH7HcxvPfF97jDHTB/dtHPLo8wNyWWWviyRMIARpzAF3n71XliAr+p3c8g9KjVzhj5/fyzcCDBzNeeiQa5LzbYwKQBoBGI/aW6QfRNtSwsUP8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732721011; c=relaxed/simple;
+	bh=NCyMYlq73PElw70CKFF9qojNv5BTzO/gwoQsR+lXrBY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mTQZcwAij+pR1Z/ClBng9qH+p7SwVZK6oJLFCtj4XZCNje5MT+HhzBoi1oRowfDh0BkMiCNKmzjr4ouAA1Xc6USWCccZUAqB5QzPbdfWGRdpqJ4UybgfbiAAugMgdjMNxT3228uZoz0pWF+neNDcIraF2BYQZ16wrMUlePzIDWA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=At7PgdAq; arc=fail smtp.client-ip=40.107.21.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AzjO75+YmwiRerXp2+Thuoo33TZoIrf58q+1cFMqSt3LD3QIEucSM0so1J/w5/vi9iAoXOyH1BUs4jYDfVLJheCwZIQYS+GBC2OmJ8MUNZUmuBbmeiIHop41/gUXVAXBgMOzChUBtAs8B9Ue71rgm6T6VL3Of5BT+SehI3bM2dRruw7xO8xC2rYdwIAdlPDsam4u2DC/bbRFOVDsM8x0kzH7X6w+bG8172+Ka0I0KrZxXsS41B8S9VeUVAMvl/wRrekUQIn2Hyx26sQjI4/4QbOJ4aREz6sm8nyLQ52plbIeyJZxpWgLvs1/V534MPx8E7p1TOa/rlouiLdBZHACMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NCyMYlq73PElw70CKFF9qojNv5BTzO/gwoQsR+lXrBY=;
+ b=rqgbBCa0WScNKUxE4tLNqXNmgrMxiZLjOuZV4w8Yf4ChTZuMQ7ds9aUrW4je0f8O9hOrgpt2ylUVxKK5Xc1e/DvZaYvjkXPeTbijiXj5zyhhYQ0pXAav4fl012rOJ3FNrj+SAnt8aKkN3Ju2Ve1J8WoRMASl7JyzCd60aNY0QI4WLJJ9nEcJc4APyBl5Y4ihQwV7hA4RZIMbIHMgKG2diA4VrHSakk1gdL3ffN2HECPjMex7swA7ubwyZ5GQmEPphASJ7CUxkn9h23Fyx1l4gNTyfWwdWuXamUjaIOhPs62eoszIKTfCL8eF+ISOg+ONJDgr3F+x746OOAA1CkY2eA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NCyMYlq73PElw70CKFF9qojNv5BTzO/gwoQsR+lXrBY=;
+ b=At7PgdAqlZsZscHUIGFsEpZ9q4MSm3on7gDWhGrKAneqSv7zpDa/7RxLoIanRwi76I+G6Sr3xvAF+A0dY7oQdyFpaSpzyWuuSz+pSLMWWK6W6iatpsXmOqZM8mKGwafTgG5TFNUbbmEN2Fhct/YQeklkaa8AWZvAz96lfMDt41YyXBXZyUN7xQa50c/7+Yocwln8X3Z3CJ0mthvDoJ31zzpBJZS9Mm2JnwNzpgI0WSnS31RpJrGtQKxCJywLjYTNMjs8xtgozPnGTvtX48bEltlzkK2Yld/FF9ID9ILqLTZ2xxZI17KTiHGjHmpA9uYahDzjBcLyDgPDPGrN+w7w2g==
+Received: from PA4PR04MB9709.eurprd04.prod.outlook.com (2603:10a6:102:26b::10)
+ by PAXPR04MB8334.eurprd04.prod.outlook.com (2603:10a6:102:1cc::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Wed, 27 Nov
+ 2024 15:23:25 +0000
+Received: from PA4PR04MB9709.eurprd04.prod.outlook.com
+ ([fe80::1009:ebb:d7ae:4628]) by PA4PR04MB9709.eurprd04.prod.outlook.com
+ ([fe80::1009:ebb:d7ae:4628%4]) with mapi id 15.20.8182.019; Wed, 27 Nov 2024
+ 15:23:25 +0000
+From: Horia Geanta <horia.geanta@nxp.com>
+To: Gaurav Jain <gaurav.jain@nxp.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
+	Silvano Di Ninno <silvano.dininno@nxp.com>, Varun Sethi <V.Sethi@nxp.com>,
+	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>, Sahil Malhotra
+	<sahil.malhotra@nxp.com>, Nikolaus Voss <nikolaus.voss@haag-streit.com>
+CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2] crypto: caam - use JobR's space to access page 0 regs
+Thread-Topic: [PATCH v2] crypto: caam - use JobR's space to access page 0 regs
+Thread-Index: AQHbP877P6BuNn6jKU6FtN0FLX7F17LLQPsA
+Date: Wed, 27 Nov 2024 15:23:25 +0000
+Message-ID: <8dbeff8a-6497-4aba-b02b-f2f5e6129f61@nxp.com>
+References: <20241126064607.456633-1-gaurav.jain@nxp.com>
+In-Reply-To: <20241126064607.456633-1-gaurav.jain@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9709:EE_|PAXPR04MB8334:EE_
+x-ms-office365-filtering-correlation-id: 88c030df-0ed8-48c7-73d9-08dd0ef76fe3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WTJZSjVaV2lreVhhcmlpdy9yeGNDbTk4NUhzVGdYVjVqQXlMcHVscmlVM3Z3?=
+ =?utf-8?B?YmpabjVnYVBMOVlXK24yeFZuRW9rMHRFeGg4UHMxQmlwZG9BdEo0S1RCeHN1?=
+ =?utf-8?B?OXd1VXRyblBUTTNGOGdiYk0zWEN2SGJpdVRBemM3bnlaUll0MHgreU9SczRs?=
+ =?utf-8?B?cE9Ybmx5STNlQmo3cnlzSFhoeTVkdkZuanhQeGFjTWR4Q0lhM2F1YXUzN0F6?=
+ =?utf-8?B?L2ZIVktpZTcxb3hmNDBDb1NmSEJqZ0hlelo2MnZPTE5kSnZDMUlpaUswRHdv?=
+ =?utf-8?B?QXIvM290UGdTQjdjMWEvaFhIWTVraXJMT3gydVlML0I0elBpdk9LbDlzaUtq?=
+ =?utf-8?B?RnNPVDF0TTN5NzVsVkRVZzdyY0xCYWpTaGhQSVpvUEpmRnQ5ckNncHQ5RjR4?=
+ =?utf-8?B?b3VqZHhieEhucERGeFYwanQxMitmVUh3c21lencvNjB5bFdXQU1sbEJCc05i?=
+ =?utf-8?B?M1B2Z3lPaEloZ1ZMRWZ2N1NmZk1qcXV6TC8rYko4RDlLZ1ZxaGJINlBxL1k5?=
+ =?utf-8?B?SnVJcHFSSkRUNTE5SXk2dHVjMUZPS0JaUjNxTVZuQjBqNEs5eUNDdmJkaFU0?=
+ =?utf-8?B?SmxOSTNrVWxmY1pFT1owdkgzeTZhY3R1YWgzWVY3enh1MmtYWStEL3Q2NUNO?=
+ =?utf-8?B?UzdieGZFTnpkUm03ai9TU1BUK1B6NHZaT1Z4b3Nid1NUZHlXNVBlT3JEK1F1?=
+ =?utf-8?B?cTFadjl1SnpPRXIrNWVyczBIeFpEMmtxUHEwWmVabnhiT3VQYzN2bldtNE9K?=
+ =?utf-8?B?ME8yOE5QME9MV1JIUHRRVHNoRW8wMHlqREdxQzNpeWlLdWxSN2N4SUhYUXkz?=
+ =?utf-8?B?d0FWRTNnNU94UENBSUNqU1F5azFiSmtFZXFvYmdVeTJnbkFsRVZ6VmhYSjY0?=
+ =?utf-8?B?M3o2NDFaenhPMDJyYTBGeEsyVUlVdzBkSTJJZytwTlRkdUs4UlN1MStHb1Zt?=
+ =?utf-8?B?M2NzVTUvK2x3eFNBVWZ3d3FtLzlZd0F6cGxxc2s3WW5qckpLaTFqaWpwN3Fh?=
+ =?utf-8?B?a1JuYmNtV2FvWVJxbEEvQWVCd2JOd2ZHZ2c2MWQ3UEErZm5BKy9KR3dZaUUv?=
+ =?utf-8?B?YXhLbFoyaVZHQXV5d3VVVk5vanY4MXNCRm9SY1lBWFJ5d0dJUlROM0xQTG9n?=
+ =?utf-8?B?T3AwWjFvZjg5VTRMVXFQNGxTNlFYWDJ2V1Vvd0hyaFd0Y2ZUT05HUXlYeStw?=
+ =?utf-8?B?L0pNWlp1NXdKYjJSK1VLUUViUHBBUmRZOVA1YXdoRkFCcW4xUDgyS0t3NWx5?=
+ =?utf-8?B?dUtjbGdZUUhxUHh2VnZwSmIyUGQ1S0t2dFZmME1WZ29weFlCV0N4MUljNHV3?=
+ =?utf-8?B?UFJOTnh3Skhoc29tSGM5eUYwNkVvVFo4aXI5eTVjRTI5bjBDOTdXNFgvT0Zm?=
+ =?utf-8?B?N1lrUGF5NG9wbFNMaExjdnRPNE1UTDlTRjhydUhRWS9ydno2Z0gzbmRhR25X?=
+ =?utf-8?B?Tkk3V09NSjhZY1M2dzJ0VDJ1UWVoL2Y4R1ZhS0VqY1dJK3BkaFNQTTd2czZu?=
+ =?utf-8?B?Nnk5b1ZnbTBhQmlldXBrd2FobzR6d2c3YmVkMzBIaUZxOUdwLzNQdyt6OGwy?=
+ =?utf-8?B?RWxBRFpmSVpzNWdUUjVJb2s3RzdDZktVK2xmeDA0MVJ6VkFlN3lHMGZhMzNR?=
+ =?utf-8?B?dTI3L1pRRmFVYXc4U3VvcUhXbHd6Mnh3V3J1RGVjdVdWWXJoQi9JQnFES2tM?=
+ =?utf-8?B?MWpGeUdkeUJ6L2NWTWdtVUxVbTI2ajA1ejBhRGUwWDMxZkRSTTZ5SWc5aDQ3?=
+ =?utf-8?B?amRKVVU4aDFFVVV1NmJ4KzdIZStVcCt4Mk9QZktXU2JkOU51czI5MlJtNU1X?=
+ =?utf-8?B?TmUzbTlPY0JLb2xOMHU3UXJEVUphWFU0YkFNNm1JaUN6WVVjOWdvSXlpWk5o?=
+ =?utf-8?B?Ym10M1ZoV01iLzBQUXh0eGVFN1ArNXArdjc2aUFVQ2loazdvdS9FVXJnQXNM?=
+ =?utf-8?Q?wX7H6tiaSc8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9709.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?T2w3dXBwVXE4Q1dvNlcxUU93L2pWZ3Z2Y1RIL3BDb2NQR1lEcjFsdnFRR29P?=
+ =?utf-8?B?czFyakdtY2lKdjJKbHNzek9RYjg3b05ZR2R0c3Q3RmM1VUF4N051ZjgvclZ5?=
+ =?utf-8?B?aXhXMVV5cDlJQ0swd2w2cVlyVVdUaHR5dzVkeGRlRGRsTmFqQzRiMm12OElt?=
+ =?utf-8?B?aTRsZ2FhSkVjZklpOUd3OXJya3RhOGFOVUVzVVgvdFQwbzdONFRpRktTcWFO?=
+ =?utf-8?B?NXlBUy9nUnRoQXhjVUNPUENGTVZoQXRWdVdiYVFod2pLVGQzYkhoUGYyWkNv?=
+ =?utf-8?B?WWJVRHNLeUM0cE5uQm44OFpKc2hvTXN4QjIzMDNHRlBLcjdSRTlrajdUdjlJ?=
+ =?utf-8?B?RDE1ZHhMSjlLbXRrNXJ5R3B3YVg2OEl4TzkwQktKVW5rOTN5RFc3RjVrbE5D?=
+ =?utf-8?B?eWY0QURlOVRwckVIdHB6Q2NkenVXUDJFdExxTklhNXUzeFNCU1ZsMnNxdjE5?=
+ =?utf-8?B?MDJoSDhzaWQydnEyaVd2d1E3eHZTdEdxZkpnSGdrcDlnMEx3TjBTTVFJcUpP?=
+ =?utf-8?B?SlI3aEl2OHZHbFY3cEhEb1orZTVxWUpMdlQzN1R1bnJHN3BOTmpUS1dPUWll?=
+ =?utf-8?B?bTRWeUhKc2FUb3E0bk1BTUIyQS8zUDBoakprVVdEdzJiWm01OURBLzAvaDQx?=
+ =?utf-8?B?ZnRpMUJmdGN5M3N4Tm9KbEVKa1pLT0JYcktjOHVaMjFDRXVKM2hjSXJPU3JD?=
+ =?utf-8?B?TVdDT1VPTUpSVUFGUVVNeS9KdkdRanVIR1RSQWhvMjgwTUV4THFIVjBGZ3A4?=
+ =?utf-8?B?emQ1V1JIQXFkSUE4M2ZNU3ZsOU96YnJ1cnh1cFB1Tm1ZZEVMZHNUVGRiSVZl?=
+ =?utf-8?B?Ni9lQTAwQmZQYUR6WnRJNVZXbkQ4VUEwU0IwcFd0QnlEcGtSZXVqNTk3ZnRz?=
+ =?utf-8?B?M3VVNW95ZGVHczdYd2RFQTZxVVhNMkFjTkNWSmpoOWFyYVBmVWZZVkFmRldG?=
+ =?utf-8?B?V3lpWXpUOEdvWnBtaU14N3daek5DdURLNncwK3hLMjRVWU1xSC9lVG9YMFFk?=
+ =?utf-8?B?MTRqemdRNFhFMXdBbjdaZEFTcHlpcmZwZUNrT2cwczlIUXVINVJvdG11UEd0?=
+ =?utf-8?B?czVHcVRkNkRhS0NPc0tUUUt6YjNHeWlEYm9iSWI2VGEyL1Y4UWNyck0xdnlT?=
+ =?utf-8?B?SFZWc0lGdCtWQVJlVzBMY0czbVRhandRMjNwNlZlMlQrTTRuOWpUS0ErZ21w?=
+ =?utf-8?B?S3piaC9CQTRVNE1pcGZxVUpGQm9jdDdiWDlobEYxVE00aTVQam5nUmRxbW0y?=
+ =?utf-8?B?ZS9kSnFTVFFnSTNVZE8xeVp0UE44RlhTMHBTV0FyeXRCdUFPSVZ2RzBFaU05?=
+ =?utf-8?B?OGU1bUJxcktGYkVWeFdWc2NRRW9mRm51U3AyL1BIM1d1UEZWcHhQSjFHZ1Nv?=
+ =?utf-8?B?d2tTQWJKRTdmd3FBcHJFdWlhQUtWd3VYdlNTak9CSDVtV3hyZmNIZ0FPRW1x?=
+ =?utf-8?B?NlBtMFl3R1RkelZHam5PRTR6cDVTaE9IVXMxZkRhaVl5bVYzVHNPaktxRTJG?=
+ =?utf-8?B?c1NWZUpudjVqZy9NdDRFOHpkcGE0MFMwMmhGcVl5TVNTcU9wL2lhWWRVZkFJ?=
+ =?utf-8?B?bGllWUNrcitQTXF6R0tpd2p6ZmpBWGNZa1lORlRlUzNYZVlnTDk4TEJOeGR6?=
+ =?utf-8?B?RXlMNzNRWHdSZ1g0d2o4dk92STErcVI4ZU4xVHFRWjdyVVJkNzRXOEZVUnEr?=
+ =?utf-8?B?ektKcS9YYmRhQW5ENklIU2F6NVBlS1RsMVoxZnZRdzE4YWI5U2syR0NzeUVX?=
+ =?utf-8?B?QWplbEZyYnQwbkozWERVem92ekFRNkc0eVZNNHBLTVlwWjg3OEVPdWZ2K3Fl?=
+ =?utf-8?B?RjR1REhIbWRDOUg5TEVRZTJWZWx1Zi9WZVR2Z2xjQWtwMEkydm1Qb0U4cjBP?=
+ =?utf-8?B?b0dpd0taY3F4eWlYcGRJa1FKb2pzNmpNMlE0QjBEQzZodGE2NnpVL2lhV0xS?=
+ =?utf-8?B?UnY3Z0hURkdDNHROZEs4WW5tSk9aMGdTN3FVRlVtMUErcEZFT3VjSWsvMGxq?=
+ =?utf-8?B?cnlZN0JKQkpSMVc3bERIVmlGeFdmT045WWo5dGFrMWFYTlp0MEN4QUFMZmZ1?=
+ =?utf-8?B?VjRSL3Z6U1BWRFlsV0VDeGhiRnhRUXhYM0V6cUhpVHZBM0czRjZRWnZ0RzR3?=
+ =?utf-8?B?SzZTWjNxcGI0NDQ5VDFVSURNb3hOSHJmS1Y2c3hzUnFNclpUcGN5T0VXN3gz?=
+ =?utf-8?B?Y2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <630CDBF9F80FD64A8EC504E8557512AC@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v5] wifi: ath11k: Fix NULL pointer check in
- ath11k_ce_rx_post_pipe()
-Content-Language: en-US
-To: Baichuan Qi <zghbqbc@gmail.com>, <markus.elfring@web.de>
-CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>
-References: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
- <20241127143804.30075-1-zghbqbc@gmail.com>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <20241127143804.30075-1-zghbqbc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ISkNkP16tpVYkKOeT4Yi-iLlLqHFkxZS
-X-Proofpoint-ORIG-GUID: ISkNkP16tpVYkKOeT4Yi-iLlLqHFkxZS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 priorityscore=1501 clxscore=1011 mlxscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 impostorscore=0 adultscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411270122
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9709.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88c030df-0ed8-48c7-73d9-08dd0ef76fe3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 15:23:25.2852
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zOUnomBeO6UfWKcmGgQgG+aLT5x1kLUIlqK+Pl1B6LkKyXtrsuYARiKmYIVGHQESILfXJkHhC9qUkr3rjFHHIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8334
 
-
-
-On 11/27/2024 8:08 PM, Baichuan Qi wrote:
-> Current implementation of `ath11k_ce_rx_post_pipe()` checks for
-> NON-NULL of either `dest_ring` or `status_ring` using an OR (||).
-> Both rings, especially `dest_ring`, should be ensured to be
-> NON-NULL in this function.
-> 
-> If only one of the rings is valid, such as `dest_ring` is NULL
-> and `status_ring` is NON-NULL, the OR (||) check would not stop
-> `ath11k_ce_rx_post_pipe()`, the subsequent call to
-> `ath11k_ce_rx_buf_enqueue_pipe()` will access the NULL pointer,
-> resulting in a driver crash.
-> 
-> Fix the NON-NULL check by changing the OR (||) to AND (&&),
-> and return an error code `-EIO` to indicate
-> `ath11k_ce_rx_post_pipe()` is stopped with an NULL pointer
-> error, ensuring that the function only proceeds when both
-> `dest_ring` and `status_ring` are NON-NULL.
-> 
-> Link: https://lore.kernel.org/ath11k/a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-
-This does not really fix any real issue. Please check ath11k_ce_alloc_pipe()
-where initialization would fail if anyone of pipe->dest_ring and
-pipe->status_ring allocation fails for ce pipe used for Rx.
-
-> Signed-off-by: Baichuan Qi <zghbqbc@gmail.com>
-> ---
-> V4 -> V5: add err code in NULL check
-> V3 -> V4: reorder describe info
-> V2 -> V3: add Link URL to mailing list archives
-> V1 -> V2: rewrite commit message and fix tag
-> 
->   drivers/net/wireless/ath/ath11k/ce.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
-> index e66e86bdec20..223dab928453 100644
-> --- a/drivers/net/wireless/ath/ath11k/ce.c
-> +++ b/drivers/net/wireless/ath/ath11k/ce.c
-> @@ -324,8 +324,10 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pipe *pipe)
->   	dma_addr_t paddr;
->   	int ret = 0;
->   
-> -	if (!(pipe->dest_ring || pipe->status_ring))
-> -		return 0;
-> +	if (!(pipe->dest_ring && pipe->status_ring)) {
-> +		ret = -EIO;
-> +		return ret;
-> +	}
-
-This will always fail as the caller loops through all the supported ce pipes
-and ce pipes used for Tx will not have either dest_ring or status_ring.
-Please ensure the patch is tested properly.
-
-So NAK
-
-Vasanth
+T24gMTEvMjYvMjAyNCA4OjQ2IEFNLCBHYXVyYXYgSmFpbiB3cm90ZToNCj4gT24gaU1YOERYTC9R
+TS9RWFAoU0VDTykgJiBpTVg4VUxQKEVMRSkgU29DcywgYWNjZXNzIHRvIGNvbnRyb2xsZXINCj4g
+cmVnaW9uKENBQU0gcGFnZSAwKSBpcyBub3QgcGVybWl0dGVkIGZyb20gbm9uIHNlY3VyZSB3b3Js
+ZC4NCj4gdXNlIEpvYlIncyByZWdpc3RlciBzcGFjZSB0byBhY2Nlc3MgcGFnZSAwIHJlZ2lzdGVy
+cy4NCj4gDQo+IEZpeGVzOiA2YTgzODMwZjY0OWEgKCJjcnlwdG86IGNhYW0gLSB3YXJuIGlmIGJs
+b2JfZ2VuIGtleSBpcyBpbnNlY3VyZSIpDQo+IFNpZ25lZC1vZmYtYnk6IEdhdXJhdiBKYWluIDxn
+YXVyYXYuamFpbkBueHAuY29tPg0KUmV2aWV3ZWQtYnk6IEhvcmlhIEdlYW50xIMgPGhvcmlhLmdl
+YW50YUBueHAuY29tPg0KDQpUaGFua3MsDQpIb3JpYQ0KDQo=
 
