@@ -1,120 +1,146 @@
-Return-Path: <linux-kernel+bounces-423514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167B49DA8A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A2D9DA8A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9162B21BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D5628520B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B2B1FCF66;
-	Wed, 27 Nov 2024 13:38:50 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0637A1FCF77;
+	Wed, 27 Nov 2024 13:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eXh6ZNQW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EF75B1FB;
-	Wed, 27 Nov 2024 13:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA74C5B1FB;
+	Wed, 27 Nov 2024 13:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732714730; cv=none; b=azFnAGt2zHWTxOL+x/wObEAzzQDmloEQ1U7z5IwvYjZix4mlvmS8/BIWiMB4aqlBnNndV+T7k/NnKBAmGL2asBrn0bBvVKg7VcDarxsETnOxskwLlFggRPeuugVjPnBPt2byB6S8Ztm4Y4KuvThWo6cxIFiUTel3aMMArDOkwfs=
+	t=1732714792; cv=none; b=bCJdMFXWtnUDI2lb/OqIZonUGUw1Mj2vMA2cSW21inj7BWepS44ewJOLsoC/d0dUGMfoh0mG49IqKgizjTmbzeozuP6MyoDEipWdO9jEsSRKc6PUW/Pld82wnFL69OikGP50sVUyoPheEv1tfPf4M5XHh+SNmeIAj4iYB+Q2+6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732714730; c=relaxed/simple;
-	bh=MrYihTpw+6Nw3uevt6KSEV8nm7+0I3/GUhbAKcAZz5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sipKPQv7q1YTVDR/OZMdXTw9g3yZaIuWxTkkEPJaMy2LHCHZbtcW2mCo+HnptO0em//TcE7W+QsaH8deXgDKOvhBqYvUWveZeZN0ddqub9f1cvyoG7xOWZH5CA14mOVDfqyQGnGELNjHPD0o95b2vOc/7BIG62C4KbctH24tyyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [IPV6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46] (unknown [IPv6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id F2247B4B1EF8;
-	Wed, 27 Nov 2024 14:38:41 +0100 (CET)
-Message-ID: <dd060a05-9428-4af8-85b1-b6baa756490f@freeshell.de>
-Date: Wed, 27 Nov 2024 05:38:39 -0800
+	s=arc-20240116; t=1732714792; c=relaxed/simple;
+	bh=3n2rxRqZZKBS7WUpxs+EVx6nCl5wYxLTkrVfSMkDs5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cM2RGowR6QtGbdN1qKSD80DtAkfkZEFf0fQXfIF8YIFlxWjjKWocHw+I5y3I24u2821oQ7qtDfYuTwkHLKZs46zEl4JxAblAAMCS/WsEXi1cpNb2YD+FxZQmnV2FIzeqk8dKqgrgrkBJJnoM1JvOXN2UK8QGMPhs/Y6p/4Ow3R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=eXh6ZNQW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F13CA78C;
+	Wed, 27 Nov 2024 14:39:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732714766;
+	bh=3n2rxRqZZKBS7WUpxs+EVx6nCl5wYxLTkrVfSMkDs5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eXh6ZNQWTTBoiF2xvL0rgA5AOMPfi2yzsVqCyvrMbdfs7y2uqQjiboox4lKuuBhFk
+	 huTwPSBu/v+zSyNtIfnVWiGwkiv8hmFuVj8Pa5JN11FTaDib2QAKAm/ZMQLO4PM7mq
+	 LgISQLxhZuwEg517YcIRGkQaIUx7SlIvCAxFELnI=
+Date: Wed, 27 Nov 2024 15:39:38 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241127133938.GI31095@pendragon.ideasonboard.com>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+ <20241126151930.GA5493@pendragon.ideasonboard.com>
+ <20241127103948.501b5a05@foz.lan>
+ <20241127124629.704809f1@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] riscv: dts: starfive: jh7110-pine64-star64: enable
- usb0 host function
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Henry Bell <dmoo_dv@protonmail.com>
-Cc: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241126073836.17208-1-e@freeshell.de>
- <20241126073836.17208-2-e@freeshell.de>
- <CAJM55Z8---o6_ZxeyUu_M74LA_zKfeksBmRGFkm2C66hRJbPug@mail.gmail.com>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <CAJM55Z8---o6_ZxeyUu_M74LA_zKfeksBmRGFkm2C66hRJbPug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127124629.704809f1@foz.lan>
 
+On Wed, Nov 27, 2024 at 12:54:15PM +0100, Mauro Carvalho Chehab wrote:
+> Em Wed, 27 Nov 2024 10:39:48 +0100 Mauro Carvalho Chehab escreveu:
+> 
+> > > This workflow doesn't apply to patch submitters who are not allowed to
+> > > send pull requests and who don't have direct commit access. I thought
+> > > these submitters are the main audience of this document. In that case, I
+> > > think moving the next section that explains the e-mail workflow before
+> > > the "Media development workflow" section (which should likely be renamed
+> > > to make it clear that it is about merging patches, not developing them)
+> > > would be best. The "Review Cadence" section could also be folded in
+> > > there, to give a full view of what a submitter can expect.
+> > > 
+> > > This would also have the advantage of introducing the linuvtv.org
+> > > patchwork instance, which you reference above. Documents are more
+> > > readable when they introduce concepts first before using them.  
+> > 
+> > Will try to do such change at v2.
+> 
+> Actually, both workflows (a) and (b) apply to the ones that can't
+> send pull requests or push at media-committers.git:
+> 
+> ---
+> 
+> a. Normal workflow: patches are handled by subsystem maintainers::
+> 
+>      +------+   +---------+   +-------+   +-----------------------+   +---------+
+>      |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge      |-->|media.git|
+>      +------+   +---------+   |request|   |in media-committers.git|   +---------+
+>                               +-------+   +-----------------------+
+> 
+>    For this workflow, pull requests can be generated by a committer,
+>    a previous committer, subsystem maintainers or by a couple of trusted
+>    long-time contributors. If you are not in such group, please don't submit
+>    pull requests, as they will likely be ignored.
+> 
+> b. Committers' workflow: patches are handled by media committers::
+> 
+>      +------+   +---------+   +--------------------+   +-----------+   +---------+
+>      |e-mail|-->|patchwork|-->|committers merge at |-->|maintainers|-->|media.git|
+>      +------+   +---------+   |media-committers.git|   |approval   |   +---------+
+>                               +--------------------+   +-----------+
+> 
+> ---
+> 
+> No matter who sent an e-mail, this will be picked by patchwork and either
+> be part of a PR or a MR, depending on who picked it.
 
-On 11/27/24 05:23, Emil Renner Berthing wrote:
-> E Shattow wrote:
->> Pine64 Star64 set JH7110 on-chip USB host mode and vbus pin assignment
-> Here I'd like it explained that the Star64 board routes 1 of the 4 USB-A ports
-> to USB0 on the SoC rather than to the USB 3.0 <-> PCIe chip.
->
-> (Confusing for users that 1 of the 4 similar ports only does USB 2.0, but
-> that's too late to change and not relevant here)
->
-> With that fixed:
-> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Today the "normal" workflow for contributors who don't send pull
+requests is that you or Hans will pick their patches from the list.
+That's why I mentioned that neither of the above workflows apply there.
+Now, if we consider that you and Hans will keep doing that for some
+patches, and merge them using the committers workflow (where you would
+handle both steps of merging in the shared tree and giving the
+maintainer approval), it's true that the normal workflow would be one of
+the two above.
 
+Looking at the pull requests sent to the list over the past twelve
+months, we have
 
-There is no (VL805) USB 3.0 <-> PCIe chip on Star64;  All 4 USB-A ports 
-route to USB0 of the SoC. What does not exist I did not write about in 
-the cover letter. I will expand the description in the commit message. 
-Thank you!  -E
+     32 Sakari Ailus
+     24 Hans Verkuil
+     22 Laurent Pinchart
+     21 Sebastian Fricke
+      7 Sean Young
+      7 Hans de Goede
+      4 Stanimir Varbanov
+      1 Shuah Khan
 
+I expect people in that list to get commit rights either from the very
+beginning or very soon after. The committer workflow (if we consider it
+as including how you and Hans will continue picking patches from the
+list) will be the new norm. how about flipping things and listing it as
+a), and then name b) the "Pull request workflow" instead of the "Normal
+workflow" ? I would even go as far as proposing documenting the pull
+request workflow as legacy.
 
->> Signed-off-by: E Shattow <e@freeshell.de>
->> ---
->>   .../boot/dts/starfive/jh7110-pine64-star64.dts | 18 +++++++++++++++++-
->>   1 file changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
->> index fe4a490ecc61..b764d4d92fd9 100644
->> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
->> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
->> @@ -80,7 +80,23 @@ &spi0 {
->>   	status = "okay";
->>   };
->>
->> +&sysgpio {
->> +	usb0_pins: usb0-0 {
->> +		vbus-pins {
->> +			pinmux = <GPIOMUX(25,  GPOUT_SYS_USB_DRIVE_VBUS,
->> +					       GPOEN_ENABLE,
->> +					       GPI_NONE)>;
->> +			bias-disable;
->> +			input-disable;
->> +			input-schmitt-disable;
->> +			slew-rate = <0>;
->> +		};
->> +	};
->> +};
->> +
->>   &usb0 {
->> -	dr_mode = "peripheral";
->> +	dr_mode = "host";
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&usb0_pins>;
->>   	status = "okay";
->>   };
->> --
->> 2.45.2
->>
+-- 
+Regards,
+
+Laurent Pinchart
 
