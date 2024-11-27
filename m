@@ -1,149 +1,118 @@
-Return-Path: <linux-kernel+bounces-423577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36A69DA9E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:32:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E35E9DA9EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:36:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD0AB21A72
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC8A163735
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B961FF7AF;
-	Wed, 27 Nov 2024 14:32:22 +0000 (UTC)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6636A1FF7AD;
+	Wed, 27 Nov 2024 14:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PqbUWomu"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008C726AD0;
-	Wed, 27 Nov 2024 14:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BA91FCD1E;
+	Wed, 27 Nov 2024 14:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732717941; cv=none; b=ckAF7DAIh12pUokGbzpKcO/JVx3pqS8cl793MetRJQQlicK96pJvkWY0Wexoovc8Tnb3Tkd3a/EnvopZFKd6MBm2UUrDy0aO0E+v8gyqhPQWe4HMhZjDTRpFYyOo3/Mk5zWhLH2x+V2rm9Ep+wv587akfxzcLuXo6XXPR2ZaHxo=
+	t=1732718155; cv=none; b=NAp5ObA6gp0dQe0fxtRJKc7PqyL8VC5HH0pxYR0KWBqJgBfNLmwlkKBIYh2syZrODnbvXklHDzwyHCx7SkBPy5CKGq5hRfZBonAaPl16LQEqIuGr11YiR7Qgb/85qaOi2xRetmsZBOHAp8PKvhA6JjrNyL/KldDhu0obumFOXMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732717941; c=relaxed/simple;
-	bh=0HvpP03fJIa9VL9yIjXyCxKkTPSv+tDsMAhrVsQoK2I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6U9AalTzXtAXynZjsGcOfxKqfTF46FZysdZM5TOCGikp7/3lJCO7tG58c3mebu+3PjJ5NQWGW0TTw0dAYphLKarNc44jZcZ3rW1s2RSUcr9CQ2POUdZ28Ex4UiCIA+o6WztHRT4NUYFk4z1MiRvC/RwPOyjLcQbSH3dTd8dP20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1732718155; c=relaxed/simple;
+	bh=oVpqtsNfjE7LBjv/M5++nxEBd8xss6xBkvmobOr5VfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RzMQSVFFMrFbo6QIQCH9UoHsw0PsUCtpNn/LkROVM2p/nKwwSg4zOo7v0SA5TACCMNBhF/syYx+/pusjwrZuSuLj+NyKvVZWhN8p2MNmIzNUwixpKkCQje7jzSGRowaycowLyqDtZfMv/PhEfaGZMt9lRIJJoeRLNaxs21/Wcdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PqbUWomu; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b66ea49407so81184885a.0;
-        Wed, 27 Nov 2024 06:32:19 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21200c749bfso67577825ad.1;
+        Wed, 27 Nov 2024 06:35:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732718154; x=1733322954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZdBKYu59zz5dNnmAPo9hi/5rPJBTreSNmfq7NUIW5R0=;
+        b=PqbUWomuwwIhabfFO9U581LJFeQ+Oz4oYEqEMgbCyHZYER9nDRSR7uu0qOetzypZEv
+         LhoY7w+dlaVx368jnQ98BTUApAGhQIMmVPAD8zU4ahzsd8pKXlm8pq5ohX8KLErx5r8P
+         S8LQIwdwlcwFIl49ZIoWYtvppO54z6vcK1iodUAbd3uUwMNwTf5PF7Ez9rqUxWyzAmGN
+         OGOZMu2pOMZzImTnUeMueYDehSX4Ax0JP9Cs8Mdh1jarVxCC3euSBL7R3l3HhK/ZX7O5
+         BHbljQtBFPBjwhlOdqM59KHRK3WGjLF6hYkXhoiGUqoDgdbzg4/3m97UkeoJTr0J3gpW
+         z+Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732717938; x=1733322738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1732718154; x=1733322954;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2j2ZUq6xu9t3wTv8Cm7N7UCfA0pG8EHAdf2AYMgtddQ=;
-        b=mbd5WEk1miTX+Op/WVf9xXPI/W6wYXYXcqzkRXOnkZs4ohVuv6oxAVUpTT/3xfSV4p
-         RG4WBZ8XbeBilPj9WELWrmHrnNGXCnAnH4J+WCbG0kxYno5czyL3T6uDnuQFD8Xh8np7
-         oB/1cP7oSj0kvpQPzE/TO5RZb09pg+fshzcec/GCVwoJdLm3f5vEFq26ZI28hy7ANgEe
-         TVUnJEkS5dozBjYuhnLOZ1JrgrI+EVoywt9Y+M8O4+Q5AIs/aBi2WLD8aD+wyZAnXzQj
-         Nr36gzPHD2omVtaIDskGAo5nVgycy7AHffBacikwvt+1LIx3MNuSoFEbKSP7C0QjnO2q
-         U3Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTrJIcNdX+nq3HMWeDwouOb8jjXKfzUi+JWVCQFG6nav5Fny0pqIheW+LQd+CkZ1DD76aubRUgjfGg4mgg@vger.kernel.org, AJvYcCVGZv7QQR4NcQxBnMNsoQbv8rhOgKZt8zbcH79fKNGs5PM6FpdGYYElJNPgS4WUAoq4zmaBv6biyeUdFg==@vger.kernel.org, AJvYcCWBPqH1JS+TUfjezcVSaS6uSos+cB+54XSffHja8mI5Pd1L43afMhUbWKS9O4kFhfe5i9sFaP2dvYigGUI=@vger.kernel.org, AJvYcCWZqbe/nmGd+NCx9fa13ZpZ97KKkl6xFdrX7v0TM0hyWM/iXl7vZgrd2f81MFWfreynPgoSVTrjvK3V@vger.kernel.org, AJvYcCWdltFfXlVAj464H9DYswcWD/+isHW85qMk0Oj4yyDpn039bds/w7q4Y3SXIMHJ5nUu8n3p3/JWEKJtFHwfqCqhvl8=@vger.kernel.org, AJvYcCXoccJ+ytW3p1jY71fEIiqJQ7zYOie3cgIwkTeKQMKVWXDVAmRIYfE1OGP0DkA/B67iYrV8OhDVLh/N@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFvo51aLMhmLWo7YiJueUIXAw8gl/rKVpPwVZrdO/l4ocTgUOy
-	BE89wNrxs9M0URzGfrMUuCWDTu/jSKs/D4rP2NaKEv3aZ3hqoKRxnFLSRgA2Qug=
-X-Gm-Gg: ASbGncuPJyMPDkDoiFc9+hNruEqbwGbwiliR/sF9nxHbMGh2Nh+tryE/P4rC7WTdb8t
-	hrONN0N5W7GVqcf1Q25er3VMwzw1qdzY7Zr4NeBDBHGIgDq1yqTztyDOBdEEZOT8rFza6UC4cvG
-	LzRdQrIgq5AoJTo6Bm3RscPc2Op8o+aVmde08PPWU2givTlg9W2sj1jtJ6M+GiQ1kwCNTFvQNec
-	B71ZlwLzy9NhqswNtRc2ra8yEzDqSoZghgQA8loftF/ONblOnyXaasEu6vUBFpPD7CBBSzp1Qer
-	iqUf+zbhaBbQfz2V
-X-Google-Smtp-Source: AGHT+IHPmQWdd5kenGSHMPBppEIql98ObTNtrv4YVg7ZVWyjoB7kE5vbX+CT/cwEKn/RnQPepr6AXQ==
-X-Received: by 2002:a05:620a:371a:b0:7b6:740f:a535 with SMTP id af79cd13be357-7b67442f42fmr1350350585a.0.1732717938600;
-        Wed, 27 Nov 2024 06:32:18 -0800 (PST)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6767bace4sm157814185a.40.2024.11.27.06.32.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 06:32:16 -0800 (PST)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b66d08d529so76678985a.1;
-        Wed, 27 Nov 2024 06:32:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVNzRBm7BItlOFowfiujdfO0aM04W6RvGYF14PObrZdH39exqCznhLB8iLkCL/Y8b3f6C/5LeGc0QHY@vger.kernel.org, AJvYcCVYzvcSBVRou6KsaC4UcY+uaR/L9mqoiMFPf7kIeTAXqg2NQqxTUb5VoX0l61y3d/jDcZSuKNBfzIaXOajCXJ/Zz6Y=@vger.kernel.org, AJvYcCW5qgrL6h0pO2ihWGnyTtpxunMP3Ka+Br3+D73NkYJdLG/vjYU6YMt/H/+JBpDpLtoiur/sJGFJD1CskZ3c@vger.kernel.org, AJvYcCXFs+FecWzMxQI+vXaofKuexnm8mr52gtUU87+DizqbkS4Sa7JU1+mQliMQ2y7JVsP8wF5+6tNu73+2@vger.kernel.org, AJvYcCXRqgyTg438KKdF9YALkFNTE5N3tthTcclg+Q7Wt0D4JfGsDi1Kf6R/ITj71MkuUdtzKt0crQSvAeJUDQY=@vger.kernel.org, AJvYcCXpypu9MkKqFLJZkVgUadiHWNQ+x8YyPF9egePKXUnEkyn9ChwWXFZRdWmiIHEETWuOdi1oW2bEcDJ7oQ==@vger.kernel.org
-X-Received: by 2002:a05:620a:3186:b0:7a9:b2f4:42e0 with SMTP id
- af79cd13be357-7b67452f309mr1359261885a.15.1732717935088; Wed, 27 Nov 2024
- 06:32:15 -0800 (PST)
+        bh=ZdBKYu59zz5dNnmAPo9hi/5rPJBTreSNmfq7NUIW5R0=;
+        b=wis1eKHh7N4PGiKBDhr0YmWNWGA8Bc4OQ1Y0L2SShgu4EczElp5SX/8tkE/x4cgGJf
+         AGbdFIW+lvrSFj6NTREgFm2FvHbyn8JF+GuhVvK+9GzLjhsWiogUWWT+P43Rxm7kdFhm
+         rZh+YxIKi+XSA4/E89K5EP52C0jd2kjBYwZ13qIs+4rnw/Nghdsvefk1n7kYDvDp1xsI
+         qGV9Cai0QYYmpTRyM/ZUpzlztUTDtEKTe9fRW2pVJ0Vf6X/t3S/Wpm8E9GbSPl3FWpa4
+         3MsQRI4V5Iq2QQKmeWcHVkTeAGmoUfUaHe3JQGCbuvvj3mQhCTn+45pI7FSImRkcCilT
+         T2mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgHe3jp7BQZuLT4l3WpTQouKQFsiczmT7ogJirR9tbyvAOoZbcf7x7353G9wXhqzn8Qg9MmJBtZjOD6S0=@vger.kernel.org, AJvYcCWGLZUkBF+0Ft0VazO+UonM2LvL+p8F+E7gbxeEUwIJFuJ46N0eKBJPJyJ/PW0erebIXsAv+wtCNLn/dSnQQsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbgL4n2XYx06324yAj5EmpsTy8PPA4eUsdgjiX2Pzfrp41Z1pJ
+	98O/PRbdKhHUjPyse3YnpSmCK0A+rl/efOJbnZLwxHjug0weFH6f
+X-Gm-Gg: ASbGncvZ+HFNpCU+ANUysbzSym865wCytDPNw9Kbb3SenkZctDUwtjt6xk7nDg7Lnyw
+	r+fb7Eg17KMAu6d6w6ZJeiZ7COEQH2DQSgCR3CoiqJNApldFGE4tZTsCK/dAUwzBjeDNTd6vIY2
+	oMO6whztH1XBU85QyaNDK9t2XAQAG54oC5k4nJts6YCK9Lp1kSARgHIDNHXd2YxMuo4InPSo7oZ
+	eEE6tUGw8G8z/w5Zdj1hyNy/+A7raO66Ojj8rs8kPAprrtRn3MORtu5odY=
+X-Google-Smtp-Source: AGHT+IGHyfCyr8T1DrDbozg4fFTa7y3qsmhyeH71De1a2eJmZ1ljjREFI3OAKgjsu9qkdKeyCPsGcA==
+X-Received: by 2002:a17:902:e881:b0:20c:c086:4998 with SMTP id d9443c01a7336-21501f622a5mr27261175ad.55.1732718153136;
+        Wed, 27 Nov 2024 06:35:53 -0800 (PST)
+Received: from localhost.localdomain ([223.72.121.35])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215150adb5asm5101175ad.258.2024.11.27.06.35.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 06:35:52 -0800 (PST)
+From: Baichuan Qi <zghbqbc@gmail.com>
+To: markus.elfring@web.de
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	zghbqbc@gmail.com
+Subject: Re: Re: wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe() ERROR code
+Date: Wed, 27 Nov 2024 22:35:06 +0800
+Message-Id: <20241127143506.28267-1-zghbqbc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
+References: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Nov 2024 15:32:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+thanks for your reply
 
-On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add audio clock pins. These are used by audio IPs as input pins to feed
-> them with audio clocks.
->
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v3:
-> - collected tags
+> May the detection of a null pointer for the data structure members
+> “dest_ring” or “status_ring” really be interpreted as a successful execution
+> of the function “ath11k_ce_rx_post_pipe”?
 
-Thanks for the update!
+i submit this patch just want to ensure the last codes after
+`if(...)` in `ath11k_ce_rx_post_pipe` can be successfully executed.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
-edicated_pins[] =3D {
->                                                       PIN_CFG_SOFT_PS)) }=
-,
->         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_=
-SOFT_PS)) },
->         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A=
- | PIN_CFG_SOFT_PS) },
-> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
-> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
+There is no error handling for NULL dest_ring (or status_ring)
+in other funtions calling `ath11k_ce_rx_post_pipe()`, because it 
+would return 0, like successful end.
 
-I'll move these before WDTOVF_PERROUT# while applying, to preserve
-sort order (by port/pin number).
+I think this patch can not change so many codes in other functions in
+ce. This may involve a lot of error handling operations,
+and depending on the severity of situation, the driver may even
+re_setup the ring.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.14.
+I will submit a v5 patch, and in that patch an error code will be
+returned.
 
->         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN=
-_CFG_IO_VMC_SD0)) },
->         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN=
-_CFG_IEN |
->                                                      PIN_CFG_IO_VMC_SD0))=
- },
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Baichuan Qi
 
