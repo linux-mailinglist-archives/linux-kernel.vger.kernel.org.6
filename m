@@ -1,91 +1,173 @@
-Return-Path: <linux-kernel+bounces-423201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901709DA42E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:53:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7089DA434
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019E3284DF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7072845AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A44E1917E4;
-	Wed, 27 Nov 2024 08:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kgUeZ7eb"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0505F189919;
+	Wed, 27 Nov 2024 08:54:06 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D838E186E46
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114F186E46
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732697573; cv=none; b=iaiKU1ImXSp4omIsKcO9+0tos5kvaDHkF/1my5tQ/sYn+C4rHeITiQJ0OX2fTkL2A/Sa/DaN+4xUi0Z+0TuJWgPIINIGz9i0xuxOCfKPZNbNv3ieyj1lxeCSytVaqV/V+Gh76nfZ5Yksz28biEhR8ES78Y2xoPGtoXHXJpimNC8=
+	t=1732697645; cv=none; b=EL5VQTlygDI8l/liA4D64zZv8JV8Omo1vXTgPlZTY5QJL4vz/vre5ynsPPFVLiNsDp3VXjCrxXgb5a2Ef0vJFcw7JudXQw1eGNZqNiWxroFMh1aeQ12Gy2BplIFb6SvLb316TBQ+gIaFkn1dUBRuxg3jCyNoyFujAB5+d/4t/7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732697573; c=relaxed/simple;
-	bh=bjbRRfMzhJjZrweIGKA3CThoDZ9CfSqte5us+KoWLmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nSpnWdmm/RUQQMTWJrShhefZGkYxVrjSYpymLlpRnvlzWa3htI5ETG7nmhZFNQllYXBb9f89x69jY/zcav5Vnc/BgEohjNFkDD10+W2C8NU8yuss8lh+OXvKUjOcxJbQYQlPBe0d3VlSN/p2EqD41JdPkh9c9LdBy247tv/ttY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kgUeZ7eb; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732697563; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=/75P4yZ3HLTWLNgRcQezp8O8WllCY0JuxZe7FDTAslM=;
-	b=kgUeZ7ebgcPA+P5zFSWCoLFrmTZCxc0P9FxpBKDifOoU4jmYppHfaB9y8PD9PZQ9bk24M1q8WF7ZyAispJa2DsZSshvctxm/9IwvG7JgeCOZQLlFdTJ+R+T/UrIryCU0DPoYi49wG9335xDN6/pjNtK3GXAZf/RdSYOsYvxt/rg=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WKLmL2V_1732697558 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 27 Nov 2024 16:52:43 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] erofs: fix PSI memstall accounting
-Date: Wed, 27 Nov 2024 16:52:36 +0800
-Message-ID: <20241127085236.3538334-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1732697645; c=relaxed/simple;
+	bh=YfgpoTDd4KRWX9QYXR4+HGyPFUeAuWa72g0EH8fO3D4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=eUoXa1SAL7Awoee057q8gxYK9r4KExPz1cXn+kfz/wpgeRR44HIY2Y0IE7Sm+hSfvkMHgbTEZTwBM7GRHfU9Xn02I1EkRCYKbXyDnVlbYs1CrDYlkJMEN3pGt/R8YQe6umXObjeRLdyaBRPQEdKEaZfRv/6Oij48BP/IJw4h/aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-320-eUu2RzI3O8WJKx3gHkW80w-1; Wed, 27 Nov 2024 08:53:58 +0000
+X-MC-Unique: eUu2RzI3O8WJKx3gHkW80w-1
+X-Mimecast-MFC-AGG-ID: eUu2RzI3O8WJKx3gHkW80w
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 27 Nov
+ 2024 08:53:49 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 27 Nov 2024 08:53:49 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Jakob Hauser' <jahau@rocketmail.com>, Jonathan Cameron
+	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+CC: Linus Walleij <linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
+Subject: RE: [PATCH] iio: magnetometer: yas530: Use signed integer type for
+ clamp limits
+Thread-Topic: [PATCH] iio: magnetometer: yas530: Use signed integer type for
+ clamp limits
+Thread-Index: AQHbQFyZWpVb6JGTu0SOPl1PuO8j1LLK0lfw
+Date: Wed, 27 Nov 2024 08:53:49 +0000
+Message-ID: <a28168acf9374c60902cdb5aa7608dee@AcuMS.aculab.com>
+References: <20241126234021.19749-1-jahau.ref@rocketmail.com>
+ <20241126234021.19749-1-jahau@rocketmail.com>
+In-Reply-To: <20241126234021.19749-1-jahau@rocketmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Fr2NxRY4FRzap3EAAfQy9dsa9csIxttMVBRqPImaXLY_1732697637
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Max Kellermann recently reported psi_group_cpu.tasks[NR_MEMSTALL] is
-incorrect in 6.11.9 kernel.
+From: Jakob Hauser <jahau@rocketmail.com>
+> Sent: 26 November 2024 23:40
+>=20
+> In the function yas537_measure() there is a clamp_val() with limits of
+> -BIT(13) and  BIT(13) - 1. The input clamp value h[] is of type s32. The =
+BIT()
+> is of type unsigned long integer due to its define in include/vdso/bits.h=
+.
+> The lower limit -BIT(13) is recognized as -8192 but expressed as an unsig=
+ned
+> long integer. The size of an unsigned long integer differs between 32-bit=
+ and
+> 64-bit architectures. Converting this to type s32 may lead to undesired
+> behavior.
 
-I think the root cause of the recent issue is that since the problematic
-commit, bio can be NULL so psi_memstall_leave() could be missed in
-z_erofs_submit_queue().
+I think you also need to say that the unsigned divide generates erronous
+values on 32bit systems and that the clamp() call result is ignored.
 
-Reported-by: Max Kellermann <max.kellermann@ionos.com>
-Closes: https://lore.kernel.org/r/CAKPOu+8tvSowiJADW2RuKyofL_CSkm_SuyZA7ME5vMLWmL6pqw@mail.gmail.com
-Fixes: 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zdata.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> Declaring a signed integer with a value of BIT(13) allows to use it more
+> specifically as a negative value on the lower clamp limit.
+>=20
+> While at it, replace all BIT(13) in the function yas537_measure() by the =
+signed
+> integer.
+>=20
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202411230458.dhZwh3TT-lkp@i=
+ntel.com/
+> Fixes: 65f79b501030 ("iio: magnetometer: yas530: Add YAS537 variant")
+> Cc: David Laight <david.laight@aculab.com>
+> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
+> ---
+> The patch is based on torvalds/linux v6.12.
+>=20
+> The calculation lines h[0], h[1] and h[2] exceed the limit of 80 characte=
+rs per
+> line. In terms of readability I would prefer to keep it that way.
+> ---
+>  drivers/iio/magnetometer/yamaha-yas530.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/iio/magnetometer/yamaha-yas530.c b/drivers/iio/magne=
+tometer/yamaha-yas530.c
+> index 65011a8598d3..938b35536e0d 100644
+> --- a/drivers/iio/magnetometer/yamaha-yas530.c
+> +++ b/drivers/iio/magnetometer/yamaha-yas530.c
+> @@ -372,6 +372,7 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 =
+*t, u16 *x, u16 *y1, u16 *y
+>  =09u8 data[8];
+>  =09u16 xy1y2[3];
+>  =09s32 h[3], s[3];
+> +=09int half_range =3D BIT(13);
+>  =09int i, ret;
+>=20
+>  =09mutex_lock(&yas5xx->lock);
+> @@ -406,13 +407,13 @@ static int yas537_measure(struct yas5xx *yas5xx, u1=
+6 *t, u16 *x, u16 *y1, u16 *y
+>  =09/* The second version of YAS537 needs to include calibration coeffici=
+ents */
+>  =09if (yas5xx->version =3D=3D YAS537_VERSION_1) {
+>  =09=09for (i =3D 0; i < 3; i++)
+> -=09=09=09s[i] =3D xy1y2[i] - BIT(13);
+> -=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / B=
+IT(13);
+> -=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / B=
+IT(13);
+> -=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / B=
+IT(13);
+> +=09=09=09s[i] =3D xy1y2[i] - half_range;
+> +=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / h=
+alf_range;
+> +=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / h=
+alf_range;
+> +=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / h=
+alf_range;
+>  =09=09for (i =3D 0; i < 3; i++) {
+> -=09=09=09clamp_val(h[i], -BIT(13), BIT(13) - 1);
+> -=09=09=09xy1y2[i] =3D h[i] + BIT(13);
+> +=09=09=09clamp_val(h[i], -half_range, half_range - 1);
+> +=09=09=09xy1y2[i] =3D h[i] + half_range;
 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 01f147505487..19ef4ff2a134 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1792,9 +1792,9 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
- 			erofs_fscache_submit_bio(bio);
- 		else
- 			submit_bio(bio);
--		if (memstall)
--			psi_memstall_leave(&pflags);
- 	}
-+	if (memstall)
-+		psi_memstall_leave(&pflags);
- 
- 	/*
- 	 * although background is preferred, no one is pending for submission.
--- 
-2.43.5
+NAK - that still ignores the result of clamp.
+and it should be clamp() not clamp_val().
+
+=09David
+
+>  =09=09}
+>  =09}
+>=20
+> --
+> 2.43.0
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
