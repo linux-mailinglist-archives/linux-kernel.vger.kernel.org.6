@@ -1,200 +1,137 @@
-Return-Path: <linux-kernel+bounces-423403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8739DA6E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:40:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415809DA6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:43:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727F4281FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDC9165AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A321F8EEC;
-	Wed, 27 Nov 2024 11:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EC21F8F01;
+	Wed, 27 Nov 2024 11:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ffXrAkpl"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4U98T4y"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE31F8EE1
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABAC1F8AFD;
+	Wed, 27 Nov 2024 11:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732707606; cv=none; b=MR+COI474+Oc+skv6GdQlwnEQlLe58OAvfs9gjnMuX7K+IGykIUjXyToFlUaKUsFlYdqfqH9MX700nyBxbMjv0R4HA/oEq3BBrsqFHona4Iq8GBZyqR1PlmzWV6KlJRK4K7y5wOBZtcNS+EZa5gTGphIkciQqPlyO9czUh80Sjs=
+	t=1732707831; cv=none; b=W11eTn5KNxJEnTbxY+TXEMvmJwtL5J1kR+1sqDscFZWbwtgrG+RP38wKNlAhs/U0app1T7tCQl9U1yWGBl+vfuYqzzaxcBvh6PwudvL2BmuVA+CubPNjJQo5o/aOK6PxCEDJdOgiOLIltUUSOoSAeP9wA3YH0hipa6BbcvjfoZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732707606; c=relaxed/simple;
-	bh=o4nE8wjfnFUpBbQRpANI+Wi2/lAKikDxFPZ7qS/fPGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZkzvQhv4s+XVdSGtla6IQuIzfsj2EtKM57qJ2j0CoA8Zm6dGWz4jcJhoTFBSstBbkEi7l3KnZz/XZ0weo4QnNfyRiIvnYqIkRHCw6gSxHz0FFNdMkihwMVYoaq3QTNQGHxXKpbWhwYv7blQ6goIsCBmSU2gdh87jx5viSf4h+js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ffXrAkpl; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38232cebb0cso5029356f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 03:40:03 -0800 (PST)
+	s=arc-20240116; t=1732707831; c=relaxed/simple;
+	bh=QqIFzL95u92FJ2dFrY0Hk2QYTWK3YhksIaMwY2a9vqs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pVILbN2+iwl5EXQpLn234rxnTZV1wPF5WCFSKyYSLwB91RQ59brC239t97xOl3ryh/umjQTyCPoOS9hj4vb0VqxvhNbV38kXYsKaHmLhb6NvayAuDbzhv0tx1EtyiblNORLyVePSJSMCm17NfDs0km4/0L2VDt5lUr1Mmd8xrkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4U98T4y; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ea6d689d22so5234927a91.1;
+        Wed, 27 Nov 2024 03:43:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732707602; x=1733312402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732707830; x=1733312630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xeLUdoD4xLFsh9NoqmIjIyZQO4DIDisVAw+MDipGd5U=;
-        b=ffXrAkplVejDaObxRHxegsuKwBLaUrFW3NKgy2bn8AzojFxiFMDNVbEe12U4WmnwTS
-         BPnzl+CFR5E5nbcjpEY+9gdp1XIM4OekUj2FKyz9/TiyJ8z2zTuh3iWMyrlaIHhgaYJ0
-         JB24QYzwTFEHeIhqkZflMMLBs5CDbU3d9gibMI3Zu+DlrcOF85Zrv/7wMLLRZmv6/F/G
-         TRaVAgxaztVzMrWd3FOE1oaBgiNvVMu6+ia/fwXKh5VXhZhmxhcY+lY3xx6alw2aoxC3
-         QJ/L+nUFZELllQNSd1QJw7KiQ/ZUL/HBPiWdN2lQM5lbNnIsP6ng+N3tgY0zdtRysUg4
-         Ctfw==
+        bh=SxSbLAHRSVlRsq/cq4uSZcTsBky57XnC1dO2nem3UBA=;
+        b=Q4U98T4yGZ8uZ3n3sPZ8bSlOUOOargcI5yRSLnvgenH0sFdwhhNLQUyYFWNs9y1Vjo
+         clFlRGYsjxHBPR2z2vFV0swHBRVzk8+J8P5QSd/VDow83rdZ8cSV7hawGotf9BMF8aZM
+         P4Ix0ZsA4APQPImyTbxhkF4Ri4aYs61TM2jCnT/OJjsyRnjK8JLUcGrVvnpE0+A2K4L9
+         ePqbD++QjuXi+599XOPQekDDE/oE94r74uz+cRBftMihRVJBGWcQKVkR6QXMYw5E/zpI
+         /fHbR1m9zRjjJW78XeGm4zMbWNa+UxehwxILA0x3Po0RNTrxgDPxlSLx4prepDdxrBFS
+         k8rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732707602; x=1733312402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1732707830; x=1733312630;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xeLUdoD4xLFsh9NoqmIjIyZQO4DIDisVAw+MDipGd5U=;
-        b=Fjptf71MMt4aLAejwtSOAL5EUeWXKpzHDbJ6UB9IeHGAHnYe4DRVdZhahp0Er/3IaF
-         yLcYhfPtGn3h++nEYP2+038aoZ04FFsU2f8JenTVq+bUN029bRnwFVXYTtGcHF86WZyZ
-         0PUOY3CZ+hYhZhePnGKi+AZoYSUqXoMq5BINmgihuP/MS9UxURUEdyM1dGpuwmZ2E6DZ
-         5tOnrhbpIDFdmmv51i/SWKCgJot+1Vx+uMk6YBwf+5shPEpDnFrUFxH80LU0jVIwjn9S
-         v/A6SEEJIqhLHyayIJgcBl7kUjn1+jtn6rH0aEf0NSLHO/4v8YfAsN2O6RLZremE+ar8
-         J4Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCWlSL2PqrV8qN9rSZXbZdXFr+hEwKhgt0bMfoZT++lfCpZvyqcVS33a/sVxf3XMOjASBr3WL9+jnrDMIio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFADkO2zbSHIphMkron3iFsM/F1a/sDdgORCNjy4Ti/JldA2Ko
-	tHIblKacK1Et0plhoEM5QRNYR9hCNuSjIxOQJnqTCZj06HpDyE0y7sdPUhruTa9p4ZAnLsM2Am7
-	mgovOiONiXq1QHMMtndiz/UUt/qELy0ixiWoX
-X-Gm-Gg: ASbGnctabwmCq/LO9qQurIh5szOn8+6QnXAirJcAYpQjEtpeVCJzWbo9S44innmKi04
-	NwHZ5vtb6Bg6bJX4/ihk6fSpwPlhN+5/0YPQRliQ6L1CuVZbHTBz2rpYCSSDdWA==
-X-Google-Smtp-Source: AGHT+IE2us7yWfY+1kczS4KsIvlmVgvswliWrEIl2BCiPKvMLgsZBRMbS9TfEIMWq8DNi4spliLCC7466V6b6w8xKVs=
-X-Received: by 2002:a05:6000:1acc:b0:382:4cc3:7def with SMTP id
- ffacd0b85a97d-385c6eb6eb1mr1956832f8f.7.1732707602192; Wed, 27 Nov 2024
- 03:40:02 -0800 (PST)
+        bh=SxSbLAHRSVlRsq/cq4uSZcTsBky57XnC1dO2nem3UBA=;
+        b=gek8GDsT7IFR5vjUpJmmfRCc9iF2HOSIW63VjeLPia26t37rfRr9Y3S8JtezqxKWCR
+         c9ecO2+WfEETHy3Dy6qlxHaVqP7VuNHqOI3Z/wRByKg9ps6rUdIpQbBG2UoQgne3I/7w
+         nbc3+0wIxzXiFg9OYJzCFk7BUqzyZ8ILwhJMjOC5jL1TxQQkZ+iSLCat0he1g/j8s5d8
+         dmANMUw+9pSIlHza2g0jdelnfeTNvCiXNfpVTRp7Ni7zaFAaFDko++Yk5ztQaj5BviqZ
+         C2GleK5tqHKcjHkiEA/ldiMrq7UDtoXrhtmsXaqcsFExcAyvCJYl4i+aetpvwI7D7nKW
+         8D9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8g3yXidjgAg0COxQFPQAgRYIlAjQB5TLWM0Omai6DrPu49ylPta5tnazOfMETC25ou5nM9hMdu6MeMfXxBWA=@vger.kernel.org, AJvYcCUNRdbZ0/Q8mt9yHJ7m/SUqhNVrwvr4QbpRijYLcULd81GfGS74UBTH3BdVbHD0wkbMHIwSX32Yt53I7wM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFq8Hw/OlXib9d86yboFmK+mto+wleJVV/GotL6BLiFR1UeBUH
+	KNpJflT9lwa6VnfaKR5H0Cg9iwDRzni6+ZxotxkevlASkdbMawZj
+X-Gm-Gg: ASbGncuQ7KOFan2MQUF0IvXiYUAHtZD+E6tgLoJB5mya3P/HjtfQPtKvNHUTa4BbKEF
+	eTEtbrR+gy3jBINXptyCXX95kZeQD4429bPjihfwY912r6xppEs/aBvimC6VSC9FuVmZZKmdl9h
+	UxkhtE7+XdIYYPx090xscqJeBCk2OnvgcPo10TL1UOhzqEP+9rnCxzUC7BFnr2j+ui6cv62jC7Q
+	T24T3AT7vH1oWV4WWwqImTOBX5G9txeUYDhI+J1GySZdvxn63G+4Xr0+nc=
+X-Google-Smtp-Source: AGHT+IELFrmOn3UMip8RyR2/J8mMZUZh/mRNybF/pjN095lAFdf3BfbRFYSu/uLilRm80EzueWBlNA==
+X-Received: by 2002:a17:90b:2b47:b0:2ea:5c01:c1a3 with SMTP id 98e67ed59e1d1-2ee08daf0a4mr3851522a91.0.1732707829275;
+        Wed, 27 Nov 2024 03:43:49 -0800 (PST)
+Received: from localhost.localdomain ([223.72.121.35])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fab815csm1277113a91.48.2024.11.27.03.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 03:43:48 -0800 (PST)
+From: Baichuan Qi <zghbqbc@gmail.com>
+To: markus.elfring@web.de
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	zghbqbc@gmail.com
+Subject: [PATCH v4] wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
+Date: Wed, 27 Nov 2024 19:43:10 +0800
+Message-Id: <20241127114310.26085-1-zghbqbc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <64d7fa52-b96c-4bff-b90c-98f0b1d15ac5@web.de>
+References: <64d7fa52-b96c-4bff-b90c-98f0b1d15ac5@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
- <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com> <6F3F4134-23FF-4230-9DC2-219FACAF546E@kloenk.dev>
-In-Reply-To: <6F3F4134-23FF-4230-9DC2-219FACAF546E@kloenk.dev>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 27 Nov 2024 12:39:49 +0100
-Message-ID: <CAH5fLgivWoo=FpKAhTsHPOot7ptWvezrgsB8YoHKsRobXok4MA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
-To: Fiona Behrens <me@kloenk.dev>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 10:47=E2=80=AFAM Fiona Behrens <me@kloenk.dev> wrot=
-e:
->
-> On 18 Nov 2024, at 11:22, Alice Ryhl wrote:
->
-> > On Wed, Oct 9, 2024 at 12:58=E2=80=AFPM Fiona Behrens <me@kloenk.dev> w=
-rote:
-> >> +impl<'a, T> Led<T>
-> >> +where
-> >> +    T: Operations + 'a,
-> >> +{
-> >> +    /// Register a new LED with a predefine name.
-> >> +    pub fn register_with_name(
-> >> +        name: &'a CStr,
-> >> +        device: Option<&'a Device>,
-> >> +        config: &'a LedConfig,
-> >> +        data: T,
-> >> +    ) -> impl PinInit<Self, Error> + 'a {
-> >> +        try_pin_init!( Self {
-> >> +            led <- Opaque::try_ffi_init(move |place: *mut bindings::l=
-ed_classdev| {
-> >> +            // SAFETY: `place` is a pointer to a live allocation, so =
-erasing is valid.
-> >> +            unsafe { place.write_bytes(0, 1) };
-> >> +
-> >> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
-> >> +            unsafe { Self::build_with_name(place, name) };
-> >> +
-> >> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
-> >> +            unsafe { Self::build_config(place, config) };
-> >> +
-> >> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
-> >> +            unsafe { Self::build_vtable(place) };
-> >> +
-> >> +        let dev =3D device.map(|dev| dev.as_raw()).unwrap_or(ptr::nul=
-l_mut());
-> >> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
-> >> +        crate::error::to_result(unsafe {
-> >> +            bindings::led_classdev_register_ext(dev, place, ptr::null=
-_mut())
-> >> +        })
-> >> +            }),
-> >> +            data: data,
-> >> +        })
-> >> +    }
-> >> +
-> >> +    /// Add nameto the led_classdev.
-> >> +    ///
-> >> +    /// # Safety
-> >> +    ///
-> >> +    /// `ptr` has to be valid.
-> >> +    unsafe fn build_with_name(ptr: *mut bindings::led_classdev, name:=
- &'a CStr) {
-> >> +        // SAFETY: `ptr` is pointing to a live allocation, so the der=
-ef is safe.
-> >> +        let name_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).name) };
-> >> +        // SAFETY: `name_ptr` points to a valid allocation and we hav=
-e exclusive access.
-> >> +        unsafe { ptr::write(name_ptr, name.as_char_ptr()) };
-> >> +    }
-> >> +
-> >> +    /// Add config to led_classdev.
-> >> +    ///
-> >> +    /// # Safety
-> >> +    ///
-> >> +    /// `ptr` has to be valid.
-> >> +    unsafe fn build_config(ptr: *mut bindings::led_classdev, config: =
-&'a LedConfig) {
-> >> +        // SAFETY: `ptr` is pointing to a live allocation, so the der=
-ef is safe.
-> >> +        let color_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).color) };
-> >> +        // SAFETY: `color_ptr` points to a valid allocation and we ha=
-ve exclusive access.
-> >> +        unsafe { ptr::write(color_ptr, config.color.into()) };
-> >> +    }
-> >> +}
-> >
-> > This usage of lifetimes looks incorrect to me. It looks like you are
-> > trying to say that the references must be valid for longer than the
-> > Led<T>, but what you are writing here does not enforce that. The Led
-> > struct must be annotated with the 'a lifetime if you want that, but
-> > I'm inclined to say you should not go for the lifetime solution in the
-> > first place.
->
-> The `led_classdev_register_ext` function copies the name, therefore the i=
-dea was that the name only has to exists until the pin init function is cal=
-led, which should be the case with how I used the lifetimes here
+Current implementation of `ath11k_ce_rx_post_pipe()` checks for
+NON-NULL of either `dest_ring` or `status_ring` using an OR (||).
+Both rings, especially `dest_ring`, should be ensured to be
+NON-NULL in this function.
 
-In that case you should be able to get rid of the lifetime like this:
+If only one of the rings is valid, such as `dest_ring` is NULL
+and `status_ring` is NON-NULL, the OR (||) check would not stop
+`ath11k_ce_rx_post_pipe()`, the subsequent call to
+`ath11k_ce_rx_buf_enqueue_pipe()` will access the NULL pointer,
+resulting in a driver crash.
 
-impl<T> Led<T>
-where
-    T: Operations,
-{
-    /// Register a new LED with a predefine name.
-    pub fn register_with_name(
-        name: &CStr,
-        device: Option<&Device>,
-        config: &LedConfig,
-        data: T,
-    ) -> impl PinInit<Self, Error> {
-        ...
-    }
+Fix the NON-NULL check by changing the OR (||) to AND (&&),
+ensuring that the function only proceeds when both `dest_ring`
+and `status_ring` are NON-NULL.
+
+Link: https://lore.kernel.org/ath11k/a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Baichuan Qi <zghbqbc@gmail.com>
+---
+V3 -> V4: reorder describe info
+V2 -> V3: add Link URL to mailing list archives
+V1 -> V2: rewrite commit message and fix tag
+
+ drivers/net/wireless/ath/ath11k/ce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+index e66e86bdec20..cc9ad014d800 100644
+--- a/drivers/net/wireless/ath/ath11k/ce.c
++++ b/drivers/net/wireless/ath/ath11k/ce.c
+@@ -324,7 +324,7 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pipe *pipe)
+ 	dma_addr_t paddr;
+ 	int ret = 0;
+ 
+-	if (!(pipe->dest_ring || pipe->status_ring))
++	if (!(pipe->dest_ring && pipe->status_ring))
+ 		return 0;
+ 
+ 	spin_lock_bh(&ab->ce.ce_lock);
+-- 
+2.34.1
+
 
