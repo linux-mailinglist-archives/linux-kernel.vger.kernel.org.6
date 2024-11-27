@@ -1,124 +1,179 @@
-Return-Path: <linux-kernel+bounces-423139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35049DA360
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:55:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E21D1661EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:55:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9740615B102;
-	Wed, 27 Nov 2024 07:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bucSP35A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A439DA362
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:55:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7018E0E;
-	Wed, 27 Nov 2024 07:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A720B230D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:55:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26BD155C94;
+	Wed, 27 Nov 2024 07:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gf+7vW/n"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD7B18E0E;
+	Wed, 27 Nov 2024 07:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694113; cv=none; b=tnmK7FOdzZ7OTxb3LY2s2xDD8AfyHcjuHn66wRT9wtdoOHjzVAKo510e5/0xLUlfO/rlRPunU566b/FbB5cTPyX85FZmwULWMfHCFH68Ie8IRskjCDR2ZfIQrC6ZydbGcZ+UiG9Bzxvqa7LLCT820YGKu3Uesb+r7HopvUipHec=
+	t=1732694122; cv=none; b=fdFDIJM3ERW8KxZLuOeH4vnL0CTYFt3PV54CRr7VcGGdb/dX16kZpSx7CaPnbAMQFgDxkF7bHPZFZtxJKYJsKXKjsmqNf/NScAtlBc2flp+kpUAiQhg4dWNMbM2plJVQxoFi25EuM6uStwfrBE6D5dnHQqdvIlELYuI3cFkODEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694113; c=relaxed/simple;
-	bh=x0xX5vYSBWllewRjPzdfK0c874WVsNj5qAoWrojVTGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYuDsypKvwkjC7mUNPQMAl1mJG2hhAyzJwFSLWUWxeMe5ApCS8R5LdFSarJrBm/xbouz2kzYHIDlq4Eh3G9LER5/kXGHI/ZKtJIeoQDSX4X99vj5/aEOnNeDRMTN5ruREwA9IpsCjguDZhVDzAnUfZR7tNyaOFrVCO5H2USWzyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bucSP35A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6B3C4CECC;
-	Wed, 27 Nov 2024 07:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732694112;
-	bh=x0xX5vYSBWllewRjPzdfK0c874WVsNj5qAoWrojVTGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bucSP35AKAy65nI+BITULDx0+C9mvIKCfCDFgHIyv84XK+74qXxwFqUbTN41rkK+C
-	 Ra6tp1daRWkSizWrHnXH10FW7w58tZ2kX8hBinj8iFiX1chlQzHLXzCN+l4ncSQR03
-	 OnPHmh97RjPzSeDuH/4EE01NtM3RfoJgytMQdFBrt2uZX5X3MUhBxpKV/tKlolYwP2
-	 AAPuj17Gfvw2HqlZy5FOkO4Dv2lqO62E3NZ22t36PrOPbxmBz/MoM46QZS/72X63i3
-	 4rCESMHIqtId3GjebgFlSCLkaOZ8aJEJHy9tLVB3HTM8J+Qb7joF3gswz/if9EU4DG
-	 43V0+UResU/dA==
-Date: Wed, 27 Nov 2024 08:55:09 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof Wilczynski <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-Message-ID: <4ufubysv62v7aq53qfzxmup5agmqypdvemd24vm6eentph46qq@3kveluud3zd3>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1732694122; c=relaxed/simple;
+	bh=xOk9bVQYlvfAagAJYPtlh5kIoSLygT//cNWYNEnbMQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=emA9pKqPuRViwkZdz9HhvfawkA9NK+UVvYjHuIadIibDuKx7XJ5HXmVqiAMQZS8EyISXbpS9IAby7VXngwJ66rOJNkyHGpzh9M1uc4VdeuxPFpli8W1qjQ7QkZhyWqcPcjZ6vho6sfZhwzygcs0Tl+HB5yEI7nPdYLMIrgo+sSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gf+7vW/n; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53df1e063d8so175731e87.3;
+        Tue, 26 Nov 2024 23:55:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732694116; x=1733298916; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yGWQ1sChWGYzmBoNIP5bk9GE7YFe+i1tuP3FVoV5U5Y=;
+        b=Gf+7vW/nHGQJB7zP+xcbJZ8lBx6Zl4lebArroZZgqSoIEp3yli8ELpqbiV/lSQT5sT
+         DFmZgyy3BJQDSiaVAZhPxDUSAOcuAE6juKyoZTF8ODoepIF/l63lHCsSm3sHMOTpm/Rs
+         4Mr/loVXTqd7Ibtk7AA1XT5NfNN8awzKrgMRsx0yeN+b0/u53AXg3Kt8xeUgqqq8S64C
+         /mbBNcWrVeSWAiWH9sdbgRe9BfCahnvgsh0H6pEvNh3HgXvdASkz5vRqsXh712EGRzJO
+         P8Ki5Xy/bZ+LKBveo8D0ThuOuAcRW5aZfz697AjOmOygjXTqP3/DF3u3AP5QWdjP89BN
+         MIog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732694116; x=1733298916;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGWQ1sChWGYzmBoNIP5bk9GE7YFe+i1tuP3FVoV5U5Y=;
+        b=KnMAgq31GYicgRNlF+ddvrhwImYDwirOgBqgb+/JMusbefTu9Nk9ab4Y7MusMLXXFz
+         QGLnAf18UwJO62kDINv5/QRb/P9qzjbAKByPOtztoryNYdhLbvMLg5QCOxqdxpYgTbHE
+         9+pnwawgBQ0TVV055H69yn+IsvLXO41UiYVvvikIWa4MFj/jppczK7LX8EBmN1hSJRhc
+         SJnpq+Ne+e5cmVaAMrdZDFBQeqOTTaHIt3NTpOIXm+//Z7Yhj8l6F0N4ZIr40lsGlvaG
+         SWb1Bwgg5tje27gllmdNTXn3LoGMHQrbNpeY0uRUDouazwF6Db96TBaOTSYfQPD82Zw2
+         Ut7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwLYEAF/vzArl4M9bhpEBzR/CjsTJwo9Rb7yAG+xuNkdwRGeM4dF/hm+1t+DoJMPvfo5Q3Cauienr2tW9S@vger.kernel.org, AJvYcCWw+jLfLBj6VTG/rdhmv+rzxluBN+GSJIkUgx9pkXpi8E2QDB/UFnISmHPTtDoPG6ixfFHc6jkCxew6/3AJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg30Td63mXjOTePvyQIopYkSVuoINFZIOwqTkjZDkg2OSU41dM
+	E+aaSvOnGzWHGoc4Vk4prik6brb2CJnM+GJk08WpRH3gtyaaWtyx
+X-Gm-Gg: ASbGncsMHa2hyLrCLkZzRgM98hTStELYcGsf4Pnc+kBVMWfAodx8aSPGeMqKQvsdslx
+	Pp8+7tNLsiicedA7hDhNOwZrXK4XdxtxsdGsIc+lZoptS6T1b9pLIQ/GHsjy/A1GFXPepVDLatP
+	xnxsu3lA+XOEaqXvhg+fJeciDtnxSygxcOaIaqGr9/e8+V20uUp/YbPJRyQrhlg+VuH6DC8jYb8
+	LarZmnF4zPTsjxjgFqfz3GJ/XZ9TzY4/wz2MpyQRav5+v+8PWGXfS4bKmIE0SxfPxQvnNmEuAE6
+	tey5GWEQ
+X-Google-Smtp-Source: AGHT+IEbbPe1I6HmGXbu5iMcKg85RnC3++SP4n4FvFu2rBZ9au0a2KeUhuG+RffetELROIKre6q4kA==
+X-Received: by 2002:a05:6512:3a8c:b0:53d:e5fc:83c8 with SMTP id 2adb3069b0e04-53df0104707mr1023581e87.45.1732694115897;
+        Tue, 26 Nov 2024 23:55:15 -0800 (PST)
+Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53de0c3ce8bsm1241799e87.116.2024.11.26.23.55.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 23:55:14 -0800 (PST)
+Message-ID: <6d4cfb7b-b1c4-4307-a090-c5fd0b895a7b@gmail.com>
+Date: Wed, 27 Nov 2024 08:55:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
+ <20241126150613.a4b57y2qmolapsuc@quack3>
+ <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
+ <Z0X9hnjBEWXcVms-@casper.infradead.org>
+ <569d0df0-71d5-4227-aa28-e57cd60bc9f1@gmail.com>
+ <Z0YWrvnz5rYcYrjV@casper.infradead.org>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <Z0YWrvnz5rYcYrjV@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 24, 2024 at 11:51:39AM +0100, Andrea della Porta wrote:
-> +  '#interrupt-cells':
-> +    description:
-> +      Specifies the Bank number [0, 1, 2] and Flags as defined in
-> +      include/dt-bindings/interrupt-controller/irq.h.
-> +    const: 2
-> +
-> +  interrupt-controller: true
-> +
-> +patternProperties:
-> +  "-state$":
-> +    oneOf:
-> +      - $ref: "#/$defs/raspberrypi-rp1-state"
-> +      - patternProperties:
-> +          "-pins$":
-> +            $ref: "#/$defs/raspberrypi-rp1-state"
-> +        additionalProperties: false
-> +
-> +$defs:
-> +  raspberrypi-rp1-state:
-> +    allOf:
-> +      - $ref: pincfg-node.yaml#
-> +      - $ref: pinmux-node.yaml#
-> +
-> +    description:
-> +      Pin controller client devices use pin configuration subnodes (children
-> +      and grandchildren) for desired pin configuration.
-> +      Client device subnodes use below standard properties.
-> +
-> +    properties:
-> +      pins:
-> +        description:
-> +          List of gpio pins affected by the properties specified in this
-> +          subnode.
-> +        items:
-> +          pattern: "^gpio([0-9]|[1-5][0-9])$"
 
-You have 54 GPIOs, so up to 53.
 
-Use also consistent quotes, either ' or ".
+On 2024-11-26 19:42, Matthew Wilcox wrote:
+> On Tue, Nov 26, 2024 at 06:26:13PM +0100, Anders Blomdell wrote:
+>> On 2024-11-26 17:55, Matthew Wilcox wrote:
+>>> On Tue, Nov 26, 2024 at 04:28:04PM +0100, Anders Blomdell wrote:
+>>>> On 2024-11-26 16:06, Jan Kara wrote:
+>>>>> Hum, checking the history the update of ra->size has been added by Neil two
+>>>>> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
+>>>>> process all pages"). Neil, the changelog seems as there was some real
+>>>>> motivation behind updating of ra->size in read_pages(). What was it? Now I
+>>>>> somewhat disagree with reducing ra->size in read_pages() because it seems
+>>>>> like a wrong place to do that and if we do need something like that,
+>>>>> readahead window sizing logic should rather be changed to take that into
+>>>>> account? But it all depends on what was the real rationale behind reducing
+>>>>> ra->size in read_pages()...
+>>>>
+>>>> My (rather limited) understanding of the patch is that it was intended to read those pages
+>>>> that didn't get read because the allocation of a bigger folio failed, while not redoing what
+>>>> readpages already did; how it was actually going to accomplish that is still unclear to me,
+>>>> but I even don't even quite understand the comment...
+>>>>
+>>>> 	/*
+>>>> 	 * If there were already pages in the page cache, then we may have
+>>>> 	 * left some gaps.  Let the regular readahead code take care of this
+>>>> 	 * situation.
+>>>> 	 */
+>>>>
+>>>> the reason for an unchanged async_size is also beyond my understanding.
+>>>
+>>> This isn't because we couldn't allocate a folio, this is when we
+>>> allocated folios, tried to read them and we failed to submit the I/O.
+>>> This is a pretty rare occurrence under normal conditions.
+>>
+>> I beg to differ, the code is reached when there is
+>> no folio support or ra->size < 4 (not considered in
+>> this discussion) or falling throug when !err, err
+>> is set by:
+>>
+>>          err = ra_alloc_folio(ractl, index, mark, order, gfp);
+>>                  if (err)
+>>                          break;
+>>
+>> isn't the reading done by:
+>>
+>>          read_pages(ractl);
+>>
+>> which does not set err!
+> 
+> You're misunderstanding.  Yes, read_pages() is called when we fail to
+> allocate a fresh folio; either because there's already one in the
+> page cache, or because -ENOMEM (or if we raced to install one), but
+> it's also called when all folios are normally allocated.  Here:
+> 
+>          /*
+>           * Now start the IO.  We ignore I/O errors - if the folio is not
+>           * uptodate then the caller will launch read_folio again, and
+>           * will then handle the error.
+>           */
+>          read_pages(ractl);
+> 
+> So at the point that read_pages() is called, all folios that ractl
+> describes are present in the page cache, locked and !uptodate.
+> 
+> After calling aops->readahead() in read_pages(), most filesystems will
+> have consumed all folios described by ractl.  It seems that NFS is
+> choosing not to submit some folios, so rather than leave them sitting
+> around in the page cache, Neil decided that we should remove them from
+> the page cache.
+More like me not reading the comments properly, sorry. What I thought I
+said, was that the problematic code in the call to do_page_cache_ra was
+reached when the folio alloction returned an error. Sorry for not being
+clear, and thanks for your patience.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+/Anders
 
 
