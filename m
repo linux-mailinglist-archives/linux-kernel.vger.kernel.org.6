@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-423195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D60F9DA427
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:52:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F096E9DA428
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:52:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AB51B216F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E16D167F64
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77AF18CBFE;
-	Wed, 27 Nov 2024 08:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D2D190493;
+	Wed, 27 Nov 2024 08:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnQx+8k3"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XFajuxcn"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F71154C12
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC0D188904
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732697542; cv=none; b=VhYuLunSNclv+3kNIAeT/TbugGnb/c/EeeLqmEHllnHZ27Ly+zsiK9mWrhuJzyuy3L3vM0VP5nFvZnt78EOUCBYS258qAXs4bPY29b2+iusw954esyW16t3qu1PKmLIrGh4J+u+m28+NScggXlBdGsyfvEieK6G/NzpS8veGzis=
+	t=1732697543; cv=none; b=ZZsgad9GPTICwnO9hyID4bmE6Y5c18tQ9ZVEu2m465f5wYGmaHAQA8W47qR8QariZjK/HNaZ0yKfjuL4LeJv2dmQmmVCPPg0joereiiv4+gjyg4GUmRzrzqbw1ixcv71Fo+BWBcmmy8Tvmj5X9k9G2SDrlRqEur8Y3FALxwgqqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732697542; c=relaxed/simple;
-	bh=uCK/Xd1aQIJ+wac+ROo7rJ0da2p+8gibtUppcXoYDQE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kKQ5M67YOQ41nBSszgX4MmsU2pnQdTFc/b9k+XTRKCjPuXTMjnR9Zua+IjTjQsP1HYt4hlIH8lRywNTBWbJt33ZW1oy+zsqoysJRymu1mocPxCD53uWpM/KJN8ET4XOrR6h+noB2b96FrQQuV8HRHTco0s4nnIhN+j/572XHKLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnQx+8k3; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1732697543; c=relaxed/simple;
+	bh=wY6f7nJu9Pg2hjSOyD0ZoDO4+PdS+dIa8RaflRe+mA4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VJbaJLpYqFSEQtkhfNxtGhUfUjyiiyNx2SGrWbY/4FO6Uh/RwFifEpGYgMVTtsRQVs09DAQ4bILqcdd+wQHzEt17wG+zy7NsaWpmOJ10f9LYt1mXOpRBLLtqQvNKyTW1vPPjQXPzf42vQgxl9mvJ1Prh0UEopnE8FH8XJ0EWbKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XFajuxcn; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ea39638194so5611118a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:52:19 -0800 (PST)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-724e14b90cfso4659084b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:52:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732697539; x=1733302339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EjlAXoFz2XIqbM41yoAxAFwBhFgti6gR6NuKnlZ7RVo=;
-        b=EnQx+8k38Bo3PNbnIrv+exhPiWODueZNaSEW3pu2Qj2497PJQqFqP2oAorpsmfcL9a
-         tNXbY6sGkhh0y8ovxm7tyLLeYdm1rJPhnv0Nc3LecjrcDYQp3kZrAc0hTYkmmcnMBMTc
-         gA7Doy0lIPuxcAj0SwCYoDairrlcfTIXzfMeWNnfRVoi91rxlMdwY6NsXzd9n1Q1qG30
-         Vj3RXkXZthSzNwU8DKVStLASBjttEep8HcESZzRTqwQOFZiYGCwlz8c/LyGvV4609lOi
-         0xP6BA78DUV/jrkDrM+JnI+5IGE2Ff85x2zfuw/H7mmYkUJipoZBKepub1cE9WTEI53a
-         W8iw==
+        d=gmail.com; s=20230601; t=1732697542; x=1733302342; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5TXHgZ3Z8QTGy7TWH/5+kFsxPLaG9TqvwezPRwTQdc=;
+        b=XFajuxcn4dstM9oYc/PefeDLcfGcCpIuPYbMdj3tnhJtkdItBOuFRQaIVDKXt0Sf2m
+         lX94PNnQuNlJ5Eca+aUUotqnebAAqPjAuj+ZDVZvv0LjWkqjRj8pLLOiV0aeJdLwW2jm
+         S/6L7WXC+hCMQ2QECw2zNBl+Ra4Lif0swIkIwlwOaMGwjMEneMxw7/2OaJhjDAOsS6A1
+         8lPKG9rWOLVoBun6SALz6dUDUbXf35Sa6Q1S37uMQTzi6EIZ1310lbICSs1Sc/IGmHdI
+         Sj3AZOw5gSuEPp7EsbDMDJmL2sLvbCefBKdFtls6kHsToqeT9pkGT0105QIfqvcJZfyp
+         RieA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732697539; x=1733302339;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EjlAXoFz2XIqbM41yoAxAFwBhFgti6gR6NuKnlZ7RVo=;
-        b=Cm48iCQQRJg32EGyjhxQdnTeQYUB9ztbscJdoEr7EEv+VM8S8q0omgJ6l37j7p7/d7
-         crlwo4WYwr4lbr3aQFcEmoe7WmNc8T0CHAHERsK9WpCBgScOP3NEw2K2IwbSReB0f3OX
-         ga32fEgSXAX6e7IGKWumyc6XdOWPF72fhCHj1J7C62bl0LN/28aQ1M0dKRCfWMFMQRrT
-         Jl4+L0rlDc94ZdXaRqNzr+2hlKknhA1Diwdu93W+qrmCFV11+1b1Bsa3YLlkkZn4T7NH
-         tvt6ZwYqePwntm2lt+VLK3e2X/Rkx/mdawp93Tdonm1IT5NyqBRb0ZsNwcrvkrbZUyxw
-         WBvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKUt0YUvvbh+Aj1WVdvsMjoj3t0E9Z0d3M8ibuq1PCP+GIuAX3j4u/F8vigjm8edgRpLaDAH48EwNwDRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0eEDtJjAzluGePeMP+/Ap+t9fu3dtte28ZEx4SWvH0Qbwo8yo
-	ErTzT5ErGxzKREoGHrQqUbIwWNmvCzWGUsE95JqBTpQgPm19V731
-X-Gm-Gg: ASbGncvsDlRFNMA8opPjQlvrKatzEDeHGYmbamyrlp/zLiUl5smyv65rjNy8ZEIkA12
-	J/7IFueGtSO+tnrtZrFwpM88Aaty/IRZ66KP/MsuKQM4HdUfHARINY4gyRl78VZunwxffUKIJOy
-	ssJsBeUITHzUMD/tHOt8PV/ScF0IpHj3UY1UVNocZeLte3VRyp6qLl/bv7nuQMo4UHu4gP7bjSm
-	y2w1UIKU86rxY26Ym0UJiganDs2/12scdjK5rHlyBlhH0QXtrbM0QWDZrxtdA==
-X-Google-Smtp-Source: AGHT+IGZOzHPfNQAD3KDCajmMQ+5AJWsprxedR2u/LUupJmxIGBxc5DBj64TblnUzXu/sLlbWzFr6Q==
-X-Received: by 2002:a17:90b:4b87:b0:2ea:6551:da5d with SMTP id 98e67ed59e1d1-2ee08eb2b6emr2727673a91.13.1732697539243;
-        Wed, 27 Nov 2024 00:52:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732697542; x=1733302342;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I5TXHgZ3Z8QTGy7TWH/5+kFsxPLaG9TqvwezPRwTQdc=;
+        b=MzJ5xLT7KnEV2Em7mUIhRDZwVpF7VJiiBc1y1+bpfLU2KlJKrEctaDg+GhzSmay4fe
+         qqu6/NkDTj+PFr0nD/ZLrLWKMWJriqp5MQZEVD2VRgRFv/4AvYGcKozicKK9VgctX8ei
+         EYcDOhGKIvK7wQ/FiLPXfvXRIiN6K34STPJwgbaXfgW2joLHOicom9DarkJ6u65jMGZ4
+         infs324TqN2rqiZNsc0HapxWDG5/Zsxcs6QDdY41h5Bn8+GyUKFVLx+LRpkc7koqVo2T
+         woDfFRQCu/MRsSgzrgYeQqet+tv/OvqPH9r1BJZgHFrHNib0XNJLVpOXt3qo0t5dZtAW
+         udOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlt8Q2tdA0jQMWN7HU/4Xza1uAfs1BBgge8UBEJNFURds5C7f0SeYjlpXK04RQy/smPE8WjyCIlGc/a7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2G+LHY484sbnyClEBHLYOLzkxJDpOJ5EeyIlTZ7cuainju+6q
+	G+GKU0kp5pV9BA9oa4P5gDHzpaHgShCaNpHkmEkZO3hIGyMwtfVo
+X-Gm-Gg: ASbGnct3ERN1d/DXkQ/pXvkU5URW03qfIO60lfr+0O6TuaztofuCbdjIletn+22/yh2
+	Jj7QV9SHSp3mC633NpoVkEsy38F8sTYwWlcTFzEr6VN2sYTo3Pd9FVtTYQzfBPSpvA8TwBtlJz+
+	vRFpIRRddGkpLR+Sj4+gMLBK57zgUmezcOe77Ev318GxnuaGAfZWenIRHbTvhPooJvCqzKpfO44
+	m6WfdXQkj5Ffvs1lEXt3eIH1lSAcpMgZdOGj2didQjUJOkqGr/k4Sj+neot+g==
+X-Google-Smtp-Source: AGHT+IF6CYkTsIeE1XeYAMX6OTkwBCN+caMMwhD4ZTXviHRAggHQYeZCg5sgJ6GOgj0vulov/WbgKQ==
+X-Received: by 2002:a17:90b:38ca:b0:2ea:4578:46c0 with SMTP id 98e67ed59e1d1-2ee08ece4a4mr3032590a91.18.1732697541734;
+        Wed, 27 Nov 2024 00:52:21 -0800 (PST)
 Received: from localhost.localdomain ([143.92.64.17])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa60091sm960531a91.20.2024.11.27.00.52.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa60091sm960531a91.20.2024.11.27.00.52.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 00:52:18 -0800 (PST)
+        Wed, 27 Nov 2024 00:52:21 -0800 (PST)
 From: "brookxu.cn" <brookxu.cn@gmail.com>
 To: kbusch@kernel.org,
 	axboe@kernel.dk,
@@ -76,10 +78,12 @@ To: kbusch@kernel.org,
 	hare@suse.de
 Cc: linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] nvme: various bugs fix & code cleanup
-Date: Wed, 27 Nov 2024 17:27:46 +0800
-Message-Id: <cover.1732699313.git.chunguang.xu@shopee.com>
+Subject: [PATCH v2 1/5] nvme-tcp: fix the memleak while create new ctrl failed
+Date: Wed, 27 Nov 2024 17:27:47 +0800
+Message-Id: <d57573f42413b9e46fe227ef389e2f8a6971f1db.1732699313.git.chunguang.xu@shopee.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1732699313.git.chunguang.xu@shopee.com>
+References: <cover.1732699313.git.chunguang.xu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,20 +94,28 @@ Content-Transfer-Encoding: 8bit
 
 From: "Chunguang.xu" <chunguang.xu@shopee.com>
 
-Here try to fix the hang issue of nvme-rdma, memory leak issue of
-nvme-tcp, cleanup the code of nvme-tcp.
+Now while we create new ctrl failed, we have not free the
+tagset occupied by admin_q, here try to fix it.
 
-Chunguang.xu (5):
-  nvme-tcp: fix the memleak while create new ctrl failed
-  nvme-rdma: unquiesce admin_q before destroy it
-  nvme-tcp: no need to quiesec admin_q in nvme_tcp_teardown_io_queues()
-  nvme-tcp: simplify nvme_tcp_configure_admin_queue()
-  nvme-tcp: remove nvme_tcp_destroy_io_queues()
+Fixes: fd1418de10b9 ("nvme-tcp: avoid open-coding nvme_tcp_teardown_admin_queue()")
+Signed-off-by: Chunguang.xu <chunguang.xu@shopee.com>
+---
+ drivers/nvme/host/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/nvme/host/rdma.c |  8 +------
- drivers/nvme/host/tcp.c  | 49 ++++++++++++++++------------------------
- 2 files changed, 20 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 3e416af2659f..55abfe5e1d25 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -2278,7 +2278,7 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
+ 	}
+ destroy_admin:
+ 	nvme_stop_keep_alive(ctrl);
+-	nvme_tcp_teardown_admin_queue(ctrl, false);
++	nvme_tcp_teardown_admin_queue(ctrl, new);
+ 	return ret;
+ }
+ 
 -- 
 2.25.1
 
