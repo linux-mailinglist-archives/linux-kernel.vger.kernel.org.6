@@ -1,232 +1,188 @@
-Return-Path: <linux-kernel+bounces-423133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786A09DA343
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:42:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1862B1622E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:42:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F705154BEA;
-	Wed, 27 Nov 2024 07:42:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE349DA347
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:43:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296C1547C0
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D151C2835DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:43:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD857155333;
+	Wed, 27 Nov 2024 07:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xAWT5veW"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE0A1547E3
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732693354; cv=none; b=BtKgB2/xFl985X288DFxWi1n5cH+kbQT776E/UWt8GJ8FMjx/631v1V4JQeyEixe4T7gA4IAXAdea2hdGYOZx1FjsxILe7ZS/OO3RsJOrqg2inHwlKh+sUqHHK59BODS2GPsBk33djb7sB20XugZNFSvktpNfzd/s/3aN454YdY=
+	t=1732693376; cv=none; b=A1Eelnq3TWAaYEM1p+6gtD45bfsChJJpzJOognw2q02qRfQ2TFS3cbIgCOBgAUM/CdCktAY7Mmz2gQSnMUTBFdCi+tGKQvCBUNGRNC1VHXHfrLm0KcpVkJFXa1/x7l4vV7a8CtgDkQ2qlRZRn9izbxX+GGcTXxnqhUKJ+gabkMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732693354; c=relaxed/simple;
-	bh=5vv8IHHMQtHAOQk523vzxTXpY6w+84T4PwVdQXLrQDM=;
+	s=arc-20240116; t=1732693376; c=relaxed/simple;
+	bh=LU6AwlYsk3CPKKY2s0mNL0hPX4NuZPGAywEkPk0vpeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRKGtic1puvUynVQ9ZPOaDvBUWoTvJhyLYCK44ic+rZSa3WTMA32XdZp+LQ1i/zrj2omvnPh/48FVMQnOfUhBhy4IuVPCIYTZ5sJtbcEszxBnalS/KOU1ocqhAH5jR3t5AzxgdeoEfTjquk5v8jh56XEXJSS8O13n1+mM3gCODQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tGCgn-0002io-EU; Wed, 27 Nov 2024 08:42:21 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tGCgm-000OCN-15;
-	Wed, 27 Nov 2024 08:42:21 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id C46AA37E17B;
-	Wed, 27 Nov 2024 07:42:20 +0000 (UTC)
-Date: Wed, 27 Nov 2024 08:42:20 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: carlos.song@nxp.com
-Cc: frank.li@nxp.com, o.rempel@pengutronix.de, kernel@pengutronix.de, 
-	andi.shyti@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, 
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: imx: support DMA defer probing
-Message-ID: <20241127-ninja-dormouse-of-bloom-8ee494-mkl@pengutronix.de>
-References: <20241127074458.2102112-1-carlos.song@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNkXG8FiiFsekFc5vnhndGdzmKl9ApCo6/BOKgT3joCeQM0dcN7rr3FqQPOwtXkU+ZztU3g8pNeN1M+eVf/qhN+Igjw9MpFU/YKBZFjZPlKc6I2HpZzgL1mG40I31lvU8Xf9kPXWaKzrEukXhH1n4aJGB7WmqscVkeGCHFe3z+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xAWT5veW; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21200c749bfso63687435ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:42:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732693373; x=1733298173; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oMWDgk/n3j4GiaybswgAiKAVmYvm7oHmNlJIVMIMNac=;
+        b=xAWT5veWFj/XYJ1A1tOPYsUPA5QLLbRSKq1cnhQPYGAcid7rDYrT61U9HlxPNax0QK
+         2rok6R4SlfXLXShsS3Ae8TgXZP1Fr8A5FjLtZ+8/dtLgWgguCG1MeE/msauMNJyHWEe9
+         6pA/Lgfrw9TzNDgH8l73V435/DD6/Yr4qyVTTdglwIU5gu4qpBd5z9siq4zGz7sngUrH
+         tehw0J7GDcwIsgmrC6Fi1/RmtrW4rULmpDdNT/zKnTXK01H9LLPc6q+Y0RatrJPspGi5
+         2gYi+9c1OYfJpUKty8iL5zGkrIuuxUTNj8ybKpthN2h94l898Y7HqduXYZeu4jmjeTwz
+         nlzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732693373; x=1733298173;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oMWDgk/n3j4GiaybswgAiKAVmYvm7oHmNlJIVMIMNac=;
+        b=ee6m+mi/E1+cN/ZZqnDdHODXxuSCKPxljtJgiTmYnjx/Kp9wrmNxtSTaiu5gIf6QVL
+         nuHnA286uy5Co+9CjIfzUmZhwQ2tyUtGx6DpMwIfUKYMYS3yDBdDwZAGEKr0/t6/PMkq
+         +1D/c7pAuUcDj9zXbj59CUd2qHyDDNxjN18ObSwYEbinVhSnpMD94zJclWgjaUaQ73lD
+         NR2+qJVzn9LdR3Lz3eqxM1b1zLeEZX5Z4RiF2nkg3NUcuetjKRb67Uf208lmN9E/cXuG
+         b/A/VDy1YjUnJOmqE2/8qTiFDgUpjJZxrQUQ2sMrtMIPznleKJUiAl08VW2k95czu6nt
+         azQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4viMC8TXV1EZDggE/7HwdneLgoWPT3J/wSW9OW7x/v8SJY/NSLoUmjMKpeJBZkpWK5m2yRPpCWM2Uwmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztjS/M/gPg5dc9+DgrqY3+sm4ckcSc/uGthV9z+6yCin/OXuCO
+	vHpScMOU5zFZyYHPDM+KBe09X3mhO1YJW52T+9JXNNcPNDhLVXx4ISf4AIzUFQ==
+X-Gm-Gg: ASbGnct8rJOqGDb6Rd3s7s/R9fIKVAE+8rlDPxm2Jwcps7jSu0HkeDcER7weAr9bkFo
+	eYD6OU/sBy8CYK6Zucf2r7xRmrSQIzl0lyO+JKMdi8hd6dhUO1Cjd745NVDiD8eZ+qLP08bA+ZA
+	C+CicO8m1NtErVYVgF97Eyvwyr6wIvHlxhIDDVcvp4doG8FjJ4sQtLWaKdes8X8zez8RchqKWuv
+	UHCgDBDJUXrfV50pgGClvuM318uVuOrtUcZaRCYq9Y7PvApxwMmB3HwJL9X
+X-Google-Smtp-Source: AGHT+IGp9I4DmuKPduEUQ+Vs8HvCWxBrCkbO+5RyEgGe/YSQ1SwDti6JUnGKKHfl4zUAgD/Vk310rA==
+X-Received: by 2002:a17:902:d551:b0:211:f8c8:372c with SMTP id d9443c01a7336-21501381ba1mr22923355ad.21.1732693373062;
+        Tue, 26 Nov 2024 23:42:53 -0800 (PST)
+Received: from thinkpad ([120.60.136.64])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc12f22sm96678915ad.186.2024.11.26.23.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 23:42:52 -0800 (PST)
+Date: Wed, 27 Nov 2024 13:12:45 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+	Nitin Rawat <quic_nitirawa@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
+Message-ID: <20241127074245.4fhr3gypxbjipqnq@thinkpad>
+References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
+ <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
+ <tebgud2k4bup35e7rkfpx5kt7m5jxgw3yo3myjzfushnmdecsj@e4cb44jqoevp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uslwfux5gvanalae"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241127074458.2102112-1-carlos.song@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tebgud2k4bup35e7rkfpx5kt7m5jxgw3yo3myjzfushnmdecsj@e4cb44jqoevp>
 
+On Tue, Nov 26, 2024 at 10:21:10PM -0600, Bjorn Andersson wrote:
+> On Thu, Nov 07, 2024 at 11:58:09AM +0000, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Starting from SM8550, UFS PHY GDSCs doesn't support hardware retention. So
+> > using RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs
+> > will get powered down during suspend, causing the UFS PHY to loose its
+> > state. And this will lead to below UFS error during resume as observed on
+> > SM8550-QRD:
+> > 
+> 
+> Unless I'm mistaken, ALWAYS_ON makes GDSC keep the gendpd ALWAYS_ON as
+> well, which in turn would ensure that any parent power-domain is kept
+> active - which in the case of GCC would imply CX.
+> 
 
---uslwfux5gvanalae
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] i2c: imx: support DMA defer probing
-MIME-Version: 1.0
+That's correct. But there is one more way to fix this issue. We can powerdown
+UFS (controller and device) during suspend and the ufs-qcom driver can specify
+the default suspend level based on platform. I think that would be more
+appropriate than forbidding CX power collapse for the whole SoC.
 
-On 27.11.2024 15:44:58, carlos.song@nxp.com wrote:
-> From: Carlos Song <carlos.song@nxp.com>
->=20
-> Return -EPROBE_DEFER when dma_request_slave_channel() because DMA driver
-> have not ready yet.
->=20
-> Move i2c_imx_dma_request() before registering I2C adapter to avoid
-> infinite loop of .probe() calls to the same driver, see "e8c220fac415
-> Revert "i2c: imx: improve the error handling in i2c_imx_dma_request()""
-> and "Documentation/driver-api/driver-model/driver.rst".
->=20
-> Use CPU mode to avoid stuck registering i2c adapter when DMA resources
-> are unavailable.
->=20
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> ---
-> Change for V3:
-> - According to Marc's comment, remove error print when defer probe.
->   Add info log when DMA has not been enabled and add error log when
->   DMA error, both won't stuck the i2c adapter register, just for remindin=
-g,
->   i2c adapter is working only in PIO mode.=20
-> Change for V2:
-> - According to Frank's comments, wrap at 75 char and Simplify fix code
->   at i2c_imx_dma_request().
-> - Use strict patch check, fix alignment warning at i2c_imx_dma_request()
-> ---
->  drivers/i2c/busses/i2c-imx.c | 31 +++++++++++++++++++++++--------
->  1 file changed, 23 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index 5ed4cb61e262..47112a38d034 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -397,17 +397,16 @@ static void i2c_imx_reset_regs(struct imx_i2c_struc=
-t *i2c_imx)
->  }
-> =20
->  /* Functions for DMA support */
-> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
-> -						dma_addr_t phy_addr)
-> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx, dma_addr_=
-t phy_addr)
->  {
->  	struct imx_i2c_dma *dma;
->  	struct dma_slave_config dma_sconfig;
-> -	struct device *dev =3D &i2c_imx->adapter.dev;
-> +	struct device *dev =3D i2c_imx->adapter.dev.parent;
->  	int ret;
-> =20
->  	dma =3D devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
->  	if (!dma)
-> -		return;
-> +		return -ENOMEM;
-> =20
->  	dma->chan_tx =3D dma_request_chan(dev, "tx");
->  	if (IS_ERR(dma->chan_tx)) {
-> @@ -452,7 +451,7 @@ static void i2c_imx_dma_request(struct imx_i2c_struct=
- *i2c_imx,
->  	dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
->  		dma_chan_name(dma->chan_tx), dma_chan_name(dma->chan_rx));
-> =20
-> -	return;
-> +	return 0;
-> =20
->  fail_rx:
->  	dma_release_channel(dma->chan_rx);
-> @@ -460,6 +459,8 @@ static void i2c_imx_dma_request(struct imx_i2c_struct=
- *i2c_imx,
->  	dma_release_channel(dma->chan_tx);
->  fail_al:
->  	devm_kfree(dev, dma);
-> +
-> +	return ret;
->  }
-> =20
->  static void i2c_imx_dma_callback(void *arg)
-> @@ -1803,6 +1804,23 @@ static int i2c_imx_probe(struct platform_device *p=
-dev)
->  	if (ret =3D=3D -EPROBE_DEFER)
->  		goto clk_notifier_unregister;
-> =20
-> +	/*
-> +	 * Init DMA config if supported, -ENODEV means DMA not enabled at
-> +	 * this platform, that is not a real error, so just remind "only
-> +	 * PIO mode is used". If DMA is enabled, but meet error when request
-> +	 * DMA channel, error should be showed in probe error log. PIO mode
-> +	 * should be available regardless of DMA.
-> +	 */
-> +	ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
-> +	if (ret) {
-> +		if (ret =3D=3D -EPROBE_DEFER)
-> +			goto clk_notifier_unregister;
-> +		else if (ret =3D=3D -ENODEV)
-> +			dev_info(&pdev->dev, "Only use PIO mode\n");
+Let me cook up a patch.
 
-On a system without DMA configured, with this patch we now get this info
-message that wasn't there before. I think this might annoy some people,
-so you should remove it.
+> The way we've dealt with this elsewhere is to use the PWRSTS_RET_ON flag
+> in pwrsts; we then keep the GDSC active, but release any votes to the
+> parent and rely on hardware to kick in MX when we're shutting down CX.
+> Perhaps this can't be done for some reason?
+> 
 
-regards,
-Marc
+UFS team told me that there is no 'hardware retention' for UFS PHYs starting
+from SM8550 and asked to keep GDSCs ALWAYS_ON. So that would mean, there is no
+MX backing also.
 
-> +		else
-> +			dev_err_probe(&pdev->dev, ret, "Failed to setup DMA, only use PIO mod=
-e\n");
-> +	}
-> +
->  	/* Add I2C adapter */
->  	ret =3D i2c_add_numbered_adapter(&i2c_imx->adapter);
->  	if (ret < 0)
-> @@ -1817,9 +1835,6 @@ static int i2c_imx_probe(struct platform_device *pd=
-ev)
->  		i2c_imx->adapter.name);
->  	dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
-> =20
-> -	/* Init DMA config if supported */
-> -	i2c_imx_dma_request(i2c_imx, phy_addr);
-> -
->  	return 0;   /* Return OK */
-> =20
->  clk_notifier_unregister:
-> --=20
-> 2.34.1
->=20
->=20
+- Mani
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+> 
+> PS. In contrast to other platforms where we've dealt with issues of
+> under voltage crashes, I see &gcc in sm8550.dtsi doesn't specify a
+> parent power-domain, which would mean that the required-opps = <&nom> of
+> &ufs_mem_hc is voting for nothing.
+> 
+> Regards,
+> Bjorn
+> 
+> > ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
+> > ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
+> > ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
+> > ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
+> > ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
+> > 
+> > Cc: stable@vger.kernel.org # 6.8
+> > Fixes: 1fe8273c8d40 ("clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag")
+> > Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/clk/qcom/gcc-sm8550.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
+> > index 5abaeddd6afc..7dd08e175820 100644
+> > --- a/drivers/clk/qcom/gcc-sm8550.c
+> > +++ b/drivers/clk/qcom/gcc-sm8550.c
+> > @@ -3046,7 +3046,7 @@ static struct gdsc ufs_phy_gdsc = {
+> >  		.name = "ufs_phy_gdsc",
+> >  	},
+> >  	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
+> >  };
+> >  
+> >  static struct gdsc ufs_mem_phy_gdsc = {
+> > @@ -3055,7 +3055,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
+> >  		.name = "ufs_mem_phy_gdsc",
+> >  	},
+> >  	.pwrsts = PWRSTS_OFF_ON,
+> > -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+> > +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
+> >  };
+> >  
+> >  static struct gdsc usb30_prim_gdsc = {
+> > 
+> > -- 
+> > 2.25.1
+> > 
+> > 
 
---uslwfux5gvanalae
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdGzVkACgkQKDiiPnot
-vG/p/gf/dNbUgrCuDN9PCQSS3wFnlsgOdh8NYGwvCYGdpCKsCEV5ka+ZsoeG3Gs3
-sL9ZpngFs6mYthktAyMv7JYNeC8swoxZCNAlxbOoqcp3DO6Xea4Iw6mA/RCmbzQU
-5AdJ0SdFYCIZSyklxCdnftN5IC0Ss9bKBbWNh/u4DwfIgImX3NdmH3I9ICRy+Q3r
-iIqAmqDA89AlPQbvzpNb2C3hhlLIRMpLzQX2CMwxLacuEBlG6ipHWZp1dLJ44U5N
-PYg1rrZxYvq/ALYAYLiCz7HbpNtPnRADB0TU336iG8/KhjfvmZhRY7wG8hju2hEU
-3RrT9AlFcC69Gp8TDMvlFrs8YqEEcA==
-=wCoA
------END PGP SIGNATURE-----
-
---uslwfux5gvanalae--
+-- 
+மணிவண்ணன் சதாசிவம்
 
