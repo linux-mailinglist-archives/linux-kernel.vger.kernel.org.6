@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-423332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6799DA5EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:35:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 478C19DA5E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF5A1623FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCBA416218C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC98C1990C2;
-	Wed, 27 Nov 2024 10:35:32 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258EB19883C;
+	Wed, 27 Nov 2024 10:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="m4w5T8gG"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AC2192D7F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1F9195FEC;
+	Wed, 27 Nov 2024 10:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732703732; cv=none; b=lwuztJyTqJAKQxttNwhp6gUwf+qqiIHwNA6eV7UcPUS9FoKIFp+RDKLxw3u+oxHR7mK3bi5ZJgU14+is2j2EDEPKD2VyTk7weeCnmn8ViDtn1RvSrqf5RKxZlClEClBbyldbxtrQZ0aG/YlicIS/BcswHzuTafoYrpF/A26qQnc=
+	t=1732703729; cv=none; b=LNzLDsGiVNkMwtfCwsGAT8yO25DVnKaXsUgZ6mMb7AoiU5A1zWW5gt4pWTabWe8sijiHOks9O82q/QEEO9gLwgrVenyQXkcOzkym0V74Qlt69amdHS7qy6mGyhevFfpbAoI1MkygWnEBAb1yusZVv1Sfcy1+vFtx4EkX59gRTLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732703732; c=relaxed/simple;
-	bh=ZYvcVW323NA1Uz0R0y6vV9hQQgnQEtYSCpswGooTjps=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hhE6uziYk0LGaN7LyLVv2WujvCJc3qhbwfrHQyPBLLvmg7LqFpWxas6TrAqI/IhybfP+QM6Hh4L8skzs2ueATuTnizU304aaySLcVIyC7D3V63rWx6JfExhC/lgshN3Wc9q+veWLALU+XF8rIbzfxwxEP+CnzyFXdAGBjHEGP84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4b5c6b80acab11efa216b1d71e6e1362-20241127
-X-CTIC-Tags:
-	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
-	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS
-	GTI_RG_INFO, GTI_C_BU, AMN_GOOD
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:87ae4f1d-adf2-492c-af4e-792c2f9d5e46,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:15
-X-CID-INFO: VERSION:1.1.38,REQID:87ae4f1d-adf2-492c-af4e-792c2f9d5e46,IP:0,URL
-	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:15
-X-CID-META: VersionHash:82c5f88,CLOUDID:9d23c5b4a4b6e64eb6e2fbffd11d9fdd,BulkI
-	D:241127183519U1COWKNK,BulkQuantity:0,Recheck:0,SF:17|19|38|66|102,TC:nil,
-	Content:0,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
-X-UUID: 4b5c6b80acab11efa216b1d71e6e1362-20241127
-X-User: xiaopei01@kylinos.cn
-Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 193568006; Wed, 27 Nov 2024 18:35:17 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: alexandre.belloni@bootlin.com,
-	aniketmaurya@google.com,
-	=linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH] i3c: dw: Fix use-after-free in dw_i3c_master driver due to race condition
-Date: Wed, 27 Nov 2024 18:35:11 +0800
-Message-Id: <bfc49c9527be5b513e7ceafeba314ca40a5be4bc.1732703537.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732703729; c=relaxed/simple;
+	bh=hwhPC+nngxGhlzp3O6yweDudyD4FEfXUMNg9mM21JjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EIEKRUq2oYlZKEKeK7u8GuUIy4+Wl1K4PBL7bJidAESPN8d5hkwfe0f5g3J40aIQJTU8Y0DY05izpExh/CQJS29VEGxSCVTuZ6QYQ5IvmQD+m31LmYblWkrglBCXaDftvrY4dCIN3Ui5xD6N9QkvXQBGWSMkzJ4S2vfyjjQ4CPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=m4w5T8gG; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732703728; x=1764239728;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=dANRT1QysBfh684irsoEIYvJESbzRAKP8LynwcGDE+4=;
+  b=m4w5T8gGeYoATlymSj8BG48iNg2P97X1ROp+nzMy2qd5YWuoullg6iXy
+   TMYyRIiOS+pySLSUfsNHAhYqT7jyfMXKkqIWfxxOKPZMzaFbTPfBHYf4l
+   /bawtVp+4AnaHDunlf49Ar4W1AFRMHLMwyfkRfkC+G8rpBOqP4x7YInYy
+   w=;
+X-IronPort-AV: E=Sophos;i="6.12,189,1728950400"; 
+   d="scan'208";a="356119897"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 10:35:24 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:44523]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.9.62:2525] with esmtp (Farcaster)
+ id e57ab266-76c7-474b-a839-3465549ca324; Wed, 27 Nov 2024 10:35:23 +0000 (UTC)
+X-Farcaster-Flow-ID: e57ab266-76c7-474b-a839-3465549ca324
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 27 Nov 2024 10:35:21 +0000
+Received: from [192.168.3.246] (10.106.82.33) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 27 Nov 2024
+ 10:35:19 +0000
+Message-ID: <522cb8d6-63fa-4450-a786-86da64f8ecc3@amazon.com>
+Date: Wed, 27 Nov 2024 10:35:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <david@redhat.com>,
+	<peterx@redhat.com>, <oleg@redhat.com>, <vkuznets@redhat.com>,
+	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
+	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
+	<xmarcalx@amazon.com>
+References: <20241118130403.23184-1-kalyazin@amazon.com>
+ <ZzyRcQmxA3SiEHXT@google.com>
+ <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
+ <Zz-gmpMvNm_292BC@google.com>
+ <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com>
+ <Z0URHBoqSgSr_X5-@google.com>
+ <e12ef1ad-7576-4874-8cc2-d48b6619fa95@amazon.com>
+ <Z0ZHSHxpagw_HXDQ@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <Z0ZHSHxpagw_HXDQ@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D013EUB003.ant.amazon.com (10.252.51.65) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-In dw_i3c_common_probe, &master->hj_work is bound with
-dw_i3c_hj_work. And dw_i3c_master_irq_handler can call
-dw_i3c_master_irq_handle_ibis function to start the work.
 
-If we remove the module which will call dw_i3c_common_remove to
-make cleanup, it will free master->base through i3c_master_unregister
-while the work mentioned above will be used. The sequence of operations
-that may lead to a UAF bug is as follows:
 
-CPU0                                      CPU1
+On 26/11/2024 22:10, Sean Christopherson wrote:
+> On Tue, Nov 26, 2024, Nikita Kalyazin wrote:
+>> On 26/11/2024 00:06, Sean Christopherson wrote:
+>>> On Mon, Nov 25, 2024, Nikita Kalyazin wrote:
+>>>> In both cases the fault handling code is blocked and the pCPU is free for
+>>>> other tasks.  I can't see the vCPU spinning on the IO to get completed if
+>>>> the async task isn't created.  I tried that with and without async PF
+>>>> enabled by the guest (MSR_KVM_ASYNC_PF_EN).
+>>>>
+>>>> What am I missing?
+>>>
+>>> Ah, I was wrong about the vCPU spinning.
+>>>
+>>> The goal is specifically to schedule() from KVM context, i.e. from kvm_vcpu_block(),
+>>> so that if a virtual interrupt arrives for the guest, KVM can wake the vCPU and
+>>> deliver the IRQ, e.g. to reduce latency for interrupt delivery, and possible even
+>>> to let the guest schedule in a different task if the IRQ is the guest's tick.
+>>>
+>>> Letting mm/ or fs/ do schedule() means the only wake event even for the vCPU task
+>>> is the completion of the I/O (or whatever the fault is waiting on).
+>>
+>> Ok, great, then that's how I understood it last time.  The only thing that
+>> is not entirely clear to me is like Vitaly says, KVM_ASYNC_PF_SEND_ALWAYS is
+>> no longer set, because we don't want to inject IRQs into the guest when it's
+>> in kernel mode, but the "host async PF" case would still allow IRQs (eg
+>> ticks like you said).  Why is it safe to deliver them?
+> 
+> IRQs are fine, the problem with PV async #PF is that it directly injects a #PF,
+> which the kernel may not be prepared to handle.
 
-                                     | dw_i3c_hj_work
-dw_i3c_common_remove                 |
-i3c_master_unregister(&master->base) |
-device_unregister(&master->dev)      |
-device_release                       |
-//free master->base                  |
-                                     | i3c_master_do_daa(&master->base)
-                                     | //use master->base
+You're right indeed, I was overfocused on IRQs for some reason.
 
-Fix it by ensuring that the work is canceled before proceeding with
-the cleanup in dw_i3c_common_remove.
+>>>>>>> I have no objection to disabling host async page faults,
+>>>>>>> e.g. it's probably a net>>>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling
+>>>>>>> needs an opt-in from>>>>> userspace.
+>> Back to this, I couldn't see a significant effect of this optimisation with
+>> the original async PF so happy to give it up, but it does make a difference
+>> when applied to async PF user [2] in my setup.  Would a new cap be a good
+>> way for users to express their opt-in for it?
+> 
+> This probably needs to be handled in the context of the async #PF user series.
+> If that series never lands, adding a new cap is likely a waste.  And I suspect
+> that even then, a capability may not be warranted (truly don't know, haven't
+> looked at your other series).
 
-Fixes: 1dd728f5d4d4 ("i3c: master: Add driver for Synopsys DesignWare IP")
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- drivers/i3c/master/dw-i3c-master.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 8d694672c110..dbcd3984f257 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -1624,6 +1624,7 @@ EXPORT_SYMBOL_GPL(dw_i3c_common_probe);
- 
- void dw_i3c_common_remove(struct dw_i3c_master *master)
- {
-+	cancel_work_sync(&master->hj_work);
- 	i3c_master_unregister(&master->base);
- 
- 	pm_runtime_disable(master->dev);
--- 
-2.34.1
-
+Yes, I meant that to be included in the async #PF user series (if 
+required), not this one.  Just wanted to bring it up here, because the 
+thread already had the relevant context.  Thanks.
 
