@@ -1,235 +1,799 @@
-Return-Path: <linux-kernel+bounces-423558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F629DA9B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:06:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEEE9DA9AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:06:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031B2281C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE84281AF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4419D1FCFDC;
-	Wed, 27 Nov 2024 14:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643831FCFE7;
+	Wed, 27 Nov 2024 14:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Cw7SGPTs"
-Received: from smtpbg156.qq.com (smtpbg156.qq.com [15.184.82.18])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UTd8aLZ/"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54FF1FE44E;
-	Wed, 27 Nov 2024 14:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.82.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732716367; cv=none; b=k86T95c1btjBrmChXkg3aIMQJGNlGGKlOoTKpx+dAgJSOnYoalDOcDNdYvFBd1P/vyKe2AhaZOFG0ExKEdusypO/s3Gs2x+n+kgADTN5y8UHaH4C/HmSgcP/XFf80W+QVQMzTsm4DZdcuA7HhVqqIt5zkSeBu4kKx+r9yv/vDmM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732716367; c=relaxed/simple;
-	bh=hl7pSD6Va2jGqRKBmvbTdZ0ciQe7LWwiApySQUTIuvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kHl0I85QKh6sX3qyxWJTKKY5c+JSZpgmhlgpaXJoU6a/jEk21SCHLkd0kVC/6JyN3jg+rUAc8SJfJ+zclOoKT2zAft0+axpvd/1DxYDw3T9lfxCLFleZVt91DJyYPrCrqIxc3Zb1o7ThV4rD/dz15SVq5dizSEqqeOGB8CfpKyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Cw7SGPTs; arc=none smtp.client-ip=15.184.82.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1732716303;
-	bh=lpUbe2iEsrUtD+K5F9y6D/Hf9UaLdV/dPn5S7BDZQhg=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=Cw7SGPTsUlgHMOjE5hqeswDJUjGNiypvJ0beooRjY6NzvRoIoSynJNq5UUTxeJh07
-	 QXPqHPQ4R0kZ1Dm7CmEPN8au2PN+H5gEV2tg2wpLEQ5m+0zRgNlNCJQbT3IT2e85do
-	 4lWzSyLOPc9jX6pOVRrowJCzX4SyqBMIAlm5SvW8=
-X-QQ-mid: bizesmtpip2t1732716296tq0sm4o
-X-QQ-Originating-IP: 6G/NEyDYBKCNIRtbsqGJy8MY0E1haWqHzGi0uC6UhiU=
-Received: from john-PC ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 27 Nov 2024 22:04:55 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 11257385633280249915
-Date: Wed, 27 Nov 2024 22:04:37 +0800
-From: Qiang Ma <maqianga@uniontech.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
- axboe@kernel.dk, dwagner@suse.de, hare@suse.de, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: Don't wait for completion of in-flight requests
-Message-ID: <2100C70C0D4CA64E+20241127220437.65ae99dd@john-PC>
-In-Reply-To: <Z0XX5ts2yTO7Frl8@fedora>
-References: <20241126115008.31272-1-maqianga@uniontech.com>
-	<Z0XX5ts2yTO7Frl8@fedora>
-Organization: UOS
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E001FCFEE;
+	Wed, 27 Nov 2024 14:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732716365; cv=pass; b=QUegrF1fBYbBFW18sVMz/G0osjzVGw0do12vyhDxuPZDr9T+NR2cn+GJjvEu5T9iVpnV4N7HH/IxVvfnotC+2EkForQ2YfMTiD9LsNMFwm48lx/9YcaIHQqEU3AG01k5BvgiMonppxeFyronGoKegio0p6RiKpp7UbEI94I6H+c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732716365; c=relaxed/simple;
+	bh=JdGym7pgPbB0z3iqiD+WPNnZOnFflxzBxCxp5LGQcJI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=FTB4XHDumAgyigoE42S332siLfeKhTV5nUNYkKwC7o8ZJMtTHn69j/j6RKzKJP5Tc6NCJCweR9U3A12EQPnE+N9P+6Wa6tdXeq9p8TashiAevdjuRbgp77e7fGruZ6HyOTNU8vM0z5JEjPWTon56l8escD280uncuxvu7j5g8Ik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UTd8aLZ/; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732716328; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=oB1NqOPYGTI2V007+mAEJvbGKvpIq5yRhTlTqdEH4IUi/bK2f4L2xK/9tWMmf1L9OLqqDRJS5Y8fLlZm19bFIfJ79rvwVsAY1GltBrIbYJGBagfPswDJT/3t1qwmST8iv7Y5aD42Aj7dnGOqL10guKN0/cXqt5LyN4sOuQJW56U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732716328; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lWQaC8Mykzh2lnFxQvbvc6WyVeJRdfmR2Vr0d6hP99A=; 
+	b=Qr2ynllsRQ1Ns178KMNYSo4pT5KlcF+2Izd3IWejlYLn4GIJmVJ4tPite/G22HGnyqHIIzcK+UPAM/y5v/qvlNxBNbrDSXxZzicSYeyYekZeixpzJoa7+hzrGi/zZco07h5m/HdJZjSx8Y1vWjXJlwBKiWywVJR5gKMpIWmjaBM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732716328;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=lWQaC8Mykzh2lnFxQvbvc6WyVeJRdfmR2Vr0d6hP99A=;
+	b=UTd8aLZ/zLIXg3Kn6F/Vvpdbcu4dzVj6CC1GYvw/CIJgw5QwZUF4mKVF6JrlFNLY
+	16YYZZiEjXBnmGocDpeSQn0DOO3gZmpu3zLavjkijFQifhYA1C+MlZ8PsI22jYnjn7D
+	V8wGDp7JZ2qWBm80OPRbxDxst0NW2URBJgoX68C8=
+Received: by mx.zohomail.com with SMTPS id 1732716325951864.0172514414779;
+	Wed, 27 Nov 2024 06:05:25 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: Mvv6JxatWTxOSRmhP7JMgzgavZD0f53HUEeJB2hcQvrlBqsxhpK6+9dF
-	ZFcz4rHRZWIFcF1bVXH+B5JYfzO1U/TDT00TwNpyxwgTKE0czWY8elDpqopmDilDv+HfELp
-	JLIjyvxyGjZAvh2s3sJ5khuSEGnfyHbnEIKPIl7SF5awfGoGJI6px3HlIzgqimF181cpb8P
-	EGS5YsoYHn1vQF3OhAF5iFWJBUDVRQqUBSGcCgiKz9xnOlKvnPiOYiX1YRMOTf8U486LVup
-	2Nd4xfWfwPsXfeljXPGTcF84rA1ESgywNncYp2j7bsRN21TxKTaNVYkD4szraOxiSHHh0JQ
-	cXVRGMlmb2V59n3od55wXyzAeVCyFvhpPd9w0HdaRehw5W4tiI8Fu6fCcaFUmPKWWqC6vTr
-	/mYM/G3tWebIOwaw+3YN792QrYsahHGKbcO3pIBKsgiPtnzeaUAh77+0A0mNuPujzf57PpQ
-	pVwkgR0/vU/luwNsZhJjKT18X2WdJNLccOk4Me0thjYYNbdDC8Xs/V5srV9EyS7S7fzBz+a
-	zgfKO6spNuDjgVGo5ukU9j2lkneP0cW57UWEJR5Z7UX5Z14LswtVg3zoP03LE7XfxhuXqqB
-	yV+8falDei8GrN54GcikPv4hqeAYckxMq8uudsZIIsp9Tv50CLSgBr0/UxIOV2c5k1e0bBN
-	f/aWZX/ziN/ytIHj0ixynt/RqDUXQpuMw9xmTN6v20jWH9hQDxzE8ppki5DBDtMQg4x+vEY
-	mb1tNRgNPU0YqOlavPndtdy55dpTta6Yi0M6fZCrthkGKKUUEltaZ8w6xVRA+moOYHjZtgp
-	MOHIeW6gQMNLSpscwbSPftXJcdQz+XX866CQ9mPX0OvtCmfEChaOUkp0Iy4DjlU4GrAlVOx
-	Hp7dGi6TFkLIkH7IaWcYAw/2pd9V3yh4Bi6bWuyG50skF8alP3UUw6Lkj1e/sCzDRRxJ+/W
-	iE25ST0P69ftc10AGED3J2vbY82gPNyHy/n1Nq5EA6IjmdZOtHu8MTh/1+J2Wf0I5KdNKDq
-	+UVe+XaYpJmSRihKgc
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 06/35] rust: drm/kms: Add drm_plane bindings
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-7-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 11:05:09 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8F8E50EB-6E10-4FEB-A9A9-630B67B41E33@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-7-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Tue, 26 Nov 2024 22:15:02 +0800
-Ming Lei <ming.lei@redhat.com> wrote:
+Hi Lyude,
 
-> On Tue, Nov 26, 2024 at 07:50:08PM +0800, Qiang Ma wrote:
-> > Problem:
-> > When the system disk uses the scsi disk bus, The main
-> > qemu command line includes:
-> > ...
-> > -device virtio-scsi-pci,id=scsi0 \
-> > -device scsi-hd,scsi-id=1,drive=drive-virtio-disk
-> > -drive id=drive-virtio-disk,if=none,file=/home/kvm/test.qcow2
-> > ...
-> > 
-> > The dmesg log is as follows::
-> > 
-> > [   50.304591][ T4382] sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> > [   50.377002][ T4382] kexec_core: Starting new kernel
-> > [   50.669775][  T194] psci: CPU1 killed (polled 0 ms)
-> > [   50.849665][  T194] psci: CPU2 killed (polled 0 ms)
-> > [   51.109625][  T194] psci: CPU3 killed (polled 0 ms)
-> > [   51.319594][  T194] psci: CPU4 killed (polled 0 ms)
-> > [   51.489667][  T194] psci: CPU5 killed (polled 0 ms)
-> > [   51.709582][  T194] psci: CPU6 killed (polled 0 ms)
-> > [   51.949508][   T10] psci: CPU7 killed (polled 0 ms)
-> > [   52.139499][   T10] psci: CPU8 killed (polled 0 ms)
-> > [   52.289426][   T10] psci: CPU9 killed (polled 0 ms)
-> > [   52.439552][   T10] psci: CPU10 killed (polled 0 ms)
-> > [   52.579525][   T10] psci: CPU11 killed (polled 0 ms)
-> > [   52.709501][   T10] psci: CPU12 killed (polled 0 ms)
-> > [   52.819509][  T194] psci: CPU13 killed (polled 0 ms)
-> > [   52.919509][  T194] psci: CPU14 killed (polled 0 ms)
-> > [  243.214009][  T115] INFO: task kworker/0:1:10 blocked for more
-> > than 122 seconds. [  243.214810][  T115]       Not tainted 6.6.0+ #1
-> > [  243.215517][  T115] "echo 0
-> > > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > [  243.216390][  T115] task:kworker/0:1     state:D stack:0
-> > > pid:10    ppid:2      flags:0x00000008
-> > [  243.217299][  T115] Workqueue: events vmstat_shepherd
-> > [  243.217816][  T115] Call trace:
-> > [  243.218133][  T115]  __switch_to+0x130/0x1e8
-> > [  243.218568][  T115]  __schedule+0x660/0xcf8
-> > [  243.219013][  T115]  schedule+0x58/0xf0
-> > [  243.219402][  T115]  percpu_rwsem_wait+0xb0/0x1d0
-> > [  243.219880][  T115]  __percpu_down_read+0x40/0xe0
-> > [  243.220353][  T115]  cpus_read_lock+0x5c/0x70
-> > [  243.220795][  T115]  vmstat_shepherd+0x40/0x140
-> > [  243.221250][  T115]  process_one_work+0x170/0x3c0
-> > [  243.221726][  T115]  worker_thread+0x234/0x3b8
-> > [  243.222176][  T115]  kthread+0xf0/0x108
-> > [  243.222564][  T115]  ret_from_fork+0x10/0x20
-> > ...
-> > [  243.254080][  T115] INFO: task kworker/0:2:194 blocked for more
-> > than 122 seconds. [  243.254834][  T115]       Not tainted 6.6.0+ #1
-> > [  243.255529][  T115] "echo 0
-> > > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > [  243.256378][  T115] task:kworker/0:2     state:D stack:0
-> > > pid:194   ppid:2      flags:0x00000008
-> > [  243.257284][  T115] Workqueue: events work_for_cpu_fn
-> > [  243.257793][  T115] Call trace:
-> > [  243.258111][  T115]  __switch_to+0x130/0x1e8
-> > [  243.258541][  T115]  __schedule+0x660/0xcf8
-> > [  243.258971][  T115]  schedule+0x58/0xf0
-> > [  243.259360][  T115]  schedule_timeout+0x280/0x2f0
-> > [  243.259832][  T115]  wait_for_common+0xcc/0x2d8
-> > [  243.260287][  T115]  wait_for_completion+0x20/0x38
-> > [  243.260767][  T115]  cpuhp_kick_ap+0xe8/0x278
-> > [  243.261207][  T115]  cpuhp_kick_ap_work+0x5c/0x188
-> > [  243.261688][  T115]  _cpu_down+0x120/0x378
-> > [  243.262103][  T115]  __cpu_down_maps_locked+0x20/0x38
-> > [  243.262609][  T115]  work_for_cpu_fn+0x24/0x40
-> > [  243.263059][  T115]  process_one_work+0x170/0x3c0
-> > [  243.263533][  T115]  worker_thread+0x234/0x3b8
-> > [  243.263981][  T115]  kthread+0xf0/0x108
-> > [  243.264405][  T115]  ret_from_fork+0x10/0x20
-> > [  243.264846][  T115] INFO: task kworker/15:2:639 blocked for more
-> > than 122 seconds. [  243.265602][  T115]       Not tainted 6.6.0+ #1
-> > [  243.266296][  T115] "echo 0
-> > > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > [  243.267143][  T115] task:kworker/15:2    state:D stack:0
-> > > pid:639   ppid:2      flags:0x00000008
-> > [  243.268044][  T115] Workqueue: events_freezable_power_
-> > disk_events_workfn [  243.268727][  T115] Call trace:
-> > [  243.269051][  T115]  __switch_to+0x130/0x1e8
-> > [  243.269481][  T115]  __schedule+0x660/0xcf8
-> > [  243.269903][  T115]  schedule+0x58/0xf0
-> > [  243.270293][  T115]  schedule_timeout+0x280/0x2f0
-> > [  243.270763][  T115]  io_schedule_timeout+0x50/0x70
-> > [  243.271245][  T115]  wait_for_common_io.constprop.0+0xb0/0x298
-> > [  243.271830][  T115]  wait_for_completion_io+0x1c/0x30
-> > [  243.272335][  T115]  blk_execute_rq+0x1d8/0x278
-> > [  243.272793][  T115]  scsi_execute_cmd+0x114/0x238
-> > [  243.273267][  T115]  sr_check_events+0xc8/0x310 [sr_mod]
-> > [  243.273808][  T115]  cdrom_check_events+0x2c/0x50 [cdrom]
-> > [  243.274408][  T115]  sr_block_check_events+0x34/0x48 [sr_mod]
-> > [  243.274994][  T115]  disk_check_events+0x44/0x1b0
-> > [  243.275468][  T115]  disk_events_workfn+0x20/0x38
-> > [  243.275939][  T115]  process_one_work+0x170/0x3c0
-> > [  243.276410][  T115]  worker_thread+0x234/0x3b8
-> > [  243.276855][  T115]  kthread+0xf0/0x108
-> > [  243.277241][  T115]  ret_from_fork+0x10/0x20  
-> 
-> Question is why this scsi command can't be completed?
-> 
-> When blk_mq_hctx_notify_offline() is called, the CPU isn't shutdown
-> yet, and it still can handle interrupt of this SCSI command.
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-Sorry, at the moment I don't know why it can't be finished,
-just provides a solution like loop and dm-rq.
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> The next step is adding a set of basic bindings to create a plane, =
+which
+> has to happen before we can create a CRTC (since we need to be able to =
+at
+> least specify a primary plane for a CRTC upon creation). This mostly
+> follows the same general pattern as connectors (AsRawPlane,
+> AsRawPlaneState, etc.).
+>=20
+> There is one major difference with planes vs. other types of atomic =
+mode
+> objects: drm_plane_state isn't the only base plane struct used in DRM
+> drivers, as some drivers will use helpers like drm_shadow_plane_state =
+which
+> have a drm_plane_state embedded within them.
+>=20
+> Since we'll eventually be adding bindings for shadow planes, we =
+introduce a
+> PlaneStateHelper trait - which represents any data type which can be =
+used
+> as the main wrapping structure around a drm_plane_state - and we =
+implement
+> this trait for PlaneState<T>. This trait can be used in our C =
+callbacks to
+> allow for drivers to use different wrapping structures without needing =
+to
+> implement a separate set of FFI callbacks for each type. Currently =
+planes
+> are the only type I'm aware of which do this.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+>=20
+> V2:
+> * Start using Gerry Guo's updated #[vtable] function so that our =
+driver
+>  operations table has a static location in memory
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms.rs       |   1 +
+> rust/kernel/drm/kms/plane.rs | 504 +++++++++++++++++++++++++++++++++++
+> 2 files changed, 505 insertions(+)
+> create mode 100644 rust/kernel/drm/kms/plane.rs
+>=20
+> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
+> index 0138e6830b48c..5b075794a1155 100644
+> --- a/rust/kernel/drm/kms.rs
+> +++ b/rust/kernel/drm/kms.rs
+> @@ -4,6 +4,7 @@
+>=20
+> pub mod connector;
+> pub mod fbdev;
+> +pub mod plane;
+>=20
+> use crate::{
+>     drm::{
+> diff --git a/rust/kernel/drm/kms/plane.rs =
+b/rust/kernel/drm/kms/plane.rs
+> new file mode 100644
+> index 0000000000000..3040c4546b121
+> --- /dev/null
+> +++ b/rust/kernel/drm/kms/plane.rs
+> @@ -0,0 +1,504 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +
+> +//! Bindings for [`struct drm_plane`] and friends.
+> +//!
+> +//! [`struct drm_plane`]: srctree/include/drm/drm_plane.h
+> +
+> +use alloc::boxed::Box;
+> +use crate::{
+> +    bindings,
+> +    drm::{device::Device, drv::Driver, fourcc::*},
+> +    error::{to_result, from_result, Error},
+> +    init::Zeroable,
+> +    prelude::*,
+> +    types::{ARef, Opaque},
+> +    private::Sealed,
+> +};
+> +use core::{
+> +    cell::Cell,
+> +    pin::Pin,
+> +    slice,
+> +    mem::{self, size_of, ManuallyDrop},
+> +    ptr::{self, null, null_mut, NonNull},
+> +    marker::*,
+> +    ops::*,
+> +};
+> +use macros::pin_data;
+> +use super::{
+> +    KmsDriver,
+> +    UnregisteredKmsDevice,
+> +    ModeObject,
+> +    StaticModeObject,
+> +};
+> +
+> +/// The main trait for implementing the [`struct drm_plane`] API for =
+[`Plane`]
+> +///
+> +/// Any KMS driver should have at least one implementation of this =
+type, which allows them to create
+> +/// [`Plane`] objects. Additionally, a driver may store =
+driver-private data within the type that
+> +/// implements [`DriverPlane`] - and it will be made available when =
+using a fully typed [`Plane`]
+> +/// object.
+> +///
+> +/// # Invariants
+> +///
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_plane`] pointers are contained within a =
+[`Plane<Self>`].
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_plane_state`] pointers are contained within a =
+[`PlaneState<Self::State>`].
+> +///
+> +/// [`struct drm_plane`]: srctree/include/drm/drm_plane.h
+> +/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
+> +#[vtable]
+> +pub trait DriverPlane: Send + Sync + Sized {
+> +    /// The generated C vtable for this [`DriverPlane`] =
+implementation.
+> +    #[unique]
+> +    const OPS: &'static DriverPlaneOps =3D &DriverPlaneOps {
+> +        funcs: bindings::drm_plane_funcs {
+> +            update_plane: =
+Some(bindings::drm_atomic_helper_update_plane),
+> +            disable_plane: =
+Some(bindings::drm_atomic_helper_disable_plane),
+> +            destroy: Some(plane_destroy_callback::<Self>),
+> +            reset: Some(plane_reset_callback::<Self>),
+> +            set_property: None,
+> +            atomic_duplicate_state: =
+Some(atomic_duplicate_state_callback::<Self::State>),
+> +            atomic_destroy_state: =
+Some(atomic_destroy_state_callback::<Self::State>),
+> +            atomic_set_property: None, // TODO someday
+> +            atomic_get_property: None, // TODO someday
+> +            late_register: None, // TODO someday
+> +            early_unregister: None, // TODO someday
+> +            atomic_print_state: None, // TODO: Display someday???
+> +            format_mod_supported: None // TODO someday
+> +        },
+> +
+> +        helper_funcs: bindings::drm_plane_helper_funcs {
+> +            prepare_fb: None,
+> +            cleanup_fb: None,
+> +            begin_fb_access: None, // TODO: someday?
+> +            end_fb_access: None, // TODO: someday?
+> +            atomic_check: None,
+> +            atomic_update: None,
+> +            atomic_enable: None, // TODO
+> +            atomic_disable: None, // TODO
+> +            atomic_async_check: None, // TODO
+> +            atomic_async_update: None, // TODO
+> +            panic_flush: None,
+> +            get_scanout_buffer: None
+> +        }
+> +    };
+> +
+> +    /// The type to pass to the `args` field of [`Plane::new`].
+> +    ///
+> +    /// This type will be made available in in the `args` argument of =
+[`Self::new`]. Drivers which
+> +    /// don't need this can simply pass [`()`] here.
+> +    type Args;
+> +
+> +    /// The parent [`Driver`] implementation.
+> +    type Driver: KmsDriver;
+> +
+> +    /// The [`DriverPlaneState`] implementation for this =
+[`DriverPlane`].
+> +    ///
+> +    /// See [`DriverPlaneState`] for more info.
+> +    type State: DriverPlaneState;
+> +
+> +    /// The constructor for creating a [`Plane`] using this =
+[`DriverPlane`] implementation.
+> +    ///
+> +    /// Drivers may use this to instantiate their [`DriverPlane`] =
+object.
+> +    fn new(device: &Device<Self::Driver>, args: Self::Args) -> impl =
+PinInit<Self, Error>;
+> +}
+> +
+> +/// The generated C vtable for a [`DriverPlane`].
+> +///
+> +/// This type is created internally by DRM.
+> +pub struct DriverPlaneOps {
+> +    funcs: bindings::drm_plane_funcs,
+> +    helper_funcs: bindings::drm_plane_helper_funcs,
+> +}
+> +
+> +#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+> +#[repr(u32)]
+> +/// An enumerator describing a type of [`Plane`].
+> +///
+> +/// This is mainly just relevant for DRM legacy drivers.
+> +pub enum PlaneType {
+> +    /// Overlay planes represent all non-primary, non-cursor planes. =
+Some drivers refer to these
+> +    /// types of planes as "sprites" internally.
+> +    OVERLAY =3D bindings::drm_plane_type_DRM_PLANE_TYPE_OVERLAY,
 
-Currently see the call stack:
- => blk_mq_run_hw_queue
- =>__blk_mq_sched_restart
- => blk_mq_run_hw_queue
- => __blk_mq_sched_restart
- => __blk_mq_free_request
- => blk_mq_free_request
- => blk_mq_end_request
- => blk_flush_complete_seq
- => flush_end_io
- => __blk_mq_end_request
- => scsi_end_request
- => scsi_io_completion
- => scsi_finish_command
- => scsi_complete
- => blk_mq_complete_request
- => scsi_done_internal
- => scsi_done
- => virtscsi_complete_cmd
- => virtscsi_req_done
- => vring_interrupt
+IMHO this should be CamelCase
 
-In finction blk_mq_run_hw_queue():
-__blk_mq_run_dispatch_ops(hctx->queue, false,
-	need_run = !blk_queue_quiesced(hctx->queue) &&
-	blk_mq_hctx_has_pending(hctx));
-	
-	if (!need_run)
-		return;
+> +
+> +    /// A primary plane attached to a CRTC that is the most likely to =
+be able to light up the CRTC
+> +    /// when no scaling/cropping is used, and the plane covers the =
+whole CRTC.
+> +    PRIMARY =3D bindings::drm_plane_type_DRM_PLANE_TYPE_PRIMARY,
+> +
+> +    /// A cursor plane attached to a CRTC that is more likely to be =
+enabled when no scaling/cropping
+> +    /// is used, and the framebuffer has the size indicated by =
+[`ModeConfigInfo::max_cursor`].
+> +    ///
+> +    /// [`ModeConfigInfo::max_cursor`]: =
+crate::drm::kms::ModeConfigInfo
+> +    CURSOR =3D bindings::drm_plane_type_DRM_PLANE_TYPE_CURSOR,
+> +}
+> +
+> +/// The main interface for a [`struct drm_plane`].
+> +///
+> +/// This type is the main interface for dealing with DRM planes. In =
+addition, it also allows
+> +/// immutable access to whatever private data is contained within an =
+implementor's [`DriverPlane`]
+> +/// type.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `plane` and `inner` are initialized for as long as this object =
+is made available to users.
+> +/// - The data layout of this structure begins with [`struct =
+drm_plane`].
+> +/// - The atomic state for this type can always be assumed to be of =
+type [`PlaneState<T::State>`].
+> +///
+> +/// [`struct drm_plane`]: srctree/include/drm/drm_plane.h
+> +#[repr(C)]
+> +#[pin_data]
+> +pub struct Plane<T: DriverPlane> {
+> +    /// The FFI drm_plane object
+> +    plane: Opaque<bindings::drm_plane>,
+> +    /// The driver's private inner data
+> +    #[pin]
+> +    inner: T,
+> +    #[pin]
+> +    _p: PhantomPinned,
+> +}
+> +
+> +unsafe impl Zeroable for bindings::drm_plane {}
 
-Come here and return directly.
+The new `unsafe` lints on rust-next will probably complain here FYI.
+
+> +
+> +impl<T: DriverPlane> Sealed for Plane<T> {}
+> +
+> +impl<T: DriverPlane> Deref for Plane<T> {
+> +    type Target =3D T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.inner
+> +    }
+> +}
+> +
+> +impl<T: DriverPlane> Plane<T> {
+> +    /// Construct a new [`Plane`].
+> +    ///
+> +    /// A driver may use this from their [`Kms::create_objects`] =
+callback in order to construct new
+> +    /// [`Plane`] objects.
+> +    ///
+> +    /// [`Kms::create_objects`]: =
+kernel::drm::kms::Kms::create_objects
+> +    pub fn new<'a, 'b: 'a, const FMT_COUNT: usize, const MOD_COUNT: =
+usize>(
+> +        dev: &'a UnregisteredKmsDevice<'a, T::Driver>,
+> +        possible_crtcs: u32,
+> +        formats: &'static FormatList<FMT_COUNT>,
+> +        format_modifiers: Option<&'static ModifierList<MOD_COUNT>>,
+> +        type_: PlaneType,
+> +        name: Option<&CStr>,
+> +        args: T::Args,
+> +    ) -> Result<&'b Self> {
+> +        let this: Pin<Box<Self>> =3D Box::try_pin_init(
+> +            try_pin_init!(Self {
+> +                plane: Opaque::new(bindings::drm_plane {
+> +                    helper_private: &T::OPS.helper_funcs,
+> +                    ..Default::default()
+> +                }),
+> +                inner <- T::new(dev, args),
+> +                _p: PhantomPinned
+> +            }),
+> +            GFP_KERNEL
+> +        )?;
+> +
+> +        // SAFETY: FFI call with no special requirements
+> +        to_result(unsafe {
+> +            bindings::drm_universal_plane_init(
+> +                dev.as_raw(),
+> +                this.as_raw(),
+> +                possible_crtcs,
+> +                &T::OPS.funcs,
+> +                formats.as_ptr(),
+> +                formats.raw_len() as _,
+> +                format_modifiers.map_or(null(), |f| f.as_ptr()),
+> +                type_ as _,
+> +                name.map_or(null(), |n| n.as_char_ptr())
+> +            )
+> +        })?;
+> +
+> +        // Convert the box into a raw pointer, we'll re-assemble it =
+in plane_destroy_callback()
+> +        // SAFETY: We don't move anything
+> +        Ok(unsafe { &*Box::into_raw(Pin::into_inner_unchecked(this)) =
+})
+> +    }
+> +}
+> +
+> +/// A trait implemented by any type that acts as a [`struct =
+drm_plane`] interface.
+> +///
+> +/// This is implemented internally by DRM.
+> +///
+> +/// [`struct drm_plane`]: srctree/include/drm/drm_plane.h
+> +pub trait AsRawPlane: StaticModeObject {
+> +    /// The type that should be used to represent an atomic state for =
+this plane interface.
+> +    type State: FromRawPlaneState;
+> +
+> +    /// Return the raw `bindings::drm_plane` for this DRM plane.
+> +    ///
+> +    /// Drivers should never use this directly.
+> +    fn as_raw(&self) -> *mut bindings::drm_plane;
+> +
+> +    /// Convert a raw `bindings::drm_plane` pointer into an object of =
+this type.
+> +    ///
+> +    /// SAFETY: Callers promise that `ptr` points to a valid instance =
+of this type
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_plane) -> &'a =
+Self;
+> +}
+> +
+> +impl<T: DriverPlane> AsRawPlane for Plane<T> {
+> +    type State =3D PlaneState<T::State>;
+> +
+> +    fn as_raw(&self) -> *mut bindings::drm_plane {
+> +        self.plane.get()
+> +    }
+> +
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_plane) -> &'a Self =
+{
+> +        // SAFETY: Our data layout starts with `bindings::drm_plane`
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> +impl<T: DriverPlane> ModeObject for Plane<T> {
+> +    type Driver =3D T::Driver;
+> +
+> +    fn drm_dev(&self) -> &Device<Self::Driver> {
+> +        // SAFETY: DRM planes exist for as long as the device does, =
+so this pointer is always valid
+> +        unsafe { Device::borrow((*self.as_raw()).dev) }
+> +    }
+> +
+> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
+> +        // SAFETY: We don't expose DRM planes to users before `base` =
+is initialized
+> +        unsafe { &mut ((*self.as_raw()).base) }
+> +    }
+> +}
+> +
+> +// SAFETY: Planes do not have a refcount
+> +unsafe impl<T: DriverPlane> StaticModeObject for Plane<T> {}
+> +
+> +// SAFETY: Our interface is thread-safe.
+> +unsafe impl<T: DriverPlane> Send for Plane<T> {}
+> +
+> +// SAFETY: Our interface is thread-safe.
+> +unsafe impl<T: DriverPlane> Sync for Plane<T> {}
+> +
+> +/// A trait implemented by any type which can produce a reference to =
+a [`struct drm_plane_state`].
+> +///
+> +/// This is implemented internally by DRM.
+> +///
+> +/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
+> +pub trait AsRawPlaneState: private::AsRawPlaneState {
+> +    /// The type that this plane state interface returns to represent =
+the parent DRM plane
+> +    type Plane: AsRawPlane;
+> +}
+> +
+> +pub(crate) mod private {
+> +    /// Trait for retrieving references to the base plane state =
+contained within any plane state
+> +    /// compatible type
+> +    #[doc(hidden)]
+> +    pub trait AsRawPlaneState {
+
+You should probably document why you need this module. I think you did =
+on one of your previous
+patches already.
+
+> +        /// Return an immutable reference to the raw plane state
+> +        fn as_raw(&self) -> &bindings::drm_plane_state;
+> +
+> +        /// Get a mutable reference to the raw =
+`bindings::drm_plane_state` contained within this
+> +        /// type.
+> +        ///
+> +        /// # Safety
+> +        ///
+> +        /// The caller promises this mutable reference will not be =
+used to modify any contents of
+> +        /// `bindings::drm_plane_state` which DRM would consider to =
+be static - like the backpointer
+> +        /// to the DRM plane that owns this state. This also means =
+the mutable reference should
+> +        /// never be exposed outside of this crate.
+> +        unsafe fn as_raw_mut(&mut self) -> &mut =
+bindings::drm_plane_state;
+> +    }
+> +}
+> +
+> +pub(crate) use private::AsRawPlaneState as AsRawPlaneStatePrivate;
+> +
+> +/// A trait implemented for any type which can be constructed =
+directly from a
+> +/// [`struct drm_plane_state`] pointer.
+> +///
+> +/// This is implemented internally by DRM.
+> +///
+> +/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
+> +pub trait FromRawPlaneState: AsRawPlaneState {
+> +    /// Get an immutable reference to this type from the given raw =
+`bindings::drm_plane_state`
+> +    /// pointer
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller guarantees `ptr` is contained within a valid =
+instance of `Self`
+> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_plane_state) -> =
+&'a Self;
+> +
+> +    /// Get a mutable reference to this type from the given raw =
+`bindings::drm_plane_state` pointer
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller guarantees `ptr` is contained within a valid =
+instance of `Self`, and that no
+> +    /// other references (mutable or immutable) to `ptr` exist.
+> +    unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) =
+-> &'a mut Self;
+> +}
+> +
+> +/// The main interface for a [`struct drm_plane_state`].
+> +///
+> +/// This type is the main interface for dealing with the atomic state =
+of DRM planes. In addition, it
+> +/// allows access to whatever private data is contained within an =
+implementor's [`DriverPlaneState`]
+> +/// type.
+> +///
+> +/// # Invariants
+> +///
+> +/// - The DRM C API and our interface guarantees that only the user =
+has mutable access to `state`,
+> +///   up until [`drm_atomic_helper_commit_hw_done`] is called. =
+Therefore, `plane` follows rust's
+> +///   data aliasing rules and does not need to be behind an =
+[`Opaque`] type.
+> +/// - `state` and `inner` initialized for as long as this object is =
+exposed to users.
+> +/// - The data layout of this structure begins with [`struct =
+drm_plane_state`].
+> +/// - The plane for this atomic state can always be assumed to be of =
+type [`Plane<T::Plane>`].
+> +///
+> +/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
+> +/// [`drm_atomic_helper_commit_hw_done`]: =
+srctree/include/drm/drm_atomic_helper.h
+> +#[derive(Default)]
+> +#[repr(C)]
+> +pub struct PlaneState<T: DriverPlaneState> {
+> +    state: bindings::drm_plane_state,
+> +    inner: T,
+> +}
+
+Out of curiosity, why the repr(C) here?
+
+> +
+> +/// The main trait for implementing the [`struct drm_plane_state`] =
+API for a [`Plane`].
+> +///
+> +/// A driver may store driver-private data within the implementor's =
+type, which will be available
+> +/// when using a full typed [`PlaneState`] object.
+> +///
+> +/// # Invariants
+> +///
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_plane`] pointers are contained within a =
+[`Plane<Self::Plane>`].
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_plane_state`] pointers are contained within a =
+[`PlaneState<Self>`].
+> +///
+> +/// [`struct drm_plane`]: srctree/include/drm_plane.h
+> +/// [`struct drm_plane_state`]: srctree/include/drm_plane.h
+> +pub trait DriverPlaneState: Clone + Default + Sized {
+> +    /// The type for this driver's drm_plane implementation
+> +    type Plane: DriverPlane;
+> +}
+> +
+> +impl<T: DriverPlaneState> Sealed for PlaneState<T> {}
+> +
+> +impl<T: DriverPlaneState> AsRawPlaneState for PlaneState<T> {
+> +    type Plane =3D Plane<T::Plane>;
+> +}
+> +
+> +impl<T: DriverPlaneState> private::AsRawPlaneState for PlaneState<T> =
+{
+> +    fn as_raw(&self) -> &bindings::drm_plane_state {
+> +        &self.state
+> +    }
+> +
+> +    unsafe fn as_raw_mut(&mut self) -> &mut bindings::drm_plane_state =
+{
+> +        &mut self.state
+> +    }
+> +}
+> +
+> +impl<T: DriverPlaneState> FromRawPlaneState for PlaneState<T> {
+> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_plane_state) -> =
+&'a Self {
+> +        // SAFETY: Our data layout starts with =
+`bindings::drm_plane_state`
+> +        unsafe { &*ptr.cast() }
+
+Same comment about breaking this into multiple statements since it gets =
+a bit hard to parse otherwise.
+
+
+> +    }
+> +
+> +    unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) =
+-> &'a mut Self {
+> +        // SAFETY: Our data layout starts with =
+`bindings::drm_plane_state`
+> +        unsafe { &mut *ptr.cast() }
+> +    }
+> +}
+> +
+> +unsafe impl Zeroable for bindings::drm_plane_state {}
+
+The unsafe lint will probably complain here too.
+
+> +
+> +impl<T: DriverPlaneState> Deref for PlaneState<T> {
+> +    type Target =3D T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.inner
+> +    }
+> +}
+> +
+> +impl<T: DriverPlaneState> DerefMut for PlaneState<T> {
+> +    fn deref_mut(&mut self) -> &mut Self::Target {
+> +        &mut self.inner
+> +    }
+> +}
+> +
+> +unsafe extern "C" fn plane_destroy_callback<T: DriverPlane>(
+> +    plane: *mut bindings::drm_plane
+> +) {
+> +    // SAFETY: DRM guarantees that `plane` points to a valid =
+initialized `drm_plane`.
+> +    unsafe { bindings::drm_plane_cleanup(plane) };
+> +
+> +    // SAFETY:
+> +    // - DRM guarantees we are now the only one with access to this =
+[`drm_plane`].
+> +    // - This cast is safe via `DriverPlane`s type invariants.
+> +    drop(unsafe { Box::from_raw(plane as *mut Plane<T>) });
+> +}
+> +
+> +unsafe extern "C" fn atomic_duplicate_state_callback<T: =
+DriverPlaneState>(
+> +    plane: *mut bindings::drm_plane
+> +) -> *mut bindings::drm_plane_state {
+> +    // SAFETY: DRM guarantees that `plane` points to a valid =
+initialized `drm_plane`.
+> +    let state =3D unsafe { (*plane).state };
+> +    if state.is_null() {
+> +        return null_mut();
+> +    }
+> +
+> +    // SAFETY: This cast is safe via `DriverPlaneState`s type =
+invariants.
+> +    let state =3D unsafe { PlaneState::<T>::from_raw(state) };
+> +
+> +    let new =3D Box::try_init(
+> +        try_init!(PlaneState::<T> {
+> +            state: bindings::drm_plane_state { ..Default::default() =
+},
+> +            inner: state.inner.clone()
+> +        }),
+> +        GFP_KERNEL
+> +    );
+> +
+> +    if let Ok(mut new) =3D new {
+> +        // SAFETY: Just a lil' FFI call, nothing special here
+> +        unsafe {
+> +            =
+bindings::__drm_atomic_helper_plane_duplicate_state(plane, =
+new.as_raw_mut())
+> +        };
+> +
+> +        Box::into_raw(new).cast()
+> +    } else {
+> +        null_mut()
+> +    }
+> +}
+> +
+> +unsafe extern "C" fn atomic_destroy_state_callback<T: =
+DriverPlaneState>(
+> +    _plane: *mut bindings::drm_plane,
+> +    state: *mut bindings::drm_plane_state
+> +) {
+> +    // SAFETY: DRM guarantees that `state` points to a valid instance =
+of `drm_plane_state`
+> +    unsafe { bindings::__drm_atomic_helper_plane_destroy_state(state) =
+};
+> +
+> +    // SAFETY:
+> +    // * DRM guarantees we are the only one with access to this =
+`drm_plane_state`
+> +    // * This cast is safe via our type invariants.
+> +    drop(unsafe { Box::from_raw(state.cast::<PlaneState<T>>()) });
+> +}
+> +
+> +unsafe extern "C" fn plane_reset_callback<T: DriverPlane>(
+> +    plane: *mut bindings::drm_plane,
+> +) {
+> +    // SAFETY: DRM guarantees that `state` points to a valid instance =
+of `drm_plane_state`
+> +    let state =3D unsafe { (*plane).state };
+> +    if !state.is_null() {
+> +        // SAFETY:
+> +        // * We're guaranteed `plane` is `Plane<T>` via type =
+invariants
+> +        // * We're guaranteed `state` is `PlaneState<T>` via type =
+invariants.
+> +        unsafe { atomic_destroy_state_callback::<T::State>(plane, =
+state) }
+> +
+> +        // SAFETY: No special requirements here, DRM expects this to =
+be NULL
+> +        unsafe { (*plane).state =3D null_mut(); }
+> +    }
+> +
+> +    // Unfortunately, this is the best we can do at the moment as =
+this FFI callback was mistakenly
+> +    // presumed to be infallible :(
+> +    let new =3D Box::new(PlaneState::<T::State>::default(), =
+GFP_KERNEL)
+> +        .expect("Blame the API, sorry!");
+
+Same comment as the previous patch: maybe just return here?
+
+> +
+> +    // DRM takes ownership of the state from here, resets it, and =
+then assigns it to the plane
+> +    // SAFETY:
+> +    // - DRM guarantees that `plane` points to a valid instance of =
+`drm_plane`.
+> +    // - The cast to `drm_plane_state` is safe via `PlaneState`s type =
+invariants.
+> +    unsafe { bindings::__drm_atomic_helper_plane_reset(plane, =
+Box::into_raw(new).cast()) };
+> +}
+> --=20
+> 2.46.1
+>=20
+
+LGTM overall. Like the preceding patch, this is very well-done. Kudos
+
+=E2=80=94 Daniel
+
 
