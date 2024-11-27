@@ -1,517 +1,162 @@
-Return-Path: <linux-kernel+bounces-423227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E829DA499
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:16:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C289DA4AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F3FB26B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CE128215A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7D1925AE;
-	Wed, 27 Nov 2024 09:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F212193079;
+	Wed, 27 Nov 2024 09:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jgaHWoTX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VYYICIuh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5IgfRStx"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8C647F69;
-	Wed, 27 Nov 2024 09:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867F7192D98;
+	Wed, 27 Nov 2024 09:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732698973; cv=none; b=CwjG1wEh27FBWhNdKzaNmjqOAjXUF3dLQH6Q3wQJPCc/Ualc8v7vSq3jsrnJR1vBdBwLT0FyzjP0LHmDpxQZpsDIqa+2ghiUZlMfeMPsaccU7hPuKhfkEwInxpgOdD91dhWOBTEV+XSbn1BFFltcv8GXLVJwlvU5tefnSnKLQjQ=
+	t=1732699126; cv=none; b=eYt0C3OhG8H1N3QB4Q9EnSYTO11PxGyG6Xdyy8X7O9PVSAUnjBA71awzlU5qa/2NdzvBLgXpYVWuuc+WjHzkrWkckZdoKk8JpzjQTpwN6U3k99cfXbcDKORLEP1FC0CGUQOu/rkNCMDrgHukPl0ROYagLyDZxNSF73nLJJfEDUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732698973; c=relaxed/simple;
-	bh=dpq0X1NBtdaYJzNj34+rXttClANmtpcn1Pen7PulK+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoZsuY3Q0+6Y3jBZldGSSE0mkjFWBunh9HSw4ds6kzuYJSrQuPBK/elSCVRD6uhcANbJ0AhQL1C0iytapkV2ZzyZJ3UoKvFKmwtLyKnCWhE6easLej2/FAk5awKqdv/xSzhbZZKUnzVAA4yinrkLNtQEpGygJrxYj3EVaUBy2fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jgaHWoTX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6147A792;
-	Wed, 27 Nov 2024 10:15:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732698946;
-	bh=dpq0X1NBtdaYJzNj34+rXttClANmtpcn1Pen7PulK+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jgaHWoTXPHY8U7GkjuKw9FGO7fNUwSWLtQCBhWRmXOoLimP/moAL5SJCcnZ1iFWRm
-	 rDg7NBjcZrckzY4jAbitW5S6uZVixaljyY0Bi3Y/JWsF8HfxLIHqf1M41h8jl2NiQs
-	 WchCSMHvBAxc+42jP0TV8SWic3onlQh0NENl3Fs0=
-Date: Wed, 27 Nov 2024 11:15:59 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, bryan.odonoghue@linaro.org,
-	hverkuil-cisco@xs4all.nl, krzk+dt@kernel.org,
-	laurentiu.palcu@nxp.com, mchehab@kernel.org, robert.chiras@nxp.com,
-	robh@kernel.org, sakari.ailus@linux.intel.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	LnxRevLi@nxp.com, hdegoede@redhat.com,
-	dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
-	alain.volmat@foss.st.com, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, alexander.stein@ew.tq-group.com,
-	umang.jain@ideasonboard.com, zhi.mao@mediatek.com, festevam@denx.de,
-	julien.vuillaumier@nxp.com, alice.yuan@nxp.com
-Subject: Re: [PATCH v2 2/4] media: ox05b1s: Add omnivision OX05B1S raw sensor
- driver
-Message-ID: <20241127091559.GC31095@pendragon.ideasonboard.com>
-References: <20241126155100.1263946-1-mirela.rabulea@nxp.com>
- <20241126155100.1263946-3-mirela.rabulea@nxp.com>
- <173269819694.1605529.2093961032702466504@ping.linuxembedded.co.uk>
+	s=arc-20240116; t=1732699126; c=relaxed/simple;
+	bh=64cKr03/CKpF0KDq6ot0uYaKlxM+MwVPMD3sqQRITC0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KzTc1/oKWX8tsU1+aU2l3aCbpUfuQSYsA9MIYw85JOrm+C0wWG2+YsQ1pRvUj8BlHY5dOsEz4wAq/WRr1M31pUtbFZ9+0VYLE50J/hvxBHp4Qs7u09u8e1Jw2zMK2b6bSgr8sKKkaIZGjXwYmP4RO7AmjdP/26Hw46+mowjpbYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VYYICIuh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5IgfRStx; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7E6561140109;
+	Wed, 27 Nov 2024 04:18:43 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 27 Nov 2024 04:18:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732699123;
+	 x=1732785523; bh=NmC2c7plcJ/Mcl0oI9qLJf0fBVn5qTuymhUmLJnrAcM=; b=
+	VYYICIuhcr1RrCllVZyR2YbQ0PgOx+geAUXce8CI0J3fbZezFJ93/XLQt3FGunzy
+	v1PJblTLjQVb/h552gYJMNAH7TI3cbJT7Dl4o1th9kF0Z4gCbL++Jjhqpn6RsuvT
+	o7IYVDHkej5QI0xazXxb4FJQQvm4KHvaLgaNwU++9Hld4r58nbbP7Zh3B62P8+xm
+	UGqZHmr3fdg76gbK4f3xyrhakNOwnyHDE5cPrXFLS4aNfli2X3gjQNeXiE9xJ+Gl
+	yx2yWaVJ2EJ7Q7FuuMd7RY/WFnasVgGuck5JgwdZDH+CQ/xnMENL9RcDUv1Gjbxn
+	l0YpS9yuYbCs7e26/Emm9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732699123; x=
+	1732785523; bh=NmC2c7plcJ/Mcl0oI9qLJf0fBVn5qTuymhUmLJnrAcM=; b=5
+	IgfRStxFNKyuB7MoNhqkXbiufLh+IR1dk3i/74JBBBcsVJAOS/nmiBwBEWCowuye
+	DgunWuc/GeDzWnwaDIloBrvweejeoDVzlIndP6YLOHRLtayoErRsMb7h715cKoIo
+	16sQQZM4Kn7ZJNFsMm+t5n4nfW967x2tqaj0WLQWuYuH1sEpy6ICS72viIl5R+xr
+	SRTEtn54CuLOXLWGWew61p0LFLQKCk8MCXjM+O4toZ1jhSYs34s4mv2AuG7matjW
+	Tyy11MH5V0fQOSh45SDaA4KpbwRnagOtb/lECqdr+XRBj3+ktwx69h+J5MJtFVCE
+	ufxZzJ8VZCV0o6Cg4Tqog==
+X-ME-Sender: <xms:8uNGZ9Mtgrqb2LkM244MsGDBs9Rl_V-TBnWIL1Oqt2Gx4VCQCld5gQ>
+    <xme:8uNGZ_8wE99PlwDfeeVEBaSWYgPOMbQPIUzRrxqk2GxyG0B3ZJ9eGLBLmGtFhpKfR
+    SkXgAuFCIeRlLX-rYo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgddtvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpedtiefhffdthfeileevheehveevieeggfegieeggfel
+    feduudevgeegieetfeevgfenucffohhmrghinhepfihikhhiphgvughirgdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthho
+    pehfvghsthgvvhgrmhesuggvnhigrdguvgdprhgtphhtthhopegvshgsvghnsehgvggrnh
+    higidrtghomhdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgt
+    phhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidq
+    rghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpth
+    htohepihhmgieslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopegrihhshhgv
+    nhhgrdguohhnghesnhigphdrtghomh
+X-ME-Proxy: <xmx:8uNGZ8ROpX2q3OtfE72XbxFI0aL82nkiXoTd5HzDtwOzkdoAF0xj_g>
+    <xmx:8uNGZ5sNut3DB1CZzCOK7Ih2lufowaCSjOxFBOK5s_kUOaM8sc7LHQ>
+    <xmx:8uNGZ1fRmMFjJjVZ-W4IeKD-tkDxTpHAyaF0yio5FD55la85LtLbAA>
+    <xmx:8uNGZ13oP6kVKpMw69eUHbOnKf6WTrhnIMF3y16nXc1BgQG2CIxscw>
+    <xmx:8-NGZ18J36QH__qlyXQkxwUal2SoIWWWQhF9-r1HKjk55N3gCvIY2xat>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B51022220071; Wed, 27 Nov 2024 04:18:42 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <173269819694.1605529.2093961032702466504@ping.linuxembedded.co.uk>
+Date: Wed, 27 Nov 2024 10:18:22 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Rasmus Villemoes" <ravi@prevas.dk>, "Fabio Estevam" <festevam@gmail.com>
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Esben Haabendal" <esben@geanix.com>, "Russell King" <linux@armlinux.org.uk>,
+ "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Dong Aisheng" <aisheng.dong@nxp.com>, "Jacky Bai" <ping.bai@nxp.com>,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "Fabio Estevam" <festevam@denx.de>
+Message-Id: <5881df5a-9495-49b9-9956-0538055bba60@app.fastmail.com>
+In-Reply-To: <87ttbthwdu.fsf@prevas.dk>
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
+ <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
+ <CACRpkdaBR5mmj43y_80b9jd3TAqRWMdCyD9EP6AY-Y0-asz4TA@mail.gmail.com>
+ <1ff005f8-384d-465e-9597-b6d5fd903862@roeck-us.net>
+ <CAOMZO5DW3t-sof_uaFa_qJPE3WFq_155mFTxGMWh0m++csgopg@mail.gmail.com>
+ <87ttbthwdu.fsf@prevas.dk>
+Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 09:03:16AM +0000, Kieran Bingham wrote:
-> Quoting Mirela Rabulea (2024-11-26 15:50:58)
-> > Add a v4l2 subdevice driver for the Omnivision OX05B1S RGB-IR sensor.
-> > 
-> > The Omnivision OX05B1S is a 1/2.5-Inch CMOS image sensor with an
-> > active array size of 2592 x 1944.
-> > 
-> > The following features are supported for OX05B1S:
-> > - Manual exposure an gain control support
-> > - vblank/hblank control support
-> > - Supported resolution: 2592 x 1944 @ 30fps (SGRBG10)
-> > 
-> > Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
-> > ---
-> > 
-> > Changes in v2:
-> >         Use dev_err_probe for missing clock, since it is now required property, and use NULL for devm_clk_get (no name for single clock), remove check for non NULL sensor->sensor_clk
-> >         Remove dev_err message for devm_regmap_init_i2c allocation error
-> >         Added spaces inside brackets, wrap lines to 80
-> >         Remove some redundant initializations
-> >         Add regulators
-> >         Make "sizes" a pointer
-> >                 Use struct v4l2_area instead of u32[2] array
-> >                 Remove the count for supported_modes[] and supported_codes[], instead use sentinel element at the end
-> >                 Consequently, update ox05b1s_enum_mbus_code, ox05b1s_enum_frame_size, ox05b1s_nearest_size, ox05b1s_find_code, to not use the count
-> >         Remove .h files for modes, however did not move this code in the driver file but added a separate c file for all supported modes
-> >         Refactor register lists to allow multiple register arrays per mode
-> >         Use GPL-2.0-only instead of GPL-2.0
-> > 
-> >  drivers/media/i2c/Kconfig                 |    1 +
-> >  drivers/media/i2c/Makefile                |    1 +
-> >  drivers/media/i2c/ox05b1s/Kconfig         |   10 +
-> >  drivers/media/i2c/ox05b1s/Makefile        |    2 +
-> >  drivers/media/i2c/ox05b1s/ox05b1s.h       |   22 +
-> >  drivers/media/i2c/ox05b1s/ox05b1s_mipi.c  | 1001 ++++++++++++++++++
-> >  drivers/media/i2c/ox05b1s/ox05b1s_modes.c | 1171 +++++++++++++++++++++
-> >  7 files changed, 2208 insertions(+)
-> >  create mode 100644 drivers/media/i2c/ox05b1s/Kconfig
-> >  create mode 100644 drivers/media/i2c/ox05b1s/Makefile
-> >  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s.h
-> >  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> >  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s_modes.c
-> > 
-> > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> > index 8ba096b8ebca..5cda062c0463 100644
-> > --- a/drivers/media/i2c/Kconfig
-> > +++ b/drivers/media/i2c/Kconfig
-> > @@ -700,6 +700,7 @@ config VIDEO_VGXY61
-> >  
-> >  source "drivers/media/i2c/ccs/Kconfig"
-> >  source "drivers/media/i2c/et8ek8/Kconfig"
-> > +source "drivers/media/i2c/ox05b1s/Kconfig"
-> >  
-> >  endif
-> >  
-> > diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> > index fbb988bd067a..028eb08e648c 100644
-> > --- a/drivers/media/i2c/Makefile
-> > +++ b/drivers/media/i2c/Makefile
-> > @@ -114,6 +114,7 @@ obj-$(CONFIG_VIDEO_OV9282) += ov9282.o
-> >  obj-$(CONFIG_VIDEO_OV9640) += ov9640.o
-> >  obj-$(CONFIG_VIDEO_OV9650) += ov9650.o
-> >  obj-$(CONFIG_VIDEO_OV9734) += ov9734.o
-> > +obj-$(CONFIG_VIDEO_OX05B1S) += ox05b1s/
-> >  obj-$(CONFIG_VIDEO_RDACM20) += rdacm20.o
-> >  obj-$(CONFIG_VIDEO_RDACM21) += rdacm21.o
-> >  obj-$(CONFIG_VIDEO_RJ54N1) += rj54n1cb0c.o
-> > diff --git a/drivers/media/i2c/ox05b1s/Kconfig b/drivers/media/i2c/ox05b1s/Kconfig
-> > new file mode 100644
-> > index 000000000000..48fcd04b20d5
-> > --- /dev/null
-> > +++ b/drivers/media/i2c/ox05b1s/Kconfig
-> > @@ -0,0 +1,10 @@
-> > +config VIDEO_OX05B1S
-> > +       tristate "OmniVision raw sensor support OX05B1S"
-> > +       depends on OF
-> > +       depends on GPIOLIB
-> > +       select REGMAP_I2C
-> > +       help
-> > +         This is a Video4Linux2 sensor driver for the Omnivision OX05B1S RGB-IR sensor.
-> > +         This is a 1/2.5-Inch CMOS image sensor with an active array size of 2592 x 1944.
-> > +         It is programmable through I2C interface.
-> > +         The output is on MIPI CSI-2 interface.
-> > diff --git a/drivers/media/i2c/ox05b1s/Makefile b/drivers/media/i2c/ox05b1s/Makefile
-> > new file mode 100644
-> > index 000000000000..0b38dbf98bcd
-> > --- /dev/null
-> > +++ b/drivers/media/i2c/ox05b1s/Makefile
-> > @@ -0,0 +1,2 @@
-> > +ox05b1s-objs := ox05b1s_modes.o ox05b1s_mipi.o
-> > +obj-$(CONFIG_VIDEO_OX05B1S) += ox05b1s.o
-> > diff --git a/drivers/media/i2c/ox05b1s/ox05b1s.h b/drivers/media/i2c/ox05b1s/ox05b1s.h
-> > new file mode 100644
-> > index 000000000000..a893c65894f3
-> > --- /dev/null
-> > +++ b/drivers/media/i2c/ox05b1s/ox05b1s.h
-> > @@ -0,0 +1,22 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (C) 2024, NXP
-> > + */
-> > +
-> > +#ifndef OX05B1S_H
-> > +#define OX05B1S_H
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +struct ox05b1s_reg {
-> > +       u32 addr;
-> > +       u32 data;
-> > +};
-> > +
-> > +struct ox05b1s_reglist {
-> > +       struct ox05b1s_reg *regs;
-> > +};
-> > +
-> > +extern struct ox05b1s_reglist ox05b1s_reglist_2592x1944[];
-> > +
-> > +#endif /* OX05B1S_H */
-> > diff --git a/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> > new file mode 100644
-> > index 000000000000..0f5e2a946e4f
-> > --- /dev/null
-> > +++ b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> > @@ -0,0 +1,1001 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * A V4L2 driver for Omnivision OX05B1S RGB-IR camera.
-> > + * Copyright (C) 2024, NXP
-> > + *
-> > + * Inspired from Sony imx219, imx290, imx214 and imx334 camera drivers
-> > + *
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <media/mipi-csi2.h>
-> > +#include <media/v4l2-ctrls.h>
-> > +#include <media/v4l2-device.h>
-> > +#include <media/v4l2-fwnode.h>
-> 
-> If you add
-> 
-> #include <media/v4l2-cci.h>
-> 
-> here you can use lots of nice helpers to abstract the size of the
-> registers.
-> 
-> I'm surprised this didn't come up in v1 already, I see there were lots
-> of dicussionss on that thread.
+On Wed, Nov 27, 2024, at 10:13, Rasmus Villemoes wrote:
+> On Tue, Nov 26 2024, Fabio Estevam <festevam@gmail.com> wrote:
+>>> Fabio submitted a patch enabling PINCTRL for imx_v4_v5_defconfig and
+>>> imx_v6_v7_defconfig explicitly [1]. I don't know if that fixes the
+>>> problem for good - I see CONFIG_ARCH_MXC in other configurations as
+>>> well.
+>>
+>> Good point. I can send a v2 adding CONFIG_PINCTRL=y to the other defconfigs.
+>>
+>
+> Instead of doing that, isn't this exactly what the 'imply' keyword is
+> for?
+>
+> - weak reverse dependencies: "imply" <symbol> ["if" <expr>]
+>
+>   This is similar to "select" as it enforces a lower limit on another
+>   symbol except that the "implied" symbol's value may still be set to n
+>   from a direct dependency or with a visible prompt.
+>
+>
+> So how about adding 'imply PINCTRL' in lieu of the previous 'select
+> PINCTRL'? And that would also better match the intention of the patch in
+> question (namely that the user needs to take explicit action to disable
+> PINCTRL).
 
-I was going to mention that too. All new sensor drivers should use these
-helpers if there's no very good reason to do otherwise.
+Please never use imply. Even if you think it's the right
+thing in a particular case, it will come back to bite you
+later.
 
-> > +#include "ox05b1s.h"
-> > +
-> > +#define OX05B1S_SENS_PAD_SOURCE        0
-> > +#define OX05B1S_SENS_PADS_NUM  1
-> > +
-> > +#define OX05B1S_REG_SW_STB 0x0100
-> 
-> #define OX05B1S_REG_SW_STB 	CCI_REG8(0x0100)
-> 
-> > +#define OX05B1S_REG_SW_RST 0x0103
-> > +#define OX05B1S_REG_CHIP_ID_23_16 0x300a
-> > +#define OX05B1S_REG_CHIP_ID_15_8 0x300b
-> > +#define OX05B1S_REG_CHIP_ID_7_0 0x300c
-> > +#define OX05B1S_REG_TIMING_HTS_H 0x380c
-> > +#define OX05B1S_REG_TIMING_HTS_L 0x380d
-> 
-> And then these become
-> #define OX05B1S_REG_TIMING_HTS	CCI_REG16(0x380c)
-> #define OX05B1S_REG_TIMING_VTS	CCI_REG16(0x380e)
-> 
-> without needing to have custom functions to split and re-arrange the
-> register.
-> 
-> The functionality already works with regmap that you're already using so
-> it should be an easy change.
-> 
-> The only thing to check/watch out for is which endianness the registers
-> are.
-> 
-> (There's a CCI_REG16_LE if it's little endian).
-> 
-> > +#define OX05B1S_REG_TIMING_VTS_H 0x380e
-> > +#define OX05B1S_REG_TIMING_VTS_L 0x380f
-> > +#define OX05B1S_REG_EXPOSURE_H 0x3501
-> > +#define OX05B1S_REG_EXPOSURE_L 0x3502
-> > +#define OX05B1S_REG_GAIN_H 0x3508
-> > +#define OX05B1S_REG_GAIN_L 0x3509
-> > +
-> > +#define client_to_ox05b1s(client)\
-> > +       container_of(i2c_get_clientdata(client), struct ox05b1s, subdev)
-> > +
-> > +struct ox05b1s_sizes {
-> > +       u32     code;
-> > +       const struct v4l2_area *sizes;
-> > +};
-> > +
-> > +struct ox05b1s_plat_data {
-> > +       char                            name[20];
-> > +       u32                             chip_id;
-> > +       u32                             native_width;
-> > +       u32                             native_height;
-> > +       u32                             active_top;
-> > +       u32                             active_left;
-> > +       u32                             active_width;
-> > +       u32                             active_height;
-> > +       const struct ox05b1s_mode       *supported_modes;
-> > +       u32                             default_mode_index;
-> > +       const struct ox05b1s_sizes      *supported_codes;
-> > +};
-> > +
-> > +struct ox05b1s_ctrls {
-> > +       struct v4l2_ctrl_handler handler;
-> > +       struct v4l2_ctrl *link_freq;
-> > +       struct v4l2_ctrl *pixel_rate;
-> > +       struct v4l2_ctrl *hblank;
-> > +       struct v4l2_ctrl *vblank;
-> > +       struct v4l2_ctrl *gain;
-> > +       struct v4l2_ctrl *exposure;
-> > +};
-> > +
-> > +struct ox05b1s_mode {
-> > +       u32 index;
-> > +       u32 width;
-> > +       u32 height;
-> > +       u32 code;
-> > +       u32 bpp;
-> > +       u32 vts; /* default VTS */
-> > +       u32 hts; /* default HTS */
-> > +       u32 exp; /* max exposure */
-> > +       bool h_bin; /* horizontal binning */
-> > +       u32 fps;
-> > +       struct ox05b1s_reglist *reg_data;
-> > +};
-> > +
-> > +/* regulator supplies */
-> > +static const char * const ox05b1s_supply_name[] = {
-> > +       "AVDD",  /* Analog voltage supply, 2.8 volts */
-> > +       "DVDD",  /* Digital I/O voltage supply, 1.8 volts */
-> > +       "DOVDD", /* Digital voltage supply, 1.2 volts */
-> > +};
-> > +
-> > +#define OX05B1S_NUM_SUPPLIES ARRAY_SIZE(ox05b1s_supply_name)
-> > +
-> > +struct ox05b1s {
-> > +       struct i2c_client *i2c_client;
-> > +       struct regmap *regmap;
-> > +       struct gpio_desc *rst_gpio;
-> > +       struct regulator_bulk_data supplies[OX05B1S_NUM_SUPPLIES];
-> > +       struct clk *sensor_clk;
-> > +       const struct ox05b1s_plat_data *model;
-> > +       struct v4l2_subdev subdev;
-> > +       struct media_pad pads[OX05B1S_SENS_PADS_NUM];
-> > +       const struct ox05b1s_mode *mode;
-> > +       struct mutex lock; /* sensor lock */
-> > +       u32 stream_status;
-> > +       struct ox05b1s_ctrls ctrls;
-> > +};
-> > +
-> > +static struct ox05b1s_mode ox05b1s_supported_modes[] = {
-> > +       {
-> > +               .index          = 0,
-> > +               .width          = 2592,
-> > +               .height         = 1944,
-> > +               .code           = MEDIA_BUS_FMT_SGRBG10_1X10,
-> > +               .bpp            = 10,
-> > +               .vts            = 0x850,
-> > +               .hts            = 0x2f0,
-> > +               .exp            = 0x850 - 8,
-> > +               .h_bin          = false,
-> > +               .fps            = 30,
-> > +               .reg_data       = ox05b1s_reglist_2592x1944,
-> > +       }, {
-> > +               /* sentinel */
-> > +       }
-> > +};
-> > +
-> > +/* keep in sync with ox05b1s_supported_modes*/
-> > +static const struct v4l2_area ox05b1s_sgrbg10_sizes[] = {
-> > +       {
-> > +               .width = 2592,
-> > +               .height = 1944,
-> > +       }, {
-> > +               /* sentinel */
-> > +       }
-> > +};
-> > +
-> > +static const struct ox05b1s_sizes ox05b1s_supported_codes[] = {
-> > +       {
-> > +               .code = MEDIA_BUS_FMT_SGRBG10_1X10,
-> > +               .sizes = ox05b1s_sgrbg10_sizes,
-> > +       }, {
-> > +               /* sentinel */
-> > +       }
-> > +};
-> > +
-> > +static const struct regmap_config ox05b1s_regmap_config = {
-> > +       .reg_bits = 16,
-> > +       .val_bits = 8,
-> > +       .cache_type = REGCACHE_RBTREE,
-> > +};
-> > +
-> > +static int ox05b1s_power_on(struct ox05b1s *sensor)
-> > +{
-> > +       struct device *dev = &sensor->i2c_client->dev;
-> > +       int ret = 0;
-> > +
-> > +       ret = regulator_bulk_enable(OX05B1S_NUM_SUPPLIES, sensor->supplies);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to enable regulators\n");
-> > +               return ret;
-> > +       }
-> > +
-> > +       /* get out of powerdown and reset */
-> > +       gpiod_set_value_cansleep(sensor->rst_gpio, 0);
-> > +
-> > +       ret = clk_prepare_enable(sensor->sensor_clk);
-> > +       if (ret < 0) {
-> > +               dev_err(dev, "Enable sensor clk fail ret=%d\n", ret);
-> > +               goto reg_off;
-> > +       }
-> > +
-> > +       /* with XVCLK@24MHz, t2 = 6ms required delay for ox05b1s before first SCCB transaction */
-> > +       fsleep(6000);
-> > +
-> > +       return ret;
-> > +
-> > +reg_off:
-> > +       regulator_bulk_disable(OX05B1S_NUM_SUPPLIES, sensor->supplies);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int ox05b1s_power_off(struct ox05b1s *sensor)
-> > +{
-> > +       gpiod_set_value_cansleep(sensor->rst_gpio, 1);
-> > +
-> > +       /* XVCLK must be active for 512 cycles (0.34 ms at 24MHz) after last SCCB transaction */
-> > +       fsleep(350);
-> > +       clk_disable_unprepare(sensor->sensor_clk);
-> > +
-> > +       regulator_bulk_disable(OX05B1S_NUM_SUPPLIES, sensor->supplies);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int ox05b1s_runtime_suspend(struct device *dev)
-> > +{
-> > +       struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> > +       struct i2c_client *client = v4l2_get_subdevdata(sd);
-> > +       struct ox05b1s *sensor = client_to_ox05b1s(client);
-> > +
-> > +       return ox05b1s_power_off(sensor);
-> > +}
-> > +
-> > +static int ox05b1s_runtime_resume(struct device *dev)
-> > +{
-> > +       struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> > +       struct i2c_client *client = v4l2_get_subdevdata(sd);
-> > +       struct ox05b1s *sensor = client_to_ox05b1s(client);
-> > +
-> > +       return ox05b1s_power_on(sensor);
-> > +}
-> > +
-> > +static int ox05b1s_write_reg(struct ox05b1s *sensor, u16 reg, u8 val)
-> > +{
-> > +       struct device *dev = &sensor->i2c_client->dev;
-> > +       int ret;
-> > +
-> > +       ret = regmap_write(sensor->regmap, reg, val);
-> > +       if (ret < 0)
-> > +               dev_err(dev, "Failed to write reg addr 0x%04x with 0x%02x\n", reg, val);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int ox05b1s_read_reg(struct ox05b1s *sensor, u16 reg, u8 *val)
-> > +{
-> > +       struct device *dev = &sensor->i2c_client->dev;
-> > +       int ret;
-> > +
-> > +       ret = regmap_raw_read(sensor->regmap, reg, val, 1);
-> > +       if (ret)
-> > +               dev_err(dev, "Read reg error: reg=%x, val=%x\n", reg, *val);
-> > +
-> > +       return ret;
-> > +}
-> 
-> This would be removed entirely and you can just use cci_write()
-> 
-> > +
-> > +#define OX05B1S_MAX_REG_BULK 16
-> > +static int ox05b1s_write_reg_array(struct ox05b1s *sensor,
-> > +                                  struct ox05b1s_reg *reg_array)
-> > +{
-> > +       struct device *dev = &sensor->i2c_client->dev;
-> > +       struct ox05b1s_reg *table = reg_array;
-> > +       u8 vals[OX05B1S_MAX_REG_BULK];
-> > +       int i;
-> > +       int ret;
-> > +
-> > +       while (table->addr) {
-> > +               for (i = 0; i < OX05B1S_MAX_REG_BULK; i++) {
-> > +                       if (table[i].addr != (table[0].addr + i))
-> > +                               break;
-> > +                       vals[i] = table[i].data;
-> > +               }
-> > +               ret = regmap_bulk_write(sensor->regmap, table->addr, vals, i);
-> > +               if (ret) {
-> > +                       dev_err(dev, "Failed to write reg addr=%x, count %d\n", table->addr, i);
-> > +                       return ret;
-> > +               }
-> > +               table += i;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> 
-> and cci_multi_reg_write() (but not needed for writing two consecutive
-> registers anymore with CCI_REG16)
-> 
-> > +
-> > +static int ox05b1s_set_hts(struct ox05b1s *sensor, u32 hts)
-> > +{
-> > +       u8 values[2] = { (u8)(hts >> 8) & 0xff, (u8)(hts & 0xff) };
-> > +
-> > +       return regmap_bulk_write(sensor->regmap, OX05B1S_REG_TIMING_HTS_H, values, 2);
-> > +}
-> 
-> And set_hts becomes:
-> 
-> 	ret = cci_write(sensor->regmap, OX05B1S_REG_TIMING_HTS, hts, &ret);
-> 
-> which can be done inline at the caller of this.
+See also https://en.wikipedia.org/wiki/COMEFROM ;-)
 
--- 
-Regards,
+I would prefer we completely kill off that keyword from the Kconfig
+language and replace it with the reverse 'default'. In this
+particular case, having 'default ARCH_IMX' in 'PINCTRL'
+would of course not be a great idea, but for the exact same
+reason, the 'imply' is wrong here.
 
-Laurent Pinchart
+       Arnd
 
