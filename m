@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-424054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329099DB01F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A429DB022
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7975281A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91808281917
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B8B1990D8;
-	Wed, 27 Nov 2024 23:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC391990D6;
+	Wed, 27 Nov 2024 23:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A3VrN+Pr"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QNuMQY9z"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2861E19538D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B1119538D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732751791; cv=none; b=NyPdISrUGWDr/ds4/6wbdP+e/39A56kZPs9KWM2VZIGrFnEjfDgTSKc0OMkDYz209uuZM8ao2Toa5PAyA9tIRJaGiDrbHY090KqzFrhGPlhmPwWzfiM++bFkHUWcxNpW1qscAiqU5XKY4xPaNnP7Cfef8+5c18C7QG7ves6QqZw=
+	t=1732751831; cv=none; b=HZrxZgLDcpC1iXYqnjJchE/RU6kM1Q8bmCzpEnKsQicOiE2TfhPxYETXbS+mtxxT6/GjL2dNGed1GlSHN16CXVhqEiaWaSyt0gib/S/U3q339q6s6Y7+kKhNgyleULDPXS0E75Zvf4quhw80kEeMBlDBjDiH5G1A7kHybkyWa8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732751791; c=relaxed/simple;
-	bh=5w3tXEfpo9pqP3sWqwOJwR1PqviyBGAGGYvcFK/szxE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hW5tR7NOou+uoExLEcLtXHMnop/UYBzAsKvnU0EtxLfpuHj9L28ripb8bgyF4DdmHmRgPbdMxiFeUBf+QsOAscnOF+8lYW5J5FwUfP6UmoDQcawJ0yMWLGmM77JhbKIpGxumoeveYlpyb84BIZmZMGK3O/ZukhEJj6BnFko/Gi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A3VrN+Pr; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea5a0f7547so313723a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:56:29 -0800 (PST)
+	s=arc-20240116; t=1732751831; c=relaxed/simple;
+	bh=gThBsz3+hRwi0ezlPl0OHla0tdLsXvJYTiWleIRrU+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y4490kwH8stDTeWzNL3REApUa92L4LpLjtUtqYB+Og1+NvMTdwU1oM2ZMNDLVGLhJsXmFeZSMJl6OFL7tW5MKnKtsmES9bRrP+xhsDk0p6HJFVBBY9Hc76Ch0IJy7GTT37UMG83+nQQuB3tBaPGmTsQnNcNLz9WGQKEJhG4fq/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QNuMQY9z; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so42946266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732751789; x=1733356589; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IUjYtrXQYviAFJPlV6rDA0QXqWM4eRKUdwjyydmGs50=;
-        b=A3VrN+Prtv2entPxOOLjGgD+/nVX6cNAT8Co3jFFausk0SMMzIf/Sx86BooTT+3Uc5
-         fdvTwkWrNJdEFPMsRxakaGF3Kb1gDxrjmuyfYuuZh+xQPiBG0rEY+M8fIPjLgBDpTexc
-         9azBcwyEodzEh2e2jsuN/zQ6KudPzwCrHW/drP0RuEVmkoQD5SnySX+zg7dZ6etrut/T
-         5XLasV3DBRi54iiELUKYIKsMEouT6+yLWd+2KMIGvhaZt1X0Hz722JaOAXTC7cZecOZO
-         SE1y1S6o9Won3yXrRgOls72+G52AFmuLVfSUDgN38TsdCN6SDJ76OxIsJZQbW+UVcm5J
-         i/oA==
+        d=linux-foundation.org; s=google; t=1732751827; x=1733356627; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KPlRZAjURNuIqI+1cp/M1BdMXf3esRQ0x/UNttbDRTI=;
+        b=QNuMQY9zUDd/8X6HNJBPHD1/doD1M45u6tAU1rttGKLO7fZtL5qTuurayat5Ar8gdx
+         cpwYERxpewxyqX9enTlWzBZmKnIYT+Xggvyhd5YLOLjYwQ7YGUDN3tgwRTM9EkpvQxRE
+         N/3X6iytt/pYhxq2xOIicVA4GS75FyoGgBvd8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732751789; x=1733356589;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUjYtrXQYviAFJPlV6rDA0QXqWM4eRKUdwjyydmGs50=;
-        b=VOb1S08LrMUoIUKNdQjbV/oftOu1Z9WijDoXsg7KyzTLMmsK+EoPmIXQ9rJSwyF3+L
-         PGRK/SogvR9iZVXWYLOragnuIatQnMBt5YwPKHK9C76Huchc8h6KrRSYwR1xbUxJgY/c
-         V5mMgqRv84tg1P9Ylti+2R/egHZQfx5S+Ph5gcmDo8QCUhrFoUg1dU521L3fbD8UpI0n
-         EnOZ/mw+kb6kpSTZhxl4oVL8KhCOODQ/N4wSjWbryVZnTDXibED9F1UMhJd/TOuZFnwo
-         cNNaiflUrCd/BVj9/TnRg97jMKg1oCF36zkJ5RNSRvYzhs09PXuuB22nxFVzkOBvPuCF
-         wLtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxFtCiTUPkRh4yeNAzwFRp15QtSdkE7KV/Z7jCZqsFhcS9dnxuWx+LUUhyuC8WzvRGyAIUKQqxkS0pBac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy49MMGRh7AeqJAvmvfNnEPyNpqX+eJ7syNaHw5V2nj1GTZVj8E
-	iagGZjAfsC1gXKdwZ2OiHzfBQrwA36Jx1CzqTduSxigRYh9H3w7plK+lAbLORTUQ/WRJa5nQ7/w
-	hCQ==
-X-Google-Smtp-Source: AGHT+IHPTR3iWge3xhiU4XEekgqj03rdjRMWQnKnjuG0mueDT2UvjYmNwZ5lFL1tB4Ijj6JiY1HtjbZkmH0=
-X-Received: from pjbsj2.prod.google.com ([2002:a17:90b:2d82:b0:2da:ac73:93e0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b8e:b0:2ea:696d:732f
- with SMTP id 98e67ed59e1d1-2ee094caf27mr6418337a91.29.1732751789406; Wed, 27
- Nov 2024 15:56:29 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 15:56:27 -0800
+        d=1e100.net; s=20230601; t=1732751827; x=1733356627;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KPlRZAjURNuIqI+1cp/M1BdMXf3esRQ0x/UNttbDRTI=;
+        b=au0gP9lzTc5O/r60jYSCXvEKFiNOaqWsW7CGrC2n8/phOFZjkWkDZSo7aXqTFlYwc+
+         nSith8LJHAHEXCVq4v67Lou6xXw86otMwushfXriI5KNmS+IkQ9ldhsF9ejqCzapVUOf
+         F9O81h6xqfgZPmLleT8OGPyM7A9Kvk72SbUu/TBj57tDzMUVljYBsnwaVD35PPX4xRRv
+         CrzD+oFGYKRuXT6+l6TNI/z9xlvrKEhU2Kc21/iPLme4UDt/jqnEI8FKIPal8BRn3ny0
+         qTSq7HKVIfohmgXeGIYBP/meq1w6nHh7dhmWmw2SI1cAWlkXkbHo2+dJotO1KhW3XMeH
+         STiw==
+X-Forwarded-Encrypted: i=1; AJvYcCURVCzT5ZIfnHMyPc/GlEXz4kRul0aQltDcCGQM24W4+Kd8D91M6h7atsWsZLjLMq/TQAwn0Wl4tVFbugQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxArLR0fuN31sQGP93g9MC2eA3LBoZqKZseBbVUBbFid9eM86m
+	aARwBzuz+yMyvUbg7OzTM+cyzfLY17iiYCQQmnrS9UuYC0l8gGImj4WfQ6PI1M7OnnLA4PgN1UR
+	0QMQ=
+X-Gm-Gg: ASbGncvOxa9QlgI+uBGr1Gmhj3F3e66qcur/GTvIBfqxP/wTf7Tcr1co0+DvxCzNCgD
+	kyXJHguAms11kX4A+MgMW4f2rc5NPxi/1KnQWjgMnKYe+6DrlgCdweN0rVu9NrezjJsMPJpxwai
+	ur2EoLUGtDDgQa/ptY2extbexfgDr50t8NPik4Ip8CAt74zg8glmlRrMsx97fik1xUbsKWN6TxV
+	PQ+9C4d9wqszc+cHINPzLZ7wpFTogD4ndRsIVc9RX9bLStkokiujgT7HGPk4WltPzpPARLuP7KB
+	VpyqXzv8How8IoTSHApHtJHE
+X-Google-Smtp-Source: AGHT+IEgdm0Ew2q2KAeSg8fe9igKzeze15G6dYJokeS3mp6dMc7LHr33ow/K2ZlYlR+wGmWuzkggeg==
+X-Received: by 2002:a17:907:7802:b0:a9e:441c:f729 with SMTP id a640c23a62f3a-aa580b2e09dmr532305466b.0.1732751827379;
+        Wed, 27 Nov 2024 15:57:07 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59994064fsm5087766b.174.2024.11.27.15.57.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 15:57:05 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso39587466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:57:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVg1StTi029hh9esNJoL4aI6rGiSMEAsgYcOxYRExRBsxsLQSoFnRP4tr7VWDkJPvtial/YAxSvnY0WlAw=@vger.kernel.org
+X-Received: by 2002:a17:907:7754:b0:aa5:1da6:d4f2 with SMTP id
+ a640c23a62f3a-aa580f22baamr487890266b.22.1732751824877; Wed, 27 Nov 2024
+ 15:57:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241127235627.4049619-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Use data load to trigger LLC
- references/misses in Intel PMU
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>
+MIME-Version: 1.0
+References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org> <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
+ <Z0eeuCyUGcKgsc5h@bombadil.infradead.org> <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
+In-Reply-To: <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 27 Nov 2024 15:56:48 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+Message-ID: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com, 
+	linux-modules@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, masahiroy@kernel.org, mmaurer@google.com, 
+	arnd@arndb.de, deller@gmx.de, song@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-In the PMU counters test, add a data load in the measured loop and target
-the data with CLFLUSH{OPT} in order to (try to) guarantee the loop
-generates LLC misses and fills.  Per the SDM, some hardware prefetchers
-are allowed to omit relevant PMU events, and Emerald Rapids (and possibly
-Sapphire Rapids) appears to have gained an instruction prefetcher that
-bypasses event counts.  E.g. the test will consistently fail on EMR CPUs,
-but then pass with seemingly benign changes to the code.
+On Wed, 27 Nov 2024 at 15:26, Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, Nov 27, 2024 at 02:35:36PM -0800, Luis Chamberlain wrote:
+> > Sorry about that, I'm on it.
+>
+> OK here is a fix, goes double build tested and then run time tested.
 
-  The event count includes speculation and cache line fills due to the
-  first-level cache hardware prefetcher, but may exclude cache line fills
-  due to other hardware-prefetchers.
+No, you misunderstand.
 
-Generate a data load as a last ditch effort to preserve the (minimal) test
-coverage for LLC references and misses.
+I don't mind the tests being built. That's *good*.
 
-Cc: Maxim Levitsky <mlevitsk@redhat.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
+I mind them being built *twice*. That means that there's some
+seriously broken lack of dependency logic.
 
-As alluded to in the changelog, if the test continues to be flaky after this,
-I'm inclined to remove the checks for LLC references/misses.
-
- tools/testing/selftests/kvm/x86_64/pmu_counters_test.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-index 698cb36989db..b05e262f9011 100644
---- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-@@ -17,7 +17,7 @@
-  * Number of instructions in each loop. 1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE,
-  * 1 LOOP.
-  */
--#define NUM_INSNS_PER_LOOP		3
-+#define NUM_INSNS_PER_LOOP		4
- 
- /*
-  * Number of "extra" instructions that will be counted, i.e. the number of
-@@ -162,13 +162,14 @@ do {										\
- 			     "1:\n\t"						\
- 			     clflush "\n\t"					\
- 			     "mfence\n\t"					\
-+			     "mov %[m], %%eax\n\t"				\
- 			     FEP "loop 1b\n\t"					\
- 			     FEP "mov %%edi, %%ecx\n\t"				\
- 			     FEP "xor %%eax, %%eax\n\t"				\
- 			     FEP "xor %%edx, %%edx\n\t"				\
- 			     "wrmsr\n\t"					\
- 			     :: "a"((uint32_t)_value), "d"(_value >> 32),	\
--				"c"(_msr), "D"(_msr)				\
-+				"c"(_msr), "D"(_msr), [m]"m"(kvm_pmu_version)	\
- 	);									\
- } while (0)
- 
-@@ -177,9 +178,9 @@ do {										\
- 	wrmsr(pmc_msr, 0);							\
- 										\
- 	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
--		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
-+		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt %[m]", FEP);	\
- 	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
--		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
-+		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush  %[m]", FEP);	\
- 	else									\
- 		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
- 										\
-
-base-commit: 4d911c7abee56771b0219a9fbf0120d06bdc9c14
--- 
-2.47.0.338.g60cca15819-goog
-
+            Linus
 
