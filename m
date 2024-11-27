@@ -1,269 +1,307 @@
-Return-Path: <linux-kernel+bounces-423459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0E09DA793
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7909DA7A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB57162B4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E020416352F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4942C1FBCA8;
-	Wed, 27 Nov 2024 12:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01991FBEBF;
+	Wed, 27 Nov 2024 12:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="lwZOurz6"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="M71zU0ta"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628791FAC5A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709835; cv=none; b=Z5888i6D0Ztw4KNPpfggHIswh8Icod40olR54c5UPVZ/WCUhF9xqisAWskjAMQmd473knYo64etr5HSXOR9IeyGhRp2ajJi1aXnfxlxRPFNuXKO4j/zX+TvOk1yuWyjSkKsrUNlHIW9zyKcEZd+/zrnY4MDe8RZIuZuv1tuCcPc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709835; c=relaxed/simple;
-	bh=RglTSagHLJlpjLLO3XN4yYHPfwT3ij0+YY9CxAXm9vQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dgvHwMU9qiTj74s0GawF0zxvCyE5c8rsXi5TMPzJablU68rh3nkXuWeZJK0TW5Td8vT288HNnuZFgDM8UxUyIq8EohJJCUPmTbGCr7AlKae8WixbR8nEcbriLm+tDkAAp28j5ikVufg+Wq4329VVzRNx+GZY3fnxdC8kj6FCrXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=lwZOurz6; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id GCIotu9p8qvuoGGygtgCmf; Wed, 27 Nov 2024 12:17:06 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id GGyftyCWlbs9MGGyftYgwr; Wed, 27 Nov 2024 12:17:05 +0000
-X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=67470dc1
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=fxJcL_dCAAAA:8
- a=NEAV23lmAAAA:8 a=HaFmDPmJAAAA:8 a=VwQbUJbxAAAA:8 a=cpyHj8QvAAAA:8
- a=dFbenWJkYNu75aGOKbQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=BPjOrAZP5zzvMhA9psHf:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wk49Us1i/U24R6rJa3o8MpulLEgGbuu6CfFvEf1cwZk=; b=lwZOurz6CElSEfsX3CQKd7PvCT
-	JrDQ1ad14yCxQdgJSz7kXcIWrGzQxTIyjyd2LAYfUfcZRmzTIQ4yKka0HPTIIBHWqq5wc72IW/kbB
-	bIceMOKIcxi8+1BWEubRkAFBSW9lnKPdwlS/oONExZBCIq8JuJgpr1OtdU7v1tgprEzu3CPd2zfo2
-	JZbJMjiYQUdAp/Rl948tCPDfCBGeWLmRfTv2aW2b3eCbXO54LvXV+8ZdBdwqIZiGyGB71VS9WjMVL
-	3XeTsdhjqD2w++Yd2TrsrV83uZuIIKCgf0VKzBC4jn9hOvCAHqv7kAh6IpJHzPmwj/6z9GCFCGnyt
-	OuZUwfKQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47580 helo=[10.0.1.115])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1tGGye-002GRT-2N;
-	Wed, 27 Nov 2024 05:17:04 -0700
-Message-ID: <6a3ce531-d863-40f2-9fe5-ac6fa3c3fb6a@w6rz.net>
-Date: Wed, 27 Nov 2024 04:17:03 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FD91FBE80;
+	Wed, 27 Nov 2024 12:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732709925; cv=fail; b=N7amki+qhdNrrQHpwKQi6ZLiNnh5TccE2sMXG5ZK820Aug+aPkbqJ3KPlfHJXrkV2W28CtgjO9p8hkAXHQnQxBFS8Jmvjq8oyMFxXNXN2RxmhW57tcmRMtDWJ9HlZnhDY3jG+/nu9Ab/3abO7Vex9POgMyEUsVNxO64MQd+zQXQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732709925; c=relaxed/simple;
+	bh=kilqHWrRRaaHXcMk/klChtvksP4SDUflTgeTAkuj4Wo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QvK28/qLD2enHdyyxzFfrF/2SKpdUONk2oG5L4b1EtHrZPnlb/z5rr5g6v9drrNcg2zbm10GpnQTphTA/WMccXUanXEon4QHxF+9KHJWfRuhZHxdfeQYQ4DAlkznVFT905Rtd1ZhaYlQqZ5lX2Nnqh8C+YXAbiQFz8pum/+KI6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=M71zU0ta; arc=fail smtp.client-ip=40.107.243.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rpzcLEV2fIitZpI8opXmpzZqOFmK8xG7m3ocYL7BiRGtoJoXLwzoZiOUbIiwvXbgXezos90mpwqqD1eU8P/CPcIXoME9vIeQC+qKC60hv3z7NR25LQIjmUBDTQ3FjGM33qFbqXP3q3JXzHw53KK97oklrjOeHbnQxMDWuuPK7hORe8WlUZYQ9E136MQml9cyxFsGgbGX9nzOSqvNOOcJLt1ms6hQ4X7nbjAVoVCeJIiHLMHHMD4uXL7FTOnYiNFW1BAV1Z2/Z1P4dd0f7U4Lv08PNXIVN5TiV0uPBGIJTqe2QkJoGH4m+pchC7A3UJzVHBhwb/Mp74pcI4f3DTvQ+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x9rxv4yu9TfNbmUZXEOAXMKbjeyz0SWduY20BxKv/Yw=;
+ b=H1ZZhNTideppr0uzZE3XHXgybz6EKyX3JaYx4dzTZUILUFZeh6oEOGPUkQMQuX8RZd5I6V7q0JlcBoraQ4py2v7lT+J7au0j55fflDtBdw47fsP8I+n7x5aJ8N4wiRCFP33hCgQG+dSQjHpABGMwxbewk/E6e5wp6FQyEwEdXZEc/VWV/FiQ7dRT2Sl+YuW9nnxz/MCTWC4J+gnrUy10aEMAnbT54tWQuALdFAE+opPdaaNlzROP9KioK7g2yQccqGi4wI4Y8993YRiHrz57zwXTlRLeQ98r1+e2Fffz3WB+rJKLwnapbVIelqcI9w3Hp4gmuqdOHLZ7hzbhXApomw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x9rxv4yu9TfNbmUZXEOAXMKbjeyz0SWduY20BxKv/Yw=;
+ b=M71zU0tapmd2NH0sjeyYZ7LKVAmLXjkmRbhZumjkAy4B+pWfM8rNYhSRkOlhQqoU22zVvepjuKJ6T8eBROCrzo9kpcGFF4vEpiEYaLWaw57Fv3xFaclwPBRRpjX7l4rGHNrR0obHgQBDcq76p4F+xkvEfvCOErnS9X6ieoR0hKk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
+ by SA1PR12MB6749.namprd12.prod.outlook.com (2603:10b6:806:255::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.23; Wed, 27 Nov
+ 2024 12:18:40 +0000
+Received: from IA1PR12MB6434.namprd12.prod.outlook.com
+ ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
+ ([fe80::dbf7:e40c:4ae9:8134%4]) with mapi id 15.20.8182.018; Wed, 27 Nov 2024
+ 12:18:39 +0000
+Message-ID: <3947869f-90d4-4912-a42f-197147fe64f0@amd.com>
+Date: Wed, 27 Nov 2024 17:48:31 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com,
+ willy@infradead.org, vbabka@suse.cz, david@redhat.com,
+ akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ joshdon@google.com, clm@meta.com
+References: <20241127054737.33351-1-bharata@amd.com>
+ <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
+ <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
+Content-Language: en-US
+From: Bharata B Rao <bharata@amd.com>
+In-Reply-To: <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN1PEPF000067F1.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c04::2d) To IA1PR12MB6434.namprd12.prod.outlook.com
+ (2603:10b6:208:3ae::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Aw: Re: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps:
- error: Unmet build dependencies: libssl-dev) in 6.12
-To: Frank Wunderlich <frank-w@public-files.de>, masahiroy@kernel.org
-Cc: nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
- <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
- <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
- <e55645d9-6e50-4b1b-b413-6a0f5acb6095@w6rz.net>
- <trinity-91daf006-41a6-4b4f-b7ee-2870f2c262c9-1732702872483@trinity-msg-rest-gmx-gmx-live-86dc4689bd-7d6hq>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <trinity-91daf006-41a6-4b4f-b7ee-2870f2c262c9-1732702872483@trinity-msg-rest-gmx-gmx-live-86dc4689bd-7d6hq>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tGGye-002GRT-2N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:47580
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 1
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfI//JxdUP+nkNbYC3vIWPlOqAjQOH0dNJd58DDCc6YcRMYkadFiDcrN1WGzB/Oy+060mBjSRwXhNt9CGUldlgsU7iTkuuEqIvksH1jzi3u+zLlHSeOLG
- 0bqreLP856EtmgsWLkvyhJS0CaYIORfS/3S/VZir7v3pt9YcWsKacKg2mZO9zjdOjFX4W8t01QcHisoLTxbBI9U10eIqP1ZX/rI=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|SA1PR12MB6749:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14f2fca6-2392-4623-d516-08dd0edda035
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NVBqQ2VEYVBxU29jQmI2Q21sZDgvekN1UlYwYm16WTJmY1J5a3llZzhvWm9w?=
+ =?utf-8?B?TXp2aU1WMkJGbDUzWlZJaFc1Y2o5WkU3alJVL2NWY1BiMEZFdk0vQ3BKdktw?=
+ =?utf-8?B?cndFZ0Q5dVZNbkptRlU3U0hmeVpwU1hXK3R3N3U5eHREUFRuMmNqZzdhak9l?=
+ =?utf-8?B?MS9TUnJPVnpVUmZpUXBSMktpZE90VmdNVmhYUmd2M2I5YnVlbWNBSzZ4bW5z?=
+ =?utf-8?B?Y1NDY29RUXFaS3lGbEtSNCs0TUFsbEZDNTdibjFtd0FuTmNXNStpVEx0UWt5?=
+ =?utf-8?B?Qlc4Mks1Tk9GM0VwVCtQQmp6STlpZWFwOWJkYUl2WmxyeDh3cHdaWDFiL2g1?=
+ =?utf-8?B?TEVlQWlnUDdIYjczcldqWkFvZENjdklTc2JVQUVBaWh4OWNTN3puZ2FjVVIr?=
+ =?utf-8?B?aGcxK3oyRjlYOFFtMzZpQmFCOHJHOU55djQ1WDB5WGJkVzZncTZXK0lwSGY2?=
+ =?utf-8?B?OUVLY2V4WWxjM2ViUEoxekp6bkgrY3JiTDM0bHVhN0JRL0wvUk1ZSStrNzNY?=
+ =?utf-8?B?WDh5dFpxU2RUeWtVMy83blRtTkM2WmczNXpyQWRtNGoxQmUwdndnTE40eEF3?=
+ =?utf-8?B?b2FMd3I2L1ZRNmorS09zd2JLVlIzMCtjTVZoSTZkN3RVVHBXSTZPd2dFV1hq?=
+ =?utf-8?B?cHdmcXZLRVRCVC9NT1NtWk1HemFsdkhORkV3R3QrTkxIOU5zd2xLQzBpKy9V?=
+ =?utf-8?B?cG9JV3AweWYxa1ZTNC9ud3kxb0RBYWpzeFVhQllNd0k0V3U1NjFUM0lGaU5Z?=
+ =?utf-8?B?RzQ2azgxSWU0cWlGdWVQdUxzYllla24xNVFGeDhmenQ3UVZ0YTJtLzViMmRu?=
+ =?utf-8?B?TExBdGUxbndzRmhtSXhWQUIzZFh0QUIxdzR0TXJJb0ZqUUI3VnFmYzJPVWJ0?=
+ =?utf-8?B?bW4wMUZZUHhsQWVYNkFWSXdad1B4cEhpbWQySXR3R0RDZ0FrMDFYK1RnaDRW?=
+ =?utf-8?B?MlJJdUl3MElFTWllWVNOanhRanJRYlQ5dHNobFBPbllhZXNWeTJVUWIrV3pj?=
+ =?utf-8?B?TUx4VUlxRXRxbTdZUnhnNW8wNmZMeWw0OVM1YWdKRmxUY1dNV2t2K1NWbnBG?=
+ =?utf-8?B?R01waHJ4YVNwSFh5STh4MnNkN0M0VzliZ0c3OWRzREkva2xRMER4bU1EUXVF?=
+ =?utf-8?B?RHhSLzNNMTZKcldIeDM2dTJBVlZQbXlKMUV6dWVtWHFsYmpIRkdzWGNJaGJZ?=
+ =?utf-8?B?Mm5UUlJEcjRubUJmTGc2MmdhaHNZU3FvajFpcTZvMmZqM0VtZ01PcWJGYlhJ?=
+ =?utf-8?B?UENaWStqRWhENVh1dEJObkhhOTRTaVVSRmdrdUtnWmVjNUJLbWR4ZHpBQ2lY?=
+ =?utf-8?B?aXpPUVIxZklSNzhvNlMvY09nU0JaUUZZdnh4QnBFaVVhVSsrdmdreEtwSnlk?=
+ =?utf-8?B?YllJTGZDZkJtZWF3eGJidy9IeU9CVlQvaEJja29DMFdQZ2F4eFpQSXRVY3V6?=
+ =?utf-8?B?dm4rcXk3eU9mWW1tZmxnVTIreFRXUmZsREYwWlU0SVFHOUFiVWlLWGNyVzBo?=
+ =?utf-8?B?OWFHQnJ5L0gzN25SMHFvT0kzbDA0UlZQZGNLY0JCdlRvQjVyTkdxaGl1ajdZ?=
+ =?utf-8?B?RnpkYWdFTzdyNEZhbXZrU1hkbWxmUnNyZTFRK1FDRHRuckFlTEVtUmR6WVVV?=
+ =?utf-8?B?NkRFeGtWU1FDaDBlamRIa1RveHEzMUNpZEI2S3BybGpneFFkZ2FTc0p3eW1k?=
+ =?utf-8?B?b3I1RkR2ZDNtT2hINEx0Zk95TkYvM2Z5R3krbDMzbXd4UXM0M2hmWkNjZ0sv?=
+ =?utf-8?Q?t471PB44AEuLc+wmyM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WFNmaEZkc2tIanZwSFVmcE5ZdVNxWjB3bStDZzdqSzFRQ1l4QnhOc0hFYXM2?=
+ =?utf-8?B?bTRJcDNFbGtnWXBjZWltMnJYSjRDTWdwUUMyZnNrQVVjN3c1LzlPeGNzU1hM?=
+ =?utf-8?B?azdxNEF3ckxOazZVZUxqTThZRVMxbEw3OTVxZW94aHFsNk5BVk5qeW1BdTFL?=
+ =?utf-8?B?R1gzOUc2eVBjY2NLUDNNUTZUSmgwWnE1bVRSbis3ZkFqTm1uakNhNEh4RmZV?=
+ =?utf-8?B?ZUgwWExFZHQvaUUwQVc0RHEvbVlTaUlnU3FBVFV3K2FhODJxMnBFNW9wMURr?=
+ =?utf-8?B?eTRFWi9OOTZtMTZQVWgwNE5sQWZSU2tsSWpTNDJBZXV1MmpCOTZydnZKYmFx?=
+ =?utf-8?B?LzVjV05wZGZnUnhCUGxkbnBZa0RiSHMyUnRpNURrckFwVjhPQTFpVVFMYTRH?=
+ =?utf-8?B?ZVoyUm1pMS9FUVY3YkFFcWI2aFlKV2J6UnhEb3Zrcmx2S05UZmNLQ3FuRjBH?=
+ =?utf-8?B?VDlDYk5WU24wVDVmMDhnTUJJVFFhSzFtM1M0cCtJNXliQ1JrRHhYNjNhUDVE?=
+ =?utf-8?B?azBoTjRXWisxNFFwaUpmK2tCYVJOU3IySng2TjBZUFNOVUNKTXRybXpIaktx?=
+ =?utf-8?B?UGN0SEZ3dEVYcCtFTzlmd1BuYkFOOElTV0xmdW82aGtEYWtmTHJ3OEpGTWty?=
+ =?utf-8?B?ZnRMZVdOemZwUitwSHZCREVoTUtOUnVicjFQSGpOQm1IQTkxelJrOHBieWR0?=
+ =?utf-8?B?TVNjYzdITHdKeXVyaURWMG5lWXlNTFRlbjQwdlQwWXhSbjJWWGRwRjF4M0g2?=
+ =?utf-8?B?YzNMSStPTU9JUzZsM2poNFgxUC8zV1NpQmh2blA3amZYMXd1YVRqOXVFaTlD?=
+ =?utf-8?B?RllWOHliODBjT1ZYSmFsT1k1eW5JKzJIb2M0ZHlpeVNwNlhPNUNwbnhhSHlN?=
+ =?utf-8?B?alZzNGJOdk1rcTA2aElpSW52eGhQTmNZRVNEM0RDNVZWcXZ1aVE2bW1IbXZa?=
+ =?utf-8?B?QnkrY09ldE9IdE1CMFMzbVFCQ2xKZlpMWXJ3NmU4UDZaK25henJHOEdRSW9x?=
+ =?utf-8?B?V3lYZE1ZMHkxUFRuTU9xRy9QZmhxR2xoTWtDcm1OZXZyWFVvTW5iS1k3TG9l?=
+ =?utf-8?B?TmtxZGRzTHVpaWQ2T29IbFp2N3JjM0czUEhWd2Fvb2VCYU9aTmJaNmdTdFl6?=
+ =?utf-8?B?VURTQ1c2NGZDd0tTRUtWOXBQVkwyYjd4SC96M01sbWJKUjJvVkFpdDA3dlZD?=
+ =?utf-8?B?bGRTcDdnQk9KS1ZhOTJVSDRJSWNGbnpPQXlwenUzTC9TeW0xd2krM0NNSFRI?=
+ =?utf-8?B?QXAwMzBQUEpHYmFhT1QyeDJRcDVpdU93ZnJIY2h0d1JHYUVIczhIWlhVNGla?=
+ =?utf-8?B?TzRZb3QyVEs3Y3RyVEZHV0VoQkdua1d3UTAreXlxZGVpL2kvRzJNaDR6WmdL?=
+ =?utf-8?B?UDN6K3BaUzZrNmt3eFRwbjNPT3FvTzdVakpZOXdQTkt2dElrUTNtVXhlZW94?=
+ =?utf-8?B?OHdEaXRISkprU3VaMmRZL0ZsWjhKOUtTY0prNTdBWUN6bGo0N2FvbG5Qek5x?=
+ =?utf-8?B?NDZ3WnhmZklkb0w4V05SbVV5NnVnNnBlNUU5QmFkRE56dHhoRjNlcFRkUlB4?=
+ =?utf-8?B?SEV2ZFNrM2R3QlpuL29naEVISWdSZHhobWZKSkxGai9YbUNobWMxWlZidTE0?=
+ =?utf-8?B?cHJuUjhiM014R3grMFJ4eGp4cUkrN2JOSU4wZ09sN05tTG5KNW1ZeUJFTUJ2?=
+ =?utf-8?B?ZjQ2S3BKNVlvVkE5NW9HTzY5K1pwUWF1QzNTVmhSRHlQdDRhWHJtM3F5YnZo?=
+ =?utf-8?B?SWFUNGJhczhFZ1VleXRzM2RPV3p4R2FjYitGT0VWeXB3NWw3YndTZU55UUNS?=
+ =?utf-8?B?bkhJUUhLT0tUN3JvTjltc0FsbHZnYTJ5ZlV1bDRmVXJqZzJya0JVYnduc3JQ?=
+ =?utf-8?B?ajAzbDJJMHJrYXlleVMzRkNKUXY3R0dwNDk2N3phTWJrWHdWRm4vbFZycW9s?=
+ =?utf-8?B?ek5UMHlSZXJsdS9Sd3RJUWlZY203aURBQjRBVG1mRE1rRVRhSHpSbTV1SXNO?=
+ =?utf-8?B?MVhmK1RSd2JoNVFmS0pncisrclJBZUU0L1d4cTBabWFrUWNWT0NJUCt1VUlV?=
+ =?utf-8?B?MndkRDVoa3daMFl3bHB2T3daU0pwcG0rRUx6SnFwQlcveEM0SThCS3pMd0ZJ?=
+ =?utf-8?Q?9QvPbe3imyzCiaXHjoLPt9c59?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14f2fca6-2392-4623-d516-08dd0edda035
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 12:18:39.8159
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aEhw4pFl5v/6R37NYlez/oHu3up1uWSJXs7bZMdOGjUgyMFGeY0svyDwp0YxMHS6syCHWeDJBZKOVL4yIfrBTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6749
 
-On 11/27/24 02:21, Frank Wunderlich wrote:
-> &gt; Gesendet: Mittwoch, 27. November 2024 um 10:10
-> &gt; Von: "Ron Economos" <re@w6rz.net>
-> &gt; An: "Frank Wunderlich" <frank-w@public-files.de>, masahiroy@kernel.org
-> &gt; CC: nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-> &gt; Betreff: Re: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev) in 6.12
-> &gt;
-> &gt; On 11/26/24 09:12, Frank Wunderlich wrote:
-> &gt; &gt; &gt; Gesendet: Donnerstag, 21. November 2024 um 23:09
-> &gt; &gt; &gt; Von: "Masahiro Yamada" <masahiroy@kernel.org>
-> &gt; &gt; &gt; An: "Frank Wunderlich" <frank-w@public-files.de>
-> &gt; &gt; &gt; CC: re@w6rz.net, nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-> &gt; &gt; &gt; Betreff: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev) in 6.12
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; On Fri, Nov 22, 2024 at 2:09 AM Frank Wunderlich
-> &gt; &gt; &gt; <frank-w@public-files.de> wrote:
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; Hi,
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; i noticed this issue with debian package build-system in final 6.12.
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; LOCALVERSION=-main board=bpi-r2 ARCH=arm CROSS_COMPILE=ccache arm-linux-gnueabihf-
-> &gt; &gt; &gt; &gt; make[1]: Entering directory '/media/data_ext/git/kernel/build'
-> &gt; &gt; &gt; &gt;   GEN     debian
-> &gt; &gt; &gt; &gt; dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source package linux-upstream
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source version 6.12.0-00061-g837897c10f69-3
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source distribution noble
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source changed by frank <frank@frank-u24>
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: host architecture armhf
-> &gt; &gt; &gt; &gt;  dpkg-source --before-build .
-> &gt; &gt; &gt; &gt; dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; This error message means, you need to install "libssl-dev:armhf"
-> &gt; &gt; &gt;
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
-> &gt; &gt; &gt; &gt; dpkg-buildpackage: warning: (Use -d flag to override.)
-> &gt; &gt; &gt; &gt; make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4.14/scripts/Makefile.package:126: bindeb-pkg] Error 3
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; it was ok in at least rc1 and libssl-dev is installed
-> &gt; &gt; &gt;
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; Presumably, you already installed libssl-dev for your build machine
-> &gt; &gt; &gt; (i.e. "libssl-dev:amd64" if your build machine is x86_64).
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; But, you have not installed "libssl-dev" for the architecture
-> &gt; &gt; &gt; your are building for (i.e, "libssl-dev:armhf")
-> &gt; &gt;
-> &gt; &gt; Hi
-> &gt; &gt;
-> &gt; &gt; thank you for answer, why is this lib required for the arch? it makes my pipeline very complex
-> &gt; &gt; just to add the repos for the arch...seems the lib is not yet used, only checked if installed.
-> &gt; &gt;
-> &gt; &gt; looks like ubuntu 24 seems to have changed the sources.list for apt, so there is no single-line to
-> &gt; &gt; be added
-> &gt; &gt;
-> &gt; &gt; this is the default apt-source in ubuntu 24:
-> &gt; &gt;
-> &gt; &gt; $ cat /etc/apt/sources.list.d/ubuntu.sources
-> &gt; &gt; Types: deb
-> &gt; &gt; URIs: http://de.archive.ubuntu.com/ubuntu/
-> &gt; &gt; Suites: noble noble-updates noble-backports
-> &gt; &gt; Components: main restricted universe multiverse
-> &gt; &gt; Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-> &gt; &gt;
-> &gt; &gt; Types: deb
-> &gt; &gt; URIs: http://security.ubuntu.com/ubuntu/
-> &gt; &gt; Suites: noble-security
-> &gt; &gt; Components: main restricted universe multiverse
-> &gt; &gt; Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-> &gt; &gt;
-> &gt; &gt; if i just add the arches
-> &gt; &gt;
-> &gt; &gt; sudo dpkg --add-architecture armhf
-> &gt; &gt; sudo dpkg --add-architecture arm64
-> &gt; &gt;
-> &gt; &gt; apt seems to add the repos on update, but i still cannot install the packages
-> &gt; &gt;
-> &gt; &gt; $ LANG=C sudo apt install libssl-dev:armhf
-> &gt; &gt; Reading package lists... Done
-> &gt; &gt; Building dependency tree... Done
-> &gt; &gt; Reading state information... Done
-> &gt; &gt; E: Unable to locate package libssl-dev:armhf
-> &gt; &gt;
-> &gt; &gt; $ LANG=C sudo apt install libssl-dev:arm64
-> &gt; &gt; Reading package lists... Done
-> &gt; &gt; Building dependency tree... Done
-> &gt; &gt; Reading state information... Done
-> &gt; &gt; E: Unable to locate package libssl-dev:arm64
-> &gt; &gt;
-> &gt; &gt; if i revert the commit below, my build is successful without installing the lib.
-> &gt; &gt;
-> &gt; &gt; afaik the -dev are source-packages (headers) which should be architecture independ, or am i missing something?
-> &gt; &gt;
-> &gt; &gt; regards Frank
-> &gt; &gt;
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; basicly i use this command after setting crosscompiler
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; LOCALVERSION="${gitbranch}" board="$board" KDEB_COMPRESS=gzip make bindeb-pkg
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; if i Revert "kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile"
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; i can compile again..any idea why this happens? my build-system is ubuntu 24.4 and github actions with ubuntu-latest.
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; https://github.com/frank-w/BPI-Router-Linux/actions/runs/11955322294/job/33327423877
-> &gt; &gt; &gt; &gt;
-> &gt; &gt; &gt; &gt; regards Frank</frank@frank-u24>
-> &gt; &gt; &gt;
-> &gt; &gt; &gt;
-> &gt; &gt; &gt;
-> &gt; &gt; &gt; --
-> &gt; &gt; &gt; Best Regards
-> &gt; &gt; &gt; Masahiro Yamada
-> &gt;
-> &gt; Here's what worked for me in /etc/apt/sources.list.d/ubuntu.sources for
-> &gt; 24.04.
-> &gt;
-> &gt; Types: deb
-> &gt; URIs: http://ports.ubuntu.com/ubuntu-ports
-> &gt; Suites: noble noble-updates noble-backports
-> &gt; Components: main universe restricted multiverse
-> &gt; Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-> &gt; Architectures: riscv64
-> &gt;
-> thx for ubuntu 24 i have it done similar (took the whole day to get both systems to the point apt-sources to be added the right way), had to modify the ubuntu.sources to add the arch for host system (amd64) and add additional file with ports.ubuntu.com for the crosscompile-target (armhf/arm64)
->
-> https://github.com/frank-w/BPI-Router-Linux/actions/runs/12047237222/job/33589357798#step:6:1
->
-> tried most time to get current ubuntu-latest for github actions running which is still ubuntu-22.04, but ran into installing issues where libssl3 cannot be installed for the desired arch...if i add it manually it depends on libc for the arch and so on...
->
-> example for ubuntu-latest / ubuntu-22.04
-> https://github.com/frank-w/BPI-Router-Linux/actions/runs/12038757178/job/33565113600
->
-> https://github.com/frank-w/BPI-Router-Linux/actions/runs/12038757178/workflow#L56
->
-> &gt; The library is used here:
-> &gt;
-> &gt; https://github.com/torvalds/linux/blob/master/scripts/sign-file.c#L25
-> &gt;
-> &gt; That file is now cross-compiled.
->
-> but why needs signing-file to be crosscompiled? the target files (kernel and maybe the deb-file) have to be crosscompiled, but imho
-> not tools for signing them. After building kernel for target-arch and creating deb isn't it possible to sign it using a amd64 (host
-> arch) openssl binary? the openssl-binary does not land on target-platform...only used as part of build-chain, or am i wrong?
->
-> btw. not sure why my webmailer creates html-tags in plaintext-mails...have reported it to the vendor, but not got any response yet, so
-> sorry for that (have replaced quote-chars manually, hope they stay as single chars and not reconverted to entities).
->
-> regards Frank
-> </frank-w@public-files.de></frank-w@public-files.de></masahiroy@kernel.org></frank-w@public-files.de></re@w6rz.net>
+On 27-Nov-24 11:49 AM, Mateusz Guzik wrote:
+> On Wed, Nov 27, 2024 at 7:13 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+>>
+>> On Wed, Nov 27, 2024 at 6:48 AM Bharata B Rao <bharata@amd.com> wrote:
+>>>
+>>> Recently we discussed the scalability issues while running large
+>>> instances of FIO with buffered IO option on NVME block devices here:
+>>>
+>>> https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
+>>>
+>>> One of the suggestions Chris Mason gave (during private discussions) was
+>>> to enable large folios in block buffered IO path as that could
+>>> improve the scalability problems and improve the lock contention
+>>> scenarios.
+>>>
+>>
+>> I have no basis to comment on the idea.
+>>
+>> However, it is pretty apparent whatever the situation it is being
+>> heavily disfigured by lock contention in blkdev_llseek:
+>>
+>>> perf-lock contention output
+>>> ---------------------------
+>>> The lock contention data doesn't look all that conclusive but for 30% rwmixwrite
+>>> mix it looks like this:
+>>>
+>>> perf-lock contention default
+>>>   contended   total wait     max wait     avg wait         type   caller
+>>>
+>>> 1337359017     64.69 h     769.04 us    174.14 us     spinlock   rwsem_wake.isra.0+0x42
+>>>                          0xffffffff903f60a3  native_queued_spin_lock_slowpath+0x1f3
+>>>                          0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>>>                          0xffffffff8f39e7d2  rwsem_wake.isra.0+0x42
+>>>                          0xffffffff8f39e88f  up_write+0x4f
+>>>                          0xffffffff8f9d598e  blkdev_llseek+0x4e
+>>>                          0xffffffff8f703322  ksys_lseek+0x72
+>>>                          0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>>>                          0xffffffff8f20b983  x64_sys_call+0x1fb3
+>>>     2665573     64.38 h       1.98 s      86.95 ms      rwsem:W   blkdev_llseek+0x31
+>>>                          0xffffffff903f15bc  rwsem_down_write_slowpath+0x36c
+>>>                          0xffffffff903f18fb  down_write+0x5b
+>>>                          0xffffffff8f9d5971  blkdev_llseek+0x31
+>>>                          0xffffffff8f703322  ksys_lseek+0x72
+>>>                          0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>>>                          0xffffffff8f20b983  x64_sys_call+0x1fb3
+>>>                          0xffffffff903dce5e  do_syscall_64+0x7e
+>>>                          0xffffffff9040012b  entry_SYSCALL_64_after_hwframe+0x76
+>>
+>> Admittedly I'm not familiar with this code, but at a quick glance the
+>> lock can be just straight up removed here?
+>>
+>>    534 static loff_t blkdev_llseek(struct file *file, loff_t offset, int whence)
+>>    535 {
+>>    536 │       struct inode *bd_inode = bdev_file_inode(file);
+>>    537 │       loff_t retval;
+>>    538 │
+>>    539 │       inode_lock(bd_inode);
+>>    540 │       retval = fixed_size_llseek(file, offset, whence,
+>> i_size_read(bd_inode));
+>>    541 │       inode_unlock(bd_inode);
+>>    542 │       return retval;
+>>    543 }
+>>
+>> At best it stabilizes the size for the duration of the call. Sounds
+>> like it helps nothing since if the size can change, the file offset
+>> will still be altered as if there was no locking?
+>>
+>> Suppose this cannot be avoided to grab the size for whatever reason.
+>>
+>> While the above fio invocation did not work for me, I ran some crapper
+>> which I had in my shell history and according to strace:
+>> [pid 271829] lseek(7, 0, SEEK_SET)      = 0
+>> [pid 271829] lseek(7, 0, SEEK_SET)      = 0
+>> [pid 271830] lseek(7, 0, SEEK_SET)      = 0
+>>
+>> ... the lseeks just rewind to the beginning, *definitely* not needing
+>> to know the size. One would have to check but this is most likely the
+>> case in your test as well.
+>>
+>> And for that there is 0 need to grab the size, and consequently the inode lock.
 
-sign-file is a target executable. When you install the 
-linux-headers-6.12.0xxx_arch.deb, it ends up in 
-/usr/src/linux-headers-6.12.0/scripts on the target.
+Here is the complete FIO cmdline I am using:
 
-That's what this change is all about. In the past, the executables in 
-/usr/src/linux-headers-xxx/scripts were being compiled for x86, not the 
-target architecture.
+fio -filename=/dev/nvme1n1p1 -direct=0 -thread -size=800G -rw=rw 
+-rwmixwrite=30 --norandommap --randrepeat=0 -ioengine=sync -bs=64k 
+-numjobs=1 -runtime=3600 --time_based -group_reporting -name=mytest
 
+And that results in lseek patterns like these:
+
+lseek(6, 0, SEEK_SET)             = 0
+lseek(6, 131072, SEEK_SET)        = 131072
+lseek(6, 65536, SEEK_SET)         = 65536
+lseek(6, 196608, SEEK_SET)        = 196608
+lseek(6, 131072, SEEK_SET)        = 131072
+lseek(6, 393216, SEEK_SET)        = 393216
+lseek(6, 196608, SEEK_SET)        = 196608
+lseek(6, 458752, SEEK_SET)        = 458752
+lseek(6, 262144, SEEK_SET)        = 262144
+lseek(6, 1114112, SEEK_SET)       = 1114112
+
+The lseeks are interspersed with read and write calls.
+
+> 
+> That is to say bare minimum this needs to be benchmarked before/after
+> with the lock removed from the picture, like so:
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index 2d01c9007681..7f9e9e2f9081 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -534,12 +534,8 @@ const struct address_space_operations def_blk_aops = {
+>   static loff_t blkdev_llseek(struct file *file, loff_t offset, int whence)
+>   {
+>          struct inode *bd_inode = bdev_file_inode(file);
+> -       loff_t retval;
+> 
+> -       inode_lock(bd_inode);
+> -       retval = fixed_size_llseek(file, offset, whence, i_size_read(bd_inode));
+> -       inode_unlock(bd_inode);
+> -       return retval;
+> +       return fixed_size_llseek(file, offset, whence, i_size_read(bd_inode));
+>   }
+> 
+>   static int blkdev_fsync(struct file *filp, loff_t start, loff_t end,
+> 
+> To be aborted if it blows up (but I don't see why it would).
+
+Thanks for this fix, will try and get back with results.
+
+Regards,
+Bharata.
 
