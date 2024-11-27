@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-423145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AB09DA36E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:01:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD749DA375
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:02:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537E6282DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45E01643DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF29156236;
-	Wed, 27 Nov 2024 08:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCB3170A11;
+	Wed, 27 Nov 2024 08:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wB1sAJQZ"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzRM6WTf"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADBF12C499
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6076E1272A6;
+	Wed, 27 Nov 2024 08:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694473; cv=none; b=MbWiB1C6sx3s6b/O/k3IXKmGLqF5WJ2J/n6+1RJLyVkAB7A85Xx6cdx/Fir9xGSdUv0YzeKGsPBOtf7saZigpemH8XyMTbQgQkAJ6P4QL/bQBldmsrvggys9ZtZnkJ33LVq2CixQl7Ww1qiwP06uBObWxpS/zISlduGXgyjGfKU=
+	t=1732694523; cv=none; b=cdCj8H+lWxyHqLSzmzfALWqVnPNd/eTIUKGbPnEqfWi8XVIXenGzcSkvYWXlU19e3YvwpgLlg12/f/FJ64ODGp3WqGjlaAIHJVY9Cuzm5aHXrFc69P7Yz91obRk5w1t0CmVUo8rhgHo4CdsgvHTcDs/NyVydqzwHpT0/nYDkbdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694473; c=relaxed/simple;
-	bh=AbkDYsis4owsrh1UCJvHba4T0vyQ/Nv1EmYIBX04NUM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fqSAPvkmDg98x88WtBrcI8bplW/1KgdKRcmna47AUe78x1C4JiqIA0cgRZQHYb9EfHPK7gAvKUFnv6ffITyWUgzg4uhkBBwIi4X/MUdIJvSqVtMGpe0f8En7qBoAamiAxqR2AXgjzFisMt5P5FMGzqD8IOBFtU3RNJppFkEArYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wB1sAJQZ; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3ea55e95d0fso1139465b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:01:11 -0800 (PST)
+	s=arc-20240116; t=1732694523; c=relaxed/simple;
+	bh=TA/9WZEbvgB1jmH6kCzUe9r/FiGqTL+90VzfPh1UVzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cvjuAd+jbXUqFQ8Y12cwPp3MXBe3ZKSFjGMVEgv7S0kuZ7vJs5S8uZ4l7LmuzicSXuKOhJF2k9773RsmfKd1jUcjyVwBQFD96mR+gh4CLPX9QgPQbBy7oZkcQ5aZSyxqXNdtrJbl8TJPXsI9Md72ro2GXoULVZF0EE4lr9kQop8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzRM6WTf; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2124a86f4cbso58320885ad.3;
+        Wed, 27 Nov 2024 00:02:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732694471; x=1733299271; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hYdfHihuwL6Ju6kDqZ75VBX+k7CPPQhvCWcMy8zyxAs=;
-        b=wB1sAJQZ6e4uxEDuxGEXz4TQPcUWDWrOrQ/uE00NM11y22nxmWe+XCuQSbmgGwtNhu
-         1pS9J2eefqlZhh1X+b4WGUw+HJiGeH/oQq/CdKF8IIq1nyQKi0nZ3G+SZqf1RvEPQdt0
-         uXDrsUnSsdxkJHsQwk4ZBL/rnAiF5bfb576R2O4LHSEgBwKQo2bcD3CGGPorJuoJq35/
-         AeCLdW5UCtFyIpdkVoxb6RZEdznp9J7wloWUA16oRQxGhinEQ/EARzaiVSsOUKi563Q0
-         90Mb0QZCIULuXfYYYE4fIZrjclYLPD5oMiMcchI80Evf/xlYm8S0wuMo3AXuXh+AZtrw
-         P1fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732694471; x=1733299271;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=gmail.com; s=20230601; t=1732694521; x=1733299321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hYdfHihuwL6Ju6kDqZ75VBX+k7CPPQhvCWcMy8zyxAs=;
-        b=dR7yQJv/8adgB7cEqXF9IqUS/MgnMdy8oRBi8JYKl0EaHo4M+EKPMqERhCzDDuKAii
-         vg8d9j0LB35Cfj763n6r3Pj5rTdAQXlJXqUkuEKCqeLmLE8T8BXumScSskLHQxys4wf8
-         NBIWPXDMtXWV7v5V36M5akca9tHT/bjHeakBMneaY1lmh9xfl6SO6sTBTvKGbs5phwI0
-         hM9viLXNZXnko6gOt33LAS5T2hWx+jOkUiEENf+0hfhmDHgJw+mTr867zME4p7hqQQGZ
-         yJJImdBrIQhUlk0gACwC+CTaNeo/8GojGzsuxPzsqUXBB0BQcbUp4bTJMGsw38CjnQOC
-         ZbrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXu0GugnC+Kij47HdEPtsUeAxz4N+GVaBgGzygXL0GQvH9xrCrxZ8PLHrfW0vlmztRi0QStMcNRAeOn9TY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylEG9tpA9JGqpN8GEy28T8/Xu86cs9cpkRTILOiWaV7aNHDOSa
-	tXAJZXgov0nZ1J561U/WzOT6ZZq+8FznRwlXAc5XewXLH1Oq3cPbQLaN7MocyFUzFpYiVaehUNK
-	WY2riH3Xf4uLctgowt7/jEfV02O4X8QCMABJYL4aeYY25Qcemv1o=
-X-Gm-Gg: ASbGncuMHcPmk39oOoJM567nopEMOVLvAg0onmpnng633GKMKW3z8uLR86/VY3x+ERE
-	5odI8iM/8ZWzXmWygU0r6xiVQ2i/jj309
-X-Google-Smtp-Source: AGHT+IEkxgFBqTgSvpO8yYB0IKDotz+aNBc7IBovLs4xngUKDxA0NRMInMSF3uQ1HnkNvQWdMO6Y8oP8iwyFQF4i8lk=
-X-Received: by 2002:a05:6808:18a5:b0:3ea:5e04:23ef with SMTP id
- 5614622812f47-3ea6dda02edmr1747674b6e.37.1732694471292; Wed, 27 Nov 2024
- 00:01:11 -0800 (PST)
+        bh=bew/I5xXVZXMcMLGcr2bk1V3h79V/rlhudJAubnILnI=;
+        b=JzRM6WTflhvuVNaoLpDjpBRtkSWaGFvch6uCz1KzlfG/5AzIlRqGtW7HywmZCXL4eS
+         KiAFxhExAfVlnttpDVpYVd9cqX+UNy8U7yQP+UYOnG4ww16ZZqjPjb9GLKqPVgZJ70Nq
+         ssWN3W6JgDu1R3zJtCdc4Ms5ktjNm2eqzR9FzSNv3sfpqnkFd30GDU85fKUSN0J+ngrQ
+         8kR5IrWc0002X7kVCJ2RWtGoq6vOX3WcQW1lWCMWi2SOd8r2ZsDYddR5imh7kvKbmBoe
+         HFuNQKWko4ncxtKrhgF+QCERLbFM06R0dNuBzaswYhoyrw4f2EQDgt9W8F5eDDdmxYtf
+         ti/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732694521; x=1733299321;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bew/I5xXVZXMcMLGcr2bk1V3h79V/rlhudJAubnILnI=;
+        b=s9pKu6nyB5M9EJBO/bfAcHsL2o/6couBcFOPfkNYk+0ycQWp5VWvA259BL26BnVZFW
+         qvP0VKv693Ey2ao60ZhhVqSCBMR1myz/57RnivkI4lvd3nN6jAyQgbamVJOeiWfmDMJN
+         NSZiCju/pdOGuetstHaAiU4wVaX97jmQADr1Qv+oeURQ/qst7P0BJvm9qycvPmYhbmQq
+         BJ9IUBV+Ss1aYbjoaod2MnPeSmKMSAokrsWDFs/Rx0AmjrDGUCAisp9FzoWIYAkVVPFe
+         UPmWWtx11bCjAR4/5VNLBoQP10rsjSgQqumTb87PtVx6nW0tH+V5QeJXLzbVXdAxciD1
+         ASvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVC4qSpfMjaDE0Gs84JXjehZDn20eGFxko97EUeyHgZuT1VCpgcCePP8depj0d7LG0373F13sZ8@vger.kernel.org, AJvYcCVyhDacbGT5p3FUS/aDO9fG6J0U3J76iH2jvtIDe3EhvYdwbzVoO2fLr0WpJtVJfk4YQXOsT57g5IGZ@vger.kernel.org, AJvYcCWCevaguTFm9qI9/gB89Z3bkPRApiKbXWKknFmI5BR1ht3Wd7TxvnHmCj8nHbG185eqBdrWsZPTi6Hdv7fN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6IXotH4fWY9zdTC8nc9FuaTE4nZyiNBxFbTl19kKnDEZhjKER
+	lTLfi3aK3qTM8GPpF6gTDvI7FYFPCasccSuDVG41gnbvAMwPxuke
+X-Gm-Gg: ASbGncsJFqnaJRgk3xC22wz3913tY1ZbOyhyeFeQV3twFoLZ1oMs9aaXRR5fyIY2Bd0
+	SCsaZhcTLKI75MmsY5srkRRmJXek8eEI6MNU/Tw5WxoHpTTraYzCPGKFqv7Itu8MJUHZNtqgZfi
+	b5lCGWmxowepKFKGezwr0Ws9Ctob/0XzTtRxTk3VwG0zRNOtHutMUFJrgUgLSoqK+gF0nEoz78R
+	ejjBgnPnSH7SkW/U0kR6E/nPD+gathzzEFrs20BcfSM15Tc4RYrLOpH9cQrxnNgHWNBBfIZK1a9
+	b1a1Qsw3ubQaPPurGvSBF6NxEBH7
+X-Google-Smtp-Source: AGHT+IGtUIoISB0+clpN9PkK/2UFXTIykn3qm+m0cLDTT9iuNBtfEZ70ZERWyU6+cs55GUUZXZV4kQ==
+X-Received: by 2002:a17:903:2b08:b0:211:e812:3948 with SMTP id d9443c01a7336-21500fedf8amr32131585ad.0.1732694521468;
+        Wed, 27 Nov 2024 00:02:01 -0800 (PST)
+Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c783sm96580615ad.25.2024.11.27.00.01.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 00:02:01 -0800 (PST)
+Message-ID: <6efc512e-b153-4f2c-8b38-4443024475ee@gmail.com>
+Date: Wed, 27 Nov 2024 16:01:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 27 Nov 2024 13:30:59 +0530
-Message-ID: <CA+G9fYsF3x+ZXURQmgA1yQj-eiobr378HbodpJf4ncng7QYXmg@mail.gmail.com>
-Subject: drivers/virtio/virtio_ring.c:1162:11: error: 'struct vring_virtqueue'
- has no member named 'premapped'
-To: virtualization@lists.linux.dev, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, eperezma@redhat.com, 
-	Sasha Levin <sashal@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] arm64: dts: nuvoton: Add Ethernet nodes
+To: Krzysztof Kozlowski <krzk@kernel.org>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mcoquelin.stm32@gmail.com, richardcochran@gmail.com
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, peppe.cavallaro@st.com,
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20241118082707.8504-1-a0987203069@gmail.com>
+ <20241118082707.8504-3-a0987203069@gmail.com>
+ <a220d407-de40-4398-a837-de11e01d2381@kernel.org>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <a220d407-de40-4398-a837-de11e01d2381@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following build errors were noticed for arm64, arm, x86_64 and riscv.
+Dear Krzysztof,
 
-First seen on Sasha Linus-next 441d2975754ad94f3ce2e29f672824bc2dc5120c.
-  Good: 07e98e730a08081b6d0b5c3a173b0487c36ed27f
-  Bad:  441d2975754ad94f3ce2e29f672824bc2dc5120c
+Thank you for your reply.
 
-arm64, arm, riscv and x86_64:
-  build:
-    * clang-19-defconfig
-    * gcc-13-defconfig
-    * clang-19-lkftconfig
-    * gcc-13-lkftconfig
+Krzysztof Kozlowski 於 11/26/2024 6:08 PM 寫道:
+> On 18/11/2024 09:27, Joey Lu wrote:
+>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+>> index e51b98f5bdce..2e0071329309 100644
+>> --- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+>> @@ -379,5 +379,57 @@ uart16: serial@40880000 {
+>>   			clocks = <&clk UART16_GATE>;
+>>   			status = "disabled";
+>>   		};
+>> +
+>> +		gmac0: ethernet@40120000 {
+>> +			compatible = "nuvoton,ma35d1-dwmac";
+>> +			reg = <0x0 0x40120000 0x0 0x10000>;
+>> +			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+>> +			interrupt-names = "macirq";
+>> +			clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
+>> +			clock-names = "stmmaceth", "ptp_ref";
+>> +
+>> +			nuvoton,sys = <&sys 0>;
+>> +			resets = <&sys MA35D1_RESET_GMAC0>;
+>> +			reset-names = "stmmaceth";
+>> +			status = "disabled";
+> Status is always, always the last property. Please read and follow DTS
+> coding style.
+>
+> Best regards,
+> Krzysztof
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Got it. I will fix these.
 
-Build error:
----------
-drivers/virtio/virtio_ring.c: In function '__vring_new_virtqueue_split':
-drivers/virtio/virtio_ring.c:1162:11: error: 'struct vring_virtqueue'
-has no member named 'premapped'
- 1162 |         vq->premapped = false;
-      |           ^~
-drivers/virtio/virtio_ring.c:1163:11: error: 'struct vring_virtqueue'
-has no member named 'do_unmap'
- 1163 |         vq->do_unmap = vq->use_dma_api;
-      |           ^~
-make[5]: *** [scripts/Makefile.build:229: drivers/virtio/virtio_ring.o] Error 1
+Thanks!
 
-Build image:
------------
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-25212-gbe03d2e1a06f/testrun/26081256/suite/build/test/gcc-13-lkftconfig-rcutorture/log
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-25212-gbe03d2e1a06f/testrun/26081256/suite/build/test/gcc-13-lkftconfig-rcutorture/history/
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-25212-gbe03d2e1a06f/testrun/26081256/suite/build/test/gcc-13-defconfig/history/
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/
+BR,
 
-$ git log --oneline
-07e98e730a08081b6d0b5c3a173b0487c36ed27f..441d2975754ad94f3ce2e29f672824bc2dc5120c
- -- drivers/virtio/virtio_ring.c
-   441d2975754ad Merge tag 'for_linus' of
-https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost into
-linus-next
-   a49c26f761d2b virtio: Make vring_new_virtqueue support packed vring
+Joey
 
-Steps to reproduce:
-------------
-- tuxsuite build \
-    --git-repo https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
-\
-    --git-sha be03d2e1a06f7bd4be131c48f1c5555e83470a4d \
-    --target-arch arm64 \
-    --toolchain gcc-13 \
-    --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/config
-
-metadata:
-----
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
-  git sha: ed9a4ad6e5bd3a443e81446476718abebee47e82
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/
-  toolchain: gcc-13, clang-19 and clang-nightly
-  config: defconfig, lkftconfig
-  arch: arm64, arm, x86_64 and riscv
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
