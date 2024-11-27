@@ -1,53 +1,45 @@
-Return-Path: <linux-kernel+bounces-423088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF809DA2A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:03:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D120167F2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:03:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C70E149C69;
-	Wed, 27 Nov 2024 07:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="j64a6Anq"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463A19DA2A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:04:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E890146580;
-	Wed, 27 Nov 2024 07:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB030B22E72
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:04:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A5D15098A;
+	Wed, 27 Nov 2024 07:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tQXo87tq"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADB0142E67;
+	Wed, 27 Nov 2024 07:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732690985; cv=none; b=uQDoTxXGSaMZ9tbP4qVHcjpITauzrHzCn3IMGavdt1CgL5HMuUlrTg8Mlgl6Hak+63JqhM9VQOLQcxx+o6kCYpmveiB+OZLpkCQXewrmEI8GOdHKQ4EXkNTigZVjSK2aCbA1Oj8AXpjDr+PQB1RGN81TXAyjXaxfnBbSV6FJAyI=
+	t=1732691036; cv=none; b=d+6rwCBlQgsyE8E53F3Rf1e1D/oPfTkagNVTKy3lx/mOAOnYQhUXWuD6yszJGeS5MOB1gFISk9WO2cF7uTLmsC8OQK0U2CbNsgdNSJv1Ue2NM+sLTg64tlV3vnHODVaqfxlyqmFL4Ge6k54n+iN3OQPjy498Oo9RSdUJzqrvEZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732690985; c=relaxed/simple;
-	bh=ZnkOxYY0o9Iq5G0yvRAyg3m9thUbXPBJcW9eR/CYVhY=;
+	s=arc-20240116; t=1732691036; c=relaxed/simple;
+	bh=Vr+OPaKshdfcwKPvFlrq+DwZKQuM5oRL8whyKhkMx60=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EguowPpjyz3sH4bCALhbbNyNm73hlTDjRpnFk6Lyu04/7gH3782Bjj8+l4wSFgUYLWv3kKq4Ecscx0bZ2ixpg4vm6cFy2eBhluEJ4HS+PoKhlgacjFBHYLh5pstSU+bBMwRCA/cHcV0TjQMWUKP+HeKYr6DmeIZ14Y8FPBj5TAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=j64a6Anq; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4AR72WRJ1816554
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 26 Nov 2024 23:02:32 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4AR72WRJ1816554
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024111601; t=1732690954;
-	bh=nPduvadFO2t2/YuV1TIFhEt8m2nz099bkr6OXyzMrWo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j64a6Anq+g/GskjdX3+8jUM08kokNzNn1sVCemNPiZvgSM0VvVLRhcqAPj2F7s5x3
-	 OQhTr9n6V8e5pniaUUDR7LU9AOYyJ0yoUizToZ2ztJn49oQAiAWqFAcSZRcQG5FjwL
-	 orP90oJ7jXseIIDKLRF//uZG/k4FQASRA4JGyhOeJIUm8ykaSIWB3Ax2Xljd5QEw8I
-	 ttsAyToMRjEBZVYjCRlnbJN6UwA+msVj6NksR0j9HhmOhnbxDkkmNhc5k4+4MhvqnQ
-	 3qjTkT5wh6pVUv/x3qt2W1mvVcelBvTbQuUVwUWQVQqEQ7SPrdvqQkKHubpJa/ABda
-	 XHeEHlBz5KYIQ==
-Message-ID: <a76d9b6c-5578-4384-970d-2642bff3a268@zytor.com>
-Date: Tue, 26 Nov 2024 23:02:31 -0800
+	 In-Reply-To:Content-Type; b=iFb1ZGzNqRde19t2BYwt0rmy/lizQCMKvHGdpRPtYno11HkiS8t/DkHuADsQsgmtkYffSutiOcEMLnPnHdPuabvCA0I//MWtcGFYDqQdkVfRPH4BVC55xNAj+n1c4okmVPVkKtt+pjI4zVxVdAdLK8w5oZym9GO0jWjfOMxMu+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tQXo87tq; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732691028; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=8b4CvN/0uVEaBclN/45Oq1ekXqOJCvnUAqF3eGgR/Ic=;
+	b=tQXo87tq/Wl/0o4FneOch6HX9VTJhJ7muF/2VBSW9MiKz91Arjj2dH8wRXFmf5hdOm49suk2LxO7PNsHJYT6sosiyhF6Orf2wT5BSWufpjKMg7xPigHa79i3hLsMsa1R+o/ceTH7gwMkZPqTfvqwZONiqNoca+/7GtaiuYE983E=
+Received: from 30.221.129.190(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WKLPV-Q_1732691026 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 27 Nov 2024 15:03:48 +0800
+Message-ID: <dfe1ba19-a1fe-4d29-b7f5-40d7b62ce144@linux.alibaba.com>
+Date: Wed, 27 Nov 2024 15:03:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,82 +47,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
- MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
-To: Borislav Petkov <bp@alien8.de>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-10-xin@zytor.com>
- <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
- <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
- <20241126200624.GDZ0YqQF96hKZ99x_b@fat_crate.local>
- <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
- <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
+Subject: Re: [PATCH net 2/2] net/smc: fix LGR and link use-after-free issue
+To: Alexandra Winter <wintera@linux.ibm.com>, wenjia@linux.ibm.com,
+ jaka@linux.ibm.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241122071630.63707-1-guwen@linux.alibaba.com>
+ <20241122071630.63707-3-guwen@linux.alibaba.com>
+ <5688fe46-dda0-4050-ba24-eb5ef573f120@linux.ibm.com>
+ <f4eb6ddf-0b44-4fb1-95d3-a8f01be19d8d@linux.alibaba.com>
+ <0d62917a-f64e-4be1-95c9-649f1a24d676@linux.ibm.com>
+From: Wen Gu <guwen@linux.alibaba.com>
+In-Reply-To: <0d62917a-f64e-4be1-95c9-649f1a24d676@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/26/2024 10:55 PM, Borislav Petkov wrote:
-> On Tue, Nov 26, 2024 at 10:46:09PM -0800, Xin Li wrote:
->> Right.  It triggered me to look at the code further, though, I think the
->> existing code could be written in a better way no matter whether I need
->> to add more MSRs.  And whoever wants to add more won't need to increase
->> MAX_POSSIBLE_PASSTHROUGH_MSRS (ofc unless overflow 64).
-> 
-> But do you see what I mean?
-> 
-> This patch is "all over the place": what are you actually fixing?
-> 
-> And more importantly, why is it part of this series?
-> 
-> Questions over questions.
-> 
-> So can you pls concentrate and spell out for me what is going on here...
-> 
 
-This is a patch that cleanup the existing code for better accommodate
-new VMX pass-through MSRs.  And it can be a standalone one.
+
+On 2024/11/25 21:02, Alexandra Winter wrote:
+> 
+> 
+> On 25.11.24 11:00, Wen Gu wrote:
+>>> I wonder if this can deadlock, when you take lock_sock so far down in the callchain.
+>>> example:
+>>>    smc_connect will first take lock_sock(sk) and then mutex_lock(&smc_server_lgr_pending);  (e.g. in smc_connect_ism())
+>>> wheras
+>>> smc_listen_work() will take mutex_lock(&smc_server_lgr_pending); and then lock_sock(sk) (in your __smc_conn_abort(,,false))
+>>>
+>>> I am not sure whether this can be called on the same socket, but it looks suspicious to me.
+>>>
+>>
+>> IMHO this two paths can not occur on the same sk.
+>>
+>>>
+>>> All callers of smc_conn_abort() without socklock seem to originate from smc_listen_work().
+>>> That makes me think whether smc_listen_work() should do lock_sock(sk) on a higher level.
+>>>
+>>
+>> Yes, I also think about this question, I guess it is because the new smc sock will be
+>> accepted by userspace only after smc_listen_work() is completed. Before that, no userspace
+>> operation occurs synchronously with it, so it is not protected by sock lock. But I am not
+>> sure if there are other reasons, so I did not aggressively protect the entire smc_listen_work
+>> with sock lock, but chose a conservative approach.
+>>
+>>> Do you have an example which function could collide with smc_listen_work()?
+>>> i.e. have you found a way to reproduce this?
+>>>
+>>
+>> We discovered this during our fault injection testing where the rdma driver was rmmod/insmod
+>> sporadically during the nginx/wrk 1K connections test.
+>>
+>> e.g.
+>>
+>>     __smc_lgr_terminate            | smc_listen_decline
+>>     (caused by rmmod mlx5_ib)      | (caused by e.g. reg mr fail)
+>>     --------------------------------------------------------------
+>>     lock_sock                      |
+>>     smc_conn_kill                  | smc_conn_abort
+>>      \- smc_conn_free              |  \- smc_conn_free
+>>     release_sock                   |
+> 
+> 
+> Thank you for the explanations. So the most suspicious scenario is
+> smc_listen_work() colliding with
+>   __smc_lgr_terminate() -> smc_conn_kill() of the conn and smc socket that is just under
+> construction by smc_listen_work() (without socklock).
+> 
+> I am wondering, if other parts of smc_listen_work() are allowed to run in parallel
+> with smc_conn_kill() of this smc socket??
+> 
+Ideally, smc_listen_work should be all covered by new_smc's sock lock, mutually
+exclusive with other conn operations.
+
+But I need to look deeper into the smc_listen_work() implementation to see if
+all-covered by sock lock is feasible. At least some of the places already protected
+by new_smc's sock lock need to be excluded or handled.
+
+e.g.
+
+smc_listen_work()
+  \- smc_listen_out_xxx()
+      \- smc_listen_out()
+          \- smc_close_non_accepted() -> take the new_smc's sock lock.
+
+> My impression would be that the whole smc_listen_work() should be protected against
+> smc_conn_kill(), not only smc_conn_free.
+> 
 
 Thanks!
-     Xin
 
