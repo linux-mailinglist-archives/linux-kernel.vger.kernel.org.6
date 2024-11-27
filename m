@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-423510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC4E9DA899
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:35:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275679DA8D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73F9166E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FBD3162020
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939691FDE3F;
-	Wed, 27 Nov 2024 13:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB031FCF6D;
+	Wed, 27 Nov 2024 13:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="InYNZXhi"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut0X/JPE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523B51FCFF3;
-	Wed, 27 Nov 2024 13:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC531922F2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732714495; cv=none; b=iHxgM1SoXdwvRcRkbL5uNNPkYVZCqra1IYPfe/ILHA8KaVr4zqJsS7YaNLOUf2K5hAfYcXdZxmWA72FkpQ1g9i6o/0q5Pq2gHs+7EafTQ0anuqCSulmv85Tc9h0Zls9XcvUfPe0bIVP2Z7CJz3Y8TIjtLtxh4wjY6CAsvoYXDxE=
+	t=1732714952; cv=none; b=Gju3YGsXcsQSYZGqJZk5vOmXZ1FDxZ+UrEUGjgM13SeVq/j/4qfDiZwiY4RycuifVSQYyIsjMl9zr2W0KETKkKh49MF4fa06IJaU3NqrEIt7eGLEho8ph0+HFBOyfT4+POyf2Gdd8BxZRfbMubGcL/el/PBqFoIeTIvBdnKvz/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732714495; c=relaxed/simple;
-	bh=sdoa3Ne+JZfyGrUUlsVEBdOsjkPTBJLSWaehMxJ0ACA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rlbUQ29pOBQaGVdCDZImmLeIkDlhjzlU0aMP9DDaL3XUwsk7eC81s3eY5m6KkIx7/hf4YGXgyFJGNrMzQWPATnyccmuOCKWqAbf3AVVFYWrwW64vgO/xPrHFZRz2p/rSnmWXLZKsKFotDjfdOM7KILdbc7tFgriIrXa7JX4SM0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=InYNZXhi; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732714491;
-	bh=sdoa3Ne+JZfyGrUUlsVEBdOsjkPTBJLSWaehMxJ0ACA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=InYNZXhiFkr6p53KM3FGah8zfTBO12oNo7UbkyufiWo6tUA/4c3cUHeYWbUGdcKcf
-	 HObY80/yOF2SKr2k6Yzt4cpyyypJPogjOtyeyZAvTxcxTVKlEagVmDtFd9ZzgM+Ms0
-	 E6CpSgPX+PNZxp+X2/PlkLFEpreTIxZxgaUTDpCNhHhq28FxSi068upZUAA4XD6+cW
-	 yPBPMXBVGS0TDkhRyryKcTA+e9FzON5wcaLqT2RL2qdvTzpWaSeHNKUk1RZMvwRwt6
-	 6j5Px9fqg/w3UzRPSjObcQYkXjtZOcBNwub/NVSy1KRQYPEk+7GspJBHwAOuxTyT/J
-	 SKNe/ayVGOz0A==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3BEB117E3700;
-	Wed, 27 Nov 2024 14:34:51 +0100 (CET)
-Message-ID: <28d06e3d-f589-4da8-a7d2-5c0bf263d2e5@collabora.com>
-Date: Wed, 27 Nov 2024 14:34:51 +0100
+	s=arc-20240116; t=1732714952; c=relaxed/simple;
+	bh=ranfFkcb0taLy3/caOuI+8tG8S/9geIMxfR+u4xYOwU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=vCBIGsz2e1zh4U/8c/PoAW/gnbRA45jcxak/eSrXk9WMPitB5RlqyTui6hu7DxtU6JuNwuySDwJO9fPyIiWmkanlvHJE0z6st+YjkA6tkcLtkwn3G9W1YpmEZ8Cs8MY8p5tZSh9bUq1Or5xinxG9nRbsWl2nWrltC3/0XGKAMqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ut0X/JPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526A2C4CECC;
+	Wed, 27 Nov 2024 13:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732714951;
+	bh=ranfFkcb0taLy3/caOuI+8tG8S/9geIMxfR+u4xYOwU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Ut0X/JPEvqIRzSpQAzCYlCHW62XEKhTsOkZ5EHcsBvu6omzRVWXxUyBm8MSCu5tr8
+	 ShIQy7yZLUf8tPp4aUoTNkr5QN9UfLVg1mALDuFf8lnwBEcvgC9547w1jA8Hx2RMmt
+	 j5soxoiZBASjvORYBQXi/e1itFTpqfLkqThTVKrQZb2+1s7uEnvjojjQMn6GAOq7WK
+	 0J5qOmMpyBwQNxV45RF69hBXnxvwMp6J/xl3G5xwFODiXFPV+9AeFcO7zyZkCJ4uvZ
+	 2ELoYY+vM+YhnFf8M9ILK7aYDqSDBpkvDu8rau00q9Ng8+MtRi1ZOxDKu5cn81jE07
+	 BEo4ufLf+1V3Q==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 27 Nov 2024 13:35:06 +0000
+Subject: [PATCH] regmap: Use correct format specifier for logging range
+ errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 08/14] arm64: dts: mediatek: mt7988: add fixed regulators
- for 1v8 and 3v3
-To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241029103937.45852-1-linux@fw-web.de>
- <20241029103937.45852-9-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241029103937.45852-9-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241127-regmap-test-high-addr-v1-1-74a48a9e0dc5@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAkgR2cC/x3MSQqAMAxA0atI1gZsncCriItq0jYLB1IRQby7x
+ eVb/P9AYhVOMBQPKF+SZN8yTFnAEt0WGIWywVa2Mcb2qBxWd+DJ6cQoIaIjUqS5W2pqe+c7D7k
+ 9lL3c/3ec3vcD15+LEGcAAAA=
+X-Change-ID: 20241127-regmap-test-high-addr-db6c3d57af6f
+To: linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1237; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ranfFkcb0taLy3/caOuI+8tG8S/9geIMxfR+u4xYOwU=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnRyHGfKXfyWF+gUvOZ43Sz/dnztxdfi7oyMC66zGB
+ ewW2nBiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ0chxgAKCRAk1otyXVSH0JsAB/
+ 4t+L5jkutkFog2y28jwqC5jt0S0A5BBSiReLFYX43lt8QQcDLeMSFNLaX0DvHwCxbhH3DPuaE2yrAY
+ c+5XxrEZHi459qRHYgHeyve3a1Mj6QGh2qK25PXJDLVgh56TiOvxWU2O3J9CbeUgQIktP3/PoecqsN
+ tt/Iin+wSiiyHOarnWETwZBKmcT15ZzRVOx2yxumvgOhnTA61392krLcXQ2O8klGjxiz4SAwveRHGw
+ kVOx3t3JwfGtZ9OKDUOqqdHQcXR9GMXRukj5anSV8OT346sZdiQwDSDBSLTz+8CVu2y/VlcJAqXJye
+ 2Y+WWYNgCerwshxMnDzhP3JORJqMsG
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Il 29/10/24 11:39, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add regulator nodes used for mmc.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+The register addresses are unsigned ints so we should use %u not %d to
+log them.
 
-That's a board specific thing, not a SoC one; please add it to your board dts
-instead.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regmap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Cheers,
-Angelo
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 53131a7ede0a6aad54bc85e970124f6b166a8010..7ac4dcd15f242acd579ee327be5cfec82d91bf49 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1052,13 +1052,13 @@ struct regmap *__regmap_init(struct device *dev,
+ 
+ 		/* Sanity check */
+ 		if (range_cfg->range_max < range_cfg->range_min) {
+-			dev_err(map->dev, "Invalid range %d: %d < %d\n", i,
++			dev_err(map->dev, "Invalid range %d: %u < %u\n", i,
+ 				range_cfg->range_max, range_cfg->range_min);
+ 			goto err_range;
+ 		}
+ 
+ 		if (range_cfg->range_max > map->max_register) {
+-			dev_err(map->dev, "Invalid range %d: %d > %d\n", i,
++			dev_err(map->dev, "Invalid range %d: %u > %u\n", i,
+ 				range_cfg->range_max, map->max_register);
+ 			goto err_range;
+ 		}
 
-> ---
->   arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-> index 639c307b9984..7371cd80a4ff 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-> @@ -62,6 +62,24 @@ psci {
->   		method = "smc";
->   	};
->   
-> +	reg_1p8v: regulator-1p8v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "fixed-1.8V";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	reg_3p3v: regulator-3p3v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "fixed-3.3V";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
->   	soc {
->   		compatible = "simple-bus";
->   		ranges;
+---
+base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+change-id: 20241127-regmap-test-high-addr-db6c3d57af6f
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
