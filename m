@@ -1,212 +1,157 @@
-Return-Path: <linux-kernel+bounces-423063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8B69DA23F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:20:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 586F39DA241
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E636AB22F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:20:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A00C1B23E6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08BF1494D4;
-	Wed, 27 Nov 2024 06:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFE514D29D;
+	Wed, 27 Nov 2024 06:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmBY+u/w"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wLyBYW2G"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46252145FE4;
-	Wed, 27 Nov 2024 06:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B96714B08C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732688416; cv=none; b=pYOaoYKRl2en0C92xcbAoUc4gTg1ZE6LTKFK4HKtVuzG5J1MmP1mj3QnJ4EFktYHGgPyuxQKrr08+mjFMQqzxYvPKNbl+sJrFey9d1TTY4T6aE4DybJH30Wh2+qBOs7oxgaEIbyC4pdNa8lbkl+O495Kz2xbiDkRWR19ea1xx4Y=
+	t=1732688421; cv=none; b=FtfBaegTVzuMxzDeiJOeXRVOUl/DktsdfDea1ClsDRmlk1KQ1LbDj6uM8vqocb2XF5Xg/dEKr0xflnADqx7b6NHkDLrBAW+sMJwOpr7s2TMccrIx6W4cWl/AhOJpuo5RpCZLKC8h5IKfR+scB9lQ6SmBoo6jfEbQhItkB19s/6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732688416; c=relaxed/simple;
-	bh=1kPtCehNXI7szzQiWHuhcxeJUsKblPfr+Onyb9hTxQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5c4WAQhgICT87VYCAfm/WzvTI1xmNdBixDjSUrgNuk85dLdQiDJKwPRyIw2vOTJ/IJvvBRR5fSHZVSIFFqq1uD21c88CVqUt5I5dmWwg+OoHF+2IzoXmJhb9VX3F4lY/NQUr9Pl3AUm6dIJML+M4ndz09+h63Vyo9Ayg4xCtfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmBY+u/w; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa539d2b4b2so81938866b.1;
-        Tue, 26 Nov 2024 22:20:14 -0800 (PST)
+	s=arc-20240116; t=1732688421; c=relaxed/simple;
+	bh=w/D8fsQPcNEG6MIfpMgWgqvfnTdWrpFGSFDTBCPsVec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRutfhFxK7ZA+CzRUtBI0hoPkx0zeD9d5Y3TQQd34mwujNXaxS+9Zf1nI17LhfgKx9GikKnds4c4tkBzc//Fwx38JvptFNSSnrFHrQ5kj4xZ00XyLqI2X9hUzqKu+MLdHbcmLmJ1EIkKAudDnjXaHBoqYIgByhUXR6v+Je82ZtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wLyBYW2G; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724e113c821so4357981b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:20:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732688413; x=1733293213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/iivPp+l72JnY9vYj/hX54ZOaGshomdwdZlqq+eIEY=;
-        b=lmBY+u/w4pWaREEkpTgKNFsVnqzkiYp6/2Zc78oaujBZjUq0YTiNqTVwR+XVWF5Idy
-         wW1V61ZJEGFctkB9AydLyCgawSODkiI7MEnUFqzAwGI/GMKrUtSLmZbDa4lYmqaLES51
-         Vbu1dl0pkT9PO+4FNOS47plPL6c4OPL7bUDxZgFhB6HqEWOGdPN2m3EYHGB5KKD/kz7W
-         uwQypdkuvI62kzqUNoyG1ckejRtE5G/CEjcxKizTKaA3eXYoZ2BCOVAym18M9iIz+4/C
-         y7NP2OktOTKCT2lL7ZSMkoHPW155jJo6Go21XUze0sLoodfetHVa4Am5KU12Wdj5tCRF
-         yMww==
+        d=linaro.org; s=google; t=1732688419; x=1733293219; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mLuEvPFQ6kcM1n0FkkyOUV7NsMkiebhxF8YqLhaowtw=;
+        b=wLyBYW2G4b2TFiIupMHb9I6+Xpi6Qo+9/uJGTc8WqwzStwhiacQP7Q0mVcO9AtdkDa
+         SiQWOLCSLpyu7AGwTrBG+wQMC3Y9AMeMEycywTZENgfHa6HCgwmZWQzLEZ0qQVcv8AR/
+         hIO+mmF8L9f6RLFwsmxnOCFrQDcreI2IE80lzrhEtLFgOHouYPym38kXxnoiKHSTFCPc
+         TbdA1HNH9/OyloqrQgSSN4OOH5JiOsDETVvTjWdHNj5aRL68m72RwSvYbsRyjjU2oOON
+         mhbnQ0CYUUpmXaIQkcUBKOcyOOvMeu66npOAY04QRx5/nXJ+HCmHPeIFYsg6CALrpjkF
+         q1MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732688413; x=1733293213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v/iivPp+l72JnY9vYj/hX54ZOaGshomdwdZlqq+eIEY=;
-        b=UPrcnaIIjfQ2L4C829oZJysJYHdN5YHkVFLqASM5lZ5LhVTOpEWftjtQ/opy/+M/0U
-         Z420I77gaBH+EOr4jnP36FPP1DUDKjE2hMkaWdv56mUA7Q6jQ42w7KUWzpRAxPXd4bL9
-         pB5LYw6MzgAZFSPe7WP15jGX4ojFGO3S8ZrCuKLJsxDXttqgYzzi3Gad3cfsfbHT13YL
-         rQ37h5NNm4TQuIajOlI4WUfYhhD1OQ9ogiyF/VcLJfMvWoGxxxgsi2teJgM/xWjG5qV1
-         E32tBi39DtzyjzlMyzLboH4vrqYAZYIVloCqF1KRY10/edwBWa/dgXTuqOr8XzmkwikS
-         cUkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQjmmBcDbzf5qm0klMcB0hXMZ6Jco5xgcEzeU57PZ+AQe/MBtes6c8ziTQszwWmbzTKUvBmBHnfLe5YxaC@vger.kernel.org, AJvYcCWJnMGGXp1F4tOBibG1tLnQCZ8CAJYyCIyn9UC0LTetNuBNWiOXWmrYaYpiZVkhWi0buNqAMbslIVhslqJJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YykvVcW72z+XlaqtyUQlf0kU54M81dhkpALFh3fKEQ/IMDumDmv
-	4IsUDx19sb49s8IwIH8qICioCA8eijjHiD3IhuUETwhppbjjT/WIstqcPtYM7S3QkOf3n2ePro5
-	/1heshmIHWGmCUGslgCk1q+449zs=
-X-Gm-Gg: ASbGncspLV3iWUKaI4lZzA4LsiIL0tTFkkkwfosy1sKCsyk/qcSA6lvm+ZrwOxQgXYt
-	lnKfpqh4GkqNgHMKqhEdm5cYjdKLWH/8=
-X-Google-Smtp-Source: AGHT+IGEwnUc8vPNCtyAfttz2QoN0COH3xUg8RCh11QFT+6Mn2KXsvxhdQl4Cy9scBpq0NBxxqKI8acJCxBSWNKaXAg=
-X-Received: by 2002:a17:906:32d2:b0:aa5:ac9:ce5f with SMTP id
- a640c23a62f3a-aa57f47f138mr221183666b.0.1732688412477; Tue, 26 Nov 2024
- 22:20:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732688419; x=1733293219;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLuEvPFQ6kcM1n0FkkyOUV7NsMkiebhxF8YqLhaowtw=;
+        b=pX5V9EUjbgBWI6dAZ+tOQ6BR4XtB0HjoMRgOik3mk1yHLQO2D4rhu+VfAn38Z2+3Mq
+         6wuRfMtMfKOYlCPa5dm9W8WQ1vzsiHu6puB6ZMDPPxH6pfCjRB/vpO07Vhtcw7IDCEPJ
+         OfCZFbJue+EN6DzqKbMdbgg3DMq8gUxKMDdye//urz0wtwDv9yJqxAp4O1yUnUtutHoS
+         AiYs9DrXvyJB4MQ1JpEid8fI3VwjRXw0IC5EJHTdPlBJLqlJrV0J4ToclUF/rglKDzPu
+         O7dKC96aAe7TrGRGiRIWO6qfXUHJU66VPg59oBS7yCSSBbwcQZsgg2PViK5J3Dh6BGBX
+         TDuw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2dLj2JZVCfJY9yMd5srX7MZgDsQmCkvxPQD6eImZ1C0YsLmzLJgQ4M0EKHYVxONUtfjiCGQBIuhnyksE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsrc2yd8nmespmWjVyxaK1tFvz5WAicMnqZ137btHz2HXYPztV
+	zAgi7jvd+hTArcBWF5+SMUZxnHxiNFKKjL/ri9vPUmhjvuU4BGzSaDbzxlCfRg==
+X-Gm-Gg: ASbGncu3Snkxdg4Rn7/GuNZQLqdrWbddPBSvbiOQvq5LZ9R8QQwQQHoKlZT7lkMENIg
+	owlT1DADElZFMArHSZlJUG1S0UMnJJzsD+afXvpE+g+SUM+bQQwHfRplc1ieLLWL9R190WqQIeg
+	/Wm5bkOevvcGhoQ1MsQfAFAII2oSiF06g02bFdGZNdeFh/FhL6tUQ0N7aTHQSManq4atFMO7yNa
+	Yx0sxOYwFg7T2hmFGHkm0YJP39M3uJw6Wb9QojLjMZOjTrcmd/1k91ie7z+
+X-Google-Smtp-Source: AGHT+IGMQz7BH6QCsJCOIshdD5nGI4ii2ks2kgkA1lV0ck1baioPhXJl9j4dkpEkR7e4LinD/4buOA==
+X-Received: by 2002:a05:6a00:ccf:b0:724:de1c:bac9 with SMTP id d2e1a72fcca58-7253007749fmr2753689b3a.13.1732688418746;
+        Tue, 26 Nov 2024 22:20:18 -0800 (PST)
+Received: from thinkpad ([120.60.136.64])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724eb65d2adsm8372423b3a.159.2024.11.26.22.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 22:20:18 -0800 (PST)
+Date: Wed, 27 Nov 2024 11:50:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
+	jdmason@kudzu.us
+Subject: Re: [PATCH v8 2/6] PCI: endpoint: Add RC-to-EP doorbell support
+ using platform MSI controller
+Message-ID: <20241127062004.oruhwkhj4zrvjx25@thinkpad>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
+ <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com>
+ <20241124071100.ts34jbnosiipnx2x@thinkpad>
+ <Z0S7+U5W2DOmzdJL@lizhi-Precision-Tower-5810>
+ <20241126041449.qouyatajd5rie5o2@thinkpad>
+ <Z0YAChEOnmezCBcU@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
-In-Reply-To: <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 27 Nov 2024 07:19:59 +0100
-Message-ID: <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, 
-	willy@infradead.org, vbabka@suse.cz, david@redhat.com, 
-	akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, 
-	clm@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z0YAChEOnmezCBcU@lizhi-Precision-Tower-5810>
 
-On Wed, Nov 27, 2024 at 7:13=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Wed, Nov 27, 2024 at 6:48=E2=80=AFAM Bharata B Rao <bharata@amd.com> w=
-rote:
+On Tue, Nov 26, 2024 at 12:19:01PM -0500, Frank Li wrote:
+
+[...]
+
+> > > > > +	/* Only support one EPF for doorbell */
+> > > > > +	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
+> > > >
+> > > > Why don't you impose this restriction in pci_epf_alloc_doorbell() itself?
+> > >
+> > > This is callback from platform_device_msi_init_and_alloc_irqs(). So it is
+> > > actually restriction at pci_epf_alloc_doorbell().
+> > >
 > >
-> > Recently we discussed the scalability issues while running large
-> > instances of FIO with buffered IO option on NVME block devices here:
-> >
-> > https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@a=
-md.com/
-> >
-> > One of the suggestions Chris Mason gave (during private discussions) wa=
-s
-> > to enable large folios in block buffered IO path as that could
-> > improve the scalability problems and improve the lock contention
-> > scenarios.
-> >
->
-> I have no basis to comment on the idea.
->
-> However, it is pretty apparent whatever the situation it is being
-> heavily disfigured by lock contention in blkdev_llseek:
->
-> > perf-lock contention output
-> > ---------------------------
-> > The lock contention data doesn't look all that conclusive but for 30% r=
-wmixwrite
-> > mix it looks like this:
-> >
-> > perf-lock contention default
-> >  contended   total wait     max wait     avg wait         type   caller
-> >
-> > 1337359017     64.69 h     769.04 us    174.14 us     spinlock   rwsem_=
-wake.isra.0+0x42
-> >                         0xffffffff903f60a3  native_queued_spin_lock_slo=
-wpath+0x1f3
-> >                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
-> >                         0xffffffff8f39e7d2  rwsem_wake.isra.0+0x42
-> >                         0xffffffff8f39e88f  up_write+0x4f
-> >                         0xffffffff8f9d598e  blkdev_llseek+0x4e
-> >                         0xffffffff8f703322  ksys_lseek+0x72
-> >                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
-> >                         0xffffffff8f20b983  x64_sys_call+0x1fb3
-> >    2665573     64.38 h       1.98 s      86.95 ms      rwsem:W   blkdev=
-_llseek+0x31
-> >                         0xffffffff903f15bc  rwsem_down_write_slowpath+0=
-x36c
-> >                         0xffffffff903f18fb  down_write+0x5b
-> >                         0xffffffff8f9d5971  blkdev_llseek+0x31
-> >                         0xffffffff8f703322  ksys_lseek+0x72
-> >                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
-> >                         0xffffffff8f20b983  x64_sys_call+0x1fb3
-> >                         0xffffffff903dce5e  do_syscall_64+0x7e
-> >                         0xffffffff9040012b  entry_SYSCALL_64_after_hwfr=
-ame+0x76
->
-> Admittedly I'm not familiar with this code, but at a quick glance the
-> lock can be just straight up removed here?
->
->   534 static loff_t blkdev_llseek(struct file *file, loff_t offset, int w=
-hence)
->   535 {
->   536 =E2=94=82       struct inode *bd_inode =3D bdev_file_inode(file);
->   537 =E2=94=82       loff_t retval;
->   538 =E2=94=82
->   539 =E2=94=82       inode_lock(bd_inode);
->   540 =E2=94=82       retval =3D fixed_size_llseek(file, offset, whence,
-> i_size_read(bd_inode));
->   541 =E2=94=82       inode_unlock(bd_inode);
->   542 =E2=94=82       return retval;
->   543 }
->
-> At best it stabilizes the size for the duration of the call. Sounds
-> like it helps nothing since if the size can change, the file offset
-> will still be altered as if there was no locking?
->
-> Suppose this cannot be avoided to grab the size for whatever reason.
->
-> While the above fio invocation did not work for me, I ran some crapper
-> which I had in my shell history and according to strace:
-> [pid 271829] lseek(7, 0, SEEK_SET)      =3D 0
-> [pid 271829] lseek(7, 0, SEEK_SET)      =3D 0
-> [pid 271830] lseek(7, 0, SEEK_SET)      =3D 0
->
-> ... the lseeks just rewind to the beginning, *definitely* not needing
-> to know the size. One would have to check but this is most likely the
-> case in your test as well.
->
-> And for that there is 0 need to grab the size, and consequently the inode=
- lock.
+> > I don't know how to parse this last sentence. But my question was why don't you
+> > impose this one EPF restriction in pci_epf_alloc_doorbell() before allocating
+> > the MSI domain using platform_device_msi_init_and_alloc_irqs()? This way if
+> > someone calls pci_epf_alloc_doorbell() multi EPF, it will fail.
+> 
+> Yes, it is limitation for current platfrom msi framework. It is totally
+> equal.
+> 
+> call stack is
+> 	pci_epf_alloc_doorbell()
+> 	     platform_device_msi_init_and_alloc_irqs()
+> 		...
+> 		pci_epc_write_msi_msg()
+> 
+> 
+> 
+> It is totally equal return at pci_epc_write_msi_msg() or return before
+> platform_device_msi_init_and_alloc_irqs().
+> 
 
-That is to say bare minimum this needs to be benchmarked before/after
-with the lock removed from the picture, like so:
+No, these two are not the same. pci_epc_write_msi_msg() will only be called
+when enabling the MSI, which is too late IMO. Why are you insisting in
+calling platform_device_msi_init_and_alloc_irqs() for multi EPF? I don't quite
+understand.
 
-diff --git a/block/fops.c b/block/fops.c
-index 2d01c9007681..7f9e9e2f9081 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -534,12 +534,8 @@ const struct address_space_operations def_blk_aops =3D=
- {
- static loff_t blkdev_llseek(struct file *file, loff_t offset, int whence)
- {
-        struct inode *bd_inode =3D bdev_file_inode(file);
--       loff_t retval;
+If the platform cannot support it, then it should not be called in first place.
 
--       inode_lock(bd_inode);
--       retval =3D fixed_size_llseek(file, offset, whence, i_size_read(bd_i=
-node));
--       inode_unlock(bd_inode);
--       return retval;
-+       return fixed_size_llseek(file, offset, whence, i_size_read(bd_inode=
-));
- }
+> why check epf in pci_epc_write_msi_msg() is because it use epf in here.
+> pci_epf_alloc_doorbell() never use epf variable. If check unused variable
+> in pci_epf_alloc_doorbell(), user don't know why and what's exactly
+> restrict it.
+> 
 
- static int blkdev_fsync(struct file *filp, loff_t start, loff_t end,
+This is not a good argument and doesn't make sense, sorry. You should not call
+platform_device_msi_init_and_alloc_irqs() for multi EPF.
 
-To be aborted if it blows up (but I don't see why it would).
+- Mani
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+மணிவண்ணன் சதாசிவம்
 
