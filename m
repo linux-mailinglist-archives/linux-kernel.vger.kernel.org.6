@@ -1,186 +1,131 @@
-Return-Path: <linux-kernel+bounces-422921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DD19D9FE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:09:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E320F9D9FE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:13:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53DE8B23999
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:09:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69340168993
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688DC1862;
-	Wed, 27 Nov 2024 00:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8037AECF;
+	Wed, 27 Nov 2024 00:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5bi6tWz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxLKd3SW"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DC510E0
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4428E28E8;
+	Wed, 27 Nov 2024 00:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732666148; cv=none; b=Rbt3/stAgHDCXwLWVM4H93R9hPD1ODySb86suB0iF+1xaiXsxmkNUf6M0PEAg2E9WKx2/QSIn9tGbJQ/r5HPX4HqHJLgNlP1f1Gno3tZMA7UR9574W82z6VPwWMYBgTLQu6OXyb/nTlN0F5o2zucl5IYkpICBGe6aVgU3Krx3Ag=
+	t=1732666393; cv=none; b=g1mp7gzv+5SYmvnfynkQPi/KjB9qnvcNPiJnaj359NEj8BDXAxw33wOmYBiz5u5bYoWCIfnraMXk1IATaqwBmlunTvWT1xPSITcQMCoY2xu/x9eWQ5UG1Ho5B3KrxSjfLlUCEkHLF0JKOhwjcVmiodUQF25HyS2aJoLocl0oav4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732666148; c=relaxed/simple;
-	bh=/CdDLGoJ1M8kEeGszX5uJUw35m3jeZUaggvfENDOBUs=;
+	s=arc-20240116; t=1732666393; c=relaxed/simple;
+	bh=1s0GMdOaub6JZFEU/3kZ6RzEwRPZmYNpUF3LvYdjTPY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d6farBCPFmUHe1PA1krjEcXVh4prkazlo1kyBkhZEIoH8O6ERahm4AbHJJ6w487L5fNuMVpejy/SD+oIcjw4JUa+9tlW8mJEchJNBPQ/CnWk/AEEXA5Sywt8AmsSXbIVpdbMiYHGZg9PPIzUuq8/XdCbsh33B4DVbIFFzWLGWGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5bi6tWz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6B0C4CEDC
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:09:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732666148;
-	bh=/CdDLGoJ1M8kEeGszX5uJUw35m3jeZUaggvfENDOBUs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G5bi6tWzX4ZuvkzJiRiNSlRty24faSfQ7HOtuh6syVJKVjnbOyhsHbp1bV7UMKnRs
-	 a1+9vY8mzTuqchiyV/EHO/9CVZQzCgJPNztwwKH7xAYkG1h3l9GXzTDvH/ztFJjZJ8
-	 ULNJP4ArfM5L6XSih2W7UQ0i9kQwysy4yLH+NmIuu13iQXmG5RrVzIzpzHIvZGByzE
-	 4I0CUJZ8FXhCXz6EHSA2fWTBmlcuLaWch1hxUk/j6Zq2VC2v96Y0csNIdDAvxv/OYS
-	 alOsc9BAjkFZ6EM2Ap6AbOwTqeyJR/kg/s+cW2NzS2IDw/n0NFq9qkTvNX2SxEyN9b
-	 4KEFv+vVP/l3A==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6eebb54fc48so55946497b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:09:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXmp+iR1HPc2e9Q4T32Q/6aygPnUumHPT9LRrHjjXQf7l8WICnmLRNItqdoTuOToVZYyRai7vOKXtWuMRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycMIN/vRrk9fPIt1EpDZxsxn2z1mNnKCDbe/rjy4daz8NjpVdY
-	ce8QDjBE5xU8sMi3cHRntlSpEoKWrKLaGRBX2QWUW7gDgLu8nQbJPA8HHziLrMNqtq+24a2Xt5x
-	QVAV3m80QFopqCXZ9ZCFht18ujtCsSO6+KVx6tA==
-X-Google-Smtp-Source: AGHT+IHqcVYjU790T8D/asBW13GT8ImEB95KZ3XVSKArXMRm/5ZayDypabv/Zo+v4QJYaFWkdMfkNsrTf+s6/9a+qmA=
-X-Received: by 2002:a05:690c:6e03:b0:6ee:b7cf:4a8f with SMTP id
- 00721157ae682-6ef37282b3dmr14585947b3.38.1732666147348; Tue, 26 Nov 2024
- 16:09:07 -0800 (PST)
+	 To:Cc:Content-Type; b=kL9SRWkFyIZfNVK9giyWfliad3iY1/VWwfakNulvTjVmE5SnqiFB58OnVaBh3IDicRClUfTXuCcZi+JM/oyx70qpBEdqszr06WIYNalkebBQkYXkPgnbNNKGM8L2xrHvQ2aUBG227WFJgm0JpnJ0cVmhHE2hUWLSy+96QcTiIpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxLKd3SW; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffa12ad18cso72047941fa.2;
+        Tue, 26 Nov 2024 16:13:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732666390; x=1733271190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1mHAZtZY187R1tmVbvpFVMB0HrZE579WEANnpnfyzOs=;
+        b=TxLKd3SWT32GNJmQSsiR8G0FTHtZVuG5Pp79FVhIb+e6oOcEm3KkW32h1SNFTyL0Cr
+         mIAUkBHvfzqDqycWMq5ERL7hnn4sWjtqzhFWY0BKbHaL+Es39iX5OT6L5510XN/Ng0NY
+         Mo1au+3fGIZRo1Q8VymfabPuRuQkx9dG8M4+s9RlDQVfyBYpqJgTYPDnzIkzwK0NgiVi
+         cCJ9qCRSiY5DggoWw/0hbt8M9Y//hjgU0km7hxWAg+DppBnpIoqTxvbspbNSMLHJxbcJ
+         ia0GTg5p4vFqb4+C09VNHV6Dy4D6/PivHI9zufG3w7TcZgXqtCS+1lN9vAL9O0pa7zDh
+         +x3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732666390; x=1733271190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1mHAZtZY187R1tmVbvpFVMB0HrZE579WEANnpnfyzOs=;
+        b=xSx0a57hh7YZDenRK+XdqyrqSfGDUZb6x7W6H6q8kxYjsWGagz0zFOVjSSJfu+2hlc
+         8ILn4dG9hk1ozv+rkfl6MrpP5cRyXokAMw/DSKm+8W5Y6ZksCC2LYzaQeGh2zS28j0Rw
+         xUBli7po/RrUh5Jjk/mHdt+p5NlHSbizuXTASN82/D19e5Rs/Pr6s2RYIa/UMw3HGgYh
+         X9/dQCmvwfWi2gJZReNaIDEOmcK35U65QFpWhaY8bIBiHEzseD1Qrv6FvUamwLYC8LPM
+         VNGMVf+9al8JC86gz72zM9YXS+VrGNHNu9L9IqNNAzqbRSw+XiKVOB28E+aI4sKNtyc2
+         u7vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP+EuZMtKtYRgydFpf2HWA5T8dKmRc3WhlQ7YxQ9c976+5dKCDcOAoMflOyECr/gchfuM500qDhmz2Bwnb@vger.kernel.org, AJvYcCVY+IgrbmY+EKut/kH0TlW4SKPO++vD4yBuGdQ+A6QaswQ7No760866eKgWFm5+tL98AhHBzTDnXXb1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyb5dJ+zluzqlGp/2x+og5SU30VyrCp07t1T6jY8YT/TDlTu5A
+	C0NtaLn9mKHO7R6uag4SLh1e5A9xmexkMK4AOCv10qox8MyK7i0lySA26QYsECDW+IuAFIscdv1
+	KjAqm9gAYKJDH9PUzqMLBFtIr+3M=
+X-Gm-Gg: ASbGnctkIW+4MFbFp+F1i3aiIuMh0sMOVSrbfPhp4SWUYCO93ISrvwTq+Y/UUfVnwH7
+	JBcTjglUilWX2pk0FIcc+pYnqsUsarBpxkgnk6ty1dU9K0exMC3ihpGdChAt+w4Y=
+X-Google-Smtp-Source: AGHT+IG8q8GRhyD6Rb04/tM7viMaskxhAL4cx8GuBAEbIRuca10p/iXJ1l1H05icicDUVP5+9Ae8JTKFG8Cdjh4SJgw=
+X-Received: by 2002:a05:651c:12c4:b0:2ff:54f3:a91f with SMTP id
+ 38308e7fff4ca-2ffd60a5943mr4507171fa.24.1732666390097; Tue, 26 Nov 2024
+ 16:13:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116091658.1983491-1-chenridong@huaweicloud.com>
- <20241116091658.1983491-2-chenridong@huaweicloud.com> <Zzq8jsAQNYgDKSGN@casper.infradead.org>
- <CAGsJ_4x0OrdhorQdz8PyLD84GOYVZJ7kLfGV_5yupLG_ZQ_B3w@mail.gmail.com> <ZzrA5nXldoE2PWx4@casper.infradead.org>
-In-Reply-To: <ZzrA5nXldoE2PWx4@casper.infradead.org>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 26 Nov 2024 16:08:56 -0800
-X-Gmail-Original-Message-ID: <CACePvbWQv1KiNua4nC6L7ph-U+qXHTGPSjHMLUyPNLz-fSz7eQ@mail.gmail.com>
-Message-ID: <CACePvbWQv1KiNua4nC6L7ph-U+qXHTGPSjHMLUyPNLz-fSz7eQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/1] mm/vmscan: move the written-back folios to the
- tail of LRU after shrinking
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Barry Song <21cnbao@gmail.com>, Chen Ridong <chenridong@huaweicloud.com>, 
-	akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org, 
-	yosryahmed@google.com, yuzhao@google.com, david@redhat.com, 
-	ryan.roberts@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	chenridong@huawei.com, wangweiyang2@huawei.com, xieym_ict@hotmail.com
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
+ <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net> <CACRpkdaBR5mmj43y_80b9jd3TAqRWMdCyD9EP6AY-Y0-asz4TA@mail.gmail.com>
+ <1ff005f8-384d-465e-9597-b6d5fd903862@roeck-us.net>
+In-Reply-To: <1ff005f8-384d-465e-9597-b6d5fd903862@roeck-us.net>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 26 Nov 2024 21:12:58 -0300
+Message-ID: <CAOMZO5DW3t-sof_uaFa_qJPE3WFq_155mFTxGMWh0m++csgopg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Esben Haabendal <esben@geanix.com>, 
+	Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Fabio Estevam <festevam@denx.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 17, 2024 at 8:22=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Mon, Nov 18, 2024 at 05:14:14PM +1300, Barry Song wrote:
-> > On Mon, Nov 18, 2024 at 5:03=E2=80=AFPM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > >
-> > > On Sat, Nov 16, 2024 at 09:16:58AM +0000, Chen Ridong wrote:
-> > > > 2. In shrink_page_list function, if folioN is THP(2M), it may be sp=
-lited
-> > > >    and added to swap cache folio by folio. After adding to swap cac=
-he,
-> > > >    it will submit io to writeback folio to swap, which is asynchron=
-ous.
-> > > >    When shrink_page_list is finished, the isolated folios list will=
- be
-> > > >    moved back to the head of inactive lru. The inactive lru may jus=
-t look
-> > > >    like this, with 512 filioes have been move to the head of inacti=
-ve lru.
-> > >
-> > > I was hoping that we'd be able to stop splitting the folio when addin=
-g
-> > > to the swap cache.  Ideally. we'd add the whole 2MB and write it back
-> > > as a single unit.
-> >
-> > This is already the case: adding to the swapcache doesn=E2=80=99t requi=
-re splitting
-> > THPs, but failing to allocate 2MB of contiguous swap slots will.
->
-> Agreed we need to understand why this is happening.  As I've said a few
-> times now, we need to stop requiring contiguity.  Real filesystems don't
-> need the contiguity (they become less efficient, but they can scatter a
-> single 2MB folio to multiple places).
->
-> Maybe Chris has a solution to this in the works?
+On Tue, Nov 26, 2024 at 8:53=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
 
-Hi Matthew  and Chenridong,
+> My understanding (which may be wrong) is that being able to disable
+> PINCTRL was the whole point of the patch.
 
-Sorry for the late reply.
+Exactly.
 
-I don't have a working solution yet. I just have some ideas.
+Adding back the "select PINCTRL" line defeats the purpose of the patch
+in Subject.
 
-One of the big challenges is what to do with swap cache. Currently
-when a folio was added to the swap cache, it assumed continued swap
-entry. There will be a lot of complexity to break that assumption. To
-make things worse, the discontiguous swap entry might belong to a
-different xarray due to the 64M swap address sharding.
+> Fabio submitted a patch enabling PINCTRL for imx_v4_v5_defconfig and
+> imx_v6_v7_defconfig explicitly [1]. I don't know if that fixes the
+> problem for good - I see CONFIG_ARCH_MXC in other configurations as
+> well.
 
-One idea is that we can have a special kind of swap device to do swap
-entry redirecting.
+Good point. I can send a v2 adding CONFIG_PINCTRL=3Dy to the other defconfi=
+gs.
 
-For the swap out path,
+However, after thinking more about it, I wonder if the patch in
+Subject is worth it.
 
-Let's say the real swapfile A is almost full. We want to allocate an
-order of 4 swap entries to folio F.
+It can help reduce the kernel size for LS1021A that does not need
+pinctrl, but on the other
+hand, it will cause pain to lots of people who have i.MX products
+running custom defconfigs.
 
-If there are contiguous swap entries in A, the swap allocator just
-returns entry [A9 ..A12], with A9 as the head swap entry. That is the
-same as the normal path we have now.
+When they update their kernel to 6.13-rc1 their i.MX will not boot and
+that will be a very unpleasant experience.
 
-On the other hand, if there is no contiguous swap entry in A. Only
-non-contiguous swap entry A1, A3, A5, A7.
+What do you think?
 
-Instead, we allocate from a special redirecting swap device R as R1,
-R2, R3, R4 with an IO redirecting array as [R1, A1, A3, A5, A7]. Swap
-device R is virtual, there is no real file backing on it, so the swap
-file size on R can grow or shrink as needed.
+Should we go with the approach of selecting  CONFIG_PINCTRL=3Dy or
+should we revert this patch?
 
-In add_to_swap_cache(), we set folio F->swap =3D R1. Add F into swap
-cache S with entry [R1..R4] pointing to folio F. In other words,
-S[R1..R4] =3D F.  Add additional lookup xarray L[R1..R4] =3D [R1, A1, A3,
-A5, A7]. For the rest of the code, we pass the R1 as the continuous
-swap entry to folio F.
-
-The swap_writepage_bdev_async() will recognize R as a special device.
-It will do the lookup xarray L[R1] to get the [R1, A1, A3, A5, A7],
-use that entry list to build the bio with 4 iovec instead of 1. Fill
-up the [A1,A3,A5,A7] into the bio vec. That is the swap write path.
-
-For the swap in, the page fault handler gets a fault at address X and
-looks up the pte containing swap entry R3.  Look up the swap cache of
-S[R3] and get nothing, folio F is not in the swap cache.
-Recognize the R is a remapping device. The swap core will lookup L[R3]
-=3D [R1, A1,A3,A5,A7]. If we want to swap in order 2 folio. Then
-construct swap_read_folio_bdev_async() with iovec [A1, A3, A5, A7].
-If we just want to swap in a 4k page. We can construct iovec as [A3]
-alone, given the swap entry starts from R1.
-
-That is the read path.
-
-For the simplicity, there is a lot of detail omitted in the
-description. Also on the implementation side, a lot of optimizations
-we might be able to do, e.g. using pointer lookup of R1 instead of
-xarray, we can use struct to hold R1 and [A1, A3, A5, A7] etc.
-
-This approach avoids a lot of complexity in breaking the continuity
-assumption of swap cache entries, at the cost of additional swap cache
-address space R. The lookup mapping L[R1..R4] =3D [R1, A1, A3, A5, A7]
-are minimally necessary data structures to track the IO remapping. I
-think that is unavoidable.
-
-Please let me know if you see any problem with the above approach. As
-always, feedback is welcome as well.
-
-Thanks
-
-Chris
+IMHO, the benefit of this patch does not justify the bad impact on users.
 
