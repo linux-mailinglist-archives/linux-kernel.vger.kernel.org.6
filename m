@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-423624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBA19DAA99
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:16:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BB29DAA9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:18:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 141C6B2251B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:16:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03DACB20B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D1F200105;
-	Wed, 27 Nov 2024 15:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E331FF7C2;
+	Wed, 27 Nov 2024 15:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTx6qf/0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="t3dHPBKM"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CD61FF7D8;
-	Wed, 27 Nov 2024 15:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374123C488
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732720598; cv=none; b=HzRxPNfPRNrL+D0YvuWOoe7J5SVZ1ZuAlyBUOsMdak5swUHE3kFjJcoWJguAGR76YNRGnahCp+3SGdfGBCTx5RjK2HmkO3qXy+8WJC//LzEneFIMWbvbM9tH9mqnMnoMPBCbjDtImOjVdC4rnFzkBneBV/YXIDsjW4r5QjydIlY=
+	t=1732720724; cv=none; b=rmAKTFz5IKU8IgCr/FAGvbQgvGxHG6ZCc4SGj5FRYViQCiwNe66+NnL4mDaMjhtxEeLj7ND6z5FYVVPXdCWxcsieNh+zr1rcjBgI8me5sr1zkA68Ali1XIObjWazcShNHrMhVKX3r0cB6Hh2goXlmDlxZmypZLWTqKrxCNlgWBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732720598; c=relaxed/simple;
-	bh=8jnJkKM3PWqGFdZGSMROt5V4Vl8ICBi2XhYnl1VjbiM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9pd7FHNGYlBghYPwwWc4bKL3aoF/B/vJ8iPBJ60IMvY3ZR4I35V+pYWaoKGwC8prpLTUZoFRZf3EvZ8pXoBxMtjaXNID1jTEBwGbCI9RsK1YL5jVNIRBzRNotUUTqFVfAy5F6fz5aYObxB+Juxel0BfcLHOiXWlI5x1Gu8LZeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTx6qf/0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B9E2C4CECC;
-	Wed, 27 Nov 2024 15:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732720598;
-	bh=8jnJkKM3PWqGFdZGSMROt5V4Vl8ICBi2XhYnl1VjbiM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hTx6qf/0jaw7idnchniEopk++7ZRKCwqCQwXRZH/FWn0hbimneT7dJNv+yPmEJL3n
-	 PeXzIZzlJlkztMJaP0GSju3OlT8Fo5JZq6vY2wT1BPTKkpD1RkUBQFLrn4FwiaBKuL
-	 jgkOOd0nhJ8hKCF2y97F55WiS1zf0uuKXY0BbAFsyJXtzEpOxBJomPZDdXBL7yF4uJ
-	 QIYDIfXg22DbgRUWvBpgktauIrQHs8vZ9NJRT3dOWp606PI4chHrOa16PaKB8wPOPE
-	 Y5EhPKHgsOHvEzOeLOqJoiAYThL1M1f1Mz2V8/v9CSTRHcGnyT4R7boWSus4m+eKZ4
-	 rmJROb/5CCaOw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tGJmN-00GIa4-QV;
-	Wed, 27 Nov 2024 15:16:35 +0000
-Date: Wed, 27 Nov 2024 15:16:35 +0000
-Message-ID: <86a5dkvh9o.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Will Deacon <will@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Bump KVM_VCPU_MAX_FEATURES
-In-Reply-To: <20241127145644.421352-1-steven.price@arm.com>
-References: <20241127145644.421352-1-steven.price@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1732720724; c=relaxed/simple;
+	bh=AfZhUOwAGIe7rH/g8ot0VbCKG6OXOElzYXSFwCIXqtU=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lBYoxF8Cw4LI/9EMw9jtl/B+B3tKpkJMfpga1SoKnyQ8ky4MCmryFjAUCpnU3Dkxm1nOLyXZO5NQaqjkYWoiOXV3A0gHf4spwa7iitXW1/HV2D9DGRen2Mcw8WL9ypDFAwSt0hiNEXQq3Zu7KuySIr758lx0lgfjHlnxysJ6Hr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=t3dHPBKM; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732720724; x=1764256724;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=Dfz7ZOwEsGUW2UNTOixOKdO6jXaVBAsB8AMeK1A77Qw=;
+  b=t3dHPBKM3OQSfEEAgqt5JR6nmeBquzBklkoc39S/nhkxPfoIDdWmDN43
+   IyTx4UvRUKzXQUVZ3n2wyGqDgTs+LO4JqraSI29cQN1gKFdr8WBHaHd25
+   /TxcAhQNoZulRx5rRSjP8xSgT46AZ1hdw/+wJDIH6mWi37WJV/wQEuziC
+   c=;
+X-IronPort-AV: E=Sophos;i="6.12,189,1728950400"; 
+   d="scan'208";a="446501929"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 15:18:40 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:36701]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.10.101:2525] with esmtp (Farcaster)
+ id 6122bc30-f8c1-4ef2-a44a-11ca49975a65; Wed, 27 Nov 2024 15:18:39 +0000 (UTC)
+X-Farcaster-Flow-ID: 6122bc30-f8c1-4ef2-a44a-11ca49975a65
+Received: from EX19D013UWA002.ant.amazon.com (10.13.138.210) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 27 Nov 2024 15:18:38 +0000
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19D013UWA002.ant.amazon.com (10.13.138.210) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 27 Nov 2024 15:18:38 +0000
+Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
+ EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
+ 15.02.1258.034; Wed, 27 Nov 2024 15:18:37 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
+	<will@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"bhe@redhat.com" <bhe@redhat.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Chocron, Jonathan" <jonnyc@amazon.com>
+Subject: RE: [PATCH] arm64: kexec: Check if IRQ is already masked before
+ masking
+Thread-Topic: [PATCH] arm64: kexec: Check if IRQ is already masked before
+ masking
+Thread-Index: AdtA331124poMU/IPU6G/kDrShffzA==
+Date: Wed, 27 Nov 2024 15:18:37 +0000
+Message-ID: <78d8b93342124112bd4a9b64d9a93020@amazon.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, catalin.marinas@arm.com, oliver.upton@linux.dev, will@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
 
-On Wed, 27 Nov 2024 14:56:31 +0000,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> When the KVM_ARM_VCPU_HAS_EL2 define was added, the value of
-> KVM_VCPU_MAX_FEATURES wasn't incremented, so that feature has never been
-> in the KVM_VCPU_VALID_FEATURES bit mask. This means the HAS_EL2 feature
-> will never be exposed to user space even if the system supports it.
-> 
-> Fixes: 89b0e7de3451 ("KVM: arm64: nv: Introduce nested virtualization VCPU feature")
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> I might be missing something, and it's possible that
-> KVM_ARM_VCPU_HAS_EL2 is deliberately not exposed yet.
+> Maybe a slightly better approach would be to simplify this code for somet=
+hing that actually uses the kernel infrastructure:
+>
+> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machin=
+e_kexec.c
+> index 82e2203d86a31..9b48d952df3ec 100644
+> --- a/arch/arm64/kernel/machine_kexec.c
+> +++ b/arch/arm64/kernel/machine_kexec.c
+> @@ -230,11 +230,8 @@ static void machine_kexec_mask_interrupts(void)
+>                     chip->irq_eoi)
+>                         chip->irq_eoi(&desc->irq_data);
+>
+> -               if (chip->irq_mask)
+> -                       chip->irq_mask(&desc->irq_data);
+> -
+> -               if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_da=
+ta))
+> -                       chip->irq_disable(&desc->irq_data);
+> +               irq_set_status_flags(i, IRQ_DISABLE_UNLAZY);
+> +               irq_disable(desc);
+>         }
+>  }
+>
+> This is of course untested.
+I tested your suggested approach and it works.
+I will publish V2 for this change.
 
-This is on purpose. I'm not planning to enable EL2 support until it is
-ready.
+Thanks, Eliav
 
-> However I'm
-> working on v6 of the host CCA series and as part of that want to add a
-> new feature but and bump KVM_VCPU_MAX_FEATURES up to 9.
-
-Well, I guess that defines some ordering then! :D
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
