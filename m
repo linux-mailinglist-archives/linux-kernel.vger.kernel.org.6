@@ -1,107 +1,112 @@
-Return-Path: <linux-kernel+bounces-423844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00799DAD80
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:04:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7444B166367
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:04:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBBF202F64;
-	Wed, 27 Nov 2024 19:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c6yI3hXu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19019DAD74
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:00:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E4F1FE45C
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B81D8281EC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:00:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776AC1FF7BC;
+	Wed, 27 Nov 2024 19:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2H085Y8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8021F5FD;
+	Wed, 27 Nov 2024 19:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732734246; cv=none; b=G+AwEVGvv8Zcu5Dk1bEV1HD8/O7M056KLNfYwBGpa0oMUnBXqabb+Ua6wJjTCSpCDeOzJe4mcDKUigNrO5axnEZOKImP0wN42BVW6sQS2L8fp7YDVI3/35EcDJkMEFCekmREOlTlZhhKo0VRC+YcEtdhAHBRevmSpn9LQn2yn6U=
+	t=1732734049; cv=none; b=EJ0PmdW/QsiwsQPmrDQu38pBHPRJRvVbpH33URlTX7Dt0+MdbpTYHN/+/SIXkpkN89AelqegBEl02uprXn1PUZ/gqjtcMEIxGdgr5wA+loQ5ddA3VvF85DWS81vMBTMHDNjJgNckKIPKRHSG9dAdXSwzj+bu89vkgHReEkmxRJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732734246; c=relaxed/simple;
-	bh=D+JloHBMt0oC8r70FErtjAFnRxiGxH8EaihhtPNVCeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uJmomyjQDBljsuFJ0a1/JASVU2CY6VOKxQD5+i6tvSzEQCkhR3ZhXb7yHJAKfV3ZitlZPO9jA5ZL6p3JH5PquO/sR4/7AEtENDgAdvy1EGHLkpV/TuSNsaC5FUzjUjMOAfCOqrg5aMT/fBbtvK+RVA4QnZJpdxqgQ6249im7xTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c6yI3hXu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=r3AYqthkhqE/hpsX8OlsrIm8YbRRATEjfUq8IVBi2fg=; b=c6yI3hXuTHaVrvxd1yVnHBVNij
-	96A37jM/iCQUDKVKAlMQN8W8+Yr5+O/MCkQEvvGDHyzlceX95tnVQ54UTGjTo95FsiCzt8tHlqxjc
-	c7qG6T1XRoLA4sUABomX1yNBJDmi7TQO5p1nmcSXdtWaeC40ulDx7Om9isCCmryt1PDt9CFinKN6D
-	unqbwGZsLVdRZlU1D5ss+qnhvrbroS/4iJgXIL6lrH23QI6ZibbR1wH16QYsNmVFcgNrYbypb3sVK
-	etkrF/ftkKgYc/ACKnfRrGfJFJ1B6aUf/mUu/cX/rfcI0BSjIRQHATtN5B0LP33wtqiSTfY2TMOKx
-	wN42K1VA==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGNKF-00000001Sul-17l5;
-	Wed, 27 Nov 2024 19:03:47 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGNKE-00000000BjT-3JcL;
-	Wed, 27 Nov 2024 19:03:46 +0000
-From: David Woodhouse <dwmw2@infradead.org>
-To: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Dave Young <dyoung@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	jpoimboe@kernel.org,
-	bsz@amazon.de
-Subject: [RFC PATCH v4 20/20] [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
-Date: Wed, 27 Nov 2024 19:00:34 +0000
-Message-ID: <20241127190343.44916-21-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241127190343.44916-1-dwmw2@infradead.org>
-References: <20241127190343.44916-1-dwmw2@infradead.org>
+	s=arc-20240116; t=1732734049; c=relaxed/simple;
+	bh=stwjnGnk0DMxkcjdPTNVNJUobHrJYgbm5W0wA6Sug34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZbZjU+/omhSlNoxCy07GI5aOJ9unBjJodpToOEfSkqJg1E27qTpO2ccRvFM+pVR1VPd7m7v0sJIJ7NwlBtxrXschPlo8YTgQM2+cnaEojHtFpYCQElZyHQsScV5M2VSuO4aIqMTiSwk7aX8jVNiiLzsRxckiqCoOT/fj5R2tZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2H085Y8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E462C4CECC;
+	Wed, 27 Nov 2024 19:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732734049;
+	bh=stwjnGnk0DMxkcjdPTNVNJUobHrJYgbm5W0wA6Sug34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J2H085Y8eZ+EJL0Vp6lK1S0Cka4gBCSm1WqJDcii41/tx3Q1QrQsIiqmPSEEkmxjD
+	 FpXAGRQAhd5AU1Iv4kx2Yb8v3kq0UhZ1rbv4yNNcffAItqvsvP72ObPdm8Z+RXqrBI
+	 6A0MrVhd4D2qUW0mpMFlboAFDLuTbpTIUvWLPNr6YMuqhULpq9tN7VSpo7O6EcsthJ
+	 fpEOTg/rLu25cQNFnEThAIwfjjYkP59eE9pUmcT593gIpfc/pcZR1SWs7+LD8lEAZv
+	 MJ+u4x9eJhpDExiZMq4EGFePOda/jjkJaiWw7SYYfAX+BqdT324irH1ChsfoHIHtUL
+	 ByKL6LX76Z/pw==
+Date: Wed, 27 Nov 2024 19:00:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+Message-ID: <e714ad9f-6a31-44ab-af2c-29f052cec07b@sirena.org.uk>
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fBmr5vGOD0aDrNaq"
+Content-Disposition: inline
+In-Reply-To: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+X-Cookie: Every path has its puddle.
 
-From: David Woodhouse <dwmw@amazon.co.uk>
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kernel/relocate_kernel_64.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--fBmr5vGOD0aDrNaq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 01a31e4a0664..ff8a813a9f9b 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -152,7 +152,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	lidt	(%rsp)
- 	addq	$10, %rsp
- 
--	//int3
-+	int3
- #endif /* CONFIG_KEXEC_DEBUG */
- 
- 	/*
--- 
-2.47.0
+On Wed, Nov 27, 2024 at 07:47:46PM +0100, Jerome Brunet wrote:
+> Depending on RESET_MESON_AUX result in axg-audio support being turned
+> off by default for the users of arm64 defconfig, which is kind of a
+> regression for them.
 
+> Cc: Mark Brown <broonie@kernel.org>
+> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Reported-by: Mark Brown <broonie@kernel.org>
+
+(I reported this to Jerome on IRC)
+
+> ---
+> Hello Stephen,
+> This fixes a problem introduced in this merge window.
+> Could you please take it directly ?
+
+It'd be great to get this into -rc1, I've got some of the affected
+systems in CI.
+
+--fBmr5vGOD0aDrNaq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdHbFsACgkQJNaLcl1U
+h9CFhwf9FXbeRLv68awMr86hSLLgSKMAQX6/IB6cA/KrLw0zKPUpVtq4T4rgrF62
+dgaTI48w9uz6aP7wXU55jYwZiNQrnCZ5YFlAF3sa0Hp18oMYAeyKC3zwGV6bCaQu
+h+o8wXq59ThA/Tn9IKq6Op6WDhk6Cgg8KufIu3yx1y2gO8D0+ltttuHpFnfmPmuU
+cmGWvdAEUtk/j/JfA/TzlpF4e0rPx2XpkTWLYGBs5mbqpkr7VkkYlnFTcUbMWdKb
+bPFAubHBjKEawqmZn60wqlAbHB8tOJ0OrG+oUEok7MYaPt+hwzG6pE3d1ukSbLFt
+CAcEJ9DcfS/toyp9owKXsI4HGdKVZQ==
+=8CNX
+-----END PGP SIGNATURE-----
+
+--fBmr5vGOD0aDrNaq--
 
