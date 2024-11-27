@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-423843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6429DAD7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:04:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51149DAD83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:05:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4113D16666A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42757B228E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C8920127E;
-	Wed, 27 Nov 2024 19:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91B4204091;
+	Wed, 27 Nov 2024 19:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cIpbPcdh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vi6zJACz"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EBA1FF604
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B42C201255
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732734246; cv=none; b=VrW9yPi869RjXLvBj0ZNWdf559F44RtaVWo2Qlcfu8A4Yk+M+xX60MDpFt5UQbJGEnRI/gfjFuc6LAupx0+eYPha2BVS6ZtXGw15fJuuMHBVK3b6aDlMuiH99HtxTzm9gJuMenTIHFNUZ/CRZxfW3DZ18qRBXYyaLTezaVZj8IM=
+	t=1732734247; cv=none; b=rHMrIurQYaIygoqPYAo7Rfbe6jSVV/8rMob/mY0Af80GWATLf8X3TDkcJhZHNE6TlyBCg45XrrU7MmwLzUew9etCsQALIC8y8KKxiz93waOlWgIbOt1h+UdSrD68O93QvHYk60Pi8UkkHeeuvxtyTmJF88XLihaBLNXYbp+xbEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732734246; c=relaxed/simple;
-	bh=4G1dwuKi5j5hukJsKtHQTnOK312oh/BUWKz5OC4SG7Q=;
+	s=arc-20240116; t=1732734247; c=relaxed/simple;
+	bh=623G9e0jeZ2RMFMd1YHMdaz5Es5e+KKYpgx8j02dSxU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FDx1dnhS3/c0TSxsMJdu8B3hXjh+7vT6ZAmBK15uwLpvf/47Jxvrtw2AcCOAN2js5mS0uzdyg2VJ4RXuTDoX/S2neaN0/w/9grxPc+/yQW8UB7XjUxWULH4VnqxcVCt5+AeubIDpOly4gP5URDK6HbvCN5T2gOqNEZsa0qSpWwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cIpbPcdh; arc=none smtp.client-ip=90.155.92.199
+	 MIME-Version; b=YHDuC2QNFbsQbwpF2D7bLl02+GBXXajpMz51jBdrXqXuzpzX2z6d3f6OybdE7XTOvsl0OAhvvziBMZmu9MP2fwQ1lSuyoI6nm4iHUz6Y09wUrQxVP8CGM+848ieumX4Xm/fQc7KUo8L7brPCFGT6Tle8MJgSgD3l81F+oV5+rGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Vi6zJACz; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=n1NxLTesaxf1CmVmrYGt0DtpmfeNYvqyA55PeXFrYQI=; b=cIpbPcdhiv/PxCBrA0udVBYnUb
-	jd6ot3jhec8XiieDBZTWAPnUeNeFCD3UDuRMG/y2mzrEK75n29vfsgS4GobkTq6RnUrhNjNtj1I6N
-	1C5cf7nVS3T+bi1e/pByQuKlAq/K1uUE0iJJ4bQKsLBTLQYjkSiw4SlMv0MFdDxd64aJVrVfe5W3a
-	xbrr6uSzejIarUWPhENLx4HgcL7MehRPW+i3qC/PohAnOjFBjel5Ga4+FZEvtjVDid1ViAdV0z3NV
-	7ZPnp732MaB2zlOkhuHr0WeExPfHFaP5LHXzumzFo2aq2FB2r1+KJmtEX2ocPPkJ70qPDNaY/OFsN
-	4sxXSfVg==;
+	bh=J05THXe+YRacmOzA8KfGrmyEonAyJGQ1gSBRrJydwjs=; b=Vi6zJACzVw41uFSjDRal8XnX3X
+	OlG6Ex20Hgc+bEduVJcdQhYqUgvCcd31ZBngWdAAvvpGtoL7z+LazP4EB8D7ErYWUjbQJaH1OYd/V
+	9PoMEp9vXcfJN8p33AHUYf2I16NT2p2iN6JOg7RUTI4NYEdiINrKhClES9K5wqdrV6xL/IRnFSSna
+	XypqcMPNm5wfWLO0x9JM8JfHwDb+1QMwB/327Q+AVsGNcw3Rf5lw/8oQ4Ujl2j5yhGIS24VEd4Eyu
+	Ivb9S2lMHbWZL4Ad3kj0ZfBk4EWHDYXbBIB9295YhutnPxsjOWD0QgIQkIMYcSaVL09epqmZDO1p3
+	vbCR9vmg==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGNKF-00000001Suh-1855;
+	id 1tGNKF-00000001Sui-17Li;
 	Wed, 27 Nov 2024 19:03:47 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGNKE-00000000Bj6-2Qt6;
+	id 1tGNKE-00000000BjB-2caS;
 	Wed, 27 Nov 2024 19:03:46 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -65,9 +65,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [RFC PATCH v4 15/20] x86/kexec: Add CONFIG_KEXEC_DEBUG option
-Date: Wed, 27 Nov 2024 19:00:29 +0000
-Message-ID: <20241127190343.44916-16-dwmw2@infradead.org>
+Subject: [RFC PATCH v4 16/20] x86/kexec: Debugging support: load a GDT
+Date: Wed, 27 Nov 2024 19:00:30 +0000
+Message-ID: <20241127190343.44916-17-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241127190343.44916-1-dwmw2@infradead.org>
 References: <20241127190343.44916-1-dwmw2@infradead.org>
@@ -83,32 +83,63 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-This does nothing yet.
+There are some failure modes which lead to triple-faults in the
+relocate_kernel function, which is fairly much undebuggable for normal
+mortals.
+
+Adding a GDT in the relocate_kernel environment is step 1 towards being
+able to catch faults and do something more useful.
 
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/Kconfig.debug | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kernel/relocate_kernel_64.S | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-index 74777a97e394..9dde32865a9b 100644
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -56,6 +56,14 @@ config EARLY_PRINTK_USB_XDBC
- 	  You should normally say N here, unless you want to debug early
- 	  crashes or need a very simple printk logging facility.
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index b24198eb1fe9..6c6bfdccfe6a 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -39,6 +39,18 @@ SYM_DATA(kexec_pa_table_page, .quad 0)
+ SYM_DATA(kexec_pa_swap_page, .quad 0)
+ SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
  
-+config KEXEC_DEBUG
-+	bool "Debug kexec transition"
-+	depends on KEXEC_CORE && EARLY_PRINTK
-+	help
-+	  Faults during kexec can be difficult to debug. This installs exception
-+	  handlers and attempts to report faults through the same serial port as
-+	  used for early_printk.
++#ifdef CONFIG_KEXEC_DEBUG
++	.balign 16
++SYM_DATA_START_LOCAL(kexec_debug_gdt)
++	.word   kexec_debug_gdt_end - kexec_debug_gdt - 1
++	.long   0
++	.word   0
++	.quad   0x00cf9a000000ffff      /* __KERNEL32_CS */
++	.quad   0x00af9a000000ffff      /* __KERNEL_CS */
++	.quad   0x00cf92000000ffff      /* __KERNEL_DS */
++SYM_DATA_END_LABEL(kexec_debug_gdt, SYM_L_LOCAL, kexec_debug_gdt_end)
++#endif /* CONFIG_KEXEC_DEBUG */
 +
- config EFI_PGT_DUMP
- 	bool "Dump the EFI pagetable"
- 	depends on EFI
+ 	.section .text.relocate_kernel,"ax";
+ 	.code64
+ SYM_CODE_START_NOALIGN(relocate_kernel)
+@@ -112,6 +124,21 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	/* store the start address on the stack */
+ 	pushq   %rdx
+ 
++#ifdef CONFIG_KEXEC_DEBUG
++	/* Create a GDTR (16 bits limit, 64 bits addr) on stack */
++	leaq	kexec_debug_gdt(%rip), %rax
++	pushq	%rax
++	pushw	(%rax)
++
++	/* Load the GDT, put the stack back */
++	lgdt	(%rsp)
++	addq	$10, %rsp
++
++	/* Test that we can load segments */
++	movq	%ds, %rax
++	movq	%rax, %ds
++#endif /* CONFIG_KEXEC_DEBUG */
++
+ 	/*
+ 	 * Clear X86_CR4_CET (if it was set) such that we can clear CR0_WP
+ 	 * below.
 -- 
 2.47.0
 
