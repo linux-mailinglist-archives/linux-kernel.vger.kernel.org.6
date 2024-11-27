@@ -1,104 +1,73 @@
-Return-Path: <linux-kernel+bounces-423280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCE49DA54C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:03:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F579DA555
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:05:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3C3C165711
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77932283E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BA2195803;
-	Wed, 27 Nov 2024 10:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F35194C8D;
+	Wed, 27 Nov 2024 10:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UfC7LK94"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IqCgg7JF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB84194C9D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9188718DF62;
+	Wed, 27 Nov 2024 10:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732701764; cv=none; b=XaxoyDih6XB1xYSwuMGVVe1k+88K4JtCI8t3Q2kI++4OVuLhIpSGfaIDOkIxRBk6PM2eiW/gdSxe7Yuq7XYh0GF1vfdjxAuwr9z8xoS+UT9wyU/iGlc3JF5b3myg2reKdnjHYqt1wteiuhKdYlyLwARGhOnoV7IUAafCE6QJeeo=
+	t=1732701902; cv=none; b=tnE/0vUYgNzO2c7M56pDybNtGNXMHxUMYCJoEuWPHet8KLkoBB+SnIzq2/s/SjiyhMhclr2aeAWSI4p8K9qSc8mb6C4r61u4JwUAXf5bwB8kzJwnT05701DzOpHIx1wek6FlxjUdCPExA8UXgHKx3jREmGGfcfQ+NqarxTaBwaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732701764; c=relaxed/simple;
-	bh=XNEC7iIHSTU5fR/qTaKpYUDlCvFBkQwpXNcdnLbp8KM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dxETfQHcn+hou4LVjUSzl5X5oKKQQB1vLBVMjiXGaxOsvaV39J9YClvL5sS+wWWcQfNay/Rlrhpsr4eUICwu6tAun9y56EjI4HKgCpmvzoW8fIeQsyydFERdv2pAsJzRQ0YtvSBBqJBOUmzpE4HetgdZwkdyIWmFWRoc0RPd6Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UfC7LK94; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso8427826a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732701760; x=1733306560; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KBSQENuLPfogqNhh0dno3u0E0BaTL1Weh6wKo3FlqE4=;
-        b=UfC7LK94bzQMHtvMxtks187MvWdhaHYHvwD4LL3M/qTHPKzcxbuQqXbtkWP2VxVuVI
-         lt+OLe0r0v9vCVxFaGbClEAbsMlu9LklL34ItQ1KeJdnmK75wsSeuV9ijSUcjNX767w2
-         AGnPnUEyy4PYRu9ZlrsTNTbx9IgBTMmRqKAbbPiwZH+qFF0xgW262ximGwLexenKcG/k
-         137Q+5HeknPFYLg3HwRknwb2fsJh3pfuYODku+xGebRs6lTAm7OsNkuMs+hQQY5sbYrs
-         M6GkEzRe6l4SrXwRlvZdHFhRFbhxtdb2Y0cFacHNuCayqx86u0Dp+eAZ/2jSvGFhKzU3
-         yvew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732701760; x=1733306560;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KBSQENuLPfogqNhh0dno3u0E0BaTL1Weh6wKo3FlqE4=;
-        b=qIZjiYk4Aa8zNGfAYPJVa/1PY8CkmkdK2FdBzybkoSmtT2Akb0wkIx1tGax6SkzeMG
-         lZJzXmQvLJ7B4Cl3r+kvTx6ZPbIbjGhJajs80yPkMCZpzEKyRN0YzgTayItJi8UF+16U
-         9bTOgBFHmGTOCpQS0DpyymxThPzWgsjmlT9kjGrwK1C00BYJw/SX/o7NzOMWs7crjdWz
-         nKDoUVjPukkP6hUxr4F86tC4YkpVwImzj8zi6KQR+3OUSwKaeriQOE6ji7l5sZKOuRRp
-         zIqW/zVuxemsTjMY4mT5bcpjtuWvEYMT+v+R4BWZkbjjXCCnJjVLGpfB0+nFyBD3t+dV
-         ckdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc6LDkHvBhPGVayqnaBQz6ejLDJXTLQZOtiR9eNm47A4zSInrFTSmkTChD0QBSex2kjkNqYzrSLh7Fqq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTBQJGQ1lGqPA9YpKPvQ6KGzEzmHreMmML1YBS/aZ+VONQ6g+3
-	NiiySEP7WgowIESrsPpRMB9IGe/OgH8SuZPnRBuczoZMAlSfaTvgmiOpfnRPtWQ=
-X-Gm-Gg: ASbGncvIV2JjY1yHamCUiuMMO72fAPq2IQTmsIVROlBiOzjrxfH+uFPbcCCSPxRY4mn
-	F/7G54W0g3nIhbhehz7xUKoTTx0xzbOzt+tT3f3mFydqk8NhLRxNOx5KuoZ45uiwE3xkRZ/P+ri
-	OYUvycIHWrrgatjHrdcMb7uTxw3WMqkLYPg6G++azIccHFjnO/aLjFdiY2H1gzRQe1R8kF4hTiS
-	Eu3q6iNWK5j0e0t/mBRlkLnzgfPdGjPZUop5FAbjGi/GgaaLg==
-X-Google-Smtp-Source: AGHT+IHqOxkrSEz0HJyXpwM0CcWfCEkT50w7pUcr6dYwlxQ8Y59TC1jt2D2TiNSkkhVgmFR8omZUGA==
-X-Received: by 2002:a17:907:2858:b0:aa5:29b8:15ce with SMTP id a640c23a62f3a-aa581062cc2mr147125166b.56.1732701759774;
-        Wed, 27 Nov 2024 02:02:39 -0800 (PST)
-Received: from pop-os.. ([145.224.90.200])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa547ffb152sm421887466b.62.2024.11.27.02.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 02:02:39 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: maz@kernel.org,
-	kvmarm@lists.linux.dev,
-	oliver.upton@linux.dev,
-	suzuki.poulose@arm.com,
-	coresight@lists.linaro.org
-Cc: James Clark <james.clark@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>,
-	Fuad Tabba <tabba@google.com>,
-	Mark Brown <broonie@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 8/8] coresight: Pass guest TRFCR value to KVM
-Date: Wed, 27 Nov 2024 10:01:25 +0000
-Message-Id: <20241127100130.1162639-9-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241127100130.1162639-1-james.clark@linaro.org>
-References: <20241127100130.1162639-1-james.clark@linaro.org>
+	s=arc-20240116; t=1732701902; c=relaxed/simple;
+	bh=0Ki6tVt0RJ0U5hQr1uvr6VP5YpEzwyn9afGPu3OLswI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mnUgT76cvNahfpImyXQgys4D6j0nOg6OltkoF+M14k6ld80x+kLoNi1Da2XiIEfGzX6P/DQLIORzcYAGpqcrMe3VPpoz//jIZjzdQJEiZYApXuUdj4RoJmxl4C9ofPL5hyimKrNNeq9VVVqFbW8d+EY9bryrH961b1FW5QQ523U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IqCgg7JF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR8wUaE007616;
+	Wed, 27 Nov 2024 10:04:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=aDcFq2xHemwqMmFNzCFpJ0
+	DM/Q/OAc9cLm6Ahj8sQHU=; b=IqCgg7JFnRxjkL+w59OPkK/qPss+GkcU4UgGWe
+	A3Th1ALCzuZ7ErQBX7yRrqyxpQ2FcSX8dbvyGEtSGs17g/5YFeanxFQc4Cv+rvQy
+	xEoP2uyCiC8HQi0DOL2TBSKdAnpd2onmv7CAaZJDufj1WMErhZmIMOMqsCsCR3op
+	xarOAGWrHCbcZ9AoPLFx26uXVEazJvEZJ8o1HXcgQavx2J8rlbHXndBhvzuda5gi
+	FoThtigRzMSI9GzSYh+zDskBRdxlEgKWostLvjokexxrGT2XDmP8msTdIS0HsZxq
+	E4odWWPuTS5q800GumNEDg/UUWy4K2O16kWDlHEH0alfYkkw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435cmquda4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 10:04:48 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARA4ldm023204
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 10:04:47 GMT
+Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 27 Nov 2024 02:04:37 -0800
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <akapatra@quicinc.com>, <hariramp@quicinc.com>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <quic_vikramsa@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: [PATCH v6 0/5] media: qcom: camss: Add sc7280 support
+Date: Wed, 27 Nov 2024 15:34:16 +0530
+Message-ID: <20241127100421.3447601-1-quic_vikramsa@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,170 +75,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: luVkiwfCrBum8_F7rItD5nCBcMRjacBS
+X-Proofpoint-ORIG-GUID: luVkiwfCrBum8_F7rItD5nCBcMRjacBS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ lowpriorityscore=0 mlxscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
+ impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411270082
 
-From: James Clark <james.clark@arm.com>
+SC7280 is a Qualcomm SoC. This series adds support to bring up the CSIPHY,
+CSID, VFE/RDI interfaces in SC7280.
 
-Currently the userspace and kernel filters for guests are never set, so
-no trace will be generated for them. Add support for tracing guests by
-passing the desired TRFCR value to KVM so it can be applied to the
-guest.
+SC7280 provides
 
-By writing either E1TRE or E0TRE, filtering on either guest kernel or
-guest userspace is also supported. And if both E1TRE and E0TRE are
-cleared when exclude_guest is set, that option is supported too. This
-change also brings exclude_host support which is difficult to add as a
-separate commit without excess churn and resulting in no trace at all.
+- 3 x VFE, 3 RDI per VFE
+- 2 x VFE Lite, 4 RDI per VFE
+- 3 x CSID
+- 2 x CSID Lite
+- 5 x CSI PHY
 
-Testing
-=======
+The changes are verified on SC7280 qcs6490-rb3gen2 board, with attached vision mezzanine
+the base dts for qcs6490-rb3gen2 is:
+https://lore.kernel.org/all/20231103184655.23555-1-quic_kbajaj@quicinc.com/
 
-The addresses were counted with the following:
+This change is dependent on below series. As it is raised on top of
+this. Please take both to validate.
+https://lore.kernel.org/lkml/20241126100126.2743795-1-quic_vikramsa@quicinc.com/
 
-  $ perf report -D | grep -Eo 'EL2|EL1|EL0' | sort | uniq -c
+Changes in V6:
+- Changed order of properties in Documentation [PATCH 1/5].
+- Updated description for ports in Documentaion [PATCH 1/5].
+- Moved regulators from csid to csiphy [PATCH 3/5].
+- Link to v5: https://lore.kernel.org/linux-arm-msm/20241112173032.2740119-1-quic_vikramsa@quicinc.com/ 
 
-Guest kernel only:
+Changes in V5:
+- Updated Commit text for [PATCH v5 1/6].
+- Moved reg after compatible string.
+- Renamed csi'x' clocks to vfe'x'_csid
+- Removed [PATCH v4 4/6] and raised a seprate series for this one.
+- Moved gpio states to mezzanine dtso.
+- Added more clock levels to address TPG related issues.
+- Renamed power-domains-names -> power-domain-names. 
+- Link to v4: https://lore.kernel.org/linux-arm-msm/20241030105347.2117034-1-quic_vikramsa@quicinc.com/ 
 
-  $ perf record -e cs_etm//Gk -a -- true
-    535 EL1
-      1 EL2
+Changes in V4:
+- V3 had 8 patches and V4 is reduced to 6.
+- Removed [Patch v3 2/8] as binding change is not required for dtso.
+- Removed [Patch v3 3/8] as the fix is already taken care in latest
+  kernel tip. 
+- Updated alignment for dtsi and dt-bindings.
+- Adding qcs6490-rb3gen2-vision-mezzanine as overlay. 
+- Link to v3: https://lore.kernel.org/linux-arm-msm/20241011140932.1744124-1-quic_vikramsa@quicinc.com/
 
-Guest user only (only 5 addresses because the guest runs slowly in the
-model):
+Changes in V3:
+- Added missed subject line for cover letter of V2.
+- Updated Alignment, indentation and properties order.
+- edit commit text for [PATCH 02/10] and [PATCH 03/10].
+- Refactor camss_link_entities.
+- Removed camcc enablement changes as it already done.
+- Link to v2: https://lore.kernel.org/linux-arm-msm/20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com/
 
-  $ perf record -e cs_etm//Gu -a -- true
-    5 EL0
+Changes in V2:
+- Improved indentation/formatting.
+- Removed _src clocks and misleading code comments.
+- Added name fields for power domains and csid register offset in DTSI.
+- Dropped minItems field from YAML file.
+- Listed changes in alphabetical order.
+- Updated description and commit text to reflect changes
+- Changed the compatible string from imx412 to imx577.
+- Added board-specific enablement changes in the newly created vision
+  board DTSI file.
+- Fixed bug encountered during testing.
+- Moved logically independent changes to a new/seprate patch.
+- Removed cci0 as no sensor is on this port and MCLK2, which was a
+  copy-paste error from the RB5 board reference.
+- Added power rails, referencing the RB5 board.
+- Discarded Patch 5/6 completely (not required).
+- Removed unused enums.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com/
 
-Host kernel only:
+Suresh Vankadara (1):
+  media: qcom: camss: Add support for camss driver on sc7280
 
-  $  perf record -e cs_etm//Hk -a -- true
-   3501 EL2
+Vikram Sharma (4):
+  media: dt-bindings: Add qcom,sc7280-camss
+  media: qcom: camss: Sort camss version enums and compatible strings
+  arm64: dts: qcom: sc7280: Add support for camss
+  arm64: dts: qcom: qcs6490-rb3gen2-vision-mezzanine: Add vision
+    mezzanine
 
-Host userspace only:
+ .../bindings/media/qcom,sc7280-camss.yaml     | 415 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/Makefile             |   4 +
+ .../qcs6490-rb3gen2-vision-mezzanine.dtso     | 108 +++++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          | 170 +++++++
+ .../qcom/camss/camss-csiphy-3ph-1-0.c         |  13 +-
+ .../media/platform/qcom/camss/camss-csiphy.c  |   5 +
+ .../media/platform/qcom/camss/camss-csiphy.h  |   1 +
+ drivers/media/platform/qcom/camss/camss-vfe.c |   8 +-
+ drivers/media/platform/qcom/camss/camss.c     | 316 ++++++++++++-
+ drivers/media/platform/qcom/camss/camss.h     |   5 +-
+ 10 files changed, 1035 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dtso
 
-  $  perf record -e cs_etm//Hu -a -- true
-    408 EL0
-      1 EL2
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: James Clark <james.clark@arm.com>
----
- .../coresight/coresight-etm4x-core.c          | 43 ++++++++++++++++---
- drivers/hwtracing/coresight/coresight-etm4x.h |  2 +-
- drivers/hwtracing/coresight/coresight-priv.h  |  3 ++
- 3 files changed, 41 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 66d44a404ad0..afe56e1b9364 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -6,6 +6,7 @@
- #include <linux/acpi.h>
- #include <linux/bitops.h>
- #include <linux/kernel.h>
-+#include <linux/kvm_host.h>
- #include <linux/moduleparam.h>
- #include <linux/init.h>
- #include <linux/types.h>
-@@ -271,9 +272,23 @@ static void etm4x_prohibit_trace(struct etmv4_drvdata *drvdata)
- 	/* If the CPU doesn't support FEAT_TRF, nothing to do */
- 	if (!drvdata->trfcr)
- 		return;
-+
-+	kvm_clear_trfcr();
- 	cpu_prohibit_trace();
- }
- 
-+static u64 etm4x_get_kern_user_filter(struct etmv4_drvdata *drvdata)
-+{
-+	u64 trfcr = drvdata->trfcr;
-+
-+	if (drvdata->config.mode & ETM_MODE_EXCL_KERN)
-+		trfcr &= ~TRFCR_ELx_ExTRE;
-+	if (drvdata->config.mode & ETM_MODE_EXCL_USER)
-+		trfcr &= ~TRFCR_ELx_E0TRE;
-+
-+	return trfcr;
-+}
-+
- /*
-  * etm4x_allow_trace - Allow CPU tracing in the respective ELs,
-  * as configured by the drvdata->config.mode for the current
-@@ -286,18 +301,28 @@ static void etm4x_prohibit_trace(struct etmv4_drvdata *drvdata)
-  */
- static void etm4x_allow_trace(struct etmv4_drvdata *drvdata)
- {
--	u64 trfcr = drvdata->trfcr;
-+	u64 trfcr, guest_trfcr;
- 
- 	/* If the CPU doesn't support FEAT_TRF, nothing to do */
--	if (!trfcr)
-+	if (!drvdata->trfcr)
- 		return;
- 
--	if (drvdata->config.mode & ETM_MODE_EXCL_KERN)
--		trfcr &= ~TRFCR_ELx_ExTRE;
--	if (drvdata->config.mode & ETM_MODE_EXCL_USER)
--		trfcr &= ~TRFCR_ELx_E0TRE;
-+	if (drvdata->config.mode & ETM_MODE_EXCL_HOST)
-+		trfcr = drvdata->trfcr & ~(TRFCR_ELx_ExTRE | TRFCR_ELx_E0TRE);
-+	else
-+		trfcr = etm4x_get_kern_user_filter(drvdata);
- 
- 	write_trfcr(trfcr);
-+
-+	/* Set filters for guests and pass to KVM */
-+	if (drvdata->config.mode & ETM_MODE_EXCL_GUEST)
-+		guest_trfcr = drvdata->trfcr & ~(TRFCR_ELx_ExTRE | TRFCR_ELx_E0TRE);
-+	else
-+		guest_trfcr = etm4x_get_kern_user_filter(drvdata);
-+
-+	/* TRFCR_EL1 doesn't have CX so mask it out. */
-+	guest_trfcr &= ~TRFCR_EL2_CX;
-+	kvm_set_trfcr(guest_trfcr);
- }
- 
- #ifdef CONFIG_ETM4X_IMPDEF_FEATURE
-@@ -655,6 +680,12 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
- 	if (attr->exclude_user)
- 		config->mode = ETM_MODE_EXCL_USER;
- 
-+	if (attr->exclude_host)
-+		config->mode |= ETM_MODE_EXCL_HOST;
-+
-+	if (attr->exclude_guest)
-+		config->mode |= ETM_MODE_EXCL_GUEST;
-+
- 	/* Always start from the default config */
- 	etm4_set_default_config(config);
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
-index 9e9165f62e81..1119762b5cec 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.h
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.h
-@@ -817,7 +817,7 @@ enum etm_impdef_type {
-  * @s_ex_level: Secure ELs where tracing is supported.
-  */
- struct etmv4_config {
--	u32				mode;
-+	u64				mode;
- 	u32				pe_sel;
- 	u32				cfg;
- 	u32				eventctrl0;
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 05f891ca6b5c..76403530f33e 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -42,6 +42,9 @@ extern const struct device_type coresight_dev_type[];
- 
- #define ETM_MODE_EXCL_KERN	BIT(30)
- #define ETM_MODE_EXCL_USER	BIT(31)
-+#define ETM_MODE_EXCL_HOST	BIT(32)
-+#define ETM_MODE_EXCL_GUEST	BIT(33)
-+
- struct cs_pair_attribute {
- 	struct device_attribute attr;
- 	u32 lo_off;
 -- 
-2.34.1
+2.25.1
 
 
