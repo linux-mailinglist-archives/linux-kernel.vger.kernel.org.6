@@ -1,177 +1,125 @@
-Return-Path: <linux-kernel+bounces-423649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0979DAAE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:41:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3E89DAAE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EE8281D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C947281B98
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E3420010C;
-	Wed, 27 Nov 2024 15:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOGo769g"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0811E1FF7DB;
+	Wed, 27 Nov 2024 15:40:48 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48420328B6;
-	Wed, 27 Nov 2024 15:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988E5328B6;
+	Wed, 27 Nov 2024 15:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732722079; cv=none; b=c9cIYrkBiROqViO2SGKzHLizF9Mwc6bGkctNYpwBPCU7A5bt9I+wHWlnmjcCZURkF0DHEtA+iWNiDP1xqRoiKHPX9jG6MW1WYtWHEX32F2YSZTYCk8KqXVHeKm7l4cV3n1nxkg7u6XlBDuFc0Ky5nVYg7QpXzsoBSE6olY9up/c=
+	t=1732722047; cv=none; b=AaVK3G7UKU3jbP0CH9szHqnJa39CwqmiDGY1pBnuMwaZxnGb8NoeTcSTP/zw8VNAmKtFwISL8A84C+iWWGwJnSx7lwdGbveokoF5ic7opeP8eIB64RdxjPTGSK3QDjFDYFeqBqAAeYSej8QIN8YjjK9b7g/upkbBURdIq7ixMds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732722079; c=relaxed/simple;
-	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fUAI6D7TfZWTiebUZ3ij2EtxKosZjKUcACsxc7bBecZcr8ijjwOeUFocUMVMTk/y8XaXhpOEVGKcOgovlc3Gg8o2kMqg28fQI+rjmrpoHnobtj5UYhpEzWgdY3oOgtWemeGXjOAksIx+3/9gGEs56MqSaxrAU26tv49Qxgl9fH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOGo769g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5ADC4CECC;
-	Wed, 27 Nov 2024 15:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732722078;
-	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IOGo769gRF6NaThfG/aRem8w6lMd6q3TVKX7KTAre+QIMv8oQIu7CFwTN/RGYB/p8
-	 BcfVMajnUjipgemFOEfrlQozVn8n2oHVUezC3xXJLcoLbzplrJYS6DO1GgkTt9oSk5
-	 YY+0kUx2brcTjWciQNZizNxvhFcpX22laSewEW2bRmPISm1OPb0hC7HDppTuUgnnyg
-	 m3bNRA6iBbr1cE1RLOwjSa3gjq6rqpF3rYXR0PMcKaH7u9yoTb7P9JeMazcL4xioHx
-	 wwwAxg/f2dGlQWyuErlr3KIXNKoj5QqJQZj/z6PhoFKZKuTD+mGJQbbdoS4vIA5Ews
-	 mBVd8jVCmU74A==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Wed, 27 Nov 2024 16:41:03 +0100
-Message-ID: <20241127-vfs-fixes-08465cd270d3@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732722047; c=relaxed/simple;
+	bh=ncPIlJNbTVF+RdXN6fFSuK1Ao3lo5VBICNQCSgrJ9K4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tw3unOgRch5E5M4UsTzy+zXvOjR5/oWLOqc3JgQMABIE3uKD9IAuluMd5k4p4+VnTbpJml/yG01GoI0yQYxDK8GJTwb1eET/iw2lYDFEK13aJl23YTuYIr3TTXVuNG483hrd3q6JT9Z4qgGUsr+737rtrI1fd1r30JMPR1i5QZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79CD0C4CECC;
+	Wed, 27 Nov 2024 15:40:45 +0000 (UTC)
+Date: Wed, 27 Nov 2024 10:41:32 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shiju Jose <shiju.jose@huawei.com>
+Cc: "dave.jiang@intel.com" <dave.jiang@intel.com>,
+ "dan.j.williams@intel.com" <dan.j.williams@intel.com>, Jonathan Cameron
+ <jonathan.cameron@huawei.com>, "alison.schofield@intel.com"
+ <alison.schofield@intel.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+ "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+ "ira.weiny@intel.com" <ira.weiny@intel.com>, "dave@stgolabs.net"
+ <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
+ <linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
+ <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
+Subject: Re: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
+ CXL spec rev 3.1
+Message-ID: <20241127104132.6c1729e1@gandalf.local.home>
+In-Reply-To: <a24524dccbf442d5a3c910d7f46c7b6c@huawei.com>
+References: <20241120093745.1847-1-shiju.jose@huawei.com>
+	<20241120093745.1847-4-shiju.jose@huawei.com>
+	<180fcfd623c64cdb86cdc9059f749af0@huawei.com>
+	<20241126120237.1598854d@gandalf.local.home>
+	<a24524dccbf442d5a3c910d7f46c7b6c@huawei.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3804; i=brauner@kernel.org; h=from:subject:message-id; bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS720649Haj5NJ7K4IuCnFJ3mjnt8k9w+9a7/6Kw0GoS XUT1562jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIns+8fI0MCpYmU/q1VwRtyZ rFsGprs91A+dm5/frjTnhJpEqOEMJUaGrdMsVjHPmad9SOk913Qm7Z7e8yd/Lt85RS/x+puv7iK b2QA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hey Linus,
+On Wed, 27 Nov 2024 10:12:12 +0000
+Shiju Jose <shiju.jose@huawei.com> wrote:
 
-I was sent a bug fix for the backing file rework that relied on the
-overlayfs pull request. The vfs.fixes branch used an earlier mainline
-commit as base. So I thought how to resolve this and my solution was to
-create a new ovl.fixes branch which contained the overlayfs changes for
-v6.13 and then apply the fix on top of it. That branch was then merged
-into vfs.fixes with an explanation why. Let me know if I should do this
-differently next time.
+> format:
+> 	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+> 	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+> 	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+> 	field:int common_pid;	offset:4;	size:4;	signed:1;
+> 
+> 	field:__data_loc char[] memdev;	offset:8;	size:4;	signed:0;
+> 	field:__data_loc char[] host;	offset:12;	size:4;	signed:0;
+> 	field:int log;	offset:16;	size:4;	signed:1;
 
-/* Summary */
+> 	field:uuid_t hdr_uuid;	offset:20;	size:16;	signed:0;
 
-This contains various fixes for this cycle:
+New type for me ;-)
 
-- Fix a few iomap bugs.
+> 	field:u64 serial;	offset:40;	size:8;	signed:0;
+> 	field:u32 hdr_flags;	offset:48;	size:4;	signed:0;
+> 	field:u16 hdr_handle;	offset:52;	size:2;	signed:0;
+> 	field:u16 hdr_related_handle;	offset:54;	size:2;	signed:0;
+> 	field:u64 hdr_timestamp;	offset:56;	size:8;	signed:0;
+> 	field:u8 hdr_length;	offset:64;	size:1;	signed:0;
+> 	field:u8 hdr_maint_op_class;	offset:65;	size:1;	signed:0;
+> 	field:u8 hdr_maint_op_sub_class;	offset:66;	size:1;	signed:0;
+> 	field:u64 dpa;	offset:72;	size:8;	signed:0;
+> 	field:u8 descriptor;	offset:80;	size:1;	signed:0;
+> 	field:u8 type;	offset:81;	size:1;	signed:0;
+> 	field:u8 transaction_type;	offset:82;	size:1;	signed:0;
+> 	field:u8 channel;	offset:83;	size:1;	signed:0;
+> 	field:u32 device;	offset:84;	size:4;	signed:0;
+> 	field:u8 comp_id[16];	offset:88;	size:16;	signed:0;
+> 	field:u64 hpa;	offset:104;	size:8;	signed:0;
+> 	field:uuid_t region_uuid;	offset:112;	size:16;	signed:0;
+> 	field:u16 validity_flags;	offset:128;	size:2;	signed:0;
+> 	field:u8 rank;	offset:130;	size:1;	signed:0;
+> 	field:u8 dpa_flags;	offset:131;	size:1;	signed:0;
+> 	field:__data_loc char[] region_name;	offset:132;	size:4;	signed:0;
+> 	field:u8 sub_type;	offset:136;	size:1;	signed:0;
+> 	field:u8 cme_threshold_ev_flags;	offset:137;	size:1;	signed:0;
+> 	field:u32 cme_count;	offset:140;	size:4;	signed:0;
+> 
+> print fmt: "memdev=%s host=%s serial=%lld log=%s : time=%llu uuid=%pUb len=%d flags='%s' handle=%x related_handle=%x maint_op_class=%u maint_op_sub_class=%u : dpa=%llx dpa_flags='%s' descriptor='%s' type='%s' transaction_type='%s' channel=%u rank=%u device=%x validity_flags='%s' comp_id=%shpa=%llx region=%s region_uuid=%pUb sub_type=%u cme_threshold_ev_flags=%u cme_count=%u", __get_str(memdev), __get_str(host), REC->serial, __print_symbolic(REC->log, { CXL_EVENT_TYPE_INFO, "Informational" }, { CXL_EVENT_TYPE_WARN, "Warning" }, { CXL_EVENT_TYPE_FAIL, "Failure" }, { CXL_EVENT_TYPE_FATAL, "Fatal" }), REC->hdr_timestamp,
 
-- Fix a wrong argument in backing file callback.
 
-- Fix security mount option retrieval in statmount().
+> &REC->hdr_uuid,
 
-- Cleanup how statmount() handles unescaped options.
+libtraceevent doesn't know about taking an address with '&'.
 
-- Add a missing inode_owner_or_capable() check for setting write hints.
+If I remove it (and the other one below for region_uuid), it parses fine.
 
-- Clear the return value in read_kcore_iter() after a successful
-  iov_iter_zero().
+I'll have to add this to the library, as it should be able to handle this.
+I bet I also have to add "%pUb" as well.
 
-- Fix a mount_setattr() selftest.
+Thanks,
 
-- Fix function signature in mount api documentation.
+-- Steve
 
-- Remove duplicate include header in the fscache code.
 
-/* Testing */
 
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-All patches have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit e7675238b9bf4db0b872d5dbcd53efa31914c98f:
-
-  Merge tag 'ovl-update-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs (2024-11-22 20:55:42 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13-rc1.fixes
-
-for you to fetch changes up to cf87766dd6f9ddcceaa8ee26e3cbd7538e42dd19:
-
-  Merge branch 'ovl.fixes' (2024-11-26 18:15:06 +0100)
-
-Please consider pulling these changes from the signed vfs-6.13-rc1.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.13-rc1.fixes
-
-----------------------------------------------------------------
-Amir Goldstein (1):
-      fs/backing_file: fix wrong argument in callback
-
-Brian Foster (4):
-      iomap: warn on zero range of a post-eof folio
-      iomap: reset per-iter state on non-error iter advances
-      iomap: lift zeroed mapping handling into iomap_zero_range()
-      iomap: elide flush from partial eof zero range
-
-Christian Brauner (3):
-      Merge patch series "iomap: zero range flush fixes"
-      statmount: fix security option retrieval
-      Merge branch 'ovl.fixes'
-
-Christoph Hellwig (1):
-      fs: require inode_owner_or_capable for F_SET_RW_HINT
-
-Jiri Olsa (1):
-      fs/proc/kcore.c: Clear ret value in read_kcore_iter after successful iov_iter_zero
-
-Michael Ellerman (1):
-      selftests/mount_setattr: Fix failures on 64K PAGE_SIZE kernels
-
-Miklos Szeredi (1):
-      statmount: clean up unescaped option handling
-
-Randy Dunlap (1):
-      fs_parser: update mount_api doc to match function signature
-
-Thorsten Blum (1):
-      fscache: Remove duplicate included header
-
- Documentation/filesystems/mount_api.rst            |  3 +-
- fs/backing-file.c                                  |  3 +-
- fs/fcntl.c                                         |  3 +
- fs/iomap/buffered-io.c                             | 90 +++++++++++-----------
- fs/iomap/iter.c                                    | 11 ++-
- fs/namespace.c                                     | 46 +++++------
- fs/netfs/fscache_io.c                              |  1 -
- fs/proc/kcore.c                                    |  1 +
- .../selftests/mount_setattr/mount_setattr_test.c   |  2 +-
- 9 files changed, 81 insertions(+), 79 deletions(-)
+> REC->hdr_length, __print_flags(REC->hdr_flags, " | ", { ((((1UL))) << (2)), "PERMANENT_CONDITION" }, { ((((1UL))) << (3)), "MAINTENANCE_NEEDED" }, { ((((1UL))) << (4)), "PERFORMANCE_DEGRADED" }, { ((((1UL))) << (5)), "HARDWARE_REPLACEMENT_NEEDED" }, { ((((1UL))) << (6)), "MAINT_OP_SUB_CLASS_VALID" } ), REC->hdr_handle, REC->hdr_related_handle, REC->hdr_maint_op_class, REC->hdr_maint_op_sub_class, REC->dpa, __print_flags(REC->dpa_flags, "|", { ((((1UL))) << (0)), "VOLATILE" }, { ((((1UL))) << (1)), "NOT_REPAIRABLE" } ), __print_flags(REC->descriptor, "|", { ((((1UL))) << (0)), "UNCORRECTABLE_EVENT" }, { ((((1UL))) << (1)), "THRESHOLD_EVENT" }, { ((((1UL))) << (2)), "POISON_LIST_OVERFLOW" } ), __print_symbolic(REC->type, { 0x00, "ECC Error" }, { 0x01, "Invalid Address" }, { 0x02, "Data Path Error" }, { 0x03, "TE State Violation" }, { 0x04, "Scrub Media ECC Error" }, { 0x05, "Adv Prog CME Counter Expiration" }, { 0x06, "CKID Violation" } ), __print_symbolic(REC->transaction_type, { 0x
+ 00, "Unknown" }, { 0x01, "Host Read" }, { 0x02, "Host Write" }, { 0x03, "Host Scan Media" }, { 0x04, "Host Inject Poison" }, { 0x05, "Internal Media Scrub" }, { 0x06, "Internal Media Management" }, { 0x07, "Internal Media Error Check Scrub" }, { 0x08, "Media Initialization" } ), REC->channel, REC->rank, REC->device, __print_flags(REC->validity_flags, "|", { ((((1UL))) << (0)), "CHANNEL" }, { ((((1UL))) << (1)), "RANK" }, { ((((1UL))) << (2)), "DEVICE" }, { ((((1UL))) << (3)), "COMPONENT" }, { ((((1UL))) << (4)), "COMPONENT PLDM FORMAT" } ), __print_hex(REC->comp_id, 0x10), REC->hpa, __get_str(region_name), &REC->region_uuid, REC->sub_type, REC->cme_threshold_ev_flags, REC->cme_count
 
