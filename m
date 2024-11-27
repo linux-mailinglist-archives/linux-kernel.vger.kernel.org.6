@@ -1,102 +1,254 @@
-Return-Path: <linux-kernel+bounces-423433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47689DA74F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:01:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E3B9DA795
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:17:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A04163852
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:01:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E01B26841
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33E91FA248;
-	Wed, 27 Nov 2024 12:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E021F9F61;
+	Wed, 27 Nov 2024 12:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQsONPQJ"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT7YzdLK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195791FA142;
-	Wed, 27 Nov 2024 12:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92351F7574
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732708889; cv=none; b=OMeSVLVRtyNcqd9EicIyXrJ7PlyiXZnVosKPX0LqXSKZHOLm/V8jdiwQbQIgWvlEC9ROXClswZlQSG9OfUEmevjiq8xI04rPWKVLEykop0pbrLw6w4mFjiN8p9OijXFGKbopsBKr+tkcUOA43N08e5/jVayu7GrlMlq1Ew5dwQc=
+	t=1732708862; cv=none; b=uVVF5Ta6QGqC3LoSUw2WGKLMIOVz15fjFhJsfn9JyHdW8L8mWMLeTABy56/4tmMg8OTOzspu7K9+qojqmOtqF5ZiiZKvXUNkeUQtkttuOS2JzRSKlAmjMPpu8RtetWyPim9y4aFAlKTwnVWE4bJ0r+bHIC6R+jmUoevtLOfv3N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732708889; c=relaxed/simple;
-	bh=lTNDyMY4THwkTeasv2E7soWYa0M4QXhAsRbC78dOzXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T7zpNcgwg+Pc74fpcY3hYwtDl08hAeQqnfg0vMQIyhsOH4/84fEpk3jpOXADTxnxJ8xZwX6vfq6R9IpGM7/JgM2mbSLXxHZit89WdpN8sIZj/IETw+kHHZZHT+TO8rG14OQxCOMutNMp8wCTTA86haCis94vlgHtGP+UFRs5MTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQsONPQJ; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2126408cf31so48275515ad.0;
-        Wed, 27 Nov 2024 04:01:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732708886; x=1733313686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sN4/UYCKwnjX/w6HTtGzxERNvG6yJdCYTg0zaHpcLhc=;
-        b=EQsONPQJrPmrUREc7x1NasqYrIJInr8CpiBP5AwHlowKquaQ0xk75hxFSQuT2aFq6W
-         Yo9PDoQzSd7OCrRr5t8LT4GhOsupg+c2bJohtBnwr27uyJKgQ7TJ4cEF6iHFpSVmH7qp
-         kIYzlBzPd9XiA8ogAwMjEbHmmdKZ79dEIaYTY32doWnE1KDQJ/lnDRERujJHj0eUaLjt
-         tNd7xd80Js9Fdvl0AN6PbKqilruv7CVPNH8mUDcMjUqNjFol1KVrVT/NWKJhSCIY0jId
-         znKj/9AqGnbOz0xO+uBZ5kyAPhuI3OJahIP6FClM5Bks8zf2EFq49CILe+NmX6fRiyX+
-         A91A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732708886; x=1733313686;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sN4/UYCKwnjX/w6HTtGzxERNvG6yJdCYTg0zaHpcLhc=;
-        b=YO2NN73K5l81nxQgubl3Ywi202/VrCnZEIrc+3mJpwoCdrBJdZUN5aQWLwVdTzDavy
-         8nKcigtDXtTgZ0GHoXCHO3wuHIBSjIYXLMe21zAf3Q7Hkz+XSJsOUNsx5W2CLM7c5Rn8
-         xBaX7iS30aniaSITtk1AbjQlOjqFeOK7dtur0WCRry0sGF1ZufhMHOhnKo+OOOn4Cr7j
-         DrhoeYDDSxwheygQuCycg8e2u+XhcQI+Ms1V3bANK5/Qlxo3J1LL/qWuRe8ffq5dHjWR
-         Xpk0B3q0ReLZoSDRMXhGfSqwEvrgbfK77+mIm2ED5gzDlHOQLs/cVT/u+p3ZEv35nksE
-         VzJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJhjxdVX9zfB7hP/DtvOhI/9Lab87ZcCqDBEHrYLfxxE/8rgNgF9safxFai2ffEH+eAZnX7UK4/UogzACIkfQ=@vger.kernel.org, AJvYcCXac/dot7/6A+OKgXepS+DH2xkiIx9+YV5prUY3iKha0t2Lu4UcvozrcaUKtib0FMf2L/XaER4ZNDqjLXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXF7Eyzheg2gwdp3C+/T7sdew4bTqNnl4AGHAZYdvIyZTCJ30w
-	ULXUxkhAclpJIYsfjj6oAx77KWh40kYrYBlZSRQ75FKTtp4b5joI
-X-Gm-Gg: ASbGncsJ1Uu1Q52jN1pZEI8T8gYN066DcmwUZIwRfDXYgdpg4nY+5QJEOzAvaYtLN4o
-	g/89U3gDET5q8rXvR+elGtm9tElGgcUsWUeIP7w+kLI3HL+CyGxDpiCduC2vx03qTZjiM1HGaHW
-	L05AWjOyuZahhZxN+Xy5s08Qam8kdietDR36oNQsloAeSD4Xg/YzLuvuEfnZlT6IE9Q6oMZZAgT
-	j2PBBIYinQgO/MGwnPAPl0/Um6ANSA6kHollTELLN5AO0kDnNM0RRudkRY=
-X-Google-Smtp-Source: AGHT+IEU2vKSpnu2XaJg/vWlfp9dLeYI801wk8Jeavg+UoypKKB1w/kg64aUyi32uf7+nu7ZgnCBAQ==
-X-Received: by 2002:a17:902:ea05:b0:212:e7c7:6bf7 with SMTP id d9443c01a7336-2150108591cmr32135295ad.4.1732708885868;
-        Wed, 27 Nov 2024 04:01:25 -0800 (PST)
-Received: from localhost.localdomain ([223.72.121.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c404sm101297915ad.40.2024.11.27.04.01.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 04:01:25 -0800 (PST)
-From: Baichuan Qi <zghbqbc@gmail.com>
-To: quic_kangyang@quicinc.com
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	markus.elfring@web.de,
-	zghbqbc@gmail.com
-Subject: Re: Re: [PATCH v3] wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
-Date: Wed, 27 Nov 2024 20:00:43 +0800
-Message-Id: <20241127120043.33873-1-zghbqbc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <6f4037b4-8084-4e1d-b339-274e25f6d317@quicinc.com>
-References: <6f4037b4-8084-4e1d-b339-274e25f6d317@quicinc.com>
+	s=arc-20240116; t=1732708862; c=relaxed/simple;
+	bh=QgTKIAqViHE740Lf3Y3MqKvVBW1/N5ycfzY/xlxCf1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DBCxeOf9AV8QjtaVvKWbGN+8BqaUi1hOaDDza2Jh5n9tIRzvoOSwT8LIUAJqROMHZzD3mkbKlHmm9eVyDU2fneNVN5AAf22aNzev/V3/nowz0eF0FDteEMeXnBhkMDS1gs+1xl3DT5Bh+pl6SUevFhg59nUfYYTTkNbEDEaF4kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT7YzdLK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 102A8C4CECC;
+	Wed, 27 Nov 2024 12:01:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732708861;
+	bh=QgTKIAqViHE740Lf3Y3MqKvVBW1/N5ycfzY/xlxCf1c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oT7YzdLKiBCmcq44isSRSMKc5Uz1Hd7uw6Rg5vj7WvClxoVJYeRoFCm2axFTT2o3X
+	 6903xnjLMB7JONzLiWwpiNpyc655og6t1OYL8ocAERtSkQsX1VNt3CSJxMkGC3/lR/
+	 L9yofk4a+mMIQX8+K/K2k9Jsg939Q8Zj4IZknuQacqBwOQ9MjPZY/Z55U71xX6D6u4
+	 Yw/hWY5p+wz7rCRXRV+82KL8AIFBwUd7BdnkJ3Kt3eaUBSgPRG/vD7EPtfeO3SfeAa
+	 MB0DPd0YsOD+lbbNaQCVc5DTkZnyBt62YJ783JYL14b1lfXWnJi2sqGSmqfWdwPlEH
+	 DB+OcfBdu5X5g==
+Date: Wed, 27 Nov 2024 17:30:57 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine subsystem updates for v6.13
+Message-ID: <Z0cJ+c0vvFZIu7I4@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4DyqYUULOFqIf2SU"
+Content-Disposition: inline
 
-thanks for your reply
 
-thanks for your help. With your help and Documentation 
-I now understand how to write patch change logs.
+--4DyqYUULOFqIf2SU
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Baichuan Qi
+Hey Linus,
+
+Please pull to receive the dmaengine subsystem updates for v6.13. This
+includes couple of new device support and updates to bunch of drivers
+including the platform_driver remove update.
+
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-6.13-rc1
+
+for you to fetch changes up to 8974f34de2ef173470a596a4dee22f4922583d1b:
+
+  dmaengine: loongson2-apb: Rename the prefix ls2x to loongson2 (2024-10-23=
+ 11:05:45 +0530)
+
+----------------------------------------------------------------
+dmaengine updates for v6.13
+
+ New support:
+  - Qualcomm SAR2130P GPI dma support
+  - Sifive PIC64GX pdma support
+  - Rcar r7s72100 support and associated updates
+
+ Updates:
+  - STM32 DMA3 updates for packing/unpacking mode and prevention of
+    additional xfers
+  - Simplification of devm_acpi_dma_controller_register() and associate
+    cleanup including headers
+  - loongson prefix renames
+  - Switch back to platform_driver::remove() subsystem update
+
+----------------------------------------------------------------
+Advait Dhamorikar (1):
+      dmaengine: ep93xx: Fix unsigned compared against 0
+
+Amelie Delaunay (6):
+      dt-bindings: dma: stm32-dma3: prevent packing/unpacking mode
+      dmaengine: stm32-dma3: prevent pack/unpack thanks to DT configuration
+      dmaengine: stm32-dma3: refactor HW linked-list to optimize memory acc=
+esses
+      dt-bindings: dma: stm32-dma3: prevent additional transfers
+      dmaengine: stm32-dma3: prevent LL refactoring thanks to DT configurat=
+ion
+      dmaengine: stm32-dma3: clamp AXI burst using match data
+
+Andy Shevchenko (3):
+      dmaengine: acpi: Drop unused devm_acpi_dma_controller_free()
+      dmaengine: acpi: Simplify devm_acpi_dma_controller_register()
+      dmaengine: acpi: Clean up headers
+
+Binbin Zhou (1):
+      dmaengine: loongson2-apb: Rename the prefix ls2x to loongson2
+
+Dmitry Baryshkov (1):
+      dt-bindings: dma: qcom,gpi: Add SAR2130P compatible
+
+Fenghua Yu (1):
+      dmaengine: idxd: Move DSA/IAA device IDs to IDXD driver
+
+Pierre-Henry Moussay (1):
+      dt-bindings: dma: sifive pdma: Add PIC64GX to compatibles
+
+Uwe Kleine-K=F6nig (1):
+      dmaengine: Switch back to struct platform_driver::remove()
+
+Wolfram Sang (3):
+      dmaengine: sh: rz-dmac: handle configs where one address is zero
+      dt-bindings: dma: rz-dmac: Document RZ/A1H SoC
+      dmaengine: sh: rz-dmac: add r7s72100 support
+
+Yan Zhen (1):
+      dmaengine: fix typo in the comment
+
+ .../devicetree/bindings/dma/qcom,gpi.yaml          |   1 +
+ .../devicetree/bindings/dma/renesas,rz-dmac.yaml   |  29 +++--
+ .../bindings/dma/sifive,fu540-c000-pdma.yaml       |  15 ++-
+ .../bindings/dma/stm32/st,stm32-dma3.yaml          |   6 +
+ Documentation/driver-api/driver-model/devres.rst   |   1 -
+ MAINTAINERS                                        |   4 +-
+ arch/loongarch/configs/loongson3_defconfig         |   2 +-
+ drivers/dma/Kconfig                                |  28 ++---
+ drivers/dma/Makefile                               |   2 +-
+ drivers/dma/acpi-dma.c                             |  43 ++------
+ drivers/dma/altera-msgdma.c                        |   2 +-
+ drivers/dma/amd/qdma/qdma.c                        |   2 +-
+ drivers/dma/apple-admac.c                          |   2 +-
+ drivers/dma/at_hdmac.c                             |   2 +-
+ drivers/dma/at_xdmac.c                             |   2 +-
+ drivers/dma/bcm-sba-raid.c                         |   2 +-
+ drivers/dma/bcm2835-dma.c                          |   2 +-
+ drivers/dma/bestcomm/bestcomm.c                    |   2 +-
+ drivers/dma/dma-jz4780.c                           |   2 +-
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c     |   2 +-
+ drivers/dma/dw/platform.c                          |   2 +-
+ drivers/dma/ep93xx_dma.c                           |   3 +-
+ drivers/dma/fsl-edma-main.c                        |   2 +-
+ drivers/dma/fsl-qdma.c                             |   2 +-
+ drivers/dma/fsl_raid.c                             |   2 +-
+ drivers/dma/fsldma.c                               |   2 +-
+ drivers/dma/idma64.c                               |   2 +-
+ drivers/dma/idxd/registers.h                       |   4 +
+ drivers/dma/img-mdc-dma.c                          |   2 +-
+ drivers/dma/imx-dma.c                              |   2 +-
+ drivers/dma/imx-sdma.c                             |   2 +-
+ drivers/dma/k3dma.c                                |   2 +-
+ .../dma/{ls2x-apb-dma.c =3D> loongson2-apb-dma.c}    |   6 +-
+ drivers/dma/mcf-edma-main.c                        |   2 +-
+ drivers/dma/mediatek/mtk-cqdma.c                   |   2 +-
+ drivers/dma/mediatek/mtk-hsdma.c                   |   2 +-
+ drivers/dma/mediatek/mtk-uart-apdma.c              |   2 +-
+ drivers/dma/milbeaut-hdmac.c                       |   2 +-
+ drivers/dma/milbeaut-xdmac.c                       |   2 +-
+ drivers/dma/mmp_pdma.c                             |   2 +-
+ drivers/dma/mmp_tdma.c                             |   2 +-
+ drivers/dma/moxart-dma.c                           |   2 +-
+ drivers/dma/mpc512x_dma.c                          |   2 +-
+ drivers/dma/mv_xor_v2.c                            |   4 +-
+ drivers/dma/nbpfaxi.c                              |   2 +-
+ drivers/dma/owl-dma.c                              |   2 +-
+ drivers/dma/ppc4xx/adma.c                          |   2 +-
+ drivers/dma/pxa_dma.c                              |   2 +-
+ drivers/dma/qcom/bam_dma.c                         |   2 +-
+ drivers/dma/qcom/hidma.c                           |   2 +-
+ drivers/dma/qcom/qcom_adm.c                        |   2 +-
+ drivers/dma/sa11x0-dma.c                           |   2 +-
+ drivers/dma/sf-pdma/sf-pdma.c                      |   4 +-
+ drivers/dma/sh/Kconfig                             |   8 +-
+ drivers/dma/sh/rcar-dmac.c                         |   2 +-
+ drivers/dma/sh/rz-dmac.c                           |  29 ++---
+ drivers/dma/sh/shdma-base.c                        |   2 +-
+ drivers/dma/sh/shdmac.c                            |   2 +-
+ drivers/dma/sh/usb-dmac.c                          |   4 +-
+ drivers/dma/sprd-dma.c                             |   2 +-
+ drivers/dma/st_fdma.c                              |   2 +-
+ drivers/dma/stm32/stm32-dma3.c                     | 121 +++++++++++++++++=
+----
+ drivers/dma/sun4i-dma.c                            |   2 +-
+ drivers/dma/sun6i-dma.c                            |   2 +-
+ drivers/dma/tegra186-gpc-dma.c                     |   2 +-
+ drivers/dma/tegra20-apb-dma.c                      |   2 +-
+ drivers/dma/tegra210-adma.c                        |   2 +-
+ drivers/dma/ti/cppi41.c                            |   2 +-
+ drivers/dma/ti/edma.c                              |   2 +-
+ drivers/dma/ti/omap-dma.c                          |   2 +-
+ drivers/dma/timb_dma.c                             |   2 +-
+ drivers/dma/txx9dmac.c                             |   4 +-
+ drivers/dma/uniphier-mdmac.c                       |   2 +-
+ drivers/dma/uniphier-xdmac.c                       |   2 +-
+ drivers/dma/xgene-dma.c                            |   2 +-
+ drivers/dma/xilinx/xdma.c                          |   2 +-
+ drivers/dma/xilinx/xilinx_dma.c                    |   2 +-
+ drivers/dma/xilinx/xilinx_dpdma.c                  |   2 +-
+ drivers/dma/xilinx/zynqmp_dma.c                    |   4 +-
+ include/linux/acpi_dma.h                           |   9 +-
+ include/linux/pci_ids.h                            |   3 -
+ 81 files changed, 266 insertions(+), 184 deletions(-)
+ rename drivers/dma/{ls2x-apb-dma.c =3D> loongson2-apb-dma.c} (99%)
+
+
+--=20
+~Vinod
+
+--4DyqYUULOFqIf2SU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmdHCfYACgkQfBQHDyUj
+g0frNBAAxEJd6NQcxht93fyO67HQKEFCA3jmGtGw2Lc52PG41ksFKbXfmAJ8REXP
+/u/9c6XDr7Nk7Q3EBP4QnZ8WXsmxeI9X/t1vRJhB6hKxqQpQgEuq/o/QiTO97Odx
+iKDjX7PcdsOHm8aN5Nj4GSoucmHOPU0OnLTsaGPP0L1aVykbb9xfB3rBG7aCmdII
++ZhsBzghsXRpu3ywBuEOVK6b6faozcoCIpyQiSHHLUYF4oxXh4e7eXAlCOVlzBF5
+sW1WGFoAm8JP4YelrYqqHdcxd6+xL+A15YubcbE/esZELHj1vjA1i2I6gQXzfByc
+pThdELEF80fcKxM2QtJ7EHC5LRB9ujNr7JANjfiDWqJL5NlxvzjFwqTotuopvlpX
+bghKPU90ubOYCQ3DRdk24DTYtuVVql0SalwPEX5PpfNh74N3maUAErxl6T0CcYjW
+rtVisHHRu+SuMi/M4CcRPzNvTQvd3bAL3E02BS6Wbf3I5KpZ/+swyLu6EMAmvGDr
+CRJKghLSWwIkvksancIvKgS7fLmfdMllstvPQkN6lTzwK5nTWo9njzE36j7RZoBB
+yI2E/uvlIlzFwW7COOb2K78A7HnypFhX/Fwgy6S0y//Y1BvtWw0BpBpyb0OL+yCJ
+ELmLpOiik2FJjUNJDFdAGxTlgm1OQAJ3C48eQpMrZgprP6wn7xI=
+=8ChM
+-----END PGP SIGNATURE-----
+
+--4DyqYUULOFqIf2SU--
 
