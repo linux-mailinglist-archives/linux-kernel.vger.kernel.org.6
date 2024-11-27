@@ -1,232 +1,210 @@
-Return-Path: <linux-kernel+bounces-423218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121C49DA47F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:10:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F34E166840
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:10:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F551917F1;
-	Wed, 27 Nov 2024 09:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="FEulM0L5"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539869DA480
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:10:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB8D13D278
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BC9283128
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:10:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D87191F79;
+	Wed, 27 Nov 2024 09:10:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298B31917F0;
+	Wed, 27 Nov 2024 09:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732698622; cv=none; b=L3d3+kh5AnFZvmyy8/OETCI71yA03NMmfefG8iVsdzqQXELC+bppkdxuFJrziM3qcaSAaW9TKbQSwD5xFPMSRzsLFOpjmz0Gp5EsQq9zLgfy5HJkDXALzdb9q9wu2L47ahfvEl6EkKW9AwtewiHxoik+jWT68/daYZA9mdt+gFw=
+	t=1732698645; cv=none; b=I3G5TIp6TqCggTMcPzhtIVkpEj2AM9ZEfJVwQlfCBUtSac9gVAZ4F5pRl8My9NILi7EogHKmcELz2w4qJw7BDQuL6RULGaPj2nFg8fA+UK0O8r3QQtIHRmLYMQHBX5NvjOz2rh1Cw+4zHigfNxX+MD2fuqcSb5soFfjdJox7LpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732698622; c=relaxed/simple;
-	bh=hpDLBCdbGdTdFSY4K0Qh9jPtofesEm5a5nlLW3lbPU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D6DJydt/5aVZujkcAHrtxpEnyOjlTQHpfya43MFzGy8J7GZ5Gh+E6UYYbF7HCR5igIiYvp8QW7MyOYGTp09m45IFPbtxfjYkxQO8DD8nJeBKMcCf2PvpoAbdMtA//sqw0IgaP1dRBkNbH6nYFtdlGVT/eGonrBcxdSEjDs5SrUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=FEulM0L5; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id GB5ptAS9JiA19GE3kt2CZn; Wed, 27 Nov 2024 09:10:09 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id GE3jtw4cSbs9MGE3jtWpEO; Wed, 27 Nov 2024 09:10:08 +0000
-X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=6746e1f0
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=fxJcL_dCAAAA:8
- a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8 a=cpyHj8QvAAAA:8
- a=3NIWOPH5CBuVwF1X97IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=BPjOrAZP5zzvMhA9psHf:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GqtkfVVYic8rQ+D3s0qU79yYthugsmls5EFK56/2Dy4=; b=FEulM0L59Tlkdi8oez6qedCJe3
-	smdPuxhpHeLrBoJN43uFgUjShNY3ep5R7MDTlub/T1Bzet5e/UcdtMwY8jtedUIpDcKHHlXBR3s4v
-	nAKldR77FWUFz7C2iSkP9eA8JbFr7BmlBMHThLvMeFGhS83CwxMpgJMuY4cA2JYnullAKqRwyTh3k
-	PJzl8CG0QWBNMIvxoyvM6O5bidf0MGESHvxlWS9F1uA5rWHgm0LYIJuOnFEJqVb3Ma+8ihH6TRbDh
-	JNSDQERCcTaBfydHdG5+pgTUBfirlqlg2hlQqv4xDM1Ms1ZxCginQm7XIHj6hR0dfIjO13NSnGyhk
-	68RiFTVg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:40038 helo=[10.0.1.115])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1tGE3j-000rwh-0o;
-	Wed, 27 Nov 2024 02:10:07 -0700
-Message-ID: <e55645d9-6e50-4b1b-b413-6a0f5acb6095@w6rz.net>
-Date: Wed, 27 Nov 2024 01:10:05 -0800
+	s=arc-20240116; t=1732698645; c=relaxed/simple;
+	bh=cILoJznEakS0xNgdjT3evu4plynf+BdBXLdjjw9AWDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q7ajnjJJOqXCZLoPmrBqGSz9Mme7Ta3J5i/wHYr5Lr96/KCMMM1CtyzrNNxCB5POFWxC/Ok2wAAKgIeF6D/2KTCRwUB69OQXkiFac4ut1rr3Qzb8GXBG9lrzKj1YbvESmyDiBCE1MoA2FL/OwIQm1VQpVFRIwCe63bhBqci/dAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B1FC4CECC;
+	Wed, 27 Nov 2024 09:10:44 +0000 (UTC)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev
+Subject: [PATCH] extcon: Switch back to struct platform_driver::remove()
+Date: Wed, 27 Nov 2024 10:10:36 +0100
+Message-ID: <20241127091036.444330-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps: error:
- Unmet build dependencies: libssl-dev) in 6.12
-To: Frank Wunderlich <frank-w@public-files.de>, masahiroy@kernel.org
-Cc: nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
- <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
- <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5936; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=HiJ/B4IqM+rtiSxxWBmvwXK8XCoFKN73GWiVFlpTVi8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnRuIMwh04I1vIABkUihVEaJ3Wy7+eZeSSicbSa PdQU+ciauaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ0biDAAKCRCPgPtYfRL+ TilZCACjIMygkN6dpbwYNqk0Yq0kEb8n000WKi88V6vryVSqCnBGNDibb7Q5Ah83cc89iHLKcyT iRvU9JBV6p97+9AueWD4cxDbuGKXWGLgdyxcKihxq4Zp2RVHffWTlZjafBJOv2RyXRuRvjJUQkL FhKkLuQr1vJHuPJ7wG+M6YoIngQ5oeSPoQJXkNw88TvvOyGWL6JGDZEq/PBuF9dmqZBEaeTOXw5 yGSZsu/vcSyzPz+qbzCGHkDo6+XD8il3+b6o2Yw7++yU1P0/fVjD+/Tbcc7belPRpfV+KBNpuyn b486u7X6srPfsgYiXkoeFRC1+GlvNMLCYl3XpyInDnYTLEPr
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tGE3j-000rwh-0o
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:40038
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 1
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfI5BTiZFZDcSFM0JgTVL7UqhxWQwGop2rjx7RA27AYPOPG+SdXtkU+oGbiiVpbIZ1dTpzGX3YCPfwe6/Ii3gGIK1DFr2ImPoDdA3ljVkYw6G5bCQeB0Y
- ds9TKXIAXryHKp8bJgzfY3mUtAb61MhtwDoAuB9pKfjpqNJ9xWd5NoyHFIxd1LrrVN8TcQcCrVnNB/pBMjQktvU9ewW1wckvE0Q=
 
-On 11/26/24 09:12, Frank Wunderlich wrote:
-> &gt; Gesendet: Donnerstag, 21. November 2024 um 23:09
-> &gt; Von: "Masahiro Yamada" <masahiroy@kernel.org>
-> &gt; An: "Frank Wunderlich" <frank-w@public-files.de>
-> &gt; CC: re@w6rz.net, nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-> &gt; Betreff: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev) in 6.12
-> &gt;
-> &gt; On Fri, Nov 22, 2024 at 2:09 AM Frank Wunderlich
-> &gt; <frank-w@public-files.de> wrote:
-> &gt; &gt;
-> &gt; &gt; Hi,
-> &gt; &gt;
-> &gt; &gt; i noticed this issue with debian package build-system in final 6.12.
-> &gt; &gt;
-> &gt; &gt; LOCALVERSION=-main board=bpi-r2 ARCH=arm CROSS_COMPILE=ccache arm-linux-gnueabihf-
-> &gt; &gt; make[1]: Entering directory '/media/data_ext/git/kernel/build'
-> &gt; &gt;   GEN     debian
-> &gt; &gt; dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
-> &gt; &gt; dpkg-buildpackage: info: source package linux-upstream
-> &gt; &gt; dpkg-buildpackage: info: source version 6.12.0-00061-g837897c10f69-3
-> &gt; &gt; dpkg-buildpackage: info: source distribution noble
-> &gt; &gt; dpkg-buildpackage: info: source changed by frank <frank@frank-u24>
-> &gt; &gt; dpkg-buildpackage: info: host architecture armhf
-> &gt; &gt;  dpkg-source --before-build .
-> &gt; &gt; dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
-> &gt;
-> &gt; This error message means, you need to install "libssl-dev:armhf"
-> &gt;
-> &gt;
-> &gt; &gt; dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
-> &gt; &gt; dpkg-buildpackage: warning: (Use -d flag to override.)
-> &gt; &gt; make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4.14/scripts/Makefile.package:126: bindeb-pkg] Error 3
-> &gt; &gt;
-> &gt; &gt; it was ok in at least rc1 and libssl-dev is installed
-> &gt;
-> &gt;
-> &gt; Presumably, you already installed libssl-dev for your build machine
-> &gt; (i.e. "libssl-dev:amd64" if your build machine is x86_64).
-> &gt;
-> &gt; But, you have not installed "libssl-dev" for the architecture
-> &gt; your are building for (i.e, "libssl-dev:armhf")
->
-> Hi
->
-> thank you for answer, why is this lib required for the arch? it makes my pipeline very complex
-> just to add the repos for the arch...seems the lib is not yet used, only checked if installed.
->
-> looks like ubuntu 24 seems to have changed the sources.list for apt, so there is no single-line to
-> be added
->
-> this is the default apt-source in ubuntu 24:
->
-> $ cat /etc/apt/sources.list.d/ubuntu.sources
-> Types: deb
-> URIs: http://de.archive.ubuntu.com/ubuntu/
-> Suites: noble noble-updates noble-backports
-> Components: main restricted universe multiverse
-> Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
->
-> Types: deb
-> URIs: http://security.ubuntu.com/ubuntu/
-> Suites: noble-security
-> Components: main restricted universe multiverse
-> Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
->
-> if i just add the arches
->
-> sudo dpkg --add-architecture armhf
-> sudo dpkg --add-architecture arm64
->
-> apt seems to add the repos on update, but i still cannot install the packages
->
-> $ LANG=C sudo apt install libssl-dev:armhf
-> Reading package lists... Done
-> Building dependency tree... Done
-> Reading state information... Done
-> E: Unable to locate package libssl-dev:armhf
->
-> $ LANG=C sudo apt install libssl-dev:arm64
-> Reading package lists... Done
-> Building dependency tree... Done
-> Reading state information... Done
-> E: Unable to locate package libssl-dev:arm64
->
-> if i revert the commit below, my build is successful without installing the lib.
->
-> afaik the -dev are source-packages (headers) which should be architecture independ, or am i missing something?
->
-> regards Frank
->
-> &gt; &gt;
-> &gt; &gt; basicly i use this command after setting crosscompiler
-> &gt; &gt;
-> &gt; &gt; LOCALVERSION="${gitbranch}" board="$board" KDEB_COMPRESS=gzip make bindeb-pkg
-> &gt; &gt;
-> &gt; &gt; if i Revert "kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile"
-> &gt; &gt;
-> &gt; &gt; i can compile again..any idea why this happens? my build-system is ubuntu 24.4 and github actions with ubuntu-latest.
-> &gt; &gt;
-> &gt; &gt; https://github.com/frank-w/BPI-Router-Linux/actions/runs/11955322294/job/33327423877
-> &gt; &gt;
-> &gt; &gt; regards Frank</frank@frank-u24>
-> &gt;
-> &gt;
-> &gt;
-> &gt; --
-> &gt; Best Regards
-> &gt; Masahiro Yamada
-> &gt; </frank-w@public-files.de></frank-w@public-files.de></masahiroy@kernel.org>
+From: Uwe Kleine-König <ukleinek@kernel.org>
 
-Here's what worked for me in /etc/apt/sources.list.d/ubuntu.sources for 
-24.04.
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
-Types: deb
-URIs: http://ports.ubuntu.com/ubuntu-ports
-Suites: noble noble-updates noble-backports
-Components: main universe restricted multiverse
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-Architectures: riscv64
+Convert all platform drivers below drivers/extcon to use .remove(), with
+the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
-The library is used here:
+En passant make the alignment of the struct initializer in
+extcon-usbc-cros-ec.c consistent.
 
-https://github.com/torvalds/linux/blob/master/scripts/sign-file.c#L25
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-That file is now cross-compiled.
+given the simplicity of the individual changes I do this all in a single
+patch. I you don't agree, please tell and I will happily split it.
+
+It's based on today's next, feel free to drop changes that result in a
+conflict when you come around to apply this. I'll care for the fallout
+at a later time then. (Having said that, if you use b4 am -3 and git am
+-3, there should be hardly any conflict.)
+
+Best regards
+Uwe
+
+ drivers/extcon/extcon-adc-jack.c     | 2 +-
+ drivers/extcon/extcon-intel-cht-wc.c | 2 +-
+ drivers/extcon/extcon-intel-mrfld.c  | 2 +-
+ drivers/extcon/extcon-max3355.c      | 2 +-
+ drivers/extcon/extcon-max77843.c     | 2 +-
+ drivers/extcon/extcon-rtk-type-c.c   | 2 +-
+ drivers/extcon/extcon-usb-gpio.c     | 2 +-
+ drivers/extcon/extcon-usbc-cros-ec.c | 6 +++---
+ 8 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/extcon/extcon-adc-jack.c b/drivers/extcon/extcon-adc-jack.c
+index 125016da7fde..46c40d85c2ac 100644
+--- a/drivers/extcon/extcon-adc-jack.c
++++ b/drivers/extcon/extcon-adc-jack.c
+@@ -196,7 +196,7 @@ static SIMPLE_DEV_PM_OPS(adc_jack_pm_ops,
+ 
+ static struct platform_driver adc_jack_driver = {
+ 	.probe          = adc_jack_probe,
+-	.remove_new     = adc_jack_remove,
++	.remove         = adc_jack_remove,
+ 	.driver         = {
+ 		.name   = "adc-jack",
+ 		.pm = &adc_jack_pm_ops,
+diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
+index 93552dc3c895..8131a3d7d562 100644
+--- a/drivers/extcon/extcon-intel-cht-wc.c
++++ b/drivers/extcon/extcon-intel-cht-wc.c
+@@ -627,7 +627,7 @@ MODULE_DEVICE_TABLE(platform, cht_wc_extcon_table);
+ 
+ static struct platform_driver cht_wc_extcon_driver = {
+ 	.probe = cht_wc_extcon_probe,
+-	.remove_new = cht_wc_extcon_remove,
++	.remove = cht_wc_extcon_remove,
+ 	.id_table = cht_wc_extcon_table,
+ 	.driver = {
+ 		.name = "cht_wcove_pwrsrc",
+diff --git a/drivers/extcon/extcon-intel-mrfld.c b/drivers/extcon/extcon-intel-mrfld.c
+index a1f737f13d49..9219f4328d70 100644
+--- a/drivers/extcon/extcon-intel-mrfld.c
++++ b/drivers/extcon/extcon-intel-mrfld.c
+@@ -275,7 +275,7 @@ static struct platform_driver mrfld_extcon_driver = {
+ 		.name	= "mrfld_bcove_pwrsrc",
+ 	},
+ 	.probe		= mrfld_extcon_probe,
+-	.remove_new	= mrfld_extcon_remove,
++	.remove		= mrfld_extcon_remove,
+ 	.id_table	= mrfld_extcon_id_table,
+ };
+ module_platform_driver(mrfld_extcon_driver);
+diff --git a/drivers/extcon/extcon-max3355.c b/drivers/extcon/extcon-max3355.c
+index e62ce7a8d131..b2ee4ff8b04d 100644
+--- a/drivers/extcon/extcon-max3355.c
++++ b/drivers/extcon/extcon-max3355.c
+@@ -127,7 +127,7 @@ MODULE_DEVICE_TABLE(of, max3355_match_table);
+ 
+ static struct platform_driver max3355_driver = {
+ 	.probe		= max3355_probe,
+-	.remove_new	= max3355_remove,
++	.remove		= max3355_remove,
+ 	.driver		= {
+ 		.name	= "extcon-max3355",
+ 		.of_match_table = max3355_match_table,
+diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
+index 9849e3b8327e..2ae9f7f1a67f 100644
+--- a/drivers/extcon/extcon-max77843.c
++++ b/drivers/extcon/extcon-max77843.c
+@@ -956,7 +956,7 @@ static struct platform_driver max77843_muic_driver = {
+ 		.of_match_table = of_max77843_muic_dt_match,
+ 	},
+ 	.probe		= max77843_muic_probe,
+-	.remove_new	= max77843_muic_remove,
++	.remove		= max77843_muic_remove,
+ 	.id_table	= max77843_muic_id,
+ };
+ 
+diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-rtk-type-c.c
+index 19a01e663733..bdc2b7b3a246 100644
+--- a/drivers/extcon/extcon-rtk-type-c.c
++++ b/drivers/extcon/extcon-rtk-type-c.c
+@@ -1778,7 +1778,7 @@ static const struct dev_pm_ops extcon_rtk_type_c_pm_ops = {
+ 
+ static struct platform_driver extcon_rtk_type_c_driver = {
+ 	.probe		= extcon_rtk_type_c_probe,
+-	.remove_new	= extcon_rtk_type_c_remove,
++	.remove		= extcon_rtk_type_c_remove,
+ 	.driver		= {
+ 		.name	= "extcon-rtk-type_c",
+ 		.of_match_table = extcon_rtk_type_c_match,
+diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-usb-gpio.c
+index 9b61eb99b7dc..5e8ad21ad206 100644
+--- a/drivers/extcon/extcon-usb-gpio.c
++++ b/drivers/extcon/extcon-usb-gpio.c
+@@ -279,7 +279,7 @@ MODULE_DEVICE_TABLE(platform, usb_extcon_platform_ids);
+ 
+ static struct platform_driver usb_extcon_driver = {
+ 	.probe		= usb_extcon_probe,
+-	.remove_new	= usb_extcon_remove,
++	.remove		= usb_extcon_remove,
+ 	.driver		= {
+ 		.name	= "extcon-usb-gpio",
+ 		.pm	= &usb_extcon_pm_ops,
+diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
+index 805a47230689..529ac5898e38 100644
+--- a/drivers/extcon/extcon-usbc-cros-ec.c
++++ b/drivers/extcon/extcon-usbc-cros-ec.c
+@@ -525,12 +525,12 @@ MODULE_DEVICE_TABLE(of, extcon_cros_ec_of_match);
+ 
+ static struct platform_driver extcon_cros_ec_driver = {
+ 	.driver = {
+-		.name  = "extcon-usbc-cros-ec",
++		.name = "extcon-usbc-cros-ec",
+ 		.of_match_table = of_match_ptr(extcon_cros_ec_of_match),
+ 		.pm = DEV_PM_OPS,
+ 	},
+-	.remove_new = extcon_cros_ec_remove,
+-	.probe   = extcon_cros_ec_probe,
++	.remove = extcon_cros_ec_remove,
++	.probe = extcon_cros_ec_probe,
+ };
+ 
+ module_platform_driver(extcon_cros_ec_driver);
+
+base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+-- 
+2.45.2
 
 
