@@ -1,216 +1,128 @@
-Return-Path: <linux-kernel+bounces-423001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C669DA117
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:17:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C69A9DA121
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:30:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA48168349
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:30:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E966126BF5;
+	Wed, 27 Nov 2024 03:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mV4eMxIS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 263E9B22718
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:17:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4787581A;
-	Wed, 27 Nov 2024 03:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="abCvyCLl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="91HwI6qF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="abCvyCLl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="91HwI6qF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A0B15C0;
-	Wed, 27 Nov 2024 03:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCBD2907;
+	Wed, 27 Nov 2024 03:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732677445; cv=none; b=mIRqMPqaTeILSiz75K6RHdOmospaUaLInYnLeYoFvur9sq0J4Pua8Yiafxg9vDS1tK1dxJxclMRC5NhwQH5dyArc0vONdarhD2zfnzyXbc9M5M4okdWdHqAz8FXQ+O7dkxkP1yHye1tBYpacJlZCJ8RORaJZEXPwhPPlvg9thcs=
+	t=1732678230; cv=none; b=FthB71UCapJJybj3Z18lRgDBQfNvNNTeq+w5v20w9jleCbNaE25HdPIlav7UsSHhUlti+yZStVTcDcnjgFD+ZKh8/rSWsKiTgjnl7XTlYf6lHQ44KJBx33IpX31PNxZHEZUnSjzv7MO/a/st2WVayJQfte4WYxc4i60JtuzspsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732677445; c=relaxed/simple;
-	bh=7hssgipUOAkhjejCsuRKLDuJDq27eMRBSF25vQXFmHg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NkgD8O0jRkqhKBBNKTHyed1OuR0T5YqKywJlJ9rMcTOksxeZu+KeB/gxlFjru1Zae4hFu+/TU1d+eWYEbr2yiK8xwuDqwlYXLFreIDQfWXHo7BprpKwBlimQ5LDJPuKG4v2ltSFntrL0d7OCR//fWoO27u3lg4+QPuzTT5d5/wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=abCvyCLl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=91HwI6qF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=abCvyCLl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=91HwI6qF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0789621164;
-	Wed, 27 Nov 2024 03:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732677441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jATjBtB2OGVhywDyqkSVuR6RGqt1WfVDdmwiHU0e0ng=;
-	b=abCvyCLlTSo2+k30H/RwkhESOy1z5Ac1OjjN8XisisPhXMFvnVWNOPhlQh3jpF5XpLkAEN
-	MuBHiM2TaAuNNWw1gEbC9DD0iQDTq9Pxn6iJVS15D8x2XYEqoiAnQHjGaF8AnonI84+XEl
-	ItXONFEex0yEty/nuVUayh+p6fifCKE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732677441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jATjBtB2OGVhywDyqkSVuR6RGqt1WfVDdmwiHU0e0ng=;
-	b=91HwI6qFUKaYPUizYHkfSO1/eLgX02u4L9fnhqUfxjYHE4ioMmcyCKFNV1/Ww6FzQ0jlTj
-	WGkjuigjgzuf9ABw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=abCvyCLl;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=91HwI6qF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732677441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jATjBtB2OGVhywDyqkSVuR6RGqt1WfVDdmwiHU0e0ng=;
-	b=abCvyCLlTSo2+k30H/RwkhESOy1z5Ac1OjjN8XisisPhXMFvnVWNOPhlQh3jpF5XpLkAEN
-	MuBHiM2TaAuNNWw1gEbC9DD0iQDTq9Pxn6iJVS15D8x2XYEqoiAnQHjGaF8AnonI84+XEl
-	ItXONFEex0yEty/nuVUayh+p6fifCKE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732677441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jATjBtB2OGVhywDyqkSVuR6RGqt1WfVDdmwiHU0e0ng=;
-	b=91HwI6qFUKaYPUizYHkfSO1/eLgX02u4L9fnhqUfxjYHE4ioMmcyCKFNV1/Ww6FzQ0jlTj
-	WGkjuigjgzuf9ABw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D679313983;
-	Wed, 27 Nov 2024 03:17:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0HeJIj6PRmdLVwAAD6G6ig
-	(envelope-from <colyli@suse.de>); Wed, 27 Nov 2024 03:17:18 +0000
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1732678230; c=relaxed/simple;
+	bh=kAoUKD6I9Idt9A7gBnC+EIuGZjgnMDBWAWNSrbzJe48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nHg+4ZvBRhqh2WZ0ACYo589I61GH8LZNqRu27y0erSlyDrmmtdMgX876amv76RIVGuTKjKWEoUeCiiJ+Ix8qKc2AvZFOkL5nZZfHb1cen7zNR3P3FZkRJdvRAeeec9o6ibIvrhR3kjmbexhm6bY64nvA5kBwh8hfG0i3TUTgLqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mV4eMxIS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKLNpo002279;
+	Wed, 27 Nov 2024 03:30:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=H/ZqM4m6sxQEHNM7Z0bOJ7ATOmXavcpjuro
+	rZKZnNiE=; b=mV4eMxISw4EKNqMHEoHQg3bXWq7QiyOOeUM/Lq6Tk/YXOKnIesr
+	/JkJv5roHwTO0GkYykkhrYervrbaigRyhiRqf7m2mByL2wsTtjLSRIkIW8/FBmH5
+	3CxeWTGYrxjyAwXvPsktl7NDPf/2/DvRtjLbx0BQPIO5ydkB35+vPBc20hSHYXaH
+	+22cf+Q3cQzMO9vaQg8oQWEXVy1lehenqxA2Zbu2SXlXoica0pybBdiZUhf5AoJW
+	nNLQAHfk+gGdpZ2o/sDnq3x7hPoPZZHejLf1Fek7E5fACz1j5574kbG/pJCzfqc1
+	iV7/WGf371u5Yaou6QWnxjTbGTPk9SKM2KA==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336cft7mm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 03:30:25 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR3UMxj015635;
+	Wed, 27 Nov 2024 03:30:22 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 43384kk8nf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 03:30:22 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AR3UMqm015630;
+	Wed, 27 Nov 2024 03:30:22 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4AR3ULrV015629
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 03:30:22 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
+	id 07F2C18BF; Wed, 27 Nov 2024 11:18:34 +0800 (CST)
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: quic_tingweiz@quicinc.com, quic_zhgao@quicinc.com,
+        quic_yuanjiey@quicinc.com
+Subject: [PATCH v1] mmc: sdhci-msm: Enable aggressive PM
+Date: Wed, 27 Nov 2024 11:17:08 +0800
+Message-Id: <20241127031708.2343727-1-quic_yuanjiey@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH V3] bcache: revert replacing IS_ERR_OR_NULL with IS_ERR
- again
-From: Coly Li <colyli@suse.de>
-In-Reply-To: <CAAsfc_pxrz1bcfo=29-qPuZhEEffbK5=LYGeNRV9gf=vfyp8Aw@mail.gmail.com>
-Date: Wed, 27 Nov 2024 11:17:01 +0800
-Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- linux-bcache <linux-bcache@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7B52DB03-5E27-4F61-AE1A-11081B12E4BE@suse.de>
-References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
- <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
- <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
- <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
- <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
- <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
- <0CFF2B9E-4E40-480D-9F3B-F7631FE3CEA5@suse.de>
- <A86AAB66-C89A-4A37-8416-F9A99D4630D8@suse.de>
- <CAAsfc_pxrz1bcfo=29-qPuZhEEffbK5=LYGeNRV9gf=vfyp8Aw@mail.gmail.com>
-To: liequan che <liequanche@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
-X-Rspamd-Queue-Id: 0789621164
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[easystack.cn,gmail.com,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	APPLE_MAILER_COMMON(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,inspur.com:email,suse.de:email,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ONVPp5CovT5fwPcWP_OjEzHflgxIIyRJ
+X-Proofpoint-ORIG-GUID: ONVPp5CovT5fwPcWP_OjEzHflgxIIyRJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=969 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411270027
 
+The sdhci-msm driver supports the device in both RUNNING
+and IDLE states, when eMMC/SD are not reading or writing,
+eMMC/SD are in IDLE state, the power management module
+will suspend the device(power off and reduce frequency,
+etc.), putting the device into a low-power mode. But the
+current sdhci-msm driver cannot put device enter into
+low-power mode.
 
+Enable aggressive PM capability to support runtime PM
+functionality, allowing the eMMC/SD card to enter
+lowe-power mode.
 
-> 2024=E5=B9=B411=E6=9C=8827=E6=97=A5 11:01=EF=BC=8Cliequan che =
-<liequanche@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Commit 028ddcac477b ("bcache: Remove unnecessary NULL point check in
-> node allocations") leads a NULL pointer deference in =
-cache_set_flush().
->=20
-> 1721         if (!IS_ERR_OR_NULL(c->root))
-> 1722                 list_add(&c->root->list, &c->btree_cache);
->=20
-> =46rom the above code in cache_set_flush(), if previous registration =
-code
-> fails before allocating c->root, it is possible c->root is NULL as =
-what
-> it is initialized. Also __bch_btree_node_alloc() never returns NULL =
-but
-> c->root is possible to be NULL at above line 1721.
->=20
-> This patch replaces IS_ERR() by IS_ERR_OR_NULL() to fix this.
+Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index e00208535bd1..e3444d223513 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -2627,6 +2627,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
++	msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
+ 
+ 	/* Set the timeout value to max possible */
+ 	host->max_timeout_count = 0xF;
+-- 
+2.34.1
 
-OK, this time the commit log makes a lot sense. It is clear to me.
-
-
->=20
-> Fixes: 028ddcac477b ("bcache: Remove unnecessary NULL point check in
-> node allocations")
-> Signed-off-by: Liequan Che <cheliequan@inspur.com>
-> Cc: stable@vger.kernel.org
-> Cc: Zheng Wang <zyytlz.wz@163.com>
-> Cc: Coly Li <colyli@suse.de>
-> ---
-> drivers/md/bcache/super.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index e7abfdd77c3b..e42f1400cea9 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1718,7 +1718,7 @@ static CLOSURE_CALLBACK(cache_set_flush)
->        if (!IS_ERR_OR_NULL(c->gc_thread))
->                kthread_stop(c->gc_thread);
->=20
-> -       if (!IS_ERR(c->root))
-> +       if (!IS_ERR_OR_NULL(c->root))
->                list_add(&c->root->list, &c->btree_cache);
->=20
->        /*
-> =E2=80=94
-> 2.46.0
-
-It is fine to me. I am in travel these days, and will handle this patch =
-by end of this week.
-
-Thanks for composing this patch.
-
-Coly Li=
 
