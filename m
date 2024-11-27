@@ -1,144 +1,202 @@
-Return-Path: <linux-kernel+bounces-423588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8341D9DA9FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:39:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883FB9DA9FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:39:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECAF6B2105B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:39:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298AA163DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AF21FF7BE;
-	Wed, 27 Nov 2024 14:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D0A1FF7C6;
+	Wed, 27 Nov 2024 14:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZYl3n3N"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oHjNr/E7"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33581FF7AD;
-	Wed, 27 Nov 2024 14:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7121FECCB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718350; cv=none; b=Sdpk1c7Z6CgFji5mSlNX1/mDNTafVFYntGnuQjYq7zEqf7eVztevyGOGIH2Jsri1+daEIphQ+pCr8EqIrGA6Pm9G3k8nCcmxm7MCI3la1Gir720G2RRQT0HR5jrENJruwJZwXyeXi+sFnuTkahVk/hDF+6/mN1f5wAmrEYbYLvQ=
+	t=1732718324; cv=none; b=YVLl4fYupHgxnLimAcYFCd2E9MNEUcnJ1hBs1JYugfFyp75ixI/8CzZ4wjIEWGddhCs66qo15QUBp+dDIT9D0OHJae+Dq6A/8hUy6eNgFrSxD+gViEQqf9AhNswsudD55hfqjvzGlp0CR0J0yj2CA1zXmTCzYQh5x4t/GDFCfOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718350; c=relaxed/simple;
-	bh=mDQqoxIO5PKh0RoG54oJcz1aIJI+TYXjqYyt/RdxkJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CR1S48xunYDClB2RiWbg5+au9tn4e8R5waV+rFnt33jOMGKQtftaJQGoCWnN63LZdfcxi8soownAOeKId6/xXgOh5qfpz53ysYLbRDUIpxPLMLcddGVgGdWorUjbiDWjBI5yivrDSQ13q9A6dfbC+rKH3oR5Vs31JokLWyudNDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZYl3n3N; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-723f37dd76cso6707038b3a.0;
-        Wed, 27 Nov 2024 06:39:08 -0800 (PST)
+	s=arc-20240116; t=1732718324; c=relaxed/simple;
+	bh=xT97KYgdluN7ebir3nQvf+4Hgac1dq5jbrG4z+OLnsc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=knGISypSdwQedYACVM5HeFNDcZW7qBfALRz2b4BUJz59SEXOdNEakZpXAwbTW9qfA9lvojcXRB9EhX9iHvWJf+AYSoLnYP52ut+8t3Z2dE/2WNE1CL/KDddqaqKommJzAgtqWfcvlcbbD0ht079cbJD0kcuNzORSx/gSrPygwQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oHjNr/E7; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-841896ec108so375069639f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:38:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732718348; x=1733323148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uTFIHkewMEaROQgyzcIc2iMfdAKBZdNTPyDszGdNlRo=;
-        b=EZYl3n3NXUsEgIuhf3OBJrfZukQh9MVx3RplmCbwHI+Gh0b+JCPGZavBaENyH/prZG
-         CwryBcMkBd0qr4xnLjEDZvv9oCNhxmSnzRY8qIOT6wEmQ4H++cmvFmixKqkc81eoFjGu
-         R+zQX8Stty7uzGVNif6PW6AQw/OmP7N9FYIHcZqH3Jzf+3fyPjpyQ7V9OhKdaE9e5DTI
-         AlbK1aVZ9gh1s/O+C5c+24GNJuLqauLL3oIDFFND3n7wOCXkQ6fbcm0BA7yXCPWNJnin
-         l7tmvFUxg2cSvYEh0Fd5A2ADQY6Iwjb48cMGPwWXvaiBMEjKmJFiPNV69rEeQjL0ST1P
-         iVJQ==
+        d=google.com; s=20230601; t=1732718322; x=1733323122; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RcW151oQ5hondKtplla/DkVWCP6XFqg+OnT+IGOy13o=;
+        b=oHjNr/E7Gqu5IU/mx96kzhrk3/6fzB+qcYaWvWCcpANsuzVAfDCK2vKdlVmG1ei+/q
+         KYWM9uzyjkOJOiXoNiHz86igzgp69psGE2Sxm+QjpB4Y51iyqyiyxojxIfQU28EkaEpT
+         3CdXjCDxvjsRneJcfDf95BeEyb79g9kVThMFaAfGbIKsedXLwCANS1WVfJPQP+cNekDU
+         f36aNtSxyXGNq296Lze/ihooLmE75K5OMmL5ISIDi0VQ43GkwE5/f5F2F+hVekV3jS3F
+         5wABWAkIoTSjrwocQAE6EeKMHmPtOV6eFl8O6EbFZYF80agVTXizR78vXR9D1z5saZ85
+         /asQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732718348; x=1733323148;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uTFIHkewMEaROQgyzcIc2iMfdAKBZdNTPyDszGdNlRo=;
-        b=LOWSy9Z8cfXtIBmUXxJCgBGHFGnC1l8FUOVYDZGZ57A++FOOOap4b4wWws4Idp/MHN
-         HyIRkKY56t5JK9nfj1xVml1ctFhhDOBBzhyfjlotldtJlNi3ELRptJcqxxjAaV4uZFO0
-         R/TAzoW+HH6kmzl4PzzopGW39an34OwPZDmHyk8KLacxrgywbpQ/HBigzNzSyz4o9V2i
-         w1cl2q5WLwcPViZ2xK9A4meUbybGicvrX2vHqw/JYKK64uZtyR4T7DtU20+5DrJhHSeX
-         +ptirDcuML4lt8z/byklDKE4FfHNlne8U9v9x7zbBDtqNOH6EN0JNewbKYJ+z3E1OT2y
-         56pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnqfxoEZRy+1+BW9d9NcH0gaJuBCN4LEdHZyGDpKXvEER1AZnb4a8CyoOrfws+so4zrEeH5dKyMOs0XHo=@vger.kernel.org, AJvYcCWfLaP9i1L1Uc5YJW5sw2amipBBJYva9m+XB1HGiEyq83EMFVSTPWkkyFrvnCksBCi4VpuM3pQaRsWVIbqXLgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWK9AW2gSdyKnB+u0desCSD28KZh+GxuAMtHN9B9r1dDDglUlQ
-	+5Y0IB2jjz+6sWArHaooEBjc47KpyzQMPMX5DwdXxnGVOMwc3dNC
-X-Gm-Gg: ASbGncup0nd/fXQ0uF/T8cmyFHDqAml/66k3tT9VhPJ/2LoJ7dM/m5aw1P9TSfyJhgq
-	iFMGGO3f7GwinSyLr3VIp5VPSRhTlA/axTkF50zJ8NeXdsM5l34auaXrI1eKiM+HWajG1qEJ2RG
-	WLoqcKB10Nfdz+TsI5a9Ng8v/2KjXj/5s2PC0Nln/J6i9kPHM4Pc4QlfbZUmyAszSghxBrapO52
-	YPCY5SDnZifGVuns2Ofe5hmlpla4RPsLUuTJD8bGVRieM6V6ipJy8cYYoY=
-X-Google-Smtp-Source: AGHT+IEXUD2cpVkmiuKSnu34vZ5p7LGeLXhOUINW5LByyCy0AAGXpoRkp3T+IjRRZa6bkvRWJ0H7oQ==
-X-Received: by 2002:a05:6a00:b81:b0:724:fac6:35f2 with SMTP id d2e1a72fcca58-725300107f4mr3650429b3a.9.1732718347283;
-        Wed, 27 Nov 2024 06:39:07 -0800 (PST)
-Received: from localhost.localdomain ([223.72.121.77])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de456472sm10283606b3a.14.2024.11.27.06.39.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 06:39:06 -0800 (PST)
-From: Baichuan Qi <zghbqbc@gmail.com>
-To: markus.elfring@web.de
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	zghbqbc@gmail.com
-Subject: [PATCH v5] wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
-Date: Wed, 27 Nov 2024 22:38:04 +0800
-Message-Id: <20241127143804.30075-1-zghbqbc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
-References: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
+        d=1e100.net; s=20230601; t=1732718322; x=1733323122;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RcW151oQ5hondKtplla/DkVWCP6XFqg+OnT+IGOy13o=;
+        b=Kq57svNlt2gmBFfZ2bcrjLmnTCA9dHT+UZKrtmUtblbrFXzz2/w6+GmMVh55OoLtT9
+         z1Q22/r80n8Jgkdq70Hbq702JkJBTl+jsZpR/OEZ+WuEWimDRTwYZ3a0ezREuujiU2lx
+         5hU+cVxjSRiuTN1/vohEJ9nJkJ8NRPHOpw4rAj0ugICRhZysOgxi+GJzihM1KfzmgIzt
+         H3CV/Tg9eWMzT0Yi4ufXLa8tYAxkfdwUFTUDh1/Is5j5tAmwSbG6hiUOCWZZriO1XP2A
+         bL+nGBg7YffgH2YVAze3jYxK+S8wqFUhzSYfN8X5CczkbKRVKyTkeH+HbI3ix8ltLmr4
+         NgbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUn2zdU174luVckVgDMXCVKBtsxGxFUYuq7B/gx0fyi+mYa5x71hwquILLAcO0QEluI26XCqVV7X63GTF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxez1pUekghSF6jTJ66G205GEFSmBXXyNGwyMw+VFgZNVJQuXaS
+	zR2f8Fi/e9qp6d2t7Ywfs3qeGADLexpLqQShnyAhi8jTHORUtb08rHwsiiJd22PMkElklOBUVuh
+	wAQ==
+X-Google-Smtp-Source: AGHT+IG7Clebz5+ikhZk/p3e2lBnUMggo0Vrm0EMc7kyDhz6gWIVGZ5y2tr41LsMOLzWgPahBG28XOb331w=
+X-Received: from pgg13.prod.google.com ([2002:a05:6a02:4d8d:b0:7fb:db54:f065])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1e01:b0:3a7:7ee3:108d
+ with SMTP id e9e14a558f8ab-3a7c55f2783mr35486615ab.23.1732718322166; Wed, 27
+ Nov 2024 06:38:42 -0800 (PST)
+Date: Wed, 27 Nov 2024 06:38:41 -0800
+In-Reply-To: <cbcb80ee5be13d78390ff6f4a1a3c58fc849e311.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240517173926.965351-23-seanjc@google.com> <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
+ <ZoxVa55MIbAz-WnM@google.com> <3da2be9507058a15578b5f736bc179dc3b5e970f.camel@redhat.com>
+ <ZqKb_JJlUED5JUHP@google.com> <8f35b524cda53aff29a9389c79742fc14f77ec68.camel@redhat.com>
+ <ZrFLlxvUs86nqDqG@google.com> <44e7f9cba483bda99f8ddc0a2ad41d69687e1dbe.camel@redhat.com>
+ <ZuG5ULBjfQ3hv_Jb@google.com> <cbcb80ee5be13d78390ff6f4a1a3c58fc849e311.camel@redhat.com>
+Message-ID: <Z0cu8aLX7VkwmtSk@google.com>
+Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
+ aliased 0x1.EDX CPUID features
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Current implementation of `ath11k_ce_rx_post_pipe()` checks for
-NON-NULL of either `dest_ring` or `status_ring` using an OR (||).
-Both rings, especially `dest_ring`, should be ensured to be
-NON-NULL in this function.
+On Thu, Nov 21, 2024, Maxim Levitsky wrote:
+> On Wed, 2024-09-11 at 08:37 -0700, Sean Christopherson wrote:
+> > On Tue, Sep 10, 2024, Maxim Levitsky wrote:
+> > > On Mon, 2024-08-05 at 15:00 -0700, Sean Christopherson wrote:
+> > > > At that point, I'm ok with defining each alias, though I honestly still don't
+> > > > understand the motivation for defining single-use macros.
+> > > > 
+> > > 
+> > > The idea is that nobody will need to look at these macros
+> > > (e.g__X86_FEATURE_8000_0001_ALIAS() and its usages), because it's clear what
+> > > they do, they just define few extra CPUID features that nobody really cares
+> > > about.
+> > > 
+> > > ALIASED_F() on the other hand is yet another _F macro() and we will need,
+> > > once again and again to figure out why it is there, what it does, etc.
+> > 
+> > That seems easily solved by naming the macro ALIASED_8000_0001_F().  I don't see
+> > how that's any less clear than __X86_FEATURE_8000_0001_ALIAS(), and as above,
+> > there are several advantages to defining the alias in the context of the leaf
+> > builder.
+> > 
+> 
+> Hi!
+> 
+> I am stating my point again: Treating 8000_0001 leaf aliases as regular CPUID
+> features means that we don't need common code to deal with this, and thus
+> when someone reads the common code (and this is the thing I care about the
+> most) that someone won't need to dig up the info about what these aliases
+> are. 
 
-If only one of the rings is valid, such as `dest_ring` is NULL
-and `status_ring` is NON-NULL, the OR (||) check would not stop
-`ath11k_ce_rx_post_pipe()`, the subsequent call to
-`ath11k_ce_rx_buf_enqueue_pipe()` will access the NULL pointer,
-resulting in a driver crash.
+Ah, this is where we disagree, I think.  I feel quite strongly that oddities such
+as aliased/duplicate CPUID feature bits need to be made as visible as possible,
+and well documented.  Hiding architectural quirks might save some readers a few
+seconds of their time, but it can also confuse others, and more importantly, makes
+it more difficult for new readers/developers to learn about the quirks.
 
-Fix the NON-NULL check by changing the OR (||) to AND (&&),
-and return an error code `-EIO` to indicate
-`ath11k_ce_rx_post_pipe()` is stopped with an NULL pointer 
-error, ensuring that the function only proceeds when both 
-`dest_ring` and `status_ring` are NON-NULL.
+This code _looks_ wrong, as there's no indication that CPUID_8000_0001_EDX is
+unique.  I too wasn't aware of the aliases until this series, and I was very
+confused by KVM's code.  The only clue that I was given was the "Don't duplicate
+feature flags which are redundant with Intel!" comment in cpufeatures.h; I still
+ended up digging through the APM to understand what was going on.
 
-Link: https://lore.kernel.org/ath11k/a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Signed-off-by: Baichuan Qi <zghbqbc@gmail.com>
----
-V4 -> V5: add err code in NULL check
-V3 -> V4: reorder describe info
-V2 -> V3: add Link URL to mailing list archives
-V1 -> V2: rewrite commit message and fix tag
+	kvm_cpu_cap_mask(CPUID_1_EDX,
+		F(FPU) | F(VME) | F(DE) | F(PSE) |
+		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SEP) |
+		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+		F(PAT) | F(PSE36) | 0 /* PSN */ | F(CLFLUSH) |
+		0 /* Reserved, DS, ACPI */ | F(MMX) |
+		F(FXSR) | F(XMM) | F(XMM2) | F(SELFSNOOP) |
+		0 /* HTT, TM, Reserved, PBE */
+	);
 
- drivers/net/wireless/ath/ath11k/ce.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+	kvm_cpu_cap_mask(CPUID_8000_0001_EDX,
+		F(FPU) | F(VME) | F(DE) | F(PSE) |
+		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+		F(PAT) | F(PSE36) | 0 /* Reserved */ |
+		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
+		F(FXSR) | F(FXSR_OPT) | f_gbpages | F(RDTSCP) |
+		0 /* Reserved */ | f_lm | F(3DNOWEXT) | F(3DNOW)
+	);
 
-diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
-index e66e86bdec20..223dab928453 100644
---- a/drivers/net/wireless/ath/ath11k/ce.c
-+++ b/drivers/net/wireless/ath/ath11k/ce.c
-@@ -324,8 +324,10 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pipe *pipe)
- 	dma_addr_t paddr;
- 	int ret = 0;
- 
--	if (!(pipe->dest_ring || pipe->status_ring))
--		return 0;
-+	if (!(pipe->dest_ring && pipe->status_ring)) {
-+		ret = -EIO;
-+		return ret;
-+	}
- 
- 	spin_lock_bh(&ab->ce.ce_lock);
- 	while (pipe->rx_buf_needed) {
--- 
-2.34.1
+Versus this code, which hopefully elicits a "huh!?" and prompts curious readers
+to go look at the definition of ALIASED_1_EDX_F() to understand why KVM is being
+weird.  And if readers can't figure things out purely from ALIASED_1_EDX_F()'s
+comment, then that's effectively a KVM documentation issue and should be fixed.
 
+In other words, I want to make things like this stick out so that more developers
+are aware of such quirks, i.e. to to minimize the probability of such knowledge
+being lost.  I don't want the next generation of KVM developers to have to
+re-discover things that can be solved by a moderately verbose comment.
+
+	kvm_cpu_cap_init(CPUID_1_EDX,
+		F(FPU),
+		F(VME),
+		F(DE),
+		F(PSE),
+		F(TSC),
+		F(MSR),
+		F(PAE),
+		F(MCE),
+		F(CX8),
+		F(APIC),
+		...
+	);
+
+	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
+		ALIASED_1_EDX_F(FPU),
+		ALIASED_1_EDX_F(VME),
+		ALIASED_1_EDX_F(DE),
+		ALIASED_1_EDX_F(PSE),
+		ALIASED_1_EDX_F(TSC),
+		ALIASED_1_EDX_F(MSR),
+		ALIASED_1_EDX_F(PAE),
+		ALIASED_1_EDX_F(MCE),
+		ALIASED_1_EDX_F(CX8),
+		ALIASED_1_EDX_F(APIC),
+		...
+	);
+
+> I for example didn't knew about them because these aliases are basically a
+> result of AMD redoing some things in the spec their way when they just
+> released first 64-bit extensions.  I didn't follow the x86 ISA closely back
+> then (I only had 32 bit systems to play with).
+> 
+> Best regards,
+> 	Maxim Levitsky
+> 
+> 
 
