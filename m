@@ -1,191 +1,123 @@
-Return-Path: <linux-kernel+bounces-423204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0641C9DA439
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BD99DA43B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:56:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A33168819
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:55:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1A2165EB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4042818FDD2;
-	Wed, 27 Nov 2024 08:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB9B18E373;
+	Wed, 27 Nov 2024 08:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1FsZvHl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubrbky6g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DA6154BEA;
-	Wed, 27 Nov 2024 08:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC427154BEA;
+	Wed, 27 Nov 2024 08:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732697716; cv=none; b=nEVUUN/w0W7oRDQE1AbFHsk11Ptg+y1YEGNbBzORF+Hg8sv46jalp+llpSekjGq3S9RRMaWXoCktUvhUZljfUgwIVbEdOLg/2UBQ9ETq/9urb3RV/1d9Fi+6xfXvyqW4tNW/Z0/cwmpmlQqMIoGV8lFOhDLCXxepLzpn9vQcyxk=
+	t=1732697781; cv=none; b=fkpZxvu4Fwiq8pNlj0zS1E/iQYLjKx0Oktx6OD+EpXzrUJfkqnnCJFuqvv9iRFjB6NY2sddNwdxMgSmKczLLTov4zhAWsA4RKH64s25OYP/GXaYa36A7/OOCgWGdShGN6Eo0IhwGtrE8R5CqUH65jL7yNLOKmWLXGi3OpMRohQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732697716; c=relaxed/simple;
-	bh=i4AuCjrpC7ozTSV7MK46pbslSmhdwEW8noa2ezdxNbE=;
+	s=arc-20240116; t=1732697781; c=relaxed/simple;
+	bh=emvo7WHupGcVSUysy3yVUx2hYcnGAx5mb2uwEYdRjYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQ2b1igq5yFt68Ec6nij5mQDL+t5Kg29qGOgt3iO6jAl12u0bKP1ndE0M8kFtD6BwgLBW2jUWh6cBTbcE/bi17HLjCut+gV2U21DOARCg9VVLvN3SsbX93bcp9IREurX5Q2sZWPoXc4xPVQISB0npfSfGQkc2KprZq/d7KgZaPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1FsZvHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59667C4CECC;
-	Wed, 27 Nov 2024 08:55:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Axvh/DcbQ9JmZFzgvqZOUkDbh9E7HFwE5C7jVWDHbCuVBJr918H5I+hsHbSt0hxKHbxQkt+y04BbIaWqs8RMLil8eFvd/b3VnfwZ+ohw/W+n6o1Nse02lZk2kaBzPM/T9PqSTsehAumeMcHGqKRQmMKGA/OuAKPlVKrXISLVu+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubrbky6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1A9C4CECC;
+	Wed, 27 Nov 2024 08:56:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732697716;
-	bh=i4AuCjrpC7ozTSV7MK46pbslSmhdwEW8noa2ezdxNbE=;
+	s=k20201202; t=1732697780;
+	bh=emvo7WHupGcVSUysy3yVUx2hYcnGAx5mb2uwEYdRjYs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V1FsZvHlJvF7fecVkjU4Co2fa/e9SN7YgwQSOzPRyQyQS5X0ICEJVFL1XtgIM/v9i
-	 6ndIZLyEmQeVPrJA3Se/v8bQqeIqdnszAoma67KFER2wOj0X5PBbPw5r3/cmoK8ZvG
-	 76bL5DwNfpTrVxdX5pTPVF6f8e9vtDvBb7gt8fuDR6YMdiUcChVp3ERHbiKC82ES1s
-	 SoYBB69wSUUagsgXHiJV3FK+/45poJo5N/9QwMzoxoFcMfume0x8g2FUWqRxvhB2rI
-	 mTSFrj6qZNjNcPLCa7Z0+xQV7p0ujcFW5Cxh9b2hchcWQ7R7HhJwK2tmqEPUWYoYNP
-	 95E+ouwSXfoMQ==
-Date: Wed, 27 Nov 2024 09:55:12 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH 3/4] arm64: dts: apple: Add touchbar digitizer nodes
-Message-ID: <y5xdrrb6ome4vggfadmnbtegigxlvwrxpqmwh7qhl2c7faesti@57odqxajdiwv>
-References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
- <20241126-z2-v1-3-c43c4cc6200d@gmail.com>
+	b=ubrbky6glta/kawO3cY5nmNLWBdme+QgX9cdUE0RGim6c609OmrTtITJ2jlly9dpO
+	 r9Ay9BynD0LHh+590bj/fSTZMYRIt43aIQqTKXU9CtS2G0XoORU4coznARRcryBmc+
+	 FCCrvepAwRulYd0FCh8mS6zq/2grAQH/nX8/+D+ulqFSK1W3Pv3Ww3gNnYQRX4VCaX
+	 8w5Gw6v4CmTt0QQvAxeWhX1LdJtKhLSYqWnEErdnlbBr+bSmw0yL8KHVqVYdtrPVkr
+	 /iszTzHIVAxKoj3PGBrUoCAPg7GFyBpPmPliauCl8P6yXXsiLJTfQY2VzFxF3UDXci
+	 zOkCV95KqW1gQ==
+Date: Wed, 27 Nov 2024 09:56:18 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pwm: correct pwm->state.enabled handling to allow
+ fops control
+Message-ID: <pujikyjijvcn3mmlayqmdkh5zyjqdrfmmz3jafxyhdhuo5ekam@ntttaqiw7iow>
+References: <20241126212414.15165-1-rafael.v.volkmer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2uhmb6pgn3e7vfqx"
 Content-Disposition: inline
-In-Reply-To: <20241126-z2-v1-3-c43c4cc6200d@gmail.com>
+In-Reply-To: <20241126212414.15165-1-rafael.v.volkmer@gmail.com>
 
-On Tue, Nov 26, 2024 at 09:48:01PM +0100, Sasha Finkelstein wrote:
-> Adds device tree entries for the touchbar digitizer
-> 
-> Co-developed-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+
+--2uhmb6pgn3e7vfqx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] pwm: correct pwm->state.enabled handling to allow
+ fops control
+MIME-Version: 1.0
+
+Hello,
+
+On Tue, Nov 26, 2024 at 06:24:14PM -0300, Rafael V. Volkmer wrote:
+> Ensure pwm->state.enabled is consistently updated during enable and
+> disable operations in ehrpwm_pwm_apply() to resolve this issue.
+>=20
+> Previously, when attempting to interact with the ti PWM driver through
+> fops, the pwm->state.enabled field was not updated correctly after
+> applying enable or disable. This led to a state mismatch where the
+> driver's state detection logic prevented disabling the PWM through
+> fops once it had been activated.
+>=20
+> Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
 > ---
->  arch/arm64/boot/dts/apple/t8103-j293.dts | 24 ++++++++++++++++++++++++
->  arch/arm64/boot/dts/apple/t8103.dtsi     | 19 +++++++++++++++++++
->  arch/arm64/boot/dts/apple/t8112-j493.dts | 20 ++++++++++++++++++++
->  arch/arm64/boot/dts/apple/t8112.dtsi     | 14 ++++++++++++++
->  4 files changed, 77 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/apple/t8103-j293.dts b/arch/arm64/boot/dts/apple/t8103-j293.dts
-> index 56b0c67bfcda321b60c621de092643017693ff91..a1c4e5731f2147121a9845bc9f34d224025fb145 100644
-> --- a/arch/arm64/boot/dts/apple/t8103-j293.dts
-> +++ b/arch/arm64/boot/dts/apple/t8103-j293.dts
-> @@ -28,6 +28,10 @@ led-0 {
->  			default-state = "keep";
->  		};
->  	};
-> +
-> +	aliases {
+>  drivers/pwm/pwm-tiehrpwm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+> index 0125e73b98df..9f939d535440 100644
+> --- a/drivers/pwm/pwm-tiehrpwm.c
+> +++ b/drivers/pwm/pwm-tiehrpwm.c
+> @@ -420,6 +420,7 @@ static int ehrpwm_pwm_apply(struct pwm_chip *chip, st=
+ruct pwm_device *pwm,
+>  	if (!state->enabled) {
+>  		if (enabled)
+>  			ehrpwm_pwm_disable(chip, pwm);
+> +			pwm->state.enabled =3D false;
 
-Do not add nodes to the end, but in appropriate place. Either ordered by
-name, as DTS coding style asks, or in logical place matching existing
-convention (convention: aliases are always the first node).
+This is a layer violation (pwm->state is under control of core.c only)
+and uses irritating indention.
 
-> +		touchbar0 = &touchbar0;
+Please rethink!
 
-Not used, drop.
+Best regards
+Uwe
 
-> +	};
->  };
->  
->  &bluetooth0 {
-> @@ -38,6 +42,26 @@ &wifi0 {
->  	brcm,board-type = "apple,honshu";
->  };
->  
-> +&spi0 {
+--2uhmb6pgn3e7vfqx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Also unusual placement - between 'w' and 'i'... unless you keep here
-the second style of sorting (matching DTSI)?
+-----BEGIN PGP SIGNATURE-----
 
-> +	status = "okay";
-> +
-> +	touchbar0: touchbar@0 {
-> +		compatible = "apple,j293-touchbar",
-> +			"apple,z2-touchbar", "apple,z2-multitouch";
-> +		reg = <0>;
-> +		spi-max-frequency = <11500000>;
-> +		spi-cs-setup-delay-ns = <2000>;
-> +		spi-cs-hold-delay-ns = <2000>;
-> +		reset-gpios = <&pinctrl_ap 139 GPIO_ACTIVE_LOW>;
-> +		cs-gpios = <&pinctrl_ap 109 0>;
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdG3q8ACgkQj4D7WH0S
+/k4dJAf/Rxe0Zo6dFRQbjp8INlPjFE6pXsoaYftak9EQ/bjyu5IKOlOXfRr1+Ye3
+xVSF63MH+FTqI+/EE4D48nGB5T22LsxO05blBVKt+Ru+7Lq8IJEDMjy3oCQ7a23q
+9NB10VehpyJIJtoMswL3YWoSBhACmkHDuJ4yaIRPRUjFRSnWiKdgZuM4Qpp2xIGe
+uRMcWBWDkxy8n/eMKuxFtXcq44Exa9OlT7EIqcQfJ8cuFkylD16PfvKKCDiq5qfK
+S5Awk1JCSzQr8EEIYcBcXVVMKtov5Yxn0hv2kf4LCIYVDFvDkr0jmXZKEyAPkSE/
+DesoyybXHE8A8isX41rM/QJ4zsfPvQ==
+=zjqn
+-----END PGP SIGNATURE-----
 
-Use proper GPIO flag define.
-
-> +		interrupts-extended = <&pinctrl_ap 194 IRQ_TYPE_EDGE_FALLING>;
-> +		firmware-name = "apple/dfrmtfw-j293.bin";
-> +		touchscreen-size-x = <23045>;
-> +		touchscreen-size-y = <640>;
-> +		label = "MacBookPro17,1 Touch Bar";
-> +	};
-> +};
-> +
->  &i2c2 {
->  	status = "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-> index 9b0dad6b618444ac6b1c9735c50cccfc3965f947..dc72aae3844bf33579f623f0b01abc7de4033af4 100644
-> --- a/arch/arm64/boot/dts/apple/t8103.dtsi
-> +++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-> @@ -326,6 +326,13 @@ clkref: clock-ref {
->  		clock-output-names = "clkref";
->  	};
->  
-> +	clk_200m: clock-200m {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <200000000>;
-> +		clock-output-names = "clk_200m";
-> +	};
-> +
->  	/*
->  	 * This is a fabulated representation of the input clock
->  	 * to NCO since we don't know the true clock tree.
-> @@ -441,6 +448,18 @@ fpwm1: pwm@235044000 {
->  			status = "disabled";
->  		};
->  
-> +		spi0: spi@235100000 {
-> +			compatible = "apple,t8103-spi", "apple,spi";
-> +			reg = <0x2 0x35100000 0x0 0x4000>;
-> +			interrupt-parent = <&aic>;
-> +			interrupts = <AIC_IRQ 614 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clk_200m>;
-> +			power-domains = <&ps_spi0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled"; /* only used in J293 */
-> +		};
-> +
->  		serial0: serial@235200000 {
->  			compatible = "apple,s5l-uart";
->  			reg = <0x2 0x35200000 0x0 0x1000>;
-> diff --git a/arch/arm64/boot/dts/apple/t8112-j493.dts b/arch/arm64/boot/dts/apple/t8112-j493.dts
-> index 0ad908349f55406783942735a2e9dad54cda00ec..03fb711b3a1fa767ba70807a6d3404e4d52eb783 100644
-> --- a/arch/arm64/boot/dts/apple/t8112-j493.dts
-> +++ b/arch/arm64/boot/dts/apple/t8112-j493.dts
-> @@ -20,6 +20,7 @@ / {
->  	aliases {
->  		bluetooth0 = &bluetooth0;
->  		wifi0 = &wifi0;
-> +		touchbar0 = &touchbar0;
-
-Do not add to the end of lists/properties/nodes etc, but keep order,
-usually alphabetical.  This avoids conflicts or allows conflicting
-series to be still merged.  That's a general rule for most of
-development (Makefiles, DTS, Kconfigs, lists in DT bindings).
-
-Best regards,
-Krzysztof
-
+--2uhmb6pgn3e7vfqx--
 
