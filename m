@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-423916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F94A9DAE3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:01:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EB99DAE42
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B93283959
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AC22B2344E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B0A202F71;
-	Wed, 27 Nov 2024 20:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CF820127F;
+	Wed, 27 Nov 2024 20:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NOolMrL7"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kz3HrGdL"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEA4146017
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC412E1E0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732737696; cv=none; b=HwMvEjBlgZWRmH4m0c7DbfUGpagmD1pBbfyyzBGCCqy30NLG2XmGZAKC6/Z1eT0PmdDYWBQNHkMuBkQ8/V2FdDmYFH6jpTgNzduExEjJuJAYM3r4QR8FrK2N8kn47B/FOQsxyj+x9o0vTNVt1gPip4bF86HLxKySrKDTsEpuNQc=
+	t=1732737769; cv=none; b=NHaUwC2cQH/fF9mlgNXad9kPEXX4SxTdSBiU7ciMQxoIwRLL9dqFc0qKU/S4cYmQE4q08wq8LW40CPX0XzYMeShC2n9dtHonpApk3/oNKxNxRJftIsHjqdzrqD9nmOsXL5V1OrAa3PM/8Lf02JSwFZBZUeoYRc4/D0ZLf+Gd9dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732737696; c=relaxed/simple;
-	bh=iGLSaQYvOpZLIRVOKm7zAxg5mxG+KrquynDIeaa/XyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fE2S5SNXnnzYEs5c6dTTBby3Ge0v3SyVj+SQtfYIZ8LV2atk/2vNSgLK8yBrV4XbH7UTkkx2XxhJCHj3juq0NlOmECASFnO+C3hwK6vGgjPLsxHvMjlMknHQGODCM0qRbgrzCBghAyv2aW7NHosWI8vp/0Me1fuNbmy2PdDFShY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NOolMrL7; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-296c184ed6bso148037fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:01:34 -0800 (PST)
+	s=arc-20240116; t=1732737769; c=relaxed/simple;
+	bh=1ftbiftdl6ZdpQqo9ri7NZgAIFw2EbqSBDlIOrIfeWo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VQoNtx40PVokaqxY5U+AG6ETcWwxqYrdQzULaGVZp3nl3G7brhcIP72F9cNt71+t3anDOmx6AKsWPwoIN6mA1S2Rs1w3MWtKckoLx71rmymiDM7AgiTFymlsXfPfQOyHhIAFvcU/t8oql8EHvuSYFaPKYbNaLv4W+Tk+p5SV7eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kz3HrGdL; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-296b0d23303so98073fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:02:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732737693; x=1733342493; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yGAs9+TLtxCXXP5blBGV1RPMNvOSXa/kEVbzs2tZuvQ=;
-        b=NOolMrL7FzEuUVnGdtu2bp7yFYuj30HpHrEr+g1gEUn4jXglpmL+Ga+ysxooboP7qJ
-         qwo2KXZM9nBvbyOGqRL9C+WyEqPDh1h7Uw0hq42LMtFSwbOMOGaS5rc/QqmSdYN9mVYG
-         Ia4/VVqnihciMVIK4qQHZAV/lmtyJ4ukL0NAgfTDCoeLzxf3mAYK9m0L9XJ9C+3fwllU
-         jp/LWbg/KYCA+Bq1Wn6xxyDyT67Xahr3TWxSxCg3I/2iIaevDG8wHwc7zsfag8+CMClS
-         n4BLcHLzhWKRov6+OV71baVN+ttFCXiODDxvGdZ8FXgwwZ9/I3olDwNCFv3H/1dVxg7m
-         KKtA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732737766; x=1733342566; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Orr376RhENxaAHUP4lGmXNqSrVBuptfDyJfLhs4GHI=;
+        b=kz3HrGdLkgKHTXRp9r3LgqPNJbg/qUeQdFpI9mYZG2xiqQPh5AyYS4edmx42yIB62j
+         +CVQHq9ukAj2BqygUJfn2s2ydYgx3+JO6yjNGnyHbDx3hRwtDzkmrCcm4eBmV9ZvHatD
+         rpeOna9T4aisYZG+K5ljTqNE7pyKms7+S18KBt9+vYum+Z/X+pOH7St0RrB+rgzFqqm6
+         BPdA5FvzPCPD/N3y7S1amwivTBVQ/yN8JvoYs358wo6F4M050aR4+MQanOYuuw/ki8yU
+         2Gm2Atjc1A5UHRui+XDXizKubyRM+ELz9LBSltlWGPGiwgzaAP3uhsSe67JPadQVgTUv
+         Ag2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732737693; x=1733342493;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yGAs9+TLtxCXXP5blBGV1RPMNvOSXa/kEVbzs2tZuvQ=;
-        b=cpn2Y1JmgFB0LQVvfn89+xP0wOzm7E/kMw90zu5moNI4JfdWkugliIWWg7pTcsXBeA
-         HwCO1iCHqDNeWU0h66zfTeG+QPTN+ThH1jEKI13/U0YZNkLGx3tqfIOPVLNq/HHvneEz
-         n/uZmq309d1CXGLChaV9iIjaiLNVN71gXfZwZipEXXzj2vCnUAxtePAFomwTTGaiM0V1
-         +7wjBBJXgCyuQCB7kf4R7MnomN9Jr+/DsKtwF+pI7tdL3hvnlSktUzaHpqyMOCyNV6If
-         29nKwirsR6a6bEmE9f+OkJH2OhqB3f+LGoS5ZKKx1Tgsd5KLM2Y9rsJ2mdtWBDxJx4TH
-         8Dhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjrYr/9swCoD4Eu9GLBrueZmYEJ90Oa/uIsGUgc7hcNy7UI7RefWKrxjWXAVD3b3KjRkWpmWOvpMUuMpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM9cO6NphI4ujdPqFdXRQuNZByVUDLi3Yk0jzlbCW75N5qRJ91
-	5TUy80LAmKBGheokYbtwcJsBc+9cgC7o6tNpgmRDGWXPN8WYs7sPQ8nrU/wUkVQ=
-X-Gm-Gg: ASbGncsNJdbPgngZjJeqZhbTwvp0EByT9eq9+pSebhI8Q1+niFiuUSLgWqePML2o1HI
-	f017JnjI2ctCu52ZmPCDq7T1U+lFt+vlI7HdfhH3cPryPOYQFBdEUDkAEscxXykGea0SPF42M2s
-	CuDwfZL0+Evx3+rVhVSJsamHRzKsvwuT4PA2ten9RduQL1+ZTIY71xF43YI5dw/ecjaxLFxnQRB
-	wPh7ICHscQlxZG5vXK1E94GmcJZAEhQQFSNukP2t6VdaQ==
-X-Google-Smtp-Source: AGHT+IFF4P2YXnscplxiGukxPYkf09OAWc7B/D6urrQUWsAbwpbsXxn6dv3H+qNYpcsHs46pVmyu6Q==
-X-Received: by 2002:a05:6870:828a:b0:296:e58a:fbbe with SMTP id 586e51a60fabf-29dc4189835mr4165584fac.19.1732737692603;
-        Wed, 27 Nov 2024 12:01:32 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d65a48895sm755944a34.63.2024.11.27.12.01.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 12:01:32 -0800 (PST)
-Message-ID: <cd72e289-f671-4b8d-adb9-aebdf8a43afd@kernel.dk>
-Date: Wed, 27 Nov 2024 13:01:31 -0700
+        d=1e100.net; s=20230601; t=1732737766; x=1733342566;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1Orr376RhENxaAHUP4lGmXNqSrVBuptfDyJfLhs4GHI=;
+        b=ciG8FOKVBrMho1B90jVtVPAUvQhnwTtZqXIT8tQ8+274IdOc0l9kX1YTl10O3j7/g/
+         9tha0sXm5o/pieBT47cafh/EY2Q8mi5hcNuXAy+xJB06SFRZeok9+B36KlPPWAFTA374
+         ojeEATYk41CXbOwUjdtZRhSpZzOv7eEYilqyDGCDvLFQZw34hg9bH9A6Hny/lvC9vz7Y
+         2nzg355f/FZbFbHEYJaXmiC+CXKquUUkVSTCSX+0W/2ylhH2qOZ3FxR0sp8J4mLb8IpT
+         smzfLm9ysIQW7sjMFYQXWslJ7d3nE0Y5/8lKG0KNy4l1fy7yIl2wxZIWsijz7j+a62oI
+         LnpA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9mX5tZb1DU9ts0eiyvXQ1wgHw+f+S275boJSCDWN8psvNip/o2agC4ROzdF9nufB/cYjXeY55N0USVWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTVWSyPY1VKj++UtayNEdo+AKbP+ZmmoPsMKkjyWgZW4uJXy20
+	a1IGpZOLgBe+zMKlUsZ6GDRiD22815AqIT12qGvfRg5qSIVZLchIFJqbXzUmcVE=
+X-Gm-Gg: ASbGncvg0ydMzxO+j+05ourclgwJqLaKdonBxLkfP7ACr4vc695n2tmeRiWpZ1qQCG8
+	w2PlApH5uYDPNXl7TuOLVp7Z5r/myCYsugPHwiLo+YTHsroND3KAeV/Wcpk5KdFAUS3a7i+61kH
+	xrBR+6i7+vCwt+LjdDgXOHa+Fw3Hp64za5e/VIXwAtUDLzgm0pTxuG/LvjR+UKaqw2qb+LRNvZ0
+	QH4mmtjgc0N7pkEStYA/jHdCen4ANoW+Sdk7jq02EWRpmf1lMfB2jswKisYrradtOWamYlH/zQG
+	ygQueA==
+X-Google-Smtp-Source: AGHT+IGH07T7bi4UBZhWQf0rm7MH3WI1YNahfDRN+tfUO8iPG05KkPFbitS0hHlmfz/nN5IPIv0wpA==
+X-Received: by 2002:a05:6870:e0cd:b0:26c:5312:a13b with SMTP id 586e51a60fabf-29dc42f5ab8mr4000169fac.30.1732737765046;
+        Wed, 27 Nov 2024 12:02:45 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2971d6654e9sm5069542fac.24.2024.11.27.12.02.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 12:02:43 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v2 0/3] iio: adc: ad7173: fix non-const info struct
+Date: Wed, 27 Nov 2024 14:01:52 -0600
+Message-Id: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-0-b6d7022b7466@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
-To: Jann Horn <jannh@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring <io-uring@vger.kernel.org>
-References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
- <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
- <CAG48ez1ZCBPriyFo-cjhoNMi56WdV7O+HPifFSgbR+U35gmMzA@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAG48ez1ZCBPriyFo-cjhoNMi56WdV7O+HPifFSgbR+U35gmMzA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALB6R2cC/52NQQ6CMBBFr0K6dkw7hRBceQ/DgpZBJtGOaSuRE
+ O5u5Qgu/uL9/Py3qUSRKalLtalICyeWUABPlfLzEO4EPBZWqLE2BhGYBYbRl7TWWJj4A0ECeAk
+ pA4dJIOX49hk6pKZznSFCUuXuFamMD9WtLzxzyhLXw7yYX/uHZDGgYdSN12ixdq29umF9sIt09
+ vJU/b7vX/GrPQbjAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Dumitru Ceclan <mitrutzceclan@gmail.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Nuno Sa <nuno.sa@analog.com>, Michael Walle <michael@walle.cc>, 
+ Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Guillaume Ranquet <granquet@baylibre.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 11/27/24 12:43 PM, Jann Horn wrote:
-> On Wed, Nov 27, 2024 at 7:09?PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 11/27/24 9:57 AM, Jann Horn wrote:
->>> Hi!
->>>
->>> In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
->>> to an mm_struct. This pointer is grabbed in bch2_direct_write()
->>> (without any kind of refcount increment), and used in
->>> bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
->>> which are used to enable userspace memory access from kthread context.
->>> I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
->>> guarantees that the MM hasn't gone through exit_mmap() yet (normally
->>> by holding an mmget() reference).
->>>
->>> If we reach this codepath via io_uring, do we have a guarantee that
->>> the mm_struct that called bch2_direct_write() is still alive and
->>> hasn't yet gone through exit_mmap() when it is accessed from
->>> bch2_dio_write_continue()?
->>>
->>> I don't know the async direct I/O codepath particularly well, so I
->>> cc'ed the uring maintainers, who probably know this better than me.
->>
->> I _think_ this is fine as-is, even if it does look dubious and bcachefs
->> arguably should grab an mm ref for this just for safety to avoid future
->> problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
->> means that on the io_uring side it cannot do non-blocking issue of
->> requests. This is slower as it always punts to an io-wq thread, which
->> shares the same mm. Hence if the request is alive, there's always a
->> thread with the same mm alive as well.
->>
->> Now if FMODE_NOWAIT was set, then the original task could exit. I'd need
->> to dig a bit deeper to verify that would always be safe and there's not
->> a of time today with a few days off in the US looming, so I'll defer
->> that to next week. It certainly would be fine with an mm ref grabbed.
-> 
-> Ah, thanks for looking into it! I missed this implication of not
-> setting FMODE_NOWAIT.
-> 
-> Anyway, what you said sounds like it would be cleaner for bcachefs to
-> grab its own extra reference, maybe by initially grabbing an mm
-> reference with mmgrab() in bch2_direct_write(), and then use
-> mmget_not_zero() in bch2_dio_write_continue() to ensure the MM is
-> stable.
+While working ad7124, Uwe pointed out a bug in the ad7173 driver.
+static struct ad_sigma_delta_info ad7173_sigma_delta_info was not const
+and was being modified during driver probe, which could lead to race
+conditions if two instances of the driver were probed at the same time.
 
-Yep I think that would definitely make it more sturdy, and also less
-headscratchy in terms of being able to verify it's actually safe.
+The actual fix part is fairly trivial but I have only compile tested it.
+Guillaume has access to ad4111 hardware, so it would be good to get a
+Tested-by from him to make sure this doesn't break anything.
 
-> What do other file systems do for this? I think they normally grab
-> page references so that they don't need the MM anymore when
-> asynchronously fulfilling the request, right? Like in
-> iomap_dio_bio_iter(), which uses bio_iov_iter_get_pages() to grab
-> references to the pages corresponding to the userspace regions in
-> dio->submit.iter?
+---
+Changes in v2:
+- Fixed chip name in a few places.
+- Add new simpler patch for "fix" that gets backported.
+- Rebase other patches on this and incorporate feedback.
+- Link to v1: https://lore.kernel.org/r/20241122-iio-adc-ad7313-fix-non-const-info-struct-v1-0-d05c02324b73@baylibre.com
 
-Not aware of anything else doing it like this, where it's punted to a
-kthread and then the mm used from there. The upfront page
-getting/mapping is the common approach, like you described. Which does
-seem like a much better choice, rather than needing to rely on the mm in
-a kworker.
+---
+David Lechner (3):
+      iio: adc: ad7173: fix using shared static info struct
+      iio: adc: ad7173: remove special handling for irq number
+      iio: adc: ad7173: don't make copy of ad_sigma_delta_info struct
 
+ drivers/iio/adc/ad7173.c               | 474 +++++++++++++++++----------------
+ drivers/iio/adc/ad_sigma_delta.c       |   5 +-
+ include/linux/iio/adc/ad_sigma_delta.h |   2 -
+ 3 files changed, 249 insertions(+), 232 deletions(-)
+---
+base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+change-id: 20241122-iio-adc-ad7313-fix-non-const-info-struct-92e59b91ee2e
+
+Best regards,
 -- 
-Jens Axboe
+David Lechner <dlechner@baylibre.com>
+
 
