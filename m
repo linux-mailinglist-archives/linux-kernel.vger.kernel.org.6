@@ -1,160 +1,136 @@
-Return-Path: <linux-kernel+bounces-423830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7496E9DAD56
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:48:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1D19DAD5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:49:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDE5F166313
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B00AB21427
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4022010F0;
-	Wed, 27 Nov 2024 18:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4915613B2A2;
+	Wed, 27 Nov 2024 18:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qBdWizEb"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oiKJsSbH"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0193A13B2A2
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31EF1448E6
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732733284; cv=none; b=f7B+PD3fQJevuVKF+osE6yts7N5/my478ZvM0edWtnioX16g2/oBBHedTIByJBx8ZddtsVlExWEdDOAUQB8Dk/b2iLoUt1evL41ZxgDer9PxKU7uIUXCaOAS0rv9B/KV4QDgSZbhyjOQhhDTLLwEWeK6OxBYMB9dhA0a9wuNATk=
+	t=1732733364; cv=none; b=kA1HfebJkymFXTWLXeDea0UWEg0/ZCNXflLyg17ARMRp7BfeG0qkV/H1R9VzAm2b6lvb1dp/pOZBn9O81zbz7SXAvANSQ4rMFqIAf22XJOC7OGag8wIr5hYgB/ldotE69GK30xu0Ss0uA/TT+2PpMN7MhlWAeQjKru3uuzxZVKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732733284; c=relaxed/simple;
-	bh=NRkynitJcItte924uDQklomHInx09SX2d6xRgfzqXGA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mA5tywGHoy0o3a4vGWzKj/to/uifL4+fAtaqmWybuNf5wduP7pzV/qWmuxon1WkoAVe+3Tf5r1zgnHeAbv4ElqhRoOLV4uHYFu5ESh6tD0nmEuLxnjvxTylhOG/iyryT+ZhGIQpNMCu3q2i6iW+iS8l6fzVtBdIl9dkvzuvO2uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qBdWizEb; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-432d866f70fso64628195e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:48:01 -0800 (PST)
+	s=arc-20240116; t=1732733364; c=relaxed/simple;
+	bh=sjoyiG2Hp2mqoPO+fxRY3EiUOYbL8A159VrQnsMQDMc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=e7sgcWyDn7DrWgjhZgHxjw8uc5X7EhAo968wHAU/nOSMIhB+61k8OK7AzrDCMRf+HQAqnDXXn/Q5x+RmWmkupiqYqh5kKdmJa+jNhLD5v5jrU9bl6TfEYGhYShfxRT+XE3g9rShD2unW65rzQziZIpaXg6W/BpOzbAoCnCoyFNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oiKJsSbH; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de771c5ebso3838784e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:49:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732733280; x=1733338080; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jcpw02mhb64jdwB+dNNvFHOzRMCWmmfGsK3Mw00EgFs=;
-        b=qBdWizEb7/PmB2KYH0aKUsVMt5+xEV2kXU+eBfT4gkxQf9V6fwJxlaI5DlAODFuI8U
-         JIV6GDa++/pVOKHk8QojSbyLl218mMGbS2x9Z59XJ6QihIqOwM/b3Dxof/4TfdCnepQU
-         HOiHVPbUXb5hvvxhEjOcKiYyCfa53VXOZjflpUFiS2yNT0FTZ9FmHBmY6a9IX7LYGef4
-         9njDh9Rn8mAc/Kj2dlYunXBKCIDhvPcoJxUaQF9ZEWNapO4baUDvLXNw1QS+7OHUirnm
-         S+YjOgKdphsPSeAz8F57drzIkHgDS1Xcl9/+Uzc2FwglrXCO0I57wn3YklomGx1oz2Yh
-         zwYg==
+        d=linaro.org; s=google; t=1732733361; x=1733338161; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sjoyiG2Hp2mqoPO+fxRY3EiUOYbL8A159VrQnsMQDMc=;
+        b=oiKJsSbHk8orAOWZJnxuZrGBtiebLC9PpNlRs6R9lvwQC12I3y6LKCYDDJpIt3gk8c
+         pqVo++P4mYR4w5KUAi4FivHHRr4ZT6yqQ4sbcenrESSA5mEQamh/0kz7Xc2DOTQ8KKUv
+         bDEj6e1MZ/MGowLqpLb+3zCFywrW3V5XDSYEniEhX0yQdUDstKIyhOSaxkV3vVqGFQWJ
+         VuLbapmhmbGmZrSHw2Jzp3uXqUkjDfWjtiTxwAmDLKHqwA9io63X2GR9rtGuVAgqdQn7
+         Sqn1DxAHJdPxNorHEJT6peMPk8hAKasb/pu/jTKjwhWTxU4rd8VXBN9ey1uro/FIDh6l
+         9TAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732733280; x=1733338080;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jcpw02mhb64jdwB+dNNvFHOzRMCWmmfGsK3Mw00EgFs=;
-        b=UN0Y6O/bi7SqA0jsTGKwdEDmcpp0PwN1wFVzWRxjC1brxWKjXbZz5EuAhRHlNTNdVR
-         WQ2MtLiLFeDS+p0hsut2XiMdsHe3qX6ZGkt4NGiSy6SStnanZcZq5PUYtXhcs/cMd+Bw
-         M51B3LcL6mj7+IHKDL4WFgiIIgwLl55HDKKKoZLLBZVkU41DlS1+GKrwCJ9MKipLMK2a
-         p4ftdWwpjnm9LS9k3g5XC06NYIpLpS1AU5RpevbQka+KhQldkCNOBZLh8fPJv/4XrDaI
-         PmQteKMuMbOAcQg2MaFK7WSTqlJiF/X0kQOIhxSJQFjsyS7mBmAUF+askUwcPSi0kgDW
-         sq0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUYN18JHyNmgP+Z43WNPsTaB+V12lvWKPVHMtTrdShfw2jqqsp/oO6tzA7u/N74MrzXP71yxMBYm7ANl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn+7nIUJqZpaNmE91LlHTD3nKNkBl4ox/2vPYlFBsSDr+CjPiK
-	mI1WPdbJ1zbOnc3yVhVFy4LFmPY2bQ+tcwbsv3KzemBn7PiwFg95eiRqJHexfs0=
-X-Gm-Gg: ASbGncvq/CCyQ+Pc1Gbxesl0FdFirhKxpy1Pq162A3t3cmPLLqtw2nwV5po7I5SFCH9
-	Nznhx14U2sd7sXJJEzrI999IhGoCe+3zaKfWatn21vQyuBjYR1fzkAE8g78Ef+EDo5/W0t6rHrb
-	Ow6iWp5Bj2mO+a3u/kIplmbznHu8+3eTzPw1bO+6axjoIrGtPy+Qkc1Xif82CnIG+Ty/L6M1EE+
-	Jn0tnU6EopR/VXjrbj3OGRIISGnTZGXQmY91TFEB8Jw9XUD2h/u9jgzVjyaEQD7
-X-Google-Smtp-Source: AGHT+IGr99n2pgmmmlqNTfnISk2hQpeyV5JpHyTyMj3WvVC6iQOTmJfEucqeLNOUYv2B6leOlv1B8A==
-X-Received: by 2002:a05:600c:3b88:b0:434:a765:7f9c with SMTP id 5b1f17b1804b1-434a9db839emr37961625e9.6.1732733280392;
-        Wed, 27 Nov 2024 10:48:00 -0800 (PST)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:e571:5afe:4e1b:8936])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa7cd343sm28854325e9.22.2024.11.27.10.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 10:47:59 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 27 Nov 2024 19:47:46 +0100
-Subject: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+        d=1e100.net; s=20230601; t=1732733361; x=1733338161;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sjoyiG2Hp2mqoPO+fxRY3EiUOYbL8A159VrQnsMQDMc=;
+        b=pqiBTVH7PcnzzFzBLeXEQadKtt6LoZCkqmCOyS/bcDRqsuTpWkvMPMifYgsoiBYbcG
+         Om27MIduPfqN8qB/h2yPDMc61Uv/kNI8TAXN/P4tQnpxZ96n6ZD8ARNJcrneGEUqkPbc
+         9x/NyWMxP44TdG67+nuA6s4IMeRNG0GH+Ph0AQEcEF/uSTCyQveo2XkQ8Ri7rC5QmoZP
+         9mphgJpKm7ocQ+8SxuVC9Heq9xdmi9Jqx1NWLhfkqBV2DXshkuNTT+RgNZAQgYH7pdDv
+         2d86SoUOg7yxEIaByyiK/EC7T2o56dcFxd/MYLzuvjEa6AhgpqnSJMroHFQYUOPayA4o
+         I/iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdM3/VFp4VYcnST1ssPRCn35qxOzILX4sDFEtv+immy9g3iPjSQUMeU0AnjsRu8H9/8RPkux4SuPbQhng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2hrRpYFNA3vcys8HT6+tPowE0O70z8dfzDyPq/tmdaDkJhFoT
+	NEtEt6K1lUO1XsWvJVpV4t68ibzdL74B0/kmcynC5z2cW4IVOH9edZ9MzdUKvRU=
+X-Gm-Gg: ASbGnct0XGY8QG2ce+OsHTPs75E2HsxB1blCa81yb/rr2oZFqUrH5CKV4d2XGV3ro5g
+	XRQU5HBUwvtTR84gOsPJ53D6NAIN9MosBsGRWYjgfenIWBf+iWqrrGPUs8Fug195haDG0wWM6EY
+	stYonGX79h3NU4dj4qPm+thyuUKu8K6CU/YDIEyBgeE7yMx44rvyGqewg64ueWG+6Y1lulOKk/j
+	NBkN5Fjy1UTVcceh+3alGGaxBEHJ2kqXoOEM27v23iSXdcudNnSWG+KCyT41Z5N9MmWhmpNt8Z4
+	6iIixvt3cbP8/uU=
+X-Google-Smtp-Source: AGHT+IEmUi+ANH8PnjVcprPLiJ6h5cts7vEPzcxELANUAmqnDFEgXsap5gI2kW5PmEmhDomAWBibaw==
+X-Received: by 2002:a05:6512:3b25:b0:53d:ed0d:1d14 with SMTP id 2adb3069b0e04-53df00d1ae2mr3023434e87.16.1732733360922;
+        Wed, 27 Nov 2024 10:49:20 -0800 (PST)
+Received: from [127.0.0.1] (85-76-116-93-nat.elisa-mobile.fi. [85.76.116.93])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24812besm2308319e87.121.2024.11.27.10.49.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 10:49:19 -0800 (PST)
+Date: Wed, 27 Nov 2024 20:49:16 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+CC: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Georgi Djakov <djakov@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Odelu Kukatla <quic_okukatla@quicinc.com>,
+ Mike Tipton <quic_mdtipton@quicinc.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_V6_3/4=5D_dt-bindings=3A_interconnec?=
+ =?US-ASCII?Q?t=3A_Add_generic_compatible_qcom=2Cepss-l3-perf?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <0ba0f4af-5075-4bb1-a7f6-815ef95bbda7@kernel.org>
+References: <20241125174511.45-1-quic_rlaggysh@quicinc.com> <20241125174511.45-4-quic_rlaggysh@quicinc.com> <20241127142304.GA3443205-robh@kernel.org> <zchtx32wtii2mzy2pp4lp4gdaim7w56kih7jcqes4tyhu24r3n@dagazlsdgdcv> <0ba0f4af-5075-4bb1-a7f6-815ef95bbda7@kernel.org>
+Message-ID: <538761B6-5C8D-4600-AB9E-687F91B855FF@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAFFpR2cC/x2MWw5AMBAAryL7bZO2xOsq4gNdbFDSRSTi7hqfk
- 8zMA0KeSaCKHvB0sfDmAug4gn5q3UjINjAYZVKtTY79MmN7Wt5w4Bu9HLiyCLsRVVeozBS2TNI
- OQr97Csr/rpv3/QB9Wvy8awAAAA==
-X-Change-ID: 20241127-clk-audio-fix-rst-missing-0b80628d934b
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1632; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=NRkynitJcItte924uDQklomHInx09SX2d6xRgfzqXGA=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnR2ldNqnF+hCENTkKMXcIyoeqe6vo64sANMP3G
- v8+TpjiOVeJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ0dpXQAKCRDm/A8cN/La
- hSHeD/wMqPZGojSkTOSnh93vp6D1DDTdHNlEehKY7SxVGlFjp1RIE64G28ltFd5voZCdRTuaaRG
- E7Log9CTOmBf0nReg2WINO1FfRKR0AC929HkeUFdKngXVIBSieROtVjvz2cRJJ5AAVFs67a3g22
- cFaPyFy1rdmlP+rqcA2RyfjXtFohm2WsSKtUrColYXMr1FLcCwvjWrX/KFUQTeol+pAwtk0YjMr
- MGn6ucKC8BmGeLn/AIsUjy9JJJSAt8EcB8X0q0+6lgIpOIjm0R8Lcc9RnFdBbHVb/Sx87xHWoNV
- chtT31Nt7LScLqDuUJOOyZCUPhFQ1WuF/SzPK/l9AjXBW9S0s2tPEsG7AMV5Jl6rlEdKRTuhT+S
- MYRfsbw7uLbydPEDIY9g+NjUBdnpPOYqFqrcwb/pJKqAq4vu7bKaYrvZoeew/YFho1WMB9gZMCu
- DObmWT5CLGisIXCmqTfsI7oJM3n8RwRHjxXrkYGl3M/IMiItcT3pi4o7jEzko+wlO1MqplRrrPS
- NN64QqczvMiS90HpiHmFxyTEJshpkD3x2l0HXE5dmwkcRN/A8xczzcuTU54dL66wNZFXhwcJ5hI
- GkGP98Y/CD4Mb/BTFu/UZrpZ12QdJTqzWMaXWCjtE1BYTnHwGK/SarH7xJJht27F/rdqDsSY/Sg
- i5TH5EzTDzIOlWA==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Depending on RESET_MESON_AUX result in axg-audio support being turned
-off by default for the users of arm64 defconfig, which is kind of a
-regression for them.
+On 27 November 2024 20:27:27 EET, Krzysztof Kozlowski <krzk@kernel=2Eorg> w=
+rote:
+>On 27/11/2024 17:53, Dmitry Baryshkov wrote:
+>> On Wed, Nov 27, 2024 at 08:23:04AM -0600, Rob Herring wrote:
+>>> On Mon, Nov 25, 2024 at 05:45:10PM +0000, Raviteja Laggyshetty wrote:
+>>>> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register instead=
+ of
+>>>> REG_L3_VOTE to scale L3 clocks, hence adding a new generic compatible
+>>>> "qcom,epss-l3-perf" for these targets=2E
+>>>
+>>> Is this a h/w difference from prior blocks or you just want to use B=
+=20
+>>> instead of A while the h/w has both A and B? The latter sounds like=20
+>>> driver policy=2E
+>>>
+>>> It is also an ABI break for s/w that didn't understand=20
+>>> qcom,epss-l3-perf=2E
+>>=20
+>> As the bindings keep old compatible strings in addition to the new
+>> qcom,epss-l3-perf, where is the ABI break? Old SW will use old entries,
+>> newer can use either of those=2E
+>No, this change drops qcom,epss-l3 and adds new fallback=2E How old
+>software can work in such case? It's broken=2E
 
-RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
-COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
-necessary for every axg audio devices. Those are now deferring.
+Oh, I see=2E We had a platform-specific overrides for those two=2E Then I =
+think we should completely drop the new qcom,epss-l3-perf idea and follow t=
+he sm8250 / sc7280 example=2E This means compatible =3D "qcom,sa8775p-perf"=
+, "qcom,epss-l3"=2E=20
 
-Select RESET_MESON_AUX rather than just depending on it.
-With this, the audio subsystem of the affected platform should probe
-correctly again
 
-Cc: Mark Brown <broonie@kernel.org>
-Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
-Hello Stephen,
-This fixes a problem introduced in this merge window.
-Could you please take it directly ?
-
-Thanks
----
- drivers/clk/meson/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
- 	select COMMON_CLK_MESON_SCLK_DIV
- 	select COMMON_CLK_MESON_CLKC_UTILS
- 	select REGMAP_MMIO
--	depends on RESET_MESON_AUX
-+	select RESET_MESON_AUX
- 	help
- 	  Support for the audio clock controller on AmLogic A113D devices,
- 	  aka axg, Say Y if you want audio subsystem to work.
-
----
-base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
-change-id: 20241127-clk-audio-fix-rst-missing-0b80628d934b
-
-Best regards,
--- 
-Jerome
+>
+>Best regards,
+>Krzysztof
 
 
