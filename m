@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-423799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC7B9DACDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:13:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93CD9DACE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:14:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28741B21203
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B89E1646C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8572010F1;
-	Wed, 27 Nov 2024 18:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="tBKyT34R"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2B62010E3;
+	Wed, 27 Nov 2024 18:14:16 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B74213BC35;
-	Wed, 27 Nov 2024 18:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3AF1FBEBE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732731218; cv=none; b=SI9tOSesHzzycAwXWA9SVQfF6hJ08MKO/fJLWrcpfTPQZPaCNpMwthN7b24lQDQvDWAcBan2jhlQo5nlqS0m4y+oX+BAZn+M6/ANfb5jARtILzM9CQy5OL0mmfA8eZIHaPX8owv+Nzmo5jWEe5RAcqGsK1txVdeNWA5zJU35H/k=
+	t=1732731256; cv=none; b=FczILW9dltylKe+2DBJERYeopUe5Vf/5KL6774Vpnfn0AHtN+Vah3qDa4RKZMv2vrHNaTvBPj0zQVUoWoo0Yr7ZoFy9Q1llwOgZ3M+BBzCb5wmu79E9az5jTWUM5wUuHtZe+4EFkzHrFvRnQskmtbihKd3vUkSmo/nNJ91qXqFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732731218; c=relaxed/simple;
-	bh=7Du12Eonp+FpH604SHJXR1zw2KF5NMbcbh6pl3RjatU=;
+	s=arc-20240116; t=1732731256; c=relaxed/simple;
+	bh=lEoBX+rlYj+Oicnwbq50Hz18NrcWEaOYQ6ozS4cepXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLBmHkAtKu1FCT7okgzrd8GTBhKfIqKzsmH9KYgbCodh+JPqR/wS73aGxSqELmc/doX+R5te2PacOVHM+ckk6qAnOYk6CfByOfWQqX4A1LO09m2YbpqgPNx30GDfShFA1gPCiHUNyX5OKJgub+K7hIv4PUPodV3N7fs13a4eE/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=tBKyT34R; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID; bh=DujE4TvkayLo2q+Ep7uPaDVDwwHO7DiHpZix41K98k8=; b=tBKyT3
-	4RI+dB2q8dwOD/QXX0cwpbOKWw2/GX1+5GCEEDhd14V5GpDfjgsLk0VJu9S2HqEt5zHGXWS9fTVVe
-	BK9kCC7Jb7kw0JOJP/+aiTM0d41M124D2r6itMuWV9Ai6hle1vt+pgLL35NxQdrJEPM6nTfQe7O87
-	wEDnwVf8Y6lCOq41Wqs/uurMaUs5/ryBh0sQJ0wwfwNVMiFFCjCI3r0vgdzcLcw3MRma2CLJmepOu
-	OooOW+bvkzsKsVVeYYqR4JwcoRO2PU2yYHxVH94LHPyA5KXDG/BEDNyqWbrPxitP5bUyxsNQf431+
-	fbmTa6w17cTPHkiXHrrTKRA1kh6A==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tGMXZ-000FkE-Ep; Wed, 27 Nov 2024 19:13:29 +0100
-Received: from [2a06:4004:10df:0:cdf:30b9:9735:780b] (helo=Seans-MBP.snzone.dk)
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tGMXY-000J32-2F;
-	Wed, 27 Nov 2024 19:13:28 +0100
-Date: Wed, 27 Nov 2024 19:13:27 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can-next] dt-bindings: can: tcan4x5x: add missing
- required clock-names
-Message-ID: <yndgosvrbdawcln2adxh6blypf4joejjd5vygogxq7ii5o3ifs@v25ai7joiutx>
-References: <20241127-tcancclk-v1-1-5493d3f03db1@geanix.com>
- <20241127-siberian-singular-c2b99a7fd370@spud>
- <pl22u3ybv3ibnpzmgiskppz56vlvqhlz25h7s5ewunkks6ywtn@v6lgln7s536w>
- <lmyugclgwb7txf3jxc3fsasp5fgu7fji5dxb2wjw4jji32omnt@rs27camphw7q>
- <20241127-myth-lily-122b9839cc0b@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzrJyeNyXzxM2YmoiXdWBLu8NQ+vMV/BEyyVSUb75Xoc6OIq/HP/HXXlPZTJ7qCSmHHm3EIGQZxR02K4cpd8Vl2Os0A1syuqnEwSeaOhM4KKa4xAZZvA26xfGTfE09aGMUm3TYeXxfIsGdv1tNtADsfjZsat186cEnHnw9zO6ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B0A7C4CECC;
+	Wed, 27 Nov 2024 18:14:14 +0000 (UTC)
+Date: Wed, 27 Nov 2024 18:14:11 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: Sasha Levin <sashal@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>
+Subject: Re: [GIT PULL] arm64 updates for 6.13-rc1
+Message-ID: <Z0dhc-DtVsvufv-E@arm.com>
+References: <20241118100623.2674026-1-catalin.marinas@arm.com>
+ <Z0STR6VLt2MCalnY@sashalap>
+ <Z0TLhc3uxa5RnK64@arm.com>
+ <0c09425b-c8ba-4ed6-b429-0bce4e7d00e9@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241127-myth-lily-122b9839cc0b@spud>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27470/Wed Nov 27 10:59:44 2024)
+In-Reply-To: <0c09425b-c8ba-4ed6-b429-0bce4e7d00e9@os.amperecomputing.com>
 
-On Wed, Nov 27, 2024 at 04:18:59PM +0100, Conor Dooley wrote:
-> On Wed, Nov 27, 2024 at 05:10:31PM +0100, Sean Nyekjaer wrote:
-> > On Wed, Nov 27, 2024 at 04:56:13PM +0100, Sean Nyekjaer wrote:
-> > > Hi Conor,
+On Tue, Nov 26, 2024 at 09:41:39AM -0800, Yang Shi wrote:
+> On 11/25/24 11:09 AM, Catalin Marinas wrote:
+> > On Mon, Nov 25, 2024 at 10:09:59AM -0500, Sasha Levin wrote:
+> > > On Mon, Nov 18, 2024 at 10:06:23AM +0000, Catalin Marinas wrote:
+> > > >   - MTE: hugetlbfs support and the corresponding kselftests
 > > > 
-> > > On Wed, Nov 27, 2024 at 03:50:30PM +0100, Conor Dooley wrote:
-> > > > On Wed, Nov 27, 2024 at 02:40:47PM +0100, Sean Nyekjaer wrote:
-> > > > > tcan4x5x requires an external clock called cclk, add it here.
-> > > > 
-> > > > That's not what this patch is doing, the clock input is already there,
-> > > > so I don't know what this patch actually accomplishes? clock-names isn't
-> > > > a required property, so you can't even use it in a driver.
-> > > > 
+> > > It looks like with the new feature above, LTP manages to trigger the
+> > > following warning on linus-next:
 > > > 
-> > > Thanks for asking the right questions :)
-> > > 
-> > > I know the clock input is there, but it looks (to me) like the driver looks for the
-> > > specific clock called cclk:
-> > > https://elixir.bootlin.com/linux/v6.12/source/drivers/net/can/m_can/m_can.c#L2299
-> > > https://elixir.bootlin.com/linux/v6.12/source/drivers/net/can/m_can/tcan4x5x-core.c#L396
+> > > [  100.133691] hugefork01 (362): drop_caches: 3
+> > > tst_hugepage.c:84: TINFO: 2 hugepage(s) reserved
+> > > tst_tmpdir.c:316: TINFO: Using /scratch/ltp-CckaqgMrC1/LTP_hug5PSMw8 as tmpdir (ext2/ext3/ext4 filesystem)
+> > > tst_test.c:1085: TINFO: Mounting none to /scratch/ltp-CckaqgMrC1/LTP_hug5PSMw8/hugetlbfs fstyp=hugetlbfs flags=0
+> > > tst_test.c:1860: TINFO: LTP version: 20240930
+> > > tst_test.c:1864: TINFO: Tested kernel: 6.12.0 #1 SMP PREEMPT @1732504538 aarch64
+> > > tst_test.c:1703: TINFO: Timeout per run is 0h 02m 30s
+> > > <4>[  100.355230] ------------[ cut here ]------------
+> > > <4>[  100.356888] WARNING: CPU: 0 PID: 363 at arch/arm64/include/asm/mte.h:58 copy_highpage+0x1d4/0x2d8
+> > > <4>[  100.359160] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+> > > <4>[  100.363578] CPU: 0 UID: 0 PID: 363 Comm: hugefork01 Not tainted 6.12.0 #1
+> > > <4>[  100.365113] Hardware name: linux,dummy-virt (DT)
+> > > <4>[  100.365966] pstate: 63402009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> > > <4>[  100.366468] pc : copy_highpage+0x1d4/0x2d8
+> > > <4>[  100.366780] lr : copy_highpage+0x78/0x2d8
+> > > <4>[  100.367090] sp : ffff80008066bb30
+> > > <4>[  100.368094] x29: ffff80008066bb30 x28: ffffc1ffc3118000 x27: 0000000000000000
+> > > <4>[  100.369341] x26: 0000000000000000 x25: 0000ffff9ce00000 x24: ffffc1ffc3118000
+> > > <4>[  100.370223] x23: fff00000c47ff000 x22: fff00000c4fff000 x21: ffffc1ffc3138000
+> > > <4>[  100.370739] x20: ffffc1ffc3138000 x19: ffffc1ffc311ffc0 x18: ffffffffffffffff
+> > > <4>[  100.371285] x17: 0000000000000000 x16: ffffa302fd05bcb0 x15: 0000ffff9d2fdfff
+> > > <4>[  100.372778] x14: 0000000000000000 x13: 1ffe00001859f161 x12: fff00000c2cf8b0c
+> > > <4>[  100.374124] x11: ffff80008066bd70 x10: ffffa302fe2a20d0 x9 : ffffa302fb438578
+> > > <4>[  100.374877] x8 : ffff80008066ba48 x7 : 0000000000000000 x6 : ffffa302fdbdf000
+> > > <4>[  100.376152] x5 : 0000000000000000 x4 : fff00000c2f239c0 x3 : fff00000c33e43f0
+> > > <4>[  100.376962] x2 : ffffc1ffc3138000 x1 : 00000000000000f4 x0 : 0000000000000000
+> > > <4>[  100.377964] Call trace:
+> > > <4>[  100.378736]  copy_highpage+0x1d4/0x2d8 (P)
+> > > <4>[  100.379422]  copy_highpage+0x78/0x2d8 (L)
+> > > <4>[  100.380272]  copy_user_highpage+0x20/0x48
+> > > <4>[  100.380805]  copy_user_large_folio+0x1bc/0x268
+> > > <4>[  100.381601]  hugetlb_wp+0x190/0x860
+> > > <4>[  100.382031]  hugetlb_fault+0xa28/0xc10
+> > > <4>[  100.382911]  handle_mm_fault+0x2a0/0x2c0
+> > > <4>[  100.383511]  do_page_fault+0x12c/0x578
+> > > <4>[  100.384913]  do_mem_abort+0x4c/0xa8
+> > > <4>[  100.385397]  el0_da+0x44/0xb0
+> > > <4>[  100.385775]  el0t_64_sync_handler+0xc4/0x138
+> > > <4>[  100.386243]  el0t_64_sync+0x198/0x1a0
+> > > <4>[  100.388759] ---[ end trace 0000000000000000 ]---
 > > 
-> > Oh I really need to get my head around the dt jargon :)
-> > Yes I'll add the clock-names to the required list for v2!
+> > It looks like this can trigger even if the system does not use MTE. The
+> > warning was introduced in commit 25c17c4b55de ("hugetlb: arm64: add mte
+> > support") and it's supposed to check whether page_mte_tagged() is called
+> > on a large folio inadvertently. But in copy_highpage(), if the source is
+> > a huge page and untagged, it takes the else path with the
+> > page_mte_tagged() check. I think something like below would do but I
+> > haven't tried it yet:
 > 
-> btw, where even is ti,tcan4x5x.yaml? I was gonna paste the fixes tag you
-> should be using but I couldn't find the file in linux-next.
+> Thanks for investigating this. Yes, it is. The fix looks correct to me.
+> 
+> > 
+> > diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
+> > index 87b3f1a25535..ef303a2262c5 100644
+> > --- a/arch/arm64/mm/copypage.c
+> > +++ b/arch/arm64/mm/copypage.c
+> > @@ -30,9 +30,9 @@ void copy_highpage(struct page *to, struct page *from)
+> >   	if (!system_supports_mte())
+> >   		return;
+> > -	if (folio_test_hugetlb(src) &&
+> > -	    folio_test_hugetlb_mte_tagged(src)) {
+> > -		if (!folio_try_hugetlb_mte_tagging(dst))
+> > +	if (folio_test_hugetlb(src)) {
+> > +		if (!folio_test_hugetlb_mte_tagged(src) ||
+> > +		    !folio_try_hugetlb_mte_tagging(dst))
+> >   			return;
+> >   		/*
 
-It's here:
-https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git/commit/?h=testing&id=77400284f54b9a1f6b6127c08cb935fc05e5c3d2
+I wonder why we had a 'return' here originally rather than a
+WARN_ON_ONCE() as we do further down for the page case. Do you seen any
+issue with the hunk below? Destination should be a new folio and not
+tagged yet:
 
-Do you think the fixes tag is needed?
+diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
+index 87b3f1a25535..cc7dfbea1304 100644
+--- a/arch/arm64/mm/copypage.c
++++ b/arch/arm64/mm/copypage.c
+@@ -30,11 +30,12 @@ void copy_highpage(struct page *to, struct page *from)
+ 	if (!system_supports_mte())
+ 		return;
 
-Fixes: 77400284f54b ("dt-bindings: can: convert tcan4x5x.txt to DT schema")
+-	if (folio_test_hugetlb(src) &&
+-	    folio_test_hugetlb_mte_tagged(src)) {
+-		if (!folio_try_hugetlb_mte_tagging(dst))
++	if (folio_test_hugetlb(src)) {
++		if (!folio_test_hugetlb_mte_tagged(src))
+ 			return;
 
-/Sean
++		WARN_ON_ONCE(!folio_try_hugetlb_mte_tagging(dst));
++
+ 		/*
+ 		 * Populate tags for all subpages.
+ 		 *
+
+-- 
+Catalin
 
