@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-423336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2909DA5F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:37:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6711116452F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:37:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1745019884B;
-	Wed, 27 Nov 2024 10:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="islEAvqI";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Dp4UrgW7"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CD29DA5F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:39:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E2C155389;
-	Wed, 27 Nov 2024 10:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732703860; cv=none; b=fJnQSiL1b9/pEGAWLe0auFSargW/i347nfQI9gvyx5yK0h2uhPpdW5ZIxzpcostoSvRRR+lK9in6XNI7CdxCyw2FeDrJPzrk3VoUdYyF0m0Pk0eH9sjyeQ2QUVMWgNtgJteM+Lc3+QsXBhF+AADC5f58wQSrVo8pZ1utRpr2Us4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732703860; c=relaxed/simple;
-	bh=EwkTX+MIFpLy9bn5raEc+I7FYh+YTAy5cL29F6FwZ48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fIsm2RIIdxQpTi5akGYyn0Ae2pVeLsuhmViy98Jth9yTu7f+oq3d0+PBbVamp5A1VHtcXKjDjEAYuaCqPk04WDPctplGvZi++8rfZbsXCbrdVA/3/lMELkQ4/9OKrrbnPkrmew/O957bzCoInpKOXmgqF40AmhmqczLeXxSPro0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=islEAvqI; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Dp4UrgW7; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 1581E122FE1E;
-	Wed, 27 Nov 2024 02:37:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1732703855; bh=EwkTX+MIFpLy9bn5raEc+I7FYh+YTAy5cL29F6FwZ48=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=islEAvqIu14umc0Nh0BNtaP0O54EhJiE/KsA+8hCjHouDnLAMzIa0hA/1GJIQK2Ma
-	 8u9eFi0mi7Z6PHzaRGyiTZBBFjQZAjeEu7D45U4AHmoxpcYTpQs4r7nSyOSiKO77Eb
-	 kIZ6/J02wk+ftsCE+1enjvEiZ/tjre4O71Zgrrm26h9Mi1Zhjt5jKfvKntsyVE6LIN
-	 aQ0uiqTK2eL8dSnZrCEmZ9ozq/I99rssBjDLGqxqjJXwvGvG4MUURW7BzSUB95ZH5V
-	 q0VZDrAo9VVt0LYZjg9xI4qsFwAvBhSo9HnKKEBxRXoKiKMa3Ic4qH70L5IKcYxRkh
-	 Vi4kgWYfOu//Q==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id gT4AeVqNt7z5; Wed, 27 Nov 2024 02:37:33 -0800 (PST)
-Received: from ketchup (unknown [119.39.112.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B50128139D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:39:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7EE197A8F;
+	Wed, 27 Nov 2024 10:38:59 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 0E94A122FE1A;
-	Wed, 27 Nov 2024 02:37:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1732703853; bh=EwkTX+MIFpLy9bn5raEc+I7FYh+YTAy5cL29F6FwZ48=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dp4UrgW77o9Ymd6bTjpRfztdQI5YoI8Jx6G+IprE8QppyWLBTchlw/HqDcCAFrY3c
-	 ZULd2sM/4mo0pFNtm3Fw5vaHW8akqi0gF2hIUGXAmoL5g0LdqHP2vS0NH0oypcswZa
-	 eLMteRDH7RCZA/1zTjKf4MHS9hi5kjjXZ4qZndXUvFRCkTyHxZvByw4ji8yACxopJo
-	 fQJYSiUZJtdrRogf6ch9w7eyyJFOoqd0Bo3nWn5BtxhB75MqagIKYFMmSvBLPQclI/
-	 UWNGvwbQXo+lXFGlwjVhdnfBLF1zRWmrq510Y8qelZp7Ofn/H+h8dB8SxRUeWrnd0J
-	 dFqueXyjg70eg==
-Date: Wed, 27 Nov 2024 10:37:20 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
-Message-ID: <Z0b2YOdIWfuJINDW@ketchup>
-References: <20241126143125.9980-2-heylenay@4d2.org>
- <20241126143125.9980-3-heylenay@4d2.org>
- <64bf96a3-e28c-4c47-b7b3-e227bbaa7aee@kernel.org>
- <hgtrinu32q2jtxb4z5nvjskjlkwwzxhymtf3alvaxlbqxrbzd3@2rw3uy2tqgnf>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14440145B0F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732703938; cv=none; b=kcssrQWpamGsq1+g6LfcIAS3Xyh9ZWVo885Jrs51fOIHq79SRdwIR8qKpzVbwgxt26Pjz0lQVwqZTLuK0Pd1gqQCC5P7Ha77Jycc3rNoqZQepwo3uGvXtrbP2iGkeQvGMgfK6cfnqpnZ0727R3jQpuo3OhHxOn9e/1mKSjyYpvE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732703938; c=relaxed/simple;
+	bh=ZYvcVW323NA1Uz0R0y6vV9hQQgnQEtYSCpswGooTjps=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KmuxmZqkft0GmK+NF1iT9HWIYQzf5UDBef1i7BlhECXFUh3p9kpsY66W9LP8HhbGnEM5JwOkF6gd/2O6A+RTr5DjTWeZLwX5nGHO9JcXryVVEJx+tNmIhsFcLOcvt3sOT0Dps5GDRtlDyz5Crzx2mNvAzeIjYMghJF69NGIp4dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c88d85eeacab11efa216b1d71e6e1362-20241127
+X-CTIC-Tags:
+	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_RG_INFO, GTI_C_BU, AMN_GOOD
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:4c49f6c0-06fd-4933-a697-b0e3d56c6535,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:15
+X-CID-INFO: VERSION:1.1.38,REQID:4c49f6c0-06fd-4933-a697-b0e3d56c6535,IP:0,URL
+	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:15
+X-CID-META: VersionHash:82c5f88,CLOUDID:cf4ea15cbe626a5561605d49b7c36fee,BulkI
+	D:241127183519U1COWKNK,BulkQuantity:1,Recheck:0,SF:17|19|38|66|102,TC:nil,
+	Content:0,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL:0,
+	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: c88d85eeacab11efa216b1d71e6e1362-20241127
+X-User: xiaopei01@kylinos.cn
+Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 994606237; Wed, 27 Nov 2024 18:38:47 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: alexandre.belloni@bootlin.com,
+	aniketmaurya@google.com,
+	linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] i3c: dw: Fix use-after-free in dw_i3c_master driver due to race condition
+Date: Wed, 27 Nov 2024 18:38:41 +0800
+Message-Id: <bfc49c9527be5b513e7ceafeba314ca40a5be4bc.1732703537.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <hgtrinu32q2jtxb4z5nvjskjlkwwzxhymtf3alvaxlbqxrbzd3@2rw3uy2tqgnf>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27, 2024 at 09:03:11AM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Nov 26, 2024 at 03:48:33PM +0100, Krzysztof Kozlowski wrote:
-> > On 26/11/2024 15:31, Haylen Chu wrote:
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - spacemit,k1-ccu-apbs
-> > > +      - spacemit,k1-ccu-mpmu
-> > > +      - spacemit,k1-ccu-apbc
-> > > +      - spacemit,k1-ccu-apmu
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 4
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: osc_32k
-> > 
-> > osc
-> > 
-> > > +      - const: vctcxo_1m
-> > > +      - const: vctcxo_3m
-> > > +      - const: vctcxo_24m
-> > > +
-> > > +  spacemit,mpmu:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description:
-> > > +      Phandle to the syscon managing "Main PMU (MPMU)" registers. It is used to
-> > > +      check PLL lock status.
-> > 
-> > Why your example does not have it? Example code is supposed to be complete.
-> 
-> I think I understand why - this is for only one variant?
+In dw_i3c_common_probe, &master->hj_work is bound with
+dw_i3c_hj_work. And dw_i3c_master_irq_handler can call
+dw_i3c_master_irq_handle_ibis function to start the work.
 
-Yes, currently all implemented PLLs are located at APBS region, thus
-this property is only meaningful in spacemit,k1-ccu-apbs.
+If we remove the module which will call dw_i3c_common_remove to
+make cleanup, it will free master->base through i3c_master_unregister
+while the work mentioned above will be used. The sequence of operations
+that may lead to a UAF bug is as follows:
 
-> But then this
-> should be disallowed in your binding for others. Currently your binding
-> says that it is required for one and allowed for others.
+CPU0                                      CPU1
 
-Thanks for the correction. I'm considering moving the definition of
-spacemit,mpmu to the if block as well. Is it the correct way to disallow
-its usage in other variants?
+                                     | dw_i3c_hj_work
+dw_i3c_common_remove                 |
+i3c_master_unregister(&master->base) |
+device_unregister(&master->dev)      |
+device_release                       |
+//free master->base                  |
+                                     | i3c_master_do_daa(&master->base)
+                                     | //use master->base
 
-> 
-> Best regards,
-> Krzysztof
+Fix it by ensuring that the work is canceled before proceeding with
+the cleanup in dw_i3c_common_remove.
 
-Thanks,
-Haylen Chu
+Fixes: 1dd728f5d4d4 ("i3c: master: Add driver for Synopsys DesignWare IP")
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ drivers/i3c/master/dw-i3c-master.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 8d694672c110..dbcd3984f257 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -1624,6 +1624,7 @@ EXPORT_SYMBOL_GPL(dw_i3c_common_probe);
+ 
+ void dw_i3c_common_remove(struct dw_i3c_master *master)
+ {
++	cancel_work_sync(&master->hj_work);
+ 	i3c_master_unregister(&master->base);
+ 
+ 	pm_runtime_disable(master->dev);
+-- 
+2.34.1
+
 
