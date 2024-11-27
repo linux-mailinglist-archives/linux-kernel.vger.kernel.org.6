@@ -1,114 +1,172 @@
-Return-Path: <linux-kernel+bounces-423572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CF29DA9D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:23:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADE29DA9D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:25:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364A6280F35
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:23:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19C67165B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE521FF618;
-	Wed, 27 Nov 2024 14:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC6C1FF60A;
+	Wed, 27 Nov 2024 14:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bChw92x9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="W4yP5bUc"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B51FF600;
-	Wed, 27 Nov 2024 14:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29291FCF63
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732717387; cv=none; b=K6BgqEKh++FooCpw3wBf8Zih51dLNJhsG04DzPiWXeUSgGq05ku8A14H33T4UbVQsnnBq3lBONvtqMfB5/y7U99Ss5rjHPLJL0t53/BInggRGvQuajgu/XBbTggx4rwg0oCE4vgGQGg8cpywJ4sUiRzfP/QjOR+OK7Zo85y1dLg=
+	t=1732717535; cv=none; b=Y74lzt4s69Ly2Z9D/kQaYxI4qkhW9UqYGwTr8NltBHUK6uwHUMjYoGeYyU4kKDonuwT3C1xt0NrZ7UVmaXVx0ZLTs3Gox9jFt2Gvi1xkt3c0k5IyxW4aMyYf93kCBp6DeMwjlZUPsEmGnuNsoxy5uDkzlXDNlBY3QQzFk9vAYFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732717387; c=relaxed/simple;
-	bh=s+Dd5OmvJfSGzVWRHgb00RXOruG+MA8ymtcQ8+AR5Xw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFZuJswQXEv45+B+E9eDBWfrlx/7Exk0T3kTRhqlFjpH6nMGUwd1VcN9/7sQURuQ9PV1Rb2zVq/NmI5oDPI+FJPlF1oew8hxcCs7RAzMJzL0i6YHKX3pXi7xlWUEqEVeSRaqqsmYpR8GezNbxSHzQW4Me8mncFvd6OVKvF2SJF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bChw92x9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E43C4CECC;
-	Wed, 27 Nov 2024 14:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732717386;
-	bh=s+Dd5OmvJfSGzVWRHgb00RXOruG+MA8ymtcQ8+AR5Xw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bChw92x9A6wsJNCywqTXl5VZfC2x/Pj3J6FW2a/kVHeWCLBTBqSorfp8+39bVXgZ4
-	 8uSjq3YtPofshYxhs/NjrAN/T6Y2eqUGDlXZFib5/+tb/sk3vOIzh3m4jbw1HAUbaK
-	 +v5XJHQrvT3TMnIngve/wFhwNiD5QRxhO1PyZVE61dBYSBDTWSYvUDyXh/LSTFtSWp
-	 K+ipJW6S1NpCW1uFo0uIIuamml1BF2bU7yPTL6ApeGe7lFh9Y9oEtITdJX8xw3A6x0
-	 WkTD5WS8qTnwLN3H5uXXXqVhqT1KMJucE9YGIDlrEqYObGPxZJrcZ5LrTVmIAzrf0e
-	 d3Tl+LuqXPDTA==
-Date: Wed, 27 Nov 2024 08:23:04 -0600
-From: Rob Herring <robh@kernel.org>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Odelu Kukatla <quic_okukatla@quicinc.com>,
-	Mike Tipton <quic_mdtipton@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1732717535; c=relaxed/simple;
+	bh=ehFyraypcr18yFYe5GaihWzp05ckn9/riEWHKnW47gs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gaJH9BB7U36bYqJO6/xvbCHgl6AYwag6S+/W7XU1e4GY31p6rXGteYBxMLb1PAarfRaYa+GReK8l28gXEyn42ZBw5EP504C8Utkg927poGN4AASFBvegbVmOTn3wSns8Rf0yK2H6GisLXXnfk2e+pnEz3R4ZRnlPD0auDm7p3kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=W4yP5bUc; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dd8b7796dso5563122e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:25:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1732717531; x=1733322331; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9vG//8ehMp4lOpZgUGc6H5kOfF24HtjuZe7yPe7sl4=;
+        b=W4yP5bUcfl+XTSiRzx9s7yq01brSw7aRxEVAGKG84IowFgxgW5OOdlhsmF/HOIJxvM
+         glDcVtgUzj8LGsA23RhWYf+4jBU0DMMvHXBlv72i4mQ1qtyNt2hv+xHFXFdKDt7qW7DV
+         /PSFJA/A0hMkvuvZPa0dgMwQwPa4+FrH4Jc4wHrX1apUymtzJ1lBXJMK4Dr9Ej+8dbyT
+         SbjymzHKV4jTtb7JyzzLlMNECelZFouYcwnO4wJYUl5tg0Rj6lWH5BfmZraZj3316NDp
+         g1ZgQSTJaW6v/zUY2D4umJb0En675lJ0wqdNXSaKKfpvkBhEwRnzhEoyHbUup0G9iTYR
+         pTvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732717531; x=1733322331;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M9vG//8ehMp4lOpZgUGc6H5kOfF24HtjuZe7yPe7sl4=;
+        b=Doif65iheF0dMG7XIrdQUqE3XHR2MzKeCcZtXn6c6Tr/pY26uxOdoqkAP89HFAhrkl
+         Zp5y490K1kvglVLYnanGYgqzcty/Yb4wgZ0GEy0HkoVhQ+cer38Ec8vZ0+Et+bpWjlYy
+         vNnRstSvZVPdX9evReutst09K38nEWDtrSkmMAhr1UN/5yqXdnJslqWQ0MzwG+fxhs7J
+         VaZLa573vMz4HvRXkeZ5sTZT074Bg2NScnW4xm98/NrVHOoH8pCWLQZaCR4CY4IHnpKm
+         awu7CM9277B/va8bVCIO92FuPy++fQU0K/CaCkOPPpiiqAIxESivF2hopW4DpPyHeLyk
+         2oJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFaPq8aBF7mnW+7qNRokiSsH2psvZq3BkJ+8Lbqrf2dDAwDeIs2kZtvAZXW4gznBxGJNAEYyeS4msMb30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8+xY9/iP/3haiMIRS1pxO+608bxmO0Q11GCRwY/wrJaTkx3qv
+	tugy51bA42RxcsonRdFMeaAsPxm2EMGUqzV83rQ3tgOqaNQKGj3oSE+1CZqPIFA=
+X-Gm-Gg: ASbGnctGdrtOrGgO+CQh+UuoSLjjpA5H/GnNOMAp0pky0w3FRKGahrJxXKjZ/0wglIr
+	GqH6Lltz0U5VJ/ENhJNw/jLbc3mHcN4T3bwX4e7dR8YzYgqQsXfCkmWxSlZoXByivptCa2WsSno
+	C9cZEuMnt2v2RwAInuRhrTsj2602bjojr1eBODmuD8EpAbXcBlWnulUAaMjl19KvQf7p8B58Gma
+	/JMBb1LM6qTmfEHrlqGq9AmqKVJeaKNkPfh60uBcHFcWp2FA38=
+X-Google-Smtp-Source: AGHT+IEq0o9PJ9NLeVH70cbpvzcAJwyOpE7QpuGsdHSdB/UiJnox4e1NTf1b0VEcLfTBl4+Lz2uo5w==
+X-Received: by 2002:a05:6512:2244:b0:53d:ed66:e070 with SMTP id 2adb3069b0e04-53df010ea48mr1692848e87.47.1732717530883;
+        Wed, 27 Nov 2024 06:25:30 -0800 (PST)
+Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb53858sm16389913f8f.62.2024.11.27.06.25.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 06:25:30 -0800 (PST)
+From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6 3/4] dt-bindings: interconnect: Add generic compatible
- qcom,epss-l3-perf
-Message-ID: <20241127142304.GA3443205-robh@kernel.org>
-References: <20241125174511.45-1-quic_rlaggysh@quicinc.com>
- <20241125174511.45-4-quic_rlaggysh@quicinc.com>
+Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Kai Zhang <zhangkai@iscas.ac.cn>,
+	Andrew Jones <ajones@ventanamicro.com>
+Subject: [PATCH v2] riscv: module: use a plain variable for list_head instead of a pointer
+Date: Wed, 27 Nov 2024 15:25:17 +0100
+Message-ID: <20241127142519.3038691-1-cleger@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125174511.45-4-quic_rlaggysh@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 25, 2024 at 05:45:10PM +0000, Raviteja Laggyshetty wrote:
-> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register instead of
-> REG_L3_VOTE to scale L3 clocks, hence adding a new generic compatible
-> "qcom,epss-l3-perf" for these targets.
+rel_head's list_head member, rel_entry, doesn't need to be allocated,
+its storage can just be part of the allocated rel_head. Remove the
+pointer which allows to get rid of the allocation as well as an existing
+memory leak found by Kai Zang using kmemleak.
 
-Is this a h/w difference from prior blocks or you just want to use B 
-instead of A while the h/w has both A and B? The latter sounds like 
-driver policy.
+Reported-by: Kai Zhang <zhangkai@iscas.ac.cn>
+Signed-off-by: Clément Léger <cleger@rivosinc.com>
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+---
 
-It is also an ABI break for s/w that didn't understand 
-qcom,epss-l3-perf.
+V2:
+ - Add Kai Reported-by
+ - Reword the commit description (Andrew)
 
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> ---
->  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml      | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
-> index 21dae0b92819..e24399ca110f 100644
-> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
-> @@ -28,12 +28,15 @@ properties:
->            - const: qcom,osm-l3
->        - items:
->            - enum:
-> -              - qcom,sc7280-epss-l3
->                - qcom,sc8280xp-epss-l3
->                - qcom,sm6375-cpucp-l3
-> -              - qcom,sm8250-epss-l3
->                - qcom,sm8350-epss-l3
->            - const: qcom,epss-l3
-> +      - items:
-> +          - enum:
-> +              - qcom,sc7280-epss-l3
-> +              - qcom,sm8250-epss-l3
-> +          - const: qcom,epss-l3-perf
->  
->    reg:
->      maxItems: 1
-> -- 
-> 2.39.2
-> 
+---
+ arch/riscv/kernel/module.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+index 1cd461f3d872..47d0ebeec93c 100644
+--- a/arch/riscv/kernel/module.c
++++ b/arch/riscv/kernel/module.c
+@@ -23,7 +23,7 @@ struct used_bucket {
+ 
+ struct relocation_head {
+ 	struct hlist_node node;
+-	struct list_head *rel_entry;
++	struct list_head rel_entry;
+ 	void *location;
+ };
+ 
+@@ -634,7 +634,7 @@ process_accumulated_relocations(struct module *me,
+ 			location = rel_head_iter->location;
+ 			list_for_each_entry_safe(rel_entry_iter,
+ 						 rel_entry_iter_tmp,
+-						 rel_head_iter->rel_entry,
++						 &rel_head_iter->rel_entry,
+ 						 head) {
+ 				curr_type = rel_entry_iter->type;
+ 				reloc_handlers[curr_type].reloc_handler(
+@@ -704,16 +704,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+ 			return -ENOMEM;
+ 		}
+ 
+-		rel_head->rel_entry =
+-			kmalloc(sizeof(struct list_head), GFP_KERNEL);
+-
+-		if (!rel_head->rel_entry) {
+-			kfree(entry);
+-			kfree(rel_head);
+-			return -ENOMEM;
+-		}
+-
+-		INIT_LIST_HEAD(rel_head->rel_entry);
++		INIT_LIST_HEAD(&rel_head->rel_entry);
+ 		rel_head->location = location;
+ 		INIT_HLIST_NODE(&rel_head->node);
+ 		if (!current_head->first) {
+@@ -722,7 +713,6 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+ 
+ 			if (!bucket) {
+ 				kfree(entry);
+-				kfree(rel_head->rel_entry);
+ 				kfree(rel_head);
+ 				return -ENOMEM;
+ 			}
+@@ -735,7 +725,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+ 	}
+ 
+ 	/* Add relocation to head of discovered rel_head */
+-	list_add_tail(&entry->head, rel_head->rel_entry);
++	list_add_tail(&entry->head, &rel_head->rel_entry);
+ 
+ 	return 0;
+ }
+-- 
+2.45.2
+
 
