@@ -1,146 +1,219 @@
-Return-Path: <linux-kernel+bounces-423515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A2D9DA8A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:40:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495059DA8A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D5628520B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06BD7285393
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0637A1FCF77;
-	Wed, 27 Nov 2024 13:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E227D1FCF73;
+	Wed, 27 Nov 2024 13:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eXh6ZNQW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvIKN2P4"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA74C5B1FB;
-	Wed, 27 Nov 2024 13:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A1D1FCD18;
+	Wed, 27 Nov 2024 13:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732714792; cv=none; b=bCJdMFXWtnUDI2lb/OqIZonUGUw1Mj2vMA2cSW21inj7BWepS44ewJOLsoC/d0dUGMfoh0mG49IqKgizjTmbzeozuP6MyoDEipWdO9jEsSRKc6PUW/Pld82wnFL69OikGP50sVUyoPheEv1tfPf4M5XHh+SNmeIAj4iYB+Q2+6s=
+	t=1732714807; cv=none; b=ZaoyB5rWfsMWDuPwD9R4fTwDdBSOgIv545g/xUeY2NNJuL8nspsEtKnNnPrIxhdmW1WPlvyxnGeaYmCqC9YoAttQHhGIi25yGL0vwy+OifiiRpBQP8FdPhoi4BbidfUDd3CCbEvAAeWFLqZx99z45VR+5jo/S/FL6lnOrHF2KWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732714792; c=relaxed/simple;
-	bh=3n2rxRqZZKBS7WUpxs+EVx6nCl5wYxLTkrVfSMkDs5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cM2RGowR6QtGbdN1qKSD80DtAkfkZEFf0fQXfIF8YIFlxWjjKWocHw+I5y3I24u2821oQ7qtDfYuTwkHLKZs46zEl4JxAblAAMCS/WsEXi1cpNb2YD+FxZQmnV2FIzeqk8dKqgrgrkBJJnoM1JvOXN2UK8QGMPhs/Y6p/4Ow3R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=eXh6ZNQW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F13CA78C;
-	Wed, 27 Nov 2024 14:39:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732714766;
-	bh=3n2rxRqZZKBS7WUpxs+EVx6nCl5wYxLTkrVfSMkDs5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eXh6ZNQWTTBoiF2xvL0rgA5AOMPfi2yzsVqCyvrMbdfs7y2uqQjiboox4lKuuBhFk
-	 huTwPSBu/v+zSyNtIfnVWiGwkiv8hmFuVj8Pa5JN11FTaDib2QAKAm/ZMQLO4PM7mq
-	 LgISQLxhZuwEg517YcIRGkQaIUx7SlIvCAxFELnI=
-Date: Wed, 27 Nov 2024 15:39:38 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>
-Subject: Re: [PATCH] docs: media: document media multi-committers rules and
- process
-Message-ID: <20241127133938.GI31095@pendragon.ideasonboard.com>
-References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
- <20241126151930.GA5493@pendragon.ideasonboard.com>
- <20241127103948.501b5a05@foz.lan>
- <20241127124629.704809f1@foz.lan>
+	s=arc-20240116; t=1732714807; c=relaxed/simple;
+	bh=XybhIwlptG3RWjD6dLrxMlzRYFTvMb5ZDn2ZOdLmhW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fLgI1F/aS6u2YvqyXs7QZ8WP3Xhz+CfHlS18452GZqx2ooY8M/M3cfiGBZOAyiwm7p94POIS7nACdj7U9ZqYVNfrExWBTlB5yBZXcmoTjbwcC3Ecn8n/JKWUoNUMXhI/X0gKgVJnsgILD+nfqG1abv5LosWzxfzM7npOhIk4zhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvIKN2P4; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-84198253281so119808539f.0;
+        Wed, 27 Nov 2024 05:40:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732714804; x=1733319604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e0OvxuddvI1D8zzGSyN9DJ1VP3rgYrJg8KBeyIV2RRc=;
+        b=JvIKN2P4jbYhDX1TkkLNz9U0LvRqXQgOtTWBV3wRTy5+hPmHob8ws4DU8vzHIAfsJ7
+         7ZBQM/j51qjgx0OrfYv2SifnmL/OQPb+dt2VcMkdXdUpaoXFE9GN62Tu2rpRhKPIU9OT
+         DenaUt9dOJcUJiRKyC1hDjq2cs4HBhz0dSXqy5yGwKVypWTZYLpaXBZhwQ6VtvxvQeyg
+         L04xzVoW5y+XJhZbE8ynAfQQHoJP0vJDnddxoQGiGDOvQSA4goKpvtm5ehdJqfFMR9Cl
+         33U8x6Ej08qe9BJdnTkYIzCJhVCaJ3XWOKcHAqJmqtQrvG4EcH1fnbM4XQ+9pDept1a1
+         y/Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732714804; x=1733319604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e0OvxuddvI1D8zzGSyN9DJ1VP3rgYrJg8KBeyIV2RRc=;
+        b=gSYeZFaZNqCCI6472ZHQb9C7LymbVRjAs+iCSLeKSz5ds0ZbIndQ6iwUxw/aLI7aOH
+         9VtnI/syLxijXykRUoNDV721gs3z2kbk3KLm0k3M4ez3HeUZHhJBDWoTDoP5zABrJcuq
+         n5QXgp6xghr4Z6dxiyGa1aHmU840Y1afntlpnlefRbJYENap1jvJR3D74AiUz3OnMc2q
+         +3cIo6qni65lPe9ltl+oLQu7b6u98MOqBfABnwgUfPu2VJ+oNAeHz8gu4BnFHjsMgBE3
+         19Zf3EDy5zErI4Dl3iEPM+V5ctzULLfhOqhat2+m9h9t89ztFlAnrjws7Lf9BWSRU204
+         CKCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTvRRSqULrjtf2+bLM91CLPQcXlTl7/ZkW0ZZ+fr9ZdXkSpPRmpuIfHpdzrh+Su505qPnmdLE08i4uApGK@vger.kernel.org, AJvYcCWkrxR/iGvLl3B/c0gLFCHUNpwe279QkiqRkuEXRiF+pwE6tPhpSyHoOJ+KlQJOcDFojB/fgKAg5FaH7bgy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz17BcLr8/1iSic6fWlIhlyj+1sNcFhdFmdX/4Cnt3TnVwe4fSS
+	a3fhvFETlAHf6pQVw5cqJY1ONIU6a5OjbdUk/2n26SRv8tyM9FfUEoBmW8GTt7+RgGCPK8eBb7u
+	R/GoVRaReXI8joy4OLKpFdNTE/LA=
+X-Gm-Gg: ASbGncutJl2+5588BY4rkPRMt9Bez2figLoWMzKkfUP+uUGfmXvrhtOejsSfHFuWhjv
+	YIVcyZpIlKnj5JRImzDahodcX1n5KCZEj8a/tFfUoP/Dchs+CFgdkYR8H7DN0w9Hw
+X-Google-Smtp-Source: AGHT+IFw+Hy3debmQQWfB5c82VSTFahHQVa4B5dF8Vi5vW9WtYDtqXgFvQqyvh8tCLVLPi7bEbWqP5yucfD+Cnpi3AM=
+X-Received: by 2002:a05:6602:641b:b0:83b:2c8e:c4 with SMTP id
+ ca18e2360f4ac-843ecf7adabmr385607039f.9.1732714804645; Wed, 27 Nov 2024
+ 05:40:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241127124629.704809f1@foz.lan>
+References: <CACKH++YAtEMYu2nTLUyfmxZoGO37fqogKMDkBpddmNaz5HE6ng@mail.gmail.com>
+ <4a2bc207-76be-4715-8e12-7fc45a76a125@leemhuis.info> <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
+ <20241127-frisst-anekdote-3e6d724cb311@brauner>
+In-Reply-To: <20241127-frisst-anekdote-3e6d724cb311@brauner>
+From: Rui Ueyama <rui314@gmail.com>
+Date: Wed, 27 Nov 2024 22:39:53 +0900
+Message-ID: <CACKH++ZXsLOhtReCucvxkqUATcXNtuW3A=idjskOt+fdme35Jg@mail.gmail.com>
+Subject: Re: [REGRESSION] mold linker depends on ETXTBSY, but open(2) no
+ longer returns it
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Thorsten Leemhuis <regressions@leemhuis.info>, regressions@lists.linux.dev, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 12:54:15PM +0100, Mauro Carvalho Chehab wrote:
-> Em Wed, 27 Nov 2024 10:39:48 +0100 Mauro Carvalho Chehab escreveu:
-> 
-> > > This workflow doesn't apply to patch submitters who are not allowed to
-> > > send pull requests and who don't have direct commit access. I thought
-> > > these submitters are the main audience of this document. In that case, I
-> > > think moving the next section that explains the e-mail workflow before
-> > > the "Media development workflow" section (which should likely be renamed
-> > > to make it clear that it is about merging patches, not developing them)
-> > > would be best. The "Review Cadence" section could also be folded in
-> > > there, to give a full view of what a submitter can expect.
-> > > 
-> > > This would also have the advantage of introducing the linuvtv.org
-> > > patchwork instance, which you reference above. Documents are more
-> > > readable when they introduce concepts first before using them.  
-> > 
-> > Will try to do such change at v2.
-> 
-> Actually, both workflows (a) and (b) apply to the ones that can't
-> send pull requests or push at media-committers.git:
-> 
-> ---
-> 
-> a. Normal workflow: patches are handled by subsystem maintainers::
-> 
->      +------+   +---------+   +-------+   +-----------------------+   +---------+
->      |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge      |-->|media.git|
->      +------+   +---------+   |request|   |in media-committers.git|   +---------+
->                               +-------+   +-----------------------+
-> 
->    For this workflow, pull requests can be generated by a committer,
->    a previous committer, subsystem maintainers or by a couple of trusted
->    long-time contributors. If you are not in such group, please don't submit
->    pull requests, as they will likely be ignored.
-> 
-> b. Committers' workflow: patches are handled by media committers::
-> 
->      +------+   +---------+   +--------------------+   +-----------+   +---------+
->      |e-mail|-->|patchwork|-->|committers merge at |-->|maintainers|-->|media.git|
->      +------+   +---------+   |media-committers.git|   |approval   |   +---------+
->                               +--------------------+   +-----------+
-> 
-> ---
-> 
-> No matter who sent an e-mail, this will be picked by patchwork and either
-> be part of a PR or a MR, depending on who picked it.
+On Wed, Nov 27, 2024 at 9:11=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Wed, Nov 27, 2024 at 07:33:53AM +0900, Rui Ueyama wrote:
+> > On Mon, Nov 11, 2024 at 9:02=E2=80=AFPM Thorsten Leemhuis
+> > <regressions@leemhuis.info> wrote:
+> > >
+> > > [adding a few CCs, dropping stable]
+> > >
+> > > On 28.10.24 12:15, Rui Ueyama wrote:
+> > > > I'm the creator and the maintainer of the mold linker
+> > > > (https://github.com/rui314/mold). Recently, we discovered that mold
+> > > > started causing process crashes in certain situations due to a chan=
+ge
+> > > > in the Linux kernel. Here are the details:
+> > > >
+> > > > - In general, overwriting an existing file is much faster than
+> > > > creating an empty file and writing to it on Linux, so mold attempts=
+ to
+> > > > reuse an existing executable file if it exists.
+> > > >
+> > > > - If a program is running, opening the executable file for writing
+> > > > previously failed with ETXTBSY. If that happens, mold falls back to
+> > > > creating a new file.
+> > > >
+> > > > - However, the Linux kernel recently changed the behavior so that
+> > > > writing to an executable file is now always permitted
+> > > > (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+/commit/?id=3D2a010c412853).
+> > >
+> > > FWIW, that is 2a010c41285345 ("fs: don't block i_writecount during
+> > > exec") [v6.11-rc1] from Christian Brauner.
+> > >
+> > > > That caused mold to write to an executable file even if there's a
+> > > > process running that file. Since changes to mmap'ed files are
+> > > > immediately visible to other processes, any processes running that
+> > > > file would almost certainly crash in a very mysterious way.
+> > > > Identifying the cause of these random crashes took us a few days.
+> > > >
+> > > > Rejecting writes to an executable file that is currently running is=
+ a
+> > > > well-known behavior, and Linux had operated that way for a very lon=
+g
+> > > > time. So, I don=E2=80=99t believe relying on this behavior was our =
+mistake;
+> > > > rather, I see this as a regression in the Linux kernel.
+> > > >
+> > > > Here is a bug report to the mold linker:
+> > > > https://github.com/rui314/mold/issues/1361
+> > >
+> > > Thx for the report. I might be missing something, but from here it lo=
+oks
+> > > like nothing happened. So please allow me to ask:
+> > >
+> > > What's the status? Did anyone look into this? Is this sill happening?
+>
+> Linus, it seems that the mold linker relies on the deny_write_access()
+> mechanism for executables. The mold linker tries to open a file for
+> writing and if ETXTBSY is returned mold falls back to creating a new
+> file.
+>
+> There is now a fix in mold upstream in
+> https://github.com/rui314/mold/commit/8e4f7b53832d8af4f48a633a8385cbc932d=
+1944e
+>
+> However, mold upstream still insists on a revert (no judgement on my
+> part in case that sentence is misinterpreted).
 
-Today the "normal" workflow for contributors who don't send pull
-requests is that you or Hans will pick their patches from the list.
-That's why I mentioned that neither of the above workflows apply there.
-Now, if we consider that you and Hans will keep doing that for some
-patches, and merge them using the committers workflow (where you would
-handle both steps of merging in the shared tree and giving the
-maintainer approval), it's true that the normal workflow would be one of
-the two above.
+I don't have a strong opinion on whether returning ETXTBSY is
+desirable or not. We can cooperate to make a smooth transition to the
+new behavior of open(2). That being said, making an abrupt kernel
+change that breaks userland in a very mysterious way is, in my
+opinion, not acceptable. I'm not personally affected by this issue,
+but I needed to speak for our users who may upgrade their kernels
+before upgrading their linker.
 
-Looking at the pull requests sent to the list over the past twelve
-months, we have
-
-     32 Sakari Ailus
-     24 Hans Verkuil
-     22 Laurent Pinchart
-     21 Sebastian Fricke
-      7 Sean Young
-      7 Hans de Goede
-      4 Stanimir Varbanov
-      1 Shuah Khan
-
-I expect people in that list to get commit rights either from the very
-beginning or very soon after. The committer workflow (if we consider it
-as including how you and Hans will continue picking patches from the
-list) will be the new norm. how about flipping things and listing it as
-a), and then name b) the "Pull request workflow" instead of the "Normal
-workflow" ? I would even go as far as proposing documenting the pull
-request workflow as legacy.
-
--- 
-Regards,
-
-Laurent Pinchart
+> Note, that the revert will cause issues for the fanotify pre-content
+> hook patch series in [1] which was the cause for the removal of the
+> deny_write_access() protection for executables so that on page faults
+> the contents of executables could be filled-in by userspace. This is
+> useful when dealing with very large executables and is apparently used
+> by Meta.
+>
+> [1]: https://lore.kernel.org/r/20241121112218.8249-1-jack@suse.cz
+>
+> While Amir tells me that they may have a way around this I expect this
+> to be hacky.
+>
+> This will also trigger a revert/rework of the LTP testsuite which has
+> adapted various tests to the deny_write_access() removal for
+> executables.
+>
+> There's been some delay in responding to this after my initial comment
+> on Github because I entered into a month of sickness. So I just got
+> reminded of this issue now. In any case, here's a tag that you can pull
+> if you agree with the revert.
+>
+> The following changes since commit 7eef7e306d3c40a0c5b9ff6adc9b273cc894db=
+d5:
+>
+>   Merge tag 'for-6.13/dm-changes' of git://git.kernel.org/pub/scm/linux/k=
+ernel/git/device-mapper/linux-dm (2024-11-25 18:54:00 -0800)
+>
+> are available in the Git repository at:
+>
+>   git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.=
+exec.deny_write_access.revert
+>
+> for you to fetch changes up to 3b832035387ff508fdcf0fba66701afc78f79e3d:
+>
+>   Revert "fs: don't block i_writecount during exec" (2024-11-27 12:51:30 =
++0100)
+>
+> ----------------------------------------------------------------
+> vfs-6.13.exec.deny_write_access.revert
+>
+> ----------------------------------------------------------------
+> Christian Brauner (1):
+>       Revert "fs: don't block i_writecount during exec"
+>
+>  fs/binfmt_elf.c       |  2 ++
+>  fs/binfmt_elf_fdpic.c |  5 ++++-
+>  fs/binfmt_misc.c      |  7 +++++--
+>  fs/exec.c             | 23 +++++++++++++++--------
+>  kernel/fork.c         | 26 +++++++++++++++++++++++---
+>  5 files changed, 49 insertions(+), 14 deletions(-)
 
