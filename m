@@ -1,63 +1,93 @@
-Return-Path: <linux-kernel+bounces-423911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C059DAE31
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:57:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8659DAE34
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1AB2B22432
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:56:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA0AB21ACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659A0202F86;
-	Wed, 27 Nov 2024 19:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9BC202F80;
+	Wed, 27 Nov 2024 20:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWgy5/Et"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Prbgf/7n"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A8882D66;
-	Wed, 27 Nov 2024 19:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A156202F87;
+	Wed, 27 Nov 2024 20:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732737412; cv=none; b=WhfEd0JnrZeILeify6X/fJjSY0GFm/9Jh3JTr7M1TcyEDTjSoEsH/X5QHr8sCyGuXk/yttx5jmqXKnf4/LOhcHtx50yOruro8AIDX0r3n20TzFENgg9yPiSVU6tkdgAHZGMz52fZGIlIxn2uw8FnBi9wYC9Ukhme1mWBveZhpKk=
+	t=1732737604; cv=none; b=JsfB/jb4zsm3clZi/HpvEj8dH2n4ao8ndbNgJ8sDyFr2I/5aetXCHUQyWDaODWodYHcoLMQ0UMTGHD4PIsI4aaoUOmj4zQENLsrhHgoJ1TiqiiyhqDz6AOHERgjX8qtO+sxp4qdu2E20XKDPSMwmUIQoFY/ZU/2pt95SB1Z7B6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732737412; c=relaxed/simple;
-	bh=sSujaLHv8yWSImYfq5lG5j5+Lr3WVgrQiG106s5PoOU=;
+	s=arc-20240116; t=1732737604; c=relaxed/simple;
+	bh=hmIxX4nmKJ/KpxkWr4aXnfd/U3L3DijeyqEGV56Cmsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odQPBwJMYsfbGgSwzNYCkt+BHTt6NlTdqEyxudjjVyi6Kbk29Z044gytyFZcYe0wm0Ji0hSzALYQPaRvInWYq3q8JeAgVH8rNceJsJ36e4R+R6PgZHHCAMlSJKRAvj4X9zaf0azVJcopdNITECfTdSbbPoHWdaeEt7t7+iDejno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWgy5/Et; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC44C4CECC;
-	Wed, 27 Nov 2024 19:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732737412;
-	bh=sSujaLHv8yWSImYfq5lG5j5+Lr3WVgrQiG106s5PoOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KWgy5/EtibxGWAMIude3wCmVkE//GF+ccVVWeWyubl2X4TW7nQGSWWzAvf9jRIzoX
-	 g0eRcnhq9AGHz/olZ8c6K3PKyZIBda6Lny1KKh1ste6YRO4Wd5YlxZLfd3PSObLTXp
-	 zMkiJh9ChwiCP5BmwCoHNx9kezWDPblS0UdzLEviQAUc3wzdQhKJuow+6JGoyFxoHc
-	 MqSOQVp+EqLXdpNZUxS5BIiGB10gTJE10hgXEhJ8sUlTHjHO4oPHJXrZYUHr1NP33F
-	 hCi8oPJqseIRliYJfGU4Mpr7x4mrD6f5zYrG3u6cq94mzSQWca9I3wt7bqbKAYPkfp
-	 qtDv7fWkGA8lg==
-Date: Wed, 27 Nov 2024 13:56:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	"open list:PCI DRIVER FOR GENERIC OF HOSTS" <linux-pci@vger.kernel.org>,
-	"moderated list:PCI DRIVER FOR GENERIC OF HOSTS" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: check bridge->bus in pci_host_common_remove
-Message-ID: <20241127195650.GA4132105-robh@kernel.org>
-References: <20241028084644.3778081-1-peng.fan@oss.nxp.com>
- <20241115062005.6ifvr6ens2qnrrrf@thinkpad>
- <PAXPR04MB8459D1507CA69498D8C38E0488242@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20241115144720.ovsyq2ani47norby@thinkpad>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NazC689IjNtIyhn81NQEMXFadPHA4DpMDgWV7kxJAH+4ihDVlpZ9Eh6npQwDZg/m7jEQV9owfEF3gagDdT9XN9pm0g2UDtyrVILTBODQQFyA80GanRn9GmWo1tCu7hDc/S6jy94gr489w9UKqSPsH+p8xqQV+p/gQ/6RiApe7yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Prbgf/7n; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21269c8df64so673065ad.2;
+        Wed, 27 Nov 2024 12:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732737602; x=1733342402; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JnlDLsmM5qv+EK/8poCXPvkvDh4sjlL4kNug7GuHXU=;
+        b=Prbgf/7np5aLFEU8O90Xi4/XrHaV2llgv0QQF90ELA2Z4GJxxMvhvq+tOADtxcfEcP
+         wgNOl4IZ99xi/I2jlH7d+GQDuu4VkdWMsGUdOVlqaaoSvvNZYoCtRkYx9pV7abmFenSs
+         TMoD42NYgr6fpmyzeC9N793OArEcg35lfKPtw97Tzj1SWuortTiD0LZJiE+/WIh7Knh+
+         HZkm/N/o7sMVDkzH67iLjY7PpqwxEofxG0HRXFCCS92WEZeM2bz+2UFdZEqKCHRl73K6
+         yAfReqRKFLINAUWoH2eFGrg1CxnNKTdivoP85dX21ycTueFxTlLdyed8wdJ6FBuM2Q96
+         4VTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732737602; x=1733342402;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7JnlDLsmM5qv+EK/8poCXPvkvDh4sjlL4kNug7GuHXU=;
+        b=smjFNHpgte1OEZOrxS5ZxJdDzRBUG9QZDgx1miTaM9Kv34/T0uKYx6NfhzyQ427Fbw
+         FLlLLX4hmFYypl4eUjJuoyHrD65U437U4nWfn5YnYb+jXO3CaEEBMfh1GrNcMhqH8t2i
+         Wn+MphcnovsRP0TkDlTgABwcRpmGQXYh9BiVM8xTSvqp70UhaDyJeewIXMw8A8eFTx3v
+         0E4eHpKJ/lIEzC82H1FEmv998UmPgo38YwrcgjnZ6UpUljZUCs3dB3NTok4Pc8e/eDGI
+         4d9r8LY1GRQun75QxkHXZh+B32XxgxgSmWN4y8rOuroQOuUoe0qZ8Ml205SbLubvd4ZM
+         Hv0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQpwksiYR/wAA777SFXAD6QBxkN/FwP5KPI0DbN7OxRsCDNwxqbeV0FwIvfdYeH3KHBY3z0xwCanDH@vger.kernel.org, AJvYcCWSWjU19+l5iaPNhxxm3xNp3crzwpsC93y0WHwxlbWzkSbpV99Ea5/PK+xt1ZW3oD3gXdVi3Kzvqs9on6g=@vger.kernel.org, AJvYcCXpRNICt7IiBr2ZIessPCGxWbacKVjGPhIDJiGLc4sgJ+qSs6jy1s+CLWUqrKrKFGQVK0I9iUFlzKjOLqZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoIYqgBUBOupdNQx9R5JB+p3JhYRHYf9rnaPryB1Y3pDMKWDoz
+	zUdI5tzJ16uxbwKY8hmL2Zx+VnvRZys0CoBtBvrnPRDeC+9Db0A5
+X-Gm-Gg: ASbGncsmr+z8SJgB3b5futEFV4x9bnQJVgjyTdAsuMIECGZwOHPM915FG4GekmJsloy
+	RgGyeRnUpdqr7Vh9N/y1/4BVdMZvXH40gPd56rPzuo1bwuf/gFnrSMESRs+NEfN0rLofOSK/8f2
+	fpw2Keh0/+o5aw+VDkLiNopQuhWoELgOK8oUVjeDnPVr21F0Z5VLwWuOPGbXUSoDQZFKAwoPH73
+	AWl4b6ICRzvDktte7TQyYXhVOyFLoE2pEFWYNr+b3IlSljO49c=
+X-Google-Smtp-Source: AGHT+IEGL7M9GjZwTDz8gnOB4Fc/ReaRn8//tUsUDCeh7CYPkfHbRbhoJ/aTMpOuF0TfqhinENoEIA==
+X-Received: by 2002:a17:902:e752:b0:212:4739:27b2 with SMTP id d9443c01a7336-215010861afmr48871945ad.5.1732737602170;
+        Wed, 27 Nov 2024 12:00:02 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:d991:bacb:df39:9ecd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc23a35sm107317255ad.250.2024.11.27.12.00.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 12:00:01 -0800 (PST)
+Date: Wed, 27 Nov 2024 11:59:58 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH 2/4] input: apple_z2: Add a driver for Apple Z2
+ touchscreens
+Message-ID: <Z0d6Psrk5f8-hXe6@google.com>
+References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
+ <20241126-z2-v1-2-c43c4cc6200d@gmail.com>
+ <Z0aCSBNEAJlgNIAI@google.com>
+ <CAMT+MTT0oiODONgEipLuAaZyzD-YyM8mbAcRsZKn8N4E326kMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,117 +96,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115144720.ovsyq2ani47norby@thinkpad>
+In-Reply-To: <CAMT+MTT0oiODONgEipLuAaZyzD-YyM8mbAcRsZKn8N4E326kMw@mail.gmail.com>
 
-On Fri, Nov 15, 2024 at 08:17:20PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Nov 15, 2024 at 10:14:10AM +0000, Peng Fan wrote:
-> > Hi Manivannan,
-> > 
-> > > Subject: Re: [PATCH] PCI: check bridge->bus in
-> > > pci_host_common_remove
-> > > 
-> > > On Mon, Oct 28, 2024 at 04:46:43PM +0800, Peng Fan (OSS) wrote:
-> > > > From: Peng Fan <peng.fan@nxp.com>
-> > > >
-> > > > When PCI node was created using an overlay and the overlay is
-> > > > reverted/destroyed, the "linux,pci-domain" property no longer exists,
-> > > > so of_get_pci_domain_nr will return failure. Then
-> > > > of_pci_bus_release_domain_nr will actually use the dynamic IDA,
-> > > even
-> > > > if the IDA was allocated in static IDA. So the flow is as below:
-> > > > A: of_changeset_revert
-> > > >     pci_host_common_remove
-> > > >      pci_bus_release_domain_nr
-> > > >        of_pci_bus_release_domain_nr
-> > > >          of_get_pci_domain_nr      # fails because overlay is gone
-> > > >          ida_free(&pci_domain_nr_dynamic_ida)
-> > > >
-> > > > With driver calls pci_host_common_remove explicity, the flow
-> > > becomes:
-> > > > B pci_host_common_remove
-> > > >    pci_bus_release_domain_nr
-> > > >     of_pci_bus_release_domain_nr
-> > > >      of_get_pci_domain_nr      # succeeds in this order
-> > > >       ida_free(&pci_domain_nr_static_ida)
-> > > > A of_changeset_revert
-> > > >    pci_host_common_remove
-> > > >
-> > > > With updated flow, the pci_host_common_remove will be called
-> > > twice, so
-> > > > need to check 'bridge->bus' to avoid accessing invalid pointer.
-> > > >
-> > > > Fixes: c14f7ccc9f5d ("PCI: Assign PCI domain IDs by ida_alloc()")
-> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > 
-> > > I went through the previous discussion [1] and I couldn't see an
-> > > agreement on the point raised by Bjorn on 'removing the host bridge
-> > > before the overlay'.
-> > 
-> > This patch is an agreement to Bjorn's idea. 
-> > 
-> > I have added pci_host_common_remove to remove host bridge
-> > before removing overlay as I wrote in commit log.
-> > 
-> > But of_changeset_revert will still runs into pci_host_
-> > common_remove to remove the host bridge again. Per
-> > my view, the design of of_changeset_revert to remove
-> > the device tree node will trigger device remove, so even
-> > pci_host_common_remove was explicitly used before
-> > of_changeset_revert. The following call to of_changeset_revert
-> > will still call pci_host_common_remove.
-> > 
-> > So I did this patch to add a check of 'bus' to avoid remove again.
-> > 
+On Wed, Nov 27, 2024 at 09:24:16AM +0100, Sasha Finkelstein wrote:
+> On Wed, 27 Nov 2024 at 03:22, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> > > +     u16 checksum;
+> >
+> > Does this need endianness annotation? It is being sent to the device...
 > 
-> Ok. I think there was a misunderstanding. Bjorn's example driver,
-> 'i2c-demux-pinctrl' applies the changeset, then adds the i2c adapter for its
-> own. And in remove(), it does the reverse.
+> Both host and device are always little endian, and this whole thing is
+> using a bespoke Apple protocol, so is unlikely to ever be seen on a BE
+> machine. But i am not opposed to adding endianness handling.
+
+In this case the endianness handling will be "free", but will still show
+good code hygiene.
+
 > 
-> But in your case, the issue is with the host bridge driver that gets probed
-> because of the changeset. While with 'i2c-demux-pinctrl' driver, it only
-> applies the changeset. So we cannot compare both drivers. I believe in your
-> case, 'i2c-demux-pinctrl' becomes 'jailhouse', isn't it?
+> > > +             slot_valid = fingers[i].state == APPLE_Z2_TOUCH_STARTED ||
+> > > +                          fingers[i].state == APPLE_Z2_TOUCH_MOVED;
+> > > +             input_mt_slot(z2->input_dev, slot);
+> > > +             input_mt_report_slot_state(z2->input_dev, MT_TOOL_FINGER, slot_valid);
+> > > +             if (!slot_valid)
+> > > +                     continue;
+> >
+> > Shorter form:
+> >
+> >                 if (!input_mt_report_slot_state(...))
+> >                         continue;
 > 
-> So in your case, changeset is applied by jailhouse and that causes the
-> platform device to be created for the host bridge and then the host bridge
-> driver gets probed. So during destroy(), you call of_changeset_revert() that
-> removes the platform device and during that process it removes the host bridge
-> driver. The issue happens because during host bridge remove, it calls
-> pci_remove_root_bus() and that tries to remove the domain_nr using
-> pci_bus_release_domain_nr().
->
-> But pci_bus_release_domain_nr() uses DT node to check whether to free the
-> domain_nr from static IDA or dynamic IDA. And because there is no DT node exist
-> at this time (it was already removed by of_changeset_revert()), it forces
-> pci_bus_release_domain_nr() to use dynamic IDA even though the IDA was initially
-> allocated from static IDA.
+> Sorry, but i fail to see how that is shorter, i am setting the slot state to
+> slot_valid, which is being computed above, so, why not just reuse
+> that instead of fetching it from input's slot state?
 
-Putting linux,pci-domain in an overlay is the same problem as aliases in 
-overlays[1]. It's not going to work well.
+You are not fetching anything, input_mt_report_slot_state() simply
+returns "true" for active slots. You are saving a line. You can also do
 
-IMO, you can have overlays, or you can have static domains. You can't 
-have both.
+		if (!input_mt_report_slot_state(z2->input_dev, MT_TOOL_FINGER,
+					fingers[i].state == APPLE_Z2_TOUCH_STARTED ||
+					fingers[i].state == APPLE_Z2_TOUCH_MOVED))
+			continue;
 
-> I think a neat way to solve this issue would be by removing the OF node only
-> after removing all platform devices/drivers associated with that node. But I
-> honestly do not know whether that is possible or not. Otherwise, any other
-> driver that relies on the OF node in its remove() callback, could suffer from
-> the same issue. And whatever fix we may come up with in PCI core, it will be a
-> band-aid only.
 > 
-> I'd like to check with Rob first about his opinion.
+> > > +     ack_xfer.tx_buf = int_ack;
+> > > +     ack_xfer.rx_buf = ack_rsp;
+> >
+> > I think these buffers need to be DMA-safe.
+> 
+> Do they? Our spi controller is not capable of doing DMA (yet?)
+> and instead copies everything into a fifo. But even if it was capable,
+> wouldn't that be the controller driver's responsibility to dma-map them?
 
-If the struct device has an of_node set, there should be a reference 
-count on that node. But I think that only prevents the node from being 
-freed. It does not prevent the overlay from being detached. This is one 
-of many of the issues with overlays Frank painstakingly documented[2].
+Yes, they do. From include/linux/spi/spi.h:
 
-Perhaps it is just a matter of iterating thru all the nodes in an 
-overlay, getting their driver/device, and forcing them to unbind. 
-Though that has to be done per bus type.
+/**
+ * struct spi_transfer - a read/write buffer pair
+ * @tx_buf: data to be written (DMA-safe memory), or NULL
+ * @rx_buf: data to be read (DMA-safe memory), or NULL
 
-Rob
+> 
+> > > +             if (fw->size - fw_idx < 8) {
+> > > +                     dev_err(&z2->spidev->dev, "firmware malformed");
+> >
+> > Maybe check this before uploading half of it?
+> 
+> That would be an extra pass though the firmware file, and the device
+> is okay with getting reset after a partial firmware upload, there is no
+> onboard storage that can be corrupted, and we fully reset it on each
+> boot (or even more often) anyway.
 
-[1] https://lore.kernel.org/all/CAL_Jsq+72Q6LyOj1va_qcyCVkSRwqGNvBFfB9NNOgYXasAFYJQ@mail.gmail.com/
-[2] https://elinux.org/Frank%27s_Evolving_Overlay_Thoughts
+OK, please add a comment to that effect.
+
+> 
+> > > +     error = apple_z2_boot(z2);
+> >
+> > Why can't we wait for the boot in probe()? We can mark the driver as
+> > preferring asynchronous probe to not delay the overall boot process.
+> 
+> A comment on previous version of this submission asked not to load
+> firmware in probe callback, since the fs may be unavailable at that point.
+
+But why do you assume that the fs will be available at open time? There
+is a number of input handlers that serve internal kernel purposes and we
+could have more in the future. They will open the device as soon as it
+is registered with the input core.
+
+It is up to the system distributor to configure the kernel properly,
+including adding needed firmware to the kernel image if they want the
+driver to be built-in.
+
+Thanks.
+
+-- 
+Dmitry
 
