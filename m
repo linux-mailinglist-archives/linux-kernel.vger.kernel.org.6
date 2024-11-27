@@ -1,175 +1,232 @@
-Return-Path: <linux-kernel+bounces-423222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344149DA485
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:11:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121C49DA47F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36328167045
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F34E166840
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2679F1925AE;
-	Wed, 27 Nov 2024 09:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F551917F1;
+	Wed, 27 Nov 2024 09:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rAeERaPi"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="FEulM0L5"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82959191F74
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB8D13D278
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732698657; cv=none; b=rzfWDGTGEnS0IC9MlkacOSzkIucYTk1fnurIy2BhTzIoyUuPGSp31iKxzAXFa3Bon3bs+GY0sbnrp43lTKUFUiYE9zVjErA2Mf3ooYmtQVtpsAtBZvOZWMaQhvxTAIeomYCfcYYbv+kuaRXIcoPJIWqqRt84GNwAiueBNJaB7fs=
+	t=1732698622; cv=none; b=L3d3+kh5AnFZvmyy8/OETCI71yA03NMmfefG8iVsdzqQXELC+bppkdxuFJrziM3qcaSAaW9TKbQSwD5xFPMSRzsLFOpjmz0Gp5EsQq9zLgfy5HJkDXALzdb9q9wu2L47ahfvEl6EkKW9AwtewiHxoik+jWT68/daYZA9mdt+gFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732698657; c=relaxed/simple;
-	bh=hi7liUjxe5RX7PGtUMrmWW50QPKb3a7b4fHNFzjuy8k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yj0uG0kVBbyJA1JtJbpFM+GHCF1hmJ1tJs0DoVhrsJadqfNfmZYsr64KwUZf6W9fAJs6ShLIpeRaX+LSuPgBiZNh+E3XYnUuPApBhAy1WGi5SNw3SJulOliGbkQcpuofe2hIBuNBQ/3QLilTTejAb5fMQ2Ur9yd3Ji1fp+n/CTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rAeERaPi; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-382376fcc4fso4020487f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:10:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732698654; x=1733303454; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D++hmFkktyJpz8KdCoh+I0yzg35pIUrfCd8imheAkBM=;
-        b=rAeERaPiTdAiFjKfP1n3AiaNPNT/gU9HVJeuKm4CZ7HsRJ1Os1ELUD8LR9fWH3S+Iy
-         7J/N2JWIfzrhMzdhywuMgwKRnzpChJR1q2T3gDVA57gw3D9FeoPT27RtpvFipdeehKw+
-         +FxcRPsBYBUKT12Y34EkMUvb4S8PQJ5I7OLVM/3ObV2SMdpCfA4LLWAoJ8A6J5DHUiUe
-         MGxoLf40a2HUHjRAd9gUrDShsIW+kGlJQ5S/S/z7AGP2rJF4qUCKZNs2vuF0CZ3zCAqF
-         dEPLuckfKQztzfETdJ9+6CBbw0vn28zT+v5yYz0NWwy6FpQugsaH3/y1tm7xR8ytgiX0
-         qXZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732698654; x=1733303454;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D++hmFkktyJpz8KdCoh+I0yzg35pIUrfCd8imheAkBM=;
-        b=j7Vm0MPDCIGMkoOLnLur3ehAEqeUc6G1hS4OLEkPb4veC48v8fr4J/QpeAR4w1SKQ4
-         HwQlC4mYw28OPcKKPeW0L1YvzQncGACSc6gR2IuMhoXLXdOvDKDYf0YNgKly4opa/96U
-         sglYKC9uecrTH9ixO94vnQP8o9nKj0vtufsR5/12GGe/wtwYXufUmd0X3NvKut+0v8bF
-         m8YQAzHccCmqzz/N2x1IHi9PI7gOews2HWhWIEyqxlwYL/FskB2FA2tSTlJI1hmtP5VO
-         y48IIjaCbO5mtnvEvbFgHTo5vr+nRlGpMBfrNjYiuQwEFTgaZhYg8pK4gGgo6iG3c88V
-         uvIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4HiT6VNmNSIM49e/YQ20Jjw2MU+bvuOnf2hPDTeNLh3BbcdUhDrTp5d+NowQydj+P2ijRHBHKKuHrFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeTZjkf6MTBGBXfLHEoz1/iYHiWFtz3tzo4Y3wRfo647gkELaf
-	qBbMqU5Za22GINV2J85H01WcmbEHyUA7nPyDra55oOjNjbdOFiNZT90UvU0Tg1A=
-X-Gm-Gg: ASbGncvLlXbBuzaaCUHf0UW675qA5SNXEB53PvxvkbYeH9LgFIPNyUSFuZ3ou7h6qoU
-	YExxyRC+rHQcDcFZfmaBgXKtCDcUimAwGETolVgGhkPblVcZmG8P/c6AR4/0drMnhj+FawIoOX1
-	ptNHE7rt0/+QU9HeYJi7MY3VIOGRGyQ9MwB85UMRtn3rC2ULo7SBHg0VwBPaywxkffwmzpWK4Ur
-	qflzz0uZx831VEPE/itc8JsSrgC7VyBfTaE8BsXDHMAehpFWBPAx0RjpZxkZtwW0kbnMxUG4zI2
-	XfR2b9CZi6Qz/Ju2jNGJ
-X-Google-Smtp-Source: AGHT+IEFPftre0OsDTeBGSoRFHKJc3M1AJdfpQJilY19IR+WHfaPS6t600F3xsPWWTZA6Rf3QY3rhQ==
-X-Received: by 2002:a05:6000:1844:b0:37d:5352:c83f with SMTP id ffacd0b85a97d-385c6ebbab6mr1844313f8f.17.1732698653797;
-        Wed, 27 Nov 2024 01:10:53 -0800 (PST)
-Received: from [127.0.0.1] (alille-653-1-300-114.w90-1.abo.wanadoo.fr. [90.1.180.114])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e5285sm14529415e9.40.2024.11.27.01.10.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 01:10:53 -0800 (PST)
-From: Guillaume Ranquet <granquet@baylibre.com>
-Date: Wed, 27 Nov 2024 10:06:14 +0100
-Subject: [PATCH v2 2/2] iio: adc: ad-sigma-delta: Document ABI for sigma
- delta adc
+	s=arc-20240116; t=1732698622; c=relaxed/simple;
+	bh=hpDLBCdbGdTdFSY4K0Qh9jPtofesEm5a5nlLW3lbPU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6DJydt/5aVZujkcAHrtxpEnyOjlTQHpfya43MFzGy8J7GZ5Gh+E6UYYbF7HCR5igIiYvp8QW7MyOYGTp09m45IFPbtxfjYkxQO8DD8nJeBKMcCf2PvpoAbdMtA//sqw0IgaP1dRBkNbH6nYFtdlGVT/eGonrBcxdSEjDs5SrUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=FEulM0L5; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id GB5ptAS9JiA19GE3kt2CZn; Wed, 27 Nov 2024 09:10:09 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id GE3jtw4cSbs9MGE3jtWpEO; Wed, 27 Nov 2024 09:10:08 +0000
+X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=6746e1f0
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=fxJcL_dCAAAA:8
+ a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8 a=cpyHj8QvAAAA:8
+ a=3NIWOPH5CBuVwF1X97IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=BPjOrAZP5zzvMhA9psHf:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GqtkfVVYic8rQ+D3s0qU79yYthugsmls5EFK56/2Dy4=; b=FEulM0L59Tlkdi8oez6qedCJe3
+	smdPuxhpHeLrBoJN43uFgUjShNY3ep5R7MDTlub/T1Bzet5e/UcdtMwY8jtedUIpDcKHHlXBR3s4v
+	nAKldR77FWUFz7C2iSkP9eA8JbFr7BmlBMHThLvMeFGhS83CwxMpgJMuY4cA2JYnullAKqRwyTh3k
+	PJzl8CG0QWBNMIvxoyvM6O5bidf0MGESHvxlWS9F1uA5rWHgm0LYIJuOnFEJqVb3Ma+8ihH6TRbDh
+	JNSDQERCcTaBfydHdG5+pgTUBfirlqlg2hlQqv4xDM1Ms1ZxCginQm7XIHj6hR0dfIjO13NSnGyhk
+	68RiFTVg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:40038 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tGE3j-000rwh-0o;
+	Wed, 27 Nov 2024 02:10:07 -0700
+Message-ID: <e55645d9-6e50-4b1b-b413-6a0f5acb6095@w6rz.net>
+Date: Wed, 27 Nov 2024 01:10:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-ad411x_calibration-v2-2-66412dac35aa@baylibre.com>
-References: <20241127-ad411x_calibration-v2-0-66412dac35aa@baylibre.com>
-In-Reply-To: <20241127-ad411x_calibration-v2-0-66412dac35aa@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Guillaume Ranquet <granquet@baylibre.com>
-X-Mailer: b4 0.15-dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps: error:
+ Unmet build dependencies: libssl-dev) in 6.12
+To: Frank Wunderlich <frank-w@public-files.de>, masahiroy@kernel.org
+Cc: nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
+ <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
+ <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tGE3j-000rwh-0o
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:40038
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 1
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfI5BTiZFZDcSFM0JgTVL7UqhxWQwGop2rjx7RA27AYPOPG+SdXtkU+oGbiiVpbIZ1dTpzGX3YCPfwe6/Ii3gGIK1DFr2ImPoDdA3ljVkYw6G5bCQeB0Y
+ ds9TKXIAXryHKp8bJgzfY3mUtAb61MhtwDoAuB9pKfjpqNJ9xWd5NoyHFIxd1LrrVN8TcQcCrVnNB/pBMjQktvU9ewW1wckvE0Q=
 
-Add common calibration nodes for sigma delta adc.
+On 11/26/24 09:12, Frank Wunderlich wrote:
+> &gt; Gesendet: Donnerstag, 21. November 2024 um 23:09
+> &gt; Von: "Masahiro Yamada" <masahiroy@kernel.org>
+> &gt; An: "Frank Wunderlich" <frank-w@public-files.de>
+> &gt; CC: re@w6rz.net, nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+> &gt; Betreff: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev) in 6.12
+> &gt;
+> &gt; On Fri, Nov 22, 2024 at 2:09 AM Frank Wunderlich
+> &gt; <frank-w@public-files.de> wrote:
+> &gt; &gt;
+> &gt; &gt; Hi,
+> &gt; &gt;
+> &gt; &gt; i noticed this issue with debian package build-system in final 6.12.
+> &gt; &gt;
+> &gt; &gt; LOCALVERSION=-main board=bpi-r2 ARCH=arm CROSS_COMPILE=ccache arm-linux-gnueabihf-
+> &gt; &gt; make[1]: Entering directory '/media/data_ext/git/kernel/build'
+> &gt; &gt;   GEN     debian
+> &gt; &gt; dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
+> &gt; &gt; dpkg-buildpackage: info: source package linux-upstream
+> &gt; &gt; dpkg-buildpackage: info: source version 6.12.0-00061-g837897c10f69-3
+> &gt; &gt; dpkg-buildpackage: info: source distribution noble
+> &gt; &gt; dpkg-buildpackage: info: source changed by frank <frank@frank-u24>
+> &gt; &gt; dpkg-buildpackage: info: host architecture armhf
+> &gt; &gt;  dpkg-source --before-build .
+> &gt; &gt; dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
+> &gt;
+> &gt; This error message means, you need to install "libssl-dev:armhf"
+> &gt;
+> &gt;
+> &gt; &gt; dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
+> &gt; &gt; dpkg-buildpackage: warning: (Use -d flag to override.)
+> &gt; &gt; make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4.14/scripts/Makefile.package:126: bindeb-pkg] Error 3
+> &gt; &gt;
+> &gt; &gt; it was ok in at least rc1 and libssl-dev is installed
+> &gt;
+> &gt;
+> &gt; Presumably, you already installed libssl-dev for your build machine
+> &gt; (i.e. "libssl-dev:amd64" if your build machine is x86_64).
+> &gt;
+> &gt; But, you have not installed "libssl-dev" for the architecture
+> &gt; your are building for (i.e, "libssl-dev:armhf")
+>
+> Hi
+>
+> thank you for answer, why is this lib required for the arch? it makes my pipeline very complex
+> just to add the repos for the arch...seems the lib is not yet used, only checked if installed.
+>
+> looks like ubuntu 24 seems to have changed the sources.list for apt, so there is no single-line to
+> be added
+>
+> this is the default apt-source in ubuntu 24:
+>
+> $ cat /etc/apt/sources.list.d/ubuntu.sources
+> Types: deb
+> URIs: http://de.archive.ubuntu.com/ubuntu/
+> Suites: noble noble-updates noble-backports
+> Components: main restricted universe multiverse
+> Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+>
+> Types: deb
+> URIs: http://security.ubuntu.com/ubuntu/
+> Suites: noble-security
+> Components: main restricted universe multiverse
+> Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+>
+> if i just add the arches
+>
+> sudo dpkg --add-architecture armhf
+> sudo dpkg --add-architecture arm64
+>
+> apt seems to add the repos on update, but i still cannot install the packages
+>
+> $ LANG=C sudo apt install libssl-dev:armhf
+> Reading package lists... Done
+> Building dependency tree... Done
+> Reading state information... Done
+> E: Unable to locate package libssl-dev:armhf
+>
+> $ LANG=C sudo apt install libssl-dev:arm64
+> Reading package lists... Done
+> Building dependency tree... Done
+> Reading state information... Done
+> E: Unable to locate package libssl-dev:arm64
+>
+> if i revert the commit below, my build is successful without installing the lib.
+>
+> afaik the -dev are source-packages (headers) which should be architecture independ, or am i missing something?
+>
+> regards Frank
+>
+> &gt; &gt;
+> &gt; &gt; basicly i use this command after setting crosscompiler
+> &gt; &gt;
+> &gt; &gt; LOCALVERSION="${gitbranch}" board="$board" KDEB_COMPRESS=gzip make bindeb-pkg
+> &gt; &gt;
+> &gt; &gt; if i Revert "kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile"
+> &gt; &gt;
+> &gt; &gt; i can compile again..any idea why this happens? my build-system is ubuntu 24.4 and github actions with ubuntu-latest.
+> &gt; &gt;
+> &gt; &gt; https://github.com/frank-w/BPI-Router-Linux/actions/runs/11955322294/job/33327423877
+> &gt; &gt;
+> &gt; &gt; regards Frank</frank@frank-u24>
+> &gt;
+> &gt;
+> &gt;
+> &gt; --
+> &gt; Best Regards
+> &gt; Masahiro Yamada
+> &gt; </frank-w@public-files.de></frank-w@public-files.de></masahiroy@kernel.org>
 
-Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
----
- .../ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta   | 23 +++++++++++++++++++++
- Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192 | 24 ----------------------
- 2 files changed, 23 insertions(+), 24 deletions(-)
+Here's what worked for me in /etc/apt/sources.list.d/ubuntu.sources for 
+24.04.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta
-new file mode 100644
-index 0000000000000000000000000000000000000000..c2c55a966163736aea8d46fc5089c08dac747b84
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad-sigma-delta
-@@ -0,0 +1,23 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		This attribute, if available, initiates the system calibration procedure. This is done on a
-+		single channel at a time. Write '1' to start the calibration.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode_available
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		This attribute, if available, returns a list with the possible calibration modes.
-+		There are two available options:
-+		"zero_scale" - calibrate to zero scale
-+		"full_scale" - calibrate to full scale
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode
-+KernelVersion:
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		This attribute, if available, sets up the calibration mode used in the system calibration
-+		procedure. Reading returns the current calibration mode.
-+		Writing sets the system calibration mode.
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192
-index f8315202c8f0df2bd4b7216f5cf8d3c2780fcf3f..28be1cabf1124ac7593392e17e4759ddfac829e8 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad7192
-@@ -19,33 +19,9 @@ Description:
- 		the bridge can be disconnected (when it is not being used
- 		using the bridge_switch_en attribute.
- 
--What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration
--KernelVersion:
--Contact:	linux-iio@vger.kernel.org
--Description:
--		Initiates the system calibration procedure. This is done on a
--		single channel at a time. Write '1' to start the calibration.
--
- What:		/sys/bus/iio/devices/iio:deviceX/in_voltage2-voltage2_shorted_raw
- KernelVersion:
- Contact:	linux-iio@vger.kernel.org
- Description:
- 		Measure voltage from AIN2 pin connected to AIN(+)
- 		and AIN(-) shorted.
--
--What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode_available
--KernelVersion:
--Contact:	linux-iio@vger.kernel.org
--Description:
--		Reading returns a list with the possible calibration modes.
--		There are two available options:
--		"zero_scale" - calibrate to zero scale
--		"full_scale" - calibrate to full scale
--
--What:		/sys/bus/iio/devices/iio:deviceX/in_voltagex_sys_calibration_mode
--KernelVersion:
--Contact:	linux-iio@vger.kernel.org
--Description:
--		Sets up the calibration mode used in the system calibration
--		procedure. Reading returns the current calibration mode.
--		Writing sets the system calibration mode.
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports
+Suites: noble noble-updates noble-backports
+Components: main universe restricted multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+Architectures: riscv64
 
--- 
-2.47.0
+The library is used here:
+
+https://github.com/torvalds/linux/blob/master/scripts/sign-file.c#L25
+
+That file is now cross-compiled.
 
 
