@@ -1,105 +1,76 @@
-Return-Path: <linux-kernel+bounces-423155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FD19DA391
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:08:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C911666D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:08:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59117BEA2;
-	Wed, 27 Nov 2024 08:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0nD7hyo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AD79DA392
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:09:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A30FF9DD;
-	Wed, 27 Nov 2024 08:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41F7B22696
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:09:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E6517A58F;
+	Wed, 27 Nov 2024 08:09:14 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC79EF9DD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694896; cv=none; b=HzeNVEVkMG8H5ALe+c80Jhpy0AY7rffCPtVTRNtUu2LxuDVCyrpHjPrXpapebRvOTR87p+/GWo6glC2TfpoAkcSsDvTvHJWCkulXI0I29kzNdqYpBuKDx+T6EmMal2OwgTKTW812MXEoL7MM3oBoAvDC9PIa8yWy1aIZZISafyA=
+	t=1732694954; cv=none; b=L24P6F5Yd45fPK7Xz405MBiUQBn4HtSzbZdHCEhgsqg0IFG5jNdRwROAjiK7O2jodHeMiT+6PV8jwiLSPV98j6MFpZN+OCWuhcTm7iOHfw5TOKuPyxUIBxgKAj8umjNKHFUEnLK9nFLLZ4MGVBtImvVtFwxyh+/AVPfCxRI6bDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694896; c=relaxed/simple;
-	bh=NF28kIDMQwUhDdPuzlAAIZpmVkGZfzIskrkhwP6SS1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCjVJPG52pk83hYxm/M0+ugZO5jWsffrzLg51+R8rLkdSwRXCbD65pGXgHcdgaQ/vHRpsi4f3sKY8BR/ZTlMO5pSVUhG633z9c8OPp/UHAfZMxLbzkMMMJlpbjmUWIumnrgyVaZ2btikST9P8pXY1arI+le8okFbIPzQCzGrWlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0nD7hyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550A2C4CECC;
-	Wed, 27 Nov 2024 08:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732694896;
-	bh=NF28kIDMQwUhDdPuzlAAIZpmVkGZfzIskrkhwP6SS1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H0nD7hyowBqigFW5yKF06MgdnaRYC2G4KNmt1r5NhZM7AQPsnnQHuTQmezHnHhZj4
-	 ysDPX7tj2opnyph35Oe3s5wPj8IZnUFppYc4xsRNjiskTJv8ZWymuRwZmwcPtoXQu2
-	 zjNs+9D9qEuYee8fY5aWYBpFlqSFYxOYOV7dvYE3XZTGjqMx9WMvoVFOKqNhD9gVwP
-	 Y1AabvC7rxbHe4d7WNecTHDhz+s7vZ0NT8ZFzO3ErP3lY7GmCY9s26BN63QttdT/cD
-	 ZtTYfe9vERGhkUmtxCzKsYQb0yMDebCSi+y2R+JESz+8vJsdnSlXPjd8ntdF6xo+Cf
-	 tl+Qrq7dspj2w==
-Date: Wed, 27 Nov 2024 09:08:12 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Sanyog Kale <sanyog.r.kale@intel.com>, 
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com, kernel@quicinc.com
-Subject: Re: [PATCH v3 2/5] ASoC: dt-bindings: wcd937x-sdw: Add static
- channel mapping support
-Message-ID: <jnetmj5ibmmoiputq52vsvfqjz2auwjeqwt36g7sg4kjrrxyso@nrugsa6px4h7>
-References: <20241126164300.3305903-1-quic_mohs@quicinc.com>
- <20241126164300.3305903-3-quic_mohs@quicinc.com>
+	s=arc-20240116; t=1732694954; c=relaxed/simple;
+	bh=PhZtHbnQcbN8cpsAvZB6kdjeXKwIqLQYyJizfvYfUr0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aPhsb0XkblDXzfO8t/Crv1F0Rm1nzOJ69QF+g1CGLNXaSijaTYONTvDKz5n5cTkj4tsV1+bw1WVnkM7gboOKMU9aSMlmJpeTvyhDpGf7hMNdC8bupUNz+QOW/o0iDQsbxrs+rLLQDL5MUp7hYEfCpe8kyA4O5TA3iH7e2q8i6rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so68909685ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:09:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732694952; x=1733299752;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y2s9s9MKWoyz2YV2vMohWIzgZGvPusmbpjpne+LE344=;
+        b=GcKNftQIpQBmN00yExxrcd5pyh7wI2lNdW08eNsqWczJzAtKqsmqAfoUfbvnMQCbvN
+         x4N9ptYGeQhs4xKJAd9XgTiUtCSK4ddM0US5Go9wKb20Qh2olPOeSxsM8ue4t3gFYCzt
+         eeeMJNT5nrS0CY3JvCwAzDv2v55lCILqZ/dmSVxSL6zDmXhLtgfmCOWErf/tnAspXv8r
+         wRhEdMQ4RghWyM0OdRbSuHxm3ZUmqxYu9Ry65b7G7ZLP3Ou43C7/ydRFGNi8z85Bm+3B
+         2t6rwT7BHyY7g6qim3g7XjMdw/nJp7nar9EyOIVmY0I+yHJ5ci19TPxv8DliRtcdX7pg
+         Reug==
+X-Gm-Message-State: AOJu0YzWK90GZFq/a/mZ10CvK0iZ81VK5vE+VVDwhbe5FcqcRczBmbO1
+	Z4EiYPp0crO/Zf7GxbPdK6F4Ccxt55ADNMobrdtONQsgyDeo/Kvth3+0yheBRPu3nNm1ZvtLgyY
+	5pWjFg0XaO3C+YExuUSTt0tIIqzt0L5v9PfMpmzyu0I3Kxr/4OyzB7HU=
+X-Google-Smtp-Source: AGHT+IG4VsA6kZCcRaH5w/2EfgRIUQ19qoZ5ro54D8zKWMMCNK8XeVhcmnsn4uRdlZZlhaA/DoELMSYp/nDBvStHTnoGwGNBK73S
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241126164300.3305903-3-quic_mohs@quicinc.com>
+X-Received: by 2002:a05:6e02:1b06:b0:3a7:96cc:8cc1 with SMTP id
+ e9e14a558f8ab-3a7c552322amr22262475ab.5.1732694952207; Wed, 27 Nov 2024
+ 00:09:12 -0800 (PST)
+Date: Wed, 27 Nov 2024 00:09:12 -0800
+In-Reply-To: <671b3f3e.050a0220.2eb763.00d4.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6746d3a8.050a0220.1286eb.002c.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+e22007d6acb9c87c2362@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 26, 2024 at 10:12:57PM +0530, Mohammad Rafi Shaik wrote:
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> index d3cf8f59cb23..7893b1c1f80b 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> @@ -58,6 +58,44 @@ properties:
->      items:
->        enum: [1, 2, 3, 4, 5]
->  
-> +  qcom,tx-channel-mapping:
-> +    description: |
-> +      Specifies static channel mapping between slave and master tx port
-> +      channels.
-> +      In the order of slave port channels which is adc1, adc2, adc3,
-> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
-> +      The channel map index values are fixed values.
-> +      SWRM_CH1 ==> 1
-> +      SWRM_CH2 ==> 2
-> +      SWRM_CH3 ==> 4
-> +      SWRM_CH4 ==> 8
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I am surprised to see here again 1/2/4/8. My comments were not
-addressed. I think we agreed during our off-list talk that you will use
-1, 2, 3 and 4.
+***
 
-> +
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    minItems: 12
-> +    maxItems: 12
-> +    additionalItems: false
-> +    items:
-> +      enum: [1, 2, 4, 8]
+Subject: 
+Author: kent.overstreet@linux.dev
 
-Best regards,
-Krzysztof
-
+#syz fix: bcachefs: Ignore empty btree root journal entries
 
