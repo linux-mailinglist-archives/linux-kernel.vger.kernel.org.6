@@ -1,164 +1,189 @@
-Return-Path: <linux-kernel+bounces-424042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3489DAFD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:31:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60847164EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:31:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C90F194C6C;
-	Wed, 27 Nov 2024 23:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkhFjXzJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279069DAFDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:32:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A404D17E01B;
-	Wed, 27 Nov 2024 23:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8702815B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:32:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBDA193432;
+	Wed, 27 Nov 2024 23:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mIw6eRuZ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BC1922FA
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732750267; cv=none; b=goTsmLbL+VD6kR7FpULfVLboegq8Fm9Pa5oRyPS6xqoNASkT2DRXSAKpIKhiCaTJtfhZvepzgX4wldN7gZhE5NohVom517ah1OGStv0Ov6Qbv7rMCzKEk1A4Wh8C4aaAIVvIakk+yTemQEAZIoVWrGinLLVoAttO5Vq+0um3RSY=
+	t=1732750313; cv=none; b=sxT0R/h3RJI/bid9uB4dXs7JAphPKvO1WeFF7kQM7JZE8EclCxppK1QJWDCkQq9qDkYlDmGrv7GhQQJee0lDsGEY5KVUpjm4ax6Waq+8AILT+o/wVj1qr+lAUt0kTvXofmc7lZ72KVqdpmmkeJJvN3Fh0CSJlsswET7zhnxBZLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732750267; c=relaxed/simple;
-	bh=I8g1DC5LZP8BZjIWjXeeojhSJ8pwmpYmCEaMamafg5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uZ4+WvHlY8Qzns5SBhyTl7E2+TDLjtCi5xmdMF3rwcNS0mav9I0EYnC6KmXphYDY3plOGLmUCYUou5Kj0SF8OqXqxyTW81MCdtgYnGSLJNPJkAK1hZuKJmzu8DHeRvDB7NbzYLWCZi53xoi3SG4ZzrJvSH+KMM9WkgzYY9pidzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkhFjXzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37427C4CED2;
-	Wed, 27 Nov 2024 23:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732750267;
-	bh=I8g1DC5LZP8BZjIWjXeeojhSJ8pwmpYmCEaMamafg5M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SkhFjXzJs+jyneVMUKx+WXFfLi2yY/2AThMvuFoHV+VVw67rIwjtZLLSFb7dPJuOO
-	 vV+mVJkEUk3bA2lKKtDp+1qcd/QwukYxurlgbJheip0fmSSR4rVJpT0asrqbQy1OTm
-	 N5xMLlykRGSdHFxs3RDI6W1PspGZBYaRO1gtOveqPO/nRIORDshW7zkset3trC1EFj
-	 CGrFWQoVLW0sxmmf3yehRLTpRxQh6kIAg+GtaZCfz5KORyx2Ro/4uOzbVMcIbVXflX
-	 JzMmlt+xG0IJWYehV6fCcpCsOJTWFoY1RRrcYDBE2NFPAGJpUGz+YYvy9k0UENMXgq
-	 FBl0lt4v6GFlA==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53df119675dso242813e87.0;
-        Wed, 27 Nov 2024 15:31:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWHs6dUa8yYp6YTJ+k6BHSbLPr0hzn/aqvYGbfe7znjoj5IUJsxu+QRdJAxc2lvfPyzisRx/No2MkonoUeE@vger.kernel.org, AJvYcCX8aSx6Jqdw4sRcNUmnoweMgtZt7DXPU+tlLPxyC1fJxDQ5qFVQFXhc/zd/sfX1sRpCwb3LR8JZs8VLm5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIxyNwDhArVtvDlgzZ9y+aYp53xqDjVj6hBNCLHHn79UQ4vkBj
-	ho0P6GPLdVjWb8UtnK33TlNJbettkhDLqkOHHmjotClKs3TGJg2RuaAv2H+ESOhtE21e0wHQcRK
-	fl+8hnioSGI/PK8vWQAAsZVhen5M=
-X-Google-Smtp-Source: AGHT+IHeKq6xghSLSrquNW9Jnj9KN+y1e1NElpXklaESZH2h+hG4XPl7PCTCTeTmflZu69DlnUyveQJSNjLRcJN8tww=
-X-Received: by 2002:a05:6512:1286:b0:53d:e88b:eb4 with SMTP id
- 2adb3069b0e04-53df00d1ba7mr2931337e87.21.1732750265812; Wed, 27 Nov 2024
- 15:31:05 -0800 (PST)
+	s=arc-20240116; t=1732750313; c=relaxed/simple;
+	bh=GJUfjMiVlmYqqv6+oKXNJL3YxuOjqYeAo6snMabsX0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hFjw4cRW1kEdPNAMRV8+DJgiRMHvaooY1cXJArK9x6itPW3HaR50V0EFzWv6/nN0/AqtLEI7+JPREtvhIRMq0ktaIuekV++ke/eGJE5ln70yNhatfC4vO7DBFCKd0T2dU1h+st2CX5Znr2MgSMTITT7+laKZEY2FYmNTq+CISd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mIw6eRuZ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a742481aso1759775e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:31:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732750310; x=1733355110; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6TszDdA28UmJNkLbj5Ys3Y092KyTg4JPf0GnkI2Cya8=;
+        b=mIw6eRuZEf5s9PaR+8iMuSJ7+JWGvpuhjg5QRFOk3Xv4uJz7fiyCUcSrQX+XCjh2j1
+         sIPglYzztxEYwNLaa8vfKtdVd5fRD63SjJQPlWZCq/C61v+ALkIDAr6weVbaWcCH2lH8
+         XyCYcWmtdRUqe5Yk65fv9xxwzTmMZyfBcJHC4sHQhOrnXOrTrJ2gEP+wl6zSaMvXJvm/
+         YonVZ/6AczcUlsSpOUkOt5BLYMBAJfnxwJv36BwJIg2+hdovBLw2oKzK9Mi1Ez4rlZCx
+         CpN+x/FdNpbrEqV+4OfRLWPv2+zh0YRKUDVdEOPJRU86XLgM5nBykjiACeS702Trmm20
+         GVuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732750310; x=1733355110;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6TszDdA28UmJNkLbj5Ys3Y092KyTg4JPf0GnkI2Cya8=;
+        b=IDb/tVGscNlFsiVU0JJNwoAkkzSJ9w7C7EiozyTsqB11ThOO8TmAJv7qDrjPuLQiBZ
+         pCsRwq8MN6nJjXC41/kNiJpzmHyHCWJ/pl3jG0/sSBLAfJ4No8lvz5MH7o1kF3ytmegn
+         7XNU/Qg+sb0RXjaMmkKMXincMTOoDMwEtiSAlKEiZOkloyDzbuITYU3lO7gm8ksmLxI+
+         7O27T/+V+5LzMXfv3uuKGKokAEAlp+aHL2YyY9EnTPpjH+sd28u/ud2prrr/YmvhX9Hn
+         1yXPorRT/cxYEx4QACbYl9AhLcyOz3wArTdEwAa1XzihrDTe+rRkyHscyNFi1txsNs8Y
+         TzWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh1KIm0qNojCNuWJb8ZQHaVJZxCZNcUE8fVwL5xj9nIYiiVaOf71sH4vQq9lFy62rr8+EABCT4xFzrDyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm6//hHomv69zHjy3v3G0/LPzIBfkitmegEGSbTCMiVf0SzKp1
+	xveWUzdcrYpMHNkjWaODPd88ftVHK3B5mehtpt+wB9uCu6M1YCns2Bi/MYBzmvY=
+X-Gm-Gg: ASbGncsJJyg5c52Wht74zoSv5LDTzQfKFIJqfRhFud5B7Ho/tD0axdLIAXgNG+xDR8+
+	yxqvbFCUxAf8aGDnXfOYlo46kBobPq/KhoAspJ1o424Fl7BvVoRCD0C3rrvY7ZJVZ/QZvncgV84
+	0Eph1wTN2lSwXmx5uT1pI3j3r5DxOGiCMHouZkgggcExPDNRjsZtZNtEUbmfWBrFsnCIZwvsfNi
+	i/gLkCRwqhUrBQFeuHdgetij7NRcOKWxFJkpl5Frv/ssRIemPcSlPIblAa4Ftg=
+X-Google-Smtp-Source: AGHT+IHgjc2cPrbC0aZV2S7sqJrkCbPea2u3Owx10Tid0gPuuY71KlejV3dkLQN2GcvQx8LRjYj36g==
+X-Received: by 2002:a05:600c:5101:b0:434:9dfe:20e6 with SMTP id 5b1f17b1804b1-434a9df71c6mr39451865e9.23.1732750309839;
+        Wed, 27 Nov 2024 15:31:49 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dc6831sm3374985e9.20.2024.11.27.15.31.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 15:31:48 -0800 (PST)
+Message-ID: <25f89e78-faec-4eba-887b-019eed752064@linaro.org>
+Date: Wed, 27 Nov 2024 23:31:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127162904.28182-1-advaitdhamorikar@gmail.com>
- <Z0eGY_6e9jVMezxE@fjasle.eu> <CAJ7bep+s04GXoht7MuVDBZ-FsjDXgdVtk11k9ajok8SkoCwH2w@mail.gmail.com>
-In-Reply-To: <CAJ7bep+s04GXoht7MuVDBZ-FsjDXgdVtk11k9ajok8SkoCwH2w@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 28 Nov 2024 08:30:29 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ86H7xpMqTwezXgbk8Bn273gpe9G1rmp-P0Qyzf7AJ2g@mail.gmail.com>
-Message-ID: <CAK7LNAQ86H7xpMqTwezXgbk8Bn273gpe9G1rmp-P0Qyzf7AJ2g@mail.gmail.com>
-Subject: Re: [PATCH-next] modpost: Remove logically dead condition
-To: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Cc: Nicolas Schier <nicolas@fjasle.eu>, Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/5] media: dt-bindings: Add qcom,sc7280-camss
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
+ hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
+ hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
+ catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241127100421.3447601-1-quic_vikramsa@quicinc.com>
+ <20241127100421.3447601-2-quic_vikramsa@quicinc.com>
+ <1a87e9d9-da7e-4b8b-807e-f56aa15acfc2@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <1a87e9d9-da7e-4b8b-807e-f56aa15acfc2@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 28, 2024 at 6:31=E2=80=AFAM Advait Dhamorikar
-<advaitdhamorikar@gmail.com> wrote:
->
-> Hello Nicolas,
->
-> > vsnprintf prototypes also indicate 'int' as return type.  What is the s=
-ource of your mentioned findings?
-> Sorry, I read an alternate vsnprintf implementation and have worded my
-> patch log wrong based on it.
->
-> However there is still an issue that n is declared as size_t which is
-> a typedef for
-> an unsigned long, I think the correct solution then is to use a signed
-> data type here for n?
+On 27/11/2024 12:57, Vladimir Zapolskiy wrote:
+>>
+>> +        camss: camss@acaf000 {
+>> +            compatible = "qcom,sc7280-camss";
+>> +
+>> +            reg = <0x0 0x0acb3000 0x0 0x1000>,
+>> +                  <0x0 0x0acc8000 0x0 0x1000>,
+> 
+> Unsurprisingly above is the error, which has been already reported for
+> enumerous amount of times, I wish to stop poking it eventually, please
+> reference to the previously given review comments and fix all of them
+> before sending a new version of the changes.
 
+So just to be clear what is wrong here because it may not be clear.
 
-Yes.
+1. Sort by IP name
+2. The first address @ reg should be equal to the address @ camss
 
-'n' should be int.
-This matches the return type of vsnprintf().
+-> Documentation/devicetree/bindings/media/qcom,msm8953-camss.yaml
 
+     camss: camss@1b00020 {
+         compatible = "qcom,msm8953-camss";
 
-I will squash the following.
+         reg = <0x1b00020 0x10>,
+               <0x1b30000 0x100>,
+               <0x1b30400 0x100>,
+               <0x1b30800 0x100>,
+               <0x1b34000 0x1000>,
+               <0x1b00030 0x4>,
+               <0x1b35000 0x1000>,
+               <0x1b00038 0x4>,
+               <0x1b36000 0x1000>,
+               <0x1b00040 0x4>,
+               <0x1b31000 0x500>,
+               <0x1b10000 0x1000>,
+               <0x1b14000 0x1000>;
+         reg-names = "csi_clk_mux",
+                     "csid0",
+                     "csid1",
+                     "csid2",
+                     "csiphy0",
+                     "csiphy0_clk_mux",
+                     "csiphy1",
+                     "csiphy1_clk_mux",
+                     "csiphy2",
+                     "csiphy2_clk_mux",
+                     "ispif",
+                     "vfe0",
+                     "vfe1";
+So:
 
+         camss: camss@acaf000 {
+             compatible = "qcom,sc7280-camss";
 
-
-diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-index 81f20ef13a0d..5b5745f00eb3 100644
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@ -49,7 +49,8 @@ module_alias_printf(struct module *mod, bool append_wildc=
-ard,
-                    const char *fmt, ...)
- {
-        struct module_alias *new, *als;
--       size_t len, n;
-+       size_t len;
-+       int n;
-        va_list ap;
-
-        /* Determine required size. */
-
-
-
-Thank you for your report!
-
-
-
-
->
-> Thanks for your time and feedback.
->
-> Best regards,
-> Advait
->
-> On Thu, 28 Nov 2024 at 02:21, Nicolas Schier <nicolas@fjasle.eu> wrote:
-> >
-> > On Wed, Nov 27, 2024 at 09:59:04PM +0530 Advait Dhamorikar wrote:
-> > > In case of failure vsnprintf returns `pos`, an unsigned long integer.
-> > > An unsigned value can never be negative, so this test will always eva=
-luate
-> > > the same way.
-> >
-> > 'man vsnprintf' on my system reveals a different behaviour:
-> >
-> > | The  functions  snprintf() and vsnprintf() do not
-> > | write more than size bytes (including the  termi=E2=80=90
-> > | nating  null  byte  ('\0')).   If  the output was
-> > | truncated due to  this  limit,  then  the  return
-> > | value  is the number of characters (excluding the
-> > | terminating null  byte)  which  would  have  been
-> > | written  to  the final string if enough space had
-> > | been available.  Thus, a return value of size  or
-> > | more  means  that the output was truncated.  (See
-> > | also below under NOTES.)
-> > |
-> > | If an output error  is  encountered,  a  negative
-> > | value is returned.
-> >
-> > vsnprintf prototypes also indicate 'int' as return type.  What is the s=
-ource of your mentioned findings?
-> >
-> > Kind regards,
-> > Nicolas
-> >
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+             reg = <0x0 0x0acaf000 0x0 0x4000>,
+                   <0x0 0x0acb3000 0x0 0x1000>,
+                   <0x0 0x0acc8000 0x0 0x1000>,
+                   <0x0 0x0acba000 0x0 0x1000>,
+                   <0x0 0x0accf000 0x0 0x1000>,
+                   <0x0 0x0acc1000 0x0 0x1000>,
+                   <0x0 0x0ace0000 0x0 0x2000>,
+                   <0x0 0x0ace2000 0x0 0x2000>,
+                   <0x0 0x0ace4000 0x0 0x2000>,
+                   <0x0 0x0ace6000 0x0 0x2000>,
+                   <0x0 0x0ace8000 0x0 0x2000>,
+                   <0x0 0x0acc4000 0x0 0x4000>,
+                   <0x0 0x0acb6000 0x0 0x4000>,
+                   <0x0 0x0accb000 0x0 0x4000>,
+                   <0x0 0x0acbd000 0x0 0x4000>;
+             reg-names = "vfe0",
+                         "csid0",
+                         "csid0_lite",
+                         "csid1",
+                         "csid1_lite",
+                         "csid2",
+                         "csiphy0",
+                         "csiphy1",
+                         "csiphy2",
+                         "csiphy3",
+                         "csiphy4",
+                         "vfe0_lite",
+                         "vfe1",
+                         "vfe1_lite",
+                         "vfe2";
+:(
+---
+bod
 
