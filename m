@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-423701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D499DABA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:19:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0579DABA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:19:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD727B20403
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B404F164B7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3AB1FF7DB;
-	Wed, 27 Nov 2024 16:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0954200B9B;
+	Wed, 27 Nov 2024 16:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6+bDJWT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="stQ13ZbY"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51967200BB1;
-	Wed, 27 Nov 2024 16:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B6D1FE45B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724344; cv=none; b=TGM6kOd/Q5qGUxXDw6PBYAISQ43ij9zhzUdUKXBZ5+wmh8rl+DWA1BSMY157oYL4SUaLemg8k/k1oX5o4gFIbstCnjlXL2kIeC865iyLYkrREiryGNrNslkoj3Oel6Fy2qSfcTrsRK3Bk+XhGcr/BnlAHoWlrMHQa4HdGzYtA+w=
+	t=1732724388; cv=none; b=NWGlrPR6YujHz4T5PfawQ7LBAJXqxgbB3SkcZmrwpxjLkbumNtVfTwGe2wqL6WBZoBolwbxwyPdbbIGADGmsn4MhuP1JsFMhKqNReUkOPJlHOKP4A3Gl4CFotE6qD/YKu51VCblnUn06YxIUVc6Tu6gbyT0B2rm7bPx7ZuRk3Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724344; c=relaxed/simple;
-	bh=N/F/nu4EPomDe0PNZxW7kt5NLpIvQhDIAVNnHLwbFMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwNyknLHjV7vGmjQ3jty0hu35tCEcAH+2XbZZfJPRBx+yTO6w5GiaG2JebIni6ZIdQnUHzGzea4SOu7kTHHd7XtD54gOvU6L7U+LkeT8Z6HHF2fODN2ij536y8xvY+2ZO8U0eDwdo5XiN/Patdok4v1m7ZmfEdLNxP/S2OGlt5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6+bDJWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9265C4CEDA;
-	Wed, 27 Nov 2024 16:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732724344;
-	bh=N/F/nu4EPomDe0PNZxW7kt5NLpIvQhDIAVNnHLwbFMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b6+bDJWTQRiQvMpF8t3PX95Nba4gsqha6jyicokWrt8v8FmxcBez1IqzYlJpdhcuK
-	 X9k1nYUwNiHwOtJSwKLPQCT7t0R9WvAkQUIcBrQ+rSQoaaclJQ9EHqzpx79ZjwxF94
-	 RxMTbxFMgcu86oMUqXQsQa7leLSljIyfT8rhaXu3gGmhWNMHazm0JmM6WaLKk/2iWG
-	 ODeeaVvjvf8s+otSpc6OHNwCYBjjOirOhzrSsLh+/TM4ct7pRwrdS4EwsLkicyxHdH
-	 +07nWTMvXHClyVPaumJsv5RUkv8b8zuwBYDRxFqsMKMx8TL4k949CJ7fqSFZsn0XSR
-	 nGbSrcxBuo27Q==
-Date: Wed, 27 Nov 2024 16:18:59 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can-next] dt-bindings: can: tcan4x5x: add missing
- required clock-names
-Message-ID: <20241127-myth-lily-122b9839cc0b@spud>
-References: <20241127-tcancclk-v1-1-5493d3f03db1@geanix.com>
- <20241127-siberian-singular-c2b99a7fd370@spud>
- <pl22u3ybv3ibnpzmgiskppz56vlvqhlz25h7s5ewunkks6ywtn@v6lgln7s536w>
- <lmyugclgwb7txf3jxc3fsasp5fgu7fji5dxb2wjw4jji32omnt@rs27camphw7q>
+	s=arc-20240116; t=1732724388; c=relaxed/simple;
+	bh=E+w9nNLSMAN+ZeW6dWk4UB03wj8vwo2aNxGc+VDrmxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CZ98ieFuCL0VKbmAu44qFrIDzxqCDwj9bxtSK9p2kAlcHAN712mZNZIqSpjeIxj7xu1XJEE0nD0m2fwByUZFwFH0F3a5jWXrZJnUWblpNwgtwucgN+l2nLQJL5SndwJbfn0P3wjIoARcRHFUx+suzqjuxi1n/wIGXJiW5UmIiCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=stQ13ZbY; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so10642a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:19:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732724385; x=1733329185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RAjY4cUXfzBi8WYwGYeSH20OavkqXnIHitIyVQzxrLw=;
+        b=stQ13ZbYItPwXmwBTX1ghPoCC614HcMBV0Rl5VnQfAnU8lJOyWCNJINpkPoJSp8noQ
+         CShUMHn9Efvwo0UYC+nwIQuOK9UswCssQzp6HlBf/Iw73nzHDYbK6zELuyW+fPY15P0R
+         zjDAxhuxiYqK53O5LrGVwqJib3QCaB8kuQdz75kheyfSn8OYSYwGZHy56spigtOIrONi
+         VN1RFkSGRWGKfmtUe59kiT9FvWpcOkl1vOhP/CQSd2zWFrhG/Ks+Ace5CXfLogtRr1t/
+         UGlODRrOBg3+aZhH/8XDEAgQtIkWTeqYniPiK+mqNqvIlYD3CeGjaCwCgkdJv/2mawkz
+         nJEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732724385; x=1733329185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RAjY4cUXfzBi8WYwGYeSH20OavkqXnIHitIyVQzxrLw=;
+        b=xNpPsr1pqdyu/gWR8L3LjasNXTkKNy9dqqhuKXQ7ja3vs6aZgNX09ucu6S89pQRoo0
+         wA2j3ozF8GH5zTbj0Ar/SZdl2qfYydyL96/U+2S+MZ8WGY8xTg/0zUw75R0yKesQs7fw
+         2FqD2cmiKZ7MNuDpg2hjwp1Ahcf9avq36UV4pmONId7bNoYTSrp9n9wgf82hbrOqsSNU
+         gsKp3GYGbnrWZEk8b/mYtnIFF7G6t0c18FRCHwxG/vdwN/V5Eo1xbK2XcmCD4DPVbdmr
+         DRGVvP25S0lAgw5JbYWIuv/N/tNaojsurhX4YRF22suIVrBxY7bEDRONkPKecrCGHONg
+         8ooQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBdFNikyIjte0tzCcori+fif3D/5PkehYaCA9DNPfyekTTh3CSfePFB5kNyGO2m13oinUo2wnmi9bRpuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztPyD009j+ziw+rKZzS61oKac3xOr577W5esACdUJA7hCKs5bA
+	fpG7Da6NbSJn9VxHUEuU/6QHIbszFJ2kISoJyvJp0de9D9DWC4lBtsBHTntcWb5yifXNJfyP2Qt
+	/bGbTCVFRNc0rxHnmIhWrMyoo11y6vro64wDn
+X-Gm-Gg: ASbGncvLUlyvAu2Z0JuF56PjSQlOA4tGKrmqxJsaAj3AXzs5wSCDq8ann6O8DjfJH9K
+	dc0aCzZb+1RDQdwbeTpaptHaPm4McqbG2RFSl9t8ECVJusGSC7c3ZzRPE32k=
+X-Google-Smtp-Source: AGHT+IHOfimbq5UVJFbeLGrkhx7uhD/EG8rIKTd4IIfYXZcO8eb5dxm860fiWHAJKL8K0w2iOIAFqyZVTagJNyJjsfE=
+X-Received: by 2002:aa7:cd50:0:b0:5d0:f39:9c7 with SMTP id 4fb4d7f45d1cf-5d083570c07mr71295a12.7.1732724384503;
+ Wed, 27 Nov 2024 08:19:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="69C/mtCz1F0Mt/iO"
-Content-Disposition: inline
-In-Reply-To: <lmyugclgwb7txf3jxc3fsasp5fgu7fji5dxb2wjw4jji32omnt@rs27camphw7q>
-
-
---69C/mtCz1F0Mt/iO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-6-7127bfcdd54e@google.com>
+ <CAG48ez0V5B0ycPuP7eRA-xE88ks8cr+a1MFZC5emv_eAsybNAw@mail.gmail.com> <CAH5fLghFezPeoPD57rXq-jy2wZBO0Bv6nSmU4OA6=hqeuGDVmA@mail.gmail.com>
+In-Reply-To: <CAH5fLghFezPeoPD57rXq-jy2wZBO0Bv6nSmU4OA6=hqeuGDVmA@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 27 Nov 2024 17:19:08 +0100
+Message-ID: <CAG48ez3n5AbKDC1dc7a9G0H9iHCZpc8mcR7Epuz78RB79=LaVA@mail.gmail.com>
+Subject: Re: [PATCH v9 6/8] mm: rust: add VmAreaNew for f_ops->mmap()
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 05:10:31PM +0100, Sean Nyekjaer wrote:
-> On Wed, Nov 27, 2024 at 04:56:13PM +0100, Sean Nyekjaer wrote:
-> > Hi Conor,
-> >=20
-> > On Wed, Nov 27, 2024 at 03:50:30PM +0100, Conor Dooley wrote:
-> > > On Wed, Nov 27, 2024 at 02:40:47PM +0100, Sean Nyekjaer wrote:
-> > > > tcan4x5x requires an external clock called cclk, add it here.
-> > >=20
-> > > That's not what this patch is doing, the clock input is already there,
-> > > so I don't know what this patch actually accomplishes? clock-names is=
-n't
-> > > a required property, so you can't even use it in a driver.
-> > >=20
-> >=20
-> > Thanks for asking the right questions :)
-> >=20
-> > I know the clock input is there, but it looks (to me) like the driver l=
-ooks for the
-> > specific clock called cclk:
-> > https://elixir.bootlin.com/linux/v6.12/source/drivers/net/can/m_can/m_c=
-an.c#L2299
-> > https://elixir.bootlin.com/linux/v6.12/source/drivers/net/can/m_can/tca=
-n4x5x-core.c#L396
->=20
-> Oh I really need to get my head around the dt jargon :)
-> Yes I'll add the clock-names to the required list for v2!
+On Wed, Nov 27, 2024 at 1:38=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+> On Tue, Nov 26, 2024 at 10:30=E2=80=AFPM Jann Horn <jannh@google.com> wro=
+te:
+> > On Fri, Nov 22, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.co=
+m> wrote:
+> > > This type will be used when setting up a new vma in an f_ops->mmap()
+> > > hook. Using a separate type from VmAreaRef allows us to have a separa=
+te
+> > > set of operations that you are only able to use during the mmap() hoo=
+k.
+> > > For example, the VM_MIXEDMAP flag must not be changed after the initi=
+al
+> > > setup that happens during the f_ops->mmap() hook.
+> > >
+> > > To avoid setting invalid flag values, the methods for clearing
+> > > VM_MAYWRITE and similar involve a check of VM_WRITE, and return an er=
+ror
+> > > if VM_WRITE is set. Trying to use `try_clear_maywrite` without checki=
+ng
+> > > the return value results in a compilation error because the `Result`
+> > > type is marked #[must_use].
+> > >
+> > > For now, there's only a method for VM_MIXEDMAP and not VM_PFNMAP. Whe=
+n
+> > > we add a VM_PFNMAP method, we will need some way to prevent you from
+> > > setting both VM_MIXEDMAP and VM_PFNMAP on the same vma.
+> > >
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> >
+> > Thanks, this looks really neat!
+> >
+> > Reviewed-by: Jann Horn <jannh@google.com>
+> >
+> > > +    /// Set the `VM_IO` flag on this vma.
+> > > +    ///
+> > > +    /// This marks the vma as being a memory-mapped I/O region.
+> >
+> > nit: VM_IO isn't really exclusively used for MMIO; the header comment
+> > says "Memory mapped I/O or similar", while the comment in
+> > remap_pfn_range_internal() says "VM_IO tells people not to look at
+> > these pages (accesses can have side effects)". But I don't really have
+> > a good definition of what VM_IO actually means; so I don't really have
+> > a concrete suggestion for what do do here. So my comment isn't very
+> > actionable, I guess it's fine to leave this as-is unless someone
+> > actually has a good definition...
+>
+> I can use this comment?
+>
+> This is used for memory mapped IO and similar. The flag tells other
+> parts of the kernel to not look at the pages. For memory mapped IO
+> this is useful as accesses to the pages could have side effects.
 
-btw, where even is ti,tcan4x5x.yaml? I was gonna paste the fixes tag you
-should be using but I couldn't find the file in linux-next.
-
---69C/mtCz1F0Mt/iO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0dGcwAKCRB4tDGHoIJi
-0p0BAP4gmHnm82HGWqBjdxIMq26VKuKZCC4ecqJjbv5MGKl3AAD9E0H7SqA9/FYW
-UuuUC1qT3nAtBzfGJ83EN89AnfTCwgw=
-=vdsg
------END PGP SIGNATURE-----
-
---69C/mtCz1F0Mt/iO--
+Yeah, sounds reasonable.
 
