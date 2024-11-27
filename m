@@ -1,84 +1,59 @@
-Return-Path: <linux-kernel+bounces-423446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5B89DA7D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:32:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F4B9DA7BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:27:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0779EB29396
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB05C1675ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F6A1FBC97;
-	Wed, 27 Nov 2024 12:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078EB1FC0E7;
+	Wed, 27 Nov 2024 12:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MFbS8Dqc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="nUxy08bn"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D31F667E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCD91FAC34;
+	Wed, 27 Nov 2024 12:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709472; cv=none; b=nto5ZPevuiWFxjG+ysupL2aFh4BVSdxB/7bHPe40LOWTyMHm98cTjV7POOUr5AjUWijTYOQDWZrC9cRmYNL3Pe4NDDcn/aNMJbRgTEu7ak3qXkAhUCZfCkH7nHR61rUQL/nvdFSCMWIKORU1PQf2SxdXle9fNjj+9ABOv0SR5wE=
+	t=1732710455; cv=none; b=bcBTCedIhKFrJfzXv7bEpOW4/Y7Yfsy/xft7rVY4P5BRvogiw21LrPYM1NGmSJ/xS/yIt7hhkQ93t8wudGb8QMPA43z6jAFjj0SbuDHGm0yVUhCTIEPkduOli3y3lQZjya27/ktsQqDgNODHv9p7SsFneJERiTgcT7jQTBI7nJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709472; c=relaxed/simple;
-	bh=F5eOtfppEc+IoodKU/rNNKsKD6NOPU6CRFuchJeSG84=;
+	s=arc-20240116; t=1732710455; c=relaxed/simple;
+	bh=5jL9pSGW+0e3tCClAnOiw1ya7EZSAqE8PQ9+Mzm8FY8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Blp/gDXUlh81JtDGz5DPi6pDX1i1zEIr5cetlZ8mz1279b/O16RVaVgvQQiDzg4NOJXyzjqcRQaVuEi6HuAHv6wLNvkF3T+A6qkmolXoS7p90kvvQfJ4dfIxw3RVw/0uBqUNE6XfIM6n/6GUqioMBzOGduLQ1jkho3nYjEwr4WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MFbS8Dqc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732709470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q6JOBTkXOEhLaQ1n7b3llX+BM31La79H/YhyA4I23K8=;
-	b=MFbS8DqcBkdaRmuP7VUQOHZEjp7pBcv1tBD8yiQYTowJ+g2kfiyjMVU+8yMi1OP9HI0PYK
-	qTOVdwqbljxAHjAo7nuzHnHR7zKqUUVGCU6oUOlzS+TY2BKBgOKOlZ1oCMtL7VUrB05EH+
-	ET9sQFLs73WCRKnDsXN84BqJ2rDXgNw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-224-3R3tuML-NQW8tP6Xquh7mQ-1; Wed, 27 Nov 2024 07:11:08 -0500
-X-MC-Unique: 3R3tuML-NQW8tP6Xquh7mQ-1
-X-Mimecast-MFC-AGG-ID: 3R3tuML-NQW8tP6Xquh7mQ
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4349c5e58a3so28875135e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:11:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732709468; x=1733314268;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6JOBTkXOEhLaQ1n7b3llX+BM31La79H/YhyA4I23K8=;
-        b=v40HzIdIcD8cGEPYBpv3c8by5jYt2WqvUKzBQRGvLhjDLZWxxdkE60ZcG7bV06JQJY
-         Fx8/NDRwtMWo7RHoT56F5vhLUlVL//fwKttHBD/xh5ocjaTEUKpeKEA6Qww+Py0yMyww
-         I4qEWkuufcguagPNBfBW9QDwX8/icxapeeMlj13v7fvlevTwSjdZo+aMj9gx/UTw3xaJ
-         ha8VnMJXvTXdrm/C2uxka3w7Nlm5A8xnWcT6ZCgHFvUMr4ECWum+xqyVCW9UPiqjNKuG
-         ogG3dLOYfVxhLMnKlt/QiDMLB80KDx5B5ooLlI3sDuUNVUeNND2iYgeIG8UzWyngCnUA
-         tqkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmciIBBwgFy+Xn1dOmwVrIsC1PL1ckl6r/kpyqMjT2sfI4veC0TAkxD97LPTrKsLuhTCej+wIxVcDrJQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0W9NI5am6WWh7Dt5cOoS1BYeAzGL+nt1QRO+mk6RX9bO8+z/o
-	WKJM63QNVJfPzhV/3Kc5dea+HMXog5uQ795uIQ1KkPz0B67l3d3TpVinBljJ98HPWblZNWfjjML
-	vO6Y/LbcxHRQQ24RrdzYIG9w8K/HVFpXvSysPSZmdhBbXfyQgi1bJbXdLFrAUyA==
-X-Gm-Gg: ASbGncsDa0sZK8Wm8szjbKNOFEkHS276/rAxQ05vHQHyPL/KsgA2y+nGEZYhJEp+uiP
-	kDhEYcPfYUAa40waRLmO/eRcQDErBlyRUGX66HSEAF5P9KwbLbZ9LaABrh83bNtNkalswysd5TM
-	CU63AFrUewHtNh9txqyz5gVBY6J0yO6HN+dTbO9N4ugSCbMfC0cqMnGq+MtlNZ7MVdasZPu3gFt
-	g9ygui0rImQJ/eeqLwMyo8moEBCe+pLk0/f4cSaWaGhAGlyli7rX9/RSQjHfyx7w/uqsHWnJ+SI
-X-Received: by 2002:a05:600c:19cc:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-434a9dbaee2mr22037105e9.1.1732709467642;
-        Wed, 27 Nov 2024 04:11:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF5S7X4BAK6Tw9UTBAoY3UvWdn/j85UYNxieDiSkT4Elsqw0mXyIcfPgWHb8aQubHgLtUvoWQ==
-X-Received: by 2002:a05:600c:19cc:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-434a9dbaee2mr22036925e9.1.1732709467289;
-        Wed, 27 Nov 2024 04:11:07 -0800 (PST)
-Received: from [192.168.88.24] (146-241-60-32.dyn.eolo.it. [146.241.60.32])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385c89fe5dbsm1187093f8f.102.2024.11.27.04.11.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 04:11:06 -0800 (PST)
-Message-ID: <7f5fd10d-aaf9-4259-9505-3fbabc3ba102@redhat.com>
-Date: Wed, 27 Nov 2024 13:11:05 +0100
+	 In-Reply-To:Content-Type; b=nEPcR6kRzx69qASIxpGEY1uMwzWTaAhS+raZeUIs5GMFi/QBFxBkKCFD56kF4Wt4gebSilIGqj9FFbIGAG9R69GVWfW7Cke3BILaeQj8Rs/HpSC+wSoka7yoOwk4azN4nNxNcHvB8+EXa4J6g+ZOH0zDmTwlt6l/V/X3ep5JE2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=nUxy08bn; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=8vlJ1pjBGzcn+AL0yBTVRFoarBGpeS4cMZH9vYOVej4=; b=nUxy08bnkRZu2dvpaDjUBvM2DS
+	g5Ce41jz6JgSZ51bLseqKPih9WHoPFVD4gLOZ/tKMg7jriLnHMVCPYU4+beaHg46v9OBEBLYkmC8Q
+	qbyKXRlhP/IUZ3Sdl9gXePIwbbFm49pQkyNDCKlsT4Vtoq4dziQ8StHHrJmlEpnAT7LpKXgrFXIK5
+	5s5akJEq35nWxi5iNlrCJNrGUjZh5ZkoTlk3D/9xKCMFYlaDjGWx7oxTWyu7vu5Z2dvI6I9RRfj9x
+	2OrZbV6LhwGDlpJgo8PIW90RGfBgatL8UVu8Lhb/aaL7vCoun6kUyhPH0WY+rGqFaFCJ+HHXEKNIU
+	L1SoY7qw==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tGGt9-000Mwl-HP; Wed, 27 Nov 2024 13:11:23 +0100
+Received: from [178.197.249.57] (helo=[192.168.1.114])
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tGGt8-0008RM-20;
+	Wed, 27 Nov 2024 13:11:22 +0100
+Message-ID: <2221d8d3-353e-4403-8675-fadc323b5885@iogearbox.net>
+Date: Wed, 27 Nov 2024 13:11:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,121 +61,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] net: ethernet: oa_tc6: fix tx skb race
- condition between reference pointers
-To: Parthiban.Veerasooran@microchip.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- UNGLinuxDriver@microchip.com, jacob.e.keller@intel.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org
-References: <20241122102135.428272-1-parthiban.veerasooran@microchip.com>
- <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
- <1d7f6fbc-bc3c-4a21-b55e-80fcd575e618@redhat.com>
- <8f06872b-1c6f-47fb-a82f-7d66a6b1c49b@microchip.com>
+Subject: Re: [PATCH bpf-next v2 2/2] bpf: Refactor bpf_tracing_func_proto()
+ and remove bpf_get_probe_write_proto()
+To: Marco Elver <elver@google.com>, Alexei Starovoitov <ast@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Nikola Grcevski <nikola.grcevski@grafana.com>,
+ bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241127111020.1738105-1-elver@google.com>
+ <20241127111020.1738105-2-elver@google.com>
+ <CANpmjNOpY0zjpVJe8zUYZR2oJ--=OtWdHnEp70SxmAnb5ubwbQ@mail.gmail.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <8f06872b-1c6f-47fb-a82f-7d66a6b1c49b@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <CANpmjNOpY0zjpVJe8zUYZR2oJ--=OtWdHnEp70SxmAnb5ubwbQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27470/Wed Nov 27 10:59:44 2024)
 
-On 11/27/24 11:49, Parthiban.Veerasooran@microchip.com wrote:
-> On 26/11/24 4:11 pm, Paolo Abeni wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On 11/27/24 1:06 PM, Marco Elver wrote:
+> On Wed, 27 Nov 2024 at 12:10, Marco Elver <elver@google.com> wrote:
 >>
->> On 11/22/24 11:21, Parthiban Veerasooran wrote:
->>> There are two skb pointers to manage tx skb's enqueued from n/w stack.
->>> waiting_tx_skb pointer points to the tx skb which needs to be processed
->>> and ongoing_tx_skb pointer points to the tx skb which is being processed.
->>>
->>> SPI thread prepares the tx data chunks from the tx skb pointed by the
->>> ongoing_tx_skb pointer. When the tx skb pointed by the ongoing_tx_skb is
->>> processed, the tx skb pointed by the waiting_tx_skb is assigned to
->>> ongoing_tx_skb and the waiting_tx_skb pointer is assigned with NULL.
->>> Whenever there is a new tx skb from n/w stack, it will be assigned to
->>> waiting_tx_skb pointer if it is NULL. Enqueuing and processing of a tx skb
->>> handled in two different threads.
->>>
->>> Consider a scenario where the SPI thread processed an ongoing_tx_skb and
->>> it moves next tx skb from waiting_tx_skb pointer to ongoing_tx_skb pointer
->>> without doing any NULL check. At this time, if the waiting_tx_skb pointer
->>> is NULL then ongoing_tx_skb pointer is also assigned with NULL. After
->>> that, if a new tx skb is assigned to waiting_tx_skb pointer by the n/w
->>> stack and there is a chance to overwrite the tx skb pointer with NULL in
->>> the SPI thread. Finally one of the tx skb will be left as unhandled,
->>> resulting packet missing and memory leak.
->>> To overcome the above issue, protect the moving of tx skb reference from
->>> waiting_tx_skb pointer to ongoing_tx_skb pointer so that the other thread
->>> can't access the waiting_tx_skb pointer until the current thread completes
->>> moving the tx skb reference safely.
+>> With bpf_get_probe_write_proto() no longer printing a message, we can
+>> avoid it being a special case with its own permission check.
 >>
->> A mutex looks overkill. Why don't you use a spinlock? why locking only
->> one side (the writer) would be enough?
-> Ah my bad, missed to protect tc6->waiting_tx_skb = skb. So that it will 
-> become like below,
-> 
-> mutex_lock(&tc6->tx_skb_lock);
-> tc6->waiting_tx_skb = skb;
-> mutex_unlock(&tc6->tx_skb_lock);
-> 
-> As both are not called from atomic context and they are allowed to 
-> sleep, I used mutex rather than spinlock.
+>> Refactor bpf_tracing_func_proto() similar to bpf_base_func_proto() to
+>> have a section conditional on bpf_token_capable(CAP_SYS_ADMIN), where
+>> the proto for bpf_probe_write_user() is returned. Finally, remove the
+>> unnecessary bpf_get_probe_write_proto().
 >>
->> Could you please report the exact sequence of events in a time diagram
->> leading to the bug, something alike the following?
+>> This simplifies the code, and adding additional CAP_SYS_ADMIN-only
+>> helpers in future avoids duplicating the same CAP_SYS_ADMIN check.
 >>
->> CPU0                                    CPU1
->> oa_tc6_start_xmit
->>   ...
->>                                          oa_tc6_spi_thread_handler
->>                                           ...
-> Good case:
-> ----------
-> Consider waiting_tx_skb is NULL.
+>> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+>> Signed-off-by: Marco Elver <elver@google.com>
+>> ---
+>> v2:
+>> * New patch.
+>> ---
+>>   kernel/trace/bpf_trace.c | 30 ++++++++++++++++++------------
+>>   1 file changed, 18 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>> index 0ab56af2e298..d312b77993dc 100644
+>> --- a/kernel/trace/bpf_trace.c
+>> +++ b/kernel/trace/bpf_trace.c
+>> @@ -357,14 +357,6 @@ static const struct bpf_func_proto bpf_probe_write_user_proto = {
+>>          .arg3_type      = ARG_CONST_SIZE,
+>>   };
+>>
+>> -static const struct bpf_func_proto *bpf_get_probe_write_proto(void)
+>> -{
+>> -       if (!capable(CAP_SYS_ADMIN))
+>> -               return NULL;
+>> -
+>> -       return &bpf_probe_write_user_proto;
+>> -}
+>> -
+>>   #define MAX_TRACE_PRINTK_VARARGS       3
+>>   #define BPF_TRACE_PRINTK_SIZE          1024
+>>
+>> @@ -1417,6 +1409,12 @@ late_initcall(bpf_key_sig_kfuncs_init);
+>>   static const struct bpf_func_proto *
+>>   bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>>   {
+>> +       const struct bpf_func_proto *func_proto;
+>> +
+>> +       func_proto = bpf_base_func_proto(func_id, prog);
+>> +       if (func_proto)
+>> +               return func_proto;
 > 
-> Thread1 (oa_tc6_start_xmit)	Thread2 (oa_tc6_spi_thread_handler)
-> ---------------------------	-----------------------------------
-> - if waiting_tx_skb is NULL
-> - waiting_tx_skb = skb
-> 				- if ongoing_tx_skb is NULL
-> 				- ongoing_tx_skb = waiting_tx_skb
-> 				- waiting_tx_skb = NULL
-> 				...
-> 				- ongoing_tx_skb = NULL
-> - if waiting_tx_skb is NULL
-> - waiting_tx_skb = skb
-> 				- if ongoing_tx_skb is NULL
-> 				- ongoing_tx_skb = waiting_tx_skb
-> 				- waiting_tx_skb = NULL
-> 				...
-> 				- ongoing_tx_skb = NULL
-> ....
+> As indicated by the patch robot failure, we can't move this call up
+> and needs to remain the last call after all others because we may
+> override a function proto in bpf_base_func_proto here (like done for
+> BPF_FUNC_get_smp_processor_id).
 > 
-> Bad case:
-> ---------
-> Consider waiting_tx_skb is NULL.
-> 
-> Thread1 (oa_tc6_start_xmit)	Thread2 (oa_tc6_spi_thread_handler)
-> ---------------------------	-----------------------------------
-> - if waiting_tx_skb is NULL
-> - waiting_tx_skb = skb
-> 				- if ongoing_tx_skb is NULL
+> Let me fix that.
 
-AFAICS, if 'waiting_tx_skb == NULL and Thread2 is in
-oa_tc6_spi_thread_handler()/oa_tc6_prepare_spi_tx_buf_for_tx_skbs()
-then ongoing_tx_skb can not be NULL, due to the previous check in:
-
-https://elixir.bootlin.com/linux/v6.12/source/drivers/net/ethernet/oa_tc6.c#L1064
-
-This looks like a single reader/single write scenarios that does not
-need any lock to ensure consistency.
-
-Do you observe any memory leak in real life scenarios?
-
-BTW it looks like both oa_tc6_start_xmit and oa_tc6_spi_thread_handler
-are possibly lacking memory barriers to avoid missing wake-ups.
-
-Cheers,
-
-Paolo
-
+I was about to comment on that, I would leave this as it was before,
+otherwise rest lgtm.
 
