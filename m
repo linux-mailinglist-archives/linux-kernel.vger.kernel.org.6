@@ -1,269 +1,329 @@
-Return-Path: <linux-kernel+bounces-423131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154919DA33E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:41:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B479DA340
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A05B21B31
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:41:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49A21B22E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174741547E7;
-	Wed, 27 Nov 2024 07:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A64154C07;
+	Wed, 27 Nov 2024 07:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QPaKcVgj"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011046.outbound.protection.outlook.com [52.101.70.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJVT7awu"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F0146A87;
-	Wed, 27 Nov 2024 07:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732693305; cv=fail; b=DokcTro60FcP/MGtIndNZ8fLSYhCV4GHz/jHC+/mVkCFFu1bN8vGs8DGZP2aXXjYJfhdUEd9UaoIGnavI/QbkwTjwafKp2sKlysppmf3F2ha5Wwi/yOE3Ac6oenZ92ErPoMkqaBE8OB7ATwH/Ssak5CVM9wjvmY8C+pbzAx4QhU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732693305; c=relaxed/simple;
-	bh=lGhisNzK6WrOH7ueJpeE/ELdMlXihQUI2mkcRKfKW/s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NQcnfkJOifpHOKZTlrjkmE7B+gYUxOMafSrEtglpW6Rl17+pNeECGIJ6Qsx5LpG/9N/TWOmhwkxOSuBuJIPFbrfrMVEz+hQ4hQaqezQ8u+xaegSBDmi+abOw2mDET5y5dLkibArZcrG0XMn6bJBtPv6jHtqdGiSu993VnQTSH00=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QPaKcVgj; arc=fail smtp.client-ip=52.101.70.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DPGx0kFiSWGV38TPIce0QGFcWKRRZcS1IE52tRT6mDo1vEVyfIdGTMXGwqtozjMLgYwpwo14fnx8SSFMHQj/zkxRujqcRaNQDMkT6bKGXONO6Wnc5Bflw/ItTnpE9+UobNl2NhCCgDoVVqYhtYlQMItL7Pmfw1f6tW6W/HJ2qtRbCKmnQch7duPPSFc5/JFb+YY394RDlNgNXpeZjtZudoZgAQEopFUmz+LEC1lu0uz0SLsJEOL6t34S0GuKhp5slVHGoWjVGX8mJ3DCngcZNDJ2h0ruZYoiiPaomM1qEraC0XyFfT9nkQPecrW4gfhvazDYod2+KugODcgOZlSnzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lGhisNzK6WrOH7ueJpeE/ELdMlXihQUI2mkcRKfKW/s=;
- b=i1MQYyNoSii3bn/QKLObtM2vbYwNqAX3EQxv4UyYaOjy1yY8g+mQNRK1fGKAEIMD2vISAtJPHUqAiMAzOBrAbN6rY8QGIohbvGr7+qM4akXPehLoPqoE6XmwkjF7spjN3hOrToIyRA/bHRT9epG1v6gLkngkovySlTq3nwJEt63FgGX3MI8Mlun6mFasMuv5tj+wGcoLIUdl7aM+MYVLwZSMKHJGj9E7cGw6iNURPx3Hlg7EqZ8ycF7a2jvGfamXMNwV5XG31YiFGQKCnJ1fAVdRCpPpG/+ZNdR1Fra7xtlQWhoGie/z0KsrjbewSvgFB826D0OeQJlRxrUMobxHGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lGhisNzK6WrOH7ueJpeE/ELdMlXihQUI2mkcRKfKW/s=;
- b=QPaKcVgjTRrxq7ZyLeIoAnYXDNgoAiYhW7Znx+RU1ZXLUkVP+nxKqNzzGEvEF4BiNbT4VSZd2f6sKYBZQN6SCtqjl93RYhYO4XTEFGBdndPKX4mmmT4b5bnwCfzgbG127/NYSHpRT664GCf1DZi40WTrjfQpACO8Ug9Xc/bblqiaxScS6p8PcJBP+DtXgQ6HvmSWB9FR76pvD1cBOnq0XQjJolvRG+d7TztFYl779TZnKH05oCLymzkTCnBZH0hAuQhRuUDiX+zoTHfMG3yCNUwarZg/LbMADd37RDRfIV/SEwmrGL9yGOr1Sjwff63m5KUbYaNuV/L7hhLnKgpN1Q==
-Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
- by VI0PR04MB10461.eurprd04.prod.outlook.com (2603:10a6:800:216::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Wed, 27 Nov
- 2024 07:41:39 +0000
-Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com
- ([fe80::4e37:f56b:8a3e:bff0]) by AM0PR0402MB3937.eurprd04.prod.outlook.com
- ([fe80::4e37:f56b:8a3e:bff0%4]) with mapi id 15.20.8048.020; Wed, 27 Nov 2024
- 07:41:38 +0000
-From: Carlos Song <carlos.song@nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-CC: Frank Li <frank.li@nxp.com>, "o.rempel@pengutronix.de"
-	<o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: imx: support DMA defer probing
-Thread-Topic: [PATCH v2] i2c: imx: support DMA defer probing
-Thread-Index: AQHbQJ/KpxcVwD7VSUaHU7HQcvRSIQ==
-Date: Wed, 27 Nov 2024 07:41:38 +0000
-Message-ID:
- <AM0PR0402MB3937944D3D0D985367EDEF9BE8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
-References: <20241126082535.1878554-1-carlos.song@nxp.com>
- <20241126-economic-energetic-junglefowl-5197a9-mkl@pengutronix.de>
- <AM0PR0402MB39372380307BC4252BD131ACE82F2@AM0PR0402MB3937.eurprd04.prod.outlook.com>
- <20241126-paper-nightingale-of-wealth-de17e7-mkl@pengutronix.de>
- <AM0PR0402MB39374E34FD6133B5E3D414D7E82F2@AM0PR0402MB3937.eurprd04.prod.outlook.com>
- <20241126-fat-orthodox-eel-5389b4-mkl@pengutronix.de>
-In-Reply-To: <20241126-fat-orthodox-eel-5389b4-mkl@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM0PR0402MB3937:EE_|VI0PR04MB10461:EE_
-x-ms-office365-filtering-correlation-id: d073222e-f488-418e-296a-08dd0eb6ed8e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?eW5tTTYydzNHeUZub2dxbk4yWEI3SnExS3V6VVc5ZDduelNuY1F1am9YSGto?=
- =?utf-8?B?YWdlWVNqOFpYNWcyOFBVcTVTTFlWN3JCK2dlc0ZQb0g4d0x2bml0dTRvRExa?=
- =?utf-8?B?WFR0dFFLQlB4SnZnVmxjQSswTTh0d29FV2RRM0xndnR4T0xQNG0zTnkvdnYv?=
- =?utf-8?B?WFJxeWFrZGdXSkVSZGthU0VlRTZXbzBLd0U0aEdKY0ZTb3dHa2lLSjNHNEhn?=
- =?utf-8?B?MHBySFlhRncyRHNZaTVsYXpRVXRjWE04cTRtMmdLdjlxTUpZdGFlUnpRc2hO?=
- =?utf-8?B?U1hwZUx2RVlsNjgwRk5BNDB4Nkt0S3lEYmp0K1JsaTlCQjYxKzcvalZ2NlA0?=
- =?utf-8?B?VlFjK3BLUzFsQWErNk1WNVBLUzZnNUJNWDdjaGwraTQ4b1FZd0l2c3NVV0U4?=
- =?utf-8?B?VVk4OXIyOExuOWZWQ2NBOUtXdDlweHdkQm9IR1VTeExGK3M1cnk4RHBoVmVP?=
- =?utf-8?B?V3R5Z3Bqdzk0Wm5leDVNZUJwTGdieVRzT3VkbEFjTFhoeDJSVzJBTnZlQk01?=
- =?utf-8?B?MzJNN2FsT2psb1VKYThrdUM4elFTVmhHekdHQUhZbENXVkpJcjU4QXpzY1JK?=
- =?utf-8?B?SnI1T1EwUnRsSUNVaTRpSGhnSFMwTVpJVHZpYytUTFE2TDEwckZ2dGM0eGRh?=
- =?utf-8?B?UFQ4b2pBVWordmJ2SmNaQzBDK2paazdkdHBSdjV3eVJUQU95ZzlmNlV4QUVL?=
- =?utf-8?B?MW1FOUJ3SmRyNHJJeVpEa3dDbmZKc3pMc3hRdSsyNURlTElNTkR0Y3lMQ0I2?=
- =?utf-8?B?dFVkNzFyUis0OE0wbThGRWxTMU50eGRmVUdWUjBBZUNycDBBWmo0dTB0YmZs?=
- =?utf-8?B?ZGdDTm9admFMZlphM2lRZXI5L1loS3lKUURIeFNaeCtCblIyVExMRVlHaXlL?=
- =?utf-8?B?ZXR2NEN4STQxUEhVNWVhY2hNRm5SWDBiU09vbFAvWVUzS0dHbHNuU0tzdElt?=
- =?utf-8?B?Q0dFWVdZQW5oblN6R05MRDlvUmpUS0VYYU1hVnk1YURQbmFES080V1NGUFZv?=
- =?utf-8?B?VDYwNkN0SWcvS2hlMEtzTDkxSlRqSWQ4TG5PWXdkVEQvd090bDlUVFdlczlR?=
- =?utf-8?B?MFo2K3plS3FaZ0lFZ1doNlpQTlVYLzNjL0w3TkFkTVM0MVFnYnBMbmJnNlRP?=
- =?utf-8?B?ektjNFo0L0pjYXU1VkFyUll0aGNNYVdRbGJzeWQ0WG9MMzZTcUJ1a1VEZnhG?=
- =?utf-8?B?WUJnNDNjUGtxSi9pb0JZSTRPRktDRWFhQVU4dzRwMENHRDkwR0dJU2FUanRp?=
- =?utf-8?B?c1FUTDd6RXQ5ZFpQUXZHR2RtSXF2WEt4T0lDdkxFUkdYSXVWMm9TSStwdGI2?=
- =?utf-8?B?STZzK2N5MEhRYTVMQTZzdW1pakNkeHUvYzQ0S1RJekxpUVdhOWEzbExZeXlI?=
- =?utf-8?B?SnRkYUN2RlNlaklUaU43OFdOdmxQUWYvajUvbmt5N1o1MFV4TXVNalFiQnZD?=
- =?utf-8?B?V2F3QXZiUHR4UVZMVENTOXN5Z3Vvbkk4dGl2QTlxazRYS0NqNzdkYTB3ZHhk?=
- =?utf-8?B?QkZ4Ny9Gamc0aDJ1bXFHVmU3Q2lMbC9Ta2FoNmgxbENlUS93cWRPL2h0dXdh?=
- =?utf-8?B?dHBNQTRPNE9aRjhwRS9pQkUwbHdOTDI2b296OVowbTFoTHE0TGUzWGJ3aXZN?=
- =?utf-8?B?N016TWpQTDE0NVdMb3FwZG5yYlhPTkZkdGdHN0NKMXg3enRqOEJJSjY3b20v?=
- =?utf-8?B?UHliQmhsYXhBa09CL3dINnBRUGxwMnhXdzliQTdaZ3Y5UTljVG8wdTR1Zitp?=
- =?utf-8?B?a3RvemtsQ2NjZ2ErWXQySmEveFJ2NHlrM0crcUtqeUZDeEJVSXo0SjVXeXN5?=
- =?utf-8?B?NXdoY2ZoQnZmcGx3R3NnZz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3937.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bG4xcFkybWVVUFl5aFhqREpkWHVobS85WTUvTkhJdVVEN3JZNWxOTVI3ZHBL?=
- =?utf-8?B?eWJxL2ROOWRKWXBTTEt2MVVtNDVKRElrSi9yUUVmM0c3VEVOWDJpeTl5Zkxi?=
- =?utf-8?B?NVF0ZFc2d3FrODF5RDhaTWh5emJmdzVQV3VHS0JCOFpJdmpXd3oyVklBeUVr?=
- =?utf-8?B?VHF4Sk1oL1dxQjBiN3o4Mm5ha3FLc0pmSEhsMFllMHF1VG11MTRUaEV4cHFu?=
- =?utf-8?B?NllKbEg3UitkcTlOVitrY1ZlT3VFbkhkNXdQMTVKdVJjcTlsOHNVMWU3VmdB?=
- =?utf-8?B?eUZTNmg1MGg5aVAzSFBrMGJaRnY1aWZlR2l2WFNrK1FUZStNNE1SdWsreS9k?=
- =?utf-8?B?c2pSUVE5NXl1RWZScVc4Vm9FejdobitsdGg1OEJJcllzVmwwdHdXQVZxWmZJ?=
- =?utf-8?B?UU5ZYjl2UXdTdVA1c2c2azlPSnFoZm13ODhqM0NUZ2hvY0FmcDRTSnBIVXpk?=
- =?utf-8?B?SmJnQ3VZZEVodGw5QXJncFAxTkg4YnBZVWZSNldUamlSQ0ZUd0ptUFVBRk5Z?=
- =?utf-8?B?U2Z5VzlxOFpwMVVLc2c1TVdnamhXblJaNUc4Tm01Z2xyVFJrelBVa0N6TS9L?=
- =?utf-8?B?NFkrS1lUNmpwTW9MTE5DK0NNd0YwSkhpT0ZEM2VqRlM1RGFFTC9aUlNKV2Fy?=
- =?utf-8?B?QnNKUXZveFZZaTF4RkJPLzhPTDN0YlVySHVCYmtINHltWTRUU1Rhd2RZenVk?=
- =?utf-8?B?R2ZvRzhFSHV2N0dITS9hTFIzeWZDbnpDRXRyOWZHNlVla3pEeFhCRUREeXhh?=
- =?utf-8?B?U2hiMXppNnZsVVlHaG1kK01YTk1acG1hWjFTcmt3NHcvTDVNVkErbGVTWHJo?=
- =?utf-8?B?S3VpeDVXdlJwTlYyN0tsbjZmNEZtaVpCZ1NCQlE5WUt6NkpCWWFHRXR1YUhu?=
- =?utf-8?B?UGVRYmJLS2tvWHp2dWF0MjNDeXVOcEljVkJWaVJqWjloL2IzelE0NHZsbXM2?=
- =?utf-8?B?OEJtdlAxM0VJQmtFRUtCSnI3emhiai9HWDUvTG5iL1Vkb3VZNHpkNDltVXJE?=
- =?utf-8?B?djVqZUVWaExreDVEYVoyN09MTmZTVU1BMlc5ektMYWp6bENZZ3NpNmVjMmEx?=
- =?utf-8?B?YU5LeGdHa1QrYzZlR2tJZGlLd1V5VDNOQzE0dXA0a2d2d3Rld0pSaG5WUERP?=
- =?utf-8?B?VlRhR1VjczI3UG5wM2pseTkyZ0RqeG94UkVScXVwU1Z0VFVnalhxczlXSHhv?=
- =?utf-8?B?bThKTmRUK3FFRzF6K2JWMEVURUtUMXNwTGRBby9IZExkSG05QUdITzlISlpF?=
- =?utf-8?B?ampoU3crOU5hNGFqYThoTkVPalkyVS9ZZUZsMDhvanNkSHRKWjlqQkU4eXdN?=
- =?utf-8?B?elpUc093WnlSWDFsWkw4OVpXY0ZYdzBLQ2w3cnFwSHpMcXg3TkF5OWhZSTYy?=
- =?utf-8?B?TjBHWTBwdXpyT1cvU0FJRTg3cGRuUGNGNVkrREUxQlIrV1lZRS9QS1VuMnZo?=
- =?utf-8?B?MTlwUGxvQ3QybWQ1Z1BUWnRJMFVQWE9Pd08raURRVHZKOGpQeitxVnR5cm5U?=
- =?utf-8?B?U0ZqZk02dDVmRFZ1MGFLM0VCMFdaOU5PaVNRNE0ybDRYZ2VqUGxzd2J4UUhO?=
- =?utf-8?B?Z1lOSTFVcnRvcUNadnNib2F2Q3lLZlJwbDNMZVRJUi9DcUhFb3g4OE1BKzJB?=
- =?utf-8?B?d0tOTk5Tc216SEIxaVpnTUxidHYwZzRLWDU5OVI3K2dWWlIwd29BQjlFcXNV?=
- =?utf-8?B?TG1PSnI3aWprVHVLTWs5cG9BQ0N5WWJGR2JnYkxQL3FaQWhJTFdsRWhzRnJJ?=
- =?utf-8?B?TWRQTHZXbm9NQjB0eXU3WXJjeVN3WDY4Q0tUaTlLNU5LYXk4NCt6TUFRdnBZ?=
- =?utf-8?B?aklXVTVIT25VUnZHTWNnWldLa00yWDRvSDJHMHlIS0s0aUxzYWRaUExjQm1L?=
- =?utf-8?B?MmpEMkdBR2YvMXFBTnJwZEg4RE9nV2NDZ3QxTU55anhmQkY1NXRCWTczdDl5?=
- =?utf-8?B?cWpnOXFzaGFhcjlqZjl6cWdnbEp5U01zNVc3MWp0MXl2a3Y5MTk0N25VUVZq?=
- =?utf-8?B?TFNpdTZoa3VkSCtkZTRJZjlNT1lqMVlqbW9QZjZ2R01Dc29MS0ZuVk9veldX?=
- =?utf-8?B?dGZRQll4WWpUVWkxbHRGdUdKV0F6eE92RWFMV0tsditXYVBhaU1xVk1rS0FZ?=
- =?utf-8?Q?5Ck7dohsC6w/9484nTGJ8kvyx?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9595A146A87;
+	Wed, 27 Nov 2024 07:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732693329; cv=none; b=OVAH4my5cejUbujoE2Y0rM33Ygawc6ADC3H59PInIkpI8i+GELOs8UYaSyPVfByJkzjCQQWVSSF1mLM/agwKaOkmQTIOX4zHlu//iuN6a/2RpxLNGWvMGm+5yp5piWlEKL7JSh3cZG7elkumPrRsRL4003jHjli2IqZeVFSv+ow=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732693329; c=relaxed/simple;
+	bh=n2ttvNoV1XL707it2hYYq89Nyv4j83JCIIFJHKcj4VE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IaVKAAxlrpb/V7cbxLgnFJI6WZ8rZcPIn7Pv9baRRrIF0aSxfDDl6OKWsCC1Ia8DLt5vHWrXINfqC2gnoVrDVUxGeEl40uZi+4//4rYmRa7TefRGbuxBrJl4ZvGyP0fj2KtsXEpnhQBKe0MnunLSc73KLFjypA3KY/iQjYuJRgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJVT7awu; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6d41f721047so46796146d6.1;
+        Tue, 26 Nov 2024 23:42:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732693326; x=1733298126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pUeFWqsXwpt4WTXkPzNXsf4Gi9tVXueAa/I+0CZw2Bo=;
+        b=JJVT7awuD8jCpy4jlIJtqfusJqo9NdDrpLub92Z5LHh7VWpm7RWSwgkbqzIvsXedZC
+         0wFRi9EK7AaW1vyKxSB91FWbNXJ/qW9lpw52kbxh7c0NQiy4DzbjhgnB6gMUUINbgstX
+         cfkZk44rlm+RNGSSjjNgsB9Sh3Ldp1dXI0cmZkfR3kbb0Qt8+lskEQKIEEwiLhx2HXZv
+         DQeAffe/FBSjR+6AOAIi4gQN7CzlfT9flJX0zBvX7+8na5ctUNqdB0flTbON3NCOPZuh
+         XnvQQA+j0qxDFI3TjW5awheqQYUVbZqSkYPPS2GuCGeSRPh+SlDQLS4kLUGHiQKOnHFO
+         WhzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732693326; x=1733298126;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pUeFWqsXwpt4WTXkPzNXsf4Gi9tVXueAa/I+0CZw2Bo=;
+        b=eyTc3Ge9fB/sC9KhBNQfI8QvOcaIQ+jNZqeF/IUAqQr1/LADr3yDXInD4gIym+ej59
+         ZI3UvcCzMW4Z5bHV9Bs3l1ctzJOtiIRM28TQRgwSlkcSln4IRnVmQ39WsrasToINtZCs
+         dox7JXQ837vh3XRCkTuQmkIO55hlQ4Zu3qBAg/QH9TNcU5cB8PUHQ6DQePFnxcWDA/Dc
+         r4jVQwpDkNYDGeuTuIaQryHvAHyFjdSgaqyzIs3k8B9C3XcLHZzrswR7AwAVsehS4649
+         J2V/DuCfhGI7GquOn/Vr+TkZH7rO1X9ymkybGKJ2i/3TaYXKO7M1GboL5wfOMShrUVZB
+         9rNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrNOr7mkRhcxrMsdHf1vQceEg1392Ai50er2We7RVDGq93USC4PSICndcguW+yX2kw2QvuwR9Ze5kRdvd2@vger.kernel.org, AJvYcCXBVuim0bKJnHxgKw3aB82j1Sa5Tp5TKnS9qwu5VnihVvHEVLlAlrsWxubhEL5devrqlzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp8iJXMZdD/8MWfKfjFp3Izb4WhIXt0s2spogbuXbeKnXGynZG
+	LtnIv00qcmTJp6NVA75r2E++C1wH/yJp2bA7k7wF/5/i8vGCgetV
+X-Gm-Gg: ASbGncsuJuYl7VVud++SxqdFMEfyxf27MD6XoesirJI6hD8mZ3Q0DWtvsavb/LOm9Un
+	rZzJoDr3axtbHRq3kgAJYSHmdzH5Q2syQvb1/e5yC/VoajQZvlR7/8iQRq7G5d1xl4lMeIwDgVU
+	5MkjNBDf9rpAwZM9+7d4e2ax7NQF8H0oh+N+eLo1Vpv5RCisAfJRHAq1xTK4QmKhYO4L0p36Rgm
+	HEjU7RnCHuVsEPC77Ez/ZfMhpi+8HHChEE47ZvZKS06VmEeDKQOsOAtR466VXFJT0MJm6RYIULX
+	kkjgxYRyPEK4kD74IS1Q/CzZ
+X-Google-Smtp-Source: AGHT+IEq2gw3b+WLjB/Mh1kpHvZvn5Y0StozzJBewkPMWhxJt8+Y+qhqDWkoXtDvVsq8bPB+0zGnHg==
+X-Received: by 2002:a05:6214:2405:b0:6d4:2806:1764 with SMTP id 6a1803df08f44-6d864e02367mr29558286d6.43.1732693326289;
+        Tue, 26 Nov 2024 23:42:06 -0800 (PST)
+Received: from Matan-Desktop.localdomain (ool-457a37de.dyn.optonline.net. [69.122.55.222])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6d451ab42cdsm63119906d6.55.2024.11.26.23.42.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 23:42:05 -0800 (PST)
+From: Matan Shachnai <m.shachnai@gmail.com>
+To: ast@kernel.org
+Cc: Matan Shachnai <m.shachnai@gmail.com>,
+	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
+	Srinivas Narayana <srinivas.narayana@rutgers.edu>,
+	Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] bpf, verifier: Improve precision of BPF_MUL
+Date: Wed, 27 Nov 2024 02:41:56 -0500
+Message-Id: <20241127074156.17567-1-m.shachnai@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR0402MB3937.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d073222e-f488-418e-296a-08dd0eb6ed8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 07:41:38.8779
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Celg8a2v12AqMoT2h1XFzAjimeCifPSDHwizklVZgHaY0z1tllnAl6wZLItfDtQWsxDsPG5AgMERmnk2ENOJUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10461
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-PiA+DQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBN
-YXJjIEtsZWluZS1CdWRkZSA8bWtsQHBlbmd1dHJvbml4LmRlPg0KPiA+ID4gU2VudDogVHVlc2Rh
-eSwgTm92ZW1iZXIgMjYsIDIwMjQgNjoyNCBQTQ0KPiA+ID4gVG86IENhcmxvcyBTb25nIDxjYXJs
-b3Muc29uZ0BueHAuY29tPg0KPiA+ID4gQ2M6IEZyYW5rIExpIDxmcmFuay5saUBueHAuY29tPjsg
-by5yZW1wZWxAcGVuZ3V0cm9uaXguZGU7DQo+ID4gPiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IGFu
-ZGkuc2h5dGlAa2VybmVsLm9yZzsgc2hhd25ndW9Aa2VybmVsLm9yZzsNCj4gPiA+IHMuaGF1ZXJA
-cGVuZ3V0cm9uaXguZGU7IGZlc3RldmFtQGdtYWlsLmNvbTsgaW14QGxpc3RzLmxpbnV4LmRldjsN
-Cj4gPiA+IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZzsNCj4gPiA+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+
-IFN1YmplY3Q6IFtFWFRdIFJlOiBbUEFUQ0ggdjJdIGkyYzogaW14OiBzdXBwb3J0IERNQSBkZWZl
-ciBwcm9iaW5nDQo+ID4gPg0KPiA+ID4gT24gMjYuMTEuMjAyNCAxMDoxNToyNywgQ2FybG9zIFNv
-bmcgd3JvdGU6DQo+ID4gPiA+ID4gPiAgc3RhdGljIHZvaWQgaTJjX2lteF9kbWFfY2FsbGJhY2so
-dm9pZCAqYXJnKSBAQCAtMTgwMyw2DQo+ID4gPiA+ID4gPiArMTgwNCwxMyBAQCBzdGF0aWMgaW50
-IGkyY19pbXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiA+ID4gPiA+
-ICAJaWYgKHJldCA9PSAtRVBST0JFX0RFRkVSKQ0KPiA+ID4gPiA+ID4gIAkJZ290byBjbGtfbm90
-aWZpZXJfdW5yZWdpc3RlcjsNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiArCS8qIEluaXQgRE1B
-IGNvbmZpZyBpZiBzdXBwb3J0ZWQgKi8NCj4gPiA+ID4gPiA+ICsJcmV0ID0gaTJjX2lteF9kbWFf
-cmVxdWVzdChpMmNfaW14LCBwaHlfYWRkcik7DQo+ID4gPiA+ID4gPiArCWlmIChyZXQgPT0gLUVQ
-Uk9CRV9ERUZFUikgew0KPiA+ID4gPiA+ID4gKwkJZGV2X2VycigmcGRldi0+ZGV2LCAiRE1BIG5v
-dCByZWFkeSwgZ28gZGVmZXIgcHJvYmUhXG4iKTsNCj4gPiA+ID4gPiA+ICsJCWdvdG8gY2xrX25v
-dGlmaWVyX3VucmVnaXN0ZXI7DQo+ID4gPiA+ID4gPiArCX0NCj4gPiA+ID4gPg0KPiA+ID4gPiA+
-IERvbid0IHNwYW0gdGhlIGxvZ3MgaWYgdGhlIGRyaXZlciBkZWZlcnMgcHJvYmluZywgaXQncyBu
-b3QgYSBlcnJvci4NCj4gPiA+ID4gPiBBbmQgaXQgbG9va3Mgc3RyYW5nZSB0byBpZ25vcmUgYWxs
-IG90aGVyIGVycm9ycyBoZXJlLiBFaXRoZXIgYWRkDQo+ID4gPiA+ID4gYSBjb21tZW50IGhlcmUs
-IHNvbWV0aGluZyBsaWtlICJjb250aW51ZSB3aXRob3V0IERNQSIsIG9yIGxldA0KPiA+ID4gPiA+
-IHRoZSBmdW5jdGlvbiByZXR1cm4NCj4gPiA+ID4gPiAwIGluIGNhc2UgdGhlIGRyaXZlciBzaG91
-bGQgY29udGludWUgYW5kIHByb3BhZ2F0ZSB0aGUgZXJyb3IgaWYNCj4gPiA+ID4gPiB0aGUgY2Fs
-bGVyIHNob3VsZCB0YWtlIGNhcmUgb2YgaXQuDQo+ID4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4g
-SGksDQo+ID4gPiA+IFRoYW5rIHlvdSBmb3IgeW91ciBzdWdnZXN0aW9uISBJIGFncmVlIHdpdGgg
-eW91Lg0KPiA+ID4gPiBJIHdpbGwgY2hhbmdlIHRvIHRoaXMgbG9naWM6DQo+ID4gPiA+IAlyZXQg
-PSBpMmNfaW14X2RtYV9yZXF1ZXN0KGkyY19pbXgsIHBoeV9hZGRyKTsNCj4gPiA+ID4gCWlmIChy
-ZXQpIHsNCj4gPiA+ID4gCQlpZiAocmV0ID09IC1FUFJPQkVfREVGRVIpDQo+ID4gPiA+IAkJCWdv
-dG8gY2xrX25vdGlmaWVyX3VucmVnaXN0ZXI7DQo+ID4gPiA+IAkJZGV2X2luZm8oJnBkZXYtPmRl
-diwgInVzZSBwaW8gbW9kZVxuIik7DQo+ID4gPiA+IAl9DQo+ID4gPiA+DQo+ID4gPiA+IFJldCA9
-IDAgIC0tLS0tPiAgZW5hYmxlIERNQSBzdWNjZXNzZnVsbHkgIC0tLS0tLS0+IG5vIHByaW50DQo+
-ID4gPiA+IFJldCE9MCAgLS0tLS0+ICBkZWZlciBwcm9iZSAtLS0tLS0tLS0+IG5vIHByaW50IGFu
-ZCB0cnkgYWdhaW4NCj4gPiA+ID4gUmV0IT0wICAtLS0tLT4gIGZhaWwgdG8gZW5hYmxlIERNQSAt
-LS0tLS0+IHJlbWluZCBub3cgaXMgdXNpbmcgcGlvDQo+ID4gPiA+IG1vZGUNCj4gPiA+ID4NCj4g
-PiA+ID4gRG8geW91IHRoaW5rIHRoZSBsb2dpYyBpcyBhY2NlcHRhYmxlPw0KPiA+ID4NCj4gPiA+
-IFllcywgdGhlIG90aGVyIG9wdGlvbiBpcyB0byBtb3ZlIHRoZSBsb2dpYyBpbnRvDQo+ID4gPiBp
-MmNfaW14X2RtYV9yZXF1ZXN0KCkgYW5kIGxldCBpdCByZXR1cm4gMCBpbiBjYXNlIG9mIERNQSBv
-ciBmYWxsYmFjaw0KPiA+ID4gdG8gUElPLCBvciBhbiBlcnJvciBpbiBjYXNlIG9mIHByb2JlIGRl
-ZmVyIG9yIGEgZmF0YWwgZXJyb3IuDQo+ID4gPg0KPiA+ID4gVGhpcyB3YXkgdGhlIHByb2JlIGZ1
-bmN0aW9uIHdpbGwgbG9vayBsaWtlIHRoaXM6DQo+ID4gPg0KPiA+ID4gICAgICByZXQgPSBpMmNf
-aW14X2RtYV9yZXF1ZXN0KGkyY19pbXgsIHBoeV9hZGRyKTsNCj4gPiA+ICAgICAgaWYgKHJldCkN
-Cj4gPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZGV2X2Vycl9wcm9iZSgmcGRldi0+ZGV2LCBy
-ZXQsICJGYWlsZWQgdG8NCj4gPiA+IHNldHVwIERNQVxuIik7DQo+ID4gPg0KPiA+DQo+ID4gU29y
-cnksIEkgaGF2ZSBzb21lIGRpZmZlcmVudCBpZGVhcy4uLg0KPiA+IDEuIERNQSBtb2RlIHNob3Vs
-ZCBiZSBvcHRpb25hbCBmb3IgaTJjLWlteCwgYmVjYXVzZSBpMmMtaW14IGNhbiBhY2NlcHQgRE1B
-DQo+IG1vZGUgbm90IGVuYWJsZWQsIGJlY2F1c2UgaXQgc3RpbGwgY2FuIHdvcmsgaW4gQ1BVIG1v
-ZGUuDQo+IA0KPiBBQ0sNCj4gDQo+ID4gICBJZiB3ZSB1c2UgcmV0dXJuIGRldl9lcnJfcHJvYmUo
-KSwgd2UgaGF2ZSB0byByZXR1cm4gZXJyb3IgYXQNCj4gaTJjX2lteF9kbWFfcmVxdWVzdCgpIGZv
-ciAic29tZSBmYXRhbCBlcnJvciIsIGl0IHdpbGwgY2F1c2UgaTJjX2FkYXB0ZXIgY2FuIG5vdA0K
-PiBiZSByZWdpc3RlcmVkLCB0aGVuIGtpbGwgaTJjIGFkYXB0ZXIgcmVnaXN0ZXIuDQo+IA0KPiBp
-MmNfaW14X2RtYV9yZXF1ZXN0IHNob3VsZCBvbmx5IHJldHVybiBhbiBlcnJvciBpZiBQSU8gbW9k
-ZSBpcyBub3QgYW4gb3B0aW9uLg0KPiANCj4gPiAgIElmIHdlIGFsd2F5cyByZXR1cm4gMCBhdCBp
-MmNfaW14X2RtYV9yZXF1ZXN0KCksIGRldl9lcnJfcHJvYmUgd2lsbCBub3QNCj4gd29yayBmb3Jl
-dmVyLiBTbyBmcm9tIG15IHBvaW50LCBpZiBETUEgaXMgbm90IHdvcmtpbmcgd2VsbCwganVzdCBv
-dXRwdXQgYSBsb2cgdG8NCj4gcmVtaW5kIG5vdyBpMmMgaXMgYWx3YXlzDQo+ID4gICB3b3JraW5n
-IGF0IENQVSBtb2RlLCB3ZSBoYXZlIG5vIERNQSwgdGhpcyBpcyBlbm91Z2guDQo+IA0KPiBBQ0sN
-Cj4gDQo+ID4gMi4gd2hlbiByZWFsbHkgZGVmZXIgcHJvYmUsIHJldHVybiBkZXZfZXJyX3Byb2Jl
-IHdpbGwgcmV0dXJuIGRlZmVyIHByb2JlDQo+IGRpcmVjdGx5LCBidXQgd2Ugc3RpbGwgbmVlZCB0
-byBnb3RvIGNsa19ub3RpZmllcl91bnJlZ2lzdGVyIGJyYW5jaCB0byBmcmVlIGlycSwNCj4gY2xr
-X25vdGlmaWVyX3VucmVnaXN0ZXIgYW5kIGRpc2FibGUgcnVudGltZSBwbS4NCj4gPiAgIFNvIHdl
-IHN0aWxsIG5lZWQgbW9yZSBqdWRnZW1lbnQgYXQgcHJvYmUgZnVuY3Rpb24gdG8gaGFuZGxlIHRo
-aXMuDQo+IA0KPiBOb3QgcXVpdGUgImRldl9lcnJfcHJvYmUoKSIgd2lsbCBub3QgZGVmZXIgcHJv
-YmUgZGlyZWN0bHksIHRoZSByZXR1cm4gaW4gInJldHVybg0KPiBkZXZfZXJyX3Byb2JlKCk7IiBk
-b2VzLiBUaGlzIHNob3VsZCB3b3JrOg0KPiANCj4gICAgICAgICByZXQgPSBpMmNfaW14X2RtYV9y
-ZXF1ZXN0KGkyY19pbXgsIHBoeV9hZGRyKTsNCj4gICAgICAgICBpZiAocmV0KSB7DQo+ICAgICAg
-ICAgICAgICAgICBkZXZfZXJyX3Byb2JlKCZwZGV2LT5kZXYsIHJldCwgIkZhaWxlZCB0byBzZXR1
-cA0KPiBETUFcbiIpOw0KPiAgICAgICAgICAgICAgICAgZ290byBjbGtfbm90aWZpZXJfdW5yZWdp
-c3RlcjsNCj4gICAgICAgICB9DQo+IA0KPiANCj4gPiBTbyBJIHByZWZlciB0aGlzIGxvZ2ljOg0K
-PiANCj4gVGhpcyBhbHNvIHdvcmtzLCBMR1RNIQ0KPiANCj4gPiByZXQgPSBpMmNfaW14X2RtYV9y
-ZXF1ZXN0KGkyY19pbXgsIHBoeV9hZGRyKTsgaWYgKHJldCkgew0KPiA+IAlpZiAocmV0ID09IC1F
-UFJPQkVfREVGRVIpDQo+ID4gCQlnb3RvIGNsa19ub3RpZmllcl91bnJlZ2lzdGVyOw0KPiA+IAlk
-ZXZfaW5mbygmcGRldi0+ZGV2LCAidXNlIHBpbyBtb2RlXG4iKTsgfQ0KPiANCg0KSSBoYXZlIGNh
-cmVmdWxseSBjb25zaWRlcmVkIHlvdXIgc3VnZ2VzdGlvbi4gDQpJZiBETUEgZmFpbCwgaTJjIG5l
-ZWRzIHRvIHNob3cgZXJyb3IgbG9nIGluZGVlZC4NClNvIEkgbWFkZSBWMyBwYXRjaCwgaXMgaXQg
-d2hhdCB3ZSBleHBlY3RlZD8NCg0KDQo+IE1hcmMNCj4gDQo+IC0tDQo+IFBlbmd1dHJvbml4IGUu
-Sy4gICAgICAgICAgICAgICAgIHwgTWFyYyBLbGVpbmUtQnVkZGUgICAgICAgICAgfA0KPiBFbWJl
-ZGRlZCBMaW51eCAgICAgICAgICAgICAgICAgICB8IGh0dHBzOi8vd3d3LnBlbmd1dHJvbml4LmRl
-IHwNCj4gVmVydHJldHVuZyBOw7xybmJlcmcgICAgICAgICAgICAgIHwgUGhvbmU6ICs0OS01MTIx
-LTIwNjkxNy0xMjkgfA0KPiBBbXRzZ2VyaWNodCBIaWxkZXNoZWltLCBIUkEgMjY4NiB8IEZheDog
-ICArNDktNTEyMS0yMDY5MTctOSAgIHwNCg==
+This patch improves (or maintains) the precision of register value tracking
+in BPF_MUL across all possible inputs. It also simplifies
+scalar32_min_max_mul() and scalar_min_max_mul().
+
+As it stands, BPF_MUL is composed of three functions:
+
+case BPF_MUL:
+  tnum_mul();
+  scalar32_min_max_mul();
+  scalar_min_max_mul();
+
+The current implementation of scalar_min_max_mul() restricts the u64 input
+ranges of dst_reg and src_reg to be within [0, U32_MAX]:
+
+    /* Both values are positive, so we can work with unsigned and
+     * copy the result to signed (unless it exceeds S64_MAX).
+     */
+    if (umax_val > U32_MAX || dst_reg->umax_value > U32_MAX) {
+        /* Potential overflow, we know nothing */
+        __mark_reg64_unbounded(dst_reg);
+        return;
+    }
+
+This restriction is done to avoid unsigned overflow, which could otherwise
+wrap the result around 0, and leave an unsound output where umin > umax. We
+also observe that limiting these u64 input ranges to [0, U32_MAX] leads to
+a loss of precision. Consider the case where the u64 bounds of dst_reg are
+[0, 2^34] and the u64 bounds of src_reg are [0, 2^2]. While the
+multiplication of these two bounds doesn't overflow and is sound [0, 2^36],
+the current scalar_min_max_mul() would set the entire register state to
+unbounded.
+
+The key idea of our patch is that if there’s no possibility of overflow, we
+can multiply the unsigned bounds; otherwise, we set the 64-bit bounds to
+[0, U64_MAX], marking them as unbounded.
+
+if (check_mul_overflow(*dst_umax, src_reg->umax_value, dst_umax) ||
+       (check_mul_overflow(*dst_umin, src_reg->umin_value, dst_umin))) {
+        /* Overflow possible, we know nothing */
+        dst_reg->umin_value = 0;
+        dst_reg->umax_value = U64_MAX;
+    }
+  ...
+
+Now, to update the signed bounds based on the unsigned bounds, we need to
+ensure that the unsigned bounds don't cross the signed boundary (i.e., if
+((s64)reg->umin_value <= (s64)reg->umax_value)). We observe that this is
+done anyway by __reg_deduce_bounds later, so we can just set signed bounds
+to unbounded [S64_MIN, S64_MAX]. Deferring the assignment of s64 bounds to
+reg_bounds_sync removes the current redundancy in scalar_min_max_mul(),
+which currently sets the s64 bounds based on the u64 bounds only in the
+case where umin <= umax <= 2^(63)-1.
+
+Below, we provide an example BPF program (below) that exhibits the
+imprecision in the current BPF_MUL, where the outputs are all unbounded. In
+contrast, the updated BPF_MUL produces a bounded register state:
+
+BPF_LD_IMM64(BPF_REG_1, 11),
+BPF_LD_IMM64(BPF_REG_2, 4503599627370624),
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0),
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0),
+BPF_ALU64_REG(BPF_AND, BPF_REG_1, BPF_REG_2),
+BPF_LD_IMM64(BPF_REG_3, 809591906117232263),
+BPF_ALU64_REG(BPF_MUL, BPF_REG_3, BPF_REG_1),
+BPF_MOV64_IMM(BPF_REG_0, 1),
+BPF_EXIT_INSN(),
+
+Verifier log using the old BPF_MUL:
+
+func#0 @0
+0: R1=ctx() R10=fp0
+0: (18) r1 = 0xb                      ; R1_w=11
+2: (18) r2 = 0x10000000000080         ; R2_w=0x10000000000080
+4: (87) r2 = -r2                      ; R2_w=scalar()
+5: (87) r2 = -r2                      ; R2_w=scalar()
+6: (5f) r1 &= r2                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R2_w=scalar()
+7: (18) r3 = 0xb3c3f8c99262687        ; R3_w=0xb3c3f8c99262687
+9: (2f) r3 *= r1                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R3_w=scalar()
+...
+
+Verifier using the new updated BPF_MUL (more precise bounds at label 9)
+
+func#0 @0
+0: R1=ctx() R10=fp0
+0: (18) r1 = 0xb                      ; R1_w=11
+2: (18) r2 = 0x10000000000080         ; R2_w=0x10000000000080
+4: (87) r2 = -r2                      ; R2_w=scalar()
+5: (87) r2 = -r2                      ; R2_w=scalar()
+6: (5f) r1 &= r2                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R2_w=scalar()
+7: (18) r3 = 0xb3c3f8c99262687        ; R3_w=0xb3c3f8c99262687
+9: (2f) r3 *= r1                      ; R1_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=11,var_off=(0x0; 0xb)) R3_w=scalar(smin=0,smax=umax=0x7b96bb0a94a3a7cd,var_off=(0x0; 0x7fffffffffffffff))
+...
+
+Finally, we proved the soundness of the new scalar_min_max_mul() and
+scalar32_min_max_mul() functions. Typically, multiplication operations are
+expensive to check with bitvector-based solvers. We were able to prove the
+soundness of these functions using Non-Linear Integer Arithmetic (NIA)
+theory. Additionally, using Agni [2,3], we obtained the encodings for
+scalar32_min_max_mul() and scalar_min_max_mul() in bitvector theory, and
+were able to prove their soundness using 16-bit bitvectors (instead of
+64-bit bitvectors that the functions actually use).
+
+In conclusion, with this patch,
+
+1. We were able to show that we can improve the overall precision of
+   BPF_MUL. We proved (using an SMT solver) that this new version of
+   BPF_MUL is at least as precise as the current version for all inputs.
+
+2. We are able to prove the soundness of the new scalar_min_max_mul() and
+   scalar32_min_max_mul(). By leveraging the existing proof of tnum_mul
+   [1], we can say that the composition of these three functions within
+   BPF_MUL is sound.
+
+[1] https://ieeexplore.ieee.org/abstract/document/9741267
+[2] https://link.springer.com/chapter/10.1007/978-3-031-37709-9_12
+[3] https://people.cs.rutgers.edu/~sn349/papers/sas24-preprint.pdf
+
+Co-developed-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+Signed-off-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>
+Co-developed-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
+Signed-off-by: Srinivas Narayana <srinivas.narayana@rutgers.edu>
+Co-developed-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
+Signed-off-by: Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>
+Signed-off-by: Matan Shachnai <m.shachnai@gmail.com>
+---
+ kernel/bpf/verifier.c | 72 +++++++++++++++----------------------------
+ 1 file changed, 24 insertions(+), 48 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 1c4ebb326785..4785f3fac70a 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -13827,65 +13827,41 @@ static void scalar_min_max_sub(struct bpf_reg_state *dst_reg,
+ static void scalar32_min_max_mul(struct bpf_reg_state *dst_reg,
+ 				 struct bpf_reg_state *src_reg)
+ {
+-	s32 smin_val = src_reg->s32_min_value;
+-	u32 umin_val = src_reg->u32_min_value;
+-	u32 umax_val = src_reg->u32_max_value;
++	u32 *dst_umin = &dst_reg->u32_min_value;
++	u32 *dst_umax = &dst_reg->u32_max_value;
+ 
+-	if (smin_val < 0 || dst_reg->s32_min_value < 0) {
+-		/* Ain't nobody got time to multiply that sign */
+-		__mark_reg32_unbounded(dst_reg);
+-		return;
+-	}
+-	/* Both values are positive, so we can work with unsigned and
+-	 * copy the result to signed (unless it exceeds S32_MAX).
+-	 */
+-	if (umax_val > U16_MAX || dst_reg->u32_max_value > U16_MAX) {
+-		/* Potential overflow, we know nothing */
+-		__mark_reg32_unbounded(dst_reg);
+-		return;
+-	}
+-	dst_reg->u32_min_value *= umin_val;
+-	dst_reg->u32_max_value *= umax_val;
+-	if (dst_reg->u32_max_value > S32_MAX) {
++	if (check_mul_overflow(*dst_umax, src_reg->u32_max_value, dst_umax) ||
++	    check_mul_overflow(*dst_umin, src_reg->u32_min_value, dst_umin)) {
+ 		/* Overflow possible, we know nothing */
+-		dst_reg->s32_min_value = S32_MIN;
+-		dst_reg->s32_max_value = S32_MAX;
+-	} else {
+-		dst_reg->s32_min_value = dst_reg->u32_min_value;
+-		dst_reg->s32_max_value = dst_reg->u32_max_value;
++		dst_reg->u32_min_value = 0;
++		dst_reg->u32_max_value = U32_MAX;
+ 	}
++
++	/* Set signed bounds to unbounded and improve precision in
++	 * reg_bounds_sync()
++	 */
++	dst_reg->s32_min_value = S32_MIN;
++	dst_reg->s32_max_value = S32_MAX;
+ }
+ 
+ static void scalar_min_max_mul(struct bpf_reg_state *dst_reg,
+ 			       struct bpf_reg_state *src_reg)
+ {
+-	s64 smin_val = src_reg->smin_value;
+-	u64 umin_val = src_reg->umin_value;
+-	u64 umax_val = src_reg->umax_value;
++	u64 *dst_umin = &dst_reg->umin_value;
++	u64 *dst_umax = &dst_reg->umax_value;
+ 
+-	if (smin_val < 0 || dst_reg->smin_value < 0) {
+-		/* Ain't nobody got time to multiply that sign */
+-		__mark_reg64_unbounded(dst_reg);
+-		return;
+-	}
+-	/* Both values are positive, so we can work with unsigned and
+-	 * copy the result to signed (unless it exceeds S64_MAX).
+-	 */
+-	if (umax_val > U32_MAX || dst_reg->umax_value > U32_MAX) {
+-		/* Potential overflow, we know nothing */
+-		__mark_reg64_unbounded(dst_reg);
+-		return;
+-	}
+-	dst_reg->umin_value *= umin_val;
+-	dst_reg->umax_value *= umax_val;
+-	if (dst_reg->umax_value > S64_MAX) {
++	if (check_mul_overflow(*dst_umax, src_reg->umax_value, dst_umax) ||
++	    check_mul_overflow(*dst_umin, src_reg->umin_value, dst_umin)) {
+ 		/* Overflow possible, we know nothing */
+-		dst_reg->smin_value = S64_MIN;
+-		dst_reg->smax_value = S64_MAX;
+-	} else {
+-		dst_reg->smin_value = dst_reg->umin_value;
+-		dst_reg->smax_value = dst_reg->umax_value;
++		dst_reg->umin_value = 0;
++		dst_reg->umax_value = U64_MAX;
+ 	}
++
++	/* Set signed bounds to unbounded and improve precision in
++	 * reg_bounds_sync()
++	 */
++	dst_reg->smin_value = S64_MIN;
++	dst_reg->smax_value = S64_MAX;
+ }
+ 
+ static void scalar32_min_max_and(struct bpf_reg_state *dst_reg,
+-- 
+2.25.1
+
 
