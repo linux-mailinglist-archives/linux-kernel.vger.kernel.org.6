@@ -1,170 +1,192 @@
-Return-Path: <linux-kernel+bounces-423888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA739DADEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:32:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120AB9DADEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:36:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72375166031
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:36:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924120127C;
+	Wed, 27 Nov 2024 19:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kZK6rJCN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C072849B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:32:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFF8201270;
-	Wed, 27 Nov 2024 19:32:32 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18A8201116
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735952; cv=none; b=ceSim2xbFTLb0cMRjVQXceN0t9MxCJPta0T/255Y85PHtVzCTXb6scuKdwtTgOnyLTdZoKWrJSvGVDpGbCJUUtBqAdq56jgc2AT1h5PVZUOIEHAJuyWaStCAvBkx4hU/yj3Xaw1j9iCYDVPojfmWm+ZEJ1IVFBNXh/tSvuriqa4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735952; c=relaxed/simple;
-	bh=RIGEfs9cNJ/9uv+5pAUE8pSQD4FYzRXcbgOfF0nVgqA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GmW5FBMaNwUWXMwRBRPIbfI7XsujllHQu8lfej75FfFw2wZ/HP3I+SBcYfKDOPAykxQIerPHOx4wYc9HL4bbxamKbsHFB1uJmQRTao9SDDxNWid5hJ8CykmL2bvvd/0kHcXX/gK88wuJ4IpUdewfPx3BPuT0xnGRQCs9gJdMKF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a768b62268so595385ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:32:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732735950; x=1733340750;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4NFRVBAF5tccxDKcM9k5a2o73zbgAoDuTHDRA7ssiBA=;
-        b=L4OQ2qB0mXKKRpUzjnKhuz+Fs6XLVzVQ5PunKB8vvFiJ5wjr23hAV03kplflVTphJU
-         OgrzEInlCiGdNGYlu/EiuNdzoaM0HLRMFrbtvvk6gCpopvOE+HhZ1/nJ/YkOldTPQjC7
-         sd6wW1dTl+/XuT43MU+ZIuj2qaqWMmPEjw6bnj7SySHc2MD4YPupWXiLuQMZNgOe9fjB
-         3qPySRwCVPmXKWld1FX0/lmmfjIp3e5ru6uU+gBNbV83iLLvY6WAt5ufKa77HsUEyrxj
-         2Ll3S2T/gU0rup/WTIaUQw2iDNMaS90L+/H6W0F/ZMOMkqYSchEV2d4gl627ElQ3AeYU
-         OoKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYq69iRX4zhCbJs2p0ENg9gBCxuzyeERBSrtqEZqISbIaU3wDLvXQkYZyHq2yVbGgobvgm/Wemp8cAl4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIMT0/M+zrzc1W21f6XhxKAX/kNZ9D8uXkR7NCIQbqaTEAiaIf
-	c4NPv1Js6cod7+E4Ra18DrR8vFT60BcO5h4/QI5sOi+7HzkKGtDIUekvfc6E9KxV6DW6CxYaG2Z
-	oiFaDvMYljOoH+71g36RIpGRrBNDf1h01EHtimvl2GpnsxyxCVsS2ZY4=
-X-Google-Smtp-Source: AGHT+IGbZHRFmksDmqi20oW+VFs2UopXzQs78egsJs6/YZom6e5Wu2t+G1qo/c0uxnF9JbE1+f66IQz4Mxua0OWUY1bBUGJHzaqg
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE70A140E38;
+	Wed, 27 Nov 2024 19:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732736182; cv=pass; b=owusdo2lstf2NGKRWoBHWMoTg0rlU1cJ+2mvf3NIvwoEHwDOCgtRJ+19AwmSEvsjz7iL+atjID83Ab8zZ14xdV2BK99Q1rvSymW5RZzWKlGEOLI8wpAtGangr15YnTm3+o1kwrBnV82GoARd0qWg4wbNGb+AObZVJQTfI42muks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732736182; c=relaxed/simple;
+	bh=NE388iVPpvaBpvGxTNK1Un0mwqG4BlziEkeChtEvX+Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=dTmvmypdnl5zFOBEaFInkun95e+DnIYMOrglpUDXyxPC5bE9B+QcEPvZSVnN7Znq8P6ubjpu8qziiOf1/tYz8kKyW8qUoGToGQfMg9FZKFkPoKQ4zksHmK2QtgH3fScDO8CpQ4ckZXrPbsQYviUCOfQxXPhPVMluyLDGEB0+iKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kZK6rJCN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732736146; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Y2r6QH9W7W4HwO1pYW0MPKURYgp7zrT5GxK/aMkSb9k1opBCVSduaQ3Y32Tyn95PSN3E4s8fVVvTnJcGetGqiuHbHAdPCncoRoXpHmtoO0N+iYW7j9J9gYQOZbUIBaZcWtbIctY8Mytw7mrPprRJtTTRamjRV3of/0v0uSig0tI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732736146; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Z8d4w5bTmj38SdaBknN0Buc18AmnCZ/rgUCkilbxcZo=; 
+	b=MR7rCEiqQOElmGaGAmWDx3vjlXYUfdFYOzOdzLBgWdIMCBgD9hVYIYoV1SrSro3j9TYjOS0SrwuCzNvwqPzX0z6xJpzJNk/b//eBNZ0km8OqsSHovt0V/V5NyVQ6fFv5W8Ifc6OjDT4qzZnNhvLbNp6JEMHJOlyyZMi6nBoy4MY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732736146;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Z8d4w5bTmj38SdaBknN0Buc18AmnCZ/rgUCkilbxcZo=;
+	b=kZK6rJCNZr2dnqjM9TSsLF/iWqz3QjYsHEhfAktU9UOPnRNsUqhRSH7qFt7KoPc4
+	tJq+OhedNH6UqXtxN6YYu65WUbI2m0yhE2IAQTBlh/tBX6xAhCGe6MC73m1Z37vCkEa
+	Rm42k5OEsRIEM3swImwi3wxiRzdtPlPm/r9b+hb8=
+Received: by mx.zohomail.com with SMTPS id 1732736144982179.1544890029311;
+	Wed, 27 Nov 2024 11:35:44 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156f:b0:3a7:172f:1299 with SMTP id
- e9e14a558f8ab-3a7c5567d12mr44645235ab.12.1732735949811; Wed, 27 Nov 2024
- 11:32:29 -0800 (PST)
-Date: Wed, 27 Nov 2024 11:32:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674773cd.050a0220.21d33d.0027.GAE@google.com>
-Subject: [syzbot] [gfs2?] KMSAN: uninit-value in gfs2_quota_init (2)
-From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 19/35] WIP: rust: drm/kms: Add OpaqueEncoder
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-20-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 16:35:30 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C8281624-85B3-423E-8451-354F4BC16B97@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-20-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-Hello,
+Hi Lyude,
 
-syzbot found the following issue on:
+> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Same thing as OpaquePlane, but for encoders now.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+>=20
+> TODO:
+> * Add upcast functions for this
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/encoder.rs | 55 ++++++++++++++++++++++++++++++++++
+> 1 file changed, 55 insertions(+)
+>=20
+> diff --git a/rust/kernel/drm/kms/encoder.rs =
+b/rust/kernel/drm/kms/encoder.rs
+> index 3ae597093645e..71fae45d2d651 100644
+> --- a/rust/kernel/drm/kms/encoder.rs
+> +++ b/rust/kernel/drm/kms/encoder.rs
+> @@ -235,6 +235,61 @@ pub fn new<'a, 'b: 'a>(
+>     }
+> }
+>=20
+> +/// A [`struct drm_encoder`] without a known [`DriverEncoder`] =
+implementation.
+> +///
+> +/// This is mainly for situations where our bindings can't infer the =
+[`DriverEncoder`] implementation
+> +/// for a [`struct drm_encoder`] automatically. It is identical to =
+[`Encoder`], except that it does not
+> +/// provide access to the driver's private data.
+> +///
+> +/// TODO: Add functions for upcasting.
+> +///
+> +/// # Invariants
+> +///
+> +/// Same as [`Encoder`].
+> +#[repr(transparent)]
+> +pub struct OpaqueEncoder<T: KmsDriver> {
+> +    encoder: Opaque<bindings::drm_encoder>,
+> +    _p: PhantomData<T>,
+> +}
+> +
+> +impl<T: KmsDriver> Sealed for OpaqueEncoder<T> {}
+> +
+> +// SAFETY: All of our encoder interfaces are thread-safe
+> +unsafe impl<T: KmsDriver> Send for OpaqueEncoder<T> {}
+> +
+> +// SAFETY: All of our encoder interfaces are thread-safe
+> +unsafe impl<T: KmsDriver> Sync for OpaqueEncoder<T> {}
+> +
+> +impl<T: KmsDriver> ModeObject for OpaqueEncoder<T> {
+> +    type Driver =3D T;
+> +
+> +    fn drm_dev(&self) -> &Device<Self::Driver> {
+> +        // SAFETY: DRM encoders exist for as long as the device does, =
+so this pointer is always
+> +        // valid
+> +        unsafe { Device::borrow((*self.encoder.get()).dev) }
+> +    }
+> +
+> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
+> +        // SAFETY: We don't expose Encoder<T> to users before it's =
+initialized, so `base` is always
+> +        // initialized
+> +        unsafe { addr_of_mut!((*self.encoder.get()).base) }
+> +    }
+> +}
+> +
+> +// SAFETY: Encoders do not have a refcount
+> +unsafe impl<T: KmsDriver> StaticModeObject for OpaqueEncoder<T> {}
+> +
+> +impl<T: KmsDriver> AsRawEncoder for OpaqueEncoder<T> {
+> +    fn as_raw(&self) -> *mut bindings::drm_encoder {
+> +        self.encoder.get()
+> +    }
+> +
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_encoder) -> &'a =
+Self {
+> +        // SAFETY: Our data layout is identical to =
+`bindings::drm_encoder`
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> unsafe extern "C" fn encoder_destroy_callback<T: DriverEncoder>(
+>     encoder: *mut bindings::drm_encoder
+> ) {
+> --=20
+> 2.46.1
+>=20
 
-HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=140fe530580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce1e2eda2213557
-dashboard link: https://syzkaller.appspot.com/bug?extid=9fb37b567267511a9e11
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120fe530580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119ae778580000
+No `from_opaque` and `try_from_opaque` like the previous patches?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2fcdec73c0f3/disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d4dc8d1847e1/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/db0e04822d2c/bzImage-9f16d5e6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/c42d45c3f3cb/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com
-
-gfs2: fsid=syz:syz.0: first mount done, others may mount
-syz-executor205: attempt to access beyond end of device
-loop0: rw=12288, sector=2251799813685248, nr_sectors = 8 limit=32768
-=====================================================
-BUG: KMSAN: uninit-value in gfs2_metatype_check_i fs/gfs2/util.h:125 [inline]
-BUG: KMSAN: uninit-value in gfs2_quota_init+0x22c4/0x2950 fs/gfs2/quota.c:1432
- gfs2_metatype_check_i fs/gfs2/util.h:125 [inline]
- gfs2_quota_init+0x22c4/0x2950 fs/gfs2/quota.c:1432
- gfs2_make_fs_rw+0x4cf/0x6a0 fs/gfs2/super.c:159
- gfs2_fill_super+0x43f5/0x45a0 fs/gfs2/ops_fstype.c:1274
- get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
- get_tree_bdev+0x37/0x50 fs/super.c:1659
- gfs2_get_tree+0x5c/0x340 fs/gfs2/ops_fstype.c:1330
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4774
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof mm/mempolicy.c:2344 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2351
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1009
- __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1951
- gfs2_getbuf+0x23f/0xcd0 fs/gfs2/meta_io.c:142
- gfs2_meta_ra+0x17f/0x7b0 fs/gfs2/meta_io.c:532
- gfs2_quota_init+0x78d/0x2950 fs/gfs2/quota.c:1429
- gfs2_make_fs_rw+0x4cf/0x6a0 fs/gfs2/super.c:159
- gfs2_fill_super+0x43f5/0x45a0 fs/gfs2/ops_fstype.c:1274
- get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
- get_tree_bdev+0x37/0x50 fs/super.c:1659
- gfs2_get_tree+0x5c/0x340 fs/gfs2/ops_fstype.c:1330
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 5797 Comm: syz-executor205 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+=E2=80=94 Daniel=
 
