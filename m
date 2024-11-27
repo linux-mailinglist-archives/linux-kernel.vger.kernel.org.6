@@ -1,96 +1,90 @@
-Return-Path: <linux-kernel+bounces-423599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C199DAA31
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A953B9DAA35
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:57:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7530316768D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4894A16683B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6051FF7AF;
-	Wed, 27 Nov 2024 14:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+0diw/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D571DFD1;
-	Wed, 27 Nov 2024 14:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442C51FF7A7;
+	Wed, 27 Nov 2024 14:57:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620491F9EC7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732719120; cv=none; b=PPbOonFjOD8RHK0LYm+yFkZGyJJ8XjAPc/CqbnYNmOzTcAXsYr/G9aMqyXTVxXZG2bhTzehtsKPl2ATIp2yaALKZ2wa9TEuHYr1Z6r2C/tUDV2OKNjWRcgCN1CFXGrEndgLHqJiUgAhi74+bGNWMp03mCittgIOt45EuKC+qUOw=
+	t=1732719423; cv=none; b=A9xFXq1GQixDVxWeDJRzEfb7yQJooaYZU1w8H3tf6aLaeFF/50gTzM5MY7AWYswNNY3EkQLyvFFFFGNJK3jYv9AEXnrOH/MT/o/BfBYW4C0Z9UzRVKNQGaDKvB4JBwd7WFUl9R4J4iBUOpx5PixYz8g+kJSxY8AnzQz6RceokXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732719120; c=relaxed/simple;
-	bh=4AGyVOnYw0w4dA8qEhJmW3K+EMnHj8IiVSZHynrM+v0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WC4nfrznN6xL7opnJqx2c/urwhvmUQGwolemp6bit9NAh56w7oxHWQox/Aj+DQMVgr6cHIQbvaOk03gnFFjBSFdgZcRlCUbafcuqWDdfg5HZ0jD4eO+VvAVa6sv1wmJun9XShH7CcrYm6xi4x0qJagcmMr74zGr0PFfHfkmKFwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+0diw/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40AAC4CECC;
-	Wed, 27 Nov 2024 14:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732719120;
-	bh=4AGyVOnYw0w4dA8qEhJmW3K+EMnHj8IiVSZHynrM+v0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T+0diw/SG+LpWSeAMVxpAb/FmmbAkmMGG4B7vDhTX4AJVjigqTnN6FJoNLQIeH/Zt
-	 JSwce2GHbaJki8uXr4zdsMlGJi7I4ZnMR27D4EGyQJj4kBliw44EyMT2eWb3IhQABx
-	 8+7ydZJomGric4n4nS17nh/VHVhZLHhJ4lkRqmtzdoqBZUBDMioIuSueVVFlitriZy
-	 faz3ac/nf1mI9mvxZN3k80Owjx218EAyBOr5mhiXennGgJACEavucWOVfkFOuDqtYn
-	 0ElH5Ab4Z+VsvYq89DktlYtAlQHccODmNWBWiAUjkcmQc+kgUrxApHJnF0T21tn1Av
-	 97VJRqWszflzQ==
-Date: Wed, 27 Nov 2024 08:51:58 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	p.zabel@pengutronix.de, cassel@kernel.org,
-	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] dt-bindings: PCI: Add STM32MP25 PCIe endpoint
- bindings
-Message-ID: <20241127145158.GA3480289-robh@kernel.org>
-References: <20241126155119.1574564-1-christian.bruel@foss.st.com>
- <20241126155119.1574564-4-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1732719423; c=relaxed/simple;
+	bh=/Ot4oxvlB+fxqPbCQnBzcP18mMeEKhrm2uVJP0I/n70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CibFHYBW78XQyJI+MevQKwIubGtbAzl+se2DprbZW6OtDW3CC0D3W/AcIVkREkLGdcZFzqPbIZuIJWD8idngmKo4z3Az034rQw+E1MOS0RLYiwlI4Lq9qeU+YwTkH7S6wY7L4NdeJ22QZ5vUdliPhbp5d42iSERPVe2HBVoIGR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B31C1477;
+	Wed, 27 Nov 2024 06:57:30 -0800 (PST)
+Received: from e122027.arm.com (unknown [10.57.69.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B85D3F58B;
+	Wed, 27 Nov 2024 06:56:57 -0800 (PST)
+From: Steven Price <steven.price@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Will Deacon <will@kernel.org>
+Cc: Steven Price <steven.price@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: arm64: Bump KVM_VCPU_MAX_FEATURES
+Date: Wed, 27 Nov 2024 14:56:31 +0000
+Message-ID: <20241127145644.421352-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126155119.1574564-4-christian.bruel@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 04:51:17PM +0100, Christian Bruel wrote:
-> STM32MP25 PCIe Controller is based on the DesignWare core configured as
-> end point mode from the SYSCFG register.
-> 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-> ---
->  .../bindings/pci/st,stm32-pcie-ep.yaml        | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
-> new file mode 100644
-> index 000000000000..0da3ee012ba8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/st,stm32-pcie-ep.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STM32MP25 PCIe endpoint driver
+When the KVM_ARM_VCPU_HAS_EL2 define was added, the value of
+KVM_VCPU_MAX_FEATURES wasn't incremented, so that feature has never been
+in the KVM_VCPU_VALID_FEATURES bit mask. This means the HAS_EL2 feature
+will never be exposed to user space even if the system supports it.
 
-Bindings are not a driver. Otherwise,
+Fixes: 89b0e7de3451 ("KVM: arm64: nv: Introduce nested virtualization VCPU feature")
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+I might be missing something, and it's possible that
+KVM_ARM_VCPU_HAS_EL2 is deliberately not exposed yet. However I'm
+working on v6 of the host CCA series and as part of that want to add a
+new feature but and bump KVM_VCPU_MAX_FEATURES up to 9.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+ arch/arm64/include/asm/kvm_host.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index e18e9244d17a..af7c827b216e 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -39,7 +39,7 @@
+ 
+ #define KVM_MAX_VCPUS VGIC_V3_MAX_CPUS
+ 
+-#define KVM_VCPU_MAX_FEATURES 7
++#define KVM_VCPU_MAX_FEATURES 8
+ #define KVM_VCPU_VALID_FEATURES	(BIT(KVM_VCPU_MAX_FEATURES) - 1)
+ 
+ #define KVM_REQ_SLEEP \
+-- 
+2.43.0
+
 
