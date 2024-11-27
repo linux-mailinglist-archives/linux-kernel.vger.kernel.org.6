@@ -1,148 +1,165 @@
-Return-Path: <linux-kernel+bounces-423954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BEB79DAEB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:57:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA6669DAEAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:57:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E3328235A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:57:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFA2165584
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF20C2036E1;
-	Wed, 27 Nov 2024 20:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0DD202F92;
+	Wed, 27 Nov 2024 20:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GrfQfsE1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T54OfFsu"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350A3200B95
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0128D200B95
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732741030; cv=none; b=rjISzjkr+w2X7KRmDRBIZ17sK3/P+M/n6t86EzpPohukhod3LDIfeKb9Rbxe8L0RbrEA/O2/Wsh3eM8lC34N4ApYszrCzYl8lSRUGf3Bh9YAIqcJut3X8sr0GLMBGPCH+NLXt5M+3B+Hcsu4V3yKjGH3sV0Dh8bvDObCeDWLBRg=
+	t=1732741020; cv=none; b=uRBXMjmIKhh6VUYmhVTrfm0uwOpcKDdsXVEjsrhijgeiRZQa0lghCtHdt/teZfXqiFWgauzIY1ArVTRU0dA3y9s8sRlaDCZNgSiidQq991pRHbBodsqd+OXJwT2qlP3lk9br/rciQJ493eOCOWkt9IGyrrjSNzjH5fdjSYzOzAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732741030; c=relaxed/simple;
-	bh=ntkWNEXiD3JT1EU9YhbTlyTxg9GZoKesv6JFTKMweOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GxBJLoSj6HVF27GX+jeFp0wRS9T120qPX7CeWizoIKf5KYC9/zu+fqpC6X6gjVWxDylpovDKHeYz+1zwj/41rz4qRaulKym/xeOTQKBUcqkVPhSm5oeb/vYip6/vDDLlKf7cXYSnJ2jmBCIRjRZb+g8DWKZakr4ZO4iXnQERbL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GrfQfsE1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732741027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9BOHRWyR3WO91hGTcRvvdOPqaUQq8joODn8hXKbKKdg=;
-	b=GrfQfsE18YV+R++f5qvZmEYcbzh+sqD02FI6QNimzMScBTO3RskAc9nLQeXb1KG3pwKGv2
-	T0zmrfvKTTDeTl+Hv4zbXQ70Gnwxyn3Nu65oHiTz2KSkBJU/dJNkXSom+2jA6gqdKtxgtz
-	ZYoGtrlrDY3fA9Q4xINes3Dd2IclYWE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-317-THgSyO5uPbyUPD3X0z21Tw-1; Wed, 27 Nov 2024 15:57:05 -0500
-X-MC-Unique: THgSyO5uPbyUPD3X0z21Tw-1
-X-Mimecast-MFC-AGG-ID: THgSyO5uPbyUPD3X0z21Tw
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-382428c257eso87846f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:57:05 -0800 (PST)
+	s=arc-20240116; t=1732741020; c=relaxed/simple;
+	bh=r+RoTo5J6nLOhM3VtnIsWJC19xzClak7aHPvKpdFM7g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nV9Gy4n+zfAyV58dgf9DBp2mv41RW1JZboQPgu4T861EpMBCB/YWYAzyb+YNPSCUdPBRO4S2hm+/M+/zAIcD2W4S6Zjx/HGom5rcq66Qgnp/XHm5PHp8VFlXSCA8qqz9WuvVyZBsjJ8DR/N8tux8x8Msn5btiD2VjLE7NKILWpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T54OfFsu; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so818455e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:56:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732741016; x=1733345816; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7U9hOswjkTlIu0eHpVW8cvTyEAZU1a4KzVLqKR0PK0E=;
+        b=T54OfFsu1CXi4yy2IhuWtAmRamzIfF2whrQlEdnWfWgVg7nAMnaF699kCVz+1AQHif
+         N+iWBkn6ISr4KolYyDmOKycMeUu6OFIMLqVaQae6vJJ5BTay1NR+N5wUM+iMB8u6C4jQ
+         JmlNoO7q9ZjmBpYECCdOBSjztaCKKZAJnCuWZYvyd9Ia8J0Bkl7HhvL5/7hF/9NlXi+Z
+         HUpJhv2fEMRMNgm7zl7ewLwjhe6ybaDGMptjEI8U5x7o2VJO2P5e/++NQbuWS3Db/UFi
+         MHRzqTPk47//efTvI0h4MCrhLP+i4HOZirWoebYSvzVc+hNBwHTDcRWLFGJlBP/fD2AD
+         jNfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732741024; x=1733345824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9BOHRWyR3WO91hGTcRvvdOPqaUQq8joODn8hXKbKKdg=;
-        b=pjZQy23JxhwqrOl36Uos15QbhKfiFAyVI4xuIA8hLRAImHK1KrosEKE3IC9EeTMAV1
-         mO6RLsRKF9ESXcdSiijJmRQODX7fdsPp4SX37gMoIXjUuwxiTCP7TfK0JPUF5ZNviPM5
-         n9uAu6GeL6emwrolnreSkshuQ53X4UPvhmE/CShUqyl8NOc7VXZ3V5neXXeDQFeBN2l9
-         H/VcTdXtltX99uvoSc510ovgGSpeVGYcL0qzbI4pYycZlTp0Ng4+n+Sna9hMp34YygOw
-         rzIz7oAXxeBaFaGwTGimIFKSY0RXL5BdF9p0vr21ZBV9S4mvlmCEcWxqytZK41etZevG
-         Prsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVL3vPwDaXhMza3OmOA7D/WXlMs0Ga1SwQQTO8Xof5w24/gGds97uQwSKGFHdd3fujcUr2WXlWZ/3SkqMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqG2wjAmxpzJn5sXu8RziB2NNO3DMLrMrj8UqvdMUssq6Uj71l
-	cuGLhYLEj8S0KjsCQnH2Jk6whj1iYc8jGSd3T2cwL5tSm9MiOod4zXs8DUGxaJcZDPus77BFv0X
-	ZiyQkCzj+5uXFbT7L3iQGZets5NEgEI3ZGNUikM/98nXf6CMl+IEIqlnBh7Y1jltDewagqWjayn
-	SKXotOaQgn2qIbXsCNA0jbbqs32ltdwq6u5H9H
-X-Gm-Gg: ASbGncsqxXKOBckA3YNBkt/iyFVwUuSA3Du44en2Z162mXarKdoIP0MCZ3XYyREsW/M
-	7IoacVCOY46wGU+oIssedjq/2NpqrO3U=
-X-Received: by 2002:a5d:59ab:0:b0:382:42d7:eedc with SMTP id ffacd0b85a97d-385c6cca8dfmr3474635f8f.5.1732741024467;
-        Wed, 27 Nov 2024 12:57:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF/Jk9iiC7CS3fOEFWe7NMbtVU2FwnwlZ2ntREyi8wOExYMmsno/b4e6Lxcy3upQCG7cOnRuG/SGWt3IqGf718=
-X-Received: by 2002:a5d:59ab:0:b0:382:42d7:eedc with SMTP id
- ffacd0b85a97d-385c6cca8dfmr3474622f8f.5.1732741024135; Wed, 27 Nov 2024
- 12:57:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732741016; x=1733345816;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7U9hOswjkTlIu0eHpVW8cvTyEAZU1a4KzVLqKR0PK0E=;
+        b=gVOnyN/W+eIGClj8aXpFXtn3a3JCddQkiX2Yix0wM8G64bdzmchsiyYhB+yLcblDY4
+         +zKmv+JWSaUeu7FS72Ksn3M6EaLeVCCpq7GyHpTFEVAzh/3pbBnN5lU7PViOuttkOi/t
+         ppmxOj6NfAk5HOf91m+uY97FY4EVSiTWgW0n9Ednk6OoNHixb++jkJCSSMDd8oNLUqAM
+         c3eSkQD7Kr7ZqJkl+eMWIXyhOdpYPeMxVmgE4hE3Ql39AB0VL0UBe+smUp2d7FFvXu5t
+         v+WHL6aWP3R5smXylwj/zxWvmzmE6cisBVUu/oP/0Q1wBscbZfF/OQf3TofIMern+v5g
+         W+ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUP6R8lES5fQk04G8A5iUX5dCtAFhY2AiAqb3By2JmdVbFwRcpqg8PxGGWHToBVahQNLg0j+bKQEzN17Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4Xgo/Xd0qXLdzKzL7xbT7h9Dx71Uoo3pM560bK0Ki/DWr/I1o
+	vOzseUADaSRJ62du6utMW2H7hZGT2MBpZALFJnUH4dH0KPifORoO6Da6yzVr3e0=
+X-Gm-Gg: ASbGncvnn5exN8zkJNJt9N+b2vF6DMpPbXA3qzsdCS/KM1uC5sm69N/103hGNEIXlLp
+	Jrbu4n0T6OcOZrHLbv5+CMZlA/qrmN6GqP/hLLvqOMfYZ3/ShIHwJiJM4+IYLbqmWYQej1ouZ1I
+	U8TPWaub4mXmcqxYKIBsYUdxTrMmPZTwSywfzxmmswyEl6laZ6LfaoFDbl+MPirEzXiXtDW1yPj
+	CXZ1VjRS/lDkWQr30DWzpepPuqea5QZeGKetsRESIMtxiISAw==
+X-Google-Smtp-Source: AGHT+IF9mEC2PpHHSEE4f/UbbHmSaSloRZU6SDyajUiQ4Pk9pvlFm1bVlT9XTXNm/2ABjv1LiTOqoQ==
+X-Received: by 2002:a05:600c:4e8a:b0:42c:b52b:4335 with SMTP id 5b1f17b1804b1-434a9dc3e80mr49302555e9.10.1732741016193;
+        Wed, 27 Nov 2024 12:56:56 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:cc06:8990:4fb8:28e5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bc91sm493395e9.9.2024.11.27.12.56.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 12:56:54 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,  "Michael Turquette"
+ <mturquette@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,  "Kevin
+ Hilman" <khilman@baylibre.com>,  "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  "Mark Brown" <broonie@kernel.org>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+In-Reply-To: <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com> (Arnd
+	Bergmann's message of "Wed, 27 Nov 2024 20:30:07 +0100")
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 27 Nov 2024 21:56:54 +0100
+Message-ID: <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127165405.2676516-1-max.kellermann@ionos.com>
- <CAO8a2Sg35LyjnaQ56WjLXeJ39CHdh+OTTuTthKYONa3Qzej3dw@mail.gmail.com> <CAKPOu+8NWBpNnUOc9WFxokMRmQYcjPpr+SXfq7br2d7sUSMyUA@mail.gmail.com>
-In-Reply-To: <CAKPOu+8NWBpNnUOc9WFxokMRmQYcjPpr+SXfq7br2d7sUSMyUA@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 27 Nov 2024 22:56:53 +0200
-Message-ID: <CAO8a2SiUL3T=MHcktWDaMbToqJYt7mYD_XN5G2nRAN0sxCHD7w@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/ceph/file: fix buffer overflow in __ceph_sync_read()
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-You are correct, that is why I'm testing a patch that deals with all
-cases where i_size < offset.
-I will CC you on the other thread.
+On Wed 27 Nov 2024 at 20:30, "Arnd Bergmann" <arnd@arndb.de> wrote:
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 4b8d59ebda00..19b084212fee 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-loff_t *ki_pos,
-        if (ceph_inode_is_shutdown(inode))
-                return -EIO;
-
--       if (!len)
-+       if (!len || !i_size)
-                return 0;
-        /*
-         * flush any page cache pages in this range.  this
-@@ -1200,12 +1200,11 @@ ssize_t __ceph_sync_read(struct inode *inode,
-loff_t *ki_pos,
-                }
-
-                idx =3D 0;
--               if (ret <=3D 0)
--                       left =3D 0;
--               else if (off + ret > i_size)
--                       left =3D i_size - off;
-+               if (off + ret > i_size)
-+                       left =3D (i_size > off) ? i_size - off : 0;
-                else
--                       left =3D ret;
-+                       left =3D (ret > 0) ? ret : 0;
-+
-                while (left > 0) {
-                        size_t plen, copied;
-
-
-
-On Wed, Nov 27, 2024 at 10:43=E2=80=AFPM Max Kellermann
-<max.kellermann@ionos.com> wrote:
+> On Wed, Nov 27, 2024, at 19:47, Jerome Brunet wrote:
+>> Depending on RESET_MESON_AUX result in axg-audio support being turned
+>> off by default for the users of arm64 defconfig, which is kind of a
+>> regression for them.
+>>
+>> RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
+>> COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
+>> necessary for every axg audio devices. Those are now deferring.
+>>
+>> Select RESET_MESON_AUX rather than just depending on it.
+>> With this, the audio subsystem of the affected platform should probe
+>> correctly again
+>>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency 
+>> on RESET_MESON_AUX")
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 >
-> On Wed, Nov 27, 2024 at 9:40=E2=80=AFPM Alex Markuze <amarkuze@redhat.com=
-> wrote:
-> > There is a fix for this proposed by Luis.
 >
-> On the private security mailing list, I wrote about it:
-> "This patch is incomplete because it only checks for i_size=3D=3D0.
-> Truncation to zero is the most common case, but any situation where
-> offset is suddenly larger than the new size triggers this bug."
+> febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 
+>> 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
+>>  	select COMMON_CLK_MESON_SCLK_DIV
+>>  	select COMMON_CLK_MESON_CLKC_UTILS
+>>  	select REGMAP_MMIO
+>> -	depends on RESET_MESON_AUX
+>> +	select RESET_MESON_AUX
+>>  	help
+>>  	  Support for the audio clock controller on AmLogic A113D devices,
+>>  	  aka axg, Say Y if you want audio subsystem to work.
 >
-> I think my patch is better.
->
+> You should generally not 'select' a symbol from another
+> subsystem, as this risks introducing dependency loops,
+> and missing dependencies.
 
+I do understand that one needs to be careful with that sort of things
+but I don't think this is happening here.
+
+>
+> It looks like RESET_MESON_AUX is a user-visible symbol,
+> so you can simply ask users to turn it on, and add it to
+> the defconfig.
+
+That would work yes but It's really something a user should not be
+concerned with. I can follow-up with another change to remove the user
+visibilty of RESET_MESON_AUX. It is always going to be something
+requested by another driver.
+
+>
+> I also see some silliness going on in the
+> include/soc/amlogic/reset-meson-aux.h, which has a
+> non-working 'static inline' definition of the exported
+> function. Before my fix, that would have caused the
+> problem auf a non-working audio driver.
+
+If by 'silliness' you mean there is symbol definition for when
+RESET_MESON_AUX is disabled, indeed I guess that could go away.
+
+Thanks for pointing it out.
+
+>
+>       Arnd
+
+-- 
+Jerome
 
