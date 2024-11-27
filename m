@@ -1,191 +1,144 @@
-Return-Path: <linux-kernel+bounces-423475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D3B9DA80D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:46:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9FE9DA7FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597FB281D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A750281DBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC91F7591;
-	Wed, 27 Nov 2024 12:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3AA1FCCEE;
+	Wed, 27 Nov 2024 12:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="k9TuaZB+"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="czKHaq92"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6355C18DF86;
-	Wed, 27 Nov 2024 12:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA6118FDD0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732711577; cv=none; b=ZaaHzMye45RKZMPhgYjxSBbNvXgNX2wROmhYiR7C2mPsN2Arz7n3Aqax394GlLmR3a+yIFt+ViyB3kFDC6G4GvWw+BMTjItkt3vJIFClJaYpc0+vp4b4pulbifdeZUt7s7d8OC2pfNm9LgOSDBH8bJYZTSXv6h2YsptDlgihlXM=
+	t=1732711130; cv=none; b=BRHl251vfdLVnWjc7/3heraS//FXJvX/tqAAyKhF99TcbtRWAm78aO9qnbNXNtXrvKi9qhRrVi9PbyUVF5rtEmcJ2fAno7FqzGUIbiu44oDA9ddXz/9VInbTfqYuImj7/OuCIdxGlbO2rmd8lxKlQB1iVd+0F70IXaxVUCaE6Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732711577; c=relaxed/simple;
-	bh=sgZZvhAKLD5ASHk7jFBYWTb2D4wOq4Yj4EndXe9SN50=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=d8Bsdldh2YpD8qXGUZKiY0x/o8gH9ZndG2GNYfAkPH03vIlwyFm/0x2j69m//+AuHKcgGPHmkVSwHT+SPjvGe53vvIMhN6qLlWRPnK0UUS7fzfdin1UDItLaLD0Z/ploH8bHB5gWq8lF/TlGvf6RGZcogpabXkBw9bHUvW8JHzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=k9TuaZB+; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id A1A51100009;
-	Wed, 27 Nov 2024 15:38:21 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru A1A51100009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1732711101;
-	bh=xqEQRHjL+Juhx1NVbwlUR8REr9AM3p5ooPM1cNWwZHs=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type:From;
-	b=k9TuaZB+D7XX/dxB8x75Seko2MZcFE7SdxSX7IvMundA7xqkviEfoH+2aqVP6oPFB
-	 KWm324IJAHy3zVropJi9mp7w2xG0pMgYS1jU8HzpKSjbQ7gpROh+sbRRvtye8xyPh8
-	 jFwYbk2i6c+TJH0AB76nCsMMl7Cx8KNW6IfOMrZxuXNEDUyPnPgLSo0sqJVO46o37w
-	 BxmWqVimtrITBByhNarTilRCXRclBNEo5OrbZtKXmBoqIuzXvqFIUSi1mdmFNUeuHJ
-	 P+2bvX5/ZyMgqDSJK8+H0g/vo/XQnp8URoei3dOgNvnqBognSMPM7wSjP3j7NXppOw
-	 tgn2y2bdFKO5w==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 27 Nov 2024 15:38:21 +0300 (MSK)
-Message-ID: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
-Date: Wed, 27 Nov 2024 15:38:20 +0300
+	s=arc-20240116; t=1732711130; c=relaxed/simple;
+	bh=1YYaQVcd/H798xCcU6/zkfoT/mGH/vxkiRfRp4k/Kpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nwkWJ0iBnGbc3uMx6E8BYl51yUL7jwBQHJ0VYO0teqX6l46jUzNV7f7dlVl1SQY78htEHPm4oX6LxwdQhDypK1nKyKXpzn2R8NaZZ7hHD5K5YlvF/exWdWtLPXmujutLJP7YQmhSdykyKIsyV2Cc0AEyE/UVuhhCrRgFHiLn9SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=czKHaq92; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so27058325e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:38:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732711127; x=1733315927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DHjB0FS8XpctltbckXhibhTVw5p/t9yVHsmxkraO6NE=;
+        b=czKHaq92j6hF5wjIB3dT9vG8nv2j1iMhF+crtgiEilp4cmRT8Vz/hBsybI0BMfJ9G3
+         r1Cbzsk6BJTipBGPzX6oWkfo3ROPciIeFC0CoRTfuH2q9F1ugnaeH4NfZIxsD94f9OlG
+         C4dlkurArBpbdvZF0TXYbdHKFKS8jNydylpeELXydHD38gKASolIzq+Oyx0S8wwOvZfh
+         DL7CAOhA7YjI2IvNqJfe+a6FyvNdOs3f5vf+/Eem7YHfrMhZrS6vlQzSM6c/bgErYJ60
+         fssfodIdC2EKSN6h/wgd4k1w0CoLsHk/+drWpAKxZKUxioMfkRinyKuVJDPkENrU350p
+         ZvvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732711127; x=1733315927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DHjB0FS8XpctltbckXhibhTVw5p/t9yVHsmxkraO6NE=;
+        b=iTyqsTFkjL7UXercNL7gRCwHuPDpb+xx+zB1bER4p+RPZ/3Pod7O0wO7VGYD9U7P/d
+         fibo12E/g7HjUJ0NQlwbqnsVvGnbC4PHF2+pnltgHTVp/4dL1KxjufacMarPs6eheAk7
+         7hQtEcJpctvV7JsQsJfEUWx/gyHXUUggUY7IX0CyajKAkreoyi/MUhbuR+GvS6VVchgN
+         h/rNEZdcRO/JIdmGBcYfSdVhuuLM0nKZzmj5P56h967poCpwLOerXu14dHhwb6kziQ2j
+         ohMd9KH9La8eSBXtVuWCyAatlW0463WWH7Zn/Mb0Fxe03kQ3ozVsBvyAogn9L6Qkpx1I
+         zNDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+k3N+GZcrwJKHkmkBZDpfSmoBQSWq7hE0YdppsuJDTaz9mA/D3E6jD34liGhrvQBnEDwzZPwLA8YATi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRJZGDycMmeg47dNoOuAYlWmIRW3u0bhR+SE8bgdMCCcrZzSim
+	/LDFivHauk6qYyYaAKujYgH5KQTsylKP/bnHPLptpFJ62Zg683g3zZmsEx5FiNrO2yd0Cuv2AMs
+	W36TFhelOgRw7sYeWDL4RDSVD9T4SHeXp/Gl7
+X-Gm-Gg: ASbGncuXxPEZJxMBPya7Fb78ksNcNnRUzH6KMSIt5PTEtQCg65Cm3a8GwRVOS6IbrBG
+	oWnAHgexcHlzKTISpW8ARxB7XEi9GgZxJJ3HEOfvK5FfQM03TcHHD1p8oBbloMA==
+X-Google-Smtp-Source: AGHT+IGn2m8yJDcE/Dzz/61f9ciHRrx99d8i4GRYNDch74O8JfcQB+p+RQG8+bfMn1ARySVuPp8Pgo3KGaUZC/Ej4uk=
+X-Received: by 2002:a05:6000:1aca:b0:382:397f:3df5 with SMTP id
+ ffacd0b85a97d-385c6edd4fcmr2071742f8f.38.1732711126964; Wed, 27 Nov 2024
+ 04:38:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Content-Language: en-US
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<oxffffaa@gmail.com>, <ddrokosov@salutedevices.com>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Subject: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
+References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-6-7127bfcdd54e@google.com>
+ <CAG48ez0V5B0ycPuP7eRA-xE88ks8cr+a1MFZC5emv_eAsybNAw@mail.gmail.com>
+In-Reply-To: <CAG48ez0V5B0ycPuP7eRA-xE88ks8cr+a1MFZC5emv_eAsybNAw@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 27 Nov 2024 13:38:35 +0100
+Message-ID: <CAH5fLghFezPeoPD57rXq-jy2wZBO0Bv6nSmU4OA6=hqeuGDVmA@mail.gmail.com>
+Subject: Re: [PATCH v9 6/8] mm: rust: add VmAreaNew for f_ops->mmap()
+To: Jann Horn <jannh@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189444 [Nov 27 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 42 0.3.42 bec10d90a7a48fa5da8c590feab6ebd7732fec6b, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/27 11:28:00 #26898120
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
 
-'hci_register_dev()' calls power up function, which is executed by
-kworker - 'hci_power_on()'. This function does access to bluetooth chip
-using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
-Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
-if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
-'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
-be executed before setting this bit. In that case HCI init logic fails.
+On Tue, Nov 26, 2024 at 10:30=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
+:
+>
+> On Fri, Nov 22, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> > This type will be used when setting up a new vma in an f_ops->mmap()
+> > hook. Using a separate type from VmAreaRef allows us to have a separate
+> > set of operations that you are only able to use during the mmap() hook.
+> > For example, the VM_MIXEDMAP flag must not be changed after the initial
+> > setup that happens during the f_ops->mmap() hook.
+> >
+> > To avoid setting invalid flag values, the methods for clearing
+> > VM_MAYWRITE and similar involve a check of VM_WRITE, and return an erro=
+r
+> > if VM_WRITE is set. Trying to use `try_clear_maywrite` without checking
+> > the return value results in a compilation error because the `Result`
+> > type is marked #[must_use].
+> >
+> > For now, there's only a method for VM_MIXEDMAP and not VM_PFNMAP. When
+> > we add a VM_PFNMAP method, we will need some way to prevent you from
+> > setting both VM_MIXEDMAP and VM_PFNMAP on the same vma.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> Thanks, this looks really neat!
+>
+> Reviewed-by: Jann Horn <jannh@google.com>
+>
+> > +    /// Set the `VM_IO` flag on this vma.
+> > +    ///
+> > +    /// This marks the vma as being a memory-mapped I/O region.
+>
+> nit: VM_IO isn't really exclusively used for MMIO; the header comment
+> says "Memory mapped I/O or similar", while the comment in
+> remap_pfn_range_internal() says "VM_IO tells people not to look at
+> these pages (accesses can have side effects)". But I don't really have
+> a good definition of what VM_IO actually means; so I don't really have
+> a concrete suggestion for what do do here. So my comment isn't very
+> actionable, I guess it's fine to leave this as-is unless someone
+> actually has a good definition...
 
-Patch adds one more bit in addition to 'HCI_UART_PROTO_READY' which
-allows to perform power up logic without original bit set.
+I can use this comment?
 
-Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
----
- drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++-----
- drivers/bluetooth/hci_uart.h  |  1 +
- 2 files changed, 15 insertions(+), 5 deletions(-)
+This is used for memory mapped IO and similar. The flag tells other
+parts of the kernel to not look at the pages. For memory mapped IO
+this is useful as accesses to the pages could have side effects.
 
-diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-index 30192bb083549..2e20f00649bd7 100644
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct hci_uart *hu)
- 	if (!skb) {
- 		percpu_down_read(&hu->proto_lock);
- 
--		if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+		if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-+		    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
- 			skb = hu->proto->dequeue(hu);
- 
- 		percpu_up_read(&hu->proto_lock);
-@@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
- 	if (!percpu_down_read_trylock(&hu->proto_lock))
- 		return 0;
- 
--	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-+	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
- 		goto no_schedule;
- 
- 	set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
-@@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	percpu_down_read(&hu->proto_lock);
- 
--	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-+	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
- 		percpu_up_read(&hu->proto_lock);
- 		return -EUNATCH;
- 	}
-@@ -582,7 +585,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
- 	if (tty != hu->tty)
- 		return;
- 
--	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+	if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-+	    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
- 		hci_uart_tx_wakeup(hu);
- }
- 
-@@ -608,7 +612,8 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data,
- 
- 	percpu_down_read(&hu->proto_lock);
- 
--	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-+	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
- 		percpu_up_read(&hu->proto_lock);
- 		return;
- 	}
-@@ -704,12 +709,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
- 
- 	hu->proto = p;
- 
-+	set_bit(HCI_UART_PROTO_INIT, &hu->flags);
-+
- 	err = hci_uart_register_dev(hu);
- 	if (err) {
- 		return err;
- 	}
- 
- 	set_bit(HCI_UART_PROTO_READY, &hu->flags);
-+	clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-index 00bf7ae82c5b7..39f39704be41f 100644
---- a/drivers/bluetooth/hci_uart.h
-+++ b/drivers/bluetooth/hci_uart.h
-@@ -89,6 +89,7 @@ struct hci_uart {
- #define HCI_UART_REGISTERED		1
- #define HCI_UART_PROTO_READY		2
- #define HCI_UART_NO_SUSPEND_NOTIFIER	3
-+#define HCI_UART_PROTO_INIT		4
- 
- /* TX states  */
- #define HCI_UART_SENDING	1
--- 
-2.30.1
+Alice
 
