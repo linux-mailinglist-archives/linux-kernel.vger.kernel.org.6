@@ -1,111 +1,98 @@
-Return-Path: <linux-kernel+bounces-423519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275679DA8D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:42:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FBD3162020
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:42:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB031FCF6D;
-	Wed, 27 Nov 2024 13:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut0X/JPE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01099DA8A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:37:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC531922F2
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FE60B21567
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:37:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BDF1FCF62;
+	Wed, 27 Nov 2024 13:37:52 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73EC5B1FB;
+	Wed, 27 Nov 2024 13:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732714952; cv=none; b=Gju3YGsXcsQSYZGqJZk5vOmXZ1FDxZ+UrEUGjgM13SeVq/j/4qfDiZwiY4RycuifVSQYyIsjMl9zr2W0KETKkKh49MF4fa06IJaU3NqrEIt7eGLEho8ph0+HFBOyfT4+POyf2Gdd8BxZRfbMubGcL/el/PBqFoIeTIvBdnKvz/o=
+	t=1732714671; cv=none; b=e2JH/QDz7T5/A30fhWLW5jwLdHwMdYOze1ki34yJFyYEFZ1kfnwsnaPbmEkAawhLdoxS3oBpRV1c2HkohAz2z+QZ1IzGyUq1yFdYy9C5/wHXGV7dKSd2lRlUVj1aspQlzPOOaPCVdZDprIrvwlfN/7t+yZ8dv0xDutTtzT3lt/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732714952; c=relaxed/simple;
-	bh=ranfFkcb0taLy3/caOuI+8tG8S/9geIMxfR+u4xYOwU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=vCBIGsz2e1zh4U/8c/PoAW/gnbRA45jcxak/eSrXk9WMPitB5RlqyTui6hu7DxtU6JuNwuySDwJO9fPyIiWmkanlvHJE0z6st+YjkA6tkcLtkwn3G9W1YpmEZ8Cs8MY8p5tZSh9bUq1Or5xinxG9nRbsWl2nWrltC3/0XGKAMqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ut0X/JPE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526A2C4CECC;
-	Wed, 27 Nov 2024 13:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732714951;
-	bh=ranfFkcb0taLy3/caOuI+8tG8S/9geIMxfR+u4xYOwU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Ut0X/JPEvqIRzSpQAzCYlCHW62XEKhTsOkZ5EHcsBvu6omzRVWXxUyBm8MSCu5tr8
-	 ShIQy7yZLUf8tPp4aUoTNkr5QN9UfLVg1mALDuFf8lnwBEcvgC9547w1jA8Hx2RMmt
-	 j5soxoiZBASjvORYBQXi/e1itFTpqfLkqThTVKrQZb2+1s7uEnvjojjQMn6GAOq7WK
-	 0J5qOmMpyBwQNxV45RF69hBXnxvwMp6J/xl3G5xwFODiXFPV+9AeFcO7zyZkCJ4uvZ
-	 2ELoYY+vM+YhnFf8M9ILK7aYDqSDBpkvDu8rau00q9Ng8+MtRi1ZOxDKu5cn81jE07
-	 BEo4ufLf+1V3Q==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 27 Nov 2024 13:35:06 +0000
-Subject: [PATCH] regmap: Use correct format specifier for logging range
- errors
+	s=arc-20240116; t=1732714671; c=relaxed/simple;
+	bh=7BLDPRjezzrPTylfDKMlVkHNqDFz8czcYJdbiT/QvsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQ7F5CmCFBHX9Bj7PBJU8BqmYIzsIY+NTsV98Zlk/esJOtQO7r82wqoe/Rcj44Abt1pGOwf7mV9zLAuJuI0aFDMANqBtmE8JelQNq/tBrR1SjNv8rtkvsGZFviqaKlcLkwWK2NJOmMgbFVTEsz/Rw2Ac18bkFXzC3a1OciltsrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Xz0qn4kLkz9sPd;
+	Wed, 27 Nov 2024 14:37:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 1E04lGo2aPGq; Wed, 27 Nov 2024 14:37:41 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xz0qn3w8bz9rvV;
+	Wed, 27 Nov 2024 14:37:41 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 73D2B8B781;
+	Wed, 27 Nov 2024 14:37:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id JM7LPTW_LVok; Wed, 27 Nov 2024 14:37:41 +0100 (CET)
+Received: from [192.168.233.90] (unknown [192.168.233.90])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F84E8B77C;
+	Wed, 27 Nov 2024 14:37:41 +0100 (CET)
+Message-ID: <15637735-cb71-473b-8b8a-21a6d6c5059b@csgroup.eu>
+Date: Wed, 27 Nov 2024 14:37:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-regmap-test-high-addr-v1-1-74a48a9e0dc5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAkgR2cC/x3MSQqAMAxA0atI1gZsncCriItq0jYLB1IRQby7x
- eVb/P9AYhVOMBQPKF+SZN8yTFnAEt0WGIWywVa2Mcb2qBxWd+DJ6cQoIaIjUqS5W2pqe+c7D7k
- 9lL3c/3ec3vcD15+LEGcAAAA=
-X-Change-ID: 20241127-regmap-test-high-addr-db6c3d57af6f
-To: linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1237; i=broonie@kernel.org;
- h=from:subject:message-id; bh=ranfFkcb0taLy3/caOuI+8tG8S/9geIMxfR+u4xYOwU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnRyHGfKXfyWF+gUvOZ43Sz/dnztxdfi7oyMC66zGB
- ewW2nBiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ0chxgAKCRAk1otyXVSH0JsAB/
- 4t+L5jkutkFog2y28jwqC5jt0S0A5BBSiReLFYX43lt8QQcDLeMSFNLaX0DvHwCxbhH3DPuaE2yrAY
- c+5XxrEZHi459qRHYgHeyve3a1Mj6QGh2qK25PXJDLVgh56TiOvxWU2O3J9CbeUgQIktP3/PoecqsN
- tt/Iin+wSiiyHOarnWETwZBKmcT15ZzRVOx2yxumvgOhnTA61392krLcXQ2O8klGjxiz4SAwveRHGw
- kVOx3t3JwfGtZ9OKDUOqqdHQcXR9GMXRukj5anSV8OT346sZdiQwDSDBSLTz+8CVu2y/VlcJAqXJye
- 2Y+WWYNgCerwshxMnDzhP3JORJqMsG
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/3] module: Split module_enable_rodata_ro()
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
+ <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ Kees Cook <kees@kernel.org>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+ <Z0YoSrSNCIcvHsBl@bombadil.infradead.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Z0YoSrSNCIcvHsBl@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The register addresses are unsigned ints so we should use %u not %d to
-log them.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/base/regmap/regmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 53131a7ede0a6aad54bc85e970124f6b166a8010..7ac4dcd15f242acd579ee327be5cfec82d91bf49 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1052,13 +1052,13 @@ struct regmap *__regmap_init(struct device *dev,
- 
- 		/* Sanity check */
- 		if (range_cfg->range_max < range_cfg->range_min) {
--			dev_err(map->dev, "Invalid range %d: %d < %d\n", i,
-+			dev_err(map->dev, "Invalid range %d: %u < %u\n", i,
- 				range_cfg->range_max, range_cfg->range_min);
- 			goto err_range;
- 		}
- 
- 		if (range_cfg->range_max > map->max_register) {
--			dev_err(map->dev, "Invalid range %d: %d > %d\n", i,
-+			dev_err(map->dev, "Invalid range %d: %u > %u\n", i,
- 				range_cfg->range_max, map->max_register);
- 			goto err_range;
- 		}
+Le 26/11/2024 à 20:58, Luis Chamberlain a écrit :
+> On Sat, Nov 09, 2024 at 11:35:35AM +0100, Christophe Leroy wrote:
+>> module_enable_rodata_ro() is called twice, once before module init
+>> to set rodata sections readonly and once after module init to set
+>> rodata_after_init section readonly.
+>>
+>> The second time, only the rodata_after_init section needs to be
+>> set to read-only, no need to re-apply it to already set rodata.
+>>
+>> Split module_enable_rodata_ro() in two.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> 
+> Didn't see a respin so this will have to be a post v6.13-rc1 fix.
 
----
-base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
-change-id: 20241127-regmap-test-high-addr-db6c3d57af6f
+Indeed I was waiting for v6.13-rc1 before sending the non RFC rebased 
+version, but I can send it now if you prefer.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+I expect it to spend a few days in linux-next before being applied to 
+mainline.
 
+Christophe
 
