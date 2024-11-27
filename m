@@ -1,236 +1,116 @@
-Return-Path: <linux-kernel+bounces-423832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17919DAD5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:51:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FA89DAD68
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:53:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B93F166410
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:53:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798FA201254;
+	Wed, 27 Nov 2024 18:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Go5qPiJq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 237BFB2146D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:51:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC1220110D;
-	Wed, 27 Nov 2024 18:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="bxQdiNYV"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A720309
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85DD201105;
+	Wed, 27 Nov 2024 18:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732733482; cv=none; b=azK24J9muZ7O3lcak+v3UVdTbBIgqGCj0nG24BzF75r+DKHVnJ+UTlYGgdAxC5YKzv16OukEAe0fXU/rG1s4g+kzjlffGZ//JuejFvnAx6Iws+MuMYM/36Q6Zgc7/L72wErTkrCkkNXqw+FoSAoIBMzXb1CsLD0AUFweznN/760=
+	t=1732733585; cv=none; b=fjwlYy8dlmgocrZopxf1DIye0PI9V+sYvx3iQ0cDqKEZFZfklV0a7nfUB1KzzKrbqrd1vRA5A+4BExTbD0ZQoryrt8ClV7OpGro7thr9y/JaXjYFvDHKLfEpmDAYyckNEh5G5FYcQOA8zCKCXkABF9YavZX2q/jJlnOKlY+jtZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732733482; c=relaxed/simple;
-	bh=fPfgZwnSLS2kQoF5+M1p4U2PsLLTNWNdyf0KSRk/2Xg=;
+	s=arc-20240116; t=1732733585; c=relaxed/simple;
+	bh=BqL09I5bjX+5UXyYYNk30hCn58iZqzaW8RyreYtcjsQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciImLwDD8yP9otkohefPojUYDYKBDNadMM65lkkijkSOqOyiL4lcCHrgUdkdlOkqq8xiXDTQPEKh1VdVYBYeU0O3A49qcQ0UUeoLiq+LxskhGHvh/1um/CRjR9+cztk/Tz6ffEHQaLt3q1/iFiZCxaD3dHiUNFxvDmw8fLP6Hms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=bxQdiNYV; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21285c1b196so75015ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1732733480; x=1733338280; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VsL5lh4/mMVU/3l2rG4YRwXPxx1DY2vb0Xku31fNN8c=;
-        b=bxQdiNYVOCoV86TNypKTMtHh5xZE7IcTPty5DaA0c1XveT92yI3GTHGH0uhmQXaFaF
-         V12FF1UtlJIipXL0UOnxy7F4YlybM2J8itU8o7m0papgTBdjhXX0rkkbpl9tSDmfjUuK
-         YUhBGyEMfA0Jf/ge4NrQFR9xK+Ry31untqYKM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732733480; x=1733338280;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VsL5lh4/mMVU/3l2rG4YRwXPxx1DY2vb0Xku31fNN8c=;
-        b=ijppG+o8at2we3pJBxtNZ/Nw+aEHcwvYqDTtakDhVnbwCtwzhitcvKMScnLZlfffaw
-         xXj+HMacK8i6QW+IjmdvtPA2goVgPL9bvDpOPnI7E4nQlYgLKiBGJdGLlwxq4fT/3VX2
-         ZDyHo3DjxcVT6YPePqX88+ZP5pEy/BTaKCX7E3dR9Ls1bv1DAQ1v7cgan675xQZg2zir
-         Jv/09/PIdsZhP3Dni/pVnUslYkAilv/wCO6si11Uz6f5EWv/gsqQaH/2UTnzSqjjV9cU
-         +AiEb2L872spRyGufMBeMFydxITThqPM8yYIEH7f2TBt25dvev/ZTFVryUMgnzvGM98W
-         GHTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBSAiqy7t3cTVjlTbUvh/Q40CSxzZOlAVPipDrpzXaIFqzYimxHvIGg0ZZAT4R2Wfmf10nBa5GXPlJxXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrAUS/YOKGNE0RKWvgyJg+u3YDasdf92VQxrU8LidU4HVJ33H0
-	R7549cjZI8eH5saMMQelZlrCvTvtxuT0ExcTtlqBJgbEJvdl/Ht5ex65aKMP0P8=
-X-Gm-Gg: ASbGncts0UN5NYqjAiXwZPjOD0Goo06cqWNYdPmEfgiWoYV1okGRu+Y2Z3QXSExCk4W
-	YyBBLUKodwMcUBvYOFNnM96LXBhdATmq4seWbkAJxoThar1XsUxr6PdAjxERDfFcEfx4wtBaJBq
-	N80gw7LdirbvXZCgAt+RpF04QzSSOEjdsxSTk3SClM9OXIxK9E2wetgQNxnChp0h31vGYwVyPhN
-	BGGhoKjObNpMMrC/swdWpiDDcUTYOAzWSj3eM3wOqVTIvPAoF1MVn5JGSC6eF1PubQ7PpvEAbvL
-	nhN0arSZrYITS7rD
-X-Google-Smtp-Source: AGHT+IFkJr9GlfDzMfKesKE8ace4E8O09xxP/zgehp8g1sOlhe/RbcBXYI45O4OUnl3dYJmueQxa4g==
-X-Received: by 2002:a17:902:d48c:b0:20c:5404:ed69 with SMTP id d9443c01a7336-21501a43fc5mr51658525ad.31.1732733479954;
-        Wed, 27 Nov 2024 10:51:19 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2150b4d9abasm15364505ad.35.2024.11.27.10.51.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 10:51:19 -0800 (PST)
-Date: Wed, 27 Nov 2024 10:51:16 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	edumazet@google.com, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
-Subject: Re: [net-next v6 5/9] net: napi: Add napi_config
-Message-ID: <Z0dqJNnlcIrvLuV6@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	edumazet@google.com, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
-References: <20241011184527.16393-1-jdamato@fastly.com>
- <20241011184527.16393-6-jdamato@fastly.com>
- <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W013zIhx8cMn2YXkv+jHVZE6utib0lToktCElQH9CRd6s3lEX5Vg4a4w72O8H0jCAfRcWefWd3gkuqyzmVPFMspHHT0Pi9JrmWKpvAK/DeNhjDynM1J9P0wXPYpNrhRTxerCZk0VZ1P0iLFhJ6/Am90M5V53PBIyJF6fSTNpYjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Go5qPiJq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881B3C4CECC;
+	Wed, 27 Nov 2024 18:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732733585;
+	bh=BqL09I5bjX+5UXyYYNk30hCn58iZqzaW8RyreYtcjsQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Go5qPiJqHddWDw7Ijsoa7lzxQQOLBA7tckcOqAAByi36H83jtMoR6UAWLTmMaRMPz
+	 3YIC444K8bYlKTRmemXpNS7qC4GgU8Cpor9MBZ15aDmMI1mR3g5Hq5MF4f6uXasgQG
+	 fI906/LPG+2QCGf4L5kUlgHtf8sVEnA/mmZ2QNvEFkM9Rq8AQQ339IhB1TdnZmK26A
+	 Dt9fnSYLMcsPfxf4y/K2271/LiN20WmQAqIDtWYmT8LhR1TVOhT6xpBqp9BCk95OKx
+	 JHdO+rmnAMCLeQMNaQuNTUT9qbzOKss1CuOvTi/WciV7F/THGMDCL6Qdh5I8Pcbxar
+	 cjXVdZkOFbOcA==
+Date: Wed, 27 Nov 2024 10:53:03 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
+Message-ID: <20241127185303.q6okbtrkfdrlmcrn@jpoimboe>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-2-yangtiezhu@loongson.cn>
+ <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
+ <75f6e90b-4d04-5627-395e-58982a84d7c1@loongson.cn>
+ <20241127005208.luhtjy2qhk3bza7a@jpoimboe>
+ <f1bcff28-dc9c-2878-10c7-6e653516e66d@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
+In-Reply-To: <f1bcff28-dc9c-2878-10c7-6e653516e66d@loongson.cn>
 
-On Wed, Nov 27, 2024 at 09:43:54AM -0800, Guenter Roeck wrote:
-> Hi,
+On Wed, Nov 27, 2024 at 02:39:13PM +0800, Tiezhu Yang wrote:
+> On 11/27/2024 08:52 AM, Josh Poimboeuf wrote:
+> > On Tue, Nov 26, 2024 at 06:41:29PM +0800, Tiezhu Yang wrote:
+> > > On 11/26/2024 02:44 PM, Josh Poimboeuf wrote:
+> > > > On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
+> > > > > @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+> > > > 
+> > > > 'prev_offset' needs to be updated as well.
+> > > 
+> > > I am not sure I understand your comment correctly, I can not see
+> > > what should to do about 'prev_offset'.
+> > 
+> > Further down the function there is
+> > 
+> >   prev_offset = reloc_offset(reloc);
+> > 
+> > which needs to be changed to
+> > 
+> >   prev_offset = offset;
+> > 
+> > as part of the patch.
 > 
-> On Fri, Oct 11, 2024 at 06:45:00PM +0000, Joe Damato wrote:
-> > Add a persistent NAPI config area for NAPI configuration to the core.
-> > Drivers opt-in to setting the persistent config for a NAPI by passing an
-> > index when calling netif_napi_add_config.
-> > 
-> > napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
-> > (after the NAPIs are deleted).
-> > 
-> > Drivers which call netif_napi_add_config will have persistent per-NAPI
-> > settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
-> > 
-> > Per-NAPI settings are saved in napi_disable and restored in napi_enable.
-> > 
-> > Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+> If I understand correctly, reloc_offset(reloc) is different with
+> reloc->sym->offset + reloc_addend(reloc), tested on x86 and readelf
+> shows that their values are different, reloc_offset(reloc) is the
+> first column of .rela.rodata, reloc->sym->offset is the second to
+> last column of .rela.rodata, reloc_addend(reloc) is the last column
+> of .rela.rodata.
 > 
-> This patch triggers a lock inversion message on pcnet Ethernet adapters.
+> If do the above change as you suggested, there will be some objtool
+> warnings on x86. I think it should be:
+> 
+>   prev_offset = reloc_offset(reloc);
+> 
+> rather than:
+> 
+>   prev_offset = offset;
+> 
+> That is to say, no need to change "prev_offset".
+> Could you please check it again, please let me know if I am wrong.
 
-Thanks for the report. I am not familiar with the pcnet driver, but
-took some time now to read the report below and the driver code.
+Sorry, I was confused by the fact there are two different meanings for
+"offset": one for where the relocation is written, and one for the
+symbol it refers to.
 
-I could definitely be reading the output incorrectly (if so please
-let me know), but it seems like the issue can be triggered in this
-case:
+How about instead of 'offset', call it 'sym_offset'?
 
-CPU 0:
-pcnet32_open
-   lock(lp->lock)
-     napi_enable
-       napi_hash_add
-         lock(napi_hash_lock)
-         unlock(napi_hash_lock)
-   unlock(lp->lock)
-
-
-Meanwhile on CPU 1:
-  pcnet32_close
-    napi_disable
-      napi_hash_del
-        lock(napi_hash_lock)
-        unlock(napi_hash_lock)
-    lock(lp->lock)
-    [... other code ...]
-    unlock(lp->lock)
-    [... other code ...]
-    lock(lp->lock)
-    [... other code ...]
-    unlock(lp->lock)
-
-In other words: while the close path is holding napi_hash_lock (and
-before it acquires lp->lock), the enable path takes lp->lock and
-then napi_hash_lock.
-
-It seems this was triggered because before the identified commit,
-napi_enable did not call napi_hash_add (and thus did not take the
-napi_hash_lock).
-
-So, I agree there is an inversion; I can't say for sure if this
-would cause a deadlock in certain situations. It seems like
-napi_hash_del in the close path will return, so the inversion
-doesn't seem like it'd lead to a deadlock, but I am not an expert in
-this and could certainly be wrong.
-
-I wonder if a potential fix for this would be in the driver's close
-function? 
-
-In pcnet32_open the order is:
-  lock(lp->lock)
-    napi_enable
-    netif_start_queue
-    mod_timer(watchdog)
-  unlock(lp->lock)
-
-Perhaps pcnet32_close should be the same?
-
-I've included an example patch below for pcnet32_close and I've CC'd
-the maintainer of pcnet32 that is not currently CC'd.
-
-Guenter: Is there any change you might be able to test the proposed
-patch below?
-
-Don: Would you mind taking a look to see if this change is sensible?
-
-Netdev maintainers: at a higher level, I'm not sure how many other
-drivers might have locking patterns like this that commit
-86e25f40aa1e ("net: napi: Add napi_config") will break in a similar
-manner. 
-
-Do I:
-  - comb through drivers trying to identify these, and/or
-  - do we find a way to implement the identified commit with the
-    original lock ordering to avoid breaking any other driver?
-
-I'd appreciate guidance/insight from the maintainers on how to best
-proceed.
-
-diff --git a/drivers/net/ethernet/amd/pcnet32.c b/drivers/net/ethernet/amd/pcnet32.c
-index 72db9f9e7bee..ff56a308fec9 100644
---- a/drivers/net/ethernet/amd/pcnet32.c
-+++ b/drivers/net/ethernet/amd/pcnet32.c
-@@ -2623,13 +2623,13 @@ static int pcnet32_close(struct net_device *dev)
-        struct pcnet32_private *lp = netdev_priv(dev);
-        unsigned long flags;
-
-+       spin_lock_irqsave(&lp->lock, flags);
-+
-        del_timer_sync(&lp->watchdog_timer);
-
-        netif_stop_queue(dev);
-        napi_disable(&lp->napi);
-
--       spin_lock_irqsave(&lp->lock, flags);
--
-        dev->stats.rx_missed_errors = lp->a->read_csr(ioaddr, 112);
-
-        netif_printk(lp, ifdown, KERN_DEBUG, dev,
+-- 
+Josh
 
