@@ -1,233 +1,186 @@
-Return-Path: <linux-kernel+bounces-423762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF989DAC68
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:27:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E239DAC6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:29:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11D5281E61
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C941671C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7E200BBA;
-	Wed, 27 Nov 2024 17:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EBB201020;
+	Wed, 27 Nov 2024 17:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YpVwA8uA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfzbH5WF"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E36201017
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8153E201015
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728453; cv=none; b=e9xdo35k9mYHCGuqzmVYDhuta6p8WOSOZHrjGR1l0DXw8tuKKaJBu/ZTrMCfr+yxnuBxgERLBoKtFoIX9b3OT8JwvYLfWxDjt4EL5HZ1xCr7sv9K16nz0sKw0U/dKLtVhU7kyebZGKQ9vlA+5Ea8ma5fUS7L6bT8TuJdtgaSnQk=
+	t=1732728590; cv=none; b=fEo5dSUb1tFjLGCH91C7ySr50qN1j2DzW8Yd6wwVzJWG4houtSzEAXTX9vUolQ94bd9Pj0Necs2EKZU/E82N2MZSxBHyVpRJnNnkybolkQN5ZKGFmVwSYM8IouBm92UriQkxM+7VBhxW7/Cwg66DpnvTzE/Mpd2F1TUCs3aCZ9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728453; c=relaxed/simple;
-	bh=84k0kHnTdC3L+4g7efXnw/e520GNE2hshbg8krGIP5o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NfgT4wHXzj7a0LLy+iNzBIlDnjc5zZjXsMZfMGBLcb3ZP1PcZTOvkJSLOEIDaX00Tt1eSknTxkontLs0yPWOI6OPva+ddKuMAaJFkJjtjCLmfL5BOSVhPMUjR0SsHYApVSS9UZo4xncrwOk8lx0bJSy66VG9Id7PIqJhZcHy00I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YpVwA8uA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732728450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=beOnUcZGQU2mrcIYvueq6R+cVXgzH9B5DJtHxbHnrQM=;
-	b=YpVwA8uAhGpAgB5M35KtDYBImfiFXGeOml28AgJnaglrS46xRoZY+TpZcyM4DcgJl8Hc51
-	60Zs8DO2xcmhtSk9Nn1JucG3+Uxn1sweCrlcpKzBxuZOH45DKiBNNiBrplJ/i3PxwhtuHh
-	pM5gTxpWzCVNfGnBvXgD3oOrRw5nRe4=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-z_JTpAvDMEq08wmF_vb-6Q-1; Wed, 27 Nov 2024 12:27:28 -0500
-X-MC-Unique: z_JTpAvDMEq08wmF_vb-6Q-1
-X-Mimecast-MFC-AGG-ID: z_JTpAvDMEq08wmF_vb-6Q
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-466acb9f16dso26631211cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:27:28 -0800 (PST)
+	s=arc-20240116; t=1732728590; c=relaxed/simple;
+	bh=AgCMaMeAnASpx9ADAFEofuxtrTW5t6AuJNoMsODv+90=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IR7yyi4hzmrtbgGx2w+MM2jfT6VGF/hWwQ6JQDxfp9i6x4GqmhbV+B9jxCb9YjE4d4oCaQPiQEwMQ5e5DVeNvJnmeDGuhgCK2KFC53MFZIwl6m/NRC6Y+q5pLM4DPvYUz4MzTCmfV6Grjo9xFJ1O0EcP2yfFI+9oNiPKPDz145A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfzbH5WF; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fbc65f6c72so5826860a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732728589; x=1733333389; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P4sIOmxt+6E3SUjl0OKh9ltYG/Wh+OnpptrG+2+4Agg=;
+        b=nfzbH5WF0S6QvTFYZLlf+vQXMM+FkwfAFMMt/XWuQa+TXqs8zK7iO2nQL0G1/9fFd2
+         6oJg0J2wriWvlLGONtIfoHclVpk4G4cmZu5nJSiHE1JNqjbs+dPoXpccJSPhug2N9xMe
+         2IUfOdpJKCdDWKGUNL4snflGPdBOOqSTpfeQnc4ys6qElY0zoLk9QJYgzBX1jqw3Ng/2
+         H5+nVujsYit5r17RjTrPP1bViCx3OMQVM7eosOTPagkNsWaVnfRXWEWa7Abq1kxvoZ1P
+         5wzEu6rksE8v5O9QSsyOooNI/lJZFx/fyioCvoHLe3GNsvite3aWEpxIhsLoZ5hZctf9
+         aWKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728448; x=1733333248;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=beOnUcZGQU2mrcIYvueq6R+cVXgzH9B5DJtHxbHnrQM=;
-        b=DuCxxICrNTTQKCQT/IwpjJyN0SReJmWfsS50KznL6650Ia1zQQoL8lKNAoA7FMl8n6
-         K7xoIIT1DmtIw0Aywys0D9f5Gsb8ZHO5vnv/7ut9zUhBBjx4kCmU6a6mX07dKQDoWcEj
-         DYqMrRFt3luSCaI60V/0WYK2XZiN4w0xVUItTX0Vx/WG/nnxVkTEWva2Kg67ZTeDjDvI
-         vFb5qn1R1RjD8sdcwQzBjnkygB44apdP0HNP5QElQf3uKRF0QiEPQrAqDpKlwlheAd1b
-         0ENoPvgmAD+g6ZEm2YxTXJjeRTIEI+H/7htjwWRZrnyXsN1qwvOT+DaniaI/TkekVagR
-         2URg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLZm7cUshh6G87kd6yUJdlCrUSaYYjorDIxnI1U6w0bjCshgCPrTem16VMDcQ1LIJxyn5sSWc+/Tg4av0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHu7jImKYdkj2URaMUd/w7BfTCp9CP8QkcneHzXWaN8naKu80v
-	lVGJGbzL+WbVM09g4F60mSeSXV94Ue3mW/Fh4Occ5egs1b7PIwMLpfCuwYliDDaaZOXLoStEotB
-	nt+n96RkHOp0EC4z8/FlMJXaSvL4oayI42lB6TVDuDSnx1mMA424GtshoZwtu2c/E4ixc0kIRee
-	ERWcDNi/xCy8ycVPWVgJhVcK8iI/uStGc2abBW2S8T9I4Qpw==
-X-Gm-Gg: ASbGncuGeyrinzdM+tClhAJrsnxwEWy8kYUPSdVJc3YTu5DxpOpfjSKUZ+ObhLYWVBJ
-	Jjtt1em9IGahAnNUsA6ypZHBmD1EPXZG6JuiFsKaGP7NN1rHsWIZGjBEoEloSXGzLn/0bBdRPFC
-	NfOF7vlcgZWxSgLfTUL/zxHvvo7biBgNpRbqV9HsgF5RkSpMUAt6NtWKOlcizzZwYVHZODoKM2i
-	WxleZKHjlkAfIrZ6ftN5zrKrNwwaxuTT+D2csbx/n8ARy4N9Htp7YKPZVA8COe4iM1Mn/Pz1xMz
-	Uh1FIWjVURduHe3Svrm6FlZn1wHGiEyXNyc=
-X-Received: by 2002:a05:622a:1341:b0:463:1677:c09 with SMTP id d75a77b69052e-466b35ea5femr68921751cf.23.1732728447853;
-        Wed, 27 Nov 2024 09:27:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH+fAMgcLzUudgIW52TJuWeKGmuj/kR1YAzG3qMwrZjsvPqzOjlYx5DSJYQMYJ3GaA+mF1VrQ==
-X-Received: by 2002:a05:622a:1341:b0:463:1677:c09 with SMTP id d75a77b69052e-466b35ea5femr68921251cf.23.1732728447440;
-        Wed, 27 Nov 2024 09:27:27 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46682eee51bsm48523711cf.82.2024.11.27.09.27.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 09:27:26 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>, Chenbo Lu
- <chenbo.lu@jobyaviation.com>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev, mingo@redhat.com,
- juri.lelli@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: Performance Degradation After Upgrading to Kernel 6.8
-In-Reply-To: <20241120090354.GE19989@noisy.programming.kicks-ass.net>
-References: <CACodVevaOp4f=Gg467_m-FAdQFceGQYr7_Ahtt6CfpDVQhAsjA@mail.gmail.com>
- <20241120090354.GE19989@noisy.programming.kicks-ass.net>
-Date: Wed, 27 Nov 2024 18:27:23 +0100
-Message-ID: <xhsmhzflkmvt0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1732728589; x=1733333389;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P4sIOmxt+6E3SUjl0OKh9ltYG/Wh+OnpptrG+2+4Agg=;
+        b=xP0n7UryOXR2dv9D5trE3BkGtbZaO41ohSHV6nmZfux7rZhSpMs/V8LA2AfrB9J5UB
+         fE3BMVNXu1ved9GzmszMppLvp1cCRmlfdAl0kvfsADxqtgzcYUI6wLuQ3a/i6NBHT5Nv
+         YrKo1gUzhXH4vMLaB8Q+8orKgI/Ta5PQis/Zo6FGafCzBsYXtxxhVq+tNjTm7U34471V
+         pLJAAjsGa62l2GQoO9MJzSQ/Bwbec7M+Jbj8bwE82yiLFULl45szaA4o3An89Q0FOlW6
+         0jenGvrw5L5uw6IhhGrh/PRGrRnbFOyOK1ZLNeCuP8aO7xo4YRq807r52XoD+H9lhPTv
+         8DiA==
+X-Gm-Message-State: AOJu0YxYUp7tSEY/BWhHZ7Sx7bBW18lpQ5+/HJWweSLM3FYDe/2itaGI
+	LNnFCf7d6tQQEtYW9otAtEP1zUhVcAtwzE/5yQi6c3EeNNQue6zZ
+X-Gm-Gg: ASbGncsCI9iqkyyaEVkO92P3XqhtXFwmbduk7RAMlja3IWATxwOxpEcYCalMXtQkKnX
+	HbpLw6My/pyrowf1YxeDKJX4Dvm1bPObGag7iRw+vYQWF6ykTdiNOHS5//pXQJWurDvRPY0HAVm
+	mnTxlMrkwBQKe1w90yJOJRRc27FJOvzxk6Al9kQd+SBennaLvFJgknPiaomiY9Q/E6nv5p0Wyib
+	azTNd/6F2OX+ZCTZA+IxgSBU7/PVam+exe2ZPDLmHocRNvkm0ncx3RIdo4EZ652IFqn9cswYdNO
+	kdwcQtOLUEWU+1d+bBciaALQBAMh
+X-Google-Smtp-Source: AGHT+IEQBpzMXh5yXkAktk+B4Le1RfAy/+Rf/KVUrppFxoUQ2qNw97WYZSZiNYXgYFn+fzg6vo950g==
+X-Received: by 2002:a05:6a21:2d84:b0:1d9:c6e8:60fc with SMTP id adf61e73a8af0-1e0e0ab4692mr5782140637.6.1732728588569;
+        Wed, 27 Nov 2024 09:29:48 -0800 (PST)
+Received: from localhost.localdomain (1-171-29-17.dynamic-ip.hinet.net. [1.171.29.17])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc1e3fdbsm9359582a12.30.2024.11.27.09.29.44
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 27 Nov 2024 09:29:47 -0800 (PST)
+From: Andy Chiu <andybnac@gmail.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev,
+	bjorn@rivosinc.com,
+	puranjay12@gmail.com,
+	alexghiti@rivosinc.com,
+	yongxuan.wang@sifive.com,
+	greentime.hu@sifive.com,
+	nick.hu@sifive.com,
+	nylon.chen@sifive.com,
+	tommy.wu@sifive.com,
+	eric.lin@sifive.com,
+	viccent.chen@sifive.com,
+	zong.li@sifive.com,
+	samuel.holland@sifive.com
+Subject: [PATCH v3 0/7] riscv: ftrace: atmoic patching and preempt improvements
+Date: Thu, 28 Nov 2024 01:29:01 +0800
+Message-Id: <20241127172908.17149-1-andybnac@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Damn, I wrote a reply on the 20th but seems like I never sent it. At least
-I found it saved somewhere, so I don't have to rewrite it...
+This series makes atmoic code patching possible in riscv ftrace. A
+direct benefit of this is that we can get rid of stop_machine() when
+patching function entries. This also makes it possible to run ftrace
+with full kernel preemption. Before this series, the kernel initializes
+patchable function entries to NOP4 + NOP4. To start tracing, it updates
+entries to AUIPC + JALR while holding other cores in stop_machine.
+stop_machine() is required because it is impossible to update 2
+instructions, and be seen atomically. And preemption must have to be
+prevented, as kernel preemption allows process to be scheduled out while
+executing on one of these instruction pairs.
 
-On 20/11/24 10:03, Peter Zijlstra wrote:
-> On Tue, Nov 19, 2024 at 04:30:02PM -0800, Chenbo Lu wrote:
->> Hello,
->> 
->> I am experiencing a significant performance degradation after
->> upgrading my kernel from version 6.6 to 6.8 and would appreciate any
->> insights or suggestions.
->> 
->> I am running a high-load simulation system that spawns more than 1000
->> threads and the overall CPU usage is 30%+ . Most of the threads are
->> using real-time
->> scheduling (SCHED_RR), and the threads of a model are using
->> SCHED_DEADLINE. After upgrading the kernel, I noticed that the
->> execution time of my model has increased from 4.5ms to 6ms.
->> 
->> What I Have Done So Far:
->> 1. I found this [bug
->> report](https://bugzilla.kernel.org/show_bug.cgi?id=219366#c7) and
->> reverted the commit efa7df3e3bb5da8e6abbe37727417f32a37fba47 mentioned
->> in the post. Unfortunately, this did not resolve the issue.
->> 2. I performed a git bisect and found that after these two commits
->> related to scheduling (RT and deadline) were merged, the problem
->> happened. They are 612f769edd06a6e42f7cd72425488e68ddaeef0a,
->> 5fe7765997b139e2d922b58359dea181efe618f9
->
-> And yet you failed to Cc Valentin, the author of said commits :/
->
->> After reverting these two commits, the model execution time improved
->> to around 5 ms.
->> 3. I revert two more commits, and the execution time is back to 4.7ms:
->> 63ba8422f876e32ee564ea95da9a7313b13ff0a1,
->> efa7df3e3bb5da8e6abbe37727417f32a37fba47
->> 
->> My questions are:
->> 1.Has anyone else experienced similar performance degradation after
->> upgrading to kernel 6.8?
->
-> This is 4 kernel releases back, I my memory isn't that long.
->
->> 2.Can anyone explain why these two commits are causing the problem? I
->> am not very familiar with the kernel code and would appreciate any
->> insights.
->
-> There might be a race window between setting the tro and sending the
-> IPI, such that previously the extra IPIs would sooner find the newly
-> pushable task.
->
-> Valentin, would it make sense to set tro before enqueueing the pushable,
-> instead of after it?
+This series addresses the problem by initializing the first NOP4 to
+AUIPC. So, atmoic patching is possible because the kernel only has to
+update one instruction. As long as the instruction is naturally aligned,
+then it is expected to be updated atomically.
 
-Urgh, those cachelines are beyond cold...
+However, the address range of the ftrace trampoline is limited to +-2K
+from ftrace_caller after appplying this series. This issue is expected
+to be solved by Puranjay's CALL_OPS, where it adds 8B naturally align
+data in front of pacthable functions and can  use it to direct execution
+out to any custom trampolines.
 
-/me goes reading
+The series is composed by three parts. The first part cleans up the
+existing issues when the kernel is compiled with clang.The second part
+modifies the ftrace code patching mechanism (2-4) as mentioned above.
+Then prepare ftrace to be able to run with kernel preemption (5,6)
 
-Ok yeah I guess we could have this race vs
+An ongoing fix:
 
-rto_push_irq_work_func()
-`\
-  rto_next_cpu()
+Since there is no room for marking *kernel_text_address as notrace[1] at
+source code level, there is a significant performance regression when
+using function_graph with TRACE_IRQFLAGS enabled. There can be as much as
+8 graph handler being called in each function-entry. The current
+workaround requires us echo "*kernel_text_address" into
+set_ftrace_notrace before starting the trace. However, we observed that
+the kernel still enables the patch site in some cases even with
+*kernel_text_address properly added in the file While the root cause is
+still under investagtion, we consider that it should not be the reason
+for holding back the code patching, in order to unblock the call_ops
+part.
 
-Not sure if that applies to DL too since it doesn't have the PUSH_IPI
-thing, but anyway - Chenbo, could you please try the below?
+[1]: https://lore.kernel.org/linux-riscv/20240613093233.0b349ed0@rorschach.local.home/
+
+Changes in v3:
+- Add a fix tag for patch 1
+- Add a data fence before sending out remote fence.i (6)
+- Link to v2: https://lore.kernel.org/all/20240628-dev-andyc-dyn-ftrace-v4-v2-0-1e5f4cb1f049@sifive.com/
+
+Changes in v2:
+- Drop patch 1 as it is merged through fixes.
+- Drop patch 2, which converts kernel_text_address into notrace. As
+  users can prevent tracing it by configuring the tracefs.
+- Use a more generic way in kconfig to align functions.
+- Link to v1: https://lore.kernel.org/r/20240613-dev-andyc-dyn-ftrace-v4-v1-0-1a538e12c01e@sifive.com
+
+
+Andy Chiu (7):
+  riscv: ftrace: support fastcc in Clang for WITH_ARGS
+  riscv: ftrace: align patchable functions to 4 Byte boundary
+  riscv: ftrace: prepare ftrace for atomic code patching
+  riscv: ftrace: do not use stop_machine to update code
+  riscv: vector: Support calling schedule() for preemptible Vector
+  riscv: add a data fence for CMODX in the kernel mode
+  riscv: ftrace: support PREEMPT
+
+ arch/riscv/Kconfig                 |   4 +-
+ arch/riscv/include/asm/ftrace.h    |  11 +++
+ arch/riscv/include/asm/processor.h |   5 ++
+ arch/riscv/include/asm/vector.h    |  22 ++++-
+ arch/riscv/kernel/asm-offsets.c    |   7 ++
+ arch/riscv/kernel/ftrace.c         | 133 ++++++++++++-----------------
+ arch/riscv/kernel/mcount-dyn.S     |  25 ++++--
+ arch/riscv/mm/cacheflush.c         |  15 +++-
+ 8 files changed, 135 insertions(+), 87 deletions(-)
 ---
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index d9d5a702f1a61..270a25335c4bc 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -602,16 +602,16 @@ static void enqueue_pushable_dl_task(struct rq *rq, struct task_struct *p)
- 
- 	WARN_ON_ONCE(!RB_EMPTY_NODE(&p->pushable_dl_tasks));
- 
-+	if (!rq->dl.overloaded) {
-+		dl_set_overload(rq);
-+		rq->dl.overloaded = 1;
-+	}
-+
- 	leftmost = rb_add_cached(&p->pushable_dl_tasks,
- 				 &rq->dl.pushable_dl_tasks_root,
- 				 __pushable_less);
- 	if (leftmost)
- 		rq->dl.earliest_dl.next = p->dl.deadline;
--
--	if (!rq->dl.overloaded) {
--		dl_set_overload(rq);
--		rq->dl.overloaded = 1;
--	}
- }
- 
- static void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *p)
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index bd66a46b06aca..1ea45a45ed657 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -385,6 +385,15 @@ static inline void rt_queue_pull_task(struct rq *rq)
- 
- static void enqueue_pushable_task(struct rq *rq, struct task_struct *p)
- {
-+	/*
-+	 * Set RTO first so rto_push_irq_work_func() can see @rq as a push
-+	 * candidate as early as possible.
-+	 */
-+	if (!rq->rt.overloaded) {
-+		rt_set_overload(rq);
-+		rq->rt.overloaded = 1;
-+	}
-+
- 	plist_del(&p->pushable_tasks, &rq->rt.pushable_tasks);
- 	plist_node_init(&p->pushable_tasks, p->prio);
- 	plist_add(&p->pushable_tasks, &rq->rt.pushable_tasks);
-@@ -392,15 +401,15 @@ static void enqueue_pushable_task(struct rq *rq, struct task_struct *p)
- 	/* Update the highest prio pushable task */
- 	if (p->prio < rq->rt.highest_prio.next)
- 		rq->rt.highest_prio.next = p->prio;
--
--	if (!rq->rt.overloaded) {
--		rt_set_overload(rq);
--		rq->rt.overloaded = 1;
--	}
- }
- 
- static void dequeue_pushable_task(struct rq *rq, struct task_struct *p)
- {
-+	/*
-+	 * To match enqueue we should check/unset RTO first, but for that we
-+	 * need to pop @p first. This makes this asymmetric wrt enqueue, but
-+	 * the worst we can get out of this is an extra useless IPI.
-+	 */
- 	plist_del(&p->pushable_tasks, &rq->rt.pushable_tasks);
- 
- 	/* Update the new highest prio pushable task */
+base-commit: 0eb512779d642b21ced83778287a0f7a3ca8f2a1
+-- 
+2.39.3 (Apple Git-145)
 
 
