@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-423702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4719DABA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:19:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544079DAB83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F11E281CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:19:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F64B21E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4D8200BA0;
-	Wed, 27 Nov 2024 16:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E1200BA2;
+	Wed, 27 Nov 2024 16:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZODDARKZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yzy7GJrB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3661FA164;
-	Wed, 27 Nov 2024 16:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91A0200B8B;
+	Wed, 27 Nov 2024 16:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724361; cv=none; b=cFNK40pTKMis/JfG3bkFuOqfC9p8Mu1DOFesStRT+yRbuKP9i3unjLHyuqRb49ZYhvzC7d5g/r/Ww1+OfQopKHB7pxN9pdTTI0oHCf/Oyj1grQ4bhoTi7QlOLVsyrwx0oZGud0SXI2lEAFLwnRM4qwwEQ48lx77i88+plzTFDQw=
+	t=1732724075; cv=none; b=PXPSu2Lick5gb1+XgoAn5OMamE7Mqkkj+GXRQAh/zM60s+5FwViqCSjSZowFWpOGHrsB7jLd6+JGWgQhrhMmBie6KraKL1t4RzZsSxLc/r6glmepWfw3Py8NtTkeQfEMZJe9PfACRZRhGTIU5J4N7+OEYqhWp+hR/BfcfQzyOkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724361; c=relaxed/simple;
-	bh=VGj1urPXgirpBpZCxUml45/Ecma/LMtwQIvuA1d+HWU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VbMFkZ0x/ghH1iNdjb8n2hrURTKbAwGYk4Dk3S2SkbvcvgVotBLWYc9y1mhCd4mUgfZYuz710c1Ef2aEzbNL7b2hAxnvIGm9L9weaoBkG/3C4CRBGxqLUTf+uJvQF7jfi/TLKcuXFVooH/BR8FZWHfHpG8hF/i7uLAeKjZBkiTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZODDARKZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B566EC4CECC;
-	Wed, 27 Nov 2024 16:19:19 +0000 (UTC)
+	s=arc-20240116; t=1732724075; c=relaxed/simple;
+	bh=t/t+qxjEE72ckgaetIew3I8k7tV0KGgHqs4PPn6lneU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XItcoaryFH4hZ42pwElRWWl1p46Mj0JwrPSNMujSrbpeOw0OvFBYPsF/vwP641nW5RHC9HvqGQNWVYlsOt1zS0lSwK1Jk0N05vGmVbfxm8Qb30trMLxch0cZXJev3g1bTGwsa59kV8rWcIOK7cPksPt2o2aYnKgABI1wQQ32tKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yzy7GJrB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1F2C4CECC;
+	Wed, 27 Nov 2024 16:14:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732724361;
-	bh=VGj1urPXgirpBpZCxUml45/Ecma/LMtwQIvuA1d+HWU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZODDARKZqOaZ1pX5mdF+8lESiPPu26IFoeJJ+jUXkoS6wgmmf6cFMVMwjTgrom1Dq
-	 CP2nImVWHee4L9XcNysL6T0f0LGmkXAmk79bUnRRf0b72fWWPLthGn+f8SjdyLNLcB
-	 Muj+ww/dy9Yb1mCCATRzr+Gw8q9ja+OMRl/gBwBSMxuIo0tFju0oCKqmKJtPMc4QJC
-	 DaCgOTsJsf0dUQg8HCLsQZHPMxwnObb71zSnvuR7GNuA2dQ8iBCEvgaMTG9Qofu5K8
-	 ahiZEJFzedhA9MWMUW37jijXDAfFmbDdxquA2WtxK4d/lzsw9Yd46hAWO0xRDhn1IA
-	 ZM59faMXJ4M7w==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 27 Nov 2024 16:14:22 +0000
-Subject: [PATCH] selftest: hugetlb_dio: Fix test naming
+	s=k20201202; t=1732724075;
+	bh=t/t+qxjEE72ckgaetIew3I8k7tV0KGgHqs4PPn6lneU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yzy7GJrBd/e3ed1KEIowTju/iUvh/T9yE4tGSE0foVfkz5XPzXIOav9a3ecTJoRt5
+	 moLU8F3FSksk54D/GR/HMeNLeuUuKh3NiYt2bnkveJbvFmKh0fRGHABUGUbsZ9FriC
+	 ZTUUjasE8OBdmpR7GkUMGtwjrFU+3VOiB+UijToRHYzP/qVaWiQoI22LUiD2adoIUe
+	 6ANGhB0IE2OfxqeDIOQbHvGef7jPGS8zPibk4MFBmqNmk215695V7uGLXiUPItOMIv
+	 EfDTid/dN/dhSFUnjvKfQh9oCGv4ZQsc6tA/55cUwZw/kBHf8zQju+TwCHdhHSgtVg
+	 GCogrBmNZzflQ==
+Date: Wed, 27 Nov 2024 16:14:30 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jason Hsu <jasonhell19@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au, patrick@stwcx.xyz,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	yang.chen@quantatw.com, jerry.lin@quantatw.com
+Subject: Re: [PATCH v5 1/2] dt-bindings: arm: aspeed: add Meta Ventura board
+Message-ID: <20241127-resupply-tanned-1410c026f127@spud>
+References: <20241127073409.147714-1-jason-hsu@quantatw.com>
+ <20241127073409.147714-2-jason-hsu@quantatw.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-kselftest-mm-hugetlb-dio-names-v1-1-22aab01bf550@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAF1FR2cC/x3NQQrCMBBG4auUWTvgRMHiVcRFk/xtB5tUMqkIp
- Xc3uPw27+1kKAqje7dTwUdN19wgp47CPOQJrLGZ3NldRdyNX4ZlrLDKKfG8TaiL56gr5yHBWOB
- D8Oilv0RqkXfBqN//4PE8jh8E4SxGcAAAAA==
-X-Change-ID: 20241127-kselftest-mm-hugetlb-dio-names-1ebccbe8183d
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Shuah Khan <shuah@kernel.org>, Donet Tom <donettom@linux.ibm.com>
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
- Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2481; i=broonie@kernel.org;
- h=from:subject:message-id; bh=VGj1urPXgirpBpZCxUml45/Ecma/LMtwQIvuA1d+HWU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnR0aGmTf7TspLsdIwd/JO0KQoZMrjSCzXVD3QifL/
- FxQZOs+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ0dGhgAKCRAk1otyXVSH0A80B/
- 9gzQZWA4bpLSHy9xmV1ACmwxzXU0aUm/3V6gLW3quSihlXjcvvGorD7iPK0HrSFI0vQX4i714pryKC
- GqXkjOkf9Za6BktApVHHinWYlMgq3b8C0Hkdtze81kH+RVbXHeCEf/3jW3qDROO30c0IW/eVj7ro2B
- KXSEF4ihnWNgHKY/0oJwaKTj5BuuCLSjYdTRFRSFDnES6ZqwxywS6M+khXpfRbTJSOA1EkHYnz5j/0
- 42goxcDxwH+dw715SRmJuOfGGYsFvKL6f9XnBODMSEtqXwc4uL8Qr0wHIelQTUiybH4+Rz/91LpP4L
- l8md8cT6uZygXnoD1VCEeVzGZAc0t3
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jmHGxiniHzsUH9Y8"
+Content-Disposition: inline
+In-Reply-To: <20241127073409.147714-2-jason-hsu@quantatw.com>
 
-The string logged when a test passes or fails is used by the selftest
-framework to identify which test is being reported. The hugetlb_dio test
-not only uses the same strings for every test that is run but it also uses
-different strings for test passes and failures which means that test
-automation is unable to follow what the test is doing at all.
 
-Pull the existing duplicated logging of the number of free huge pages
-before and after the test out of the conditional and replace that and the
-logging of the result with a single ksft_print_result() which incorporates
-the parameters passed into the test into the output.
+--jmHGxiniHzsUH9Y8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: fae1980347bf ("selftests: hugetlb_dio: fixup check for initial conditions to skip in the start")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/mm/hugetlb_dio.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+On Wed, Nov 27, 2024 at 03:34:08PM +0800, Jason Hsu wrote:
+> From: Jason-Hsu <jasonhell19@gmail.com>
+>=20
+> Document the new compatibles used on Meta Ventura.
+> Add subject prefix for the patch.
+>=20
+> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
 
-diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
-index 432d5af15e66b7d6cac0273fb244d6696d7c9ddc..db63abe5ee5e85ff7795d3ea176c3ac47184bf4f 100644
---- a/tools/testing/selftests/mm/hugetlb_dio.c
-+++ b/tools/testing/selftests/mm/hugetlb_dio.c
-@@ -76,19 +76,15 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
- 	/* Get the free huge pages after unmap*/
- 	free_hpage_a = get_free_hugepages();
- 
-+	ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
-+	ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
-+
- 	/*
- 	 * If the no. of free hugepages before allocation and after unmap does
- 	 * not match - that means there could still be a page which is pinned.
- 	 */
--	if (free_hpage_a != free_hpage_b) {
--		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
--		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
--		ksft_test_result_fail(": Huge pages not freed!\n");
--	} else {
--		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
--		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
--		ksft_test_result_pass(": Huge pages freed successfully !\n");
--	}
-+	ksft_test_result(free_hpage_a == free_hpage_b,
-+			 "free huge pages from %u-%u\n", start_off, end_off);
- }
- 
- int main(void)
+I acked this on v1:
+https://lore.kernel.org/all/20241022-purgatory-modify-fdcc5f1cff23@spud/
 
----
-base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
-change-id: 20241127-kselftest-mm-hugetlb-dio-names-1ebccbe8183d
+Where did that ack go?
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/D=
+ocumentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 2f92b8ab08fa..98ea2b3e0eb1 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -86,6 +86,7 @@ properties:
+>                - facebook,greatlakes-bmc
+>                - facebook,harma-bmc
+>                - facebook,minerva-cmc
+> +              - facebook,ventura-rmc
+>                - facebook,yosemite4-bmc
+>                - ibm,blueridge-bmc
+>                - ibm,everest-bmc
+> --=20
+> 2.34.1
+>=20
 
+--jmHGxiniHzsUH9Y8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0dFZgAKCRB4tDGHoIJi
+0mIfAQCayJEyg/gpu7kW1AsnuurZqhAYXJ0x4zKzE2K1FAFASQD7BAOqyd6ui9uH
+b6YBGxhPSq91ve2zVGXLlpN06U7rIAY=
+=Gnpn
+-----END PGP SIGNATURE-----
+
+--jmHGxiniHzsUH9Y8--
 
