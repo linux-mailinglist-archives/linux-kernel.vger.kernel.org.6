@@ -1,115 +1,397 @@
-Return-Path: <linux-kernel+bounces-423478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B532F9DA81D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:54:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFE89DA824
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:57:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A15D281FB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:54:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 587F9B22607
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219E318DF86;
-	Wed, 27 Nov 2024 12:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E0C1FCCF7;
+	Wed, 27 Nov 2024 12:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VFjp4YnR"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y81wl/Y0"
+Received: from mail-lf1-f66.google.com (mail-lf1-f66.google.com [209.85.167.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21E21FCCE9
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FE21FCCE9
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732712087; cv=none; b=H00tYa/CmtFSgStg0psMs3a5vsUPPpcNT2RnhKL4EHDIi7VbkTh9Ir+rBsClbuulOfJfVdpVtYQu7l4dfh8CEVmtsQl/bZTLF/JGyJTOPKIqd2mIzNDEyLenbk/R/4w6DfAZIyQecjC12KLx7suRxGkJjZH8Fm8da8VHL/sKkL8=
+	t=1732712244; cv=none; b=sjjlEOCN2gUAbK/kXnNlfmxk/P0PKOjoYv3nYSnmxA43yUFvCmBCCW/J9+S3MLolOCmBNQNPj+EvEF4Im5IE0KJeAOm95CbQxfnpul1cM1820QVgoUNtYVwHm8myDlHvcA3uv5VPRggUiowBqhlWgUmkmz1/qW2xfZV0IwHODaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732712087; c=relaxed/simple;
-	bh=Lh+K93JZ+oSO4iAA1pLiUmBkVGI7gz64mN0R2XehEKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AcpX9sbFnXPVn5yCOfN5fsNFcn17hGoD3G0eVfz2TmXNPw/Z/ZSdPF10/WhT5wgfdgYTI0lo9K0Pzep9uwu+k6wO8TuS2aKDlXxz+g5mBop2zDI6VQvUN59ilfKciZFim91Lq5a1BRIR9BMkQxowx7iIJVSCvI5V4OTIrKYL6so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VFjp4YnR; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da353eb2eso10431163e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:54:45 -0800 (PST)
+	s=arc-20240116; t=1732712244; c=relaxed/simple;
+	bh=/3QVXltBSBnwY1S9HcJrbTDVh0qKiIBiEGYRIXGOvhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aKbGzHx+Z7QXyQXTD2BeiBSm2IqfpXNODKyu5JfZ6FKx1zROqTxYYoTZM9wzkSVAX9bfEx1BEzhjpdt0cfOZG3GwuHiB3J48jgbhNlEy57Tr1CSk2A7ZM9nheHmDdV8ShdwjiYw+vKqJ2xfigyJHTPQWmML3vmLkSaowAdJy8nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y81wl/Y0; arc=none smtp.client-ip=209.85.167.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f66.google.com with SMTP id 2adb3069b0e04-53ddb4c05c0so670968e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:57:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732712084; x=1733316884; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMlguYsXBaHTG8IIPiymhg5zN1IoRUyw9vVeQdmNnoE=;
-        b=VFjp4YnR2BMoy20IxOEMJ6AK3Ujrzz3qmqIca2qOFLtkK55WJsWT28V1CueF2zG9oA
-         obvV4ErO6bOWG4IoF9wTGVCsRzKyKxGlc1aUqRrTHzjWb0AFe1QVeXte1QXSQNi/Fy9h
-         ZDqJZrq9ZY5pdpybQD0+pDTk/X/IyN4E+fD7GMadGmvERoPh9zQijAE4j1em4simzM0z
-         RNVJzhnGtNKpW4usO8p2lPDZdkI7/cOnkHbnKpAPZtECWpT8mKCGuIGuEhHIW2WP4UFP
-         oWvuf8iJR9xR47rt3XMM0mFg/L2TVpUfUHKFj9SPPKxO4RMU4k68P0JHutPQYPkSRbV+
-         wJMA==
+        d=linaro.org; s=google; t=1732712240; x=1733317040; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GMnA2TIQtFWhtYtMcjnAKHGq49js6Hrus6w+eGXStpw=;
+        b=y81wl/Y08+Ru8XEJyIVItSVkx3WjOm+Db1n+dg+aAApQKmZlehnDsNfON6VP1WgnDP
+         0/gqK3vGuXOWyxfMio82Nd3tbbQrt27yf8xtoC6X+PfZ8hMKGMr/d3I4vkaQ3NltNPan
+         gCovmMGvXUX5PGnkRS30VxMpA3keMmYfJe/A/YRchGOdxXsjRwifXtpwXHoZVzyKGz3g
+         Dv6vJp6COx+DregUVD3sa9jA5LREsSOWvy6zX7RMmYFtqeDdMQ1UuqtpAriA8NNMEINf
+         i+UaqXo7GJWLMi1krreGXln/mHsObdxD+jERvu9mxieYQ+naq+BjnkVqvbrgKZVhVdFV
+         7buA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732712084; x=1733316884;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMlguYsXBaHTG8IIPiymhg5zN1IoRUyw9vVeQdmNnoE=;
-        b=JFvEveqHYXTgXzJ9tTuaQNmHn+ygJd3ljS2a0fwdD/Rs6s5iq6FwkJEPgXNMrs0/iq
-         Ng7bYRkPfufbhHKMYLN8FM5pdaYRLPxqZ/dfJizLoMPLgnHfoM+/qnb32HH+XuHl4lnS
-         aISaiKEAl/g+PKblqT+OtDU5lMmgSsckDfwgOujFfCzTekG+elW2lc9mA/gmPeMZu7bN
-         8/9ze/yqJD6yqUFSA9gt/AP3ieg++xciBgCLpmgWevQwqMsCWUp+yf7ORH5d9VBHOUKI
-         TYHPavfvnGuBPYHuiWOnAU6Ouq54q3RKL8/SsNK1Y9gj6whCvxHP3mm/Bu3S/iNik4yM
-         RqnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYmiVPrfuHPsrpL3kg1yQynsw7pVOy4x2iY9y3Vq7+HHvpW+ozrjkv6TKadDvqWjKuSgnhcwQsG3t5Eoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNgjsvivrzPk5KOs8eLLWbTEBmG/dPP/TKPOzgsc6p81DfJge8
-	3X0V7S3HnwLMLzNy1OaC8fsJ4OF8qJU/RCGtao4hh6CfK7QxC5N7V4Y7Hh90ys3NpD5vG5ioW+j
-	Zl8acsujES1KHz5bd9C1dxBTzSl/XSX6DK3DRTQ==
-X-Gm-Gg: ASbGnctWjk9dclnI85KBiPksHtczMPkmBwHwWIwBWSFJnNLvhzXiPorZddJJcBv18kR
-	8I89KHE51q5q1xlyu1obxIF0lcSIFDFfMFCRVNoS8OkFaVS+fAM94rrjXuPVdRjE=
-X-Google-Smtp-Source: AGHT+IHx709SaQ1FKdkFFszRfWrjL9xRjWY5udSKu4C3NKATAFjJLfJrvyExi7rrNp0NGOcrVq8wkyZ207HqatYcYLA=
-X-Received: by 2002:a05:6512:b26:b0:53d:efc7:70c6 with SMTP id
- 2adb3069b0e04-53df00d9d1fmr2573513e87.30.1732712083923; Wed, 27 Nov 2024
- 04:54:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732712240; x=1733317040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GMnA2TIQtFWhtYtMcjnAKHGq49js6Hrus6w+eGXStpw=;
+        b=gUVfXJ7io49OftxbRj0CHq4VJq74RGyOjmKX8cHnmB0ixMcQ7w8liBUJMYaLRj352Q
+         UiinteiQQO8LROlA8wle4NMu6Xwr6kUuG9Vkp1sIY+V/zn6U+ANcwk+AtnTs+TXuNXT2
+         8X7CQvFMXKKKV3KS7FlxAz6Yi8HhYd6sqSKMJE/H+bW0chhiVl+vujwbK9QHBJvVH8hy
+         5nOqICPjEvElE9bMjIYCmVWRsODUdkZxi8hHZWJY0gdzFzMlklMOz5wcBx7iOXDwvpEs
+         8rRIyGdWvstVfks3xIUQv9HXUsrULJs51w5WS55DpQ80jQWqhLZ/6Hsuj308ZOdkCU8c
+         lWtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXf/bWIvKT47FDcXLCiOan1NI5lCoAZeOUy+weJgQcRq2Jz5Vo0Um/yvl2u/OcUFtO3fYjvONMiPNfv9uY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7K8hxSSE2Dvy51tqIriA+cjNJMfB3zI2SgFuwdM5NhxB9P+Sq
+	80n/RoGFKTqd9RDSN5cSNjmNcynfj42jcdbT2CEGsk7sbTkhUH8M+IMEB1NKnYA=
+X-Gm-Gg: ASbGncuhkODTsRJKNuHrppCAyPjAGPAvg2PFcfO40p4/3iGWHze+7NOin3xKH5eVVwY
+	hBSH3QP1Nv2r/+DkIKwTApc2n4XTSjoVNvPqQa7I93NnlWIfUKBo6D2nsK0iZZJv83GDw5Jarwk
+	TMiQCCoXBDTm3p12mhz4z8/lST9tiHBD3LKKDxLQZ7V9bmrm+XIbkl0aP9dQoKxCwGuzRIw/AMA
+	chNuYqwlgk45+OvFSTG48w7Km2iJNdjP9S477d9kkm/OYSfXu585KVS9htEdkBq6Z5jU3wEyaPR
+	/CPkFzLWDfHBvVYmZEdf6AIcnOub
+X-Google-Smtp-Source: AGHT+IEorNTlk8cNgkvDRFQKz1WeQVG+qF6iU+1q8AV+O6kv4z8kbCBsuwDicAF8+/dgchFW5mETbw==
+X-Received: by 2002:a05:6512:33d6:b0:53d:e780:3ff5 with SMTP id 2adb3069b0e04-53df010a27dmr318412e87.9.1732712239632;
+        Wed, 27 Nov 2024 04:57:19 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53ddd4c8fefsm1587593e87.125.2024.11.27.04.57.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 04:57:19 -0800 (PST)
+Message-ID: <1a87e9d9-da7e-4b8b-807e-f56aa15acfc2@linaro.org>
+Date: Wed, 27 Nov 2024 14:57:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127115107.11549-1-quic_janathot@quicinc.com>
-In-Reply-To: <20241127115107.11549-1-quic_janathot@quicinc.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 27 Nov 2024 13:54:32 +0100
-Message-ID: <CAMRc=McvKvHy8sxhHE2-5LO7-MAjtPMLks6x9bufTjmpG4cT6Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] Enable Bluetooth on qcs6490-rb3gen2 board
-To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, quic_mohamull@quicinc.com, 
-	quic_hbandi@quicinc.com, quic_anubhavg@quicinc.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/5] media: dt-bindings: Add qcom,sc7280-camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241127100421.3447601-1-quic_vikramsa@quicinc.com>
+ <20241127100421.3447601-2-quic_vikramsa@quicinc.com>
+Content-Language: en-US
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241127100421.3447601-2-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 12:51=E2=80=AFPM Janaki Ramaiah Thota
-<quic_janathot@quicinc.com> wrote:
->
-> - Patch 1/2 enable WCN6750 Bluetooth node for qcs6490-rb3gen2 board
->   along with onchip PMU.
-> - Patch 2/2 add qcom,wcn6750-pmu bindings.
->
-> Janaki Ramaiah Thota (2):
->   arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
->   regulator: dt-bindings: qcom,qca6390-pmu: document WCN6750
->
->  .../bindings/regulator/qcom,qca6390-pmu.yaml  |  27 +++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 174 +++++++++++++++++-
->  drivers/bluetooth/hci_qca.c                   |   2 +-
->  drivers/power/sequencing/pwrseq-qcom-wcn.c    |  22 +++
->  4 files changed, 223 insertions(+), 2 deletions(-)
->
-> --
+On 11/27/24 12:04, Vikram Sharma wrote:
+> Add bindings for qcom,sc7280-camss to support the camera subsystem
+> on the SC7280 platform.
+> 
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   .../bindings/media/qcom,sc7280-camss.yaml     | 415 ++++++++++++++++++
+>   1 file changed, 415 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> new file mode 100644
+> index 000000000000..6fafb3631b15
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> @@ -0,0 +1,415 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,sc7280-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SC7280 CAMSS ISP
+> +
+> +maintainers:
+> +  - Azam Sadiq Pasha Kapatrala Syed <akapatra@quicinc.com>
+> +  - Hariram Purushothaman <hariramp@quicinc.com>
+> +
+> +description:
+> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sc7280-camss
+> +
+> +  reg:
+> +    maxItems: 15
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid0_lite
+> +      - const: csid1
+> +      - const: csid1_lite
+> +      - const: csid2
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: vfe0
+> +      - const: vfe0_lite
+> +      - const: vfe1
+> +      - const: vfe1_lite
+> +      - const: vfe2
+> +
+> +  clocks:
+> +    maxItems: 32
+> +
+> +  clock-names:
+> +    items:
+> +      - const: camnoc_axi
+> +      - const: csiphy0
+> +      - const: csiphy0_timer
+> +      - const: csiphy1
+> +      - const: csiphy1_timer
+> +      - const: csiphy2
+> +      - const: csiphy2_timer
+> +      - const: csiphy3
+> +      - const: csiphy3_timer
+> +      - const: csiphy4
+> +      - const: csiphy4_timer
+> +      - const: gcc_camera_ahb
+> +      - const: gcc_cam_hf_axi
+> +      - const: soc_ahb
+> +      - const: vfe0
+> +      - const: vfe0_axi
+> +      - const: vfe0_cphy_rx
+> +      - const: vfe0_csid
+> +      - const: vfe0_lite
+> +      - const: vfe0_lite_cphy_rx
+> +      - const: vfe0_lite_csid
+> +      - const: vfe1
+> +      - const: vfe1_axi
+> +      - const: vfe1_cphy_rx
+> +      - const: vfe1_csid
+> +      - const: vfe1_lite
+> +      - const: vfe1_lite_cphy_rx
+> +      - const: vfe1_lite_csid
+> +      - const: vfe2
+> +      - const: vfe2_axi
+> +      - const: vfe2_cphy_rx
+> +      - const: vfe2_csid
+> +
+> +  interrupts:
+> +    maxItems: 15
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid0_lite
+> +      - const: csid1
+> +      - const: csid1_lite
+> +      - const: csid2
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: vfe0
+> +      - const: vfe0_lite
+> +      - const: vfe1
+> +      - const: vfe1_lite
+> +      - const: vfe2
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: ahb
+> +      - const: hf_0
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    items:
+> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: ife0
+> +      - const: ife1
+> +      - const: ife2
+> +      - const: top
+> +
+> +  vdda-phy-supply:
+> +    description:
+> +      Phandle to a regulator supply to PHY core block.
+> +
+> +  vdda-pll-supply:
+> +    description:
+> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSIPHY 0.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSIPHY 1.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSIPHY 2.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSIPHY 3.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@4:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSIPHY 4.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - interconnects
+> +  - interconnect-names
+> +  - iommus
+> +  - power-domains
+> +  - power-domain-names
+> +  - vdda-phy-supply
+> +  - vdda-pll-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,camcc-sc7280.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> +    #include <dt-bindings/interconnect/qcom,sc7280.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        camss: camss@acaf000 {
+> +            compatible = "qcom,sc7280-camss";
+> +
+> +            reg = <0x0 0x0acb3000 0x0 0x1000>,
+> +                  <0x0 0x0acc8000 0x0 0x1000>,
 
-Is there no associated change to the pwrseq-qcom-wcn driver?
+Unsurprisingly above is the error, which has been already reported for
+enumerous amount of times, I wish to stop poking it eventually, please
+reference to the previously given review comments and fix all of them
+before sending a new version of the changes.
 
-Bart
+--
+Best wishes,
+Vladimir
 
