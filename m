@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-423936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DD99DAE83
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:25:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C409DAE84
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:26:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5DDB23229
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479DC163D97
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF79B202F91;
-	Wed, 27 Nov 2024 20:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215DE202F8B;
+	Wed, 27 Nov 2024 20:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N4fOrYUQ"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMxOjQFv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1564020127A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801E62CCC0;
+	Wed, 27 Nov 2024 20:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732739147; cv=none; b=gPqSXq1eonGWfvATNgAdLAcK6kqANlFAXWgGcQUJ+N3qSLBevPIdMMe31DQFoUt4R7+wkHJTkO2wQ7Yg6QKlWnmcfjGcD5HttZ3pj1h2qoMy3i3OWkq8KsuGp93SUPaGB57qjAt0I5RKzhF+Yb66sQa/l9V5pHlAyLCQRJFFVUk=
+	t=1732739206; cv=none; b=Lk5wfJHApimFWvwsh8p1OcujoBKuKvw/JmZi3UsAwF4hRNo4dKwCfg6r7WYEEks/pwnKP2IxzbIR44cWwr7bV2fcMRzmiiTVfUpNTRFTxhzBgBnT7ZLA3IOz6iKTSG/apUfO19eg4jexlxCA3mbj3sFrAe3bXxbGUfGWM1RuC7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732739147; c=relaxed/simple;
-	bh=eDlqeY888v429bWEPT3Fi6aBbu+iw9MzRiOWp7sVA5Y=;
+	s=arc-20240116; t=1732739206; c=relaxed/simple;
+	bh=LNDY5ueeEYALxnNozlJJO/E0J742FYFNLyMMZaYyLtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2Wds7INnVX53KfB0coEuMLZNVj+04AMPg5EustvNzGZgjGb24JKtWRiClDqfc+69ytQ+VyN0byT1+3PIY7ka5wl1vU90CTHwZA2CCKPtk94412Fd2V+HXQwkjRCc44Ltm+Ay2gREBs9b54YE80BkeC8Ul9CamEuDRWczq5LLuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N4fOrYUQ; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 27 Nov 2024 15:25:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732739143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=skcgUuoiBBxN7x6FTZw8AkaFvSWZd1lygoGn1Se8VZE=;
-	b=N4fOrYUQx0faVhPRb1Oa7gTV7sUsuqju0ZEy6iiQFBsKHKryzKbb0V4vVhgOPVObJBFA6a
-	KZZdMW/wxIgJTfi6yycPtaSUEcG5mI+6nRJr2QhIVuokizKVc+2NHO6vIdXeU5c/hu5GUQ
-	bD5WGWu6GIGRXi1lyi/h1Sv1DpDfM0Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Jann Horn <jannh@google.com>, linux-bcachefs@vger.kernel.org, 
-	kernel list <linux-kernel@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
-	io-uring <io-uring@vger.kernel.org>
-Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
-Message-ID: <3ajlmjyqz6aregccuysq3juhxrxy5zzgdrufrfwjfab55cv2aa@oneydwsnucnj>
-References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
- <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+kXqK8xhKpj+BxPrwN2pOfvNWrIWbBf+pDJ7zfkxko/gOAsAm+BZOudoHdGmA1DjmQOfGzmIdfy9tVhLJBi+xPVaFqwuDGCaeJ73NSBY07Nx8kkpMCo2cgSI5vzriLGoB/5L9JWODcxbEkSD02O5DILvPJsuS0KYjU+al8NI+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMxOjQFv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F58C4CECC;
+	Wed, 27 Nov 2024 20:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732739206;
+	bh=LNDY5ueeEYALxnNozlJJO/E0J742FYFNLyMMZaYyLtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mMxOjQFvuHtW7B26ceigTz0G6N711UUNMZ8bzv2xy+BgWadbBPZSwMcLhM/LM0Wap
+	 EGHddOMYJTwGAzsntkzRuEiJVFitmodkIFChHjE4OM2ts3gdL1WWKszAHk+JJXQIcz
+	 r6gquls0ucKxTSmb9RKubNX4Kt2A6p6pRyonr/neykGPBBtEsbDd3TANgbNKdLRhue
+	 HbSAtrW+pnJbWiN3wib6MkZBXZ8P6+yfKQZEIfxPgCiNRTT5wWzhxUrYYuMfo3slYe
+	 GkXnXueYWLHn6xC0pvAihFUWl3vtw9pFfUwg8aTEhyG00d+m0WP4YDEvbOpEt5yurg
+	 J3sO1/imhozsw==
+Date: Thu, 28 Nov 2024 05:26:43 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+Cc: david@lechnology.com, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH] counter: add COUNTER_FUNCTION_DISABLE for energy saving
+Message-ID: <Z0eAg9HRlYlCy25H@ishi>
+References: <20241125230220.9994-1-rafael.v.volkmer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="enD/eqU8NFepVRPA"
+Content-Disposition: inline
+In-Reply-To: <20241125230220.9994-1-rafael.v.volkmer@gmail.com>
+
+
+--enD/eqU8NFepVRPA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 11:09:14AM -0700, Jens Axboe wrote:
-> On 11/27/24 9:57 AM, Jann Horn wrote:
-> > Hi!
-> > 
-> > In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
-> > to an mm_struct. This pointer is grabbed in bch2_direct_write()
-> > (without any kind of refcount increment), and used in
-> > bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
-> > which are used to enable userspace memory access from kthread context.
-> > I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
-> > guarantees that the MM hasn't gone through exit_mmap() yet (normally
-> > by holding an mmget() reference).
-> > 
-> > If we reach this codepath via io_uring, do we have a guarantee that
-> > the mm_struct that called bch2_direct_write() is still alive and
-> > hasn't yet gone through exit_mmap() when it is accessed from
-> > bch2_dio_write_continue()?
-> > 
-> > I don't know the async direct I/O codepath particularly well, so I
-> > cc'ed the uring maintainers, who probably know this better than me.
-> 
-> I _think_ this is fine as-is, even if it does look dubious and bcachefs
-> arguably should grab an mm ref for this just for safety to avoid future
-> problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
-> means that on the io_uring side it cannot do non-blocking issue of
-> requests. This is slower as it always punts to an io-wq thread, which
-> shares the same mm. Hence if the request is alive, there's always a
-> thread with the same mm alive as well.
-> 
-> Now if FMODE_NOWAIT was set, then the original task could exit. I'd need
-> to dig a bit deeper to verify that would always be safe and there's not
-> a of time today with a few days off in the US looming, so I'll defer
-> that to next week. It certainly would be fine with an mm ref grabbed.
+On Mon, Nov 25, 2024 at 08:02:20PM -0300, Rafael V. Volkmer wrote:
+> Add `COUNTER_FUNCTION_DISABLE` to the `counter_function` enum in the
+> counter API. This allows file operations to signal other drivers to
+> disable hardware resources, reducing energy consumption in
+> power-sensitive scenarios.
+>=20
+> Previously, tests with Texas Instruments' eQEP modules revealed that
+> hardware resources remained active unless the driver was removed,
+> offering no user command to stop the count. This approach exposed the
+> fragility of these resources.
+>=20
+> To address this, introduce a new enum option in the counter API to
+> receive commands for disabling the hardware. This ensures the hardware
+> enters an idle, power-saving state when not in use.
+>=20
+> Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
 
-Wouldn't delivery of completions be tied to an address space (not a
-process) like it is for aio?
+Hello Rafael,
+
+I wonder whether a new enum option is actually needed in this case.
+Wouldn't the Count "enable" extension already provide a way for users to
+stop the counting? I imagine the driver would determine implicitly that
+the device can enter a power-saving state in that scenario when counting
+has been disabled by the user.
+
+William Breathitt Gray
+
+--enD/eqU8NFepVRPA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ0eAgwAKCRC1SFbKvhIj
+KySVAQCpfa71177/rYkjGQNbgXl4JINaxZYMsNIOdV0N7cFZtAEA6UH55z1OO9ti
+wmY86PhVbmoqsHJ1OMRItDsWgZu0dQI=
+=h+Dv
+-----END PGP SIGNATURE-----
+
+--enD/eqU8NFepVRPA--
 
