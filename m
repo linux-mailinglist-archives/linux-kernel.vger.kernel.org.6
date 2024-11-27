@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-423691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28ED79DAB7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:14:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4719DABA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:19:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2532165097
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F11E281CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD97200B8C;
-	Wed, 27 Nov 2024 16:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4D8200BA0;
+	Wed, 27 Nov 2024 16:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HuhYe1c5"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZODDARKZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB8200132
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3661FA164;
+	Wed, 27 Nov 2024 16:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724075; cv=none; b=uuXE3hCYLCn9B4lHjYFXNruAFRISl0pP6c5epPJtA6l6GQj8WhC0GNTXppqn0OO0uFDW6cG1+aG/4xOzjNriKBn4neVkdq7TknOynyr30zj4GcmTHaHLQ6NVQ0/aGB8RSArsXyc+VdEMKhmRUdfLjhdOrzMGwABsgf2NwOsPCj4=
+	t=1732724361; cv=none; b=cFNK40pTKMis/JfG3bkFuOqfC9p8Mu1DOFesStRT+yRbuKP9i3unjLHyuqRb49ZYhvzC7d5g/r/Ww1+OfQopKHB7pxN9pdTTI0oHCf/Oyj1grQ4bhoTi7QlOLVsyrwx0oZGud0SXI2lEAFLwnRM4qwwEQ48lx77i88+plzTFDQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724075; c=relaxed/simple;
-	bh=wdNY7HX2WspIyz6Q35Nz/LQqzU4lAK3ST4AREKvs+EM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f+/g3jn2KkL84qChkUT7KQ2Utf4vSLIHbYj2n4ZF3tAm2b52Z1RuvDFzCqZpJOZWBmnLV3rvCWyBoDjZGgUHloguedf9F3fnVB7jOeuoZHKH6PR9xtnO0lDuSHS9lYfBCV9V/Nuj4st3rM01rOtMFtpU79HCN1zZg12dumTlQ8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HuhYe1c5; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d01db666ceso7127312a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:14:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732724071; x=1733328871; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fvjj15h+61TIjL9fWQW0WlE61jSKFQDeRBQ9KAl+OOw=;
-        b=HuhYe1c5tZRQI2cZnAvlur0MOwKqsftMpv7uTXLAyMjsG09ToJeuiTAVkBXEfVj+hr
-         3v5jwGiYO+EP6hnSSGatn7n/tHMrGLwytsJCgi6le+aSjhKTg/dCWX4eMbXMc9bbiatz
-         5gm8sWSo6uTF9nJVa9GLfjCuV8bRq9Q3q5Scc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732724071; x=1733328871;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fvjj15h+61TIjL9fWQW0WlE61jSKFQDeRBQ9KAl+OOw=;
-        b=ZSh7PfPZNb2h1fux/X3GQEnK7BaNMOwl3cw40UX/ppmqaIZScWLoGIR3uuuaKIQR78
-         yPPRnPmn+kS32WrjGDSlPj++Ij49G2B64+22OY63Ymq1U/+nRquWnLonGJErJ4nhxyG8
-         XpT0YbL20d9VYjLsZtqSysN+y8BVFTtSzuyHDRIZkzwCt76KUVmHUMBZO2iBagU1TyUu
-         2UMP/N8SIWKs29dlzksxgl6NLpoEklfCikBbIZ9UeiQ/CmgiA7/fEfvzquBSjE6AKiAb
-         CAzP0Mdf7ZpntROBnHMuSdknO6oRT6kP9j50O/vJw2EGfyxy6nK9mBrTEl6eeGzWJYr4
-         Z1dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXccWVYDd20wl8eTQUqBSUFFBMx2rM0+AUDo0E5OH0AIouXAWV5KQTE1KUej3bWYwIq5fU6YRtJ9RZXvas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgniMeGOs/TIAZxHMzub7AAjB0m71D3O7aUzBhZeD5iwM6pqwV
-	rXp6Oftr80f/WFoOsB4r6QDe6wHnQqWxKBeyYv4zo4K47IhUm95TFe2lp+FNYAH1vdtx8s5Kpu1
-	CnQeElw==
-X-Gm-Gg: ASbGncud1HkmCNpApgQY4HSjcrn6LYbVCzIVzt9v5LQd6DgEL1w5U5FwwVIcPNHVZwY
-	AGh8Q2C0quW1n1+iyFJORkZvdVsqDw4GUbUIog3M/Jt5UQO2AfBe6Lx/lKXOmr9+FvFlo/bf8MC
-	tgUm0yYtTnYVZicZzTZzRk23Nt7tFY81wCkEFCb/tJsqfXI/GRhVQ+C0KlumKG3DsMPdoj+Kms7
-	CDLQHkrky3/0nXJMIOz3KrVWCnUOil8FyBdT6+6HLCzuvR44dhKn14LpRQamuLhc/5ZG7TrEelJ
-	F+57hT4hmOYFcQi6P6GuSKSo
-X-Google-Smtp-Source: AGHT+IFrsvf+8cVf2qIHFszkWRDh4Aa8U8SAY65GppRpUGwI53WYYbw2AvSssn+RztDnF7dB5dCcrw==
-X-Received: by 2002:a17:906:1db2:b0:aa5:459e:2db with SMTP id a640c23a62f3a-aa581062652mr264203766b.53.1732724071363;
-        Wed, 27 Nov 2024 08:14:31 -0800 (PST)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5b8c77sm727374666b.187.2024.11.27.08.14.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 08:14:30 -0800 (PST)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa543c4db92so568355166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:14:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVm4U+iqSPbYRmE3iGZ3zi559XVBfvYiCWVJxGEZdkaZP9UVkAhJaFNu6zHx+N9JMeUgzgrxBxk/ywH8Yo=@vger.kernel.org
-X-Received: by 2002:a17:906:310c:b0:aa5:1dc0:7c1 with SMTP id
- a640c23a62f3a-aa580ed01d1mr234195366b.9.1732724070395; Wed, 27 Nov 2024
- 08:14:30 -0800 (PST)
+	s=arc-20240116; t=1732724361; c=relaxed/simple;
+	bh=VGj1urPXgirpBpZCxUml45/Ecma/LMtwQIvuA1d+HWU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VbMFkZ0x/ghH1iNdjb8n2hrURTKbAwGYk4Dk3S2SkbvcvgVotBLWYc9y1mhCd4mUgfZYuz710c1Ef2aEzbNL7b2hAxnvIGm9L9weaoBkG/3C4CRBGxqLUTf+uJvQF7jfi/TLKcuXFVooH/BR8FZWHfHpG8hF/i7uLAeKjZBkiTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZODDARKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B566EC4CECC;
+	Wed, 27 Nov 2024 16:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732724361;
+	bh=VGj1urPXgirpBpZCxUml45/Ecma/LMtwQIvuA1d+HWU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZODDARKZqOaZ1pX5mdF+8lESiPPu26IFoeJJ+jUXkoS6wgmmf6cFMVMwjTgrom1Dq
+	 CP2nImVWHee4L9XcNysL6T0f0LGmkXAmk79bUnRRf0b72fWWPLthGn+f8SjdyLNLcB
+	 Muj+ww/dy9Yb1mCCATRzr+Gw8q9ja+OMRl/gBwBSMxuIo0tFju0oCKqmKJtPMc4QJC
+	 DaCgOTsJsf0dUQg8HCLsQZHPMxwnObb71zSnvuR7GNuA2dQ8iBCEvgaMTG9Qofu5K8
+	 ahiZEJFzedhA9MWMUW37jijXDAfFmbDdxquA2WtxK4d/lzsw9Yd46hAWO0xRDhn1IA
+	 ZM59faMXJ4M7w==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 27 Nov 2024 16:14:22 +0000
+Subject: [PATCH] selftest: hugetlb_dio: Fix test naming
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-vfs-fixes-08465cd270d3@brauner>
-In-Reply-To: <20241127-vfs-fixes-08465cd270d3@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 27 Nov 2024 08:14:14 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjQC9pt4s3K0Be57ay2kSyDbUjiF2Jq4V1BPYi1z3Qx0A@mail.gmail.com>
-Message-ID: <CAHk-=wjQC9pt4s3K0Be57ay2kSyDbUjiF2Jq4V1BPYi1z3Qx0A@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs fixes
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241127-kselftest-mm-hugetlb-dio-names-v1-1-22aab01bf550@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAF1FR2cC/x3NQQrCMBBG4auUWTvgRMHiVcRFk/xtB5tUMqkIp
+ Xc3uPw27+1kKAqje7dTwUdN19wgp47CPOQJrLGZ3NldRdyNX4ZlrLDKKfG8TaiL56gr5yHBWOB
+ D8Oilv0RqkXfBqN//4PE8jh8E4SxGcAAAAA==
+X-Change-ID: 20241127-kselftest-mm-hugetlb-dio-names-1ebccbe8183d
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Shuah Khan <shuah@kernel.org>, Donet Tom <donettom@linux.ibm.com>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+ Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2481; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=VGj1urPXgirpBpZCxUml45/Ecma/LMtwQIvuA1d+HWU=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnR0aGmTf7TspLsdIwd/JO0KQoZMrjSCzXVD3QifL/
+ FxQZOs+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ0dGhgAKCRAk1otyXVSH0A80B/
+ 9gzQZWA4bpLSHy9xmV1ACmwxzXU0aUm/3V6gLW3quSihlXjcvvGorD7iPK0HrSFI0vQX4i714pryKC
+ GqXkjOkf9Za6BktApVHHinWYlMgq3b8C0Hkdtze81kH+RVbXHeCEf/3jW3qDROO30c0IW/eVj7ro2B
+ KXSEF4ihnWNgHKY/0oJwaKTj5BuuCLSjYdTRFRSFDnES6ZqwxywS6M+khXpfRbTJSOA1EkHYnz5j/0
+ 42goxcDxwH+dw715SRmJuOfGGYsFvKL6f9XnBODMSEtqXwc4uL8Qr0wHIelQTUiybH4+Rz/91LpP4L
+ l8md8cT6uZygXnoD1VCEeVzGZAc0t3
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, 27 Nov 2024 at 07:41, Christian Brauner <brauner@kernel.org> wrote:
->
-> I was sent a bug fix for the backing file rework that relied on the
-> overlayfs pull request. The vfs.fixes branch used an earlier mainline
-> commit as base. So I thought how to resolve this and my solution was to
-> create a new ovl.fixes branch which contained the overlayfs changes for
-> v6.13 and then apply the fix on top of it. That branch was then merged
-> into vfs.fixes with an explanation why. Let me know if I should do this
-> differently next time.
+The string logged when a test passes or fails is used by the selftest
+framework to identify which test is being reported. The hugetlb_dio test
+not only uses the same strings for every test that is run but it also uses
+different strings for test passes and failures which means that test
+automation is unable to follow what the test is doing at all.
 
-Thanks, this looks good - exactly like I think it should have been done.
+Pull the existing duplicated logging of the number of free huge pages
+before and after the test out of the conditional and replace that and the
+logging of the result with a single ksft_print_result() which incorporates
+the parameters passed into the test into the output.
 
-Pulled,
-             Linus
+Fixes: fae1980347bf ("selftests: hugetlb_dio: fixup check for initial conditions to skip in the start")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/mm/hugetlb_dio.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+index 432d5af15e66b7d6cac0273fb244d6696d7c9ddc..db63abe5ee5e85ff7795d3ea176c3ac47184bf4f 100644
+--- a/tools/testing/selftests/mm/hugetlb_dio.c
++++ b/tools/testing/selftests/mm/hugetlb_dio.c
+@@ -76,19 +76,15 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+ 	/* Get the free huge pages after unmap*/
+ 	free_hpage_a = get_free_hugepages();
+ 
++	ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
++	ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
++
+ 	/*
+ 	 * If the no. of free hugepages before allocation and after unmap does
+ 	 * not match - that means there could still be a page which is pinned.
+ 	 */
+-	if (free_hpage_a != free_hpage_b) {
+-		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
+-		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
+-		ksft_test_result_fail(": Huge pages not freed!\n");
+-	} else {
+-		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
+-		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
+-		ksft_test_result_pass(": Huge pages freed successfully !\n");
+-	}
++	ksft_test_result(free_hpage_a == free_hpage_b,
++			 "free huge pages from %u-%u\n", start_off, end_off);
+ }
+ 
+ int main(void)
+
+---
+base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+change-id: 20241127-kselftest-mm-hugetlb-dio-names-1ebccbe8183d
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
