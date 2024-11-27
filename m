@@ -1,180 +1,161 @@
-Return-Path: <linux-kernel+bounces-423547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6079DA988
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:02:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED539DA98A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:03:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C05281A40
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2EE281CF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804AC1FCFD0;
-	Wed, 27 Nov 2024 14:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9CF1FCF41;
+	Wed, 27 Nov 2024 14:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="lzYoEZgG"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kdp0xkxj"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BBD3232
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B828B3232
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732716170; cv=none; b=DwcJP8ZxBBTWFfPR8eazWh5ceqFN7adRE+nXdUK3nNOvHMR81lZiFmRL0HxbOLWYHEJhyzgALgb68s2vjQ39/AkeZO0Y4T93xiNq+T3Um6Nkffq1T6tMvHEO92HVDjZ0TfEe48Lzp04P6sELFBvn4EN7sfbx2r47cxQvyfuiNCc=
+	t=1732716177; cv=none; b=e2hbqlieKz+foTD94u2wnQkLrKvsR3JNogPQ+FQ4JkWkXR1KLPT3L8qLhnEgkggjY47XWlHWLqiE2hZIwBI2T5PQvbwsKhNBflhZ1KlF3AaZrhWaXSwwDT4uU5DTnPdtk6tKn4hK4ZP02xq4jdM3v0Zay9DlapGXBEK/z2C6RRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732716170; c=relaxed/simple;
-	bh=qb9TFOTX3syqD5AaXirIorMhGgw6vDS0CAsUGJCBPdI=;
+	s=arc-20240116; t=1732716177; c=relaxed/simple;
+	bh=TUPT2Vj93/kyEbrXqfOFEH096hxvwGyIPajMGlJp8xA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2gSgX6k8729oMXYWLSrR6shuwktvp4V1Glui2/u6x9r76FOJuguORBRhk2YHlPZQkpy2gLqCQo6Tb+fCa7hJhaGrk0V2aEQFU//ADTMQJi/O0qjmR55t2k+uF31f0FtW4MjCQXKpy85vJrXwO4dTcEnx/LT+crRFGWLuEzbPhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=lzYoEZgG; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a14d6bf4so26188605e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:02:48 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmeYYlU50rWOHtVXjbts1z+EcUoD3GASquya61YoOxrF9eHRDNSXdaEY7SJnsNoDRCelDCP4o0jgToWLWoXMHazKwpvTOFzeyaiFJzw81zyiHfRo9762g07yKzGZOTzLX/8mQR4ZCRt8IPUZwh7hS7UJWQittGaxY3nOVIzSAII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kdp0xkxj; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso2231130e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:02:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732716167; x=1733320967; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HHoVh6bdQ+49A7HwWA2MZyeijxPsG/IR+pS2oskUYMg=;
-        b=lzYoEZgGDBHqJu3AlUvpBQvxAVqHInKJB0N0ailkEKgYXgUHw5KJi4z3MV46GQG3/M
-         CEZuAcZK933p2uB253LLUn85ZrPMQt10RlsyLtjB/WNn1QiVFDDrUwjmwGZbzOpV7Fmr
-         wH7g31VGuI+49O3Ny/PpGRSjxsYSPvvHB78bkyezSPJrhmHJourL8quVmpv4e9KFBIcF
-         EM258NE2JQqrs7xr3TonquiQPr4v4yC2jHY43yvNH+fIESNScSHG0Gs8t/BC9nPzCOM6
-         usgCC2cjPHTivrYx8uAhD8A/MqxkV68+asyG8OnuvIzu/zuCt9WEFrG9D5WBrGK1w14H
-         DhKw==
+        d=linaro.org; s=google; t=1732716174; x=1733320974; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T01FX8+ifMzh7FdT/3RYrXgZQjd2w/xyGf35CNWYzZw=;
+        b=Kdp0xkxjdipnSnpoAfJH/ID8ZhUz7QlJIUqtiA1lA7sRn3lZE2FRl8Wrie5RLWOZOu
+         +nS/edCDmeyaq6snRRuK47idAH0i4+ndakXWNoY5h7O1iIkknPi3mZOa/KrVFhlBHC40
+         L8KYFJB80qc1pNrOdOQpW1/bIq6mvXztylLU6LUwAQD84JnjiFV7RYjrnYxqanNvBF06
+         zj7W44eIHmVCQUUCj3aJMGE6LfDJbwthLCobJBjdakXOzwHOiYOHMeEoI4f1tiWila8D
+         W+xYIJAOjnYjlswYnL8K32uyFyJZ93JGD8Wu9DVlmjo2tMqsiQ9pTChj1oFDK8ncTB2N
+         HsGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732716167; x=1733320967;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HHoVh6bdQ+49A7HwWA2MZyeijxPsG/IR+pS2oskUYMg=;
-        b=UvaTY8Yx6Dcp3z9zjF70/aG8kum4QBwaz6z9WVTx5g2J780ZKrwslnIcIkqCM/DiFh
-         xx5QqTmchonDeb8TSIrwZzb9cQZjE2Tn9zaJKE8/74EGxoauFGHY04UgteKEpLPuag+h
-         vSnBk9qeL8SGdBzJqhJtsaeGP0+UVV0AEHqcrB7nQm0yztV/4PeH88nIYRLRfujXGam7
-         TQS3e+ODwjuJ00cbbxSgVR4xEpz5zAOSnauQbRNpiwy1VoqLvz3xplXTyVQ/0dcwbrkM
-         Hj6A1HNVAJFXyBZejDlCk7UYx0h3VVzJ6/i7OMJw+reNw4a67Qc7C0WB3EeCNdaVdRQz
-         ZxdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6++tTCCy5RNo0tskBA0TqsBbVaLdsKvzTjgJQWcsMCqIkwoBGMx+RTvWFiLMqzJ5e5PoPPErUB8gscVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwockENE3x//6spwgF05hFZM/uZ0z9HcxqmuwzxvKJjZsyIeOKS
-	ICXVr3W6TT5uBH7WMQKwRdJ/H2/D+x4uHZIcQnQHKJBRGImtgkzyFQE/ws4c6wM=
-X-Gm-Gg: ASbGncutVICOMF0NBHypXMWhwnGoGBvpDqmp3b/JYiZlYu7e7ON7cuOodiIO3yWsCN9
-	xiQPw4Z2jDvJ9tXvDBLzfSo0Mt6xvBSDOY76bPsy63/iBOQhdJVhvhVat3NV2MalQsZVTOepVJ/
-	gEa6szgRwzB+DQUwi75v6IyZZ8MAXCVp3RWUPUxhkbh+0aaUkU3b0XJlYSo6BxCDvBUOj3ZpJv4
-	DISkedMcQwYGqIbVejbFVbblRY87d1qmNBbCgSbBFdfHdLyLK6eC8MxCdmTSGz2yFZLHdrBVK6X
-	bdHW1SUbuPsIZuRwyX1uYJ6aesG4iN/M5Ek=
-X-Google-Smtp-Source: AGHT+IFe1fSW20TaAbPYl6Y04HjqEdbDAiCLB5PflXpOVEcCMA7NIYGVv9p91IM/S4pid4RHtdLlvA==
-X-Received: by 2002:a05:600c:3b24:b0:434:a75b:5f59 with SMTP id 5b1f17b1804b1-434a9dbb06cmr33861275e9.3.1732716156911;
-        Wed, 27 Nov 2024 06:02:36 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa763a59sm22192305e9.11.2024.11.27.06.02.36
+        d=1e100.net; s=20230601; t=1732716174; x=1733320974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T01FX8+ifMzh7FdT/3RYrXgZQjd2w/xyGf35CNWYzZw=;
+        b=Lm38Yw5ixFJMjd/aRs03Wf3w5b/MvASxjuZ74smsjS0m2rJ1iNvZ/zOZhUqTGsk9Bz
+         YyG/SKhEMWDg5c8R/adSTwm4xca76IXS+P1HZ/jD51Q8XK4NpqbQGCRtvw4k4uQtL9pz
+         B0D/d58ZZeIJ8PYKpdel/Hp04UB01IMmOG7BubSUub2PUbTCX/tg9fHFZpObNYp3q68a
+         4aSe8XSDT5mP8O3W5kAauwNCVKdhNeRW/7u5nWNk+B/4ri2utp0R09Pzbz8eIvm3NafE
+         b69jB2UOsexY4Q8ypOjhPEJrQmFYY2Rm57b5uS/ic9YOWcSdX9QlUM4setU8Cz7qhSgq
+         UMVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/zYSt+Wlh8sPSUueaTMgHoHmYaFK0sLdpE/Uv+yYoMJ1hdIzDF3VLaaYvtcvgN0bljeMjGoDQ2yIfUKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLp9PH1/3VwEHJBTU7qOjAspIKKWSl0xJATv3n1qq2HrIMiRaN
+	HXUBI4V+omp56y4Gmh16Lrt05ZItlbz+Rih29GtsEj7tv3vWE9CQLmjnGkfrdxE=
+X-Gm-Gg: ASbGncskip+C2NC88QuvuuBAe0xGYGHjJ3FIxPorh0RneyioWlBZ5iJv7rAe1RauaS4
+	h65RrP51VXsfsKOLsdI4PUScchm8kmoNhKHHpufN0uh55iTMAtYVFcYNNokx/85/3hBrdGx1wDX
+	gPwbigrMyxTk0Q5swgKQIqSSC0IRkbvB1DEAgg51fFtHGZRQpx4Z89Yj+bFWWfFPe4cmcwQhJIR
+	YohKJqFsTZvnKVfnrmYLhPbRQnp+ROFbegJxIZexcmcqr2ao0YeEv2tJA/b8e2NdSOUDfxdKIyz
+	xy33hFODfqS4LnSZvdMGjjgN5s0kcA==
+X-Google-Smtp-Source: AGHT+IE4PFY/jEkiwyrm8o+Db9OLNXgxUMj7QvjWWz6uR+5Fh5KVZpx+UZJ77BHMmy7vJiZ7cMIV8g==
+X-Received: by 2002:a05:6512:398c:b0:53d:ea3c:2ba0 with SMTP id 2adb3069b0e04-53df00d12afmr2027772e87.16.1732716173570;
+        Wed, 27 Nov 2024 06:02:53 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd3c852ccsm2274613e87.253.2024.11.27.06.02.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 06:02:36 -0800 (PST)
-Date: Wed, 27 Nov 2024 15:02:35 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Charlie Jenkins <charlie@rivosinc.com>, zhangkai@iscas.ac.cn
-Subject: Re: [PATCH] riscv: module: use a plain variable for list_head
- instead of a pointer
-Message-ID: <20241127-2c074e38cc599c7e2d0da505@orel>
-References: <20241127103016.2699179-1-cleger@rivosinc.com>
+        Wed, 27 Nov 2024 06:02:52 -0800 (PST)
+Date: Wed, 27 Nov 2024 16:02:50 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v4 2/3] arm64: dts: qcom: sar2130p: add support for
+ SAR2130P
+Message-ID: <2hka5j3iyml32czhv6k2gr6ss2jthsgaljva5izhzzcoc3l4eq@slsmyp7s6ars>
+References: <20241102-sar2130p-dt-v4-0-60b7220fd0dd@linaro.org>
+ <20241102-sar2130p-dt-v4-2-60b7220fd0dd@linaro.org>
+ <ff7c9b83-0ac7-43a0-a86a-2fed66728a32@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241127103016.2699179-1-cleger@rivosinc.com>
+In-Reply-To: <ff7c9b83-0ac7-43a0-a86a-2fed66728a32@quicinc.com>
 
-On Wed, Nov 27, 2024 at 11:30:14AM +0100, Clément Léger wrote:
-> list_head does not need to be allocated, it can be a plain variable.
+On Tue, Nov 26, 2024 at 11:32:59PM +0530, Krishna Kurapati wrote:
+> 
+> 
+> On 11/2/2024 8:33 AM, Dmitry Baryshkov wrote:
+> > Add DT file for the Qualcomm SAR2130P platform.
+> > 
+> > Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   arch/arm64/boot/dts/qcom/sar2130p.dtsi | 3123 ++++++++++++++++++++++++++++++++
+> >   1 file changed, 3123 insertions(+)
+> > 
+> 
+> [...]
+> 
+> > +		usb_dp_qmpphy: phy@88e8000 {
+> > +			compatible = "qcom,sar2130p-qmp-usb3-dp-phy";
+> > +			reg = <0x0 0x088e8000 0x0 0x3000>;
+> > +
+> > +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+> > +				 <&rpmhcc RPMH_CXO_CLK>,
+> > +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
+> > +				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+> > +			clock-names = "aux", "ref", "com_aux", "usb3_pipe";
+> > +
+> > +			power-domains = <&gcc USB3_PHY_GDSC>;
+> > +
+> > +			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
+> > +				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
+> > +			reset-names = "phy", "common";
+> > +
+> > +			#clock-cells = <1>;
+> > +			#phy-cells = <1>;
+> > +
+> > +			orientation-switch;
+> > +
+> > +			status = "disabled";
+> > +
+> 
+> Hi Dmitry,
+> 
+>  Sorry for asking this question after code got merged. I forgot about asking
+> this last time when I commented on your patch and provided the HS Phy IRQ
+> value.
+> 
+>  In SAR2130P, I remember that the lane orientation is reversed. As in on
+> normal targets, if the orientatin GPIO reads "0" it means LANE_A but on
+> SAR2130 it means LANE_B. Can you confirm if superspeed was tested only in
+> one orientation only.
 
-rel_head's list_head member, rel_entry, doesn't need to be allocated,
-its storage can just be part of the allocated rel_head.
-
-> Remove the pointer which allows to get rid of the allocation as well as
-> an existing memory leak.
-
-It'd be nice to add how the memory leak was found. Inspection or some
-tool?
+Thanks for the notice. I don't remember if I had USB3 or just USB2
+connected to the USB-C connector. I will take a look and report
+afterwards, but it might take some time.
 
 > 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>  I can push code for setting orienation properly for this target if you can
+> confirm that orienation is read reverse on SAR2130P.
 > 
-> ---
->  arch/riscv/kernel/module.c | 18 ++++--------------
->  1 file changed, 4 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
-> index 1cd461f3d872..47d0ebeec93c 100644
-> --- a/arch/riscv/kernel/module.c
-> +++ b/arch/riscv/kernel/module.c
-> @@ -23,7 +23,7 @@ struct used_bucket {
->  
->  struct relocation_head {
->  	struct hlist_node node;
-> -	struct list_head *rel_entry;
-> +	struct list_head rel_entry;
->  	void *location;
->  };
->  
-> @@ -634,7 +634,7 @@ process_accumulated_relocations(struct module *me,
->  			location = rel_head_iter->location;
->  			list_for_each_entry_safe(rel_entry_iter,
->  						 rel_entry_iter_tmp,
-> -						 rel_head_iter->rel_entry,
-> +						 &rel_head_iter->rel_entry,
->  						 head) {
->  				curr_type = rel_entry_iter->type;
->  				reloc_handlers[curr_type].reloc_handler(
-> @@ -704,16 +704,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
->  			return -ENOMEM;
->  		}
->  
-> -		rel_head->rel_entry =
-> -			kmalloc(sizeof(struct list_head), GFP_KERNEL);
-> -
-> -		if (!rel_head->rel_entry) {
-> -			kfree(entry);
-> -			kfree(rel_head);
-> -			return -ENOMEM;
-> -		}
-> -
-> -		INIT_LIST_HEAD(rel_head->rel_entry);
-> +		INIT_LIST_HEAD(&rel_head->rel_entry);
->  		rel_head->location = location;
->  		INIT_HLIST_NODE(&rel_head->node);
->  		if (!current_head->first) {
-> @@ -722,7 +713,6 @@ static int add_relocation_to_accumulate(struct module *me, int type,
->  
->  			if (!bucket) {
->  				kfree(entry);
-> -				kfree(rel_head->rel_entry);
->  				kfree(rel_head);
->  				return -ENOMEM;
->  			}
-> @@ -735,7 +725,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
->  	}
->  
->  	/* Add relocation to head of discovered rel_head */
-> -	list_add_tail(&entry->head, rel_head->rel_entry);
-> +	list_add_tail(&entry->head, &rel_head->rel_entry);
->  
->  	return 0;
->  }
-> -- 
-> 2.45.2
-> 
->
+> Regards,
+> Krishna,
 
-Other than the commit message change suggestions,
-
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+-- 
+With best wishes
+Dmitry
 
