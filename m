@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-423990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BAF9DAF19
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:51:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313239DAF1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCAB9164438
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:51:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FCB16438E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FC02036F2;
-	Wed, 27 Nov 2024 21:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A932036E8;
+	Wed, 27 Nov 2024 21:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ezczi3Mt"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tRiK3LIX"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C106CF9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F25F9DD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732744290; cv=none; b=V4J+l4NMjwf5GKK/WB8+jVaSz3p7uuksc+mkujEXHJJJsGTSWRk58a4Xfb6kXIhObNXaCW9+y7wTcIepqCD9H57reSmLBobOk0KnjqnDH8DxhrdBufXeb4dzxVl/wuIo0SsvVKlVsIB1p9XZPZTo505BtTIHANtE4snR37zWKJQ=
+	t=1732744356; cv=none; b=n76dK8/MkNiEkNilr1cot2ud3xTMAvbpexL0QSFKZcG5QIhJ8VDxATOH5jVczT3zFR+PohBnhR8vAQFkmaC7OZP7/Mu5UVM/fXUf2CD5uHXaL+RAfms0/jBAbL2IZXOyPCNuj/Oaw2/sO35Hrs7v62AY8msOCeChdAqCGMDYRio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732744290; c=relaxed/simple;
-	bh=H3U8YysZWzN/tyAM+nPTXamfgtOS/lmXkl1zpBKl1E8=;
+	s=arc-20240116; t=1732744356; c=relaxed/simple;
+	bh=EM/4mHDM8IGSubI+o454Y3goHzwpuRKt6oB8kvXn198=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oJoyZVW3Bi13dHDAv0Yp89NQGLTJhqlUNUahJqA45d9+RnTlzzQaGfIeThIP9OZEtoFvELdN3Z228a4KmXfZXmWz2SS8J/nevkvcRWvr6S3lAVMzkjNPQSJo5dQvF2qy6vIN8GWeF2tfVlQadfFFPtzIS+E6tSiZNQK1u9fBKa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ezczi3Mt; arc=none smtp.client-ip=209.85.167.169
+	 In-Reply-To:Content-Type; b=ZJziGGJV/ld3F6ffCRFJGzLggoGHwpnnRHtK/rCONVMah8cQ/AgvBdjZu83+b3OdluraTEp4n5+8fdY4vjDBEsmoShzxafU2Tg7vmhF4wRQQP5heMvVd24f6pF+PWiNr2FJbQGQpIiYX2/GXNog0fBs0evAZuiKraQRvAQfrTIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tRiK3LIX; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3ea3cc9a5ddso158017b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:51:28 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-71d554dedc6so88455a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:52:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732744288; x=1733349088; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732744354; x=1733349154; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=j/fcWLOC2+4XCfTTSTBHDdct2Q1n6+XII+KClLLeN3E=;
-        b=Ezczi3MtSnY9CRtRMl5JlCzXJ6AeidwODssH3G+JLX+XqjyvoyquhDzll4Z7iXWB/L
-         8b0Kyo2vaF3RI2tA8PUKkjrSuOjT30XaexcBO4noGYKpFqIulFOMgrFyV0611uIwOxwC
-         Aw2GS6E3/YlSascrti+Gav3yOtEZO01EttW5BnLntoI8rZJQo37MF5+BEj/b64RNHdnZ
-         yEnTPDL3blh39Bt6LhSOdwU9oANcE++kDRj3Etwcoe/PNPZ3wr96/Dq99cRl+tDryxhh
-         AtoiOZD4ng5pwgWZBvIzOXOHMcxlKY0bZXRNzWYdiJQMK6p+7SRNmgnoVhrpVCalrYNu
-         MTow==
+        bh=zXBXv71yrwh/W96nQYPOr57MuN6FAQnmq0hsvo2YPvo=;
+        b=tRiK3LIXTo0fmYGB3vWLZuvv7HKNorc1ebP37vtXvhVNvgaE2ob4crk4+4Q0rmC7lV
+         gbVg+LRPbozSEjKIojsSGsjOXbIi4oaGvKkt0I6mvVX/WrkpwHrSYX3w/Bs7EE5aOjbX
+         gFN/ltu+UuMCkCohLjyOvgQzXygvpuq8n0yKa0HkfDY4+uhQmiG5PQn5kARzJiJJrWBu
+         oLDnphOobBxuhcunhiiWp95EdoOmfl+/mulL+1onWPeywb1FOKhJK8wQCO7mGEhHbbkL
+         sMudeblimG027931KWr+TN32eWPB6m/T6Hsdd4/hDaDi/LZhpzLloaXaioDnJ4LQldgQ
+         diyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732744288; x=1733349088;
+        d=1e100.net; s=20230601; t=1732744354; x=1733349154;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/fcWLOC2+4XCfTTSTBHDdct2Q1n6+XII+KClLLeN3E=;
-        b=kdO6EZeGNZCTjgeVzWJVWKAClDMqtlDa0iFzVaJmLhohc7vfIdXIp6PKIe+x9hyEIO
-         YM8Mr8zwvCiuGpk7Gs6nzwbpMZ87wcUHyRI2lPZfwCFKJd+X+YTxfqFYCNMbE5tlmZVl
-         yi46P0/rTzYnoEKKNzZYT5Ku/55y7hhhkS1xx9BQt9kHw7xsueuTHifrWP9V2mNAK3ZS
-         pXFxfNu/oN8m7Pzl+64bS/GQXPTjlQlPrCZBeo7uqBBW1Md81e19PSA/Okget9EF1uFG
-         /28i9PAzhYF2sFF8qAHnst2siZk9L9qWJqrCQQmanoHpdJwsXD0vRRlb3xEoLW0H71H3
-         c0mA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMVlONuXZCTz0J/ocl8VjprBPs9VyBVvU5wYh4ltI1ehqML3jsambfKMUG1M3YKzbOzgsMDrapyXfAmho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOLBCwQm5G5DKkL+LEMLZ2HpszQDuPQl5rwAk1+L2vD5qM748U
-	6GIrjZpvLiIAVv6IMoMk/HKAkIJEoZwdjJKxe0IfUJipRPCRMIj8cq6xgx0MFPY=
-X-Gm-Gg: ASbGncvDQAdcqz7cuCl4TvlQF1q2oXwTj2hyx0fK6CjhQWzGXxhBaZmy9ujcK9OGXUX
-	cw5d2m16PzAk7QFelVKIT66j1SQkeFo4CGoepxAy35FnO24X2sQ2pMhgKHMw4gGIO0CGdAIi2WN
-	YzcW2140TS1qr5vZVvvSmfvQkx5aoLZqgVMarkA3v4PUi51YNu2h35DiY4EcVKWf7KYiDBWe1Ej
-	VyLG1j0YehqUL70tTK6xLaHEfPwGVuZdc209dUaO3YMTA==
-X-Google-Smtp-Source: AGHT+IF0rman/7RZvDkxI7PbRvYPHmH4FJqmkcyhs1FTMa1Nu6qVjXxeLCstpeUpTTnvbauCMB6Xgw==
-X-Received: by 2002:a05:6808:f09:b0:3e6:5f3:f0d8 with SMTP id 5614622812f47-3ea6dc25128mr5976319b6e.24.1732744287861;
-        Wed, 27 Nov 2024 13:51:27 -0800 (PST)
+        bh=zXBXv71yrwh/W96nQYPOr57MuN6FAQnmq0hsvo2YPvo=;
+        b=PRKyTIdKRMk4LD5qbnqo+oK5JaN1+dbTGLtbGxxQHOBp/rdJ1ImSoU8fwvOlfwDxaG
+         GLONXoEErkudxLR9/WokH5Ko8kJVya1/bj5qeq8SxGEaW+oNK5KelIAu4EUHP7OH5hhn
+         B7rCmdnVTs1xV1H91jUCDSL4uRhctEOHHtG1zxrBl7rE8iXR+84E64Ik3SULiL6zY08r
+         pH8cbEp3aaQbnFxTacIU/zdbXsku8oLxiBaa2iXOSbBq4Tg84P6xTdZ/wh5J5ajPVVPb
+         9dBPk9AF3fgbaNY804TE7oxgFOZMYmHHhIHmmZU6Cf8k3evS6wHoGLc0iqhwZfXWA+Nv
+         V+ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVXg1x6x54ASxhy2xTDsQeIILrn3oy76U/dc7SJ8eL+n7tlh6Jf9/3+C/WiwqKlD3uvuK693EVLjgqwpxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRqNn/fFwPFNo3M/SDHAXZhNI4k7haCjlF4sKhzKEk3DFPK5Ri
+	OXCBjCkMbwKoiCOWnFz3uDI+QcBV0McTdo5v2zLBhuNcDCSKrAOHpWBXlLg4Kyw=
+X-Gm-Gg: ASbGncszSQm0tLOcU1RuMDVszMkjIBP3gPpUvjOWPnUj2K9RYTsAJtycFAg+VMVEkNu
+	y8MnYprditavKxs76KJPjMZ8d7jdlGz89mhl2ahUydDvR24Y91VgNhJ5b/RXz2hwYVn+X3/ZO52
+	QwMxpn4qvvEuuBJiAka/a2n0DdVGccTRQADi895xhI7pdUkb8T4lToolBwC8UwRLV1EVigBbfd1
+	hMEjLnXAyZ/IBJBph642mG9/YljGCgxVdSFgJImlGOYdA==
+X-Google-Smtp-Source: AGHT+IGeeLFCPusmOIhw+35AOSNyBrWyt/GW4UJ4w87XtENHZrksBW3r4sJQ0Nqdv4tVolmCtBkvAw==
+X-Received: by 2002:a05:6830:6996:b0:718:9c7c:2b33 with SMTP id 46e09a7af769-71d65cf3b0dmr4424477a34.23.1732744353716;
+        Wed, 27 Nov 2024 13:52:33 -0800 (PST)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ea4c06a600sm2074355b6e.8.2024.11.27.13.51.26
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f21a366532sm19894eaf.12.2024.11.27.13.52.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 13:51:27 -0800 (PST)
-Message-ID: <3c24016e-a24c-4b7f-beca-990ef0d91bfe@kernel.dk>
-Date: Wed, 27 Nov 2024 14:51:26 -0700
+        Wed, 27 Nov 2024 13:52:33 -0800 (PST)
+Message-ID: <4715a920-ae4b-41d4-97ae-0fb92b4fa024@kernel.dk>
+Date: Wed, 27 Nov 2024 14:52:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,9 +81,9 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Jens Axboe <axboe@kernel.dk>
 Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Jann Horn <jannh@google.com>, linux-bcachefs@vger.kernel.org,
- kernel list <linux-kernel@vger.kernel.org>,
+To: Jann Horn <jannh@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org, kernel list <linux-kernel@vger.kernel.org>,
  Pavel Begunkov <asml.silence@gmail.com>, io-uring <io-uring@vger.kernel.org>
 References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
  <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
@@ -91,27 +91,85 @@ References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
  <CAG48ez2y+6dJq2ghiMesKjZ38Rm7aHc7hShWJDbBL0Baup-HyQ@mail.gmail.com>
  <k7nnmegjogf4h5ubos7a6c4cveszrvu25g5zunoownil3klpok@jnotdc7q6ic2>
  <4f7e45b6-c237-404a-a4c0-4929fa3f1c4b@kernel.dk>
- <tt4mrwkwh74tc26nkkeaypci74pcmvupqcdljavlimefeitntc@6tit5kojq5ha>
+ <CAG48ez3BS3rRCBnEHvdLbR29u9ZEB7VeCByfMBDa57JiLUM8zQ@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <tt4mrwkwh74tc26nkkeaypci74pcmvupqcdljavlimefeitntc@6tit5kojq5ha>
+In-Reply-To: <CAG48ez3BS3rRCBnEHvdLbR29u9ZEB7VeCByfMBDa57JiLUM8zQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 2:27?PM Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> On Wed, Nov 27, 2024 at 02:16:24PM -0700, Jens Axboe wrote:
+> On Wed, Nov 27, 2024 at 10:16?PM Jens Axboe <axboe@kernel.dk> wrote:
+> > On 11/27/24 2:08 PM, Kent Overstreet wrote:
+> > > On Wed, Nov 27, 2024 at 09:44:21PM +0100, Jann Horn wrote:
+> > >> On Wed, Nov 27, 2024 at 9:25?PM Kent Overstreet
+> > >> <kent.overstreet@linux.dev> wrote:
+> > >>> On Wed, Nov 27, 2024 at 11:09:14AM -0700, Jens Axboe wrote:
+> > >>>> On 11/27/24 9:57 AM, Jann Horn wrote:
+> > >>>>> Hi!
+> > >>>>>
+> > >>>>> In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
+> > >>>>> to an mm_struct. This pointer is grabbed in bch2_direct_write()
+> > >>>>> (without any kind of refcount increment), and used in
+> > >>>>> bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
+> > >>>>> which are used to enable userspace memory access from kthread context.
+> > >>>>> I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
+> > >>>>> guarantees that the MM hasn't gone through exit_mmap() yet (normally
+> > >>>>> by holding an mmget() reference).
+> > >>>>>
+> > >>>>> If we reach this codepath via io_uring, do we have a guarantee that
+> > >>>>> the mm_struct that called bch2_direct_write() is still alive and
+> > >>>>> hasn't yet gone through exit_mmap() when it is accessed from
+> > >>>>> bch2_dio_write_continue()?
+> > >>>>>
+> > >>>>> I don't know the async direct I/O codepath particularly well, so I
+> > >>>>> cc'ed the uring maintainers, who probably know this better than me.
+> > >>>>
+> > >>>> I _think_ this is fine as-is, even if it does look dubious and bcachefs
+> > >>>> arguably should grab an mm ref for this just for safety to avoid future
+> > >>>> problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
+> > >>>> means that on the io_uring side it cannot do non-blocking issue of
+> > >>>> requests. This is slower as it always punts to an io-wq thread, which
+> > >>>> shares the same mm. Hence if the request is alive, there's always a
+> > >>>> thread with the same mm alive as well.
+> > >>>>
+> > >>>> Now if FMODE_NOWAIT was set, then the original task could exit. I'd need
+> > >>>> to dig a bit deeper to verify that would always be safe and there's not
+> > >>>> a of time today with a few days off in the US looming, so I'll defer
+> > >>>> that to next week. It certainly would be fine with an mm ref grabbed.
+> > >>>
+> > >>> Wouldn't delivery of completions be tied to an address space (not a
+> > >>> process) like it is for aio?
+> > >>
+> > >> An io_uring instance is primarily exposed to userspace as a file
+> > >> descriptor, so AFAIK it is possible for the io_uring instance to live
+> > >> beyond when the last mmput() happens. io_uring initially only holds an
+> > >> mmgrab() reference on the MM (a comment above that explains: "This is
+> > >> just grabbed for accounting purposes"), which I think is not enough to
+> > >> make it stable enough for kthread_use_mm(); I think in io_uring, only
+> > >> the worker threads actually keep the MM fully alive (and AFAIK the
+> > >> uring worker threads can exit before the uring instance itself is torn
+> > >> down).
+> > >>
+> > >> To receive io_uring completions, there are multiple ways, but they
+> > >> don't use a pointer from the io_uring instance to the MM to access
+> > >> userspace memory. Instead, you can have a VMA that points to the
+> > >> io_uring instance, created by calling mmap() on the io_uring fd; or
+> > >> alternatively, with IORING_SETUP_NO_MMAP, you can have io_uring grab
+> > >> references to userspace-provided pages.
+> > >>
+> > >> On top of that, I think it might currently be possible to use the
+> > >> io_uring file descriptor from another task to submit work. (That would
+> > >> probably be fairly nonsensical, but I think the kernel does not
+> > >> currently prevent it.)
+> > >
+> > > Ok, that's a wrinkle.
+> >
 > > I'd argue the fact that you are using an mm from a different process
 > > without grabbing a reference is the wrinkle. I just don't think it's a
 > > problem right now, but it could be... aio is tied to the mm because of
 > > how it does completions, potentially, and hence needs this exit_aio()
 > > hack because of that. aio also doesn't care, because it doesn't care
 > > about blocking - it'll happily block during issue.
->
-> I'm not trying to debate who's bug it is, I'm just checking if I need to
-> backport a security fix.
-
-Not trying to place blame.
-
+> >
 > > > Jens, is it really FMODE_NOWAIT that controls whether we can hit this? A
 > > > very cursory glance leads me to suspect "no", it seems like this is a
 > > > bug if io_uring is allowed on bcachefs at all.
@@ -120,20 +178,17 @@ Not trying to place blame.
 > > this. And yes, for writes, if FMODE_NOWAIT isn't set, then io-wq is
 > > always involved for the IO.
 >
-> Ok, sounds like we're in the clear. I already started writing the
-> patch, so it'll just be a "now we can turn on FMODE_NOWAIT" instead of
-> a bugfix.
+> I guess it could be an issue if the iocb can outlive the io-wq thread?
+> Like, a userspace task creates a uring instance and starts a write;
+> the write will be punted to a uring worker because of missing
+> FMODE_NOWAIT; then the uring worker enters io_write() and starts a
+> write on a kiocb. Can this write initiated from the worker be async?
+> And could the uring worker exit (for example, because the userspace
+> task exited) while the kiocb is still in flight?
 
-That sounds good - and FMODE_NOWAIT will be a good addition. It'll make
-RWF_NOWAIT work, and things like io_uring will also work better as it
-won't need to needlessly punt to an io-wq worker to complete this IO.
-
-> By the way, did the lifetime issue that was causing umount/remount to
-> fail ever get resolved? I've currently got no test coverage for
-> io_uring, would be nice to flip that back on.
-
-Nope, I do have an updated branch since then, but it's still sitting
-waiting on getting a bit more love. I suspect it'll be done for 6.14.
+No, any write (or read, whatever) from an io-wq worker is always
+blocking / sync. That's the main reason for them existing, to be able to
+do blocking issue. And that's what they always do.
 
 -- 
 Jens Axboe
