@@ -1,202 +1,182 @@
-Return-Path: <linux-kernel+bounces-423587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883FB9DA9FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D4E9DAA0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298AA163DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B32166795
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D0A1FF7C6;
-	Wed, 27 Nov 2024 14:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918F21FF7BE;
+	Wed, 27 Nov 2024 14:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oHjNr/E7"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aa+V5kB2"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7121FECCB
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718324; cv=none; b=YVLl4fYupHgxnLimAcYFCd2E9MNEUcnJ1hBs1JYugfFyp75ixI/8CzZ4wjIEWGddhCs66qo15QUBp+dDIT9D0OHJae+Dq6A/8hUy6eNgFrSxD+gViEQqf9AhNswsudD55hfqjvzGlp0CR0J0yj2CA1zXmTCzYQh5x4t/GDFCfOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718324; c=relaxed/simple;
-	bh=xT97KYgdluN7ebir3nQvf+4Hgac1dq5jbrG4z+OLnsc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=knGISypSdwQedYACVM5HeFNDcZW7qBfALRz2b4BUJz59SEXOdNEakZpXAwbTW9qfA9lvojcXRB9EhX9iHvWJf+AYSoLnYP52ut+8t3Z2dE/2WNE1CL/KDddqaqKommJzAgtqWfcvlcbbD0ht079cbJD0kcuNzORSx/gSrPygwQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oHjNr/E7; arc=none smtp.client-ip=209.85.166.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-841896ec108so375069639f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:38:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732718322; x=1733323122; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RcW151oQ5hondKtplla/DkVWCP6XFqg+OnT+IGOy13o=;
-        b=oHjNr/E7Gqu5IU/mx96kzhrk3/6fzB+qcYaWvWCcpANsuzVAfDCK2vKdlVmG1ei+/q
-         KYWM9uzyjkOJOiXoNiHz86igzgp69psGE2Sxm+QjpB4Y51iyqyiyxojxIfQU28EkaEpT
-         3CdXjCDxvjsRneJcfDf95BeEyb79g9kVThMFaAfGbIKsedXLwCANS1WVfJPQP+cNekDU
-         f36aNtSxyXGNq296Lze/ihooLmE75K5OMmL5ISIDi0VQ43GkwE5/f5F2F+hVekV3jS3F
-         5wABWAkIoTSjrwocQAE6EeKMHmPtOV6eFl8O6EbFZYF80agVTXizR78vXR9D1z5saZ85
-         /asQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732718322; x=1733323122;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RcW151oQ5hondKtplla/DkVWCP6XFqg+OnT+IGOy13o=;
-        b=Kq57svNlt2gmBFfZ2bcrjLmnTCA9dHT+UZKrtmUtblbrFXzz2/w6+GmMVh55OoLtT9
-         z1Q22/r80n8Jgkdq70Hbq702JkJBTl+jsZpR/OEZ+WuEWimDRTwYZ3a0ezREuujiU2lx
-         5hU+cVxjSRiuTN1/vohEJ9nJkJ8NRPHOpw4rAj0ugICRhZysOgxi+GJzihM1KfzmgIzt
-         H3CV/Tg9eWMzT0Yi4ufXLa8tYAxkfdwUFTUDh1/Is5j5tAmwSbG6hiUOCWZZriO1XP2A
-         bL+nGBg7YffgH2YVAze3jYxK+S8wqFUhzSYfN8X5CczkbKRVKyTkeH+HbI3ix8ltLmr4
-         NgbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn2zdU174luVckVgDMXCVKBtsxGxFUYuq7B/gx0fyi+mYa5x71hwquILLAcO0QEluI26XCqVV7X63GTF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxez1pUekghSF6jTJ66G205GEFSmBXXyNGwyMw+VFgZNVJQuXaS
-	zR2f8Fi/e9qp6d2t7Ywfs3qeGADLexpLqQShnyAhi8jTHORUtb08rHwsiiJd22PMkElklOBUVuh
-	wAQ==
-X-Google-Smtp-Source: AGHT+IG7Clebz5+ikhZk/p3e2lBnUMggo0Vrm0EMc7kyDhz6gWIVGZ5y2tr41LsMOLzWgPahBG28XOb331w=
-X-Received: from pgg13.prod.google.com ([2002:a05:6a02:4d8d:b0:7fb:db54:f065])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1e01:b0:3a7:7ee3:108d
- with SMTP id e9e14a558f8ab-3a7c55f2783mr35486615ab.23.1732718322166; Wed, 27
- Nov 2024 06:38:42 -0800 (PST)
-Date: Wed, 27 Nov 2024 06:38:41 -0800
-In-Reply-To: <cbcb80ee5be13d78390ff6f4a1a3c58fc849e311.camel@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC591FF7A7;
+	Wed, 27 Nov 2024 14:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732718654; cv=pass; b=cul+bRLezV5cw+H2catJhQ92Tsp+Cox0SNgKX6fYiKn7xP+buMpl68d+KFPRAwYVC3W8eFT6O0jD1+zqXn1uyiMHDpYdFg1ZYHeLa32FOUP1Nsv05ORJx9+WwzPlokv3de/X34rY/IZyX3zYCTxQ5c8NfINHUour7PFvh7ZsEsE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732718654; c=relaxed/simple;
+	bh=hNWRyfA0hLuS9z4M0IomGat40IOMJ0NtjlYCGwg2kHE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=limJbh5t9id5ghNlkRaS767b00o8dOG3JOWQfOM0P3gyasLCzQT6OQcTVrUma24pddyO6AYzSuh72HNsMEf7l9RAlRfwuEjYXhS/ymnXDvQAMfP9AOWGCwwHQ2mylDBwFlN561cnsoJQ4KUx8vVHyzty7CeO2gjKiKCSNVj++Zs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aa+V5kB2; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732718613; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NOI6dDP3D2TjL1boOmDGAU+aw0ARWRV9GO8H5F/7MMrWrS7SyaNakYH0kpFBcstUia9aJDkK31p5OI1b6LZCBFxfrvL+JHUuQMZET/rNOGSa3E8/tg4T8jtjgLAhi8P37YUhANfgFNnQ1SxAw8us76Nq2Dfg4FOmUESt7qvie3k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732718613; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oTwTz0AGCDwSgvoHUUyLYZrH4mlX58t6JryU8TBBMTY=; 
+	b=YX4h1nFwzjRIFl3ucnw7h9kxVgwaLIMswS5MnShdnXzkQG+RNLQ1QC3e9NsoxXtvmZEm66gllSU1mK4kEEkHGbivFPYNNddOtRpzOglPYA5fxpHL/1rdHl3DJTKe8oxs5i2loFmzc3e/89I0ijmihIvaZi+zhXtKgl7r8q4nyQA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732718613;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=oTwTz0AGCDwSgvoHUUyLYZrH4mlX58t6JryU8TBBMTY=;
+	b=aa+V5kB2LKz3uonZgIzaptffnNhXkFYrrjFOXUumxp4/bWbEfYsoDK5RRNXCWUT2
+	yW+P8viqvYoU5KK9UA9cdyi4OuL42IgUokcPpeF4b0QMZVOLfwXEHP4vVSd9tTcEI2+
+	COrW1Atp5V+erePZPxJfnxmbjd7LCsIdXTzxQJJc=
+Received: by mx.zohomail.com with SMTPS id 1732718613236384.9475704770982;
+	Wed, 27 Nov 2024 06:43:33 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-23-seanjc@google.com> <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
- <ZoxVa55MIbAz-WnM@google.com> <3da2be9507058a15578b5f736bc179dc3b5e970f.camel@redhat.com>
- <ZqKb_JJlUED5JUHP@google.com> <8f35b524cda53aff29a9389c79742fc14f77ec68.camel@redhat.com>
- <ZrFLlxvUs86nqDqG@google.com> <44e7f9cba483bda99f8ddc0a2ad41d69687e1dbe.camel@redhat.com>
- <ZuG5ULBjfQ3hv_Jb@google.com> <cbcb80ee5be13d78390ff6f4a1a3c58fc849e311.camel@redhat.com>
-Message-ID: <Z0cu8aLX7VkwmtSk@google.com>
-Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
- aliased 0x1.EDX CPUID features
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 09/35] WIP: rust: drm/kms: Add
+ Connector.attach_encoder()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-10-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 11:43:18 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5C141885-C8D3-4CD9-8919-683D1DFE4AB3@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-10-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Thu, Nov 21, 2024, Maxim Levitsky wrote:
-> On Wed, 2024-09-11 at 08:37 -0700, Sean Christopherson wrote:
-> > On Tue, Sep 10, 2024, Maxim Levitsky wrote:
-> > > On Mon, 2024-08-05 at 15:00 -0700, Sean Christopherson wrote:
-> > > > At that point, I'm ok with defining each alias, though I honestly still don't
-> > > > understand the motivation for defining single-use macros.
-> > > > 
-> > > 
-> > > The idea is that nobody will need to look at these macros
-> > > (e.g__X86_FEATURE_8000_0001_ALIAS() and its usages), because it's clear what
-> > > they do, they just define few extra CPUID features that nobody really cares
-> > > about.
-> > > 
-> > > ALIASED_F() on the other hand is yet another _F macro() and we will need,
-> > > once again and again to figure out why it is there, what it does, etc.
-> > 
-> > That seems easily solved by naming the macro ALIASED_8000_0001_F().  I don't see
-> > how that's any less clear than __X86_FEATURE_8000_0001_ALIAS(), and as above,
-> > there are several advantages to defining the alias in the context of the leaf
-> > builder.
-> > 
-> 
-> Hi!
-> 
-> I am stating my point again: Treating 8000_0001 leaf aliases as regular CPUID
-> features means that we don't need common code to deal with this, and thus
-> when someone reads the common code (and this is the thing I care about the
-> most) that someone won't need to dig up the info about what these aliases
-> are. 
+Hi Lyude
 
-Ah, this is where we disagree, I think.  I feel quite strongly that oddities such
-as aliased/duplicate CPUID feature bits need to be made as visible as possible,
-and well documented.  Hiding architectural quirks might save some readers a few
-seconds of their time, but it can also confuse others, and more importantly, makes
-it more difficult for new readers/developers to learn about the quirks.
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> This adds a simple binding for completing the last step of creating a =
+DRM
+> connector - attaching its encoder. This function should only be called
+> before the connector is registered, and DRM should enforce this itself =
+by
+> returning an error if a driver tries to add an encoder to an
+> already-registered DRM connector.
+>=20
+> Note that unlike most of the methods we'll be adding to DRM mode =
+objects,
+> this is directly implemented on the Connector<T> type since I don't =
+really
+> think it would make sense for us to allow this operation on an
+> OpaqueConnector (a DRM connector without a known DriverConnector
+> implementation, something we'll be adding in the next few commits).
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+>=20
+> TODO:
+> * Figure out a solution for making sure that this can only be called =
+when a
+>  Connector is unregistered, probably via an UnregisteredConnector =
+type.
+>=20
 
-This code _looks_ wrong, as there's no indication that CPUID_8000_0001_EDX is
-unique.  I too wasn't aware of the aliases until this series, and I was very
-confused by KVM's code.  The only clue that I was given was the "Don't duplicate
-feature flags which are redundant with Intel!" comment in cpufeatures.h; I still
-ended up digging through the APM to understand what was going on.
+Either that, or via the typestate pattern. But I think a =
+UnregisteredConnector type
+will work fine based on your previous UnregisteredKmsDevice.
 
-	kvm_cpu_cap_mask(CPUID_1_EDX,
-		F(FPU) | F(VME) | F(DE) | F(PSE) |
-		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
-		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SEP) |
-		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
-		F(PAT) | F(PSE36) | 0 /* PSN */ | F(CLFLUSH) |
-		0 /* Reserved, DS, ACPI */ | F(MMX) |
-		F(FXSR) | F(XMM) | F(XMM2) | F(SELFSNOOP) |
-		0 /* HTT, TM, Reserved, PBE */
-	);
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/connector.rs | 15 +++++++++++++++
+> 1 file changed, 15 insertions(+)
+>=20
+> diff --git a/rust/kernel/drm/kms/connector.rs =
+b/rust/kernel/drm/kms/connector.rs
+> index 0fa927a3743b2..54457b327c365 100644
+> --- a/rust/kernel/drm/kms/connector.rs
+> +++ b/rust/kernel/drm/kms/connector.rs
+> @@ -28,6 +28,7 @@
+> use super::{
+>     ModeObject,
+>     RcModeObject,
+> +    encoder::*,
+>     KmsDriver,
+> };
+> use macros::pin_data;
+> @@ -227,6 +228,20 @@ pub fn new(
+>             =
+ARef::from_raw(NonNull::new_unchecked(Box::into_raw(Pin::into_inner_unchec=
+ked(new))))
+>         })
+>     }
+> +
+> +    /// Attach an encoder to this [`Connector`].
+> +    ///
+> +    /// TODO: Move this to an `UnregisteredConnector` interface =
+somehow=E2=80=A6
+> +    #[must_use]
+> +    pub fn attach_encoder<E>(&self, encoder: &Encoder<E>) -> Result
+> +    where
+> +        E: DriverEncoder<Driver =3D T::Driver>
+> +    {
+> +        // SAFETY: FFI call with no special requirements
+> +        to_result(unsafe {
+> +            bindings::drm_connector_attach_encoder(self.as_raw(), =
+encoder.as_raw())
+> +        })
+> +    }
+> }
+>=20
+> /// A trait implemented by any type that acts as a [`struct =
+drm_connector`] interface.
+> --=20
+> 2.46.1
+>=20
+>=20
 
-	kvm_cpu_cap_mask(CPUID_8000_0001_EDX,
-		F(FPU) | F(VME) | F(DE) | F(PSE) |
-		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
-		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
-		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
-		F(PAT) | F(PSE36) | 0 /* Reserved */ |
-		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
-		F(FXSR) | F(FXSR_OPT) | f_gbpages | F(RDTSCP) |
-		0 /* Reserved */ | f_lm | F(3DNOWEXT) | F(3DNOW)
-	);
+LGTM.
 
-Versus this code, which hopefully elicits a "huh!?" and prompts curious readers
-to go look at the definition of ALIASED_1_EDX_F() to understand why KVM is being
-weird.  And if readers can't figure things out purely from ALIASED_1_EDX_F()'s
-comment, then that's effectively a KVM documentation issue and should be fixed.
+=E2=80=94 Daniel
 
-In other words, I want to make things like this stick out so that more developers
-are aware of such quirks, i.e. to to minimize the probability of such knowledge
-being lost.  I don't want the next generation of KVM developers to have to
-re-discover things that can be solved by a moderately verbose comment.
-
-	kvm_cpu_cap_init(CPUID_1_EDX,
-		F(FPU),
-		F(VME),
-		F(DE),
-		F(PSE),
-		F(TSC),
-		F(MSR),
-		F(PAE),
-		F(MCE),
-		F(CX8),
-		F(APIC),
-		...
-	);
-
-	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
-		ALIASED_1_EDX_F(FPU),
-		ALIASED_1_EDX_F(VME),
-		ALIASED_1_EDX_F(DE),
-		ALIASED_1_EDX_F(PSE),
-		ALIASED_1_EDX_F(TSC),
-		ALIASED_1_EDX_F(MSR),
-		ALIASED_1_EDX_F(PAE),
-		ALIASED_1_EDX_F(MCE),
-		ALIASED_1_EDX_F(CX8),
-		ALIASED_1_EDX_F(APIC),
-		...
-	);
-
-> I for example didn't knew about them because these aliases are basically a
-> result of AMD redoing some things in the spec their way when they just
-> released first 64-bit extensions.  I didn't follow the x86 ISA closely back
-> then (I only had 32 bit systems to play with).
-> 
-> Best regards,
-> 	Maxim Levitsky
-> 
-> 
 
