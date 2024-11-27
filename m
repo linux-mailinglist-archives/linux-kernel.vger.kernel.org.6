@@ -1,214 +1,205 @@
-Return-Path: <linux-kernel+bounces-423969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE8F9DAEE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:22:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862699DAEE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15ABAB22003
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD81FB21ED0
 	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FE92036FC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2550F2036FE;
 	Wed, 27 Nov 2024 21:22:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9616A13D518
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC33202F8A
 	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742548; cv=none; b=r71E7uHbvFh8rJHq5FDRIRJDlPEOFZZLiwWpNX3gNC4lx8Xs0TIKOeNSa/N/KrkeWEBqvMT5AKTPcphi/lltrhFDpUBn1n3FtchhHE1Fzjznb0w5WFRM1Zl0pcugyZXQ7ca5cyUspyOxEIn9g/PsC81S1j2rjy3GPcepi6tSZ4Q=
+	t=1732742548; cv=none; b=REVUQ3hTP3OVlD479h+NCrb4zQ6rkCGdEkKiYrdbvWNHk7SjOzsxrm9oCXbghKiAXb8Ggis8yyBh/hZrTIcoYQnP46/AHMQgBgontcWmSctUgnJ1dM2uGb6b62xCTa8jGtQp0sJRhImle/58AIzK72HyWzL5SkIQMefHciu0Qgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732742548; c=relaxed/simple;
-	bh=yFbgcHeMHyIvKDJ4TL0bBAORSg87sc3mNPdjcKC4euk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=C/rV69b3uii6LZfXxTEsyVxImIDi4vYy1cQFD3RPufz2c4lUn0I9elc4tG4QAXbcUDWsA9C6pzV3QZX5QiheLJavhG6la1oveTiX+2LoLKlsCUPvm+D50SMcafrVl6Jo0MmhKo1+3Uw8bvPlXGORX2Lrv2DFuSeaHynfg0oUvvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	bh=OBY6QdrGgNdKd+xDpyFVhVv80DDuvfUoS9ABUoeWb7g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oNTftX38NBrQBu8UmK2DnL6us+ZexSZI95R0zp7MxE3fZAs1oqytKGgpT+YfVnUou+VgRWc21pndGZKSLdj4eA9hFpyz75U+OgyiLR23miDwyDg3jtiwQoKYdHMYFzx7DzmxpQJPvLzZmAp6olHa+Fk/8T6FS4nSYGbe6vFZSvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7c729bfbaso1723815ab.0
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7a1e95f19so1489795ab.1
         for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:22:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1732742546; x=1733347346;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=c6w/ragAH6fNV1kVvMrzZ4MY5D3euj2lCORACOs9Ins=;
-        b=FCVeyny/WlSOosVgNPOZu6/rdYwNIndcZd7zC9ABTq0wZYeVAa4iALOjatISUnk+0n
-         gW0/6acMPJmyC6KtjbDKrN/li4YC5gxG8aYLRBcDI3JOqLyFtcerwI7Yxygz2ZC+q1Mt
-         pbhil42IMd9DRxF24uDSnMH6vjqv5Omk4hayr+LfuUtQczkpi0TzTXtbUYz47w1OKqle
-         M8NXzT1qQfXMnaynMroQ8oQnG5iIAM4yGlRqpW9G6qsXZdMxhly7/W2GYvJMzrSGh7w1
-         /C+dm2R7FiQohnyxrUCPfoHG+9Anq3CGDhBSJX2zQo5f65/DpstS6iYjBJeSPTx9CIlU
-         GnzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUb50XDzTbD5yNhBQ9E9V+6MPOcF3F74sjWEcl98w5VuVJfsmvS7zoI0rUErON3GZec+GYKUtJ5ho4Jp28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1d6/UfEmWZYEIGQsrvU5RER97wJerSpY1JGAG4uJdejbTLugQ
-	c2m1wQfcKFnNhh8PFSPqXqfqWiGrQCkKljH+2J1tOP2FdhgKtooFydGb4BgnXx7HnRQa70C4n6c
-	nPWts7H9/7UPLvMuxQtZNMLLTidYQECbllIe+3GV6YFckWwdEeaI7zv0=
-X-Google-Smtp-Source: AGHT+IHkmj8EeYdD0jdKVhuczxXDyaO0/L8rIBgOTIAxmjMRJSe40gzKjtwDt9Zm2d3nTBtYmpYeeyPhXdVFSHyJu5zkMDHGAN1o
+        bh=2RJgiKqNkLqMi9PSMV/v4UIBjSSz0oHYuOxtKnx3sB8=;
+        b=TLjquyx7c2mP7QbcUFaYC4dy4I2PMRlqxTj98uoeRySYQG7uIsBdsuJvEaux77uK1i
+         Oc++IAnpNFdLIvNRjZKa3V7e+PjFiuZMI3zU4Yb7+ZPWfKyYAl+uNDg6VTYFss8NqyTg
+         6SWmnkJNo7282HH47J3ENGPE008qq8xmnEcayKY+pL5FeZcfy9UN1d/A6/50d8BPR4zx
+         ZZ1/NfTFaL8sHV0SaUfUfjLa6SL8kTxKjX6Xigpv6+s/ezsMhlk3XuDHPZyOMySkdo1q
+         MkZeXsWZWbaMjSM8CYhM3j0O5dPaOrnPUAm0kj0FOyZ4SgI2uluVAPfpNceAnrHEcYtN
+         pRSw==
+X-Gm-Message-State: AOJu0YxRbHOkdAbPOx/jXiIwOrQaBy8Dx3WBj76fdvCJsDsENGDUxcdN
+	z5Q5aAaslIZZoQBG5urs0HnI6bVFHDki5abbQgCisQuhvAgBye2ZWoqmMeofB+dE2jVizuYMusq
+	JTdZ5sikXnoUrssELLwmt/bUh5qLLtlF8J9Qf4yRheGssmngCaN1wQ0s=
+X-Google-Smtp-Source: AGHT+IFRD6RuHZpTnNRBQCiEtPVohyHg59PIjgfyntPSIy/QYXfBb/yuIKSjZ9Y0PWwagn2/qcFshG7yOjg/FJSBqmzjFmbnVdK4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1caf:b0:3a7:8720:9de8 with SMTP id
- e9e14a558f8ab-3a7c552677amr54613075ab.5.1732742545753; Wed, 27 Nov 2024
- 13:22:25 -0800 (PST)
-Date: Wed, 27 Nov 2024 13:22:25 -0800
+X-Received: by 2002:a92:c547:0:b0:3a7:6c5c:9aa4 with SMTP id
+ e9e14a558f8ab-3a7c5564e30mr54571355ab.12.1732742546041; Wed, 27 Nov 2024
+ 13:22:26 -0800 (PST)
+Date: Wed, 27 Nov 2024 13:22:26 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67478d91.050a0220.253251.0061.GAE@google.com>
-Subject: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_read_iter
-From: syzbot <syzbot+8965fea6a159ab9aa32d@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, bharathsm@microsoft.com, brauner@kernel.org, 
-	dhowells@redhat.com, ericvh@kernel.org, jlayton@kernel.org, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	marc.dionne@auristor.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-	netfs@lists.linux.dev, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	rostedt@goodmis.org, samba-technical@lists.samba.org, sfrench@samba.org, 
-	sprasad@microsoft.com, syzkaller-bugs@googlegroups.com, tom@talpey.com, 
-	v9fs@lists.linux.dev
+Message-ID: <67478d92.050a0220.253251.0062.GAE@google.com>
+Subject: [syzbot] [kernel?] BUG: sleeping function called from invalid context
+ in static_key_slow_dec
+From: syzbot <syzbot+b26935466701e56cfdc2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    ed9a4ad6e5bd Add linux-next specific files for 20241126
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17615530580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=8965fea6a159ab9aa32d
+HEAD commit:    5b366eae7193 stmmac: dwmac-intel-plat: fix call balance of..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c0ab5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=b26935466701e56cfdc2
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175c8dc0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1103a1e8580000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3b9ba5fbd895/disk-ed9a4ad6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e30aed8d0305/vmlinux-ed9a4ad6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1092546e50cf/bzImage-ed9a4ad6.xz
-
-The issue was bisected to:
-
-commit 1bd9011ee163e11f186b72705978fd6b21bdc07b
-Author: David Howells <dhowells@redhat.com>
-Date:   Fri Nov 8 17:32:29 2024 +0000
-
-    netfs: Change the read result collector to only use one work item
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=174cc3c0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14ccc3c0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ccc3c0580000
+disk image: https://storage.googleapis.com/syzbot-assets/d36e3f2a031f/disk-5b366eae.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/baad85a1bbb6/vmlinux-5b366eae.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4ac0e6e4acdf/bzImage-5b366eae.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8965fea6a159ab9aa32d@syzkaller.appspotmail.com
-Fixes: 1bd9011ee163 ("netfs: Change the read result collector to only use one work item")
+Reported-by: syzbot+b26935466701e56cfdc2@syzkaller.appspotmail.com
 
-INFO: task syz-executor246:5857 blocked for more than 143 seconds.
-      Not tainted 6.12.0-next-20241126-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor246 state:D stack:22584 pid:5857  tgid:5857  ppid:5854   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- bit_wait+0x12/0xd0 kernel/sched/wait_bit.c:237
- __wait_on_bit+0xb0/0x2f0 kernel/sched/wait_bit.c:49
- out_of_line_wait_on_bit+0x1d5/0x260 kernel/sched/wait_bit.c:64
- wait_on_bit include/linux/wait_bit.h:77 [inline]
- netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:107 [inline]
- netfs_unbuffered_read fs/netfs/direct_read.c:146 [inline]
- netfs_unbuffered_read_iter_locked+0xd7e/0x1560 fs/netfs/direct_read.c:231
- netfs_unbuffered_read_iter+0xbf/0xe0 fs/netfs/direct_read.c:266
- new_sync_read fs/read_write.c:484 [inline]
- vfs_read+0x991/0xb70 fs/read_write.c:565
- ksys_read+0x18f/0x2b0 fs/read_write.c:708
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1999cb4f79
-RSP: 002b:00007ffef9ec4f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f1999cb4f79
-RDX: 0000000000002020 RSI: 000000002001b640 RDI: 0000000000000006
-RBP: 00007f1999cfe04e R08: 0000000000000006 R09: 0000000000000006
-R10: 0000000000000006 R11: 0000000000000246 R12: 00007ffef9ec4fac
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937ae0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
-5 locks held by kworker/u8:2/35:
-2 locks held by getty/5592:
- #0: ffff888034e320a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by syz-executor246/5857:
- #0: ffff888072050148 (&sb->s_type->i_mutex_key#15){++++}-{4:4}, at: netfs_start_io_direct+0x1d4/0x210 fs/netfs/locking.c:188
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-next-20241126-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+BUG: sleeping function called from invalid context at include/linux/percpu-rwsem.h:49
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
+preempt_count: 100, expected: 0
+RCU nest depth: 0, expected: 0
+1 lock held by ksoftirqd/0/16:
+ #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_do_batch kernel/rcu/tree.c:2561 [inline]
+ #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_core+0xa37/0x17a0 kernel/rcu/tree.c:2823
+Preemption disabled at:
+[<ffffffff81578192>] softirq_handle_begin kernel/softirq.c:395 [inline]
+[<ffffffff81578192>] handle_softirqs+0x122/0x980 kernel/softirq.c:530
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc6-syzkaller-00203-g5b366eae7193 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:94 [inline]
  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
- watchdog+0xffb/0x1040 kernel/hung_task.c:397
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8653
+ percpu_down_read include/linux/percpu-rwsem.h:49 [inline]
+ cpus_read_lock+0x1b/0x150 kernel/cpu.c:490
+ __static_key_slow_dec kernel/jump_label.c:320 [inline]
+ static_key_slow_dec+0x49/0xa0 kernel/jump_label.c:336
+ nf_tables_chain_destroy+0x3c4/0x4f0 net/netfilter/nf_tables_api.c:2160
+ __nft_release_basechain_now net/netfilter/nf_tables_api.c:11442 [inline]
+ nft_release_basechain_rcu+0x3fc/0x550 net/netfilter/nf_tables_api.c:11454
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
  kthread+0x2f0/0x390 kernel/kthread.c:389
  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
  </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 35 Comm: kworker/u8:2 Not tainted 6.12.0-next-20241126-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_unbound toggle_allocation_gate
-RIP: 0010:insn_get_sib arch/x86/lib/insn.c:447 [inline]
-RIP: 0010:insn_get_displacement+0x2ca/0x9a0 arch/x86/lib/insn.c:484
-Code: cb f5 49 bc 00 00 00 00 00 fc ff df e9 12 04 00 00 49 8d 5d 25 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 <84> c0 0f 85 95 05 00 00 0f b6 1b 31 ff 89 de e8 72 c9 cb f5 85 db
-RSP: 0018:ffffc90000ab7790 EFLAGS: 00000a07
-RAX: 0000000000000000 RBX: ffffc90000ab7945 RCX: dffffc0000000000
-RDX: ffff888020a81e00 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90000ab794c R08: ffffffff8bd3c21d R09: ffffffff8bd395b6
-R10: 0000000000000002 R11: ffff888020a81e00 R12: 1ffff92000156f29
-R13: ffffc90000ab7920 R14: 1ffff92000156f2a R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbd0e4b4580 CR3: 000000000e736000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+================================
+WARNING: inconsistent lock state
+6.12.0-rc6-syzkaller-00203-g5b366eae7193 #0 Tainted: G        W         
+--------------------------------
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-R} usage.
+ksoftirqd/0/16 [HC0[0]:SC1[1]:HE1:SE0] takes:
+ffffffff8e7d1d90 (cpu_hotplug_lock){+++?}-{0:0}, at: __static_key_slow_dec kernel/jump_label.c:320 [inline]
+ffffffff8e7d1d90 (cpu_hotplug_lock){+++?}-{0:0}, at: static_key_slow_dec+0x49/0xa0 kernel/jump_label.c:336
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+  percpu_down_write+0x54/0x310 kernel/locking/percpu-rwsem.c:229
+  cpus_write_lock kernel/cpu.c:508 [inline]
+  _cpu_up+0x76/0x580 kernel/cpu.c:1638
+  cpu_up+0x184/0x230 kernel/cpu.c:1722
+  cpuhp_bringup_mask+0xdf/0x260 kernel/cpu.c:1788
+  cpuhp_bringup_cpus_parallel+0xaf/0x160 kernel/cpu.c:1866
+  bringup_nonboot_cpus+0x2b/0x50 kernel/cpu.c:1892
+  smp_init+0x34/0x150 kernel/smp.c:1009
+  kernel_init_freeable+0x417/0x5d0 init/main.c:1572
+  kernel_init+0x1d/0x2b0 init/main.c:1469
+  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+irq event stamp: 1161634
+hardirqs last  enabled at (1161634): [<ffffffff8bc76793>] irqentry_exit+0x63/0x90 kernel/entry/common.c:357
+hardirqs last disabled at (1161633): [<ffffffff8bc7433e>] sysvec_apic_timer_interrupt+0xe/0xc0 arch/x86/kernel/apic/apic.c:1049
+softirqs last  enabled at (1161438): [<ffffffff8157b03a>] run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+softirqs last disabled at (1161447): [<ffffffff8157b03a>] run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(cpu_hotplug_lock);
+  <Interrupt>
+    lock(cpu_hotplug_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by ksoftirqd/0/16:
+ #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_do_batch kernel/rcu/tree.c:2561 [inline]
+ #0: ffffffff8e937e60 (rcu_callback){....}-{0:0}, at: rcu_core+0xa37/0x17a0 kernel/rcu/tree.c:2823
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.12.0-rc6-syzkaller-00203-g5b366eae7193 #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
 Call Trace:
- <NMI>
- </NMI>
  <TASK>
- insn_get_immediate+0x62/0x11f0 arch/x86/lib/insn.c:650
- insn_get_length arch/x86/lib/insn.c:723 [inline]
- insn_decode+0x2d6/0x4c0 arch/x86/lib/insn.c:762
- text_poke_loc_init+0xed/0x870 arch/x86/kernel/alternative.c:2432
- arch_jump_label_transform_queue+0x8f/0x100 arch/x86/kernel/jump_label.c:138
- __jump_label_update+0x177/0x3a0 kernel/jump_label.c:513
- static_key_disable_cpuslocked+0xd2/0x1c0 kernel/jump_label.c:240
- static_key_disable+0x1a/0x20 kernel/jump_label.c:248
- toggle_allocation_gate+0x1bf/0x260 mm/kfence/core.c:854
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_usage_bug+0x62e/0x8b0 kernel/locking/lockdep.c:4038
+ valid_state+0x13a/0x1c0 kernel/locking/lockdep.c:4052
+ mark_lock_irq+0xbb/0xc20 kernel/locking/lockdep.c:4263
+ mark_lock+0x223/0x360 kernel/locking/lockdep.c:4725
+ __lock_acquire+0xbf9/0x2050 kernel/locking/lockdep.c:5156
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+ cpus_read_lock+0x42/0x150 kernel/cpu.c:490
+ __static_key_slow_dec kernel/jump_label.c:320 [inline]
+ static_key_slow_dec+0x49/0xa0 kernel/jump_label.c:336
+ nf_tables_chain_destroy+0x3c4/0x4f0 net/netfilter/nf_tables_api.c:2160
+ __nft_release_basechain_now net/netfilter/nf_tables_api.c:11442 [inline]
+ nft_release_basechain_rcu+0x3fc/0x550 net/netfilter/nf_tables_api.c:11454
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
+ smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
  kthread+0x2f0/0x390 kernel/kthread.c:389
  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
  </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.344 msecs
+BUG: scheduling while atomic: ksoftirqd/0/16/0x00000101
+INFO: lockdep is turned off.
+Modules linked in:
+Preemption disabled at:
+[<ffffffff81578192>] softirq_handle_begin kernel/softirq.c:395 [inline]
+[<ffffffff81578192>] handle_softirqs+0x122/0x980 kernel/softirq.c:530
 
 
 ---
@@ -218,14 +209,9 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
