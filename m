@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-423552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8479E9DA99D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:05:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848969DA99B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:05:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3954B22A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44792281D56
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFD71FDE21;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6921FDE1D;
 	Wed, 27 Nov 2024 14:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECI5gxRP"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VOYlmv8r"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2601FDE08
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D931FDE00
 	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732716295; cv=none; b=W3YAxVa4G+bH0oUp6fqemdUKVV36kiEECHGLi7ueMwonex3ExYd/TN2DBVGl9eadj1hMUu8T/C8yR9jkM01Y1ePCAlljpqc1ZJC8lrX/uF5wy0RRe/NiIINmIc7ypR67UcnDL0cRhfwCloYGP6PgzY8BBPoQ8XEd3Atbj17s/dI=
+	t=1732716294; cv=none; b=I3G0Xu+zn3tzgce2kdvJtJFsExBVNNe4+uiY/ctvuQ/IZxTY1b4OEMCJWwO25ZmHqszt+s9olpQN2Ubr44iTCnnLjoFo9zFwMZTS5gfzPhz3SXE9z1ZpMgfKbkoKjgtRwLNdEUD5MWEyzTNseNOmXvKH0hT0nIk6EtHncq55rpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732716295; c=relaxed/simple;
-	bh=QXlCwnR73sOvgJbeSLPKA0J+vuLe1Chwk+otkmp9zJM=;
+	s=arc-20240116; t=1732716294; c=relaxed/simple;
+	bh=ErNLlV3VyQUaeuBrJa+IVJY8nm3FUxVk1dHk6f1cd6s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GOAiPJbSrcjmvoqSmpb6HmtfL3kK+4hXmyYylg29TCjxN+IloUZ3T3x7uzEpB5hl8WHt+XnyI7p9Rd7TF/uxesOJUGy/gLAabPIG62gs8yMe5cdoPPNE9hqa2GMaEN6eXl9+gtbHQuGE6VPZWzlTmnTBcmoA7LKDikpvN9guPVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECI5gxRP; arc=none smtp.client-ip=209.85.208.181
+	 In-Reply-To:To:Cc; b=LKfLR2NtiXlmUW/mFZYmf5qLqREyIm4xwg9KgsBwEsuW2ZQpAp2sWjfpGLxQ9OvxMlaLpIn0idL+Ty5Im6wzZXBiKwKLkMooSoutIVvugjuaaLyn8dNgzDgdMFP/B3LBUVCCw3Cvv42hc38lxqHTiBqolpz5Nv+UZeaF5GGMiqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VOYlmv8r; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso38861231fa.2
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53df1d1b726so596821e87.0
         for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:04:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1732716291; x=1733321091; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=72/s2aAz5EY0mwh8LitCCx1LbBniPW9ZXzF/7Krgc0A=;
-        b=ECI5gxRPpwXxGjLyLQweNvqZDb5m2lB2ea877nbSZ5N1euvpdKzFDbO8GAGMQd6hQu
-         BcYGKD8pDM2NBy+H+zQDv+h1r21oV3JJ9fr8dWeQ/icocg+SGsvjv8R+PYMXwISpfTot
-         z/A0pQ3mj9nxQYk+RBlsx5iFqUEYYq0oIOaxM2jCQgHo1IbLK849x1pISAN0s61qtgpf
-         nz501oZ5FBjzAmt+oCWy/P+rjn4HJwvwLjiDETvj2CglfLCnPxeQ2TJ5Tu+treInUJPx
-         moje7xs4++xYIiL8Gu9Jp+/0CC7v6MmdgoLiGt8/jVsip9fQx8hXvAh7L/HzpCyUn8Sf
-         QzsA==
+        bh=rzfmmxXcC5nfkCV4gc5yUHDuhltopU/HIPPIiYJqWlY=;
+        b=VOYlmv8rflYPVxhVXHH9/uvm4bJ0Ak1BmmrtHrv6iWNJvzNbCEf+4RX28fy3OWAy/i
+         osw+xWf1KcGvKFefLZ72MgR8CqI8vqa0F8rqOzviHKCGlRh4wlk6MFGqSH9p/SwiM8Cg
+         LY00SZ8P04vE7fug6dyDuzXapC1STCQnZKGC1xP2zwKCTuzY4Ps7ZrTM9J0TDpn8Ze+l
+         9xar4OL3jH0wCp9owDm8Z5CHeaUaYwAICWHKoXeOhqv73FcRUfAwkXnK0N0BZ4FnK+5N
+         daT5BT888cLJ4Ck7/ZboMNqVCVy3WfDqIp3YpOYwA+mYbP0vBvQh4HoGIlFOCGVghN4L
+         97ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1732716291; x=1733321091;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=72/s2aAz5EY0mwh8LitCCx1LbBniPW9ZXzF/7Krgc0A=;
-        b=dSSkgYNJaVn2DtNY2AGXYdecF8qPIj9rmi1WBusAiNGY/nr/pQuqPbMfuCJxXknJkL
-         7yWrGao/KoaikYTNukcvZYgcn/ip7+Z42yn9uhvKh9nAYdt5utJtt2S5tjfjyAd9QUlD
-         TEYVs2tJXqtgYNzIXnsuGMAaEEK82oN1Iti99doY638gysiveWqX8vIsK8+BZpfRBUcX
-         jEBUj0Q2i6nrWMeA1r8IERoIXut2njjqnwozJJH0igMycUB+aVtZUuw8ySJqFO1y38oi
-         et4zUw0b2eq/ApOm47fnDDx2Bl781wfBz1uCFitvnQIy9TrGIqIYL6Nccok5Ut+SxZbn
-         4sGw==
-X-Gm-Message-State: AOJu0YzvoaGo/P+OOY35HSAEjFBRbCnxJYBw5DtWHHu2tXPhxMSzoJJ7
-	Ct2m+fDOiqVTNhsnEkdY4KM63N34pbzXuysvSWlzXfi7XlZuGfWE4JIZJy4X3yBIwzpm1qVRnUp
-	/
-X-Gm-Gg: ASbGncsOfdtXv7YMkj8eULQjbHR8UsbXjxlVUusY857A+zDLwaybo4Yb3v4xZo61rMN
-	Tqa6xLgZeBadF5Azkva2O17+A/djMROBXkWuf590XRh8UbhpiSPCNxNVFY2yk+8D96pLeMKBH8q
-	lMwJyf1RmATV6VdwSR4LZzbkFQvwYee0TkZ/iaW6Udf7Ee62KrWRxvMlbNAqDF7HpPOp5nudUrm
-	+O6Dy98xp33YDiZCHI01pCuHZJiUCkcPt2OY3/CMFjstgT18gDHBZLX0A==
-X-Google-Smtp-Source: AGHT+IGF/QHYDm0CT+wA1NuP7NJ4YCS3p/mH8/g7Cx82llyqYFv5ATWtb43Nzi/a5RuKJ1xyN20SLQ==
-X-Received: by 2002:a05:6512:32c9:b0:53d:e3a6:ae82 with SMTP id 2adb3069b0e04-53df00ccf7dmr1632023e87.14.1732716289138;
-        Wed, 27 Nov 2024 06:04:49 -0800 (PST)
+        bh=rzfmmxXcC5nfkCV4gc5yUHDuhltopU/HIPPIiYJqWlY=;
+        b=ZlArfG+q2DbiCelAkjEZJ2s14W/a3wdm6NO9A+E2JtIJ2yab/PP0BSGGf3w8ApWONu
+         MziTSziXVlwFwBuT0RD90Wdg7lqN5F+XqCTowCEODdpg8GwNfOnt5ZVlj0paJdbAW5gi
+         GZbwlSKoHS8jOoBTConR2wLtzZ2igv+XBL+AaFAJF/+gO8gCtpSHyY8OxLvkm0oqCFqp
+         t0P5ZjzEbfADN480fOO39AKmeiRGCk/eH00RHNtT3XI5bNgcMZIM4qELciupcC5cA4ah
+         Kdj1pLZwV/AGt3fwcnb6T4v9i43Meee7bsRfcDNY7VN2mTJBCwExQs0VorTipia44+dA
+         filQ==
+X-Gm-Message-State: AOJu0YwHFqCu10WJ8LRtwy9Fc+KFo0c9MXTLpjuCGMJjH3MQiQJx+LJY
+	G+JFiD2spHye7/axkfJzn1FdxIoDKuVXGgYDk2B0KyICxEG0GxJ4uQa0LSBZeq69zBmCMxKHwd7
+	o
+X-Gm-Gg: ASbGncsCcKesyiACXFb7fzJ+o7NPnD8TnJD65WLnCdPQZx8ZnttygouFxGHq6azGZBh
+	IEiuGpRI82uZdpocGKECykKlktJXbGBUA8sHxoxnkfKVP2NdCbbKY7RW+F2nZ5d6343C4oyEJop
+	GmJEsVXxo8pFvYUkKYMt5WQgUqfXO0fGPUWxETO+H4it/h3OnghRhP/bhos/OY7PdPLRueWN4Fc
+	WwkY6FH2ir3Umd0cCei1vBNvN+tGjdfChV7dE4n4W1uFrVV89Eez9Q5fw==
+X-Google-Smtp-Source: AGHT+IE2Yz6mOY37264WsE3DpCDAykgqJRgeSNe3trAvSeoBcV7ImxZGXM35npt/8X7BY4n/kF3gwA==
+X-Received: by 2002:a05:6512:ba6:b0:53d:e5fd:a44a with SMTP id 2adb3069b0e04-53df0112217mr1863531e87.54.1732716290684;
+        Wed, 27 Nov 2024 06:04:50 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd44cb7c5sm2157291e87.122.2024.11.27.06.04.46
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd44cb7c5sm2157291e87.122.2024.11.27.06.04.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 06:04:47 -0800 (PST)
+        Wed, 27 Nov 2024 06:04:50 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 27 Nov 2024 16:04:33 +0200
-Subject: [PATCH v3 2/3] drm/msm/mdss: reuse defined bitfields for UBWC 2.0
+Date: Wed, 27 Nov 2024 16:04:34 +0200
+Subject: [PATCH v3 3/3] drm/msm/mdss: use boolean values for macrotile_mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-msm-mdss-ubwc-v3-2-9782a7c2b023@linaro.org>
+Message-Id: <20241127-msm-mdss-ubwc-v3-3-9782a7c2b023@linaro.org>
 References: <20241127-msm-mdss-ubwc-v3-0-9782a7c2b023@linaro.org>
 In-Reply-To: <20241127-msm-mdss-ubwc-v3-0-9782a7c2b023@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -92,91 +92,118 @@ To: Rob Clark <robdclark@gmail.com>,
 Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2727;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3073;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=QXlCwnR73sOvgJbeSLPKA0J+vuLe1Chwk+otkmp9zJM=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnRybyC9Wz4xuhmvfGaHaKJ7PiP1FzhN+t5Et36
- EVrWeYMjQWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0cm8gAKCRCLPIo+Aiko
- 1dpZCACZ7g/CCQJyt4U5vHY+J2co9NFbwn6zfIj5RmiF/WDoZk6OzjGboFKXiHWKrNo0flIns68
- cehetRi55IUJO47IYj4eO3vMc4Wwt2rcaJYGMbIUatj7YxlZRpq+lDZhOjalHsrCN/2QINiDMgJ
- 72IInEH1jK2eH+f6KJKmJd3fZJiaUnUMvvJh95nqQbMYlYRIRZ0EgpEaGT8WTYCQ/dUv29HhfSp
- ng/5PwLWdp9Yj3WLdFgB83ErB9x5Rjg38QNgFQ8g/mlQXCaLi7RIWCAzb7WrJEtu+7w1Jun45k2
- rqh3PiQOnGna9wr5LalvzgOmczJWNDKjYRHhMp7qS6bElAxn
+ bh=ErNLlV3VyQUaeuBrJa+IVJY8nm3FUxVk1dHk6f1cd6s=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnRybz5EfeQNFPp88Ula96PZeIRf/rzwux4YPIF
+ 4srT6SRd8eJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0cm8wAKCRCLPIo+Aiko
+ 1c/GB/4mwY3uWvHXGyq/FbPpZu83Lz4gH8Aux84nF/nOP7nQF3NArHkTbPL2B3q+8GXtGQj78EK
+ qp7oH7AJiyd93pxBlsc1KdkNxOL9QGZnYxnZsk/iCYPXzGsdnqVY+Xj47Gb9NAtX/5tNRbwX+HP
+ nQaABEz0l44nD6C8RPgzdx/Lufo9hx6tf4+x2m/LR6CaDZOpyD1mJPQA917YlqkpuhXBnE4XvZA
+ c3zy3IfY/01wXEzbMBNBcM/gstwVu/tN/J17OHIy8qy/wKiYU+20JBK521KzalJWM1JHqQyOHFu
+ AGuV/fzcBvSjXKwogKpufaDGitf2gu9xGh5fuhQGHoW6KiBL
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Follow other msm_mdss_setup_ubwc_dec_nn functions and use individual
-bits instead of just specifying the value to be programmed to the
-UBWC_STATIC register.
+The macrotile_mode is a flag, not a bit value. Use true/false values to
+set it rather than 1/0.
 
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/msm_mdss.c | 17 +++++++++++++----
- drivers/gpu/drm/msm/msm_mdss.h |  1 -
- 2 files changed, 13 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/msm/msm_mdss.c | 16 ++++++++--------
+ drivers/gpu/drm/msm/msm_mdss.h |  2 +-
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index bb176178855cbe14386481d90bf70aa82be4d522..87ada64133924d712810c644a5ff660a082c2abd 100644
+index 87ada64133924d712810c644a5ff660a082c2abd..6dbeea860abfa1cad8e1da926c66b825938933a0 100644
 --- a/drivers/gpu/drm/msm/msm_mdss.c
 +++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -166,8 +166,16 @@ static int _msm_mdss_irq_domain_add(struct msm_mdss *msm_mdss)
- static void msm_mdss_setup_ubwc_dec_20(struct msm_mdss *msm_mdss)
- {
- 	const struct msm_mdss_data *data = msm_mdss->mdss_data;
-+	u32 value = MDSS_UBWC_STATIC_UBWC_SWIZZLE(data->ubwc_swizzle) |
-+		    MDSS_UBWC_STATIC_HIGHEST_BANK_BIT(data->highest_bank_bit);
- 
--	writel_relaxed(data->ubwc_static, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
-+	if (data->ubwc_bank_spread)
-+		value |= MDSS_UBWC_STATIC_UBWC_BANK_SPREAD;
-+
-+	if (data->ubwc_enc_version == UBWC_1_0)
-+		value |= MDSS_UBWC_STATIC_UBWC_MIN_ACC_LEN(1);
-+
-+	writel_relaxed(value, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
- }
- 
- static void msm_mdss_setup_ubwc_dec_30(struct msm_mdss *msm_mdss)
-@@ -587,7 +595,8 @@ static const struct msm_mdss_data sa8775p_data = {
- static const struct msm_mdss_data sc7180_data = {
- 	.ubwc_enc_version = UBWC_2_0,
- 	.ubwc_dec_version = UBWC_2_0,
--	.ubwc_static = 0x1e,
-+	.ubwc_swizzle = 6,
-+	.ubwc_bank_spread = true,
- 	.highest_bank_bit = 0x1,
- 	.reg_bus_bw = 76800,
+@@ -588,7 +588,7 @@ static const struct msm_mdss_data sa8775p_data = {
+ 	.ubwc_swizzle = 4,
+ 	.ubwc_bank_spread = true,
+ 	.highest_bank_bit = 0,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
+ 	.reg_bus_bw = 74000,
  };
-@@ -638,7 +647,7 @@ static const struct msm_mdss_data sm6350_data = {
- 	.ubwc_enc_version = UBWC_2_0,
- 	.ubwc_dec_version = UBWC_2_0,
+ 
+@@ -607,7 +607,7 @@ static const struct msm_mdss_data sc7280_data = {
  	.ubwc_swizzle = 6,
--	.ubwc_static = 0x1e,
-+	.ubwc_bank_spread = true,
+ 	.ubwc_bank_spread = true,
  	.highest_bank_bit = 1,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
+ 	.reg_bus_bw = 74000,
+ };
+ 
+@@ -615,7 +615,7 @@ static const struct msm_mdss_data sc8180x_data = {
+ 	.ubwc_enc_version = UBWC_3_0,
+ 	.ubwc_dec_version = UBWC_3_0,
+ 	.highest_bank_bit = 3,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
  	.reg_bus_bw = 76800,
  };
-@@ -661,7 +670,7 @@ static const struct msm_mdss_data sm6115_data = {
- 	.ubwc_enc_version = UBWC_1_0,
- 	.ubwc_dec_version = UBWC_2_0,
- 	.ubwc_swizzle = 7,
--	.ubwc_static = 0x11f,
-+	.ubwc_bank_spread = true,
- 	.highest_bank_bit = 0x1,
+ 
+@@ -625,7 +625,7 @@ static const struct msm_mdss_data sc8280xp_data = {
+ 	.ubwc_swizzle = 6,
+ 	.ubwc_bank_spread = true,
+ 	.highest_bank_bit = 3,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
  	.reg_bus_bw = 76800,
  };
+ 
+@@ -689,7 +689,7 @@ static const struct msm_mdss_data sm8250_data = {
+ 	.ubwc_bank_spread = true,
+ 	/* TODO: highest_bank_bit = 2 for LP_DDR4 */
+ 	.highest_bank_bit = 3,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
+ 	.reg_bus_bw = 76800,
+ };
+ 
+@@ -700,7 +700,7 @@ static const struct msm_mdss_data sm8350_data = {
+ 	.ubwc_bank_spread = true,
+ 	/* TODO: highest_bank_bit = 2 for LP_DDR4 */
+ 	.highest_bank_bit = 3,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
+ 	.reg_bus_bw = 74000,
+ };
+ 
+@@ -711,7 +711,7 @@ static const struct msm_mdss_data sm8550_data = {
+ 	.ubwc_bank_spread = true,
+ 	/* TODO: highest_bank_bit = 2 for LP_DDR4 */
+ 	.highest_bank_bit = 3,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
+ 	.reg_bus_bw = 57000,
+ };
+ 
+@@ -722,7 +722,7 @@ static const struct msm_mdss_data x1e80100_data = {
+ 	.ubwc_bank_spread = true,
+ 	/* TODO: highest_bank_bit = 2 for LP_DDR4 */
+ 	.highest_bank_bit = 3,
+-	.macrotile_mode = 1,
++	.macrotile_mode = true,
+ 	/* TODO: Add reg_bus_bw with real value */
+ };
+ 
 diff --git a/drivers/gpu/drm/msm/msm_mdss.h b/drivers/gpu/drm/msm/msm_mdss.h
-index 737ea6c39271ca85ab82b72914acb9781a7a2cb3..1714bb41b838c33f3da19d93c5c1f5c53cfbdbab 100644
+index 1714bb41b838c33f3da19d93c5c1f5c53cfbdbab..14dc53704314558841ee1fe08d93309fd2233812 100644
 --- a/drivers/gpu/drm/msm/msm_mdss.h
 +++ b/drivers/gpu/drm/msm/msm_mdss.h
-@@ -11,7 +11,6 @@ struct msm_mdss_data {
- 	/* can be read from register 0x58 */
- 	u32 ubwc_dec_version;
+@@ -13,7 +13,7 @@ struct msm_mdss_data {
  	u32 ubwc_swizzle;
--	u32 ubwc_static;
  	u32 highest_bank_bit;
  	bool ubwc_bank_spread;
- 	u32 macrotile_mode;
+-	u32 macrotile_mode;
++	bool macrotile_mode;
+ 	u32 reg_bus_bw;
+ };
+ 
 
 -- 
 2.39.5
