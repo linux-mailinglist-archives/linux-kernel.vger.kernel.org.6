@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-423080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FC69DA282
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:53:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF53A9DA285
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADE7283974
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BF5AB21A77
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ACE1487E1;
-	Wed, 27 Nov 2024 06:53:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBEF1494CF;
+	Wed, 27 Nov 2024 06:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Z6rAP/ZC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB9113BAE4
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2128C13BAE4;
+	Wed, 27 Nov 2024 06:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732690408; cv=none; b=f1NsTTpTEEUIMV1H3SAB0cbfAWOW19Wia1TbMQJL9UWJPu7wHjdjmLhtD2V89ZmaOnQsZq9cX9pxo8H9Sshw9RPNkjT22Hv+j8BhuV12lGAsXrZHOReUKHkWtl/5J24sGsC73xfYLqFwPz+QgSkBjNGwh2rAB8MFockUXzp8T7I=
+	t=1732690537; cv=none; b=WUUO4pGZ2pa0HBUTg7qH4ILq81eA4VbuE2N0I22ig5SJcK2i0HRPz8qu/qPrzN6FOU2C9jNrk7g40GtTsaRjZwttxFGco2W7aqqWSi+URPJLI3xYqyxvTew3rwSkirF2BYh1E4j92IE7Qjf+oMb+z1EFA1KKq7xwkfcF011QbnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732690408; c=relaxed/simple;
-	bh=dPM4yL3SLQDlfkv8fU7NiS6F3W5AuAaTDxV64BN5MIk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lK64gsKXp+l7moNBB23Nrg4wVBrPTbhF/mrJ/P8E/rrRXzS2juwj3zcLzVLGc2L0mryOBe6m/CSKY85tDUQnozMGYd+k3wLZKTFO8pZzqweedel2F9aLTojoqt8bTnA3rRwwCGSmqcZI0sp85pZGozUfyUvsWyK8c9QlAFIQk3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7c729bfbaso3005315ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:53:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732690405; x=1733295205;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uR1DmXSxy/oOhcoxolUVLhBz85Ktc/N225g4+AbElMM=;
-        b=DkUiGl2ZnySz9Sc+FHGq5DD6+qIo7PmRJvgO1Pc0yUUh9hdQ1sZTJ56Lwo3cCZX67b
-         iaZwuDF4pxY7m+W9e1GLG95gorTpmc2Obxa2CtHp3EYqZ2kapVBQXbUOOLKeVeydt3BA
-         KqxYebx5wR73kmcyxc8avSY5oi5yXNMSMukNJDeDJavkAtWiJETr5nE/Ian9jS666bgn
-         Nzud3aZQsO+jfDVEh03jyEOu+CG6/Gt5fHWuNGov2dvwsbZUYzz7Z/y5wkgHpX+lUHHZ
-         aru0ZU9lOJor9U3qjV6sMoezDWpstsQlDNAlHd5eBAB2Ku+JW99k9XltBBtVqk2Ss5KO
-         CPeQ==
-X-Gm-Message-State: AOJu0YybkuKsVP541TmvVS8AdUVeYRF7Ly4wBvzP+lvvRknU8kK4+TLo
-	AorPKAknyAQAtKkwNO+j+zmWOUlwxxOKCRypyjeL76mvWhCDfryDLcTc/M0qxPbUode8TepGB1n
-	IsTVbvrdQg6gZBYFcmYg/hfgwR4Tj1McNYRQFl+t8QUQ/0rncXMDc+YU=
-X-Google-Smtp-Source: AGHT+IHvtI8ntuzoL09z0xAubUI0T4ojMMKrX2ffu/OEEIlRIpOrbEpG/f1sLbi5ZecwBTLFhsJn++M1JqjpmPoYwogr4z/K9svL
+	s=arc-20240116; t=1732690537; c=relaxed/simple;
+	bh=UB1y1AA0qmWXHxMam6cy0LFVwd0LvVorrbc6xiz7mOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BwGQCh3z03mGUTlyajpOpY6v9crGGro4i1CfVU3ZDUCpOoM2tUHgSb19c/yyVnhYS2OgbLIj1xsLgy9TACzYaVPxx57lcYbH1o9vGTbPn8/Vcpeb5LKtVeyrnpsC7HJa4/naO0XZ2E7EEfan/9iWWCKyvVzaUR+6uSSV8MUJfR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Z6rAP/ZC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4140A40E015E;
+	Wed, 27 Nov 2024 06:55:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hhQ5_UjZPbXo; Wed, 27 Nov 2024 06:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732690527; bh=NgGatvZw6gjPA40roIhorBC9q4pXK57dJ3T9T+thf6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z6rAP/ZCcdKlf6Zm7J1yfXHs3V4A3idxKW7S7Ta7WuP3WamlypjvFoANTkEPLMbAV
+	 BMlvyt9DLpjWv/gh+JT0+VRpWD+BnrLC4wSm0zApat6IA9wSHB7J/h+9eW5CWqlVpF
+	 mgRmohTAyyUsHqGlwvtkGttkuoyscp4xPZlLWbfX8IPh9uttI884saa8aMATIvHPdg
+	 bLc9nzkcGdgy7sUqN2AYrCcm61PLPUz2wp1DVdzIxtv2yB4tZTXt7dY3VKjkqizN8G
+	 BOKBszT2R7EeOxsSbWZY0ms0zhsWY32w9qtNpaSW/kOCoh3vA47s0Cp2QWt7pUDpjz
+	 iaP3GHNOksNCEefN3His8z3bpVokA2NWytPqWXP+1+0Sbp9cR/u6NAuYvx/ZSnSJmv
+	 aLwHAjmy7eSOax8zUWhmuCnOhkv/jXYip9hJ9MHwIYUF5rjuawd2Dmt/7ZlXFVE4RE
+	 ZnqX27vN9/ENmeXjwaMcNSVzN7VAResHbQ87fhn+7kOYSZvi4EGTszNsYmMvkXfQ3T
+	 YYPO/9jSIJNifLxvHdE4Guc5/zueQKhspwUIEwvYOlLuAkZss0orEq1bwZ02xpB8Nd
+	 qNKrpMr6zxIfxD3D+UMeNwRLj+K5AA15kQrxiqezRab2N5yrWgeh+szMuV3uwkIS/p
+	 NR5VrcDjxafOQZezYUdqjBso=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B351A40E0163;
+	Wed, 27 Nov 2024 06:55:11 +0000 (UTC)
+Date: Wed, 27 Nov 2024 07:55:10 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xin Li <xin@zytor.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
+ MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
+Message-ID: <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-10-xin@zytor.com>
+ <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
+ <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
+ <20241126200624.GDZ0YqQF96hKZ99x_b@fat_crate.local>
+ <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c547:0:b0:3a7:6c5c:9aa4 with SMTP id
- e9e14a558f8ab-3a7c5564e30mr21351925ab.12.1732690405404; Tue, 26 Nov 2024
- 22:53:25 -0800 (PST)
-Date: Tue, 26 Nov 2024 22:53:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6746c1e5.050a0220.1286eb.002a.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING: locking bug in sched_core_lock (2)
-From: syzbot <syzbot+37a95c05fafd621ecf0c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
 
-Hello,
+On Tue, Nov 26, 2024 at 10:46:09PM -0800, Xin Li wrote:
+> Right.  It triggered me to look at the code further, though, I think the
+> existing code could be written in a better way no matter whether I need
+> to add more MSRs.  And whoever wants to add more won't need to increase
+> MAX_POSSIBLE_PASSTHROUGH_MSRS (ofc unless overflow 64).
 
-syzbot found the following issue on:
+But do you see what I mean?
 
-HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ff175f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
-dashboard link: https://syzkaller.appspot.com/bug?extid=37a95c05fafd621ecf0c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+This patch is "all over the place": what are you actually fixing?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+And more importantly, why is it part of this series?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/112cedff0255/disk-06afb0f3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f65020d28328/vmlinux-06afb0f3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4fb4cb7df5b1/bzImage-06afb0f3.xz
+Questions over questions.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+37a95c05fafd621ecf0c@syzkaller.appspotmail.com
+So can you pls concentrate and spell out for me what is going on here...
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 13420 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 0 PID: 13420 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4850 [inline]
-WARNING: CPU: 0 PID: 13420 at kernel/locking/lockdep.c:232 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Modules linked in:
-CPU: 0 UID: 0 PID: 13420 Comm: syz.7.1623 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4850 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Code: 00 00 83 3d 11 c9 ac 0e 00 75 23 90 48 c7 c7 80 d1 0a 8c 48 c7 c6 80 d4 0a 8c e8 77 64 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc90003d7f2d0 EFLAGS: 00010046
-RAX: 4215103f8b5df600 RBX: 00000000000010d8 RCX: 0000000000080000
-RDX: dffffc0000000000 RSI: 000000000000957f RDI: 0000000000009580
-RBP: 00000000000c10d8 R08: ffffffff8155fe42 R09: 1ffff110170c519a
-R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff8880359028c4
-R13: 000000000000000f R14: 1ffff11006b2052f R15: ffff888035902978
-FS:  00007f6b83fff6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f45936a0d58 CR3: 000000005dcb4000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- sched_core_lock+0x162/0x240 kernel/sched/core.c:374
- __sched_core_flip+0x176/0x440 kernel/sched/core.c:401
- __sched_core_enable kernel/sched/core.c:438 [inline]
- sched_core_get+0xbd/0x180 kernel/sched/core.c:456
- sched_core_alloc_cookie+0x71/0xa0 kernel/sched/core_sched.c:18
- sched_core_share_pid+0x298/0x7d0 kernel/sched/core_sched.c:185
- __do_sys_prctl kernel/sys.c:2741 [inline]
- __se_sys_prctl+0x956/0x3b50 kernel/sys.c:2467
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6b8317e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6b83fff038 EFLAGS: 00000246 ORIG_RAX: 000000000000009d
-RAX: ffffffffffffffda RBX: 00007f6b83335fa0 RCX: 00007f6b8317e819
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 000000000000003e
-RBP: 00007f6b831f175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f6b83335fa0 R15: 00007fffd307ecc8
- </TASK>
+Thx.
 
+-- 
+Regards/Gruss,
+    Boris.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+https://people.kernel.org/tglx/notes-about-netiquette
 
