@@ -1,163 +1,141 @@
-Return-Path: <linux-kernel+bounces-423317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F283E9DA5C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:30:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2E09DA5C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:30:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4843316531B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:30:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477871990C8;
+	Wed, 27 Nov 2024 10:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UP5geYxF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27A7BB22630
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:30:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD4F19413B;
-	Wed, 27 Nov 2024 10:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Ll/hxxKB"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D747118E0E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BDF1990BD;
+	Wed, 27 Nov 2024 10:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732703427; cv=none; b=jLWz+pvFCXolWOJrfS+qLkh/pG7ItQMxo1mLuqocT3mJN0zAKbx8OADLJFhEzVxybhXvXq8m0Fa/ds4REMIi9n4dq5NV8RIPLIyxzVb02NDaqbFOHa2FPDz/daNdKw6AZYz6H0M0j5A5gMhg/13cxkJBsLfg6kH0b4haGIw6A0A=
+	t=1732703433; cv=none; b=qpiEagVU7gmwr79uYo6XaiWZEEofPeQP3SDYbLorvRGV1TWRoud9j0233nIgw+Bbgq1sFVmlammMU4AvRDje+oAo84A21oob/5tFVHm7xk5AJ79VIYmV3lSXODhGWzFT80Jhb9BaTb7u37HQV26XIcxtQwScByCdaWKn+llb0ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732703427; c=relaxed/simple;
-	bh=Ds7C5pb194YFdxwzXToNBRyWu8AEFEM9Ll5NtubIdb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UTFrQtGYsKfznK2yA3ZWLyQOiKgkHxmuL4ejFEyC1uPsS8lsWbOns0dwNR6vGxd4ZcIXv84QMzYpfyS/sK9QKqu5tQ59REtzQ5LbSGVpjuu7lwT/XuM6Ze0FSHsqIJEemMxivuUHB5UXNFz5CCw6CqMA57ZA/xBJn3R2UsLg/C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Ll/hxxKB; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so22691705e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:30:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1732703423; x=1733308223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdmWojUkhwpwXLovz/kimDZeMrYf2eBrW2EF70Dlfbc=;
-        b=Ll/hxxKBnVb7wV0bK4sye/7/cuCMrV2+NvJfp/JaKqZV+6pWyDlNvW7HVlwsFRv+l7
-         yY5nH8hvE4zpMolM1N/B7h+aJ2kRBEnNyebFdAleBXm5w3AlQW0YyDRhFSuiIoQsqlv3
-         QKZCyG8i82RNzL6oZpxDnCNwFobwIXt+BDeTD1wwWKydZXuEGnVqa8OJ6f0Gm6hc9LYB
-         wUxGR5EEpl27cyiaXUhW74mKzqXXHnW3s/zEyUxX+ekGut8zOgCRu6WEzgSnVMsfTxpu
-         HXS1yb8R2vEOmXGuqeAoQTWri4PS9Ndg7D2UaTfKUeTMLc6OWpUdpIPSSNh5XbzuM4an
-         u7NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732703423; x=1733308223;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mdmWojUkhwpwXLovz/kimDZeMrYf2eBrW2EF70Dlfbc=;
-        b=jU69Hg7X6O6YzzZBSppPDOt9uP6KT6hj2dpTrdGMycOWklJZdhLKfRGyE0ZNwhiTyT
-         0CxY0KLBvSNubTyHpqeFuwFL4KzEjlIT7BmeBOP2b0Lo1ueRveClnIQdrewNl547viGL
-         6W44UjZdrzOK90yme1pmodOjQVrNeTH9UTcuAQ0qmGUz7dOx3lfj5Q+2AqE96IiWV/lD
-         LeHJaZ4kYQRXcqeB3IaVtCKfd8NxOal3QPUrd8vnIl72Kyt8+mE+9dODiWCv2eO6bCHV
-         T77H4s1WFcYBs2z5eg8y8p+TiSys3pfRIMN52B/6zhNW4f0RspYtwkGSbA1RUSleTvLz
-         hmyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyQoVLp5ELsOEgdwT50FXplgm683pUYh7CkI7qAzjNqDksrO/DIqu1lF6Ou1RFN/lcZ3SQHGWrIZFY6Bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNj/Nl7xP3qFVu6V4mxS6hp9g9u74LVwQt8tad+B8myO8V/qB7
-	WWmVn/VO4dcNPya1SR3e+VUdz+Cuph/NviJhHJOBWzBCWJPD695W5Yp+1MqRNW8=
-X-Gm-Gg: ASbGncv/xa9bHawN4c/Fm8QkjVcJeEXgWXZfbG4wmFhLU+dl8xdGa2U3L7qDU44XRL+
-	Wv8XOW+2fww6LtMbHWWBj5dCebjKEJstMoiSkicI6u7GituUUfoPTmj7A28SNrLjY36R+S3/DY8
-	h1RcLyxp04RWMvsao22jEEc5sb7L599qGQAyIhWiufKKp0qlAgvTMFYbUSTM7yxuf7RbBIt2lUC
-	sO4+PBHg5h6FPGcqtjyajyU4UoiaHHM+7dOx29qkLnLSZsbWBk=
-X-Google-Smtp-Source: AGHT+IF5IkFBTeO7XGVr/CEmevonfUf2d58+nLijve3eXN4jnhveTHhqS1Pg0SJtzoux/aBfgEgZRw==
-X-Received: by 2002:a05:600c:3546:b0:431:4e82:ffa6 with SMTP id 5b1f17b1804b1-434a9de54b7mr20134735e9.24.1732703423049;
-        Wed, 27 Nov 2024 02:30:23 -0800 (PST)
-Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafeceesm15947776f8f.37.2024.11.27.02.30.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 02:30:22 -0800 (PST)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	zhangkai@iscas.ac.cn
-Subject: [PATCH] riscv: module: use a plain variable for list_head instead of a pointer
-Date: Wed, 27 Nov 2024 11:30:14 +0100
-Message-ID: <20241127103016.2699179-1-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732703433; c=relaxed/simple;
+	bh=L1ISwpfiIXiP5zeO9y5IbY+euqSLxP6SkE0Y3RbKxnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GDCEFyUDSrsD2r0aNhRC/U4YR1iSBSpxJWEksl8SiQDAvC/1Vy7daExkPVnY0FmnoyZqT+WiU1D2wism7dGpGQxvFJ1owrkQUQvmn9qUhhOLy/MXYRQQjnxMAawTSxRa8wehGL6VHDhl/AYThnEiu3wxkufZ18pB1U2lZwv2FK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UP5geYxF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR93mMJ007146;
+	Wed, 27 Nov 2024 10:30:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aqdcIm1htWFFascJevOmAsV6FIpg5ooOxh9zwCuY9LY=; b=UP5geYxFuWVC+4Ep
+	MluKXWgZVcSE0d0TSgCS0gvynmOQec0mFhMjrUR8RfAW3++Cc3MtM0yPwAnLkaZs
+	aMEiykU/VtSRKCkYcuW2wFdoulIL8yhlEPBnM1xTD4eGUkcaUiac+JTYpR2xxSTO
+	eFVg8CYUpXODbZuRrf4Jrd1/c6NyGc8WR6Fu7E6y3g5/tt9rjjGQICyRZQkyVbiC
+	Llpd0AtQojqh2f9SXGWu9UktDdSTo7ISVyLUEz+jEskQY0tztPJHMak7dct38Jok
+	X8s2dTj0OoxgO17zXt/TCQOs4nL1NBAYQtEYHlr0wPFurY+bl3UqSTj7gzLrJ4iw
+	eBQdAw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw9ec76-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 10:30:25 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARAUOQQ013304
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 10:30:24 GMT
+Received: from [10.253.78.253] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 02:30:18 -0800
+Message-ID: <6f4037b4-8084-4e1d-b339-274e25f6d317@quicinc.com>
+Date: Wed, 27 Nov 2024 18:30:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] wifi: ath11k: Fix NULL pointer check in
+ ath11k_ce_rx_post_pipe()
+To: Baichuan Qi <zghbqbc@gmail.com>, <markus.elfring@web.de>
+CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>
+References: <a77fe99d-079b-4ef3-a1ce-6aea10256860@web.de>
+ <20241127094317.303815-1-zghbqbc@gmail.com>
+Content-Language: en-US
+From: Kang Yang <quic_kangyang@quicinc.com>
+In-Reply-To: <20241127094317.303815-1-zghbqbc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6CjFbIR4pvu_Y28EpLLVjOMYNRZreN9J
+X-Proofpoint-ORIG-GUID: 6CjFbIR4pvu_Y28EpLLVjOMYNRZreN9J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=808 adultscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411270086
 
-list_head does not need to be allocated, it can be a plain variable.
-Remove the pointer which allows to get rid of the allocation as well as
-an existing memory leak.
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
+
+On 11/27/2024 5:43 PM, Baichuan Qi wrote:
+> Fix the NON-NULL check by changing the OR (||) to AND (&&),
+> ensuring that the function only proceeds when both `dest_ring`
+> and `status_ring` are NON-NULL.
+> 
+> The current implementation of `ath11k_ce_rx_post_pipe` checks for
+> NON-NULL of either `dest_ring` or `status_ring` using a
+> logical OR (||). However, both rings, especially `dest_ring`,
+> should be ensured to be NON-NULL in this function.
+> If only one of the rings is valid, such as `dest_ring` is NULL
+> and `status_ring` is NON-NULL, the subsequent call to
+> `ath11k_ce_rx_buf_enqueue_pipe()` will access the NULL pointer,
+> resulting in a driver crash.
+> 
+> Link: https://lore.kernel.org/ath11k/a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Signed-off-by: Baichuan Qi <zghbqbc@gmail.com>
+> ---
+
+So this is version 3, please remember adding you version change here🙂:
+
+v3: add link URL.
+v2: rewrite commit message, add fix tag.
 
 ---
- arch/riscv/kernel/module.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages
 
-diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
-index 1cd461f3d872..47d0ebeec93c 100644
---- a/arch/riscv/kernel/module.c
-+++ b/arch/riscv/kernel/module.c
-@@ -23,7 +23,7 @@ struct used_bucket {
- 
- struct relocation_head {
- 	struct hlist_node node;
--	struct list_head *rel_entry;
-+	struct list_head rel_entry;
- 	void *location;
- };
- 
-@@ -634,7 +634,7 @@ process_accumulated_relocations(struct module *me,
- 			location = rel_head_iter->location;
- 			list_for_each_entry_safe(rel_entry_iter,
- 						 rel_entry_iter_tmp,
--						 rel_head_iter->rel_entry,
-+						 &rel_head_iter->rel_entry,
- 						 head) {
- 				curr_type = rel_entry_iter->type;
- 				reloc_handlers[curr_type].reloc_handler(
-@@ -704,16 +704,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
- 			return -ENOMEM;
- 		}
- 
--		rel_head->rel_entry =
--			kmalloc(sizeof(struct list_head), GFP_KERNEL);
--
--		if (!rel_head->rel_entry) {
--			kfree(entry);
--			kfree(rel_head);
--			return -ENOMEM;
--		}
--
--		INIT_LIST_HEAD(rel_head->rel_entry);
-+		INIT_LIST_HEAD(&rel_head->rel_entry);
- 		rel_head->location = location;
- 		INIT_HLIST_NODE(&rel_head->node);
- 		if (!current_head->first) {
-@@ -722,7 +713,6 @@ static int add_relocation_to_accumulate(struct module *me, int type,
- 
- 			if (!bucket) {
- 				kfree(entry);
--				kfree(rel_head->rel_entry);
- 				kfree(rel_head);
- 				return -ENOMEM;
- 			}
-@@ -735,7 +725,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
- 	}
- 
- 	/* Add relocation to head of discovered rel_head */
--	list_add_tail(&entry->head, rel_head->rel_entry);
-+	list_add_tail(&entry->head, &rel_head->rel_entry);
- 
- 	return 0;
- }
--- 
-2.45.2
+>   drivers/net/wireless/ath/ath11k/ce.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+> index e66e86bdec20..cc9ad014d800 100644
+> --- a/drivers/net/wireless/ath/ath11k/ce.c
+> +++ b/drivers/net/wireless/ath/ath11k/ce.c
+> @@ -324,7 +324,7 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pipe *pipe)
+>   	dma_addr_t paddr;
+>   	int ret = 0;
+>   
+> -	if (!(pipe->dest_ring || pipe->status_ring))
+> +	if (!(pipe->dest_ring && pipe->status_ring))
+>   		return 0;
+>   
+>   	spin_lock_bh(&ab->ce.ce_lock);
 
 
