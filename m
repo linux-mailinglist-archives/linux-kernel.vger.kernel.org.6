@@ -1,269 +1,380 @@
-Return-Path: <linux-kernel+bounces-423268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C209DA53A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:57:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304869DA53C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F3AB213E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A132825ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B649194A63;
-	Wed, 27 Nov 2024 09:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DFD1946A8;
+	Wed, 27 Nov 2024 09:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gYnJ4UEt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mmjzgwzY"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E0A6A8D2;
-	Wed, 27 Nov 2024 09:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E775A6A8D2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732701432; cv=none; b=rzfO23B0u2jAUHVCH2sJEUxCrn+KNeiLCBQiYCNKEFP9+COw90oc0leDEub5e/xE0ps8MI5wehoSwGo2zdxDn1vzHZ2Cxl0wKgeKKPHFYhFT/Oiah7vW+YgqKxb+8dccekP3t51FVwwViI929v6V6TY15iDwkcjip53XyY2BZuU=
+	t=1732701527; cv=none; b=EF1zTzM9PErOYMQNLQb0M1At9YVMZRJZ/9oJHlCBPJ4Wwe0tnLI6MGw2ght7BDNPTa14Zg+Xh35QWM+r/bDIzBtXZN9AnEAvqYsxoVI2LdFrB7qlGkgOunfmnQ3D5HhsQXkoyoX2nxvTtFn/2ikVuEbjkoIGgNnk+ZzKhtRyfFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732701432; c=relaxed/simple;
-	bh=piY6NVUpel+wRUEZs6EFQ1GXhVd8+X8WGGcAIQ5rvhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WCYtzftH+bp8W/rFre/kJxlfH/W1T2FZ8grOgrrkapSKfMZ00ccrQEgkjLhN1GOBODt0gpdYUBkJrOhimeTgiQ38Q+AHfjLfQO94b2l8tuBUHQ1n5bvhUR5UfDj51mlxknDAcN3rd7untH700EN97L/OITHdkCJ2/fG1PMEMyjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gYnJ4UEt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR9JE1J006025;
-	Wed, 27 Nov 2024 09:56:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IE5v750NhfcBCh+HTstqz8SDcyR6ATb9vcpl8k+7QvQ=; b=gYnJ4UEtWpzjKNm4
-	k6o4zGbeBYs6LrJADAxNpAg7yL2mT7WaHFcOGJW61gpZm9Dvi+8bO2fw1H47zUyU
-	mpxSvo9aMvZYBVaciA0nMxhzK2ZjNkGKka6i5FLfaNDE8zUYTaQlGKoqSIicuV9j
-	hFcZTBAdVlZaBrXsK5P41uu68j4lm1Yu29TI4w7urJnvcvVstks1s+Fn4pfGmfQi
-	qwj4wdc6kBP+2ZHCHGiTFMOFSddS+kQ76mYYRfcq+0aaV67hoWdeKaNxqYAe9Lv2
-	7o7k03Z5uQI81ispFKU4iijf7mRmSS5jEkREf5iZyG7onv71+PqTMHCtK4tGEyAq
-	b3mXig==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434ts1p2pf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 09:56:58 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR9uw5D001804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 09:56:58 GMT
-Received: from [10.64.68.102] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
- 2024 01:56:48 -0800
-Message-ID: <b3fa1fa6-3ed5-4f4c-a3bb-607b06774cdb@quicinc.com>
-Date: Wed, 27 Nov 2024 17:56:45 +0800
+	s=arc-20240116; t=1732701527; c=relaxed/simple;
+	bh=k8+bOtsFgTZzdDpVRn8U3yRVdxILlGI+H+NKWPKnCxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZB25ICaj2DfGjg0B1gkifUIvQkZOMTc5DJNro6ZwznIrrnHnqAlfsiImmXEv74m9a9dhMb0Frqu+dYRqjOOcUA1+05iUyACILGcc2a5+AqVGtMUY9f8RoN9W5RAYRx+Z37ehbJLYHuDbwgrNvcB8TT+ZWzeK8Zf6HuUw4jfHZsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mmjzgwzY; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dde4f0f23so3789150e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:58:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732701523; x=1733306323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MSwBpe7A1WU6doSfB6DCRay342117jvdCAZmr4IsSos=;
+        b=mmjzgwzYmG1qlSiMoKqfSq4tXT0CWyRfyK7B7/UPOk/TG4vOtZZp1nkiEtyGdbR19w
+         1R72WZdJh+QSkb4AcHksIqXyBYnCqfCEsX+eiMaamXt5FEKu7Zz2zrx/RPL4akG68hy8
+         WiybGa+lIyDZHRXLzvDRlPGuIJIEVV0zeDMKI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732701523; x=1733306323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MSwBpe7A1WU6doSfB6DCRay342117jvdCAZmr4IsSos=;
+        b=dsGajaDv31fQLOes5EphFvYiYPGCXcs3O7WOGZL1++sYL8T5HW1NJ8hmOWVSzVIl4R
+         0tSDgPF/qNkNorm2NAu0sY1Nk8CR3AIQMJNmEIH06FjZ1B2K5/D4QecOqT4aE1B6WG9q
+         ML8BiPyCgLZfSx/+UinEBG3SIsaEttxR0GXbLF5MPvOPPZUVZR/Qsc43UWWqLaGG/674
+         45MSelveKfJ95+cqN/bWh1sVfXL4o3M6pQSM9/99nO1W3pKbhnrrCE088/N+ScXmXPMH
+         23mJ8snN0uF6v3okz68gGRsXpiKK/LVzdUI0bKF7hvpyWFzeJ5B1S3q0OXxkTI1sDgtv
+         +v7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUPfUPUDvSGhtlaZVYKoD8nA11YYb1xzx3DG1wSZEbnngpdF9YqWPk14qbaWh8kBOgCzRB6z2eEto4MINU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkCk64WQ08I0+h/PdgcuS60UyAPUEmT4bdYnZMnhdOlswjXjx3
+	caLEMajhc/ZLs+rKK6ZXE6GLCNAoyrInd9OzzpuRRKa+xlyB+xmW1XHUIyG1N6UXyc1uekCFqKJ
+	Y+UoTkL9/4pnO9uATZhEbfY6cd4KULPjF6s1w
+X-Gm-Gg: ASbGnctIlHeJKur+kWbv1KLxqtwd0EoGZpimnw5dpPbnigv0gqPQGQAyba+noqM5Ew6
+	acTahJwT4hJIf02A2s+QsTksyjBMBmUDCAU1IhXGku5y94cKQQKBuoWanYGQ=
+X-Google-Smtp-Source: AGHT+IGleoyHiMc5UekJdmwzwoaHJ99Sqt7ibutxuWqjuRAHyMFlhRlwsg+RWwpv8+r4qDN/FtBJnxVPgL0QKDwrwuI=
+X-Received: by 2002:a05:6512:3c81:b0:53d:ea1d:50fc with SMTP id
+ 2adb3069b0e04-53df0111f03mr1289736e87.48.1732701522167; Wed, 27 Nov 2024
+ 01:58:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: enable pcie0 for QCS8300
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>, <bhelgaas@google.com>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <quic_qianyu@quicinc.com>,
-        <conor+dt@kernel.org>, <neil.armstrong@linaro.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>
-CC: <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tdas@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>
-References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
- <20241114095409.2682558-5-quic_ziyuzhan@quicinc.com>
- <a02925d7-2d09-4902-97e4-5e7f09d7ef21@oss.qualcomm.com>
-Content-Language: en-US
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <a02925d7-2d09-4902-97e4-5e7f09d7ef21@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tTg52swv73q9BIT9C6iEByOmYqdiO0Sv
-X-Proofpoint-ORIG-GUID: tTg52swv73q9BIT9C6iEByOmYqdiO0Sv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 malwarescore=0
- impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411270082
+References: <20241009052402.411978-1-fshao@chromium.org> <20241024-stalwart-bandicoot-of-music-bc6b29@houat>
+ <CAC=S1niZuiJkWBvci+bmrU-BvahhXyWWAYAMOB200a3Ppu=rTg@mail.gmail.com> <20241114-gray-corgi-of-youth-f992ec@houat>
+In-Reply-To: <20241114-gray-corgi-of-youth-f992ec@houat>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 27 Nov 2024 17:58:31 +0800
+Message-ID: <CAGXv+5EmVj6S2iioYgMKvY8NM3_jzCDS9-GC-GOMU44j0ikmKA@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm/bridge: panel: Use devm_drm_bridge_add()
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Fei Shao <fshao@chromium.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, David Airlie <airlied@gmail.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Revisiting this thread since I just stepped on the same problem on a
+different device.
+
+On Thu, Nov 14, 2024 at 9:12=E2=80=AFPM Maxime Ripard <mripard@kernel.org> =
+wrote:
+>
+> On Tue, Oct 29, 2024 at 10:53:49PM +0800, Fei Shao wrote:
+> > On Thu, Oct 24, 2024 at 8:36=E2=80=AFPM Maxime Ripard <mripard@kernel.o=
+rg> wrote:
+> > >
+> > > On Wed, Oct 09, 2024 at 01:23:31PM +0800, Fei Shao wrote:
+> > > > In the mtk_dsi driver, its DSI host attach callback calls
+> > > > devm_drm_of_get_bridge() to get the next bridge. If that next bridg=
+e is
+> > > > a panel bridge, a panel_bridge object is allocated and managed by t=
+he
+> > > > panel device.
+> > > >
+> > > > Later, if the attach callback fails with -EPROBE_DEFER from subsequ=
+ent
+> > > > component_add(), the panel device invoking the callback at probe ti=
+me
+> > > > also fails, and all device-managed resources are freed accordingly.
+> > > >
+> > > > This exposes a drm_bridge bridge_list corruption due to the unbalan=
+ced
+> > > > lifecycle between the DSI host and the panel devices: the panel_bri=
+dge
+> > > > object managed by panel device is freed, while drm_bridge_remove() =
+is
+> > > > bound to DSI host device and never gets called.
+> > > > The next drm_bridge_add() will trigger UAF against the freed bridge=
+ list
+> > > > object and result in kernel panic.
+> > > >
+> > > > This bug is observed on a MediaTek MT8188-based Chromebook with MIP=
+I DSI
+> > > > outputting to a DSI panel (DT is WIP for upstream).
+> > > >
+> > > > As a fix, using devm_drm_bridge_add() with the panel device in the =
+panel
+> > > > path seems reasonable. This also implies a chain of potential clean=
+up
+> > > > actions:
+> > > >
+> > > > 1. Removing drm_bridge_remove() means devm_drm_panel_bridge_release=
+()
+> > > >    becomes hollow and can be removed.
+> > > >
+> > > > 2. devm_drm_panel_bridge_add_typed() is almost emptied except for t=
+he
+> > > >    `bridge->pre_enable_prev_first` line. Itself can be also removed=
+ if
+> > > >    we move the line into drm_panel_bridge_add_typed(). (maybe?)
+> > > >
+> > > > 3. drm_panel_bridge_add_typed() now calls all the needed devm_* cal=
+ls,
+> > > >    so it's essentially the new devm_drm_panel_bridge_add_typed().
+> > > >
+> > > > 4. drmm_panel_bridge_add() needs to be updated accordingly since it
+> > > >    calls drm_panel_bridge_add_typed(). But now there's only one bri=
+dge
+> > > >    object to be freed, and it's already being managed by panel devi=
+ce.
+> > > >    I wonder if we still need both drmm_ and devm_ version in this c=
+ase.
+> > > >    (maybe yes from DRM PoV, I don't know much about the context)
+> > > >
+> > > > This is a RFC patch since I'm not sure if my understanding is corre=
+ct
+> > > > (for both the fix and the cleanup). It fixes the issue I encountere=
+d,
+> > > > but I don't expect it to be picked up directly due to the redundant
+> > > > commit message and the dangling devm_drm_panel_bridge_release().
+> > > > I plan to resend the official patch(es) once I know what I supposed=
+ to
+> > > > do next.
+> > > >
+> > > > For reference, here's the KASAN report from the device:
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >  BUG: KASAN: slab-use-after-free in drm_bridge_add+0x98/0x230
+> > > >  Read of size 8 at addr ffffff80c4e9e100 by task kworker/u32:1/69
+> > > >
+> > > >  CPU: 1 UID: 0 PID: 69 Comm: kworker/u32:1 Not tainted 6.12.0-rc1-n=
+ext-20241004-kasan-00030-g062135fa4046 #1
+> > > >  Hardware name: Google Ciri sku0/unprovisioned board (DT)
+> > > >  Workqueue: events_unbound deferred_probe_work_func
+> > > >  Call trace:
+> > > >   dump_backtrace+0xfc/0x140
+> > > >   show_stack+0x24/0x38
+> > > >   dump_stack_lvl+0x40/0xc8
+> > > >   print_report+0x140/0x700
+> > > >   kasan_report+0xcc/0x130
+> > > >   __asan_report_load8_noabort+0x20/0x30
+> > > >   drm_bridge_add+0x98/0x230
+> > > >   devm_drm_panel_bridge_add_typed+0x174/0x298
+> > > >   devm_drm_of_get_bridge+0xe8/0x190
+> > > >   mtk_dsi_host_attach+0x130/0x2b0
+> > > >   mipi_dsi_attach+0x8c/0xe8
+> > > >   hx83102_probe+0x1a8/0x368
+> > > >   mipi_dsi_drv_probe+0x6c/0x88
+> > > >   really_probe+0x1c4/0x698
+> > > >   __driver_probe_device+0x160/0x298
+> > > >   driver_probe_device+0x7c/0x2a8
+> > > >   __device_attach_driver+0x2a0/0x398
+> > > >   bus_for_each_drv+0x198/0x200
+> > > >   __device_attach+0x1c0/0x308
+> > > >   device_initial_probe+0x20/0x38
+> > > >   bus_probe_device+0x11c/0x1f8
+> > > >   deferred_probe_work_func+0x80/0x250
+> > > >   worker_thread+0x9b4/0x2780
+> > > >   kthread+0x274/0x350
+> > > >   ret_from_fork+0x10/0x20
+> > > >
+> > > >  Allocated by task 69:
+> > > >   kasan_save_track+0x40/0x78
+> > > >   kasan_save_alloc_info+0x44/0x58
+> > > >   __kasan_kmalloc+0x84/0xa0
+> > > >   __kmalloc_node_track_caller_noprof+0x228/0x450
+> > > >   devm_kmalloc+0x6c/0x288
+> > > >   devm_drm_panel_bridge_add_typed+0xa0/0x298
+> > > >   devm_drm_of_get_bridge+0xe8/0x190
+> > > >   mtk_dsi_host_attach+0x130/0x2b0
+> > > >   mipi_dsi_attach+0x8c/0xe8
+> > > >   hx83102_probe+0x1a8/0x368
+> > > >   mipi_dsi_drv_probe+0x6c/0x88
+> > > >   really_probe+0x1c4/0x698
+> > > >   __driver_probe_device+0x160/0x298
+> > > >   driver_probe_device+0x7c/0x2a8
+> > > >   __device_attach_driver+0x2a0/0x398
+> > > >   bus_for_each_drv+0x198/0x200
+> > > >   __device_attach+0x1c0/0x308
+> > > >   device_initial_probe+0x20/0x38
+> > > >   bus_probe_device+0x11c/0x1f8
+> > > >   deferred_probe_work_func+0x80/0x250
+> > > >   worker_thread+0x9b4/0x2780
+> > > >   kthread+0x274/0x350
+> > > >   ret_from_fork+0x10/0x20
+> > > >
+> > > >  Freed by task 69:
+> > > >   kasan_save_track+0x40/0x78
+> > > >   kasan_save_free_info+0x58/0x78
+> > > >   __kasan_slab_free+0x48/0x68
+> > > >   kfree+0xd4/0x750
+> > > >   devres_release_all+0x144/0x1e8
+> > > >   really_probe+0x48c/0x698
+> > > >   __driver_probe_device+0x160/0x298
+> > > >   driver_probe_device+0x7c/0x2a8
+> > > >   __device_attach_driver+0x2a0/0x398
+> > > >   bus_for_each_drv+0x198/0x200
+> > > >   __device_attach+0x1c0/0x308
+> > > >   device_initial_probe+0x20/0x38
+> > > >   bus_probe_device+0x11c/0x1f8
+> > > >   deferred_probe_work_func+0x80/0x250
+> > > >   worker_thread+0x9b4/0x2780
+> > > >   kthread+0x274/0x350
+> > > >   ret_from_fork+0x10/0x20
+> > > >
+> > > >  The buggy address belongs to the object at ffffff80c4e9e000
+> > > >   which belongs to the cache kmalloc-4k of size 4096
+> > > >  The buggy address is located 256 bytes inside of
+> > > >   freed 4096-byte region [ffffff80c4e9e000, ffffff80c4e9f000)
+> > > >
+> > > >  The buggy address belongs to the physical page:
+> > > >  head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pinco=
+unt:0
+> > > >  flags: 0x8000000000000040(head|zone=3D2)
+> > > >  page_type: f5(slab)
+> > > >  page: refcount:1 mapcount:0 mapping:0000000000000000
+> > > >  index:0x0 pfn:0x104e98
+> > > >  raw: 8000000000000040 ffffff80c0003040 dead000000000122 0000000000=
+000000
+> > > >  raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000=
+000000
+> > > >  head: 8000000000000040 ffffff80c0003040 dead000000000122 000000000=
+0000000
+> > > >  head: 0000000000000000 0000000000040004 00000001f5000000 000000000=
+0000000
+> > > >  head: 8000000000000003 fffffffec313a601 ffffffffffffffff 000000000=
+0000000
+> > > >  head: 0000000000000008 0000000000000000 00000000ffffffff 000000000=
+0000000
+> > > >  page dumped because: kasan: bad access detected
+> > > >
+> > > >  Memory state around the buggy address:
+> > > >   ffffff80c4e9e000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > >   ffffff80c4e9e080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > >  >ffffff80c4e9e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > >                     ^
+> > > >   ffffff80c4e9e180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > >   ffffff80c4e9e200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > Signed-off-by: Fei Shao <fshao@chromium.org>
+> > >
+> > > I was looking at the driver to try to follow your (awesome btw, thank=
+s)
+> > > commit log, and it does have a quite different structure compared to
+> > > what we recommend.
+> > >
+> > > Would following
+> > > https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care-with-mi=
+pi-dsi-bridges
+> > > help?
+> >
+> > Hi Maxime,
+> >
+> > Thank you for the pointer.
+> > I read the suggested pattern in the doc and compared it with the
+> > drivers. If I understand correctly, both the MIPI-DSI host and panel
+> > drivers follow the instructions:
+> >
+> > 1. The MIPI-DSI host driver must run mipi_dsi_host_register() in its pr=
+obe hook.
+> >    >> drm/mediatek/mtk_dsi.c runs mipi_dsi_host_register() in the probe=
+ hook.
+> > 2. In its probe hook, the bridge driver must try to find its MIPI-DSI
+> > host, register as a MIPI-DSI device and attach the MIPI-DSI device to
+> > its host.
+> >    >> drm/panel/panel-himax-hx83102.c follows and runs
+> > mipi_dsi_attach() at the end of probe hook.
+> > 3. In its struct mipi_dsi_host_ops.attach hook, the MIPI-DSI host can
+> > now add its component.
+> >    >> drm/mediatek/mtk_dsi.c calls component_add() in the attach callba=
+ck.
+> >
+> > Could you elaborate on the "different structures" you mentioned?
+>
+> Yeah, you're right, sorry.
+>
+> > To clarify my point: the issue is that component_add() may return
+> > -EPROBE_DEFER if the component (e.g. DSI encoder) is not ready,
+> > causing the panel bridge to be removed. However, drm_bridge_remove()
+> > is bound to MIPI-DSI host instead of panel bridge, which owns the
+> > actual list_head object.
+> >
+> > This might be reproducible with other MIPI-DSI host + panel
+> > combinations by forcibly returning -EPROBE_DEFER in the host attach
+> > hook (verification with another device is needed), so the fix may be
+> > required in drm/bridge/panel.c.
+
+> Yeah, I think you're just hitting another bridge lifetime issue, and
+> it's not the only one unfortunately. Tying the bridge structure lifetime
+> itself to the device is wrong, it should be tied to the DRM device
+> lifetime instead.
+
+I think the more immediate issue is that the bridge object's lifetime
+and drm_bridge_add/remove are inconsistent when devm_drm_of_get_bridge()
+or drmm_of_get_bridge() are used.
+
+These helpers tie the bridge add/removal to the device or drm_device
+passed in, but internally they call down to drm_panel_bridge_add_typed()
+which allocates the bridge object tied to the panel device.
+> But then, the discussion becomes that bridges typically probe outside of
+> the "main" DRM device probe path, so you don't have access to the DRM
+> device structure until attach at best.
+>
+> That's why I'm a bit skeptical about your patch. It might workaround
+> your issue, but it doesn't actually solve the problem. I guess the best
+> way about it would be to convert bridges to reference counting, with the
+> device taking a reference at probe time when it allocates the structure
+> (and giving it back at remove time), and the DRM device taking one when
+> it's attached and one when it's detached.
+
+Without going as far, it's probably better to align the lifecycle of
+the two parts. Most other bridge drivers in the kernel have |drm_bridge|
+lifecycle tied to their underlying |device|, either with explicit
+drm_bridge_{add,remove}() calls in their probe/bind and remove/unbind
+callbacks respectively, or with devm_drm_bridge_add in the probe/bind
+path. The only ones with a narrower lifecycle are the DSI hosts, which
+add the bridge in during host attach and remove it during host detach.
+
+I'm thinking about fixing the panel_bridge lifecycle such that it is
+tied to the panel itself. Maybe that would involve making
+devm_drm_of_get_bridge() correctly return bridges even if a panel was
+found, and then making the panels create and add panel bridges directly,
+possibly within drm_panel_add(). Would that make sense?
 
 
-On 11/14/2024 9:02 PM, Konrad Dybcio wrote:
-> On 14.11.2024 10:54 AM, Ziyue Zhang wrote:
->> Add configurations in devicetree for PCIe0, including registers, clocks,
->> interrupts and phy setting sequence.
->>
->> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts |  44 +++++-
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 176 ++++++++++++++++++++++
-> This implies this patch should be two separate ones
->
->
-> [...]
->
->
->> +&tlmm {
->> +	pcie0_default_state: pcie0-default-state {
->> +		perst-pins {
->> +			pins = "gpio2";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-down;
->> +		};
->> +
->> +		clkreq-pins {
->> +			pins = "gpio1";
->> +			function = "pcie0_clkreq";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +
->> +		wake-pins {
->> +			pins = "gpio0";
-> Sorting these in an increasing order would be welcome
->
->
->>   
->> +		pcie0: pci@1c00000 {
->> +			compatible = "qcom,pcie-qcs8300","qcom,pcie-sa8775p";
-> Missing ' ' after ','
->
->> +			reg = <0x0 0x01c00000 0x0 0x3000>,
->> +			      <0x0 0x40000000 0x0 0xf20>,
->> +			      <0x0 0x40000f20 0x0 0xa8>,
->> +			      <0x0 0x40001000 0x0 0x4000>,
->> +			      <0x0 0x40100000 0x0 0x100000>,
->> +			      <0x0 0x01c03000 0x0 0x1000>;
->> +
->> +			reg-names = "parf",
->> +				    "dbi",
->> +				    "elbi",
->> +				    "atu",
->> +				    "config",
->> +				    "mhi";
->> +
->> +			device_type = "pci";
-> Please try to match the style in x1e80100, it's mostly coherent but
-> things like newlines differ, which is tiny but mildly annoying
->
->> +
->> +			#address-cells = <3>;
->> +			#size-cells = <2>;
->> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
->> +				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
-> Looks like there's a bit more space in there
->> +			bus-range = <0x00 0xff>;
->> +
->> +			dma-coherent;
->> +
->> +			linux,pci-domain = <0>;
->> +			num-lanes = <2>;
->> +
->> +			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			interrupt-names = "msi0",
->> +					  "msi1",
->> +					  "msi2",
->> +					  "msi3",
->> +					  "msi4",
->> +					  "msi5",
->> +					  "msi6",
->> +					  "msi7";
-> Please also add a "global" interrupt.. looks like it's GIC_SPI 166, but
-> please confirm
-> okay
->> +
->> +			#interrupt-cells = <1>;
->> +			interrupt-map-mask = <0 0 0 0x7>;
->> +			interrupt-map = <0 0 0 1 &intc GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
->> +					<0 0 0 2 &intc GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>,
->> +					<0 0 0 3 &intc GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
->> +					<0 0 0 4 &intc GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
->> +				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
->> +				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
->> +				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>,
->> +				 <&gcc GCC_PCIE_0_SLV_Q2A_AXI_CLK>;
->> +
->> +			clock-names = "aux",
->> +				      "cfg",
->> +				      "bus_master",
->> +				      "bus_slave",
->> +				      "slave_q2a";
->> +
->> +			assigned-clocks = <&gcc GCC_PCIE_0_AUX_CLK>;
->> +			assigned-clock-rates = <19200000>;
->> +
->> +			interconnects = <&pcie_anoc MASTER_PCIE_0 0 &mc_virt SLAVE_EBI1 0>,
-> QCOM_ICC_TAG_ALWAYS
-> okay
->> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_PCIE_0 0>;
-> QCOM_ICC_TAG_ACTIVE_ONLY
->
-> [...]
-> okay
->> +
->> +			pcieport0: pcie@0 {
->> +				device_type = "pci";
->> +				reg = <0x0 0x0 0x0 0x0 0x0>;
->> +				#address-cells = <3>;
->> +				#size-cells = <2>;
->> +				ranges;
->> +				bus-range = <0x01 0xff>;
->> +			};
-> Are you going to use this? If not, please drop
+Thanks
+ChenYu
 
-its required by wlan driver we need it
-
-BRs
-
-Ziyue
-
+> It's much more involved than just another helper though :/
 >
->> +		};
->> +
->> +		pcie0_phy: phy@1c04000 {
->> +			compatible = "qcom,qcs8300-qmp-gen4x2-pcie-phy";
->> +			reg = <0x0 0x1c04000 0x0 0x2000>;
->> +
->> +			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
-> This clock goes to the RC, it should be _PHY_AUX (which you put below
-> as phy_aux), please replace it.
-> will do it
->> +				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
->> +				 <&gcc GCC_PCIE_CLKREF_EN>,
->> +				 <&gcc GCC_PCIE_0_PHY_RCHNG_CLK>,
->> +				 <&gcc GCC_PCIE_0_PIPE_CLK>,
->> +				 <&gcc GCC_PCIE_0_PIPEDIV2_CLK>,
->> +				 <&gcc GCC_PCIE_0_PHY_AUX_CLK>;
->> +
->> +			clock-names = "aux",
->> +				      "cfg_ahb",
->> +				      "ref",
->> +				      "rchng",
->> +				      "pipe",
->> +				      "pipediv2",
->> +				      "phy_aux";
-> Konrad
+> Maxime
 
