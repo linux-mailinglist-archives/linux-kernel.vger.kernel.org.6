@@ -1,168 +1,150 @@
-Return-Path: <linux-kernel+bounces-423794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1F19DACC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:59:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF27166DB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:59:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8AB2010E9;
-	Wed, 27 Nov 2024 17:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A9fwf9Ub"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1318C9DACD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:04:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54D71F9EDC;
-	Wed, 27 Nov 2024 17:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD59028219B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:04:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E522010E8;
+	Wed, 27 Nov 2024 18:04:24 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A940913BC35
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732730383; cv=none; b=mysrJlaw4MZL6G0YOQ1J3dN6DsQleogJeN37oTGMSiUQX5nbShm4WOCEFKuIsztj+e3T3vZkUn0pmd0xeMMz8iQz5w6NDKJk5zlhtIkdaB1EBswdJPyAlvugtf6d7pkXJUMOPxYY1oemyjoh1AEYyL86mMNllmHHdYsN8qZxlGY=
+	t=1732730664; cv=none; b=Ncnnm1R/mJ/sslxq+BUxvpg3J4Og6fG1l/MM4DHIbOYsqTmkxkvK7H/QYZfEQ6TI1d86A+FxtTMGBOfT+3hH4dwTfptKX0m3oIkmH6xCJUNMEoNH8l1mClYuKqTnGqyEVKmfIQa2xikj94gofE8HzCQiVkGqnFi5rrbSeZaWMGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732730383; c=relaxed/simple;
-	bh=RXNxyxBpGXpGgg17BVRBF+StkiICtLDNa4Qra1sN+6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lbs9dXoexWu7xAGh94CnRlU9h96VhcdWYlKwcinQkmrCUxNTuups6vHYw5wIIRPYzaYaipSh+6/m48vUTws0J5cgAKWJjvsYvnOX0uwsCqFvO6E+jjc373FmX2jbpSz59EETltcAOnuYY1DIqwCMNZUqYDukh8qvSHJQeYDotfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A9fwf9Ub; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8402778C;
-	Wed, 27 Nov 2024 18:59:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732730354;
-	bh=RXNxyxBpGXpGgg17BVRBF+StkiICtLDNa4Qra1sN+6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A9fwf9Ub1cQm5UxIUWylxhnOXcgShjapC2U8RfcO96D50PUxukVaEZfQL2bWyyZLC
-	 3EUDK2+DUmN2RYwrv64hWF3DmIp3Bg3Wt6HCm+/oyxs9e+90yBg7Kg4aS7uvr1sMxN
-	 KQeaPkQHvsU2ECn17VwG3L077lyQPIMUcMtx5c/c=
-Date: Wed, 27 Nov 2024 19:59:26 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>
-Subject: Re: [PATCH] docs: media: document media multi-committers rules and
- process
-Message-ID: <20241127175926.GA13800@pendragon.ideasonboard.com>
-References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
- <20241126151930.GA5493@pendragon.ideasonboard.com>
- <20241127103948.501b5a05@foz.lan>
- <20241127124629.704809f1@foz.lan>
- <20241127133938.GI31095@pendragon.ideasonboard.com>
- <20241127160923.7eca17d1@sal.lan>
+	s=arc-20240116; t=1732730664; c=relaxed/simple;
+	bh=JzS500PxWffVihiDZ7AMokjE5g31kEYPPG3bsEBc0Sc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=A28Bt/RR/G9XOYSga+P1TXYFSwAmclLfNnsc08ub7HrUNDheDAhZaAxNyACogI6bGKbsfffQmyKGTVTlkz02ycsQpModx2tn9VIHADEppRNy2Mg2JI7jnuDoZn5sswQs5S7Ii6UACiGyAjIj51s3zDFPoGE1kTSkmcvPsjcWgXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7932544c4so67483025ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:04:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732730662; x=1733335462;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/f5h0Y9XRI0DexcqLkUpUpE+N2FUo+0oErMpwWJ3jNs=;
+        b=q4TxrOLbRBy3ZotFOLFPqnktSupEZqHbXhSZoVujHnot7RLcHTJBTCYGa9wvqO5szY
+         tl4VejmZhXD/k28Dls5CWhwjEZC5tCKkZXYaZor9ij3ScPHPxSe2fQF9ISPYBXOkWVwm
+         PAeYbegp/Sf7ooxj6e8NS2ptI6u/g4Cum1JLnzFp/u17WQ8wEDSI/3Bfj1i19qGBIcPZ
+         RSpZYR8uXo0vYXAfrQQ9zjjicnWkZgOtqt2iCBy2fEMhB2MSFN9G+2KiupLi/rOj1/hW
+         im0FKvHYwHGH3EsUZWHwOyBh76BrqwdUpi7OBDOYZk5dREIR5CDOc347oDB09VTl9hbG
+         25yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAB++GVUD2xANFmQoRkhWt822o0bF5q3gO+R2sYFupTitvI08Pa+ORxLuvZ4cb0xK9Mv423AiQZ5qH5QA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS7xLm11P+LcPWtRylrWskmFrdE+E8vsRb1XEir7BFlpy0CjNr
+	xDRQl/1Q+iE4HlZ5nnPJLpO2Jo91vfjRQS+gLB7AXMxiYVLFBe1RxhUMAUT+1gwuS4ThIfA1l4a
+	K+g99ZD3prVNKBuFdgJ96hArer/hCbz3e/9UKhqmMsTn5CyGdepzXcQs=
+X-Google-Smtp-Source: AGHT+IGHHygyC07GPZNk2r7m71YWqRIOtS05ffHx/ZNW9xXsuWg/zpzCfCqB0FyvgeWQS0ANOw+qfdz+vXEjjbhTMQz/4LgsMC3D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241127160923.7eca17d1@sal.lan>
+X-Received: by 2002:a05:6e02:4414:20b0:3a7:c5b1:a55c with SMTP id
+ e9e14a558f8ab-3a7c5b1a6f5mr25603915ab.0.1732730661882; Wed, 27 Nov 2024
+ 10:04:21 -0800 (PST)
+Date: Wed, 27 Nov 2024 10:04:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67475f25.050a0220.253251.005b.GAE@google.com>
+Subject: [syzbot] [fuse?] KASAN: null-ptr-deref Read in fuse_copy_do
+From: syzbot <syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 27, 2024 at 04:09:23PM +0100, Mauro Carvalho Chehab wrote:
-> Em Wed, 27 Nov 2024 15:39:38 +0200 Laurent Pinchart escreveu:
-> > On Wed, Nov 27, 2024 at 12:54:15PM +0100, Mauro Carvalho Chehab wrote:
-> > > Em Wed, 27 Nov 2024 10:39:48 +0100 Mauro Carvalho Chehab escreveu:
-> > >   
-> > > > > This workflow doesn't apply to patch submitters who are not allowed to
-> > > > > send pull requests and who don't have direct commit access. I thought
-> > > > > these submitters are the main audience of this document. In that case, I
-> > > > > think moving the next section that explains the e-mail workflow before
-> > > > > the "Media development workflow" section (which should likely be renamed
-> > > > > to make it clear that it is about merging patches, not developing them)
-> > > > > would be best. The "Review Cadence" section could also be folded in
-> > > > > there, to give a full view of what a submitter can expect.
-> > > > > 
-> > > > > This would also have the advantage of introducing the linuvtv.org
-> > > > > patchwork instance, which you reference above. Documents are more
-> > > > > readable when they introduce concepts first before using them.    
-> > > > 
-> > > > Will try to do such change at v2.  
-> > > 
-> > > Actually, both workflows (a) and (b) apply to the ones that can't
-> > > send pull requests or push at media-committers.git:
-> > > 
-> > > ---
-> > > 
-> > > a. Normal workflow: patches are handled by subsystem maintainers::
-> > > 
-> > >      +------+   +---------+   +-------+   +-----------------------+   +---------+
-> > >      |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge      |-->|media.git|
-> > >      +------+   +---------+   |request|   |in media-committers.git|   +---------+
-> > >                               +-------+   +-----------------------+
-> > > 
-> > >    For this workflow, pull requests can be generated by a committer,
-> > >    a previous committer, subsystem maintainers or by a couple of trusted
-> > >    long-time contributors. If you are not in such group, please don't submit
-> > >    pull requests, as they will likely be ignored.
-> > > 
-> > > b. Committers' workflow: patches are handled by media committers::
-> > > 
-> > >      +------+   +---------+   +--------------------+   +-----------+   +---------+
-> > >      |e-mail|-->|patchwork|-->|committers merge at |-->|maintainers|-->|media.git|
-> > >      +------+   +---------+   |media-committers.git|   |approval   |   +---------+
-> > >                               +--------------------+   +-----------+
-> > > 
-> > > ---
-> > > 
-> > > No matter who sent an e-mail, this will be picked by patchwork and either
-> > > be part of a PR or a MR, depending on who picked it.  
-> > 
-> > Today the "normal" workflow for contributors who don't send pull
-> > requests is that you or Hans will pick their patches from the list.
-> 
-> True, but we've been following process (b) since the last merge window: we
-> are generating merges at the media-committers.git. As we're maintainers, 
-> the "maintainers approval" step is also handled by us, by the one that
-> submitted the MR, after checking the media-ci results.
-> 
-> > That's why I mentioned that neither of the above workflows apply there.
-> > Now, if we consider that you and Hans will keep doing that for some
-> > patches, and merge them using the committers workflow (where you would
-> > handle both steps of merging in the shared tree and giving the
-> > maintainer approval), it's true that the normal workflow would be one of
-> > the two above.
-> 
-> Yes, that's the case.
-> 
-> > Looking at the pull requests sent to the list over the past twelve
-> > months, we have
-> > 
-> >      32 Sakari Ailus
-> >      24 Hans Verkuil
-> >      22 Laurent Pinchart
-> >      21 Sebastian Fricke
-> >       7 Sean Young
-> >       7 Hans de Goede
-> >       4 Stanimir Varbanov
-> >       1 Shuah Khan
-> > 
-> > I expect people in that list to get commit rights either from the very
-> > beginning or very soon after. The committer workflow (if we consider it
-> > as including how you and Hans will continue picking patches from the
-> > list) will be the new norm. how about flipping things and listing it as
-> > a), and then name b) the "Pull request workflow" instead of the "Normal
-> > workflow" ? I would even go as far as proposing documenting the pull
-> > request workflow as legacy.
-> 
-> Renaming from Normal work flow to Pull request workflow makes sense.
-> 
-> The pull request workflow won't be legacy. Even with major contributors
-> using the new workflow for "normal work", pull requests will still be
-> generated for API changes.
+Hello,
 
-OK, let's not mark it as deprecated, we can just rename it to "Pull
-request workflow". I'd still prefer to list it as b) but won't make that
-a casus belli.
+syzbot found the following issue on:
 
--- 
-Regards,
+HEAD commit:    445d9f05fa14 Merge tag 'nfsd-6.13' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12733530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c44a32edb32752c
+dashboard link: https://syzkaller.appspot.com/bug?extid=87b8e6ed25dbc41759f7
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fd43c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cf2f5f980000
 
-Laurent Pinchart
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9fd8dd2a6550/disk-445d9f05.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/af034d90afcb/vmlinux-445d9f05.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/07a713832258/bzImage-445d9f05.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+87b8e6ed25dbc41759f7@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: null-ptr-deref in fuse_copy_do+0x183/0x320 fs/fuse/dev.c:809
+Write of size 5 at addr 0000000000000000 by task syz-executor159/5840
+
+CPU: 0 UID: 0 PID: 5840 Comm: syz-executor159 Not tainted 6.12.0-syzkaller-09734-g445d9f05fa14 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ kasan_report+0xd9/0x110 mm/kasan/report.c:602
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ __asan_memcpy+0x3c/0x60 mm/kasan/shadow.c:106
+ fuse_copy_do+0x183/0x320 fs/fuse/dev.c:809
+ fuse_copy_one fs/fuse/dev.c:1065 [inline]
+ fuse_copy_args+0x1e6/0x770 fs/fuse/dev.c:1083
+ copy_out_args fs/fuse/dev.c:1966 [inline]
+ fuse_dev_do_write+0x1cc1/0x3720 fs/fuse/dev.c:2052
+ fuse_dev_write+0x14f/0x1e0 fs/fuse/dev.c:2087
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa4c9df3c0f
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 89 5e 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 dc 5e 02 00 48
+RSP: 002b:00007fa4c9da71e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fa4c9e7f3e8 RCX: 00007fa4c9df3c0f
+RDX: 0000000000000015 RSI: 0000000020000540 RDI: 0000000000000003
+RBP: 00007fa4c9e7f3e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007fa4c9e4c33c
+R13: 00007fa4c9e44027 R14: 00007fff3bcf2380 R15: 00007fa4c9e4a338
+ </TASK>
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
