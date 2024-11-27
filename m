@@ -1,290 +1,156 @@
-Return-Path: <linux-kernel+bounces-423025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF34E9DA188
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:41:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BCB9DA18A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:43:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D2416800F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E0D168179
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA513C9A6;
-	Wed, 27 Nov 2024 04:41:32 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CC181AD7;
+	Wed, 27 Nov 2024 04:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d6H4XFUU"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059CA481CD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B672314F90
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732682491; cv=none; b=iQxw2Y4pHzWh2ebXKsmXFHFwHs9kMlsgTvpkp7uEhAh6GZL3gh56f02OQN46mL94aTSl+Zh9JMlAxWiflb1OqR+dl2WUsoMHZOJDJmrVPsrdYVjTzW3O6+wGzLck5CzOgq7bofzs4j42IlUU996L+ACysTrVLrRIKQI8Ca676To=
+	t=1732682596; cv=none; b=G0ZDiVmtGBPli8WCAGnqiptuH5YBGF8tAvBv1hRyDH60cENDaiTC1WwAtPekpASdWXn8HI1Qrt6C/xvOpShKBztOnq8UQwstSxwUlm9k+W8yHdxfPVuD7OZJwuAg3Q6SeGxtvPg5xuAPClTM1QeRM8SZoKHsCmfe76CP+twMQWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732682491; c=relaxed/simple;
-	bh=GT/nl1AGpKErtYHJ+X9IZWzidORUpehWetkl1mup8rY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JeRr3Tiu7RBcrT+zS+jMNK8E+E76J0w1kBhVVRjCi7/o3BHyXoBLEwPawOzwGBekwRf5GEuqrgNiRbg6ZRQ2QsFJQmaS45KjxUN0G28QBouooGe36BKnn7YCKGO5AEMRtmPxKUxYib1SZINiU9UpksM6ip2r55KuscVpdcPmLIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-843eac1b9dbso98314439f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:41:29 -0800 (PST)
+	s=arc-20240116; t=1732682596; c=relaxed/simple;
+	bh=b0a9mbaAx6zBnaux2dFdVBPuuQxiQ0zP49OgKzFZRRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SMStwCSjtI+rnDYQgRuGPNnqd66iuTJiZXXWaW6OwhieE24lL6RFy354OaCyzSLTE+Mu/0Fv6gCWV9E5TLJx6ivnMzJDro96hqWldtCv7sv4wkehFEUqRn9gJ2IulTJpwvK9cov07V7ge+BpVKN1chWSn4LGEBnAt9xrv5Ei47M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d6H4XFUU; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5f1d1068451so1462413eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:43:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732682593; x=1733287393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=buIj9lD4l7EjMTWNqbbtXYSQ2Eo8RWol7XgFHIWEhAQ=;
+        b=d6H4XFUUyPoqKF4kCp+wHDF7NA5T6GSzjisgasyCWkJGuPzgN7dOz4z7SzmS6EqjzZ
+         EjlUdTAqawJ4NyD4UfmaeNaPAbWHcEC+MCb07RUbjFoSPqjN8YjBmNS7nmnL+3jJanNX
+         KCdvz5YBM2bozxeTwl9rSzCCmXOgb7U9n3i+s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732682489; x=1733287289;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fM+Hy8Hr0VEn0/qCKpSvIifMReAzuRgBAAaIkzjf404=;
-        b=O50D5TSccqgumnym3qTThaNlXKbIMqf0YbjJROkKz402R5qpF6B2cz6VO4P3GZ+QXF
-         5y7jua93n6FsWyR9IW2ADi9ShfaCEKCvaL0BqKxlfyWEUjNyMKRbVMXWVPhWygZQj+aW
-         pQqh1tkeTl9bhk9aBQWOTzZkrow56AO0DqY3f9EXv7uf4LfzyJTEaBOuwOKmCy9xYFMe
-         UV2W+knSn+VjWuErMVam0zsiI8c4T7k1Y+UCJRwMl9jqQnGwcmIvLTEQ6HO1hZRvXvKK
-         Q395kWUcLcUv7opJPmuWsI6wc7xHwdNVAq46LhlcUkuZM6ubt+09c4xstWwXb9d+j4Ou
-         BINg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJe/uLILeLBRT348Nitmg81pk7gqG6zGJgcPwBb6d5fJ4tS0O0uPez7pBQSDadMMvC2N9xqrqjofF1SXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDSRIBoBLqlfgDnR+IIfv8WQLG3R4tXLE60XBDMxxv45cuyOrH
-	xyCBxPOGNr1e1foBZlidHo8msblbcOVOrELbVH+R9CS1lo/tKamZAmU1t9mJJ8UjjWNa5yKJnVM
-	tgFnXbBRQTbtwMO4vdacBZRgljKDTj2NK5qcfF+6lhStoSraIVOG9XyE=
-X-Google-Smtp-Source: AGHT+IF7JS6O/ppGLz3JPYdk+v176s/+1CmUTZORzj3cCNO74MDeX75CgLQsuibvcuEpVPhM+s2KTZP+xwA6CL+8F19V7x+Wdb95
+        d=1e100.net; s=20230601; t=1732682593; x=1733287393;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=buIj9lD4l7EjMTWNqbbtXYSQ2Eo8RWol7XgFHIWEhAQ=;
+        b=VDVHhhIrZNIaRKE1nNt5RnOcdpCHW2o9lgIU9o/+2DYGL7IwZvo4RyRCVhRE5OczW0
+         rnnveT8Zi09+YlkX9Fk6JjcTw+hhtAvDBYVmYfP/1ElKFUs8R959Xql+W+UeyUo0re4n
+         nKanmlIOyMzW+Pvlp5lKiLwORepYNr1Kx5nUmoZEZLbkfPLVEnuuCtqAHubZ9bMaAkfg
+         X2NKFGwDEEiXc9j8kWqajIwMCBy58oskcOkQVB/OplN2/DqN8beK+9Z7xMLv+5T101Xj
+         /wd0DyhQommzG8NPgQG9HfgFNYYnk3QgyPxIQ/pbazS/g8pPcG0P9QlAS3OY5GDABS1i
+         SiXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGYnA9cY4W53r/2Vi//XJeZw8lboEgDF1gr6l+HV3ggD9jl2jvaAkSqbGvFVwtE5lfcuQRVs1CpF5uCdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKi7C+vmmdBO2Lk1neD/PK1eVjpns3M+RKEVV4PfiB7YTnH1BP
+	a4u+ErQZcGrEF1mhkxrVUWadPlt5Rdm288usy+1Wefkpggqa9c19UVkM2plJPUGmwxY/enNXV/a
+	njy+3UIxMHFTu0s8wW+xkZYFiBF/MAF/QOyzP
+X-Gm-Gg: ASbGncuJaGWuQu1lUUIzg53ks9jIErMHgbuQ3krtATywcjyES4U8yWcxZsFu89ehvR7
+	2Jw96Drp1/I4OXEXMJaOnkD4gB6WkC2z7zdu7byaOV6UifVooR20TD8zEOQM=
+X-Google-Smtp-Source: AGHT+IHzVwgmp24HNWYR9QgilyN0+vKnYnhsqeCOo3U9Uzr8ko0VEjMW3SCABnxFA+zY3W8ifSeKNUAKmHsycZau8KU=
+X-Received: by 2002:a05:6808:3082:b0:3ea:5a0e:941c with SMTP id
+ 5614622812f47-3ea6dbc8cb9mr1709943b6e.10.1732682592979; Tue, 26 Nov 2024
+ 20:43:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2144:b0:3a7:7124:bd2c with SMTP id
- e9e14a558f8ab-3a7c55d9bddmr19621205ab.19.1732682489074; Tue, 26 Nov 2024
- 20:41:29 -0800 (PST)
-Date: Tue, 26 Nov 2024 20:41:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6746a2f9.050a0220.21d33d.001f.GAE@google.com>
-Subject: [syzbot] [btrfs?] possible deadlock in __btrfs_release_delayed_node (4)
-From: syzbot <syzbot+aa35cc34a0cc8c783a7f@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241127030221.1586352-1-xji@analogixsemi.com>
+In-Reply-To: <20241127030221.1586352-1-xji@analogixsemi.com>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 27 Nov 2024 12:43:02 +0800
+Message-ID: <CAEXTbpe=3mN-wCJGRVe7SSbzr5J=zFhWOF30jm5HH4cN_GyK_w@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge:anx7625: Update HDCP status at atomic_disable()
+To: Xin Ji <xji@analogixsemi.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	bliang@analogixsemi.com, qwen@analogixsemi.com, treapking@google.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Nov 27, 2024 at 11:02=E2=80=AFAM Xin Ji <xji@analogixsemi.com> wrot=
+e:
+>
+> Update HDCP content_protection to DRM_MODE_CONTENT_PROTECTION_UNDESIRED
+> in bridge .atomic_disable().
+>
+> Signed-off-by: Xin Ji <xji@analogixsemi.com>
 
-syzbot found the following issue on:
-
-HEAD commit:    2c22dc1ee3a1 Merge tag 'mailbox-v6.13' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e90f5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=472032c4f88b28ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa35cc34a0cc8c783a7f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2c22dc1e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/edc4991391e8/vmlinux-2c22dc1e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ddbf30097ad/bzImage-2c22dc1e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aa35cc34a0cc8c783a7f@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-syzkaller-09435-g2c22dc1ee3a1 #0 Not tainted
-------------------------------------------------------
-kswapd1/79 is trying to acquire lock:
-ffff888052b8b678 (&delayed_node->mutex){+.+.}-{4:4}, at: __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
-
-but task is already holding lock:
-ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
-ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
-       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       slab_pre_alloc_hook mm/slub.c:4055 [inline]
-       slab_alloc_node mm/slub.c:4133 [inline]
-       __kmalloc_cache_noprof+0x41/0x390 mm/slub.c:4309
-       kmalloc_noprof include/linux/slab.h:901 [inline]
-       kzalloc_noprof include/linux/slab.h:1037 [inline]
-       kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
-       loop_set_size drivers/block/loop.c:233 [inline]
-       loop_set_status+0x5f0/0x8f0 drivers/block/loop.c:1285
-       lo_ioctl+0xcbc/0x1f50
-       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&q->q_usage_counter(io)#17){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
-       __submit_bio+0x2c6/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       btrfs_submit_chunk fs/btrfs/bio.c:745 [inline]
-       btrfs_submit_bbio+0xf93/0x18e0 fs/btrfs/bio.c:773
-       read_extent_buffer_pages+0x65a/0x910 fs/btrfs/extent_io.c:3558
-       btrfs_read_extent_buffer+0xd9/0x770 fs/btrfs/disk-io.c:229
-       read_block_for_search+0x79e/0xbb0 fs/btrfs/ctree.c:1619
-       btrfs_search_slot+0x121b/0x3150 fs/btrfs/ctree.c:2236
-       btrfs_init_root_free_objectid+0x148/0x330 fs/btrfs/disk-io.c:4837
-       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
-       btrfs_get_root_ref+0x5d7/0xc30 fs/btrfs/disk-io.c:1364
-       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
-       open_ctree+0x2470/0x2a30 fs/btrfs/disk-io.c:3532
-       btrfs_fill_super fs/btrfs/super.c:972 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
-       btrfs_get_tree+0x1274/0x1a10 fs/btrfs/super.c:2105
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       fc_mount+0x1b/0xb0 fs/namespace.c:1231
-       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
-       btrfs_get_tree+0x65b/0x1a10 fs/btrfs/super.c:2106
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (btrfs-tree-00){++++}-{4:4}:
-       reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5374
-       __lock_release kernel/locking/lockdep.c:5563 [inline]
-       lock_release+0x396/0xa30 kernel/locking/lockdep.c:5870
-       up_write+0x79/0x590 kernel/locking/rwsem.c:1629
-       btrfs_tree_unlock_rw fs/btrfs/locking.h:201 [inline]
-       btrfs_unlock_up_safe+0x179/0x3b0 fs/btrfs/locking.c:225
-       search_leaf fs/btrfs/ctree.c:1944 [inline]
-       btrfs_search_slot+0x2748/0x3150 fs/btrfs/ctree.c:2188
-       btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4350
-       btrfs_insert_delayed_item fs/btrfs/delayed-inode.c:758 [inline]
-       btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:836 [inline]
-       __btrfs_commit_inode_delayed_items+0xd5d/0x24a0 fs/btrfs/delayed-inode.c:1126
-       __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
-       flush_space+0x24a/0xd00 fs/btrfs/space-info.c:775
-       btrfs_async_reclaim_metadata_space+0x113/0x350 fs/btrfs/space-info.c:1105
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (&delayed_node->mutex){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
-       btrfs_evict_inode+0x73d/0x1070 fs/btrfs/inode.c:5374
-       evict+0x4e8/0x9a0 fs/inode.c:796
-       dispose_list fs/inode.c:845 [inline]
-       prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
-       super_cache_scan+0x38c/0x4b0 fs/super.c:223
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
-       shrink_one+0x43b/0x850 mm/vmscan.c:4836
-       shrink_many mm/vmscan.c:4897 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4975 [inline]
-       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
-       kswapd_shrink_node mm/vmscan.c:6785 [inline]
-       balance_pgdat mm/vmscan.c:6977 [inline]
-       kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  &delayed_node->mutex --> &q->q_usage_counter(io)#17 --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&q->q_usage_counter(io)#17);
-                               lock(fs_reclaim);
-  lock(&delayed_node->mutex);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd1/79:
- #0: ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
- #0: ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
- #1: ffff8880436800e0 (&type->s_umount_key#45){++++}-{4:4}, at: super_trylock_shared fs/super.c:562 [inline]
- #1: ffff8880436800e0 (&type->s_umount_key#45){++++}-{4:4}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 79 Comm: kswapd1 Not tainted 6.12.0-syzkaller-09435-g2c22dc1ee3a1 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
- __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
- btrfs_evict_inode+0x73d/0x1070 fs/btrfs/inode.c:5374
- evict+0x4e8/0x9a0 fs/inode.c:796
- dispose_list fs/inode.c:845 [inline]
- prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
- super_cache_scan+0x38c/0x4b0 fs/super.c:223
- do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
- shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
- shrink_one+0x43b/0x850 mm/vmscan.c:4836
- shrink_many mm/vmscan.c:4897 [inline]
- lru_gen_shrink_node mm/vmscan.c:4975 [inline]
- shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
- kswapd_shrink_node mm/vmscan.c:6785 [inline]
- balance_pgdat mm/vmscan.c:6977 [inline]
- kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Tested-by: Pin-yen Lin <treapking@chromium.org>
+> ---
+>  drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/=
+bridge/analogix/anx7625.c
+> index a2675b121fe4..a75f519ddcb8 100644
+> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data =
+*ctx)
+>                                  TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
+>  }
+>
+> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
+> +{
+> +       struct device *dev =3D ctx->dev;
+> +
+> +       if (!ctx->connector)
+> +               return;
+> +
+> +       anx7625_hdcp_disable(ctx);
+> +
+> +       ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
+> +       drm_hdcp_update_content_protection(ctx->connector,
+> +                                          ctx->hdcp_cp);
+> +
+> +       dev_dbg(dev, "update CP to UNDESIRE\n");
+> +}
+> +
+>  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
+>  {
+>         u8 bcap;
+> @@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct a=
+nx7625_data *ctx,
+>                         dev_err(dev, "current CP is not ENABLED\n");
+>                         return -EINVAL;
+>                 }
+> -               anx7625_hdcp_disable(ctx);
+> -               ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
+> -               drm_hdcp_update_content_protection(ctx->connector,
+> -                                                  ctx->hdcp_cp);
+> -               dev_dbg(dev, "update CP to UNDESIRE\n");
+> +
+> +               anx7625_hdcp_disable_and_update_cp(ctx);
+>         }
+>
+>         if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_ENABLED) {
+> @@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct dr=
+m_bridge *bridge,
+>
+>         dev_dbg(dev, "drm atomic disable\n");
+>
+> +       anx7625_hdcp_disable_and_update_cp(ctx);
+> +
+>         ctx->connector =3D NULL;
+>         anx7625_dp_stop(ctx);
+>
 
