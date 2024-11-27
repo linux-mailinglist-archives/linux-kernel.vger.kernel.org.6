@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-423735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA819DAC02
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:46:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52AC1629C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:46:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AC320101F;
-	Wed, 27 Nov 2024 16:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="QQPuhk0h"
-Received: from mail.fris.de (mail.fris.de [116.203.77.234])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86AA89DABF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:43:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F2F20101E;
-	Wed, 27 Nov 2024 16:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F05281589
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:43:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5C0200BB8;
+	Wed, 27 Nov 2024 16:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="G+29scSU"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9232200BA7;
+	Wed, 27 Nov 2024 16:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732725904; cv=none; b=mhv6Topf82TX+a8LXPSq/pL4vMuZTsldw7dFfROyXXZkYzYEYYo2lzMfapQHius6863S1hwA8CjO9mW4vouEqSai1K443ia98ZkxkvKuTtUlyIA/1LFPYEpAiKDSJIGSk/rmmdcTVx9xsIHuwzBZIJyFzOt3oN/Mz8rgf2dGh60=
+	t=1732725773; cv=none; b=irQgX/1pirPZOOCiga4pDNtEpk4VDRsgDu+DaTCB0/TifDS3YIH7JY8tF+nzrCBIRIHW0dPCR5fB73Xk4JVRVKGTUBF86HVnyhFcpyan2UX1JYzFF7OKFRa6L6bFj/tcxZ5gNNtQL3M7lPaVs2rVpWPi0yFV/foVzW6gZ7bv5B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732725904; c=relaxed/simple;
-	bh=aI5K8bUZW3h7PptuwM64HWWKYAllkjMLFVRPAJdSTMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ck4eMvRd8o0kEzuX3R7ipbXES8mbp62Ikmyse6QlqLqXoj8SMk454Op65L86Ba3YX9zce8EQyO+EtAPpjsVbNvk9Jh3X/2IgdH6+WgYNtkiwCNAk5UrGgBuT1SS7a5i8nlwB6gxBxvkinbE4gpNwZ6IQUn/FFOad9DJFeQPp59I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=QQPuhk0h; arc=none smtp.client-ip=116.203.77.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D471BFB68;
-	Wed, 27 Nov 2024 17:45:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1732725900; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GhtswKrs5hWgUHWTjspzoBdgsbXdHPpxNxDCoXZGs+A=;
-	b=QQPuhk0hAAXOKMhdeO7MSjXUxOA6Ht9IjSizaQMw8s28RNbRzPYFR2M/ij2ojM/L/O1DHM
-	MhW3Lm9wuUCCZHwtW2gkquuufVlWMXKsHfAs/TVghYK9pjA6nSUyUaeKEQONuD8T2EtT/F
-	CVedpawlZs8qEtNcBoTIVNFEhjZuViiL1VXsexyT86bx1UN6AZqyIIigSV+/Ekl4+syM6/
-	qvV3doIz1YECSHiZmVkERYKt9ZBCG08sqeabwks+24EjPImgXiT0A17GbCJz1AN6+Hbudf
-	b7eIaCe/1CXr+lAJ0aURETN18ujwlXU7/Us8UURR5VYq92EGqfl8UCDhzac2rw==
-From: Frieder Schrempf <frieder@fris.de>
-To: linux-arm-kernel@lists.infradead.org,
-	Marek Vasut <marex@denx.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v2 11/11] arm64: dts: imx8mp-kontron: Add support for reading SD_VSEL signal
-Date: Wed, 27 Nov 2024 17:42:27 +0100
-Message-ID: <20241127164337.613915-12-frieder@fris.de>
-In-Reply-To: <20241127164337.613915-1-frieder@fris.de>
-References: <20241127164337.613915-1-frieder@fris.de>
+	s=arc-20240116; t=1732725773; c=relaxed/simple;
+	bh=gYEm5B35nIqK8/VYxZLl5rw6/UAnKfqXCZ4Y6fVdcK0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FBi2zOoxPtMJTBZmBaoYg5rxynTkrFJ/u+XZn59RTFa/O51NSDRQGh2FSa6T6/gE22RuDKueutIY6zfJgtaaI47+rvG+3jyCpa4T4C6uwCKbwW08l7B2q0ef+4lMUIzzagx+UUNY+IaDsreM+yjxALMVOuM1ZkSNvyStWVe1fcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=G+29scSU; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732725768;
+	bh=gYEm5B35nIqK8/VYxZLl5rw6/UAnKfqXCZ4Y6fVdcK0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=G+29scSU7ixvk4g/uC8xB3XZeRTiw8MjzXTTD87YkOtkPK7eSftI2F7RI2pACEFsy
+	 i4u8VniohsPVB4hRCCfmvuWoBGagi+fOzgqBs/VqSWjwDYKOZwc5ItsxunC0VxMF2Q
+	 NalHGNoONe+C+L8CnNAi5+DwGiuzZLrjP1v7e0/U=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 27 Nov 2024 17:42:47 +0100
+Subject: [PATCH] HID: bpf: drop unneeded casts discarding const
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Message-Id: <20241127-hid-bpf-cast-v1-1-f26424960e84@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAAZMR2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyNz3YzMFN2kgjTd5MTiEt1UYyMzE4s0sySLNHMloJaCotS0zAqwcdG
+ xtbUAn/ppVl4AAAA=
+X-Change-ID: 20241127-hid-bpf-cast-e32648f6b8f7
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732725768; l=2876;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=gYEm5B35nIqK8/VYxZLl5rw6/UAnKfqXCZ4Y6fVdcK0=;
+ b=uo2iRztWNgZDb/AESeKPjybJmDbHTDN1qIq/1WvZQVtNIkNs+OW4VUULtxLb/U3x/ryHJplad
+ 9S2b2W/WmrPD7PhjsQbtx51+KJTmPnMst6lV/8DRJvRFXCiQ4LW9eQl
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In commit 33c0fb85b571 ("HID: bpf: make part of struct hid_device writable")
+the const qualifier was dropped from struct hid_bpf_ctx::hid.
+The casts are now unnecessary.
 
-This fixes the LDO5 regulator handling of the pca9450 driver by
-taking the status of the SD_VSEL into account to determine which
-configuration register is used for the voltage setting.
-
-Even without this change there is no functional issue, as the code
-for switching the voltage in sdhci.c currently switches both, the
-VSELECT/SD_VSEL signal and the regulator voltage at the same time
-and doesn't run into an invalid corner case.
-
-We should still make sure, that we always use the correct register
-when controlling the regulator. At least in U-Boot this fixes an
-actual bug where the wrong IO voltage is used and it makes sure
-that the correct voltage can be read from sysfs.
-
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
-Changes for v2:
-* new patch
----
- arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/hid/bpf/hid_bpf_dispatch.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
-index e0e9f6f7616d9..b97bfeb1c30f8 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
-@@ -311,6 +311,7 @@ reg_nvcc_sd: LDO5 {
- 				regulator-name = "NVCC_SD (LDO5)";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <3300000>;
-+				sd-vsel-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
- 			};
- 		};
- 	};
-@@ -808,7 +809,7 @@ MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d0 /* SDIO_A_D0 */
- 			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d0 /* SDIO_A_D1 */
- 			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d0 /* SDIO_A_D2 */
- 			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d0 /* SDIO_A_D3 */
--			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x1d0
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x400001d0
- 		>;
- 	};
+diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf_dispatch.c
+index 961b7f35aa673618abbb7bf2edc18cd3ef7c90f4..ec950f8164e20192dd2ddb7753af19cca6c1a036 100644
+--- a/drivers/hid/bpf/hid_bpf_dispatch.c
++++ b/drivers/hid/bpf/hid_bpf_dispatch.c
+@@ -352,7 +352,6 @@ __hid_bpf_hw_check_params(struct hid_bpf_ctx *ctx, __u8 *buf, size_t *buf__sz,
+ {
+ 	struct hid_report_enum *report_enum;
+ 	struct hid_report *report;
+-	struct hid_device *hdev;
+ 	u32 report_len;
  
-@@ -820,7 +821,7 @@ MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d4 /* SDIO_A_D0 */
- 			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d4 /* SDIO_A_D1 */
- 			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d4 /* SDIO_A_D2 */
- 			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d4 /* SDIO_A_D3 */
--			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x1d0
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x400001d0
- 		>;
- 	};
+ 	/* check arguments */
+@@ -371,9 +370,7 @@ __hid_bpf_hw_check_params(struct hid_bpf_ctx *ctx, __u8 *buf, size_t *buf__sz,
+ 	if (*buf__sz < 1)
+ 		return -EINVAL;
  
-@@ -832,7 +833,7 @@ MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d6 /* SDIO_A_D0 */
- 			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d6 /* SDIO_A_D1 */
- 			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d6 /* SDIO_A_D2 */
- 			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d6 /* SDIO_A_D3 */
--			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x1d0
-+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT		0x400001d0
- 		>;
- 	};
+-	hdev = (struct hid_device *)ctx->hid; /* discard const */
+-
+-	report_enum = hdev->report_enum + rtype;
++	report_enum = ctx->hid->report_enum + rtype;
+ 	report = hid_ops->hid_get_report(report_enum, buf);
+ 	if (!report)
+ 		return -EINVAL;
+@@ -402,7 +399,6 @@ hid_bpf_hw_request(struct hid_bpf_ctx *ctx, __u8 *buf, size_t buf__sz,
+ 		   enum hid_report_type rtype, enum hid_class_request reqtype)
+ {
+ 	struct hid_bpf_ctx_kern *ctx_kern;
+-	struct hid_device *hdev;
+ 	size_t size = buf__sz;
+ 	u8 *dma_data;
+ 	int ret;
+@@ -429,13 +425,11 @@ hid_bpf_hw_request(struct hid_bpf_ctx *ctx, __u8 *buf, size_t buf__sz,
+ 		return -EINVAL;
+ 	}
  
+-	hdev = (struct hid_device *)ctx->hid; /* discard const */
+-
+ 	dma_data = kmemdup(buf, size, GFP_KERNEL);
+ 	if (!dma_data)
+ 		return -ENOMEM;
+ 
+-	ret = hid_ops->hid_hw_raw_request(hdev,
++	ret = hid_ops->hid_hw_raw_request(ctx->hid,
+ 					      dma_data[0],
+ 					      dma_data,
+ 					      size,
+@@ -464,7 +458,6 @@ __bpf_kfunc int
+ hid_bpf_hw_output_report(struct hid_bpf_ctx *ctx, __u8 *buf, size_t buf__sz)
+ {
+ 	struct hid_bpf_ctx_kern *ctx_kern;
+-	struct hid_device *hdev;
+ 	size_t size = buf__sz;
+ 	u8 *dma_data;
+ 	int ret;
+@@ -478,13 +471,11 @@ hid_bpf_hw_output_report(struct hid_bpf_ctx *ctx, __u8 *buf, size_t buf__sz)
+ 	if (ret)
+ 		return ret;
+ 
+-	hdev = (struct hid_device *)ctx->hid; /* discard const */
+-
+ 	dma_data = kmemdup(buf, size, GFP_KERNEL);
+ 	if (!dma_data)
+ 		return -ENOMEM;
+ 
+-	ret = hid_ops->hid_hw_output_report(hdev, dma_data, size, (u64)(long)ctx, true);
++	ret = hid_ops->hid_hw_output_report(ctx->hid, dma_data, size, (u64)(long)ctx, true);
+ 
+ 	kfree(dma_data);
+ 	return ret;
+
+---
+base-commit: aaf20f870da056752f6386693cc0d8e25421ef35
+change-id: 20241127-hid-bpf-cast-e32648f6b8f7
+
+Best regards,
 -- 
-2.46.1
+Thomas Weißschuh <linux@weissschuh.net>
 
 
