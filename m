@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-423178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29EC9DA3F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:31:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C8164E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:30:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82CF18CBFE;
-	Wed, 27 Nov 2024 08:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GOc38dii"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F7C9DA3F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:31:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E34148832
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2E028177A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:31:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102BE188CC6;
+	Wed, 27 Nov 2024 08:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oB91C0S/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD24C133;
+	Wed, 27 Nov 2024 08:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732696250; cv=none; b=smagFGj48K2BjbhL4d2Qh/aUWNpeOycyV6ASpEjFEC5uRqLYFwPBBxjtl+qpZ3kpDUS+hKL8qoa5YW3ZmVESrkP+EZKjx04bQeEMlJ/rR7ZvxowyYbD9E+lT7VZG5/cModQPalSALkHJ/Z0ekeu4kr4I2st2p9lFUWsbxL48hnI=
+	t=1732696306; cv=none; b=mCdyNtEM0aaKo7lQ5GZnIay0JcVRtRlQQEu6iBoj0bpQDs1LU1bPq62CMO/5AYwdfNgh3C9AR06ewy/4aam2TftNjetLM9qxmJQ4dq7ExzhN3fcivLSjmc8cAuNys9TjnGSwUXJszk5BIoitn07+T7r+TOAY0xQyQYCXFfq7U0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732696250; c=relaxed/simple;
-	bh=Eoz0Q8Mkl/Pr7C3Gb8h9/rvKIVaHswPcRREVkWgCHFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aek4/VKnd5zkcPd9QIRKzo9n5fxE/p9UbWyz2jyHMxBcd5QBbMKDU6zA6YFzwYoN6M218cycjBcx2gsxYI4vrNJu26NnqIaHHounj+YJnl5TkxKc1UxM3pq1+Qc1hxENf5ikmS2OeA0SvJQCHTmwTxWdB4YGpspna4dunMVla4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GOc38dii; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732696247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4MUFVXWBRckkMqy36xXoK5Hu73zQLVLWkWdXnXLcAfI=;
-	b=GOc38diim1rsdgIwrNU68kOakEz33NPfBZ+7Zk1f3qLFBlTMZpCaH8wzJ1W/ynxm+wlZQI
-	7SSnLPNHYlLTtrqAuGsA3q6zWWG9GpMvFXsJaYFJc+qRh0Z6L2Oa/MNqZP0MkEAmW6mUjQ
-	E+GTJOdyWS9fNs/0ZQFL07n9tLy3vkQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-552-B3JS6U35Pqyl2VzJ2FgJ7g-1; Wed, 27 Nov 2024 03:30:45 -0500
-X-MC-Unique: B3JS6U35Pqyl2VzJ2FgJ7g-1
-X-Mimecast-MFC-AGG-ID: B3JS6U35Pqyl2VzJ2FgJ7g
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4349eeeb841so24679355e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:30:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732696244; x=1733301044;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4MUFVXWBRckkMqy36xXoK5Hu73zQLVLWkWdXnXLcAfI=;
-        b=TY744gh6OYicASfNO2qatZRyq/FrUmyxWKEWKAY/l4cFkEENQpGbUr6mjhlnP9btDC
-         z11J6m9nZv33ZAh0m9NE2sH0hQvP9iSjUG3iUsYk9IHtRzCk+OnzgOfRv0AV3ZlM2BYo
-         eYhMAOuNHXHmiEvjGrq45FP54J6voT5L5W7HnmjX95vayD5B/7vv0zIKwR3H+PZpNG54
-         46WqAI6Ph2r9IckiaP+fttXjClgWX/q2UBmfQ1rXTzYrhMJYdTbB3+9pRmyJXZ8KJUA2
-         eCxia9O6pPyG/nM+TJmdAFP4gVpeEBOmz0SIqt3MLlvuQt2xcSOCVN4Zjrokpul5cCPA
-         eObg==
-X-Forwarded-Encrypted: i=1; AJvYcCVml1fNKFsHEekRXM4hUT3zRj2DdQp42ctlaNSFdX+zJs//PaTIrrN4v2Iix/Ir3bjPvX0AhzL0Kln647U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoIM5LT4DYZisYbqx1kBk1J1csCdOEsbQPiKlsralDRr9YBK5H
-	aAJO0NrUptGRmm/CSQqNUj19hOOfqzjREEO1c+EeThHu5mIsT/s1Rrj2CY434SyjDCdaaZqtKhW
-	qlGC9Gk/ZPHBQyhE0uGmKOv9TX6CpZqZx4HphIHVSGhgfT8KM4QR9USDctjBwDg==
-X-Gm-Gg: ASbGnct5C7Az8Vit9kwwZqyoPxVms+0pFDu5PW/6yyQl9JT7ohl/L05BRwBCiUtWHrR
-	+7Uscp6SeGEkrJTRnuS8FDneOiGScZtSwuzFPDXEI01oUp6ecr5PtfMWy+3D7YtcKgiR7OZeag/
-	i2i0y8AyDlYZHEVyKo10G8f2QIDZrj9CRJPp0HuU4TKn0f3NDyJNq/bYYSvriUHj3Emalgo++Vu
-	dpEeb3tftanAt2u9YoheymKegQzJSCTn/sVctZXWhJ1
-X-Received: by 2002:a05:600c:198c:b0:434:a386:6ae with SMTP id 5b1f17b1804b1-434a9db7cf7mr17738075e9.7.1732696244295;
-        Wed, 27 Nov 2024 00:30:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH2ADNx1yo7XqVN38+hjrq+uT0dwvOn8CIAZOqDBS7VnrgJbvD/98tIaKuZzdGb8T2i4UE1fg==
-X-Received: by 2002:a05:600c:198c:b0:434:a386:6ae with SMTP id 5b1f17b1804b1-434a9db7cf7mr17737925e9.7.1732696243978;
-        Wed, 27 Nov 2024 00:30:43 -0800 (PST)
-Received: from redhat.com ([2a02:14f:1f6:a902:b9b1:2d24:8c60:30dd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74ea95sm13552115e9.5.2024.11.27.00.30.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 00:30:43 -0800 (PST)
-Date: Wed, 27 Nov 2024 03:30:39 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	colin.i.king@gmail.com, dtatulea@nvidia.com, eperezma@redhat.com,
-	huangwenyu1998@gmail.com, jasowang@redhat.com, mgurtovoy@nvidia.com,
-	philipchen@chromium.org, si-wei.liu@oracle.com
-Subject: Re: [GIT PULL] virtio: features, fixes, cleanups
-Message-ID: <20241127032948-mutt-send-email-mst@kernel.org>
-References: <20241126163144-mutt-send-email-mst@kernel.org>
+	s=arc-20240116; t=1732696306; c=relaxed/simple;
+	bh=ajpsbfzjEK/tc5dS0pljHlmhCXF2KW2ug2gy+Xc9aLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lfiY+TtrFooWvnwMlbKSDJCWhFM8G/z9H3b7z2tQbY2kRABZFiiJs6+K6W15lTYabS2KQwEgzGRd1gKIazayQmQt7jKtCW2k59/hnph6s0oAQkNf+jhIr4yYcZDKncOt7LIkH7aCbyhGOhjKVzakA/YlnsNi6wQf+xQBZ1gnv9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oB91C0S/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKLX80007146;
+	Wed, 27 Nov 2024 08:31:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Iev3WZdFrLdARm1wihK+wRwRDy+pVq1zEka0DtX4iB4=; b=oB91C0S/flf+a/oD
+	/V/4csssAIOekJl3T2AM5RenLKWlc4FctOrjZKbqh/t2yRV+r5ozcA/h6nDgjvHS
+	ApwqAcxHGwUnCRdor2C8//sIYYz9+/pkrJwa0YR+n7+AP2ztnAuVCHMY+Avg0jgI
+	zM8O76wHVoiaK2/cTKt+1b7V+7v5OVX+ZHc4XMyBNXIhOnxoynGQ6hHRgFfuhsN9
+	E270nwjhjkZCclKeAOdLKZloFgKWPKriDcNVm1oQyGQ49GAY8nON0YpYr0KlMZHL
+	h6lCc/QpUx4dQvmK8VE6sA/N9SZ9mAuln+1gEJUUjBdePrXaHj/eX2J7ZC4++nQ0
+	JRSEqA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw9e1cf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 08:31:40 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR8VdUb023552
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 08:31:40 GMT
+Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 00:31:37 -0800
+Message-ID: <2f7adf9c-d816-4281-a690-be2067587475@quicinc.com>
+Date: Wed, 27 Nov 2024 16:31:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126163144-mutt-send-email-mst@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] arm64: dts: qcom: sm8450: move board clocks to
+ DTS files
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241115-fix-board-clocks-v1-0-8cb00a4f57c2@linaro.org>
+ <20241115-fix-board-clocks-v1-1-8cb00a4f57c2@linaro.org>
+From: Tingwei Zhang <quic_tingweiz@quicinc.com>
+In-Reply-To: <20241115-fix-board-clocks-v1-1-8cb00a4f57c2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: v0AEjUCT5QjzkXmDFj_yrGU4vy5QGp-2
+X-Proofpoint-ORIG-GUID: v0AEjUCT5QjzkXmDFj_yrGU4vy5QGp-2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411270070
 
-On Tue, Nov 26, 2024 at 04:31:51PM -0500, Michael S. Tsirkin wrote:
+On 11/15/2024 2:59 PM, Dmitry Baryshkov wrote:
+> SM8450 is one of the platforms where board-level clocks (XO, sleep) are
+> fully defined in the SoC dtsi file. This is not correct and doesn't
+> fully follow the DT guidelines. Move these two clocks to the board files
+> completely.
 > 
-> I was hoping to get vhost threading compat fixes in but no luck.
-> A very quiet merge cycle - I guess it's a sign we got a lot merged
-> last time, and everyone is busy testing. Right, guys?
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8450-hdk.dts                 | 14 ++++++++++++++
+>   arch/arm64/boot/dts/qcom/sm8450-qrd.dts                 | 14 ++++++++++++++
+>   arch/arm64/boot/dts/qcom/sm8450-sony-xperia-nagara.dtsi | 14 ++++++++++++++
+>   arch/arm64/boot/dts/qcom/sm8450.dtsi                    | 14 --------------
+>   4 files changed, 42 insertions(+), 14 deletions(-)
+> 
+<...>
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 53147aa6f7e4acb102dd5dee51f0aec164b971c7..7dc183cc5c29374a19aabb36086e27edfffeaf37 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -33,20 +33,6 @@ / {
+>   
+>   	chosen { };
+>   
+> -	clocks {
+> -		xo_board: xo-board {
+> -			compatible = "fixed-clock";
+> -			#clock-cells = <0>;
+> -			clock-frequency = <76800000>;
+> -		};
+> -
+> -		sleep_clk: sleep-clk {
+> -			compatible = "fixed-clock";
+> -			#clock-cells = <0>;
+> -			clock-frequency = <32000>;
+> -		};
+> -	};
+> -
+Sleep clock is moved to board device tree while reference of this clock 
+is still in soc device tree like gcc node. Is this preferrable way to 
+reference the node defined in board device in soc device tree?
+>   	cpus {
+>   		#address-cells = <2>;
+>   		#size-cells = <0>;
+> 
 
-You will get a merge conflict with net, resolution is here:
 
-https://lore.kernel.org/all/20241118172605.19ee6f25@canb.auug.org.au/
-
-
-> The following changes since commit 83e445e64f48bdae3f25013e788fcf592f142576:
-> 
->   vdpa/mlx5: Fix error path during device add (2024-11-07 16:51:16 -0500)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
-> 
-> for you to fetch changes up to 6a39bb15b3d1c355ab198d41f9590379d734f0bb:
-> 
->   virtio_vdpa: remove redundant check on desc (2024-11-12 18:07:46 -0500)
-> 
-> ----------------------------------------------------------------
-> virtio: features, fixes, cleanups
-> 
-> A small number of improvements all over the place.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Colin Ian King (1):
->       virtio_vdpa: remove redundant check on desc
-> 
-> Max Gurtovoy (2):
->       virtio_fs: add informative log for new tag discovery
->       virtio_fs: store actual queue index in mq_map
-> 
-> Philip Chen (1):
->       virtio_pmem: Add freeze/restore callbacks
-> 
-> Si-Wei Liu (2):
->       vdpa/mlx5: Fix PA offset with unaligned starting iotlb map
->       vdpa/mlx5: Fix suboptimal range on iotlb iteration
-> 
-> Wenyu Huang (1):
->       virtio: Make vring_new_virtqueue support packed vring
-> 
->  drivers/nvdimm/virtio_pmem.c |  24 +++++
->  drivers/vdpa/mlx5/core/mr.c  |  12 +--
->  drivers/virtio/virtio_ring.c | 227 +++++++++++++++++++++++--------------------
->  drivers/virtio/virtio_vdpa.c |   3 +-
->  fs/fuse/virtio_fs.c          |  13 +--
->  5 files changed, 159 insertions(+), 120 deletions(-)
-
+-- 
+Thanks,
+Tingwei
 
