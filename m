@@ -1,174 +1,110 @@
-Return-Path: <linux-kernel+bounces-423733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82CE9DABFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:46:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4769DAC06
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:47:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB9F164CBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:45:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1552C282CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A76920126E;
-	Wed, 27 Nov 2024 16:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040C8200BB7;
+	Wed, 27 Nov 2024 16:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aUPDbmAi"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jo0dS/iE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4D9201256
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5104C1428E3;
+	Wed, 27 Nov 2024 16:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732725896; cv=none; b=GFwL9n7PDl1m9kIZWck7md5nxk3JebbMfjHxqqonq5fPjIZiGjWEHbVwJpk7+X4jxo2t2+S6NL4K4Dncv7xB4gHNw8gyv7rGBa2JdBGi2+5X+lz6KvrcdCC3LyPh9DK+BXyeAXZGHhT6wL1YVBH5cBOU16ibDjkKymWyInnoPKg=
+	t=1732726063; cv=none; b=FZd30QxD34yjgdEd4W2qvQUyHUH9QMLaqly2q+oxoY/9WyYpVRAn+NpEKWG59OO5Dox6Xhmk5bUL7YUjDchdKG9bhTgWjUnzgogrjEs0Kx8cenUUQYKFKlOPAEFT+Gos16pdWZNEa17uLA/ahdw0VfYU9BTOFYYCaU2V6ucFqB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732725896; c=relaxed/simple;
-	bh=B0NJtAswW/ENp89+GUemsEmKD4nhWS8fdJGHlmvIv1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aqlG8p5J5yvzcd2ZxL7Jj9fWpkv8xti8xmtrP7o24nR9bl4GBcVr8hNKFenLZruEb4BcY6z856J4lCBr/gH5M/KqZwALc4PW/G4pjMIYQQyMf4rDKwIZheLB++G17hjdhgJFMH6VRu0/ACpGtBYiPIN4Msj3WIXnH7nPiIJ9okw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aUPDbmAi; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df31ca44eso575308e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:44:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732725893; x=1733330693; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fW8xExxeIKpIvS1coftBu84q3jUSvnzFCGKxsDAIRY4=;
-        b=aUPDbmAiy3kXFHjb7LsmvWNLZgbxSgNaOnaT+F5rermZg9R7Y00LWYFei2XfxqwZf8
-         rxmNpN7g/JQ2RAzgVi4b/Qbi44QpF+tC/itep0RS7JPnkie9j82a94mQ6MeHYyVNm7Zj
-         WyYH6ITUWhNdhx7/FWYSC5BRX81bLlQURhzCEfzQKruIXIMCvHdMRwdweY9WSCSNdC1X
-         +A8PRnENAN4jAz+sksF5Da0kNG0cgf9ZVEWzaUVD0E+5ew9B5ixUMugzrmWeYxL1giMp
-         Ww+diIiQWpD4l0lbJXyOwwLhExWq/OYXKBhz0YPp4N1xYP5ECgy7M6Oa6mo2nC/IkC9G
-         ZVCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732725893; x=1733330693;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fW8xExxeIKpIvS1coftBu84q3jUSvnzFCGKxsDAIRY4=;
-        b=hP7zFEqC38kxBGMeRPt0kXpExPaYuWc4L6VqhK7ssiIH1M73IVuGQvLseqGhmVNTlT
-         yETL0RAjqSYHvTMR4Ga4UkMtVdTEdvUYUKwFDFOO810/g5rIWOu/oXZKIvKUKA7Qwaav
-         U2LTKt+I8Fqj7ydrEfs8P+vUHkoqRJS2TNDEWwbqasqdgPqr4PwYpa22znDX/zPmrsQI
-         fyCtMqEGoyFAOCrrUCIycWcoDGsGk8sjQ9V7FEAahzxpbJW4bFeHTtF7b9steeLXvpdq
-         4kr3dAckh075Tw3gCt7fi65BshyOq3gdux7zy+wV+nPBJTH3r1tXTETNeZpaFv/B/Z9y
-         u1GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuYQMxwM6+MX+ATNtsOAwSs2iPmitmGMi1k1LRhjr0hbiJqoRy3RaIGc4uq8aQWtWQJz+88f3lzvRBAXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfuacg8fRVuCewuOX4mmmtM8G/dM3OSqdIaNbJpxSC8go2JY+H
-	rHx3IzOEGz81qw7U3SN6mdZKPFgzy2J1COtwALKjU+DODN9Q5S8bGUqBhLuiZJo=
-X-Gm-Gg: ASbGncuRKMsOA+PpidoM6/OIPAncvUBy8M+1/wr+IkXo1AGv9m3ZhVKv/JWu1+fSL1e
-	veN95rQh/XQfftlEkJuJh0co1Ph4iHUbairxhTM20OvXdXdoDEhrn/EPelBkA15WkjiU2xIP7gr
-	DK4TizuoUb9KwjV0m4ehe2nE1XvtPohPwEcIdj52jCdJoCO9o5xuH2Sb9r6mhE1yXSvuaj/wi1q
-	yNiX51lx4v7DVpSGUzMltwKDIL+B4jdfruQpQoM8jiUWZoQXpqTpkS6c1JY
-X-Google-Smtp-Source: AGHT+IESX0M/mKeeOPEaJAvih6k+WhOExY781wFMg2q0kk+FhBaoTszX5Z/64SQGu7rfW5ScvTae1A==
-X-Received: by 2002:a05:6512:2355:b0:53d:e5fd:a445 with SMTP id 2adb3069b0e04-53df00dd3ddmr2625559e87.32.1732725892585;
-        Wed, 27 Nov 2024 08:44:52 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.200])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa53a146fd0sm538629966b.143.2024.11.27.08.44.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 08:44:52 -0800 (PST)
-Message-ID: <22ef761d-7a9c-46a2-8d61-3d16c2188c0c@linaro.org>
-Date: Wed, 27 Nov 2024 16:44:50 +0000
+	s=arc-20240116; t=1732726063; c=relaxed/simple;
+	bh=mtfe2NOqbCfz3psjWYNHrEDGlK5BP7RRwd1d/jmG0i8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ppcyd6aRZSZGMBwbs2en5gomss4GdPmxRQpqVqduuQxJHoUYqDqV9TSecZf2oVlpA2ACeL+bDbTw/5xFEREqEc8LijaRLxZthLQkY9KflEgMetlMizUWBT3AwHfgqJFYEezxukyblRdO6qMciqvYnlGvhbO8se7IoI49GmhUPl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jo0dS/iE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45BE1C4CECC;
+	Wed, 27 Nov 2024 16:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732726061;
+	bh=mtfe2NOqbCfz3psjWYNHrEDGlK5BP7RRwd1d/jmG0i8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jo0dS/iE43Xopq61VTauW2oll8xOcEy4XbKNEIFKp0Ns08bD8aFAC/CmNodV9zHC4
+	 pqxYJXfPzR+0oS/duUzo1y4EX34bcP7wFr0/qX7q1f2H6XXrQRRKAmXolZJobiUc0Q
+	 RKMxKPzOoY1rgXdYKKHSEgHAs0Ee3kfktmr1UdZZ02X9V9w3R2Dl9/9JzoQZ8GXKa2
+	 q5p9yMvashONZg8Q6Kt36cjZhwmTbOYHsKuOdgs3ElMdInmOAkypl8Rq5aZybgr1NQ
+	 jT36ze5dALgUteYGLkG0BfwrIwia5AQ0u14fke701toKPWUqqIfhwUj1kSS77UZfXy
+	 /DGyFocdDFRXQ==
+Date: Wed, 27 Nov 2024 16:47:36 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: linux-arm-kernel@lists.infradead.org, Marek Vasut <marex@denx.de>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Robin Gong <yibin.gong@nxp.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Joy Zou <joy.zou@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 01/11] Revert "regulator: pca9450: Add sd-vsel GPIO"
+Message-ID: <26ddcc86-7583-4402-b6b3-7c4cbe63ed94@sirena.org.uk>
+References: <20241127164337.613915-1-frieder@fris.de>
+ <20241127164337.613915-2-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] coresight: change some driver' spinlock type to
- raw_spinlock_t
-To: Yeoreum Yun <yeoreum.yun@arm.com>, suzuki.poulose@arm.com,
- mike.leach@linaro.org
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, nd@arm.com,
- alexander.shishkin@linux.intel.com, bigeasy@linutronix.de,
- clrkwllms@kernel.org, rostedt@goodmis.org
-References: <20241125094816.365472-1-yeoreum.yun@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241125094816.365472-1-yeoreum.yun@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3CfSZ6vXPVxUCjFn"
+Content-Disposition: inline
+In-Reply-To: <20241127164337.613915-2-frieder@fris.de>
+X-Cookie: Every path has its puddle.
 
 
+--3CfSZ6vXPVxUCjFn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 25/11/2024 9:48 am, Yeoreum Yun wrote:
-> In some coresight drivers, drvdata->spinlock can be held during __schedule()
-> by perf_event_task_sched_out()/in().
-> 
-> Since drvdata->spinlock type is spinlock_t and
-> perf_event_task_sched_out()/in() is called after acquiring rq_lock,
-> which is raw_spinlock_t (an unsleepable lock),
-> this poses an issue in PREEMPT_RT kernel where spinlock_t is sleepable.
-> 
-> To address this,change type drvdata->spinlock in some coresight drivers,
-> which can be called by perf_event_task_sched_out()/in(),
-> from spinlock_t to raw_spinlock_t.
-> 
-> Levi Yun (9):
->    coresight: change coresight_device lock type to raw_spinlock_t
->    coresight-etm4x: change etmv4_drvdata spinlock type to raw_spinlock_t
->    coresight: change coresight_trace_id_map's lock type to raw_spinlock_t
->    coresight-cti: change cti_drvdata spinlock's type to raw_spinlock_t
->    coresight-etb10: change etb_drvdata spinlock's type to raw_spinlock_t
->    coresight-funnel: change funnel_drvdata spinlock's type to
->      raw_spinlock_t
->    coresight-replicator: change replicator_drvdata spinlock's type to
->      raw_spinlock_t
->    coresight-tmc: change tmc_drvdata spinlock's type to raw_spinlock_t
->    coresight/ultrasoc: change cti_drvdata spinlock's type to
->      raw_spinlock_t
-> 
->   .../hwtracing/coresight/coresight-config.c    |  21 +-
->   .../hwtracing/coresight/coresight-config.h    |   2 +-
->   drivers/hwtracing/coresight/coresight-core.c  |   2 +-
->   .../hwtracing/coresight/coresight-cti-core.c  |  65 +-
->   .../hwtracing/coresight/coresight-cti-sysfs.c | 135 +++--
->   drivers/hwtracing/coresight/coresight-cti.h   |   2 +-
->   drivers/hwtracing/coresight/coresight-etb10.c |  62 +-
->   .../coresight/coresight-etm4x-core.c          |  71 ++-
->   .../coresight/coresight-etm4x-sysfs.c         | 566 +++++++++---------
->   drivers/hwtracing/coresight/coresight-etm4x.h |   2 +-
->   .../hwtracing/coresight/coresight-funnel.c    |  34 +-
->   .../coresight/coresight-replicator.c          |  36 +-
->   .../hwtracing/coresight/coresight-syscfg.c    |  75 ++-
->   .../hwtracing/coresight/coresight-tmc-core.c  |   9 +-
->   .../hwtracing/coresight/coresight-tmc-etf.c   | 195 +++---
->   .../hwtracing/coresight/coresight-tmc-etr.c   | 199 +++---
->   drivers/hwtracing/coresight/coresight-tmc.h   |   2 +-
->   .../hwtracing/coresight/coresight-trace-id.c  |  93 ++-
->   drivers/hwtracing/coresight/ultrasoc-smb.c    |  12 +-
->   drivers/hwtracing/coresight/ultrasoc-smb.h    |   2 +-
->   include/linux/coresight.h                     |   4 +-
->   21 files changed, 751 insertions(+), 838 deletions(-)
-> 
-> --
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> 
+On Wed, Nov 27, 2024 at 05:42:17PM +0100, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+>=20
+> This reverts commit 27866e3e8a7e93494f8374f48061aa73ee46ceb2.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-Somewhat related to this change, but not something that needs to be done 
-now:
+Please include human readable descriptions of things like commits and
+issues being discussed in e-mail in your mails, this makes them much
+easier for humans to read especially when they have no internet access.
+I do frequently catch up on my mail on flights or while otherwise
+travelling so this is even more pressing for me than just being about
+making things a bit easier to read.
 
-All of the spinlocks for the syfs store/read functions don't need to be 
-raw spinlocks, or spinlocks at all. They're never called from the 
-scheduling code and can be locked by coresight_mutex instead. 
-coresight_mutex is held on the sysfs enable/disable path when those 
-values are actually used.
+--3CfSZ6vXPVxUCjFn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Same point as here: 
-https://lore.kernel.org/linux-arm-kernel/9a637e74-d81d-405c-bad0-c97ec1aa4b77@linaro.org/
+-----BEGIN PGP SIGNATURE-----
 
-Probably needs a review of which values in each device might be shared 
-between perf mode and sysfs mode when they shouldn't be, as there was 
-one in the link above.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdHTScACgkQJNaLcl1U
+h9C+fAf/fKV4GhE/U5x7gXRxMU7czUWQW1GbYGA8bZbpLHcgcVDGVEEUJiRKslTw
+hWxbJLpvXt/X0j7Rwque58R1TXNfOBGS9dPReC19VaAL26/rxDLnGHpBGVMefIaD
+B1v4QwukgYJXksR6Cr9hyVqBo1pFk37ehoOy/IYuxkJOcjFFeHLx1LHD2fVonrMP
+yye3VusjeAQqPIEf5c+g/PLRrpsnHrO76FeE18z7AxFqrmzuxbW0JWJsE88xnYQO
+COgKxP+jGKxhd6CvCdTpIRt9LnTh6AU2sWtZHQmgtbRy/7vPJ0BSJ+F4g3pbCrza
+zBLTQvZPwdsRRgOFHQUMm6SICETdZQ==
+=D4p/
+-----END PGP SIGNATURE-----
 
-I thought the only thing shared between sysfs and perf should be the 
-'mode' which is taken with a compare and swap without locking anyway.
-
+--3CfSZ6vXPVxUCjFn--
 
