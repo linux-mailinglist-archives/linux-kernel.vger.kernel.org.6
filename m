@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-423802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EB99DACE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:15:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C1E9DACE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:15:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52693B21EFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418AA164E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7086B1411C8;
-	Wed, 27 Nov 2024 18:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDB11FF7B0;
+	Wed, 27 Nov 2024 18:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmGL7Kuu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpw7QEfD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C536528F5;
-	Wed, 27 Nov 2024 18:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4589528F5;
+	Wed, 27 Nov 2024 18:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732731329; cv=none; b=BSKjnKDeGok6MlidBDSxe57YYf5abfmWgeFL1RhpAkROJzd1EO7SrlbvyCNlM0ISq3WG+/sFu0MbzxY5LHwHdsBnpDwqXn2+cxd/oG9sSGcxlVIh7NrPTL6uxpKW0CyrOgAohp9c+nao6ZdYrEU2bBZFSYlm7hcU09t2JzOoxxo=
+	t=1732731353; cv=none; b=tDSX79j6o896pPrwhshLfbNjrHBmylSHzoNoZvSGcM1ZJioP4KlUdk15ltaJF1TC3A3/MMsAHri6olYSpHWUCqe+Ojpkq8WmghUiA6SGyGOy2HFE15AgsA43VrZNI3x9+kwOF4r5scxVYxd0Xz1bIwqpVfCuO3WISwDcRREW+UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732731329; c=relaxed/simple;
-	bh=DNgFxM1b/5aiFJSdKVSyMQOpGhRuxK1JvdQCJb4+iXA=;
+	s=arc-20240116; t=1732731353; c=relaxed/simple;
+	bh=6lrmQp/bo2VP9p7ksOmamWbX434qkL7CBpG8q9DJP3A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SQwl7moZYTrvWbIQwJJd42l7cLuqalUROqn1mBBEoe69C5j/Sds2XGHqwS16gGbBoPYLstJS9l+j2IiDOZpl73R5qRUFebpKzhy2fEj00VIoROA5sDPnosNgtZCck0ZaC6H7Jyow35dZmAEOBXHOKPPHpIKRCZczpojzf6k1qGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmGL7Kuu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 306A9C4CECC;
-	Wed, 27 Nov 2024 18:15:24 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=s3th3Ime2Z/q0EDg3bp52niku+qvlHBy0qjQkxf51kkuf7VZJ26SBPTV2IEoMVupz4tcr42ua4JK6GRHODOheo6pKHx4TKELH5mr+74Z0ZFRMeYlIbwHrd7on1UtOqNXJyGMCiy6BhdmvZyh9DD+uIDWJTqiH8lln3Op1wgxeKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpw7QEfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8602AC4CECC;
+	Wed, 27 Nov 2024 18:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732731329;
-	bh=DNgFxM1b/5aiFJSdKVSyMQOpGhRuxK1JvdQCJb4+iXA=;
+	s=k20201202; t=1732731352;
+	bh=6lrmQp/bo2VP9p7ksOmamWbX434qkL7CBpG8q9DJP3A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DmGL7KuuHQGC8O6sbIdT3qmqodVf4aNcEq1GLNk/7oL76z7pYwwfqs+OnMtupRiBC
-	 2EsJpxU4s9SBrwjqD1fCqyGY05wT9vo3da0036c/BUxf03oHoyBADCQVjhzTMh7DvI
-	 xXiOc33I1w//eIwAjLSWxrDMJds10OQTEiOyGN+IvUSHlpxQm78EacCuLU4Hkl+jpK
-	 DGatDCdvnRhNZpjS6lC7XYs/AIJx3fc/8Mr59boOid2pl2J8twtRMnQuLSiva5AHyX
-	 YW8hWgfH1Acu3k+sCItxsmdVewEXeBCRK2mCjrLqufcek2uAs7FgP8octf6mlahjKe
-	 47ETM1eTt0UmA==
-Message-ID: <f376110e-dd49-4ee5-8a4c-f743bfb91e9c@kernel.org>
-Date: Wed, 27 Nov 2024 19:15:22 +0100
+	b=gpw7QEfDYo7hBLT8ohJd5XYLYiKtd4ltcZX99TxU9BrW3q/uNNWucL0W8FiMa+fe0
+	 bug2j6AhZR8IXewujbX3MpEKK8WSI6Wu91NwYv+yC6QVW6ptPJ2Zpubjs7zGrammXg
+	 C6DCKEB5FwjuWzaJ5Gezqn99vpA7LLzBUrPHkLH6rqmooov+RjmC3eU5DPRLt5LZY6
+	 hAC67NNAyIK6mLrrGnCc6H5FhJB8o23slGBAOjda/1ZYO11lwTkuMBBl8EnreGOICG
+	 q9Iicf5l1G5H+5JO/ZJ4N6AlCd87u6DJXMD0U3ELZHp27QgfkzNW1XFfEMCY2c87fG
+	 1Tp1UnEwRJf9g==
+Message-ID: <a503ca1b-a9d6-4613-92be-a671c260547a@kernel.org>
+Date: Wed, 27 Nov 2024 19:15:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: arm: aspeed: add Meta Ventura board
+Subject: Re: [PATCH v5 2/2] ARM: dts: aspeed: ventura: add Meta Ventura BMC
 To: Jason Hsu <jasonhell19@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
  patrick@stwcx.xyz, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
  linux-kernel@vger.kernel.org
-Cc: yang.chen@quantatw.com, jerry.lin@quantatw.com
+Cc: yang.chen@quantatw.com, jerry.lin@quantatw.com,
+ Jason Hsu <jason-hsu@quantatw.com>
 References: <20241127073409.147714-1-jason-hsu@quantatw.com>
- <20241127073409.147714-2-jason-hsu@quantatw.com>
+ <20241127073409.147714-3-jason-hsu@quantatw.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,22 +104,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241127073409.147714-2-jason-hsu@quantatw.com>
+In-Reply-To: <20241127073409.147714-3-jason-hsu@quantatw.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 27/11/2024 08:34, Jason Hsu wrote:
-> From: Jason-Hsu <jasonhell19@gmail.com>
-> 
-> Document the new compatibles used on Meta Ventura.
+> Add Linux device tree related to Meta(Facebook) Ventura specific devices connected to BMC(AST2600) SoC.
 > Add subject prefix for the patch.
-> 
-> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
 > ---
-I wrote you instruction to which you did not respond and then sent v5
-without improvements. We all make mistakes, but repeating the same
-mistake over and over is unfortunately wasting our time. Please read and
-respond that you understood the instruction I gave you last time.
+NAK, nothing improved.
+
+Respond to comments and implement them.
 
 Best regards,
 Krzysztof
