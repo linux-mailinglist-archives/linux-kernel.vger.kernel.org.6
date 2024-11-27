@@ -1,192 +1,121 @@
-Return-Path: <linux-kernel+bounces-423889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120AB9DADEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:36:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72375166031
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:36:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924120127C;
-	Wed, 27 Nov 2024 19:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kZK6rJCN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4539C9DADEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:36:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE70A140E38;
-	Wed, 27 Nov 2024 19:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732736182; cv=pass; b=owusdo2lstf2NGKRWoBHWMoTg0rlU1cJ+2mvf3NIvwoEHwDOCgtRJ+19AwmSEvsjz7iL+atjID83Ab8zZ14xdV2BK99Q1rvSymW5RZzWKlGEOLI8wpAtGangr15YnTm3+o1kwrBnV82GoARd0qWg4wbNGb+AObZVJQTfI42muks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732736182; c=relaxed/simple;
-	bh=NE388iVPpvaBpvGxTNK1Un0mwqG4BlziEkeChtEvX+Q=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=dTmvmypdnl5zFOBEaFInkun95e+DnIYMOrglpUDXyxPC5bE9B+QcEPvZSVnN7Znq8P6ubjpu8qziiOf1/tYz8kKyW8qUoGToGQfMg9FZKFkPoKQ4zksHmK2QtgH3fScDO8CpQ4ckZXrPbsQYviUCOfQxXPhPVMluyLDGEB0+iKQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kZK6rJCN; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732736146; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Y2r6QH9W7W4HwO1pYW0MPKURYgp7zrT5GxK/aMkSb9k1opBCVSduaQ3Y32Tyn95PSN3E4s8fVVvTnJcGetGqiuHbHAdPCncoRoXpHmtoO0N+iYW7j9J9gYQOZbUIBaZcWtbIctY8Mytw7mrPprRJtTTRamjRV3of/0v0uSig0tI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732736146; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Z8d4w5bTmj38SdaBknN0Buc18AmnCZ/rgUCkilbxcZo=; 
-	b=MR7rCEiqQOElmGaGAmWDx3vjlXYUfdFYOzOdzLBgWdIMCBgD9hVYIYoV1SrSro3j9TYjOS0SrwuCzNvwqPzX0z6xJpzJNk/b//eBNZ0km8OqsSHovt0V/V5NyVQ6fFv5W8Ifc6OjDT4qzZnNhvLbNp6JEMHJOlyyZMi6nBoy4MY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732736146;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Z8d4w5bTmj38SdaBknN0Buc18AmnCZ/rgUCkilbxcZo=;
-	b=kZK6rJCNZr2dnqjM9TSsLF/iWqz3QjYsHEhfAktU9UOPnRNsUqhRSH7qFt7KoPc4
-	tJq+OhedNH6UqXtxN6YYu65WUbI2m0yhE2IAQTBlh/tBX6xAhCGe6MC73m1Z37vCkEa
-	Rm42k5OEsRIEM3swImwi3wxiRzdtPlPm/r9b+hb8=
-Received: by mx.zohomail.com with SMTPS id 1732736144982179.1544890029311;
-	Wed, 27 Nov 2024 11:35:44 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8181B22674
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:36:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700E1202F89;
+	Wed, 27 Nov 2024 19:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pe3Vtqbm"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33949202F82
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732736187; cv=none; b=sXN2yLdtiv19MeWWt9q8+KXvCWN0ARyqglckfzGlfd9GPPwph3g/LASjZlfgbuek04pji+NzEEbZ1TQYEslhjCoZcj9xApeETDXZ4s5BXqhQ5leW+KtpKMupPWx72WgUP0/KpY45igsf6y0KVtq0B4/REqQ5km7g7Mj6331ax5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732736187; c=relaxed/simple;
+	bh=oKtZKcmXb2M6spKPqMefrmKou8p8fKIrTlFjEhi5x+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QgeOr3ImJo+XKwq7AtzxPsJGBZAqxCm4m5dzTiNYkehesbsQ2PF4afdtDZW3ZsfLVfek48jEprHTOxHMKQhyKqcQQVewEYPuoLA4VDKMos4ssww0U0dUl/OIyoavAt2hupuDuQrGDRGNSU+hIJGUek6m3tOQKmKB7LmGMakmMsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pe3Vtqbm; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so890441fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:36:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732736184; x=1733340984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKtZKcmXb2M6spKPqMefrmKou8p8fKIrTlFjEhi5x+Q=;
+        b=Pe3VtqbmuJC7efp8ulABu3cSWCGp8PGmjxISI/eFBAsjczjKNYof+HQq/5oXN/U/RV
+         dTML6A+EWa9BmdPK32/oLrZ2aXjR9csT0rnGVmWuxmsUAN4xFARiOqws5GTsj3TotEJm
+         y6wYf6AiL0T0aoMXWwjT5avDmzMcJUlLSYzzAeKWYdwOaGySKsjPlbaO4x8xOxG2N1zq
+         8Fv5uiWTkK0bCdmBGCLr2tmufnTFxD5zAeojAOAvaCCxsj50DwBUT5tO/K6IJ2frffTo
+         oOOTX8RE/ipyGysXRGMDrGZuHBAfkALuh9+QJuXHt3Lg7E/yUnLgZTvsY24EhT8QztsH
+         TrmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732736184; x=1733340984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oKtZKcmXb2M6spKPqMefrmKou8p8fKIrTlFjEhi5x+Q=;
+        b=o/7g3BqpUpGpKDv3QD219KYjTEq22fAh072XKwquR+eelQPDilcf7FvCD+CBqvJgHT
+         a6oFle3AIw+bgSFtN0TQHqMa/VEhNp4On/6HAI6ctUcirR0bSEEYw/7Vwr1hOQ0TbBlP
+         nIN8Hp99rMYI4Smp46TIlKsOhkeBMc2HLwpFC1ct1zLYGSd4KszgdhBE//i2H1KKOr2Q
+         VMbWyV0zVU5X7YgPDIpQFM4gniCjMyO1Ex99FtQcCJMvPmgsHoW3Tg/MHOw259hEkCnD
+         gxXlKdTkF6FI/r30P0SelZ6gUfyDSIElx8+hy+NkwmwTDpwmgMyZmVvDKxr2zj95TmtB
+         IsFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1i6D+ByS8X8NOoGWgNe5HIcIuqfHy1hNNpYaEVNxkMkPR0LzPWfHr7G13ioeq5tv1vSNQbFOVsblj290=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4cUHKBiZDxWzeRcrG0UpahfF0VJnOzoDGToEntgtzHOppPakj
+	JuB6/BdLdI4HUNX9I0jxt/r/q00SX+iWeaVcwxG2/fDYvkNOxR374+rAiOM2Xz5ObDFi/jNlSyj
+	0SXduSzLg0SA7ltRrJ9knbjpd+QQ=
+X-Gm-Gg: ASbGncsRYFyNsmGGBn264fbd7Idmk6ehQna3m52Sw92SGFT3mzE4kGV6JMiO5a14cV6
+	LCsSMOW5Q5G5HrDGwe8OKL/fP6M1YWjGj/egJwderyOCo3SuyYUb4fJvvEf1rzg==
+X-Google-Smtp-Source: AGHT+IFPeS8nF9rsPbtVwAeT0yJgfR0bmbDXQw0nAIv58Wn7uVNgUUVKZ7ZtSZ3kSyKequY0RNGC6L25fA0S8ZLitnQ=
+X-Received: by 2002:a05:651c:2119:b0:2ff:a8dc:6fb8 with SMTP id
+ 38308e7fff4ca-2ffd5fcc1f1mr40204551fa.8.1732736184044; Wed, 27 Nov 2024
+ 11:36:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 19/35] WIP: rust: drm/kms: Add OpaqueEncoder
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-20-lyude@redhat.com>
-Date: Wed, 27 Nov 2024 16:35:30 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241127-imx-pinctrl-enable-v1-1-d3431a98253b@kernel.org>
+In-Reply-To: <20241127-imx-pinctrl-enable-v1-1-d3431a98253b@kernel.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 27 Nov 2024 16:36:12 -0300
+Message-ID: <CAOMZO5CbgmGpJvurf0Ctomj5dDOt=dC5X8XvwaqsM9Ce_uXhUQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: imx_*_defconfig: Fix i.MX pinctrl enablement
+To: Mark Brown <broonie@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Linus Walleij <linus.walleij@linaro.org>, Esben Haabendal <esben@geanix.com>, 
+	linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <C8281624-85B3-423E-8451-354F4BC16B97@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-20-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
 
-Hi Lyude,
+On Wed, Nov 27, 2024 at 4:25=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> When the i.MX pinctrl drivers were made user controllable by 17d210018914
+> ("ARM: imx: Allow user to disable pinctrl") the select of pinctrl by the
+> arch code was removed. This change means that for the i.MX specific
+> defconfigs nothing enables the base PINCTRL Kconfig and things that depen=
+d
+> on it (eg, audio on the i.MX6 UDOO boards) stop working. Explicitly enabl=
+e
+> PINCTRL in these configs to restore functionality with them.
+>
+> Fixes: 17d210018914 ("ARM: imx: Allow user to disable pinctrl")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Same thing as OpaquePlane, but for encoders now.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
->=20
-> TODO:
-> * Add upcast functions for this
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms/encoder.rs | 55 ++++++++++++++++++++++++++++++++++
-> 1 file changed, 55 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/kms/encoder.rs =
-b/rust/kernel/drm/kms/encoder.rs
-> index 3ae597093645e..71fae45d2d651 100644
-> --- a/rust/kernel/drm/kms/encoder.rs
-> +++ b/rust/kernel/drm/kms/encoder.rs
-> @@ -235,6 +235,61 @@ pub fn new<'a, 'b: 'a>(
->     }
-> }
->=20
-> +/// A [`struct drm_encoder`] without a known [`DriverEncoder`] =
-implementation.
-> +///
-> +/// This is mainly for situations where our bindings can't infer the =
-[`DriverEncoder`] implementation
-> +/// for a [`struct drm_encoder`] automatically. It is identical to =
-[`Encoder`], except that it does not
-> +/// provide access to the driver's private data.
-> +///
-> +/// TODO: Add functions for upcasting.
-> +///
-> +/// # Invariants
-> +///
-> +/// Same as [`Encoder`].
-> +#[repr(transparent)]
-> +pub struct OpaqueEncoder<T: KmsDriver> {
-> +    encoder: Opaque<bindings::drm_encoder>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +impl<T: KmsDriver> Sealed for OpaqueEncoder<T> {}
-> +
-> +// SAFETY: All of our encoder interfaces are thread-safe
-> +unsafe impl<T: KmsDriver> Send for OpaqueEncoder<T> {}
-> +
-> +// SAFETY: All of our encoder interfaces are thread-safe
-> +unsafe impl<T: KmsDriver> Sync for OpaqueEncoder<T> {}
-> +
-> +impl<T: KmsDriver> ModeObject for OpaqueEncoder<T> {
-> +    type Driver =3D T;
-> +
-> +    fn drm_dev(&self) -> &Device<Self::Driver> {
-> +        // SAFETY: DRM encoders exist for as long as the device does, =
-so this pointer is always
-> +        // valid
-> +        unsafe { Device::borrow((*self.encoder.get()).dev) }
-> +    }
-> +
-> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
-> +        // SAFETY: We don't expose Encoder<T> to users before it's =
-initialized, so `base` is always
-> +        // initialized
-> +        unsafe { addr_of_mut!((*self.encoder.get()).base) }
-> +    }
-> +}
-> +
-> +// SAFETY: Encoders do not have a refcount
-> +unsafe impl<T: KmsDriver> StaticModeObject for OpaqueEncoder<T> {}
-> +
-> +impl<T: KmsDriver> AsRawEncoder for OpaqueEncoder<T> {
-> +    fn as_raw(&self) -> *mut bindings::drm_encoder {
-> +        self.encoder.get()
-> +    }
-> +
-> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_encoder) -> &'a =
-Self {
-> +        // SAFETY: Our data layout is identical to =
-`bindings::drm_encoder`
-> +        unsafe { &*ptr.cast() }
-> +    }
-> +}
-> +
-> unsafe extern "C" fn encoder_destroy_callback<T: DriverEncoder>(
->     encoder: *mut bindings::drm_encoder
-> ) {
-> --=20
-> 2.46.1
->=20
+I submitted the same fix:
 
-No `from_opaque` and `try_from_opaque` like the previous patches?
+https://lore.kernel.org/imx/d718ddd2-d473-4455-b21a-15024e46787c@roeck-us.n=
+et/T/#mc71dc21d99e0b013c5ce46c0d90940fd8806ae9a
 
-=E2=80=94 Daniel=
+but as Guenter pointed out, there are other defconfigs that select
+ARCH_MXC, so this change is incomplete.
+
+It will also cause regressions for people that have their own
+defconfigs (where PINCTRL is not selected).
+
+Then I came up with a v2 that simply re-select PINCTRL as a minimal
+fix for the regressions:
+
+https://lore.kernel.org/linux-arm-kernel/f65d65b3-b60c-4c5c-a002-81370821ee=
+1f@app.fastmail.com/T/#u
 
