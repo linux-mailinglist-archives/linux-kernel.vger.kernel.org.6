@@ -1,108 +1,166 @@
-Return-Path: <linux-kernel+bounces-423149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9035B9DA37D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:03:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258CF9DA381
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E466DB2168F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:03:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9576AB227F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9CF176FB0;
-	Wed, 27 Nov 2024 08:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50377178395;
+	Wed, 27 Nov 2024 08:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwqLy78w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4WzDgYV"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09728156231;
-	Wed, 27 Nov 2024 08:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5481F1552F5;
+	Wed, 27 Nov 2024 08:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694595; cv=none; b=Vlu3oqHBkg564/CrScJnvBosX+7HA7+IZqEW32LHSrp6nDXfHKC79jgQL5kWYchrJUKi7sEil04a/dgqdPN3jcIbF5CGkHPG1noSIBhuOc8duJtPv0FTWdJ65RuO+qyBu/l7cjANSRr3J2i9+oB1M5NBijexxYsRpEX+FvDAdMU=
+	t=1732694623; cv=none; b=pxdKLiC1nqTXodBlHqJsdxga3lQRMrsKBUWM7OpvZQq2rRsiZ3XS0rqQ8WXtVhkrg3V+Taj+ClXwek7MO8oQhTOphIp7oLoG0pQGyCzqFUntrr87FFbf1QMXktIym0YOHqfO9jBpji4KkvWaDNYBHuNXuxmlD/LEaUg12AiaLoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694595; c=relaxed/simple;
-	bh=hj4+4Ezmbqfp1vJnsXREN9jO7XtVqXtz2wnGr9Mc2kY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbnXC6TNx8Z6ZoxD4tKb2s/ORp4KPXzkoJGgLfNCG5cliGu4yxvPz6fxyLptIxxmgnoGOccVmpm2hcROLvCbzaBGd705LnfhYRja90yuAu71Dpqq1t9cnHdQeY6yqBqi2UwnF7pZdNJjZMnXWOpISPIGgmapybRVBkbt0p4BYI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwqLy78w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFC3C4CECC;
-	Wed, 27 Nov 2024 08:03:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732694594;
-	bh=hj4+4Ezmbqfp1vJnsXREN9jO7XtVqXtz2wnGr9Mc2kY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pwqLy78ws32w5NA9fdKVRy0XL6UtXfSMQ1zuA3+KNZzfhomF0O3IrxfdauFhVzweL
-	 d/LiFaHU6JfEwOPQom8SZt4B4fTtGzTSIQY1xJvVEO28bx5MWGOpjB39J5SGMLLiAq
-	 MAKVWrdk2GUbBQCpYtgQIcmS3fZVcoG68wG1DVTjfbmjuRrX5aLD4/agvLXS+9F1bB
-	 9K6w3jo6hfzX2E/VGvP70dZhm9RfB9SWwkUcB2IQ3qDuW71JHa5UwsTLTuXgIrnvhc
-	 VUxq+p0LgxYhT6VlEb/u1564Lku77MLfkJ+ArRG8QaskwUfAofKMfBLPl8kzjfNa3p
-	 f0THhjq75CDHg==
-Date: Wed, 27 Nov 2024 09:03:11 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haylen Chu <heylenay@4d2.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Haylen Chu <heylenay@outlook.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
-Message-ID: <hgtrinu32q2jtxb4z5nvjskjlkwwzxhymtf3alvaxlbqxrbzd3@2rw3uy2tqgnf>
-References: <20241126143125.9980-2-heylenay@4d2.org>
- <20241126143125.9980-3-heylenay@4d2.org>
- <64bf96a3-e28c-4c47-b7b3-e227bbaa7aee@kernel.org>
+	s=arc-20240116; t=1732694623; c=relaxed/simple;
+	bh=ZuMCJ5mITzsbd/8AutxnAljozboXdKYS7dWubDj/68s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LW1QpKXUnTJjUq8koi0PWyRD0jW7PwcZa4w/2aFB2dg99X6lLgCibHLSH0VUFNGVyCLUx3rbmUlwQgLLsE93/y1MyE00L49tW8bKAJWF942RWsNKmmEQO5YewCwF0QM5X+FAL1+rKuh9qKCGiUaB4qBNDoqkaCIlMc+IH8UPS0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N4WzDgYV; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so5296424a12.3;
+        Wed, 27 Nov 2024 00:03:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732694621; x=1733299421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HvstvQGGZWpwukBxOMgySPouyXZH3tEoacDeqR0VV4A=;
+        b=N4WzDgYVcIi91eGX63Q2c+0x+HvvRw1NvoQKhekVA2mECkixG04XrzwS9CTmnbghII
+         wZO+zDerVVeP9qR3xIgiIBUq6NZ6OjXE0r+ht8168ndfm1wkvCF+7CXvUssbW+HX5X9O
+         DbvI5uFDvaICrIuAJe092WLhX51bu0PeCZm4zAUGNyNSQCiUQyfcjU0LpThtICFwb/x7
+         HO0A52qTylwgS11Vd0ZaZZhUyNHGWDEutsWfJzj9sZW1Ss50BJX2X8HubpyWkun36qe6
+         I5Q94SrZDSqhwCQt7mcrr5frPVRyP0q7OKNZC+v12MVWOha91mJ/0F0nD9zIQea4gEkk
+         QQuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732694621; x=1733299421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HvstvQGGZWpwukBxOMgySPouyXZH3tEoacDeqR0VV4A=;
+        b=CGraWKg21atLVBSGfYkwscEqXfvMMludekdtnwmJSdRGHwZDOc8TzD3fuOo52Pn9Zv
+         0oY4zSoJ2Rz4eHjw3Lom+gwX6umUTsuraTDHTrdEoqAWQqDZlzY+BpcgmOAW9n2OYPFC
+         6Qfy6ZFhb8+ZX48fCwSZs6CB10kHwscQO9Cfm1FEp7ZSwAch17tc/kBb1XI8vo8xj8wl
+         8hYUYjV0Af1LC7sPg5i9pQIqAcmIP001x+GROS1yyjEyeUYqVq/So3wdTsS47Hzrvexa
+         RfFyLJ3oWKG6IHF8wqGuRNNlm3mloshQKbMtsElSrQCBxIpnff1vW66bsxgw/fZbFJ8b
+         dclg==
+X-Forwarded-Encrypted: i=1; AJvYcCVg8fguZobCTvemTqKo+y8zjVAWDK11FFmr0LhIfVLQdd7vf+65L0K1DeGxQItob/rsM7ALPllT@vger.kernel.org, AJvYcCXA+nufc+94PLXEyChm02odcJyQC9mCNh7cHKOnqFTedDI2QychbKq4MdPMkIHaSPzg8aeebydvGftx@vger.kernel.org, AJvYcCXx0TmoXZC7Kug24HuO6mJf7czFHPOd9vq23sLzvesxqpS5Oou77s4QCPikkxZv9SPkCHfw54oebe3X6zTB@vger.kernel.org
+X-Gm-Message-State: AOJu0YynxKimK1cR7gvBSm2pGqKb9sbZ5YN5jGMrurc36nF5ZAGI47Nu
+	+7blO2BHP4ciF/Vg6xrpWxqQ+Kxoe/Wvm4iofxkRTvdqyzIeaQZz
+X-Gm-Gg: ASbGncvqXKzTFNJiH6FOr9xj1CCr8rWdA0JZF05VQEdUV4OTYfrFlxEUEjt1uNCNNfj
+	X8FBGtnlT8zdOBFD7StTJWOcg23qrn+DMujHIO0MPCUSCGyWJXzJYgksk5rByHf6BZKFpCRICKu
+	dBUHbGLdPWtGo7lfMqjXzC/Khu3L2e7nZ8MuhKNb4XaaV7jjenwSRCf3PnMbmOBBB7y+fIsgfjr
+	iWFRnQlAyLH79SUkF4ZI7jLd5OlmRiiXTFq9T3iZ2sQ4F1DP+fyGrbMNifzaRgWFA0zAkLJhWW5
+	Pm/ZBLmcmhJGvUluV6UMeTJdRaiO
+X-Google-Smtp-Source: AGHT+IHRo3XtMbkGU/iUkrZZ9kDEO66Pm5yljji2WIQGTrvtOISCN9QXMkeyFyIaUUK12nAZ7FFb4Q==
+X-Received: by 2002:a05:6a21:3288:b0:1e0:d380:fe61 with SMTP id adf61e73a8af0-1e0e0b9dbf6mr3148053637.45.1732694621422;
+        Wed, 27 Nov 2024 00:03:41 -0800 (PST)
+Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de531308sm9618017b3a.110.2024.11.27.00.03.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 00:03:40 -0800 (PST)
+Message-ID: <fb61cf82-b14d-4f58-99bb-9677305a0aa6@gmail.com>
+Date: Wed, 27 Nov 2024 16:03:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <64bf96a3-e28c-4c47-b7b3-e227bbaa7aee@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] net: stmmac: dwmac-nuvoton: Add dwmac glue for
+ Nuvoton MA35 family
+To: Krzysztof Kozlowski <krzk@kernel.org>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mcoquelin.stm32@gmail.com, richardcochran@gmail.com
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, peppe.cavallaro@st.com,
+ linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20241118082707.8504-1-a0987203069@gmail.com>
+ <20241118082707.8504-4-a0987203069@gmail.com>
+ <7c132784-87db-44f9-8be4-a0805e438735@kernel.org>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <7c132784-87db-44f9-8be4-a0805e438735@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 03:48:33PM +0100, Krzysztof Kozlowski wrote:
-> On 26/11/2024 15:31, Haylen Chu wrote:
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - spacemit,k1-ccu-apbs
-> > +      - spacemit,k1-ccu-mpmu
-> > +      - spacemit,k1-ccu-apbc
-> > +      - spacemit,k1-ccu-apmu
-> > +
-> > +  clocks:
-> > +    maxItems: 4
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: osc_32k
-> 
-> osc
-> 
-> > +      - const: vctcxo_1m
-> > +      - const: vctcxo_3m
-> > +      - const: vctcxo_24m
-> > +
-> > +  spacemit,mpmu:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      Phandle to the syscon managing "Main PMU (MPMU)" registers. It is used to
-> > +      check PLL lock status.
-> 
-> Why your example does not have it? Example code is supposed to be complete.
 
-I think I understand why - this is for only one variant? But then this
-should be disallowed in your binding for others. Currently your binding
-says that it is required for one and allowed for others.
+Krzysztof Kozlowski 於 11/26/2024 6:10 PM 寫道:
+> On 18/11/2024 09:27, Joey Lu wrote:
+>> +
+>> +static struct nvt_priv_data *
+>> +nuvoton_gmac_setup(struct platform_device *pdev, struct plat_stmmacenet_data *plat)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct nvt_priv_data *bsp_priv;
+>> +	phy_interface_t phy_mode;
+>> +	u32 tx_delay, rx_delay;
+>> +	u32 macid, arg, reg;
+>> +
+>> +	bsp_priv = devm_kzalloc(dev, sizeof(*bsp_priv), GFP_KERNEL);
+>> +	if (!bsp_priv)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	bsp_priv->regmap =
+>> +		syscon_regmap_lookup_by_phandle_args(dev->of_node, "nuvoton,sys", 1, &macid);
+>> +	if (IS_ERR(bsp_priv->regmap)) {
+>> +		dev_err(dev, "Failed to get sys register\n");
+> Syntax is: return dev_err_probe
+I will use dev_err_probe instead.
+>
+>> +		return ERR_PTR(-ENODEV);
+>> +	}
+>> +	if (macid > 1) {
+>> +		dev_err(dev, "Invalid sys arguments\n");
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>
+>
+> ...
+>
+I will use dev_err_probe instead.
+>> +
+>> +	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* We support WoL by magic packet, override pmt to make it work! */
+>> +	plat_dat->pmt = 1;
+>> +	dev_info(&pdev->dev, "Wake-Up On Lan supported\n");
+>
+> Drop, driver should be silent on success.
+Got it.
+>
+>> +	device_set_wakeup_capable(&pdev->dev, 1);
+>> +
+>> +	return 0;
+>> +}
+>
+>
+> Best regards,
+> Krzysztof
 
-Best regards,
-Krzysztof
+Thanks!
+
+BR,
+
+Joey
 
 
