@@ -1,201 +1,111 @@
-Return-Path: <linux-kernel+bounces-423223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CD39DA488
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:11:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279E39DA48C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25A3EB2281B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22CA282544
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3052191F95;
-	Wed, 27 Nov 2024 09:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657181922F2;
+	Wed, 27 Nov 2024 09:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KRy49Cfz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mvop1Y52"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ECD13D278;
-	Wed, 27 Nov 2024 09:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F66188A0D;
+	Wed, 27 Nov 2024 09:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732698701; cv=none; b=nMh/lds24u/hgV74VJZI/Wm3Qk0LuIvoPCBSUTiZ6AVj2Hpq203eQ5Lzbya6XwinHgiKMlmKM+Lag2VyNKj99UNQPlu4y78U9m8K6QQnR5SMNNQ7AH40OiReY+u39HBUqq8zHTAekeJgoIVmZLr9N9S01/iCOhhiDE5rDnpQSw8=
+	t=1732698727; cv=none; b=mz/7AoDjaOXVh5zgoEK33Y0hrsEhMt3Hs4+n8JGhqO64J35LB253z70lsNgTv3Dlfmk7niLpN15rZ4ZdKZ6zPVab+DWquQGs/c8S1Yr8SXG4jh8m255CFeVpoQAch6D0evCsUnkKioPJpE6ULZN73Ujsm4w9AZuUBlBnuhmQ2lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732698701; c=relaxed/simple;
-	bh=4Les83iobehZQbj4RmZdxVlxgPcNcFnRN78AlQyw+QA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B9gqI3IoIk1q2WVto+laF5kEsTFzVUG7dbLOf7LWH+LTMXWwawwQKkcEm2zGs8OUmg2RMU45SlMK18u+QIfEH0ODTJ6Su7FzyQkd+9ABecPgxYMJFSd5kOYiWzhKSsFVLTZlSv0UIBrUSZaL5gwM+E4YVMHBN6mY6HV1nc87w38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KRy49Cfz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR64jBM000828;
-	Wed, 27 Nov 2024 09:11:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KPoWXTJ5g40D7FXVXok8S9PkK66Riq85uQri4nd5Ay8=; b=KRy49Cfz53hwb5yM
-	l3J7s9aztn8BvmYSEDXP97xulOc/IgpYL8AiOkDb/zGCBsp2XP1XsW6S0vHphe3L
-	qdRBHQ2gDO8rON/g3vFBLpYXyn1pOfLMN5TbLe/bqPs3xqtattBTPEXwiXJk6aA1
-	z8JBBO8aYG0eZ9y/yKF0dGtsRsA2NdHXFxKz0BO9HzIYPBA898e7poSKz8cjuOcV
-	wc3HRtP+miUI6sbUgzi6NQBnNQf5U2QRnEV9MdyXsJaxDqd80wlPsEhgyJo3vSYY
-	4wOKOlUtf9g+k6F7+yxEbfEcyZQw63rM/h6MqYgxdufXQwJ2EBPRelOVkESPEjlp
-	ZERKgw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435wuerg63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 09:11:28 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR9BRFD029189
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 09:11:27 GMT
-Received: from [10.151.37.94] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
- 2024 01:11:23 -0800
-Message-ID: <fe912c14-170f-92b7-d0be-71c4a7a456d0@quicinc.com>
-Date: Wed, 27 Nov 2024 14:41:20 +0530
+	s=arc-20240116; t=1732698727; c=relaxed/simple;
+	bh=eMcMiTlapMQlM2VxLBHCg1tkpjyHbDi5PzUsXwK875Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SX5DEd8EeOXCjzT0jQdBWTLELOBuqSLcVXdSZyCPe5cpniC2KZyS+dxcR4D38fIDQZPs2D9395MdrWTFrB6GO3CcnwMA7Umu20cxDElBoQIy42ycfHT5X7A8Xei5CO3Uh5sR6ZC+wL38xZqzQGeELUkGkGUn/uTQe5JLR+ZqluE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mvop1Y52; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3136D792;
+	Wed, 27 Nov 2024 10:11:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732698701;
+	bh=eMcMiTlapMQlM2VxLBHCg1tkpjyHbDi5PzUsXwK875Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mvop1Y52epjvnh+EGZ7G9p0Hpb7nAmZ4qCSHoPc8Mj6e4sccheWfCrfwAiqusbrJa
+	 q3wYJlKaApM82/uCU48ugWQCfpL40rmxXzh4a3DuAY5aeTzN5FjzNdH1pr4miKIZH3
+	 Rt7nv9Fysb1Xc8vUYI0QtU+Z+0qRE3n0xNzspW84=
+Date: Wed, 27 Nov 2024 11:11:53 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: uvcvideo: Do not set an async control owned
+ by other fh
+Message-ID: <20241127091153.GA31095@pendragon.ideasonboard.com>
+References: <20241127-uvc-fix-async-v1-0-eb8722531b8c@chromium.org>
+ <20241127-uvc-fix-async-v1-1-eb8722531b8c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 2/3] mtd: rawnand: qcom: Fix onfi param page read
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <bbrezillon@kernel.org>, <linux-mtd@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_nainmeht@quicinc.com>, <quic_laksd@quicinc.com>
-References: <20241122085933.2663927-1-quic_mdalam@quicinc.com>
- <20241122085933.2663927-3-quic_mdalam@quicinc.com>
- <20241126054135.5v7f5ln5vwc64eys@thinkpad>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <20241126054135.5v7f5ln5vwc64eys@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: TqBkF3t_1oEpfbKdomLQIAR-XW4e8jwL
-X-Proofpoint-GUID: TqBkF3t_1oEpfbKdomLQIAR-XW4e8jwL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- clxscore=1015 adultscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411270075
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127-uvc-fix-async-v1-1-eb8722531b8c@chromium.org>
 
+Hi Ricardo,
 
+Thank you for the patch.
 
-On 11/26/2024 11:11 AM, Manivannan Sadhasivam wrote:
-> On Fri, Nov 22, 2024 at 02:29:32PM +0530, Md Sadre Alam wrote:
+On Wed, Nov 27, 2024 at 07:46:10AM +0000, Ricardo Ribalda wrote:
+> If a file handle is waiting for a response from an async control, avoid
+> that other file handle operate with it.
 > 
-> Please change subject to:
+> Without this patch, the first file handle will never get the event
+> associated to that operation.
+
+Please explain why that is an issue (both for the commit message and for
+me, as I'm not sure what you're fixing here).
+
+What may be an issue is that ctrl->handle seem to be accessed from
+different contexts without proper locking :-S
+
+> Cc: stable@vger.kernel.org
+> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> mtd: rawnand: qcom: Fix last codeword read in qcom_param_page_type_exec()
-Ok
-> 
->> For QPIC V2 onwards there is a separate register to read
->> last code word "QPIC_NAND_READ_LOCATION_LAST_CW_n".
->>
->> qcom_param_page_type_exec() is used to read only one code word
->> If it will get configure number of code words to 1 in QPIC_NAND_DEV0_CFG0
-> 
-> "If it configures the number of..."
-Ok
-> 
->> register then QPIC controller thinks its reading the last code word,
->> since we are having separate register to read the last code word,
->> we have to configure "QPIC_NAND_READ_LOCATION_LAST_CW_n" register
->> to fetch data from QPIC buffer to system memory.
->>
->> Without this change page read was failing with timeout error
->>
->> / # hexdump -C /dev/mtd1
->> [  129.206113] qcom-nandc 1cc8000.nand-controller: failure to read page/oob
->> hexdump: /dev/mtd1: Connection timed out
->>
->> This issue only seen on SDX targets since SDX target used QPICv2. But
->> same working on IPQ targets since IPQ used QPICv1.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 89550beb098e ("mtd: rawnand: qcom: Implement exec_op()")
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> - Mani
-> 
->> ---
->>
->> Change in [v2]
->>
->> * Updated commit message
->>
->> * Added stable kernel tag
->>
->> * Replaced the buf_count value of 512 with the len in bytes.
->>
->> Change in [v1]
->>
->> * Resolved the issue with reading a single code word in the parameter
->>    page read
->>
->>   drivers/mtd/nand/raw/qcom_nandc.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
->> index cc59461df72e..31ec3db1246d 100644
->> --- a/drivers/mtd/nand/raw/qcom_nandc.c
->> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
->> @@ -2859,7 +2859,12 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
->>   	const struct nand_op_instr *instr = NULL;
->>   	unsigned int op_id = 0;
->>   	unsigned int len = 0;
->> -	int ret;
->> +	int ret, reg_base;
->> +
->> +	reg_base = NAND_READ_LOCATION_0;
->> +
->> +	if (nandc->props->qpic_v2)
->> +		reg_base = NAND_READ_LOCATION_LAST_CW_0;
->>   
->>   	ret = qcom_parse_instructions(chip, subop, &q_op);
->>   	if (ret)
->> @@ -2911,7 +2916,10 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
->>   	op_id = q_op.data_instr_idx;
->>   	len = nand_subop_get_data_len(subop, op_id);
->>   
->> -	nandc_set_read_loc(chip, 0, 0, 0, len, 1);
-> 
-> nandc_set_read_loc() does changes the register offset based on QPIC version. So
-> what exactly you are trying to fix here?
-QPICv2 having separate register to copy last code word data from QPIC buffer to Memory.
-e.g for 2K page nand total code word = 4, so to copy first three code word need to configure
-NAND_LOCATIONn register , but to copy last code word need to configure NAND_LOCATIONn_LAST
-register.
-> 
-> - Mani
-> 
->> +	if (nandc->props->qpic_v2)
->> +		nandc_set_read_loc_last(chip, reg_base, 0, len, 1);
->> +	else
->> +		nandc_set_read_loc_first(chip, reg_base, 0, len, 1);
->>   
->>   	if (!nandc->props->qpic_v2) {
->>   		write_reg_dma(nandc, NAND_DEV_CMD_VLD, 1, 0);
->> -- 
->> 2.34.1
->>
-> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 4fe26e82e3d1..5d3a28edf7f0 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1950,6 +1950,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  	if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+>  		return -EACCES;
+>  
+> +	/* Other file handle is waiting a response from this async control. */
+> +	if (ctrl->handle && ctrl->handle != handle)
+> +		return -EBUSY;
+> +
+>  	/* Clamp out of range values. */
+>  	switch (mapping->v4l2_type) {
+>  	case V4L2_CTRL_TYPE_INTEGER:
+
+-- 
+Regards,
+
+Laurent Pinchart
 
