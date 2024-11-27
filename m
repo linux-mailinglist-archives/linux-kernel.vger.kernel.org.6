@@ -1,200 +1,179 @@
-Return-Path: <linux-kernel+bounces-424040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACC59DAFD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:26:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B36C9DAFD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:26:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812FEB21755
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D831650EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F30198E92;
-	Wed, 27 Nov 2024 23:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVbNaneZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AA91990CF;
+	Wed, 27 Nov 2024 23:26:05 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D80433C8;
-	Wed, 27 Nov 2024 23:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B061990B7;
+	Wed, 27 Nov 2024 23:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732749964; cv=none; b=WiKxxsROGznKQgRpp1sZLuf4SVyjHhyzIGYstWLqBEqlS0FuAceoyQMIvUetODAUvgNSIj26ZkU2Bmff0rR0hV8zLKR4bnYAEgokVdJH0eTfXkGUt5TNWnMMTFaFhmOdyzswguI2Zp3ljW7lj/CttdE2iHNtXJBOOlDlJLrWDoQ=
+	t=1732749965; cv=none; b=IN5uIB9AFk5zAPOBcZf9c5vP7ZyxcaAK6gf7HczW97qGTLBKl7QJ9lkghBWXWPdM5ocKN5hDODHyjE3+P8PFTUGc2DpjHeFoCgFyfw+y01Pm98Q3Q6KkoGM0ix8WO4Mm5OMplNmbhIv2OEFmx3mMhF4EDWJvtotD5ssjZS1Lp/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732749964; c=relaxed/simple;
-	bh=vmi+P8yL117Jcf3Rm8qz5U52cXggg+MsNiPykKptW9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zd57xWqgJjiCeN5N2S+0AflRAC7B7LLv7Vj0ZhpyQ0TAi9wQhMioAdoMyvLFiDnAvxk92f9FAKUMIga+x3ybt0jT2PPI4AfiWROZGerQyTo4Clt+c9ghi52FJq+XQvOGWo6lBubc+ea8CgbbvBxMPMtnui42YXIj2rjaMc+ILLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVbNaneZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60BF1C4CECC;
-	Wed, 27 Nov 2024 23:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732749963;
-	bh=vmi+P8yL117Jcf3Rm8qz5U52cXggg+MsNiPykKptW9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rVbNaneZrusINVJMmUXRTsghlJr6cQ4tqZvi6/PTBYcV/jWG5WY2SumJioG6UB+qi
-	 qPulByWMyuitJCDa22C8jKpr9WshHcxEEMlv5p2j/02FxRiaXWJF3sLC2QLBz64V1a
-	 O7hC52CMobRvspLtCN5gW8O8WiwlAoj/xjcxZ4eeMa1SAweQOhuaHfWKOlgJ4NDR3Y
-	 2556OP+HVlJE0G1H7UGrydppMwC0p3sfTibdHg0i9W9mDhx8rGViWr8owltpZXyyZM
-	 IF04Zx2y2S+wXrzL+ty9TPOjqCFmvdlZ1F1PM6l/SIJZkFs2hzB1xw0s75PzdxCJkn
-	 s3qx3kd2btM2Q==
-Date: Wed, 27 Nov 2024 15:26:01 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com,
-	linux-modules@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, masahiroy@kernel.org,
-	mmaurer@google.com, arnd@arndb.de, deller@gmx.de, song@kernel.org
-Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
-Message-ID: <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
-References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
- <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
- <Z0eeuCyUGcKgsc5h@bombadil.infradead.org>
+	s=arc-20240116; t=1732749965; c=relaxed/simple;
+	bh=1FJBXmaQSpmIb5DuWh95szHp6eXBY0xiIxMtpeRMYpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rnI7iePZEUoMqiUNKPG7AMQoVcJWR8jINe8GVhShl97IOfY/8O8LITvUcWW/H5379F+gOSJ5KU3GBAJNM86i8gww/8+5Ae3m04ZVNT77LP0I/Lr0y+3mH5/u3PSNnqt+wOWGLxrEGlp04Uu+95RJ9eHXc5nZuNIst51acCqgBAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F90C4CED3;
+	Wed, 27 Nov 2024 23:26:04 +0000 (UTC)
+Date: Wed, 27 Nov 2024 18:26:56 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: javier.carrasco.cruz@gmail.com, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, masahiroy@kernel.org, shuah@kernel.org
+Subject: Re: [PATCH v3 0/7] streamline_config.pl: fix: process configs set
+ to "y"
+Message-ID: <20241127182656.5834616b@gandalf.local.home>
+In-Reply-To: <20241127230547.2047716-1-david.hunter.linux@gmail.com>
+References: <20241018103032.09ff7dcf@gandalf.local.home>
+	<20241127230547.2047716-1-david.hunter.linux@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0eeuCyUGcKgsc5h@bombadil.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 02:35:36PM -0800, Luis Chamberlain wrote:
-> Sorry about that, I'm on it.
+On Wed, 27 Nov 2024 18:05:47 -0500
+David Hunter <david.hunter.linux@gmail.com> wrote:
 
-OK here is a fix, goes double build tested and then run time tested.
+> From: David.hunter.linux@gmail.com
+> 
+> I think that there are 2 distinct reasons that a module should not be
+> turned off when using the 'localmodconfig' command. 
+> 
+> 1) the module is used directly
+> 2) the module is needed for another module that has been included in the
+> kernel with a "y". 
+> 
+> I think we both agree on the first reason, but we may be having a
+> disagreement/miscommunication for reason 2. 
 
-From 6c9ef19d7676c3f650f1de3e2619c958f21c0b75 Mon Sep 17 00:00:00 2001
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Wed, 27 Nov 2024 14:10:57 -0800
-Subject: [PATCH] selftests: kallsyms: fix with sensible defaults
+Note, Linus uses make localmodconfig a lot. He didn't always, because he
+complained that it would keep too many options enabled. I don't want to
+suddenly have Linus's make localmodconfig blow up the options again. I can
+see him complaining about it. Believe me, you don't want Linus to notice
+this patch for the wrong reasons.
 
-Folks use 'make allmodconfig' to test building Linux, and although
-the test is intended to stress test that and later load insane modules,
-we don't need to make 'make allmodconfig' suffer. So scale down to
-the bare bones by default.
+This is why I'm very concerned about things like BCACHEFS being enabled
+after localmodconfig when there's obviously no reason for it. Even if it
+enables CLOSURES. BCACHEFS is an filesystem that I don't use. It should not
+be enabled on my machines.
 
-To do this be explicit about the sensible ranges and bound the test
-so that folks who the impact if they enable more broader range test
-options.
+> 
+> > For example:
+> >
+> >  BCACHEFS_FS n -> m
+> >
+> > Why is that needed?  
+> 
+> With regards to your question, I see that 'CLOSURES' is set to 'y' in
+> your original .config file. 'BCACHEFS_FS' selects 'CLOSURES'. I suspect
+> that if 'BCACHEFS_FS' is set to 'n', then your config would have no way
+> of keeping 'CLOSURES' as 'y'.
 
-This also helps us clarify where we run into existing limits today.
+Which is OK for this example.
 
-Also, avoid the stupid FORCE so that re-builds will only trigger
-when really needed.
+> 
+> I understand that the following patch is not suitable for upstream;
+> however, the following patch might help you to understand a little bit
+> more about each config options like 'BCACHEFS_FS'. 
+> 
+> https://lore.kernel.org/all/20241014141345.5680-5-david.hunter.linux@gmail.com/
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- lib/Kconfig.debug                     | 38 ++++++++++++++++++++++++++-
- lib/tests/module/Makefile             |  2 +-
- lib/tests/module/gen_test_kallsyms.sh |  9 +++++--
- 3 files changed, 45 insertions(+), 4 deletions(-)
+Note, I'll try to remember to look at this after the Thanksgiving break.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index b5929721fc63..31b843690a00 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2986,9 +2986,43 @@ config TEST_KALLSYMS_D
- 	tristate
- 	depends on m
- 
-+choice
-+	prompt "Kallsym test range"
-+	default TEST_KALLSYMS_FAST
-+	help
-+	  Selecting something other than "Fast" will enable tests which slow
-+	  down the build and may crash your build.
-+
-+config TEST_KALLSYMS_FAST
-+	bool "Fast builds"
-+	help
-+	  You won't really be testing kallsysms, so this just helps fast builds
-+	  when allmodconfig is used..
-+
-+config TEST_KALLSYMS_LARGE
-+	bool "Enable testing kallsyms with large exports"
-+	help
-+	  This will enable larger number of symbols. Only enable this if you
-+	  are a modules developer. This will slow down your build considerbly
-+	  by at least 2x.
-+
-+config TEST_KALLSYMS_MAX
-+	bool "Known kallsysms limits"
-+	help
-+	  This will enable exports to the point we know we'll start crashing
-+	  builds.
-+
-+endchoice
-+
-+
- config TEST_KALLSYMS_NUMSYMS
- 	int "test kallsyms number of symbols"
--	default 100
-+	range 2 8 if TEST_KALLSYMS_FAST
-+	range 8 100 if TEST_KALLSYMS_LARGE
-+	range 100 1000 if TEST_KALLSYMS_MAX
-+	default 2 if TEST_KALLSYMS_FAST
-+	default 8 if TEST_KALLSYMS_LARGE
-+	default 100 if TEST_KALLSYMS_MAX
- 	help
- 	  The number of symbols to create on TEST_KALLSYMS_A, only one of which
- 	  module TEST_KALLSYMS_B will use. This also will be used
-@@ -2997,6 +3031,8 @@ config TEST_KALLSYMS_NUMSYMS
- 	  trigger a segfault today, don't use anything close to it unless
- 	  you are aware that this should not be used for automated build tests.
- 
-+	  We use sensible default to not slow down default allmodconfig builds.
-+
- config TEST_KALLSYMS_SCALE_FACTOR
- 	int "test kallsyms scale factor"
- 	default 8
-diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
-index af5c27b996cb..5436386d7aa0 100644
---- a/lib/tests/module/Makefile
-+++ b/lib/tests/module/Makefile
-@@ -3,7 +3,7 @@ obj-$(CONFIG_TEST_KALLSYMS_B) += test_kallsyms_b.o
- obj-$(CONFIG_TEST_KALLSYMS_C) += test_kallsyms_c.o
- obj-$(CONFIG_TEST_KALLSYMS_D) += test_kallsyms_d.o
- 
--$(obj)/%.c: FORCE
-+$(obj)/%.c: $(srctree)/lib/tests/module/gen_test_kallsyms.sh $(KCONFIG_CONFIG)
- 	@$(kecho) "  GEN     $@"
- 	$(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
- 		$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
-diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
-index 3f2c626350ad..561dcac0f359 100755
---- a/lib/tests/module/gen_test_kallsyms.sh
-+++ b/lib/tests/module/gen_test_kallsyms.sh
-@@ -7,6 +7,11 @@ NUM_SYMS=$2
- SCALE_FACTOR=$3
- TEST_TYPE=$(echo $TARGET | sed -e 's|lib/tests/module/test_kallsyms_||g')
- TEST_TYPE=$(echo $TEST_TYPE | sed -e 's|.c||g')
-+FIRST_B_LOOKUP=1
-+
-+if [[ $NUM_SYMS -gt 2 ]]; then
-+	FIRST_B_LOOKUP=$((NUM_SYMS/2))
-+fi
- 
- gen_template_module_header()
- {
-@@ -52,10 +57,10 @@ ____END_MODULE
- 
- gen_template_module_data_b()
- {
--	printf "\nextern int auto_test_a_%010d;\n\n" 28
-+	printf "\nextern int auto_test_a_%010d;\n\n" $FIRST_B_LOOKUP
- 	echo "static int auto_runtime_test(void)"
- 	echo "{"
--	printf "\nreturn auto_test_a_%010d;\n" 28
-+	printf "\nreturn auto_test_a_%010d;\n" $FIRST_B_LOOKUP
- 	echo "}"
- }
- 
--- 
-2.45.2
+> 
+> If you put in
+> 
+> dprintvar("BCACHEFS_FS);
+> 
+> you would be able to see what selects 'BCACHEFS_FS' and what is selected
+> by 'BCACHEFS_FS'. I suspect that if you were to use it for each of the
+> config options that you have questions about, you would likely see that
+> each config option set to "m" has a "y" option that it selects. The
+> question then would be is the "y" option actually required for your
+> particular machine.   
 
+I would argue that if a 'y' depends on a 'm' then it's not needed unless
+that 'y' is a dependency for other 'm's that are needed. We should look
+into seeing if that's the case.
+
+> 
+> This brings us to the root cause of the issue that we are having: there
+> is no way to know if a config option set to 'y' is actually required. If
+> there was a way to tell if 'CLOSURES' is needed, we can easily determine
+> whether BCACHEFS_FS is actually necessary. 
+
+I would say that CLOSURES is considered needed if a 'm' that is needed
+depends on it. Otherwise, I would say no.
+
+> 
+> Without knowing whether the 'y' options are needed, we then have to make
+> a determination whether it is better to have the (potentially necessary)
+> 'y' options with the extra (not directly used) 'm' options or to drop
+> those 'y' options along with those 'm' options. 
+> 
+> My argument is that the 'y' options are important, even if we cannot
+> determine whether they are used or not. The problem I had that made me
+> aware of the issues with localmodconfig was that my new computer would
+> consistently do an emergency shutdown whenever I would try to compile the
+> kernel. I eventually realized that the fan was not being recognized, so
+> my workaround was to put the BIOS in control of the fan (instead of the
+> kernel). 
+> 
+> It was not until I realized that I had a few hardware devices that were
+> not being recognized that I was able to pinpoint the root cause of the
+> problem. For clarity, some of my hardware devices that were nonfunctional
+> were USBs, the microphone, Bluetooth (and as mentioned earlier, the fan). 
+
+Can you show the dependency change for those devices. Knowing what exactly
+was disabled and knowing what was needed would be useful. That way we can
+fix the actual problem without using a big hammer approach of just keeping
+any module enabled that enables a 'y'.
+
+> 
+> I am curious to know if there are any hardware devices that are not
+> recognized on your computer after you use localmodconfig. One way to
+> check is to use use 'ls' on the psuedofilesystem or to use any of the
+> commands (like lspci) that recognize hardware.
+> 
+> I do not know whether any of your hardware requires the 'CLOSURES'
+> config, but because someone's hardware MAY need it, my reasoning is that
+> streamline_config.pl should include 'BCACHEFS_FS' if it is the only thing
+> that selects another config opiton set to 'y'. 
+
+BACHEFS is a new file system. If there's a dependency in my config that
+requires it, that's a bug in the config.
+
+> 
+> On my computer, when all of these configs set to 'm' are added (because
+> of reason 2), all of my hardware works (including the Bluetooth,
+> microphone, and USBs. 
+> 
+> If, on the other hand, you still feel like it would be better to not
+> include these particular config options, I would ask that you allow a
+> command line option like '-s' or '--safe' that users could use to make
+> the config file with the added modules. 
+
+Let's first find out what the problem is. Remember, this is code that Linus
+uses for his builds. Rule #1 I was told when I first became a kernel
+developer was, "Whatever you do. Don't break Linus's workstation!"
+
+-- Steve
 
