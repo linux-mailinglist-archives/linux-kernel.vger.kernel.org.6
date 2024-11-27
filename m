@@ -1,245 +1,269 @@
-Return-Path: <linux-kernel+bounces-423267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843219DA534
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:54:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C209DA53A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:57:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3436165EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:54:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F3AB213E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA601946B8;
-	Wed, 27 Nov 2024 09:54:06 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B649194A63;
+	Wed, 27 Nov 2024 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gYnJ4UEt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FE818FC81;
-	Wed, 27 Nov 2024 09:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E0A6A8D2;
+	Wed, 27 Nov 2024 09:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732701246; cv=none; b=jrlc/WGceXz3MqWZtkNZTfE5CTGfaUlS4qGNWvvYQbiGPMcizTgzMdv+21vnDPF/P227szWwVl6gSturseOZF5pr9XMSLcXJzlbCaX6QJBt/WnzENEwVWlF1D/3Zc0KZhh9fdfRtmiq8/TnKOT/mFg8DF8LKDwBJ6QvIDmNyOSA=
+	t=1732701432; cv=none; b=rzfO23B0u2jAUHVCH2sJEUxCrn+KNeiLCBQiYCNKEFP9+COw90oc0leDEub5e/xE0ps8MI5wehoSwGo2zdxDn1vzHZ2Cxl0wKgeKKPHFYhFT/Oiah7vW+YgqKxb+8dccekP3t51FVwwViI929v6V6TY15iDwkcjip53XyY2BZuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732701246; c=relaxed/simple;
-	bh=xgynu+dnij/Ap4H8Z6VToiH02SriDSYtiIh9IuHQf6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ICHbOfVuAtnu0y81LcW/dhDH/qYEUkFLkBqsyd5/YUlS6lCX95xtyx7KwS6w5IbtH2Xex/AWmGPJNeBAzWzSz7IyHQrTh1kJsv4XG+GmUoEYsRjslrTmbPAMnGmyDWLC8xEU+PPistfxw11fNWYzY3EBnbY/rOXZ34XSyIHhaNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so8421681a12.2;
-        Wed, 27 Nov 2024 01:54:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732701241; x=1733306041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nFNxczP+b5V8JKJ5O2vCYbJjZZHSVrsWR+o7WcAs32s=;
-        b=oDc7FnlUqG3bexzIgW3O/GKsPqgDb7e+rOSakbZjxeikmihRiXjfbT4Od/mRGpi3an
-         D09IQo9Dy4DsJGWhjdiLQF7x44KGJaFLeVQSGc5buSKQpz8ov1yk+88RVzRqzJkJElOf
-         fFSaDQraZex2KLvkYNM4gsbTiCjheQALDK6KKcFeY3Tq4UaNqS/i16JzG390W8+eepwS
-         ZfqYGq5BuZUiQYImY2nqg0PpzYxvys2fOC9cr5IF3eE6Nir59s/ELDFaSqCCGCqad+HO
-         omuXfX+3QHXfCsyx8IugTdUy/sK4kFh8ngI4m+Q17hslC3aAjaelORLchw+spF8wjlES
-         0hvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh3RLN6+BUf0+3UWj0gTMWH6cEtkg3ItTQBUhD1qYa4Nejs4Vtuo3ZrrvAwZ1pUmC36Dn8LdlyTyMvQ9erynvAHr8=@vger.kernel.org, AJvYcCVXAO9L/yUa8X7BAPFD1RDK5HGQ8QHmKM3D6WG3HB8+3rsc266EWV7KnIYINQyRbqBO3MQozPnmySc=@vger.kernel.org, AJvYcCW3XsFmXukRR9FxgGIoC7cFaUW8akZSssFYa8Kql9wVjtWI616/mciD6DYAY/H7BT+6vIPDchvLhNsYGqla@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFF6/cQwbnXSXVZJy1RrxXJXHsBbSm1sRCIJs/FYP5EzDAU4CD
-	TDHk5EBP677WzPz5mQ6DABqnxKp+80zCB+F+WNA+KHYy2ngXs7GVDkJkLUH7yHo=
-X-Gm-Gg: ASbGncu7ca8xDYNoxMPHCebKh5XlTVVy1xot2c0UoS0GnUEHkxUMc69urVuQZr516wm
-	HiqiyOzab4wsBSGsBuBpCkq8qp66kBBc6ntFxhUmmiRil9LWwsnrxrUp1HjB9H2eHDHssFBE4yA
-	Ye6A0UJfS5wWpzuWIcLUWnCIaIBeDjf2z3ytSTbaBQBRNiLw4MSKNYcVjgNOuEhYr0guyarl0X0
-	7qVTbOXmIn25AqSBY0p9viHowdSIRvIE/fjJZdAxda1i+4pc9/HP/QCH3QnVa9GcJ09VViXCY8f
-	UKH8FvnL0Jzt
-X-Google-Smtp-Source: AGHT+IHmH3ImqJXE6O3fZkkabRKi4GRR/5G27AvOFYyipk2/zPz9Vt/gKSDyxRiTPadJTEJfFyCNlA==
-X-Received: by 2002:a17:906:328d:b0:aa5:1d08:dad0 with SMTP id a640c23a62f3a-aa580ede47cmr164258366b.1.1732701240895;
-        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57bf82sm688603866b.147.2024.11.27.01.54.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1055061866b.1;
-        Wed, 27 Nov 2024 01:54:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUA4hz8j2X4DQxTbw2gfla42wKVeO0I6xLeMEYTq3+1GGN+GfzoK27+suC/H52fx8d6vVp2KsVeGNalcMnf/RWh910=@vger.kernel.org, AJvYcCXi1N7YGPxVPQWx+0fI6ouce1qMY3lh6zvuN/gkvRf26pPAR2139DSORPxAn5E6iokwSKyX7o7FvU5NYlT4@vger.kernel.org, AJvYcCXzVz3Z2r215lFtN+PjTHWG2THt2BYvU2MIhMVsxcmsskEp2lSrA064qveiZ4CUapofOhsjU7WMX5Y=@vger.kernel.org
-X-Received: by 2002:a17:907:7616:b0:a9a:f0e:cd4 with SMTP id
- a640c23a62f3a-aa581066bb2mr149567166b.55.1732701239952; Wed, 27 Nov 2024
- 01:53:59 -0800 (PST)
+	s=arc-20240116; t=1732701432; c=relaxed/simple;
+	bh=piY6NVUpel+wRUEZs6EFQ1GXhVd8+X8WGGcAIQ5rvhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WCYtzftH+bp8W/rFre/kJxlfH/W1T2FZ8grOgrrkapSKfMZ00ccrQEgkjLhN1GOBODt0gpdYUBkJrOhimeTgiQ38Q+AHfjLfQO94b2l8tuBUHQ1n5bvhUR5UfDj51mlxknDAcN3rd7untH700EN97L/OITHdkCJ2/fG1PMEMyjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gYnJ4UEt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR9JE1J006025;
+	Wed, 27 Nov 2024 09:56:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IE5v750NhfcBCh+HTstqz8SDcyR6ATb9vcpl8k+7QvQ=; b=gYnJ4UEtWpzjKNm4
+	k6o4zGbeBYs6LrJADAxNpAg7yL2mT7WaHFcOGJW61gpZm9Dvi+8bO2fw1H47zUyU
+	mpxSvo9aMvZYBVaciA0nMxhzK2ZjNkGKka6i5FLfaNDE8zUYTaQlGKoqSIicuV9j
+	hFcZTBAdVlZaBrXsK5P41uu68j4lm1Yu29TI4w7urJnvcvVstks1s+Fn4pfGmfQi
+	qwj4wdc6kBP+2ZHCHGiTFMOFSddS+kQ76mYYRfcq+0aaV67hoWdeKaNxqYAe9Lv2
+	7o7k03Z5uQI81ispFKU4iijf7mRmSS5jEkREf5iZyG7onv71+PqTMHCtK4tGEyAq
+	b3mXig==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434ts1p2pf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 09:56:58 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR9uw5D001804
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 09:56:58 GMT
+Received: from [10.64.68.102] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 01:56:48 -0800
+Message-ID: <b3fa1fa6-3ed5-4f4c-a3bb-607b06774cdb@quicinc.com>
+Date: Wed, 27 Nov 2024 17:56:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 27 Nov 2024 10:53:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
-Message-ID: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add selective Runtime PM
- support for clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: enable pcie0 for QCS8300
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <bhelgaas@google.com>,
+        <kw@linux.com>, <lpieralisi@kernel.org>, <quic_qianyu@quicinc.com>,
+        <conor+dt@kernel.org>, <neil.armstrong@linaro.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>
+CC: <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
+        <quic_tdas@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>
+References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
+ <20241114095409.2682558-5-quic_ziyuzhan@quicinc.com>
+ <a02925d7-2d09-4902-97e4-5e7f09d7ef21@oss.qualcomm.com>
+Content-Language: en-US
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+In-Reply-To: <a02925d7-2d09-4902-97e4-5e7f09d7ef21@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tTg52swv73q9BIT9C6iEByOmYqdiO0Sv
+X-Proofpoint-ORIG-GUID: tTg52swv73q9BIT9C6iEByOmYqdiO0Sv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270082
 
-Hi Prabhakar,
 
-Thanks for your patch!
-
-s/rzv2h-cpg/rzv2h/
-
-On Tue, Nov 5, 2024 at 12:24=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 11/14/2024 9:02 PM, Konrad Dybcio wrote:
+> On 14.11.2024 10:54 AM, Ziyue Zhang wrote:
+>> Add configurations in devicetree for PCIe0, including registers, clocks,
+>> interrupts and phy setting sequence.
+>>
+>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts |  44 +++++-
+>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 176 ++++++++++++++++++++++
+> This implies this patch should be two separate ones
 >
-> Update `rzv2h_cpg_attach_dev` to prevent external clocks not tied to the
-> power domain from being managed by Runtime PM. This ensures that only
-> clocks originating from the domain are controlled, thereby avoiding
-> unintended handling of external clocks.
 >
-> Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
-> structures to exclude specific clocks from Runtime PM when needed. Some
-> clocks, such as those in the CRU block, require unique enable/disable
-> sequences that are incompatible with standard Runtime PM. For example,
-> the CSI-2 D-PHY clock initialization requires toggling individual clocks,
-> making Runtime PM unsuitable.
+> [...]
 >
-> The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
-> be managed by Runtime PM based on this `no_pm` flag. New macros, such as
-> `DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
-> PM.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> - Updated code to skip external clocks to be controlled from runtime PM
-> - Updated id range check
-> - Updated commit message
-
-Thanks for the update!
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -668,8 +671,38 @@ struct rzv2h_cpg_pd {
->         struct generic_pm_domain genpd;
->  };
+>> +&tlmm {
+>> +	pcie0_default_state: pcie0-default-state {
+>> +		perst-pins {
+>> +			pins = "gpio2";
+>> +			function = "gpio";
+>> +			drive-strength = <2>;
+>> +			bias-pull-down;
+>> +		};
+>> +
+>> +		clkreq-pins {
+>> +			pins = "gpio1";
+>> +			function = "pcie0_clkreq";
+>> +			drive-strength = <2>;
+>> +			bias-pull-up;
+>> +		};
+>> +
+>> +		wake-pins {
+>> +			pins = "gpio0";
+> Sorting these in an increasing order would be welcome
 >
-> +static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
-> +                               const struct of_phandle_args *clkspec)
-> +{
-> +       if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_count=
- !=3D 2)
-> +               return false;
-> +
-> +       switch (clkspec->args[0]) {
-> +       case CPG_MOD: {
-> +               struct rzv2h_cpg_priv *priv =3D pd->priv;
-> +               unsigned int id =3D clkspec->args[1];
-> +               struct mod_clock *clock;
-> +
-> +               if (id >=3D priv->num_mod_clks)
-> +                       return true;
-> +
-> +               if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR(-=
-ENOENT))
-> +                       return true;
-
-Shouldn't this return false for the two invalid cases above?
-
-> +
-> +               clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->num_=
-core_clks + id]));
-> +
-> +               return !clock->no_pm;
-> +       }
-> +
-> +       case CPG_CORE:
-> +       default:
-> +               return true;
-
-False? (I know the code treated it is a PM clock before)
-
-> +       }
-> +}
-> +
->  static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct=
- device *dev)
->  {
-> +       struct rzv2h_cpg_pd *pd =3D container_of(domain, struct rzv2h_cpg=
-_pd, genpd);
->         struct device_node *np =3D dev->of_node;
->         struct of_phandle_args clkspec;
->         bool once =3D true;
-> @@ -679,6 +712,12 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_do=
-main *domain, struct device
 >
->         while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", =
-i,
->                                            &clkspec)) {
-> +               if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
-> +                       of_node_put(clkspec.np);
-> +                       i++;
-> +                       continue;
-
-This loop may start to loop nicer using
-"for (i =3D 0; !of_parse_phandle_with_args(...); i++)".
-
-> +               }
-> +
->                 if (once) {
->                         once =3D false;
->                         error =3D pm_clk_create(dev);
-> diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-=
-cpg.h
-> index 819029c81904..0723df4c1134 100644
-> --- a/drivers/clk/renesas/rzv2h-cpg.h
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> @@ -100,6 +100,7 @@ enum clk_types {
->   * @name: handle between common and hardware-specific interfaces
->   * @parent: id of parent clock
->   * @critical: flag to indicate the clock is critical
-> + * @no_pm: flag to indicate PM is not supported
->   * @on_index: control register index
->   * @on_bit: ON bit
->   * @mon_index: monitor register index
-> @@ -109,17 +110,19 @@ struct rzv2h_mod_clk {
->         const char *name;
->         u16 parent;
->         bool critical;
-> +       bool no_pm;
->         u8 on_index;
->         u8 on_bit;
->         s8 mon_index;
->         u8 mon_bit;
->  };
+>>   
+>> +		pcie0: pci@1c00000 {
+>> +			compatible = "qcom,pcie-qcs8300","qcom,pcie-sa8775p";
+> Missing ' ' after ','
 >
-> -#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _monin=
-dex, _monbit) \
-> +#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit=
-, _monindex, _monbit) \
+>> +			reg = <0x0 0x01c00000 0x0 0x3000>,
+>> +			      <0x0 0x40000000 0x0 0xf20>,
+>> +			      <0x0 0x40000f20 0x0 0xa8>,
+>> +			      <0x0 0x40001000 0x0 0x4000>,
+>> +			      <0x0 0x40100000 0x0 0x100000>,
+>> +			      <0x0 0x01c03000 0x0 0x1000>;
+>> +
+>> +			reg-names = "parf",
+>> +				    "dbi",
+>> +				    "elbi",
+>> +				    "atu",
+>> +				    "config",
+>> +				    "mhi";
+>> +
+>> +			device_type = "pci";
+> Please try to match the style in x1e80100, it's mostly coherent but
+> things like newlines differ, which is tiny but mildly annoying
+>
+>> +
+>> +			#address-cells = <3>;
+>> +			#size-cells = <2>;
+>> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
+>> +				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
+> Looks like there's a bit more space in there
+>> +			bus-range = <0x00 0xff>;
+>> +
+>> +			dma-coherent;
+>> +
+>> +			linux,pci-domain = <0>;
+>> +			num-lanes = <2>;
+>> +
+>> +			interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
+>> +				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+>> +			interrupt-names = "msi0",
+>> +					  "msi1",
+>> +					  "msi2",
+>> +					  "msi3",
+>> +					  "msi4",
+>> +					  "msi5",
+>> +					  "msi6",
+>> +					  "msi7";
+> Please also add a "global" interrupt.. looks like it's GIC_SPI 166, but
+> please confirm
+> okay
+>> +
+>> +			#interrupt-cells = <1>;
+>> +			interrupt-map-mask = <0 0 0 0x7>;
+>> +			interrupt-map = <0 0 0 1 &intc GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<0 0 0 2 &intc GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<0 0 0 3 &intc GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
+>> +					<0 0 0 4 &intc GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+>> +			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
+>> +				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+>> +				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
+>> +				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>,
+>> +				 <&gcc GCC_PCIE_0_SLV_Q2A_AXI_CLK>;
+>> +
+>> +			clock-names = "aux",
+>> +				      "cfg",
+>> +				      "bus_master",
+>> +				      "bus_slave",
+>> +				      "slave_q2a";
+>> +
+>> +			assigned-clocks = <&gcc GCC_PCIE_0_AUX_CLK>;
+>> +			assigned-clock-rates = <19200000>;
+>> +
+>> +			interconnects = <&pcie_anoc MASTER_PCIE_0 0 &mc_virt SLAVE_EBI1 0>,
+> QCOM_ICC_TAG_ALWAYS
+> okay
+>> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_PCIE_0 0>;
+> QCOM_ICC_TAG_ACTIVE_ONLY
+>
+> [...]
+> okay
+>> +
+>> +			pcieport0: pcie@0 {
+>> +				device_type = "pci";
+>> +				reg = <0x0 0x0 0x0 0x0 0x0>;
+>> +				#address-cells = <3>;
+>> +				#size-cells = <2>;
+>> +				ranges;
+>> +				bus-range = <0x01 0xff>;
+>> +			};
+> Are you going to use this? If not, please drop
 
-Note that this series conflicts with "[PATCH 00/12] Add support for
-Renesas RZ/G3E SoC and SMARC-EVK platform", which you are probably
-already aware of.
+its required by wlan driver we need it
 
-[1] https://lore.kernel.org/all/20241122124558.149827-1-biju.das.jz@bp.rene=
-sas.com/
+BRs
 
-Gr{oetje,eeting}s,
+Ziyue
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>
+>> +		};
+>> +
+>> +		pcie0_phy: phy@1c04000 {
+>> +			compatible = "qcom,qcs8300-qmp-gen4x2-pcie-phy";
+>> +			reg = <0x0 0x1c04000 0x0 0x2000>;
+>> +
+>> +			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
+> This clock goes to the RC, it should be _PHY_AUX (which you put below
+> as phy_aux), please replace it.
+> will do it
+>> +				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
+>> +				 <&gcc GCC_PCIE_CLKREF_EN>,
+>> +				 <&gcc GCC_PCIE_0_PHY_RCHNG_CLK>,
+>> +				 <&gcc GCC_PCIE_0_PIPE_CLK>,
+>> +				 <&gcc GCC_PCIE_0_PIPEDIV2_CLK>,
+>> +				 <&gcc GCC_PCIE_0_PHY_AUX_CLK>;
+>> +
+>> +			clock-names = "aux",
+>> +				      "cfg_ahb",
+>> +				      "ref",
+>> +				      "rchng",
+>> +				      "pipe",
+>> +				      "pipediv2",
+>> +				      "phy_aux";
+> Konrad
 
