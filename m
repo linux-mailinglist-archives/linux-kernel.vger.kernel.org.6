@@ -1,85 +1,47 @@
-Return-Path: <linux-kernel+bounces-423804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B379DACEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:16:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911F69DACEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A92D1602FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 415E9165E3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEF02010E1;
-	Wed, 27 Nov 2024 18:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142FE143C69;
+	Wed, 27 Nov 2024 18:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iiHWVUeF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMDY8YUF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7928013D613
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6312F28F5;
+	Wed, 27 Nov 2024 18:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732731367; cv=none; b=RLfvOhrdPrGUqM1rNQtfLpwCLkMnb8822fCjRlH3Lc7YKouD9va8BHXmvsB9JJmMJ6Gwb4SBiLT1ZOCp+BpRLJouUmC+KBJHTynpr/GQg2cE9cKgKHg55l0Qz1u3U7Wv0v6lot6RsXUW3z3eZvrREjdZlDdWa/i6KGWxpPS+W2Q=
+	t=1732731421; cv=none; b=C8bQpdshyg9oJobbH5UzDtbTnMtnHeAtT+CPsPW1FOxZpH68clhoL8ltW1tuhOJAPQ95HUepq4NpXXRoRChNBBJnlEi0kDsoAg/gpK1JAGVeUMsT2/yUMnpG8KcJm7ah4/9e3gayaZhQxbTPd35FrAztueBzTw+h6tswhkW93gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732731367; c=relaxed/simple;
-	bh=0LFR4u+l4syEWgEIki5giJ+Inx0CHWLWcC8ShzBG7V4=;
+	s=arc-20240116; t=1732731421; c=relaxed/simple;
+	bh=ViaFJxqIqAaRF5tQZD54yXLYk8q0ILGAzJ1PxTcRLmw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJjJ9T72iUnw7Rlg0e0tHUiJ9yfdBKYW/634hvRaJ9KP89mURI9z0XQhEkEajnOhbc15PQpeP6ISsnKZukK8q537qRItomIr2mJbXlTMDa9KKH86k8cU9vgi8xUYYPm/JdiITxNjCg5iPm/zL5rKSTZ1eBgir50+BqG6nQtck4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iiHWVUeF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732731364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zO1IXqN3Qo3x31XCdEArCw4yZfWyzY7K8jwcLaA/L8E=;
-	b=iiHWVUeFIcUjxRxfQ8lSX54RERL7zmKstM9WBIJWWj8gVJHCTBJWbr2k9x7Vm8g/QhGyXS
-	jNNNHqP/XR9An9eHqAfbz22Cg5+GN/Ujk8X7ulc+VZg+4NWGddiDugArkQJf5Dqq0CDq1o
-	1vroSgYKNxj/2cz2nWiArwMoGo86MwI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-UEVrHqbiPOGN-RSnwHXBJg-1; Wed, 27 Nov 2024 13:16:03 -0500
-X-MC-Unique: UEVrHqbiPOGN-RSnwHXBJg-1
-X-Mimecast-MFC-AGG-ID: UEVrHqbiPOGN-RSnwHXBJg
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4349e97bfc4so36137275e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:16:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732731362; x=1733336162;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zO1IXqN3Qo3x31XCdEArCw4yZfWyzY7K8jwcLaA/L8E=;
-        b=D68nTj3X1Ei+fzeZsCYRtOAQySNcqOPSPhgUsJY4rbsJH1h+hGP0av/in9M1HahxUX
-         J16BZgD+wjdMZAO9lXrf5jij8NJwV7Ouu/eAmhlnSlfKANXN7UjWqDzFEAhSoboElIvE
-         +RHcuH4w/bdJwgltDvJphaRhcjt8D8gh7rHTnMRQMf4FcaQVkClpkO+4OfneMUDRo73O
-         s3wg9rtc60JsgunlyltWcu2nn+PttxgUXfMXkz7nFSUrZ7jMk1cGOYe98ANBH4aM4DF6
-         ToZjtGF6RuTrbZNyjAsgXguEVu7qn2u7qKAcMsOxo4Dhb0Bvq1sJpS65LKVcs6cztgkU
-         D1Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAqeB7qZnFZThAI94mzfAedx2D6s91C0mkLoZ3uCKactTd6HRbTVUlJ34Nmkweu1poqz694X31GGkyyrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHPMv5h9SX/CoI13UtZPg7PSL+TSgMsLLny1Mg2eYzvBFikeZX
-	Kg4fWHre2nrALE3Q6CeKDKAE88zjrs1ec3JHdUwleuJaFfUS3qu/dEWrvjuzB8lOpiyr2b/rhfK
-	Xb3ujIaezg6iulHzn7/21mrJotPeQDEQH4TbWqpqDfmSg6mvZkz/iAp+3h7+8tA==
-X-Gm-Gg: ASbGncuNc/78b89ABd5t8YNyxGy1zem3DjdCmbt7SWO+udoketuRp3VL4gAnTobkMja
-	AchSBfvMM2C9ocnNuE0TpPZHYzLzYrz89UmBwEwENWYWxmnurcqThgyLsYeCjiOLg4JWQzAp2q5
-	aqnfnJXaCJplDtX8iZc0Bf+F+j0aR34F3JKj9Pwz9tkl5+9B/VDwHbBy5SX6/QKtm1NTIoMLXjx
-	2Vh7zrZ+W7BUpjbJYhlnmpzcSfweIQb4p1aLwf/LITIcaMt+cK6KQ==
-X-Received: by 2002:a05:600c:1c93:b0:434:a852:ba77 with SMTP id 5b1f17b1804b1-434a9dcec68mr46330755e9.15.1732731361989;
-        Wed, 27 Nov 2024 10:16:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGlSOETqY5xWikoXdGyx+ENqCPhG3pAdQ1oFPlJH7WCPfJ43PWFxdmZZG2nmMbq+n4dBvEiQg==
-X-Received: by 2002:a05:600c:1c93:b0:434:a852:ba77 with SMTP id 5b1f17b1804b1-434a9dcec68mr46330345e9.15.1732731361607;
-        Wed, 27 Nov 2024 10:16:01 -0800 (PST)
-Received: from [192.168.10.3] ([151.49.236.146])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434aa7fa1dasm28287285e9.42.2024.11.27.10.16.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 10:16:01 -0800 (PST)
-Message-ID: <0835f21a-c0b1-429c-a107-d7d0a2838194@redhat.com>
-Date: Wed, 27 Nov 2024 19:15:59 +0100
+	 In-Reply-To:Content-Type; b=ozEQjrr+OlrrFKhMJ1a64H2sr+OP9pdMLMnzCxjj38p5hY9cGsGTjBFa02cBDaMb20VuugR66SYJ96R2JbFURB8jecQS0ue2cP3+5Mc6EaBrz8XykueGmsBtY/hauw/7paAXQjcii4kDmwmQ57Q8eQucX9w6KwKXMQQGkkOapxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMDY8YUF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A695C4CECC;
+	Wed, 27 Nov 2024 18:16:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732731420;
+	bh=ViaFJxqIqAaRF5tQZD54yXLYk8q0ILGAzJ1PxTcRLmw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RMDY8YUFnXK2TvL1IxrrTkaE7fUjjSXgEChancSRHqtWw5ne6ON74FhPghW2kouy7
+	 Jhm1sDBwGyjCHzmr+r3q8lnEU0A7xBFsnZ+NxmDe819kLrpnbIFqBn5OME118X8EbE
+	 SjnuAmDQF3L43Ja246t6FSyYUcSpI5xl6m1fJKp0nPbzklkvA9lDzEkubM8J8WH+hZ
+	 QXHttJk+vryEibdgjxvk3pszu07pISh/k95POWkrgoIvI3VdhrklxF6RruAfK1dk6/
+	 za/ifWTxwVGe9Gh8qQoms4Uokrl8JqDasZgiaxJV+HHS6eZRWkSWbt2+27oKNvw/sT
+	 cmUTglglEIZcw==
+Message-ID: <d165ed94-4979-46e4-a685-44f4636620b6@kernel.org>
+Date: Wed, 27 Nov 2024 19:16:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,106 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX KeyID
- management
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "Hansen, Dave" <dave.hansen@intel.com>, "seanjc@google.com"
- <seanjc@google.com>
-Cc: "yuan.yao@intel.com" <yuan.yao@intel.com>,
- "Huang, Kai" <kai.huang@intel.com>, "x86@kernel.org" <x86@kernel.org>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "Hunter, Adrian" <adrian.hunter@intel.com>
-References: <20241115202028.1585487-1-rick.p.edgecombe@intel.com>
- <20241115202028.1585487-2-rick.p.edgecombe@intel.com>
- <30d0cef5-82d5-4325-b149-0e99833b8785@intel.com>
- <Z0EZ4gt2J8hVJz4x@google.com>
- <6903d890-c591-4986-8c88-a4b069309033@intel.com>
- <92547c5fea8d47cc351afa241cf8b5e5999dbe28.camel@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v5 0/2] Add Meta(Facebook) Ventura BMC(AST2600)
+To: Jason Hsu <jasonhell19@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+ patrick@stwcx.xyz, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Cc: yang.chen@quantatw.com, jerry.lin@quantatw.com,
+ Jason Hsu <jason-hsu@quantatw.com>
+References: <20241127073409.147714-1-jason-hsu@quantatw.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <92547c5fea8d47cc351afa241cf8b5e5999dbe28.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241127073409.147714-1-jason-hsu@quantatw.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/23/24 03:06, Edgecombe, Rick P wrote:
-> On Fri, 2024-11-22 at 16:08 -0800, Dave Hansen wrote:
->> On 11/22/24 15:55, Sean Christopherson wrote:
->>> On Fri, Nov 22, 2024, Dave Hansen wrote:
->>> I don't know the full context, but working with "struct page" is a pain when every
->>> user just wants the physical address.  KVM SVM had a few cases where pointers were
->>> tracked as "struct page", and it was generally unpleasant to read and work with.
->>
->> I'm not super convinced. page_to_phys(foo) is all it takes
->>
->>> I also don't like conflating the kernel's "struct page" with the architecture's
->>> definition of a 4KiB page.
->>
->> That's fair, although it's pervasively conflated across our entire
->> codebase. But 'struct page' is substantially better than a hpa_t,
->> phys_addr_t or u64 that can store a full 64-bits of address. Those
->> conflate a physical address with a physical page, which is *FAR* worse.
+On 27/11/2024 08:34, Jason Hsu wrote:
+> Add Linux device tree entry related to Meta(Facebook) Ventura specific
+> devices connected to BMC(AST2600) SoC.
 > 
-> In the case of tdh_mem_page_aug(), etc the caller only has a kvm_pfn_t passed
-> from a TDP MMU callback, for the page to be mapped in the guest TD. It is
-> probably not nice to assume that this kvm_pfn_t will have a struct page. So we
-> shouldn't always use struct pages for the SEAMCALL wrappers in any case.
-> 
-> What if we just move these members from hpa_t to pfn_t? It keeps us off struct
-> page, but addresses some of Dave's concerns about hpa_t looking like a specific
-> address.
+> ---
+> v1:
+>     1. Create ventura dts file.
+>     2. Add commit msg.
+>     3. Use format-patch to generate patch.
+>     4. Add subject prefixes matching the subsystem.
+> ---
+> v2:
+> ---
+>     1. Modify email content.
+> v3:
+> ---
+>     1. Add mail list.
+> v4:
+>     1. Apply git send-email --thread option.
+>     2. Sort nodes in the dts alphanumerically.
+> v5:
+>     1. Run scripts/checkpatch.pl and fix reported warnings.
 
-For tdr I agree with Dave that you probably want a struct which stores 
-the struct page*. Currently the code is using __get_free_page(), but 
-it's a small change to have it use alloc_page() instead, and 
-__free_page() instead of free_page().
 
-The only difference on the arch/x86/virt/ side is a bunch of added 
-page_to_phys().
+Nothing improved. Do you know how to run checkpatch?
 
-Anyhow, whatever you post I'll take care of adjusting in the KVM patches.
+Why did you ignore all other comments?
 
-Paolo
 
+Best regards,
+Krzysztof
 
