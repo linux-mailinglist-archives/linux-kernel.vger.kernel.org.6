@@ -1,110 +1,117 @@
-Return-Path: <linux-kernel+bounces-423675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B918E9DAB34
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D919DAB39
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733B6281CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA24281F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D117C200B9B;
-	Wed, 27 Nov 2024 15:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XekDxYIg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F22200B89;
+	Wed, 27 Nov 2024 15:58:02 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD5F200B83;
-	Wed, 27 Nov 2024 15:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07110200127;
+	Wed, 27 Nov 2024 15:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732723045; cv=none; b=SRs/nKFpn0biVCHjwoaH5IrfFAut/4sayjZ3hIGGV2cgmSYFlDusIPlYJIn1jDk+IsDt/lw1Kvv8tW7bM0qelfhRtO6CuJAHMkCaPlw9U9mSNFStGwR7j1xzNN3mrL5EKzSUZRNqEaUGiTyC/2uYz5f+GTI1E32zgZwe7GN7w0Y=
+	t=1732723082; cv=none; b=KFnKAMg3kgReQvKx5Shxd74K2ktw2DVN+wx+GqZG1cY8vvYMPbLocTjJseBW0kxFIifo1tzPEfCtWgAPWZ0FaZ+o2vYV0zTDCZ5sDGqLh3IHqY9U4XQOCS4/4faF55aBCQ0gV3zEkat5nmficimlfHKp+9uBrrE5CGiSGGSGtr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732723045; c=relaxed/simple;
-	bh=WSGkgXaL4N5p2uwRcTTHYvq/3QczX507d7c/2vEeemg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXU/WyGo2CwIrpvDkJUJ9Np+u+6lEMW2CGcU/9J4607krTP8X11yNSRm8R88jbVHvOxyN4WTNrMisZC9bwPT5EGECp3IC6QmDjUTfiMQaxReeyLFfPP+B3XupT7iEjE04Cm64LEn5pjNb6JKx7w5UYunKRaK3iLYPM2YKJiPCM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XekDxYIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC0EC4CECC;
-	Wed, 27 Nov 2024 15:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732723044;
-	bh=WSGkgXaL4N5p2uwRcTTHYvq/3QczX507d7c/2vEeemg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XekDxYIgmckQWV1NFhqDy2VJTp7NPCiygIgd3uwhCCLqARbnjTzUNlHeLRJmFVXuu
-	 G8BrMiepbHsftZ1ahwYMYEkJda+0ttpBUdNqmA13Fvdb1QQbKp8ir+IjNKtJ7mRzcc
-	 H/SP2D8S/UI/yMS52eOF3oH8YkaNFg6rZ5LFYKbMGwnnsviRvcb9LwPb9sGWvOAHQX
-	 ceO1zo7F7MyUaVpqYZEza0FGCJLuLJRGhKPujjZDFlAqPCb8akifWpNY6tfdgN4VgH
-	 gkMt2mSKVc8zGV2U0lkuIF8m3X20L/9yb4Ssrb7RqHM8q+pwe00W1hih/3nxkNvxIn
-	 7jO4tsg9dNP2w==
-Date: Wed, 27 Nov 2024 15:57:19 +0000
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jagan Sridharan <badhri@google.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Roy Luo <royluo@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/6] dt-bindings: usb: max33359: add max77759 flavor
-Message-ID: <20241127-chloride-pantyhose-74f3d81e91f8@spud>
-References: <20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
- <20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org>
+	s=arc-20240116; t=1732723082; c=relaxed/simple;
+	bh=WLaj8Mili5XLkily00vB+aPjJXbRsughMjY1++2Z0e0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KqQqQLRH17ltvlG5S66kvUeRCP63xRUzzMszyMWxsu8c0rdoCjviVgUdj99sYpRWadkxRyWOMpCtKoZJ3ChNw/hlK84NDUGC8vqJrBsFtFHbtXx32PvFuvQR4K18UqRCE7htA8FkibjRbNZpnmA45YNadhb3raQmJZD390wRkh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Xz3TD0Bs1z9v7J5;
+	Wed, 27 Nov 2024 23:36:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id A7C9E1403D2;
+	Wed, 27 Nov 2024 23:57:42 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwB36TlsQUdnTGRlAg--.61578S2;
+	Wed, 27 Nov 2024 16:57:42 +0100 (CET)
+Message-ID: <9c8979adb9b575d2f938043f61e2be82c898632a.camel@huaweicloud.com>
+Subject: Re: [PATCH 1/3] ima: Remove inode lock
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Shu Han <ebpqwerty472123@gmail.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com,  linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Wed, 27 Nov 2024 16:57:27 +0100
+In-Reply-To: <CAHQche-W2VxB+EJQRHUAWr4=850sX1ZfzzZUFJChUx8j6dW9Hw@mail.gmail.com>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+	 <CAHQche-W2VxB+EJQRHUAWr4=850sX1ZfzzZUFJChUx8j6dW9Hw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YAvHQQ/l8A2Bxt50"
-Content-Disposition: inline
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org>
+X-CM-TRANSID:LxC2BwB36TlsQUdnTGRlAg--.61578S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jr1xur1UGw15Gw18Aw43Wrg_yoWDtwbEgF
+	90v34vyw18Xan5Wa1vkrs3GFZ3ta1rWw18CFZrArW0vw15Jrs8XFWruryfZrWrJasxtrs0
+	kFWSg348K34q9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
+	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABGdGg7UGkwAAsH
 
-
---YAvHQQ/l8A2Bxt50
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 27, 2024 at 11:01:40AM +0000, Andr=E9 Draszik wrote:
-> On the surface, Maxim's max77759 appears identical to max33359. It
-> should still have a dedicated compatible, though, as it is a different
-> IC. This will allow for handling differences in case they are
-> discovered in the future.
+On Wed, 2024-10-09 at 23:59 +0800, Shu Han wrote:
+> > Finally, expand the critical region in process_measurement()
+> > guarded by
+> > iint->mutex up to where the inode was locked, use only one iint
+> > lock in
+> > __ima_inode_hash(), since the mutex is now in the inode security
+> > blob, and
+> > replace the inode_lock()/inode_unlock() calls in
+> > ima_check_last_writer().
 >=20
-> max77759 is used on Google Pixel 6 and Pixel 6 Pro.
+> I am not familiar with this, so the following statement may be
+> inaccurate:
 >=20
-> Add a dedicated compatible to allow for potential differences in the
-> future.
+> I suspect that modifying the `i_flags` field through
+> `inode->i_flags |=3D S_IMA;` in `ima_inode_get` may cause a
+> race, as this patch removes the write lock for inodes in
+> process_measurement().
 >=20
-> Signed-off-by: Andr=E9 Draszik <andre.draszik@linaro.org>
+> For example, swapon() adds the S_SWAPFILE tag under inode write
+> lock's
+> protection.
+>=20
+> Perhaps this initialization tag(`S_IMA`) can also be moved into
+> inode's
+> security blob.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+It would not even be necessary, since after making IMA as a regular LSM
+the S_IMA check can be replaced by testing whether or not the pointer
+of inode integrity metadata in the security blob is NULL.
 
---YAvHQQ/l8A2Bxt50
-Content-Type: application/pgp-signature; name="signature.asc"
+Will remove S_IMA.
 
------BEGIN PGP SIGNATURE-----
+Thanks
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0dBXgAKCRB4tDGHoIJi
-0mj5AQCDzK12u7YaMkhu+D9SK/V2jSyYP8eYKIAjoZDcb9CwkQD/YdlfFSRpxyel
-DUeDcV6Z54WafX5zftL10U6v86kzHgQ=
-=vXaV
------END PGP SIGNATURE-----
+Roberto
 
---YAvHQQ/l8A2Bxt50--
 
