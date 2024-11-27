@@ -1,119 +1,141 @@
-Return-Path: <linux-kernel+bounces-423351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD49DA631
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:54:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E49DA636
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:54:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30BC32829EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 282EF163FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689E81D54E7;
-	Wed, 27 Nov 2024 10:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B891D5ABD;
+	Wed, 27 Nov 2024 10:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHLylw9L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jZZf7clD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF03A1D4615;
-	Wed, 27 Nov 2024 10:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E391D4615;
+	Wed, 27 Nov 2024 10:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704834; cv=none; b=N34BY5HYkI6rcqcUgs+x+HjicXdYYJZqBlgfVRMFzGwy3DFqeonZXnGOSMIFh++mONXj0Uw3ovFh18o7xXbWL/T03PjSgrGNWxpab6S7pxmRgslH5bKY0ODam9iosEFGwquXf6c4vHSy85iWIU+JpBFn6x7db0MWfqrluH/tr8o=
+	t=1732704877; cv=none; b=gvlfEusIF+q8j5cQECmWMtVe0dibkmfZpXcbz8XQdK9pgRnJQynljJLRlW+BIcx8R2OJ7HDTJl1bkkMqqOn/V9kVgm1LiMUcMum9/YJGg935iS+E/9vR1gSM4tzZXyqptTM4T38Eqaj+A2DXUgBs9ER3nH8UPfuefkBbKQipUV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704834; c=relaxed/simple;
-	bh=6XoEF5skrr2YRZh0MLj7vFVwPVlrkVX9jwGWw17Wm00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C87t2lOdkKZMEppwbO2epz8aaeavh+hggwCCxojnv+GbJRrbl/wynf2Is3vghoTXc5TkwnKut1f1J0KJ0/tHAuEytAZ3kVcRHgXFGKA9gAVoIvjr0TV7CT4jkiZAmxfbf7oRfS0jgSzUW8ISCuTC0n4CGCBIrmHCM7KFo+eyZXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHLylw9L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE14C4CED9;
-	Wed, 27 Nov 2024 10:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732704834;
-	bh=6XoEF5skrr2YRZh0MLj7vFVwPVlrkVX9jwGWw17Wm00=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cHLylw9LQ/8bCzEd6Br88Jm0Hv7nwpA113HRIt/mySY1i4tdZxHOmIlwMh5MYpaAN
-	 DZcVtbhD57vF5UcOEV9o+HTl/9hql6RUyXtS+5nT1J96Xlin847e8HQVBNjnmDtPQf
-	 xUPy/P9haLxGBf5hcb+1QdxYMNApzgcPLQ1ItDtSqPZzYobRrcLIBxWUjlumo/rLIo
-	 Vv4C7kV55ckWw4bFqWXhW4YLu/ZAyswuBAqU9IgThPJs8AGU024nVBJXKatvuu/5z2
-	 WbT7MMvMceiapv5W/vFSbFzPnBI6ELyVQwbTR2T7mo/p/1vNwlQKbdo9yy7JWuIS1Y
-	 yuXpnwrBBvPig==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-296bf028170so2491851fac.3;
-        Wed, 27 Nov 2024 02:53:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVC1/5hbaNo1htoHSpHKyfDpHtWZoC+CVYjStxveMR6wljdNih1uFFm5rJHYB81QyV10uVGAOJeZrc=@vger.kernel.org, AJvYcCWMLU/6tQQxH6OCh9FFxcNfq74q5InlAeh/X/WoJsQBBOCmK3abdE8BumEL9hTiTuBxxjIjVkoYU+t8tSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIgsLgVBD/78Th8RnMfCRBumClWnObEa4KSz9lap/8QlAaVcw1
-	QCEamN/kV3Efu1D0wQZys8w6Q+1s4H/u43Fa1Pq2ycL0PVdcTVseHAn7zjAVynyGV67kRZ/57GK
-	dU+tHtP3PE7aTAGqoEu1ZkxRjJaI=
-X-Google-Smtp-Source: AGHT+IER75SAOZUHH5jMgPekx7s/nl0d2NiLpDAXLFD49Hq7D2LZdweUm8zIcuOpHYIh3SSebTpmW0OFlPr+jp9C5lo=
-X-Received: by 2002:a05:6870:1cf:b0:27d:10f5:347 with SMTP id
- 586e51a60fabf-29dc40098fdmr1834428fac.15.1732704833749; Wed, 27 Nov 2024
- 02:53:53 -0800 (PST)
+	s=arc-20240116; t=1732704877; c=relaxed/simple;
+	bh=bw4R/xaVIhqazXmWYeRS//XfI0YzbW0vTTgSRGVI3SA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WuLnE4M4mXAJ+IPH08o5DqR7PZs8Yd+pQ1h6aVqfMI1y40SH7Cr304Bw63IO0wQ8YrDHUL2XegOsN12XygF2Rcm4HdECz4Z0V+gGZslbxSE68A70CcJJhi1Ho8IJCDm7rLqepPUOvdcBmy4n9yo2A8G8YJc3b7X2l1+iBAMJzVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jZZf7clD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR93TN2004424;
+	Wed, 27 Nov 2024 10:54:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rEMqPPtfJwiWelzz0hRF2xRvmtFgCOZyATXF6ddQuHA=; b=jZZf7clDnMgEw2sS
+	jJsrBWwIhVKcpZlVjPbd9lL2MA9PUX9CXvYp1wQMfjMLyRP0/AdESMrovJejtrms
+	z/+KlX+h2Cc2inmDf+2ByLN4CsD8reLkacqQaKWeWzoo9yH1lkjmWyZTndLnV2yZ
+	jZ1v0upIJV75dr1wmAzuLsKgmWq+H9XAvewCVuE0s/2LJy3Zuj0vI6lXdnOYvHAF
+	yp53gcgq1wQz9VP5ZtsiplLcmHXYY0+zedzDZR5CBp8CHLRsWoBfK+ZAcuHm96Si
+	tApyA7WV29VlU+jttSL2rtH/5LWAp1Cek1CcCoiL3RzEF333tFmEhBR/nK8pfVqI
+	EiKEsw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435839cdh6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 10:54:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARAsKVL015882
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 10:54:20 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 02:54:13 -0800
+Message-ID: <8982d065-9bc6-4036-8004-80b1681eaf3c@quicinc.com>
+Date: Wed, 27 Nov 2024 18:54:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126201539.477448-1-patryk.wlazlyn@linux.intel.com>
- <20241126201539.477448-2-patryk.wlazlyn@linux.intel.com> <Z0a0JNRPuRYaVrcI@BLRRASHENOY1.amd.com>
- <9a918226-4f93-4ee5-8673-20d82802f126@linux.intel.com>
-In-Reply-To: <9a918226-4f93-4ee5-8673-20d82802f126@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 27 Nov 2024 11:53:41 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0io8+zHwE82Z2z-GiTKwT63aHhbzDUhmZYHF3VwzbNaFw@mail.gmail.com>
-Message-ID: <CAJZ5v0io8+zHwE82Z2z-GiTKwT63aHhbzDUhmZYHF3VwzbNaFw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] x86/smp: Allow calling mwait_play_dead with an
- arbitrary hint
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: "Gautham R. Shenoy" <gautham.shenoy@amd.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] Display enablement changes for Qualcomm QCS8300
+ platform
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Ritesh Kumar
+	<quic_riteshk@quicinc.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Neil
+ Armstrong" <neil.armstrong@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Gpp7Knmg-xPkJylILt6Rf0k6FYHYWrFs
+X-Proofpoint-ORIG-GUID: Gpp7Knmg-xPkJylILt6Rf0k6FYHYWrFs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=969 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270090
 
-On Wed, Nov 27, 2024 at 9:33=E2=80=AFAM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> > Hello Patryk,
-> >
-> > Apologies for what may appear as bikeshedding, after this patch, the
-> > cpuidle code still won't call any mwait based play dead loop since the
-> > support for enter_dead for FFh based idle states in acpi_idle and
-> > intel_idle only gets added in Patches 2 and 3.
-> >
-> > Does it make sense to split this Patch 1 into 2 patches : 1/4 and 4/4
-> >
-> > 1/4 just introduces the mwait_play_dead_with_hint() helper which will
-> > be used by patches 2 and 3.
-> >
-> > 4/4 get rids of the of logic to find the deepest state from
-> > mwait_play_dead() and modifies native_play_dead() to call
-> > cpuidle_play_dead() followed by hlt_play_dead() thus removing any
-> > reference to mwait_play_dead(). Optionally you can even rename
-> > mwait_play_dead_with_hints() to mwait_play_dead().
-> >
-> > That way the changelog that you have for this patch can be used in 4/4
-> > since with the addition of play_dead support for FFh states in both
-> > acpi_idle and intel_idle via patches 2 and 3, the logic to find the
-> > deepest ffh state in mwait_play_dead() is no longer required.
-> >
-> > Thoughts ?
->
-> Yeah, makes sense. I just wanted to simplify, but at some point crossed m=
-y mind
-> that submitting it like you suggested may be better.
 
-Not just it may be better, but this is the only way to do it or people
-who apply the first patch without the other two patches will likely
-have problems (and that may easily happen during bisection, for
-example).
 
-Things should always work between consecutive patches in a patch series.
+On 2024/11/27 15:13, Krzysztof Kozlowski wrote:
+> On 27/11/2024 08:05, Yongxing Mou wrote:
+>> This series introduces support to enable the Mobile Display Subsystem (MDSS)
+>> and Display Processing Unit (DPU) for the Qualcomm QCS8300 target. It
+>> includes the addition of the hardware catalog, compatible string,
+>> relevant device tree changes, and their YAML bindings.
+>>
+>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>> ---
+>> This series depends on following series:
+>> https://lore.kernel.org/all/20241114-qcs8300-mm-cc-dt-patch-v1-1-7a974508c736@quicinc.com/
+>> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+> Above was not part of this merge window, so nothing from your patchset
+> can be merged for this v6.14.
+> 
+> If you want things to get merged, I suggest decoupling dependencies.
+> 
+Thanks for reviewing.Can we keep the dependency on above changes and 
+merge our changes after the dependent changes are merged?
+> Best regards,
+> Krzysztof
 
-> I am going to split that if I don't see any objections.
-
-Yes, please!
 
