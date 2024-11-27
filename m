@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-423016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D850F9DA14A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:00:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1979DA14D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0F92844C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B9D283CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B984113B293;
-	Wed, 27 Nov 2024 04:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F367C13A869;
+	Wed, 27 Nov 2024 04:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ypQEskSa"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWSDBNHP"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA8C1805A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAF128EB;
+	Wed, 27 Nov 2024 04:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732680042; cv=none; b=E3jFFHm7jEcVSvhEclmXbKBioOx6g5Oc84IMqFxkJlxJcWkWFXYvRH3NqyAhmo39tf3QvNsimZlXj9Lcim/izlpgwlAPxM60iaDaCGLfaMkc2lo6F2Nhl2tIHsuyAHDodQVttlQkph2pBOOhs9D5MTfKtL89czN5xggS7pkfU9k=
+	t=1732680350; cv=none; b=VlddcrBqT8XKco7X8T1vUerUsUU4/GoMx0yAcFy9VZdlHlRp0vpXYaiAgwFbaL4X3qzUdUpVe/vLR7YQuRvMvOca10t2Efu1J6Re3/jPf1xwsIaNLPBmYmsXKYvNu13kgbI8qPVdMD2PLQSInY+r6WpxJnhZyEdq5Di1QBn46Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732680042; c=relaxed/simple;
-	bh=HmL5KghJhyA1NHfNg2xF4U1baArdo1wSpfGkfHDUK8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F78Durdp65V+6jJtSBBxMxO8SK7/LUPScqLerUmcjHwXtbUZ+nYVIeY+8/745ELvhYIC7imwy5FFecRBP5Y2tG0o2tOytSrO8uRFkTEkAXrfsRemzBx2jmwtAIBJm8rS1Krd3AJtC/0M8w4/jBrLgejIwX+wEQm35TYcD8o3xvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ypQEskSa; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53dd9e853ccso4351187e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:00:39 -0800 (PST)
+	s=arc-20240116; t=1732680350; c=relaxed/simple;
+	bh=eGMgbMDKyJQFsX2FhhmL+N7rAH4Be2hXmFG8guEZ4I4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=BgdPi4gveb3yXvEzs9X5mA1sD0JYrZfkVUsRih+pA2kUviPKy9Ast/3Kul0rETmKkvp3pRvtKDGFpxDolR0uCL7APGzIEhyGDMcmzTvIbtpPh4pwQdFwZ3rJMuJCKJZK7PG1M9qXQwopB2M7zsh6cHv1XOABZxUuJY3YqRmY4Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWSDBNHP; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3822ba3cdbcso3931556f8f.0;
+        Tue, 26 Nov 2024 20:05:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732680038; x=1733284838; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PvYaGtKoOy0NaIKR2w9foJlILqskaLFgzQORKPCUl0k=;
-        b=ypQEskSanMKrjKGW+ixrojbbc+vVCzBWsMpVL9nTjtGn0gSHwPPaavt4VHF20ZmSwX
-         IbTmSLkhVs6yLZjQNzZMLmoIfazgBalrwYORLw3PaBV8G8ycTYpdhcQ+fj420ZQVDtaU
-         gtNayyC8GZtMAO9MsSbffhU9WKvNiq4fp8WSCszq3vqHZnN2m7XzeBm0XsANRG/RKtJW
-         308N3TCiFYqer2ZLFB2GT7wxnSoNhc8fy+g3h6Aw42zA59SLgY6f1NL96eEi9mf1xD/t
-         d5WmTxZ7dC+u+ushXiWlYNc/bIxxr2ernOD42FKPAr4PHpFPPuWBg0+HjyNT2UuL2DkU
-         7Hsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732680038; x=1733284838;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732680347; x=1733285147; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PvYaGtKoOy0NaIKR2w9foJlILqskaLFgzQORKPCUl0k=;
-        b=RwpGpnxawNzvFwHM2EjvNA+fDC643FBRXdDhA4T6B/ipBCFTeDTqID7c7kBdf/Lbnv
-         IWQk8QjX4/iBkFgDrLiwAYXPi3n5sK9kxWXwVgJBLf/L61dazuGjO+79lEe3ZxkUAPCr
-         w1PaYe39SC0K5Ufytcl1Dfys1sqc2ETNtdXtoTe1esbDd1h2DHDc50LVTx71Y+8Xp2xk
-         jqrgSLAf71wpxDAET3NzRwtUfLt7gRGrUMwC9y9kFGTSoE3fidRYSTUiUbjenar8T6yi
-         jEu6T61Fcnac5OY1VS4Fk3GoyhfFBofLrm8H4gQNNUNI0yg1+2IRfCNx13iHC3pSAZUe
-         uSCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkDhUzjV7270/J92E+zEmF7tvwOCIODipl0Au3eMvEZywQ1VY/5dEmO4WAVLJnAgTasbhf6zPI7BtLLlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBCqFqA9rjYw72LF7urTZyOIJhoaFmoxFkhLPJ1ZBtEB4kMkbL
-	CtizRnkn+25NN9V+kELFxsG57r2Ymbp5bxBSwArnGF0aOdkQmb+V4tXcV+fP2JI=
-X-Gm-Gg: ASbGncvglFGJ3RtFh9WNQnbv4qLLp2r+qucY5dTlqXIgT7AoWlREThiyJXgkcE0E7w8
-	rW+J+2Cn01W72QCFMhNBWEKDFMbf9ETPFVm+ar8I2raLO/Cz/L8Se5PnPie2yK7aVZ5tfT1o63p
-	cKUwxRvRM0PxY2TcXOjqokmE+C3i0RQ7olGKvgbfiiE1cvnNndzt67uwf3RN1qqGmGgaqB96ug0
-	COIf3JFAYgrtBWgzN/pOXk5XMUtP3/VnAo6rgs1Rlnc5ly1ffdkZ5KL2qXCY2x+LLfQ2hfjfx08
-	VxMDZLRyLe1s/5C1WEzl7QE4usKqTA==
-X-Google-Smtp-Source: AGHT+IFe46Ut3ixzrDaftB+74Cb5uVfPJwBiur6xDbxeHzU02v/b8vYaE19Gaapdwhhc1BJVVfN3HQ==
-X-Received: by 2002:a05:6512:b15:b0:53d:ed4e:e5af with SMTP id 2adb3069b0e04-53df00dce8amr636846e87.33.1732680037797;
-        Tue, 26 Nov 2024 20:00:37 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd88b54cbsm1914492e87.214.2024.11.26.20.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 20:00:36 -0800 (PST)
-Date: Wed, 27 Nov 2024 06:00:34 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_tingweiz@quicinc.com, quic_zhgao@quicinc.com
-Subject: Re: [PATCH v1] mmc: sdhci-msm: Enable aggressive PM
-Message-ID: <zrqcbghhhpmr2dknipkmqxcxcxnlqr4ury4haqq4n6xja5lc7p@6gh56cndcwjl>
-References: <20241127031708.2343727-1-quic_yuanjiey@quicinc.com>
+        bh=eGMgbMDKyJQFsX2FhhmL+N7rAH4Be2hXmFG8guEZ4I4=;
+        b=DWSDBNHPZk9lVUMnWDMJQQ2stuGjqio+OTlF6yvE2Z012k0rOYuKaHhfHUe9be2kkC
+         42hgVl7RGDuAZzAh6/5mXJOmAcB/uz/evWP4IBexY7rdXqyRMZ0BLqiB9wZY0FYoA/Pa
+         yzBf46zxjGxsgxFCoXBGZxOvijlhs+aJRQbVX9gAwMoEp0QwgftYxYPmkK1UWzcK1YD6
+         7EoxPKQC3BblJ+th+tEy7KjUID2dvOvHGbUrk59tA0fbwHPOhMxy+4L/z7JywJYCC+15
+         RO+bRBib/ucdHK8Cm5kbghEkB/WLdiYmeg07/HAIaRSZmpEtEwiD6Zn1JkRU5WDe0YKJ
+         JMGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732680347; x=1733285147;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eGMgbMDKyJQFsX2FhhmL+N7rAH4Be2hXmFG8guEZ4I4=;
+        b=mr/szQyVA6M6WXRyx9WBwYD8w6M5ZM5P2IC6eHppqutSYWh1S12Pj7nirlJTKZHDI3
+         18KJSjFdJXtsPjr76I/RJrx+gkvOCt9zrLgLcx+sqBwHzOGcJZhoO+mVVF17H7fd96zz
+         2UZjTjW8nS7grNmz5guF0e4+Rg1jT5JsjKeu3b2fxQSdfzEDlhSKhba7xiIGTMyc9fUj
+         4Adlk8ivVocR4oq/dohO8kP/GbKeTCGFHbRpmdj9friQhr+R5QUezPSEXH2cWUwCv93P
+         qD3FOUm7s62Py343R0mz/VUpkaSAG/NUXOaNf3w50fUm4wHFYTcki6wF/lPY/nwjrzUh
+         +B1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVdoIqQfl+o0cY7U/y4kM9kg23KlV47PRnIIT6MJ5jbsQnSBJ+U0bUnCV6+t8U6y6pu7GqcPdH+ei25@vger.kernel.org, AJvYcCXLmjl03fBJoxZPdGiS66K8JZLAdlHXQnNHr3QS5VRSkQaIGJJEEpG1NRqG/EWiaoJrOSfvR09IkFp+DaME@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz8HhJRVK58l1K5wwW7zSisbpHID7zSDjHHoLcA8HoTthEcMsD
+	CCl6QppqsaeSeSbcwoplQmAMA4uGEUAGBFv0HtEa54pEiApbFHs/
+X-Gm-Gg: ASbGnctQsFfc+ccfYex+RkSzzY4ly7CKUhDKErJIf/b1Al9VbDQFjMKldG9wnfji+O9
+	7q6AcPupa72b1zD5heEsn1ANQQseUEE7raxtvenhV6EGj9zR/QWxuORNduszyDYzNcVGkErrqMq
+	EcTJ382b2e+frfOEf73WJq6xrx3pzrHi3heuiJU7XBruL+oOVGfkChtzIuK2/13twT3D1YKpgn5
+	OGfe8KiE4fbKhGab9Fgzs/nQXqipf4t0LtZRHdwaqaCJ4A2M67dBF352KDk6bkIMlbfe+wy
+X-Google-Smtp-Source: AGHT+IHc99eGtijXfEAq6+Nq0ctt6V5ES855jF/j39G6AUo9KVVVWLSlAJEn/iJyJYwFhVzX13IpTQ==
+X-Received: by 2002:a5d:59a3:0:b0:37c:cc67:8b1f with SMTP id ffacd0b85a97d-385c6ef477amr1008941f8f.48.1732680346883;
+        Tue, 26 Nov 2024 20:05:46 -0800 (PST)
+Received: from smtpclient.apple ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe504sm14932923f8f.25.2024.11.26.20.05.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Nov 2024 20:05:46 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127031708.2343727-1-quic_yuanjiey@quicinc.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH] WIP: arm64: dts: meson: drop broadcom compatible from
+ reference board SDIO nodes
+From: Christian Hewitt <christianshewitt@gmail.com>
+In-Reply-To: <027767d4-89e7-4665-b840-294a84a89869@linaro.org>
+Date: Wed, 27 Nov 2024 08:05:33 +0400
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2B479B54-2784-4D75-BEE8-23A52EEFBF17@gmail.com>
+References: <20241124083453.900368-1-christianshewitt@gmail.com>
+ <027767d4-89e7-4665-b840-294a84a89869@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: Apple Mail (2.3826.200.121)
 
-On Wed, Nov 27, 2024 at 11:17:08AM +0800, Yuanjie Yang wrote:
-> The sdhci-msm driver supports the device in both RUNNING
-> and IDLE states, when eMMC/SD are not reading or writing,
-> eMMC/SD are in IDLE state, the power management module
-> will suspend the device(power off and reduce frequency,
-> etc.), putting the device into a low-power mode. But the
-> current sdhci-msm driver cannot put device enter into
-> low-power mode.
-> 
-> Enable aggressive PM capability to support runtime PM
-> functionality, allowing the eMMC/SD card to enter
-> lowe-power mode.
-> 
-> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> On 24 Nov 2024, at 8:11=E2=80=AFpm, Krzysztof Kozlowski =
+<krzysztof.kozlowski@linaro.org> wrote:
+>=20
+> On 24/11/2024 09:34, Christian Hewitt wrote:
+>> Drop the Broadcom compatible and use a generic sdio identifier with =
+the Amlogic
+>=20
+> 1. Heh, what? Why? This is not really explained and does not look
+> sensible at all.
+> 2. What is "generioc sdio identifier"?
+>=20
+>> reference boards. This allows a wider range of Android STB devices =
+with QCA9377
+>> and RTL8189ES/FS chips to have working WiFi when booting from the =
+reference dtb
+>=20
+> Please wrap commit message according to Linux coding style / =
+submission
+> process (neither too early nor over the limit):
+> =
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/sub=
+mitting-patches.rst#L597
+>=20
+>=20
+>> files. There is no observed impact on Broadcom devices.
+>=20
+> So how does it allow wider range of devices to have working wifi?
 
-What is the difference to [1] ?
+Sending patches while recovering from a 100km Triathlon last weekend
+resulted in some formatting and submission mistakes - sorry for that :(
 
-[1] https://lore.kernel.org/linux-arm-msm/20241104060722.10642-1-quic_sartgarg@quicinc.com
+I=E2=80=99ll send a v2 shortly with reduced subject/line length and a =
+better
+description of the change and reasoning.
 
-> ---
->  drivers/mmc/host/sdhci-msm.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index e00208535bd1..e3444d223513 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -2627,6 +2627,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->  	}
->  
->  	msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
-> +	msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
->  
->  	/* Set the timeout value to max possible */
->  	host->max_timeout_count = 0xF;
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Christian=
 
