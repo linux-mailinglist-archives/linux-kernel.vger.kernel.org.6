@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-423730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2669DABF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:45:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852DA9DABFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C40281F28
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:45:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14FD7B24832
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6640C2010E4;
-	Wed, 27 Nov 2024 16:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0F20110B;
+	Wed, 27 Nov 2024 16:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="geadsehf"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="YbwGJoKI"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A7720102A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DDE2010E2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732725888; cv=none; b=WTF/UjrHnIjoTYww9LCiO9uAbRifsoNvePrUDyfaBvwNpLNQngnV4A0P0p6QjUqogNSxlmSO4Pb+BARqTYVV7QOFwbDBgiOK28mEFidIpgb2vy/bqENLs3jr7i49swu7/Qig/V18z6UXXrZJhvGPUufIQkuK7i4wGHyjE99ZFto=
+	t=1732725890; cv=none; b=tr4xIwr5zXM/AWF6aB3cs/2nwTfE1G9t43r4jeKGczscxiphNOnH3TK7ZiFPd89UX1pnBkhoC06o17J6hUaj67BC2sNwfCA7osjfUid2MHvIOD9Rq6LI/dSDFjyFKFJJrzvGkIhDBtcCeHpQXOguqB2c9nY7Fa2DwL/uiyoUUY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732725888; c=relaxed/simple;
-	bh=su/n92AzBztSNoNYUl/lOKH5DlhZ0lVKituapnI/Td0=;
+	s=arc-20240116; t=1732725890; c=relaxed/simple;
+	bh=d996Pb4grSMymj8iX4YrCnnfv31zNoY9lRlxym/+8yE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=COIigv4K33iKQyr25FkEK2K3/aIoy+y8sp4NZekS4FMD1tAQtqvyczg43rwTXPdn7gcLvx1VHd0PhkGpPH7LdeMq5kd5vzF31O709iMb4N721+8YiEkIv7j6dD8XOSSOAPHAwcZZaXGPn7IvrNYNaqv00fHyU7m07E56FCmIqss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=geadsehf; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=o6yIJocD0hqCF+l4uuSMiU4qkWXsU4cwpYAbhUbrKxZ6NAXj4h4ZlWwwv71zN3S9t9ytnTm6LtUZCde9RawBIe35VpN9NBKWVHtoyO0dkdLu7vzmoosalXXVBKTOOyLL4Sc4vcVjVtQv97RZqZORLL12Cx99HJEpXbhlfzlwP0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=YbwGJoKI; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DF09BBFB98;
-	Wed, 27 Nov 2024 17:44:44 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6F404BFB96;
+	Wed, 27 Nov 2024 17:44:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1732725885; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1732725887; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=13D+wyJPJmO8MKQWxkHfAKBMu7JpxD+W0TTMGRBbJxY=;
-	b=geadsehfstQAloXeeSe7Hmk2QwTKV7loelGSbTGQMgPeQy54xqlORJcbvVb+8mmg/vH0p3
-	p/u3Yb8LKw8jdBiTO3Z9L+xm0M9B8quKSY7Ky/Eib1ZKaPnGZOAgu6mamd+JQu6xDlpVtC
-	NziIKTkKJN5aQZCKF7WBeOpNgovf0C3DkV3wQGIxAcZwrM7TDaVTItOKhkLSchvPIlLvRC
-	7sy143kRvaihu8q1mvSzkogjqJA5yNi5QRGAMRrT5XcsYZlT+ASRA5AKqhT5+dmr6vZo+i
-	fXdpdTS/a/Pss7zbDM3dOXbCu3R+uHc9CIhGO0MztMn7/rUwNjwXX/xClAXS3A==
+	bh=AxOVFaaTtf3vqrp1NbSGzCrsRokoNNo20iMlzSXj/hw=;
+	b=YbwGJoKIUvNDlJNRQkanxrXcaqQ4B34YnRbJw4V3kacSCu1AzoBxBMaS6Hpkbfh225avgM
+	cP/JEPgUeMtfSxRZPfDTLRlfiMQGBhOYP8DFVtMUjZg5auNiURv9CPoc5zR4dncRj11LJL
+	hZBG2oPPyjad2OaOl/0zP0iQMRgKYmRwu7DUXFhDVE1wG41VdiBRLiehAmTsHDmtm9VY2G
+	LQ0syTDiKnuqVFsfHH8ZEVULp/5DdSHZwiTzeR22Nlgp1q6C3Fp2lmeFdS/6qLEtJ9miq1
+	fpundE7b/DKanTPwKKPh6XCNqtXkuAkH1AbY904c/setcNm0iOKM5yBAihfG5A==
 From: Frieder Schrempf <frieder@fris.de>
 To: linux-arm-kernel@lists.infradead.org,
 	Marek Vasut <marex@denx.de>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
 	Liam Girdwood <lgirdwood@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Robin Gong <yibin.gong@nxp.com>
-Cc: Bo Liu <liubo03@inspur.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Bo Liu <liubo03@inspur.com>,
 	Joy Zou <joy.zou@nxp.com>
-Subject: [PATCH v2 07/11] regulator: pca9450: Fix enable register for LDO5
-Date: Wed, 27 Nov 2024 17:42:23 +0100
-Message-ID: <20241127164337.613915-8-frieder@fris.de>
+Subject: [PATCH v2 08/11] regulator: pca9450: Handle hardware with fixed SD_VSEL for LDO5
+Date: Wed, 27 Nov 2024 17:42:24 +0100
+Message-ID: <20241127164337.613915-9-frieder@fris.de>
 In-Reply-To: <20241127164337.613915-1-frieder@fris.de>
 References: <20241127164337.613915-1-frieder@fris.de>
 Precedence: bulk
@@ -67,50 +66,61 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-The LDO5 regulator has two configuration registers, but only
-LDO5CTRL_L contains the bits for enabling/disabling the regulator.
+There are two ways to set the output voltage of the LD05
+regulator. First by writing to the voltage selection registers
+and second by toggling the SD_VSEL signal.
 
-Fixes: 0935ff5f1f0a ("regulator: pca9450: add pca9450 pmic driver")
+Usually board designers connect SD_VSEL to the VSELECT signal
+controlled by the USDHC controller, but in some cases the
+signal is hardwired to a fixed low level (therefore selecting
+3.3V as initial value for allowing to boot from the SD card).
+
+In these cases, the voltage is only determined by the value
+of the LDO5CTRL_L register. Introduce a property
+nxp,sd-vsel-fixed-low to let the driver know that SD_VSEL
+is low and there is no GPIO to actually get that
+information from dynamically.
+
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Marek Vasut <marex@denx.de>
 ---
 Changes for v2:
-* none
+* new patch
 ---
- drivers/regulator/pca9450-regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/regulator/pca9450-regulator.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
-index 8e525deaff0b7..7f7e176bef452 100644
+index 7f7e176bef452..6024de9656e8e 100644
 --- a/drivers/regulator/pca9450-regulator.c
 +++ b/drivers/regulator/pca9450-regulator.c
-@@ -506,7 +506,7 @@ static const struct pca9450_regulator_desc pca9450a_regulators[] = {
- 			.n_linear_ranges = ARRAY_SIZE(pca9450_ldo5_volts),
- 			.vsel_reg = PCA9450_REG_LDO5CTRL_H,
- 			.vsel_mask = LDO5HOUT_MASK,
--			.enable_reg = PCA9450_REG_LDO5CTRL_H,
-+			.enable_reg = PCA9450_REG_LDO5CTRL_L,
- 			.enable_mask = LDO5H_EN_MASK,
- 			.owner = THIS_MODULE,
- 		},
-@@ -715,7 +715,7 @@ static const struct pca9450_regulator_desc pca9450bc_regulators[] = {
- 			.n_linear_ranges = ARRAY_SIZE(pca9450_ldo5_volts),
- 			.vsel_reg = PCA9450_REG_LDO5CTRL_H,
- 			.vsel_mask = LDO5HOUT_MASK,
--			.enable_reg = PCA9450_REG_LDO5CTRL_H,
-+			.enable_reg = PCA9450_REG_LDO5CTRL_L,
- 			.enable_mask = LDO5H_EN_MASK,
- 			.owner = THIS_MODULE,
- 		},
-@@ -887,7 +887,7 @@ static const struct pca9450_regulator_desc pca9451a_regulators[] = {
- 			.n_linear_ranges = ARRAY_SIZE(pca9450_ldo5_volts),
- 			.vsel_reg = PCA9450_REG_LDO5CTRL_H,
- 			.vsel_mask = LDO5HOUT_MASK,
--			.enable_reg = PCA9450_REG_LDO5CTRL_H,
-+			.enable_reg = PCA9450_REG_LDO5CTRL_L,
- 			.enable_mask = LDO5H_EN_MASK,
- 			.owner = THIS_MODULE,
- 		},
+@@ -36,6 +36,7 @@ struct pca9450 {
+ 	enum pca9450_chip_type type;
+ 	unsigned int rcnt;
+ 	int irq;
++	bool sd_vsel_fixed_low;
+ };
+ 
+ static const struct regmap_range pca9450_status_range = {
+@@ -102,6 +103,9 @@ static unsigned int pca9450_ldo5_get_reg_voltage_sel(struct regulator_dev *rdev)
+ {
+ 	struct pca9450 *pca9450 = rdev_get_drvdata(rdev);
+ 
++	if (pca9450->sd_vsel_fixed_low)
++		return PCA9450_REG_LDO5CTRL_L;
++
+ 	if (pca9450->sd_vsel_gpio && !gpiod_get_value(pca9450->sd_vsel_gpio))
+ 		return PCA9450_REG_LDO5CTRL_L;
+ 
+@@ -1084,6 +1088,9 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
+ 		return ret;
+ 	}
+ 
++	pca9450->sd_vsel_fixed_low =
++		of_property_read_bool(ldo5->dev.of_node, "nxp,sd-vsel-fixed-low");
++
+ 	dev_info(&i2c->dev, "%s probed.\n",
+ 		type == PCA9450_TYPE_PCA9450A ? "pca9450a" :
+ 		(type == PCA9450_TYPE_PCA9451A ? "pca9451a" : "pca9450bc"));
 -- 
 2.46.1
 
