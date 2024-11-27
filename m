@@ -1,157 +1,269 @@
-Return-Path: <linux-kernel+bounces-423381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD459DA6A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:14:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53169DA687
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:07:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C6FCB2987A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75300164AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09CE1EE035;
-	Wed, 27 Nov 2024 11:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2001EE001;
+	Wed, 27 Nov 2024 11:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KXfZfUM6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p8bQSUHT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="A6QzlK35";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p8bQSUHT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="A6QzlK35"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652F1EE023;
-	Wed, 27 Nov 2024 11:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B461E0DED;
+	Wed, 27 Nov 2024 11:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732705629; cv=none; b=o5388ulbLTTm6WHSqY2mFDx7b9RgeAfKheZ1EvwvJ4xZOGQBo2bWP8Hcc9iCOcQjeaqxb6X7A4/RN98NqsgztbUdM7Qs+Q620N4ZscVhMEryGtCMev9GLjEfK/DggSVush1N+j9/Ypqf09Zpd7PwyhGUtOvBS2UjGw1y3Uh7KXI=
+	t=1732705623; cv=none; b=N80dn4JbPjXFzTAmwFDGYGi67DZKM5sTz2bQ1nJ8StG6T+x+d6jAM8y2TC65dWKCnHlLuX9fK2SNIw5FjCKHz4MfvtpMFn6CfBEHJgrF0lwEiaHoQMOVzvVfSzn27Qw5o5vjRee78Quevo55TSopnFue2tHtCQiHLdOQF4+sK7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732705629; c=relaxed/simple;
-	bh=/1Y0Pr5zlaTOBKbaJdGDqjvMDHGZJbLEBG4xP0of54E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RiHsCV1R4vRwFLy1YXDleXIOUwHffhrO16GgjDduVawDD6xY4TE1MFGMagP2MH0ulJIFR4H58+FUSypI6kLgFs5xjSKCKkpWoCFjf9aF7Q2b90cPcr9Us+b06NYLBJooZsTcN96cXfWYx2bPy/WLkZp20TV9wP3WGgpst+sNHLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KXfZfUM6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR8tuij006092;
-	Wed, 27 Nov 2024 11:06:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zZ9yc2zbn8F7uOk5mtyEw86GWK73C7e7qpyItFSaXbU=; b=KXfZfUM65o0TlGaP
-	42Z1YL2rQHEz2cxwflmazA6XCozyIFY7SYZnYhpjevrWnmtwP9zZ5Bq9gY9jDGdT
-	vjOhaBr0Epj5xBdhKhlkf3REZmf3aab88T/JOOassib7CgA0Ic4GdCxf+cdwPrPZ
-	s9b/QXwhwK+C5pYRfluTCUrz+ly788566m2DKYmxnXNyUC05znZDrwlopND5MWy8
-	KIhfCNoElgGIruPnQiGn8p6eNcOjuucKp1PcgzU73LZHsrKOdIQE/0+n8/b9ZeDx
-	toBD8RSlxAP/tziJ9W6dpk/04p4BiVzOM9maNxPg0dEg9C2aehu7xvKWKoJQqgyh
-	v4e4KA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434ts1p9q5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 11:06:47 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARB6lHR006239
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 11:06:47 GMT
-Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
- 2024 03:06:40 -0800
-Message-ID: <42a8565a-6dd9-4cb6-a83b-22e779b5f31b@quicinc.com>
-Date: Wed, 27 Nov 2024 19:06:37 +0800
+	s=arc-20240116; t=1732705623; c=relaxed/simple;
+	bh=nsTnpCU5lza/RRF6svKMS0tHdUP03m9UTECrIonLoPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSkeU9OfMUt3pGjQy3Tu9wNAZq8zQqacOkjNJeYS25AM+ugPxK8dfygqkYdk/SBs4BZ0M2UxYTo9yScN7wR8DFOccfD3W87c5+7JCS6AqBiSV3AOUjToPv+O7uDdx5fESCk+HNOkhpQRyDj6MEd3mK/WGV1RrjhLedKLnMUxJzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p8bQSUHT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=A6QzlK35; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p8bQSUHT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=A6QzlK35; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6DCAC1F786;
+	Wed, 27 Nov 2024 11:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732705614; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ve5bO8Xk7Mdrs4etTh9swfc19BKNL9zCNHLtpjsUTFc=;
+	b=p8bQSUHTiWn0ntOSRJlScU0Y19NQdFqyVvSnTjYkPUFbSbXa84sBQr1A++WXGv8NqwuNv7
+	Uv8Tu4bAhSvjqJS1aPqaa9tjJdYTBrh05zizZNuVVnuFwm0khP5TBFOTxpmDqrWT1RyyQ6
+	7AkavAsc5Zz5U4vPxB5TjZWUiuGyPr8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732705614;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ve5bO8Xk7Mdrs4etTh9swfc19BKNL9zCNHLtpjsUTFc=;
+	b=A6QzlK35pDqkrXs+xGX1Dgc+aZox97lM3/2YXSKsXJeYg5wX9oGp90z8E3LoX/LazwHrS8
+	WLYc/Yx/4DFZsYDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732705614; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ve5bO8Xk7Mdrs4etTh9swfc19BKNL9zCNHLtpjsUTFc=;
+	b=p8bQSUHTiWn0ntOSRJlScU0Y19NQdFqyVvSnTjYkPUFbSbXa84sBQr1A++WXGv8NqwuNv7
+	Uv8Tu4bAhSvjqJS1aPqaa9tjJdYTBrh05zizZNuVVnuFwm0khP5TBFOTxpmDqrWT1RyyQ6
+	7AkavAsc5Zz5U4vPxB5TjZWUiuGyPr8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732705614;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ve5bO8Xk7Mdrs4etTh9swfc19BKNL9zCNHLtpjsUTFc=;
+	b=A6QzlK35pDqkrXs+xGX1Dgc+aZox97lM3/2YXSKsXJeYg5wX9oGp90z8E3LoX/LazwHrS8
+	WLYc/Yx/4DFZsYDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5686213941;
+	Wed, 27 Nov 2024 11:06:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id S3cYFU79RmfSWQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 27 Nov 2024 11:06:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EBEF6A08D6; Wed, 27 Nov 2024 12:06:49 +0100 (CET)
+Date: Wed, 27 Nov 2024 12:06:49 +0100
+From: Jan Kara <jack@suse.cz>
+To: NeilBrown <neilb@suse.de>
+Cc: Jan Kara <jack@suse.cz>, Anders Blomdell <anders.blomdell@gmail.com>,
+	Philippe Troin <phil@fifi.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	netfs@lists.linux.dev
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+Message-ID: <20241127110649.yg2k4s3fzohb2pgg@quack3>
+References: <>
+ <20241126150613.a4b57y2qmolapsuc@quack3>
+ <173269663098.1734440.13407516531783940860@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Display enablement changes for Qualcomm QCS8300
- platform
-To: Yongxing Mou <quic_yongmou@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>,
-        Ritesh Kumar <quic_riteshk@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
- <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
- <8982d065-9bc6-4036-8004-80b1681eaf3c@quicinc.com>
-From: Tingwei Zhang <quic_tingweiz@quicinc.com>
-In-Reply-To: <8982d065-9bc6-4036-8004-80b1681eaf3c@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DK9OgcMEwMBc9F4QNKCwGE-uqUxS41-R
-X-Proofpoint-ORIG-GUID: DK9OgcMEwMBc9F4QNKCwGE-uqUxS41-R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=948 spamscore=0 adultscore=0 malwarescore=0
- impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411270092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173269663098.1734440.13407516531783940860@noble.neil.brown.name>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,fifi.org,infradead.org,linux-foundation.org,vger.kernel.org,kvack.org,redhat.com,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 11/27/2024 6:54 PM, Yongxing Mou wrote:
+Added David Howells to CC since this seems to be mostly netfs related.
+
+On Wed 27-11-24 19:37:10, NeilBrown wrote:
+> On Wed, 27 Nov 2024, Jan Kara wrote:
+> > On Tue 26-11-24 11:37:19, Jan Kara wrote:
+> > > On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+> > > > On 2024-11-26 02:48, Philippe Troin wrote:
+> > > > > On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+> > > > > > When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+> > > > > > we got terrible performance (lots of nfs: server x.x.x.x not
+> > > > > > responding).
+> > > > > > What triggered this problem was virtual machines with NFS-mounted
+> > > > > > qcow2 disks
+> > > > > > that often triggered large readaheads that generates long streaks of
+> > > > > > disk I/O
+> > > > > > of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+> > > > > > area of the
+> > > > > > machine.
+> > > > > > 
+> > > > > > A git bisect gave the following suspect:
+> > > > > > 
+> > > > > > git bisect start
+> > > > > 
+> > > > > 8< snip >8
+> > > > > 
+> > > > > > # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+> > > > > > readahead: properly shorten readahead when falling back to
+> > > > > > do_page_cache_ra()
+> > > > > 
+> > > > > Thank you for taking the time to bisect, this issue has been bugging
+> > > > > me, but it's been non-deterministic, and hence hard to bisect.
+> > > > > 
+> > > > > I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+> > > > > slightly different setups:
+> > > > > 
+> > > > > (1) On machines mounting NFSv3 shared drives. The symptom here is a
+> > > > > "nfs server XXX not responding, still trying" that never recovers
+> > > > > (while the server remains pingable and other NFSv3 volumes from the
+> > > > > hanging server can be mounted).
+> > > > > 
+> > > > > (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+> > > > > several minutes) on random I/O. These stalls eventually recover.
+> > > > > 
+> > > > > I've built a 6.11.10 kernel with
+> > > > > 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+> > > > > normal (no more NFS hangs, no more VM stalls).
+> > > > > 
+> > > > Some printk debugging, seems to indicate that the problem
+> > > > is that the entity 'ra->size - (index - start)' goes
+> > > > negative, which then gets cast to a very large unsigned
+> > > > 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+> > > > bug is still eludes me, though.
+> > > 
+> > > Thanks for the report, bisection and debugging! I think I see what's going
+> > > on. read_pages() can go and reduce ra->size when ->readahead() callback
+> > > failed to read all folios prepared for reading and apparently that's what
+> > > happens with NFS and what can lead to negative argument to
+> > > do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> > > ra->size / ra->async_size does more harm than good (because those values
+> > > show *desired* readahead to happen, not exact number of pages read),
+> > > furthermore it is problematic because ra can be shared by multiple
+> > > processes and so updates are inherently racy. If we indeed need to store
+> > > number of read pages, we could do it through ractl which is call-site local
+> > > and used for communication between readahead generic functions and callers.
+> > > But I have to do some more history digging and code reading to understand
+> > > what is using this logic in read_pages().
+> > 
+> > Hum, checking the history the update of ra->size has been added by Neil two
+> > years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
+> > process all pages"). Neil, the changelog seems as there was some real
+> > motivation behind updating of ra->size in read_pages(). What was it? Now I
+> > somewhat disagree with reducing ra->size in read_pages() because it seems
+> > like a wrong place to do that and if we do need something like that,
+> > readahead window sizing logic should rather be changed to take that into
+> > account? But it all depends on what was the real rationale behind reducing
+> > ra->size in read_pages()...
+> > 
 > 
+> I cannot tell you much more than what the commit itself says.
+> If there are any pages still in the rac, then we didn't try read-ahead
+> and shouldn't pretend that we did. Else the numbers will be wrong.
 > 
-> On 2024/11/27 15:13, Krzysztof Kozlowski wrote:
->> On 27/11/2024 08:05, Yongxing Mou wrote:
->>> This series introduces support to enable the Mobile Display Subsystem 
->>> (MDSS)
->>> and Display Processing Unit (DPU) for the Qualcomm QCS8300 target. It
->>> includes the addition of the hardware catalog, compatible string,
->>> relevant device tree changes, and their YAML bindings.
->>>
->>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->>> ---
->>> This series depends on following series:
->>> https://lore.kernel.org/all/20241114-qcs8300-mm-cc-dt-patch- 
->>> v1-1-7a974508c736@quicinc.com/
->>> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi- 
->>> v2-0-494c40fa2a42@quicinc.com/
->> Above was not part of this merge window, so nothing from your patchset
->> can be merged for this v6.14.
->>
->> If you want things to get merged, I suggest decoupling dependencies.
->>
-> Thanks for reviewing.Can we keep the dependency on above changes and 
-> merge our changes after the dependent changes are merged?
+> I think the important part of the patch was the
+> delete_from_page_cache().
+> Leaving pages in the page cache which we didn't try to read will cause
+> a future read-ahead to skip those pages and they can only be read
+> synchronously.
 
-You can move device tree changes which have dependency to a separate 
-series and keep binding/driver changes here. They don't have dependency.
+Yes, I agree with the delete_from_page_cache() part (although it seems as a
+bit of an band aid but I guess KISS principle wins here).
 
->> Best regards,
->> Krzysztof
-> 
-> 
+> But maybe you are right that ra, being shared, shouldn't be modified
+> like this.
 
+OK, I was wondering whether this ra update isn't some way how NFS tries to
+stear optimal readahead size for it. It would be weird but possible. If
+this was mostly a theoretical concert, then I'd be for dropping the ra
+update in read_pages(). I did a small excursion to nfs_readahead() and
+that function itself seems to read all the pages unless there's some error
+like ENOMEM. But before doing this nfs_readahead() does:
 
+        ret = nfs_netfs_readahead(ractl);
+        if (!ret)
+                goto out;                    
+
+And that is more interesting because if the inode has netfs cache, we will
+do netfs_readahead(ractl) and return 0. So whatever netfs_readahead() reads
+is the final result. And that function actually seems to read only
+PAGEVEC_SIZE folios (because that's what fits in its request structure) and
+aborts. 
+
+Now unless you have fscache in tmpfs or you have really large folios in the
+page cache, reading PAGEVEC_SIZE folios can be too small to get decent
+performance. But that's somewhat besides the point of this thread. The fact
+is that netfs can indeed read very few folios from the readahead it was
+asked to do. The question is how the generic readahead code should handle
+such case. Either we could say that such behavior is not really supported
+(besides error recovery where performance is not an issue) and fix netfs to
+try harder to submit all the folios generic code asked it to read. Or we
+can say generic readahead code needs to accommodate such behavior in a
+performant way but then the readahead limitation should be communicated in
+advance so that we avoid creating tons of folios only to discard them a
+while later. I guess the decision depends on how practical is the "try to
+read all folios" solution for netfs... What do you think guys?
+
+								Honza
 -- 
-Thanks,
-Tingwei
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
