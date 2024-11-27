@@ -1,128 +1,95 @@
-Return-Path: <linux-kernel+bounces-424051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861FF9DAFF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D372D9DAFF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:54:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DFE281A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0A2281BB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E55199254;
-	Wed, 27 Nov 2024 23:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC66198A08;
+	Wed, 27 Nov 2024 23:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UVu59g6Z"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeG7vUmN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DFD1990D8
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EE815E5CA;
+	Wed, 27 Nov 2024 23:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732751596; cv=none; b=eisMuC5zITLNIZ/NGywDyRAPg0B+R5YQSgAl4faFgbwqP7XSRnl9VZc7UVgaZxT8tXO3+N+OhAMb2UvN/6sC1/KWS/WO1UMUBDZfBRZfpZDgcl3KufzQfVu4WaUL7u5Npr6S6aiFZ1UlS9TKBred30vAWa+5fTjwbWDVzBJ3LaM=
+	t=1732751635; cv=none; b=QTxMAIZjg32eYz8TiHx3voCfpFDYH9mwsUeCH+8ENjKVQuqdGs2Pt9af2NOSp8cLm0NBsGOywZrhO8aknlA9QzuF1ZnS7MagbT8vMukULPLxwLgY/N8wUXxyVkXmA+U9C1RRs52IeaoV2PU/zQnwUbOwftIpIpvs3cUNibEQEUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732751596; c=relaxed/simple;
-	bh=B+guaGM8zNDjHAblKR3rNrz7k+exZxvr6Z32NHXfp78=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=W9YLKF/s5kmpoEOHLc5KczIe9uISfZqhrtWRhHK5q2s+AQjyxwg+hZbgxk8sZ5uGnKnvN9GMNShcH8PvnD+bCn3AgA/yQ9qTTBF7ibzC4q0mkz7kTEvGixHMS7Jy5FK5ZaqS/Zc9tshWUf4aLaW6+Rq3cvu3ugzlMYRTRvMMT+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UVu59g6Z; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea21082c99so226547a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732751595; x=1733356395; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNdPCBLD98K20zOO6Bao1YI0NO02p0JCW7gr9Ds1ueM=;
-        b=UVu59g6ZBOjQvWmBnPSDdqfB/5FbEBFQ+3yX5SJ+uNsP2Dh0zYhmJQySHJzHNfMeXD
-         DMAr2Ewx0cShCHFdbn/Sl5aZaa6P/hr2zHc0ZJZI0+xuAuCaaMy1m2jk8kwl7bpeju4v
-         q5E+aofuyJWb1xlQ/j7aqW7NjRmWiVZvXYMPuUN6vaIYuU0LqBJGDWmYZ3+AtdjgoIhW
-         9XRBsvSZZu7D0FY7aTIXms2+68IHv+VcA+4Bogof1q91Y/gBdqI1l8gPYMUtwhHxJ36l
-         1CpkwFv8qyPreRbPPjNoOeebrvDMowkTNTzmSXMzyXfyBp0AE9mCDTDxrK1hyCftGrrZ
-         /szA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732751595; x=1733356395;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNdPCBLD98K20zOO6Bao1YI0NO02p0JCW7gr9Ds1ueM=;
-        b=CsomS2aUKDSZomBP7ER+EgbMjiziRck/Z/F5Q9ZKbXlHGpEHIKewTnayTFU2/8PcJI
-         1RrfpsDlzI0EwE7BipO6avCRJAgTSSBfbLku5EuoMtzV+nUE8Dns9xh+w+EIoev2N60K
-         AgW+Yz6J2CoQaxsAvWPpDXMxoN7QGI9fWncL4iHTryUjrjp9t41y3yNP5TDjY2y/t7NI
-         Y8EvGHul4ZGKfq/ulLDRwZskmqvaEkIjVLGv/0pRsP9Buisd/AzwihHJj+2d06c+gyWG
-         hcPA9gfmLTONZD1hV/ePPweiu5pVxOBZ01D2T4L4qRsa03D6pptowP+1byZnvx/CW2pR
-         DtHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiFZjxLwJCU6A4BYqPuatFEQWYyiRxLgvWx4YeJhiFOGv5nN6G6a5rbJNpT4ISOpotdbBMDnJJ/BoipFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5Xd6XuW7QCICTwcdX2unos4R2bUGd5V9L2pioVhl37bvC6AnK
-	cX2mXMQavq9vB0Hy8euNAS4Npi0WzDF5K75JZ+ASegYGeeZ8WsHi0yjTpbbg/3CaNovXtHa2NXE
-	F4Q==
-X-Google-Smtp-Source: AGHT+IHR7A/TQXvzV6P238Oe4bPKg8Edeq87kZfXAl9SSGx/sR0jXBPGRSpiDg11scozZoz1hS5NEDgHQmo=
-X-Received: from pjtd6.prod.google.com ([2002:a17:90b:46:b0:2ea:c64d:fccb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b51:b0:2ea:5054:6c44
- with SMTP id 98e67ed59e1d1-2ee097e51b4mr6538986a91.31.1732751594839; Wed, 27
- Nov 2024 15:53:14 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 15:53:12 -0800
+	s=arc-20240116; t=1732751635; c=relaxed/simple;
+	bh=kiqiUHGZQKDYDLk9fO3maDsxVcc0F+gp/DU8rZH1+FQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gW/8kEX8u0NeAvYEVNuPe0UADVw9CH9eI7GSnOwpAmufE21LKsyTy7JEFc7MzqnSh8WqmpCXfGGvPAUGE+IS5clbFMtZckZgxhXEbxkomb/ndl4I+tQFpB7bXSCVfkeCw/aH0YK/YCvBwclr1KSzSi2ezb2nCjL9SEIfx9jyF3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeG7vUmN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D001C4CED4;
+	Wed, 27 Nov 2024 23:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732751634;
+	bh=kiqiUHGZQKDYDLk9fO3maDsxVcc0F+gp/DU8rZH1+FQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GeG7vUmNZxbSth87JooSfMF70IdT3fmdmMXXf3fotyZKM4wDTZKySh6/5dMAENZG+
+	 fQSYLbqMyRYMmCkBitkqzLK8OanqDV8g4hL8G3ktzy12e0uHSsKnAoK+ull1W/Qrtm
+	 winMgGo7shI9dK1PMEGiYmzxwRXOIWUGwJEE1x7Eny5Ura6yST/t+WESAttYWhKVNU
+	 EzcN2TCkGTwCzHwgVfMoA/aUZTABc6qB/VzMdR4jObHzc5B4B5Hm+nrg2UePPTBIND
+	 0//7C4UTE2M9bPDtYYrCqrwKCi07Ukb1R+xEdNYoe0VaN6LS27LVjLSrdaBmkdWfc4
+	 kfh7Xyp8EDsHw==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53de5ec22adso233749e87.3;
+        Wed, 27 Nov 2024 15:53:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUTeYMrN8/ZFzLNEuNy9eKAc4hv8C6MOys19tbitvHXwiFAzZtuvzHaGOBx1zp3HtuYGU74lLbyqb6LzkU=@vger.kernel.org, AJvYcCVpGQmBlxJAiu1gWm4e85a3VYz/MoqQ3Qy1pF4U9abk66JnVZAn5napMmHTkOuhYJupFnSGdcNdZpWlo0MC@vger.kernel.org, AJvYcCXLDiiebSqQvHLd6+7f1QL3elgzXz4Dka/Lxork6TlSjNp/+yiJj0lzkn7j2Ygnj6BAOMxsCHrrHA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmZCZLdN//JWWdUc2rZpxQpJ7oyg4+vQPllKpyh2cLZhDk2pAQ
+	bey5PLo/diK2K6POeoe7F5oxBMXHEfGTDOpzl6ybuSLSOKvynXY/QZvajG/y0aIXosd5CZVD6rG
+	SYoCgm9OlmYRquR0xWOYkb5qdFC4=
+X-Google-Smtp-Source: AGHT+IGCxQxyu7QI4OzPAUT0z2wKT6cIjeMzPvwQlBLfhKTYIg/LEjqElhB370EqPzFIOc43+h4829TCnjPUJgXQ+N4=
+X-Received: by 2002:ac2:4c45:0:b0:53d:e5c0:b99d with SMTP id
+ 2adb3069b0e04-53df010ead6mr2748857e87.49.1732751633236; Wed, 27 Nov 2024
+ 15:53:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241127235312.4048445-1-seanjc@google.com>
-Subject: [PATCH] KVM: SVM: Remove redundant TLB flush on guest CR4.PGE change
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20241127-selinux-clean-v2-1-a6e528c1ff93@linutronix.de>
+In-Reply-To: <20241127-selinux-clean-v2-1-a6e528c1ff93@linutronix.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 28 Nov 2024 08:53:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQRtzeUQq8W6GsSJsA5jq4cnn4=-Cvz=J_tZeb-3n+A_w@mail.gmail.com>
+Message-ID: <CAK7LNAQRtzeUQq8W6GsSJsA5jq4cnn4=-Cvz=J_tZeb-3n+A_w@mail.gmail.com>
+Subject: Re: [PATCH v2] selinux: add generated av_permissions.h to targets
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Drop SVM's direct TLB flush when CR4.PGE is toggled and NPT is enabled, as
-KVM already guarantees TLBs are flushed appropriately.
+On Wed, Nov 27, 2024 at 7:09=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> av_permissions.h was not declared as a target and therefore not cleaned
+> up automatically by kbuild.
+>
+> Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
+> Link: https://lore.kernel.org/lkml/CAK7LNATUnCPt03BRFSKh1EH=3D+Sy0Q48wE4E=
+R0BZdJqOb_44L8w@mail.gmail.com/
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 
-For the call from cr_trap(), kvm_post_set_cr4() requests TLB_FLUSH_GUEST
-(which is a superset of TLB_FLUSH_CURRENT) when CR4.PGE is toggled,
-regardless of whether or not KVM is using TDP.
 
-The calls from nested_vmcb02_prepare_save() and nested_svm_vmexit() are
-checking guest (L2) vs. host (L1) CR4, and so a flush is unnecessary as L2
-is defined to use a different ASID (from L1's perspective).
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Lastly, the call from svm_set_cr0() passes in the current CR4 value, i.e.
-can't toggle PGE.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/svm.c | 5 -----
- 1 file changed, 5 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index dd15cc635655..f39724bf26be 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -284,8 +284,6 @@ u32 svm_msrpm_offset(u32 msr)
- 	return MSR_INVALID;
- }
- 
--static void svm_flush_tlb_current(struct kvm_vcpu *vcpu);
--
- static int get_npt_level(void)
- {
- #ifdef CONFIG_X86_64
-@@ -1921,9 +1919,6 @@ void svm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
- 	unsigned long host_cr4_mce = cr4_read_shadow() & X86_CR4_MCE;
- 	unsigned long old_cr4 = vcpu->arch.cr4;
- 
--	if (npt_enabled && ((old_cr4 ^ cr4) & X86_CR4_PGE))
--		svm_flush_tlb_current(vcpu);
--
- 	vcpu->arch.cr4 = cr4;
- 	if (!npt_enabled) {
- 		cr4 |= X86_CR4_PAE;
 
-base-commit: 4d911c7abee56771b0219a9fbf0120d06bdc9c14
--- 
-2.47.0.338.g60cca15819-goog
 
+--=20
+Best Regards
+Masahiro Yamada
 
