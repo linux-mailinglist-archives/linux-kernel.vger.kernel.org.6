@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-423338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF6B9DA5FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:40:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17389DA605
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:42:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C0163A0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9622818F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E20198851;
-	Wed, 27 Nov 2024 10:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CAF198850;
+	Wed, 27 Nov 2024 10:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UGf4ZUE/"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AFViMWtt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C27145B0F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA066145B0F;
+	Wed, 27 Nov 2024 10:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704003; cv=none; b=BUdJWr4SHeWLgFgJ7uS3ADJmc/gm+rONG8oJMY5mIoMata2C4r4EEMv1AtHCxhU8bF5nvSTLQL32KhCjoChlDSaSMRUxFF3Mlt6R8Hk5tUgnt2BOfpz/ZXca8JcqQ/tAX9trl83iAkbxREWFWG5wj1Q1Uba1DDT+n1xrTGC9sk4=
+	t=1732704135; cv=none; b=tdaoxTNIQcSFumW7eFcp0OAOnhH0jG7Gy15tjf/dmN3dK9u60e2A3OOdp5xGhZp7eZQT/FPcmhLc8nDRdMojuWxLd4fKMEQDnNcR7juy51N5Bx0qK1QGSi8vu50lCeJUuDtF9u/flnkO3G98j/zRim4gGqzGY6UTWxBTCma3dmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704003; c=relaxed/simple;
-	bh=YAhRCQad9Fl4phrqCGjZO+vojAEemq5NZZJCL/La2hw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAS4EipNsCDQS9xUSO7RncZ0RYrLhwV7sWmmy2ViH5dK6T6xuSRSMbwrmJcoIfvKt8XCUVl01yx9AsjWU2lG45bWiTqDlMir0Xl8KH6N44JtrtmQUyuBlyr6w42zFD8YLCcdOhmiKYXGaykaNpJtUpBAJ0ENmwY2e6+zgFND7qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UGf4ZUE/; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7fc88476a02so718490a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:40:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732704001; x=1733308801; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAhRCQad9Fl4phrqCGjZO+vojAEemq5NZZJCL/La2hw=;
-        b=UGf4ZUE/azqXHvTxRc+yubhctdHB7I2hvkktyNjktSw/VqL2rcOWCx/xxeMAgtv1ff
-         /zUmJrR3SKsazMNpEYSlDHL0yeIj+FEfnKFAAgwdLwEl+OGtSqU79YvbfenajnPRlih8
-         RVQ6BaMzEBegpcCyYf6yz2mYrtfwA5kIs7/1oCMJitqgYu33/yyiptVwWQKRT0h20DTh
-         Z8vWZ4ejLp6cqszhMs70soLauF8kadhrMUt2/qMY7dtDFOCv10EhXZBS8Ro1ABLMANU0
-         Wab0AjESvFm/KnpOxU2SC9KDkGwZrDs0jB5OY25kb/rjkXgFS1bdmk3RC6DPX9BpP1hi
-         55/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732704001; x=1733308801;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YAhRCQad9Fl4phrqCGjZO+vojAEemq5NZZJCL/La2hw=;
-        b=Cl1x9xt3uGbS6XUffKwKV6bb7E87xO3bcX8cHV7xdz/kPvSfFCAuvYe/5H6UCLyQNz
-         W6XFkjJcrvpZQ8vHmDrztJMA7Ja5RLgBc2zg3RC2OwJOdeIeUE2/qLhT0CdnCRpk47S4
-         obmO5jyN6TDlUPNJ4Pn06FvjWyrMwfZ1R6ClpwfGnGxGSqjT+v5Z1uFoPTV+jCjGjQkc
-         LiIahRi1p32vImsb7S/CTj0+XtStfP6f2pUxwa03tX/as7ryqY0EYT2LjuibLY/ojY0J
-         kJ7cJZ3dofACebuXPD6fOG+eocRv4ye3EuIktfDwVXf+xDc3S7yaq1kjGKrgxhgb3G4T
-         jWAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrdHB5mPJTiplHpGzHToVnnwhz8xs/hwD6lt373ml1vgWKe+trDf7wnj0oNamjrH8C3uql1JQ0aAnZr3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1J3dXxZmwnT0Ol+YcSHnu8oqEuk1ap7Vv46ldrtT18DUhkgne
-	oh/O0CcE5TG8YW83Ct+Ps5rNoQBEXFx45QiA8COZkummR2XIJ2VM6gpMxWHLxw28/Rh/dNbsoow
-	HoLbnjBMWhEBbcncM0dlpSpYh+7w6M+4x4j4a
-X-Gm-Gg: ASbGncv7ehXi596skVekkFKKNUhjwkcoZ4JR4IOxAzPgMElV1oXzckFPTzPxpsLwHor
-	GvJApeRKqlbkhawbQmfu1hwaQiIDzBva3BkCt4VrdfQtR/iTHJAXfdutsyNTu
-X-Google-Smtp-Source: AGHT+IHPgg7jOSb4n1FJaK9z+pT3P/39rZh85gc71gfy/mp5/MtBFS3bSZy7ijgI60+hE3Uvgxy8QvoOG7YZhKKkocg=
-X-Received: by 2002:a05:6a21:99a6:b0:1dc:154c:365 with SMTP id
- adf61e73a8af0-1e0e0aa746cmr3992920637.4.1732704000763; Wed, 27 Nov 2024
- 02:40:00 -0800 (PST)
+	s=arc-20240116; t=1732704135; c=relaxed/simple;
+	bh=wZ6Pd1q6VEtjcLUGO6tUqjQCpl+eVGwavhOR34BrIc8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=msXaqNWc/CmeGoQVn5RQrc1RUenQU7cpIYzi1xbtXGSHVBjBmaTggc6QOw2A+8fahZEqppuG4xiLTa+nBiSf9vRQwsFkusLgiFG7WZpS+LPtLMZvMOP+ySKWISrqWzV7/sC2wQnGppAFHNQKzAW62uLLAMUJuZHsM8gqi6nzBek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AFViMWtt; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732704134; x=1764240134;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=wZ6Pd1q6VEtjcLUGO6tUqjQCpl+eVGwavhOR34BrIc8=;
+  b=AFViMWtt42YzscdXX3s/6vDfUYO8AaZ1++1NZMxuCTGeXPYdKJbDrdnW
+   B8387wbpnNobYtXMcRZiR4gRqWhjzTmCLYcHnlTnP2wegvLfVSqvY9Ss/
+   I3XKA2E6GvH71u5goNmRdw5jKaxo15NR3uuXlz1sl+d7ux1nrRhnbormV
+   N/gUEXXYMHzupqxVpOAuyKWYJR292dB/j7EfKjEyjji3e/WBll7PYP8Vr
+   THQphZXv9PRrBTy0lWMw0D7ObDTpI0OYMqFwOiXHWhYuti7FCVu69nXH0
+   vy9BnKFQmxDRhPgcOVCQWJmGMpIKix9l/Vuf4fHElg7Sizm/sVk9QG6C9
+   w==;
+X-CSE-ConnectionGUID: iyzmZ6DoSy6KlAXMEP+gtw==
+X-CSE-MsgGUID: PpaKluT9QWyJ4wRknOkLKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36567877"
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="36567877"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 02:42:14 -0800
+X-CSE-ConnectionGUID: AHGA/AwhS3eSWRRIg5uRXA==
+X-CSE-MsgGUID: DuSUhu83SByPM/nwBlWFTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="129417696"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.71])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 02:42:11 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 27 Nov 2024 12:42:07 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: jlee@suse.com, farhan.anwar8@gmail.com, rayanmargham4@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 4/5] platform/x86: acer-wmi: Improve error handling
+ when reading AC status
+In-Reply-To: <20241124171426.29203-5-W_Armin@gmx.de>
+Message-ID: <de578b41-b301-0d50-7ef4-a00c31c6c9bf@linux.intel.com>
+References: <20241124171426.29203-1-W_Armin@gmx.de> <20241124171426.29203-5-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126165414.1378338-1-elver@google.com> <CAEf4Bzb4D_=zuJrg3PawMOW3KqF8JvJm9SwF81_XHR2+u5hkUg@mail.gmail.com>
-In-Reply-To: <CAEf4Bzb4D_=zuJrg3PawMOW3KqF8JvJm9SwF81_XHR2+u5hkUg@mail.gmail.com>
-From: Marco Elver <elver@google.com>
-Date: Wed, 27 Nov 2024 11:39:24 +0100
-Message-ID: <CANpmjNNm7szX_9D9z2iYr4xyN57th0WMOmiipTCYYkSo-Z6rLA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Improve bpf_probe_write_user() warning message
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nikola Grcevski <nikola.grcevski@grafana.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, 26 Nov 2024 at 22:32, Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-[...]
-> should we just drop this warning altogether? After all, we can call
+On Sun, 24 Nov 2024, Armin Wolf wrote:
 
-I'm in favour.
+> If a call to ACER_WMID_GET_GAMING_SYS_INFO_METHODID fails, the lower
+> 8 bits will be non-zero. Use WMID_gaming_get_sys_info() to check for
+> this when reading the AC status.
+> 
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/acer-wmi.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index 7b549920eba7..6964fea84fa1 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -1951,12 +1951,9 @@ static int acer_thermal_profile_change(void)
+>  			return err;
+> 
+>  		/* Check power source */
+> -		status = WMI_gaming_execute_u64(
+> -			ACER_WMID_GET_GAMING_SYS_INFO_METHODID,
+> -			ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS, &on_AC);
+> -
+> -		if (ACPI_FAILURE(status))
+> -			return -EIO;
+> +		err = WMID_gaming_get_sys_info(ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS, &on_AC);
+> +		if (err < 0)
+> +			return err;
+> 
+>  		switch (current_tp) {
+>  		case ACER_PREDATOR_V4_THERMAL_PROFILE_TURBO:
+> --
+> 2.39.5
+> 
 
-> crash_kexec() without any warnings, if we have the right capabilities.
-> bpf_probe_write_user() is much less destructive and at worst will
-> cause memory corruption within a single process (assuming
-> CAP_SYS_ADMIN, of course). If yes, I think we should drop
-> bpf_get_probe_write_proto() function altogether and refactor
-> bpf_tracing_func_proto() to have
-> bpf_token_capable(CAP_SYS_ADMIN)-guarded section, just like
-> bpf_base_func_proto() has.
+I'd add WMID_gaming_get_sys_info() in this change and reorder the series
+so that this comes before the fan/temp/hwmon changes.
 
-Let me do that too. But as a separate patch 2/2 as it simplifies
-backporting the removal of the warning to older kernels.
+-- 
+ i.
+
 
