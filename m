@@ -1,128 +1,104 @@
-Return-Path: <linux-kernel+bounces-423171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6169DA3E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:26:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B501647B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:26:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8005E186E2F;
-	Wed, 27 Nov 2024 08:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C6qpG9NP"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCDF9DA3EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:29:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C5013C816;
-	Wed, 27 Nov 2024 08:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D15B225D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:29:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07DD188CB5;
+	Wed, 27 Nov 2024 08:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSnPyxVr"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D649C1865E2;
+	Wed, 27 Nov 2024 08:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732695998; cv=none; b=rGl6V+xrlphCniNV67wNfx9NEqYNRiKwCOMLeP70ozluLkFCpcAbK+HYOJx8T92tD6o/huG9vN2umq47HyDAL7YawIVDCTXrWNmvC0EIGv5kDR6+F7vD7QRkveJyvintbpZ8oAxB6A7QHnNrY+LkBUYmaosoByqXCVl1M2vsJI4=
+	t=1732696173; cv=none; b=gpCBTN+BI7PLIlvr38KlMhsrRxZfNlnQsYhVtyomLNsEffVbjiDZwYKuJeqX9xnupzyJ6apljZ0/AzLLKstUDpakU+96/U6B7Om/chNLNtOCT3H9uo4hGisyn9fIdpANj3Vc6cwWIuPU+a9xHbhu9rW6/OPLolDyp7zWiWSl0ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732695998; c=relaxed/simple;
-	bh=ttBuqBOm3+1ecIeuoO/LPjdDdzZz47MGwI9SY6l/QHM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMNjWS7DOxLKkyWWQIXbZfFpvDp6ff7JxbVmO3vuhGufwes1lFxORTEGnfEArUpAHnp822AQTNVK57sJoa1veKtlhvFZHj7Dn8CGk1kfbsgCyL1wyx9II0AEWhCI+EqdGNXj0WgQT3D1uigwYDvxZ2R4a3SKFa1ejwN5w0YUUyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C6qpG9NP; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AR8QQn0969158
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 27 Nov 2024 02:26:26 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732695986;
-	bh=x5MEcsWepkzSagRcBdjCCQ9PHoHda5oErgZwMaMz09A=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=C6qpG9NPchNMwdzzhI2F73hWyMMqNewZk+mct8g+YvmTN9L52rY4N124GsIkTAflU
-	 awKz7UVYfCSUVdgxtgiQjKPt91Al5jI6Y05eIHLdAlBpb9ih1auCl7G1VTx3CBFdAB
-	 ATCb9bbkCcroJtBrWm5EmjRwUjJXBNrI6wgj+Jj0=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AR8QQtT121482;
-	Wed, 27 Nov 2024 02:26:26 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 27
- Nov 2024 02:26:25 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 27 Nov 2024 02:26:25 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AR8QON2092114;
-	Wed, 27 Nov 2024 02:26:25 -0600
-Date: Wed, 27 Nov 2024 13:56:23 +0530
-From: s-vadapalli <s-vadapalli@ti.com>
-To: Enric Balletbo i Serra <eballetb@redhat.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        "Tero
- Kristo" <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dasnavis Sabiya <sabiya.d@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
-Message-ID: <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
-References: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
+	s=arc-20240116; t=1732696173; c=relaxed/simple;
+	bh=njd05bArOgKjbgLgjHcusDaTScXAtClI9n8o3C7sop4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rmBhRFX9Y/juQWwxY+0qXpTAygBxbZ/+UdLagxexfjyqRlyW21RZycri5xx5pI3fwL00anr5A0rJyn2/13SRphDwhS252a4PG2OZgFLDaLnXFumGDtdgHYkh0oWRU8dUGlZPbG+X59t9SmN8LeSi7c5ax+pwSML3+b6XAi+YM+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSnPyxVr; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e382e549918so5565001276.2;
+        Wed, 27 Nov 2024 00:29:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732696171; x=1733300971; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=njd05bArOgKjbgLgjHcusDaTScXAtClI9n8o3C7sop4=;
+        b=CSnPyxVrSYCj62DiJclJrKD4fvJA1+8+jzcrLSaUOVdF64mhDi/ch46KXeGGXFIGRS
+         cOMfAZL+C5yrPYHh+WYgLqil6osJPqWhqSUul1KOve/Hix0MOiyJZIG4ay8cn33p0ELP
+         phSPrLhWCbzrOJ9YCFVLlaWPrAbpYd855cDgDvfwe2BzLuBzn9a6fLphasTOnZIjYY3b
+         fo0P3i8MMlxFEEy8p2JvIQMe7fUME+UWIFzLr2iGstfTUe7cWocymah0yCtSsYJCZoj2
+         sIX3ZGCB3yu7AS3dvs4+xJXYFrDqKi43t0t+NuFN769HEjboMyL5hex0Dkfkf9wpwthA
+         v+kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732696171; x=1733300971;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=njd05bArOgKjbgLgjHcusDaTScXAtClI9n8o3C7sop4=;
+        b=cjR4p6xF3S8Ne//ErfX1YNhRI+LnzHkdYjoaQGYQDTlxddAa/kojyJAaW88odU38FK
+         CcdSmvvwwFB+1+YLTD2zy9fSmSPlsVOebMv/YBMCXewBVOa0eSfc79rBp7f+YHWoPc4V
+         IHp1K+0pPTvbhMtKR7518HqlSOzTQkh7T53v59jbmmoT1t1PQ+td+FypOwh1Mj0GKpNC
+         cwWa9sAv/oE6G3P47SgKtAZQLJeu6YjgfJH4P+9qncJuKYYYAs3fb/BwvbBWaBUhziRl
+         MoU+WFx2JObC9E+2yQyQZBySawoGX6dThBUbPesTG6nAQYhFaPMa1nFZT6/CGN6gNaEM
+         mceQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeaqyNjF/A2oS2QOwoTaxVD+4ZP+VtEigVXga4cirlA4OndiA/4CnhMUvc1SREXDoWKZ//PRlL1A/KHhk=@vger.kernel.org, AJvYcCWVZ0G1KeVuG/HHurqzk3IoLL4XD/kyO+a1+Hu8IyLvsxH4RPCHFZbKDGwlo+FWI1VXdMmjotWr32MG@vger.kernel.org, AJvYcCXHDLQ+GMiQANQ22cti54bPrGA+T5B+k0q1JH5VtnfBp/G3vPFx9+mwvekgof2DXEQa3TahcyPzvhk56NPv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBT93MPnOsp6QfbQzAOm97LBH8MKeYeAvZFQhogQ9EOwu7O7GQ
+	zav2Wkde+z8vP6vIrQZvtos9zhMJP+wRLXlPZJzTSazG9zPD0twtW4zHF9m2+Ftk4oHYGXx3Hci
+	13PzRMArvMcsaK5jW+3UqKthfvg0=
+X-Gm-Gg: ASbGnctujgsA93+QM5ekH6I9J+vulsXvY6Q3BzkMT2Y6xLii7c2pRLt3YbKJ0jo21yS
+	h6Gbck8uIgmPMaJKqYI9l5zhJvTZ5jdMN
+X-Google-Smtp-Source: AGHT+IG4T6iCfTuQRbFcDR8g+9gj9vnb1SF11d4ey59iqSnin7GgRZc6RSmnNx6SkL9tm182e4/IfH05c5ENgkbSLA0=
+X-Received: by 2002:a05:6902:a07:b0:e2b:df40:2588 with SMTP id
+ 3f1490d57ef6-e395b8a1b09mr2315229276.21.1732696170745; Wed, 27 Nov 2024
+ 00:29:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com> <Z0Z7Lrv3rBfzac_e@google.com>
+In-Reply-To: <Z0Z7Lrv3rBfzac_e@google.com>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Wed, 27 Nov 2024 09:29:19 +0100
+Message-ID: <CAMT+MTThJoYLYhtYAHwh6F3LTApid9Em+eP2AZYc3JChC2b9ig@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Driver for Apple Z2 touchscreens.
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Janne Grunau <j@jannau.net>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 26, 2024 at 11:08:19AM +0100, Enric Balletbo i Serra wrote:
+On Wed, 27 Nov 2024 at 02:51, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> I believe this needs to be done at the SPI controller level. See
+> "cs-gpiods" property in
+> Documentation/devicetree/bindings/spi/spi-controller.yaml that, as far
+> as I understand, allows overriding controller's native CS handling with
+> a GPIO when needed.
 
-Hello Enric,
-
-> From: Dasnavis Sabiya <sabiya.d@ti.com>
-> 
-> AM69 SK board has two stacked USB3 connectors:
->    1. USB3 (Stacked TypeA + TypeC)
->    2. USB3 TypeA Hub interfaced through TUSB8041.
-> 
-> The board uses SERDES0 Lane 3 for USB3 IP. So update the
-> SerDes lane info for PCIe and USB. Add the pin mux data
-> and enable USB 3.0 support with its respective SERDES settings.
-> 
-> Signed-off-by: Dasnavis Sabiya <sabiya.d@ti.com>
-> Signed-off-by: Enric Balletbo i Serra <eballetb@redhat.com>
-> ---
-> I've been carrying this patch for quite long time in my builds to have
-> support for USB on my AM69-SK board without problems. For some reason this
-> patch was never send to upstream or I couldn't find it. So I took the
-> opportunity, now that I rebased my build, to send upstream.
-> 
-> I have maintained the original author of the downstream patch as is
-> basically his work.
-> ---
->  arch/arm64/boot/dts/ti/k3-am69-sk.dts | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-
-[...]
-
-> +&usb0 {
-> +	status = "okay";
-> +	dr_mode = "host";
-
-Since the Type-C interface is also connected to USB0, shouldn't "dr_mode"
-be "otg"? Also, has the Type-C interface been tested with this patch?
-Please let me know.
-
-[...]
-
-Regards,
-Siddharth.
+I have already tried doing that (adding the relevant gpio as cs-gpios
+on the controller)
+and for some reason none of my attempts worked. Since there is no hardware
+documentation, I can't really tell why, could be possible that we need both
+native CS and that gpio, could be memory barrier issues somewhere in
+the driver core,
+but the method above is the only one i could get to work.
 
