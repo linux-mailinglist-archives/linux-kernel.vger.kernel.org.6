@@ -1,224 +1,284 @@
-Return-Path: <linux-kernel+bounces-424007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C4C9DAF42
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:37:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD089DAF52
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1628BB21B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A82E28200E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011EB202F9A;
-	Wed, 27 Nov 2024 22:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B2203716;
+	Wed, 27 Nov 2024 22:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="nnMzM6j/"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazolkn19012051.outbound.protection.outlook.com [52.103.2.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGQV9ywC"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687B313BC35;
-	Wed, 27 Nov 2024 22:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732747030; cv=fail; b=IU+OhvGJOWfNZkMF+R5wBZ+jvM4vAprI2ksxmIaztVE1/eFTGXc2S7IXAllNWVdSDLodz4bLJ04vuHdvW4m9aqkqUWJKTdGABEC+AWpdgVDYq/UZjIuBoOmhdilBUd+BoKoBRfob74e6mbLAod1UBfOksEDo1tE57d44VBsWOig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732747030; c=relaxed/simple;
-	bh=VQ5PIqd1VZQH8N4XyGZol6ngWoU7Or1fu4pCjiSY2mw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jYXKqf1j5zwRsrM+qx3mF/zGPOq8J93Rw+OgcHLqYf8Z1Sa6v9435oyx4Ii2FTjLBbwoa/33xCrGwTt2rs8jsxANw/XIOPE0LotAl8ViOxV6OhdKQsjONxjAjGFdNqTFDTwpR6BgOTVeee+e2Z06tcdFqwikL9Hq3fJTg2+TDD0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=nnMzM6j/; arc=fail smtp.client-ip=52.103.2.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lza9Wtvr5zXGrrrRmSDQPwPojYwubOd/gV2tCB5a8nLe1+e8WMXstK7K5DFZ1wap0SxCcl+zIDl7LkxFeiibtonhZZy0KanplXa6d0THmUydcqs0Njpe+s/vwKcl40k5rbiHhlaWsZ7NxfVSzzc8hP0AfQw0LKdjSYgYm9et/Rybgo0NSgk8k/e79Gi1z2I0RJPnnB8w2WgnDPMVo89lxX1bOZiWb1pCPbmP2hGoSi9dq+TwD5yZF/Me86y9I/tiTbcWpznyx/751ysFKVvw66TmuZLOQhnEEGIlim6UC2KvoPS4qxij8yDwvmkGTbt7+y1wNUfulOON0Xmrl4SK5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tSw02FFKNAOc7K6kJ61rZCoeVh9Kh6b7hmJUJYp+HCo=;
- b=qHKj/EeAjB2U/huPcFZqf4cZQkbKLELpXdcre+36VE1iFhtK+0D+0zf5KAa+zeK9NN6W0LDS0r5EMTpEhL0oYEYHHQtiaSzib6leW4t29uC817K4ChLMPQI92f2XRqaorSbD7Nu88ps4FRFreENERBfmDjG8kS/MU+H5UtWTR6CMMwxqdFNVeg/9dvEkdxomj3+8PV0TX2k21T7VknXLnCQd6ErSfLodxGUM2Ux/QXl6PW/PZkbH79w6FTeKfVB+K7ubmsj59Dx2caDnFCfWiiPscBLcvUvNAF9TZ4waJmKbeKR9n8iOy+32wTlH57GKbi1m56oGmjWTns6NAfkEqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tSw02FFKNAOc7K6kJ61rZCoeVh9Kh6b7hmJUJYp+HCo=;
- b=nnMzM6j/erbYrnhsW4VTr1ge7W0f21Xo+T7/hs9GzvxxQlqcbAt4TQdKCZc6f3iag4Wk+7Ic9xlXGoScfXTIaze49ri9keI/kVh2KONTOt3nruveKhnCLy2JDeiGz45dbW/eJIIXrbuSfpiuMfxB7H1HJBnWsfLzrrDQ9ve3sE+Iakh2t9PXDhfeV1uJKlU1S5yeDN41UYCyDu0bZ5jxbMNzDgyOyc7jNkCs0EKpSymDZjsrLEKxCg5mDqfoYlhWfIA9yMe5sPBqwgohQrBEWXpCOxA4nSH4gKg4IG1JWF+Bb12lVHPZ4PHPBZosug6ZL1FM3Zn6GRbyuq4bDsg5pg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DS0PR02MB9570.namprd02.prod.outlook.com (2603:10b6:8:f2::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.12; Wed, 27 Nov 2024 22:37:05 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%7]) with mapi id 15.20.8182.018; Wed, 27 Nov 2024
- 22:37:05 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Cathy Avery <cavery@redhat.com>, "kys@microsoft.com" <kys@microsoft.com>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "decui@microsoft.com" <decui@microsoft.com>,
-	"jejb@linux.ibm.com" <jejb@linux.ibm.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>
-CC: "bhull@redhat.com" <bhull@redhat.com>, "emilne@redhat.com"
-	<emilne@redhat.com>, "loberman@redhat.com" <loberman@redhat.com>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>
-Subject: RE: [PATCH v2] scsi: storvsc: Do not flag MAINTENANCE_IN return of
- SRB_STATUS_DATA_OVERRUN as an error
-Thread-Topic: [PATCH v2] scsi: storvsc: Do not flag MAINTENANCE_IN return of
- SRB_STATUS_DATA_OVERRUN as an error
-Thread-Index: AQHbQPgUa182hHqRi0C/I7R3exzABLLLttKQ
-Date: Wed, 27 Nov 2024 22:37:04 +0000
-Message-ID:
- <SN6PR02MB41578E632973F20E13989BFFD4282@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20241127181324.3318443-1-cavery@redhat.com>
-In-Reply-To: <20241127181324.3318443-1-cavery@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS0PR02MB9570:EE_
-x-ms-office365-filtering-correlation-id: a1846126-a378-4d6d-27ce-08dd0f3404df
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|461199028|19110799003|8060799006|8062599003|102099032|440099028|3412199025;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?pwGCXL9A+XwpzfGea4NMvI4Xa9aOHlrJSMqhOWwh0nrlu5/+HMzGd5krqLxH?=
- =?us-ascii?Q?ADTubr7eHiLFLlEyZYqzmIjX+rnldJi1ZFeh5HMuvRdbT+A2jDwp7OMqrPT3?=
- =?us-ascii?Q?9CiCeGFyGL3wn+wd1OebU2ijUx8qlq6QQBETl3m/aVVa9IcXrhBA5uEXTTmK?=
- =?us-ascii?Q?aAPxXvfC7vu/zDn6/Wjprv3qdTnHbKt3aDVXREe8L5yE+DNbYd04RiWCXaMJ?=
- =?us-ascii?Q?jSZ9Y3JfnMf6WPq1Lr0ceyvyjcJqRXvgTEGof/o0qexZJIimgRkssEpjEw+E?=
- =?us-ascii?Q?KX6fWhvqrZS/dEog8dU/md9qipGVq4HzQyT6uQHMQDPUeK6uWv9+Uqd4m/cp?=
- =?us-ascii?Q?FK2KTSRbwj4XMEbATFEocco+n+gDLm/vZXwPi7kIUshwrEXjAgpZteGSIAcT?=
- =?us-ascii?Q?Gu1/yFWoof8AAB+ipEPrOctW13W2WJZpjuXK8iDGhlTGGBvvjtypXsWzbA/B?=
- =?us-ascii?Q?ozwVr2fjCD1m9SBv05cTr5xyIO5toJAjUNlChUImFgtn3Xj8RMQdgy4uwxJt?=
- =?us-ascii?Q?zTySEKAmi+QSMkUCfSwheryGsgmYOxt6dEKaDS4/cudjdKl7tTFD7s22z21K?=
- =?us-ascii?Q?t67wVOKNI7uwi+DU18ur8Z+teVBGQuk+EU5/lfNlk4Y7RaJJuGAPmV2JuOY4?=
- =?us-ascii?Q?0MBhu6TfUvP/0oogcXUW22NNCBgjb0PsWF04o2WTx90Bkctsg0ZXZqEVWUM/?=
- =?us-ascii?Q?Q4dj+/p8sCpLVpfTlmJzGZjXac2uwNrZS06/u2MRRdeP0/Idu3UxE6sGksve?=
- =?us-ascii?Q?CdiQ2FHzH4m3WoquJPnCLKLig25YLa/Y+8vQ7z9JXJkwzFhieBAWRz4vHDWI?=
- =?us-ascii?Q?RQy0Fy4rxZ/7PQQ9ZtsLDmeuDz29+XoCs6MeYq9dhzxb/UOHCvdLltXD8zWO?=
- =?us-ascii?Q?iX/NYDaX7PUuGKmErPsipIJ9qKfi2uttbJOZtEfEvgHI6BGXOBfDrh3Cayjb?=
- =?us-ascii?Q?tQskz4GTCbnwmg/OlXdEv2dVE35T6Alm6eBI5yeIkSnSik8DGaqLxSwKIXMu?=
- =?us-ascii?Q?cEFFLtX618AJ8arm1bJx1PSWUg=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?RQBIu02Czqp0kzyVPWNAk0J8gfmG7M84Q9YqH+lswQLDWWG+mn35NTqWfGMF?=
- =?us-ascii?Q?V8qilrDxwc0+K/94GX4tjG5Q00LBf+4zv0ZcXR3J6SoHipc5N/Hcg5jhUUoA?=
- =?us-ascii?Q?sfJmBXSBtQeJ5g0w0UrNwnAPivo0NK1g1YHjWNGdGrNlOMdcgsKKttwNbKSH?=
- =?us-ascii?Q?KDvcd/T69+2mmrq3/2ZF4aE2/jiAjRDoWegHiRaCKKUUBcRsrMOpYYS2PFo9?=
- =?us-ascii?Q?44zVxzBH+m+jgQuf3T7uGG7a7ogTvZBHAioc9DaiUzCeDD0sK4AYI5Dd8L0r?=
- =?us-ascii?Q?OepzsgIaONxnvtAXWjMfedYC9z7hVbTLACrWOPrqu837o6+dHP2lOxfPumL4?=
- =?us-ascii?Q?BT3P3d+9hCxYq+FD+xCKtB4PFoB7mRrB4T1JMG8BldGzFgkoSHN7ZvQDnQwR?=
- =?us-ascii?Q?ffh3/882kEhcG+g6zZD0cgiUUVTlkHaKtaueYVa9HDuHTQmMjfx50sUl2BLM?=
- =?us-ascii?Q?iP/9PRdgznAnVs3sjBtB662Ktn4VmlUG2mBn4wP5sXRwdXVBXxaPsDgr/aSu?=
- =?us-ascii?Q?65AjB/RvjghdfhBnQ0hWhYy+jYMMGZh6w+Q1/Ww47VzlnP4Pbs+3M90Ur8rn?=
- =?us-ascii?Q?B4tViP133bsvI1SM9f5jvqz388cMAiqYnJE+SUIaEg2mVqO1RKas+PJKqg4I?=
- =?us-ascii?Q?c6Xqj30fQOAmVX1S/G/6TRAE9Hkc2IhLhCcLo5ZmaEGC2zjZ1UCckDqrvUsF?=
- =?us-ascii?Q?H71An6OG7R/9IGlMFG2WtWCsIQB8Y0EIxX+GnRLE82/0VDpS6WbWTtQCVOHp?=
- =?us-ascii?Q?X2aVCLZ9moENDbCYdovIjUSI/BkmTgyf/dZD1WV7tmyHpzJb8nvSdMifHVGI?=
- =?us-ascii?Q?lsy2UCPoiou+fpcq4AuJCuiWfvCw2QoGTxysIGNZnObHPw9daJ9TJWCmEaV1?=
- =?us-ascii?Q?CryRNJHWWwitjWeVuQJ4Lj2AhEqJT2XQSWvSbtBkdI6lcCh8jgHi5tUUwgvk?=
- =?us-ascii?Q?RIQ9oa/MoufNEUN9PXGYJK4pph/QQphaZUyX2OSedx0Foo4Z7d43e7XhcIKr?=
- =?us-ascii?Q?TNYpGf4ZDwXfI4ZuDSrNGv+dW0cUMTT0KfwD/anzneTZo1r4x+Jkg7P3yngm?=
- =?us-ascii?Q?enz5C4mopHNItucPfKNzAAshfnppSQWPvkqx3snn7LnDQt6F0ANrDxJ6dIVc?=
- =?us-ascii?Q?u6/gZiwI/szrQ3pQ4lzcdUccS7tQeammvpog5DMoh1hSWyuB36PJFgUituPG?=
- =?us-ascii?Q?dsbwq7ErGcS14ruqnGYraMrRgSUXBtZ8hIxQ+U0wK9aXAcvKE82HgdvRnCo?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3731537D4;
+	Wed, 27 Nov 2024 22:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732747691; cv=none; b=MV9F1qb6mB9BbZKS1IAC39n7QwxCds4Ql7QpIKgGW4OFuWtwmNWGebIu40t28OSg/xl0fh4fGu1zDcgmhgZrHhWUtxjz5JnSwyXXmnJ8aAgh/VbaDHyCyWUQkGeDEtfzNsvj4EmUmI4SpzIwFID0WvtQJnN8xrz56G/3RBqLXQQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732747691; c=relaxed/simple;
+	bh=GexJXR/2dc2IBhv34q6bDcJcXTBjzVNHuP0avEFyg3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BAbaBMkkdeYO6eQhpeENFxFT3ZG0lqLhwDA9xPbWPxLaCeLiB+Tbpt0WqvvvQMgiJSV1x3pA3kVZTVdHeBh6JwsJ4rkDuwU6dwkJG7z8Pr59udZzw9Y1R+KfmjEHpgwzq8EyFUkfLIvJMclzcqFyPbaZGKWuP53zZhvVYPCi8wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGQV9ywC; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ee153ec651so219273a91.0;
+        Wed, 27 Nov 2024 14:48:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732747689; x=1733352489; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=PzsIRv0dmcoh1JVhn/KYfXIXK/gFawhUd+jupZesXIM=;
+        b=RGQV9ywCV/S815EzHB3dkI4h6B1vmfD8bEoAFWtKDqEkjLsKqUW0uH7OMknMd84asn
+         k9GI1e/ZrBxoZnb/lnOJeyx2lK5GwvokJICZyaibbOxnNuqknVh+d+tICMVGoFmLLyVE
+         pKIvi8vaxCDgGhleMAh0WlhtHejf7PVVKX/cwo2NSyDqKIi33Tmh7p/bu/TQU52xVWt+
+         bOvlzzUfEVLMIFET1DgriPOchHLRIiR4Zgq0XbPC27sRWdygakXuHdNL7UXrJ5HWdrXI
+         G8w/FFoMDQR8YjxyaK/tY7BmkX9Orj69UPLWkJeU5YI8s5SuffhMEumx8mTOaVVLPxyG
+         WV8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732747689; x=1733352489;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PzsIRv0dmcoh1JVhn/KYfXIXK/gFawhUd+jupZesXIM=;
+        b=YT3TmJ5U57e2ego32pPwFjWrmHL8cX8RbTniwuxJuc8Eef+BYjIFQFloMewjHmrBD1
+         tKEIXSQnD0M85/eCMsbXzIudhcI3PAHnb+2vGTNEqJ72YYRM+Trsy3tvU5jwBbem4u6/
+         ziLiFYqFLibVfWEgVUK9jkqxNzQPBlZGf10akXCt6NI+Eh8Vza9aAWaADgDzqujb8Izn
+         RowWuVm+6yMsR1XlQq6+xOKyUK4pM/YazXnjHgJ+SZKMMirqilqe8V9wuRy/PYzgKW4U
+         vsBnpL+Tre5X/taPa6WZYquS+VZKBJ+q55GNljE6xEgOjiRATAxifadEnjORfsW5Q37O
+         b5og==
+X-Forwarded-Encrypted: i=1; AJvYcCWg9g+uRCBV5hDg05bcVcezDtkPalViqeQsqMwCPwULgS6NZuoDyJelFAfqWfc1nnLXeLV/72WXM840Vu/5@vger.kernel.org, AJvYcCWxXyBy0NRMmw/nOki2j0BQnvjlxZsu37Ylk45YuKufYw3+txgRoWoLA5Ikm0Nm2hyml3lG7WqIz2A=@vger.kernel.org, AJvYcCXH4bltkoq1BIk3f+8/G9saY5ToKHdQ/uxo2CQRrXcpA3XB6AmJD5bESse4OkYFQUd/roAU/FJc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcaVfut8E36J+PE3Dbm4tE5rkln2hXZqovv3k3wAnSsJKV4MI8
+	YTUCWYT8zzFPjPXvEwb231qUrO1AJ9CUPvbtg6MnzxWioF51P41u
+X-Gm-Gg: ASbGncsQ77JmWxnoddyw79uWbYO3WMjo/bxa5AfzOGJ5y+HoUb0banuJJC0J1FxuxCX
+	mbOYzG45D5TwitdsuQduq+ZpVC08/NgpA9aHYPJBSjyhkckCxQ11i2bjS4WXNJXX5sqmWJ7bAVD
+	xzeHriwRqG8Aq9rnvgr9R9rDoUpKztCCGm+4POxmZcNA0HMI21LJ5mK0axlTHuwaYn4SutXNC+3
+	QuT3+ZlFcci9PCCRSBlHT+0RX8VggG+lqq4zUV5JGCcV04/F3QhJTIXq5gHTldqdjlGfS6IKXic
+	+rOCRXVm5CBOitskOdWq94A=
+X-Google-Smtp-Source: AGHT+IHKrye4kW+lZBmR2EtaynTda3T7K6xVD46GM8CihjQl+xc26tZC3RgoDSFItG33JLMxhEeXPA==
+X-Received: by 2002:a17:90b:3e86:b0:2ea:a9ac:eef2 with SMTP id 98e67ed59e1d1-2ee08eb1c46mr5790193a91.13.1732747689000;
+        Wed, 27 Nov 2024 14:48:09 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fad0797sm2141990a91.40.2024.11.27.14.48.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 14:48:08 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <1bdc12d6-ac23-49ff-a235-5ea54ca2ddaa@roeck-us.net>
+Date: Wed, 27 Nov 2024 14:48:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1846126-a378-4d6d-27ce-08dd0f3404df
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 22:37:05.0569
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR02MB9570
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next v6 5/9] net: napi: Add napi_config
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+ mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+ bjorn@rivosinc.com, amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+ willemdebruijn.kernel@gmail.com, edumazet@google.com,
+ Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Johannes Berg <johannes.berg@intel.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
+References: <20241011184527.16393-1-jdamato@fastly.com>
+ <20241011184527.16393-6-jdamato@fastly.com>
+ <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
+ <Z0dqJNnlcIrvLuV6@LQ3V64L9R2> <Z0d6QlrRUig5eD_I@LQ3V64L9R2>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Z0d6QlrRUig5eD_I@LQ3V64L9R2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Cathy Avery <cavery@redhat.com> Sent: Wednesday, November 27, 2024 10=
-:13 AM
->=20
-> This patch partially reverts
->=20
-> 	commit 812fe6420a6e789db68f18cdb25c5c89f4561334
-> 	Author: Michael Kelley <mikelley@microsoft.com>
-> 	Date:   Fri Aug 25 10:21:24 2023 -0700
->=20
-> 	scsi: storvsc: Handle additional SRB status values
->=20
-> HyperV does not support MAINTENANCE_IN resulting in FC passthrough
-> returning the SRB_STATUS_DATA_OVERRUN value. Now that
-> SRB_STATUS_DATA_OVERRUN
-> is treated as an error multipath ALUA paths go into a faulty state as mul=
-tipath
-> ALUA submits RTPG commands via MAINTENANCE_IN.
->=20
-> [    3.215560] hv_storvsc 1d69d403-9692-4460-89f9-a8cbcc0f94f3:
-> tag#230 cmd 0xa3 status: scsi 0x0 srb 0x12 hv 0xc0000001
-> [    3.215572] scsi 1:0:0:32: alua: rtpg failed, result 458752
->=20
-> MAINTENANCE_IN now returns success to avoid the error path as
-> is currently done with INQUIRY and MODE_SENSE.
->=20
-> Suggested-by: Michael Kelley <mhklinux@outlook.com>
-> Signed-off-by: Cathy Avery <cavery@redhat.com>
-> ---
-> Changes since v1:
-> - Handle error and logging by returning success as previously
->   done with INQUIRY and MODE_SENSE [Michael Kelley].
-> ---
->  drivers/scsi/storvsc_drv.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-> index 7ceb982040a5..d0b55c1fa908 100644
-> --- a/drivers/scsi/storvsc_drv.c
-> +++ b/drivers/scsi/storvsc_drv.c
-> @@ -149,6 +149,8 @@ struct hv_fc_wwn_packet {
->  */
->  static int vmstor_proto_version;
->=20
-> +static bool hv_dev_is_fc(struct hv_device *hv_dev);
-> +
->  #define STORVSC_LOGGING_NONE	0
->  #define STORVSC_LOGGING_ERROR	1
->  #define STORVSC_LOGGING_WARN	2
-> @@ -1138,6 +1140,7 @@ static void storvsc_on_io_completion(struct storvsc=
-_device
-> *stor_device,
->  	 * not correctly handle:
->  	 * INQUIRY command with page code parameter set to 0x80
->  	 * MODE_SENSE command with cmd[2] =3D=3D 0x1c
-> +	 * MAINTENANCE_IN is not supported by HyperV FC passthrough
->  	 *
->  	 * Setup srb and scsi status so this won't be fatal.
->  	 * We do this so we can distinguish truly fatal failues
-> @@ -1145,7 +1148,9 @@ static void storvsc_on_io_completion(struct storvsc=
-_device
-> *stor_device,
->  	 */
->=20
->  	if ((stor_pkt->vm_srb.cdb[0] =3D=3D INQUIRY) ||
-> -	   (stor_pkt->vm_srb.cdb[0] =3D=3D MODE_SENSE)) {
-> +	   (stor_pkt->vm_srb.cdb[0] =3D=3D MODE_SENSE) ||
-> +	   (stor_pkt->vm_srb.cdb[0] =3D=3D MAINTENANCE_IN &&
-> +	   hv_dev_is_fc(device))) {
->  		vstor_packet->vm_srb.scsi_status =3D 0;
->  		vstor_packet->vm_srb.srb_status =3D SRB_STATUS_SUCCESS;
->  	}
-> --
-> 2.42.0
+On 11/27/24 12:00, Joe Damato wrote:
+> On Wed, Nov 27, 2024 at 10:51:16AM -0800, Joe Damato wrote:
+>> On Wed, Nov 27, 2024 at 09:43:54AM -0800, Guenter Roeck wrote:
+>>> Hi,
+>>>
+>>> On Fri, Oct 11, 2024 at 06:45:00PM +0000, Joe Damato wrote:
+>>>> Add a persistent NAPI config area for NAPI configuration to the core.
+>>>> Drivers opt-in to setting the persistent config for a NAPI by passing an
+>>>> index when calling netif_napi_add_config.
+>>>>
+>>>> napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
+>>>> (after the NAPIs are deleted).
+>>>>
+>>>> Drivers which call netif_napi_add_config will have persistent per-NAPI
+>>>> settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
+>>>>
+>>>> Per-NAPI settings are saved in napi_disable and restored in napi_enable.
+>>>>
+>>>> Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+>>>> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+>>>> Signed-off-by: Joe Damato <jdamato@fastly.com>
+>>>> Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+>>>
+>>> This patch triggers a lock inversion message on pcnet Ethernet adapters.
+>>
+>> Thanks for the report. I am not familiar with the pcnet driver, but
+>> took some time now to read the report below and the driver code.
+>>
+>> I could definitely be reading the output incorrectly (if so please
+>> let me know), but it seems like the issue can be triggered in this
+>> case:
+> 
+> Sorry, my apologies, I both:
+>    - read the report incorrectly, and
+>    - proposed a bad patch that would result in a deadlock :)
+> 
+> After re-reading it and running this by Martin (who is CC'd), the
+> inversion is actually:
+> 
+> CPU 0:
+> pcnet32_open
+>     lock(lp->lock)
+>       napi_enable
+>         napi_hash_add <- before this executes, CPU 1 proceeds
+>           lock(napi_hash_lock)
+> CPU 1:
+>    pcnet32_close
+>      napi_disable
+>        napi_hash_del
+>          lock(napi_hash_lock)
+>           < INTERRUPT >
+>              pcnet32_interrupt
+>                lock(lp->lock)
+> 
+> This is now an inversion because:
+> 
+> CPU 0: holds lp->lock and is about to take napi_hash_lock
+> CPU 1: holds napi_hashlock and an IRQ firing on CPU 1 tries to take
+>         lp->lock (which CPU 0 already holds)
+> 
+> Neither side can proceed:
+>    - CPU 0 is stuck waiting for napi_hash_lock
+>    - CPU 1 is stuck waiting for lp->lock
+> 
+> I think the below explanation is still correct as to why the
+> identified commit causes the issue:
+> 
+>> It seems this was triggered because before the identified commit,
+>> napi_enable did not call napi_hash_add (and thus did not take the
+>> napi_hash_lock).
+> 
+> However, the previous patch I proposed for pcnet32 would also cause
+> a deadlock as the watchdog timer's function also needs lp->lock.
+> 
+> A corrected patch for pcnet32 can be found below.
+> 
+> Guenter: Sorry, would you mind testing the below instead of the
+> previous patch?
+> 
+> Don: Let me know what you think about the below?
+> 
+> Netdev maintainers, there is an alternate locking solution I can
+> propose as an RFC that might avoid this class of problem if this
+> sort of issue is more widespread than just pcnet32:
+>    - add the NAPI to the hash in netif_napi_add_weight (instead of napi_enable)
+>    - remove the NAPI from the hash in __netif_napi_del (instead of
+>      napi_disable)
+> 
+> If changing the locking order in core is the desired route, than the
+> patch below should be unnecessary, but:
+> 
+> diff --git a/drivers/net/ethernet/amd/pcnet32.c b/drivers/net/ethernet/amd/pcnet32.c
+> index 72db9f9e7bee..2e0077e68883 100644
+> --- a/drivers/net/ethernet/amd/pcnet32.c
+> +++ b/drivers/net/ethernet/amd/pcnet32.c
+> @@ -2625,11 +2625,10 @@ static int pcnet32_close(struct net_device *dev)
+> 
+>          del_timer_sync(&lp->watchdog_timer);
+> 
+> +       spin_lock_irqsave(&lp->lock, flags);
+>          netif_stop_queue(dev);
+>          napi_disable(&lp->napi);
+> 
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+That is what I did, actually. Problem with that is that napi_disable()
+wants to be able to sleep, thus the above triggers:
+
+BUG: sleeping function called from invalid context at net/core/dev.c:6775
+in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1817, name: ip
+preempt_count: 1, expected: 0
+2 locks held by ip/1817:
+#0: ffffffff81ded990 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x22a/0x74c
+#1: ff6000000498ccb0 (&lp->lock){-.-.}-{3:3}, at: pcnet32_close+0x40/0x126
+irq event stamp: 3720
+hardirqs last  enabled at (3719): [<ffffffff80decaf4>] _raw_spin_unlock_irqrestore+0x54/0x62
+hardirqs last disabled at (3720): [<ffffffff80dec8a2>] _raw_spin_lock_irqsave+0x5e/0x64
+softirqs last  enabled at (3712): [<ffffffff8001efca>] handle_softirqs+0x3e6/0x4a2
+softirqs last disabled at (3631): [<ffffffff80ded6cc>] __do_softirq+0x12/0x1a
+CPU: 0 UID: 0 PID: 1817 Comm: ip Tainted: G                 N 6.12.0-10313-g7d4050728c83-dirty #1
+Tainted: [N]=TEST
+Hardware name: riscv-virtio,qemu (DT)
+Call Trace:
+[<ffffffff80006d42>] dump_backtrace+0x1c/0x24
+[<ffffffff80dc8d94>] show_stack+0x2c/0x38
+[<ffffffff80de00b0>] dump_stack_lvl+0x74/0xac
+[<ffffffff80de00fc>] dump_stack+0x14/0x1c
+[<ffffffff8004da18>] __might_resched+0x23e/0x248
+[<ffffffff8004da60>] __might_sleep+0x3e/0x62
+[<ffffffff80b8d370>] napi_disable+0x24/0x10c
+[<ffffffff809a06fe>] pcnet32_close+0x6c/0x126
+
+Guenter
+
 
