@@ -1,79 +1,154 @@
-Return-Path: <linux-kernel+bounces-424053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F9D9DB01D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:55:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CAD166091
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:55:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B699D198A22;
-	Wed, 27 Nov 2024 23:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sck6kqcE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329099DB01F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:56:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B2615E5CA;
-	Wed, 27 Nov 2024 23:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7975281A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:56:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B8B1990D8;
+	Wed, 27 Nov 2024 23:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A3VrN+Pr"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2861E19538D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732751721; cv=none; b=sZeXSWijVg0kk0Gd52UP8+ptxrp/NTC/R+v2vwSNp52v8R1m1MOCFg09g8diXwIpZFD5H8hbJEObVW0y1/TRCWr2Cpnv9geYWz2NiJaysEN3hghOyCZ5hFn2Rvdicvz84zLEPCa1CPjby15g8pZjZbD36NEEhGnjcsAb7rsaW54=
+	t=1732751791; cv=none; b=NyPdISrUGWDr/ds4/6wbdP+e/39A56kZPs9KWM2VZIGrFnEjfDgTSKc0OMkDYz209uuZM8ao2Toa5PAyA9tIRJaGiDrbHY090KqzFrhGPlhmPwWzfiM++bFkHUWcxNpW1qscAiqU5XKY4xPaNnP7Cfef8+5c18C7QG7ves6QqZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732751721; c=relaxed/simple;
-	bh=B8fmrdHc5Dk+tV9vqznlHk8uhc8a+Z9ZoKSIWsmGcZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjK0vJWnE+B9RsdFY99JjeQwW1O72A46J9QCfIBdNa63YziuFpXF3orANLrCtsW9QKRLrQ3k+nVC4+YbuhvVokI3arLgg9o2Khuq+hBLd6qcz0swrgd4BvBmMGYDlo7GLIO8M2xObF1eof5HFn2oW72vmotr1ExHB/jURuXV8B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sck6kqcE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629EFC4CECC;
-	Wed, 27 Nov 2024 23:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732751719;
-	bh=B8fmrdHc5Dk+tV9vqznlHk8uhc8a+Z9ZoKSIWsmGcZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sck6kqcEhmkHMzpT5LDf3tOcIJCa3/s+iQOAIaT5ZpqM2ifqzFlG2/Gvoub7sb+vv
-	 dDqles6QUj5bvKk3tgsSGCCvfbu/INxm5URs9GhKDLzua4nXfyFLb1InAjffWBMZSG
-	 0y4hq1rQeVMxzS7BSIyB5AFYFBFKa9SIqraeow+6Gu7wlUazFAE9bO051oxMqmwkVu
-	 YbAWICOOQaHMdnsy2OmONBZXjTrXDYoLVMXr0lLEmYHX9yDHUEi+Fs35ClyJV/EcIN
-	 sq4KbdtfuFJ5uHxi673qdOhO41AItQDuMFnQsi+hrRHj7M708OrpZkP2nEUWrJAOb7
-	 GlD5HVYQYIVPA==
-Date: Wed, 27 Nov 2024 23:55:18 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ragavendra <ragavendra.bn@gmail.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, x86@kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/aesni: fix uninit value for skcipher_walk
-Message-ID: <20241127235518.GA870796@google.com>
-References: <20241127234347.1739754-1-ragavendra.bn@gmail.com>
+	s=arc-20240116; t=1732751791; c=relaxed/simple;
+	bh=5w3tXEfpo9pqP3sWqwOJwR1PqviyBGAGGYvcFK/szxE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hW5tR7NOou+uoExLEcLtXHMnop/UYBzAsKvnU0EtxLfpuHj9L28ripb8bgyF4DdmHmRgPbdMxiFeUBf+QsOAscnOF+8lYW5J5FwUfP6UmoDQcawJ0yMWLGmM77JhbKIpGxumoeveYlpyb84BIZmZMGK3O/ZukhEJj6BnFko/Gi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A3VrN+Pr; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea5a0f7547so313723a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:56:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732751789; x=1733356589; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IUjYtrXQYviAFJPlV6rDA0QXqWM4eRKUdwjyydmGs50=;
+        b=A3VrN+Prtv2entPxOOLjGgD+/nVX6cNAT8Co3jFFausk0SMMzIf/Sx86BooTT+3Uc5
+         fdvTwkWrNJdEFPMsRxakaGF3Kb1gDxrjmuyfYuuZh+xQPiBG0rEY+M8fIPjLgBDpTexc
+         9azBcwyEodzEh2e2jsuN/zQ6KudPzwCrHW/drP0RuEVmkoQD5SnySX+zg7dZ6etrut/T
+         5XLasV3DBRi54iiELUKYIKsMEouT6+yLWd+2KMIGvhaZt1X0Hz722JaOAXTC7cZecOZO
+         SE1y1S6o9Won3yXrRgOls72+G52AFmuLVfSUDgN38TsdCN6SDJ76OxIsJZQbW+UVcm5J
+         i/oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732751789; x=1733356589;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUjYtrXQYviAFJPlV6rDA0QXqWM4eRKUdwjyydmGs50=;
+        b=VOb1S08LrMUoIUKNdQjbV/oftOu1Z9WijDoXsg7KyzTLMmsK+EoPmIXQ9rJSwyF3+L
+         PGRK/SogvR9iZVXWYLOragnuIatQnMBt5YwPKHK9C76Huchc8h6KrRSYwR1xbUxJgY/c
+         V5mMgqRv84tg1P9Ylti+2R/egHZQfx5S+Ph5gcmDo8QCUhrFoUg1dU521L3fbD8UpI0n
+         EnOZ/mw+kb6kpSTZhxl4oVL8KhCOODQ/N4wSjWbryVZnTDXibED9F1UMhJd/TOuZFnwo
+         cNNaiflUrCd/BVj9/TnRg97jMKg1oCF36zkJ5RNSRvYzhs09PXuuB22nxFVzkOBvPuCF
+         wLtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxFtCiTUPkRh4yeNAzwFRp15QtSdkE7KV/Z7jCZqsFhcS9dnxuWx+LUUhyuC8WzvRGyAIUKQqxkS0pBac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy49MMGRh7AeqJAvmvfNnEPyNpqX+eJ7syNaHw5V2nj1GTZVj8E
+	iagGZjAfsC1gXKdwZ2OiHzfBQrwA36Jx1CzqTduSxigRYh9H3w7plK+lAbLORTUQ/WRJa5nQ7/w
+	hCQ==
+X-Google-Smtp-Source: AGHT+IHPTR3iWge3xhiU4XEekgqj03rdjRMWQnKnjuG0mueDT2UvjYmNwZ5lFL1tB4Ijj6JiY1HtjbZkmH0=
+X-Received: from pjbsj2.prod.google.com ([2002:a17:90b:2d82:b0:2da:ac73:93e0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b8e:b0:2ea:696d:732f
+ with SMTP id 98e67ed59e1d1-2ee094caf27mr6418337a91.29.1732751789406; Wed, 27
+ Nov 2024 15:56:29 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 27 Nov 2024 15:56:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127234347.1739754-1-ragavendra.bn@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241127235627.4049619-1-seanjc@google.com>
+Subject: [PATCH] KVM: selftests: Use data load to trigger LLC
+ references/misses in Intel PMU
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 27, 2024 at 03:43:47PM -0800, Ragavendra wrote:
-> In crypto/aesni-intel_glue.c most declarations of struct
-> skcipher_walk are unitialized. This causes one of the values
-> in the struct to be left uninitialized in the later usages.
-> 
-> This patch fixes it by adding initializations to the struct
-> skcipher_walk walk variable.
-> 
-> Fixes bugs reported in the Coverity scan with CID 139545,
-> 1518179, 1585019 and 1598915.
-> 
-> Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+In the PMU counters test, add a data load in the measured loop and target
+the data with CLFLUSH{OPT} in order to (try to) guarantee the loop
+generates LLC misses and fills.  Per the SDM, some hardware prefetchers
+are allowed to omit relevant PMU events, and Emerald Rapids (and possibly
+Sapphire Rapids) appears to have gained an instruction prefetcher that
+bypasses event counts.  E.g. the test will consistently fail on EMR CPUs,
+but then pass with seemingly benign changes to the code.
 
-This should be fixed in skcipher_walk_virt(), not in every caller.
+  The event count includes speculation and cache line fills due to the
+  first-level cache hardware prefetcher, but may exclude cache line fills
+  due to other hardware-prefetchers.
 
-- Eric
+Generate a data load as a last ditch effort to preserve the (minimal) test
+coverage for LLC references and misses.
+
+Cc: Maxim Levitsky <mlevitsk@redhat.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+
+As alluded to in the changelog, if the test continues to be flaky after this,
+I'm inclined to remove the checks for LLC references/misses.
+
+ tools/testing/selftests/kvm/x86_64/pmu_counters_test.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+index 698cb36989db..b05e262f9011 100644
+--- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
++++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+@@ -17,7 +17,7 @@
+  * Number of instructions in each loop. 1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE,
+  * 1 LOOP.
+  */
+-#define NUM_INSNS_PER_LOOP		3
++#define NUM_INSNS_PER_LOOP		4
+ 
+ /*
+  * Number of "extra" instructions that will be counted, i.e. the number of
+@@ -162,13 +162,14 @@ do {										\
+ 			     "1:\n\t"						\
+ 			     clflush "\n\t"					\
+ 			     "mfence\n\t"					\
++			     "mov %[m], %%eax\n\t"				\
+ 			     FEP "loop 1b\n\t"					\
+ 			     FEP "mov %%edi, %%ecx\n\t"				\
+ 			     FEP "xor %%eax, %%eax\n\t"				\
+ 			     FEP "xor %%edx, %%edx\n\t"				\
+ 			     "wrmsr\n\t"					\
+ 			     :: "a"((uint32_t)_value), "d"(_value >> 32),	\
+-				"c"(_msr), "D"(_msr)				\
++				"c"(_msr), "D"(_msr), [m]"m"(kvm_pmu_version)	\
+ 	);									\
+ } while (0)
+ 
+@@ -177,9 +178,9 @@ do {										\
+ 	wrmsr(pmc_msr, 0);							\
+ 										\
+ 	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
+-		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
++		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt %[m]", FEP);	\
+ 	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
+-		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
++		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush  %[m]", FEP);	\
+ 	else									\
+ 		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
+ 										\
+
+base-commit: 4d911c7abee56771b0219a9fbf0120d06bdc9c14
+-- 
+2.47.0.338.g60cca15819-goog
+
 
