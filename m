@@ -1,32 +1,32 @@
-Return-Path: <linux-kernel+bounces-423557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEEE9DA9AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:06:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E951F9DA9B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BE84281AF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:06:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61FF0B24013
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643831FCFE7;
-	Wed, 27 Nov 2024 14:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1D1FCFE2;
+	Wed, 27 Nov 2024 14:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UTd8aLZ/"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E001FCFEE;
-	Wed, 27 Nov 2024 14:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6A21FE45E;
+	Wed, 27 Nov 2024 14:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732716365; cv=pass; b=QUegrF1fBYbBFW18sVMz/G0osjzVGw0do12vyhDxuPZDr9T+NR2cn+GJjvEu5T9iVpnV4N7HH/IxVvfnotC+2EkForQ2YfMTiD9LsNMFwm48lx/9YcaIHQqEU3AG01k5BvgiMonppxeFyronGoKegio0p6RiKpp7UbEI94I6H+c=
+	t=1732716375; cv=pass; b=jpWDpr5da8OR6aNhIfjkhmuXKcAMvoyuwA8Q7/wgwsxYRtVCXTI6BWGWYHZ+pxN3SsQWcgsssY8P2PGkGEaHoi2IfKrBPxAK4cqYZ2kqG8ApWCHvEQ0Ht+IAxdEiBLfwf1VxAoqtdJCtgZ8yiHBdIkdTPggv+tMYN8hBOlBMSl8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732716365; c=relaxed/simple;
+	s=arc-20240116; t=1732716375; c=relaxed/simple;
 	bh=JdGym7pgPbB0z3iqiD+WPNnZOnFflxzBxCxp5LGQcJI=;
 	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=FTB4XHDumAgyigoE42S332siLfeKhTV5nUNYkKwC7o8ZJMtTHn69j/j6RKzKJP5Tc6NCJCweR9U3A12EQPnE+N9P+6Wa6tdXeq9p8TashiAevdjuRbgp77e7fGruZ6HyOTNU8vM0z5JEjPWTon56l8escD280uncuxvu7j5g8Ik=
+	 Message-Id:References:To; b=bydIn7EvpTbuuRFT6QINHN1pHtx5YdDmMs7eAgFyKEjUmr0dH1Kfuj+fNYj6H8goF3fUfe4o0UbLshfvXg7FORXrOfllnFYVjAONXyK6fc+ag8WYzz774jEB+FZqCqCTXoscOPIYU90XFuDPjAhx/9nhOvEnpsUkj+FJpVpY37I=
 ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UTd8aLZ/; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
@@ -48,7 +48,7 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732716328;
 	b=UTd8aLZ/zLIXg3Kn6F/Vvpdbcu4dzVj6CC1GYvw/CIJgw5QwZUF4mKVF6JrlFNLY
 	16YYZZiEjXBnmGocDpeSQn0DOO3gZmpu3zLavjkijFQifhYA1C+MlZ8PsI22jYnjn7D
 	V8wGDp7JZ2qWBm80OPRbxDxst0NW2URBJgoX68C8=
-Received: by mx.zohomail.com with SMTPS id 1732716325951864.0172514414779;
+Received: by mx.zohomail.com with SMTPS id 1732716325936125.44940223774336;
 	Wed, 27 Nov 2024 06:05:25 -0800 (PST)
 Content-Type: text/plain;
 	charset=utf-8
