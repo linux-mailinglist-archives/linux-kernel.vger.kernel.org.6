@@ -1,79 +1,53 @@
-Return-Path: <linux-kernel+bounces-422927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7D79DA002
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:30:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142D89DA011
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:42:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE22168D81
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A12283B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2DE4A00;
-	Wed, 27 Nov 2024 00:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B069C8F49;
+	Wed, 27 Nov 2024 00:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LF6RzbQL"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sHWCNGAK"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADE4A23;
-	Wed, 27 Nov 2024 00:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC3A8831
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732667443; cv=none; b=QhG3CzrR6I1ZquzXod16R+WDRD9PHOgbyl8yE6NtWgmpGlnPLK3x4qlKeBnzpAAeQXoti1WO/z3FyDqnEemu12n2W7bVGCj5nd8CLdGDCdZl9wkmlzfaZgyjQ/DtEKcIW5vCnZdBClT0blcqg6KwZkOx5J4UHT8MVZi9v6Xx9jA=
+	t=1732668125; cv=none; b=iqaqXJ1VKzVSxJv97eNVzDUibdofB57R7G9BLqiMYxYU/gGsvTSHKWxL0qTk5kdVHLQVxkQekCc832sFZyFnAit/MN2GplQutTpTVhp+G80dKRYq+tcf97BHV81/llLYUNyVneHJ6AeV1+xs0ipJp0WfsTL6HngnMYSKKYiV610=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732667443; c=relaxed/simple;
-	bh=B/XP/5li46wEXl9jRgvnOXy0VBsDGFE+to1Hlxg9ikg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L4NEZ0+qrA/RnU6BJ6zj2HF1Qh8aOxcPa+78lNfRQpTzczxd/sR+2LvH/KlpH59CcePgm6PBlikOnOh06pc3gpu3tM8U+Ru3rFpBqXqkE3lk0SSE9K4ONsGAl3siIKAUDZUFX1ZJr2o+AwA1orB+WabP/9Ox8a35pwhNKdtXoFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LF6RzbQL; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so57253705e9.0;
-        Tue, 26 Nov 2024 16:30:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732667440; x=1733272240; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ej8tv2A3HWZXC2wma35bhFGNWRxHqMQLJ4mpt4LT9Bk=;
-        b=LF6RzbQLCA+04o86SXHcLkQgWF+u4D3YnafKkE5gaYAOlc4G/YA5jaoKz3gsTpHb19
-         I/PYFRdwWQiSQ+k6Hi0wCXi/+NjmaO1qNto5JVBCOcuLt3hbT+gXjQS3689nlmvtObim
-         ag43KcMupEI/xMrCfyrKEV+kQDyLK9V+r/j4TDVW2/PRLoISMF4/bGd4FZ+fUVCl8xuW
-         FVFqalX6JSDF8EIatxIWwBrX9BWr4buEbAY21mxJo3XPtq6xFXHUwsjhEJpIOGAzTg23
-         fK7PxSqshTNr/N5klzZazVZhQ0eoPDpuEbo80jmYZyRXhsxNKkbTUmqcBQWOlR9cNhB6
-         247Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732667440; x=1733272240;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ej8tv2A3HWZXC2wma35bhFGNWRxHqMQLJ4mpt4LT9Bk=;
-        b=qxSu9dCY1gfj/uP0ceuuRWrL5O1zaZAqskhNGqQlGr1m09Iv5sG+u9gaX/VdeE2vCj
-         f7zuSh1M1U+MF1H7MojoniAHUfKPivGXjex2IeN0pocOh5O8TlOLI0FJtMK9NTFlqEJV
-         DgrMu+8m4p20QlQSkXoO0b5xQ3BbXbNybn7cujrwi30uHi5MtvWsYf6xcV1y4oskUw4A
-         xH6p67dRLvuYEIS26eupRE486P0lkvBfKLMKjZB3fZUql/LpyuX+2QY/newxJL7rEqJ1
-         uWF0LbevJH59J8u/k6B1RYLBlojs7URzEN4zjJ+L8H0PHXIHyYwA7tsZxvJm8Ek00ZCe
-         JxUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfEX8Cplxj4HbTd/QUpWM4Ne/NWGTfDaYFx4uYdsUgZGp62ewU5+JkWqrDQcswAawa08ksTTT4uSg=@vger.kernel.org, AJvYcCWgH3OJtwc2c24LW9URN0UIPsDcRhG60Popvvr75ni4ZLsKmx4VNo0jGIAwsfR0BA0bqYgVyiDQ@vger.kernel.org, AJvYcCX94igKltFjvOgBc03K+0NxwIyQWNTlGyFiJMuMxfkGIzT/4XZT6cGlcLwBoZ/AYsd9LHL51gmH/yJcIucS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj3wUCLFKpnELDRhlgnE6FwoJF8/qF4p2d5SB3rFa2LwX4hpwO
-	wDRiB9UGbfnqr6oRbP07yqX95FsOPIchEIE4l/1qkn+rsMyJfWit
-X-Gm-Gg: ASbGncvZXs+fU1jLXQOvyfBHmMH9Yz1TwNgnVZfAjsLPHcnu0oJHxM+TotV3XXEAbFj
-	OabZetLuu5PXP683vihTZXntHBr45ch0FLRDqIZlsL27IXbDHb74gZc58P3mW0gaaJctlbTVZCJ
-	psJ9/Lk4dsaUPGQG0jBvgiQMUQRKu2pQMbWZM8PthK8OyEytImUSRb5cicDYxzh1eDLwRQKyNMu
-	xwYND8uTAMw+kSmJEqtSmjhVQd6G2vs7sdLQ0ZoqntB0i2Xm2o9ksK7ExC7tys9V+IWuUso6hn+
-	sJv3f0lz3HexG/zhYQkxE2I/vIzuEUP/rV4T9KdQOirLrzyiHF/Kf/Ko7wm/xjxBN2thge9LIui
-	ksDLxChrTIFZ37P3A7er/arZXbsmYfjc8SmDNC3bRY74=
-X-Google-Smtp-Source: AGHT+IEPN/MJAsvPH/wHNl/SHEw0ZMIZ1SSH4y1SpB0BkcojvZudR4bbqDNjOWlU55rWqsIvScXncQ==
-X-Received: by 2002:a05:600c:5253:b0:434:9e1d:7629 with SMTP id 5b1f17b1804b1-434a9e07911mr8451625e9.33.1732667439604;
-        Tue, 26 Nov 2024 16:30:39 -0800 (PST)
-Received: from ?IPV6:2a02:8389:41cf:e200:2880:ffb8:6aed:9f0d? (2a02-8389-41cf-e200-2880-ffb8-6aed-9f0d.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:2880:ffb8:6aed:9f0d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedf63sm14723779f8f.102.2024.11.26.16.30.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 16:30:38 -0800 (PST)
-Message-ID: <98feceae-2146-478b-8296-d3a41401dbf9@gmail.com>
-Date: Wed, 27 Nov 2024 01:30:36 +0100
+	s=arc-20240116; t=1732668125; c=relaxed/simple;
+	bh=e64eiSaj3E/N55rH4WHugQJd8+Wr/ApxMZdKfQx1O9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMndwRyv/P2JZVCT5CxAM7nhXt6VvRTaqe+Y5Ir4u06I8uHRV+j4g9exjAW1A2thJNwuiZJpsnRF1cSkMRopr90UBd6YX7U7DuoB91asIGe2J/qjb4aTAYudpmgCzfZPr6HQa3miEW8/HPRUYtaifHaUUl2kEL5RNvtyRregEPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sHWCNGAK; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wj4xUgLDkEbLpQugqy4KRnKjeZwh4Cl4LIFBDNjGph0=; b=sHWCNGAK7IMB4+lwr0W821QvZo
+	3U4DqW7z81fvtTWdittyLAadWrDhViPhBCHueG1zN6TqurprwmD+njUIv9TIsZGo9+Q2Etsu+P8vj
+	Fa7TpEuezYuhHGAJ+a/cFPNQb8lx7Ia0J0K+7R4tVBvBiN+2ix/kuRZLGrSRNaeBbBtHShoyVKehk
+	fZmeyHTGUzHqq5VzSfIPmN/crd0LTRdzUK5YTbVwqeypaJPq1ZXpcE80WEmarzXKNxdAu3YKwsark
+	FSfbQktfl5QhRorA2ts+N4rqgpIv3x2z2hhUnSjkRGT368F966zh1YyI23Bzj6iJOdFZ2a5UKAfYx
+	RGzdJY6g==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tG67Y-00DPc1-4g; Wed, 27 Nov 2024 01:41:32 +0100
+Message-ID: <6e9a6084-2e78-4139-8c61-4d2f2ccd068e@igalia.com>
+Date: Wed, 27 Nov 2024 09:41:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,111 +55,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] iio: adc: ti-ads1119: fix information leak in
- triggered buffer
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Antoni Pokusinski <apokusinski01@gmail.com>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
- <jpaulo.silvagoncalves@gmail.com>, Gregor Boirie <gregor.boirie@parrot.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- Francesco Dolcini <francesco.dolcini@toradex.com>, stable@vger.kernel.org
-References: <20241125-iio_memset_scan_holes-v1-0-0cb6e98d895c@gmail.com>
- <20241125-iio_memset_scan_holes-v1-2-0cb6e98d895c@gmail.com>
- <20241126085958.GA13577@francesco-nb>
- <59a4b096-101b-419d-8a19-1063d759b4e2@gmail.com>
- <20241126185211.385f82c4@jic23-huawei> <D5WG58I3QIEL.7Y7EGKOC7AS8@gmail.com>
-Content-Language: en-US, de-AT
-In-Reply-To: <D5WG58I3QIEL.7Y7EGKOC7AS8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 2/5] sched_ext: Manage the validity of scx_rq_clock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tj@kernel.org, void@manifault.com, mingo@redhat.com,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
+ Changwoo Min <changwoo@igalia.com>
+References: <20241116160126.29454-1-changwoo@igalia.com>
+ <20241116160126.29454-3-changwoo@igalia.com>
+ <20241116193235.GQ22801@noisy.programming.kicks-ass.net>
+ <494b8851-ba5b-4205-bea0-dc504c2ffa33@igalia.com>
+ <20241118094100.GG39245@noisy.programming.kicks-ass.net>
+ <9a2bfe0d-3a1d-4917-bf10-33259c79a3bb@igalia.com>
+ <20241119081740.GB11903@noisy.programming.kicks-ass.net>
+ <a7a989d2-b88b-4ceb-9c57-6874e09a1599@igalia.com>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <a7a989d2-b88b-4ceb-9c57-6874e09a1599@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 26/11/2024 23:00, Javier Carrasco wrote:
-> On Tue Nov 26, 2024 at 7:52 PM CET, Jonathan Cameron wrote:
->> On Tue, 26 Nov 2024 10:46:37 +0100
->> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
->>
->>> On 26/11/2024 09:59, Francesco Dolcini wrote:
->>>> On Mon, Nov 25, 2024 at 10:16:10PM +0100, Javier Carrasco wrote:
->>>>> The 'scan' local struct is used to push data to user space from a
->>>>> triggered buffer, but it has a hole between the sample (unsigned int)
->>>>> and the timestamp. This hole is never initialized.
->>>>>
->>>>> Initialize the struct to zero before using it to avoid pushing
->>>>> uninitialized information to userspace.
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>> Fixes: a9306887eba4 ("iio: adc: ti-ads1119: Add driver")
->>>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>>>> ---
->>>>>  drivers/iio/adc/ti-ads1119.c | 2 ++
->>>>>  1 file changed, 2 insertions(+)
->>>>>
->>>>> diff --git a/drivers/iio/adc/ti-ads1119.c b/drivers/iio/adc/ti-ads1119.c
->>>>> index e9d9d4d46d38..2615a275acb3 100644
->>>>> --- a/drivers/iio/adc/ti-ads1119.c
->>>>> +++ b/drivers/iio/adc/ti-ads1119.c
->>>>> @@ -506,6 +506,8 @@ static irqreturn_t ads1119_trigger_handler(int irq, void *private)
->>>>>  	unsigned int index;
->>>>>  	int ret;
->>>>>
->>>>> +	memset(&scan, 0, sizeof(scan));
->>>>
->>>> Did you consider adding a reserved field after sample and just
->>>> initializing that one to zero?
->>>>
->>>> It seems a trivial optimization not adding much value, but I thought about
->>>> it, so I'd like to be sure you considered it.
->>>>
->>>> In any case, the change is fine.
->>>>
->>>> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
->>>>
->>>> Thanks,
->>>> Francesco
->>>>
->>>
->>> Hi Francesco, thanks for your review.
->>>
->>> In this particular case where unsigned int is used for the sample, the
->>> padding would _in theory_ depend on the architecture. The size of the
->>> unsigned int is usually 4 bytes, but the standard only specifies that it
->>> must be able to contain values in the [0, 65535] range i.e. 2 bytes.
->>> That is indeed theory, and I don't know if there is a real case where a
->>> new version of Linux is able to run on an architecture that uses 2 bytes
->>> for an int. I guess there is not, but better safe than sorry.
->> Using an unsigned int here is a bug as well as we should present consistent
->> formatted data whatever the architecture.
-> 
-> Would you prefer that in the same patch as they are related issues? I
-> could switch to u32 in v2 along with anything else that might arise in
-> the reviews of the rest of the series.
-> If you prefer a separate patch, that's fine too.
-> 
+Hello,
 
-Although now that I am looking into it, and according to the datasheet
-and defined scan_type, the right size should be s16.
-
->>>
->>> We could be more specific with u32 for the sample and then add the
->>> reserved field, but I would still prefer a memset() for this small
->>> struct. Adding and initializing a reserved field looks a bit artificial
->>> to me, especially for such marginal gains.
->> Issue with reserved fields is we would have to be very very careful to spot them
->> all.  A memset avoids that care being needed.
->>
->> Jonathan
->>
->>>
->>> Moreover, the common practice (at least in IIO)is a plain memset() to
->>> initialize struct holes, and such common patterns are easier to maintain :)
->>>
->>> Best regards,
->>> Javier Carrasco
+On 24. 11. 20. 00:57, Changwoo Min wrote:
+> Hello,
 > 
+> On 24. 11. 19. 17:17, Peter Zijlstra wrote:
+>> On Tue, Nov 19, 2024 at 10:19:44AM +0900, Changwoo Min wrote:
+> 
+>>> Let's suppose the following timeline:
+>>>
+>>>    T1. rq_lock(rq)
+>>>    T2. update_rq_clock(rq)
+>>>    T3. a sched_ext BPF operation
+>>>    T4. rq_unlock(rq)
+>>>    T5. a sched_ext BPF operation
+>>>    T6. rq_lock(rq)
+>>>    T7. update_rq_clock(rq)
+>>>
+>>> For [T2, T4), we consider that rq clock is valid
+>>> (SCX_RQ_CLK_UPDATED is set), so scx_bpf_clock_get_ns calls during
+>>> [T2, T4) (including T3) will return the rq clock updated at T2.
+>>> Let's think about what we should do for the duration [T4, T7)
+>>> when a BPF scheduler can still call scx_bpf_clock_get_ns (T5).
+>>> During that duration, we consider the rq clock is invalid
+>>> (SCX_RQ_CLK_UPDATED is unset). So when calling
+>>> scx_bpf_clock_get_ns at T5, we call sched_clock() to get the
+>>> fresh clock.
+> 
+>> So the question then becomes, what is T5 doing and is it 'right' for it
+>> to get a fresh clock value.
+>>
+>> Please give an example of T5 -- I really don't know this BPF crap much
+>> -- and reason about how the clock should behave.
+> 
+> Here is one example. `scx_central` uses a BPF timer for
+> preemptive scheduling. In every msec, the timer callback checks
+> if the currently running tasks exceed their timeslice. At the
+> beginning of the BPF timer callback (central_timerfn in
+> scx_central.bpf.c), scx_central gets the current time. When the
+> BPF timer callback runs, the rq clock could be invalid, the same
+> as T5. In this case, it is reasonable to return a fresh clock
+> value rather than returning the old one (T2).
+> 
+> Besides this timer example, scx_bpf_clock_get_ns() can be called
+> any callbacks defined in `struct sched_ext_ops`. Some callbacks
+> can be called without holding a rq lock (e.g., ops.cpu_online,
+> ops.cgroup_init). In these cases, it is reasonable to reutrn a
+> fresh clock value rather returning the old one.
 
+I wonder if the above example is sufficient for you. If you need
+more examples or clarification, please let me know.
+
+
+Regarding the my following my comment in the previous email, ...
+
+On 24. 11. 19. 10:19, Changwoo Min wrote:
+>> Growing sched_clock_data shouldn't be a problem, it's only 24 bytes,
+>> so we have plenty free bytes there.
+> 
+> Alright. I will change the current implementation and extend
+> `struct sched_clock_data` to store the `VALID` flag in the next
+> version.
+
+
+I found `struct sched_clock_data` is defined only when
+CONFIG_HAVE_UNSTABLE_SCHED_CLOCK is set, so I think extending
+`struct sched_clock_data` is not an approach approach. Extending
+`struct scx_rq` seems the best option after opting out
+sched_clock_data. I will make sure the cached clock value and
+flag in the scx_rq are in the same cache line to minimize the
+cache misses. What do you think?
+
+Thanks!
+Changwoo Min
 
