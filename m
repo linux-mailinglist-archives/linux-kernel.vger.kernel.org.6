@@ -1,185 +1,328 @@
-Return-Path: <linux-kernel+bounces-423422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353A49DA737
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:53:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A09D9DA727
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:51:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 352C1B269D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA4C163E40
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027E11F9F5F;
-	Wed, 27 Nov 2024 11:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33151F943B;
+	Wed, 27 Nov 2024 11:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VReTf/mQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yEVb5TNv"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2084.outbound.protection.outlook.com [40.107.244.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83A01F9F55;
-	Wed, 27 Nov 2024 11:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732708309; cv=none; b=C8vGpkmRiC9yRj32n2XuxxDyQF/6EgCAXHHj19fwn/Jy+mweDZ+a+ixDhCyx+mWXS+2geQGHMhYSK61piRFTRz1XBfuPuqxr6TYS7kScnsBsXtx8F1VjPShaw0ckuM4w9g7q9afnzvMW76Wz/plshGuvAbsT/w4RGjJ7cRZgaVw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732708309; c=relaxed/simple;
-	bh=ErPP9c4l3QF+6gCsJyaNXV9lUGfHlw8xtchr84nZNUc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+2up/oaY/EuMF1HpHRDM2MGogeGQyn2dgfxk+LQwBmjmlumS8hDwn3sLotXRJPc/uYO/AxadZEhB8U6Zkjx9bvp/dz7r51QQsXdT49d1YZq2r9JYKyZRGAVdGrFgvCwfE0VXt0PFUMfLoDBXdFAFSqphD+89YBK8r3hpWfI3TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VReTf/mQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR8BnrL009576;
-	Wed, 27 Nov 2024 11:51:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1L6EbXGa4gjKewlKK1VepByH
-	J/Y1UHlLv72Bl04ORAU=; b=VReTf/mQlYe4hoPN57uXsB1rzLArhNZT6wVtqGY6
-	sBE3SAnYzslWSZoM9nw7kugRp6e+uPd3JGT5U+xPuA4rGqqOyMcBmAIkyMylF5JA
-	azVaRbHt+YJy4zU5vrmmVJJKnlxsQq7Ua9qlfV5ApmcuS+13AlWDmIhUkVqGnbkW
-	FWSZqeThyeV3eDuDrjmgvjEe1Ze0MbN6FLaimdEsYyrfYH+0id6tGpYWwOPtlZGm
-	w3Wfs/SflgQglf/50Y927/d7HrMxM201AFDef8lYnTeJRHgiJ0ryoiYeFUG/21vs
-	i2pbhsqfIg90XMu1ocPplJ0z5P0Wlt4r3zTpl16OeNorXA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435ffyu9ba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 11:51:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARBpcuC025967
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 11:51:38 GMT
-Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 27 Nov 2024 03:51:32 -0800
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
-        <quic_anubhavg@quicinc.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v4 2/2] regulator: dt-bindings: qcom,qca6390-pmu: document WCN6750
-Date: Wed, 27 Nov 2024 17:21:07 +0530
-Message-ID: <20241127115107.11549-3-quic_janathot@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241127115107.11549-1-quic_janathot@quicinc.com>
-References: <20241127115107.11549-1-quic_janathot@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8701917F1
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732708290; cv=fail; b=M+THKc9JIkFA6Pk3W6d98CZLfO+CDHMMbRJ1LhP86oQX66QjY+TifGGE+0xL0NEdNbBhKejNuPCW6THWx/SMO3G2QBIBLuR9InJTvAgCJVSS5vDH3K02/7jV8zBmA4dJfAqnlUTDFVUybnO/BAL1z47Up16l69klUKAHdhswfP8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732708290; c=relaxed/simple;
+	bh=JkusVSrjKJkqIJVERrnR132U0AGz+/vunnvx3yLmHv8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CuPAPU12lb8htCV17wRRFm2sYKfv5UFuXxPMShNjals221VAEcQNljKViHtewnDe9nEHyIvq+65XlzLFUZ3GnrZmAGYpTIfg3h7C56K26WkNtSmNdN+ElwpY6+TMRroeLcs6b3HQ0iVDDr8RC5A6CVKfLsUew3AUJhbMyARIrm0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yEVb5TNv; arc=fail smtp.client-ip=40.107.244.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lGPKEd/a4DjevUfM+E69p4s59KuavoAg86eGKrImE7P98YZ/nnoQDUw/mSsf0NPvLXs0sm10jt60CZ7nNlWsvcBj8lAjq/41K6iPuGwGlqPW1eYFHFr53OzxgtgDUUn8G2rqAbor5HEcyB0TezW7+CZ80/IqrkVC7pcP80vo0vjmx1V4JtVVvXJAtd5BV2mTUncs8ugWtx+BxPN0SSgWkJkU1HogCisGHEA1QK95U0v7FUFakb2Fbsth1W9MAa/2u08ZmVTAKL7v0AAO3RqjZqImAvLWoA/FxGiznm58QB/3T9dYh8mCw4mzwD83QzkDbOnslqxbW+x7AIhX76MQTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IDBsgBCGRyXkOtuzTGe0uAqzPzGkec6z9VM/Cld+69k=;
+ b=yOTu14/1LwM8BQHEkfogA/PVK4cV4C0jYHuFsmDyBUhkvL8YBYpjKjT6CaoOOahhS/G1me+W+jzyUwDD5q4JP4tqxKWk1bzFHmFUPcajmVV62N2YzIKX2qCjKfbZA3UpeGlUMjAHHUfFpiIdWdgnkInYnGdpgi2byRTu/MSUwM3MMxKAJ7fCuDUctDMpCH6Xad+lX+jm7Q4v7tHtP7EQpmMepLcCI7AuOSqCtSrIWRrUd/55CVZBY3hC0i6LGsTt5NQP+RAGnxW9wgdc23d7AUvxzKvqy/wai/jIB8v6q/ocpIMA2ZttWuo1cPTWS2UIF7keJeMrC72chUXKBEikCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IDBsgBCGRyXkOtuzTGe0uAqzPzGkec6z9VM/Cld+69k=;
+ b=yEVb5TNvHoP88wTJRThnJxEDTJqz44z35jJlvZv9MjsLmLB97FFc2uuEF2hGmlmQLZ1EfR90S+dwtE0s7Whp/FLcg6Em/IAPSq/v1cc33beah3J+LP6qgxfjU+N8Yg4C0JAJk4dZYRczDb+MkJ75Etn0vAjcTBIocQ5UT5bjPPs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SJ1PR12MB6170.namprd12.prod.outlook.com (2603:10b6:a03:45b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Wed, 27 Nov
+ 2024 11:51:24 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8182.019; Wed, 27 Nov 2024
+ 11:51:24 +0000
+Message-ID: <8266003e-eb98-44cb-a326-1e4f688eeb4c@amd.com>
+Date: Wed, 27 Nov 2024 12:51:18 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] amdgpu fix for gfx1103 queue evict/restore crash
+To: Mika Laitio <lamikr@gmail.com>, Xinhui.Pan@amd.com, airlied@gmail.com,
+ simona@ffwll.ch, Hawking.Zhang@amd.com, sunil.khatri@amd.com,
+ lijo.lazar@amd.com, kevinyang.wang@amd.com, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241127114638.11216-1-lamikr@gmail.com>
+ <20241127114638.11216-2-lamikr@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20241127114638.11216-2-lamikr@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0252.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:af::14) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _pBDr6Aqp9p_24q6N-01cBBsS6A7Uc-h
-X-Proofpoint-ORIG-GUID: _pBDr6Aqp9p_24q6N-01cBBsS6A7Uc-h
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411270097
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ1PR12MB6170:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99f9dc07-252f-4ae1-e84e-08dd0ed9d190
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V0tIQnFuNDVXWnNwZUFlQVNBVG5nWEd0am5VWmlrbDlCSTQ1dTVTQWNEMFFF?=
+ =?utf-8?B?bnB6RlNIL2J1dXgyRkVNM3QvZFpaZDcvTlFhMERqL2lKL2FVSVNEQTdsYXBR?=
+ =?utf-8?B?TFZIdCsrc0h1WFVpUjdocXJDdnEyeWFPL2pEdDRJUll4RksySTRTbDZCT211?=
+ =?utf-8?B?RnZqVWpWVVl0MDBnaVFvS3VMdVFpdzM4SWJWSFFueSs1cXlkbExlQUhXdUln?=
+ =?utf-8?B?MXpsMmRmVHJDQjZhd056ejdoSk1aUm4yYlRKRGpYb0FBMWx6blZyTEl4dlBh?=
+ =?utf-8?B?Y0RMcmJJSVh2cVA3YlRLY1NzcjlmQjgrVjZlZ1Z6YkU2dlRWRVF6WUZyK1o4?=
+ =?utf-8?B?OE5zS3NNT1Z5NnpvbnJRVFYza0s0d1gzMVB4Zm5DbnZPaHArbjZwdnVsSlBM?=
+ =?utf-8?B?YUdhVy8wL0QxRXNHM2pKaWVZeWRnNzIwUVBlVXVXNk93TS9mVUYzMWdBRGp4?=
+ =?utf-8?B?dnZsVTg1K0k3OXpoTGZDOUdROTFmMzVzTnU1NHhrcXA2QVNwbFlXSmVucnJT?=
+ =?utf-8?B?eEZYcUwzVDYrV3lRNDBLdE5sbVZFTExDSU53b0RwcXlZNUIxQXpqb3ZYWFpP?=
+ =?utf-8?B?YjZtOVkrTTNEYjJtaWlTUUFtQ0JpZFNmditNYlBNT1ZkTEJIMzJ4SlNxR29j?=
+ =?utf-8?B?Uk81Zk5HaWpQaVBjOE9GbUhpTGtCWUNpSVlNQ3R0am9oV0hVdUZVMUR6cFo5?=
+ =?utf-8?B?anIzNkUxODVlbENiM1NLR29nK3oySFJQamlieWpuTTVlbXUwU211eGs2RjdF?=
+ =?utf-8?B?T0pud3BhTHpHcGNFWXZTZnh6MnYyaGJ6SWU5TGFjaWVUZUphMk02QjBoMVZn?=
+ =?utf-8?B?TkFVM1VNTnZHYVpGbGl6S3JqYlFsNnF2WEpDQW9CdWNpUGFEcFFWVDZwNGs4?=
+ =?utf-8?B?QjIxaXovNVZhTzcyMDBPYXc2cDQydW5VU2hPMWVMOWRJaFVTbWcwS1NvcXhu?=
+ =?utf-8?B?eU1ia3Bpa1NGYjBiYllXY3o0cUFaRkdmTVJTRk9yaUR5QU9LeEswUlpTcmdo?=
+ =?utf-8?B?MWE5ZnAxQit4aFRBOGNob3pEZXJlZUxuKytaSndXSlE3UHd5Y1FhYlBBZTNS?=
+ =?utf-8?B?eXIreWphTE44b01VRmcwa0t0STZVSDZwZnJjV1VqTE83S0VOdVpRVlZEMHVk?=
+ =?utf-8?B?KzRuUmhQdS9GZjFiSnk0cUppYzlCMEZFMXF5QkdEeUk1Ry9jMHVMZ3ZqSmpI?=
+ =?utf-8?B?WUhBT1l0eW5CbEdaZzAzRWhVdnhvc05pM2RTOVplcDRGTERNaGdHbjZ5d2ZL?=
+ =?utf-8?B?S3czK216ZzRBUkhJLzdmdnI0NW9qSHZWc1BRTVprdEZ5ekJWREswU2NLcUdK?=
+ =?utf-8?B?MHFYR2UrTXZuNnNKSGQ4VDg1UjA2YkVvd214K1VlZUx1anhsUFpUQk95Q1M4?=
+ =?utf-8?B?eU9rdXNJOU8wWCtZU0dEVWxjbHNCQXptdEcwaEZJTUJkSnhtanFsZjBBQ2RU?=
+ =?utf-8?B?ZG5mTUhacnRuU0FmK3ZrUVk5YmtZZkRoRFRmSTY2ZWJVUzBnUmNlSURTRTl2?=
+ =?utf-8?B?R1htUVVHSkEwbEc3bDhZZU9td0xTSnhQR0gzWCtBenU0elpHakxtRndlKzYx?=
+ =?utf-8?B?MGNPRC8zT0ZFNVhEenlaQXZ4ZkxZVWFIR3Era0tyMG9vTTRxTWxUbTRLbElq?=
+ =?utf-8?B?Z1laaUM3YStZdHhzdXdOUGJxNGhFWW90V1RBRkRmOFFmclRHU0pLSXcxT2Zt?=
+ =?utf-8?B?MVAvaEdCT09tZGgvUjluRFpoN0o0RVdHeGpVK014MWRUUCtjTmw0OFBGMXo0?=
+ =?utf-8?B?c3ZITytaUVJRQVUwYkc3YXVLMnE2SkRXLzJsdjh4QS90dmdId1VYcmI0enc3?=
+ =?utf-8?B?amdTMFBVOTJiNDI4YTR1akZScVNkYUdoWHYvaERJQUt5blhORGUzUFRpTWVy?=
+ =?utf-8?B?MTM2M21TMWhUd1NGRGRpVk9Nb1RGem43OVhlU0VMazIzcVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ekQvRVhpYzNicnlvNXBVVzQ4dVl5RHA1YzJsTFplTkhEeDZqUzhoU1dLSy9K?=
+ =?utf-8?B?VGlZYnNUakd3blhwanlzK0hxRkdYN2FYcjhaTnVZYjgrTjRhbkptWDhEWGFM?=
+ =?utf-8?B?WlhDSWM3WW8zQlhkNjRBTlFuTHpNSGNOK0N3RThPd0RxcmRRWWticEYzTmh1?=
+ =?utf-8?B?RTVUMnJWN0w2MnZzTWFCaUgwL2pqelp4ZjFNZjhicTNLNHZwYVhVdnVRdVFW?=
+ =?utf-8?B?YXpQZTg4NG92MitEOHhja1I3alBnR1NVVzNodGQrYjM0VUdGQ1dCQ2pDR0c2?=
+ =?utf-8?B?cm5rUGRIek1aVzFzUW9OZm0zWThxMERhYUNYQUVnNUdNKzVsTkRDOTI3S0ZI?=
+ =?utf-8?B?Sk8rRHJ4cDJLM1F0cW8yT1E2M2w5ZklibVRoZktSclZoT1pEdWtwRVhRUVc2?=
+ =?utf-8?B?Qi83aUtXN1VGcWJVR1dDNGNtRTVmak5CeEVab1VTLzZvdk9VNjY2Y2prbWhl?=
+ =?utf-8?B?TW5VWFc0Uk51TmVIc3pKSFlhZ3NhdDZ4UnN4UDFSZUs2UmprZXl1eDJZWnZ4?=
+ =?utf-8?B?STZGOEIrZWJjUDVnWG52enAyUy9ESlc3NHpzSWkwSWM5SUpxSTdGMHhkeHNs?=
+ =?utf-8?B?aHBLQUNYTXNHNkkzL2djSE5KeEgxeDFEbzdNVnNEUFZnU2laRVI5aHRpcnM4?=
+ =?utf-8?B?NjFoU0pXV2NmUi90TDdIVk1QMEZPeG1uMlZlUlY2MnZYdmlKYVdOZEFzSlhN?=
+ =?utf-8?B?cUJ5ZkNtWWtKbWQ0U2x2WjBySmxOSzRWOWNocHhvOERIK1ZXZTg0RVVJMHJm?=
+ =?utf-8?B?cEs1RDNXL1lZOU1ENzl3cDh2RlVaS0h5SnUvYkpPV204TkdhTUhXczNDb1E3?=
+ =?utf-8?B?MlBuelFybmQ3NUN3RHR5aWZPTnpGRGF1dElMUXFtNE9tTG0wTTJpRUdQZWYr?=
+ =?utf-8?B?dzZZV0JraElnNlBsMHlGVVR6V2ZVWEh3OEwrMG44ZHpJeW1NQ2ZsUnNKMkZp?=
+ =?utf-8?B?eWx4S0RsZTR1Q3lMUFd2UVMybm9PS0xxZ2x4bytHcEZyVHFKUlVuWGFNblJH?=
+ =?utf-8?B?NHYrcnluYi9UL3RySFlCNjF3bmtxa3hKeGk0bEw0MldoN2ZaOWYxWHpMdGsy?=
+ =?utf-8?B?dEs0NG50OW1ETVFuRGdWbS9nYUNwaFplWmhjZnFqOEpMTXRlM2hRRk5zaEIw?=
+ =?utf-8?B?MGx2VVJjam5yVXZ3LzI0ZXJUVTFtRzlJRzdmUUlYRmtGaEVJK2tiUXFFVkdJ?=
+ =?utf-8?B?SmNucXNmMHB3QStjZUVjRWhwbGM3U3RUMURzaTlkYXNLTm1vc3BuRWE1OEVo?=
+ =?utf-8?B?V0JHUkZMSlBYTXhMWUEzcEtFQVZ5aHE1dmtGYjA0eWgwZVBCQW5QUWEzMVk1?=
+ =?utf-8?B?RHFSNmpEdFBPRmlGTWtaK3BGdTgzcFZOSnpWbXNvNXlvWDVmRzZCaVYvK3I4?=
+ =?utf-8?B?MGE0M255OURaUFY4MTJuSTBWUWg0bjZacWdVZUhnUXFNaGRHaFNsS2tRWXNO?=
+ =?utf-8?B?QldobHNnanUyMHNOdWpBNWU0STBqbDE5RjFla0lCVkFUTXN6N0p1N2hEdnBH?=
+ =?utf-8?B?bmFhdHVqeXN4UjhOODMrREpBMXVjQ1hhQW5EYkJqKzYvRzlsZjliWUZiaEdq?=
+ =?utf-8?B?aTVBYUcxQ0VablhrR1lMU1M3RTBDemN1TGExNE9JTVZlMlhhNXdwYXFmaVZY?=
+ =?utf-8?B?WHZoZzRmZzhJVllSZ1c4WDgwVG80aUpJcVdZaGJVejdseHBUK3hwM3B3ZWsr?=
+ =?utf-8?B?ZUxGTTFtWnR0VXRvRXE3WHphVzFFM3dDNm9UWFVlSEZVL1ZSU3ZTS2hHdFR3?=
+ =?utf-8?B?OUtEZ0JPVDVRVHlTT3dGckQvQmRXRDRndlFQbTBZNS9uYVZVaGdkNFlzaHZR?=
+ =?utf-8?B?ZFdBeVFMWUltVDNYUjhOUG05c2NFa3B5dGVEdUt2WFZJVXp4dlMwTDBrL1hP?=
+ =?utf-8?B?VDlDWS94UFNvVlZoanl0N3ArSGpWSHRYSElCZStkbDcxaWdwSStJTkNTL1Rm?=
+ =?utf-8?B?MVlEQzRYSFVzTVF3WkhFZTArVUU4UktENFp3Mk5Ha0s1TVNMdWtsRVZXTnNX?=
+ =?utf-8?B?NHdJS2FCcXdHM0lNREVyVUJleUJUN3d6R0JSZjY3UGgrbGdvd2FESmh0OEVw?=
+ =?utf-8?B?NUxONjBiMVN6UTIvWHdOU3RsZC9vZ2VBSWlZZ2xMRTVxaFFEU1ZyTU50YmJW?=
+ =?utf-8?Q?G3v69nB84vnqp/5Yr9fUOtz/M?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99f9dc07-252f-4ae1-e84e-08dd0ed9d190
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 11:51:24.6148
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AlP1IIbFGtFjTKrJyMQR7oxB/w1nDd3HSrJLkH+hkoW00BJAyxVs/VXxZI13wU+5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6170
 
-Add description of the PMU node for the WCN6750 module.
+Am 27.11.24 um 12:46 schrieb Mika Laitio:
+> AMD gfx1103 / M780 iGPU will crash eventually when used for
+> pytorch ML/AI operations on rocm sdk stack. After kernel error
+> the application exits on error and linux desktop can itself
+> sometimes either freeze or reset back to login screen.
+>
+> Error will happen randomly when kernel calls evict_process_queues_cpsch and
+> restore_process_queues_cpsch methods to remove and restore the queues
+> that has been created earlier.
+>
+> The fix is to remove the evict and restore calls when device used is
+> iGPU. The queues that has been added during the user space application execution
+> time will still be removed when the application exits
 
-Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
----
- .../bindings/regulator/qcom,qca6390-pmu.yaml  | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+As far as I can see that is absolutely not a fix but rather a obviously 
+broken workaround.
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,qca6390-pmu.yaml b/Documentation/devicetree/bindings/regulator/qcom,qca6390-pmu.yaml
-index ca401a209cca..47c425c9fff1 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,qca6390-pmu.yaml
-+++ b/Documentation/devicetree/bindings/regulator/qcom,qca6390-pmu.yaml
-@@ -18,6 +18,7 @@ properties:
-   compatible:
-     enum:
-       - qcom,qca6390-pmu
-+      - qcom,wcn6750-pmu
-       - qcom,wcn6855-pmu
-       - qcom,wcn7850-pmu
- 
-@@ -27,6 +28,9 @@ properties:
-   vddaon-supply:
-     description: VDD_AON supply regulator handle
- 
-+  vddasd-supply:
-+    description: VDD_ASD supply regulator handle
-+
-   vdddig-supply:
-     description: VDD_DIG supply regulator handle
- 
-@@ -42,6 +46,9 @@ properties:
-   vddio1p2-supply:
-     description: VDD_IO_1P2 supply regulator handle
- 
-+  vddrfa0p8-supply:
-+    description: VDD_RFA_0P8 supply regulator handle
-+
-   vddrfa0p95-supply:
-     description: VDD_RFA_0P95 supply regulator handle
- 
-@@ -51,12 +58,18 @@ properties:
-   vddrfa1p3-supply:
-     description: VDD_RFA_1P3 supply regulator handle
- 
-+  vddrfa1p7-supply:
-+    description: VDD_RFA_1P7 supply regulator handle
-+
-   vddrfa1p8-supply:
-     description: VDD_RFA_1P8 supply regulator handle
- 
-   vddrfa1p9-supply:
-     description: VDD_RFA_1P9 supply regulator handle
- 
-+  vddrfa2p2-supply:
-+    description: VDD_RFA_2P2 supply regulator handle
-+
-   vddpcie1p3-supply:
-     description: VDD_PCIE_1P3 supply regulator handle
- 
-@@ -119,6 +132,20 @@ allOf:
-         - vddpcie1p3-supply
-         - vddpcie1p9-supply
-         - vddio-supply
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,wcn6750-pmu
-+    then:
-+      required:
-+        - vddaon-supply
-+        - vddasd-supply
-+        - vddpmu-supply
-+        - vddrfa0p8-supply
-+        - vddrfa1p2-supply
-+        - vddrfa1p7-supply
-+        - vddrfa2p2-supply
-   - if:
-       properties:
-         compatible:
--- 
+Evicting and restoring queues is usually mandatory for correct operation.
+
+So just ignore that this doesn't work will just is not something you can do.
+
+Regards,
+Christian.
+
+>
+> On evety test attempts the crash has always happened on the
+> same location while removing the 2nd queue of 3 with doorbell id 0x1002.
+>
+> Below is the trace captured by adding more printouts to problem
+> location to print message also when the queue is evicted or resrored
+> succesfully.
+>
+> [  948.324174] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1202, queue: 2, caller: restore_process_queues_cpsch
+> [  948.334344] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1002, queue: 1, caller: restore_process_queues_cpsch
+> [  948.344499] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1000, queue: 0, caller: restore_process_queues_cpsch
+> [  952.380614] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1202, queue: 2, caller: evict_process_queues_cpsch
+> [  952.391330] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1002, queue: 1, caller: evict_process_queues_cpsch
+> [  952.401634] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1000, queue: 0, caller: evict_process_queues_cpsch
+> [  952.414507] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1202, queue: 2, caller: restore_process_queues_cpsch
+> [  952.424618] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1002, queue: 1, caller: restore_process_queues_cpsch
+> [  952.434922] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1000, queue: 0, caller: restore_process_queues_cpsch
+> [  952.446272] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1202, queue: 2, caller: evict_process_queues_cpsch
+> [  954.460341] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+> [  954.460356] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes failed to remove hardware queue from MES, doorbell=0x1002, queue: 1, caller: evict_process_queues_cpsch
+> [  954.460360] amdgpu 0000:c4:00.0: amdgpu: MES might be in unrecoverable state, issue a GPU reset
+> [  954.460366] amdgpu 0000:c4:00.0: amdgpu: Failed to evict queue 1
+> [  954.460368] amdgpu 0000:c4:00.0: amdgpu: Failed to evict process queues
+> [  954.460439] amdgpu 0000:c4:00.0: amdgpu: GPU reset begin!
+> [  954.460464] amdgpu 0000:c4:00.0: amdgpu: remove_all_queues_mes: Failed to remove queue 0 for dev 5257
+> [  954.460515] amdgpu 0000:c4:00.0: amdgpu: Dumping IP State
+> [  954.462637] amdgpu 0000:c4:00.0: amdgpu: Dumping IP State Completed
+> [  955.865591] amdgpu: process_termination_cpsch started
+> [  955.866432] amdgpu: process_termination_cpsch started
+> [  955.866445] amdgpu 0000:c4:00.0: amdgpu: Failed to remove queue 0
+> [  956.503043] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+> [  956.503059] [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+> [  958.507491] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+> [  958.507507] [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+> [  960.512077] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+> [  960.512093] [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+> [  960.785816] [drm:gfx_v11_0_hw_fini [amdgpu]] *ERROR* failed to halt cp gfx
+>
+> Signed-off-by: Mika Laitio <lamikr@gmail.com>
+> ---
+>   .../drm/amd/amdkfd/kfd_device_queue_manager.c | 24 ++++++++++++-------
+>   1 file changed, 16 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> index c79fe9069e22..96088d480e09 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> @@ -1187,9 +1187,12 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
+>   	struct kfd_process_device *pdd;
+>   	int retval = 0;
+>   
+> +	// gfx1103 APU can fail to remove queue on evict/restore cycle
+> +	if (dqm->dev->adev->flags & AMD_IS_APU)
+> +		goto out;
+>   	dqm_lock(dqm);
+>   	if (qpd->evicted++ > 0) /* already evicted, do nothing */
+> -		goto out;
+> +		goto out_unlock;
+>   
+>   	pdd = qpd_to_pdd(qpd);
+>   
+> @@ -1198,7 +1201,7 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
+>   	 * Skip queue eviction on process eviction.
+>   	 */
+>   	if (!pdd->drm_priv)
+> -		goto out;
+> +		goto out_unlock;
+>   
+>   	pr_debug_ratelimited("Evicting PASID 0x%x queues\n",
+>   			    pdd->process->pasid);
+> @@ -1219,7 +1222,7 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
+>   			if (retval) {
+>   				dev_err(dev, "Failed to evict queue %d\n",
+>   					q->properties.queue_id);
+> -				goto out;
+> +				goto out_unlock;
+>   			}
+>   		}
+>   	}
+> @@ -1231,8 +1234,9 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
+>   					      KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0,
+>   					      USE_DEFAULT_GRACE_PERIOD);
+>   
+> -out:
+> +out_unlock:
+>   	dqm_unlock(dqm);
+> +out:
+>   	return retval;
+>   }
+>   
+> @@ -1326,14 +1330,17 @@ static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
+>   	uint64_t eviction_duration;
+>   	int retval = 0;
+>   
+> +	// gfx1103 APU can fail to remove queue on evict/restore cycle
+> +	if (dqm->dev->adev->flags & AMD_IS_APU)
+> +		goto out;
+>   	pdd = qpd_to_pdd(qpd);
+>   
+>   	dqm_lock(dqm);
+>   	if (WARN_ON_ONCE(!qpd->evicted)) /* already restored, do nothing */
+> -		goto out;
+> +		goto out_unlock;
+>   	if (qpd->evicted > 1) { /* ref count still > 0, decrement & quit */
+>   		qpd->evicted--;
+> -		goto out;
+> +		goto out_unlock;
+>   	}
+>   
+>   	/* The debugger creates processes that temporarily have not acquired
+> @@ -1364,7 +1371,7 @@ static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
+>   			if (retval) {
+>   				dev_err(dev, "Failed to restore queue %d\n",
+>   					q->properties.queue_id);
+> -				goto out;
+> +				goto out_unlock;
+>   			}
+>   		}
+>   	}
+> @@ -1375,8 +1382,9 @@ static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
+>   	atomic64_add(eviction_duration, &pdd->evict_duration_counter);
+>   vm_not_acquired:
+>   	qpd->evicted = 0;
+> -out:
+> +out_unlock:
+>   	dqm_unlock(dqm);
+> +out:
+>   	return retval;
+>   }
+>   
+
 
