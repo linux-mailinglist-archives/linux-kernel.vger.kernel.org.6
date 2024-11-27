@@ -1,173 +1,110 @@
-Return-Path: <linux-kernel+bounces-423203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7089DA434
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:54:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6839DA432
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:54:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7072845AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0401688CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0505F189919;
-	Wed, 27 Nov 2024 08:54:06 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A18318F2C3;
+	Wed, 27 Nov 2024 08:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXKiGNly"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114F186E46
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B69154BEA;
+	Wed, 27 Nov 2024 08:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732697645; cv=none; b=EL5VQTlygDI8l/liA4D64zZv8JV8Omo1vXTgPlZTY5QJL4vz/vre5ynsPPFVLiNsDp3VXjCrxXgb5a2Ef0vJFcw7JudXQw1eGNZqNiWxroFMh1aeQ12Gy2BplIFb6SvLb316TBQ+gIaFkn1dUBRuxg3jCyNoyFujAB5+d/4t/7c=
+	t=1732697640; cv=none; b=rhZT8tyDmm62Ek+iugYMdVorYfIY5pQCNvLtEm6nDbV43iHaW3qtEz024rqQ7tewozgbr4bCszKRNqMj3EwIQjANTePADJ5gJ/TpuBh1iUUplXM+N0gXNFzDeMVUFjXkIUr7ts/jhLqHV1CJzx1AF0G6p0RuU0K79Z4e9jCuN1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732697645; c=relaxed/simple;
-	bh=YfgpoTDd4KRWX9QYXR4+HGyPFUeAuWa72g0EH8fO3D4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=eUoXa1SAL7Awoee057q8gxYK9r4KExPz1cXn+kfz/wpgeRR44HIY2Y0IE7Sm+hSfvkMHgbTEZTwBM7GRHfU9Xn02I1EkRCYKbXyDnVlbYs1CrDYlkJMEN3pGt/R8YQe6umXObjeRLdyaBRPQEdKEaZfRv/6Oij48BP/IJw4h/aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-320-eUu2RzI3O8WJKx3gHkW80w-1; Wed, 27 Nov 2024 08:53:58 +0000
-X-MC-Unique: eUu2RzI3O8WJKx3gHkW80w-1
-X-Mimecast-MFC-AGG-ID: eUu2RzI3O8WJKx3gHkW80w
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 27 Nov
- 2024 08:53:49 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 27 Nov 2024 08:53:49 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jakob Hauser' <jahau@rocketmail.com>, Jonathan Cameron
-	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-CC: Linus Walleij <linus.walleij@linaro.org>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: RE: [PATCH] iio: magnetometer: yas530: Use signed integer type for
- clamp limits
-Thread-Topic: [PATCH] iio: magnetometer: yas530: Use signed integer type for
- clamp limits
-Thread-Index: AQHbQFyZWpVb6JGTu0SOPl1PuO8j1LLK0lfw
-Date: Wed, 27 Nov 2024 08:53:49 +0000
-Message-ID: <a28168acf9374c60902cdb5aa7608dee@AcuMS.aculab.com>
-References: <20241126234021.19749-1-jahau.ref@rocketmail.com>
- <20241126234021.19749-1-jahau@rocketmail.com>
-In-Reply-To: <20241126234021.19749-1-jahau@rocketmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1732697640; c=relaxed/simple;
+	bh=GTzXM271KTS+OKkc7ykloLsBziWS3jjzqhZTo6a8EF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1b/jnXeZ5yJqB337o/iHBR+E6/QNiRpfWacvMU0NrxFmrJJqlPEBfUySA0a1hUTeDXygSSZKZ/Ak95VKCjwpb8VRQzJuuWyOYaowtC0zYv65Jf+L6Fi6d4+SuZ/sQKaQCalKjIftGAVyoUoFL/OJnQGEJGF48nr8q1ILT1YqDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXKiGNly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645DEC4CECC;
+	Wed, 27 Nov 2024 08:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732697639;
+	bh=GTzXM271KTS+OKkc7ykloLsBziWS3jjzqhZTo6a8EF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oXKiGNlyZQceBCDjYgRpXnO5tlWKreUOdXPH77t5mGA0hsfCbTQbNdfOI58uftfZW
+	 MDSqeVRJuuHg4lbLQpZowcfhxS5Vw22vEv6EK9c+PwCp7iYYuMlScMQOZ6CVTZp/Ti
+	 MhD+dlNVdGlrjZOvi9lAxFO8HlIUY5cLWDO8M9Gs0DCiIGHBFsRxwfK+Q7JrO5MEey
+	 sxJ7ZMXWHJpKtNs+ai61WvHXdzZIDgedcsNFn7r5sMAeYZ7WJRTbc/CQnu8hWIN1Mt
+	 GtGeHtywiot3Fd68k82LucuP1pWQ/h5kQquk6ou8DH+kZiyjYKerC6UZYcxVFlNHls
+	 vFSe1n/J62uZw==
+Date: Wed, 27 Nov 2024 09:53:53 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v8 4/6] PCI: endpoint: pci-epf-test: Add doorbell test
+ support
+Message-ID: <Z0beIUiqXsz5DwVJ@ryzen>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
+ <20241116-ep-msi-v8-4-6f1f68ffd1bb@nxp.com>
+ <20241124075645.szue5nzm4gcjspxf@thinkpad>
+ <Z0TNMIX4ehaB+mSn@lizhi-Precision-Tower-5810>
+ <20241126042523.6qlmhkjfl5kwouth@thinkpad>
+ <Z0WcKeM2630u_xSK@ryzen>
+ <20241126124112.5o4c3lzem72lkvdw@thinkpad>
+ <Z0X9ccbTO1I2zefm@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Fr2NxRY4FRzap3EAAfQy9dsa9csIxttMVBRqPImaXLY_1732697637
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0X9ccbTO1I2zefm@lizhi-Precision-Tower-5810>
 
-From: Jakob Hauser <jahau@rocketmail.com>
-> Sent: 26 November 2024 23:40
->=20
-> In the function yas537_measure() there is a clamp_val() with limits of
-> -BIT(13) and  BIT(13) - 1. The input clamp value h[] is of type s32. The =
-BIT()
-> is of type unsigned long integer due to its define in include/vdso/bits.h=
-.
-> The lower limit -BIT(13) is recognized as -8192 but expressed as an unsig=
-ned
-> long integer. The size of an unsigned long integer differs between 32-bit=
- and
-> 64-bit architectures. Converting this to type s32 may lead to undesired
-> behavior.
+On Tue, Nov 26, 2024 at 11:55:13AM -0500, Frank Li wrote:
+> On Tue, Nov 26, 2024 at 06:11:12PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Nov 26, 2024 at 11:00:09AM +0100, Niklas Cassel wrote:
+> > > On Tue, Nov 26, 2024 at 09:55:23AM +0530, Manivannan Sadhasivam wrote:
+> > > > On Mon, Nov 25, 2024 at 02:17:04PM -0500, Frank Li wrote:
+> > > > > On Sun, Nov 24, 2024 at 01:26:45PM +0530, Manivannan Sadhasivam wrote:
+> > > > > > On Sat, Nov 16, 2024 at 09:40:44AM -0500, Frank Li wrote:
+> > > > > > > Add three registers: doorbell_bar, doorbell_addr, and doorbell_data,
+> >
+> > I like the idea of calling pci_epf_alloc_doorbell() in
+> > pci_epf_{enable/disable}_doorbell() APIs. And as you said, it doesn't make sense
+> > to call these APIs too frequently.
+> 
+> I not sure what's you means and direction for next version.
 
-I think you also need to say that the unsigned divide generates erronous
-values on 32bit systems and that the clamp() call result is ignored.
+Move pci_epf_alloc_doorbell() from .bind() to pci_epf_enable_doorbell().
+Move pci_epf_free_doorbell() from .unbind() to pci_epf_disable_doorbell().
 
->=20
-> Declaring a signed integer with a value of BIT(13) allows to use it more
-> specifically as a negative value on the lower clamp limit.
->=20
-> While at it, replace all BIT(13) in the function yas537_measure() by the =
-signed
-> integer.
->=20
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411230458.dhZwh3TT-lkp@i=
-ntel.com/
-> Fixes: 65f79b501030 ("iio: magnetometer: yas530: Add YAS537 variant")
-> Cc: David Laight <david.laight@aculab.com>
-> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
-> ---
-> The patch is based on torvalds/linux v6.12.
->=20
-> The calculation lines h[0], h[1] and h[2] exceed the limit of 80 characte=
-rs per
-> line. In terms of readability I would prefer to keep it that way.
-> ---
->  drivers/iio/magnetometer/yamaha-yas530.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/iio/magnetometer/yamaha-yas530.c b/drivers/iio/magne=
-tometer/yamaha-yas530.c
-> index 65011a8598d3..938b35536e0d 100644
-> --- a/drivers/iio/magnetometer/yamaha-yas530.c
-> +++ b/drivers/iio/magnetometer/yamaha-yas530.c
-> @@ -372,6 +372,7 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 =
-*t, u16 *x, u16 *y1, u16 *y
->  =09u8 data[8];
->  =09u16 xy1y2[3];
->  =09s32 h[3], s[3];
-> +=09int half_range =3D BIT(13);
->  =09int i, ret;
->=20
->  =09mutex_lock(&yas5xx->lock);
-> @@ -406,13 +407,13 @@ static int yas537_measure(struct yas5xx *yas5xx, u1=
-6 *t, u16 *x, u16 *y1, u16 *y
->  =09/* The second version of YAS537 needs to include calibration coeffici=
-ents */
->  =09if (yas5xx->version =3D=3D YAS537_VERSION_1) {
->  =09=09for (i =3D 0; i < 3; i++)
-> -=09=09=09s[i] =3D xy1y2[i] - BIT(13);
-> -=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / B=
-IT(13);
-> -=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / B=
-IT(13);
-> -=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / B=
-IT(13);
-> +=09=09=09s[i] =3D xy1y2[i] - half_range;
-> +=09=09h[0] =3D (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / h=
-alf_range;
-> +=09=09h[1] =3D (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / h=
-alf_range;
-> +=09=09h[2] =3D (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / h=
-alf_range;
->  =09=09for (i =3D 0; i < 3; i++) {
-> -=09=09=09clamp_val(h[i], -BIT(13), BIT(13) - 1);
-> -=09=09=09xy1y2[i] =3D h[i] + BIT(13);
-> +=09=09=09clamp_val(h[i], -half_range, half_range - 1);
-> +=09=09=09xy1y2[i] =3D h[i] + half_range;
+If the pci_epf_alloc_doorbell() call within pci_epf_enable_doorbell() fails,
+let pci_epf_enable_doorbell() set STATUS_DOORBELL_ENABLE_FAIL.
 
-NAK - that still ignores the result of clamp.
-and it should be clamp() not clamp_val().
 
-=09David
+> This patch just go first step. If we can append to ITS to bar0 in future,
+> pci_epf_alloc_doorbell() will become more reasonable at bind() function.
 
->  =09=09}
->  =09}
->=20
-> --
-> 2.43.0
+To be fair, we are probably quite far away from supporting a BAR with two
+backing memory areas. It would require a lot of changes in the PCI endpoint
+framework, and a lot of changes in the DWC driver.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+And even if we do add all the support for it, why can't we keep the
+doorbell allocation in pci_epf_enable_doorbell() ?
 
+
+Kind regards,
+Niklas
 
