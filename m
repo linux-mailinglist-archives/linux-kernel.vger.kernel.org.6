@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-423935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16F59DAE81
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:25:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DD99DAE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:25:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825C8163736
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:25:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5DDB23229
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5400B202F84;
-	Wed, 27 Nov 2024 20:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF79B202F91;
+	Wed, 27 Nov 2024 20:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIYZ+Mb1"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N4fOrYUQ"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC622CCC0;
-	Wed, 27 Nov 2024 20:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1564020127A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732739127; cv=none; b=MOcg+aJc93eUcproBskHevboQ+mef8qsl0hf8uYs6Quh2o1TGWQR91a69qlYenZvKYeH1Y21rEPyjRli6u6u/tk4hsaxPbutOoQEa3AFkJcg6JTOlDqmU20yK2Hd4OWDLYQa1nScwxjUKBUMhupIHkTvsmaW7fHiS21FCsn8EAI=
+	t=1732739147; cv=none; b=gPqSXq1eonGWfvATNgAdLAcK6kqANlFAXWgGcQUJ+N3qSLBevPIdMMe31DQFoUt4R7+wkHJTkO2wQ7Yg6QKlWnmcfjGcD5HttZ3pj1h2qoMy3i3OWkq8KsuGp93SUPaGB57qjAt0I5RKzhF+Yb66sQa/l9V5pHlAyLCQRJFFVUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732739127; c=relaxed/simple;
-	bh=g+aQQ/Ggzod7NNGajMUoLiB7GzgH/mALJiUvlvfNSbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/yboQ33hKwDDSJBqIlvJ38GvLT9aQUxior/cUHWddqjklvhH8sYZeJ87A+9qCYut+Jv4FVTI6yPU2jsqx4XC7GPB27Yq5BQbgzku4eYnM0r7zRaAUUp7CyN6RilkhjtJWr/qDY/Xjal1rRJNpzSEgxSPefVChtHnd36XdMlsL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIYZ+Mb1; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53dd8b7796dso88330e87.1;
-        Wed, 27 Nov 2024 12:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732739124; x=1733343924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0K+iavJdOt6R73DNJUouu2pgKCbJgW737wlJ/zVGHcA=;
-        b=hIYZ+Mb1kYnqYP4sUWDQ65Q7tSupmxAkZ9uq9REFOQcyLHxTEXRPqZqjnCGnCAap3b
-         9ge/rpTzNds9Agb+icA2K/IuMk5MDNySuGuBaD9kHDVvgnXsPhxhJjbP4eHr/kdKFkMK
-         lvsdqH/dZGfALSf5J7mRy4bAGS58HSzIG2twcQmcAPWfB53dwmezwqlDF+HZtRMAL/gZ
-         i0esLOftlvdzb7MjmGsfTvTz14TGy7RDuDoPDyHF+qH3K0QB2ZmKXpgR6xsg/UjSkZ1c
-         ZmYVPBCxgtfctvUOcr55YBycxCEXtJmXCm9xuuhb1d3zXgMT+zLdBUOluFLJ9dW+HO5Q
-         lQmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732739124; x=1733343924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0K+iavJdOt6R73DNJUouu2pgKCbJgW737wlJ/zVGHcA=;
-        b=bvjlmpTmndjJqc6BI7ge4Ro44m/VuWjgY0RXQLY90Zw1Nofhyh8HAZY5IYfnvmj1Y8
-         va+Lz50KW87FFokRlKNsnrlHe9lA1Czzrjbq7F1PtZTzBzzkNJlskYF+WCWEFmh/0v0z
-         NdhaIpKqaPuI+G+NKufONTLnKeIEedj+8luYKNLPM+2PtF1+oql89fg5wMJBlpoHw2r9
-         fT1Y2lyogovCZQmblRmv36FY6leHGszwMLY8Gz3DNfNOfBp8OMa+UTtGhdNv4AMqitPQ
-         +a6dw/XW+7HSLr6tPCYYTFO0AhMoWjBAjrxTI2b7w4+oFqkHNQJKN87Ozgjd5DnZt4N1
-         Eqdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCnp6pzsaPCmZ36EhPPy9hKTnbsTJIqQMy9QWDZm7omYq3lFwtjpGN2jG71vAIB14pcXwS4qPoQ44+uZY=@vger.kernel.org, AJvYcCVQGUxKNbjeyZePDjR41U32yOjVTGj/q95yfYWTVSwlW4VJBBmIpa+JADiQ+Z297Lm7pWPpZoFmqqOPuBnzx3fVA1+5uA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJobBhoDoAD1wPApySzrPp0yOyRM1n1znqYUZPe2iozvsdrUVF
-	58qZxjpvgyfqbzu1+Hr0Wsqav6JO0lslAH0CgsJTE9viwDPg24of8B7Ndr1Qlj2GTfPupK4lWh4
-	Lr5UWtzW0D7xgRGYvtqonY+MmSxqx0b9XL3g=
-X-Gm-Gg: ASbGncsulPAKKtvSF6EnxhhR2K+5TAL7kANs5W+DAGdruqZlRY1Xu0UzUo7zhhuExYn
-	+YkaRO1Dpx7PjmnWH07DmgW2DInhEK6pP4lwmueo5Wx71CBahpbmYOR7RIH7ynw==
-X-Google-Smtp-Source: AGHT+IHAnPjqI0m3mX/rBTTsaJWOuXdC9RWeheEERSsb6eeLetqQSHpstJrb7dMhiHWJC9a0z/RZGP7Gv3PtwL59A8g=
-X-Received: by 2002:a05:6512:2316:b0:53d:e5cc:d06b with SMTP id
- 2adb3069b0e04-53df00cf669mr2904354e87.20.1732739123956; Wed, 27 Nov 2024
- 12:25:23 -0800 (PST)
+	s=arc-20240116; t=1732739147; c=relaxed/simple;
+	bh=eDlqeY888v429bWEPT3Fi6aBbu+iw9MzRiOWp7sVA5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g2Wds7INnVX53KfB0coEuMLZNVj+04AMPg5EustvNzGZgjGb24JKtWRiClDqfc+69ytQ+VyN0byT1+3PIY7ka5wl1vU90CTHwZA2CCKPtk94412Fd2V+HXQwkjRCc44Ltm+Ay2gREBs9b54YE80BkeC8Ul9CamEuDRWczq5LLuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N4fOrYUQ; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 27 Nov 2024 15:25:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732739143;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=skcgUuoiBBxN7x6FTZw8AkaFvSWZd1lygoGn1Se8VZE=;
+	b=N4fOrYUQx0faVhPRb1Oa7gTV7sUsuqju0ZEy6iiQFBsKHKryzKbb0V4vVhgOPVObJBFA6a
+	KZZdMW/wxIgJTfi6yycPtaSUEcG5mI+6nRJr2QhIVuokizKVc+2NHO6vIdXeU5c/hu5GUQ
+	bD5WGWu6GIGRXi1lyi/h1Sv1DpDfM0Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Jann Horn <jannh@google.com>, linux-bcachefs@vger.kernel.org, 
+	kernel list <linux-kernel@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
+	io-uring <io-uring@vger.kernel.org>
+Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
+Message-ID: <3ajlmjyqz6aregccuysq3juhxrxy5zzgdrufrfwjfab55cv2aa@oneydwsnucnj>
+References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
+ <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123133041.16042-1-sedat.dilek@gmail.com> <2024112335-liver-reclining-a95d@gregkh>
-In-Reply-To: <2024112335-liver-reclining-a95d@gregkh>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Wed, 27 Nov 2024 21:24:47 +0100
-Message-ID: <CA+icZUWtqu_1u=U92Qk_Z1Hd_7ub6ebcWdmd5L+omZV4vkUBJQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: samsung-laptop: Rename MODULE_DESCRIPTION
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Corentin Chary <corentin.chary@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Nov 23, 2024 at 10:15=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sat, Nov 23, 2024 at 02:29:28PM +0100, Sedat Dilek wrote:
-> > Rename from "Samsung Backlight driver" to "Samsung Laptop driver".
-> >
-> > Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > ---
-> >  drivers/platform/x86/samsung-laptop.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Wow, does anyone still use this thing?  Anyway, looks good:
->
+On Wed, Nov 27, 2024 at 11:09:14AM -0700, Jens Axboe wrote:
+> On 11/27/24 9:57 AM, Jann Horn wrote:
+> > Hi!
+> > 
+> > In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
+> > to an mm_struct. This pointer is grabbed in bch2_direct_write()
+> > (without any kind of refcount increment), and used in
+> > bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
+> > which are used to enable userspace memory access from kthread context.
+> > I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
+> > guarantees that the MM hasn't gone through exit_mmap() yet (normally
+> > by holding an mmget() reference).
+> > 
+> > If we reach this codepath via io_uring, do we have a guarantee that
+> > the mm_struct that called bch2_direct_write() is still alive and
+> > hasn't yet gone through exit_mmap() when it is accessed from
+> > bch2_dio_write_continue()?
+> > 
+> > I don't know the async direct I/O codepath particularly well, so I
+> > cc'ed the uring maintainers, who probably know this better than me.
+> 
+> I _think_ this is fine as-is, even if it does look dubious and bcachefs
+> arguably should grab an mm ref for this just for safety to avoid future
+> problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
+> means that on the io_uring side it cannot do non-blocking issue of
+> requests. This is slower as it always punts to an io-wq thread, which
+> shares the same mm. Hence if the request is alive, there's always a
+> thread with the same mm alive as well.
+> 
+> Now if FMODE_NOWAIT was set, then the original task could exit. I'd need
+> to dig a bit deeper to verify that would always be safe and there's not
+> a of time today with a few days off in the US looming, so I'll defer
+> that to next week. It certainly would be fine with an mm ref grabbed.
 
-Thanks for coding the samsung_laptop driver 10+ years ago, Greg.
-
-My mother died in 2012.
-This laptop was her last  birthday present to me.
-
-# cat /proc/version
-Linux version 6.12.1-2-amd64-clang19-kcfi
-(sedat.dilek@gmail.com@iniza) (ClangBuiltLinux clang version 19.1.4
-(https://github.com/llvm/llvm-project.git
-aadaa00de76ed0c4987b97450dd638f63a385bed), ClangBuiltLinux LLD 19.1.4
-(https://github.com/llvm/llvm-project.git
-aadaa00de76ed0c4987b97450dd638f63a385bed)) #2~trixie+dileks SMP
-PREEMPT_DYNAMIC 2024-11-23
-
-# LC_ALL=3DC dmesg -T | grep -i samsung
-[Wed Nov 27 20:01:11 2024] DMI: SAMSUNG ELECTRONICS CO., LTD.
-530U3BI/530U4BI/530U4BH/530U3BI/530U4BI/530U4BH, BIOS 13XK 03/28/2013
-[Wed Nov 27 20:02:29 2024] samsung_laptop: detected SABI interface: SwSmi@
-
-# dmidecode --string system-manufacturer
-SAMSUNG ELECTRONICS CO., LTD.
-# dmidecode --string system-product-name
-530U3BI/530U4BI/530U4BH
-
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Thanks, hope the platform/x86 maintainers will follow.
-
-Best regards,
--Sedat-
+Wouldn't delivery of completions be tied to an address space (not a
+process) like it is for aio?
 
