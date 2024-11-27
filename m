@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-423571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89A39DA9CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:21:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CF29DA9D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8933F281A29
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364A6280F35
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443E91FF60B;
-	Wed, 27 Nov 2024 14:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE521FF618;
+	Wed, 27 Nov 2024 14:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mGPXHth8"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bChw92x9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A101FF600;
-	Wed, 27 Nov 2024 14:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B51FF600;
+	Wed, 27 Nov 2024 14:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732717286; cv=none; b=mLqQqMqgyVvcLyunisyY3XcFTf+PJt/cetY6OAOV376BtOaBmdeqIzSnQgh6/QGm8TR/FYTA32UGujRNmzAE91+mZLwqHd662DcltJ3i13tsuOhcZxo2+PJ1H8opn+DPGhs6LsBqk8/wQDc5dQ65dg4/2C4C/Hx69w+4bjuW/8A=
+	t=1732717387; cv=none; b=K6BgqEKh++FooCpw3wBf8Zih51dLNJhsG04DzPiWXeUSgGq05ku8A14H33T4UbVQsnnBq3lBONvtqMfB5/y7U99Ss5rjHPLJL0t53/BInggRGvQuajgu/XBbTggx4rwg0oCE4vgGQGg8cpywJ4sUiRzfP/QjOR+OK7Zo85y1dLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732717286; c=relaxed/simple;
-	bh=TQ9JiApntJLIYIXRcPg++9QrBYmA+RtMrGsgqQQKEP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=afwGLpA0Vwv1HHIbwZhSpfmeFt6rF83iQQH5k4e0LShjbW7BWuPS5DTm5LS1nUJLsPHS9CPX2PNA9e8TKaEmGruck/HaQdl2zI5wrwQxeq8ngE1fgIK+kG1x5cq8o1/3PUHzm0oiiCAfiaNxUMhc9/3CtIwen7Q5/aUtUGWcf8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mGPXHth8; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso8740873a12.3;
-        Wed, 27 Nov 2024 06:21:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732717283; x=1733322083; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jB30OEOTBI/dWjDLW+IofaDVc+ErUf2vlR2vQMQXiJA=;
-        b=mGPXHth8I6dnMs7jfnIlDP5lgIjlVOb9aAcSPIlx33oczbHAkNPoMlD365hpV0PKZy
-         Ng1dtLgb8pL6PU1ChxX+H6lpUFE0ugKlZSMPyn6RMUJO1/4XeWNxKf/CGKFfV2PQCypr
-         BFyg0P9f/BVXeN+OdrnlPii/jQ3sY9ixeZMZF+vYrn6fjWE9Qm62fuBlByS27g+RypDP
-         ihIdyy+Z8gZNReUNYMHQ9TsTEjlL6glTf4LoyO8ygIcRJj8y5Z6VNbGoMoxI+VAMGTaG
-         LKjVdhCeVQsUdfh5uhzhtak8V9zCekQQOZtvqALJDAMlc5JXq5svh0K9URLujm7RHe+s
-         i6Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732717283; x=1733322083;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jB30OEOTBI/dWjDLW+IofaDVc+ErUf2vlR2vQMQXiJA=;
-        b=l9owdNjEVOpUA9nGWJLRkEJREUkG2VuCbzDBI0kI5gGeJvpY/AEFu52xaKLB5Sc5rz
-         byzSmuGXmPdbWTHICnOaSUOQgLlA36v7dC+DiAJcK1FtaB1aqnxt6dOY8e816Rcfz/JQ
-         J3j+qMQgnOjGqVbk/midF3MWtdVwTYqKlERbKY0IQ1Pt33hd+IjALzfy2uyPEJLCkA8P
-         Bogr2iHDlvReEsBmXP8rkkbPyOxpSHUmQcBWNkl/DjDVEBlknISC4Aa/gq2Int7j2qyr
-         DI1SS+5XAPzPqozrvHN0Zr8u/OLqvojTc5giVBewsYtL059nbfYwOqMvxfgMN7lrcR85
-         beNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHRDf1RquqX2Qzh9Mv9lxizw+EcfPnxNciKH76oQatm2NkQWnlReOxaeEswciR33ZOh3BbVKnVH3W6@vger.kernel.org, AJvYcCVzKA5hXOGPKuYAOmOgE+m8n9HJzwoQ7CV/aZCn35xnWlPJCdCYBc6yE8H5BCGRb+PC50Y82nSBzEMcLLEJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzLa1c75g9L2gzbr5BbS4r+bqL6SKyQQu7RhCuZ4xDsgPYjKpr
-	3mB2YoZ0rHYRPOhttHwL5OiTuyfWUnIB5DWEZxYKD1n6NM25X5Vh
-X-Gm-Gg: ASbGncvlqeMSycup+HX+jApqlSq5qmcfbdDEzMSSbq0fiuO5RdGBicNuhYUuVMbP97p
-	aDDNACAe1e2kk3TVy10/lSASTzaOvChD+rjtO3jnVJ3nSjqXHEU4fg9XoLTYhz5g23m8SSmSmN3
-	uq70ROUoj48fV2rTE45SMI+5c64kd/8As63q1cZa8O2piYhlgSubLWioEschwP2ig/lPR0wr6Kd
-	Fu/w9asKIQXy6rvtQVmImDgynLj+IwTxUrpXYfCTR+d7xcZQHFDFQ2LgSC2Tm4ksdLkBA==
-X-Google-Smtp-Source: AGHT+IHe150xbicT8zJH2pK+sdFFqfuimlWI1wHv0E59eCRbFhzq6xB8ZKKCD9y65J/fD8U/jvaTPg==
-X-Received: by 2002:a05:6402:51d4:b0:5cf:c321:d169 with SMTP id 4fb4d7f45d1cf-5d080bb5b48mr3160413a12.11.1732717283279;
-        Wed, 27 Nov 2024 06:21:23 -0800 (PST)
-Received: from [192.168.221.195] ([81.19.10.93])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3be73fsm6191421a12.39.2024.11.27.06.21.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 06:21:22 -0800 (PST)
-Message-ID: <d83667b9-23a2-4f1c-9a9a-12ce1e3a3983@gmail.com>
-Date: Wed, 27 Nov 2024 15:21:22 +0100
+	s=arc-20240116; t=1732717387; c=relaxed/simple;
+	bh=s+Dd5OmvJfSGzVWRHgb00RXOruG+MA8ymtcQ8+AR5Xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFZuJswQXEv45+B+E9eDBWfrlx/7Exk0T3kTRhqlFjpH6nMGUwd1VcN9/7sQURuQ9PV1Rb2zVq/NmI5oDPI+FJPlF1oew8hxcCs7RAzMJzL0i6YHKX3pXi7xlWUEqEVeSRaqqsmYpR8GezNbxSHzQW4Me8mncFvd6OVKvF2SJF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bChw92x9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E43C4CECC;
+	Wed, 27 Nov 2024 14:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732717386;
+	bh=s+Dd5OmvJfSGzVWRHgb00RXOruG+MA8ymtcQ8+AR5Xw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bChw92x9A6wsJNCywqTXl5VZfC2x/Pj3J6FW2a/kVHeWCLBTBqSorfp8+39bVXgZ4
+	 8uSjq3YtPofshYxhs/NjrAN/T6Y2eqUGDlXZFib5/+tb/sk3vOIzh3m4jbw1HAUbaK
+	 +v5XJHQrvT3TMnIngve/wFhwNiD5QRxhO1PyZVE61dBYSBDTWSYvUDyXh/LSTFtSWp
+	 K+ipJW6S1NpCW1uFo0uIIuamml1BF2bU7yPTL6ApeGe7lFh9Y9oEtITdJX8xw3A6x0
+	 WkTD5WS8qTnwLN3H5uXXXqVhqT1KMJucE9YGIDlrEqYObGPxZJrcZ5LrTVmIAzrf0e
+	 d3Tl+LuqXPDTA==
+Date: Wed, 27 Nov 2024 08:23:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Odelu Kukatla <quic_okukatla@quicinc.com>,
+	Mike Tipton <quic_mdtipton@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V6 3/4] dt-bindings: interconnect: Add generic compatible
+ qcom,epss-l3-perf
+Message-ID: <20241127142304.GA3443205-robh@kernel.org>
+References: <20241125174511.45-1-quic_rlaggysh@quicinc.com>
+ <20241125174511.45-4-quic_rlaggysh@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] w1: ds2482: Add regulator support
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Stefan Wahren <stefan.wahren@chargebyte.com>,
- Stefan Wahren <wahrenst@gmx.net>
-Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com>
- <20241125-ds2482-add-reg-v4-2-475a7a08df96@gmail.com>
-Content-Language: cs, en-US
-From: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
-In-Reply-To: <20241125-ds2482-add-reg-v4-2-475a7a08df96@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125174511.45-4-quic_rlaggysh@quicinc.com>
 
-			     I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
-> @@ -457,6 +459,10 @@ static int ds2482_probe(struct i2c_client *client)
->   		goto exit;
->   	}
->   
-> +	ret = devm_regulator_get_enable(&client->dev, "vcc");
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret, "Failed to enable regulator\n");
+On Mon, Nov 25, 2024 at 05:45:10PM +0000, Raviteja Laggyshetty wrote:
+> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register instead of
+> REG_L3_VOTE to scale L3 clocks, hence adding a new generic compatible
+> "qcom,epss-l3-perf" for these targets.
 
-This will cause a memory leak of `data`, I would refactor the driver a 
-bit in the next patch revision. Should I create a separate commit that 
-switches from kzalloc() to devm_kzalloc() or keep it in patch 2/3? The 
-separate commits way seems correct to me, so it is clearly 
-distinguished. Sorry that I missed it.
+Is this a h/w difference from prior blocks or you just want to use B 
+instead of A while the h/w has both A and B? The latter sounds like 
+driver policy.
 
-> +
->   	data->client = client;
->   	i2c_set_clientdata(client, data);
+It is also an ABI break for s/w that didn't understand 
+qcom,epss-l3-perf.
 
-Best regards,
-Kryštof Černý
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
+>  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml      | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+> index 21dae0b92819..e24399ca110f 100644
+> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+> @@ -28,12 +28,15 @@ properties:
+>            - const: qcom,osm-l3
+>        - items:
+>            - enum:
+> -              - qcom,sc7280-epss-l3
+>                - qcom,sc8280xp-epss-l3
+>                - qcom,sm6375-cpucp-l3
+> -              - qcom,sm8250-epss-l3
+>                - qcom,sm8350-epss-l3
+>            - const: qcom,epss-l3
+> +      - items:
+> +          - enum:
+> +              - qcom,sc7280-epss-l3
+> +              - qcom,sm8250-epss-l3
+> +          - const: qcom,epss-l3-perf
+>  
+>    reg:
+>      maxItems: 1
+> -- 
+> 2.39.2
+> 
 
