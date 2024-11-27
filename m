@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-423773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8159A9DAC80
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:32:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BBAD9DAC78
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:31:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD5D167206
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:32:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BEFDB21B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA276200BBA;
-	Wed, 27 Nov 2024 17:32:25 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17583A41;
-	Wed, 27 Nov 2024 17:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA13B200BBA;
+	Wed, 27 Nov 2024 17:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nleGZZJh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4096BA41;
+	Wed, 27 Nov 2024 17:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728745; cv=none; b=AAuoRrx7IjFQaLFTsgEn54sKbAgilpsPrl6OI9atmP7YqW9St9pMvvTG55nyt5ymprDWWwTjG2U0bXN+mhghtIZaWBfzAaSahf/DifvpkPCyutwl07v5Z9X2PVHpc5DcAFBiUC/5NKWy1Ow6Ikub6D1UZ8btYsT/YiVC6alcXoA=
+	t=1732728697; cv=none; b=Tr/8ocGX0a8AsMdIrNClwXfMWDVi1yhtYdN8yda4HNVnJZ9pMi96kSVTAYKHcTcZdOhSLGlMBgu1ajIzUPNsjvVIDVb5R733FJ65cvKORzAuPzG3JCdvnlSXsvNLboN8RST2gKWuEPnjazdPFCNRAnhAWaecp4V5DdF2OafGN7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728745; c=relaxed/simple;
-	bh=2UqC7ofISMc/ShaD/y+NPwjn/miRNC6CwUla/sbT3xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgNUAVrDuM65UfODP1WYxZUOZiaZgoxTa7DwMGYEXYgpVwl3p8VY0TitANvgyWGyZwXNMABh44n6lrB4dNB0vTnVRE194ord5OegRDSSrAuPsgQztVeXnXRj8fGovCJ1cs3mOSGqtE0cbR2eBw1BTN+Zhw43FrFzkPSfm3K0l4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4ARHUrYb001848;
-	Wed, 27 Nov 2024 11:30:53 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4ARHUgi2001842;
-	Wed, 27 Nov 2024 11:30:42 -0600
-Date: Wed, 27 Nov 2024 11:30:42 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        corbet@lwn.net, mcgrof@kernel.org, petr.pavlu@suse.com,
-        samitolvanen@google.com, da.gomez@samsung.com,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
-        hch@lst.de, mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
-        dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
-        ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
-        kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
-Message-ID: <20241127173042.GA1649@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1732728697; c=relaxed/simple;
+	bh=LfXrssLl1K5C5+1Lr9sZjQhFSsdyhL7juvo3sKzUbyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZ55yAtaiysu99QZq1P+O1P4K4jZJ+WtvGnns0JLvm9cfM1r/xaYjHp/rs949xIl4WuBJVGL4zH67rfPYMDbzSz5saLbC9+nQLUD/eOL1gKVC03tKWv90NHcq8D7NBvrEBynqOfdGWWlFPzM2fW9e4S65I/Kb2nK9b3EjYHXkII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nleGZZJh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE0BBC4CECC;
+	Wed, 27 Nov 2024 17:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732728696;
+	bh=LfXrssLl1K5C5+1Lr9sZjQhFSsdyhL7juvo3sKzUbyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nleGZZJhKjPuvp+eVNdK1ql3FYKbZ9zqzQkgaOXTqVfBNPQBILpq2o5re9sw9o3mF
+	 665GCrIFQx7+U8w3cLhUCQuWDw8br10g/US2OFDxtgxL61i3tLq5gQ2a72zikRSIVE
+	 PrpFLKIQGxXl4p3dJlhXVNXkHnYLbcY3WvlsXjjsM8aRaOkjUIWZJ+V/b0z6UHh3pR
+	 WbOQz+/uvB+eGjjAztw1wjbXvfoJKSO2owUW5021bJAZnsYRbN6zldLVyr/aZhOMTo
+	 scqqzpuuG3CBmAEo/hDUtgZI1obNjSqhsQFRAsyrTa4oBmXNWgDKexGnwE5yp85M2X
+	 Z4aZxAF3YfGpg==
+Date: Wed, 27 Nov 2024 17:31:31 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Vishwaroop A <va@nvidia.com>, krzk+dt@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+Message-ID: <48f9c8c0-5cac-4812-8d06-501193be731b@sirena.org.uk>
+References: <20241126134529.936451-1-va@nvidia.com>
+ <20241126134529.936451-3-va@nvidia.com>
+ <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
+ <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
+ <59ec100f-1915-447b-98fb-3cbe2ca53a1f@sirena.org.uk>
+ <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1JUZLYFyoBZ+UnKq"
+Content-Disposition: inline
+In-Reply-To: <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
+X-Cookie: Every path has its puddle.
+
+
+--1JUZLYFyoBZ+UnKq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 27 Nov 2024 11:30:53 -0600 (CST)
 
-On Tue, Nov 19, 2024 at 11:49:07AM +0100, Roberto Sassu wrote:
+On Wed, Nov 27, 2024 at 05:24:01PM +0000, Jon Hunter wrote:
+> On 27/11/2024 16:09, Mark Brown wrote:
 
-Hi Roberto, I hope the week is going well for you.
+> > I understand what he's trying to accomplish, it's the same thing as
+> > what everyone who wants to put a raw spidev compatible in their DT is
+> > trying to do.  The way to do this would be something like a DT overlay
+> > that describes whatever is actually connected, or just customise the DT
+> > locally.
 
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Integrity detection and protection has long been a desirable feature, to
-> reach a large user base and mitigate the risk of flaws in the software
-> and attacks.
-> 
-> However, while solutions exist, they struggle to reach a large user base,
-> due to requiring higher than desired constraints on performance,
-> flexibility and configurability, that only security conscious people are
-> willing to accept.
-> 
-> For example, IMA measurement requires the target platform to collect
-> integrity measurements, and to protect them with the TPM, which introduces
-> a noticeable overhead (up to 10x slower in a microbenchmark) on frequently
-> used system calls, like the open().
-> 
-> IMA Appraisal currently requires individual files to be signed and
-> verified, and Linux distributions to rebuild all packages to include file
-> signatures (this approach has been adopted from Fedora 39+). Like a TPM,
-> also signature verification introduces a significant overhead, especially
-> if it is used to check the integrity of many files.
-> 
-> This is where the new Integrity Digest Cache comes into play, it offers
-> additional support for new and existing integrity solutions, to make
-> them faster and easier to deploy.
-> 
-> The Integrity Digest Cache can help IMA to reduce the number of TPM
-> operations and to make them happen in a deterministic way. If IMA knows
-> that a file comes from a Linux distribution, it can measure files in a
-> different way: measure the list of digests coming from the distribution
-> (e.g. RPM package headers), and subsequently measure a file if it is not
-> found in that list.
-> 
-> The performance improvement comes at the cost of IMA not reporting which
-> files from installed packages were accessed, and in which temporal
-> sequence. This approach might not be suitable for all use cases.
-> 
-> The Integrity Digest Cache can also help IMA for appraisal. IMA can simply
-> lookup the calculated digest of an accessed file in the list of digests
-> extracted from package headers, after verifying the header signature. It is
-> sufficient to verify only one signature for all files in the package, as
-> opposed to verifying a signature for each file.
+> We could certainly use an overlay, but how do we handle the kernel side? My
+> understanding is that per patch 3/3 we need to reference a compatible string
+> the kernel is aware of. I guess we could use an existing one, but feels like
+> a massive hack. It would be nice if there is something generic we can use
+> for this like 'linux,spidev'.
 
-Roberto, a big picture question for you, our apologies if we
-completely misunderstand your patch series.
+> I see that ACPI has something and it does print a warning that this should
+> not be used in production systems.
 
-The performance benefit comes from the fact that the kernel doesn't
-have to read a file and calculate the cryptographic digest when the
-file is accessed.  The 'trusted' digest value comes from a signed list
-of digests that a packaging entity provides and the kernel validates.
-So there is an integrity guarantee that the supplied digests were the
-same as when the package was built.
+You can put 'spidev' in as the compatible and get the warning, we don't
+require specific compatibles if the Linux device ID is good enough.  If
+you genuinely just have bare wires you're probably able to cope with the
+warning.  If something is actually connected you should use the
+compatible for whatever that is, if spidev makes sense for it then
+that'd be OK to add to spidev.
 
-Is there a guarantee implemented, that we missed, that the on-disk
-file actually has the digest value that was initially generated by the
-packaging entity when the file is accessed operationally?
+--1JUZLYFyoBZ+UnKq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Secondly, and in a related issue, what happens in a container
-environment when a pathname is accessed that is actually a different
-file but with the same effective pathname as a file that is in the
-vendor validated digest list?
+-----BEGIN PGP SIGNATURE-----
 
-Once again, apologies, if we completely misinterpret the issues
-involved.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdHV3MACgkQJNaLcl1U
+h9CkhAf/Sd+cdQQ9AQTt/DP1h6dK/EpNAfJlhvCVKSSlIQjLBcY3AG/2OjxesmoU
+YmLesR1KdO72iGZtpyZuZ0CgY5T+1A6F2sGCYmholsjs1tt3zItscYNyI3GvB+va
+IEtrkQ+6fXsQ32ITKp9PzMIHOUvN1AKHKTj0A1oTSeTdJ3k1YoMc/mqYt5MTYV/G
+DU2MKC13LFzkjA4cjpQ/LXMhlQTynI/axSCwBCuZXlvXzJqxfjyw+oCLmhsNaiaW
+uQOmMbfHr27eQ/jLsVvU9fwok1b8ucPvKZ+kDy7mraEJv/tZApzmmFJwK8ZWVQGO
+qojI8Uiz/uEw+a9SRocKOVjKxM5jng==
+=18Mw
+-----END PGP SIGNATURE-----
 
-Have a good remainder of the week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+--1JUZLYFyoBZ+UnKq--
 
