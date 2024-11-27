@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-423142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD7C9DA367
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:59:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F109DA36A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE497B21ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B2BB2275B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AA3156F54;
-	Wed, 27 Nov 2024 07:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cz1p9C04"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BF1155A4D;
+	Wed, 27 Nov 2024 07:59:03 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96C618E0E;
-	Wed, 27 Nov 2024 07:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E6E1547E7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694334; cv=none; b=LPir4k34RnyQKMbt0VPOKx3Ud1gWmUFmIIFmL+yY7LXErNO/G+QmGgpNvxdzpC9JMcUA3lPWHvx38eVrB2APmQqln55M4bH20FSZdM4+w8Gy6PP1VdtC3Xh06Gq1VXaRvcazJ1JtqeUWIOSg1TisNyz7bwG7v0h72eWl2AFJP2g=
+	t=1732694342; cv=none; b=TECn8SvYu//xzmaPg0wIrnB5UeUrjjf7KBcQ4RSE5CcYVg7lFOKcKu1l9037ZYSobouffuyxbB2+OjGMiFrp2bGW4/D1xHglUZvxzl8O4EcCjP6zv8IpjqcDC5EpnsSqSHt6PQWTlqIlWVYazisvBhwhQyocyU+ASYH72E9sKI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694334; c=relaxed/simple;
-	bh=6JyzI5o2AujomxV45o4ngewZg7a7VRndqzge/Zg0rSU=;
+	s=arc-20240116; t=1732694342; c=relaxed/simple;
+	bh=ksZ0wZ8geOb/vvM5E2Zu1KEmiLZQ29CuzEySdiiaDkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abab1CZuxcKy+DapnCpunORc6bMArilijzvxcmEv4DkjAaoFLN2IzzaKG9NkYn5icbEwuU23GabS/OPctUU7a0e6X3V9wuanTJMRYY6ngKP5TjO9XRHVA0o5U4UPcS8BJ5AvNFXCMKRTd2kyZti10DySfI08nVa7IcjLWOAZjGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cz1p9C04; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1D49640E01D6;
-	Wed, 27 Nov 2024 07:58:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CfYpScBxOcRs; Wed, 27 Nov 2024 07:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732694326; bh=im+StteL0walDEw+HJ2ysBCjd+H+8Az7ZF6UhoPbYq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cz1p9C04M5VnEcZL2auXIhLu7WIZ0ywfapGrJGTKMEyLEQP4AnN+D5npiHAyttgqM
-	 gNd8osuCdO3YrNb9N41cAKLS8tE7AmSEGbPsoWxhzWCQXneqhl/n4P9OOAJKlwvp/k
-	 cMCWyKLn5rORIg7V/AzwRgviHF8gmbCCrM06h/wAZfoyesari3/Ygg7yQ5dBpUPySu
-	 2GJoK3F6eaKe3u1TKYL2rYzFaGzCkzW5A1uy4TcUNChDLbF3UMwc5J/RyUpYXlxTyl
-	 HnR1u1UD7UAZbFzHMQcvXj/avQgoIZVHaUluejm4iKRX6IGy5jLzGMJ5cwbjeWOFM4
-	 KNSECS1q5BN1jCzJ+Jxblr8K6nFGx688X2L732ng3jL0hv8C4xHDxhCfTukA+7Bb8W
-	 EowCm9mVqQOSIBzkXbiOBmUEaQCGYUqoaVvAx36Aeou0tuVomvyKVW7U4UtP9BeaBK
-	 HM4A2vPZzNXnTp5OT0qDOWosMHEc3zNS+qwxWUJIzkrn2onglpkKjHp3ehGTzohR3m
-	 Tvk69d4nqvgVRSA+wZF+m47hKYS+kuobbs1LKWy+pu0xGjAank9l07NOmBNDrH/yIJ
-	 WgCr9C8QEWOAUKIYBFjS4w9E3earPFgKGCWwEKV7MQ4Z00GWMwznMZsSYPgRGFabOX
-	 Lg4ulo1ihyp2XMloA9cxPt6Q=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/A/tY+jTtFvpvWwAL9tgF3dqqQKDUbzIShELgELRZnGJEVWyiTOayyQFF/PPcT/8oU/7VHtlc+Ty5vy9s2xFlDXRmrXZhx8LD3P8UjuaE5bhZsniL31PKdlY3W45xpBibTXrhfcaepest0FJ4qvJ6TB+dnqDQRL35ZFULjSHTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tGCwk-000639-Aa; Wed, 27 Nov 2024 08:58:50 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tGCwj-000ODy-0m;
+	Wed, 27 Nov 2024 08:58:50 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5113E40E0169;
-	Wed, 27 Nov 2024 07:58:31 +0000 (UTC)
-Date: Wed, 27 Nov 2024 08:58:25 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
- MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
-Message-ID: <20241127075825.GDZ0bRIf0bWrtzYDSK@fat_crate.local>
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-10-xin@zytor.com>
- <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
- <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
- <20241126200624.GDZ0YqQF96hKZ99x_b@fat_crate.local>
- <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
- <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
- <a76d9b6c-5578-4384-970d-2642bff3a268@zytor.com>
- <20241127071008.GCZ0bF0EGespFhxwlP@fat_crate.local>
- <43e47da0-1257-4e68-9669-8e3d4915fa57@zytor.com>
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id A655F37E1A3;
+	Wed, 27 Nov 2024 07:58:49 +0000 (UTC)
+Date: Wed, 27 Nov 2024 08:58:49 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Carlos Song <carlos.song@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, 
+	"o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: RE: [EXT] Re: [PATCH v3] i2c: imx: support DMA defer probing
+Message-ID: <20241127-analytic-azure-hamster-727fd8-mkl@pengutronix.de>
+References: <20241127074458.2102112-1-carlos.song@nxp.com>
+ <20241127-ninja-dormouse-of-bloom-8ee494-mkl@pengutronix.de>
+ <AM0PR0402MB3937614F4866F4F15D2FDA21E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="elw43wbzngdfoidk"
 Content-Disposition: inline
-In-Reply-To: <43e47da0-1257-4e68-9669-8e3d4915fa57@zytor.com>
+In-Reply-To: <AM0PR0402MB3937614F4866F4F15D2FDA21E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Nov 26, 2024 at 11:32:13PM -0800, Xin Li wrote:
-> It's self-contained. 
 
-It better be. Each patch needs to build and boot on its own.
+--elw43wbzngdfoidk
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: RE: [EXT] Re: [PATCH v3] i2c: imx: support DMA defer probing
+MIME-Version: 1.0
 
-> Another approach is to send cleanup patches in a separate preparation patch
-> set.
+On 27.11.2024 07:48:13, Carlos Song wrote:
+> > >  static void i2c_imx_dma_callback(void *arg) @@ -1803,6 +1804,23 @@
+> > > static int i2c_imx_probe(struct platform_device *pdev)
+> > >  	if (ret =3D=3D -EPROBE_DEFER)
+> > >  		goto clk_notifier_unregister;
+> > >
+> > > +	/*
+> > > +	 * Init DMA config if supported, -ENODEV means DMA not enabled at
+> > > +	 * this platform, that is not a real error, so just remind "only
+> > > +	 * PIO mode is used". If DMA is enabled, but meet error when request
+> > > +	 * DMA channel, error should be showed in probe error log. PIO mode
+> > > +	 * should be available regardless of DMA.
+> > > +	 */
+> > > +	ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
+> > > +	if (ret) {
+> > > +		if (ret =3D=3D -EPROBE_DEFER)
+> > > +			goto clk_notifier_unregister;
+> > > +		else if (ret =3D=3D -ENODEV)
+> > > +			dev_info(&pdev->dev, "Only use PIO mode\n");
+> >=20
+> > On a system without DMA configured, with this patch we now get this info
+> > message that wasn't there before. I think this might annoy some people,=
+ so you
+> > should remove it.
+> >=20
+>=20
+> :-) hhh, get it.
 
-Not in this case. The next patch shows *why* you're doing the cleanup so it
-makes sense for them going together.
+Some things look reasonable when discussing the patch, but when you
+see the new, cleaned-up version, you immediately realize that this is
+going to annoy people :)
 
--- 
-Regards/Gruss,
-    Boris.
+> How about change to dev_dbg?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Good idea.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--elw43wbzngdfoidk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdG0TYACgkQKDiiPnot
+vG+KkQf/Q+u30VAGEE7GQ8pY0YCDMlgwq9Lrph+jmHFG1nrNAnOc525i9+1N5Q5/
+HR1cWXxUV/yHkt6tkmKlbmGTv5V4FtLOM1QFq4RDCYql8alygNNcN2v4ZUZg3827
+el4CHe85/9/Ra2xln9yJ6WIrw7Lhn0Zh0CdpH97hYqmR0WHrpTecWFHbXNGIVieL
+85DPurmsXB7lVCfi7sa4V0NjZtts+bkDeDEVnO30j3SAkOtf3KUMtpNWAIGUmRvk
+uhdwGfpKbt4sYrmumv05Oly4FzQC8pGf1PAvpDxrlxTbvaHVnkjxvxQ86BbdWOIP
+zdkYoGoEU24Eq3WBH+hUS1LjNmKcRQ==
+=dQGb
+-----END PGP SIGNATURE-----
+
+--elw43wbzngdfoidk--
 
