@@ -1,124 +1,186 @@
-Return-Path: <linux-kernel+bounces-423651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D549DAAEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:42:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F10739DAAED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598E8281E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D1D281C31
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705B020010B;
-	Wed, 27 Nov 2024 15:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA7E200117;
+	Wed, 27 Nov 2024 15:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keRTqRHW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HxpbOTxr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB087328B6;
-	Wed, 27 Nov 2024 15:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CB6328B6;
+	Wed, 27 Nov 2024 15:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732722120; cv=none; b=tBl6QTxSs/IY2EBxkDefR4yrkyDBcLNxdzPnz3cO7U+llcof6ON09tIjupNxkvxePoZI6bCAojtILinmZ27Fjq1LzbCri8/eowUCyaojVxh0ZEy5SiX3yG+xdIB29b+6KQZFvgiZ24TZEogGBZSERThhGlAmfdYtdTSXuM9BUQE=
+	t=1732722176; cv=none; b=fSjVSy5BfaRmuEkLPgSnA3FBQUk3hNG9H+sbRxMLX6wpH+ybytq6G3/Cd8Ia3I7ri4nWyZfjPE2x0xlb6j2wzICHC9SlQ4AS+JT20j/JtzQtWundanf5iRFcw3i0NYRvxxpTn8jLf4kesp1wiajO8XKjLck+sRaU0tf0kP+A9Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732722120; c=relaxed/simple;
-	bh=dZSnAYpZutAuOvaVC5VkHYc0cGR/1sXeOGbZkw59I2w=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K+3NQtMikTGbYpeZFc5bm42Nd/JuUAO9l723d/wstWTHRMfVDQcwD9vl0OQOrextdXLgb6kvpewuSiEQ4NpBzbKZjCHXWuvg0SkY2qtI/Xe982jMn9t++v2qYksGqCbUxfB5PxRZh59nsDcwHvXd8Jv2mbQNBJF21ZW/fD5bo+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keRTqRHW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 488A6C4CED3;
-	Wed, 27 Nov 2024 15:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732722120;
-	bh=dZSnAYpZutAuOvaVC5VkHYc0cGR/1sXeOGbZkw59I2w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=keRTqRHWiVSj0heTa4ZVSS1l8dafdIoPicR8WQe/Fr3C/bRoRUQalLEZIJ3cyK7cI
-	 cPGIqpGF49rYoTyj2iUzh0hjZ9jeD8moEQZ8j9iD1S2v4EOaWhFdxZ/1dF4DkoahJt
-	 GjS0JDpt4tTVrneIyEdrurg6phrKcrr7K03RBBBRS8Jz1j42v5eZQm3UYuuISlbL91
-	 zEynDTl3v/3MTwjQWPeB/+ndzhqWSam97iEd+zF72TjtfY7GKw+//xM4p/1OJdaImF
-	 /kqnHl9kKeYhGvFwwVlQ3lYdVhtDY4uiqm4m4YAiRj2X1L3jadW5sEfhQ53T34SLpi
-	 7ftqIEdWt41NQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tGKAv-00GItK-Un;
-	Wed, 27 Nov 2024 15:41:58 +0000
-Date: Wed, 27 Nov 2024 15:41:57 +0000
-Message-ID: <868qt4vg3e.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Will Deacon <will@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Bump KVM_VCPU_MAX_FEATURES
-In-Reply-To: <a7011738-a084-46fa-947f-395d90b37f8b@arm.com>
-References: <20241127145644.421352-1-steven.price@arm.com>
-	<86a5dkvh9o.wl-maz@kernel.org>
-	<a7011738-a084-46fa-947f-395d90b37f8b@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1732722176; c=relaxed/simple;
+	bh=PFXgcJiegBnxIv46gcl53V36a+QKsSehT/vWjTwYGxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nsWzO8xQ8/kNYmPYhFr0QJvjdkskiEDS2oiqr+azk7gV6OoJmNjhcW4bHr8UlM4rnZPN/NdN3Q+YEGWB/B8/hm63uJqDo9QncDfIuaJg2aOXZ378Q2Gq0jL58LvEnEd5CHBhv9XavIE6cavkUrugIowpuSJt0ULYleLka3Jr6+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HxpbOTxr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARBGmS4032267;
+	Wed, 27 Nov 2024 15:42:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yExLqwZGvqmSmj+XIYg07lYtBkvx4ifg0IGpGhPL5/Q=; b=HxpbOTxrVA+rzUA8
+	rpoE7CzVuLCGTgJ+RdzEA3X1Ntf81tSp4hj4Q4bOcb7PpL/QUfCf3J3NRgloENPe
+	xNEGPyNACTGYad+et56oUzBv3b79SuH6g9CONlUD2whKz8pQeo1hwsigNKKopCzb
+	IkwpWbyDkLnXFj+FGVq1DuXSg6ryPrtzbAJrco0wKBOCrcmz6ujRZFcmhdHUX6zt
+	pJEtzgoWY0z85D+Ael7lzMqbGmQXlYswcCF73l6s80D/uU1/Hs62mohwp1lY6rek
+	M4ejFP7rbvHI6OBlmst03b+RdoQfLzULL/783Yl7C6i2Sga+S2NQ1qlrc/fEb8v1
+	M9CfQQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4362dmgren-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 15:42:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARFgoDr007375
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 15:42:50 GMT
+Received: from [10.216.26.141] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 07:42:46 -0800
+Message-ID: <8de99bbd-3abe-4ffa-9395-84b81d610875@quicinc.com>
+Date: Wed, 27 Nov 2024 21:12:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, catalin.marinas@arm.com, oliver.upton@linux.dev, will@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] arm64: dts: qcom: sar2130p: add support for
+ SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+References: <20241102-sar2130p-dt-v4-0-60b7220fd0dd@linaro.org>
+ <20241102-sar2130p-dt-v4-2-60b7220fd0dd@linaro.org>
+ <ff7c9b83-0ac7-43a0-a86a-2fed66728a32@quicinc.com>
+ <2hka5j3iyml32czhv6k2gr6ss2jthsgaljva5izhzzcoc3l4eq@slsmyp7s6ars>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <2hka5j3iyml32czhv6k2gr6ss2jthsgaljva5izhzzcoc3l4eq@slsmyp7s6ars>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Z3RVRSFgpHeEGHio3ghcO2kTEfLKesbC
+X-Proofpoint-GUID: Z3RVRSFgpHeEGHio3ghcO2kTEfLKesbC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1015 spamscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 adultscore=0 suspectscore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270125
 
-On Wed, 27 Nov 2024 15:24:32 +0000,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> On 27/11/2024 15:16, Marc Zyngier wrote:
-> > On Wed, 27 Nov 2024 14:56:31 +0000,
-> > Steven Price <steven.price@arm.com> wrote:
-> >>
-> >> When the KVM_ARM_VCPU_HAS_EL2 define was added, the value of
-> >> KVM_VCPU_MAX_FEATURES wasn't incremented, so that feature has never been
-> >> in the KVM_VCPU_VALID_FEATURES bit mask. This means the HAS_EL2 feature
-> >> will never be exposed to user space even if the system supports it.
-> >>
-> >> Fixes: 89b0e7de3451 ("KVM: arm64: nv: Introduce nested virtualization VCPU feature")
-> >> Signed-off-by: Steven Price <steven.price@arm.com>
-> >> ---
-> >> I might be missing something, and it's possible that
-> >> KVM_ARM_VCPU_HAS_EL2 is deliberately not exposed yet.
-> > 
-> > This is on purpose. I'm not planning to enable EL2 support until it is
-> > ready.
-> 
-> I did suspect that's the case - but it might have been better to knobble
-> it in system_supported_vcpu_features()/kvm_vcpu_init_check_features()
-> rather than 'hiding' it in the MAX_FEATURES. But hindsight is a
-> wonderful thing ;)
-> 
-> >> However I'm
-> >> working on v6 of the host CCA series and as part of that want to add a
-> >> new feature but and bump KVM_VCPU_MAX_FEATURES up to 9.
-> > 
-> > Well, I guess that defines some ordering then! :D
-> 
-> Indeed - I'll try to remember to include note about this "dependency" in
-> my cover letter. We're likely to need a few more rounds for CCA to be
-> ready, so hopefully NV will naturally be there in time :D
 
-Any minute now, according to those impersonating a French physicist...
 
-	M.
+On 11/27/2024 7:32 PM, Dmitry Baryshkov wrote:
+> On Tue, Nov 26, 2024 at 11:32:59PM +0530, Krishna Kurapati wrote:
+>>
+>>
+>> On 11/2/2024 8:33 AM, Dmitry Baryshkov wrote:
+>>> Add DT file for the Qualcomm SAR2130P platform.
+>>>
+>>> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    arch/arm64/boot/dts/qcom/sar2130p.dtsi | 3123 ++++++++++++++++++++++++++++++++
+>>>    1 file changed, 3123 insertions(+)
+>>>
+>>
+>> [...]
+>>
+>>> +		usb_dp_qmpphy: phy@88e8000 {
+>>> +			compatible = "qcom,sar2130p-qmp-usb3-dp-phy";
+>>> +			reg = <0x0 0x088e8000 0x0 0x3000>;
+>>> +
+>>> +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+>>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>>> +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
+>>> +				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+>>> +			clock-names = "aux", "ref", "com_aux", "usb3_pipe";
+>>> +
+>>> +			power-domains = <&gcc USB3_PHY_GDSC>;
+>>> +
+>>> +			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
+>>> +				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
+>>> +			reset-names = "phy", "common";
+>>> +
+>>> +			#clock-cells = <1>;
+>>> +			#phy-cells = <1>;
+>>> +
+>>> +			orientation-switch;
+>>> +
+>>> +			status = "disabled";
+>>> +
+>>
+>> Hi Dmitry,
+>>
+>>   Sorry for asking this question after code got merged. I forgot about asking
+>> this last time when I commented on your patch and provided the HS Phy IRQ
+>> value.
+>>
+>>   In SAR2130P, I remember that the lane orientation is reversed. As in on
+>> normal targets, if the orientatin GPIO reads "0" it means LANE_A but on
+>> SAR2130 it means LANE_B. Can you confirm if superspeed was tested only in
+>> one orientation only. >
+> Thanks for the notice. I don't remember if I had USB3 or just USB2
 
--- 
-Without deviation from the norm, progress is not possible.
+Basically during "qmp_combo_com_init()" call, we program the orientation 
+based on gpio output from ucsi:
+
+	val = SW_PORTSELECT_MUX;
+	if (qmp->orientation == TYPEC_ORIENTATION_REVERSE)
+		val |= SW_PORTSELECT_VAL;
+	writel(val, com + QPHY_V3_DP_COM_TYPEC_CTRL);
+
+  On SAR2130P, the above logic is reverse. If the cable is set in normal 
+orientation, the SW_PORTSELECT_VAL must be set. You can compare the 
+result on some mobile target like SM8550/SM8650 vs SAR2130 to confirm 
+the observation.
+
+> connected to the USB-C connector. I will take a look and report
+> afterwards, but it might take some time.
+> 
+
+  No worries. Just wanted to bring this to your notice. On day-1 of 
+bring-up, I did struggle for some time to figure out that the CC 
+orientation is flipped since every cable flip was working in High Speed 
+as lanes were programmed reverse all the time. I didn't want you to hit 
+that issue for when the orientation switch is actually enabled.
+
+  On a side note, there were some issues found in qmp combo phy during 
+stress testing which are specific to SAR2130P. I can try and fix them up 
+after you confirm the above test results now that the target is actually 
+present on upstream.
+
+Regards,
+Krishna,
 
