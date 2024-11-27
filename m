@@ -1,113 +1,90 @@
-Return-Path: <linux-kernel+bounces-423777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AA69DAC8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:33:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381291673F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:33:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945F620111C;
-	Wed, 27 Nov 2024 17:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxmS0+WO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3A29DAC8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:35:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED42914EC73;
-	Wed, 27 Nov 2024 17:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C10E3B219AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:35:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D734720100E;
+	Wed, 27 Nov 2024 17:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A6WFnalI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+8h1rzV7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E270282D66
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728800; cv=none; b=Wag60qVGJkaFhX1GII7FOJUu7FEuzoHjW13Nv72M66IgIOwfvWYuDH3RFCamCpr+2t4F1Lot+VruQbUO13Ke5B/fzu1jZMIrBastxVbtRnkFg6q9d4amJux06RMLxInkHH2bChCfyF5EwH9qKvRQuVRaZLPA7JV8OnvK6r3RAGs=
+	t=1732728924; cv=none; b=larlesF1sYnr36fWFbZuCZAz5MwMTFFVPSGKutlFcprzwdOqg0SsQStZmE2wqON3a6F+Ans9hR06Ql2Ev6I/D9qTEihqDAyc7GHnAz2k/3qeE4bnAXYcXQ0w9ed1+SRCN2n0xQcg68XEQeQDwIhyTa7whyTEIe8k/tZQkDogndg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728800; c=relaxed/simple;
-	bh=BQh27LKzhiRLJMzOoMEdsd1yUoXl8z0wlylntXevl3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjhOU+MUQvdWpEqlOiyc1jTa9Bb+QTCUZWMG817j589MqIz2FykeC+a6DC29JwmKeN1pxiTnekRDk5r2cxg/BSbTHSXugw6s5Wx7QNZw0oC7mpFQY1dnGV8fXsEUAhdLFPlfz5IJmfVUttE93VVOBuh/fRHtnhGm4+CznDzW62Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxmS0+WO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8B8C4CED4;
-	Wed, 27 Nov 2024 17:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732728799;
-	bh=BQh27LKzhiRLJMzOoMEdsd1yUoXl8z0wlylntXevl3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TxmS0+WOLVHY5eS64570cFiWbtecRgJKcin7yobRxnJX/a580Kqw0Atd/lZmjAJc2
-	 YXnJSpvUADMnz38GxD9HTv8ou1DLwPO26w43Q8PPJS+3WL0P1PNjztaRjAo+AOJxza
-	 vBPqNIbijVuuLwk+v+hU8XzE44wEQvr/CaB2i4hHCZsYUIeJ2Mc+Gb1WfNlGOjcdqr
-	 HcZJpxU69De7uK4o7AzfpwgHVPwZ7Ga6BpP3VgaRuLFGzqi62E8QGk/B8aPb9lffvM
-	 tozY/K7Fq85i6mjOl61dPRkM67QXfUmTXksD/K0V7XBTBLCCIqautEtJaH2pWVjmKl
-	 C/j6Y1lmxTMOQ==
-Date: Wed, 27 Nov 2024 17:33:13 +0000
-From: Mark Brown <broonie@kernel.org>
-To: potturu venkata prasad <venkataprasad.potturu@amd.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-	Vijendar.Mukunda@amd.com, Basavaraj.Hiregoudar@amd.com,
-	Sunil-kumar.Dommati@amd.com, syed.sabakareem@amd.com,
-	mario.limonciello@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
-	Takashi Iwai <tiwai@suse.com>,
-	Tim Crawford <tcrawford@system76.com>,
-	Attila =?utf-8?B?VMWRa8Opcw==?= <attitokes@gmail.com>,
-	Techno Mooney <techno.mooney@gmail.com>,
-	Jeremy Soller <jeremy@system76.com>,
-	Malcolm Hart <malcolm@5harts.com>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: amd: yc: Fix for enabling DMIC on acp6x via _DSD
- entry
-Message-ID: <7291d216-59a9-4a99-af74-8789b9426916@sirena.org.uk>
-References: <20241127112227.227106-1-venkataprasad.potturu@amd.com>
- <a6036171-2dfd-4296-9fe4-242c306e5449@perex.cz>
- <021436ab-8035-4c56-99d5-c478075e6add@amd.com>
+	s=arc-20240116; t=1732728924; c=relaxed/simple;
+	bh=Chf3C0xsICyQjM/lr4S2GUrWv4rK+LuzQVV7ahgEGvs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DF/FbODlH+g1gqSatheM3nCWJYgZo67yIg+VIqKPe5BcfnRjNBfcyGAduk1vGFl1OsOm4a9lyX7PpiTXtg1U/eY0/7fDTa0FTye7wdbS6pjkxqEg2kCUwLDexc7AEtnWXsevS3v2AXYoOgXxg7nMEkep1JkLvo1Ty0ZLvNa75ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A6WFnalI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+8h1rzV7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732728918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hE34aWHnGkcOc6Qbq7JSa1GKnMoIGGF7nTLsL4wquQ0=;
+	b=A6WFnalI03t1ykGYz6V5DoIL3xBIKxBK7E02C88kwrqyRlwnyDRoLwHZB5uPQb2RUaD9it
+	QRpINuZDndJQUUzuzRXkdvDEL3lndC6iIw8m6+xgx73uqsJuCTNVTuRbl+IhjXwBpx+IxO
+	Er4c/uFopgP1pZ2y2hgmZjkxtdW2ZnUGg6uwdzsiz9AzOBRV3/P+gefrub32nsNYxwHJ7H
+	dTgYqEL/Np5220qtKKpxHRuo9xjPJ+dWpt45F2KhhugFZkDlE3TTzcWN4Twx2GJs4Lr6Dq
+	WGtKYaaSOeTeFMnHea8NEPCuxoBVP1zR/jqhc3RCTalANLduuxDIfHwUPVNLnw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732728918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hE34aWHnGkcOc6Qbq7JSa1GKnMoIGGF7nTLsL4wquQ0=;
+	b=+8h1rzV7rfnrP+yTOx72bwzAe8dc2rko6ROrPx6lvYPEDBTan5NclpDZnhQPr6+pH8mPs0
+	fGWhZRrKpZTB/aCg==
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: "Dalmas, Marcelo (GE Vernova)" <marcelo.dalmas@ge.com>,
+ "jstultz@google.com" <jstultz@google.com>, "sboyd@kernel.org"
+ <sboyd@kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ntp: fix bug in adjtimex reading time offset
+In-Reply-To: <Z0dDOje96uI_t9sd@hoboy.vegasvil.org>
+References: <SJ0P101MB03687BF7D5A10FD3C49C51E5F42E2@SJ0P101MB0368.NAMP101.PROD.OUTLOOK.COM>
+ <87zflkydgp.ffs@tglx> <Z0dDOje96uI_t9sd@hoboy.vegasvil.org>
+Date: Wed, 27 Nov 2024 18:35:18 +0100
+Message-ID: <87ttbsy3zd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lQFgnXmO0PqXf7EH"
-Content-Disposition: inline
-In-Reply-To: <021436ab-8035-4c56-99d5-c478075e6add@amd.com>
-X-Cookie: Every path has its puddle.
+Content-Type: text/plain
 
+On Wed, Nov 27 2024 at 08:05, Richard Cochran wrote:
+> On Wed, Nov 27, 2024 at 03:10:30PM +0100, Thomas Gleixner wrote:
+>     The patch was generated by the following coccinelle script:
+>
+>     ...
+>
+> So I guess combining random other manual fixes into a patch that
+> claims to be generated is a bad idea?
 
---lQFgnXmO0PqXf7EH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Indeed. I just figured out why the cast is there. txc::time_offset is of
+type 'long long', so the division triggers a build fail on 32-bit.
 
-On Wed, Nov 27, 2024 at 10:34:32PM +0530, potturu venkata prasad wrote:
-> On 11/27/24 18:06, Jaroslav Kysela wrote:
+It want's to be:
 
-> > The logic seems wrong. The overrides code bellow won't be executed when
-> > ACPI _WOV data are not set. I think that it may cause regressions for
-> > some BIOS versions.
+   txc->time_offset = div_s64(txc->time_offset, NSEC_PER_USEC);
 
-> > Also, the return code should be probably -ENODEV.
-
-> Okay Jaroslav,
-
-> We will correct it and resend v2 patch.
-
-Given that I applied this before Jaroslav's review please send an
-incremental patch that fixes the issue.
-
---lQFgnXmO0PqXf7EH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdHV9gACgkQJNaLcl1U
-h9ArZAf+N5l4lAUmsCWhAQ0BxUbpe3RrQEtejxCILmg0QFcir8MVPxlmCMGDbNxX
-eoGwEbxjJJcTILesjLHUEYH4lcwvd6qKQLdqQ9lFRcUyaJrjooalfrhoHYt4O+0F
-3YgMfWlyMpbPi3E3QsGIj752IcNxEyn5a+s5Y/NMWAVWeVO3dB9nfi6A5FIkmFAQ
-Za6VtF3rlmfpxo8MDpbGZvukz9f5ak4XCsfFBsJjDGqJfalYqJqi/R7XV+FsXDvH
-hGaq5iSHviLu75d5U/gH+Lq+3mGqpYZbaQPsiYFCgisAn0260Ip+dJs157hs76l4
-d8Gw9Yu1kJbKmF06Q4qK6kTVeB0KBQ==
-=OBSP
------END PGP SIGNATURE-----
-
---lQFgnXmO0PqXf7EH--
+....
 
