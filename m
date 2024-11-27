@@ -1,174 +1,280 @@
-Return-Path: <linux-kernel+bounces-423270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B579DA540
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E31DB9DA54D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:03:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3509F165866
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:00:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D711657E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D741946D0;
-	Wed, 27 Nov 2024 10:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A95194AD9;
+	Wed, 27 Nov 2024 10:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CMis1mez"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQEtnu2d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0848B18DF62
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732701645; cv=none; b=csHQ8E8GOa2y96oVs7TJOLwF8a62ENWiJqxFiAGGp47AXPR1gnx6clJaSzehcK3KpYQAT1Ahfwj1UDEYGiXW+BzibOayS+3A7YACoFQR6zPUFKKb2qELTjDHgp1yF236CfkZmnOepg8McprZezLJBWkmNqMES/DlRm31LMmItBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732701645; c=relaxed/simple;
-	bh=zRYsYbGf/cDqfHjKWgxhLuI5WTXoZE+rVWtmg6t0YJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MN4+o6sfXu33JN4DrJIfQgpW49bx3M+hMBjy+UTM8/tt1DIIGdBBe13V8Ai/BE5WaJoO4ABHYAwhbUA3NXLSkchS7SFqdL9IfmPlsjoeg0Tb987B3nNWAldHZWv/XxnWSMrWV6ee9rgM+wIufvJi4wZzKKGVVCRTu7d8JATnkKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CMis1mez; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732701640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s0wPBAaMjSnNTX8RqBZAQUWmuUVI0sWePXuVzRgZ7Qw=;
-	b=CMis1mezOLuEWSgzPQ9RrsOhrnjSsNheiPGpxoqKDYO2K9uxf7plcy8PFH/GE15MbgW0b0
-	SHPWb5PD5IRRIHVlXjX2j+xnnS1UO4Ez4Pd3T4f69669NKiVy35ayDZv2hqepztoLl6lCt
-	nIXZn4wf047neZz+OuAAioAxtQuIEzg=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-hfhp4ZGsMraDcvFYILPDqg-1; Wed, 27 Nov 2024 05:00:39 -0500
-X-MC-Unique: hfhp4ZGsMraDcvFYILPDqg-1
-X-Mimecast-MFC-AGG-ID: hfhp4ZGsMraDcvFYILPDqg
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5f1f269bb5cso227394eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:00:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732701639; x=1733306439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s0wPBAaMjSnNTX8RqBZAQUWmuUVI0sWePXuVzRgZ7Qw=;
-        b=Ohk8B0WoeFbgza2F38fyoVXaBS3EbuPOnpvxzAqrKyqQHi9yL8rX2U+Bq76UJa/Who
-         qrCbXhGnd65EUmplmS2pjDeQeAiV1Nz/TDJaqj1TZZGyBbb3xjyQZa1FwpmFtleJnmLO
-         dJQ5OITbKT+z8kWPJpTe+AVosgfRwdjHFZVUXLN9eQMC+dC69Rmx5F2Qk6sePa+7M07T
-         iSkHm0PIBfyQGscIbnK/veHOMruo1l50TT088F06StzBNDQVHEgcBFqMCfBcZAOa8GVy
-         xB9h+p3QmuECX31DXsh028EAkOnKe02Cj3iyI5zkGATo7vmMNc0H86UwRUAlqeRVqeor
-         NpnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6aQjjDpnzKAzoeo1WwuDX0yCw1Pf4mf5ehE8O1CGCIrua44aT3cqJadXwvlq5F8QRp+PZ0gO82I1Dulc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzK6ZA4Z1lsD5KfOlSKq86dke7Zo9+Q0T2jBSIv9VqpK2c0I/S
-	WuYtQe6nl73L+DfTx2ljAW8dFjdMBcIl1kkHCxPenKYhXjG+1bff3HuFnOUyZtPqNJBZ9l4V3Kc
-	JQVUnON2mce/532S92seWfngRA3VnysQ6141jmKX3v/JuQF0rYhtfFJT3lMa3fDZAY7EtPGEyRU
-	MZjV+4jm9q4LxinfN1F/OIies85+V9xU7tr3xS
-X-Gm-Gg: ASbGncvQw/kLcKwvmkq5zgQ3XzZuKYw+nk2Bt7iJ0056GElvqbHYQEPvltAPEGaiL1T
-	n5aNSLJ2S5r54EoYIQPSATxkMP04Z+g==
-X-Received: by 2002:a05:6870:c152:b0:27b:b2e0:6af with SMTP id 586e51a60fabf-29dc3fb9cd2mr485564fac.2.1732701638776;
-        Wed, 27 Nov 2024 02:00:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxVRugfM1h6RP4poBOiNX8qRrDOehBisqylVM+eiLebPmXpS2cMHMjj58RYifbv8/vFUZK4bOyHhB27KGFiHc=
-X-Received: by 2002:a05:6870:c152:b0:27b:b2e0:6af with SMTP id
- 586e51a60fabf-29dc3fb9cd2mr485554fac.2.1732701638432; Wed, 27 Nov 2024
- 02:00:38 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA7A19413C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732701832; cv=fail; b=op4dD0ElN9kaLtKEX08rWvJ3+PYYrALFYTes3SsNQQgolXgF/j7lUui7jJ8UkFW56AKAua8tNNviQNpYpS5iJdmPojDkNmL/BhEtf1rrmhDj1KMgm+iNci7RYvrdANZDUVBRsF32Wyk0Q20hBJfI1SZDizocuXzNNCtmBz01UvQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732701832; c=relaxed/simple;
+	bh=QYJxnbinFYIQx3eLf7fKCOuXp9z4GQ3oqNLN3Nvbq9A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uokbkk+HrrhtAj7EpWGVtsLZiEQabMcBVdW6KpC8inAdGWRk6ln7ZwnHg0TfZNwx55e/J3LVz86Sxf6kbZ3hBWfGE/WV6xX7J9oNTb9IXuqKJPyebdBzehsagxwqq5Pj7SohUYCXOIZ7cWCkh6AeCWf1+k5HyOWpjcCu82HU66M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EQEtnu2d; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732701831; x=1764237831;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=QYJxnbinFYIQx3eLf7fKCOuXp9z4GQ3oqNLN3Nvbq9A=;
+  b=EQEtnu2db7NtD3J6vKLtkanB69qUm6NkOF+ydblRD0772DWYaCEczJHw
+   opUgtmChe4UawumAUSrzUt6GIJ6Iruv+BjEzs9vWETUk0/W36AViNRl7X
+   X2l6wWghJp+SnTntUytqpSU7P9OlFr6EF6uwYpfuGutQvOg11gulakk9C
+   vox+UmtSyXNkH1nM/0cj71507Ly0yOE3FzkqtncP2od5WjhF+G+qoXt96
+   wq1elUkJUZt7oty9ozIH/eMszxDxDchwpva7fRRrTZZ8baWH3gwvzI+BT
+   9m1BhhUu2T1zlUqqFjO8XXvWkQrjCxnrWa3p9lVBZ5m6QFrqBmmyzPLi0
+   A==;
+X-CSE-ConnectionGUID: ANdR+2VfTOuFNi9Sr7aKRg==
+X-CSE-MsgGUID: rwwlM/aSQOyTOKqsclNtmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="33148235"
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="33148235"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 02:03:50 -0800
+X-CSE-ConnectionGUID: nT3oAauwQw6gIY6B5pU5Tg==
+X-CSE-MsgGUID: b+LFYolbTGWAy9lFuryC1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="92044615"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Nov 2024 02:03:50 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 27 Nov 2024 02:03:49 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 27 Nov 2024 02:03:49 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.172)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 27 Nov 2024 02:03:49 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NqzTMWF2F3xCHzqy2Xbdy7E6D5M7o8+3PQ1H05T2JRXKLFsBRVgpGYdL5fquSs1HRTc8XI45x/6P7yxpsTTq3e7kZXLbQISgsAJBDrkhcL8BS8fFTlBzTKIlL63e6sjewMr5+NTwn1B/59M/z6ZEs9klG9R+pmhKI4YE8v/8rC13JAkBTgSQavQRUOsFaUUqJp3nM+J0NIV6puDVW1WlpXIyiD2COhiPiYzw3TTi2oVHSO90CDxAqp5YViG7mORB/d9i8AG9JlSDEpdj4VruuIafsVruZiZPvdW3XZpTnXGbbQG8cUZvjmTlaE4/tB13xXi8qfxcDyGHk2G1nesQmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kaTZcNgjVpnlvi7ycnJW+VaezI4KbEwKoz411nEoP0U=;
+ b=xyoABFR+2Y/A0cA1W+6m+WAqQT16A/CMk6yPJK90VWRa7wnazrZLW+ntPxb4JtNBnamnEi4PdslpAMqGmlccgf8YsKavicWyYDZ9XaYWl/z7r18aa0zU208ik6C36sMOmKNhW6JQlBP1QCV1H/LvDresrKJu9tUx9yc7TDSFg7lLjmLB8pEEryhm3VnrRrfD3RK3A9usCe0AsfPFi7h3thZheqvI3SwnRDbek2YUW/1J84gSTSSthf7DgH1KD3T3wylvtTKF/X9LrvdmqbBbO05LkmAqVtZWKpjOam4tqCrwnKX9wni9B8QxPgAfuKaDmyi1TJOdyg/CyFVq5j/xPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ DM6PR11MB4610.namprd11.prod.outlook.com (2603:10b6:5:2ab::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.13; Wed, 27 Nov 2024 10:03:47 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8182.019; Wed, 27 Nov 2024
+ 10:03:47 +0000
+Date: Wed, 27 Nov 2024 18:01:04 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Baoquan He <bhe@redhat.com>
+CC: "Eric W. Biederman" <ebiederm@xmission.com>, "Kirill A. Shutemov"
+	<kirill@shutemov.name>, <kexec@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>,
+	<x86@kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+Message-ID: <Z0bt4HXAKqM3C1ZW@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20241021034553.18824-1-yan.y.zhao@intel.com>
+ <87frop8r0y.fsf@email.froward.int.ebiederm.org>
+ <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+ <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
+ <ZxmRkUNmx863Po2U@yzhao56-desk.sh.intel.com>
+ <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z0WzHZ+fNn6WuH/E@MiWiFi-R3L-srv>
+X-ClientProxiedBy: SGXP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::23)
+ To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com> <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
-In-Reply-To: <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Wed, 27 Nov 2024 11:00:27 +0100
-Message-ID: <CALE0LRtUN2N_Z05jH_BMSg7yvirSRob0pSErmQxTu8AatmODgw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
-To: s-vadapalli <s-vadapalli@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dasnavis Sabiya <sabiya.d@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|DM6PR11MB4610:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0246f1aa-0eab-4a54-41c6-08dd0ecac8b9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/3vAXnajQcpqGmSpnz1Lv/Bv8hCds9vAO8yE9DAmjPgru8RqPxmhYpbuGRsa?=
+ =?us-ascii?Q?8ujCQ9bQdpoIuhsz8tgsXhBkITX8lRLOW/0wrYZpHmiOVihEWOA8lmWFGubD?=
+ =?us-ascii?Q?sJpZUjIpf7bgEyU441dUluiWg6SGQksz6uq0RtoEva7mGHJH9zng/O6yAhU+?=
+ =?us-ascii?Q?JCEheB8ux2Bs9bofGnGv1chMLLl3TKeAJOnZLLKAKZgK+us0fMZ0rvf+2bGy?=
+ =?us-ascii?Q?VQ2HJJDe/c1Di0MOi6J3OnZDhaknqOZBF5akjMs+XGeT57I8J7Ll4H1KEb40?=
+ =?us-ascii?Q?B4thOA0mFzeaRFQFl3ybtena9TxA+WwjF/pBe9ryEPcPrfZINFxZBRBTOXrL?=
+ =?us-ascii?Q?L2XUKEtqrIFNBc9g76aNsAxd0hDHbrDFUcO5bq4iE/oVt7rtD/LUp7ucqyP0?=
+ =?us-ascii?Q?Kyc07fwWb4y4MfIhIw2iiZS4wJtaQlJFjEWTIt1WGS1jJOI/JJq4qaHJdjkM?=
+ =?us-ascii?Q?lX2DujL6VPQhFkeXDELWH98fWahPg56cBZqa6Q72APNouBvu+9G2yzRJeAwa?=
+ =?us-ascii?Q?oHXzBOCX6InEFqrw/r8HGdiW4Gq3tw525o8C3qK28lRZiWUZg+Ms010ybjKK?=
+ =?us-ascii?Q?WE/GsZN7m9sOgBwhi8M4XpcB6yF0Oi3C3doFS5gEk+en0O+qxTQ4664xiMWf?=
+ =?us-ascii?Q?mrkNkK/bn0ed4jwD3d5nj4vC5irMEnDMMKs0S30oHv0PGlSqxvhGYOheqQQe?=
+ =?us-ascii?Q?FlJHEwPnHSqSbiE9qetag/8VmTRjNwj//3UMHr8W0LuSJSGk+j0P0rO/wGMN?=
+ =?us-ascii?Q?d1XJ43yKrsHERNuT9e9pFRJiHbq7tps4R7nbvMhBo0LqzZ7x4jEMmHjgCvmq?=
+ =?us-ascii?Q?yHfQDtY+7jQNMGlZasNNYt2f3pIE24Rx8mxjpP64rnWzf6lbDpUKBy2JWT8l?=
+ =?us-ascii?Q?HOc27G+sNjlnaKERS0BJvY2wY3Sg0cqO2QYgqDra6Cpuw/TJEX2MFtK5OVTX?=
+ =?us-ascii?Q?ZA4xCD6y/lgu+grBeM6Z9mG7PKT2eykHEwuEAmmkRh5zafUmLf2p3C9iHOR3?=
+ =?us-ascii?Q?auBGFVNPMwrElZ6yhqCCflGT9TNvWU9tK4OZvGKLUbwcH0VCeYczZHWm6wj3?=
+ =?us-ascii?Q?dj0j8BX4hXX7l2xaq5ex9ggsCPCgw8ccCfrQjrSrXi2Mg4iyczpe5OLlpNuy?=
+ =?us-ascii?Q?c2Iu+Ik0LqdUBLKdNzohWS3Myiemsb2v+CMjkgGqN9k8W9K4koFLuQEs0j+0?=
+ =?us-ascii?Q?soBO1sJX51cOpVOI4aWfPKyeCWEeC/RWqbRDY7yQ3lQ37D//GULK1Aaw7d7+?=
+ =?us-ascii?Q?FU0ju4xczxeBB9HSU9cpwJbmo4UeC7jfCxgPlZaVpBbW404geiITBv8E9G/l?=
+ =?us-ascii?Q?23xILJmJmyZLyUdhagRSDsfRqDkefTmUuQ1M/kVSwXnpvg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XpC3gvRZHbbZWgbFfsUFZIvCpruf3DipeYlVafdf0KKfzjnQAu89zCHkPD1s?=
+ =?us-ascii?Q?j3R8dqgMMFHJbedLaxu+ltGJrtT4pBiFVk27LGMM52vUM2i264lkac/yeZCO?=
+ =?us-ascii?Q?kQh1R8LIM4iDheOtMVMgKXz2SqcNJErAUNwJO9NJjHEpwSYVAODsKaK954Kr?=
+ =?us-ascii?Q?ORF9vP1ym070MgoqC9K8mTa/wR+4j7Vk+nkLws3xLHw4qtdZh5tQArpZkXYo?=
+ =?us-ascii?Q?K4wcriPe9WsM6Pco6HSU0Blf/ryMI5mYFh5EUwJhVzt4GZQY+qPxuVLNLiSV?=
+ =?us-ascii?Q?pvuDNyU+YXXWnQh8ygJpL5YNcuH0zgj0Tp2amBRmDjwdd1L3eiNMuTxffxCV?=
+ =?us-ascii?Q?3Yyznuw5+3+DluMkNvAYZMfJLd22Z9aNLyPJBOPsKZjejzCLpks4p2GEGmQl?=
+ =?us-ascii?Q?DlkgfEuPwgTbIissb54NQMKjVF+et900+beBdJFZ1RdX/Ns3591m632ezsxo?=
+ =?us-ascii?Q?XpVbivs6ls9/Jk+b9LT3FZFgF08XndW646BTfm0LoMx8AkkW6CATPHPKbFH4?=
+ =?us-ascii?Q?jNis7QoWCjVV2XSK36a6pIPWUNIxtATld675hbAP/VZR6eMCtNhXv0c57CKe?=
+ =?us-ascii?Q?TBCX2FDp4af6M5tdLPlNFaGszdUqn7Tb9MCD1vsBXZt0qmuxuauLyB2c+dDH?=
+ =?us-ascii?Q?/MfB0bHY9iUNDHPz2SkMjIYWRkDly5jGZAWkmxqPuSQ17XzeYRvfHaxVC70/?=
+ =?us-ascii?Q?Xw4gta5+aL/8fWIVQA9Lbh/4E/WkW2oPDSQfePGJZf7wciZCmotc7QGySj1t?=
+ =?us-ascii?Q?gEL7UfFC2OPZGHyO689yfP3igQFVdSMt3fw1sN+zz/cqiwIi3UEiJGEzvDch?=
+ =?us-ascii?Q?fXdHnTtKOTzLkoFhLZf8FEy24+OwjHvYhCA2zXOTdX1hJadsqKabqI07hPHS?=
+ =?us-ascii?Q?Ale1GkaBQAwc1i9QqflRkO/i9nUPNmWmocJVLe9s0hKUkBmZAUi1/tFAsIv2?=
+ =?us-ascii?Q?+VAcyjJsXaARrpZ4exGpAOzbNWR5QLN10C74o5VYXzKqXDGkWXqSrfARGpn5?=
+ =?us-ascii?Q?5/AjwegugqlzDD+C74FJBgVCNsU0J4N6zQPmZ7saCUvi4HrMmSL7yGpXeasH?=
+ =?us-ascii?Q?fstP7WaJ4h1KhjZN8dhgaxIyoBT/FIej8FL/wvCFEbI2JpHsOC+oF0li4sAL?=
+ =?us-ascii?Q?1omYTTJZbM+Tj88HASvOdNgJtb7Y7GgWoKCowTzK1nn95LNFsusELqDTmpXx?=
+ =?us-ascii?Q?FzK3E6U2Z2HJ/bKUnQ5deigNDFtWZfdAdMxuICYCglfy5/qhup2KHmXp8k7R?=
+ =?us-ascii?Q?0tqCnUkGSA/kuQHdJdLTC1w2H3C4yo5HC6rQk29NXieHWNJKaP57zDKjPkMA?=
+ =?us-ascii?Q?dsvz9AGsNnH4tXchRNKs+5/lUj0JOEOlVAinGY2x9g7jRF1bCw0UXnF7YDWW?=
+ =?us-ascii?Q?N/lZYERukhNsgNje9O/V7WRBohF/2NlBe49RmayGSHiU95yMXr7a0HVWwM4+?=
+ =?us-ascii?Q?zx600LIcFr5FKeIlAovX9tPFC19bacMMrKFA9JR0yiTZIE9hxCSw8IJ7fRvy?=
+ =?us-ascii?Q?gXnQXpFfWSuQ3sDufAXeH/2wWY9Uyy9AdFSnjgm7yBFms4hrk4qDbvI1Ijnw?=
+ =?us-ascii?Q?dcp72MhhZKUiDO0nDsTJlBewtsB91WcRkkEWiMHX?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0246f1aa-0eab-4a54-41c6-08dd0ecac8b9
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 10:03:47.2137
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ubbYqOevz/8kRAAlzuio16l/srJDIkxbNrFuNpi4eaNaHawVEzzNzkpPrWRz87Oc57LPqC9YYW3CrCSRuCx//w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4610
+X-OriginatorOrg: intel.com
 
-Hi,
+On Tue, Nov 26, 2024 at 07:38:05PM +0800, Baoquan He wrote:
+> On 10/24/24 at 08:15am, Yan Zhao wrote:
+> > On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
+> > > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
+> > > 
+> > > > Waiting minutes to get VM booted to shell is not feasible for most
+> > > > deployments. Lazy is sane default to me.
+> > > 
+> > > Huh?
+> > > 
+> > > Unless my guesses about what is happening are wrong lazy is hiding
+> > > a serious implementation deficiency.  From all hardware I have seen
+> > > taking minutes is absolutely ridiculous.
+> > > 
+> > > Does writing to all of memory at full speed take minutes?  How can such
+> > > a system be functional?
+> > > 
+> > > If you don't actually have to write to the pages and it is just some
+> > > accounting function it is even more ridiculous.
+> > > 
+> > > 
+> > > I had previously thought that accept_memory was the firmware call.
+> > > Now that I see that it is just a wrapper for some hardware specific
+> > > calls I am even more perplexed.
+> > > 
+> > > 
+> > > Quite honestly what this looks like to me is that someone failed to
+> > > enable write-combining or write-back caching when writing to memory
+> > > when initializing the protected memory.  With the result that everything
+> > > is moving dog slow, and people are introducing complexity left and write
+> > > to avoid that bad implementation.
+> > > 
+> > > 
+> > > Can someone please explain to me why this accept_memory stuff has to be
+> > > slow, why it has to take minutes to do it's job.
+> > This kexec patch is a fix to a guest(TD)'s kexce failure.
+> > 
+> > For a linux guest, the accept_memory() happens before the guest accesses a page.
+> > It will (if the guest is a TD)
+> > (1) trigger the host to allocate the physical page on host to map the accessed
+> >     guest page, which might be slow with wait and sleep involved, depending on
+> >     the memory pressure on host.
+> > (2) initializing the protected page.
+> > 
+> > Actually most of guest memory are not accessed by guest during the guest life
+> > cycle. accept_memory() may cause the host to commit a never-to-be-used page,
+> > with the host physical page not even being able to get swapped out.
+> 
+> So this sounds to me more like a business requirement on cloud platform,
+> e.g if one customer books a guest instance with 60G memory, while the
+> customer actually always only cost 20G memory at most. Then the 40G memory
+> can be saved to reduce pressure for host.
+Yes.
 
-On Wed, Nov 27, 2024 at 9:27=E2=80=AFAM s-vadapalli <s-vadapalli@ti.com> wr=
-ote:
->
-> On Tue, Nov 26, 2024 at 11:08:19AM +0100, Enric Balletbo i Serra wrote:
->
-> Hello Enric,
->
-> > From: Dasnavis Sabiya <sabiya.d@ti.com>
-> >
-> > AM69 SK board has two stacked USB3 connectors:
-> >    1. USB3 (Stacked TypeA + TypeC)
-> >    2. USB3 TypeA Hub interfaced through TUSB8041.
-> >
-> > The board uses SERDES0 Lane 3 for USB3 IP. So update the
-> > SerDes lane info for PCIe and USB. Add the pin mux data
-> > and enable USB 3.0 support with its respective SERDES settings.
-> >
-> > Signed-off-by: Dasnavis Sabiya <sabiya.d@ti.com>
-> > Signed-off-by: Enric Balletbo i Serra <eballetb@redhat.com>
-> > ---
-> > I've been carrying this patch for quite long time in my builds to have
-> > support for USB on my AM69-SK board without problems. For some reason t=
-his
-> > patch was never send to upstream or I couldn't find it. So I took the
-> > opportunity, now that I rebased my build, to send upstream.
-> >
-> > I have maintained the original author of the downstream patch as is
-> > basically his work.
-> > ---
-> >  arch/arm64/boot/dts/ti/k3-am69-sk.dts | 33 +++++++++++++++++++++++++++=
-++++++
-> >  1 file changed, 33 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dt=
-s/ti/k3-am69-sk.dts
->
-> [...]
->
-> > +&usb0 {
-> > +     status =3D "okay";
-> > +     dr_mode =3D "host";
->
-> Since the Type-C interface is also connected to USB0, shouldn't "dr_mode"
-> be "otg"? Also, has the Type-C interface been tested with this patch?
-> Please let me know.
->
+> I could be shallow, just a wild guess.
+> If my guess is right, at least those cloud service providers must like this
+> accept_memory feature very much.
+> 
+> > 
+> > That's why we need a lazy accept, which does not accept_memory() until after a
+> > page is allocated by the kernel (in alloc_page(s)).
+> 
+> By the way, I have two questions, maybe very shallow.
+> 
+> 1) why can't we only find those already accepted memory to put kexec
+> kernel/initrd/bootparam/purgatory?
 
-Yes, all usb from the board were tested. I'll try otg mode for the
-Type-C interface and resend the patch.
+Currently, the first kernel only accepts memory during the memory allocation in
+a lazy accept mode. Besides reducing boot time, it's also good for memory
+over-commitment as you mentioned above.
 
-$ lsusb -t
-/:  Bus 001.Port 001: Dev 001, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 480M
-    |__ Port 001: Dev 002, If 0, Class=3DHub, Driver=3Dhub/4p, 480M
-        |__ Port 001: Dev 003, If 0, Class=3DHub, Driver=3Dhub/4p, 480M
-            |__ Port 001: Dev 004, If 0, Class=3DHuman Interface Device,
-Driver=3Dusbhid, 1.5M
-            |__ Port 001: Dev 004, If 1, Class=3DHuman Interface Device,
-Driver=3Dusbhid, 1.5M
-        |__ Port 002: Dev 005, If 0, Class=3DMass Storage,
-Driver=3Dusb-storage, 480M
-/:  Bus 002.Port 001: Dev 001, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 5000=
-M
-    |__ Port 001: Dev 002, If 0, Class=3DHub, Driver=3Dhub/4p, 5000M
-        |__ Port 003: Dev 004, If 0, Class=3DMass Storage,
-Driver=3Dusb-storage, 5000M
-        |__ Port 004: Dev 003, If 0, Class=3DMass Storage,
-Driver=3Dusb-storage, 5000M
+My understanding of why the memory for the kernel/initrd/bootparam/purgatory is
+not allocated from the first kernel is that this memory usually needs to be
+physically contiguous. Since this memory will not be used by the first kernel,
+looking up from free RAM has a lower chance of failure compared to allocating it
+from the first kernel, especially when memory pressure is high in the first
+kernel.
 
-Thanks,
-   Enric
-> [...]
->
-> Regards,
-> Siddharth.
->
+ 
+> 2) why can't we accept memory for (kernel, boot params/cmdline/initrd)
+> in 2nd kernel? Surely this purgatory still need be accepted in 1st kernel.
+> Sorry, I just read accept_memory() code, haven't gone through x86 boot
+> code flow.
+If a page is not already accepted, invoking accept_memory() will trigger a
+memory accept to zero-out the page content. So, for the pages passed to the
+second kernel, they must have been accepted before page content is copied in.
 
+For boot params/cmdline/initrd, perhaps we could make those pages in shared
+memory initially and have the second kernel to accept private memory for copy.
+However, that would be very complex and IMHO not ideal.
 
