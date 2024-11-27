@@ -1,226 +1,172 @@
-Return-Path: <linux-kernel+bounces-423895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F48A9DADF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:40:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08059DADFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F5D282164
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F5CFB234D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDAB20127B;
-	Wed, 27 Nov 2024 19:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959AD202F6A;
+	Wed, 27 Nov 2024 19:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0YOqD0Tg"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4OdQFkp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B732201116
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32A8201029;
+	Wed, 27 Nov 2024 19:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732736407; cv=none; b=XIeD3bTcQBQIIvNGYqNXuugy5L1s8pt8Mjev2vLgt2bXjsqibSj7jTlmp+uTS4QCkJk4MYEF5EiDDjBlGS9wVXTkwGm63m5Aq8ePw7YuCr0EpT/N8jnaK7EfhxFp53LrpOtt0pGCPl0L5EakSGndX2+6SK08Try8DFW7ZuO/sco=
+	t=1732736443; cv=none; b=Y+W1I2jSqCURNE2RhdUXC2MFb3Dm+dhjHv77mPeBz6DEV705br8qL2SV1+Tvqz8nQz6smi+Ec3tQaUT9qqiyIpxEy9y8/lnMmuBj0oPXeIuHuZYwPtNPnI4dplyR2tfzidfw34+uVBrU+n3HkPp65QyEmmtF5nsGpFDKc+Ub0MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732736407; c=relaxed/simple;
-	bh=x9dS7oAYleHRajlJ27xlcRqC5Yg8HnsAAlu88HSzn04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/N61hWf1QjYQWiQUkO5sQBBydmYGKpm+HFGUWIz9DTPW7RzlrknvWJZlzbRKHqGtB+guB7UKKx+d8ES6UMUlIsaAW6SFJogOjieok/6lfA/6Ji2spY4PqjzrJTo97mwUmYp7et3teA+sStcXVzPAbAFRvT3OPfifs/1RPRqqbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0YOqD0Tg; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668caacfb2so15431cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732736405; x=1733341205; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJl9SLmf8+tDJzXXlxRiqoHwxpxlnvk1n/BWGDuOZZo=;
-        b=0YOqD0TgQGN7+R44KaCStW6dxHvnYvSWWcWBDhM+2mbdwOBy7BH5YrfhE74qCOHwgh
-         8uovI7ZhKgGBeu+4oEDe4DIQb/WDxzxD11F9RzE7YTylWhlwalTn4VeE9GA1Gn45s0k5
-         XjYOTVMjIqUun6Atv+hHFhza37Wl9lZj/ziD4JHk1c7N+grMeSRoCRgP4c0wgPpfDe0i
-         4/ACh0IxY3oQ2GRTaMeDIDvp04Aj8fq/RtgY8fu16XREE0CwfG+XvbVbdRDOd5tfKmuo
-         K1zo04H8IjwVpIhFBWuyd6/2Pc9ZTE9ViIGVL0X/T18FbXD64cKp2EmS1v7e0jU9YTx3
-         WhJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732736405; x=1733341205;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJl9SLmf8+tDJzXXlxRiqoHwxpxlnvk1n/BWGDuOZZo=;
-        b=P6vpnNzjaOsGZGU+9ujVD3FKBkleE/TwGswI7P+HxflssY3HDai6VlTACxvyqMJu0C
-         9kTFVKQrArbYNHy+glR5VTGxUfSju+O3brJY3FDSJ+hcmLyqxUFxAodJtHH1ctWRDwaS
-         apA1cUnE35XMjZPhHzRExuPMKbDKUgm5fh+1OO3q+DsIyhoKjcxGs+TNBem98i1KZ4ny
-         +vMm8Hw4133Czp5JbHyz6lslxCmN+2MGyvvMvs2lWzQrY9CECIUHF10xQJ+vf1Q6Xua8
-         +RwGmXsOyhHi2iUZ2TiPIDb+ItyS4p2oC+3M/D7OpMdSO+loG4NITWy34bIW70PMWq/6
-         LM2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUd7UuqkQTmRpvLroVnSPAv3L/MB3beZjy6fey2jqATRGftTVubNwaMw3fT8Glfjt5SZCuHIflEescTBEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq6zg+S4nPQ7fJx9iGS3MtmjbqAZEFgzJoJQnDjiVtHFSWPM8K
-	Pm5iLtK92yQlhTwcyG2leSkGYJAjrNfYPJJEhMyBTs+ey+KP9aMbzoPrFrKXUdi4vOhk4EGzdmu
-	l/UJjW4VIp5mztYBzqd92EiC6DwbAOX1EDQhP
-X-Gm-Gg: ASbGncvOpXmYH052gMAdFUefD8HsX51myRVQX63+uiMlAaSpTr9Wfch4fEP9XIbA45M
-	/JtsgYEUfvNbijlVFDRAiTozTan+7qhM=
-X-Google-Smtp-Source: AGHT+IFpU3rekOtcEw5rS4VDu/+FdfyXUn4njkcrc7z2/l5oaizj3tMziVrc1xraWFLbxEOWRGr6r/J9olDf9amauwU=
-X-Received: by 2002:a05:622a:5e83:b0:461:48f9:4852 with SMTP id
- d75a77b69052e-466c2a6b1a2mr134761cf.28.1732736404883; Wed, 27 Nov 2024
- 11:40:04 -0800 (PST)
+	s=arc-20240116; t=1732736443; c=relaxed/simple;
+	bh=FNpsPBymSvEX1rHGNSh2J+QjHOLtO8xKZwskRMfxD8A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ml0rorp8PFSyXPj5pByRryRAlUke8xraZGozdhQs9tRMG1ITDaOCb3i2B8OTPYPiSnMqhPxxMrUzIhgiK8tH1/vMj1QvcGdhFqbkc6FAYxBF+RcbGwZXiJsKIKZZJLQPxSVRuAiE3yAohUeietKviaq4Czyi45idcQeegAUrPVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4OdQFkp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF0AC4CECC;
+	Wed, 27 Nov 2024 19:40:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732736441;
+	bh=FNpsPBymSvEX1rHGNSh2J+QjHOLtO8xKZwskRMfxD8A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y4OdQFkp2nt/VvgqWAzMb+U036mIXv7j2LJHKF/dpUn954h4y4SzH9pfQm5Llm4xC
+	 Xn3EHI2RFYk+gF5oK9ediPguZG96lc468mGXVKDVabS6zPzl3wbCS/MnXPq9wNWUoD
+	 88QCHf1aG6/UUPTBoYdYVcG4036FWpAv+gaqp53RLXgsDDy3Z7Nu4AVunbRKleiL8c
+	 4+D8sjtuIsIxt+phU4/VoCafcBznr1o2zDnmKGhv34cusEtthtKdEUJGBXWRWILSOo
+	 OA57OHPSkfugMlhiW2Ny9LvwIpITFIFKLXiw77pynSGgenHRCGTb3GbcimZ9kP5jMT
+	 7BPLErjejFueQ==
+From: SeongJae Park <sj@kernel.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Yuanchu Xie <yuanchu@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+	Khalid Aziz <khalid.aziz@oracle.com>,
+	Henry Huang <henry.hj@antgroup.com>,
+	Yu Zhao <yuzhao@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Gregory Price <gregory.price@memverge.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Tejun Heo <tj@kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Mike Rapoport <rppt@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Daniel Watson <ozzloy@each.do>,
+	cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH v4 0/9] mm: workingset reporting
+Date: Wed, 27 Nov 2024 11:40:38 -0800
+Message-Id: <20241127194038.84382-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241127072604.GA2501036@cmpxchg.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
- <20241120103456.396577-3-linyunsheng@huawei.com> <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
- <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com> <CAHS8izM+sK=48gfa3gRNffu=T6t6-2vaS60QvH79zFA3gSDv9g@mail.gmail.com>
- <CAKgT0Uc-SDHsGkgmLeAuo5GLE0H43i3h7mmzG88BQojfCoQGGA@mail.gmail.com> <8f45cc4f-f5fc-4066-9ee1-ba59bf684b07@huawei.com>
-In-Reply-To: <8f45cc4f-f5fc-4066-9ee1-ba59bf684b07@huawei.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 27 Nov 2024 11:39:53 -0800
-Message-ID: <CAHS8izPg7B5DwKfSuzz-iOop_YRbk3Sd6Y4rX7KBG9DcVJcyWg@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Alexander Duyck <alexander.duyck@gmail.com>, Jesper Dangaard Brouer <hawk@kernel.org>, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, liuyonglong@huawei.com, 
-	fanghaiqing@huawei.com, zhangkun09@huawei.com, 
-	Robin Murphy <robin.murphy@arm.com>, IOMMU <iommu@lists.linux.dev>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27, 2024 at 1:35=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> On 2024/11/27 7:53, Alexander Duyck wrote:
-> > On Tue, Nov 26, 2024 at 1:51=E2=80=AFPM Mina Almasry <almasrymina@googl=
-e.com> wrote:
-> >>
-> >> On Thu, Nov 21, 2024 at 12:03=E2=80=AFAM Yunsheng Lin <linyunsheng@hua=
-wei.com> wrote:
-> >>>
-> >>> On 2024/11/20 23:10, Jesper Dangaard Brouer wrote:
-> >>>>
-> >>>>>       page_pool_detached(pool);
-> >>>>>       pool->defer_start =3D jiffies;
-> >>>>>       pool->defer_warn  =3D jiffies + DEFER_WARN_INTERVAL;
-> >>>>> @@ -1159,7 +1228,7 @@ void page_pool_update_nid(struct page_pool *p=
-ool, int new_nid)
-> >>>>>       /* Flush pool alloc cache, as refill will check NUMA node */
-> >>>>>       while (pool->alloc.count) {
-> >>>>>           netmem =3D pool->alloc.cache[--pool->alloc.count];
-> >>>>> -        page_pool_return_page(pool, netmem);
-> >>>>> +        __page_pool_return_page(pool, netmem);
-> >>>>>       }
-> >>>>>   }
-> >>>>>   EXPORT_SYMBOL(page_pool_update_nid);
-> >>>>
-> >>>> Thanks for continuing to work on this :-)
-> >>>
-> >>> I am not sure how scalable the scanning is going to be if the memory =
-size became
-> >>> bigger, which is one of the reason I was posting it as RFC for this v=
-ersion.
-> >>>
-> >>> For some quick searching here, it seems there might be server with ma=
-x ram capacity
-> >>> of 12.3TB, which means the scanning might take up to about 10 secs fo=
-r those systems.
-> >>> The spin_lock is used to avoid concurrency as the page_pool_put_page(=
-) API might be
-> >>> called from the softirq context, which might mean there might be spin=
-ning of 12 secs
-> >>> in the softirq context.
-> >>>
-> >>> And it seems hard to call cond_resched() when the scanning and unmapp=
-ing takes a lot
-> >>> of time as page_pool_put_page() might be called concurrently when poo=
-l->destroy_lock
-> >>> is released, which might means page_pool_get_dma_addr() need to be ch=
-ecked to decide
-> >>> if the mapping is already done or not for each page.
-> >>>
-> >>> Also, I am not sure it is appropriate to stall the driver unbound up =
-to 10 secs here
-> >>> for those large memory systems.
-> >>>
-> >>> https://www.broadberry.com/12tb-ram-supermicro-servers?srsltid=3DAfmB=
-OorCPCZQBSv91mOGH3WTg9Cq0MhksnVYL_eXxOHtHJyuYzjyvwgH
-> >>>
-> >>
-> >> FWIW I'm also concerned about the looping of all memory on the system.
-> >> In addition to the performance, I think (but not sure), that
-> >> CONFIG_MEMORY_HOTPLUG may mess such a loop as memory may appear or
-> >> disappear concurrently. Even if not, the CPU cost of this may be
-> >> significant. I'm imagining the possibility of having many page_pools
-> >> allocated on the system for many hardware queues, (and maybe multiple
-> >> pp's per queue for applications like devmem TCP), and each pp looping
-> >> over the entire xTB memory on page_pool_destroy()...
-> >>
-> >> My 2 cents here is that a more reasonable approach is to have the pp
-> >> track all pages it has dma-mapped, without the problems in the
-> >> previous iterations of this patch:
-> >>
-> >> 1. When we dma-map a page, we add it to some pp->dma_mapped data
-> >> structure (maybe xarray or rculist).
-> >> 2. When we dma-unmap a page, we remove it from pp->dma_mapped.
-> >> 3 When we destroy the pp, we traverse pp->dma_mapped and unmap all the
-> >> pages there.
-> >
-> > The thing is this should be a very rare event as it should apply only
-> > when a device is removed and still has pages outstanding shouldn't it?
-> > The problem is that maintaining a list of in-flight DMA pages will be
-> > very costly and will make the use of page pool expensive enough that I
-> > would worry it might be considered less than useful. Once we add too
-> > much overhead the caching of the DMA address doesn't gain us much on
-> > most systems in that case.
-> >
-> >> I haven't looked deeply, but with the right data structure we may be
-> >> able to synchronize 1, 2, and 3 without any additional locks. From a
-> >> quick skim it seems maybe rculist and xarray can do this without
-> >> additional locks, maybe.
->
-> I am not sure how the above right data structure without any additional
-> locks will work, but my feeling is that the issues mentioned in [1] will
-> likely apply to the above right data structure too.
->
-> 1. https://lore.kernel.org/all/6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawe=
-i.com/
->
++ damon@lists.linux.dev
 
-I don't see the issues called out in the above thread conflict with
-what I'm proposing. In fact, I think Jesper's suggestion works
-perfectly with what I'm proposing. Maybe I'm missing something.
+I haven't thoroughly read any version of this patch series due to my laziness,
+sorry.  So I may saying something completely wrong.  My apology in advance, and
+please correct me in the case.
 
-We can use an atomic pool->destroy_count to synchronize steps 2 and 3.
-I.e. If destroy_count > 0, we don't unmap the page in
-__page_pool_release_page(), and instead count on the page_pool_destroy
-unmapping all the pages in the pp->dma_mapped list.
+> On Tue, Nov 26, 2024 at 06:57:19PM -0800, Yuanchu Xie wrote:
+> > This patch series provides workingset reporting of user pages in
+> > lruvecs, of which coldness can be tracked by accessed bits and fd
+> > references.
 
-> >>
-> >> Like stated in the previous iterations of this approach, we should not
-> >> be putting any hard limit on the amount of memory the pp can allocate,
-> >> and we should not have to mess with the page->pp entry in struct page.
->
-> It would be good to be more specific about how it is done without 'messin=
-g'
-> with the page->pp entry in struct page using some pseudocode or RFC if yo=
-u
-> call the renaming as messing.
->
+DAMON provides data access patterns of user pages.  It is not exactly named as
+workingset but a superset of the information.  Users can therefore get the
+workingset from DAMON-provided raw data.  So I feel I have to ask if DAMON can
+be used for, or help at achieving the purpose of this patch series.
 
-Yeah, I don't think touching the page->pp entry is needed if you use
-an xarray or rculist which hangs off the pp.
+Depending on the detailed definition of workingset, of course, the workingset
+we can get from DAMON might not be technically same to what this patch series
+aim to provide, and the difference could be somewhat that makes DAMON unable to
+be used or help here.  But I cannot know if this is the case with only this
+cover letter.
 
-I'm currently working on a few bug fixes already and the devmem TCP TX
-which is waiting on by a few folks; I don't think I can look into this
-right now, but I'll try. If this issue hasn't been resolved by the
-time I get some bandwidth, sure, I'll take a stab at it.
+> > However, the concept of workingset applies generically to
+> > all types of memory, which could be kernel slab caches, discardable
+> > userspace caches (databases), or CXL.mem. Therefore, data sources might
+> > come from slab shrinkers, device drivers, or the userspace.
+> > Another interesting idea might be hugepage workingset, so that we can
+> > measure the proportion of hugepages backing cold memory. However, with
+> > architectures like arm, there may be too many hugepage sizes leading to
+> > a combinatorial explosion when exporting stats to the userspace.
+> > Nonetheless, the kernel should provide a set of workingset interfaces
+> > that is generic enough to accommodate the various use cases, and extensible
+> > to potential future use cases.
 
---=20
+This again sounds similar to what DAMON aims to provide, to me.  DAMON is
+designed to be easy to extend for vairous use cases and internal mechanisms.
+Specifically, it separates access check mechanisms and core logic into
+different layers, and provides an interface to use for implementing extending
+DAMON with new mechanisms.  DAMON's two access check mechanisms for virtual
+address spaces and the physical address space are made using the interface,
+indeed.  Also there were RFC patch series extending DAMON for NUMA-specific and
+write-only access monitoring using NUMA hinting fault and soft-dirty PTEs as
+the internal mechanisms.
+
+My humble understanding of the major difference between DAMON and workingset
+reporting is the internal mechanism.  Workingset reporting uses MGLRU as the
+access check mechanism, while current access check mechanisms for DAMON are
+using page table accessed bits checking as the major mechanism.  I think DAMON
+can be extended to use MGLRU as its another internal access check mechanism,
+but I understand that there could be many things that I overseeing.
+
+Yuanchu, I think it would help me and other reviewers better understand this
+patch series if you could share that.  And I will also be more than happy to
+help you and others better understanding what DAMON can do or not with the
+discussion.
+
+> 
+> Doesn't DAMON already provide this information?
+> 
+> CCing SJ.
+
+Thank you for adding me, Johannes :)
+
+[...]
+> It does provide more detailed insight into userspace memory behavior,
+> which could be helpful when trying to make sense of applications that
+> sit on a rich layer of libraries and complicated runtimes. But here a
+> comparison to DAMON would be helpful.
+
+100% agree.
+
+
 Thanks,
-Mina
+SJ
+
+[...]
 
