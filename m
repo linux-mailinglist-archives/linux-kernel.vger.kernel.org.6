@@ -1,218 +1,168 @@
-Return-Path: <linux-kernel+bounces-423793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94E19DACC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:57:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1F19DACC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:59:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B3DB21CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:57:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF27166DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792802010E9;
-	Wed, 27 Nov 2024 17:57:25 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8AB2010E9;
+	Wed, 27 Nov 2024 17:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A9fwf9Ub"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BEC1F9EDC;
-	Wed, 27 Nov 2024 17:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54D71F9EDC;
+	Wed, 27 Nov 2024 17:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732730245; cv=none; b=hKER0Im2Nl5cW91lI8Ambd5N9fqR4sehmyFzVvBYc6y843rSOA+2/tpffXASUIVa7dVC/KTMWMIY5H2RlDRKgOxtvI6B3zAQsUcx6TkGS/mWLsReI8FglIY85c8EmW558/J+uDYuxfGXEp1yhlPi7oZWoHKxDhoOImU+XJ08SgM=
+	t=1732730383; cv=none; b=mysrJlaw4MZL6G0YOQ1J3dN6DsQleogJeN37oTGMSiUQX5nbShm4WOCEFKuIsztj+e3T3vZkUn0pmd0xeMMz8iQz5w6NDKJk5zlhtIkdaB1EBswdJPyAlvugtf6d7pkXJUMOPxYY1oemyjoh1AEYyL86mMNllmHHdYsN8qZxlGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732730245; c=relaxed/simple;
-	bh=x1kowV5XL3Zqxu+IDAagYEQKyPRxx7DwTqSCw5LeAnE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=apTLwCG0rCyoKbDxHp0klUTvJUl2lDkHvySstI3k1Jwe2fdOqCwQ+1FhaCHC2qYKyACQ3/2VJWVTLG8AlZLLXWvJL0zTktTJl+qezOVlrXkOFZZRzhsuxxIymvZRDo3bKSvtMMXxShOvQsPAoDN8RyR+KavLjEONLbJuewScZNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Xz6732N50z9v7Nb;
-	Thu, 28 Nov 2024 01:36:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 19E9D140392;
-	Thu, 28 Nov 2024 01:57:17 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3aDljXUdnvqlmAg--.45319S2;
-	Wed, 27 Nov 2024 18:57:16 +0100 (CET)
-Message-ID: <8b7d0c280ae51f619c0e57379824a858de463098.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  corbet@lwn.net, mcgrof@kernel.org,
- petr.pavlu@suse.com, samitolvanen@google.com,  da.gomez@samsung.com,
- akpm@linux-foundation.org, paul@paul-moore.com,  jmorris@namei.org,
- serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
- alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-api@vger.kernel.org, linux-modules@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
- hch@lst.de,  mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
- dhowells@redhat.com,  jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
- petr.vorel@gmail.com,  mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto
- Sassu <roberto.sassu@huawei.com>
-Date: Wed, 27 Nov 2024 18:56:47 +0100
-In-Reply-To: <20241127173042.GA1649@wind.enjellic.com>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <20241127173042.GA1649@wind.enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732730383; c=relaxed/simple;
+	bh=RXNxyxBpGXpGgg17BVRBF+StkiICtLDNa4Qra1sN+6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lbs9dXoexWu7xAGh94CnRlU9h96VhcdWYlKwcinQkmrCUxNTuups6vHYw5wIIRPYzaYaipSh+6/m48vUTws0J5cgAKWJjvsYvnOX0uwsCqFvO6E+jjc373FmX2jbpSz59EETltcAOnuYY1DIqwCMNZUqYDukh8qvSHJQeYDotfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A9fwf9Ub; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8402778C;
+	Wed, 27 Nov 2024 18:59:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732730354;
+	bh=RXNxyxBpGXpGgg17BVRBF+StkiICtLDNa4Qra1sN+6Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A9fwf9Ub1cQm5UxIUWylxhnOXcgShjapC2U8RfcO96D50PUxukVaEZfQL2bWyyZLC
+	 3EUDK2+DUmN2RYwrv64hWF3DmIp3Bg3Wt6HCm+/oyxs9e+90yBg7Kg4aS7uvr1sMxN
+	 KQeaPkQHvsU2ECn17VwG3L077lyQPIMUcMtx5c/c=
+Date: Wed, 27 Nov 2024 19:59:26 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241127175926.GA13800@pendragon.ideasonboard.com>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+ <20241126151930.GA5493@pendragon.ideasonboard.com>
+ <20241127103948.501b5a05@foz.lan>
+ <20241127124629.704809f1@foz.lan>
+ <20241127133938.GI31095@pendragon.ideasonboard.com>
+ <20241127160923.7eca17d1@sal.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD3aDljXUdnvqlmAg--.45319S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr1ktrW8Kw17Cw4kAr1rCrg_yoW7Gw4fpa
-	93Kay5Kr4kJFWxCFs2y3WfurWFk3yrtw4UWrn8W348Ary5ur1I9w10ka1UuF9rGrn2ya12
-	vr4Uta4UC3s0yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvGb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
-	Jr1lIxkvb40E47kJMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjxUBDDGUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAABGdGg-MHRgABsX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127160923.7eca17d1@sal.lan>
 
-On Wed, 2024-11-27 at 11:30 -0600, Dr. Greg wrote:
-> On Tue, Nov 19, 2024 at 11:49:07AM +0100, Roberto Sassu wrote:
->=20
-> Hi Roberto, I hope the week is going well for you.
->=20
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Integrity detection and protection has long been a desirable feature, t=
-o
-> > reach a large user base and mitigate the risk of flaws in the software
-> > and attacks.
-> >=20
-> > However, while solutions exist, they struggle to reach a large user bas=
-e,
-> > due to requiring higher than desired constraints on performance,
-> > flexibility and configurability, that only security conscious people ar=
-e
-> > willing to accept.
-> >=20
-> > For example, IMA measurement requires the target platform to collect
-> > integrity measurements, and to protect them with the TPM, which introdu=
-ces
-> > a noticeable overhead (up to 10x slower in a microbenchmark) on frequen=
-tly
-> > used system calls, like the open().
-> >=20
-> > IMA Appraisal currently requires individual files to be signed and
-> > verified, and Linux distributions to rebuild all packages to include fi=
-le
-> > signatures (this approach has been adopted from Fedora 39+). Like a TPM=
-,
-> > also signature verification introduces a significant overhead, especial=
-ly
-> > if it is used to check the integrity of many files.
-> >=20
-> > This is where the new Integrity Digest Cache comes into play, it offers
-> > additional support for new and existing integrity solutions, to make
-> > them faster and easier to deploy.
-> >=20
-> > The Integrity Digest Cache can help IMA to reduce the number of TPM
-> > operations and to make them happen in a deterministic way. If IMA knows
-> > that a file comes from a Linux distribution, it can measure files in a
-> > different way: measure the list of digests coming from the distribution
-> > (e.g. RPM package headers), and subsequently measure a file if it is no=
-t
-> > found in that list.
-> >=20
-> > The performance improvement comes at the cost of IMA not reporting whic=
-h
-> > files from installed packages were accessed, and in which temporal
-> > sequence. This approach might not be suitable for all use cases.
-> >=20
-> > The Integrity Digest Cache can also help IMA for appraisal. IMA can sim=
-ply
-> > lookup the calculated digest of an accessed file in the list of digests
-> > extracted from package headers, after verifying the header signature. I=
-t is
-> > sufficient to verify only one signature for all files in the package, a=
-s
-> > opposed to verifying a signature for each file.
->=20
-> Roberto, a big picture question for you, our apologies if we
-> completely misunderstand your patch series.
+On Wed, Nov 27, 2024 at 04:09:23PM +0100, Mauro Carvalho Chehab wrote:
+> Em Wed, 27 Nov 2024 15:39:38 +0200 Laurent Pinchart escreveu:
+> > On Wed, Nov 27, 2024 at 12:54:15PM +0100, Mauro Carvalho Chehab wrote:
+> > > Em Wed, 27 Nov 2024 10:39:48 +0100 Mauro Carvalho Chehab escreveu:
+> > >   
+> > > > > This workflow doesn't apply to patch submitters who are not allowed to
+> > > > > send pull requests and who don't have direct commit access. I thought
+> > > > > these submitters are the main audience of this document. In that case, I
+> > > > > think moving the next section that explains the e-mail workflow before
+> > > > > the "Media development workflow" section (which should likely be renamed
+> > > > > to make it clear that it is about merging patches, not developing them)
+> > > > > would be best. The "Review Cadence" section could also be folded in
+> > > > > there, to give a full view of what a submitter can expect.
+> > > > > 
+> > > > > This would also have the advantage of introducing the linuvtv.org
+> > > > > patchwork instance, which you reference above. Documents are more
+> > > > > readable when they introduce concepts first before using them.    
+> > > > 
+> > > > Will try to do such change at v2.  
+> > > 
+> > > Actually, both workflows (a) and (b) apply to the ones that can't
+> > > send pull requests or push at media-committers.git:
+> > > 
+> > > ---
+> > > 
+> > > a. Normal workflow: patches are handled by subsystem maintainers::
+> > > 
+> > >      +------+   +---------+   +-------+   +-----------------------+   +---------+
+> > >      |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge      |-->|media.git|
+> > >      +------+   +---------+   |request|   |in media-committers.git|   +---------+
+> > >                               +-------+   +-----------------------+
+> > > 
+> > >    For this workflow, pull requests can be generated by a committer,
+> > >    a previous committer, subsystem maintainers or by a couple of trusted
+> > >    long-time contributors. If you are not in such group, please don't submit
+> > >    pull requests, as they will likely be ignored.
+> > > 
+> > > b. Committers' workflow: patches are handled by media committers::
+> > > 
+> > >      +------+   +---------+   +--------------------+   +-----------+   +---------+
+> > >      |e-mail|-->|patchwork|-->|committers merge at |-->|maintainers|-->|media.git|
+> > >      +------+   +---------+   |media-committers.git|   |approval   |   +---------+
+> > >                               +--------------------+   +-----------+
+> > > 
+> > > ---
+> > > 
+> > > No matter who sent an e-mail, this will be picked by patchwork and either
+> > > be part of a PR or a MR, depending on who picked it.  
+> > 
+> > Today the "normal" workflow for contributors who don't send pull
+> > requests is that you or Hans will pick their patches from the list.
+> 
+> True, but we've been following process (b) since the last merge window: we
+> are generating merges at the media-committers.git. As we're maintainers, 
+> the "maintainers approval" step is also handled by us, by the one that
+> submitted the MR, after checking the media-ci results.
+> 
+> > That's why I mentioned that neither of the above workflows apply there.
+> > Now, if we consider that you and Hans will keep doing that for some
+> > patches, and merge them using the committers workflow (where you would
+> > handle both steps of merging in the shared tree and giving the
+> > maintainer approval), it's true that the normal workflow would be one of
+> > the two above.
+> 
+> Yes, that's the case.
+> 
+> > Looking at the pull requests sent to the list over the past twelve
+> > months, we have
+> > 
+> >      32 Sakari Ailus
+> >      24 Hans Verkuil
+> >      22 Laurent Pinchart
+> >      21 Sebastian Fricke
+> >       7 Sean Young
+> >       7 Hans de Goede
+> >       4 Stanimir Varbanov
+> >       1 Shuah Khan
+> > 
+> > I expect people in that list to get commit rights either from the very
+> > beginning or very soon after. The committer workflow (if we consider it
+> > as including how you and Hans will continue picking patches from the
+> > list) will be the new norm. how about flipping things and listing it as
+> > a), and then name b) the "Pull request workflow" instead of the "Normal
+> > workflow" ? I would even go as far as proposing documenting the pull
+> > request workflow as legacy.
+> 
+> Renaming from Normal work flow to Pull request workflow makes sense.
+> 
+> The pull request workflow won't be legacy. Even with major contributors
+> using the new workflow for "normal work", pull requests will still be
+> generated for API changes.
 
-Hi Greg
+OK, let's not mark it as deprecated, we can just rename it to "Pull
+request workflow". I'd still prefer to list it as b) but won't make that
+a casus belli.
 
-no need to apologise, happy to answer your questions.
+-- 
+Regards,
 
-> The performance benefit comes from the fact that the kernel doesn't
-> have to read a file and calculate the cryptographic digest when the
-> file is accessed.  The 'trusted' digest value comes from a signed list
-> of digests that a packaging entity provides and the kernel validates.
-> So there is an integrity guarantee that the supplied digests were the
-> same as when the package was built.
-
-The performance benefit (for appraisal with my benchmark: 65% with
-sequential file access and 43% with parallel file access) comes from
-verifying the ECDSA signature of 303 digest lists, as opposed to the
-ECDSA signature of 12312 files.
-
-The additional performance boost due to switching from file data digest
-to fsverity digests is on top of that.
-
-> Is there a guarantee implemented, that we missed, that the on-disk
-> file actually has the digest value that was initially generated by the
-> packaging entity when the file is accessed operationally?
-
-Yes, the guarantee is provided by IMA by measuring the actual file
-digest and searching it in a digest cache. The integration in IMA of
-the Integrity Digest Cache is done in a separate patch set:
-
-https://lore.kernel.org/linux-security-module/20241119110103.2780453-1-robe=
-rto.sassu@huaweicloud.com/
-
-The integrity evaluation result is invalidated when the file is
-modified, or when the digest list used to verify the file is modified
-too.
-
-For fsverity, the guarantee similarly comes from searching the fsverity
-digest in a digest cache, but as opposed of IMA the integrity
-evaluation result does not need to be invalidated for a file write,
-since fsverity-protected files are accessible only in read-only mode.
-However, the result still needs to be invalidated if the digest list
-changes.
-
-> Secondly, and in a related issue, what happens in a container
-> environment when a pathname is accessed that is actually a different
-> file but with the same effective pathname as a file that is in the
-> vendor validated digest list?
-
-At the moment nothing, only the file data are evaluated. Currently, the
-Integrity Digest Cache does not store the pathnames associated to a
-digest. It can be done as an extension, if desired, and the pathnames
-can be compared.
-
-Roberto
-
-> Once again, apologies, if we completely misinterpret the issues
-> involved.
->=20
-> Have a good remainder of the week.
->=20
-> As always,
-> Dr. Greg
->=20
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
-
+Laurent Pinchart
 
