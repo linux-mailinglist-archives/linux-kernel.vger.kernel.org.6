@@ -1,150 +1,145 @@
-Return-Path: <linux-kernel+bounces-423905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1D79DAE1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:45:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4109DAE24
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:52:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE09166564
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:52:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2AA202F73;
+	Wed, 27 Nov 2024 19:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b="szzFNdQF"
+Received: from mail.w14.tutanota.de (mail.w14.tutanota.de [185.205.69.214])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F06282525
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:45:47 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C12010E5;
-	Wed, 27 Nov 2024 19:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SdsqqWMv"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885562010E8
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D681C82D66;
+	Wed, 27 Nov 2024 19:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.205.69.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732736739; cv=none; b=KzAZOTRHGolWLVgE7N9pzPOjXrvlsYs48mbYW5nui6op3VWwVvAvgM/QEKChPLNWIo1OgKQiOeeyC1qKMOnXdBcs7XnYJ9fN/OwmcethtAV+hYq17F1WLJPvbOOVG+IadV2aN6nDV/Dub5wLb1r4B4sM+ygioujeUosKSFHXcZM=
+	t=1732737130; cv=none; b=WnxySwbRmURufTLghoDBajgUiBaOj5wceygXWThSoUkEBOxYNSPV3qFj6QafjfrDiJmRDgQ4Uytycdgnr5aSLvalCheZe697d+Ej22TE+4mDvgEzf3PLRuNn/UrlrqvKs7K2eYhvc6ChWnv3xw47fQ2kQqgQKMba2OAHS9ebXck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732736739; c=relaxed/simple;
-	bh=NylLDBV4iWNpobwH6iSMROiM5e+3FgmCpG1sYJRENiU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=MLl+lWuPqCFw0WuOA/mxXtL+XH5JLmKE/gdBW17kIOh1Q2PGlbkur68l8AbFDFTMtsP0+Si8YfA5BsRZABRsHCuuMLTCP2NB+MXTmx70ZWRqNLipU+09IGFcCzvOZKJLZjUtJpjHNizPGd3fcRck3jTLvf0HVpdp8t9pkzc3sXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SdsqqWMv; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de852a287so32096e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:45:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732736736; x=1733341536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NylLDBV4iWNpobwH6iSMROiM5e+3FgmCpG1sYJRENiU=;
-        b=SdsqqWMvn5S2SYfmYLBXcDXi5Svbf+0hfOWzzLfC+vPAd8iDM9vf0YUzFt8AJUGqwu
-         2fLfEXfX84bZ6vPUmfqz3i5ZrxjDCShk7ipmbI+q00aTBkbz7giqTCTn13nJpqcnNcJd
-         0980vUOxC+lLWggqlSe7mx7f4C3zFSni48E+9NerhGfsDyEJdiOEX2aD4OS2cqUSjNrf
-         JvXfBsM2Cue+QJBdr5mFkCx/qwo6JuLFHNl/7rwI6MRHRR4KBlQV7gffUBsHLBRBwq/c
-         SAYlaEUr8aqZNezQ1XXaSnhSvURE+IpzKv6JaeQHg+fdyOHWEhK1QAK6BnuccKEwAjYs
-         QKUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732736736; x=1733341536;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NylLDBV4iWNpobwH6iSMROiM5e+3FgmCpG1sYJRENiU=;
-        b=s+lYapO6V1deGvb59t8hNbyUab1ModL+AmVAi3xGEOQYQCpZlM+W8I6kD4llBrLtB2
-         IBDI0Qp/HtSo1cUTtqTMC0RPo1soQ9Pz/pe4+2Hj0s0QQAZHCc9IlnopVcqXW9faSZQQ
-         Z72QlLoSZxfU/Rch4sgIgpNE+OMDEdD7jXS5CP7cIm61hMecI/UGx5vum3JKrzVOG6gy
-         Ar/VKokY9YlkuPKo9lNcjvfY4mR8DXu1RoN42TcxW9dRIBhAwdwo7Oki0z3HQjjg8Hfl
-         fXODK0KNR3EVTeQZrLwkkddxfXa0sY7aCF8oetp/Fb5dfehNLtNaKr65sCyUOE9Z8fzf
-         5f1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjBtEFE+l3mLRDGozYMOZe+P+moJH1Nku5aDmfh0ti7i7f3uFseIUAJkHktC37TixvgL5z//Lbv2UFYy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwThnmH+Sv6IuyVRV8DE8CHuMC82VlKR0/Z0zDsUojt2SjMyd3
-	AAmfJIYSGojPSRgUbvZlgMnPg/Uacjs8lzPo8WlRAep8+ZNxQPloLxUbCQ2bLRw=
-X-Gm-Gg: ASbGnctAWMP32GPPiEL/RkK2nPWhP4lhc3J7lSlfpNN3iyCVbtTgIrlJsn8LzJjFJMI
-	vsGTN+dcIxfx/FWUPW/AIAkAzYEPT9ZM3+AcpaEkvFGlJCrAx2Spy2kH+nyzZ5I1wLUOMno1Ng6
-	zvUBVz6Wwcu663BLPK6saOW0BUo5yLV8sJEo1XuvL1pSWUUF4UQF0EHU1XQSaO7jknRtnW57ooE
-	ht7r54rUwUX73MjrUobys8UYyNHd1isEFoJEgTU+TM63N38rnNGWKgtxWKaP+lhzHquq09cHuOg
-	0xLdJxwNbEOoFA4=
-X-Google-Smtp-Source: AGHT+IH40kESQ0kSX97wL3PUiuSrJ02aqjttnHdyPp1N1UTnVIo1USB4X398z4n7wKGyArZKFCjzuw==
-X-Received: by 2002:a05:6512:b03:b0:53d:ed68:3cfa with SMTP id 2adb3069b0e04-53df0112264mr1385460e87.55.1732736735626;
-        Wed, 27 Nov 2024 11:45:35 -0800 (PST)
-Received: from [127.0.0.1] (85-76-116-93-nat.elisa-mobile.fi. [85.76.116.93])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24812besm2319077e87.121.2024.11.27.11.45.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 11:45:34 -0800 (PST)
-Date: Wed, 27 Nov 2024 21:45:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
-CC: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Odelu Kukatla <quic_okukatla@quicinc.com>,
- Mike Tipton <quic_mdtipton@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_V6_3/4=5D_dt-bindings=3A_interconnec?=
- =?US-ASCII?Q?t=3A_Add_generic_compatible_qcom=2Cepss-l3-perf?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <fff1a05c-5e7c-451d-9b08-4e835d6ab131@kernel.org>
-References: <20241125174511.45-1-quic_rlaggysh@quicinc.com> <20241125174511.45-4-quic_rlaggysh@quicinc.com> <20241127142304.GA3443205-robh@kernel.org> <zchtx32wtii2mzy2pp4lp4gdaim7w56kih7jcqes4tyhu24r3n@dagazlsdgdcv> <0ba0f4af-5075-4bb1-a7f6-815ef95bbda7@kernel.org> <538761B6-5C8D-4600-AB9E-687F91B855FF@linaro.org> <fff1a05c-5e7c-451d-9b08-4e835d6ab131@kernel.org>
-Message-ID: <CD9BA30C-C38F-4F3B-9823-B8F5B4160BC6@linaro.org>
+	s=arc-20240116; t=1732737130; c=relaxed/simple;
+	bh=9OXWDCL+ZUm0Rd4Zlgsj1Uw1/4MpCmgYer0oaJua2iU=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=QulnEx7v6xoPTsvPIy57m3P3YdYLJUAOzEUcCvHpCc0AjNcoUrAREPJp7/02CKyQ81WC7ObIPZq4HsXX7gcMuFv25caoOwKFAnJpwXl5/aBx5o1AXD5brLs/ixckLRZ8GCLN+3Svf0+y4D5IzZ0iadOec/mTxgNjVJkKmKcSjBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io; spf=pass smtp.mailfrom=tuta.io; dkim=pass (2048-bit key) header.d=tuta.io header.i=@tuta.io header.b=szzFNdQF; arc=none smtp.client-ip=185.205.69.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuta.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuta.io
+Received: from tutadb.w10.tutanota.de (w10.api.tuta.com [IPv6:fd:ac::d:10])
+	by mail.w14.tutanota.de (Postfix) with ESMTP id BCA363F4D5EE;
+	Wed, 27 Nov 2024 20:46:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732736761;
+	s=s1; d=tuta.io;
+	h=From:From:To:To:Subject:Subject:Content-Description:Content-ID:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Cc:Cc:Date:Date:In-Reply-To:In-Reply-To:MIME-Version:MIME-Version:Message-ID:Message-ID:Reply-To:References:References:Sender;
+	bh=9OXWDCL+ZUm0Rd4Zlgsj1Uw1/4MpCmgYer0oaJua2iU=;
+	b=szzFNdQFIfU7RJm/QK/TMQ9Z8aNLzvy0B+Qj/XhaYc/1RnFgDFhoSBKtXhcdqXOL
+	CC5gH2Us1sgnnDLUrD0vXsiaIyyChGBklqbQJaqUfpMF+RJVVmIUHXeoo64WS+xjaIU
+	gUZM62YPPDY+YcAn/Din9uhqQH3zejBor0t3yiA/v2RxONLME6gyCRIdBN6S7S36LEV
+	b/ttKJIG3MHR9f3TFUVffe/XRCvDwxlw+gWKyHy4f8RQfeUqTPs/m7kNuRjx9QEkG6J
+	Z+b9HXWcRBxQtgrt+0/fRyJ4GNLckUskD7C5EAZNAXyLLCl2Q94l8ARPnDySGmIGYY/
+	Wn0AJrib7w==
+Date: Wed, 27 Nov 2024 20:46:01 +0100 (CET)
+From: jens.korinth@tuta.io
+To: Daniel Sedlak <daniel@sedlak.dev>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rust For Linux <rust-for-linux@vger.kernel.org>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Message-ID: <OCj9As8--F-9@tuta.io>
+In-Reply-To: <230b3602-5d68-4e79-969d-0d2df1fdf033@sedlak.dev>
+References: <20241126-pr_once_macros-v4-0-410b8ca9643e@tuta.io> <20241126-pr_once_macros-v4-1-410b8ca9643e@tuta.io> <230b3602-5d68-4e79-969d-0d2df1fdf033@sedlak.dev>
+Subject: Re: [PATCH v4 1/3] rust: Add `OnceLite` for executing code once
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On 27 November 2024 21:22:02 EET, Krzysztof Kozlowski <krzk@kernel=2Eorg> w=
-rote:
->On 27/11/2024 19:49, Dmitry Baryshkov wrote:
->> On 27 November 2024 20:27:27 EET, Krzysztof Kozlowski <krzk@kernel=2Eor=
-g> wrote:
->>> On 27/11/2024 17:53, Dmitry Baryshkov wrote:
->>>> On Wed, Nov 27, 2024 at 08:23:04AM -0600, Rob Herring wrote:
->>>>> On Mon, Nov 25, 2024 at 05:45:10PM +0000, Raviteja Laggyshetty wrote=
-:
->>>>>> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register inste=
-ad of
->>>>>> REG_L3_VOTE to scale L3 clocks, hence adding a new generic compatib=
-le
->>>>>> "qcom,epss-l3-perf" for these targets=2E
->>>>>
->>>>> Is this a h/w difference from prior blocks or you just want to use B=
-=20
->>>>> instead of A while the h/w has both A and B? The latter sounds like=
-=20
->>>>> driver policy=2E
->>>>>
->>>>> It is also an ABI break for s/w that didn't understand=20
->>>>> qcom,epss-l3-perf=2E
->>>>
->>>> As the bindings keep old compatible strings in addition to the new
->>>> qcom,epss-l3-perf, where is the ABI break? Old SW will use old entrie=
-s,
->>>> newer can use either of those=2E
->>> No, this change drops qcom,epss-l3 and adds new fallback=2E How old
->>> software can work in such case? It's broken=2E
->>=20
->> Oh, I see=2E We had a platform-specific overrides for those two=2E Then=
- I think we should completely drop the new qcom,epss-l3-perf idea and follo=
-w the sm8250 / sc7280 example=2E This means compatible =3D "qcom,sa8775p-pe=
-rf", "qcom,epss-l3"=2E=20
->
->It depends for example whether epss-l3 is valid at all=2E ABI is not
->broken if nothing was working in the first place, assuming it is
->explained in commit msg (not the case here)=2E
+> Have you considered it to be implemented like `AtomicU32`? I think=E2=84=
+=A2 that
+> one atomic variable is more than enough.
 
-Judging by the current schema, epss-l3 is defined as new HW block of aka n=
-ot OSM L3, no matter which register is used for programming=2E
+Just to clarify - you mean something like this? Nevermind the magic numbers=
+,
+I'd replace them, of course.
 
+diff --git a/rust/kernel/once_lite.rs b/rust/kernel/once_lite.rs
+index 723c3244fc85..0622ecbfced5 100644
+--- a/rust/kernel/once_lite.rs
++++ b/rust/kernel/once_lite.rs
+@@ -16,7 +16,7 @@
+//!
+//! Reference: <https://doc.rust-lang.org/std/sync/struct.Once.html>
+=C2=A0
+-use core::sync::atomic::{AtomicBool, Ordering::Relaxed};
++use core::sync::atomic::{AtomicU32, Ordering::Acquire, Ordering::Relaxed};
+=C2=A0
+/// A low-level synchronization primitive for one-time global execution.
+///
+@@ -44,13 +44,13 @@
+/// assert_eq!(x, 42);
+/// ```
+///
+-pub struct OnceLite(AtomicBool, AtomicBool);
++pub struct OnceLite(AtomicU32);
+=C2=A0
+impl OnceLite {
+=C2=A0=C2=A0=C2=A0=C2=A0 /// Creates a new `OnceLite` value.
+=C2=A0=C2=A0=C2=A0=C2=A0 #[inline(always)]
+=C2=A0=C2=A0=C2=A0=C2=A0 pub const fn new() -> Self {
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Self(AtomicBool::new(false), At=
+omicBool::new(false))
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Self(AtomicU32::new(0))
+=C2=A0=C2=A0=C2=A0=C2=A0 }
+=C2=A0
+=C2=A0=C2=A0=C2=A0=C2=A0 /// Performs an initialization routine once and on=
+ly once. The given
+@@ -71,10 +71,10 @@ pub const fn new() -> Self {
+=C2=A0=C2=A0=C2=A0=C2=A0 /// [`DO_ONCE_LITE_IF`]: srctree/include/once_lite=
+.h
+=C2=A0=C2=A0=C2=A0=C2=A0 #[inline(always)]
+=C2=A0=C2=A0=C2=A0=C2=A0 pub fn call_once<F: FnOnce()>(&self, f: F) {
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if !self.0.load(Relaxed) && !se=
+lf.0.swap(true, Relaxed) {
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 f()
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if self.0.load(Relaxed) =3D=3D =
+0 && self.0.compare_exchange(0, 1, Acquire, Relaxed) =3D=3D Ok(0) {
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 f();
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 self.0.=
+store(2, Relaxed);
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 self.1.store(true, Relaxed);
+=C2=A0=C2=A0=C2=A0=C2=A0 }
+=C2=A0
+=C2=A0=C2=A0=C2=A0=C2=A0 /// Returns `true` if some `call_once` call has co=
+mpleted successfully.
+@@ -98,7 +98,7 @@ pub fn call_once<F: FnOnce()>(&self, f: F) {
+=C2=A0=C2=A0=C2=A0=C2=A0 /// ```
+=C2=A0=C2=A0=C2=A0=C2=A0 #[inline(always)]
+=C2=A0=C2=A0=C2=A0=C2=A0 pub fn is_completed(&self) -> bool {
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 self.1.load(Relaxed)
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 self.0.load(Relaxed) > 1
+=C2=A0=C2=A0=C2=A0=C2=A0 }
+}
 
->
->Best regards,
->Krzysztof
+> The `rust` part should be default value for rustdoc tests, can we please
+> omit that?
 
+Will do!
+
+Jens
 
