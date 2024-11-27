@@ -1,150 +1,147 @@
-Return-Path: <linux-kernel+bounces-423706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC289DABB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:24:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA30A9DABBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1227C280F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E79B21E7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157E9200B99;
-	Wed, 27 Nov 2024 16:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C02200BB9;
+	Wed, 27 Nov 2024 16:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEdy+yMw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZnEs2k10";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZnEs2k10"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D962CCC0;
-	Wed, 27 Nov 2024 16:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7EA200BAA;
+	Wed, 27 Nov 2024 16:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724643; cv=none; b=iQp1xDT+pU3APkMRuxyzClGtHuKEGxemfR9Rbtz9TJmc/mSLImhPtv4+kx3AxEbebPeCZK1srI9mS+gQ/NpOmrwyn8GsX4efuBKPwt/2+uZQpMhyoXQ27U01tyecNX881aByfzLn/UtfotTxlIh18BYFoLjt8E+xAb24q7fP7Tw=
+	t=1732724647; cv=none; b=EOVDM8UraiFbMKTqzFUawrZEeT9RRJO33YpV9/diduaNZ8wiCsPwwyM9hrSMoJ+NYzLkLah8EAZgDPy7xWrd4cX2hMgRcUrg5rosvxcBH+qSmGUYW297TP1NYCJ9epjVnBD+hj4dyOfYLnsRBOU86u0ZwrHndjuiOBT6TJ1utoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724643; c=relaxed/simple;
-	bh=udtlpz3tEcbApivtbF+WFTwB2TmLD0gnoCjWl9TRfMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h3y6hKFJF1E9+IH1XwVvhry46+suZCiG0d/mCcrYQ4zWzRhHUD/5o9YkZFbS191cGDM8qorQd7cW4CS71R/ypzAKHkomkQrnUgDNzpv6hAO2LiTYxWgCG00pgjHn4as+hw9DUmc0KjP9LaFq+HUL294nsB6SXVy73H+43uilf28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEdy+yMw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A38C4CECC;
-	Wed, 27 Nov 2024 16:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732724643;
-	bh=udtlpz3tEcbApivtbF+WFTwB2TmLD0gnoCjWl9TRfMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iEdy+yMwJNPcRsJ3zI0ESXkzdU3UZahNeW8N6y+xU8hSJhMM9cJQ2SchBQoNyf9LH
-	 WopgHitWxqX131k+5F8HTJbHlkQ9Be/Hbs5lIyaeSRVWP7Lp81UKhts6L/Z1MirigU
-	 L0PhLJs6YvAdkZ3WI9/6R9R/0QvZ6/AMFxlgJnBXYVyNcpKlEY4IarmOhxj+7pGt2y
-	 yLdi+TnJS74VgH/cF1Kok2pjlhAWr4M0MN+ru/T2D1I47apsXjl0FvQGoBrDp2V4dJ
-	 b6SbC3kE+VB6+5XeIixYsbMnJItReDz+22UbvrhyYJjhPcHBM1jpNky/+Zo5WrWmB7
-	 EbLGbYUOvyzSA==
-Date: Wed, 27 Nov 2024 16:23:58 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de,
-	sebastian.reichel@collabora.com, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dse@thaumatec.com, Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH v4 1/2] dt-bindings: phy: Add Rockchip MIPI C-/D-PHY
- schema
-Message-ID: <20241127-impromptu-tiptoeing-6c1b9ed2c93f@spud>
-References: <20241126131736.465111-1-heiko@sntech.de>
- <20241126131736.465111-2-heiko@sntech.de>
- <20241126-pastrami-gusty-8b9df32ae00c@spud>
- <2213231.Mh6RI2rZIc@diego>
+	s=arc-20240116; t=1732724647; c=relaxed/simple;
+	bh=I2wTDpQvi1jEM2W3bnEJtAgPbOoW+MQVhlA1D+Hi76M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c7wWKatWMX+NWXJB4vT4aF1M/8NmGucDZSf3aET/RNc0Og6eGRfdmKtjTemQpajvAb51fIfss8RDV3cwm4F0ed65XaP8hTxYPQZJo1Nue7yraBwHLssnd1qlw0FkwCt0qnpR1puh5f97xxU4n6oF7Ut7pnBNuZtb40MgA5DCwEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ZnEs2k10; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ZnEs2k10; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1732724644;
+	bh=I2wTDpQvi1jEM2W3bnEJtAgPbOoW+MQVhlA1D+Hi76M=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=ZnEs2k107IERJUalfXr5ISgXvB8UL+rYk5U+oiM4Av2A74iUqzNvYB5suBpEXM04d
+	 UI7vfGblnpqWJposiG/Yw8f93LZtVHYlSmE8YCDvHEna+hMx+DFv25r+rrJLUH3LQS
+	 Qp2Ro/x+d7gNqR8KLm7tCSpYQdl1WxpWRtby9YZk=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 788F7128799D;
+	Wed, 27 Nov 2024 11:24:04 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id HWVf5V4tu0lo; Wed, 27 Nov 2024 11:24:04 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1732724644;
+	bh=I2wTDpQvi1jEM2W3bnEJtAgPbOoW+MQVhlA1D+Hi76M=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=ZnEs2k107IERJUalfXr5ISgXvB8UL+rYk5U+oiM4Av2A74iUqzNvYB5suBpEXM04d
+	 UI7vfGblnpqWJposiG/Yw8f93LZtVHYlSmE8YCDvHEna+hMx+DFv25r+rrJLUH3LQS
+	 Qp2Ro/x+d7gNqR8KLm7tCSpYQdl1WxpWRtby9YZk=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7B413128799C;
+	Wed, 27 Nov 2024 11:24:03 -0500 (EST)
+Message-ID: <ca741d8eade72aa68c389a88d2520f4fe541a1e7.camel@HansenPartnership.com>
+Subject: Re: TPM/EFI issue [Was: Linux 6.12]
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jiri Slaby <jirislaby@kernel.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>
+Cc: Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	linux-integrity@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	"linux-efi@vger.kernel.org"
+	 <linux-efi@vger.kernel.org>
+Date: Wed, 27 Nov 2024 11:24:01 -0500
+In-Reply-To: <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org>
+References: 
+	<CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com>
+	 <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/LUGouHf4SBUTfca"
-Content-Disposition: inline
-In-Reply-To: <2213231.Mh6RI2rZIc@diego>
+Content-Transfer-Encoding: 8bit
 
+On Wed, 2024-11-27 at 07:46 +0100, Jiri Slaby wrote:
+> Cc TPM + EFI guys.
+> 
+> On 17. 11. 24, 23:26, Linus Torvalds wrote:
+> > But before the merge window opens, please give this a quick test to
+> > make sure we didn't mess anything up. The shortlog below gives you
+> > the
+> > summary for the last week, and nothing really jumps out at me. A
+> > number of last-minute reverts, and some random fairly small fixes
+> > fairly spread out in the tree.
+> 
+> Hi,
+> 
+> there is a subtle bug in 6.12 wrt TPM (in TPM, EFI, or perhaps in 
+> something else):
+> https://bugzilla.suse.com/show_bug.cgi?id=1233752
+> 
+> Our testing (openQA) fails with 6.12:
+> https://openqa.opensuse.org/tests/4657304#step/trup_smoke/26
+> 
+> The last good is with 6.11.7:
+> https://openqa.opensuse.org/tests/4648526
+> 
+> In sum:
+> TPM is supposed to provide a key for decrypting the root partitition,
+> but fails for some reason.
+> 
+> It's extremely hard (so far) to reproduce outside of openQA (esp.
+> when 
+> trying custom kernels).
+> 
+> Most of the 6.12 TPM stuff already ended in (good) 6.11.7. I tried to
+> revert:
+>    423893fcbe7e tpm: Disable TPM on tpm2_create_primary() failure
+> from 6.12 but that still fails.
+> 
+> We are debugging this further, this is just so you know.
+> 
+> Or maybe you have some immediate ideas?
 
---/LUGouHf4SBUTfca
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, it looks like you eliminated the TPM changes:
 
-On Tue, Nov 26, 2024 at 07:38:35PM +0100, Heiko St=FCbner wrote:
-> Hey Conor,
->=20
-> Am Dienstag, 26. November 2024, 18:44:14 CET schrieb Conor Dooley:
-> > On Tue, Nov 26, 2024 at 02:17:34PM +0100, Heiko Stuebner wrote:
-> > > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > >=20
-> > > Add dt-binding schema for the MIPI C-/D-PHY found on
-> > > Rockchip RK3588 SoCs.
-> > >=20
-> > > Tested-by: Daniel Semkowicz <dse@thaumatec.com>
-> > > Tested-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > > ---
-> > >  .../phy/rockchip,rk3588-mipi-dcphy.yaml       | 87 +++++++++++++++++=
-++
-> > >  1 file changed, 87 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk=
-3588-mipi-dcphy.yaml
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3588-mi=
-pi-dcphy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-=
-dcphy.yaml
-> > > new file mode 100644
-> > > index 000000000000..c8ff5ba22a86
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcph=
-y.yaml
-> > > @@ -0,0 +1,87 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/phy/rockchip,rk3588-mipi-dcphy.ya=
-ml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Rockchip MIPI D-/C-PHY with Samsung IP block
-> > > +
-> > > +maintainers:
-> > > +  - Guochun Huang <hero.huang@rock-chips.com>
-> > > +  - Heiko Stuebner <heiko@sntech.de>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - rockchip,rk3576-mipi-dcphy
-> > > +      - rockchip,rk3588-mipi-dcphy
-> >=20
-> > How many phys do each of these SoCs have?
->=20
-> - rk3588 has two - each with a separate GRF for additional settings [0]
-> - rk3576 has one
->=20
->=20
-> Heiko
->=20
-> [0] https://lore.kernel.org/lkml/D5F5C1RWVHG5.TSHPO29TXYEF@cknow.org/T/
-> The register layout in each GRF area is identical, but each DC-PHY gets
-> its own separate GRF io-mem block.
+https://bugzilla.suse.com/show_bug.cgi?id=1233752#c6
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+So it must be something in the logging or event recording code.  The
+first thing to check is can you run a replay of the log to get the end
+PCR values?  The binary for that is
 
---/LUGouHf4SBUTfca
-Content-Type: application/pgp-signature; name="signature.asc"
+tsseventextend -sim -v -if
+/sys/kernel/security/tpm0/binary_bios_measurements
 
------BEGIN PGP SIGNATURE-----
+You'll have to check the values it gives against the values in 
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0dHnQAKCRB4tDGHoIJi
-0sKHAQDyRrsdu04AIYeIKa/yoWGVW61Dgmc8zuF3PJhupjpSvwD/aP5gCI9OX1aZ
-S3VqhYXp9SVFwvFVnquSYL7+DHuA3gc=
-=nL8k
------END PGP SIGNATURE-----
+/sys/class/tpm/tpm0/tpm-sha256
 
---/LUGouHf4SBUTfca--
+Probably also check sha1 to see if it matches.
+
+Regards,
+
+James
+
 
