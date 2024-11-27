@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-423757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9204D9DAC56
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:22:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A479DAC57
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3429D166A9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F604166C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80DE201029;
-	Wed, 27 Nov 2024 17:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E132A201029;
+	Wed, 27 Nov 2024 17:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JLkdulyq"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkC26/F+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DCD1FF7BB
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA6B200B96
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728159; cv=none; b=oX3poEIYOv8oIp+1srY5E9bP3o9r8wZKidEzwT6cKVUcjwS1D1ZHWQZCuT6Z9MtV3ze17w7fo96Ntks/ZV/ZtZKypDEa4xoO9kLy2wAcy7nCZMrslLIITAKW2ncrdVM610jNYzSJ17GPl0gtB7F7rihKWgmVR8jDsCEwOrwQpRk=
+	t=1732728171; cv=none; b=dELVDA4wheC+srEhAGsjNxlsW3gd9BI/ry0VsVXhxDmJMuzVdCXdwqZXZTtNQbGUsksE528Xyr9jEYF8j/6OoB2MM5fjMOlLunmO5GlcTKhQDNNF7Q/WXhvLYFZpbi8SWp9Rxvkrq5WHQsiHtdlzlcHO/u6Zutwb+RQ+TwwGAm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728159; c=relaxed/simple;
-	bh=+vUOed904fqCM56GvdT6y2ZFeUnRxD9XR7KdTjK+tA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F3adabe8vXUqx/qmiKGs207+PAoljtKpdDcI5E3ge3+5xUbT0rWa/g4YUVWQ045LmIQzL/5LCxc3en4Wd7ihnC4fMeOkCCva8BNVv5PSgdaeXHWSE4cU+GM/vfkn1dpCq267vOODc0TKhGHjJDLrZ1ojFekINR7IqIylZJ8i5U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JLkdulyq; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4349f160d62so33782375e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:22:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1732728155; x=1733332955; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zos3ZSR+4jZZkxC82FlxJ002wxj7wv8nR00Fq/bmK6A=;
-        b=JLkdulyqxb43c14uPF8uuI26xrNrGsYlfXxllhrWCnD1RAhPMGrnv8YdW+0Uvspf5B
-         Ftk0/TLpJhYwwT6oQ48h8DEglzYrDyrNGnAvfkgUs6Owg5mpXWVR6y42D3L8BjyprAvU
-         xgh6hnA5r0d7gCH/ADoOe9h69Om8aAx8RFGaJpjmyuDL49nZvXtMTQqRNLGozR2DfJX2
-         YEiH5+2TYQBI/hMby14P1Wdy7akV3SIAAcON5P0a86ett9HcAUBTazMMblg5fDRSBY1e
-         Sz9/uQTRzu7b2dSWJ95bz3iZ4frM7Zoqtd3g+lBI3Rct2+QbXEf87lfYB2+cWkTsVu2Q
-         MLqg==
+	s=arc-20240116; t=1732728171; c=relaxed/simple;
+	bh=udRSauQ8v0m45QJa02tpuWABp6MhR6MgqKOiA1qUWyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lX+hu8n8FQVA2pmK9X6KJEkaIUhg6bAN4hMvQamPp6OKFefa1OSzZ+3Y30H0TkxlRgqjjdgd0jeOn/jm1Dr/E0mXenjYjoEu1zDUGc6iMX7Bo3Fq4FORgmHq/Ir6wENLT8Y3bg/mxbe5AAuzj78dHPaJ3X1dkRebbEngPjlJ+ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CkC26/F+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732728168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W9zax/CHaztlMaSgeA0GgU43P1mgjhVVVedx0D3zKOY=;
+	b=CkC26/F+KE1Qm4TVnxGq1tRbGD66ty8IpqptluLtPT8kbMIDbnr8sphtugpAHmzk3nYZRu
+	MgK5HlFvfyg9RUz2+a5YnOBoAQBozzNkRpq+ByX+SwB1Q1Di131Iuke5Qv0smHbdSnWKDd
+	OYzXiqcTTiEu/snwQFI0NBnTYh88g8Y=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-RM4GIlw2MHi_JZlCvq4KxA-1; Wed, 27 Nov 2024 12:22:47 -0500
+X-MC-Unique: RM4GIlw2MHi_JZlCvq4KxA-1
+X-Mimecast-MFC-AGG-ID: RM4GIlw2MHi_JZlCvq4KxA
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7c836fda9so291315ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:22:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728155; x=1733332955;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zos3ZSR+4jZZkxC82FlxJ002wxj7wv8nR00Fq/bmK6A=;
-        b=HT6UdrM/PFstLa6lBZS4hDrXyoevYnT2xOH9yXaIqvz/IzlMo7o0E0c34xYMLpIHU0
-         eR+cSu0PiuZKc5fNsXcDDzAa11rhQTT7xOCE6Vo4TdXdQLTfKlzvNKHU6FzTbv9T7Oa+
-         R6C5u217cXYS0tWYTst02xgtPDAsX04uPO9RV273XAIMDXSFAvAlMfkJtPqy1Gt4OXsk
-         ej4N4kqo11AG/rBTftSSMKUsqBJXEU1CK0FwoecUiiX/1ODzDaDx5ay+p+dYSmM1wGzQ
-         FLpva9yLCC1Nr1nMRwP57Qba04cbXDsUL8cxOeYa4h65mYBlFEpDxIHCXa1tcVwa41m0
-         H01A==
-X-Forwarded-Encrypted: i=1; AJvYcCWP1RGggga+LNURMKuYEiDrPFd69Xq97t5DhnUJqxPjzezAtkVZeCGPRLw5TULKhCo1VEkpKi5t1BDWpWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8VgoYSvGUjXy6Ms2s74UhlbuEnVGNY32TyyUEMRXii4swovrO
-	ZDiOCe9YOUXsALxrLnzq87XxeaQWKZAHFOOEp0lE9JGn9mnHAG6ptco9RvwWRrI=
-X-Gm-Gg: ASbGnct1hBpfIZy+zJDCQWCJxdAxdr6NxM6ef7FOPMxgLinydp+FkwSt1KJM9cmwNCQ
-	khXogfEhvI8RDRRuM9Jpv1Z1l+9O3gb2v8k0ebRht5V0uUrS7c12/FOLpH94EgbYDOwo/tH/bhU
-	aQ5e2YUF/d6HxGcqeLCA76RyXqO2CrpR4S3hIbG8AGPA7MCxorw3tp0BQpy6f+xb//JxeJfvUvA
-	RUtPoDlWvB/Ep9Pmsqvb84B7MWaqj3adqymSFVp9JT1bBwEyakty4CatQ==
-X-Google-Smtp-Source: AGHT+IFFWYbsBo99dq8o9ql/MRkTvADPckRvRFXRTZc5M9tvoTbk1c17SeAXZA4rqQw9msf2bDKKIA==
-X-Received: by 2002:a05:600c:1d9d:b0:434:9c1b:b36a with SMTP id 5b1f17b1804b1-434a9dbf226mr36685565e9.13.1732728153104;
-        Wed, 27 Nov 2024 09:22:33 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafe3cbsm16741588f8f.38.2024.11.27.09.22.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 09:22:32 -0800 (PST)
-Message-ID: <9bc52590-3f68-423e-8eb6-4a9a06426709@tuxon.dev>
-Date: Wed, 27 Nov 2024 19:22:31 +0200
+        d=1e100.net; s=20230601; t=1732728166; x=1733332966;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W9zax/CHaztlMaSgeA0GgU43P1mgjhVVVedx0D3zKOY=;
+        b=ib01qpg8QFVO+v3SpV8YqUsImOt2m8tl/iAG8rVL5llNm3ORqXpG5Jd0fBInvP6GpP
+         J+tV9SI/cxaL8tSYMObNPFPWwJ6s8sDAOZaOMkIbVNmk5i10qaC8NcDUvCiFiRfeeqhN
+         A4cnzsjDvRSemblJyw6bxZlJZszBfY6B3BBvAQ9DKPirYdDevZe6JxYe2cDTfra7jyTA
+         R3lohZn9QqpzqwsgWUHlrzWYkdsZvhmO+bxeShsp6Qp77WJgxpciif+uv/P8niUeR4t1
+         eGEc95/NkkjOXrw5hwja8uyA2pOoZEIQJ9TyTjyDOfaTNikibC2HVFNQ6pOAwKpK16/g
+         oYcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4nk6PKoKowKrXvPuADnzrLhT/Wi3oPSomEbk78ezAvI24YQJe3o4QDSkbMR2wjT7J9Sl/toYPzDNgP1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ljT4bd1cjMMjYykhqDWNPdbYLUlpbqMwIjAaIi7TBrBUcaNE
+	l6xLmq5w+J62SM56JmglXLen3/E1BDQ7QPDb3sr6TzC5FHDP46KI9r5U4b+URwqbOoDelTS/HZm
+	k9+GeWspaNmTubXeDNTG2Vh9t/UkjYJrqnCFwHg/whGqtfQyyCGXidgD+PbklFg==
+X-Gm-Gg: ASbGnctb+HBMXcVA8wa2Gy5DX6+F2bHPQ+XGKCBh7DNkrh9rkP2tuWUUuGaXDxK4W5I
+	ZXfBRjGbeSJdp1Hpab/9O389cojLHDnKQciAUECwCMc069I2HCwmbuybveL5L8iIyquAhuKcmO8
+	vcfuhMuKhl5m8l/jraWrRzM019WCBzDjDkg4Pyqikunn3GnNpi5eP2/p5AGUnKW5VS+ORuH/n/I
+	k6VzaRWwThPAtfvNEvQWS9aWmaS9RTJBjaKTwE5CXjk0LWuKxu4aA==
+X-Received: by 2002:a05:6e02:1785:b0:3a7:bd4c:b17e with SMTP id e9e14a558f8ab-3a7c544a689mr11641895ab.0.1732728166282;
+        Wed, 27 Nov 2024 09:22:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFgahiLZdXLot24IB4E3W1bQXNAY3TqwQBGglHBYwgd/Sn9n6D44soFsrc5jyVRxyY14SiM6Q==
+X-Received: by 2002:a05:6e02:1785:b0:3a7:bd4c:b17e with SMTP id e9e14a558f8ab-3a7c544a689mr11641795ab.0.1732728165925;
+        Wed, 27 Nov 2024 09:22:45 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a79acbdf6asm27282405ab.77.2024.11.27.09.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 09:22:45 -0800 (PST)
+Date: Wed, 27 Nov 2024 10:22:43 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Mitchell Augustin <mitchell.augustin@canonical.com>
+Cc: linux-pci@vger.kernel.org, kvm@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: drivers/pci: (and/or KVM): Slow PCI initialization during VM
+ boot with passthrough of large BAR Nvidia GPUs on DGX H100
+Message-ID: <20241127102243.57cddb78.alex.williamson@redhat.com>
+In-Reply-To: <CAHTA-uY3pyDLH9-hy1RjOqrRR+OU=Ko6hJ4xWmMTyoLwHhgTOQ@mail.gmail.com>
+References: <CAHTA-uYp07FgM6T1OZQKqAdSA5JrZo0ReNEyZgQZub4mDRrV5w@mail.gmail.com>
+	<20241126103427.42d21193.alex.williamson@redhat.com>
+	<CAHTA-ubXiDePmfgTdPbg144tHmRZR8=2cNshcL5tMkoMXdyn_Q@mail.gmail.com>
+	<20241126154145.638dba46.alex.williamson@redhat.com>
+	<CAHTA-uZp-bk5HeE7uhsR1frtj9dU+HrXxFZTAVeAwFhPen87wA@mail.gmail.com>
+	<20241126170214.5717003f.alex.williamson@redhat.com>
+	<CAHTA-uY3pyDLH9-hy1RjOqrRR+OU=Ko6hJ4xWmMTyoLwHhgTOQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com,
- broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org,
- perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
- <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi, Geert,
+On Tue, 26 Nov 2024 19:12:35 -0600
+Mitchell Augustin <mitchell.augustin@canonical.com> wrote:
 
-On 27.11.2024 16:32, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+> Thanks for the breakdown!
 > 
-> On Wed, Nov 13, 2024 at 2:35 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Add audio clock pins. These are used by audio IPs as input pins to feed
->> them with audio clocks.
->>
->> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - collected tags
+> > That alone calls __pci_read_base() three separate times, each time
+> > disabling and re-enabling decode on the bridge. [...] So we're
+> > really being bitten that we toggle decode-enable/memory enable
+> > around reading each BAR size  
 > 
-> Thanks for the update!
-> 
->> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
->>                                                       PIN_CFG_SOFT_PS)) },
->>         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS)) },
->>         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
->> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
->> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
-> 
-> I'll move these before WDTOVF_PERROUT# while applying, to preserve
-> sort order (by port/pin number).
+> That makes sense to me. Is this something that could theoretically be
+> done in a less redundant way, or is there some functional limitation
+> that would prevent that or make it inadvisable? (I'm still new to pci
+> subsystem debugging, so apologies if that's a bit vague.)
 
-OK, thank you!
+The only requirement is that decode should be disabled while sizing
+BARs, the fact that we repeat it around each BAR is, I think, just the
+way the code is structured.  It doesn't take into account that toggling
+the command register bit is not a trivial operation in a virtualized
+environment.  IMO we should push the command register manipulation up a
+layer so that we only toggle it once per device rather than once per
+BAR.  Thanks,
 
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-pinctrl for v6.14.
-> 
->>         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
->>         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
->>                                                      PIN_CFG_IO_VMC_SD0)) },
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Alex
+
 
