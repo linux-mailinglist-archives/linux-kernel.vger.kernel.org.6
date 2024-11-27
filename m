@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-423469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9FE9DA7FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:38:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1599DA800
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A750281DBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:38:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52C54B221A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3AA1FCCEE;
-	Wed, 27 Nov 2024 12:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4CA1FCCED;
+	Wed, 27 Nov 2024 12:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="czKHaq92"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pvlo/KHC"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA6118FDD0
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053EC1BC3C;
+	Wed, 27 Nov 2024 12:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732711130; cv=none; b=BRHl251vfdLVnWjc7/3heraS//FXJvX/tqAAyKhF99TcbtRWAm78aO9qnbNXNtXrvKi9qhRrVi9PbyUVF5rtEmcJ2fAno7FqzGUIbiu44oDA9ddXz/9VInbTfqYuImj7/OuCIdxGlbO2rmd8lxKlQB1iVd+0F70IXaxVUCaE6Mk=
+	t=1732711229; cv=none; b=N0IEyxQYWfOBqh8PF/up5JVqMgDLiJ4iwNshw9H2k2ErO9J3dpnY1bpL326zobaAwSaF6jjkyjMryZIZE0zE1zIavs9nTNGuDjcI2Z95w+ewqkcfNVgAGDIeAVoP/hAG4wj0Awht/vu06d5aTzbeotB7r5jK/y7gWVoeyfjTWBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732711130; c=relaxed/simple;
-	bh=1YYaQVcd/H798xCcU6/zkfoT/mGH/vxkiRfRp4k/Kpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwkWJ0iBnGbc3uMx6E8BYl51yUL7jwBQHJ0VYO0teqX6l46jUzNV7f7dlVl1SQY78htEHPm4oX6LxwdQhDypK1nKyKXpzn2R8NaZZ7hHD5K5YlvF/exWdWtLPXmujutLJP7YQmhSdykyKIsyV2Cc0AEyE/UVuhhCrRgFHiLn9SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=czKHaq92; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so27058325e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:38:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732711127; x=1733315927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DHjB0FS8XpctltbckXhibhTVw5p/t9yVHsmxkraO6NE=;
-        b=czKHaq92j6hF5wjIB3dT9vG8nv2j1iMhF+crtgiEilp4cmRT8Vz/hBsybI0BMfJ9G3
-         r1Cbzsk6BJTipBGPzX6oWkfo3ROPciIeFC0CoRTfuH2q9F1ugnaeH4NfZIxsD94f9OlG
-         C4dlkurArBpbdvZF0TXYbdHKFKS8jNydylpeELXydHD38gKASolIzq+Oyx0S8wwOvZfh
-         DL7CAOhA7YjI2IvNqJfe+a6FyvNdOs3f5vf+/Eem7YHfrMhZrS6vlQzSM6c/bgErYJ60
-         fssfodIdC2EKSN6h/wgd4k1w0CoLsHk/+drWpAKxZKUxioMfkRinyKuVJDPkENrU350p
-         ZvvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732711127; x=1733315927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DHjB0FS8XpctltbckXhibhTVw5p/t9yVHsmxkraO6NE=;
-        b=iTyqsTFkjL7UXercNL7gRCwHuPDpb+xx+zB1bER4p+RPZ/3Pod7O0wO7VGYD9U7P/d
-         fibo12E/g7HjUJ0NQlwbqnsVvGnbC4PHF2+pnltgHTVp/4dL1KxjufacMarPs6eheAk7
-         7hQtEcJpctvV7JsQsJfEUWx/gyHXUUggUY7IX0CyajKAkreoyi/MUhbuR+GvS6VVchgN
-         h/rNEZdcRO/JIdmGBcYfSdVhuuLM0nKZzmj5P56h967poCpwLOerXu14dHhwb6kziQ2j
-         ohMd9KH9La8eSBXtVuWCyAatlW0463WWH7Zn/Mb0Fxe03kQ3ozVsBvyAogn9L6Qkpx1I
-         zNDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+k3N+GZcrwJKHkmkBZDpfSmoBQSWq7hE0YdppsuJDTaz9mA/D3E6jD34liGhrvQBnEDwzZPwLA8YATi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRJZGDycMmeg47dNoOuAYlWmIRW3u0bhR+SE8bgdMCCcrZzSim
-	/LDFivHauk6qYyYaAKujYgH5KQTsylKP/bnHPLptpFJ62Zg683g3zZmsEx5FiNrO2yd0Cuv2AMs
-	W36TFhelOgRw7sYeWDL4RDSVD9T4SHeXp/Gl7
-X-Gm-Gg: ASbGncuXxPEZJxMBPya7Fb78ksNcNnRUzH6KMSIt5PTEtQCg65Cm3a8GwRVOS6IbrBG
-	oWnAHgexcHlzKTISpW8ARxB7XEi9GgZxJJ3HEOfvK5FfQM03TcHHD1p8oBbloMA==
-X-Google-Smtp-Source: AGHT+IGn2m8yJDcE/Dzz/61f9ciHRrx99d8i4GRYNDch74O8JfcQB+p+RQG8+bfMn1ARySVuPp8Pgo3KGaUZC/Ej4uk=
-X-Received: by 2002:a05:6000:1aca:b0:382:397f:3df5 with SMTP id
- ffacd0b85a97d-385c6edd4fcmr2071742f8f.38.1732711126964; Wed, 27 Nov 2024
- 04:38:46 -0800 (PST)
+	s=arc-20240116; t=1732711229; c=relaxed/simple;
+	bh=i0PC18Ag6j9i/4GRYJF1IIehRwmX1aMZgwBOZJqy7xA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OCZIIIjc/Fei/Qvr1FahN04VNlW2/kuOv0hLRmouJEK/biFNBcc98qqkKk0tly/ob1hU83cRvIByQ3lsRWWuD7EOvjZ+hm4gpkHLSUQwKhG244tTqT+j6MgavX2OWZ9qkCsFqdvGmsBPGXebWjCeDQBhmQbxhaui9vGzneB1G64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pvlo/KHC; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732711210; x=1733316010; i=markus.elfring@web.de;
+	bh=fpewDsh7yobJLaWUslG8bxbswQX0jqbSuiTLLXCbYJ0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=pvlo/KHCSbLP8cZbzImcZt0xMgqjXXMFztLLmb7enGMNdG5xogqvlgXv0ugpvSNT
+	 V3VfN3ewFyrZk2YkbUPk8SGwYZLRSrVNXcokA6Hl3VlFNHQf5/rTgm/FzplurL8BE
+	 3boBkyOMsO0dcVPrJ3AUt0jzaKB54DxmNS8yb1vM0h3Ql/QqjnYK3L/5ev2t0B6IT
+	 Cc9IrJij9GqOEqflBTqt8aGDNA3XQIpx4kyy74uqF2ReGKopknyio9Liz5Gtgpqml
+	 7VRX/YVMbXDkBcaIYge/1v30mOqyEQlVxylxuID5FSrh6T9n2UNGc1WMIkiYIIt0A
+	 hybLSef0oBNdGXootQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MECCd-1tNjyu4A4b-00HFGe; Wed, 27
+ Nov 2024 13:40:10 +0100
+Message-ID: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
+Date: Wed, 27 Nov 2024 13:40:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-6-7127bfcdd54e@google.com>
- <CAG48ez0V5B0ycPuP7eRA-xE88ks8cr+a1MFZC5emv_eAsybNAw@mail.gmail.com>
-In-Reply-To: <CAG48ez0V5B0ycPuP7eRA-xE88ks8cr+a1MFZC5emv_eAsybNAw@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 27 Nov 2024 13:38:35 +0100
-Message-ID: <CAH5fLghFezPeoPD57rXq-jy2wZBO0Bv6nSmU4OA6=hqeuGDVmA@mail.gmail.com>
-Subject: Re: [PATCH v9 6/8] mm: rust: add VmAreaNew for f_ops->mmap()
-To: Jann Horn <jannh@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
+To: Baichuan Qi <zghbqbc@gmail.com>, ath11k@lists.infradead.org,
+ linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+References: <a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de>
+ <20241127032821.57468-1-hbczqbc@163.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241127032821.57468-1-hbczqbc@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LVu/Ji+o6eubGrNMXXAgVq6F/AKt6uw/930Y/eLxbGkhzSwJz2h
+ JOI7w0JPyoOko/iZWnHSZRdPWHMadzEN4zpkaXwa1reapplPQy/mJZzRcekJr0bRmbZaFPf
+ msoHLzwRvSrs0acCW1XcxoZYhJyXhjOXSv0vQ9kU02Nc1K+IhfofvSOwSrdvzyX0yyxhZdf
+ ph65CwuL3yx60NXHhZESA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bDKwGBQ2AXM=;zVmvMiej+8akaBmIA8831siJ9+x
+ aaFLK+PPR7o/TiWKddMyOtjZKVDVTjDVmjI/VxRbZOeNQqo9QqXRRscKrZuFpiWlzzEIFbztW
+ XpfbrbI7IgIWX+61fTJ1MFXeFqp2zPnUTgzRASWM5c2u9QsNpNifHyln7POukBy/esu2d7ty/
+ 4ASvuSdd1/WRjndLyv/zjh6qY3aH4UV+2hr/r9o5y1CTrORFwSLZJPTlPAMSndd1+hlcr6AmB
+ H535oHz2PzLSQX8/NspKQLlmRB/E/bX1LK10/SQYfiGgeHc3xwWvZDIjOeS7WdrOi7U3YOB8K
+ 7F26tI3USkiDHEcMDOgZweSyzIMMiyZHU0kL9a7AbAzVI+0c5IOW/wRf6TCzQhqSTYMx9Y3P6
+ yv2cVSLT6PyLboJaSK3LqdZRDjf1T33W3Y35V5PEQPMCAoScZ3Z8e2c1KMKCfH6RX51kOk3d+
+ u/jmYpFf8lIfIvLE3SqQ9wz0w3nffT5FGde5k6W8Vu/ehigo3XBn4WNYyyfUlMQA9tvxJDpFJ
+ QCfOWf8o0Xe1HFuTbiha8oXKxsvPZFcaoHYdsV3N1D4T4+AmpRDzestAYL4FPs9ieCNQYr07X
+ lQblkvyouOAAfAPJNfk2NJ4J9rm4wYJ7ckNmOUJFG1U4n6cGzLqwg4ev0EvE1WzCEuJFF8gHB
+ XBWvpWgj7g8jz0zrDmJfZ7/hDvGvoCT0yNV/jUO1NVE9Y7zOBXseZKKPoHerLidAUVnuqBfFU
+ f88fexrf11GqaMRWoUwbyLps2JOWUs49UUFp2DwkR1FJJGNgnYB0DM7/xJi0wbTVgHwGuNEsJ
+ BwgiW9T3cEXktoAn51h0PXYlxl0O8NpR0RZ3ptXu37W/Lx2tkQbKr7VWDcr45pc2IDfuXPqoq
+ TAZpqTuBB3Wy2nnEgKCD8wkqK6aVrDSAi82lS6IofATol1ZqpDH4YGN812K5iRlf8SPfvdMzl
+ v9AcaWqy8VK+3PihbTpPFRs1YchxA0ZtiPd0DZltmTimqg50orU79NYq9Bs1i+bGwKIlGa/Nw
+ b+FiN/e6Lk1KTWpF+mcA71s0TH2Gis0IKScsXWwuTw4pQ58Qi3crnz60OGHTa9XcEwrEqYf7Z
+ 2AkOWDu54=
 
-On Tue, Nov 26, 2024 at 10:30=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
-:
+>> Is there a need to reconsider also such a return value?
 >
-> On Fri, Nov 22, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
- wrote:
-> > This type will be used when setting up a new vma in an f_ops->mmap()
-> > hook. Using a separate type from VmAreaRef allows us to have a separate
-> > set of operations that you are only able to use during the mmap() hook.
-> > For example, the VM_MIXEDMAP flag must not be changed after the initial
-> > setup that happens during the f_ops->mmap() hook.
-> >
-> > To avoid setting invalid flag values, the methods for clearing
-> > VM_MAYWRITE and similar involve a check of VM_WRITE, and return an erro=
-r
-> > if VM_WRITE is set. Trying to use `try_clear_maywrite` without checking
-> > the return value results in a compilation error because the `Result`
-> > type is marked #[must_use].
-> >
-> > For now, there's only a method for VM_MIXEDMAP and not VM_PFNMAP. When
-> > we add a VM_PFNMAP method, we will need some way to prevent you from
-> > setting both VM_MIXEDMAP and VM_PFNMAP on the same vma.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Thanks, this looks really neat!
->
-> Reviewed-by: Jann Horn <jannh@google.com>
->
-> > +    /// Set the `VM_IO` flag on this vma.
-> > +    ///
-> > +    /// This marks the vma as being a memory-mapped I/O region.
->
-> nit: VM_IO isn't really exclusively used for MMIO; the header comment
-> says "Memory mapped I/O or similar", while the comment in
-> remap_pfn_range_internal() says "VM_IO tells people not to look at
-> these pages (accesses can have side effects)". But I don't really have
-> a good definition of what VM_IO actually means; so I don't really have
-> a concrete suggestion for what do do here. So my comment isn't very
-> actionable, I guess it's fine to leave this as-is unless someone
-> actually has a good definition...
+> According to the current code (commit d5c65159f289) of
+> this function, this function should be terminated directly
+> after checking the null pointer, the return value may be
+> meaningless.
+The return value is checked at two source code places at least.
 
-I can use this comment?
+* ath11k_ce_recv_process_cb():
+  https://elixir.bootlin.com/linux/v6.12.1/source/drivers/net/wireless/ath=
+/ath11k/ce.c#L450
 
-This is used for memory mapped IO and similar. The flag tells other
-parts of the kernel to not look at the pages. For memory mapped IO
-this is useful as accesses to the pages could have side effects.
+* ath11k_ce_rx_post_buf():
+  https://elixir.bootlin.com/linux/v6.12.1/source/drivers/net/wireless/ath=
+/ath11k/ce.c#L893
 
-Alice
+
+May the detection of a null pointer for the data structure members
+=E2=80=9Cdest_ring=E2=80=9D or =E2=80=9Cstatus_ring=E2=80=9D really be int=
+erpreted as a successful execution
+of the function =E2=80=9Cath11k_ce_rx_post_pipe=E2=80=9D?
+
+Regards,
+Markus
 
