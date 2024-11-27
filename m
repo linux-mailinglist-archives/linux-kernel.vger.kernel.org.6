@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-423817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5739DAD1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:31:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D969DAD26
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:32:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F7B2B20D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7286164CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7207A201017;
-	Wed, 27 Nov 2024 18:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124282010F4;
+	Wed, 27 Nov 2024 18:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XuY/Tlns"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Var05lfL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6391BC3F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595201BC3F;
+	Wed, 27 Nov 2024 18:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732732307; cv=none; b=t/Ag7buFA/UY8tKNeo25O878bZWlVC6dsdaXH7LxdJYGJlUTkYSdIVQFrPurXQVPHpnus7SzYoeNQcxyJgMSLor97wzoJYaaprNwtci4FQAE84C2/yEP2krWZIKaYmfFU9XLAZyygNCEwhMMDuluKog7hpLNWA1L1RTosVkV+fk=
+	t=1732732354; cv=none; b=KAkuHGS/LbiGU0jrJ4cdSlUxRCGq8lu7edyDl5qNFfpVQYHtkGQeHob1OXIBGumoxISpgzxiWW/qb1SMyNbB2iJ2KK3ufMsJM3d+R57u7AnMEWvIf4TfxKGnFRKR7WiafaF/Fj/o6662ztz5JHkxWogEi/KijJ0DY7bNQhBUi8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732732307; c=relaxed/simple;
-	bh=H7ilfbEKwHZFW+OXhaTF8agmyZNIePxrdYkcdDoBhR4=;
+	s=arc-20240116; t=1732732354; c=relaxed/simple;
+	bh=/vBmTYaopwkO9U1MxuA3+UmHMhhDk6FRfuMg62uPqSw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dDXhwTjvhyViYL5ocAGR27vSR1MRXyvS4rEeo+NyKin9kZZRQqhEoJmn5AXgb3FwTBRKHogtJ6iegt9YEMaBHNQoScUmZo0OA8K6Ih1BQ5Jl+uAB+ireOlsSwMEhKNrTQ3NEFD7/kewSYLwXxpC5PqFtn8p+00MwV4iavczsABo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XuY/Tlns; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARHXaQu017978;
-	Wed, 27 Nov 2024 18:31:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=hNO8ANskpYar2KpQahF0FCws8jhxFg4QnmwfEWKVq/Q=; b=XuY/TlnsoGXk
-	sEOSHxLmBEAC4zRgTO44MaeEofRH56rqXZI4g2jlnM+vn4CPxqLm/2kji3GboEzn
-	c+bxxlI1tftGvM3Jf0ytt1tGdsj45KO6SJ8O6WZQTFEiHuF8cqnqWSKObLBVmHny
-	xCTdguNSa2Yrz7qLT141/fq22PvCmoOleeI06bZhupbaMP1NzAYB+ejv43vrqWBy
-	XkwSGQlkD+/Iq/LOZZTi9nJlI2pkyiS+FgS8SVpmVGE45LUCvUVZmWpyqc2IO2G9
-	5Ly/sxlfxuqGxK0b1yneXz9HI/UIRRSZSCFenbwWWRXSfS3HwBX/PGMsI5Md3Hqz
-	WF3Jd7gnEA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366yx0h80-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 18:31:33 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ARIVWPW008267;
-	Wed, 27 Nov 2024 18:31:32 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366yx0h7w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 18:31:32 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARGY7Ls025115;
-	Wed, 27 Nov 2024 18:31:31 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43672eg4vs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 18:31:31 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ARIVUAR2949886
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Nov 2024 18:31:30 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 52A665805C;
-	Wed, 27 Nov 2024 18:31:30 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AAE3958058;
-	Wed, 27 Nov 2024 18:31:23 +0000 (GMT)
-Received: from [9.43.13.174] (unknown [9.43.13.174])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 27 Nov 2024 18:31:23 +0000 (GMT)
-Message-ID: <fc570904-a9d0-4c86-b7c8-d47da6bf02dd@linux.ibm.com>
-Date: Thu, 28 Nov 2024 00:01:20 +0530
+	 In-Reply-To:Content-Type; b=PjOS3v4u3zcVdhl+UvixX2ALcKTMp9WLro4l4WNv5eRJcPogXDY2KV/RVWZhghQxu04Qlqu6NYP64KvdjHzrQ7jZdww9JTMFPfes2yQLxuLJWhSDsGHoC/bxr/HjKMnfOyDbq6JpobeXsrRxLerC5MOS7XDPT9+5NYOqZfhwl68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Var05lfL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CEF8C4CECC;
+	Wed, 27 Nov 2024 18:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732732353;
+	bh=/vBmTYaopwkO9U1MxuA3+UmHMhhDk6FRfuMg62uPqSw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Var05lfLBzfmO5ci4BJJQraPwABzaIm5Pll7Q8hAcEiUgmflOttzPgLrgdiQ1AzBJ
+	 HgO0RfvWMVf+h+5lT8NOAjGReTb48tB78JDCPBjz8dW+U9Lq0/c9/C5xIfPxf3jHbA
+	 QlOZMYfgVnlx96g+Wh10ME1NaMYvBhF0i0B30yQhhq8XOphhkjtQYCrZ6XTSLjb31w
+	 sD2OMWA1GSlq/FaMR62agAvqeEaIpi5eLBSwwfPGG93rpknJS5vwIIQ5ekabtqm9rM
+	 Vu1h2x1u/jHuLpydSeC6ELE+UMSREQaGI+KOOureMm856thof1JbpMuTb60Ui634No
+	 92wAtycmIfADg==
+Message-ID: <a51b99a3-bfa3-42d7-ba6e-fed5b2c25646@kernel.org>
+Date: Wed, 27 Nov 2024 19:32:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,114 +49,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Fix CPU bandwidth limit bypass during CPU
- hotplug
-To: Vishal Chourasia <vishalc@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, sshegde@linux.ibm.com,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20241126064812.809903-2-vishalc@linux.ibm.com>
+Subject: Re: [PATCH v6 4/5] arm64: dts: qcom: sc7280: Add support for camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241127100421.3447601-1-quic_vikramsa@quicinc.com>
+ <20241127100421.3447601-5-quic_vikramsa@quicinc.com>
 Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Reply-To: 20241126064812.809903-2-vishalc@linux.ibm.com
-In-Reply-To: <20241126064812.809903-2-vishalc@linux.ibm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241127100421.3447601-5-quic_vikramsa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pXak4yOxb2JVEiK8Pp7Cb3Fi0SenUvVQ
-X-Proofpoint-GUID: w5OmPJ1ZU9SDuFUuxH6_O3VnZdC4LD8S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1015 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411270145
 
-Hi Vishal,
-
-On 26/11/24 12:18, Vishal Chourasia wrote:
-> CPU controller limits are not properly enforced during CPU hotplug operations,
-> particularly during CPU offline. When a CPU goes offline, throttled
-> processes are unintentionally being unthrottled across all CPUs in the system,
-> allowing them to exceed their assigned quota limits.
+On 27/11/2024 11:04, Vikram Sharma wrote:
+> Add changes to support the camera subsystem on the SC7280.
 > 
-> Assigning 6.25% bandwidth limit to a cgroup in a 8 CPU system, where, workload
-> is running 8 threads for 20 seconds at 100% CPU utilization,
-> expected (user+sys) time = 10 seconds.
-> 
-> # cat /sys/fs/cgroup/test/cpu.max
-> 50000 100000
-> 
-> # ./ebizzy -t 8 -S 20        // non-hotplug case
-> real 20.00 s
-> user 10.81 s                 // intented behaviour
-> sys   0.00 s
-> 
-> # ./ebizzy -t 8 -S 20        // hotplug case
-> real 20.00 s
-> user 14.43 s                 // Workload is able to run for 14 secs
-> sys   0.00 s                 // when it should have only run for 10 secs
-> 
-> During CPU hotplug, scheduler domains are rebuilt and cpu_attach_domain
-> is called for every active CPU to update the root domain. That ends up
-> calling rq_offline_fair which un-throttles any throttled hierarchies.
-> 
-> Unthrottling should only occur for the CPU being hotplugged to allow its
-> throttled processes to become runnable and get migrated to other CPUs.
-> 
-> With current patch applied,
-> # ./ebizzy -t 8 -S 20        // hotplug case
-> real 21.00 s
-> user 10.16 s                 // intented behaviour
-> sys   0.00 s
-> 
-> Note: hotplug operation (online, offline) was performed in while(1) loop
-
-Tested with and without this patch for the ebizzy workload as mentioned.
-
-Without the patch:
-------------------
-19376 records/s
-real 20.00 s
-user 12.49 s
-sys   0.00 s
-
-With the patch:
----------------
-17708 records/s
-real 20.00 s
-user 10.07 s
-sys   0.00 s
-
-Hence,
-Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-
-Thanks,
-Madadi Vineeth Reddy
-
-> 
-> Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 > ---
->  kernel/sched/fair.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 170 +++++++++++++++++++++++++++
+>  1 file changed, 170 insertions(+)
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index fbdca89c677f..c436e2307e6f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6684,7 +6684,8 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
->  	list_for_each_entry_rcu(tg, &task_groups, list) {
->  		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 55db1c83ef55..9376755ac43e 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -4426,6 +4426,176 @@ cci1_i2c1: i2c-bus@1 {
+>  			};
+>  		};
 >  
-> -		if (!cfs_rq->runtime_enabled)
-> +		/* Don't unthrottle an active cfs_rq unnecessarily */
-> +		if (!cfs_rq->runtime_enabled || cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
->  			continue;
->  
->  		/*
+> +		camss: camss@acaf000 {
+> +			compatible = "qcom,sc7280-camss";
+> +
+> +			reg = <0x0 0x0acb3000 0x0 0x1000>,
 
+You received feedback to really start testing your code with tools.
+Nothing improved. Do you have troubles running tools or something in
+feedback was not clear? If first - ask. If second - respond to our
+comments, so we can clarify.
+
+Repeating the same mistake over and over and asking us to point you the
+same issue is waste of our time. Sorry, that's not acceptable to me.
+
+NAK.
+
+Best regards,
+Krzysztof
 
