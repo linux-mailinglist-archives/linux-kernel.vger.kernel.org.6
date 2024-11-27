@@ -1,142 +1,137 @@
-Return-Path: <linux-kernel+bounces-423971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF859DAEE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:23:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F9A9DAEE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F9EB2239E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4142820EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE2D2036E5;
-	Wed, 27 Nov 2024 21:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512F7203708;
+	Wed, 27 Nov 2024 21:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GABKFJ5b"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QGRZEF1Y"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BD0201260
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12612036E7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742557; cv=none; b=ETnCoxvyVbHuFI+Dr4WdnzHya+SjnY4RIl4MxY6ea7HD8T6m6kZs4/W/uC1cEyk0VamC64e7EYp+X8T2ESYZwJa8JgXEz5KTijfrisotdqrx0UIswFX+uOJ82qGVgNjyQruINWzhcyBDqBWHCcSsfO81yVc1q1JTUBR3gk0CTfQ=
+	t=1732742580; cv=none; b=q7WO6LYGJMFHFgNxEB/0e8K3oJpJPxKzTZtVD33BX+4Y0XgCJE1RVkPIIrbpIU256gRdb1viJMj89ToSuthhRE8jZ+RR/9ZowvgvRO6R7dNTAncQOa0dluN1XC8xfnC8k8j90anTU2cGzW13XPDEHmXymOHEFPk0rq/f2eH6RaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732742557; c=relaxed/simple;
-	bh=Agnjbz587P4oSCogC5lLzBSRTTaiXdovVtgVuafHtks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MoptgAFcM28fkLorLeID6DneLXAcbzN1wRZzO/U34bZZlBwm1mSZj1U+rO9aug7B+Pt7QnS6MGlZPzxpXuDvL212DTa+S73ioojyDEOOzg30/LGSDn+jKHtDY4/bvtUOWTgcJSlOVE7MJdBgHW9ZO7mL2JcGg49AJhWxrfh2m/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GABKFJ5b; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a9f2da82so871215e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:22:35 -0800 (PST)
+	s=arc-20240116; t=1732742580; c=relaxed/simple;
+	bh=mDS1XojcKgyKV+qhf+mZoci6ei6W3HBx9/RajVFqU1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DtAtfex+J2F9jRJtHJtTvCBBoXyTho9YrmKLn3OuBlkuo1g826CjabuaQa087KIbXA4f/eVpq8mSyGlovzVKwigGQLrUsRxyFz3AH0FXj2hqw4dMHp4D05K6WoCH6t3KjDPfEcbvdiK1JA2xJlwkU48Z+STfMkZiA0rN10T3k+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QGRZEF1Y; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de79c2be4so135687e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:22:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732742554; x=1733347354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOKP8M1nDZ9OKJh1q0CWeqQ/iPZ7vzW6ilNHfYhI9VI=;
-        b=GABKFJ5bLgGAJncH9pCR/ki39tRwlD+Djr5Q0do1kpnuIkLwMQBA2eMPcH+yUEM444
-         zidnk0DxL4EkWMmoySgKa/y13FgllJzI+WwOXy9hnXJOVS0Gsd750RIfirQ6T6QRlfTv
-         c+MEdvmAfIspZNoBSUb2cCYgYRdwR+WPqtC7t33RwPHHsJX77sH996h20DmVCBvky6E5
-         R+DRBdMlNVcVELZrw8pDfHbj7WTsT9nw0OvMvyL9KcWjNQ/Zl14+GEc5VE2eOCZ3Q7VT
-         3CXI00W5XQVjZE8wQgluZDs0Zp2mJOmbLbV086Ra59wms0963UvXYY781dfVPi+eAbkL
-         aLAQ==
+        d=linux-foundation.org; s=google; t=1732742577; x=1733347377; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Au3QzJwj/0l4623aVKpu/uhJ436TUkwvUw3oPsNH4kU=;
+        b=QGRZEF1YwLLeloe9qwsLuGiFwxjdY1Mvi87D4krYVbz7LL050UZ0OszBg+fEHKoVIz
+         ZKlCHVHQK/A0oM8Wj+MACPFKJVsS9cntG51lHtfwSxXYUsdEjXURw0aPEA+YnF3eFby2
+         tJB8WG360P1JyI38wr73Lulx9VJpUrlpoQYDM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732742554; x=1733347354;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732742577; x=1733347377;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dOKP8M1nDZ9OKJh1q0CWeqQ/iPZ7vzW6ilNHfYhI9VI=;
-        b=JkdlOAcEyE/CTGqx5b4iaXjwCejWVPbXZgECJcAou6nncIY5uemwrtfTJUkENAdh08
-         ZXtL5fUqHbC9hxpWm7nm/qhjnEiR+9TrxN/WV5qQkUdzMCy15krKoGWk5Apz8qIjm/uV
-         V+j157TKlmmlD5tTak7HTBImJL6CzQYYItnF5V1z24tQTk4ljIzBWQmtVz8DR0Eqrkdj
-         AvFhfJVKqpHjRJ+ELdDNRUX+TI9XqAqGDtX5sk1IcArcceDBoYlUlkm4lOFVgSyIKRc9
-         EmlNtizgJ3LTWIYAQg9q+Q93JtC9iOJ07yKUroBMD6/UjUsb0rNyFTzMY67GlqM51PnW
-         a8qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVd1piW8SXznwo4to4vVP4ECMrglbtEOs2BKFV8RvoVFtWiTsNnfEnTWEQsSVJmJVEkjI1zWtx5IbMSq7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUdlEO7WrdNL0wcahdO1cgGnFhNIw0Xb3oMwP1Qnm5qR/Ytvsc
-	0qbP6h8YZwEQgxsy2njca/drNixNIC76RBdwRGPGnfdwvo9UxbVe
-X-Gm-Gg: ASbGncs60x3jIBX+sBu2F8mReCYHue591RKf4JBOt+23S9Kov2eTKaOIY1MstuqG+/f
-	hEbj+5OdYd9FkBkwcC0FbQSNKZijgfR9n4MPsNlqpUMqmc5vKzEu7gT6VkrE6biQnTW9FZb2c37
-	9TDEv93vrx4SuL4wUeh/nTY5bkxJCOtDXM/AyMpL5LEgk2IQNFYgR+sMTTWAJ+Y5RsJ8eWpbagI
-	5oRIMquURJVzR7p46HjN3O4dLm0yYoOtOyjykoulanyJzD7Zrf7f0xk4/wdK4g=
-X-Google-Smtp-Source: AGHT+IFyOC85pA7G5rfMZI+Xvk/NzuEGMS/EOrXcNhS6i4CT1eXBjcLFu/uRA8eXycyLNh+xOE9yWw==
-X-Received: by 2002:a05:600c:4f0e:b0:434:9cf0:d23d with SMTP id 5b1f17b1804b1-434a9deca10mr37347595e9.25.1732742554027;
-        Wed, 27 Nov 2024 13:22:34 -0800 (PST)
-Received: from demon-pc.localdomain ([188.27.128.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa76b52bsm32148505e9.18.2024.11.27.13.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 13:22:33 -0800 (PST)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Cosmin Tanislav <demonsingur@gmail.com>
-Subject: [PATCH v2] regmap: detach regmap from dev on regmap_exit
-Date: Wed, 27 Nov 2024 23:22:31 +0200
-Message-ID: <20241127212233.330983-1-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        bh=Au3QzJwj/0l4623aVKpu/uhJ436TUkwvUw3oPsNH4kU=;
+        b=ODwL9tWteNrSJE9lM5vmOnahFlL1Nj7y/UneO+6Yrgl87vyrzZEzyDyoYpFlX2K+Fv
+         MlKkvljKuxRyB5b8hNN9jdH5xzKBFm/GxJji7Ro7X3hxflZkScN1CzqpeLzFKdFEpwOP
+         fp25Fax8gZO47DLiMqgiz6YHzOsuovD99F75iKZI3GSkYE7k9NvndHhjBIWP3aiIkC5+
+         o1m5Ihk0UtBdCIi5NN+wJOYrdLo1t2j7+1aakSDDYoGvUqE63HOptmz2+DA4jEteit9h
+         Zvaj8B/DuGHn/389so9mHvHqyc74tjHtyGE6EDBLIwU2I2te2f2Q7QQuIGb5Pvjby4TI
+         yAFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4CjqsOQOFq2jdLrIaNTIDpUTtyD7DwolcwFMgxaL3mwHbkCugdXjpMBQ9Tt8PRXwl07NgfsrL6Xbwcx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8M/eXmd8L8rTDtRijf1na6Jw9HwkDLLn1OrNI28sHs+4g+SDq
+	Tf8I64kbd3siSHzBFc+Va3O5Yfmhtu6uNZh87GY/V6k4V7Bt8BZWiF2lHvMH8nnikdvuOyY10m9
+	FfOM=
+X-Gm-Gg: ASbGncvAJqEmwXtNSVd4jGAAK1E0+LNKRxUFKSYc69v36mNpLvUsfR8kQW/VO+J9zpF
+	8PVf9gdqXVigRzpv4p1A17PdXO2QY2+ZOwLUGZw7lMPqb2ogi74Bha5bmT/EkrBlxrLbQJg4LQb
+	WBlDIWFierPsyE7wWIGxoj2AfrzX3EvMSm+t02IJ3zwEtWmPJ9trbTiwtxNBWYwhJ/LDkuGCyqI
+	uZkvoMOq/LFWg48pWEsxTGbytXFOFOnJiSdCcm4YT3skCNOBVrJ/wj8WppWLh9sT/VYBCYrQicd
+	RkSgSMpD5otnfn5l6KoG4IVc
+X-Google-Smtp-Source: AGHT+IFNTWK6ifFDZitychEQK6rlsmM7tO/ajbTQnE6zy9ZardH0xJy5bPh4XCxeKf44tjShYgd9HQ==
+X-Received: by 2002:a05:6512:3d19:b0:53d:de1b:f961 with SMTP id 2adb3069b0e04-53df00aa17dmr2999302e87.7.1732742576735;
+        Wed, 27 Nov 2024 13:22:56 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5b178dsm744061766b.170.2024.11.27.13.22.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 13:22:56 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e8522445dso13715766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:22:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXzmbT3Z4WfB2kdPmYGixmu8nSj1X5gi1l0C5Qic3EPs7k9cHdpaQ1X0w8oBJmjrWPPTh9ngwK3bnDEwsg=@vger.kernel.org
+X-Received: by 2002:a17:906:5a5f:b0:a9e:b471:8008 with SMTP id
+ a640c23a62f3a-aa580f6add9mr299720866b.34.1732742574156; Wed, 27 Nov 2024
+ 13:22:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
+In-Reply-To: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 27 Nov 2024 13:22:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
+Message-ID: <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
+Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com, 
+	linux-modules@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, masahiroy@kernel.org, mmaurer@google.com, 
+	arnd@arndb.de, deller@gmx.de, song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-At the end of __regmap_init(), if dev is not NULL, regmap_attach_dev()
-is called, which adds a devres reference to the regmap, to be able to
-retrieve a dev's regmap by name using dev_get_regmap().
+On Tue, 26 Nov 2024 at 17:10, Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> Highlights for this merge window:
 
-When calling regmap_exit, the opposite does not happen, and the
-reference is kept until the dev is detached.
+Lowlights:
 
-Add a regmap_detach_dev() function, export it and call it in
-regmap_exit(), to make sure that the devres reference is not kept.
+>   * Adds a new modules selftests: kallsyms which helps us tests find_symbol()
+>     and the limits of kallsyms on Linux today.
 
-V2:
- * switch to static function
+This is completely broken.
 
-Fixes: 72b39f6f2b5a ("regmap: Implement dev_get_regmap()")
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
----
- drivers/base/regmap/regmap.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Try doing "make allmodconfig" and then do "make" twice in a row.
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 53131a7ede0a6..e3e2afc2c83c6 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -598,6 +598,17 @@ int regmap_attach_dev(struct device *dev, struct regmap *map,
- }
- EXPORT_SYMBOL_GPL(regmap_attach_dev);
- 
-+static int dev_get_regmap_match(struct device *dev, void *res, void *data);
-+
-+static int regmap_detach_dev(struct device *dev, struct regmap *map)
-+{
-+	if (!dev)
-+		return 0;
-+
-+	return devres_release(dev, dev_get_regmap_release,
-+			      dev_get_regmap_match, (void *)map->name);
-+}
-+
- static enum regmap_endian regmap_get_reg_endian(const struct regmap_bus *bus,
- 					const struct regmap_config *config)
- {
-@@ -1445,6 +1456,7 @@ void regmap_exit(struct regmap *map)
- {
- 	struct regmap_async *async;
- 
-+	regmap_detach_dev(map->dev, map);
- 	regcache_exit(map);
- 
- 	regmap_debugfs_exit(map);
--- 
-2.47.0
+It re-generates the tests, so you see this:
 
+  GEN     lib/tests/module/test_kallsyms_a.c
+  GEN     lib/tests/module/test_kallsyms_b.c
+  GEN     lib/tests/module/test_kallsyms_c.c
+  GEN     lib/tests/module/test_kallsyms_d.c
+  CC [M]  lib/tests/module/test_kallsyms_a.o
+  CC [M]  lib/tests/module/test_kallsyms_b.o
+  CC [M]  lib/tests/module/test_kallsyms_c.o
+  CC [M]  lib/tests/module/test_kallsyms_d.o
+  LD [M]  lib/tests/module/test_kallsyms_a.ko
+  LD [M]  lib/tests/module/test_kallsyms_b.ko
+  LD [M]  lib/tests/module/test_kallsyms_c.ko
+  LD [M]  lib/tests/module/test_kallsyms_d.ko
+
+both times, and this has made the empty build slow down by about a
+factor of two.
+
+Which is a big deal, because the "empty build" is actually fairly
+important for me. It's the baseline build test performance, and with
+small pulls it actually dominates.
+
+So this isn't ok. Please fix asap, because otherwise I will just
+revert it - it really does affect my workflow that much.
+
+                  Linus
 
