@@ -1,283 +1,139 @@
-Return-Path: <linux-kernel+bounces-424035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7477E9DAFB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:05:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BD0164A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:05:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332A5204089;
-	Wed, 27 Nov 2024 23:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1u5SvjE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A9F9DAFB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:06:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58265191F75;
-	Wed, 27 Nov 2024 23:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9AE28105F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:06:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECBD2010F1;
+	Wed, 27 Nov 2024 23:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhvYs/kp"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547BB202F71;
+	Wed, 27 Nov 2024 23:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732748740; cv=none; b=tT8BjopfdAjIW3bevf//sKb3qdrS0YLGZmXMDytWTo1jPZAX1Z2547myrUaEsZ8cZQTC9whdXost6JBRKtmkzWstTO1Py+muGQ8Q6PQBk+DRFwUTn6bxgLMx67gCO3F/Ym7/0Iq0Q6R1JKF33bNAplEcXz8UB3SFZfivGfj2FrA=
+	t=1732748757; cv=none; b=scLcOVsWEyfrZ2V5Tp6gXMFFSqA+s6lXllSd/vgahM+dwWKnToAZWnBhUpeMasNN0k5z5X1W0PE90CZcqkdqY5hl7vNZ5ZdhY+25GQ4qAj9NddeaZjPiJVoSsC/BuKymRvr+lcMGVFaLxTq137nwO9WMQ9S9Knp98Us3U9FPRsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732748740; c=relaxed/simple;
-	bh=z8NgIlDrNAeGr2/ntkWL1FSUBzM8rEJw8L5UI+Kgu18=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n4bNuOf4cI7KU36co0zXs2gIc2OsgMIILxAl2V5l3AlPe6ruo86VuTXeeusQvqQvh689zmu4Pup5MrrMAdpAhPv7RLumBAr/LUv7sVV+Vn/+rqpQ3G5cPpjafJ9DTs2ipvl98HBK/a3knsDOELbcerzekCMQlY650ZT4mKrj3SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1u5SvjE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A46C4CECC;
-	Wed, 27 Nov 2024 23:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732748739;
-	bh=z8NgIlDrNAeGr2/ntkWL1FSUBzM8rEJw8L5UI+Kgu18=;
-	h=Date:From:To:Cc:Subject:From;
-	b=q1u5SvjEqifRUpiMq/iOr7DX4R5QHIJmkWVCtJJpN1cQEyHa4FOWlWVdzwamARJgP
-	 0qGr7FGZaR6HL2lCxOTyPmXXOFZWGPSy8uJXpekuF09oayfjctbUrbsKySBlQ4db3G
-	 nphK/t03yQQnrzdHG53x4IO/MCBlBqRGqEIXpv0Mpfv/kjs9PWOFHXAALbMr38nriV
-	 BEC/QJvp30anaFcmHvrNxztE3Y8UnZAlYw8EZURHqv2iGxaimHS8JuV120Akx2c7Ua
-	 kIvUNhlrA+DNkOYWCBDhjxjrLUvi0aTwAOtxXi+D/6jqxVX8OWXeH67ggDvhjvlk50
-	 DXvQMHBtzXOFA==
-Received: by mercury (Postfix, from userid 1000)
-	id 36EB610604CF; Thu, 28 Nov 2024 00:05:37 +0100 (CET)
-Date: Thu, 28 Nov 2024 00:05:37 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [GIT PULL] power-supply changes for 6.13
-Message-ID: <rxg72umwpo3ltl4inbidhmgqpzxmqluk4wr6irmhwuo7ukpmnc@liqfo2svz3in>
+	s=arc-20240116; t=1732748757; c=relaxed/simple;
+	bh=IBnHTnLx6R19BBp5cLxEEfXX31iIfTAv66qH7GUA7RI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=vBFWD6VGv6zcwmeU/xsze/I5vFW9TxspfgQsK5x99S+b62fbkAzVlop6JSf5enz23uNMf6jc3J4coALqbRexhIRFVRkPsZJcbJJPwJ//RIqehism3LZ//CX34os43fM5arzzXIHjh1FjNvnWAz7SEM3j0B6Bm326Ea56zvxGlGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhvYs/kp; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4af58808485so20908137.3;
+        Wed, 27 Nov 2024 15:05:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732748754; x=1733353554; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LD0NsE8cueBmHLv9nYIGrdVGIuuAR+96OlYlJUtBTGw=;
+        b=PhvYs/kpnIzxr1GWXJPZiegqcCrhlT47yRbEnh5PAYoS9L3VUgvx5CbF7XoVY33hU1
+         rNO+Q5N2NaYmiIQh2o9iR+Sia4HVOBiJgffAqIlFvWIhg2scMn5E9+3z5Uh2VRQ/YUL2
+         6ASV55rf7eD8QICFBS9jS3xRuOBFiFRU2b+q+KcLrz3+kPUx+05sWypUIODW6T3gNgwU
+         ueWRZ/V1FCmvkMjH9ejpFC1Oa+zBK4OYLS6gp7IjlILMhhqTokJlXnrQQRNhJcR4uluG
+         qhHRCvqCxvxiSHmalTDw3grNVCbpVtlswAHs7WFKTzJnU5I67YJ17Qk6ybdo//KEI9Q3
+         hXfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732748754; x=1733353554;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LD0NsE8cueBmHLv9nYIGrdVGIuuAR+96OlYlJUtBTGw=;
+        b=FNHU58QxkPdaIUQGr/zxPPHAFHgzkjYCofEmtN72w7soFVLfM4mMLVVHacJzbftbnN
+         XjrNJj+BVH7W0muH/6DzYcmEUErD9q47L9objr9fz+Ro/mATWv0TeRQu0k+ZxQVvyLwE
+         De1tdHlV/s+0tkS71SYq07DbaOQAJylVduVcCJHNhbcWLrFXgztn8XU19uSNzmS2eeel
+         z6sui5VXHWFY0+DIv6isaDsnQDPqP/mTxyfWffq9IKNJHWk+3Osu9uoGz1zAjPvTTaf7
+         ZnEMs/Sbr7OpW+LCTalDpDWg7iogr9N2b7Y0fa/4fwMbtk/eSLuavRy7wWL1pHNVvIjX
+         GkOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1+ErF3yavfAoIRt72CygzMyg0TLnyQ/EzghVsnkXnbX2Y4Gq0gVL8a5fiWwNVCXd29mo5UE2bmvuJ7cY=@vger.kernel.org, AJvYcCVTQpB7bbQIjRrQuIihNnM1q8Iif5kzoOKLk5OrHFIKEINaimRv12oRHPeKExzfNvYVSNDwKGUAFwU8moWH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4ww+w8IPBewsrIp1hBWC05xNqOSt6Z6Xh1if4o9IZ7IWUH+2e
+	ri2vjvELGbc+bWQeREa6/jwaH5Sqm8zifMEHhgfMUhFn42X/G34ggqyzWQ==
+X-Gm-Gg: ASbGncsAE82QrU02RaoQ8KbFxvPgOuj7efqlSAInWZYI0nctbIlhM+U72b+Bt1LUu0U
+	F+OZLxNA94/clmMO1h7WmY2w99KoWcCri1qDsF+2UtLy9BwUlIp1EWw1Kr9jWzJZKuqNYBq1AYk
+	L8Fpmnsd5kgcslQ3l2z7YDimD9QIKzlXgkDBH5YhbllumWOVCgvpp6n2MBZaFay+FJsYF3o83xz
+	Z1U5ZuUeVinLzq7Ec8x1DrZOagjBBKEQ0hFY/1y8z60vLAzI/CDfIMv9HTC/8DGfkzqTTFn6sJH
+	80TMFvX4d5voCGs5Bcv000vJPtio6uQ=
+X-Google-Smtp-Source: AGHT+IGrD4YCLnVT88uZaUoynT2sbqidMdrLivph9MkTZpL1bBRvFiL0NmeH+Xqp7pUW0CAJ+O2H2A==
+X-Received: by 2002:a05:6102:32ce:b0:4af:3fa2:2d0f with SMTP id ada2fe7eead31-4af44ae4d60mr7496262137.26.1732748754107;
+        Wed, 27 Nov 2024 15:05:54 -0800 (PST)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af590ac4b0sm11652137.3.2024.11.27.15.05.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 15:05:53 -0800 (PST)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: rostedt@goodmis.org
+Cc: david.hunter.linux@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org,
+	shuah@kernel.org,
+	David.hunter.linux@gmail.com
+Subject: Re: [PATCH v3 0/7] streamline_config.pl: fix: process configs set to "y"
+Date: Wed, 27 Nov 2024 18:05:47 -0500
+Message-ID: <20241127230547.2047716-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241018103032.09ff7dcf@gandalf.local.home>
+References: <20241018103032.09ff7dcf@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="taddozhm4ifcqzw7"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+From: David.hunter.linux@gmail.com
 
---taddozhm4ifcqzw7
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [GIT PULL] power-supply changes for 6.13
-MIME-Version: 1.0
+I think that there are 2 distinct reasons that a module should not be turned off when using the 'localmodconfig' command. 
 
-Hi Linus,
+1) the module is used directly
+2) the module is needed for another module that has been included in the kernel with a "y". 
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+I think we both agree on the first reason, but we may be having a disagreement/miscommunication for reason 2. 
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+> For example:
+>
+>  BCACHEFS_FS n -> m
+>
+> Why is that needed?
 
-are available in the Git repository at:
+With regards to your question, I see that 'CLOSURES' is set to 'y' in your original .config file. 'BCACHEFS_FS' selects 'CLOSURES'. I suspect that if 'BCACHEFS_FS' is set to 'n', then your config would have no way of keeping 'CLOSURES' as 'y'.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
-t tags/for-v6.13
+I understand that the following patch is not suitable for upstream; however, the following patch might help you to understand a little bit more about each config options like 'BCACHEFS_FS'. 
 
-for you to fetch changes up to b6d445f6724deda3fd87fa33358009d947a64c5d:
+https://lore.kernel.org/all/20241014141345.5680-5-david.hunter.linux@gmail.com/
 
-  power: reset: ep93xx: add AUXILIARY_BUS dependency (2024-11-12 00:07:00 +=
-0100)
+If you put in
 
-----------------------------------------------------------------
-power supply and reset changes for the 6.13 series
+dprintvar("BCACHEFS_FS);
 
- * power-supply core
-  - replace power_supply_register_no_ws() with power_supply_register() and a
-    new "no_wakeup_source" field in struct power_supply_config
-  - constify battery info tables in the core and all drivers
-  - switch back to remove callback for all platform drivers
-  - allow power_supply_put() to be called from atomic context
-  - mark attribute arrays read-only after init
+you would be able to see what selects 'BCACHEFS_FS' and what is selected by 'BCACHEFS_FS'. I suspect that if you were to use it for each of the config options that you have questions about, you would likely see that each config option set to "m" has a "y" option that it selects. The question then would be is the "y" option actually required for your particular machine.   
 
- * power-supply drivers
-  - new driver for TWL6030 and TWL6032
-  - rk817: improve battery capacity calibration
-  - misc. small cleanups and fixes
+This brings us to the root cause of the issue that we are having: there is no way to know if a config option set to 'y' is actually required. If there was a way to tell if 'CLOSURES' is needed, we can easily determine whether BCACHEFS_FS is actually necessary. 
 
-----------------------------------------------------------------
-Andreas Kemnade (2):
-      dt-bindings: power: supply: Add TI TWL603X charger
-      power: supply: initial support for TWL6030/32
+Without knowing whether the 'y' options are needed, we then have to make a determination whether it is better to have the (potentially necessary) 'y' options with the extra (not directly used) 'm' options or to drop those 'y' options along with those 'm' options. 
 
-Andrew Kreimer (1):
-      power: supply: Fix a typo
+My argument is that the 'y' options are important, even if we cannot determine whether they are used or not. The problem I had that made me aware of the issues with localmodconfig was that my new computer would consistently do an emergency shutdown whenever I would try to compile the kernel. I eventually realized that the fan was not being recognized, so my workaround was to put the BIOS in control of the fan (instead of the kernel). 
 
-Arnd Bergmann (1):
-      power: reset: ep93xx: add AUXILIARY_BUS dependency
+It was not until I realized that I had a few hardware devices that were not being recognized that I was able to pinpoint the root cause of the problem. For clarity, some of my hardware devices that were nonfunctional were USBs, the microphone, Bluetooth (and as mentioned earlier, the fan). 
 
-Ba Jing (1):
-      reset: keystone-reset: remove unused macros
+I am curious to know if there are any hardware devices that are not recognized on your computer after you use localmodconfig. One way to check is to use use 'ls' on the psuedofilesystem or to use any of the commands (like lspci) that recognize hardware.
 
-Barnab=E1s Cz=E9m=E1n (1):
-      power: supply: bq27xxx: Fix registers of bq27426
+I do not know whether any of your hardware requires the 'CLOSURES' config, but because someone's hardware MAY need it, my reasoning is that streamline_config.pl should include 'BCACHEFS_FS' if it is the only thing that selects another config opiton set to 'y'. 
 
-Bart Van Assche (1):
-      power: supply: core: Remove might_sleep() from power_supply_put()
+On my computer, when all of these configs set to 'm' are added (because of reason 2), all of my hardware works (including the Bluetooth, microphone, and USBs. 
 
-ChiYuan Huang (2):
-      power: supply: rt9471: Fix wrong WDT function regfield declaration
-      power: supply: rt9471: Use IC status regfield to report real charger =
-status
-
-Chris Morgan (4):
-      power: supply: rk817: stop updating info in suspend
-      power: supply: rk817: Update battery capacity calibration
-      power: supply: axp20x_usb_power: Use scaled iio_read_channel
-      power: supply: axp20x_battery: Use scaled iio_read_channel
-
-Chris Packham (2):
-      dt-bindings: reset: syscon-reboot: Add reg property
-      power: reset: syscon-reboot: Accept reg property
-
-Ed Robbins (1):
-      power: supply: pmu_battery: Set power supply type to BATTERY
-
-Elliot Berman (1):
-      dt-bindings: power: reset: Convert mode-.* properties to array
-
-Rob Herring (Arm) (1):
-      dt-bindings: power/supply: qcom,pmi8998-charger: Drop incorrect "#int=
-errupt-cells" from example
-
-Shen Lichuan (1):
-      power: supply: Correct multiple typos in comments
-
-Stanislav Jakubek (2):
-      dt-bindings: power: supply: sc27xx-fg: document deprecated bat-detect=
--gpio
-      power: supply: sc27xx: Fix battery detect GPIO probe
-
-Thomas Wei=DFschuh (19):
-      power: supply: core: constify power_supply_battery_info::resist_table
-      power: supply: ab8500: constify resistance table
-      power: supply: samsung-sdi-battery: constify resistance table
-      power: supply: sc27xx: use const reference to ocv table
-      power: supply: core: constify power_supply_battery_info::ocv_table
-      power: supply: ab8500: constify ocv table
-      power: supply: samsung-sdi-battery: constify ocv table
-      power: supply: core: add wakeup source inhibit by power_supply_config
-      ACPI: battery: Register power supply with power_supply_register()
-      power: supply: acer_a500_battery: register power supply with devm_pow=
-er_supply_register()
-      power: supply: bq27xxx_battery: register power supply with power_supp=
-ly_register()
-      power: supply: cros_usbpd-charger: register power supply with devm_po=
-wer_supply_register()
-      power: supply: lenovo_yoga_c630_battery: register power supplies with=
- power_supply_register()
-      power: supply: max77976_charger: register power supply with devm_powe=
-r_supply_register()
-      power: supply: core: remove {,devm_}power_supply_register_no_ws()
-      power: supply: core: use device mutex wrappers
-      power: supply: core: unexport power_supply_property_is_writeable()
-      power: supply: core: mark attribute arrays as ro_after_init
-      power: supply: hwmon: move interface to private header
-
-Uwe Kleine-K=F6nig (1):
-      power: Switch back to struct platform_driver::remove()
-
-anish kumar (1):
-      power: supply: generic-adc-battery: change my gmail
-
- .../bindings/power/reset/nvmem-reboot-mode.yaml    |   4 +
- .../devicetree/bindings/power/reset/qcom,pon.yaml  |   7 +
- .../bindings/power/reset/reboot-mode.yaml          |   4 +-
- .../bindings/power/reset/syscon-reboot-mode.yaml   |   4 +
- .../bindings/power/reset/syscon-reboot.yaml        |  11 +-
- .../power/supply/qcom,pmi8998-charger.yaml         |   1 -
- .../bindings/power/supply/sc27xx-fg.yaml           |   5 +
- .../bindings/power/supply/ti,twl6030-charger.yaml  |  48 ++
- drivers/acpi/battery.c                             |   3 +-
- drivers/power/reset/Kconfig                        |   1 +
- drivers/power/reset/at91-poweroff.c                |   2 +-
- drivers/power/reset/at91-reset.c                   |   2 +-
- drivers/power/reset/at91-sama5d2_shdwc.c           |   2 +-
- drivers/power/reset/keystone-reset.c               |   2 -
- drivers/power/reset/ltc2952-poweroff.c             |   2 +-
- drivers/power/reset/qnap-poweroff.c                |   2 +-
- drivers/power/reset/syscon-reboot.c                |   3 +-
- drivers/power/supply/88pm860x_battery.c            |   4 +-
- drivers/power/supply/Kconfig                       |  10 +
- drivers/power/supply/Makefile                      |   1 +
- drivers/power/supply/ab8500_bmdata.c               |   4 +-
- drivers/power/supply/ab8500_btemp.c                |   4 +-
- drivers/power/supply/ab8500_chargalg.c             |   2 +-
- drivers/power/supply/ab8500_charger.c              |   2 +-
- drivers/power/supply/ab8500_fg.c                   |   2 +-
- drivers/power/supply/acer_a500_battery.c           |   9 +-
- drivers/power/supply/act8945a_charger.c            |   2 +-
- drivers/power/supply/adp5061.c                     |   2 +-
- drivers/power/supply/axp20x_battery.c              |  33 +-
- drivers/power/supply/axp20x_usb_power.c            |  33 +-
- drivers/power/supply/bq27xxx_battery.c             |  40 +-
- drivers/power/supply/charger-manager.c             |   4 +-
- drivers/power/supply/cpcap-battery.c               |   2 +-
- drivers/power/supply/cpcap-charger.c               |   2 +-
- drivers/power/supply/cros_usbpd-charger.c          |   4 +-
- drivers/power/supply/da9030_battery.c              |   6 +-
- drivers/power/supply/da9052-battery.c              |   2 +-
- drivers/power/supply/da9150-charger.c              |   2 +-
- drivers/power/supply/generic-adc-battery.c         |   4 +-
- drivers/power/supply/ipaq_micro_battery.c          |   2 +-
- drivers/power/supply/isp1704_charger.c             |   2 +-
- drivers/power/supply/lenovo_yoga_c630_battery.c    |  14 +-
- drivers/power/supply/lp8788-charger.c              |   2 +-
- drivers/power/supply/max14577_charger.c            |   2 +-
- drivers/power/supply/max77650-charger.c            |   2 +-
- drivers/power/supply/max77693_charger.c            |   2 +-
- drivers/power/supply/max77976_charger.c            |   3 +-
- drivers/power/supply/max8925_power.c               |   4 +-
- drivers/power/supply/pcf50633-charger.c            |   2 +-
- drivers/power/supply/pmu_battery.c                 |   1 +
- drivers/power/supply/power_supply.h                |  22 +-
- drivers/power/supply/power_supply_core.c           |  87 +--
- drivers/power/supply/power_supply_hwmon.c          |   1 +
- drivers/power/supply/power_supply_sysfs.c          |  12 +-
- drivers/power/supply/qcom_battmgr.c                |   2 +-
- drivers/power/supply/qcom_pmi8998_charger.c        |   2 +-
- drivers/power/supply/qcom_smbb.c                   |   8 +-
- drivers/power/supply/rk817_charger.c               | 112 ++--
- drivers/power/supply/rt9471.c                      |  52 +-
- drivers/power/supply/samsung-sdi-battery.c         |  10 +-
- drivers/power/supply/sc2731_charger.c              |   2 +-
- drivers/power/supply/sc27xx_fuel_gauge.c           |  12 +-
- drivers/power/supply/tps65090-charger.c            |   2 +-
- drivers/power/supply/tps65217_charger.c            |   2 +-
- drivers/power/supply/twl4030_charger.c             |   2 +-
- drivers/power/supply/twl6030_charger.c             | 581 +++++++++++++++++=
-++++
- drivers/power/supply/wm831x_power.c                |   2 +-
- drivers/power/supply/wm8350_power.c                |   2 +-
- drivers/power/supply/wm97xx_battery.c              |   2 +-
- include/linux/power_supply.h                       |  35 +-
- 70 files changed, 971 insertions(+), 292 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/power/supply/ti,twl60=
-30-charger.yaml
- create mode 100644 drivers/power/supply/twl6030_charger.c
-
---taddozhm4ifcqzw7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdHpb0ACgkQ2O7X88g7
-+pq5CQ/0C0mnat9JL7/BQC4I1hp3VIfdBgzTBR2+75uOzFZPmT4KVA5vLv23GiyG
-aYzIj0eFNg61tZCUHqwdYPG2wSPiVREEeJE9og1Wp5neHfsGczfF4zJKN5aE3KED
-3SIyJqdsufm+i50hnDSv5Q6E0E1VBJ0Lsu2BzVKCIWNY7iQEk5wRxZV/KUZiLftx
-MK+tQkrPlDd+bcClQySSO/wzJ+J2MNP+p7vILLWLfCG2uel0vVG766Buty6N04J/
-kIpAMtWEubOW98fH6lFTHWwpdqJmMAi71iTXPCIXlHpZ6GHxM/k6wx/3raejwaFJ
-o7UVCtPoyHu93aYYEaxf10pTPzi2PicZ8uTB6ykexdY0rDK8nnFX8NbSSwuuYgRO
-VicTX6HQ6IHGc1rWfhOtj+nzg2iyQyWoY4HSKepihsYWyVeyUAofj4st8LLIiyGF
-s9CF1/AJx1eOGOUUaUKF3LYQHXIESKUiTkCVxy3Or4L9GNRd4UkV2P1DuUb2ztkN
-ZcGjR14VnzqXXiCdTJmwsadFob90QPPEHOH5Fo83DE/c6dF3CHeFF1JrSRJUS9o2
-0CqHDVnZA3/HTyabFyh3GUcPfyX3BoPxKLwI3Jt6sy+577lBzAPpg1L+rnhlbWWZ
-hmcgzKCUfQQmuMM6l36cLVyNjmklbFRlCbT/PCl5wOwPvoktnA==
-=oaBD
------END PGP SIGNATURE-----
-
---taddozhm4ifcqzw7--
+If, on the other hand, you still feel like it would be better to not include these particular config options, I would ask that you allow a command line option like '-s' or '--safe' that users could use to make the config file with the added modules. 
 
