@@ -1,146 +1,107 @@
-Return-Path: <linux-kernel+bounces-423623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE38D9DAA98
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:16:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBA19DAA99
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:16:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB4E167A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:16:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 141C6B2251B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FD01FF7C9;
-	Wed, 27 Nov 2024 15:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D1F200105;
+	Wed, 27 Nov 2024 15:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geo9siy/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTx6qf/0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA753C488;
-	Wed, 27 Nov 2024 15:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CD61FF7D8;
+	Wed, 27 Nov 2024 15:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732720593; cv=none; b=imr60zZh1YMGbzSBsbrrw/XoaaUSB/GV7yAy2h8QnPI63TI7nPVoSGwngelpFrpYLkqh5YVbbvCNMN+KC3EIw+eauPv6KAghkO5zn5GJ1lPh7yssGPcCic+4UQz4LO8NBLomE8NJEiUZvcsQqYs7y8t8kFu6q+rkfMv7L5ukcjo=
+	t=1732720598; cv=none; b=HzRxPNfPRNrL+D0YvuWOoe7J5SVZ1ZuAlyBUOsMdak5swUHE3kFjJcoWJguAGR76YNRGnahCp+3SGdfGBCTx5RjK2HmkO3qXy+8WJC//LzEneFIMWbvbM9tH9mqnMnoMPBCbjDtImOjVdC4rnFzkBneBV/YXIDsjW4r5QjydIlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732720593; c=relaxed/simple;
-	bh=73uSU84WC159XIEa9x/EDBuom42dzuqTcTszbM/yk0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ku6GVR4Y+D0whthvH/C23iLqas7++uQcd39iHH9osg1cKeLt2bSfW7TkwLisGgPz8Mk4vq6FBjfYXzydXibroJtkXGokbV55f3KJlpLXEGO4RqrzmevDix9IHI/UYWwKCZQ+vw9pFoQqwGeu/wEvmmXenvVdKk9CETs/YYUbJcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geo9siy/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B01C4CED2;
-	Wed, 27 Nov 2024 15:16:32 +0000 (UTC)
+	s=arc-20240116; t=1732720598; c=relaxed/simple;
+	bh=8jnJkKM3PWqGFdZGSMROt5V4Vl8ICBi2XhYnl1VjbiM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X9pd7FHNGYlBghYPwwWc4bKL3aoF/B/vJ8iPBJ60IMvY3ZR4I35V+pYWaoKGwC8prpLTUZoFRZf3EvZ8pXoBxMtjaXNID1jTEBwGbCI9RsK1YL5jVNIRBzRNotUUTqFVfAy5F6fz5aYObxB+Juxel0BfcLHOiXWlI5x1Gu8LZeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTx6qf/0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B9E2C4CECC;
+	Wed, 27 Nov 2024 15:16:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732720592;
-	bh=73uSU84WC159XIEa9x/EDBuom42dzuqTcTszbM/yk0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=geo9siy/nYm1+nZ7+jxEfER0rrXEjzKbIryvpQmVcu/R9vrmoZ5I4CvT/NFNbajdm
-	 8Mq8gKeYC8ptnH79jDB6rM4pcJS0aSSHg+IYdu6fl4+4XA3tGCYxYThGGUbvKqvvph
-	 +gYT2sHHKwOLDuIc38gwd8Zd0sf86KLO8FQYBxCCCA43kDko9zgvs8xfqysxL27g8n
-	 7ysDVIg6GGCg6C3oWyxW7AwI96XAr7d1AMDFpix2LPJYxIHxg58pjPrie8/H93fG8Z
-	 EF1iiC+u7jv+PrECbwAdWe6VVxoV2SJWJ0JFIdoJH0N/3ll99sa4E6xTkd+79LNUIe
-	 7/d2z3hBqE5cQ==
-Date: Wed, 27 Nov 2024 09:16:30 -0600
-From: Rob Herring <robh@kernel.org>
-To: Andrej Picej <andrej.picej@norik.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: drm/bridge: ti-sn65dsi83: Add optional
- property ti,lvds-vcom
-Message-ID: <20241127151630.GA3515396-robh@kernel.org>
-References: <20241127103031.1007893-1-andrej.picej@norik.com>
- <20241127103031.1007893-2-andrej.picej@norik.com>
+	s=k20201202; t=1732720598;
+	bh=8jnJkKM3PWqGFdZGSMROt5V4Vl8ICBi2XhYnl1VjbiM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hTx6qf/0jaw7idnchniEopk++7ZRKCwqCQwXRZH/FWn0hbimneT7dJNv+yPmEJL3n
+	 PeXzIZzlJlkztMJaP0GSju3OlT8Fo5JZq6vY2wT1BPTKkpD1RkUBQFLrn4FwiaBKuL
+	 jgkOOd0nhJ8hKCF2y97F55WiS1zf0uuKXY0BbAFsyJXtzEpOxBJomPZDdXBL7yF4uJ
+	 QIYDIfXg22DbgRUWvBpgktauIrQHs8vZ9NJRT3dOWp606PI4chHrOa16PaKB8wPOPE
+	 Y5EhPKHgsOHvEzOeLOqJoiAYThL1M1f1Mz2V8/v9CSTRHcGnyT4R7boWSus4m+eKZ4
+	 rmJROb/5CCaOw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tGJmN-00GIa4-QV;
+	Wed, 27 Nov 2024 15:16:35 +0000
+Date: Wed, 27 Nov 2024 15:16:35 +0000
+Message-ID: <86a5dkvh9o.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Will Deacon <will@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Bump KVM_VCPU_MAX_FEATURES
+In-Reply-To: <20241127145644.421352-1-steven.price@arm.com>
+References: <20241127145644.421352-1-steven.price@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127103031.1007893-2-andrej.picej@norik.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, catalin.marinas@arm.com, oliver.upton@linux.dev, will@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Nov 27, 2024 at 11:30:29AM +0100, Andrej Picej wrote:
-> From: Janine Hagemann <j.hagemann@phytec.de>
+On Wed, 27 Nov 2024 14:56:31 +0000,
+Steven Price <steven.price@arm.com> wrote:
 > 
-> Add an optional property to change LVDS output voltage. This depends on
-> the connected display specifications. With this property we directly set
-> the LVDS_VCOM (0x19) register.
-> Better register property mapping would be quite tricky. Please check
-> bridge's datasheet for details on how register values set the LVDS
-> data lines and LVDS clock output voltage.
+> When the KVM_ARM_VCPU_HAS_EL2 define was added, the value of
+> KVM_VCPU_MAX_FEATURES wasn't incremented, so that feature has never been
+> in the KVM_VCPU_VALID_FEATURES bit mask. This means the HAS_EL2 feature
+> will never be exposed to user space even if the system supports it.
 > 
-> Signed-off-by: Janine Hagemann <j.hagemann@phytec.de>
-> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> Fixes: 89b0e7de3451 ("KVM: arm64: nv: Introduce nested virtualization VCPU feature")
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  .../bindings/display/bridge/ti,sn65dsi83.yaml      | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-> index 48a97bb3e2e0..5b2c0c281824 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-> @@ -58,6 +58,12 @@ properties:
->                    - const: 2
->                    - const: 3
->                    - const: 4
-> +              ti,lvds-vcom:
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                description: LVDS output voltage configuration. This defines
-> +                  LVDS_VCOM (0x19) register value. Check bridge's datasheet for
-> +                  details on how register values set the LVDS data lines and
-> +                  LVDS clock output voltage.
+> I might be missing something, and it's possible that
+> KVM_ARM_VCPU_HAS_EL2 is deliberately not exposed yet.
 
-Constraints? 0 - 2^32 are all valid values?
+This is on purpose. I'm not planning to enable EL2 support until it is
+ready.
 
->  
->        port@1:
->          $ref: /schemas/graph.yaml#/$defs/port-base
-> @@ -78,6 +84,12 @@ properties:
->                    - const: 2
->                    - const: 3
->                    - const: 4
-> +              ti,lvds-vcom:
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                description: LVDS output voltage configuration. This defines
-> +                  LVDS_VCOM (0x19) register value. Check bridge's datasheet for
-> +                  details on how register values set the LVDS data lines and
-> +                  LVDS clock output voltage.
+> However I'm
+> working on v6 of the host CCA series and as part of that want to add a
+> new feature but and bump KVM_VCPU_MAX_FEATURES up to 9.
 
-Never good to just have 2 copies of the same thing. Move the whole port 
-schema to a $defs entry and add the property there. Then just $ref it:
+Well, I guess that defines some ordering then! :D
 
-  port@0:
-    description: Video port for MIPI DSI Channel-A input
-    $ref: '#/$defs/dsi-port'
+	M.
 
-
-$defs:
-  dsi-port:
-    $ref: /schemas/graph.yaml#/$defs/port-base
-    unevaluatedProperties: false
-    description: Video port for MIPI DSI inputs
-
-    properties:
-      endpoint:
-        $ref: /schemas/media/video-interfaces.yaml#
-        unevaluatedProperties: false
-
-        properties:
-          data-lanes:
-            description: array of physical DSI data lane indexes.
-            minItems: 1
-            items:
-              - const: 1
-              - const: 2
-              - const: 3
-              - const: 4
-
+-- 
+Without deviation from the norm, progress is not possible.
 
