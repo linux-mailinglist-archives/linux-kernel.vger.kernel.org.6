@@ -1,155 +1,336 @@
-Return-Path: <linux-kernel+bounces-423749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5889DAC2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2169DAC32
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51D19164958
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:03:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E103164771
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90905201007;
-	Wed, 27 Nov 2024 17:03:37 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD0201010;
+	Wed, 27 Nov 2024 17:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ckZybp51"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE8B3FB8B;
-	Wed, 27 Nov 2024 17:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732727017; cv=none; b=LO+29DP5l1UwLzhvErPpGUKRt3WcWG7nVKzWHdMbh5Soik50xOtRuI4lLu6tIuPiNn41GFdQyQmrScDVgzOKfxsUtG1OqzEe2THxgVflBTPdtEcU9yNvpjuir5qfHwRRdIXkDI5HvrFDj/pLGnR2StVyyX91cgHY4K5C8xUmG5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732727017; c=relaxed/simple;
-	bh=/MBQrgM9w6T2ANg5OY8gZZ/OJNjy1Rx3PVVK42tUjLY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FvoG1yDT6L0tKNLbchWdoJPe/Voa1ZYSM7Jlq+izppfoSdiKZGdDJc01zLUjAH6d8GzrfabUgsglmMtoZbvawnblMKZUGGjkLAqwiBwy4JisnNguGzE9dKmXghPUsJmQaQGS63gTtnvZ2935PuuFoNrpnwdkEoJxqXeyHMWTPQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xz5Nc559Dz6D971;
-	Thu, 28 Nov 2024 01:02:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 16DDD1400D8;
-	Thu, 28 Nov 2024 01:03:30 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 27 Nov
- 2024 18:03:28 +0100
-Date: Wed, 27 Nov 2024 17:03:27 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <nifan.cxl@gmail.com>, <ming4.li@intel.com>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<lukas@wunner.de>
-Subject: Re: [PATCH v3 05/15] PCI/AER: Add CXL PCIe port correctable error
- support in AER service driver
-Message-ID: <20241127170327.00000374@huawei.com>
-In-Reply-To: <20241113215429.3177981-6-terry.bowman@amd.com>
-References: <20241113215429.3177981-1-terry.bowman@amd.com>
-	<20241113215429.3177981-6-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B306A3FB8B;
+	Wed, 27 Nov 2024 17:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732727084; cv=pass; b=DF9uCSVoD9alS+1GlTZAPFdp7g2frnwATP4S6YFIef0iPosDHrqyJYJTo9+kQeyGebO48E04jiRwHnqLWtIJ+KBpwAah2cKu5a5ly09a/t+kAY0k5bhKNO8CIUzWFFE8b7Mg4PPkIVFG/kK5fvKwpEq69ZI9r4ADYbXYu3cQWow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732727084; c=relaxed/simple;
+	bh=qF/d3SSzrTJeW7/DdfqQkC+nMwhPlbF0wIQHyBooUS0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pHk4PNN+0XDjRs86bto+YBG07ByLc4qSjccuE4GTmQPEjdQRjRlwQBqxzm5qIyY9PBzJQzqgYfvrw6sgh6mCeoPTblEDxwfb4J/9VOZw5ib+bSHNKNsHKwsQCHjOoLK4+XdkDJVb5Oeu/MGCiJHtH9cHKSSUPozpShbpQ4UDrRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ckZybp51; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732727037; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jIF6WcFsa7I0SVmYvBQiGg86iB7nlnV0i/9U4SrBCqUb/xp1zBp7n9E+Upzh8fGkNTRYoihRMBMHVFZWZptABwMwTR30EZhHOvlmQzHgVA5X+eunqI5J8FHTn+h80VrHPffgZh9Jp7QTpgoYDvb5E7acHQPG/1S0jT1m6RbM5Is=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732727037; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ThqB6Cw1Jz5IsPrydDGEs7scPjQXlxcw0xZC/VMUBio=; 
+	b=M47wD+ldu5Rd5vv+QW4ajan+iTOSVOSrCAVqDqFHznuG5htUYvxiCDQH7To6abMlGDtqS7bThh2qxr6BjmONdBVPVWJDiUJ6VmCX+bJ4wtOUy7ubN78hzkXxwEchTmEpuETIZ2NgftXkvXo5EVXHFrGVwtRub8Nvwfg3wBhzeQI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732727037;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ThqB6Cw1Jz5IsPrydDGEs7scPjQXlxcw0xZC/VMUBio=;
+	b=ckZybp51h0i6ipcllrZLB5l8jXfgjNJzJGy+S71P1LMZkCIlaqu+H+DbvnSG+aGC
+	gtGEe0wy/JIURPNLz0/DNvdvMY7XSnSSklJgKrvSG/aZoH53/fsF54ghsKd6YM6l/9E
+	CL+vcyk/PXb/k1+En7vvaeeZ7o1uxZU/zwOdbK1U=
+Received: by mx.zohomail.com with SMTPS id 1732727035170332.7762190998259;
+	Wed, 27 Nov 2024 09:03:55 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 15/35] WIP: rust: drm/kms: Add OpaquePlane and
+ OpaquePlaneState
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-16-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 14:03:39 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <46A2C748-0EC5-481D-8473-09182C1D44DF@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-16-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Wed, 13 Nov 2024 15:54:19 -0600
-Terry Bowman <terry.bowman@amd.com> wrote:
+Hi Lyude,
 
-> The AER service driver supports handling downstream port protocol errors in
-> restricted CXL host (RCH) mode also known as CXL1.1. It needs the same
-> functionality for CXL PCIe ports operating in virtual hierarchy (VH)
-> mode.[1]
-> 
-> CXL and PCIe protocol error handling have different requirements that
-> necessitate a separate handling path. The AER service driver may try to
-> recover PCIe uncorrectable non-fatal errors (UCE). The same recovery is not
-> suitable for CXL PCIe port devices because of potential for system memory
-> corruption. Instead, CXL protocol error handling must use a kernel panic
-> in the case of a fatal or non-fatal UCE. The AER driver's PCIe error
-> handling does not panic the kernel in response to a UCE.
-> 
-> Introduce a separate path for CXL protocol error handling in the AER
-> service driver. This will allow CXL protocol errors to use CXL specific
-> handling instead of PCIe handling. Add the CXL specific changes without
-> affecting or adding functionality in the PCIe handling.
-> 
-> Make this update alongside the existing downstream port RCH error handling
-> logic, extending support to CXL PCIe ports in VH mode.
-> 
-> is_internal_error() is currently limited by CONFIG_PCIEAER_CXL kernel
-> config. Update is_internal_error()'s function declaration such that it is
-> always available regardless if CONFIG_PCIEAER_CXL kernel config is enabled
-> or disabled.
-> 
-> The uncorrectable error (UCE) handling will be added in a future patch.
-> 
-> [1] CXL 3.1 Spec, 12.2.2 CXL Root Ports, Downstream Switch Ports, and
-> Upstream Switch Ports
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-I took another look and so a question inline.
-
-Jonathan
-
->  static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
->  {
->  	struct aer_err_info *info = (struct aer_err_info *)data;
-> @@ -1033,14 +1032,23 @@ static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
->  
->  static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  {
-> -	/*
-> -	 * Internal errors of an RCEC indicate an AER error in an
-> -	 * RCH's downstream port. Check and handle them in the CXL.mem
-> -	 * device driver.
-> -	 */
-> -	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC &&
-> -	    is_internal_error(info))
-> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC)
->  		pcie_walk_rcec(dev, cxl_rch_handle_error_iter, info);
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Same thing as OpaqueCrtc and OpaqueCrtcState, but for plane states =
+now.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+>=20
+> TODO:
+> * Finish adding upcast functions.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/plane.rs | 143 +++++++++++++++++++++++++++++++++++
+> 1 file changed, 143 insertions(+)
+>=20
+> diff --git a/rust/kernel/drm/kms/plane.rs =
+b/rust/kernel/drm/kms/plane.rs
+> index 3040c4546b121..3ace487316d46 100644
+> --- a/rust/kernel/drm/kms/plane.rs
+> +++ b/rust/kernel/drm/kms/plane.rs
+> @@ -217,6 +217,43 @@ pub fn new<'a, 'b: 'a, const FMT_COUNT: usize, =
+const MOD_COUNT: usize>(
+>         // SAFETY: We don't move anything
+>         Ok(unsafe { &*Box::into_raw(Pin::into_inner_unchecked(this)) =
+})
+>     }
 > +
-> +	if (info->severity == AER_CORRECTABLE) {
-> +		struct pci_driver *pdrv = dev->driver;
-> +		int aer = dev->aer_cap;
+> +    /// Attempt to convert an [`OpaquePlane`] into a fully qualified =
+[`Plane`].
+> +    ///
+> +    /// This checks if the given [`OpaquePlane`] uses the same =
+[`DriverPlane`] implementation, and
+> +    /// returns the [`OpaquePlane`] as a [`Plane`] object if so.
+> +    pub fn try_from_opaque<'a, D>(opaque: &'a OpaquePlane<D>) -> =
+Option<&'a Self>
+> +    where
+> +        D: KmsDriver,
+> +        T: DriverPlane<Driver =3D D>
+> +    {
+> +        // SAFETY: The vtables for a `Plane` are initialized by the =
+time that we expose `Plane`
+> +        // objects to users, and their values are invariant =
+throughout the lifetime of the device.
+> +        let funcs =3D unsafe { (*opaque.plane.get()).funcs };
 > +
-> +		if (aer)
-
-How do we get here with no aer?
-
-On a PCIe device AER is optional, but not I think on a CXL device
-(I can't find the text but there is a change log entry that says
-to clarify that it is required for CXL devices)
-
-Maybe the optionality is why the PCIe code has this check.
-
-Anyhow, I don't really mind keeping it, was just curious.
-
-> +			pci_write_config_dword(dev, aer + PCI_ERR_COR_STATUS,
-> +					       info->status);
+> +        // SAFETY: We just guaranteed that the opaque plane shares =
+our vtable pointers, which means
+> +        // it must belong to our `DriverPlane` implementation. As =
+well, all `Plane<DriverPlane>`
+> +        // objects start with an identical data layout to =
+`OpaquePlane`
+> +        ptr::eq(funcs, &T::OPS.funcs).then(|| unsafe { =
+mem::transmute(opaque) })
+> +    }
 > +
-> +		if (pdrv && pdrv->cxl_err_handler &&
-> +		    pdrv->cxl_err_handler->cor_error_detected)
-> +			pdrv->cxl_err_handler->cor_error_detected(dev);
+> +    /// Convert a [`OpaquePlane`] into its fully qualified [`Plane`].
+> +    ///
+> +    /// This is an infallible version of [`Self::try_from_opaque`]. =
+This function is mainly useful
+> +    /// for drivers where only a single [`DriverPlane`] =
+implementation exists.
+> +    ///
+> +    /// # Panics
+> +    ///
+> +    /// This function will panic if the underlying [`Plane`] which =
+contains the provided
+> +    /// [`OpaquePlane`] does not belong to the same [`DriverPlane`] =
+implementation.
+> +    pub fn from_opaque<'a, D>(opaque: &'a OpaquePlane<D>) -> &'a Self
+> +    where
+> +        D: KmsDriver,
+> +        T: DriverPlane<Driver =3D D>
+> +    {
+> +        Self::try_from_opaque(opaque)
+> +            .expect("Passed OpaquePlane does not share this =
+DriverPlane implementation")
+> +    }
+
+I guess the same question from the previous patch applies. If a driver =
+has only a single implementor for
+`DriverPlane`, why should it care about OpaquePlane?
+
+> }
+>=20
+> /// A trait implemented by any type that acts as a [`struct =
+drm_plane`] interface.
+> @@ -275,6 +312,63 @@ unsafe impl<T: DriverPlane> Send for Plane<T> {}
+> // SAFETY: Our interface is thread-safe.
+> unsafe impl<T: DriverPlane> Sync for Plane<T> {}
+>=20
+> +/// A [`struct drm_plane`] without a known [`DriverPlane`] =
+implementation.
+> +///
+> +/// This is mainly for situations where our bindings can't infer the =
+[`DriverPlane`] implementation
+> +/// for a [`struct drm_plane`] automatically. It is identical to =
+[`Plane`], except that it does not
+> +/// provide access to the driver's private data.
+> +///
+> +/// It may be upcasted to a full [`Plane`] using =
+[`Plane::from_opaque`] or
+> +/// [`Plane::try_from_opaque`].
+> +///
+> +/// # Invariants
+> +///
+> +/// - `plane` is initialized for as long as this object is made =
+available to users.
+> +/// - The data layout of this structure is equivalent to [`struct =
+drm_plane`].
+> +///
+> +/// [`struct drm_plane`]: srctree/include/drm/drm_plane.h
+> +#[repr(transparent)]
+> +pub struct OpaquePlane<T: KmsDriver> {
+> +    plane: Opaque<bindings::drm_plane>,
+> +    _p: PhantomData<T>,
+> +}
 > +
-> +		pcie_clear_device_status(dev);
-> +	}
->  }
+> +impl<T: KmsDriver> Sealed for OpaquePlane<T> {}
+> +
+> +impl<T: KmsDriver> AsRawPlane for OpaquePlane<T> {
+> +    type State =3D OpaquePlaneState<T>;
+> +
+> +    fn as_raw(&self) -> *mut bindings::drm_plane {
+> +        self.plane.get()
+> +    }
+> +
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_plane) -> &'a Self =
+{
+> +        // SAFETY: Our data layout is identical to =
+`bindings::drm_plane`
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> +impl<T: KmsDriver> ModeObject for OpaquePlane<T> {
+> +    type Driver =3D T;
+> +
+> +    fn drm_dev(&self) -> &Device<Self::Driver> {
+> +        // SAFETY: DRM planes exist for as long as the device does, =
+so this pointer is always valid
+> +        unsafe { Device::borrow((*self.as_raw()).dev) }
+> +    }
+> +
+> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
+> +        // SAFETY: We don't expose DRM planes to users before `base` =
+is initialized
+> +        unsafe { &mut ((*self.as_raw()).base) }
+> +    }
+> +}
+> +
+> +// SAFETY: Planes do not have a refcount
+> +unsafe impl<T: KmsDriver> StaticModeObject for OpaquePlane<T> {}
+> +
+> +// SAFETY: Our plane interfaces are guaranteed to be thread-safe
+> +unsafe impl<T: KmsDriver> Send for OpaquePlane<T> {}
+> +unsafe impl<T: KmsDriver> Sync for OpaquePlane<T> {}
+> +
+> /// A trait implemented by any type which can produce a reference to a =
+[`struct drm_plane_state`].
+> ///
+> /// This is implemented internally by DRM.
+> @@ -419,6 +513,55 @@ fn deref_mut(&mut self) -> &mut Self::Target {
+>     }
+> }
+>=20
+> +/// A [`struct drm_plane_state`] without a known [`DriverPlaneState`] =
+implementation.
+> +///
+> +/// This is mainly for situations where our bindings can't infer the =
+[`DriverPlaneState`]
+> +/// implementation for a [`struct drm_plane_state`] automatically. It =
+is identical to [`Plane`],
+> +/// except that it does not provide access to the driver's private =
+data.
+> +///
+> +/// TODO: Add upcast functions
+> +///
+> +/// # Invariants
+> +///
+> +/// - The DRM C API and our interface guarantees that only the user =
+has mutable access to `state`,
+> +///   up until [`drm_atomic_helper_commit_hw_done`] is called. =
+Therefore, `plane` follows rust's
+> +///   data aliasing rules and does not need to be behind an =
+[`Opaque`] type.
+> +/// - `state` is initialized for as long as this object is exposed to =
+users.
+> +/// - The data layout of this structure is identical to [`struct =
+drm_plane_state`].
+> +///
+> +/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
+> +/// [`drm_atomic_helper_commit_hw_done`]: =
+srctree/include/drm/drm_atomic_helper.h
+> +#[repr(transparent)]
+> +pub struct OpaquePlaneState<T: KmsDriver> {
+> +    state: bindings::drm_plane_state,
+> +    _p: PhantomData<T>,
+> +}
+> +
+> +impl<T: KmsDriver> AsRawPlaneState for OpaquePlaneState<T> {
+> +    type Plane =3D OpaquePlane<T>;
+> +}
+> +
+> +impl<T: KmsDriver> private::AsRawPlaneState for OpaquePlaneState<T> {
+> +    fn as_raw(&self) -> &bindings::drm_plane_state {
+> +        &self.state
+> +    }
+> +
+> +    unsafe fn as_raw_mut(&mut self) -> &mut bindings::drm_plane_state =
+{
+> +        &mut self.state
+> +    }
+> +}
+> +
+> +impl<T: KmsDriver> FromRawPlaneState for OpaquePlaneState<T> {
+> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_plane_state) -> =
+&'a Self {
+> +        // SAFETY: Our data layout is identical to `ptr`
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +
+> +    unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) =
+-> &'a mut Self {
+> +        // SAFETY: Our data layout is identical to `ptr`
+> +        unsafe { &mut *ptr.cast() }
+> +    }
+> +}
+> unsafe extern "C" fn plane_destroy_callback<T: DriverPlane>(
+>     plane: *mut bindings::drm_plane
+> ) {
+> --=20
+> 2.46.1
+>=20
+
+Apart for the clarification I asked above, this patch looks good.
+
+=E2=80=94 Daniel
 
 
