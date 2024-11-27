@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-423027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C859DA18C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:45:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E3B9DA18E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08456B244D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:45:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC312824C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8652382D66;
-	Wed, 27 Nov 2024 04:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F20313C677;
+	Wed, 27 Nov 2024 04:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRNANRtd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0Mzcn3q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80C3320E;
-	Wed, 27 Nov 2024 04:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF0C320E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732682741; cv=none; b=ayliHncRATRmJGN9mpMxiFOBPh8zQ3sgZSD5+HKMS5IEgL+A0slg2dsKbIhGhnyBuzw1K4HVz9OLxkp4LZ/RZlgWczKTnsoY4jCmEfixdyRfLUO1ZcK86LMHEJdS8MRRh6UZ7iViiRdwepcg8wSa3rXN9JHcmAj2fzzzV0xSlJo=
+	t=1732682866; cv=none; b=bUWr6vxS7NH4MnqsV8fXWpPGeutOTYrWz+nwFOZEtjpfh1ncMaMm2xjdtRPqoZYIa81QaCya96tQR2dEhHyo4R/j6kD5WFDzBPdwciQ0G556JN8FQAbWZCr4KtemVXwDbAqOEPmNLeuR83GaLWEJQim5Yf2R/8K0Mt4YnvRLtaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732682741; c=relaxed/simple;
-	bh=jwWouk2doTDSnMPVqlNYcds+EY7AkvBTULO2Iq6KJeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fz30R7BabbKANfxpzmr+6YeVZWHdPzV0rCey6SEVnzC5KDiouxCR5vVEOsQjAHL3LV9xzPuGdVTlbvRF8sx0LhK6jorepeeFIM6fsYOIv/5w0DemRDA1tB+ECKegyDoRWrW1QD3Prx10oAe2TZIlrtctFw30lOyuKA9Jl5ISs1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRNANRtd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67EBCC4CECC;
-	Wed, 27 Nov 2024 04:45:40 +0000 (UTC)
+	s=arc-20240116; t=1732682866; c=relaxed/simple;
+	bh=lE6lG6LbPgOzdb286dF+kUKjWnXPkNkNTcDjRX7A1tA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iI+U4i7hsPgkdy319O+lEMXLyVXiyFx/c5Avkd2H5HKGVNHppKwXh75Ln/6LBYjdOZ0oIU6MiimsiW2usk+kMTbG4pLi5peBRQYCL/qUSxSKzJ2vTUPmboqZ23+HcIydPjjMNUgmIVJfq4nsjJZihs0hligoEEsJjpTL+i5J0Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0Mzcn3q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9571C4CECC;
+	Wed, 27 Nov 2024 04:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732682741;
-	bh=jwWouk2doTDSnMPVqlNYcds+EY7AkvBTULO2Iq6KJeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lRNANRtdQlYm6Z4c34jUJUtU6S5BKJVLPJFE2ZSv1X8IlqoeaDp2dlA2spQx2X/9/
-	 jwqxfV155bpTVixnIwP+frf13Pfwf49ZaS8p5QqIhOeHk/0qMS72zOq3DGhhySackH
-	 b5VoXFb8DiOWm/EJwkMkG3X5UAplVIIbMYNFHhpVzjTh7mm7k9LeA1+1koY98HyCGd
-	 LRm+iFXFvBhNlhjhYJiiY46Di0SuLfV0Faz29hpANM0oJlwxwil/NEMaZ8jSsWspaC
-	 nHMmS8kHg+AG8Hs0aDUoqvcJJAzKm4TJJwR1ag8MBKUvV7ymBb6uFfh/3wQ6j6EkJQ
-	 j0OsYqy9K8hbw==
-Date: Tue, 26 Nov 2024 22:45:38 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kuldeep Singh <quic_kuldsing@quicinc.com>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
-	Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>, Andy Gross <andy.gross@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] firmware: qcom: scm: Handle various probe ordering
- for qcom_scm_assign_mem()
-Message-ID: <oq7on5krzvq2lsla4irfi4cr2lwnzejpowglzmovon7ye4dgsm@yqibu2el6j3l>
-References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
- <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-3-7056127007a7@linaro.org>
- <CAMRc=Me=Eu6+SpdguKurWgQDrpuo4qTCwWO6GfzS=YuA9vUzOw@mail.gmail.com>
- <a5343627-a325-465e-b744-747d4c1b2cae@linaro.org>
+	s=k20201202; t=1732682866;
+	bh=lE6lG6LbPgOzdb286dF+kUKjWnXPkNkNTcDjRX7A1tA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=I0Mzcn3qh89AmdzEWWHcigW+S2cwxbK9NbAsjPABv7SnTqYuQFDOdx9iIReRcPB1p
+	 bpUBGMHAQ8jI9Aa+i2Ur/lGqXXf5oA/jUGcLX3H2TmnUOdX9BGVGXQZ/ocgx03Eo0f
+	 4+tH1ZLQRAd+vPjxrj17H2cOLJ+W6BczeFNGnxY3lJ+tXHSWUoc0rViw0kqPEeEJ08
+	 cLhhFA1DjozeU7ssirkI0Vel5iD/TAX8hJAwplRDw9I54RQFUHGZiikAaInFWXbWuz
+	 zCl5yZBt44Tvxo6gWmAhLreCN6xTmP6G5NjTWQVYkiPsuTGcQh6oO9hxSV+P1tJmMf
+	 fHbnrN4vYMRqA==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v2 0/3] objtool: noinstr validation for static branches/calls
+Date: Tue, 26 Nov 2024 20:47:39 -0800
+Message-ID: <cover.1732682344.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5343627-a325-465e-b744-747d4c1b2cae@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 03:19:00PM +0100, Krzysztof Kozlowski wrote:
-> On 20/11/2024 15:07, Bartosz Golaszewski wrote:
-> >> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> >> index 5d91b8e22844608f35432f1ba9c08d477d4ff762..93212c8f20ad65ecc44804b00f4b93e3eaaf8d95 100644
-> >> --- a/drivers/firmware/qcom/qcom_scm.c
-> >> +++ b/drivers/firmware/qcom/qcom_scm.c
-> >> @@ -1075,6 +1075,9 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
-> >>         int ret, i, b;
-> >>         u64 srcvm_bits = *srcvm;
-> >>
-> >> +       if (!qcom_scm_is_available())
-> >> +               return -EPROBE_DEFER;
-> >> +
-> > 
-> > Should we be returning -EPROBE_DEFER from functions that are not
-> > necessarily limited to being used in probe()? For instance ath10k uses
-> > it in a workqueue job. I think this is why this driver is probed in
-> > subsys_initcall() rather than module_initcall().
-> Uh, good point. To my understanding, every resource like function can do
-> it, e.g. clk_get. Whether drivers call it in probe() or somewhere else -
-> e.g. some startup call like there is plenty in the ASoC or DMA
-> device_alloc_chan_resources() - is responsibility of the
-> driver/consumer, not the provider of that resource.
-> 
-> With such explanation returning EPROBE_DEFER is ok, just like returning
-> anything else (e.g. EINVAL).
-> 
-> Now about this function: it is not exactly "get a resource" one, but
-> still the caller might want to call it again later, which is implied by
-> EPROBE_DEFER. Maybe this should be EAGAIN instead? Just like
-> power-supply is doing in power_supply_get_property().
-> 
+v2:
+- Add some fixes reported by kbuild.
 
-The return value here will wander up the stack and I'm not convinced
-that all callers will handle an EAGAIN in a favourable way.
 
-The way we've dealt with this before is to say that if a client will
-call qcom_scm_*() they must call qcom_scm_is_available() during their
-initialization and handle the EPROBE_DEFER accordingly.
+FWIW, this reports the following static keys:
 
-Regards,
-Bjorn
+  - sched_clock_running
+  - __sched_clock_stable
+  - mds_idle_clear
+  - vmx_l1d_flush_cond
+  - stack_erasing_bypass
 
-> Best regards,
-> Krzysztof
+and the following static calls:
+
+  - pv_sched_clock
+  - x86_idle
+
+(not necessarily an exhaustive list, just the ones I've seen)
+
+
+Josh Poimboeuf (3):
+  jump_label: Add annotations for validating noinstr usage
+  static_call: Add read-only-after-init static calls
+  objtool: Add noinstr validation for static branches/calls
+
+ include/linux/jump_label.h              | 30 ++++++--
+ include/linux/objtool.h                 |  7 ++
+ include/linux/static_call.h             | 19 +++++
+ tools/objtool/Documentation/objtool.txt | 34 +++++++++
+ tools/objtool/check.c                   | 92 ++++++++++++++++++++++---
+ tools/objtool/include/objtool/check.h   |  1 +
+ tools/objtool/include/objtool/elf.h     |  1 +
+ tools/objtool/include/objtool/special.h |  1 +
+ tools/objtool/special.c                 | 18 ++++-
+ 9 files changed, 187 insertions(+), 16 deletions(-)
+
+-- 
+2.47.0
+
 
