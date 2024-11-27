@@ -1,116 +1,194 @@
-Return-Path: <linux-kernel+bounces-423416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5961B9DA71E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:49:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579A99DA721
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:49:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E459228142D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:49:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB53165E40
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3021F9AA4;
-	Wed, 27 Nov 2024 11:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6D71F9EB5;
+	Wed, 27 Nov 2024 11:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fIdBCo/b"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIiDiutT"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480F1917F1;
-	Wed, 27 Nov 2024 11:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6531917F1;
+	Wed, 27 Nov 2024 11:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732708166; cv=none; b=oPsjf4xfndRMSXRDZDqL5rZ4sot8dD9zRM6EeoaEjOUDYZjTpiFOF9fnOCSzRJQC6xkpb6TtllvNGdl1ESK46turQa3sMMKegL7vsdB0IKgaxSjD02mjVlpZIinvWFW1FslCXUEeXRwWQW4vxknlRUsq2Uwnh+OYAgpZaxBuBrc=
+	t=1732708174; cv=none; b=ZF2wxtKS3rSHQ72qgpotuCWQ8kKsQCRIrKGsqIqxKbcbtc4XamK+8gKnSg0FTPkRn1CkUI8w4+9Fk3TgsWMCRcHdAuTrMjlOq9XOrJahc5ru4fR6cBbAYNDMO76RiZh+FuM3bAw0YvSgTgi7y13yZN9ZTrRucANUTebc9bhsWb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732708166; c=relaxed/simple;
-	bh=brJ4OvMdMNpU0GKx4LwueP2L1Igr9rWjZME02H1ZC0Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GjdOPLtjMfAggwvD87vs0yuLNaSf0UtYDivSGC+0d/qjV0V5j32z5ilcmq1ubGRbdpsj2jLsasoY3rmnPEkNnyQOZ5raucTE65NabxmOBFlbkZ1z/0oXroYhJLkwRhWkoVNSZrOMr3WVFnflmPsbekcyAnzSwhUo8JjY9fN70JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fIdBCo/b; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR7Rrgg031606;
-	Wed, 27 Nov 2024 03:49:04 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	pfpt0220; bh=7w9PYxRoKxSZecYgNzzy4l3FTSJfjUEz56IOMh1h/uY=; b=fId
-	BCo/b6/7H2gQnakoH5VJ86QJYXyeyM58MLRsan4a0VTlb71WmXHVV7iKcuaF01mU
-	OtHK4iyyqmpPfP31GCDgiZioayycITY2BgTzhcJsTIVCRzmx1RruuDKfb6wr6dZX
-	+aS2RkaTeBxja7m1FPaXm7b0rRJ1MC346ZDpKVHoTL63rIPosvQ/er7tll6ENHde
-	WcZnBdztW5IGekCT6GVe8Bt6SzzsPPAe7+IckyQDZYULNT16mRfHb0YwTdK2Z3CZ
-	YyMLjaoKyecguNcv2YqbLPzDCbf6UhXtB2cfrZhWmgZMqw86X4i1GWNRo4t++Cjh
-	2A8g+k/y3ZiegIn1aWg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 435y238ge4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 03:49:03 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 27 Nov 2024 03:49:02 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 27 Nov 2024 03:49:02 -0800
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id CEE223F7062;
-	Wed, 27 Nov 2024 03:48:58 -0800 (PST)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <andrew+netdev@lunn.ch>, <edumazet@google.com>,
-        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>
-Subject: [net PATCH] octeontx2-af: Fix installation of PF multicast rules
-Date: Wed, 27 Nov 2024 17:18:57 +0530
-Message-ID: <20241127114857.11279-1-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1732708174; c=relaxed/simple;
+	bh=8UByTi9O0eUrokO20BPe2tCop1WK6r2tySiCZSUd08U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BSlgvDRqmPoeGbG9k6Fi4++oQsyy5QNUBVWMWY+jkVFtZtkpJyxD/mzh5QEJQlyrExeqeKxGpFwOZWyrBzWATZqirmHyq5T97Tpu0w8b3ozsF0+R99MNMGwYMXl+pivzUBlh55NXkF66pGvK+oxNq5HKfQo9qKRJ41nI17XMDrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIiDiutT; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53de8ecafeeso2087953e87.1;
+        Wed, 27 Nov 2024 03:49:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732708170; x=1733312970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhM5k6V9GFL2Pc6HBmI3l+duYh7dw9XHt8yRGSBrdY0=;
+        b=aIiDiutTLXOE+0R/17EfEOqFoHpBF73bdpTvN72zJRYelX1U9UO82ZJ8/BWpQciGq5
+         xxKvFV6c6bKo2f+BNPJwaydoDJTLymwN+4FoM1fSNA9bJKI6/3y+zdXhX8yeyK8wdldv
+         FjhX62muTxR4ZaPtHOYqeE07JNJKOqbwhyZb/WJL43CKUlG5ra6obwybhctCxZsspack
+         z6WDGsyK4ycd7xsZGCHA6O1CeUDaq2fxIkssqAuJDIgKtZnnzqQl3CzWi9JjHiA65aAe
+         mW1LPx9shlmEvK8sjS+lObtBOKMrGQmn0o4XXnswXkvMfbwGCb6KF2GrcE4h+T4oW242
+         Iz1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732708170; x=1733312970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhM5k6V9GFL2Pc6HBmI3l+duYh7dw9XHt8yRGSBrdY0=;
+        b=IZqdANWq1Txzase1uN2WnSA4dIHYXIUXj1XwotegFHBRX9v/nbigIjf1/h+SqzQvft
+         VIEGTtsG1LgqyIKIkX0Qi56f/o/abKmXdyECRnRVC/JOVP18q+nu+mEmiugnwxiASLim
+         cr87mUdsKs1ivAnEVbEMCKZ2kp8jN/huoNj/qrLKXox4nOql9V7l2oC8SLFfl2inBO9x
+         zc1+0cdthKLodMCycD26Y5ihm3S7v4xO/677t8I15EqI4mOEFgDfNMk1tYLKeqcJBLyt
+         M2TY4PSFv7nNyy4Td9Jjzvpn7uKangVs2bPir6oeFtwPqF3E1Bl91f72bZDACNHM4ULu
+         76RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/YnHTAjtwepWXeJFNNeha9b5yImVNlIDWr/QAS8HSJfY00in5F2vXGsOmVqtL55dVnhWGN8AkzfIbfhcelWE+Cpv3@vger.kernel.org, AJvYcCW7Ph63E1I+FZPQ5naqZps3vVevG/FWe7/bLPi8+9tctAhrvCq8ARGf50a/oZUHw++DLOpq9ot4XfE+jan+@vger.kernel.org, AJvYcCWXH2yzfSa57a1Dq9LvngDoC9q8SmJAhyqQB73RLeadomY7kB/KR5HAXjGIYPrhL+tQA5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTQK3jJt7UL7jwnk3dc3VwSrLcorqZtreFR3oYhCbRoQfokPgQ
+	ehRa0Z0Qw9Q7j5JcwaHarFFEaFi00PAh91RWyyOkKyolqulGsiLd1Wx3IQ==
+X-Gm-Gg: ASbGncvFoJmWM20uuAN681TGZ9eTIhVq/iaXqMp8+DoVQnr2umhsefe4ur6joYoOmDt
+	J4YyncuQo7P8Uj4RWphXIqchWLoSEsiGDvA1oEsEMcX1QJ0TibwDSn8v3HvlNZA7bWF/Iim+bLW
+	O4ZTYT+v37EIj6hZUi/CyQf6LHzFYdn7XFi31PqAwakUT1RNm+MbKYtsqf0hQE4MQQ6n27lBLI9
+	fznlcws/RYzFdt4MQQWifY6jxE3bWVq6ENT9M+9QVlz/7FTDmOx7QSPQHkPyRPM6gpV1GJy6QYg
+	f5zjS904qXN8Whh44bidoPI=
+X-Google-Smtp-Source: AGHT+IECGFrwM5m5TNZXo5pYG5pnOKYvkhiO8omVyK57Iv+f/4G4vSINdGNMG3b3likCc/8Jx83lcA==
+X-Received: by 2002:a05:6512:124f:b0:53a:bb9:b54a with SMTP id 2adb3069b0e04-53df010e386mr1540541e87.48.1732708169914;
+        Wed, 27 Nov 2024 03:49:29 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3b0fc1sm6105834a12.28.2024.11.27.03.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 03:49:29 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 27 Nov 2024 12:49:27 +0100
+To: Marco Elver <elver@google.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Nikola Grcevski <nikola.grcevski@grafana.com>, bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 2/2] bpf: Refactor bpf_tracing_func_proto()
+ and remove bpf_get_probe_write_proto()
+Message-ID: <Z0cHRzM3NDwhLPTE@krava>
+References: <20241127111020.1738105-1-elver@google.com>
+ <20241127111020.1738105-2-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: g8INKQ0bgxY8Kj1_c8ga1pg_diBM3Pdg
-X-Proofpoint-GUID: g8INKQ0bgxY8Kj1_c8ga1pg_diBM3Pdg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241127111020.1738105-2-elver@google.com>
 
-Due to target variable is being reassigned in npc_install_flow()
-function, PF multicast rules are not getting installed.
-This patch addresses the issue by fixing the "IF" condition
-checks when rules are installed by AF.
+On Wed, Nov 27, 2024 at 12:10:01PM +0100, Marco Elver wrote:
+> With bpf_get_probe_write_proto() no longer printing a message, we can
+> avoid it being a special case with its own permission check.
+> 
+> Refactor bpf_tracing_func_proto() similar to bpf_base_func_proto() to
+> have a section conditional on bpf_token_capable(CAP_SYS_ADMIN), where
+> the proto for bpf_probe_write_user() is returned. Finally, remove the
+> unnecessary bpf_get_probe_write_proto().
+> 
+> This simplifies the code, and adding additional CAP_SYS_ADMIN-only
+> helpers in future avoids duplicating the same CAP_SYS_ADMIN check.
+> 
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+> v2:
+> * New patch.
 
-Fixes: 6c40ca957fe5 ("octeontx2-pf: Adds TC offload support").
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-index da69e454662a..8a2444a8b7d3 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-@@ -1457,14 +1457,14 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
- 		target = req->vf;
- 
- 	/* PF installing for its VF */
--	if (!from_vf && req->vf && !from_rep_dev) {
-+	else if (!from_vf && req->vf && !from_rep_dev) {
- 		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
- 		pf_set_vfs_mac = req->default_rule &&
- 				(req->features & BIT_ULL(NPC_DMAC));
- 	}
- 
- 	/* Representor device installing for a representee */
--	if (from_rep_dev && req->vf)
-+	else if (from_rep_dev && req->vf)
- 		target = req->vf;
- 	else
- 		/* msg received from PF/VF */
--- 
-2.25.1
+jirka
 
+> ---
+>  kernel/trace/bpf_trace.c | 30 ++++++++++++++++++------------
+>  1 file changed, 18 insertions(+), 12 deletions(-)
+> 
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 0ab56af2e298..d312b77993dc 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -357,14 +357,6 @@ static const struct bpf_func_proto bpf_probe_write_user_proto = {
+>  	.arg3_type	= ARG_CONST_SIZE,
+>  };
+>  
+> -static const struct bpf_func_proto *bpf_get_probe_write_proto(void)
+> -{
+> -	if (!capable(CAP_SYS_ADMIN))
+> -		return NULL;
+> -
+> -	return &bpf_probe_write_user_proto;
+> -}
+> -
+>  #define MAX_TRACE_PRINTK_VARARGS	3
+>  #define BPF_TRACE_PRINTK_SIZE		1024
+>  
+> @@ -1417,6 +1409,12 @@ late_initcall(bpf_key_sig_kfuncs_init);
+>  static const struct bpf_func_proto *
+>  bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>  {
+> +	const struct bpf_func_proto *func_proto;
+> +
+> +	func_proto = bpf_base_func_proto(func_id, prog);
+> +	if (func_proto)
+> +		return func_proto;
+> +
+>  	switch (func_id) {
+>  	case BPF_FUNC_map_lookup_elem:
+>  		return &bpf_map_lookup_elem_proto;
+> @@ -1458,9 +1456,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>  		return &bpf_perf_event_read_proto;
+>  	case BPF_FUNC_get_prandom_u32:
+>  		return &bpf_get_prandom_u32_proto;
+> -	case BPF_FUNC_probe_write_user:
+> -		return security_locked_down(LOCKDOWN_BPF_WRITE_USER) < 0 ?
+> -		       NULL : bpf_get_probe_write_proto();
+>  	case BPF_FUNC_probe_read_user:
+>  		return &bpf_probe_read_user_proto;
+>  	case BPF_FUNC_probe_read_kernel:
+> @@ -1539,7 +1534,18 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>  	case BPF_FUNC_trace_vprintk:
+>  		return bpf_get_trace_vprintk_proto();
+>  	default:
+> -		return bpf_base_func_proto(func_id, prog);
+> +		break;
+> +	}
+> +
+> +	if (!bpf_token_capable(prog->aux->token, CAP_SYS_ADMIN))
+> +		return NULL;
+> +
+> +	switch (func_id) {
+> +	case BPF_FUNC_probe_write_user:
+> +		return security_locked_down(LOCKDOWN_BPF_WRITE_USER) < 0 ?
+> +		       NULL : &bpf_probe_write_user_proto;
+> +	default:
+> +		return NULL;
+>  	}
+>  }
+>  
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
 
