@@ -1,97 +1,293 @@
-Return-Path: <linux-kernel+bounces-422920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420519D9FE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:07:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5199D9FE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:07:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE55428408A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A991D284055
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA59515C0;
-	Wed, 27 Nov 2024 00:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Ks+ko3AP"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998CF442C;
-	Wed, 27 Nov 2024 00:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99DF15D1;
+	Wed, 27 Nov 2024 00:07:34 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E64819
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732666070; cv=none; b=kugIJ4Y6c8eFtKF7/Y9bd+lFREtON54P7Kn55t4hGpMpIrsOVjK+wrd1KLLi2JjADxkBMrcj5ebM8GEw2nL6Dyk7wcSaqjsRn6g3/skqjuGnWsPL9IBqyuIou7r7x/i93yq7jXiYWNARNr1q7kWT9vtHdnepLlVOyeKkCmPXfdU=
+	t=1732666054; cv=none; b=ifmgsYTtVehneTwk9KonIU6ySDr/CSys2zjEQQE6qy07qXqsv43MAhKZ+JK1C11lQJXBQudXZWg0S4h1oHH0k1pBgj0zRjvXrxeIRpubcP5+brNPJIwMqLopFTEy1bykBBe8z4e0PrCtD8Z0lFmsFaTcqJW8g41pIw3GLDMko2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732666070; c=relaxed/simple;
-	bh=b/bWXkWsBvIxxwjlVEAZG0qDiG7p+GKlNgmbj3amCsI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=e5VIgzJmF8dsLYbVTFBSR6omrHhMwlGk9X32RMlHIyFUMxbMtZgBimQWY4I1pfxl8ykHAOYZ46vMQ2OloDGBQ2smYdjGmCN+e7ilyfc2XBDHsuFPo+/XJZRorfnO2WVAZrsHa640Epyil/tw+bmiJl8eqXqXHnaPx8FQDZloDEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Ks+ko3AP reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=7TYlHpIs5XZ2k0MiWJICOYJkAc8+riO3jFAfFvaZm+0=; b=K
-	s+ko3APq25iudZkgfESUNBP9bHoUM2jgf5lf8J4YxY7k+1tFpp/wVMHvI0Xod+0P
-	rc4MyeebDWXjF1b0X1KHoELd0A0EQ7Vho/RuPf3+5XfTViFHo1+k4MQ5dkE6/YeV
-	5mZwqGf73jRvkRHbV+X2Bychz0a/8Qg5Qm3/epfTbI=
-Received: from 00107082$163.com ( [111.35.188.140] ) by
- ajax-webmail-wmsvr-40-100 (Coremail) ; Wed, 27 Nov 2024 08:07:17 +0800
- (CST)
-Date: Wed, 27 Nov 2024 08:07:17 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
- for decimal values
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <875xo9zyeq.ffs@tglx>
-References: <20241108160717.9547-1-00107082@163.com>
- <4ce18851-6e9f-bbe-8319-cc5e69fb45c@linux-m68k.org> <87ed36zon8.ffs@tglx>
- <25ddb2c9.4b0e.19347d04c05.Coremail.00107082@163.com> <875xo9zyeq.ffs@tglx>
-X-NTES-SC: AL_Qu2YAPqduUgo4SOfbOkZnEYQheY4XMKyuPkg1YJXOp80siTd9ScBbW9EJHj6+s6LGzKhoAiNdBlF6P9nRYxdZ5K5+YgZ3rTouuDAjbUbrDsY
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1732666054; c=relaxed/simple;
+	bh=cCSVB87Oybt0Feurx/hAmK32cFXozy+EqGOQj4l5hWg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sBCrq70ER8CE3VZURiODI7wbAtMiFCwHzW2Y7SSAHKa654j34ZGZP9uOAduRvZ4GMbjUb+8dUWAqRWwaPdG2OT2oXrIhwewC/7X49htxCS65py9I7M48lG6S4czNz0fctd/7VZTCXXM0otNJFsUwdoaqLff6u6K6bb/e9IcuNL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a76ee0008cso76771105ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:07:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732666051; x=1733270851;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VB6vI+nokYY9Inszc0TQur4AzhYeyReUOU/6+4yz1bA=;
+        b=Q81KmrzasqdP8cW3wWbf2z3sqQYlPvdCMebhzbSOrIRVk0A9QOj3+Ni5z5fxaJTxlp
+         0iK8NAeHa84k4SEn3wqSNHKPiT6GnI/2VKa1Zv470JUPJldmJQ2AsAaS2ed3/IGMRAZt
+         TLVoyOC1Jq6hKGyqZV1F2ojxqQNk0Lq6PUWLrpDlIxFBd4Eho3BQjhcIDhcpoIcOnaz4
+         2pQXDVuSWCdIj8M79EjJLZRaDUzlvBTA9FtbglXGHrPTpGHFZCMMr01Tlf/Psxale71V
+         DJQBB2IA6h+/+aY1vNUPe4YUyLI/FXvHijO96GY86b4aFFkoYsYbAoCg+vcUenl+fsWA
+         j9Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp6a8z8wso3ljpoZx1NaigG/5TBroo7GbF2JmwAH9xKx1kFJUFd/a5dWO2DOzQz1+tOcTpWnxjrIQIG34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoH0/oG5CIaWw7s+7XnIRLWnIQY+BCdHI9A2COfzxos64mR+IP
+	IaS+X74Wdy4kJjMwZ4CxeTC1/XgLm8S8XTQIwPQ8xUgnD3DgT+Fn/Nrfyw1yLmajohQYVRZtw9t
+	mKvtJErjj5Y+Nywo1NTDoJp3QuIpmr7H7sPRB4X/zI7iMCNsjwIOQPLc=
+X-Google-Smtp-Source: AGHT+IE/Sf74V4uq61Mbov7vEgEgJnN2LHDI+uBV4Isy68C2VmCUHyHe2ny/repkcRTsME2YnnPY7g4ypwTLyksmVOMQ86cVVswk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <55ac03be.235.1936af19487.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZCgvCgDXn9m2YkZndKQwAA--.57144W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hmjqmdGBiYiJgACsF
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-Received: by 2002:a05:6e02:178c:b0:3a7:8149:6aa with SMTP id
+ e9e14a558f8ab-3a7c55fc480mr10455615ab.24.1732666051572; Tue, 26 Nov 2024
+ 16:07:31 -0800 (PST)
+Date: Tue, 26 Nov 2024 16:07:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674662c3.050a0220.1286eb.0025.GAE@google.com>
+Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ lookup_object_or_alloc (2)
+From: syzbot <syzbot+4bab29ea59a63b8b33b1@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-CkF0IDIwMjQtMTEtMjcgMDE6NDA6MjksICJUaG9tYXMgR2xlaXhuZXIiIDx0Z2x4QGxpbnV0cm9u
-aXguZGU+IHdyb3RlOgo+T24gV2VkLCBOb3YgMjAgMjAyNCBhdCAxMjoyNCwgRGF2aWQgV2FuZyB3
-cm90ZToKPj4gQXQgMjAyNC0xMS0yMCAwOToyMDo1OSwgIlRob21hcyBHbGVpeG5lciIgPHRnbHhA
-bGludXRyb25peC5kZT4gd3JvdGU6Cj4+PmRpZmYgLS1naXQgYS9rZXJuZWwvaXJxL3Byb2MuYyBi
-L2tlcm5lbC9pcnEvcHJvYy5jCj4+PmluZGV4IGYzNmMzM2JkMmRhNC4uOWI3MTVjZThjZjJlIDEw
-MDY0NAo+Pj4tLS0gYS9rZXJuZWwvaXJxL3Byb2MuYwo+Pj4rKysgYi9rZXJuZWwvaXJxL3Byb2Mu
-Ywo+Pj5AQCAtNTAxLDYgKzUwMSw3IEBAIGludCBzaG93X2ludGVycnVwdHMoc3RydWN0IHNlcV9m
-aWxlICpwLCB2b2lkICp2KQo+Pj4gCj4+PiAJCXNlcV9wdXRfZGVjaW1hbF91bGxfd2lkdGgocCwg
-IiAiLCBjbnQsIDEwKTsKPj4+IAl9Cj4+PisJc2VxX3B1dGMocCwgJyAnKTsKPj4+IAo+Pj4gCXJh
-d19zcGluX2xvY2tfaXJxc2F2ZSgmZGVzYy0+bG9jaywgZmxhZ3MpOwo+Pj4gCWlmIChkZXNjLT5p
-cnFfZGF0YS5jaGlwKSB7Cj4+Cj4+IE9uIHNlY29uZCB0aG91Z2h0LCAgIGNvbnNpZGVyaW5nIG90
-aGVyIHBhdGhzIGhhdmUgYWxyZWFkeSBoYWQgYSBsZWFkaW5nIHNwYWNlLCAKPj4gbWF5YmUgaXQg
-aXMgbW9yZSBjbGVhbiB0byBqdXN0IGFkZCBhIGxlYWRpbmcgc3BhY2UgYmVmb3JlIGlycV9wcmlu
-dF9jaGlwOgo+Pgo+PiAgICAgICAgIHJhd19zcGluX2xvY2tfaXJxc2F2ZSgmZGVzYy0+bG9jaywg
-ZmxhZ3MpOwo+PiAgICAgICAgIGlmIChkZXNjLT5pcnFfZGF0YS5jaGlwKSB7Cj4+IC0gICAgICAg
-ICAgICAgICBpZiAoZGVzYy0+aXJxX2RhdGEuY2hpcC0+aXJxX3ByaW50X2NoaXApCj4+ICsgICAg
-ICAgICAgICAgICBpZiAoZGVzYy0+aXJxX2RhdGEuY2hpcC0+aXJxX3ByaW50X2NoaXApIHsKPj4g
-KyAgICAgICAgICAgICAgICAgICAgICAgc2VxX3B1dGMocCwgJyAnKTsKPj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgZGVzYy0+aXJxX2RhdGEuY2hpcC0+aXJxX3ByaW50X2NoaXAoJmRlc2MtPmly
-cV9kYXRhLCBwKTsKPj4gLSAgICAgICAgICAgICAgIGVsc2UgaWYgKGRlc2MtPmlycV9kYXRhLmNo
-aXAtPm5hbWUpCj4+ICsgICAgICAgICAgICAgICB9IGVsc2UgaWYgKGRlc2MtPmlycV9kYXRhLmNo
-aXAtPm5hbWUpCj4+ICAgICAgICAgICAgICAgICAgICAgICAgIHNlcV9wcmludGYocCwgIiAlOHMi
-LCBkZXNjLT5pcnFfZGF0YS5jaGlwLT5uYW1lKTsKPj4gICAgICAgICAgICAgICAgIGVsc2UKPj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgc2VxX3ByaW50ZihwLCAiICU4cyIsICItIik7Cj4KPkkg
-cmF0aGVyIGtlZXAgdGhlIHNlcV9wdXRjKCkgYW5kIHJlbW92ZSB0aGUgdHJhaWxpbmcgc3BhY2Ug
-ZnJvbSB0aGUKPm90aGVyIHByaW50cy4KCkFncmVlLCAgY29kZSB3b3VsZCBhbGlnbiBiZXR0ZXIg
-dGhpcyB3YXkgYW5kIHNlcGFyYXRpbmcgc3BhY2VzIHdpbGwgYmUgY29uc2lzdGVudC4KCkRhdmlk
-CgoK
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1156fec0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2406be795e8a5f4
+dashboard link: https://syzkaller.appspot.com/bug?extid=4bab29ea59a63b8b33b1
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a3d6e8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d656bfec363b/disk-28eb75e1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/24f43f097510/vmlinux-28eb75e1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5d84a86858b1/bzImage-28eb75e1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4bab29ea59a63b8b33b1@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in timer_is_static_object+0x80/0x90 kernel/time/timer.c:733
+Read of size 8 at addr ffff88807a901ca0 by task syz.1.23344/23262
+
+CPU: 0 UID: 0 PID: 23262 Comm: syz.1.23344 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ timer_is_static_object+0x80/0x90 kernel/time/timer.c:733
+ lookup_object_or_alloc.part.0+0x416/0x590 lib/debugobjects.c:679
+ lookup_object_or_alloc lib/debugobjects.c:665 [inline]
+ debug_object_assert_init+0x268/0x2f0 lib/debugobjects.c:1008
+ debug_timer_assert_init kernel/time/timer.c:845 [inline]
+ debug_assert_init kernel/time/timer.c:890 [inline]
+ __timer_delete+0x81/0x1c0 kernel/time/timer.c:1412
+ del_timer include/linux/timer.h:202 [inline]
+ try_to_grab_pending+0x7d/0x850 kernel/workqueue.c:2064
+ work_grab_pending kernel/workqueue.c:2157 [inline]
+ __cancel_work+0xac/0x370 kernel/workqueue.c:4322
+ sco_sock_clear_timer+0x4f/0xe0 net/bluetooth/sco.c:180
+ sco_sock_close net/bluetooth/sco.c:522 [inline]
+ sco_sock_release+0x67/0x2d0 net/bluetooth/sco.c:1298
+ __sock_release+0xb0/0x270 net/socket.c:640
+ sock_close+0x1c/0x30 net/socket.c:1408
+ __fput+0x3f8/0xb60 fs/file_table.c:450
+ task_work_run+0x14e/0x250 kernel/task_work.c:239
+ get_signal+0x1d3/0x26c0 kernel/signal.c:2789
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f96dd37e819
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f96de0aa038 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: fffffffffffffffc RBX: 00007f96dd535fa0 RCX: 00007f96dd37e819
+RDX: 0000000000000008 RSI: 0000000020001580 RDI: 0000000000000004
+RBP: 00007f96dd3f175e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f96dd535fa0 R15: 00007ffcbc3e10f8
+ </TASK>
+
+Allocated by task 23070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:879 [inline]
+ kzalloc_noprof include/linux/slab.h:1015 [inline]
+ sco_conn_add net/bluetooth/sco.c:199 [inline]
+ sco_conn_add+0xc8/0x410 net/bluetooth/sco.c:184
+ sco_connect net/bluetooth/sco.c:336 [inline]
+ sco_sock_connect+0x325/0xbd0 net/bluetooth/sco.c:645
+ __sys_connect_file+0x13e/0x1a0 net/socket.c:2055
+ __sys_connect+0x14f/0x170 net/socket.c:2074
+ __do_sys_connect net/socket.c:2080 [inline]
+ __se_sys_connect net/socket.c:2077 [inline]
+ __x64_sys_connect+0x72/0xb0 net/socket.c:2077
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 23070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4727
+ sco_conn_free net/bluetooth/sco.c:97 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ sco_conn_put+0x2cd/0x4c0 net/bluetooth/sco.c:107
+ sco_chan_del+0x9c/0x1b0 net/bluetooth/sco.c:236
+ __sco_sock_close+0xab/0x210 net/bluetooth/sco.c:508
+ sco_sock_close net/bluetooth/sco.c:523 [inline]
+ sco_sock_release+0x6f/0x2d0 net/bluetooth/sco.c:1298
+ __sock_release+0xb0/0x270 net/socket.c:640
+ sock_close+0x1c/0x30 net/socket.c:1408
+ __fput+0x3f8/0xb60 fs/file_table.c:450
+ task_work_run+0x14e/0x250 kernel/task_work.c:239
+ get_signal+0x1d3/0x26c0 kernel/signal.c:2789
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88807a901c00
+ which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 160 bytes inside of
+ freed 256-byte region [ffff88807a901c00, ffff88807a901d00)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88807a900200 pfn:0x7a900
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000240 ffff88801b041b40 ffff88801b040708 ffffea0001d81190
+raw: ffff88807a900200 000000000010000a 00000001f5000000 0000000000000000
+head: 00fff00000000240 ffff88801b041b40 ffff88801b040708 ffffea0001d81190
+head: ffff88807a900200 000000000010000a 00000001f5000000 0000000000000000
+head: 00fff00000000001 ffffea0001ea4001 ffffffffffffffff 0000000000000000
+head: ffff888000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5848, tgid 5848 (syz-executor), ts 72198926581, free_ts 72169629294
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __kmalloc_cache_noprof+0x2b4/0x300 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:879 [inline]
+ kzalloc_noprof include/linux/slab.h:1015 [inline]
+ ____ip_mc_inc_group+0x3ee/0x1000 net/ipv4/igmp.c:1468
+ __ip_mc_inc_group net/ipv4/igmp.c:1503 [inline]
+ ip_mc_inc_group net/ipv4/igmp.c:1509 [inline]
+ ip_mc_up+0x154/0x3b0 net/ipv4/igmp.c:1808
+ inetdev_event+0xafd/0x18a0 net/ipv4/devinet.c:1638
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1996
+ call_netdevice_notifiers_extack net/core/dev.c:2034 [inline]
+ call_netdevice_notifiers net/core/dev.c:2048 [inline]
+ __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8982
+ dev_change_flags+0x10c/0x160 net/core/dev.c:9020
+ do_setlink.constprop.0+0x69c/0x3f70 net/core/rtnetlink.c:3103
+page last free pid 5841 tgid 5841 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4141
+ getname_flags.part.0+0x4c/0x550 fs/namei.c:139
+ getname_flags include/linux/audit.h:322 [inline]
+ getname+0x8d/0xe0 fs/namei.c:223
+ do_sys_openat2+0x104/0x1e0 fs/open.c:1396
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_openat fs/open.c:1433 [inline]
+ __se_sys_openat fs/open.c:1428 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1428
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88807a901b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88807a901c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88807a901c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                               ^
+ ffff88807a901d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88807a901d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
