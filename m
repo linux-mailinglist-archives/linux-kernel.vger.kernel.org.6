@@ -1,158 +1,118 @@
-Return-Path: <linux-kernel+bounces-423418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD469DA723
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:50:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D61B09DA72E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFBB6B24EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AFE22812AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D671F9ED8;
-	Wed, 27 Nov 2024 11:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3230E1F9ED4;
+	Wed, 27 Nov 2024 11:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsNABuHf"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V+qssyRp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F791F9ECC;
-	Wed, 27 Nov 2024 11:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604601F7564;
+	Wed, 27 Nov 2024 11:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732708179; cv=none; b=BYrhE8HlUWm4d2HL9RFrM817uRNzzFCBRorlWpL6ppqZQ6/r7OgjVoe9keumz9u0RjCWfdCTAigJb+0Q0I05SXvcMkjhFlaUBj7PnipKQGzV/GqNLV+eNSY63HJ06Sq6iUeiGdVTRgYcsSXWE4e1nlWkBRn2CEbi6+Vr5ztQOrM=
+	t=1732708304; cv=none; b=GbKUorUvnqPWWk0Hu7E7X0p0n6STUVPaI8YsqwoDZGgLKcAoEyTqlR19Udnn0WTSa65gath+2nJwvzV5zWvdMDI5R3dcBYKdrj6djEBDq/a2blwNvsaPLBGPs3ncoITMV034JDjIZqkdaJPN4c2md75eiC6OwPdZRLPO0pDisJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732708179; c=relaxed/simple;
-	bh=YO5jsAFokPQw0krpuMb81U8PTSlUrJKpD8UCXmnpAH4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WwbrN8ff/jGJmlGat0KAwKsqnWx0tWE/RB0stqrScjiWtU+6JgjILYCIgXfgT0a1buzco7C8A3qmoLVsvkDACznRRivD1y5gQC4NMM8rQlKpQ6v4VIVF0fAAK9FbUY0ScurW/wGOIUTa1/V50Fr5Yux5YxG/L82bIXbV5Gk/t7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsNABuHf; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa560a65fd6so124075266b.0;
-        Wed, 27 Nov 2024 03:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732708176; x=1733312976; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kwQCvtPpp8+BxmW4rpq1HgxrDOIdn4yXH8MhwqPEUsY=;
-        b=KsNABuHfjMuwF4YOkt4LNVXFwrhj39yTdAYq/mkpdbqkjkeWOSb/ow9qV6gfYbH5d6
-         2AeWr9KKQHW/pF1mSzBTzbpvDaij9ae4DP020OV4mvmftLelugkImelIiPfyP/Yihj8J
-         dOhJ8f3gK4bhgS8I4CcD/mvrHO+/Le5j24VnuOgPpnUClHv2Nhkk6oS+A3GPpswCskiq
-         /EUuN/gyi7xWK/KWzcJSjVHEfvCNaYXwFbgSJx/1CUZRXiPVSd5WwBCbclQrnqqaHAss
-         8gCSa1mgBnu6F1oDRagp5CSWNAhf3ApXWcmgB7Qb56T9fdMi1+o+78tCPmhRe40x+djD
-         Otow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732708176; x=1733312976;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kwQCvtPpp8+BxmW4rpq1HgxrDOIdn4yXH8MhwqPEUsY=;
-        b=WpkZ2yjQJGueYX7io4vJNKwLf/nc0sAyRLRX6OTY+GMJ9O6lo8pb6cVQ3xe4PrhUP+
-         K3d0RluGAg2n/FL7GQMCU19pFTyq9OwT30gxA8pffnzegI3HuMDWT82umodaI3q2U0ip
-         qhDqiiMzP34G+2TZ7bi3HeExSZMV521IyYPb5tnuxdm086//CPbAOlgvgjjZGdCByd97
-         IyQ6HlKhpCWHSevp4QoQKEUQMn7nDL3xu+Z26IJw6YZuBEep1tq0oj0QrzpJZqVFTRWq
-         2iR5JUYNzKHIGldKLoR9DYiR72Eq4BFtawGK3WH1auG3vQieg+d5n9bZVMdUmvspR6Ss
-         bSUw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+V/RIzT2amPXLddRqqSM2GzifmC2xqxcGNAhomFJ32H729ZUIxKPGeDsLMW0gTK03XE0=@vger.kernel.org, AJvYcCVRNbuXEw7xyHhVBynsUHgrmOWTniacrrribvLj49RUx6Bh1BmhSk0KEy6i3ltAL2H0A2J78dk+vzv3SKeY@vger.kernel.org, AJvYcCWVFelDS1wBM1eLMGpxZPWIrOxdFbv5da0UxkncUq4RgRiMZV2Jg/nOyyjhwy6OPNkBNa69W8/fjpQaiIg25XhIYk1Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIDo0cJ2CLJAi3GbK3hb65irAitc7ummDeIiOM1tWGwHbxpoFM
-	IQ92hAnSiocxWB8oyKD6BNJ+0difreaEU/FfSBQjr7+2q3uj8gZY
-X-Gm-Gg: ASbGnctHVag4hUw74TYZN9mj6YMYseAy65c/38z92Okx+VagJlG+EKjI8xLGpqv4xzq
-	KUTb8/STHpqKcPsEMY128p6kzxndr4G4mANlU7wLHLXdJWWkNxSjVP8bLWwHxW3b7xXkafJnomD
-	yPCUH16UlhoZ9Syex82e2gHLNcp0PMech7hHLP7V2sjmMWWOb355u+EMYe2Mk7r6ELGohFgRjf5
-	gpLIa6wOmu2z9llCYZF//s31cnmIzB9JrKZFh685SfhqxZWLM0LN3sEDenRUmB1Klbvli5nXSc/
-	BTK1yhdzfUwLA2hzixKLTuQ=
-X-Google-Smtp-Source: AGHT+IH8XvC8bOLMTe+DA11zRG4XwxyPNmdeciEFri4AJtzmiWMIbPqJmMXBH/1AamlxktBfzt1tcQ==
-X-Received: by 2002:a17:906:30cc:b0:aa5:c1b:2204 with SMTP id a640c23a62f3a-aa57fac455emr265187766b.8.1732708175683;
-        Wed, 27 Nov 2024 03:49:35 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa547ffb152sm431874666b.62.2024.11.27.03.49.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 03:49:35 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 27 Nov 2024 12:49:33 +0100
-To: Marco Elver <elver@google.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Nikola Grcevski <nikola.grcevski@grafana.com>, bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: Remove bpf_probe_write_user()
- warning message
-Message-ID: <Z0cHTRsJoWgZBGNU@krava>
-References: <20241127111020.1738105-1-elver@google.com>
+	s=arc-20240116; t=1732708304; c=relaxed/simple;
+	bh=0f014ApAViv3z9tsBLhOmTsocxLXqn7R8QCbMwZKhXM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S07ZxL18XskWwhzbFt7cqFOrr7/k0F+DcjV4LphrwuFv1ZI/IOXL6refJPFOoCGM0/rNkfbyk/Yzd0BC4abkS9QeTOBNTmZEQZnhrq2c/tXOYTEC+97e+M5C2eqFocmM7NJPsfrwskLBJ1Z7iZs9SfQIffnYV7sJFXa0t8l2ejs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V+qssyRp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR8qfxN007068;
+	Wed, 27 Nov 2024 11:51:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=pni2R4i8a1tOw4Va8dFHmoPC/J3QfZlX70nM6ULHbtc=; b=V+
+	qssyRpsiHhZMaNHcJmPzpBYeDgaPxlLUABdC4ZaJO79+3Wp+SIG/EvnZdTWpmPJp
+	RsMKGTsea5lOx5NmQBp5lNkyuKdqJUdbm0lpm/5j5MFVVEcmiR7V3SjTtURAaZo7
+	Nbxe4DHQsO9kq48MhtFRBTXOl79YmNYfLHh5FWPVKsCTp54xExvVRa7XOeL7Cjro
+	xvSfEkWMI874CpSSx29W4eMgxaK27EoKtSSvCVBMue/6R181ewT67BQj80uqwi+V
+	0gDeGzd/Pj4fxWzYrEz0wWc3tHg47L9lXpX1uDMB55YMLZ2DVPgwKC18rBuK37Sn
+	cq1M/pLi14BVL8VANVeA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw9emh4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 11:51:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARBpRSW004855
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 11:51:27 GMT
+Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 27 Nov 2024 03:51:21 -0800
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <quic_anubhavg@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v4 0/2] Enable Bluetooth on qcs6490-rb3gen2 board
+Date: Wed, 27 Nov 2024 17:21:05 +0530
+Message-ID: <20241127115107.11549-1-quic_janathot@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127111020.1738105-1-elver@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: q794T_NnMMw7mVT2VltQ9_KcZwowxY5a
+X-Proofpoint-ORIG-GUID: q794T_NnMMw7mVT2VltQ9_KcZwowxY5a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=851 adultscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411270097
 
-On Wed, Nov 27, 2024 at 12:10:00PM +0100, Marco Elver wrote:
-> The warning message for bpf_probe_write_user() was introduced in
-> 96ae52279594 ("bpf: Add bpf_probe_write_user BPF helper to be called in
-> tracers"), with the following in the commit message:
-> 
->     Given this feature is meant for experiments, and it has a risk of
->     crashing the system, and running programs, we print a warning on
->     when a proglet that attempts to use this helper is installed,
->     along with the pid and process name.
-> 
-> After 8 years since 96ae52279594, bpf_probe_write_user() has found
-> successful applications beyond experiments [1, 2], with no other good
-> alternatives. Despite its intended purpose for "experiments", that
-> doesn't stop Hyrum's law, and there are likely many more users depending
-> on this helper: "[..] it does not matter what you promise [..] all
-> observable behaviors of your system will be depended on by somebody."
-> 
-> The ominous "helper that may corrupt user memory!" has offered no real
-> benefit, and has been found to lead to confusion where the system
-> administrator is loading programs with valid use cases.
-> 
-> As such, remove the warning message.
-> 
-> Link: https://lore.kernel.org/lkml/20240404190146.1898103-1-elver@google.com/ [1]
-> Link: https://lore.kernel.org/r/lkml/CAAn3qOUMD81-vxLLfep0H6rRd74ho2VaekdL4HjKq+Y1t9KdXQ@mail.gmail.com/ [2]
-> Link: https://lore.kernel.org/all/CAEf4Bzb4D_=zuJrg3PawMOW3KqF8JvJm9SwF81_XHR2+u5hkUg@mail.gmail.com/
-> Signed-off-by: Marco Elver <elver@google.com>
+- Patch 1/2 enable WCN6750 Bluetooth node for qcs6490-rb3gen2 board 
+  along with onchip PMU.
+- Patch 2/2 add qcom,wcn6750-pmu bindings.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Janaki Ramaiah Thota (2):
+  arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
+  regulator: dt-bindings: qcom,qca6390-pmu: document WCN6750
 
-jirka
+ .../bindings/regulator/qcom,qca6390-pmu.yaml  |  27 +++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 174 +++++++++++++++++-
+ drivers/bluetooth/hci_qca.c                   |   2 +-
+ drivers/power/sequencing/pwrseq-qcom-wcn.c    |  22 +++
+ 4 files changed, 223 insertions(+), 2 deletions(-)
 
-> ---
-> v2:
-> * Just delete the message entirely (suggested by Andrii Nakryiko)
-> ---
->  kernel/trace/bpf_trace.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 630b763e5240..0ab56af2e298 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -362,9 +362,6 @@ static const struct bpf_func_proto *bpf_get_probe_write_proto(void)
->  	if (!capable(CAP_SYS_ADMIN))
->  		return NULL;
->  
-> -	pr_warn_ratelimited("%s[%d] is installing a program with bpf_probe_write_user helper that may corrupt user memory!",
-> -			    current->comm, task_pid_nr(current));
-> -
->  	return &bpf_probe_write_user_proto;
->  }
->  
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+-- 
 
