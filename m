@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-423575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B759DA9DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:26:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47C616685D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:26:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0B71FF612;
-	Wed, 27 Nov 2024 14:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRLk2Hg5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45209DA9DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:31:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C758B1FF600;
-	Wed, 27 Nov 2024 14:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678A4B219A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:31:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC181FF617;
+	Wed, 27 Nov 2024 14:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FtwH6dmI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O7CQAmPL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496A926AD0;
+	Wed, 27 Nov 2024 14:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732717601; cv=none; b=aITQoaPPHAVDB8RJN+9SDRinxzK18ldegg4R+0LYKP3vrS/A4lCtRWlHAPMHcTR2Z5oDHo2B0FmyEYDQ34GAipz61dwQgt5gh3Cl9QyNrOC46deK2fZSxGOD04hYe4mI3/2G7zipW7qo78xdKUBLY15HyoG96sN7MAQFNt5AMdU=
+	t=1732717871; cv=none; b=oaMkyYX9Uh4QlvXU7qo/GIeH7vVEXXFJGUY1BJ/7Dyk1rxw+YvdSVqGPC8mkRU1lyNtt0iLLPGl44vAfqBYlN+XChGVlijK5UaZfwaCOo4/Q2NIZ4//Zkff4WjWRR9Bu1zgN7vU8ZiKrfoBzEi3P7dmuzossVXA+321YJqJTxVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732717601; c=relaxed/simple;
-	bh=kqNvddmDWtm7j0n7cbl9AqMJ+Ww39KyF2qb8khHv7zI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7BXptidCHzyZ/EPZU+uDDebVG9NlKF3bm8RHihqWikD1EE4ZprjRKr3VxlUWT6K8RZTRzcb5mwiw1UfDlBIKt/lWirM/zZRCd51I2P/M0o0eJbUKk5fGHezjNJ96UQEQaUzk2PSjSG2QFNj17Rl5fp+ndet1AV8vDGlNpuOdZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRLk2Hg5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 364EFC4CECC;
-	Wed, 27 Nov 2024 14:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732717601;
-	bh=kqNvddmDWtm7j0n7cbl9AqMJ+Ww39KyF2qb8khHv7zI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LRLk2Hg5BpC0e6D0gRHZqBuTAPOfn5yC7hHhwuYPB0lNR1lkzn8BPdkRXQND30GiD
-	 kA+REhHwzGNrRa7v6pgsRV7dxWg1QEmPT9Lj6HT+FKmcEh8/pqn4Le5Ac9EjITV+4E
-	 8XyIMonYyRKGN14kythItJj9u66rhGmFmk49A5cEd1EosxgZ57DFaIj8gnAn/6kmY2
-	 dWXcG6zLfbtnzOae30JpagghRoLjg5408etK/cP3/pKPBXR7tptbhgsybi8sjS37dl
-	 A/IP8OjkpLkuL42MfLMib0ANQxoqkaXpKO3LJLvalJ84GkKfj4ftkURwyezrbi31T6
-	 VoU36du1t828Q==
-Date: Wed, 27 Nov 2024 08:26:39 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: mediatek,xsphy: add property to
- set disconnect threshold
-Message-ID: <20241127142639.GA3451514-robh@kernel.org>
-References: <20241126025859.29923-1-chunfeng.yun@mediatek.com>
+	s=arc-20240116; t=1732717871; c=relaxed/simple;
+	bh=SbWvi8b3kQtxd0QIMyleExujGM9/6bgLGFH9pA41o+U=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dd0GmmSp98OitCMu41vor2QIsxJfwWgg6m3n8bzf3FxERNSJhLGcv5lsrRWiXlZt1VTygkhVF9R15X5RNy9FGo+zcRPwlD5TbA0m/vqCStXf+mtRgZuJe5l7WRffgPzuPZEb0c0TJVzVaExNBDRrQjSAjLTPvAw3XkSkp//Bao8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FtwH6dmI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O7CQAmPL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 27 Nov 2024 14:31:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732717867;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W860JXMaS5h6j69idQvjzaaXJ1b9J9Sr1Z08VvEaE34=;
+	b=FtwH6dmI8cJppsphir/G/FF3qdH+PLcj2d8+wUvaeAzkqxF7RaJ08Ok5ODfFhjVD6/FmwY
+	JJeiW/QupH4NwHTHTPAcv5hSbVNfd5fsMyEh0bXHiaAiGbNkwm5gYUd5RcC2tzPSjK/Bw4
+	m+DJ8ckWGrpS6sS2fR3hHCbaTwKaE4dKUkgoaEyx7SkRQm3CSGgr+Sa7/YUcTe6tcUCKJ6
+	b2xRisHax1n+yWgnxw31OyJSF8Qq5THitPKN3bsEryHTn+/4BAPhxoeGC+I/oD5S1RzYDp
+	v35CGwSro9r0SciEE7enssLtRUnqAAuZ0FsREN3WW58h9YGvPcqyih8NKujY8Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732717867;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W860JXMaS5h6j69idQvjzaaXJ1b9J9Sr1Z08VvEaE34=;
+	b=O7CQAmPLPLP+fK/6dSDTlHBs3K7yHJ46ftlWTk9ePg4I9ERi6ZRXVkga3wRuc4dY3JLdCK
+	KTbu89C2PhlkA+DA==
+From: "tip-bot2 for Marcelo Dalmas" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/urgent] ntp: Remove invalid cast in time offset math
+Cc: Marcelo Dalmas <marcelo.dalmas@ge.com>,
+ Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3CSJ0P101MB03687BF7D5A10FD3C49C51E5F42E2=40SJ0P101MB?=
+ =?utf-8?q?0368=2ENAMP101=2EPROD=2EOUTLOOK=2ECOM=3E?=
+References: =?utf-8?q?=3CSJ0P101MB03687BF7D5A10FD3C49C51E5F42E2=40SJ0P101M?=
+ =?utf-8?q?B0368=2ENAMP101=2EPROD=2EOUTLOOK=2ECOM=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126025859.29923-1-chunfeng.yun@mediatek.com>
+Message-ID: <173271786637.412.11744400812569588652.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 10:58:58AM +0800, Chunfeng Yun wrote:
-> Add a property to tune usb2 phy's disconnect threshold.
-> And add a compatible for mt8196.
-> 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
-> index a9e3139fd421..2e012d5e1da1 100644
-> --- a/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/mediatek,xsphy.yaml
-> @@ -49,6 +49,7 @@ properties:
->        - enum:
->            - mediatek,mt3611-xsphy
->            - mediatek,mt3612-xsphy
-> +          - mediatek,mt8196-xsphy
->        - const: mediatek,xsphy
->  
->    reg:
-> @@ -129,6 +130,13 @@ patternProperties:
->          minimum: 1
->          maximum: 7
->  
-> +      mediatek,discth:
+The following commit has been merged into the timers/urgent branch of tip:
 
-That's not understandable. Spell it out: mediatek,disconnect-thres
+Commit-ID:     299130166e70124956c865a66a3669a61db1c212
+Gitweb:        https://git.kernel.org/tip/299130166e70124956c865a66a3669a61db1c212
+Author:        Marcelo Dalmas <marcelo.dalmas@ge.com>
+AuthorDate:    Mon, 25 Nov 2024 12:16:09 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 27 Nov 2024 15:18:45 +01:00
 
-> +        description:
-> +          The selection of disconnect threshold (U2 phy)
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 1
-> +        maximum: 15
-> +
->        mediatek,efuse-intr:
->          description:
->            The selection of Internal Resistor (U2/U3 phy)
-> -- 
-> 2.46.0
-> 
+ntp: Remove invalid cast in time offset math
+
+Due to an unsigned cast, adjtimex() returns the wrong offest when using
+ADJ_MICRO and the offset is negative. In this case a small negative offset
+returns approximately 4.29 seconds (~ 2^32/1000 milliseconds) due to the
+unsigned cast of the negative offset.
+
+Remove the cast and restore the signed division to cure that issue.
+
+Fixes: ead25417f82e ("timex: use __kernel_timex internally")
+Signed-off-by: Marcelo Dalmas <marcelo.dalmas@ge.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/SJ0P101MB03687BF7D5A10FD3C49C51E5F42E2@SJ0P101MB0368.NAMP101.PROD.OUTLOOK.COM
+---
+ kernel/time/ntp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index b550ebe..02e7fe6 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -798,7 +798,7 @@ int __do_adjtimex(struct __kernel_timex *txc, const struct timespec64 *ts,
+ 
+ 		txc->offset = shift_right(ntpdata->time_offset * NTP_INTERVAL_FREQ, NTP_SCALE_SHIFT);
+ 		if (!(ntpdata->time_status & STA_NANO))
+-			txc->offset = (u32)txc->offset / NSEC_PER_USEC;
++			txc->offset /= NSEC_PER_USEC;
+ 	}
+ 
+ 	result = ntpdata->time_state;
 
