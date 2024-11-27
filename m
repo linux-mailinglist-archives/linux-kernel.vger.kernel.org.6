@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-423352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E49DA636
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:54:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BA39DA63C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 282EF163FE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425851642C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B891D5ABD;
-	Wed, 27 Nov 2024 10:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CEC1DA622;
+	Wed, 27 Nov 2024 10:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jZZf7clD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="LS69UuNH";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="uwsJfH+3"
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E391D4615;
-	Wed, 27 Nov 2024 10:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EED1D89ED;
+	Wed, 27 Nov 2024 10:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704877; cv=none; b=gvlfEusIF+q8j5cQECmWMtVe0dibkmfZpXcbz8XQdK9pgRnJQynljJLRlW+BIcx8R2OJ7HDTJl1bkkMqqOn/V9kVgm1LiMUcMum9/YJGg935iS+E/9vR1gSM4tzZXyqptTM4T38Eqaj+A2DXUgBs9ER3nH8UPfuefkBbKQipUV4=
+	t=1732704962; cv=none; b=WEeq3AHaLTfv0EbJMzsWv+a4s2QyFbuj54oq/egiukqEhHL+g9wvbqtOS06a7F/Huo1eVUuTFh+U2p8SF/2bBCdEzTd5cY3mBYDdslabyKQJEeZ+TbfYnARM/M55iX69p5AOHhPcDYBd3DCVW9NSRgjwnAjkxRKsDbt33Hesi1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704877; c=relaxed/simple;
-	bh=bw4R/xaVIhqazXmWYeRS//XfI0YzbW0vTTgSRGVI3SA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WuLnE4M4mXAJ+IPH08o5DqR7PZs8Yd+pQ1h6aVqfMI1y40SH7Cr304Bw63IO0wQ8YrDHUL2XegOsN12XygF2Rcm4HdECz4Z0V+gGZslbxSE68A70CcJJhi1Ho8IJCDm7rLqepPUOvdcBmy4n9yo2A8G8YJc3b7X2l1+iBAMJzVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jZZf7clD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR93TN2004424;
-	Wed, 27 Nov 2024 10:54:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rEMqPPtfJwiWelzz0hRF2xRvmtFgCOZyATXF6ddQuHA=; b=jZZf7clDnMgEw2sS
-	jJsrBWwIhVKcpZlVjPbd9lL2MA9PUX9CXvYp1wQMfjMLyRP0/AdESMrovJejtrms
-	z/+KlX+h2Cc2inmDf+2ByLN4CsD8reLkacqQaKWeWzoo9yH1lkjmWyZTndLnV2yZ
-	jZ1v0upIJV75dr1wmAzuLsKgmWq+H9XAvewCVuE0s/2LJy3Zuj0vI6lXdnOYvHAF
-	yp53gcgq1wQz9VP5ZtsiplLcmHXYY0+zedzDZR5CBp8CHLRsWoBfK+ZAcuHm96Si
-	tApyA7WV29VlU+jttSL2rtH/5LWAp1Cek1CcCoiL3RzEF333tFmEhBR/nK8pfVqI
-	EiKEsw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435839cdh6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 10:54:21 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARAsKVL015882
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 10:54:20 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
- 2024 02:54:13 -0800
-Message-ID: <8982d065-9bc6-4036-8004-80b1681eaf3c@quicinc.com>
-Date: Wed, 27 Nov 2024 18:54:10 +0800
+	s=arc-20240116; t=1732704962; c=relaxed/simple;
+	bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YerwAz345eVd0fXpqBDZ0baOGtGsBbfhOfk4FPIaIHRp8vfC7FrJV1LARLUAqNlM+gfGrU7Ca/wejx1kP8sUXJsAUmn3jmuREzZntBavARgWpqp1R0tpJXeS82WMWhRcRukknxxZUqYtUDd3kjJjsP4eXIIjryfrMhoWcQLk9uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=LS69UuNH; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=uwsJfH+3; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 48A0E122FE1E;
+	Wed, 27 Nov 2024 02:55:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1732704958; bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LS69UuNHegvzH1QSVS9u26+DzTmRUuAlEOWIyQCWg6gHwC/xTRVDnLJVMA5CMLvw9
+	 jgvd9Rei8dwzBzUJqtObWxY7lqY4eSGhv+d7YruAoVyCkKn7fnyIIIZiIFFDwfCf62
+	 hFopsYayeFM0SFASoPuRhE1CHIbBp7CqPmRg2ONgiXw18fEmCd8j62gmhSV4LRwW8o
+	 ra3bkHSwHwqTQhVZxw6w9vQGsP1nvn3pMY/62z7k1U1F2tMxIOhk5FrQjvcYDCTwf0
+	 XlsLFTnm9O0CuaQbjsTiAwlgoeIv1DWE1XLvPwOfRXWZ+pvid18ZQR8KIgcfuM5DWO
+	 5yMxMAkOe6QYw==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id YNS0vbNhMu1C; Wed, 27 Nov 2024 02:55:54 -0800 (PST)
+Received: from ketchup (unknown [119.39.112.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 9EAAB122FE1A;
+	Wed, 27 Nov 2024 02:55:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1732704954; bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uwsJfH+3HRYpZD5erNRE95tLavoK9z63ZaX9LVjxZJHBKdEgmgXeS6ic7WBmDKMvU
+	 /eSyJl+JNlQy0ZHrPdw1iDW6BpZaPrdDwT4BfMmqBBwESOBfkRDgLdnaPdjMsgIFeP
+	 s7pYW+XoA7hHNQ9Mp17hcE5uWgsxQ7jUXegvYUt7z49HQbFHYK7QUvqiRGL7+0qC2+
+	 lbwhlTD4TJKqBmcFSh1/vw31YmsqnFJKO27CmJS4WssIQABF4Ml3jlz4dwLb+AngsB
+	 uXXPfZwVEVQqdABuBSP8hsIP8+4hQL7pTgJ+bEEu2HFFUf2IEvC9tBKedT2g61J92f
+	 RobmCn9pjXc+w==
+Date: Wed, 27 Nov 2024 10:55:42 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Subject: Re: [PATCH v3 0/3] Add clock controller support for Spacemit K1
+Message-ID: <Z0b6rqurcj-gfzjI@ketchup>
+References: <20241126143125.9980-2-heylenay@4d2.org>
+ <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Display enablement changes for Qualcomm QCS8300
- platform
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ritesh Kumar
-	<quic_riteshk@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Neil
- Armstrong" <neil.armstrong@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
- <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Gpp7Knmg-xPkJylILt6Rf0k6FYHYWrFs
-X-Proofpoint-ORIG-GUID: Gpp7Knmg-xPkJylILt6Rf0k6FYHYWrFs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=969 lowpriorityscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411270090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
 
+On Tue, Nov 26, 2024 at 03:44:20PM +0100, Krzysztof Kozlowski wrote:
+> On 26/11/2024 15:31, Haylen Chu wrote:
+> > The clock tree of Spacemit K1 is managed by several independent
+> > controllers in different SoC parts. In this series, all clock hardwares
+> > in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
+> > driver, CPU cores and UARTs could be brought up (see below). More clocks
+> > will be implemented later soon.
+> > 
+> > No device tree changes are included since Spacemit K1 UART needs two
+> > clocks to operate, but for now the driver gets only one. I would like to
+> > defer the changes until this is resolved.
+> > 
+> > This driver has been tested on BananaPi-F3 board and successfully
+> > brought up I2C, RTC, mmc and ethernet controllers. A clock tree dump
+> > could be obtained here[1].
+> > 
+> > [1]: https://gist.github.com/heylenayy/ebc6316692dd3aff56575dbf0eb4f1a9
+> > 
+> > Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+> > 
+> > Changed from v2
+> > - dt-binding fixes
+> What fixes? Be specific, what did you change?
 
+Sorry for the vague changelog about dt-binding changes... I'm willing
+to post a more precise one here,
 
-On 2024/11/27 15:13, Krzysztof Kozlowski wrote:
-> On 27/11/2024 08:05, Yongxing Mou wrote:
->> This series introduces support to enable the Mobile Display Subsystem (MDSS)
->> and Display Processing Unit (DPU) for the Qualcomm QCS8300 target. It
->> includes the addition of the hardware catalog, compatible string,
->> relevant device tree changes, and their YAML bindings.
->>
->> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->> ---
->> This series depends on following series:
->> https://lore.kernel.org/all/20241114-qcs8300-mm-cc-dt-patch-v1-1-7a974508c736@quicinc.com/
->> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
-> Above was not part of this merge window, so nothing from your patchset
-> can be merged for this v6.14.
+- drop clocks marked as deprecated by the vendor (CLK_JPF_4KAFBC and
+  CLK_JPF_2KAFBC)
+- add binding of missing bus clocks
+- change input clocks to use frequency-aware and more precise names
+- mark input clocks and their names as required
+- move the example to the (parent) syscon node and complete it
+- misc style fixes
+
 > 
-> If you want things to get merged, I suggest decoupling dependencies.
-> 
-Thanks for reviewing.Can we keep the dependency on above changes and 
-merge our changes after the dependent changes are merged?
 > Best regards,
 > Krzysztof
 
+Thanks,
+Haylen Chu
 
