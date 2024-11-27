@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-423412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9716B9DA70B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:46:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DD9165AFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:46:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA4E1B3F3D;
-	Wed, 27 Nov 2024 11:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UMmasBpd"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B599DA719
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:48:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B8917591;
-	Wed, 27 Nov 2024 11:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1212CB23C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:46:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558EB1F7574;
+	Wed, 27 Nov 2024 11:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MydWR7uE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152881F756D;
+	Wed, 27 Nov 2024 11:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732707939; cv=none; b=B3l2YmYpMgy1i2PggxCNiX7nJOMsQNx6PRgzIjbqDG4fwqsgOHmZ3XfYVOCh7JgVTwMRobozpZyuf1Iz9nZY+WE9qrI3RgY7I6+UydZCEE8Cc8lLjGcJay/A8iPKEQxcJtiBEjir3FvOYfDTr6pK+u2u0JtEY3CnX0bS3oOD+Sc=
+	t=1732707998; cv=none; b=Fa4ginQzbcXn1QzFMzeu7z9iXFBhuUaLvPnWdFFjoFfsXEnhWz517oyp1LmcRx8jL2Cdv9BgS4G0ar5O5RKumJ+/2dAHU+s5JQGlJgl+82fG6KL2Z6gIf3uJYTTaWC8NfDbomoKBilGPggXmKHB+XwLVSLfaegQ2d4YmDynWkwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732707939; c=relaxed/simple;
-	bh=YsJim3X/59akWviqfsnVfzcGmh+By4dRga1zXN2BHMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=IjSCAmJ8jDjip2QSHok/f7eNesIaFKZNFWtp7j8k0jz+1EEkyajdcHDnOkzvV3PiZapTi5Me1R5BXN+Jjwum9N1BK9bqx8mhogE0rR5KopLtMly2iSFSKBnmbUdGfQSJ2cZ1BOgXXnWvwQco6qmKzO4WLxyDozbbfg0fkmkasI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UMmasBpd; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732707919; x=1733312719; i=markus.elfring@web.de;
-	bh=wsTkpJ0crrbiKCw//zEGB71MSjoQsz2INPw4o65ZODw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UMmasBpdiKjjnuub+miyWcxiisBtRmQsorQ9Q1IDBk1b/eLv69QnVXvMjUNLpKEH
-	 C7r0hlGNMVj2hXu1PSnsJ6qPxbIIPnZi5ppqP0OhrbiLmdbHxehp1oUV1QxmPCgMo
-	 RybkAQZG55e+YUx1ND9jzNg91n9zFegTh9aNzUt0ut3PuPzrnGMNmZL2F4ANnxiuO
-	 oGRxiJUsJ7Po+V0yM386x6YQvbmfMamAX4BmH0Mj+kEigmxYlVBCPB8cHXGGEjGYN
-	 gmnIjqpTGTljUizj9HUaB5eXzrZQU9jdcT01f07DyOhaqADT3blT+IDwuN3xMAvC2
-	 4Rvcv07JRFLq3gH/Mg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrOdp-1u0vBA07lv-00lKvI; Wed, 27
- Nov 2024 12:45:19 +0100
-Message-ID: <056e599a-f1f3-4ef4-a0d9-04cbe99f198c@web.de>
-Date: Wed, 27 Nov 2024 12:45:18 +0100
+	s=arc-20240116; t=1732707998; c=relaxed/simple;
+	bh=vlL19C/qQVIzaDwmXl2UumgSU4dKfAIK+3KBrEf4c5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S7DV6fs3eRjQLT/Dw8N8U8ALNFUC4Un3gOToGE580r1X0dxceJphi1xGocosDusbkCW/ysRRt+irfOZtQxtLZrLQwUymAt1gXeN5rJ69qU/YvDTaC1LQJ4O14o8uQk3LLyskKAUKAeLH14dnv8yt9Zn3TTtmlHcCE9WCi1qF6ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MydWR7uE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR8rnPA007930;
+	Wed, 27 Nov 2024 11:46:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gkf0l9uy+eIhnpqzixpH1Jsqb75R/Ft64j6jabRq2is=; b=MydWR7uEDuNr5YLO
+	1CxlLzeXHy9qvmL/Kl8axlLpl4v0R5venl42r6/2ZCvjQ1kxYdcowSKSTp8DDJBn
+	Xh0D6/s9Sqc9HPXPH2aIOuxUYXC7WLejshm5IVIXVfRQFmX7EiodHFuejExMo/q9
+	ukbv4nKc7NXwRa0+giJIuz571g0WToy1sAvYL4KkZqyAHJLKX0KUblX7pZIe6lLO
+	RjrVJIkMfuOqlCI+kp0GEbliEGeGB0BMtfYKkT2FVgzrMsWuwrd4P9+clDGvtSZo
+	o6L06JsvyJdxFzEIGVOWVjpzlV9zU7VLSYaB7Zo5BJIMY9ZkBL8FN2OO9a76uRtm
+	u3ypzA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435ffyu8ux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 11:46:17 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ARBkFnj008885
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 11:46:15 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
+ 2024 03:46:08 -0800
+Message-ID: <d170e2d7-eb7b-4141-8516-2a3cea429b67@quicinc.com>
+Date: Wed, 27 Nov 2024 19:46:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,64 +64,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH 01/11] coccinelle: Add script to reorder capable()
- calls
-To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- linux-security-module@vger.kernel.org, cocci@inria.fr,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Serge Hallyn <serge@hallyn.com>
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
- <20241125104011.36552-11-cgoettsche@seltendoof.de>
-Content-Language: en-GB
-Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>,
- LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241125104011.36552-11-cgoettsche@seltendoof.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:c3z75ebXs5Vvec51bTijuBJ89sciEkl5vT69C//yxvbWjzQ69bj
- 6b2xXMO5j383+Av9ioHLroYrBtP+7cR6EkqAx2WX1bE3Ek126hEo0YbN2n98AGKuHu9cSOo
- BD86XgkY7y10I1YH70J/WzQaFoKcwmbzZfhGYncJWBp7G2E9nseOmODgxfD175nBkJV+Fc4
- OhW4+0CaIDBMKrlezuo2w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EERdwdgsqjs=;tQJriFa/CF00kg9HEyf9Jz2Xzfg
- GEbf7XRlswfFTo92k73LvwyyjuldmWapj2wOkdCfJDf2pQV7blO/e7Tn5Awo/9wDA0Or/awyB
- oaK1p8zNZtwoYgNo7K0eRRLW6+e0ZwyN0Dt3k9PTXbkFepcbh4pO3E6/57K21t9TbmYjXerZR
- Xr62/8itvY/6SN73rueLJZG1w9wSilsyzsTCB0Wb01KKtjYc0iBfmvIVv7y5DYPDmoJCnNV9x
- jFuknWRua9wRYshpPINz2iO8JZHco+c8kyptlQwC0Q+PEDhTjQz7BQwCigFt74ON8p4pR47F+
- RK2nV9Jlz5fGqrP1+yc0Vx79aSrCnsazHyf9IdzQMGieupwbvU25gpFA3mIUTlqebWR3RZxil
- eb+uPL0nGufuv4XbDM8+Xr+xnGG0QVO1jPoUXB6gT1uYYY5JfuIccYU7uJdfe41Qv2wT+EWWz
- Hc3tNJW4uXG4Yk8WcNFNUII8dNnDiJsoGPsRI39jy0mYwD23bTzZ0bxReQgg3pMYZaf1ILHzc
- JmTOM0aNg3dRpgRUPRAagNSUtEAuWkVlNhR6p6NQV9DRNygBxMZuiBf4XDZfVfPdx4Q+4C3vG
- 7QNKo76SXHq0lzER7XVha1QnrshPRDVkOdJvHLq2MD+3MVQTejfZtKCXJbodEy/iJpIqB3Gr2
- 5a+nfjF7+ObvnemK+Hht0BAXIyWcHck1bOLJPSqJszkGCRDibuLHAH1JY2dLkkT9yXFyzm3Ai
- CQJP3JUrkz5OR4YXaxKiZWPhUojq0J5KUUtyLnzBgldKe9U8rth+ryVwYfKpNaaiern4A6F6y
- tjNW2dbtuDHxT4x3UbdUvbeBg++TvD+dKc7KCJUfpbWrfWjjaipMxBokmqeE8CdsHy7hUH6fg
- mouxJv5LetFST1feBWxFScP+4rDUtbEwMAJh8o/OI3N07zJAnXGbNYwGT
-
-=E2=80=A6
-> +++ b/scripts/coccinelle/api/capable_order.cocci
-=E2=80=A6
-> +@ depends on patch@
-> +identifier F =3D { capable, ns_capable, sockopt_ns_capable };
-> +binary operator op,op1,op2;
-=E2=80=A6
-> +-  F@p(EL) op E
-> ++  E op F(EL)
-=E2=80=A6
-
-
-You would like to reorder expression parts.
-How do you think about to increase the precision for such
-an SmPL change specification?
-
-* May only operators be taken into account for which
-  the commutative property holds?
-
-* Would you like to support a varying length for the affected
-  operator chain (=E2=89=A5 2 operands)?
+Subject: Re: [PATCH 0/5] Display enablement changes for Qualcomm QCS8300
+ platform
+To: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Ritesh Kumar <quic_riteshk@quicinc.com>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        "Sean
+ Paul" <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <675c41cb-afa8-4386-8dc9-026a36bc1152@kernel.org>
+ <8982d065-9bc6-4036-8004-80b1681eaf3c@quicinc.com>
+ <42a8565a-6dd9-4cb6-a83b-22e779b5f31b@quicinc.com>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <42a8565a-6dd9-4cb6-a83b-22e779b5f31b@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _oJ1GmAeXHuiqQybL3IZZlaOfJFMmfZT
+X-Proofpoint-ORIG-GUID: _oJ1GmAeXHuiqQybL3IZZlaOfJFMmfZT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
+ mlxlogscore=937 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270096
 
 
-Regards,
-Markus
+
+On 2024/11/27 19:06, Tingwei Zhang wrote:
+> On 11/27/2024 6:54 PM, Yongxing Mou wrote:
+>>
+>>
+>> On 2024/11/27 15:13, Krzysztof Kozlowski wrote:
+>>> On 27/11/2024 08:05, Yongxing Mou wrote:
+>>>> This series introduces support to enable the Mobile Display 
+>>>> Subsystem (MDSS)
+>>>> and Display Processing Unit (DPU) for the Qualcomm QCS8300 target. It
+>>>> includes the addition of the hardware catalog, compatible string,
+>>>> relevant device tree changes, and their YAML bindings.
+>>>>
+>>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>>>> ---
+>>>> This series depends on following series:
+>>>> https://lore.kernel.org/all/20241114-qcs8300-mm-cc-dt-patch- 
+>>>> v1-1-7a974508c736@quicinc.com/
+>>>> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi- 
+>>>> v2-0-494c40fa2a42@quicinc.com/
+>>> Above was not part of this merge window, so nothing from your patchset
+>>> can be merged for this v6.14.
+>>>
+>>> If you want things to get merged, I suggest decoupling dependencies.
+>>>
+>> Thanks for reviewing.Can we keep the dependency on above changes and 
+>> merge our changes after the dependent changes are merged?
+> 
+> You can move device tree changes which have dependency to a separate 
+> series and keep binding/driver changes here. They don't have dependency.
+> 
+Got it.we can move this dtsi to the DP enablement DTSI change series in 
+next patchset.
+>>> Best regards, 
+>>> Krzysztof
+>>
+>>
+> 
+> 
+
 
