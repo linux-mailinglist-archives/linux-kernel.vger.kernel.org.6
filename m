@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-423768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2639DAC70
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:30:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0403A9DAC71
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D788281EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8268281EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D229E20110D;
-	Wed, 27 Nov 2024 17:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AAE20102B;
+	Wed, 27 Nov 2024 17:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5D9kcQj"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUPT+0oQ"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A542B2010FB;
-	Wed, 27 Nov 2024 17:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CD520110E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732728610; cv=none; b=sBcRxJmpL7xRzPJcxcDw9Kz1Wl5tD9s8UK5hWQm9d2uPhwqsjWpZnAu/5jvtMj4FsGhDXFg5b4ft8EokU/0RgHclzczSGZHrFPa/fxq80M7zpfUPIteWcCUhqMXDQaUqrQ0JZ3dpRmpGLhPE4uaIKCdd23/ScaglA3nhsLx4F4Q=
+	t=1732728614; cv=none; b=ugdrxe3fMifRe8PlLx99SEcFGDk2sqlamv54Vxh5RXd21DVwhSVGzbNyXRT+dcJ8XKu1JuIbtRyyhLsfXarnuDf1OKlPrVVwRQD0kHjyFDNvxeawnUkwo1KrlR8rw5FioJ3QL+q41rOGySuklFrmmXWZV5/evzxw6uQ92bdRzCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732728610; c=relaxed/simple;
-	bh=jB6V5LnOG2FU2rWhkR2mAKb1UPOirED+m9TxmqTlLDg=;
+	s=arc-20240116; t=1732728614; c=relaxed/simple;
+	bh=fBBghbhDRzpIZuEVSxoyhU2mCVIh66Al5FJPjlygwv4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Hxs0/b20ZbG9tkKntSFf4cT4oUh8RctWy2UO2RMj00iNesvd4eSBvSdBP+yXP9ds66QSIaqqHBdbUdVJmVv7AZo+WBXmOOhrDcTA+dW3ZhtBdeIDlZB5aQF/LTQiz2rHi3MRilQUp5ZPhUjTKPMufE+qSso6xob/j3oNlEKuiAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5D9kcQj; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=U9BAKF6q9Yg0+wUFxk5SSGWbxtsepD5cb0YKVXdRb4BInFRfAoYZ8tYHUpnds0XMam4XHm7f7LJde251wwTtNHnwjLNL9LUiFdAgcfTrBl5td/HDcQudvh0KhIv9tdFId6m9pu0z/yP5RYl57c+7yPB5hyVmYZ7cgyMM3sxU4+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUPT+0oQ; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so5960400a12.0;
-        Wed, 27 Nov 2024 09:30:08 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc2b84bc60so2725206a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732728608; x=1733333408; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732728612; x=1733333412; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IJ4wyksNmGKwRpxqsruWC4A8GzGFI32FmHe+iaxPpao=;
-        b=i5D9kcQjX0UQJpfGstl06rvbkIxxCU7ZLV22+4ZeO33ePlezqTYF3DCUFYwl/p4O1Z
-         uJTBxgwc9XoOeWU1L9StQGV09hhpAJfOQH70u7QJfpb5Qg4j521VWESqk/KHni4IKmLb
-         2S6Mp2VQJyKi/TtMav8hsR6IBKbpkPw0qy2Rncmeg5p1skfQNjMBFO3ivhORiAncYYob
-         qil9T3DxqCDDBdPx32JEzG7+9EpJNhcDxB6BeiGYjNowhClNVm5lCIWVqp5zRpMk80m7
-         +iB5vfktkgXTn2NQbehin0zT6MpoZtICmAYS2aGrPL2ALLcgNXMx8BQck9EcffdQIYW1
-         vCgg==
+        bh=Hlixj4dxi1hv7t1eaE352YtuPYrxmNR32TDpbYYyUtI=;
+        b=HUPT+0oQFFz+ZlHR1NRYwQM6BgItK/xYFY9pmxN7HRmDzfEmapMzhRH6ZNMQt8X+KV
+         EJowJLMsvcUEnqlcbFfjey6LLqPtxeX+O7wn0lFSkY2S64qfW002WvUDjzhyoy5aeTNb
+         lCJF8UoAc74VyoXqgaXofut+S/RX6XL82O1wyzWHb6Zk06N29kwQkL3fnubzLMUOxSL5
+         qkkixDqDJWsr7HUQEnxXrjn9jvhWrmBqK2w1riKXPgV9xNUXPm13MCYDj8NxBNPuahT6
+         p7YoLsJu1n0ca2eJPbdMDb68pqIsn2u8CIs1yzm59RvxXhTgaVVILLOgboSnpC+Nyv2/
+         xfQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732728608; x=1733333408;
+        d=1e100.net; s=20230601; t=1732728612; x=1733333412;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IJ4wyksNmGKwRpxqsruWC4A8GzGFI32FmHe+iaxPpao=;
-        b=k/25DkIa5QSIfjPF/6azPzOTH7nvi51EW6jMs7CAI0A77mYjZGqKJUqEIh8D48gOfM
-         LbfYRBHt/waWtX5P1pbn/9P/+XyueEOXWa3HPUR+Yx0JzGtkdRM4mG4fD1f0I3uk7Pgv
-         NjjmKbdDQ8j/q3eDt/iyLCFx0Et1isoJqrCdj9beAKfUcsjaEEHCphJzQm3/X8tCrEOm
-         WJQX3f5y9vd4fKTJ4hQcemrvAs34pg/cuOObINAMrotmfUj67BONqnLl58wza/kGpykP
-         kBxsJs1Y9v6K47F7anYJIeTyajsRTjIiTaWhQEuW+3hrrSCIvftlousNCDbyZJI/jnos
-         jcsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCG1NI/m4Ro25sn1Aab1NHIpq8Z+97wklnwYw7WMk6QteBmElJ0N8Zl5sNoqWesQyElhTqEd92+/gNOkpKvMqMes0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbSahKbXNm+e+2DIl5Lb4vwVAOmW6ZJj821oM0k3v0C4T8q/kZ
-	BCjY51ZEd/RncWyOBmBW12eFo4kIvqjaAXVV4P53ne9rIzoq1wHS
-X-Gm-Gg: ASbGncsiMs31gGz+rBwjEJ/3Z5LMFXVOCLtIqnLgO1pY9U2QQeBVeZyHwVtBlAls/B8
-	hEgqyiaO9AgmJvtuLrROiw9dzh0xI31z/PujSZtWcnlsAXqx8i6O0mMWwCcnUghHi2kx94cpBJ4
-	dtc+2PrsMvik4WSKUY4eWwDB5ksNxy/2WGWb4MAb4cfV58QlWoL1v9fHZk9h3uz/uPHfIjSq0lX
-	OKN0s+jRinwVLeox1u5QNi5O2ir0S/tG+kmasq7uZtTWA0j+68oVL3fYr5IuBxu1fWwcKugJQ9K
-	6UC+1Ac1pZ87C7B8KTjJaEAQDyny
-X-Google-Smtp-Source: AGHT+IF4fq/f76pFPUxSVNMwuLs8cfvtvFw2AwTwF+Xja2556ySDeUDGNdUbpJFYW6y4k7ZnLfhsXg==
-X-Received: by 2002:a05:6a20:914b:b0:1e0:d123:7154 with SMTP id adf61e73a8af0-1e0e0ade54cmr5763536637.17.1732728607749;
-        Wed, 27 Nov 2024 09:30:07 -0800 (PST)
+        bh=Hlixj4dxi1hv7t1eaE352YtuPYrxmNR32TDpbYYyUtI=;
+        b=qpMbFXwjVp84Aljk3vWKq1WkySy5SLd8Z6iK62uEI0sJySVhiITkdtjcKDSxUw5xuC
+         1xj3FF58vb8kiNzcCd0QUS84625jRQlP/6lAH7ZthR6OjjYCXFk/v1XYMvV5vl9a3mw/
+         +ts9+cNkB7KOq6bwpyVnFW61DCs5eXd7sSj3wZ/Sja/jKcW1bfkmMhrnJKShD2JH2nK3
+         Oxc2psPhAX2aXJ1hUu62ynr0VXyWUFFIfw9zip50Ic3F+IeozO8PFZArJ0aP8kHwF0Hw
+         GhLN4CnZkmYGdkkVmfzteXf6MZ+DhIve+5YtbTkr6U8ktG07cqOsPwp0RvoYVRtYW3gM
+         fLzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmIz214uC6nfzWZyzDM7MtqFuxndxpDqwTYSWCLL4RWiACxZ4m85vXhRNb1eTU0NQMbDqCB71XColiyMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzHTClVxh11/nO2uGCoSG7NaMeRLaQnCJN/d6/bIARZPgK4ov5
+	xwkbMLZWicMrsdKh3J625BMSlEUSySW+CxF77qwxMHaAXhFULSyq
+X-Gm-Gg: ASbGnctG5rIWXqPqkbEoVEd8BDqhdAlSxKCERNKjjIAoN7YfjMe87e3uNx0e6KA0l64
+	pSzAcHw8TDkvD9kWnHs0Ik6ACCLyJvD+FlltP/rslo4EENyhGojmiTYSx5MlUuDIdRoDu+DjatR
+	SQlhIp/+fyoJrXXH8j2m3SCluU2cc45kPzUJIUwCmRDYgedZq4CifzUrvY86hC1tFW8TuQIAXer
+	6GvrpubtGXQ+Ar8GRNysFsNtCCH25L6XOMBqpUdJxGE83BVSuZ1c+pxHv8UBv97eLoQRMUDpHIi
+	YtvGxIYRfakpizzKUW7hSO2Z7wgi
+X-Google-Smtp-Source: AGHT+IG4NurKvJEqxA2cpsneqQG887+tFx88JjKBx3q3M02mZmw0BTNFpg0m60820Xm5RX2iTEn9oA==
+X-Received: by 2002:a05:6a21:e8c:b0:1e0:c56f:7da8 with SMTP id adf61e73a8af0-1e0e0aa83camr5657700637.4.1732728611949;
+        Wed, 27 Nov 2024 09:30:11 -0800 (PST)
 Received: from localhost.localdomain (1-171-29-17.dynamic-ip.hinet.net. [1.171.29.17])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc1e3fdbsm9359582a12.30.2024.11.27.09.30.04
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc1e3fdbsm9359582a12.30.2024.11.27.09.30.09
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 27 Nov 2024 09:30:07 -0800 (PST)
+        Wed, 27 Nov 2024 09:30:11 -0800 (PST)
 From: Andy Chiu <andybnac@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
+To: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	bjorn@rivosinc.com,
 	puranjay12@gmail.com,
 	alexghiti@rivosinc.com,
@@ -93,9 +89,9 @@ Cc: linux-kernel@vger.kernel.org,
 	viccent.chen@sifive.com,
 	zong.li@sifive.com,
 	samuel.holland@sifive.com
-Subject: [PATCH v3 4/7] riscv: ftrace: do not use stop_machine to update code
-Date: Thu, 28 Nov 2024 01:29:05 +0800
-Message-Id: <20241127172908.17149-5-andybnac@gmail.com>
+Subject: [PATCH v3 5/7] riscv: vector: Support calling schedule() for preemptible Vector
+Date: Thu, 28 Nov 2024 01:29:06 +0800
+Message-Id: <20241127172908.17149-6-andybnac@gmail.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 In-Reply-To: <20241127172908.17149-1-andybnac@gmail.com>
 References: <20241127172908.17149-1-andybnac@gmail.com>
@@ -109,88 +105,91 @@ Content-Transfer-Encoding: 8bit
 
 From: Andy Chiu <andy.chiu@sifive.com>
 
-Now it is safe to remove dependency from stop_machine() for us to patch
-code in ftrace.
+Each function entry implies a call to ftrace infrastructure. And it may
+call into schedule in some cases. So, it is possible for preemptible
+kernel-mode Vector to implicitly call into schedule. Since all V-regs
+are caller-saved, it is possible to drop all V context when a thread
+voluntarily call schedule(). Besides, we currently don't pass argument
+through vector register, so we don't have to save/restore V-regs in
+ftrace trampoline.
 
 Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
 ---
- arch/riscv/kernel/ftrace.c | 53 +++-----------------------------------
- 1 file changed, 4 insertions(+), 49 deletions(-)
+ arch/riscv/include/asm/processor.h |  5 +++++
+ arch/riscv/include/asm/vector.h    | 22 +++++++++++++++++++---
+ 2 files changed, 24 insertions(+), 3 deletions(-)
 
-diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-index 5ebe412280ef..57a6558e212e 100644
---- a/arch/riscv/kernel/ftrace.c
-+++ b/arch/riscv/kernel/ftrace.c
-@@ -13,23 +13,13 @@
- #include <asm/patch.h>
+diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+index 5f56eb9d114a..9c1cc716b891 100644
+--- a/arch/riscv/include/asm/processor.h
++++ b/arch/riscv/include/asm/processor.h
+@@ -79,6 +79,10 @@ struct pt_regs;
+  *       Thus, the task does not own preempt_v. Any use of Vector will have to
+  *       save preempt_v, if dirty, and fallback to non-preemptible kernel-mode
+  *       Vector.
++ *  - bit 29: The thread voluntarily calls schedule() while holding an active
++ *    preempt_v. All preempt_v context should be dropped in such case because
++ *    V-regs are caller-saved. Only sstatus.VS=ON is persisted across a
++ *    schedule() call.
+  *  - bit 30: The in-kernel preempt_v context is saved, and requries to be
+  *    restored when returning to the context that owns the preempt_v.
+  *  - bit 31: The in-kernel preempt_v context is dirty, as signaled by the
+@@ -93,6 +97,7 @@ struct pt_regs;
+ #define RISCV_PREEMPT_V			0x00000100
+ #define RISCV_PREEMPT_V_DIRTY		0x80000000
+ #define RISCV_PREEMPT_V_NEED_RESTORE	0x40000000
++#define RISCV_PREEMPT_V_IN_SCHEDULE	0x20000000
  
- #ifdef CONFIG_DYNAMIC_FTRACE
--void ftrace_arch_code_modify_prepare(void) __acquires(&text_mutex)
-+void arch_ftrace_update_code(int command)
+ /* CPU-specific state of a task */
+ struct thread_struct {
+diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
+index c7c023afbacd..c5b6070db99f 100644
+--- a/arch/riscv/include/asm/vector.h
++++ b/arch/riscv/include/asm/vector.h
+@@ -76,6 +76,11 @@ static __always_inline void riscv_v_disable(void)
+ 	csr_clear(CSR_SSTATUS, SR_VS);
+ }
+ 
++static __always_inline bool riscv_v_is_on(void)
++{
++	return !!(csr_read(CSR_SSTATUS) & SR_VS);
++}
++
+ static __always_inline void __vstate_csr_save(struct __riscv_v_ext_state *dest)
  {
- 	mutex_lock(&text_mutex);
--
--	/*
--	 * The code sequences we use for ftrace can't be patched while the
--	 * kernel is running, so we need to use stop_machine() to modify them
--	 * for now.  This doesn't play nice with text_mutex, we use this flag
--	 * to elide the check.
--	 */
--	riscv_patch_in_stop_machine = true;
--}
--
--void ftrace_arch_code_modify_post_process(void) __releases(&text_mutex)
--{
--	riscv_patch_in_stop_machine = false;
-+	command |= FTRACE_MAY_SLEEP;
-+	ftrace_modify_all_code(command);
- 	mutex_unlock(&text_mutex);
-+	flush_icache_all();
+ 	asm volatile (
+@@ -244,6 +249,11 @@ static inline void __switch_to_vector(struct task_struct *prev,
+ 	struct pt_regs *regs;
+ 
+ 	if (riscv_preempt_v_started(prev)) {
++		if (riscv_v_is_on()) {
++			WARN_ON(prev->thread.riscv_v_flags & RISCV_V_CTX_DEPTH_MASK);
++			riscv_v_disable();
++			prev->thread.riscv_v_flags |= RISCV_PREEMPT_V_IN_SCHEDULE;
++		}
+ 		if (riscv_preempt_v_dirty(prev)) {
+ 			__riscv_v_vstate_save(&prev->thread.kernel_vstate,
+ 					      prev->thread.kernel_vstate.datap);
+@@ -254,10 +264,16 @@ static inline void __switch_to_vector(struct task_struct *prev,
+ 		riscv_v_vstate_save(&prev->thread.vstate, regs);
+ 	}
+ 
+-	if (riscv_preempt_v_started(next))
+-		riscv_preempt_v_set_restore(next);
+-	else
++	if (riscv_preempt_v_started(next)) {
++		if (next->thread.riscv_v_flags & RISCV_PREEMPT_V_IN_SCHEDULE) {
++			next->thread.riscv_v_flags &= ~RISCV_PREEMPT_V_IN_SCHEDULE;
++			riscv_v_enable();
++		} else {
++			riscv_preempt_v_set_restore(next);
++		}
++	} else {
+ 		riscv_v_vstate_set_restore(next, task_pt_regs(next));
++	}
  }
  
- static int ftrace_check_current_call(unsigned long hook_pos,
-@@ -155,41 +145,6 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
- 	return __ftrace_modify_call_site(&ftrace_call_dest, func, true);
- }
- 
--struct ftrace_modify_param {
--	int command;
--	atomic_t cpu_count;
--};
--
--static int __ftrace_modify_code(void *data)
--{
--	struct ftrace_modify_param *param = data;
--
--	if (atomic_inc_return(&param->cpu_count) == num_online_cpus()) {
--		ftrace_modify_all_code(param->command);
--		/*
--		 * Make sure the patching store is effective *before* we
--		 * increment the counter which releases all waiting CPUs
--		 * by using the release variant of atomic increment. The
--		 * release pairs with the call to local_flush_icache_all()
--		 * on the waiting CPU.
--		 */
--		atomic_inc_return_release(&param->cpu_count);
--	} else {
--		while (atomic_read(&param->cpu_count) <= num_online_cpus())
--			cpu_relax();
--
--		local_flush_icache_all();
--	}
--
--	return 0;
--}
--
--void arch_ftrace_update_code(int command)
--{
--	struct ftrace_modify_param param = { command, ATOMIC_INIT(0) };
--
--	stop_machine(__ftrace_modify_code, &param, cpu_online_mask);
--}
- #endif
- 
- #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ void riscv_v_vstate_ctrl_init(struct task_struct *tsk);
 -- 
 2.39.3 (Apple Git-145)
 
