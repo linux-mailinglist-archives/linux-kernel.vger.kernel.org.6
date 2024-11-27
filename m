@@ -1,153 +1,110 @@
-Return-Path: <linux-kernel+bounces-423974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACAC9DAEEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:26:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0449DAEF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:27:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79864166A90
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:26:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5717428217D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4512036E7;
-	Wed, 27 Nov 2024 21:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB32036EE;
+	Wed, 27 Nov 2024 21:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3t9bZ8E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAnwYckq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FA213D518;
-	Wed, 27 Nov 2024 21:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B13413D518;
+	Wed, 27 Nov 2024 21:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742761; cv=none; b=KAWw1x1bzSmcBth5yXGwtogXE0FDvvILpkpW/U8b4cBhz5KP1v/4AzWt+FjJ/QjBYcy981OyFbDhKwKIyN+4/Hrni89at7VMu6n1+cQaZPqpIES6wVya/2tsKDZ7wS1pQUGSnJ7Hw9tYym/l2yy9felnCE4FwMtUVGzQ5DxirV4=
+	t=1732742816; cv=none; b=Yt8wZ3HdGkYZQswafN5e5h1YeIyo4lfV7zAlrci+fen3L38sk+j+nXYyugWBq99QWNQYYtXOYj1jCbS2hP5/Lzj8OrsvbpawREFvwgXmN2azLfgngud4PrSVtjyL0Sl1b6nMLdqX2tmoAA78rA8sVaKFrfJflr1Z9BNlYgkfPEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732742761; c=relaxed/simple;
-	bh=RrHDVweNwvoqrOMwYtZp9qluVuL3gDi+cBfsfnkg6Tc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=etWq8W4CHZ5FyxqlmQIer/oWpWTOhyn+a+Yesozwo1JQa6LHKIEXe2k34Tk+VZni5Us+862ptuptUkDY7NHbUttXqYumuYfVLc/CPDpip1RoNmYhth43OZoOeJ58uLW318bX/oIG1Bl/D9dD6IAsjqTDRsiJSRiGLHhRis8I2Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3t9bZ8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CAFC4CED2;
-	Wed, 27 Nov 2024 21:26:00 +0000 (UTC)
+	s=arc-20240116; t=1732742816; c=relaxed/simple;
+	bh=jbC/jCJS+84tqIbSsE35AlGW1kuXaj5wEHCWYqF4OVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lTZY0Z0x5SMN/9rpoEB6QJleI9UqHPPmt/6Uu/QO9PbBnm1t9/msWsCGVsNvUZV3rjhVlHcqgaWlIQ2cHeotuiNn5qiFde1pP3HxuVG64jLRI0s/OmyQuMJ3xhfvio7t24oZfMm3TQijILGdPxex9lPzGsBnasci0VPKiVvJI4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAnwYckq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41EDC4CECC;
+	Wed, 27 Nov 2024 21:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732742761;
-	bh=RrHDVweNwvoqrOMwYtZp9qluVuL3gDi+cBfsfnkg6Tc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=A3t9bZ8EmXIioTHMce62anSQn+jiH5uF/rZyxanOkDQJTerumAdx6BvH5CUUsYVJY
-	 /FqFUQGppa67XuiFZ9AkIgMmjCuGgQXl5XFZY3t741JUj5LIJ3SXK4EwbXSvP2aneT
-	 3ua+zeVZDXd4LWpXvuq2wTnL/7UQSVPj6fIN+cjiFwVUCDEhgf0efVqY9rmFbmxxn8
-	 I0j+DJGmy1npu6wud1U7fF129t/G923zKnTTXC+by5V/0dI0GrL4d0DaWYwWEk+pME
-	 ryFsL/TTc2wFoSYXhUjuX+A7WRBWaOg6wHYeaqQILgET258ezYH79S2JJhRkP0hIwf
-	 yzFaJNvlNoEsQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Andy Chiu <andybnac@gmail.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Steven Rostedt
- <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- llvm@lists.linux.dev, bjorn@rivosinc.com, puranjay12@gmail.com,
- alexghiti@rivosinc.com, yongxuan.wang@sifive.com, greentime.hu@sifive.com,
- nick.hu@sifive.com, nylon.chen@sifive.com, tommy.wu@sifive.com,
- eric.lin@sifive.com, viccent.chen@sifive.com, zong.li@sifive.com,
- samuel.holland@sifive.com
-Subject: Re: [PATCH v3 0/7] riscv: ftrace: atmoic patching and preempt
- improvements
-In-Reply-To: <20241127172908.17149-1-andybnac@gmail.com>
-References: <20241127172908.17149-1-andybnac@gmail.com>
-Date: Wed, 27 Nov 2024 22:25:57 +0100
-Message-ID: <87frncmkre.fsf@all.your.base.are.belong.to.us>
+	s=k20201202; t=1732742816;
+	bh=jbC/jCJS+84tqIbSsE35AlGW1kuXaj5wEHCWYqF4OVk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VAnwYckq/SXsefbJ3d64IEic5tkRfSJA3lNI30aXFTdXyH3sZqHxjB4LspcqTUVy3
+	 sp9uZiSnqkIGnB6XfOaGtXWmVjLDt+JeNnmb4HbCTGhjocCg86VA0UPrSreC+X+Uzi
+	 3KVXK8CMLOd+RVk9Sez8pzPcPUrtBVA6qGDqNZr7OvUKiFYkr5G6jI1bBATF69dNJO
+	 lcGQNV+3vWiFL/4BRmOQINU4wR9euzXGDaVBmcF0ILnom+C1KPFdjDI1mTs+J4aLCa
+	 iRasUFtaJr8ZkopmAQppaLWlVDfrbMGdnqS2RqCYE22mM7p+kM1aEPP4trydxfVsyB
+	 /KuEKekVKG0sQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf tools: Avoid unaligned pointer operations
+Date: Wed, 27 Nov 2024 13:26:55 -0800
+Message-ID: <20241127212655.922196-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Adding Steven.
+The sample data is 64-bit aligned basically but raw data starts with
+32-bit length field and data follows.  In perf_event__synthesize_sample
+it treats the sample data as a 64-bit array.  And it needs some trick
+to update the raw data properly.
 
-Andy Chiu <andybnac@gmail.com> writes:
+But it seems some compilers are not happy with this and the program dies
+siliently.  I found the sample parsing test failed without any messages
+on affected systems.
 
-> This series makes atmoic code patching possible in riscv ftrace. A
-> direct benefit of this is that we can get rid of stop_machine() when
-> patching function entries. This also makes it possible to run ftrace
-> with full kernel preemption. Before this series, the kernel initializes
-> patchable function entries to NOP4 + NOP4. To start tracing, it updates
-> entries to AUIPC + JALR while holding other cores in stop_machine.
-> stop_machine() is required because it is impossible to update 2
-> instructions, and be seen atomically. And preemption must have to be
-> prevented, as kernel preemption allows process to be scheduled out while
-> executing on one of these instruction pairs.
->
-> This series addresses the problem by initializing the first NOP4 to
-> AUIPC. So, atmoic patching is possible because the kernel only has to
-> update one instruction. As long as the instruction is naturally aligned,
-> then it is expected to be updated atomically.
->
-> However, the address range of the ftrace trampoline is limited to +-2K
-> from ftrace_caller after appplying this series. This issue is expected
-> to be solved by Puranjay's CALL_OPS, where it adds 8B naturally align
-> data in front of pacthable functions and can  use it to direct execution
-> out to any custom trampolines.
->
-> The series is composed by three parts. The first part cleans up the
-> existing issues when the kernel is compiled with clang.The second part
-> modifies the ftrace code patching mechanism (2-4) as mentioned above.
-> Then prepare ftrace to be able to run with kernel preemption (5,6)
->
-> An ongoing fix:
->
-> Since there is no room for marking *kernel_text_address as notrace[1] at
-> source code level, there is a significant performance regression when
-> using function_graph with TRACE_IRQFLAGS enabled. There can be as much as
-> 8 graph handler being called in each function-entry. The current
-> workaround requires us echo "*kernel_text_address" into
-> set_ftrace_notrace before starting the trace. However, we observed that
-> the kernel still enables the patch site in some cases even with
-> *kernel_text_address properly added in the file While the root cause is
-> still under investagtion, we consider that it should not be the reason
-> for holding back the code patching, in order to unblock the call_ops
-> part.
+Let's update the code to use a 32-bit pointer directly and make sure the
+result is 64-bit aligned again.  No functional changes intended.
 
-Maybe Steven knows this from the top of his head!
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/synthetic-events.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-As Andy points out, "*kernel_text_address" is used in the stack
-unwinding on RISC-V. So, if you do a tracing without filtering *and*
-TRACE_IRQFLAGS, one will drown in traces.
+diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+index a58444c4aed1f1ea..385383ef6cf1edaf 100644
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
+ 	}
+ 
+ 	if (type & PERF_SAMPLE_RAW) {
+-		u.val32[0] = sample->raw_size;
+-		*array = u.val64;
+-		array = (void *)array + sizeof(u32);
++		u32 *array32 = (void *)array;
++
++		*array32 = sample->raw_size;
++		array32++;
++
++		memcpy(array32, sample->raw_data, sample->raw_size);
++		array = (void *)(array32 + (sample->raw_size / sizeof(u32)));
+ 
+-		memcpy(array, sample->raw_data, sample->raw_size);
+-		array = (void *)array + sample->raw_size;
++		/* make sure the array is 64-bit aligned */
++		BUG_ON(((long)array) / sizeof(u64));
+ 	}
+ 
+ 	if (type & PERF_SAMPLE_BRANCH_STACK) {
+-- 
+2.47.0.338.g60cca15819-goog
 
-E.g. the ftrace selftest:
-  | $ ./ftracetest -vvv test.d/ftrace/fgraph-multi.tc
-
-will generate a lot of traces.
-
-Now, if we add:
---8<--
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc b=
-/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc
-index ff88f97e41fb..4f30a4d81d99 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc
-@@ -84,6 +84,7 @@ cd $INSTANCE2
- do_test '*rcu*' 'rcu'
- cd $WD
- cd $INSTANCE3
-+echo '*kernel_text_address' > set_ftrace_notrace
- echo function_graph > current_tracer
-=20
- sleep 1
--->8--
-
-The graph tracer will not honor the "set_ftrace_notrace" in $INSTANCE3,
-but still enable the *kernel_text_address traces. (Note that there are
-no filters in the test, so *all* ftrace recs will be enabled.)
-
-Are we holding the graph tracer wrong?
-
-
-Happy thanksgiving!
-Bj=C3=B6rn
 
