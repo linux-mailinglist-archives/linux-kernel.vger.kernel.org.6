@@ -1,117 +1,317 @@
-Return-Path: <linux-kernel+bounces-423677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D919DAB39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:58:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621689DAB49
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA24281F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:58:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B17C7B22525
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F22200B89;
-	Wed, 27 Nov 2024 15:58:02 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512A620013D;
+	Wed, 27 Nov 2024 16:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="URs6Go4O"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07110200127;
-	Wed, 27 Nov 2024 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732723082; cv=none; b=KFnKAMg3kgReQvKx5Shxd74K2ktw2DVN+wx+GqZG1cY8vvYMPbLocTjJseBW0kxFIifo1tzPEfCtWgAPWZ0FaZ+o2vYV0zTDCZ5sDGqLh3IHqY9U4XQOCS4/4faF55aBCQ0gV3zEkat5nmficimlfHKp+9uBrrE5CGiSGGSGtr0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732723082; c=relaxed/simple;
-	bh=WLaj8Mili5XLkily00vB+aPjJXbRsughMjY1++2Z0e0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KqQqQLRH17ltvlG5S66kvUeRCP63xRUzzMszyMWxsu8c0rdoCjviVgUdj99sYpRWadkxRyWOMpCtKoZJ3ChNw/hlK84NDUGC8vqJrBsFtFHbtXx32PvFuvQR4K18UqRCE7htA8FkibjRbNZpnmA45YNadhb3raQmJZD390wRkh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Xz3TD0Bs1z9v7J5;
-	Wed, 27 Nov 2024 23:36:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id A7C9E1403D2;
-	Wed, 27 Nov 2024 23:57:42 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwB36TlsQUdnTGRlAg--.61578S2;
-	Wed, 27 Nov 2024 16:57:42 +0100 (CET)
-Message-ID: <9c8979adb9b575d2f938043f61e2be82c898632a.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Shu Han <ebpqwerty472123@gmail.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Wed, 27 Nov 2024 16:57:27 +0100
-In-Reply-To: <CAHQche-W2VxB+EJQRHUAWr4=850sX1ZfzzZUFJChUx8j6dW9Hw@mail.gmail.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <CAHQche-W2VxB+EJQRHUAWr4=850sX1ZfzzZUFJChUx8j6dW9Hw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA520200127;
+	Wed, 27 Nov 2024 16:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732723292; cv=pass; b=j4Eeh6505/NK2G39tJKV6csokWMV/fCWDsYb9LPPTVvSkumKvkf5ZaTr10/BZLnv36Ba+ZV9X5v2wf6XcHdY0thMPox9ajgCc4t/eR8DoPzW7Xz2oByV+QjVxHuT0+cNC86L7KMQfjJNmDSN1PYSMFebZaFCI0YQ6ZHrHNC3aIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732723292; c=relaxed/simple;
+	bh=Ifope+2Im9co9jHJe5x0mBqpzIJZIFVHMxDXOMdujEY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jorIfflKHLRjuuQa6I7qOZC95xLQUZvuVkAfjhLyIAyFcvVzXFNe6sShRBHKw7blbZfFhgv7Y2Ffm4ff2FiABGX5kwf+odYQayTmcakpkT48y2ysRlVkTB5SL1DD2EILj7uhxt1ryH83skpT3FBL4aCH+5C/I691+kJ0Vmmje7M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=URs6Go4O; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732723246; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nx+mLXSJ4gNuxmshcVOpUQfzuHyu0wTzXaRE8EhfNYqIdmsVAL74Kmkoqg8jY12F4J4osEpsYf3tcf9vvDv8RSEAXyqhOl/25VuhxezPre+ZVvWvbshyu/etwSOpZTFKVXiLQ2m3IOm9WuiW/RycbgBP/aVovsiD87+xdcXr/ak=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732723246; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NA81LvCy7ahNhWTPOvNOJ1qqd3S/0kPAzi+HAw+aYHk=; 
+	b=gf0wl1184XIjCz8XCFBELaCTnMfMtLezMqutEKBR7OmjRm6cdCRSdu7lSKaLRRVEcvQlJldxoOyM+Mz25tjHjUwdzYp9bOnFvCMl3mGJ1bJ7IB7mVzG3mdeaCna11C0ggnNatkEZxQYmUSGRjAT8HBLT/+hSaku2dgl1P6HSHKA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732723246;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=NA81LvCy7ahNhWTPOvNOJ1qqd3S/0kPAzi+HAw+aYHk=;
+	b=URs6Go4OAejB4v6B61P4gA6FRu1Md4rLR3BWPUGb0xSwxijTawgPnM2iyk7tGCsK
+	QefMkrX0QDMUvtY3bvd5BXVxYHny/FawY8bv6gnv77Uor5sySQFA9Jy9nLhfPR33iAp
+	6wctF8SxM8Nr0dIFc/7yD4kLoNJr/Ms6moF1TZyY=
+Received: by mx.zohomail.com with SMTPS id 1732723245585541.8552567167637;
+	Wed, 27 Nov 2024 08:00:45 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwB36TlsQUdnTGRlAg--.61578S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jr1xur1UGw15Gw18Aw43Wrg_yoWDtwbEgF
-	90v34vyw18Xan5Wa1vkrs3GFZ3ta1rWw18CFZrArW0vw15Jrs8XFWruryfZrWrJasxtrs0
-	kFWSg348K34q9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABGdGg7UGkwAAsH
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 14/35] WIP: rust: drm/kms: Add OpaqueCrtc and
+ OpaqueCrtcState
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-15-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 13:00:30 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <39164069-001D-401D-A037-3C43F27373B9@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-15-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Wed, 2024-10-09 at 23:59 +0800, Shu Han wrote:
-> > Finally, expand the critical region in process_measurement()
-> > guarded by
-> > iint->mutex up to where the inode was locked, use only one iint
-> > lock in
-> > __ima_inode_hash(), since the mutex is now in the inode security
-> > blob, and
-> > replace the inode_lock()/inode_unlock() calls in
-> > ima_check_last_writer().
+Hi Lyude,
+
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
 >=20
-> I am not familiar with this, so the following statement may be
-> inaccurate:
+> This is the same thing as OpaqueConnector and OpaqueConnectorState, =
+but for
+> CRTCs now.
 >=20
-> I suspect that modifying the `i_flags` field through
-> `inode->i_flags |=3D S_IMA;` in `ima_inode_get` may cause a
-> race, as this patch removes the write lock for inodes in
-> process_measurement().
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 >=20
-> For example, swapon() adds the S_SWAPFILE tag under inode write
-> lock's
-> protection.
+> ---
 >=20
-> Perhaps this initialization tag(`S_IMA`) can also be moved into
-> inode's
-> security blob.
+> TODO:
+> * Add upcast functions
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/crtc.rs | 131 ++++++++++++++++++++++++++++++++++++
+> 1 file changed, 131 insertions(+)
+>=20
+> diff --git a/rust/kernel/drm/kms/crtc.rs b/rust/kernel/drm/kms/crtc.rs
+> index d84db49948380..1a3c9c448afcc 100644
+> --- a/rust/kernel/drm/kms/crtc.rs
+> +++ b/rust/kernel/drm/kms/crtc.rs
+> @@ -234,6 +234,41 @@ pub fn new<'a, 'b: 'a, P, C>(
+>         // SAFETY: We don't move anything
+>         Ok(unsafe { &*Box::into_raw(Pin::into_inner_unchecked(this)) =
+})
+>     }
+> +
+> +    /// Attempt to convert an [`OpaqueCrtc`] into a fully qualified =
+[`Crtc`].
+> +    ///
+> +    /// This checks if the given [`OpaqueCrtc`] uses the same =
+[`DriverCrtc`] implementation, and
+> +    /// returns the [`OpaqueCrtc`] as a [`Crtc`] object if so.
+> +    pub fn try_from_opaque<'a, D>(opaque: &'a OpaqueCrtc<D>) -> =
+Option<&'a Self>
+> +    where
+> +        D: KmsDriver,
+> +        T: DriverCrtc<Driver =3D D>
+> +    {
+> +        // SAFETY: The vtables for a `Crtc` are initialized =
+throughout the lifetime of the object
+> +        let funcs =3D unsafe { (*opaque.crtc.get()).funcs };
+> +
+> +        // SAFETY: We only perform this transmutation if the opaque =
+CRTC shares our vtable pointers,
+> +        // so the underlying `Crtc` must share our data layout.
+> +        ptr::eq(funcs, &T::OPS.funcs).then(|| unsafe { =
+mem::transmute(opaque) })
+> +    }
+> +
+> +    /// Convert a [`OpaqueCrtc`] into its fully qualified [`Crtc`].
+> +    ///
+> +    /// This is an infallible version of [`Self::try_from_opaque`]. =
+This function is mainly useful
+> +    /// for drivers where only a single [`DriverCrtc`] implementation =
+exists.
 
-It would not even be necessary, since after making IMA as a regular LSM
-the S_IMA check can be replaced by testing whether or not the pointer
-of inode integrity metadata in the security blob is NULL.
+I am confused. If a driver has a single `DriverCrtc`, why would it care =
+for `OpaqueCrtc`?
 
-Will remove S_IMA.
+> +    ///
+> +    /// # Panics
+> +    ///
+> +    /// This function will panic if the underlying CRTC in the =
+provided [`OpaqueCrtc`] does not
+> +    /// belong to the same [`DriverCrtc`] implementation.
+> +    pub fn from_opaque<'a, D>(opaque: &'a OpaqueCrtc<D>) -> &'a Self
+> +    where
+> +        D: KmsDriver,
+> +        T: DriverCrtc<Driver =3D D>
+> +    {
+> +        Self::try_from_opaque(opaque)
+> +            .expect("Passed OpaqueCrtc does not share this DriverCrtc =
+implementation")
+> +    }
+> }
+>=20
+> /// A trait implemented by any type that acts as a [`struct drm_crtc`] =
+interface.
+> @@ -267,6 +302,66 @@ unsafe fn from_raw<'a>(ptr: *mut =
+bindings::drm_crtc) -> &'a Self {
+>     }
+> }
+>=20
+> +/// A [`struct drm_crtc`] without a known [`DriverCrtc`] =
+implementation.
+> +///
+> +/// This is mainly for situations where our bindings can't infer the =
+[`DriverCrtc`] implementation
+> +/// for a [`struct drm_crtc`] automatically. It is identical to =
+[`Crtc`], except that it does not
+> +/// provide access to the driver's private data.
+> +///
+> +/// It may be upcasted to a full [`Crtc`] using [`Crtc::from_opaque`] =
+or
+> +/// [`Crtc::try_from_opaque`].
+> +///
+> +/// # Invariants
+> +///
+> +/// - `crtc` is initialized for as long as this object is made =
+available to users.
+> +/// - The data layout of this structure is equivalent to [`struct =
+drm_crtc`].
 
-Thanks
+nit: Maybe worth clarifying that it=E2=80=99s equivalent to =
+`bindings::drm_crtc`, not directly to
+C=E2=80=99s `struct drm_crtc`. Although it should also be equivalent to =
+that in practice.
 
-Roberto
+> +///
+> +/// [`struct drm_crtc`]: srctree/include/drm/drm_crtc.h
+> +#[repr(transparent)]
+> +pub struct OpaqueCrtc<T: KmsDriver> {
+> +    crtc: Opaque<bindings::drm_crtc>,
+> +    _p: PhantomData<T>
+> +}
+> +
+> +impl<T: KmsDriver> Sealed for OpaqueCrtc<T> {}
+> +
+> +impl<T: KmsDriver> AsRawCrtc for OpaqueCrtc<T> {
+> +    type State =3D OpaqueCrtcState<T>;
+> +
+> +    fn as_raw(&self) -> *mut bindings::drm_crtc {
+> +        self.crtc.get()
+> +    }
+> +
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_crtc) -> &'a Self =
+{
+> +        // SAFETY: Our data layout starts with `bindings::drm_crtc`
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> +impl<T: KmsDriver> ModeObject for OpaqueCrtc<T> {
+> +    type Driver =3D T;
+> +
+> +    fn drm_dev(&self) -> &Device<Self::Driver> {
+> +        // SAFETY: The parent device for a DRM connector will never =
+outlive the connector, and this
+> +        // pointer is invariant through the lifetime of the connector
+> +        unsafe { Device::borrow((*self.as_raw()).dev) }
+> +    }
+> +
+> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
+> +        // SAFETY: We don't expose DRM connectors to users before =
+`base` is initialized
+> +        unsafe { addr_of_mut!((*self.as_raw()).base) }
+> +    }
+> +}
+> +
+> +// SAFETY: CRTCs are non-refcounted modesetting objects
+> +unsafe impl<T: KmsDriver> StaticModeObject for OpaqueCrtc<T> {}
+> +
+> +// SAFETY: Our CRTC interface is guaranteed to be thread-safe
+> +unsafe impl<T: KmsDriver> Send for OpaqueCrtc<T> {}
+> +
+> +// SAFETY: Our CRTC interface is guaranteed to be thread-safe
+> +unsafe impl<T: KmsDriver> Sync for OpaqueCrtc<T> {}
+> +
+> unsafe impl Zeroable for bindings::drm_crtc_state { }
+>=20
+> impl<T: DriverCrtcState> Sealed for CrtcState<T> {}
+> @@ -400,6 +495,42 @@ unsafe fn from_raw<'a>(ptr: *const =
+bindings::drm_crtc_state) -> &'a Self {
+>     }
+> }
+>=20
+> +/// A [`struct drm_crtc_state`] without a known [`DriverCrtcState`] =
+implementation.
+> +///
+> +/// This is mainly for situations where our bindings can't infer the =
+[`DriverCrtcState`]
+> +/// implementation for a [`struct drm_crtc_state`] automatically. It =
+is identical to [`Crtc`],
+> +/// except that it does not provide access to the driver's private =
+data.
+> +///
+> +/// TODO: Add upcast functions
+> +///
+> +/// # Invariants
+> +///
+> +/// - `state` is initialized for as long as this object is exposed to =
+users.
+> +/// - The data layout of this type is identical to [`struct =
+drm_crtc_state`].
+> +///
+> +/// [`struct drm_crtc_state`]: srctree/include/drm/drm_crtc.h
+> +#[repr(transparent)]
+> +pub struct OpaqueCrtcState<T: KmsDriver> {
+> +    state: Opaque<bindings::drm_crtc_state>,
+> +    _p: PhantomData<T>
+> +}
+> +
+> +impl<T: KmsDriver> AsRawCrtcState for OpaqueCrtcState<T> {
+> +    type Crtc =3D OpaqueCrtc<T>;
+> +}
+> +
+> +impl<T: KmsDriver> private::AsRawCrtcState for OpaqueCrtcState<T> {
+> +    fn as_raw(&self) -> *mut bindings::drm_crtc_state {
+> +        self.state.get()
+> +    }
+> +}
+> +
+> +impl<T: KmsDriver> FromRawCrtcState for OpaqueCrtcState<T> {
+> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_crtc_state) -> =
+&'a Self {
+> +        // SAFETY: Our data layout is identical to =
+`bindings::drm_crtc_state`
+> +        unsafe { &*(ptr.cast()) }
+> +    }
+> +}
+> unsafe extern "C" fn crtc_destroy_callback<T: DriverCrtc>(
+>     crtc: *mut bindings::drm_crtc
+> ) {
+> --=20
+> 2.46.1
+>=20
+>=20
 
+=E2=80=94 Daniel=
 
