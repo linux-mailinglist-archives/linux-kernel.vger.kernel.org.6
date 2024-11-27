@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-423576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45209DA9DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C36A69DA9E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678A4B219A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD0AB21A72
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC181FF617;
-	Wed, 27 Nov 2024 14:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FtwH6dmI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O7CQAmPL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B961FF7AF;
+	Wed, 27 Nov 2024 14:32:22 +0000 (UTC)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496A926AD0;
-	Wed, 27 Nov 2024 14:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008C726AD0;
+	Wed, 27 Nov 2024 14:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732717871; cv=none; b=oaMkyYX9Uh4QlvXU7qo/GIeH7vVEXXFJGUY1BJ/7Dyk1rxw+YvdSVqGPC8mkRU1lyNtt0iLLPGl44vAfqBYlN+XChGVlijK5UaZfwaCOo4/Q2NIZ4//Zkff4WjWRR9Bu1zgN7vU8ZiKrfoBzEi3P7dmuzossVXA+321YJqJTxVg=
+	t=1732717941; cv=none; b=ckAF7DAIh12pUokGbzpKcO/JVx3pqS8cl793MetRJQQlicK96pJvkWY0Wexoovc8Tnb3Tkd3a/EnvopZFKd6MBm2UUrDy0aO0E+v8gyqhPQWe4HMhZjDTRpFYyOo3/Mk5zWhLH2x+V2rm9Ep+wv587akfxzcLuXo6XXPR2ZaHxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732717871; c=relaxed/simple;
-	bh=SbWvi8b3kQtxd0QIMyleExujGM9/6bgLGFH9pA41o+U=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dd0GmmSp98OitCMu41vor2QIsxJfwWgg6m3n8bzf3FxERNSJhLGcv5lsrRWiXlZt1VTygkhVF9R15X5RNy9FGo+zcRPwlD5TbA0m/vqCStXf+mtRgZuJe5l7WRffgPzuPZEb0c0TJVzVaExNBDRrQjSAjLTPvAw3XkSkp//Bao8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FtwH6dmI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O7CQAmPL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 27 Nov 2024 14:31:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732717867;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W860JXMaS5h6j69idQvjzaaXJ1b9J9Sr1Z08VvEaE34=;
-	b=FtwH6dmI8cJppsphir/G/FF3qdH+PLcj2d8+wUvaeAzkqxF7RaJ08Ok5ODfFhjVD6/FmwY
-	JJeiW/QupH4NwHTHTPAcv5hSbVNfd5fsMyEh0bXHiaAiGbNkwm5gYUd5RcC2tzPSjK/Bw4
-	m+DJ8ckWGrpS6sS2fR3hHCbaTwKaE4dKUkgoaEyx7SkRQm3CSGgr+Sa7/YUcTe6tcUCKJ6
-	b2xRisHax1n+yWgnxw31OyJSF8Qq5THitPKN3bsEryHTn+/4BAPhxoeGC+I/oD5S1RzYDp
-	v35CGwSro9r0SciEE7enssLtRUnqAAuZ0FsREN3WW58h9YGvPcqyih8NKujY8Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732717867;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W860JXMaS5h6j69idQvjzaaXJ1b9J9Sr1Z08VvEaE34=;
-	b=O7CQAmPLPLP+fK/6dSDTlHBs3K7yHJ46ftlWTk9ePg4I9ERi6ZRXVkga3wRuc4dY3JLdCK
-	KTbu89C2PhlkA+DA==
-From: "tip-bot2 for Marcelo Dalmas" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] ntp: Remove invalid cast in time offset math
-Cc: Marcelo Dalmas <marcelo.dalmas@ge.com>,
- Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3CSJ0P101MB03687BF7D5A10FD3C49C51E5F42E2=40SJ0P101MB?=
- =?utf-8?q?0368=2ENAMP101=2EPROD=2EOUTLOOK=2ECOM=3E?=
-References: =?utf-8?q?=3CSJ0P101MB03687BF7D5A10FD3C49C51E5F42E2=40SJ0P101M?=
- =?utf-8?q?B0368=2ENAMP101=2EPROD=2EOUTLOOK=2ECOM=3E?=
+	s=arc-20240116; t=1732717941; c=relaxed/simple;
+	bh=0HvpP03fJIa9VL9yIjXyCxKkTPSv+tDsMAhrVsQoK2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6U9AalTzXtAXynZjsGcOfxKqfTF46FZysdZM5TOCGikp7/3lJCO7tG58c3mebu+3PjJ5NQWGW0TTw0dAYphLKarNc44jZcZ3rW1s2RSUcr9CQ2POUdZ28Ex4UiCIA+o6WztHRT4NUYFk4z1MiRvC/RwPOyjLcQbSH3dTd8dP20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b66ea49407so81184885a.0;
+        Wed, 27 Nov 2024 06:32:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732717938; x=1733322738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2j2ZUq6xu9t3wTv8Cm7N7UCfA0pG8EHAdf2AYMgtddQ=;
+        b=mbd5WEk1miTX+Op/WVf9xXPI/W6wYXYXcqzkRXOnkZs4ohVuv6oxAVUpTT/3xfSV4p
+         RG4WBZ8XbeBilPj9WELWrmHrnNGXCnAnH4J+WCbG0kxYno5czyL3T6uDnuQFD8Xh8np7
+         oB/1cP7oSj0kvpQPzE/TO5RZb09pg+fshzcec/GCVwoJdLm3f5vEFq26ZI28hy7ANgEe
+         TVUnJEkS5dozBjYuhnLOZ1JrgrI+EVoywt9Y+M8O4+Q5AIs/aBi2WLD8aD+wyZAnXzQj
+         Nr36gzPHD2omVtaIDskGAo5nVgycy7AHffBacikwvt+1LIx3MNuSoFEbKSP7C0QjnO2q
+         U3Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTrJIcNdX+nq3HMWeDwouOb8jjXKfzUi+JWVCQFG6nav5Fny0pqIheW+LQd+CkZ1DD76aubRUgjfGg4mgg@vger.kernel.org, AJvYcCVGZv7QQR4NcQxBnMNsoQbv8rhOgKZt8zbcH79fKNGs5PM6FpdGYYElJNPgS4WUAoq4zmaBv6biyeUdFg==@vger.kernel.org, AJvYcCWBPqH1JS+TUfjezcVSaS6uSos+cB+54XSffHja8mI5Pd1L43afMhUbWKS9O4kFhfe5i9sFaP2dvYigGUI=@vger.kernel.org, AJvYcCWZqbe/nmGd+NCx9fa13ZpZ97KKkl6xFdrX7v0TM0hyWM/iXl7vZgrd2f81MFWfreynPgoSVTrjvK3V@vger.kernel.org, AJvYcCWdltFfXlVAj464H9DYswcWD/+isHW85qMk0Oj4yyDpn039bds/w7q4Y3SXIMHJ5nUu8n3p3/JWEKJtFHwfqCqhvl8=@vger.kernel.org, AJvYcCXoccJ+ytW3p1jY71fEIiqJQ7zYOie3cgIwkTeKQMKVWXDVAmRIYfE1OGP0DkA/B67iYrV8OhDVLh/N@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFvo51aLMhmLWo7YiJueUIXAw8gl/rKVpPwVZrdO/l4ocTgUOy
+	BE89wNrxs9M0URzGfrMUuCWDTu/jSKs/D4rP2NaKEv3aZ3hqoKRxnFLSRgA2Qug=
+X-Gm-Gg: ASbGncuPJyMPDkDoiFc9+hNruEqbwGbwiliR/sF9nxHbMGh2Nh+tryE/P4rC7WTdb8t
+	hrONN0N5W7GVqcf1Q25er3VMwzw1qdzY7Zr4NeBDBHGIgDq1yqTztyDOBdEEZOT8rFza6UC4cvG
+	LzRdQrIgq5AoJTo6Bm3RscPc2Op8o+aVmde08PPWU2givTlg9W2sj1jtJ6M+GiQ1kwCNTFvQNec
+	B71ZlwLzy9NhqswNtRc2ra8yEzDqSoZghgQA8loftF/ONblOnyXaasEu6vUBFpPD7CBBSzp1Qer
+	iqUf+zbhaBbQfz2V
+X-Google-Smtp-Source: AGHT+IHPmQWdd5kenGSHMPBppEIql98ObTNtrv4YVg7ZVWyjoB7kE5vbX+CT/cwEKn/RnQPepr6AXQ==
+X-Received: by 2002:a05:620a:371a:b0:7b6:740f:a535 with SMTP id af79cd13be357-7b67442f42fmr1350350585a.0.1732717938600;
+        Wed, 27 Nov 2024 06:32:18 -0800 (PST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6767bace4sm157814185a.40.2024.11.27.06.32.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 06:32:16 -0800 (PST)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b66d08d529so76678985a.1;
+        Wed, 27 Nov 2024 06:32:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNzRBm7BItlOFowfiujdfO0aM04W6RvGYF14PObrZdH39exqCznhLB8iLkCL/Y8b3f6C/5LeGc0QHY@vger.kernel.org, AJvYcCVYzvcSBVRou6KsaC4UcY+uaR/L9mqoiMFPf7kIeTAXqg2NQqxTUb5VoX0l61y3d/jDcZSuKNBfzIaXOajCXJ/Zz6Y=@vger.kernel.org, AJvYcCW5qgrL6h0pO2ihWGnyTtpxunMP3Ka+Br3+D73NkYJdLG/vjYU6YMt/H/+JBpDpLtoiur/sJGFJD1CskZ3c@vger.kernel.org, AJvYcCXFs+FecWzMxQI+vXaofKuexnm8mr52gtUU87+DizqbkS4Sa7JU1+mQliMQ2y7JVsP8wF5+6tNu73+2@vger.kernel.org, AJvYcCXRqgyTg438KKdF9YALkFNTE5N3tthTcclg+Q7Wt0D4JfGsDi1Kf6R/ITj71MkuUdtzKt0crQSvAeJUDQY=@vger.kernel.org, AJvYcCXpypu9MkKqFLJZkVgUadiHWNQ+x8YyPF9egePKXUnEkyn9ChwWXFZRdWmiIHEETWuOdi1oW2bEcDJ7oQ==@vger.kernel.org
+X-Received: by 2002:a05:620a:3186:b0:7a9:b2f4:42e0 with SMTP id
+ af79cd13be357-7b67452f309mr1359261885a.15.1732717935088; Wed, 27 Nov 2024
+ 06:32:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173271786637.412.11744400812569588652.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 Nov 2024 15:32:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
+Message-ID: <CAMuHMdWhBUwWB=8T3TW8osEG+=MaW5bykqZ77V40MVf9GKeCgw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the timers/urgent branch of tip:
+Hi Claudiu,
 
-Commit-ID:     299130166e70124956c865a66a3669a61db1c212
-Gitweb:        https://git.kernel.org/tip/299130166e70124956c865a66a3669a61db1c212
-Author:        Marcelo Dalmas <marcelo.dalmas@ge.com>
-AuthorDate:    Mon, 25 Nov 2024 12:16:09 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 27 Nov 2024 15:18:45 +01:00
+On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add audio clock pins. These are used by audio IPs as input pins to feed
+> them with audio clocks.
+>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - collected tags
 
-ntp: Remove invalid cast in time offset math
+Thanks for the update!
 
-Due to an unsigned cast, adjtimex() returns the wrong offest when using
-ADJ_MICRO and the offset is negative. In this case a small negative offset
-returns approximately 4.29 seconds (~ 2^32/1000 milliseconds) due to the
-unsigned cast of the negative offset.
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
+edicated_pins[] =3D {
+>                                                       PIN_CFG_SOFT_PS)) }=
+,
+>         { "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_=
+SOFT_PS)) },
+>         { "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A=
+ | PIN_CFG_SOFT_PS) },
+> +       { "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
+> +       { "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
 
-Remove the cast and restore the signed division to cure that issue.
+I'll move these before WDTOVF_PERROUT# while applying, to preserve
+sort order (by port/pin number).
 
-Fixes: ead25417f82e ("timex: use __kernel_timex internally")
-Signed-off-by: Marcelo Dalmas <marcelo.dalmas@ge.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/SJ0P101MB03687BF7D5A10FD3C49C51E5F42E2@SJ0P101MB0368.NAMP101.PROD.OUTLOOK.COM
----
- kernel/time/ntp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.14.
 
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index b550ebe..02e7fe6 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -798,7 +798,7 @@ int __do_adjtimex(struct __kernel_timex *txc, const struct timespec64 *ts,
- 
- 		txc->offset = shift_right(ntpdata->time_offset * NTP_INTERVAL_FREQ, NTP_SCALE_SHIFT);
- 		if (!(ntpdata->time_status & STA_NANO))
--			txc->offset = (u32)txc->offset / NSEC_PER_USEC;
-+			txc->offset /= NSEC_PER_USEC;
- 	}
- 
- 	result = ntpdata->time_state;
+>         { "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN=
+_CFG_IO_VMC_SD0)) },
+>         { "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN=
+_CFG_IEN |
+>                                                      PIN_CFG_IO_VMC_SD0))=
+ },
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
