@@ -1,184 +1,165 @@
-Return-Path: <linux-kernel+bounces-423882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7E09DADD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:30:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514549DADD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 803DB281279
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:30:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C42B27108
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27232201279;
-	Wed, 27 Nov 2024 19:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF541201116;
+	Wed, 27 Nov 2024 19:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5pon74J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fD2zUlVD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H5pOV3yH"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6950312E1E0;
-	Wed, 27 Nov 2024 19:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA012E1E0;
+	Wed, 27 Nov 2024 19:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735816; cv=none; b=nXqnOSY+xMzeitcFIcvcz7x9ShYVfpzNSIkYcZ/z6tpdN3c1d4QMdnHuIIwJB+f7qehaOjANJU0q+z1uOqLW+N2axJ/Zz9feQ8qKwjxhuHj+FMMvzv1HbzEOxx2Dzebq6lRMi+N8rcUZHgrVWz7pE+1i+Xd6Xt+AnCPoMEebG1c=
+	t=1732735832; cv=none; b=A9zp4sxKW5feynABNgbXGehHtDVvwTbTY0TTESsu2PLa955eYc89b+NqqTY/5IJMfIL4YJHI6rFR/1TvVB6qyH0NWwYmCPTj68BEXh8yGt+L3a2rB8RGZAH1xaFeuTNHmg8qOmaDcZl9ZwseRZWSI9HfiAFSYxcwVP4/UWMcMvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735816; c=relaxed/simple;
-	bh=Q93fhdsgg0GiaU68+V3FzwR+KBc2+Wcx9p9sfWcABMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ERVbX7uKe/3iVSNPZjCZl6Xy6Nx085mi/QnhWrys4ZFoEVkHpsyLu26MsmBh/ZBDsuGs5HtobAOdUaAB0JmXszDPShXjKkLhNK6ZNtKeRNVrEmcDUlsH3AoQ+1T+gHzBfitQtJA6/nylvDIurLgIKJtu624LtREXuGl2iCZdg4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5pon74J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1012C4CECC;
-	Wed, 27 Nov 2024 19:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732735815;
-	bh=Q93fhdsgg0GiaU68+V3FzwR+KBc2+Wcx9p9sfWcABMg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=d5pon74Jylztp5VkG+voF54PL+5omHF9r+rBOgjyN3yu3BiuZvTIc7qIrQ2URDr5m
-	 cBqnyPwmr8biiVB33DLT0R+epsH4nxGaH696880KjlGaCAQ+jMJ76Wzi0VPnbevKP/
-	 JBjvxtzoU8TYfoWXykun7L3TMrhTNiczveUPxPdcOk0A/hpqvWyto/XWIZZZrzl0u8
-	 5pVCri8ZLCrB6YWQHV2dg6LrLdPlqLURm54gXjTpnwSmF5j3k0B1dEZGHUX7rh9jP1
-	 zh41dEKco0LNz11cK97gETakxQK17V1dyupoBhO9SUtKtIJZA6XCURGJv6lIuxZnZ/
-	 gDZOgspFr9BFw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tGNjp-00GLq1-Jq;
-	Wed, 27 Nov 2024 19:30:13 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] arch_numa: Restore nid checks before registering a memblock with a node
-Date: Wed, 27 Nov 2024 19:30:00 +0000
-Message-Id: <20241127193000.3702637-1-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1732735832; c=relaxed/simple;
+	bh=Bj/s6PT34SkAI6ztbW67uRqPMcWds4OjshAmxkBD6/s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IrvnbMyKeHXYYgCf0qsa/x9GtrHweDvbfFwI9bJ38YrN4XdZtJ3JtR+2EhfxzMuTUvU4H1sffHdXfJaACj5zLbVv6fn625XLixTZVgsFcB/393o7TA8/SXkRCteUdiO6a37wrUr7SpBCT4gKB+EaXjNwyVOtIfGJg0LkY5gpHqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fD2zUlVD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H5pOV3yH; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 0A9F51380756;
+	Wed, 27 Nov 2024 14:30:29 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 27 Nov 2024 14:30:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732735829;
+	 x=1732822229; bh=PMTKICLAk8Ul19wYWrq/UHHGVaNn10wFQLO8Ht338L4=; b=
+	fD2zUlVDRIa6UFm+LgOzMT9Zp9jJvynzA2AtXaUueyiT1VXO0MHD0GHhMHfyCICt
+	mTeuNlqUl2p6BX3M9tcPG4Egw8L4SYmcdKDrQQxYPy8sE+oE08fj9cPUUJzBEbRh
+	Gf51HgGfDcJE+O2czHENn4LQ4HuyXQ3SL2XwQ8xbZDXIfORO9Xe3M+H0B3sIFWeR
+	9uM1TD9ufZsT4WzTwdiODGBNs/mSXV+R9I2/8/OvcoJYnYYBxQ/PoBj4cSLEE+5/
+	lqMS9+GVWRWyKrbhC6RPqb0JB5roS41BjNUtwpUhij4FdMSUiemlSNU0XnRfxKg9
+	4dtkBKPpqKxE6QhBAoGBGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732735829; x=
+	1732822229; bh=PMTKICLAk8Ul19wYWrq/UHHGVaNn10wFQLO8Ht338L4=; b=H
+	5pOV3yHAV1aXVBIGJ8YQfrresq2YqIFjtLtk/Fvp/XOj+Kv4v1SPbk3zFZRySLBV
+	LJcxdnyBlc+keML7Yn5jCPmXjKvygEp16dKnymIdFyOk74Gs0ynICO/sgEe5zL2r
+	uOZhhiiKEjnhGDs4YMmtakiqoEF8axEJHBcZllBkP5WCO+GlnfzSQZQV6LqJAJ+P
+	CWGCdpkfmrbn2mykq1XNq06ss2ZhtsKFMB+yWhInrf6KT9WEfz9HLzw4krbu5gGy
+	HwA2rlysZk3IV2LH+eeQtjHEZlw/AR5pjR9ZkQLKV4Pjar9J1I3ZokxEJEiz8Ipr
+	GaC6aK8AiK4LyB6I8NcrA==
+X-ME-Sender: <xms:VHNHZymJ-B8FSBgSfNQtcO69NdeQHxiqYGUcfnlKXKRESNgSDlNTXA>
+    <xme:VHNHZ51Yzy9o5AQpK6W2dCEGc1soTxW8zeBaqrdPpNhc9-IcaqEG3TdqRQAHTyHCq
+    O5SkLpHzd23bbilMpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdduvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisg
+    hrvgdrtghomhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdp
+    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
+    htohepmhgrrhhtihhnrdgslhhumhgvnhhsthhinhhglhesghhoohhglhgvmhgrihhlrdgt
+    ohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgrrhhmshht
+    rhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrmhhlohhgih
+    gtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    rghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:VHNHZwohAnM6qcGvYt57x8rZYujNQDRAXuOvGZJFQ7FzDqB3MRsTTg>
+    <xmx:VHNHZ2l5skdIkAlbpfZ3uoruVk1hadaOboTgL5v2EayCDq2mudDMKg>
+    <xmx:VHNHZw3MIRdevzqJejuGzilVwfBFRQvJJD21Nq8Tcdx4pbpz708zvA>
+    <xmx:VHNHZ9srmhntVifpTVlUnu8iACTzYA1YER8tWYne4F4_YrwFUAa9Ww>
+    <xmx:VHNHZ5t7dwmXGd_wtkgHJ4-mlfxy7bHCgRhToztkEPC_dHMpKqOizRo3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7D7EF2220071; Wed, 27 Nov 2024 14:30:28 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rppt@kernel.org, catalin.marinas@arm.com, will@kernel.org, ziy@nvidia.com, dan.j.williams@intel.com, david@redhat.com, akpm@linux-foundation.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Date: Wed, 27 Nov 2024 20:30:07 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>
+Message-Id: <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+In-Reply-To: 
+ <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+References: 
+ <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Commit 767507654c22 ("arch_numa: switch over to numa_memblks")
-significantly cleaned up the NUMA registration code, but also
-dropped a significant check that was refusing to accept to
-configure a memblock with an invalid nid.
+On Wed, Nov 27, 2024, at 19:47, Jerome Brunet wrote:
+> Depending on RESET_MESON_AUX result in axg-audio support being turned
+> off by default for the users of arm64 defconfig, which is kind of a
+> regression for them.
+>
+> RESET_MESON_AUX is not in directly the defconfig, so depending on it turn
+> COMMON_CLK_AXG_AUDIO off. The clock provided by this module are
+> necessary for every axg audio devices. Those are now deferring.
+>
+> Select RESET_MESON_AUX rather than just depending on it.
+> With this, the audio subsystem of the affected platform should probe
+> correctly again
+>
+> Cc: Mark Brown <broonie@kernel.org>
+> Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency 
+> on RESET_MESON_AUX")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-On "quality hardware" such as my ThunderX machine, this results
-in a kernel that dies immediately:
 
-[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x431f0a10]
-[    0.000000] Linux version 6.12.0-00013-g8920d74cf8db (maz@valley-girl) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #3872 SMP PREEMPT Wed Nov 27 15:25:49 GMT 2024
-[    0.000000] KASLR disabled due to lack of seed
-[    0.000000] Machine model: Cavium ThunderX CN88XX board
-[    0.000000] efi: EFI v2.4 by American Megatrends
-[    0.000000] efi: ESRT=0xffce0ff18 SMBIOS 3.0=0xfffb0000 ACPI 2.0=0xffec60000 MEMRESERVE=0xffc905d98
-[    0.000000] esrt: Reserving ESRT space from 0x0000000ffce0ff18 to 0x0000000ffce0ff50.
-[    0.000000] earlycon: pl11 at MMIO 0x000087e024000000 (options '115200n8')
-[    0.000000] printk: legacy bootconsole [pl11] enabled
-[    0.000000] NODE_DATA(0) allocated [mem 0xff6754580-0xff67566bf]
-[    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
-[    0.000000] Mem abort info:
-[    0.000000]   ESR = 0x0000000096000004
-[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    0.000000]   SET = 0, FnV = 0
-[    0.000000]   EA = 0, S1PTW = 0
-[    0.000000]   FSC = 0x04: level 0 translation fault
-[    0.000000] Data abort info:
-[    0.000000]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[    0.000000]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[    0.000000]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[    0.000000] [0000000000001d40] user address but active_mm is swapper
-[    0.000000] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-00013-g8920d74cf8db #3872
-[    0.000000] Hardware name: Cavium ThunderX CN88XX board (DT)
-[    0.000000] pstate: a00000c5 (NzCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.000000] pc : sparse_init_nid+0x54/0x428
-[    0.000000] lr : sparse_init+0x118/0x240
-[    0.000000] sp : ffff800081da3cb0
-[    0.000000] x29: ffff800081da3cb0 x28: 0000000fedbab10c x27: 0000000000000001
-[    0.000000] x26: 0000000ffee250f8 x25: 0000000000000001 x24: ffff800082102cd0
-[    0.000000] x23: 0000000000000001 x22: 0000000000000000 x21: 00000000001fffff
-[    0.000000] x20: 0000000000000001 x19: 0000000000000000 x18: ffffffffffffffff
-[    0.000000] x17: 0000000001b00000 x16: 0000000ffd130000 x15: 0000000000000000
-[    0.000000] x14: 00000000003e0000 x13: 00000000000001c8 x12: 0000000000000014
-[    0.000000] x11: ffff800081e82860 x10: ffff8000820fb2c8 x9 : ffff8000820fb490
-[    0.000000] x8 : 0000000000ffed20 x7 : 0000000000000014 x6 : 00000000001fffff
-[    0.000000] x5 : 00000000ffffffff x4 : 0000000000000000 x3 : 0000000000000000
-[    0.000000] x2 : 0000000000000000 x1 : 0000000000000040 x0 : 0000000000000007
-[    0.000000] Call trace:
-[    0.000000]  sparse_init_nid+0x54/0x428
-[    0.000000]  sparse_init+0x118/0x240
-[    0.000000]  bootmem_init+0x70/0x1c8
-[    0.000000]  setup_arch+0x184/0x270
-[    0.000000]  start_kernel+0x74/0x670
-[    0.000000]  __primary_switched+0x80/0x90
-[    0.000000] Code: f865d804 d37df060 cb030000 d2800003 (b95d4084)
-[    0.000000] ---[ end trace 0000000000000000 ]---
-[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-[    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..ea16bfde0df2d7bfebb041161f6b96bbb35003ed 
+> 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
+>  	select COMMON_CLK_MESON_SCLK_DIV
+>  	select COMMON_CLK_MESON_CLKC_UTILS
+>  	select REGMAP_MMIO
+> -	depends on RESET_MESON_AUX
+> +	select RESET_MESON_AUX
+>  	help
+>  	  Support for the audio clock controller on AmLogic A113D devices,
+>  	  aka axg, Say Y if you want audio subsystem to work.
 
-while previous kernel versions were able to recognise how brain-damaged
-the machine is, and only build a fake node.
+You should generally not 'select' a symbol from another
+subsystem, as this risks introducing dependency loops,
+and missing dependencies.
 
-Restoring the check brings back some sanity and a "working" system.
+It looks like RESET_MESON_AUX is a user-visible symbol,
+so you can simply ask users to turn it on, and add it to
+the defconfig.
 
-Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org
----
- drivers/base/arch_numa.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+I also see some silliness going on in the
+include/soc/amlogic/reset-meson-aux.h, which has a
+non-working 'static inline' definition of the exported
+function. Before my fix, that would have caused the
+problem auf a non-working audio driver.
 
-diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
-index e187016764265..5457248eb0811 100644
---- a/drivers/base/arch_numa.c
-+++ b/drivers/base/arch_numa.c
-@@ -207,7 +207,21 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
- static int __init numa_register_nodes(void)
- {
- 	int nid;
--
-+	struct memblock_region *mblk;
-+
-+	/* Check that valid nid is set to memblks */
-+	for_each_mem_region(mblk) {
-+		int mblk_nid = memblock_get_region_node(mblk);
-+		phys_addr_t start = mblk->base;
-+		phys_addr_t end = mblk->base + mblk->size - 1;
-+
-+		if (mblk_nid == NUMA_NO_NODE || mblk_nid >= MAX_NUMNODES) {
-+			pr_warn("Warning: invalid memblk node %d [mem %pap-%pap]\n",
-+				mblk_nid, &start, &end);
-+			return -EINVAL;
-+		}
-+	}
-+ 
- 	/* Finally register nodes. */
- 	for_each_node_mask(nid, numa_nodes_parsed) {
- 		unsigned long start_pfn, end_pfn;
--- 
-2.39.2
-
+      Arnd
 
