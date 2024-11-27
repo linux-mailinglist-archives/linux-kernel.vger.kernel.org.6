@@ -1,165 +1,167 @@
-Return-Path: <linux-kernel+bounces-423188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4599DA413
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:42:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9663C9DA416
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628EB284B24
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:42:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E9ECB263BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FD5189F20;
-	Wed, 27 Nov 2024 08:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XerAHcE/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA2018B495;
+	Wed, 27 Nov 2024 08:42:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931D71114;
-	Wed, 27 Nov 2024 08:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7E515E5CA
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732696945; cv=none; b=FIqHCd6yY9eZXfqX9LupDnybZ910ILGYvFdLbl/e4P1qJO2MAFFwPWfMgEuwCV19jBTV8a5yLAMWwOCZHwEZNcNF2Zdr6340hrgROTfH1RzF3/ZrzQo+7IXu/fJtwRs2EaNEQopFIDE7ndbnBHkfkHPyafs1aiMI0vxh62iIaGo=
+	t=1732696973; cv=none; b=RdF8EE7Q9hCKNUGHHMRpBCvfM+S1c/Zu2+lB2vi3KCR1toeWMWnqd7dbvRVj1rXfA2I/XKMRHLBn3NI6dzfYNUbeZ7bQUmuqqpFYMv6Qwhw8T27GkBobrsaGHrwgDa/37GSkZFKbq2wD9rcNfFyD8uWBXpvJ9AUcPLWfvO7yLDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732696945; c=relaxed/simple;
-	bh=1SruQ6equFJEJ3DDQvtA5uhMPF4SVyogTYV0u07VntU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bcyl6amtEsxnn3hIt/FamAd2DfANdmRsQ1bJcDGW9ECsZt076MvPTzsoQUMQmvdRp2qwKfOiTvSKJ60PwejeQJ0Til7/xJsYQSq8CoDkOHZdODwt10DjcQvjyqw8R84SSckCYRcPQDqbpOklb3cVhbh5Tg7J+cm+EpS+SiSS9Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XerAHcE/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732696941;
-	bh=1SruQ6equFJEJ3DDQvtA5uhMPF4SVyogTYV0u07VntU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XerAHcE/bSIaVT+gDx5+/EXDHU4d77hSNKsYcHdGjAyUawEmdllA2suX/9cM4ePtZ
-	 +cMuz99nwjOx2nUQl5hhrazHxLAPvVZZ0yhfYtDxWLe4RVqVglSgh2DyWYp2d5D71i
-	 NNhbWNfuUWtOz+xhx2B5W+zwblnPOee4AdFrzTTwZ75SAb3e2jKuCMn0I+YGOra6vm
-	 O11LKMWWkJ/6qMAo3cgUTP64fUemDdu/UGxStaO+Jgc/ZYZ4mkG8sr2Udll4NZqQ3e
-	 vOoSXnkwUPO51ZeUCkC9/B+PttGmc9e0tv2hkM7uBhrZb1v85/U/7gNyKvYmIMp4Ma
-	 0g9Gn6jLlVYeQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 08DD017E1330;
-	Wed, 27 Nov 2024 09:42:21 +0100 (CET)
-Message-ID: <8fec2c21-9d72-4a6b-9f00-01f2e6375831@collabora.com>
-Date: Wed, 27 Nov 2024 09:42:20 +0100
+	s=arc-20240116; t=1732696973; c=relaxed/simple;
+	bh=NlYQBbt4vAGGW65taHg686I5E+/mZFReRuNLnbeBtSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSW8s7sovpwkvGy1paNyyl47KXYSFy4NGxV5By+73v+42E2t+EQwt1i2b/jCebG6hqgsU5rdXpQOJlD6ImNkUFK5sJ0QQDh0ANckjNcs7d2zjjjn5Lc5jLQZ73YUBNDfKcwnvLTaql/sSyXjiV7Sdykorl5beB8S7ucaEhZ1xpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tGDdB-0007ev-U1; Wed, 27 Nov 2024 09:42:41 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tGDdA-000Od7-2j;
+	Wed, 27 Nov 2024 09:42:41 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4B92637E23A;
+	Wed, 27 Nov 2024 08:42:41 +0000 (UTC)
+Date: Wed, 27 Nov 2024 09:42:40 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: carlos.song@nxp.com
+Cc: frank.li@nxp.com, o.rempel@pengutronix.de, kernel@pengutronix.de, 
+	andi.shyti@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, 
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] i2c: imx: support DMA defer probing
+Message-ID: <20241127-attentive-orthodox-tuna-8f8af0-mkl@pengutronix.de>
+References: <20241127083818.2108201-1-carlos.song@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 7/7] drm/mediatek: Introduce HDMI/DDC v2 for
- MT8195/MT8188
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "simona@ffwll.ch" <simona@ffwll.ch>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>
-References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
- <20241120124512.134278-8-angelogioacchino.delregno@collabora.com>
- <133167aa2a3fab40547f5dc6602adf2c3d9e01e5.camel@mediatek.com>
- <4143b793-c5b1-4b6d-8547-26a9dc526957@collabora.com>
- <0711c097f724409941239696f5ab790b302d194a.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0711c097f724409941239696f5ab790b302d194a.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Il 27/11/24 04:08, CK Hu (胡俊光) ha scritto:
-> On Tue, 2024-11-26 at 09:57 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until you have verified the sender or the content.
->>
->>
->> Il 26/11/24 08:42, CK Hu (胡俊光) ha scritto:
->>> Hi, Angelo:
->>>
->>> On Wed, 2024-11-20 at 13:45 +0100, AngeloGioacchino Del Regno wrote:
->>>> External email : Please do not click links or open attachments until you have verified the sender or the content.
->>>>
->>>>
->>>> Add support for the newer HDMI-TX (Encoder) v2 and DDC v2 IPs
->>>> found in MediaTek's MT8195, MT8188 SoC and their variants, and
->>>> including support for display modes up to 4k60 and for HDMI
->>>> Audio, as per the HDMI 2.0 spec.
->>>>
->>>> HDCP and CEC functionalities are also supported by this hardware,
->>>> but are not included in this commit.
->>>
->>> Both MT8173 HDMI and MT8173 CEC has hot plug detection interrupt.
->>> I don't know why but MT8173 choose CEC to detect hot plug.
->>>
->>> Does MT8195 CEC has hot plug detection interrupt?
->>> If it has, may we align the hot plug detection flow with MT8173?
->>>
->>
->> The CEC on MT8195 does have an hotplug detection interrupt, but that *must* be
->> used exclusively for CEC for one important reason.
->>
->> While on MT8188 we only have the HDMI (TX) Encoder, MT8195 features both HDMI TX
->> and HDMI RX and in the specific case of this SoCs, the CEC block is shared between
->> the two controllers.
->>
->> If we use the CEC hotplug detection for HDMI-TX, we wouldn't be able to share the
->> block with the HDMI-RX without hacks.
->>
->> This is why we need to use the HTPLG/PORD provided by the HDMI-TX block instead of
->> the CEC one.
-> 
-> OK, please add this information to commit message so that we know why not use CEC to detect hot plug.
-> 
-
-Sure, I'll do that for v2.
-
-Cheers,
-Angelo
-
-> Regards,
-> CK
-> 
->>
->>> This is not a strong suggestion because I don't know why MT8173 choose CEC to detect.
->>> I just want more function to be common.
->>
->> Yeah, I got the point and I would've asked the same question, but for the reasons
->> that I explained, that's unfortunately not possible :-)
->>
->> Cheers,
->> Angelo
->>
->>>
->>> Regards,
->>> CK
->>>
->>>>
->>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> ---
->>>>
->>
->>
->>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pxqnpspionffusqk"
+Content-Disposition: inline
+In-Reply-To: <20241127083818.2108201-1-carlos.song@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--pxqnpspionffusqk
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4] i2c: imx: support DMA defer probing
+MIME-Version: 1.0
+
+On 27.11.2024 16:38:18, carlos.song@nxp.com wrote:
+> From: Carlos Song <carlos.song@nxp.com>
+>=20
+> Return -EPROBE_DEFER when dma_request_slave_channel() because DMA driver
+> have not ready yet.
+>=20
+> Move i2c_imx_dma_request() before registering I2C adapter to avoid
+> infinite loop of .probe() calls to the same driver, see "e8c220fac415
+> Revert "i2c: imx: improve the error handling in i2c_imx_dma_request()""
+> and "Documentation/driver-api/driver-model/driver.rst".
+>=20
+> Use CPU mode to avoid stuck registering i2c adapter when DMA resources
+> are unavailable.
+>=20
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> ---
+> Change for V4:
+> - Output "Only use PIO mode" log in debug level when no DMA configure.
+> Change for V3:
+> - According to Marc's comment, remove error print when defer probe.
+>   Add info log when DMA has not been enabled and add error log when
+>   DMA error, both won't stuck the i2c adapter register, just for remindin=
+g,
+>   i2c adapter is working only in PIO mode.
+> Change for V2:
+> - According to Frank's comments, wrap at 75 char and Simplify fix code
+>   at i2c_imx_dma_request().
+> - Use strict patch check, fix alignment warning at i2c_imx_dma_request()
+> ---
+>  drivers/i2c/busses/i2c-imx.c | 31 +++++++++++++++++++++++--------
+>  1 file changed, 23 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index 5ed4cb61e262..b11d66d56c55 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -397,17 +397,16 @@ static void i2c_imx_reset_regs(struct imx_i2c_struc=
+t *i2c_imx)
+>  }
+> =20
+>  /* Functions for DMA support */
+> -static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+> -						dma_addr_t phy_addr)
+> +static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx, dma_addr_=
+t phy_addr)
+>  {
+>  	struct imx_i2c_dma *dma;
+>  	struct dma_slave_config dma_sconfig;
+> -	struct device *dev =3D &i2c_imx->adapter.dev;
+> +	struct device *dev =3D i2c_imx->adapter.dev.parent;
+
+Why is this change needed? What's the purpose?
+
+>  	int ret;
+> =20
+>  	dma =3D devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+
+This means you bind the allocated memory to the parent device, not the
+i2c device anymore.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--pxqnpspionffusqk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdG234ACgkQKDiiPnot
+vG8A7gf7B/b0e/ASM4AusSjiFR0rAASfg7BeudhvJ3auw76AlPe6JjyyTodUlfur
+xfFTVzsqrCeeuCq7lkJfILu2RPFu4vVhR6PNc3ubUyimyxYJYrJdTJgj3IvCPArd
++xI1QsI5zo/H2TYU1+y8woXHVqnLosva6A8FKH7hnsOxGnk5UXJLmBDiLsThuYdw
+oWevSaTDQXAZZH82ImQ+Rwiax/fABhMEomldtCK7uJ72JTG269xmmMNifHYF5749
+tn9Vtca6nizXN90og71/kiMnABwotiFD5GGbprEb67i3XAkbN85cewMv/2gFsNUn
+v5bcHKwgORbWdRuq3HaPfCbJVwWofw==
+=xqso
+-----END PGP SIGNATURE-----
+
+--pxqnpspionffusqk--
 
