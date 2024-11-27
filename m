@@ -1,213 +1,237 @@
-Return-Path: <linux-kernel+bounces-423626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA98A9DAA9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:19:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064429DAAA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:20:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1FF28187D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C05167A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB3E1FF7C3;
-	Wed, 27 Nov 2024 15:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A751A1FF7D3;
+	Wed, 27 Nov 2024 15:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ML4RfZJt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fgjqd4DN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD521FF7A8
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE361442E8
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732720757; cv=none; b=mZvAREDjMj0qaZOC5dddHGZsJoR37AnE+hQcpE7Je1NQbr+f9igw24YEwRrN0yoC+rk867Xhxpt3gG3YyhKys2PQKj+xoHy+Pd9L7KT+dEnTLdT/YQtPissgLFb+y0+YQhOffLs7pWk2mQ+FfS/gFRTrK2fcZIkJ0pLWwZ3IF1Y=
+	t=1732720849; cv=none; b=ctQOmTxZ3nXIT6SfB/2H295z3/5HHcjtzGWmMzG1LarwargBxnjO0GDRHcPKx+MpRpytFyDTHuqYIMWawCh8Hk7fSqGYMPxQye5ws9SYVrH01XThUjcuQk2Z7cSK/q9Z3Hd8959C8egZpmZ/Hm8OUn3FBUAnyVoWco7vRNXyZ8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732720757; c=relaxed/simple;
-	bh=PDP6M3iB3HkWPpxiPD4WO5+rYWAXmQLYqVob4tX5ZfQ=;
+	s=arc-20240116; t=1732720849; c=relaxed/simple;
+	bh=/3Wsd0r1atmN8QgendSG2mAiHmuXScUakR9O7v+XZZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmMO7OEb3FTU7mSfFAN6H6t0ztWknK4OiBLq5Nf0cmGZuap8+Jx6GsT4AGJ162Ak9tsYKnyEChuwBy+EOGODOtBrjPVYY65mDxx/aQ4ax+IN2MutvULK1c8yos62t+qvmdGnpPA8R6voiyYjisMmsmWoOxrdZk4eq9Db14e1cO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ML4RfZJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA03C4CECC;
-	Wed, 27 Nov 2024 15:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732720757;
-	bh=PDP6M3iB3HkWPpxiPD4WO5+rYWAXmQLYqVob4tX5ZfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ML4RfZJtLjYbrhikhSpSD64w/JN4lUN8mBDRWtBnj4M3W538OaPiGZaFwKY75GKw0
-	 zDNgorJNgHk0l2bpgM6zNOVVNqRp3eB/C3MRtmpuwg0b5JAw+BrGm9TT02o26dfahH
-	 DnyxZe5GMGNH178wmj3oTouDk6sZjRrf7wYMQKbO9b8pnf/8TbiCtYWG6N7y5yxRYJ
-	 pRXjVFklXiPNEsUh8HAZ37ceDp0peViePmPtuqIWI+bdlad0uoUBoHPd2E05g1YH7T
-	 M1Dj7SRIG1Ivsbw8IppIPnwEe9fFE7Dy0cRLlewcbHxx1cT/Togp4TNPbcLJ1HQT8T
-	 pMM9n4DzNuU5Q==
-Date: Wed, 27 Nov 2024 16:19:14 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] drm/vkms: Switch to dynamic allocation for CRTC
-Message-ID: <20241127-fennec-of-magic-spirit-bcfcc5@houat>
-References: <20241122-b4-vkms-allocated-v2-0-ff7bddbf0bfb@bootlin.com>
- <20241122-b4-vkms-allocated-v2-3-ff7bddbf0bfb@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJN45DrIBVzBoRQI9+3dqS4U114FpuubS3ECJUT1Gig21oVxolNUHmLLZIw+T/KupTr7AO2e5rcuV1RzG80p2o4nim0HaaRKBc7AEfw6mi8wItC9QXeXLiBI9CnQK3/QpBirKFIcveNR4DxqZ05q1K6ITskV1dPJQeqEmEIo5oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fgjqd4DN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732720847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2m3sM+geAVqtO9zJQ0mLUooy55Xp73Cx8PifdCc8B0s=;
+	b=Fgjqd4DN2aKOuctsRJhwLxq1ItF7Pg5AgJMOXrojlJaE7oiSSlW1rFiqrFOMPFqd2siPAv
+	2rkOQpJrpwdxFEeqTjotnA/e+u1QdMO2wLH7l/4x0MqWyEhS2r8I6P+s+HS3yzLTxULOrl
+	dGNLSa2U0vl11ZE97QM1m0BvJc0Sz30=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-vbvfy8jRNE639mBPqSDwow-1; Wed,
+ 27 Nov 2024 10:20:41 -0500
+X-MC-Unique: vbvfy8jRNE639mBPqSDwow-1
+X-Mimecast-MFC-AGG-ID: vbvfy8jRNE639mBPqSDwow
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EFD3D1936133;
+	Wed, 27 Nov 2024 15:20:39 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.17])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 14770300019E;
+	Wed, 27 Nov 2024 15:20:33 +0000 (UTC)
+Date: Wed, 27 Nov 2024 23:20:28 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	axboe@kernel.dk, dwagner@suse.de, hare@suse.de,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: Don't wait for completion of in-flight requests
+Message-ID: <Z0c4vPLnwicI6T9J@fedora>
+References: <20241126115008.31272-1-maqianga@uniontech.com>
+ <Z0XX5ts2yTO7Frl8@fedora>
+ <2100C70C0D4CA64E+20241127220437.65ae99dd@john-PC>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="kztmkcguwyxpegsy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241122-b4-vkms-allocated-v2-3-ff7bddbf0bfb@bootlin.com>
+In-Reply-To: <2100C70C0D4CA64E+20241127220437.65ae99dd@john-PC>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+On Wed, Nov 27, 2024 at 10:04:37PM +0800, Qiang Ma wrote:
+> On Tue, 26 Nov 2024 22:15:02 +0800
+> Ming Lei <ming.lei@redhat.com> wrote:
+> 
+> > On Tue, Nov 26, 2024 at 07:50:08PM +0800, Qiang Ma wrote:
+> > > Problem:
+> > > When the system disk uses the scsi disk bus, The main
+> > > qemu command line includes:
+> > > ...
+> > > -device virtio-scsi-pci,id=scsi0 \
+> > > -device scsi-hd,scsi-id=1,drive=drive-virtio-disk
+> > > -drive id=drive-virtio-disk,if=none,file=/home/kvm/test.qcow2
+> > > ...
+> > > 
+> > > The dmesg log is as follows::
+> > > 
+> > > [   50.304591][ T4382] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> > > [   50.377002][ T4382] kexec_core: Starting new kernel
 
---kztmkcguwyxpegsy
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/4] drm/vkms: Switch to dynamic allocation for CRTC
-MIME-Version: 1.0
+Why is one new kernel started? what event triggers kernel_kexec()?
 
-Hi,
+machine_shutdown() follows, probably the scsi controller is dead.
 
-On Fri, Nov 22, 2024 at 05:35:11PM +0100, Louis Chauvet wrote:
-> specific allocation for the CRTC is not strictly necessary at this point,
-> but in order to implement dynamic configuration of VKMS (configFS), it
-> will be easier to have one allocation per CRTC.
->=20
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > [   50.669775][  T194] psci: CPU1 killed (polled 0 ms)
+> > > [   50.849665][  T194] psci: CPU2 killed (polled 0 ms)
+> > > [   51.109625][  T194] psci: CPU3 killed (polled 0 ms)
+> > > [   51.319594][  T194] psci: CPU4 killed (polled 0 ms)
+> > > [   51.489667][  T194] psci: CPU5 killed (polled 0 ms)
+> > > [   51.709582][  T194] psci: CPU6 killed (polled 0 ms)
+> > > [   51.949508][   T10] psci: CPU7 killed (polled 0 ms)
+> > > [   52.139499][   T10] psci: CPU8 killed (polled 0 ms)
+> > > [   52.289426][   T10] psci: CPU9 killed (polled 0 ms)
+> > > [   52.439552][   T10] psci: CPU10 killed (polled 0 ms)
+> > > [   52.579525][   T10] psci: CPU11 killed (polled 0 ms)
+> > > [   52.709501][   T10] psci: CPU12 killed (polled 0 ms)
+> > > [   52.819509][  T194] psci: CPU13 killed (polled 0 ms)
+> > > [   52.919509][  T194] psci: CPU14 killed (polled 0 ms)
+> > > [  243.214009][  T115] INFO: task kworker/0:1:10 blocked for more
+> > > than 122 seconds. [  243.214810][  T115]       Not tainted 6.6.0+ #1
+> > > [  243.215517][  T115] "echo 0
+> > > > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > > > [  243.216390][  T115] task:kworker/0:1     state:D stack:0
+> > > > pid:10    ppid:2      flags:0x00000008
+> > > [  243.217299][  T115] Workqueue: events vmstat_shepherd
+> > > [  243.217816][  T115] Call trace:
+> > > [  243.218133][  T115]  __switch_to+0x130/0x1e8
+> > > [  243.218568][  T115]  __schedule+0x660/0xcf8
+> > > [  243.219013][  T115]  schedule+0x58/0xf0
+> > > [  243.219402][  T115]  percpu_rwsem_wait+0xb0/0x1d0
+> > > [  243.219880][  T115]  __percpu_down_read+0x40/0xe0
+> > > [  243.220353][  T115]  cpus_read_lock+0x5c/0x70
+> > > [  243.220795][  T115]  vmstat_shepherd+0x40/0x140
+> > > [  243.221250][  T115]  process_one_work+0x170/0x3c0
+> > > [  243.221726][  T115]  worker_thread+0x234/0x3b8
+> > > [  243.222176][  T115]  kthread+0xf0/0x108
+> > > [  243.222564][  T115]  ret_from_fork+0x10/0x20
+> > > ...
+> > > [  243.254080][  T115] INFO: task kworker/0:2:194 blocked for more
+> > > than 122 seconds. [  243.254834][  T115]       Not tainted 6.6.0+ #1
+> > > [  243.255529][  T115] "echo 0
+> > > > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > > > [  243.256378][  T115] task:kworker/0:2     state:D stack:0
+> > > > pid:194   ppid:2      flags:0x00000008
+> > > [  243.257284][  T115] Workqueue: events work_for_cpu_fn
+> > > [  243.257793][  T115] Call trace:
+> > > [  243.258111][  T115]  __switch_to+0x130/0x1e8
+> > > [  243.258541][  T115]  __schedule+0x660/0xcf8
+> > > [  243.258971][  T115]  schedule+0x58/0xf0
+> > > [  243.259360][  T115]  schedule_timeout+0x280/0x2f0
+> > > [  243.259832][  T115]  wait_for_common+0xcc/0x2d8
+> > > [  243.260287][  T115]  wait_for_completion+0x20/0x38
+> > > [  243.260767][  T115]  cpuhp_kick_ap+0xe8/0x278
+> > > [  243.261207][  T115]  cpuhp_kick_ap_work+0x5c/0x188
+> > > [  243.261688][  T115]  _cpu_down+0x120/0x378
+> > > [  243.262103][  T115]  __cpu_down_maps_locked+0x20/0x38
+> > > [  243.262609][  T115]  work_for_cpu_fn+0x24/0x40
+> > > [  243.263059][  T115]  process_one_work+0x170/0x3c0
+> > > [  243.263533][  T115]  worker_thread+0x234/0x3b8
+> > > [  243.263981][  T115]  kthread+0xf0/0x108
+> > > [  243.264405][  T115]  ret_from_fork+0x10/0x20
+> > > [  243.264846][  T115] INFO: task kworker/15:2:639 blocked for more
+> > > than 122 seconds. [  243.265602][  T115]       Not tainted 6.6.0+ #1
+> > > [  243.266296][  T115] "echo 0
+> > > > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > > > [  243.267143][  T115] task:kworker/15:2    state:D stack:0
+> > > > pid:639   ppid:2      flags:0x00000008
+> > > [  243.268044][  T115] Workqueue: events_freezable_power_
+> > > disk_events_workfn [  243.268727][  T115] Call trace:
+> > > [  243.269051][  T115]  __switch_to+0x130/0x1e8
+> > > [  243.269481][  T115]  __schedule+0x660/0xcf8
+> > > [  243.269903][  T115]  schedule+0x58/0xf0
+> > > [  243.270293][  T115]  schedule_timeout+0x280/0x2f0
+> > > [  243.270763][  T115]  io_schedule_timeout+0x50/0x70
+> > > [  243.271245][  T115]  wait_for_common_io.constprop.0+0xb0/0x298
+> > > [  243.271830][  T115]  wait_for_completion_io+0x1c/0x30
+> > > [  243.272335][  T115]  blk_execute_rq+0x1d8/0x278
+> > > [  243.272793][  T115]  scsi_execute_cmd+0x114/0x238
+> > > [  243.273267][  T115]  sr_check_events+0xc8/0x310 [sr_mod]
+> > > [  243.273808][  T115]  cdrom_check_events+0x2c/0x50 [cdrom]
+> > > [  243.274408][  T115]  sr_block_check_events+0x34/0x48 [sr_mod]
+> > > [  243.274994][  T115]  disk_check_events+0x44/0x1b0
+> > > [  243.275468][  T115]  disk_events_workfn+0x20/0x38
+> > > [  243.275939][  T115]  process_one_work+0x170/0x3c0
+> > > [  243.276410][  T115]  worker_thread+0x234/0x3b8
+> > > [  243.276855][  T115]  kthread+0xf0/0x108
+> > > [  243.277241][  T115]  ret_from_fork+0x10/0x20  
+> > 
+> > Question is why this scsi command can't be completed?
+> > 
+> > When blk_mq_hctx_notify_offline() is called, the CPU isn't shutdown
+> > yet, and it still can handle interrupt of this SCSI command.
+> > 
+> > 
+> > Thanks,
+> > Ming
+> > 
+> > 
+> Sorry, at the moment I don't know why it can't be finished,
+> just provides a solution like loop and dm-rq.
+> 
+> Currently see the call stack:
+>  => blk_mq_run_hw_queue
+>  =>__blk_mq_sched_restart
+>  => blk_mq_run_hw_queue
+>  => __blk_mq_sched_restart
+>  => __blk_mq_free_request
+>  => blk_mq_free_request
+>  => blk_mq_end_request
+>  => blk_flush_complete_seq
+>  => flush_end_io
+>  => __blk_mq_end_request
+>  => scsi_end_request
+>  => scsi_io_completion
+>  => scsi_finish_command
+>  => scsi_complete
+>  => blk_mq_complete_request
+>  => scsi_done_internal
+>  => scsi_done
+>  => virtscsi_complete_cmd
+>  => virtscsi_req_done
+>  => vring_interrupt
+> 
+> In finction blk_mq_run_hw_queue():
+> __blk_mq_run_dispatch_ops(hctx->queue, false,
+> 	need_run = !blk_queue_quiesced(hctx->queue) &&
+> 	blk_mq_hctx_has_pending(hctx));
+> 	
+> 	if (!need_run)
+> 		return;
+> 
+> Come here and return directly.
 
-This one should probably be split further, there's several things going
-on right now.
+Does blk_queue_quiesced() return true?
 
-> ---
->  drivers/gpu/drm/vkms/vkms_crtc.c      | 32 +++++++++++++++++------------=
----
->  drivers/gpu/drm/vkms/vkms_drv.h       |  9 +++++----
->  drivers/gpu/drm/vkms/vkms_output.c    | 26 +++++++++++++++-----------
->  drivers/gpu/drm/vkms/vkms_writeback.c | 17 +++++++++--------
->  4 files changed, 46 insertions(+), 38 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms=
-_crtc.c
-> index ace8d293f7da611110c1e117b6cf2f3c9e9b4381..d014dec117e7d4ec7e9e38037=
-a4a4cb4bc6be4ca 100644
-> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
-> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-> @@ -84,9 +84,7 @@ static bool vkms_get_vblank_timestamp(struct drm_crtc *=
-crtc,
->  				      int *max_error, ktime_t *vblank_time,
->  				      bool in_vblank_irq)
->  {
-> -	struct drm_device *dev =3D crtc->dev;
-> -	struct vkms_device *vkmsdev =3D drm_device_to_vkms_device(dev);
-> -	struct vkms_output *output =3D &vkmsdev->output;
-> +	struct vkms_output *output =3D drm_crtc_to_vkms_output(crtc);
->  	struct drm_vblank_crtc *vblank =3D drm_crtc_vblank_crtc(crtc);
-> =20
->  	if (!READ_ONCE(vblank->enabled)) {
-> @@ -279,25 +277,29 @@ static void vkms_crtc_destroy_workqueue(struct drm_=
-device *dev,
->  	destroy_workqueue(vkms_out->composer_workq);
->  }
-> =20
-> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-> -		   struct drm_plane *primary, struct drm_plane *cursor)
-> +struct vkms_output *vkms_crtc_init(struct drm_device *dev, struct drm_pl=
-ane *primary,
-> +				   struct drm_plane *cursor)
->  {
-> -	struct vkms_output *vkms_out =3D drm_crtc_to_vkms_output(crtc);
-> +	struct vkms_output *vkms_out;
-> +	struct drm_crtc *crtc;
->  	int ret;
-> =20
-> -	ret =3D drmm_crtc_init_with_planes(dev, crtc, primary, cursor,
-> -					 &vkms_crtc_funcs, NULL);
-> -	if (ret) {
-> -		DRM_ERROR("Failed to init CRTC\n");
-> -		return ret;
-> +	vkms_out =3D drmm_crtc_alloc_with_planes(dev, struct vkms_output, crtc,
-> +					       primary, cursor,
-> +					       &vkms_crtc_funcs, NULL);
-> +	if (IS_ERR(vkms_out)) {
-> +		DRM_DEV_ERROR(dev->dev, "Failed to init CRTC\n");
-> +		return vkms_out;
->  	}
-> =20
-> +	crtc =3D &vkms_out->crtc;
-> +
->  	drm_crtc_helper_add(crtc, &vkms_crtc_helper_funcs);
-> =20
->  	ret =3D drm_mode_crtc_set_gamma_size(crtc, VKMS_LUT_SIZE);
->  	if (ret) {
->  		DRM_ERROR("Failed to set gamma size\n");
-> -		return ret;
-> +		return ERR_PTR(ret);
->  	}
-> =20
->  	drm_crtc_enable_color_mgmt(crtc, 0, false, VKMS_LUT_SIZE);
-> @@ -307,12 +309,12 @@ int vkms_crtc_init(struct drm_device *dev, struct d=
-rm_crtc *crtc,
-> =20
->  	vkms_out->composer_workq =3D alloc_ordered_workqueue("vkms_composer", 0=
-);
->  	if (!vkms_out->composer_workq)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
-> =20
->  	ret =3D drmm_add_action_or_reset(dev, vkms_crtc_destroy_workqueue,
->  				       vkms_out);
->  	if (ret)
-> -		return ret;
-> +		return ERR_PTR(ret);
-> =20
-> -	return ret;
-> +	return vkms_out;
->  }
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_=
-drv.h
-> index 19fd99b8e506c4454d7878b67f692a0441c22665..fbe7de67fb9c6a6a6964d71b4=
-52b9a3ce573e0f8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -214,7 +214,6 @@ struct vkms_config {
->  struct vkms_device {
->  	struct drm_device drm;
->  	struct platform_device *platform;
-> -	struct vkms_output output;
->  	const struct vkms_config *config;
->  };
-> =20
-> @@ -241,8 +240,9 @@ struct vkms_device {
->   * @primary: primary plane to attach to the CRTC
->   * @cursor: plane to attach to the CRTC
->   */
-> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-> -		   struct drm_plane *primary, struct drm_plane *cursor);
-> +struct vkms_output *vkms_crtc_init(struct drm_device *dev,
-> +				   struct drm_plane *primary,
-> +				   struct drm_plane *cursor);
+Thanks,
+Ming
 
-You also need to update the doc.
-
-Maxime
-
---kztmkcguwyxpegsy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0c4cgAKCRAnX84Zoj2+
-duemAX92vtHSUEQ3IsVnAEqPNEcZCn5Y/hzSZ5XcpkcT6jZtGSKiIryldM0Hn0uu
-6+gTwrABgOp1wBbdQYVRUGvd+JQtdOfnbgwir+4gF8+1K20IdrQ9iCgjbLPMvMR0
-kSi0PgJGzg==
-=heCp
------END PGP SIGNATURE-----
-
---kztmkcguwyxpegsy--
 
