@@ -1,610 +1,177 @@
-Return-Path: <linux-kernel+bounces-423394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4149DA6D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:25:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023C09DA6C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 809E5B24868
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6EA6281BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF6A1F6687;
-	Wed, 27 Nov 2024 11:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96E51F6677;
+	Wed, 27 Nov 2024 11:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="qoST56TE"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRn4FAAc"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46E61F6669;
-	Wed, 27 Nov 2024 11:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A337F1EE012;
+	Wed, 27 Nov 2024 11:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732706544; cv=none; b=fmvVl7kxFdXx8iMwDFOfw4d1qfLDtdzZOQhhCwK6DUcqRZ3KWjarrGFfwgVnJui5eE9gxR08ZsiZMo5FDi7U+Bwnjr7WIKjkQ1OCRGIicWmosYda38XxNcAkkP5bICF6W5kJH5lK0qs1OA7y3m6lldBimhxq68HaZdWocrunzqI=
+	t=1732706517; cv=none; b=VD66z1jje1+igg59a1wnPBpyCJgwgjziFtdbRBDvKmNCUs8mUK+bF/IeDXi1OkY3GVmYFLfKmAxg5XIe2sgM1Poa3zMn6bp8Fu5gxDVgm0L3Mv1CHerNxe69wM+bqxrH8DjfYP/QCBuH26MyP4KE8eC5FT4DF9Tvh5dNcj0dHHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732706544; c=relaxed/simple;
-	bh=zEiZUjACrQWfRSlapuLJEAUtutVYrw5ngRhobUVxnp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XUXyEzsWzAjVVqsB3gasjce9g/WPnJW7Q2zkZBb1P4Hr5K6C/P1Ngc1q3gOWYXw8Kx8CnlJ1vLK2odCcWYXYt5zcTokgXuR/eSE7Biz09id5Dm0HO4cFrPbbLbFHaUPMA4zF6JQM7pGsgst/qQcwwpH18txnQHgMBNn/1jOVR/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=qoST56TE; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (pd9e59944.dip0.t-ipconnect.de [217.229.153.68])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 33EB72FC0055;
-	Wed, 27 Nov 2024 12:22:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1732706538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mwMOKSGoqDu0hvAYoT2nYLalIygD0uZv7LQUmpMIyl0=;
-	b=qoST56TEkYj5pEcgXAz3vMb5lDHc4f+oA+EwnsqOP/fz+6dT+w6re+H0RgppjjYM6FInU8
-	iM3XZkBKpMAaGme85kXGOtz+4xvFXUAFbQsleFSRNrih9PuR6cc0HsqHARsKboCOsoXA29
-	8LB6QfXVFho5hydXQd93iWBP1VwW++c=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Werner Sembach <wse@tuxedocomputers.com>
-Subject: [RFC PATCH 1/1] platform: x86: tuxi: Implement TUXEDO TUXI ACPI TFAN as thermal subsystem
-Date: Wed, 27 Nov 2024 12:21:10 +0100
-Message-ID: <20241127112141.42920-2-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241127112141.42920-1-wse@tuxedocomputers.com>
-References: <20241127112141.42920-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1732706517; c=relaxed/simple;
+	bh=8+jxdjMxeCxAwzyVZxUV+2/WcnmyC99hPA5a29GYKl8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMYnuId7M954m1WArLPc/c0A9rtdXApYPjsTujGTBMigCTj1xEkCUzh3/4yn7uNDp6UsfYSaPthMaOXMK4WJWa2miYonTiPlFrnFuNrY4tx2p0nqG6UORPuiENpTHorKB4ZO8dt80f2V0seE2S+N8zbk1C0tq+/qKd334ATifcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRn4FAAc; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a68480164so909049366b.3;
+        Wed, 27 Nov 2024 03:21:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732706514; x=1733311314; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=elVChWAOghJtOr2/9ffIty1GUC4j4pc0XNnLNMpNrcU=;
+        b=nRn4FAAcgu6pKlL93uzV2g2lvtDzfMEkgJFRIxeR/X4C80vY4MmTzwZ/mYl1FzyBpn
+         n1ssAB+B8qj39gOTKtSlawRTwwZCJ0RaNgL5+RIIPeg/Lk/1Y1XC7gHZBZphSwSLOCj1
+         YpNwZruFCKfQ/GwuE8BLHdSGCg/zGfsCfkqdGOYVHEudRHdsIh4qu6aE8vZzbz44LtB4
+         zAsxdTMalFCwWpLbLiG/KmX0SyoFPsbJ5qqJIiu7lYmmjHasJsK/QAoejwCWy4ytrJox
+         +q5FztfNd8ANZFXyJ0jfBZzFHTKypE1EgnQdai4x8jJj8Vig9x1SVtwnD0TecgHR15eR
+         KnLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732706514; x=1733311314;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=elVChWAOghJtOr2/9ffIty1GUC4j4pc0XNnLNMpNrcU=;
+        b=qZepVaIMgUdAaELQ2xMHeXAvFsaUQRjYXyAflRYfJusFoiaDeycZFvucJcrGFW3tJ4
+         NbSQBbva4/q44kN8+73KJ35P3EYRtTqLLWOdbQxi2bDrq/AT2wJQ/8JkqP7kEl6tfMsm
+         HEKu95aD+Ld+BTIPkZpMUNaWpCnE4lNQC/APHB3LrsI0NIal63Ot+nf0d3lMHVX7oq8R
+         r6WSk5g1nPMWgDIrg/EeYSRv7f99xZ/Q5LxGHSS4j3gnOJCErEioYHmxB/2b/jsjy8e1
+         eIRtAL23640gZMCD0pyfe+OBS+mPsCxYDBD2Cp1o3xEs8P+slNN2au1YHYDPXute8KEC
+         eCrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiuldWss8Tmv+wVOohADbfoyVYTMTsmM+bcTvC7lLjhKwg0Q9KkO8fxDeDr+iNyAL4PF6PZfDM1087PZzDPg==@vger.kernel.org, AJvYcCVelMaoEn5++KT3/NxDC8MAm+F/u3xvdsfbTjUm0N+bOdDSphHvCNHG6AakorWuVQ7jY3jAs3m8xIlLVv5R@vger.kernel.org, AJvYcCXojN+T12ne6EXYXYy36RnMzNNM7+v+b0/zhqEzx55lUn9tfV5LdACErQil1lGTEwOBu7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVPlXSBHKpv/sl04y9gBXtwVKP+qnXafg5YtAm617Mo7N8EqUv
+	nS5HzEmIYk/IQppl1BULleTnDcYyo4ZOuq3E16zAVtlxcnw7rQpE
+X-Gm-Gg: ASbGncuKnNMZEx7micJGkyAmwnWajfi8whpTj43Yc63qBQmBZKahNXG+Dg9CduVCo6X
+	MecdD8G9dNILppUZEZSu1UThJGjezI3EPSo5FcpX0Fbo1Zf2SQAVZzFmmaofZjRwX/6CgQnUqY2
+	VR7wiP18df3srFxZbmCZHqj7IZyam/kOsOTyvCPgdUGlz8iaaYfojGsiAxvQMbpoCob+Efy3WUT
+	GY1/qYCdoCk8e9nSsnic0baNIZ5BuJqhXUNORRPzYWcju1Eft52HPkBRJff8WJ5ebGyJpZlNoym
+	A8GGmDmioXODuthmdrkrug8=
+X-Google-Smtp-Source: AGHT+IFRBr5mN/dgP2KN/EIsb6j1zyc0+OcOueX2C2ho08DvnIw4RstkuXnVlQQq3zOGoyXDEmtlqA==
+X-Received: by 2002:a17:907:618f:b0:a9a:c651:e7d9 with SMTP id a640c23a62f3a-aa581057f6fmr128727366b.46.1732706513796;
+        Wed, 27 Nov 2024 03:21:53 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa54a6db906sm414525466b.41.2024.11.27.03.21.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 03:21:53 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 27 Nov 2024 12:21:51 +0100
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, ast@kernel.org, daniel@iogearbox.net,
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	memxor@gmail.com, snorcht@gmail.com, brauner@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v4 2/5] selftests/bpf: Add tests for open-coded
+ style process file iterator
+Message-ID: <Z0cAz3uOGRcl36Eu@krava>
+References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50809E5CD1B8DE0225A85B6B99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Zz3HjT24glXY-8AF@krava>
+ <AM6PR03MB5080FB540DD0BBFA48C20325992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB5080FB540DD0BBFA48C20325992F2@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-The TUXEDO Sirius 16 Gen1 & Gen2 have the custom TUXEDO Interface (TUXI)
-ACPI interface which currently consists of the TFAN device. This has ACPI
-functions to control the built in fans and monitor fan speeds and CPU and
-GPU temprature.
+On Tue, Nov 26, 2024 at 10:24:07PM +0000, Juntong Deng wrote:
+> On 2024/11/20 11:27, Jiri Olsa wrote:
+> > On Tue, Nov 19, 2024 at 05:53:59PM +0000, Juntong Deng wrote:
+> > 
+> > SNIP
+> > 
+> > > +static void subtest_task_file_iters(void)
+> > > +{
+> > > +	int prog_fd, child_pid, wstatus, err = 0;
+> > > +	const int stack_size = 1024 * 1024;
+> > > +	struct iters_task_file *skel;
+> > > +	struct files_test_args args;
+> > > +	struct bpf_program *prog;
+> > > +	bool setup_end, test_end;
+> > > +	char *stack;
+> > > +
+> > > +	skel = iters_task_file__open_and_load();
+> > > +	if (!ASSERT_OK_PTR(skel, "open_and_load"))
+> > > +		return;
+> > > +
+> > > +	if (!ASSERT_OK(skel->bss->err, "pre_test_err"))
+> > > +		goto cleanup_skel;
+> > > +
+> > > +	prog = bpf_object__find_program_by_name(skel->obj, "test_bpf_iter_task_file");
+> > > +	if (!ASSERT_OK_PTR(prog, "find_program_by_name"))
+> > > +		goto cleanup_skel;
+> > > +
+> > > +	prog_fd = bpf_program__fd(prog);
+> > > +	if (!ASSERT_GT(prog_fd, -1, "bpf_program__fd"))
+> > > +		goto cleanup_skel;
+> > 
+> > I don't think you need to check on this once we did iters_task_file__open_and_load
+> > 
+> > > +
+> > > +	stack = (char *)malloc(stack_size);
+> > > +	if (!ASSERT_OK_PTR(stack, "clone_stack"))
+> > > +		goto cleanup_skel;
+> > > +
+> > > +	setup_end = false;
+> > > +	test_end = false;
+> > > +
+> > > +	args.setup_end = &setup_end;
+> > > +	args.test_end = &test_end;
+> > > +
+> > > +	/* Note that there is no CLONE_FILES */
+> > > +	child_pid = clone(task_file_test_process, stack + stack_size, CLONE_VM | SIGCHLD, &args);
+> > > +	if (!ASSERT_GT(child_pid, -1, "child_pid"))
+> > > +		goto cleanup_stack;
+> > > +
+> > > +	while (!setup_end)
+> > > +		;
+> > 
+> > I thin kthe preferred way is to synchronize through pipe,
+> > you can check prog_tests/uprobe_multi_test.c
+> > 
+> 
+> Thanks for your reply.
+> 
+> Do we really need to use pipe? Currently this test is very simple.
+> 
+> In this test, all files opened by the test process will be closed first
+> so that there is an empty file description table, and then open the
+> test files.
+> 
+> This way the test process has only 3 newly opened files and the file
+> descriptors are always 0, 1, 2.
+> 
+> Although using pipe is feasible, this test will become more complicated
+> than it is now.
 
-This driver implements this TFAN device via the thermal subsystem to allow
-userspace controlled, but hardware safe, custom fan curves.
+I see, I missed the close_range call.. anyway I'd still prefer pipe to busy waiting
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- drivers/platform/x86/Makefile                 |   3 +
- drivers/platform/x86/tuxedo/Kbuild            |   6 +
- drivers/platform/x86/tuxedo/nbxx/Kbuild       |   8 +
- drivers/platform/x86/tuxedo/nbxx/Kconfig      |   9 +
- drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c  |  96 +++++++
- drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h  |  84 ++++++
- .../x86/tuxedo/nbxx/acpi_tuxi_thermal.c       | 241 ++++++++++++++++++
- .../x86/tuxedo/nbxx/acpi_tuxi_thermal.h       |  14 +
- 8 files changed, 461 insertions(+)
- create mode 100644 drivers/platform/x86/tuxedo/Kbuild
- create mode 100644 drivers/platform/x86/tuxedo/nbxx/Kbuild
- create mode 100644 drivers/platform/x86/tuxedo/nbxx/Kconfig
- create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
- create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h
- create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.c
- create mode 100644 drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.h
+perhaps you could use fentry probe triggered by the task_file_test_process
+and do the fd/file iteration in there? that way there'be no need for the sync
 
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e1b1429470674..1562dcd7ad9a5 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -153,3 +153,6 @@ obj-$(CONFIG_WINMATE_FM07_KEYS)		+= winmate-fm07-keys.o
- 
- # SEL
- obj-$(CONFIG_SEL3350_PLATFORM)		+= sel3350-platform.o
-+
-+# TUXEDO
-+obj-y					+= tuxedo/
-diff --git a/drivers/platform/x86/tuxedo/Kbuild b/drivers/platform/x86/tuxedo/Kbuild
-new file mode 100644
-index 0000000000000..16396a8923432
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/Kbuild
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+obj-y	+= nbxx/
-diff --git a/drivers/platform/x86/tuxedo/nbxx/Kbuild b/drivers/platform/x86/tuxedo/nbxx/Kbuild
-new file mode 100644
-index 0000000000000..aa4d6d66b785f
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nbxx/Kbuild
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+tuxedo_nbxx_acpi_tuxi-y			:= acpi_tuxi.o
-+tuxedo_nbxx_acpi_tuxi-y			+= acpi_tuxi_thermal.o
-+obj-$(CONFIG_TUXEDO_NBXX_ACPI_TUXI)	+= tuxedo_nbxx_acpi_tuxi.o
-diff --git a/drivers/platform/x86/tuxedo/nbxx/Kconfig b/drivers/platform/x86/tuxedo/nbxx/Kconfig
-new file mode 100644
-index 0000000000000..93f7f86e803da
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nbxx/Kconfig
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# TUXEDO X86 Platform Specific Drivers
-+#
-+
-+config TUXEDO_NBXX_ACPI_TUXI
-+	tristate "TUXEDO TUXI"
-+	help
-+	  TUXEDO TUXI driver
-diff --git a/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
-new file mode 100644
-index 0000000000000..6031cf731b449
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2024 Werner Sembach wse@tuxedocomputers.com
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/acpi.h>
-+#include "acpi_tuxi_thermal.h"
-+
-+#include "acpi_tuxi.h"
-+
-+static int eval_intparams(acpi_handle handle, acpi_string pathname,
-+			  unsigned long long *params, u32 params_count,
-+			  unsigned long long *retval)
-+{
-+	struct acpi_object_list arguments;
-+	unsigned long long data;
-+	acpi_status status;
-+
-+	pr_debug("Eval %s\n", pathname);
-+
-+	if (params_count > 0) {
-+		pr_debug("Params:\n");
-+
-+		arguments.count = params_count;
-+		arguments.pointer = kzalloc(
-+			params_count * sizeof(*arguments.pointer), GFP_KERNEL);
-+		for (int i = 0; i < params_count; ++i) {
-+			pr_debug("%llu\n", params[i]);
-+
-+			arguments.pointer[i].type = ACPI_TYPE_INTEGER;
-+			arguments.pointer[i].integer.value = params[i];
-+		}
-+		status = acpi_evaluate_integer(handle, pathname, &arguments,
-+					       &data);
-+		kfree(arguments.pointer);
-+	} else {
-+		status = acpi_evaluate_integer(handle, pathname, NULL, &data);
-+	}
-+	if (ACPI_FAILURE(status))
-+		return_ACPI_STATUS(status);
-+
-+	if (retval)
-+		*retval = data;
-+
-+	pr_debug("RetVal: %llu\n", *retval);
-+
-+	return 0;
-+}
-+
-+static int add(struct acpi_device *device) {
-+	struct tuxedo_nbxx_acpi_tuxi_driver_data_t *driver_data;
-+	acpi_status status;
-+
-+	driver_data = devm_kzalloc(&device->dev, sizeof(*driver_data),
-+				   GFP_KERNEL);
-+	if (!driver_data)
-+		return -ENOMEM;
-+
-+	// Find subdevices
-+	status = acpi_get_handle(device->handle, "TFAN",
-+				 &driver_data->tfan_handle);
-+	if (ACPI_FAILURE(status))
-+		return_ACPI_STATUS(status);
-+
-+	driver_data->eval_intparams = &eval_intparams;
-+
-+	dev_set_drvdata(&device->dev, driver_data);
-+
-+	return tuxedo_nbxx_acpi_tuxi_thermal_add_devices(device);
-+}
-+
-+static void remove(struct acpi_device *device) {
-+	tuxedo_nbxx_acpi_tuxi_thermal_remove_devices(device);
-+}
-+
-+static const struct acpi_device_id acpi_device_ids[] = {
-+	{"TUXI0000", 0},
-+	{"", 0}
-+};
-+MODULE_DEVICE_TABLE(acpi, acpi_device_ids);
-+
-+static struct acpi_driver acpi_driver = {
-+	.name = "tuxedo_nbxx_acpi_tuxi",
-+	.ids = acpi_device_ids,
-+	.ops = {
-+		.add = add,
-+		.remove = remove,
-+	},
-+};
-+
-+module_acpi_driver(acpi_driver);
-+
-+MODULE_DESCRIPTION("TUXEDO TUXI");
-+MODULE_AUTHOR("Werner Sembach <wse@tuxedocomputers.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h
-new file mode 100644
-index 0000000000000..7ffda8e0dd68a
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2024 Werner Sembach wse@tuxedocomputers.com
-+ */
-+
-+#ifndef __PLATFORM_X86_TUXEDO_NBXX_ACPI_TUXI_H__
-+#define __PLATFORM_X86_TUXEDO_NBXX_ACPI_TUXI_H__
-+
-+#include <linux/thermal.h>
-+#include <linux/acpi.h>
-+
-+/*
-+ * Set fan speed target
-+ *
-+ * Set a specific fan speed (needs manual mode)
-+ *
-+ * Arg0: Fan index
-+ * Arg1: Fan speed as a fraction of maximum speed (0-255)
-+ */
-+#define TUXI_TFAN_METHOD_SET_FAN_SPEED		"SSPD"
-+
-+/*
-+ * Get fan speed target
-+ *
-+ * Arg0: Fan index
-+ * Returns: Current fan speed target a fraction of maximum speed (0-255)
-+ */
-+#define TUXI_TFAN_METHOD_GET_FAN_SPEED		"GSPD"
-+
-+/*
-+ * Get fans count
-+ *
-+ * Returns: Number of individually controllable fans
-+ */
-+#define TUXI_TFAN_METHOD_GET_FAN_COUNT		"GCNT"
-+
-+/*
-+ * Set fans mode
-+ *
-+ * Arg0: 0 = auto, 1 = manual
-+ */
-+#define TUXI_TFAN_METHOD_SET_FAN_MODE		"SMOD"
-+
-+/*
-+ * Get fans mode
-+ *
-+ * Returns: 0 = auto, 1 = manual
-+ */
-+#define TUXI_TFAN_METHOD_GET_FAN_MODE		"GMOD"
-+
-+/*
-+ * Get fan type/what the fan is pointed at
-+ *
-+ * Arg0: Fan index
-+ * Returns: 0 = general, 1 = CPU, 2 = GPU
-+ */
-+#define TUXI_TFAN_METHOD_GET_FAN_TYPE		"GTYP"
-+
-+/*
-+ * Get fan temperature/temperature of what the fan is pointed at
-+ *
-+ * Arg0: Fan index
-+ * Returns: Temperature sensor value in 10ths of degrees kelvin
-+ */
-+#define TUXI_TFAN_METHOD_GET_FAN_TEMPERATURE	"GTMP"
-+
-+/*
-+ * Get actual fan speed in RPM
-+ *
-+ * Arg0: Fan index
-+ * Returns: Speed sensor value in revolutions per minute
-+ */
-+#define TUXI_TFAN_METHOD_GET_FAN_RPM		"GRPM"
-+
-+struct tuxedo_nbxx_acpi_tuxi_driver_data_t {
-+	acpi_handle tfan_handle;
-+	int (*eval_intparams)(acpi_handle, acpi_string,
-+				  unsigned long long *, u32,
-+				  unsigned long long *);
-+	struct thermal_zone_device **tzdevs;
-+	size_t tzdevs_count;
-+};
-+
-+#endif // __PLATFORM_X86_TUXEDO_NBXX_ACPI_TUXI_H__
-diff --git a/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.c b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.c
-new file mode 100644
-index 0000000000000..557e3fac15779
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.c
-@@ -0,0 +1,241 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2024 Werner Sembach wse@tuxedocomputers.com
-+ */
-+
-+#include <linux/thermal.h>
-+#include <linux/minmax.h>
-+#include <linux/export.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/acpi.h>
-+#include "acpi_tuxi.h"
-+
-+#include "acpi_tuxi_thermal.h"
-+
-+static struct thermal_trip tzdtrips[] = {
-+	{
-+		.type		= THERMAL_TRIP_ACTIVE,
-+		.temperature	= 80000,
-+		.hysteresis	= 5000,
-+	},
-+	{
-+		.type		= THERMAL_TRIP_ACTIVE,
-+		.temperature	= 90000,
-+		.hysteresis	= 5000,
-+	},
-+	{
-+		.type		= THERMAL_TRIP_HOT,
-+		.temperature	= 100000,
-+		.hysteresis	= 5000,
-+	},
-+	{
-+		.type		= THERMAL_TRIP_CRITICAL,
-+		.temperature	= 110000,
-+	},
-+};
-+
-+struct tz_devdata_t {
-+	struct acpi_device *parent;
-+	struct thermal_cooling_device *cdev;
-+	size_t index;
-+};
-+
-+static bool should_bind(struct thermal_zone_device *tzdev,
-+			const struct thermal_trip __always_unused *trip,
-+			struct thermal_cooling_device *cdev,
-+			struct cooling_spec __always_unused *cspec)
-+{
-+	return cdev->devdata == tzdev;
-+}
-+
-+static int get_temp(struct thermal_zone_device *tzdev, int *temp)
-+{
-+	struct tuxedo_nbxx_acpi_tuxi_driver_data_t *driver_data;
-+	struct tz_devdata_t *tz_devdata;
-+	unsigned long long data;
-+	int ret;
-+
-+	tz_devdata = thermal_zone_device_priv(tzdev);
-+	driver_data = dev_get_drvdata(&tz_devdata->parent->dev);
-+
-+	unsigned long long params[] = { tz_devdata->index };
-+	ret = driver_data->eval_intparams(driver_data->tfan_handle,
-+					  TUXI_TFAN_METHOD_GET_FAN_TEMPERATURE,
-+					  params, ARRAY_SIZE(params), &data);
-+	if (ret)
-+		return ret;
-+
-+	*temp = data * 100 - 272000;
-+
-+	return 0;
-+}
-+
-+static struct thermal_zone_device_ops tzdops = {
-+	.should_bind = should_bind,
-+	.get_temp = get_temp,
-+};
-+
-+static struct thermal_zone_params tzdparams = {
-+	.governor_name = "user_space",
-+};
-+
-+static int get_max_state(struct thermal_cooling_device __always_unused *cdev,
-+		  unsigned long *state)
-+{
-+	*state = 255;
-+
-+	return 0;
-+}
-+
-+static int get_cur_state(struct thermal_cooling_device *cdev,
-+			 unsigned long *state)
-+{
-+	struct tuxedo_nbxx_acpi_tuxi_driver_data_t *driver_data;
-+	struct thermal_zone_device *tzdev;
-+	struct tz_devdata_t *tz_devdata;
-+	unsigned long long data;
-+	int ret;
-+
-+	tzdev = cdev->devdata;
-+	tz_devdata = thermal_zone_device_priv(tzdev);
-+	driver_data = dev_get_drvdata(&tz_devdata->parent->dev);
-+
-+	unsigned long long params[] = { tz_devdata->index };
-+	ret = driver_data->eval_intparams(driver_data->tfan_handle,
-+					  TUXI_TFAN_METHOD_GET_FAN_SPEED,
-+					  params, ARRAY_SIZE(params), &data);
-+	if (ret)
-+		return ret;
-+
-+	*state = data;
-+
-+	return 0;
-+}
-+
-+static int set_cur_state(struct thermal_cooling_device *cdev,
-+			 unsigned long state) {
-+	struct tuxedo_nbxx_acpi_tuxi_driver_data_t *driver_data;
-+	struct thermal_zone_device *tzdev;
-+	struct tz_devdata_t *tz_devdata;
-+	unsigned long long data;
-+	int ret;
-+
-+	tzdev = cdev->devdata;
-+	tz_devdata = thermal_zone_device_priv(tzdev);
-+	driver_data = dev_get_drvdata(&tz_devdata->parent->dev);
-+
-+	unsigned long long params[] = { tz_devdata->index, state };
-+	ret = driver_data->eval_intparams(driver_data->tfan_handle,
-+					  TUXI_TFAN_METHOD_SET_FAN_SPEED,
-+					  params, ARRAY_SIZE(params), &data);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static struct thermal_cooling_device_ops tcdops = {
-+	.get_max_state = get_max_state,
-+	.get_cur_state = get_cur_state,
-+	.set_cur_state = set_cur_state,
-+};
-+
-+int tuxedo_nbxx_acpi_tuxi_thermal_add_devices(struct acpi_device *parent)
-+{
-+	struct tuxedo_nbxx_acpi_tuxi_driver_data_t *driver_data;
-+	struct tz_devdata_t *tz_devdata;
-+	struct thermal_zone_device **tzdevs;
-+	unsigned long long data;
-+	size_t tzdevs_count;
-+	char *type;
-+	int ret;
-+
-+	driver_data = dev_get_drvdata(&parent->dev);
-+
-+	ret = driver_data->eval_intparams(driver_data->tfan_handle,
-+					  TUXI_TFAN_METHOD_GET_FAN_COUNT, NULL,
-+					  0, &data);
-+	if (ret)
-+		return ret;
-+
-+	tzdevs_count = data;
-+	tzdevs = devm_kzalloc(&parent->dev, tzdevs_count * sizeof(*tzdevs),
-+			      GFP_KERNEL);
-+	if (!tzdevs)
-+			return -ENOMEM;
-+
-+	driver_data->tzdevs = tzdevs;
-+	driver_data->tzdevs_count = tzdevs_count;
-+
-+	for (size_t i = 0; i < tzdevs_count; ++i) {
-+		tz_devdata = devm_kzalloc(&parent->dev, sizeof(*tz_devdata),
-+					  GFP_KERNEL);
-+		if (!tz_devdata)
-+			return -ENOMEM;
-+
-+		tz_devdata->parent = parent;
-+		tz_devdata->index = i;
-+
-+		unsigned long long params[] = { i };
-+		ret = driver_data->eval_intparams(driver_data->tfan_handle,
-+						  TUXI_TFAN_METHOD_GET_FAN_TYPE,
-+						  params, ARRAY_SIZE(params),
-+						  &data);
-+		if (ret)
-+			return ret;
-+
-+		switch(data) {
-+		case 0:
-+			type = "tuxedo_general";
-+			break;
-+		case 1:
-+			type = "tuxedo_cpu";
-+			break;
-+		case 2:
-+			type = "tuxedo_gpu";
-+			break;
-+		default:
-+			return -EIO;
-+		}
-+
-+		tzdevs[i] = thermal_zone_device_register_with_trips(
-+			type, tzdtrips, ARRAY_SIZE(tzdtrips), tz_devdata, &tzdops,
-+			&tzdparams, 1000, 1000);
-+		if (IS_ERR(tzdevs[i]))
-+			return PTR_ERR(tzdevs[i]);
-+
-+		tz_devdata->cdev = thermal_cooling_device_register(type,
-+								   tzdevs[i],
-+								   &tcdops);
-+		if (IS_ERR(tz_devdata->cdev))
-+			return PTR_ERR(tz_devdata->cdev);
-+	}
-+
-+	unsigned long long params[] = { 1 };
-+	driver_data->eval_intparams(driver_data->tfan_handle,
-+				    TUXI_TFAN_METHOD_SET_FAN_MODE,
-+				    params, ARRAY_SIZE(params), &data);
-+
-+	return 0;
-+}
-+
-+void tuxedo_nbxx_acpi_tuxi_thermal_remove_devices(struct acpi_device *parent) {
-+	struct tuxedo_nbxx_acpi_tuxi_driver_data_t *driver_data;
-+	struct tz_devdata_t *tz_devdata;
-+	unsigned long long data;
-+
-+	driver_data = dev_get_drvdata(&parent->dev);
-+
-+	unsigned long long params[] = { 0 };
-+	driver_data->eval_intparams(driver_data->tfan_handle,
-+				    TUXI_TFAN_METHOD_SET_FAN_MODE,
-+				    params, ARRAY_SIZE(params), &data);
-+
-+	for (int i = 0; i < driver_data->tzdevs_count; ++i) {
-+		tz_devdata = thermal_zone_device_priv(driver_data->tzdevs[i]);
-+
-+		thermal_cooling_device_unregister(tz_devdata->cdev);
-+		thermal_zone_device_unregister(driver_data->tzdevs[i]);
-+	}
-+}
-diff --git a/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.h b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.h
-new file mode 100644
-index 0000000000000..2193fa6db0ea1
---- /dev/null
-+++ b/drivers/platform/x86/tuxedo/nbxx/acpi_tuxi_thermal.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2024 Werner Sembach wse@tuxedocomputers.com
-+ */
-+
-+#ifndef __PLATFORM_X86_TUXEDO_NBXX_ACPI_TUXI_THERMAL_H__
-+#define __PLATFORM_X86_TUXEDO_NBXX_ACPI_TUXI_THERMAL_H__
-+
-+#include <linux/acpi.h>
-+
-+int tuxedo_nbxx_acpi_tuxi_thermal_add_devices(struct acpi_device *parent);
-+void tuxedo_nbxx_acpi_tuxi_thermal_remove_devices(struct acpi_device *parent);
-+
-+#endif // __PLATFORM_X86_TUXEDO_NBXX_ACPI_TUXI_THERMAL_H__
--- 
-2.43.0
-
+jirka
 
