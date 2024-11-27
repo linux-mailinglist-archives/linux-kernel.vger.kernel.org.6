@@ -1,83 +1,163 @@
-Return-Path: <linux-kernel+bounces-422940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A419DA031
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:08:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F309DA033
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:10:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3045168DB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:08:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CA4CB22DEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DECB8BE5;
-	Wed, 27 Nov 2024 01:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1469BC2C8;
+	Wed, 27 Nov 2024 01:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miCTHw7X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A878F5C;
-	Wed, 27 Nov 2024 01:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F00A28E8;
+	Wed, 27 Nov 2024 01:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732669716; cv=none; b=F0vzgAQf9NmWpTx2UdNjbjNK5qsD7QOD1P1lXFa/w4B2kOQWc+oPkUyr5Ta38SMKcivBMje8WxPfbgOZxoW4DnHy7XDel8AmqDKYJ8XIFRHmrLo/8KEBZGSH41mbzKFGfnLpK2ImRAJYerfr/I/qaHm38rg6oA6aSiAu+4Pd7vM=
+	t=1732669834; cv=none; b=anWmo09b9E4VspFr6JPn4gCkqMpw71WoIfxeNKu5E8qcN/5r2oEcp7sARYeRdXHaWzk0Edk8w7BNk2Rv3FxFByRYwK3H7kV+EOP2aBdPIeE1+UVao1St4fmgINq7EyHYdPw98wxL40v/HNmMWbfnvt1bS6ZR/2zY176TjE7MpUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732669716; c=relaxed/simple;
-	bh=QLci+I7Hcbge8QfcwBcwZEGwMzhpA+c87e6vrbpgXDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jB2DrAUUo3DVoQN0TPNbMxkFB1lq2XmxhUkKvb/q4Q0pP57i0yW0WPTuxdpA+evkAMUuBvb/7f0ArM7253WlwO4Le3Uz2PlB4aylQ01awweR4GxOJ6+y7gx/6vZ/CwKENvwzqfu6RL+yqk1PdXF7wYpV6QdZgzb2GlKWF2V6HSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D1BC4CECF;
-	Wed, 27 Nov 2024 01:08:35 +0000 (UTC)
-Date: Tue, 26 Nov 2024 20:09:25 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: David Hunter <david.hunter.linux@gmail.com>
-Cc: masahiroy@kernel.org, javier.carrasco.cruz@gmail.com,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org
-Subject: Re: [PATCH v2 2/7] streamline_config.pl: ensure all defaults are
- tracked
-Message-ID: <20241126200925.442af060@gandalf.local.home>
-In-Reply-To: <20241126234813.1602902-1-david.hunter.linux@gmail.com>
-References: <CAK7LNAR8TQx=r-esfi+dJ3=TQ+6Om+LPadhDPqn3TLH93xi4WQ@mail.gmail.com>
-	<20241126234813.1602902-1-david.hunter.linux@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732669834; c=relaxed/simple;
+	bh=PQ3J3RnuIxle5Ti4rLewqRZE0iwYuE5MuhrnEiN8pRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oUorEPCIeqJRD4e8ixlGPT91jm+FHUzBERLaa/TMFfiKN98+849Tj9/wbu5XLsrGf76N/RRjJMwpUq1GbDj9t6iSrd+1ZPQBtEhsejg1gHYZAi2RH/y6l+ADHnDcmpjpAR7SI1x3jR6Bcimw1rQc/qsNtMp3AzO/0IO2MiS1l1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miCTHw7X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE00C4CECF;
+	Wed, 27 Nov 2024 01:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732669833;
+	bh=PQ3J3RnuIxle5Ti4rLewqRZE0iwYuE5MuhrnEiN8pRM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=miCTHw7XpauR2/+KAigQacgeuD6RApV2TlYwvn9TQaVTi6sFWgYKK/YT59RQfxgRx
+	 /G4wj5xAep54ECFKxmmADITjdCquZVpAHNRzGrEFHk8jfPk6hc0wew5RtBOpPttiJI
+	 jIk5ldh6v8wum6IQ2CzAscnRKMWErx+guEvhwkuyuTlSLK4EbIXTdqmoOygUrMmAG1
+	 tPsa5kzg6+/JmvKqWHIZWGZABngtXcVa8dlTvvfRvPHIqXV25xEmutxhKOdsei/0Dz
+	 dZLBiSiZMk/SM5dWxg5lYBvaYWfgX218TSV4ue9TmXx9mzDICWLTNnuQcHXtnp4S9g
+	 O2vGc1ln+vShQ==
+Date: Tue, 26 Nov 2024 17:10:32 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, samitolvanen@google.com,
+	petr.pavlu@suse.com, da.gomez@samsung.com,
+	linux-modules@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org, mmaurer@google.com, arnd@arndb.de,
+	deller@gmx.de, song@kernel.org, mcgrof@kernel.org
+Subject: [GIT PULL] Modules changes for v6.13-rc1
+Message-ID: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 26 Nov 2024 18:48:13 -0500
-David Hunter <david.hunter.linux@gmail.com> wrote:
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
 
-> From: david.hunter.linux@gmail.com
-> 
-> There are many instances of the second line of a config entry containing infomation about defaults. Here is a summary: 
-> 
-> def_bools found: 746
-> def_tristates found: 59
-> defaults found: 169
-> 
-> > Can you list some examples of where this happens?  
-> 
-> I created a file that finds all the times that a default information is given in the line following a CONFIG entry is created. Here is a link for the output, which will show the file and the line numbers: 
-> 
-> https://github.com/dshunter107/linux-tools/blob/main/localmodconfig/defaults.output
-> 
-> If you would like to see the shell script I made to find the locations, you can view it at this link: 
-> 
-> https://github.com/dshunter107/linux-tools/blob/main/localmodconfig/check_define.sh
-> 
+  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
 
-Thanks, can you ping me again next week. I'm still finishing up this merge
-window and have a lot of tasks that need to get done before Thanksgiving,
-and will be taking a break from computing during the Holiday.
+are available in the Git repository at:
 
-I'm not going to have time to look at this this week, and will likely
-forget about it.
+  git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/ tags/modules-6.13-rc1
 
--- Steve
+for you to fetch changes up to 2466b31201424ccb7eda00277222302a4d6576cb:
+
+  tests/module/gen_test_kallsyms.sh: use 0 value for variables (2024-11-07 14:32:55 -0800)
+
+----------------------------------------------------------------
+Modules changes for v6.13-rc1
+
+Highlights for this merge window:
+
+  * The whole caching of module code into huge pages by Mike Rapoport is going
+    in through Andrew Morton's tree due to some other code dependencies. That's
+    really the biggest highlight for Linux kernel modules in this release. With
+    it we share huge pages for modules, starting off with x86. Expect to see that
+    soon through Andrew!
+
+  * Helge Deller addressed some lingering low hanging fruit alignment
+    enhancements by. It is worth pointing out that from his old patch series
+    I dropped his vmlinux.lds.h change at Masahiro's request as he would
+    prefer this to be specified in asm code [0].
+
+    [0] https://lore.kernel.org/all/20240129192644.3359978-5-mcgrof@kernel.org/T/#m9efef5e700fbecd28b7afb462c15eed8ba78ef5a
+
+  * Matthew Maurer and Sami Tolvanen have been tag teaming to help
+    get us closer to a modversions for Rust. In this cycle we take in
+    quite a lot of the refactoring for ELF validation. I expect modversions
+    for Rust will be merged by v6.14 as that code is mostly ready now.
+
+  * Adds a new modules selftests: kallsyms which helps us tests find_symbol()
+    and the limits of kallsyms on Linux today.
+
+  * We have a realtime mailing list to kernel-ci testing for modules now
+    which relies and combines patchwork, kpd and kdevops:
+
+    - https://patchwork.kernel.org/project/linux-modules/list/
+    - https://github.com/linux-kdevops/kdevops/blob/main/docs/kernel-ci/README.md
+    - https://github.com/linux-kdevops/kdevops/blob/main/docs/kernel-ci/kernel-ci-kpd.md
+    - https://github.com/linux-kdevops/kdevops/blob/main/docs/kernel-ci/linux-modules-kdevops-ci.md
+
+    If you want to help avoid Linux kernel modules regressions, now its simple,
+    just add a new Linux modules sefltests under tools/testing/selftests/module/
+    That is it. All new selftests will be used and leveraged automatically by
+    the CI.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      selftests: kallsyms: add MODULE_DESCRIPTION
+
+Helge Deller (2):
+      modules: Ensure 64-bit alignment on __ksymtab_* sections
+      modules: Add missing entry for __ex_table
+
+Luis Chamberlain (2):
+      selftests: add new kallsyms selftests
+      tests/module/gen_test_kallsyms.sh: use 0 value for variables
+
+Matthew Maurer (13):
+      module: Take const arg in validate_section_offset
+      module: Factor out elf_validity_ehdr
+      module: Factor out elf_validity_cache_sechdrs
+      module: Factor out elf_validity_cache_secstrings
+      module: Factor out elf_validity_cache_index_info
+      module: Factor out elf_validity_cache_index_mod
+      module: Factor out elf_validity_cache_index_sym
+      module: Factor out elf_validity_cache_index_str
+      module: Group section index calculations together
+      module: Factor out elf_validity_cache_strtab
+      module: Additional validation in elf_validity_cache_strtab
+      module: Reformat struct for code style
+      scripts: Remove export_report.pl
+
+ Makefile                                      |   6 +-
+ kernel/module/internal.h                      |   7 +-
+ kernel/module/main.c                          | 569 +++++++++++++++++++-------
+ lib/Kconfig.debug                             | 105 +++++
+ lib/Makefile                                  |   1 +
+ lib/tests/Makefile                            |   1 +
+ lib/tests/module/.gitignore                   |   4 +
+ lib/tests/module/Makefile                     |  15 +
+ lib/tests/module/gen_test_kallsyms.sh         | 129 ++++++
+ scripts/export_report.pl                      | 186 ---------
+ scripts/module.lds.S                          |   9 +-
+ tools/testing/selftests/module/Makefile       |  12 +
+ tools/testing/selftests/module/config         |   3 +
+ tools/testing/selftests/module/find_symbol.sh |  81 ++++
+ 14 files changed, 785 insertions(+), 343 deletions(-)
+ create mode 100644 lib/tests/Makefile
+ create mode 100644 lib/tests/module/.gitignore
+ create mode 100644 lib/tests/module/Makefile
+ create mode 100755 lib/tests/module/gen_test_kallsyms.sh
+ delete mode 100755 scripts/export_report.pl
+ create mode 100644 tools/testing/selftests/module/Makefile
+ create mode 100644 tools/testing/selftests/module/config
+ create mode 100755 tools/testing/selftests/module/find_symbol.sh
 
