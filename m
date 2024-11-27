@@ -1,112 +1,83 @@
-Return-Path: <linux-kernel+bounces-423604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A699DAA39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:59:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768FB166F9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:59:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F4E1FF7AA;
-	Wed, 27 Nov 2024 14:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="hLJ2JAhk"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BE79DAA3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:59:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596EB652
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 550B5B211DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:59:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1AE1F9A9F;
+	Wed, 27 Nov 2024 14:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGTTDtjw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F7C1FF5F8;
+	Wed, 27 Nov 2024 14:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732719546; cv=none; b=C/JlxW1ABo4OV2z9vgDWgq94qyI95NA5zEJ/T4MxNU0EGTYYbFVbxwyAPk+CGwn3wL+fAl6NkN/N+zC3w0LBGRpXq3zT4MYRWkX+gyQu4R7G/9zITjfghZDMKE2++woveXy5YDel+L80zKy6lagkyoarrNxKMnqTmw9Z1i4ps/0=
+	t=1732719565; cv=none; b=NYlhZh5KcRmy0GN8eBNSWIbUqdj0NMLmW3Eo7IQXlL22Ry4U0a5EGI+w132V7z76H27hnHr4hcOOP8r5GXodYK/L646dJsIQ5dLwrbkipLL5jDyMziyQwh6zwksNOwy3LXi5h2agDWTw5e9Lvzt/JThSsB1X5Ks3Zhw0+S2eYoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732719546; c=relaxed/simple;
-	bh=d1Yf7lV6LprirBnM5DZ+am7RY70xRgwA7d7ed1VUkPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aBuioO2PrYlhg2uoBdRRfK0HTDRPvB3bacPVU0nabuR4fV7kwTSw9o9Sz/A2r+dbd8rXR1U6hewZWF+Q/obEGL/Wm1aO/JjWG+ads2MQKXLrDGmR9IblCHcyrHvoR3qQ2B5J2FLDAfSwkNHHk3R25qtBe2kfR61S5ciE42ug7I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=hLJ2JAhk; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732719545; x=1764255545;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2DX3H+a44kQ13gTw3hzeF4XJrHuDL47mesPKbbKCQO8=;
-  b=hLJ2JAhkO/bmjdspnI9UvmIE+h7OVIThix4mIqVvHnQyofOA8OidBQxF
-   /V4qLQ6fR+Hj4eaorA0+6/SUs0KvLOwIBC17CHUcWfrHkzu5I37sVOTpC
-   9L/k8LEuyj0l0NiHFzH/94d3yNey8zSQNiIyR6xhMczJw+gDhRSSmwKAQ
-   0=;
-X-IronPort-AV: E=Sophos;i="6.12,189,1728950400"; 
-   d="scan'208";a="677169741"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 14:59:02 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:60970]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.13:2525] with esmtp (Farcaster)
- id e0021fdb-2735-4534-9e9c-863282448e48; Wed, 27 Nov 2024 14:59:01 +0000 (UTC)
-X-Farcaster-Flow-ID: e0021fdb-2735-4534-9e9c-863282448e48
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 27 Nov 2024 14:59:01 +0000
-Received: from [192.168.90.101] (10.85.143.173) by
- EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 27 Nov 2024 14:58:57 +0000
-Message-ID: <7846b08f-5bdb-448b-9c56-73d9f16a839b@amazon.com>
-Date: Wed, 27 Nov 2024 16:58:53 +0200
+	s=arc-20240116; t=1732719565; c=relaxed/simple;
+	bh=SVhXyj/ZbRJBm3pGNYNcl/3ggq+hcnNG3Esckkf/+Yw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j28PdIyZrEoy/lGzyT33MvURwVKJkm2uUR1k1OLc9PFWHwoghmSHg+wkmoXYotuyrBHXGzywf06F3GsQCVQzHxSKuTGXNu0uznk9rcqbxnQ/06xIBHRxwF3Y3UH5HwvOyhmCEzzmGt58mSHP6suIDDU1CC0gncWUs8H9fDS1h4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGTTDtjw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753AEC4CECC;
+	Wed, 27 Nov 2024 14:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732719564;
+	bh=SVhXyj/ZbRJBm3pGNYNcl/3ggq+hcnNG3Esckkf/+Yw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TGTTDtjwHXPmzkERIfnnt1B08xP9zER2IuaQCb6KIZPwaS6Gja8vheY34Uo/TfQF0
+	 Uvrmiz1eloyHIZind1vhluijfaF7fPXrqKw6Jj17pD/ONXPyxYyZu85V+gsevxU2Gm
+	 T8Hnl4x6Yd6Od8VwiJbyY5sObEOqEeBkpXseFFSkYX0UhWw5hadQ2J8SuD2Zo0WLDD
+	 tNtEoCHAIwNO8nAx9k1yoiUz/RyJvYXG8d2a1u/MhHdibUF+rYHVsOuZ7ZP5nTe/Yc
+	 8x/H4AmzuryL/HTW9M+bc4VTgALSWNEubNbu4PNmdMWIAMHAyYoOHPfYGtqXAusS6J
+	 0M6eMhpeTELfg==
+Date: Wed, 27 Nov 2024 08:59:22 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: linux-stm32@st-md-mailman.stormreply.com,
+	manivannan.sadhasivam@linaro.org, quic_schintav@quicinc.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
+	cassel@kernel.org, linux-pci@vger.kernel.org,
+	alexandre.torgue@foss.st.com, devicetree@vger.kernel.org,
+	lpieralisi@kernel.org, bhelgaas@google.com, kw@linux.com,
+	fabrice.gasnier@foss.st.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/5] dt-bindings: PCI: Add STM32MP25 PCIe endpoint
+ bindings
+Message-ID: <173271956195.3489911.2255772456897177524.robh@kernel.org>
+References: <20241126155119.1574564-1-christian.bruel@foss.st.com>
+ <20241126155119.1574564-4-christian.bruel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: kexec: Check if IRQ is already masked before
- masking
-To: Marc Zyngier <maz@kernel.org>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <akpm@linux-foundation.org>,
-	<bhe@redhat.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <jonnyc@amazon.com>
-References: <20241126050509.4426-1-farbere@amazon.com>
- <86cyihvopl.wl-maz@kernel.org>
-Content-Language: en-US
-From: "Farber, Eliav" <farbere@amazon.com>
-In-Reply-To: <86cyihvopl.wl-maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126155119.1574564-4-christian.bruel@foss.st.com>
 
-> Maybe a slightly better approach would be to simplify this code for
-> something that actually uses the kernel infrastructure:
->
-> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-> index 82e2203d86a31..9b48d952df3ec 100644
-> --- a/arch/arm64/kernel/machine_kexec.c
-> +++ b/arch/arm64/kernel/machine_kexec.c
-> @@ -230,11 +230,8 @@ static void machine_kexec_mask_interrupts(void)
->                      chip->irq_eoi)
->                          chip->irq_eoi(&desc->irq_data);
->
-> -               if (chip->irq_mask)
-> -                       chip->irq_mask(&desc->irq_data);
-> -
-> -               if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
-> -                       chip->irq_disable(&desc->irq_data);
-> +               irq_set_status_flags(i, IRQ_DISABLE_UNLAZY);
-> +               irq_disable(desc);
->          }
->   }
->
-> This is of course untested.
 
-I tested your suggested approach and it works.
-I will upload V2 for this change.
+On Tue, 26 Nov 2024 16:51:17 +0100, Christian Bruel wrote:
+> STM32MP25 PCIe Controller is based on the DesignWare core configured as
+> end point mode from the SYSCFG register.
+> 
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+>  .../bindings/pci/st,stm32-pcie-ep.yaml        | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+> 
 
-Thanks, Eliav
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
