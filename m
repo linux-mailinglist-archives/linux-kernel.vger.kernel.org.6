@@ -1,55 +1,45 @@
-Return-Path: <linux-kernel+bounces-423376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF519DA67C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:04:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D633E9DA67E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:04:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B783282E71
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34E8163996
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B11A18BC3F;
-	Wed, 27 Nov 2024 11:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F41EE029;
+	Wed, 27 Nov 2024 11:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="DLXWtXFk"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FcE8UKPS"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A611EBFED;
-	Wed, 27 Nov 2024 11:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59C81EBA0D;
+	Wed, 27 Nov 2024 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732705320; cv=none; b=QSx2d+rEFKMiQBQNauwoAf51BQNJdevMAe3h6zZ8ksWVgbgQslxuD1b2JL7NZPJ2zNss8WaObJf3jF4M605wNSpe2M+WN17vJPGoam8oQSJRgJVWPTT+a2DfOk2Qs1fAgZdHbtjrA/kKqIYA63I806mkf6S9LMM6F5IBpzIiFC8=
+	t=1732705344; cv=none; b=tpql2jTcC4FijB1YzbRLPJmBkv/Jsn9H7IEOmNHT+sJgmmqfRyUNcDampRGCn63rvYucmLD+w3xxZn+GBo3HvniQfbf9ZT8i0zpqnHx2s3CMWPcYwqK672lbVAG2yMlXYCz0X6Q/73ltYm0VkBikVxRfP9La7o/3iGL7SDGBYM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732705320; c=relaxed/simple;
-	bh=T6DgXkgqz6HZ36ZmsXSqt2fUlETXH1SYEt5e2pB4Jt0=;
+	s=arc-20240116; t=1732705344; c=relaxed/simple;
+	bh=SR0ePwHp0GA795M/9GcPHbpC2ijsjfg2DaxIWwZJC8c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SyvrqEcGpYLgVevZXscC95rPpFoP7NB93d9oyA9+HcqmPWSjLcvXeq6b+wQpY8EvLqiLYDRmNbUXBXQ6X7OqdMPqExbhEBZ9NcTRBlbgX5ZnWIUNv6pxRAkoLfNp5PQDiwON5tToWwUh7wce7b/tlFWQ2xu09JZYHGtUEON3AXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=DLXWtXFk; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WPNnkNusSbpQG7FakN9Ye2q95yHSoDQUaIuZWXayp+I=; b=DLXWtXFkj6e4fvq/C3RHTNR89S
-	TsFawNMwRcQWuVLolTfJG5osTMUgN4XuWfL/YQYQCy9tYfpwjFnrCK0cp4sBMEdrR8J8uh5DSP5r+
-	Gx58Qgbuk/3xwDwGiHWuIFHzqdGuUwWvz33ojwUMhGaFuO4y8z90TZZnVWhtjWdl5yXr8SR+x2o/g
-	ctvef4iRcobweEyOF/BztOnJDTB2r2ejM1ZOTp+R+dckV/ZMN6lETuzOS/mUmxp/jpQvMT++rLMK+
-	ADtwO+YGpzaivNQzhM0jM6AzEpQbpFm202dAXv07W8sNS+iQcGioUGvv4ExirYWV2F/EKri1BDwCM
-	s0M4jHgA==;
-Received: from [89.212.21.243] (port=49272 helo=[192.168.69.52])
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tGFnw-007bvX-1g;
-	Wed, 27 Nov 2024 12:01:56 +0100
-Message-ID: <c2af397e-b1a0-4ec7-8ff0-60b9e36cd939@norik.com>
-Date: Wed, 27 Nov 2024 12:01:55 +0100
+	 In-Reply-To:Content-Type; b=eZMeLFkREoW5p65suVeQf9M6TvKJZSAKlUg7Bj/Lgnhg2Ad8eQu6zD/si5gQNv46nILCaEOJv1aUBPobDojeddMX+FZIwCnb9udE2uYBWiz94USGGyxKwg24gGbtOz0JrYSxAPk5wGj9vj25ThPSYFLTP6+Hd1m2v6WdlFV0we0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FcE8UKPS; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732705333; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=SoaB6C5PEyN7YaAPt3mcEv/MO65XKYDAh7oA1Qdc11A=;
+	b=FcE8UKPSDVIzc0wRFiYTOjdKU1lviOP3doMjFMN3SqBGcb0ktD1FcEOPpvtegohU9/WG8x0mIWOMfCgoFykaFnUv0s3xbRU3zKPVmV8je3pipN6D09TPkRPZtSKgTaZGnz7VGARGtssTwtwpnR/QQbkRVpVpeob+y0+pqdYqwbw=
+Received: from 30.221.101.175(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WKMQX7n_1732705331 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 27 Nov 2024 19:02:12 +0800
+Message-ID: <3d005186-1e63-4d57-b73f-230d1ded72f2@linux.alibaba.com>
+Date: Wed, 27 Nov 2024 19:02:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,155 +47,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Upstream] [PATCH 09/15] arm64: dts: imx8mm: move bulk of rtc
- properties to carrierboards
-To: Teresa Remmet <T.Remmet@phytec.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "robh@kernel.org" <robh@kernel.org>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "festevam@gmail.com" <festevam@gmail.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "imx@lists.linux.dev" <imx@lists.linux.dev>,
- PHYTEC Upstream <upstream@lists.phytec.de>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <20241125081814.397352-1-andrej.picej@norik.com>
- <20241125081814.397352-10-andrej.picej@norik.com>
- <67e55b1f18f2a676b890c9a4133575e8b90f6019.camel@phytec.de>
+Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
+To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
+ <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
+ <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
+ <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
+ <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
 Content-Language: en-US
-From: Andrej Picej <andrej.picej@norik.com>
-Autocrypt: addr=andrej.picej@norik.com; keydata=
- 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
- xtT/8OxBOVSHvA==
-In-Reply-To: <67e55b1f18f2a676b890c9a4133575e8b90f6019.camel@phytec.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Hi Teresa,
 
-On 27. 11. 24 11:34, Teresa Remmet wrote:
-> Hello Andrej,
+
+On 2024/8/10 05:07, Wenjia Zhang wrote:
 > 
-> Am Montag, dem 25.11.2024 um 09:18 +0100 schrieb Andrej Picej:
->> From: Yannic Moog <y.moog@phytec.de>
->>
->> Move properties from SoM's dtsi to carrierboard's dts as they are
->> actually defined by the carrier board design.
->>
->> Signed-off-by: Yannic Moog <y.moog@phytec.de>
->> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
->> ---
->>   arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts | 4 ++++
->>   arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi       | 4 ----
->>   arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts    | 4 ++++
->>   3 files changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-
->> rdk.dts b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts
->> index 7aaf705c7e47..f5f503c3c6b9 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts
->> +++ b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts
->> @@ -221,6 +221,10 @@ &pcie_phy {
->>   
->>   /* RTC */
->>   &rv3028 {
->> +       interrupt-parent = <&gpio1>;
->> +       interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
->> +       pinctrl-0 = <&pinctrl_rtc>;
 > 
-> You should also move the pinctrl settings to the carrier boards.
-> As the pin can be used differently and should not be defined by the
-> SoM.
-
-Ok will fix this in v2. Thanks.
-
-BR,
-Andrej.
-
+> On 08.08.24 08:26, Guangguan Wang wrote:
+>> On 2024/7/15 10:53, Guangguan Wang wrote:
+>>>
+>>>
+>>> On 2024/7/11 23:57, Wenjia Zhang wrote:
+>>>>
+>>>>
+>>>> On 09.07.24 18:05, Guangguan Wang wrote:
+>>>>> When sending large size data in TCP, the data will be split into
+>>>>> several segments(packets) to transfer due to MTU config. And in
+>>>>> the receive side, application can be woken up to recv data every
+>>>>> packet arrived, the data transmission and data recv copy are
+>>>>> pipelined.
+>>>>>
+>>>>> But for SMC-R, it will transmit as many data as possible in one
+>>>>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
+>>>>> size, the application only be woken up to recv data when all RDMA
+>>>>> WRITE data and the followed CDC msg arrived. The data transmission
+>>>>> and data recv copy are sequential.
+>>>>>
+>>>>> This patch introduce autosplit for SMC, which can automatic split
+>>>>> data into several segments and every segment transmitted by one RDMA
+>>>>> WRITE when sending large size data in SMC. Because of the split, the
+>>>>> data transmission and data send copy can be pipelined in the send side,
+>>>>> and the data transmission and data recv copy can be pipelined in the
+>>>>> receive side. Thus autosplit helps improving latency performance when
+>>>>> sending large size data. The autosplit also works for SMC-D.
+>>>>>
+>>>>> This patch also introduce a sysctl names autosplit_size for configure
+>>>>> the max size of the split segment, whose default value is 128KiB
+>>>>> (128KiB perform best in my environment).
+>>>>>
+>>>>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
+>>>>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
+>>>>> for SMC-D with smc-loopback.
+>>>>>
+>>>>> Test command:
+>>>>> sockperf sr --tcp -m 1048575
+>>>>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
+>>>>>
+>>>>> Test config:
+>>>>> sysctl -w net.smc.wmem=524288
+>>>>> sysctl -w net.smc.rmem=524288
+>>>>>
+>>>>> Test results:
+>>>>> SMC-R
+>>>>> msgsize   noautosplit    autosplit
+>>>>> 128KB       55.546 us     55.763 us
+>>>>> 256KB       83.537 us     69.743 us (17% improve)
+>>>>> 512KB      138.306 us    100.313 us (28% improve)
+>>>>> 1MB        273.702 us    197.222 us (28% improve)
+>>>>>
+>>>>> SMC-D with smc-loopback
+>>>>> msgsize   noautosplit    autosplit
+>>>>> 128KB       14.672 us     14.690 us
+>>>>> 256KB       28.277 us     23.958 us (15% improve)
+>>>>> 512KB       63.047 us     45.339 us (28% improve)
+>>>>> 1MB        129.306 us     87.278 us (32% improve)
+>>>>>
+>>>>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>>>>> ---
+>>>>>    Documentation/networking/smc-sysctl.rst | 11 +++++++++++
+>>>>>    include/net/netns/smc.h                 |  1 +
+>>>>>    net/smc/smc_sysctl.c                    | 12 ++++++++++++
+>>>>>    net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
+>>>>>    4 files changed, 42 insertions(+), 1 deletion(-)
+>>>>>
+>>>>
+>>>> Hi Guangguan,
+>>>>
+>>>> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
+>>>>
+>>>
+>>> Did you mean too many partial stores will result in some issue? What's the issue?
+>>>
+> Forget it, I did verify that the partial stores should not be problem now.
+>>>
+>>>> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
+>>>
+>>> Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
+>>> For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
+>>>
+>>> Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
+>>>
+> mhhh, that could be a good reason to use sysctl.
+>>> Thanks,
+>>> Guangguan Wang
+>>>
+>>
+>> Hi Wenjia,
+>>
+>> Is there any update comment or information about this patch?
+> 
+> Hi Guangguan,
+> 
+> sorry for the delayed answer. In the last time it is really difficult for me to find time to look into it and test it. With more thinking, I'm kind of convinced with this idea. But test is still needed. I'll be in vacation next 3 weeks. I hope it is okay for you that I'll test it as soon as possible when I'm back. If everything is ok, I think we can let it go upstream.
 > 
 > Thanks,
-> Teresa
+> Wenjia
+
+Hi Wenjia,
+
+Is there any update comment or information about this patch?
+
 > 
->> +       pinctrl-names = "default";
->>          aux-voltage-chargeable = <1>;
->>          trickle-resistor-ohms = <3000>;
->>          wakeup-source;
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
->> b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
->> index cced82226c6d..fdfe28780d6f 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
->> @@ -301,10 +301,6 @@ eeprom@51 {
->>          /* RTC */
->>          rv3028: rtc@52 {
->>                  compatible = "microcrystal,rv3028";
->> -               interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
->> -               interrupt-parent = <&gpio1>;
->> -               pinctrl-names = "default";
->> -               pinctrl-0 = <&pinctrl_rtc>;
->>                  reg = <0x52>;
->>          };
->>   };
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
->> b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
->> index c9bf4ac254bb..b7b18d5a4f68 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
->> +++ b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l.dts
->> @@ -215,6 +215,10 @@ &pwm4 {
->>   
->>   /* RTC */
->>   &rv3028 {
->> +       interrupt-parent = <&gpio1>;
->> +       interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
->> +       pinctrl-0 = <&pinctrl_rtc>;
->> +       pinctrl-names = "default";
->>          aux-voltage-chargeable = <1>;
->>          trickle-resistor-ohms = <3000>;
->>          wakeup-source;
 > 
+>>
+>>>>
+>>>> Thanks,
+>>>> Wenjia
 
