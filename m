@@ -1,239 +1,233 @@
-Return-Path: <linux-kernel+bounces-423721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06699DABE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:35:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094829DABE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05CF2B22404
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1DD281856
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCB1200BAD;
-	Wed, 27 Nov 2024 16:35:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7E3200BAD;
+	Wed, 27 Nov 2024 16:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fdKdH47a"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109411F9AB1;
-	Wed, 27 Nov 2024 16:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CCF200B9A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732725301; cv=none; b=uQYYr+Wr9BD2ALOs7y7T1zUwzATgJC2++8l87c6h0twQKbwBt3RADCv2kGy+tsYUZ9VgAOyOTzSZYyFnuyf4W6b3MluphjyH6nd6lo8qihfztGI1xpuogJR0ABs7aVVdggltcxYXL2+v5fzY8potoVYx3DvnAQKRuEOGSERgSxI=
+	t=1732725372; cv=none; b=SYUQStaNSc+310g4GY1Z/8kH0qH7gr4w9RDLG00S7v7gS6s9BG7Yi6cYmZth7f0NEo0B8dGZgEKuIO0aqfzHpQR5QasB6pPp3kmeecrAVTCUjp7uY/LQTYY9Gi1kvmzMvRZeClzCLTi1aYvfvXVSwfX8giV21nerxUX/0bwiIZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732725301; c=relaxed/simple;
-	bh=hz772gxy7L0ksRCjSvbYXOfm/jK6yfavLZkXUFN0xjA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mXpPtFm7/lUOr+XL403RVobhd/jrCFeGQsaf+p8UzNzFWh+8Bk6VM69935pA1ii8SeCPqn847WcWBOtqPbWLQA7OJEWmjshzGEOaM68dY6O3cA/YxgW7gM534tO9yFmx09AILoTFhZLiMLobqurA/O66Fz4PktKyx/HKNHDLM5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xz4j723Dwz6D8gt;
-	Thu, 28 Nov 2024 00:32:11 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8F6851400D8;
-	Thu, 28 Nov 2024 00:34:48 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 27 Nov
- 2024 17:34:47 +0100
-Date: Wed, 27 Nov 2024 16:34:44 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <linux-cxl@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>
-CC: <tongtiangen@huawei.com>, Yicong Yang <yangyicong@huawei.com>, "Niyas
- Sait" <niyas.sait@huawei.com>, <ajayjoshi@micron.com>, Vandana Salve
-	<vsalve@micron.com>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Gregory Price
-	<gourry@gourry.net>, Huang Ying <ying.huang@intel.com>
-Subject: Re: [RFC PATCH 0/4] CXL Hotness Monitoring Unit perf driver
-Message-ID: <20241127163426.00004a65@huawei.com>
-In-Reply-To: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
-References: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732725372; c=relaxed/simple;
+	bh=LFHxdVBYoYAZY0hiY+E3Y2YFGe1NNWQZcPV+JukXgfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c4EmtddLsD66w6MreRJEvbTqwJwpdZ8H4mMypsY4ftOPLDcNJkdf/JgPNR+7KdYROEa/nerSj408UgITZWNhosKjwoQKxRBlzCw5CcdVdZ/dJ1zjS5W+qtOutfD+r3l1u+u1JJnoneexP2agMnWUCuuCRzksAn4GufmOlDgVRzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fdKdH47a; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434ab114753so6774145e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:36:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732725367; x=1733330167; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L7o68Jt3JQlv3ZsSTZZHiyaGjZ/zi4RrNjh1cOfyHrk=;
+        b=fdKdH47arqcmaEdJYTYYW0Nkwk1t+407ZHNs40FacHqfbLKrYea3/JfqEXjHknJSsL
+         QHOEBWYxGTHYmuMTn0fbePjmHvCHUbCVU/DLYUrE2qWCI7rl3CcWzOUkZaEbm9oBlK+O
+         6RWFZy+9ui6oo0cXE6OJx7Y0opciqn6ZF+zdk4rB5j/F7MoM3njaCuR2+DGNd6RXGREz
+         fpDoJ/4KUx9K6Ck+LNvWWX+oQxhw2anjM/lRyYO4iN8fgt8MZm1+OahHr9fg4v/NrEcD
+         DjZa5sFcozmC/pPDoDtDq3lY6ma1pzscfqf3b89B7mWI6IjZImkD0TDE3dOnJKoQHuvH
+         9PWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732725367; x=1733330167;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7o68Jt3JQlv3ZsSTZZHiyaGjZ/zi4RrNjh1cOfyHrk=;
+        b=pMjQQIq99Gfg/LeTFsAvfu/jVTzsRmx3SFIFqOckcWQqXPVH4L58V3OR5GG9SnFgbF
+         Elck5cjNXEY3RNHKZhtw85gke5itTgr1ykArsKcDWkntFSm0eAac7oP5mwlfIvqJja3c
+         3x3FC1x0hE82zONnJR6//GbuP0ave3apyifAnjHsFDVO1hNa6cg6UDop28FlMJB+LjQd
+         JNmpkulvgXcFM8/VrNtSwNdMgr4kK9UajOIVVACkjsuixMhCwLlzW5ax7rCvHjUILNX6
+         Fr8K36KyKuORM7XZdW5a8jhNYSdOkOMGY5Z4Q2BtnkqqcX1bpfZGKhiPrmPKyp1MFrxd
+         t7BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUK0fDPWnYkQb3e+iJOIzZBYCgk79xB9/nTWNS3R/48eSATMLYlEWdwRtk2wp5ypnXOYx0hVlEBW4rE3ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj9gPWZJINSsi3UaNMKBW0NZCG8ohiO5XvJpiIUrco5qJnf3jZ
+	pq65GgrjKxp/eSKvd4bLbqzEu/I/DotyCPydlCtvb2/QGf4WD11p+ahIT0DJkUBL1syDM+N8Pom
+	E
+X-Gm-Gg: ASbGnctQ3+2q3Bwcc4ZsHbasRCsf1PBTpiZrm3o518qxe34PYwGtRwo027Q4kRsWhq2
+	P2Nn98P7K7HiQUDIN4CRfxE+MX8D84ZtTzJI7RmOi83uLOUVUmO7bKUseOzXGSQFz/joOJQi4DI
+	LNvuLILDhA3kxtL93hvcB8ee7hDeWjm5i1A5FD3sfoN48E3D3Dulqnv146r30yQTD/ye+z+c8DJ
+	0YXSAf8e/odm4gLhIBdDqM+rchNd9qqSIasFuIc1LW1zr4/CL6Afg==
+X-Google-Smtp-Source: AGHT+IEWnqn0V5IXY2KkfrK9yKYz57HCzRYVhbvaz++snN7BEPqLaXC4wz5nGYvpZuhZRWsRZuDGCA==
+X-Received: by 2002:a05:600c:4f49:b0:431:52a3:d9d9 with SMTP id 5b1f17b1804b1-434a9d4fa7dmr37689545e9.0.1732725367221;
+        Wed, 27 Nov 2024 08:36:07 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc42b3sm16836954f8f.68.2024.11.27.08.36.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 08:36:06 -0800 (PST)
+Message-ID: <09567939-f5fb-4281-a912-7f8a6a07c3e5@suse.com>
+Date: Wed, 27 Nov 2024 17:36:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kmod: verify module name before invoking modprobe
+To: Song Chen <chensong_2000@189.cn>
+Cc: mcgrof@kernel.org, samitolvanen@google.com, da.gomez@samsung.com,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org
+References: <20241110114233.97169-1-chensong_2000@189.cn>
+ <21423aea-65c3-430e-932d-2ba70b6b9ac3@suse.com>
+ <524b444f-4b81-4005-b93a-39b7d3fd3db1@189.cn>
+ <8ea8dfed-608f-44b9-8adb-fb1798619215@suse.com>
+ <d3cad11c-a65d-4faf-a636-3d85474d7175@189.cn>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <d3cad11c-a65d-4faf-a636-3d85474d7175@189.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Nov 2024 10:18:41 +0000
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+On 11/20/24 03:17, Song Chen wrote:
+> Hi Petr,
+> 
+> 在 2024/11/18 20:54, Petr Pavlu 写道:
+>> On 11/13/24 03:15, Song Chen wrote:
+>>> 在 2024/11/12 20:56, Petr Pavlu 写道:
+>>>> On 11/10/24 12:42, Song Chen wrote:
+>>>>> Sometimes when kernel calls request_module to load a module
+>>>>> into kernel space, it doesn't pass the module name appropriately,
+>>>>> and request_module doesn't verify it as well.
+>>>>>
+>>>>> As a result, modprobe is invoked anyway and spend a lot of time
+>>>>> searching a nonsense name.
+>>>>>
+>>>>> For example reported from a customer, he runs a user space process
+>>>>> to call ioctl(fd, SIOCGIFINDEX, &ifr), the callstack in kernel is
+>>>>> like that:
+>>>>> dev_ioctl(net/core/dev_iovtl.c)
+>>>>>     dev_load
+>>>>>        request_module("netdev-%s", name);
+>>>>>        or request_module("%s", name);
+>>>>>
+>>>>> However if name of NIC is empty, neither dev_load nor request_module
+>>>>> checks it at the first place, modprobe will search module "netdev-"
+>>>>> in its default path, env path and path configured in etc for nothing,
+>>>>> increase a lot system overhead.
+>>>>>
+>>>>> To address this problem, this patch copies va_list and introduces
+>>>>> a helper is_module_name_valid to verify the parameters validity
+>>>>> one by one, either null or empty. if it fails, no modprobe invoked.
+>>>>
+>>>> I'm not sure if I fully follow why this should be addressed at the
+>>>> request_module() level. If the user repeatedly invokes SIOCGIFINDEX with
+>>>> an empty name and this increases their system load, wouldn't it be
+>>>> better to update the userspace to prevent this non-sense request in the
+>>>> first place?
+>>>
+>>> If the user process knew, it wouldn't make the mistake.
+>>
+>> The user process should be able to check that the ifr_name passed to
+>> SIOCGIFINDEX is empty and avoid the syscall altogether, or am I missing
+>> something? Even if the kernel gets improved in some way to handle this
+>> case better, I would still suggest looking at what the application is
+>> doing and how it ends up making this call.
+>>
+> 
+> yes, agree, it's the user space process's fault after all.
+> 
+>>> moreover, what
+>>> happened in dev_load was quite confusing, please see the code below:
+>>>
+>>>       no_module = !dev;
+>>>       if (no_module && capable(CAP_NET_ADMIN))
+>>>           no_module = request_module("netdev-%s", name);
+>>>       if (no_module && capable(CAP_SYS_MODULE))
+>>>           request_module("%s", name);
+>>>
+>>> Running the same process, sys admin or root user spends more time than
+>>> normal user, it took a while for us to find the cause, that's why i
+>>> tried to fix it in kernel.
+>>>
+>>> Similarly, if something should be done in the kernel,
+>>>> wouldn't it be more straightforward for dev_ioctl()/dev_load() to check
+>>>> this case?
+>>>
+>>> I thought about it at the beginning, not only dev_ioctl/dev_load but
+>>> also other request_module callers should check this case as well, that
+>>> would be too much effort, then I switched to check it at the beginning
+>>> of request_module which every caller goes through.
+>>>
+>>>>
+>>>> I think the same should in principle apply to other places that might
+>>>> invoke request_module() with "%s" and a bogus value. The callers can
+>>>> appropriately decide if their request makes sense and should be
+>>>> fixed/improved.
+>>>>
+>>>
+>>> Callees are obliged to do fault tolerance for callers, or at least let
+>>> them know what is going on inside, what kinds of mistake they are
+>>> making, there are a lot of such cases in kernel, such as call_modprobe
+>>> in kernel/module/kmod.c, it checks if orig_module_name is NULL.
+>>
+>> Ok, I see the idea behind checking that a value passed to
+>> request_module() to format "%s" is non-NULL.
+>>
+>> I'm however not sure about rejecting empty strings as is also done by
+>> the patch. Consider a call to request_module("mod%s", suffix) where the
+>> suffix could be empty to select the default variant, or non-empty to
+>> select e.g. some optimized version of the module. Only the caller knows
+>> if the suffix being empty is valid or not.
+>>
+>> I've checked if this pattern is currently used in the kernel and wasn't
+>> able to find anything, so that is good. However, I'm not sure if
+>> request_module() should flat-out reject this use.
+>>
+> 
+> I accidentally found another problem in request_module when i was 
+> testing this patch again, if the caller just passes a empty pointer to 
+> request_module, like request_module(NULL), the process will be broken:
+> 
+> [    2.336160]  ? asm_exc_page_fault+0x2b/0x30
+> [    2.336160]  ? __pfx_crc64_rocksoft_notify+0x10/0x10
+> [    2.336160]  ? vsnprintf+0x5a/0x4f0
+> [    2.336160]  __request_module+0x93/0x2b0
+> [    2.336160]  ? __pfx_crc64_rocksoft_notify+0x10/0x10
+> [    2.336160]  ? notifier_call_chain+0x65/0xd0
+> [    2.336160]  ? __pfx_crc64_rocksoft_notify+0x10/0x10
+> [    2.336160]  crypto_probing_notify+0x43/0x60
+> 
+> (please ignore the caller, that is a testing code.)
+> 
+> I searched kernel code if this patter exists, and found in 
+> __trace_bprintk of kernel/trace/trace_printk.c, it checks fmt at the 
+> beginning of the function:
+> 
+>       va_list ap;
+> 
+>       if (unlikely(!fmt))
+>           return 0;
+> 
+> Therefore, i would like to suggest we should at least add this check in 
+> request_module too. In that sense, why don't we do a little further to 
+> verify every parameter's validity to provide better fault tolerance, 
+> besides, it costs almost nothing.
+> 
+> If you like this idea, i will send a v2.
 
-> The CXL specification release 3.2 is now available under a click through at
-> https://computeexpresslink.org/cxl-specification/ and it brings new
-> shiny toys.
+I don't have much of a preference. It can be added, but on the other
+hand I think it isn't really necessary. Most functions with format
+arguments in the kernel don't perform this type of checking as far as
+I can see.
 
-If anyone wants to play, basic emulation on my CXL QEMU staging tree
-https://gitlab.com/jic23/qemu/-/commit/e89b35d264c1bcc04807e7afab1254f35ffc8cb9
-
-Branch with a few other things on top is:
-https://gitlab.com/jic23/qemu/-/commits/cxl-2024-11-27
-
-Note that this currently doesn't produce real data.  I have a plan
-/ initial PoC / hack to hook that up via an addition to the QEMU cache
-plugin and an external tool to emulate the hotness tracker counting
-hardware. Will be a little while before I get that finished, so in
-a meantime the above exercises the driver.
-
-Jonathan
- 
-> 
-> RFC reason
-> - Whilst trace capture with a particular configuration is potentially useful
->   the intent is that CXL HMU units will be used to drive various forms of
->   hotpage migration for memory tiering setups. This driver doesn't do this
->   (yet), but rather provides data capture etc for experimentation and
->   for working out how to mostly put the allocations in the right place to
->   start with by tuning applications.
-> 
-> CXL r3.2 introduces a CXL Hotness Monitoring Unit definition. The intent
-> of this is to provide a way to establish which units of memory (typically
-> pages or larger) in CXL attached memory are hot. The implementation details
-> and algorithm are all implementation defined. The specification simply
-> describes the 'interface' which takes the form of ring buffer of hotness
-> records in a PCI BAR and defined capability, configuration and status
-> registers.
-> 
-> The hardware may have constraints on what it can track, granularity etc
-> and on how accurately it tracks (e.g. counter exhaustion, inaccurate
-> trackers). Some of these constraints are discoverable from the hardware
-> registers, others such as loss of accuracy have no universally accepted
-> measures as they are typically access pattern dependent. Sadly it is
-> very unlikely any hardware will implement a truly precise tracker given
-> the large resource requirements for tracking at a useful granularity.
-> 
-> There are two fundamental operation modes:
-> 
-> * Epoch based. Counters are checked after a period of time (Epoch) and
->   if over a threshold added to the hotlist.
-> * Always on. Counters run until a threshold is reached, after that the
->   hot unit is added to the hotlist and the counter released.
-> 
-> Counting can be filtered on:
-> 
-> * Region of CXL DPA space (256MiB per bit in a bitmap).
-> * Type of access - Trusted and non trusted or non trusted only, R/W/RW
-> 
-> Sampling can be modified by:
-> 
-> * Downsampling including potentially randomized downsampling.
-> 
-> The driver presented here is intended to be useful in its own right but
-> also to act as the first step of a possible path towards hotness monitoring
-> based hot page migration. Those steps might look like.
-> 
-> 1. Gather data - drivers provide telemetry like solutions to get that
->    data. May be enhanced, for example in this driver by providing the
->    HPA address rather than DPA Unit Address. Userspace can access enough
->    information to do this so maybe not.
-> 2. Userspace algorithm development, possibly combined with userspace
->    triggered migration by PA. Working out how to use different levels
->    of constrained hardware resources will be challenging.
-> 3. Move those algorithms in kernel. Will require generalization across
->    different hotpage trackers etc.
-> 
-> So far this driver just gives access to the raw data. I will probably kick
-> of a longer discussion on how to do adaptive sampling needed to actually
-> use these units for tiering etc, sometime soon (if no one one else beats
-> me too it).  There is a follow up topic of how to virtualize this stuff
-> for memory stranding cases (VM gets a fixed mixture of fast and slow
-> memory and should do it's own tiering).
-> 
-> More details in the Documentation patch but typical commands are:
-> 
-> $perf record -a  -e cxl_hmu_mem0.0.0/epoch_type=0,access_type=6,\
->  hotness_threshold=1024,epoch_multiplier=4,epoch_scale=4,range_base=0,\
->  range_size=1024,randomized_downsampling=0,downsampling_factor=32,\
->  hotness_granual=12
-> 
-> $perf report --dump-raw-traces
-> 
-> Example output.  With a counter_width of 16 (0x10) the least significant
-> 4 bytes are the counter value and the unit index is bits 16-63.
-> Here all units are over the threshold and the indexes are 0,1,2 etc.
-> 
-> . ... CXL_HMU data: size 33512 bytes
-> Header 0: units: 29c counter_width 10
-> Header 1 : deadbeef
-> 0000000000000283
-> 0000000000010364
-> 0000000000020366
-> 000000000003033c
-> 0000000000040343
-> 00000000000502ff
-> 000000000006030d
-> 000000000007031a
-> 
-> Which will produce a list of hotness entries.
-> Bits[N-1:0] counter value
-> Bits[63:N] Unit ID (combine with unit size and DPA base + HDM decoder
->   config to get to a Host Physical Address)
-> 
-> Specific RFC questions.
-> - What should be in the header added to the aux buffer.
->   Currently just the minimum is provided. Number of records
->   and the counter width needed to decode them.
-> - Should we reset the counters when doing sampling "-F X"
->   If the frequency is higher than the epoch we never see any hot units.
->   If so, when should we reset them?
-> 
-> Note testing has been light and on emulation only + as perf tool is
-> a pain to build on a striped back VM,  build testing has all be on
-> arm64 so far.  The driver loads though on both arm64 and x86 so
-> any problems are likely in the perf tool arch specific code
-> which is build tested (on wrong machine)
-> 
-> The QEMU emulation needs some cleanup, but I should be able to post
-> that shortly to let people actually play with this.  There are lots
-> of open questions there on how 'right' we want the emulation to be
-> and what counting uarch to emulate.
-> 
-> Jonathan Cameron (4):
->   cxl: Register devices for CXL Hotness Monitoring Units (CHMU)
->   cxl: Hotness Monitoring Unit via a Perf AUX Buffer.
->   perf: Add support for CXL Hotness Monitoring Units (CHMU)
->   hwtrace: Document CXL Hotness Monitoring Unit driver
-> 
->  Documentation/trace/cxl-hmu.rst     | 197 +++++++
->  Documentation/trace/index.rst       |   1 +
->  drivers/cxl/Kconfig                 |   6 +
->  drivers/cxl/Makefile                |   3 +
->  drivers/cxl/core/Makefile           |   1 +
->  drivers/cxl/core/core.h             |   1 +
->  drivers/cxl/core/hmu.c              |  64 ++
->  drivers/cxl/core/port.c             |   2 +
->  drivers/cxl/core/regs.c             |  14 +
->  drivers/cxl/cxl.h                   |   5 +
->  drivers/cxl/cxlpci.h                |   1 +
->  drivers/cxl/hmu.c                   | 880 ++++++++++++++++++++++++++++
->  drivers/cxl/hmu.h                   |  23 +
->  drivers/cxl/pci.c                   |  26 +-
->  tools/perf/arch/arm/util/auxtrace.c |  58 ++
->  tools/perf/arch/x86/util/auxtrace.c |  76 +++
->  tools/perf/util/Build               |   1 +
->  tools/perf/util/auxtrace.c          |   4 +
->  tools/perf/util/auxtrace.h          |   1 +
->  tools/perf/util/cxl-hmu.c           | 367 ++++++++++++
->  tools/perf/util/cxl-hmu.h           |  18 +
->  21 files changed, 1748 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/trace/cxl-hmu.rst
->  create mode 100644 drivers/cxl/core/hmu.c
->  create mode 100644 drivers/cxl/hmu.c
->  create mode 100644 drivers/cxl/hmu.h
->  create mode 100644 tools/perf/util/cxl-hmu.c
->  create mode 100644 tools/perf/util/cxl-hmu.h
-> 
-
+-- 
+Thanks,
+Petr
 
