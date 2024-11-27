@@ -1,215 +1,290 @@
-Return-Path: <linux-kernel+bounces-423024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953069DA185
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:34:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF34E9DA188
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:41:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FC5284F1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D2416800F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EB013A869;
-	Wed, 27 Nov 2024 04:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBJ0XCim"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA513C9A6;
+	Wed, 27 Nov 2024 04:41:32 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250B214F90;
-	Wed, 27 Nov 2024 04:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059CA481CD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732682046; cv=none; b=NThtD+Gppt98nijlzhyCPTC/iNKY8kFUsfDwFl6KWb5X2uyR4F/4N6tPpWw+7Pps5VnXgH7+eu2jBYTKPkjtjlNJg12lLukIsYjpQL82lrXwS1E4wnG5iBXUK8co+221EQgctVNXieYVuo9W+AF1oetJFlOKgm2lApd+1Ob+ox0=
+	t=1732682491; cv=none; b=iQxw2Y4pHzWh2ebXKsmXFHFwHs9kMlsgTvpkp7uEhAh6GZL3gh56f02OQN46mL94aTSl+Zh9JMlAxWiflb1OqR+dl2WUsoMHZOJDJmrVPsrdYVjTzW3O6+wGzLck5CzOgq7bofzs4j42IlUU996L+ACysTrVLrRIKQI8Ca676To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732682046; c=relaxed/simple;
-	bh=esaoqFsdsjq6dGqzkJX1+DvjhcClDspLFiMqk0Y1wgU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qjinoEvFYdHzfRePoua5XiYIyFNez4lZPm8zML3Cwnh0+D2gm93DktOVubqelli5jyt8ZfH3TUbCUvwL2AbgpNhI26Ip2iOAZW8fHx8vfhyIoVeFQnJGicV9/kVLV3nGO5+T9IU/4c0nGKGCIm2VPC0vW6a07rdESq6gufFZifU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBJ0XCim; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a8b94fb5so2141005e9.0;
-        Tue, 26 Nov 2024 20:34:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732682043; x=1733286843; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nE9I1uPOR4sQF959XXKFUqSwci9J/1L0qLYIRegyl2k=;
-        b=EBJ0XCimwsH4wtw/3aeyzWQWosOlbbQd/OQi6YCvze0X5bMcU6CiLODz4iCXe7SOK2
-         /aCT2wuQhHilW19WOiKMancL+MAVCC6qSIo7QVvw77PYrZojXiDOHnhs2tn7I4HVD/xh
-         m02U9sur84DkQFLSbgzlWMsH2+uHov4co6Pi2+WWwci+hf6FhNUkIoZrRx03ZLZOBl55
-         +tkeZEYotdkXTENUCgT5HU1gp/cUlOs/QhoeFcRs0uTJg6eS0SEC7y9djNP+y+7+hIXW
-         yl0LXvl0bJaBEVpI60N9hUHsK5kOIdmbo15oYNsJeP51Keh1edHCxy1ppvu65/oXzmMs
-         8IMA==
+	s=arc-20240116; t=1732682491; c=relaxed/simple;
+	bh=GT/nl1AGpKErtYHJ+X9IZWzidORUpehWetkl1mup8rY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JeRr3Tiu7RBcrT+zS+jMNK8E+E76J0w1kBhVVRjCi7/o3BHyXoBLEwPawOzwGBekwRf5GEuqrgNiRbg6ZRQ2QsFJQmaS45KjxUN0G28QBouooGe36BKnn7YCKGO5AEMRtmPxKUxYib1SZINiU9UpksM6ip2r55KuscVpdcPmLIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-843eac1b9dbso98314439f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:41:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732682043; x=1733286843;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nE9I1uPOR4sQF959XXKFUqSwci9J/1L0qLYIRegyl2k=;
-        b=dd778PdbTKNaUASWGxuhuOwSwDJod851ATavxpfFKSs6OSfq1URWEq0z/iLylDY8Je
-         VNaqTjdSCdI4yHxek88x594edUjax+7OlNlsHPHIaYGRh8ScTBz+VbASWsrF/EoAeW8M
-         FcUZWn/Bq44rE+mLbzz3JEoGA4FtdywMsSpJ7w30mU9C+wfBAAbgZ6eJ9zKIOyCFelr5
-         d5G4VV1T+BuIMi1almyPn9mzCkXUd7wcyt0CVqNjL1SdUS/5dx5rE6ep8JRdUY9+M1Mc
-         crM5c0onBWRtwWZxhvCKPGT/O2JgniH71+whUF/Omh93re73723iCuJvweEXKKTFOe52
-         BX/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWGktxyCDeSimTCtc5GXDJBaK7bzquZqj5jzy4A5LAWin+6pacUAQrVUWlZMlNA5A4S6dAl5YP5AphIoC8H@vger.kernel.org, AJvYcCXQXwr+ObsONQ7Ve5kBo3FZIn4p2ulOe5ZwqcmNGJtJNC/Jf8D8MtpKLjijqqNVHRu6jQTqfq6ZJLxE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwODsoMU2euvYaSYmZ+k9eVnV6dHzqRqK2Gw8ya8iOwpvjL6eHY
-	TUMH5jmh7yKmUf5PVK3V/0TFCJ0BEAOkdcJ0dFW/tr+Ajwqsp/Kz
-X-Gm-Gg: ASbGnctAYe9JwUb0P/EhBNggcs790p8jVgap933gUKYH96qk9tINWdSOKtgi9QjtGEp
-	JA+dMy1p/oO56KEyqHj7zLE93JmHmgbk5wYFslQ3NA5bWPxhnR5jiBOwe6iIFfXO+Ebv/Uq74lx
-	U1X63NNzLiCTWXJ/b7pGVqA3OIHdfnc5EjpUd16BVavyrpZgyymLvmI1wRU9oEHJCFPaMFg6Xqm
-	OTKvODrF6sabyvACjHaK/N9vKD/YOv9tRxS6YicrkbMi/3smNcrBCc=
-X-Google-Smtp-Source: AGHT+IHFTh4QPCHLqYQqSQVx7EWaLp6Y5TlpjfC3lTUuw+N9BykWXKF0iN1qJk77JxXDjEBKXKGF6A==
-X-Received: by 2002:a05:600c:214a:b0:434:9d3c:31ec with SMTP id 5b1f17b1804b1-434a4e988b5mr44514395e9.10.1732682043182;
-        Tue, 26 Nov 2024 20:34:03 -0800 (PST)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e256esm7503415e9.32.2024.11.26.20.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 20:34:02 -0800 (PST)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH v2] arm64: dts: meson: remove broadcom wifi compatible from GX reference boards
-Date: Wed, 27 Nov 2024 04:33:58 +0000
-Message-Id: <20241127043358.3799737-1-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1732682489; x=1733287289;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fM+Hy8Hr0VEn0/qCKpSvIifMReAzuRgBAAaIkzjf404=;
+        b=O50D5TSccqgumnym3qTThaNlXKbIMqf0YbjJROkKz402R5qpF6B2cz6VO4P3GZ+QXF
+         5y7jua93n6FsWyR9IW2ADi9ShfaCEKCvaL0BqKxlfyWEUjNyMKRbVMXWVPhWygZQj+aW
+         pQqh1tkeTl9bhk9aBQWOTzZkrow56AO0DqY3f9EXv7uf4LfzyJTEaBOuwOKmCy9xYFMe
+         UV2W+knSn+VjWuErMVam0zsiI8c4T7k1Y+UCJRwMl9jqQnGwcmIvLTEQ6HO1hZRvXvKK
+         Q395kWUcLcUv7opJPmuWsI6wc7xHwdNVAq46LhlcUkuZM6ubt+09c4xstWwXb9d+j4Ou
+         BINg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJe/uLILeLBRT348Nitmg81pk7gqG6zGJgcPwBb6d5fJ4tS0O0uPez7pBQSDadMMvC2N9xqrqjofF1SXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDSRIBoBLqlfgDnR+IIfv8WQLG3R4tXLE60XBDMxxv45cuyOrH
+	xyCBxPOGNr1e1foBZlidHo8msblbcOVOrELbVH+R9CS1lo/tKamZAmU1t9mJJ8UjjWNa5yKJnVM
+	tgFnXbBRQTbtwMO4vdacBZRgljKDTj2NK5qcfF+6lhStoSraIVOG9XyE=
+X-Google-Smtp-Source: AGHT+IF7JS6O/ppGLz3JPYdk+v176s/+1CmUTZORzj3cCNO74MDeX75CgLQsuibvcuEpVPhM+s2KTZP+xwA6CL+8F19V7x+Wdb95
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2144:b0:3a7:7124:bd2c with SMTP id
+ e9e14a558f8ab-3a7c55d9bddmr19621205ab.19.1732682489074; Tue, 26 Nov 2024
+ 20:41:29 -0800 (PST)
+Date: Tue, 26 Nov 2024 20:41:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6746a2f9.050a0220.21d33d.001f.GAE@google.com>
+Subject: [syzbot] [btrfs?] possible deadlock in __btrfs_release_delayed_node (4)
+From: syzbot <syzbot+aa35cc34a0cc8c783a7f@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Amlogic GX reference boards shipped with Broadcom SDIO modules and
-this is described in device-tree files. These boards are rare, but
-their device-trees are commonly used to boot no-name Android STB's
-that closely follow the vendor reference design. For cost reasons
-these boxes often use non-Broadcom RTL8189ES/FS and QCA9377 SDIO
-modules, and for availability reasons the chipset/module used can
-change between batches of the same device.
+Hello,
 
-Testing shows the only requirement for WiFi driver probe and load
-is presence of the correct 'reg' value, and all Amlogic boards use
-the same <1> value. Removing the 'brcm,bcm4329-fmac' compatible
-allows a wider range of Android STB boards to boot from reference
-design device-trees and have working WiFi. Also convert the 'brcmf'
-node name to a more generic 'sdio' to reflect we are not always
-using the Broadcom brcmfmac driver now.
+syzbot found the following issue on:
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+HEAD commit:    2c22dc1ee3a1 Merge tag 'mailbox-v6.13' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e90f5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=472032c4f88b28ab
+dashboard link: https://syzkaller.appspot.com/bug?extid=aa35cc34a0cc8c783a7f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2c22dc1e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/edc4991391e8/vmlinux-2c22dc1e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3ddbf30097ad/bzImage-2c22dc1e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aa35cc34a0cc8c783a7f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-syzkaller-09435-g2c22dc1ee3a1 #0 Not tainted
+------------------------------------------------------
+kswapd1/79 is trying to acquire lock:
+ffff888052b8b678 (&delayed_node->mutex){+.+.}-{4:4}, at: __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
+
+but task is already holding lock:
+ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
+ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4055 [inline]
+       slab_alloc_node mm/slub.c:4133 [inline]
+       __kmalloc_cache_noprof+0x41/0x390 mm/slub.c:4309
+       kmalloc_noprof include/linux/slab.h:901 [inline]
+       kzalloc_noprof include/linux/slab.h:1037 [inline]
+       kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
+       loop_set_size drivers/block/loop.c:233 [inline]
+       loop_set_status+0x5f0/0x8f0 drivers/block/loop.c:1285
+       lo_ioctl+0xcbc/0x1f50
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
+       __submit_bio+0x2c6/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       btrfs_submit_chunk fs/btrfs/bio.c:745 [inline]
+       btrfs_submit_bbio+0xf93/0x18e0 fs/btrfs/bio.c:773
+       read_extent_buffer_pages+0x65a/0x910 fs/btrfs/extent_io.c:3558
+       btrfs_read_extent_buffer+0xd9/0x770 fs/btrfs/disk-io.c:229
+       read_block_for_search+0x79e/0xbb0 fs/btrfs/ctree.c:1619
+       btrfs_search_slot+0x121b/0x3150 fs/btrfs/ctree.c:2236
+       btrfs_init_root_free_objectid+0x148/0x330 fs/btrfs/disk-io.c:4837
+       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
+       btrfs_get_root_ref+0x5d7/0xc30 fs/btrfs/disk-io.c:1364
+       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
+       open_ctree+0x2470/0x2a30 fs/btrfs/disk-io.c:3532
+       btrfs_fill_super fs/btrfs/super.c:972 [inline]
+       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
+       btrfs_get_tree+0x1274/0x1a10 fs/btrfs/super.c:2105
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       fc_mount+0x1b/0xb0 fs/namespace.c:1231
+       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
+       btrfs_get_tree+0x65b/0x1a10 fs/btrfs/super.c:2106
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (btrfs-tree-00){++++}-{4:4}:
+       reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5374
+       __lock_release kernel/locking/lockdep.c:5563 [inline]
+       lock_release+0x396/0xa30 kernel/locking/lockdep.c:5870
+       up_write+0x79/0x590 kernel/locking/rwsem.c:1629
+       btrfs_tree_unlock_rw fs/btrfs/locking.h:201 [inline]
+       btrfs_unlock_up_safe+0x179/0x3b0 fs/btrfs/locking.c:225
+       search_leaf fs/btrfs/ctree.c:1944 [inline]
+       btrfs_search_slot+0x2748/0x3150 fs/btrfs/ctree.c:2188
+       btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4350
+       btrfs_insert_delayed_item fs/btrfs/delayed-inode.c:758 [inline]
+       btrfs_insert_delayed_items fs/btrfs/delayed-inode.c:836 [inline]
+       __btrfs_commit_inode_delayed_items+0xd5d/0x24a0 fs/btrfs/delayed-inode.c:1126
+       __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+       flush_space+0x24a/0xd00 fs/btrfs/space-info.c:775
+       btrfs_async_reclaim_metadata_space+0x113/0x350 fs/btrfs/space-info.c:1105
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (&delayed_node->mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
+       btrfs_evict_inode+0x73d/0x1070 fs/btrfs/inode.c:5374
+       evict+0x4e8/0x9a0 fs/inode.c:796
+       dispose_list fs/inode.c:845 [inline]
+       prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
+       super_cache_scan+0x38c/0x4b0 fs/super.c:223
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
+       shrink_one+0x43b/0x850 mm/vmscan.c:4836
+       shrink_many mm/vmscan.c:4897 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+       kswapd_shrink_node mm/vmscan.c:6785 [inline]
+       balance_pgdat mm/vmscan.c:6977 [inline]
+       kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &delayed_node->mutex --> &q->q_usage_counter(io)#17 --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&q->q_usage_counter(io)#17);
+                               lock(fs_reclaim);
+  lock(&delayed_node->mutex);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd1/79:
+ #0: ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
+ #0: ffffffff8ea3f520 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
+ #1: ffff8880436800e0 (&type->s_umount_key#45){++++}-{4:4}, at: super_trylock_shared fs/super.c:562 [inline]
+ #1: ffff8880436800e0 (&type->s_umount_key#45){++++}-{4:4}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 79 Comm: kswapd1 Not tainted 6.12.0-syzkaller-09435-g2c22dc1ee3a1 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+ __btrfs_release_delayed_node+0xa5/0xaf0 fs/btrfs/delayed-inode.c:268
+ btrfs_evict_inode+0x73d/0x1070 fs/btrfs/inode.c:5374
+ evict+0x4e8/0x9a0 fs/inode.c:796
+ dispose_list fs/inode.c:845 [inline]
+ prune_icache_sb+0x239/0x2f0 fs/inode.c:1033
+ super_cache_scan+0x38c/0x4b0 fs/super.c:223
+ do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
+ shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
+ shrink_one+0x43b/0x850 mm/vmscan.c:4836
+ shrink_many mm/vmscan.c:4897 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+ shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+ kswapd_shrink_node mm/vmscan.c:6785 [inline]
+ balance_pgdat mm/vmscan.c:6977 [inline]
+ kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
-Changes since v1:
-- correct and reduce subject/description line length
-- provide a better explanation of the change
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi      | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts  | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p231.dts  | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts        | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxm-q201.dts        | 3 +--
- 6 files changed, 6 insertions(+), 12 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-index 52d57773a77f..1736bd2e96e2 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-@@ -178,9 +178,8 @@ &sd_emmc_a {
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
- 
--	brcmf: wifi@1 {
-+	sdio: wifi@1 {
- 		reg = <1>;
--		compatible = "brcm,bcm4329-fmac";
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-index c1470416faad..7dffeb5931c9 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-@@ -102,8 +102,7 @@ hdmi_tx_tmds_out: endpoint {
- };
- 
- &sd_emmc_a {
--	brcmf: wifi@1 {
-+	sdio: wifi@1 {
- 		reg = <1>;
--		compatible = "brcm,bcm4329-fmac";
- 	};
- };
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p231.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p231.dts
-index 92c425d0259c..ff9145d49090 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p231.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p231.dts
-@@ -21,8 +21,7 @@ &ethmac {
- };
- 
- &sd_emmc_a {
--	brcmf: wifi@1 {
-+	sdio: wifi@1 {
- 		reg = <1>;
--		compatible = "brcm,bcm4329-fmac";
- 	};
- };
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-index 7e7dc87ede2d..b52a830efcce 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-@@ -134,9 +134,8 @@ &sd_emmc_a {
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
- 
--	brcmf: wifi@1 {
-+	sdio: wifi@1 {
- 		reg = <1>;
--		compatible = "brcm,bcm4329-fmac";
- 	};
- };
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts
-index d4858afa0e9c..feb31207773f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts
-@@ -72,8 +72,7 @@ external_phy: ethernet-phy@0 {
- };
- 
- &sd_emmc_a {
--	brcmf: wifi@1 {
-+	sdio: wifi@1 {
- 		reg = <1>;
--		compatible = "brcm,bcm4329-fmac";
- 	};
- };
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-q201.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-q201.dts
-index d02b80d77378..6c8bec1853ac 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-q201.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-q201.dts
-@@ -21,8 +21,7 @@ &ethmac {
- };
- 
- &sd_emmc_a {
--	brcmf: wifi@1 {
-+	sdio: wifi@1 {
- 		reg = <1>;
--		compatible = "brcm,bcm4329-fmac";
- 	};
- };
--- 
-2.34.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
