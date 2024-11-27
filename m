@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-423022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1B19DA16E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:21:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FA29DA173
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696D2B24877
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:21:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B46FAB24988
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42BF13AA4C;
-	Wed, 27 Nov 2024 04:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65F013C69E;
+	Wed, 27 Nov 2024 04:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHxQG5sL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vIQ/OWTz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4327D10E6;
-	Wed, 27 Nov 2024 04:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019EC18E0E;
+	Wed, 27 Nov 2024 04:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732681273; cv=none; b=n0+DDyasqWG67SLeSuYjNN0u6c86IghUbc79lHaHyc+YwoV6Dhp+m2PDfkr2HjJ8eAG4mNGlV0RxqvGYyrkDLB8MjNx27TJLOj2yWRmhppTkPal74bz99IwzPxCZq6ZZW44iz+FySHSLVKaxPfNiJEvEXoLx6opB/9LUTiKWSDs=
+	t=1732681344; cv=none; b=LX0m9rIYz8Bw460luR83bHasIgpOTZpw7InQhgORaUmd/gJlCSpHEeLowGUMgqbfOkgDvPKmbyJjM4zes06iS2NXOKdPiWlWSsf/enM8knygIrlRgPsqh+2ZEpFMuoUOd4ujxQHus7bSK0adpOyrmJkaD85KKWAEVUsZQeUCxAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732681273; c=relaxed/simple;
-	bh=eHOLQKunbk8Z3giDEIVHC1DnAyRTlQQ9KQn/cuoZS7k=;
+	s=arc-20240116; t=1732681344; c=relaxed/simple;
+	bh=o6u8e0NpNmDukk8wDUY+TU+51ndzfjh95tgvttkNYTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VgKsIWd9KEk6keNVN8MJsjurSBcjQ9CzTPNodl1TXGMm2BlcaeyxmFXI7QAL8iT0EU0FYKGb4mySIPJFtx3gUQm5eVE/DHqEaDdfy4S4Mt3ZT9z9QydQx7sJUIaHTWt3CdjeY5I7UrZava78XCcIuBwVGKGwa1kNJQqg1myTGik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHxQG5sL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADF5C4CECC;
-	Wed, 27 Nov 2024 04:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732681273;
-	bh=eHOLQKunbk8Z3giDEIVHC1DnAyRTlQQ9KQn/cuoZS7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KHxQG5sLVqZUZTAiOvTwoSBEJAQfVtGniz0PQwBIE1txYPDdeZ5Ic6WNRzeGQcgQO
-	 dSDtnCfBI4DmJs1SUxqb8zN9WxQ0NeOGrCo/V/OtPio9W02z9iTS/qyYU+ewU98Iva
-	 TlKHdFs7vGL7uHayaDq+pPqYw3ztw7aazAR12KXjGwK+4q5LKWhfuKXo8ExmvRr4RC
-	 3VSMDDZhVfcvz6beZcxdo9GC7P4RFcPEildaDZgrQUtLyri2wC1U30PIBsIzKHgbIo
-	 6FuDLPfyMiY2zZMSJn6ee54mOsCnB85ax/kwtuofA9ucTI5L45qD30KXgvspfAdOQQ
-	 Qe4OE9J2BGghw==
-Date: Tue, 26 Nov 2024 22:21:10 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: manivannan.sadhasivam@linaro.org
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, 
-	Nitin Rawat <quic_nitirawa@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
-Message-ID: <tebgud2k4bup35e7rkfpx5kt7m5jxgw3yo3myjzfushnmdecsj@e4cb44jqoevp>
-References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
- <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KVjOSYz8kgzSnl0Y/66VxsEVjKJBtsbRuqUyKSAOoJF+ALl64U737t40ei6gNsugkBSYP82ZXI4QHzytR3wlKebYN3GgELNEnXVcCHRqitiA0gYQ5LO5jiHYceKgNb9RFvOd4BRLtQDeDEsz1GfpCu16T/7xLK9PYkHjMm05l3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vIQ/OWTz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lsl6ovAWE+1J5VPRu7emBoNaP80Jn7k3CUy4+NuzBgo=; b=vIQ/OWTzOJMV8aZvPso4/T2Krm
+	FcXIfiRo7iY8snv8wTbCWgP3cH/xrv3DDF6C543FPlzLfkcqaXvgVMv6S278Upt10mQsfPk3z+gpu
+	oAcdtXtn4LHDRQgxG+00C29MHmBr7j68+dcjugVjBw0vH+ejTzetn+bdnZs18TZAZND+i5iv7DTXv
+	1n1R8UVlTE9vKn3awOZ4GQ6n5X0QLkTZnmWSmzazfZfdZ39NmlWyigGF4+qNfUIAWSBzgTdSRCVQe
+	2J3xAj5hn2hnlogdDDBdQr36cnSBojfyj2C2U+KrJroGFx+c4wJktJHb9+iz2my79ldVI5vUNqJZ8
+	Qpwqg4vg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tG9Yl-00000000sPD-0Ish;
+	Wed, 27 Nov 2024 04:21:51 +0000
+Date: Wed, 27 Nov 2024 04:21:50 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Yuanchu Xie <yuanchu@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+	Khalid Aziz <khalid.aziz@oracle.com>,
+	Henry Huang <henry.hj@antgroup.com>, Yu Zhao <yuzhao@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Gregory Price <gregory.price@memverge.com>,
+	Huang Ying <ying.huang@intel.com>, Lance Yang <ioworker0@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Mike Rapoport <rppt@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Daniel Watson <ozzloy@each.do>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 1/9] mm: aggregate workingset information into
+ histograms
+Message-ID: <Z0aeXrpY-deSfO8v@casper.infradead.org>
+References: <20241127025728.3689245-1-yuanchu@google.com>
+ <20241127025728.3689245-2-yuanchu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,76 +88,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
+In-Reply-To: <20241127025728.3689245-2-yuanchu@google.com>
 
-On Thu, Nov 07, 2024 at 11:58:09AM +0000, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Starting from SM8550, UFS PHY GDSCs doesn't support hardware retention. So
-> using RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs
-> will get powered down during suspend, causing the UFS PHY to loose its
-> state. And this will lead to below UFS error during resume as observed on
-> SM8550-QRD:
-> 
+On Tue, Nov 26, 2024 at 06:57:20PM -0800, Yuanchu Xie wrote:
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 64c2eb0b160e..bbd3c1501bac 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -470,9 +470,14 @@ extern unsigned long highest_memmap_pfn;
+>  /*
+>   * in mm/vmscan.c:
+>   */
+> +struct scan_control;
+> +bool isolate_lru_page(struct page *page);
 
-Unless I'm mistaken, ALWAYS_ON makes GDSC keep the gendpd ALWAYS_ON as
-well, which in turn would ensure that any parent power-domain is kept
-active - which in the case of GCC would imply CX.
-
-The way we've dealt with this elsewhere is to use the PWRSTS_RET_ON flag
-in pwrsts; we then keep the GDSC active, but release any votes to the
-parent and rely on hardware to kick in MX when we're shutting down CX.
-Perhaps this can't be done for some reason?
-
-
-PS. In contrast to other platforms where we've dealt with issues of
-under voltage crashes, I see &gcc in sm8550.dtsi doesn't specify a
-parent power-domain, which would mean that the required-opps = <&nom> of
-&ufs_mem_hc is voting for nothing.
-
-Regards,
-Bjorn
-
-> ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
-> ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
-> ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
-> ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
-> ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
-> 
-> Cc: stable@vger.kernel.org # 6.8
-> Fixes: 1fe8273c8d40 ("clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag")
-> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-sm8550.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-> index 5abaeddd6afc..7dd08e175820 100644
-> --- a/drivers/clk/qcom/gcc-sm8550.c
-> +++ b/drivers/clk/qcom/gcc-sm8550.c
-> @@ -3046,7 +3046,7 @@ static struct gdsc ufs_phy_gdsc = {
->  		.name = "ufs_phy_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
->  };
->  
->  static struct gdsc ufs_mem_phy_gdsc = {
-> @@ -3055,7 +3055,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
->  		.name = "ufs_mem_phy_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
->  };
->  
->  static struct gdsc usb30_prim_gdsc = {
-> 
-> -- 
-> 2.25.1
-> 
-> 
+Is this a mismerge?  It doesn't exist any more.
 
