@@ -1,173 +1,114 @@
-Return-Path: <linux-kernel+bounces-423180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CD99DA3F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:32:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C329160EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:32:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A118C03E;
-	Wed, 27 Nov 2024 08:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHSrWOwd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018379DA3FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:33:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D12DC133;
-	Wed, 27 Nov 2024 08:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75AEAB256B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:33:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E89188CC6;
+	Wed, 27 Nov 2024 08:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gFhhgZXB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354F0C133;
+	Wed, 27 Nov 2024 08:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732696317; cv=none; b=R+zTP+hyq3kpo+05u8I0ueVO/vGfNJUtlLYnpw37H98bfogZdlcPY6RzAR39UDzYt0SKn/yIwblYYSFQv3S9ujjz8FTSfVzku3SHPnTnU3zYBCvUxBfj6ymCeClx2uIix/tGybkevupUGu8PpqEjOq/msb0VbyZF7SuuZJIyMCE=
+	t=1732696385; cv=none; b=AmggJWCnLgYWiRb41C6NGpBnwvsf3mn/JWBA0U9MG8BWME23mkzOYOVfB+C5u5tRbjbZi1TgcLJavXi11x0LpjOAYrQlL6cBSPZpK9oiA/5A9/v1ej7hzq3sOaANukKMxH0nzavEFte+WyK8AVN4TAB6neQQKdtdxKoKIuw2KR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732696317; c=relaxed/simple;
-	bh=zQqXeiGh/GI1HhfGcPBEm+TPwHWnClOwK1Q+tF6nli4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EdhaicEvvL2Vw2efAofLP0G/pg2A1pnUQu6BMbPkiYzz0thCGkG6UQIplxLYqRnoltKlPvRCyjl2eQgDgYymm7FcxfE9z1k6KuXRA0Tk1tZCxw838Tjp94l9zU418X4hB+giweSHkUph5eL8SmmNjCCRg+BTk6oPX1LAarPoyOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHSrWOwd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4634EC4CECC;
-	Wed, 27 Nov 2024 08:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732696316;
-	bh=zQqXeiGh/GI1HhfGcPBEm+TPwHWnClOwK1Q+tF6nli4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lHSrWOwdKV8m+2HYch+WjdXi8HmkCUH/x7xKqPxwn4TeG25QumOQLf2P69okIOETJ
-	 HM3zJYYAdVsEL82uQHAkQtIdftd0gjTDSTG/zjuEitq58nGsLHuK46L9C00rGiN2YO
-	 22//QLjcYYlLsRBhSVmX9MJMOJkdZ1laZSJIvM1xZT83Swq+yfYwwx0xRd2I3TWHJS
-	 rmgY/+BdwACSN/wJd8OSGJZ7pwVWVbHr+VTrnkugj6ONtOl3iNt2GSoUy+PIxaES6A
-	 pWqDaMddme+GGxzHOFLUQEl6Z+7Ehw6rbqejGfELbYmlB5KKrBbPmrjShjJjJTbCjB
-	 jg78029B7pBog==
-Date: Wed, 27 Nov 2024 09:31:53 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mirela Rabulea <mirela.rabulea@nxp.com>
-Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, 
-	hverkuil-cisco@xs4all.nl, laurent.pinchart+renesas@ideasonboard.com, robh@kernel.org, 
-	krzk+dt@kernel.org, bryan.odonoghue@linaro.org, laurentiu.palcu@nxp.com, 
-	robert.chiras@nxp.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com, hdegoede@redhat.com, 
-	dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com, alain.volmat@foss.st.com, 
-	devicetree@vger.kernel.org, conor+dt@kernel.org, alexander.stein@ew.tq-group.com, 
-	umang.jain@ideasonboard.com, zhi.mao@mediatek.com, festevam@denx.de, 
-	julien.vuillaumier@nxp.com, alice.yuan@nxp.com
-Subject: Re: [PATCH v2 2/4] media: ox05b1s: Add omnivision OX05B1S raw sensor
- driver
-Message-ID: <3g7utet7n4gkhuc4wmq23n45u35n2nmuoyizled5lb3ra23ar4@nuf2ekb7houm>
-References: <20241126155100.1263946-1-mirela.rabulea@nxp.com>
- <20241126155100.1263946-3-mirela.rabulea@nxp.com>
+	s=arc-20240116; t=1732696385; c=relaxed/simple;
+	bh=M00Qhe2c1TyxMErLdNGS0w3/e24/ozEJ+9La09g5Ny4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kReCpjbpwzOJ7SO/d+OXofwKWZAcnvHDCHtIL6GywGUAPrg9BWHP7BdUetkl/qLPjQsoZ3TPNXN++dZ3HdsUJ6/P2tnGAJwjSkpI6U2ZlNK56hbS0fPz2lPixMBjYTAVuMiUnNH0oMcnctypI3EJGc+qZGkKzfPhB7g0VfwOODY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gFhhgZXB; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732696385; x=1764232385;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=M00Qhe2c1TyxMErLdNGS0w3/e24/ozEJ+9La09g5Ny4=;
+  b=gFhhgZXBHuLLGQV/uv+jEzpOxAZWFLmO84nYIDlYNGgzyxd7+VuFyzXE
+   B30FzBBKzXvCm3/Ad5kfzNq6rF6d+Mj3ZSqumc797o4isI5+WiVF3n/V8
+   PV6GHPbortEGaYxtN2AVKtNgnoOoi4JFPQ5Tz1sRoH2UpNeWwtbwovTHl
+   jw0WvAGTfBxlo71fBZt9Zq9t6yZOGFVk/5YTDLc9O4EBE48vLwm6kufx3
+   Aq5sRAxttpH3qTT8HkaKDABVjsibWbLziPF745ZAjfFGWkhI6F0UaKDaR
+   EG87izjNlleF9JA5O/G2sd4+3GqghtgoFZxFWeJJiXGqf2hVOfxGwe9hv
+   Q==;
+X-CSE-ConnectionGUID: EXBRFwfzSTqblG4wnO2S2w==
+X-CSE-MsgGUID: Ys8N09OgQ5yBXYVaS8cE3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="44270137"
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="44270137"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 00:33:04 -0800
+X-CSE-ConnectionGUID: tA1MtW3XQ9amREhmESy8GA==
+X-CSE-MsgGUID: yNROq1b9Se2bQqSJsIorQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="92186043"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO [10.245.244.42]) ([10.245.244.42])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 00:33:01 -0800
+Message-ID: <9a918226-4f93-4ee5-8673-20d82802f126@linux.intel.com>
+Date: Wed, 27 Nov 2024 09:32:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241126155100.1263946-3-mirela.rabulea@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] x86/smp: Allow calling mwait_play_dead with an
+ arbitrary hint
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, peterz@infradead.org,
+ dave.hansen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com
+References: <20241126201539.477448-1-patryk.wlazlyn@linux.intel.com>
+ <20241126201539.477448-2-patryk.wlazlyn@linux.intel.com>
+ <Z0a0JNRPuRYaVrcI@BLRRASHENOY1.amd.com>
+Content-Language: en-US
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <Z0a0JNRPuRYaVrcI@BLRRASHENOY1.amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 05:50:58PM +0200, Mirela Rabulea wrote:
-> +struct ox05b1s {
-> +	struct i2c_client *i2c_client;
-> +	struct regmap *regmap;
-> +	struct gpio_desc *rst_gpio;
-> +	struct regulator_bulk_data supplies[OX05B1S_NUM_SUPPLIES];
-> +	struct clk *sensor_clk;
-> +	const struct ox05b1s_plat_data *model;
-> +	struct v4l2_subdev subdev;
-> +	struct media_pad pads[OX05B1S_SENS_PADS_NUM];
-> +	const struct ox05b1s_mode *mode;
-> +	struct mutex lock; /* sensor lock */
-> +	u32 stream_status;
-> +	struct ox05b1s_ctrls ctrls;
-> +};
-> +
-> +static struct ox05b1s_mode ox05b1s_supported_modes[] = {
+> Hello Patryk,
+>
+> Apologies for what may appear as bikeshedding, after this patch, the
+> cpuidle code still won't call any mwait based play dead loop since the
+> support for enter_dead for FFh based idle states in acpi_idle and
+> intel_idle only gets added in Patches 2 and 3.
+>
+> Does it make sense to split this Patch 1 into 2 patches : 1/4 and 4/4
+>
+> 1/4 just introduces the mwait_play_dead_with_hint() helper which will
+> be used by patches 2 and 3.
+>
+> 4/4 get rids of the of logic to find the deepest state from
+> mwait_play_dead() and modifies native_play_dead() to call
+> cpuidle_play_dead() followed by hlt_play_dead() thus removing any
+> reference to mwait_play_dead(). Optionally you can even rename
+> mwait_play_dead_with_hints() to mwait_play_dead().
+>
+> That way the changelog that you have for this patch can be used in 4/4
+> since with the addition of play_dead support for FFh states in both
+> acpi_idle and intel_idle via patches 2 and 3, the logic to find the
+> deepest ffh state in mwait_play_dead() is no longer required.
+>
+> Thoughts ?
 
-This is const, I think.
-
-> +	{
-> +		.index		= 0,
-> +		.width		= 2592,
-> +		.height		= 1944,
-> +		.code		= MEDIA_BUS_FMT_SGRBG10_1X10,
-> +		.bpp		= 10,
-> +		.vts		= 0x850,
-> +		.hts		= 0x2f0,
-> +		.exp		= 0x850 - 8,
-> +		.h_bin		= false,
-> +		.fps		= 30,
-> +		.reg_data	= ox05b1s_reglist_2592x1944,
-> +	}, {
-> +		/* sentinel */
-> +	}
-> +};
-
-...
-
-> +	ret = ox05b1s_read_reg(sensor, OX05B1S_REG_CHIP_ID_23_16, &reg_val);
-> +	chip_id |= reg_val << 16;
-> +	ret |= ox05b1s_read_reg(sensor, OX05B1S_REG_CHIP_ID_15_8, &reg_val);
-> +	chip_id |= reg_val << 8;
-> +	ret |= ox05b1s_read_reg(sensor, OX05B1S_REG_CHIP_ID_7_0, &reg_val);
-> +	chip_id |= reg_val;
-> +	if (ret) {
-> +		dev_err(dev, "Camera chip_id read error\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	switch (chip_id) {
-> +	case 0x580542:
-> +		camera_name = "ox05b1s";
-> +		break;
-> +	default:
-> +		camera_name = "unknown";
-> +		break;
-> +	}
-> +
-> +	if (chip_id == sensor->model->chip_id) {
-> +		dev_info(dev, "Camera %s detected, chip_id=%x\n", camera_name, chip_id);
-
-Device should be silent on success. This can be dev_dbg.
-
-> +	} else {
-> +		dev_err(dev, "Detected %s camera (chip_id=%x), but expected %s (chip_id=%x)\n",
-> +			camera_name, chip_id, sensor->model->name, sensor->model->chip_id);
-> +		ret = -ENODEV;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int ox05b1s_probe(struct i2c_client *client)
-> +{
-> +	int retval;
-> +	struct device *dev = &client->dev;
-> +	struct v4l2_subdev *sd;
-> +	struct ox05b1s *sensor;
-> +
-> +	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
-> +	if (!sensor)
-> +		return -ENOMEM;
-> +
-> +	sensor->regmap = devm_regmap_init_i2c(client, &ox05b1s_regmap_config);
-> +	if (IS_ERR(sensor->regmap))
-> +		return PTR_ERR(sensor->regmap);
-> +
-> +	sensor->i2c_client = client;
-> +
-> +	sensor->model = of_device_get_match_data(dev);
-> +
-> +	ox05b1s_get_gpios(sensor);
-> +
-> +	/* Get system clock, xvclk */
-> +	sensor->sensor_clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(sensor->sensor_clk)) {
-
-No need for {}, some left-over from old version.
-
-Best regards,
-Krzysztof
+Yeah, makes sense. I just wanted to simplify, but at some point crossed my mind
+that submitting it like you suggested may be better. I am going to split that
+if I don't see any objections.
 
 
