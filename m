@@ -1,105 +1,150 @@
-Return-Path: <linux-kernel+bounces-423903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D829DAE15
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:44:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1D79DAE1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F11FFB21BAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F06282525
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAEE202F86;
-	Wed, 27 Nov 2024 19:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C12010E5;
+	Wed, 27 Nov 2024 19:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wg3x8J70"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SdsqqWMv"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1769202F60;
-	Wed, 27 Nov 2024 19:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885562010E8
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732736659; cv=none; b=OzpCwPqLWFK2dmHMk0vJ+ZXldnF0bYgdkx1BM5Q7ekvnONrpOUwQprJqcaoDuALzt1cO4VQXxcGBjhYJfAeORBa2n/9tG0r3r6oUPtPbcJGb3gbNa1vqtv+hFx0Rd8lpGM6E0dByGWaXA/eAJrwwAt/15fDCA0Qgkos+hG9B3jY=
+	t=1732736739; cv=none; b=KzAZOTRHGolWLVgE7N9pzPOjXrvlsYs48mbYW5nui6op3VWwVvAvgM/QEKChPLNWIo1OgKQiOeeyC1qKMOnXdBcs7XnYJ9fN/OwmcethtAV+hYq17F1WLJPvbOOVG+IadV2aN6nDV/Dub5wLb1r4B4sM+ygioujeUosKSFHXcZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732736659; c=relaxed/simple;
-	bh=B99Q4TuUQCBVDCulwhs5KeOYu87zTkzwgednVKDrSFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jjEsMrDCEU6Teymutfy1/UA1v6F5IB641iaOARarl++BgDMFBI5D2mb4BUQzdbUOlPHG/1l/mp3CJWbizWsGhBYFGFxIldLLz8IITyI0QyUS4DKVMGKqFJWMTadpqzJ0lYxrE0bYVJXeevqZOSu4xe8G7JnAXJ0+pv/0Oj65NW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wg3x8J70; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3346DC4CECC;
-	Wed, 27 Nov 2024 19:44:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732736657;
-	bh=B99Q4TuUQCBVDCulwhs5KeOYu87zTkzwgednVKDrSFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wg3x8J70uo0NcNGP02BmgzmvsBbJ39XPNvBLS8JnMLm2wWqH4dSkJjM09EB/oHwzV
-	 tQh2lCSwwL5bf7exd5labZ+zW/Mm66DUrk2jst8i8nJz+h9ex6bnAJjzgabu9OUO7i
-	 n2kOALJbi/W8q3nGvCbMcJrh5zyvtBBrZZXkldeyc/bC5lRaCUGkT6+brSFD1210D1
-	 5oZDttkjRuPp7/ctAC+K+fbjrqTo1DsGD/BUmvLZFWiMdlKm1DYX07xi2it7nRKXey
-	 ERu5VUXglBg2Yn939r6Y/cppVsmBg9RjtwGsRdWrQWV4gPvAierVVE2QFOaGQ8I9EH
-	 tDgc56u4qjiqw==
-Date: Wed, 27 Nov 2024 19:44:12 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Esben Haabendal <esben@geanix.com>,
-	linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: imx_*_defconfig: Fix i.MX pinctrl enablement
-Message-ID: <23adf02f-68b5-4927-96a9-0793b9a80608@sirena.org.uk>
-References: <20241127-imx-pinctrl-enable-v1-1-d3431a98253b@kernel.org>
- <CAOMZO5CbgmGpJvurf0Ctomj5dDOt=dC5X8XvwaqsM9Ce_uXhUQ@mail.gmail.com>
+	s=arc-20240116; t=1732736739; c=relaxed/simple;
+	bh=NylLDBV4iWNpobwH6iSMROiM5e+3FgmCpG1sYJRENiU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=MLl+lWuPqCFw0WuOA/mxXtL+XH5JLmKE/gdBW17kIOh1Q2PGlbkur68l8AbFDFTMtsP0+Si8YfA5BsRZABRsHCuuMLTCP2NB+MXTmx70ZWRqNLipU+09IGFcCzvOZKJLZjUtJpjHNizPGd3fcRck3jTLvf0HVpdp8t9pkzc3sXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SdsqqWMv; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53de852a287so32096e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:45:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732736736; x=1733341536; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NylLDBV4iWNpobwH6iSMROiM5e+3FgmCpG1sYJRENiU=;
+        b=SdsqqWMvn5S2SYfmYLBXcDXi5Svbf+0hfOWzzLfC+vPAd8iDM9vf0YUzFt8AJUGqwu
+         2fLfEXfX84bZ6vPUmfqz3i5ZrxjDCShk7ipmbI+q00aTBkbz7giqTCTn13nJpqcnNcJd
+         0980vUOxC+lLWggqlSe7mx7f4C3zFSni48E+9NerhGfsDyEJdiOEX2aD4OS2cqUSjNrf
+         JvXfBsM2Cue+QJBdr5mFkCx/qwo6JuLFHNl/7rwI6MRHRR4KBlQV7gffUBsHLBRBwq/c
+         SAYlaEUr8aqZNezQ1XXaSnhSvURE+IpzKv6JaeQHg+fdyOHWEhK1QAK6BnuccKEwAjYs
+         QKUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732736736; x=1733341536;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NylLDBV4iWNpobwH6iSMROiM5e+3FgmCpG1sYJRENiU=;
+        b=s+lYapO6V1deGvb59t8hNbyUab1ModL+AmVAi3xGEOQYQCpZlM+W8I6kD4llBrLtB2
+         IBDI0Qp/HtSo1cUTtqTMC0RPo1soQ9Pz/pe4+2Hj0s0QQAZHCc9IlnopVcqXW9faSZQQ
+         Z72QlLoSZxfU/Rch4sgIgpNE+OMDEdD7jXS5CP7cIm61hMecI/UGx5vum3JKrzVOG6gy
+         Ar/VKokY9YlkuPKo9lNcjvfY4mR8DXu1RoN42TcxW9dRIBhAwdwo7Oki0z3HQjjg8Hfl
+         fXODK0KNR3EVTeQZrLwkkddxfXa0sY7aCF8oetp/Fb5dfehNLtNaKr65sCyUOE9Z8fzf
+         5f1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjBtEFE+l3mLRDGozYMOZe+P+moJH1Nku5aDmfh0ti7i7f3uFseIUAJkHktC37TixvgL5z//Lbv2UFYy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwThnmH+Sv6IuyVRV8DE8CHuMC82VlKR0/Z0zDsUojt2SjMyd3
+	AAmfJIYSGojPSRgUbvZlgMnPg/Uacjs8lzPo8WlRAep8+ZNxQPloLxUbCQ2bLRw=
+X-Gm-Gg: ASbGnctAWMP32GPPiEL/RkK2nPWhP4lhc3J7lSlfpNN3iyCVbtTgIrlJsn8LzJjFJMI
+	vsGTN+dcIxfx/FWUPW/AIAkAzYEPT9ZM3+AcpaEkvFGlJCrAx2Spy2kH+nyzZ5I1wLUOMno1Ng6
+	zvUBVz6Wwcu663BLPK6saOW0BUo5yLV8sJEo1XuvL1pSWUUF4UQF0EHU1XQSaO7jknRtnW57ooE
+	ht7r54rUwUX73MjrUobys8UYyNHd1isEFoJEgTU+TM63N38rnNGWKgtxWKaP+lhzHquq09cHuOg
+	0xLdJxwNbEOoFA4=
+X-Google-Smtp-Source: AGHT+IH40kESQ0kSX97wL3PUiuSrJ02aqjttnHdyPp1N1UTnVIo1USB4X398z4n7wKGyArZKFCjzuw==
+X-Received: by 2002:a05:6512:b03:b0:53d:ed68:3cfa with SMTP id 2adb3069b0e04-53df0112264mr1385460e87.55.1732736735626;
+        Wed, 27 Nov 2024 11:45:35 -0800 (PST)
+Received: from [127.0.0.1] (85-76-116-93-nat.elisa-mobile.fi. [85.76.116.93])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24812besm2319077e87.121.2024.11.27.11.45.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 11:45:34 -0800 (PST)
+Date: Wed, 27 Nov 2024 21:45:32 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+CC: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Georgi Djakov <djakov@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Odelu Kukatla <quic_okukatla@quicinc.com>,
+ Mike Tipton <quic_mdtipton@quicinc.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_V6_3/4=5D_dt-bindings=3A_interconnec?=
+ =?US-ASCII?Q?t=3A_Add_generic_compatible_qcom=2Cepss-l3-perf?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <fff1a05c-5e7c-451d-9b08-4e835d6ab131@kernel.org>
+References: <20241125174511.45-1-quic_rlaggysh@quicinc.com> <20241125174511.45-4-quic_rlaggysh@quicinc.com> <20241127142304.GA3443205-robh@kernel.org> <zchtx32wtii2mzy2pp4lp4gdaim7w56kih7jcqes4tyhu24r3n@dagazlsdgdcv> <0ba0f4af-5075-4bb1-a7f6-815ef95bbda7@kernel.org> <538761B6-5C8D-4600-AB9E-687F91B855FF@linaro.org> <fff1a05c-5e7c-451d-9b08-4e835d6ab131@kernel.org>
+Message-ID: <CD9BA30C-C38F-4F3B-9823-B8F5B4160BC6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tpxTvM+AVXAWYvlF"
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5CbgmGpJvurf0Ctomj5dDOt=dC5X8XvwaqsM9Ce_uXhUQ@mail.gmail.com>
-X-Cookie: Every path has its puddle.
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 27 November 2024 21:22:02 EET, Krzysztof Kozlowski <krzk@kernel=2Eorg> w=
+rote:
+>On 27/11/2024 19:49, Dmitry Baryshkov wrote:
+>> On 27 November 2024 20:27:27 EET, Krzysztof Kozlowski <krzk@kernel=2Eor=
+g> wrote:
+>>> On 27/11/2024 17:53, Dmitry Baryshkov wrote:
+>>>> On Wed, Nov 27, 2024 at 08:23:04AM -0600, Rob Herring wrote:
+>>>>> On Mon, Nov 25, 2024 at 05:45:10PM +0000, Raviteja Laggyshetty wrote=
+:
+>>>>>> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register inste=
+ad of
+>>>>>> REG_L3_VOTE to scale L3 clocks, hence adding a new generic compatib=
+le
+>>>>>> "qcom,epss-l3-perf" for these targets=2E
+>>>>>
+>>>>> Is this a h/w difference from prior blocks or you just want to use B=
+=20
+>>>>> instead of A while the h/w has both A and B? The latter sounds like=
+=20
+>>>>> driver policy=2E
+>>>>>
+>>>>> It is also an ABI break for s/w that didn't understand=20
+>>>>> qcom,epss-l3-perf=2E
+>>>>
+>>>> As the bindings keep old compatible strings in addition to the new
+>>>> qcom,epss-l3-perf, where is the ABI break? Old SW will use old entrie=
+s,
+>>>> newer can use either of those=2E
+>>> No, this change drops qcom,epss-l3 and adds new fallback=2E How old
+>>> software can work in such case? It's broken=2E
+>>=20
+>> Oh, I see=2E We had a platform-specific overrides for those two=2E Then=
+ I think we should completely drop the new qcom,epss-l3-perf idea and follo=
+w the sm8250 / sc7280 example=2E This means compatible =3D "qcom,sa8775p-pe=
+rf", "qcom,epss-l3"=2E=20
+>
+>It depends for example whether epss-l3 is valid at all=2E ABI is not
+>broken if nothing was working in the first place, assuming it is
+>explained in commit msg (not the case here)=2E
+
+Judging by the current schema, epss-l3 is defined as new HW block of aka n=
+ot OSM L3, no matter which register is used for programming=2E
 
 
---tpxTvM+AVXAWYvlF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>
+>Best regards,
+>Krzysztof
 
-On Wed, Nov 27, 2024 at 04:36:12PM -0300, Fabio Estevam wrote:
-
-> It will also cause regressions for people that have their own
-> defconfigs (where PINCTRL is not selected).
-
-AFACIT we generally just tolerate those.
-
-> Then I came up with a v2 that simply re-select PINCTRL as a minimal
-> fix for the regressions:
-
-> https://lore.kernel.org/linux-arm-kernel/f65d65b3-b60c-4c5c-a002-81370821ee1f@app.fastmail.com/T/#u
-
-That also works of course - whatever way we do this it'd be good to get
-this fixed for -rc1.
-
---tpxTvM+AVXAWYvlF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdHdosACgkQJNaLcl1U
-h9DB0Af/fCc7aDc37iy2DwGKzHqlYm4tYaWEMqyvw+cPSN7QDQXrDZecDrqy2FXQ
-bHpjvVOMR023AVHmuvqSCnaAzctb+zacIWAHs/M/0sRDN28wpYVhjUN3cpDc1Ewl
-VzoqQ6f3sRR72WzjOp+++zbYLXaKS8DLv3jrwRVBDa70xGVSFPkz0r5m1qxuiYwU
-JaN3lBS2yyxPTtcaMsMRAmzC1vR536dtl/eFF75ZTycXG0akP8VKLD1T5GAcdTq1
-5VhFY/mv2A7OLqOrScQ/poOuOe7UFLkisFAEGnlVhjNlLJGJTpytPeEAQkS4NN9F
-hcnSSDrPCwljg1Agog5RsZObnbjCpw==
-=Jw5l
------END PGP SIGNATURE-----
-
---tpxTvM+AVXAWYvlF--
 
