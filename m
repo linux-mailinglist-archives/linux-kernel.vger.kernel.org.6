@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-423247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1F89DA4F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:40:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC0A162540
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:40:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AF5193439;
-	Wed, 27 Nov 2024 09:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/fvBgUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2779DA4F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:42:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A00193060;
-	Wed, 27 Nov 2024 09:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DB6283472
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:42:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BC819343B;
+	Wed, 27 Nov 2024 09:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XDVp8uGE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2223E13A888;
+	Wed, 27 Nov 2024 09:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732700438; cv=none; b=BqBv1yuRCHvfK0lG22D9Jc5Tujky8f2z4KbCiuxvQCw8DxIql04Ph+1lXBO0ZEeuE6E8iZ2EnBDAC5+0WNhlXu/2uRPS2MeWXGV4a035I5D2VumurM2Smo9y04Ei4ydr80qLelgii+uVS12P2cCzl1aBGcDGIkwABcJUGmAmooI=
+	t=1732700546; cv=none; b=X4getjTfMdUkif84Ujgx4qp1HB8sA+PyUA8oous2uO71e5jM20oD7qZGzxYsP72aoSQSvwe6oxymSZS6I2G3c3D3jvgxq9miW30PxK/SC3p0OzFk0VIhgq3q8dfAw8rAu7Kz0gqpwPNw4tWJYSZRbM//3THaAVLEZ0BrxyLm4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732700438; c=relaxed/simple;
-	bh=iK/cZpP3in9oQkiP+zslk6edX5pzwthEzCyqGqnUsyU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DnAg2LTKkDu6f5mv62H39u/vFbx3Ah74/8krT+zHfSPrIN1AO6+wDg2YU1TwBVUfuaFj1tl+mu9fOYgMgDd+o+EL8w8RodyhQ1pwzBkOSG/xETasTH5sHBDf+Bac4jCl+N0AZ7ml4pQySHqCyclCpLHgsY/tV8iWnwF0F10E1Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/fvBgUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3620C4CECC;
-	Wed, 27 Nov 2024 09:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732700437;
-	bh=iK/cZpP3in9oQkiP+zslk6edX5pzwthEzCyqGqnUsyU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=S/fvBgUrq7Uaq5hfwrA4V0Ru6g+9RCikGwzEopIm4vVwm3IWg+SUqOduOzWF9ZLDr
-	 oQmGSk0qYOFe0GQya7Nik3bXGPPOrq/IRpuaw0L69Uf5EN6l8zYm0335N/NhyZMPD8
-	 svKHtE2KAVMMKsZfUgdYZJwsbWsUZND+kmCDH4cpd/V5Uw2GkWoQxE/joYw67jJpBP
-	 8ywNfJClHsdHNefdc/I45Isp4CUq1gUH/JpGiZZU6fNEFStAB9yRH5vRY5jQM0tYw7
-	 /Qz/s1DpH4dHaZp6+DZ+7hhrQeBKd/b/BAJQFNrZHPKEUxnwHADLTst//W0qeCaYgK
-	 R/FBz/LNi9gUA==
-Message-ID: <766219f6-a535-4eaa-b1cc-768e0522d71c@kernel.org>
-Date: Wed, 27 Nov 2024 10:40:29 +0100
+	s=arc-20240116; t=1732700546; c=relaxed/simple;
+	bh=KWKEWa3UIXAu4vOfBjPfx5eH26k3SHJci83eJv2qTjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fBc92/rnSav9JZWDNnD/pBDhXtUhorqnLMS34Jsbf10QKa36Cw+001KHlAFFFOz5bwBO4X6260AQwCaVL2pTUozgBPUv4mTF3M8ekImlu8vKztFrVcDTfPe+/JNZgZYh3IVHoJ2Uui75vVApUsGYRBGIKWCgGv6tNLAtIExZ2HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XDVp8uGE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 69465792;
+	Wed, 27 Nov 2024 10:42:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732700520;
+	bh=KWKEWa3UIXAu4vOfBjPfx5eH26k3SHJci83eJv2qTjM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XDVp8uGE4wQ2KBiHmPVFjkiW5WbIV13n+VdsontCe4G/OJcQIni0zLsNHGvOZE7yY
+	 c12GSVsxdHGj/sMHLcUYodVZaNVkPSKli5TMDIrowic2nciWMPaBySmTYIDbi43qIp
+	 7tHm2twL3gPlSBzXX7JRZtBP/yGWfXzmNuAd1cVQ=
+Date: Wed, 27 Nov 2024 11:42:12 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: uvcvideo: Do not set an async control owned
+ by other fh
+Message-ID: <20241127094212.GF31095@pendragon.ideasonboard.com>
+References: <20241127-uvc-fix-async-v1-0-eb8722531b8c@chromium.org>
+ <20241127-uvc-fix-async-v1-1-eb8722531b8c@chromium.org>
+ <20241127091153.GA31095@pendragon.ideasonboard.com>
+ <CANiDSCs36Ndyjz52aYA0SHef8JVQc=FvtDNk8xQwR=30m652Gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Add initial support for QCS8300 SoC and QCS8300
- RIDE board
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, quic_tingweiz@quicinc.com,
- quic_aiquny@quicinc.com, Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Xin Liu <quic_liuxin@quicinc.com>, Kyle Deng <quic_chunkaid@quicinc.com>,
- Tingguo Cheng <quic_tingguoc@quicinc.com>,
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-References: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
- <5a4a80e7-b6dc-4c01-a16d-ed8ea1aefe44@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <5a4a80e7-b6dc-4c01-a16d-ed8ea1aefe44@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCs36Ndyjz52aYA0SHef8JVQc=FvtDNk8xQwR=30m652Gg@mail.gmail.com>
 
-On 25/09/2024 16:01, Krzysztof Kozlowski wrote:
-> On 25/09/2024 12:43, Jingyi Wang wrote:
->> Introduce the Device Tree for the QCS8300 platform.
->>
->> Features added and enabled:
->> - CPUs with PSCI idle states
->> - Interrupt-controller with PDC wakeup support
->> - Timers, TCSR Clock Controllers
->> - Reserved Shared memory
->> - GCC and RPMHCC
->> - TLMM
->> - Interconnect
->> - QuP with uart
->> - SMMU
->> - QFPROM
->> - Rpmhpd power controller
->> - UFS
->> - Inter-Processor Communication Controller
->> - SRAM
->> - Remoteprocs including ADSP,CDSP and GPDSP
->> - BWMONs
->>
->> binding dependencies:
->> - remoteproc: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com/
->> - ufs-phy: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_ufs_phy_binding-v3-1-c1eb5c393b09@quicinc.com/
->> - ufs-controller: https://lore.kernel.org/all/20240911-qcs8300_ufs_binding-v2-1-68bb66d48730@quicinc.com/ - Reviewed
->> - smmu: https://lore.kernel.org/all/20240911-qcs8300_smmu_binding-v2-1-f53dd9c047ba@quicinc.com/ - Applied
->> - ipcc: https://lore.kernel.org/all/20240911-qcs8300_ipcc_binding-v2-1-ca15326c5d0f@quicinc.com/ - Applied
->> - qfprom: https://lore.kernel.org/all/20240911-qcs8300_qfprom_binding-v2-1-d39226887493@quicinc.com/ - Reviewed
->> - tcsr: https://lore.kernel.org/all/20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com/ - Reviewed
->> - rmphpd: https://lore.kernel.org/all/20240920-add_qcs8300_powerdomains_driver_support-v1-1-96a2a08841da@quicinc.com/ - Reviewed
->> - bwmon: https://lore.kernel.org/all/20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com/ - Reviewed
->> - others: https://lore.kernel.org/all/20240911-qcs8300_binding-v2-0-de8641b3eaa1@quicinc.com/ - Reviewed
+On Wed, Nov 27, 2024 at 10:25:48AM +0100, Ricardo Ribalda wrote:
+> On Wed, 27 Nov 2024 at 10:12, Laurent Pinchart wrote:
+> > On Wed, Nov 27, 2024 at 07:46:10AM +0000, Ricardo Ribalda wrote:
+> > > If a file handle is waiting for a response from an async control, avoid
+> > > that other file handle operate with it.
+> > >
+> > > Without this patch, the first file handle will never get the event
+> > > associated to that operation.
+> >
+> > Please explain why that is an issue (both for the commit message and for
+> > me, as I'm not sure what you're fixing here).
 > 
-This submission has bugs and instead of fixing it, some other people are
-sending already patches on top.
+> What about something like this:
+> 
+> Without this patch, the first file handle will never get the event
+> associated with that operation, which can lead to endless loops in
+> applications. Eg:
+> If an application A wants to change the zoom and to know when the
+> operation has completed:
+> it will open the video node, subscribe to the zoom event, change the
+> control and wait for zoom to finish.
+> If before the zoom operation finishes, another application B changes
+> the zoom, the first app A will loop forever.
 
-No, fix this patchset instead.
+So it's related to the userspace-visible behaviour, there are no issues
+with this inside the kernel ?
 
-Best regards,
-Krzysztof
+Applications should in any case implement timeouts, as UVC devices are
+fairly unreliable. What bothers me with this patch is that if the device
+doesn't generate the event, ctrl->handle will never be reset to NULL,
+and the control will never be settable again. I think the current
+behaviour is a lesser evil.
 
+> > What may be an issue is that ctrl->handle seem to be accessed from
+> > different contexts without proper locking :-S
+> 
+> Isn't it always protected by ctrl_mutex?
+
+Not that I can tell. At least uvc_ctrl_status_event_async() isn't called
+with that lock held. uvc_ctrl_set() seems OK (a lockedep assert at the
+beginning of the function wouldn't hurt).
+
+As uvc_ctrl_status_event_async() is the URB completion handler, a
+spinlock would be nicer than a mutex to protect ctrl->handle.
+
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > index 4fe26e82e3d1..5d3a28edf7f0 100644
+> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > > @@ -1950,6 +1950,10 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+> > >       if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+> > >               return -EACCES;
+> > >
+> > > +     /* Other file handle is waiting a response from this async control. */
+> > > +     if (ctrl->handle && ctrl->handle != handle)
+> > > +             return -EBUSY;
+> > > +
+> > >       /* Clamp out of range values. */
+> > >       switch (mapping->v4l2_type) {
+> > >       case V4L2_CTRL_TYPE_INTEGER:
+
+-- 
+Regards,
+
+Laurent Pinchart
 
