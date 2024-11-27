@@ -1,114 +1,169 @@
-Return-Path: <linux-kernel+bounces-423166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7439DA3CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:21:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48D59DA3D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:21:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAB38B2607D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70DB2166FBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2921865F0;
-	Wed, 27 Nov 2024 08:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7944218858E;
+	Wed, 27 Nov 2024 08:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewpMAi6M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="np+L1VUS"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA0413C816;
-	Wed, 27 Nov 2024 08:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBEA17BB21;
+	Wed, 27 Nov 2024 08:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732695675; cv=none; b=WtukqwekgtQmGIfsT3sUos/J0yfLGfZAA2dW5UXHewT/5AKmZso84/uysx96T/hKWQEWkTFlTMN2hPnD7wvwbTlVGD/vvY44ZUkWfO9dVC51JtfBY8cowcpZiN62ThU1owsCQvG0Gen1k5V2tVl2Uii2SY5/nDvaR+6nBMkf+dA=
+	t=1732695689; cv=none; b=U2mIxm9dsLK1e3YCBNR8nGLnS1sSFwyDwbG1MHRnPLbiyYVXna/psm8eICXERB2C9tYofU2H5dFOol4bUoDcbFWLj1NKMd6vvTguLiBwzYMfj8I9pE9r/nTmiFf7O46C5IdpkbuNuIdSrv8N4z8SWXfxGZXjblj+23FeiLrE/p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732695675; c=relaxed/simple;
-	bh=id+aTLaJGkl5TLeYDuyrx5kMCJuL6YRs6MH/F+wlEOI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=IxBBeTi81Pj2l+oHA/g9u5oelNNcyl32nyDm5jg9umJ5rG/OFt8mmN5WDg83ZSadNpLswUsHUHlOCnXI2WLxv104RMO3rs9WAoLZ+pYQZEiuyn9yaIKhTMtfMzdlRJuInSmGSPB4MI+vT7xIRldW4WY/1276V2KRFz0a64NlNwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewpMAi6M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CE5C4CECC;
-	Wed, 27 Nov 2024 08:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732695674;
-	bh=id+aTLaJGkl5TLeYDuyrx5kMCJuL6YRs6MH/F+wlEOI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ewpMAi6MGGWdMkdebEubYl1DCfaacM++ANTuAZSa7N0oVKYmhw9hf/VLbvFPUp0V2
-	 PG+KRKTyE8GuSrESVPfDLxO7uhKPNBTQAazlNDrO751JylvbyA6U6lv/dtX2a9m86w
-	 vnf67ND7Or5ae7sTJoceHsYFLWOjmEK9Oaf5LJJN2KRO0FaqMMH0kb2cIIoIxHdp1b
-	 DBQ+4q0GTQwPFAyv5kLuaIN4r6BS9ao/sSBozNeSAx2AyFfhxh38tISvolaidUXfbP
-	 92Un52aKvvsriH1Qa7AAzHYkSniu1b4i1mT3RmsARtwEBCHxnyGS6oRHD3o3QTjnAW
-	 MrKCIQH/mv4Hw==
-Date: Wed, 27 Nov 2024 02:21:12 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1732695689; c=relaxed/simple;
+	bh=stSSnFTtoJHg8BqGvfNhevnOn2ndUoEebm8YWcO5spM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HutAv6IrS7jT/9mz7PlU74oo5L36J2Suo5nLYoD3tSz0KRvjE91GY5F7hEwXMnQyeSx5onXUw4NWFLc9XIy3eBxJjflsszXQoJ4swuHmfNBkIQGwxClN1qapZRgjnxBDrp4G/xiHZ+b+tRJmbgu/Rpxcw8/7ii7SLJZ5jG2cA5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=np+L1VUS; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e38232fc4d8so5690763276.2;
+        Wed, 27 Nov 2024 00:21:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732695686; x=1733300486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LXx+dVC/bMbMySJqkxvau2EzlELyuHvZH+PJDlKKiNk=;
+        b=np+L1VUSE9UJvfqeABBBElaJvQja+dmPswBsNsZhQhHZRXONRCR1oJD+N05NGiBHux
+         8VdWuIekERVtrJG2+Bw7llpoalgU7icyn2X0ZEBbaiRm0oHzf6bL6GYjzm5gIcAqsXQR
+         /U2MiW3qGoxxoRwP2ZP30dtjvPylRFKuh4EPi5RpYfXvy0bu6i6MOL3GmirHLBzzQbeQ
+         TR9XoiVyL32pnJABnSBnXc4/0r2TEGeQQLqc7fxU23gIhM5xYS1h1BVGddEIB+9f4Z46
+         2YyNPRo2GPRuv+SeVuo4eRUSGGFXYN1Rg8eDwjIIHw8tLpTw35r8KZUVhXaIdg1JmVf2
+         xNpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732695686; x=1733300486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LXx+dVC/bMbMySJqkxvau2EzlELyuHvZH+PJDlKKiNk=;
+        b=U120C/uAuuMnZ5tvFX0ayz9bz3N4hmC85YkKX/AWwxXQhJr3sbzYapMKNY5jQt5ja4
+         YvRQWMjMvWWvN6g6z5ZZBARJzJzv3RLMOISYNabZHI1TkZN9gQclNLjm6iP2YBLcYDiZ
+         hC0M4H8uVsro9rsXhgLhkV8b82ZlmMEoGuoE4rELNCsumGZtHhBcGeE/kd8auljVJz0V
+         UtKrDaWIwBv5X7bTPeir7w9TCA2U6Iu6mSfZQ8yvu9lNZ008u2wQtGsVdxNi6Prp+rj7
+         BocBcZOrht/00Ywj2mnrklA8fy2rGD7+1JMI77jHuX6AkDr8WN1ctUE+MCk7D1OZdfMD
+         22mg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0dqiXgXP16eYc+Scoc8EPEgpJOe3i39233Oqc7lSzad0lZsBhQ452YSmOu4yxA+kngpAocQ6oxRDE@vger.kernel.org, AJvYcCU2zoDzoxQBcKYYM9LSGyrDrRuuUyiuts41SjXFwNnuvNM63LhgkY7NUP8SuiBnio6hLSj4LtV4Og0C@vger.kernel.org, AJvYcCWKFE2eRA1Zqdl5vEeJsNYk/8iOL+xGF+G/0txjf9YyVyBQQObFC2eMBMjLvGk7FKKCgs3e1LO6BI5yJxFH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoqfsnraG4ZpUps0Cr8KKO60ycLfsXTHPXqoXbK/cBYPeee15o
+	vVQndHOPSN+42mdzrUzQnOV9kaV9BQlzKTsVMhOltDEYwHHHviLYWJHmAcybIkv8P5H21O4kPZy
+	fkscH/OowJ2zjXx2U7K/kK/H2gY4=
+X-Gm-Gg: ASbGnct75szYswTfn1Pf5M2M5g5ZRXR3BQnNy1pbXUqa9QEIl+l5A5PyTDHn7Fe8cSM
+	C4durrFYCFOopSmySdUB5MgvxbiWRcHupCmREjOklI8nuqD2+8SS8Tn6Y0MH6pIs=
+X-Google-Smtp-Source: AGHT+IEKPD8zeEXnQhDGjU08izfyjaPh9mW6eUsQmF+VL7kvEeC8+Cs3bH4LLV81hmpuN/ogXjymN3kPibAGVGCWNM8=
+X-Received: by 2002:a05:6902:210e:b0:e22:6a94:f22f with SMTP id
+ 3f1490d57ef6-e395b8c1eb5mr2083679276.28.1732695686164; Wed, 27 Nov 2024
+ 00:21:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
- Ritesh Kumar <quic_riteshk@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, freedreno@lists.freedesktop.org, 
- Simona Vetter <simona@ffwll.ch>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
-References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
- <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
-Message-Id: <173269567235.2233485.7286772244329561840.robh@kernel.org>
-Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on QCS8300
+References: <20241126074005.546447-1-tmyu0@nuvoton.com> <20241126074005.546447-2-tmyu0@nuvoton.com>
+ <20241126-shimmer-such-35cf44076981@spud>
+In-Reply-To: <20241126-shimmer-such-35cf44076981@spud>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Wed, 27 Nov 2024 16:21:14 +0800
+Message-ID: <CAOoeyxUXYU4rMxku62CnS6BPNZ4shm5t4R_it63JTVsT0-Nrnw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: temperature: Add support for NCT7718W
+To: Conor Dooley <conor@kernel.org>
+Cc: tmyu0@nuvoton.com, jic23@kernel.org, lars@metafoo.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, cmo@melexis.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Dear Conor,
 
-On Wed, 27 Nov 2024 15:05:01 +0800, Yongxing Mou wrote:
-> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> ---
->  .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 239 +++++++++++++++++++++
->  1 file changed, 239 insertions(+)
-> 
+Thank you for your comments,
+I will make the modifications in the next patch.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Best regards,
+Ming.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dts:26:18: fatal error: dt-bindings/clock/qcom,qcs8300-gcc.h: No such file or directory
-   26 |         #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Conor Dooley <conor@kernel.org> =E6=96=BC 2024=E5=B9=B411=E6=9C=8827=E6=97=
+=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=881:58=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Tue, Nov 26, 2024 at 03:40:04PM +0800, Ming Yu wrote:
+> > Add devicetree binding document for Nuvoton NCT7718W thermal sensor.
+> >
+> > Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
+> > ---
+> >  .../iio/temperature/nuvoton,nct7718.yaml      | 44 +++++++++++++++++++
+> >  MAINTAINERS                                   |  6 +++
+> >  2 files changed, 50 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/temperature/n=
+uvoton,nct7718.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/temperature/nuvoton,=
+nct7718.yaml b/Documentation/devicetree/bindings/iio/temperature/nuvoton,nc=
+t7718.yaml
+> > new file mode 100644
+> > index 000000000000..a3573e3d454d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/temperature/nuvoton,nct7718=
+.yaml
+> > @@ -0,0 +1,44 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/temperature/nuvoton,nct7718.yam=
+l#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Nuvoton NCT7718W Thermal Sensor IC
+> > +
+> > +maintainers:
+> > +  - Ming Yu <tmyu0@nuvoton.com>
+> > +
+> > +description:
+> > +  https://www.nuvoton.com/resource-files/Nuvoton_NCT7718W_Datasheet_V1=
+1.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: nuvoton,nct7718
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+>
+> Please add the vdd supply as a required property.
+>
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        temp-sensor@4c {
+>
+> The generic node name is actually temperature-sensor.
+>
+> Thanks,
+> Conor.
 
