@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-423754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449519DAC41
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 690E99DAC4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE9C166B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188E0166CB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074A9201002;
-	Wed, 27 Nov 2024 17:09:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CB4201015;
+	Wed, 27 Nov 2024 17:20:33 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02881F8F1A;
-	Wed, 27 Nov 2024 17:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ACD225D6;
+	Wed, 27 Nov 2024 17:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732727344; cv=none; b=aoUjhoTZputcts8XL3w+UW9n+WMGX5PleLZSay/ff/XuoNF3g9izj9VaFN/iH0BY2f9ZvOshkfJ2U801HwN2k8BlE4kPiwlj8if8jVKMXxFJGaXonZsVbT5UQKERnHxBXccP23XmXNwFfD0Luf+vj4h3v/gNv9kNy4rZgIYn5f4=
+	t=1732728033; cv=none; b=MAIYfe+gKCmI+yiI0e6zKGJW6qB2UMBfE8rh1U1X/5SqDXpbqgQl4FHsXSd7nenYy+JrQlTRQ16+19v6OYkRRf8EvEUYU+91/ulvVm7LrBcDPLaozasZ5jOFvICF5DMyseTczBcAJJnZ2nKm2VtGBu2YAceDRlNyuYOrF8IVvV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732727344; c=relaxed/simple;
-	bh=8VEm8aUEJUZUBfqieyeV6sPe94ptDwIYS4xqe8ZQD00=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O9aEiK9uODuil6BlRc9NsYat/pZjs1u7pxX7YqFdPqIRcoPpiZHrIfKA0srUs1iwzH8F+v6B/oXeTmMJdy8v/gMXh1tWc9CickiBoefC9XOsyr11gTp9yEprYLNCAIzx4t2jOic3gUiKWDavpeX2J+nlSsP2QA4L/OTBRsyfOj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D015C4CECC;
-	Wed, 27 Nov 2024 17:09:02 +0000 (UTC)
-Date: Wed, 27 Nov 2024 12:09:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
- alexander.shishkin@linux.intel.com, bigeasy@linutronix.de,
- clrkwllms@kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rt-devel@lists.linux.dev, nd@arm.com
-Subject: Re: [PATCH 1/9] coresight: change coresight_device lock type to
- raw_spinlock_t
-Message-ID: <20241127120954.0facd34f@gandalf.local.home>
-In-Reply-To: <20241125094816.365472-2-yeoreum.yun@arm.com>
-References: <20241125094816.365472-1-yeoreum.yun@arm.com>
-	<20241125094816.365472-2-yeoreum.yun@arm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732728033; c=relaxed/simple;
+	bh=mpyGGqPht6QEiY3RU88ACzruKbGM4Y82JYRu8p6kqOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osbF+uCkV0LAR6z3tmRIzUu4xGc3eOrC8WZVONTarU68gHXWkBhpvOn2UjqwR9eY+EmE8Wi3Dxz5H4IhA7EV+i3KPm3ukzCY+NsVT8tvUBbcsjvP8rDs1NtMATHbkLMoNBudSLODd/qrXAx7Qq0jDFUBGbBkL7qoBAFWTN8Git8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id ACB9D654; Wed, 27 Nov 2024 11:20:21 -0600 (CST)
+Date: Wed, 27 Nov 2024 11:20:21 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	Jordan Rome <linux@jordanrome.com>,
+	linux-security-module@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>,
+	Paul Moore <paul@paul-moore.com>
+Subject: Re: [GIT PULL] capabilities
+Message-ID: <20241127172021.GA25444@mail.hallyn.com>
+References: <Zztcp-fm9Ln57c-t@lei>
+ <20241122173418.GA518018@mail.hallyn.com>
+ <CAHC9VhRtuDmRX37asbFTFnwnoGTAidS1PArwZ9EfY4992fXQXg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRtuDmRX37asbFTFnwnoGTAidS1PArwZ9EfY4992fXQXg@mail.gmail.com>
 
-On Mon, 25 Nov 2024 09:48:08 +0000
-Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+On Mon, Nov 25, 2024 at 01:52:59PM -0500, Paul Moore wrote:
+> On Fri, Nov 22, 2024 at 12:34 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Mon, Nov 18, 2024 at 03:26:31PM +0000, sergeh@kernel.org wrote:
+> > > Hi Linus,
+> >
+> > Hi,
+> >
+> > before the merge window closes, I just wanted to make sure this didn't get
+> > lost.
+> 
+> ... and while Serge may not have sent a pull request for the
+> capability code in a while, I just want to vouch that Serge is a real
+> person and this is a legit pull request :)
 
-> @@ -853,17 +851,14 @@ EXPORT_SYMBOL_GPL(cscfg_unregister_csdev);
->  void cscfg_csdev_reset_feats(struct coresight_device *csdev)
->  {
->  	struct cscfg_feature_csdev *feat_csdev;
-> -	unsigned long flags;
->  
-> -	spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
-> +	guard(raw_spinlock_irqsave)(&csdev->cscfg_csdev_lock);
-> +
->  	if (list_empty(&csdev->feature_csdev_list))
-> -		goto unlock_exit;
-> +		return;
->  
->  	list_for_each_entry(feat_csdev, &csdev->feature_csdev_list, node)
->  		cscfg_reset_feat(feat_csdev);
+Hi Linus,
 
-We should start documenting what is not real-time "safe". That is, if this
-code is executed, we have a loop here that holds a raw spin lock. This
-appears to make the time the raw spin lock held to be non deterministic.
+don't mean to nag, but as the end of the merge window is approaching,
+figure I should try one more time (or else ask Paul to send it instead).
+Did you receive this PR?  Are there any changes I need to make?
 
-If someone is running PREEMPT_RT and expects deterministic behavior, they
-cannot be using this code. That is fine, but we should probably create a
-document somewhere that notes this.
-
--- Steve
-
-
-> -
-> -unlock_exit:
-> -	spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
->  }
->  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
->  
+thanks,
+-serge
 
