@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-423923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A73E9DAE54
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:10:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B7D9DAE62
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:13:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9C7B223F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:10:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C36BBB21C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF473202F88;
-	Wed, 27 Nov 2024 20:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l2YGRm9g"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7599E12E1E0
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B81F20125E;
+	Wed, 27 Nov 2024 20:13:51 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD0612E1E0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732738222; cv=none; b=VkzMBazKue/2U9GC6HTKwM/5w0NUm7dQgfpNsqlvZMJ70BLSHzB6R128aRpV6/kUJ2eesh4sOAZN8g3pdhxLoMOkm4/tkobzlL323oln3om+ONqIB1sDP6mxFY761II6lz4UCz+t9kMgp8wqKo9Dgd5lVUuT6RmSvcEI/7rJ7Oc=
+	t=1732738431; cv=none; b=dEI2vU+ZP+VK/wLsXlwf2/c76T+Rf7IPIsOkBx7PHC7Vz7L77F4Ka2kNzSluvyBQ6cF1yoK+oA0yszkJDUfOqxLpiokpyYudJJoFuSIG5pkZmGI7IZ7OjNshUGxiD3lPHDaT5PHpQ2OBhenA7rYQ8crEU5B7iDXRN8augJEhtY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732738222; c=relaxed/simple;
-	bh=hUBcNXvuvLbYXhYdraBI3VWzdlKOrSFOIJZwTLRZEZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nd1d4qlxb600IFANnSviNfX9o+WJWjKHXpxYJQN13qm7yMejICM9db2n8zJHnHsYp5PcNV2TbRakyE8WISLV0Nk7YWyHXh4NrE/kQNs1S5VJN3KLksm5Tu1IQrInkfFYEHMdHre7ThK4bVUTkWa4vQm0gk8JoiyqVi8qv2vkaEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l2YGRm9g; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a9f9a225so4295e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:10:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732738219; x=1733343019; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hUBcNXvuvLbYXhYdraBI3VWzdlKOrSFOIJZwTLRZEZw=;
-        b=l2YGRm9gPz0ZsEhi8TnCA9kznf2WGM+FRitcXjQA40wZNRpg1+GHIc7J+bJq0UmgW+
-         +997SmxG7Ei1vpqfjjvPPN4bDgi/ARVac/AeyZmG9Y+jTv8Na+EcXUMK53rjXqJVIDuz
-         /81AHUDLGMxxftFghEmcELMiyM/XkJDuRVV4/Qrb3wlR7mYqOeLAA98y3BfkHO5dT7TG
-         ufPRfEi/V+NX/GAxTnNOW2XFSSqpDlqVgLZqSepsz1jPqD6CLr3LDwGNIwlhwrl+tMiR
-         qTQI/ffoUpOKYI1Yl3RJYcJj2lHBibtQ8hgaIMEVkJxGrpbgTZdQ+aIkWkgaB4hLPcmS
-         F+LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732738219; x=1733343019;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hUBcNXvuvLbYXhYdraBI3VWzdlKOrSFOIJZwTLRZEZw=;
-        b=fTVUZJgarwZHPAxV/P1pjzHqzFBrJi1PGj1aQzgG4ZmB9SxuXYZwMeVqpnMlJzfFQu
-         wG/T2VCVk+7ooxZFV3Du7drhQO1TJ2jLcmpc5oBc2tkOx0NADlwon9/gn9Jt8wCsCAK4
-         aBehEY8HYA5EuyRh9jHM/QVMbSm34v5hij14q29GjqJVARfzc+voR5bkmrEX2uk4Rwf0
-         U9xZ+PP2XGxr8ns86KD6L52eDrAJyQEKEB4KQ8fQtBMDmly/TI71SN0jRXRQ3K0Irqiw
-         c/bb9Ln3i3Q0OiMjcbUQWYTRoPyKN9tJ1r/dQwNGoLv5igDHMVsA8yiO/LS6nPYzbaVs
-         ak4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZMr9NMfwVC4wCesqgPDQxlBfFFEpOQZWPh2S++Iw0UPXJeJJ4iNKBJK2AE/tC44oUc9OoDx+YjyK1dlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj1GGDUsR1f07SMienUPoxiYO6MK9U9c9P/bBZjB73IaQWmXia
-	ljEUTFNhWuzqEQqMruvTdg6mt3lZIvfmV+5WD+9ryUZUDBJdpV9jvPRadc46UI8J3qrer9PmN7E
-	aj/AGpRP6lDfMU5l9wGEWacQ8fkAHG0WpWXYy
-X-Gm-Gg: ASbGncuWD1F+82BnBDHCAc0Z4zNopWGQreka41ijPk3dkYEp0yybx3XzwOFGKhqVo7m
-	KhgqPGEYkcCSz1qknk/ws/yywLQpK0qulRAyTnLOErky7Bnyi2JSfrBlSnxY=
-X-Google-Smtp-Source: AGHT+IG+kehlB4s0M5dWyJKGLHeYyY36EY44ty+lp0Mvoe5e9HkKe9gEegCulaT0+L4A1Oxd2n33hHXL6WkpLXJ43p4=
-X-Received: by 2002:a05:600c:3b28:b0:42b:8ff7:bee2 with SMTP id
- 5b1f17b1804b1-434b066ec64mr85985e9.5.1732738218634; Wed, 27 Nov 2024 12:10:18
- -0800 (PST)
+	s=arc-20240116; t=1732738431; c=relaxed/simple;
+	bh=1AlcZanFnP+t+j0vD87Ebae2fiwPOYbqZu2hIx8r7KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A2IACsP+o/Dm3Nh7RzxUEtdDbYN9rkl7jaiNNUGAh7xBTWyC8ugGFsE592XJYliCUjcOUm6Q+R8U+VIYn49RX89n7t0uBM7AkKjxdH+Hn7gR5p5Bzp4y2YSqJLcFhacN8KbJ9qhl274uQu9jgrroGW3stZn9BdiSpy3C03gDnoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4ARKAHQb021080;
+	Wed, 27 Nov 2024 14:10:17 -0600
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4ARKAGvl021078;
+	Wed, 27 Nov 2024 14:10:16 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 27 Nov 2024 14:10:15 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, arnd@arndb.de
+Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
+Message-ID: <20241127201015.GO29862@gate.crashing.org>
+References: <20241114131114.602234-1-mpe@ellerman.id.au> <20241114210418.GM29862@gate.crashing.org> <87mshm7ixu.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241125171617.113892-1-shakeel.butt@linux.dev> <Z0Yhivws5XSeme68@google.com>
-In-Reply-To: <Z0Yhivws5XSeme68@google.com>
-From: Axel Rasmussen <axelrasmussen@google.com>
-Date: Wed, 27 Nov 2024 12:09:42 -0800
-Message-ID: <CAJHvVcg_mHiGvMpaM5XX8F7cvsxxGc9oOdCsy4zjMJAd9kX8-A@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: mmap_lock: optimize mmap_lock tracepoints
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, 
-	Steven Rostedt <rostedt@goodmis.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mshm7ixu.fsf@mpe.ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 
-No objections. :)
-
-Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
-
-
-On Tue, Nov 26, 2024 at 11:29=E2=80=AFAM Roman Gushchin
-<roman.gushchin@linux.dev> wrote:
->
-> On Mon, Nov 25, 2024 at 09:16:17AM -0800, Shakeel Butt wrote:
-> > We are starting to deploy mmap_lock tracepoint monitoring across our
-> > fleet and the early results showed that these tracepoints are consuming
-> > significant amount of CPUs in kernfs_path_from_node when enabled.
+On Tue, Nov 26, 2024 at 02:49:49PM +1100, Michael Ellerman wrote:
+> Segher Boessenkool <segher@kernel.crashing.org> writes:
+> > On Fri, Nov 15, 2024 at 12:11:04AM +1100, Michael Ellerman wrote:
+> >> CHRP (Common Hardware Reference Platform) was a standard developed by
+> >> IBM & Apple for PowerPC-based systems.
+> >> 
+> >> The standard was used in the development of some machines but never
+> >> gained wide spread adoption.
+> >> 
+> >> The Linux CHRP code only supports a handful of machines, all 32-bit, eg.
+> >> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possibly
+> >> some from Motorola? No Apple machines should be affected.
+> >> 
+> >> All of those mentioned above are over or nearing 20 years old, and seem
+> >> to have no active users.
 > >
-> > It seems like the kernel is trying to resolve the cgroup path in the
-> > fast path of the locking code path when the tracepoints are enabled. In
-> > addition for some application their metrics are regressing when
-> > monitoring is enabled.
-> >
-> > The cgroup path resolution can be slow and should not be done in the
-> > fast path. Most userspace tools, like bpftrace, provides functionality
-> > to get the cgroup path from cgroup id, so let's just trace the cgroup
-> > id and the users can use better tools to get the path in the slow path.
-> >
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->
-> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
->
-> Thanks!
+> > This was used by all non-IBM 970 systems as well.  The last was SLOF on
+> > JS20 and JS21, about 20 years ago yes, and I doubt anyone uses it still
+> > (I don't).
+> 
+> By "this" you mean the CHRP standard?
+
+I mean the "maple" stuff, and the whole "chrp" thing in PowerPC Linux.
+
+> At least in Linux the "CHRP" platform has always been 32-bit only AFAIK.
+
+No?  I've written stuff for it for years :-)
+
+> My memory is that JS20/JS21 used the "maple" platform, which was a
+> 64-bit only bare-metal platform, possibly it was actually == CHRP, but
+> we didn't call it that in Linux.
+
+Well, it is what it is called in the Open Firmware device trees!
+
+It has a root "device_type" property that starts with the string "chrp".
+But that really is only because Yaboot for some reason needs it to
+behave reasonably, heh.  (I didn't remember the details, but I still
+have the original SLOF open source release tarballs :-) )  So yeah it
+wasn't anything "chrp" in Linux itself, aha.
+
+> But maybe I'm wrong, you were more involved than me back than, and it
+> was a long time ago :)
+
+Very long ago.  Sad to see it go, but the Git tree will never forget :-)
+
+
+Segher
 
