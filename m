@@ -1,261 +1,201 @@
-Return-Path: <linux-kernel+bounces-423472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDADA9DA803
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:41:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814F69DA802
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:41:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3DD16588D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:41:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40CA0281C10
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE41B1FCCF1;
-	Wed, 27 Nov 2024 12:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gy0/+bnN"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32021FCCE7;
+	Wed, 27 Nov 2024 12:41:28 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874F514431B;
-	Wed, 27 Nov 2024 12:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C7E1BC3C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732711307; cv=none; b=ohElj0BL8cPFgpM4l5LZLUnhz++F1SJ0KSAhuztoDErCOS0hBKhD6PoCzkMg8kwcxybsiPHeU4zIVlVMi8XDHOFfnvL9kjHYhkJpwIhEJ3GDL7Dqx73INgRLB+1cEdAwU0HI/bLqsLBiCobtLWLCf2Ylb71Ou55a+wg8phdeEf8=
+	t=1732711288; cv=none; b=cQtZXlUPYzY7KBfsf8HDwgZjeMgkjGTV35GOWwr6cKCO3TTzJuoLqe17K+YQB06L6vMwdFlP0oLuBqoEWr1QfGUjGBC8H8o8QzFeB/brUbosqaR2rmOlNYU7PcfbObHJyCZcb3+TmjSu7SzqBwsQjv8jK4KlLOFzQjOGvM+Jsyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732711307; c=relaxed/simple;
-	bh=jzwfXMKGFvfliBaBmwCPcdqRJHYyzBv5yI+z5+w7A60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pdKpcCSt5255hiocQnySH/jIsyrpz0Fch7nHX6HPTQOczKamL7sZF2OPQKA2BiM01AHducuj7cfpK8KNJL8g+YkUAThmJGLP7eroXAvEYkfooE5xLtCXrxtx0DfUByXVSHWdeCNXqxt3qCILZlgcyhjLtf1oPtW6R8YGQM9gO7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gy0/+bnN; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-856e98ad00bso2219526241.0;
-        Wed, 27 Nov 2024 04:41:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732711304; x=1733316104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=16wNQUe4wMRKDkorNrGa0gcC7fienvSCUWfzA3w+ZP8=;
-        b=gy0/+bnNMi1jEhu6Bw5uGETuCDULhhILQ0eSrmLIRUbwFl+202QyIGnlbUmZVMkO8e
-         EOmHkcb21TN8tvZSBiuqGhiEbMcZx6Bc10WWrQkAAiujYfrpvNS2h7rhfy9MOkH2hX4s
-         Nlw+wtEBjlHzYNEBNyiwB9iJVf7fPOrTePh0HBCdrHw9J/6AjRRc9fSCxfaThVKmlfM1
-         SNWMK8cQxWTSYLq3pl1XG2LOTMYwVARAhFmxPKIe51z+RJIR82AAt550XnBGRi5NTLFT
-         PtjTJ7xyoTQgp99WaFD6oGoSvH1YqITbQnkdHrxBDF/1t150idJUuFHI0gPHU3F+P36c
-         QoYw==
+	s=arc-20240116; t=1732711288; c=relaxed/simple;
+	bh=ltxwsYKMLXNAFQlvvwNcEgin+pkHdw7KaOfFBELzKFE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kazX+5jSxxCmGi6rKb6z+HE1qMp1Ti1Rf+JeFXXCHWPs57+Sd+9ILnzQ6XQuF3/fLFc3juTBWDoSiApwrfHnOqd6A9a10CGtkkMmOaOCGhw/xpgu4cUnDgFrtVAo23g8HmqE9mAyaw8JLH1utS3h2yX2Oe83Ejgmh4E9evgLNh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77fad574cso63513285ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:41:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732711304; x=1733316104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=16wNQUe4wMRKDkorNrGa0gcC7fienvSCUWfzA3w+ZP8=;
-        b=asoUgBxc3n592nGNt7PURdYICmUArJReWSUA3Ylk2PRz79EtOH0Y0zZga8o39LGGlP
-         FbroQgBpQHE4EVdE3X6pDnvpt/htyErYovTRY4d/MKjCNOddqkYX5kbqwbZ70cWdTldP
-         MPFYOJLJyvqgTBQ+zyd5dzNBqGb16MisrNaXdJgYK9wz3z0E+bob4Hpc/ATACgo4m/nO
-         hIH9hKPuupg7jIIhbx/Q7JcDCzpTQIbnewMn5kFIx39AXTahBfvR40hEZpW3Ni4DXiaY
-         VGRMenZR1f7Ya1XI8hOEN2T4l9LbE3tIDsga+20FxgCcGWsitd2B7J/kPWFEWMeURPjM
-         fdCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBRQTpNhNB4SAcRJApjApk8sWQ+52D6zJghXPO/x7TkIZ9puIy6EwtH8bXaGAdRJhnIWwhR0DWm9E=@vger.kernel.org, AJvYcCUvh0g43t7/gWXF6fBhP87uCne5neUJv0Q0/4K/xeQ7FyvevQ6FVEQRQUPVw1/lk2VJX6k8kOrLpWW6YOxuQYK2Ilo=@vger.kernel.org, AJvYcCWuoMyJAKECpKLWaIZrrnUwOjF2kB9i0MkJAcc/ekn8veY2HI6HCtoznRoKunVhP+3uiYnIZfrGuqqHXC5V@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnc+MKL2+Zo5zch5i5wKMenCXhoCO8UJfxa6mFQY5Rm32AOH/H
-	3O0sas4ga0mFQg2hwzPpdBIdg4FEX0SBncpNhz5GtZ1FyQtv80vJrbIKdX23d3GXY1xFqVG5oCv
-	+uBKFiJrhJM/owTq4t6qPgLtLO1U=
-X-Gm-Gg: ASbGncu3WV5ABXaNg/gJs2YP1M0bzux9L/g6sjYOV2QEIF0eYiSm0yo6bILZgF2Zg1+
-	tJ5vp3LV+NW6aZupCXQwHU6nY9CIWO6mR1RYSA92GLzjCE4Hr32wVGQxt6dBCmSs=
-X-Google-Smtp-Source: AGHT+IGRCpQmXuKz6tAKA4gkXv+3CK8qNDaQFWzjDOELjQFo/h42vbpYfBZ+niAaKrMDSzhaY/pwojvNZQHgrYenixI=
-X-Received: by 2002:a05:6122:3d15:b0:50c:4707:df0 with SMTP id
- 71dfb90a1353d-515569cc47cmr4013546e0c.5.1732711304318; Wed, 27 Nov 2024
- 04:41:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732711286; x=1733316086;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQYS0cG3LtS9IuwQPAFcgh+J9lnXsoBqjCXOc+R9V6A=;
+        b=CPTy2OMP6MOwacXRR238KI7qKBzirnh5tz0Sp8WZSyJIgP/CkR/uhuL4t26bIMvYwd
+         rAt2PzSaSn9kCK7fCfoo5nMOEBu/m20GseU2PsQFqPNspQYrQ5kZeIz+HoAcnuy1YmTi
+         +3D+SqHD7w1lzJSaNrLfyN0+Oja+NssndNw8WaFXAm2EJrjUdhlWZRbLzQc1V2ksYe75
+         u5dNKX4PF2JHjjPJ3GL1Jtm4bsWJInnmw26XdWzez4/v4zst036RWF40HYaeckN087Yy
+         TSqTyTLBnbsYizC111E3xWCFboJNx6RJC4hPszw+yRGziwFvr853sQHgV3k0IfxsXo0u
+         AWIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlbwpMYGzGz3iJVWaWezHHbeybNwox81ht3SYruFJOMaOPAUO4VJNGXPiC0bxytxbAlABwLXNGCorzBWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPtbn8fophg3gK8qiNiW4kmkAUumQBlrfDhkJiLl9MeUROwQtg
+	NEk3H4RhNlt6Ku2moEdwrTnI7gCxZXYL0OmuL/96hA1n+6Fm1JUkinmZ0wUQeM/epMFAvfNokm4
+	yLnhrXcYFbQ17onxCCZzc2m+Q7/TuDerLSJ0T7q0NKuUwOjjzcV8tDkA=
+X-Google-Smtp-Source: AGHT+IFP+zsqRvs3mQ9WuZzJ49Roy5sZs1CSK+VUqduX53qWfGd0Scup1Ob/oGPMSQYJ4BCm6+PyHYVb6kXwcwW8MIC7WRPCX9GS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241104232401.290423-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdX0p4KhTNpNKMfZBjrCDxsyGO7sSwcJZWxBgxoHBZy9jQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 27 Nov 2024 12:41:18 +0000
-Message-ID: <CA+V-a8vMMwyZ0rsdzrMuhvWDXa5dMtgYXf9+6YEAm1dXYUU+DQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add selective Runtime PM
- support for clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Received: by 2002:a92:c265:0:b0:3a7:70a4:6872 with SMTP id
+ e9e14a558f8ab-3a7c555f0a9mr30553605ab.9.1732711285799; Wed, 27 Nov 2024
+ 04:41:25 -0800 (PST)
+Date: Wed, 27 Nov 2024 04:41:25 -0800
+In-Reply-To: <6739af3b.050a0220.87769.0007.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67471375.050a0220.21d33d.0024.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_alloc_v4_validate
+ (2)
+From: syzbot <syzbot+8dd95f470e7cd0ff4b66@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+syzbot has found a reproducer for the following issue on:
 
-Thank you for the review.
+HEAD commit:    7eef7e306d3c Merge tag 'for-6.13/dm-changes' of git://git...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1346e1e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c5486b9d7cc64830
+dashboard link: https://syzkaller.appspot.com/bug?extid=8dd95f470e7cd0ff4b66
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1353fff7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151643c0580000
 
-On Wed, Nov 27, 2024 at 9:54=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for your patch!
->
-> s/rzv2h-cpg/rzv2h/
->
-Ok, I'll update the commit header.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2331c33a914b/disk-7eef7e30.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8e50ed828391/vmlinux-7eef7e30.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a942e199e781/bzImage-7eef7e30.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/495fbbf0d709/mount_0.gz
 
-> On Tue, Nov 5, 2024 at 12:24=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Update `rzv2h_cpg_attach_dev` to prevent external clocks not tied to th=
-e
-> > power domain from being managed by Runtime PM. This ensures that only
-> > clocks originating from the domain are controlled, thereby avoiding
-> > unintended handling of external clocks.
-> >
-> > Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_cl=
-k`
-> > structures to exclude specific clocks from Runtime PM when needed. Some
-> > clocks, such as those in the CRU block, require unique enable/disable
-> > sequences that are incompatible with standard Runtime PM. For example,
-> > the CSI-2 D-PHY clock initialization requires toggling individual clock=
-s,
-> > making Runtime PM unsuitable.
-> >
-> > The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock shou=
-ld
-> > be managed by Runtime PM based on this `no_pm` flag. New macros, such a=
-s
-> > `DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypas=
-s
-> > PM.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - Updated code to skip external clocks to be controlled from runtime PM
-> > - Updated id range check
-> > - Updated commit message
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > @@ -668,8 +671,38 @@ struct rzv2h_cpg_pd {
-> >         struct generic_pm_domain genpd;
-> >  };
-> >
-> > +static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
-> > +                               const struct of_phandle_args *clkspec)
-> > +{
-> > +       if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_cou=
-nt !=3D 2)
-> > +               return false;
-> > +
-> > +       switch (clkspec->args[0]) {
-> > +       case CPG_MOD: {
-> > +               struct rzv2h_cpg_priv *priv =3D pd->priv;
-> > +               unsigned int id =3D clkspec->args[1];
-> > +               struct mod_clock *clock;
-> > +
-> > +               if (id >=3D priv->num_mod_clks)
-> > +                       return true;
-> > +
-> > +               if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR=
-(-ENOENT))
-> > +                       return true;
->
-> Shouldn't this return false for the two invalid cases above?
->
-Oops, I agree.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8dd95f470e7cd0ff4b66@syzkaller.appspotmail.com
 
-> > +
-> > +               clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->nu=
-m_core_clks + id]));
-> > +
-> > +               return !clock->no_pm;
-> > +       }
-> > +
-> > +       case CPG_CORE:
-> > +       default:
-> > +               return true;
->
-> False? (I know the code treated it is a PM clock before)
->
-OK.
+=====================================================
+BUG: KMSAN: uninit-value in bch2_alloc_v4_validate+0x739/0x19a0 fs/bcachefs/alloc_background.c:249
+ bch2_alloc_v4_validate+0x739/0x19a0 fs/bcachefs/alloc_background.c:249
+ bch2_bkey_val_validate+0x2b5/0x440 fs/bcachefs/bkey_methods.c:143
+ bset_key_validate fs/bcachefs/btree_io.c:841 [inline]
+ validate_bset_keys+0x1531/0x2080 fs/bcachefs/btree_io.c:910
+ validate_bset_for_write+0x142/0x290 fs/bcachefs/btree_io.c:1942
+ __bch2_btree_node_write+0x53df/0x6830 fs/bcachefs/btree_io.c:2152
+ bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
+ bch2_btree_node_rewrite+0x1442/0x1930 fs/bcachefs/btree_update_interior.c:2179
+ async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2236 [inline]
+ async_btree_node_rewrite_work+0x485/0x1710 fs/bcachefs/btree_update_interior.c:2249
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-> > +       }
-> > +}
-> > +
-> >  static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, stru=
-ct device *dev)
-> >  {
-> > +       struct rzv2h_cpg_pd *pd =3D container_of(domain, struct rzv2h_c=
-pg_pd, genpd);
-> >         struct device_node *np =3D dev->of_node;
-> >         struct of_phandle_args clkspec;
-> >         bool once =3D true;
-> > @@ -679,6 +712,12 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_=
-domain *domain, struct device
-> >
-> >         while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells"=
-, i,
-> >                                            &clkspec)) {
-> > +               if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
-> > +                       of_node_put(clkspec.np);
-> > +                       i++;
-> > +                       continue;
->
-> This loop may start to loop nicer using
-> "for (i =3D 0; !of_parse_phandle_with_args(...); i++)".
->
-Ok, I'll switch to a for loop here.
+Uninit was stored to memory at:
+ bch2_alloc_v4_validate+0x27f/0x19a0 fs/bcachefs/alloc_background.c:247
+ bch2_bkey_val_validate+0x2b5/0x440 fs/bcachefs/bkey_methods.c:143
+ bset_key_validate fs/bcachefs/btree_io.c:841 [inline]
+ validate_bset_keys+0x1531/0x2080 fs/bcachefs/btree_io.c:910
+ validate_bset_for_write+0x142/0x290 fs/bcachefs/btree_io.c:1942
+ __bch2_btree_node_write+0x53df/0x6830 fs/bcachefs/btree_io.c:2152
+ bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
+ bch2_btree_node_rewrite+0x1442/0x1930 fs/bcachefs/btree_update_interior.c:2179
+ async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2236 [inline]
+ async_btree_node_rewrite_work+0x485/0x1710 fs/bcachefs/btree_update_interior.c:2249
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-> > +               }
-> > +
-> >                 if (once) {
-> >                         once =3D false;
-> >                         error =3D pm_clk_create(dev);
-> > diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2=
-h-cpg.h
-> > index 819029c81904..0723df4c1134 100644
-> > --- a/drivers/clk/renesas/rzv2h-cpg.h
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> > @@ -100,6 +100,7 @@ enum clk_types {
-> >   * @name: handle between common and hardware-specific interfaces
-> >   * @parent: id of parent clock
-> >   * @critical: flag to indicate the clock is critical
-> > + * @no_pm: flag to indicate PM is not supported
-> >   * @on_index: control register index
-> >   * @on_bit: ON bit
-> >   * @mon_index: monitor register index
-> > @@ -109,17 +110,19 @@ struct rzv2h_mod_clk {
-> >         const char *name;
-> >         u16 parent;
-> >         bool critical;
-> > +       bool no_pm;
-> >         u8 on_index;
-> >         u8 on_bit;
-> >         s8 mon_index;
-> >         u8 mon_bit;
-> >  };
-> >
-> > -#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _mon=
-index, _monbit) \
-> > +#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onb=
-it, _monindex, _monbit) \
->
-> Note that this series conflicts with "[PATCH 00/12] Add support for
-> Renesas RZ/G3E SoC and SMARC-EVK platform", which you are probably
-> already aware of.
->
-> [1] https://lore.kernel.org/all/20241122124558.149827-1-biju.das.jz@bp.re=
-nesas.com/
->
-Yep, I'll ask Biju kindly to rebase the changes on top of v3 while he
-sends v2. Or do you want me to rebase on the above?
+Uninit was stored to memory at:
+ memcpy_u64s_small fs/bcachefs/util.h:393 [inline]
+ bkey_p_copy fs/bcachefs/bkey.h:47 [inline]
+ bch2_sort_keys_keep_unwritten_whiteouts+0x16af/0x19d0 fs/bcachefs/bkey_sort.c:187
+ __bch2_btree_node_write+0x3ae8/0x6830 fs/bcachefs/btree_io.c:2095
+ bch2_btree_node_write+0xa5/0x2e0 fs/bcachefs/btree_io.c:2284
+ bch2_btree_node_rewrite+0x1442/0x1930 fs/bcachefs/btree_update_interior.c:2179
+ async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2236 [inline]
+ async_btree_node_rewrite_work+0x485/0x1710 fs/bcachefs/btree_update_interior.c:2249
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Cheers,
-Prabhakar
+Uninit was stored to memory at:
+ memcpy_u64s_small fs/bcachefs/util.h:393 [inline]
+ bkey_p_copy fs/bcachefs/bkey.h:47 [inline]
+ bch2_sort_repack+0xb74/0x1040 fs/bcachefs/bkey_sort.c:140
+ bch2_btree_sort_into+0x212/0x620 fs/bcachefs/btree_io.c:399
+ bch2_btree_node_alloc_replacement+0xa3d/0xb60 fs/bcachefs/btree_update_interior.c:469
+ bch2_btree_node_rewrite+0x2d4/0x1930 fs/bcachefs/btree_update_interior.c:2155
+ async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2236 [inline]
+ async_btree_node_rewrite_work+0x485/0x1710 fs/bcachefs/btree_update_interior.c:2249
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4238
+ __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4255
+ __do_kmalloc_node mm/slub.c:4271 [inline]
+ __kmalloc_node_noprof+0xc96/0x1250 mm/slub.c:4289
+ __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:650
+ btree_bounce_alloc fs/bcachefs/btree_io.c:124 [inline]
+ btree_node_sort+0x78a/0x1d30 fs/bcachefs/btree_io.c:323
+ bch2_btree_post_write_cleanup+0x1b0/0xf20 fs/bcachefs/btree_io.c:2248
+ bch2_btree_node_prep_for_write+0x494/0x720 fs/bcachefs/btree_trans_commit.c:93
+ bch2_trans_lock_write+0x7ef/0xc00 fs/bcachefs/btree_trans_commit.c:129
+ do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:896 [inline]
+ __bch2_trans_commit+0x31c4/0xd190 fs/bcachefs/btree_trans_commit.c:1121
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ bch2_journal_replay+0x2e3d/0x4d30 fs/bcachefs/recovery.c:317
+ bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:191 [inline]
+ bch2_run_recovery_passes+0xaf9/0xf80 fs/bcachefs/recovery_passes.c:244
+ bch2_fs_recovery+0x447b/0x5b00 fs/bcachefs/recovery.c:861
+ bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0x13ea/0x22d0 fs/bcachefs/fs.c:2170
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.12.0-syzkaller-09567-g7eef7e306d3c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: btree_node_rewrite async_btree_node_rewrite_work
+=====================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
