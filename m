@@ -1,165 +1,144 @@
-Return-Path: <linux-kernel+bounces-423110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C43B9DA2FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:23:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3BE9DA304
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:25:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE12EB216CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:23:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C9F284255
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34FA1494AB;
-	Wed, 27 Nov 2024 07:23:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8A714EC4E;
+	Wed, 27 Nov 2024 07:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8Fc8TA0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87F9149C4F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6461114;
+	Wed, 27 Nov 2024 07:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732692219; cv=none; b=g06kfN5upf8PDqiAOBNP1ybaau26w1VWMl3A2U0qCVbFwd0E6WRVTqocOGSRVvrOUex8ahxEafjuUdOjo/YUS3iFqBJU09pREGx1IjQqA/3bdP1rCAcEwbrSLczBVzrmJ0HsORZDvUte7Yfb0x/CYZMug14wdb+zAssZx3ezO/U=
+	t=1732692301; cv=none; b=I7cBYjJjKa5R7kgmlcvRoiQ+EoTPS7UqowT6E+3fBLeHapZgwk2jMJzM0xE1GvY1/tvlajRMf9rougxE4Fi7x9Ls8aik4rwgVuU/PLf5BUhnXxdGsF6hklp2txCRrGH5WHyCoDCQqGbHuyb/gEMjsma4xUV5fG5qh1mTYdhPox4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732692219; c=relaxed/simple;
-	bh=zJmbLpKS5QTdD23s8dpSzT1IWRSLh1IzqMiXdY06JBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCPpF4HOonusEdBFU20bDU46eUKlf/ShuzZ87mzHevf96VA/OtoqTH6cHBpX/pK/HmgcqWzfzrbKNqxIewXoswj3ROLXOZMYhmQp82cWxU7ySRU3dNySHfxcNCBUZ8WNnKvMlIaPwL9xfaHdlDYgrQS23JEAgEw0Bgr4/82edEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tGCOH-0007Aj-EA; Wed, 27 Nov 2024 08:23:13 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tGCOG-000O6d-05;
-	Wed, 27 Nov 2024 08:23:12 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 5876E37E146;
-	Wed, 27 Nov 2024 07:23:12 +0000 (UTC)
-Date: Wed, 27 Nov 2024 08:23:10 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, 
-	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
- SoC support
-Message-ID: <20241127-hidden-termite-of-fruition-46bcbe-mkl@pengutronix.de>
-References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
- <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
- <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
- <20241126-independent-crocodile-of-finesse-106009-mkl@pengutronix.de>
- <01a7de95-24e2-4c75-a818-bbc363e89844@oss.nxp.com>
- <20241126-capable-vagabond-tody-8b3717-mkl@pengutronix.de>
- <1a9281ec-3a4f-4175-8892-ee2e1ce1308a@oss.nxp.com>
- <20241126-aquatic-brawny-shrimp-b3cc0e-mkl@pengutronix.de>
- <20241126-conscious-keen-cricket-c603ff-mkl@pengutronix.de>
- <e8d11c7f-0bf5-44cd-bb2d-a7e454905e53@oss.nxp.com>
+	s=arc-20240116; t=1732692301; c=relaxed/simple;
+	bh=P8kFsxDlZKWl7Xli/WBLMhjNY2vCFvtxZpeE++EhU68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g3nqD5b2EoX4REhVZiJE8LR3PXhB3iHmUIDhZPHYyzIHD5vxxMkn+ti6hAqMjPe3zxEusTtaZlJzwyvLuV7cS9Om4wNefrdBM5t9L0xmx8hx62laFkC/H2Y8+A/YDzCjakOapvHMp416DS/SCounQpYaD5DMYE2nrq/I8CkWOmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8Fc8TA0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKLZME007169;
+	Wed, 27 Nov 2024 07:24:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S2AWkEyxvmsl1kvKldkRb2KMSlvYt9LKy1TqsWTIG5A=; b=h8Fc8TA0mzTfkfDB
+	tW0wPDETYDLRFUJLZX4LDurH6YMdAYN04rPUXRaAAKDgM6CxeIKKHzvGWSFfg5e3
+	lzONddtNv8kAf7rbzWDdOn8FmNCISbALj25PS+8rlKPLgHDoAiS/pHF0w4iVye/+
+	YIW8ZKjFY3asWlmXs1T56f6tbNVsmAaiV5Q38mucSJDQUlcDRBVQe9Pz8hbEzar4
+	LjgxXG6XQOczQFL6DwX3GlsV0HRHQHCy+niOfNVHxqgJB6/3d19bQus9oScj8LZH
+	nkxMVfwn7xkqqe3WZeU3V5jx6oCSALP8GAgr1DZd0huf0nf1SE0s6DOiS/4lKScB
+	esmOkg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw9dukf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 07:24:53 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR7Oq46012527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 07:24:52 GMT
+Received: from [10.216.30.52] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
+ 2024 23:24:48 -0800
+Message-ID: <2d10224e-102c-4508-99f4-5743588d0686@quicinc.com>
+Date: Wed, 27 Nov 2024 12:54:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5dvi24przo7ojyc4"
-Content-Disposition: inline
-In-Reply-To: <e8d11c7f-0bf5-44cd-bb2d-a7e454905e53@oss.nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/22] dt-bindings: net: wireless: describe the ath12k
+ AHB module
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        Kalle Valo
+	<kvalo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jeff Johnson
+	<jjohnson@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-2-quic_rajkbhag@quicinc.com>
+ <h4xel7xh3vyljxi7jn2afqasfmbsiqjtgpvqthrviovode6cxt@ey5nnzi4dwtv>
+ <708e9d22-0513-4646-aeac-2187c052e208@quicinc.com>
+ <b5f352e8-19a5-4c06-b9ba-44af791f6a81@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <b5f352e8-19a5-4c06-b9ba-44af791f6a81@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: a33gLwOSBQYVf_Bonnz9Mjr4doGl8QAp
+X-Proofpoint-ORIG-GUID: a33gLwOSBQYVf_Bonnz9Mjr4doGl8QAp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=901 adultscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411270060
 
+On 10/16/2024 2:30 PM, Krzysztof Kozlowski wrote:
+>>>> +    description:
+>>>> +      phandle to a node describing reserved memory (System RAM memory)
+>>>> +      used by ath12k firmware (see bindings/reserved-memory/reserved-memory.txt)
+>>>> +
+>>>> +  qcom,rproc:
+>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>> +    description:
+>>>> +      DT entry of a WCSS node. WCSS node is the child node of q6 remoteproc driver.
+>>>> +      (see bindings/remoteproc/qcom,multipd-pil.yaml)
+>>> DT nodes are not children of drivers. But other DT nodes. Explain why
+>>> this phandle is needed, what is it for.
+>>>
+>>> To me it looks like you incorrectly organized your nodes.
+>>>
+>> This phandle is required by wifi driver (ath12k) to retrieve the correct remote processor
+>> (rproc_get_by_phandle()). Ath12k driver needs this rproc to interact with the remote
+>> processor (example: booting-up remote processor).
+> That's driver aspect. Why does the hardware needs it?
+> 
+> WiFi is the remote processor, so I would expect this being a child. Or
+> just drop entirely.
+> 
+> You keep using here arguments how you designed your drivers, which is
+> not valid. Sorry, fix your drivers... or use arguments in terms of hardware.
+> 
+> 
+>> In next version, will correct the description based on existing bindings (qcom,ath11k.yaml).
+> Sorry, let's don't copy existing solutions just because they exist.
 
---5dvi24przo7ojyc4
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
- SoC support
-MIME-Version: 1.0
-
-On 26.11.2024 17:21:14, Ciprian Marian Costea wrote:
-> On 11/26/2024 5:19 PM, Marc Kleine-Budde wrote:
-> > On 26.11.2024 16:18:41, Marc Kleine-Budde wrote:
-> > > On 26.11.2024 17:15:10, Ciprian Marian Costea wrote:
-> > > > > > > > > +        interrupt-names:
-> > > > > > > > > +          items:
-> > > > > > > > > +            - const: mb_0-7
-> > > > >=20
-> > > > > I was wondering if it makes sense to have an interrupt name not
-> > > > > mentioning the exact mailbox numbers, so that the same interrupt =
-name
-> > > > > can be used for a different IP core, too. On the coldfire SoC the=
- 1st
-> > > > > IRQ handles mailboxes 0...15.
-> > > > >=20
-> > > >=20
-> > > > I am ok with proposing a more generic name for mailboxes in order to
-> > > > increase reusability among FlexCAN enabled SoCs.
-> > > > Further specific mailbox numbers could be mentioned in the actual
-> > > > S32G2/S32G3 dtsi flexcan node.
-> > > >=20
-> > > > One proposal could be:
-> > > > - mb-1: First Range of Mailboxes
-> > > > - mb-2: Second Range of Mailboxes
-> > > >=20
-> > > > Let me know if you agree to update as proposed in V3.
-> > >=20
-> > > Looks good to me!
-> >=20
-> > Or maybe start with "0", that makes it a bit easier to construct the
-> > names of the IRQ-names in a for loop.
-> >=20
-> > regards,
-> > Marc
-> >=20
->=20
-> That makes sense. Thanks for the suggestion.
-
-I think we're almost there. Now you can change patch 1 to
-platform_get_irq_byname(..., "mb-1");.
-
-regards,
-Marc
-
-P.S.: Actual support for the mailboxes 64..127 or the extended FIFO can
-be added in a later patch.
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---5dvi24przo7ojyc4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdGyNsACgkQKDiiPnot
-vG9xmwgAjOg4eIKyhvOOMDZ6ThiRTE5QU0F6EGGfD5QDhvHTzX+DCWSFlohlIQ/E
-wL7ulkWgis9P/FZzagYnSCQm5XSPFLaWb3KK3Q0cjsda/26dVTvOAeiweznJyoaX
-SyCtfFZfC7pYkiXZUDiq5IgZoFHu8t1PD9sRR6UtYdktJrP8eP7hFvVjMnGXKVBp
-Nawoaj9Nva9cvYfZj8r+zYMJ4lv7IV72Wm///V1wx20SxwNeFsDnOVNgptps5pm9
-EAQMVdXLui10d55G1IlbGR0sFLS4sjv2zYLbjfLO7P8m2X5KlqHqPkWITN0/rrw7
-nP6yTlwKa/VzOXtxOmNiPhPrqNqvJA==
-=k3bP
------END PGP SIGNATURE-----
-
---5dvi24przo7ojyc4--
+In the IPQ5332 platform, the WiFi component, known as the Wireless Control Subsystem (WCSS),
+functions as the wireless controller. Additionally, there is a separate hardware module, the
+Qualcomm Hexagon DSP(q6 remote processor), which is utilized for offloading WiFi processing
+tasks. These two hardware modules operate in conjunction, necessitating a phandle in the WiFi
+node that references the remote processor. Despite their interdependence, these modules are
+distinct from a hardware perspective.
 
