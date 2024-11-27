@@ -1,212 +1,425 @@
-Return-Path: <linux-kernel+bounces-423058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86049DA201
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:11:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2349DA208
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697C3284A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0FC2846FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21A9146A87;
-	Wed, 27 Nov 2024 06:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B54F148316;
+	Wed, 27 Nov 2024 06:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e92cstLW"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2040.outbound.protection.outlook.com [40.107.102.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPK7aqiI"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305EDF51;
-	Wed, 27 Nov 2024 06:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732687879; cv=fail; b=lAG0dHav8LaaNTnZ3GM31jzloMI33D6pEwJDNjxOP92JbRPYaZZRWqVPduuhzrFoHER7OxsdKBaH1RTTPXo/tWFOyRn5z4iE6+iV8kirxXOxEz2RCFgxZouhobzSauHZYCXZ/gcmFAAHPXsFDh42/udkivlJ9uRpuy9T4FuaN6k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732687879; c=relaxed/simple;
-	bh=bI0LYxaZhwHVbJbKiO+bUIk2TGWz+FSFabG2Dgarc/Q=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DCP9LYI7Mk19B6BUe8tTv4VuUsxfdX6p4Wl9Cf5jFLR3N34YZDpLJKqXu+5KYfZn+P0Vc5djbCi+e30Q1neAGCHb04lvdda/Up83/biWJuEW5ZN+C22M7YTX3eWLFHAxMZ0T0uzlqJ/Uk+X2OOzxcG+WLTK2K/U0BSyCnr+0Yv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e92cstLW; arc=fail smtp.client-ip=40.107.102.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lri/zhuO4HvmEm/nY0lxa0wIhkZrdM10dEX3YVBx6m3gn4djSR2kP5YcM6OYrr85sKnqedBv8azbv+qU1zbIJBIkVrtkzZdb/4Qu/VQyccSkN5YqfG03kY/W6DSvBpwi0X78hAse9jo2FWNwEu4gJ1Np6O0vtPgvKTllyBusMUILum8XziCY0DKjMAN+l+AGPrcllbbZH/XJwZ0nuHpm3UOVri1yJSq4lhQNqCGXf8G/eLyl1mCY9ONkA1zsxSpfwn5rmFGcxY2heLC6iAM9cfpqK4UeCT/wdtV3+6yRhUBQ43GSnif1k2osH3kfq6E/pBAgnLsd1l7PY6Z+EAkB/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4DlX08BDXLHyYISnucUx0dJUEBADoZF5OiZPXY5olrA=;
- b=JpQ7H4ZU8bjQF4SYflKdsoqfF9Nb6h1GL2bm1VPCaFTdriIZDxD7zv5dbPMw0cJlh56g0L4lkwi9dZZJPIdGkhm2aC5WHf6pdxmszBvrUGuaLd7qNIrfbAdtPKzFZT9G0L/rrAoU9k8/4iRVj62tjq4EkGOsLAqNB9kwjjZDigenDQfv9adqWBzORTPyYTFUpZcExG9OEynkuo/2+IKdaYa4HrkMAb+NoYYuM3MzudlMwbocDFrSrcCjtDmeW2hfu3qBryoS0yEsWdU05glqRsAOEwIky9Mx8JEn96tPao/NH/nf9YV6tou10wTypUAgAXmfI68aLp2NTXrcP7LrIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4DlX08BDXLHyYISnucUx0dJUEBADoZF5OiZPXY5olrA=;
- b=e92cstLWzK1EO2aGAMtirptCU+tenLmc31ACWCKIV94wqGSUKlk9OjphG0+L9gDJNGfYjNrpZVtfVYctIi0Kq940uWNBjVfM5SKfWgXlk4E34Q4mfJuGi7dhAzS8T77PQzqOno+jCN15/6q9B9bg0he2sHbS50+GkHEpnEMHyunpq5enG09gAsFCTYhMoauv3mQRBNu54IRFeV4334Ut7JNt5KOoRmMcuvUYG77SjDK/j8fCV/G8du+puZ2mNKt+xz99svik6HX8arEZCkCY9hVt8pUSZ6nK4pR8T1ajOEYzHI4W4OX/Cm6p9dAVoFi/3B9nUvbZJJdtnZLDJl9Tag==
-Received: from MW4PR03CA0323.namprd03.prod.outlook.com (2603:10b6:303:dd::28)
- by BL3PR12MB6426.namprd12.prod.outlook.com (2603:10b6:208:3b5::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Wed, 27 Nov
- 2024 06:11:14 +0000
-Received: from CO1PEPF000042AB.namprd03.prod.outlook.com
- (2603:10b6:303:dd:cafe::a2) by MW4PR03CA0323.outlook.office365.com
- (2603:10b6:303:dd::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.13 via Frontend Transport; Wed,
- 27 Nov 2024 06:11:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CO1PEPF000042AB.mail.protection.outlook.com (10.167.243.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.12 via Frontend Transport; Wed, 27 Nov 2024 06:11:14 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 26 Nov
- 2024 22:11:03 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 26 Nov 2024 22:11:02 -0800
-Received: from NV-2XGVVG3.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 26 Nov 2024 22:11:01 -0800
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <arnd@arndb.de>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] soc/tegra: fuse: Update Tegra234 nvmem keepout list
-Date: Wed, 27 Nov 2024 11:40:53 +0530
-Message-ID: <20241127061053.16775-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BED6DF51;
+	Wed, 27 Nov 2024 06:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732688051; cv=none; b=kHKET5TDLq0A87UIwcFIqjqyyELn1vRfASyoj4gzy+VjUR5Nhw3NF67Gh1Xk/3HNbv6REEePurxnmUBrIexZrCP9bXPWQg9tr91mcDi0APeR7brKZMsKN3nr+hH/bjrpq3rlwK37gDX5EcQZruBewJKW9GomSHZdNVSWxwysGgc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732688051; c=relaxed/simple;
+	bh=mIjObW/iBDG6II5VeKMX+1aOfpQnLoBEkcrTK3/L0dU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y1iLqsptCUywQTqDd9DxLLOOKYHgMat5cSICg/nMdRP3k04xcQPOOXSd7DFpADeZnOY4B+pKxPgReZfa5HfYVNUc7cNCzPQ9djcRGEDg+TZZNl6IpFyQSNXibHZJHrN2UNpivzGlckt1XJoJyjRVJpLx2oo5se/6srbPUdJOea8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPK7aqiI; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cfddc94c83so7942712a12.3;
+        Tue, 26 Nov 2024 22:14:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732688047; x=1733292847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oDoZpetLkqMnLB7cRFHPmJPgDTTNJdqJP5Z9EqKdMUQ=;
+        b=hPK7aqiIu5SmJlO3veQfgGIetHCY0ZE5klLCfjjEtwTvc6xmmheSO0KwNTg/1T9sJf
+         JC601VlxE/dVCYYJOlUurYDIWC9ydfXAChmugsA+hAkaIpIYokYayoPvOMNNy67plaDQ
+         mlechoqhogA8/MF1cmCoSBpKQdzMIoabT5Gr8nTy75tzgbz/z3A6X1482FR46WkNEbFD
+         qVt+e6mQuTyZSh13GPrTl5R9anLcmsGlpaLJHMFLzZ8ikhVlFV3UIXsGf+jtQKvgQRoR
+         3XvWm2DO54Uj7KYTQLjxQ72a8qQ/D09PD3WXcRPsQTW/nvJIElVjVou+tdYwX6ODcJLn
+         iLWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732688047; x=1733292847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oDoZpetLkqMnLB7cRFHPmJPgDTTNJdqJP5Z9EqKdMUQ=;
+        b=Bjq/9hogM6h587jweE/gTEDVPZUvocRmwiGGkEonRNO5wnsvPI/MkrK/CyokRMAuy3
+         XbqtQqVgx3GqFt8dkzEFKPsj5e7px8PPFyX8Na1rCWxYHmrYiqKPbjmLV8O6+Quh1ILo
+         LYqmj9rDDniR2L089lCZZjupTHh2NIajwdEI+7NMcA8g+7mWDG4AMIHyF/Ove3NlVky8
+         oyLTSiA1mu9Zbd6ByYJqLObEIqc51tHrSbZMpVFEHrxr3xs9DHs0EymX0mElHRXTcKmO
+         ETZGlDqf2YK1P1W2fYcT2byP1hUFlkbyQvfnR9f5T2NXK3Ujxsi2LAO/CXmCeF9eC7dj
+         fwxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi6A9Hy6t09cMVy6CENFPr1bzK8WcRK5AXBHzM4qUqpxP0y6W1guJw0kBFH1P8l3wLb7iqZ6+lf/tZsYzs@vger.kernel.org, AJvYcCWvtCs7EJ7kjsyr3eOvHfixovhYRr/RWYNy27jpEHQ8TGaXJU8ZUiF6FpJOJfT8Oxx6XvqbGAqujfQUYx0I@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTcAQxskwrAXXPCLHb+24qZNAoHIa/i/BSZ+/BkFgTSRHGHnwh
+	0RHNr2qPqBySZtIF4nqH51j7EDhATvzt5kVL4R8PHSFzpglxcGAV1te/Dwy+0JbHhsMnXxCvXeY
+	hZoA9PQJyqL7Axr5G9//TferYRTc=
+X-Gm-Gg: ASbGncsGmWfrq8bgueDDgXjrneJ2+hLx0TTUxr7IblorHDN7/9ESn1/v42WNDBIW7il
+	F7c6uUcDz5RI/THgui4l2+TY9/yY56Xw=
+X-Google-Smtp-Source: AGHT+IF3EiiHk+74MSMyYikO5IFU3xODqntnXb6lef7wQiVbmziPJGBKrD/7bI3gL4wu/NsH0boT3Moj1gayuKFeqTo=
+X-Received: by 2002:a17:906:c3a3:b0:a9a:3e33:8d9e with SMTP id
+ a640c23a62f3a-aa580f5620bmr109674566b.28.1732688047110; Tue, 26 Nov 2024
+ 22:14:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AB:EE_|BL3PR12MB6426:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64f916ff-781d-4810-b410-08dd0eaa4c2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MSTlERG90zylEESaeffDkz3ucej1ht9NXVa8DjO+cZQNMd4P5cLlooMej1Rz?=
- =?us-ascii?Q?sfFIDvtLXHlmvxlP6jY3QHvijxwCPQujuAktKRv8f1oMozLV9CxfXt51128M?=
- =?us-ascii?Q?Hg0iKiSgu2r8hZGufV20BRAREt+6kVLOoXGNxrgT9Ie3tTCVpuaC7AtfacYW?=
- =?us-ascii?Q?sd7w8385nK9BQByINwjYe8FAMwjyXBTm6e5e78vB6F/GBI7FrekunGIGBqYD?=
- =?us-ascii?Q?w6+iRh12vkUWpDwNfGfCXDN4ThgPdUYIwYDJZiwhucHlDIJbwq0XnFEBQUZZ?=
- =?us-ascii?Q?4Lum9pRwra0Ih8Ywg6Nc2lYWiZ7of86OqYqgsiqrlyec3A1Wv1Y4uBRnLZfg?=
- =?us-ascii?Q?cRHjWANTQ9U8zXmVWeSmz4cAfitdjFCWe5Fb4uonWEiWN4S4Y2s1/sWiAr41?=
- =?us-ascii?Q?j6m14mPbnm3pj2o+597TsSnJR35W0N0kUZcOAeBaL0//w8jw+2NFwPFxEbiX?=
- =?us-ascii?Q?YbgV5CXy3l3wVxcSkVygGgo1JS97ZJZgiw0yjUZIy0eBz75Wi+OGYZCEkkwD?=
- =?us-ascii?Q?qRa1SRLtVLxVfWs+vM/KgvLmLNq9aBiavvI3pyGOJUK7CsTwsm8hKYprQ88R?=
- =?us-ascii?Q?pkp1lsJ8XtbLvpooryfXT0o6jgqLfWKz+95QlX/7HE+dHtpH1hJsCShKnwl2?=
- =?us-ascii?Q?FCv6UoFPvA4Bq+mOazJOeyDhjoDqwMFNu6BDppS+zHnRjcYDaCmNtnc6uyEZ?=
- =?us-ascii?Q?lPvOZjV03IfId7V8lK0vYNHe1JWullmSs8te2oO1hzELcSbfQqmBlCCMBTr3?=
- =?us-ascii?Q?RN6EJ2dhBi6tTa623xt04rzQOpugL0/Ohu9VOFDNLwTgAlFQWrt4wWgrwWyM?=
- =?us-ascii?Q?yY13MeNL+/RNSykUlnWbRJ15RZet1LKBffL2fXDVbOELRGjxikQJ3yglA8d/?=
- =?us-ascii?Q?CgaeckTk2wQhRlQA6k3uQ+kxPFRLVQThc9KDw8C/TcHmUE5FmD+XG/tMEQ3v?=
- =?us-ascii?Q?339UDHyZCADqQDaVg2QGOjLYl8+wf2oSWDvBPGNEEadk+E2lu92UjbQYoSA1?=
- =?us-ascii?Q?2Z9oKFxjK8tDjmrqxuuuROBP7wH5xqSvBu6hNFm/3i+ULtGVSz2UcMT5xuQQ?=
- =?us-ascii?Q?1lamULn4+X38MKnJIF3/V2cni3jk60TQ1duc02thOhzKVXpfe3nao9X6c8Hp?=
- =?us-ascii?Q?7j/avNMBVjVTCcVXjdzCxCnZ42QEfwe+XLohCBu5X1pVq6fl5kJ9ajZ7s47i?=
- =?us-ascii?Q?QYXwofxIuSzcRgNYCCcKL4JJ6OlEe6LvLj7ao4XiKjspacd1wBC5PB860pOp?=
- =?us-ascii?Q?7wxHPU1W7JMgswddbw4FxpW0w+WA6wjwk98Qe1HlpDvInS0H3+8JBIYsg5G8?=
- =?us-ascii?Q?zBai4tbnEE/deJpG5BO38jllf79M+BnGXQ2M9Nm5x/2QmDNECtrD7lgo6aPb?=
- =?us-ascii?Q?YSqTO844Bf+vJE9LBXMgxgrk6V+xM7Lb0x/5afMJsm4qKjGxuGax5+s7TXI+?=
- =?us-ascii?Q?kTN/m5bcA9OHSkjw4DZ7tTVBkce4IGTQ?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 06:11:14.0924
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64f916ff-781d-4810-b410-08dd0eaa4c2c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AB.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6426
+References: <20241127054737.33351-1-bharata@amd.com>
+In-Reply-To: <20241127054737.33351-1-bharata@amd.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 27 Nov 2024 07:13:54 +0100
+Message-ID: <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
+To: Bharata B Rao <bharata@amd.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, 
+	willy@infradead.org, vbabka@suse.cz, david@redhat.com, 
+	akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, 
+	clm@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Various Nvidia userspace applications and tests access following fuse
-via Fuse nvmem interface:
+On Wed, Nov 27, 2024 at 6:48=E2=80=AFAM Bharata B Rao <bharata@amd.com> wro=
+te:
+>
+> Recently we discussed the scalability issues while running large
+> instances of FIO with buffered IO option on NVME block devices here:
+>
+> https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd=
+.com/
+>
+> One of the suggestions Chris Mason gave (during private discussions) was
+> to enable large folios in block buffered IO path as that could
+> improve the scalability problems and improve the lock contention
+> scenarios.
+>
 
-	* odmid
-	* odminfo
-	* boot_security_info
-	* public_key_hash
-	* reserved_odm0
-	* reserved_odm1
-	* reserved_odm2
-	* reserved_odm3
-	* reserved_odm4
-	* reserved_odm5
-	* reserved_odm6
-	* reserved_odm7
-	* odm_lock
-	* pk_h1
-	* pk_h2
-	* revoke_pk_h0
-	* revoke_pk_h1
-	* security_mode
-	* system_fw_field_ratchet0
-	* system_fw_field_ratchet1
-	* system_fw_field_ratchet2
-	* system_fw_field_ratchet3
-	* optin_enable
+I have no basis to comment on the idea.
 
-Update tegra234_fuse_keepouts list to allow reading these fuse from
-nvmem sysfs interface.
+However, it is pretty apparent whatever the situation it is being
+heavily disfigured by lock contention in blkdev_llseek:
 
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
- drivers/soc/tegra/fuse/fuse-tegra30.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+> perf-lock contention output
+> ---------------------------
+> The lock contention data doesn't look all that conclusive but for 30% rwm=
+ixwrite
+> mix it looks like this:
+>
+> perf-lock contention default
+>  contended   total wait     max wait     avg wait         type   caller
+>
+> 1337359017     64.69 h     769.04 us    174.14 us     spinlock   rwsem_wa=
+ke.isra.0+0x42
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>                         0xffffffff8f39e7d2  rwsem_wake.isra.0+0x42
+>                         0xffffffff8f39e88f  up_write+0x4f
+>                         0xffffffff8f9d598e  blkdev_llseek+0x4e
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>    2665573     64.38 h       1.98 s      86.95 ms      rwsem:W   blkdev_l=
+lseek+0x31
+>                         0xffffffff903f15bc  rwsem_down_write_slowpath+0x3=
+6c
+>                         0xffffffff903f18fb  down_write+0x5b
+>                         0xffffffff8f9d5971  blkdev_llseek+0x31
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>                         0xffffffff903dce5e  do_syscall_64+0x7e
+>                         0xffffffff9040012b  entry_SYSCALL_64_after_hwfram=
+e+0x76
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index eb14e5ff5a0a..e24ab5f7d2bf 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra30.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -647,15 +647,20 @@ static const struct nvmem_cell_lookup tegra234_fuse_lookups[] = {
- };
- 
- static const struct nvmem_keepout tegra234_fuse_keepouts[] = {
--	{ .start = 0x01c, .end = 0x0c8 },
--	{ .start = 0x12c, .end = 0x184 },
-+	{ .start = 0x01c, .end = 0x064 },
-+	{ .start = 0x084, .end = 0x0a0 },
-+	{ .start = 0x0a4, .end = 0x0c8 },
-+	{ .start = 0x12c, .end = 0x164 },
-+	{ .start = 0x16c, .end = 0x184 },
- 	{ .start = 0x190, .end = 0x198 },
- 	{ .start = 0x1a0, .end = 0x204 },
--	{ .start = 0x21c, .end = 0x250 },
--	{ .start = 0x25c, .end = 0x2f0 },
-+	{ .start = 0x21c, .end = 0x2f0 },
- 	{ .start = 0x310, .end = 0x3d8 },
--	{ .start = 0x400, .end = 0x4f0 },
--	{ .start = 0x4f8, .end = 0x7e8 },
-+	{ .start = 0x400, .end = 0x420 },
-+	{ .start = 0x444, .end = 0x490 },
-+	{ .start = 0x4bc, .end = 0x4f0 },
-+	{ .start = 0x4f8, .end = 0x54c },
-+	{ .start = 0x57c, .end = 0x7e8 },
- 	{ .start = 0x8d0, .end = 0x8d8 },
- 	{ .start = 0xacc, .end = 0xf00 }
- };
--- 
-2.47.0
+Admittedly I'm not familiar with this code, but at a quick glance the
+lock can be just straight up removed here?
 
+  534 static loff_t blkdev_llseek(struct file *file, loff_t offset, int whe=
+nce)
+  535 {
+  536 =E2=94=82       struct inode *bd_inode =3D bdev_file_inode(file);
+  537 =E2=94=82       loff_t retval;
+  538 =E2=94=82
+  539 =E2=94=82       inode_lock(bd_inode);
+  540 =E2=94=82       retval =3D fixed_size_llseek(file, offset, whence,
+i_size_read(bd_inode));
+  541 =E2=94=82       inode_unlock(bd_inode);
+  542 =E2=94=82       return retval;
+  543 }
+
+At best it stabilizes the size for the duration of the call. Sounds
+like it helps nothing since if the size can change, the file offset
+will still be altered as if there was no locking?
+
+Suppose this cannot be avoided to grab the size for whatever reason.
+
+While the above fio invocation did not work for me, I ran some crapper
+which I had in my shell history and according to strace:
+[pid 271829] lseek(7, 0, SEEK_SET)      =3D 0
+[pid 271829] lseek(7, 0, SEEK_SET)      =3D 0
+[pid 271830] lseek(7, 0, SEEK_SET)      =3D 0
+
+... the lseeks just rewind to the beginning, *definitely* not needing
+to know the size. One would have to check but this is most likely the
+case in your test as well.
+
+And for that there is 0 need to grab the size, and consequently the inode l=
+ock.
+
+>  134057198     14.27 h      35.93 ms    383.14 us     spinlock   clear_sh=
+adow_entries+0x57
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f5e7967  clear_shadow_entries+0x57
+>                         0xffffffff8f5e90e3  mapping_try_invalidate+0x163
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>                         0xffffffff8f9d3872  invalidate_bdev+0x42
+>                         0xffffffff8f9fac3e  blkdev_common_ioctl+0x9ae
+>                         0xffffffff8f9faea1  blkdev_ioctl+0xc1
+>   33351524      1.76 h      35.86 ms    190.43 us     spinlock   __remove=
+_mapping+0x5d
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f5ec71d  __remove_mapping+0x5d
+>                         0xffffffff8f5f9be6  remove_mapping+0x16
+>                         0xffffffff8f5e8f5b  mapping_evict_folio+0x7b
+>                         0xffffffff8f5e9068  mapping_try_invalidate+0xe8
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>                         0xffffffff8f9d3872  invalidate_bdev+0x42
+>    9448820     14.96 m       1.54 ms     95.01 us     spinlock   folio_lr=
+uvec_lock_irqsave+0x64
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>                         0xffffffff8f6e3ed4  folio_lruvec_lock_irqsave+0x6=
+4
+>                         0xffffffff8f5e587c  folio_batch_move_lru+0x5c
+>                         0xffffffff8f5e5a41  __folio_batch_add_and_move+0x=
+d1
+>                         0xffffffff8f5e7593  deactivate_file_folio+0x43
+>                         0xffffffff8f5e90b7  mapping_try_invalidate+0x137
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>    1488531     11.07 m       1.07 ms    446.39 us     spinlock   try_to_f=
+ree_buffers+0x56
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f768c76  try_to_free_buffers+0x56
+>                         0xffffffff8f5cf647  filemap_release_folio+0x87
+>                         0xffffffff8f5e8f4c  mapping_evict_folio+0x6c
+>                         0xffffffff8f5e9068  mapping_try_invalidate+0xe8
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>                         0xffffffff8f9d3872  invalidate_bdev+0x42
+>    2556868      6.78 m     474.72 us    159.07 us     spinlock   blkdev_l=
+lseek+0x31
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5d01  _raw_spin_lock_irq+0x51
+>                         0xffffffff903f14c4  rwsem_down_write_slowpath+0x2=
+74
+>                         0xffffffff903f18fb  down_write+0x5b
+>                         0xffffffff8f9d5971  blkdev_llseek+0x31
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>    2512627      3.75 m     450.96 us     89.55 us     spinlock   blkdev_l=
+lseek+0x31
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5d01  _raw_spin_lock_irq+0x51
+>                         0xffffffff903f12f0  rwsem_down_write_slowpath+0xa=
+0
+>                         0xffffffff903f18fb  down_write+0x5b
+>                         0xffffffff8f9d5971  blkdev_llseek+0x31
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>     908184      1.52 m     439.58 us    100.58 us     spinlock   blkdev_l=
+lseek+0x31
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5d01  _raw_spin_lock_irq+0x51
+>                         0xffffffff903f1367  rwsem_down_write_slowpath+0x1=
+17
+>                         0xffffffff903f18fb  down_write+0x5b
+>                         0xffffffff8f9d5971  blkdev_llseek+0x31
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>        134      1.48 m       1.22 s     663.88 ms        mutex   bdev_rel=
+ease+0x69
+>                         0xffffffff903ef1de  __mutex_lock.constprop.0+0x17=
+e
+>                         0xffffffff903ef863  __mutex_lock_slowpath+0x13
+>                         0xffffffff903ef8bb  mutex_lock+0x3b
+>                         0xffffffff8f9d5249  bdev_release+0x69
+>                         0xffffffff8f9d5921  blkdev_release+0x11
+>                         0xffffffff8f7089f3  __fput+0xe3
+>                         0xffffffff8f708c9b  __fput_sync+0x1b
+>                         0xffffffff8f6fe8ed  __x64_sys_close+0x3d
+>
+>
+> perf-lock contention patched
+>  contended   total wait     max wait     avg wait         type   caller
+>
+>    1153627     40.15 h      48.67 s     125.30 ms      rwsem:W   blkdev_l=
+lseek+0x31
+>                         0xffffffff903f15bc  rwsem_down_write_slowpath+0x3=
+6c
+>                         0xffffffff903f18fb  down_write+0x5b
+>                         0xffffffff8f9d5971  blkdev_llseek+0x31
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>                         0xffffffff903dce5e  do_syscall_64+0x7e
+>                         0xffffffff9040012b  entry_SYSCALL_64_after_hwfram=
+e+0x76
+>  276512439     39.19 h      46.90 ms    510.22 us     spinlock   clear_sh=
+adow_entries+0x57
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f5e7967  clear_shadow_entries+0x57
+>                         0xffffffff8f5e90e3  mapping_try_invalidate+0x163
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>                         0xffffffff8f9d3872  invalidate_bdev+0x42
+>                         0xffffffff8f9fac3e  blkdev_common_ioctl+0x9ae
+>                         0xffffffff8f9faea1  blkdev_ioctl+0xc1
+>  763119320     26.37 h     887.44 us    124.38 us     spinlock   rwsem_wa=
+ke.isra.0+0x42
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>                         0xffffffff8f39e7d2  rwsem_wake.isra.0+0x42
+>                         0xffffffff8f39e88f  up_write+0x4f
+>                         0xffffffff8f9d598e  blkdev_llseek+0x4e
+>                         0xffffffff8f703322  ksys_lseek+0x72
+>                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>   33263910      2.87 h      29.43 ms    310.56 us     spinlock   __remove=
+_mapping+0x5d
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f5ec71d  __remove_mapping+0x5d
+>                         0xffffffff8f5f9be6  remove_mapping+0x16
+>                         0xffffffff8f5e8f5b  mapping_evict_folio+0x7b
+>                         0xffffffff8f5e9068  mapping_try_invalidate+0xe8
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>                         0xffffffff8f9d3872  invalidate_bdev+0x42
+>   58671816      2.50 h     519.68 us    153.45 us     spinlock   folio_lr=
+uvec_lock_irqsave+0x64
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>                         0xffffffff8f6e3ed4  folio_lruvec_lock_irqsave+0x6=
+4
+>                         0xffffffff8f5e587c  folio_batch_move_lru+0x5c
+>                         0xffffffff8f5e5a41  __folio_batch_add_and_move+0x=
+d1
+>                         0xffffffff8f5e7593  deactivate_file_folio+0x43
+>                         0xffffffff8f5e90b7  mapping_try_invalidate+0x137
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>        284     22.33 m       5.35 s       4.72 s         mutex   bdev_rel=
+ease+0x69
+>                         0xffffffff903ef1de  __mutex_lock.constprop.0+0x17=
+e
+>                         0xffffffff903ef863  __mutex_lock_slowpath+0x13
+>                         0xffffffff903ef8bb  mutex_lock+0x3b
+>                         0xffffffff8f9d5249  bdev_release+0x69
+>                         0xffffffff8f9d5921  blkdev_release+0x11
+>                         0xffffffff8f7089f3  __fput+0xe3
+>                         0xffffffff8f708c9b  __fput_sync+0x1b
+>                         0xffffffff8f6fe8ed  __x64_sys_close+0x3d
+>    2181469     21.38 m       1.15 ms    587.98 us     spinlock   try_to_f=
+ree_buffers+0x56
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f768c76  try_to_free_buffers+0x56
+>                         0xffffffff8f5cf647  filemap_release_folio+0x87
+>                         0xffffffff8f5e8f4c  mapping_evict_folio+0x6c
+>                         0xffffffff8f5e9068  mapping_try_invalidate+0xe8
+>                         0xffffffff8f5e9160  invalidate_mapping_pages+0x10
+>                         0xffffffff8f9d3872  invalidate_bdev+0x42
+>     454398      4.22 m      37.54 ms    557.13 us     spinlock   __remove=
+_mapping+0x5d
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f5c7f  _raw_spin_lock+0x3f
+>                         0xffffffff8f5ec71d  __remove_mapping+0x5d
+>                         0xffffffff8f5f4f04  shrink_folio_list+0xbc4
+>                         0xffffffff8f5f5a6b  evict_folios+0x34b
+>                         0xffffffff8f5f772f  try_to_shrink_lruvec+0x20f
+>                         0xffffffff8f5f79ef  shrink_one+0x10f
+>                         0xffffffff8f5fb975  shrink_node+0xb45
+>        773      3.53 m       2.60 s     273.76 ms        mutex   __lru_ad=
+d_drain_all+0x3a
+>                         0xffffffff903ef1de  __mutex_lock.constprop.0+0x17=
+e
+>                         0xffffffff903ef863  __mutex_lock_slowpath+0x13
+>                         0xffffffff903ef8bb  mutex_lock+0x3b
+>                         0xffffffff8f5e3d7a  __lru_add_drain_all+0x3a
+>                         0xffffffff8f5e77a0  lru_add_drain_all+0x10
+>                         0xffffffff8f9d3861  invalidate_bdev+0x31
+>                         0xffffffff8f9fac3e  blkdev_common_ioctl+0x9ae
+>                         0xffffffff8f9faea1  blkdev_ioctl+0xc1
+>    1997851      3.09 m     651.65 us     92.83 us     spinlock   folio_lr=
+uvec_lock_irqsave+0x64
+>                         0xffffffff903f60a3  native_queued_spin_lock_slowp=
+ath+0x1f3
+>                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>                         0xffffffff8f6e3ed4  folio_lruvec_lock_irqsave+0x6=
+4
+>                         0xffffffff8f5e587c  folio_batch_move_lru+0x5c
+>                         0xffffffff8f5e5a41  __folio_batch_add_and_move+0x=
+d1
+>                         0xffffffff8f5e5ae4  folio_add_lru+0x54
+>                         0xffffffff8f5d075d  filemap_add_folio+0xcd
+>                         0xffffffff8f5e30c0  page_cache_ra_order+0x220
+>
+> Observations from perf-lock contention
+> --------------------------------------
+> - Significant reduction of contention for inode_lock (inode->i_rwsem)
+>   from blkdev_llseek() path.
+> - Significant increase in contention for inode->i_lock from invalidate
+>   and remove_mapping paths.
+> - Significant increase in contention for lruvec spinlock from
+>   deactive_file_folio path.
+>
+> Request comments on the above and I am specifically looking for inputs
+> on these:
+>
+> - Lock contention results and usefulness of large folios in bringing
+>   down the contention in this specific case.
+> - If enabling large folios in block buffered IO path is a feasible
+>   approach, inputs on doing this cleanly and correclty.
+>
+> Bharata B Rao (1):
+>   block/ioctl: Add an ioctl to enable large folios for block buffered IO
+>     path
+>
+>  block/ioctl.c           | 8 ++++++++
+>  include/uapi/linux/fs.h | 2 ++
+>  2 files changed, 10 insertions(+)
+>
+> --
+> 2.34.1
+>
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
