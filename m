@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-423912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8659DAE34
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:00:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9D29DAE37
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA0AB21ACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5F2818BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9BC202F80;
-	Wed, 27 Nov 2024 20:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF1213D518;
+	Wed, 27 Nov 2024 20:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Prbgf/7n"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="GRP0zwAB"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A156202F87;
-	Wed, 27 Nov 2024 20:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83972036E0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732737604; cv=none; b=JsfB/jb4zsm3clZi/HpvEj8dH2n4ao8ndbNgJ8sDyFr2I/5aetXCHUQyWDaODWodYHcoLMQ0UMTGHD4PIsI4aaoUOmj4zQENLsrhHgoJ1TiqiiyhqDz6AOHERgjX8qtO+sxp4qdu2E20XKDPSMwmUIQoFY/ZU/2pt95SB1Z7B6g=
+	t=1732737609; cv=none; b=YXKZz3MER7+aNeSkjzpxyTh9+oX318IzehraeAsHQeoM1V0Rk6/lXS014tn5QpUw59KbXN0cSOQAAFaADncFRRyjW7BCEBj8S4Xl2LGJ7OC38FeoWtpZ+C9jZwvmEy0wpNGTrHlYMOnOzOvRQa8dZF9hoVpZfL//72kQMTrYDLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732737604; c=relaxed/simple;
-	bh=hmIxX4nmKJ/KpxkWr4aXnfd/U3L3DijeyqEGV56Cmsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NazC689IjNtIyhn81NQEMXFadPHA4DpMDgWV7kxJAH+4ihDVlpZ9Eh6npQwDZg/m7jEQV9owfEF3gagDdT9XN9pm0g2UDtyrVILTBODQQFyA80GanRn9GmWo1tCu7hDc/S6jy94gr489w9UKqSPsH+p8xqQV+p/gQ/6RiApe7yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Prbgf/7n; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21269c8df64so673065ad.2;
-        Wed, 27 Nov 2024 12:00:03 -0800 (PST)
+	s=arc-20240116; t=1732737609; c=relaxed/simple;
+	bh=4kulIdpUkClMnW3bgQTIh+M2+GGa09Ku28XupppGLXw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWOsvxvNCcPrQrxlxE84Zum7uTvOSvLr2QitvrNvSaoxa3ToazUE6V/fBrv4CpcQRJpRG3yfAV4EiAz/vfQ9Dzi4pcQUddS1cvgtTwXQ8JSTeD7RRYkzntdPB5fMYfkV8tirqXpdDfVRx8O94dWnGG8/P+Lnqif1mDK4oOU4J9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=GRP0zwAB; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ea6f821decso129828a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:00:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732737602; x=1733342402; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1732737606; x=1733342406; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7JnlDLsmM5qv+EK/8poCXPvkvDh4sjlL4kNug7GuHXU=;
-        b=Prbgf/7np5aLFEU8O90Xi4/XrHaV2llgv0QQF90ELA2Z4GJxxMvhvq+tOADtxcfEcP
-         wgNOl4IZ99xi/I2jlH7d+GQDuu4VkdWMsGUdOVlqaaoSvvNZYoCtRkYx9pV7abmFenSs
-         TMoD42NYgr6fpmyzeC9N793OArEcg35lfKPtw97Tzj1SWuortTiD0LZJiE+/WIh7Knh+
-         HZkm/N/o7sMVDkzH67iLjY7PpqwxEofxG0HRXFCCS92WEZeM2bz+2UFdZEqKCHRl73K6
-         yAfReqRKFLINAUWoH2eFGrg1CxnNKTdivoP85dX21ycTueFxTlLdyed8wdJ6FBuM2Q96
-         4VTA==
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjUTXgm+hjNlrlkeiDpx8ILNw62xTbjnMxBRwDCdfK0=;
+        b=GRP0zwABVmUxP6EqpcKwcyw63nZa/Qo55iElKFAEHlti9kzOicKkAuHviL5bODN9yP
+         sXmHyeKSWzzAVOSEMrYTztiITE237f7sLwu6ZWcAVJL2/rR7lF1r2MrWihtaSdce2D69
+         8FiChVUjy0oYX/FIQLtnCIVzXRkTgxYygejUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732737602; x=1733342402;
+        d=1e100.net; s=20230601; t=1732737606; x=1733342406;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7JnlDLsmM5qv+EK/8poCXPvkvDh4sjlL4kNug7GuHXU=;
-        b=smjFNHpgte1OEZOrxS5ZxJdDzRBUG9QZDgx1miTaM9Kv34/T0uKYx6NfhzyQ427Fbw
-         FLlLLX4hmFYypl4eUjJuoyHrD65U437U4nWfn5YnYb+jXO3CaEEBMfh1GrNcMhqH8t2i
-         Wn+MphcnovsRP0TkDlTgABwcRpmGQXYh9BiVM8xTSvqp70UhaDyJeewIXMw8A8eFTx3v
-         0E4eHpKJ/lIEzC82H1FEmv998UmPgo38YwrcgjnZ6UpUljZUCs3dB3NTok4Pc8e/eDGI
-         4d9r8LY1GRQun75QxkHXZh+B32XxgxgSmWN4y8rOuroQOuUoe0qZ8Ml205SbLubvd4ZM
-         Hv0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWQpwksiYR/wAA777SFXAD6QBxkN/FwP5KPI0DbN7OxRsCDNwxqbeV0FwIvfdYeH3KHBY3z0xwCanDH@vger.kernel.org, AJvYcCWSWjU19+l5iaPNhxxm3xNp3crzwpsC93y0WHwxlbWzkSbpV99Ea5/PK+xt1ZW3oD3gXdVi3Kzvqs9on6g=@vger.kernel.org, AJvYcCXpRNICt7IiBr2ZIessPCGxWbacKVjGPhIDJiGLc4sgJ+qSs6jy1s+CLWUqrKrKFGQVK0I9iUFlzKjOLqZ1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoIYqgBUBOupdNQx9R5JB+p3JhYRHYf9rnaPryB1Y3pDMKWDoz
-	zUdI5tzJ16uxbwKY8hmL2Zx+VnvRZys0CoBtBvrnPRDeC+9Db0A5
-X-Gm-Gg: ASbGncsmr+z8SJgB3b5futEFV4x9bnQJVgjyTdAsuMIECGZwOHPM915FG4GekmJsloy
-	RgGyeRnUpdqr7Vh9N/y1/4BVdMZvXH40gPd56rPzuo1bwuf/gFnrSMESRs+NEfN0rLofOSK/8f2
-	fpw2Keh0/+o5aw+VDkLiNopQuhWoELgOK8oUVjeDnPVr21F0Z5VLwWuOPGbXUSoDQZFKAwoPH73
-	AWl4b6ICRzvDktte7TQyYXhVOyFLoE2pEFWYNr+b3IlSljO49c=
-X-Google-Smtp-Source: AGHT+IEGL7M9GjZwTDz8gnOB4Fc/ReaRn8//tUsUDCeh7CYPkfHbRbhoJ/aTMpOuF0TfqhinENoEIA==
-X-Received: by 2002:a17:902:e752:b0:212:4739:27b2 with SMTP id d9443c01a7336-215010861afmr48871945ad.5.1732737602170;
-        Wed, 27 Nov 2024 12:00:02 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:d991:bacb:df39:9ecd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc23a35sm107317255ad.250.2024.11.27.12.00.00
+        bh=SjUTXgm+hjNlrlkeiDpx8ILNw62xTbjnMxBRwDCdfK0=;
+        b=mMewYZ/kxXYTDX0sQXoM4nSzXBLpohS2N5IA3bzKy0UCjQLLDsJf/10DcAOB09wdQj
+         nr96SpozBNDQN8jw6n2Zi7c6lHlJe1wAwRa9Nxr4QXV5Dar6aJ+taQYqRxpmdLPQQROi
+         h257AaBEZIKA9limqHFXdmgCRit+B/TQK61RcSkEaJ+zghYrobF8CVKWgPMwFIY60u0X
+         B4281Mk2FwXiZWG2vuHHvzWBpNwM5fJ7b5/w+KF7IjURSkueGMu5+pNtItptF7UB91L0
+         lceI8n8rnj2s0M32C+qBIa+NFw/4bevneh2sKu6/Yb85TmLTh/FzZoMnGv8mnvkVpHwm
+         hjhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAl3K8AuLjjhUbONKDQupqSpWbGWgxHGJd4OeTbx+YOsfEXIUV/iIrqg3ZOBneHf2SeMpCxk3zpGeTsc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRwl8SjylSlXWDt8CPLNz4RUK1vQktJ2cIDAxiq1y7m0LhKLhJ
+	b274X4SvdiQj9Kq9SXWM2yNBYrcMEbJsA8Ol8nDVaYrgDt4SUowYs8vwNc2lMCI=
+X-Gm-Gg: ASbGncsBcL9OW77++2zGxwBsg47pxkGPna7MUlXpTw8XXVSvkkTuwWUOVoQOY2Rwd9p
+	ErF6Pj7KK0BYN3416KCp+W9v0h2hdJrxZ3iZxk+VrWH9iD7zhNko7yGxq7FJLZux3AYvsXFZhAv
+	nhwvrM/0VSmGyiOUQ3WLSmZS72Khnd4rULGKqbyPL4F2l4QtIpi7vE9M/Ued+Fs2A3eQWJrgdcK
+	jqyqDNqihet//9qPcCwM2LXq8t3g4JckdO8swqoKzg9tqs3KK5EHglLAJMVmcGxD2XdN8zEKwR2
+	8/i0o7rPym/9pdOC
+X-Google-Smtp-Source: AGHT+IHJ3VPgCBxfCXsFev5RlCwsdAg0ojCe3Aj++64ttxbNqdV4DbkkvxPl6aCAVgmuLHmfyQyUcg==
+X-Received: by 2002:a17:90b:3c12:b0:2e0:7b2b:f76 with SMTP id 98e67ed59e1d1-2ee08ecf438mr5493334a91.19.1732737605988;
+        Wed, 27 Nov 2024 12:00:05 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa995d7sm1989300a91.35.2024.11.27.12.00.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 12:00:01 -0800 (PST)
-Date: Wed, 27 Nov 2024 11:59:58 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH 2/4] input: apple_z2: Add a driver for Apple Z2
- touchscreens
-Message-ID: <Z0d6Psrk5f8-hXe6@google.com>
-References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
- <20241126-z2-v1-2-c43c4cc6200d@gmail.com>
- <Z0aCSBNEAJlgNIAI@google.com>
- <CAMT+MTT0oiODONgEipLuAaZyzD-YyM8mbAcRsZKn8N4E326kMw@mail.gmail.com>
+        Wed, 27 Nov 2024 12:00:05 -0800 (PST)
+Date: Wed, 27 Nov 2024 12:00:02 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Guenter Roeck <linux@roeck-us.net>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	edumazet@google.com, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
+Subject: Re: [net-next v6 5/9] net: napi: Add napi_config
+Message-ID: <Z0d6QlrRUig5eD_I@LQ3V64L9R2>
+References: <20241011184527.16393-1-jdamato@fastly.com>
+ <20241011184527.16393-6-jdamato@fastly.com>
+ <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
+ <Z0dqJNnlcIrvLuV6@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,96 +96,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMT+MTT0oiODONgEipLuAaZyzD-YyM8mbAcRsZKn8N4E326kMw@mail.gmail.com>
+In-Reply-To: <Z0dqJNnlcIrvLuV6@LQ3V64L9R2>
 
-On Wed, Nov 27, 2024 at 09:24:16AM +0100, Sasha Finkelstein wrote:
-> On Wed, 27 Nov 2024 at 03:22, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > > +     u16 checksum;
-> >
-> > Does this need endianness annotation? It is being sent to the device...
+On Wed, Nov 27, 2024 at 10:51:16AM -0800, Joe Damato wrote:
+> On Wed, Nov 27, 2024 at 09:43:54AM -0800, Guenter Roeck wrote:
+> > Hi,
+> > 
+> > On Fri, Oct 11, 2024 at 06:45:00PM +0000, Joe Damato wrote:
+> > > Add a persistent NAPI config area for NAPI configuration to the core.
+> > > Drivers opt-in to setting the persistent config for a NAPI by passing an
+> > > index when calling netif_napi_add_config.
+> > > 
+> > > napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
+> > > (after the NAPIs are deleted).
+> > > 
+> > > Drivers which call netif_napi_add_config will have persistent per-NAPI
+> > > settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
+> > > 
+> > > Per-NAPI settings are saved in napi_disable and restored in napi_enable.
+> > > 
+> > > Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+> > 
+> > This patch triggers a lock inversion message on pcnet Ethernet adapters.
 > 
-> Both host and device are always little endian, and this whole thing is
-> using a bespoke Apple protocol, so is unlikely to ever be seen on a BE
-> machine. But i am not opposed to adding endianness handling.
-
-In this case the endianness handling will be "free", but will still show
-good code hygiene.
-
+> Thanks for the report. I am not familiar with the pcnet driver, but
+> took some time now to read the report below and the driver code.
 > 
-> > > +             slot_valid = fingers[i].state == APPLE_Z2_TOUCH_STARTED ||
-> > > +                          fingers[i].state == APPLE_Z2_TOUCH_MOVED;
-> > > +             input_mt_slot(z2->input_dev, slot);
-> > > +             input_mt_report_slot_state(z2->input_dev, MT_TOOL_FINGER, slot_valid);
-> > > +             if (!slot_valid)
-> > > +                     continue;
-> >
-> > Shorter form:
-> >
-> >                 if (!input_mt_report_slot_state(...))
-> >                         continue;
-> 
-> Sorry, but i fail to see how that is shorter, i am setting the slot state to
-> slot_valid, which is being computed above, so, why not just reuse
-> that instead of fetching it from input's slot state?
+> I could definitely be reading the output incorrectly (if so please
+> let me know), but it seems like the issue can be triggered in this
+> case:
 
-You are not fetching anything, input_mt_report_slot_state() simply
-returns "true" for active slots. You are saving a line. You can also do
+Sorry, my apologies, I both:
+  - read the report incorrectly, and
+  - proposed a bad patch that would result in a deadlock :)
 
-		if (!input_mt_report_slot_state(z2->input_dev, MT_TOOL_FINGER,
-					fingers[i].state == APPLE_Z2_TOUCH_STARTED ||
-					fingers[i].state == APPLE_Z2_TOUCH_MOVED))
-			continue;
+After re-reading it and running this by Martin (who is CC'd), the
+inversion is actually:
 
-> 
-> > > +     ack_xfer.tx_buf = int_ack;
-> > > +     ack_xfer.rx_buf = ack_rsp;
-> >
-> > I think these buffers need to be DMA-safe.
-> 
-> Do they? Our spi controller is not capable of doing DMA (yet?)
-> and instead copies everything into a fifo. But even if it was capable,
-> wouldn't that be the controller driver's responsibility to dma-map them?
+CPU 0:
+pcnet32_open
+   lock(lp->lock)
+     napi_enable
+       napi_hash_add <- before this executes, CPU 1 proceeds
+         lock(napi_hash_lock)
+CPU 1:
+  pcnet32_close
+    napi_disable
+      napi_hash_del
+        lock(napi_hash_lock)
+         < INTERRUPT >
+            pcnet32_interrupt
+              lock(lp->lock)
 
-Yes, they do. From include/linux/spi/spi.h:
+This is now an inversion because:
 
-/**
- * struct spi_transfer - a read/write buffer pair
- * @tx_buf: data to be written (DMA-safe memory), or NULL
- * @rx_buf: data to be read (DMA-safe memory), or NULL
+CPU 0: holds lp->lock and is about to take napi_hash_lock
+CPU 1: holds napi_hashlock and an IRQ firing on CPU 1 tries to take
+       lp->lock (which CPU 0 already holds)
 
-> 
-> > > +             if (fw->size - fw_idx < 8) {
-> > > +                     dev_err(&z2->spidev->dev, "firmware malformed");
-> >
-> > Maybe check this before uploading half of it?
-> 
-> That would be an extra pass though the firmware file, and the device
-> is okay with getting reset after a partial firmware upload, there is no
-> onboard storage that can be corrupted, and we fully reset it on each
-> boot (or even more often) anyway.
+Neither side can proceed:
+  - CPU 0 is stuck waiting for napi_hash_lock
+  - CPU 1 is stuck waiting for lp->lock
 
-OK, please add a comment to that effect.
+I think the below explanation is still correct as to why the
+identified commit causes the issue:
 
-> 
-> > > +     error = apple_z2_boot(z2);
-> >
-> > Why can't we wait for the boot in probe()? We can mark the driver as
-> > preferring asynchronous probe to not delay the overall boot process.
-> 
-> A comment on previous version of this submission asked not to load
-> firmware in probe callback, since the fs may be unavailable at that point.
+> It seems this was triggered because before the identified commit,
+> napi_enable did not call napi_hash_add (and thus did not take the
+> napi_hash_lock).
 
-But why do you assume that the fs will be available at open time? There
-is a number of input handlers that serve internal kernel purposes and we
-could have more in the future. They will open the device as soon as it
-is registered with the input core.
+However, the previous patch I proposed for pcnet32 would also cause
+a deadlock as the watchdog timer's function also needs lp->lock.
 
-It is up to the system distributor to configure the kernel properly,
-including adding needed firmware to the kernel image if they want the
-driver to be built-in.
+A corrected patch for pcnet32 can be found below.
 
-Thanks.
+Guenter: Sorry, would you mind testing the below instead of the
+previous patch?
 
--- 
-Dmitry
+Don: Let me know what you think about the below?
+
+Netdev maintainers, there is an alternate locking solution I can
+propose as an RFC that might avoid this class of problem if this
+sort of issue is more widespread than just pcnet32:
+  - add the NAPI to the hash in netif_napi_add_weight (instead of napi_enable)
+  - remove the NAPI from the hash in __netif_napi_del (instead of
+    napi_disable)
+
+If changing the locking order in core is the desired route, than the
+patch below should be unnecessary, but:
+
+diff --git a/drivers/net/ethernet/amd/pcnet32.c b/drivers/net/ethernet/amd/pcnet32.c
+index 72db9f9e7bee..2e0077e68883 100644
+--- a/drivers/net/ethernet/amd/pcnet32.c
++++ b/drivers/net/ethernet/amd/pcnet32.c
+@@ -2625,11 +2625,10 @@ static int pcnet32_close(struct net_device *dev)
+
+        del_timer_sync(&lp->watchdog_timer);
+
++       spin_lock_irqsave(&lp->lock, flags);
+        netif_stop_queue(dev);
+        napi_disable(&lp->napi);
+
+-       spin_lock_irqsave(&lp->lock, flags);
+-
+        dev->stats.rx_missed_errors = lp->a->read_csr(ioaddr, 112);
+
+        netif_printk(lp, ifdown, KERN_DEBUG, dev,
 
