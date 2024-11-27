@@ -1,128 +1,158 @@
-Return-Path: <linux-kernel+bounces-423485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82E79DA83B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:08:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EFE9DA840
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FED4282E9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:08:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42263B220AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D7E1FCF45;
-	Wed, 27 Nov 2024 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fDPxZ2n1"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9991FCF41;
+	Wed, 27 Nov 2024 13:10:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06061FCCE7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE0D1F9EDA
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732712926; cv=none; b=pnztUT8CT0+sJIUhfA/JYNe3k14S2xdh1yVoeqgeGpc6Imy9FMxdUyusXlK7WYdLWfLJ2FkCJoR9DotKtu4sW1l3Z7brA4WDYegcUelQGIHcHbrGjdwDMHYO266bzcwUJUpssYGIdGQsW2diccVXFUqww26TP7yQyG30mH9BhUQ=
+	t=1732713022; cv=none; b=tKOUhWuy2p4xIBLFVDVubCzLliyWHDxPpBT3ry2s+4I3G4bVaaQdjgxo9UaUuyZlmT0gmtdClKx/G5BPrtlGnp+IylQH5jTYZfNXsxgng+r6xOVW//QxfSzFS8LxLw60+ZUav5/idcq9uXwE/4mWhvGVt+NA0p4WjquUzLgHcwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732712926; c=relaxed/simple;
-	bh=STCfL3GsKf/AOQi4vbhGaEdxgftPACg3jwZIG7ref3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ei/o4cnZ/iNjG+pnlBW53gdv42hSHieP4DY2WXt5GFxaqB6jVHVg5ixZy6nM0imi6n8J9zJu+5gDDJQtF7iFOgxDWUSKb/5AUxb1vyJOVKJXBT7sXSpMULUJ3dMbU+6r06muyNWjlMqrJ3pFCW/vZDP02n/Ko+ueo/ps/yfda78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fDPxZ2n1; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de880c77eso2617149e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:08:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732712923; x=1733317723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/dpswvTaRge66vj7YjaC/6aZT4nt4DTSU3DINcL/KGM=;
-        b=fDPxZ2n1R9eKxnkE0yTKyg8cwuboimFdA1BJowBdLAKXlzvSnRu59uUbyiy+e8HZYF
-         Eyvsfytc6o5t7E/sKElx4Hn4IBWcgs+5hAucEY+Phh63m5w7MaD84c2ZvXSWanc0K6aS
-         50HRXPi9deK5tpAml1mzZFjfkjkAh8EOe/UjjpNm8zgfDtx69hRLQwLsNOsNVfQzXZHu
-         hQXdEu+0FhbgkJ6TaskJRijZneXDHBOrolHoQdNWAVC2arD8ZFOoc0wfYgpjGryRZqPF
-         wmbz0NbHEaTCcx3PWKEcmtr1owWQNg/tuGqMe3U1qqmLix2OIdmMs6ZHfmW/0cbul/hw
-         ZA2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732712923; x=1733317723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/dpswvTaRge66vj7YjaC/6aZT4nt4DTSU3DINcL/KGM=;
-        b=RayW0DOwMmcfQXE1Yp0qmbjhxoD+wn5DoSKqL4Cgrpky2SiBng54OrrCCla2GSeqCe
-         biyf/X5Lps8ygVHSYEByKTZlQ3dzHL6J3NJFN45AoomXWvZl5ilYJGa/G+LY/y8sXgm4
-         7e0au/AsYNT4kK45YxSj4RlOg0qeiV4Ckg2aUu+4GEWm2ayEQHRBU9tjIpvjaJuRWaV4
-         3HJ9ht9l/5G/CBRy4/pvyvqb/XYi+cvrX91IxgnJOffX5dMQbshjyZ6IGpA91MWAstUw
-         GzRUeW7dU9fx5Fc8ba41QIOEKbBZhtsI70j66eatiK9ZhrG7xhJ/kjvbdpmijy5Di3F1
-         wiVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZQjMEWRObYtANXA+e+LGgowPJveEV5RRXErIfLqZ8+OvCzySjl/x6iJNcuwY+IwKLWlCjLady+7VEiHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZpUkIdN+yvQ7b9PeA9kVfsmdBUw7A9fQnxWafT9vRWvkwa4VF
-	oEZZH7bUPdghT8+Rkiwmk1VCYPaYRV7eucyxieIsLllXn4cJePz8O0W1DcAtr2AwhEg/DHIY/5I
-	U7KC1l2AQr7LBxgXYvk1xHnrYdu6TM9e+Wt/FLw==
-X-Gm-Gg: ASbGncts/mQ994uPxc7fUmEp1I6w1GYwt3SDhLgBmuKG8mtSqTZETwwEUBXBKRVIrWn
-	K+aKagh2rak/YKr7kOq3MNEZrjcGdYVXnVbGi39OzoTKRmwkchyMdxiGL1cdTImo=
-X-Google-Smtp-Source: AGHT+IFqryFgOZJLLptnd4IzLulOUkyCGy+nqG1q8FUpptIWr2Y34pCBKnW7QjQl4HqmdUnAxe95e40GRyaOYV61QJI=
-X-Received: by 2002:a05:6512:124f:b0:53d:ed6c:30de with SMTP id
- 2adb3069b0e04-53df0016b58mr1784542e87.0.1732712923117; Wed, 27 Nov 2024
- 05:08:43 -0800 (PST)
+	s=arc-20240116; t=1732713022; c=relaxed/simple;
+	bh=EOh92bEuxwS6HTMBz3ZSifuHMXu6RBK4J5pkkY7/m8Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PnrgV3R1PSvFvprASFkyJljAM6NaaXjmDorY+7PnltA0wC4zaGiwFaezWsvjytheEv5lS92AymQ7hftRHYsO5Vq57XrZruSr0YxT05w4dKQEem6dyUG28kv9bobJ4hfdqjPGLWsof5DvgZeZuOIYjhwOM9ZCdD8LzTLm9ZAyG9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tGHo4-0001wg-VO; Wed, 27 Nov 2024 14:10:12 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tGHo3-000R6b-0o;
+	Wed, 27 Nov 2024 14:10:12 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tGHo3-000O9F-35;
+	Wed, 27 Nov 2024 14:10:11 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [RFC net-next v1 1/2] net: phy: Add support for driver-specific next update time
+Date: Wed, 27 Nov 2024 14:10:10 +0100
+Message-Id: <20241127131011.92800-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127115107.11549-1-quic_janathot@quicinc.com>
- <20241127115107.11549-2-quic_janathot@quicinc.com> <873e45b4-bcca-43fa-ab90-81754b28629f@kernel.org>
-In-Reply-To: <873e45b4-bcca-43fa-ab90-81754b28629f@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 27 Nov 2024 14:08:32 +0100
-Message-ID: <CAMRc=Mf-cO9M9=P50mhPDvRRBSYVZUDrEVa1jcMvAsjdAq6VLw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Janaki Ramaiah Thota <quic_janathot@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, quic_mohamull@quicinc.com, 
-	quic_hbandi@quicinc.com, quic_anubhavg@quicinc.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Nov 27, 2024 at 2:05=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 27/11/2024 12:51, Janaki Ramaiah Thota wrote:
-> > Add a PMU node for the WCN6750 module present on the qcs6490-rb3gen boa=
-rd
-> > and use the power sequencer for the same.
-> >
-> > Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 174 ++++++++++++++++++-
-> >  drivers/bluetooth/hci_qca.c                  |   2 +-
-> >  drivers/power/sequencing/pwrseq-qcom-wcn.c   |  22 +++
-> >  3 files changed, 196 insertions(+), 2 deletions(-)
->
-> DTS is always separate and cannot go via the same (driver) tree,
->
-> Missing bindings.
->
-> Missing changelog, it's v4 so what happened here?
->
-> Best regards,
-> Krzysztof
+Introduce the `phy_get_next_update_time` function to allow PHY drivers
+to dynamically determine the time (in milliseconds) until the next state
+update event. This enables more flexible and adaptive polling intervals
+based on the link state or other conditions.
 
-Ah, so this is where the driver change is at.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/phy/phy.c | 29 +++++++++++++++++++++++++++--
+ include/linux/phy.h   | 13 +++++++++++++
+ 2 files changed, 40 insertions(+), 2 deletions(-)
 
-Janaki: the DT binding lives under the "regulator" namespace so it's
-Mark Brown who typically takes changes to it via his tree. I pick up
-driver changes into the pwrseq tree. Bjorn takes the DTS changes. Luiz
-and Marcel are responsible for Bluetooth changes so you will have to
-split all these changes into separate commits.
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index cec3f6280e44..0c9f3c03500c 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -1401,6 +1401,26 @@ void phy_free_interrupt(struct phy_device *phydev)
+ }
+ EXPORT_SYMBOL(phy_free_interrupt);
 
-Bart
++/**
++ * phy_get_next_update_time - Determine the next PHY update time
++ * @phydev: Pointer to the phy_device structure
++ *
++ * This function queries the PHY driver to get the time for the next polling
++ * event. If the driver does not implement the callback, a default value is used.
++ *
++ * Return: The time for the next polling event in milliseconds
++ */
++static unsigned int phy_get_next_update_time(struct phy_device *phydev)
++{
++	const unsigned int default_time = PHY_STATE_TIME;
++
++	/* Ensure valid driver and callback are present */
++	if (phydev && phydev->drv && phydev->drv->get_next_update_time)
++		return phydev->drv->get_next_update_time(phydev);
++
++	return default_time;
++}
++
+ enum phy_state_work {
+ 	PHY_STATE_WORK_NONE,
+ 	PHY_STATE_WORK_ANEG,
+@@ -1479,8 +1499,13 @@ static enum phy_state_work _phy_state_machine(struct phy_device *phydev)
+ 	 * state machine would be pointless and possibly error prone when
+ 	 * called from phy_disconnect() synchronously.
+ 	 */
+-	if (phy_polling_mode(phydev) && phy_is_started(phydev))
+-		phy_queue_state_machine(phydev, PHY_STATE_TIME);
++	if (phy_polling_mode(phydev) && phy_is_started(phydev)) {
++		unsigned int next_update_time =
++			phy_get_next_update_time(phydev);
++
++		phy_queue_state_machine(phydev,
++					msecs_to_jiffies(next_update_time));
++	}
+
+ 	return state_work;
+ }
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 4a4e7c32222f..bdfe5fa01d3d 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1202,6 +1202,19 @@ struct phy_driver {
+ 	 */
+ 	int (*led_polarity_set)(struct phy_device *dev, int index,
+ 				unsigned long modes);
++
++	/**
++	 * @get_next_update_time: Get the time until the next update event
++	 * @dev: PHY device which has the LED
++	 *
++	 * Callback to determine the time (in milliseconds) until the next
++	 * update event for the PHY state  machine. Allows PHY drivers to
++	 * dynamically adjust polling intervals based on link state or other
++	 * conditions.
++	 *
++	 * Returns the time in milliseconds until the next update event.
++	 */
++	unsigned int (*get_next_update_time)(struct phy_device *dev);
+ };
+ #define to_phy_driver(d) container_of_const(to_mdio_common_driver(d),		\
+ 				      struct phy_driver, mdiodrv)
+--
+2.39.5
+
 
