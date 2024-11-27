@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-423398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D373B9DA6DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:26:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4849DA6DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98068281B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:26:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F4181B23B5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021C31F758C;
-	Wed, 27 Nov 2024 11:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26911F758E;
+	Wed, 27 Nov 2024 11:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="ZYovNeSs"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="ZTdRLNIW"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081881F7580;
-	Wed, 27 Nov 2024 11:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA6E1F7544;
+	Wed, 27 Nov 2024 11:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732706799; cv=none; b=Owcr8v8Rj+6yF4udaLMRG41vc+d/VE7E9fPaVDIxRFWKSv/Tq03xj+a+p99F3lr0yP4DSaXxf2iIOELlk5hifs83fXIlrMtDOD5BkSLT2X7ntPOubCQgSHKrZNLBsqcLr/Jx+c5dhOWhQtQuZI/eowHYfb67Ulgd2np1hMVE/tQ=
+	t=1732706815; cv=none; b=tud7YF7Ta3c1cu8S56fftYn+GBA4N3aZ7WS4zLdXC0EW/q81dgAeN35U/tNCHeM4PRLqmrJyzP0KEUk6bECm1SUuaoXodqVK072ys71G6liESHaouVBX8OrjciTPJ7OQxbfOCgd9u6Nqee/Pb2FHTxL9yiNaWy/Zx10hP66nfZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732706799; c=relaxed/simple;
-	bh=D2eQF5mgbsyrxPpbju76xhbJL0GFoW4vkZixO1AN/dQ=;
+	s=arc-20240116; t=1732706815; c=relaxed/simple;
+	bh=28dQTrG3He6iFEKXXDoA7pxzEaS5Xh5bp7DgOEMy9QI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o/vlHddbJlkWvNb7fbX8+55/gFg0e9crRgs+XpRRf1WGmdaKWqMLy6b+nA9+KW5wsAmUgyKuZPTIr2y7XAelsinKz1ia83glmM1o3dV0YSGPJrXbZzLEZMt0HebE27QG3kmCA6gt4srxxQTWH9P3noIl5jW6Up2h5fK/aNzGX2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=ZYovNeSs; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:3b05:0:640:71ba:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 645566149C;
-	Wed, 27 Nov 2024 14:26:25 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8011:701:66e1:20a5:ba04:640b] (unknown [2a02:6bf:8011:701:66e1:20a5:ba04:640b])
-	by mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id NQXpOa0IdW20-SBv4QkLj;
-	Wed, 27 Nov 2024 14:26:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1732706784;
-	bh=nv3E9lyzcT86UpCM0PKF51rK/xDhCxSUaDkaJMEa42k=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=ZYovNeSs3bTOf0KgYxlyYFjeGpKBlCTaSf50S+O8Q7XyR0Lot/nwRLO57EaTmsAs5
-	 cKW3jsbB2VpBxns6XW1+xobxquxakZNx1FnN7Ow8Cy0YPW77LVayQNbWO2ThImJQut
-	 DVmPwoPSmW5PmrmwbJwk9agSX03D1W/yDbCgHscU=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <0ad3de06-19b1-4be4-968c-ad6ba072097c@yandex-team.ru>
-Date: Wed, 27 Nov 2024 14:26:23 +0300
+	 In-Reply-To:Content-Type; b=QWKdlm3sO2x/rCrxnxIZO7nJA8XXpHh+VQuKI8HaJVc7kU2smrP7uDCI42Zkj1GjYKr9XUb9qS7KGQNA/ysJ7pvr/7kFJkpX/wTKe6uoubbmuqB0BTT7kAUtp4dt1OQAzvM8H2waFscSDUHzY9d4m8v5jZKOYAqClzAyti2XWtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=ZTdRLNIW; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C266324000B;
+	Wed, 27 Nov 2024 11:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1732706804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lwU4mXYYTdimQrB6vSMf2Y5tX570CcargndAnexCjxE=;
+	b=ZTdRLNIWRKx+BEau5xXr5cOhELhrhLPO7QwX8nOxq5xJ0We9L4Un05XWBcumeHRc0huJ93
+	jGKe9CI7ifTLyy7PHDpmDuSgAxr4wbWcWnUzYv1gDQmBqaudE7IThZuH18Sc37Cx52Zpdi
+	97gzRYLVrmYiqYnpAdhf3xKeKx0Xzx3GWSOa8m/ZqOEAhvRJ89TEV+s1nn/kW3X7BYLjTG
+	RaXz/eC6oOIHwv4WzZWIz9eKKNcpnxpW2b/0GrwH9inxtVewdOLTOh3EdzdygG7shwkIhc
+	T4I4o7Er3cuNHbVCpc9phdjjJEvJL2aTWm+WSCjCKY9cBMm8Xh9zmaXuy77UtQ==
+Message-ID: <501c04d7-1a7d-4000-a948-e9effb281a05@yoseli.org>
+Date: Wed, 27 Nov 2024 12:26:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,92 +53,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] x86: KVM: Advertise AMD's speculation control
- features
-To: Jim Mattson <jmattson@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- babu.moger@amd.com, seanjc@google.com, mingo@redhat.com, bp@alien8.de,
- tglx@linutronix.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- pbonzini@redhat.com
-References: <20241126094424.943192-1-davydov-max@yandex-team.ru>
- <20241126094424.943192-3-davydov-max@yandex-team.ru>
- <CALMp9eS5VzbqthF03tQoXkKK+hRYsH4sxuL3hwY-vud6Vez8xQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/2] arch: m68k: Add STACKTRACE support
+To: linux-m68k@lists.linux-m68k.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ rostedt@goodmis.org, Greg Ungerer <gerg@linux-m68k.org>,
+ Michael Schmitz <schmitzmic@gmail.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-2-0883d704525b@yoseli.org>
 Content-Language: en-US
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-In-Reply-To: <CALMp9eS5VzbqthF03tQoXkKK+hRYsH4sxuL3hwY-vud6Vez8xQ@mail.gmail.com>
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <20241021-add-m68k-tracing-support-v1-2-0883d704525b@yoseli.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
+Hi there,
 
+On 21/10/2024 11:44, Jean-Michel Hautbois wrote:
+> In order to use tracing, implement a basic arch_stack_walk() based on
+> the one in PowerPC.
+> Tested on a M54418 coldfire.
 
-On 11/26/24 20:11, Jim Mattson wrote:
-> On Tue, Nov 26, 2024 at 1:45 AM Maksim Davydov
-> <davydov-max@yandex-team.ru> wrote:
->>
->> It seems helpful to expose to userspace some speculation control features
->> from 0x80000008_EBX function:
->> * 16 bit. IBRS always on. Indicates whether processor prefers that
->>    IBRS is always on. It simplifies speculation managing.
->> * 18 bit. IBRS is preferred over software solution. Indicates that
->>    software mitigations can be replaced with more performant IBRS.
->> * 19 bit. IBRS provides Same Mode Protection. Indicates that when IBRS
->>    is set indirect branch predictions are not influenced by any prior
->>    indirect branches.
->> * 29 bit. BTC_NO. Indicates that processor isn't affected by branch type
->>    confusion. It's used during mitigations setting up.
->> * 30 bit. IBPB clears return address predictor. It's used during
->>    mitigations setting up.
->>
->> Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
->> ---
->>   arch/x86/include/asm/cpufeatures.h | 3 +++
->>   arch/x86/kvm/cpuid.c               | 5 +++--
->>   2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
->> index f6be4fd2ead0..ba371d364c58 100644
->> --- a/arch/x86/include/asm/cpufeatures.h
->> +++ b/arch/x86/include/asm/cpufeatures.h
->> @@ -340,7 +340,10 @@
->>   #define X86_FEATURE_AMD_IBPB           (13*32+12) /* Indirect Branch Prediction Barrier */
->>   #define X86_FEATURE_AMD_IBRS           (13*32+14) /* Indirect Branch Restricted Speculation */
->>   #define X86_FEATURE_AMD_STIBP          (13*32+15) /* Single Thread Indirect Branch Predictors */
->> +#define X86_FEATURE_AMD_IBRS_ALWAYS_ON (13*32+16) /* Indirect Branch Restricted Speculation always-on preferred */
->>   #define X86_FEATURE_AMD_STIBP_ALWAYS_ON        (13*32+17) /* Single Thread Indirect Branch Predictors always-on preferred */
->> +#define X86_FEATURE_AMD_IBRS_PREFERRED (13*32+18) /* Indirect Branch Restricted Speculation is preferred over SW solution */
->> +#define X86_FEATURE_AMD_IBRS_SMP       (13*32+19) /* Indirect Branch Restricted Speculation provides Same Mode Protection */
+Well, I said it was tested, but it was only compile tested basically.
+AFAICT now, I think it is not working as when I use wakeup_rt as a 
+tracer, I don't have the stack trace:
+
+# wakeup_rt latency trace v1.1.5 on 6.12.0-10380-gb66f06337b66-dirty
+# --------------------------------------------------------------------
+# latency: 2000 us, #18/18, CPU#0 | (M:preempt VP:0, KP:0, SP:0 HP:0)
+#    -----------------
+#    | task: irq/100-enet-fe-118 (uid:0 nice:0 policy:1 rt_prio:50)
+#    -----------------
+#
+#                    _------=> CPU#
+#                   / _-----=> irqs-off/BH-disabled
+#                  | / _----=> need-resched
+#                  || / _---=> hardirq/softirq
+#                  ||| / _--=> preempt-depth
+#                  |||| / _-=> migrate-disable
+#                  ||||| /     delay
+#  cmd     pid     |||||| time  |   caller
+#     \   /        ||||||  \    |    /
+kworker/-11        0dnh5.    0us :       11:120:R   + [000]      22: 
+98:R irq_work/0
+kworker/-11        0dnh5.    0us : <stack trace>
+kworker/-11        0dnh5.    0us : 0
+kworker/-11        0d..3.    0us : __schedule
+kworker/-11        0d..3.    0us :       11:120:R ==> [000]      22: 
+98:R irq_work/0
+kworker/-11        0d..3.    0us : <stack trace>
+  telnetd-229       0Dnh4.    0us :      229:120:R   + [000]     118: 
+49:R irq/100-enet-fe
+  telnetd-229       0Dnh4.    0us : <stack trace>
+  telnetd-229       0Dnh4.    0us : 0
+  telnetd-229       0D..3.    0us : __schedule
+  telnetd-229       0D..3.    0us :      229:120:R ==> [000]     118: 
+49:R irq/100-enet-fe
+  telnetd-229       0D..3.    0us : <stack trace>
+  telnetd-229       0dn.5.    0us :      229:120:R   + [000]     118: 
+49:R irq/100-enet-fe
+  telnetd-229       0dn.5.    0us : <stack trace>
+  telnetd-229       0dn.5.    0us#: 0
+  telnetd-229       0d..3. 2000us : __schedule
+  telnetd-229       0d..3. 2000us :      229:120:R ==> [000]     118: 
+49:R irq/100-enet-fe
+  telnetd-229       0d..3. 2000us : <stack trace>
+
+Geert, Greg, and maybe other highly skilled m68k people, could you 
+please help me with this particular function :-) ?
+
+Thanks !
+JM
+
 > 
-> "SMP" is an unfortunate overloading of an acronym with another
-> well-known meaning. Perhaps "SAME_MODE"?
+> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+> ---
+>   arch/m68k/Kconfig             |  5 ++++
+>   arch/m68k/kernel/Makefile     |  1 +
+>   arch/m68k/kernel/stacktrace.c | 70 +++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 76 insertions(+)
+> 
+> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+> index ab3375475721fa63418c40d4ba6ac76679ebc77d..7142f9759181a90269ae1ba9e682d331ee2ddbf6 100644
+> --- a/arch/m68k/Kconfig
+> +++ b/arch/m68k/Kconfig
+> @@ -40,6 +40,7 @@ config M68K
+>   	select UACCESS_MEMCPY if !MMU
+>   	select ZONE_DMA
+>   	select TRACE_IRQFLAGS_SUPPORT
+> +	select ARCH_STACKWALK
+>   
+>   config CPU_BIG_ENDIAN
+>   	def_bool y
+> @@ -107,6 +108,10 @@ config BOOTINFO_PROC
+>   	  Say Y to export the bootinfo used to boot the kernel in a
+>   	  "bootinfo" file in procfs.  This is useful with kexec.
+>   
+> +config STACKTRACE_SUPPORT
+> +	bool
+> +	default y
+> +
+>   menu "Platform setup"
+>   
+>   source "arch/m68k/Kconfig.cpu"
+> diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
+> index f335bf3268a108a45bab079fbf0a1c8ead9beb71..4efe92af0b711b19cb1d5129f74e67a739e289b1 100644
+> --- a/arch/m68k/kernel/Makefile
+> +++ b/arch/m68k/kernel/Makefile
+> @@ -31,3 +31,4 @@ obj-$(CONFIG_UBOOT)		+= uboot.o
+>   
+>   obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
+>   
+> +obj-y	+= stacktrace.o
+> diff --git a/arch/m68k/kernel/stacktrace.c b/arch/m68k/kernel/stacktrace.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..06c7459373bd25b3bb3540cfe2a909259c1db3ce
+> --- /dev/null
+> +++ b/arch/m68k/kernel/stacktrace.c
+> @@ -0,0 +1,70 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Stack trace utility functions etc.
+> + *
+> + * Copyright 2024 Jean-Michel Hautbois, Yoseli SAS.
+> + */
+> +
+> +#include <asm/current.h>
+> +#include <asm/ptrace.h>
+> +#include <linux/sched.h>
+> +#include <linux/sched/task_stack.h>
+> +#include <linux/stacktrace.h>
+> +
+> +static inline unsigned long current_stack_frame(void)
+> +{
+> +	unsigned long sp;
+> +
+> +	asm volatile("movl %%sp, %0" : "=r"(sp));
+> +	return sp;
+> +}
+> +
+> +static inline int validate_sp(unsigned long sp, struct task_struct *task)
+> +{
+> +	unsigned long stack_start, stack_end;
+> +
+> +	if (task == current)
+> +		stack_start = (unsigned long)task_stack_page(task);
+> +	else
+> +		stack_start = (unsigned long)task->thread.esp0;
+> +
+> +	stack_end = stack_start + THREAD_SIZE;
+> +
+> +	if (sp < stack_start || sp >= stack_end)
+> +		return 0;
+> +
+> +	return 1;
+> +}
+> +
+> +void __no_sanitize_address arch_stack_walk(stack_trace_consume_fn consume_entry, void *cookie,
+> +					   struct task_struct *task, struct pt_regs *regs)
+> +{
+> +	unsigned long sp;
+> +
+> +	if (regs && !consume_entry(cookie, regs->pc))
+> +		return;
+> +
+> +	if (regs)
+> +		sp = (unsigned long) regs;
+> +	else if (task == current)
+> +		sp = current_stack_frame();
+> +	else
+> +		sp = task->thread.ksp;
+> +
+> +	for (;;) {
+> +		unsigned long *stack = (unsigned long *) sp;
+> +		unsigned long newsp, ip;
+> +
+> +		if (!validate_sp(sp, task))
+> +			return;
+> +
+> +		newsp = stack[0];
+> +		ip = stack[1];
+> +
+> +		if (!consume_entry(cookie, ip))
+> +			return;
+> +
+> +		sp = newsp;
+> +	}
+> +}
 > 
 
-Thanks a lot for reviewing!
-Yep, you are right. I've missed that "SMP" can confuse someone. So, 
-"X86_FEATURE_AMD_IBRS_SAME_MODE" seems pretty good because the similar 
-name is used in APM. I'll prepare the third version soon.
-
-
->>   #define X86_FEATURE_AMD_PPIN           (13*32+23) /* "amd_ppin" Protected Processor Inventory Number */
->>   #define X86_FEATURE_AMD_SSBD           (13*32+24) /* Speculative Store Bypass Disable */
->>   #define X86_FEATURE_VIRT_SSBD          (13*32+25) /* "virt_ssbd" Virtualized Speculative Store Bypass Disable */
->> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->> index 30ce1bcfc47f..5b2d52913b18 100644
->> --- a/arch/x86/kvm/cpuid.c
->> +++ b/arch/x86/kvm/cpuid.c
->> @@ -754,8 +754,9 @@ void kvm_set_cpu_caps(void)
->>          kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
->>                  F(CLZERO) | F(XSAVEERPTR) |
->>                  F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
->> -               F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
->> -               F(AMD_PSFD)
->> +               F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_IBRS_ALWAYS_ON) |
->> +               F(AMD_STIBP_ALWAYS_ON) | F(AMD_IBRS_PREFERRED) |
->> +               F(AMD_IBRS_SMP) | F(AMD_PSFD) | F(BTC_NO) | F(AMD_IBPB_RET)
->>          );
-> 
-> Reviewed-by: Jim Mattson <jmattson@google.com>
-
--- 
-Best regards,
-Maksim Davydov
 
