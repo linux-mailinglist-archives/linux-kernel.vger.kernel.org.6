@@ -1,239 +1,142 @@
-Return-Path: <linux-kernel+bounces-423820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9819DAD2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:33:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C719DAD33
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7A428211E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0BF281F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE772010EC;
-	Wed, 27 Nov 2024 18:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780582010F0;
+	Wed, 27 Nov 2024 18:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YO4fxDVy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4221BC3F;
-	Wed, 27 Nov 2024 18:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C7D1BC3F;
+	Wed, 27 Nov 2024 18:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732732397; cv=none; b=f0yPKhcmDGOX5sgv1vRVsZUh1tZNYkN0qiRn4aHh3nMkpugCTmfdzPcTNUcPEkT4all3N0AX5+DQwN1gNnaFDmNPIhRYo5OqYO5NcwXlqK8I2IR+0c8dlmFR1lGXzUs5+uHhEUvEU0g61n+C/+0EPQPdK3r+Sa4o7cSBzApJBfU=
+	t=1732732507; cv=none; b=VWqvw2EFOQmJN75YiJ0O5sURsxI9VRXx6zXQKYkiUvEBdB9baGVYAoBAaTWucHMFgtt8CplNT7xwTSizC5Ox/aohMMDY4XFWOstV0iP6QdncTjJ415NERkmmGJj1dGctjcFnmYmgck5kbafh6b4WyxuDZNbL4ogoXdXO/B3SabQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732732397; c=relaxed/simple;
-	bh=9zXd8RmiNkmqLklKwkazP0hHcI83JqlwTMxS3ZY+S0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=awPTTr9Hiv5UyBMeSINhGkY8BNxmdOOADu/GO5MYd+dNi09gb1+oaUPbLlqA/cxY+s0Tl+xvEBxRFMkl9+Iy7MR9NZtF0LETDTK+v7RhzNdT7xxJs/J9UAA0QDGAG2jebr2c9xlOxadAWi1VHqazkgh3e9c4NiA9C47WTijW1is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7516FC4CECC;
-	Wed, 27 Nov 2024 18:33:15 +0000 (UTC)
-Date: Wed, 27 Nov 2024 13:34:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "dave.jiang@intel.com" <dave.jiang@intel.com>,
- "dan.j.williams@intel.com" <dan.j.williams@intel.com>, Jonathan Cameron
- <jonathan.cameron@huawei.com>, "alison.schofield@intel.com"
- <alison.schofield@intel.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
- "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
- "ira.weiny@intel.com" <ira.weiny@intel.com>, "dave@stgolabs.net"
- <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
- <linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
- <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: Re: [PATCH v4 3/6] cxl/events: Update General Media Event Record to
- CXL spec rev 3.1
-Message-ID: <20241127133407.7bc1376a@gandalf.local.home>
-In-Reply-To: <53a299d3cca6417d90d553e8399f834b@huawei.com>
-References: <20241120093745.1847-1-shiju.jose@huawei.com>
-	<20241120093745.1847-4-shiju.jose@huawei.com>
-	<180fcfd623c64cdb86cdc9059f749af0@huawei.com>
-	<20241126120237.1598854d@gandalf.local.home>
-	<a24524dccbf442d5a3c910d7f46c7b6c@huawei.com>
-	<20241127104132.6c1729e1@gandalf.local.home>
-	<53a299d3cca6417d90d553e8399f834b@huawei.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732732507; c=relaxed/simple;
+	bh=/mMvaV0aHwY/gsD1R8j4w0XmyEzMyEII6eygRRQQY2Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JtEWn6FwlOufCQogKVvc0o7Df/55Df9KmBxJM6WvBiLYIdWV8lBhW8oayCEWpv5XUdREiPL28plHatfOsTkqsCiQhJolct8dL5WcSosRxpUkItyVqrLoaN1Y8Xv00izzoFkFPNHuBX+JpgDyO6HIhYUGiwhk+bhAxPxdMKInKDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YO4fxDVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8702C4CED2;
+	Wed, 27 Nov 2024 18:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732732507;
+	bh=/mMvaV0aHwY/gsD1R8j4w0XmyEzMyEII6eygRRQQY2Y=;
+	h=From:Date:Subject:To:Cc:From;
+	b=YO4fxDVyp791lbXJ9jHhDFWEopWsjM+FSxksMVJNdRZ9JwWQyawGGCi0QBZy9xksG
+	 csikGcqJsZZH3sE2IdcucG0LdERrZBXpntDQNeBIH31pvo6T1DDyETI57+qPXW00A9
+	 NOrgxhk29mi8UNQXTYMviYe4oyTQ+nztKqFHC5dosrjO9qyCvA0k56FwezcdQbcBcR
+	 CreFntHLVrlO+bEJaSn6o2up9iKGERgedowT5rIbEGWpnzEyah4krpK+Cz1bPGuji8
+	 tm+MssG3uHeNRRqsh649Vz+j8gL1CM2huBy0qrMgwjxOrZ4vz+VbCVHMG/kVmT7H2n
+	 F6hAs5mRMaZyg==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-296b0d23303so52842fac.2;
+        Wed, 27 Nov 2024 10:35:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNURJ0mSGIRft5i/VQbJEJCyc3dHC/IQhE+OL9pxs2eGjBBiPUMP9aHjbxT3kHkS+vcxhA+o9bdZYkScE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaptPlALNSEG/39rQmm+UCWE/u4J1TUXqA9Lyxle3+Xu+pkXVP
+	QbyEtACy4HM4CRYH1UXZJlX9hO7P/KAsU28/vZdkCwSeKIw8oTvH52d9BPWjBBSbIXJLuqfciHG
+	WvnQ1ZXZDw1663AiKQoAfhBcqgdw=
+X-Google-Smtp-Source: AGHT+IFm7XploE6REnShpmAAhLH7Sjn/TChvw2z8TfyL00YhL6PMkfFtMZ1QuzTg8AXkXKDW6y7fU1RGu94ESDLctwk=
+X-Received: by 2002:a05:6870:3313:b0:278:22d3:53 with SMTP id
+ 586e51a60fabf-29dc4006fc9mr3602538fac.12.1732732506933; Wed, 27 Nov 2024
+ 10:35:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="MP_/gj_VQ.qi4BsFaumOAmUndPT"
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 27 Nov 2024 19:34:55 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gpH46U5bJ5OvZ6JXAvFkzb3P6+=N3zBOPSvQNjgmCHDg@mail.gmail.com>
+Message-ID: <CAJZ5v0gpH46U5bJ5OvZ6JXAvFkzb3P6+=N3zBOPSvQNjgmCHDg@mail.gmail.com>
+Subject: [GIT PULL] Additional thermal control updates for v6.13-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---MP_/gj_VQ.qi4BsFaumOAmUndPT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Hi Linus,
 
-On Wed, 27 Nov 2024 18:20:26 +0000
-Shiju Jose <shiju.jose@huawei.com> wrote:
+Please pull from the tag
 
-> I tested removing hdr_uuid and region_uuid from the rasdaemon test setup
-> as you suggested. As a result, libtraceevent parses correctly, as you mentioned.
-> 
-> However, I encounter  similar parsing error ("FAILED TO PARSE") when I add two additional
-> decoded strings (%s) to the TP_printk, replacing (%u). Please see the attached format file,
-> "format_cxl_general_media_v3.1_basic", for your reference.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ thermal-6.13-rc1-3
 
-Are you sure. I don't see anything wrong with that one. Which version of
-libtraceevent do you have?
+with top-most commit 4dc333c6c28c49943a571f09c3868e5058552016
 
-> 
-> I've also attached another format file, "format_cxl_general_media_v3.1_full",
-> which contains the complete TP_printk() intended.
+ Merge branch 'thermal-intel'
 
-This one has some complex arguments and also uses the '&' address of an
-argument.
+on top of commit eb78332b1067776ca4a474ccfd92460014e8d8e3
 
->  
-> Can you please help or else can you share how to debug these errors in the
-> libtraceevent setup?
+ Merge tag 'thermal-6.13-rc1-2' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
 
-Basically, I use the attached program (that just links to libtraceevent).
+to receive additional thermal control updates for 6.13-rc1.
 
-Note, I need to delete the first line of your files, which has the "cat"
-command. But you can run this on the file itself:
+These fix a Power Allocator thermal governor issue reported recently,
+update the Intel int3400 thermal driver and simplify DT data parsing in
+the thermal control subsystem:
 
-  ./tep_load_event /sys/kernel/tracing/events/cxl/cxl_general_media/format
+ - Add a NULL pointer check that was missed by recent modifications of
+   the Power Allocator thermal governor (Rafael Wysocki).
 
-But you may need to be root to do that. If root just copies that file, you
-can then run it as non-root.
+ - Remove the data_vault attribute_group from int3400 because it is only
+   used for exposing one binary file that can be exposed directly (Thomas
+   Wei=C3=9Fschuh).
 
- # cp /sys/kernel/tracing/events/cxl/cxl_general_media/format /tmp
- $ ./tep_load_event /tmp/format
+ - Prevent the current_uuid sysfs attribute in int3400 from mistakenly
+   treating valid UUID values as invalid on some older systems (Srinivas
+   Pandruvada).
 
-I run it under gdb and see where it fails. But it should let you know if it
-will pass or not. I put a breakpoint on tep_warning and when it gets hit, I
-examine what it did up to that point.
+ - Use the cleanup.h mechanics to simplify DT data parsing in the thermal
+   core and some drivers (Krzysztof Kozlowski).
 
--- Steve
+Thanks!
 
 
---MP_/gj_VQ.qi4BsFaumOAmUndPT
-Content-Type: text/x-c++src
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=tep_load_event.c
+---------------
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+Krzysztof Kozlowski (6):
+      thermal: of: Simplify thermal_of_should_bind with scoped for each OF =
+child
+      thermal: of: Use scoped memory and OF handling to simplify
+thermal_of_trips_init()
+      thermal: of: Use scoped device node handling to simplify
+of_thermal_zone_find()
+      thermal: qcom-spmi-adc-tm5: Simplify with scoped for each OF child lo=
+op
+      thermal: tegra: Simplify with scoped for each OF child loop
+      thermal: sun8i: Use scoped device node handling to simplify error pat=
+hs
 
-#include <event-parse.h>
+Rafael J. Wysocki (1):
+      thermal: gov_power_allocator: Add missing NULL pointer check
 
-static char *argv0;
+Srinivas Pandruvada (1):
+      thermal: int3400: Fix reading of current_uuid for active policy
 
-static char *get_this_name(void)
-{
-	static char *this_name;
-	char *arg;
-	char *p;
+Thomas Wei=C3=9Fschuh (1):
+      thermal: int3400: Remove unneeded data_vault attribute_group
 
-	if (this_name)
-		return this_name;
+---------------
 
-	arg = argv0;
-	p = arg+strlen(arg);
-
-	while (p >= arg && *p != '/')
-		p--;
-	p++;
-
-	this_name = p;
-	return p;
-}
-
-static void usage(void)
-{
-	char *p = get_this_name();
-
-	printf("usage: %s exec\n"
-	       "\n",p);
-	exit(-1);
-}
-
-static void __vdie(const char *fmt, va_list ap, int err)
-{
-	int ret = errno;
-	char *p = get_this_name();
-
-	if (err && errno)
-		perror(p);
-	else
-		ret = -1;
-
-	fprintf(stderr, "  ");
-	vfprintf(stderr, fmt, ap);
-
-	fprintf(stderr, "\n");
-	exit(ret);
-}
-
-void die(const char *fmt, ...)
-{
-	va_list ap;
-
-	va_start(ap, fmt);
-	__vdie(fmt, ap, 0);
-	va_end(ap);
-}
-
-void pdie(const char *fmt, ...)
-{
-	va_list ap;
-
-	va_start(ap, fmt);
-	__vdie(fmt, ap, 1);
-	va_end(ap);
-}
-
-int main (int argc, char **argv)
-{
-	struct tep_handle *tep;
-	off_t size;
-	char *buf;
-	int ret;
-
-	argv0 = argv[0];
-
-	if (argc < 2)
-		usage();
-
-	tep = tep_alloc();
-	if (!tep)
-		pdie("tep_alloc");
-
-	tep_set_loglevel(TEP_LOG_ALL);
-
-	ret = open(argv[1], O_RDONLY);
-	if (ret < 0)
-		pdie(argv[1]);
-	size = lseek(ret, 0, SEEK_END);
-	if (size < 0)
-		pdie("lseek");
-
-	lseek(ret, 0, SEEK_SET);
-	buf = malloc(size);
-	if (!buf)
-		pdie("malloc");
-
-	size = read(ret, buf, size);
-	if (size < 0)
-		pdie("read");
-	close(ret);
-
-	ret = tep_parse_event(tep, buf, size, "sys");
-	if (ret < 0)
-		pdie("tep_parse_event");
-
-	free(buf);
-	tep_free(tep);
-	return 0;
-}
-
---MP_/gj_VQ.qi4BsFaumOAmUndPT--
+ drivers/thermal/gov_power_allocator.c              |  7 ++-
+ .../intel/int340x_thermal/int3400_thermal.c        | 18 ++------
+ drivers/thermal/qcom/qcom-spmi-adc-tm5.c           |  7 +--
+ drivers/thermal/sun8i_thermal.c                    | 11 +++--
+ drivers/thermal/tegra/soctherm.c                   |  5 +--
+ drivers/thermal/thermal_of.c                       | 50 +++++++-----------=
+----
+ 6 files changed, 34 insertions(+), 64 deletions(-)
 
