@@ -1,122 +1,239 @@
-Return-Path: <linux-kernel+bounces-423073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726F59DA268
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:39:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 518639DA270
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3950E28591E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:39:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1BC6B20E52
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547F4146019;
-	Wed, 27 Nov 2024 06:39:21 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F36F9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05D71494AB;
+	Wed, 27 Nov 2024 06:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdQyOWXA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5132E146580
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732689561; cv=none; b=GLU0NfnHxkOk5T/M+FqSak7WA5FoVE1wK0bggQ5p9xHttmjJ2iJPfawzqh57E7p4M/K3XzHqhNZ6Nhpcl1RHACz1kLr2KChl+UDjlFZE4TiZWOvQDgC1ldScJALwyHah3k8f95iQVVskc7Mx+F+6mSvhkMSAXQbo8hCJlpFx3wg=
+	t=1732689870; cv=none; b=kfBy9PeyeME9QwMLEHr4iJJ5DVE34KuMOdhk5wTzdwHwDErAtwpejGT/3eCPEEFh40In8pfW1EI8Wv0pne9r7av7qVX3Xge6LJdlHPQRuIggHWrJbkAcZhSt7q274LeyeMVtA7vi1hrJWj18tu76itQD/mTBqrbFxJMeRWtLR5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732689561; c=relaxed/simple;
-	bh=QzXjNuaetxZpAnx67AbI2GUQH5dA91HczpHtXRg7S9A=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GmlUpZ8E/rOpc0iU6gJa8XuTPceZZ1DvGbPvr9xcziqfCJEiAq427zMq4gxzHc/yXrFT7GDfAX2lACyb0gcmRx857B+FzN6/jNj1DnLUvP21LIZSHzAMBXSk8MV7E1kB6KAGcVnvcNxbgc01DmCDXBfW8MsnsddohGr3rg3lM9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxC+KTvkZnZKRJAA--.12458S3;
-	Wed, 27 Nov 2024 14:39:15 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMBx_uCRvkZnNotpAA--.21910S3;
-	Wed, 27 Nov 2024 14:39:15 +0800 (CST)
-Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-2-yangtiezhu@loongson.cn>
- <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
- <75f6e90b-4d04-5627-395e-58982a84d7c1@loongson.cn>
- <20241127005208.luhtjy2qhk3bza7a@jpoimboe>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <f1bcff28-dc9c-2878-10c7-6e653516e66d@loongson.cn>
-Date: Wed, 27 Nov 2024 14:39:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1732689870; c=relaxed/simple;
+	bh=Adem4fDNDm4uOJzImDUmzo/9GG4HkxizaDKg1FXsy3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KflWXL+7ZHGcwbznK3E32Kpu5Mr/1XswCZbPDQ1Js3PaekuEdk/jfPAqApd480i0F7MKGP4s0o6XJawzKzPVdwWY+Q1krZOcU/ICy0s2iH3/YdgfXhPZt805Gg4ZZ9oF8cpm19HKXqVXPNPrjEi9bjLegI4d/Kc1fskWuNEYNJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZdQyOWXA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732689867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MdRqBIsob+HSQlVYogv7NSws9OUzt8+ABx+5vycAsxw=;
+	b=ZdQyOWXA3ObyHQoYAJGGRcyY67f9ANbpJvir+pLZiJAnpndNPHVLjViWZ3BERCd1Dw/OBt
+	dJTYQSp1a2rlJRTelpnj3kruLtj9aO7FVHG7nMZ8FbmORGnsoI4JK+9TSqZUdtVdVerBub
+	znfmhy1dxd6vIsNAi+eWPQ+2XlMOidk=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-mzfccM1pN5qpgmhTIu9ttg-1; Wed, 27 Nov 2024 01:44:25 -0500
+X-MC-Unique: mzfccM1pN5qpgmhTIu9ttg-1
+X-Mimecast-MFC-AGG-ID: mzfccM1pN5qpgmhTIu9ttg
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa55354400eso48378066b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:44:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732689864; x=1733294664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MdRqBIsob+HSQlVYogv7NSws9OUzt8+ABx+5vycAsxw=;
+        b=JDkwl6vMFizn9EgQXmkwIOOTLSavRCdo+9G+oTxyE4jolman0toOFxp0hNrFbWgOVY
+         Lfzor8DD5GcAW9txDEtmBEzcnjIBHYF51wl0jck9p8Ib9P2Q3DeHDLHFb9hPoH3CTkIw
+         ne+cSeLhemMk1LmHhkg36YEcuvDbo63Rr7BqDJCNwbBEcnX69KB6IIxYntORFO2TWbw7
+         R4JJL4ib2C6kGG+edFMXY3MiiJuua2v7yJdUvX1/dhT9lQDQSYyXogSzLznG/sKQrPoT
+         erqEEnlt2fBgZOJVIaYCkB3IfBSbgZJ5IFLz9f/3Qj3e4VpgGp2myhkQwoPBPupJAnR1
+         IkmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlX0mZM4O3aQAasVBgviogvL3aY+5s6vAphzCHNAEWQK8mhNIS7WhwXYYnmap1TF9RgJeLpFJz30cMhk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVIgE2bYzO5jzuZh3Ezo28GIyS0ON1CSo7KSCyu5smamgn5JKT
+	xfevhoIXRv7rtOsV6CWz2rSlPocglHA8Rswp6a5Ghrl9ZafMptXfDjHb/BGxCp+zL2/0XuD2/lf
+	F717tiB+Jg+lOgwja2XGBVLTfUH2sPUU7dlBc2L6wZ09zxzEJl+cJwMADgjgog3OQagDmKbffXm
+	5vTF3bIcROfiIgnmRZVDJZvsTaI9prHRdDexh0
+X-Gm-Gg: ASbGncsmhISlxObFHvzlZKwyru3OtZb+PmtgmLXulkgFIqcMJeASJdeeqv0hOwGJf1g
+	xGsa/uzOv2lWevffOUTCLk9ndJWkbc4Jb
+X-Received: by 2002:a17:907:2cc6:b0:a99:3db2:eb00 with SMTP id a640c23a62f3a-aa5649cf412mr648868966b.28.1732689863797;
+        Tue, 26 Nov 2024 22:44:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IExZ32B7TxPPlBNx/gDPoxy1NSbfDzaO3j+hHsSRz0S0ZDH0lfDAjhj4c4mRiL8YGZcb7T/QzEjIE9kOhP+9jM=
+X-Received: by 2002:a17:907:2cc6:b0:a99:3db2:eb00 with SMTP id
+ a640c23a62f3a-aa5649cf412mr648867366b.28.1732689863496; Tue, 26 Nov 2024
+ 22:44:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241127005208.luhtjy2qhk3bza7a@jpoimboe>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMBx_uCRvkZnNotpAA--.21910S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CrWxAw4ftFW3uw45uFy8WFX_yoW8Gr4UpF
-	ZxAa15Jrnayr17Wanavan7u3Z3J3s7GFn8Gr4kKryrJry2gw15ta95GF45Ca4kGr1SvF47
-	Zr4Fqw1fZw4DA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
-	UUUUU
+References: <20241105072642.898710-1-lulu@redhat.com> <20241105072642.898710-5-lulu@redhat.com>
+ <5dcd0aa9-f098-4aac-a053-9693761ff550@oracle.com>
+In-Reply-To: <5dcd0aa9-f098-4aac-a053-9693761ff550@oracle.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Wed, 27 Nov 2024 14:43:44 +0800
+Message-ID: <CACLfguU_xqxu5b0D8RoEFAb5Z8Xp4H8v2f5UeLG74kSZcthfOw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] vhost: Add kthread support in function vhost_worker_create
+To: michael.christie@oracle.com
+Cc: jasowang@redhat.com, mst@redhat.com, sgarzare@redhat.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/27/2024 08:52 AM, Josh Poimboeuf wrote:
-> On Tue, Nov 26, 2024 at 06:41:29PM +0800, Tiezhu Yang wrote:
->> On 11/26/2024 02:44 PM, Josh Poimboeuf wrote:
->>> On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
->>>> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
->>>
->>> 'prev_offset' needs to be updated as well.
->>
->> I am not sure I understand your comment correctly, I can not see
->> what should to do about 'prev_offset'.
+On Wed, Nov 27, 2024 at 5:20=E2=80=AFAM <michael.christie@oracle.com> wrote=
+:
 >
-> Further down the function there is
+> On 11/5/24 1:25 AM, Cindy Lu wrote:
+> >  static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
+> >  {
+> >       struct vhost_worker *worker;
+> > -     struct vhost_task *vtsk;
+> > +     struct vhost_task *vtsk =3D NULL;
+> > +     struct task_struct *task =3D NULL;
+> >       char name[TASK_COMM_LEN];
+> >       int ret;
+> >       u32 id;
+> >
+> > +     /* Allocate resources for the worker */
+> >       worker =3D kzalloc(sizeof(*worker), GFP_KERNEL_ACCOUNT);
+> >       if (!worker)
+> >               return NULL;
+> >
+> > +     worker->fn =3D kzalloc(sizeof(struct vhost_task_fn), GFP_KERNEL_A=
+CCOUNT);
+> > +     if (!worker->fn) {
+> > +             kfree(worker);
+> > +             return NULL;
+> > +     }
 >
->   prev_offset = reloc_offset(reloc);
+> Why dynamically allocate this?
 >
-> which needs to be changed to
+> You could probably even just kill the vhost_task_fn struct since we just
+> have to the 2 callouts.
+
+sure, will change this
 >
->   prev_offset = offset;
 >
-> as part of the patch.
+> > +
+> >       worker->dev =3D dev;
+> >       snprintf(name, sizeof(name), "vhost-%d", current->pid);
+> >
+> > -     vtsk =3D vhost_task_create(vhost_run_work_list, vhost_worker_kill=
+ed,
+> > -                              worker, name);
+> > -     if (!vtsk)
+> > -             goto free_worker;
+> > -
+> >       mutex_init(&worker->mutex);
+> >       init_llist_head(&worker->work_list);
+> >       worker->kcov_handle =3D kcov_common_handle();
+> > -     worker->vtsk =3D vtsk;
+> >
+> > -     vhost_task_start(vtsk);
+> > +     if (dev->inherit_owner) {
+> > +             /* Create and start a vhost task */
+>
+> Maybe instead of this comment and the one below write something about
+> what inherit_owner means. We can see from the code we are creating a
+> vhost/kthread, but it's not really obvious why. Something like:
+>
+> /*
+>  * If inherit_owner is true we use vhost_tasks to create
+>  * the worker so all settings/limits like cgroups, NPROC,
+>  * scheduler, etc are inherited from the owner. If false,
+>  * we use kthreads and only attach to the same cgroups
+>  * as the owner for compat with older kernels.
+>  */
+>
+Thanks, Mike=EF=BC=8C I will change this
 
-If I understand correctly, reloc_offset(reloc) is different with
-reloc->sym->offset + reloc_addend(reloc), tested on x86 and readelf
-shows that their values are different, reloc_offset(reloc) is the
-first column of .rela.rodata, reloc->sym->offset is the second to
-last column of .rela.rodata, reloc_addend(reloc) is the last column
-of .rela.rodata.
-
-If do the above change as you suggested, there will be some objtool
-warnings on x86. I think it should be:
-
-   prev_offset = reloc_offset(reloc);
-
-rather than:
-
-   prev_offset = offset;
-
-That is to say, no need to change "prev_offset".
-Could you please check it again, please let me know if I am wrong.
-
-Thanks,
-Tiezhu
+>
+>
+> > +             vtsk =3D vhost_task_create(vhost_run_work_list,
+> > +                                      vhost_worker_killed, worker, nam=
+e);
+> > +             if (!vtsk)
+> > +                     goto free_worker;
+> > +
+> > +             worker->vtsk =3D vtsk;
+> > +             worker->fn->wakeup =3D vhost_task_wakeup_fn;
+> > +             worker->fn->stop =3D vhost_task_stop_fn;
+> > +
+> > +             vhost_task_start(vtsk);
+> > +     } else {
+> > +             /* Create and start a kernel thread */
+> > +             task =3D kthread_create(vhost_run_work_kthread_list, work=
+er,
+> > +                                   "vhost-%d", current->pid);
+> > +             if (IS_ERR(task)) {
+> > +                     ret =3D PTR_ERR(task);
+> > +                     goto free_worker;
+> > +             }
+> > +             worker->task =3D task;
+> > +             worker->fn->wakeup =3D vhost_kthread_wakeup_fn;
+> > +             worker->fn->stop =3D vhost_kthread_stop_fn;
+> > +
+> > +             wake_up_process(task);
+> > +             /* Attach to the vhost cgroup */
+>
+> You don't need this comment do you? The function name tells us the same
+> info.
+>
+sure, Will remove  this
+> > +             ret =3D vhost_attach_cgroups(dev);
+>
+> I don't think this works. Patch 3/9 did:
+>
+> +       xa_for_each(&dev->worker_xa, i, worker) {
+> +               ret =3D vhost_worker_cgroups_kthread(worker);
+>
+> but we don't add the worker to the xa until below.
+>
+> You also want to just call vhost_worker_cgroups_kthread above, because
+> you only want to add the one task and not loop over all of them.
+>
+> I would then also maybe rename vhost_worker_cgroups_kthread to something
+> like vhost_attach_task_to_cgroups.
+>
+>
+Will fix this. Thanks
+>
+> > +             if (ret)
+> > +                     goto stop_worker;
+> > +     }
+> >
+> >       ret =3D xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GFP_=
+KERNEL);
+> >       if (ret < 0)
+> >               goto stop_worker;
+> >       worker->id =3D id;
+> > -
+> >       return worker;
+> > -
+> >  stop_worker:
+> > -     vhost_task_stop(vtsk);
+> > +     worker->fn->stop(dev->inherit_owner ? (void *)vtsk : (void *)task=
+);
+>
+> I don't think you need to cast since the function takes a void pointer.
+> Same comment for the other patches like 6/9 where you are calling the
+> callout and casting.
+>
+Sure, Thanks I will rewrite this part
+Thanks
+cindy
 
 
