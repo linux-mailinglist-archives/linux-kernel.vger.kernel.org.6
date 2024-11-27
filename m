@@ -1,172 +1,164 @@
-Return-Path: <linux-kernel+bounces-423447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0239DA7B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:25:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F17A9DA77A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:12:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861B4B2BF57
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B7F2828C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9FC1FBC94;
-	Wed, 27 Nov 2024 12:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99F31FBCB2;
+	Wed, 27 Nov 2024 12:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7iGE4Bp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="r92Kl2md";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5Ok6EUPv"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A7A1FAC33;
-	Wed, 27 Nov 2024 12:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024851FBCA7;
+	Wed, 27 Nov 2024 12:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709489; cv=none; b=E3AmP+srXjPhiUOv6rl3KCN9HGOhGS8HEaMpMSKWFxCSPH2HJLuunVxvM146NahuMf84m3jN0sFLO+ayXmr+SqrqgSHkB0Ka+vn2CpEz6B9an2bRIGeLJaV3HeeF+SZSlNqLszRiUBTVgopdtYsXVsHBaVeJ45FGLIMwL/wAkYc=
+	t=1732709511; cv=none; b=q8Jj2pC42biXTjsxqvzHp3e/Y6zJrUG729AqHojD9oLKWbkYx/2vGW36bbHmqB//84GPWqYN3AepaHDuaAFuF6/ctZZrIQSvd2fA1OYzx9Zyoro/FwiEsdq2IO/iDNL2eyYMFWSBUkupK6/aIzgzhFOJZ7rzfscAhplIKWbXU68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709489; c=relaxed/simple;
-	bh=dqWgDeXEGSRxykq4pDLI8kHlq98XWyHJixML/bBW9a0=;
+	s=arc-20240116; t=1732709511; c=relaxed/simple;
+	bh=jzXiWxyCibDahW4FWBCnt++CATpAWgnwTob3s6EhX1M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzhohFRjnk8pBJQU2sxFRWpJnson68vn7afbdWFBX4q8S1sPfbfjkjntcY4iR8lfBdmEM5VFMlTATYp+txKOso5umkthyGS5nIaF/r6inI6rocxDfS5QAQw977HJmBzhnej1FUxLBhgIfRpqnA9U6eGCRdxJngcSR6qIroPAXUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7iGE4Bp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CF6C4CECC;
-	Wed, 27 Nov 2024 12:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732709488;
-	bh=dqWgDeXEGSRxykq4pDLI8kHlq98XWyHJixML/bBW9a0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m7iGE4BpYB+iIEUPgptl983fxACfuA9gJgPj8pBHlXtKbxhREiwmi4DjeIPYbaXF0
-	 EPCFXJ/AaqlooFbYtzYZflSKOviGNU1IVQir63r/iOgN8s9sp6UfZvh6RzCcmPGOh5
-	 ZfvwuiGkwDRZHIwOmh8h2Ik5jpRnXNKZEHnwF+9M9Zlk+jeTOturk6LpkqTB66rUNn
-	 wJYSdG3cMLljO+xRjooflTGnk4MV70YZZPbaBo4Sjaq3bFGRKQZWxFnpzy0Xb1ZXwd
-	 Max0GHx3mC9gUiRm4iKaJc6BI67wf7udPoi6cr7ZW6tizaEPP/w7TBkgi4RCYxFe7R
-	 uomR120OYghzw==
-Date: Wed, 27 Nov 2024 13:11:23 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, 
-	regressions@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>, 
-	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Rui Ueyama <rui314@gmail.com>
-Subject: Re: [REGRESSION] mold linker depends on ETXTBSY, but open(2) no
- longer returns it
-Message-ID: <20241127-frisst-anekdote-3e6d724cb311@brauner>
-References: <CACKH++YAtEMYu2nTLUyfmxZoGO37fqogKMDkBpddmNaz5HE6ng@mail.gmail.com>
- <4a2bc207-76be-4715-8e12-7fc45a76a125@leemhuis.info>
- <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFF0n2dcRw0ZmD1PRo5vESBwz+u7OSMp1ppE4mqazNmrgowM5YT2YiV15rGNo2LHE3IgyrMYbWS4vCOqmGul65H28CG39oaw58Ho4uk1NfS1nS2C/Q2v4aJTwnOuvnTNSCwLBfnQdzndCaucV5NH3kzagbqLcY3XvpR7l4NrYZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=r92Kl2md; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5Ok6EUPv; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B8CEC2540072;
+	Wed, 27 Nov 2024 07:11:47 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 27 Nov 2024 07:11:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732709507; x=
+	1732795907; bh=3blg7EFfpE4vkXvFpR4yFVjJmH1gJFZZGLgmEe/FrLQ=; b=r
+	92Kl2mdbB7MQSS/OYx2J7FaxG7RGB+rJ2opdgVWsrauQUxP1R9UKURWGMk4Sgy6D
+	Hy3VvCwDrLbV9WLbwyW3XS5K3MPISolYAP8FE34TDHpJBZWfyMxPLVoqjJ0oQohx
+	zDKPSps3kySeOow5tTSe0bdc5c77MaHrTfkchpJo9go6McjucCcupA5o9JWj6e8d
+	akcuhRUdsDoGwu3TnjsC8ksZ0FF1vht46iatKiKEryuyTGocRzVSXPzfnwpLVWzK
+	wsWD+ao/JEJsoLzDj+KF6ECUkLSpxZCPEwHEIDmepro3cQkEd5n2YmmK1ggyCLlm
+	5TNMFnz2qj8p7ttqNJQgQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732709507; x=1732795907; bh=3blg7EFfpE4vkXvFpR4yFVjJmH1gJFZZGLg
+	mEe/FrLQ=; b=5Ok6EUPv4W3E+86ly6MTj646iphZE5wh39OT0XlnGD6zMifZVX6
+	61CuLvas9D4P6QiKBTyIiLwOiwHeIpoh58j3qdKLcsrIJScu+0ZWJRlY1KU/aRGV
+	VXOYwFYkcMClK6qTK4HTHy5LZ+5bA6AyxUiwGICmFJ5qm/vNCQrgQYTZTky2G4/F
+	OlMN7jI7nx/kZTYx29ejyx/k8oZAIVgxneAlg+JQIIxPzygY8x3zjO8OJOkuUys5
+	dU0iP/oH1w5KhznOnJU5KZU1+fdJOVPxI3Bu9m38rSEhfLxUUc7axOvVTKixBhn5
+	B5bbFnXxL9bkELzwTx870ZETQBvY+4C2oeg==
+X-ME-Sender: <xms:gQxHZ9cPIQMhvlrfw7ukEFjBWQCjXbfbLKPtibs0SrsODWSDs5dOFw>
+    <xme:gQxHZ7MEeV3tnUAe2LWbNFbmbnGnFQldhs8dO4nA3P3AL-V4w0nlxwETYIqrcu1_F
+    y4l6_EKtkCITlVm92k>
+X-ME-Received: <xmr:gQxHZ2gqJA0ewDdKrhMGszWxK3eagRdUMT6rcgRfJKQzm3jFG8FrSBzvg6T9BVWGEPyUIw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdefgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnheptddvkeduhfeggeduheef
+    hedtffefudfghefgfeevveelueeufffhvdelueevvedvnecuffhomhgrihhnpehsvghrih
+    gvshdrthhoohhlshenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtoh
+    epuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrggtihgvjhdrfihivggt
+    iihorhdqrhgvthhmrghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphht
+    thhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvgdrhhgrnhhsvg
+    hnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedr
+    uggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepth
+    hglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:gQxHZ2_qQqMhvC_1J1mvY9t39ia2LDjDXuWPu3DNT0RYNo_2h9BhIQ>
+    <xmx:gQxHZ5tPtT6jUvhgPxhOeJHNiNLZSNNn-HcbpUqx2GT5Xbgz9OtkMQ>
+    <xmx:gQxHZ1HDguZcTK93FA8Teeiu_jijpBJ7ucFFRjr1PWq04xprqX4XhA>
+    <xmx:gQxHZwOBcWCc3MdI5faqvzBW9U3YO09WngXRnwrlrbYlLC0u7t2ShA>
+    <xmx:gwxHZ6n-ShnUolqwu1bI3ur7mUmXxaqEchFUXJ4a5NfYgw5fxTzPOKf1>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Nov 2024 07:11:42 -0500 (EST)
+Date: Wed, 27 Nov 2024 14:11:38 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: shuah@kernel.org, hpa@zytor.com, x86@kernel.org, 
+	dave.hansen@linux.intel.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] selftests/lam: Move cpu_has_la57() to use cpuinfo
+ flag
+Message-ID: <6kfafs7wio7ruth3p54pezqwcultxqqpnjvehjzaz7hlba4rp3@6kb5zdqfglsl>
+References: <cover.1732627541.git.maciej.wieczor-retman@intel.com>
+ <4979b3de7021f34cbef22d44799e28c914f993ca.1732627541.git.maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACKH++YYM2uCOrFwELeJZzHuTn5UozE-=7PS3DiVnsJfXg1SDw@mail.gmail.com>
+In-Reply-To: <4979b3de7021f34cbef22d44799e28c914f993ca.1732627541.git.maciej.wieczor-retman@intel.com>
 
-On Wed, Nov 27, 2024 at 07:33:53AM +0900, Rui Ueyama wrote:
-> On Mon, Nov 11, 2024 at 9:02 PM Thorsten Leemhuis
-> <regressions@leemhuis.info> wrote:
-> >
-> > [adding a few CCs, dropping stable]
-> >
-> > On 28.10.24 12:15, Rui Ueyama wrote:
-> > > I'm the creator and the maintainer of the mold linker
-> > > (https://github.com/rui314/mold). Recently, we discovered that mold
-> > > started causing process crashes in certain situations due to a change
-> > > in the Linux kernel. Here are the details:
-> > >
-> > > - In general, overwriting an existing file is much faster than
-> > > creating an empty file and writing to it on Linux, so mold attempts to
-> > > reuse an existing executable file if it exists.
-> > >
-> > > - If a program is running, opening the executable file for writing
-> > > previously failed with ETXTBSY. If that happens, mold falls back to
-> > > creating a new file.
-> > >
-> > > - However, the Linux kernel recently changed the behavior so that
-> > > writing to an executable file is now always permitted
-> > > (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2a010c412853).
-> >
-> > FWIW, that is 2a010c41285345 ("fs: don't block i_writecount during
-> > exec") [v6.11-rc1] from Christian Brauner.
-> >
-> > > That caused mold to write to an executable file even if there's a
-> > > process running that file. Since changes to mmap'ed files are
-> > > immediately visible to other processes, any processes running that
-> > > file would almost certainly crash in a very mysterious way.
-> > > Identifying the cause of these random crashes took us a few days.
-> > >
-> > > Rejecting writes to an executable file that is currently running is a
-> > > well-known behavior, and Linux had operated that way for a very long
-> > > time. So, I don’t believe relying on this behavior was our mistake;
-> > > rather, I see this as a regression in the Linux kernel.
-> > >
-> > > Here is a bug report to the mold linker:
-> > > https://github.com/rui314/mold/issues/1361
-> >
-> > Thx for the report. I might be missing something, but from here it looks
-> > like nothing happened. So please allow me to ask:
-> >
-> > What's the status? Did anyone look into this? Is this sill happening?
+On Tue, Nov 26, 2024 at 02:34:48PM +0100, Maciej Wieczor-Retman wrote:
+> In current form cpu_has_la57() reports platform's support for LA57
+> through reading the output of cpuid. A much more useful information is
+> whether 5-level paging is actually enabled on the running system.
+> 
+> Presence of the la57 flag in /proc/cpuinfo signifies that 5-level paging
+> was compiled into the kernel, is supported by the platform and wasn't
+> disabled by kernel command line argument.
+> 
+> Use system() with cat and grep to figure out if la57 is enabled on the
+> running system.
+> 
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+> Changelog v4:
+> - Add this patch to the series.
+> 
+>  tools/testing/selftests/x86/lam.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
+> index 0ea4f6813930..0ac805125ab2 100644
+> --- a/tools/testing/selftests/x86/lam.c
+> +++ b/tools/testing/selftests/x86/lam.c
+> @@ -124,14 +124,11 @@ static inline int cpu_has_lam(void)
+>  	return (cpuinfo[0] & (1 << 26));
+>  }
+>  
+> -/* Check 5-level page table feature in CPUID.(EAX=07H, ECX=00H):ECX.[bit 16] */
+>  static inline int cpu_has_la57(void)
+>  {
+> -	unsigned int cpuinfo[4];
+> -
+> -	__cpuid_count(0x7, 0, cpuinfo[0], cpuinfo[1], cpuinfo[2], cpuinfo[3]);
+> +	int ret = !!system("cat /proc/cpuinfo | grep -wq la57\n");
 
-Linus, it seems that the mold linker relies on the deny_write_access()
-mechanism for executables. The mold linker tries to open a file for
-writing and if ETXTBSY is returned mold falls back to creating a new
-file.
+Heh. grep can read files on its own :P
 
-There is now a fix in mold upstream in
-https://github.com/rui314/mold/commit/8e4f7b53832d8af4f48a633a8385cbc932d1944e
+	return !system("grep -wq la57 /proc/cpuinfo");
 
-However, mold upstream still insists on a revert (no judgement on my
-part in case that sentence is misinterpreted).
+>  
+> -	return (cpuinfo[2] & (1 << 16));
+> +	return !ret;
+>  }
+>  
+>  /*
+> -- 
+> 2.47.1
+> 
 
-Note, that the revert will cause issues for the fanotify pre-content
-hook patch series in [1] which was the cause for the removal of the
-deny_write_access() protection for executables so that on page faults
-the contents of executables could be filled-in by userspace. This is
-useful when dealing with very large executables and is apparently used
-by Meta.
-
-[1]: https://lore.kernel.org/r/20241121112218.8249-1-jack@suse.cz
-
-While Amir tells me that they may have a way around this I expect this
-to be hacky.
-
-This will also trigger a revert/rework of the LTP testsuite which has
-adapted various tests to the deny_write_access() removal for
-executables.
-
-There's been some delay in responding to this after my initial comment
-on Github because I entered into a month of sickness. So I just got
-reminded of this issue now. In any case, here's a tag that you can pull
-if you agree with the revert. 
-
-The following changes since commit 7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5:
-
-  Merge tag 'for-6.13/dm-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm (2024-11-25 18:54:00 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.exec.deny_write_access.revert
-
-for you to fetch changes up to 3b832035387ff508fdcf0fba66701afc78f79e3d:
-
-  Revert "fs: don't block i_writecount during exec" (2024-11-27 12:51:30 +0100)
-
-----------------------------------------------------------------
-vfs-6.13.exec.deny_write_access.revert
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Revert "fs: don't block i_writecount during exec"
-
- fs/binfmt_elf.c       |  2 ++
- fs/binfmt_elf_fdpic.c |  5 ++++-
- fs/binfmt_misc.c      |  7 +++++--
- fs/exec.c             | 23 +++++++++++++++--------
- kernel/fork.c         | 26 +++++++++++++++++++++++---
- 5 files changed, 49 insertions(+), 14 deletions(-)
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
