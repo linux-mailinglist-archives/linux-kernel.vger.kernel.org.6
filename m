@@ -1,123 +1,269 @@
-Return-Path: <linux-kernel+bounces-423458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E159DA7BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:27:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0E09DA793
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:17:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB57162B4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:17:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4942C1FBCA8;
+	Wed, 27 Nov 2024 12:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="lwZOurz6"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D52AB2E689
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:16:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9429D1FC7D2;
-	Wed, 27 Nov 2024 12:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U+p2X9wP"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722941FC0FC
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628791FAC5A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709705; cv=none; b=DmuR/TRRpntwQBIZpAlAGMxXQPClG4Lhshd3UrA2v/znx2TKmx0eV23G7hh5cHRK4uskjjEgx56tffB/eDbvgzgm8XpPs49v63RUzvOgGtuMrx+zqLfBQ1dT7DEaUXEJvjdwOykNOJy7V24N+dupPcFS8oaDffQd5OBGq+4VgBs=
+	t=1732709835; cv=none; b=Z5888i6D0Ztw4KNPpfggHIswh8Icod40olR54c5UPVZ/WCUhF9xqisAWskjAMQmd473knYo64etr5HSXOR9IeyGhRp2ajJi1aXnfxlxRPFNuXKO4j/zX+TvOk1yuWyjSkKsrUNlHIW9zyKcEZd+/zrnY4MDe8RZIuZuv1tuCcPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709705; c=relaxed/simple;
-	bh=yv3h2vzWiCSkYvOmOVZOnLbH4e+vqdmkttphrGsTdA8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X0cc/34E0yU9E/OiyjAef+epWPuKn+m5UxbmaIRWLLN9XHwCcUpGiEAGn79Vaw/8I+Gsq5DRYdAxYWhZ2Jl0a+4f1Y4Sb1fK2Bd9CInieUIsIspHQQ9c0yCKsAuEWocUytFLG1/0+RXeuvzh0XVpJ/z/NTeDECWK5xZBUMD+JXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U+p2X9wP; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4668f208f10so27634601cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:15:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732709702; x=1733314502; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n6PMrA6yfmsQRKTdt+5BI8/0Y5GUPe75YZrlJGsNn64=;
-        b=U+p2X9wPu/UMKCx3VFmxhdXB1oJWwXW2/deneWXnmYZIQkCbLIB31/26g5I7m49Vdd
-         UivIN4yzh6Bak0ZPALYFBocZm8+pWe5XM1wATMbuQQ1I67HCA6eu3CINNvoMD/8o+i8/
-         ZxQOF+qi0w1t1pQMks7vO3NR3xMColOXr3MzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732709702; x=1733314502;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n6PMrA6yfmsQRKTdt+5BI8/0Y5GUPe75YZrlJGsNn64=;
-        b=lSl4OV8QcnW+NiWm189aVs8fS6RwA94DsIBFtK0MKwLUeWDdknhl6NMt2ulJyXBUuX
-         FSS5MPB6Pt3dzj8/pCfIn7g8vqZz1LgOt0OQqiJtPh2BHB8DbkEB75bVWjoz8zZgEQ3P
-         eoxFu2/AREi9hPKWDWh9oYYrmoYXn2erDuu4+dOeyu1Ge2MY7dBlzZLfONd40ZgLyH94
-         HFTWInWzfmyOAtQxpY2OiRAt5jd5ZhbCArq3xNCjFE9Sp/l/Ue1tg8tdA7gE2dXuh0rP
-         7/akYoovBmSWpo7gcOzYOjZASPsHdTl2VW+OF+xbv9+1UZu3x2PA0Gzc2Or44Y1fF2zf
-         JNQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDVuvvkTkEzPOWczQCIYBI1/0Op/NVr8CzfppSWTHTINAicclPDq5VKlVCt3HIYjG6/6Zh5lv0LowmMmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMqjPFzzi3xPu/fTCiWV46CeZ3781MOp+PhjwYeV9UIuRMoiN/
-	W8xSM3fHgHx44ItTpSY0jin4wa79QYCW2825dhyjsm6M5tI9IOxiWUdrsyzTJg==
-X-Gm-Gg: ASbGncuGVquRGvUI6Ebl1YWBTEYQl2hGSGRNHBXfSZkOZFjk+N8wGgtTzD2POjfSZNW
-	Nfef4uSTZe9mh27wz7QroEtysUvJpt4ly28yRpvLZqFEQfhSEHSLfds034hySno2vaMhP6obje/
-	vUjyHAfWLUqi3zxXH4GAmyphDsN5ugAaP2BWOj3UQnO6FXXWAZreLTuEBynPDv/XmieV0DNGL2F
-	VWFrJ8DzQr/I/rWCc1OooRcpRv7tpc8XvT3cUzy3vCo2eN6qe2RFIkjrQGqtw9p3mZNdC74vfet
-	k6tpf6L/09oOXDSgQ1QvknYJ
-X-Google-Smtp-Source: AGHT+IHf6ueSfY60U0HfefcCmnZQ367u8xLsUq+kt1ZVbjF6qn5g8wIQB2Z8/Cf0NEGUz/Jw+SbagQ==
-X-Received: by 2002:ac8:594e:0:b0:460:ad52:ab0d with SMTP id d75a77b69052e-466b3516358mr37080091cf.16.1732709702235;
-        Wed, 27 Nov 2024 04:15:02 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466be77cf7bsm371171cf.89.2024.11.27.04.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 04:15:01 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 27 Nov 2024 12:14:52 +0000
-Subject: [PATCH v2 4/4] media: uvcvideo: Remove redundant NULL assignment
+	s=arc-20240116; t=1732709835; c=relaxed/simple;
+	bh=RglTSagHLJlpjLLO3XN4yYHPfwT3ij0+YY9CxAXm9vQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dgvHwMU9qiTj74s0GawF0zxvCyE5c8rsXi5TMPzJablU68rh3nkXuWeZJK0TW5Td8vT288HNnuZFgDM8UxUyIq8EohJJCUPmTbGCr7AlKae8WixbR8nEcbriLm+tDkAAp28j5ikVufg+Wq4329VVzRNx+GZY3fnxdC8kj6FCrXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=lwZOurz6; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id GCIotu9p8qvuoGGygtgCmf; Wed, 27 Nov 2024 12:17:06 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id GGyftyCWlbs9MGGyftYgwr; Wed, 27 Nov 2024 12:17:05 +0000
+X-Authority-Analysis: v=2.4 cv=FY0xxo+6 c=1 sm=1 tr=0 ts=67470dc1
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=fxJcL_dCAAAA:8
+ a=NEAV23lmAAAA:8 a=HaFmDPmJAAAA:8 a=VwQbUJbxAAAA:8 a=cpyHj8QvAAAA:8
+ a=dFbenWJkYNu75aGOKbQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=BPjOrAZP5zzvMhA9psHf:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wk49Us1i/U24R6rJa3o8MpulLEgGbuu6CfFvEf1cwZk=; b=lwZOurz6CElSEfsX3CQKd7PvCT
+	JrDQ1ad14yCxQdgJSz7kXcIWrGzQxTIyjyd2LAYfUfcZRmzTIQ4yKka0HPTIIBHWqq5wc72IW/kbB
+	bIceMOKIcxi8+1BWEubRkAFBSW9lnKPdwlS/oONExZBCIq8JuJgpr1OtdU7v1tgprEzu3CPd2zfo2
+	JZbJMjiYQUdAp/Rl948tCPDfCBGeWLmRfTv2aW2b3eCbXO54LvXV+8ZdBdwqIZiGyGB71VS9WjMVL
+	3XeTsdhjqD2w++Yd2TrsrV83uZuIIKCgf0VKzBC4jn9hOvCAHqv7kAh6IpJHzPmwj/6z9GCFCGnyt
+	OuZUwfKQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47580 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tGGye-002GRT-2N;
+	Wed, 27 Nov 2024 05:17:04 -0700
+Message-ID: <6a3ce531-d863-40f2-9fe5-ac6fa3c3fb6a@w6rz.net>
+Date: Wed, 27 Nov 2024 04:17:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-uvc-fix-async-v2-4-510aab9570dd@chromium.org>
-References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
-In-Reply-To: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: Re: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps:
+ error: Unmet build dependencies: libssl-dev) in 6.12
+To: Frank Wunderlich <frank-w@public-files.de>, masahiroy@kernel.org
+Cc: nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
+ <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
+ <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
+ <e55645d9-6e50-4b1b-b413-6a0f5acb6095@w6rz.net>
+ <trinity-91daf006-41a6-4b4f-b7ee-2870f2c262c9-1732702872483@trinity-msg-rest-gmx-gmx-live-86dc4689bd-7d6hq>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <trinity-91daf006-41a6-4b4f-b7ee-2870f2c262c9-1732702872483@trinity-msg-rest-gmx-gmx-live-86dc4689bd-7d6hq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tGGye-002GRT-2N
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:47580
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 1
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfI//JxdUP+nkNbYC3vIWPlOqAjQOH0dNJd58DDCc6YcRMYkadFiDcrN1WGzB/Oy+060mBjSRwXhNt9CGUldlgsU7iTkuuEqIvksH1jzi3u+zLlHSeOLG
+ 0bqreLP856EtmgsWLkvyhJS0CaYIORfS/3S/VZir7v3pt9YcWsKacKg2mZO9zjdOjFX4W8t01QcHisoLTxbBI9U10eIqP1ZX/rI=
 
-ctrl->handle will only be different than NULL for controls that have
-mappings. This is because that assignment is only done inside
-uvc_ctrl_set() for mapped controls.
+On 11/27/24 02:21, Frank Wunderlich wrote:
+> &gt; Gesendet: Mittwoch, 27. November 2024 um 10:10
+> &gt; Von: "Ron Economos" <re@w6rz.net>
+> &gt; An: "Frank Wunderlich" <frank-w@public-files.de>, masahiroy@kernel.org
+> &gt; CC: nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+> &gt; Betreff: Re: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev) in 6.12
+> &gt;
+> &gt; On 11/26/24 09:12, Frank Wunderlich wrote:
+> &gt; &gt; &gt; Gesendet: Donnerstag, 21. November 2024 um 23:09
+> &gt; &gt; &gt; Von: "Masahiro Yamada" <masahiroy@kernel.org>
+> &gt; &gt; &gt; An: "Frank Wunderlich" <frank-w@public-files.de>
+> &gt; &gt; &gt; CC: re@w6rz.net, nicolas@fjasle.eu, nathan@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+> &gt; &gt; &gt; Betreff: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev) in 6.12
+> &gt; &gt; &gt;
+> &gt; &gt; &gt; On Fri, Nov 22, 2024 at 2:09 AM Frank Wunderlich
+> &gt; &gt; &gt; <frank-w@public-files.de> wrote:
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; Hi,
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; i noticed this issue with debian package build-system in final 6.12.
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; LOCALVERSION=-main board=bpi-r2 ARCH=arm CROSS_COMPILE=ccache arm-linux-gnueabihf-
+> &gt; &gt; &gt; &gt; make[1]: Entering directory '/media/data_ext/git/kernel/build'
+> &gt; &gt; &gt; &gt;   GEN     debian
+> &gt; &gt; &gt; &gt; dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source package linux-upstream
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source version 6.12.0-00061-g837897c10f69-3
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source distribution noble
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: source changed by frank <frank@frank-u24>
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: info: host architecture armhf
+> &gt; &gt; &gt; &gt;  dpkg-source --before-build .
+> &gt; &gt; &gt; &gt; dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
+> &gt; &gt; &gt;
+> &gt; &gt; &gt; This error message means, you need to install "libssl-dev:armhf"
+> &gt; &gt; &gt;
+> &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
+> &gt; &gt; &gt; &gt; dpkg-buildpackage: warning: (Use -d flag to override.)
+> &gt; &gt; &gt; &gt; make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4.14/scripts/Makefile.package:126: bindeb-pkg] Error 3
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; it was ok in at least rc1 and libssl-dev is installed
+> &gt; &gt; &gt;
+> &gt; &gt; &gt;
+> &gt; &gt; &gt; Presumably, you already installed libssl-dev for your build machine
+> &gt; &gt; &gt; (i.e. "libssl-dev:amd64" if your build machine is x86_64).
+> &gt; &gt; &gt;
+> &gt; &gt; &gt; But, you have not installed "libssl-dev" for the architecture
+> &gt; &gt; &gt; your are building for (i.e, "libssl-dev:armhf")
+> &gt; &gt;
+> &gt; &gt; Hi
+> &gt; &gt;
+> &gt; &gt; thank you for answer, why is this lib required for the arch? it makes my pipeline very complex
+> &gt; &gt; just to add the repos for the arch...seems the lib is not yet used, only checked if installed.
+> &gt; &gt;
+> &gt; &gt; looks like ubuntu 24 seems to have changed the sources.list for apt, so there is no single-line to
+> &gt; &gt; be added
+> &gt; &gt;
+> &gt; &gt; this is the default apt-source in ubuntu 24:
+> &gt; &gt;
+> &gt; &gt; $ cat /etc/apt/sources.list.d/ubuntu.sources
+> &gt; &gt; Types: deb
+> &gt; &gt; URIs: http://de.archive.ubuntu.com/ubuntu/
+> &gt; &gt; Suites: noble noble-updates noble-backports
+> &gt; &gt; Components: main restricted universe multiverse
+> &gt; &gt; Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+> &gt; &gt;
+> &gt; &gt; Types: deb
+> &gt; &gt; URIs: http://security.ubuntu.com/ubuntu/
+> &gt; &gt; Suites: noble-security
+> &gt; &gt; Components: main restricted universe multiverse
+> &gt; &gt; Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+> &gt; &gt;
+> &gt; &gt; if i just add the arches
+> &gt; &gt;
+> &gt; &gt; sudo dpkg --add-architecture armhf
+> &gt; &gt; sudo dpkg --add-architecture arm64
+> &gt; &gt;
+> &gt; &gt; apt seems to add the repos on update, but i still cannot install the packages
+> &gt; &gt;
+> &gt; &gt; $ LANG=C sudo apt install libssl-dev:armhf
+> &gt; &gt; Reading package lists... Done
+> &gt; &gt; Building dependency tree... Done
+> &gt; &gt; Reading state information... Done
+> &gt; &gt; E: Unable to locate package libssl-dev:armhf
+> &gt; &gt;
+> &gt; &gt; $ LANG=C sudo apt install libssl-dev:arm64
+> &gt; &gt; Reading package lists... Done
+> &gt; &gt; Building dependency tree... Done
+> &gt; &gt; Reading state information... Done
+> &gt; &gt; E: Unable to locate package libssl-dev:arm64
+> &gt; &gt;
+> &gt; &gt; if i revert the commit below, my build is successful without installing the lib.
+> &gt; &gt;
+> &gt; &gt; afaik the -dev are source-packages (headers) which should be architecture independ, or am i missing something?
+> &gt; &gt;
+> &gt; &gt; regards Frank
+> &gt; &gt;
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; basicly i use this command after setting crosscompiler
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; LOCALVERSION="${gitbranch}" board="$board" KDEB_COMPRESS=gzip make bindeb-pkg
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; if i Revert "kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile"
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; i can compile again..any idea why this happens? my build-system is ubuntu 24.4 and github actions with ubuntu-latest.
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; https://github.com/frank-w/BPI-Router-Linux/actions/runs/11955322294/job/33327423877
+> &gt; &gt; &gt; &gt;
+> &gt; &gt; &gt; &gt; regards Frank</frank@frank-u24>
+> &gt; &gt; &gt;
+> &gt; &gt; &gt;
+> &gt; &gt; &gt;
+> &gt; &gt; &gt; --
+> &gt; &gt; &gt; Best Regards
+> &gt; &gt; &gt; Masahiro Yamada
+> &gt;
+> &gt; Here's what worked for me in /etc/apt/sources.list.d/ubuntu.sources for
+> &gt; 24.04.
+> &gt;
+> &gt; Types: deb
+> &gt; URIs: http://ports.ubuntu.com/ubuntu-ports
+> &gt; Suites: noble noble-updates noble-backports
+> &gt; Components: main universe restricted multiverse
+> &gt; Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+> &gt; Architectures: riscv64
+> &gt;
+> thx for ubuntu 24 i have it done similar (took the whole day to get both systems to the point apt-sources to be added the right way), had to modify the ubuntu.sources to add the arch for host system (amd64) and add additional file with ports.ubuntu.com for the crosscompile-target (armhf/arm64)
+>
+> https://github.com/frank-w/BPI-Router-Linux/actions/runs/12047237222/job/33589357798#step:6:1
+>
+> tried most time to get current ubuntu-latest for github actions running which is still ubuntu-22.04, but ran into installing issues where libssl3 cannot be installed for the desired arch...if i add it manually it depends on libc for the arch and so on...
+>
+> example for ubuntu-latest / ubuntu-22.04
+> https://github.com/frank-w/BPI-Router-Linux/actions/runs/12038757178/job/33565113600
+>
+> https://github.com/frank-w/BPI-Router-Linux/actions/runs/12038757178/workflow#L56
+>
+> &gt; The library is used here:
+> &gt;
+> &gt; https://github.com/torvalds/linux/blob/master/scripts/sign-file.c#L25
+> &gt;
+> &gt; That file is now cross-compiled.
+>
+> but why needs signing-file to be crosscompiled? the target files (kernel and maybe the deb-file) have to be crosscompiled, but imho
+> not tools for signing them. After building kernel for target-arch and creating deb isn't it possible to sign it using a amd64 (host
+> arch) openssl binary? the openssl-binary does not land on target-platform...only used as part of build-chain, or am i wrong?
+>
+> btw. not sure why my webmailer creates html-tags in plaintext-mails...have reported it to the vendor, but not got any response yet, so
+> sorry for that (have replaced quote-chars manually, hope they stay as single chars and not reconverted to entities).
+>
+> regards Frank
+> </frank-w@public-files.de></frank-w@public-files.de></masahiroy@kernel.org></frank-w@public-files.de></re@w6rz.net>
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+sign-file is a target executable. When you install the 
+linux-headers-6.12.0xxx_arch.deb, it ends up in 
+/usr/src/linux-headers-6.12.0/scripts on the target.
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 99ddc5e9dff8..b9c9ff629ab6 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1645,10 +1645,8 @@ bool uvc_ctrl_status_event_async(struct urb *urb, struct uvc_video_chain *chain,
- 	struct uvc_device *dev = chain->dev;
- 	struct uvc_ctrl_work *w = &dev->async_ctrl;
- 
--	if (list_empty(&ctrl->info.mappings)) {
--		ctrl->handle = NULL;
-+	if (list_empty(&ctrl->info.mappings))
- 		return false;
--	}
- 
- 	w->data = data;
- 	w->urb = urb;
-
--- 
-2.47.0.338.g60cca15819-goog
+That's what this change is all about. In the past, the executables in 
+/usr/src/linux-headers-xxx/scripts were being compiled for x86, not the 
+target architecture.
 
 
