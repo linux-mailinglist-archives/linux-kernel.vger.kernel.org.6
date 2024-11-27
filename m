@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-423341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644D89DA610
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:47:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD2C9DA60C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:44:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09581645B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:44:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29076198851;
+	Wed, 27 Nov 2024 10:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nm7/1J07"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD14B21D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:43:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A8F19884B;
-	Wed, 27 Nov 2024 10:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3/wsbKR"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6735D145B0F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E62192D79;
+	Wed, 27 Nov 2024 10:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704224; cv=none; b=gLtHFOSZPqlFg+EMoJivbny9WZ6dsA4ycfTYZVAKYE8BhCMH1iK5/iN9WGEPUPOFF3lKkNdUitvfdwyagzcRpq3ULiEc5Paai/jSWL+PVDHymtHPeXdrk/5a4wgZUvTkJcJXvdzTRPCXch8pl6HgwgLK7HKBDayaebgeJa2Ld68=
+	t=1732704269; cv=none; b=fek/SQmI2jcRx7fsIKSzb8Q8/R1ybEpS0xEXMYsXlCT6Zsk7E/HH+HXqY1vivmTxf/lCVZ7la5W0VnqRiY0oaZfc6N7VBL3NWr8jPj452YyUl3eeWUdr+0CI+x21w6aKck418CJ4GTNdw/wSsEy1XaiO0T0LPy18yF7hW9pJmtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704224; c=relaxed/simple;
-	bh=pNCvTr15h54rXqFAxHFqLQGy0rcXtDjwY1aAYWGsTpo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NUsSe7c56LbjAXixFDJ4y1Ls/dYoZXrugUk50QbKUl0W/MyFssUM7vc02N+w/eWwJOLi202cH6m7EHdWH4n1VkwZpwhvvCQJ4CblcKaDPc8GUZBPUbE1wIA3A5Z2fzvq1UyjfIlOj6rgq7drHvBwq5giQBajYGyZeyh76fvjX1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3/wsbKR; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-724fee568aaso3702469b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:43:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732704223; x=1733309023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tzCk60ssLnzRtG4kB4XwKsk4zCPWkQgHAif9YUyJxD8=;
-        b=X3/wsbKRwcRfEuiQ4/dMyPP9oyaYEw9u56T7qq0b8n6uf0EfwfuVLMPhGCWBTalyGe
-         doycFat3nU6XFknVor+BEczeiomd/Ghky9np3on6gHN6SEZge/sPAnpJQlYU/YP4Vof4
-         6WnuHkNGlItbKybQeth2dAploiomIK5IlVlv42cCy7X+9NEAy7TQWqgp/E/8ocpAN+rR
-         AHPcHaSbjiLUXqKQMetbAln1Rq9QUvKyrV2yPpDURAlSchGz4lXfKQab0O72OJFE98RR
-         wqc5b0z0s117sNeDzppKs9TyJoR9xQmTySIIWkaumasQFtPpedDP7FOEerEFXs6J7N6p
-         hveQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732704223; x=1733309023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tzCk60ssLnzRtG4kB4XwKsk4zCPWkQgHAif9YUyJxD8=;
-        b=GJyfpmCQckQRT3UGonkNTE/SJ3vNw8Iv5s+Tb1mGMyQ11r8vRep8mdi83R9wVDBgC7
-         H9JTWtS4XQyquVsq1j2A4xrVJsEj/4hyjb6B34TMoX1IEJBH64S+NyONl32mp0I9sDHP
-         hlmCQszayaftxLKeU+cNL2VGe7M3xNclrf+vfDSwqCIu/lcxqRizCBsjBVm9K9VxhPTd
-         YS+JQUyEyHLIkLXbxdQkp1fl9tMkZLZPtA24CHJb+wTLryw2A3v2LsQaH3LDPVmWJOHw
-         cb0poxLGP8DzE0BSMc8QH+hK5/fMuicNS5P2+Nmr0Z0O6MNGXlPIZQVYHa5hgYGSw/2m
-         a7kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfz1KkNMNRHMaYKTkg+s/Iq3V23a7LOu728HVfAyEQm+biqdjekjyEX6KlvEAI7Sx+gTVfV6SEQASJ1no=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSVGVvuIqe8PtyDPZQXhxMW6ORriEzux+w/OSrodsWAF4mQ4vv
-	2S09ERGe4ExPzl8vxZQvcznQgiXYPyO+nrwy6ZYJQyM61XXGPAty
-X-Gm-Gg: ASbGncuSG9eKo30y9McBOu4MQT8xtFV2vevsiQoPpBqauyd19vogVDTFhYYCYO7ga6N
-	3pXBem9bSjpd1yqRIM6Dh2nj9aiixNHzRTLrbuzKyLmM+vlyg2dVXPnw/2HZEsMNSow9QHxzGNh
-	CofnzXZ1BioOKga0FEtwpWooqvgKyUlJsLSkFm2T7HKlxqVznglz685slcgf+LR4BCXINqTyZCM
-	KNxYufYJxOmhj9YlI6hoeVCXXLZDaGN0xt0CJV3qQHSQxvQ50oBMwcVv2xWg1VY1g==
-X-Google-Smtp-Source: AGHT+IFasGDwkTah8VJCd5YqVj7arrUVACm5XfE0BZ2QCILBn6viPi1c/IWF0UOE2Q5hAg+SnGy9+g==
-X-Received: by 2002:a05:6a00:14d5:b0:71e:695:41ee with SMTP id d2e1a72fcca58-72530013a73mr3817487b3a.5.1732704222532;
-        Wed, 27 Nov 2024 02:43:42 -0800 (PST)
-Received: from advait-kdeneon.. ([2405:201:1e:f1d5:79f6:179c:470f:690f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de572e50sm9905806b3a.172.2024.11.27.02.43.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 02:43:42 -0800 (PST)
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Stefan Eichenberger <eichest@gmail.com>
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Subject: [PATCH] phy: marvell: Fix spelling mistake "exlicitly" -> "explicitly"
-Date: Wed, 27 Nov 2024 16:13:33 +0530
-Message-Id: <20241127104333.18944-1-advaitdhamorikar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732704269; c=relaxed/simple;
+	bh=RCfwYift9o4l7+Ap7MyKfuhE6hST1jIqGbg9B38+Km8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=odJ5yRqSImHF8YxzTiopkks0ZdbDpTcoA+Noii5nhAUVxxiyDtO0lCBWPkHxZwDF2P/CmEOmmXZeljjPNeDzsoSsXI3hanv0e4EL/7dGsG1CJZu+xi15EUAhkznrauwS73ZYSBkeIFcRFwyF3V7bZ6l9O5k8i8vJw+opsmtqSr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nm7/1J07; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732704268; x=1764240268;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=RCfwYift9o4l7+Ap7MyKfuhE6hST1jIqGbg9B38+Km8=;
+  b=nm7/1J07/SoCRygh7GJHZM7cTzzXKXo5jAWGu+po3F0m2pLbj86YIAhI
+   F5/fTO23lWEb1U67RqwfgfvraMnxJVKiM6Pct/KBNeNFLbGbdSQtEa4mn
+   2qM17wonKC/9AHDD5sGx8SIpzxzBocc9QHIjSLUugrf2WT+bS8TcrHoEy
+   kCk3O3lD+DkM1qrbKXLsMkGGC6QOV0rN4z/S6XFbpUmLT1j4wUzWYxKb7
+   1XI84V6xS3N7udzrbYf29USF1gTLVR/BsmhwkNPWxB3pDWHjjdcUBp3aL
+   RxV2gWZha0EDZzYZ0OZWYlD7a1Lm/1CePd0/mf86qR/+GswtNzkn2xYj3
+   g==;
+X-CSE-ConnectionGUID: 9uUscNC5QCuZ2X2fn1PkmA==
+X-CSE-MsgGUID: VhCdTy/ARbG9giwz2Czxag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="33056610"
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="33056610"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 02:44:28 -0800
+X-CSE-ConnectionGUID: 33rGevD8QHCjWRsg4i6JcA==
+X-CSE-MsgGUID: 7bEWvnWTTOGluCJP5tnM0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
+   d="scan'208";a="91994498"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.71])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 02:44:25 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 27 Nov 2024 12:44:22 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: jlee@suse.com, farhan.anwar8@gmail.com, rayanmargham4@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 5/5] platform/x86: acer-wmi: Ignore AC events
+In-Reply-To: <20241124171426.29203-6-W_Armin@gmx.de>
+Message-ID: <9ea81e1d-572f-5c01-93ad-64af84973899@linux.intel.com>
+References: <20241124171426.29203-1-W_Armin@gmx.de> <20241124171426.29203-6-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1642322309-1732704262=:931"
 
-Fix spelling mistake in mvebu_comphy_ethernet_init_reset
-comments.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
----
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--8323328-1642322309-1732704262=:931
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-index fefc02d921e6..71f9c14fb50d 100644
---- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-@@ -422,7 +422,7 @@ static int mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane)
- 	/* wait until clocks are ready */
- 	mdelay(1);
- 
--	/* exlicitly disable 40B, the bits isn't clear on reset */
-+	/* explicitly disable 40B, the bits isn't clear on reset */
- 	regmap_read(priv->regmap, MVEBU_COMPHY_CONF6(lane->id), &val);
- 	val &= ~MVEBU_COMPHY_CONF6_40B;
- 	regmap_write(priv->regmap, MVEBU_COMPHY_CONF6(lane->id), val);
--- 
-2.34.1
+On Sun, 24 Nov 2024, Armin Wolf wrote:
 
+> On the Acer Swift SFG14-41, the events 8 - 1 and 8 - 0 are printed on
+> AC connect/disconnect. Ignore those events to avoid spamming the
+> kernel log with error messages.
+>=20
+> Reported-by: Farhan Anwar <farhan.anwar8@gmail.com>
+> Closes: https://lore.kernel.org/platform-driver-x86/2ffb529d-e7c8-4026-a3=
+b8-120c8e7afec8@gmail.com
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--
+ i.
+
+> ---
+>  drivers/platform/x86/acer-wmi.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-=
+wmi.c
+> index 6964fea84fa1..73243090242d 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -97,6 +97,7 @@ enum acer_wmi_event_ids {
+>  =09WMID_HOTKEY_EVENT =3D 0x1,
+>  =09WMID_ACCEL_OR_KBD_DOCK_EVENT =3D 0x5,
+>  =09WMID_GAMING_TURBO_KEY_EVENT =3D 0x7,
+> +=09WMID_AC_EVENT =3D 0x8,
+>  };
+>=20
+>  enum acer_wmi_predator_v4_sys_info_command {
+> @@ -2302,6 +2303,9 @@ static void acer_wmi_notify(union acpi_object *obj,=
+ void *context)
+>  =09=09if (return_value.key_num =3D=3D 0x5 && has_cap(ACER_CAP_PLATFORM_P=
+ROFILE))
+>  =09=09=09acer_thermal_profile_change();
+>  =09=09break;
+> +=09case WMID_AC_EVENT:
+> +=09=09/* We ignore AC events here */
+> +=09=09break;
+>  =09default:
+>  =09=09pr_warn("Unknown function number - %d - %d\n",
+>  =09=09=09return_value.function, return_value.key_num);
+> --
+> 2.39.5
+>=20
+
+--8323328-1642322309-1732704262=:931--
 
