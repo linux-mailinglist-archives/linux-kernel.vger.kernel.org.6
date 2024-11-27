@@ -1,224 +1,202 @@
-Return-Path: <linux-kernel+bounces-423240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1A09DA4DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:36:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CBD9DA4E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:36:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 905711625D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03769282D1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ED0193081;
-	Wed, 27 Nov 2024 09:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2B217DE2D;
+	Wed, 27 Nov 2024 09:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A6cIR1kO"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hiuQIYz3"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9920D188CB5
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BD518E373
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732700171; cv=none; b=QaTBzvxzaiCeg8XRozd/pwYkFfRJR9ukpPNaAAqub0n7/YA5y/cXuk7dLviBNymtl2FAvNLmmrOC/UFjqr9erfCTkERT9oy6TR8UvmfuBDfMr0UGYdGgXKxGBxRcZP/bTOyKfqxGTNeV/w6+EnBR97H4s/rGgVU8LiW0iLbGZNw=
+	t=1732700194; cv=none; b=ZFipG3aWjCcMktqdSxf+Nfual9gKxdwfx1LNczPwXxCAUVWp/B5j1YVmEkHDOWMEgheRgL9QDC87kG6Ne8ZSdexK+lPgI5CFx0QdcklaZK5QgtXM7n9pmRMThr7QrUxPkqMrqBPbJ3Fr0XFMlBDy1nUt49jj1UWxhD37lm50dx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732700171; c=relaxed/simple;
-	bh=3faT5F9J14w90KJBMsHvfrz0n9EfaIV2bM/RpbX0mzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jvlf7sWtS7enft6N5S0/v3oZBS2Igs3Y8ojhVi6KIHHhhWCRyvF5++W32i1PB/JzBPxgEAjcJPEgP63+WGOonIoawNFZJYgtLbhzgYM+Ke6GQBwhgGejH4+AvchYhGUtns6CPvSr9oCY1Wlv7ma3YChiRoLInRSfd565PEQvBJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A6cIR1kO; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2126408cf31so47457985ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:36:09 -0800 (PST)
+	s=arc-20240116; t=1732700194; c=relaxed/simple;
+	bh=gtprPVNdoBA0SQtz+Tn8Mp5pL32x47VlscWHTkUCCP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HqZvQmGRbBZ9lj60pZuxlyOsFq89R+qmOiy0KgXgSL7/LQA7LBIUNDsJw3mJzgKQUUj06P1n77qnG2PCsXNv2Q6KlWrUMuRZKN2WR4aQa9sc9ts/ExBcWQDqo3+R8Zk4dl+cwKjU2V98KIkQv08uAGVOykl55C0ILEUxscxS1Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hiuQIYz3; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3822e64b2d8so231280f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:36:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732700169; x=1733304969; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EnK2dcdalpmGY5jgzTnos37anlqTQntnz3I6QcXPIDU=;
-        b=A6cIR1kO9WMZSxFXpFmBw0qxVjl31xVQM20UDU8ZfOfWQRaCvGY+ox7NRdYXN59jar
-         Chh1uRoECX5tpdkUCwbg/SgPB7cCWrhA/bNNchuLwkQUULE/RvghtVRqjE7GIrU/tV3Y
-         NVJ64IosAZAEJaixRpZ6HpddpT6UnXMnZ6eLw=
+        d=linaro.org; s=google; t=1732700190; x=1733304990; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6JiUVixxYlECG0+CmoWGiRvTX57VPI+LOi/KpvIp4z8=;
+        b=hiuQIYz37WuUwNBMHn9k8wX7AlkjEE4jityz7hSQVKatNEWFf9xYqyXIN7F7VN31nl
+         JjUCojFBnIsuxOofB2KNz1WjI3QgK4Rq1m0ACdj3nfQBhuWKKh80K6LdINpVPa+BedcW
+         QvLOxzy1D10bctKhc/Rkb6zyedwG0o9jy/Dixj8bh+UEr7rU/0Jo0lprvCOy+kpTvFtQ
+         9CUULLP3HvonH2/z85CKvjyvGMDebdyXNisLfbiNikdH/forfvDmCo0L2UDEhFak0r6K
+         1zwJ3fVkX+68CDl/riVIpZpl5XdKqV+qKnw0dCmVmT5oWONoJ9Cz8VpOb+ML2XQgLOPV
+         trGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732700169; x=1733304969;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732700190; x=1733304990;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EnK2dcdalpmGY5jgzTnos37anlqTQntnz3I6QcXPIDU=;
-        b=AsBx4KZTF7wprefZ62AHW0hZ7Wv7ixcsCgMP26wI5I9O/wOKgSb0mWOp40hG13kZjB
-         rkn8CazLwnrjK1HDphKCpldt2whRHioghC6ltWCCde9tpqOgkXom6/eTgJf8IEn6kQWf
-         6d7OcsezdjpWEe65Ch6Cl3FiGI7BfCMTsezZF2yuSrpODmF4yp5LGz/Hi5twfxkiwr7i
-         4RCR0OTWiPUmsFpChXsKZOCBdNsxZK1WNsM9DQCKZxvqVJjGi2H+WG6teopcjDxEvZ6M
-         cvgxkOeqkJLznwxkI2LU93HJ1/bsi0gzg2OzM6yl0Imy/IBCXeMNJvWPFmxjb4NDs7No
-         R7Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCW+zLu1rW4MC6ZMGpgahgx6/D3BU87cTJCU096SmgF1efRH24xfcmKQSVAcWL41vj1SDa4JZjy4gx+btig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRhElt1xmjh3WkLtgbSsYoaREU7Jjl37E16lt2i4rUe5+cXPcK
-	dd/5wdLSc098hUenzjgRdROc5W/Lf/hU3Q4n0K2W2rj1MBRhhoe6nB5PLJLPGgey7mb0B5PQY64
-	=
-X-Gm-Gg: ASbGncsPnSnls7I2KARoJUi/6Dm9kNPxD/DQjRvJGfurSlgZ42B6WzYgRpbWxgBOk0L
-	bQ5cIJZ5tzYKNtGVHv4hUE9Th6yfcbib7bb76E8P18BPFvmjB7MeMtnyZHggMds+5mLL/8Hq4w5
-	HIQspEqKxroD1pi2P/4FOQ4f85r0NfiakjmyWPPwfJkFUyrQItrtYe14XinA5LVpKLQVgB5CwMi
-	Mln7YbeKjLsLCGbRl3R/0I6ZieJ8WTNBXLKytJPYnQzwVnRl34u1LYgsh6HmAMqiJZSMavadHjW
-	UTunSurMKglm3Ezh
-X-Google-Smtp-Source: AGHT+IHkeyOInmCna4LidnpkOusNrcDMI5AbxBS7EKzpoFj2jlgKEBE3xFTAVe/j0ZVYO0/z9TBekg==
-X-Received: by 2002:a17:903:22c2:b0:211:f335:ac8 with SMTP id d9443c01a7336-21501385201mr24803385ad.29.1732700168678;
-        Wed, 27 Nov 2024 01:36:08 -0800 (PST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com. [209.85.215.172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc20b7fsm98948475ad.242.2024.11.27.01.36.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 01:36:07 -0800 (PST)
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ee7e87f6e4so5387853a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:36:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXuVrAJxK/sNqq7FvFQdeZjuLj1uzNnarKOhN4tdXNTpkdpqo/2Y3TYBCmwkge+KvwPOG3eT64xC2CvP7U=@vger.kernel.org
-X-Received: by 2002:a05:6a21:3289:b0:1e0:d14b:d54c with SMTP id
- adf61e73a8af0-1e0e0b58d0fmr3827817637.30.1732700166977; Wed, 27 Nov 2024
- 01:36:06 -0800 (PST)
+        bh=6JiUVixxYlECG0+CmoWGiRvTX57VPI+LOi/KpvIp4z8=;
+        b=pa9oOL9Ac9oFD4R9q7koKIpyBSPGCrXy2rXr/ZnwriXtR5QUXi4lBNxYGf2Qp8Co8W
+         KfMgpCUPdGN7QG1AAdIoZ0qskJtIN/SFD2pS5qVeCH8QOOX2CAAn004nUlLInzy1KS5Z
+         Ua7rqFzXX8/UsP+j5L+kBURcgHKQD1ip1Es6RRDtXAkfhWHOcFLdH5dEtQo1UXSYMvmM
+         YL0oeJnryWh2jMeHILNs6unwh2/VS4pohSi8yM6VicOktMrytilAX24pUH+S4xCPa6mc
+         259VCzITohP6/mpqM12WLPglaGiOpdCPbPoHYSyOz+JAM0vQybvI1BcxjhUsS28N1VY5
+         bqCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIP5XQs/iQjKVR+5PtQpYdDX+CL/Z6/ERNUgmYILpq3VbIMTnlFnS/4L0tqmbxJok4uu2AcbGIRc23i+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuOqiPBSCvJGJaHyl2vdLkm7W4ttK1CAYTVOwlSiE/gdeI8zfA
+	USJlMa6aCNyf0zNQVRM1fhyHpMg72rUdknp1d/5uJlMoRGWpkqZLdDxy9Tah2z8oX589EbPZ/wS
+	bmAM=
+X-Gm-Gg: ASbGncvBdEGDZ9hK16dbBy4f1sTuxJrDJYa1dHElsrrgGJL9e2F6FUXqnyGpvsQohfj
+	e+wLH+rKn+wM7v4AxQONu3WoAI/0yNHPYZeElj8piADL/R0BOBJzUJ9Fh8PYn4nR0cDnOdJNzac
+	6/46HhdpOXDv3dAIT7M9bS4kho6YWtBziTZK/WrTQH2KVHaqlVgfcoU92UWIrNJakgTOox3t1Na
+	jzcpSUmTw1YAIknC8MMLkOu3GjFDAiqMq/kP29kU5t8nl4UJnVKWRUEvWlkqts=
+X-Google-Smtp-Source: AGHT+IHg0M4TpF2Z6OCGwX2wDMIMPge9z2fUPxOqzZYk0qiCMYgz7Tddg7rr6pBtKhaG0tQg5d/Qaw==
+X-Received: by 2002:a5d:47cb:0:b0:382:498f:9d54 with SMTP id ffacd0b85a97d-385c6eb68a6mr711784f8f.6.1732700190581;
+        Wed, 27 Nov 2024 01:36:30 -0800 (PST)
+Received: from krzk-bin.. ([178.197.219.21])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc38afsm15729035f8f.67.2024.11.27.01.36.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 01:36:29 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] clk: qcom: clk-alpha-pll: Do not use random stack value for recalc rate
+Date: Wed, 27 Nov 2024 10:36:23 +0100
+Message-ID: <20241127093623.80735-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
- <20241120-uvc-readless-v4-1-4672dbef3d46@chromium.org> <20241126180616.GL5461@pendragon.ideasonboard.com>
- <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com>
- <20241127083444.GV5461@pendragon.ideasonboard.com> <CANiDSCvvCtkiHHPCj0trox-oeWeh_rks3Cqm+kS9Hvtp9QC6Yg@mail.gmail.com>
- <20241127091400.GB31095@pendragon.ideasonboard.com>
-In-Reply-To: <20241127091400.GB31095@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 27 Nov 2024 10:35:54 +0100
-X-Gmail-Original-Message-ID: <CANiDSCs8o4SFx1TJYXNcWkgrzk6COoTxOKD1a02AuO4CYKxx+g@mail.gmail.com>
-Message-ID: <CANiDSCs8o4SFx1TJYXNcWkgrzk6COoTxOKD1a02AuO4CYKxx+g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] media: uvcvideo: Support partial control reads
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 27 Nov 2024 at 10:14, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Wed, Nov 27, 2024 at 09:58:21AM +0100, Ricardo Ribalda wrote:
-> > On Wed, 27 Nov 2024 at 09:34, Laurent Pinchart wrote:
-> > > On Tue, Nov 26, 2024 at 07:12:53PM +0100, Ricardo Ribalda wrote:
-> > > > On Tue, 26 Nov 2024 at 19:06, Laurent Pinchart wrote:
-> > > > > On Wed, Nov 20, 2024 at 03:26:19PM +0000, Ricardo Ribalda wrote:
-> > > > > > Some cameras, like the ELMO MX-P3, do not return all the bytes
-> > > > > > requested from a control if it can fit in less bytes.
-> > > > > > Eg: Returning 0xab instead of 0x00ab.
-> > > > > > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
-> > > > > >
-> > > > > > Extend the returned value from the camera and return it.
-> > > > > >
-> > > > > > Cc: stable@vger.kernel.org
-> > > > > > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
-> > > > > > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > > > ---
-> > > > > >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++++
-> > > > > >  1 file changed, 16 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > > > > > index cd9c29532fb0..482c4ceceaac 100644
-> > > > > > --- a/drivers/media/usb/uvc/uvc_video.c
-> > > > > > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > > > > > @@ -79,6 +79,22 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
-> > > > > >       if (likely(ret == size))
-> > > > > >               return 0;
-> > > > > >
-> > > > > > +     /*
-> > > > > > +      * In UVC the data is usually represented in little-endian.
-> > > > >
-> > > > > I had a comment about this in the previous version, did you ignore it on
-> > > > > purpose because you disagreed, or was it an oversight ?
-> > > >
-> > > > I rephrased the comment. I added "usually" to make it clear that it
-> > > > might not be the case for all the data types. Like composed or xu.
-> > >
-> > > Ah, that's what you meant by "usually". I read it as "usually in
-> > > little-endian, but could be big-endian too", which confused me.
-> > >
-> > > Data types that are not integers will not work nicely with the
-> > > workaround below. How do you envision that being handled ? Do you
-> > > consider that the device will return too few bytes only for integer data
-> > > types, or that affected devices don't have controls that use compound
-> > > data types ? I don't see what else we could do so I'd be fine with such
-> > > a heuristic for this workaround, but it needs to be clearly explained.
-> >
-> > Non integer datatypes might work if the last part of the data is
-> > expected to be zero.
-> > I do not think that we can find a heuristic that can work for all the cases.
-> >
-> > For years we have ignored partial reads and it has never been an
-> > issue. I vote for not adding any heuristics, the logging should help
-> > identify future issues (if there is any).
->
-> What you're doing below is already a heuristic :-) I don't think the
-> code needs to be changed, but I'd like this comment to explain why we
-> consider that the heuristic in this patch is fine, to help the person
-> (possibly you or me) who will read this code in a year and wonder what's
-> going on.
+If regmap_read() fails, random stack value was used in calculating new
+frequency in recalc_rate() callbacks.  Such failure is really not
+expected as these are all MMIO reads, however code should be here
+correct and bail out.  This also avoids possible warning on
+uninitialized value.
 
-What about:
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 41 ++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 12 deletions(-)
 
-* Some devices return shorter USB control packets than expected if the
-* returned value can fit in less bytes. Zero all the bytes that the
-* device has not written.
-*
-* This quirk is applied to all datatypes, even to non little-endian integers
-* or composite values. We exclude UVC_GET_INFO from the quirk.
-* UVC_GET_LEN does not need to be excluded because its size is
-* always 1.
-
->
-> > > > I also r/package/packet/
-> > > >
-> > > > Did I miss another comment?
-> > > >
-> > > > > > +      * Some devices return shorter USB control packets that expected if the
-> > > > > > +      * returned value can fit in less bytes. Zero all the bytes that the
-> > > > > > +      * device have not written.
-> > > > >
-> > > > > s/have/has/
-> > > > >
-> > > > > And if you meant to start a new paragraph here, a blank line is missing.
-> > > > > Otherwise, no need to break the line before 80 columns.
-> > > >
-> > > > The patch is already in the uvc tree. How do you want to handle this?
-> > >
-> > > The branch shared between Hans and me can be rebased, it's a staging
-> > > area.
-> >
-> > I will send a new version, fixing the typo. and the missing new line.
-> > I will also remove the sentence
-> > `* In UVC the data is usually represented in little-endian.`
-> > It is confusing.
-> >
-> > > > > > +      * We exclude UVC_GET_INFO from the quirk. UVC_GET_LEN does not need to
-> > > > > > +      * be excluded because its size is always 1.
-> > > > > > +      */
-> > > > > > +     if (ret > 0 && query != UVC_GET_INFO) {
-> > > > > > +             memset(data + ret, 0, size - ret);
-> > > > > > +             dev_warn_once(&dev->udev->dev,
-> > > > > > +                           "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
-> > > > > > +                           uvc_query_name(query), cs, unit, ret, size);
-> > > > > > +             return 0;
-> > > > > > +     }
-> > > > > > +
-> > > > > >       if (ret != -EPIPE) {
-> > > > > >               dev_err(&dev->udev->dev,
-> > > > > >                       "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-
-
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 5e9217ea3760..0cd937ab47d0 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -682,9 +682,12 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 alpha_width = pll_alpha_width(pll);
+ 
+-	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
++	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
++		return 0;
++
++	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
++		return 0;
+ 
+-	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
+ 	if (ctl & PLL_ALPHA_EN) {
+ 		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &low);
+ 		if (alpha_width > 32) {
+@@ -915,8 +918,11 @@ alpha_pll_huayra_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 l, alpha = 0, ctl, alpha_m, alpha_n;
+ 
+-	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
+-	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
++	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
++		return 0;
++
++	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
++		return 0;
+ 
+ 	if (ctl & PLL_ALPHA_EN) {
+ 		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &alpha);
+@@ -1110,8 +1116,11 @@ clk_trion_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 l, frac, alpha_width = pll_alpha_width(pll);
+ 
+-	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
+-	regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac);
++	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
++		return 0;
++
++	if (regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &frac))
++		return 0;
+ 
+ 	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
+ }
+@@ -1169,7 +1178,8 @@ clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
+ 	u32 ctl;
+ 
+-	regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
++	if (regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl))
++		return 0;
+ 
+ 	ctl >>= PLL_POST_DIV_SHIFT;
+ 	ctl &= PLL_POST_DIV_MASK(pll);
+@@ -1385,8 +1395,11 @@ static unsigned long alpha_pll_fabia_recalc_rate(struct clk_hw *hw,
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 l, frac, alpha_width = pll_alpha_width(pll);
+ 
+-	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
+-	regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac);
++	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
++		return 0;
++
++	if (regmap_read(pll->clkr.regmap, PLL_FRAC(pll), &frac))
++		return 0;
+ 
+ 	return alpha_pll_calc_rate(parent_rate, l, frac, alpha_width);
+ }
+@@ -2457,9 +2470,12 @@ static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
+ 	struct regmap *regmap = pll->clkr.regmap;
+ 	u32 l, frac;
+ 
+-	regmap_read(regmap, PLL_L_VAL(pll), &l);
++	if (regmap_read(regmap, PLL_L_VAL(pll), &l))
++		return 0;
+ 	l &= LUCID_EVO_PLL_L_VAL_MASK;
+-	regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac);
++
++	if (regmap_read(regmap, PLL_ALPHA_VAL(pll), &frac))
++		return 0;
+ 
+ 	return alpha_pll_calc_rate(parent_rate, l, frac, pll_alpha_width(pll));
+ }
+@@ -2534,7 +2550,8 @@ static unsigned long clk_rivian_evo_pll_recalc_rate(struct clk_hw *hw,
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 l;
+ 
+-	regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
++	if (regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l))
++		return 0;
+ 
+ 	return parent_rate * l;
+ }
 -- 
-Ricardo Ribalda
+2.43.0
+
 
