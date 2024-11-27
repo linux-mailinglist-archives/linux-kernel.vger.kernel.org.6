@@ -1,327 +1,139 @@
-Return-Path: <linux-kernel+bounces-423556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FAA89DA9B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:07:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0865A9DA9B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:10:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47756165313
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FB4280F86
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E39E1FCF41;
-	Wed, 27 Nov 2024 14:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30A51FCFE7;
+	Wed, 27 Nov 2024 14:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aq+a2KGp"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="obfBiBlc"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E8C1FCFE7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB2C1EF0B7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732716356; cv=none; b=csdf76Bae7lSh9huxAJtl6ln8v6dnmsWGDL7QeUmZsCiWB3ZosAq/aPH0ryCVeJAYtQftsinyp6ntoZCsTlps2SzHsvLc/0JnzbBPWfMmpFxOa2FUuN0zPwar8XXj3XwN9ygeTyjCDx5PuThQASpViowbQcRkPVp8vOjxOhAr5A=
+	t=1732716614; cv=none; b=tmlueDhg5oV7yz45tLGZP90OEtbrrWzx+9AUIheQgT6EY/GSAJd3JaoWOFhuBtB/85L57y4wQGBMhJTNsCOt4Y/byJy7nfQDZHtfndt0zX/bm/Md/vpgWqKS76gyzEpC9PA+DzeFocREtSY44m3cyUvzPKZZ8ekRHl118QgZaA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732716356; c=relaxed/simple;
-	bh=1/9/VRiAd3mFuJE0x6u0oROPGPE9qYr/1F5OkY7DYEU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hB/t2xa9B+c+h1xgo/G+N4ELKhutrxNeM9jqU3VrHTYu54ky4QRumXWq9PEf6KDMooM9m5SNMCEP+tQdR2D8+m3aZ7n8s21GPFukiEqMoqTXse+PSRB4raEOgqzWfjjXMxXmkKClnkFHzR1cRcPPNaS3MKUm5zIMiFIRIVatgYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aq+a2KGp; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a1639637so25311155e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:05:54 -0800 (PST)
+	s=arc-20240116; t=1732716614; c=relaxed/simple;
+	bh=kFR9PUIfM5ND9o1WW+w41Hok+j3QIJY6jvBaATu8WzY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rI8UdlFeECxH6dwzKPV9ZkBIpFWaLl7pu9M0WeaVxWyNLsSsZtaFfa7FVrLxbU+ieBh+wGbIGZb8d1W8Q5flfjuwGxClz7A4m7bgcd0nE47jSjFG7/NT/akQ3qxe86RQh5v43WUh2WQYWj6DlBCRPG0PajDVivdhrR+TQBp3gs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=obfBiBlc; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5cfc26d02e6so912686a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:10:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732716353; x=1733321153; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LnTMbYbEVvxii8W+l8ai6UooboM0MmZTrUVAFR7MtHk=;
-        b=Aq+a2KGp0tU//R7kGaugvrrG9U1Kdu+Z6PXztprx5neXUn1B2qOhar0hDxMUXRGyPR
-         XhGdueaGYqEXEyTfQ8woGhp4hhv3qlFgDgNVn3k5HdDNn1VTVLBYWaJNVtQBWY3Z9m1S
-         F+hZNH+h6FXg3w/0K6Xf/m9NIsq+gfhcWmYR98qOp+p5ckGhJba3UByt/EQx7zVuasek
-         +GEy9tjEVvRnvCQBOUIAXI3tePv+NMqZAXFIZPj+veUgCkryShQqQDi04Yp3ft2Q68fD
-         1xnpVBY0GwlgbLZ9p2RtxdVFziGAjMT56xs5WbfSjI8lfK/OMl62AnMp44LkRqJCjXUv
-         Hbog==
+        d=google.com; s=20230601; t=1732716611; x=1733321411; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3jMhxXVf1QUdWvEy2vp558o5guO3soGdUIj9ntlxOTI=;
+        b=obfBiBlcaPrODzdJqxRzRNZUGivowy1jFQM/HquQr9ROS98NN9ZAnEbizq7HuVnaiO
+         iklIk726bsWEzv/DSKHN9gylbPz/saWcEkFPRy+J/YGGw7Nmq15QBMamYSFJLbL/ucUM
+         +n5RBwwzLJcJdhKIk30BC8Ul7HanQQcnNpEuTPp0mEXoAE53LAJWfwbaOQWHQTTSP2SR
+         HXTrgAMOvA68Lxxs4TWFV6UK3grUhwY9eEWrV5yl/UvYIS9hILIWT61s+zSKqfcDG3sl
+         vTMHIvhATQdGtcMSngR+0RXj9VjpzeY2f0yu5dVd9NHr92437SP7lt1QwXyJg2iv8SqF
+         T8PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732716353; x=1733321153;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LnTMbYbEVvxii8W+l8ai6UooboM0MmZTrUVAFR7MtHk=;
-        b=K3nmdTaO6SQIbNrTAZsxDqxKlmQQp+tk4p+jjFSu0WcboChR1DBKGhmnlNwEBspk1h
-         lPclo2eOgBm56zDMWaC1jvh84Hw2aS8eyotkVM32r07AL2jZ/6EU9yzBF12gw+7+G1KL
-         WK2gxbX3quhGD9SDF7BabUJsOqKtkERNN0rE19EmbBbFz6q1viU3E6xSNPXewWr52i+h
-         CL8SKWmyYDxOiGYqi/CsWLyBmmK/eO16TPfTkRqPZLslbSzsW56fmsy9wKRQ7e9XWBiU
-         kMLZ5s+ZhNrAQVP5y5QiPt6MI3u6Epv5NMRZ7UaaNZ2vKZ2UACQhTMpfqiyaWYWlKBLa
-         C55w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFY/cSW+VFLRvlF9j5okG6SJ8U5Nq9WT+fe3EvwB9yiH62CMOOq5tNa32dYWEb8D3QdiW/eEBTtRXK/7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbtXtpk0iMPgnwIig2gy9NQsnP1Ilcsat7NwuRl4qDoCfgYW0u
-	v+kqh4YDhTs4IQxrkE6akNqVbopzXT2w4mnwZ+FDjd2im+lxgGybY5m2yohNeZc=
-X-Gm-Gg: ASbGncu0TIG1sy+Pz+7E+xpt2JiMgby5Wz2mmlXEu77qIG6RNlNQRZxRhlNz4LEYR0G
-	pBUz2epA+6tK7QMJGkEUbT4DPVpFw3bL56xA9Lz++QfPTmv/vLbCoWGjeIWqYOWwbdp5MNafPaK
-	C0ZefPu8kmWPuOCnhvpbzJkS5KWZ/AoXR7jM/KofuTvYw7IMLT/a1K47g2kFuKAAOKvK57fLXbk
-	RRo68pr/dJvdXXy8f/r5SeAOirwRr1zZ7wC6FFCrM9IYTycJOd9u0oioPA=
-X-Google-Smtp-Source: AGHT+IGg2acUZRXw34PIaD/kU+hGoPERoHWRpiVKwUZdCoAZRnahx4SyEEoF+vxW3u1N5y/+QSx2Tw==
-X-Received: by 2002:a05:6000:2707:b0:382:359f:534d with SMTP id ffacd0b85a97d-385c6ebcea5mr1955933f8f.23.1732716338889;
-        Wed, 27 Nov 2024 06:05:38 -0800 (PST)
-Received: from [127.0.0.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad6436sm16442335f8f.13.2024.11.27.06.05.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 06:05:38 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Wed, 27 Nov 2024 14:05:14 +0000
-Subject: [PATCH v3 3/3] media: dt-bindings: qcom-venus: Deprecate
- video-decoder and video-encoder where applicable
+        d=1e100.net; s=20230601; t=1732716611; x=1733321411;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3jMhxXVf1QUdWvEy2vp558o5guO3soGdUIj9ntlxOTI=;
+        b=BFrVMLTLQVbzyoEi8euUEE/DkO3tb9Rf5saRcS7fbV0xO+EJPK28vMBG4T8laD9OvB
+         NG12ngI4i0yuSAGJx2zUCnsQvu/89gDHz0zWqXmFuv3Ostfc3A0iOE4+nNmwYchbm+4g
+         i4ycEwLdIXUGMo/M5pV1EEDHOGM9nzjLYmtqViSjOLkfB1zoMMbhKJ5AJiEL5ZGHn53C
+         O7T7ZgCgV91kc5xNTCgeJOgv+55Y+hzZRVJtMYkNo4Uqy2XYG0T+uXjFgZW94lvTbv/b
+         12vqzdjGoZGn61wX67xGGQQOrD1ZFNLVJkiTmCi1LBqN/dCLL5nPryKrBtgGCyCf/Par
+         jraw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTmfG46DKzig8OWeyVzlA3jJ2khS7KmWm8Wik9iKu1MHMiFAaqeVi4Tk+xz7yp6bjkMFpZUm9FRm4+fII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnkQKvSA+nHT2zMT4ATHK/qL7lZDNPSr8024AlBRq4cPt7iHAL
+	zht2pJWqGyhXp7o0UTGqVoD0MHKJMq/NPVOrZyHZmkgqHS/9OTD1IxtNP6Z64QuzCSR1aJyd7g=
+	=
+X-Google-Smtp-Source: AGHT+IFwlhr766qLc1hn4ldFnhIVaefGNadp5e+TUp8EreJ0cfnmr57nrisQx2lW5b/EFk+oKdUqLhIavA==
+X-Received: from edb5.prod.google.com ([2002:a05:6402:2385:b0:5cf:e3b0:4e89])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:5309:b0:5d0:ada:e44b
+ with SMTP id 4fb4d7f45d1cf-5d080c6dcc1mr3352422a12.16.1732716611041; Wed, 27
+ Nov 2024 06:10:11 -0800 (PST)
+Date: Wed, 27 Nov 2024 15:09:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v3-3-ef6bd25e98db@linaro.org>
-References: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v3-0-ef6bd25e98db@linaro.org>
-In-Reply-To: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v3-0-ef6bd25e98db@linaro.org>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: quic_renjiang@quicinc.com, quic_vnagar@quicinc.com, 
- quic_dikshita@quicinc.com, konradybcio@kernel.org, 
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Stanimir Varbanov <stanimir.varbanov@linaro.org>, 
- devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241127140958.1828012-1-elver@google.com>
+Subject: [PATCH bpf-next v3 1/2] bpf: Remove bpf_probe_write_user() warning message
+From: Marco Elver <elver@google.com>
+To: elver@google.com, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Nikola Grcevski <nikola.grcevski@grafana.com>, bpf@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-For the list of yaml files here the video-decoder and video-encoder nodes
-provide nothing more than configuration input for the driver. These entries
-do not in fact impart hardware specific data and should be deprecated.
+The warning message for bpf_probe_write_user() was introduced in
+96ae52279594 ("bpf: Add bpf_probe_write_user BPF helper to be called in
+tracers"), with the following in the commit message:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+    Given this feature is meant for experiments, and it has a risk of
+    crashing the system, and running programs, we print a warning on
+    when a proglet that attempts to use this helper is installed,
+    along with the pid and process name.
+
+After 8 years since 96ae52279594, bpf_probe_write_user() has found
+successful applications beyond experiments [1, 2], with no other good
+alternatives. Despite its intended purpose for "experiments", that
+doesn't stop Hyrum's law, and there are likely many more users depending
+on this helper: "[..] it does not matter what you promise [..] all
+observable behaviors of your system will be depended on by somebody."
+
+The ominous "helper that may corrupt user memory!" has offered no real
+benefit, and has been found to lead to confusion where the system
+administrator is loading programs with valid use cases.
+
+As such, remove the warning message.
+
+Link: https://lore.kernel.org/lkml/20240404190146.1898103-1-elver@google.com/ [1]
+Link: https://lore.kernel.org/r/lkml/CAAn3qOUMD81-vxLLfep0H6rRd74ho2VaekdL4HjKq+Y1t9KdXQ@mail.gmail.com/ [2]
+Link: https://lore.kernel.org/all/CAEf4Bzb4D_=zuJrg3PawMOW3KqF8JvJm9SwF81_XHR2+u5hkUg@mail.gmail.com/
+Signed-off-by: Marco Elver <elver@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 ---
- .../devicetree/bindings/media/qcom,msm8916-venus.yaml        | 12 ++----------
- .../devicetree/bindings/media/qcom,sc7180-venus.yaml         | 12 ++----------
- .../devicetree/bindings/media/qcom,sc7280-venus.yaml         | 12 ++----------
- .../devicetree/bindings/media/qcom,sdm845-venus-v2.yaml      | 12 ++----------
- .../devicetree/bindings/media/qcom,sm8250-venus.yaml         | 12 ++----------
- 5 files changed, 10 insertions(+), 50 deletions(-)
+v3:
+* Collect Ack from Jiri.
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
-index 9410f13ca97c181973c62fe62d0399fc9e82f05d..da140c2e3d3f3c3e886496e3e2303eda1df99bb4 100644
---- a/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,msm8916-venus.yaml
-@@ -45,6 +45,7 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
-   video-encoder:
-@@ -57,13 +58,12 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
- required:
-   - compatible
-   - iommus
--  - video-decoder
--  - video-encoder
- 
- unevaluatedProperties: false
- 
-@@ -83,12 +83,4 @@ examples:
-         power-domains = <&gcc VENUS_GDSC>;
-         iommus = <&apps_iommu 5>;
-         memory-region = <&venus_mem>;
--
--        video-decoder {
--            compatible = "venus-decoder";
--        };
--
--        video-encoder {
--            compatible = "venus-encoder";
--        };
-     };
-diff --git a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
-index 5cec1d077cda77817f6d876109defcb0abbfeb2c..83c4a5d95f020437bd160d6456850bc84a2cf5ff 100644
---- a/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,sc7180-venus.yaml
-@@ -70,6 +70,7 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
-   video-encoder:
-@@ -82,14 +83,13 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
- required:
-   - compatible
-   - power-domain-names
-   - iommus
--  - video-decoder
--  - video-encoder
- 
- unevaluatedProperties: false
- 
-@@ -114,12 +114,4 @@ examples:
-                       "vcodec0_core", "vcodec0_bus";
-         iommus = <&apps_smmu 0x0c00 0x60>;
-         memory-region = <&venus_mem>;
--
--        video-decoder {
--            compatible = "venus-decoder";
--        };
--
--        video-encoder {
--            compatible = "venus-encoder";
--        };
-     };
-diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-index 10c334e6b3dcf25967fa438f8e6e5035448af1b9..413c5b4ee6504ba1d5fe9f74d5be04ad8c90c318 100644
---- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
-@@ -68,6 +68,7 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
-   video-encoder:
-@@ -80,14 +81,13 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
- required:
-   - compatible
-   - power-domain-names
-   - iommus
--  - video-decoder
--  - video-encoder
- 
- unevaluatedProperties: false
- 
-@@ -125,14 +125,6 @@ examples:
- 
-         memory-region = <&video_mem>;
- 
--        video-decoder {
--            compatible = "venus-decoder";
--        };
--
--        video-encoder {
--            compatible = "venus-encoder";
--        };
--
-         video-firmware {
-             iommus = <&apps_smmu 0x21a2 0x0>;
-         };
-diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-index 6228fd2b324631f3138e128c918266da58f6b544..c839cb1ebc0999e10b865f4bb43ea76ffa2bf46d 100644
---- a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-@@ -70,6 +70,7 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
-   video-core1:
-@@ -82,14 +83,13 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
- required:
-   - compatible
-   - power-domain-names
-   - iommus
--  - video-core0
--  - video-core1
- 
- unevaluatedProperties: false
- 
-@@ -119,12 +119,4 @@ examples:
-         iommus = <&apps_smmu 0x10a0 0x8>,
-                  <&apps_smmu 0x10b0 0x0>;
-         memory-region = <&venus_mem>;
--
--        video-core0 {
--            compatible = "venus-decoder";
--        };
--
--        video-core1 {
--            compatible = "venus-encoder";
--        };
-     };
-diff --git a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
-index f66033ae8b590e7b6f1e344c368994744411aca2..da54493220c9dc90e7d9f5fcfce7590acb241c85 100644
---- a/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,sm8250-venus.yaml
-@@ -73,6 +73,7 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
-   video-encoder:
-@@ -85,6 +86,7 @@ properties:
-     required:
-       - compatible
- 
-+    deprecated: true
-     additionalProperties: false
- 
- required:
-@@ -95,8 +97,6 @@ required:
-   - iommus
-   - resets
-   - reset-names
--  - video-decoder
--  - video-encoder
- 
- unevaluatedProperties: false
- 
-@@ -132,12 +132,4 @@ examples:
-         resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
-                  <&videocc VIDEO_CC_MVS0C_CLK_ARES>;
-         reset-names = "bus", "core";
--
--        video-decoder {
--            compatible = "venus-decoder";
--        };
--
--        video-encoder {
--            compatible = "venus-encoder";
--        };
-     };
+v2:
+* Just delete the message entirely (suggested by Andrii Nakryiko)
+---
+ kernel/trace/bpf_trace.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 630b763e5240..0ab56af2e298 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -362,9 +362,6 @@ static const struct bpf_func_proto *bpf_get_probe_write_proto(void)
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return NULL;
+ 
+-	pr_warn_ratelimited("%s[%d] is installing a program with bpf_probe_write_user helper that may corrupt user memory!",
+-			    current->comm, task_pid_nr(current));
+-
+ 	return &bpf_probe_write_user_proto;
+ }
+ 
 -- 
-2.47.0
+2.47.0.338.g60cca15819-goog
 
 
