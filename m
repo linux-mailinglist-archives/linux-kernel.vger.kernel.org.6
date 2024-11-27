@@ -1,143 +1,114 @@
-Return-Path: <linux-kernel+bounces-423146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD749DA375
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:02:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDA79DA378
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E45E01643DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E5BF166729
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCB3170A11;
-	Wed, 27 Nov 2024 08:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9932F1714B7;
+	Wed, 27 Nov 2024 08:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzRM6WTf"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Iv/sqs4r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6076E1272A6;
-	Wed, 27 Nov 2024 08:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E21016132F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694523; cv=none; b=cdCj8H+lWxyHqLSzmzfALWqVnPNd/eTIUKGbPnEqfWi8XVIXenGzcSkvYWXlU19e3YvwpgLlg12/f/FJ64ODGp3WqGjlaAIHJVY9Cuzm5aHXrFc69P7Yz91obRk5w1t0CmVUo8rhgHo4CdsgvHTcDs/NyVydqzwHpT0/nYDkbdE=
+	t=1732694561; cv=none; b=Z/PuQJQyDFG5ZMnAv/EHQn5I+uNlIyMnSI44mdsuriPHjtY5pEooRZQSPyvk9zlyxnVA9qk+2QD25UZqsO4LFGjJPCf1un/WMO2/yA5zXfxgTlucpcLzLAHiJYH/lkqcf9ZLLT1VAqij0hBKHMYjEv5NkPtHh88JiksBwtiU8+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694523; c=relaxed/simple;
-	bh=TA/9WZEbvgB1jmH6kCzUe9r/FiGqTL+90VzfPh1UVzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cvjuAd+jbXUqFQ8Y12cwPp3MXBe3ZKSFjGMVEgv7S0kuZ7vJs5S8uZ4l7LmuzicSXuKOhJF2k9773RsmfKd1jUcjyVwBQFD96mR+gh4CLPX9QgPQbBy7oZkcQ5aZSyxqXNdtrJbl8TJPXsI9Md72ro2GXoULVZF0EE4lr9kQop8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzRM6WTf; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2124a86f4cbso58320885ad.3;
-        Wed, 27 Nov 2024 00:02:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732694521; x=1733299321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bew/I5xXVZXMcMLGcr2bk1V3h79V/rlhudJAubnILnI=;
-        b=JzRM6WTflhvuVNaoLpDjpBRtkSWaGFvch6uCz1KzlfG/5AzIlRqGtW7HywmZCXL4eS
-         KiAFxhExAfVlnttpDVpYVd9cqX+UNy8U7yQP+UYOnG4ww16ZZqjPjb9GLKqPVgZJ70Nq
-         ssWN3W6JgDu1R3zJtCdc4Ms5ktjNm2eqzR9FzSNv3sfpqnkFd30GDU85fKUSN0J+ngrQ
-         8kR5IrWc0002X7kVCJ2RWtGoq6vOX3WcQW1lWCMWi2SOd8r2ZsDYddR5imh7kvKbmBoe
-         HFuNQKWko4ncxtKrhgF+QCERLbFM06R0dNuBzaswYhoyrw4f2EQDgt9W8F5eDDdmxYtf
-         ti/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732694521; x=1733299321;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bew/I5xXVZXMcMLGcr2bk1V3h79V/rlhudJAubnILnI=;
-        b=s9pKu6nyB5M9EJBO/bfAcHsL2o/6couBcFOPfkNYk+0ycQWp5VWvA259BL26BnVZFW
-         qvP0VKv693Ey2ao60ZhhVqSCBMR1myz/57RnivkI4lvd3nN6jAyQgbamVJOeiWfmDMJN
-         NSZiCju/pdOGuetstHaAiU4wVaX97jmQADr1Qv+oeURQ/qst7P0BJvm9qycvPmYhbmQq
-         BJ9IUBV+Ss1aYbjoaod2MnPeSmKMSAokrsWDFs/Rx0AmjrDGUCAisp9FzoWIYAkVVPFe
-         UPmWWtx11bCjAR4/5VNLBoQP10rsjSgQqumTb87PtVx6nW0tH+V5QeJXLzbVXdAxciD1
-         ASvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC4qSpfMjaDE0Gs84JXjehZDn20eGFxko97EUeyHgZuT1VCpgcCePP8depj0d7LG0373F13sZ8@vger.kernel.org, AJvYcCVyhDacbGT5p3FUS/aDO9fG6J0U3J76iH2jvtIDe3EhvYdwbzVoO2fLr0WpJtVJfk4YQXOsT57g5IGZ@vger.kernel.org, AJvYcCWCevaguTFm9qI9/gB89Z3bkPRApiKbXWKknFmI5BR1ht3Wd7TxvnHmCj8nHbG185eqBdrWsZPTi6Hdv7fN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6IXotH4fWY9zdTC8nc9FuaTE4nZyiNBxFbTl19kKnDEZhjKER
-	lTLfi3aK3qTM8GPpF6gTDvI7FYFPCasccSuDVG41gnbvAMwPxuke
-X-Gm-Gg: ASbGncsJFqnaJRgk3xC22wz3913tY1ZbOyhyeFeQV3twFoLZ1oMs9aaXRR5fyIY2Bd0
-	SCsaZhcTLKI75MmsY5srkRRmJXek8eEI6MNU/Tw5WxoHpTTraYzCPGKFqv7Itu8MJUHZNtqgZfi
-	b5lCGWmxowepKFKGezwr0Ws9Ctob/0XzTtRxTk3VwG0zRNOtHutMUFJrgUgLSoqK+gF0nEoz78R
-	ejjBgnPnSH7SkW/U0kR6E/nPD+gathzzEFrs20BcfSM15Tc4RYrLOpH9cQrxnNgHWNBBfIZK1a9
-	b1a1Qsw3ubQaPPurGvSBF6NxEBH7
-X-Google-Smtp-Source: AGHT+IGtUIoISB0+clpN9PkK/2UFXTIykn3qm+m0cLDTT9iuNBtfEZ70ZERWyU6+cs55GUUZXZV4kQ==
-X-Received: by 2002:a17:903:2b08:b0:211:e812:3948 with SMTP id d9443c01a7336-21500fedf8amr32131585ad.0.1732694521468;
-        Wed, 27 Nov 2024 00:02:01 -0800 (PST)
-Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c783sm96580615ad.25.2024.11.27.00.01.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 00:02:01 -0800 (PST)
-Message-ID: <6efc512e-b153-4f2c-8b38-4443024475ee@gmail.com>
-Date: Wed, 27 Nov 2024 16:01:54 +0800
+	s=arc-20240116; t=1732694561; c=relaxed/simple;
+	bh=Psq5ZuC5Inn1c7voFTAP1G67H7S83lRQXRKRS4yE4mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JyhzgFuCcGEY1pFr7jtS1+31AbNvMl3UfzViSUqWhe7OtaiDXoBYyPKvNlG0XkaYv7jXVMiAzDu+bi9LpVnVy0D9aiCl237E+fXAiCk9GxZYgWAqE3Zn/5ElA6p9zj3R1tSHb9uUdToQwMqbKlrh+lUQezKciCLfbOx4iPcDKzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Iv/sqs4r; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732694558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Psq5ZuC5Inn1c7voFTAP1G67H7S83lRQXRKRS4yE4mk=;
+	b=Iv/sqs4rCM11OVaUQHJw/fCTQ76/9uPjaXcU/3hJ0U5uVjzMqBdWmvRS5ML1qW8SUNGkr4
+	Ptlng5litOL5yP92WFDnqs3LzAzUUp19n8Gmpq5snKmSdVWhLIgB1sa7IZ2YJXadMEuydG
+	sAk1L5aDVDlu42ynip/8GRPEC+ofOKM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-KBXU4aMHNGi2YkGLDQqVAQ-1; Wed,
+ 27 Nov 2024 03:02:32 -0500
+X-MC-Unique: KBXU4aMHNGi2YkGLDQqVAQ-1
+X-Mimecast-MFC-AGG-ID: KBXU4aMHNGi2YkGLDQqVAQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1501E1955F57;
+	Wed, 27 Nov 2024 08:02:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.52])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E418519560A3;
+	Wed, 27 Nov 2024 08:02:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 27 Nov 2024 09:02:07 +0100 (CET)
+Date: Wed, 27 Nov 2024 09:01:56 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jann Horn <jannh@google.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org, akpm@linux-foundation.org, peterz@infradead.org,
+	mingo@kernel.org, torvalds@linux-foundation.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, mjguzik@gmail.com,
+	brauner@kernel.org, mhocko@kernel.org, vbabka@suse.cz,
+	shakeel.butt@linux.dev, hannes@cmpxchg.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	david@redhat.com, arnd@arndb.de, viro@zeniv.linux.org.uk,
+	hca@linux.ibm.com
+Subject: Re: [PATCH v5 tip/perf/core 1/2] uprobes: simplify
+ find_active_uprobe_rcu() VMA checks
+Message-ID: <20241127080133.GA7717@redhat.com>
+References: <20241122035922.3321100-1-andrii@kernel.org>
+ <20241122035922.3321100-2-andrii@kernel.org>
+ <CAG48ez06=E-rXYk59yJR2aKFD2yaqcQu+6wqVau9pQ8X36A+aQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] arm64: dts: nuvoton: Add Ethernet nodes
-To: Krzysztof Kozlowski <krzk@kernel.org>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mcoquelin.stm32@gmail.com, richardcochran@gmail.com
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, peppe.cavallaro@st.com,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20241118082707.8504-1-a0987203069@gmail.com>
- <20241118082707.8504-3-a0987203069@gmail.com>
- <a220d407-de40-4398-a837-de11e01d2381@kernel.org>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <a220d407-de40-4398-a837-de11e01d2381@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez06=E-rXYk59yJR2aKFD2yaqcQu+6wqVau9pQ8X36A+aQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Dear Krzysztof,
-
-Thank you for your reply.
-
-Krzysztof Kozlowski 於 11/26/2024 6:08 PM 寫道:
-> On 18/11/2024 09:27, Joey Lu wrote:
->> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
->> index e51b98f5bdce..2e0071329309 100644
->> --- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
->> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
->> @@ -379,5 +379,57 @@ uart16: serial@40880000 {
->>   			clocks = <&clk UART16_GATE>;
->>   			status = "disabled";
->>   		};
->> +
->> +		gmac0: ethernet@40120000 {
->> +			compatible = "nuvoton,ma35d1-dwmac";
->> +			reg = <0x0 0x40120000 0x0 0x10000>;
->> +			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "macirq";
->> +			clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
->> +			clock-names = "stmmaceth", "ptp_ref";
->> +
->> +			nuvoton,sys = <&sys 0>;
->> +			resets = <&sys MA35D1_RESET_GMAC0>;
->> +			reset-names = "stmmaceth";
->> +			status = "disabled";
-> Status is always, always the last property. Please read and follow DTS
-> coding style.
+On 11/26, Jann Horn wrote:
 >
-> Best regards,
-> Krzysztof
+> On Fri, Nov 22, 2024 at 4:59 AM Andrii Nakryiko <andrii@kernel.org> wrote:
+> > At the point where find_active_uprobe_rcu() is used we know that VMA in
+> > question has triggered software breakpoint, so we don't need to validate
+> > vma->vm_flags. Keep only vma->vm_file NULL check.
+>
+> How do we know that the VMA we find triggered a software breakpoint?
+> Between the time a software breakpoint was hit and the time we took
+> the mmap_read_lock(), the VMA could have been replaced with an
+> entirely different one, right?
 
-Got it. I will fix these.
+Right, but this doesn't really differ from the case when another thread
+replaces (or even unmaps) this VMA after find_active_uprobe_rcu() drops
+mm->mmap_lock and returns a found uprobe.
 
-Thanks!
+So I think this is fine.
 
-BR,
-
-Joey
+Oleg.
 
 
