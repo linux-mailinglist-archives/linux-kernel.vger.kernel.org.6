@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-424047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9749DAFEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:44:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB859DAFEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:47:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9215B2174A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8FD7B217EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D8A19938D;
-	Wed, 27 Nov 2024 23:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF6119882F;
+	Wed, 27 Nov 2024 23:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9OPHKBB"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sQyitDF/"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC9191F8E;
-	Wed, 27 Nov 2024 23:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CE815E5CA
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732751059; cv=none; b=AJbJ3eAlBiaQiVr/IR0bfrlPP9Ba/OC3LMpvYGT0oQHr5nsqmgJxPChS6H7ifjcln4UNMUI9/MYogS4vTLScvedthpFCaAESP+vEyyyKk/ETTtCldsYJFKP9W6B/yTXZxAO2RTlKDjCagkS/7v4TPsvKl1ImZCUIxlUeJHe6FrE=
+	t=1732751223; cv=none; b=lNlAusTSmFj9Ja25BFIcprI/GDjblhjW9FguPMNWpHyzkdrapXCsJInFtE7RHUhQswF4g2G55oVrKowAvs8GJ/8JKVlLZzCNeK4CrdrEjBB88HvQzKWjI+ud4YIJCEV7jRm8lj9kc9nsb26GyE4meVmrfjAfVKPNLdPx893fHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732751059; c=relaxed/simple;
-	bh=SJgQfHOSQEkKrprgq2qm57fqyeX+64ivBUN9XHKz728=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hs/FWwJb+ICh2G/Ug5Yxxh7Awv2mF6h02xUKUmRbPpG3j+SnOPLk59UyYnrJwg7sX15S/CPte4q/6w2fAKJoYXNbVvdGGnYJQijQW7YPgi1pmRFbgGwLxZsw7uJwRXKfq+ecc2xAgubz9P1OJDXmaAMeSs6JeQnJig9BG0yh8ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9OPHKBB; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7251731d2b9so1014292b3a.1;
-        Wed, 27 Nov 2024 15:44:18 -0800 (PST)
+	s=arc-20240116; t=1732751223; c=relaxed/simple;
+	bh=nd3J865/YZ+2VEz7ghltJB+9oC6ZlC3mBxeZJDrtEh0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Vy1m1tIbSf5IwtH3hg5afDsANejuJcfq9iM08BchKzlwFmXSWNvALNq9vVhwBJiPgm4t1+XutRv5hKXPHcTxUDNP+axdtvvZq+KN6oefIdSjiidwIXb3rLZWW6L6HyodH+Dre6GeBBaZjy2N1vdZiUYyw7sgxHb6LsjJnyCpPmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sQyitDF/; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7ea8baba60dso247771a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:47:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732751057; x=1733355857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+MIlH5caWtN86lAoqIcyCI0PAwLZbimudGFiQD/0o8=;
-        b=Z9OPHKBBcq6bDwqay69gYq9JxIMlYWyJ66uP4944wDwIAB5McGdmvVqm9DRBDAXaDJ
-         6EFL4/LQJwGUla8bO15gGVQrYZgBBqe6xP8EAETJMhul0x1ikLhrRIbvCDlfcJ8mH1Mz
-         ZcJwtLf2lshXJ2mWPriu89H6udCwyZMkLMP01Q0UE2fqEioi3Fak3ghH+0+qFB+0On3o
-         E03iTUqjpHeMd81bX/zBQSzEL3y0qE4wVxLg409yUbucWFjjjmwNUtscILFHz1KxLCE/
-         Yu09hRoZBYwUGbyHTQvc1XgrtVIrx0HZvWKXSbOJgH2mxGLGhaXBGoo1Wl7YRoaTbnQK
-         wWaQ==
+        d=google.com; s=20230601; t=1732751222; x=1733356022; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PIulGb3qmhZUHKLGlDgu3ych7aY/kTKi7wptAAkUHH4=;
+        b=sQyitDF/OkqWa7Zjai6v2DSN9JI1ZMP+c9yRQ28QWL09S8a5PqdHkkS0hvr4oKC+Bh
+         AmUJJPdIcp873jRhDqO5cSxNEYPSf1X4ndIHMdJTLPlwJ2GkrqzYyr1q++4ANQj8Zopo
+         /XFJ6q6a0jQSJGXfOYZfSY+RMfV52jl7A2NR+H/6yt2W3KliydRF702cBp0DmmhFcfEQ
+         TrH4dfz+tRvMu7trINdeDTDLw8oMMCAxkFF24H0dALTNuLMXJyXvWqpqi9emgDsmiPJ1
+         vCWxFrfNu0jcNVSX5UQI/WVmEhC3yT6Qb4u0LleMJTbdRMQpybGy0AAs5RVVtq8ptkTZ
+         5bXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732751057; x=1733355857;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j+MIlH5caWtN86lAoqIcyCI0PAwLZbimudGFiQD/0o8=;
-        b=WJexTVjd4TyHWVlMd05T1OVPd9cuiG8OlPEmG3dNFDb6aD81+bi6Nq4+iZ3IWRQRZP
-         BAT4+6Pe1qX68OykOot9HZVroZ4iqS032RwnsbfZbRk2jqaFqZ5qf5+zaoabDLpZcms6
-         bd5XmeH7PDTmv4HwiZG34XtvTQLl9ibybTGMMBxASjCv0X+V2sut5mgzaSEbGA0jm7Rw
-         VOkmdzB6JdSDaEiG9/zioeY4z8CkzV6+Nx8+kBEdysJmnwOUAy8aBDyqER3E8zcQnsnn
-         L1FrZDfBUZ9Eu0KlJrfv5vwpX733rU/fefdSn1jpEcgT/fwmmUEMafLRJ1kI0WHO6WCb
-         +mIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAuGBe9w5Hwkk89ace5Vsf4Cfwpr7tSBkDx2gr8f84YPlFLEJ7VMbpIZLWfVw/wz7/uqAqQqNuWC9sIBw=@vger.kernel.org, AJvYcCUmSaggSJZuNEONfhbdCK1wPQjG88MgFGBNn9MGpyDdxh7sMooB/tY4vQK0CwZCuVfQ3Fb40upDDvKBXmXs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmRHcKk67e1U1pxu9FwZk70Cisovsy0rwjrwPwVl/FQ/9e0nss
-	n71DTVZxUX4omtKfBC9sMP2fPaX9g1uPseUVa5aXynegF4jruEfG
-X-Gm-Gg: ASbGncuwdy4GYIZ3VKYd0I9EOIxeEUCOyj2AY4OGdxh6tfnRLtILmjsuUvahhm9VVHR
-	q4cbsSu9jr8zjV4pZ5uv2SOuJwwjc6FnQxZgC6rwIJscMJaEV9jCz52S14GRRwGz6rrKMVDn1Ww
-	Bq89w9oF34FnaXNSARCuV7tj0bIEP+VW3SFnUmybPp8MB/p+saxOpiJ6rtorKmusV0t/TnoI2VX
-	CGgPXCjeHgzNmt51ZsvxTkm/CcILNNuK92XoSvmWB7WdxHQW60A
-X-Google-Smtp-Source: AGHT+IGZJyMglYCdFWYJvTUolybseLph5KHalgMYhe6FouC4A/B7u1APP2l2Yk+cRmbxW/j7oEFFdA==
-X-Received: by 2002:a17:902:f541:b0:20c:f6c5:7f6c with SMTP id d9443c01a7336-2151d33e1e0mr20148275ad.16.1732751057389;
-        Wed, 27 Nov 2024 15:44:17 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725417fbffasm141807b3a.103.2024.11.27.15.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 15:44:16 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com
-Cc: x86@kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] x86/aesni: fix uninit value for skcipher_walk
-Date: Wed, 27 Nov 2024 15:43:47 -0800
-Message-ID: <20241127234347.1739754-1-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        d=1e100.net; s=20230601; t=1732751222; x=1733356022;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PIulGb3qmhZUHKLGlDgu3ych7aY/kTKi7wptAAkUHH4=;
+        b=BlMwxSscS4nCob9iK6x2uTLT9nxDpasFd/3I4voLnSsZsIHSAutjyhVFS0cqtYYA2R
+         BpDGOIzzLxmI6Vdun3PWi4JqPLCJGCWbEDykqrOV5mGq+KEa9Ct7XCqh+26jdNKj2I/R
+         nHX0Ucq1fV8Nb7/oj/5gXaoUWkIDVuxF1qj5whubNZzRZqEwHdPQtiuJ29fLuxq1SjTi
+         nsxb/B29r7Eob+NjRs1UeQQo0JsExHLsYk2t6O202+Mg+BLXg7NiNW/KF5W/YX9uaIcS
+         hpIetX8sL4aElUuPPL20EsDR+1vDaBfIRsBq4RXJARqM0nzwy21xl/kLXqqTLitEb7An
+         T2rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsGeA5OGsk5nJAa68/adCje6DjAmpTuGDBkAUSNNrMJS51txdWGadcgOuigD5One1LR2NEgqaHjACLeCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL/9zKgM9/vLwYBO8To1VwYOLxxxA4IMHqmghza/ol0dThdM2A
+	iSJK+yNYFLZnvH2gub33Q1tLbKDy92+vyvqpzeRYfTG+1VwqkUuGbdPxz3kK7pntpSKHrUmZhsz
+	h5w==
+X-Google-Smtp-Source: AGHT+IEBfEA3SFEJ/e7q4DLhCeeHP2mhmWlaClqCNg6lR6N/PIHK+FBp/M05m9sAjCkl7gaROt6CrfMX15c=
+X-Received: from pgbcw5.prod.google.com ([2002:a05:6a02:4285:b0:7fc:1f6a:c14a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2583:b0:1e0:d380:fe71
+ with SMTP id adf61e73a8af0-1e0e09e2467mr8155703637.0.1732751221766; Wed, 27
+ Nov 2024 15:47:01 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 27 Nov 2024 15:46:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241127234659.4046347-1-seanjc@google.com>
+Subject: [PATCH] KVM: SVM: Macrofy SEV=n versions of sev_xxx_guest()
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In crypto/aesni-intel_glue.c most declarations of struct
-skcipher_walk are unitialized. This causes one of the values
-in the struct to be left uninitialized in the later usages.
+Define sev_{,es_,snp_}guest() as "false" when SEV is disabled via Kconfig,
+i.e. when CONFIG_KVM_AMD_SEV=n.  Despite the helpers being __always_inline,
+gcc-12 is somehow incapable of realizing that the return value is a
+compile-time constant and generates sub-optimal code.
 
-This patch fixes it by adding initializations to the struct
-skcipher_walk walk variable.
+Opportunistically clump the paths together to reduce the amount of
+ifdeffery.
 
-Fixes bugs reported in the Coverity scan with CID 139545,
-1518179, 1585019 and 1598915.
+No functional change intended.
 
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
----
- arch/x86/crypto/aesni-intel_glue.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/svm/svm.h | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
-index b0dd83555499..168edb21a6c4 100644
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -398,7 +398,7 @@ static int ctr_crypt(struct skcipher_request *req)
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct crypto_aes_ctx *ctx = aes_ctx(crypto_skcipher_ctx(tfm));
- 	u8 keystream[AES_BLOCK_SIZE];
--	struct skcipher_walk walk;
-+	struct skcipher_walk walk = {};
- 	unsigned int nbytes;
- 	int err;
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 43fa6a16eb19..2f5d8b105eb0 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -358,39 +358,32 @@ static __always_inline struct kvm_sev_info *to_kvm_sev_info(struct kvm *kvm)
+ 	return &to_kvm_svm(kvm)->sev_info;
+ }
  
-@@ -447,7 +447,7 @@ static int xctr_crypt(struct skcipher_request *req)
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
- 	struct crypto_aes_ctx *ctx = aes_ctx(crypto_skcipher_ctx(tfm));
- 	u8 keystream[AES_BLOCK_SIZE];
--	struct skcipher_walk walk;
-+	struct skcipher_walk walk = {};
- 	unsigned int nbytes;
- 	unsigned int byte_ctr = 0;
- 	int err;
-@@ -517,7 +517,7 @@ xts_crypt_slowpath(struct skcipher_request *req, xts_crypt_func crypt_func)
- 	int tail = req->cryptlen % AES_BLOCK_SIZE;
- 	struct scatterlist sg_src[2], sg_dst[2];
- 	struct skcipher_request subreq;
--	struct skcipher_walk walk;
-+	struct skcipher_walk walk = {};
- 	struct scatterlist *src, *dst;
- 	int err;
++#ifdef CONFIG_KVM_AMD_SEV
+ static __always_inline bool sev_guest(struct kvm *kvm)
+ {
+-#ifdef CONFIG_KVM_AMD_SEV
+ 	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
  
-@@ -1339,7 +1339,7 @@ gcm_crypt(struct aead_request *req, int flags)
- 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
- 	const struct aes_gcm_key *key = aes_gcm_key_get(tfm, flags);
- 	unsigned int assoclen = req->assoclen;
--	struct skcipher_walk walk;
-+	struct skcipher_walk walk = {};
- 	unsigned int nbytes;
- 	u8 ghash_acc[16]; /* GHASH accumulator */
- 	u32 le_ctr[4]; /* Counter in little-endian format */
+ 	return sev->active;
+-#else
+-	return false;
+-#endif
+ }
+-
+ static __always_inline bool sev_es_guest(struct kvm *kvm)
+ {
+-#ifdef CONFIG_KVM_AMD_SEV
+ 	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+ 
+ 	return sev->es_active && !WARN_ON_ONCE(!sev->active);
+-#else
+-	return false;
+-#endif
+ }
+ 
+ static __always_inline bool sev_snp_guest(struct kvm *kvm)
+ {
+-#ifdef CONFIG_KVM_AMD_SEV
+ 	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+ 
+ 	return (sev->vmsa_features & SVM_SEV_FEAT_SNP_ACTIVE) &&
+ 	       !WARN_ON_ONCE(!sev_es_guest(kvm));
++}
+ #else
+-	return false;
++#define sev_guest(kvm) false
++#define sev_es_guest(kvm) false
++#define sev_snp_guest(kvm) false
+ #endif
+-}
+ 
+ static inline bool ghcb_gpa_is_registered(struct vcpu_svm *svm, u64 val)
+ {
+
+base-commit: 4d911c7abee56771b0219a9fbf0120d06bdc9c14
 -- 
-2.46.1
+2.47.0.338.g60cca15819-goog
 
 
