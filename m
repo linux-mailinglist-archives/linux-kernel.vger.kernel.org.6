@@ -1,147 +1,148 @@
-Return-Path: <linux-kernel+bounces-423440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA809DA761
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:07:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5679DA765
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6355116524A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721D9164F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C321FAC57;
-	Wed, 27 Nov 2024 12:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0FA1FAC49;
+	Wed, 27 Nov 2024 12:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a6/MC30S"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="URcUIMxM"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18A01FAC49
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE4A1FA14F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709251; cv=none; b=M03H+uex54mDCa4YgGgXJtg2aqEiiVssKrjo8bdZ+eHyT/QtmXpAY0aNeHBp6q0qGdtmTC0ChTdx9FvebXmICZgpX1WZT4EOVKejUH6DdrxFVGdPlRaD4AlslhwkqpyXWcnnAbm9vWGNzuptJFqdIhAaU3DctFGNr3t/f2WvBGE=
+	t=1732709259; cv=none; b=EWzdOCk+jrHW/t0Bs1I2/kvrcRSmANqCm/gT8pDxx+Wjjz8MVWCnINh3PhlRT9GMP/wszeEBTuGEZiywx8KGMWfM5aXGEiykGfLkXTJvPu/iu6+tGepVzcCAdLQH0k55N2HAhxerZi840L02RFPz7X1a0IQGaRViZEWCJx9lXjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709251; c=relaxed/simple;
-	bh=xGH2otcBVgI7ZNii2v4VTVGd8E5+SfRgGy1VfVtc73M=;
+	s=arc-20240116; t=1732709259; c=relaxed/simple;
+	bh=0DAwBIuwfDFeVjAyyl2kiKCxxuWS8YClRsH5Rv23TIM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e5efqolwc15NtpjxLkgRFzMKinPoQ2juiS8sI28MkOMjxGudHN4TvSRX+wxzVkpwzl4EnikdOyvou34HUNhclwzv1NWy100Tvs4C4ZLlMuPz2XxQmJvwAmB7dMQfk0w8focrCnjyx37poSwlVm+hZY3MyXp0FvNU5QUx91rv5As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a6/MC30S; arc=none smtp.client-ip=209.85.210.179
+	 To:Cc:Content-Type; b=bq4r9XFcuT9Yj77SqWJfqxzVpfbbq3KlXeoyOEjI07/X4bSxmBOGms4+xsV+WRBGTUdayelLLE9OAhl2G/JbwXcU9i9UtIXXX0Ttd0vc50kw6iaXh8MTkyUTOBsV/Ejzv6Rc7M6JGU0DSTq8Hg9dnQ2OMj43n5rdlNtg9Eyds6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=URcUIMxM; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so4927809b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:07:29 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a8640763so13123345e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:07:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732709249; x=1733314049; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4AXKwflDoZON8uZoVsJO/jcP453CSzNx76GT1Wo4MM4=;
-        b=a6/MC30ShRdNJOEP/o0oWpovXhVZVL5l5b0OUMTgOcYIpiO80QiDYHvF+9goJ1cWZ+
-         I2yUkInsowopj58dDH1Z8bP6IQuKwwrcrmQHQXYwP21+Z570MjY0W9Uqw7hTya4zDiqK
-         sdqIhc0V3CQ/U5/3JYLL11xz+9J/WdgJEf0BgLNsuk9nG1ZNINCA/3n7C/HeZu/gRKpf
-         g9hl3Vnd5Q0PAw1dQhHJXkirS9Fx6mRL6XS0aSyhql6MigWwQtrn7Jylu5Nup9r6mBHH
-         322guCfG+r/AGOsnDOcozxtosZ8y+eslkUMO8/oeIqq0W0kdLOcg7amnQBQp3PgbXtx4
-         DWRQ==
+        d=google.com; s=20230601; t=1732709256; x=1733314056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dWm1TWYufvmfNpaeEtp42v64UUjDvzA4BzbXGW2BVf4=;
+        b=URcUIMxM2JgU/l7fv0KICPc3EXgFW0pXWeyjfUsjvtJOKZF3nPYPRTAA9K9XlkOKfG
+         53NiJ0TTt59eWldO82zD88rYN2xWAdQTUe7XrJSTHR8RE8Sc4tef8Far0cIckITXbZtt
+         wYHLDWbbJp4EtJsRwtE9yb3Vl6JuHFho4yjKfXZ5QYU51nWT9ZxN78QdLpddbmX/aMfj
+         sUfK08XdoWmtFYuoc/AnI6D1DkHZePEU+pOJ49E1XPIUKBIFHzpNAgD9aoIJNXwQj5Oe
+         9KwAKYbfDYej3IJLnRZFS3sNlfc0MpsrUqopyPaZEiCKKBQLs49eNWH73LI0YUcWNvya
+         bNvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732709249; x=1733314049;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4AXKwflDoZON8uZoVsJO/jcP453CSzNx76GT1Wo4MM4=;
-        b=niQEEqUiQgCnp7WKdijiKaDOVMSFbZKAj2GQ9BwhRAFfBt7KrsItZybvuycKmP4WJj
-         fgvTJUiDshRgL2V2QaYhP0q62cYHqGd6SXnzFRrflkcaobM8ZMdpU0jbBPmBgLFZT1BJ
-         3u8JMKmPqPxaYLCTYv4wk/ck+c9HsDcNDvRs8KjqzEFiYCgW5wwT4gIjCE6wpO0UgWoo
-         T82pZ4w4nuMuiUEbVlH4NLAS8fBCsIKYNi+1ITSxeUbtvdqhGTiu28hEBSM7qLwbegAL
-         bbcHGX0jOB0tn/jJG+HnFU0dFgkiiMPEbAco4pQBsiZSLoKYRF+MPzoPwQubd8O09UoR
-         CBog==
-X-Forwarded-Encrypted: i=1; AJvYcCXd1/OEYvKuOEw9hNbdi3USIghVKHR0SYDcSBEDME3gLmiFzaNgVXufR5P78GkYt7EVWLLpTRt68QMTfiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl7M/S1euIu26Ff5xBBnDqauiIQ+3zKpZyr+bEEytRrI8C0Oip
-	236OALLNRNgvW/vGAiPgp8LhkXCF4FNiC3JHGaTlt5i6ikApchulxA/ZOYwNaSn5D3+L5lAxO5S
-	c4BAx8xF2hkvcIGb8GCTbmbdk/ueY6RvmS+a5bZi0oORbX7phHSEPwyM=
-X-Gm-Gg: ASbGnctrFHiAmecACJRn3MEHTcSiysbuZDmrrfET7q/LyLsscneosM99dS3QdWT8IZJ
-	RjPujsHvsv9TlWYVaLCow6BzLVNejNaHm/KZ9XjZxSnQUQ7Wzec9crxiKL4MT
-X-Google-Smtp-Source: AGHT+IHwICfCYrviS08kFGNRMVpuL3ujNRVHSRlu6OtVk1kmMBM8BBst4vSPlPTaleJxA8eHXG8PEgN83xzT+6HzfII=
-X-Received: by 2002:a05:6a00:230b:b0:71e:74bf:6b1a with SMTP id
- d2e1a72fcca58-7253011ef5amr3365444b3a.16.1732709248940; Wed, 27 Nov 2024
- 04:07:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732709256; x=1733314056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dWm1TWYufvmfNpaeEtp42v64UUjDvzA4BzbXGW2BVf4=;
+        b=N7/mtuhJEBRvI5idqJZqvTmeujZMBC3QBMZwX5K0789jev5a9smB4WX4MFBUWZCtcB
+         35RZQg+seHNdJgFv8AvRedaIGkxKZKEY84bVRWvfGvERmdvFlqvlQT20eChYMi5bHgEh
+         j7jHwv0aQju3IGB4tjOTm+R5MBY0xgtlhpbcIbcH0g9FKv51eTMdy7iK1r69A5YDgJBq
+         O5EQv7NZm8czOcQifj4oPzrFR1xf5rUr2aSywdKIze7dF/P/ZQM8x4HRLdpxJwz6DZ/g
+         s7jxEl8PcYDnTCSOByrBgru4BEa5ySEJrHleGB/bW8W6yl2ujIJSKt3uspo7ckL95C4x
+         /OvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq5Hddr8eNLxDsi8OAsxDfA1SQH8YaotAchqKEfS+T3xe+cO1v6QWbY8p9gCENN3vbMRTeh4eeySSGhfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfVds1Lgg3d4o6NRiDItssOSzRzFcv8USJQ6UHtOdHvdV7o2uQ
+	y0gU55iZGb1rx6y+cbTeXzNrz3Q2Tv0Jw3bVmKFajl8qvXT/spivo2qIcP1OEuYZ0AF5aphvTzt
+	2/yIz/QeF7KJP9tB+oihU3GIbC4GOkw6HxQdh
+X-Gm-Gg: ASbGncuJRZTBKzauAR68gjUmEJi5Htl1kKm/apV/VZQL6Fi+aeC02nI92Baf5KEh+pe
+	Ke8zpCCZDLM52thdM8K7eyXWNszKe99GJxx21spu/lNR2tzc3P+xoyS4Kr4j26w==
+X-Google-Smtp-Source: AGHT+IEU7sCQZACTxRM+APpfp1z3LglXVBsKbLEmt9jC3z9LLn6MH3hFnU0ce83BO+yNXFOxsujS3zXOPd85Sp63IP0=
+X-Received: by 2002:a05:6000:1fad:b0:382:4b80:abc8 with SMTP id
+ ffacd0b85a97d-385c6eddaf1mr1952403f8f.46.1732709256079; Wed, 27 Nov 2024
+ 04:07:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127111020.1738105-1-elver@google.com> <20241127111020.1738105-2-elver@google.com>
-In-Reply-To: <20241127111020.1738105-2-elver@google.com>
-From: Marco Elver <elver@google.com>
-Date: Wed, 27 Nov 2024 13:06:52 +0100
-Message-ID: <CANpmjNOpY0zjpVJe8zUYZR2oJ--=OtWdHnEp70SxmAnb5ubwbQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 2/2] bpf: Refactor bpf_tracing_func_proto()
- and remove bpf_get_probe_write_proto()
-To: elver@google.com, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Nikola Grcevski <nikola.grcevski@grafana.com>, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202411271011.gFsgMWRv-lkp@intel.com>
+In-Reply-To: <202411271011.gFsgMWRv-lkp@intel.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 27 Nov 2024 13:07:24 +0100
+Message-ID: <CAH5fLgiH+hu-VA4GTCWRaEBVXoENX36P16EQzDadJptNi=vk8Q@mail.gmail.com>
+Subject: Re: rust/helpers/jump_label.c:10:5: sparse: sparse: symbol
+ 'rust_helper_static_key_count' was not declared. Should it be static?
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 27 Nov 2024 at 12:10, Marco Elver <elver@google.com> wrote:
+On Wed, Nov 27, 2024 at 3:38=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
 >
-> With bpf_get_probe_write_proto() no longer printing a message, we can
-> avoid it being a special case with its own permission check.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   b50ecc5aca4d18f1f0c4942f5c797bc85edef144
+> commit: 6e59bcc9c8adec9a5bbedfa95a89946c56c510d9 rust: add static_branch_=
+unlikely for static_key_false
+> date:   3 weeks ago
+> config: um-randconfig-r111-20241126 (https://download.01.org/0day-ci/arch=
+ive/20241127/202411271011.gFsgMWRv-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5=
+92c0fe55f6d9a811028b5f3507be91458ab2713)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20241127/202411271011.gFsgMWRv-lkp@intel.com/reproduce)
 >
-> Refactor bpf_tracing_func_proto() similar to bpf_base_func_proto() to
-> have a section conditional on bpf_token_capable(CAP_SYS_ADMIN), where
-> the proto for bpf_probe_write_user() is returned. Finally, remove the
-> unnecessary bpf_get_probe_write_proto().
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202411271011.gFsgMWRv-lkp=
+@intel.com/
 >
-> This simplifies the code, and adding additional CAP_SYS_ADMIN-only
-> helpers in future avoids duplicating the same CAP_SYS_ADMIN check.
+> sparse warnings: (new ones prefixed by >>)
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+> >> rust/helpers/jump_label.c:10:5: sparse: sparse: symbol 'rust_helper_st=
+atic_key_count' was not declared. Should it be static?
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/mutex.c:11:6: sparse: sparse: symbol 'rust_helper___mutex=
+_init' was not declared. Should it be static?
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/helpers.c: note: in included file:
+>    rust/helpers/spinlock.c:16:6: sparse: sparse: context imbalance in 'ru=
+st_helper_spin_lock' - wrong count at exit
+>    rust/helpers/spinlock.c:21:6: sparse: sparse: context imbalance in 'ru=
+st_helper_spin_unlock' - unexpected unlock
 >
-> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: Marco Elver <elver@google.com>
-> ---
-> v2:
-> * New patch.
-> ---
->  kernel/trace/bpf_trace.c | 30 ++++++++++++++++++------------
->  1 file changed, 18 insertions(+), 12 deletions(-)
+> vim +/rust_helper_static_key_count +10 rust/helpers/jump_label.c
 >
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 0ab56af2e298..d312b77993dc 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -357,14 +357,6 @@ static const struct bpf_func_proto bpf_probe_write_user_proto = {
->         .arg3_type      = ARG_CONST_SIZE,
->  };
->
-> -static const struct bpf_func_proto *bpf_get_probe_write_proto(void)
-> -{
-> -       if (!capable(CAP_SYS_ADMIN))
-> -               return NULL;
-> -
-> -       return &bpf_probe_write_user_proto;
-> -}
-> -
->  #define MAX_TRACE_PRINTK_VARARGS       3
->  #define BPF_TRACE_PRINTK_SIZE          1024
->
-> @@ -1417,6 +1409,12 @@ late_initcall(bpf_key_sig_kfuncs_init);
->  static const struct bpf_func_proto *
->  bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
->  {
-> +       const struct bpf_func_proto *func_proto;
-> +
-> +       func_proto = bpf_base_func_proto(func_id, prog);
-> +       if (func_proto)
-> +               return func_proto;
+>      8
+>      9  #ifndef CONFIG_JUMP_LABEL
+>   > 10  int rust_helper_static_key_count(struct static_key *key)
 
-As indicated by the patch robot failure, we can't move this call up
-and needs to remain the last call after all others because we may
-override a function proto in bpf_base_func_proto here (like done for
-BPF_FUNC_get_smp_processor_id).
+Can we turn off sparse warnings for rust/helpers?
 
-Let me fix that.
+Alice
 
