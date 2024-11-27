@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-423244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B614A9DA4E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:38:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816F19DA4EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:39:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C844283154
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F00416255D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD9193432;
-	Wed, 27 Nov 2024 09:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE58C193416;
+	Wed, 27 Nov 2024 09:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHbwB1ij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CisYtDZ+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D47193060;
-	Wed, 27 Nov 2024 09:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655E9193060
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 09:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732700278; cv=none; b=E24f5M9dtj6YJAATGO7/VD0PQRlCiagyfOE46zgT8rk3OE8VItwAt9eHaB9PhhZIsC12eGKasOz2W9Awv3yvcmZGhvtGhKNqR1hArXB8lH6RBmlK2qdK6JwHUjYxw4AF9Ds0R6ghyLuHhhwo96luiVHhFbnghK1wtm8rMzK1MLs=
+	t=1732700336; cv=none; b=XN/pNRS2e3DzfcDEjQHg3D4FfvjNgHhxul60w/bpkKS548yYMrbD3Vpn37nj1ZD5Ts44BmPuiOpmkZ//I7fuhcoepgOQ1O+LDnpBBe47pdj8sKXJ7WS/CZ0eVZ4zE6esK6dhdqXNgUouFRRPiEYB80XmX2TyeVxp8IrehH5K2oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732700278; c=relaxed/simple;
-	bh=2RQAx5yTC+mn8SEu4ZcvdX34ZqfK54eSl0sEaD2sZHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M1wrwsKV0rbZRXgdGyImFDQHD3oxFuBteGfIOBVeMeDMsUQDRzvfHBaah+Nd4Ls6Z0+0bmRXo90pKVmu39dVaFZwmA8Y7xAk0yzXM3RSnC9e8vggwu9KYtVf8R02U/IPpApVSU4VpYJ16qAQlqizkHs6b6Dgw0h31w3niBpwfoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHbwB1ij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D33DC4CECC;
-	Wed, 27 Nov 2024 09:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732700277;
-	bh=2RQAx5yTC+mn8SEu4ZcvdX34ZqfK54eSl0sEaD2sZHA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MHbwB1iji4J82b3vYeJlKafjSH73DEGTwOY9zNuIYAUEmlYCSreLVYzWicv/dPkob
-	 cfQD1CBQ6Ec/yNW3md8vgtMkHlI2LnUlhELQ7Vby/iM8DkbkkxTSa4+lbDEMsDxxb1
-	 kJ3GClNN8Mlp8m2DB2ffjE6xnaYB3UlOFhdo9sLpA5HIu3EqfTxFephnS3uo5ODDaP
-	 PPtsZ0G0M4fCsLxTY6dYzKW2LlV1yLX1yoFnY5VfeSiYmDOzKilSIeaSbW8ehtIQRa
-	 0/xt976nHT0U6+x6CbQ48285KpqMhKQJlujQHJ2+Ib6DuEX+IUAVqiCmry5ntypSNJ
-	 tnMR3+H0qRhtw==
-Message-ID: <42e3293d-a7dd-4b39-8e36-45b1f31f8b01@kernel.org>
-Date: Wed, 27 Nov 2024 10:37:51 +0100
+	s=arc-20240116; t=1732700336; c=relaxed/simple;
+	bh=k+0grmfi/B62i6ByVqGUgDScCl7uFtwldM0WMpITXog=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H6yf9QO4n4qzH1fBqy6hx/JrwssIs8k4uXzPkOBdKeFXKQCW9Tbs7QrKrIigTmikRA5JHVAmpZxCUxjY3PbF/aMJNfaoUNTcz2YZN10MFeo6RFz/Z7Vx2W7BpM8PERiudeKcKPko7lYxGJM29oobCHlrZvqj6ipaf0DnqXja6RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CisYtDZ+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732700333;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=67mCCAfGGkUPbab4Ey3Mf6PbNpI7TD0NLALRxHnve6g=;
+	b=CisYtDZ+JXeYPTiXgYK3ITK2TIIXP86YzTX15s9174SmC06FIXndxwlw0Xwc+RoZaMx52U
+	vZOve+M/5VmKFCHyEFx+wnhRjSv6XaSsd8cs0HxAk9njjXyPUznNcdA94jLxCU3z1zKZt8
+	TCvBS6Rf/Wo3jb3Aa4pzSTHBooucZko=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-rPVw4JQfOQWgrBumNf5GMw-1; Wed, 27 Nov 2024 04:38:52 -0500
+X-MC-Unique: rPVw4JQfOQWgrBumNf5GMw-1
+X-Mimecast-MFC-AGG-ID: rPVw4JQfOQWgrBumNf5GMw
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-434a27c9044so15509545e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:38:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732700331; x=1733305131;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=67mCCAfGGkUPbab4Ey3Mf6PbNpI7TD0NLALRxHnve6g=;
+        b=ie0kzcm5JsA8Ck/nINVf/2dTK9G8IeGMn8VxyrEzHeQt7dDZvZw9h9IaRs7BXAlux6
+         TXXtom4dQ2siciHqpkllmifFyOwjjlHaiu9NsOpFnxS7pizIhHU7mb99cUkREN/AP9Jk
+         SxC9qIl/uP9BQwegYrmjQfzHifuacdVOK4pdOdK9zBhVUi1iNDNi0TGbmD53n6H8zTW5
+         RkbEq5HPvf4sbAKgqqVs19slaOxfaLzdOQnqN+D4eB/1H0e2DJhPeWw9qcbwURAigjhu
+         11PSVLOeuVbxeEtwrwgCjaBqO9R5I+KmPiM0MSFqjmuVpF98IBWzdmb0iEfAqcz/6wuS
+         rUiQ==
+X-Gm-Message-State: AOJu0YyzUS5hSYxaG51aFPiBeDcadgP83c3bC6+ek8Qja9uPWxTtYbON
+	426LahuSdLEFEBGVy9MhWUNYDPxQe5HcC6lFnBtrWh7Ir7z5iROhXL+tzR+W2EXeVzUIkhKje5z
+	oHu/JtYlgYkhumLLdCY9qp/ONLV05j5KhtYe/KASOMt9FxJoaLZFZfgI0LZUsmg==
+X-Gm-Gg: ASbGnctCn4wZ5osWFRumW/72RlA9WnLaOvaOyPUKhpryRzjO1KE65c8CobWykmE3dl2
+	naePvC//Y/k3NBXrBXggu/0SjCWpUmRPMuXuu8JXbAV1xNfQ3rXwF/7g/xXAvhhqAPIFLJUQwZv
+	fWZkl8Os2/sxMFjA5O4U9O/aU48+R9rdjzi6bBOzdjbVnG1TF4J5iZdzQgI/lB+w6QbZ1qxbGX1
+	QpUMIcB60g8+i+VoQLJfd2gGDf2hRPQbUWAzLeREPIKIAEOKUes6lBKrj7aNewN+K/gUb0RvrRa
+	WLHSU+pbKz3K9YYk5ibBQlGFxnmCL8BvZmQ=
+X-Received: by 2002:a05:600c:1e1b:b0:434:9499:9e87 with SMTP id 5b1f17b1804b1-434a9de819fmr18274995e9.25.1732700330814;
+        Wed, 27 Nov 2024 01:38:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHpw5sbzbayfkp2I3fg5d6Vm3hbz5XaDjeKpgIB9kIlyiTJ7IXEY3Iom1ISrm0/6zWt9y8akA==
+X-Received: by 2002:a05:600c:1e1b:b0:434:9499:9e87 with SMTP id 5b1f17b1804b1-434a9de819fmr18274835e9.25.1732700330467;
+        Wed, 27 Nov 2024 01:38:50 -0800 (PST)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa6f3d11sm15832935e9.0.2024.11.27.01.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 01:38:49 -0800 (PST)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 0/3] objtool: noinstr validation for static
+ branches/calls
+In-Reply-To: <cover.1732682344.git.jpoimboe@kernel.org>
+References: <cover.1732682344.git.jpoimboe@kernel.org>
+Date: Wed, 27 Nov 2024 10:38:49 +0100
+Message-ID: <xhsmh34jdnhhy.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Correct IRQ number of EL2 non-secure
- physical timer
-To: Cong Zhang <quic_congzhan@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: quic_pkondeti@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241127-correct_timer_irq-v1-1-ce4309b655bd@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241127-correct_timer_irq-v1-1-ce4309b655bd@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 27/11/2024 10:32, Cong Zhang wrote:
-> The INTID of EL2 non-secure physical timer is 26. In linux, the IRQ
-> number has a fixed 16 offset for PPIs. Therefore, the linux IRQ number
-> of EL2 non-secure physical timer should be 10 (26 - 16).
-> 
-> Signed-off-by: Cong Zhang <quic_congzhan@quicinc.com>
-> ---
-> The EL2 non-secure physical timer is utilized during kernel bootup in
-> EL2 mode with KVM enabled. This patch has been verified on the QCS8300
-> platform with KVM enabled. Given that the dependency patch has already
-> been reviewed, I am uncertain whether it is preferable to submit this
-> fix as a new patch or to combine it with the dependency patch. I would
-> appreciate your suggestions on this patch.
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 2 +-
-This was not merged. Do not post fixes to things which are still patches
-on mailing list.
+On 26/11/24 20:47, Josh Poimboeuf wrote:
+> v2:
+> - Add some fixes reported by kbuild.
+>
+>
+> FWIW, this reports the following static keys:
+>
+>   - sched_clock_running
+>   - __sched_clock_stable
+>   - mds_idle_clear
+>   - vmx_l1d_flush_cond
+>   - stack_erasing_bypass
+>
+> and the following static calls:
+>
+>   - pv_sched_clock
+>   - x86_idle
+>
 
-Best regards,
-Krzysztof
+And you event did the static calls, sweet! Thanks a ton Josh, lemme catch
+up with emails and then I'll look into these.
+
 
