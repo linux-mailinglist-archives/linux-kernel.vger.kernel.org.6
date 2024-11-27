@@ -1,147 +1,364 @@
-Return-Path: <linux-kernel+bounces-423518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C859DA8D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 973C69DA8D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A248281466
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56819281E9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DD41FCF73;
-	Wed, 27 Nov 2024 13:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C211FCF74;
+	Wed, 27 Nov 2024 13:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rCekTdkt"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NO0mID+G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6481FCFDC
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3F21FCF6D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732714883; cv=none; b=m6Yf/oCWkrzNVvnQKTPk/gESRNWfVjpcS0waPR8v7yBsAyGvXZlH/AtlxrNQ100MIMLnWB2EG3ukBQkyK+AT0ik8aU12OZuu9xQShAdBrQmX40Etlg4Hahx8fi/lh+8+zEK2cX/h6nQX7ZTz6PvnHgXB18dwubmHdp3kkHE3eyI=
+	t=1732714968; cv=none; b=hhAIHZNgh7Lv5AfyCrZyJey6L/uWcd0OiXMcQNjqlBGYy4Fv1b+1MsHkDKZPJbERaf/oP2hoFX6tyEVCr8riBERYYN65xKCsy8K6pMr99+U8c4VMV4OcwbtT+vX0ohWT1B62P1v+FzIBpNR5amkscT0hTvz0qqLbfbwH1SxOXPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732714883; c=relaxed/simple;
-	bh=ySPedvBJevYjtblSz3wodfE4A8z/KCFgNZPKngqn6RM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCAsxciBNvQCufuHF1vEjgu8IlKw/50mH8dedmkUGDQRoEDbV01WA2fs9P4fuGWmYFr95oJjRMAK9z94cmMi9ZzSnZ0w5unbQh/lZ5A0vwnKG5F0gSzrB6CnG2cNYNAl6E7xDLZrm81Jj22vqGi4eDoXL1Vl+x5NoDjz3oamPYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rCekTdkt; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53de6b7da14so3266595e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:41:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732714880; x=1733319680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+V0B8FgWwCZYmESnMjYEXbPLdTp7ON4XeU+NCnDG0sM=;
-        b=rCekTdkt8YkjJpLmPc5KUeLL+2QN43j0QjeeB7RK19/9ggR6r5wLPvhqiyCegmpgI3
-         cbcGvrArgBVXCudovRvI85RIsiJs4tWzZTIi0jaI+oao0x0UhvrhtJnl9tfYitJB8hPh
-         vyBMd1km8v5Ph42Rj/kdqVUaZTRHm86phwjimVM1bTfdTg19yZJ0zlDytyGjBErdViTV
-         dXHwyyCvMUq0FXNOFHag/77JDdOSmc0uCpxJbuzA0A7h03qBs7AFgzMsV3yQ4pIzGk6M
-         xak0IVHwW3HmnH+nwCkc0Kns5g/TwdR7izsqqMvFRhSPzdWzGSlVq9yYp3UiYAdDHQeG
-         GTRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732714880; x=1733319680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+V0B8FgWwCZYmESnMjYEXbPLdTp7ON4XeU+NCnDG0sM=;
-        b=V6hcZYvbTryVge/9jnXzlW/Zec7Ar3ZAspJL6YJ+gfXyqOqaBGmko/iohsrJXSiSjS
-         Tha8ckvGYEslhNPfdL5LPdsSuF1hNfGN7QbeXwh1E8MReOvKRNRmzEJOyp+wk6VCenqc
-         ZSQE5x6OiyFe5PpHB4C+jKMsOTjDqawRNKbHy/sayWmTq0xArBt5zKPR3jgl/gA7GYk8
-         ajsQ4EQO9YEmVJ64X7zvVAuvjApIXkhYlTKLKlmSAtIKnw0B8pjPPp5cAJqJ6LaWXt2b
-         jNSBgvKTmP3NClu0rHRbQyEmVOFEFGQFsJ3NGGZtecXLdVvYuYWyLNB+PWSxYGdJpakQ
-         DNhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfduvQ6CLHPqNO4GfqLt8F3KJOVD9852Ub/PNdvq3tvIwOQgSsPa5ubdsvpuBfTkWPodQkqsxN+KXQbUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7f1LGE3GqNz63HR8gSBTRzSGutG/+AkkwERrAGNg+4/esOIk9
-	7UJJAG6yzhD4an49zPnnzPE0Etcv4IhM6YL6qyStN9sH/OZCqp1Cq/kYiuiTlfk=
-X-Gm-Gg: ASbGncvTnwRE3qUUcnWMJyC/xQo2VM8idzctwoWJC5GVO1bNxuAOG+j58NY36XFSSIb
-	r+6fFOIZvEvraV+jgQ15XnRdo/KXHYwZ2gTEoaz//QrIvr1TDqrSjv6IK0XSPKLU12jzNO3qsDs
-	9lwIizut7nPjFvJ5dtT/aAkjN+yLYzWrIahGXRQpkhNxc5JgHZZ4FOvlVHajyPy4lalzI22nNsK
-	JwX8kxZdbVOzpEGNXnYgXuT4ttBGZDATdy3p1zZ7gXk/xf5bUm9DeUnISUuZxP0q8yg0L9qy0fN
-	U0aUZUNdt08X2BS1ZHh97LIfOQv6hQ==
-X-Google-Smtp-Source: AGHT+IG9BNVyGMPhRMDkSB666seeuc69CW+Jv5lBWbNwNRZPtIr56nhPI2eE0zoLaGS7x7+3k7cyFg==
-X-Received: by 2002:a05:6512:3a8f:b0:53d:a4f3:29ed with SMTP id 2adb3069b0e04-53df00dd707mr910972e87.27.1732714879617;
-        Wed, 27 Nov 2024 05:41:19 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd336a530sm2263130e87.142.2024.11.27.05.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 05:41:19 -0800 (PST)
-Date: Wed, 27 Nov 2024 15:41:16 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, Ritesh Kumar <quic_riteshk@quicinc.com>
-Subject: Re: [PATCH 2/4] phy: qcom: edp: Add support for eDP PHY on QCS8300
-Message-ID: <new6hjxnwyuohetdprxwee3epf23uemwft2p7faym5f5zqv3og@fksrew4blk7p>
-References: <20241127-qcs8300_dp-v1-0-0d30065c8c58@quicinc.com>
- <20241127-qcs8300_dp-v1-2-0d30065c8c58@quicinc.com>
+	s=arc-20240116; t=1732714968; c=relaxed/simple;
+	bh=RTCrqjRzuZyB+6SaGVRbNBwxLFJ80VrTdPYE5BQetHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnGIDmpPZQp2Trs2K650fyZItFILThLfkYfAhgoca8fpdmd51kE9TkM0ZcVC60RA68tsC7q3XoPAuJ/8WmI9+AB2zf5KM5Ujt89WZzEZkVq4Emwk8yEFQcEdjk4NPqP1FSiA+6ULGgNMHeYVXXAtOcw0/UFzH85jIMlPvAloG8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NO0mID+G; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732714965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DrqEyN1VIkRW+8Dy1kjHg1io3m7CiBN0LwYlK4a0uE4=;
+	b=NO0mID+Gpmfw9hDZx5Exk37O6RPEyOzEq50dwvwpb6Eo0+HjbssLQsLqnWjZbNLJfuIVTL
+	kUmfK+j49p5Nv8HxKSCQaoAo7GI+RV8K84VZsDBW92p59/OmENfbyUwsSQC3DtKHapmBx9
+	JBAUGRywfSy6CIEfVEMODCuNaWHPEBA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-422--71aCkMMNDq79fYvTqV5PQ-1; Wed,
+ 27 Nov 2024 08:42:42 -0500
+X-MC-Unique: -71aCkMMNDq79fYvTqV5PQ-1
+X-Mimecast-MFC-AGG-ID: -71aCkMMNDq79fYvTqV5PQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0A5D01955F77;
+	Wed, 27 Nov 2024 13:42:41 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.224.132])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E0A2A1956054;
+	Wed, 27 Nov 2024 13:42:38 +0000 (UTC)
+From: tglozar@redhat.com
+To: rostedt@goodmis.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jkacur@redhat.com,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH v2] rtla/timerlat: Fix histogram ALL for zero samples
+Date: Wed, 27 Nov 2024 14:41:30 +0100
+Message-ID: <20241127134130.51171-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127-qcs8300_dp-v1-2-0d30065c8c58@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Nov 27, 2024 at 04:15:49PM +0800, Yongxing Mou wrote:
-> Add support for eDP PHY v5 found on the Qualcomm QCS8300 platform.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-edp.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
-> index f1b51018683d51df064f60440864c6031638670c..90e0a399c25299ad1b2fb5df8512ba3888661046 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
-> @@ -532,6 +532,13 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v4 = {
->  	.com_configure_ssc	= qcom_edp_com_configure_ssc_v4,
->  };
->  
-> +static const struct qcom_edp_phy_cfg qcs8300_dp_phy_cfg = {
-> +	.is_edp = false,
-> +	.aux_cfg = edp_phy_aux_cfg_v5,
-> +	.swing_pre_emph_cfg = &edp_phy_swing_pre_emph_cfg_v5,
-> +	.ver_ops = &qcom_edp_phy_ops_v4,
-> +};
-> +
->  static const struct qcom_edp_phy_cfg sa8775p_dp_phy_cfg = {
->  	.is_edp = false,
->  	.aux_cfg = edp_phy_aux_cfg_v5,
-> @@ -1133,6 +1140,7 @@ static int qcom_edp_phy_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id qcom_edp_phy_match_table[] = {
-> +	{ .compatible = "qcom,qcs8300-edp-phy", .data = &qcs8300_dp_phy_cfg, },
+From: Tomas Glozar <tglozar@redhat.com>
 
-If the setup is the same as SA8775p and you don't expect any
-QCS8300-specific tunings, please reuse sa8775p as a fallback compat.
+rtla timerlat hist currently computers the minimum, maximum and average
+latency even in cases when there are zero samples. This leads to
+nonsensical values being calculated for maximum and minimum, and to
+divide by zero for average.
 
->  	{ .compatible = "qcom,sa8775p-edp-phy", .data = &sa8775p_dp_phy_cfg, },
->  	{ .compatible = "qcom,sc7280-edp-phy", .data = &sc7280_dp_phy_cfg, },
->  	{ .compatible = "qcom,sc8180x-edp-phy", .data = &sc7280_dp_phy_cfg, },
-> 
-> -- 
-> 2.34.1
-> 
+A similar bug is fixed by 01b05fc0e5f3 ("rtla/timerlat: Fix histogram
+report when a cpu count is 0") but the bug still remains for printing
+the sum over all CPUs in timerlat_print_stats_all.
 
+The issue can be reproduced with this command:
+
+$ rtla timerlat hist -U -d 1s
+Index
+over:
+count:
+min:
+avg:
+max:
+Floating point exception (core dumped)
+
+(There are always no samples with -U unless the user workload is
+created.)
+
+Fix the bug by omitting max/min/avg when sample count is zero,
+displaying a dash instead, just like we already do for the individual
+CPUs. The logic is moved into a new function called
+format_summary_value, which is used for both the individual CPUs
+and for the overall summary.
+
+Cc: stable@vger.kernel.org
+Fixes: 1462501c7a8 ("rtla/timerlat: Add a summary for hist mode")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+---
+ tools/tracing/rtla/src/timerlat_hist.c | 177 ++++++++++++++-----------
+ 1 file changed, 96 insertions(+), 81 deletions(-)
+
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index 8b66387e5f35..4403cc4eba30 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -281,6 +281,21 @@ static void timerlat_hist_header(struct osnoise_tool *tool)
+ 	trace_seq_reset(s);
+ }
+ 
++/*
++ * format_summary_value - format a line of summary value (min, max or avg)
++ * of hist data
++ */
++static void format_summary_value(struct trace_seq *seq,
++				 int count,
++				 unsigned long long val,
++				 bool avg)
++{
++	if (count)
++		trace_seq_printf(seq, "%9llu ", avg ? val / count : val);
++	else
++		trace_seq_printf(seq, "%9c ", '-');
++}
++
+ /*
+  * timerlat_print_summary - print the summary of the hist data to the output
+  */
+@@ -328,29 +343,23 @@ timerlat_print_summary(struct timerlat_hist_params *params,
+ 		if (!data->hist[cpu].irq_count && !data->hist[cpu].thread_count)
+ 			continue;
+ 
+-		if (!params->no_irq) {
+-			if (data->hist[cpu].irq_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						data->hist[cpu].min_irq);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (!params->no_irq)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].irq_count,
++					     data->hist[cpu].min_irq,
++					     false);
+ 
+-		if (!params->no_thread) {
+-			if (data->hist[cpu].thread_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						data->hist[cpu].min_thread);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (!params->no_thread)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].thread_count,
++					     data->hist[cpu].min_thread,
++					     false);
+ 
+-		if (params->user_hist) {
+-			if (data->hist[cpu].user_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						data->hist[cpu].min_user);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (params->user_hist)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].user_count,
++					     data->hist[cpu].min_user,
++					     false);
+ 	}
+ 	trace_seq_printf(trace->seq, "\n");
+ 
+@@ -364,29 +373,23 @@ timerlat_print_summary(struct timerlat_hist_params *params,
+ 		if (!data->hist[cpu].irq_count && !data->hist[cpu].thread_count)
+ 			continue;
+ 
+-		if (!params->no_irq) {
+-			if (data->hist[cpu].irq_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						 data->hist[cpu].sum_irq / data->hist[cpu].irq_count);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (!params->no_irq)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].irq_count,
++					     data->hist[cpu].sum_irq,
++					     true);
+ 
+-		if (!params->no_thread) {
+-			if (data->hist[cpu].thread_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						 data->hist[cpu].sum_thread / data->hist[cpu].thread_count);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (!params->no_thread)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].thread_count,
++					     data->hist[cpu].sum_thread,
++					     true);
+ 
+-		if (params->user_hist) {
+-			if (data->hist[cpu].user_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						 data->hist[cpu].sum_user / data->hist[cpu].user_count);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (params->user_hist)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].user_count,
++					     data->hist[cpu].sum_user,
++					     true);
+ 	}
+ 	trace_seq_printf(trace->seq, "\n");
+ 
+@@ -400,29 +403,23 @@ timerlat_print_summary(struct timerlat_hist_params *params,
+ 		if (!data->hist[cpu].irq_count && !data->hist[cpu].thread_count)
+ 			continue;
+ 
+-		if (!params->no_irq) {
+-			if (data->hist[cpu].irq_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						 data->hist[cpu].max_irq);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (!params->no_irq)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].irq_count,
++					     data->hist[cpu].max_irq,
++					     false);
+ 
+-		if (!params->no_thread) {
+-			if (data->hist[cpu].thread_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						data->hist[cpu].max_thread);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (!params->no_thread)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].thread_count,
++					     data->hist[cpu].max_thread,
++					     false);
+ 
+-		if (params->user_hist) {
+-			if (data->hist[cpu].user_count)
+-				trace_seq_printf(trace->seq, "%9llu ",
+-						data->hist[cpu].max_user);
+-			else
+-				trace_seq_printf(trace->seq, "        - ");
+-		}
++		if (params->user_hist)
++			format_summary_value(trace->seq,
++					     data->hist[cpu].user_count,
++					     data->hist[cpu].max_user,
++					     false);
+ 	}
+ 	trace_seq_printf(trace->seq, "\n");
+ 	trace_seq_do_printf(trace->seq);
+@@ -506,16 +503,22 @@ timerlat_print_stats_all(struct timerlat_hist_params *params,
+ 		trace_seq_printf(trace->seq, "min:  ");
+ 
+ 	if (!params->no_irq)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.min_irq);
++		format_summary_value(trace->seq,
++				     sum.irq_count,
++				     sum.min_irq,
++				     false);
+ 
+ 	if (!params->no_thread)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.min_thread);
++		format_summary_value(trace->seq,
++				     sum.thread_count,
++				     sum.min_thread,
++				     false);
+ 
+ 	if (params->user_hist)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.min_user);
++		format_summary_value(trace->seq,
++				     sum.user_count,
++				     sum.min_user,
++				     false);
+ 
+ 	trace_seq_printf(trace->seq, "\n");
+ 
+@@ -523,16 +526,22 @@ timerlat_print_stats_all(struct timerlat_hist_params *params,
+ 		trace_seq_printf(trace->seq, "avg:  ");
+ 
+ 	if (!params->no_irq)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.sum_irq / sum.irq_count);
++		format_summary_value(trace->seq,
++				     sum.irq_count,
++				     sum.sum_irq,
++				     true);
+ 
+ 	if (!params->no_thread)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.sum_thread / sum.thread_count);
++		format_summary_value(trace->seq,
++				     sum.thread_count,
++				     sum.sum_thread,
++				     true);
+ 
+ 	if (params->user_hist)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.sum_user / sum.user_count);
++		format_summary_value(trace->seq,
++				     sum.user_count,
++				     sum.sum_user,
++				     true);
+ 
+ 	trace_seq_printf(trace->seq, "\n");
+ 
+@@ -540,16 +549,22 @@ timerlat_print_stats_all(struct timerlat_hist_params *params,
+ 		trace_seq_printf(trace->seq, "max:  ");
+ 
+ 	if (!params->no_irq)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.max_irq);
++		format_summary_value(trace->seq,
++				     sum.irq_count,
++				     sum.max_irq,
++				     false);
+ 
+ 	if (!params->no_thread)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.max_thread);
++		format_summary_value(trace->seq,
++				     sum.thread_count,
++				     sum.max_thread,
++				     false);
+ 
+ 	if (params->user_hist)
+-		trace_seq_printf(trace->seq, "%9llu ",
+-				 sum.max_user);
++		format_summary_value(trace->seq,
++				     sum.user_count,
++				     sum.max_user,
++				     false);
+ 
+ 	trace_seq_printf(trace->seq, "\n");
+ 	trace_seq_do_printf(trace->seq);
 -- 
-With best wishes
-Dmitry
+2.47.0
+
 
