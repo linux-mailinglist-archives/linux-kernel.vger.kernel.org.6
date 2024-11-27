@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-424029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D539DAF98
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:00:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F579DAFA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAD3FB2268F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830302823F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CC62040BF;
-	Wed, 27 Nov 2024 22:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF619149C41;
+	Wed, 27 Nov 2024 23:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dcyh9iU9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="7xHVRgNr"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C687B205AC3;
-	Wed, 27 Nov 2024 22:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD426200132;
+	Wed, 27 Nov 2024 23:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732748356; cv=none; b=umPp7sbk0LN+DJoNBxOQSno0tbYOBs+xD7NB9lYrM266PUlAurUvIk5K7O1/mQ+obFsyPhjKm1XnqVul+84qplasjtsKB/gZ9O+ePEabP2bk8SxXn+gQMaX7af2F2qlHxxXPQIGXLyHZQoXxehTLOYTH6ppQrgJjSnv+gy3/LDI=
+	t=1732748446; cv=none; b=XW7OuAgct/YgRZ/E048q1nxgPhSkr86DNJLXNVgWe0rsIMGe0AIEzAfkNoLMPRenF3C3+XLvm01V4Z3LR9P/SVgVvZghcj/lElfSksd9Fwuw8FRbNIyfOB9b0xT/3ebXyjAA3SAywxPyvH7xPfbH2F8Yvi4xDRtlG2Qbbh3JGmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732748356; c=relaxed/simple;
-	bh=7q+HprYzzC+BJkpdZIdCVuKvfPuexWA6NfRf5oftI5Q=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=L80a6SLc7Feh2sZnixr0h++h9yBoCZoFmOwib0EjiwWNMP27cqLCIH8PL7TTUi/jbt04YZtj0iQfm9OFVenwRmb/Q4LVbOwPwkL4z7bf5Syk4NmEw03nX0ZXiS+Ydt07+ETjq1anGXc0CVjLgeafKWnvW/3bhpmVdXVqJzjoonQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dcyh9iU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601B3C4CED4;
-	Wed, 27 Nov 2024 22:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732748356;
-	bh=7q+HprYzzC+BJkpdZIdCVuKvfPuexWA6NfRf5oftI5Q=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Dcyh9iU9Tcn3yTsQipZSQ1qbmp50FoLdknJ+CGLUzye9qraVS36DdbwP9nDJ0njdq
-	 e7TIFuf4TyGHkPc6BOZAA8rqUwOWhqINZ7W8MLzFJ1k1xZ0H+AGN6fHkwRelqIpzvF
-	 Ud670qjTeGh2SLWV7D6ujTUyIw7IG7sL4WkJ5qxZEtsVMK8B1Bjw4RLRAjTVc7K09r
-	 N7JeAsrDFhcFUD5P1uAOu/9t0a2FnQ8//Xs5lkGYOsmWjncyk6mZi/tad6pxIcwj24
-	 bSo0mqDPDUVJkhZt3DBdrFxF5t91fgRuEJa3loV8n77xSU1NHGYfpTslBNTBKllUKo
-	 dcgNb9lAw276g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC43380A944;
-	Wed, 27 Nov 2024 22:59:30 +0000 (UTC)
-Subject: Re: [GIT PULL] More ACPI updates for v6.13-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0jH9yWHEymTNjWTw2h5Vgh4yXjjcYFjpmeRi8kskOwxuA@mail.gmail.com>
-References: <CAJZ5v0jH9yWHEymTNjWTw2h5Vgh4yXjjcYFjpmeRi8kskOwxuA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0jH9yWHEymTNjWTw2h5Vgh4yXjjcYFjpmeRi8kskOwxuA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.13-rc1-2
-X-PR-Tracked-Commit-Id: 6f683c7feea45cbcd8748aafe73b0c79a6909e26
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b86545e02e8c22fb89218f29d381fa8e8b91d815
-Message-Id: <173274836916.1238022.12364580809618726378.pr-tracker-bot@kernel.org>
-Date: Wed, 27 Nov 2024 22:59:29 +0000
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1732748446; c=relaxed/simple;
+	bh=zStXecvmU4rqFqJQo/vWiHKnyPjwrzOoN6jGOCJpMgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jfUWKrj5JQqEbtv07MY0qKFVGAaki8sjrJy7KL51LvbQscA3LGw6YHTEYUY8JmBeO8ZsqZ22tTH9CYiI7vm452coyh3YmoYKTh9oZQrlDhU6luRbGJ8AiC3+cB+97FJy/YSWRB88B3QQOf4goxEoNTiT2tsmBg1xahYHPQ6qSWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=7xHVRgNr; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=v7j+46Y7C79/elhptioQhfAS8mTYTmGKvj6E/KHywy8=; b=7xHVRgNreK6FF8xKovw8C3k9YK
+	AW2Qq7fXNNCwc6DumrwroJZnGKwXNvYaHp0QtGaihZy1NGEPy3Gv5SowfNbP/7LSsWvCVnzY89kjC
+	pkZyY5BSi7Kmu1abbzK51oFikpfgLNT6mOqpqFwpw216FoH7OOxM1b7kh5LkZMUfvsJdcBjy+Z1oX
+	I/4LQBAKIAMfQ/mIvZx1Wy+Bbf4EdynGR+cs/2QdMJwKEJInkThpzAkQXLoE0HlWbU3PJYp0OLzaU
+	N/h81BA9wd+rKzJeVNRTSehYnd62K+bb3hm6uHM0AxYauHUphyAfiF5ZanrfNFc8ms6MOuUbxb6+r
+	n3He1NGg==;
+Date: Thu, 28 Nov 2024 00:00:28 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: tony@atomide.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andreas@kemnade.info, hns@goldelico.com,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi, khilman@baylibre.com,
+ rogerq@kernel.org
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: ti/omap: gta04: fix pm issues caused by
+ spi module
+Message-ID: <20241128000028.1db436c8@akair>
+In-Reply-To: <20241116211549.2020727-1-andreas@kemnade.info>
+References: <20241116211549.2020727-1-andreas@kemnade.info>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Wed, 27 Nov 2024 19:37:23 +0100:
+Am Sat, 16 Nov 2024 22:15:49 +0100
+schrieb Andreas Kemnade <andreas@kemnade.info>:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.13-rc1-2
+> @@ -459,6 +460,15 @@ OMAP3630_CORE2_IOPAD(0x25fa, PIN_INPUT_PULLDOWN | MUX_MODE3)	/* etk_d15.hsusb2_d
+>  		>;  
+>  	};
+>  
+> +	mcspi3hog_pins: mcspi3hog-pins {
+> +		pinctrl-single,pins = <
+> +			OMAP3630_CORE2_IOPAD(0x25dc, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* etk_d0 */
+> +			OMAP3630_CORE2_IOPAD(0x25de, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* etk_d1 */
+> +			OMAP3630_CORE2_IOPAD(0x25e0, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* etk_d2 */
+> +			OMAP3630_CORE2_IOPAD(0x25e2, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* etk_d3 */
+> +		>;
+> +	};
+> +
+mode7 is not safe mode in this special case, need mode 4 (gpio),
+so this patch is broken.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b86545e02e8c22fb89218f29d381fa8e8b91d815
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regards,
+Andreas
 
