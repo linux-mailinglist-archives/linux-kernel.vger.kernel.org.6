@@ -1,246 +1,116 @@
-Return-Path: <linux-kernel+bounces-423415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE90E9DA718
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:48:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5961B9DA71E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0341B24C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E459228142D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8BA1F8AE7;
-	Wed, 27 Nov 2024 11:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3021F9AA4;
+	Wed, 27 Nov 2024 11:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6TGMjkT"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fIdBCo/b"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23601F9EB4
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480F1917F1;
+	Wed, 27 Nov 2024 11:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732708035; cv=none; b=IlbazWgLKLmiO0fzVBGKTQwurjwBIp5XkzMVnIQ9nKN/FH/7CNfQ3SbLRCuWw4JiaDeSG/CaujCWCjTof1/JzR1QJ+eUdFxshOpJ0B1Gl8tXFyBnnfvTYc4AlsM7nARxVFv/gz/uqAd8ejSsUaUpEr5tVaaQ3YIZ7oXlUz3NjAY=
+	t=1732708166; cv=none; b=oPsjf4xfndRMSXRDZDqL5rZ4sot8dD9zRM6EeoaEjOUDYZjTpiFOF9fnOCSzRJQC6xkpb6TtllvNGdl1ESK46turQa3sMMKegL7vsdB0IKgaxSjD02mjVlpZIinvWFW1FslCXUEeXRwWQW4vxknlRUsq2Uwnh+OYAgpZaxBuBrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732708035; c=relaxed/simple;
-	bh=d3MTBcQkwU2lmQ98bFrXDrFppjPfqnEERbGS0GGjuaI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d5QQ/iy73cFbVNtYYpe19U256cAcnhJPZ3pzI05y4nOo8RXcEfzYDm1A74pO8Lwh5hhPBP1R1uGa3xbAnxaTxTIPLLZ4Yd7xjkoOUKcAKVxutNGkZhhe9VbgGkDZjW/+ysPnaL6hXNQiEgCGhVaxhqCeU+wHpJlh6sfFdSiOowM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6TGMjkT; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21210fe8775so5966865ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 03:47:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732708033; x=1733312833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MuylmfZA3oDT64r9NGCB6xYFcj/Ra9P9EYBkVyg6c3M=;
-        b=F6TGMjkTt1ISzgWEe9grfsUGeY7L/Jnnlf1dNpr0aPjeOHCLptkE+7n9wW4CCJrIu/
-         WXC23HkFWM0xPqeCOFwdag6dcTvnn+nVNZVGJBnVMGBBU6Ac5lyMQbknBSmcz9ikC6N9
-         B6welkb+1Ley9sCPLsBCMB2uu55ijAMshKiO35FVrSFAOsfW8WHJqPz9ETkBLCUOa7jW
-         vvk+gUWClyDg8LZVNt3xWp+KdrZs+gr0rFlDHvl5DKea2QXYuAne2Rt80VoS48Cb8zCm
-         GAPQjAFaI9pWafkDgg83qgplENCs+IxvqGhAuBAikvm47U8w6DCjZIGsVWT9202sbHZa
-         OZag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732708033; x=1733312833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MuylmfZA3oDT64r9NGCB6xYFcj/Ra9P9EYBkVyg6c3M=;
-        b=wK8wE+z2E7wAPQNmgUc+sBZKGDVd7v7lI4k8O/n0ikdEZGLG4H9A8qEMnyZR3vaoLR
-         +4S64qaD6+uSJZ+HWRw0dfPdDGe/pL7jEYR8Y65WxJWxCZElXnmLuTvzPuuQxRVyj0wq
-         2g8ebw2OR+EDN41PMHwg2bhoQK+lj//kFNIdu6T5MEd15IYDR22LXEVyzBjXqjpCUqwL
-         YSEPRxCuz/wH76AcLvYAVqStP3USq5U0A9FipM6C2TMrcaZoRAqJn/JC4xMVrk5KprdM
-         G9als00uZ35KyW+Y/pus55jQNmoeCQOCHX9D7NJ9YLOBZwuiYOu0QOZVI2qvpf1437oY
-         KATQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKnS+G+v1J/AufYckrxF1wqA5wu3/smXh1Ck8DtdGnbI4k5Yogyw4DnICC0nZ1WM9GI8cDaSW7in347wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1a4BmkC9i+hyLjbAefUOPpK3DDD07kvlGWwlg3MTN43KyqpVQ
-	cBmU/Obac4dKOe2pjGeu/MDzVVNI1x8ibBZxRd71tcTguv806vw4
-X-Gm-Gg: ASbGnctqhVEJDU+4PdvFMhhAiK9xc/aXX7kNFYGaesPFBXYzD6UIkOAdlDwy1Qq4aJO
-	HbB34d70/reyMQDyRC31K0TuoE4sm50Ap0CFeDI3jTG5tJQbL57eRlv6G9qaqLysJZOJ02iVC2M
-	ky6b0TZb4vmVTbBAIpGRCjtlmqqb+aGwN/eZflhRrL/vlMU3GLyuhv161csBqn+H8nz33MGq99N
-	ciS8JdcOWO6krCo/h9U6jn0foAnDRLUSQFW4Ghd1WKOVUX2as2QnbB6lXQNa5RI1ZKLV8Vtb0xm
-	QQ==
-X-Google-Smtp-Source: AGHT+IHoX3eDCwwyCInnqKWFs872hvgjGvyI4beYdRcCyyPD9WI1QnVw1OwIhB5AgQuCLd1pLGXWxA==
-X-Received: by 2002:a17:903:1c2:b0:20c:b3ea:9006 with SMTP id d9443c01a7336-214e6e5b6a2mr90909195ad.6.1732708033193;
-        Wed, 27 Nov 2024 03:47:13 -0800 (PST)
-Received: from miley.lan (c-73-162-202-2.hsd1.ca.comcast.net. [73.162.202.2])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2129dbfa834sm100805645ad.117.2024.11.27.03.47.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 03:47:12 -0800 (PST)
-From: Mika Laitio <lamikr@gmail.com>
-To: christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	Hawking.Zhang@amd.com,
-	sunil.khatri@amd.com,
-	lijo.lazar@amd.com,
-	kevinyang.wang@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lamikr@gmail.com
-Subject: [PATCH 1/1] amdgpu fix for gfx1103 queue evict/restore crash
-Date: Wed, 27 Nov 2024 03:46:38 -0800
-Message-ID: <20241127114638.11216-2-lamikr@gmail.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <20241127114638.11216-1-lamikr@gmail.com>
-References: <20241127114638.11216-1-lamikr@gmail.com>
+	s=arc-20240116; t=1732708166; c=relaxed/simple;
+	bh=brJ4OvMdMNpU0GKx4LwueP2L1Igr9rWjZME02H1ZC0Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GjdOPLtjMfAggwvD87vs0yuLNaSf0UtYDivSGC+0d/qjV0V5j32z5ilcmq1ubGRbdpsj2jLsasoY3rmnPEkNnyQOZ5raucTE65NabxmOBFlbkZ1z/0oXroYhJLkwRhWkoVNSZrOMr3WVFnflmPsbekcyAnzSwhUo8JjY9fN70JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fIdBCo/b; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AR7Rrgg031606;
+	Wed, 27 Nov 2024 03:49:04 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=7w9PYxRoKxSZecYgNzzy4l3FTSJfjUEz56IOMh1h/uY=; b=fId
+	BCo/b6/7H2gQnakoH5VJ86QJYXyeyM58MLRsan4a0VTlb71WmXHVV7iKcuaF01mU
+	OtHK4iyyqmpPfP31GCDgiZioayycITY2BgTzhcJsTIVCRzmx1RruuDKfb6wr6dZX
+	+aS2RkaTeBxja7m1FPaXm7b0rRJ1MC346ZDpKVHoTL63rIPosvQ/er7tll6ENHde
+	WcZnBdztW5IGekCT6GVe8Bt6SzzsPPAe7+IckyQDZYULNT16mRfHb0YwTdK2Z3CZ
+	YyMLjaoKyecguNcv2YqbLPzDCbf6UhXtB2cfrZhWmgZMqw86X4i1GWNRo4t++Cjh
+	2A8g+k/y3ZiegIn1aWg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 435y238ge4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 03:49:03 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 27 Nov 2024 03:49:02 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 27 Nov 2024 03:49:02 -0800
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id CEE223F7062;
+	Wed, 27 Nov 2024 03:48:58 -0800 (PST)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <horms@kernel.org>, <andrew+netdev@lunn.ch>, <edumazet@google.com>,
+        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
+        <hkelam@marvell.com>
+Subject: [net PATCH] octeontx2-af: Fix installation of PF multicast rules
+Date: Wed, 27 Nov 2024 17:18:57 +0530
+Message-ID: <20241127114857.11279-1-gakula@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: g8INKQ0bgxY8Kj1_c8ga1pg_diBM3Pdg
+X-Proofpoint-GUID: g8INKQ0bgxY8Kj1_c8ga1pg_diBM3Pdg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-AMD gfx1103 / M780 iGPU will crash eventually when used for
-pytorch ML/AI operations on rocm sdk stack. After kernel error
-the application exits on error and linux desktop can itself
-sometimes either freeze or reset back to login screen.
+Due to target variable is being reassigned in npc_install_flow()
+function, PF multicast rules are not getting installed.
+This patch addresses the issue by fixing the "IF" condition
+checks when rules are installed by AF.
 
-Error will happen randomly when kernel calls evict_process_queues_cpsch and
-restore_process_queues_cpsch methods to remove and restore the queues
-that has been created earlier.
-
-The fix is to remove the evict and restore calls when device used is
-iGPU. The queues that has been added during the user space application execution
-time will still be removed when the application exits
-
-On evety test attempts the crash has always happened on the
-same location while removing the 2nd queue of 3 with doorbell id 0x1002.
-
-Below is the trace captured by adding more printouts to problem
-location to print message also when the queue is evicted or resrored
-succesfully.
-
-[  948.324174] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1202, queue: 2, caller: restore_process_queues_cpsch
-[  948.334344] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1002, queue: 1, caller: restore_process_queues_cpsch
-[  948.344499] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1000, queue: 0, caller: restore_process_queues_cpsch
-[  952.380614] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1202, queue: 2, caller: evict_process_queues_cpsch
-[  952.391330] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1002, queue: 1, caller: evict_process_queues_cpsch
-[  952.401634] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1000, queue: 0, caller: evict_process_queues_cpsch
-[  952.414507] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1202, queue: 2, caller: restore_process_queues_cpsch
-[  952.424618] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1002, queue: 1, caller: restore_process_queues_cpsch
-[  952.434922] amdgpu 0000:c4:00.0: amdgpu: add_queue_mes added hardware queue to MES, doorbell=0x1000, queue: 0, caller: restore_process_queues_cpsch
-[  952.446272] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes removed hardware queue from MES, doorbell=0x1202, queue: 2, caller: evict_process_queues_cpsch
-[  954.460341] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-[  954.460356] amdgpu 0000:c4:00.0: amdgpu: remove_queue_mes failed to remove hardware queue from MES, doorbell=0x1002, queue: 1, caller: evict_process_queues_cpsch
-[  954.460360] amdgpu 0000:c4:00.0: amdgpu: MES might be in unrecoverable state, issue a GPU reset
-[  954.460366] amdgpu 0000:c4:00.0: amdgpu: Failed to evict queue 1
-[  954.460368] amdgpu 0000:c4:00.0: amdgpu: Failed to evict process queues
-[  954.460439] amdgpu 0000:c4:00.0: amdgpu: GPU reset begin!
-[  954.460464] amdgpu 0000:c4:00.0: amdgpu: remove_all_queues_mes: Failed to remove queue 0 for dev 5257
-[  954.460515] amdgpu 0000:c4:00.0: amdgpu: Dumping IP State
-[  954.462637] amdgpu 0000:c4:00.0: amdgpu: Dumping IP State Completed
-[  955.865591] amdgpu: process_termination_cpsch started
-[  955.866432] amdgpu: process_termination_cpsch started
-[  955.866445] amdgpu 0000:c4:00.0: amdgpu: Failed to remove queue 0
-[  956.503043] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-[  956.503059] [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-[  958.507491] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-[  958.507507] [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-[  960.512077] amdgpu 0000:c4:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
-[  960.512093] [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
-[  960.785816] [drm:gfx_v11_0_hw_fini [amdgpu]] *ERROR* failed to halt cp gfx
-
-Signed-off-by: Mika Laitio <lamikr@gmail.com>
+Fixes: 6c40ca957fe5 ("octeontx2-pf: Adds TC offload support").
+Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 ---
- .../drm/amd/amdkfd/kfd_device_queue_manager.c | 24 ++++++++++++-------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-index c79fe9069e22..96088d480e09 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
-@@ -1187,9 +1187,12 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
- 	struct kfd_process_device *pdd;
- 	int retval = 0;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+index da69e454662a..8a2444a8b7d3 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+@@ -1457,14 +1457,14 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
+ 		target = req->vf;
  
-+	// gfx1103 APU can fail to remove queue on evict/restore cycle
-+	if (dqm->dev->adev->flags & AMD_IS_APU)
-+		goto out;
- 	dqm_lock(dqm);
- 	if (qpd->evicted++ > 0) /* already evicted, do nothing */
--		goto out;
-+		goto out_unlock;
- 
- 	pdd = qpd_to_pdd(qpd);
- 
-@@ -1198,7 +1201,7 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
- 	 * Skip queue eviction on process eviction.
- 	 */
- 	if (!pdd->drm_priv)
--		goto out;
-+		goto out_unlock;
- 
- 	pr_debug_ratelimited("Evicting PASID 0x%x queues\n",
- 			    pdd->process->pasid);
-@@ -1219,7 +1222,7 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
- 			if (retval) {
- 				dev_err(dev, "Failed to evict queue %d\n",
- 					q->properties.queue_id);
--				goto out;
-+				goto out_unlock;
- 			}
- 		}
- 	}
-@@ -1231,8 +1234,9 @@ static int evict_process_queues_cpsch(struct device_queue_manager *dqm,
- 					      KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0,
- 					      USE_DEFAULT_GRACE_PERIOD);
- 
--out:
-+out_unlock:
- 	dqm_unlock(dqm);
-+out:
- 	return retval;
- }
- 
-@@ -1326,14 +1330,17 @@ static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
- 	uint64_t eviction_duration;
- 	int retval = 0;
- 
-+	// gfx1103 APU can fail to remove queue on evict/restore cycle
-+	if (dqm->dev->adev->flags & AMD_IS_APU)
-+		goto out;
- 	pdd = qpd_to_pdd(qpd);
- 
- 	dqm_lock(dqm);
- 	if (WARN_ON_ONCE(!qpd->evicted)) /* already restored, do nothing */
--		goto out;
-+		goto out_unlock;
- 	if (qpd->evicted > 1) { /* ref count still > 0, decrement & quit */
- 		qpd->evicted--;
--		goto out;
-+		goto out_unlock;
+ 	/* PF installing for its VF */
+-	if (!from_vf && req->vf && !from_rep_dev) {
++	else if (!from_vf && req->vf && !from_rep_dev) {
+ 		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
+ 		pf_set_vfs_mac = req->default_rule &&
+ 				(req->features & BIT_ULL(NPC_DMAC));
  	}
  
- 	/* The debugger creates processes that temporarily have not acquired
-@@ -1364,7 +1371,7 @@ static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
- 			if (retval) {
- 				dev_err(dev, "Failed to restore queue %d\n",
- 					q->properties.queue_id);
--				goto out;
-+				goto out_unlock;
- 			}
- 		}
- 	}
-@@ -1375,8 +1382,9 @@ static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
- 	atomic64_add(eviction_duration, &pdd->evict_duration_counter);
- vm_not_acquired:
- 	qpd->evicted = 0;
--out:
-+out_unlock:
- 	dqm_unlock(dqm);
-+out:
- 	return retval;
- }
- 
+ 	/* Representor device installing for a representee */
+-	if (from_rep_dev && req->vf)
++	else if (from_rep_dev && req->vf)
+ 		target = req->vf;
+ 	else
+ 		/* msg received from PF/VF */
 -- 
-2.43.0
+2.25.1
 
 
