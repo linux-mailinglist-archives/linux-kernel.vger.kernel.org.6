@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-422959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06809DA077
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:52:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F589DA07E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:57:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C269165CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:52:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FF4BB2206F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBDD1CFB6;
-	Wed, 27 Nov 2024 01:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F241CFB6;
+	Wed, 27 Nov 2024 01:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfPGSc08"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gdMTQTzW"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF131802B;
-	Wed, 27 Nov 2024 01:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EBA14F90
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732672364; cv=none; b=Sp1bSjRcmITiOYhTmPC/nKqw80I8d0pRWkn3h0Hzw4qNliYrN8BnoQ3cQBCZycXX3mcA0xpLTQUGOTLU7idedQOKUuUCBTMZV8KQqr94MGDeHKDouNrLS7O7rR8uSzSTfW5cSxe2wFNtl22YUOpxZhiKNlIoApcRMiMMRsdmxfw=
+	t=1732672662; cv=none; b=ODaJJqG6noFO/tUzlSzUtYd6xRXYhUYOSh0+AQauqSfEx4MjRTKqacbWoRDUF8jA5pPJ+q/WvV9aQecGEoY3Lh99eOM1ixeuh+yTwolYQQeYEOvHMc2O4GNWtoEpdqDyUFhiAeEHfYnhUUAlrH24wIlaKqbqL/eXZgBuHlfipWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732672364; c=relaxed/simple;
-	bh=7mOuOkpZZoXqHcUjeXr1wrFqOPZ8xCDvpX0PP+8Lo+I=;
+	s=arc-20240116; t=1732672662; c=relaxed/simple;
+	bh=ksWBzgOTRRjiMqwQKS27FxHnZp3t+25yvmXBAXJZHto=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VmCY3QZFpPBlO04brc7Y6JaMVEmk++DrMUTk1uslo00DCOJjCV++BlpMLvIrbRTOfH84HGtQVb7OyVtuP+hvXD33j2uv5gQXgib1+MxYosUsW7fXWk2q/9dl1SMtRymkYZUDtQhmR7Y/xdI8eVuRPk+6r6dLfIZv7/MxmU4RTic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfPGSc08; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43497839b80so27760515e9.2;
-        Tue, 26 Nov 2024 17:52:42 -0800 (PST)
+	 To:Cc:Content-Type; b=GX+tg9ulFlk4s6cME7Ikxr5YhYyIxfzE5L6FaPVGP01PIj6+lYImtR66epDBOs3vU3XoXU3sNCkXqqY08P+PT6alTyTkIGfv1DjcF2G2oVlB/fU3gv7Z1qsDka1/xpP4bYr6x1g4TmWvVxPbH03Y6tD6SIMdAdzp67+Rz8X4F9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gdMTQTzW; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-382376fcc4fso3815639f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732672361; x=1733277161; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DwQP6BBV5a5jKpJfwwMjvCqRQHR2gtIdPjXFDlvb0fY=;
-        b=HfPGSc080c0tAUk/OjMdtyD6txDJqZtd9od72Ud9hQLVq92xEBna5Y5B82vX7JHXk1
-         A9RTPVxAs67/dcsIEcSDgTXNNT3CQsmnsuU0WVxxh5BG9Rrbz9vh+kOGVO0SxV0tmM25
-         AmswmKWLJ7JGhUXM/hih268pGYkC3nT7VMf/b7S1qdGcn48SuOCmL+U7pP8ru9NtjzYN
-         Fajvy343yDw+j2XIJXgYDwBifLSbdjUydIthN77VVddUT7hz4MU2NIe8KEIm6Kg3nxA/
-         gLPSQju+t+9c+o2WunfUcToG/+JXLUr8847LT2A2ceac05BqrA0FMYXaoApBQHG7hf9g
-         RhQg==
+        d=linux-foundation.org; s=google; t=1732672658; x=1733277458; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GOqSZTMOEDNxx064Zu6yp+hRM+WY+GJu1uiInvQOD7c=;
+        b=gdMTQTzWOVyfZ/XgpDLg66r79SAjGd4qH8rvaSzVHAPpMpFF97rcnHIilENp03RUHH
+         ZEo6TOTqsoep6oeGkgC49vcd9FftE41a4DcsxSEsZqiIRLotiKqXFkkvq9ciumra26XD
+         CCvqNvkIYnMZeJJjkA9oAnqdCUSfTItJkKA6Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732672361; x=1733277161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DwQP6BBV5a5jKpJfwwMjvCqRQHR2gtIdPjXFDlvb0fY=;
-        b=UMkHfMVvJjArHOhsW3kTFF+ux04DCYkiHA2zDpT8DwVnzcwwrSaIqj8jl+/8ZdNiVC
-         nfSg5T7WZ4WcZR6ZigIZVWw45Er5V5I8H10/mk9s31LZCGQpHOCIUCSv2MJpdr6KihqO
-         IH2JgkA7KhMpbt8WbYxfwG1dIj3mK4m409zfJ1p4qq+Qt84rSckIw8ZcLiRxDmR+kCG2
-         uvL7wSD8269j/xqfupS9+oRFMWegTwFYDmJCM+VwS4RgxI9t2aB+MwL9j5E4nShWVWRb
-         BPrVa0BQvx9qjXUqrgoJCwozPUS1O49IdyRCx0eZdbZc1iOubGuEZVjZFtPsag+PG0+d
-         xgNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCwtWxUCcE4PWwtnIDzGlIOFTtFMB0K/aGOSxjpqDC9RMAGjhdIXo7/MQ/ozHd5AwcoIg=@vger.kernel.org, AJvYcCWy3UMos5D2AdTvbaswNuEF3GFPokbW7e9bXFEGy+nV9g+777YErrkpY7y23NOLT/5wNJP/MDIgIc5QYaMU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd9pjkqAlp3HVvGQ5hYtk9rVcbKYg1xsBwQ52tbZBtyTQGjaCd
-	yHlmBbNDahe7jOQCwsMfysFTHg8/wTmznkrziCZGrJ0RytVeBOK8wMTi2Za6lyLMeSS/x8oN5zN
-	6sb/WgjHLJP9Aa5U38Xslf5mf+Uk=
-X-Gm-Gg: ASbGncvztzIUt4AP6aN8zJFXLHLTkoMk2k4/9OJCkoaf+In+GOhcf5EzxstiNO+60+Y
-	XqmYzPa3muFSLT0irbp7Me4PRiE0SxtexeQbOjHNd6esS7es=
-X-Google-Smtp-Source: AGHT+IF8UkQJQxSDvoJgYjizGcLaObXjLdJzwah5c49XNp8MW8hRc/r4pm5Wh5Rub9xTUG2rtNVOoM0PQhuqNfYQGEk=
-X-Received: by 2002:a05:600c:5102:b0:434:932b:a44c with SMTP id
- 5b1f17b1804b1-434a9df6b06mr10041105e9.27.1732672360612; Tue, 26 Nov 2024
- 17:52:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732672658; x=1733277458;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GOqSZTMOEDNxx064Zu6yp+hRM+WY+GJu1uiInvQOD7c=;
+        b=Z1Cin1bb3r0HY9k3shn11LG5Mn3HJ0LYyidbTuSwjoVhQfH3Vh4cRDj77RQwZD3qy6
+         lSjjtmyXfLUEqsf09J1pHWK74Ail52FtV4d2M7fd7/9ICgkP+F0ua187OQWNIJwhQqCn
+         thTwRyFT8HlQKT4NnQOtCLI984Yj7HEQQIq63kWXt74DW8GdqB32EI5N/Sxkr0t40KJK
+         d3Bb0Nxo71nDr9ARB/hUt5QnMoa65uKn3fs2Vw9e6C7Bno8bZthiXcmz1iUD2pXFIpo4
+         M8ik5OlgbF9FghVdQk4u4MYJmqBUDXiXXKEk9jyCSCq2Joz9WM7+cqEQ/bcpBKfDarvG
+         Gx5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkSLhHi9mYTiPh9x6Ic3WcA4rKNxtK7gk/gMqO1X0xXsMlg9PYiYFWGyPOLp0D9sFgp2c65e2SxedgeX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFYPO1kqXsQUtcftm99Av5VmeYdIPfb2FyiByQK9HMaL1t9+8B
+	BmDk1DqTfZ+73h2UbzHyP24lpKTyAVjnlzkOlWKE37gWjxco6id11Z8g0+nf5k29MbkpzdqYn24
+	ec3K8OA==
+X-Gm-Gg: ASbGncsDf/b5ZsM8Dby/Y4rWO8olbFMrs+GyPDZyG/e6ONl1OrBXMB0+3zuKbePLgCE
+	RdLmuGs7jSXsJwDM9b5nrHbKM9BJMwiomU9fAblp7d3+3UylOlCqYunWFWaYHyLjqZjgMIjwXWY
+	zXFwVkRkpWIsH2f/Ciy1Vhxz8QtKRk1dPhqPhTQ4Y9j9Lc8z1Yms/g97GidPenLa5PpfP8OrHCL
+	BA/zuopjXSQsQ5sbZv20BrnKXeqSuaDooeXxp8iuYVM21BrwUQx7rVSx/OrwkrTWW6hq88nI5fX
+	0IUoFOONn1Su27ARcuTmapwo
+X-Google-Smtp-Source: AGHT+IHyr6NKWg/kBFvEa2w1ftsRLc4Sp+MYvuqaMsCtsRaODd4JwWpH3pxqtF67v6rWu2UZQ/8rCg==
+X-Received: by 2002:a05:6000:481c:b0:382:4a84:674 with SMTP id ffacd0b85a97d-385c6eb7ffbmr746046f8f.6.1732672658309;
+        Tue, 26 Nov 2024 17:57:38 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b2f5322sm652793266b.70.2024.11.26.17.57.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 17:57:35 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa549d9dffdso463261866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:57:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW5Hd/3LDiifqU2ar6fCLFXqnpOAVA0JJaXHTqwOuYZG0aGba81zGXKN8GNiBEPWbMr+gI8gPfJisUTYcY=@vger.kernel.org
+X-Received: by 2002:a17:907:7742:b0:aa5:152a:d0a5 with SMTP id
+ a640c23a62f3a-aa580f2c2ecmr68070366b.18.1732672654818; Tue, 26 Nov 2024
+ 17:57:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
-In-Reply-To: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 26 Nov 2024 17:52:29 -0800
-Message-ID: <CAADnVQLV=7Mt+DTX84u_4kP_pVNhbyHMvL29BPcFQjOj7RpM7A@mail.gmail.com>
-Subject: Re: [PATCH] btf: Use BIN_ATTR_SIMPLE_RO() to define vmlinux attribute
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20241126022500.718070-1-ojeda@kernel.org> <CAHk-=wgRSWz=5e39P3Xb8FmsD6Qa-_LFBTs1q2m53yrw-yCSzA@mail.gmail.com>
+ <CANiq72nqyFHkQFRLoXSA5BEvgNz_8iOCK+A1gU+2ubnJRd-OwA@mail.gmail.com>
+In-Reply-To: <CANiq72nqyFHkQFRLoXSA5BEvgNz_8iOCK+A1gU+2ubnJRd-OwA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 26 Nov 2024 17:57:18 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whv=DZ3beoAmKu8F0LyHr9shYR=5uqgo2P_EQia825W7Q@mail.gmail.com>
+Message-ID: <CAHk-=whv=DZ3beoAmKu8F0LyHr9shYR=5uqgo2P_EQia825W7Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Rust for 6.13
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 4:57=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
+On Tue, 26 Nov 2024 at 16:19, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> The usage of the macro allows to remove the custom handler function,
-> saving some memory. Additionally the code is easier to read.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> Something similar can be done to btf_module_read() in kernel/bpf/btf.c.
-> But doing it here and now would lead to some conflicts with some other
-> sysfs refactorings I'm doing. It will be part of a future series.
-> ---
->  kernel/bpf/sysfs_btf.c | 21 +++++----------------
->  1 file changed, 5 insertions(+), 16 deletions(-)
->
-> diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
-> index fedb54c94cdb830a4890d33677dcc5a6e236c13f..a24381f933d0b80b11116d054=
-63c35e9fa66acb1 100644
-> --- a/kernel/bpf/sysfs_btf.c
-> +++ b/kernel/bpf/sysfs_btf.c
-> @@ -12,34 +12,23 @@
->  extern char __start_BTF[];
->  extern char __stop_BTF[];
->
-> -static ssize_t
-> -btf_vmlinux_read(struct file *file, struct kobject *kobj,
-> -                struct bin_attribute *bin_attr,
-> -                char *buf, loff_t off, size_t len)
-> -{
-> -       memcpy(buf, __start_BTF + off, len);
-> -       return len;
-> -}
-> -
-> -static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init =3D {
-> -       .attr =3D { .name =3D "vmlinux", .mode =3D 0444, },
-> -       .read =3D btf_vmlinux_read,
-> -};
-> +static __ro_after_init BIN_ATTR_SIMPLE_RO(vmlinux);
+> Doing the latter would leave you with what linux-next has for those
+> `use`s. You can also move the `ffi::...` one inside the `crate::...`
+> import and run `rustfmt` which makes it look a bit more consistent:
 
-To be honest I really don't like when code is hidden by macros like this.
-Looks like you guys already managed to sprinkle it in a few places.
+Ok, thanks. Done.
 
-btf_vmlinux_read() can be replaced with sysfs_bin_attr_simple_read().
-This part is fine, but macro pls dont.
-It doesn't help readability.
-imo mode =3D 0444 vs mode =3D 0400 is easier to understand
-instead of _RO vs _ADMIN_RO suffix.
-__ro_after_init should be a part of it, at least.
-
-I'd like to hear what other maintainers think about
-such obfuscation.
+            Linus
 
