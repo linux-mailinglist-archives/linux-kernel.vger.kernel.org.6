@@ -1,209 +1,177 @@
-Return-Path: <linux-kernel+bounces-423056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414219DA1FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:09:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D0A9DA1FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58907B21E44
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:09:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AE9B22780
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6823B146D68;
-	Wed, 27 Nov 2024 06:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0722F146D78;
+	Wed, 27 Nov 2024 06:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A0x+544n"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F/7Qhd03"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52578145A1C
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C250F1114
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732687750; cv=none; b=nWtwvZolXS5NaYKzjKersk41CmI+MJMsPV/dhiWOXjlrmAZM1zixNO3DjIDGAvNghBp442hBCxcCXW6gXvA7HOUjjsZPpuZsgk0j7FMCf5oWpruxKi2di0PIzFvIPnSaZ46K+Lc6y0BAmnbJWV69unfXIIdq238qTqWwgUvGSb4=
+	t=1732687846; cv=none; b=fOorYJeARbl8DCo0Aww/i42NAzAgiIUJIsQgw5dVG/N7GBUZrHhCRdl1Y3wVTdsfkQVWL5rK6A8hUQMJeLfgaRSv6cPt/PF2l1PwL9m8+4C7Vh/M5p93s9h1xVYrMUMpmS360PYCoSIBARH4qF8PnPrQO0FffKqDjHf9DJ3yPxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732687750; c=relaxed/simple;
-	bh=bYkDd2FDNQhF6n7/ktLHR3Dlk+Dr0HT6E2QUUA+lxXw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=szMIHey7T198x0iPXu8ejRdnQXXeTFZLmzsjwS9RqeeW6C9Jlz7IigCiqqVEBlGyg+jrldmeE3dK2Y2/ulZN8U73RGj/xDwu03heCaaa9rObONAj6Uh0mXNO/XndBkPEVBO1aonZviReI1mxIMsonIqRmGHuSdARJ4FyWQrZCs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A0x+544n; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241127060905epoutp02ed19aeb6e42f4a08844081018e3653fb~LvlL4_H2G1910119101epoutp02Y
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:09:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241127060905epoutp02ed19aeb6e42f4a08844081018e3653fb~LvlL4_H2G1910119101epoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1732687745;
-	bh=ciGwo/b6Fo4IMrQIxYgYlTRHL77X9o02RKYiwTR6jxY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=A0x+544ni1/hJDIV9U1+cMuguKvekjMO4Q92rNLJZo48eSqR4ge3rEA+j/MCcYRbb
-	 DkhWwaEbX/lDlx9xLpwt8MDQ9Lz5t6ruTq62/Sfv4a/4MxbqrpTUM0VmnBSSaKEtXq
-	 ZZ8StHJUepxR3Dk/UrahVfe20UtdDDzz5K0MfPnY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241127060904epcas2p1e27d0114f8b112c19954c7680a0880e0~LvlLZPbMo1426114261epcas2p1-;
-	Wed, 27 Nov 2024 06:09:04 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Xypt75xK5z4x9Q1; Wed, 27 Nov
-	2024 06:09:03 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	95.E9.22938.F77B6476; Wed, 27 Nov 2024 15:09:03 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241127060902epcas2p3477f29bef1164a4a48e6eee885aee505~LvlJToIYN2048020480epcas2p3-;
-	Wed, 27 Nov 2024 06:09:02 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241127060902epsmtrp1a1d87017cf655b1e0411c550e217f242~LvlJSvI3h0303103031epsmtrp1z;
-	Wed, 27 Nov 2024 06:09:02 +0000 (GMT)
-X-AuditID: b6c32a43-0b1e27000000599a-fa-6746b77f51c2
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	88.29.18949.E77B6476; Wed, 27 Nov 2024 15:09:02 +0900 (KST)
-Received: from KORCO078619 (unknown [10.229.8.183]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241127060902epsmtip141bd0d0f165d1fa9bc875fcfc1758418~LvlI_nc_40262902629epsmtip1P;
-	Wed, 27 Nov 2024 06:09:02 +0000 (GMT)
-From: =?UTF-8?B?64KY7IaM7JuQL1NPV09OIE5B?= <sowon.na@samsung.com>
-To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, <robh@kernel.org>,
-	<krzk@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>
-Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <000101db4076$ac6b18a0$054149e0$@samsung.com>
-Subject: RE: [PATCH v3 3/3] arm64: dts: exynosautov920: add ufs phy for
- ExynosAutov920 SoC
-Date: Wed, 27 Nov 2024 15:09:01 +0900
-Message-ID: <005801db4092$db115270$9133f750$@samsung.com>
+	s=arc-20240116; t=1732687846; c=relaxed/simple;
+	bh=cPdvo1SMZFEQqJn7eeSCQKo/FFcAMU9G1ZiW83fwums=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OaHDIZjsSFU+lhm0b8mJlJBV0nzXsaCW2BDHine1njRZG+2q3slgDWj3JHJBnTAyBucUG/CR4cx5TfDdfC2LDC/XEJ6AhPXBD/mf7Q1yWTnSRHeP75yMf6MCDVSbQ65zOC44BK/MqywiwLnPrhA/qa8Zm3f27BTZmiPItP4uu+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F/7Qhd03; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7251331e756so2540156b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:10:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732687844; x=1733292644; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zqa/SgF6yTly97ZL5Wo5M3cWThMFlMnzVOsX4J3DANc=;
+        b=F/7Qhd03NXlipv2FGM0SrftKWLCIuNM0ijMbYMipj5+dldrZHBUQYB3yiI/LtQ9g8G
+         1x0NVvi879HNPG72K8QRO0O/JRsEYW2Ce5x6urRYJNepNhj0LZyx5+jd3ed49Ah4O5sX
+         qn9lVRORxzhcB1v3tXodio6Yq91LE9S9vpe9Iz1/2nYgdOj8fR880rYv4gSnGqOZZs62
+         M7KA/eZM0dYRhqTwitQopU8Yd8to4aL8m6gl6XUpCa4MH8Lf/gtNbSOlPX2PmQh90ATN
+         /NzkRtzz9PpBoQmElhJRUNcxdNNc5nKAItHXAbcD70NKcHG2aAUZv5Vy/4NIeXOkpl9G
+         fiGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732687844; x=1733292644;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zqa/SgF6yTly97ZL5Wo5M3cWThMFlMnzVOsX4J3DANc=;
+        b=kpLSEpX0b394qXXdU+1T+LxYHlWnXt6ed7CQUskZwYTcsiMLR1ZP0IJ2v3t3Dxi4go
+         OJ0gjz32CLtAIU5vPsRBXayNH8KOVHHmSRsK23sK9PC8HetRQrufrxCrZsJeE9h6AFm0
+         Sz/icxEsAaWrivzpmo2W5GMAAUkUe2dCCPtCGZa7DYVr3tGjktmt28WnlxxMgOd80Spv
+         CScbDvnFP7rdsPTCj4TRMkoEvQgTJWj5HMhjX14fvWO2bcI62WMdjj4Ya7MkTY98DIaF
+         5s6O1MaT+biLv+WbO2lCSMuViki6CzTcBKvurZfSkpWbf/4/NZUtosWuaiba+PZw+XI5
+         sHcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWx+N8o3bmlvzUiXNSdvHFsn//noo2mwCJFw57LUVWpDUs/7hWY1+sBhH60fb3FhImMlA7+tFCYOG0OR3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTTYl04URYTxY382sLvGu9A4ELDAf0mPH75WnXp7KFYrjZDe9G
+	o0onBagEPONlr1XMGz973caJDrlx6R5cLt/xcMmUwTy1jyaT5pNfLUXQJQ0obg==
+X-Gm-Gg: ASbGncsjeyuhutyU78+x/a2hLo88ShB0lxVW1qG9x2h6HWOKfuZFasvAzLEfCoWBhzj
+	rhx9Qe+M87J7B2uWiA6T+79pEoYk4PoBm6xP4S6SWugVHTLKaHW2Re/y2dxWYPvsejCEOjzda3V
+	x2DnMlt0/LzszPvcg3opaRlE/3kFeQKa2Kgja1zpAzlPaMXe7giIU5opfQBK6mvgepgUGMjFlBi
+	gUm8rAhH/6SwUHSpsl3BtwROETuWVzC+LSxw+p99EkTUXeB7kjaKTLIC5KJ
+X-Google-Smtp-Source: AGHT+IGaHS3AyXRTU+a3Eu+LV+18G7egpriN+zK0KvIQMZt/bOebgNCGoDrBCNgxqRGORwKNCzNPfg==
+X-Received: by 2002:a05:6a00:13a7:b0:71e:f83:5c00 with SMTP id d2e1a72fcca58-72530014285mr2668234b3a.2.1732687844004;
+        Tue, 26 Nov 2024 22:10:44 -0800 (PST)
+Received: from thinkpad ([120.60.136.64])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de474c9fsm9447348b3a.44.2024.11.26.22.10.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 22:10:43 -0800 (PST)
+Date: Wed, 27 Nov 2024 11:40:39 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Hsin-Yi Wang <hsinyi@chromium.org>,
+	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
+	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+	lukas@wunner.de
+Subject: Re: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <20241127061039.ls3ghxswft3hvww5@thinkpad>
+References: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKN54LK9wdlweRKh/1XLNX4aAwNFgK+n1kYAa5oYP4BvfZb/rEz/krQ
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGJsWRmVeSWpSXmKPExsWy7bCmqW79drd0g42b9CwezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLfYeecEswOXx6ZVnWwefVtW
-	MXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6Dr
-	lpkDdIuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C8QK84Mbe4NC9dLy+1xMrQ
-	wMDIFKgwITtjW3d9wUXhiq/Pj7E3MDYKdDFyckgImEisnbGGGcQWEtjBKLF4JkcXIxeQ/YlR
-	YtGH6YwQzjdGiV8PtzB1MXKAdSw4yA8R38soMe33EqjuF4wSLY9iQWw2AUeJldP+MoHYIgLT
-	GSX2L7EC6WUWqJXY32kCEuYUsJLov/mQFcQWFoiRON7QxwhiswioSpxfep0RpJxXwFJi055S
-	kDCvgKDEyZlPWEBsZgF5ie1v5zBD3K8g8fPpMlaITW4SrY09zBA1IhKzO9uYQc6UENjBIbFp
-	wkt2iAYXiR93elggbGGJV8e3QMWlJF72t0HZ+RLrH95lg7ArJO4e+g9Vby+x6MxPdohXNCXW
-	79KHhIiyxJFbUKfxSXQc/ssOEeaV6GgTgmhUkug4P4cJwpaQWPViMtsERqVZSB6bheSxWUge
-	mIWwawEjyypGsdSC4tz01GSjAkN4NCfn525iBCdQLecdjFfm/9M7xMjEwXiIUYKDWUmEl0/c
-	OV2INyWxsiq1KD++qDQntfgQoykwpCcyS4km5wNTeF5JvKGJpYGJmZmhuZGpgbmSOO+91rkp
-	QgLpiSWp2ampBalFMH1MHJxSDUw7uA8nln80ZH5+RGqX7utZTxoe8r+buJfHTXVn1G2mB4eZ
-	Lm5csrj9/MriR4r+8/4tLQzrddj2L6CaZ/dFL4FNC/VEuDvWBqbPWnitfEawWVDwrn9X3PY1
-	uZY5mmhNt1m7wpOd/ca6TfHPZK9zyh8TDZs/T7dUMobpfvrDK/Hhgko31Y5acfQ1Gtt/T16/
-	YXqzWO2X1spfs96/Xx1xuduxZ4+YbwaH0etTm8ryfp1T/HW1rkfM4uo5ps0rq62fGhi+e9cu
-	rN3RraClsCOCX2eSn6pA+JO3NrVb9kaY7zA70vY0adLvxs8v05fN0eh88NTD6IcgW/euhfH/
-	Yh9HhJ+1cWLxLE//8vpzWmKaQYMSS3FGoqEWc1FxIgCcAFm6KQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSnG7ddrd0g3MLxCwezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLfYeecEswOXx6ZVnWwefVtW
-	MXp83iQXwBzFZZOSmpNZllqkb5fAlbGtu77gonDF1+fH2BsYGwW6GDk4JARMJBYc5O9i5OIQ
-	EtjNKLG2vZGti5ETKC4h8e3NHiYIW1jifssRVoiiZ4wSR3qvsYMk2AQcJVZO+8sEkhARmMso
-	MefWQWaQBLNAI6PExQ42iI7XjBKHmn6AJTgFrCT6bz5kBbGFBaIkuv/sBlvHIqAqcX7pdUaQ
-	k3gFLCU27SkFCfMKCEqcnPmEBWKmtkTvw1ZGCFteYvvbOcwQ1ylI/Hy6jBXm0lfHt7BD2KYS
-	b/93gsVFBNwkWht7oG4TkZjd2cY8gVF0FpIVs5CsmIVkxSwkLQsYWVYxSqYWFOem5xYbFhjl
-	pZbrFSfmFpfmpesl5+duYgTHoZbWDsY9qz7oHWJk4mA8xCjBwawkwssn7pwuxJuSWFmVWpQf
-	X1Sak1p8iFGag0VJnPfb694UIYH0xJLU7NTUgtQimCwTB6dUA9NWU7VnpXtiXx0OjFofG3rC
-	z3UDA1P2dqfc7jbRugm6pz84zZkgzfEx/OTxdIt5Fisqp2ssv2e+NfHV7GdM8T+vnzB52C0j
-	of7isuvze3+VTU4I2U9evHFeROdTuQ/On2SU/ijM8st4NOV99teHC7nN+F7497Vn/UpULskW
-	e/pYwOy+ziwz/j1RFeU7Xr/8qND91f5V7MeEt/mF1v9ntk3f5LCUz45Z7dOd5XZzz8xqrK7O
-	78pnleJbuW1D1hnx6X8lnN5vVODdfo5R4m6M8u5oZq9nZcsaiw59Z/7+/VayyeMZEsxRPqlS
-	x9fwvXvzwD9j6ZsXZxXqlfpmr3zz9TPbQUOV1cu+ln0x8py53KJPiaU4I9FQi7moOBEAJ76n
-	ADIDAAA=
-X-CMS-MailID: 20241127060902epcas2p3477f29bef1164a4a48e6eee885aee505
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65
-References: <20241118021009.2858849-1-sowon.na@samsung.com>
-	<CGME20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65@epcas2p3.samsung.com>
-	<20241118021009.2858849-4-sowon.na@samsung.com>
-	<000101db4076$ac6b18a0$054149e0$@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
 
-Hi Alim,
+On Tue, Nov 26, 2024 at 03:17:11PM -0800, Brian Norris wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Unlike ACPI based platforms, there are no known issues with D3Hot for
+> the PCI bridges in Device Tree based platforms. Past discussions (Link
+> [1]) determined the restrictions around D3 should be relaxed for all
+> Device Tree systems. So let's allow the PCI bridges to go to D3Hot
+> during runtime.
+> 
+> To match devm_pci_alloc_host_bridge() -> devm_of_pci_bridge_init(), we
+> look at the host bridge's parent when determining whether this is a
+> Device Tree based platform. Not all bridges have their own node, but the
+> parent (controller) should.
+> 
+> Link: https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/ [1]
+> Link: https://lore.kernel.org/linux-pci/20240828210705.GA37859@bhelgaas/ [2]
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> [Brian: look at host bridge's parent, not bridge node; rewrite
+> description]
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-> -----Original Message-----
-> From: Alim Akhtar <alim.akhtar@samsung.com>
-> Sent: Wednesday, November 27, 2024 11:47 AM
-> To: 'Sowon Na' <sowon.na@samsung.com>; robh@kernel.org; krzk@kernel.org;
-> conor+dt@kernel.org; vkoul@kernel.org; kishon@kernel.org
-> Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> Subject: RE: [PATCH v3 3/3] arm64: dts: exynosautov920: add ufs phy for
-> ExynosAutov920 SoC
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Sowon Na <sowon.na@samsung.com>
-> > Sent: Monday, November 18, 2024 7:40 AM
-> > To: robh@kernel.org; krzk@kernel.org; conor+dt@kernel.org;
-> > vkoul@kernel.org; alim.akhtar@samsung.com; kishon@kernel.org
-> > Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> > sowon.na@samsung.com
-> > Subject: [PATCH v3 3/3] arm64: dts: exynosautov920: add ufs phy for
-> > ExynosAutov920 SoC
-> >
-> > Add UFS Phy for ExynosAutov920
-> >
-> > Like ExynosAutov9, this also uses fixed-rate clock nodes until clock
-> > driver has been supported. The clock nodes are initialized on
-> > bootloader stage thus we don't need to control them so far.
-> >
-> > Signed-off-by: Sowon Na <sowon.na@samsung.com>
-> > ---
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> 
-> Are you planning to send UFS HCI patches as well?
+Thanks for picking it up!
 
-Yes, I will send UFS HCI patches for ExynosAutov920 after phy patches.
-Really thank you for your reviews.
+- Mani
 
+> ---
+> Based on prior work by Manivannan Sadhasivam that was part of a bigger
+> series that stalled:
 > 
-> >  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > index c759134c909e..505ba04722de 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> > @@ -361,6 +361,17 @@ pinctrl_aud: pinctrl@1a460000 {
-> >  			compatible = "samsung,exynosautov920-pinctrl";
-> >  			reg = <0x1a460000 0x10000>;
-> >  		};
-> > +
-> > +		ufs_0_phy: phy@16e04000 {
-> > +			compatible = "samsung,exynosautov920-ufs-phy";
-> > +			reg = <0x16e04000 0x4000>;
-> > +			reg-names = "phy-pma";
-> > +			clocks = <&xtcxo>;
-> > +			clock-names = "ref_clk";
-> > +			samsung,pmu-syscon = <&pmu_system_controller>;
-> > +			#phy-cells = <0>;
-> > +			status = "disabled";
-> > +		};
-> >  	};
-> >
-> >  	timer {
-> > --
-> > 2.45.2
+> [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
+> https://lore.kernel.org/linux-pci/20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org/
+> 
+> I'm resubmitting this single patch, since it's useful and seemingly had
+> agreement. I massaged it a bit to relax some restrictions on how the
+> Device Tree should look.
+> 
+> Changes in v5:
+> - Pulled out of the larger series, as there were more controversial
+>   changes in there, while this one had agreement (Link [2]).
+> - Rewritten with a relaxed set of rules, because the above patch
+>   required us to modify many device trees to add bridge nodes.
+> 
+>  drivers/pci/pci.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e278861684bc..5d898f5ea155 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3018,6 +3018,8 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
+>   */
+>  bool pci_bridge_d3_possible(struct pci_dev *bridge)
+>  {
+> +	struct pci_host_bridge *host_bridge;
+> +
+>  	if (!pci_is_pcie(bridge))
+>  		return false;
+>  
+> @@ -3038,6 +3040,15 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
+>  		if (pci_bridge_d3_force)
+>  			return true;
+>  
+> +		/*
+> +		 * Allow D3 for all Device Tree based systems. We assume a host
+> +		 * bridge's parent will have a device node, even if this bridge
+> +		 * may not have its own.
+> +		 */
+> +		host_bridge = pci_find_host_bridge(bridge->bus);
+> +		if (dev_of_node(host_bridge->dev.parent))
+> +			return true;
+> +
+>  		/* Even the oldest 2010 Thunderbolt controller supports D3. */
+>  		if (bridge->is_thunderbolt)
+>  			return true;
+> -- 
+> 2.47.0.338
 > 
 
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
