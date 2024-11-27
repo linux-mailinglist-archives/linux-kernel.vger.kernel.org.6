@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-423101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F3C9DA2D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:10:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6BD9DA2DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:12:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1DA282B6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AECF16918C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6713014A099;
-	Wed, 27 Nov 2024 07:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE1B149E1A;
+	Wed, 27 Nov 2024 07:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QHHLPtce"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="R6hqUfMX"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D013781AD7;
-	Wed, 27 Nov 2024 07:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1722681AD7;
+	Wed, 27 Nov 2024 07:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732691437; cv=none; b=IRZVHaleMKDeL3NgOzym9asVTmap8f119POK26lYHdLtmZAHldHzJiN/1UUG2JTINSirDiL57bsghNs55Asr73Rlxl74riDgTtnYFuoESJCY+2p6TTJDjMj0EF8fOceODpASiHWEV/GJ9W9MU1fGx/1Lvu5N2fti+Ge46ire1lk=
+	t=1732691547; cv=none; b=pqVIPTTAFQtrybb3ySscVUqHmGcnOBf/ijDtqVt/kmUq2T8owffTCgt35v0zMdKgf0IGZ2tVjnOXYuq8+0YyKFbT2NQwHmseBs0JchfsSwaAMF3+hPRWuh0jrrwfH1IN7gyO3AJ71Hk0lCZZqgwMZ1jHfdsUYvuGfM0Ay1SkuUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732691437; c=relaxed/simple;
-	bh=h/6PXM5+oeSmRI+UjWHclb5ds1HiT/ArENythA3YGvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKsPsH/0xPOJlxAE0blXMYKAsajFmmk3jE8WEy5EdhmlCQOrRGc3NleTRY8nKtDc+QHWX90T6tV94q1cnVJeO7CtNIYouc2aVXVEQGY8PTdN98T++NPjSLEdz9in5qdxZmp0wuC4YrT1z4VoLa19wU1QNiQSRZ/ckHAR2e7ngKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QHHLPtce; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DBC9940E015E;
-	Wed, 27 Nov 2024 07:10:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dqphlJko5SAh; Wed, 27 Nov 2024 07:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732691429; bh=UdEI40W3d2pLt5TzoYH/Wxqr7ZNKm7eelk0wt7IqSl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QHHLPtceeHxY1YT4Y1oyon0HpG/ePAIwZtJnko/9trT0m4s08+TgNEaDWy7lZnOoj
-	 2dySuc+pg+qpo5Y1Tf9653kinTMqItPEQsBem/1uY/+9ONSbJBZNR26KVY6aolC2h6
-	 RvMIVM8Ryy8Y+nopxcdTXmSkOmOA5m9jE+/U6oujJ0WHp4d2TXU3Qygl8L1Rngktsr
-	 L040jV29rOSh9q9Gwrex+M1U2J3HaVP9L90EeXIJa09i+AP8127Y0Ja+KDar2o5B2G
-	 QONMy+QdrbFVemerDfKPVo/jU02lYtis+JMZb0SMpSNeBN86qAxii8bjj0ibS2MC1z
-	 qeGE511fWgtmKisNCjOXZ32i51lFLP7ZF1eTeDa9d1fwy0tf9Xcu9fSK/VmPO+l1tf
-	 cHbI0nbU2AxD5etVOTg+1LxD8YfLIdLzZ/RgcAnqtjOPji2zEDzbazrQ/AXoTxaOng
-	 EWLUEtfytzqIeS+JYwORhlb4/ArhAZ1FNMVWkfa7x4uSrru2nuGOqQ3Gn2CfYnUiVF
-	 orbDq/64jLxKs5sVcfPfNWD7ZK3wJHUMWxALqm2+kj0qsRGE/2k9ZGxK811Nm5VK56
-	 7Zk5hiGcFmt6LfNrXtd5/C5ORtu/uQfrPK2Pwaou8YSYsS/qpueUXzd/ubRRmK1cd2
-	 rVwRlQus/OGwl/sGDfTvx4XQ=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 73D2840E0163;
-	Wed, 27 Nov 2024 07:10:14 +0000 (UTC)
-Date: Wed, 27 Nov 2024 08:10:08 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
- MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
-Message-ID: <20241127071008.GCZ0bF0EGespFhxwlP@fat_crate.local>
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-10-xin@zytor.com>
- <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
- <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
- <20241126200624.GDZ0YqQF96hKZ99x_b@fat_crate.local>
- <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
- <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
- <a76d9b6c-5578-4384-970d-2642bff3a268@zytor.com>
+	s=arc-20240116; t=1732691547; c=relaxed/simple;
+	bh=DQ8NgbSKIk2393Iv25ChBGcnvTgnFEGSnzdzgr0SRUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mjo8+SDKf1JLDWwb2hYmPymqe/HCrQoDWrkIGqFWtnLiKo5W2BQtjJZZLZb1wrwbgDQfbj9O4ZVymdZaD7eVQ1uLYT4om9PyHDn6uyVJDHdf9R0nwRQ4uVRLLur5uKfZsAV0j3zdpe1MoUbY+Ax5uNuaOI5KcEFIBhXWDfjEAKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=R6hqUfMX; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A1DB3A06EB;
+	Wed, 27 Nov 2024 08:12:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=BH5mL4wRTiW49fY5TXH3
+	cCb7VB9lpyJqEtwCttH2FW4=; b=R6hqUfMXnZ+Zn7nY1F21IEQ2ivu4jGDH+c36
+	eeIia4n3sF3imo7exXZM6JEBkP7zeDYRHAO+xCgYHIQti4y8UZKCEKnhiLxDN+78
+	kIBmYJt0j+RC6pLDHRQubvjs35YAKuYaVDuC1/O4ZK+1HQ6NNNrWSIYPURZPsr/t
+	r7BLhAHAnb60rCVIWNuaIdmKSsqR7CqkGGedvePUYG51HnAE3BKNsIM357djU2BD
+	34d+PRao6xV4X4SpPzPGYHl423Ts8hhLaS+uBy0aYZo2D6KdZvEZr5NEuOhWnboP
+	JiaOeuwyFUd3wrqJIcPgDDHDlN+eAGsZAeDa+mbViP9dthwA3KBMEfHvWmr1aT2+
+	U3q9x86pGNdLwNmsSrOkYbIFpGIaz6OLrmOQ3FGeJItWt5ULfpMo7hItNXCtt6sa
+	Ewx+5bCTjOrlMQ24wcsTVBLjU82t1GLlvwHvIdaXsU04xpR+7KAgAmr/X3bHsEgG
+	kuZ9+me9UtKV4Sw7Lx9RnrXe6+uzuHAaas5n6X1kUo67sd1I+/WZP3hM6fWad69P
+	6VUyCdljZ2bwYJJc6ek6LqOskboWgoZzpZbnSxb/fEwUFWbVZoqAqF2LlnVxHcgJ
+	658L38zIuTluCn2jhn3DXyCcV3/aBrQ9upWh9jHJxVPTabLILaBg/ATmu8xLTz4C
+	Jhk007o=
+Message-ID: <60f52d54-da36-4223-9063-b833451781ea@prolan.hu>
+Date: Wed, 27 Nov 2024 08:12:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a76d9b6c-5578-4384-970d-2642bff3a268@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] ASoC: sun4i-codec: Add support for Allwinner suniv
+ F1C100s
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Mesih Kilinc
+	<mesihkilinc@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>
+References: <20241123123900.2656837-1-csokas.bence@prolan.hu>
+ <20241123123900.2656837-4-csokas.bence@prolan.hu>
+ <d0ecce33-25e2-4711-8311-7788c77b7d2d@sirena.org.uk>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <d0ecce33-25e2-4711-8311-7788c77b7d2d@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855637465
 
-On Tue, Nov 26, 2024 at 11:02:31PM -0800, Xin Li wrote:
-> This is a patch that cleanup the existing code for better accommodate
-> new VMX pass-through MSRs.  And it can be a standalone one.
+Hi,
 
-Well, your very *next* patch is adding more MSRs to that array. So it needs to
-be part of this series.
+On 2024. 11. 26. 13:18, Mark Brown wrote:
+> On Sat, Nov 23, 2024 at 01:39:02PM +0100, Csókás, Bence wrote:
+> 
+>> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> 
+> When you write your signoffs like this with the , but no "" (like in
+> your From:) it confuses software and causes everything after the , to
+> get deleted.  Probably just including the quotes is the best option to
+> match the email header.
 
--- 
-Regards/Gruss,
-    Boris.
+Git handles it fine since 2.46, before that there was some weirdness in 
+send-email not adding it to the Cc: correctly, but git am & co. worked 
+fine. b4 still has issues with it unfortunately.
+Link: https://github.com/mricon/b4/issues/50
 
-https://people.kernel.org/tglx/notes-about-netiquette
+However, the real problem I think is that git format-patch doesn't add 
+the quotes. What's worse, you'll have a real hard time trying to git 
+config --global user.name "a quoted string". Git tries *really* hard to 
+remove surrounding quotation (and is further aided by the shell). I'll 
+see what I can do.
+
+Bence
+
 
