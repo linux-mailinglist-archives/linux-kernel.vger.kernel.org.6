@@ -1,160 +1,157 @@
-Return-Path: <linux-kernel+bounces-423590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0294C9DAA0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:44:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 925679DAA17
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71C03B20F0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:44:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E796FB221A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E6D1FF7B9;
-	Wed, 27 Nov 2024 14:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Jpd+arMY"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257B01FCF5B;
+	Wed, 27 Nov 2024 14:47:12 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3B61FF7AF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F59B652;
+	Wed, 27 Nov 2024 14:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718641; cv=none; b=ca59fsESzzEURZqU8TYZZL+x56hkl9yqlsAVXwgWFociZ22YzCa0zgjNSo0jf2udK4DWLqjwzpBqxNtAMW2pZzSDWCDO0e6m6OjUpWOAJU3NV0dp8di3qwVHwxOIaHz7irC8i9Yd+ZhJDW5XIbSyU2kSavkvIV6dwpk/OWhe1rw=
+	t=1732718831; cv=none; b=NprzRp8qZbUYMTA516MD4JjWcAm9L+Dq2DQADKpDB4swDGBVCQysGtzHFvySExf0I/+JepYtgxd7rXmOkZSwMKKhqZK/6UUgNN3zjIYlijH1OlGPgaO5ygvZKgTumbyiRyzgYKpn4j5fsamnhOlYAWBvqgU6btz6SS7bkGhFVfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718641; c=relaxed/simple;
-	bh=BKyo3SJUCENow7hT34xLm3QSUwMBEZLnMnf1c6fFVlE=;
+	s=arc-20240116; t=1732718831; c=relaxed/simple;
+	bh=99N+WhVI9/y39t5sBv6sXReC7pzbFGrxQUgPEFqAE8w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irQmUPLp1Ko1VDtunkWNK1y3VDPlTbYM6b2orHgacHBiLIeJr2VMHe14RjtXVVsTri3Tg74uYTar+6uYPgd5qrl31z5UMQaZ/XJVOhauBKAXrtJo/ODVb0MVk7aGL45m5+EckJ28wX0CkI+eblYWDfEFtcVANoV+myuVzTyXrLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Jpd+arMY; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffd796ba0aso7034131fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:43:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1732718638; x=1733323438; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9YVIFse3ZChPt5rxLEsxZQnkg/jV/uGoXgcbdEaGy7I=;
-        b=Jpd+arMYwsjdH3sCAJUdTTqlG829VAi/SjdCVQdEh5+XbjHO1ex1HT0Q4zFJqxo2pX
-         tTqEY8hFvvNpZzT1wDFXgQxg2FfERbi1hNzpHAL0ZCaB7HTwcvzEnhhi9rsMj2rbKBWP
-         XI2ccb5dEBe5hiRsNRxCvpdxrqGlJsuRvIiTWDxmmnxpR93P3k4BQcKnroDDqcAdFXMW
-         m75WAf2br4SdQKQ+a3mJbmUgipQ+XwIMBPB0l8lERGO+VQwwKlZVjnbkim3jUk7uTxRo
-         4wGtw4Li2wNoDt/24O2Ti3RJBdwRmAFoM902qpa55Zu4R/8t4Qt2G1qcg/gWCVJRyrIj
-         zIag==
+	 To:Cc:Content-Type; b=dadDKH2Sgl33cyKxez2viMr2tdMfJNCYH99xOQSeOPKxjyEa0pknOGtivK3+xK0J1YaZiCp3iNoW6XON09JQthcnS8lDGYMaHM6FpVgOpHdUhLuc5rsghM21aY4PH5lPfR5l34xhOUpjWtg/PKKMtAqu9Qvn76uas+UJgtSsILY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfabc686c8so7943040a12.0;
+        Wed, 27 Nov 2024 06:47:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732718638; x=1733323438;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9YVIFse3ZChPt5rxLEsxZQnkg/jV/uGoXgcbdEaGy7I=;
-        b=AHsEjLNxpwWmjGcagKQ9/yqccWjuthtLXkqYqgjj7dh2gbwRyxDYyUEcsanrsyOMCL
-         MHSYxSequkxJx5Vewwy2NBAHy3wrEK23ewSqRuikAc8SOlYgSFsBmrNAOQHTuEUIPtk2
-         R8cBpNaDfRYBUyZGOeE9tHsGt6z79VA2OX4mIv+Vunq2W/VlgPovs7Q1uw4d3tQB6R80
-         HsDF+90FbHCrg6a+o30+VF1rr4lpYz7wZ2GVT0+QrB7j3Q+9FYBBSQuLQtAd1Y/dkuzB
-         Q7fzc7dj82rtltu/tn/HHLkR3nvz0ed7Gixiv4Y9qV2VuYZ9Dg4uHF/FzDpRjtfXq3oC
-         8MPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTS7nUXJZBJI3vUQNwi9tLeMTXYVJOhHq0mGUbRV+J3MzuuwBRcaYs+CzgGyBi8flM1kLPs/i50E77vt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxX/wqSBmMVrLc/Gfm2Ps1+6jEs8uvUEvjkplVC9INsWSCHz2S
-	t5zlAp47CAdT1sCigFVq8w1K0SMSVynxRUJ9MAovQKavf6uPNw+5AhOrLI2k9gsksKOUPHIIGNS
-	qYMSywG40w6A6Xg8ORLNlHpN6zT7StEFnubMbUQ==
-X-Gm-Gg: ASbGncs7I9UzqOGU2bex8FK+BTwTRushUd6xSCRhSfL6KAWx4DgZleQs8hQLtqqY+jf
-	yAuiOdXJidjge3i8w5wqUV8Y06FchmhM=
-X-Google-Smtp-Source: AGHT+IGRc+pnEqrVmcTeiSgm588KNdJoqDkUIBr6k6jJMRMMQfn38OBTZLWXgC+yJZqrBBmbWXdkKEpuJmNNp8+huYY=
-X-Received: by 2002:a2e:b8c9:0:b0:2ff:8a1b:547f with SMTP id
- 38308e7fff4ca-2ffd60201f0mr16551901fa.14.1732718637613; Wed, 27 Nov 2024
- 06:43:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732718826; x=1733323626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oO5LdOmCG0wIh47g8NvSkPwghS/9DiaDmcFTr+YTjt0=;
+        b=nOTcRdE79UNuVrvcHtcIBoAZ3wI1EtqDGt6orZj0fr3ysNpU2n3IpzRNr0Ha0nSVL2
+         fCpAxcJ1e1pfM1g7e3LNlaIIsHNOGjBO4xabJyqqMtw5QO52hMpy0YAaqQwZoNyQjl5C
+         21i0Nhl/MESXiwMfSKWHn2DU7c161yWRkCb2Av0nAIg+abDUak/4llHCavPKpxjimnep
+         jSJSujXpWLtBNsXEWBb3TBj4avW45pJmOUvDa35Q9AXDoMKaCl9bH9M3LkyRW/cYrkij
+         dpB5ZbsAmyNucJBdqfrsCkjgVz7l7h3/42o9NgPr4bLUheH7MurvIN+O2hx2RLPQW3Ix
+         dc1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDzmKHQxQU8tyiUJPWXT4MFgvBbyJRZONHzL3VPlA5hs7OHlh/A7AWgr5r1O3UrFlg+VOysOvN0VuiIy1T@vger.kernel.org, AJvYcCUPnA+RzfPX34a6ZIGXsoB3TNnJzu75ODHmsjeur6iuXzB0lZV/UJZd/WAWvB7Kuc0MB65i71jqKTnx@vger.kernel.org, AJvYcCUjVq3zm0/oEWhEGdv14KV5/CONDPPigeZyDc5yXOUj329GQqnW+sNNhK9g18zYFhH72WYKIUfT7sxDUA==@vger.kernel.org, AJvYcCWUaHdvJFJF2dQNYsJl0LdGHSbz1VcPxXcU/n9Qad1HNDEMPph4xZslflvbWh/1bunflK21Ng9ftobhgLw=@vger.kernel.org, AJvYcCWdzvDh60UiJYt55d2xjAoAeIo6fcZicuwpR45tkDJJt9/sSKSgRY/b3hcKXiXCYJpNrOmOxg4kr4HatdtgHJyaePo=@vger.kernel.org, AJvYcCXMhXTO/LDnxcMtcW274sduNXr1tfHBs8jEs0rYG+wURavtbxYMdc+lNOUAsvfFsQe6JNsg8eR6Oq+E@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX+USldY/lQZTaX0BLU75ArSLeAf3YkHopMPaWrAhQGgNoFKvG
+	yHLsC1r2cjZyTBwF7klArQc7T+7d7xUoPQ5XNgS2CZNrfvT1DccM7qCVqjo0wxk=
+X-Gm-Gg: ASbGncu7a6wZDVnBSWri2BBajgD41yjapNQDhCM3mPLf9kSIMchrSS4HpqN4q+qIznh
+	LZsYnoiJx57R4B8ACEI0xqd+w3n2ART3VQpV82I2x5TfpmH7uDj4QTU/nq7GcbEsozXNvDDIk1X
+	XEJd3gAhgKy+7fM5kvp4yBI2WA5cDu4EAXJYh/SCkM3KT5dmMh07i/dZ1NDAYJgYMGBcVcrqEHw
+	PEU3SYCdZVUZhSffsWGJjrN0ZM0282+TFLp9+KPCK6ywSlurvOlQKBWkPE77fscFgPRq4Vc8q7S
+	p54FhilOyI9o
+X-Google-Smtp-Source: AGHT+IFv4IYD40Zt7LZ/ySspN7+1PeRiXYMW0ey8s/mrZC7I/02RwJMqR4uajyn/qJUUU22RnsOfIg==
+X-Received: by 2002:a17:907:28d0:b0:a99:e939:d69e with SMTP id a640c23a62f3a-aa581062e0cmr225674066b.51.1732718825757;
+        Wed, 27 Nov 2024 06:47:05 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5c621dsm708405766b.205.2024.11.27.06.47.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 06:47:02 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa52bb7beceso577797066b.3;
+        Wed, 27 Nov 2024 06:47:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUttit19WXmM9C985sO5+OqQv6sIQFl0TbuCOnJ9c7MdEPbgQ5jUy2mYgHSUBy7vsujxFQHpQTBTKOz@vger.kernel.org, AJvYcCUuZN4Xs8/gpvAlZrRAhUB6g3l52fV/P6SIeewWELCyrnBTcnsyg/WwH8pkB8P4pZmWK4GhbIYdjmrhpbaa5yDKhUA=@vger.kernel.org, AJvYcCW2P1kgM2Tz3N9jnzdcCOYZIKdRSw4Ce1BQM8oAeMCKn+uRnTFFWC4XOeMpyALVyM7/CrzIgg0hBFMtWfw=@vger.kernel.org, AJvYcCWPZ8LncmYgc8H1SXmbAgFqIPPQlXdwPUth3M6Bn1Fx5bwlztwmXCrwYiQMXcaQTLVVa7w3PFbzs3xJfo4f@vger.kernel.org, AJvYcCWQ7Z0Z4WQPJlMF5JyRW5j7+QIpgH9Lv7Pl/EUGsfTqcBU39iqT9pMyHqJZeG/sbw2iwiq/GDzFbuHS@vger.kernel.org, AJvYcCXJB46Y6i3xCe9lPGlodRa+jl+9cZlUaEuwf6Kfk3cjoTj2O+d2GOOR4rcH63tb6E95BvxhAHSOtVkQYA==@vger.kernel.org
+X-Received: by 2002:a17:907:7781:b0:aa5:3b48:8f9b with SMTP id
+ a640c23a62f3a-aa580f01c0fmr238937266b.13.1732718821101; Wed, 27 Nov 2024
+ 06:47:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
- <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com>
- <20241122-orthodox-mantis-of-reading-2dcdcf@houat> <13cfb66b-f904-4720-8829-a6d9db85aaa5@broadcom.com>
-In-Reply-To: <13cfb66b-f904-4720-8829-a6d9db85aaa5@broadcom.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 27 Nov 2024 14:43:38 +0000
-Message-ID: <CAPY8ntD7tf6+PXKdWe8_KjCiPoemR0RQDiaHHndtjutOLGbR1w@mail.gmail.com>
-Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display hardware
-To: Florian Fainelli <florian.fainelli@broadcom.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 27 Nov 2024 15:46:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXfSmkbnTS463xa5ty_2W+vFbWhRK65nN1yiN_+c66P5A@mail.gmail.com>
+Message-ID: <CAMuHMdXfSmkbnTS463xa5ty_2W+vFbWhRK65nN1yiN_+c66P5A@mail.gmail.com>
+Subject: Re: [PATCH v3 01/25] clk: renesas: r9a08g045-cpg: Add clocks, resets
+ and power domains support for SSI
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	lgirdwood@gmail.com, broonie@kernel.org, magnus.damm@gmail.com, 
+	linus.walleij@linaro.org, perex@perex.cz, tiwai@suse.com, 
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 24 Nov 2024 at 17:00, Florian Fainelli
-<florian.fainelli@broadcom.com> wrote:
+Hi Claudiu,
+
+On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
+> Add SSI clocks, resets and power domains support for the SSI blocks
+> available on the Renesas RZ/G3S SoC.
 >
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
 >
-> On 11/22/2024 12:06 AM, Maxime Ripard wrote:
-> > On Thu, Nov 21, 2024 at 03:37:00PM +0000, Dave Stevenson wrote:
-> >> On Wed, 23 Oct 2024 at 17:50, Dave Stevenson
-> >> <dave.stevenson@raspberrypi.com> wrote:
-> >>>
-> >>> This series adds the required DRM, clock, and DT changes
-> >>> required to support the display hardware on Pi5.
-> >>> There are a couple of minor fixes first before the main patches.
-> >>>
-> >>> Many of the patches were authored by Maxime whilst working
-> >>> for us, however there have been a number of fixes squashed
-> >>> into his original patches as issues have been found. I also
-> >>> reworked the way UBM allocations are done to avoid double
-> >>> buffering of the handles as they are quite a limited resource.
-> >>>
-> >>> There are 2 variants of the IP. Most Pi5's released to date
-> >>> have used the C1 step of the SoC, whilst the 2GB Pi5 released
-> >>> in August is using the D0 step, as will other boards in future.
-> >>>
-> >>> Due to various reasons the register map got reworked between
-> >>> the steps, so there is extra code to handle the differences.
-> >>> Which step is in use is read out of the hardware, so they
-> >>> share a compatible string.
-> >>
-> >> A gentle ping on the patches for clk-raspberrypi (patches 29-33) and
-> >> Broadcom DT (patches 34-36).
-> >>
-> >> All the DRM and dtbinding ones are reviewed or acked (thank you!).
-> >
-> > If the bindings and DRM patches are all merged, you can merge these at
-> > least.
->
-> I will be taking in the DTS patche shortly. Thanks!
+> Changes in v3:
+> - collected tags
 
-Thank you Florian and Stephen.
+Thanks for the update!
 
-I messed up and pinged the v1 cover note :( V2 is
-https://lore.kernel.org/linux-arm-kernel/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
-Thank you Florian for grabbing the correct version anyway, although
-there weren't any changes to the DT side anyway.
+> --- a/drivers/clk/renesas/r9a08g045-cpg.c
+> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
+> @@ -209,6 +209,14 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks=
+[] =3D {
+>         DEF_MOD("sdhi2_imclk2",         R9A08G045_SDHI2_IMCLK2, CLK_SD2_D=
+IV4, 0x554, 9),
+>         DEF_MOD("sdhi2_clk_hs",         R9A08G045_SDHI2_CLK_HS, R9A08G045=
+_CLK_SD2, 0x554, 10),
+>         DEF_MOD("sdhi2_aclk",           R9A08G045_SDHI2_ACLK, R9A08G045_C=
+LK_P1, 0x554, 11),
+> +       DEF_MOD("ssi0_pclk",            R9A08G045_SSI0_PCLK2, R9A08G045_C=
+LK_P0, 0x570, 0),
+> +       DEF_MOD("ssi0_sfr",             R9A08G045_SSI0_PCLK_SFR, R9A08G04=
+5_CLK_P0, 0x570, 1),
+> +       DEF_MOD("ssi1_pclk",            R9A08G045_SSI1_PCLK2, R9A08G045_C=
+LK_P0, 0x570, 2),
+> +       DEF_MOD("ssi1_sfr",             R9A08G045_SSI1_PCLK_SFR, R9A08G04=
+5_CLK_P0, 0x570, 3),
+> +       DEF_MOD("ssi2_pclk",            R9A08G045_SSI2_PCLK2, R9A08G045_C=
+LK_P0, 0x570, 4),
+> +       DEF_MOD("ssi2_sfr",             R9A08G045_SSI2_PCLK_SFR, R9A08G04=
+5_CLK_P0, 0x570, 5),
+> +       DEF_MOD("ssi3_pclk",            R9A08G045_SSI3_PCLK2, R9A08G045_C=
+LK_P0, 0x570, 6),
+> +       DEF_MOD("ssi3_sfr",             R9A08G045_SSI3_PCLK_SFR, R9A08G04=
+5_CLK_P0, 0x570, 7),
 
-V2 includes fixing Maxime's comment on "[PATCH 31/37] clk: bcm: rpi:
-Allow cpufreq driver to also adjust gpu clocks" that Stephen also
-commented on.
+If you don't mind, I will rename "ssi[0123]_pclk" to "ssi[0123]_pclk2",
+to match the define and the documentation.
 
-Stephen: Sorry, maintaining newbie, particularly for clocks. I see in
-linux-clk patchwork they are marked as "Awaiting Upstream". What, if
-anything, do I need to do on those?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.14.
 
-I've pushed the v2 DRM patches with dtbindings, so the clock changes
-are the only ones left.
+Gr{oetje,eeting}s,
 
-Thanks again.
-  Dave
+                        Geert
 
-> --
-> Florian
->
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
