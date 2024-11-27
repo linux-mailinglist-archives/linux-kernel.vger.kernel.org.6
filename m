@@ -1,414 +1,210 @@
-Return-Path: <linux-kernel+bounces-423012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E107E9DA136
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:49:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BEE9DA13B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 04:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6961687B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB44E168974
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22DB13A3F4;
-	Wed, 27 Nov 2024 03:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21C713B293;
+	Wed, 27 Nov 2024 03:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z3ZsemIu"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="ep0ETOCF"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023112.outbound.protection.outlook.com [40.107.44.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEB643ABD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 03:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732679371; cv=none; b=ivRY67dH6fi/LdfaI99oeGGFcOA/dlfdpogd880jDgYXEIIRDnrlHb/KVsjNbTOVZtPgsrotE9UWmnddQ3nUi8Xg4WeqfRp4gLfAoB5nxp1z0WI1lCBj8iD+1elHHVWL5wAW81tOIFoMSYNPJjZjZbpVW1xQhycdCCLrOHTv+ZY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732679371; c=relaxed/simple;
-	bh=eD3pPODQToz+j60jzAIrQi578xjDHFXKsipAp8dC9yA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dbvD3fEW42uKPR1bkLO8C89GE+4LWEMVKDGe/g7tRh0Vkq5p6xSh7JqpqCtO0CRihovBKUkB7puS5kQUq5unmFfNiUFAYC1kQBUWfrmZsoXmH5Of02HJptRFq16yZZqDWkl4o1dgpOy68MsFttk1/ksk50ORONJZaqdLiou1634=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z3ZsemIu; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53de8ecafeeso1660808e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 19:49:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732679368; x=1733284168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XQjMZqwe0NAeO2fTOG+5fOQwDridfm3r/wIYgtFv14o=;
-        b=Z3ZsemIu5lILTc/QsVv1tYoPN1yJb2w6MryOyqXvInNDJaY9W2zRY0hjRYSuk7JK78
-         V3AZ8W9kQ8XEu0vsN7tx4qdQUmLgAWpHUkzGyVy677Z/TApymQ9RdEuVlQjrDfUFgghf
-         QZnbIVNL6RRvTJLmJIHv2Y96bKsTNNmRo38b4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732679368; x=1733284168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XQjMZqwe0NAeO2fTOG+5fOQwDridfm3r/wIYgtFv14o=;
-        b=AxTDb4vvXgXY96TyDNayIInhADU2bmajEx+x4wSb2FBVSw5uFQBaLEE6bIqS6CZR50
-         1pFzdS4KqbZdQSiRY3fp7r1D/Z26c7GAdqhY4DdwVTssy5cLHYP/4a1As6PN+iJtDo5j
-         ciCbxMchTzvo/2iMkSHSM7ilgS3//rNi4CSml3eW01zL8MhpJkwEqipLg2jaqKqdVwnr
-         KplCzgcInOn5m81WlSMKWstKUCe61Pi8y+eel9xg04h28Z8O9mSXnPCThMPqe1u2xS18
-         0IMDV7XbGcP2r9AM49rYoTi27KrsMoGv7x+/4V9QFHjRjsQOOUnp/5nLDq3aGxzRx2Zf
-         /Vzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMPMvHBBkyX+RKSk//M6xIGB3OUGW4ibiNz/jxx2LYB9ZSLdL+/XfiX33cmYIWgkVhF8tryPlWaPeNm/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9MPHIeAUTBk6+GRjj5VcbWFCRWLgLx1AqNWWnLf8yArrALbMu
-	snHBdTw25FSedoTdc6jeeCF/aeHxtFIveqjcAm57iKCjieN5u0W5vlFk0SIatmYXIdoQ+74DUAA
-	4qZ4MK9kk7vQWbf5ShJhgoXliKl25FjzjNw3/
-X-Gm-Gg: ASbGncvSAPod6CvXyDItNCGMIxjspWKObIN7UEeLN0fTv5HrzRXh/HxfpCUXT+V+feQ
-	nsSm4KBQvBYbD0pzLSjABoQh9vIO6fcIPOR3xjLLh1eqUCCCyDVIZE74FE5w=
-X-Google-Smtp-Source: AGHT+IGJWt+111FcebZ3WvjPF9EapXUa5FGOe8wHBjnKg2h6Jhmo3dCGj/hJ2nJ5jRFbFMQdOUSqHbFx87pg+jrIdqI=
-X-Received: by 2002:a05:6512:b18:b0:53d:ed6a:4db2 with SMTP id
- 2adb3069b0e04-53df00a976amr634882e87.11.1732679367049; Tue, 26 Nov 2024
- 19:49:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F6A1114;
+	Wed, 27 Nov 2024 03:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732679440; cv=fail; b=txlzTOTp1+aFn0EGVbBBBkSqcqGMwlYpApskiqc1SRbg3/aZej7dA1M8X4B7sOm1mMbNu0igyZbkcB8SXDtgUAmZ1hl6EYGXk0NJBpRFgqi/M19l4NtQANWCCgQI3PKijMDyS7skHIkBf+afEClcxaJbgxD3Xn60uJqfc7l6yws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732679440; c=relaxed/simple;
+	bh=1eeKrAuwEmqIszN24MRJ0DcsZf2t5t8EfQebMM1W1zk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z20kGcnwGMdZI+qOOBCNI0rtUKCTL5csAYGa+GI0fnKBl3BGzSCOt4I0BglJ0OCtL4scmZAunqDEhQ2Izbfjfj7VQxkf7teGrObWgKAOb5qh22U5XRj46bLM3XHgvvIEGqTKQyo/Eyq4TlfguoqhDZZCNQDLlChsdZHbrWv22Eg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=ep0ETOCF; arc=fail smtp.client-ip=40.107.44.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GGVj4kVNapx2hWMxc7QyhaBA5oXn9yGw4Nk7NCsHzlgsGy6enpi9tw9sLnMd79xLxRfWMOApLZTLyi+D/mzJPjThxifkz1CVpYmBXm8jCtGh7FfgzlehnPv6FP1gvMfYayvU8nRYQbu/ASs+tXisyiNOnrEqmcplpRUpjNL6oG/3vQKQIeMWn9cbkdk8APFtJ1hQdcsJTU3tdNWyxHEuwpzVvqxvzvPbileg7SXUgZS8bNAIk2YLtDVe33+H/fSIKLDKHe/Z24BWl5x/XBWUmX6EOlTWVwe5+BEI1deHbfQX+gusr+7tf8QhdkG9j/Su7d70bkqMvZCP8j4JoYtQZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1eeKrAuwEmqIszN24MRJ0DcsZf2t5t8EfQebMM1W1zk=;
+ b=dCGROZM9Ypgd2GkvlQonR8ecvpjnGDVzSs77UuvgPJ1tTofSTOmuvFXhtzaTn1vg2sW4sf9Ey7e4l+jaVmMyJlRb5b7bGZigS9B4KQ1yJa2hDoMc2b9H6K6IiXr9i/6OAn2ajBiphl8qCAXRIFuwdEG7yuYjuByspq4L5Qi34YZ+Ak/xOHYxDizXVZVboWy7H6qFDucV3Ni3IlSHGk3arl4z0UCy2GAroAYGSGcps+yZbZik8ENpGXKMAz+nOIhh5+Cpq6AcSekEpGJ/ySmHACBLn4h1QdCZ3TtopYWYUKRv+zfem0OBhq7uyIrEPEO0Q22/wvi5gXmx6EO+nceLug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1eeKrAuwEmqIszN24MRJ0DcsZf2t5t8EfQebMM1W1zk=;
+ b=ep0ETOCFtLRRkuw+aDsYIsrGGofUoSoWYYa0rwbq+YQ5mSH92ShZ/dDumbaIauwtD+8n3l+9IouKfK0QutF5WbFiWCY8xyltV5FDlrHH9qN6c7BDdy0JbSyNwZikgRPHXnsiUVvXv+qmSkOWEsef+V3T12D2/WlrEyLJOEi4RhtSLSeBHFBcyaDbC0rPEeM9vK2m6SLJkMKJxii94JmOnLapg/Y4Bo76hpfa2KiA+ThJb9G4uEdCQAF5aelpkVP8XLff2a5I640JV8/IRFuVkYXwifh9Zt1RC0SrzxpnP2CK6eDwNUKeZ2l3tfztoOBe2FqKtyQQg2139sdlu3KuJA==
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
+ by TYZPR06MB6728.apcprd06.prod.outlook.com (2603:1096:400:44c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.12; Wed, 27 Nov
+ 2024 03:50:34 +0000
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28%5]) with mapi id 15.20.8207.010; Wed, 27 Nov 2024
+ 03:50:34 +0000
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "ratbert@faraday-tech.com"
+	<ratbert@faraday-tech.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Conor Dooley <conor.dooley@microchip.com>
+Subject:
+ =?utf-8?B?5Zue6KaGOiBbUEFUQ0ggbmV0LW5leHQgdjMgMS83XSBkdC1iaW5kaW5nczog?=
+ =?utf-8?Q?net:_ftgmac100:_support_for_AST2700?=
+Thread-Topic: [PATCH net-next v3 1/7] dt-bindings: net: ftgmac100: support for
+ AST2700
+Thread-Index: AQHbOyDbxNpji49FAkKFh0hSsYNmWbLH0kUAgAK17OA=
+Date: Wed, 27 Nov 2024 03:50:34 +0000
+Message-ID:
+ <SEYPR06MB513468BB8BEF0A64077D5BE99D282@SEYPR06MB5134.apcprd06.prod.outlook.com>
+References: <20241120075017.2590228-1-jacky_chou@aspeedtech.com>
+	 <20241120075017.2590228-2-jacky_chou@aspeedtech.com>
+ <cc93cc7332e97e31f90edc13496951dc0df12744.camel@pengutronix.de>
+In-Reply-To: <cc93cc7332e97e31f90edc13496951dc0df12744.camel@pengutronix.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|TYZPR06MB6728:EE_
+x-ms-office365-filtering-correlation-id: e4c76e19-6c5f-4951-b712-08dd0e96a581
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MTVkYTAwN0N2OTVsYm5FSnRtSzFBQUdSSklUNHBMdzF5T3R6NEx6dkJIQTJv?=
+ =?utf-8?B?T0tROWZzV2EvZkZJSUZtdm8vSkpRUnQydFlUUVZaT1c1TGJiTnFtdWRDNkgr?=
+ =?utf-8?B?Qjd3alFRZkxUNmNvTG9sWlEvblJFR3cyQnBKYVZEY3piVHpuNzgwV0ZpUW92?=
+ =?utf-8?B?QmdCQURyUHFxa0R1Z2M2dmhESS8xVEc3Z21ONjJJYmhIbTFSWW9aczFSS1Zh?=
+ =?utf-8?B?YkdtVXg2b2JSZVNHRXpOLzNRSUVQUUMwc3I3Mkw0aTlKTFNyYXdmM25Fa2VI?=
+ =?utf-8?B?elhpcXhUcnpmTTRtWGRzWUUzT3Z4Und0RUErUW8yblhWQ3UvTC9peEozM1Fl?=
+ =?utf-8?B?c2c5TDJyQWtjY0lIdjBUbGR3Y011UjB6aDdKRkQyR2VjMEZBaCtQQno5bktV?=
+ =?utf-8?B?aGNCUEFvOEk3SEJLZkhkL1hBL1g5Y0VBUXF6TkxVNFloZXJuUm44TmhEZWxQ?=
+ =?utf-8?B?dFNjLzVWeWdZR3FXNm00NHUyYjBkR05UaUc4cnZnZXlnN2ROT0JxOVlpMXZz?=
+ =?utf-8?B?Q0ZzZTRrUjRJYmNQaE5tUGYzYlJiM0N2Zzk0WFlJaFcyeFRuclYxSmYvbmhU?=
+ =?utf-8?B?NnRMZG9BQWNibXdsNS9zMWRFQUxjVGRzaHFreDFGTHdiZzg0UnFuMnVvUkNo?=
+ =?utf-8?B?ckxhUEdnU3VjM3dGQytvWXFOSmRXL1Z4ZWc0NWd6TklLcGFWWU9TbWxTZlV6?=
+ =?utf-8?B?WVhmK1JQTlZGanFxTHJjdjB0cTRxcENKWGo3M01aWVlZZHZMWnlIcVlFZW9D?=
+ =?utf-8?B?bDQ2TERMUzdOV1FYSFk4MVJmWnp2MEhuaDVJNEZrRFlsQTQrQ1NXcGFkbUk4?=
+ =?utf-8?B?Mkp4aVZMT09CckhSOW92bUxQeExMTDJHRC9sc2NsNURKV1hiQkM1WEM5ZnVm?=
+ =?utf-8?B?SENwbHI0ZTVYaDRvL0ZaRFZPVzNXVVZ1V0tjUnZLVlcrcDR6ajkzK2dUL3ZY?=
+ =?utf-8?B?SnU5YlhWWmYvTTdaZkFIYUdmQ2xWczhFODJUQTVKSTB3ekpBbTVIMnBpR2dJ?=
+ =?utf-8?B?c2I0LzludDgzbTRtc2NiaUwvZDhvOFBES0hhM2JzV1VSZ0xEbjUwb3pMSXI0?=
+ =?utf-8?B?a3NIZVhOTnVEMEx6Yk85K2RFR2JiVk1mNUw3TnhwMVgvTjJVcHRoc0JrT2NV?=
+ =?utf-8?B?enpsNnNWMlZySjFGU0FnaGt0VUNYZU5JTFZBTWFMSSthMnBvYjFNM3JEU2lu?=
+ =?utf-8?B?VDFBVjJkcVdGaWdGWERTZUVNSDN1WkNlQUVIb2RVZ3lobzJDQzFON0pLeFNj?=
+ =?utf-8?B?ZHBtTWRmV3VORjBzTkJKS0Rmanh5bjBOOXB2V2dFODVjS2ZxWjVrcEw4NXVz?=
+ =?utf-8?B?em5Da2h5aUc2bnFkTG45UlA0RUJxN2RUalpJNFdqank3UHIvMm9xcXp5Z0x0?=
+ =?utf-8?B?eWFLUW5ydjVlK3FPSnRBM2JUQ1plRjNOYzZTR1pmT1hsQ2kxbWlQVWJqZW45?=
+ =?utf-8?B?N0FZanVTNW5QUG5pL2VLendhZU41eHlCdVZ0bE44RG9VNEloWHVORW5PNVUy?=
+ =?utf-8?B?TXF4NWhlVVg1b0IybG04d0xleXp2UGpKR3VIUXpTTzFlMlUyNWNESXpULzcw?=
+ =?utf-8?B?d01TaTJ3WkhWcEJDR29XL1J0UzQzVmtJL1BNd293Q0YrZG80TVBmTkFLbFVC?=
+ =?utf-8?B?dHVkUkRtRmlGMis4RUppWVRURG5IcG53Umw3RDdRS3RFaTFhREdEQ0RVei9J?=
+ =?utf-8?B?VDhMckczM2s0TXp2cmlQcEFRQUdrMTBkUzdMMWZpT2lXTTB1T0QvV3Y1aWRE?=
+ =?utf-8?B?Qmd5NDdXekpMZlpvUzRSYjFzM09sWnV5aW5FVXVpdnA1Wkd0NHZ0RDY3UkZH?=
+ =?utf-8?B?LzJjanRWQ2hGc2tQSlFDeEloZVp6aXc3NDhJbHdKWDRDTlQrOVc2WkE4VjNX?=
+ =?utf-8?B?L2prVUVkQnlJKzJVWGNuR2dWZ3pnMXQ1R3BNN3daTEl0U041OUlubkNBd1JK?=
+ =?utf-8?Q?w9238lDnOgo=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dXgrbEMvYkhVODFMamp6OXEwTGlIeG4rZXBSM2hTREp3YTZoZmFOZXU1L0p1?=
+ =?utf-8?B?djFSNTB5azlQMWdERGU3MWxkd0RDa2F0VkNiM2hwbHZRMVJNZmpWTG10aTJi?=
+ =?utf-8?B?eW1SNU5qL2tsYXl0eXFLL0VSc0grS1o3NDlhd3RpTldaVTlXelJuRlZub2t5?=
+ =?utf-8?B?MlYya3NMVnR1eXVqUU5NNHd1TmRsZElOay9uL3Rpdi9EQXg5cXBEVXhlVDNU?=
+ =?utf-8?B?aFZ0YTN2Z283TnV4dzhNcDliNFVINkFIRnNqbkR1MWlOZGhrVmp6WllvSzBI?=
+ =?utf-8?B?S0gzV0FqZUxKMFN1SnJqTzk3V01jQjFkUEVZdnhiejg0TkUrK2VCeEZZWWpp?=
+ =?utf-8?B?NkY3dlZnZ21PRU5uKzJKZTFvUm9SL1dWYUN0NWNGV2pIWks2UGVua3crejZ5?=
+ =?utf-8?B?ejd4T2xNck8vQ2JGamVRRk1DZEMvQlpXVk0zVzFjMHhNa0pHc3VOSVowdlNU?=
+ =?utf-8?B?WmJlckI3WTRoTUllYzFRNjRuMWNmMUZnb210c3F1eTJuZHlxcVU1RHRXL053?=
+ =?utf-8?B?bmF1cXZWNm43UXljSGtqNmFxOE9FMGlCbVBlemY5ZWtKY0RCSVp6a29OVTV2?=
+ =?utf-8?B?ZTRVZzdKOUF4a1ptc21kZzV5UGluNVp1RXlaS1QzWEsyVTNYVzl5ZWhRUExO?=
+ =?utf-8?B?Y01xdjZBV3RaZ2tWT2FvM21sTDF1VGJTN2FqRzh3eHcwSnYxOEI0Snc1R3N6?=
+ =?utf-8?B?M0JCZHdVSEJ6b0h3Z2VsYS9zVVVpeENYZEdBODIvN3VDbmhUYXpaMmxxRnVU?=
+ =?utf-8?B?dkRMcGZWeGNaT3FURjNyYkYwTDFxNGdadCtuYm9TUTEvSVFYZHk2MkN1RVFh?=
+ =?utf-8?B?Y3E0cEhCSkh6RGRrdWJMOUtQRWsvQjdrVG5tY0x0eWp0MHNNcTlyMlNvTWxl?=
+ =?utf-8?B?WkJlZmMvNThnRzhBOUhFYXdmUXpGQ0hSTzRuS1hCNlZLT2pJMXNjNGlIRXhK?=
+ =?utf-8?B?dk8ydkN0TjVXUEdmM2tHNlEwbTVpYTFEdUZRaEU4Ym1HeENzL1NmNWhUZnBQ?=
+ =?utf-8?B?QnVRZFNYNGh3eWZFVHhva3RQd0NWQ2ptNG55U3Y0N2dyNE4vczRJU1pVYlAv?=
+ =?utf-8?B?VU5DdUNNaHUrbE9CQlFRQnNzcFBDbDNuanlocllSQ3NYcFRFVzM0NmU4NHVp?=
+ =?utf-8?B?Z1pGaHFacmJ6b0YwOWd2SS9DVzhXVFA3SW5zcktzVjh1cmhiS2JycThDdkR0?=
+ =?utf-8?B?MHVja2JaSWlzRlB5NFJjVzhadmU4OC9mS0tBOHYwQ3c5NVRjOTJlQk81ek9V?=
+ =?utf-8?B?Z1BoRnIwRmp6VGlvL3FzbnYxQUtnbkx6Mk55ODlmQThTSjZqVUcvYzljTUE0?=
+ =?utf-8?B?ZklBUFlUb2dsQnN1Y0tVRGUrRnVXRjBnbVQwQjBONDIrZk5GUHlMVjFjbkRj?=
+ =?utf-8?B?eEVwQnJBUTBYR0xNV29CN1p0R2h4V082TXpsS01WQ21vT285Rk1KamtSbnk1?=
+ =?utf-8?B?ekZRcmFtMjhGWkRubWpUWlN0aHk1NGcrWFZxdFU0MEpkTHlkM0h1SSt6cnBC?=
+ =?utf-8?B?TDBLYWc1ay9rS2l1SjBsR2YrVUxqZEZ6R2x2RXozZ1gxTklPVE1TMHo1OWtF?=
+ =?utf-8?B?Zks2S0FNdnVHTGN1ckZuMEw2THlva3ZKNEh6K2cwOFhvSEFoM3ZrUmxVR3Vo?=
+ =?utf-8?B?T0dYKzBUWUFiNDJCTnhPMW9RNmF0ZWp5Q08rdk1OeW1ERFlqZzJCUEpXZFR1?=
+ =?utf-8?B?aFlSQlRQbTZ3VkVFQmJGMG9MYklCVHZMdjQ0ejB6L0JFSEJxZGRWb0dGV09a?=
+ =?utf-8?B?WDRnRndFMzF2UDcyNWRSdXYyM2JKczQybkUwMDF0bHFyaW5RWVEyamlIaWNZ?=
+ =?utf-8?B?ZEhhdFV0UVZnSE9kNUVreVRvMkxNZmhoUzJjRUFkQ1R0VnlEWGN5MEk0OUNT?=
+ =?utf-8?B?NVBYM09DVDl0SHlrcy9DejAxNTFGS25meE5BN21HUkxJeXVTOEJXY2pxWDdR?=
+ =?utf-8?B?OEc5cFAxMFZsNjYyQVhqbUhtcDdERS8rUThNZDk5cWhobDVhQXpqRStjY1VM?=
+ =?utf-8?B?RkpGeC9ZMzJJa0pOWGRwMlQrWlZUZjdib0FJWkx0WWRlU2MxaHJIT2pMZnB2?=
+ =?utf-8?B?Zm5wZzkyeXorS0F6cjdxYWp2aitFcEVCNFR0KzVUbVo2b0dib3pFNjZlTnRn?=
+ =?utf-8?Q?Sb/Mda+FkIYj0QG/vSu3pky7B?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106093335.1582205-1-wenst@chromium.org>
-In-Reply-To: <20241106093335.1582205-1-wenst@chromium.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 27 Nov 2024 11:49:16 +0800
-Message-ID: <CAGXv+5Fzrz9sBvE=FpV6URpcZtxvchxfY9WE4k4s+S3BzMWw2g@mail.gmail.com>
-Subject: Re: [PATCH v11 0/7] platform/chrome: Introduce DT hardware prober
-To: Wolfram Sang <wsa@kernel.org>
-Cc: chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4c76e19-6c5f-4951-b712-08dd0e96a581
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 03:50:34.1042
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2gQpBQE/Dy3QEiWrnqYOeHJWejBwdt9U5NYzlw2Ir2Xsk9wasKFr9kK15MWb16ghkC0GOjCP+T7SmyhpMRFSffuTiFQfP7A+512j0aNraLw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6728
 
-Hi Wolfram,
-
-On Wed, Nov 6, 2024 at 5:34=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> wr=
-ote:
->
-> Hi everyone,
->
-> This is v11 of my "of: Introduce hardware prober driver" series.
-> v11 adds a missing include of linux/types.h for the |bool| type,
-> as reported by Andrey.
->
-> To Wolfram:
-> Everything is fully reviewed and ready to be merged. There is also
-> no need to wait for the end of the merge window if you also merge
-> in the immutable regulator tag [1]. Not sure if you want to also
-> take the last DT patch though. If that's the case you would likely
-> still have to wait for the end of the merge window.
-
-Just checking in. I just wanted to make sure that this is still on
-track for v6.13-rc1.
-
-
-Thanks
-ChenYu
-
-> Changes since v10:
-> - Added include of linux/types.h for type |bool| in i2c-of-prober.h
->
-> The older changelog entries have been moved to the bottom of the cover
-> letter.
->
-> For the I2C component (touchscreens and trackpads) case from the
-> original series, the hardware prober driver finds the particular
-> class of device in the device tree, gets its parent I2C adapter,
-> and tries to initiate a simple I2C read for each device under that
-> I2C bus. When it finds one that responds, it considers that one
-> present, marks it as "okay", and returns, letting the driver core
-> actually probe the device.
->
-> This works fine in most cases since these components are connected
-> via a ribbon cable and always have the same resources. The prober
-> will also grab these resources and enable them.
->
-> The other case, selecting a display panel to use based on the SKU ID
-> from the firmware, hit a bit of an issue with fixing the OF graph.
-> It has been left out since v3.
->
-> Patch 1 adds of_changeset_update_prop_string(), as requested by Rob.
->
-> Patch 2 adds for_each_child_of_node_with_prefix(), as suggested by Andy.
->
-> Patch 3 implements probing the I2C bus for presence of components as
-> a hookable helper function in the I2C core.
->
-> Patch 4 implements regulator supply support as a set of simple helpers
-> for the I2C component prober.
->
-> Patch 5 implements GPIO support for the I2C component prober simple
-> helpers.
->
-> Patch 6 adds a ChromeOS specific DT hardware prober. This initial
-> version targets the Hana Chromebooks, probing its I2C trackpads and
-> touchscreens.
->
-> Patch 7 modifies the Hana device tree and marks the touchscreens
-> and trackpads as "fail-needs-probe", ready for the driver to probe.
->
->
-> The regulator parts were merged separately with an immutable tag [1]. Rob
-> already gave his Reviewed-by for the OF bits, and I assume he is OK with
-> them going through a different branch. So I believe it is fine for
-> Wolfram to take all the patch except the last one through the I2C tree.
-> The last DTS patch can be merged through the MediaTek tree once the
-> driver bits land.
->
->
-> Thanks
-> ChenYu
->
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git=
-/tag/?h=3Dregulator-of-get-optional
->
-> Changes since v9:
-> - Picked up review-bys
-> - Added inclusion of stddef.h for NULL
-> - Added "noautosel" stable tag to the device tree patch
->
-> Changes since v8:
-> - Link to v8:
->   https://lore.kernel.org/all/20241008073430.3992087-1-wenst@chromium.org=
-/
-> - Patch "i2c: core: Remove extra space in Makefile" was merged and
->   dropped from this version
-> - Patch 3 "i2c: Introduce OF component probe function"
->   - Added missing include of <linux/kconfig.h> to i2c-of-prober.h
->   - Expanded description of i2c_of_probe_ops::enable to mention that
->     returning -EPROBE_DEFER is valid (Doug)
->   - Reworded descrption of i2c_of_probe_ops::cleanup_early to avoid
->     confusion with i2c_of_probe_ops::enable (Doug)
->   - Reworked i2c_of_probe_get_i2c_node() to return NULL on failure,
->     matching most functions that return |struct device_node *|.
-> - Patch 4 "i2c: of-prober: Add simple helpers for regulator support"
->   - Picked up Doug's reviewed-by
-> - Patch 5 "i2c: of-prober: Add GPIO support to simple helpers"
->   - Moved |struct gpio_desc| forward declaration before |struct regulator=
-|
->     (Andy)
->   - Dropped GPIO descriptor validity check from
->     i2c_of_probe_simple_disable_gpio(); GPIO functions check it (Andy)
->   - Dropped comment from i2c_of_probe_simple_disable_gpio() (Doug)
->   - Reworded comment in i2c_of_probe_simple_cleanup() (Doug)
->   - Picked up Doug's reviewed-by
-> - Patch 6 "platform/chrome: Introduce device tree hardware prober"
->   - Added trailing commas on last field in struct variable declarations
->     (Andy)
->   - Added macros wrapping chromeos_i2c_probe_dumb_* and
->     chromeos_i2c_probe_simple_*_cfg variable declarations (Andy)
->   - Split up hw_prober_platforms into one field per line (Andy)
->   - Picked up Doug's reviewed-by
-> - Patch 7 "arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and
->            trackpads as fail"
->
-> Changes since v7:
-> - Link to v7:
->   https://lore.kernel.org/all/20240911072751.365361-1-wenst@chromium.org/
-> - Patch 2 "of: base: Add for_each_child_of_node_with_prefix()"
->   - Collected Rob's Reviewed-by
-> - Patch 3 "i2c: core: Remove extra space in Makefile"
->   - Collected Andi's Reviewed-by
-> - Patch 4 "i2c: Introduce OF component probe function"
->   - Dropped log level of "enabling component" to debug
->   - Dropped file name from header file
->   - Reverted to __free() cleanup for i2c bus node
->   - Corrected "failed-needs-probe" to "fail-needs-probe" in commit messag=
-e
->   - Fixed incorrectly positioned period ('.') in commit message
->   - Expanded description of i2c_of_probe_component()
->   - Expanded comment explaining check for "available" devices to note tha=
-t
->     if such a device is found then the i2c probe function becomes a no-op
->   - Simplified check for "available" devices for-each loop
->   - Expanded description of @free_resources_early callback to explicitly
->     state that it is not called if no working components are found
->   - Dropped !cfg check
->   - Replaced "fail" with "fail-needs-probe" in i2c_of_probe_component()
->     kernel doc
->   - Combined callbacks (.get_resources with .enable; .cleanup with
->     .free_resources_late); .free_resources_early renamed to .cleanup_earl=
-y
-> - Patch 5 "i2c: of-prober: Add simple helpers for regulator support"
->   - Reworded comment in i2c_of_probe_simple_get_supply() as suggested
->     (Andy)
->   - Dropped mention of time unit in struct i2c_of_probe_simple_opts
->     kernel doc (Andy)
->   - Added mention of common GPIO line usages ("enable" or "reset") in I2C
->     OF component prober kernel doc (Doug)
->   - Added check for non-zero delay before msleep() (Doug)
->   - Combined callback helpers (.get_resources with .enable; .cleanup with
->     .free_resources_late)
-> - Patch 6 "i2c: of-prober: Add GPIO support to simple helpers"
->   - Dropped mention of time unit in struct i2c_of_probe_simple_opts
->     kernel doc (Andy)
->   - Added check for non-zero delay before msleep() (Doug)
->   - Simplified GPIO name check and reverse conditional branches (Andy)
->   - Added description about the supported power sequence
->   - Switched GPIO usage to logical levels (Doug)
->     - Changed some variable names and comments to fit
->   - Added description of power sequence to struct i2c_of_probe_simple_opt=
-s
->     (Doug)
->   - Added comment saying i2c_of_probe_simple_put_gpiod() might be no-op
->     (Doug)
->   - Combined callbacks (.get_resources with .enable; .cleanup with
->     .free_resources_late); renamed i2c_of_probe_simple_free_res_early() t=
-o
->     i2c_of_probe_simple_cleanup_early()
-> - Patch 7 "platform/chrome: Introduce device tree hardware prober"
->   - Corrected Makefile item order
->   - Replaced "failed-needs-probe" with "fail-needs-probe" in commit messa=
-ge
->   - Added include of "linux/of.h" for of_machine_is_compatible()
->   - Switched to simple probe helpers for trackpads on Hana
-> - Patch 8 "arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and
->            trackpads as fail"
->   - Mark touchscreen@40 as "fail-needs-probe" as well
->
-> Changes since v6:
-> - Link to v6:
->   https://lore.kernel.org/all/20240904090016.2841572-1-wenst@chromium.org=
-/
-> - Dropped patch "gpiolib: Add gpio_property_name_length()"
->   No longer needed
-> - Dropped patch "regulator: Move OF-specific regulator lookup code to of_=
-regulator.c"
->   Already merged
-> - Patch 2 "of: base: Add for_each_child_of_node_with_prefix()"
->   - Changed helper name to "for_each_child_of_node_with_prefix()"
-> - Patch 4 "regulator: Add of_regulator_get_optional() for pure DT regulat=
-or lookup"
->   - Was "regulator: Do pure DT regulator lookup in of_regulator_bulk_get_=
-all()"
->   - Changed reference [1] to Link: tag
->   - Rebased on top of commit 401d078eaf2e ("regulator: of: Refactor
->     of_get_*regulator() to decrease indentation")
->   - Exported of_regulator_get_optional()
->   - Changed commit message to focus on "of_regulator_get_optional()"
->   - Dropped change to of_regulator_bulk_get_all()
-> - Patch 5 "i2c: core: Remove extra space in Makefile"
->   - Collected Andy's Reviewed-by
-> - Patch 6 "i2c: Introduce OF component probe function"
->   - Correctly replaced for_each_child_of_node_scoped() with
->     for_each_child_of_node_with_prefix()
->   - Added namespace for exported symbols
->   - Made the probe function a framework with hooks
->   - Split out a new header file
->   - Added MAINTAINERS entry
->   - Reworded kernel-doc
->   - Dropped usage of __free from i2c_of_probe_component() since error
->     path cleanup is needed anyway
-> - Patch 7 "i2c: of-prober: Add simple helpers for regulator support"
->   - Moved change of of_get_next_child_scoped() to
->     of_get_next_child_with_prefix() to previous patch
->   - Restructured into helpers for the I2C OF component prober
->   - Reduced to only handle one regulator
->   - Commit message updated
-> - Patch 8 "i2c: of-prober: Add GPIO support to simple helpers"
->   - Restructured into helpers for the I2C OF component prober
->   - Reduced to only handle one GPIO
->   - Set GPIO to input on (failure) cleanup
->   - Updated commit message
-> - Patch 9 "platform/chrome: Introduce device tree hardware prober"
->   - Adapted to new I2C OF prober interface
->   - Collected Acked-by tag
->
-> Changes since v5:
-> - Link to v5:
->   https://lore.kernel.org/all/20240822092006.3134096-1-wenst@chromium.org=
-/
-> - Patch 1 "of: dynamic: Add of_changeset_update_prop_string"
->   - Collected Rob's reviewed-by
-> - Patch 2 "of: base: Add for_each_child_of_node_with_prefix_scoped()"
->   - New patch
-> - Patch 3 "regulator: Move OF-specific regulator lookup code to of_regula=
-tor.c"
->   - Fix kerneldoc format of of_regulator_dev_lookup()
->   - Fix stub compile error for !CONFIG_OF in drivers/regulator/internal.h
-> - Patch 4 "regulator: Split up _regulator_get()"
->   - Fixed kerneldoc "Return" section format for _regulator_get_common()
->   - Slightly reworded return value description
-> - Patch 5 "regulator: Do pure DT regulator lookup in of_regulator_bulk_ge=
-t_all()"
->   - Used "dev_of_node(dev)" instead of "dev->of_node"
->   - Replaced "dev_printk" with "dev_printk()" in kerneldoc mentions
->   - Fixed kerneldoc "Return" section format for of_regulator_get_optional=
-()
->   - Fix @np parameter name in of_regulator_dev_lookup() kerneldoc
-> - Patch 6 "gpiolib: Add gpio_property_name_length()"
->   - Changed function name to "gpio_get_property_name_length()"
->   - Changed argument name to "propname"
->   - Clarified return value for "*-<GPIO suffix>" case
->   - Reworked according to Andy's suggestion
->   - Added stub function
-> - Patch 7 "i2c: core: Remove extra space in Makefile"
->   - New patch
-> - Patch 8 "i2c: Introduce OF component probe function"
->   - Fixed indent in Makefile
->   - Split regulator and GPIO TODO items
->   - Reversed final conditional in i2c_of_probe_enable_node()
-> - Patch 9 "i2c: of-prober: Add regulator support"
->   - Split of_regulator_bulk_get_all() return value check and explain
->     "ret =3D=3D 0" case
->   - Switched to of_get_next_child_with_prefix_scoped() where applicable
->   - Used krealloc_array() instead of directly calculating size
->   - copy whole regulator array in one memcpy() call
->   - Drop "0" from struct zeroing initializer
->   - Split out regulator helper from i2c_of_probe_enable_res() to keep
->     code cleaner when combined with the next patch
->   - Added options for customizing power sequencing delay
->   - Rename i2c_of_probe_get_regulator() to i2c_of_probe_get_regulators()
->   - Add i2c_of_probe_free_regulator() helper
-> - Patch 10 "i2c: of-prober: Add GPIO support"
->   - Renamed "con" to "propname" in i2c_of_probe_get_gpiod()
->   - Copy string first and check return value of strscpy() for overflow in
->     i2c_of_probe_get_gpiod()
->   - Add parenthesis around "enable" and "reset" GPIO names in comments
->   - Split resource count debug message into two separate lines
->   - Split out GPIO helper from i2c_of_probe_enable_res() to keep code
->     cleaner following the previous patch
->   - Adopted options for customizing power sequencing delay following
->     previous patch
-> - Patch 11 "platform/chrome: Introduce device tree hardware prober"
->   - Adapt to new i2c_of_probe_component() parameters
-> - Patch 12 "arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and
->             trackpads as fail"
->   - None
->
-> See v5 cover letter for previous change logs.
->
-> Chen-Yu Tsai (7):
->   of: dynamic: Add of_changeset_update_prop_string
->   of: base: Add for_each_child_of_node_with_prefix()
->   i2c: Introduce OF component probe function
->   i2c: of-prober: Add simple helpers for regulator support
->   i2c: of-prober: Add GPIO support to simple helpers
->   platform/chrome: Introduce device tree hardware prober
->   arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads
->     as fail
->
->  MAINTAINERS                                   |   8 +
->  .../boot/dts/mediatek/mt8173-elm-hana.dtsi    |  14 +
->  arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |   4 +-
->  drivers/i2c/Makefile                          |   1 +
->  drivers/i2c/i2c-core-of-prober.c              | 415 ++++++++++++++++++
->  drivers/of/base.c                             |  35 ++
->  drivers/of/dynamic.c                          |  44 ++
->  drivers/platform/chrome/Kconfig               |  11 +
->  drivers/platform/chrome/Makefile              |   1 +
->  .../platform/chrome/chromeos_of_hw_prober.c   | 154 +++++++
->  include/linux/i2c-of-prober.h                 | 140 ++++++
->  include/linux/of.h                            |  13 +
->  12 files changed, 838 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/i2c/i2c-core-of-prober.c
->  create mode 100644 drivers/platform/chrome/chromeos_of_hw_prober.c
->  create mode 100644 include/linux/i2c-of-prober.h
->
-> --
-> 2.47.0.199.ga7371fff76-goog
->
+SGkgUGhpbGlwcCwNCg0KVGhhbmsgeW91IGZvciB5b3VyIHJlcGx5Lg0KDQo+ID4gZGlmZiAtLWdp
+dA0KPiA+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9mYXJhZGF5LGZ0
+Z21hYzEwMC55YW1sDQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0
+L2ZhcmFkYXksZnRnbWFjMTAwLnlhbWwNCj4gPiBpbmRleCA5YmNiYWNiNjY0MGQuLmZmZmU1YzUx
+ZGFhOSAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+bmV0L2ZhcmFkYXksZnRnbWFjMTAwLnlhbWwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvbmV0L2ZhcmFkYXksZnRnbWFjMTAwLnlhbWwNCj4gPiBAQCAtMjEsNiAr
+MjEsNyBAQCBwcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAgICAgICAgIC0gYXNwZWVkLGFzdDI0MDAt
+bWFjDQo+ID4gICAgICAgICAgICAgICAgLSBhc3BlZWQsYXN0MjUwMC1tYWMNCj4gPiAgICAgICAg
+ICAgICAgICAtIGFzcGVlZCxhc3QyNjAwLW1hYw0KPiA+ICsgICAgICAgICAgICAgIC0gYXNwZWVk
+LGFzdDI3MDAtbWFjDQo+ID4gICAgICAgICAgICAtIGNvbnN0OiBmYXJhZGF5LGZ0Z21hYzEwMA0K
+PiA+DQo+ID4gICAgcmVnOg0KPiA+IEBAIC0zMyw3ICszNCw3IEBAIHByb3BlcnRpZXM6DQo+ID4g
+ICAgICBtaW5JdGVtczogMQ0KPiA+ICAgICAgaXRlbXM6DQo+ID4gICAgICAgIC0gZGVzY3JpcHRp
+b246IE1BQyBJUCBjbG9jaw0KPiA+IC0gICAgICAtIGRlc2NyaXB0aW9uOiBSTUlJIFJDTEsgZ2F0
+ZSBmb3IgQVNUMjUwMC8yNjAwDQo+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IFJNSUkgUkNMSyBn
+YXRlIGZvciBBU1QyNTAwLzI2MDAvMjcwMA0KPiA+DQo+ID4gICAgY2xvY2stbmFtZXM6DQo+ID4g
+ICAgICBtaW5JdGVtczogMQ0KPiANCj4gR2l2ZW4gcGF0Y2ggMywgSSB3b3VsZCBleHBlY3QgYSBy
+ZXNldHMgcHJvcGVydHkgdG8gYmUgZGVmaW5lZCBhbmQgcG9zc2libHkNCj4gYWRkZWQgdG8gdGhl
+IGxpc3Qgb2YgcmVxdWlyZWQgcHJvcGVydGllcyBmb3IgYXNwZWVkLGFzdDI3MDAtIG1hYy4NCg0K
+QWdyZWUuIEkgd2lsbCBhZGQgbW9yZSBpbmZvcm1hdGlvbiBhYm91dCB0aGUgcmVzZXQgcHJvcGVy
+dHkgaW4gbmV4dCB2ZXJzaW9uLg0KDQpUaGFua3MsDQpKYWNreQ0KDQo=
 
