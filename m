@@ -1,132 +1,144 @@
-Return-Path: <linux-kernel+bounces-423466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2330D9DA7BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:28:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4DE9DA7E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5283281901
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A230A281CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963DD1FC0F4;
-	Wed, 27 Nov 2024 12:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790931FC7E5;
+	Wed, 27 Nov 2024 12:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtvdPsZf"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mSAcu2K8"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0001F942A;
-	Wed, 27 Nov 2024 12:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402961FC118
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732710505; cv=none; b=XyUFK7lhuyjhcs1l5ICaNLZJf+qtpehZctlpLR0YtYRChxuFDLQJ+ODqoDAmmy8pVxsGFIOUJt9F0s9DNnwS33Tx2dIXocRm5oP1PlQQX297LFiuD75tuWPhMFZqNyQTshYB5+W8U52sTijZSfmMEuYcZb4WgcgYJoDNWggkLXM=
+	t=1732710964; cv=none; b=pGe8uKnk2Wjoh1t8o6pLwPsCc0h/9O0lShtReZ/NyF+a4p3lY8ZgGWxlcd8HFEumr39R0a3/AYZAX+1kp27IeYVBNeMRbKCz8R3hrqs+yePFcvoK2S4kRfE6Y7H9Bu9+RQD+aXdGM6FbbSEohDVUDTY91u9an/nWDeRFBuPRutI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732710505; c=relaxed/simple;
-	bh=KVD/TsdewKb1nlukCbKQ6+3n6lWyBMCj2A20pATrmHo=;
+	s=arc-20240116; t=1732710964; c=relaxed/simple;
+	bh=JYbL2g8guAT8sd0URsVEdQ/eCdsK61c3+OjoQGgYXoQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IRFNWomb8KOfrx4OxF2UnxjouchBxTL0p90Z6c91X3fUcW6KFuvRH09SSpozNSP4s+bE6dta2dkoCRw14TEtK9uVLq2pRfHPrEtnxNFriyDek0zhmRypp4dijKRADuk3xkSPLIV8av7CSlQ7AT/mt4qwHIy96CDZosnCTaDH47o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AtvdPsZf; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53df1e063d8so544762e87.3;
-        Wed, 27 Nov 2024 04:28:23 -0800 (PST)
+	 To:Cc:Content-Type; b=BgxHabp67uzr1benhPCxpDmnKizgcq68pazyS2a8IWzU3uewr1sRYl1FHdJOw+fVdrddVup+6qh578CflIPERSqXZlNqM8MRcOfXahIEVxMfokdHaDn5h1EO9unHhMwJMdIBZIVRqjsj0zQNIRIOpdaYexEl3oXkMAKChgaySPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mSAcu2K8; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a10588f3so22626865e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:36:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732710501; x=1733315301; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732710961; x=1733315761; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uBuQtBr/HHW+O2FRD8SKWaOAbKa/8acp/47kK7p0Iao=;
-        b=AtvdPsZfW3sNW4u+pz/9dP8+WzIz0QMKwvvGtI7drBEm4jshEYizOCc/awYtYs6kP4
-         TKsIE8jxM8NN40He7xMPmmItprEUkNlRvpJCH61EnXq/9GuxFwC9ewTCgCGZLQMLezRh
-         P8dP2Tk9k3XdHAmMRoFbkdK6CTUEVJcfpHy6GxF7V5KQUpuhIx9YZ6KbibOml2SrgWKQ
-         kGN2ut458IFv8JdJlTeNtw9JbeuXHs2gh62jzYcb8y53vBHCO5CDn0bBRSTvV+h84x0J
-         urHqDMehRh6wWL5m3OaY8aPPZQ+9tV7T9ga8YVWYW3ok9MQGwZHr0lnPxjvXHo0XiN/w
-         pkQA==
+        bh=TrzbbClRBZ1yOTU2YN04HTV4UJx3/zhI0vBTZVhTMAw=;
+        b=mSAcu2K8eGTPWbuxojPWEIMfF2fVTTbYbafdmXnyK6N854nyXqj3Fr2oBZ1ds13VNf
+         rTVaEdM+7FuzNim5Gwg6cy4JVOKbBJuEpUlbwV62pqUy49IR6+Qk6bWc9MdtCRpSYWER
+         UAthYoP8/X78wgobZy/+rj20BXee1zr+loKM/D/QYNrvdyni7GXcuYrlr10taJcgMSS6
+         AzwC4QkWE2oRS/c3m36eLFMyj7xG3ZSOND6JsEAogIRDBCDToeCOlpHMSWuxM0g8QI8T
+         AaJQVXIPxACTP/NuxJVF5OIUEZozNAnJ5JWaAbDCHY8DxfYUZG9Cj/9nvvQYyHHSuJmD
+         Ux/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732710501; x=1733315301;
+        d=1e100.net; s=20230601; t=1732710961; x=1733315761;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uBuQtBr/HHW+O2FRD8SKWaOAbKa/8acp/47kK7p0Iao=;
-        b=C0Q9D6MuNeOpDQas3vnluuNDOS7ypvIhCaNejUXcWl0ddc+c6y/avn3H5gJbAd4GSO
-         3YeUiuo94XGD/zURe+fK9e45+CvPo9S383C9ZCnNWGsigo70PUcGYq8raTCijuWtww+e
-         f87XAExV330Kmea+poeG2XBAV3g4dBvvvBSi1Tck/1hA+xijAgucd8fP+jsgsCO6w8Lq
-         ZbQEYTNtLycHd8E0nJz8SPmKESgCOpr+fyvY4v4dA7UJvtgeJzz4o8P4F/dlkGTPfWWX
-         m8kQuWtqPhbcXfwVrX7k5odvpt4FXK7x7zPXhJGBxXE1D2QClb7ORKkBSotalYY4Vime
-         COnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXcVTL0yCVOdZcXpvG0Bb7/oH1+b/On0NByTnw4zuDrrWc9qABdz7QqVrTmVVMSVk02Mkj9McCy5832PBT@vger.kernel.org, AJvYcCXa3A1RDn2iLeLdduHTws7N4157DCIZd9yKlwKFAtXFvJMsonqoT4Ssmgur41oDdgLi4Tgk+XM/tGKvBOu3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfRGm7ShpEPJkUJhS2GOjl4Ipy0e8y8Vr+8MKpr8jjY6AGGgMt
-	0dGvZXs59Pmh59s6c1Bq72/pebHiB+NoBjtDPEH7OIE9IG7zlTnRkEYMIAHYWmMbsgsyUx/nemF
-	ekGqSMJp+GxNzluGUa7SoGtlEcmg=
-X-Gm-Gg: ASbGncsINfxuokF/9bUzlCR3n/823UylAYCJLRRZd+ogR3F9eV3CoOX9e3n6jCVzFjw
-	J3i+L3bufUBFr/+r6coK9qiFxttShKrw=
-X-Google-Smtp-Source: AGHT+IFwXubr7l0qYqnlgg97c6fsQlp+ICrOK0lCiQm2f0xBjXBzgLLDsS1wWMXHOIEQyFZAm6o1MSrETC7yopqdYTY=
-X-Received: by 2002:a05:6512:b98:b0:53d:ede3:3d5 with SMTP id
- 2adb3069b0e04-53df00d11c8mr1532012e87.22.1732710501089; Wed, 27 Nov 2024
- 04:28:21 -0800 (PST)
+        bh=TrzbbClRBZ1yOTU2YN04HTV4UJx3/zhI0vBTZVhTMAw=;
+        b=JTG9yLO6E9UsfUydJiRA/N0T2no8mm78TEuxglnyyP3zBBqBE1v0LygWaD3HoF2uWr
+         ibvrLtfoQb82/sEInTukpDgaV+6JVUdXJ/4zTPBpIHuLS3dN+x2GtHrwR9hP0ZG96RBR
+         Vnb7x5otwUlZ9h8b0deHWy8LqkX+3cZDFFJ2lCGMofwoMk2ZIRSnnQ3E00tk0zEJM9eT
+         f9k5bEiRDLIGTB9N3bxHosLVAPK85aBPw6+BiZ4z9/3yHwDBO+1VEBTHG6PzjAo14TqB
+         BUdtK1a75NDtvr4fIPfh4rYl6N6p1lA4LqRsY2NKrAV9zA6QknGGkKoPH3IRKVF3cQmq
+         0hXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMtgmF4mLFPwMkx8xSziECIrDkTgQenewV9G8E9oMsojj/DuXBKS2Y4OEtZuwSdTO3oU0LG0e7ol6oKUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiynGkq2XzObAJojUZMYqbHcehwi/Q84LVg6ieZFcksrfdhVQz
+	NlXPZ878haQ8DviInSP+MsrKrrX+iJPwpo/k14xldZdzaoir7+pha+FWtYejlZsMzuz/35kfzvN
+	hSTw9Xb+C/zhTANWfwlJzgM6ffMntoB+QUUN9
+X-Gm-Gg: ASbGncuzCSO61kw8x0S0ofGtqEynBdj27kSc+dXv2/bWrZ5gx7CCCEVNuhceTgzapdo
+	fdBGfrEClIG/Nfj+eb9JlUQuZwXP+iymX74CRKNO+WJ/+2fR/vV/mv5UZ2ucUVQ==
+X-Google-Smtp-Source: AGHT+IEbpjzkgc8IM7OndZI804Me6rzyM6Kjc3mTYT80bhflefRpDQA7MbvAM40NWVN+XmE+Ao7DgeTZqeqNuKDfQlI=
+X-Received: by 2002:a5d:59a6:0:b0:382:31a1:8dc3 with SMTP id
+ ffacd0b85a97d-385c6ec0ce0mr2408873f8f.35.1732710961482; Wed, 27 Nov 2024
+ 04:36:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
- <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com> <3947869f-90d4-4912-a42f-197147fe64f0@amd.com>
-In-Reply-To: <3947869f-90d4-4912-a42f-197147fe64f0@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 27 Nov 2024 13:28:09 +0100
-Message-ID: <CAGudoHEN-tOhBbdr5hymbLw3YK6OdaCSfsbOL6LjcQkNhR6_6A@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, 
-	willy@infradead.org, vbabka@suse.cz, david@redhat.com, 
-	akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, 
-	clm@meta.com
+References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-8-7127bfcdd54e@google.com>
+ <CAG48ez09fS1v2gWbOFx+uQd7Lj+z2x3LhL3hfpQzpVHdNJ5UJg@mail.gmail.com>
+In-Reply-To: <CAG48ez09fS1v2gWbOFx+uQd7Lj+z2x3LhL3hfpQzpVHdNJ5UJg@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 27 Nov 2024 13:35:49 +0100
+Message-ID: <CAH5fLgiJLP_w9vpuQFszkrUW3V3DyJVGHLv7Q43-Rx9-WSXzyw@mail.gmail.com>
+Subject: Re: [PATCH v9 8/8] task: rust: rework how current is accessed
+To: Jann Horn <jannh@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 1:18=E2=80=AFPM Bharata B Rao <bharata@amd.com> wro=
-te:
+On Tue, Nov 26, 2024 at 6:15=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
 >
-> On 27-Nov-24 11:49 AM, Mateusz Guzik wrote:
-> > That is to say bare minimum this needs to be benchmarked before/after
-> > with the lock removed from the picture, like so:
-> >
-> > diff --git a/block/fops.c b/block/fops.c
-> > index 2d01c9007681..7f9e9e2f9081 100644
-> > --- a/block/fops.c
-> > +++ b/block/fops.c
-> > @@ -534,12 +534,8 @@ const struct address_space_operations def_blk_aops=
- =3D {
-> >   static loff_t blkdev_llseek(struct file *file, loff_t offset, int whe=
-nce)
-> >   {
-> >          struct inode *bd_inode =3D bdev_file_inode(file);
-> > -       loff_t retval;
-> >
-> > -       inode_lock(bd_inode);
-> > -       retval =3D fixed_size_llseek(file, offset, whence, i_size_read(=
-bd_inode));
-> > -       inode_unlock(bd_inode);
-> > -       return retval;
-> > +       return fixed_size_llseek(file, offset, whence, i_size_read(bd_i=
-node));
-> >   }
-> >
-> >   static int blkdev_fsync(struct file *filp, loff_t start, loff_t end,
-> >
-> > To be aborted if it blows up (but I don't see why it would).
+> On Fri, Nov 22, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> > +impl CurrentTask {
+> > +    /// Access the address space of this task.
+> > +    ///
+> > +    /// To increment the refcount of the referenced `mm`, you can use =
+`ARef::from`.
+> > +    #[inline]
+> > +    pub fn mm(&self) -> Option<&MmWithUser> {
+> > +        let mm =3D unsafe { (*self.as_ptr()).mm };
+> > +
+> > +        if mm.is_null() {
+> > +            None
+> > +        } else {
+> > +            // SAFETY: If `current->mm` is non-null, then it reference=
+s a valid mm with a non-zero
+> > +            // value of `mm_users`. The returned `&MmWithUser` borrows=
+ from `CurrentTask`, so the
+> > +            // `&MmWithUser` cannot escape the current task, meaning `=
+mm_users` can't reach zero
+> > +            // while the reference is still live.
+> > +            Some(unsafe { MmWithUser::from_raw(mm) })
 >
-> Thanks for this fix, will try and get back with results.
+> Maybe also add safety comments for these nitpicky details:
 >
+> kthreads can use kthread_use_mm()/kthread_unuse_mm() to change
+> current->mm (which allows kthreads to access arbitrary userspace
+> address spaces with copy_from_user/copy_to_user), but as long as you
+> can't call into kthread_use_mm()/kthread_unuse_mm() from Rust code,
+> this should be correct. If you do want to allow calls into
+> kthread_use_mm()/kthread_unuse_mm() later on, you might have to gate
+> this on a check for PF_KTHREAD, or something like that.
 
-Please make sure to have results just with this change, no messing
-with folio sizes so that I have something for the patch submission.
+Huh ... is it possible to use kthread_use_mm() to create a situation
+where current->mm has mm_users equal to zero? If not, then I don't
+think it's a problem.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> Binary formats' .load_binary implementations can change current->mm by
+> calling begin_new_exec(), but that's not an issue as long as no binary
+> format loaders are implemented in Rust.
+
+I think we can allow such loaders by having them involve an unsafe
+operation asserting that you're not holding any references into
+current when you start the new process.
+
+Alice
 
