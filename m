@@ -1,202 +1,137 @@
-Return-Path: <linux-kernel+bounces-423049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653B69DA1E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:57:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 048BF168083
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:57:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA480145A1C;
-	Wed, 27 Nov 2024 05:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Unnl66OM"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11022142.outbound.protection.outlook.com [40.107.200.142])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08949DA1E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:59:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7A328EB
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.142
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732687051; cv=fail; b=Atee9mOr51eIB0PSkZP4B3J31HX9uwBY4QR0GY9n+TlofFM2et5eNK9y64ztygCv8ep4vYu4ez9Bba7h3Oy23EE6IrWZZ9qVE6+1y/4Cmma1JC0cfU7LB4AoJUSVKquqEPe2CushWtDaSm0T1dguFFnT5AI9P1kU6Ks9F5P1qaI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732687051; c=relaxed/simple;
-	bh=agJ3OOs5mBm73cv9+Ndkq15XgtpGy/Cxi9Et9TqJdC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S8O6XgS0xMbMHLy4l9zrgos1uw87u069CuPTkTVJDnTbdUiahkY0QqvBDLJrWknPcPIduGhyCZk76WP3COrAEazPhVfMeToLW7lSaxs/Qz1S4Z6c4Po55sJCEUj6vwyRrODm0XOnkYEOb3M9Ku3zBjPw43kKy11BJrBZ7lJ93rc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Unnl66OM; arc=fail smtp.client-ip=40.107.200.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xLKXNIlzW3/xKUurG2AvGg0nlkZqmfLm/EBo4dlhcSbrXG06GSE2oHWOP9JJR6oYlLStkTNmu5igv0dFT5fwOIsiCe2ubhDoMuUQKgcODwoWDT6apiRPb376Zc2zeRRUtWpMIuR/yxqI5mCF80tA+I7iIDnh88dqA3uviBbut6i5ujoJMVfqQAUl1hfUdddY5KKOCSi5iq7Eaye1WWLjEhxFNIcnZWb+xgTorCUelT50a0kHRfjwZiX9yNhOsDERG/I6rUBvSDCz9+5tmdyN1I5XrXp61nm2hZpHsJypGDw4t3XxorJf0bD33gkvVlaNE/favYR0AOvqBRg/h/zB9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4nTIOgTO+qYjQsnQ4NpqRvMg/QW7WYohWkM8lwQarB0=;
- b=MJtzTxh1cYg9/2ANciklOO9hI+XOWHS0EXn2WNCtH4+90kUO4TT3fI34WE8RKEwrZ7+js7qfym55OiHimPQH+EL+TLnnpsrLZXAJgbLXCJbVVHLgvgmL69/w64foA0HGWhy1NAw8NkH36QeQJJC7jI5AWKKG6dKayQxupEIyGzhe7DlXa+Dd3VxT9s9UGx7H2dRMkxd9P435Pmo9zXg8+/kT181G8xn9L8fvaQiMPcnUOVP5ggPcrocc3w4yvhm6DWVixhaJ+DFsNE01npOLDOiUSPGbeTw+HWxl1C9wYaTKRkArhlATsHmMz/5k5yCHPOMsVAi3YXUCev6yFv6j1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4nTIOgTO+qYjQsnQ4NpqRvMg/QW7WYohWkM8lwQarB0=;
- b=Unnl66OMjqc2CluhtNOzSCA+iXqAJ0/9HnsDB3GZv2CN8UTski68PGh5+GrvTdnoRBlI9No1Er48dfGVr9safTvk1Kb/fMd/szP8dfZXvVAK7G5K7j8wfI66ItsHOObpxA5Y8krBG+9amG6Uk2sY897K6ek5DXGpFkuae7unQbo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6436.prod.exchangelabs.com (2603:10b6:303:64::21) by
- DS1PR01MB9086.prod.exchangelabs.com (2603:10b6:8:221::6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.12; Wed, 27 Nov 2024 05:57:26 +0000
-Received: from MW4PR01MB6436.prod.exchangelabs.com
- ([fe80::77c9:9e36:e28e:7970]) by MW4PR01MB6436.prod.exchangelabs.com
- ([fe80::77c9:9e36:e28e:7970%4]) with mapi id 15.20.8207.010; Wed, 27 Nov 2024
- 05:57:26 +0000
-From: Adam Li <adamli@os.amperecomputing.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org,
-	patches@amperecomputing.com,
-	cl@linux.com,
-	christian.loehle@arm.com,
-	vineethr@linux.ibm.com,
-	Adam Li <adamli@os.amperecomputing.com>
-Subject: [PATCH v2 3/3] sched/fair: Update comments regarding last and skip buddy
-Date: Wed, 27 Nov 2024 05:56:10 +0000
-Message-Id: <20241127055610.7076-4-adamli@os.amperecomputing.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241127055610.7076-1-adamli@os.amperecomputing.com>
-References: <20241127055610.7076-1-adamli@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::30)
- To SJ0PR01MB6445.prod.exchangelabs.com (2603:10b6:a03:2a1::14)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A79EB2199D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 05:59:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C7F145B27;
+	Wed, 27 Nov 2024 05:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6Ui+qa2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE8513B588
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 05:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732687172; cv=none; b=mA3Zd3TU8gUFcE/HrCBMWR6eoG8EhlpH/3dDhaLwcHK3DtuadeJ2+ZPeqnCwpSAkGm0WU19pnTUuYN1a81hozUjbnvGfGb04I3tFGChEwWKVwo/4qzxr/7Wkm8KdcOxDEBSOb4G+qgApsvz4TOy7/RVW2GRWQhsi0irmiuBrseg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732687172; c=relaxed/simple;
+	bh=2xLVoQahYDG/Yy0AV3UFbWueQ8rm1/faUzaNAFbsF1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NRm156NOYGsXQ8bn/VkUs2pupsv92Dj44sjHlPpvWUCsFS+y0h22gjIf04m2KcKZu0+H3uadBIJbKwDA2h9HGW/WE2jfL1FnJB7tcP1XpGC3F0EdkWDIoUsU+CkasamNc9WjY/59BEhJOzBfR3EKbUJ893XpcAtqXTf4t8VwaEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6Ui+qa2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732687169;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o/fjIUkQ27yd9Z8Hs7Zp53yDHC5wrDnKDcAqHCnJGWY=;
+	b=S6Ui+qa299TYQR6gAAH8hidszYvW1Smlo//rvAyzgB4ajUxlR4D6bwFZgIAeaU5tUTlVVW
+	6b1GoGclD328zgH3t4BZstTLX2GKyOLZLIU0DbLygJKAbZ0qQ/U8Lm7fRVuKTIRJ+ccO0j
+	mpHaUiQo4cj5ZvHlOjOrByQA/a1YKgI=
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
+ [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-249-5Ht_ep4INaqJGg7ITZtadA-1; Wed, 27 Nov 2024 00:59:27 -0500
+X-MC-Unique: 5Ht_ep4INaqJGg7ITZtadA-1
+X-Mimecast-MFC-AGG-ID: 5Ht_ep4INaqJGg7ITZtadA
+Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-84fdfb0203eso1055774241.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:59:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732687166; x=1733291966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o/fjIUkQ27yd9Z8Hs7Zp53yDHC5wrDnKDcAqHCnJGWY=;
+        b=UfnqUvyL0ObmUL/yctaYlj2LULI5LRqDx+hyc5LeBTunllnNMXV8pEG6alOJBHraBh
+         bu+EyR3ov2VJ+XLIeVM2EgQVuDUCeT1h11gAfWKlWcBJp9ZxNOmXOnF2x7ZTTg0DP08X
+         7dbLiQqW1LpE2ydNVNu9KwPUQBndaJOr3N2wN5lBKHEqU86FXZ1uCH6sSY5/bvnrTo+8
+         mBHZgHlbGIUq1r7jLKwJX0+R5/tbgz+rAFPPBp1/6tum3XyBhF82H+WKYE2vKldtsJ8S
+         ZO01Rj0s0FdepJOp557Xy6p/3RavNJ8PmkUzPum1nrH4BqzJ7s+poGWkAW9QcxWMA4iG
+         6O2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUTaZ3mkQvu3SU+S0UTBUbkLbK18F+gLZ545HPd8ZtsEfGW7b/iGWVU65kVwS1ZRaDw+FepLEbfjVKf31g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB7c6XPphMzQnbarqgOb6H5lVfucbFLeckZ0KkqQML/z6xUgjF
+	Wcn79ywhbqw9SxHhN0SSKjR60ezEyj1Tr0J4KUHOiKOR50nbIIgs0oA2SQD6hpeycyGdt4Gmhhj
+	bHxTrasrIO1X2w/PbUw761UTF0E32/HDnJI8TET/vFohRsfg2c4oxFSD4pdNnRgZJZ4TpS32qIe
+	EYRX9DaGU+D5IHT6t53XdgyeR8CaDLuZyfbqzn
+X-Gm-Gg: ASbGnctaMOrTKgdAo1nhM99iYLCThrPyJL53IDkzAH4X5nsoQH15nJQgeSNMY2jFOND
+	G71CGdMM5YaSTEIsWnpuQF9z0/Zji3M2d
+X-Received: by 2002:a05:6102:f0a:b0:4af:3f3c:515d with SMTP id ada2fe7eead31-4af447ba11amr2730465137.4.1732687166715;
+        Tue, 26 Nov 2024 21:59:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH2TQ15E4W1Ojy9i9gQaYjKOCM7Cc7smqBFyBhqtgupb5Nxx5IMgBRjxp6hWjbGXcqRPwQNKJwsG7sA0LlUiwk=
+X-Received: by 2002:a05:6102:f0a:b0:4af:3f3c:515d with SMTP id
+ ada2fe7eead31-4af447ba11amr2730459137.4.1732687166533; Tue, 26 Nov 2024
+ 21:59:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6436:EE_|DS1PR01MB9086:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e50385f-3cfa-4b83-2d7c-08dd0ea85538
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9os4AcGsU4lf+Hb8jfK79O4yAfYM38pU2a+sMSNUxKeMWCLlBtR5ZWL3vXUW?=
- =?us-ascii?Q?yredHU1sHzDr9j4d5T7+qJZL6YobUfPTdv2pE/0s/ct695bNAVG3mQ/TEJco?=
- =?us-ascii?Q?DEOBNiTpB7LNGgv5kpx9rk8uEMqjYIKADazaMd12AsRdIayobf/o91GzkAA2?=
- =?us-ascii?Q?nesZE0XXjTAV8gTqWrLo/kz3ZDz6pOypWIw9YkZpkFB/fT29LUCJj9kgKgys?=
- =?us-ascii?Q?rjs3TL+nYLeSDqv2hyWgHEQnhxGCDZMzTZ1Ai+uzmktcU/4sxtKWhhV3lRpE?=
- =?us-ascii?Q?XvfMW1oYzu1QAZI3viRSYF1MeDAiyJaiEoQeOnDcD3vOZWCTKjkHEaNNlFi8?=
- =?us-ascii?Q?zGfwIq/Fz8T6gLxcvIS+YJyMeT15qgUvcjhDNnEUHxSOiVqOE+Cgib5W+MwX?=
- =?us-ascii?Q?Ypix7YlKnpb1498yDjCVWsK0xMW7zpRNhDSvuQ438jOzoAXQLP2u5SMc40F+?=
- =?us-ascii?Q?oaau2RjThaceqMDQ5uuFmYUPlWcxvP8guavJ+DBE+q0jVDjthTxUESOUU9cD?=
- =?us-ascii?Q?JN2SyStRtx2Rnj5GwowGv+WrhO5lSq7hd/kdrA0UCHlOug6WEdsCAg8Iz0aM?=
- =?us-ascii?Q?Okr+XqZ9QeE6CNqbSM2g4QGZoJZK24h9G8TaaxcuBBqKKq7/SaCE1aO1dEHk?=
- =?us-ascii?Q?K8vU1un4cz/lqwr1lzkppKWuwGnHD3JBd/F93e1ZECYPNmAP7crvf6b/HN7a?=
- =?us-ascii?Q?L8zimLVef5sftGHaH4mlgIiTT7asQhwRvVpq2gX2eGdzMSQ01FNAzbCk6prk?=
- =?us-ascii?Q?M9f/SW2i3WCS10Snf3d/OGLUbQLpLvSpkMeWBGLThWCbrZgq9EVfqRZwKrJm?=
- =?us-ascii?Q?Vc0LJ4yhU+NgwwKT9FjDaDwxAmICSCcwyIy1OJntUy24LTABu+MElIHZxBZ2?=
- =?us-ascii?Q?OUv/h35dgPQxZLd6Vk0gDam5qTQiXt4CtFOTqIT4zoIGCth60o7juW+yhnPp?=
- =?us-ascii?Q?U1G7sm5BlHN7KdSzbFhdFumfoFOAuZElkt9ThZdFt7DXTX1ZQtW3QJP7XLEg?=
- =?us-ascii?Q?lMrQDz7xrBZdZZTO23sNVtvIMppeAHKuF6NvShWp6/8K8kp9/tR6BgSte32I?=
- =?us-ascii?Q?Dnp5tS3SB0gjsmZDrJRcSqUAF/k5PVyJNf7+mZiYz6D8N3L//UvYfzOaw2lp?=
- =?us-ascii?Q?G1uzA2zIKael2flJlNKl+CGVXX9drGO1pxFKq5KscFYN7L1sz7ErsExHhMH7?=
- =?us-ascii?Q?Irvw251VMZ67h6uFE3o3QTgdRAxdjIxFm3Pf+Lti/Fba2PRHbex1uew6FJoF?=
- =?us-ascii?Q?DIyLkhqjpA6m1ZMlLAxJgWCeLjs3LUqO6rkdSiM3yQRETVu07RCEwljFru+s?=
- =?us-ascii?Q?z75WC+7/+DMq5cTBzcRTrgqyw96rpTmDJ2QBKePMna3NruamvvC7g54bQ/Rl?=
- =?us-ascii?Q?/GJijJX5jgs50SGH6Z2TUjxBA45PWU1biNIWm9Qg/7Km6G4iOQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6436.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hZ7uc8rI14aupxEaZttgr0CdFbzrBrr5ko3Qtze+y3kShKPUYVoQy1A7oaue?=
- =?us-ascii?Q?ji9Q91UtnevMpy1k395Vk/Tw7mD44z456BamZwj8aCHXJRvymt8nKrWifEM9?=
- =?us-ascii?Q?Yx/Y5Jx0NwNHguS0MokvIvoKOZj5XL2mtEfpPmDmFknJYg7Ek2N5YgNpiLuY?=
- =?us-ascii?Q?75hQLgLDRR6i5C4JgLuIf/HUrqurfcx4ogSgEynUrU0yxuZXpfdfDP+d34i/?=
- =?us-ascii?Q?URuQwhRTspMnT6XLqcv4QTsdbh6NNlzKSKUDnDHHZLpj0sgwdDsZGy6SYla2?=
- =?us-ascii?Q?PHe4Q5AAPo3vmJKiQRLlTdX/EHswnBdTX9Wk9qCK9iQy6+GevIxJCMeC6rzr?=
- =?us-ascii?Q?VOkV7qNNPMYT53UFr4kCJrH00bGDtku+Ptu1+rW4sBy7RAF2UDJD2baFj3Hz?=
- =?us-ascii?Q?ZB1dGFbQ25emg1hVaJ267jTUr6YgaUf8CONg3NYsc+UOd05DYiBPbZQyTOEU?=
- =?us-ascii?Q?nvlhpuaomkTPjbktzhGs/7HWSpRFweWx+XSSYnthiqJwzfPYa2MD7flAQfW5?=
- =?us-ascii?Q?/CkPZOS3+5Bp3mgKaaBK7QZFAbTPt/uQYWKA2eNJCFH/nXA0Qo+o60w7uqw9?=
- =?us-ascii?Q?WYecUfAaube5C9geE52xMziAPx8M8bnLHK/W5fAZhyoMOznbHiknEpmEf0Xh?=
- =?us-ascii?Q?hEVc+1kC2uTHlN4EI5Q49FLNbJqWJTtQ5WRRa+8cKdqiZshBCMgSy4czVPYa?=
- =?us-ascii?Q?DedVXz5JjkHvt7vx2x58FLDlgwVVt+Ed6q9ihik4Hl4wKq0dytZsjBWeDzDw?=
- =?us-ascii?Q?Pv2xCrQIkMOE7hHzLV9VmJsAf5zF5rm2UceiUyqv7/A5VjIpmPvd72AKsZzA?=
- =?us-ascii?Q?rmmc2D/z/d1zFXMu1lp7tMnI2qMAyrbO/189+Jp8p9M2l6SWbmwQnMEgBzmk?=
- =?us-ascii?Q?dcS97fhQt5dfJk8iucZ0PtckBG6mLxTgve6vzB4PhbHSDVGFxfqmbjvshgAA?=
- =?us-ascii?Q?N80XTsFY1xRtZR2fn0mJN+LSaFA13J/U3ONDRJNwqKephNvcTF9vHWLUuzgE?=
- =?us-ascii?Q?6MhxekxbUeAFopL9SxrcI44mMx+KcwAXaTJ8Tj9HgM9nQfC+rCjGyqlLFVo5?=
- =?us-ascii?Q?E6BaMgmR2WSbFK2w0CWlpB3zzeTLIM+KJCKfw+f5/9SbMsRqMw3cHSP8YQ7x?=
- =?us-ascii?Q?RoYnBDBebckdOoERpgl1AssK3A2qfIV4+C0k0YoMDRVxYvpwpkQ4SSV28ZaC?=
- =?us-ascii?Q?AuNhoBulK+p56okKgIc88kBAfZcfct6Z4/tuDjvJ69VdGqQE/eKjj2q14y4T?=
- =?us-ascii?Q?dUmBm0cD+zi1/ZzXa73tq/bZRC5P+LY12/ImczAPcsmlU9vGjn3AJZVRQZfn?=
- =?us-ascii?Q?Wh1udxFK95yRZZmyBZhQWk+GEVLFHVV4xdxqkq27/du741AEMO5+/X9ZzD+p?=
- =?us-ascii?Q?hxmytXOnXJJ4OA3x4Xw8P/mapwiCp6d9vVmMjMohzDqLoS5/Gt4dA3NeR9Fe?=
- =?us-ascii?Q?c+1y/8eypDjTad3CbJz2BuOEbIRN1Wx8vqth3dokuFgRgmVqMi90NpqJOvOv?=
- =?us-ascii?Q?IK5rXuTVvKGPOGiHF6pBOUmNprH/mNr86JyAv/P9EnvvhehmXR5ZV8u2pWuS?=
- =?us-ascii?Q?G76YH6SqKkKxwIf559pbbPzCjnoUu6TWzKhAftNTkJUxXg8xhr4zzUNTDvKZ?=
- =?us-ascii?Q?Z+/wGR/VDAA/QcYb550pCok=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e50385f-3cfa-4b83-2d7c-08dd0ea85538
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR01MB6445.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 05:57:26.4856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bOmEiGYsBsfuBirw7+yDW3j0hw8Rl6CILvF1eHkZxCmHXGJ5GPHkBzg65zFduS+GdkQfOxkFxVqeETbe9yDyczvSMdi9sfCLBwApTyMaZ789KeinZU2a9mz6wy4mUp9i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR01MB9086
+References: <6741f6b2.050a0220.1cc393.0017.GAE@google.com>
+In-Reply-To: <6741f6b2.050a0220.1cc393.0017.GAE@google.com>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Wed, 27 Nov 2024 13:59:15 +0800
+Message-ID: <CAFj5m9JTrOdETvLY=pO=6oXC6NXPumAPa82281qra0sfakjr=g@mail.gmail.com>
+Subject: Re: [syzbot] [block?] possible deadlock in blk_mq_submit_bio
+To: syzbot <syzbot+5218c85078236fc46227@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed the "last"
-and "skip" buddy. Update comments in pick_next_entity().
+On Sat, Nov 23, 2024 at 11:37=E2=80=AFPM syzbot
+<syzbot+5218c85078236fc46227@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.=
+o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D148bfec058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db011a14ee4cb9=
+480
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D5218c85078236fc=
+46227
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> userspace arch: i386
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7=
+feb34a89c2a/non_bootable_disk-06afb0f3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/aae0561fd279/vmlinu=
+x-06afb0f3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/faa3af3fa7ce/b=
+zImage-06afb0f3.xz
+...
 
-Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
-Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- kernel/sched/fair.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d5a3b5589e4e..259c56dcdff6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5602,17 +5602,11 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 
- static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
- 
--/*
-- * Pick the next process, keeping these things in mind, in this order:
-- * 1) keep things fair between processes/task groups
-- * 2) pick the "next" process, since someone really wants that to run
-- * 3) pick the "last" process, for cache locality
-- * 4) do not run the "skip" process, if something else is available
-- */
- static struct sched_entity *
- pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- {
- 	/*
-+	 * Pick the "next" buddy, since someone really wants that to run.
- 	 * Enabling NEXT_BUDDY will affect latency but not fairness.
- 	 */
- 	if (sched_feat(NEXT_BUDDY) &&
--- 
-2.25.1
+#syz test: https://github.com/ming1/linux v6.13/block-fix
 
 
