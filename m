@@ -1,110 +1,76 @@
-Return-Path: <linux-kernel+bounces-423975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0449DAEF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:27:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645F19DAEF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:31:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5717428217D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6DE166F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB32036EE;
-	Wed, 27 Nov 2024 21:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAnwYckq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B13413D518;
-	Wed, 27 Nov 2024 21:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DBC20125E;
+	Wed, 27 Nov 2024 21:31:31 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D833414EC60
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742816; cv=none; b=Yt8wZ3HdGkYZQswafN5e5h1YeIyo4lfV7zAlrci+fen3L38sk+j+nXYyugWBq99QWNQYYtXOYj1jCbS2hP5/Lzj8OrsvbpawREFvwgXmN2azLfgngud4PrSVtjyL0Sl1b6nMLdqX2tmoAA78rA8sVaKFrfJflr1Z9BNlYgkfPEc=
+	t=1732743091; cv=none; b=YC5VJEZEiELGOh+T9ycO5Z+qF5V1+b43E3OmQY4mJ1xb6CJL4dJBQ0f9kCJZVZZjY8ilOOI4X10UsTA8KLSagGy0bOc1wktdMsR/oIzfN1XTPbnfolsX+JfA0ENljk3WkWNw6oARL8FAeA6rc/fMpTWSJdDaDDHpo1TYQ+SbVOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732742816; c=relaxed/simple;
-	bh=jbC/jCJS+84tqIbSsE35AlGW1kuXaj5wEHCWYqF4OVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lTZY0Z0x5SMN/9rpoEB6QJleI9UqHPPmt/6Uu/QO9PbBnm1t9/msWsCGVsNvUZV3rjhVlHcqgaWlIQ2cHeotuiNn5qiFde1pP3HxuVG64jLRI0s/OmyQuMJ3xhfvio7t24oZfMm3TQijILGdPxex9lPzGsBnasci0VPKiVvJI4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAnwYckq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41EDC4CECC;
-	Wed, 27 Nov 2024 21:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732742816;
-	bh=jbC/jCJS+84tqIbSsE35AlGW1kuXaj5wEHCWYqF4OVk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VAnwYckq/SXsefbJ3d64IEic5tkRfSJA3lNI30aXFTdXyH3sZqHxjB4LspcqTUVy3
-	 sp9uZiSnqkIGnB6XfOaGtXWmVjLDt+JeNnmb4HbCTGhjocCg86VA0UPrSreC+X+Uzi
-	 3KVXK8CMLOd+RVk9Sez8pzPcPUrtBVA6qGDqNZr7OvUKiFYkr5G6jI1bBATF69dNJO
-	 lcGQNV+3vWiFL/4BRmOQINU4wR9euzXGDaVBmcF0ILnom+C1KPFdjDI1mTs+J4aLCa
-	 iRasUFtaJr8ZkopmAQppaLWlVDfrbMGdnqS2RqCYE22mM7p+kM1aEPP4trydxfVsyB
-	 /KuEKekVKG0sQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf tools: Avoid unaligned pointer operations
-Date: Wed, 27 Nov 2024 13:26:55 -0800
-Message-ID: <20241127212655.922196-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1732743091; c=relaxed/simple;
+	bh=CHi7bphX71qYgHTlDll+Wj7NJLrP+YAEEOXZpEaR8DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjBoOgRkm3YDG7itUYZNx32OHLTr0SDtibbLBAOiFiGXkLSodbPsnuVF0gLJRlwOp+PcMAxcW9wUqpeg68AZh48sGmxSRLnPYLMoj0IsdO8sd+tYA22uXSY+J3CoU52tRlQitQYFQXaKVavcRwxtDNkXtSubfYrhohzZz86EGJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4ARLR3GW027113;
+	Wed, 27 Nov 2024 15:27:04 -0600
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4ARLR2qE027111;
+	Wed, 27 Nov 2024 15:27:02 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 27 Nov 2024 15:27:02 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, jk@ozlabs.org,
+        arnd@arndb.de, geoff@infradead.org
+Subject: Re: [RFC PATCH 01/20] powerpc/cell: Remove support for IBM Cell Blades
+Message-ID: <20241127212702.GP29862@gate.crashing.org>
+References: <20241114125111.599093-1-mpe@ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114125111.599093-1-mpe@ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 
-The sample data is 64-bit aligned basically but raw data starts with
-32-bit length field and data follows.  In perf_event__synthesize_sample
-it treats the sample data as a 64-bit array.  And it needs some trick
-to update the raw data properly.
+Hi!
 
-But it seems some compilers are not happy with this and the program dies
-siliently.  I found the sample parsing test failed without any messages
-on affected systems.
+On Thu, Nov 14, 2024 at 11:50:50PM +1100, Michael Ellerman wrote:
+> IBM Cell Blades used the Cell processor and the "blade" server form
+> factor. They were sold as models QS20, QS21 & QS22 from roughly 2006 to
+> 2012 [1]. They were used in a few supercomputers (eg. Roadrunner) that
+> have since been dismantled, and were not that widely used otherwise.
 
-Let's update the code to use a 32-bit pointer directly and make sure the
-result is 64-bit aligned again.  No functional changes intended.
+Sad to see this go as well as native powerpc blades just days ago.  But
+yeah it is time (and we are all getting old, etc.)
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/synthetic-events.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
 
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index a58444c4aed1f1ea..385383ef6cf1edaf 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
- 	}
- 
- 	if (type & PERF_SAMPLE_RAW) {
--		u.val32[0] = sample->raw_size;
--		*array = u.val64;
--		array = (void *)array + sizeof(u32);
-+		u32 *array32 = (void *)array;
-+
-+		*array32 = sample->raw_size;
-+		array32++;
-+
-+		memcpy(array32, sample->raw_data, sample->raw_size);
-+		array = (void *)(array32 + (sample->raw_size / sizeof(u32)));
- 
--		memcpy(array, sample->raw_data, sample->raw_size);
--		array = (void *)array + sample->raw_size;
-+		/* make sure the array is 64-bit aligned */
-+		BUG_ON(((long)array) / sizeof(u64));
- 	}
- 
- 	if (type & PERF_SAMPLE_BRANCH_STACK) {
--- 
-2.47.0.338.g60cca15819-goog
+> Until recently I still had a working QS22, which meant I was able to
+> keep the platform support working, but unfortunately that machine has
+> now died.
 
+You're only sad for sentimental reasons, I hope?  :-)
+
+
+Segher
 
