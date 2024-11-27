@@ -1,166 +1,201 @@
-Return-Path: <linux-kernel+bounces-422947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694469DA048
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:28:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 764F99DA04E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF343284894
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:28:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF29EB203BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DA28F5C;
-	Wed, 27 Nov 2024 01:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C01918E0E;
+	Wed, 27 Nov 2024 01:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJ4K1PVw"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RcbI0xHT"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3658C2C8;
-	Wed, 27 Nov 2024 01:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FD379F6
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 01:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732670917; cv=none; b=fu/WCVVQyDu15Vif0Bwam+irI8lqermbDXuqxJxvlubYujlU3D95wyGlUT5KTZWBrevZybhJ/mqofbV4hUL3DyDg8UGdKBdFamTirxO0xqA2fyrf8H1tVA1r27X9H1bbCiev53IwcmCugsZlhASbTJ+/ddPE3pCY6Q2XV+TMi6I=
+	t=1732671251; cv=none; b=QTC79Lt+3QAO1ZR7Wi1fz01jXtId0kpaZcpG5hFaLSYbTftSqaTSiGDtXzbNy/vWsvHySZKmnZAYATBHKBqsksc1kp0q78LCnzdYjSIYH18KhA/Lpg+nXftcRxVz+Qz2D6cUj1138dbTYOtLTsz+OQk2g8qeO3TI3gyupHgC920=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732670917; c=relaxed/simple;
-	bh=xgcVac1+8JTtY+MAEzTJPKDad8WK2RWqBk36DEWFFdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NdoxeTLF//2Zbh9NpT0Dt26OnT9O1vQdZKxVkXFDwu4KnW1vQYADip1L//zBPq2/sSLv4x1RJkVq0TspmVxJH8G2Y+R6fUDhEL8nOxN2gY4qE4na0z6leGQoleoMtOX4LrV9zNAiNCO5uEqxnnEMazAA9xcKUesVAoavKvXXzfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJ4K1PVw; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ee676b4e20so64789407b3.3;
-        Tue, 26 Nov 2024 17:28:35 -0800 (PST)
+	s=arc-20240116; t=1732671251; c=relaxed/simple;
+	bh=8JJBrEd6fN6/kKlAPWr8eFZ7/5jVvHBCemvLOKwJAwk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=b4ogQmu1CojZercWZoZWcqX7ykhXRoYPzKjJ4DQ5FWZu+I9Bk82If7g8co8C0RdbjynCOvdxRJUfS6/K6MCjbDogoiDpByYTbBW0pHPTmzR/ccFc1ib1hj8/KWBVnlPV7/szzx75eyvdDpfJ5r5LFRHmOUxz4EpH+Lu4oE3gWsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RcbI0xHT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43169902057so53451455e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:34:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732670914; x=1733275714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hrpi/+ve4yn+KqJVdDwRTih59lt+ln6RdiSdTwzQdBg=;
-        b=VJ4K1PVw30SSHNdRjHfAa6SQBBvnAelQAb4EjUjoPDqiy0Q09srUfctR++spulPb/+
-         ILzlXG21N24Fx34pZRA3sP2882YGbP0zSGR7kkEo76XzNPGgaJTf03LovwA+3Zr8zAOX
-         YyN0uSokoVqTIAgC0B5QZEAYsoAWUZhqRk96X5ioAfiOXdqPFc5OlTclLQ0L8I9VG6rg
-         1affk3dHKNpARnHWivfhqkqTHw37kyDxkw3HLDmLYM9T3XbcsX5he9mAp6nuJq/g+0xk
-         Cq1nvGTUfSiEQMFl8ez3/06vClNb/dlQdqZEqB8AdKNbhStATVNkVIrJbnmdOiETJPKH
-         6idg==
+        d=linaro.org; s=google; t=1732671248; x=1733276048; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UXuWr9eO062TJa3ME/MG6XW57errlDbaeHl9Z4oOEPI=;
+        b=RcbI0xHTn3OZso+h/bqya+Zo6iTvXBrxzBFTlK5av9vlqI6Yuh+iMXZlzeTqA33UE2
+         XYV8rvj/fazMuAq2U8puqgfIpAnQgH0TAbnegb6aGbIRYucyvKaehQqWNt3LF2RKBl7s
+         xRmvj9hADgR6tgMlTLF0yAOrpn8escYAbEnKsF+wAUFX+lx77OGclUD8q8p+TNp0/q8y
+         MEiifxWyVx8jeSX66mLAHDzdr3wftijqRElBjR9ULd5BOoCWEWar2zrhyIOfmSdq3SEm
+         hZs+oqmmTX3Xec4mlYbSjhLYTb5bcy3dhpwq1UPgADUS9RuVxmz2YOd5lSAi5lp10d7B
+         SpQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732670914; x=1733275714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732671248; x=1733276048;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hrpi/+ve4yn+KqJVdDwRTih59lt+ln6RdiSdTwzQdBg=;
-        b=DBHeUtxqngexYdfLfU5bYQYamcOqlGaHdaJXsOOI5ntUXmiNYXjDLgH+PB2OhdG3C6
-         jqaBGginEvQTxaAjaZNT2DE3gcVOaXYy3saCzFKAvtD8CmPkEohtWOWYdqN0Qe7W6Bv0
-         WM5zTVDi35eBF0YBNvy2TvNG9fh/7niB5nVwSc7XzU98givR5UAFjmWz9qJmK9wCxzq4
-         FcnSleArOw57h9BLwvJBOCi3QILrNiSu70ILc4Fq54IRF5P2UWrQ4mHxZhZskaxIvai+
-         pIB0hEwweYNpvd+MbVUVCDBHfK23X/9X92TkcbU41lQw7Q6yO4MQivEkmRsYJFI9TDu5
-         XT+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYPboRyUhjoORnFXSsfB1A7ub+XkXkBpKcJ9mXVXAwPvoTDsbqm5aMG+2PohLkRdnezBM0zD08+jraT9wK@vger.kernel.org, AJvYcCWpDJhLZuckLWGvA8rjPXi2QUV5oO0QnVjYLNv7Gt0AYuYghoGWC8cIoRp0xXSZfi4pdvTQYjqq0zzv7YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyStLgSVNcTJuNNCzYdHiHNA0p4D5LnGMw4wS4hU1votuNNTyC+
-	Gt/R6Y0MsFDFPdgzlEMiKI644qimrM11RqN5phIgtlf22TL0IfA61vxO+8Jq90eB1HF2wN04l25
-	UC/KlDbXKcimQhMpL3kh4FGQh7iI=
-X-Gm-Gg: ASbGncuEdhirVUcy5IB2yxpR/GC5MibwqWtK05krIcBGMEAXqHt09j80mU1dYC2u4qw
-	OGM//x9R01dnMRQgN6ElhG5meVxNbF2k=
-X-Google-Smtp-Source: AGHT+IEp4LGe8Jhoz6WxQPMbuJhE535YCZ6w2Zl2WTC4nwajljsdfywsoqbi1sL2VcenG3a8LwPpst2MdXdXdH1gHfA=
-X-Received: by 2002:a05:690c:a8b:b0:6ea:e967:81da with SMTP id
- 00721157ae682-6ef3720d0a7mr13749717b3.11.1732670914542; Tue, 26 Nov 2024
- 17:28:34 -0800 (PST)
+        bh=UXuWr9eO062TJa3ME/MG6XW57errlDbaeHl9Z4oOEPI=;
+        b=CTMoXxSDlRDRpFiHgWA2By0VcFTxzNzBSJ+dHwsiziUrDR6NK1/BZAUPPdeLYvgr2U
+         6gpNgbGMcPyoCbDHNutSQp/T0OZ9DueNjbpg4UW1BEkLIgZBczh8rrQhOmvoS9xbRdKf
+         /81tSv3Srl3rNEqZehp+U9BOZMHX9rZ9b1rL3579Z0p1XkNykyH+t7wlH7c9wXQLYdoo
+         WB1+KT87CrWIACP+T0x+1sNXi+4NCaQKJn62MdSHUBLXDtXufIfnS/m9tShJ3B/V8aU/
+         QMCHZDqdxp52DEJfvlZR4m2UpBl26n7VvUw48bjBfnipJuXxA/hnFgU2FTmTnGRk+ceI
+         w+Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVcDHvDjVw0ExTm6GrovTWsAvdmR0H3moyOjfW6aHG8zlvt+uM2nyCJRi9NwQO9vo2w3auR6D72wFnwSz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKOKVeZUmIw37QbjJKtXR3Ibyg8c+jF4oF7aYfLd1c/Oy9Azrd
+	EXlJVp5bBdu6pI7VoDRGF1VfOXV3NtkiJG2W5fTMrMsLytppgpsRNI1aKD8UJLs=
+X-Gm-Gg: ASbGncvqq2HEEYCaTBf5KtNVJ9EcbJ84cRUFbroi/+wjihqAqiag7Yn7gfyjohDmQIK
+	oMxBseVj9JB8HAgrOTafBJEf99XNtxWdBnFQJ5FfwgD0syg5kbbxePkAiWg2PCQch60G4jpJBCc
+	elkgg2STnkc4Za9X3jSuIzLcSbhZ1TfqHnWZxj+Z3j4gCMt4ZIXy0KjvxO2bOpF0y2ivQanN0Cd
+	tu8g6jYOr7Li29R3+yyMV/xfA5EmvR0EH88JkU9ceX/jbSpDAMoYxJuzB4=
+X-Google-Smtp-Source: AGHT+IHFiNM+t+/nj/Rt0Y5Nok+jV+HD2ouDuD19erJ1e1f4r0iLDq6Rf3CZXsY1AskVHryOTDIBVA==
+X-Received: by 2002:a05:6000:2cc:b0:382:498a:9cf5 with SMTP id ffacd0b85a97d-385c6ebb6d9mr771073f8f.14.1732671248154;
+        Tue, 26 Nov 2024 17:34:08 -0800 (PST)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc42b3sm14848641f8f.68.2024.11.26.17.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 17:34:07 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/3] media: venus: Provide support for selecting
+ encoder/decoder from in-driver
+Date: Wed, 27 Nov 2024 01:34:03 +0000
+Message-Id: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-0-99c16f266b46@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
- <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
- <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de> <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
- <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de> <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
- <0CFF2B9E-4E40-480D-9F3B-F7631FE3CEA5@suse.de> <A86AAB66-C89A-4A37-8416-F9A99D4630D8@suse.de>
-In-Reply-To: <A86AAB66-C89A-4A37-8416-F9A99D4630D8@suse.de>
-From: liequan che <liequanche@gmail.com>
-Date: Wed, 27 Nov 2024 09:28:23 +0800
-Message-ID: <CAAsfc_pK8JYE4Abaxj5ea-D2R2hCWWE2Cupq3u0hNDv_eXwc6g@mail.gmail.com>
-Subject: [PATCH V2] bcache:fix oops in cache_set_flush
-To: Coly Li <colyli@suse.de>
-Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAt3RmcC/x2NQQqDMBAAvyJ77oK7Udr0K6WHNK5xD0bZiC2If
+ 2/a4zAwc0ARUylwbw4w2bXokivQpYE4hZwEdagM3HJHxFecZdCAZQtJc0LukAi5R3s5nN4Yl3k
+ NW9X2sxJc9N67W8sEtbiajPr53x7P8/wC0IYEIn0AAAA=
+X-Change-ID: 20241127-media-staging-24-11-25-rb3-hw-compat-string-ea3c99938021
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: quic_renjiang@quicinc.com, quic_vnagar@quicinc.com, 
+ quic_dikshita@quicinc.com, konradybcio@kernel.org, 
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
 
-Caused by the following commit, partially revert it.
+Various venus patches have been held up due to the misuse of DT to provide
+a configuration input to venus as to which mode a given transcoder should
+be in.
 
-Commit 028ddcac477b ("bcache: Remove unnecessary NULL point check in
-node allocations") replaced IS_ERR_OR_NULL by IS_ERR. This leads to a
-NULL pointer dereference.
+Link: https://lore.kernel.org/linux-arm-msm/436145fd-d65f-44ec-b950-c434775187ca@kernel.org
+Link: https://lore.kernel.org/linux-media/ba40de82-b308-67b1-5751-bb2d95f2b8a5@linaro.org/
 
-crash> bt
-PID: 7773     TASK: ffff49cc44d69340  CPU: 57   COMMAND: "kworker/57:2"
- #0 [ffff800046373800] machine_kexec at ffffbe5039eb54a8
- #1 [ffff8000463739b0] __crash_kexec at ffffbe503a052824
- #2 [ffff8000463739e0] crash_kexec at ffffbe503a0529cc
- #3 [ffff800046373a60] die at ffffbe5039e9445c
- #4 [ffff800046373ac0] die_kernel_fault at ffffbe5039ec698c
- #5 [ffff800046373af0] __do_kernel_fault at ffffbe5039ec6a38
- #6 [ffff800046373b20] do_page_fault at ffffbe503ac76ba4
- #7 [ffff800046373b70] do_translation_fault at ffffbe503ac76ebc
- #8 [ffff800046373b90] do_mem_abort at ffffbe5039ec68ac
- #9 [ffff800046373bc0] el1_abort at ffffbe503ac669bc
-crash> dis cache_set_flush+0x94
-0xffffbe50121fa4c8 <cache_set_flush+148>:       str     x23, [x20, #512]
+This series provides support for static configuration of venus from the resource
+structure via:
 
-If the bcache cache disk contains damaged data,when the bcache cache
-disk partition is directly operated,the system-udevd service is
-triggered to call the bcache-register program to register the
-bcache device, resulting in kernel oops.
+1. Adding two strings to the resource structure.
+   One string for the decoder one for the encoder.
+2. The string for each SoC has been matched to the existing in the
+   DT which currently specifies the mode as decoder or encoder.
+3. New logic in the driver parses the DTB looking for the node name
+   specified for the decoder and encoder .
+4. If the DTB contains the node name, then no new node is added as
+   we assume to be working with an "old" DTB.
+5. If the DTB does not contain the specified decoder/encoder string
+   then a new in-memory node is added which contains a compat string
+   consistent with upstream compat strings used to currently select
+   between the decoder and encoder respectively.
+6. In this way new venus driver entries may be added which respect
+   the requirement to move mode selection out of DTB and into driver.
+7. Simple instances of decoder/encoder nodes in the yaml schema have been
+   marked as deprecated.
+8. Since the proposed scheme here always defers to what the DTB says that
+   means it would be possible to remove decoder/encoder entries for the
+   deprecated schema should we choose to do so at a later date but,
+   that step is not taken in this series.
+9. Some of the upstream encoder/decoder nodes for example sdm630/sdm660
+   also contain clock and power-domain information and have not been
+   updated with the static configuration data or had the schema amended to
+   deprecate values. Because these nodes impart hardware specific
+   information and are already upstream this series proposes to leave
+   those as-is.
 
-This patch replaces IS_ERR() by IS_ERR_OR_NULL() to fix this.
+However if this scheme is adopted it should allow for addition of venus for
+both qcs615[1] and sc8280xp[2].
 
-Fixes: 028ddcac477b ("bcache: Remove unnecessary NULL point check in
-node allocations")
-Link: https://lore.kernel.org/all/3DF4A87A-2AC1-4893-AE5F-E921478419A9@suse.de/
-Cc: stable@vger.kernel.org
-Cc: Zheng Wang <zyytlz.wz@163.com>
-Cc: Coly Li <colyli@suse.de>
-Signed-off-by: Markus Weippert <markus@gekmihesg.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Other SoCs such as sm8550, sm8650 and beyond are expected to be supported
+by Iris.
+
+The sm8350 and sm8280xp in the second series would then be able to excise
+the offending compat = "video-encoder" | "video-decoder" in the schema and
+DT.
+
+I considered making this series an all singing all dancing method to select
+between encoder and decoder for all SoCs but, the objective here is not to
+add functionality but to provide support for configuration in-driver
+consistent with current usage and to do so with a minimal code
+intervention.
+
+So far I've tested on RB3 by removing:
+
+video-core0 {
+	compatible = "venus-decoder";
+};
+
+video-core1 {
+	compatible = "venus-encoder";
+};
+
+This works - the code adds the nodes into memory and the video
+encoder/decoder logic in the plaform code runs.
+
+Similarly if the nodes are left in-place then no new nodes are added by the
+code in this series and still both encoder and decoder probe.
+
+Thus proving the code works and will provide support for new platforms
+while also leaving open the option of dropping nodes from upstream.
+
+I've left the dropping step out for now, it can be implemented later.
+
+[1] https://lore.kernel.org/linux-arm-msm/20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com
+[2] https://lore.kernel.org/linux-media/20230731-topic-8280_venus-v1-0-8c8bbe1983a5@linaro.org/
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 1f829e74db0a..e2a803683105 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1723,7 +1723,7 @@ static void cache_set_flush(struct closure *cl)
-        if (!IS_ERR_OR_NULL(c->gc_thread))
-                kthread_stop(c->gc_thread);
+Bryan O'Donoghue (3):
+      media: venus: Add support for static video encoder/decoder declarations
+      media: venus: Populate video encoder/decoder nodename entries
+      media: dt-bindings: qcom-venus: Deprecate video-decoder and video-encoder where applicable
 
--       if (!IS_ERR_OR_NULL(c->root))
-+       if (!IS_ERR(c->root))
-                list_add(&c->root->list, &c->btree_cache);
-
-        /*
---
-
-Signed-off-by: cheliequan <cheliequan@inspur.com>
+ .../bindings/media/qcom,msm8916-venus.yaml         | 12 +---
+ .../bindings/media/qcom,sc7180-venus.yaml          | 12 +---
+ .../bindings/media/qcom,sc7280-venus.yaml          | 12 +---
+ .../bindings/media/qcom,sdm845-venus-v2.yaml       | 12 +---
+ .../bindings/media/qcom,sm8250-venus.yaml          | 12 +---
+ drivers/media/platform/qcom/venus/core.c           | 67 ++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/core.h           |  2 +
+ 7 files changed, 79 insertions(+), 50 deletions(-)
 ---
- drivers/md/bcache/super.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+change-id: 20241127-media-staging-24-11-25-rb3-hw-compat-string-ea3c99938021
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index fd97730479d8..c72f5576e4da 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1741,8 +1741,10 @@ static void cache_set_flush(struct closure *cl)
-        if (!IS_ERR_OR_NULL(c->gc_thread))
-                kthread_stop(c->gc_thread);
-
--       if (!IS_ERR(c->root))
--               list_add(&c->root->list, &c->btree_cache);
-+       if (!IS_ERR_OR_NULL(c->root)) {
-+               if (!list_empty(&c->root->list))
-+                       list_add(&c->root->list, &c->btree_cache);
-+       }
-
-        /*
-         * Avoid flushing cached nodes if cache set is retiring
+Best regards,
 -- 
-2.33.0
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
