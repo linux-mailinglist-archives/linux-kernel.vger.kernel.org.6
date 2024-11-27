@@ -1,163 +1,177 @@
-Return-Path: <linux-kernel+bounces-423650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBA59DAAE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0979DAAE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:41:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E5E281B80
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:41:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EE8281D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5889F20010B;
-	Wed, 27 Nov 2024 15:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E3420010C;
+	Wed, 27 Nov 2024 15:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ahFbmLjd"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOGo769g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864501FF7CF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48420328B6;
+	Wed, 27 Nov 2024 15:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732722093; cv=none; b=kXD1YFj5VslxnDPRTT1mY/MgrKbqQT2ttFUqlSEeQ6wlKrrHKK99FimS3rYF+b+uQW+wjM/Yl/3EtZJ9jOh6J0gUn1V0goEsyXycke0F7Ux4ELkAR8iCzyITX9/u0wMqYDa+/TsHYx7NB8k7FxpINWkY1uXUJU3B4WelVXUC/eo=
+	t=1732722079; cv=none; b=c9cIYrkBiROqViO2SGKzHLizF9Mwc6bGkctNYpwBPCU7A5bt9I+wHWlnmjcCZURkF0DHEtA+iWNiDP1xqRoiKHPX9jG6MW1WYtWHEX32F2YSZTYCk8KqXVHeKm7l4cV3n1nxkg7u6XlBDuFc0Ky5nVYg7QpXzsoBSE6olY9up/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732722093; c=relaxed/simple;
-	bh=58cuDrsg/OQLT2Ug3JOIoWAzpXpMMSW9mIf+RUrd1Ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+7qUpnh0v9yYDxZ6Sl0nr9bjycI0e6VMWl4M+kr5WAy/jCPgdsnScU9AUXokUGvrSCmWYnBFbyvcUwp4qvA1N7cgSf9Mf9/WQE9knSTZBzuprS+tochf+H1BDyPWvm3sw9OQyyVlPrDzW5XqWphyxfyw30/Q1t8zfMcuACIt1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ahFbmLjd; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so9980a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732722089; x=1733326889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xOp+x0lSSqAbodyySD8EebFArHIya2dNPwG3ZPMkL8Y=;
-        b=ahFbmLjdDMlIGezMIDuL74S2YGtwkbuJWSYOJQB2e6nvFpsD+JKKp1aL7HoXXr9jfx
-         qeMUIbwMRkQOvHJYpFmolw4ZXRE5C2Kthqboaxq+SJ27QQ+ZC5gKVEN/9QMMIPPGUL6o
-         IpGo7A/BJsNT7PLoWf5EfVTG4jJXXqPZaZyT5Fqzfm5+att5zdgH5lmVxngb905xiQc4
-         Ra0geHpvGvIp57FZOl2VH5+sadVbhosmTFU8W42WiIwbphyMhCcGPAEWZdPjJInpOdQh
-         ZmFQn+nTgT0oaq6AGtardkAnRXW9SrnlfxxwWXi70hbcMUBt86H5SZ/T+fap/YInnYE1
-         hu/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732722089; x=1733326889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xOp+x0lSSqAbodyySD8EebFArHIya2dNPwG3ZPMkL8Y=;
-        b=IbKvmAUOM3XqXDzhaKwd3We9S50dO2H1fi8k2cnf2AvYbsu+cybRyku+RAKmXAaX3G
-         iAhNLICuJzHW3HHmEoG+gh782wdfebE9CiRPJ39DPVEHgzvYUUm4USnN61Cs5itTUIVW
-         TWUp59eY04u3ktGNZqocGhcULsd/OobIjL4BkBASxzhb8wQx4sMCEKSpRMtxoSpYbUNR
-         EuoginozdM2RqrGfnEZDVej9vkoUnedtHT/aKXWFgGUrOr76mHQMRYTaF1775XQxPvF5
-         ptderY51tsudguwFc32wGphuDV0U0pcncDZvgzSHshOGvVsBaN6yG8Cp0gqBDjpb6b4f
-         DFxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpbGqWXUvkipd0dsKNg5KU32rBXsNFoae0TDBf9B8UA9NAtqvIjSF6FeZcnj49/hodjOMFPRxmGg1PqHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz00IWVQiDPjNzVZSWk882jVI3/YOg4zMrNNhpqqd+IV04Mps8n
-	XivlPH2r/+BzvYXXNZ/rNPvfsueqPCCh/WNopW9hKnIUwxGosCojcHZ+lE5mGUhIogHyatMaKZl
-	xSmq5M8VY/G1Bc0FG6OiRrXSsVZ4iMHGamUJ5
-X-Gm-Gg: ASbGncsdTh+bhXvamenC60Pn2L+sBp+AngqAuahyp9f1aAagcJOvek3a7b4MimiEXRm
-	axZMPfnIA2mtKJCRW3n2BhhAKG44yEOnKViqBIJ+roGD53luwkb/wXcCRadY=
-X-Google-Smtp-Source: AGHT+IGSxiMWpP0s/sQAaaFQzjTLl+Nv+eTmOa0mh0CF6SOrWd/yecanyWkZSe+M48mi+Aq+sg1yIMNNTsFok47rbAA=
-X-Received: by 2002:a05:6402:394:b0:5cf:c23c:2bee with SMTP id
- 4fb4d7f45d1cf-5d0810ab5cemr83997a12.0.1732722088392; Wed, 27 Nov 2024
- 07:41:28 -0800 (PST)
+	s=arc-20240116; t=1732722079; c=relaxed/simple;
+	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fUAI6D7TfZWTiebUZ3ij2EtxKosZjKUcACsxc7bBecZcr8ijjwOeUFocUMVMTk/y8XaXhpOEVGKcOgovlc3Gg8o2kMqg28fQI+rjmrpoHnobtj5UYhpEzWgdY3oOgtWemeGXjOAksIx+3/9gGEs56MqSaxrAU26tv49Qxgl9fH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOGo769g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5ADC4CECC;
+	Wed, 27 Nov 2024 15:41:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732722078;
+	bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IOGo769gRF6NaThfG/aRem8w6lMd6q3TVKX7KTAre+QIMv8oQIu7CFwTN/RGYB/p8
+	 BcfVMajnUjipgemFOEfrlQozVn8n2oHVUezC3xXJLcoLbzplrJYS6DO1GgkTt9oSk5
+	 YY+0kUx2brcTjWciQNZizNxvhFcpX22laSewEW2bRmPISm1OPb0hC7HDppTuUgnnyg
+	 m3bNRA6iBbr1cE1RLOwjSa3gjq6rqpF3rYXR0PMcKaH7u9yoTb7P9JeMazcL4xioHx
+	 wwwAxg/f2dGlQWyuErlr3KIXNKoj5QqJQZj/z6PhoFKZKuTD+mGJQbbdoS4vIA5Ews
+	 mBVd8jVCmU74A==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Wed, 27 Nov 2024 16:41:03 +0100
+Message-ID: <20241127-vfs-fixes-08465cd270d3@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-2-7127bfcdd54e@google.com>
- <CAG48ez28kzjrvMN66Yp9n+WziPzE5LU_Y320405Q=PoOzdzStg@mail.gmail.com> <CAH5fLggh7HeOm8wGZH=hnR+SyPoW8Hik3uy4RodibyjY1UT36w@mail.gmail.com>
-In-Reply-To: <CAH5fLggh7HeOm8wGZH=hnR+SyPoW8Hik3uy4RodibyjY1UT36w@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 27 Nov 2024 16:40:52 +0100
-Message-ID: <CAG48ez0QmQ7s_MmPj3Q9joEvGSkr9DUWoeJ6dvD=6icq+3DwKQ@mail.gmail.com>
-Subject: Re: [PATCH v9 2/8] mm: rust: add vm_area_struct methods that require
- read access
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3804; i=brauner@kernel.org; h=from:subject:message-id; bh=yplFH8W7Y+J109iyuIuu/LadReT3tZ4Zb8K7yt+vvf4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS720649Haj5NJ7K4IuCnFJ3mjnt8k9w+9a7/6Kw0GoS XUT1562jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIns+8fI0MCpYmU/q1VwRtyZ rFsGprs91A+dm5/frjTnhJpEqOEMJUaGrdMsVjHPmad9SOk913Qm7Z7e8yd/Lt85RS/x+puv7iK b2QA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27, 2024 at 1:01=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
-> On Tue, Nov 26, 2024 at 11:10=E2=80=AFPM Jann Horn <jannh@google.com> wro=
-te:
-> >
-> > On Fri, Nov 22, 2024 at 4:41=E2=80=AFPM Alice Ryhl <aliceryhl@google.co=
-m> wrote:
-> > > This adds a type called VmAreaRef which is used when referencing a vm=
-a
-> > > that you have read access to. Here, read access means that you hold
-> > > either the mmap read lock or the vma read lock (or stronger).
-> > >
-> > > Additionally, a vma_lookup method is added to the mmap read guard, wh=
-ich
-> > > enables you to obtain a &VmAreaRef in safe Rust code.
-> > >
-> > > This patch only provides a way to lock the mmap read lock, but a
-> > > follow-up patch also provides a way to just lock the vma read lock.
-> > >
-> > > Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
-> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> >
-> > Reviewed-by: Jann Horn <jannh@google.com>
->
-> Thanks!
->
-> > with one comment:
-> >
-> > > +    /// Zap pages in the given page range.
-> > > +    ///
-> > > +    /// This clears page table mappings for the range at the leaf le=
-vel, leaving all other page
-> > > +    /// tables intact, and freeing any memory referenced by the VMA =
-in this range. That is,
-> > > +    /// anonymous memory is completely freed, file-backed memory has=
- its reference count on page
-> > > +    /// cache folio's dropped, any dirty data will still be written =
-back to disk as usual.
-> > > +    #[inline]
-> > > +    pub fn zap_page_range_single(&self, address: usize, size: usize)=
- {
-> > > +        // SAFETY: By the type invariants, the caller has read acces=
-s to this VMA, which is
-> > > +        // sufficient for this method call. This method has no requi=
-rements on the vma flags. Any
-> > > +        // value of `address` and `size` is allowed.
-> >
-> > If we really want to allow any address and size, we might want to add
-> > an early bailout in zap_page_range_single(). The comment on top of
-> > zap_page_range_single() currently says "The range must fit into one
-> > VMA", and it looks like by the point we reach a bailout, we could have
-> > gone through an interval tree walk via
-> > mmu_notifier_invalidate_range_start()->__mmu_notifier_invalidate_range_=
-start()->mn_itree_invalidate()
-> > for a range that ends before it starts; I don't know how safe that is.
->
-> I could change the comment on zap_page_range_single() to say:
->
-> "The range should be contained within a single VMA. Otherwise an error
-> is returned."
->
-> And then I can add an overflow check at the top of
-> zap_page_range_single(). Sounds ok?
+Hey Linus,
 
-Yes, I think changing the comment like that and adding a check for
-whether address+size wraps around there addresses this.
+I was sent a bug fix for the backing file rework that relied on the
+overlayfs pull request. The vfs.fixes branch used an earlier mainline
+commit as base. So I thought how to resolve this and my solution was to
+create a new ovl.fixes branch which contained the overlayfs changes for
+v6.13 and then apply the fix on top of it. That branch was then merged
+into vfs.fixes with an explanation why. Let me know if I should do this
+differently next time.
+
+/* Summary */
+
+This contains various fixes for this cycle:
+
+- Fix a few iomap bugs.
+
+- Fix a wrong argument in backing file callback.
+
+- Fix security mount option retrieval in statmount().
+
+- Cleanup how statmount() handles unescaped options.
+
+- Add a missing inode_owner_or_capable() check for setting write hints.
+
+- Clear the return value in read_kcore_iter() after a successful
+  iov_iter_zero().
+
+- Fix a mount_setattr() selftest.
+
+- Fix function signature in mount api documentation.
+
+- Remove duplicate include header in the fscache code.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
+
+All patches have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit e7675238b9bf4db0b872d5dbcd53efa31914c98f:
+
+  Merge tag 'ovl-update-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs (2024-11-22 20:55:42 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13-rc1.fixes
+
+for you to fetch changes up to cf87766dd6f9ddcceaa8ee26e3cbd7538e42dd19:
+
+  Merge branch 'ovl.fixes' (2024-11-26 18:15:06 +0100)
+
+Please consider pulling these changes from the signed vfs-6.13-rc1.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.13-rc1.fixes
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      fs/backing_file: fix wrong argument in callback
+
+Brian Foster (4):
+      iomap: warn on zero range of a post-eof folio
+      iomap: reset per-iter state on non-error iter advances
+      iomap: lift zeroed mapping handling into iomap_zero_range()
+      iomap: elide flush from partial eof zero range
+
+Christian Brauner (3):
+      Merge patch series "iomap: zero range flush fixes"
+      statmount: fix security option retrieval
+      Merge branch 'ovl.fixes'
+
+Christoph Hellwig (1):
+      fs: require inode_owner_or_capable for F_SET_RW_HINT
+
+Jiri Olsa (1):
+      fs/proc/kcore.c: Clear ret value in read_kcore_iter after successful iov_iter_zero
+
+Michael Ellerman (1):
+      selftests/mount_setattr: Fix failures on 64K PAGE_SIZE kernels
+
+Miklos Szeredi (1):
+      statmount: clean up unescaped option handling
+
+Randy Dunlap (1):
+      fs_parser: update mount_api doc to match function signature
+
+Thorsten Blum (1):
+      fscache: Remove duplicate included header
+
+ Documentation/filesystems/mount_api.rst            |  3 +-
+ fs/backing-file.c                                  |  3 +-
+ fs/fcntl.c                                         |  3 +
+ fs/iomap/buffered-io.c                             | 90 +++++++++++-----------
+ fs/iomap/iter.c                                    | 11 ++-
+ fs/namespace.c                                     | 46 +++++------
+ fs/netfs/fscache_io.c                              |  1 -
+ fs/proc/kcore.c                                    |  1 +
+ .../selftests/mount_setattr/mount_setattr_test.c   |  2 +-
+ 9 files changed, 81 insertions(+), 79 deletions(-)
 
