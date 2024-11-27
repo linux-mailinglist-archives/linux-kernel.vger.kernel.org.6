@@ -1,156 +1,206 @@
-Return-Path: <linux-kernel+bounces-423445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F219DA78E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:16:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5B89DA7D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF5FAB238E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:10:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0779EB29396
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82811FBC89;
-	Wed, 27 Nov 2024 12:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F6A1FBC97;
+	Wed, 27 Nov 2024 12:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="z1nDNSfD"
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MFbS8Dqc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428461FAC5A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D31F667E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732709415; cv=none; b=cFgHxvat0IMho8sNSnXXHU7xE0ad2K/+d/71xbo1TBfpe72LQf4ZY375PDr9QSrQCn1GvlVS+xWmHS8VWav+9+oE0yfa4GugoK0gTY99hW1UAbw+nP4uhsXSMG5o5gW1rtqDa+O1F3SM2KQvcqYKuLflq3+yNqV83diM9FsWo58=
+	t=1732709472; cv=none; b=nto5ZPevuiWFxjG+ysupL2aFh4BVSdxB/7bHPe40LOWTyMHm98cTjV7POOUr5AjUWijTYOQDWZrC9cRmYNL3Pe4NDDcn/aNMJbRgTEu7ak3qXkAhUCZfCkH7nHR61rUQL/nvdFSCMWIKORU1PQf2SxdXle9fNjj+9ABOv0SR5wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732709415; c=relaxed/simple;
-	bh=iL9L2yvqBC7QBxFr60b9hN1d56U3FPt5NB22f54JlZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrP2XYegD5nZLER49m4i4f/1wT3XQhfjwoqTkxKQx0pF6WvSRJtyrS+hzTkRYAUqEmylnR+EwMhoKwVSSj3NlCq8lhjnM3tDyuXFaKUseHMi12IAVd7pTLmdgQHaPgNJIfZjciaT+ejubK9lUbPc4Yl8lUjIEKXKhlmAWtoPDOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=z1nDNSfD; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xyyth2djbz6vv;
-	Wed, 27 Nov 2024 13:10:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732709404;
-	bh=eaKW65KI9A4QWlkoj9p8ZqojNDFsLmXT/WQoZnFsFi4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=z1nDNSfDg8/hBzUqX3ND2eBcdGPY0I9VFQ7uecWNWsXIjKccfI9h5bzk/YwjONaUY
-	 F6ZVNzQLzkfp8vDEcetAyqgAdma7/LWhN950mzLoaG/ViuhXt0nFJUuAuvOCupiWmr
-	 2456DcNFx8quafajuekQEQoGZa5dDLRuchrtSIFk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xyytg25xszfTJ;
-	Wed, 27 Nov 2024 13:10:03 +0100 (CET)
-Date: Wed, 27 Nov 2024 13:10:01 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc"
- interpreter and 28 tests
-Message-ID: <20241127.Ob8DaeR9xaul@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
- <20241112191858.162021-7-mic@digikod.net>
- <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
- <20241122.ahY1pooz1ing@digikod.net>
- <623f89b4de41ac14e0e48e106b846abc9e9d70cf.camel@linux.ibm.com>
+	s=arc-20240116; t=1732709472; c=relaxed/simple;
+	bh=F5eOtfppEc+IoodKU/rNNKsKD6NOPU6CRFuchJeSG84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Blp/gDXUlh81JtDGz5DPi6pDX1i1zEIr5cetlZ8mz1279b/O16RVaVgvQQiDzg4NOJXyzjqcRQaVuEi6HuAHv6wLNvkF3T+A6qkmolXoS7p90kvvQfJ4dfIxw3RVw/0uBqUNE6XfIM6n/6GUqioMBzOGduLQ1jkho3nYjEwr4WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MFbS8Dqc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732709470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q6JOBTkXOEhLaQ1n7b3llX+BM31La79H/YhyA4I23K8=;
+	b=MFbS8DqcBkdaRmuP7VUQOHZEjp7pBcv1tBD8yiQYTowJ+g2kfiyjMVU+8yMi1OP9HI0PYK
+	qTOVdwqbljxAHjAo7nuzHnHR7zKqUUVGCU6oUOlzS+TY2BKBgOKOlZ1oCMtL7VUrB05EH+
+	ET9sQFLs73WCRKnDsXN84BqJ2rDXgNw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-224-3R3tuML-NQW8tP6Xquh7mQ-1; Wed, 27 Nov 2024 07:11:08 -0500
+X-MC-Unique: 3R3tuML-NQW8tP6Xquh7mQ-1
+X-Mimecast-MFC-AGG-ID: 3R3tuML-NQW8tP6Xquh7mQ
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4349c5e58a3so28875135e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:11:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732709468; x=1733314268;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6JOBTkXOEhLaQ1n7b3llX+BM31La79H/YhyA4I23K8=;
+        b=v40HzIdIcD8cGEPYBpv3c8by5jYt2WqvUKzBQRGvLhjDLZWxxdkE60ZcG7bV06JQJY
+         Fx8/NDRwtMWo7RHoT56F5vhLUlVL//fwKttHBD/xh5ocjaTEUKpeKEA6Qww+Py0yMyww
+         I4qEWkuufcguagPNBfBW9QDwX8/icxapeeMlj13v7fvlevTwSjdZo+aMj9gx/UTw3xaJ
+         ha8VnMJXvTXdrm/C2uxka3w7Nlm5A8xnWcT6ZCgHFvUMr4ECWum+xqyVCW9UPiqjNKuG
+         ogG3dLOYfVxhLMnKlt/QiDMLB80KDx5B5ooLlI3sDuUNVUeNND2iYgeIG8UzWyngCnUA
+         tqkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmciIBBwgFy+Xn1dOmwVrIsC1PL1ckl6r/kpyqMjT2sfI4veC0TAkxD97LPTrKsLuhTCej+wIxVcDrJQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0W9NI5am6WWh7Dt5cOoS1BYeAzGL+nt1QRO+mk6RX9bO8+z/o
+	WKJM63QNVJfPzhV/3Kc5dea+HMXog5uQ795uIQ1KkPz0B67l3d3TpVinBljJ98HPWblZNWfjjML
+	vO6Y/LbcxHRQQ24RrdzYIG9w8K/HVFpXvSysPSZmdhBbXfyQgi1bJbXdLFrAUyA==
+X-Gm-Gg: ASbGncsDa0sZK8Wm8szjbKNOFEkHS276/rAxQ05vHQHyPL/KsgA2y+nGEZYhJEp+uiP
+	kDhEYcPfYUAa40waRLmO/eRcQDErBlyRUGX66HSEAF5P9KwbLbZ9LaABrh83bNtNkalswysd5TM
+	CU63AFrUewHtNh9txqyz5gVBY6J0yO6HN+dTbO9N4ugSCbMfC0cqMnGq+MtlNZ7MVdasZPu3gFt
+	g9ygui0rImQJ/eeqLwMyo8moEBCe+pLk0/f4cSaWaGhAGlyli7rX9/RSQjHfyx7w/uqsHWnJ+SI
+X-Received: by 2002:a05:600c:19cc:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-434a9dbaee2mr22037105e9.1.1732709467642;
+        Wed, 27 Nov 2024 04:11:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5S7X4BAK6Tw9UTBAoY3UvWdn/j85UYNxieDiSkT4Elsqw0mXyIcfPgWHb8aQubHgLtUvoWQ==
+X-Received: by 2002:a05:600c:19cc:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-434a9dbaee2mr22036925e9.1.1732709467289;
+        Wed, 27 Nov 2024 04:11:07 -0800 (PST)
+Received: from [192.168.88.24] (146-241-60-32.dyn.eolo.it. [146.241.60.32])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385c89fe5dbsm1187093f8f.102.2024.11.27.04.11.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 04:11:06 -0800 (PST)
+Message-ID: <7f5fd10d-aaf9-4259-9505-3fbabc3ba102@redhat.com>
+Date: Wed, 27 Nov 2024 13:11:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <623f89b4de41ac14e0e48e106b846abc9e9d70cf.camel@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 2/2] net: ethernet: oa_tc6: fix tx skb race
+ condition between reference pointers
+To: Parthiban.Veerasooran@microchip.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ UNGLinuxDriver@microchip.com, jacob.e.keller@intel.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org
+References: <20241122102135.428272-1-parthiban.veerasooran@microchip.com>
+ <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
+ <1d7f6fbc-bc3c-4a21-b55e-80fcd575e618@redhat.com>
+ <8f06872b-1c6f-47fb-a82f-7d66a6b1c49b@microchip.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <8f06872b-1c6f-47fb-a82f-7d66a6b1c49b@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 12:41:45PM -0500, Mimi Zohar wrote:
-> On Fri, 2024-11-22 at 15:50 +0100, Mickaël Salaün wrote:
-> > On Thu, Nov 21, 2024 at 03:34:47PM -0500, Mimi Zohar wrote:
-> > > Hi Mickaël,
-> > > 
-> > > On Tue, 2024-11-12 at 20:18 +0100, Mickaël Salaün wrote:
-> > > > 
-> > > > +
-> > > > +/* Returns 1 on error, 0 otherwise. */
-> > > > +static int interpret_stream(FILE *script, char *const script_name,
-> > > > +			    char *const *const envp, const bool restrict_stream)
-> > > > +{
-> > > > +	int err;
-> > > > +	char *const script_argv[] = { script_name, NULL };
-> > > > +	char buf[128] = {};
-> > > > +	size_t buf_size = sizeof(buf);
-> > > > +
-> > > > +	/*
-> > > > +	 * We pass a valid argv and envp to the kernel to emulate a native
-> > > > +	 * script execution.  We must use the script file descriptor instead of
-> > > > +	 * the script path name to avoid race conditions.
-> > > > +	 */
-> > > > +	err = execveat(fileno(script), "", script_argv, envp,
-> > > > +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> > > 
-> > > At least with v20, the AT_CHECK always was being set, independent of whether
-> > > set-exec.c set it.  I'll re-test with v21.
-> > 
-> > AT_EXECVE_CEHCK should always be set, only the interpretation of the
-> > result should be relative to securebits.  This is highlighted in the
-> > documentation.
+On 11/27/24 11:49, Parthiban.Veerasooran@microchip.com wrote:
+> On 26/11/24 4:11 pm, Paolo Abeni wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 11/22/24 11:21, Parthiban Veerasooran wrote:
+>>> There are two skb pointers to manage tx skb's enqueued from n/w stack.
+>>> waiting_tx_skb pointer points to the tx skb which needs to be processed
+>>> and ongoing_tx_skb pointer points to the tx skb which is being processed.
+>>>
+>>> SPI thread prepares the tx data chunks from the tx skb pointed by the
+>>> ongoing_tx_skb pointer. When the tx skb pointed by the ongoing_tx_skb is
+>>> processed, the tx skb pointed by the waiting_tx_skb is assigned to
+>>> ongoing_tx_skb and the waiting_tx_skb pointer is assigned with NULL.
+>>> Whenever there is a new tx skb from n/w stack, it will be assigned to
+>>> waiting_tx_skb pointer if it is NULL. Enqueuing and processing of a tx skb
+>>> handled in two different threads.
+>>>
+>>> Consider a scenario where the SPI thread processed an ongoing_tx_skb and
+>>> it moves next tx skb from waiting_tx_skb pointer to ongoing_tx_skb pointer
+>>> without doing any NULL check. At this time, if the waiting_tx_skb pointer
+>>> is NULL then ongoing_tx_skb pointer is also assigned with NULL. After
+>>> that, if a new tx skb is assigned to waiting_tx_skb pointer by the n/w
+>>> stack and there is a chance to overwrite the tx skb pointer with NULL in
+>>> the SPI thread. Finally one of the tx skb will be left as unhandled,
+>>> resulting packet missing and memory leak.
+>>> To overcome the above issue, protect the moving of tx skb reference from
+>>> waiting_tx_skb pointer to ongoing_tx_skb pointer so that the other thread
+>>> can't access the waiting_tx_skb pointer until the current thread completes
+>>> moving the tx skb reference safely.
+>>
+>> A mutex looks overkill. Why don't you use a spinlock? why locking only
+>> one side (the writer) would be enough?
+> Ah my bad, missed to protect tc6->waiting_tx_skb = skb. So that it will 
+> become like below,
 > 
-> Sure, that sounds correct.  With an IMA-appraisal policy, any unsigned script
-> with the is_check flag set now emits an "cause=IMA-signature-required" audit
-> message.  However since IMA-appraisal isn't enforcing file signatures, this
-> sounds wrong.
+> mutex_lock(&tc6->tx_skb_lock);
+> tc6->waiting_tx_skb = skb;
+> mutex_unlock(&tc6->tx_skb_lock);
 > 
-> New audit messages like "IMA-signature-required-by-interpreter" and "IMA-
-> signature-not-required-by-interpreter" would need to be defined based on the
-> SECBIT_EXEC_RESTRICT_FILE.
+> As both are not called from atomic context and they are allowed to 
+> sleep, I used mutex rather than spinlock.
+>>
+>> Could you please report the exact sequence of events in a time diagram
+>> leading to the bug, something alike the following?
+>>
+>> CPU0                                    CPU1
+>> oa_tc6_start_xmit
+>>   ...
+>>                                          oa_tc6_spi_thread_handler
+>>                                           ...
+> Good case:
+> ----------
+> Consider waiting_tx_skb is NULL.
+> 
+> Thread1 (oa_tc6_start_xmit)	Thread2 (oa_tc6_spi_thread_handler)
+> ---------------------------	-----------------------------------
+> - if waiting_tx_skb is NULL
+> - waiting_tx_skb = skb
+> 				- if ongoing_tx_skb is NULL
+> 				- ongoing_tx_skb = waiting_tx_skb
+> 				- waiting_tx_skb = NULL
+> 				...
+> 				- ongoing_tx_skb = NULL
+> - if waiting_tx_skb is NULL
+> - waiting_tx_skb = skb
+> 				- if ongoing_tx_skb is NULL
+> 				- ongoing_tx_skb = waiting_tx_skb
+> 				- waiting_tx_skb = NULL
+> 				...
+> 				- ongoing_tx_skb = NULL
+> ....
+> 
+> Bad case:
+> ---------
+> Consider waiting_tx_skb is NULL.
+> 
+> Thread1 (oa_tc6_start_xmit)	Thread2 (oa_tc6_spi_thread_handler)
+> ---------------------------	-----------------------------------
+> - if waiting_tx_skb is NULL
+> - waiting_tx_skb = skb
+> 				- if ongoing_tx_skb is NULL
 
-It makes sense.  Could you please send a patch for these
-IMA-*-interpreter changes?  I'll include it in the next series.
+AFAICS, if 'waiting_tx_skb == NULL and Thread2 is in
+oa_tc6_spi_thread_handler()/oa_tc6_prepare_spi_tx_buf_for_tx_skbs()
+then ongoing_tx_skb can not be NULL, due to the previous check in:
 
-> 
-> 
-> > > 
-> > > > +	if (err && restrict_stream) {
-> > > > +		perror("ERROR: Script execution check");
-> > > > +		return 1;
-> > > > +	}
-> > > > +
-> > > > +	/* Reads script. */
-> > > > +	buf_size = fread(buf, 1, buf_size - 1, script);
-> > > > +	return interpret_buffer(buf, buf_size);
-> > > > +}
-> > > > +
-> > > 
-> > > 
-> > 
-> 
-> 
+https://elixir.bootlin.com/linux/v6.12/source/drivers/net/ethernet/oa_tc6.c#L1064
+
+This looks like a single reader/single write scenarios that does not
+need any lock to ensure consistency.
+
+Do you observe any memory leak in real life scenarios?
+
+BTW it looks like both oa_tc6_start_xmit and oa_tc6_spi_thread_handler
+are possibly lacking memory barriers to avoid missing wake-ups.
+
+Cheers,
+
+Paolo
+
 
