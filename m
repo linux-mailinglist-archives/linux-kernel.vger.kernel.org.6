@@ -1,146 +1,172 @@
-Return-Path: <linux-kernel+bounces-422957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F129DA06F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:42:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1AAF9DA07B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34D728507C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:42:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8784F284FD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0E31BDE6;
-	Wed, 27 Nov 2024 01:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8474D2110E;
+	Wed, 27 Nov 2024 01:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FJdg0jpL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IqnU1riJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EEC28E8;
-	Wed, 27 Nov 2024 01:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D581C18E0E;
+	Wed, 27 Nov 2024 01:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732671766; cv=none; b=ZuV5xc1HIQbniHP5aLGyw0PLEr0XRGecYgiM0WIwvJbmFxXu4klpM2O/E57xXsc33YCinS3YdSOoQdlY/EZdQaWR1XNTGA9c6wSBZQsurpg+PYlIP3l9fO9QEgZFd3UaoZWJZtTIg9Qr38ZLCFWUE2Yn6YrRz724IiXSuR7PhbA=
+	t=1732672365; cv=none; b=PIBRsOUXUU0rZzLmAfKQXTMqqgASp2mpaXzvjue5YHmVy33Inyu1SvPYk4AjV6OKXEygGDobvrlnaumHiP2SXUQ7mKKkJnOxLLn91Dpto7WnvOSufA0BJbRACgn1F+LPVnn1Nh9zv2RdjlZVs/XY2L4S9X/gs/nWsCEc6u9qU+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732671766; c=relaxed/simple;
-	bh=W+y24p0JQZmblXrM2wuNDcuR7LGrAv4BH99beYTBo78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rTxqlBWz3t0GKDb4XdzQvzN3hXpl4o5f0+wiMw4i9gkCsAiIJJca1YYnEMpQquT8RZHzcpoHN/045qystW3VSxp7bZeqDhqbMIsFx0OFxdQtMjbDm5WAJ7uA5L3H4sJuHnFdIJmDhTkIH7VraTz3fy7/lFezFgMaGxHBAaGdayk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FJdg0jpL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKKxGB028826;
-	Wed, 27 Nov 2024 01:42:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OrONQ+CWoo/0YARp8CoV9PkeUGcON1u1GMLGMH9wdJw=; b=FJdg0jpLsjECGTus
-	6WUCG60EtrjrkwHv0MWeSIbtXo9URssMwdyQAdiIVTYE2/MpYcrefnmVPIw94u3r
-	MWSoEEadVzmXHm4i3Gnu4vNuGqFtjiAMKpswIuZBfvtCtzaDjA20aLlGuHa4HjOC
-	hHydaZfN9WRUa8PViRvIm40fz8bfPun9EUf9xh7FidCun5dck2jpXyth7Wd6TY77
-	xhMf3EsFtp6blpKAhjmsCdWm0WLAGmlVrnecYO8v6dJR41YnJECZCEXqrVmki+Qu
-	kk5oX5iLR09MyoaMWUq5mJ6AlB4xIkEetWGMbZaEqguSkSoGrkCVloVoQAIejZnT
-	xYEnfQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434nyg61tn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 01:42:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR1gRxW004857
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 01:42:27 GMT
-Received: from [10.216.8.10] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
- 2024 17:42:19 -0800
-Message-ID: <9ff459ed-4491-4bd4-1402-622d9c31cb71@quicinc.com>
-Date: Wed, 27 Nov 2024 07:12:16 +0530
+	s=arc-20240116; t=1732672365; c=relaxed/simple;
+	bh=u8XBNmwneoxB5iJSOE8owpe1u+lvHw247qoEVK8QUCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqDpKFS6KO2OzWf/NfkRN336Mc+5Lf82zn7EgO/O9UbaixYSOASK4IszSPklzVquyRrcpnqfllkh/53AWurxGnyCYpRLMAp+fAaldutg9+zdecBSbAor4RyU7bALJMXK6qAd72CfuZtfVUgwbdy892bJ3ait6wo6iU3SBKGxx+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IqnU1riJ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732672365; x=1764208365;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u8XBNmwneoxB5iJSOE8owpe1u+lvHw247qoEVK8QUCw=;
+  b=IqnU1riJJMOdaCoHvuhmY46tyJD6dvI54f/P2Pnme6WC3xR5vVWy3Fj8
+   MMb8lxFFMu/HdAmobFTJaYWSrut7UWKYErlxAKXhkNWGZ3Tmsj7mtS+1l
+   P7ogF2pn/XUV+blOYUemk5o69JDlaxhVPJLGbRJSjELMxh3YjiGE0D3ms
+   xUe31JWyIsVDQTVyTSjT9yKW9686SsoFmjOs7bE+d4tILYWQgSn/P38V+
+   TkdNjrGrpbIOHA6qRel8nb65hUwQxbBXUXfLszjtTGJWwUr26EN+EVecw
+   WsX4l/hoyzNx3B11HhQLmc8WAxX5bEcJZznwuAT3G2HXvkfcn4EKeMF3N
+   A==;
+X-CSE-ConnectionGUID: 2yAN82ijS3uSpDaZktAQyQ==
+X-CSE-MsgGUID: c6UJnGTKT02i/CA0opHeQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36522200"
+X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
+   d="scan'208";a="36522200"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 17:52:44 -0800
+X-CSE-ConnectionGUID: vVheyF9cQl+zWAixouNtOw==
+X-CSE-MsgGUID: +iGyTpcfSn+/pU+XeSIWEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
+   d="scan'208";a="92110771"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa010.fm.intel.com with ESMTP; 26 Nov 2024 17:52:40 -0800
+Date: Wed, 27 Nov 2024 09:49:38 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Manne, Nava kishore" <nava.kishore.manne@amd.com>
+Cc: "git (AMD-Xilinx)" <git@amd.com>, "mdf@kernel.org" <mdf@kernel.org>,
+	"hao.wu@intel.com" <hao.wu@intel.com>,
+	"yilun.xu@intel.com" <yilun.xu@intel.com>,
+	"trix@redhat.com" <trix@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"saravanak@google.com" <saravanak@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [RFC v2 1/1] fpga-region: Add generic IOCTL interface for
+ runtime FPGA programming
+Message-ID: <Z0Z6socXrmHQ26C0@yilunxu-OptiPlex-7050>
+References: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
+ <20241029091734.3288005-2-nava.kishore.manne@amd.com>
+ <ZzwQrYeWVF6cRtgA@yilunxu-OptiPlex-7050>
+ <DS7PR12MB6070AAA0C413DBF26F685207CD222@DS7PR12MB6070.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: x1e80100: Add PCIe lane
- equalization preset properties
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <quic_mrana@quicinc.com>,
-        <quic_vbadigan@quicinc.com>, <kernel@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han
-	<jingoohan1@gmail.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20241116-presets-v1-0-878a837a4fee@quicinc.com>
- <20241116-presets-v1-1-878a837a4fee@quicinc.com>
- <5648484f-38f2-4c75-b8a3-7a0148dc940b@oss.qualcomm.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <5648484f-38f2-4c75-b8a3-7a0148dc940b@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wZDQKUsZMpz6e0I4pL6xTejUgl1-tWfW
-X-Proofpoint-ORIG-GUID: wZDQKUsZMpz6e0I4pL6xTejUgl1-tWfW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- mlxlogscore=768 clxscore=1015 mlxscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411270012
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS7PR12MB6070AAA0C413DBF26F685207CD222@DS7PR12MB6070.namprd12.prod.outlook.com>
 
+> > > + * struct fpga_region_ops - ops for low level FPGA region ops for
+> > > +device
+> > > + * enumeration/removal
+> > > + * @region_status: returns the FPGA region status
+> > > + * @region_config_enumeration: Configure and enumerate the FPGA region.
+> > > + * @region_remove: Remove all devices within the FPGA region
+> > > + * (which are added as part of the enumeration).
+> > > + */
+> > > +struct fpga_region_ops {
+> > > +	int (*region_status)(struct fpga_region *region);
+> > > +	int (*region_config_enumeration)(struct fpga_region *region,
+> > > +					 struct fpga_region_config_info *config_info);
+> > 
+> > My current concern is still about this combined API, it just offloads all work to low
+> > level, but we have some common flows. That's why we introduce a common FPGA
+> > reprograming API.
+> > 
+> > I didn't see issue about the vendor specific pre configuration. They are generally
+> > needed to initialize the struct fpga_image_info, which is a common structure for
+> > fpga_region_program_fpga().
+> > 
+> > For port IDs(AFU) inputs for DFL, I think it could also be changed (Don't have to be
+> > implemented in this patchset). Previously DFL provides an uAPI for the whole
+> > device, so it needs a port_id input to position which fpga_region within the device for
+> > programming. But now, we are introducing a per fpga_region programming interface,
+> > IIUC port_id should not be needed anymore.
+> > 
+> > The combined API is truly simple for leveraging the existing of-fpga-region overlay
+> > apply mechanism. But IMHO that flow doesn't fit our new uAPI well. That flow is to
+> > adapt the generic configfs overlay interface, which comes to a dead end as you
+> > mentioned.
+> > 
+> > My gut feeling for the generic programing flow should be:
+> > 
+> >  1. Program the image to HW.
+> >  2. Enumerate the programmed image (apply the DT overlay)
+> > 
+> > Why we have to:
+> > 
+> >  1. Start enumeration.
+> >  2. On pre enumeration, programe the image.
+> >  3. Real enumeration.
+> > 
+> 
+> I agree with the approach of leveraging vendor-specific callbacks to handle
+> the distinct phases of the FPGA programming process. 
+> Here's the proposed flow.
+>  
+> Pre-Configuration:
+> A vendor-specific callback extracts the required pre-configuration details
+> and initializes struct fpga_image_info. This ensures that all vendor-specific
 
+Since we need to construct the fpga_image_info, initialize multiple
+field as needed, I'm wondering if configfs could be a solution for the
+uAPI?
 
-On 11/16/2024 4:49 PM, Konrad Dybcio wrote:
-> On 16.11.2024 2:37 AM, Krishna chaitanya chundru wrote:
->> Add PCIe lane equalization preset properties for 8 GT/s and 16 GT/s data
->> rates used in lane equalization procedure.
->>
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> index a36076e3c56b..6a2074297030 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->> @@ -2993,6 +2993,10 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->>   			phys = <&pcie6a_phy>;
->>   			phy-names = "pciephy";
->>   
->> +			eq-presets-8gts = /bits/ 16 <0x5555 0x5555>;
+> requirements are handled before proceeding to the programming phase.
+>  
+> Programming:
+> The common API fpga_region_program_fpga() is used to program the image
+> to hardware. This standardizes the programming logic, minimizing duplication
+> and ensuring consistency across implementations.
+>  
+> Enumeration:
+> A vendor-specific callback is used for real enumeration, enabling hardware
+> specific customization while keeping the flow flexible and adaptable
 > 
-> If we make all of these presets u8 arrays, we can use the:
-> 
-> property = [0xff 0xff 0xff 0xff];
-> 
-> syntax
-> 
-> Konrad
-we can't make the property as u8 as each index represents single lane
-and for 8 GT/s data rates each value needs 16bits. So for 8 GT/s we have
-to use u16 array only.
+> This approach provides a clean separation of responsibilities, with
+> vendor-specific logic confined to the pre-configuration and enumeration
+> phases, while the programming phase leverages a common API.
+> It simplifies maintenance and aligns well with the Program -> Enumerate flow.
 
-- Krishna Chaitanya.
+Generally I'm good to this flow.
+
+Thanks,
+Yilun
+
+>  
+> Looking forward to your feedback.
+> 
+> 
+> Regards,
+> Navakishore.
 
