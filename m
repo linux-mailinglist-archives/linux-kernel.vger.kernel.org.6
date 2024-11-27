@@ -1,210 +1,240 @@
-Return-Path: <linux-kernel+bounces-423669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026699DAB20
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:55:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD209DAB28
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9548B223D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99A0281FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ACB20012F;
-	Wed, 27 Nov 2024 15:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6734720013A;
+	Wed, 27 Nov 2024 15:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cIXMO1LC"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2048.outbound.protection.outlook.com [40.107.92.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PU0L/DdG"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A431200117;
-	Wed, 27 Nov 2024 15:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732722903; cv=fail; b=uyG0jLMAJN1PdMMsOpfWfGbPYl7epI30s/8Bey1ZeV+W011m1bwIpGiPkEAVz2E/P+9nuBMnLZdH6f1VbhsuIhYOQBBSSD/r4VjlQjAoenwpxL0iVIOHmgw3ksUM45Bie33JqV6uyMovzXvZuGNUIjFRoBFeJH1tdvtTTbFXEAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732722903; c=relaxed/simple;
-	bh=bedTBeDNuIdPW/g+6qV7jrl/G5kQAUOrmgIxn5FsBqo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kJhz75St6vbVEpug8fdFdsrL6njNv1YhXQp3/lO0evv62rJ5Aa9MADaVLmdCSIm7LcQPhGiq7DqIwFH2UWW8NYdFY9F91ACKAVzSThDkGxzBGh43aCI41KkiI6GE+3gt/gGJVoifBgVA4+3HOjWFc6IR6xMlgPxjPCsAepQSSTg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cIXMO1LC; arc=fail smtp.client-ip=40.107.92.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G/PLf3EDdqLnUQJIfdXze7q+hwgGgGJ35no0E1usELn53VqwCzxEcSMqxW3ZfZtXAYG1gAB4g8y5eiM6oA40YrBNau/CJOgQgst1MO8xTSuYuaqBrq4STlnc5/fmI3aNKoYKVBftxmQ+/YHBT9w/abm+rk3V+o5eyc7vrjGOaSyoLlWDrXLPCV0ym591wollaiI5zVAlg5QgwDVG7MTMj0TZhYS7e2a49Q3GWqHYMneKWOfWmWnEEfHAAftOXIitrJ+v5LSg0OamWcd/J0+aD9IK/mYM1nGrB5aLG7EABEpaBfAkofcV8Op7mhHJt+uvnMqK8Upj9323316lqY/mCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cWmwinlChVffaXzkviOnkskEazxN/lfsv6Tcvc7bbOM=;
- b=Sg5l/EVZjWB9fyQfwX5Ng5E2lvbBOkDk3iXU1PrjTyNGL6zG7rKzer2AvtFwuNPWKPZtwd+9QriEnBAvV5Dw7Et4O6R8WSoUWnMZpLu4RgTPxJIG2w+1es3rvXr3oQ0EbkUIjXiajT86vQdgpanNggmA+ZUFbuNwpQinobK5GaJKZ2uA0om3ptsekxNf2857QAFlUlWp1bCc2MRDD5AlXSMtP6s/JUflbcArz6noDBU8NMVoipA1YToJtREwZwXs6WzjG8+aBJm+gMbIpxYD58CeEjGqtDf+cLLH4TzSjtKY/iZdF+YnQbEAz1b0GmYpNqHmlN3WFSHwA+kukzIPxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cWmwinlChVffaXzkviOnkskEazxN/lfsv6Tcvc7bbOM=;
- b=cIXMO1LCdVVVyf1TbFmwv9VChDDerpN+Q4il4q2sCZhwwSykFSymMXi80MJ82tSlj76BIwsfqpjUIA0pkxmxbVfEqofpuoOBLi0MaC8fB1sHayMWqUilw0weR9T87WlyMhCSvctXxzkbrEvFCSCL0g/HLPiLaXEH4uB2aylAiAE/DaWoqZ/i4qpH4AuhbhCPArwohZN0Cnm4VVP6ty/g15URLTYHkTO2JIMOS/nemmyXmJnwU+ubOL+MZG4DyRO2LOJmgEsUXVcUV8GFqneMwuiPYK3/6xggflUCMflNlfvlCdoU60H6FMyFltg7yNNN3UvLK6CXDKH54WepZsg2Qw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SJ2PR12MB7941.namprd12.prod.outlook.com (2603:10b6:a03:4d3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Wed, 27 Nov
- 2024 15:54:57 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%2]) with mapi id 15.20.8207.010; Wed, 27 Nov 2024
- 15:54:57 +0000
-Message-ID: <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
-Date: Wed, 27 Nov 2024 15:54:52 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
- controller
-To: Mark Brown <broonie@kernel.org>, Vishwaroop A <va@nvidia.com>,
- krzk+dt@kernel.org
-Cc: robh@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
-References: <20241126134529.936451-1-va@nvidia.com>
- <20241126134529.936451-3-va@nvidia.com>
- <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P123CA0051.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1::15) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A35200121
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732722933; cv=none; b=O6ZwA+4uqkzAcSk4ajmCxQ6GY2upaK6Lxxgu5lQ1eaouKrrSwRb/TfcCLDK17zQJFXkmjNQSPxsoIKf862mRypC+WTVhdKshVTQOgO+Am5YkkJAnEU57ST5ZuKonNY0DbXQjZ265xiI5gifUzGI+C/dWejEvEN1QaaNVmuv7+KA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732722933; c=relaxed/simple;
+	bh=M78xFjTtzjUp+sgtV1vhmtloCxaKb1TcGmKL3Bb/rB8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bBlc2idengS5L4LSLFB/eUezrh3OU7oTrKmkPZqf8vufBmD3SMcabOmQy9hgF+wwgQDyPwu4t3IVo2pso1+y0vgzQTgvA9XXYHQUhTBtY0PDb/xhXoDzE+DJp9+JeJ+igliayTfyK3746Ri7ATm4XtQ6IEOOVMaotEN2a2SuZro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PU0L/DdG; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-432d86a3085so63170015e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732722929; x=1733327729; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+fZHHyi9lrufyt8LGbh+sPd+B86keKpYadbG8L8712E=;
+        b=PU0L/DdGD5HeKMIuoUfIdd8O9H9EmUnMXQvdTyLFEjNezUlnfYufrAcUhWZ8bYJ9sG
+         UA3aHIUxTMEFv0sQnBAFfUqycp1DL8NDii3F6Eno1yWWvETU4IZEoYshHAgWaYAZIxiT
+         eNoOSkuTwlntTPVDIa9sYshb3X6pxuHT8a3KTwXdEXCwbh6VxEotVuiHGg9rCrrIUyuJ
+         XZa4IZ6R637JG0Ow2nzDdJNOibkYAqMxdAbRMIfj/lrUkmv2+PEPwucq+fEm4g+5inGy
+         oQC6gYrZLcBFb0lAjsUNx4kBFck0nTd0IL1pROorlsqhJ70LIcdj4+jgZnZvV5shkuoZ
+         MJBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732722929; x=1733327729;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+fZHHyi9lrufyt8LGbh+sPd+B86keKpYadbG8L8712E=;
+        b=Jy++cPWbldzSrNC6Yoimc3PDxOSr5U8SSVjfo3I6UERZSuj/NyTkFAL/3xqWT0ZgIM
+         Lzg8mIK768M+6wg+hxRYyGNICoT75gR/LrruVn3itamIpBfShAuJBMPRSUm1YP5cXs1r
+         /eES5dW36ABY+PdPoOyQRcLaJe/9hl3BCwBjAe6angQGR8BptdoGTEDYf+K9G2adGhlz
+         AiNfCD3BaIpEXG7xdFZnstJnRn9EqThO8144Ou4r0RkN+3mP64+taM/Z1PZF66GP2eWK
+         29voNHtGjvdTCE7Y3V9FdlvKtIsf+sr0GIBywKDE5Qs5woX9hfLWqRrFxVED7BAKBXoE
+         pwhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWanBFX3FoimfnuIF1lNPNZQ86aoKHRUdeslyxSSGbsZ8xR239BPvOELrCBbk0hXeMkhApJv/A9UNqpWbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1jlGg4nS0KTCoZBxU2astO20u3C58uTxc82f3Jv3d4x4TzZVw
+	IryRCDNr1JZ3/ML1Es2zhoTYKOmTXT0+jzAZf0N8975py9WSKgJYRpCaoIk7yRc=
+X-Gm-Gg: ASbGnctSFqKf59ap2/NhOpaFRHRREXxpl5iNtlOQSSmLnwBejMytnr7PNjz0IqlxEJG
+	JRKCxhFnvuOvAYWsP591sbeTMsnsJMBO8k7YJMohZSV9ElukK+rLsO5lEJRwT5xpwGggn/bwzX3
+	siveLcZDlalIjcTWVnbB1LJV5rxpCbg0wk+5q9f84WehLrwu5ffqFxVB/OSLQgq1uwpU1kDvSiD
+	XELfSuYyT1sAwqBPlXay2mejxoIjvJ19STAJ2EqSulVU5ZZtlnAmYkGCZ4f7SrFq4SrtvXIyh3p
+	ggEs+wouhWSJLD/kd5K5LJOoqqM=
+X-Google-Smtp-Source: AGHT+IH0D2BTFO4lLWrwOI5qlHZb/ab3iD4eTxYpRNpC5w+FLQ9G/yFTXTi/l1wQsEuQuG8y3L4+Pw==
+X-Received: by 2002:a05:600c:354e:b0:434:a802:e9b2 with SMTP id 5b1f17b1804b1-434a9dbc589mr34098165e9.4.1732722929148;
+        Wed, 27 Nov 2024 07:55:29 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:8ad2:e64c:f150:ebc6? ([2a01:e0a:982:cbb0:8ad2:e64c:f150:ebc6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7a4f69sm25388865e9.3.2024.11.27.07.55.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 07:55:28 -0800 (PST)
+Message-ID: <79e76b0d-15df-444e-ab14-24cf32678b96@linaro.org>
+Date: Wed, 27 Nov 2024 16:55:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SJ2PR12MB7941:EE_
-X-MS-Office365-Filtering-Correlation-Id: f32fee2e-d8cb-4677-6942-08dd0efbd77e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MFZFdGRRQWd3K3JDZmswdXBBZktOMkFWVmNOZE1XQTdnU0x2ZEVramNQYXU2?=
- =?utf-8?B?Q1MxdVhXSUhjNUdwN2NDRnB6ZmNoN0JCVFZnTlJIV1pFa1k1SklqQUVnbXV2?=
- =?utf-8?B?Y0RoeTVqS1lVaEdWNmtidEdTR3QzaTltd0tGYlFFM2RudWU1dTZVTVdwQ3Bj?=
- =?utf-8?B?V0w3dkIrd2hvQktabVBOTk1rWGhBS1p2cVFtaVdyZm5kNDBnWGY1MllNc1lG?=
- =?utf-8?B?SnhtVThNTWVSTFpNeHZEaXhqZmdrTzZuVTdzMkFYYW9IcTR5TWE5RFdoY2xu?=
- =?utf-8?B?TDgzMjhyNzVIS3lxVWUrR0NHdHVJYlR6Sm5NNSsxVWF6Y0VQWFI0WjMxRXQ4?=
- =?utf-8?B?TGJPQVJDZXdrcnhkU2tyR2pjcUpmaXJsd1Uxd0RQRG56SVIwdTNWK1MrMFVj?=
- =?utf-8?B?UW5YNTFoYlhDT1FGeUFTWjA5MmtVRCtoVFFNVzFyR2ZHZlZ4am15MTRqZ2dj?=
- =?utf-8?B?Zk5ySTRJL2FXU093YlFXeWU5SWlwdi9YaEhHajNiUmlkSFg1WjRiNFp2VTJU?=
- =?utf-8?B?Rk80cDNlQWZaY1ZpUU1MMGxaNTF0QkFCU3g5ZkJ1eDZmUGZHNGtVbHU2cXZy?=
- =?utf-8?B?NVJoWk9yemd0VTZFYWhKQjllb09yTlhVM00rcm1Hd0IrQTVUMExMWXRPNmhN?=
- =?utf-8?B?K0xETGtLSUV6Q1BQTlNsdS9wQkNkWm4yV2NkOVd0SkkrY0lYMlBDRDBPUGtt?=
- =?utf-8?B?dGdsOUZLcEVYQ3VxRXR0OGxHZGF0SWxldkVvdlRVZGhPVTZZR2k2Tml4TUd3?=
- =?utf-8?B?TjJGRmNSZUtCUjBBQS84MzFlUVZTekV1MDVHczIyQStzdWs1VzE3dFdhQ3ZH?=
- =?utf-8?B?U3lvb0ZnNm15RlZhdGljQW50aDQzdEwwQ05wbXloQUE4K3k5Z0F1K2tXVTAr?=
- =?utf-8?B?L0RkN2oyblRaTW81bndrWWZxR0Z5S09GV1c5VWRGY3VCTGxCWkxNS1lPc2ZN?=
- =?utf-8?B?WkhYakZNU0VaNEFGUGlqdDhKcVRSOVBsTzFxNVBMcjQyTnhKclNkQU5KWUVR?=
- =?utf-8?B?bkwzYTR1TXQrZWVXZ0wrUlJCTWFHemdMNEpSeklLWEJWSDg3OHliZlV3K1lk?=
- =?utf-8?B?N1I0dkpKbW9sa0hDKzUrdkFGcFFQOW4xbERJWmR6UDR4TUJiTnhhZzlzNjRj?=
- =?utf-8?B?eTJOL3dXcktRTUQwZWp5Q2xzNjRSemVQNDNzbHVmTThEZndIZUluUHdtVThz?=
- =?utf-8?B?S2NIbSsxbkNNbGEzR2xSK2JyZWFscVdXdFliRFpkcHozQVpvUm9LaEpSU2xi?=
- =?utf-8?B?bUtKemQ2d2lmT1QwQ1VNd3h2Vis4RWNtWEJBSTNHTUdweG5nYXBWdkwyN3Vk?=
- =?utf-8?B?aCtkbEI2V3VPM3dtS1QySVhld3hLbGhwRlYveFZNRWx5TUxtRFhHeHd6ZFVM?=
- =?utf-8?B?REIzSWFIYjFCU3RzSi9KSEV1RzBWWjNnRGdOcXk2NjNHbmNpbDEzc25DTHVS?=
- =?utf-8?B?dzAvSFBvUFBGbnlQeFFSdkkxbnVNdEZLSU4zRVVDRE9UelFtOU1nbjhDcVU0?=
- =?utf-8?B?QzU5anpFNjdsTGo5QmkzckkrT3dFRUwvQzlPRTdXdk0yLys2a3lEbmtGQklK?=
- =?utf-8?B?UDlUM09mekpnaDl3R1hlTW5hcURJelFZb05kOUhkS2loY0xGWGdjVEl4NDFu?=
- =?utf-8?B?MlFBNEVDa3NObjZsTll6L3dUVDh3ZFJ4bWZkNTM3SW5RUXdwejJ5N1FBY0RZ?=
- =?utf-8?B?Q1ZHVklhMmRtWGg4Qjl0S0RzaENWYjRaQzFZVGQwbHJjM2Q1Yk9wZ3hZcnl2?=
- =?utf-8?B?RFpTNkxaNE9OdXdTY0JzZ09Ra3JKdUdTY2JaNmZtYk5ScWpKREZRQjF0b1c3?=
- =?utf-8?B?VFV1N0cvNFRUQlRaV2VyZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RnlCTmpoemM1aGRydXpHekpPaFUwZWh5TUo3TmRXN0NIY09US1pLZmxWRXU3?=
- =?utf-8?B?d1ZmbmxBcDR5d3ZJV29zQmlHa2FoTGlBTmtoWHNqSkd6THFBbVBrdW5qcGVa?=
- =?utf-8?B?WVUyeVc2d2gyYmZXOFRmRnhud05IUUZ4eldMczJXem02RDY1SUUzMHFNSVZm?=
- =?utf-8?B?RExDd2JUQlU4b1ZUaVVPNlIxSnNWN1o5MXB2cnY3dFQvQWhhWVM4VUlrTWNO?=
- =?utf-8?B?WXlYc3o3WFZTRlY2bHN3ekpFR2tSYTZJZzc1N2pEM1hheEZIMlp5RXk3Wm5v?=
- =?utf-8?B?SXhLL0pOU0F1Q3RPd1lvMllRamhQRHdBNVFGOWZGRTk2S1RhZXIxdzZSNWg5?=
- =?utf-8?B?UG15UThmc3FjcmJBK2l6RzRMREQyYTlnNGdBc2ZxUXZnejVpblo2NnJtSjl0?=
- =?utf-8?B?THpDRnppWXJkMFBJRzEvVFRpa0NYMnhlZitrZWhNbzFPZDdydThSRFdDSnJr?=
- =?utf-8?B?WU94b3NORTh1N3VVMzVLUTZTSXY1YUNjUUk4bDRYT0xBcVlRQisyc29wWnhO?=
- =?utf-8?B?dmsyR0hua0NJNjNRcUlzN0JZQzdvZmZwWkFRU2xvS1NrWGtPVnQ2NzZUcjR3?=
- =?utf-8?B?ZFZvVE1Lay8zUXpxVkRhR2NILzlyblhuampFZ0ZFczZLOWZaeHVNdDliM1Vm?=
- =?utf-8?B?Q0xYSE1MUGtNUU16KzYyZjIxaUFKWHgzVi9rbDN5QU4xTkZBdUFKS0dhTlcy?=
- =?utf-8?B?VjJwM0IzWVJFMXhkc050TEVqRnlxaVZJSWJ4ZnJ6OEZ0K3VGdWFOM0FEVld5?=
- =?utf-8?B?bHpFN0lMSHFXdG1mY1lrYzJ6VmtBYVlPdWlUSnExWWhCYWxrVitycWtaTGE3?=
- =?utf-8?B?UFo5U1NxRkRQUGQzalNiVmVXa3o5eS9sV21GZmJ2MUQrVjladDZaQjV6T1RG?=
- =?utf-8?B?aVJlZTdRUnBaSW1TREN6ODdrZ3QrSUsxOTlKK0VVeUZWN3c5ZTRFSkdieE1l?=
- =?utf-8?B?OFBtQmhuWTNBQ1FxeVZweHN0MWZ0ZUxlRVRYWmQ4ZkJRc0JZUU1wSDlqTFBp?=
- =?utf-8?B?S1F4NktaNDdFQzF4ci9ZdnlKYmtwdTFDK09vZitZV0xqOWhCc0xIS2RQUXE4?=
- =?utf-8?B?Skx2bHVvR0ZyVkNWREVmL1ZSM2JDMXlTZW1td1VSRm8rdTJveUFJRGRuTHZ4?=
- =?utf-8?B?cVNjOFlSSDFhdHNiL0lOQkF0b2FvdVNlVVpiOTBQTHkxZ0E1OWtLSndVUUxC?=
- =?utf-8?B?azdrWjZ0MWl3UStJWEVnV09uemJwN3MvNlp1b3U0dUwyOW1icy9qMjFCM0tR?=
- =?utf-8?B?OHZCZ0R3cmRWTFh6WXRUNG9VYkN5d3JBNElycmY5eWhkWVZlb1drYk1MQkRR?=
- =?utf-8?B?OWg1bXZxc2NLelRzTlR2UTZQVHA3dWtJSG5xdXFwVVJ2TWw3dUFHTnVuVUN2?=
- =?utf-8?B?TDZmQU5vNnMyYWxSQnM1RHdDUzFXU3R6RVRhU25iMko2b0l1c1pWQ1llRnJT?=
- =?utf-8?B?bmNIbCtaaHlmamtuQjR5OUFHOW9TZUJXMC9zZ0ZLNkxwL09CZXVJRVRDa3lL?=
- =?utf-8?B?Qk5vM1J2RWZMNGErbzZjd2FQbkZxV1F2VFdEWnFlVVRlMmQybXFZWEhTTlgz?=
- =?utf-8?B?VkdYdExySlUyckpteFBlM1YyMEVhTU1sTFF2M09vUTR6NktwWHRjVnRydFlx?=
- =?utf-8?B?VWZQNUsza1hhRzc2NXBJRHBFMlhLVWRBREZ3MXBMV3craEYvZTRVTlRGVkVu?=
- =?utf-8?B?Nm5DN2h2RUN4RDM4NFo3dExtZ0IwRlBlU0lOcUFCekNJUGs5cXFXZTd5QzNz?=
- =?utf-8?B?WlFnZnlDNW05ZUQ5TWY1V2ltVzFmay9Sb0s1ck9QYnV3ekJ5cnRRRkMxMzFB?=
- =?utf-8?B?VnZxRE0zT05BUm9JZWJiVFZ1OUVsb29lWDczZlNMU2I5aGdocVBScXY1Ynkw?=
- =?utf-8?B?Y0NabzJ5eXdJQ0pTVjRHUkxUSHFpOWZuN2o1djIyV2w4WTZTMVM3d2JyZG5S?=
- =?utf-8?B?UEVTb0N5OFVWYXpGc25xNHN3S2s4NDBZa2JNcVVwcm4vUkxjUTVjOWFDZ0l2?=
- =?utf-8?B?b3VLR3U0N3B2dUJQSmxvSDR0ak9Gb0g1OUFzaGpjWEFXU0ptd3cwUEtqOFVE?=
- =?utf-8?B?enRhSFpFbnYwNkFKSGxNZFVWay8zL3hpSVhPaGZOT3lSbUMzdUtYUFc2N0tD?=
- =?utf-8?Q?zBfSX7ZmSBSX2l9Irb9Q3b0E4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f32fee2e-d8cb-4677-6942-08dd0efbd77e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 15:54:57.4153
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PJ5AYsyutY0jBxkMXTpv8E4AxfQwcuziqxmXeicKBUPk/3Ahn7YRr3FU6gQH8kMEdZ0oW3/XFuxiHdfrYMCnrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7941
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 08/11] drm/msm: adreno: request for maximum bus
+ bandwidth usage
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
+ <20241119-topic-sm8x50-gpu-bw-vote-v2-8-4deb87be2498@linaro.org>
+ <20241123225954.lv3k2fxk7rxyh67z@hu-akhilpo-hyd.qualcomm.com>
+ <1965cd01-7b31-4f16-82b2-27fd56fcb77e@linaro.org>
+ <2d3a77da-cf73-4888-bc4d-68482181c908@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <2d3a77da-cf73-4888-bc4d-68482181c908@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Mark, Krzysztof,
-
-On 26/11/2024 13:56, Mark Brown wrote:
-> On Tue, Nov 26, 2024 at 01:45:28PM +0000, Vishwaroop A wrote:
+On 27/11/2024 16:46, Akhil P Oommen wrote:
+> On 11/25/2024 1:44 PM, Neil Armstrong wrote:
+>> On 23/11/2024 23:59, Akhil P Oommen wrote:
+>>> On Tue, Nov 19, 2024 at 06:56:43PM +0100, Neil Armstrong wrote:
+>>>> When requesting a DDR bandwidth level along a GPU frequency
+>>>> level via the GMU, we can also specify the bus bandwidth usage in a
+>>>> 16bit
+>>>> quantitized value.
+>>>>
+>>>> For now simply request the maximum bus usage.
+>>>
+>>> Why? You don't care about power efficiency?
+>>> Lets drop this patch. We don't care about AB vote yet.
+>>
+>> I care about functionality, without this AB vote the spillall use
+>> case that fails on SM8650 HDK fails on the SM8650 QRD.
 > 
->> +            # NVIDIA Tegra SPIDEV Controller device
->> +          - nvidia,tegra-spidev
+> This should have been documented as a comment so that someone doesn't
+> remove it in future.
 > 
-> All the issues with having spidev nodes directly in the DT also apply if
-> you add a prefix onto it.  Whatever is attached to the SPI controller
-> needs to be described, not just a placeholder like this.
+>>
+>> AB is a quantitized value of the BW voted, so yes I expect we can have
+>> 100% of the BW voted, but since we scale the BW it's perfectly fine.
+> 
+> Ah! no. MAX AB vote here is equal to the Max IB vote value in the hfi
+> table. This is why I was asking about including all BW levels from the
+> DT in the hfi table in the other patch.
+> 
+> So you are always voting for Max DDR Freq which is probably helping (or
+> masking?) the spill all issue. We can just add a quirk to vote for MAX
+> IB probably.
 
+Oh, indeed I've been re-reading gen7_bus_ab_quantize() and it seems
+I should calculate the AB vote when building the bw_table.
 
-Chatting with Vishwaroop, what he is trying to accomplish with this 
-patchset it to have a pseudo SPI device that we can control from userspace.
+Thanks,
+Neil
 
-On the Tegra Jetson boards we have a 40-pin expansion header similar to 
-what is found on boards like Raspberry Pi and allows users to connect 
-various cards to. By having a pseudo device we can interact with 
-different SPI devices.
-
-Yes by default nothing is connected and so there is nothing to talk to. 
-However, this does enable us to do SPI loopback testing for example.
-
-So I am wondering if it would be acceptable to having some generic dummy 
-device-tree compatible string for this? I guess it does not need to be 
-Tegra specific.
-
-Thanks
-Jon
-
--- 
-nvpublic
+> 
+> -Akhil
+> 
+>>
+>> Neil
+>>
+>>>
+>>> -Akhil
+>>>
+>>>>
+>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>> ---
+>>>>    drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 11 +++++++++++
+>>>>    drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
+>>>>    2 files changed, 16 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/
+>>>> msm/adreno/a6xx_gmu.c
+>>>> index
+>>>> dc2d0035544e7848e5c4ea27f1ea9a191f9c4991..36c0f67fd8e109aabf09a0804bacbed3593c39d7 100644
+>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>> @@ -134,6 +134,17 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
+>>>> struct dev_pm_opp *opp,
+>>>>                if (bw == gmu->gpu_bw_table[bw_index])
+>>>>                    break;
+>>>>            }
+>>>> +
+>>>> +        if (bw_index) {
+>>>> +            /*
+>>>> +             * Append AB vote to the maximum bus usage.
+>>>> +             * AB represents a quantitized 16bit value of the
+>>>> +             * max ddr bandwidth we could use, let's simply
+>>>> +             * request the maximum for now.
+>>>> +             */
+>>>> +            bw_index |= AB_VOTE(MAX_AB_VOTE);
+>>>> +            bw_index |= AB_VOTE_ENABLE;
+>>>> +        }
+>>>>        }
+>>>>          gmu->current_perf_index = perf_index;
+>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/
+>>>> msm/adreno/a6xx_hfi.h
+>>>> index
+>>>> 528110169398f69f16443a29a1594d19c36fb595..52ba4a07d7b9a709289acd244a751ace9bdaab5d 100644
+>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>>>> @@ -173,6 +173,11 @@ struct a6xx_hfi_gx_bw_perf_vote_cmd {
+>>>>        u32 bw;
+>>>>    };
+>>>>    +#define AB_VOTE_MASK        GENMASK(31, 16)
+>>>> +#define MAX_AB_VOTE        (FIELD_MAX(AB_VOTE_MASK) - 1)
+>>>> +#define AB_VOTE(vote)        FIELD_PREP(AB_VOTE_MASK, (vote))
+>>>> +#define AB_VOTE_ENABLE        BIT(8)
+>>>> +
+>>>>    #define HFI_H2F_MSG_PREPARE_SLUMBER 33
+>>>>      struct a6xx_hfi_prep_slumber_cmd {
+>>>>
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>
+> 
 
 
