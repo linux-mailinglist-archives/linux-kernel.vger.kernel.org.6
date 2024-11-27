@@ -1,57 +1,73 @@
-Return-Path: <linux-kernel+bounces-423837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DFE9DAD73
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:00:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B75E9DAD8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB6628207A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:00:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4387B23A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919B1201261;
-	Wed, 27 Nov 2024 19:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0A1205E17;
+	Wed, 27 Nov 2024 19:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Z6mYFFjA"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hIXc1feL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F5A20125B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A0A2036FD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732733999; cv=none; b=REBJ0TOl7H6w/FFwbvpo7CN5YoVgh9rbgytbjYCCGwfK3bfaIqcIacFl+s4uPD3H8V5JancVTo7FroWapUrnOEdBOzH80I9xsYAMkkxtSPgULxJAoDbD3GtssKIrgxF3zwee6T2G0EkSY8RxJNIlU5vQR1Q3uQAEiPzi8Aju5d0=
+	t=1732734251; cv=none; b=DWb7BbHKyoZTQo5LK9XTXiU5TlZhv6BP/tszvu5caM4Lf2sGh2cWtFyB62bxdEB2hnhwZQKPK/OSiixQS658SLypXJGyWdUO01IHMXllGe/pZRnfwdb2XcMQxUX/J6oSX3ANIriDRrB5KX81zRpx/LBafqs/jMwm9umqqcJa/3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732733999; c=relaxed/simple;
-	bh=Q9lD0FFdsE2KuX9EExX2wAlkFfqAIiMM16sS73q7On4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TpvJ5r/EmBZ0DF44v6/Ngbk/wBJJtfpqoEhOCtfHAbprFO4w9Gxo1TzCRKPwYiQjfmUqMKAVeBSe/1BZwLRrS7IlGNLX7hyqjESW1+oKHKT4rwEYn0gTUn7/Rsf9KFpQLzbSuAuOByqP3fE8p/n/2C6jZ1pS+mAfsU5mMiAhyC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Z6mYFFjA; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc.intra.ispras.ru (unknown [10.10.165.4])
-	by mail.ispras.ru (Postfix) with ESMTPSA id EDCD2518E76F;
-	Wed, 27 Nov 2024 18:59:51 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru EDCD2518E76F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1732733992;
-	bh=IbWtycDxvF+2Dy4hwBe4BTV3k5eyFHoRBLH861A4gOI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Z6mYFFjAn6JgbSPD5vF9Vm0kclH6Et4l/3KZmgaE7c7JVyqPY0YIPQtlTJn8wpS8D
-	 bukRG+IeNWgKspQ/zepNoe3iv7PR1vfotYqd/KG15qx7I0xBkRhcMllYWO2UQdF6jc
-	 2NiyBgbhYUPhbKBDy8WUdwdDSTue8A923iKGjZPs=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev,
+	s=arc-20240116; t=1732734251; c=relaxed/simple;
+	bh=ATrLF8bEGGQ7d1ke8koQcA5JABpDyqfpZQhiBk9oNjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Va/jugSJXeWzTZUwlz0c8pGU7ojHvFvPEpO2OddhhIeoGOPHTsCNCgC8ukY2qEbb8LYoP5Re3Lt3cMqQx87Kl+DInVg/NkTqY5qwKxbQfQ4ZEIJPP4WJNpzV1BEgRHF2YlTUjntkxH1cF8PruZTZvGkhwVSQaoX7Pv9g5FzzSCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hIXc1feL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=OTgmGqkzjiMCAdM9XAGVnWmAd0bZ2mIoBGOGiUYyUyI=; b=hIXc1feLdzn5u5UgzQVtmgzb0L
+	tIIR/OVSGOFdLZ/bDLsU+8k0HWQJAfnJBBbU1hDGxJI8NkcxP3Feu3mbhtlip4PnBWeUboSVaR0TG
+	td797DNJ62Agu3iRmioCN+/QhRwcXOG1zI6YAvqrCLw70X6pKJgvDRmjPcJCZ6i43M1PuQOPKUy5B
+	Cf7IGkWg9C5RQgTzljoY9ngd6fyz3gjlBxteE6L/iGhm6+4dhUE/u76oagvPdUB9CkUj8uUUcxnDx
+	f6XNW5n/pJM4+neVN8kAVbj6619Wf2egv2kmqBdmEZ9z9kS+nRO6OtI6wIdq9gUvtstIyxfI+8px9
+	JDZaUXGQ==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGNKC-00000001cW2-3BcR;
+	Wed, 27 Nov 2024 19:03:46 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGNKD-00000000Bi7-39d2;
+	Wed, 27 Nov 2024 19:03:45 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] dma-debug: fix physical address calculation for struct dma_debug_entry
-Date: Wed, 27 Nov 2024 21:59:26 +0300
-Message-Id: <20241127185926.168102-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.39.5
+	Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: [RFC PATCH v4 00/20] x86/kexec: Add exception handling for relocate_kernel and further yak-shaving
+Date: Wed, 27 Nov 2024 19:00:14 +0000
+Message-ID: <20241127190343.44916-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,69 +75,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-Offset into the page should also be considered while calculating a physical
-address for struct dma_debug_entry. page_to_phys() just shifts the value
-PAGE_SHIFT bits to the left so offset part is zero-filled.
+Debugging kexec failures is painful, as anything going wrong in execution
+of the critical relocate_kernel() function tends to just lead to a triple
+fault. Thus leading to *weeks* of my life that I won't get back. Having
+hacked something up for my own use, I figured I should share it...
 
-An example (wrong) debug assertion failure with CONFIG_DMA_API_DEBUG
-enabled which is observed during systemd boot process after recent
-dma-debug changes:
+Add a CONFIG_KEXEC_DEBUG option which sets up a trivial exception handler
+in that environment, and outputs to the early_printk serial console if
+configured. Currently only I/O-based 8250 serial ports are supported, but
+that could be extended.
 
-DMA-API: e1000 0000:00:03.0: cacheline tracking EEXIST, overlapping mappings aren't supported
-WARNING: CPU: 4 PID: 941 at kernel/dma/debug.c:596 add_dma_entry
-CPU: 4 UID: 0 PID: 941 Comm: ip Not tainted 6.12.0+ #288
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:add_dma_entry kernel/dma/debug.c:596 
-Call Trace:
- <TASK>
-debug_dma_map_page kernel/dma/debug.c:1236 
-dma_map_page_attrs kernel/dma/mapping.c:179
-e1000_alloc_rx_buffers drivers/net/ethernet/intel/e1000/e1000_main.c:4616
-...
+While we're here, clean the code up a little and fix some other problems. 
+Most notably, load a suitable GDT on the way back into the kernel after a 
+KEXEC_PRESERVE_CONTEXT invocation instead of trusting the called code to do 
+so. And (new in v4) fix the interaction of PTI and the identmap code so that 
+it doesn't scribble over the end of the 4KiB region allocated for the PGD 
+expecting there to be a userspace PGD there.
 
-Found by Linux Verification Center (linuxtesting.org).
+I should probably bring the i386 version into line with this, although
+the lack of rip-based addressing makes all the PIC code a bit harder.
 
-Fixes: 9d4f645a1fd4 ("dma-debug: store a phys_addr_t in struct dma_debug_entry")
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- kernel/dma/debug.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+David Woodhouse (20):
+      x86/kexec: Restore GDT on return from preserve_context kexec
+      x86/kexec: Clean up and document register use in relocate_kernel_64.S
+      x86/kexec: Use named labels in swap_pages in relocate_kernel_64.S
+      x86/kexec: Only swap pages for preserve_context mode
+      x86/mm: Add _PAGE_NOPTISHADOW bit to avoid updating userspace page tables
+      x86/kexec: Allocate PGD for x86_64 transition page tables separately
+      x86/kexec: Copy control page into place in machine_kexec_prepare()
+      x86/kexec: Invoke copy of relocate_kernel() instead of the original
+      x86/kexec: Move relocate_kernel to kernel .data section
+      x86/kexec: Add data section to relocate_kernel
+      x86/kexec: Drop page_list argument from relocate_kernel()
+      x86/kexec: Eliminate writes through kernel mapping of relocate_kernel page
+      x86/kexec: Clean up register usage in relocate_kernel()
+      x86/kexec: Mark relocate_kernel page as ROX instead of RWX
+      x86/kexec: Add CONFIG_KEXEC_DEBUG option
+      x86/kexec: Debugging support: load a GDT
+      x86/kexec: Debugging support: Load an IDT and basic exception entry points
+      x86/kexec: Debugging support: Dump registers on exception
+      x86/kexec: Add 8250 serial port output
+      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
 
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index 295396226f31..27ade2bab531 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -1219,7 +1219,7 @@ void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
- 
- 	entry->dev       = dev;
- 	entry->type      = dma_debug_single;
--	entry->paddr	 = page_to_phys(page);
-+	entry->paddr	 = page_to_phys(page) + offset;
- 	entry->dev_addr  = dma_addr;
- 	entry->size      = size;
- 	entry->direction = direction;
-@@ -1400,7 +1400,8 @@ void debug_dma_alloc_coherent(struct device *dev, size_t size,
- 	entry->type      = dma_debug_coherent;
- 	entry->dev       = dev;
- 	entry->paddr	 = page_to_phys((is_vmalloc_addr(virt) ?
--				vmalloc_to_page(virt) : virt_to_page(virt)));
-+				vmalloc_to_page(virt) : virt_to_page(virt))) +
-+				offset_in_page(virt);
- 	entry->size      = size;
- 	entry->dev_addr  = dma_addr;
- 	entry->direction = DMA_BIDIRECTIONAL;
-@@ -1424,7 +1425,8 @@ void debug_dma_free_coherent(struct device *dev, size_t size,
- 		return;
- 
- 	ref.paddr = page_to_phys((is_vmalloc_addr(virt) ?
--			vmalloc_to_page(virt) : virt_to_page(virt)));
-+			vmalloc_to_page(virt) : virt_to_page(virt))) +
-+			offset_in_page(virt);
- 
- 	if (unlikely(dma_debug_disabled()))
- 		return;
--- 
-2.39.5
+ arch/x86/Kconfig.debug               |   8 +
+ arch/x86/include/asm/kexec.h         |  34 +++-
+ arch/x86/include/asm/pgtable_types.h |   8 +-
+ arch/x86/include/asm/sections.h      |   1 +
+ arch/x86/kernel/callthunks.c         |   6 +
+ arch/x86/kernel/early_printk.c       |   6 +
+ arch/x86/kernel/machine_kexec_64.c   | 121 +++++++----
+ arch/x86/kernel/relocate_kernel_64.S | 385 +++++++++++++++++++++++++++--------
+ arch/x86/kernel/vmlinux.lds.S        |  16 +-
+ arch/x86/mm/ident_map.c              |   6 +-
+ arch/x86/mm/pti.c                    |   2 +-
+ 11 files changed, 457 insertions(+), 136 deletions(-)
+
 
 
