@@ -1,225 +1,121 @@
-Return-Path: <linux-kernel+bounces-423862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950549DAD94
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:08:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5149E9DADAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6490E168D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C558C160F27
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391DB202F67;
-	Wed, 27 Nov 2024 19:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD9202F8D;
+	Wed, 27 Nov 2024 19:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TD3PcH9U"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gfoR/ncG"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C3720125C
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193E1200100;
+	Wed, 27 Nov 2024 19:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732734375; cv=none; b=j1S0t3JDhIZIKanfPOUfPTHfFgxjMM9pLKJSpRZZA4etWKgqx+u1DUY+F5LvyLV9lZrRKLk+q+79zz/WdM6N0g1TLuMFJwzKkvpWEkIZ3JsOCxAYiUoa87chBfpZVI/nSSeAzPeMoN5j/pO8NP5nJe0yFU77s0D2qAEH+Cil2mU=
+	t=1732735251; cv=none; b=BGvOxYV/0od+0GsEbyIZcjvb4RGJWuMpdzl1pzkML8CCF96p6aXKm3pvKl2bvIXJWIm5GC57uk9XEppKoWpx6hYEvBqwqQ/Bgyp/qxlesB92dqarpzmNjbO2A+BmdmOlUWYZ27lUfToExl1wkvkUH5fvtvdSKNCtJoWtA0lX3Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732734375; c=relaxed/simple;
-	bh=R1AfY708jXdHmbfLByxg5ZttNT2kjrD7QHd6g5PwSEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsbcqJ7KN8H55cHfqVGJkJL2VlyWmdtHE5/mzZgLVWwBUJRixgqy5NeVZDV7nVqy+OzH+LBTJsn+PKS313MS8v8BmQxScGOe3PYdZse6AmkHRvQBOMdvkODqLNvFkUgqTnwKg7rhVTNCrCs+XttuClig+j/0Kzt56RE4ieJC4hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TD3PcH9U; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7fbd76941ccso3731095a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:06:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732734373; x=1733339173; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HgXnDYjeious6Mn9ABnjIVdAyLz/oUf564mThG/grAY=;
-        b=TD3PcH9UCceHHleHtGPq83dqo8PRXTjnmtXCwj9IMqPpsM2iv5TPnaFdBkndRrPZaX
-         OqME7mtEJH+PZ7Y7k4TU/U8s2KoqTZtJHcvE+0yAP+jwiSxjo7PzptOaLcVQ241m3cXA
-         CZco3rdl5luIBaoDX8Ar0QjagdwbhCuzy37TZN/9Wl1rYpqz8iD1AKSddXNkFgMLOg2g
-         cAFTNS6u7biu0hvxN1MKqt2bpckswww6gTBLLiZJXtPRmMt49uL9wUsjWrk+OwT96kRX
-         qZwW8YZ5YoH7e7rk0hFG9uCnYz/cOo70HRazlDIsmrO9u6Q1fnwaj5JCGEi12JIPSQp4
-         xE5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732734373; x=1733339173;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HgXnDYjeious6Mn9ABnjIVdAyLz/oUf564mThG/grAY=;
-        b=YBrAmRIMgskUAJfcgWB3IiP4PdO+7u88hsiKGmNUHlvSAFzQuuMDOx++fTSPJJix/g
-         nNYTB+u0lKMTUjRT+jfyWBC1BO6jbKX/BP8RHFN/P9qUDgEJJWg8th64gklkAl2/yC3c
-         rYM11UyvLKpztbJPcpdV6C0hiAvO1tMD+apj7SuQLaP1xCQhdnbPaY2yelkRYLuO4Ie9
-         hEYM3iIqYv37fOs7af48MzkuWo6XR2GJVh1mt7P88vkNEDr3Lsn83IJpdRtI0UQk/UCI
-         8dv8s5ohE7lXjAL9IAVqBfvwf7XjWrqsrB/i5r94KCaPPuVczcCjWVaI0BfeX4anTbBz
-         ip9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUD57j9V7tLi+hOQjc9FgvqWBQvqygEzXnz8ajpIeglzBxUXbzTYc8wMovus5ufnF0rg7KC9M9Uop0d8F4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe1byUAXvik4NbuZG8L5lTiK/qc1gZci8MNSou1mLQeGzgo46T
-	H3RSx9F76tXe+0/GCE0skkb1dA0jmsGRD8STdO9owLN/34JN4ojB
-X-Gm-Gg: ASbGnct9FinGLI3tWwLUoGjq9AmqHilQDsMhicDJyX4eSB3EA0W0RIPEVMaAYq4GvQb
-	+6KY0NHIQC0TzbJvbr4KVkDpHMlfNtF9IDVJQpPjmzBYrMGFRmh4U2AK0/w85+0wa5pIJF6MyJ9
-	LvQK8iqjnRp4Q9wrvrSoLdOEX76qjMtWx2X1eCAP1Orkq2246kblimXawrAf3vzOJRFdUM8eQ8X
-	DDCDE66UfnWm6bySKC9Rvs8tleiHVa5ufQndkAkxJ51KQY3fg==
-X-Google-Smtp-Source: AGHT+IEXoQP6bH9Kzyt4UUpfN2R0wNZnbQ/Gg5zUP2GZDnuGrLc0kFHcLCx0kZmRMXyA8zVMS069QQ==
-X-Received: by 2002:a17:90b:1dc7:b0:2ea:853b:276d with SMTP id 98e67ed59e1d1-2ee08fca57fmr6226817a91.17.1732734372920;
-        Wed, 27 Nov 2024 11:06:12 -0800 (PST)
-Received: from localhost ([216.228.125.131])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fad03f2sm1936721a91.36.2024.11.27.11.06.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 11:06:12 -0800 (PST)
-Date: Wed, 27 Nov 2024 11:06:10 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] riscv: Always inline bitops
-Message-ID: <Z0dtohAlZqad841q@yury-ThinkPad>
-References: <20241123-riscv-always-inline-bitops-v1-1-00e8262ab1cf@kernel.org>
+	s=arc-20240116; t=1732735251; c=relaxed/simple;
+	bh=zC0ViIiYdKsbVqeJfJUG3RgY2nrR+ULONrnm6jK1PYA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HisSkWGu2ZHU2YJoTuzuSvfSv28Y66KLL2AvO6OmXet1YO5fyCb6Js7Sh/rfMIaZVfywPJFQPITnApY36cTLb3bJ1wqmhtQ5OwFLQaizMfIlZQAWT32eJtYVVDzVvflyMpCjCqDEEcdeViCEiDXkX8RjBGtihIDIsYVUYLcGZFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gfoR/ncG; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732735245;
+	bh=zC0ViIiYdKsbVqeJfJUG3RgY2nrR+ULONrnm6jK1PYA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=gfoR/ncGvuCTb4B+50mjWOUOjuwdb1/ZJZKr03VqAgL0hjj+TqOI642/ypapPq21m
+	 Zvcpj0QZIHXlLk/krWIam+wUKWSBimMsG9JD00ccfepk+e46w68YjV9vwBGwCsFMe9
+	 1LsDiTPAGvitIbTNaTbFXxPcyTB0F21+54rQ5hAQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH bpf-next 0/9] bpf: Constify BPF ops
+Date: Wed, 27 Nov 2024 20:15:19 +0100
+Message-Id: <20241127-bpf-const-ops-v1-0-a698b8d58680@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241123-riscv-always-inline-bitops-v1-1-00e8262ab1cf@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMdvR2cC/x2MywqAIBAAfyX23ELak34lOlSutRcVN0KI/j3rO
+ DAzNwhFJoGxuCHSxcLeZVBlAduxuJ2QTWbQlW6U0j2uweLmnZzog+BijB66bq1V20NuQiTL6f9
+ N8KmO0gnz87zgjR7DaQAAAA==
+X-Change-ID: 20241127-bpf-const-ops-add2866b3157
+To: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+ Kui-Feng Lee <thinker.li@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Benjamin Tissoires <bentiss@kernel.org>, Tejun Heo <tj@kernel.org>, 
+ David Vernet <void@manifault.com>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-input@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732735245; l=1323;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=zC0ViIiYdKsbVqeJfJUG3RgY2nrR+ULONrnm6jK1PYA=;
+ b=ySK54si6Ag6rcojkx7OIsS9WP8sr4LPXu+9XrODrxc3Uh2Zl4ToNUwiMWlcOTa/vu12B06OvE
+ rvFYs2UjQD/CX5F/kTcWJT6XRTzsOhms6mKqG3GaGYQhAgdudk4kn/7
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sat, Nov 23, 2024 at 07:30:19PM -0700, Nathan Chancellor wrote:
-> When building allmodconfig + ThinLTO with certain versions of clang,
-> arch_set_bit() may not be inlined, resulting in a modpost warning:
-> 
->   WARNING: modpost: vmlinux: section mismatch in reference: arch_set_bit+0x58 (section: .text.arch_set_bit) -> numa_nodes_parsed (section: .init.data)
-> 
-> acpi_numa_rintc_affinity_init() calls arch_set_bit() via __node_set()
-> with numa_nodes_parsed, which is marked as __initdata. If arch_set_bit()
-> is not inlined, modpost will flag that it is being called with data that
-> will be freed after init.
-> 
-> As acpi_numa_rintc_affinity_init() is marked as __init, there is not
-> actually a functional issue here. However, the bitop functions should be
-> marked as __always_inline, so that they work consistently for init and
-> non-init code, which the comment in include/linux/nodemask.h alludes to.
-> This matches s390 and x86's implementations.
-> 
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Move struct bpf_struct_ops into read-only memory to protect against
+accidental and malicious modifications.
 
-Applied, thanks!
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (9):
+      bpf: tcp: Remove inaccurate comment about extern
+      bpf: Move func_models from bpf_struct_ops to bpf_struct_ops_desc
+      bpf: Allow registration of const struct bpf_struct_ops
+      const_structs.checkpatch: add bpf_struct_ops
+      bpf: Allow registration of const cfi_stubs
+      bpf, net: tcp: Constify BPF ops
+      bpf, net: dummy_ops: Constify BPF ops
+      HID: bpf: constify BPF ops
+      sched_ext: Constify BPF ops
 
-So we have generic, x86 and riscv bitops inlined, and powerpc and s390
-non-inlined. We need to align them all, I think.
+ drivers/hid/bpf/hid_bpf_struct_ops.c |  4 ++--
+ include/linux/bpf.h                  |  8 ++++----
+ include/linux/btf.h                  |  2 +-
+ kernel/bpf/bpf_struct_ops.c          |  8 ++++----
+ kernel/bpf/btf.c                     |  4 ++--
+ kernel/sched/ext.c                   |  4 ++--
+ net/bpf/bpf_dummy_struct_ops.c       | 10 +++++-----
+ net/ipv4/bpf_tcp_ca.c                |  7 +++----
+ scripts/const_structs.checkpatch     |  1 +
+ 9 files changed, 24 insertions(+), 24 deletions(-)
+---
+base-commit: fc39fb56917bb3cb53e99560ca3612a84456ada2
+change-id: 20241127-bpf-const-ops-add2866b3157
 
-Thanks,
-Yury
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-> ---
->  arch/riscv/include/asm/bitops.h | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
-> index fae152ea0508d2e1ea490fffd645eab99cf387bf..c6bd3d8354a96b4e7bbef0e98a201da412301b57 100644
-> --- a/arch/riscv/include/asm/bitops.h
-> +++ b/arch/riscv/include/asm/bitops.h
-> @@ -228,7 +228,7 @@ static __always_inline int variable_fls(unsigned int x)
->   *
->   * This operation may be reordered on other architectures than x86.
->   */
-> -static inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
-> +static __always_inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
->  {
->  	return __test_and_op_bit(or, __NOP, nr, addr);
->  }
-> @@ -240,7 +240,7 @@ static inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
->   *
->   * This operation can be reordered on other architectures other than x86.
->   */
-> -static inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
-> +static __always_inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
->  {
->  	return __test_and_op_bit(and, __NOT, nr, addr);
->  }
-> @@ -253,7 +253,7 @@ static inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
->   * This operation is atomic and cannot be reordered.
->   * It also implies a memory barrier.
->   */
-> -static inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
-> +static __always_inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
->  {
->  	return __test_and_op_bit(xor, __NOP, nr, addr);
->  }
-> @@ -270,7 +270,7 @@ static inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
->   * Note that @nr may be almost arbitrarily large; this function is not
->   * restricted to acting on a single-word quantity.
->   */
-> -static inline void arch_set_bit(int nr, volatile unsigned long *addr)
-> +static __always_inline void arch_set_bit(int nr, volatile unsigned long *addr)
->  {
->  	__op_bit(or, __NOP, nr, addr);
->  }
-> @@ -284,7 +284,7 @@ static inline void arch_set_bit(int nr, volatile unsigned long *addr)
->   * on non x86 architectures, so if you are writing portable code,
->   * make sure not to rely on its reordering guarantees.
->   */
-> -static inline void arch_clear_bit(int nr, volatile unsigned long *addr)
-> +static __always_inline void arch_clear_bit(int nr, volatile unsigned long *addr)
->  {
->  	__op_bit(and, __NOT, nr, addr);
->  }
-> @@ -298,7 +298,7 @@ static inline void arch_clear_bit(int nr, volatile unsigned long *addr)
->   * Note that @nr may be almost arbitrarily large; this function is not
->   * restricted to acting on a single-word quantity.
->   */
-> -static inline void arch_change_bit(int nr, volatile unsigned long *addr)
-> +static __always_inline void arch_change_bit(int nr, volatile unsigned long *addr)
->  {
->  	__op_bit(xor, __NOP, nr, addr);
->  }
-> @@ -311,7 +311,7 @@ static inline void arch_change_bit(int nr, volatile unsigned long *addr)
->   * This operation is atomic and provides acquire barrier semantics.
->   * It can be used to implement bit locks.
->   */
-> -static inline int arch_test_and_set_bit_lock(
-> +static __always_inline int arch_test_and_set_bit_lock(
->  	unsigned long nr, volatile unsigned long *addr)
->  {
->  	return __test_and_op_bit_ord(or, __NOP, nr, addr, .aq);
-> @@ -324,7 +324,7 @@ static inline int arch_test_and_set_bit_lock(
->   *
->   * This operation is atomic and provides release barrier semantics.
->   */
-> -static inline void arch_clear_bit_unlock(
-> +static __always_inline void arch_clear_bit_unlock(
->  	unsigned long nr, volatile unsigned long *addr)
->  {
->  	__op_bit_ord(and, __NOT, nr, addr, .rl);
-> @@ -345,13 +345,13 @@ static inline void arch_clear_bit_unlock(
->   * non-atomic property here: it's a lot more instructions and we still have to
->   * provide release semantics anyway.
->   */
-> -static inline void arch___clear_bit_unlock(
-> +static __always_inline void arch___clear_bit_unlock(
->  	unsigned long nr, volatile unsigned long *addr)
->  {
->  	arch_clear_bit_unlock(nr, addr);
->  }
->  
-> -static inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
-> +static __always_inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
->  		volatile unsigned long *addr)
->  {
->  	unsigned long res;
-> 
-> ---
-> base-commit: 0eb512779d642b21ced83778287a0f7a3ca8f2a1
-> change-id: 20241123-riscv-always-inline-bitops-0021c4dae36b
-> 
-> Best regards,
-> -- 
-> Nathan Chancellor <nathan@kernel.org>
 
