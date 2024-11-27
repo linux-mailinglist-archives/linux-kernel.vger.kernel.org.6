@@ -1,168 +1,406 @@
-Return-Path: <linux-kernel+bounces-423606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178079DAA4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:00:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F25B9DAA52
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68512B22B00
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:00:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD89EB209BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD0F1FF7B4;
-	Wed, 27 Nov 2024 15:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9BA1FF7B4;
+	Wed, 27 Nov 2024 15:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="cflNpNiE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BVxSiHKe"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aPOtoNAI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F64346447;
-	Wed, 27 Nov 2024 15:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732719628; cv=none; b=pGOp+EOYf02if27i/cSijT6cUJPb2w/7NmiQ2W8v5sjV70wg+8hb8obM7RWpuGx+Yhx1phG2mDruxKLckaF/f/pKac9PnDxi28QxGIYCFXBhRuB+fc+NSAizkDLohxHUiZPgP4t0xGChFI5BMKVqymdTWGfWZhHO2+gbGhq5REQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732719628; c=relaxed/simple;
-	bh=S8WOt3XS3ffuA4SkCF5xWhZI7UgStUwEvyQWNFBRWUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8l+KulKm81w2aySb/sGjeu0PudKfINndK4AVHiskHaMZ6eLk76fujw5wKMMgwTu8stmPjRcu9EOFPY/ESrVLptG0Ur8+lqPqxCP3yUCEvBHbg2q5ucodgpjl25uIMFX0gv1RP66PS9M2W7EspmBCgX0kXnHr5Tt/UNam3xFrhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=cflNpNiE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BVxSiHKe; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6177413802CB;
-	Wed, 27 Nov 2024 10:00:23 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Wed, 27 Nov 2024 10:00:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1732719623; x=1732806023; bh=rdIuwMAQ6G
-	ejsm7b5qViee1kStyXKxOtBCpCokGSvD0=; b=cflNpNiEwHtAQBw2zgCv4gadWK
-	Q/YQjdsizsTuzoGPOn7+J/9WALRxliMimt/T1fwa0KXaTMza+ZA2K/Y8hcAgspjc
-	SzA0mKedQQxSdeuq2LyFwXrHa0uqxM426HBZb1gqId+VqvsocBl1YonmrFaJ0u9J
-	f4e8/IPUQxHNzASrhpHQx7Il0egtQBsuw+0WfwP0PFQ42pL7kdtMMxp+D29W6v2F
-	CAAbFlC/Y/eDQoodCD2c8rhuirYk2D/QL1ByFsmyMcUHpwYy3Cp+/98sP9kTfYQY
-	Ho8zMrWEtHknCX4Xcv/AWF+2xvU4X1NSeT55gP5t95DM7Rp7DBZS/rKpAyOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732719623; x=1732806023; bh=rdIuwMAQ6Gejsm7b5qViee1kStyXKxOtBCp
-	CokGSvD0=; b=BVxSiHKe+WTKqTYCFwcCNnjBMd5UTbjDwb2Pq0niLaFLmlsMnTX
-	VViUaEZO3PeSBDGbXdlpKg6VGxgmpdQd2CWpGsMqmHJDI4far0VCga+W/VLYPrJ3
-	vwQiPWjfn+2yuZkavsRVZg+1zg5fzirWLwy0nMl6o8lIvIFIvKJqNo9RL7DL6QbG
-	ToT2aN/+03pSBwjn3QJBCzooYZUfKJ/Zj6gnPpqd9YwG3Ce0hCjpx498dx1TRx4r
-	r7d6YWC6z+1WXVfsapfonzkidsz6wiz5NZ1j+/4VxKd6VulnMeEnZThpHJCzjoaA
-	rXImPYEZtF2/wk6qL0pkmw1kFrOZK7HRgYA==
-X-ME-Sender: <xms:AjRHZ_AW874cCeLntUh0EWJFIkqu1O7JBUUq32Bgon5HlG9kzRa-kQ>
-    <xme:AjRHZ1iAUkGEu7rrZQCnjohZOSAPdHqgTZntY-ZFilVqvO_z9bqp_3El58fBKdGfO
-    O7-lPpKNjeGpc_wooY>
-X-ME-Received: <xmr:AjRHZ6kN8Id0DqS1C3aJMg8NgWrYoTIen2stUp1XeusYvdPChEXRIOqsXQ8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeelgdeijecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
-    hfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpih
-    iiiigrqeenucggtffrrghtthgvrhhnpedthfffveekvefggfdvvdejiedvhfehleejtddt
-    feegleeiheektdeljeeigeeigfenucffohhmrghinhepshhirhgvnhgrrdhorhhgrdhukh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigt
-    hhhosehthigthhhordhpihiiiigrpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhope
-    gsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtkhesshhushgv
-    rdgtiidprhgtphhtthhopegvsghivgguvghrmhesgihmihhsshhiohhnrdgtohhmpdhrtg
-    hpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehskhhhrghnsehl
-    ihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepiigshihsiigvkhesih
-    hnrdifrgifrdhplhdprhgtphhtthhopegthihphhgrrhestgihphhhrghrrdgtohhm
-X-ME-Proxy: <xmx:AjRHZxwTK_jX14Y0JwfSyHuSkMY0wrZzCDMbqNHjRGAY7b0-FGnzAg>
-    <xmx:AjRHZ0QPln-BxRzLCRLHJkE_efuG5vSYbJCAlDZmV62znucyR3LH7Q>
-    <xmx:AjRHZ0Y0MrB8o4iyesrEleNQf3Fx06J8msOmIe7KrObUtFzX84FLHg>
-    <xmx:AjRHZ1S3fHcnMACSu2ywrSAZBv0yKd8-kULbjpCW_wMxQwAgfRpuxw>
-    <xmx:BzRHZwp1pUur4PqHCoyJD_QF3oGsE-w78jyWRy64W9zld5NnnfvtwmFz>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Nov 2024 10:00:16 -0500 (EST)
-Date: Wed, 27 Nov 2024 08:00:12 -0700
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: Re: [PATCH 2/2] selftests/exec: add a test for execveat()'s comm
-Message-ID: <Z0cz/Dhrw118WPiE@tycho.pizza>
-References: <20241030203732.248767-1-tycho@tycho.pizza>
- <20241030203732.248767-2-tycho@tycho.pizza>
- <6c68dddb-84f3-4b73-987c-8334b2301d9b@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EAE22F19;
+	Wed, 27 Nov 2024 15:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732719854; cv=pass; b=L43t+a5d6NLw7dvmHg9vl8F8NN/3c58/jYOxmhNDrQLHyjPuQQ9yao978uvTK2ZGq2S9mikVzGTi+zlZhWovPOm09hy9Tw9WFaCzMVQAyZ3UVj/WTHvUZdlB6IIToikaEG2WIcQccm+iVAYqSm2ddw8PD1cZWMM9agjNxxurR1E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732719854; c=relaxed/simple;
+	bh=Z4IKFz06Y9RDesPH4CweTGLKX30G2sOGMAK6Acuf7tU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ryMdREe0kgNrlZwuwNEjgurts/hks6Vfc243JIaIoTGg+Iz9RbQbC80wd5TJDHLSvBiBvMvrndnPeGXhApEXxlmrt+rgAU7xumjyxKrPJNAdvzsGBDeZgf3wIKxf6g1F6oclwHmdFzre/q30wcSenqWSfErVsXkuPOngJsFkTEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aPOtoNAI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732719810; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ic+sSeblIlMzNmyx93ijjM1GVdyzE8/eGMi0aumB5MO+91VUZg0htzi62u5hSN9WpJ56wqeFH/UhXH9uj+JQgZgIg6DSxqmf6l+w0lc+wkgHg5CSiD7GK1nfrZE0NzFBfUhTLmQ3xElUHpISB5wpQ7grX701ZMKN6YiGzAGnW7U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732719810; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FW2BjeUhmf7EpI5P3+7+Tgb5Vu35+00rH6VSDQTpzOs=; 
+	b=gz6heiuUIt8N6kz6ksWOgP1BLJgCM4qQADfmxgNNNk2QR5KLU7/ARiu5O9EK3yVrd54llobMhPzzjsIN0D0cFlePh/vtaxO6QKu0ZuW/X2izzdaBRsWS4N2281B/jCBRKoDrnajn1JSlBXAdw+ucroTXFA9pnxfb2iKB/6zV8uI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732719810;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=FW2BjeUhmf7EpI5P3+7+Tgb5Vu35+00rH6VSDQTpzOs=;
+	b=aPOtoNAIrmmuzLep4Wzb6pO4kc3Cln6MTfq7VDzbpP1q6Hjt5bMFdi1cZt2ugBcS
+	FcBbo2qKnUZWqm0KB9/ZCoDmoNMp3StxSiWsA+RrE3cdhfAUrAV1rba+TXysScyR7Dv
+	MihD8dBvkVtVtYRv/8dH6K2icKJWl6GQJn+1ZkvY=
+Received: by mx.zohomail.com with SMTPS id 1732719808969656.9652960943769;
+	Wed, 27 Nov 2024 07:03:28 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c68dddb-84f3-4b73-987c-8334b2301d9b@sirena.org.uk>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 10/35] rust: drm/kms: Add DriverConnector::get_mode
+ callback
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-11-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 12:03:14 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <36E11299-A121-46DB-8F8D-45AC4B99BCE6@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-11-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Wed, Nov 27, 2024 at 02:25:29PM +0000, Mark Brown wrote:
-> On Wed, Oct 30, 2024 at 02:37:32PM -0600, Tycho Andersen wrote:
-> > From: Tycho Andersen <tandersen@netflix.com>
-> > 
-> > In the previous patch we've defined a couple behaviors:
-> > 
-> > 1. execveat(fd, AT_EMPTY_PATH, {"foo"}, ...) should render argv[0] as
-> >    /proc/pid/comm
-> > 2. execveat(fd, AT_EMPTY_PATH, {NULL}, ...) should keep the old behavior of
-> >    rendering the fd as /proc/pid/comm
-> > 
-> > and just to be sure keeps working with symlinks, which was a concern in
-> > [1], I've added a test for that as well.
-> > 
-> > The test itself is a bit ugly, because the existing check_execveat_fail()
-> > helpers use a hardcoded envp and argv, and we want to "pass" things via the
-> > environment to test various argument values, but it seemed cleaner than
-> > passing one in everywhere in all the existing tests.
-> 
-> This test doesn't pass in my CI, running on an i.MX8MP Verdin board.
-> This is an arm64 system and I'm running the tests on NFS.
-> 
-> > Output looks like:
-> 
-> >     ok 51 Check success of execveat(6, 'home/tycho/packages/...yyyyyyyyyyyyyyyyyyyy', 0)...
-> >     # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
-> >     ok 52 Check success of execveat(9, '', 4096)...
-> >     # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
-> >     ok 53 Check success of execveat(11, '', 4096)...
-> >     # Check execveat(AT_EMPTY_PATH)'s comm is 9
-> >     [   25.579272] process 'execveat' launched '/dev/fd/9' with NULL argv: empty string added
-> >     ok 54 Check success of execveat(9, '', 4096)...
-> 
-> The output when things fail is:
-> 
-> # # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
-> # # bad comm, got: 11 expected: sentinel# child 8257 exited with 1 neither 0 nor 0
-> # not ok 52 Check success of execveat(11, '', 4096)... 
-> # # Check execveat(AT_EMPTY_PATH)'s comm is sentinel
-> # # bad comm, got: 13 expected: sentinel# child 8258 exited with 1 neither 0 nor 0
-> # not ok 53 Check success of execveat(13, '', 4096)... 
-> 
-> Full log from a failing job at:
-> 
->    https://lava.sirena.org.uk/scheduler/job/993508
-> 
-> I didn't do any investigation beyond this.
+Hi Lyude,
 
-Strange... but this series has been rejected by Linus anyway, so
-probably not worth investigating further.
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Next up is filling out some of the basic connector hotplugging =
+callbacks -
+> which we'll need for setting up the fbdev helpers for KMS devices. =
+Note
+> that connector hotplugging in DRM follows a BFL scheme: pretty much =
+all
 
-Tycho
+A what scheme?
+
+> probing is protected under the mighty drm_device->mode_config.lock, =
+which
+> of course is a bit counter-intuitive to rust's locking schemes where =
+data
+> is always associated with its lock.
+>=20
+> Since that lock is embedded in an FFI type and not a rust type, we =
+need to
+> introduce our own wrapper type that acts as a lock acquisition for =
+this.
+> This brings us to introducing a few new types:
+>=20
+> * ModeConfigGuard - the most basic lock guard, as long as this object =
+is
+>  alive we are guaranteed to be holding drm_device->mode_config.lock. =
+This
+>  object doesn't do much else on its own currently.
+> * ConnectorGuard - an object which corresponds to a specific typed DRM
+>  connector. This can only be acquired with a ModeConfigGuard, and will =
+be
+>  used to allow calling methods that are only safe to call with
+>  drm_device->mode_config.lock held. Since it implements
+>  Deref<Target=3DConnector<T>> as well, it can also be used for any =
+other
+>  operations that would normally be available on a DRM connector.
+>=20
+> And finally, we add the DriverConnector::get_modes() trait method =
+which
+> drivers can use to implement the drm_connector_helper_funcs.get_modes
+> callback. Note that while we make this trait method mandatory, we only =
+do
+> so for the time being since VKMS doesn't do very much with DRM =
+connectors -
+> and as such we have no need yet to implement alternative connector =
+probing
+> schemes outside of get_modes().
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms.rs           | 70 ++++++++++++++++++++++++++++++++
+> rust/kernel/drm/kms/connector.rs | 57 ++++++++++++++++++++++++--
+> 2 files changed, 124 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
+> index d5cad598f016f..d74267c78864f 100644
+> --- a/rust/kernel/drm/kms.rs
+> +++ b/rust/kernel/drm/kms.rs
+> @@ -18,6 +18,8 @@
+>     types::*,
+>     error::to_result,
+>     private::Sealed,
+> +    sync::{Mutex, MutexGuard},
+> +    container_of
+> };
+> use core::{
+>     ops::Deref,
+> @@ -233,6 +235,21 @@ impl<T, K> KmsDriver for T
+>     T: Driver<Kms =3D K>,
+>     K: Kms<Driver =3D T> {}
+>=20
+> +impl<T: KmsDriver> Device<T> {
+> +    /// Retrieve a pointer to the mode_config mutex
+> +    #[inline]
+> +    pub(crate) fn mode_config_mutex(&self) -> &Mutex<()> {
+> +        // SAFETY: This lock is initialized for as long as =
+`Device<T>` is exposed to users
+> +        unsafe { Mutex::from_raw(&mut =
+(*self.as_raw()).mode_config.mutex) }
+
+Again, a bit hard to understand what=E2=80=99s going on here, since =
+everything is on a single line.
+
+> +    }
+> +
+> +    /// Acquire the [`mode_config.mutex`] for this [`Device`].
+> +    #[inline]
+> +    pub fn mode_config_lock(&self) -> ModeConfigGuard<'_, T> {
+> +        ModeConfigGuard(self.mode_config_mutex().lock(), PhantomData)
+> +    }
+> +}
+> +
+> /// A modesetting object in DRM.
+> ///
+> /// This is any type of object where the underlying C object contains =
+a [`struct drm_mode_object`].
+> @@ -339,3 +356,56 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>         unsafe { =
+bindings::drm_mode_object_put(obj.as_ref().raw_mode_obj()) }
+>     }
+> }
+> +
+> +/// A mode config guard.
+> +///
+> +/// This is an exclusive primitive that represents when =
+[`drm_device.mode_config.mutex`] is held - as
+> +/// some modesetting operations (particularly ones related to =
+[`connectors`](connector)) are still
+> +/// protected under this single lock. The lock will be dropped once =
+this object is dropped.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `self.0` is contained within a [`struct drm_mode_config`], =
+which is contained within a
+> +///   [`struct drm_device`].
+> +/// - The [`KmsDriver`] implementation of that [`struct drm_device`] =
+is always `T`.
+> +/// - This type proves that [`drm_device.mode_config.mutex`] is =
+acquired.
+> +///
+> +/// [`struct drm_mode_config`]: (srctree/include/drm/drm_device.h)
+> +/// [`drm_device.mode_config.mutex`]: =
+(srctree/include/drm/drm_device.h)
+> +/// [`struct drm_device`]: (srctree/include/drm/drm_device.h)
+> +pub struct ModeConfigGuard<'a, T: KmsDriver>(MutexGuard<'a, ()>, =
+PhantomData<T>);
+> +
+> +impl<'a, T: KmsDriver> ModeConfigGuard<'a, T> {
+> +    /// Construct a new [`ModeConfigGuard`].
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must ensure that [`drm_device.mode_config.mutex`] =
+is acquired.
+> +    ///
+> +    /// [`drm_device.mode_config.mutex`]: =
+(srctree/include/drm/drm_device.h)
+> +    pub(crate) unsafe fn new(drm: &'a Device<T>) -> Self {
+> +        // SAFETY: Our safety contract fulfills the requirements of =
+`MutexGuard::new()`
+> +        Self(unsafe { MutexGuard::new(drm.mode_config_mutex(), ()) }, =
+PhantomData)
+> +    }
+> +
+> +    /// Return the [`Device`] that this [`ModeConfigGuard`] belongs =
+to.
+> +    pub fn drm_dev(&self) -> &'a Device<T> {
+> +        // SAFETY:
+> +        // - `self` is embedded within a `drm_mode_config` via our =
+type invariants
+> +        // - `self.0.lock` has an equivalent data type to `mutex` via =
+its type invariants.
+> +        let mode_config =3D unsafe { container_of!(self.0.lock, =
+bindings::drm_mode_config, mutex) };
+> +
+> +        // SAFETY: And that `drm_mode_config` lives in a `drm_device` =
+via type invariants.
+> +        unsafe { Device::borrow(container_of!(mode_config, =
+bindings::drm_device, mode_config)) }
+> +    }
+> +
+> +    /// Assert that the given device is the owner of this mode config =
+guard.
+> +    ///
+> +    /// # Panics
+> +    ///
+> +    /// Panics if `dev` is different from the owning device for this =
+mode config guard.
+> +    #[inline]
+> +    pub(crate) fn assert_owner(&self, dev: &Device<T>) {
+> +        assert!(ptr::eq(self.drm_dev(), dev));
+> +    }
+> +}
+> diff --git a/rust/kernel/drm/kms/connector.rs =
+b/rust/kernel/drm/kms/connector.rs
+> index 54457b327c365..57ab29473c344 100644
+> --- a/rust/kernel/drm/kms/connector.rs
+> +++ b/rust/kernel/drm/kms/connector.rs
+> @@ -19,7 +19,7 @@
+> use core::{
+>     marker::*,
+>     ptr::null_mut,
+> -    mem,
+> +    mem::{self, ManuallyDrop},
+>     ptr::{self, NonNull, addr_of_mut},
+>     ffi::*,
+>     ops::*,
+> @@ -28,6 +28,7 @@
+> use super::{
+>     ModeObject,
+>     RcModeObject,
+> +    ModeConfigGuard,
+>     encoder::*,
+>     KmsDriver,
+> };
+> @@ -93,7 +94,7 @@ pub trait DriverConnector: Send + Sync + Sized {
+>             destroy: Some(connector_destroy_callback::<Self>),
+>             force: None,
+>             detect: None,
+> -            fill_modes: None,
+> +            fill_modes: =
+Some(bindings::drm_helper_probe_single_connector_modes),
+>             debugfs_init: None,
+>             oob_hotplug_event: None,
+>             atomic_duplicate_state: =
+Some(atomic_duplicate_state_callback::<Self::State>),
+> @@ -101,7 +102,7 @@ pub trait DriverConnector: Send + Sync + Sized {
+>         helper_funcs: bindings::drm_connector_helper_funcs {
+>             mode_valid: None,
+>             atomic_check: None,
+> -            get_modes: None,
+> +            get_modes: Some(get_modes_callback::<Self>),
+>             detect_ctx: None,
+>             enable_hpd: None,
+>             disable_hpd: None,
+> @@ -132,6 +133,12 @@ pub trait DriverConnector: Send + Sync + Sized {
+>     ///
+>     /// Drivers may use this to instantiate their [`DriverConnector`] =
+object.
+>     fn new(device: &Device<Self::Driver>, args: Self::Args) -> impl =
+PinInit<Self, Error>;
+> +
+> +    /// Retrieve a list of available display modes for this =
+[`Connector`].
+> +    fn get_modes<'a>(
+> +        connector: ConnectorGuard<'a, Self>,
+> +        guard: &ModeConfigGuard<'a, Self::Driver>
+> +    ) -> i32;
+> }
+>=20
+> /// The generated C vtable for a [`DriverConnector`].
+> @@ -229,6 +236,19 @@ pub fn new(
+>         })
+>     }
+>=20
+> +    /// Acquire a [`ConnectorGuard`] for this connector from a =
+[`ModeConfigGuard`].
+> +    ///
+> +    /// This verifies using the provided reference that the given =
+guard is actually for the same
+> +    /// device as this connector's parent.
+> +    ///
+> +    /// # Panics
+> +    ///
+> +    /// Panics if `guard` is not a [`ModeConfigGuard`] for this =
+connector's parent [`Device`].
+> +    pub fn guard<'a>(&'a self, guard: &ModeConfigGuard<'a, =
+T::Driver>) -> ConnectorGuard<'a, T> {
+> +        guard.assert_owner(self.drm_dev());
+> +        ConnectorGuard(self)
+> +    }
+> +
+>     /// Attach an encoder to this [`Connector`].
+>     ///
+>     /// TODO: Move this to an `UnregisteredConnector` interface =
+somehow=E2=80=A6
+> @@ -327,6 +347,37 @@ unsafe fn from_raw<'a>(ptr: *mut =
+bindings::drm_connector) -> &'a Self {
+>     drop(unsafe { Box::from_raw(connector as *mut Connector<T>) });
+> }
+>=20
+> +unsafe extern "C" fn get_modes_callback<T: DriverConnector>(
+> +    connector: *mut bindings::drm_connector,
+> +) -> c_int {
+> +    // SAFETY: This is safe via `DriverConnector`s type invariants.
+> +    let connector =3D unsafe { Connector::<T>::from_raw(connector) };
+> +
+> +    // SAFETY: This FFI callback is only called while =
+`mode_config.lock` is held
+> +    let guard =3D ManuallyDrop::new(unsafe { =
+ModeConfigGuard::new(connector.drm_dev()) });
+
+I=E2=80=99m confused. Can you explain what this ManuallyDrop is being =
+used for?
+
+> +
+> +    T::get_modes(connector.guard(&guard), &guard)
+> +}
+> +
+> +/// A privileged [`Connector`] obtained while holding a =
+[`ModeConfigGuard`].
+> +///
+> +/// This provides access to various methods for [`Connector`] that =
+must happen under lock, such as
+> +/// setting resolution preferences and adding display modes.
+> +///
+> +/// # Invariants
+> +///
+> +/// Shares the invariants of [`ModeConfigGuard`].
+> +#[derive(Copy, Clone)]
+> +pub struct ConnectorGuard<'a, T: DriverConnector>(&'a Connector<T>);
+> +
+> +impl<T: DriverConnector> Deref for ConnectorGuard<'_, T> {
+> +    type Target =3D Connector<T>;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        self.0
+> +    }
+> +}
+> +
+> // SAFETY: DRM expects this struct to be zero-initialized
+> unsafe impl Zeroable for bindings::drm_connector_state {}
+>=20
+> --=20
+> 2.46.1
+>=20
+
+=E2=80=94 Daniel
+
 
