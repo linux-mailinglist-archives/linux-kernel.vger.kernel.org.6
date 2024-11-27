@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-423411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8049DA70F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:46:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9716B9DA70B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:46:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D83AB21706
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DD9165AFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DF41F9404;
-	Wed, 27 Nov 2024 11:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA4E1B3F3D;
+	Wed, 27 Nov 2024 11:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="D4yjdhy2"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UMmasBpd"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736761D9A41;
-	Wed, 27 Nov 2024 11:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B8917591;
+	Wed, 27 Nov 2024 11:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732707912; cv=none; b=FB/kMn+PoUQr4Eu5T+yWA64sC6SBuvBmZuLdSBJmw8Ahv7UAQFSppm8H4gZbXwWycbL/Z1bIOAscZBcpPwO+g5Qr0zwj609wNu+ypJbr2AcrI/4D0NhZ9FoJtMIz09WghUNru6LC2SymWo4KUc+FHHf4hrp2nUK0Eb2qoNnHUow=
+	t=1732707939; cv=none; b=B3l2YmYpMgy1i2PggxCNiX7nJOMsQNx6PRgzIjbqDG4fwqsgOHmZ3XfYVOCh7JgVTwMRobozpZyuf1Iz9nZY+WE9qrI3RgY7I6+UydZCEE8Cc8lLjGcJay/A8iPKEQxcJtiBEjir3FvOYfDTr6pK+u2u0JtEY3CnX0bS3oOD+Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732707912; c=relaxed/simple;
-	bh=mwUGhylsbgUqMhXih+Jds98x6S16t8YQHtQ6OIWiib0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ax0J373L7x0RKeKZBQoeuQoFetVkzDDx8XBsGph5p15rmPLJ4W0L0UfTDGQ4EYZrWdJu/MJI/B/hM4oa2h8k+0mIV8wgIeMTwuEOv+Iao1ukPd14UoXr6lDoTHVFUZb9ttxvxq/PdksEXaLn81440o7RiAlnIUwdWtRsP0xS21Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=D4yjdhy2; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1732707903;
-	bh=mwUGhylsbgUqMhXih+Jds98x6S16t8YQHtQ6OIWiib0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=D4yjdhy29+8MtpalfJZuwK8SIvdX7rN+pn4eKp6zbRoehqJxSpRM680qj4Lz30Fs6
-	 sp7/apFiKQhf+jDWy5IaE/Aih0rYmvgrFyxxHECxd11tnRWnFEyYYBWWOtSxZ23ikU
-	 9fE7YE6uWa2hZW9Fj754prN+YHIkxCGvCBHVbp7M=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id D45BC66AFC;
-	Wed, 27 Nov 2024 06:45:01 -0500 (EST)
-Message-ID: <c828b254fb93bd136b36d3a06ab1d9d29ce13d88.camel@xry111.site>
-Subject: Re: [PATCH v2] selftests/vDSO: support DT_GNU_HASH
-From: Xi Ruoyao <xry111@xry111.site>
-To: Shuah Khan <skhan@linuxfoundation.org>, Fangrui Song <i@maskray.me>, 
- Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Wed, 27 Nov 2024 19:44:59 +0800
-In-Reply-To: <f229fbad-731c-4dd4-8c66-ff8829c2c958@linuxfoundation.org>
-References: <20240915064944.2044066-1-maskray@google.com>
-	 <f229fbad-731c-4dd4-8c66-ff8829c2c958@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1732707939; c=relaxed/simple;
+	bh=YsJim3X/59akWviqfsnVfzcGmh+By4dRga1zXN2BHMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=IjSCAmJ8jDjip2QSHok/f7eNesIaFKZNFWtp7j8k0jz+1EEkyajdcHDnOkzvV3PiZapTi5Me1R5BXN+Jjwum9N1BK9bqx8mhogE0rR5KopLtMly2iSFSKBnmbUdGfQSJ2cZ1BOgXXnWvwQco6qmKzO4WLxyDozbbfg0fkmkasI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UMmasBpd; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732707919; x=1733312719; i=markus.elfring@web.de;
+	bh=wsTkpJ0crrbiKCw//zEGB71MSjoQsz2INPw4o65ZODw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UMmasBpdiKjjnuub+miyWcxiisBtRmQsorQ9Q1IDBk1b/eLv69QnVXvMjUNLpKEH
+	 C7r0hlGNMVj2hXu1PSnsJ6qPxbIIPnZi5ppqP0OhrbiLmdbHxehp1oUV1QxmPCgMo
+	 RybkAQZG55e+YUx1ND9jzNg91n9zFegTh9aNzUt0ut3PuPzrnGMNmZL2F4ANnxiuO
+	 oGRxiJUsJ7Po+V0yM386x6YQvbmfMamAX4BmH0Mj+kEigmxYlVBCPB8cHXGGEjGYN
+	 gmnIjqpTGTljUizj9HUaB5eXzrZQU9jdcT01f07DyOhaqADT3blT+IDwuN3xMAvC2
+	 4Rvcv07JRFLq3gH/Mg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrOdp-1u0vBA07lv-00lKvI; Wed, 27
+ Nov 2024 12:45:19 +0100
+Message-ID: <056e599a-f1f3-4ef4-a0d9-04cbe99f198c@web.de>
+Date: Wed, 27 Nov 2024 12:45:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH 01/11] coccinelle: Add script to reorder capable()
+ calls
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ linux-security-module@vger.kernel.org, cocci@inria.fr,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Serge Hallyn <serge@hallyn.com>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-11-cgoettsche@seltendoof.de>
+Content-Language: en-GB
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>,
+ LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241125104011.36552-11-cgoettsche@seltendoof.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:c3z75ebXs5Vvec51bTijuBJ89sciEkl5vT69C//yxvbWjzQ69bj
+ 6b2xXMO5j383+Av9ioHLroYrBtP+7cR6EkqAx2WX1bE3Ek126hEo0YbN2n98AGKuHu9cSOo
+ BD86XgkY7y10I1YH70J/WzQaFoKcwmbzZfhGYncJWBp7G2E9nseOmODgxfD175nBkJV+Fc4
+ OhW4+0CaIDBMKrlezuo2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:EERdwdgsqjs=;tQJriFa/CF00kg9HEyf9Jz2Xzfg
+ GEbf7XRlswfFTo92k73LvwyyjuldmWapj2wOkdCfJDf2pQV7blO/e7Tn5Awo/9wDA0Or/awyB
+ oaK1p8zNZtwoYgNo7K0eRRLW6+e0ZwyN0Dt3k9PTXbkFepcbh4pO3E6/57K21t9TbmYjXerZR
+ Xr62/8itvY/6SN73rueLJZG1w9wSilsyzsTCB0Wb01KKtjYc0iBfmvIVv7y5DYPDmoJCnNV9x
+ jFuknWRua9wRYshpPINz2iO8JZHco+c8kyptlQwC0Q+PEDhTjQz7BQwCigFt74ON8p4pR47F+
+ RK2nV9Jlz5fGqrP1+yc0Vx79aSrCnsazHyf9IdzQMGieupwbvU25gpFA3mIUTlqebWR3RZxil
+ eb+uPL0nGufuv4XbDM8+Xr+xnGG0QVO1jPoUXB6gT1uYYY5JfuIccYU7uJdfe41Qv2wT+EWWz
+ Hc3tNJW4uXG4Yk8WcNFNUII8dNnDiJsoGPsRI39jy0mYwD23bTzZ0bxReQgg3pMYZaf1ILHzc
+ JmTOM0aNg3dRpgRUPRAagNSUtEAuWkVlNhR6p6NQV9DRNygBxMZuiBf4XDZfVfPdx4Q+4C3vG
+ 7QNKo76SXHq0lzER7XVha1QnrshPRDVkOdJvHLq2MD+3MVQTejfZtKCXJbodEy/iJpIqB3Gr2
+ 5a+nfjF7+ObvnemK+Hht0BAXIyWcHck1bOLJPSqJszkGCRDibuLHAH1JY2dLkkT9yXFyzm3Ai
+ CQJP3JUrkz5OR4YXaxKiZWPhUojq0J5KUUtyLnzBgldKe9U8rth+ryVwYfKpNaaiern4A6F6y
+ tjNW2dbtuDHxT4x3UbdUvbeBg++TvD+dKc7KCJUfpbWrfWjjaipMxBokmqeE8CdsHy7hUH6fg
+ mouxJv5LetFST1feBWxFScP+4rDUtbEwMAJh8o/OI3N07zJAnXGbNYwGT
 
-On Thu, 2024-09-19 at 09:37 -0600, Shuah Khan wrote:
-> On 9/15/24 00:49, Fangrui Song wrote:
-> > glibc added support for DT_GNU_HASH in 2006 and DT_HASH has been
-> > obsoleted for more than one decade in many Linux distributions.
-> >=20
-> > Many vDSOs support DT_GNU_HASH. This patch adds selftests support.
-> >=20
-> > Signed-off-by: Fangrui Song <maskray@google.com>
-> > Tested-by: Xi Ruoyao <xry111@xry111.site>
-> > --
-> > Changes from v1:
-> > * fix style of a multi-line comment. ignore false positive suggestions =
-from checkpath.pl: `ELF(Word) *`
-> > ---
-> > =C2=A0 tools/testing/selftests/vDSO/parse_vdso.c | 105 ++++++++++++++++=
-------
-> > =C2=A0 1 file changed, 79 insertions(+), 26 deletions(-)
-> >=20
->=20
-> Quick note that this will be picked up after the merge window closes.
+=E2=80=A6
+> +++ b/scripts/coccinelle/api/capable_order.cocci
+=E2=80=A6
+> +@ depends on patch@
+> +identifier F =3D { capable, ns_capable, sockopt_ns_capable };
+> +binary operator op,op1,op2;
+=E2=80=A6
+> +-  F@p(EL) op E
+> ++  E op F(EL)
+=E2=80=A6
 
-Hi Shuah,
 
-The patch seems forgotten.
+You would like to reorder expression parts.
+How do you think about to increase the precision for such
+an SmPL change specification?
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+* May only operators be taken into account for which
+  the commutative property holds?
+
+* Would you like to support a varying length for the affected
+  operator chain (=E2=89=A5 2 operands)?
+
+
+Regards,
+Markus
 
