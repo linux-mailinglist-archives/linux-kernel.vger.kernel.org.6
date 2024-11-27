@@ -1,182 +1,165 @@
-Return-Path: <linux-kernel+bounces-423591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D4E9DAA0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:44:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 866D99DAA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B32166795
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 358231663D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918F21FF7BE;
-	Wed, 27 Nov 2024 14:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FDC1FF7B7;
+	Wed, 27 Nov 2024 14:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aa+V5kB2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyYlY9tY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC591FF7A7;
-	Wed, 27 Nov 2024 14:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718654; cv=pass; b=cul+bRLezV5cw+H2catJhQ92Tsp+Cox0SNgKX6fYiKn7xP+buMpl68d+KFPRAwYVC3W8eFT6O0jD1+zqXn1uyiMHDpYdFg1ZYHeLa32FOUP1Nsv05ORJx9+WwzPlokv3de/X34rY/IZyX3zYCTxQ5c8NfINHUour7PFvh7ZsEsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718654; c=relaxed/simple;
-	bh=hNWRyfA0hLuS9z4M0IomGat40IOMJ0NtjlYCGwg2kHE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=limJbh5t9id5ghNlkRaS767b00o8dOG3JOWQfOM0P3gyasLCzQT6OQcTVrUma24pddyO6AYzSuh72HNsMEf7l9RAlRfwuEjYXhS/ymnXDvQAMfP9AOWGCwwHQ2mylDBwFlN561cnsoJQ4KUx8vVHyzty7CeO2gjKiKCSNVj++Zs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aa+V5kB2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732718613; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NOI6dDP3D2TjL1boOmDGAU+aw0ARWRV9GO8H5F/7MMrWrS7SyaNakYH0kpFBcstUia9aJDkK31p5OI1b6LZCBFxfrvL+JHUuQMZET/rNOGSa3E8/tg4T8jtjgLAhi8P37YUhANfgFNnQ1SxAw8us76Nq2Dfg4FOmUESt7qvie3k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732718613; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oTwTz0AGCDwSgvoHUUyLYZrH4mlX58t6JryU8TBBMTY=; 
-	b=YX4h1nFwzjRIFl3ucnw7h9kxVgwaLIMswS5MnShdnXzkQG+RNLQ1QC3e9NsoxXtvmZEm66gllSU1mK4kEEkHGbivFPYNNddOtRpzOglPYA5fxpHL/1rdHl3DJTKe8oxs5i2loFmzc3e/89I0ijmihIvaZi+zhXtKgl7r8q4nyQA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732718613;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=oTwTz0AGCDwSgvoHUUyLYZrH4mlX58t6JryU8TBBMTY=;
-	b=aa+V5kB2LKz3uonZgIzaptffnNhXkFYrrjFOXUumxp4/bWbEfYsoDK5RRNXCWUT2
-	yW+P8viqvYoU5KK9UA9cdyi4OuL42IgUokcPpeF4b0QMZVOLfwXEHP4vVSd9tTcEI2+
-	COrW1Atp5V+erePZPxJfnxmbjd7LCsIdXTzxQJJc=
-Received: by mx.zohomail.com with SMTPS id 1732718613236384.9475704770982;
-	Wed, 27 Nov 2024 06:43:33 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B881FECCB;
+	Wed, 27 Nov 2024 14:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732718604; cv=none; b=lhof7qsazHgMEWzuRTfIWQGykNmrMWAL3whCSi250OELr8pdr131qm4MNYkLfx6OymsCXVuYYG+VM2hWBH/xB1nc4N/3ibcygBG8uV5Oprx9e+VNSWQPejhS1OiN0yGGaF5okzKYFC5whicfORpYyq6gHs+ZfYozWqKyL7dUqdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732718604; c=relaxed/simple;
+	bh=XHWAmWVGdvPSI+4U+sDv7f5UDi0JdephXUkR8n9wRiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtpF8OYMcHcqmIWxVyYTcvWZvaxFDUEY3TGj8zB8qGhj8uoigBNiX/K4MOcmDV8mwzNbzncQQP8OE4iczr8SyuKPGVImhDJc9IXcUWnPABkhckjuVS3Pq2NTEfp9/CA4Fe6s/4MwiP8Av2h5HWmO/9tEnR6AcUVjt7R9U8UscwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyYlY9tY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8CC7C4CED2;
+	Wed, 27 Nov 2024 14:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732718604;
+	bh=XHWAmWVGdvPSI+4U+sDv7f5UDi0JdephXUkR8n9wRiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AyYlY9tYSOHhCWuC5K4ImBvKCQ81XUWA2iczhn7TbOMzKZ8VvZJt7W5NYQ2+qa32E
+	 pj+hJD6IdyxuXBr47GpxUMTGDgJgna60SaEe09D9qzOlkpYNr6t0e3IK7WmzItGU/Z
+	 w3xrwq0m3SrxfWJ3uH9EWAgzxtuf3KmVxihQ3ZYSGIVASZ3/EZA0UNuwJ4hKDAsbrN
+	 hQ/5hrNK7wzBJyatOtywdc9MplvI70zECRxGLb3GoOdRdYkBUBYVc3hqZzePCxXAbJ
+	 dyGcCrcpjhSyesv/niPTiGXh7PcfmlOAtfVYUEgE3nZal+lt3KOkDwGNXJyi1/1wFa
+	 tPa5UAWsObtGQ==
+Date: Wed, 27 Nov 2024 08:43:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	NXP S32 Linux <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+Subject: Re: [PATCH v5 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
+ SoCs
+Message-ID: <20241127144322.GA3454134-robh@kernel.org>
+References: <20241126114940.421143-1-ciprianmarian.costea@oss.nxp.com>
+ <20241126114940.421143-2-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 09/35] WIP: rust: drm/kms: Add
- Connector.attach_encoder()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-10-lyude@redhat.com>
-Date: Wed, 27 Nov 2024 11:43:18 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5C141885-C8D3-4CD9-8919-683D1DFE4AB3@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-10-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126114940.421143-2-ciprianmarian.costea@oss.nxp.com>
 
-Hi Lyude
-
-> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> This adds a simple binding for completing the last step of creating a =
-DRM
-> connector - attaching its encoder. This function should only be called
-> before the connector is registered, and DRM should enforce this itself =
-by
-> returning an error if a driver tries to add an encoder to an
-> already-registered DRM connector.
->=20
-> Note that unlike most of the methods we'll be adding to DRM mode =
-objects,
-> this is directly implemented on the Connector<T> type since I don't =
-really
-> think it would make sense for us to allow this operation on an
-> OpaqueConnector (a DRM connector without a known DriverConnector
-> implementation, something we'll be adding in the next few commits).
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
+On Tue, Nov 26, 2024 at 01:49:37PM +0200, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> 
+> RTC tracks clock time during system suspend and it is used as a wakeup
+> source on S32G2/S32G3 architecture.
+> 
+> RTC from S32G2/S32G3 is not battery-powered and it is not kept alive
+> during system reset.
+> 
+> Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 > ---
->=20
-> TODO:
-> * Figure out a solution for making sure that this can only be called =
-when a
->  Connector is unregistered, probably via an UnregisteredConnector =
-type.
->=20
-
-Either that, or via the typestate pattern. But I think a =
-UnregisteredConnector type
-will work fine based on your previous UnregisteredKmsDevice.
-
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms/connector.rs | 15 +++++++++++++++
-> 1 file changed, 15 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/kms/connector.rs =
-b/rust/kernel/drm/kms/connector.rs
-> index 0fa927a3743b2..54457b327c365 100644
-> --- a/rust/kernel/drm/kms/connector.rs
-> +++ b/rust/kernel/drm/kms/connector.rs
-> @@ -28,6 +28,7 @@
-> use super::{
->     ModeObject,
->     RcModeObject,
-> +    encoder::*,
->     KmsDriver,
-> };
-> use macros::pin_data;
-> @@ -227,6 +228,20 @@ pub fn new(
->             =
-ARef::from_raw(NonNull::new_unchecked(Box::into_raw(Pin::into_inner_unchec=
-ked(new))))
->         })
->     }
+>  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> new file mode 100644
+> index 000000000000..89414a0d926c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +    /// Attach an encoder to this [`Connector`].
-> +    ///
-> +    /// TODO: Move this to an `UnregisteredConnector` interface =
-somehow=E2=80=A6
-> +    #[must_use]
-> +    pub fn attach_encoder<E>(&self, encoder: &Encoder<E>) -> Result
-> +    where
-> +        E: DriverEncoder<Driver =3D T::Driver>
-> +    {
-> +        // SAFETY: FFI call with no special requirements
-> +        to_result(unsafe {
-> +            bindings::drm_connector_attach_encoder(self.as_raw(), =
-encoder.as_raw())
-> +        })
-> +    }
-> }
->=20
-> /// A trait implemented by any type that acts as a [`struct =
-drm_connector`] interface.
-> --=20
-> 2.46.1
->=20
->=20
+> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
+> +
+> +maintainers:
+> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> +
+> +description:
+> +  RTC hardware module present on S32G2/S32G3 SoCs is used as a wakeup source.
+> +  It is not kept alive during system reset and it is not battery-powered.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nxp,s32g2-rtc
+> +      - items:
+> +          - const: nxp,s32g3-rtc
+> +          - const: nxp,s32g2-rtc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: ipg clock drives the access to the RTC iomapped registers
+> +      - description: Clock source for the RTC module. Can be selected between
+> +          4 different clock sources using an integrated hardware mux.
+> +          On S32G2/S32G3 SoCs, 'source0' is the SIRC clock (~32KHz) and it is
+> +          available during standby and runtime. 'source1' is reserved and cannot
+> +          be used. 'source2' is the FIRC clock and it is only available during
+> +          runtime providing a better resolution (~48MHz). 'source3' is an external
+> +          RTC clock source which can be additionally added in hardware.
 
-LGTM.
+Is switching the clock source at run-time possible? For example, use the 
+48MHz at runtime and switch to 32kHz or external clock during suspend. 
+If so, you need to list all possible clock sources. Really, you probably 
+should no matter what as you need to describe what's in the h/w, not 
+configuration (though configuration is okay when it's fixed for the 
+device).
 
-=E2=80=94 Daniel
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ipg
+> +      - enum: [ source0, source1, source2, source3 ]
 
+You can do:
+
+maxItems: 5
+items:
+  - const: ipg
+additionalItems:
+  pattern: '^source[0-4]$'
+
+Though I will have to relax constraints on 'additionalItems' to avoid a 
+warning.
+
+Rob
 
