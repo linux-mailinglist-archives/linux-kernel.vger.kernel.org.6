@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-423964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B4B9DAECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:16:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D0B9DAED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:18:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53281165FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:18:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50792202F79;
+	Wed, 27 Nov 2024 21:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ7NpMJU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DF82821F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:16:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F5B202F8F;
-	Wed, 27 Nov 2024 21:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GYBl5RVy"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951987DA81
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A909D7DA81;
+	Wed, 27 Nov 2024 21:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742190; cv=none; b=Of0WFpH2SZm07b27XIAczJ+0pnI/FrWrnT9FTdXUns4ZAnuRKiy6CLJ3DcANdhpJy6Cx7sDqr26VOiU6yCUkr9LFYWcHaZ9nkqY4+PRzJOMtj95z4IAUFbKxvQo0OcZUBg75j6d29pMkejlkIc7e3Z97B14zO4200OjVqjI+4cU=
+	t=1732742287; cv=none; b=HKAnkG6b9fez12NixC3feh8FLrRc70w4UxGVUPI1QMn0ECnqAKfeg3DLWhw4eZs2DuwC+zv9AreqqGgFyN3G9zOxWW7+ETbLQeTKqgy/qf0MbOhJa+n0of9REdIUGbv0iXFWA7lJ2+ECBJbjZKqh2pkm63ne8CC1nI+BBcaNmxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732742190; c=relaxed/simple;
-	bh=Fxn1X+ehwaYhCHZcC8uTjSxCtiQcEenGfPonIBYz6Io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i4DPKostoFM7eJrAXxVFehcy5hrT0DeJc4U3Gff9qokgwA/C5CMGLUc73crDXsmKfn57TtdlJAw5B42JTPP0aIARQXcjrqypBk7O8/kyYWi8rLbeiucQdrdo2956Qs/IuJ7Ov2I8Gff6YLjsgaAkJC2rnUNECVOnjBf0G9dORs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GYBl5RVy; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-71d5476ebb1so73733a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:16:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732742185; x=1733346985; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MbEQnkUxOaFhMn75+V9SHyVteV8uSDV/a8R/NVBNEOA=;
-        b=GYBl5RVyNT8U5VdhEesQfi9osi82U4VEgWa7hwX6AoH3JQP0MEB+3k8gLrofVbUKZR
-         iitzYOnwQgmQVcyiA4Zfm/PUUfsFoC6QoGCAUr3y9YxzOHVdxBwnHr/QVIk9lI8EFWNT
-         lkJ7zGDLphK0mNHgYSN1z56xdyvlEWwtgpWc+KANXSkP/L4Vqrxb0AitTmVLEjhzczOW
-         NvkiGlH1GhdBQjGdco8BifKBqwUkQgjtRnua3rMabnjyXBf2xRnqJZfBKRHbSKly11hm
-         0ZialJqpYCv9SNR6FqWAEW8cOANDETAs4suErc10aZjirxtLUPhWilZOkY1WmZLM8Og9
-         0jnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732742185; x=1733346985;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MbEQnkUxOaFhMn75+V9SHyVteV8uSDV/a8R/NVBNEOA=;
-        b=wS4x/BW025sY57gdQw8vTvg0lM7C2IIPUpZHrLgpWAHN9Sxo4lYsbJoEHmxDgoHx1s
-         W1YyNUdTCpIaLniG4yh5h85R0Si+mRkryB5ANAcUX8C07yujhoCd2tcjxAed0n9xeTf/
-         dXS9T5iYUyV2WiJsa3XBlAKP0whUwHxcgi4I678DAhf0rUrpiR+5RNvl4yDKTK4uJ/yc
-         fm9++61uPrAfnvuyLngCw3A9+HIJDGFymAXM5f4u8AQNVpTKmiOFptXGzQqo9XmfGGGe
-         ICF/Zq9yryvBCGlQNlmypMxI/iSH4ARB2K3W+XjzwlMgaezoiHFDDSfeJQJB94W/dHck
-         o6zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUj9ITaYe2N86HCfBidnCcQ96hGWD8zcq/L5XPIal1DI7Byx0DTP7+3NznnaCnIoE6JJ7gOcQhhKxmKqRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8qjnBYu61xcchIKTDZPWdKUznH+dKbqkP3ieZWa4y8dGVFxU9
-	qnhpVIcI1lP6jzTaKBUiqnXnCUmvkNnASU/7od8pMdJelRO7W6L7hi6/2vST2Ow=
-X-Gm-Gg: ASbGncsa3FOcigxNvMZHr78QSrL1IWwxiYSrr5ZFAijfCSFVjx9sg7imxWCfGrZaRgd
-	gqbQzOiRC/K4jG2vwskduiox0dVsdoNaPL51GEAasIHqHW1B6lYCW719ikscGrnJjF0hFGq9t4I
-	fIXl6P9HzTvaTmokf9MpNTYie87cdzpZVwN/Z48oMg258GgddZwQCGkf0pu9EoCzIm9413dXbIh
-	y+Ry5avWV1Oii1BKX4EXeoHkcAv/Dsb6XacAxinPtFd7g==
-X-Google-Smtp-Source: AGHT+IFts3eKwhVYVSrJDt3Jr4qUN9DnRFk2sgCqpxJYdxS758kSUN5q61EgEhIS5rtU7WG7aVXKOg==
-X-Received: by 2002:a05:6830:4907:b0:71a:6c7a:e23b with SMTP id 46e09a7af769-71d65cb2c74mr4690905a34.16.1732742185581;
-        Wed, 27 Nov 2024 13:16:25 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d725638a7sm17780a34.43.2024.11.27.13.16.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 13:16:24 -0800 (PST)
-Message-ID: <4f7e45b6-c237-404a-a4c0-4929fa3f1c4b@kernel.dk>
-Date: Wed, 27 Nov 2024 14:16:24 -0700
+	s=arc-20240116; t=1732742287; c=relaxed/simple;
+	bh=yDl5oczllgAYa8WZPNgP0zyrPYISCmrYIjhILQe6iyM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RhrOrat+NIfS8PXUNqp8hpgXm5OE6fXFFHcZ8LSa98w0r5/A/ZOXYA6Zqw3ef3jcOm2n4OFMUAF6JnZoAeDD05fVOc3kUcTk0zFRUQ29b93NLqJ3xCEfS8WKdbua+VCMFhl2HDVYsRJ487SvSlO5zdNO2BpZYcudjkUi/EdEZfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ7NpMJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06FDC4CECC;
+	Wed, 27 Nov 2024 21:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732742287;
+	bh=yDl5oczllgAYa8WZPNgP0zyrPYISCmrYIjhILQe6iyM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DZ7NpMJU2B3xyBjveFVz+LibQwAp1tdS8imzjObUeLB/2sad4GJNvO0C5v/I6O3m+
+	 VYCj+QeEO2E9MW3wSSx3XfKTmQyWwgfeJt7WOm4W1aLqzV4AsW2rv93pbED6RpiBN7
+	 ROVx7qlP3g5EUOjLK15qqiMYL/46kG+ycbGTVuMDfxwtON/VMbgYEXihe8YbAh5jQf
+	 gtbq1BPOsnieIM8pt+bi0GpxxIYi2N7vDdkAiRsOO+gxqfLt8Gv1aowZktuUy9Cf47
+	 iip1Xkk1HFFsNBAzW7Y2Xpybe2cb87RB6vww477qQJOL+JQdqwqDcBHPN3YatkIEBi
+	 t0JtOYvDhVCbw==
+From: SeongJae Park <sj@kernel.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	nehagholkar@meta.com,
+	abhishekd@meta.com,
+	kernel-team@meta.com,
+	david@redhat.com,
+	ying.huang@intel.com,
+	nphamcs@gmail.com,
+	akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	feng.tang@intel.com,
+	kbusch@meta.com,
+	damon@lists.linux.dev
+Subject: Re: [RFC PATCH 0/4] Promotion of Unmapped Page Cache Folios.
+Date: Wed, 27 Nov 2024 13:18:03 -0800
+Message-Id: <20241127211803.87124-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241127082201.1276-1-gourry@gourry.net>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
-To: Kent Overstreet <kent.overstreet@linux.dev>, Jann Horn <jannh@google.com>
-Cc: linux-bcachefs@vger.kernel.org, kernel list
- <linux-kernel@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>,
- io-uring <io-uring@vger.kernel.org>
-References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
- <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
- <3ajlmjyqz6aregccuysq3juhxrxy5zzgdrufrfwjfab55cv2aa@oneydwsnucnj>
- <CAG48ez2y+6dJq2ghiMesKjZ38Rm7aHc7hShWJDbBL0Baup-HyQ@mail.gmail.com>
- <k7nnmegjogf4h5ubos7a6c4cveszrvu25g5zunoownil3klpok@jnotdc7q6ic2>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <k7nnmegjogf4h5ubos7a6c4cveszrvu25g5zunoownil3klpok@jnotdc7q6ic2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/27/24 2:08 PM, Kent Overstreet wrote:
-> On Wed, Nov 27, 2024 at 09:44:21PM +0100, Jann Horn wrote:
->> On Wed, Nov 27, 2024 at 9:25?PM Kent Overstreet
->> <kent.overstreet@linux.dev> wrote:
->>> On Wed, Nov 27, 2024 at 11:09:14AM -0700, Jens Axboe wrote:
->>>> On 11/27/24 9:57 AM, Jann Horn wrote:
->>>>> Hi!
->>>>>
->>>>> In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
->>>>> to an mm_struct. This pointer is grabbed in bch2_direct_write()
->>>>> (without any kind of refcount increment), and used in
->>>>> bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
->>>>> which are used to enable userspace memory access from kthread context.
->>>>> I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
->>>>> guarantees that the MM hasn't gone through exit_mmap() yet (normally
->>>>> by holding an mmget() reference).
->>>>>
->>>>> If we reach this codepath via io_uring, do we have a guarantee that
->>>>> the mm_struct that called bch2_direct_write() is still alive and
->>>>> hasn't yet gone through exit_mmap() when it is accessed from
->>>>> bch2_dio_write_continue()?
->>>>>
->>>>> I don't know the async direct I/O codepath particularly well, so I
->>>>> cc'ed the uring maintainers, who probably know this better than me.
->>>>
->>>> I _think_ this is fine as-is, even if it does look dubious and bcachefs
->>>> arguably should grab an mm ref for this just for safety to avoid future
->>>> problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
->>>> means that on the io_uring side it cannot do non-blocking issue of
->>>> requests. This is slower as it always punts to an io-wq thread, which
->>>> shares the same mm. Hence if the request is alive, there's always a
->>>> thread with the same mm alive as well.
->>>>
->>>> Now if FMODE_NOWAIT was set, then the original task could exit. I'd need
->>>> to dig a bit deeper to verify that would always be safe and there's not
->>>> a of time today with a few days off in the US looming, so I'll defer
->>>> that to next week. It certainly would be fine with an mm ref grabbed.
->>>
->>> Wouldn't delivery of completions be tied to an address space (not a
->>> process) like it is for aio?
->>
->> An io_uring instance is primarily exposed to userspace as a file
->> descriptor, so AFAIK it is possible for the io_uring instance to live
->> beyond when the last mmput() happens. io_uring initially only holds an
->> mmgrab() reference on the MM (a comment above that explains: "This is
->> just grabbed for accounting purposes"), which I think is not enough to
->> make it stable enough for kthread_use_mm(); I think in io_uring, only
->> the worker threads actually keep the MM fully alive (and AFAIK the
->> uring worker threads can exit before the uring instance itself is torn
->> down).
->>
->> To receive io_uring completions, there are multiple ways, but they
->> don't use a pointer from the io_uring instance to the MM to access
->> userspace memory. Instead, you can have a VMA that points to the
->> io_uring instance, created by calling mmap() on the io_uring fd; or
->> alternatively, with IORING_SETUP_NO_MMAP, you can have io_uring grab
->> references to userspace-provided pages.
->>
->> On top of that, I think it might currently be possible to use the
->> io_uring file descriptor from another task to submit work. (That would
->> probably be fairly nonsensical, but I think the kernel does not
->> currently prevent it.)
+Hello,
+
+On Wed, 27 Nov 2024 03:21:57 -0500 Gregory Price <gourry@gourry.net> wrote:
+
+> Unmapped page cache pages can be demoted to low-tier memory, but
+> they can presently only be promoted in two conditions:
+>     1) The page is fully swapped out and re-faulted
+>     2) The page becomes mapped (and exposed to NUMA hint faults)
 > 
-> Ok, that's a wrinkle.
+> This RFC proposes promoting unmapped page cache pages by using
+> folio_mark_accessed as a hotness hint for unmapped pages.
 
-I'd argue the fact that you are using an mm from a different process
-without grabbing a reference is the wrinkle. I just don't think it's a
-problem right now, but it could be... aio is tied to the mm because of
-how it does completions, potentially, and hence needs this exit_aio()
-hack because of that. aio also doesn't care, because it doesn't care
-about blocking - it'll happily block during issue.
+Adding my thoughts that humble and biased as a DAMON maintainer.  The thoughts
+are about the general problem, not about this patchset.  So please think below
+as a sort of my "thinking loud" or "btw I use DAMON", and ignore those when
+discussing about this specific patch series.
 
-> Jens, is it really FMODE_NOWAIT that controls whether we can hit this? A
-> very cursory glance leads me to suspect "no", it seems like this is a
-> bug if io_uring is allowed on bcachefs at all.
+DAMON's access check mechanisms use PG_idle which is updated by
+folio_mark_accessed(), and hence DAMON can monitor access to unmapped pages.
+DAMON also supports migrating pages of specific access pattern to an arbitrary
+NUMA node.  So, promoting unmapped page cache folios using DAMON might be
+another way.
 
-I just looked at bcachefs dio writes, which look to be the only case of
-this. And yes, for writes, if FMODE_NOWAIT isn't set, then io-wq is
-always involved for the IO.
+More specifically, users could use only DAMON for both promoting and demoting
+of every page like HMSDK[1] does, or for only unmapped pages promotion.  I
+think the former idea might work given previous test results, and I proposed an
+idea[2] to make it more general (>2 tiers) and easy to tune using DAMOS quota
+auto-tuning feature before.  All features for the proposed idea[2] are
+available starting v6.11.   For the latter idea, though, I'm not sure how
+beneficial it would be, and whether it makes sense at all.
 
--- 
-Jens Axboe
+For people who might be interested in it, or just how DAMON can be used for
+such weird idea, I posted an RFC patch[3] for making DAMON be able to be used
+for the use case.  For easy testing from anyone who interested, I also pushed
+DAMON user-space tool's support of the new filter to a temporal branch[4].  The
+temporal branch[4] might be erased later.
+
+Note that I haven't test any of the two changes for the unmapped pages only
+promotion idea, and have no ETA for any test.  Those are only for concept level
+idea sharing.
+
+[...]
+> During development, we explored the following proposals:
+[...]
+> 4) Adding a separate kthread - suggested by many
+> 
+>    This is - to an extent - a more general version of the LRU proposal.
+>    We still have to track the folios - which likely requires the
+>    addition of a page flag.  Additionally, this method would actually
+>    contend pretty heavily with LRU behavior - i.e. we'd want to
+>    throttle addition to the promotion candidate list in some scenarios.
+
+DAMON runs on a separate kthread, so DAMON-based approach maybe categorized
+into this one.
+
+[1] https://github.com/skhynix/hmsdk/wiki/Capacity-Expansion
+[2] https://lore.kernel.org/damon/20231112195602.61525-1-sj@kernel.org/
+[3] https://lore.kernel.org/20241127205624.86986-1-sj@kernel.org
+[4] https://github.com/damonitor/damo/commit/32186d710355ef0dec55e3c6bd398fadeb9d136f
+
+
+Thanks,
+SJ
+
+[...]
 
