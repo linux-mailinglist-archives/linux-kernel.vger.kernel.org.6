@@ -1,134 +1,130 @@
-Return-Path: <linux-kernel+bounces-423354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BA39DA63C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:56:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425851642C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:56:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CEC1DA622;
-	Wed, 27 Nov 2024 10:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="LS69UuNH";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="uwsJfH+3"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F719DA659
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:00:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EED1D89ED;
-	Wed, 27 Nov 2024 10:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704962; cv=none; b=WEeq3AHaLTfv0EbJMzsWv+a4s2QyFbuj54oq/egiukqEhHL+g9wvbqtOS06a7F/Huo1eVUuTFh+U2p8SF/2bBCdEzTd5cY3mBYDdslabyKQJEeZ+TbfYnARM/M55iX69p5AOHhPcDYBd3DCVW9NSRgjwnAjkxRKsDbt33Hesi1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704962; c=relaxed/simple;
-	bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YerwAz345eVd0fXpqBDZ0baOGtGsBbfhOfk4FPIaIHRp8vfC7FrJV1LARLUAqNlM+gfGrU7Ca/wejx1kP8sUXJsAUmn3jmuREzZntBavARgWpqp1R0tpJXeS82WMWhRcRukknxxZUqYtUDd3kjJjsP4eXIIjryfrMhoWcQLk9uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=LS69UuNH; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=uwsJfH+3; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 48A0E122FE1E;
-	Wed, 27 Nov 2024 02:55:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1732704958; bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LS69UuNHegvzH1QSVS9u26+DzTmRUuAlEOWIyQCWg6gHwC/xTRVDnLJVMA5CMLvw9
-	 jgvd9Rei8dwzBzUJqtObWxY7lqY4eSGhv+d7YruAoVyCkKn7fnyIIIZiIFFDwfCf62
-	 hFopsYayeFM0SFASoPuRhE1CHIbBp7CqPmRg2ONgiXw18fEmCd8j62gmhSV4LRwW8o
-	 ra3bkHSwHwqTQhVZxw6w9vQGsP1nvn3pMY/62z7k1U1F2tMxIOhk5FrQjvcYDCTwf0
-	 XlsLFTnm9O0CuaQbjsTiAwlgoeIv1DWE1XLvPwOfRXWZ+pvid18ZQR8KIgcfuM5DWO
-	 5yMxMAkOe6QYw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id YNS0vbNhMu1C; Wed, 27 Nov 2024 02:55:54 -0800 (PST)
-Received: from ketchup (unknown [119.39.112.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCD12830EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:00:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905731E0E02;
+	Wed, 27 Nov 2024 10:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Afk2R8G2"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 9EAAB122FE1A;
-	Wed, 27 Nov 2024 02:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1732704954; bh=1yU/qlGi1UeV8a2MiKkmtcspdlkNnyaFzSDiPOaFkJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uwsJfH+3HRYpZD5erNRE95tLavoK9z63ZaX9LVjxZJHBKdEgmgXeS6ic7WBmDKMvU
-	 /eSyJl+JNlQy0ZHrPdw1iDW6BpZaPrdDwT4BfMmqBBwESOBfkRDgLdnaPdjMsgIFeP
-	 s7pYW+XoA7hHNQ9Mp17hcE5uWgsxQ7jUXegvYUt7z49HQbFHYK7QUvqiRGL7+0qC2+
-	 lbwhlTD4TJKqBmcFSh1/vw31YmsqnFJKO27CmJS4WssIQABF4Ml3jlz4dwLb+AngsB
-	 uXXPfZwVEVQqdABuBSP8hsIP8+4hQL7pTgJ+bEEu2HFFUf2IEvC9tBKedT2g61J92f
-	 RobmCn9pjXc+w==
-Date: Wed, 27 Nov 2024 10:55:42 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 0/3] Add clock controller support for Spacemit K1
-Message-ID: <Z0b6rqurcj-gfzjI@ketchup>
-References: <20241126143125.9980-2-heylenay@4d2.org>
- <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3DE1E0DCC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732705126; cv=none; b=rpo+8u0swyqa6hRN29i+r80ptflAKTn84lyclAO0i0NUqmlXDMDWAsfidqQR2FgEUZR2j+XH4D8YAyp7EFRIhcHXZukY3z3OIAvMzT4XgWu+GZJAwaoFjAzLWCZ2PJo1sS7tkLqTyEXhn18yZ4Ej9TMQXCzGoK/mqL3XqE4ZCyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732705126; c=relaxed/simple;
+	bh=S7LPZ+3y6FWIMJsp5Ouu+DK3lPX6vaJw3it09f2Ne+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Guwx5+NftI7VMvwFAYvV33X7r0BpPgXct/mvysFaTbx6x7TPidzk3LohLFCls6YVet4ebhsnF3XftyUGfZJUfDCivOtBPUkp6xJYGOyVq74qo1uGci+E7xZm00rO/4s9lgoZRHdhTaucK9u819XWY1k1eINsOiKS0Xf0d0Ud42E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Afk2R8G2; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7f71f2b136eso5335895a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:58:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732705125; x=1733309925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cJl3kb5XMLhtXCrbkEMR/4kHcfh7IzK3UV5gKDYZwhw=;
+        b=Afk2R8G21GIWVC+W0lbOF6px0gMudIA9JtbHDynGABu0sO36zPptK7mNOzCUYIWG2z
+         nG9zMiB7KReDqofLojXkBtDtIBdB0FLKdIULbeS/CTmOXCfdRFsmX7KJAbnxFrR0d5MQ
+         e+9zzm234kaQwOFrABpid10g5CTaJOdfKqDYY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732705125; x=1733309925;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cJl3kb5XMLhtXCrbkEMR/4kHcfh7IzK3UV5gKDYZwhw=;
+        b=josGelbX/W0WOzCP1tD0YhrV6uQ/S0TyRAT2yuAsinnZIOmBCnMRBm0Hn7AjHpDUdP
+         1JX5a3/gJXLrnusAQU/reeA7TAjg3DHv9Ffkyz/ZEU03KJEjt1soWEfpfHP42PXIK4J9
+         bX6F01Rm239pzGjc6/y1ncXV4ZsjiKjFX4usowA0SYh43QBNHheWsXSR88hBAhm4DBJG
+         W0rQZczup6GrZ0qH0Ecy1Iz38KMTJk/Z0SxOCD6YL38GcfY4bOmWSrAJ3zzitiHB7qRw
+         ObQLsM5X9v1uYIKBHk/yOg7JkY3mcwRxVQZhUDoFvkaiiECzKMJ9s9Av/HybKLdlbETb
+         qvUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw7JgSP5YoTIm/aUncmY02pDa77E5QVNXXJl+sIbtBiv177hQxtJ/2KLdRcFomljfWQBwQ9WqoUSAf658=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaC4ypjcUGrhbvlndayytZ5MvK/DN+bHKqvZYcOoHtAPfy5Yio
+	XAFkVJqmEHBe2FWTf85Wi0uIAdn/IcL4gWrmMloblpcmv94BvBTmTjyzLQibag==
+X-Gm-Gg: ASbGncvuNCljtVg05xgPwBtfJBm4NxkFuCm0ikTLzJqOeP4TVzxFdtUB0QVzr37Pwu3
+	adrz36QppIZVHkuZ77N2CfsQ4iX8ZC6zcl9xPQeNWRrFd7N30eaOMP+cyB6b3e/8w+cRZA3Msrm
+	3fyP/liwAhNIDPbH8TM7qqplgEG/Y2f11lcpMlVXW8PtYFsobZ2ZSPQsJOuYS9Mc9Yq4quKlVey
+	bBIlr9vh0DKQap7UFh12EAEsxit3j8C5Xvs27oaTDO0MiylK2IsV1IscuAZtGkmvZbdwxfHaQ==
+X-Google-Smtp-Source: AGHT+IGL+fUYN25nrPPTc6QN4yfjwK4zt5HoSmXI1qXJXe97hGTkF/f4uxfX713K4ZM4XUZIFaEH6Q==
+X-Received: by 2002:a05:6a20:3945:b0:1e0:d1db:4d8a with SMTP id adf61e73a8af0-1e0e0b207demr3923440637.10.1732705124764;
+        Wed, 27 Nov 2024 02:58:44 -0800 (PST)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:a2e8:8551:482f:404b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa860a9sm1196835a91.33.2024.11.27.02.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 02:58:44 -0800 (PST)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: David Lin <yu-hao.lin@nxp.com>,
+	Pin-yen Lin <treapking@chromium.org>,
+	Doug Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep from 10s to 5s
+Date: Wed, 27 Nov 2024 18:55:43 +0800
+Message-ID: <20241127105709.4014302-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 26, 2024 at 03:44:20PM +0100, Krzysztof Kozlowski wrote:
-> On 26/11/2024 15:31, Haylen Chu wrote:
-> > The clock tree of Spacemit K1 is managed by several independent
-> > controllers in different SoC parts. In this series, all clock hardwares
-> > in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
-> > driver, CPU cores and UARTs could be brought up (see below). More clocks
-> > will be implemented later soon.
-> > 
-> > No device tree changes are included since Spacemit K1 UART needs two
-> > clocks to operate, but for now the driver gets only one. I would like to
-> > defer the changes until this is resolved.
-> > 
-> > This driver has been tested on BananaPi-F3 board and successfully
-> > brought up I2C, RTC, mmc and ethernet controllers. A clock tree dump
-> > could be obtained here[1].
-> > 
-> > [1]: https://gist.github.com/heylenayy/ebc6316692dd3aff56575dbf0eb4f1a9
-> > 
-> > Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
-> > 
-> > Changed from v2
-> > - dt-binding fixes
-> What fixes? Be specific, what did you change?
+In commit 52250cbee7f6 ("mwifiex: use timeout variant for
+wait_event_interruptible") it was noted that sometimes we seemed
+to miss the signal that our host sleep settings took effect. A
+10 second timeout was added to the code to make sure we didn't
+hang forever waiting. It appears that this problem still exists
+and we hit the timeout sometimes for Chromebooks in the field.
 
-Sorry for the vague changelog about dt-binding changes... I'm willing
-to post a more precise one here,
+Recently on ChromeOS we've started setting the DPM watchdog
+to trip if full system suspend takes over 10 seconds. Given
+the timeout in the original patch, obviously we're hitting
+the DPM watchdog before mwifiex gets a chance to timeout.
 
-- drop clocks marked as deprecated by the vendor (CLK_JPF_4KAFBC and
-  CLK_JPF_2KAFBC)
-- add binding of missing bus clocks
-- change input clocks to use frequency-aware and more precise names
-- mark input clocks and their names as required
-- move the example to the (parent) syscon node and complete it
-- misc style fixes
+While we could increase the DPM watchdog in ChromeOS to avoid
+this problem, it's probably better to simply decrease the
+timeout. Any time we're waiting several seconds for the
+firmware to respond it's likely that the firmware won't ever
+respond. With that in mind, decrease the timeout in mwifiex
+from 10 seconds to 5 seconds.
 
-> 
-> Best regards,
-> Krzysztof
+Suggested-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+---
 
-Thanks,
-Haylen Chu
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index e06a0622973e..f79589cafe57 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -545,7 +545,7 @@ int mwifiex_enable_hs(struct mwifiex_adapter *adapter)
+ 
+ 	if (wait_event_interruptible_timeout(adapter->hs_activate_wait_q,
+ 					     adapter->hs_activate_wait_q_woken,
+-					     (10 * HZ)) <= 0) {
++					     (5 * HZ)) <= 0) {
+ 		mwifiex_dbg(adapter, ERROR,
+ 			    "hs_activate_wait_q terminated\n");
+ 		return false;
+-- 
+2.47.0.338.g60cca15819-goog
+
 
