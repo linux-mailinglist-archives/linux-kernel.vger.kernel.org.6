@@ -1,254 +1,151 @@
-Return-Path: <linux-kernel+bounces-423431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E3B9DA795
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:17:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2A69DA74D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E01B26841
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1C828158B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E021F9F61;
-	Wed, 27 Nov 2024 12:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA111FA248;
+	Wed, 27 Nov 2024 12:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT7YzdLK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjFRese9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92351F7574
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2701FA142;
+	Wed, 27 Nov 2024 12:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732708862; cv=none; b=uVVF5Ta6QGqC3LoSUw2WGKLMIOVz15fjFhJsfn9JyHdW8L8mWMLeTABy56/4tmMg8OTOzspu7K9+qojqmOtqF5ZiiZKvXUNkeUQtkttuOS2JzRSKlAmjMPpu8RtetWyPim9y4aFAlKTwnVWE4bJ0r+bHIC6R+jmUoevtLOfv3N8=
+	t=1732708875; cv=none; b=nOq9HoIk9TqhltL56l2dxYKU3Q8Ex28pLh4MeciXsZlZGlEte1yxD9oKCnms+uBt7ETJOB6rbDZQuoRm1zhEvkHvezoXAOSL8yjyNn3ROj/447UgNJX7YLU17i5y3fNwqqcZsIH/V1bfvLgMp+6RTDb4JthJ/2aBmQw30t8cqIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732708862; c=relaxed/simple;
-	bh=QgTKIAqViHE740Lf3Y3MqKvVBW1/N5ycfzY/xlxCf1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DBCxeOf9AV8QjtaVvKWbGN+8BqaUi1hOaDDza2Jh5n9tIRzvoOSwT8LIUAJqROMHZzD3mkbKlHmm9eVyDU2fneNVN5AAf22aNzev/V3/nowz0eF0FDteEMeXnBhkMDS1gs+1xl3DT5Bh+pl6SUevFhg59nUfYYTTkNbEDEaF4kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT7YzdLK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 102A8C4CECC;
-	Wed, 27 Nov 2024 12:01:00 +0000 (UTC)
+	s=arc-20240116; t=1732708875; c=relaxed/simple;
+	bh=l8Y87yoQEdyXuP6xZbRrWD7FatUpzs4zW88la++jh5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nI5kBi7zviujHkjh0OOtXIOfDfmpWpXbAIeoM8SxlW1EPhOAtLDMjmPSCjkktBEZ/HXN8uEJXE77D+cakR3C6IN5Fg7nguR2ADCk7Stupep1EtEcEa7OZxw41NaUvYH50byXDeaXJyZz+xTYoqvybQItnAvCU1UvdYXCP2P3svM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjFRese9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE0C8C4CECC;
+	Wed, 27 Nov 2024 12:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732708861;
-	bh=QgTKIAqViHE740Lf3Y3MqKvVBW1/N5ycfzY/xlxCf1c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oT7YzdLKiBCmcq44isSRSMKc5Uz1Hd7uw6Rg5vj7WvClxoVJYeRoFCm2axFTT2o3X
-	 6903xnjLMB7JONzLiWwpiNpyc655og6t1OYL8ocAERtSkQsX1VNt3CSJxMkGC3/lR/
-	 L9yofk4a+mMIQX8+K/K2k9Jsg939Q8Zj4IZknuQacqBwOQ9MjPZY/Z55U71xX6D6u4
-	 Yw/hWY5p+wz7rCRXRV+82KL8AIFBwUd7BdnkJ3Kt3eaUBSgPRG/vD7EPtfeO3SfeAa
-	 MB0DPd0YsOD+lbbNaQCVc5DTkZnyBt62YJ783JYL14b1lfXWnJi2sqGSmqfWdwPlEH
-	 DB+OcfBdu5X5g==
-Date: Wed, 27 Nov 2024 17:30:57 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmaengine subsystem updates for v6.13
-Message-ID: <Z0cJ+c0vvFZIu7I4@vaman>
+	s=k20201202; t=1732708873;
+	bh=l8Y87yoQEdyXuP6xZbRrWD7FatUpzs4zW88la++jh5Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IjFRese9ysTQdVyc/xnxkc9GB+5OpLdUhPEOeNhtYMbfgeN0EAcPHJr18VwywFEqV
+	 OPZijlfEDT47CGTH4iIbmDP0YhfQzCIKPHB2XcM/x4SpS2fR1vf4nRyg2nx5bxzUrm
+	 u5e8gRUEs4+/o4CEzh6iMQHdu+MlXss/HKOrNRuF6MZDxy0emp4AWYf/xNGJ6XrngQ
+	 436HfpFWjFiLCpoQmsscMDXkWElo4L7fYXnvLfqRBfu71ZVpBtnGj0AO5QNrAUJ7TL
+	 GlpHiFr7erDfydx3cZm55gHddiSYNW3PKSSRzmI6NH5dPGg1n7P4nDoRIrhe98bAU0
+	 l/N8pTSQJ0W3g==
+Message-ID: <d4145905-68d3-40ba-bb66-15747eb0d54d@kernel.org>
+Date: Wed, 27 Nov 2024 13:01:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4DyqYUULOFqIf2SU"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on QCS8300
+To: Yongxing Mou <quic_yongmou@quicinc.com>,
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+ Ritesh Kumar <quic_riteshk@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+ Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, freedreno@lists.freedesktop.org,
+ Simona Vetter <simona@ffwll.ch>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org
+References: <20241127-mdss_qcs8300-v1-0-29b2c3ee95b8@quicinc.com>
+ <20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com>
+ <173269567235.2233485.7286772244329561840.robh@kernel.org>
+ <f433283d-e203-41f7-acc6-59fe606722a5@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f433283d-e203-41f7-acc6-59fe606722a5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 27/11/2024 12:02, Yongxing Mou wrote:
+>>
+>> doc reference errors (make refcheckdocs):
+>>
+>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241127-mdss_qcs8300-v1-1-29b2c3ee95b8@quicinc.com
+>>
+>> The base for the series is generally the latest rc1. A different dependency
+>> should be noted in *this* patch.
+>>
+>> If you already ran 'make dt_binding_check' and didn't see the above
+>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>> date:
+>>
+>> pip3 install dtschema --upgrade
+>>
+>> Please check and re-submit after running the above command yourself. Note
+>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>> your schema. However, it must be unset to test all examples with your schema.
+>>
+> Thank you for your checking. I rechecked this file and indeed found some 
+> issues. I will fix them in the next patchset. But i did not see issues 
+> related to this header file in local. Maybe it is dependency or tool 
+> issues. I will and update tool and recheck this issue and fix it in the 
+> next patchset.
+> 
 
---4DyqYUULOFqIf2SU
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Read the instruction carefully, including statement about base.
 
-Hey Linus,
-
-Please pull to receive the dmaengine subsystem updates for v6.13. This
-includes couple of new device support and updates to bunch of drivers
-including the platform_driver remove update.
-
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
-aengine-6.13-rc1
-
-for you to fetch changes up to 8974f34de2ef173470a596a4dee22f4922583d1b:
-
-  dmaengine: loongson2-apb: Rename the prefix ls2x to loongson2 (2024-10-23=
- 11:05:45 +0530)
-
-----------------------------------------------------------------
-dmaengine updates for v6.13
-
- New support:
-  - Qualcomm SAR2130P GPI dma support
-  - Sifive PIC64GX pdma support
-  - Rcar r7s72100 support and associated updates
-
- Updates:
-  - STM32 DMA3 updates for packing/unpacking mode and prevention of
-    additional xfers
-  - Simplification of devm_acpi_dma_controller_register() and associate
-    cleanup including headers
-  - loongson prefix renames
-  - Switch back to platform_driver::remove() subsystem update
-
-----------------------------------------------------------------
-Advait Dhamorikar (1):
-      dmaengine: ep93xx: Fix unsigned compared against 0
-
-Amelie Delaunay (6):
-      dt-bindings: dma: stm32-dma3: prevent packing/unpacking mode
-      dmaengine: stm32-dma3: prevent pack/unpack thanks to DT configuration
-      dmaengine: stm32-dma3: refactor HW linked-list to optimize memory acc=
-esses
-      dt-bindings: dma: stm32-dma3: prevent additional transfers
-      dmaengine: stm32-dma3: prevent LL refactoring thanks to DT configurat=
-ion
-      dmaengine: stm32-dma3: clamp AXI burst using match data
-
-Andy Shevchenko (3):
-      dmaengine: acpi: Drop unused devm_acpi_dma_controller_free()
-      dmaengine: acpi: Simplify devm_acpi_dma_controller_register()
-      dmaengine: acpi: Clean up headers
-
-Binbin Zhou (1):
-      dmaengine: loongson2-apb: Rename the prefix ls2x to loongson2
-
-Dmitry Baryshkov (1):
-      dt-bindings: dma: qcom,gpi: Add SAR2130P compatible
-
-Fenghua Yu (1):
-      dmaengine: idxd: Move DSA/IAA device IDs to IDXD driver
-
-Pierre-Henry Moussay (1):
-      dt-bindings: dma: sifive pdma: Add PIC64GX to compatibles
-
-Uwe Kleine-K=F6nig (1):
-      dmaengine: Switch back to struct platform_driver::remove()
-
-Wolfram Sang (3):
-      dmaengine: sh: rz-dmac: handle configs where one address is zero
-      dt-bindings: dma: rz-dmac: Document RZ/A1H SoC
-      dmaengine: sh: rz-dmac: add r7s72100 support
-
-Yan Zhen (1):
-      dmaengine: fix typo in the comment
-
- .../devicetree/bindings/dma/qcom,gpi.yaml          |   1 +
- .../devicetree/bindings/dma/renesas,rz-dmac.yaml   |  29 +++--
- .../bindings/dma/sifive,fu540-c000-pdma.yaml       |  15 ++-
- .../bindings/dma/stm32/st,stm32-dma3.yaml          |   6 +
- Documentation/driver-api/driver-model/devres.rst   |   1 -
- MAINTAINERS                                        |   4 +-
- arch/loongarch/configs/loongson3_defconfig         |   2 +-
- drivers/dma/Kconfig                                |  28 ++---
- drivers/dma/Makefile                               |   2 +-
- drivers/dma/acpi-dma.c                             |  43 ++------
- drivers/dma/altera-msgdma.c                        |   2 +-
- drivers/dma/amd/qdma/qdma.c                        |   2 +-
- drivers/dma/apple-admac.c                          |   2 +-
- drivers/dma/at_hdmac.c                             |   2 +-
- drivers/dma/at_xdmac.c                             |   2 +-
- drivers/dma/bcm-sba-raid.c                         |   2 +-
- drivers/dma/bcm2835-dma.c                          |   2 +-
- drivers/dma/bestcomm/bestcomm.c                    |   2 +-
- drivers/dma/dma-jz4780.c                           |   2 +-
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c     |   2 +-
- drivers/dma/dw/platform.c                          |   2 +-
- drivers/dma/ep93xx_dma.c                           |   3 +-
- drivers/dma/fsl-edma-main.c                        |   2 +-
- drivers/dma/fsl-qdma.c                             |   2 +-
- drivers/dma/fsl_raid.c                             |   2 +-
- drivers/dma/fsldma.c                               |   2 +-
- drivers/dma/idma64.c                               |   2 +-
- drivers/dma/idxd/registers.h                       |   4 +
- drivers/dma/img-mdc-dma.c                          |   2 +-
- drivers/dma/imx-dma.c                              |   2 +-
- drivers/dma/imx-sdma.c                             |   2 +-
- drivers/dma/k3dma.c                                |   2 +-
- .../dma/{ls2x-apb-dma.c =3D> loongson2-apb-dma.c}    |   6 +-
- drivers/dma/mcf-edma-main.c                        |   2 +-
- drivers/dma/mediatek/mtk-cqdma.c                   |   2 +-
- drivers/dma/mediatek/mtk-hsdma.c                   |   2 +-
- drivers/dma/mediatek/mtk-uart-apdma.c              |   2 +-
- drivers/dma/milbeaut-hdmac.c                       |   2 +-
- drivers/dma/milbeaut-xdmac.c                       |   2 +-
- drivers/dma/mmp_pdma.c                             |   2 +-
- drivers/dma/mmp_tdma.c                             |   2 +-
- drivers/dma/moxart-dma.c                           |   2 +-
- drivers/dma/mpc512x_dma.c                          |   2 +-
- drivers/dma/mv_xor_v2.c                            |   4 +-
- drivers/dma/nbpfaxi.c                              |   2 +-
- drivers/dma/owl-dma.c                              |   2 +-
- drivers/dma/ppc4xx/adma.c                          |   2 +-
- drivers/dma/pxa_dma.c                              |   2 +-
- drivers/dma/qcom/bam_dma.c                         |   2 +-
- drivers/dma/qcom/hidma.c                           |   2 +-
- drivers/dma/qcom/qcom_adm.c                        |   2 +-
- drivers/dma/sa11x0-dma.c                           |   2 +-
- drivers/dma/sf-pdma/sf-pdma.c                      |   4 +-
- drivers/dma/sh/Kconfig                             |   8 +-
- drivers/dma/sh/rcar-dmac.c                         |   2 +-
- drivers/dma/sh/rz-dmac.c                           |  29 ++---
- drivers/dma/sh/shdma-base.c                        |   2 +-
- drivers/dma/sh/shdmac.c                            |   2 +-
- drivers/dma/sh/usb-dmac.c                          |   4 +-
- drivers/dma/sprd-dma.c                             |   2 +-
- drivers/dma/st_fdma.c                              |   2 +-
- drivers/dma/stm32/stm32-dma3.c                     | 121 +++++++++++++++++=
-----
- drivers/dma/sun4i-dma.c                            |   2 +-
- drivers/dma/sun6i-dma.c                            |   2 +-
- drivers/dma/tegra186-gpc-dma.c                     |   2 +-
- drivers/dma/tegra20-apb-dma.c                      |   2 +-
- drivers/dma/tegra210-adma.c                        |   2 +-
- drivers/dma/ti/cppi41.c                            |   2 +-
- drivers/dma/ti/edma.c                              |   2 +-
- drivers/dma/ti/omap-dma.c                          |   2 +-
- drivers/dma/timb_dma.c                             |   2 +-
- drivers/dma/txx9dmac.c                             |   4 +-
- drivers/dma/uniphier-mdmac.c                       |   2 +-
- drivers/dma/uniphier-xdmac.c                       |   2 +-
- drivers/dma/xgene-dma.c                            |   2 +-
- drivers/dma/xilinx/xdma.c                          |   2 +-
- drivers/dma/xilinx/xilinx_dma.c                    |   2 +-
- drivers/dma/xilinx/xilinx_dpdma.c                  |   2 +-
- drivers/dma/xilinx/zynqmp_dma.c                    |   4 +-
- include/linux/acpi_dma.h                           |   9 +-
- include/linux/pci_ids.h                            |   3 -
- 81 files changed, 266 insertions(+), 184 deletions(-)
- rename drivers/dma/{ls2x-apb-dma.c =3D> loongson2-apb-dma.c} (99%)
-
-
---=20
-~Vinod
-
---4DyqYUULOFqIf2SU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmdHCfYACgkQfBQHDyUj
-g0frNBAAxEJd6NQcxht93fyO67HQKEFCA3jmGtGw2Lc52PG41ksFKbXfmAJ8REXP
-/u/9c6XDr7Nk7Q3EBP4QnZ8WXsmxeI9X/t1vRJhB6hKxqQpQgEuq/o/QiTO97Odx
-iKDjX7PcdsOHm8aN5Nj4GSoucmHOPU0OnLTsaGPP0L1aVykbb9xfB3rBG7aCmdII
-+ZhsBzghsXRpu3ywBuEOVK6b6faozcoCIpyQiSHHLUYF4oxXh4e7eXAlCOVlzBF5
-sW1WGFoAm8JP4YelrYqqHdcxd6+xL+A15YubcbE/esZELHj1vjA1i2I6gQXzfByc
-pThdELEF80fcKxM2QtJ7EHC5LRB9ujNr7JANjfiDWqJL5NlxvzjFwqTotuopvlpX
-bghKPU90ubOYCQ3DRdk24DTYtuVVql0SalwPEX5PpfNh74N3maUAErxl6T0CcYjW
-rtVisHHRu+SuMi/M4CcRPzNvTQvd3bAL3E02BS6Wbf3I5KpZ/+swyLu6EMAmvGDr
-CRJKghLSWwIkvksancIvKgS7fLmfdMllstvPQkN6lTzwK5nTWo9njzE36j7RZoBB
-yI2E/uvlIlzFwW7COOb2K78A7HnypFhX/Fwgy6S0y//Y1BvtWw0BpBpyb0OL+yCJ
-ELmLpOiik2FJjUNJDFdAGxTlgm1OQAJ3C48eQpMrZgprP6wn7xI=
-=8ChM
------END PGP SIGNATURE-----
-
---4DyqYUULOFqIf2SU--
+Best regards,
+Krzysztof
 
