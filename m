@@ -1,111 +1,177 @@
-Return-Path: <linux-kernel+bounces-423349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60189DA62C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:52:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7F99DA62F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 11:53:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADF5282B75
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF52163CEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71C11D54E7;
-	Wed, 27 Nov 2024 10:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6211D517A;
+	Wed, 27 Nov 2024 10:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5QlllCt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eIqhpox2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299111D5154;
-	Wed, 27 Nov 2024 10:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272CE1D4615
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732704721; cv=none; b=UqBWXHZJzI1rxawI+BXKwpt3MT04oqO3DYIjPjt8CFK1o1rpzKJk7Ic2WwNKiBM4zM99Bu2/H0siSr68bTFEFyxC+WA+DPpwUlRKbQ46t3O++fuOadVQG//vk0njcHPeEkOphEiS9Xtp+b2vyPhynfb8o41DZAoSDsriDF7n2dU=
+	t=1732704807; cv=none; b=I6oljGpSrmZIC8nmemRju8mdNpMWWQnmj9Of+oKEsh9Cm93cZ2nUWi5PU9dSoVEsbqlbDfyqsczUrkhPXc0IAXE7gzWezOoLNOS3FjuS+rcUl5pG1XgFhAQNflTUt6n68vDi0gVrTg9Ga/X/xWNvWmv2o6XsxjehsrMQRbRXoW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732704721; c=relaxed/simple;
-	bh=jhfCuG//hKf93/Uj0gV9SnmY/cy69M5v4LN5FI+Ru/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWxH2brCBwKdjDS4cg5kOnlR0A/6SRWqPGhWdRoLqku0uvE/Sh6sIsoJjJeKk14Z8cKfdJklCmIcCLOHOOif+xYsk59RF5z+kLkyedI+TVsDNAR+rBZP4dh+KmHkKc3xVvQuN9xxCNb/zvZGGK9st+2NaipOaN93gw2y0AgtgEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5QlllCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5DC4C4CECC;
-	Wed, 27 Nov 2024 10:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732704719;
-	bh=jhfCuG//hKf93/Uj0gV9SnmY/cy69M5v4LN5FI+Ru/w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e5QlllCtc37KT2cydMX76sbsx+UaXHbUF5MY8Qd4PXlZZgkSEdU16+MvST96Y1iFs
-	 oDxXnmK0t+ZFInhcg3t0dktxdXZCX48t88MXJPgDca/oifB+HFfzS3iD1Vvdr580uV
-	 0+ijbpoxc7ctBoJ38uT2yVrPYNF/zHxUGrGU2KJlkwn0/d/5Y+DOclX6sucUvIZF6Y
-	 f2tXMeG6mp7+942XmmfpBCEoJoIdzdPqTJXC8zHT6UvynkCBSG27v7yzZaHQ+bt7gm
-	 qWHtTouHTstbUWv4Y/MInm9bH+BOWdfiteWAsRqKNgTpeRXs+FRik+2wJ5rnBdBJa0
-	 u4db7qcHYdtFg==
-From: Christian Brauner <brauner@kernel.org>
-To: shao.mingyin@zte.com.cn
-Cc: Christian Brauner <brauner@kernel.org>,
-	yang.yang29@zte.com.cn,
-	yang.tao172@zte.com.cn,
-	xu.xin16@zte.com.cn,
-	lu.zhongjun@zte.com.cn,
-	chen.lin5@zte.com.cn,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] boot: flush delayed work
-Date: Wed, 27 Nov 2024 11:51:51 +0100
-Message-ID: <20241127-flohmarkt-beispiel-718586524de1@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241023135850067m3w2R0UXESiVCYz_wdAoT@zte.com.cn>
-References: <20241023135850067m3w2R0UXESiVCYz_wdAoT@zte.com.cn>
+	s=arc-20240116; t=1732704807; c=relaxed/simple;
+	bh=bCE4AcK/ZllCPlJSoCeZ7KhIFdafF2bBS4oFX+pvrXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V1nvjO01+jtlGeARBAUAk06za2Ln+7UW1SgXd6mXK8nZgfbMNNQtwFHBdiBaYOmk/ycQbax8EWCt05DuXuQfLbN6qX4TKCFntjhOc+Ueg4HxakoyaSvVmE93cMz5lVS2UJdK5NGhpdrR12PrO3r/ugC2C9OVVKrv1QoQbqCsjTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eIqhpox2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732704805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=X5E9F3vFD3kbBD8ibTB1Ry3D0NJcFvY52fjgPigQDtU=;
+	b=eIqhpox2rluuoqqF4vqU3rYkiIb8nFJWSQ7YhcIuEJgy67vGRAD6RMGZVoM4z77lZZHXbY
+	fEXx4vkWph7kWgzOTcoVIYAoOQCsw1kopGGNUJsyRzavujUoROzePVEvN2UMFhkq6YfYLG
+	fpkqsQs/rmBPxBidjbYmL/RioE7RAik=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-SdLjYjV0M_yRcFRJtQWyDA-1; Wed, 27 Nov 2024 05:53:23 -0500
+X-MC-Unique: SdLjYjV0M_yRcFRJtQWyDA-1
+X-Mimecast-MFC-AGG-ID: SdLjYjV0M_yRcFRJtQWyDA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-382341057e6so3453801f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:53:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732704802; x=1733309602;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=X5E9F3vFD3kbBD8ibTB1Ry3D0NJcFvY52fjgPigQDtU=;
+        b=Vas53v7tX9lv+MG4YkdwW+R1UhDzYflmTUOhtOaMXwkdjxZsZWMVQI93pQhH2nOA3N
+         /l2MLxxni10wChF2rFD52iQkvzg47LfRrGbCZIE/um3zHzRNLSsM0raXw0vbM/WU06ns
+         oXfwykNXmh4gPSZpwYrvN/8940XIifDWwUZdmKyUMMepw6OpksxR7iZLUftlMrOG2QeH
+         U/0JQWmmjcGljvNC7kJuOF5rxZ5PvKmVPQhdd0UiEkSLKC20e3BYGsCQFxsVm/Y9IzlA
+         C2SGJnF235BOAHl0+yBUsknxIbJ0NdiMic9wX7Oj6IBlgJ09BQBZ+B0e5n194wd5u/Do
+         VpaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ+YHYiqsRrzC+QeUpATs1+6S8V+tnG2GpuUp1Kv++PjsFOTP/n/jNK5JPTn2T0WfmSfCdO7dKb65AOfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPb56WqgjkfJHEWaan4tI98L1lWLYbB+es6YnYb9gEteELQdDn
+	FLoZLB/iK2JObGKHVpnDDBn3NcrgFY9MOOahpnOEiDYvQ/5jk7nH7bRHPH+lCRVl4qMPbdOVAJ3
+	/j87tCIh5UiveEHMHEVuw/9bp57aWdl2BEdT7ftGy/6AH7TVOmOIC9quq1b5OPQ==
+X-Gm-Gg: ASbGncvQtHdCJ7S522fBX7x/ezAHeDK+GfKLUS+sbLiO8+/hFBNh4D+K8Q+pDZYceqY
+	Q88n1bWC8as+tiZ8rJwVLyPQHwP4tW52nbH5PcYNObOttNMFQYhTQ0JqOMsPoN7POtL1YHwJ48m
+	4eY9gdbBoMSGiFNWh7lseK+akv/ZJDCSQg05VNufyc+RSSLyn5gdWeBksvcoVaPDoouwVrE+OLC
+	H+3+fojVJFUUMGSjo+JubDYNOgfXHFd5hX9uutKoSdP8aPf57LRpPDO1LvnggUWTZDfnLpm+z/7
+	8cMETtqNP38jPWqewCAdKHOifmKZYBB8TOjKqsknR3kl1z7nJTqpryzBSyDRhfYR/sJTnFz0WP8
+	dXg==
+X-Received: by 2002:a05:6000:481b:b0:382:4b6b:bcfd with SMTP id ffacd0b85a97d-385c6ec1173mr2166078f8f.33.1732704802000;
+        Wed, 27 Nov 2024 02:53:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFj5qkpTz1VTj8kBKRoiIX/eHfIu8WkRa7K8lPRGFNEeiG4GU2pbxNaVteuVRzcGAxOMjiamQ==
+X-Received: by 2002:a05:6000:481b:b0:382:4b6b:bcfd with SMTP id ffacd0b85a97d-385c6ec1173mr2166063f8f.33.1732704801670;
+        Wed, 27 Nov 2024 02:53:21 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70d:be00:66fa:83a6:8803:977e? (p200300cbc70dbe0066fa83a68803977e.dip0.t-ipconnect.de. [2003:cb:c70d:be00:66fa:83a6:8803:977e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedf58sm15892283f8f.103.2024.11.27.02.53.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 02:53:20 -0800 (PST)
+Message-ID: <3aabe1d0-8322-4fba-90bc-2208731d9cbb@redhat.com>
+Date: Wed, 27 Nov 2024 11:53:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1817; i=brauner@kernel.org; h=from:subject:message-id; bh=jhfCuG//hKf93/Uj0gV9SnmY/cy69M5v4LN5FI+Ru/w=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7/TzOfrFNQE9sBt9PhndX/i/J3+ZQtOY5U6nG6fVPX 3/J0tay6ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI8xVGhst1vI/+CW/XctnL c47TIMtXyKJ7Qkt35rzXMedk68QPZTAyPNM4wSxh/dMm/eIHJwUvhmKHSN2DBsE3Nu+fcnWxv8l jZgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: migrate: Removed unused argument vma from
+ migrate_misplaced_folio
+To: Donet Tom <donettom@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>
+References: <20241126155655.466186-1-donettom@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241126155655.466186-1-donettom@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Oct 2024 13:58:50 +0800, shao.mingyin@zte.com.cn wrote:
-> We find a bug that the rcS file may not be executed, resulting in module
-> and business not being loaded. When trying to execute rcS, the fput()
-> related to rcS has not done to complete, so deny_write_access() returns
-> ETXTBSY.
+On 26.11.24 16:56, Donet Tom wrote:
+> Commit ee86814b0562 ("mm/migrate: move NUMA hinting fault folio
+> isolation + checks under PTL") removed the code that had used
+> the vma argument in migrate_misplaced_folio.
 > 
-> rcS is opened in do_populate_rootfs before executed.
-> After flush_delayed_fput() has done to complete, do_populate_rootfs
-> assumes that all fput() related to do_populate_rootfs has done to complete.
-> However, flush_delayed_fput can only ensure that the fput() on current
-> delayed_fput_list has done to complete, the fput() that has already been
-> removed from delayed_fput_list in advance may not be completed. Attempting
-> to execute the file associated with this fput() now will result in ETXTBSY.
-> Most of the time, the fput() related to rcS has done to complete in
-> do_populate_rootfs before executing rcS, but sometimes it's not.
+> Since the vma argument was no longer used in migrate_misplaced_folio,
+> this patch removed it.
 > 
-> [...]
+> changes:
+> V2:
+>    Added mm:migrate prefix in subject line.
+> V1:
+> https://lore.kernel.org/all/20241125075731.176573-1-donettom@linux.ibm.com/
+> 
+> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> ---
 
-Commit message rewritten by me.
+Acked-by: David Hildenbrand <david@redhat.com>
 
----
+-- 
+Cheers,
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+David / dhildenb
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
-
-[1/1] fs: fix bug that fput() may not have done to complete in flush_delayed_fput
-      https://git.kernel.org/vfs/vfs/c/c0ef70cf7a91
 
