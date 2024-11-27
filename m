@@ -1,127 +1,145 @@
-Return-Path: <linux-kernel+bounces-422958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67959DA076
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D06809DA077
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:52:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724651659A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C269165CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150BE1CFB6;
-	Wed, 27 Nov 2024 01:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBDD1CFB6;
+	Wed, 27 Nov 2024 01:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHLuzg68"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfPGSc08"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAE1ECF;
-	Wed, 27 Nov 2024 01:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF131802B;
+	Wed, 27 Nov 2024 01:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732672308; cv=none; b=QBBbQl9y4ANkBb6leNrFwXw7eFzQt/JwfHI//rEFqLIKoO7nXiB/CJMspGQSXexADuwr7ioHjYjstW85Wa7wBJi1kjDQgyGG3KxNzgNFD4UEzqC57tnDzqjSjHoYdX5k4wV+JFqrWgAEYxDe/oOmhzRXT7IQl3QxNqJscSKrq2A=
+	t=1732672364; cv=none; b=Sp1bSjRcmITiOYhTmPC/nKqw80I8d0pRWkn3h0Hzw4qNliYrN8BnoQ3cQBCZycXX3mcA0xpLTQUGOTLU7idedQOKUuUCBTMZV8KQqr94MGDeHKDouNrLS7O7rR8uSzSTfW5cSxe2wFNtl22YUOpxZhiKNlIoApcRMiMMRsdmxfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732672308; c=relaxed/simple;
-	bh=NidMgqMWIjDze9tE3gkGIg9VormyUGi9/RD3MgaGCmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akp4k1pp7CZBD85GRlQ0NB6l+5aBtw2G/j2skyjuGW+oknUN63Lqw6PjO5J/e66ELX9/mY/MzTeE6jztCUah64A2gxMhlkbcLHIrC5iZRpkK2Ctx/b0QUa8o/Yu3GNqaPMlaeRnXHg9D0XzBgJeE7ChfO63L1QlNKoq1DId2BXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHLuzg68; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1732672364; c=relaxed/simple;
+	bh=7mOuOkpZZoXqHcUjeXr1wrFqOPZ8xCDvpX0PP+8Lo+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VmCY3QZFpPBlO04brc7Y6JaMVEmk++DrMUTk1uslo00DCOJjCV++BlpMLvIrbRTOfH84HGtQVb7OyVtuP+hvXD33j2uv5gQXgib1+MxYosUsW7fXWk2q/9dl1SMtRymkYZUDtQhmR7Y/xdI8eVuRPk+6r6dLfIZv7/MxmU4RTic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfPGSc08; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ea4e9e6ef2so4947840a91.1;
-        Tue, 26 Nov 2024 17:51:46 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43497839b80so27760515e9.2;
+        Tue, 26 Nov 2024 17:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732672306; x=1733277106; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f6yJthSITZz0JgeCwZB+IqdVfVUyc0ONXrqOpbvTgLw=;
-        b=IHLuzg68XJcl/YyZOxhJGQOK4j5u1RNdccKeqm327+pCs9JmahiNN5IUUi/L85ggfU
-         3Kvnl3Rv9Piq+HtCXUVxzBET2PvgkGQzImbqk7zCAYnMO+cR/n0425djRYbpvfKvmIkK
-         uJtNZEFKSshLJmYI8/ZkCNYZkAyx9HkG4UcBGKL6yysC/GjMlXPvCEL3yeaKK1zrrkRr
-         4Lzf00k8WGVuf50yA4CMWnKe5sxbSaL2ey5wlTz2ZaMY08Tya4LAPxIU+EHmQoeLhlgQ
-         e4piHhikVgVtBUduG4iqczVb4nQ87u58EKk8z46zCfI+3RoP3E7mhFceNH5J2kCauXJH
-         d4ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732672306; x=1733277106;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732672361; x=1733277161; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f6yJthSITZz0JgeCwZB+IqdVfVUyc0ONXrqOpbvTgLw=;
-        b=VbV2oLv+jDp0pPmUmn/oB1VWaurceRbMMFvzveyGughoyK4R83AWQ2+XxWjEdXDh2Y
-         BxIwxYoOrnsWLy1doBRW3aPciDO8YxEdM+5Cm7V4S9sHnK4FoJeS+cnTxm0m8AilGcf1
-         zpr8reKC1sbMSDj0qxwEpUXYZ/FxhpyydL4jeXu1MEfLiVEzW9bVZt+5QZ90N43qSjmH
-         ujr8pwqoy1TUFiZvIYuQVPjm/UejK8Xmtw39OIoRmas3/ispIAj97OKFXQe3j1/oU4t1
-         cKrSb5KrKrQHRPjZY4lk+8Ppse1XwBeAkVbwCZr0pBtnWACIoE5V+zkbKAyQbORvxqrp
-         CSuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNdRrM2nID+P+ZvQ0cfaRdKpoVOvu2Vc04OUET4aeDRO/8NxaZvJTHM0LuCZ2SXuBIYePuOhECh0FgVAc=@vger.kernel.org, AJvYcCXJ5ux6RQHZbpFMlU7txGmCfR2BfoGYitesPL3Liv9wXDCcrXig/7wD9DGXZ+H3+uezGZZvifxbSlwkvb0X@vger.kernel.org, AJvYcCXaJOZxb4e/8SnwMlm7oX8HgCUITQt/5AihcpZ/NFhEwkW8RyRDIix+MH3JkLFI9n0k6TvRUZ+aEg+W@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeECR1MgHJOAVeaSRVdQMMVh/49oc6HsMpvV/DuuGIamTAAhTl
-	ugM8m1EK711SatdesxnMwrSWYSol2avh57sNF5qZ9MUNWIICvDyC
-X-Gm-Gg: ASbGncvZGN6Go8JQEzCb9k8o2DXjWIpENFXI5VFuBsoorQJvJYn5BoKVRuoZ++rC1nb
-	MYdAz7AG2Zr2ocl+nlTk0/eDm7sjr2Y2IGSVJJIsrFju6mMG7lheEfShAXU+IXfZ1CQiDS/j4Ol
-	Fl+RUo5u28ULkQUnNmMlAsipoJfblp8CPJl9L2ZNsH4qUIA2JC5SlCyXcx8QNiW6u6fkEYMKgeT
-	YSWp5qX0UoKdPxRuu37X1+98QKpHlx38jXTns5uQC0pymCBq4U=
-X-Google-Smtp-Source: AGHT+IGWUC26ECFB/XST5h32zsfNM+cTFebDB426koYcgqVJ4sR4f37BBk7oSc1604wiVBTnh/A1ng==
-X-Received: by 2002:a17:90b:1d81:b0:2ea:7d8f:6f17 with SMTP id 98e67ed59e1d1-2ee08eb5cecmr2142866a91.10.1732672306240;
-        Tue, 26 Nov 2024 17:51:46 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:d991:bacb:df39:9ecd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa6134fsm248728a91.18.2024.11.26.17.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 17:51:45 -0800 (PST)
-Date: Tue, 26 Nov 2024 17:51:42 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: fnkl.kernel@gmail.com
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/4] Driver for Apple Z2 touchscreens.
-Message-ID: <Z0Z7Lrv3rBfzac_e@google.com>
-References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
+        bh=DwQP6BBV5a5jKpJfwwMjvCqRQHR2gtIdPjXFDlvb0fY=;
+        b=HfPGSc080c0tAUk/OjMdtyD6txDJqZtd9od72Ud9hQLVq92xEBna5Y5B82vX7JHXk1
+         A9RTPVxAs67/dcsIEcSDgTXNNT3CQsmnsuU0WVxxh5BG9Rrbz9vh+kOGVO0SxV0tmM25
+         AmswmKWLJ7JGhUXM/hih268pGYkC3nT7VMf/b7S1qdGcn48SuOCmL+U7pP8ru9NtjzYN
+         Fajvy343yDw+j2XIJXgYDwBifLSbdjUydIthN77VVddUT7hz4MU2NIe8KEIm6Kg3nxA/
+         gLPSQju+t+9c+o2WunfUcToG/+JXLUr8847LT2A2ceac05BqrA0FMYXaoApBQHG7hf9g
+         RhQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732672361; x=1733277161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DwQP6BBV5a5jKpJfwwMjvCqRQHR2gtIdPjXFDlvb0fY=;
+        b=UMkHfMVvJjArHOhsW3kTFF+ux04DCYkiHA2zDpT8DwVnzcwwrSaIqj8jl+/8ZdNiVC
+         nfSg5T7WZ4WcZR6ZigIZVWw45Er5V5I8H10/mk9s31LZCGQpHOCIUCSv2MJpdr6KihqO
+         IH2JgkA7KhMpbt8WbYxfwG1dIj3mK4m409zfJ1p4qq+Qt84rSckIw8ZcLiRxDmR+kCG2
+         uvL7wSD8269j/xqfupS9+oRFMWegTwFYDmJCM+VwS4RgxI9t2aB+MwL9j5E4nShWVWRb
+         BPrVa0BQvx9qjXUqrgoJCwozPUS1O49IdyRCx0eZdbZc1iOubGuEZVjZFtPsag+PG0+d
+         xgNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCwtWxUCcE4PWwtnIDzGlIOFTtFMB0K/aGOSxjpqDC9RMAGjhdIXo7/MQ/ozHd5AwcoIg=@vger.kernel.org, AJvYcCWy3UMos5D2AdTvbaswNuEF3GFPokbW7e9bXFEGy+nV9g+777YErrkpY7y23NOLT/5wNJP/MDIgIc5QYaMU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd9pjkqAlp3HVvGQ5hYtk9rVcbKYg1xsBwQ52tbZBtyTQGjaCd
+	yHlmBbNDahe7jOQCwsMfysFTHg8/wTmznkrziCZGrJ0RytVeBOK8wMTi2Za6lyLMeSS/x8oN5zN
+	6sb/WgjHLJP9Aa5U38Xslf5mf+Uk=
+X-Gm-Gg: ASbGncvztzIUt4AP6aN8zJFXLHLTkoMk2k4/9OJCkoaf+In+GOhcf5EzxstiNO+60+Y
+	XqmYzPa3muFSLT0irbp7Me4PRiE0SxtexeQbOjHNd6esS7es=
+X-Google-Smtp-Source: AGHT+IF8UkQJQxSDvoJgYjizGcLaObXjLdJzwah5c49XNp8MW8hRc/r4pm5Wh5Rub9xTUG2rtNVOoM0PQhuqNfYQGEk=
+X-Received: by 2002:a05:600c:5102:b0:434:932b:a44c with SMTP id
+ 5b1f17b1804b1-434a9df6b06mr10041105e9.27.1732672360612; Tue, 26 Nov 2024
+ 17:52:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
+References: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
+In-Reply-To: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 26 Nov 2024 17:52:29 -0800
+Message-ID: <CAADnVQLV=7Mt+DTX84u_4kP_pVNhbyHMvL29BPcFQjOj7RpM7A@mail.gmail.com>
+Subject: Re: [PATCH] btf: Use BIN_ATTR_SIMPLE_RO() to define vmlinux attribute
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sasha,
+On Fri, Nov 22, 2024 at 4:57=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> The usage of the macro allows to remove the custom handler function,
+> saving some memory. Additionally the code is easier to read.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+> Something similar can be done to btf_module_read() in kernel/bpf/btf.c.
+> But doing it here and now would lead to some conflicts with some other
+> sysfs refactorings I'm doing. It will be part of a future series.
+> ---
+>  kernel/bpf/sysfs_btf.c | 21 +++++----------------
+>  1 file changed, 5 insertions(+), 16 deletions(-)
+>
+> diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
+> index fedb54c94cdb830a4890d33677dcc5a6e236c13f..a24381f933d0b80b11116d054=
+63c35e9fa66acb1 100644
+> --- a/kernel/bpf/sysfs_btf.c
+> +++ b/kernel/bpf/sysfs_btf.c
+> @@ -12,34 +12,23 @@
+>  extern char __start_BTF[];
+>  extern char __stop_BTF[];
+>
+> -static ssize_t
+> -btf_vmlinux_read(struct file *file, struct kobject *kobj,
+> -                struct bin_attribute *bin_attr,
+> -                char *buf, loff_t off, size_t len)
+> -{
+> -       memcpy(buf, __start_BTF + off, len);
+> -       return len;
+> -}
+> -
+> -static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init =3D {
+> -       .attr =3D { .name =3D "vmlinux", .mode =3D 0444, },
+> -       .read =3D btf_vmlinux_read,
+> -};
+> +static __ro_after_init BIN_ATTR_SIMPLE_RO(vmlinux);
 
-On Tue, Nov 26, 2024 at 09:47:58PM +0100, Sasha Finkelstein via B4 Relay wrote:
-> Hi.
-> 
-> This series adds support for Apple touchscreens using the Z2 protocol.
-> Those are used as the primary touchscreen on mobile Apple devices, and for the
-> touchbar on laptops using the M-series chips. (T1/T2 laptops have a coprocessor
-> in charge of speaking Z2 to the touchbar).
-> 
-> Originally sent as a RFC at https://lore.kernel.org/all/20230223-z2-for-ml-v1-0-028f2b85dc15@gmail.com/
-> The changes since then mostly address the review feedback, but also
-> add another machine that has this specific controller.
-> 
-> The extra gpio needed to be toggled turned out to be a quirk of the
-> j293, normal CS is unusable on it, and a gpio has to be used instead.
-> (j493 does not have this quirk)
+To be honest I really don't like when code is hidden by macros like this.
+Looks like you guys already managed to sprinkle it in a few places.
 
-I believe this needs to be done at the SPI controller level. See
-"cs-gpiods" property in
-Documentation/devicetree/bindings/spi/spi-controller.yaml that, as far
-as I understand, allows overriding controller's native CS handling with
-a GPIO when needed.
+btf_vmlinux_read() can be replaced with sysfs_bin_attr_simple_read().
+This part is fine, but macro pls dont.
+It doesn't help readability.
+imo mode =3D 0444 vs mode =3D 0400 is easier to understand
+instead of _RO vs _ADMIN_RO suffix.
+__ro_after_init should be a part of it, at least.
 
-Cc-ing Mark Brown.
-
-Thanks.
-
--- 
-Dmitry
+I'd like to hear what other maintainers think about
+such obfuscation.
 
