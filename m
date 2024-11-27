@@ -1,205 +1,253 @@
-Return-Path: <linux-kernel+bounces-423207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BA79DA442
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:58:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583899DA446
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 10:00:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECDD11659D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:00:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3980E18E76B;
+	Wed, 27 Nov 2024 09:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMB8cufs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E071B25024
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:58:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F25F190486;
-	Wed, 27 Nov 2024 08:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PhLbLkml"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0EF155389
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7207013D278;
+	Wed, 27 Nov 2024 09:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732697920; cv=none; b=mbiESOz8UY/r5Uz7IRLey4ES0XEH8lyQexdEL+kb8kLcxv/qpVCVf88H0cV77XZx1lfKimohxenW7aVYXjGBp/Uk5bmXVjRLeNvru1/az6+lENP+n0dGTWo5m0B+OGbiav0YBquLlSY4QH2SdvBZlrub4w0hu2rH6y0209F9MSI=
+	t=1732698025; cv=none; b=L57DjY0ZQC7MFPmhKL2XZ+tnLwDTfRUAPq7Ofsf9DHGYh69e2mt5280oHlVXkxqqleDl4h5ZPX6SnDRMLqnFOPgn6OBBwe7UKGMwRQg3ekNQdCKm6IrpNjj0WMMzhhSFDaB+vOCW9vJaAcR1QkE8GO8NNKBLcBwoh3wAMbgDtQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732697920; c=relaxed/simple;
-	bh=JiHij5QSGg+4juP7Bw0Jcbhv8F9uCGy9weyzR2lagVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bb2j4eqfXQRy10KIFdPvjDpAQByyuMCTl62yhIMBBcscOJI3GUB5xhjbF9RzhduN9vvS0vRUmBGk3qWyH97CP4q3I9DX8T3G07LEgnitkKMCp2L51JOuzpVltSUJr5955J1SagX0sId1Gu1FR+TvEt1B/BegzX6HaLGEO5QwBPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PhLbLkml; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3ea5f158138so838258b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:58:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732697917; x=1733302717; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2a1NquYRm428Xk6taKkRe/kN+BcnV15X20uznJxfdTg=;
-        b=PhLbLkmlVrHaBbjsLbntYaQDRDDo0TNlOyykDLCPqcEYVqpmops5IObjRYsHEM50CJ
-         t8ERIFPTrTWwrKtdBEN3rJPlmR6Zhv/KEkW7GBPk2x5ILmVW9fNp/0Wg5FJa8XmmL3Br
-         KGfioluaeJ2vq77vX75QnX52dmDanR+UXQtYs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732697917; x=1733302717;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2a1NquYRm428Xk6taKkRe/kN+BcnV15X20uznJxfdTg=;
-        b=XgdFgUU9RVDze/svC4Ikjh6M6tZiB1/A68p7BUw1Uqd+sY5RepCnoEDnLQizquGe0H
-         QKnAhg3aDOLIibQFA7+sh4bCUH1mlPpTOz6kpMfq2jtFVVNE2Ed44FR+715yR2RknGPQ
-         v37l+eTJHi53G8Hzby0B+eom2zAiM3ftMap2+oyaoITqKkispfv9PNPzm0UDjFBTBa0T
-         2y80uw6ObKUxlwkK6z7/6pbxL+M0uqI0vN6jb8F0mhCqeOLjQHMSXcKWhy+WkFKupUop
-         0/rDIQ6ZR7+wlmpGKMGK7Becm/HnTzjmoJGtX0v+j5HIQu/xieMDh7Ig2hdTZ0I60Mih
-         zeLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfQRS+Iw/G+HmIRYLDPSn6Xnmg0JN8qeixZ389ygJ7B8ANjLwGQwrqz9512aP1ArhDWLMHuyjsMomjlqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJIiZKBjmcml8iwYoOD5ee2GCMoUn5ffFFAMWnmuwyla1De8B3
-	Riuc6Lq+lZQ9KXHvDkNIDqle4/H1JBUIabHs4axnq91Pa6hQWLDAJSGb1RrQUvoovVkYpCbMxh0
-	=
-X-Gm-Gg: ASbGncuLMrf5oXdllemyjquFbmRBOKlI9GiKj6ZhZRc4J+beGO+JWugumEGp1WHtXZS
-	S2L14iGMITOJ7Uh7AgwWqVHPujH1HdxXiJpIlf7e76q+mMTzhTQINIuwtvxW85N3MvgOBoQwmTY
-	0EbCO/i/cWp3Y68ouaPGWVE6gAvuJ8gXJxVLpFk1OLs7ep8xh6F/u1KSuunrw0U3N3Yutdkku7n
-	50b++gaUqtrOikotT217Mox8/dy6EjdqS2zsy1+uGgxSlm4XI4mK0LXZgpFhlg99sYTFqr0lREe
-	KTbI2jsB8V0y
-X-Google-Smtp-Source: AGHT+IFAuojrOYFMidQ5XliElbVaIt0LNDktZKT8sZsiNYP86ICfqsSkUXjou+cmFBVx67XJ6JKjsQ==
-X-Received: by 2002:a05:6808:210c:b0:3ea:3bb2:7e17 with SMTP id 5614622812f47-3ea6dda6d6dmr1781963b6e.41.1732697917216;
-        Wed, 27 Nov 2024 00:58:37 -0800 (PST)
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com. [209.85.210.48])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71d5d277fe3sm983857a34.66.2024.11.27.00.58.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 00:58:35 -0800 (PST)
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71d47201b3fso1519282a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:58:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVQT51oOvBxZmJCZKXrTfb2cJUX58BzLk8u5+uTwsadPBhFxE9igFB1dDuY95v91P87+ZBOcodV8Nbfy0o=@vger.kernel.org
-X-Received: by 2002:a05:6808:3087:b0:3ea:4e7c:a91a with SMTP id
- 5614622812f47-3ea6dd4a1fbmr2389825b6e.34.1732697913702; Wed, 27 Nov 2024
- 00:58:33 -0800 (PST)
+	s=arc-20240116; t=1732698025; c=relaxed/simple;
+	bh=skOG+mShRmZEUftI8NfzklM92Fji6/eTdCiEyIalZAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5DHdehMGzpJlXEFW353xqgGRr+TYixo3skNJ2xkz3eSb/KvWPBIbY9hcoy35W0seDCMl+tPBGW3oeIn2EscXl0nK3EW9k+9wCqmCQY7vGzV8gRP5pddRUELX6nHE10F34nDR8VeC6whd7tZJUlL3ERGqO9FB6Kj7A+tquA3wZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMB8cufs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3606FC4CED3;
+	Wed, 27 Nov 2024 09:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732698025;
+	bh=skOG+mShRmZEUftI8NfzklM92Fji6/eTdCiEyIalZAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QMB8cufs71rrLPIEQ4bVG2jDaYfa8StaN0GAOpQA1h/fdinByMiftHdvjWLQhO5lw
+	 DaYLtwMXqd9YYEjCnRzjPYPKexatzVpXXOYRP+UhdLbpoIVn+4NrUHW9WcoOOObvaH
+	 Hm5Ykm2Cs3XtT5AG4f8TEtQVHojz5rsBWMqX9EWlbiIPSWfDYTITc+DJSVBcFQdOWu
+	 1SitDC+yOjFQAiJPONQqDTTlKPgxNQU4ag02HsFv7mg8gX8/GH4ZfSs40/iiH47l5h
+	 TV3qw0cMe/ygKN9VeppUKg3RsWJ/fxXZ/L6T/3y1sx6GEeKj0nYbRP9dWJsFaIs27F
+	 K2/Wj2uKNYwMA==
+Date: Wed, 27 Nov 2024 10:00:21 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH 2/4] input: apple_z2: Add a driver for Apple Z2
+ touchscreens
+Message-ID: <27amnmlm52igidlv23h3d3bvaezbdumedfkqicbtreka3llhqs@fafepduxgv43>
+References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
+ <20241126-z2-v1-2-c43c4cc6200d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
- <20241120-uvc-readless-v4-1-4672dbef3d46@chromium.org> <20241126180616.GL5461@pendragon.ideasonboard.com>
- <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com> <20241127083444.GV5461@pendragon.ideasonboard.com>
-In-Reply-To: <20241127083444.GV5461@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 27 Nov 2024 09:58:21 +0100
-X-Gmail-Original-Message-ID: <CANiDSCvvCtkiHHPCj0trox-oeWeh_rks3Cqm+kS9Hvtp9QC6Yg@mail.gmail.com>
-Message-ID: <CANiDSCvvCtkiHHPCj0trox-oeWeh_rks3Cqm+kS9Hvtp9QC6Yg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] media: uvcvideo: Support partial control reads
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241126-z2-v1-2-c43c4cc6200d@gmail.com>
 
-On Wed, 27 Nov 2024 at 09:34, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Tue, Nov 26, 2024 at 07:12:53PM +0100, Ricardo Ribalda wrote:
-> > On Tue, 26 Nov 2024 at 19:06, Laurent Pinchart wrote:
-> > > On Wed, Nov 20, 2024 at 03:26:19PM +0000, Ricardo Ribalda wrote:
-> > > > Some cameras, like the ELMO MX-P3, do not return all the bytes
-> > > > requested from a control if it can fit in less bytes.
-> > > > Eg: Returning 0xab instead of 0x00ab.
-> > > > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
-> > > >
-> > > > Extend the returned value from the camera and return it.
-> > > >
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
-> > > > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > ---
-> > > >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++++
-> > > >  1 file changed, 16 insertions(+)
-> > > >
-> > > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > > > index cd9c29532fb0..482c4ceceaac 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_video.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > > > @@ -79,6 +79,22 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
-> > > >       if (likely(ret == size))
-> > > >               return 0;
-> > > >
-> > > > +     /*
-> > > > +      * In UVC the data is usually represented in little-endian.
-> > >
-> > > I had a comment about this in the previous version, did you ignore it on
-> > > purpose because you disagreed, or was it an oversight ?
-> >
-> > I rephrased the comment. I added "usually" to make it clear that it
-> > might not be the case for all the data types. Like composed or xu.
->
-> Ah, that's what you meant by "usually". I read it as "usually in
-> little-endian, but could be big-endian too", which confused me.
->
-> Data types that are not integers will not work nicely with the
-> workaround below. How do you envision that being handled ? Do you
-> consider that the device will return too few bytes only for integer data
-> types, or that affected devices don't have controls that use compound
-> data types ? I don't see what else we could do so I'd be fine with such
-> a heuristic for this workaround, but it needs to be clearly explained.
+On Tue, Nov 26, 2024 at 09:48:00PM +0100, Sasha Finkelstein wrote:
+> +static int apple_z2_boot(struct apple_z2 *z2)
+> +{
+> +	int timeout;
+> +
+> +	enable_irq(z2->spidev->irq);
+> +	gpiod_direction_output(z2->reset_gpio, 0);
+> +	timeout = wait_for_completion_timeout(&z2->boot_irq, msecs_to_jiffies(20));
+> +	if (timeout == 0)
+> +		return -ETIMEDOUT;
+> +	return apple_z2_upload_firmware(z2);
+> +}
+> +
+> +static int apple_z2_open(struct input_dev *dev)
+> +{
+> +	struct apple_z2 *z2 = input_get_drvdata(dev);
+> +	int error;
+> +
+> +	/* Reset the device on boot */
+> +	gpiod_direction_output(z2->reset_gpio, 1);
+> +	usleep_range(5000, 10000);
+> +	error = apple_z2_boot(z2);
+> +	if (error) {
+> +		gpiod_direction_output(z2->reset_gpio, 1);
 
-Non integer datatypes might work if the last part of the data is
-expected to be zero.
-I do not think that we can find a heuristic that can work for all the cases.
+This is less readable code. Each function should clean up its own stuff,
+so if z2_boot() de-asserted the reset, then z2_boot() should clean up by
+asserting again, not expecting the caller to do this.
 
-For years we have ignored partial reads and it has never been an
-issue. I vote for not adding any heuristics, the logging should help
-identify future issues (if there is any).
+> +		disable_irq(z2->spidev->irq);
+> +	} else
+> +		z2->open = 1;
+> +	return error;
+> +}
+> +
+> +static void apple_z2_close(struct input_dev *dev)
+> +{
+> +	struct apple_z2 *z2 = input_get_drvdata(dev);
+> +
+> +	disable_irq(z2->spidev->irq);
+> +	gpiod_direction_output(z2->reset_gpio, 1);
+> +	z2->open = 0;
+> +	z2->booted = 0;
+> +}
+> +
+> +static int apple_z2_probe(struct spi_device *spi)
+> +{
+> +	struct device *dev = &spi->dev;
+> +	struct apple_z2 *z2;
+> +	int error;
+> +	const char *label;
+> +	struct touchscreen_properties props;
+> +
+> +	z2 = devm_kzalloc(dev, sizeof(*z2), GFP_KERNEL);
+> +	if (!z2)
+> +		return -ENOMEM;
+> +
+> +	z2->spidev = spi;
+> +	init_completion(&z2->boot_irq);
+> +	spi_set_drvdata(spi, z2);
+> +
+> +	z2->cs_gpio = devm_gpiod_get_index(dev, "cs", 0, 0);
+> +	if (IS_ERR(z2->cs_gpio)) {
+> +		if (PTR_ERR(z2->cs_gpio) != -ENOENT) {
+> +			dev_err(dev, "unable to get cs");
+> +			return PTR_ERR(z2->cs_gpio);
+> +		}
+> +		z2->cs_gpio = NULL;
+> +	}
+> +
+> +	z2->reset_gpio = devm_gpiod_get_index(dev, "reset", 0, 0);
+> +	if (IS_ERR(z2->reset_gpio)) {
+> +		dev_err(dev, "unable to get reset");
 
->
-> > I also r/package/packet/
-> >
-> > Did I miss another comment?
-> >
-> > > > +      * Some devices return shorter USB control packets that expected if the
-> > > > +      * returned value can fit in less bytes. Zero all the bytes that the
-> > > > +      * device have not written.
-> > >
-> > > s/have/has/
-> > >
-> > > And if you meant to start a new paragraph here, a blank line is missing.
-> > > Otherwise, no need to break the line before 80 columns.
-> >
-> > The patch is already in the uvc tree. How do you want to handle this?
->
-> The branch shared between Hans and me can be rebased, it's a staging
-> area.
+Syntax is: return dev_err_probe, almost everywhere here.
 
-I will send a new version, fixing the typo. and the missing new line.
-I will also remove the sentence
-`* In UVC the data is usually represented in little-endian.`
-It is confusing.
+> +		return PTR_ERR(z2->reset_gpio);
+> +	}
+> +
+> +	error = devm_request_threaded_irq(dev, z2->spidev->irq, NULL,
+> +					apple_z2_irq, IRQF_ONESHOT | IRQF_NO_AUTOEN,
+> +					"apple-z2-irq", spi);
+> +	if (error < 0) {
+> +		dev_err(dev, "unable to request irq");
+> +		return z2->spidev->irq;
+> +	}
+> +
+> +	error = device_property_read_string(dev, "label", &label);
+> +	if (error) {
+> +		dev_err(dev, "unable to get device name");
+> +		return error;
+> +	}
+> +
+> +	error = device_property_read_string(dev, "firmware-name", &z2->fw_name);
+> +	if (error) {
+> +		dev_err(dev, "unable to get firmware name");
+> +		return error;
+> +	}
+> +
+> +	z2->cal_blob = of_get_property(dev->of_node, "apple,z2-cal-blob", &z2->cal_size);
 
+There is no such property.
 
->
-> > > > +      * We exclude UVC_GET_INFO from the quirk. UVC_GET_LEN does not need to
-> > > > +      * be excluded because its size is always 1.
-> > > > +      */
-> > > > +     if (ret > 0 && query != UVC_GET_INFO) {
-> > > > +             memset(data + ret, 0, size - ret);
-> > > > +             dev_warn_once(&dev->udev->dev,
-> > > > +                           "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
-> > > > +                           uvc_query_name(query), cs, unit, ret, size);
-> > > > +             return 0;
-> > > > +     }
-> > > > +
-> > > >       if (ret != -EPIPE) {
-> > > >               dev_err(&dev->udev->dev,
-> > > >                       "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
->
-> --
-> Regards,
->
-> Laurent Pinchart
+You cannot sneak undocumented properties.
 
+> +	if (!z2->cal_blob) {
+> +		dev_warn(dev, "unable to get calibration, precision may be degraded");
+> +		z2->cal_size = 0;
+> +	}
+> +
+> +	z2->input_dev = devm_input_allocate_device(dev);
+> +	if (!z2->input_dev)
+> +		return -ENOMEM;
+> +	z2->input_dev->name = label;
+> +	z2->input_dev->phys = "apple_z2";
+> +	z2->input_dev->dev.parent = dev;
+> +	z2->input_dev->id.bustype = BUS_SPI;
+> +	z2->input_dev->open = apple_z2_open;
+> +	z2->input_dev->close = apple_z2_close;
+> +
+> +	/* Allocate the axes before setting from DT */
+> +	input_set_abs_params(z2->input_dev, ABS_MT_POSITION_X, 0, 0, 0, 0);
+> +	input_set_abs_params(z2->input_dev, ABS_MT_POSITION_Y, 0, 0, 0, 0);
+> +	touchscreen_parse_properties(z2->input_dev, true, &props);
+> +	z2->y_size = props.max_y;
+> +	input_abs_set_res(z2->input_dev, ABS_MT_POSITION_X, 100);
+> +	input_abs_set_res(z2->input_dev, ABS_MT_POSITION_Y, 100);
+> +	input_set_abs_params(z2->input_dev, ABS_MT_WIDTH_MAJOR, 0, 65535, 0, 0);
+> +	input_set_abs_params(z2->input_dev, ABS_MT_WIDTH_MINOR, 0, 65535, 0, 0);
+> +	input_set_abs_params(z2->input_dev, ABS_MT_TOUCH_MAJOR, 0, 65535, 0, 0);
+> +	input_set_abs_params(z2->input_dev, ABS_MT_TOUCH_MINOR, 0, 65535, 0, 0);
+> +	input_set_abs_params(z2->input_dev, ABS_MT_ORIENTATION, -32768, 32767, 0, 0);
+> +
+> +	input_set_drvdata(z2->input_dev, z2);
+> +
+> +	error = input_mt_init_slots(z2->input_dev, 256, INPUT_MT_DIRECT);
+> +	if (error < 0) {
+> +		dev_err(dev, "unable to initialize multitouch slots");
+> +		return error;
+> +	}
+> +
+> +	error = input_register_device(z2->input_dev);
+> +	if (error < 0)
+> +		dev_err(dev, "unable to register input device");
+> +
+> +	return error;
+> +}
+> +
+> +static const struct of_device_id apple_z2_of_match[] = {
+> +	{ .compatible = "apple,z2-multitouch" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, apple_z2_of_match);
+> +
+> +static struct spi_device_id apple_z2_of_id[] = {
+> +	{ .name = "j293-touchbar" },
+> +	{ .name = "j493-touchbar" },
+> +	{ .name = "z2-touchbar" },
 
+You should not need all these above.
 
--- 
-Ricardo Ribalda
+> +	{ .name = "z2-multitouch" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(spi, apple_z2_of_id);
+> +
+> +static struct spi_driver apple_z2_driver = {
+> +	.driver = {
+> +		.name	= "apple-z2",
+> +		.owner = THIS_MODULE,
+
+Drop, this is some very old code. All owners were removed ~10 or more
+years ago. This suggests you took some old or poorly maintained driver
+as a template, thus you duplicate all the issues we already fixed.
+
+> +		.of_match_table = of_match_ptr(apple_z2_of_match),
+
+Drop of_match_ptr(), you have a warning here.
+
+> +	},
+> +	.id_table       = apple_z2_of_id,
+> +	.probe		= apple_z2_probe,
+
+Best regards,
+Krzysztof
+
 
