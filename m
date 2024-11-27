@@ -1,267 +1,129 @@
-Return-Path: <linux-kernel+bounces-423120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8229DA31A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:31:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94C39DA31F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 052E0284BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3927BB229C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0BA14F9CC;
-	Wed, 27 Nov 2024 07:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4178153812;
+	Wed, 27 Nov 2024 07:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vb2oHvWw"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bMOvlLf8"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F20DBE46
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6988BBE46;
+	Wed, 27 Nov 2024 07:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732692698; cv=none; b=Gj1bVueWt1gjbv9NutYBfXcas4wGSzjZ07XUgAdulAZ25Ya7opK043jKo/uODKeEgizYvRjknsOm3zGkfqYBuNEgureP4CCuF9u4VSUm4SFRL0dgFlEn1Nvpjo0S1OMiSEJw0TcFIepFfrq+T0PwfSH+4rb1CXGUhxryqpBZRYo=
+	t=1732692765; cv=none; b=ZVX3LNM5kKS6XHKFCsiG01fPL6osgSzaVbSWBLeK89Qtv2qdZ1LmSJbGn3W51nnUUeJ6EF9cfWZ8Ji6MrK/Z4m4goyrVR9bw72qKQBL84K0qVxUKVQzDW6GJmGWz80Wqzkl6bkb4m/vYGP9QC2vuLfnXjLZ3MNZRUT9Pl/COYes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732692698; c=relaxed/simple;
-	bh=dqZDut5fzTWDXSN5vDb91fVnxcC/3pJWX6YT082XNKs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=O86aRpLogfG/nq9H/QQzjNIoEWq+g4elxCTxOVpvRj4l81qQNF+HwLfViMSMWavn9777RjXjBTkYPuhPl4WpNp5ly2/gc/UFZSPZHV5+ZlTMTD+V8x20abZwlhWuooVqAayYGJsTXG64VGylnX9M100ZvoZwhTy09oFVp3hgbI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Vb2oHvWw; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ee55cfa88cso59062777b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:31:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732692696; x=1733297496; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5s5kassNlAoHNZdiz5aHlrrPJqXpxtHYXspH9LV6FQ8=;
-        b=Vb2oHvWwJjKyBqTLeCeBKZ3+L0t0UrjOE+OMJFRnQZjNc7dvvxAUfOF0PKGw3xAjyB
-         8E8ixEmu+T14AQ9OLcDPtF1WnhhtAt84f0m5mpWkkP6qPfqKxjhJT4PJfhILofszc2gP
-         jrWCUMG9e5v0Gw3lL+TWTIPUHpg9B3Wh4TVDk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732692696; x=1733297496;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5s5kassNlAoHNZdiz5aHlrrPJqXpxtHYXspH9LV6FQ8=;
-        b=khkBqFuLHuh+qy8KDgJpFC9L9psgbEuXbUBB88Cxx6y+7mS9uAHrmtYLROFD7UqhH4
-         Qy8OeRDUMdHrFWzpoD6V+UaJyTcS+CUezfr2iQQK3NfKdLtX4+5v/FJc02XbUrumoIk+
-         GTEqtaYqFUsVeZU1mMYCJuJ2jSVpIXNmEhxMYtmR3H6tMcQmQAYysCyxXwp5pmodyoTA
-         d1iN/0Cp2VMlSSFW7Jco0pE2xG8uvNlPthxjWmY7QpfDhTQLe1NFFSptoAP5DX17gffT
-         aa7vRUc6iQG9o0X0McqezuaKAsC0Uzitod4eE0L6vt2VT62EHIVXu/vzV9WEhKJ5QVIZ
-         aFbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4FtjnAp+tID1WpW2BN9f8fTigyzvzivhMSJP7blqgpIzOct4yDfAZGY7iH/89gk8JRgDFKOH6lsxNuOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfuPaWDiaBZU9KMPOudCzc1+pKn8EmiZ4mqSpBgN3CpS5s5Q+6
-	pwl2XmjH90BTzU69CDlwH6dqtDsOuiI3xQnHOghuUQ15W5ItPAzWDmMLT6fMkg==
-X-Gm-Gg: ASbGncunHFXFZWEuJcdzLfjtxUQ7SefLdKYaMoxIqz2Kv7z29xaMI6laiaGZXq6Z5d+
-	WdZBDovLcnwdE0F9dPST1RByznklk7T3fv+DpQ6KB9/0ZOcOW8Bcb8Pnb8K8QuB+F26B24SQFuO
-	cm00b+GRBYEn+iW6oECp1rzrMrVWe/RGVgNO7IaO3b/LRJJ43xjVjeV1FABERVrDcNacYUMmReF
-	wcNgSKDzSZW685/zxGu/8UpXv5QK9fYA2J0YkLGySAfmBUxO5zRLFAU2scKtIAa9YGCPZaJx2DE
-	q5uafZDXL5nKVnezbf2YYqjl
-X-Google-Smtp-Source: AGHT+IHyZnJyE9wo8p3SInxIuSgKOnoVMgLEx25GkkIkZK0krjmvoxt7Wx3KVXoA9xySjh7XgcLHtw==
-X-Received: by 2002:a05:690c:67c7:b0:6ec:b10a:22a4 with SMTP id 00721157ae682-6ef37233377mr21660707b3.25.1732692696025;
-        Tue, 26 Nov 2024 23:31:36 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451b23f13sm63653876d6.92.2024.11.26.23.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 23:31:35 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 27 Nov 2024 07:31:29 +0000
-Subject: [PATCH] media: uvcvideo: Remove duplicated cap/out code
+	s=arc-20240116; t=1732692765; c=relaxed/simple;
+	bh=y5PKOe3A/ElM8wkWM4XMgKNtPnBBd+d6Q8Bsjsnjh14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C6RgjlwgSsp7iklyKH/f12UJeuo5z+YtCVBcXCFnnqcxu11bGzyomamHgNmWOH87fxTtJbIardeVudC/8xZR+S1bXHzQe5y3LRj+ZwyKLW2mZG5g/q+47TKYXNupmUvITb1tuLt8p3UwQk+bJj3tZFvKtId8Y9ptz9JQ9PXGSs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bMOvlLf8; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4AR7WE5O1827260
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 26 Nov 2024 23:32:14 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4AR7WE5O1827260
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1732692735;
+	bh=Q+69jm4dZPx/77M/o6zw1lNWCYUcUCa6Gnxp/BFqGUo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bMOvlLf8TZEck31MTyVHXl+AkIYh0ku74K/YZ0Myta9xF9uEn/Yd+hhOXBFbKqyiy
+	 1E3jrJZBS9Q1HGcXiJt6faZoqovW/TP9DginaUVsG0AJxLD+56nGhDTkTa4SGuFuCT
+	 jTyu84+Iq9s7xcDLqkJ9e9Se6kwhMr6Y1np1L6p6/uDRPZjIMmAb7i+LK3rPuLfz0D
+	 ybe25B0eozQqjKhavasjcNePh6YxGfNHDjc77O6YuzY42cinM8p8OPgGtSzlKoSP0o
+	 eLoDMIneEolnJVh2M2vnblkARceLdWGINc/sxXuFUFyIBAwxN3hrx4CzUx8XtjKFhr
+	 jw76Pgawb9ReA==
+Message-ID: <43e47da0-1257-4e68-9669-8e3d4915fa57@zytor.com>
+Date: Tue, 26 Nov 2024 23:32:13 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
+ MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
+To: Borislav Petkov <bp@alien8.de>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-10-xin@zytor.com>
+ <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
+ <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
+ <20241126200624.GDZ0YqQF96hKZ99x_b@fat_crate.local>
+ <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
+ <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
+ <a76d9b6c-5578-4384-970d-2642bff3a268@zytor.com>
+ <20241127071008.GCZ0bF0EGespFhxwlP@fat_crate.local>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20241127071008.GCZ0bF0EGespFhxwlP@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org>
-X-B4-Tracking: v=1; b=H4sIANDKRmcC/x3MPQqAMAxA4auUzAb6IwpeRRxCjZpFS2uLIL27x
- fEb3nshcRROMKkXIhdJcp0NplPgDzp3RlmbwWrbG2NHzMXjmgN6CnjlGwfSzmvDTpODVoXImzz
- /cV5q/QC1uw7UYQAAAA==
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-The *_vid_cap and *_vid_out helpers seem to be identical. Remove all the
-duplicated code.
+On 11/26/2024 11:10 PM, Borislav Petkov wrote:
+> On Tue, Nov 26, 2024 at 11:02:31PM -0800, Xin Li wrote:
+>> This is a patch that cleanup the existing code for better accommodate
+>> new VMX pass-through MSRs.  And it can be a standalone one.
+> 
+> Well, your very *next* patch is adding more MSRs to that array. So it needs to
+> be part of this series.
+> 
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Unless I miss something, cap and out helpers are identical. So there is
-no need to duplicate code
----
- drivers/media/usb/uvc/uvc_v4l2.c | 112 ++++++++-------------------------------
- 1 file changed, 22 insertions(+), 90 deletions(-)
+It's self-contained.  Another approach is to send cleanup patches in a 
+separate preparation patch set.
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 97c5407f6603..11ccdaf0269f 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -361,9 +361,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
- 	return ret;
- }
- 
--static int uvc_v4l2_get_format(struct uvc_streaming *stream,
--	struct v4l2_format *fmt)
-+static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-+			   struct v4l2_format *fmt)
- {
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	const struct uvc_format *format;
- 	const struct uvc_frame *frame;
- 	int ret = 0;
-@@ -395,9 +397,11 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
- 	return ret;
- }
- 
--static int uvc_v4l2_set_format(struct uvc_streaming *stream,
--	struct v4l2_format *fmt)
-+static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-+			   struct v4l2_format *fmt)
- {
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	struct uvc_streaming_control probe;
- 	const struct uvc_format *format;
- 	const struct uvc_frame *frame;
-@@ -685,11 +689,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
- 	return 0;
- }
- 
--static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
-+static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
- 			      struct v4l2_fmtdesc *fmt)
- {
--	const struct uvc_format *format;
-+	struct uvc_fh *handle = fh;
-+	struct uvc_streaming *stream = handle->stream;
- 	enum v4l2_buf_type type = fmt->type;
-+	const struct uvc_format *format;
- 	u32 index = fmt->index;
- 
- 	if (fmt->type != stream->type || fmt->index >= stream->nformats)
-@@ -707,82 +713,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
- 	return 0;
- }
- 
--static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
--				      struct v4l2_fmtdesc *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_ioctl_enum_fmt(stream, fmt);
--}
--
--static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
--				      struct v4l2_fmtdesc *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_ioctl_enum_fmt(stream, fmt);
--}
--
--static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_v4l2_get_format(stream, fmt);
--}
--
--static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--
--	return uvc_v4l2_get_format(stream, fmt);
--}
--
--static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	int ret;
--
--	ret = uvc_acquire_privileges(handle);
--	if (ret < 0)
--		return ret;
--
--	return uvc_v4l2_set_format(stream, fmt);
--}
--
--static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
--				   struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	int ret;
--
--	ret = uvc_acquire_privileges(handle);
--	if (ret < 0)
--		return ret;
--
--	return uvc_v4l2_set_format(stream, fmt);
--}
--
--static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
--				     struct v4l2_format *fmt)
--{
--	struct uvc_fh *handle = fh;
--	struct uvc_streaming *stream = handle->stream;
--	struct uvc_streaming_control probe;
--
--	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
--}
--
--static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
--				     struct v4l2_format *fmt)
-+static int uvc_ioctl_try_fmt(struct file *file, void *fh,
-+			     struct v4l2_format *fmt)
- {
- 	struct uvc_fh *handle = fh;
- 	struct uvc_streaming *stream = handle->stream;
-@@ -1544,14 +1476,14 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
- 
- const struct v4l2_ioctl_ops uvc_ioctl_ops = {
- 	.vidioc_querycap = uvc_ioctl_querycap,
--	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
--	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
--	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
--	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
--	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
--	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
--	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
--	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
-+	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
-+	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
-+	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
-+	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
-+	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
-+	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
-+	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
-+	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
- 	.vidioc_reqbufs = uvc_ioctl_reqbufs,
- 	.vidioc_querybuf = uvc_ioctl_querybuf,
- 	.vidioc_qbuf = uvc_ioctl_qbuf,
-
----
-base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
-change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+Thanks!
+     Xin
 
