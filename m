@@ -1,169 +1,78 @@
-Return-Path: <linux-kernel+bounces-424030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750909DAF9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:00:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A08016539C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:00:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCEF205E16;
-	Wed, 27 Nov 2024 22:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="tzkl8bGe"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE8D9DAF93
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:00:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884C7205E0E;
-	Wed, 27 Nov 2024 22:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6F8FB224DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:59:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AA320408C;
+	Wed, 27 Nov 2024 22:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjMJSMiR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D775203700;
+	Wed, 27 Nov 2024 22:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732748361; cv=none; b=n7r1VIhN9I0r8PH02iY5hzmgPaA98YZ0HNqyn63n+uQPrn5M8iQL/ERlfzE1qb/A8gTNgrk5W2ztD/o6kTFoLBQYqAHbly3QabWGaZEDueXO6VKbrQuszmP76jmpybHiJrDkA+3S+D0l7HMosFAaXrjH8D0FedcGswBHOlKAucU=
+	t=1732748352; cv=none; b=O9p3lk0/bffxYfu0BWc3DU/0IGiMQIQboPn5hurwNqkTwRA84H3ttPewRWP5P+pDddmXjIPE8+yw39iJwZbaKxalXOEyLGP3u+N2vWf2qsoDnmPLoqFHQJdC0l8Hm3vZK1PVPinoo5pmGSh0ngjE5p2GqScVL1nJR6wFwu80LMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732748361; c=relaxed/simple;
-	bh=ZlIqQL9nhR8ZrTmEz4h9i7YgCxYv3bRODmwAhrVR7tQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JN+VIFtqpZR/dJ3oowI21Qp9Tyv0BapnKuY9IcTnItZgSZKVjQdbxpa9Mcn7nj6lHUCTt6V/5q561mb8a1cWqhANuODqUBsopoD68sE8qZdhQf6i52jRgiY4iAK5GTB6JBgEH2AkD6LKBDaon6HDXlIFsM1B5ycMQpA9xi2KD1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=tzkl8bGe; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=zYWPwKrxCHw1U304AUsx5/K0+fIPQMRZnHhXdfi9zsg=; b=tzkl8bGexeiM662e4bzFYg/nMt
-	sUv4PjlCkek4aSLZdlU9XIbsvVdWxEuVQsYteZ+HwGszkkLBj9kgDEBHHhYPVUmmo77z2VkyvIp6n
-	11GBvKKsz4J9ewjZGcUEBIAX/H/UI7riqhzsftJ4FqFPQzqKnn/x3sLyIhDO74xCMGwqJGrTwzqf0
-	KW4WJjENCdXKAVFHi0ynD4IcX1Un77p2msa9Ha9GwWlzST5kchQMTawaj7PrLw+ed3edrhEMxlG1B
-	UiwO+Kn6NEatA6y8TC7pxIhJimRpj7TxFTDT5f6YVxz0dwRb/Cg+KQVHTYEXDGYDzPgA5HfyuYkjb
-	d7mrlnig==;
-Date: Wed, 27 Nov 2024 23:58:58 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, hns@goldelico.com, linux-omap@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- aaro.koskinen@iki.fi, khilman@baylibre.com, stable@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: ti/omap: gta04: fix pm issues caused by spi
- module
-Message-ID: <20241127235858.44e1ce01@akair>
-In-Reply-To: <d1679678-8996-4484-bcf4-d4eaa6f009a4@kernel.org>
-References: <20241107225100.1803943-1-andreas@kemnade.info>
-	<b26c1fa8-b3b7-4aa9-bc78-793ddfa3bc6b@kernel.org>
-	<20241108184118.5ee8114c@akair>
-	<20241111150953.GA23206@atomide.com>
-	<20241111193117.5a5f5ecb@akair>
-	<20241111234604.66a9691b@akair>
-	<20241116212734.30f5d35b@akair>
-	<d1679678-8996-4484-bcf4-d4eaa6f009a4@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732748352; c=relaxed/simple;
+	bh=4FOCYieM1QAFO/+neIlTbG+6OcqZu0hFJzElhn/gyWo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=fqgYUDO3xQjLdLWjD531I7UKsNqwGJ9ism+aiIUbbMolsuGvLb9ThzcpasT0+dWPutpYG0i4oU0AbioILoL4KKNihf7HF/Jve4S0DPx80ZYGA6mJnSnc+TFkn6H5DmFTF08VV5QymwNwNwWP1xhJk2SMHFj4tlYK4wi/0JgLRk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjMJSMiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5E8C4CECC;
+	Wed, 27 Nov 2024 22:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732748352;
+	bh=4FOCYieM1QAFO/+neIlTbG+6OcqZu0hFJzElhn/gyWo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=DjMJSMiRHNR8vm/viER3YP5CPqOxEuTqOTRKn10D0dg6ifuqGK/i1N/b/IQILCU36
+	 1YUp+LWJbWjJL7qZ4yBWScML++f2AKp3zQ8W/7sAQIOBV0rFmPOmUBkYYgczdFeGLE
+	 mXvzUETzK6AS60mAX7ksOrD4F3VjPtKi5c7uUSeMRJUvOQ3Po7DpTL6d0NAC616wCJ
+	 /gPn6ywMpzYvbNIJ6KMc3lY6A1m52h/+YWByVMMPk+A66hZWXH+tLPNfFylVivgdNV
+	 zLSdjGWtaH8DCcZ6HRxafXT6usRs0N9SQokw8UWTwnrBD699srxic70e34E7GxAQI4
+	 +trqI6MXVjfuw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C5E380A944;
+	Wed, 27 Nov 2024 22:59:26 +0000 (UTC)
+Subject: Re: [GIT PULL] Additional thermal control updates for v6.13-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0gpH46U5bJ5OvZ6JXAvFkzb3P6+=N3zBOPSvQNjgmCHDg@mail.gmail.com>
+References: <CAJZ5v0gpH46U5bJ5OvZ6JXAvFkzb3P6+=N3zBOPSvQNjgmCHDg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0gpH46U5bJ5OvZ6JXAvFkzb3P6+=N3zBOPSvQNjgmCHDg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal-6.13-rc1-3
+X-PR-Tracked-Commit-Id: 4dc333c6c28c49943a571f09c3868e5058552016
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 92b459d82a6ec472d01f18edd532946aea80df6a
+Message-Id: <173274836497.1238022.14548822949257560391.pr-tracker-bot@kernel.org>
+Date: Wed, 27 Nov 2024 22:59:24 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-Am Mon, 18 Nov 2024 15:08:48 +0200
-schrieb Roger Quadros <rogerq@kernel.org>:
+The pull request you sent on Wed, 27 Nov 2024 19:34:55 +0100:
 
-> On 16/11/2024 22:27, Andreas Kemnade wrote:
-> > Am Mon, 11 Nov 2024 23:46:04 +0100
-> > schrieb Andreas Kemnade <andreas@kemnade.info>:
-> >   
-> >> Am Mon, 11 Nov 2024 19:31:17 +0100
-> >> schrieb Andreas Kemnade <andreas@kemnade.info>:
-> >>  
-> >>> Am Mon, 11 Nov 2024 17:09:53 +0200
-> >>> schrieb Tony Lindgren <tony@atomide.com>:
-> >>>     
-> >>>> * Andreas Kemnade <andreas@kemnade.info> [241108 17:41]:      
-> >>>>> They are not used, if they are just disabled, kernel does not touch
-> >>>>> them, so if it is there, the kernel can handle
-> >>>>> pm. At least as long as it is not under ti,sysc.
-> >>>>>
-> >>>>> There are probably cleaner solutions for this, but for a CC: stable I
-> >>>>> would prefer something less invasive.        
-> >>>>
-> >>>> For unused devices, it's best to configure things to use ti-sysc, and
-> >>>> then set status disabled (or reserved) for the child devices only. This
-> >>>> way the parent interconnect target module is PM runtime managed by
-> >>>> Linux, and it's power domain gets properly idled for the unused devices
-> >>>> too.
-> >>>>       
-> >>> Hmm, we also have omap_hwmod_setup_all() which is still called if
-> >>> without device nodes being available.
-> >>>
-> >>> Converting mcspi to ti-sysc is more than 100 lines. So it does not
-> >>> qualify for stable.
-> >>>     
-> >>>>> I can try a ti-sysc based fix in parallel.        
-> >>>>
-> >>>> Yeah that should be trivial hopefully :)
-> >>>>       
-> >>> I played around, got pm issues too, tried to force-enable things (via
-> >>> power/control),
-> >>> watched CM_IDLEST1_CORE and CM_FCLKEN1_CORE, they behave. Bits are set
-> >>> or reset.
-> >>>
-> >>> but not CM_IDLEST_CKGEN, it is 0x209 instead of 0x1.
-> >>>
-> >>> I test from initramfs, so no mmc activity involved
-> >>>
-> >>> removing status = "disabled" from mcspi3 solves things.
-> >>> With and without ti-sysc conversion. removing status = "disabled" from
-> >>> mcspi4 seems not to help.
-> >>>
-> >>> That all cannot be... I will retry tomorrow.
-> >>>     
-> >> well, I tried a bit further:
-> >> I build the omap spi driver as module.
-> >> and booted With mcspi3 not disabled and no module autoload.
-> >>
-> >> without module loaded: pm bad, same as with mcspi3 disabled
-> >> with module loaded: core pm ok
-> >> with module loaded and unloaded: core pm ok.
-> >>
-> >> so at least a trace.
-> >>  
-> > ok, I am a bit further.
-> > mcspi is per default in slave mode, setting it to master solves issues.
-> > And that happens when the driver is probed because its default is
-> > master.
-> > Having the pins muxed as mode 7 also helps or selecting a pulldown for
-> > cs. (cs is active high per default!)
-> > switching to pullup does not harm once the spi module is off, but having
-> > active cs seems to prevent idling despite CM_IDLEST1_CORE
-> > not showing it.
-> > 
-> > History: u-boot muxes McSPI3, because it can be available on an
-> > optionally fitted pin header. But there is no user known (would need
-> > a dtb overlay anyways). So I will rather mux to mode 7.  
-> 
-> I'm sorry I didn't fully understand the problem.
-> 
-> So, u-boot configures pinmux for McSPI3 and enables McSPI3 as well
-> but fails to disable it properly?
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal-6.13-rc1-3
 
-At least it sets Pinmux.
- 
-> And because McSPI3 is in slave mode and CS is active it fails to
-> transition to idle in Linux?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/92b459d82a6ec472d01f18edd532946aea80df6a
 
-yes, slave mode is default.
-> 
-> So isn't this a u-boot issue?
-> 
-Just telling u-boot to not mux McSPI3 helps. So, yes u-boot should not
-set it. But. I have no clear idea how bitrot the u-boot update process
-is. I would prefer setting the pinmux also in kernel back to the
-default.
+Thank you!
 
-Regards,
-Andreas
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
