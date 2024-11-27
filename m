@@ -1,130 +1,92 @@
-Return-Path: <linux-kernel+bounces-423476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734E89DA80E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:48:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF5C9DA819
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 13:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CBCB220D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1D7281FCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 12:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C0A1FCCF7;
-	Wed, 27 Nov 2024 12:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="GUC5myFw"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BB21FBCA4;
+	Wed, 27 Nov 2024 12:53:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AAA18DF86
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732711676; cv=pass; b=CNQaAsSWu9Exz2mIixUtpjJAPCSbsYFzxtVa/OfCl8Z7iiJSA+LkJjVbdtIA4wgNUzXkridzkyK6eVRVm6dC1MO1ovFV3M9IDVbVhsLgElfZwJMhp/+6Gv54kxvyydkWwZf9fdOA/cMqrZ7Zfle4gfysab9rPVOmdIH952IFgOE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732711676; c=relaxed/simple;
-	bh=Bd06PNLbuQNKWSgN2W473RemLeF7YQ6IzbTh9bEAxSo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BrHIPTqHTEN/rgP6nytx31jr+8AzashrtGSGzAebH6DH7N3Wd2Lz7gILYCHFZU6n8gx4ashQ2+EobXyqG3dAgOG6RTnlFdSQCNxFT+7aJ2fi44QSreT/3KtZhygitGH/tk776BXw6A4GDAXIp5j4hxABW7D4XgugsP57wwMQ2Ns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=GUC5myFw; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732711668; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=T/V8prtSG/s5nx3O5eHiaXdZSHAxT9t0sAZ3vKxNnfbKPr24LKjPn8yeNPt9bc4+F6iZxtzh74XmUbASTjmWWQbh5PY2+188qT1M2Ue7TmcTwQ5um8+giO7+3PhhJXv7gdbbp0yfq9b9BZYMCXhLxhjNy6mp2hsAxkHTymHbOKk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732711668; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nx+5Otru7N1BnAEMOloNCmwWKKDyhOm0N562nK+oyeA=; 
-	b=Zloe1aQNFYwf4XVFuQzJNR+PegS/YAMkDC7rJ6HQEs38ISDHaXip05G28XDy9tlwR3AkCOTnnqduILdBUNotEHS4gM6x1XA5C5XL9aSIo7dtbFxL+v20dBEPRU9nEHIeRvtJ/yutafdOPCktCdDQUXKpqDwtCvyVwEJ1wZ7jRZM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732711668;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=nx+5Otru7N1BnAEMOloNCmwWKKDyhOm0N562nK+oyeA=;
-	b=GUC5myFwR7q7sa/za4ZnqLxAbVJqAJEW6HWrdjUe8FHftkQY2FUfIgfLBQgYDnFd
-	36+9hbEA0Go9yMCOeiYFT/zMZvHCKpx6Dy8W8gIEbDnUK6k27f048QK/AK8uo8dh8UR
-	HwqKHO0MJGa5IobGrH00tqdx5Yck1kEQnooM7AUE=
-Received: by mx.zohomail.com with SMTPS id 1732711665702989.2877902988454;
-	Wed, 27 Nov 2024 04:47:45 -0800 (PST)
-Message-ID: <8ac1529d-988e-4eea-915c-acaa12ed222b@collabora.com>
-Date: Wed, 27 Nov 2024 17:47:45 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5AD4315D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732711984; cv=none; b=X8lEqevvPKjg0Mno1AMrCZ3I29RA5S9h8n662otiYdDUey3JbRCF2pfkgda0Jmt+t3OD8Kba3GxUCs/2rm8GTLxZjvs2cT4fbqzHZVJYiqc9hK/ZI6QWTrZBXBR8e5Uo3rC4KDIbjvlsT/kE9zRJUx2xuMTlnGH+FyYhS1C4ntY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732711984; c=relaxed/simple;
+	bh=xjPIjiSLj2qSUGGn3KuFkn/JtDdj5QT2U5LNX0c/IoY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cgFbN/NfQvsWpcV+zChF8F8aTjAn3IhFVi4kWLKZ4uhFZmuC2agFtFZWzVM0pCrdfqJ1+RFJkuxdHBUEcvIreXxvTE2NsL0H52RvimEjT+uzWrlAu+HzSbSQlLiG53ZivqyhK4GIcD+fZkBBkjIRYkt2NFcc1+U6sA2xzO565mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a78589df29so58647465ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 04:53:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732711982; x=1733316782;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d04jGaNrIT6mQifbCfwGC0CEwBJsC/NBvU26ZyXmy18=;
+        b=UdjsnDrb2XFc2x7k9vUP/cEH4cbR/S9fGKGtoahrpyR6zruZpCdR+JrKe14TOb+Uzb
+         TM9XtF8ziaSakiCW/EoRehEiIpCw2F+sPlHwk0ynZIhdj3ySNSY0cVP5gEDddAEbcwRo
+         mrRch1wYixE9Kp5mDZCMsmm2wdiuxQRGTUNJzebCtJo5IlGxKCdMP7K5cJdffh+Bo1Yo
+         mHu8xj8CGH9Qp4+LrHwzR8tqnkHNsACpa7Az1oF7QWylfv71PkZiBES/hWf/uqY1euW0
+         3nR3lzjRR8hyCCVr159jt46wJ9rYN71YQ/EsRKWU4eg6rHS4gFOdZawSwd547h0LqwMO
+         9alA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdR090TPnRx8JUOWsHmj+TbZCQwVg2CyYFGVv1xmYk6C3bXHoAc3HSiOI+Ii8+vhxMwwX/H5GNhO4220M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMvAegNHpVWeogCQ9uGKlpH0n1qqBJJ15KOsxkpo3a5ZUyYreb
+	tSxmD7S27OeF1scbOf5kqSO4Tf1P6dM+cI87u2GJPtZFVKosoWiCPngzFCTSMw1Pk9i8dLl5tcv
+	91FiwLW2zDMUWZnt/45GFc9XG6hvAGduUuXvhyIR2GhBE3uvItopqu9c=
+X-Google-Smtp-Source: AGHT+IHFbYN4PHoZhAy2Ap0eVBG57YJgaBuU4VAYOcRbFvC6ua7Sf8lpRHfa1f+KL3Ku8bbnxFWWi964nH4c5eaAmANGcMdy1agt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Bug Report] Depmod is failing on allmodconfig for arm64 and
- x86_64
-To: Will Deacon <will@kernel.org>
-References: <91c041ac-5491-4c97-9afc-9eb11c8e686c@collabora.com>
- <20241127122602.GA2530@willie-the-truck>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241127122602.GA2530@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-Received: by 2002:a92:ca0e:0:b0:3a7:635e:d365 with SMTP id
+ e9e14a558f8ab-3a7c5540e9cmr37418815ab.6.1732711982732; Wed, 27 Nov 2024
+ 04:53:02 -0800 (PST)
+Date: Wed, 27 Nov 2024 04:53:02 -0800
+In-Reply-To: <67447b76.050a0220.1cc393.0086.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6747162e.050a0220.1286eb.0031.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] BUG: corrupted list in bch2_btree_and_journal_iter_exit
+From: syzbot <syzbot+2f7c2225ed8a5cb24af1@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/27/24 5:26 PM, Will Deacon wrote:
-> On Tue, Nov 26, 2024 at 06:25:44PM +0500, Muhammad Usama Anjum wrote:
->> Hi,
->>
->> The depmod is failing on 9f16d5e6f2206 (mainline) arm64 and x86_64 because of:
->> ```
->> depmod: ERROR: Cycle detected: libphy
->>
->> depmod: ERROR: Cycle detected: lan969x_switch -> sparx5_switch -> lan969x_switch
->> depmod: ERROR: Cycle detected: ptp
->> depmod: ERROR: Cycle detected: stp
->> depmod: ERROR: Cycle detected: ipv6
->> depmod: ERROR: Cycle detected: bridge
->> depmod: ERROR: Found 2 modules in dependency cycles!
->> make[2]: *** [scripts/Makefile.modinst:132: depmod] Error 1
->> make[1]: *** [/tmp/kci/linux/Makefile:1844: modules_install] Error 2
->> make: *** [Makefile:224: __sub-make] Error 2
->> ```
->>
->> This issue wasn't present until c66fbc6c3df9. 
-> 
-> $ git show c66fbc6c3df9
-> commit c66fbc6c3df9ccefbb896695cfc4db279d517ff1
-> Merge: f103749785a7 1037d186edfc
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Wed Nov 20 14:56:02 2024 -0800
-> 
->     Merge tag 'for-linus' of https://github.com/openrisc/linux
-> 
->     Pull OpenRISC update from Stafford Horne:
->      "A single fixup from me: Fix bug with earlycon being broken due to
->       removal of early_ioremap"
-> 
->     * tag 'for-linus' of https://github.com/openrisc/linux:
->       openrisc: Implement fixmap to fix earlycon
-> 
-> 
-> Are you sure?
-The allmodconfig builds were successful until c66fbc3df9. [1] [2]
-Here is link to build results. They can be filtered [3].
+syzbot has bisected this issue to:
 
-[1] https://kcidb.kernelci.org/d/build/build?orgId=1&var-datasource=default&var-build_architecture=arm64&var-build_config_name=defconfig%20allmodconfig&var-id=maestro:673e7462923416c0c98a8b71&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=yes
+commit d1adfe4e7e4e7ea225547a07c4b79c314c50c6fb
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sun Apr 7 03:26:36 2024 +0000
 
-[2] https://kcidb.kernelci.org/d/build/build?orgId=1&var-datasource=default&var-build_architecture=x86_64&var-build_config_name=x86_64_defconfig%20allmodconfig&var-id=maestro:673e7464923416c0c98a8b8f&from=now-100y&to=now&timezone=browser&var-origin=$__all&var-test_path=&var-issue_presence=yes
+    bcachefs: move root node topo checks to node_check_topology()
 
-[3] https://kcidb.kernelci.org/d/maestro-home/home?orgId=1&var-origin=maestro&var-tree=mainline&var-branch=master&var-test_path_regex=boot&var-platform=%25&var-config=%25&var-datasource=default&viewPanel=panel-41&from=2024-11-17T19:00:00.000Z&to=2024-11-27T18:59:59.000Z
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17e6e1e8580000
+start commit:   9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1416e1e8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1016e1e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f7c2225ed8a5cb24af1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cf575f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14be0530580000
 
-> 
-> Will
-> 
+Reported-by: syzbot+2f7c2225ed8a5cb24af1@syzkaller.appspotmail.com
+Fixes: d1adfe4e7e4e ("bcachefs: move root node topo checks to node_check_topology()")
 
-
--- 
-BR,
-Muhammad Usama Anjum
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
