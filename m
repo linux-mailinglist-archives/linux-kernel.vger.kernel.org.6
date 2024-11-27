@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-423579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E35E9DA9EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:36:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0140C9DA9E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC8A163735
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D2C163AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6636A1FF7AD;
-	Wed, 27 Nov 2024 14:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6611E1FF7A7;
+	Wed, 27 Nov 2024 14:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PqbUWomu"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtVgWSWr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BA91FCD1E;
-	Wed, 27 Nov 2024 14:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18F226AD0;
+	Wed, 27 Nov 2024 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718155; cv=none; b=NAp5ObA6gp0dQe0fxtRJKc7PqyL8VC5HH0pxYR0KWBqJgBfNLmwlkKBIYh2syZrODnbvXklHDzwyHCx7SkBPy5CKGq5hRfZBonAaPl16LQEqIuGr11YiR7Qgb/85qaOi2xRetmsZBOHAp8PKvhA6JjrNyL/KldDhu0obumFOXMU=
+	t=1732718123; cv=none; b=VTPrFOy0BKOWSOZ70bBsGYavnlo7CFPfIR7JilwnicHLSCiD5/tNUmthTpzif8AdXf1om7Nih6G//mj/F0xj1mljRpOzxAZ9D2JAcyrnm+f0Oxk9er3uL/EI+K33L8G5EvpHRb874E+qQieTd+HPlwTrAGLZbg89jM78TrMEc6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718155; c=relaxed/simple;
-	bh=oVpqtsNfjE7LBjv/M5++nxEBd8xss6xBkvmobOr5VfA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RzMQSVFFMrFbo6QIQCH9UoHsw0PsUCtpNn/LkROVM2p/nKwwSg4zOo7v0SA5TACCMNBhF/syYx+/pusjwrZuSuLj+NyKvVZWhN8p2MNmIzNUwixpKkCQje7jzSGRowaycowLyqDtZfMv/PhEfaGZMt9lRIJJoeRLNaxs21/Wcdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PqbUWomu; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21200c749bfso67577825ad.1;
-        Wed, 27 Nov 2024 06:35:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732718154; x=1733322954; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZdBKYu59zz5dNnmAPo9hi/5rPJBTreSNmfq7NUIW5R0=;
-        b=PqbUWomuwwIhabfFO9U581LJFeQ+Oz4oYEqEMgbCyHZYER9nDRSR7uu0qOetzypZEv
-         LhoY7w+dlaVx368jnQ98BTUApAGhQIMmVPAD8zU4ahzsd8pKXlm8pq5ohX8KLErx5r8P
-         S8LQIwdwlcwFIl49ZIoWYtvppO54z6vcK1iodUAbd3uUwMNwTf5PF7Ez9rqUxWyzAmGN
-         OGOZMu2pOMZzImTnUeMueYDehSX4Ax0JP9Cs8Mdh1jarVxCC3euSBL7R3l3HhK/ZX7O5
-         BHbljQtBFPBjwhlOdqM59KHRK3WGjLF6hYkXhoiGUqoDgdbzg4/3m97UkeoJTr0J3gpW
-         z+Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732718154; x=1733322954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZdBKYu59zz5dNnmAPo9hi/5rPJBTreSNmfq7NUIW5R0=;
-        b=wis1eKHh7N4PGiKBDhr0YmWNWGA8Bc4OQ1Y0L2SShgu4EczElp5SX/8tkE/x4cgGJf
-         AGbdFIW+lvrSFj6NTREgFm2FvHbyn8JF+GuhVvK+9GzLjhsWiogUWWT+P43Rxm7kdFhm
-         rZh+YxIKi+XSA4/E89K5EP52C0jd2kjBYwZ13qIs+4rnw/Nghdsvefk1n7kYDvDp1xsI
-         qGV9Cai0QYYmpTRyM/ZUpzlztUTDtEKTe9fRW2pVJ0Vf6X/t3S/Wpm8E9GbSPl3FWpa4
-         3MsQRI4V5Iq2QQKmeWcHVkTeAGmoUfUaHe3JQGCbuvvj3mQhCTn+45pI7FSImRkcCilT
-         T2mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgHe3jp7BQZuLT4l3WpTQouKQFsiczmT7ogJirR9tbyvAOoZbcf7x7353G9wXhqzn8Qg9MmJBtZjOD6S0=@vger.kernel.org, AJvYcCWGLZUkBF+0Ft0VazO+UonM2LvL+p8F+E7gbxeEUwIJFuJ46N0eKBJPJyJ/PW0erebIXsAv+wtCNLn/dSnQQsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbgL4n2XYx06324yAj5EmpsTy8PPA4eUsdgjiX2Pzfrp41Z1pJ
-	98O/PRbdKhHUjPyse3YnpSmCK0A+rl/efOJbnZLwxHjug0weFH6f
-X-Gm-Gg: ASbGncvZ+HFNpCU+ANUysbzSym865wCytDPNw9Kbb3SenkZctDUwtjt6xk7nDg7Lnyw
-	r+fb7Eg17KMAu6d6w6ZJeiZ7COEQH2DQSgCR3CoiqJNApldFGE4tZTsCK/dAUwzBjeDNTd6vIY2
-	oMO6whztH1XBU85QyaNDK9t2XAQAG54oC5k4nJts6YCK9Lp1kSARgHIDNHXd2YxMuo4InPSo7oZ
-	eEE6tUGw8G8z/w5Zdj1hyNy/+A7raO66Ojj8rs8kPAprrtRn3MORtu5odY=
-X-Google-Smtp-Source: AGHT+IGHyfCyr8T1DrDbozg4fFTa7y3qsmhyeH71De1a2eJmZ1ljjREFI3OAKgjsu9qkdKeyCPsGcA==
-X-Received: by 2002:a17:902:e881:b0:20c:c086:4998 with SMTP id d9443c01a7336-21501f622a5mr27261175ad.55.1732718153136;
-        Wed, 27 Nov 2024 06:35:53 -0800 (PST)
-Received: from localhost.localdomain ([223.72.121.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215150adb5asm5101175ad.258.2024.11.27.06.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 06:35:52 -0800 (PST)
-From: Baichuan Qi <zghbqbc@gmail.com>
-To: markus.elfring@web.de
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	zghbqbc@gmail.com
-Subject: Re: Re: wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe() ERROR code
-Date: Wed, 27 Nov 2024 22:35:06 +0800
-Message-Id: <20241127143506.28267-1-zghbqbc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
-References: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
+	s=arc-20240116; t=1732718123; c=relaxed/simple;
+	bh=cGcZHaMQtle2IcrxcOfO29L9Bv2SJC1rKcXJPH2eSqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dwHI8GYCHN0peQK7vLKQtA0tKHR2Fg8Gq3+jrTrlUOR1rMc7oR8ZaWO/CryllkbKnr/HCKepI359ac0GAzouJx+xOrlJS2tR09WHjMbEAqgAMtEQKCGaM6Hcz2BipFeKUZKigCl5s5IspVLrxa9zA4JRjeNlEeZPvPTGHr9nrOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtVgWSWr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB8BC4CECC;
+	Wed, 27 Nov 2024 14:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732718123;
+	bh=cGcZHaMQtle2IcrxcOfO29L9Bv2SJC1rKcXJPH2eSqE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RtVgWSWr6L+OMIViUYHjY1nlwUl8WxOfBfWe0Vq/Se2lIBFGur/MjmicE84pjFaks
+	 NyeAibnY7AALXe/00TQRW20GsnoqAaDfuuSS3fyPaMKM9M/x4VORjK5+BfKR4eczZF
+	 jeb9iRaFSQBhWLxRkbiu/I5IwavU+0y8PtJVOxVesWJ3ClnkKiKAV11HOZ3kcIWRmW
+	 1OzR+6y2rzXch4Tr4rbKgYhbXu8aa/+rtwnwfN9AJT37f3fFPbhC1ehk7TGVzjMxMS
+	 peSbbndjTvS3UGl9L/YenRqSIBe/gpk/x+hde/IpEfuKkChybLjgRh6LLFk4J4Etdo
+	 Z6DagVhn9Krag==
+Message-ID: <1abbedd9-f34d-40be-9d3f-f33fcd012cb3@kernel.org>
+Date: Wed, 27 Nov 2024 16:35:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: dwc3-am62: Re-initialize controller if lost
+ power in PM suspend
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>, "srk@ti.com" <srk@ti.com>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241122-am62-dwc3-io-ddr-v1-1-cc4956449420@kernel.org>
+ <20241125182343.bfnecsub2oxohrns@synopsys.com>
+ <523727cd-7950-45b1-a0d3-3f978e789015@kernel.org>
+ <20241126221536.n4ecwbndpelx3bmv@synopsys.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241126221536.n4ecwbndpelx3bmv@synopsys.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-thanks for your reply
+Hi Thinh,
 
-> May the detection of a null pointer for the data structure members
-> “dest_ring” or “status_ring” really be interpreted as a successful execution
-> of the function “ath11k_ce_rx_post_pipe”?
+On 27/11/2024 00:15, Thinh Nguyen wrote:
+> On Mon, Nov 25, 2024, Roger Quadros wrote:
+>>
+>>
+>> On 25/11/2024 20:23, Thinh Nguyen wrote:
+>>> On Fri, Nov 22, 2024, Roger Quadros wrote:
+>>>> If controller looses power during PM suspend then re-initialize
+>>>> it. We use the DEBUG_CFG register to track if controller lost power
+>>>> or was reset in PM suspend.
+>>>>
+>>>> Move all initialization code into dwc3_ti_init() so it can be re-used.
+>>>>
+>>>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>>>> ---
+>>>>  drivers/usb/dwc3/dwc3-am62.c | 82 +++++++++++++++++++++++++++++---------------
+>>>>  1 file changed, 55 insertions(+), 27 deletions(-)
+>>>>
+>>>> diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
+>>>> index fad151e78fd6..2192222faf4f 100644
+>>>> --- a/drivers/usb/dwc3/dwc3-am62.c
+>>>> +++ b/drivers/usb/dwc3/dwc3-am62.c
+>>>> @@ -108,6 +108,9 @@
+>>>>  
+>>>>  #define DWC3_AM62_AUTOSUSPEND_DELAY	100
+>>>>  
+>>>> +#define USBSS_DEBUG_CFG_OFF		0x7
+>>>> +#define USBSS_DEBUG_CFG_DISABLED	0x7
+>>>
+>>> Do we need 2 different macros with the same value of the same register
+>>> for this?
+>>
+>> Oops. This is a mistake. The second one should be 0.
+>>
+> 
+> Ok. Please send a fix.
 
-i submit this patch just want to ensure the last codes after
-`if(...)` in `ath11k_ce_rx_post_pipe` can be successfully executed.
+Yes I will send a v2.
 
-There is no error handling for NULL dest_ring (or status_ring)
-in other funtions calling `ath11k_ce_rx_post_pipe()`, because it 
-would return 0, like successful end.
+I have a query regarding this. Even though we restore the USB wrapper context
+the XHCI driver still complains with below message.
 
-I think this patch can not change so many codes in other functions in
-ce. This may involve a lot of error handling operations,
-and depending on the severity of situation, the driver may even
-re_setup the ring.
+[   68.235111] xhci-hcd xhci-hcd.0.auto: xHC error in resume, USBSTS 0x401, Reinit
 
-I will submit a v5 patch, and in that patch an error code will be
-returned.
+Clearly the Save/restore failed and so SRE bit is set.
+Is this something to be concerned about or needs addressing?
 
-Baichuan Qi
+the host controller functions fine as it is re-initialized by the
+XHCI driver.
+
+-- 
+cheers,
+-roger
+
 
