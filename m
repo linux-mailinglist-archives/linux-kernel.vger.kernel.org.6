@@ -1,147 +1,240 @@
-Return-Path: <linux-kernel+bounces-423143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F109DA36A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:59:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E78D9DA36D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 09:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B2BB2275B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:59:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FEB283176
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BF1155A4D;
-	Wed, 27 Nov 2024 07:59:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD97170A11;
+	Wed, 27 Nov 2024 08:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlAUM7Lm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E6E1547E7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F404E12C499;
+	Wed, 27 Nov 2024 08:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694342; cv=none; b=TECn8SvYu//xzmaPg0wIrnB5UeUrjjf7KBcQ4RSE5CcYVg7lFOKcKu1l9037ZYSobouffuyxbB2+OjGMiFrp2bGW4/D1xHglUZvxzl8O4EcCjP6zv8IpjqcDC5EpnsSqSHt6PQWTlqIlWVYazisvBhwhQyocyU+ASYH72E9sKI8=
+	t=1732694427; cv=none; b=jyrvoQruPyUQRJKrnNH+hvc5OWz4allhhmll96GglnIJ+iZf1kVRR/M6+YIIGjL8Mlw2IzlQZBWQGuY1AvsCRYPqCAtizFSezrW9KXqiY1TUFdLGGUUdqHDlVli/t9ui3hNpsTZTEdRtIF+L7ZPZ9KteyA634jw5W4IJiBC1aRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694342; c=relaxed/simple;
-	bh=ksZ0wZ8geOb/vvM5E2Zu1KEmiLZQ29CuzEySdiiaDkQ=;
+	s=arc-20240116; t=1732694427; c=relaxed/simple;
+	bh=GgFaD5G7nqFywtoKREjsYWNcLoJk08J62pho+WSpmF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/A/tY+jTtFvpvWwAL9tgF3dqqQKDUbzIShELgELRZnGJEVWyiTOayyQFF/PPcT/8oU/7VHtlc+Ty5vy9s2xFlDXRmrXZhx8LD3P8UjuaE5bhZsniL31PKdlY3W45xpBibTXrhfcaepest0FJ4qvJ6TB+dnqDQRL35ZFULjSHTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tGCwk-000639-Aa; Wed, 27 Nov 2024 08:58:50 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tGCwj-000ODy-0m;
-	Wed, 27 Nov 2024 08:58:50 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A655F37E1A3;
-	Wed, 27 Nov 2024 07:58:49 +0000 (UTC)
-Date: Wed, 27 Nov 2024 08:58:49 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Carlos Song <carlos.song@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, 
-	"o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: RE: [EXT] Re: [PATCH v3] i2c: imx: support DMA defer probing
-Message-ID: <20241127-analytic-azure-hamster-727fd8-mkl@pengutronix.de>
-References: <20241127074458.2102112-1-carlos.song@nxp.com>
- <20241127-ninja-dormouse-of-bloom-8ee494-mkl@pengutronix.de>
- <AM0PR0402MB3937614F4866F4F15D2FDA21E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aan6TenTzsR8OWwI9oZzyNpfOjECVEV6zsocLlSp9/glLPzREBSt4XsQTZyTM728834uGh8tNekLolHk2Vz1TpSH5JsrwLlDH63rN8phxTqJfTrjOmcTezPXSEiiTRE07ZIhP8YMkKXnbiQzSdwe3I1uEgZmlukP9uvtPyMSGvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlAUM7Lm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EC6C4CECC;
+	Wed, 27 Nov 2024 08:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732694426;
+	bh=GgFaD5G7nqFywtoKREjsYWNcLoJk08J62pho+WSpmF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KlAUM7Lm5DlNOg07lUAolBchsP3+72z39PWUOaa/A32011A8vAyg5TpfJZYRLPwfX
+	 ZwWEoftS985KFdJOZnf5OpZyVqCXB7JBb/Vp+UttePmCnuzMZl4ldRXK+5iTFvPNAc
+	 AznH0W8ekw2K/aXPmnlcKxjurM92EgWlJhmjWpTgJOaG+Tn70hCkoQSJjzV/rcsnkP
+	 SBQhsrWQKmusTooerr28t3CvCiH6oXDozuGX9ajBi95NJq+1Ji+3Sk2T680z2ep7WJ
+	 8P2Jwg7gHnBFhq4Gnf6M+4xog4kwwb1/MprvBXyMdeGyWT/+NbxK6WVukg6hzwr9SU
+	 bdr65ULZi8sFg==
+Date: Wed, 27 Nov 2024 09:00:22 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v4 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+Message-ID: <yhah2mrild37ntk77u75oysjzf3mpegvqeg5es2vzq6tencwco@lytu235eymoa>
+References: <cover.1732660478.git.marcelo.schmitt@analog.com>
+ <227873de1e9aa249504639da2241915541d089d5.1732660478.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="elw43wbzngdfoidk"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <AM0PR0402MB3937614F4866F4F15D2FDA21E8282@AM0PR0402MB3937.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <227873de1e9aa249504639da2241915541d089d5.1732660478.git.marcelo.schmitt@analog.com>
+
+On Tue, Nov 26, 2024 at 08:15:05PM -0300, Marcelo Schmitt wrote:
+> Extend the AD4000 series device tree documentation to also describe
+> PulSAR devices.
+> 
+> The single-channel series of PulSAR devices is similar to the AD4000 series
+> except PulSAR devices sample at slower rates and don't have a
+> configuration register. Because PulSAR devices don't have a configuration
+> register, they don't support all features of AD4000 devices and thus fewer
+> interfaces are provided to user space. Also, while AD4000 may have their
+> SDI pin connected to SPI host MOSI line, PulSAR SDI pin is never connected
+> to MOSI.
+> 
+> Some devices within the PulSAR series are just faster versions of others.
+> >From fastest to slowest, AD7980, AD7988-5, AD7686, AD7685, and AD7988-1 are
+> all 16-bit pseudo-differential pin-for-pin compatible ADCs. Devices that
+> only vary on the sample rate are documented with a common fallback
+> compatible.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> Change log v3 -> v4
+> - Sorted compatible strings in alphabetical order.
+> - Left only fallback compatibles in allOf check list for adi,sdi-pin property.
+> - Improved patch description with explanation about how the AD4000 and PulSAR
+>   devices are different.
+> 
+> Well, I didn't manage to get a dtbs_check message for all the cases I was
+> expecting to cover, yet. I trust the test done by maintainers while I don't
+> figure out what's wrong with my setup.
+> 
+> FWIW, here's what I tried:
+> 
+> Cloned dt-binding tree from git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+> Fetched and checked out dt/next branch.
+> Applied AD4000/PulSAR patches.
+> - <62dd96ac9cd> ("iio: adc: ad4000: fix reading unsigned data")
+> - <8ebfd0925521> ("iio: adc: ad4000: Check for error code from devm_mutex_init() call")
+> - the patches from this patch series
+> 
+> Cloned dtc from git://git.kernel.org/pub/scm/utils/dtc/dtc.git into a directory
+> at the same level of linux kernel source dir.
+> 
+> Cloned dt-schema from https://github.com/devicetree-org/dt-schema.git into a
+> directory at the same level of linux kernel source dir.
+> Within dt-schema, 
+> mkdir venv
+> python3 -m venv venv/
+> source venv/bin/activate
+> python3 -m ensurepip --default-pip
+> python3 -m pip install --upgrade pip setuptools wheel
+> pip install yamllint
+> pip install dtschema --upgrade
+> pip install -e .
+> 
+> export ARCH=arm; export CROSS_COMPILE=arm-linux-gnueabi-
+> Ran `./scripts/dtc/update-dtc-source.sh` from the top level of Linux source tree.
+> make defconfig
+> Added zynq-coraz7s-ad7685.dts to arch/arm/boot/dts/xilinx/.
+> Added zynq-coraz7s-ad7685.dtb to arch/arm/boot/dts/xilinx/Makefile.
+> make -j4 dtbs_check # but it didn't print anything about adi,sdi-pin value.
+> Changed the compatible from "adi,ad7685" to "adi,ad7687" and dtbs_check prints
+> arch/arm/boot/dts/xilinx/zynq-coraz7s-ad7685.dtb: adc@0: adi,sdi-pin:0: 'sdi' is not one of ['high', 'low', 'cs']
+> 
+
+Your process is weird. None of these are needed, especially dtc, except
+pip install yamllint and dtschema. Installing dtc suggests you are
+working on some old kernel and that's a mistake on its own. Plaese work
+on latest mainline / maintainer / next tree.
 
 
---elw43wbzngdfoidk
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: RE: [EXT] Re: [PATCH v3] i2c: imx: support DMA defer probing
-MIME-Version: 1.0
+> -zynq-coraz7s-ad7685.dts file {
+> // SPDX-License-Identifier: GPL-2.0
+> 
+> /dts-v1/;
+> #include "zynq-7000.dtsi"
+> 
+> / {
+> 	adc_vref: regulator-vref {
+> 		compatible = "regulator-fixed";
+> 		regulator-name = "EVAL 5V Vref";
+> 		regulator-min-microvolt = <5000000>;
+> 		regulator-max-microvolt = <5000000>;
+> 		regulator-always-on;
+> 	};
+> 
+> 	adc_vdd: regulator-vdd {
+> 		compatible = "regulator-fixed";
+> 		regulator-name = "Eval VDD supply";
+> 		regulator-min-microvolt = <5000000>;
+> 		regulator-max-microvolt = <5000000>;
+> 		regulator-always-on;
+> 	};
+> 
+> 	adc_vio: regulator-vio {
+> 		compatible = "regulator-fixed";
+> 		regulator-name = "Eval VIO supply";
+> 		regulator-min-microvolt = <3300000>;
+> 		regulator-max-microvolt = <3300000>;
+> 		regulator-always-on;
+> 	};
+> };
+> 
+> &spi0 {
+> 	adc@0 {
+> 		compatible = "adi,ad7685";
+> 		reg = <0>;
+> 		spi-max-frequency = <40000000>;
+> 		vdd-supply = <&adc_vdd>;
+> 		vio-supply = <&adc_vio>;
+> 		ref-supply = <&adc_vref>;
+> 		adi,sdi-pin = "sdi";
+> 	};
+> };
+> -} zynq-coraz7s-ad7685.dts file
+> 
+>  .../bindings/iio/adc/adi,ad4000.yaml          | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> index e413a9d8d2a2..3c1171c7f0e1 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> @@ -19,6 +19,20 @@ description: |
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
+>  
+>  $ref: /schemas/spi/spi-peripheral-props.yaml#
+>  
+> @@ -63,6 +77,32 @@ properties:
+>  
+>        - const: adi,adaq4003
+>  
+> +      - items:
+> +          - enum:
+> +              - adi,ad7685
+> +              - adi,ad7686
+> +              - adi,ad7980
+> +              - adi,ad7988-1
+> +              - adi,ad7988-5
+> +          - const: adi,ad7983
+> +
+> +      - items:
+> +          - enum:
+> +              - adi,ad7688
+> +              - adi,ad7693
+> +          - const: adi,ad7687
 
-On 27.11.2024 07:48:13, Carlos Song wrote:
-> > >  static void i2c_imx_dma_callback(void *arg) @@ -1803,6 +1804,23 @@
-> > > static int i2c_imx_probe(struct platform_device *pdev)
-> > >  	if (ret =3D=3D -EPROBE_DEFER)
-> > >  		goto clk_notifier_unregister;
-> > >
-> > > +	/*
-> > > +	 * Init DMA config if supported, -ENODEV means DMA not enabled at
-> > > +	 * this platform, that is not a real error, so just remind "only
-> > > +	 * PIO mode is used". If DMA is enabled, but meet error when request
-> > > +	 * DMA channel, error should be showed in probe error log. PIO mode
-> > > +	 * should be available regardless of DMA.
-> > > +	 */
-> > > +	ret =3D i2c_imx_dma_request(i2c_imx, phy_addr);
-> > > +	if (ret) {
-> > > +		if (ret =3D=3D -EPROBE_DEFER)
-> > > +			goto clk_notifier_unregister;
-> > > +		else if (ret =3D=3D -ENODEV)
-> > > +			dev_info(&pdev->dev, "Only use PIO mode\n");
-> >=20
-> > On a system without DMA configured, with this patch we now get this info
-> > message that wasn't there before. I think this might annoy some people,=
- so you
-> > should remove it.
-> >=20
->=20
-> :-) hhh, get it.
+I don't see where you allow adi,ad7687 alone. Same problem with other
+cases.
 
-Some things look reasonable when discussing the patch, but when you
-see the new, cleaned-up version, you immediately realize that this is
-going to annoy people :)
+> +
+> +      - items:
+> +          - enum:
+> +              - adi,ad7690
+> +              - adi,ad7982
+> +              - adi,ad7984
+> +          - const: adi,ad7691
 
-> How about change to dev_dbg?
+Best regards,
+Krzysztof
 
-Good idea.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---elw43wbzngdfoidk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdG0TYACgkQKDiiPnot
-vG+KkQf/Q+u30VAGEE7GQ8pY0YCDMlgwq9Lrph+jmHFG1nrNAnOc525i9+1N5Q5/
-HR1cWXxUV/yHkt6tkmKlbmGTv5V4FtLOM1QFq4RDCYql8alygNNcN2v4ZUZg3827
-el4CHe85/9/Ra2xln9yJ6WIrw7Lhn0Zh0CdpH97hYqmR0WHrpTecWFHbXNGIVieL
-85DPurmsXB7lVCfi7sa4V0NjZtts+bkDeDEVnO30j3SAkOtf3KUMtpNWAIGUmRvk
-uhdwGfpKbt4sYrmumv05Oly4FzQC8pGf1PAvpDxrlxTbvaHVnkjxvxQ86BbdWOIP
-zdkYoGoEU24Eq3WBH+hUS1LjNmKcRQ==
-=dQGb
------END PGP SIGNATURE-----
-
---elw43wbzngdfoidk--
 
