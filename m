@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-423798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D170F9DACD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:09:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075429DACE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04881282092
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A3C2819EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F02010E8;
-	Wed, 27 Nov 2024 18:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01762010FF;
+	Wed, 27 Nov 2024 18:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qkDGMqlx"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FKGIP4WY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A2B1FBEBE
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1B01FC7ED
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732730959; cv=none; b=TvGCuq+qHUW43Te3jMUGoYraBkqgvVoS0oVVqAXkDQ5+ajTVQsRpjTDNGt7yxuzOxcFw+bvxpefC9cPlEt5cwvKwy+0mofvPabT3VzUhZVLskYk3xQhZCouiy+cL/eSDnqS2dTJmT3x/6pQAsHEDMY3AszXj6+2T1mnauyjDyow=
+	t=1732731219; cv=none; b=IZkAyNIrmEBQvdGY6z+XK7BQIC5sLFwkrEHnsVurrVqXn+GXn775fbqdp2yg3vKKFs27+4Fz9PoBaK5IOCYWxEubszWgUQCQg5VkSCm8/Be9W6iv+Zkwn5Hg8MNh12Qpne99luGvJks6soABUlIWc8z6g7oZRlqyKd/OHf9Z1Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732730959; c=relaxed/simple;
-	bh=k6twA83RhgEkYTndqjBQH+J9zpIY+1fGNgoXAENHfK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ue5RIyPDhcF2kdMjc+mFrTfIEWoqNxUuM94Fy0Uva4nEVqQV874QxIybrtc9jcQWw1I/wEeJoqIXpL4MFH8FpDfA37QjLrsP8mK5yGP83RzOI7YNk/aas6Zw2ZGeDLjuSX30f4kgUjqtCYuqG6yzHWGwmYgPgb5Ufqxar0y0jrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qkDGMqlx; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3ea369fdb0cso38044b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 10:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732730956; x=1733335756; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DoGbLkeVIO7J9gwZq5xeigAI0HvXe8K7jWGsWScuDCY=;
-        b=qkDGMqlxIWubWLRKYO23oG6uIwivmta7IvJ0SkOX7iBAHMgG4k4WfVZpluKHcsPqTW
-         6p86b5qbChpTbOlagcjN5HVaLjksRfJ2Ws0bfOulCExI5z5HM/xg39nueBubch9CIVL6
-         JvmBaVduzAsmQp5AlW3tMLRfIdae65qHqv8YxJpy1luYHnMN9KbkSOjbaUX8QrUTJwML
-         429GabbJkKLPPraWu0wMDlODcdSG559mnNK1ls4VouCWralFlNAwzq5Byd1+fGR2CatH
-         3AlvVODs0vS6/pGFfjYuPomDT25JGEwELKAbbguSZnLbRNramxBrpT5wk2ckN/taR9SC
-         CGGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732730956; x=1733335756;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DoGbLkeVIO7J9gwZq5xeigAI0HvXe8K7jWGsWScuDCY=;
-        b=sBq8QClbgBk5CP4WsjzcAQjRlSQALcTsqj53qBzKjBJ2IoKzwXidwxC/Zmvc5RGYpG
-         tIeQjuRamR3T4H4XtP12tzNCfZqzceoaktKI78gXrizipR9acY2jvSU/+qm3StZtFNeK
-         HmerJFeaGcfopXTsLqLZqqPwkVMdrdPfN74N49krDhoJQMBbsHVyQLyfBE2lQ6Dx7ypf
-         kgdo//dTkU0qKkB6k3pASr1K4QcZ3tVgubNUcOHCZjfm0Deh3M4bl0FIXySUNxoQu7uz
-         Z3/HaBTSsFzuGhtb3ylI/PCM4EshPv/NJIKeSe577xXbHfobeEvi06ohrKiUyolYqPFY
-         XDlA==
-X-Gm-Message-State: AOJu0YxPhCYr6elV9AhpVlhltKyb2buvENdK0UVy/DDkJuiTUKa0w6vj
-	kjny4ewB49+KTn6Ui8bUAN6aqxAQO3HUcPnvqr/Lm9X6pq4T2Ug4E2J+GOT1SgA=
-X-Gm-Gg: ASbGncvyQdE5Q6sAwzeKMNtB+zXbDQLaxKiR27cih9brHRy6O0jhPb4HNuUI302zni8
-	ecOLgGFAoVLNsxK3lHJGEC15Lp5eHHhqwJu7O65dxE7peD1s781O6Y/vtjT61bPuy8QRBnNIqA4
-	v1C1FPc0vs3y1xL5vwa+Bi1RP1M8ul3Y/A4nPkluA+LRQslu5W+iLdFR5abnHyVRVormuVIOD1m
-	8GXU827T6EywT9Vabn412BZ3FmsBKIdDhkyY7W3+ILN5g==
-X-Google-Smtp-Source: AGHT+IEzYAvcMur4sgCG1WEl9xZWuubacTInfBqh/+y3ztclPYbL17Apse++rxDF3EcKguN87eXAzA==
-X-Received: by 2002:a05:6808:6508:b0:3e6:263b:9108 with SMTP id 5614622812f47-3ea6dc223f8mr4430489b6e.22.1732730956242;
-        Wed, 27 Nov 2024 10:09:16 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e91500f931sm3740165b6e.51.2024.11.27.10.09.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 10:09:15 -0800 (PST)
-Message-ID: <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
-Date: Wed, 27 Nov 2024 11:09:14 -0700
+	s=arc-20240116; t=1732731219; c=relaxed/simple;
+	bh=uCK/oSvqKJse6UZiS4QNw7GTSY59CPZ6FRheoY3Jwjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H/hP77xxN16tUhHT+7EJYnqK0k8oQNL0vY+J4N3AqeAgpgRbgJoPVKAKyMmShOs/Yj/354ewfvYFVF8mhwMEVx5XuabsSEREDkYvOUGQU9S91APcP1qNuEVG8qDHqDnGv7rmPI32eTgpZccGGYz17llSHknsBYJL0ySXHSJf1aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FKGIP4WY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732731215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bBLKMV5jpNDuJoQl4/1hOw5nZa8O963JZs4hwXdVXR4=;
+	b=FKGIP4WYWf2BqL3Sb+6B1zxI7w54xZxjl187rtw8oRSYQlRbCAXt2yidgHplOEJNP6LnE+
+	0xSCFi0kHXvEoRiYV74nq629hPqr0LG3dne2+PzF+i2Wt4tmuVe2KoZ6zmWAiRr90qQkyq
+	X/El9OSTTOXjvu1NElqZzRIRb5qD42M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-374-NRDJlUbdOtKuuTsUwaJxTg-1; Wed,
+ 27 Nov 2024 13:13:32 -0500
+X-MC-Unique: NRDJlUbdOtKuuTsUwaJxTg-1
+X-Mimecast-MFC-AGG-ID: NRDJlUbdOtKuuTsUwaJxTg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4020D1956064;
+	Wed, 27 Nov 2024 18:13:27 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.80.211])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D0435195E480;
+	Wed, 27 Nov 2024 18:13:24 +0000 (UTC)
+From: Cathy Avery <cavery@redhat.com>
+To: kys@microsoft.com,
+	martin.petersen@oracle.com,
+	wei.liu@kernel.org,
+	haiyangz@microsoft.com,
+	decui@microsoft.com,
+	jejb@linux.ibm.com,
+	mhklinux@outlook.com,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: bhull@redhat.com,
+	emilne@redhat.com,
+	loberman@redhat.com,
+	vkuznets@redhat.com
+Subject: [PATCH v2] scsi: storvsc: Do not flag MAINTENANCE_IN return of SRB_STATUS_DATA_OVERRUN as an error
+Date: Wed, 27 Nov 2024 13:13:24 -0500
+Message-ID: <20241127181324.3318443-1-cavery@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
-To: Jann Horn <jannh@google.com>, Kent Overstreet
- <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org
-Cc: kernel list <linux-kernel@vger.kernel.org>,
- Pavel Begunkov <asml.silence@gmail.com>, io-uring <io-uring@vger.kernel.org>
-References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 11/27/24 9:57 AM, Jann Horn wrote:
-> Hi!
-> 
-> In fs/bcachefs/fs-io-direct.c, "struct dio_write" contains a pointer
-> to an mm_struct. This pointer is grabbed in bch2_direct_write()
-> (without any kind of refcount increment), and used in
-> bch2_dio_write_continue() for kthread_use_mm()/kthread_unuse_mm()
-> which are used to enable userspace memory access from kthread context.
-> I believe kthread_use_mm()/kthread_unuse_mm() require that the caller
-> guarantees that the MM hasn't gone through exit_mmap() yet (normally
-> by holding an mmget() reference).
-> 
-> If we reach this codepath via io_uring, do we have a guarantee that
-> the mm_struct that called bch2_direct_write() is still alive and
-> hasn't yet gone through exit_mmap() when it is accessed from
-> bch2_dio_write_continue()?
-> 
-> I don't know the async direct I/O codepath particularly well, so I
-> cc'ed the uring maintainers, who probably know this better than me.
+This patch partially reverts
 
-I _think_ this is fine as-is, even if it does look dubious and bcachefs
-arguably should grab an mm ref for this just for safety to avoid future
-problems. The reason is that bcachefs doesn't set FMODE_NOWAIT, which
-means that on the io_uring side it cannot do non-blocking issue of
-requests. This is slower as it always punts to an io-wq thread, which
-shares the same mm. Hence if the request is alive, there's always a
-thread with the same mm alive as well.
+	commit 812fe6420a6e789db68f18cdb25c5c89f4561334
+	Author: Michael Kelley <mikelley@microsoft.com>
+	Date:   Fri Aug 25 10:21:24 2023 -0700
 
-Now if FMODE_NOWAIT was set, then the original task could exit. I'd need
-to dig a bit deeper to verify that would always be safe and there's not
-a of time today with a few days off in the US looming, so I'll defer
-that to next week. It certainly would be fine with an mm ref grabbed.
+	scsi: storvsc: Handle additional SRB status values
 
+HyperV does not support MAINTENANCE_IN resulting in FC passthrough
+returning the SRB_STATUS_DATA_OVERRUN value. Now that SRB_STATUS_DATA_OVERRUN
+is treated as an error multipath ALUA paths go into a faulty state as multipath
+ALUA submits RTPG commands via MAINTENANCE_IN.
+
+[    3.215560] hv_storvsc 1d69d403-9692-4460-89f9-a8cbcc0f94f3:
+tag#230 cmd 0xa3 status: scsi 0x0 srb 0x12 hv 0xc0000001
+[    3.215572] scsi 1:0:0:32: alua: rtpg failed, result 458752
+
+MAINTENANCE_IN now returns success to avoid the error path as
+is currently done with INQUIRY and MODE_SENSE.
+
+Suggested-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+---
+Changes since v1:
+- Handle error and logging by returning success as previously
+  done with INQUIRY and MODE_SENSE [Michael Kelley].
+---
+ drivers/scsi/storvsc_drv.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index 7ceb982040a5..d0b55c1fa908 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -149,6 +149,8 @@ struct hv_fc_wwn_packet {
+ */
+ static int vmstor_proto_version;
+ 
++static bool hv_dev_is_fc(struct hv_device *hv_dev);
++
+ #define STORVSC_LOGGING_NONE	0
+ #define STORVSC_LOGGING_ERROR	1
+ #define STORVSC_LOGGING_WARN	2
+@@ -1138,6 +1140,7 @@ static void storvsc_on_io_completion(struct storvsc_device *stor_device,
+ 	 * not correctly handle:
+ 	 * INQUIRY command with page code parameter set to 0x80
+ 	 * MODE_SENSE command with cmd[2] == 0x1c
++	 * MAINTENANCE_IN is not supported by HyperV FC passthrough
+ 	 *
+ 	 * Setup srb and scsi status so this won't be fatal.
+ 	 * We do this so we can distinguish truly fatal failues
+@@ -1145,7 +1148,9 @@ static void storvsc_on_io_completion(struct storvsc_device *stor_device,
+ 	 */
+ 
+ 	if ((stor_pkt->vm_srb.cdb[0] == INQUIRY) ||
+-	   (stor_pkt->vm_srb.cdb[0] == MODE_SENSE)) {
++	   (stor_pkt->vm_srb.cdb[0] == MODE_SENSE) ||
++	   (stor_pkt->vm_srb.cdb[0] == MAINTENANCE_IN &&
++	   hv_dev_is_fc(device))) {
+ 		vstor_packet->vm_srb.scsi_status = 0;
+ 		vstor_packet->vm_srb.srb_status = SRB_STATUS_SUCCESS;
+ 	}
 -- 
-Jens Axboe
+2.42.0
+
 
