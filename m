@@ -1,67 +1,89 @@
-Return-Path: <linux-kernel+bounces-423586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CED99DA9F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8341D9DA9FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B520B225FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:38:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECAF6B2105B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B80D200121;
-	Wed, 27 Nov 2024 14:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AF21FF7BE;
+	Wed, 27 Nov 2024 14:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pxykcM66"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZYl3n3N"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B70E1FF7B0;
-	Wed, 27 Nov 2024 14:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33581FF7AD;
+	Wed, 27 Nov 2024 14:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718272; cv=none; b=TIQKywAhA2SK35PJ+g65YNfOwfepcEgq0YVDbJxCLWUaRXCtlUMIunykti8UEaXNjoS9bGU7YR/mYK1zDJRgbqqLR18Gw3ikzzzOlHh5x3qfgC7DDvAYD/SGE/Tm+Xf2lyRx69cZ42aLtUWoe3tI4GXhJLU/r/DEdAVr8ya+FPA=
+	t=1732718350; cv=none; b=Sdpk1c7Z6CgFji5mSlNX1/mDNTafVFYntGnuQjYq7zEqf7eVztevyGOGIH2Jsri1+daEIphQ+pCr8EqIrGA6Pm9G3k8nCcmxm7MCI3la1Gir720G2RRQT0HR5jrENJruwJZwXyeXi+sFnuTkahVk/hDF+6/mN1f5wAmrEYbYLvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718272; c=relaxed/simple;
-	bh=Zc16Jjy96K03qte13/K/uHaHy6dlr5tPU0LN4UKZQP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZKB5gj2x1yjQhcqAXbecRn/wXnoz99XQ1KJbMzNqmpcEyQO5hECoK0Che9/5DXTwibAZbxSTx6fTLd1xJRz4vhE2i+bgoMOa55UEJD4F25wv2tCKMI1BCYOLIazYl5/tkL6jMivpApdm/xYFlISWFyHBcdrmwvCVPSE3FIal+VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pxykcM66; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Yi9ivZL7hE/+AzA0giTInnZeJXGkpovY54SIjT3aEK0=; b=pxykcM66aiKoDh/4VkTR3L4I/z
-	YCeJrljdqeu+hrNiYgKXEk/KgrW0IbRwcpLBsGDImydPRxLSjGJPUl781hBlJOr+mMd9cgFoqMzOE
-	7ZLFW37TIuto1KEHTXLXOP+i5rFu1nkEYUnJ6SKBkqHoDLz7PlWtADncByfXN39fGWM2OS1gnCdeW
-	ZOeDR2+xnzixNGzcjVLg06lndU3m3lxGBMPI/hbGG4P0k/dBhihEL6MNhWyGT0gHg7VF9XYzVZHEE
-	UMPs41LUipmm8ETKI4+cTTH6qJQ2a1NTuSxWB5I2L+/2GuRwtMfKvYDRl9EdRYaDlAnCjTFzi3cs9
-	BpX6FZiA==;
-Received: from i5e86190f.versanet.de ([94.134.25.15] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tGJAk-0002n6-Hw; Wed, 27 Nov 2024 15:37:42 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: quentin.schulz@cherry.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1732718350; c=relaxed/simple;
+	bh=mDQqoxIO5PKh0RoG54oJcz1aIJI+TYXjqYyt/RdxkJo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CR1S48xunYDClB2RiWbg5+au9tn4e8R5waV+rFnt33jOMGKQtftaJQGoCWnN63LZdfcxi8soownAOeKId6/xXgOh5qfpz53ysYLbRDUIpxPLMLcddGVgGdWorUjbiDWjBI5yivrDSQ13q9A6dfbC+rKH3oR5Vs31JokLWyudNDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZYl3n3N; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-723f37dd76cso6707038b3a.0;
+        Wed, 27 Nov 2024 06:39:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732718348; x=1733323148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uTFIHkewMEaROQgyzcIc2iMfdAKBZdNTPyDszGdNlRo=;
+        b=EZYl3n3NXUsEgIuhf3OBJrfZukQh9MVx3RplmCbwHI+Gh0b+JCPGZavBaENyH/prZG
+         CwryBcMkBd0qr4xnLjEDZvv9oCNhxmSnzRY8qIOT6wEmQ4H++cmvFmixKqkc81eoFjGu
+         R+zQX8Stty7uzGVNif6PW6AQw/OmP7N9FYIHcZqH3Jzf+3fyPjpyQ7V9OhKdaE9e5DTI
+         AlbK1aVZ9gh1s/O+C5c+24GNJuLqauLL3oIDFFND3n7wOCXkQ6fbcm0BA7yXCPWNJnin
+         l7tmvFUxg2cSvYEh0Fd5A2ADQY6Iwjb48cMGPwWXvaiBMEjKmJFiPNV69rEeQjL0ST1P
+         iVJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732718348; x=1733323148;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uTFIHkewMEaROQgyzcIc2iMfdAKBZdNTPyDszGdNlRo=;
+        b=LOWSy9Z8cfXtIBmUXxJCgBGHFGnC1l8FUOVYDZGZ57A++FOOOap4b4wWws4Idp/MHN
+         HyIRkKY56t5JK9nfj1xVml1ctFhhDOBBzhyfjlotldtJlNi3ELRptJcqxxjAaV4uZFO0
+         R/TAzoW+HH6kmzl4PzzopGW39an34OwPZDmHyk8KLacxrgywbpQ/HBigzNzSyz4o9V2i
+         w1cl2q5WLwcPViZ2xK9A4meUbybGicvrX2vHqw/JYKK64uZtyR4T7DtU20+5DrJhHSeX
+         +ptirDcuML4lt8z/byklDKE4FfHNlne8U9v9x7zbBDtqNOH6EN0JNewbKYJ+z3E1OT2y
+         56pA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnqfxoEZRy+1+BW9d9NcH0gaJuBCN4LEdHZyGDpKXvEER1AZnb4a8CyoOrfws+so4zrEeH5dKyMOs0XHo=@vger.kernel.org, AJvYcCWfLaP9i1L1Uc5YJW5sw2amipBBJYva9m+XB1HGiEyq83EMFVSTPWkkyFrvnCksBCi4VpuM3pQaRsWVIbqXLgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWK9AW2gSdyKnB+u0desCSD28KZh+GxuAMtHN9B9r1dDDglUlQ
+	+5Y0IB2jjz+6sWArHaooEBjc47KpyzQMPMX5DwdXxnGVOMwc3dNC
+X-Gm-Gg: ASbGncup0nd/fXQ0uF/T8cmyFHDqAml/66k3tT9VhPJ/2LoJ7dM/m5aw1P9TSfyJhgq
+	iFMGGO3f7GwinSyLr3VIp5VPSRhTlA/axTkF50zJ8NeXdsM5l34auaXrI1eKiM+HWajG1qEJ2RG
+	WLoqcKB10Nfdz+TsI5a9Ng8v/2KjXj/5s2PC0Nln/J6i9kPHM4Pc4QlfbZUmyAszSghxBrapO52
+	YPCY5SDnZifGVuns2Ofe5hmlpla4RPsLUuTJD8bGVRieM6V6ipJy8cYYoY=
+X-Google-Smtp-Source: AGHT+IEXUD2cpVkmiuKSnu34vZ5p7LGeLXhOUINW5LByyCy0AAGXpoRkp3T+IjRRZa6bkvRWJ0H7oQ==
+X-Received: by 2002:a05:6a00:b81:b0:724:fac6:35f2 with SMTP id d2e1a72fcca58-725300107f4mr3650429b3a.9.1732718347283;
+        Wed, 27 Nov 2024 06:39:07 -0800 (PST)
+Received: from localhost.localdomain ([223.72.121.77])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de456472sm10283606b3a.14.2024.11.27.06.39.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 06:39:06 -0800 (PST)
+From: Baichuan Qi <zghbqbc@gmail.com>
+To: markus.elfring@web.de
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	kvalo@kernel.org,
 	linux-kernel@vger.kernel.org,
-	dse@thaumatec.com,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v2 3/3] arm64: dts: rockchip: add overlay for tiger-haikou video-demo adapter
-Date: Wed, 27 Nov 2024 15:37:19 +0100
-Message-ID: <20241127143719.660658-4-heiko@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241127143719.660658-1-heiko@sntech.de>
-References: <20241127143719.660658-1-heiko@sntech.de>
+	linux-wireless@vger.kernel.org,
+	zghbqbc@gmail.com
+Subject: [PATCH v5] wifi: ath11k: Fix NULL pointer check in ath11k_ce_rx_post_pipe()
+Date: Wed, 27 Nov 2024 22:38:04 +0800
+Message-Id: <20241127143804.30075-1-zghbqbc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
+References: <30b208e0-55a2-400f-9638-1765e7ed3bfa@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,190 +92,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+Current implementation of `ath11k_ce_rx_post_pipe()` checks for
+NON-NULL of either `dest_ring` or `status_ring` using an OR (||).
+Both rings, especially `dest_ring`, should be ensured to be
+NON-NULL in this function.
 
-This adds support for the video-demo-adapter DEVKIT ADDON CAM-TS-A01
-(https://embedded.cherry.de/product/development-kit/) for the Haikou
-devkit with Tiger RK3588 SoM.
+If only one of the rings is valid, such as `dest_ring` is NULL
+and `status_ring` is NON-NULL, the OR (||) check would not stop
+`ath11k_ce_rx_post_pipe()`, the subsequent call to
+`ath11k_ce_rx_buf_enqueue_pipe()` will access the NULL pointer,
+resulting in a driver crash.
 
-The Video Demo adapter is an adapter connected to the fake PCIe slot
-labeled "Video Connector" on the Haikou devkit.
+Fix the NON-NULL check by changing the OR (||) to AND (&&),
+and return an error code `-EIO` to indicate
+`ath11k_ce_rx_post_pipe()` is stopped with an NULL pointer 
+error, ensuring that the function only proceeds when both 
+`dest_ring` and `status_ring` are NON-NULL.
 
-It's main feature is a Leadtek DSI-display with touchscreen and a camera
-(that is not supported yet). To drive these components a number of
-additional regulators are grouped on the adapter as well as a PCA9670
-gpio-expander to provide the needed additional gpio-lines.
-
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+Link: https://lore.kernel.org/ath11k/a9ccc947-20b2-4322-84e5-c96aaa604e63@web.de
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Signed-off-by: Baichuan Qi <zghbqbc@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../rk3588-tiger-haikou-video-demo.dtso       | 144 ++++++++++++++++++
- 2 files changed, 145 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
+V4 -> V5: add err code in NULL check
+V3 -> V4: reorder describe info
+V2 -> V3: add Link URL to mailing list archives
+V1 -> V2: rewrite commit message and fix tag
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 3f888451a13e..a2404fcdc6fd 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -144,6 +144,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-toybrick-x0.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-turing-rk1.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-coolpi-4b.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
-new file mode 100644
-index 000000000000..a7fe18b81170
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2024 Cherry Embedded Solutions GmbH
-+ *
-+ * DEVKIT ADDON CAM-TS-A01
-+ * https://embedded.cherry.de/product/development-kit/
-+ *
-+ * DT-overlay for the camera / DSI demo appliance for Haikou boards.
-+ * In the flavour for use with a Tiger system-on-module.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
-+
-+&{/} {
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		power-supply = <&dc_12v>;
-+		pwms = <&pwm0 0 25000 0>;
-+	};
-+
-+	vcc1v8_video: regulator-vcc1v8-video {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc1v8-video";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	vcc2v8_video: regulator-vcc2v8-video {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc2v8-video";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	video-adapter-leds {
-+		compatible = "gpio-leds";
-+
-+		video-adapter-led {
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&pca9670 7 GPIO_ACTIVE_HIGH>;
-+			label = "video-adapter-led";
-+			linux,default-trigger = "none";
-+		};
-+	};
-+};
-+
-+&dsi0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "leadtek,ltk050h3148w";
-+		reg = <0>;
-+		backlight = <&backlight>;
-+		iovcc-supply = <&vcc1v8_video>;
-+		reset-gpios = <&pca9670 0 GPIO_ACTIVE_LOW>;
-+		vci-supply = <&vcc2v8_video>;
-+
-+		port {
-+			mipi_panel_in: endpoint {
-+				remote-endpoint = <&dsi0_out_panel>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsi0_in {
-+	dsi0_in_vp3: endpoint {
-+		remote-endpoint = <&vp3_out_dsi0>;
-+	};
-+};
-+
-+&dsi0_out {
-+	dsi0_out_panel: endpoint {
-+		remote-endpoint = <&mipi_panel_in>;
-+	};
-+};
-+
-+&i2c6 {
-+	/* OV5675, GT911, DW9714 are limited to 400KHz */
-+	clock-frequency = <400000>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	touchscreen@14 {
-+		compatible = "goodix,gt911";
-+		reg = <0x14>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <RK_PC3 IRQ_TYPE_LEVEL_LOW>;
-+		irq-gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&touch_int>;
-+		pinctrl-names = "default";
-+		reset-gpios = <&pca9670 1 GPIO_ACTIVE_HIGH>;
-+		AVDD28-supply = <&vcc2v8_video>;
-+		VDDIO-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	pca9670: gpio@27 {
-+		compatible = "nxp,pca9670";
-+		reg = <0x27>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
-+&mipidcphy0 {
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	touch {
-+		touch_int: touch-int {
-+			rockchip,pins = <3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&pwm0 {
-+	status = "okay";
-+};
-+
-+&vp3 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	vp3_out_dsi0: endpoint@ROCKCHIP_VOP2_EP_MIPI0 {
-+		reg = <ROCKCHIP_VOP2_EP_MIPI0>;
-+		remote-endpoint = <&dsi0_in_vp3>;
-+	};
-+};
+ drivers/net/wireless/ath/ath11k/ce.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+index e66e86bdec20..223dab928453 100644
+--- a/drivers/net/wireless/ath/ath11k/ce.c
++++ b/drivers/net/wireless/ath/ath11k/ce.c
+@@ -324,8 +324,10 @@ static int ath11k_ce_rx_post_pipe(struct ath11k_ce_pipe *pipe)
+ 	dma_addr_t paddr;
+ 	int ret = 0;
+ 
+-	if (!(pipe->dest_ring || pipe->status_ring))
+-		return 0;
++	if (!(pipe->dest_ring && pipe->status_ring)) {
++		ret = -EIO;
++		return ret;
++	}
+ 
+ 	spin_lock_bh(&ab->ce.ce_lock);
+ 	while (pipe->rx_buf_needed) {
 -- 
-2.45.2
+2.34.1
 
 
