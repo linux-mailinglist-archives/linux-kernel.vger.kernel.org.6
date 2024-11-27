@@ -1,109 +1,179 @@
-Return-Path: <linux-kernel+bounces-423994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041249DAF20
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:54:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 990EE9DAF22
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:55:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A997A166673
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:54:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033CFB222C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120A8202F9B;
-	Wed, 27 Nov 2024 21:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcbgURYx"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E312036FB;
+	Wed, 27 Nov 2024 21:55:26 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D83F9DD;
-	Wed, 27 Nov 2024 21:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E974C191F75
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732744472; cv=none; b=K5Om75nzapjirA4GcvnaxMWjlvyejYpt4IPhQ3q7VW91xcYyeGRQ4NyNKIQNBkAcaAgfB13gOzeQn1fuoTn15OstvTiw4ZUr0bLxfyVDtdHep1VE2uM76OsZOu9tkdYjaowEBMRXwpwrs37cRCuKQQM0YWyZB6dKSjInm03du44=
+	t=1732744525; cv=none; b=K82iL4VuiWz/q3rBEPu7yq5ecAaBEyWwXpx04q1PBP9lE/SE58CqAp21Bi+bShvj23C1g35sSpKTOTk22VXPPCmaphAL9eGuvY0TFGRxMLC8UPLcK38veqTK0yNWQsV9FfImPHVME6HiG9UfS3xc8peAceMkSzj2mfYXgIIUcig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732744472; c=relaxed/simple;
-	bh=YuGy9ZCRnqsUhscscY23DwGwV75BCtHvzuixxPPh8+A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ma0yFakpFxdwR9OKIngDrOrcsRsyhB5/I9rW8xPnr5N1OGwIlO3hK8XTw0MahZP5TM+kws2I2V+WYoIddbDuEyqMhLOp0RyewaBXxn9xBn5PkPfAIGw0WIEX6Ja9XLXndCc7vxj8YYRj2kL0pHYimYL7zK4S3Y00qcbqizzpEfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcbgURYx; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-724f41d550cso154105b3a.2;
-        Wed, 27 Nov 2024 13:54:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732744470; x=1733349270; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YuGy9ZCRnqsUhscscY23DwGwV75BCtHvzuixxPPh8+A=;
-        b=IcbgURYxbO4Ld+XddxiX0T7nkCK1OINvH6t/bRRNYtkazfpc1P3cn6b45s70xSoOzD
-         lAO1PLYKvfZgCQkWNK33DM4w4tUPf5eZC39lVSnqaaeeLImCelYMBLTzKXEd2jBpYfbG
-         59oVK3rlJQHK35ocZOye8HevDdOlksmLrp/fAc93MeOjOta7Twkp24K29Yieap+k6XwE
-         DS094K3oVK00MSSbLEpi+WbMI879DQNAGVOoWExqBeZ4k4DyV7K30mK7Z0uEy0F+qvlk
-         oJ/IcMvnkmnacSXJNx71UtiX6KTwBSzxaIRM7jUb1PdZJbmaWlK/7qKKx1YoQbaupla+
-         Q95A==
+	s=arc-20240116; t=1732744525; c=relaxed/simple;
+	bh=wHM2OrL8e79dKeH2gD8Yp82lDj4yCL0xRcvE5WB7s9s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jCiOPLkYGi63rx46iNGRrVKGMirIUvHZKXOp8u1fKRQjR9xn4U4I19/RIMTevVDUf+QSIG55M/FnyLppwIPowz1HLHE+xLq82N9K6AOGHC18l8zoUAHnLRZ2076O7j8O2IOpm/byGs0aM8heuBBIrVBYEI9yPxh3oUbssd3DhiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a54a66a2so11360739f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:55:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732744470; x=1733349270;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YuGy9ZCRnqsUhscscY23DwGwV75BCtHvzuixxPPh8+A=;
-        b=pEnt/lTOxo8C97hqNvrJd5RHxM2xgQW6JDXRgmvsQ5W3F4sNjVDg+AQj7rOkehWmPf
-         DfL5SxKz2XdCZhPV55eSX5Eirta2WJYdqtrEtUWfuCMl3hhsXfoQkDBniXYOuUuMEC0u
-         EJ/CVQ7urpurPG3hADR74VaAkHH8bhGvO1G3o3OH9FAbX5IUFm4pDrImUZZvLBR9CrR8
-         gLPaNuniUAAJhcZdg4E5IAoHc3DyY5BlGFU6fyAJtyGYKKCLKOuRtBBdVLRCC0APoe+1
-         uSz+HZtYFM6jsGBzff84B2xVjWBLyCHky0fBovoGKguvF7ploiZ2u3/FiTVFeB1Dce+d
-         bk8g==
-X-Forwarded-Encrypted: i=1; AJvYcCULcpRH+S5iPZ3/GVWuNgTLMXxW3R3KT45Y3Tkl2MH0+g4wlKjFx1lWrBemdTVD4Nk1rmPWlIQXUtoddHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL2U2+mXTdJOsTl11t454236O3WGs+sKPcTxaqQ2N2OowSExtJ
-	0p/h84lKYPQbP7d2TaT4FX2lSqr0xCGRwhukFGOwEAm4BDe0Wt5h
-X-Gm-Gg: ASbGncsc7dP6WFPaZ8XzqgF9Jsk/IpAzqaWo6DVZ7fa+8mB3WCvHWj22W7XNMR7NxzU
-	UXR6ZF2S5dK98JVjhW0v1DyquOWy8RFBYtTdCHMiFYOpDZXXMgCoOKcr2MK8KOp/JUTV9N/F6Tc
-	3fGtzh/17agWWwmG0f49QPumvgn7QHgvYd+YxAxLbHcukTLpzMF9wmxXcbpW6PfOIIWfZQcUqiR
-	+Rs4M1kL2t45MnPcCZo+57kWgR4Acw2CXDeObYxAQbrbYv3OI/uhm833UUz73iw4qoU/OA=
-X-Google-Smtp-Source: AGHT+IG6amnJVHYBw/Ql+QzwBliI5iw/nwAu3MF07EIkvLED7RS2I/HLTFou+WrG3va/EtlTbyOpEA==
-X-Received: by 2002:a05:6a00:230b:b0:724:5d26:d904 with SMTP id d2e1a72fcca58-7253014341cmr5722470b3a.18.1732744470447;
-        Wed, 27 Nov 2024 13:54:30 -0800 (PST)
-Received: from localhost.localdomain ([177.10.10.137])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725418482a7sm36277b3a.190.2024.11.27.13.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 13:54:30 -0800 (PST)
-From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-To: david@lechnology.com
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael.v.volkmer@gmail.com,
-	wbg@kernel.org
-Subject: Re: [PATCH] Add COUNTER_FUNCTION_DISABLE to the counter API
-Date: Wed, 27 Nov 2024 18:54:04 -0300
-Message-Id: <20241127215404.915-1-rafael.v.volkmer@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <c67e095c-3fba-44df-950f-b014ce27eb0f@lechnology.com>
-References: <c67e095c-3fba-44df-950f-b014ce27eb0f@lechnology.com>
+        d=1e100.net; s=20230601; t=1732744523; x=1733349323;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Epg/2RMhmpPXmBlb4qS8YZsKov8fLNlh2IrMDtv8Kxs=;
+        b=GfZ/EhMG+ikA3JUOQVYkiS2lswIsDLK7+lIRPZ6TRoNh7vpLPBGsZ2rYDiQUPdPKM1
+         PFBJlHdsRirhjqHYHJLVj9dVvLl/60xnFKpYZJWng0SYHFDtR5Au+GTf3mv8e5SC30QG
+         mNrXyduP9CulT3ikYhmVzD+JDMUmvmY4SyZ+phqIfCpxXPnYZbGAjtrT1a4NhkwAkKjG
+         sLjlnhaZi/Qo7Ukvh1nVb+rde0OHRnoA1fDs1tW6ySQr13G47vHgJtYWWBIhVLf5poFN
+         Mq8lyrLbIj5PfJwIiQJpeUXk4NnrQHPYJ1epX17byhvA+EsLAUvuRO+Vm8NwHJTh5s4u
+         ZGZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu86vRWOgu4gsn5226kxVg2GU9NQmIxPiVQOKzBcrTyX3yHr0/FWJcS/ssEZbvoGvc4GunYjL+eKsAkX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ0dLR8BmlklURROF+rX81AeKJN2uQ/wuKQvhbak16+70+EgYD
+	gv7+ZipKuyNz5e28AY31I8/CeMuXr+1xGMpDq7S/lTJdehpWqueNT3p0UlBOW7N5Jw5e7EOxkU2
+	d/jzAYiIQTOSD9A6JHzZAIA5fdwLuaEnkrxkT2GXPAtvMoRMzSUHc57E=
+X-Google-Smtp-Source: AGHT+IF5KfYlQB4ZglRygUfFv4HlReybSxnwAVaXI2cqd9V0GHNEQqdc0dKCshkBV2GNUJoSGcfKFgsp2XiTCNqdtyszvdoerLAW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1d05:b0:3a7:8040:595b with SMTP id
+ e9e14a558f8ab-3a7c555ec95mr39547485ab.9.1732744523085; Wed, 27 Nov 2024
+ 13:55:23 -0800 (PST)
+Date: Wed, 27 Nov 2024 13:55:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6747954b.050a0220.253251.0064.GAE@google.com>
+Subject: [syzbot] [net?] KASAN: global-out-of-bounds Read in __hw_addr_add_ex (2)
+From: syzbot <syzbot+a29a4fe94b1560756f7d@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/25/24 11:36 AM, David Lechner wrote:=0D
-> How does this work without an additional patch to modify the TI eQEP=0D
-> counter driver to handle this new enum value? For example, I would=0D
-> expect that this enum value would be added to ti_eqep_position_functions=
-=0D
-> and case statements added in ti_eqep_function_read(),=0D
-> ti_eqep_function_write() and ti_eqep_action_read() to handle the new=0D
-> option.=0D
-=0D
-Hi, David!=0D
-=0D
-Yes, the intention is to have a second path where the eQEP driver handles =
-=0D
-this within these file operations functions.=0D
-=0D
-Best regards=
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    5f153a692bac Merge commit 'bf40167d54d5' into fixes
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e6d230580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cdbbf8ef410bf2e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=a29a4fe94b1560756f7d
+compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: riscv64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1080aca7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c3a940580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-5f153a69.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bf8994051afc/vmlinux-5f153a69.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7603ef590293/Image-5f153a69.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a29a4fe94b1560756f7d@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: global-out-of-bounds in memcmp+0xc0/0xca lib/string.c:676
+Read of size 1 at addr ffffffff895cb520 by task syz-executor156/3200
+
+CPU: 1 UID: 0 PID: 3200 Comm: syz-executor156 Not tainted 6.12.0-rc1-syzkaller-00012-g5f153a692bac #0
+Hardware name: riscv-virtio,qemu (DT)
+Call Trace:
+[<ffffffff80010a14>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
+[<ffffffff85f7c3cc>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
+[<ffffffff85fd797a>] __dump_stack lib/dump_stack.c:94 [inline]
+[<ffffffff85fd797a>] dump_stack_lvl+0x122/0x196 lib/dump_stack.c:120
+[<ffffffff85f861e4>] print_address_description mm/kasan/report.c:377 [inline]
+[<ffffffff85f861e4>] print_report+0x290/0x5a0 mm/kasan/report.c:488
+[<ffffffff80970318>] kasan_report+0xec/0x118 mm/kasan/report.c:601
+[<ffffffff8097214e>] __asan_report_load1_noabort+0x12/0x1a mm/kasan/report_generic.c:378
+[<ffffffff85f525ae>] memcmp+0xc0/0xca lib/string.c:676
+[<ffffffff84d3805e>] __hw_addr_add_ex+0xee/0x676 net/core/dev_addr_lists.c:88
+[<ffffffff84d3b06a>] __dev_mc_add net/core/dev_addr_lists.c:867 [inline]
+[<ffffffff84d3b06a>] dev_mc_add+0xac/0x108 net/core/dev_addr_lists.c:885
+[<ffffffff84edd5e2>] mrp_init_applicant+0xe8/0x56e net/802/mrp.c:873
+[<ffffffff85ad13e2>] vlan_mvrp_init_applicant+0x26/0x30 net/8021q/vlan_mvrp.c:57
+[<ffffffff85ac7490>] register_vlan_dev+0x1b4/0x922 net/8021q/vlan.c:170
+[<ffffffff85acfab0>] vlan_newlink+0x3d2/0x5fc net/8021q/vlan_netlink.c:193
+[<ffffffff84d83228>] rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
+[<ffffffff84d83228>] __rtnl_newlink+0xfe2/0x1738 net/core/rtnetlink.c:3730
+[<ffffffff84d839ea>] rtnl_newlink+0x6c/0xa2 net/core/rtnetlink.c:3743
+[<ffffffff84d7259a>] rtnetlink_rcv_msg+0x428/0xdbe net/core/rtnetlink.c:6646
+[<ffffffff850b3e8e>] netlink_rcv_skb+0x216/0x3dc net/netlink/af_netlink.c:2550
+[<ffffffff84d6454c>] rtnetlink_rcv+0x26/0x30 net/core/rtnetlink.c:6664
+[<ffffffff850b2140>] netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+[<ffffffff850b2140>] netlink_unicast+0x4f0/0x82c net/netlink/af_netlink.c:1357
+[<ffffffff850b2ce0>] netlink_sendmsg+0x864/0xdc6 net/netlink/af_netlink.c:1901
+[<ffffffff84c5e82a>] sock_sendmsg_nosec net/socket.c:729 [inline]
+[<ffffffff84c5e82a>] __sock_sendmsg+0xcc/0x160 net/socket.c:744
+[<ffffffff84c5f436>] ____sys_sendmsg+0x5ce/0x79e net/socket.c:2602
+[<ffffffff84c66b4c>] ___sys_sendmsg+0x144/0x1e6 net/socket.c:2656
+[<ffffffff84c67624>] __sys_sendmsg+0x130/0x1f0 net/socket.c:2685
+[<ffffffff84c67754>] __do_sys_sendmsg net/socket.c:2694 [inline]
+[<ffffffff84c67754>] __se_sys_sendmsg net/socket.c:2692 [inline]
+[<ffffffff84c67754>] __riscv_sys_sendmsg+0x70/0xa2 net/socket.c:2692
+[<ffffffff8000f2d4>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:90
+[<ffffffff85fd9c4a>] do_trap_ecall_u+0x1aa/0x216 arch/riscv/kernel/traps.c:331
+[<ffffffff85ffcac6>] _new_vmalloc_restore_context_a0+0xc2/0xce
+
+The buggy address belongs to the variable:
+ vlan_mrp_app+0x60/0x3e80
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x897cb
+flags: 0xffe000000002000(reserved|node=0|zone=0|lastcpupid=0x7ff)
+raw: 0ffe000000002000 ff1c00000025f2c8 ff1c00000025f2c8 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner info is not present (never set?)
+
+Memory state around the buggy address:
+ ffffffff895cb400: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 00 00 00 00
+ ffffffff895cb480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffffff895cb500: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 00 00 00 00
+                               ^
+ ffffffff895cb580: 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9 f9 f9
+ ffffffff895cb600: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
