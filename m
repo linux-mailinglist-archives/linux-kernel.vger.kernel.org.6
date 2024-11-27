@@ -1,551 +1,761 @@
-Return-Path: <linux-kernel+bounces-423581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0779DA9F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:37:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE5D9DA9F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C83B21887
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3333281B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FCA1FF7AC;
-	Wed, 27 Nov 2024 14:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28F1FF617;
+	Wed, 27 Nov 2024 14:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JW0OiRON"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KQclbAVC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E8C1FECCB
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732718254; cv=none; b=YIqKeKVFTc5+nwIKun5Ihw6rBQ/wwOwpmEEyopy/CMPUGD4CyT4xCG9971frHY/BSpbDqWwEy/ELi6L95FMTo+y9xmbMApPMBoM+g4NYMA6/vRclR382WUxuoFYJx+Z2cc8+hL7PSUVmNDuKKhp8TWbnTg6IorM+4Vz7rVLtVBY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732718254; c=relaxed/simple;
-	bh=idDdijuSl6TpC7xZI34FqxTidsAYrtNZu4a2lFJHarU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hwNWEmIDLow9Yz1kD04VgUeMKnhFXK6xQRDQHKNCTjlq8CwIl15LSP+l8v/nw6ikPqoon5Lt5sGwhCovMTbsiNhPTz32vR/BVq6kkC1Q7zIII+PhF4A7ocuj+kF5wVSyx1stDaiMWEkxBqGBAjBEYFP/n/0XIwjmsPR4SO6/gz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JW0OiRON; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732718251; x=1764254251;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=idDdijuSl6TpC7xZI34FqxTidsAYrtNZu4a2lFJHarU=;
-  b=JW0OiRONAU8unph4dOCcrqaW6ksoa5a8cJ7ZSeCKGySEFAC6DZlyut0m
-   +B+uthKnsVx+QckM/vObOu30t8oiFaM2zRiYtD9jk6Or5XMcJvfDQPLd2
-   YXnQgcyUtlZg6wdtKjUCH/xIWWcw4bcW40GQXrrfrrO+nvPoG8nd3l1Xi
-   f/eCxbRSeiLZ1WcHlevMO5sDrzZGgw06Hodz/No3ILmlsnVbirFSkvN1f
-   PGKbA89KGzDTJlDAf3mJkd0p7ExwalrHqHB+zSyghevpqj87s2H3iISIN
-   cIjcPNWZC0QyPW3/ceE6HWhj09FUKOm7KWS3K8fVfDjaA9vF4CUvaZ82/
-   A==;
-X-CSE-ConnectionGUID: 0w2I5bqoRBKTF2eomAgQoA==
-X-CSE-MsgGUID: CsKI1dyMRVyhymlEAnaP9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="32779688"
-X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
-   d="scan'208";a="32779688"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 06:37:30 -0800
-X-CSE-ConnectionGUID: +Quh8qs+SpKsQpfVD4VsRg==
-X-CSE-MsgGUID: 33DvVVl6QECqr3k2MVpS4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,189,1728975600"; 
-   d="scan'208";a="96906019"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 27 Nov 2024 06:37:28 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGJAU-000843-0c;
-	Wed, 27 Nov 2024 14:37:26 +0000
-Date: Wed, 27 Nov 2024 22:36:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: arch/s390/kernel/guarded_storage.c:109:1: sparse: sparse: Using
- plain integer as NULL pointer
-Message-ID: <202411272233.Dh4B5mNx-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4391FF7A7;
+	Wed, 27 Nov 2024 14:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732718269; cv=pass; b=h11doyGm7Q+7QztBR+RhGAVrx2LxQIdDhvSd7WaT2ykoLpfJMfz9e+wRXANgSsbbE+XVFBDGgwcUHnXOS9/Sqvkl3O5i3UOYsn7wJ0gJLfR+pyPP2EOK5JJbNWEjkjySKdEZfT9mZiMy73Dy3msXlaNx/UhOpZ2EzIcPy+qaFd0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732718269; c=relaxed/simple;
+	bh=N75OSKnLAl8+WYyCCLH/xlJdUYIOqIMt6GhaVE/nNps=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Z/tlwRc+VTOb140RqosqSswP5+5OqWyNdh80VY3TcqyQv3Mbgun/TvJ/HsOa53W055CMLhR8NsjBjszCh0QEgVIws4cH4QrMl4s7YoXXGgzT4Y+KsjM5Vb6uJB6QhBFrwVh+ed8qUok1HjMwTFxe95shLDX8iNR92qyjEJ0cEqg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KQclbAVC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732718230; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mjSNqlXhrSAhrZx4s4asPmByY6tMEk8bYhmKG6z96AivQm1Pw8ECTYz7MQBxlrhEYIDXVuZk1dznRUPUIpL4O5LI3UsU1RKmFBtgmJ0xKRVy3qFKUQny7nFfcsWnMfZVBAR1KTu0RJ8LpyhxaNLLsqiKRyV9t8U27lhGn007BJs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732718230; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9XHjmjcw2a+7IfwIAfkVcwy2fr5yzUZYB1w5Q2sFOhE=; 
+	b=OLc6MmZ11cUbLZrkfYfIOxdvrCFj9xTeNbzuYCXvwNa3kR3LvSSWNUepXofot2UG93FElihbkGjIhCBewDvsL0UjZeafq0AJlZmMLoiQq6wOj0a9N3c1bpREdeFY1/wiiaH5E6U20l/3CJDLt650TXHLEH8MSTBE+DpNMBMvnR0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732718230;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=9XHjmjcw2a+7IfwIAfkVcwy2fr5yzUZYB1w5Q2sFOhE=;
+	b=KQclbAVCCCYoPsz/WCbOh5aTSZ+BoD9fRywryZ3u/mIqC/OIlwjKvzKJCbaGDcQR
+	iVYWNQCl6UEWVLXwfSOVCbgtFjH4KzlN1ObRfLNjmTucb7sZIT5DXal4vJEMHrOEDsx
+	hMleBnmO1KSlU/wCqzYlQwJ1duYpxzD1BsMmLSXU=
+Received: by mx.zohomail.com with SMTPS id 1732718226861940.4981914974559;
+	Wed, 27 Nov 2024 06:37:06 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 07/35] WIP: rust: drm/kms: Add drm_crtc bindings
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-8-lyude@redhat.com>
+Date: Wed, 27 Nov 2024 11:36:50 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <042BD8BE-A0E1-4CD4-89AB-96314DABECA3@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-8-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   aaf20f870da056752f6386693cc0d8e25421ef35
-commit: aa0d6e70d3b34e710a6a57a53a3096cb2e0ea99f s390: autogenerate compat syscall wrappers
-date:   6 years ago
-config: s390-randconfig-r133-20241121 (https://download.01.org/0day-ci/archive/20241127/202411272233.Dh4B5mNx-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241127/202411272233.Dh4B5mNx-lkp@intel.com/reproduce)
+Hi Lyude,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411272233.Dh4B5mNx-lkp@intel.com/
+> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> This introduces basic bindings for DRM CRTCs which follow the same =
+general
+> pattern as connectors and planes (e.g. AsRawCrtc, AsRawCrtcState, =
+etc.).
+> There is one big difference though - drm_crtc_state appears to be the =
+one
+> atomic state that actually has data which can be mutated from outside =
+of
+> the atomic commit phase - which means we can't keep rust referencs to =
+it,
 
-sparse warnings: (new ones prefixed by >>)
->> arch/s390/kernel/guarded_storage.c:109:1: sparse: sparse: Using plain integer as NULL pointer
->> arch/s390/kernel/guarded_storage.c:109:1: sparse: sparse: Using plain integer as NULL pointer
---
->> arch/s390/kernel/sthyi.c:490:1: sparse: sparse: Using plain integer as NULL pointer
->> arch/s390/kernel/sthyi.c:490:1: sparse: sparse: Using plain integer as NULL pointer
->> arch/s390/kernel/sthyi.c:490:1: sparse: sparse: Using plain integer as NULL pointer
->> arch/s390/kernel/sthyi.c:490:1: sparse: sparse: Using plain integer as NULL pointer
---
->> arch/s390/pci/pci_mmio.c:35:1: sparse: sparse: Using plain integer as NULL pointer
->> arch/s390/pci/pci_mmio.c:35:1: sparse: sparse: Using plain integer as NULL pointer
-   arch/s390/pci/pci_mmio.c:75:1: sparse: sparse: Using plain integer as NULL pointer
-   arch/s390/pci/pci_mmio.c:75:1: sparse: sparse: Using plain integer as NULL pointer
---
-   drivers/char/random.c:418:19: sparse: sparse: symbol 'primary_crng' was not declared. Should it be static?
->> drivers/char/random.c:2040:1: sparse: sparse: Using plain integer as NULL pointer
->> drivers/char/random.c:2040:1: sparse: sparse: Using plain integer as NULL pointer
-   drivers/char/random.c:2256:9: sparse: sparse: context imbalance in 'get_random_u64' - different lock contexts for basic block
-   drivers/char/random.c:2286:9: sparse: sparse: context imbalance in 'get_random_u32' - different lock contexts for basic block
---
-   fs/read_write.c:335:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:335:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:481:9: sparse: sparse: symbol '__vfs_write' was not declared. Should it be static?
-   fs/read_write.c:586:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:586:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:607:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:607:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:633:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:633:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:659:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:659:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1100:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1100:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1106:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1106:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1112:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1112:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1120:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1120:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/read_write.c:1120:1: sparse: sparse: cast to restricted __kernel_rwf_t
-   fs/read_write.c:1132:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1132:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1140:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1140:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1140:1: sparse: sparse: cast to restricted __kernel_rwf_t
-   fs/read_write.c:1192:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1192:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1227:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1227:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1245:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1245:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1298:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1298:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1333:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1333:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1351:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1351:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1464:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1464:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1483:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1483:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1501:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1501:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1521:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1521:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1627:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1627:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1627:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:1627:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/read_write.c:315:36: sparse: sparse: self-comparison always evaluates to false
---
->> fs/pipe.c:845:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/pipe.c:845:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/pipe.c:850:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/pipe.c:850:1: sparse: sparse: Using plain integer as NULL pointer
---
->> fs/namei.c:3786:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/namei.c:3786:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3792:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3792:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3848:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3848:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3853:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3853:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3956:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:3956:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4096:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4096:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4107:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4107:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4164:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4164:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4164:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4164:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4170:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4170:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4170:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4170:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4329:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4329:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4329:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4329:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4335:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4335:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4335:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4335:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4658:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4658:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4658:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4658:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4664:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4664:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4664:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4664:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4670:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4670:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4670:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c:4670:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namei.c: note: in included file (through include/linux/srcu.h, include/linux/notifier.h, include/linux/memory_hotplug.h, ...):
-   include/linux/rcupdate.h:660:9: sparse: sparse: context imbalance in 'terminate_walk' - unexpected unlock
-   include/linux/rcupdate.h:660:9: sparse: sparse: context imbalance in 'unlazy_walk' - unexpected unlock
-   include/linux/rcupdate.h:660:9: sparse: sparse: context imbalance in 'unlazy_child' - unexpected unlock
-   include/linux/rcupdate.h:660:9: sparse: sparse: context imbalance in 'pick_link' - unexpected unlock
-   fs/namei.c:2172:19: sparse: sparse: context imbalance in 'path_init' - wrong count at exit
---
->> fs/namespace.c:1667:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/namespace.c:1667:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:1677:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:1677:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:1691:22: sparse: sparse: symbol 'to_mnt_ns' was not declared. Should it be static?
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3074:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3130:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3130:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3130:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/namespace.c:3130:1: sparse: sparse: Using plain integer as NULL pointer
---
->> fs/xattr.c:480:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/xattr.c:480:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/xattr.c:480:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/xattr.c:480:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/xattr.c:480:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/xattr.c:480:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:487:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:487:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:487:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:487:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:487:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:487:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:494:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:494:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:494:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:494:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:574:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:574:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:574:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:574:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:574:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:574:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:580:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:580:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:580:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:580:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:580:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:580:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:586:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:586:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:586:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:586:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:650:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:650:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:650:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:650:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:656:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:656:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:656:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:656:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:662:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:662:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:715:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:715:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:715:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:715:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:721:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:721:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:721:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:721:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:727:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/xattr.c:727:1: sparse: sparse: Using plain integer as NULL pointer
---
->> fs/d_path.c:424:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/d_path.c:424:1: sparse: sparse: Using plain integer as NULL pointer
-   fs/d_path.c:153:9: sparse: sparse: context imbalance in 'prepend_path' - wrong count at exit
-   fs/d_path.c:366:23: sparse: sparse: context imbalance in '__dentry_path' - different lock contexts for basic block
---
->> ipc/syscall.c:110:1: sparse: sparse: Using plain integer as NULL pointer
->> ipc/syscall.c:110:1: sparse: sparse: Using plain integer as NULL pointer
---
-   kernel/fork.c:1470:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/fork.c:1470:9: sparse:    struct sighand_struct [noderef] __rcu *
-   kernel/fork.c:1470:9: sparse:    struct sighand_struct *
->> kernel/fork.c:1599:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/fork.c:1599:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/fork.c:2024:32: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct [noderef] __rcu *real_parent @@     got struct task_struct * @@
-   kernel/fork.c:2024:32: sparse:     expected struct task_struct [noderef] __rcu *real_parent
-   kernel/fork.c:2024:32: sparse:     got struct task_struct *
-   kernel/fork.c:2076:54: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct list_head *head @@     got struct list_head [noderef] __rcu * @@
-   kernel/fork.c:2076:54: sparse:     expected struct list_head *head
-   kernel/fork.c:2076:54: sparse:     got struct list_head [noderef] __rcu *
-   kernel/fork.c:2317:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/fork.c:2317:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/fork.c:2317:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/fork.c:2317:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/fork.c:2362:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct *[assigned] parent @@     got struct task_struct [noderef] __rcu *real_parent @@
-   kernel/fork.c:2362:24: sparse:     expected struct task_struct *[assigned] parent
-   kernel/fork.c:2362:24: sparse:     got struct task_struct [noderef] __rcu *real_parent
-   kernel/fork.c:1778:27: sparse: sparse: dereference of noderef expression
-   kernel/fork.c:1778:27: sparse: sparse: dereference of noderef expression
-   kernel/fork.c:1780:22: sparse: sparse: dereference of noderef expression
-   kernel/fork.c: note: in included file (through include/linux/ftrace.h, include/linux/perf_event.h, include/linux/trace_events.h, ...):
-   include/linux/ptrace.h:211:45: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct task_struct *new_parent @@     got struct task_struct [noderef] __rcu *parent @@
-   include/linux/ptrace.h:211:45: sparse:     expected struct task_struct *new_parent
-   include/linux/ptrace.h:211:45: sparse:     got struct task_struct [noderef] __rcu *parent
-   include/linux/ptrace.h:211:62: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected struct cred const *ptracer_cred @@     got struct cred const [noderef] __rcu *ptracer_cred @@
-   include/linux/ptrace.h:211:62: sparse:     expected struct cred const *ptracer_cred
-   include/linux/ptrace.h:211:62: sparse:     got struct cred const [noderef] __rcu *ptracer_cred
-   kernel/fork.c:2074:59: sparse: sparse: dereference of noderef expression
-   kernel/fork.c:2075:59: sparse: sparse: dereference of noderef expression
-   kernel/fork.c:2154:9: sparse: sparse: dereference of noderef expression
-   kernel/fork.c:2154:9: sparse: sparse: dereference of noderef expression
---
->> kernel/capability.c:150:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/capability.c:150:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/capability.c:150:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/capability.c:150:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/capability.c:224:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/capability.c:224:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/capability.c:224:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/capability.c:224:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/capability.c:197:43: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const *from @@     got struct __user_cap_data_struct [noderef] __user * @@
-   kernel/capability.c:197:43: sparse:     expected void const *from
-   kernel/capability.c:197:43: sparse:     got struct __user_cap_data_struct [noderef] __user *
-   kernel/capability.c:173:30: sparse: sparse: dereference of noderef expression
-   kernel/capability.c:174:30: sparse: sparse: dereference of noderef expression
-   kernel/capability.c:175:30: sparse: sparse: dereference of noderef expression
-   kernel/capability.c:248:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *to @@     got struct __user_cap_data_struct [noderef] __user ( * )[2] @@
-   kernel/capability.c:248:29: sparse:     expected void *to
-   kernel/capability.c:248:29: sparse:     got struct __user_cap_data_struct [noderef] __user ( * )[2]
-   kernel/capability.c:252:41: sparse: sparse: dereference of noderef expression
-   kernel/capability.c:253:41: sparse: sparse: dereference of noderef expression
-   kernel/capability.c:254:43: sparse: sparse: dereference of noderef expression
---
->> kernel/reboot.c:308:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/reboot.c:308:1: sparse: sparse: Using plain integer as NULL pointer
---
->> kernel/groups.c:153:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/groups.c:153:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/groups.c:190:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/groups.c:190:1: sparse: sparse: Using plain integer as NULL pointer
---
->> kernel/uid16.c:23:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/uid16.c:23:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:28:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:28:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:64:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:64:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:64:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:64:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:64:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:64:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:87:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:87:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:87:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:87:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:87:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:87:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:154:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:154:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:177:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/uid16.c:177:1: sparse: sparse: Using plain integer as NULL pointer
---
->> kernel/kexec_file.c:319:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/kexec_file.c:319:1: sparse: sparse: Using plain integer as NULL pointer
---
->> kernel/rseq.c:308:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/rseq.c:308:1: sparse: sparse: Using plain integer as NULL pointer
---
->> kernel/bpf/syscall.c:2580:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/bpf/syscall.c:2580:1: sparse: sparse: Using plain integer as NULL pointer
---
->> mm/mincore.c:156:1: sparse: sparse: Using plain integer as NULL pointer
->> mm/mincore.c:156:1: sparse: sparse: Using plain integer as NULL pointer
---
->> mm/swapfile.c:2510:1: sparse: sparse: Using plain integer as NULL pointer
->> mm/swapfile.c:2510:1: sparse: sparse: Using plain integer as NULL pointer
-   mm/swapfile.c:3090:1: sparse: sparse: Using plain integer as NULL pointer
-   mm/swapfile.c:3090:1: sparse: sparse: Using plain integer as NULL pointer
-   mm/swapfile.c:441:35: sparse: sparse: context imbalance in 'swap_do_scheduled_discard' - different lock contexts for basic block
-   mm/swapfile.c:612:23: sparse: sparse: context imbalance in 'scan_swap_map_try_ssd_cluster' - different lock contexts for basic block
-   mm/swapfile.c:856:20: sparse: sparse: context imbalance in 'scan_swap_map_slots' - unexpected unlock
-   mm/swapfile.c:938:23: sparse: sparse: context imbalance in 'swap_free_cluster' - different lock contexts for basic block
-   mm/swapfile.c:1121:9: sparse: sparse: context imbalance in 'swap_info_get' - wrong count at exit
-   mm/swapfile.c:1133:36: sparse: sparse: context imbalance in 'swap_info_get_cont' - unexpected unlock
-   mm/swapfile.c:337:9: sparse: sparse: context imbalance in '__swap_entry_free' - different lock contexts for basic block
-   mm/swapfile.c:1203:23: sparse: sparse: context imbalance in 'swap_entry_free' - different lock contexts for basic block
-   mm/swapfile.c:1260:34: sparse: sparse: context imbalance in 'put_swap_page' - different lock contexts for basic block
-   mm/swapfile.c:1321:28: sparse: sparse: context imbalance in 'swapcache_free_entries' - unexpected unlock
-   mm/swapfile.c:337:9: sparse: sparse: context imbalance in 'page_swapcount' - different lock contexts for basic block
-   mm/swapfile.c:337:9: sparse: sparse: context imbalance in 'swap_swapcount' - different lock contexts for basic block
-   mm/swapfile.c:337:9: sparse: sparse: context imbalance in 'swp_swapcount' - different lock contexts for basic block
-   mm/swapfile.c:337:9: sparse: sparse: context imbalance in 'swap_page_trans_huge_swapped' - different lock contexts for basic block
-   mm/swapfile.c:1570:44: sparse: sparse: context imbalance in 'reuse_swap_page' - unexpected unlock
-   mm/swapfile.c:337:9: sparse: sparse: context imbalance in '__swap_duplicate' - different lock contexts for basic block
-   mm/swapfile.c:3603:23: sparse: sparse: context imbalance in 'add_swap_count_continuation' - unexpected unlock
---
->> mm/memfd.c:247:1: sparse: sparse: Using plain integer as NULL pointer
->> mm/memfd.c:247:1: sparse: sparse: Using plain integer as NULL pointer
---
->> net/socket.c:1455:1: sparse: sparse: Using plain integer as NULL pointer
->> net/socket.c:1455:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1492:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1492:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1622:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1622:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1622:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1622:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1628:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1628:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1628:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1628:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1672:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1672:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1710:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1710:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1710:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1710:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1746:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1746:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1746:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1746:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1796:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1796:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1796:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1796:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1807:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1807:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1859:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1859:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1859:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1859:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1859:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1859:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1870:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1870:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1910:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1910:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1947:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1947:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1947:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:1947:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2161:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2161:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2237:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2237:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2334:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2334:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2486:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2486:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2486:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2486:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2497:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2497:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2497:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2497:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2528:1: sparse: sparse: Using plain integer as NULL pointer
-   net/socket.c:2528:1: sparse: sparse: Using plain integer as NULL pointer
---
->> kernel/printk/printk.c:1564:1: sparse: sparse: Using plain integer as NULL pointer
->> kernel/printk/printk.c:1564:1: sparse: sparse: Using plain integer as NULL pointer
-   kernel/printk/printk.c:2875:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected int [noderef] __percpu *__p @@     got int * @@
-   kernel/printk/printk.c:2875:23: sparse:     expected int [noderef] __percpu *__p
-   kernel/printk/printk.c:2875:23: sparse:     got int *
-   kernel/printk/printk.c:2875:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected int [noderef] __percpu *__p @@     got int * @@
-   kernel/printk/printk.c:2875:23: sparse:     expected int [noderef] __percpu *__p
-   kernel/printk/printk.c:2875:23: sparse:     got int *
-   kernel/printk/printk.c:2875:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected int [noderef] __percpu *__p @@     got int * @@
-   kernel/printk/printk.c:2875:23: sparse:     expected int [noderef] __percpu *__p
-   kernel/printk/printk.c:2875:23: sparse:     got int *
-   kernel/printk/printk.c:2875:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected int [noderef] __percpu *__p @@     got int * @@
-   kernel/printk/printk.c:2875:23: sparse:     expected int [noderef] __percpu *__p
-   kernel/printk/printk.c:2875:23: sparse:     got int *
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
-   kernel/printk/printk.c:2875:23: sparse: sparse: dereference of noderef expression
---
->> security/keys/keyctl.c:61:1: sparse: sparse: Using plain integer as NULL pointer
->> security/keys/keyctl.c:61:1: sparse: sparse: Using plain integer as NULL pointer
->> security/keys/keyctl.c:61:1: sparse: sparse: Using plain integer as NULL pointer
->> security/keys/keyctl.c:61:1: sparse: sparse: Using plain integer as NULL pointer
->> security/keys/keyctl.c:61:1: sparse: sparse: Using plain integer as NULL pointer
->> security/keys/keyctl.c:61:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:157:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:157:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:157:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:157:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:157:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:157:1: sparse: sparse: Using plain integer as NULL pointer
-   security/keys/keyctl.c:1516:31: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct key [noderef] __rcu *session_keyring @@     got struct key * @@
-   security/keys/keyctl.c:1516:31: sparse:     expected struct key [noderef] __rcu *session_keyring
-   security/keys/keyctl.c:1516:31: sparse:     got struct key *
-   security/keys/keyctl.c:1526:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct *parent @@     got struct task_struct [noderef] __rcu *real_parent @@
-   security/keys/keyctl.c:1526:16: sparse:     expected struct task_struct *parent
-   security/keys/keyctl.c:1526:16: sparse:     got struct task_struct [noderef] __rcu *real_parent
-   security/keys/keyctl.c:1558:27: sparse: sparse: dereference of noderef expression
-   security/keys/keyctl.c:1558:27: sparse: sparse: dereference of noderef expression
-   security/keys/keyctl.c:1559:27: sparse: sparse: dereference of noderef expression
-   security/keys/keyctl.c:1559:27: sparse: sparse: dereference of noderef expression
-   security/keys/keyctl.c:1754:43: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected struct keyctl_pkey_query [noderef] __user * @@     got struct keyctl_pkey_query * @@
-   security/keys/keyctl.c:1754:43: sparse:     expected struct keyctl_pkey_query [noderef] __user *
-   security/keys/keyctl.c:1754:43: sparse:     got struct keyctl_pkey_query *
---
-   fs/notify/inotify/inotify_user.c:544:51: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct fsnotify_mark_connector *conn @@     got struct fsnotify_mark_connector [noderef] __rcu *i_fsnotify_marks @@
-   fs/notify/inotify/inotify_user.c:544:51: sparse:     expected struct fsnotify_mark_connector *conn
-   fs/notify/inotify/inotify_user.c:544:51: sparse:     got struct fsnotify_mark_connector [noderef] __rcu *i_fsnotify_marks
->> fs/notify/inotify/inotify_user.c:696:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/notify/inotify/inotify_user.c:696:1: sparse: sparse: Using plain integer as NULL pointer
---
->> fs/quota/quota.c:890:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/quota/quota.c:890:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/quota/quota.c:890:1: sparse: sparse: Using plain integer as NULL pointer
->> fs/quota/quota.c:890:1: sparse: sparse: Using plain integer as NULL pointer
+Nit: typo in `references to it`
 
-vim +109 arch/s390/kernel/guarded_storage.c
+> and instead need to use the Opaque type and implement things through
+> pointers instead.
+>=20
+> This should be the last mode object we're introducing for the time =
+being
+> with its own atomic state. Note that we've not added bindings for =
+private
+> modesetting objects yet, but I don't think those will be needed for =
+rvkms -
+> and the same general patterns we're using here should work for adding
+> private modesetting objects.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+>=20
+> TODO:
+> * Add commit data in the future
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms.rs      |   1 +
+> rust/kernel/drm/kms/crtc.rs | 501 ++++++++++++++++++++++++++++++++++++
+> 2 files changed, 502 insertions(+)
+> create mode 100644 rust/kernel/drm/kms/crtc.rs
+>=20
+> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
+> index 5b075794a1155..4b54611fdba8b 100644
+> --- a/rust/kernel/drm/kms.rs
+> +++ b/rust/kernel/drm/kms.rs
+> @@ -3,6 +3,7 @@
+> //! KMS driver abstractions for rust.
+>=20
+> pub mod connector;
+> +pub mod crtc;
+> pub mod fbdev;
+> pub mod plane;
+>=20
+> diff --git a/rust/kernel/drm/kms/crtc.rs b/rust/kernel/drm/kms/crtc.rs
+> new file mode 100644
+> index 0000000000000..d84db49948380
+> --- /dev/null
+> +++ b/rust/kernel/drm/kms/crtc.rs
+> @@ -0,0 +1,501 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +
+> +//! KMS driver abstractions for rust.
 
-916cda1aa1b412 Martin Schwidefsky 2016-01-26  108  
-916cda1aa1b412 Martin Schwidefsky 2016-01-26 @109  SYSCALL_DEFINE2(s390_guarded_storage, int, command,
+Maybe this should be a little more specific?
 
-:::::: The code at line 109 was first introduced by commit
-:::::: 916cda1aa1b412d7cf2991c3af7479544942d121 s390: add a system call for guarded storage
+> +
+> +use super::{
+> +    plane::*,
+> +    ModeObject,
+> +    StaticModeObject,
+> +    KmsDriver,
+> +    UnregisteredKmsDevice
+> +};
+> +use crate::{
+> +    bindings,
+> +    drm::device::Device,
+> +    device,
+> +    prelude::*,
+> +    private::Sealed,
+> +    error::from_result,
+> +    types::Opaque,
+> +    init::Zeroable,
+> +    sync::Arc,
+> +    error::to_result,
+> +};
+> +use core::{
+> +    cell::{Cell, UnsafeCell},
+> +    marker::*,
+> +    ptr::{NonNull, null, null_mut, addr_of_mut, self},
+> +    ops::{Deref, DerefMut},
+> +    mem,
+> +};
+> +use macros::vtable;
+> +
+> +/// The main trait for implementing the [`struct drm_crtc`] API for =
+[`Crtc`].
+> +///
+> +/// Any KMS driver should have at least one implementation of this =
+type, which allows them to create
+> +/// [`Crtc`] objects. Additionally, a driver may store driver-private =
+data within the type that
+> +/// implements [`DriverCrtc`] - and it will be made available when =
+using a fully typed [`Crtc`]
+> +/// object.
+> +///
+> +/// # Invariants
+> +///
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_crtc`] pointers are contained within a =
+[`Crtc<Self>`].
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_crtc_state`] pointers are contained within a =
+[`CrtcState<Self::State>`].
+> +///
+> +/// [`struct drm_crtc`]: srctree/include/drm/drm_crtc.h
+> +/// [`struct drm_crtc_state`]: srctree/include/drm/drm_crtc.h
+> +#[vtable]
+> +pub trait DriverCrtc: Send + Sync + Sized {
+> +    /// The generated C vtable for this [`DriverCrtc`] =
+implementation.
+> +    #[unique]
+> +    const OPS: &'static DriverCrtcOps =3D &DriverCrtcOps {
+> +        funcs: bindings::drm_crtc_funcs {
+> +            atomic_destroy_state: =
+Some(atomic_destroy_state_callback::<Self::State>),
+> +            atomic_duplicate_state: =
+Some(atomic_duplicate_state_callback::<Self::State>),
+> +            atomic_get_property: None,
+> +            atomic_print_state: None,
+> +            atomic_set_property: None,
+> +            cursor_move: None,
+> +            cursor_set2: None,
+> +            cursor_set: None,
+> +            destroy: Some(crtc_destroy_callback::<Self>),
+> +            disable_vblank: None,
+> +            early_unregister: None,
+> +            enable_vblank: None,
+> +            gamma_set: None, // TODO
+> +            get_crc_sources: None,
+> +            get_vblank_counter: None,
+> +            get_vblank_timestamp: None,
+> +            late_register: None,
+> +            page_flip: Some(bindings::drm_atomic_helper_page_flip),
+> +            page_flip_target: None,
+> +            reset: Some(crtc_reset_callback::<Self::State>),
+> +            set_config: Some(bindings::drm_atomic_helper_set_config),
+> +            set_crc_source: None,
+> +            set_property: None,
+> +            verify_crc_source: None,
+> +        },
+> +
+> +        helper_funcs: bindings::drm_crtc_helper_funcs {
+> +            atomic_disable: None,
+> +            atomic_enable: None,
+> +            atomic_check: None,
+> +            dpms: None,
+> +            commit: None,
+> +            prepare: None,
+> +            disable: None,
+> +            mode_set: None,
+> +            mode_valid: None,
+> +            mode_fixup: None,
+> +            atomic_begin: None,
+> +            atomic_flush: None,
+> +            mode_set_nofb: None,
+> +            mode_set_base: None,
+> +            mode_set_base_atomic: None,
+> +            get_scanout_position: None,
+> +        },
+> +    };
+> +
+> +    /// The type to pass to the `args` field of [`Crtc::new`].
+> +    ///
+> +    /// This type will be made available in in the `args` argument of =
+[`Self::new`]. Drivers which
+> +    /// don't need this can simply pass [`()`] here.
+> +    type Args;
+> +
+> +    /// The parent [`KmsDriver`] implementation.
+> +    type Driver: KmsDriver;
+> +
+> +    /// The [`DriverCrtcState`] implementation for this =
+[`DriverCrtc`].
+> +    ///
+> +    /// See [`DriverCrtcState`] for more info.
+> +    type State: DriverCrtcState;
+> +
+> +    /// The constructor for creating a [`Crtc`] using this =
+[`DriverCrtc`] implementation.
+> +    ///
+> +    /// Drivers may use this to instantiate their [`DriverCrtc`] =
+object.
+> +    fn new(device: &Device<Self::Driver>, args: &Self::Args) -> impl =
+PinInit<Self, Error>;
+> +}
+> +
+> +/// The generated C vtable for a [`DriverCrtc`].
+> +///
+> +/// This type is created internally by DRM.
+> +pub struct DriverCrtcOps {
+> +    funcs: bindings::drm_crtc_funcs,
+> +    helper_funcs: bindings::drm_crtc_helper_funcs,
+> +}
+> +
+> +/// The main interface for a [`struct drm_crtc`].
+> +///
+> +/// This type is the main interface for dealing with DRM CRTCs. In =
+addition, it also allows
+> +/// immutable access to whatever private data is contained within an =
+implementor's [`DriverCrtc`]
+> +/// type.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `crtc` and `inner` are initialized for as long as this object =
+is made available to users.
+> +/// - The data layout of this structure begins with [`struct =
+drm_crtc`].
+> +/// - The atomic state for this type can always be assumed to be of =
+type [`CrtcState<T::State>`].
+> +///
+> +/// [`struct drm_crtc`]: srctree/include/drm/drm_crtc.h
+> +#[repr(C)]
+> +#[pin_data]
+> +pub struct Crtc<T: DriverCrtc> {
+> +    // The FFI drm_crtc object
+> +    crtc: Opaque<bindings::drm_crtc>,
+> +    /// The driver's private inner data
+> +    #[pin]
+> +    inner: T,
+> +    #[pin]
+> +    _p: PhantomPinned,
+> +}
+> +
+> +// SAFETY: DRM expects this struct to be zero-initialized
+> +unsafe impl Zeroable for bindings::drm_crtc { }
+> +
+> +impl<T: DriverCrtc> Sealed for Crtc<T> {}
+> +
+> +// SAFETY: Our CRTC interfaces are guaranteed to be thread-safe
+> +unsafe impl<T: DriverCrtc> Send for Crtc<T> { }
+> +
+> +// SAFETY: Our CRTC interfaces are guaranteed to be thread-safe
+> +unsafe impl<T: DriverCrtc> Sync for Crtc<T> { }
+> +
+> +impl<T: DriverCrtc> Deref for Crtc<T> {
+> +    type Target =3D T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.inner
+> +    }
+> +}
+> +
+> +impl<T: DriverCrtc> ModeObject for Crtc<T> {
+> +    type Driver =3D T::Driver;
+> +
+> +    fn drm_dev(&self) -> &Device<Self::Driver> {
+> +        // SAFETY: DRM connectors exist for as long as the device =
+does, so this pointer is always
+> +        // valid
+> +        unsafe { Device::borrow((*self.as_raw()).dev) }
+> +    }
+> +
+> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
+> +        // SAFETY: We don't expose Crtc<T> to users before it's =
+initialized, so `base` is always
+> +        // initialized
+> +        unsafe { addr_of_mut!((*self.as_raw()).base) }
+> +    }
+> +}
+> +
+> +// SAFETY: CRTCs are non-refcounted modesetting objects
+> +unsafe impl<T: DriverCrtc> StaticModeObject for Crtc<T> { }
+> +
+> +impl<T: DriverCrtc> Crtc<T> {
+> +    /// Construct a new [`Crtc`].
+> +    ///
+> +    /// A driver may use this from their [`Kms::create_objects`] =
+callback in order to construct new
+> +    /// [`Crtc`] objects.
+> +    ///
+> +    /// [`Kms::create_objects`]: =
+kernel::drm::kms::Kms::create_objects
+> +    pub fn new<'a, 'b: 'a, P, C>(
 
-:::::: TO: Martin Schwidefsky <schwidefsky@de.ibm.com>
-:::::: CC: Martin Schwidefsky <schwidefsky@de.ibm.com>
+With two lifetimes and two generic types, this is getting a bit =
+convoluted IMHO.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I wonder if more descriptive names for the generics would help here, =
+like `PlaneData` instead of P.
+
+> +        dev: &'a UnregisteredKmsDevice<'a, T::Driver>,
+> +        primary: &'a Plane<P>,
+> +        cursor: Option<&'a Plane<C>>,
+> +        name: Option<&CStr>,
+> +        args: T::Args,
+> +    ) -> Result<&'b Self>
+> +    where
+> +        P: DriverPlane<Driver =3D T::Driver>,
+> +        C: DriverPlane<Driver =3D T::Driver>
+> +    {
+> +        let this =3D Box::try_pin_init(
+> +            try_pin_init!(Self {
+> +                crtc: Opaque::new(bindings::drm_crtc {
+> +                    helper_private: &T::OPS.helper_funcs,
+> +                    ..Default::default()
+> +                }),
+> +                inner <- T::new(dev, &args),
+> +                _p: PhantomPinned,
+> +            }),
+> +            GFP_KERNEL
+> +        )?;
+> +
+> +        to_result(unsafe {
+> +            bindings::drm_crtc_init_with_planes(
+> +                dev.as_raw(),
+> +                this.as_raw(),
+> +                primary.as_raw(),
+> +                cursor.map_or(null_mut(), |c| c.as_raw()),
+> +                &T::OPS.funcs,
+> +                name.map_or(null(), |n| n.as_char_ptr())
+> +            )
+> +        })?;
+> +
+> +        // Convert the box into a raw pointer, we'll re-assemble it =
+in crtc_destroy_callback()
+> +        // SAFETY: We don't move anything
+> +        Ok(unsafe { &*Box::into_raw(Pin::into_inner_unchecked(this)) =
+})
+
+Maybe break this into multiple lines?
+
+> +    }
+> +}
+> +
+> +/// A trait implemented by any type that acts as a [`struct =
+drm_crtc`] interface.
+> +///
+> +/// This is implemented internally by DRM.
+> +///
+> +/// [`struct drm_crtc`]: srctree/include/drm/drm_crtc.h
+> +pub trait AsRawCrtc: StaticModeObject {
+> +    /// The type that should be returned for a CRTC state acquired =
+using this CRTC interface
+> +    type State: FromRawCrtcState;
+> +
+> +    /// Return a raw pointer to the `bindings::drm_crtc` for this =
+object
+> +    fn as_raw(&self) -> *mut bindings::drm_crtc;
+> +
+> +    /// Convert a raw `bindings::drm_crtc` pointer into an object of =
+this type.
+> +    ///
+> +    /// SAFETY: Callers promise that `ptr` points to a valid instance =
+of this type
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_crtc) -> &'a Self;
+> +}
+> +
+> +impl<T: DriverCrtc> AsRawCrtc for Crtc<T> {
+> +    type State =3D CrtcState<T::State>;
+> +
+> +    fn as_raw(&self) -> *mut bindings::drm_crtc {
+> +        self.crtc.get()
+> +    }
+> +
+> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_crtc) -> &'a Self =
+{
+> +        // SAFETY: Our data layout starts with `bindings::drm_crtc`
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> +unsafe impl Zeroable for bindings::drm_crtc_state { }
+> +
+> +impl<T: DriverCrtcState> Sealed for CrtcState<T> {}
+> +
+> +/// The main trait for implementing the [`struct drm_crtc_state`] API =
+for a [`Crtc`].
+> +///
+> +/// A driver may store driver-private data within the implementor's =
+type, which will be available
+> +/// when using a full typed [`CrtcState`] object.
+> +///
+> +/// # Invariants
+> +///
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_crtc`] pointers are contained within a =
+[`Crtc<Self::Crtc>`].
+> +/// - Any C FFI callbacks generated using this trait are guaranteed =
+that passed-in
+> +///   [`struct drm_crtc_state`] pointers are contained within a =
+[`CrtcState<Self>`].
+> +///
+> +/// [`struct drm_crtc`]: srctree/include/drm_crtc.h
+> +/// [`struct drm_crtc_state`]: srctree/include/drm_crtc.h
+> +pub trait DriverCrtcState: Clone + Default + Unpin {
+> +    /// The parent CRTC driver for this CRTC state
+> +    type Crtc: DriverCrtc<State =3D Self> where Self: Sized;
+> +}
+> +
+> +/// The main interface for a [`struct drm_crtc_state`].
+> +///
+> +/// This type is the main interface for dealing with the atomic state =
+of DRM crtcs. In addition, it
+> +/// allows access to whatever private data is contained within an =
+implementor's [`DriverCrtcState`]
+> +/// type.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `state` and `inner` initialized for as long as this object is =
+exposed to users.
+> +/// - The data layout of this structure begins with [`struct =
+drm_crtc_state`].
+> +/// - The CRTC for this type can always be assumed to be of type =
+[`Crtc<T::Crtc>`].
+> +///
+> +/// [`struct drm_crtc_state`]: srctree/include/drm/drm_crtc.h
+> +#[repr(C)]
+> +pub struct CrtcState<T: DriverCrtcState> {
+> +    state: Opaque<bindings::drm_crtc_state>,
+> +    inner: UnsafeCell<T>,
+
+I don=E2=80=99t think this is being passed to C, nor do I see UnsafeCell =
+being used for its interior mutability
+Here, so can=E2=80=99t this just be T?
+
+> +}
+> +
+> +impl<T: DriverCrtcState> Deref for CrtcState<T> {
+> +    type Target =3D T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: Our interface ensures that `inner` will not be =
+modified unless only a single
+> +        // mutable reference exists to `inner`, so this is safe
+> +        unsafe { &*self.inner.get() }
+> +    }
+> +}
+> +
+> +impl<T: DriverCrtcState> DerefMut for CrtcState<T> {
+> +    fn deref_mut(&mut self) -> &mut Self::Target {
+> +        // SAFETY: Our interfaces ensures that we either have one =
+mutable reference to the state
+> +        // (this one), or multiple immutable references
+> +        unsafe { self.inner.get_mut() }
+> +    }
+> +}
+> +
+> +/// A trait implemented by any type which can produce a reference to =
+a [`struct drm_crtc_state`].
+> +///
+> +/// This is implemented internally by DRM.
+> +///
+> +/// [`struct drm_crtc_state`]: srctree/include/drm/drm_crtc.h
+> +pub trait AsRawCrtcState: private::AsRawCrtcState {
+> +    /// The type that this CRTC state interface returns to represent =
+the parent CRTC
+> +    type Crtc: AsRawCrtc;
+> +}
+> +
+> +pub(crate) mod private {
+> +    use super::*;
+> +
+> +    #[doc(hidden)]
+> +    pub trait AsRawCrtcState {
+> +        /// Return a raw pointer to the DRM CRTC state
+> +        ///
+> +        /// Note that CRTC states are the only atomic state in KMS =
+which don't nicely follow rust's
+> +        /// data aliasing rules already.
+> +        fn as_raw(&self) -> *mut bindings::drm_crtc_state;
+> +    }
+> +}
+> +
+> +pub(super) use private::AsRawCrtcState as AsRawCrtcStatePrivate;
+> +
+> +/// A trait for providing common methods which can be used on any =
+type that can be used as an atomic
+> +/// CRTC state.
+> +pub trait RawCrtcState: AsRawCrtcState {
+> +    /// Return the CRTC that owns this state.
+> +    fn crtc(&self) -> &Self::Crtc {
+> +        // SAFETY:
+> +        // * This type conversion is guaranteed by type invariance
+> +        // * Our interface ensures that this access follows rust's =
+data-aliasing rules
+> +        // * `crtc` is guaranteed to never be NULL and is invariant =
+throughout the lifetime of the
+> +        //   state
+> +        unsafe { <Self::Crtc as =
+AsRawCrtc>::from_raw((*self.as_raw()).crtc) }
+> +    }
+> +}
+> +impl<T: AsRawCrtcState> RawCrtcState for T {}
+> +
+> +/// A trait implemented for any type which can be constructed =
+directly from a
+> +/// [`struct drm_crtc_state`] pointer.
+> +///
+> +/// This is implemented internally by DRM.
+> +///
+> +/// [`struct drm_crtc_state`]: srctree/include/drm/drm_crtc.h
+> +pub trait FromRawCrtcState: AsRawCrtcState {
+> +    /// Obtain a reference back to this type from a raw DRM crtc =
+state pointer
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that ptr contains a valid instance of =
+this type.
+> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_crtc_state) -> =
+&'a Self;
+> +}
+> +
+> +impl<T: DriverCrtcState> private::AsRawCrtcState for CrtcState<T> {
+> +    #[inline]
+> +    fn as_raw(&self) -> *mut bindings::drm_crtc_state {
+> +        self.state.get()
+> +    }
+> +}
+> +
+> +impl<T: DriverCrtcState> AsRawCrtcState for CrtcState<T> {
+> +    type Crtc =3D Crtc<T::Crtc>;
+> +}
+> +
+> +impl<T: DriverCrtcState> FromRawCrtcState for CrtcState<T> {
+> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_crtc_state) -> =
+&'a Self {
+> +        // SAFETY: Our data layout starts with =
+`bindings::drm_crtc_state`
+> +        unsafe { &*(ptr.cast()) }
+> +    }
+> +}
+> +
+> +unsafe extern "C" fn crtc_destroy_callback<T: DriverCrtc>(
+> +    crtc: *mut bindings::drm_crtc
+> +) {
+> +    // SAFETY: DRM guarantees that `crtc` points to a valid =
+initialized `drm_crtc`.
+> +    unsafe { bindings::drm_crtc_cleanup(crtc) };
+> +
+> +    // SAFETY:
+> +    // - DRM guarantees we are now the only one with access to this =
+[`drm_crtc`].
+> +    // - This cast is safe via `DriverCrtc`s type invariants.
+> +    // - We created this as a pinned type originally
+> +    drop(unsafe { Pin::new_unchecked(Box::from_raw(crtc as *mut =
+Crtc<T>)) });
+> +}
+> +
+> +unsafe extern "C" fn atomic_duplicate_state_callback<T: =
+DriverCrtcState>(
+> +    crtc: *mut bindings::drm_crtc
+> +) -> *mut bindings::drm_crtc_state {
+> +    // SAFETY: DRM guarantees that `crtc` points to a valid =
+initialized `drm_crtc`.
+> +    let state =3D unsafe { (*crtc).state };
+> +    if state.is_null() {
+> +        return null_mut();
+> +    }
+> +
+> +    // SAFETY: This cast is safe via `DriverCrtcState`s type =
+invariants.
+> +    let crtc =3D unsafe { Crtc::<T::Crtc>::from_raw(crtc) };
+> +
+> +    // SAFETY: This cast is safe via `DriverCrtcState`s type =
+invariants.
+> +    let state =3D unsafe { CrtcState::<T>::from_raw(state) };
+> +
+> +    let mut new =3D Box::try_init(
+> +        try_init!(CrtcState::<T> {
+> +            state: Opaque::new(Default::default()),
+> +            inner: UnsafeCell::new((*state).clone()),
+> +        }),
+> +        GFP_KERNEL
+> +    );
+> +
+> +    if let Ok(mut new) =3D new {
+> +        let new =3D Box::into_raw(new).cast();
+> +
+> +        // SAFETY: DRM simply copies the data from the previous base =
+DRM state here and does not
+> +        // move the contents of `ptr`
+> +        unsafe { =
+bindings::__drm_atomic_helper_crtc_duplicate_state(crtc.as_raw(), new) }
+> +
+> +        new
+> +    } else {
+> +        null_mut()
+> +    }
+> +}
+> +
+> +unsafe extern "C" fn atomic_destroy_state_callback<T: =
+DriverCrtcState>(
+> +    _crtc: *mut bindings::drm_crtc,
+> +    crtc_state: *mut bindings::drm_crtc_state,
+> +) {
+> +    // SAFETY: DRM guarantees that `state` points to a valid instance =
+of `drm_crtc_state`
+> +    unsafe { =
+bindings::__drm_atomic_helper_crtc_destroy_state(crtc_state) };
+> +
+> +    // SAFETY:
+> +    // * DRM guarantees we are the only one with access to this =
+`drm_crtc_state`
+> +    // * This cast is safe via our type invariants.
+> +    // * All data in `CrtcState` is either Unpin, or pinned
+> +    drop(unsafe { Box::from_raw(crtc_state as *mut CrtcState<T>) });
+> +}
+> +
+> +unsafe extern "C" fn crtc_reset_callback<T: DriverCrtcState>(
+> +    crtc: *mut bindings::drm_crtc,
+> +) {
+> +    // SAFETY: DRM guarantees that `state` points to a valid instance =
+of `drm_crtc_state`
+> +    let state =3D unsafe { (*crtc).state };
+> +    if !state.is_null() {
+> +        // SAFETY:
+> +        // * We're guaranteed `crtc` is `Crtc<T>` via type invariants
+> +        // * We're guaranteed `state` is `CrtcState<T>` via type =
+invariants.
+> +        unsafe { atomic_destroy_state_callback::<T>(crtc, state) }
+> +
+> +        // SAFETY: No special requirements here, DRM expects this to =
+be NULL
+> +        unsafe { (*crtc).state =3D null_mut(); }
+> +    }
+> +
+> +    // SAFETY: `crtc` is guaranteed to be of type `Crtc<T::Crtc>` by =
+type invariance
+> +    let crtc =3D unsafe { Crtc::<T::Crtc>::from_raw(crtc) };
+> +
+> +    // Unfortunately, this is the best we can do at the moment as =
+this FFI callback was mistakenly
+> +    // presumed to be infallible :(
+> +    let new =3D Box::try_init(
+> +        try_init!(CrtcState::<T> {
+> +            state: Opaque::new(Default::default()),
+> +            inner: UnsafeCell::new(Default::default()),
+> +        }),
+> +        GFP_KERNEL
+> +    ).expect("Unfortunately, this API was presumed infallible");
+> +
+> +    // SAFETY: DRM takes ownership of the state from here, and will =
+never move it
+> +    unsafe {
+> +        bindings::__drm_atomic_helper_crtc_reset(
+> +            crtc.as_raw(),
+> +            Box::into_raw(new).cast()
+> +        )
+> +    };
+> +}
+> --=20
+> 2.46.1
+>=20
+>=20
+
+Overall LGTM.
+
+By the way, what is WIP about this?
+
+=E2=80=94 Daniel=
 
