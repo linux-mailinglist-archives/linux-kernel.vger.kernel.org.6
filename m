@@ -1,151 +1,180 @@
-Return-Path: <linux-kernel+bounces-423546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557779DA985
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:01:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6079DA988
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:02:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36037164D30
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C05281A40
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 14:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5549C1FCFDF;
-	Wed, 27 Nov 2024 14:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804AC1FCFD0;
+	Wed, 27 Nov 2024 14:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zEyvsi9o"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="lzYoEZgG"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EC53232
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BBD3232
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 14:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732716056; cv=none; b=EXQUThEQ7C3WGjGENzyB/fgd2ANeyyochk/84nJdYRVLtawNZUPNusoQ7D22bIcyhvNn2qE5ss76PSL44zcMc5czo3McrvwjL1UT0B9XOnMUgmi1HxikhbITHfUORuI52wTBqtRND1Io5svgCD9mI9TACPSHx1igaCD1DJwN0VY=
+	t=1732716170; cv=none; b=DwcJP8ZxBBTWFfPR8eazWh5ceqFN7adRE+nXdUK3nNOvHMR81lZiFmRL0HxbOLWYHEJhyzgALgb68s2vjQ39/AkeZO0Y4T93xiNq+T3Um6Nkffq1T6tMvHEO92HVDjZ0TfEe48Lzp04P6sELFBvn4EN7sfbx2r47cxQvyfuiNCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732716056; c=relaxed/simple;
-	bh=W1DxBS8fDYv3TRxGQaecFUft0N2XtDvc2T/7HVuJ2y0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=McSegAx1zjAieq6KIgjhxQL17uMZg00YvVz8TGuAH1kV5IF4K9o1hNiDwzyogOcnO0q0vGtuCzJdgDVLMR4xP9NRNAKKggr7RvnTAkK6hVi7Q1fUN3inN5TsTop94wBqcuV7c4PpT7+JOSGI93/URa7hTMnYtdWUQ6SxTwuSV3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zEyvsi9o; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea5447561bso6468301a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:00:55 -0800 (PST)
+	s=arc-20240116; t=1732716170; c=relaxed/simple;
+	bh=qb9TFOTX3syqD5AaXirIorMhGgw6vDS0CAsUGJCBPdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2gSgX6k8729oMXYWLSrR6shuwktvp4V1Glui2/u6x9r76FOJuguORBRhk2YHlPZQkpy2gLqCQo6Tb+fCa7hJhaGrk0V2aEQFU//ADTMQJi/O0qjmR55t2k+uF31f0FtW4MjCQXKpy85vJrXwO4dTcEnx/LT+crRFGWLuEzbPhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=lzYoEZgG; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a14d6bf4so26188605e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:02:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732716054; x=1733320854; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EdwWS10u7VCBrGSuDVmxmJIAY/501oDBhCB/j2Uherc=;
-        b=zEyvsi9oxc1WkLQF3ylJM7iMhdnLKRmx1eIs9LYCH5cm6VFS4MAJYghSX4+ayLqQgX
-         F97xH2Cp2qfV9vNOVVG++SNj/CShrYHnINJeeJ4rhXAjHCBDJnrj/9NQQcu5YIigXGcW
-         MTobQMEVT+ZgXPEv50pr05kfuVadLjDVcbFK4Ib7Vb1eTW8NMjpx16xd9j02tZ3/TXdu
-         Q2bYbrn0+oxQGfciUlui+vnrqw/F9HPaeMJvP7wcM7AuQbmAx5nPhCAAYO017jtAspGb
-         +Foq4EApTQ1NPoXx5XARYTC1YAWNIQMcROuKbLXYpEGoHyqc/glarh82UdJ70k6zzpOw
-         PdBA==
+        d=ventanamicro.com; s=google; t=1732716167; x=1733320967; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HHoVh6bdQ+49A7HwWA2MZyeijxPsG/IR+pS2oskUYMg=;
+        b=lzYoEZgGDBHqJu3AlUvpBQvxAVqHInKJB0N0ailkEKgYXgUHw5KJi4z3MV46GQG3/M
+         CEZuAcZK933p2uB253LLUn85ZrPMQt10RlsyLtjB/WNn1QiVFDDrUwjmwGZbzOpV7Fmr
+         wH7g31VGuI+49O3Ny/PpGRSjxsYSPvvHB78bkyezSPJrhmHJourL8quVmpv4e9KFBIcF
+         EM258NE2JQqrs7xr3TonquiQPr4v4yC2jHY43yvNH+fIESNScSHG0Gs8t/BC9nPzCOM6
+         usgCC2cjPHTivrYx8uAhD8A/MqxkV68+asyG8OnuvIzu/zuCt9WEFrG9D5WBrGK1w14H
+         DhKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732716054; x=1733320854;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EdwWS10u7VCBrGSuDVmxmJIAY/501oDBhCB/j2Uherc=;
-        b=ZzINZ3XIx6bkLdFy41cHR4yDAZIU7aHF9AN5xshGb/fm8OW8QAj0o96UQDlRlVsYrg
-         aw7hiCJy0zwYWn7s4YDT0JEehQHIS+sl0QU/GYqLl/e5tvLWx3gEXojh3vrHC4nLX0Ju
-         SR4Amj7vfur2YkcNSurCpl5wRrT+T7gsc4bZWCafm7nOPIqY/piFI8eGh9G98dg9NQZR
-         WgLTMKSDCtruBqRg8ry70kvEC6+pO99MkhXotDzmbpAMsjdTmp5aICKAVVjCtazhBkYK
-         YlHI4XjBRkXKFW2M91pEwyRfsY0BK76+SqKkLniujdyfMyy6O30YQJoFrxrc7F5/c5iU
-         BlRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjEa0t3Lb3nQY0R0tjiadcElbeyCTwrIJOmCOqz0oB2vVGuRKqHe+NX0AsVEfXFV6Qtwykn2Q5Jdv3FHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycRvzSx8aXHXn318lf+uO2qyZDvszuGCvDHIuLxfJyPZw9Zxg1
-	EFn1vd7ap3xd4ACwICMt1Nk7AAElNFT6lh4MlG/4xzkWX3Cr86a1RXih2BTc8imJJDwvwZpSS6I
-	jjA==
-X-Google-Smtp-Source: AGHT+IEceWTnc4XBuGV61B8FQtJMJ4GYGuGv/V6MFcmhcEEziILmmaudgMsDr7JH5R7liBwxVt0pxc+caLk=
-X-Received: from pjbph7.prod.google.com ([2002:a17:90b:3bc7:b0:2c7:b802:270a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2245:b0:2ea:61de:3900
- with SMTP id 98e67ed59e1d1-2ee097e3427mr3408431a91.32.1732716054604; Wed, 27
- Nov 2024 06:00:54 -0800 (PST)
-Date: Wed, 27 Nov 2024 06:00:49 -0800
-In-Reply-To: <Zz/6NBmZIcRUFvLQ@intel.com>
+        d=1e100.net; s=20230601; t=1732716167; x=1733320967;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHoVh6bdQ+49A7HwWA2MZyeijxPsG/IR+pS2oskUYMg=;
+        b=UvaTY8Yx6Dcp3z9zjF70/aG8kum4QBwaz6z9WVTx5g2J780ZKrwslnIcIkqCM/DiFh
+         xx5QqTmchonDeb8TSIrwZzb9cQZjE2Tn9zaJKE8/74EGxoauFGHY04UgteKEpLPuag+h
+         vSnBk9qeL8SGdBzJqhJtsaeGP0+UVV0AEHqcrB7nQm0yztV/4PeH88nIYRLRfujXGam7
+         TQS3e+ODwjuJ00cbbxSgVR4xEpz5zAOSnauQbRNpiwy1VoqLvz3xplXTyVQ/0dcwbrkM
+         Hj6A1HNVAJFXyBZejDlCk7UYx0h3VVzJ6/i7OMJw+reNw4a67Qc7C0WB3EeCNdaVdRQz
+         ZxdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6++tTCCy5RNo0tskBA0TqsBbVaLdsKvzTjgJQWcsMCqIkwoBGMx+RTvWFiLMqzJ5e5PoPPErUB8gscVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwockENE3x//6spwgF05hFZM/uZ0z9HcxqmuwzxvKJjZsyIeOKS
+	ICXVr3W6TT5uBH7WMQKwRdJ/H2/D+x4uHZIcQnQHKJBRGImtgkzyFQE/ws4c6wM=
+X-Gm-Gg: ASbGncutVICOMF0NBHypXMWhwnGoGBvpDqmp3b/JYiZlYu7e7ON7cuOodiIO3yWsCN9
+	xiQPw4Z2jDvJ9tXvDBLzfSo0Mt6xvBSDOY76bPsy63/iBOQhdJVhvhVat3NV2MalQsZVTOepVJ/
+	gEa6szgRwzB+DQUwi75v6IyZZ8MAXCVp3RWUPUxhkbh+0aaUkU3b0XJlYSo6BxCDvBUOj3ZpJv4
+	DISkedMcQwYGqIbVejbFVbblRY87d1qmNBbCgSbBFdfHdLyLK6eC8MxCdmTSGz2yFZLHdrBVK6X
+	bdHW1SUbuPsIZuRwyX1uYJ6aesG4iN/M5Ek=
+X-Google-Smtp-Source: AGHT+IFe1fSW20TaAbPYl6Y04HjqEdbDAiCLB5PflXpOVEcCMA7NIYGVv9p91IM/S4pid4RHtdLlvA==
+X-Received: by 2002:a05:600c:3b24:b0:434:a75b:5f59 with SMTP id 5b1f17b1804b1-434a9dbb06cmr33861275e9.3.1732716156911;
+        Wed, 27 Nov 2024 06:02:36 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa763a59sm22192305e9.11.2024.11.27.06.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 06:02:36 -0800 (PST)
+Date: Wed, 27 Nov 2024 15:02:35 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Charlie Jenkins <charlie@rivosinc.com>, zhangkai@iscas.ac.cn
+Subject: Re: [PATCH] riscv: module: use a plain variable for list_head
+ instead of a pointer
+Message-ID: <20241127-2c074e38cc599c7e2d0da505@orel>
+References: <20241127103016.2699179-1-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-8-adrian.hunter@intel.com> <Zz/6NBmZIcRUFvLQ@intel.com>
-Message-ID: <Z0cmEd5ehnYT8uc-@google.com>
-Subject: Re: [PATCH 7/7] KVM: TDX: Add TSX_CTRL msr into uret_msrs list
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
-	isaku.yamahata@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, yan.y.zhao@intel.com, weijiang.yang@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241127103016.2699179-1-cleger@rivosinc.com>
 
-On Fri, Nov 22, 2024, Chao Gao wrote:
-> >+static bool tdparams_tsx_supported(struct kvm_cpuid2 *cpuid)
-> >+{
-> >+	const struct kvm_cpuid_entry2 *entry;
-> >+	u64 mask;
-> >+	u32 ebx;
-> >+
-> >+	entry = kvm_find_cpuid_entry2(cpuid->entries, cpuid->nent, 0x7, 0);
-> >+	if (entry)
-> >+		ebx = entry->ebx;
-> >+	else
-> >+		ebx = 0;
-> >+
-> >+	mask = __feature_bit(X86_FEATURE_HLE) | __feature_bit(X86_FEATURE_RTM);
-> >+	return ebx & mask;
-> >+}
-> >+
-> > static int setup_tdparams(struct kvm *kvm, struct td_params *td_params,
-> > 			struct kvm_tdx_init_vm *init_vm)
-> > {
-> >@@ -1299,6 +1322,7 @@ static int setup_tdparams(struct kvm *kvm, struct td_params *td_params,
-> > 	MEMCPY_SAME_SIZE(td_params->mrowner, init_vm->mrowner);
-> > 	MEMCPY_SAME_SIZE(td_params->mrownerconfig, init_vm->mrownerconfig);
-> > 
-> >+	to_kvm_tdx(kvm)->tsx_supported = tdparams_tsx_supported(cpuid);
-> > 	return 0;
-> > }
-> > 
-> >@@ -2272,6 +2296,11 @@ static int __init __tdx_bringup(void)
-> > 			return -EIO;
-> > 		}
-> > 	}
-> >+	tdx_uret_tsx_ctrl_slot = kvm_find_user_return_msr(MSR_IA32_TSX_CTRL);
-> >+	if (tdx_uret_tsx_ctrl_slot == -1 && boot_cpu_has(X86_FEATURE_MSR_TSX_CTRL)) {
-> >+		pr_err("MSR_IA32_TSX_CTRL isn't included by kvm_find_user_return_msr\n");
-> >+		return -EIO;
-> >+	}
-> > 
-> > 	/*
-> > 	 * Enabling TDX requires enabling hardware virtualization first,
-> >diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-> >index 48cf0a1abfcc..815ff6bdbc7e 100644
-> >--- a/arch/x86/kvm/vmx/tdx.h
-> >+++ b/arch/x86/kvm/vmx/tdx.h
-> >@@ -29,6 +29,14 @@ struct kvm_tdx {
-> > 	u8 nr_tdcs_pages;
-> > 	u8 nr_vcpu_tdcx_pages;
-> > 
-> >+	/*
-> >+	 * Used on each TD-exit, see tdx_user_return_msr_update_cache().
-> >+	 * TSX_CTRL value on TD exit
-> >+	 * - set 0     if guest TSX enabled
-> >+	 * - preserved if guest TSX disabled
-> >+	 */
-> >+	bool tsx_supported;
+On Wed, Nov 27, 2024 at 11:30:14AM +0100, Clément Léger wrote:
+> list_head does not need to be allocated, it can be a plain variable.
+
+rel_head's list_head member, rel_entry, doesn't need to be allocated,
+its storage can just be part of the allocated rel_head.
+
+> Remove the pointer which allows to get rid of the allocation as well as
+> an existing memory leak.
+
+It'd be nice to add how the memory leak was found. Inspection or some
+tool?
+
 > 
-> Is it possible to drop this boolean and tdparams_tsx_supported()? I think we
-> can use the guest_can_use() framework instead.
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> 
+> ---
+>  arch/riscv/kernel/module.c | 18 ++++--------------
+>  1 file changed, 4 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+> index 1cd461f3d872..47d0ebeec93c 100644
+> --- a/arch/riscv/kernel/module.c
+> +++ b/arch/riscv/kernel/module.c
+> @@ -23,7 +23,7 @@ struct used_bucket {
+>  
+>  struct relocation_head {
+>  	struct hlist_node node;
+> -	struct list_head *rel_entry;
+> +	struct list_head rel_entry;
+>  	void *location;
+>  };
+>  
+> @@ -634,7 +634,7 @@ process_accumulated_relocations(struct module *me,
+>  			location = rel_head_iter->location;
+>  			list_for_each_entry_safe(rel_entry_iter,
+>  						 rel_entry_iter_tmp,
+> -						 rel_head_iter->rel_entry,
+> +						 &rel_head_iter->rel_entry,
+>  						 head) {
+>  				curr_type = rel_entry_iter->type;
+>  				reloc_handlers[curr_type].reloc_handler(
+> @@ -704,16 +704,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+>  			return -ENOMEM;
+>  		}
+>  
+> -		rel_head->rel_entry =
+> -			kmalloc(sizeof(struct list_head), GFP_KERNEL);
+> -
+> -		if (!rel_head->rel_entry) {
+> -			kfree(entry);
+> -			kfree(rel_head);
+> -			return -ENOMEM;
+> -		}
+> -
+> -		INIT_LIST_HEAD(rel_head->rel_entry);
+> +		INIT_LIST_HEAD(&rel_head->rel_entry);
+>  		rel_head->location = location;
+>  		INIT_HLIST_NODE(&rel_head->node);
+>  		if (!current_head->first) {
+> @@ -722,7 +713,6 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+>  
+>  			if (!bucket) {
+>  				kfree(entry);
+> -				kfree(rel_head->rel_entry);
+>  				kfree(rel_head);
+>  				return -ENOMEM;
+>  			}
+> @@ -735,7 +725,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+>  	}
+>  
+>  	/* Add relocation to head of discovered rel_head */
+> -	list_add_tail(&entry->head, rel_head->rel_entry);
+> +	list_add_tail(&entry->head, &rel_head->rel_entry);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.45.2
+> 
+>
 
-Yeah, though that optimized handling will soon come for free[*], and I plan on
-landing that sooner than TDX, so don't fret too much over this.
+Other than the commit message change suggestions,
 
-[*] https://lore.kernel.org/all/20240517173926.965351-1-seanjc@google.com
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
