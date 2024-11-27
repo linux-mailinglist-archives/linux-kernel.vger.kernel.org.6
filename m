@@ -1,200 +1,242 @@
-Return-Path: <linux-kernel+bounces-423115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BF79DA30E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:26:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7931B9DA312
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F8E284160
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:26:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1213B25ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B2014D29D;
-	Wed, 27 Nov 2024 07:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CBF14EC60;
+	Wed, 27 Nov 2024 07:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="TwOtOjqs"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2118.outbound.protection.outlook.com [40.107.220.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HvEVI+Ai"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00605149C69
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732692393; cv=fail; b=idQftOEI4do2ZH+WmXmd3KVmzK7aYVPcE8jNxNssD4r/l8cd0C5beVAU5f1HtiUxtLzZSmC2DBHC3VXjdrG3JklKhnl2wUPnQPpNKhhPTwVcog0bO/ipdIN9Eul70EOmr3DhETwuyZ1uDAI4xAyVO5sxjkApFzAGV1T8CFqmMIk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732692393; c=relaxed/simple;
-	bh=uNz96WJ8p7yNdJxM5nj9NAkZmsCFHmdRwYrFc/mJATs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KY5PoTQniebo+MrWSOlW53LEKcuNqssTBV1uGDkm4eIbOdL0UIytEhzgTeKxw/fGJpg26W+g6bYXLRgB0UxwMx2xDgGNEJjsf2k36B3sI//bpA3s0YtxX0ZymEtYbfJkpJXn6tN2tADScx8vJkfv27XUMS6sBmr90Mc7oZAnFLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=TwOtOjqs; arc=fail smtp.client-ip=40.107.220.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y/pbZ27CS71Th5lxDLaDolzu8Ey16qrdfrWI+XVX87xGk/oz+bhMKEK7Ezdh1A4E8hya4MgeeatTygKJk8Zw5WfLWGcZJUT5NMCYksoaUdr49eXA1cSTNNfBV6XcbdidqkwGVX9XZeaC/0lgyuPhLHxFnGzLDqUlI8vG1sajHP59XZeFuLYXysijmGDyCslJDvYq87VquW8TBVfyrOKpQA3qKxuZkDHWQbWUhKX77fcLLhSdutB3j+dM4EIe5C6HujiRpOiHJXWWgbGMvyVJEneHmx3XXWrcL0OMl9CQU8FaPHodmHfJjXevnG/w9FkMLF/EDjJLaVIHEyRD6rYzrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jgLcsK9eFO8eEiK5wN0BwNOIu2oZF9j4TgRrPf7cavI=;
- b=pyFLVlauCPO5T2IQ8fwbmvWJNhYN2nSE+pyEqbC4fHkv0455cEuDfaZaIe5iQLxq+Vi1XuHpoLfkTEe2yRPuHemHXFI+OeQm8PwgWsQaX0HJM5aetGIHISCgx6j2l7jc+DC6o7BXRxxqU6iJE5MrNzDF/TVD0fnYVn+zFc2dt/6xmm/PokDGLcqjRYgFcnrd3Fn6cBOsPSd90bj9/MqR9j6sw/A3QmDC7dKazZ+DRsR//Gd7ezegjDIazYVtdoHkFNXNNbZxFSYduU88i4WjyE1qkUYkkUuJ1omlUzcIUF8+D0+Br2QPoBi1I7pgwnB8UsDfSHkh9sm3RCr+lJAfRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B961114
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732692432; cv=none; b=Tzruxolq4lsPXz8IjGQFY+QZWQFLDbHOxen943UuXdBCuubNxsPo0uYNA3GUnDqQz4qWG7zWUXRTp8+onlsE7zRqqMFR7bwV7PylUvz9rDGie51EnSfryCDa645UFPw++Qb/y8InSPDKqzu6WbV6QnMuZLOlIgh2P7/pams7yoI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732692432; c=relaxed/simple;
+	bh=VEeTdkPIshGtUMIjF1+MQ8SsBy4eSEWr18q7NQ2DlmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ubxb091blUOybVw5FtNXdtMH0WPl66US9nitcXsZHL3S/RnlZaTk0G1eDKYo3KVNfyk8r4PCUBJAB95TtpNFYZZP8tW0oJjswg20wfInC5PgpGWsi8Tu8cCuaMzYCsxo+yvdCpGad2w96uDIzot+US15FSlhPx7cJD3Mi4QOjzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HvEVI+Ai; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7252f48acf2so536338b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:27:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jgLcsK9eFO8eEiK5wN0BwNOIu2oZF9j4TgRrPf7cavI=;
- b=TwOtOjqs2F6XnAqIDkxySDSZNXnr9dgQc3QdoNOOR1Bv5scBf/+t+g/qexPcTkNMtedJRnHwGgIApxBUdjO+iE+OBs1DIk/yOSeBULwbpsMA+MCdXgbDIykZY7nQSlal8qtVIDnklEO6d2Z8GgSR/ffy0OtP4r0G7nuvey63GNM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SJ0PR01MB6445.prod.exchangelabs.com (2603:10b6:a03:2a1::14) by
- BL3PR01MB6996.prod.exchangelabs.com (2603:10b6:208:35b::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.11; Wed, 27 Nov 2024 07:26:28 +0000
-Received: from SJ0PR01MB6445.prod.exchangelabs.com
- ([fe80::223:9849:bfff:b119]) by SJ0PR01MB6445.prod.exchangelabs.com
- ([fe80::223:9849:bfff:b119%5]) with mapi id 15.20.8207.010; Wed, 27 Nov 2024
- 07:26:26 +0000
-Message-ID: <a2b41bc9-72f5-40f1-ac44-d2c495fb3dd4@os.amperecomputing.com>
-Date: Wed, 27 Nov 2024 15:26:16 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] sched/fair: Fix panic if NEXT_BUDDY enabled
-To: 20241125021222.356881-2-adamli@os.amperecomputing.com,
- peterz@infradead.org, mingo@redhat.com, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
- patches@amperecomputing.com, cl@linux.com,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20241125021222.356881-1-adamli@os.amperecomputing.com>
- <20241125021222.356881-2-adamli@os.amperecomputing.com>
- <70dfefef-aaa3-43be-9f8a-85adc07942fc@linux.ibm.com>
-Content-Language: en-US
-From: Adam Li <adamli@os.amperecomputing.com>
-In-Reply-To: <70dfefef-aaa3-43be-9f8a-85adc07942fc@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR06CA0249.apcprd06.prod.outlook.com
- (2603:1096:4:ac::33) To SJ0PR01MB6445.prod.exchangelabs.com
- (2603:10b6:a03:2a1::14)
+        d=chromium.org; s=google; t=1732692429; x=1733297229; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWsPbH9Ey/0wa0vmOqHRbHISu5d2cxb8zw/sMgDSg6c=;
+        b=HvEVI+Ai3EYvp31aVBnvk2dDhrveVJCi+PgDquQl2J7X6mLVdzn4a3vxH0DKHkV6BF
+         2NakHs1ibnxQp2BpQmUnUDviE65sWC9i8wvcTawTtwDYQXxsHILi+IeTCDj9dy2B/5of
+         IdYoEN8niU7vKF+TRlJjLZuqR7AXwf80CJx5M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732692429; x=1733297229;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sWsPbH9Ey/0wa0vmOqHRbHISu5d2cxb8zw/sMgDSg6c=;
+        b=FQfOOH00zgIQ65lKCuEqH6xauzO06MjLZcSlHsWHujMB25hdZm+cXYXvKiFzZvXrhY
+         cmtMLu856pZdgBD49LqJdjKE1JzmiLvQk3vqU4cwQE05V9ZuCqSbH/G6jO/blrFNg7+s
+         U/ouULDqpmRycOyNtxROxIfRJyvzct9chJ5Ssl4cA4EjDyBqB/7Qv6BRNC7/ZVzlMDWU
+         sdG311F1GUx/EqFeOVTD3uHBSg0t1bV8uyo139ybPL/ANQXXVW6cG0zVW5TY2IkhTjOY
+         yAfZNKqwyganfq0yZIMoKexqbtNEoHzalcXnJfPm074og5zR1pFxVdWdaNF7v7i2kMsE
+         RzDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQhkPHydSuONgD56hbEuSHYnanGtoE31YpmSgufMMx4yb9ycW5hJ306o1K1B/35GIV70gZcf4e1MQG5mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzji7qg90bC+u2YVPCZ2A4ptinmvybTCjB7Tis6lbXAFu/Ckty
+	YLvJeeg1UVXFzmAn494z59uqRs5RrH7/OBksUAb+NufsPmiW26fSy4VdqjSK0VdqAUryFJYSb+k
+	=
+X-Gm-Gg: ASbGncuWlo9H1bxf0UT4yQPVS5o3OSIVbrqNaCLVT7Cm284FvW6SAW0sh3Hlt045P1d
+	lKoNj+66wq+MGno7j9K7+WgthiZaswdbHR6g/H4pIlfediAmhSGl0pDF1sUwMBFhwDSmixjPM8b
+	uPJSL5jF9Cw3VOBOSUY6YjQLWa9Tur3Cy4+tPzE27hw1VZuGl8BMfu7CPndnlj9RXOzk+omDYCL
+	iD6zDz2xyDd2gFp6T3uEA5LSbBpK+c5UsvJyWf3vl1v6NYnbqlhboMt0C7Goc2qOXnj3PRPpqeC
+	IEPZSeMR6KvTza4D
+X-Google-Smtp-Source: AGHT+IE5tw2e1pOb/xjqlTGt6fPLYpkD/b5/gc2Wqn9OuTCyavRZJaI8tvotprO2e5zfd1Vb5/WrWw==
+X-Received: by 2002:a05:6a00:ccd:b0:724:6dcd:6c46 with SMTP id d2e1a72fcca58-7253006e0b2mr3426817b3a.14.1732692429250;
+        Tue, 26 Nov 2024 23:27:09 -0800 (PST)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com. [209.85.210.177])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc4c28sm9894192a12.3.2024.11.26.23.27.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 23:27:08 -0800 (PST)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7252f48acf2so536305b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:27:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/0mLx4+AotlEaI6zLxspWOLRK6TMujzdshb4Jv/vU0oRYn2zO+wFiPf2yzHUDiFhcHHkONW6wtKAYumg=@vger.kernel.org
+X-Received: by 2002:a05:6a00:3c91:b0:724:f6a2:7b77 with SMTP id
+ d2e1a72fcca58-7253013312cmr3529250b3a.17.1732692427462; Tue, 26 Nov 2024
+ 23:27:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR01MB6445:EE_|BL3PR01MB6996:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3d8bd87-cd24-4c70-1a42-08dd0eb4cd4a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aVhZQ0FJU1crSW43TFdpOHpqZnRuK0JlR3ZWbmFRYmliVjVPOHZoYndURHdn?=
- =?utf-8?B?UXhMeVlTRGdyYk1wN0pZdno1T3lzVU9BbFdDN0lkeWtDTmp2T3ozWkVVRnhy?=
- =?utf-8?B?MGhxVXFjOUxqUXU5WjZ3UGF1Nk9rYU5TOVlJUE52V3QzYk9WaE1UTHVMMllH?=
- =?utf-8?B?c2FpQVpEYW9UOVpKbXJaVm9Zc005a3VjZ1ZuVnNqU0xmR3JrcDBSQmhXN2tT?=
- =?utf-8?B?bUNEV3gvSi9lem82RHhxWC9veUNONmRjeDdvVTVybjZqMVZNQm5qTWMyNWRj?=
- =?utf-8?B?RS9WNUNrOUJBdVFpZzFwYm1BRjU3NHltakUwbm4wTlRZUnd6MEdLQnp4UGI1?=
- =?utf-8?B?aytUR0U2Y3FrVERoYmZsczBTOHF2em9ncUlTbytPd0RMakRJNUcyaXBBa3ps?=
- =?utf-8?B?cEM3VnNjaVdEaWJvdFIzbFBtNWxtNDd4TTRzakpzOGxuVGQrbDFyeG5QV0kr?=
- =?utf-8?B?ajBydkliSDl5WmhDNnRFTWZsdWEwbHJaUVBHSTlVS1BPYkhZL2psd1VXMzZB?=
- =?utf-8?B?Q2l2bTBtR0dUWjBnNVNLc3lyZ3hyWkxVODd3Y2lhb3UvVW5EdGdUcHVYWkVS?=
- =?utf-8?B?MnNVNVNPbmxQYUhvZE92WEZJRmFGa2JwMjZmVlJyd29LTjJQYWJIYjR6aUZX?=
- =?utf-8?B?Qkw5NVJGbThNNzQvc00vUDM3ZFhuYmdEa0E0UE1UTDRlN1ovRTZjRUVScUZJ?=
- =?utf-8?B?NFJOOHRldWZBOEx3aW82MlFaVXJMYnZFck5tb1FDaHVEM1d3TElqNFhVREov?=
- =?utf-8?B?QjNMNThjUmk5TGRSTi9meVZzOXRiL1NEak9ETndMTWs5c2lIaEk2L21LNmJx?=
- =?utf-8?B?UndVbzMwdGNOWWw1blMyL0RUMDdlM0FsZVFSa0hybmRxZGcxS1NIL1FsL2hh?=
- =?utf-8?B?VVBNK3VwV2ZaRTN6ZzNwcjN0d1NoQmJKbTN4RU40SU8rMVB2Z0dOMXZVWTVG?=
- =?utf-8?B?Y2JMNTJXNWNSaFJuc3hnenFJZW9hVTRMYmtyU1ZlcGE0b0MrUGhwNHF5RTN5?=
- =?utf-8?B?S1poYXdHUmZYL2FRRVVaam9iUEwzTVBReHhYeVk3TCtUQ0ZYc3dUNEo0bGxk?=
- =?utf-8?B?YlNwSHBJV2ZIa0ZSUmlVRCtiRG5lZkVCTjVJQWUzWUFVY1RseXZUU1V2dDRI?=
- =?utf-8?B?TG5uWG1jZDBJN3BnOG5DV3hqZmE4Vk94cit0VVRaSFA0ekRoNVdRaW04VUtO?=
- =?utf-8?B?RlFZb29qaDVzY0YrQlNCanpSV0k5N09WYi9YSUp2RDl1ckxtY3FhcGJiZTJy?=
- =?utf-8?B?N2huTHZKVW50R01qK0o1Qm0vZUdJZ2RGTE4vVHIwdXlwa0haRGZuZmxSczhp?=
- =?utf-8?B?aDRnZnI3SlJtZnZqQW9pQU5tVGpvc1FOWjlER0lZZEJiR1hoTDhwNTlONVNx?=
- =?utf-8?B?VXpmMGVBd3dDK0MyQ2k5OXNpcjJrTUN4L3J5WWxEK2hGUzZ2TitqeC9oRDZu?=
- =?utf-8?B?aHpCcU12VnY3cU0xT1BJekpJWFlpRXZHZ1lGbFlIZW1GWXNuMU9kemd4NVhm?=
- =?utf-8?B?R2x2RGNoS0F6QWhuUUxWMzl1TlB4ekdqVGg2UWl3Y3R3bDlBSkdURi9ZZ0FP?=
- =?utf-8?B?eTJNM2NWc3JFMEhuZmQ2SC9iRkNwN0licXlDaG1MYkRyNmVmMXR6TFoyK1dy?=
- =?utf-8?B?M3AxZlNkd2FjYmZPOGFhUXJsTTRSZUlnN0VuN1lZcXdHWFRxMFFFQ0E2NEJ0?=
- =?utf-8?B?Tnk2ZzdqYnB0ZktTbzdLNyt2eDVGb3FMaTlMdndBRU5JMlczTDNnVGhiVEJa?=
- =?utf-8?B?dFFLbTE0ZVU2K2lqZFFiUnhEYmtvSnNrd053ZU5icHFyNXBkYlZKUGJaRThZ?=
- =?utf-8?Q?3m3rEpWzJ386VveRUoxIsNx946vZZ/DIzHxY4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR01MB6445.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VUVoS0NEWVFjVXIrVVp3S0Flb0xDdDdIMUdTZkh6bHBkbzVBcG5LU040SEdN?=
- =?utf-8?B?S05FbWFaSFNESFZSRWI0ZXJtRk55WFhVWFdReEYwd0wyZTV2TE9BWnRDUHNT?=
- =?utf-8?B?WG9zVlZVSkdRYkJHVzJZWGFyTWFGTlRrcDV1UmcxVGtaaHVBbldqSGp1S3pZ?=
- =?utf-8?B?RUdHMmxJeWcyakQydWt3Rm8yVnI2UlNlQ045OTlvUUMra1ZHN3k0OWJUWXJZ?=
- =?utf-8?B?WWFRRjFkenQ4dHJENGExckpuVkxNci9zb05ESnVPbHJ6L1JGQkxMd2NWV0tT?=
- =?utf-8?B?M3VGYldReFZ0TnlmWXZ2S1IzUDhlZml1a2tBVzZtN0tjKzJaRzNiSnlSUHJ3?=
- =?utf-8?B?S3dlL1FUKzZrMHRQWFhjSzZ0TktjMSsxVkRVMzhwL3JxTlpBRFlwN2dlRFV2?=
- =?utf-8?B?alVsSjVraHVpTXhGQlVrQllUS3A0WnhhbGl5OUpiZ000cEhYczVQSjN5Q1dZ?=
- =?utf-8?B?NlkvODNPc01lN1duNzJ4K2V1WldNZGh4N0FNczVTU0Jtcm9FUVh0Y3diSWpY?=
- =?utf-8?B?UnhDbGErNWFSdWlrTjZPcStGYno3bTBnTFhXK0xLNFdWSUN1TThpN2hUbFJn?=
- =?utf-8?B?ZDZPbDBRK0RaTGZnWW9tc05aZU5QZXJrT21QaFVjdjJ0K01WZTFidGIwOTFt?=
- =?utf-8?B?cmtjaUZ4Uk41MEhzMDhjNnVtM3JFWDhQK2lCZmFERjl2eGdmZEZOWTFjVWhN?=
- =?utf-8?B?ajljQndmc20wSmxaNFFrTlVPc1VlRjlPTTJsL3J6UGFqdmVqVUEvRHZpd1hn?=
- =?utf-8?B?WFMxUnZ2elJaU09hb3BZeld6SFJtVkd5S0VmR1Vnb00wRkd3U1VxNUhtcmtx?=
- =?utf-8?B?N0tubEN0aktiVU40VGs5dzV6Z3VvNEp5MXdWcHhIR2JGQVZ2ajdZcHVnUktJ?=
- =?utf-8?B?ZGdkMGZsV2krOXNwK2ZSK1ZoaHI3K1ZpTmtiZTNETXdtUkc2UkErSXZaYm9a?=
- =?utf-8?B?TEtBcFhyUVhUbGxOTU53a25mMVVmSk01MEtpL2ZuNU1UNi9BTGRnQlB1dmkz?=
- =?utf-8?B?bnBSeG4vdGc4amh6VjExb3A5bU1NNk5LUTlrZzJIVzBPOWowekZzcXdmdUhp?=
- =?utf-8?B?dEtwRnU0bjVzNkJLa1czWVQySzZ6QUE4dldERFF0a0RadDlRb0VrRVpxYTkz?=
- =?utf-8?B?Zmo4djFVZDV1cWp4MlBuYUFodEs3eEZJQ3lFdks4K3Y4UHZpZ1VqbUYxYzFI?=
- =?utf-8?B?anRMTm5Qdmk5c1k3UXpkUGs2Y054eHZ3RTJOM09iNVg5MnlGaEo5RGJHWHFi?=
- =?utf-8?B?NVBEWjhEbVRUam5EMWhPVzhTZHFrSG9aQTRQMkpDNEd4WUNBOWk3Ukg2YUpz?=
- =?utf-8?B?STJBcnY0c2VKZEMzdDFQdjR4cnR5NTV1RTNwUkRLRFl5bnptNlg4OXRIVys5?=
- =?utf-8?B?K2lCcGRiaFd0RjRXd1BYc2FOb0NDY05iNlpSVWRWUmpwanlDYUpFU3RGSTJ0?=
- =?utf-8?B?bUlBd0dsL2pBbHQxVXBjbXNWM1FZOVE0YmFFNlJNalh1eWZJRGZXb0gxKzlF?=
- =?utf-8?B?Z1g1WVA0OHRRMXFIUnZLeDUva2JMN1loWlZmVVFMTUNsRHRtY2hhOHhTT1p5?=
- =?utf-8?B?ekd5UEJoMGNXVkUwZk5HaUlQT2puRXlra05VN01OWGo0V29qK01LT0V2Uk5x?=
- =?utf-8?B?RWdSSU9yandaRml3emVhdUE3ZFI4T0JLd0Z3ek5sb0RXaWpzT08xT3RNM3oz?=
- =?utf-8?B?bXltbjlxUnFEQkhoRUc0dG1sK0RDaEJNRXhFYnM2NjgzZjZoQ21MMUgzemk0?=
- =?utf-8?B?RE5BTzdLUnF3RmJNa0RqV1hkU0VtV3cyTmNXR0RHS1dzazlSQWZJNFZHdm1x?=
- =?utf-8?B?QlJFbnJlZEIyRW9YUmh2Z0N0ZzRwelpFNzhsV3F0Zjh2SytXcmQvT1pvWkhZ?=
- =?utf-8?B?b1lsc01WSERrQkM4amFpREZ1ZUs4NEVvUHBkUDNEZGpnNEplYTN4NkZZb2Vr?=
- =?utf-8?B?OTcxNkZCbVFZU2NKVFliem1pYm44L1RtQmtvOEZGcWZMRGNWVGxjdDZ4aFkr?=
- =?utf-8?B?TTEyUlorY1VXQVBPQlNQOXF6amROKzBuem9BTG92WG1OL3hHQUxpYkJ4ZXlm?=
- =?utf-8?B?djc3RWUwQ21tbXU5czdLbDZjbjB0ZjM5UzJLRFVSYVZpckcrV1ZqZW1LSy96?=
- =?utf-8?B?T01Ib1pDLzZhS3ZXRlNZVmJCYW8zNFdzQThjNmZYaDRuSEpzSmNjdmsyQ1BN?=
- =?utf-8?Q?8BZkXLKAvvUlffXwQ0pAl7Y=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3d8bd87-cd24-4c70-1a42-08dd0eb4cd4a
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR01MB6445.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 07:26:26.1194
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ykV7vZNNB7uRLywUyHWkgtiasYx0jR1iKv2NZauZISKbf7OjbnE4Ihkht7mrxEg0n2OBN9/yYNauLun9/FkD1fO1AlnT0kpCSb42k7OYel+wQUelJcHjeInsXBEIhfi1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR01MB6996
+References: <20241126-uvc-granpower-ng-v1-0-6312bf26549c@chromium.org> <20241126-uvc-granpower-ng-v1-2-6312bf26549c@chromium.org>
+In-Reply-To: <20241126-uvc-granpower-ng-v1-2-6312bf26549c@chromium.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Wed, 27 Nov 2024 08:26:56 +0100
+X-Gmail-Original-Message-ID: <CANiDSCu+v+nf3tifsbybf8a5Ea54c7ag4B61BDkN9FA9ogM+SA@mail.gmail.com>
+Message-ID: <CANiDSCu+v+nf3tifsbybf8a5Ea54c7ag4B61BDkN9FA9ogM+SA@mail.gmail.com>
+Subject: Re: [PATCH 2/9] media: uvcvideo: Remove dangling pointers
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/25/2024 6:16 PM, Madadi Vineeth Reddy wrote:
-> On 25/11/24 07:42, Adam Li wrote:
->> Enabling NEXT_BUDDY may trigger warning and kernel panic:
-> 
-> IIUC, this happens due to a race condition between choosing the next_buddy and
-> dequeuing the task from the runqueue as soon as its lag becomes zero, thereby causing
-> task_of(se) to result in a null dereference in pick_task_fair?
-> 
-> Correct me if I am wrong.
-> 
-pick_eevdf() may return NULL, which triggers this NULL pointer dereference
-at pick_next_entity():
-	struct sched_entity *se = pick_eevdf(cfs_rq);
-	if (se->sched_delayed)
+[Resending in plain text, seem like today is not may day]
 
-Enabling NEXT_BUDDY is more likely to trigger this panic.
+On Tue, 26 Nov 2024 at 17:20, Ricardo Ribalda <ribalda@chromium.org> wrote:
+>
+> When an async control is written, we copy a pointer to the file handle
+> that started the operation. That pointer will be used when the device is
+> done. Which could be anytime in the future.
+>
+> If the user closes that file descriptor, its structure will be freed,
+> and there will be one dangling pointer per pending async control, that
+> the driver will try to use.
+>
+> Keep a counter of all the pending async controls and clean all the
+> dangling pointers during release().
+>
+> Cc: stable@vger.kernel.org
+> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 40 ++++++++++++++++++++++++++++++++++++++--
+>  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
+>  drivers/media/usb/uvc/uvcvideo.h |  3 +++
+>  3 files changed, 43 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 5d3a28edf7f0..11287e81d91c 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1589,7 +1589,12 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+>         mutex_lock(&chain->ctrl_mutex);
+>
+>         handle = ctrl->handle;
+> -       ctrl->handle = NULL;
+> +       if (handle) {
+> +               ctrl->handle = NULL;
+> +               WARN_ON(!handle->pending_async_ctrls)
+There is obviously a missing semicolon here.
+I screwed it up when I reordered the patches to move it to the first
+part of the set.
+Luckily we have CI :).
 
-I added another patch to check return value of pick_eevdf() in v2:
-https://lore.kernel.org/all/20241127055610.7076-1-adamli@os.amperecomputing.com/
+You can see the fixed version here:
+https://gitlab.freedesktop.org/linux-media/users/ribalda/-/commits/b4/uvc-granpower-ng
 
-Thanks for review.
--adam
+I do not plan to resend the whole series until there are more comments.
+But I am sending the first two patches as a new set, they are fixes. I
+will also send the last patch alone, it is unrelated to this.
+
+> +               if (handle->pending_async_ctrls)
+> +                       handle->pending_async_ctrls--;
+> +       }
+>
+>         list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+>                 s32 value = __uvc_ctrl_get_value(mapping, data);
+> @@ -2050,8 +2055,11 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>         mapping->set(mapping, value,
+>                 uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+>
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> +       if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
+> +               if (!ctrl->handle)
+> +                       handle->pending_async_ctrls++;
+>                 ctrl->handle = handle;
+> +       }
+>
+>         ctrl->dirty = 1;
+>         ctrl->modified = 1;
+> @@ -2774,6 +2782,34 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+>         return 0;
+>  }
+>
+> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+> +{
+> +       struct uvc_entity *entity;
+> +
+> +       guard(mutex)(&handle->chain->ctrl_mutex);
+> +
+> +       if (!handle->pending_async_ctrls)
+> +               return;
+> +
+> +       list_for_each_entry(entity, &handle->chain->dev->entities, list) {
+> +               int i;
+> +
+> +               for (i = 0; i < entity->ncontrols; ++i) {
+> +                       struct uvc_control *ctrl = &entity->controls[i];
+> +
+> +                       if (!ctrl->handle || ctrl->handle != handle)
+> +                               continue;
+> +
+> +                       ctrl->handle = NULL;
+> +                       if (WARN_ON(!handle->pending_async_ctrls))
+> +                               continue;
+> +                       handle->pending_async_ctrls--;
+> +               }
+> +       }
+> +
+> +       WARN_ON(handle->pending_async_ctrls);
+> +}
+> +
+>  /*
+>   * Cleanup device controls.
+>   */
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 97c5407f6603..b425306a3b8c 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
+>
+>         uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+>
+> +       uvc_ctrl_cleanup_fh(handle);
+> +
+>         /* Only free resources if this is a privileged handle. */
+>         if (uvc_has_privileges(handle))
+>                 uvc_queue_release(&stream->queue);
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 07f9921d83f2..2f8a9c48e32a 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -612,6 +612,7 @@ struct uvc_fh {
+>         struct uvc_video_chain *chain;
+>         struct uvc_streaming *stream;
+>         enum uvc_handle_state state;
+> +       unsigned int pending_async_ctrls; /* Protected by ctrl_mutex. */
+>  };
+>
+>  struct uvc_driver {
+> @@ -797,6 +798,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+>  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+>                       struct uvc_xu_control_query *xqry);
+>
+> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
+> +
+>  /* Utility functions */
+>  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
+>                                             u8 epaddr);
+>
+> --
+> 2.47.0.338.g60cca15819-goog
+>
+
+
+-- 
+Ricardo Ribalda
 
