@@ -1,145 +1,109 @@
-Return-Path: <linux-kernel+bounces-423141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82469DA363
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:57:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E9216672A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:57:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7517C155C94;
-	Wed, 27 Nov 2024 07:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bT4ZJj7N"
-Received: from lelvem-ot05.ext.ti.com (lelvem-ot05.ext.ti.com [198.47.23.236])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD7C9DA367
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:59:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135D18E0E;
-	Wed, 27 Nov 2024 07:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.236
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE497B21ACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:59:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AA3156F54;
+	Wed, 27 Nov 2024 07:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cz1p9C04"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96C618E0E;
+	Wed, 27 Nov 2024 07:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732694219; cv=none; b=D3XVYOnTGbptxCZPoUF6V/MWOjizLUoA3dYPo5NFA23o5XuSEnhRyczMJkAeaB+OzMDxMNke5cM/KgxNcIIdMvFpVuXsD7q/Qd1KkaEDGAcg0fDqvpo0kYFVVBX6h/xWeiRW1FgrhSNYj6I3qFZe8uFenQpP0i4peDaMWe3dKYs=
+	t=1732694334; cv=none; b=LPir4k34RnyQKMbt0VPOKx3Ud1gWmUFmIIFmL+yY7LXErNO/G+QmGgpNvxdzpC9JMcUA3lPWHvx38eVrB2APmQqln55M4bH20FSZdM4+w8Gy6PP1VdtC3Xh06Gq1VXaRvcazJ1JtqeUWIOSg1TisNyz7bwG7v0h72eWl2AFJP2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732694219; c=relaxed/simple;
-	bh=w9ZUC24fqxg1qtXiqFIGcqXnTll6fq+dMcHtyfDw7r8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hjrBbpznjRgTtGFi3qm56Bqkt6OSqJUdKpPASZze7d1my636QG1VDAWoW/xEhxRT0S0MqMXLFLT7lEzRe8Y2M8y9FK7eVO8sjSoqmDVLQ2Md4/VnWSTjYS6FMrfkjnVIKx+Wx+HGxGrSks8U3EU+hOlmo8Z8a88xirRPuof+C9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bT4ZJj7N; arc=none smtp.client-ip=198.47.23.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot05.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AR7unwZ757910
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 27 Nov 2024 01:56:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732694209;
-	bh=tjTIKW9eo5borKok+xBtBjM7UMaGh7skviWUJzH4050=;
-	h=From:To:CC:Subject:Date;
-	b=bT4ZJj7NarbK8iwZtvoi31q9/+DVyFKMh4ed5q0v65ldsu40xVo+/gUS2NIn+JwDG
-	 1qwvH/9Z44BZPO2LBPINGCWJd4MdzlQ9eHIJ4Q5zH4l+wlrB6XDFOgPHQRR85n7Qj/
-	 a1NHIcmresNaptBW7D+E6fkmRfdg/jsvJbEi8lps=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AR7ungO104187;
-	Wed, 27 Nov 2024 01:56:49 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 27
- Nov 2024 01:56:49 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 27 Nov 2024 01:56:48 -0600
-Received: from a-dutta.dhcp.ti.com (a-dutta.dhcp.ti.com [172.24.227.92])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AR7ujN9052665;
-	Wed, 27 Nov 2024 01:56:46 -0600
-From: Anurag Dutta <a-dutta@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <vaishnav.a@ti.com>,
-        <a-dutta@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j7200: Add node to disable loopback connection
-Date: Wed, 27 Nov 2024 13:26:44 +0530
-Message-ID: <20241127075644.210759-1-a-dutta@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732694334; c=relaxed/simple;
+	bh=6JyzI5o2AujomxV45o4ngewZg7a7VRndqzge/Zg0rSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abab1CZuxcKy+DapnCpunORc6bMArilijzvxcmEv4DkjAaoFLN2IzzaKG9NkYn5icbEwuU23GabS/OPctUU7a0e6X3V9wuanTJMRYY6ngKP5TjO9XRHVA0o5U4UPcS8BJ5AvNFXCMKRTd2kyZti10DySfI08nVa7IcjLWOAZjGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cz1p9C04; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1D49640E01D6;
+	Wed, 27 Nov 2024 07:58:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id CfYpScBxOcRs; Wed, 27 Nov 2024 07:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732694326; bh=im+StteL0walDEw+HJ2ysBCjd+H+8Az7ZF6UhoPbYq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cz1p9C04M5VnEcZL2auXIhLu7WIZ0ywfapGrJGTKMEyLEQP4AnN+D5npiHAyttgqM
+	 gNd8osuCdO3YrNb9N41cAKLS8tE7AmSEGbPsoWxhzWCQXneqhl/n4P9OOAJKlwvp/k
+	 cMCWyKLn5rORIg7V/AzwRgviHF8gmbCCrM06h/wAZfoyesari3/Ygg7yQ5dBpUPySu
+	 2GJoK3F6eaKe3u1TKYL2rYzFaGzCkzW5A1uy4TcUNChDLbF3UMwc5J/RyUpYXlxTyl
+	 HnR1u1UD7UAZbFzHMQcvXj/avQgoIZVHaUluejm4iKRX6IGy5jLzGMJ5cwbjeWOFM4
+	 KNSECS1q5BN1jCzJ+Jxblr8K6nFGx688X2L732ng3jL0hv8C4xHDxhCfTukA+7Bb8W
+	 EowCm9mVqQOSIBzkXbiOBmUEaQCGYUqoaVvAx36Aeou0tuVomvyKVW7U4UtP9BeaBK
+	 HM4A2vPZzNXnTp5OT0qDOWosMHEc3zNS+qwxWUJIzkrn2onglpkKjHp3ehGTzohR3m
+	 Tvk69d4nqvgVRSA+wZF+m47hKYS+kuobbs1LKWy+pu0xGjAank9l07NOmBNDrH/yIJ
+	 WgCr9C8QEWOAUKIYBFjS4w9E3earPFgKGCWwEKV7MQ4Z00GWMwznMZsSYPgRGFabOX
+	 Lg4ulo1ihyp2XMloA9cxPt6Q=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5113E40E0169;
+	Wed, 27 Nov 2024 07:58:31 +0000 (UTC)
+Date: Wed, 27 Nov 2024 08:58:25 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xin Li <xin@zytor.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+Subject: Re: [PATCH v3 09/27] KVM: VMX: Do not use
+ MAX_POSSIBLE_PASSTHROUGH_MSRS in array definition
+Message-ID: <20241127075825.GDZ0bRIf0bWrtzYDSK@fat_crate.local>
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-10-xin@zytor.com>
+ <20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local>
+ <e7f6e7c2-272a-4527-ba50-08167564e787@zytor.com>
+ <20241126200624.GDZ0YqQF96hKZ99x_b@fat_crate.local>
+ <f2fa87d7-ade8-42e2-8b2b-dba6f050d8c2@zytor.com>
+ <20241127065510.GBZ0bCTl8hptbdph2p@fat_crate.local>
+ <a76d9b6c-5578-4384-970d-2642bff3a268@zytor.com>
+ <20241127071008.GCZ0bF0EGespFhxwlP@fat_crate.local>
+ <43e47da0-1257-4e68-9669-8e3d4915fa57@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <43e47da0-1257-4e68-9669-8e3d4915fa57@zytor.com>
 
-CTRLMMR_MCU_SPI1_CTRL register controls if MCU_SPI1 is directly
-connected to SPI3 in the MAIN Domain (default) or if MCU_SPI1
-and SPI3 are independently pinned out. By default, the field
-SPI1_LINKDIS (Bit 0) is set to 0h. In order to disable the direct
-connection, the SPI1_LINKDIS (Bit 0) needs to be set to 1h. Model
-this functionality as a "reg-mux" device and based on the idle-state
-property, enable/disable the connection bewtween MCU_SPI1 and MAIN_SPI3.
+On Tue, Nov 26, 2024 at 11:32:13PM -0800, Xin Li wrote:
+> It's self-contained. 
 
-The register field description has been referred from J7200 TRM [1]
-(Table 5-517. CTRLMMR_MCU_SPI1_CTRL Register Field Descriptions). 
+It better be. Each patch needs to build and boot on its own.
 
-[1] https://www.ti.com/lit/pdf/spruiu1
+> Another approach is to send cleanup patches in a separate preparation patch
+> set.
 
-Signed-off-by: Anurag Dutta <a-dutta@ti.com>
----
+Not in this case. The next patch shows *why* you're doing the cleanup so it
+makes sense for them going together.
 
-Hi all,
-The above functionality can be achieved by changing the idle-state of
-the "spi1_linkdis" node. As observed, when the SPI1_LINKDIS (Bit 0)
-is 0h, the connection remains enabled and SPIDEV loopback test is
-succssful [1]. But, when the state changes to 1, the the SPI1_LINKDIS
-(Bit 0) becomes 1h and the SPIDEV loopback test fails [2] indicating
-that the connection between MCU_SPI1 and MAIN_SPI3 has been disabled.
-
-Test logs:
-[1] https://gist.github.com/anuragdutta731/9ac287f27f1dfb3a5ccee4cc86e02dbb
-[2] https://gist.github.com/anuragdutta731/3ed7b7b5a1a3dab494ba46858b972088
- 
- arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts | 4 ++++
- arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi       | 7 +++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-index db43e7e10b76..f684ce6ad9ad 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-@@ -409,6 +409,10 @@ &serdes_ln_ctrl {
- 		      <J7200_SERDES0_LANE2_QSGMII_LANE1>, <J7200_SERDES0_LANE3_IP4_UNUSED>;
- };
- 
-+&mcu_spi1 {
-+	mux-controls = <&spi1_linkdis 0>;
-+};
-+
- &usb_serdes_mux {
- 	idle-states = <1>; /* USB0 to SERDES lane 3 */
- 	bootph-all;
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-index 6a8453865874..56ab144fea07 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-@@ -184,6 +184,13 @@ phy_gmii_sel: phy@4040 {
- 			reg = <0x4040 0x4>;
- 			#phy-cells = <1>;
- 		};
-+
-+		spi1_linkdis: mux-controller@4060 {
-+			compatible = "reg-mux";
-+			reg = <0x4060 0x4>;
-+			#mux-control-cells = <1>;
-+			mux-reg-masks = <0x0 0x1>;
-+		};
- 	};
- 
- 	wkup_conf: bus@43000000 {
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
