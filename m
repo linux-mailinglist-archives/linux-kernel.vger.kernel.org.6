@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-423083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371179DA294
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:00:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01AF9DA291
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:59:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3FF283F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CAAB166F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808CD1494A6;
-	Wed, 27 Nov 2024 06:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="d/hfn2e5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ReCEv65H"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631F613BAE4;
-	Wed, 27 Nov 2024 06:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984FF1494A6;
+	Wed, 27 Nov 2024 06:59:52 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BB013BAE4
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732690796; cv=none; b=lV2td8E+i8dK7DBfbGdnj0ju3DY9o2eBdx88WZqRGJGFeYaX/1wWJ21GLDJ5TXKHfEZVIZX0z8JJxSKLB9HLSgPM143wC2FGntQJ8jxmccdIpvD05bSMT/PFQfsERHZV1ZW0gdlINWb+ju9z0slC5XXjnKW0QdrYCgCbq2EsTf0=
+	t=1732690792; cv=none; b=DQ4WxsAFRDCjrpTiCqbzkmEHNgtl7jyqPvR+zYWqjyAZ6WqHBfwv3uqH2Z8BxqHRZ0TyESD+bA1lzsRmnSY6V3vTB+fzi0OJyvhqTHWWR2WGGSTKqi0jwrqBSizRJe2rDdI1p/zr9rhslV7o38Y2KOUJAHxetZiU5Pv0G6WJYJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732690796; c=relaxed/simple;
-	bh=z2k2FPmeYeD7YEJLXiMJm2AVYkDzjw2DD2GJtiYcJXY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=tyRLjEOgzicS8KRpDSBYoLiQkwzTYqxBrfqbNBMsZ5wv2xdSlyIrOpxFojuZdKLBwtkcK0ETawQcbmIak4u/5yMwOEKuaoa1E0Xtx3FyAA7KdwIQ6oq/8POsgbQM599jmpnbn+bqGja/Zjyxdl4y6Zxgi+5GWoaDX5OGwDMBoOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=d/hfn2e5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ReCEv65H; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 512481380650;
-	Wed, 27 Nov 2024 01:59:53 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 27 Nov 2024 01:59:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732690793;
-	 x=1732777193; bh=/dkBCpxMRicHp1J617Swu7hSxvIKAmw8XcVl1p1pm44=; b=
-	d/hfn2e5ZupZSdn1UrqO2idtH2PvbQUI7UnPIMKh1lZ5j5yogQqJFwop+fUzKpQy
-	wKe5pZRC4XggX3cP5FXEfn3NKz4LDX8y+cSrbhFQnn/OdM3ag99ElCsVhCj/yzj3
-	790hzaOPccly0LNLbnVqKfPMYxDE3yk4FoTWTo19V3HTKI32NOVgywgTRj5qCEXf
-	kiLkL9nodUGIaZf2mUEldkboWw8DSGcCSGzdy3jS/ayd7RT/pEw14EIjrPJyL+8g
-	Fm0XTZSou/m8L2xh479eEHPbVY+3n9amTTz3BubZWK2ffgt63ee6cu+2NROLOpGP
-	cBpVW/YKUFSd3SOUp4Ykmw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732690793; x=
-	1732777193; bh=/dkBCpxMRicHp1J617Swu7hSxvIKAmw8XcVl1p1pm44=; b=R
-	eCEv65HiKSbRUH2Gq+RXQk3OQ9AZmGvod33rSVf32iW5mxpOUeD0MzdfjH1k8Fwn
-	B/n4UiLFKQY0TlkkEHvWwL3bVBLBSh5UBcLZ1BooOLo9WvGqtnMJk7HlVB+THrMv
-	bWIxPHpSVd+TW8RZRgSPlX1jqmN0UvjMADFHbRwRwZGYP2PPxoYo9MpgPvN4jCgr
-	VpDeq31fNj7facdQz59sxfoSPXQnNU7jcqdkXd2n7cOjGoiyjrVQe/Zovq+tvXJ0
-	CrGi9II9JSMcBibPqVuV5uie864W7YIwqHC2UyszPlLrJEC/2kzNdka66U67YhdX
-	S/rFVG1Pv1AeemQ9Bw07w==
-X-ME-Sender: <xms:Z8NGZ7QWSo7NkfLg453N6RCWFUlNwr29YwmZv6msgocnON0yBAOFzA>
-    <xme:Z8NGZ8x-13OC7iihOFyEL6UQfED8wD7vrTsNDKKQVSw-BXLbu9vvz0s90drbvXU-j
-    MytlzKVfaKCV2RemXM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeekgddutddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudei
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugi
-    drohhrghdruhhkpdhrtghpthhtohepfhgvshhtvghvrghmseguvghngidruggvpdhrtghp
-    thhtohepvghssggvnhesghgvrghnihigrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrg
-    hmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvg
-    hvpdhrtghpthhtoheprghishhhvghnghdrughonhhgsehngihprdgtohhm
-X-ME-Proxy: <xmx:Z8NGZw2dHLJAxepzVxODX8m9zY6TyhfRtQTMMbbu5HhEmW6aw1vNfw>
-    <xmx:Z8NGZ7D4J9479QHFI34qDA-u0LdKouX6WB5tWv-yk4WgnYmHx5d8iw>
-    <xmx:Z8NGZ0jH9p4lThNE_vOrJZBUsqNPp4-xPDamuorS4BmZ8DX20XXzaA>
-    <xmx:Z8NGZ_olZA0aEAVQDFY5ycZbzBPMvVnCLgi6MLqdUnVH773p7H1XLg>
-    <xmx:acNGZwzZj3z7XfDRA5Y0tSmcPd1vo3TyT8meEfRYIU2wP7ldEXvgXsbV>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8E4122220071; Wed, 27 Nov 2024 01:59:51 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732690792; c=relaxed/simple;
+	bh=JQvrt6sjdRP/+QXxKE+FZiMkcYoa6Y191y+8p1PuuIU=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UDVTT2A2pwfLcZa4biObrnw6qvj2UftRv+TkKLkuUHVkfG/p6jZ+NnFBEdCxTsek9fUXU727NqGeBf5pqOYAsOhb5Sh4tWjd3x3llgX89uU6g/bYcYAD1Omraqtx61lWj0fgiA0TZHHgqZNJehCjkVpSlBnKMunyqkOeIYc57Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Axjq9iw0ZngqdJAA--.54776S3;
+	Wed, 27 Nov 2024 14:59:46 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxyOJhw0ZnG5BpAA--.24506S3;
+	Wed, 27 Nov 2024 14:59:46 +0800 (CST)
+Subject: Re: [PATCH v4 03/10] objtool: Handle different entry size of rodata
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-4-yangtiezhu@loongson.cn>
+ <20241126070214.26gj5fnsjx5b5vp3@jpoimboe>
+ <e56d48c6-172d-5b31-86de-98384fe58e98@loongson.cn>
+ <4993a8d0-d08b-d9c1-f13f-934af75c3103@loongson.cn>
+ <20241127005711.de2ml367dw32ncg3@jpoimboe>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <450eb29d-f1ad-d9b3-4bb7-965ef5a45250@loongson.cn>
+Date: Wed, 27 Nov 2024 14:59:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 27 Nov 2024 07:59:31 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Fabio Estevam" <festevam@gmail.com>, "Guenter Roeck" <linux@roeck-us.net>
-Cc: "Linus Walleij" <linus.walleij@linaro.org>,
- "Esben Haabendal" <esben@geanix.com>, "Russell King" <linux@armlinux.org.uk>,
- "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Dong Aisheng" <aisheng.dong@nxp.com>, "Jacky Bai" <ping.bai@nxp.com>,
- "Rasmus Villemoes" <rasmus.villemoes@prevas.dk>,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- "Fabio Estevam" <festevam@denx.de>
-Message-Id: <4af23996-a618-4816-8375-d00748be0700@app.fastmail.com>
-In-Reply-To: 
- <CAOMZO5DW3t-sof_uaFa_qJPE3WFq_155mFTxGMWh0m++csgopg@mail.gmail.com>
-References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
- <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
- <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
- <CACRpkdaBR5mmj43y_80b9jd3TAqRWMdCyD9EP6AY-Y0-asz4TA@mail.gmail.com>
- <1ff005f8-384d-465e-9597-b6d5fd903862@roeck-us.net>
- <CAOMZO5DW3t-sof_uaFa_qJPE3WFq_155mFTxGMWh0m++csgopg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
-Content-Type: text/plain
+In-Reply-To: <20241127005711.de2ml367dw32ncg3@jpoimboe>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMCxyOJhw0ZnG5BpAA--.24506S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7KF4ruFW3KFyftF1fXw47Awc_yoW8Gr4UpF
+	4DCrWxKr4UZFW3AwnFy3W8Was8Gw47XryIvr9FvFW8WFnrXr98Jr4xur1j93Z5XrsxKa1S
+	kFWSgF15Aws0y3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jY
+	SoJUUUUU=
 
-On Wed, Nov 27, 2024, at 01:12, Fabio Estevam wrote:
-> However, after thinking more about it, I wonder if the patch in
-> Subject is worth it.
+
+
+On 11/27/2024 08:57 AM, Josh Poimboeuf wrote:
+> On Tue, Nov 26, 2024 at 09:22:22PM +0800, Tiezhu Yang wrote:
+>>> OK, if I understand your comment correctly, this should be an
+>>> arch-specific function defined in
+>>> tools/objtool/arch/*/include/arch/elf.h, otherwise it also needs to
+>>> check ehdr.e_machine
+>>> in tools/objtool/include/objtool/elf.h.
+>>
+>> There are only macro definitions in
+>> tools/objtool/arch/*/include/arch/elf.h,
+>> so I think it is better to add reloc_size() in
+>> tools/objtool/include/objtool/elf.h,
+>> like this:
+>>
+>> static inline unsigned int reloc_size(struct elf *elf, struct reloc *reloc)
+>> {
+>>         if (elf->ehdr.e_machine == EM_X86_64) {
+>>                 switch (reloc_type(reloc)) {
+>>                 case R_X86_64_32:
+>>                 case R_X86_64_PC32:
+>>                         return 4;
+>>                 case R_X86_64_64:
+>>                 case R_X86_64_PC64:
+>>                         return 8;
+>>                 default:
+>>                         ERROR("unknown X86_64 reloc type");
+>>                 }
+>>         } else if (elf->ehdr.e_machine == EM_LOONGARCH) {
+>>                 switch (reloc_type(reloc)) {
+>>                 case R_LARCH_32:
+>>                 case R_LARCH_32_PCREL:
+>>                         return 4;
+>>                 case R_LARCH_64:
+>>                 case R_LARCH_64_PCREL:
+>>                         return 8;
+>>                 default:
+>>                         ERROR("unknown LoongArch reloc type");
+>>                 }
+>>         } else {
+>>                 return 8;
+>>         }
+>> }
 >
-> It can help reduce the kernel size for LS1021A that does not need
-> pinctrl, but on the other
-> hand, it will cause pain to lots of people who have i.MX products
-> running custom defconfigs.
+> How about tools/objtool/arch/loongarch/decode.c?  Then we don't need to
+> check e_machine.
 
-How about moving CONFIG_SOC_LS1021A out of arch/arm/mach-imx/Kconfig
-entirely? As far as I can tell, the only file that is even
-compiled in there is arch/arm/mach-imx/mach-ls1021a.c, and that
-one is not actually required.
+OK, makes sense, will do it.
 
-I think we can just have an ARCH_LAYERSCAPE entry in
-arch/arm/Kconfig.platforms instead, or maybe keep it in
-mach-imx/Kconfig but drop the CONFIG_IMX dependency.
-
-The only thing that imx and layerscape seem to share is
-the platsmp.c file, which has code for both, but nothing
-in there seems shared. Maybe layerscape can just use
-enable-method="psci" anyway, if that is implemented by
-the firmware?
-
-       Arnd
 
