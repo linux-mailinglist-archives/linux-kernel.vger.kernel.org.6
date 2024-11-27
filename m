@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-423739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4A69DAC0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:52:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768079DAC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:52:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625D0282E08
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06369167B61
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BFB20100C;
-	Wed, 27 Nov 2024 16:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD45A201002;
+	Wed, 27 Nov 2024 16:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="lgfdp3Tt"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="T7BE4FLR"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2664200BA3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25471428E3;
 	Wed, 27 Nov 2024 16:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732726324; cv=none; b=s+Pi+rf8Tr6pS9VjOeAZEOthnQvuCCabroAt70KLBUWUhbIrrk8MdIaqriBl84cpsrO+IvtRpTx6uvwjvnHr8e4fF+ob28oEbDqTYA3lyH4PC0BN6cYtytW4XfqK//rZunx8wXOj9tVpVN/ZMaqCqX4PrPC1uDS411GOLLWv0C4=
+	t=1732726324; cv=none; b=A7d7Ka6yv0WBsgTN3fxndZiP2wFoKd59IqJE/qQQErj9eUIzNgU6X8Qz7ttaqix0UsGFNcabK9TEg5d1OfUrMWGsk865eHIKMCitJKNaQbifn1IrzbVaXHfbgeRj/Hg7XkawO9R88uTbA8tYje88W0DzIEOWpY2mHkpw6WHDS/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732726324; c=relaxed/simple;
-	bh=W1zPE0EBVV5XXFYVY9qF1SmP5fH7nLvG/zs5AJRUmCY=;
+	bh=/4kyzsf36kcxRdFfTEuviyucuWc6JBAoZXvGWSlhrkw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hLxY2ckVkbbcUso01nFdA2dk7hsGLFvzYIAdV9Gso/dGeTn9ZqJbGkVSeVgpPYCvFczziXYd+B6asVJAPWdo7nRgbphqZcKfjCbYQ0ExgFNjXYCgcvvgv5yzcJDNV6a/FYMFEIOeCK17KBbWEq0k/GegfiffEFrVHe2w1fuVTkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=lgfdp3Tt; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=GlMfnF2rs3WLLEcm9+gL2/lclyeHQX+1Flov1yO7FG98qZFvxiZjhpb0d+LhRPI4RqiIg36BqwBN/1c7kl+xUYjAfwz345IHhqS9rWF7qSK+oZ3nq+8oa0x8gpE8m35uytPIGm60NiOhtjbp3FpqC3tY27nnLhwkE0eaCaMf/vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=T7BE4FLR; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 63CA2BFB92;
-	Wed, 27 Nov 2024 17:44:32 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EBB17BFB94;
+	Wed, 27 Nov 2024 17:44:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1732725872; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1732725874; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=1czmU5HryxYDFCAjqA43ualDjKgjhaED/d0vTrFAZXM=;
-	b=lgfdp3Tt2cGDgyZ/6cwY0Zdga57uMo7Oj1ogXGpd0ny4kkvNWE8aO1XDUD0PFE+kO+dTlq
-	NmjZpCooVNOjCI9x4fvrbA+BNlPotfbsTK01cgTvkchWiY4zM76cgdVDjwb3GAm1CaNff5
-	X4klzEJ3yDQ1HdLtX4LjazH+IgZve+4bZjn/iSiSrk2Ep4bOjWRP4DuD8BOj6NFAIrkWOV
-	Z3chmNDzYEuzl0xMyMIp038mqg6MYFZaJc0EY1iu83yEIBKz7hE/ASxJ/BaxvuqOQpdXhS
-	08K947hasnuz6R7ZYe4Dn+cL+mQDBOrA+UWCvUSaa8TWphnAAdYDbx4zTlBNzQ==
+	bh=5HvescA7ggE2G2W5BNg1EgLCr4WOqo5gIMehYGZzaE8=;
+	b=T7BE4FLRgYCezCzoNq4KpzDkWOO8N01zGOc8BESWb1Z/Ve1VCRp3pEVhWc/jODEP/f3PJv
+	IS1dz85eEh4nSQv3UsQ6PhqNPvxmN+6JZNFPKqgjGgJ7JwkPR1SxNmWifDigV+tJrxCv50
+	Y3m3Nc86IxwlaVg91NF5wtrI5GWAWi1etXR9WVmdU0Gm/bJrRcq/oMco+6sbt0xQfLEWdA
+	7c9/bjdxIMB8qNGzfOIFhI8QYAIdsSOPH7E0JyCnx47wBTk21Hc5gsg8FW+9lZ5XovkPS4
+	+SCxrie03YH51r6vJCfel57g9tBD9JaJWLvTuTdsGxr/K/ojy6AVT4XQKTl/Vw==
 From: Frieder Schrempf <frieder@fris.de>
 To: linux-arm-kernel@lists.infradead.org,
 	Marek Vasut <marex@denx.de>,
@@ -55,9 +55,9 @@ To: linux-arm-kernel@lists.infradead.org,
 Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
 	Joy Zou <joy.zou@nxp.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 02/11] dt-bindings: regulator: pca9450: Add sd-vsel-gpios to read back LDO5 status
-Date: Wed, 27 Nov 2024 17:42:18 +0100
-Message-ID: <20241127164337.613915-3-frieder@fris.de>
+Subject: [PATCH v2 03/11] dt-bindings: regulator: pca9450: Document nxp,sd-vsel-fixed-low property for LDO5
+Date: Wed, 27 Nov 2024 17:42:19 +0100
+Message-ID: <20241127164337.613915-4-frieder@fris.de>
 In-Reply-To: <20241127164337.613915-1-frieder@fris.de>
 References: <20241127164337.613915-1-frieder@fris.de>
 Precedence: bulk
@@ -71,72 +71,35 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-In order to know the current status (which of the two control
-registers is used) for the LDO5 regulator, we need to route back the
-USDHC_VSELECT signal by setting the SION bit in the IOMUX.
-
-By adding the according GPIO as sd-vsel-gpios to the LDO5 node, we
-allow the regulator driver to sample the current status of the
-SD_VSEL signal that is used to select the correct control register.
-
-The SD_VSEL on the PMIC is always an input. It's driven by the SoC's
-VSELECT signal (controlled by the USDHC controller) and we use the
-SION bit in the IOMUX to internally loop back the signal in order to
-sample it using the GPIO.
-
-As the SD_VSEL pin is directly routed to the LDO5 regulator in the
-PMIC, make the sd-vsel-gpios property part of the LDO5 node.
-
-SoC                                  PMIC
-+-----------------------+           +-------------------+
-|                       |           |                   |
-|                       |           |                   |
-|  GPIO <----------+    |           |                   |
-|                  |    |    SD_VSEL|   +-------+       |
-|  USDHC_VSELECT ->+------------------->| LDO5  |       |
-|                       |           |   +-------+       |
-|                       |           |                   |
-+-----------------------+           +-------------------+
+This new property can be used for boards which have the SD_VSEL tied
+to a fixed low level. The voltage of LDO5 is therefore only controlled
+by writing to the LDO5CTRL_L register.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
 Changes for v2:
-* extend commit message
-* split into two patches (revert old sd-vsel-gpios separately)
+* new patch
 ---
- .../regulator/nxp,pca9450-regulator.yaml       | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ .../bindings/regulator/nxp,pca9450-regulator.yaml           | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-index 79fc0baf5fa2f..5d0d684186c96 100644
+index 5d0d684186c96..0e19c54aa5f8a 100644
 --- a/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
 +++ b/Documentation/devicetree/bindings/regulator/nxp,pca9450-regulator.yaml
-@@ -41,8 +41,24 @@ properties:
-     description: |
-       list of regulators provided by this controller
+@@ -49,6 +49,12 @@ properties:
+           Properties for single LDO5 regulator.
  
-+    properties:
-+      LDO5:
-+        type: object
-+        $ref: regulator.yaml#
-+        description:
-+          Properties for single LDO5 regulator.
-+
-+        properties:
-+          sd-vsel-gpios:
+         properties:
++          nxp,sd-vsel-fixed-low:
++            type: boolean
 +            description:
-+              GPIO that can be used to read the current status of the SD_VSEL
-+              signal in order for the driver to know if LDO5CTRL_L or LDO5CTRL_H
-+              is used by the hardware.
++              Let the driver know that SD_VSEL is hardwired to low level and
++              there is no GPIO to get the actual value from.
 +
-+        unevaluatedProperties: false
-+
-     patternProperties:
--      "^LDO[1-5]$":
-+      "^LDO[1-4]$":
-         type: object
-         $ref: regulator.yaml#
-         description:
+           sd-vsel-gpios:
+             description:
+               GPIO that can be used to read the current status of the SD_VSEL
 -- 
 2.46.1
 
