@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-423885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7D99DADDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:31:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848DD9DADDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43AF0284BC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:31:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3D8DB2743A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7878202F6B;
-	Wed, 27 Nov 2024 19:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZnkUFkVW"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CDF201116;
+	Wed, 27 Nov 2024 19:31:35 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695F13D89D;
-	Wed, 27 Nov 2024 19:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735900; cv=pass; b=HJHiMPJtVtXlc2bPdHLIMEsDkDROceA1dL6rmiSF3YbYTOVEjjdVKgCiNeqv+ZmhVf7SxTAT/vwnc40Vgvr34U1rb6WJXHpkSiHgMDdEJVhz2KmzStDP93WJ6T82ggOnF9n5XAMMkX+v6KDRl4X5ZCfeeTG21dHtHPqnQSjypvw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735900; c=relaxed/simple;
-	bh=Dv2qljR+WQMx1v46rWerpe+tYNyL/J2PUmxNUjH5/o0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=liJr9FOiA8mYco2wYHmc2ae0va6ucbenidIvlUaXmBa34rI2GRppb8hTXf5Jo3pWEt1dqS7xxCdJOTr0DnK1hr05njQLPwZ62Vci/mg1iQjJcds2kDE1qHjcP78i+GDoBaU5owxidH4CNz9fOAjUyfO1YUiQl8h/D+NXj6OXViI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZnkUFkVW; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732735865; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HlSAK+vbChOESf6CajiRJQzPO42oC6fQF8pUfas81XKOr+xR5fLMG/omzasec3da//DwPZUJYv+29U4qBpY8kwxtsMEfkAuk85rHfDI0//3ZrpMqc5503elUf7bQYhVYwByYq+Er1CgVBYLoHOXNSGfCeENutMAmzh29h2akmHQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732735865; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=puooQMdPcEt9xW6FRzJ4TgjZrgpqYcoxpKKozms2RUw=; 
-	b=W0zxjR6y+Y4Vmge8IC2KrZCujeb8ZOPcJJ9NtvX87PZjjuX6xGvwzQkgnzlmJ5tfmH67qXOYcBokRwwLdybYXj8gwXbjkVLWqCw4IeJHtCd4F4ItE05xne2KaECZdX0dL7rqb8mu7MeZj2nU4dtwtbHaDxHLw9N5q1GKtuYDXDY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732735865;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=puooQMdPcEt9xW6FRzJ4TgjZrgpqYcoxpKKozms2RUw=;
-	b=ZnkUFkVWDHoRYWqTDiEHh//Sa20UD/qIMEaKaqlGh7/j1VeCrmV6f5CzQbIkUoC9
-	xs+RzZbz3vLfIPThxdyZUG3oXdYogWXrA75WzEeMS6kccRYw2kxDa8mBNR5Zf0r5AI3
-	TpcWC6SImF93XY766EB8npTueOhymHNdRkG3nnDE=
-Received: by mx.zohomail.com with SMTPS id 1732735864391797.9845788869264;
-	Wed, 27 Nov 2024 11:31:04 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2D213D89D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732735895; cv=none; b=exgDz6xvX/GeuPO6ecDhT+xtqNjDqKrH7DZlygu9sVDKLBfpk0shpOspUYEjLyMMmduNdZNpJC1oY0DMiL653TejyK9Hys1dnu5P97p0kfYjQ1VYDHVyaFxTz3dWkP9bU6lbD0oRDr1rmDNtrFlMZegw5SklOn3qwJBsydie6OM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732735895; c=relaxed/simple;
+	bh=ZRWv/qJXWX0N+LmlrTPTdZNF7tI8MhRL5ijfHMRhmuI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RS4uD31CD3qD3JWR2AYuX2UQTzphBs8uFf0DvnREQZkKyYm+SNSBuSfgri0zdnifxWYqD8pn+xhU49T0Lc5WpeqcpC5DHgjGTMr20d9oDAsh4qh25KSJbxgX0iPa+6nwZUGnvgA9Hzl9gHu5YERlTtfwdjoxH9+Cwu6mkO1DV10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7bdd00353so769595ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 11:31:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732735892; x=1733340692;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nhvv+26YcoilaAxS4XzL863FzPGOjY6ajDUbRofaE8U=;
+        b=L/heIPsTYG5+iRbuWTwZFvtgfD5ZbK7+DqDX4HY9Fx8+Y0A9G9Uz7Jq5rtwvb/45qt
+         9lr6kORQ6crb+YMuYH229kIHuDmmVmlb5x8MT8XIuGtF/XE5myBEweXqgzP3sswfaj6M
+         1tpjnErzwOphMvq2uWL9BfrvSHlw1ASq+ze/CJRbni1kyniJH+G9uwyXB2a3n83Tvrff
+         HUSUoLfj8sGWT1PVW2YRLofrQu/DycRM+q/IQ6VEOHcYHELoZCGCLp9WkCL3VXtinV/Y
+         f59umL2EjS/jyrrPh0h3KKXQfzs8XwKt97Hi5uyUjEaWjxzjP+P14ZNlYgrDmnDOO+4A
+         1Tng==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNQg1P5WH/DvOVfPxHzXVIW38UGzpdQMTVcNgu07s6PR/mlGzMU1xj5V8yDNDQPzdVR6rI8I+KVrcNYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCLP0gYidbSGlkReL+qgsZvOgNjr06qA7Q/zlNuMrDNKKMov9k
+	3j7hWQ33GTg0cMqYgPiRr6OBUPP/BaKoStdA0wUPl4fQ52G4dk31VMKJjCnAnsvUTfrqGLCGc8b
+	f1kK61liTgdLadznzRpJ/4/uRlG1S8dLVD3QM3nNddPKZKhKq1SpHy+E=
+X-Google-Smtp-Source: AGHT+IGY8P0kD9Kmo8vCaJ0MVKVivQfixo468bFvt0QCfbxcippbtBDZm5OvuigToBSx0ngtAUJfslLcqQ6yvMLlfBYqp54CCWfp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 18/35] rust: drm/kms: Add RawPlane and RawPlaneState
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-19-lyude@redhat.com>
-Date: Wed, 27 Nov 2024 16:30:49 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FC63978F-BAC0-4294-999E-9BA31FA39490@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-19-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:144a:b0:3a7:6f1c:a084 with SMTP id
+ e9e14a558f8ab-3a7c55e2adfmr49463305ab.23.1732735892640; Wed, 27 Nov 2024
+ 11:31:32 -0800 (PST)
+Date: Wed, 27 Nov 2024 11:31:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67477394.050a0220.21d33d.0026.GAE@google.com>
+Subject: [syzbot] [ntfs3?] kernel panic: stack is corrupted in ntfs_printk
+From: syzbot <syzbot+41821903c04037f57f20@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Lyude
+Hello,
 
-> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Same thing as RawCrtc and RawCrtcState, but for DRM planes now
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms/plane.rs | 35 +++++++++++++++++++++++++++++++++++
-> 1 file changed, 35 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/kms/plane.rs =
-b/rust/kernel/drm/kms/plane.rs
-> index 3ace487316d46..1c151ae3b3dcc 100644
-> --- a/rust/kernel/drm/kms/plane.rs
-> +++ b/rust/kernel/drm/kms/plane.rs
-> @@ -312,6 +312,27 @@ unsafe impl<T: DriverPlane> Send for Plane<T> {}
-> // SAFETY: Our interface is thread-safe.
-> unsafe impl<T: DriverPlane> Sync for Plane<T> {}
->=20
-> +/// Common methods available on any type which implements =
-[`AsRawPlane`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the =
-basic methods for working with
-> +/// planes.
-> +pub trait RawPlane: AsRawPlane {
-> +    /// Return the index of this DRM plane
-> +    #[inline]
-> +    fn index(&self) -> u32 {
-> +        // SAFETY: The index is initialized by the time we expose =
-`Plane` objects to users, and is
-> +        // invariant throughout the lifetime of the `Plane`
-> +        unsafe { (*self.as_raw()).index }
-> +    }
-> +
-> +    /// Return the index of this DRM plane in the form of a bitmask
-> +    #[inline]
-> +    fn mask(&self) -> u32 {
-> +        1 << self.index()
-> +    }
-> +}
-> +impl<T: AsRawPlane> RawPlane for T {}
-> +
-> /// A [`struct drm_plane`] without a known [`DriverPlane`] =
-implementation.
-> ///
-> /// This is mainly for situations where our bindings can't infer the =
-[`DriverPlane`] implementation
-> @@ -426,6 +447,20 @@ pub trait FromRawPlaneState: AsRawPlaneState {
->     unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) -> =
-&'a mut Self;
-> }
->=20
-> +/// Common methods available on any type which implements =
-[`AsRawPlane`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the =
-basic methods for working with
-> +/// the atomic state of [`Plane`]s.
-> +pub trait RawPlaneState: AsRawPlaneState {
-> +    /// Return the plane that this plane state belongs to.
-> +    fn plane(&self) -> &Self::Plane {
-> +        // SAFETY: The index is initialized by the time we expose =
-Plane objects to users, and is
-> +        // invariant throughout the lifetime of the Plane
-> +        unsafe { Self::Plane::from_raw(self.as_raw().plane) }
-> +    }
-> +}
-> +impl<T: AsRawPlaneState + ?Sized> RawPlaneState for T {}
-> +
-> /// The main interface for a [`struct drm_plane_state`].
-> ///
-> /// This type is the main interface for dealing with the atomic state =
-of DRM planes. In addition, it
-> --=20
-> 2.46.1
->=20
+syzbot found the following issue on:
 
-LGTM
+HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110e19c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5073f0bff19a2470
+dashboard link: https://syzkaller.appspot.com/bug?extid=41821903c04037f57f20
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130e19c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1064f6e8580000
 
-=E2=80=94 Daniel
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-9f16d5e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0b34c9010f21/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fa5635896077/bzImage-9f16d5e6.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d7a3b96e4e1b/mount_0.gz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+41821903c04037f57f20@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 4096
+ntfs3(loop0): Inode r=a is not in use!
+Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ntfs_printk+0x415/0x420
+CPU: 0 UID: 0 PID: 5379 Comm: syz-executor218 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ panic+0x349/0x880 kernel/panic.c:354
+ __stack_chk_fail+0x15/0x20 kernel/panic.c:836
+ ntfs_printk+0x415/0x420
+ ntfs_read_mft fs/ntfs3/inode.c:86 [inline]
+ ntfs_iget5+0x57c/0x37b0 fs/ntfs3/inode.c:537
+ ntfs_fill_super+0x3e8e/0x4730 fs/ntfs3/super.c:1477
+ get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3c5f178d6a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffedbe7c538 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffedbe7c540 RCX: 00007f3c5f178d6a
+RDX: 0000000020000280 RSI: 0000000020000300 RDI: 00007ffedbe7c540
+RBP: 0000000000000004 R08: 00007ffedbe7c580 R09: 000000000001f746
+R10: 0000000000200001 R11: 0000000000000286 R12: 00007ffedbe7c580
+R13: 0000000000000003 R14: 0000000000200000 R15: 00007ffedbe7c7d0
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
