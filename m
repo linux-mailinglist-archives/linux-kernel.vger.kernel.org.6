@@ -1,180 +1,109 @@
-Return-Path: <linux-kernel+bounces-423084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120D29DA298
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:01:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5F0169065
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:01:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B53149C6F;
-	Wed, 27 Nov 2024 07:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dLmyIKdU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E6C9DA299
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 08:01:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A246417BA2;
-	Wed, 27 Nov 2024 07:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5462841AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:01:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25CF1474B2;
+	Wed, 27 Nov 2024 07:01:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C9013C816
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 07:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732690854; cv=none; b=JOrYA+gQyxg6x2j1/GXoKVEsgyL2GpnPqWc7jjLrRggVbVA6vTiae/AMPsdeu3lC6zp1VGe0NL6ClG5sgPGyaeo9R5y/Wags8UFPb7eIdg4hW+1y43RGEWQZjwapeF49N5oFSuKGwpKXysPiGU6ooPAsIN3R9IbsGgei50ZtDwQ=
+	t=1732690900; cv=none; b=LlGRyPOxReIXLrnCFfBBpEIDlcckfFT9dH5hZxSxdTlho+fQb0FVp/eNSihooGYAag/Kxt7Ui8PyWAqKL+lPCh2d5a+28iVRYMe3k2HjujTnyap5/xw7qNVJY0Yno4V2YNETdvyv++pA6W3ryf7dteOLvbYzTU/WPCz3zUFNgEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732690854; c=relaxed/simple;
-	bh=rYrtuOnGhlmsVE8BBvxk8yY4kUvnUhoSOGfV5MZkSgg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=O4xwHZX7nmlF/IflwkOpJ7wtHv5DUWgD6jL4Xd6AbCr41le+ynzwD6VClsGmULozJLoOeLOSGXBqMsqG/AL+uFN08fGcT92xUnBQO5vR1BFOKcF0vOydYGCeeab4wJ0D7HyMMk12CkVtkhL1BwgYwtYh8jBMCdV75n7tajsKdek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dLmyIKdU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKLXvc007146;
-	Wed, 27 Nov 2024 07:00:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XgRtXKp6Ib0r1ecUjQWlmkTsRbpS2b5Cwd/uwfaa+wk=; b=dLmyIKdU8IhBp0lK
-	e37ZIYmWNVrS2ophDrZc+zUDy1X0qmMQUYLjBjP1X47sGxWnkHQU+8lPIKub8NxS
-	lAUejjvg8ssU0BzR5vaNZj0x38AiBjW568LorSqgLTP9SN5xI58by0hVNMUEtnYW
-	Nct6zc0k9Afcfj3b6Z1c5UPYzhlJlHCYFJU1UomRygAK7tAN6N48pZLA+pRQTuE8
-	iJ4sEiEZ5iQuBJZLyVaIqXxku873jT8K29jWEmpeh//fe5+hbuhthWshVvgcqXc2
-	tZmArM94Sfn/srbihWzfNZgtI0DPcsIaO/TdWYpk3ytV/WnLRI2/x284RX07BNxL
-	4BwAuw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434sw9ds2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 07:00:46 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR70kuY026035
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 07:00:46 GMT
-Received: from [10.253.38.8] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
- 2024 23:00:42 -0800
-Message-ID: <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
-Date: Wed, 27 Nov 2024 15:00:38 +0800
+	s=arc-20240116; t=1732690900; c=relaxed/simple;
+	bh=gWyFNicxctPBg9J4e26jnWJduJq5hCPP0tXpiqu81B8=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=W5DW8oZ29pxsGserYzq8L4/pBcCNkpgQ+xGWPeGPDzoyPNsCNtRlGqEUA1wcPHksMQDUddiqaeseQA2lXuol6hir/5DPQvGG0NEXP80oAEIpHA6U1goz5uSoxw3RdAueUy5aijLyAFKyO5NAuhEo+3a4wLGUjCnhgEQbsDiwAi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxyuDPw0ZnyqdJAA--.11929S3;
+	Wed, 27 Nov 2024 15:01:35 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMAxVcDNw0ZnkJBpAA--.44731S3;
+	Wed, 27 Nov 2024 15:01:34 +0800 (CST)
+Subject: Re: [PATCH v4 06/10] objtool: Handle unsorted table offset of rodata
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-7-yangtiezhu@loongson.cn>
+ <8cb35ab7-56d0-8e8d-5e18-1bc2b94aeeeb@loongson.cn>
+ <20241127012042.by4g34m4twlfmove@jpoimboe>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <53677c5f-2ea5-a227-66f7-b27c27665f6b@loongson.cn>
+Date: Wed, 27 Nov 2024 15:01:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
- node
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20241118-dts_qcs615-v2-0-e62b924a3cbd@quicinc.com>
- <20241118-dts_qcs615-v2-2-e62b924a3cbd@quicinc.com>
- <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
- <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
- <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
- <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
- <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _Sw2n69pV_5KQZultUUqlaXlxy3wsuoo
-X-Proofpoint-ORIG-GUID: _Sw2n69pV_5KQZultUUqlaXlxy3wsuoo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 adultscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411270056
+In-Reply-To: <20241127012042.by4g34m4twlfmove@jpoimboe>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMAxVcDNw0ZnkJBpAA--.44731S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrtrW5Ww15Wr1ktry8Jw4xAFc_yoWfCwb_ur
+	1I9F4DWayDJF1kG3Wqyws7JF4jgw1UXa1jqr4Iyr4qvwnxZrWv9w4xuFyS9345J3ZFgr90
+	g3WqqFWxuw4jgosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+	6r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFE__UUUUU=
 
 
 
-On 2024-11-27 14:17, Yijie Yang wrote:
-> 
-> 
-> On 2024-11-22 21:19, Andrew Lunn wrote:
->>>>>>    +&ethernet {
->>>>>> +    status = "okay";
->>>>>> +
->>>>>> +    pinctrl-0 = <&ethernet_defaults>;
->>>>>> +    pinctrl-names = "default";
->>>>>> +
->>>>>> +    phy-handle = <&rgmii_phy>;
->>>>>> +    phy-mode = "rgmii";
->>>>>
->>>>> That is unusual. Does the board have extra long clock lines?
->>>>
->>>> Do you mean to imply that using RGMII mode is unusual? While the 
->>>> EMAC controller supports various modes, due to hardware design 
->>>> limitations, only RGMII mode can be effectively implemented.
->>>
->>> Is that a board-specific issue, or something that concerns the SoC 
->>> itself?
+On 11/27/2024 09:20 AM, Josh Poimboeuf wrote:
+> On Tue, Nov 26, 2024 at 09:28:19PM +0800, Tiezhu Yang wrote:
+>>> +		/* Handle the special cases compiled with Clang on LoongArch */
+>>> +		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
+>>> +		    reloc->sym->type == STT_SECTION && reloc != table &&
+>>> +		    reloc_offset(reloc) == reloc_offset(table) + rodata_table_size)
+>>> +			break;
 >>
->> Lots of developers gets this wrong.... Searching the mainline list for
->> patchs getting it wrong and the explanation i have given in the past
->> might help.
+>> I think it can be generic, like this:
 >>
->> The usual setting here is 'rgmmii-id', which means something needs to
->> insert a 2ns delay on the clock lines. This is not always true, a very
->> small number of boards use extra long clock likes on the PCB to add
->> the needed 2ns delay.
+>>                 /* Check for the end of the table: */
+>>                 if (reloc != table && reloc == next_table)
+>>                         break;
 >>
->> Now, if 'rgmii' does work, it means something else is broken
->> somewhere. I will let you find out what.
-> 
-> The 'rgmii' does function correctly, but it does not necessarily mean 
-> that a time delay is required at the board level. The EPHY can also 
-> compensate for the time skew.
+>>                 if (reloc != table &&
+>>                     reloc_offset(reloc) == reloc_offset(table) +
+>> rodata_table_size)
+>>                         break;
+>>
+>> What do you think?
+>
+> I'm not sure, this patch is hard to review because it uses
+> insn->table_size which doesn't get set until the next patch.
+>
+> Maybe this patch should come after patches 7 & 8, or maybe they should
+> be squashed?
 
-I was mistaken earlier; it is actually the EMAC that will introduce a 
-time skew by shifting the phase of the clock in 'rgmii' mode.
-
-> 
->>
->>>>>> +    max-speed = <1000>;
->>>>>
->>>>> Why do you have this property? It is normally used to slow the MAC
->>>>> down because of issues at higher speeds.
->>>>
->>>> According to the databoot, the EMAC in RGMII mode can support speeds 
->>>> of up to 1Gbps.
->>>
->>> I believe the question Andrew is asking is "how is that effectively
->>> different from the default setting (omitting the property)?"
->>
->> Correct. If there are no issues at higher speeds, you don't need
->> this. phylib will ask the PHY what it is capable of, and limit the
->> negotiated speeds to its capabilities. Occasionally you do see an
->> RGMII PHY connected to a MII MAC, because a RGMII PHY is cheaper...
->>
->>     Andrew
-> 
-> It does unnecessary, I will remove it.
-> 
-
--- 
-Best Regards,
-Yijie
+OK, I will squash the changes into patch #7.
 
 
