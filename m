@@ -1,177 +1,212 @@
-Return-Path: <linux-kernel+bounces-423057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D0A9DA1FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86049DA201
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AE9B22780
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697C3284A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0722F146D78;
-	Wed, 27 Nov 2024 06:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21A9146A87;
+	Wed, 27 Nov 2024 06:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F/7Qhd03"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e92cstLW"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2040.outbound.protection.outlook.com [40.107.102.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C250F1114
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 06:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732687846; cv=none; b=fOorYJeARbl8DCo0Aww/i42NAzAgiIUJIsQgw5dVG/N7GBUZrHhCRdl1Y3wVTdsfkQVWL5rK6A8hUQMJeLfgaRSv6cPt/PF2l1PwL9m8+4C7Vh/M5p93s9h1xVYrMUMpmS360PYCoSIBARH4qF8PnPrQO0FffKqDjHf9DJ3yPxw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732687846; c=relaxed/simple;
-	bh=cPdvo1SMZFEQqJn7eeSCQKo/FFcAMU9G1ZiW83fwums=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OaHDIZjsSFU+lhm0b8mJlJBV0nzXsaCW2BDHine1njRZG+2q3slgDWj3JHJBnTAyBucUG/CR4cx5TfDdfC2LDC/XEJ6AhPXBD/mf7Q1yWTnSRHeP75yMf6MCDVSbQ65zOC44BK/MqywiwLnPrhA/qa8Zm3f27BTZmiPItP4uu+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F/7Qhd03; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7251331e756so2540156b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 22:10:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732687844; x=1733292644; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zqa/SgF6yTly97ZL5Wo5M3cWThMFlMnzVOsX4J3DANc=;
-        b=F/7Qhd03NXlipv2FGM0SrftKWLCIuNM0ijMbYMipj5+dldrZHBUQYB3yiI/LtQ9g8G
-         1x0NVvi879HNPG72K8QRO0O/JRsEYW2Ce5x6urRYJNepNhj0LZyx5+jd3ed49Ah4O5sX
-         qn9lVRORxzhcB1v3tXodio6Yq91LE9S9vpe9Iz1/2nYgdOj8fR880rYv4gSnGqOZZs62
-         M7KA/eZM0dYRhqTwitQopU8Yd8to4aL8m6gl6XUpCa4MH8Lf/gtNbSOlPX2PmQh90ATN
-         /NzkRtzz9PpBoQmElhJRUNcxdNNc5nKAItHXAbcD70NKcHG2aAUZv5Vy/4NIeXOkpl9G
-         fiGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732687844; x=1733292644;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqa/SgF6yTly97ZL5Wo5M3cWThMFlMnzVOsX4J3DANc=;
-        b=kpLSEpX0b394qXXdU+1T+LxYHlWnXt6ed7CQUskZwYTcsiMLR1ZP0IJ2v3t3Dxi4go
-         OJ0gjz32CLtAIU5vPsRBXayNH8KOVHHmSRsK23sK9PC8HetRQrufrxCrZsJeE9h6AFm0
-         Sz/icxEsAaWrivzpmo2W5GMAAUkUe2dCCPtCGZa7DYVr3tGjktmt28WnlxxMgOd80Spv
-         CScbDvnFP7rdsPTCj4TRMkoEvQgTJWj5HMhjX14fvWO2bcI62WMdjj4Ya7MkTY98DIaF
-         5s6O1MaT+biLv+WbO2lCSMuViki6CzTcBKvurZfSkpWbf/4/NZUtosWuaiba+PZw+XI5
-         sHcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWx+N8o3bmlvzUiXNSdvHFsn//noo2mwCJFw57LUVWpDUs/7hWY1+sBhH60fb3FhImMlA7+tFCYOG0OR3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTTYl04URYTxY382sLvGu9A4ELDAf0mPH75WnXp7KFYrjZDe9G
-	o0onBagEPONlr1XMGz973caJDrlx6R5cLt/xcMmUwTy1jyaT5pNfLUXQJQ0obg==
-X-Gm-Gg: ASbGncsjeyuhutyU78+x/a2hLo88ShB0lxVW1qG9x2h6HWOKfuZFasvAzLEfCoWBhzj
-	rhx9Qe+M87J7B2uWiA6T+79pEoYk4PoBm6xP4S6SWugVHTLKaHW2Re/y2dxWYPvsejCEOjzda3V
-	x2DnMlt0/LzszPvcg3opaRlE/3kFeQKa2Kgja1zpAzlPaMXe7giIU5opfQBK6mvgepgUGMjFlBi
-	gUm8rAhH/6SwUHSpsl3BtwROETuWVzC+LSxw+p99EkTUXeB7kjaKTLIC5KJ
-X-Google-Smtp-Source: AGHT+IGaHS3AyXRTU+a3Eu+LV+18G7egpriN+zK0KvIQMZt/bOebgNCGoDrBCNgxqRGORwKNCzNPfg==
-X-Received: by 2002:a05:6a00:13a7:b0:71e:f83:5c00 with SMTP id d2e1a72fcca58-72530014285mr2668234b3a.2.1732687844004;
-        Tue, 26 Nov 2024 22:10:44 -0800 (PST)
-Received: from thinkpad ([120.60.136.64])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de474c9fsm9447348b3a.44.2024.11.26.22.10.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 22:10:43 -0800 (PST)
-Date: Wed, 27 Nov 2024 11:40:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Hsin-Yi Wang <hsinyi@chromium.org>,
-	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
-	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-	lukas@wunner.de
-Subject: Re: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all
- Devicetree based platforms
-Message-ID: <20241127061039.ls3ghxswft3hvww5@thinkpad>
-References: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305EDF51;
+	Wed, 27 Nov 2024 06:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732687879; cv=fail; b=lAG0dHav8LaaNTnZ3GM31jzloMI33D6pEwJDNjxOP92JbRPYaZZRWqVPduuhzrFoHER7OxsdKBaH1RTTPXo/tWFOyRn5z4iE6+iV8kirxXOxEz2RCFgxZouhobzSauHZYCXZ/gcmFAAHPXsFDh42/udkivlJ9uRpuy9T4FuaN6k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732687879; c=relaxed/simple;
+	bh=bI0LYxaZhwHVbJbKiO+bUIk2TGWz+FSFabG2Dgarc/Q=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DCP9LYI7Mk19B6BUe8tTv4VuUsxfdX6p4Wl9Cf5jFLR3N34YZDpLJKqXu+5KYfZn+P0Vc5djbCi+e30Q1neAGCHb04lvdda/Up83/biWJuEW5ZN+C22M7YTX3eWLFHAxMZ0T0uzlqJ/Uk+X2OOzxcG+WLTK2K/U0BSyCnr+0Yv4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e92cstLW; arc=fail smtp.client-ip=40.107.102.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lri/zhuO4HvmEm/nY0lxa0wIhkZrdM10dEX3YVBx6m3gn4djSR2kP5YcM6OYrr85sKnqedBv8azbv+qU1zbIJBIkVrtkzZdb/4Qu/VQyccSkN5YqfG03kY/W6DSvBpwi0X78hAse9jo2FWNwEu4gJ1Np6O0vtPgvKTllyBusMUILum8XziCY0DKjMAN+l+AGPrcllbbZH/XJwZ0nuHpm3UOVri1yJSq4lhQNqCGXf8G/eLyl1mCY9ONkA1zsxSpfwn5rmFGcxY2heLC6iAM9cfpqK4UeCT/wdtV3+6yRhUBQ43GSnif1k2osH3kfq6E/pBAgnLsd1l7PY6Z+EAkB/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4DlX08BDXLHyYISnucUx0dJUEBADoZF5OiZPXY5olrA=;
+ b=JpQ7H4ZU8bjQF4SYflKdsoqfF9Nb6h1GL2bm1VPCaFTdriIZDxD7zv5dbPMw0cJlh56g0L4lkwi9dZZJPIdGkhm2aC5WHf6pdxmszBvrUGuaLd7qNIrfbAdtPKzFZT9G0L/rrAoU9k8/4iRVj62tjq4EkGOsLAqNB9kwjjZDigenDQfv9adqWBzORTPyYTFUpZcExG9OEynkuo/2+IKdaYa4HrkMAb+NoYYuM3MzudlMwbocDFrSrcCjtDmeW2hfu3qBryoS0yEsWdU05glqRsAOEwIky9Mx8JEn96tPao/NH/nf9YV6tou10wTypUAgAXmfI68aLp2NTXrcP7LrIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4DlX08BDXLHyYISnucUx0dJUEBADoZF5OiZPXY5olrA=;
+ b=e92cstLWzK1EO2aGAMtirptCU+tenLmc31ACWCKIV94wqGSUKlk9OjphG0+L9gDJNGfYjNrpZVtfVYctIi0Kq940uWNBjVfM5SKfWgXlk4E34Q4mfJuGi7dhAzS8T77PQzqOno+jCN15/6q9B9bg0he2sHbS50+GkHEpnEMHyunpq5enG09gAsFCTYhMoauv3mQRBNu54IRFeV4334Ut7JNt5KOoRmMcuvUYG77SjDK/j8fCV/G8du+puZ2mNKt+xz99svik6HX8arEZCkCY9hVt8pUSZ6nK4pR8T1ajOEYzHI4W4OX/Cm6p9dAVoFi/3B9nUvbZJJdtnZLDJl9Tag==
+Received: from MW4PR03CA0323.namprd03.prod.outlook.com (2603:10b6:303:dd::28)
+ by BL3PR12MB6426.namprd12.prod.outlook.com (2603:10b6:208:3b5::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Wed, 27 Nov
+ 2024 06:11:14 +0000
+Received: from CO1PEPF000042AB.namprd03.prod.outlook.com
+ (2603:10b6:303:dd:cafe::a2) by MW4PR03CA0323.outlook.office365.com
+ (2603:10b6:303:dd::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.13 via Frontend Transport; Wed,
+ 27 Nov 2024 06:11:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1PEPF000042AB.mail.protection.outlook.com (10.167.243.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.12 via Frontend Transport; Wed, 27 Nov 2024 06:11:14 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 26 Nov
+ 2024 22:11:03 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 26 Nov 2024 22:11:02 -0800
+Received: from NV-2XGVVG3.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 26 Nov 2024 22:11:01 -0800
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <arnd@arndb.de>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] soc/tegra: fuse: Update Tegra234 nvmem keepout list
+Date: Wed, 27 Nov 2024 11:40:53 +0530
+Message-ID: <20241127061053.16775-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AB:EE_|BL3PR12MB6426:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64f916ff-781d-4810-b410-08dd0eaa4c2c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MSTlERG90zylEESaeffDkz3ucej1ht9NXVa8DjO+cZQNMd4P5cLlooMej1Rz?=
+ =?us-ascii?Q?sfFIDvtLXHlmvxlP6jY3QHvijxwCPQujuAktKRv8f1oMozLV9CxfXt51128M?=
+ =?us-ascii?Q?Hg0iKiSgu2r8hZGufV20BRAREt+6kVLOoXGNxrgT9Ie3tTCVpuaC7AtfacYW?=
+ =?us-ascii?Q?sd7w8385nK9BQByINwjYe8FAMwjyXBTm6e5e78vB6F/GBI7FrekunGIGBqYD?=
+ =?us-ascii?Q?w6+iRh12vkUWpDwNfGfCXDN4ThgPdUYIwYDJZiwhucHlDIJbwq0XnFEBQUZZ?=
+ =?us-ascii?Q?4Lum9pRwra0Ih8Ywg6Nc2lYWiZ7of86OqYqgsiqrlyec3A1Wv1Y4uBRnLZfg?=
+ =?us-ascii?Q?cRHjWANTQ9U8zXmVWeSmz4cAfitdjFCWe5Fb4uonWEiWN4S4Y2s1/sWiAr41?=
+ =?us-ascii?Q?j6m14mPbnm3pj2o+597TsSnJR35W0N0kUZcOAeBaL0//w8jw+2NFwPFxEbiX?=
+ =?us-ascii?Q?YbgV5CXy3l3wVxcSkVygGgo1JS97ZJZgiw0yjUZIy0eBz75Wi+OGYZCEkkwD?=
+ =?us-ascii?Q?qRa1SRLtVLxVfWs+vM/KgvLmLNq9aBiavvI3pyGOJUK7CsTwsm8hKYprQ88R?=
+ =?us-ascii?Q?pkp1lsJ8XtbLvpooryfXT0o6jgqLfWKz+95QlX/7HE+dHtpH1hJsCShKnwl2?=
+ =?us-ascii?Q?FCv6UoFPvA4Bq+mOazJOeyDhjoDqwMFNu6BDppS+zHnRjcYDaCmNtnc6uyEZ?=
+ =?us-ascii?Q?lPvOZjV03IfId7V8lK0vYNHe1JWullmSs8te2oO1hzELcSbfQqmBlCCMBTr3?=
+ =?us-ascii?Q?RN6EJ2dhBi6tTa623xt04rzQOpugL0/Ohu9VOFDNLwTgAlFQWrt4wWgrwWyM?=
+ =?us-ascii?Q?yY13MeNL+/RNSykUlnWbRJ15RZet1LKBffL2fXDVbOELRGjxikQJ3yglA8d/?=
+ =?us-ascii?Q?CgaeckTk2wQhRlQA6k3uQ+kxPFRLVQThc9KDw8C/TcHmUE5FmD+XG/tMEQ3v?=
+ =?us-ascii?Q?339UDHyZCADqQDaVg2QGOjLYl8+wf2oSWDvBPGNEEadk+E2lu92UjbQYoSA1?=
+ =?us-ascii?Q?2Z9oKFxjK8tDjmrqxuuuROBP7wH5xqSvBu6hNFm/3i+ULtGVSz2UcMT5xuQQ?=
+ =?us-ascii?Q?1lamULn4+X38MKnJIF3/V2cni3jk60TQ1duc02thOhzKVXpfe3nao9X6c8Hp?=
+ =?us-ascii?Q?7j/avNMBVjVTCcVXjdzCxCnZ42QEfwe+XLohCBu5X1pVq6fl5kJ9ajZ7s47i?=
+ =?us-ascii?Q?QYXwofxIuSzcRgNYCCcKL4JJ6OlEe6LvLj7ao4XiKjspacd1wBC5PB860pOp?=
+ =?us-ascii?Q?7wxHPU1W7JMgswddbw4FxpW0w+WA6wjwk98Qe1HlpDvInS0H3+8JBIYsg5G8?=
+ =?us-ascii?Q?zBai4tbnEE/deJpG5BO38jllf79M+BnGXQ2M9Nm5x/2QmDNECtrD7lgo6aPb?=
+ =?us-ascii?Q?YSqTO844Bf+vJE9LBXMgxgrk6V+xM7Lb0x/5afMJsm4qKjGxuGax5+s7TXI+?=
+ =?us-ascii?Q?kTN/m5bcA9OHSkjw4DZ7tTVBkce4IGTQ?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 06:11:14.0924
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64f916ff-781d-4810-b410-08dd0eaa4c2c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042AB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6426
 
-On Tue, Nov 26, 2024 at 03:17:11PM -0800, Brian Norris wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Unlike ACPI based platforms, there are no known issues with D3Hot for
-> the PCI bridges in Device Tree based platforms. Past discussions (Link
-> [1]) determined the restrictions around D3 should be relaxed for all
-> Device Tree systems. So let's allow the PCI bridges to go to D3Hot
-> during runtime.
-> 
-> To match devm_pci_alloc_host_bridge() -> devm_of_pci_bridge_init(), we
-> look at the host bridge's parent when determining whether this is a
-> Device Tree based platform. Not all bridges have their own node, but the
-> parent (controller) should.
-> 
-> Link: https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/ [1]
-> Link: https://lore.kernel.org/linux-pci/20240828210705.GA37859@bhelgaas/ [2]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> [Brian: look at host bridge's parent, not bridge node; rewrite
-> description]
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Various Nvidia userspace applications and tests access following fuse
+via Fuse nvmem interface:
 
-Thanks for picking it up!
+	* odmid
+	* odminfo
+	* boot_security_info
+	* public_key_hash
+	* reserved_odm0
+	* reserved_odm1
+	* reserved_odm2
+	* reserved_odm3
+	* reserved_odm4
+	* reserved_odm5
+	* reserved_odm6
+	* reserved_odm7
+	* odm_lock
+	* pk_h1
+	* pk_h2
+	* revoke_pk_h0
+	* revoke_pk_h1
+	* security_mode
+	* system_fw_field_ratchet0
+	* system_fw_field_ratchet1
+	* system_fw_field_ratchet2
+	* system_fw_field_ratchet3
+	* optin_enable
 
-- Mani
+Update tegra234_fuse_keepouts list to allow reading these fuse from
+nvmem sysfs interface.
 
-> ---
-> Based on prior work by Manivannan Sadhasivam that was part of a bigger
-> series that stalled:
-> 
-> [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
-> https://lore.kernel.org/linux-pci/20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org/
-> 
-> I'm resubmitting this single patch, since it's useful and seemingly had
-> agreement. I massaged it a bit to relax some restrictions on how the
-> Device Tree should look.
-> 
-> Changes in v5:
-> - Pulled out of the larger series, as there were more controversial
->   changes in there, while this one had agreement (Link [2]).
-> - Rewritten with a relaxed set of rules, because the above patch
->   required us to modify many device trees to add bridge nodes.
-> 
->  drivers/pci/pci.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e278861684bc..5d898f5ea155 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3018,6 +3018,8 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
->   */
->  bool pci_bridge_d3_possible(struct pci_dev *bridge)
->  {
-> +	struct pci_host_bridge *host_bridge;
-> +
->  	if (!pci_is_pcie(bridge))
->  		return false;
->  
-> @@ -3038,6 +3040,15 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
->  		if (pci_bridge_d3_force)
->  			return true;
->  
-> +		/*
-> +		 * Allow D3 for all Device Tree based systems. We assume a host
-> +		 * bridge's parent will have a device node, even if this bridge
-> +		 * may not have its own.
-> +		 */
-> +		host_bridge = pci_find_host_bridge(bridge->bus);
-> +		if (dev_of_node(host_bridge->dev.parent))
-> +			return true;
-> +
->  		/* Even the oldest 2010 Thunderbolt controller supports D3. */
->  		if (bridge->is_thunderbolt)
->  			return true;
-> -- 
-> 2.47.0.338
-> 
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+---
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index eb14e5ff5a0a..e24ab5f7d2bf 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -647,15 +647,20 @@ static const struct nvmem_cell_lookup tegra234_fuse_lookups[] = {
+ };
+ 
+ static const struct nvmem_keepout tegra234_fuse_keepouts[] = {
+-	{ .start = 0x01c, .end = 0x0c8 },
+-	{ .start = 0x12c, .end = 0x184 },
++	{ .start = 0x01c, .end = 0x064 },
++	{ .start = 0x084, .end = 0x0a0 },
++	{ .start = 0x0a4, .end = 0x0c8 },
++	{ .start = 0x12c, .end = 0x164 },
++	{ .start = 0x16c, .end = 0x184 },
+ 	{ .start = 0x190, .end = 0x198 },
+ 	{ .start = 0x1a0, .end = 0x204 },
+-	{ .start = 0x21c, .end = 0x250 },
+-	{ .start = 0x25c, .end = 0x2f0 },
++	{ .start = 0x21c, .end = 0x2f0 },
+ 	{ .start = 0x310, .end = 0x3d8 },
+-	{ .start = 0x400, .end = 0x4f0 },
+-	{ .start = 0x4f8, .end = 0x7e8 },
++	{ .start = 0x400, .end = 0x420 },
++	{ .start = 0x444, .end = 0x490 },
++	{ .start = 0x4bc, .end = 0x4f0 },
++	{ .start = 0x4f8, .end = 0x54c },
++	{ .start = 0x57c, .end = 0x7e8 },
+ 	{ .start = 0x8d0, .end = 0x8d8 },
+ 	{ .start = 0xacc, .end = 0xf00 }
+ };
 -- 
-மணிவண்ணன் சதாசிவம்
+2.47.0
+
 
