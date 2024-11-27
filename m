@@ -1,127 +1,271 @@
-Return-Path: <linux-kernel+bounces-422972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6654E9DA0AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:38:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6735F9DA0AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 03:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F106B281E79
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECDEA2823CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 02:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC2B3FB9C;
-	Wed, 27 Nov 2024 02:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8DB46447;
+	Wed, 27 Nov 2024 02:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dRioCE/r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O4auedZF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69D01BC3F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 02:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E49208C4;
+	Wed, 27 Nov 2024 02:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732675105; cv=none; b=gRb+ZCJK0CWheWDvgOpGh8dSFTIPVFbzt/mxaBeA5thF6qv5To5BAs3+PRhpFk+d9hT4HdDMJu5qQLRhmDa4SVsNrepTMsPocETjy4jMbL0fCJ4GhYxxv4sD7kwl3TZQujViz8HdkxPqIvIF44wcCBOlVGjwLsC9GnXyhbcajiY=
+	t=1732675169; cv=none; b=THHR6POOSLtFZ6uRqHdx3B48NoyksXMqQXwqYzNWujh1VBMb+gA9Lkpaf0n8SRQMaJ2bpLbZUSmherFyB7goMzd/zQmHdyIO+NMVH2/Zb8QNnQekqxhwVvN81UIllRpZIYrTHbSLXOZMRLV9SclmzeC69Bde10wz5Sf5K1L2QcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732675105; c=relaxed/simple;
-	bh=YK83F2+u9ZrupkvFrEEQdPxsZgYtoYaXi3uAGJ4lCc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nkmJ0co2WR7iIUoU8v380vH6wSdEuwDra4nDsx2O1dptTciG0NjqkWbqQDGUzVBQAVSFdZqQoLteDE1QHRAY6t5WKNv5TiGDMqiA86POzDhlL24y6BA4q7cJdMt317zgYNZGnnKucvKBCfj8J4Co7gQrluPFtTMsUkdS2OvDZmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dRioCE/r; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732675104; x=1764211104;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=YK83F2+u9ZrupkvFrEEQdPxsZgYtoYaXi3uAGJ4lCc0=;
-  b=dRioCE/rACK2zMo5JyjxxJ+LYxCAG5c/aA6nsJ39GRsz3NuUe4ylc4nA
-   HXTqW7+XemlxSHb9il06Ng7UINyiLtiara6JiZLFQ15F+Z3ydx5ZmO3uN
-   O4kVVwD5Ia0fXgvTphVsJMi3XRG5g5/ni7Glef2ssz6EbRnB9nRPD8dCL
-   jv17X3onezC45GuskPAiqS+J5T5zwsyjvzrO26qPrjsqH+rKxJDlEITah
-   b89ESnSKMWFtkIhl3Olr6GLOvjzotLcjxu/3loXPYsgSQfLgi5dQzdlmW
-   ZwsMOjthAqU0IidV5NxQHHtOswbxmCjYQpqw4fakEa0Z8qD32ADpidx0x
-   Q==;
-X-CSE-ConnectionGUID: 6x72l2dBSZ2f8o44ekfkIg==
-X-CSE-MsgGUID: ai9KrjxKRlOjMPe8oBdStg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="43928038"
-X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
-   d="scan'208";a="43928038"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 18:38:24 -0800
-X-CSE-ConnectionGUID: grAEcnecRbenEfrNeejE7g==
-X-CSE-MsgGUID: mhdVxv1gQ2SwpnQS83dnJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,188,1728975600"; 
-   d="scan'208";a="96218937"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 26 Nov 2024 18:38:21 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tG7wZ-0007fg-1I;
-	Wed, 27 Nov 2024 02:38:19 +0000
-Date: Wed, 27 Nov 2024 10:37:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>
-Subject: rust/helpers/jump_label.c:10:5: sparse: sparse: symbol
- 'rust_helper_static_key_count' was not declared. Should it be static?
-Message-ID: <202411271011.gFsgMWRv-lkp@intel.com>
+	s=arc-20240116; t=1732675169; c=relaxed/simple;
+	bh=nDVMp7oZ1MfEFQGe8BmgFuzjQzJ3q9e84tSp9XATVzI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPx/lF7Gq6XZJNWWkFnQ+NEsmZ3dvXYANgbiiv4ohnCeVDb1xPSPIqYc5an4VPHX1QSVFX/qk/4s5Um7Z1k/sMLpWkJtZ3iijHjkcSWczhxSoM+f4UrN5AfiYz6DVARJXj7vUIDDN8f9alN4xKlTmrPes2lalPVIsR9E5a90tqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O4auedZF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQKLFrh011465;
+	Wed, 27 Nov 2024 02:39:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dKR4CyFsKZY1WikosxBOiyo7kYRZRY7WKvX8Ka9wIIE=; b=O4auedZFXJptF81M
+	hNNOy/e0hX3V7ERiOsvqPkfkbws0aJIMWub4g2QrIKZlyTNcZy+RUhq98SkzWVcu
+	RMweXTiRjj6koJaS8TsNL2WO/Q1H2Qv3SNw+weaJij/g1c7xIq0vhPs81YUwTjlg
+	oP4eLHZhb7l88j07kDb6GAyvD/vT3v/zXyAn6hcGeuDKwMCKio/iFOHZXX/17JQD
+	Z0qtH3aBi0W4WRECUJANEkitv7F6A5I0lVSQxyxRoXYOpHqng9rECKRlOBvr0F9Z
+	eL+vi61FYdiw5hk2Vn1Cu1QQDXnVbVmCtZUhCnOExtYnWx9UraFQcWlhXDEQ/r8f
+	DiJIQw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435bf5jjb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 02:39:24 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR2dOuG026584
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 02:39:24 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 26 Nov 2024 18:39:20 -0800
+Date: Wed, 27 Nov 2024 10:39:16 +0800
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_tengfan@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_zhgao@quicinc.com>, <quic_yuanjiey@quicinc.com>
+Subject: Re: [PATCH v1] mmc: sdhci-msm: Correctly set the load for the
+ regulator
+Message-ID: <Z0aGVA4xtIa2G8Ei@cse-cd02-lnx.ap.qualcomm.com>
+References: <20241122075048.2006894-1-quic_yuanjiey@quicinc.com>
+ <10836ece-7ea9-47d6-ad0c-25ae36e5051b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <10836ece-7ea9-47d6-ad0c-25ae36e5051b@intel.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 23l1SoBfR03C2S3S_JwAhg9C63vCiOcW
+X-Proofpoint-GUID: 23l1SoBfR03C2S3S_JwAhg9C63vCiOcW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=999 spamscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270021
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b50ecc5aca4d18f1f0c4942f5c797bc85edef144
-commit: 6e59bcc9c8adec9a5bbedfa95a89946c56c510d9 rust: add static_branch_unlikely for static_key_false
-date:   3 weeks ago
-config: um-randconfig-r111-20241126 (https://download.01.org/0day-ci/archive/20241127/202411271011.gFsgMWRv-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241127/202411271011.gFsgMWRv-lkp@intel.com/reproduce)
+On Tue, Nov 26, 2024 at 12:43:12PM +0200, Adrian Hunter wrote:
+> On 22/11/24 09:50, Yuanjie Yang wrote:
+> > Qualcomm regulator supports two power supply modes: HPM and LPM.
+> > Currently, the sdhci-msm.c driver does not set the load to adjust
+> > the current for eMMC and SD. Therefore, if the regulator set load
+> > in LPM state, it will lead to the inability to properly initialize
+> > eMMC and SD.
+> > 
+> > Set the correct regulator current for eMMC and SD to ensure that the
+> > device can work normally even when the regulator is in LPM.
+> > 
+> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > ---
+> >  drivers/mmc/host/sdhci-msm.c | 91 +++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 89 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> > index e00208535bd1..f2a2260d54c6 100644
+> > --- a/drivers/mmc/host/sdhci-msm.c
+> > +++ b/drivers/mmc/host/sdhci-msm.c
+> > @@ -134,9 +134,22 @@
+> >  /* Timeout value to avoid infinite waiting for pwr_irq */
+> >  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
+> >  
+> > +/* Max load for eMMC Vdd supply */
+> > +#define MMC_VMMC_MAX_LOAD_UA	570000
+> > +
+> >  /* Max load for eMMC Vdd-io supply */
+> >  #define MMC_VQMMC_MAX_LOAD_UA	325000
+> >  
+> > +/* Max load for SD Vdd supply */
+> > +#define SD_VMMC_MAX_LOAD_UA	800000
+> > +
+> > +/* Max load for SD Vdd-io supply */
+> > +#define SD_VQMMC_MAX_LOAD_UA	22000
+> > +
+> > +#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
+> > +
+> > +#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
+> > +
+> >  #define msm_host_readl(msm_host, host, offset) \
+> >  	msm_host->var_ops->msm_readl_relaxed(host, offset)
+> >  
+> > @@ -147,6 +160,11 @@
+> >  #define CQHCI_VENDOR_CFG1	0xA00
+> >  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+> >  
+> > +enum {
+> 
+> This could be a named type and used instead of 'int'
+> e.g.
+> 
+> enum msm_reg_type {
+Thanks , I will fix it in next version.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411271011.gFsgMWRv-lkp@intel.com/
+> > +	VMMC_REGULATOR,
+> > +	VQMMC_REGULATOR,
+> > +};
+> > +
+> >  struct sdhci_msm_offset {
+> >  	u32 core_hc_mode;
+> >  	u32 core_mci_data_cnt;
+> > @@ -1403,11 +1421,70 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
+> >  	return ret;
+> >  }
+> >  
+> > -static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
+> > +static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current, int type)
+> 
+> Then 'int type' could be 'enum msm_reg_type type'
+Thanks, I will fix it in next version.
 
-sparse warnings: (new ones prefixed by >>)
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
->> rust/helpers/jump_label.c:10:5: sparse: sparse: symbol 'rust_helper_static_key_count' was not declared. Should it be static?
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/mutex.c:11:6: sparse: sparse: symbol 'rust_helper___mutex_init' was not declared. Should it be static?
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/helpers.c: note: in included file:
-   rust/helpers/spinlock.c:16:6: sparse: sparse: context imbalance in 'rust_helper_spin_lock' - wrong count at exit
-   rust/helpers/spinlock.c:21:6: sparse: sparse: context imbalance in 'rust_helper_spin_unlock' - unexpected unlock
+> > +{
+> > +	int load = 0;
+> > +
+> > +	/*
+> > +	 * When eMMC and SD are powered on for the first time, select a higher
+> > +	 * current value from the corresponding current for eMMC and SD to
+> > +	 * ensure that the eMMC and SD cards start up properly and complete
+> > +	 * initialization. After the initialization process is finished, use
+> > +	 * the corresponding current to set the eMMC and SD to ensure the
+> > +	 * normal work of the device.
+> > +	 */
+> > +
+> > +	if (!mmc->card)
+> > +		return max_current;
+> > +
+> > +	if (mmc_card_is_removable(mmc) && mmc_card_mmc(mmc->card))
+> 
+> The comment mentions eMMC but here there is 'mmc_card_is_removable()'
+> whereas eMMC's are not removable.  If this is right it needs some
+> clarification.
+Thanks, I also realize that mmc_card_is_removable(mmc) is an unnecessary
+judgment. I will delete this judgment in next version.
 
-vim +/rust_helper_static_key_count +10 rust/helpers/jump_label.c
+> > +		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
+> > +	else if (mmc_card_sd(mmc->card))
+> > +		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
+> > +
+> > +	return load;
+> > +}
+> > +
+> > +static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
+> > +				     bool hpm, int max_current, int type)
+> 
+> Again 'int type' could be 'enum msm_reg_type type'
+Thanks, I will fix it in next version.
 
-     8	
-     9	#ifndef CONFIG_JUMP_LABEL
-  > 10	int rust_helper_static_key_count(struct static_key *key)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > +{
+> > +	int ret;
+> > +	int load = 0;
+> > +
+> > +	/*
+> > +	 * After the initialization process is finished, Once the type of card
+> > +	 * is determined，only set the corresponding current for SD and eMMC.
+> > +	 */
+> > +
+> > +	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
+> > +		return 0;
+> > +
+> > +	if (hpm)
+> > +		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
+> > +
+> > +	if (type == VMMC_REGULATOR)
+> > +		ret = regulator_set_load(mmc->supply.vmmc, load);
+> > +	else
+> > +		ret = regulator_set_load(mmc->supply.vqmmc, load);
+> > +	if (ret)
+> > +		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
+> > +			mmc_hostname(mmc), ret);
+> > +	return ret;
+> > +}
+> > +
+> > +static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
+> > +			      struct mmc_host *mmc, bool hpm)
+> >  {
+> > +	int ret;
+> > +
+> >  	if (IS_ERR(mmc->supply.vmmc))
+> >  		return 0;
+> >  
+> > +	ret = msm_config_regulator_load(msm_host, mmc, hpm,
+> > +					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
+> >  }
+> >  
+> > @@ -1435,6 +1512,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
+> >  				goto out;
+> >  			}
+> >  		}
+> > +
+> > +		ret = msm_config_regulator_load(msm_host, mmc, level,
+> > +						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
+> > +		if (ret < 0) {
+> > +			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
+> > +				mmc_hostname(mmc), ret);
+> > +			goto out;
+> > +		}
+> > +
+> >  		ret = regulator_enable(mmc->supply.vqmmc);
+> >  	} else {
+> >  		ret = regulator_disable(mmc->supply.vqmmc);
+> > @@ -1642,7 +1728,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+> >  	}
+> >  
+> >  	if (pwr_state) {
+> > -		ret = sdhci_msm_set_vmmc(mmc);
+> > +		ret = sdhci_msm_set_vmmc(msm_host, mmc,
+> > +					 pwr_state & REQ_BUS_ON);
+> >  		if (!ret)
+> >  			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
+> >  					pwr_state & REQ_BUS_ON);
+> 
 
