@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-423951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839DE9DAEAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:55:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B0B9DAEAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:56:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32949164B4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:55:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F277B2185E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB1B202F8B;
-	Wed, 27 Nov 2024 20:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83E202F8B;
+	Wed, 27 Nov 2024 20:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dbCOWpEu"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Arx1PFHc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEFB200B95
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18B019885D;
+	Wed, 27 Nov 2024 20:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732740927; cv=none; b=EttcNeaw8oi14cAnXG0CHPwnYzfjq8X0Yzxa/33XHXBLhs037Qq/e2/25MXIxC8xKc1vnl9X5H+O/mu3DjjJHjhhhHPZXwGsSir0pKV/YvGjejwPJc7BGPwRSJxMU60C7CE82IWAXbPq59GqPhpHdCmlXQBw1P0Wl1C66LXJNHw=
+	t=1732740989; cv=none; b=tlbUPZwAdVRlubdYZawTuD4gjrSwrdxwAjWyNl3lSlGAWEqPv5EOP2UO/eDeR2lq0VagOYWKV8fzJKRRy9E9AbK4BeHXcLqVo/IQyyGMy4ZAKztd7hSNz0GsrSL9ttEM/uodZhA6u9rUubUbDlsiHpxDC2Nn8dBzKCms4yiRqcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732740927; c=relaxed/simple;
-	bh=x2gfFrZUwzseqbug6gmVaw6spWNhlY9Px1PJF7ovdWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XeGFUqFhXNyX7jywottXe/yhKR5cUrw2zL9dhssv6nZtj1F6xLnozGY6yr818VRnByb6SU/RDE8Z8IdRjQ2TO9CO7ZWneWKD3f6tt/NtjfyEbOTkOX1JIVlhJXzrOuSu8dAYsx9mBuWzXw9RmuLMHt6oYYyQppuFKRYZHGSXetU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dbCOWpEu; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffc81cee68so1837851fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:55:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732740923; x=1733345723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BjCT3CJUw7mbVWg1te23k9gtZsl9VE0eK0p+bLSN3xk=;
-        b=dbCOWpEuUWktuUq8hHBwymBbi9a1jj5zl/18A4Ib0Ucqba5dnFnuUxXu8SWdXjg/iu
-         B8gX0292UD+LEcJkd65ukfB78GNY4Hs8k4sSn6QmXuMwq0sA7kzxctz/fc83TUXo/YeQ
-         PcagXjI+LwHAOCEsBzLVQARbMaDReXqELYQNg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732740923; x=1733345723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BjCT3CJUw7mbVWg1te23k9gtZsl9VE0eK0p+bLSN3xk=;
-        b=edH+sWYPsLemRzC+RhRRnJ73PrP+ErSA/DewxIsaC9BS7k5u5cBwh/ofaeBSJ8ZSc+
-         GJpI4+9AkipK2u+ORg+zJHX9yx23XeaQc6qyzvc1AZ6eTTOxVUmX/PVdeeopCdmMXUd9
-         aGSeAnOJnVoWZnSV5S7rSCQVijxkkdvxaY/Q4F032M65REQmwidKEuH5Cme2lA3cbTj3
-         uAeLTvhiCpVujLPguWDsu4lE9VLRMN7LSxPa3yVUi/sVbU3sJ9dWOOeQEtckQW7/Fia5
-         Z/fAXWMLRqTA8G3w3yhz7Vhgz+JfqPpx7iaDu44h5JwQeLLVCImKT2JvKHPE1IrppTzY
-         w+ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUH3nmX8w2krs5a4ZwJ+Ofw3o8H0ye8Ok6hSMfn7hQdDBtKEEmCJpc2m3EkmdKkwWVm7ijtYyVOGe5/T5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRfx/TAxQES8Ulrk3gL4G8EKaZwNIR5985xg8HUkk2q9SsKr1F
-	woZ8LCjOjdZQkbwBf6rAfLUBrNyNbBNpOK1rX3M/hGopwtAS5VkKeulGlleFCf/xPaji+X+BbMW
-	OaQ==
-X-Gm-Gg: ASbGnct3ogepA6KYBCxZvVDA5o6rOdSnmC643ziieGkphT08Jp1oEY04gGl5opXJhrx
-	sSwQ/ciJ50v4cSLFRb2dd0EeO9PS7beF55XbmKQfyUhWzJyOpcVRnRj1kr/mrsCZSe/6F7i7web
-	ydNGo2a5rid8bJ+eGkV+9gp8RksQcQR4xcAL0inhbZp3OCEdsgpFuNviqdib6pXNAIilcg9PzuY
-	i7b06feCLxpzbLMXYevafI3R0O5f4MzebEgR1ESNDXvlWMO2P7tyl+dhufEtU1GzCS+ZZtMsl/e
-	e350tKwI/+p2SeP80g==
-X-Google-Smtp-Source: AGHT+IEVrSDbQpoCezq0kO5eOExvYlDgjKkGncyiZ7m2Vv7kOGywqyBWEsIqYIff7UPpTWo3xFsrIQ==
-X-Received: by 2002:a2e:bc88:0:b0:2ff:dda2:eb0b with SMTP id 38308e7fff4ca-2ffdda2f145mr9414821fa.19.1732740922644;
-        Wed, 27 Nov 2024 12:55:22 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa53a0729sm21553071fa.118.2024.11.27.12.55.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 12:55:21 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffdd9fc913so1779121fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 12:55:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVJAeBhVA2GnwhT0DAiEaFB+0jUcWUR2h0tspRDdLgtzNHSL749BzcZ3XrkLF7pM5CjUmU+PxvVVraKOc8=@vger.kernel.org
-X-Received: by 2002:a05:651c:18c4:b0:2fb:3445:a4af with SMTP id
- 38308e7fff4ca-2ffd60325f3mr31834761fa.21.1732740921491; Wed, 27 Nov 2024
- 12:55:21 -0800 (PST)
+	s=arc-20240116; t=1732740989; c=relaxed/simple;
+	bh=IsY1p9peZtsuSZmN1lXqkSi2g3xTHsQCxshSsJgZG1w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XoKi91oLJA7J6g/N9R6W/5z6b9YTi1za+47tDHF68gRSNLJSm8TSm1obtkd0aXqx3oRvjhIeldVfXmYjJeWVV+oGQTSETHLyVYxzQZUQjYy+lJExMzuM/hyQ954kr3gpsAmp0lHj1BsnOQZ0TWIWryMEgo03j76f2znG4DN/8D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Arx1PFHc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C93C4CECC;
+	Wed, 27 Nov 2024 20:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732740989;
+	bh=IsY1p9peZtsuSZmN1lXqkSi2g3xTHsQCxshSsJgZG1w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Arx1PFHcSj+PqFbPWIkBHIkiHMkmNsiA+gH8W9NoTAtXL+V6o6tCrs43pca8YTKVc
+	 +66/1vUHZ1Dbvgj0UI+AhKnRrIWAtIse6PFMPQP1aDl9YMzgaTz2XKfkg+164BzAni
+	 1v+nnYBIWCMmVETcLBfMGUMYrwW0kr4MmUelngWRtWGthYwSpIBBMwpcmsp0fcDxUF
+	 nMbEIav25ZUiVxMoZXL3lzwJbzMLPKkC5AsynbEyQmcggMs5z8t/EveVV7IeKhEYb1
+	 yfh5RDiRXz8XszRjbf46JcNSA9QsCJFG1nOdNIQbZzzwUbr00MZM5skJvSJ5BEsGM0
+	 KYlB5qrlsma6A==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Gregory Price <gourry@gourry.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] mm/damon: introduce DAMOS filter type UNMAPPED
+Date: Wed, 27 Nov 2024 12:56:24 -0800
+Message-Id: <20241127205624.86986-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204527.GA285791@lichtman.org>
-In-Reply-To: <20241121204527.GA285791@lichtman.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 27 Nov 2024 12:55:10 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V6B9mAb-EQaK1K+pa4duzOGmz=dt4QUFVVGUbq7NnK3Q@mail.gmail.com>
-Message-ID: <CAD=FV=V6B9mAb-EQaK1K+pa4duzOGmz=dt4QUFVVGUbq7NnK3Q@mail.gmail.com>
-Subject: Re: [PATCH] kdb: utilize more readable control characters macro in
- kdb io
-To: Nir Lichtman <nir@lichtman.org>
-Cc: jason.wessel@windriver.com, danielt@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Some DAMOS actions may better to be applied to only mapped, or unmapped
+pages.  For example, users might want to use NUMA hint fault based
+CXL-memory promotion for mapped pages, and DAMOS-based promotion for
+unmapped pages.  For another example, users might want to proactively
+reclaim only unmapped page cache, since some people do mmap() for only
+performance-important files, to reduce read()/write() system call
+overheads.  To support such use cases, introduce a new DAMOS filter type
+for unmapped pages.
 
-On Thu, Nov 21, 2024 at 12:45=E2=80=AFPM Nir Lichtman <nir@lichtman.org> wr=
-ote:
->
-> @@ -267,7 +267,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
->         if (key !=3D 9)
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+It is unclear if the example usages are realistic, and how much benefit
+this idea will provide for the example usages.  This is for showing only
+more specific shape of the idea, and hence RFC.  No test other than
+build on my machine has run.
 
-FWIW, the "9" above is better as CTRL_KEY('I').
+ include/linux/damon.h    | 2 ++
+ mm/damon/paddr.c         | 3 +++
+ mm/damon/sysfs-schemes.c | 1 +
+ 3 files changed, 6 insertions(+)
 
+diff --git a/include/linux/damon.h b/include/linux/damon.h
+index 9d8bb6116df4..10fc6df52111 100644
+--- a/include/linux/damon.h
++++ b/include/linux/damon.h
+@@ -315,6 +315,7 @@ struct damos_stat {
+  * @DAMOS_FILTER_TYPE_ANON:	Anonymous pages.
+  * @DAMOS_FILTER_TYPE_MEMCG:	Specific memcg's pages.
+  * @DAMOS_FILTER_TYPE_YOUNG:	Recently accessed pages.
++ * @DAMOS_FILTER_TYPE_UNMAPPED:	Unmapped pages.
+  * @DAMOS_FILTER_TYPE_ADDR:	Address range.
+  * @DAMOS_FILTER_TYPE_TARGET:	Data Access Monitoring target.
+  * @NR_DAMOS_FILTER_TYPES:	Number of filter types.
+@@ -334,6 +335,7 @@ enum damos_filter_type {
+ 	DAMOS_FILTER_TYPE_ANON,
+ 	DAMOS_FILTER_TYPE_MEMCG,
+ 	DAMOS_FILTER_TYPE_YOUNG,
++	DAMOS_FILTER_TYPE_UNMAPPED,
+ 	DAMOS_FILTER_TYPE_ADDR,
+ 	DAMOS_FILTER_TYPE_TARGET,
+ 	NR_DAMOS_FILTER_TYPES,
+diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+index 4733aaddcae8..b3cb2578a201 100644
+--- a/mm/damon/paddr.c
++++ b/mm/damon/paddr.c
+@@ -222,6 +222,9 @@ static bool __damos_pa_filter_out(struct damos_filter *filter,
+ 		if (matched)
+ 			damon_folio_mkold(folio);
+ 		break;
++	case DAMOS_FILTER_TYPE_UNMAPPED:
++		matched = !folio_mapped(folio) || !folio_raw_mapping(folio);
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+index 6cc976b8e363..25356fe99273 100644
+--- a/mm/damon/sysfs-schemes.c
++++ b/mm/damon/sysfs-schemes.c
+@@ -345,6 +345,7 @@ static const char * const damon_sysfs_scheme_filter_type_strs[] = {
+ 	"anon",
+ 	"memcg",
+ 	"young",
++	"unmapped",
+ 	"addr",
+ 	"target",
+ };
+-- 
+2.39.5
 
-> @@ -176,14 +174,16 @@ int kdb_get_kbd_char(void)
->         case KT_LATIN:
->                 switch (keychar) {
->                 /* non-printable supported control characters */
-> -               case CTRL('A'): /* Home */
-> -               case CTRL('B'): /* Left */
-> -               case CTRL('D'): /* Del */
-> -               case CTRL('E'): /* End */
-> -               case CTRL('F'): /* Right */
-> -               case CTRL('I'): /* Tab */
-> -               case CTRL('N'): /* Down */
-> -               case CTRL('P'): /* Up */
-> +               case CTRL_KEY('A'): /* Home */
-> +               case CTRL_KEY('B'): /* Left */
-> +               case CTRL_KEY('D'): /* Del */
-> +               case CTRL_KEY('E'): /* End */
-> +               case CTRL_KEY('F'): /* Right */
-> +               case CTRL_KEY('I'): /* Tab */
-> +               case CTRL_KEY('K'):
-> +               case CTRL_KEY('N'): /* Down */
-> +               case CTRL_KEY('P'): /* Up */
-> +               case CTRL_KEY('U'):
-
-You snuck in a functionality change (adding Ctrl-K and Ctrl-U) here
-that should be in a separate patch.
-
-Otherwise this looks nice to me.
-
--Doug
 
