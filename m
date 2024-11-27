@@ -1,95 +1,132 @@
-Return-Path: <linux-kernel+bounces-423630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E789DAAA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D029DAAB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 022061679E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634F5166D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 15:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886211FF7CC;
-	Wed, 27 Nov 2024 15:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03FF1FF7DA;
+	Wed, 27 Nov 2024 15:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puOXGKqF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="mjJ2AMfo"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76931FF7C3
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5E11FF7C2;
+	Wed, 27 Nov 2024 15:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732720863; cv=none; b=L/8aKxa7Y/da7gQ1rDLnQeu7dYKcQezcKPNkOtSdnYqrLHNYguakUewmTIR13071697VPq31oQrK8POprEKjq5YeQZY4CK2j1nnj6gNYXKZ7GD5dc+SPxf/Zsdx/V525fhwpFp1ow42YF0klbYz00NtrtZ+xXmhccVVXquGg5Xs=
+	t=1732720940; cv=none; b=gqpgWazjsh1QLBLbuS+WrYb6Mm2skxkLvYnK+76tyQIJ+A2ZLCLZc3RPQUmdikHveB6jbAF8AX8sWiIpP9EQnJk8lbJz/lbgi/yQ3EcLP51RFucfrd35WyFIBqrflj2xEWhHh/8QxyNThXUTY3TD4kSDDc8CFm/CXf3VMzeGarI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732720863; c=relaxed/simple;
-	bh=oLpo+hWAgB+0siG+hnBSnXiUeJoq42VkWg/Lo9jL3Y4=;
+	s=arc-20240116; t=1732720940; c=relaxed/simple;
+	bh=+3InKqe2qAdjjp6xq492AfyD2EpLQw09TtoBCofPou0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzvjLyquKxlzHFOegiDAXMx8G1DUs7jhcXnVBoFyyxZ5qx+qCITIanAiuiRtd+y1LDUh23PJwaVg3I0cgQ4I8+0Ew2R4++APoTJG6zUo4cFXo0HdKKZ9iRgJDi3IdKokNWQBFBDsfkA5ORseedIgCy4vBVtZLP2Hq3xiy/Ner6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puOXGKqF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17077C4CECC;
-	Wed, 27 Nov 2024 15:21:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732720862;
-	bh=oLpo+hWAgB+0siG+hnBSnXiUeJoq42VkWg/Lo9jL3Y4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVGVKkyOSKlMaXlrv6PrKLEiJr5C542zMGvAipF27RaFO4DGsbKfxCcPHyj/eoJlM4EcPfcv3xrt9HfJPIa+jTSwnx6H34uUI/OeduyawrYq+mAocuWW3Isw6dwv3JZyuCYGJLhaplKxZHL/OG0dIzxqfSAQrxnDlgCYHV01Ka4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=mjJ2AMfo; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732720932;
+	bh=+3InKqe2qAdjjp6xq492AfyD2EpLQw09TtoBCofPou0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=puOXGKqF5ksn1wblnOcY2BV7BD2hEY/PjaVbaN+hAVlxwkGS0FpNeONX8QwQ7qur7
-	 yhSByGKFSXLUkUUpN2RKWdm2kPqdc7XHB2oYqjgBb6mkPjZ07SCnTGKzAB9ijG5DZ8
-	 /cewMaPyrYnZOUvPMzn6C4tbgo//s+dFcbcXQJqC6JUIkjHMPzpDMjxygqfCQkojID
-	 HuadncSYPfE02KOcwaRevfNPCCf0sBxzHJ3w2hqx/7bBHcUh9Mx5kcXmkF5ZIjnqXg
-	 XGqRCkhT3+fuKVThkldBn0zSIq5lccl8nERIlK2BOo0QGhJElH7p8CQq00TMTojKZK
-	 PC1iuy5aHH7Ug==
-Date: Wed, 27 Nov 2024 16:21:00 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] drm/vkms: Rename vkms_output to vkms_crtc
-Message-ID: <20241127-aboriginal-spiked-centipede-cabef0@houat>
-References: <20241122-b4-vkms-allocated-v2-0-ff7bddbf0bfb@bootlin.com>
- <20241122-b4-vkms-allocated-v2-4-ff7bddbf0bfb@bootlin.com>
+	b=mjJ2AMfow3qyyyaZ/euCqvl1CQvjDkdHeH5in1HTXovuhc542WrBmfTYCthwS0yFX
+	 5bSfgK9R2COTMCNVET3k5q2K06tVUFzmP8p1Z+iAZfHL35wPD7ruvT/Q4ltjdsIbNV
+	 KjXPlAFu8XtjB7vEOo9k+9VytTil06sXOcaT5kiE=
+Date: Wed, 27 Nov 2024 16:22:12 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] btf: Use BIN_ATTR_SIMPLE_RO() to define vmlinux attribute
+Message-ID: <998be751-3e7d-46e7-896e-6fd089f5dfa5@t-8ch.de>
+References: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
+ <CAADnVQLV=7Mt+DTX84u_4kP_pVNhbyHMvL29BPcFQjOj7RpM7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="umgahrspnwgk4kha"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122-b4-vkms-allocated-v2-4-ff7bddbf0bfb@bootlin.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLV=7Mt+DTX84u_4kP_pVNhbyHMvL29BPcFQjOj7RpM7A@mail.gmail.com>
 
+On 2024-11-26 17:52:29-0800, Alexei Starovoitov wrote:
+> On Fri, Nov 22, 2024 at 4:57 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> >
+> > The usage of the macro allows to remove the custom handler function,
+> > saving some memory. Additionally the code is easier to read.
+> >
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > Something similar can be done to btf_module_read() in kernel/bpf/btf.c.
+> > But doing it here and now would lead to some conflicts with some other
+> > sysfs refactorings I'm doing. It will be part of a future series.
+> > ---
+> >  kernel/bpf/sysfs_btf.c | 21 +++++----------------
+> >  1 file changed, 5 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
+> > index fedb54c94cdb830a4890d33677dcc5a6e236c13f..a24381f933d0b80b11116d05463c35e9fa66acb1 100644
+> > --- a/kernel/bpf/sysfs_btf.c
+> > +++ b/kernel/bpf/sysfs_btf.c
+> > @@ -12,34 +12,23 @@
+> >  extern char __start_BTF[];
+> >  extern char __stop_BTF[];
+> >
+> > -static ssize_t
+> > -btf_vmlinux_read(struct file *file, struct kobject *kobj,
+> > -                struct bin_attribute *bin_attr,
+> > -                char *buf, loff_t off, size_t len)
+> > -{
+> > -       memcpy(buf, __start_BTF + off, len);
+> > -       return len;
+> > -}
+> > -
+> > -static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init = {
+> > -       .attr = { .name = "vmlinux", .mode = 0444, },
+> > -       .read = btf_vmlinux_read,
+> > -};
+> > +static __ro_after_init BIN_ATTR_SIMPLE_RO(vmlinux);
+> 
+> To be honest I really don't like when code is hidden by macros like this.
+> Looks like you guys already managed to sprinkle it in a few places.
+> 
+> btf_vmlinux_read() can be replaced with sysfs_bin_attr_simple_read().
+> This part is fine, but macro pls dont.
+> It doesn't help readability.
+> imo mode = 0444 vs mode = 0400 is easier to understand
+> instead of _RO vs _ADMIN_RO suffix.
 
---umgahrspnwgk4kha
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 4/4] drm/vkms: Rename vkms_output to vkms_crtc
-MIME-Version: 1.0
+I'm fine with either solution.
 
-On Fri, Nov 22, 2024 at 05:35:12PM +0100, Louis Chauvet wrote:
-> The current vkms_output structure only contains crtc-related members.
+My patch is motivated by my current effort to constify 'struct
+bin_attribute' throughout the kernel.
+With the macro I only have to touch this location once,
+without it twice.
 
-That's not true though? There's a connector, the connector's workqueue,
-etc. in there.
+If we go with a plain sysfs_bin_attr_simple_read() please let me do the
+patch in another series I have prepared, to be submitted after 6.13-rc1.
 
-Maxime
+> __ro_after_init should be a part of it, at least.
 
---umgahrspnwgk4kha
-Content-Type: application/pgp-signature; name="signature.asc"
+I see where you are coming from, it would break the pattern with all the
+other attribute macros however.
 
------BEGIN PGP SIGNATURE-----
+> I'd like to hear what other maintainers think about
+> such obfuscation.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0c42wAKCRAnX84Zoj2+
-di2IAYCNsqVrXaL8QKjOZw5i0osxjLvTGT3ohksTk4Zj5bIm4IEGtJ0YI+Xn90dH
-Q8ljx/gBfjTY6PHH9jJz0+2aX68O4rXlj7iP6f0SBFqF/R2EhaeDh3HGjt3g2ts6
-Gi8ti7HFnA==
-=pbn6
------END PGP SIGNATURE-----
-
---umgahrspnwgk4kha--
+Ack.
 
