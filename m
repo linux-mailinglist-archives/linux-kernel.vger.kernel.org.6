@@ -1,336 +1,111 @@
-Return-Path: <linux-kernel+bounces-423751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2169DAC32
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:04:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20579DAC30
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 18:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E103164771
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39870164926
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD0201010;
-	Wed, 27 Nov 2024 17:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C06201003;
+	Wed, 27 Nov 2024 17:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ckZybp51"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvaknC7e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B306A3FB8B;
-	Wed, 27 Nov 2024 17:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732727084; cv=pass; b=DF9uCSVoD9alS+1GlTZAPFdp7g2frnwATP4S6YFIef0iPosDHrqyJYJTo9+kQeyGebO48E04jiRwHnqLWtIJ+KBpwAah2cKu5a5ly09a/t+kAY0k5bhKNO8CIUzWFFE8b7Mg4PPkIVFG/kK5fvKwpEq69ZI9r4ADYbXYu3cQWow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732727084; c=relaxed/simple;
-	bh=qF/d3SSzrTJeW7/DdfqQkC+nMwhPlbF0wIQHyBooUS0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=pHk4PNN+0XDjRs86bto+YBG07ByLc4qSjccuE4GTmQPEjdQRjRlwQBqxzm5qIyY9PBzJQzqgYfvrw6sgh6mCeoPTblEDxwfb4J/9VOZw5ib+bSHNKNsHKwsQCHjOoLK4+XdkDJVb5Oeu/MGCiJHtH9cHKSSUPozpShbpQ4UDrRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ckZybp51; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732727037; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jIF6WcFsa7I0SVmYvBQiGg86iB7nlnV0i/9U4SrBCqUb/xp1zBp7n9E+Upzh8fGkNTRYoihRMBMHVFZWZptABwMwTR30EZhHOvlmQzHgVA5X+eunqI5J8FHTn+h80VrHPffgZh9Jp7QTpgoYDvb5E7acHQPG/1S0jT1m6RbM5Is=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732727037; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ThqB6Cw1Jz5IsPrydDGEs7scPjQXlxcw0xZC/VMUBio=; 
-	b=M47wD+ldu5Rd5vv+QW4ajan+iTOSVOSrCAVqDqFHznuG5htUYvxiCDQH7To6abMlGDtqS7bThh2qxr6BjmONdBVPVWJDiUJ6VmCX+bJ4wtOUy7ubN78hzkXxwEchTmEpuETIZ2NgftXkvXo5EVXHFrGVwtRub8Nvwfg3wBhzeQI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732727037;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=ThqB6Cw1Jz5IsPrydDGEs7scPjQXlxcw0xZC/VMUBio=;
-	b=ckZybp51h0i6ipcllrZLB5l8jXfgjNJzJGy+S71P1LMZkCIlaqu+H+DbvnSG+aGC
-	gtGEe0wy/JIURPNLz0/DNvdvMY7XSnSSklJgKrvSG/aZoH53/fsF54ghsKd6YM6l/9E
-	CL+vcyk/PXb/k1+En7vvaeeZ7o1uxZU/zwOdbK1U=
-Received: by mx.zohomail.com with SMTPS id 1732727035170332.7762190998259;
-	Wed, 27 Nov 2024 09:03:55 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BEB1F8F1A;
+	Wed, 27 Nov 2024 17:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732727051; cv=none; b=NG/cGhxjh2IN71WUHGn6ep3lE5rSZ8MBGhMW35ww721/kkAjt5gxBopaVzFcS2cBgDvyhlyQRkV67qM5yPN3N9p/fOurUqxI4eW0NKK4ccHb2ohW6nfJzWOrilvecOreqPwM1qOb+nFzFnRlXkFuWvWF0IW9Kw1JR+Nr8o1jzvI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732727051; c=relaxed/simple;
+	bh=5HRBVytr5GUFSIGmJD7/dGSkmSv8GWKUHwmGpMyEXys=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pdYJWniXTPsIvwFPrBsO8I+sMOomHTHFj1HzO3mmEq+EqVPsKRDi/rk3nZeqW2EauajakICxZx468PtE+eg3o5nPpmmbBLmYUlXOxvAp5BxnIJdLi1nbswJymai7uBgeOwNDKQyxL5GNtJW3JiB362Uv1iIlFm9LdqZqgg0w9Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvaknC7e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BFBC4CECC;
+	Wed, 27 Nov 2024 17:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732727051;
+	bh=5HRBVytr5GUFSIGmJD7/dGSkmSv8GWKUHwmGpMyEXys=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YvaknC7egerwU0wTAMT56+snNiguf+QPNUBbcMHW3PPtw20N60ss+DgBPNrYLv1MY
+	 Jn4xJL2ZWjCE1cO9yrH+LnKDqOc7cm/JNVET4NSyX9BFk7yQT9Xml4uP4fM/WPTzJb
+	 rd7hCpnRsAayL+3YQ+aQAneAGoTqng+trBp2eKxYsjwVyxoMbuWf+gmc9NatWUKtE4
+	 /9UAmPQaSl7FsrvpWzDTVhOz6iLsRidYhhBOAtpRl+kgS2GGRFa+vXf0cDiawcuqC+
+	 VbwSqQaLm7rhrGMdtxVysKqCdpgnnGqwKTyay6Vm+IcxKmfoG4b92ZBaoxNOgqZDIl
+	 LCghrdgcfDrFQ==
+From: SeongJae Park <sj@kernel.org>
+To: Maximilian Heyne <mheyne@amazon.de>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Shuah Khan" <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/damon: Add _damon_sysfs.py to TEST_FILES
+Date: Wed, 27 Nov 2024 09:04:07 -0800
+Message-Id: <20241127170407.82602-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241127-picks-visitor-7416685b-mheyne@amazon.de>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 15/35] WIP: rust: drm/kms: Add OpaquePlane and
- OpaquePlaneState
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-16-lyude@redhat.com>
-Date: Wed, 27 Nov 2024 14:03:39 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <46A2C748-0EC5-481D-8473-09182C1D44DF@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-16-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Lyude,
+On Wed, 27 Nov 2024 12:08:53 +0000 Maximilian Heyne <mheyne@amazon.de> wrote:
 
-> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Same thing as OpaqueCrtc and OpaqueCrtcState, but for plane states =
-now.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
+> When running selftests I encountered the following error message with
+> some damon tests:
+> 
+>  # Traceback (most recent call last):
+>  #   File "[...]/damon/./damos_quota.py", line 7, in <module>
+>  #     import _damon_sysfs
+>  # ModuleNotFoundError: No module named '_damon_sysfs'
+> 
+> Fix this by adding the _damon_sysfs.py file to TEST_FILES so that it
+> will be available when running the respective damon selftests.
+
+Thank you for finding and fixing this issue, Max!
+
+> 
+> Fixes: 306abb63a8ca ("selftests/damon: implement a python module for test-purpose DAMON sysfs controls")
+> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
 > ---
->=20
-> TODO:
-> * Finish adding upcast functions.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms/plane.rs | 143 +++++++++++++++++++++++++++++++++++
-> 1 file changed, 143 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/kms/plane.rs =
-b/rust/kernel/drm/kms/plane.rs
-> index 3040c4546b121..3ace487316d46 100644
-> --- a/rust/kernel/drm/kms/plane.rs
-> +++ b/rust/kernel/drm/kms/plane.rs
-> @@ -217,6 +217,43 @@ pub fn new<'a, 'b: 'a, const FMT_COUNT: usize, =
-const MOD_COUNT: usize>(
->         // SAFETY: We don't move anything
->         Ok(unsafe { &*Box::into_raw(Pin::into_inner_unchecked(this)) =
-})
->     }
-> +
-> +    /// Attempt to convert an [`OpaquePlane`] into a fully qualified =
-[`Plane`].
-> +    ///
-> +    /// This checks if the given [`OpaquePlane`] uses the same =
-[`DriverPlane`] implementation, and
-> +    /// returns the [`OpaquePlane`] as a [`Plane`] object if so.
-> +    pub fn try_from_opaque<'a, D>(opaque: &'a OpaquePlane<D>) -> =
-Option<&'a Self>
-> +    where
-> +        D: KmsDriver,
-> +        T: DriverPlane<Driver =3D D>
-> +    {
-> +        // SAFETY: The vtables for a `Plane` are initialized by the =
-time that we expose `Plane`
-> +        // objects to users, and their values are invariant =
-throughout the lifetime of the device.
-> +        let funcs =3D unsafe { (*opaque.plane.get()).funcs };
-> +
-> +        // SAFETY: We just guaranteed that the opaque plane shares =
-our vtable pointers, which means
-> +        // it must belong to our `DriverPlane` implementation. As =
-well, all `Plane<DriverPlane>`
-> +        // objects start with an identical data layout to =
-`OpaquePlane`
-> +        ptr::eq(funcs, &T::OPS.funcs).then(|| unsafe { =
-mem::transmute(opaque) })
-> +    }
-> +
-> +    /// Convert a [`OpaquePlane`] into its fully qualified [`Plane`].
-> +    ///
-> +    /// This is an infallible version of [`Self::try_from_opaque`]. =
-This function is mainly useful
-> +    /// for drivers where only a single [`DriverPlane`] =
-implementation exists.
-> +    ///
-> +    /// # Panics
-> +    ///
-> +    /// This function will panic if the underlying [`Plane`] which =
-contains the provided
-> +    /// [`OpaquePlane`] does not belong to the same [`DriverPlane`] =
-implementation.
-> +    pub fn from_opaque<'a, D>(opaque: &'a OpaquePlane<D>) -> &'a Self
-> +    where
-> +        D: KmsDriver,
-> +        T: DriverPlane<Driver =3D D>
-> +    {
-> +        Self::try_from_opaque(opaque)
-> +            .expect("Passed OpaquePlane does not share this =
-DriverPlane implementation")
-> +    }
-
-I guess the same question from the previous patch applies. If a driver =
-has only a single implementor for
-`DriverPlane`, why should it care about OpaquePlane?
-
-> }
->=20
-> /// A trait implemented by any type that acts as a [`struct =
-drm_plane`] interface.
-> @@ -275,6 +312,63 @@ unsafe impl<T: DriverPlane> Send for Plane<T> {}
-> // SAFETY: Our interface is thread-safe.
-> unsafe impl<T: DriverPlane> Sync for Plane<T> {}
->=20
-> +/// A [`struct drm_plane`] without a known [`DriverPlane`] =
-implementation.
-> +///
-> +/// This is mainly for situations where our bindings can't infer the =
-[`DriverPlane`] implementation
-> +/// for a [`struct drm_plane`] automatically. It is identical to =
-[`Plane`], except that it does not
-> +/// provide access to the driver's private data.
-> +///
-> +/// It may be upcasted to a full [`Plane`] using =
-[`Plane::from_opaque`] or
-> +/// [`Plane::try_from_opaque`].
-> +///
-> +/// # Invariants
-> +///
-> +/// - `plane` is initialized for as long as this object is made =
-available to users.
-> +/// - The data layout of this structure is equivalent to [`struct =
-drm_plane`].
-> +///
-> +/// [`struct drm_plane`]: srctree/include/drm/drm_plane.h
-> +#[repr(transparent)]
-> +pub struct OpaquePlane<T: KmsDriver> {
-> +    plane: Opaque<bindings::drm_plane>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +impl<T: KmsDriver> Sealed for OpaquePlane<T> {}
-> +
-> +impl<T: KmsDriver> AsRawPlane for OpaquePlane<T> {
-> +    type State =3D OpaquePlaneState<T>;
-> +
-> +    fn as_raw(&self) -> *mut bindings::drm_plane {
-> +        self.plane.get()
-> +    }
-> +
-> +    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_plane) -> &'a Self =
-{
-> +        // SAFETY: Our data layout is identical to =
-`bindings::drm_plane`
-> +        unsafe { &*ptr.cast() }
-> +    }
-> +}
-> +
-> +impl<T: KmsDriver> ModeObject for OpaquePlane<T> {
-> +    type Driver =3D T;
-> +
-> +    fn drm_dev(&self) -> &Device<Self::Driver> {
-> +        // SAFETY: DRM planes exist for as long as the device does, =
-so this pointer is always valid
-> +        unsafe { Device::borrow((*self.as_raw()).dev) }
-> +    }
-> +
-> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
-> +        // SAFETY: We don't expose DRM planes to users before `base` =
-is initialized
-> +        unsafe { &mut ((*self.as_raw()).base) }
-> +    }
-> +}
-> +
-> +// SAFETY: Planes do not have a refcount
-> +unsafe impl<T: KmsDriver> StaticModeObject for OpaquePlane<T> {}
-> +
-> +// SAFETY: Our plane interfaces are guaranteed to be thread-safe
-> +unsafe impl<T: KmsDriver> Send for OpaquePlane<T> {}
-> +unsafe impl<T: KmsDriver> Sync for OpaquePlane<T> {}
-> +
-> /// A trait implemented by any type which can produce a reference to a =
-[`struct drm_plane_state`].
-> ///
-> /// This is implemented internally by DRM.
-> @@ -419,6 +513,55 @@ fn deref_mut(&mut self) -> &mut Self::Target {
->     }
-> }
->=20
-> +/// A [`struct drm_plane_state`] without a known [`DriverPlaneState`] =
-implementation.
-> +///
-> +/// This is mainly for situations where our bindings can't infer the =
-[`DriverPlaneState`]
-> +/// implementation for a [`struct drm_plane_state`] automatically. It =
-is identical to [`Plane`],
-> +/// except that it does not provide access to the driver's private =
-data.
-> +///
-> +/// TODO: Add upcast functions
-> +///
-> +/// # Invariants
-> +///
-> +/// - The DRM C API and our interface guarantees that only the user =
-has mutable access to `state`,
-> +///   up until [`drm_atomic_helper_commit_hw_done`] is called. =
-Therefore, `plane` follows rust's
-> +///   data aliasing rules and does not need to be behind an =
-[`Opaque`] type.
-> +/// - `state` is initialized for as long as this object is exposed to =
-users.
-> +/// - The data layout of this structure is identical to [`struct =
-drm_plane_state`].
-> +///
-> +/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
-> +/// [`drm_atomic_helper_commit_hw_done`]: =
-srctree/include/drm/drm_atomic_helper.h
-> +#[repr(transparent)]
-> +pub struct OpaquePlaneState<T: KmsDriver> {
-> +    state: bindings::drm_plane_state,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +impl<T: KmsDriver> AsRawPlaneState for OpaquePlaneState<T> {
-> +    type Plane =3D OpaquePlane<T>;
-> +}
-> +
-> +impl<T: KmsDriver> private::AsRawPlaneState for OpaquePlaneState<T> {
-> +    fn as_raw(&self) -> &bindings::drm_plane_state {
-> +        &self.state
-> +    }
-> +
-> +    unsafe fn as_raw_mut(&mut self) -> &mut bindings::drm_plane_state =
-{
-> +        &mut self.state
-> +    }
-> +}
-> +
-> +impl<T: KmsDriver> FromRawPlaneState for OpaquePlaneState<T> {
-> +    unsafe fn from_raw<'a>(ptr: *const bindings::drm_plane_state) -> =
-&'a Self {
-> +        // SAFETY: Our data layout is identical to `ptr`
-> +        unsafe { &*ptr.cast() }
-> +    }
-> +
-> +    unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) =
--> &'a mut Self {
-> +        // SAFETY: Our data layout is identical to `ptr`
-> +        unsafe { &mut *ptr.cast() }
-> +    }
-> +}
-> unsafe extern "C" fn plane_destroy_callback<T: DriverPlane>(
->     plane: *mut bindings::drm_plane
-> ) {
-> --=20
-> 2.46.1
->=20
-
-Apart for the clarification I asked above, this patch looks good.
-
-=E2=80=94 Daniel
-
+>  tools/testing/selftests/damon/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/damon/Makefile b/tools/testing/selftests/damon/Makefile
+> index 5b2a6a5dd1af7..812f656260fba 100644
+> --- a/tools/testing/selftests/damon/Makefile
+> +++ b/tools/testing/selftests/damon/Makefile
+> @@ -6,7 +6,7 @@ TEST_GEN_FILES += debugfs_target_ids_read_before_terminate_race
+>  TEST_GEN_FILES += debugfs_target_ids_pid_leak
+>  TEST_GEN_FILES += access_memory access_memory_even
+>  
+> -TEST_FILES = _chk_dependency.sh _debugfs_common.sh
+> +TEST_FILES = _chk_dependency.sh _debugfs_common.sh _damon_sysfs.py
+>  
+>  # functionality tests
+>  TEST_PROGS = debugfs_attrs.sh debugfs_schemes.sh debugfs_target_ids.sh
+> -- 
+> 2.40.1
+[...]
 
