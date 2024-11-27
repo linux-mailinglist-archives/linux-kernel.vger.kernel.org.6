@@ -1,179 +1,112 @@
-Return-Path: <linux-kernel+bounces-423995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990EE9DAF22
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:55:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE879DAF25
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:58:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A5D166668
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:58:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EE3191F75;
+	Wed, 27 Nov 2024 21:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dn9sPrKK"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033CFB222C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:55:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E312036FB;
-	Wed, 27 Nov 2024 21:55:26 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E974C191F75
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F8E202F7B;
+	Wed, 27 Nov 2024 21:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732744525; cv=none; b=K82iL4VuiWz/q3rBEPu7yq5ecAaBEyWwXpx04q1PBP9lE/SE58CqAp21Bi+bShvj23C1g35sSpKTOTk22VXPPCmaphAL9eGuvY0TFGRxMLC8UPLcK38veqTK0yNWQsV9FfImPHVME6HiG9UfS3xc8peAceMkSzj2mfYXgIIUcig=
+	t=1732744713; cv=none; b=d6u5lVxVwS4NHu/bOjMnFMnzUuKfn7fi9LpHckFi3X5BnqJ3HSstQKACA4kyR48wAtNtmbndS1geqGkHhNQtfQhgKP9YUrhHzWTUBW6kSKgsZMYXuvhj7rrpjpcY8e70wL8Mr9RN/mINkQ3xCrDlKGtIAMPEixvLfDk6IF9Jju0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732744525; c=relaxed/simple;
-	bh=wHM2OrL8e79dKeH2gD8Yp82lDj4yCL0xRcvE5WB7s9s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jCiOPLkYGi63rx46iNGRrVKGMirIUvHZKXOp8u1fKRQjR9xn4U4I19/RIMTevVDUf+QSIG55M/FnyLppwIPowz1HLHE+xLq82N9K6AOGHC18l8zoUAHnLRZ2076O7j8O2IOpm/byGs0aM8heuBBIrVBYEI9yPxh3oUbssd3DhiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a54a66a2so11360739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:55:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732744523; x=1733349323;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Epg/2RMhmpPXmBlb4qS8YZsKov8fLNlh2IrMDtv8Kxs=;
-        b=GfZ/EhMG+ikA3JUOQVYkiS2lswIsDLK7+lIRPZ6TRoNh7vpLPBGsZ2rYDiQUPdPKM1
-         PFBJlHdsRirhjqHYHJLVj9dVvLl/60xnFKpYZJWng0SYHFDtR5Au+GTf3mv8e5SC30QG
-         mNrXyduP9CulT3ikYhmVzD+JDMUmvmY4SyZ+phqIfCpxXPnYZbGAjtrT1a4NhkwAkKjG
-         sLjlnhaZi/Qo7Ukvh1nVb+rde0OHRnoA1fDs1tW6ySQr13G47vHgJtYWWBIhVLf5poFN
-         Mq8lyrLbIj5PfJwIiQJpeUXk4NnrQHPYJ1epX17byhvA+EsLAUvuRO+Vm8NwHJTh5s4u
-         ZGZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu86vRWOgu4gsn5226kxVg2GU9NQmIxPiVQOKzBcrTyX3yHr0/FWJcS/ssEZbvoGvc4GunYjL+eKsAkX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ0dLR8BmlklURROF+rX81AeKJN2uQ/wuKQvhbak16+70+EgYD
-	gv7+ZipKuyNz5e28AY31I8/CeMuXr+1xGMpDq7S/lTJdehpWqueNT3p0UlBOW7N5Jw5e7EOxkU2
-	d/jzAYiIQTOSD9A6JHzZAIA5fdwLuaEnkrxkT2GXPAtvMoRMzSUHc57E=
-X-Google-Smtp-Source: AGHT+IF5KfYlQB4ZglRygUfFv4HlReybSxnwAVaXI2cqd9V0GHNEQqdc0dKCshkBV2GNUJoSGcfKFgsp2XiTCNqdtyszvdoerLAW
+	s=arc-20240116; t=1732744713; c=relaxed/simple;
+	bh=bClPv1mu2ovYRkv1B/aBZoP0QK+NelTmZlCGLKlBRD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/fp8YHDjOh9dTzvVqMx8bmq4DW5xd00vAGXKRQ51FHrEytSJ/vG75NwbfKgtp1SNVMunwvKypxjq/PsYUjzO1IHz+ySPWsfAxtzICGW9lB1gfzOWIWLvJN4xFA7WORXGTtcvZVqjOJe8mGkiyuF6RlZy8+8yaOLV8dBc+xCI1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dn9sPrKK; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 27 Nov 2024 16:58:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732744709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7AzoWilbJIHV7U6MNrHT9EvT5nzRzbnsGFkuZHlRxzc=;
+	b=Dn9sPrKK0CJm8VXslucFbFgEKlONDzPDvInCT1GskRjasQYbGYztOCts+JHGmdVGRh6p4V
+	sPemNtYGmHZEHImYVDCAuG84UxHcJTRvvn7pw+b5m2JiWnc3A/W+E5w/GxUwt7yVODJ3aS
+	RmCe/NAn42im/E2UzSp1Il47aNWP33I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Jann Horn <jannh@google.com>, linux-bcachefs@vger.kernel.org, 
+	kernel list <linux-kernel@vger.kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
+	io-uring <io-uring@vger.kernel.org>
+Subject: Re: bcachefs: suspicious mm pointer in struct dio_write
+Message-ID: <hrx6kaqeyqdchmv24xivrooyimackqx5mxm6vlvj3y5gusxgno@gjsbtm76unrs>
+References: <CAG48ez21ZtMJ6gcUND6bLV6XD6b--CXmKSRjKq+D33jhRh1LPw@mail.gmail.com>
+ <69510752-d6f9-4cf1-b93d-dcd249d911ef@kernel.dk>
+ <3ajlmjyqz6aregccuysq3juhxrxy5zzgdrufrfwjfab55cv2aa@oneydwsnucnj>
+ <CAG48ez2y+6dJq2ghiMesKjZ38Rm7aHc7hShWJDbBL0Baup-HyQ@mail.gmail.com>
+ <k7nnmegjogf4h5ubos7a6c4cveszrvu25g5zunoownil3klpok@jnotdc7q6ic2>
+ <4f7e45b6-c237-404a-a4c0-4929fa3f1c4b@kernel.dk>
+ <tt4mrwkwh74tc26nkkeaypci74pcmvupqcdljavlimefeitntc@6tit5kojq5ha>
+ <3c24016e-a24c-4b7f-beca-990ef0d91bfe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d05:b0:3a7:8040:595b with SMTP id
- e9e14a558f8ab-3a7c555ec95mr39547485ab.9.1732744523085; Wed, 27 Nov 2024
- 13:55:23 -0800 (PST)
-Date: Wed, 27 Nov 2024 13:55:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6747954b.050a0220.253251.0064.GAE@google.com>
-Subject: [syzbot] [net?] KASAN: global-out-of-bounds Read in __hw_addr_add_ex (2)
-From: syzbot <syzbot+a29a4fe94b1560756f7d@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c24016e-a24c-4b7f-beca-990ef0d91bfe@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Wed, Nov 27, 2024 at 02:51:26PM -0700, Jens Axboe wrote:
+> On Wed, Nov 27, 2024 at 2:27?PM Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > On Wed, Nov 27, 2024 at 02:16:24PM -0700, Jens Axboe wrote:
+> > > I'd argue the fact that you are using an mm from a different process
+> > > without grabbing a reference is the wrinkle. I just don't think it's a
+> > > problem right now, but it could be... aio is tied to the mm because of
+> > > how it does completions, potentially, and hence needs this exit_aio()
+> > > hack because of that. aio also doesn't care, because it doesn't care
+> > > about blocking - it'll happily block during issue.
+> >
+> > I'm not trying to debate who's bug it is, I'm just checking if I need to
+> > backport a security fix.
+> 
+> Not trying to place blame.
+> 
+> > > > Jens, is it really FMODE_NOWAIT that controls whether we can hit this? A
+> > > > very cursory glance leads me to suspect "no", it seems like this is a
+> > > > bug if io_uring is allowed on bcachefs at all.
+> > >
+> > > I just looked at bcachefs dio writes, which look to be the only case of
+> > > this. And yes, for writes, if FMODE_NOWAIT isn't set, then io-wq is
+> > > always involved for the IO.
+> >
+> > Ok, sounds like we're in the clear. I already started writing the
+> > patch, so it'll just be a "now we can turn on FMODE_NOWAIT" instead of
+> > a bugfix.
+> 
+> That sounds good - and FMODE_NOWAIT will be a good addition. It'll make
+> RWF_NOWAIT work, and things like io_uring will also work better as it
+> won't need to needlessly punt to an io-wq worker to complete this IO.
+> 
+> > By the way, did the lifetime issue that was causing umount/remount to
+> > fail ever get resolved? I've currently got no test coverage for
+> > io_uring, would be nice to flip that back on.
+> 
+> Nope, I do have an updated branch since then, but it's still sitting
+> waiting on getting a bit more love. I suspect it'll be done for 6.14.
 
-syzbot found the following issue on:
-
-HEAD commit:    5f153a692bac Merge commit 'bf40167d54d5' into fixes
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e6d230580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cdbbf8ef410bf2e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=a29a4fe94b1560756f7d
-compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: riscv64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1080aca7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c3a940580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-5f153a69.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bf8994051afc/vmlinux-5f153a69.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7603ef590293/Image-5f153a69.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a29a4fe94b1560756f7d@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: global-out-of-bounds in memcmp+0xc0/0xca lib/string.c:676
-Read of size 1 at addr ffffffff895cb520 by task syz-executor156/3200
-
-CPU: 1 UID: 0 PID: 3200 Comm: syz-executor156 Not tainted 6.12.0-rc1-syzkaller-00012-g5f153a692bac #0
-Hardware name: riscv-virtio,qemu (DT)
-Call Trace:
-[<ffffffff80010a14>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
-[<ffffffff85f7c3cc>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
-[<ffffffff85fd797a>] __dump_stack lib/dump_stack.c:94 [inline]
-[<ffffffff85fd797a>] dump_stack_lvl+0x122/0x196 lib/dump_stack.c:120
-[<ffffffff85f861e4>] print_address_description mm/kasan/report.c:377 [inline]
-[<ffffffff85f861e4>] print_report+0x290/0x5a0 mm/kasan/report.c:488
-[<ffffffff80970318>] kasan_report+0xec/0x118 mm/kasan/report.c:601
-[<ffffffff8097214e>] __asan_report_load1_noabort+0x12/0x1a mm/kasan/report_generic.c:378
-[<ffffffff85f525ae>] memcmp+0xc0/0xca lib/string.c:676
-[<ffffffff84d3805e>] __hw_addr_add_ex+0xee/0x676 net/core/dev_addr_lists.c:88
-[<ffffffff84d3b06a>] __dev_mc_add net/core/dev_addr_lists.c:867 [inline]
-[<ffffffff84d3b06a>] dev_mc_add+0xac/0x108 net/core/dev_addr_lists.c:885
-[<ffffffff84edd5e2>] mrp_init_applicant+0xe8/0x56e net/802/mrp.c:873
-[<ffffffff85ad13e2>] vlan_mvrp_init_applicant+0x26/0x30 net/8021q/vlan_mvrp.c:57
-[<ffffffff85ac7490>] register_vlan_dev+0x1b4/0x922 net/8021q/vlan.c:170
-[<ffffffff85acfab0>] vlan_newlink+0x3d2/0x5fc net/8021q/vlan_netlink.c:193
-[<ffffffff84d83228>] rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
-[<ffffffff84d83228>] __rtnl_newlink+0xfe2/0x1738 net/core/rtnetlink.c:3730
-[<ffffffff84d839ea>] rtnl_newlink+0x6c/0xa2 net/core/rtnetlink.c:3743
-[<ffffffff84d7259a>] rtnetlink_rcv_msg+0x428/0xdbe net/core/rtnetlink.c:6646
-[<ffffffff850b3e8e>] netlink_rcv_skb+0x216/0x3dc net/netlink/af_netlink.c:2550
-[<ffffffff84d6454c>] rtnetlink_rcv+0x26/0x30 net/core/rtnetlink.c:6664
-[<ffffffff850b2140>] netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-[<ffffffff850b2140>] netlink_unicast+0x4f0/0x82c net/netlink/af_netlink.c:1357
-[<ffffffff850b2ce0>] netlink_sendmsg+0x864/0xdc6 net/netlink/af_netlink.c:1901
-[<ffffffff84c5e82a>] sock_sendmsg_nosec net/socket.c:729 [inline]
-[<ffffffff84c5e82a>] __sock_sendmsg+0xcc/0x160 net/socket.c:744
-[<ffffffff84c5f436>] ____sys_sendmsg+0x5ce/0x79e net/socket.c:2602
-[<ffffffff84c66b4c>] ___sys_sendmsg+0x144/0x1e6 net/socket.c:2656
-[<ffffffff84c67624>] __sys_sendmsg+0x130/0x1f0 net/socket.c:2685
-[<ffffffff84c67754>] __do_sys_sendmsg net/socket.c:2694 [inline]
-[<ffffffff84c67754>] __se_sys_sendmsg net/socket.c:2692 [inline]
-[<ffffffff84c67754>] __riscv_sys_sendmsg+0x70/0xa2 net/socket.c:2692
-[<ffffffff8000f2d4>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:90
-[<ffffffff85fd9c4a>] do_trap_ecall_u+0x1aa/0x216 arch/riscv/kernel/traps.c:331
-[<ffffffff85ffcac6>] _new_vmalloc_restore_context_a0+0xc2/0xce
-
-The buggy address belongs to the variable:
- vlan_mrp_app+0x60/0x3e80
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x897cb
-flags: 0xffe000000002000(reserved|node=0|zone=0|lastcpupid=0x7ff)
-raw: 0ffe000000002000 ff1c00000025f2c8 ff1c00000025f2c8 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff895cb400: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 00 00 00 00
- ffffffff895cb480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffffff895cb500: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 00 00 00 00
-                               ^
- ffffffff895cb580: 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9 f9 f9
- ffffffff895cb600: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Alright - if you want to ping me when that's ready, along with any other
+knobs I should flip on for io_uring support, I'll flip io_uring back on
+in my test infrastructure at that time.
 
