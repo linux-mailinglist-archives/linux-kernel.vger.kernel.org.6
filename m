@@ -1,67 +1,87 @@
-Return-Path: <linux-kernel+bounces-423965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D0B9DAED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:18:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53281165FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:18:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50792202F79;
-	Wed, 27 Nov 2024 21:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ7NpMJU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C8F9DAED7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:20:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A909D7DA81;
-	Wed, 27 Nov 2024 21:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7114B22009
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 21:20:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D18203705;
+	Wed, 27 Nov 2024 21:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="KSVW4EeW"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E3115575C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732742287; cv=none; b=HKAnkG6b9fez12NixC3feh8FLrRc70w4UxGVUPI1QMn0ECnqAKfeg3DLWhw4eZs2DuwC+zv9AreqqGgFyN3G9zOxWW7+ETbLQeTKqgy/qf0MbOhJa+n0of9REdIUGbv0iXFWA7lJ2+ECBJbjZKqh2pkm63ne8CC1nI+BBcaNmxg=
+	t=1732742434; cv=none; b=JqkMR5UQ7tlOvaDEw1GmuHhm9ZmH7Adpa8quxpCvWHpFfCFHNUkP+OLMRLQi4GJgZBOzs4CSdsosG7QgTRjqrcbcNalcVNk3p6QhExhJHHv6/vRARe+Q+XvNIkVSJH7Qh8w4zbDr8ZzccCbQ7Om4GoeExnvnNEh/HTs11VoZoQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732742287; c=relaxed/simple;
-	bh=yDl5oczllgAYa8WZPNgP0zyrPYISCmrYIjhILQe6iyM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RhrOrat+NIfS8PXUNqp8hpgXm5OE6fXFFHcZ8LSa98w0r5/A/ZOXYA6Zqw3ef3jcOm2n4OFMUAF6JnZoAeDD05fVOc3kUcTk0zFRUQ29b93NLqJ3xCEfS8WKdbua+VCMFhl2HDVYsRJ487SvSlO5zdNO2BpZYcudjkUi/EdEZfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ7NpMJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06FDC4CECC;
-	Wed, 27 Nov 2024 21:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732742287;
-	bh=yDl5oczllgAYa8WZPNgP0zyrPYISCmrYIjhILQe6iyM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DZ7NpMJU2B3xyBjveFVz+LibQwAp1tdS8imzjObUeLB/2sad4GJNvO0C5v/I6O3m+
-	 VYCj+QeEO2E9MW3wSSx3XfKTmQyWwgfeJt7WOm4W1aLqzV4AsW2rv93pbED6RpiBN7
-	 ROVx7qlP3g5EUOjLK15qqiMYL/46kG+ycbGTVuMDfxwtON/VMbgYEXihe8YbAh5jQf
-	 gtbq1BPOsnieIM8pt+bi0GpxxIYi2N7vDdkAiRsOO+gxqfLt8Gv1aowZktuUy9Cf47
-	 iip1Xkk1HFFsNBAzW7Y2Xpybe2cb87RB6vww477qQJOL+JQdqwqDcBHPN3YatkIEBi
-	 t0JtOYvDhVCbw==
-From: SeongJae Park <sj@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	nehagholkar@meta.com,
-	abhishekd@meta.com,
-	kernel-team@meta.com,
-	david@redhat.com,
-	ying.huang@intel.com,
-	nphamcs@gmail.com,
-	akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	feng.tang@intel.com,
-	kbusch@meta.com,
-	damon@lists.linux.dev
-Subject: Re: [RFC PATCH 0/4] Promotion of Unmapped Page Cache Folios.
-Date: Wed, 27 Nov 2024 13:18:03 -0800
-Message-Id: <20241127211803.87124-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241127082201.1276-1-gourry@gourry.net>
-References: 
+	s=arc-20240116; t=1732742434; c=relaxed/simple;
+	bh=m393FgBxZLWdYj7lNp0m3T+NbDxlfPibCRLFVAz8ZJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SDCELnoiEAVxd3yomO9ggupx+lxDbMDtWp/+wwzkx3aJpZfYV/HUe2Xt2XKiAR7Ifu1Ttg1ErPbz1l245sIYyFotrt/y9sh+5MoUmALWNqFPsYuDzfne9cfwZ4ta0+zp1s7YhcvL8yYb75fub3D5+oD6/2Yz/5gvglEgQoSsWmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=KSVW4EeW; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so923435e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 13:20:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732742429; x=1733347229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MKfdXKuCNixmLGJZzJm5npXP+Iz02BGU7+wRejyTvW0=;
+        b=KSVW4EeWSbf+BLRBTw/i0D9gRf1e8+Ytf8PGNYSFdrmRHFCo2Gg5yGB64ER50L8YPs
+         OCV9d5Fu5cJMmiyU3HZhxoYJT0jhdT3dR54xFO2EWGC5FnlZ6sbr6GwZ6WKJ2/rxcDZp
+         lNHUWqrYI8V1iSqrCI+ip6Rl/aT5GTrc5yLxtqcs8CO8H7zrjQQdI9D8s8HvAhfLP5q3
+         cYKqtH4PcCDoD/yfQ5C1cRzFGrJnPOwOUvSZHlFhZllS3v3CGKRrWxKwI7YL4m5ox3+m
+         gdx9BiDe3gTIF5RpBZGXVQnyzLd2gha92VIkXxELzxZm6eCDFLo31OkCPfUPohijBFac
+         KP9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732742429; x=1733347229;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MKfdXKuCNixmLGJZzJm5npXP+Iz02BGU7+wRejyTvW0=;
+        b=EjLGRlJUa/8tPupgeDdeUDTTaky1oawjP1eQT0ruKXZ/X4aL1lACPs4D3wtmHksLcq
+         gQywk4LxiCizYlJw9i2I5ipCk2vXbDuE44V+4C3ypUbsYrS4rWyfi4smW4BFAoiEayvS
+         rxxV85zxiUJJU+D2ERVhtuFA8N7Se7CMp2wE5S/sOv2pVgCUzwwasLh+uo0WL7s9bPr7
+         2uh2cMif+32rJNRe51xOzhvbBvbZKaY64y2Wev9Ugee2Ieh/09R1JNWnw46e6bvYve2J
+         HOunzoItm4DmZ+2W6YxW1koXX3NoZmQv06lqCoKAQHhu2knC/0gvecmaZyqGwoRhscuO
+         w0ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVsM9y95TaKqPFD21X5R6oWSn0flRLwZFV9lSG+GlGsNoTzXcL7B6r8qRI9AZLb9iHfooWRNqtaRPYoZIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4oGqvMP0o2DEkTYC7/mLWGrMydyTzbVghM2r1NOU0Mg6oJbj+
+	Zddkf6xrQtlyMBOgxqQIiK1AvIHAV3dTmmG+qIDsbVekbgd17zToeXzTTAXZW2glQqBJxWBc3mb
+	eoPc=
+X-Gm-Gg: ASbGncvhOcp/SduF3VSv8VdaWFFZasi7U5Z769RRAKJBrsWEVzJQdl6Xfy1bf2SmkED
+	mbed45WaEox0trgUtp9aVDOpsYuZg729smiSNHJghOJPeni52KbYGmzxrUuU7Vobesw3pneMyo4
+	EtdxP8pROkwMpKUQzCLh+WTnhBtwLozl4ls53tPIJo12zzzLBqv3aPsurBe2VC2fKPqSPSu+AP7
+	8V7KcGs4gQJDByN3QtGw2DfeJjdxrYFeCurZ4nEmf88JToK+EAirP5czSi0+9ZB3OLWdFRo6p7Y
+	8tx2TZdanb6XGZdlU/bx6AtD5hHOOYRGW9OV2u4wooXhh7YGtA==
+X-Google-Smtp-Source: AGHT+IF57YQtZ6lX5ZxXc1iWwXjbntR0Vs7l+BNHyIQrT+euNq+feqoSBOd+EPlVv7DePMeGEUZXCg==
+X-Received: by 2002:a05:600c:3b1d:b0:433:c76d:d57e with SMTP id 5b1f17b1804b1-434a9dbc43dmr41458265e9.5.1732742429636;
+        Wed, 27 Nov 2024 13:20:29 -0800 (PST)
+Received: from raven.intern.cm-ag (p200300dc6f2c8700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2c:8700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74fec9sm31929615e9.6.2024.11.27.13.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 13:20:29 -0800 (PST)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: amarkuze@redhat.com,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
+Date: Wed, 27 Nov 2024 22:20:27 +0100
+Message-ID: <20241127212027.2704515-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,69 +90,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+In two `break` statements, the call to ceph_release_page_vector() was
+missing, leaking the allocation from ceph_alloc_page_vector().
 
-On Wed, 27 Nov 2024 03:21:57 -0500 Gregory Price <gourry@gourry.net> wrote:
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Unmapped page cache pages can be demoted to low-tier memory, but
-> they can presently only be promoted in two conditions:
->     1) The page is fully swapped out and re-faulted
->     2) The page becomes mapped (and exposed to NUMA hint faults)
-> 
-> This RFC proposes promoting unmapped page cache pages by using
-> folio_mark_accessed as a hotness hint for unmapped pages.
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4b8d59ebda00..24d0f1cc9aac 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1134,6 +1134,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 			extent_cnt = __ceph_sparse_read_ext_count(inode, read_len);
+ 			ret = ceph_alloc_sparse_ext_map(op, extent_cnt);
+ 			if (ret) {
++				ceph_release_page_vector(pages, num_pages);
+ 				ceph_osdc_put_request(req);
+ 				break;
+ 			}
+@@ -1168,6 +1169,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 					op->extent.sparse_ext_cnt);
+ 			if (fret < 0) {
+ 				ret = fret;
++				ceph_release_page_vector(pages, num_pages);
+ 				ceph_osdc_put_request(req);
+ 				break;
+ 			}
+-- 
+2.45.2
 
-Adding my thoughts that humble and biased as a DAMON maintainer.  The thoughts
-are about the general problem, not about this patchset.  So please think below
-as a sort of my "thinking loud" or "btw I use DAMON", and ignore those when
-discussing about this specific patch series.
-
-DAMON's access check mechanisms use PG_idle which is updated by
-folio_mark_accessed(), and hence DAMON can monitor access to unmapped pages.
-DAMON also supports migrating pages of specific access pattern to an arbitrary
-NUMA node.  So, promoting unmapped page cache folios using DAMON might be
-another way.
-
-More specifically, users could use only DAMON for both promoting and demoting
-of every page like HMSDK[1] does, or for only unmapped pages promotion.  I
-think the former idea might work given previous test results, and I proposed an
-idea[2] to make it more general (>2 tiers) and easy to tune using DAMOS quota
-auto-tuning feature before.  All features for the proposed idea[2] are
-available starting v6.11.   For the latter idea, though, I'm not sure how
-beneficial it would be, and whether it makes sense at all.
-
-For people who might be interested in it, or just how DAMON can be used for
-such weird idea, I posted an RFC patch[3] for making DAMON be able to be used
-for the use case.  For easy testing from anyone who interested, I also pushed
-DAMON user-space tool's support of the new filter to a temporal branch[4].  The
-temporal branch[4] might be erased later.
-
-Note that I haven't test any of the two changes for the unmapped pages only
-promotion idea, and have no ETA for any test.  Those are only for concept level
-idea sharing.
-
-[...]
-> During development, we explored the following proposals:
-[...]
-> 4) Adding a separate kthread - suggested by many
-> 
->    This is - to an extent - a more general version of the LRU proposal.
->    We still have to track the folios - which likely requires the
->    addition of a page flag.  Additionally, this method would actually
->    contend pretty heavily with LRU behavior - i.e. we'd want to
->    throttle addition to the promotion candidate list in some scenarios.
-
-DAMON runs on a separate kthread, so DAMON-based approach maybe categorized
-into this one.
-
-[1] https://github.com/skhynix/hmsdk/wiki/Capacity-Expansion
-[2] https://lore.kernel.org/damon/20231112195602.61525-1-sj@kernel.org/
-[3] https://lore.kernel.org/20241127205624.86986-1-sj@kernel.org
-[4] https://github.com/damonitor/damo/commit/32186d710355ef0dec55e3c6bd398fadeb9d136f
-
-
-Thanks,
-SJ
-
-[...]
 
