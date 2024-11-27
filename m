@@ -1,122 +1,368 @@
-Return-Path: <linux-kernel+bounces-423745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D8A9DAC18
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:54:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713AA1694E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:54:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E349200BB5;
-	Wed, 27 Nov 2024 16:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QJVvUvJG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Md3FlJmX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A199DAC1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 17:54:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ED217C96;
-	Wed, 27 Nov 2024 16:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26114B2212B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 16:54:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73826201003;
+	Wed, 27 Nov 2024 16:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="iWUpNs9p"
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2D8200BA3
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732726442; cv=none; b=LaQewCJKiCLysDXbu0QCwXaTLZvjLWSDmX5714+ttkyt1qcqTRU4jnf1coXx+4T5U8iXbRKetumV+5sRRb5q2eKWo71gtfhkswSF6h5HtReJNnr1izDnIGTn/C0AlszzZ4+i8TsBZugOmAVwkjMIFs9zEcuELymH2fdaISID/d8=
+	t=1732726455; cv=none; b=mQsC1rK1NshIBcLU61ZwLeT1q/4J16z2Dk4tGEuRvXPayOn2U7dcYcMnwgC/RAcxb0PW51RC7/nJOytrWdrqjUlOSDxn4JS5Nb9rW8jWXFBVWKPrVmLLmEoqasGVRCj9Uo84g3g0E2g906+ZdJVq7nNVgN4kECoHGmdyMNN/Tck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732726442; c=relaxed/simple;
-	bh=kmTGzgyDpZn1Fn4Eb1y+CbLVGkXnVF3S86LX6rvnkz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVU6/F4ctveyyCppFDGwK2GR0r5CI9i/4ccbgWiX5Ikucx9ChkOwlK2kP0Y8yogtSWXCV/W5+YtZdw07yvQ/9AwYkY1IC6g/4aDO2OFJR3jtkqvyIe5y7IrF35cN3n9zaKQaCmjZ90amvBLsU56gZfJsxsDmDWNk5jOWroFdC1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QJVvUvJG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Md3FlJmX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 27 Nov 2024 17:53:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732726437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6TLBvyInykSDFc+FqVHujzt1ulKNH1trpfBPs+rUlI=;
-	b=QJVvUvJGyXssfjIQAzeKVpAA4U5DupcTHtuwGVBYXulNp+475oBpy67vuJQWIYm7gLNEIm
-	7aGd/ZaSjdJstXk0LA0Ckqcwjc5NmoP3eZz8nFVYl97ap2L9LMRMydXlpT81Xm0B1TNJsx
-	7+7asV4TOsSYeCdaQYP9qKllMZh5kMTALUYQaGgvFLdDExwMunv9W8G1VhgPaRWODFhvSv
-	FKqq+5My9vac1BHuEcsHgW3QhylUQ72erfwZjF92YT/n4DkvQrqXUn1g+BAWTLFmMOxHoW
-	S2P3UsxbeIGgLiw70YvDjpVNOXoPsonxZIFGtA4ri1UOjKE7PaPSflYNgznTkA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732726437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6TLBvyInykSDFc+FqVHujzt1ulKNH1trpfBPs+rUlI=;
-	b=Md3FlJmXY3YKf3NtQnqrRCfazRFvbuPR//i3H5C0gpb5wyZJLUndUCvS1HNv8Ebl91rsyt
-	KN0RAUrLZb2pAwAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andreas Larsson <andreas@gaisler.com>, Waiman Long <llong@redhat.com>,
-	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-Message-ID: <20241127165356.hnkqmgcc@linutronix.de>
-References: <20241125181231.XpOsxxHx@linutronix.de>
- <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
- <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
- <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
- <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
- <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
- <20241126112000.UkTwR0Iv@linutronix.de>
- <48b9d642-9739-4333-b4b9-319df8a85e2d@redhat.com>
- <b698d599-ef4e-4966-92fb-1f84d7a0df75@gaisler.com>
- <4eb7bb8e-c2aa-4ce5-9f15-3086fccf4e46@roeck-us.net>
+	s=arc-20240116; t=1732726455; c=relaxed/simple;
+	bh=S4eHcpglmeao1LGl/cJoGVX1FRppa+2e3o3Qu9TAWfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j3/MllfiNm4I1W1UJHVOq7V0+yDu7r/YGnmBIO/UbhBeBEPT97Sc/sFPHfMYyUYYCKUj2hQjZG2TWNYoN8zAt8biiIYK9zL7onODDgQiQFYLklVayIGDIYm1XyPjgq6c1PiLoSa7etmRf/nNu/8s9wwAm86xB5cKTMaVEv/1fdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=iWUpNs9p; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5d036963a6eso5870131a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 08:54:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732726450; x=1733331250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+Fql9pBERDSrejpdbF7yc4MdeEfFwTo3f5/cemLNsQ=;
+        b=iWUpNs9pjdgD7CQNfWB/dDVEHiqdiNTI7j1dCbFOjhLF/IF8cpPG+ye9Yf980QBnC4
+         u1fhZVb6zN21CwGSYcrNQtncsqqh2K4jZVv+hEBsFDhGBqUXQs0HwzfR5Ks+FvWN/m6i
+         kzft0B6ZPJuyNBpySU04Ni0YnIxXEpRoHbDZfQLduP69IEQOuLse3TgwsOZn/HL41V8Q
+         lp5Wl+xxkrYrzSCuxJE5YGsXLsr1Q+K/nzV2z02ziFccJWtRgLckfpbSbb9zGvrFUkHg
+         Isb2+xexznUJX2MFmsRoe64JQ7U1pSnwICYWITTwN0gX1POj0UrWBYSL3g0nZiOl9HVU
+         RR6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732726450; x=1733331250;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y+Fql9pBERDSrejpdbF7yc4MdeEfFwTo3f5/cemLNsQ=;
+        b=VHK3qOKdNNpdZcMiijEQfxKz2k1FUuTG6/K5n9jMAVkvjGPnxLDv5I6CmN+by0i3lw
+         ZhgOTq3rrWhPtzYpPo9w05DJ91cn8BMbBQoxNLC/vr7/c+PzCB8S4TibE1Det8JeDiJ8
+         QyMA1jKFxvj4gIZfvFHVADdvjWwRyoqlcgD2IeKCacIwEcqQMLYRgZNFTTd+U4ZsRVyc
+         jzB26LSmImx/oK65ozuWGfKhahCASHLe05Bo3XPtTNbxDyIWrp9o03Oj+FX4KRMdkzxD
+         qKk+zdcUxxbYXFnKpYiCT72zBNJYUDt2+3dsv0mmXHIpNlYJBJ24mn5OsO62JYMYd59m
+         fPow==
+X-Forwarded-Encrypted: i=1; AJvYcCWwcNjdmG7FG6Qhufxa6BIAzOQuBQh0dnta3OktdhpgUne7blx5Rt9XrvrXazB2DBiPKmMzeU6eFqfSsrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQhpEbbb3Y1f8ITHaGY6yU4xih+Agpkk+WS8xj7H5O383LtVM8
+	5Lrt5Gf8EDl2Wvr7+aLedNyCSI+Zv7ZfL1n5YxnZbn55paY0lMyicaqlj4q0daM=
+X-Gm-Gg: ASbGnculkxikNtzvsJj3W9dVKiL7YgESnrwqFm51XXFI8UlTtFzX+zdJMQL7vPPmJV3
+	J75A4o0bEuHSsePRu61rjH8wR8udw5a3NTV3qRR37kZiQ5tS82D5aLqVEgDhqJ1IBLVBVCcQFuQ
+	b4+QiXiBGXJYxtAQTKcGjauuLWTvoAt3GFkIqG18V391T3mbyTVWqiT4jqsY4lCFENu51rU0JkI
+	KEG9G7D/yQNCrw2/BV8BPVUyklqdVog3WNY5wtoawf3Lk9H4FlhWYDiAjMfSjcKXn1O1fkmEmh3
+	fRR+kW7voZDNtjkCoRLKtsB+7XkeRsBaVU4/P3RB/gNjQylvLg==
+X-Google-Smtp-Source: AGHT+IH2d3QQXMr5TVC8Z87qPqmiPtIEPUeEUvzAxF2WdXJsf53JysbCUBivaeZ9CUFU2/b/zOQk6Q==
+X-Received: by 2002:a17:906:3caa:b0:aa5:4ca6:11b1 with SMTP id a640c23a62f3a-aa58106265dmr269711266b.52.1732726449886;
+        Wed, 27 Nov 2024 08:54:09 -0800 (PST)
+Received: from raven.intern.cm-ag (p200300dc6f2c8700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2c:8700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa54a23545dsm442854766b.152.2024.11.27.08.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 08:54:09 -0800 (PST)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v2] fs/ceph/file: fix buffer overflow in __ceph_sync_read()
+Date: Wed, 27 Nov 2024 17:54:05 +0100
+Message-ID: <20241127165405.2676516-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4eb7bb8e-c2aa-4ce5-9f15-3086fccf4e46@roeck-us.net>
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-27 08:02:50 [-0800], Guenter Roeck wrote:
-> On 11/27/24 07:39, Andreas Larsson wrote:
-> > Even though this is for sparc64, there is work being done looking into
-> > enabling RT for sparc32. If the amount of fixes needed to keep
-> > PROVE_RAW_LOCK_NESTING enabled is quite small at the moment I'd rather
-> > see it enabled for sparc rather than risking it becoming worse in the
-> > future.
+If the inode size gets truncated by another task, __ceph_sync_read()
+may crash with a buffer overflow because it sets `left` to a huge
+value:
 
-Okay. So you seem to be in favour of fixing the sparc64 splats Guenter
-reported?
+  else if (off + ret > i_size)
+          left = i_size - off;
 
-> > I don't know what the situation is for other architectures that does not
-> > support RT.
-> > 
-> 
-> For my part I still don't understand why PROVE_RAW_LOCK_NESTING is no longer
-> a configurable option, or in other words why it is mandated even for architectures
-> not supporting RT. To me this means that I'll either have to disable PROVE_LOCKING
-> for sparc or live with endless warning backtraces. The latter obscures real
-> problems, so it is a no-go.
+Imagine `i_size` was truncated to zero; `off + ret > i_size` is always
+true, but `i_size - off` can be negative; since `left` is unsigned, it
+turns into a rather huge number, and thus the `while (left > 0)` loop
+never stops until it eventually crashes because `pages[idx]` overflows
+the `pages` allocation.
 
-It is documented in Documentation/locking/locktypes.rst how the locks
-should nest. It is just nobody enabled it on sparc64 and tested. The
-option was meant temporary until the big read blocks are cleared.
+We need to ensure that `i_size` never becomes smaller than `off`.  I
+suggest breaking from the loop as soon as this happens, right after
+the `i_size = i_size_read(inode)` update.
 
-> So, if people want to keep mandating PROVE_RAW_LOCK_NESTING together with
-> PROVE_LOCKING for all architectures, I'll disable PROVE_LOCKING for sparc
-> in my testing. NP, just let me know. I'll then do the same for other
-> architectures not supporting RT if I hit the same problem there.
+This can be reproduced easily by running a program like this on one
+Ceph client:
 
-Waiman posted a patch to disable it on architectures that don't support
-PREEMPT_RT. You could also post the patches you discussed. Andreas does
-not seem to be against it (but then I don't know if he is a 32 or 64bit
-guy). I did not year from other architectures so far.
+  ioctl(fd, CEPH_IOC_SYNCIO);
+  char buffer[16384];
+  while (1) pread(fd, buffer, sizeof(buffer), 8192);
 
-> Guenter
+Then, on another server, truncate and rewrite the file until the first
+server's kernel crashes (I never needed more than two attempts to
+trigger the kernel crash):
 
-Sebastian
+  dd if=/dev/urandom of=foo bs=1k count=64
+
+This is how the crash looks like (with KASAN and some debug logs from
+`__ceph_sync_read` and `ceph_fill_file_size`):
+
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 16384 i_size 65536
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 16384 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: size 65536 -> 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_seq 36656 -> 36657
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 0 i_size 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: result 0 retry_op 0
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: on inode 0000000035059a6f 1000235edb7.fffffffffffffffe 2000~4000
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: orig 8192~16384 reading 8192~16384
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] __ceph_sync_read: 8192~16384 got 1024 i_size 0
+ ==================================================================
+ BUG: KASAN: slab-out-of-bounds in __ceph_sync_read+0x173f/0x1b10
+ Read of size 8 at addr ffff8881d5dfbea0 by task pread/3276
+
+ CPU: 3 UID: 2147488069 PID: 3276 Comm: pread Not tainted 6.11.10-cm4all1-hp+ #254
+ Hardware name: HPE ProLiant DL380 Gen10/ProLiant DL380 Gen10, BIOS U30 09/05/2019
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0x62/0x90
+  print_report+0xc4/0x5e0
+  ? __virt_addr_valid+0x1e9/0x3a0
+  ? __ceph_sync_read+0x173f/0x1b10
+  kasan_report+0xb9/0xf0
+  ? __ceph_sync_read+0x173f/0x1b10
+  __ceph_sync_read+0x173f/0x1b10
+  ? __pfx___ceph_sync_read+0x10/0x10
+  ? lock_acquire+0x186/0x4d0
+  ? ceph_read_iter+0xace/0x19f0
+  ceph_read_iter+0xace/0x19f0
+  ? lock_release+0x648/0xb50
+  ? __pfx_ceph_read_iter+0x10/0x10
+  ? __rseq_handle_notify_resume+0x8ed/0xd40
+  ? __pfx___rseq_handle_notify_resume+0x10/0x10
+  ? vfs_read+0x6e0/0xba0
+  vfs_read+0x6e0/0xba0
+  ? __pfx_vfs_read+0x10/0x10
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  __x64_sys_pread64+0x19b/0x1f0
+  ? __pfx___x64_sys_pread64+0x10/0x10
+  ? __pfx___rseq_handle_notify_resume+0x10/0x10
+  do_syscall_64+0x82/0x130
+  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? do_syscall_64+0x8e/0x130
+  ? do_syscall_64+0x8e/0x130
+  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? do_syscall_64+0x8e/0x130
+  ? do_syscall_64+0x8e/0x130
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? do_syscall_64+0x8e/0x130
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x7f8449d18343
+ Code: 48 8b 6c 24 48 e8 3d 00 f3 ff 41 b8 02 00 00 00 e9 38 f6 ff ff 66 90 80 3d a1 42 0e 00 00 49 89 ca 74 14 b8 11 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5d c3 0f 1f 40 00 48 83 ec 28 48 89 54 24 10
+ RSP: 002b:00007ffd7a2e8b78 EFLAGS: 00000202 ORIG_RAX: 0000000000000011
+ RAX: ffffffffffffffda RBX: 00007ffd7a2e8cc8 RCX: 00007f8449d18343
+ RDX: 0000000000004000 RSI: 0000557f7917c2a0 RDI: 0000000000000003
+ RBP: 00007ffd7a2e8bb0 R08: 0000557f7919d000 R09: 0000000000021001
+ R10: 0000000000002000 R11: 0000000000000202 R12: 0000000000000000
+ R13: 00007ffd7a2e8cf0 R14: 0000557f436c2dd8 R15: 00007f8449e43020
+  </TASK>
+
+ Allocated by task 3276:
+  kasan_save_stack+0x1c/0x40
+  kasan_save_track+0x10/0x30
+  __kasan_kmalloc+0x8b/0x90
+  __kmalloc_noprof+0x1bf/0x490
+  ceph_alloc_page_vector+0x36/0x110
+  __ceph_sync_read+0x769/0x1b10
+  ceph_read_iter+0xace/0x19f0
+  vfs_read+0x6e0/0xba0
+  __x64_sys_pread64+0x19b/0x1f0
+  do_syscall_64+0x82/0x130
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+ The buggy address belongs to the object at ffff8881d5dfbe80
+  which belongs to the cache kmalloc-32 of size 32
+ The buggy address is located 0 bytes to the right of
+  allocated 32-byte region [ffff8881d5dfbe80, ffff8881d5dfbea0)
+
+ The buggy address belongs to the physical page:
+ page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1d5dfb
+ flags: 0x2fffc0000000000(node=0|zone=2|lastcpupid=0x3fff)
+ page_type: 0xfdffffff(slab)
+ raw: 02fffc0000000000 ffff888100042780 dead000000000122 0000000000000000
+ raw: 0000000000000000 0000000080400040 00000001fdffffff 0000000000000000
+ page dumped because: kasan: bad access detected
+
+ Memory state around the buggy address:
+  ffff8881d5dfbd80: fa fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8881d5dfbe00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+ >ffff8881d5dfbe80: 00 00 00 00 fc fc fc fc fa fb fb fb fc fc fc fc
+                                ^
+  ffff8881d5dfbf00: fc fc fc fc fc fc fc fc fa fb fb fb fc fc fc fc
+  ffff8881d5dfbf80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+ ==================================================================
+ Disabling lock debugging due to kernel taint
+ Oops: general protection fault, probably for non-canonical address 0xe021fc6b8000019a: 0000 [#1] SMP KASAN PTI
+ KASAN: maybe wild-memory-access in range [0x0110035c00000cd0-0x0110035c00000cd7]
+ CPU: 3 UID: 2147488069 PID: 3276 Comm: pread Tainted: G    B              6.11.10-cm4all1-hp+ #254
+ Tainted: [B]=BAD_PAGE
+ Hardware name: HPE ProLiant DL380 Gen10/ProLiant DL380 Gen10, BIOS U30 09/05/2019
+ RIP: 0010:__ceph_sync_read+0xc33/0x1b10
+ Code: 39 e7 4d 0f 47 fc 48 8d 0c c6 48 89 c8 48 c1 e8 03 42 80 3c 30 00 0f 85 0b 0b 00 00 48 8b 11 48 8d 7a 08 48 89 f8 48 c1 e8 03 <42> 80 3c 30 00 0f 85 0d 0b 00 00 48 8b 42 08 a8 01 0f 84 ee 04 00
+ RSP: 0018:ffff8881ed6e78e0 EFLAGS: 00010207
+ RAX: 0022006b8000019a RBX: 0000000000000000 RCX: ffff8881d5dfbea0
+ RDX: 0110035c00000ccc RSI: 0000000000000008 RDI: 0110035c00000cd4
+ RBP: ffff8881ed6e7a80 R08: 0000000000000001 R09: fffffbfff28b44ac
+ R10: ffffffff945a2567 R11: 0000000000000001 R12: ffffffffffffa000
+ R13: 0000000000000004 R14: dffffc0000000000 R15: 0000000000001000
+ FS:  00007f8449c1f740(0000) GS:ffff88d2b5a00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007fb72c6aecf0 CR3: 00000001ed7b6003 CR4: 00000000007706f0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ PKRU: 55555554
+ Call Trace:
+  <TASK>
+  ? die_addr+0x3c/0xa0
+  ? exc_general_protection+0x113/0x200
+  ? asm_exc_general_protection+0x22/0x30
+  ? __ceph_sync_read+0xc33/0x1b10
+  ? __pfx___ceph_sync_read+0x10/0x10
+  ? lock_acquire+0x186/0x4d0
+  ? ceph_read_iter+0xace/0x19f0
+  ceph_read_iter+0xace/0x19f0
+  ? lock_release+0x648/0xb50
+  ? __pfx_ceph_read_iter+0x10/0x10
+  ? __rseq_handle_notify_resume+0x8ed/0xd40
+  ? __pfx___rseq_handle_notify_resume+0x10/0x10
+  ? vfs_read+0x6e0/0xba0
+  vfs_read+0x6e0/0xba0
+  ? __pfx_vfs_read+0x10/0x10
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  __x64_sys_pread64+0x19b/0x1f0
+  ? __pfx___x64_sys_pread64+0x10/0x10
+  ? __pfx___rseq_handle_notify_resume+0x10/0x10
+  do_syscall_64+0x82/0x130
+  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? do_syscall_64+0x8e/0x130
+  ? do_syscall_64+0x8e/0x130
+  ? lockdep_hardirqs_on_prepare+0x275/0x3e0
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? do_syscall_64+0x8e/0x130
+  ? do_syscall_64+0x8e/0x130
+  ? syscall_exit_to_user_mode+0x9a/0x190
+  ? do_syscall_64+0x8e/0x130
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x7f8449d18343
+ Code: 48 8b 6c 24 48 e8 3d 00 f3 ff 41 b8 02 00 00 00 e9 38 f6 ff ff 66 90 80 3d a1 42 0e 00 00 49 89 ca 74 14 b8 11 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5d c3 0f 1f 40 00 48 83 ec 28 48 89 54 24 10
+ RSP: 002b:00007ffd7a2e8b78 EFLAGS: 00000202 ORIG_RAX: 0000000000000011
+ RAX: ffffffffffffffda RBX: 00007ffd7a2e8cc8 RCX: 00007f8449d18343
+ RDX: 0000000000004000 RSI: 0000557f7917c2a0 RDI: 0000000000000003
+ RBP: 00007ffd7a2e8bb0 R08: 0000557f7919d000 R09: 0000000000021001
+ R10: 0000000000002000 R11: 0000000000000202 R12: 0000000000000000
+ R13: 00007ffd7a2e8cf0 R14: 0000557f436c2dd8 R15: 00007f8449e43020
+  </TASK>
+ Modules linked in:
+ ---[ end trace 0000000000000000 ]---
+ RIP: 0010:__ceph_sync_read+0xc33/0x1b10
+ Code: 39 e7 4d 0f 47 fc 48 8d 0c c6 48 89 c8 48 c1 e8 03 42 80 3c 30 00 0f 85 0b 0b 00 00 48 8b 11 48 8d 7a 08 48 89 f8 48 c1 e8 03 <42> 80 3c 30 00 0f 85 0d 0b 00 00 48 8b 42 08 a8 01 0f 84 ee 04 00
+ RSP: 0018:ffff8881ed6e78e0 EFLAGS: 00010207
+ RAX: 0022006b8000019a RBX: 0000000000000000 RCX: ffff8881d5dfbea0
+ RDX: 0110035c00000ccc RSI: 0000000000000008 RDI: 0110035c00000cd4
+ RBP: ffff8881ed6e7a80 R08: 0000000000000001 R09: fffffbfff28b44ac
+ R10: ffffffff945a2567 R11: 0000000000000001 R12: ffffffffffffa000
+ R13: 0000000000000004 R14: dffffc0000000000 R15: 0000000000001000
+ FS:  00007f8449c1f740(0000) GS:ffff88d2b5a00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007fb72c6aecf0 CR3: 00000001ed7b6003 CR4: 00000000007706f0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ PKRU: 55555554
+ workqueue: ceph_con_workfn hogged CPU for >10000us 35 times, consider switching to WQ_UNBOUND
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: size 0 -> 65536
+ ceph:  [8f7ec2f3-0dcb-468f-bd16-37e0a61bf195 4098067] ceph_fill_file_size: truncate_size 0 -> 0, encrypted 0
+
+Fixes: 1065da21e5df ("ceph: stop copying to iter at EOF on sync reads")
+Fixes: https://tracker.ceph.com/issues/67524
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+v2: public posting; added link to Ceph bug tracker (vulnerability had
+been known already for 3 months)
+---
+ fs/ceph/file.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4b8d59ebda00..57d7cdda0f87 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1154,6 +1154,13 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 		doutc(cl, "%llu~%llu got %zd i_size %llu%s\n", off, len,
+ 		      ret, i_size, (more ? " MORE" : ""));
+ 
++		if (off >= i_size)
++			/* meanwhile, the file has been truncated by
++			 * another task and the offset is no longer
++			 * valid; stop here
++			 */
++			break;
++
+ 		/* Fix it to go to end of extent map */
+ 		if (sparse && ret >= 0)
+ 			ret = ceph_sparse_ext_map_end(op);
+-- 
+2.45.2
+
 
