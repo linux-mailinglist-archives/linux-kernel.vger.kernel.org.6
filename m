@@ -1,92 +1,166 @@
-Return-Path: <linux-kernel+bounces-423060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3496C9DA210
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:17:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B609DA214
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 07:17:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C3EB2230C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7914D168129
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 06:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716A2146A87;
-	Wed, 27 Nov 2024 06:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818391487ED;
+	Wed, 27 Nov 2024 06:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fcdn3ZbH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hJV9E977"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8204913A888;
-	Wed, 27 Nov 2024 06:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCBA1448E4;
+	Wed, 27 Nov 2024 06:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732688227; cv=none; b=OMpgL88E9jqYIdr9kg3/EnVEZo+2T8goBFfPi48ijOAYZlrkmNfyGnrFr1pKmrNTpnpWDralvk1/XoAwzjeHilX5JxKe0RISdsK7pAKJeNvi/HdVJvhxcel9ezADVkWcnQ9AN3fV3JLBV/vMwTb+rrcC92ELuuMnkvAENBWcO58=
+	t=1732688254; cv=none; b=eIBWRp1MjEcwbKvP0aT5q3Qtfrz8awlxd6u65Whz0xg/Iq7ct48SOJEEpxYiUVMHs924u5DnE++FZ7ZNrSoM86WJYl+rm5OZptu8fYHi/yGHVKHrb0hP9vFxRHQL+jnt5qrEM4Efgg4b2sl+LnYI9Vnp10n2XV0lhxxkgI/Xf8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732688227; c=relaxed/simple;
-	bh=sw8UATenxkcpeWx+B4ytuYhAFUr4chvZ3QbTmCMiKy8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=bex1grzPZSkpFde8+hdOPpSRH/eliHDOVI57T+aG873fsQ75eLyUgC0xCM0gZM4XQj23/weVOJn7SQrNK6LDJcT6IJbaSuwAT+W/mHKzqTtPFhgQDEq3MiPkFXrK6p6gzNumCfNJdeitxnx66bhhg1v2Skjh5qwCcT/ff9ikQ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fcdn3ZbH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732688216;
-	bh=sw8UATenxkcpeWx+B4ytuYhAFUr4chvZ3QbTmCMiKy8=;
-	h=Date:From:To:Subject:From;
-	b=fcdn3ZbHelhd2t1Go7indg8MY+2PUrru9EIQgY/A9iMiW5rDp1EzoBtrH5UoW0yUQ
-	 1nSdU2qstBazcj+Jk7hTR+Ii3LGS/NQRlyprz5icAppYwEV8585rdc13iXAcW7dfNN
-	 dr47vnwnaqe5Sb69jRpBjprcB+rXD/+xvxq+ZRF25MGtlewCryecykKhr7q9tS6pOe
-	 TlePixAEjR1UQWx5qvn8xTDkiL85LOovB85YTAdZ5s8b6avQmK5kxIEgZaq10MbbXw
-	 zSbfgyHvvV5Cj4hauF3ud3VDtuefPFUgALksuGUrXt9WODu1dO422JOOds4g8VKWdo
-	 15EJMIY/04Hcw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xyq3D0jyZz4xfq;
-	Wed, 27 Nov 2024 17:16:56 +1100 (AEDT)
-Date: Wed, 27 Nov 2024 17:16:57 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linux Next Mailing List  <linux-next@vger.kernel.org>, Linux Kernel 
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: taking a short break
-Message-ID: <20241127171657.0fd5f86b@canb.auug.org.au>
+	s=arc-20240116; t=1732688254; c=relaxed/simple;
+	bh=Gca62i0AjdqoFCbRGDM+X6M70u9eZwv1tl4Adbr7SRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y4GVVAikt+6+8X40yAdT1V2E4u7d2poShvv0h334PO0SE2/uLBlYwXs2cNl8PdW8v5GCeYypCPoMwNM3oposG45wGsolNopyIyY7yxRjOI5MtReO3pv1yq1I1O/76ajFj6cC4420n/vH70d1RnjWJ89ZEJG6ASjc+R0DqhCjjfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hJV9E977; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQLCnm5006390;
+	Wed, 27 Nov 2024 06:17:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+kJ+ah1xZyNSAIa72rUUxzocL2Mhdk9ssDqxG+1kq1E=; b=hJV9E977/ytglPTK
+	BxkLCub3v0TvICdq0sATx0Id6F+IYjQflomp9CBXZH7Jpqb0imWZc9cFeZeswVLN
+	LwDbOFAbvaDlKkm8faqV5Jq0+5sbNMBW+NL68qyEsvCkmSEKkG9VkON9K1IXua4C
+	o6p8VfJh68hujEJwqZozWffq08fQvkjnJylDGBCOfcVHfUj9MVJWwlX1F6yBhrvT
+	ckM/j7b4uXbKXzkIOIa3AzhlGCayvsC+POBiJlOd5eB59n2Sl4aTZQhj+1fRZqDI
+	tdPH11vItURMVhrQuK1nW4ydUe3fJ57I8Tl5erqmqQwSrr2yd6rHAM5hgzoU8jFW
+	YOH1EQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435p22s62b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 06:17:26 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AR6HQ1o023402
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 06:17:26 GMT
+Received: from [10.253.38.8] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
+ 2024 22:17:22 -0800
+Message-ID: <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
+Date: Wed, 27 Nov 2024 14:17:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z_hcHkEMIGE4+q0z6UJuqJa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
+ node
+To: Andrew Lunn <andrew@lunn.ch>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20241118-dts_qcs615-v2-0-e62b924a3cbd@quicinc.com>
+ <20241118-dts_qcs615-v2-2-e62b924a3cbd@quicinc.com>
+ <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
+ <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
+ <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
+ <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
+Content-Language: en-US
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+In-Reply-To: <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HhbIFxhMMPgVhvF4t_HlqSzzqmvLcNZ8
+X-Proofpoint-GUID: HhbIFxhMMPgVhvF4t_HlqSzzqmvLcNZ8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 phishscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411270051
 
---Sig_/z_hcHkEMIGE4+q0z6UJuqJa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-There will be no linux-next release on Friday or all next week.
+On 2024-11-22 21:19, Andrew Lunn wrote:
+>>>>>    +&ethernet {
+>>>>> +    status = "okay";
+>>>>> +
+>>>>> +    pinctrl-0 = <&ethernet_defaults>;
+>>>>> +    pinctrl-names = "default";
+>>>>> +
+>>>>> +    phy-handle = <&rgmii_phy>;
+>>>>> +    phy-mode = "rgmii";
+>>>>
+>>>> That is unusual. Does the board have extra long clock lines?
+>>>
+>>> Do you mean to imply that using RGMII mode is unusual? While the EMAC controller supports various modes, due to hardware design limitations, only RGMII mode can be effectively implemented.
+>>
+>> Is that a board-specific issue, or something that concerns the SoC itself?
+> 
+> Lots of developers gets this wrong.... Searching the mainline list for
+> patchs getting it wrong and the explanation i have given in the past
+> might help.
+> 
+> The usual setting here is 'rgmmii-id', which means something needs to
+> insert a 2ns delay on the clock lines. This is not always true, a very
+> small number of boards use extra long clock likes on the PCB to add
+> the needed 2ns delay.
+> 
+> Now, if 'rgmii' does work, it means something else is broken
+> somewhere. I will let you find out what.
 
---=20
-Cheers,
-Stephen Rothwell
+The 'rgmii' does function correctly, but it does not necessarily mean 
+that a time delay is required at the board level. The EPHY can also 
+compensate for the time skew.
 
---Sig_/z_hcHkEMIGE4+q0z6UJuqJa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+>>>>> +    max-speed = <1000>;
+>>>>
+>>>> Why do you have this property? It is normally used to slow the MAC
+>>>> down because of issues at higher speeds.
+>>>
+>>> According to the databoot, the EMAC in RGMII mode can support speeds of up to 1Gbps.
+>>
+>> I believe the question Andrew is asking is "how is that effectively
+>> different from the default setting (omitting the property)?"
+> 
+> Correct. If there are no issues at higher speeds, you don't need
+> this. phylib will ask the PHY what it is capable of, and limit the
+> negotiated speeds to its capabilities. Occasionally you do see an
+> RGMII PHY connected to a MII MAC, because a RGMII PHY is cheaper...
+> 
+> 	Andrew
 
------BEGIN PGP SIGNATURE-----
+It does unnecessary, I will remove it.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdGuVkACgkQAVBC80lX
-0Gy7ZggAhESo1uiR4WcRLc7SFVx9bIDopHyRbYt+1b3Ta2gLgG4KsH7NtZxBbcuu
-PT68L1IPy19u8svGsq3nt2rmbbQFiKFG0+mQyP1RHRmovrAkWtK6T6pX/vWIKSPH
-0Zd/tPtZ2YcfC7UZLNHCPCFk+Z+tNoWrmDyfpREaYj2yaWoQCjLAMCbEJe/v2t2y
-g+u/HAISWjql39SNrN1CmNM+iMHkRPE4C5mx4NyNr1bMNM+m+zIquMYhAueT8sH7
-ho8hcBov9xvaCsKQChlo9LsqBmiDhBAWdjx2tSVwILQnQBra2Gln+5CHDJKOugGd
-+vNlVHuCU/QGYzrTLNqeQH42ZQrYlA==
-=wzVd
------END PGP SIGNATURE-----
+-- 
+Best Regards,
+Yijie
 
---Sig_/z_hcHkEMIGE4+q0z6UJuqJa--
 
