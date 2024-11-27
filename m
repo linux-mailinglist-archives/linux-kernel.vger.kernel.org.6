@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-424008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD089DAF52
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:48:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59D19DAF53
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A82E28200E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B4A281F5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 22:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B2203716;
-	Wed, 27 Nov 2024 22:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263D82036F6;
+	Wed, 27 Nov 2024 22:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGQV9ywC"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="vUI6BF/e"
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3731537D4;
-	Wed, 27 Nov 2024 22:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3C813BC35;
+	Wed, 27 Nov 2024 22:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732747691; cv=none; b=MV9F1qb6mB9BbZKS1IAC39n7QwxCds4Ql7QpIKgGW4OFuWtwmNWGebIu40t28OSg/xl0fh4fGu1zDcgmhgZrHhWUtxjz5JnSwyXXmnJ8aAgh/VbaDHyCyWUQkGeDEtfzNsvj4EmUmI4SpzIwFID0WvtQJnN8xrz56G/3RBqLXQQ=
+	t=1732747797; cv=none; b=CzQt0twu6dYkkYsOXL1MD3gmxFgb2jZpHea+m1U/DSJ951MZe8Sn1c+fYkE+33ARCO/gfjvf3XEXbZZUCHSHY385Zk9sZe+dti/fKXn4ErLrAL14xEsv2izLhS2dUApwwxE9CAa+KvibbJSp7+67Hcsc/hgTtjetmbE/LCEcuSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732747691; c=relaxed/simple;
-	bh=GexJXR/2dc2IBhv34q6bDcJcXTBjzVNHuP0avEFyg3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BAbaBMkkdeYO6eQhpeENFxFT3ZG0lqLhwDA9xPbWPxLaCeLiB+Tbpt0WqvvvQMgiJSV1x3pA3kVZTVdHeBh6JwsJ4rkDuwU6dwkJG7z8Pr59udZzw9Y1R+KfmjEHpgwzq8EyFUkfLIvJMclzcqFyPbaZGKWuP53zZhvVYPCi8wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGQV9ywC; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ee153ec651so219273a91.0;
-        Wed, 27 Nov 2024 14:48:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732747689; x=1733352489; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzsIRv0dmcoh1JVhn/KYfXIXK/gFawhUd+jupZesXIM=;
-        b=RGQV9ywCV/S815EzHB3dkI4h6B1vmfD8bEoAFWtKDqEkjLsKqUW0uH7OMknMd84asn
-         k9GI1e/ZrBxoZnb/lnOJeyx2lK5GwvokJICZyaibbOxnNuqknVh+d+tICMVGoFmLLyVE
-         pKIvi8vaxCDgGhleMAh0WlhtHejf7PVVKX/cwo2NSyDqKIi33Tmh7p/bu/TQU52xVWt+
-         bOvlzzUfEVLMIFET1DgriPOchHLRIiR4Zgq0XbPC27sRWdygakXuHdNL7UXrJ5HWdrXI
-         G8w/FFoMDQR8YjxyaK/tY7BmkX9Orj69UPLWkJeU5YI8s5SuffhMEumx8mTOaVVLPxyG
-         WV8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732747689; x=1733352489;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PzsIRv0dmcoh1JVhn/KYfXIXK/gFawhUd+jupZesXIM=;
-        b=YT3TmJ5U57e2ego32pPwFjWrmHL8cX8RbTniwuxJuc8Eef+BYjIFQFloMewjHmrBD1
-         tKEIXSQnD0M85/eCMsbXzIudhcI3PAHnb+2vGTNEqJ72YYRM+Trsy3tvU5jwBbem4u6/
-         ziLiFYqFLibVfWEgVUK9jkqxNzQPBlZGf10akXCt6NI+Eh8Vza9aAWaADgDzqujb8Izn
-         RowWuVm+6yMsR1XlQq6+xOKyUK4pM/YazXnjHgJ+SZKMMirqilqe8V9wuRy/PYzgKW4U
-         vsBnpL+Tre5X/taPa6WZYquS+VZKBJ+q55GNljE6xEgOjiRATAxifadEnjORfsW5Q37O
-         b5og==
-X-Forwarded-Encrypted: i=1; AJvYcCWg9g+uRCBV5hDg05bcVcezDtkPalViqeQsqMwCPwULgS6NZuoDyJelFAfqWfc1nnLXeLV/72WXM840Vu/5@vger.kernel.org, AJvYcCWxXyBy0NRMmw/nOki2j0BQnvjlxZsu37Ylk45YuKufYw3+txgRoWoLA5Ikm0Nm2hyml3lG7WqIz2A=@vger.kernel.org, AJvYcCXH4bltkoq1BIk3f+8/G9saY5ToKHdQ/uxo2CQRrXcpA3XB6AmJD5bESse4OkYFQUd/roAU/FJc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcaVfut8E36J+PE3Dbm4tE5rkln2hXZqovv3k3wAnSsJKV4MI8
-	YTUCWYT8zzFPjPXvEwb231qUrO1AJ9CUPvbtg6MnzxWioF51P41u
-X-Gm-Gg: ASbGncsQ77JmWxnoddyw79uWbYO3WMjo/bxa5AfzOGJ5y+HoUb0banuJJC0J1FxuxCX
-	mbOYzG45D5TwitdsuQduq+ZpVC08/NgpA9aHYPJBSjyhkckCxQ11i2bjS4WXNJXX5sqmWJ7bAVD
-	xzeHriwRqG8Aq9rnvgr9R9rDoUpKztCCGm+4POxmZcNA0HMI21LJ5mK0axlTHuwaYn4SutXNC+3
-	QuT3+ZlFcci9PCCRSBlHT+0RX8VggG+lqq4zUV5JGCcV04/F3QhJTIXq5gHTldqdjlGfS6IKXic
-	+rOCRXVm5CBOitskOdWq94A=
-X-Google-Smtp-Source: AGHT+IHKrye4kW+lZBmR2EtaynTda3T7K6xVD46GM8CihjQl+xc26tZC3RgoDSFItG33JLMxhEeXPA==
-X-Received: by 2002:a17:90b:3e86:b0:2ea:a9ac:eef2 with SMTP id 98e67ed59e1d1-2ee08eb1c46mr5790193a91.13.1732747689000;
-        Wed, 27 Nov 2024 14:48:09 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fad0797sm2141990a91.40.2024.11.27.14.48.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 14:48:08 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <1bdc12d6-ac23-49ff-a235-5ea54ca2ddaa@roeck-us.net>
-Date: Wed, 27 Nov 2024 14:48:06 -0800
+	s=arc-20240116; t=1732747797; c=relaxed/simple;
+	bh=yHbkOdGZ/gV2M9ZFCqKzSzTd7trIWrm0ZksrHnoNTCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jHwhmgQIc+RfZyRZiKRF0nqxu6bxekEZycOADeQ2Cw1owGOSFC1gT9wYANgmCBzpx5+O0ALabp+aYHjeVY5HBTAbGNHr7KRrfvsgj1w/YtrPUcNfymr9wThPS26ZiPHyri9V9AZhqlo1efmiAG1jnMtR0Ri9nBLqeim4jngwvBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=vUI6BF/e; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hMUtGkwU6OybnPoy+PNJ2R+Zfic/wvSyqAgr9APpV0M=; b=vUI6BF/e9AJPSf++3b/7UQ9iZN
+	YzejioM14d/K1H73DXnrh8A+0aY0g+4z3Uy/oeY0J6ZhDMEK/FqQczIBGMAwOnFxVHK8UIz2/ophO
+	eanHbgLltkjQ6j7S8w36DxmkhRekv0NUrb1pwcJnPnDwrcmNLs5ePkDA5t2NzVpEZkmSFRlx5QIyv
+	hp50OSz7WO/Lo9qhZUcnWBZOD7XXYEs7EAVtIXJViCBMv/eQypTT53seBbkdkwgLhEdlOYyvvSA5n
+	suF6MPl+28Wx2ml2xumwndO6bJlQwYmJOJW/Q2Eh1lYn+mas2HKt8o0j1JqrdXkUq5NcdsbkSnQtC
+	/FquCUjg==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:58976 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1tGQtO-0005gm-1K;
+	Wed, 27 Nov 2024 17:49:53 -0500
+Message-ID: <538f5d83-1a16-4df5-8dbe-4c6d556e1058@lechnology.com>
+Date: Wed, 27 Nov 2024 16:49:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,203 +57,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v6 5/9] net: napi: Add napi_config
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
- mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
- bjorn@rivosinc.com, amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
- willemdebruijn.kernel@gmail.com, edumazet@google.com,
- Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Johannes Berg <johannes.berg@intel.com>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, pcnet32@frontier.com
-References: <20241011184527.16393-1-jdamato@fastly.com>
- <20241011184527.16393-6-jdamato@fastly.com>
- <85dd4590-ea6b-427d-876a-1d8559c7ad82@roeck-us.net>
- <Z0dqJNnlcIrvLuV6@LQ3V64L9R2> <Z0d6QlrRUig5eD_I@LQ3V64L9R2>
+Subject: Re: [PATCH] Add COUNTER_FUNCTION_DISABLE to the counter API
+To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, wbg@kernel.org
+References: <c67e095c-3fba-44df-950f-b014ce27eb0f@lechnology.com>
+ <20241127215404.915-1-rafael.v.volkmer@gmail.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <Z0d6QlrRUig5eD_I@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ xsFNBFFxkZ8BEADXzbnj9t8XSZYxKJGHdHqYgEBVzRElb3+f11qhDZKzVCMsn1+AN+PlHqC7
+ VrCWLsWTSY7WsHB2fW3aXaoidtac5FYoX2IXAun1Sbv15NcBdapImkMv6zxhAyWz6LqPfdCp
+ QV+3x6qwUPFeLHdmew8mkSq56qTFgDQr9oQhsrXKHkXFD7aIAf5bM6janQCHgGTVDraRDfEO
+ rV9rj7Wu/SfjUCVSCvW/SuWBa3IXTLNgbrNwBfo7Pl/tHuto0jxkVCIJ6J3xa85BKMw1WjA+
+ jKzh12S6KWrLUfhEUt64G9WJHiZOnVAjxgCR7TUahVM2OQHcp49ouG/JZsGNniulXH4ErA2O
+ Wt6seUEx8XQIm48H96RWgKrwKJ+1WoLEmUcYOJDZUcguMZVc3Astx8aSaRjf6IRBO8XlJSJV
+ OorkguvrTQBZJfjoicuFx7VlpdMggMZayv0cqEvzZMSHUt8DCUG74rLhtab9LCg/9wdCwqyE
+ JEi/8jaV7JWxwiCmzVpw0mHn1DiUlp5kapZT+Hart0Gc1WW915psA4G6KneisFM5DJe+S5mn
+ dUJb5IttTOx37jQQi2igwlSBdSC/M+Zy3sb+DXYJUVjVxK56RGAnlSvjHUx/TkID6Vb6HXvm
+ Fgm9vQamTEf+C3XzlY2v1YaMMX8yQjfrzQSoGfB0+9zaD9J/cwARAQABzSREYXZpZCBMZWNo
+ bmVyIDxkYXZpZEBsZWNobm9sb2d5LmNvbT7CwXgEEwECACIFAlFxkZ8CGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAAAoJEB+K+IyC93wDdcMQALkIsjA/nWJZY+Z6AkpL9HfeyYA6D2LK
+ LFwWQ5fPok9G5wArvf+yHnbnVvtlZKPEdUAzbBacaATeLGRC0Kzei1asDgb/IR5YXQRMdshj
+ 5Bd+DutTbT270p6jrzI3p7r1K7AycFcpfgSpOUQY7Wde7AT7KHCHaDjsy/a4d8EVjEhKZBg1
+ wgBr8L+2lVgjQP4x/tuj4KrWKygcCNiombhKW4iz2uR7EspoS18D+9MD8vLVrOqDKBWGswes
+ cDblcjMv8FXIc7JR8x6ZbubFODoRzAs4MAlOgGT8FBAK/DUD63gMHTtKJrVghjoDNe77pmW1
+ zQK0P0zu9zciPg4h3AE+ENsJxqHoOEwCvJMQbhliFVYL4O0tM648V6K0o1btt4Ps0FEFASfX
+ ZDa7uO30YZG+uqevP4wp6bfPpiHEUku32tSKZstbxljprLe0wDwYFSgXvVYUDUD6G3N1e3p0
+ xDXo+Oj/8yoZaPrOzMbqL66uSVghVTya7FjgT2aG1HfzH19NfO7SN+BQ4ld94gnDL2wWjA6h
+ pddm+me8Aqa/xp0Wfhzs77/tyYd2FhV8RRs/tt1RN/8COblLnFGpNjtHCtpUuPCMTPN04+hg
+ fEQVsW03//yRgt4teDogaklG+mYSbpkANMjyMN1LKVWM3YJTQcKIgpT8HvZwdrYBjB8CMHLb
+ K2zgzsFNBFFxkZ8BEADSVjyceG8Up24FFXwv5YmV7yX520kM97N11e1RJVMI1RSU+Na3Xo9J
+ 1BW6EFMAdibD6hH8PiMmToKxBrfYSLStLh2MbHA2T/3zqicU1nuk376LMyrAuoV/fl8/7Jld
+ wh1c9AADaYXNQfZ84R6nyaTRjy4fqcc/dG2kw5ZMln909SMKZc3HdVynmo9pLT2HBOnXu2d3
+ bIGmzuDnDXzh1X8+ods4gViuvB31xU1WiANr4TbhaNU+/LmEVfvhS+34Cmz3U5Xs5x7nWdpM
+ 6fFfDOSz2sIYXOGAcaV3oJ121Uul2U2bMTsXxiwdbjmZP9jrzEfvhD5KIOutX+0OzdtM9QVB
+ 70QQOEh3maW/FwGdL5stYcadsBiEEI6Y2ymVpBgzrPS6HzC+UZLUShOE+aLx+SYBYAuypikM
+ PvG9W3MqWHCsXXEfyp2mCeorKb7PafyaBO/E5REjPmYUpkGMNZH1lGV3jegE9WdOBfXW9xvC
+ wf0UefoFaVhjsjtzvl8lMQndrDBdKPpJ7zIIG6FGSsUYmCtvE+JAk83tfpUpSZKDSzsqtLTI
+ 8GE2fQzEuZcBqm6Yk2V1+u6rjUjmqEBIzunyeUupaUc+p00JiwNE8v/wcx7UbD5m+PGOkNoL
+ MLe0ti0O7nFlY8avZzy3eLBQenu4WsJjPVYeQGeGB3oLvCGIhT9/WwARAQABwsFfBBgBAgAJ
+ BQJRcZGfAhsMAAoJEB+K+IyC93wDC44P/0bAjHgFUPHl7jG5CrWGwgdTNN8NrjpmIxSk37kI
+ uKMzcwP9BWhFF0mx6mCUEaxvGdAQ9Va/uXB2TOyhLCGXhlf8uCwxcIyrOlhi2bK6ZIwwovyj
+ jh7GCRnm8cP8ohDCJlDUpHkOpmU4tcapbZiBrFaFAahxPMjwK9GJ3JY0lx63McgCEIwm6txN
+ cMnVX5Y3HeW5Wo8DtmeM3XajJLFaBXIhEfoNHMfDON6UGiXFeR8S9W8dpaX8XEwzPUjZyOG2
+ LvOMAEPXx+kB9mZPTogong8LekL1HZHSY4OYffzQy5fVE+woHAMADkrmuosGkTRCP4IQHXOa
+ goax/Dox01lKTLnlUL1iWWQjfRaFXVKxEc2PF1RZUpoO/IQYFB1twcaF2ibT3TlGolbmb3qU
+ YBo/Apl5GJUj/xOWwrbikD+Ci+vx8yuFUlulbS9Ht+3z1dFjBUDbtZ4Bdy/1heNpA9xORiRs
+ +M4GyTil33pnBXEZp29nh7ev4VJ96sVvnQFzls3motvG+pq/c37Ms1gYayeCzA2iCDuKx6Zk
+ ybHg7IzNEduqZQ4bkaBpnEt+vwE3Gg5l4dAUFWAs9qY13nyBANQ282FNctziEHCUJZ/Map6T
+ dzHWO6hU1HuvmlwcJSFCOey8yhkt386E6KfVYzrIhwTtabg+DLyMZK40Rop1VcU7Nx0M
+In-Reply-To: <20241127215404.915-1-rafael.v.volkmer@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 11/27/24 12:00, Joe Damato wrote:
-> On Wed, Nov 27, 2024 at 10:51:16AM -0800, Joe Damato wrote:
->> On Wed, Nov 27, 2024 at 09:43:54AM -0800, Guenter Roeck wrote:
->>> Hi,
->>>
->>> On Fri, Oct 11, 2024 at 06:45:00PM +0000, Joe Damato wrote:
->>>> Add a persistent NAPI config area for NAPI configuration to the core.
->>>> Drivers opt-in to setting the persistent config for a NAPI by passing an
->>>> index when calling netif_napi_add_config.
->>>>
->>>> napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
->>>> (after the NAPIs are deleted).
->>>>
->>>> Drivers which call netif_napi_add_config will have persistent per-NAPI
->>>> settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
->>>>
->>>> Per-NAPI settings are saved in napi_disable and restored in napi_enable.
->>>>
->>>> Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
->>>> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
->>>> Signed-off-by: Joe Damato <jdamato@fastly.com>
->>>> Reviewed-by: Jakub Kicinski <kuba@kernel.org>
->>>
->>> This patch triggers a lock inversion message on pcnet Ethernet adapters.
->>
->> Thanks for the report. I am not familiar with the pcnet driver, but
->> took some time now to read the report below and the driver code.
->>
->> I could definitely be reading the output incorrectly (if so please
->> let me know), but it seems like the issue can be triggered in this
->> case:
+On 11/27/24 3:54 PM, Rafael V. Volkmer wrote:
+> On 11/25/24 11:36 AM, David Lechner wrote:
+>> How does this work without an additional patch to modify the TI eQEP
+>> counter driver to handle this new enum value? For example, I would
+>> expect that this enum value would be added to ti_eqep_position_functions
+>> and case statements added in ti_eqep_function_read(),
+>> ti_eqep_function_write() and ti_eqep_action_read() to handle the new
+>> option.
 > 
-> Sorry, my apologies, I both:
->    - read the report incorrectly, and
->    - proposed a bad patch that would result in a deadlock :)
+> Hi, David!
 > 
-> After re-reading it and running this by Martin (who is CC'd), the
-> inversion is actually:
+> Yes, the intention is to have a second path where the eQEP driver handles 
+> this within these file operations functions.
 > 
-> CPU 0:
-> pcnet32_open
->     lock(lp->lock)
->       napi_enable
->         napi_hash_add <- before this executes, CPU 1 proceeds
->           lock(napi_hash_lock)
-> CPU 1:
->    pcnet32_close
->      napi_disable
->        napi_hash_del
->          lock(napi_hash_lock)
->           < INTERRUPT >
->              pcnet32_interrupt
->                lock(lp->lock)
-> 
-> This is now an inversion because:
-> 
-> CPU 0: holds lp->lock and is about to take napi_hash_lock
-> CPU 1: holds napi_hashlock and an IRQ firing on CPU 1 tries to take
->         lp->lock (which CPU 0 already holds)
-> 
-> Neither side can proceed:
->    - CPU 0 is stuck waiting for napi_hash_lock
->    - CPU 1 is stuck waiting for lp->lock
-> 
-> I think the below explanation is still correct as to why the
-> identified commit causes the issue:
-> 
->> It seems this was triggered because before the identified commit,
->> napi_enable did not call napi_hash_add (and thus did not take the
->> napi_hash_lock).
-> 
-> However, the previous patch I proposed for pcnet32 would also cause
-> a deadlock as the watchdog timer's function also needs lp->lock.
-> 
-> A corrected patch for pcnet32 can be found below.
-> 
-> Guenter: Sorry, would you mind testing the below instead of the
-> previous patch?
-> 
-> Don: Let me know what you think about the below?
-> 
-> Netdev maintainers, there is an alternate locking solution I can
-> propose as an RFC that might avoid this class of problem if this
-> sort of issue is more widespread than just pcnet32:
->    - add the NAPI to the hash in netif_napi_add_weight (instead of napi_enable)
->    - remove the NAPI from the hash in __netif_napi_del (instead of
->      napi_disable)
-> 
-> If changing the locking order in core is the desired route, than the
-> patch below should be unnecessary, but:
-> 
-> diff --git a/drivers/net/ethernet/amd/pcnet32.c b/drivers/net/ethernet/amd/pcnet32.c
-> index 72db9f9e7bee..2e0077e68883 100644
-> --- a/drivers/net/ethernet/amd/pcnet32.c
-> +++ b/drivers/net/ethernet/amd/pcnet32.c
-> @@ -2625,11 +2625,10 @@ static int pcnet32_close(struct net_device *dev)
-> 
->          del_timer_sync(&lp->watchdog_timer);
-> 
-> +       spin_lock_irqsave(&lp->lock, flags);
->          netif_stop_queue(dev);
->          napi_disable(&lp->napi);
-> 
+> Best regards
 
-That is what I did, actually. Problem with that is that napi_disable()
-wants to be able to sleep, thus the above triggers:
+OK, so please send those patches too so that we can see the whole picture.
 
-BUG: sleeping function called from invalid context at net/core/dev.c:6775
-in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1817, name: ip
-preempt_count: 1, expected: 0
-2 locks held by ip/1817:
-#0: ffffffff81ded990 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x22a/0x74c
-#1: ff6000000498ccb0 (&lp->lock){-.-.}-{3:3}, at: pcnet32_close+0x40/0x126
-irq event stamp: 3720
-hardirqs last  enabled at (3719): [<ffffffff80decaf4>] _raw_spin_unlock_irqrestore+0x54/0x62
-hardirqs last disabled at (3720): [<ffffffff80dec8a2>] _raw_spin_lock_irqsave+0x5e/0x64
-softirqs last  enabled at (3712): [<ffffffff8001efca>] handle_softirqs+0x3e6/0x4a2
-softirqs last disabled at (3631): [<ffffffff80ded6cc>] __do_softirq+0x12/0x1a
-CPU: 0 UID: 0 PID: 1817 Comm: ip Tainted: G                 N 6.12.0-10313-g7d4050728c83-dirty #1
-Tainted: [N]=TEST
-Hardware name: riscv-virtio,qemu (DT)
-Call Trace:
-[<ffffffff80006d42>] dump_backtrace+0x1c/0x24
-[<ffffffff80dc8d94>] show_stack+0x2c/0x38
-[<ffffffff80de00b0>] dump_stack_lvl+0x74/0xac
-[<ffffffff80de00fc>] dump_stack+0x14/0x1c
-[<ffffffff8004da18>] __might_resched+0x23e/0x248
-[<ffffffff8004da60>] __might_sleep+0x3e/0x62
-[<ffffffff80b8d370>] napi_disable+0x24/0x10c
-[<ffffffff809a06fe>] pcnet32_close+0x6c/0x126
+Based on your discussion with William, it sounds like there are 2 things
+that need to be resolved.
 
-Guenter
+1. Should a power saving mode actually be a counter function or should it
+   be controlled by the counter enable attribute or something else, like
+   more general Linux power management stuff?
+2. If there are going to be in-kernel users calling these functions, then
+   we will likely want to introduce some new APIs in the kernel for this.
+   Using platform_get_drvdata() from one driver to another is a bit
+   fragile. Likely we will want some devicetree bindings for counter
+   consumers and providers and some kernel APIs like a counter_get() that
+   takes an index or string ID to get the counter provider assigned to a
+   counter consumer. Then we will probably want some wrappers around the
+   counter ops pointers so that consumer drivers don't have to depend on
+   the internal implementation of the counter subsystem.
 
 
