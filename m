@@ -1,190 +1,185 @@
-Return-Path: <linux-kernel+bounces-423878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-423879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3662D9DADCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:27:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDB19DADD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 20:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB14F2819E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117E32819D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 19:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4285D201273;
-	Wed, 27 Nov 2024 19:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1B7201272;
+	Wed, 27 Nov 2024 19:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Li2z0z9T"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNzNsL0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D4413DBB6;
-	Wed, 27 Nov 2024 19:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732735631; cv=pass; b=LeZQzpydgK1YvUG59KUFRnl7ZeZN5vhW3j0uHhJbga16uwHjhcPeONzwtHzUlUNiYa1b63OFwmG3mEqYVifBpdEh4PIsZWEpCOEC150EuiOvyrEBJ3GtenF6Y8wYm227NVGP3JzLZGmKcJRMu7jNyD9sUA6sAcU0ChRW2302jBo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732735631; c=relaxed/simple;
-	bh=4qYnz5xi5gnh6+HliYXFQsfcuQBxYMMCDlj5gHBNIc0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Y10+UA9siATU1Uf0U6H5vCaNkl5fOvgkf+9ScfGgJH1vD7DVttjWiSE3Gq1/HkVH8R9v1ct0C7mTRVhC2tjKeAPBx85kmjeCbhI0ST7bUGfyBQbGnCc3YY4ibS6dRxa09mbtzFelqrPApRXobo3EOGnCOTTOTSYeu2dczzrcTfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Li2z0z9T; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732735584; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kTsdsC6upmSd6l9rP6fjrCIJTU8U+4weBu0WWXSZJsBh3ncMDkcl0uP+GF+aVS7f8lWclS4y/kVVXXhDrqefu1pZpa0cGwtqrQAsad9IuO7BneMQSu30sLxwtMHlSbV5/qPoQUYR27Esj+E+vv8C3efftJuUd1XS7jv9y4fLNUc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732735584; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=RX2Qxk8Q8vCZMNnquh0zQky0kuIksspy8X4nlKr9Wa4=; 
-	b=RU5OzG5/WYF0rooLuXFku7RZvN8EHAn4OM1AeFXhiTDMvs+0krCDxtCaqTDFZ/4QjsnEN/iJMg0KTm4WdndTj1GpA8FsD0R5cKspa49zADVKuyY50kCaAWQ31zBGbfSBJSqwpdn3MhQMxlRcJlEoKvcljvWvdzorvvngK6p8oRQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732735584;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=RX2Qxk8Q8vCZMNnquh0zQky0kuIksspy8X4nlKr9Wa4=;
-	b=Li2z0z9TF8VTmmVVSPHSTt2M+wJTSea2pPKhQsaG7NSyCGjNOUmq9zqIEKC40vvl
-	ubKC0N8n27ckA2rP0d1XIVEoM4KqqHpGXf7GZs7RW51zDYM9EnpkKQjc5aAcEXX04yM
-	ht/l2gxmk3ReqSzQHyuyr8QHu6udKyJrrOoZ9yfg=
-Received: by mx.zohomail.com with SMTPS id 1732735582329215.8868752125901;
-	Wed, 27 Nov 2024 11:26:22 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA2313DBB6;
+	Wed, 27 Nov 2024 19:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732735696; cv=none; b=bdpM+vbFAKJXI4PGBu4UUPrZvlBbhM2+owhDz58zP6t+T/Y+S9DjZgqfi2xo8MbSMrGXK/KdJKBmI+Yga7mDx0CrMLQieo0VJUzUcAZKBcANyhp7jevA/ZGTEBvwmX3ghYBqJew2x0rxZDDzKoJIS7/rkC/iFUD+wrKc6ojt4HQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732735696; c=relaxed/simple;
+	bh=L/s3c4/RZA69fHGylBHRrju1a7fV+Zb4xiWFgej2aOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BXoS36qQw5nCkcjaMnJ0ofQju4lhZLL0XbXZVtJmo3yMJdqD7lKQk38+PnwOX2OVBq9XsDGaL6qVfpKmJXQIL5fbMUyU96ITRzeJAz46ulEQDuo9+jmilFDF4uGQKe/jjzIbXu/bVUeTDPLDOBaQ+t5OMAbsdHuyyl/iZBoRMyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNzNsL0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D86DC4CECC;
+	Wed, 27 Nov 2024 19:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732735696;
+	bh=L/s3c4/RZA69fHGylBHRrju1a7fV+Zb4xiWFgej2aOg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cNzNsL0rLiE+MtsxgjGHK9NSnDA4rTiFw6O8KjtLSpBPnT2/5tQpQsjrD+1j+kJGD
+	 9mIe7cpoVHj+90qDhpPdYKw4AdSPB0+xF2H/tysr2QsshKlqfGx2R3bKH/pG5ean5v
+	 PGJClW/KMtKl1Eehze4NNYbaUneRwjtugENSvl8btR2Tl9NaQNPDW6cRGb/spbvzMO
+	 PhSnTkEuR1x5M0nHw36Pb1OVu+Q/GMMuJzWkXiJHf7G4fpS82bJ6H+p1J7zPyedeK+
+	 ci5kBtKxIKePvm3LXihTRIKktsxkCgmAzUjJXZHubC38QCBxLgF7Ks0NtXDSIUdTc7
+	 BcT4LXqDxR8vQ==
+Message-ID: <2e81384a-7165-4f25-b84f-7a0045bad60a@kernel.org>
+Date: Wed, 27 Nov 2024 20:28:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 16/35] rust: drm/kms: Add RawConnector and
- RawConnectorState
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-17-lyude@redhat.com>
-Date: Wed, 27 Nov 2024 16:26:06 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B8CBF3CE-1591-4624-816D-9A528B76E1B2@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-17-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: power: Convert raspberrypi,bcm2835-power
+ to Dt schema
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+ Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>
+References: <20241028-raspberrypi-bcm2835-power-v4-1-acf44abd45ff@gmail.com>
+ <bdze3425qwrtlvlairw2b4xiycpkmhirzhqn2jt6jngc3bu4ta@uo4nc2lnj4sf>
+ <qb5sdh55yj7est52netydaauazgluej6hvvtutmmiw2bhglnpw@lq2cyg3hjhlw>
+ <b81cd6bd-4a7e-4032-aa56-843793a0e0c8@kernel.org>
+ <5wzekgv7ccja7ucz2w3byprltalflx4am24scecxjokra4t44g@ll56dfqotyoq>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <5wzekgv7ccja7ucz2w3byprltalflx4am24scecxjokra4t44g@ll56dfqotyoq>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Lyude,
+On 27/11/2024 19:38, Karan Sanghavi wrote:
+> On Sun, Nov 24, 2024 at 11:52:35AM +0100, Krzysztof Kozlowski wrote:
+>> On 24/11/2024 09:49, Karan Sanghavi wrote:
+>>> On Tue, Oct 29, 2024 at 08:10:23AM +0100, Krzysztof Kozlowski wrote:
+>>>> On Mon, Oct 28, 2024 at 04:44:12PM +0000, Karan Sanghavi wrote:
+>>>>> Convert the raspberrypi,bcm2835-power binding to Dt schema
+>>>>>
+>>>>> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+>>>>> ---
+>>>>> Changes in v4:
+>>>>> - Corrected misindentations and random differences.
+>>>>> - Link to v3: https://lore.kernel.org/r/20241026-raspberrypi-bcm2835-power-v3-1-6621e075d33f@gmail.com
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>
+>>>> ---
+>>>>
+>>>> <form letter>
+>>>> This is an automated instruction, just in case, because many review tags
+>>>> are being ignored. If you know the process, you can skip it (please do
+>>>> not feel offended by me posting it here - no bad intentions intended).
+>>>> If you do not know the process, here is a short explanation:
+>>>>
+>>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+>>>> versions, under or above your Signed-off-by tag. Tag is "received", when
+>>>> provided in a message replied to you on the mailing list. Tools like b4
+>>>> can help here. However, there's no need to repost patches *only* to add
+>>>> the tags. The upstream maintainer will do that for tags received on the
+>>>> version they apply.
+>>>>
+>>>> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>>> </form letter>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> Dear Krzysztof,
+>>>
+>>> I hope this email finds you well. 
+>>> I'm following up on the patch I recently submitted linked below.
+>>> https://lore.kernel.org/all/ZxEm-H-PjlQyXeOH@Emma/
+>> I don't understand why do you reply to this patch about other patch.
+>> Anyway, you got reply there.
+>>
+> Really sorry to attach the wrong link 
+> Please find the corret link below
+> https://lore.kernel.org/all/20241028-raspberrypi-bcm2835-power-v4-1-acf44abd45ff@gmail.com/
+> 
+> Is there anything more left form my side for this patch as you have given the
+> reviewed by tag to it but still it hasn't been applied yet 
 
-> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> Now that we have more then one way to refer to connectors, we also =
-want to
+Yeah... Two things here:
+1. It was not sent to PM domain maintainers, so subsystem maintainers
+won't pick it up.
+2. If you want to ping someone, then rather ping Broadcom maintainers,
+not me. Broadcom maintainers could have taken this patch almost month ago.
 
-nit: typo here, s/then/than
 
-> ensure that any methods which are common to any kind of connector type =
-can
-> be used on all connector representations. This is where RawConnector =
-and
-> RawConnectorState come in: we implement these traits for any type =
-which
-> implements AsRawConnector or AsRawConnectorState respectively.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms/connector.rs | 34 ++++++++++++++++++++++++++++++++
-> 1 file changed, 34 insertions(+)
->=20
-> diff --git a/rust/kernel/drm/kms/connector.rs =
-b/rust/kernel/drm/kms/connector.rs
-> index 98ac7fb781d4e..f62740d7f6469 100644
-> --- a/rust/kernel/drm/kms/connector.rs
-> +++ b/rust/kernel/drm/kms/connector.rs
-> @@ -331,6 +331,27 @@ unsafe fn from_raw<'a>(ptr: *mut =
-bindings::drm_connector) -> &'a Self {
->     }
-> }
->=20
-> +/// Common methods available on any type which implements =
-[`AsRawConnector`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the =
-basic methods for working with
-> +/// connectors.
-> +pub trait RawConnector: AsRawConnector {
-> +    /// Return the index of this DRM connector
-> +    #[inline]
-> +    fn index(&self) -> u32 {
-> +        // SAFETY: The index is initialized by the time we expose DRM =
-connector objects to users,
-> +        // and is invariant throughout the lifetime of the connector
-> +        unsafe { (*self.as_raw()).index }
-> +    }
-> +
-> +    /// Return the bitmask derived from this DRM connector's index
-> +    #[inline]
-> +    fn mask(&self) -> u32 {
-> +        1 << self.index()
-> +    }
-> +}
-> +impl<T: AsRawConnector> RawConnector for T {}
-> +
-> unsafe extern "C" fn connector_destroy_callback<T: DriverConnector>(
->     connector: *mut bindings::drm_connector,
-> ) {
-> @@ -523,6 +544,19 @@ pub trait FromRawConnectorState: =
-AsRawConnectorState {
->     unsafe fn from_raw_mut<'a>(ptr: *mut =
-bindings::drm_connector_state) -> &'a mut Self;
-> }
->=20
-> +/// Common methods available on any type which implements =
-[`AsRawConnectorState`].
-> +///
-> +/// This is implemented internally by DRM, and provides many of the =
-basic methods for working with
-> +/// the atomic state of [`Connector`]s.
-> +pub trait RawConnectorState: AsRawConnectorState {
-> +    fn connector(&self) -> &Self::Connector {
-> +        // SAFETY: This is guaranteed safe by type invariance, and =
-we're guaranteed by DRM that
-> +        // `self.state.connector` points to a valid instance of a =
-`Connector<T>`
-> +        unsafe { =
-Self::Connector::from_raw((*self.as_raw()).connector) }
-> +    }
-> +}
-> +impl<T: AsRawConnectorState> RawConnectorState for T {}
-> +
-> /// The main interface for a [`struct drm_connector_state`].
-> ///
-> /// This type is the main interface for dealing with the atomic state =
-of DRM connectors. In
-> --=20
-> 2.46.1
->=20
->=20
+For the (1) above, get_maintainers.pl is not accurate in this case. You
+will get *additional* addresses to Cc with get_maintainers.pl on
+drivers/pmdomain/bcm/raspberrypi-power.c. After merge window, I suggest
+to resend this wider audience with *the Rb tag applied*.
 
-LGTM,
 
-=E2=80=94 Daniel
-
+Best regards,
+Krzysztof
 
