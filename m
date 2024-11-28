@@ -1,155 +1,169 @@
-Return-Path: <linux-kernel+bounces-424378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0539E9DB3B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:24:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07099DB3B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95292162588
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42371162DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1689A14B96E;
-	Thu, 28 Nov 2024 08:24:49 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC4614B086;
+	Thu, 28 Nov 2024 08:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ReInDfA8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC5613FD86;
-	Thu, 28 Nov 2024 08:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3213313FD86;
+	Thu, 28 Nov 2024 08:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782288; cv=none; b=KYonWhBE5ajGRGs5fAmmmI1e/z03O1UcZEvpUekBjpVM016HcfEbw+V7yHsGJSKSGPm+ULFYZYuMITJmB3ghSHERiHoVKMt/2pjivqPSRbbicogdcy+Yb1jKnvmxJ6QdtUwxFYyp9EIDLgGgjPdQcivLC8GpjG5zcrzsPwQjXr8=
+	t=1732782299; cv=none; b=V4C+FINtcGGHdbC2+2GBZiSZ7AbvnMaJsZd/ETWMhaMthw6LHvMzenmT1AhJIE21m98FXGuFdjn9YvgvXwclEFCMEa9oEk8La5HHbYrajdZuitafY7qV2xo0zVp3/OUlyOzIe6doVcixJMPjpeNK8DNh8wag6PJiFlkLB+9UdRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782288; c=relaxed/simple;
-	bh=SCu+ISsKCCcd6qkQaEWA3jNZcsdZonCDPyLTB8O/kyY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D+yO0gep3hvj7B3tQbmkJ4egKyv2UO4E5toEDOON7QGkcDoEqL6BEE4KGCMmVw+sD1b8tGGm0oZBBuuFRoH5FVlnm2GMs5tKYAEsxxkntMsLgALKvILt7wuJ4rSEL+OHd1fX0KvDdkLABEmBcuuL57WE/3YWM9Fz1r5oSTm8Iqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XzTDQ0Gx6z9v7JN;
-	Thu, 28 Nov 2024 15:57:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id B8230140762;
-	Thu, 28 Nov 2024 16:24:23 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwDXNXWhKEhn28ZyAg--.30519S2;
-	Thu, 28 Nov 2024 09:24:22 +0100 (CET)
-Message-ID: <10c8fd4b53f946c2d7e933a35c6eb36557e8c592.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest
- list parsers
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  corbet@lwn.net, petr.pavlu@suse.com,
- samitolvanen@google.com, da.gomez@samsung.com,  akpm@linux-foundation.org,
- paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com,
- shuah@kernel.org, mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
- linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
- linux-modules@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kselftest@vger.kernel.org,  wufan@linux.microsoft.com,
- pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,  mjg59@srcf.ucam.org,
- pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, 
- jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, 
- mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Thu, 28 Nov 2024 09:23:57 +0100
-In-Reply-To: <Z0d4vXuCqjTo_QW1@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
-	 <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
-	 <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
-	 <Z0Ybvzy7ianR-Sx9@bombadil.infradead.org>
-	 <3dc25195b0362b3e5b6d6964df021ff4e7e1b226.camel@huaweicloud.com>
-	 <Z0d4vXuCqjTo_QW1@bombadil.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732782299; c=relaxed/simple;
+	bh=1fnaIG1nYe4uoedCIRf1VMkQy9HxCwnYmURxMbX/Dhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DN0GZA5Tl7kXQoVLydTgrlgTqfhqG1XuRElW5ipMnkBHJt8X4PFoJG8QSDgq4l0CPCMN6R97EotT/HCnLJdZRBmf0K1VpeHRn31WgoPJkRhri8VIBQCWuBFvR31MHSkBd6m14rDy1yXn6Jy1kmHTia6sOef9xCc1zoILgIJ+q2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ReInDfA8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARMH9D6016748;
+	Thu, 28 Nov 2024 08:24:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/4U7H+fB6+lpXcyRIf7le/5WCYXvwpYmkA9IOsE9Mig=; b=ReInDfA8pnpF+hWx
+	Bamu+dyScIf5tZCflJJX2fdPXXXh+qr/KhnF8GCdviW7FvSCSJYBEq6DT8I8aNqJ
+	aykSjrURMkhIgnGOBqWfMja3xDLqMA+Iy6fK5YKfL7Kg9Xh5zs28rEKtDRWMBzVD
+	vYqnVsdYNDOFSwtbZyjC7BkvKQgp/qWM1k/Jia9HlOFbTx+BywkwNFu9xHRvxI4/
+	AXwDXJxICl0FHv21jn/TSZEYcGPC5QqskEb57U1y/yQXKFhhtH4XpdR9LMNSCCZt
+	LlC0FvqotWdtQH7NngBYSt8pH6fSTaEKGk8qOHtH4SIBvI6nLzDAsGKLb4Xd+g6O
+	aG3WLQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43671e9ted-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 08:24:48 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS8OmWu007444
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 08:24:48 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 28 Nov
+ 2024 00:24:43 -0800
+Message-ID: <c6497c90-f323-42e4-97ea-a0b5d91e3585@quicinc.com>
+Date: Thu, 28 Nov 2024 16:24:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwDXNXWhKEhn28ZyAg--.30519S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw15XFyUGry5CF48Zr1DWrg_yoW8uF4xpF
-	WfK3ZIkr4kt3Wqkw4vyw47uFW0k393GrW5G3Z3Gr9ayr15KFya9FyIgw43WFZrKr4vgw4a
-	qr1rZ3sIvw1kZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x07bhb18UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGdH1TUBdQAAsw
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: add initial support for QCS8300
+ DTSI
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <quic_tengfan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
+        Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+        Xin Liu
+	<quic_liuxin@quicinc.com>,
+        Kyle Deng <quic_chunkaid@quicinc.com>,
+        "Tingguo
+ Cheng" <quic_tingguoc@quicinc.com>,
+        Raviteja Laggyshetty
+	<quic_rlaggysh@quicinc.com>
+References: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
+ <20240925-qcs8300_initial_dtsi-v2-3-494c40fa2a42@quicinc.com>
+ <mjth25v54mioefjet2udacqqwvw7tfbhemmvjps4utjm545hyn@3f7zwohi4qee>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <mjth25v54mioefjet2udacqqwvw7tfbhemmvjps4utjm545hyn@3f7zwohi4qee>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8C_cxGrAsdLSQVq6o9tcxHAyKnFrTUwe
+X-Proofpoint-GUID: 8C_cxGrAsdLSQVq6o9tcxHAyKnFrTUwe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ impostorscore=0 mlxscore=0 phishscore=0 priorityscore=1501 clxscore=1011
+ bulkscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280066
 
-On Wed, 2024-11-27 at 11:53 -0800, Luis Chamberlain wrote:
-> On Wed, Nov 27, 2024 at 10:51:11AM +0100, Roberto Sassu wrote:
-> > For eBPF programs we are also in a need for a better way to
-> > measure/appraise them.
->=20
-> I am confused now, I was under the impression this "Integrity Digest
-> Cache" is just a special thing for LSMs, and so I was under the
-> impression that kernel_read_file() lsm hook already would take care
-> of eBPF programs.
 
-Yes, the problem is that eBPF programs are transformed in user space
-before they are sent to the kernel:
 
-https://lwn.net/Articles/977394/
+On 11/27/2024 2:13 AM, Bjorn Andersson wrote:
+> On Wed, Sep 25, 2024 at 06:43:34PM +0800, Jingyi Wang wrote:
+>> Add initial DTSI for QCS8300 SoC.
+>>
+>> Features added in this revision:
+>> - CPUs with PSCI idle states
+>> - Interrupt-controller with PDC wakeup support
+>> - Timers, TCSR Clock Controllers
+>> - Reserved Shared memory
+>> - GCC and RPMHCC
+>> - TLMM
+>> - Interconnect
+>> - QuP with uart
+>> - SMMU
+>> - QFPROM
+>> - Rpmhpd power controller
+>> - UFS
+>> - Inter-Processor Communication Controller
+>> - SRAM
+>> - Remoteprocs including ADSP,CDSP and GPDSP
+>> - BWMONs
+>>
+>> [Zhenhua: added the smmu node]
+>> Co-developed-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+>> [Xin: added ufs/adsp/gpdsp nodes]
+>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>> [Kyle: added the aoss_qmp node]
+>> Co-developed-by: Kyle Deng <quic_chunkaid@quicinc.com>
+>> Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
+>> [Tingguo: added the rpmhpd nodes]
+>> Co-developed-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+>> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+>> [Raviteja: added interconnect nodes]
+>> Co-developed-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> 
+> Sorry, thought I had replied to this already, but I must have confused
+> it with QCS615.
+> 
+> Please see my feedback regarding signed-off-by and subject line:
+> https://lore.kernel.org/all/4bhsuysjm2uwkk52g4pkspiadsf5y4m2afotj7ggo2lnj24ip2@yqkijcdkiloj/
+> https://lore.kernel.org/all/2qvv3zrop2i5hurrn7bfggfkjb7rqlbfa7bxiekdisi6c57gxd@d2fptisjhy3j/
+> 
+> 
+> 
+> For reference, here's the qcs615 v5.
+> https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/
+> 
+> Regards,
+> Bjorn
 
-The Integrity Digest Cache can be used for the measurement/appraisal of
-the initial eBPF ELF file, when they are accessed from the filesystem,
-but the resulting blob sent to the kernel will be different.
+Thanks, Will update in the next version.
 
-> > Now, I'm trying to follow you on the additional kernel_read_file()
-> > calls. I agree with you, if a parser tries to open again the file that
-> > is being verified it would cause a deadlock in IMA (since the inode
-> > mutex is already locked for verifying the original file).
->=20
-> Just document this on the parser as a requirement.
-
-Ok, will do.
-
-> > > > Supporting kernel modules opened the road for new deadlocks, since =
-one
-> > > > can ask a digest list to verify a kernel module, but that digest li=
-st
-> > > > requires the same kernel module. That is why the in-kernel mechanis=
-m is
-> > > > 100% reliable,
-> > >=20
-> > > Are users of this infrastructure really in need of modules for these
-> > > parsers?
-> >=20
-> > I planned to postpone this to later, and introduced two parsers built-
-> > in (TLV and RPM). However, due to Linus's concern regarding the RPM
-> > parser, I moved it out in a kernel module.
->=20
-> OK this should be part of the commit log, ie that it is not desirable to
-> have an rpm parser in-kernel for some users.
-
-I understand. Will add in the commit log.
-
-Just to clarify, we are not talking about the full blown librpm in the
-kernel, but a 243 LOC that I rewrote to obtain only the information I
-need. I also formally verified it with pseudo/totally random data with
-Frama-C:
-
-https://github.com/robertosassu/rpm-formal/blob/main/validate_rpm.c
-
-Thanks
-
-Roberto
-
+Thanks,
+Jingyi
 
