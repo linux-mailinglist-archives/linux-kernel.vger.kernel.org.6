@@ -1,82 +1,91 @@
-Return-Path: <linux-kernel+bounces-424405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA54C9DB3FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:43:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A639DB3F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:43:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D805B21221
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A6A166673
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8B7150981;
-	Thu, 28 Nov 2024 08:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C26C1514DC;
+	Thu, 28 Nov 2024 08:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xp7//pJW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gpTO9RCM"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C432714C59B;
-	Thu, 28 Nov 2024 08:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB9314D444
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783418; cv=none; b=kzX/+zl3sRAXjwwgj3XypD/Bskh0O1S6qp3Tsmh+QAHueBC7lcWcfTwn5F0mPr7AIL0K8ggEtAE6O5yHPjnHV3t/srM+tYSoRGrtqHnBFcnUauweq2EvalUtsCWjo0PlBuF0vfdQfUNpUMcXbbDhDmav2SU3aYY4ubqz884G3K0=
+	t=1732783392; cv=none; b=umki1U4WMztJiPIJXmJqcdW0Ikw3Q3vOh9g/q2pHdAPBdzvuW02C9Z4oVsC5Wnuid1/PGq9tP0gQC0Rsw6bHSiAGnsAtZCQB6D9QW3xwr0E3Ouc/EtgXkU1kt+1rxGyPvLDEzpzF7X/wAUjqRjplKhcvUUoaESgDvZ5zBZSAaDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783418; c=relaxed/simple;
-	bh=ulk0lZq8nHfFng3q6rfFKuN3jfHr4YUxzS7NVrZA34U=;
+	s=arc-20240116; t=1732783392; c=relaxed/simple;
+	bh=eD0BKTile3avGYgb6esO7NcB7LFOjudhnPBYvOtuu6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTfGQYX9ucuMn8N8zDS7xGXRGRXFHE0YFYAmyo7yPuyCV2fy3NYhjLgsxH5Bf/b+0cCB/Nv7xKlQTiQj3kS+WrducSd408+ylmpYeGrSuprz+Xj+MPl9McyyAmXIxF/YGUXndGm4zP+rcaM1K2ubLnfUIXrggGLzFLBmiDi2pFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xp7//pJW; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732783417; x=1764319417;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ulk0lZq8nHfFng3q6rfFKuN3jfHr4YUxzS7NVrZA34U=;
-  b=Xp7//pJWyWkDfpIo7QvxopxIKhTIwtetM/oCeYbZ8os6hhZK3zN3Lc9x
-   vMfJdddie1PXC16TFQ/QCZf6gJQ8L0JjuRaP41WFf1Zob2f0/8VRIvpdk
-   V/WxIDIXBoWzdA2rYq20zpmS+JRsHa2T/71pAE3l9Rm7xHdnbR8xWK+1T
-   gyFplJDhUEPwfiM547FV8zUn6RFlvjVcbbYdOkMFF0xL7sdFqKNfIF/4i
-   rlPOoc46RWf/eSTy8vAiMZZ/xwbBTBmOESus9RdAb4aLw+54nGRHzhw00
-   TJx9//T2mlWkLUJQmie50T2DvV7GiaTIf4CqZj04SFngm3CIspSiUb9jb
-   w==;
-X-CSE-ConnectionGUID: EezlzC6EQ0Kuob3hqeBVaw==
-X-CSE-MsgGUID: gZVDC0McSBS7yBuVj3gHqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43621319"
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="43621319"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 00:43:32 -0800
-X-CSE-ConnectionGUID: DU+78fxVTv+KspEbwt8ftg==
-X-CSE-MsgGUID: wVU9ekrfQPeqYsQMX5I6sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="91990561"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Nov 2024 00:43:29 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGa7S-0009MF-2N;
-	Thu, 28 Nov 2024 08:43:26 +0000
-Date: Thu, 28 Nov 2024 16:42:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] tracing/dynevent: Adopt guard() and scoped_guard()
-Message-ID: <202411281612.F29skJjy-lkp@intel.com>
-References: <173262943230.8323.4595317585229847937.stgit@devnote2>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/63Lo42EfmI9AWhVjOFmx38mC+mrvUkgSz/mB3+3VwrRheRHjXPF0rB9b2whGNArVYVmEhyu+qW6Q6IobLuUUFGYgXBHb0ZUO/EmM1VRc9msR+DSuQ3GI7Odht2nQT55KCLmgp/nB7iq1HlY0tAuORFjRjPcKQO7mLZ9JuULuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gpTO9RCM; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa532dcb470so31384766b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1732783389; x=1733388189; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tMHb2Kr+9Gyds+XTGzQnx6NFjRgDvoBkrYDD0zxb/+k=;
+        b=gpTO9RCM87lRTmvEUOFaWOz57bO62fWTAqgf0Bw4ZEXrYqHHa34J3LKUURTedXEeh5
+         GAnrAmMAjn3lvlqVjXNOVZCkY4O8YIlalLkNu7frgvpOMPp+8NoG0xYnTQz9bMyNN7IJ
+         Oo2aVsrnft/1cMgoelpO+U4Zu0IlicHtNlQq+P5E+uLLED/aQaYPEldmxeYuhUSQbobQ
+         eTFYASwZBDCLrBPHUXuRUU4hAr0xZ1qqk+d+YSDEBVD4rzsWU2p2u17Ys9qMDfsdsckn
+         2Y2RlOHHdMuJHG2t/1UIjC4OTldpTq4qQPbcRjC5dFqVI1/YnBKotwBhaQi/JCt2XMnp
+         gNjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732783389; x=1733388189;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tMHb2Kr+9Gyds+XTGzQnx6NFjRgDvoBkrYDD0zxb/+k=;
+        b=v2ZPsiZfSjU9VjJvTUbCiOVwgF9x/i0u6m9/NGQbtWtHvAitDmsFtmsvpqsBslQkd7
+         H+fU9ZRpz+lAb05qecOS03FnJEpTSN1luz6PAe+ZxJ4aPAM/crnNvZTrx6fXcQHhkLRT
+         IzaA98LW+lTumH48/PEtIwMSPr91ANma16FwSu0+509OE0wCBi6UxutFE8R/KXm6L+9S
+         yWiU2bsmkzZT3wApei+XApRuHLdtP+hLWZB+zn2Js6ZINGhe7YagsmTCAjI8jx2R7J6F
+         39iJTUmaA99QCWC9SvRs+dZfSladKynbPXrQi9p/CYrJN1bs5QB8+dfRWZ/clQ2ClZBx
+         kUXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVB02ZYtfaCppLsgXHjDEQEu3fOa05g5unAnUwqPtBSoEQ2EcYGJPZ9tfo5AkWESN5qYttqeKmD/Uzj8E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCJ02Wfohjpe2PIZc5KHKw1yg38U2926370WhQ/7mQLzGVP2qT
+	s3snlNYDrK47rtO58BOAbXrqZMotUIhtTgJCLaApRavybpoPv08wW+CytNKtb4U=
+X-Gm-Gg: ASbGncvB4ZbqHXwQnz+j0OftANoYGK+rzozhMVkJDn6Vh2LVtaA+pX9wkiLFYLpYJdj
+	6gnxaZB40CoZjoxfnPaFvZCTbTquTayV5/HqBy8072bNN0EcCYO6Q0T06AYgzW0sFhcUOy1xTJJ
+	jfMSVQl3PfLYsmdHXnPtTCpQvwPDFyQtGPWxal1d8BpnH38Kp0W/8cZADCZLsQfHsvWW8wb6f6g
+	eY1dSnxQ1Mbxjw3UrSCrdxSyuM1KEIcOQ9Zwc4/Ky26n0XgwFoIZLrDNu1U+kHVbWsw/7hRK6pI
+	AcBjSlgOWUSkFGsmCqdob2ZQnaJf0LahxY4=
+X-Google-Smtp-Source: AGHT+IE91WdNXINf1ttfiGq0DeG9vnUXdI7yQdKbewyZQW5Jp/++7K5EDj28/C2AmS8X01ObB7bPuA==
+X-Received: by 2002:aa7:cfd4:0:b0:5d0:8225:aa19 with SMTP id 4fb4d7f45d1cf-5d08225aa9cmr4768526a12.2.1732783388739;
+        Thu, 28 Nov 2024 00:43:08 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097e8f649sm493828a12.59.2024.11.28.00.43.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 00:43:07 -0800 (PST)
+Date: Thu, 28 Nov 2024 09:43:06 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	James Houghton <jthoughton@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: Re: [PATCH v4 15/16] KVM: selftests: Use canonical $(ARCH) paths for
+ KVM selftests directories
+Message-ID: <20241128-d7a5061ce8160000cd5260bd@orel>
+References: <20241128005547.4077116-1-seanjc@google.com>
+ <20241128005547.4077116-16-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,224 +94,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <173262943230.8323.4595317585229847937.stgit@devnote2>
+In-Reply-To: <20241128005547.4077116-16-seanjc@google.com>
 
-Hi Masami,
+On Wed, Nov 27, 2024 at 04:55:46PM -0800, Sean Christopherson wrote:
+> Use the kernel's canonical $(ARCH) paths instead of the raw target triple
+> for KVM selftests directories.  KVM selftests are quite nearly the only
+> place in the entire kernel that using the target triple for directories,
+> tools/testing/selftests/drivers/s390x being the lone holdout.
+> 
+> Using the kernel's preferred nomenclature eliminates the minor, but
+> annoying, friction of having to translate to KVM's selftests directories,
+> e.g. for pattern matching, opening files, running selftests, etc.
+> 
+> Opportunsitically delete file comments that reference the full path of the
+> file, as they are obviously prone to becoming stale, and serve no known
+> purpose.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.12 next-20241128]
-[cannot apply to rostedt-trace/for-next rostedt-trace/for-next-urgent]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-eprobe-Fix-to-release-eprobe-when-failed-to-add-dyn_event/20241128-100853
-base:   linus/master
-patch link:    https://lore.kernel.org/r/173262943230.8323.4595317585229847937.stgit%40devnote2
-patch subject: [PATCH 6/6] tracing/dynevent: Adopt guard() and scoped_guard()
-config: arm-randconfig-001-20241128 (https://download.01.org/0day-ci/archive/20241128/202411281612.F29skJjy-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411281612.F29skJjy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411281612.F29skJjy-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/trace/trace_dynevent.c:11:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> kernel/trace/trace_dynevent.c:105:3: error: cannot jump from this goto statement to its label
-     105 |                 goto out;
-         |                 ^
-   kernel/trace/trace_dynevent.c:108:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
-     108 |         guard(mutex)(&event_mutex);
-         |         ^
-   include/linux/cleanup.h:315:15: note: expanded from macro 'guard'
-     315 |         CLASS(_name, __UNIQUE_ID(guard))
-         |                      ^
-   include/linux/compiler.h:189:29: note: expanded from macro '__UNIQUE_ID'
-     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-         |                             ^
-   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^
-   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
-      83 | #define ___PASTE(a,b) a##b
-         |                       ^
-   <scratch space>:162:1: note: expanded from here
-     162 | __UNIQUE_ID_guard315
-         | ^
-   kernel/trace/trace_dynevent.c:92:4: error: cannot jump from this goto statement to its label
-      92 |                         goto out;
-         |                         ^
-   kernel/trace/trace_dynevent.c:108:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
-     108 |         guard(mutex)(&event_mutex);
-         |         ^
-   include/linux/cleanup.h:315:15: note: expanded from macro 'guard'
-     315 |         CLASS(_name, __UNIQUE_ID(guard))
-         |                      ^
-   include/linux/compiler.h:189:29: note: expanded from macro '__UNIQUE_ID'
-     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-         |                             ^
-   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^
-   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
-      83 | #define ___PASTE(a,b) a##b
-         |                       ^
-   <scratch space>:162:1: note: expanded from here
-     162 | __UNIQUE_ID_guard315
-         | ^
-   kernel/trace/trace_dynevent.c:85:4: error: cannot jump from this goto statement to its label
-      85 |                         goto out;
-         |                         ^
-   kernel/trace/trace_dynevent.c:108:2: note: jump bypasses initialization of variable with __attribute__((cleanup))
-     108 |         guard(mutex)(&event_mutex);
-         |         ^
-   include/linux/cleanup.h:315:15: note: expanded from macro 'guard'
-     315 |         CLASS(_name, __UNIQUE_ID(guard))
-         |                      ^
-   include/linux/compiler.h:189:29: note: expanded from macro '__UNIQUE_ID'
-     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-         |                             ^
-   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^
-   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
-      83 | #define ___PASTE(a,b) a##b
-         |                       ^
-   <scratch space>:162:1: note: expanded from here
-     162 | __UNIQUE_ID_guard315
-         | ^
-   1 warning and 3 errors generated.
-
-
-vim +105 kernel/trace/trace_dynevent.c
-
-5448d44c38557f Masami Hiramatsu          2018-11-05  @11  #include <linux/mm.h>
-5448d44c38557f Masami Hiramatsu          2018-11-05   12  #include <linux/mutex.h>
-5448d44c38557f Masami Hiramatsu          2018-11-05   13  #include <linux/tracefs.h>
-5448d44c38557f Masami Hiramatsu          2018-11-05   14  
-5448d44c38557f Masami Hiramatsu          2018-11-05   15  #include "trace.h"
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   16) #include "trace_output.h"	/* for trace_event_sem */
-5448d44c38557f Masami Hiramatsu          2018-11-05   17  #include "trace_dynevent.h"
-5448d44c38557f Masami Hiramatsu          2018-11-05   18  
-5448d44c38557f Masami Hiramatsu          2018-11-05   19  static DEFINE_MUTEX(dyn_event_ops_mutex);
-5448d44c38557f Masami Hiramatsu          2018-11-05   20  static LIST_HEAD(dyn_event_ops_list);
-5448d44c38557f Masami Hiramatsu          2018-11-05   21  
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   22) bool trace_event_dyn_try_get_ref(struct trace_event_call *dyn_call)
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   23) {
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   24) 	struct trace_event_call *call;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   25) 	bool ret = false;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   26) 
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   27) 	if (WARN_ON_ONCE(!(dyn_call->flags & TRACE_EVENT_FL_DYNAMIC)))
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   28) 		return false;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   29) 
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   30) 	down_read(&trace_event_sem);
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   31) 	list_for_each_entry(call, &ftrace_events, list) {
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   32) 		if (call == dyn_call) {
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   33) 			atomic_inc(&dyn_call->refcnt);
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   34) 			ret = true;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   35) 		}
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   36) 	}
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   37) 	up_read(&trace_event_sem);
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   38) 	return ret;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   39) }
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   40) 
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   41) void trace_event_dyn_put_ref(struct trace_event_call *call)
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   42) {
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   43) 	if (WARN_ON_ONCE(!(call->flags & TRACE_EVENT_FL_DYNAMIC)))
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   44) 		return;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   45) 
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   46) 	if (WARN_ON_ONCE(atomic_read(&call->refcnt) <= 0)) {
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   47) 		atomic_set(&call->refcnt, 0);
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   48) 		return;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   49) 	}
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   50) 
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   51) 	atomic_dec(&call->refcnt);
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   52) }
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   53) 
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   54) bool trace_event_dyn_busy(struct trace_event_call *call)
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   55) {
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   56) 	return atomic_read(&call->refcnt) != 0;
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   57) }
-1d18538e6a0926 Steven Rostedt (VMware    2021-08-16   58) 
-5448d44c38557f Masami Hiramatsu          2018-11-05   59  int dyn_event_register(struct dyn_event_operations *ops)
-5448d44c38557f Masami Hiramatsu          2018-11-05   60  {
-5448d44c38557f Masami Hiramatsu          2018-11-05   61  	if (!ops || !ops->create || !ops->show || !ops->is_busy ||
-5448d44c38557f Masami Hiramatsu          2018-11-05   62  	    !ops->free || !ops->match)
-5448d44c38557f Masami Hiramatsu          2018-11-05   63  		return -EINVAL;
-5448d44c38557f Masami Hiramatsu          2018-11-05   64  
-5448d44c38557f Masami Hiramatsu          2018-11-05   65  	INIT_LIST_HEAD(&ops->list);
-79cc5c1710963f Masami Hiramatsu (Google  2024-11-26   66) 	guard(mutex)(&dyn_event_ops_mutex);
-5448d44c38557f Masami Hiramatsu          2018-11-05   67  	list_add_tail(&ops->list, &dyn_event_ops_list);
-5448d44c38557f Masami Hiramatsu          2018-11-05   68  	return 0;
-5448d44c38557f Masami Hiramatsu          2018-11-05   69  }
-5448d44c38557f Masami Hiramatsu          2018-11-05   70  
-d262271d04830e Masami Hiramatsu          2021-02-01   71  int dyn_event_release(const char *raw_command, struct dyn_event_operations *type)
-5448d44c38557f Masami Hiramatsu          2018-11-05   72  {
-5448d44c38557f Masami Hiramatsu          2018-11-05   73  	struct dyn_event *pos, *n;
-5448d44c38557f Masami Hiramatsu          2018-11-05   74  	char *system = NULL, *event, *p;
-d262271d04830e Masami Hiramatsu          2021-02-01   75  	int argc, ret = -ENOENT;
-d262271d04830e Masami Hiramatsu          2021-02-01   76  	char **argv;
-d262271d04830e Masami Hiramatsu          2021-02-01   77  
-d262271d04830e Masami Hiramatsu          2021-02-01   78  	argv = argv_split(GFP_KERNEL, raw_command, &argc);
-d262271d04830e Masami Hiramatsu          2021-02-01   79  	if (!argv)
-d262271d04830e Masami Hiramatsu          2021-02-01   80  		return -ENOMEM;
-5448d44c38557f Masami Hiramatsu          2018-11-05   81  
-1ce25e9f6fff76 Masami Hiramatsu          2018-11-05   82  	if (argv[0][0] == '-') {
-d262271d04830e Masami Hiramatsu          2021-02-01   83  		if (argv[0][1] != ':') {
-d262271d04830e Masami Hiramatsu          2021-02-01   84  			ret = -EINVAL;
-d262271d04830e Masami Hiramatsu          2021-02-01   85  			goto out;
-d262271d04830e Masami Hiramatsu          2021-02-01   86  		}
-5448d44c38557f Masami Hiramatsu          2018-11-05   87  		event = &argv[0][2];
-1ce25e9f6fff76 Masami Hiramatsu          2018-11-05   88  	} else {
-1ce25e9f6fff76 Masami Hiramatsu          2018-11-05   89  		event = strchr(argv[0], ':');
-d262271d04830e Masami Hiramatsu          2021-02-01   90  		if (!event) {
-d262271d04830e Masami Hiramatsu          2021-02-01   91  			ret = -EINVAL;
-d262271d04830e Masami Hiramatsu          2021-02-01   92  			goto out;
-d262271d04830e Masami Hiramatsu          2021-02-01   93  		}
-1ce25e9f6fff76 Masami Hiramatsu          2018-11-05   94  		event++;
-1ce25e9f6fff76 Masami Hiramatsu          2018-11-05   95  	}
-1ce25e9f6fff76 Masami Hiramatsu          2018-11-05   96  
-5448d44c38557f Masami Hiramatsu          2018-11-05   97  	p = strchr(event, '/');
-5448d44c38557f Masami Hiramatsu          2018-11-05   98  	if (p) {
-5448d44c38557f Masami Hiramatsu          2018-11-05   99  		system = event;
-5448d44c38557f Masami Hiramatsu          2018-11-05  100  		event = p + 1;
-5448d44c38557f Masami Hiramatsu          2018-11-05  101  		*p = '\0';
-5448d44c38557f Masami Hiramatsu          2018-11-05  102  	}
-95c104c378dc7d Linyu Yuan                2022-06-27  103  	if (!system && event[0] == '\0') {
-8db403b9631331 Christophe JAILLET        2021-04-11  104  		ret = -EINVAL;
-8db403b9631331 Christophe JAILLET        2021-04-11 @105  		goto out;
-8db403b9631331 Christophe JAILLET        2021-04-11  106  	}
-5448d44c38557f Masami Hiramatsu          2018-11-05  107  
-79cc5c1710963f Masami Hiramatsu (Google  2024-11-26  108) 	guard(mutex)(&event_mutex);
-5448d44c38557f Masami Hiramatsu          2018-11-05  109  	for_each_dyn_event_safe(pos, n) {
-5448d44c38557f Masami Hiramatsu          2018-11-05  110  		if (type && type != pos->ops)
-5448d44c38557f Masami Hiramatsu          2018-11-05  111  			continue;
-30199137c899d7 Masami Hiramatsu          2019-06-20  112  		if (!pos->ops->match(system, event,
-d262271d04830e Masami Hiramatsu          2021-02-01  113  				argc - 1, (const char **)argv + 1, pos))
-cb8e7a8d55e052 Masami Hiramatsu          2019-06-20  114  			continue;
-cb8e7a8d55e052 Masami Hiramatsu          2019-06-20  115  
-5448d44c38557f Masami Hiramatsu          2018-11-05  116  		ret = pos->ops->free(pos);
-cb8e7a8d55e052 Masami Hiramatsu          2019-06-20  117  		if (ret)
-5448d44c38557f Masami Hiramatsu          2018-11-05  118  			break;
-5448d44c38557f Masami Hiramatsu          2018-11-05  119  	}
-4313e5a613049d Steven Rostedt (Google    2022-11-23  120) 	tracing_reset_all_online_cpus();
-d262271d04830e Masami Hiramatsu          2021-02-01  121  out:
-d262271d04830e Masami Hiramatsu          2021-02-01  122  	argv_free(argv);
-5448d44c38557f Masami Hiramatsu          2018-11-05  123  	return ret;
-5448d44c38557f Masami Hiramatsu          2018-11-05  124  }
-5448d44c38557f Masami Hiramatsu          2018-11-05  125  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Acked-by: Andrew Jones <ajones@ventanamicro.com>
 
