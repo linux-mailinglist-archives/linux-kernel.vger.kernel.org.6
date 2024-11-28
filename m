@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-424318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8079DB2F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:00:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D50139DB2F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79ED3164D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881B01647AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6420313BC18;
-	Thu, 28 Nov 2024 07:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FBEJCoKe"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844E17C7C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A014658B;
+	Thu, 28 Nov 2024 07:02:36 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B60317C7C;
+	Thu, 28 Nov 2024 07:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732777250; cv=none; b=ee7bXbNdVjTA6Pf43jtcA027RCZc0MffR8XYaU3vQ4eWGOKIC8m8c2OCJcrb6j8QXo+v2bLjMQvR3GuieD/PWRYlWfwFemQEp5/mGmCdk/zWF7M5Q7zlEWsZAr8+bnn7q53Qvmfl/uprpkjbjow2FOcw2V6IKR2vsZupZ8Sxmdo=
+	t=1732777355; cv=none; b=su/qDn9evslygnBj8pqIcDmEhctjobwa1xUmvBTZ3sWjSYrw1OLBEVvZ6tYBT8K8mxkBw/mPfEhlaYkbsC46lRQmPi+Qb4j8T1QUjNyFfeXcG0dsBSaPyeyZa8n4pbVsNzG6LCX6f7d03uvqwU7vOa2hJqiHJv9jm1HkGhi4gNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732777250; c=relaxed/simple;
-	bh=4BQyWmUlE6jvGCDCm6OQP0d8YyywfVKgmlgBZXB48dE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=glz9m5KofJk7cKleya2/P30Pt4sQ0saa2/nubSmVkD7QETwuGVugJwgLBriw18XsuYqFS8H/uf6hXzyTRnItnbVT1YvzaVycVx7m1QihgU8Q8GIb+mq7xNKIuAnndSST6klF/ROir9uZ+8dScZwYYhgXBBSibTvHxRtgxDbD8WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FBEJCoKe; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c9a0f00b-3aeb-467a-8771-a4ebb57fbba0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732777244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vc2qIi2ocm1k6X4UAMIiWJqBmJVTnENQ+z8246d3WSQ=;
-	b=FBEJCoKeNBMioFawWTiB/dQdiDsxLKD2w48TOsbRVzR3gnI6n2sUWYwcnEiuk9dRiVI1lJ
-	cGyLWt7w3HFmEH8c/Z1v9vOoYhD+uhp1yH7a1z6p5Hh2RXEX51PnOj64Q/kahfJhHtXqGu
-	VigfYwcD5WssfN4qVcr0IRwS/uPfw9w=
-Date: Thu, 28 Nov 2024 15:00:33 +0800
+	s=arc-20240116; t=1732777355; c=relaxed/simple;
+	bh=c+z1muBowvgFRpY9lxKS29aSkjJfUGmDMjemLPjY60Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZW34YNNm8YtPv7okhZEEusJJ1BS9gQZuien+MXsKeSb9BOuCGpcDxPrSHfSnIATGA9grJslEDPMaop4ueSt5EAlRZ6YJ73XWxvTaOR74oUnz8glVFlyMFN6N4sFJFkjYbhNX9iztPx1iTXV0jkr/EmHhVJqlrMN5nWyNXXQKz5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.180.135.20])
+	by gateway (Coremail) with SMTP id _____8AxQK2EFUhnaXdKAA--.40737S3;
+	Thu, 28 Nov 2024 15:02:28 +0800 (CST)
+Received: from ubuntu.. (unknown [10.180.135.20])
+	by front1 (Coremail) with SMTP id qMiowMCxLEeDFUhnvxtrAA--.46285S2;
+	Thu, 28 Nov 2024 15:02:27 +0800 (CST)
+From: Ming Wang <wangming01@loongson.cn>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	WANG Xuerui <git@xen0n.name>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	lixuefeng@loongson.cn,
+	gaojuxin@loongson.cn,
+	wangming01@loongson.cn
+Subject: [PATCH] rtc: loongson: clear TOY_MATCH0_REG in loongson_rtc_isr
+Date: Thu, 28 Nov 2024 15:02:27 +0800
+Message-ID: <20241128070227.1071352-1-wangming01@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 2/2] mm: zswap: zswap_store_pages() simplifications for
- batching.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
- yosryahmed@google.com, nphamcs@gmail.com, usamaarif642@gmail.com,
- ryan.roberts@arm.com, 21cnbao@gmail.com, akpm@linux-foundation.org
-Cc: wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-References: <20241127225324.6770-1-kanchana.p.sridhar@intel.com>
- <20241127225324.6770-3-kanchana.p.sridhar@intel.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20241127225324.6770-3-kanchana.p.sridhar@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxLEeDFUhnvxtrAA--.46285S2
+X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAgEPEmdHp9IHDgABsD
+X-Coremail-Antispam: 1Uk129KBj93XoW7uF43CFWDCry3Zr1DJFy5Awc_yoW8AF1Dpr
+	W3Ca4DursYvr4UCas5Aay8WrWay3yfJr9xuFs7Kw4Y93Z8A34UXF4FgFyUtr4Dur95JFWY
+	q3y8KFW5u3WqkwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52
+	x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80
+	ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcO6pDUUUU
 
-On 2024/11/28 06:53, Kanchana P Sridhar wrote:
-> In order to set up zswap_store_pages() to enable a clean batching
-> implementation in [1], this patch implements the following changes:
-> 
-> 1) Addition of zswap_alloc_entries() which will allocate zswap entries for
->     all pages in the specified range for the folio, upfront. If this fails,
->     we return an error status to zswap_store().
-> 
-> 2) Addition of zswap_compress_pages() that calls zswap_compress() for each
->     page, and returns false if any zswap_compress() fails, so
->     zswap_store_page() can cleanup resources allocated and return an error
->     status to zswap_store().
-> 
-> 3) A "store_pages_failed" label that is a catch-all for all failure points
->     in zswap_store_pages(). This facilitates cleaner error handling within
->     zswap_store_pages(), which will become important for IAA compress
->     batching in [1].
-> 
-> [1]: https://patchwork.kernel.org/project/linux-mm/list/?series=911935
-> 
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
->   mm/zswap.c | 93 +++++++++++++++++++++++++++++++++++++++++-------------
->   1 file changed, 71 insertions(+), 22 deletions(-)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index b09d1023e775..db80c66e2205 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1409,9 +1409,56 @@ static void shrink_worker(struct work_struct *w)
->   * main API
->   **********************************/
->   
-> +static bool zswap_compress_pages(struct page *pages[],
-> +				 struct zswap_entry *entries[],
-> +				 u8 nr_pages,
-> +				 struct zswap_pool *pool)
-> +{
-> +	u8 i;
-> +
-> +	for (i = 0; i < nr_pages; ++i) {
-> +		if (!zswap_compress(pages[i], entries[i], pool))
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
+The TOY_MATCH0_REG should be cleared to 0 in the RTC interrupt handler,
+otherwise the interrupt cannot be cleared, which will cause the
+loongson_rtc_isr to be triggered multiple times.
 
-How about introducing a `zswap_compress_folio()` interface which
-can be used by `zswap_store()`?
-```
-zswap_store()
-	nr_pages = folio_nr_pages(folio)
+The previous code cleared TOY_MATCH0_REG in the loongson_rtc_handler,
+which is an ACPI interrupt. This did not prevent loongson_rtc_isr
+from being triggered multiple times.
 
-	entries = zswap_alloc_entries(nr_pages)
+This commit moves the clearing of TOY_MATCH0_REG to the loongson_rtc_isr
+to ensure that the interrupt is properly cleared.
 
-	ret = zswap_compress_folio(folio, entries, pool)
+Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
+Signed-off-by: Ming Wang <wangming01@loongson.cn>
+---
+ drivers/rtc/rtc-loongson.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-	// store entries into xarray and LRU list
-```
+diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
+index e8ffc1ab90b0..0aa30095978b 100644
+--- a/drivers/rtc/rtc-loongson.c
++++ b/drivers/rtc/rtc-loongson.c
+@@ -114,6 +114,12 @@ static irqreturn_t loongson_rtc_isr(int irq, void *id)
+ 	struct loongson_rtc_priv *priv = (struct loongson_rtc_priv *)id;
+ 
+ 	rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
++
++	/*
++	 * The TOY_MATCH0_REG should be cleared 0 here,
++	 * otherwise the interrupt cannot be cleared.
++	 */
++	regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -131,11 +137,7 @@ static u32 loongson_rtc_handler(void *id)
+ 	writel(RTC_STS, priv->pm_base + PM1_STS_REG);
+ 	spin_unlock(&priv->lock);
+ 
+-	/*
+-	 * The TOY_MATCH0_REG should be cleared 0 here,
+-	 * otherwise the interrupt cannot be cleared.
+-	 */
+-	return regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
++	return ACPI_INTERRUPT_HANDLED;
+ }
+ 
+ static int loongson_rtc_set_enabled(struct device *dev)
+-- 
+2.43.0
 
-And this version `zswap_compress_folio()` is very simple for now:
-```
-zswap_compress_folio()
-	nr_pages = folio_nr_pages(folio)
-
-	for (index = 0; index < nr_pages; ++index) {
-		struct page *page = folio_page(folio, index);
-
-		if (!zswap_compress(page, &entries[index], pool))
-			return false;
-	}
-
-	return true;
-```
-This can be easily extended to support your "batched" version.
-
-Then the old `zswap_store_page()` could be removed.
-
-The good point is simplicity, that we don't need to slice folio
-into multiple batches, then repeat the common operations for each
-batch, like preparing entries, storing into xarray and LRU list...
-
-Thanks.
 
