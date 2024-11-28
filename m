@@ -1,201 +1,161 @@
-Return-Path: <linux-kernel+bounces-424725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAA09DB88F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2979DB894
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777ABB22F64
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB71283571
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB74F1A9B31;
-	Thu, 28 Nov 2024 13:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BED71A9B51;
+	Thu, 28 Nov 2024 13:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OOClgjSr"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4x8dQLJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DE2158527
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DA1A3BC0;
+	Thu, 28 Nov 2024 13:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732800389; cv=none; b=L4Ei5xw1naXaC9QVIIySjx5WHCjiO5kh0qQpYhYY/458HThSczaZELJsXFbNjFAMhVkdNu8IhLnYoXPFt4VGZb96j1E3KnwxsX1CuEC+zRtgED0Ik61B91x2UOLDnHo3dZBzZZSAxNNfbrhMaT9uuqkbpZFnvbatWwLiSXFDhbY=
+	t=1732800442; cv=none; b=lfmB9qSxWrYicUCpG0mP4aJn/Z8f+0JQ7ykIw4zW7YvZ4BcEUeDA8jYYTMvBh0qPetDTuk1wQMZrYmoKrRlzg8+vDcAdSrzjgF0VZOHzJRwYyyJgThah0q/z3y5iGnXLWtM9UniKgE6MTi6yWIY3iHi5PXRfS8ivxFHZkP1SXg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732800389; c=relaxed/simple;
-	bh=gywptusl9FMGIrT/EUCh7xuj8f5tlNTEJcvfd3Ekin0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hnv6LCAouBk30hdzr67ldIqh8CG3WyVitM2BjREPS5D4J+BQ87/dEpazUo39jGZ7NdKC2NSLrANWXqz5VtYnJItp7UKaY9jjjfGtZjHgSfn4qosrprdilJKzoTByy5vVqPkwcWKC/1/LZnTLOija4uvEm+6fsD3rwM++GsRipu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OOClgjSr; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffa3e8e917so9664471fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:26:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732800386; x=1733405186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hptatYvEA8Enrguk8oP5vLAEt4VLsfMiRBE5rNfad/M=;
-        b=OOClgjSr0iQy7F898QTRBCQVDJtcJVM2I9Yz4ci98Go1nkU2uohhkyeBRbkKtRFXxn
-         ommbVdAjte00aGLXVnH7Hj5Nqon0d2iooJuLLdUa8RD5X2CX5bpprpMeaODAwGmpxV6b
-         puxZ6cUh2/rtzV9fegr+tEih7YbM3+5O+1hHYofGIxx+jVcrfY5nQvtkvdhzY72dU2eC
-         OyI7tiVWRuIkdB/pxgpekZF0BRR5DnOALcGN/suigvVzF3siR+CXOA51zmpkOW/mlT7L
-         9PQifgfELOpBGubCr0Jkqaor5Q/95K4cYf5YsfmuQh4Dogbv+nsXs1Sx9J2FmL/loyE6
-         GdWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732800386; x=1733405186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hptatYvEA8Enrguk8oP5vLAEt4VLsfMiRBE5rNfad/M=;
-        b=febEEZUxSFSfR13W7Ud3sHlsaKhs4AD1VaE8eMUUBAzLD/tQaB7qvd2xzKmsDMKF7J
-         4MWO3kiy3mGvb8FWVuD8PnhMQM5jbA+4dQIb+bi0zJYrO1jXxw6aMWSqiI+VFPv7gowU
-         uvQLqyJyZqf7qhskJ844KXiagMgcx3WIB2hKEeMkqyYYjRnyiQtpqDSJew+IVFp9MY8n
-         Ck1xW3rqVFN4zak+VT1X5soZvies/9hURjAr3cmiLo/MlyVF9sKUrNd+EWfWhv7cHv2j
-         D1tnQVSuIhSmMO++FsWv0ZtfYs9rI78OpapbrQ59z3GymBX4MZY8grP+Nu3y6hPFqIgy
-         i3NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRSgIuayYjZ8HAYhTRW7b8Hoi5zz1uXyYWTqAKSxQ9yYDQ1AWjm/Qd9IB5A7JcCZyIN/7Kff0Bkk8cuzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx3QIxYTe3CyiSzK5zWQJCNI1raG9Rmp8VZfx5PkYxs+v9O34+
-	7z/WYcJHqhTcze3sNyLFjWZEMVXcGjHot410i8vdLrenEfiukkGK9kvzbe4gC9A=
-X-Gm-Gg: ASbGncvpVYFMsqeuELRvww4rXrOWVkWMgwM3QJXsOw1FoMHUfZeCAIOH8IK2bsTD3QV
-	vpNhOZmRYJxldfeo4/8SOkmje+K+cThZmB0b+9o9p5CAxPE/BsU3r4PBo1hEjTbOqnsLn+hMgwx
-	2UvqZb5lHbkpHCNou/FC3TAbngApQJKSa93e27HKmffnTZ3a2viQ4e145/KReGjnpIwOl5Dbdbn
-	qR4R2klmaSEmd/CwYuJqomaG9+jOQJTniurydZB8rp5uvdAK0JNTwG89MW2savWUb529xaA/+Hz
-	TFSsXGz0LCmIfXbkj6imC3jJcQXmDQ==
-X-Google-Smtp-Source: AGHT+IGC3gaQ62hMn2mc57Lh3Z4Pgu5XWI0vf5vOjcb88KgIQmcjU1q/2zOc0M3t3qprl3ZV7jTR3g==
-X-Received: by 2002:a05:6512:b1c:b0:53d:d19f:1c7e with SMTP id 2adb3069b0e04-53df010ea53mr4138862e87.51.1732800385828;
-        Thu, 28 Nov 2024 05:26:25 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6443257sm178638e87.70.2024.11.28.05.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 05:26:24 -0800 (PST)
-Date: Thu, 28 Nov 2024 15:26:23 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] arm64: qcom: dts: sm8650: add interconnect and
- opp-peak-kBps for GPU
-Message-ID: <2lelgxo32rx6r2ivg2ni53re7c3kwvhyhtg6puwvvet7v5wpah@ysdqjscrgw7t>
-References: <20241128-topic-sm8x50-gpu-bw-vote-v3-0-81d60c10fb73@linaro.org>
- <20241128-topic-sm8x50-gpu-bw-vote-v3-7-81d60c10fb73@linaro.org>
+	s=arc-20240116; t=1732800442; c=relaxed/simple;
+	bh=s7ntmLyoK0Ige0yP54n7nzwN2qCmpmvx316Vpb4inks=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CXxoh26umEpvjPbSABpoEANAQ6Bkx0PoejZFN7QuSVZoCTpTf5sIQzJzemRpy/6QxPjYd/ze88J+jmVDgwneuCOVvObO+vCdO2uEhb1UNGaHYjMrkoPyMMDznSajBU4KrYFQ0L3pnKzW8BvGYlf7fGuo2AO8gXgWl9Ljk3N/aWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4x8dQLJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1117BC4CED3;
+	Thu, 28 Nov 2024 13:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732800442;
+	bh=s7ntmLyoK0Ige0yP54n7nzwN2qCmpmvx316Vpb4inks=;
+	h=From:Date:Subject:To:Cc:From;
+	b=W4x8dQLJLyeKbmnDT2QjsgZfRNMP4shFyIT/3c8z4rXM1Q/HOOYiYE34+B0dse2ok
+	 1+ykhOG408CCgxPWHbaO+oPmaBISGvzv+9xC5qywv17Kn84nzFjhejrE3LevibFyiz
+	 GO8cD4fznOGsQyuRrH4UVUylijcfaxocejNrCdD/mA692bOAE2lI0Agnth1vGEFLSb
+	 pot7E1hZkYLaZuKVPp8IHfmFYxO/vpeP8tznGvRIUecQzi2j2/IHFLdozbuA1/SVK7
+	 bzziZ6k3yNig+NLDXsg1lTAIxAGJfGIl3R6wzsedWNepAfakRrLu1QkVr6Sgl0TbKZ
+	 PslcPSFNW+O7A==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Date: Thu, 28 Nov 2024 14:27:16 +0100
+Subject: [PATCH HID] selftests/hid: fix kfunc inclusions with newer bpftool
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128-topic-sm8x50-gpu-bw-vote-v3-7-81d60c10fb73@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241128-fix-new-bpftool-v1-1-c9abdf94a719@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALNvSGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyML3bTMCt281HLdpIK0kvz8HF1jw0TLNBPjxMS0pCQloK6ColSgErC
+ J0Uoeni5KsbW1ADG4jtxmAAAA
+X-Change-ID: 20241128-fix-new-bpftool-31a9f43aafbb
+To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+ Benjamin Tissoires <bentiss@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732800440; l=3659;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=s7ntmLyoK0Ige0yP54n7nzwN2qCmpmvx316Vpb4inks=;
+ b=PREaqb+BXRq/tIkrsTWycjKGYBT+dINU4VsCFZL2/q0/YXm/vlTEaUZriVdHDTZk7HtnLrfUL
+ /Lrw153FIwxDPxv8iyaIJ2+xt8XzW80dC/LigpAPfgDnrsD++kjCNvz
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-On Thu, Nov 28, 2024 at 11:25:47AM +0100, Neil Armstrong wrote:
-> Each GPU OPP requires a specific peak DDR bandwidth, let's add
-> those to each OPP and also the related interconnect path.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8650.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> index 25e47505adcb790d09f1d2726386438487255824..dc85ba8fe1d8f20981b6d7e9672fd7137b915b98 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -2636,6 +2636,9 @@ gpu: gpu@3d00000 {
->  			qcom,gmu = <&gmu>;
->  			#cooling-cells = <2>;
->  
-> +			interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+bpftool now embeds the kfuncs definitions directly in the generated
+vmlinux.h
 
-QCOM_ICC_TAG_ALWAYS, LGTM otherwise
+This is great, but because the selftests dir might be compiled with
+HID_BPF disabled, we have no guarantees to be able to compile the
+sources with the generated kfuncs.
 
-> +			interconnect-names = "gfx-mem";
-> +
->  			status = "disabled";
->  
->  			zap-shader {
-> @@ -2649,56 +2652,67 @@ gpu_opp_table: opp-table {
->  				opp-231000000 {
->  					opp-hz = /bits/ 64 <231000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D2>;
-> +					opp-peak-kBps = <2136718>;
->  				};
->  
->  				opp-310000000 {
->  					opp-hz = /bits/ 64 <310000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
-> +					opp-peak-kBps = <6074218>;
->  				};
->  
->  				opp-366000000 {
->  					opp-hz = /bits/ 64 <366000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D0>;
-> +					opp-peak-kBps = <6074218>;
->  				};
->  
->  				opp-422000000 {
->  					opp-hz = /bits/ 64 <422000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-> +					opp-peak-kBps = <8171875>;
->  				};
->  
->  				opp-500000000 {
->  					opp-hz = /bits/ 64 <500000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
-> +					opp-peak-kBps = <8171875>;
->  				};
->  
->  				opp-578000000 {
->  					opp-hz = /bits/ 64 <578000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-> +					opp-peak-kBps = <12449218>;
->  				};
->  
->  				opp-629000000 {
->  					opp-hz = /bits/ 64 <629000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L0>;
-> +					opp-peak-kBps = <12449218>;
->  				};
->  
->  				opp-680000000 {
->  					opp-hz = /bits/ 64 <680000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-> +					opp-peak-kBps = <16500000>;
->  				};
->  
->  				opp-720000000 {
->  					opp-hz = /bits/ 64 <720000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
-> +					opp-peak-kBps = <16500000>;
->  				};
->  
->  				opp-770000000 {
->  					opp-hz = /bits/ 64 <770000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-> +					opp-peak-kBps = <16500000>;
->  				};
->  
->  				opp-834000000 {
->  					opp-hz = /bits/ 64 <834000000>;
->  					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-> +					opp-peak-kBps = <16500000>;
->  				};
->  			};
->  		};
-> 
-> -- 
-> 2.34.1
-> 
+If we have the kfuncs, because we have the `__not_used` hack, the newly
+defined kfuncs do not match the ones from vmlinux.h and things go wrong.
 
+Prevent vmlinux.h to define its kfuncs and also add the missing `__weak`
+symbols for our custom kfuncs definitions
+
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+---
+This was noticed while bumping the CI to fedora 41 which has an update
+of bpftool.
+
+I'll probably take this in for-6.13/upstream-fixes tomorrow if no bots
+comes back at me.
+
+Cheers,
+Benjamin
+---
+ tools/testing/selftests/hid/progs/hid_bpf_helpers.h | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
+index e5db897586bbfe010d8799f6f52fc5c418344e6b..531228b849daebcf40d994abb8bf35e760b3cc4e 100644
+--- a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
++++ b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
+@@ -22,6 +22,9 @@
+ #define HID_REQ_SET_IDLE         HID_REQ_SET_IDLE___not_used
+ #define HID_REQ_SET_PROTOCOL     HID_REQ_SET_PROTOCOL___not_used
+ 
++/* do not define kfunc through vmlinux.h as this messes up our custom hack */
++#define BPF_NO_KFUNC_PROTOTYPES
++
+ #include "vmlinux.h"
+ 
+ #undef hid_bpf_ctx
+@@ -91,31 +94,31 @@ struct hid_bpf_ops {
+ /* following are kfuncs exported by HID for HID-BPF */
+ extern __u8 *hid_bpf_get_data(struct hid_bpf_ctx *ctx,
+ 			      unsigned int offset,
+-			      const size_t __sz) __ksym;
+-extern struct hid_bpf_ctx *hid_bpf_allocate_context(unsigned int hid_id) __ksym;
+-extern void hid_bpf_release_context(struct hid_bpf_ctx *ctx) __ksym;
++			      const size_t __sz) __weak __ksym;
++extern struct hid_bpf_ctx *hid_bpf_allocate_context(unsigned int hid_id) __weak __ksym;
++extern void hid_bpf_release_context(struct hid_bpf_ctx *ctx) __weak __ksym;
+ extern int hid_bpf_hw_request(struct hid_bpf_ctx *ctx,
+ 			      __u8 *data,
+ 			      size_t buf__sz,
+ 			      enum hid_report_type type,
+-			      enum hid_class_request reqtype) __ksym;
++			      enum hid_class_request reqtype) __weak __ksym;
+ extern int hid_bpf_hw_output_report(struct hid_bpf_ctx *ctx,
+-				    __u8 *buf, size_t buf__sz) __ksym;
++				    __u8 *buf, size_t buf__sz) __weak __ksym;
+ extern int hid_bpf_input_report(struct hid_bpf_ctx *ctx,
+ 				enum hid_report_type type,
+ 				__u8 *data,
+-				size_t buf__sz) __ksym;
++				size_t buf__sz) __weak __ksym;
+ extern int hid_bpf_try_input_report(struct hid_bpf_ctx *ctx,
+ 				    enum hid_report_type type,
+ 				    __u8 *data,
+-				    size_t buf__sz) __ksym;
++				    size_t buf__sz) __weak __ksym;
+ 
+ /* bpf_wq implementation */
+ extern int bpf_wq_init(struct bpf_wq *wq, void *p__map, unsigned int flags) __weak __ksym;
+ extern int bpf_wq_start(struct bpf_wq *wq, unsigned int flags) __weak __ksym;
+ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
+ 		int (callback_fn)(void *map, int *key, void *wq),
+-		unsigned int flags__k, void *aux__ign) __ksym;
++		unsigned int flags__k, void *aux__ign) __weak __ksym;
+ #define bpf_wq_set_callback(timer, cb, flags) \
+ 	bpf_wq_set_callback_impl(timer, cb, flags, NULL)
+ 
+
+---
+base-commit: 919464deeca24e5bf13b6c8efd0b1d25cc43866f
+change-id: 20241128-fix-new-bpftool-31a9f43aafbb
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Benjamin Tissoires <bentiss@kernel.org>
+
 
