@@ -1,153 +1,120 @@
-Return-Path: <linux-kernel+bounces-424427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7AD9DB43A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:51:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F2B9DB43D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30042B22FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9179280AA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37F1155CBA;
-	Thu, 28 Nov 2024 08:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB89415748F;
+	Thu, 28 Nov 2024 08:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RrDl2oSw"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="GtSaFwNV"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718791537C6
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900DB156F55
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783834; cv=none; b=kQ4Pw8KgrJbSi3cywBzKil0aGPx7iO9iIWULWbc6hQFOHjs5926woQT3qVcGx7A1n87FgMcqaZg6aUAvSkpNixnGMRA7iNsoAlap/dLpwLPzhBFtKcL0KNyN+rl4skQ/ag3/8ql3etj410dCsJDuXlCgxxy8Nu5HW/foJusBBYc=
+	t=1732783839; cv=none; b=OTQ+AQkq+KP8sKnpo42G4J+JVGWbdGKZbembMFV6UgGjFMAbNaGEQXKFTLR68Cbyfs3FFhiIJtX3yW7h2Gt+zUmrtA4OPtIVsnxFvNBoX06ot4/vWz5K38c1jgFttYYyIAPuHfBqOwmIE+kkES4keEBcVy8LXZok5+SXuK7HCho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783834; c=relaxed/simple;
-	bh=B5t0AMedGldpOU0H3E5hI5JtAqjpENBbuqduwus8zS8=;
+	s=arc-20240116; t=1732783839; c=relaxed/simple;
+	bh=vIFqCvcR+eOrT5Ry8ljKGnELxDLiTTF3hdIn2rwdnAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I20AyrhesgNgCvkaqwWUpYUimCdAqUVfHKCgBPmbYAHqBEFYua3zmzXr8OYRCUVVXS51Scj57ltH8epVWefzW772/kvoM+EwbUuktBt2zw04TYmu6iUpvpIOOJkiA2ojMS5vJhrcRKgagz0/0Pe1v+tKQcIBTVuWwHgJfjstssQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RrDl2oSw; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38230ed9baeso421095f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:50:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732783831; x=1733388631; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QECfFTmNEKncBrHJdBggIZG8ZqozV1xvM8dgwyM0qgs=;
-        b=RrDl2oSwCnYEp7oECYNcxSauyK6XRiGyM3KuRBy3ZyDSkk2c0CRQpsJ5Z50dSA6p+x
-         uyithzBEEtg4MTHMi9w23wtsmXKcpWvU3OWVgXXYLHtOmdUEeJ5pkl/Lnj8qLh1eJbNv
-         xiz3b+WEaP+3EQ1wGHJp1ACfJcSuHn91+fkCjWKNmKFq6MOa6yBpjDm4xwvvqbAMYtYA
-         olz5wssDge7gJWM2GFL0aqTf9frmn5uf2P3hzDjxRyd8jQCyBhvooqxSZy5rc6azqWVz
-         iZixorUSExxUhIPW6MX30seFMulAJzAcSIrjh71rqCeb+m8I8CtizXwGCoKWNXmIa3Tb
-         UJvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732783831; x=1733388631;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QECfFTmNEKncBrHJdBggIZG8ZqozV1xvM8dgwyM0qgs=;
-        b=L1TQM4yO1ivqMY5FQpjymgF6OeUJVdr+oaWLT9lp8p2SVxt/zMnEeGSC3YzV/Zgdah
-         +SUdnQKMnIB332V2jeoSZFOZPAVTO6jKhZCIdC2wzbA+LTY7ib8nqNuBH3CL6tqEP+wt
-         C+8VMMSIH6lTFycSZBpekYe7WCqhZwS1NDUPp1nNpyLcUGloFzt73+KzwxbjZy781108
-         MeDwpWwzFFiOvyD0fZG2N4GDRBBqnAvtgF2epWnp7+5VwWAJhmWuLEw8zJKIlDRX9i5u
-         Z4QBCdS25oWwgSjTq+AOklT//dlPBOJoetk3EnKt3H6aiZQcgHwO6JvxHWem2lw5SJDh
-         or6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVP9cQys+wLQgDMneB0gYX8T6QGy7+oYxKkSfCjeSpJfyYBahLNIIEX5BecJkVtqxOogv0XNetTxEkITeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHHBGNZPfEFlQ13nmG1t5ciXTbIeC1csIFkn83MWVle2fFvADc
-	8eRjDxlfddgPJu0pjtk4ynFGAPo/dPiQW4kyGmiO9V3Xd5x+tMvj1eoqwZfmUxM=
-X-Gm-Gg: ASbGncuWs66qvSQcHqFsgwAwfWfT0QaQ8wTIWEQhwhHs0aq20qtfhQF5x5/db4L2Dqi
-	+sORvYvkKcW7T4vBiDNjFLPwxKaIMNP9a8qSjhDeC7t2e+UOJeKxjU5BrcAtfb6Sj0efheAjZ4p
-	7jkpiD2loKUETL4bxgLm7ooIeCt58i1PfMg9tv8N9bKX74S8h/bA8O/bFWOKf26EWL64CKENsUb
-	MvIYL8+wt/P9ANlhjmpUx6aSgoHbsnZNnsOmJtdxfirKv0kCM2S8Teqwh0X4XCjWxjY/bGSVBaI
-	/LXgZe6CwEsyHwTFejbPXOnTeXCy3X27dNE=
-X-Google-Smtp-Source: AGHT+IG+6tIq/ymmeTyN+HZZy4E/zimUHRxIE/bdOFPe6GsuR8aMA9Q+PN66vVJzXIjP6nnnerBmMg==
-X-Received: by 2002:a5d:6dab:0:b0:37d:9476:45f6 with SMTP id ffacd0b85a97d-385c6eb8e19mr5105817f8f.7.1732783830638;
-        Thu, 28 Nov 2024 00:50:30 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f7148fsm14832265e9.41.2024.11.28.00.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:50:30 -0800 (PST)
-Date: Thu, 28 Nov 2024 09:50:29 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: zhouquan@iscas.ac.cn
-Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/4] RISC-V: KVM: Allow Svvptc extension for Guest/VM
-Message-ID: <20241128-1e20d2226e4be72c121df6fc@orel>
-References: <cover.1732762121.git.zhouquan@iscas.ac.cn>
- <35d9c91a69ebcb81b40dc4f7f51e290c3d94b2d9.1732762121.git.zhouquan@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRS/m3jvdkt25vsMSaCPrx/rLDyNnRwIJsjLeGqJXht3Punxqy4XOm4IVEhytJeJ7nuTovkieaRbH1Unz1RJDOHnBUvG+MyQCwtlQXfDsx1I8WGgQL8u/1NLO4dgGs8ZbdN9Cm2LTXKiIovaOe5y4T6+l+OaAQ5lceFBQSjSDyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=GtSaFwNV; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 2DB864076170;
+	Thu, 28 Nov 2024 08:50:34 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2DB864076170
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1732783834;
+	bh=nwx20sUNV3V48B4S4LmEJCdAcHoPAPUS+hQHRsPUw28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GtSaFwNVMauDMCCpLqY2eZjkdLk2gojBhKUd3OrInZ2f1xM1a0EsWbyZHAoI6v1G/
+	 B3mPtytBMIkHHfogITJwzI4JioRo5PeMlVO7ySSWR0wduCb25h1uxJZm7h/8ad+30T
+	 g5lFX+wR2xYS2NPLifE5s+NiHkdtc6rX/3TCxgOc=
+Date: Thu, 28 Nov 2024 11:50:30 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] dma-debug: fix physical address calculation for struct
+ dma_debug_entry
+Message-ID: <20241128-caa8ebcbb224ba75d406a450-pchelkin@ispras.ru>
+References: <20241127185926.168102-1-pchelkin@ispras.ru>
+ <20241128035011.GA13047@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <35d9c91a69ebcb81b40dc4f7f51e290c3d94b2d9.1732762121.git.zhouquan@iscas.ac.cn>
+In-Reply-To: <20241128035011.GA13047@lst.de>
 
-On Thu, Nov 28, 2024 at 11:21:15AM +0800, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
+On Thu, 28. Nov 04:50, Christoph Hellwig wrote:
+> Is it ok for you if I fold in the following cleanup to have a helper
+> instead of the duplicate very dense expression?
 > 
-> Extend the KVM ISA extension ONE_REG interface to allow KVM user space
-> to detect and enable Svvptc extension for Guest/VM.
-> 
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->  arch/riscv/include/uapi/asm/kvm.h | 1 +
->  arch/riscv/kvm/vcpu_onereg.c      | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-> index 4f24201376b1..9db33f52f56e 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -177,6 +177,7 @@ enum KVM_RISCV_ISA_EXT_ID {
->  	KVM_RISCV_ISA_EXT_ZAWRS,
->  	KVM_RISCV_ISA_EXT_SMNPM,
->  	KVM_RISCV_ISA_EXT_SSNPM,
-> +	KVM_RISCV_ISA_EXT_SVVPTC,
->  	KVM_RISCV_ISA_EXT_MAX,
->  };
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index 27ade2bab531..e43c6de2bce4 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -1377,6 +1377,18 @@ void debug_dma_unmap_sg(struct device *dev, struct scatterlist *sglist,
+>  	}
+>  }
 >  
-> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-> index 5b68490ad9b7..67965feb5b74 100644
-> --- a/arch/riscv/kvm/vcpu_onereg.c
-> +++ b/arch/riscv/kvm/vcpu_onereg.c
-> @@ -41,6 +41,7 @@ static const unsigned long kvm_isa_ext_arr[] = {
->  	KVM_ISA_EXT_ARR(SSNPM),
->  	KVM_ISA_EXT_ARR(SSTC),
->  	KVM_ISA_EXT_ARR(SVINVAL),
-> +	KVM_ISA_EXT_ARR(SVVPTC),
+> +static phys_addr_t virt_to_paddr(void *virt)
+> +{
+> +	struct page *page;
+> +
+> +	if (is_vmalloc_addr(virt))
+> +		page = vmalloc_to_page(virt);
+> +	else
+> +		page = virt_to_page(virt);
+> +
+> +	return page_to_phys(page) + offset_in_page(virt);
+> +}
+> +
+>  void debug_dma_alloc_coherent(struct device *dev, size_t size,
+>  			      dma_addr_t dma_addr, void *virt,
+>  			      unsigned long attrs)
+> @@ -1399,9 +1411,7 @@ void debug_dma_alloc_coherent(struct device *dev, size_t size,
+>  
+>  	entry->type      = dma_debug_coherent;
+>  	entry->dev       = dev;
+> -	entry->paddr	 = page_to_phys((is_vmalloc_addr(virt) ?
+> -				vmalloc_to_page(virt) : virt_to_page(virt))) +
+> -				offset_in_page(virt);
+> +	entry->paddr	 = virt_to_paddr(virt);
+>  	entry->size      = size;
+>  	entry->dev_addr  = dma_addr;
+>  	entry->direction = DMA_BIDIRECTIONAL;
+> @@ -1424,9 +1434,7 @@ void debug_dma_free_coherent(struct device *dev, size_t size,
+>  	if (!is_vmalloc_addr(virt) && !virt_addr_valid(virt))
+>  		return;
+>  
+> -	ref.paddr = page_to_phys((is_vmalloc_addr(virt) ?
+> -			vmalloc_to_page(virt) : virt_to_page(virt))) +
+> -			offset_in_page(virt);
+> +	ref.paddr = virt_to_paddr(virt);
+>  
+>  	if (unlikely(dma_debug_disabled()))
+>  		return;
 
-Alphabetic order, please.
+No problem. It actually looks more readable.
 
->  	KVM_ISA_EXT_ARR(SVNAPOT),
->  	KVM_ISA_EXT_ARR(SVPBMT),
->  	KVM_ISA_EXT_ARR(ZACAS),
-> @@ -135,6 +136,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsigned long ext)
->  	case KVM_RISCV_ISA_EXT_SSNPM:
->  	case KVM_RISCV_ISA_EXT_SSTC:
->  	case KVM_RISCV_ISA_EXT_SVINVAL:
-> +	case KVM_RISCV_ISA_EXT_SVVPTC:
-
-Same comment as above.
-
->  	case KVM_RISCV_ISA_EXT_SVNAPOT:
->  	case KVM_RISCV_ISA_EXT_ZACAS:
->  	case KVM_RISCV_ISA_EXT_ZAWRS:
-> -- 
-> 2.34.1
-> 
-
-Otherwise,
-
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-
+--
 Thanks,
-drew
+Fedor
 
