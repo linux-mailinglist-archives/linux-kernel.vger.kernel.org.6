@@ -1,128 +1,299 @@
-Return-Path: <linux-kernel+bounces-424799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846539DB994
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:27:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD1D9DB997
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51569281F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CB6028204B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977D1AE00C;
-	Thu, 28 Nov 2024 14:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9081AF0D3;
+	Thu, 28 Nov 2024 14:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BOWJjEva"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TIoBbDGl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76A4192D77;
-	Thu, 28 Nov 2024 14:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEA71AC428
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732804032; cv=none; b=ubE8JKagj4gXiBeUkwbb7u9QjCNp3tCAW+S2cIZ/O8hkXIHNpQnfXdp0joFVdIkpco+AwuL9/AY1BTqPUmt6whZkwd2m0z6esWWLh9aQkHE0virYzZTSZnuNP9hnYF9aZPIzMLiu/k9pZ2ft4yqnxzHGn1rFHqmgPhPs9JkKnxI=
+	t=1732804102; cv=none; b=buzMLUSkALUT6mPrdSMW36U6kQ7x/XqvwYsY+pbBFSX04nj8NfA45zairzaPtsThE0MWL5JMmYPZm4KElfpQfC/rN21h8WGtjBTv4oRQXj+gVtJf8KTteUIs90xHPjq6miTOwXCP1WL3J9wSq/nJXhtwhmrYiB5E5KAUaEG/Nb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732804032; c=relaxed/simple;
-	bh=EfQQHvGhTD42fJCMocAmYACbr6mr5voTdkVtUR8QiYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJ5yHw/z1F4hbhh68dPtQocK/YnswloYLoT8gznBfSv/gc7I6n6kjloSUqhm5oL7BOiq7FGbYEzCB0lxojoBM9p40cAFXBgf3MvsqWabs9u5/p+Nf0q+N+E2ouilcf9AZgx4Gn9xPL9/mIUGWAIzqLIbcl0kidaOKdS+aMqSLqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BOWJjEva; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1732804022;
-	bh=EfQQHvGhTD42fJCMocAmYACbr6mr5voTdkVtUR8QiYw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BOWJjEvaqoHhRv6RQEt2YcyIEBZs8LmI0lcL4f4iiRMq3iJqDsxuG3knGI9FSQPln
-	 Z+NlbDUTckXC1FoY8ApZfRKriLDrsFdXaokYm+MoQlK7hS849vRPT+qNaqRh85BCAR
-	 T2r+h/kQC00yQc7cuBHilc1ndQplJmZauHELEmVa98j79D+AwsAaPTEemoyHy8B0mF
-	 4beSnRKLuY+3PTcF+G/zqOVHSrVBnsdkiM0Tin0QxNjyhvlOAAgOPWh4BxBSuzauyF
-	 0CMHgjmi3rpOMEIxHnYJySJzbzO2/F3uZ+/T6zWePfH+rfyRm1sevVAASuBa5LkOuB
-	 h1iyuvKE/JuDw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XzdtG6J8rzjYj;
-	Thu, 28 Nov 2024 09:27:02 -0500 (EST)
-Message-ID: <62cb12cb-d3b6-4ad1-b9e6-c49b642eaeb4@efficios.com>
-Date: Thu, 28 Nov 2024 09:27:01 -0500
+	s=arc-20240116; t=1732804102; c=relaxed/simple;
+	bh=R8TjSpi/afDr6JkuNWcxq4jz+9ahghAamlgXiBn1OOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XnAphNkC+MrD0lper7pcd4yhjt+BlRxBjq2IuF7xOSxhGFgrCntQWPiP/vaSxvphCps9npRUsxI5QR9GUEpOM9/2yDCHcVYQIUvMyb4qd64mydNMidAksmguzve5WyzGtEDVRknB2vc/ZSNOsVI0JagSSlKcQFsl7FGxCweGwdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TIoBbDGl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732804100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C8y9rNhtPEDKFIvEh+1mbCwk+d6L94p51TvKBj3PoGY=;
+	b=TIoBbDGlozagyYn2aGaO0UQ58Kzfxo83wglNKRX+MwEhLpjivQJoyLdWYeCO03tit1UvTc
+	S3HddJocIn+nJmV5o5U1HwBtwXmlBRX+LPxLwxYpKaSGKBjERNAK76/nAmNzQgUSUBKaLP
+	sgrCeOxkDPHcWuarSzbA0kYeU5wTy7I=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-xoquMNu1P6COeVfIifcM-w-1; Thu,
+ 28 Nov 2024 09:28:16 -0500
+X-MC-Unique: xoquMNu1P6COeVfIifcM-w-1
+X-Mimecast-MFC-AGG-ID: xoquMNu1P6COeVfIifcM-w
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D23A1955F68;
+	Thu, 28 Nov 2024 14:28:15 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.39.193.69])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8282A300018D;
+	Thu, 28 Nov 2024 14:28:13 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.13-rc1
+Date: Thu, 28 Nov 2024 15:27:38 +0100
+Message-ID: <20241128142738.132961-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: Add WARN_ON_ONCE for syscall_nr check
-To: Tao Chen <chen.dylane@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20241128115319.305523-1-chen.dylane@gmail.com>
- <20241128074623.063bf253@rorschach.local.home>
- <8d4796dc-ef5b-43d8-8ec0-3891b7994428@gmail.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <8d4796dc-ef5b-43d8-8ec0-3891b7994428@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 2024-11-28 08:15, Tao Chen wrote:
-> 在 2024/11/28 20:46, Steven Rostedt 写道:
->> On Thu, 28 Nov 2024 19:53:19 +0800
->> Tao Chen <chen.dylane@gmail.com> wrote:
->>
->>> Now, x86_64 kernel not support to trace syscall for ia32 syscall.
->>> As a result, there is no any trace output when tracing a ia32 task.
->>> Like unreg_event_syscall_enter, add a WARN_ON_ONCE judgment for
->>> syscall_nr in perf_syscall_enter and ftrace_syscall_enter to give
->>> some message.
->>
->> So on a system that has "panic_on_warn" set and they trace a 32 bit
->> system call, it will cause their system to crash. Is that the intended
->> behavior?
->>
->> WARN*() is for self testing the kernel to detect real bugs, not to
->> inform users that something isn't supported.
->>
->> BIG NAK!
->>
->> -- Steve
-> 
-> Hi, Steve, thank you for your reply, as you say, so what about 
-> pr_warn_once api just to print something ?
-> 
+Hi Linus!
 
-I understand that explicitly enabling a system call and observing
-that ia32 system calls are just not traced by ftrace and perf can
-be surprising for end users. But printing a warning on the tracing
-path for an unimplemented tracing feature is just wrong.
+Very calm week, thanks to US holidays.
 
-Also, AFAIU the warning will trigger if an ia32 program issues any
-system call when any unrelated system call tracing is enabled,
-including non-compat syscalls.
+The following changes since commit fcc79e1714e8c2b8e216dc3149812edd37884eef:
 
-If you want to check something and return an error, it would
-be in tracefs where the users interact with files that represent
-ia32 system calls to try to list/enable them. However, given the
-exposed files have nothing that mention whether they apply to
-non-compat or compat system calls, it's understandable that an
-end user would think all system calls are traced, including
-compat system calls. So I'm not sure how to solve that in ftrace/perf
-without actually implementing the missing feature the way the
-tracefs ABI is exposed.
+  Merge tag 'net-next-6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next (2024-11-21 08:28:08 -0800)
 
-If your end goal is to trace ia32 system call, you may want to try the
-lttng-modules kernel tracer [1], which has supported compat system call
-tracing for the past 12 years (at least since lttng-modules 2.0).
+are available in the Git repository at:
 
-Thanks,
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.13-rc1
 
-Mathieu
+for you to fetch changes up to 04f5cb48995d51deed0af71aaba1b8699511313f:
 
-[1] https://lttng.org/
+  Documentation: tls_offload: fix typos and grammar (2024-11-28 12:09:06 +0100)
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+----------------------------------------------------------------
+Including fixes from bluetooth.
+
+Current release - regressions:
+
+  - rtnetlink: fix rtnl_dump_ifinfo() error path
+
+  - bluetooth: remove the redundant sco_conn_put
+
+Previous releases - regressions:
+
+  - netlink: fix false positive warning in extack during dumps
+
+  - sched: sch_fq: don't follow the fast path if Tx is behind now
+
+  - ipv6: delete temporary address if mngtmpaddr is removed or unmanaged
+
+  - tcp: fix use-after-free of nreq in reqsk_timer_handler().
+
+  - bluetooth: fix slab-use-after-free Read in set_powered_sync
+
+  - l2tp: fix warning in l2tp_exit_net found
+
+  - eth: bnxt_en: fix receive ring space parameters when XDP is active
+
+  - eth: lan78xx: fix double free issue with interrupt buffer allocation
+
+  - eth: tg3: set coherent DMA mask bits to 31 for BCM57766 chipsets
+
+Previous releases - always broken:
+
+  - ipmr: fix tables suspicious RCU usage
+
+  - iucv: MSG_PEEK causes memory leak in iucv_sock_destruct()
+
+  - eth: octeontx2-af: fix low network performance
+
+  - eth: stmmac: dwmac-socfpga: set RX watchdog interrupt as broken
+
+  - eth: rtase: correct the speed for RTL907XD-V1
+
+Misc:
+
+  - some documentation fixup
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Choong Yong Liang (1):
+      net: stmmac: set initial EEE policy configuration
+
+David Wei (1):
+      selftests: fix nested double quotes in f-string
+
+Edward Adam Davis (1):
+      Bluetooth: SCO: remove the redundant sco_conn_put
+
+Eric Dumazet (2):
+      rtnetlink: fix rtnl_dump_ifinfo() error path
+      net: hsr: fix hsr_init_sk() vs network/transport headers.
+
+Guenter Roeck (1):
+      net: microchip: vcap: Add typegroup table terminators in kunit tests
+
+Hangbin Liu (3):
+      net/ipv6: delete temporary address if mngtmpaddr is removed or unmanaged
+      selftests/rtnetlink.sh: add mngtempaddr test
+      selftests: rds: move test.py to TEST_FILES
+
+Hariprasad Kelam (5):
+      octeontx2-af: RPM: Fix mismatch in lmac type
+      octeontx2-af: RPM: Fix low network performance
+      octeontx2-af: RPM: fix stale RSFEC counters
+      octeontx2-af: RPM: fix stale FCFEC counters
+      octeontx2-af: Quiesce traffic before NIX block reset
+
+Heiner Kallweit (1):
+      net: phy: ensure that genphy_c45_an_config_eee_aneg() sees new value of phydev->eee_cfg.eee_enabled
+
+Jakub Kicinski (3):
+      netlink: fix false positive warning in extack during dumps
+      selftests: net: test extacks in netlink dumps
+      net_sched: sch_fq: don't follow the fast path if Tx is behind now
+
+James Chapman (1):
+      net/l2tp: fix warning in l2tp_exit_net found by syzbot
+
+Justin Lai (3):
+      rtase: Refactor the rtase_check_mac_version_valid() function
+      rtase: Correct the speed for RTL907XD-V1
+      rtase: Corrects error handling of the rtase_check_mac_version_valid()
+
+Kuniyuki Iwashima (1):
+      tcp: Fix use-after-free of nreq in reqsk_timer_handler().
+
+Leo Stone (1):
+      Documentation: tls_offload: fix typos and grammar
+
+Luiz Augusto von Dentz (2):
+      Bluetooth: MGMT: Fix slab-use-after-free Read in set_powered_sync
+      Bluetooth: MGMT: Fix possible deadlocks
+
+Maxime Chevallier (1):
+      net: stmmac: dwmac-socfpga: Set RX watchdog interrupt as broken
+
+Michael Chan (2):
+      bnxt_en: Refactor bnxt_ptp_init()
+      bnxt_en: Unregister PTP during PCI shutdown and suspend
+
+Michal Luczaj (3):
+      llc: Improve setsockopt() handling of malformed user input
+      rxrpc: Improve setsockopt() handling of malformed user input
+      net: Comment copy_from_sockptr() explaining its behaviour
+
+Oleksij Rempel (3):
+      net: usb: lan78xx: Fix double free issue with interrupt buffer allocation
+      net: usb: lan78xx: Fix memory leak on device unplug by freeing PHY device
+      net: usb: lan78xx: Fix refcounting and autosuspend on invalid WoL configuration
+
+Paolo Abeni (10):
+      Merge branch 'correcting-switch-hardware-versions-and-reported-speeds'
+      Merge branch 'ipv6-fix-temporary-address-not-removed-correctly'
+      Merge branch 'octeontx2-af-misc-rpm-fixes'
+      Merge branch 'bnxt_en-bug-fixes'
+      Merge branch 'net-fix-some-callers-of-copy_from_sockptr'
+      Merge tag 'for-net-2024-11-26' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+      ipmr: add debug check for mr table cleanup
+      ip6mr: fix tables suspicious RCU usage
+      ipmr: fix tables suspicious RCU usage
+      Merge branch 'net-fix-mcast-rcu-splats'
+
+Pavan Chebbi (1):
+      tg3: Set coherent DMA mask bits to 31 for BCM57766 chipsets
+
+Rosen Penev (1):
+      net: mdio-ipq4019: add missing error check
+
+Russell King (Oracle) (1):
+      net: phy: fix phy_ethtool_set_eee() incorrectly enabling LPI
+
+Saravanan Vajravel (1):
+      bnxt_en: Reserve rings after PCIe AER recovery if NIC interface is down
+
+Shravya KN (2):
+      bnxt_en: Set backplane link modes correctly for ethtool
+      bnxt_en: Fix receive ring space parameters when XDP is active
+
+Sidraya Jayagond (1):
+      s390/iucv: MSG_PEEK causes memory leak in iucv_sock_destruct()
+
+Somnath Kotur (1):
+      bnxt_en: Fix queue start to update vnic RSS table
+
+Vitalii Mordan (1):
+      marvell: pxa168_eth: fix call balance of pep->clk handling routines
+
+Vyshnav Ajith (1):
+      Fix spelling mistake
+
+ Documentation/networking/cdc_mbim.rst              |   2 +-
+ Documentation/networking/tls-offload.rst           |  29 ++---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  37 +++++-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |   9 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ptp.c      |   4 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ptp.h      |   3 +-
+ drivers/net/ethernet/broadcom/tg3.c                |   3 +
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c    |  70 ++++++++++-
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.h    |   5 +
+ .../ethernet/marvell/octeontx2/af/lmac_common.h    |   7 +-
+ drivers/net/ethernet/marvell/octeontx2/af/rpm.c    |  87 ++++++++++----
+ drivers/net/ethernet/marvell/octeontx2/af/rpm.h    |  18 ++-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c    |   1 +
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.h    |   1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu_cgx.c    |  45 +++++--
+ drivers/net/ethernet/marvell/pxa168_eth.c          |  14 +--
+ .../net/ethernet/microchip/vcap/vcap_api_kunit.c   |  17 +--
+ drivers/net/ethernet/realtek/rtase/rtase.h         |   7 +-
+ drivers/net/ethernet/realtek/rtase/rtase_main.c    |  43 ++++---
+ .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |   2 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   3 +
+ drivers/net/mdio/mdio-ipq4019.c                    |   5 +-
+ drivers/net/phy/phy-c45.c                          |   2 +-
+ drivers/net/phy/phy.c                              |  52 +++++----
+ drivers/net/usb/lan78xx.c                          |  40 ++++---
+ include/linux/phy.h                                |   2 +
+ include/linux/sockptr.h                            |   2 +
+ net/bluetooth/mgmt.c                               |  38 ++++--
+ net/bluetooth/sco.c                                |   2 +-
+ net/core/rtnetlink.c                               |  14 ++-
+ net/hsr/hsr_device.c                               |   4 +-
+ net/ipv4/inet_connection_sock.c                    |   2 +-
+ net/ipv4/ipmr.c                                    |  56 ++++++---
+ net/ipv6/addrconf.c                                |  41 +++++--
+ net/ipv6/ip6mr.c                                   |  52 +++++++--
+ net/iucv/af_iucv.c                                 |  26 +++--
+ net/l2tp/l2tp_core.c                               |  22 +++-
+ net/llc/af_llc.c                                   |   2 +-
+ net/netlink/af_netlink.c                           |  21 ++--
+ net/rxrpc/af_rxrpc.c                               |   7 +-
+ net/sched/sch_fq.c                                 |   6 +
+ .../selftests/drivers/net/hw/lib/py/linkconfig.py  |   2 +-
+ tools/testing/selftests/net/Makefile               |   3 +-
+ tools/testing/selftests/net/netlink-dumps.c        | 129 +++++++++++++++++++++
+ tools/testing/selftests/net/rds/Makefile           |   5 +-
+ tools/testing/selftests/net/rtnetlink.sh           |  95 +++++++++++++++
+ 46 files changed, 811 insertions(+), 226 deletions(-)
 
 
