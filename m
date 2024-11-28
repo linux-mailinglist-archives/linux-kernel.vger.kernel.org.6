@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-424177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74A89DB14D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:00:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A47E9DB14E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:00:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08B9164638
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:00:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC4633F7;
+	Thu, 28 Nov 2024 02:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XhmyBh9j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B61BB21F5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:00:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D9D45038;
-	Thu, 28 Nov 2024 02:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dOliguwi"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B967733F7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C370517557
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732759217; cv=none; b=JvUDlmlSs+/qBtEUXaqhjiASQKXPySVYan+b4SFzSOgDyrWnYvUTzhfuREOp9NV9f9mMkwusXMTcOR5yfVD9qqmw+OEM8W/125uhYtKrMLjDmpVWCzRxUAzYn8L0arWRRr4n8jwmdlB8EV/JQr4euwd9xccTQ5TdZ1flVw36oV0=
+	t=1732759234; cv=none; b=bSa1uurpLM2TwIQVj1S2Wv7wEnwThMd7rin+PulH0yc56ES8BNQRZ1dfERxmVR/226gjFO8ETN8PglqfuKPURbbva6G7VbnCWU15nypH45UCIdMYwOxsZASGu1Xyj73BiSNLidtZDgJwkSYgbXJCMcpiiSMdWsvpworySxp8g84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732759217; c=relaxed/simple;
-	bh=4JgRpQhuxfm+8Ig9FV5l2jYht6pguktaYTxRlrJNpVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YBluME5P1y8XzGLxgbkdOoDqi5DpYs6JSwDWi/LBzmNT9LJlrRUrosZVKoJzk/RMTp0KmFXOmbYqHpsK0zYj5JIq8QGWaQGQpc9sD5hWRjYdVAgE7FJs0PnbCsE8Q2vUQZfJ6fTHOYvk9ew3gvAPth9znqcvGgUW8kIbnpzxDW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dOliguwi; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a68480164so32229466b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:00:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732759212; x=1733364012; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=phKPuAwhlETuyirMc9Kst/Ln0jqmFrDOaYl+HMwpY+0=;
-        b=dOliguwiYeUoN19//jpxUPpL2Ra3f9VDLFOZEuVUdFx9D3WzZ5P/NZr9iWO0Xof8Gy
-         4+gzt5urevTP2dloLw8j8UEpMEpYYGXDapNP0xKCpdpM1okKYYlXzecFE9BWvgMkKjpn
-         Xdb4oHDA2pOQvNI/7Z9s6EHJEb3VhanbdZWFQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732759212; x=1733364012;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=phKPuAwhlETuyirMc9Kst/Ln0jqmFrDOaYl+HMwpY+0=;
-        b=HitRIKXsuyiedL1aFUgNpaGjDFyz27vJv2n7ldtrgc/dOdeLb3jk9HfqmJstxTg497
-         9NlqDPqx+MbKLaoDREqe7dRpSePYTua21JZLDvNfTO1BWcRuxu4krEvjFih8wMagG1q0
-         pJQrWiW4euYiNHPdOZcX0dD86dtNAPn0ICgEKPnxYQf/tQ5RfY9h0ubfoAzIgzCPKfaj
-         w3VyEzM859tJxpQR0mppRYW7Z452aOe88XfcOZJMIvyLiSRkcrDN50ZSOoJsEocykBQ7
-         JTms0t12OmiFDQAwRiuSXrllnncRzyo3cBwijlPisWEnaHsVD8gpemgehMkAH6JS0nUl
-         UQ5Q==
-X-Gm-Message-State: AOJu0YytYQLN3Iz4rhz+OV6/q+/+8tOHV/QUtep+amv2KSldGkusA8FZ
-	xG/VEe6jBlw5RKD0dNdJWLIQ9TlvlpXoCsFHX1kIPQpp9rIbJf24/zo+rfCy27+nv3nLxwQlswv
-	kGpU=
-X-Gm-Gg: ASbGncs3MYHgnclyYsxP6yyu4z/8UdsGv8ufcmrSSzm32XmVi2FVf85IzTuiISlHS37
-	NCd1Avc16cK+OVOAAqRnqe8BRbB+2m+sdjoIssb7gt/AroRW4JRowYkp68vfFTsQpbVVRiF/7p9
-	AKPSxFeQXeF+VrzvtBu6p+pENGu3Z3eORirqJE9ssOD5qo7kdXsilxJ/Cy4kShLjaYxRH/grpbq
-	+H/EmETVycf07HzColb0TXZI2TICgzzcKpF8WK1XwW0guSwAwkdNBxB3W0PfVld1SurJDiCsoF/
-	agk8Ptppjd91YsTlsmZjNCEz
-X-Google-Smtp-Source: AGHT+IHwczMCSfR4AmEUwdgvolnYViI4MTrJZmJ4CQIMYCe2q8GnwHoEVHiK6r116YRlezSOdnyDYw==
-X-Received: by 2002:a17:906:8453:b0:aa5:4d26:8e52 with SMTP id a640c23a62f3a-aa581058831mr397206266b.47.1732759211943;
-        Wed, 27 Nov 2024 18:00:11 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a4csm12921266b.106.2024.11.27.18.00.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 18:00:10 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa549d9dffdso35601666b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:00:09 -0800 (PST)
-X-Received: by 2002:a17:906:23ea:b0:a99:ffef:aec5 with SMTP id
- a640c23a62f3a-aa580f2cce1mr344732666b.23.1732759209250; Wed, 27 Nov 2024
- 18:00:09 -0800 (PST)
+	s=arc-20240116; t=1732759234; c=relaxed/simple;
+	bh=hOOOULTJUDl6V4BuKieCinx2cEaSAl1r+q1YY0fONjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QWspDcltP+JbGgjUziQKKmnRwuUzCjGq2oRS+2c3TzskWjltWuxvggpZ8m6FSZKY/XbXDvr4YQcKdrrenPhktXOCUsPLdF/sfFDeHpUMIA5P6PltGr3Fk0o4rElSfgnxHLqTReGoZStIcv1TlBeJ+8eahjzGgp/w/BmcXsq+tsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XhmyBh9j; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732759230;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=obLlZ+jmbczg3UIn8oVPQK96dLu2F2rrMm0/IsSd8DU=;
+	b=XhmyBh9jC3RF+JOE+OZIWCrx80gRhFSlsiv0zcyJ55NRxrXJ2AUp6dMTFrqlrd+H/o6ZDS
+	rfEvc0wxB4Pa32H76OcAy7bPbcpzR1cs7u3cN1KX+D5pZ+fIPIcL+/xJd6W+d8v5VJRT2E
+	Z0aqdZLR1bd24JK3H6hD2wJySHVg4B4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-118-SIMpgOg-Puu3KI1i6C9nZA-1; Wed,
+ 27 Nov 2024 21:00:24 -0500
+X-MC-Unique: SIMpgOg-Puu3KI1i6C9nZA-1
+X-Mimecast-MFC-AGG-ID: SIMpgOg-Puu3KI1i6C9nZA
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13F811955F41;
+	Thu, 28 Nov 2024 02:00:23 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.88.24])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DE5E71955F40;
+	Thu, 28 Nov 2024 02:00:20 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] locking/lockdep: Enforce PROVE_RAW_LOCK_NESTING only if ARCH_SUPPORTS_RT
+Date: Wed, 27 Nov 2024 21:00:09 -0500
+Message-ID: <20241128020009.83347-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411210651.CD8B5A3B98@keescook> <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
- <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org> <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
- <202411271645.04C3508@keescook>
-In-Reply-To: <202411271645.04C3508@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 27 Nov 2024 17:59:53 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
-Message-ID: <CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
-To: Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, 27 Nov 2024 at 16:53, Kees Cook <kees@kernel.org> wrote:
->
-> On a related note, what do you think of using execveat's "pathname"
-> argument as "comm" if AT_EMPTY_PATH is set? That'll give process
-> launchers control over comm (which is what they want), and we can keep
-> the dentry name fallback as proposed too?
+Relax the rule to set PROVE_RAW_LOCK_NESTING by default only for arches
+that supports PREEMPT_RT.  For arches that do not support PREEMPT_RT,
+they will not be forced to address unimportant raw lock nesting issues
+when they want to enable PROVE_LOCKING.  They do have the option
+to enable it to look for these raw locking nesting problems if they
+choose to.
 
-That's not actually how AT_EMPTY_PATH works.
+Suggested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ lib/Kconfig.debug | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes, it's how AT_EMPTY_PATH *should* work, but despite the name,
-AT_EMPTYH_PATH does not mean "path is empty".
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 1e37c62e8595..942b4cb138bd 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1397,9 +1397,9 @@ config PROVE_LOCKING
+ 	 For more details, see Documentation/locking/lockdep-design.rst.
+ 
+ config PROVE_RAW_LOCK_NESTING
+-	bool
++	bool "Enable raw_spinlock - spinlock nesting checks" if !ARCH_SUPPORTS_RT
+ 	depends on PROVE_LOCKING
+-	default y
++	default y if ARCH_SUPPORTS_RT
+ 	help
+ 	 Enable the raw_spinlock vs. spinlock nesting checks which ensure
+ 	 that the lock nesting rules for PREEMPT_RT enabled kernels are
+-- 
+2.47.0
 
-It means "path *may* be empty - but if path isn't empty, it's a regular path".
-
-IOW, what is going on is that POSIX required that an empty path be an
-error. And AT_EMPTY_PATH is basically a "don't error out on an empty
-path" flag, not a "path *is* empty" flag.
-
-So if pathname exists and isn't empty, AT_EMPTY_PATH does nothing.
-
-             Linus
 
