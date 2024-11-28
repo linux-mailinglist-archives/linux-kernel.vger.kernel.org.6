@@ -1,394 +1,196 @@
-Return-Path: <linux-kernel+bounces-425061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0989DBD01
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:42:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7819DBD06
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43E46B21888
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:42:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D100B21B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D851C3041;
-	Thu, 28 Nov 2024 20:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BC41C32EC;
+	Thu, 28 Nov 2024 20:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAPCfD59"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Lcx4cKOb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DBA146D6E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B84433B1;
+	Thu, 28 Nov 2024 20:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732826553; cv=none; b=B4JfQWkqhXI1wIGwHbwDMd3yBJQg5sd6fw3K/BgDffQ9tr4wLBWffESlaoW7qTgCzr7IYkSfLerlUG7LiIFeoWpmTusjOI1iAHbyxHtNE+/cnppSvUEhhZz+Jtd3PgbK5b5P6LlAl3KYq8PWa6aTPkEQ+XKcJEZnOJFBYybSh04=
+	t=1732826735; cv=none; b=mM239hy9s5fYETBfJaXhNqhHRTv4aViwZEQ8EEzX/QxwyyohNUbueE7S3wexcQfRH7yphcJibmRfM80oJ9fTSXGGtftx6iTJASV4nybw3b50x2pBhw24mwp4JhB/znJywsBeXyT57CPOGoiTkfezxm0UV41bJzp3t7O4agqqQW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732826553; c=relaxed/simple;
-	bh=nXMhirWlddlXEQ62Nhkz7tEjeRH0HHdZ9rbXk+qJqJ0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WQkdNIKGoUthB/kAP+lgLr1an57vPi2ezUd61tutOCwdetBOKBySpc063X0v3bDQABIdO4p27NRDmy9SzNmob86220NSknL6X0z8/Xe8g/2vWH0jFkuCMbJ8c/egWryu06XWoTiAJX5IlD8OdfjM0WT6Fjdq1fcP+QUFzAsNQmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAPCfD59; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso141668266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732826549; x=1733431349; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2KdlF9x9lgY8r5WheHdsB6PvqVgobDEaMbbXgNvbHM0=;
-        b=BAPCfD59NbV7n83dwu02kxUmcO6qDO+Dq55EvJe9wbXFsXBHgBxdj9tT6Y1GT/1x7t
-         8oCwMJIpuUgO0gFANmmAPRGiSbDPjKO3l3JvZ4oRf2qDKqq7V0jT1HtQ45CJ7FyLMMt5
-         VjjocHk1WcC+s11BWwO9H9nBhJlbZj5b/yQwjjX/7fnjqFuqP8hhx5afyqlsaDePdMcu
-         QiJ99e0ej7p7Mn/ajTUzrNRTwrg7hPcUaDNehqloP9xdz21PhgINO89iQGkj5xn01RT5
-         NmU1LVgqCZJSPwHOFow+He59KvM1F8xfhQzwTZM2GGU57Ebqfp6jwmq732zcPbtqe29o
-         szGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732826549; x=1733431349;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2KdlF9x9lgY8r5WheHdsB6PvqVgobDEaMbbXgNvbHM0=;
-        b=flp4D8TzD0lvO5t4Pah+9YO/KJEI1BuCiE7kzMDuCso8N/90RE0Fyipniz/jfTie/U
-         1986bQ5B6ZJ3JvzElm2LdBQmvLz6S5iC1h6C4/U1YMsmwOeJ6SUWcDN8TbFUcp2TcotH
-         TLYY7HAtKwQgsounCxgNpM4Yqto/Ji4kuv9DwYdrRWN3wFHMZW9V8VZlQiG28KPsgjUw
-         OFzVwYtmVnEkpMtjhh8vu1PJC2fG9SnmE+AGB58UJa3VvzSTPC+gmlU+1dtl3ESVT/6Q
-         7PfSWh/SCs++SF064FqRjN6OTf3XA01poCxnBcLJS3re7mby60L9BdHugG1kHDKlZ2mr
-         sZIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxnizKZAx4TncTytR1DxqiZHDYtc0+KNZPjD2/wZaqbIW9+Q7GeQWKO6yG7jmwt79WW5Czz9zOCA5IUPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuhpAybsr+ELVHja2GIiX7CzmTke95f9dwut1OI1BMuiiJ2bK8
-	Nrcc6r3WD+MmrAkFxLO10NeuWOcptNPQTuWAIDRFd/leoSHryF4clAvcoSxwuZAD0OIWluR727f
-	68gXC58qL3OSIM/b9BuG62T+EJ2xI4ris
-X-Gm-Gg: ASbGncvVaxeQh0RF78X+mRPw1adp5FPi55X0O9K1E0+dkWaYkOldAYw32VMj6YyfCAr
-	zAMyui7qiUHFLiE/y8O/5/Y5Y1G3liA==
-X-Google-Smtp-Source: AGHT+IFyI+TYy88fNKIfSHbBJWEK8n7Et57aFo2D52UyXwxq0DbKB/1iKKtJxVZFfocKE4ICU3WBS50mcnXHHDeC5Co=
-X-Received: by 2002:a17:906:3d21:b0:aa5:3fa9:e90c with SMTP id
- a640c23a62f3a-aa580f56c51mr621818766b.32.1732826549342; Thu, 28 Nov 2024
- 12:42:29 -0800 (PST)
+	s=arc-20240116; t=1732826735; c=relaxed/simple;
+	bh=UMYE0eAAYmB/PkcRW6ZCnIx6X+WRhj8jM3geWSVcjZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7bmQdr34SpFs7K10k4/N/6NSS9fA3XdGnYBmBbhjjgxbLmqNjwUG5jMhAbLr3VekhiuQu4U3UW3dBLrlw16O8LLP/0gyBHqc3C3dfh1iEJKNCGcVVgPv+WEOruVqKMJnag9kfbNFQEHx/BkkV7z76KEjfONnOuJkh80Ob95UH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Lcx4cKOb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5320AC21;
+	Thu, 28 Nov 2024 21:45:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732826706;
+	bh=UMYE0eAAYmB/PkcRW6ZCnIx6X+WRhj8jM3geWSVcjZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lcx4cKObeZiwGP3FOLTXu/Yte4QaG1tNMlAPAy3OJsu1+qmhPqLaRIEM5x/eEboia
+	 0AhSvccogyMoTvrveonE5ld3ossGD5c1WObhtmrWTJn1+enCjo7EyzlZPYVPOltUcJ
+	 H5ZCVJI8PALVokCWHpIINSRReiIsWiXnMAoWFQLM=
+Date: Thu, 28 Nov 2024 22:45:19 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] media: uvcvideo: Support partial control reads
+Message-ID: <20241128204519.GA25731@pendragon.ideasonboard.com>
+References: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
+ <20241120-uvc-readless-v4-1-4672dbef3d46@chromium.org>
+ <20241126180616.GL5461@pendragon.ideasonboard.com>
+ <CANiDSCuZkeV7jTVbNhnty8bMszUkb6g9czJfwDvRUFMhNdFp2Q@mail.gmail.com>
+ <20241127083444.GV5461@pendragon.ideasonboard.com>
+ <CANiDSCvvCtkiHHPCj0trox-oeWeh_rks3Cqm+kS9Hvtp9QC6Yg@mail.gmail.com>
+ <20241127091400.GB31095@pendragon.ideasonboard.com>
+ <CANiDSCs8o4SFx1TJYXNcWkgrzk6COoTxOKD1a02AuO4CYKxx+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 29 Nov 2024 06:42:18 +1000
-Message-ID: <CAPM=9tzpFOhQN3yCb4+OpLsfYVrq4mLuUS+SP=H=gq=qSLDz7g@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.13-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCs8o4SFx1TJYXNcWkgrzk6COoTxOKD1a02AuO4CYKxx+g@mail.gmail.com>
 
-Hi Linus,
+On Wed, Nov 27, 2024 at 10:35:54AM +0100, Ricardo Ribalda wrote:
+> On Wed, 27 Nov 2024 at 10:14, Laurent Pinchart wrote:
+> > On Wed, Nov 27, 2024 at 09:58:21AM +0100, Ricardo Ribalda wrote:
+> > > On Wed, 27 Nov 2024 at 09:34, Laurent Pinchart wrote:
+> > > > On Tue, Nov 26, 2024 at 07:12:53PM +0100, Ricardo Ribalda wrote:
+> > > > > On Tue, 26 Nov 2024 at 19:06, Laurent Pinchart wrote:
+> > > > > > On Wed, Nov 20, 2024 at 03:26:19PM +0000, Ricardo Ribalda wrote:
+> > > > > > > Some cameras, like the ELMO MX-P3, do not return all the bytes
+> > > > > > > requested from a control if it can fit in less bytes.
+> > > > > > > Eg: Returning 0xab instead of 0x00ab.
+> > > > > > > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
+> > > > > > >
+> > > > > > > Extend the returned value from the camera and return it.
+> > > > > > >
+> > > > > > > Cc: stable@vger.kernel.org
+> > > > > > > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
+> > > > > > > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> > > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > > > ---
+> > > > > > >  drivers/media/usb/uvc/uvc_video.c | 16 ++++++++++++++++
+> > > > > > >  1 file changed, 16 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> > > > > > > index cd9c29532fb0..482c4ceceaac 100644
+> > > > > > > --- a/drivers/media/usb/uvc/uvc_video.c
+> > > > > > > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > > > > > > @@ -79,6 +79,22 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
+> > > > > > >       if (likely(ret == size))
+> > > > > > >               return 0;
+> > > > > > >
+> > > > > > > +     /*
+> > > > > > > +      * In UVC the data is usually represented in little-endian.
+> > > > > >
+> > > > > > I had a comment about this in the previous version, did you ignore it on
+> > > > > > purpose because you disagreed, or was it an oversight ?
+> > > > >
+> > > > > I rephrased the comment. I added "usually" to make it clear that it
+> > > > > might not be the case for all the data types. Like composed or xu.
+> > > >
+> > > > Ah, that's what you meant by "usually". I read it as "usually in
+> > > > little-endian, but could be big-endian too", which confused me.
+> > > >
+> > > > Data types that are not integers will not work nicely with the
+> > > > workaround below. How do you envision that being handled ? Do you
+> > > > consider that the device will return too few bytes only for integer data
+> > > > types, or that affected devices don't have controls that use compound
+> > > > data types ? I don't see what else we could do so I'd be fine with such
+> > > > a heuristic for this workaround, but it needs to be clearly explained.
+> > >
+> > > Non integer datatypes might work if the last part of the data is
+> > > expected to be zero.
+> > > I do not think that we can find a heuristic that can work for all the cases.
+> > >
+> > > For years we have ignored partial reads and it has never been an
+> > > issue. I vote for not adding any heuristics, the logging should help
+> > > identify future issues (if there is any).
+> >
+> > What you're doing below is already a heuristic :-) I don't think the
+> > code needs to be changed, but I'd like this comment to explain why we
+> > consider that the heuristic in this patch is fine, to help the person
+> > (possibly you or me) who will read this code in a year and wonder what's
+> > going on.
+> 
+> What about:
+> 
+> * Some devices return shorter USB control packets than expected if the
+> * returned value can fit in less bytes. Zero all the bytes that the
+> * device has not written.
+> *
+> * This quirk is applied to all datatypes, even to non little-endian integers
+> * or composite values. We exclude UVC_GET_INFO from the quirk.
+> * UVC_GET_LEN does not need to be excluded because its size is
+> * always 1.
 
-Merge window fixes, mostly amdgpu and xe, with a few other minor ones,
-all looks fairly normal,
+For the second paragraph you could write
 
-Dave.
+ * This quirk is applied to all controls, regardless of their data type. Most
+ * controls are little-endian integers, in which case the missing bytes become 0
+ * MSBs. For other data types, a different heuristic could be implemented if a
+ * device is found needing it.
+ *
+ * We exclude UVC_GET_INFO from the quirk. UVC_GET_LEN does not need to be
+ * excluded because its size is always 1.
 
-drm-next-2024-11-29:
-drm fixes for v6.13-rc1
+> > > > > I also r/package/packet/
+> > > > >
+> > > > > Did I miss another comment?
+> > > > >
+> > > > > > > +      * Some devices return shorter USB control packets that expected if the
+> > > > > > > +      * returned value can fit in less bytes. Zero all the bytes that the
+> > > > > > > +      * device have not written.
+> > > > > >
+> > > > > > s/have/has/
+> > > > > >
+> > > > > > And if you meant to start a new paragraph here, a blank line is missing.
+> > > > > > Otherwise, no need to break the line before 80 columns.
+> > > > >
+> > > > > The patch is already in the uvc tree. How do you want to handle this?
+> > > >
+> > > > The branch shared between Hans and me can be rebased, it's a staging
+> > > > area.
+> > >
+> > > I will send a new version, fixing the typo. and the missing new line.
+> > > I will also remove the sentence
+> > > `* In UVC the data is usually represented in little-endian.`
+> > > It is confusing.
+> > >
+> > > > > > > +      * We exclude UVC_GET_INFO from the quirk. UVC_GET_LEN does not need to
+> > > > > > > +      * be excluded because its size is always 1.
+> > > > > > > +      */
+> > > > > > > +     if (ret > 0 && query != UVC_GET_INFO) {
+> > > > > > > +             memset(data + ret, 0, size - ret);
+> > > > > > > +             dev_warn_once(&dev->udev->dev,
+> > > > > > > +                           "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
+> > > > > > > +                           uvc_query_name(query), cs, unit, ret, size);
+> > > > > > > +             return 0;
+> > > > > > > +     }
+> > > > > > > +
+> > > > > > >       if (ret != -EPIPE) {
+> > > > > > >               dev_err(&dev->udev->dev,
+> > > > > > >                       "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
 
-i915:
-- hdcp: Fix when the first read and write are retried
+-- 
+Regards,
 
-xe:
-- Wake up waiters after wait condition set to true
-- Mark the preempt fence workqueue as reclaim
-- Update xe2 graphics name string
-- Fix a couple of guc submit races
-- Fix pat index usage in migrate
-- Ensure non-cached migrate pagetable bo mappings
-- Take a PM ref in the delayed snapshot capture worker
-
-amdgpu:
-- SMU 13.0.6 fixes
-- XGMI fixes
-- SMU 13.0.7 fixes
-- Misc code cleanups
-- Plane refcount fixes
-- DCN 4.0.1 fixes
-- DC power fixes
-- DTO fixes
-- NBIO 7.11 fixes
-- SMU 14.0.x fixes
-- Reset fixes
-- Enable DC on LoongArch
-- Sysfs hotplug warning fix
-- Misc small fixes
-- VCN 4.0.3 fix
-- Slab usage fix
-- Jpeg delayed work fix
-
-amdkfd:
-- wptr handling fixes
-
-radeon:
-- Use ttm_bo_move_null()
-- Constify struct pci_device_id
-- Fix spurious hotplug
-- HPD fix
-
-rockchip
-- fix 32-bit build
-The following changes since commit a163b895077861598be48c1cf7f4a88413c28b22:
-
-  Merge tag 'drm-xe-next-fixes-2024-11-15' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2024-11-18
-13:38:46 +1000)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-11-29
-
-for you to fetch changes up to 9794b89c50f7fc972c6b4ddc69693c9f9d1ae7d7:
-
-  Merge tag 'drm-xe-next-fixes-2024-11-28' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2024-11-29
-04:59:28 +1000)
-
-----------------------------------------------------------------
-drm fixes for v6.13-rc1
-
-i915:
-- hdcp: Fix when the first read and write are retried
-
-xe:
-- Wake up waiters after wait condition set to true
-- Mark the preempt fence workqueue as reclaim
-- Update xe2 graphics name string
-- Fix a couple of guc submit races
-- Fix pat index usage in migrate
-- Ensure non-cached migrate pagetable bo mappings
-- Take a PM ref in the delayed snapshot capture worker
-
-amdgpu:
-- SMU 13.0.6 fixes
-- XGMI fixes
-- SMU 13.0.7 fixes
-- Misc code cleanups
-- Plane refcount fixes
-- DCN 4.0.1 fixes
-- DC power fixes
-- DTO fixes
-- NBIO 7.11 fixes
-- SMU 14.0.x fixes
-- Reset fixes
-- Enable DC on LoongArch
-- Sysfs hotplug warning fix
-- Misc small fixes
-- VCN 4.0.3 fix
-- Slab usage fix
-- Jpeg delayed work fix
-
-amdkfd:
-- wptr handling fixes
-
-radeon:
-- Use ttm_bo_move_null()
-- Constify struct pci_device_id
-- Fix spurious hotplug
-- HPD fix
-
-rockchip
-- fix 32-bit build
-
-----------------------------------------------------------------
-Alex Deucher (3):
-      drm/amdgpu/gmc7: fix wait_for_idle callers
-      drm/amdgpu/jpeg: cancel the jpeg worker
-      Revert "drm/radeon: Delay Connector detecting when HPD singals
-is unstable"
-
-Aric Cyr (1):
-      drm/amd/display: 3.2.310
-
-Arnd Bergmann (1):
-      drm/rockchip: avoid 64-bit division
-
-Asad Kamal (3):
-      drm/amd/pm: Update data types used for uapi i/f
-      drm/amd/pm: Add gpu_metrics_v1_7
-      drm/amd/pm: Get xgmi link status for XGMI_v_6_4_0
-
-Austin Zheng (1):
-      drm/amd/display: Populate Power Profile In Case of Early Return
-
-Bhavin Sharma (2):
-      drm/amd/pm: remove redundant tools_size check
-      drm/amd/display: remove redundant is_dsc_possible check
-
-Chris Park (1):
-      drm/amd/display: Ignore scalar validation failure if pipe is phantom
-
-Christophe JAILLET (1):
-      drm/radeon: Constify struct pci_device_id
-
-Dave Airlie (5):
-      Merge tag 'drm-intel-next-fixes-2024-11-21' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-next
-      Merge tag 'drm-xe-next-fixes-2024-11-21' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-next
-      Merge tag 'amd-drm-fixes-6.13-2024-11-22' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-next
-      Merge tag 'drm-misc-next-fixes-2024-11-28' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-next
-      Merge tag 'drm-xe-next-fixes-2024-11-28' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-next
-
-Dillon Varone (1):
-      drm/amd/display: Enable Request rate limiter during C-State on dcn401
-
-Huacai Chen (2):
-      drm/radeon: Use ttm_bo_move_null() in radeon_bo_move()
-      drm/amd/display: Allow building DC with clang on LoongArch
-
-Jesse.zhang@amd.com (2):
-      drm/amdgpu: Add sysfs interface for vcn reset mask
-      drm/amdgpu: Fix sysfs warning when hotplugging
-
-Joshua Aberback (1):
-      drm/amd/display: Fix handling of plane refcount
-
-Kenneth Feng (3):
-      drm/amdgpu/pm: add gen5 display to the user on smu v14.0.2/3
-      drm/amd/pm: disable pcie speed switching on Intel platform for
-smu v14.0.2/3
-      drm/amd/pm: skip setting the power source on smu v14.0.2/3
-
-Lijo Lazar (4):
-      drm/amdgpu: Add init level for post reset reinit
-      drm/amdgpu: Use reset recovery state checks
-      drm/amdkfd: Use the correct wptr size
-      drm/amd/pm: Remove arcturus min power limit
-
-Mario Limonciello (2):
-      drm/amd: Add some missing straps from NBIO 7.11.0
-      drm/amd: Fix initialization mistake for NBIO 7.11 devices
-
-Matt Roper (1):
-      drm/xe: Update xe2_graphics name string
-
-Matthew Auld (4):
-      drm/xe/guc_submit: fix race around pending_disable
-      drm/xe/guc_submit: fix race around suspend_pending
-      drm/xe/migrate: fix pat index usage
-      drm/xe/migrate: use XE_BO_FLAG_PAGETABLE
-
-Matthew Brost (2):
-      drm/xe: Mark preempt fence workqueue as reclaim
-      drm/xe: Take PM ref in delayed snapshot capture worker
-
-Nirmoy Das (1):
-      drm/xe/ufence: Wake up waiters after setting ufence->signalled
-
-Ovidiu Bunea (1):
-      drm/amd/display: Remove PIPE_DTO_SRC_SEL programming from set_dtbclk_dto
-
-Samson Tam (2):
-      drm/amd/display: add public taps API in SPL
-      drm/amd/display: allow chroma 1:1 scaling when sharpness is off
-
-Steven 'Steve' Kendall (1):
-      drm/radeon: Fix spurious unplug event on radeon HDMI
-
-Suraj Kandpal (1):
-      drm/i915/hdcp: Fix when the first read and write are retried
-
-Umio Yasuno (1):
-      drm/amd/pm: update current_socclk and current_uclk in
-gpu_metrics on smu v13.0.7
-
-Victor Zhao (1):
-      drm/amdkfd: make sure ring buffer is flushed before update wptr
-
-Vitaly Prosyak (1):
-      drm/amdgpu: fix usage slab after free
-
-Xiang Liu (1):
-      drm/amdgpu/vcn: reset fw_shared when VCPU buffers corrupted on vcn v4.0.3
-
-Yihan Zhu (1):
-      drm/amd/display: update pipe selection policy to check head pipe
-
-Zicheng Qu (2):
-      drm/amd/display: Fix null check for pipe_ctx->plane_state in
-dcn20_program_pipe
-      drm/amd/display: Fix null check for pipe_ctx->plane_state in
-hwss_setup_dpp
-
- drivers/gpu/drm/amd/amdgpu/aldebaran.c             |   4 +
- drivers/gpu/drm/amd/amdgpu/amdgpu.h                |   1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |  29 ++++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c            |   8 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c           |   6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_preempt_mgr.c    |   3 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |  10 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c          |   5 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_reset.h          |   2 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c           |   6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c            |   6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c            |  37 +++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h            |   4 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c            |   6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c           |  41 +++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.h           |   2 +
- drivers/gpu/drm/amd/amdgpu/df_v3_6.c               |   4 +-
- drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c              |  18 +++-
- drivers/gpu/drm/amd/amdgpu/jpeg_v1_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v2_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v2_5.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v3_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v4_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v4_0_5.c           |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v5_0_0.c           |   2 +-
- drivers/gpu/drm/amd/amdgpu/nbio_v7_11.c            |   9 ++
- drivers/gpu/drm/amd/amdgpu/sienna_cichlid.c        |   2 +
- drivers/gpu/drm/amd/amdgpu/smu_v13_0_10.c          |   2 +
- drivers/gpu/drm/amd/amdgpu/vcn_v4_0.c              |   9 ++
- drivers/gpu/drm/amd/amdgpu/vcn_v4_0_3.c            |  39 +++++--
- drivers/gpu/drm/amd/amdgpu/vcn_v5_0_0.c            |  10 ++
- drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c      |   7 +-
- drivers/gpu/drm/amd/display/Kconfig                |  15 +--
- drivers/gpu/drm/amd/display/dc/core/dc.c           |   7 +-
- .../gpu/drm/amd/display/dc/core/dc_hw_sequencer.c  |   3 +
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c  |   8 ++
- drivers/gpu/drm/amd/display/dc/dc.h                |   2 +-
- .../gpu/drm/amd/display/dc/dccg/dcn35/dcn35_dccg.c |  15 +--
- .../dml21/src/dml2_core/dml2_core_dcn4_calcs.c     |   6 ++
- .../amd/display/dc/dml2/dml2_dc_resource_mgmt.c    |  23 +++-
- drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c        |  13 +--
- .../drm/amd/display/dc/hubbub/dcn10/dcn10_hubbub.h |   8 +-
- .../drm/amd/display/dc/hubbub/dcn20/dcn20_hubbub.h |   1 +
- .../amd/display/dc/hubbub/dcn401/dcn401_hubbub.c   |  24 ++++-
- .../amd/display/dc/hubbub/dcn401/dcn401_hubbub.h   |   7 +-
- .../drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c    |   6 +-
- .../drm/amd/display/dc/hwss/dcn401/dcn401_hwseq.c  |  13 ++-
- drivers/gpu/drm/amd/display/dc/inc/hw/dchubbub.h   |   2 +-
- .../display/dc/resource/dcn401/dcn401_resource.h   |   3 +-
- drivers/gpu/drm/amd/display/dc/spl/dc_spl.c        |  97 +++++++++++------
- drivers/gpu/drm/amd/display/dc/spl/dc_spl.h        |   2 +
- .../amd/include/asic_reg/nbio/nbio_7_11_0_offset.h |   2 +
- .../include/asic_reg/nbio/nbio_7_11_0_sh_mask.h    |  13 +++
- drivers/gpu/drm/amd/include/kgd_pp_interface.h     | 118 ++++++++++++++++++++-
- .../drm/amd/pm/powerplay/smumgr/vega12_smumgr.c    |  24 ++---
- drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          |   8 +-
- drivers/gpu/drm/amd/pm/swsmu/inc/smu_v14_0.h       |   2 +-
- drivers/gpu/drm/amd/pm/swsmu/smu11/arcturus_ppt.c  |   6 +-
- .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_6_ppt.c   |  12 ++-
- .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c   |   2 +
- drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0.c     |   2 +-
- .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  37 +++++--
- drivers/gpu/drm/amd/pm/swsmu/smu_cmn.c             |   3 +
- drivers/gpu/drm/i915/display/intel_hdcp.c          |  32 +++---
- drivers/gpu/drm/radeon/radeon_audio.c              |  12 ++-
- drivers/gpu/drm/radeon/radeon_connectors.c         |  10 --
- drivers/gpu/drm/radeon/radeon_drv.c                |   3 +-
- drivers/gpu/drm/radeon/radeon_ttm.c                |   3 +-
- drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     |   2 +-
- drivers/gpu/drm/xe/xe_devcoredump.c                |   6 ++
- drivers/gpu/drm/xe/xe_device.c                     |   3 +-
- drivers/gpu/drm/xe/xe_guc_submit.c                 |  34 ++++--
- drivers/gpu/drm/xe/xe_migrate.c                    |   6 +-
- drivers/gpu/drm/xe/xe_pci.c                        |   2 +-
- drivers/gpu/drm/xe/xe_sync.c                       |   6 +-
- 75 files changed, 692 insertions(+), 195 deletions(-)
+Laurent Pinchart
 
