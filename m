@@ -1,177 +1,178 @@
-Return-Path: <linux-kernel+bounces-424272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90939DB272
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:17:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A89E9DB284
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB962B227DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:17:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D59E5B21364
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3EB13B792;
-	Thu, 28 Nov 2024 05:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SG1bhClx"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C5313C8F3;
+	Thu, 28 Nov 2024 05:37:27 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F3BAD4B;
-	Thu, 28 Nov 2024 05:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1841386BF
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732771041; cv=none; b=WgMReH+6KQxGLiUMsGUeshCUVWIDHO3cREHQ6ZrOf2KlXrw7rs2UX8YLLYwuzkJDldWepnSHatqIBQ6KB33Y3NHmyoH8z8J6Oufc0LS+y3KdD2fYXMGy7OmHgQZIKiG4Brx6v+cmg4Qschn/uk/QFd05chLg95x2YVQs9WEiaic=
+	t=1732772246; cv=none; b=TBsyKEAfSToc/0aHOaxifzNr8ld/WSo5fxp0+wymmzg9HFu/NBnDMn3+nQpIr8A8ATxqhcy8g/ei2Qq2SsEFH7oVFAXeodgqxdqnhLfEItyfeC2ba9+lx+rsRgUZRlmDF6OGtWQXHbJtCHS8jQaVIUnv/mDGilOVsMgztaClm5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732771041; c=relaxed/simple;
-	bh=axw8GZUDEJnuGgv5liNFiPSxzG9BMlaL8C/F0uNUl38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiXNUd5DjEod7ljvDjw9V5eYBa452SAKRELXzOqsLuAjydcNW1DOJjg38RtN3nJQ6xAcBwsD+Z8aF9e+5bIM8Eowwy2Bp4P/QlWBNBoGsg0wRVfCNZ5XIXjbt7yZzeleft1hbopqfUmpvGb4sJMU9NoWEj8v7CTUOnJc/g1qDMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SG1bhClx; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARHY5vG023453;
-	Thu, 28 Nov 2024 05:17:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=QEtc7N
-	tViimDoFDdgLXWudJ4k4WGhKfg8PoKOO7OHVk=; b=SG1bhClxyHpEOrPWMkDw6y
-	KlSb44pSJl349hzfFZulsyeWQGXRViKjDWwtzl+SOKPT7BB+aQtMyTG/fIV7ZIRl
-	MyeIGYTuCO7COmbNZYWMaXfuJkFDlv8bmVtMWSNBdoRsQhVpX3UoTap8H4GhN3w7
-	mZsDtJe5IoIQmV5Y3fARgyxNYMD2wE6w0/LTytEdamb/QBZf3gPHZT/xf3nc/xWI
-	KOIYznETM8f3+DfUEjlV/tOc5o9pL5AxJis87q/EzYIpltjc3n1uVAfnBnOTGWVO
-	6RaQ9+AVLomVRWu3JdMBwJYJSof6JRDj7grFC6a4Xp7XmSaopIAvz7zkeC9P7V7Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366ywjxk0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 05:17:04 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AS5H33A010314;
-	Thu, 28 Nov 2024 05:17:03 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366ywjxjw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 05:17:03 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS4iVna009796;
-	Thu, 28 Nov 2024 05:17:02 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43672f6cqu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 05:17:02 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AS5H15K17891944
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 28 Nov 2024 05:17:01 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BAA2C58053;
-	Thu, 28 Nov 2024 05:17:01 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CCAC358043;
-	Thu, 28 Nov 2024 05:16:58 +0000 (GMT)
-Received: from [9.171.2.153] (unknown [9.171.2.153])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 28 Nov 2024 05:16:58 +0000 (GMT)
-Message-ID: <8174031c-b9b1-4e32-806e-28f1b2c1dee0@linux.ibm.com>
-Date: Thu, 28 Nov 2024 10:46:56 +0530
+	s=arc-20240116; t=1732772246; c=relaxed/simple;
+	bh=I0fWGtRYkrk71ug5Z5vT0Z9EtDi9G71hOV/nq8reRD4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AJ5XRzSxV7W67mz8wSHyVuZ35qaczPH3m4sqV51FwQq2r5Xp0kT64zVJANyKi0ttDzoodkkHgoYLaZbiaAk0o2KEUBdeq5wBcpkgnF7wNkYCGqBWFyUvIZ5XtftbCOdBYe+0xzeWTmeJ6LnA8eRQCFBdFwmor/glrNh01GOfHYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7807feadfso4536425ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:37:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732772244; x=1733377044;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z/Aeo78pYxl1DJJesHxrCd5dfR7WVwjSchzygaVTFbM=;
+        b=d0XWm44r97+kzbNyfssYg1ZdqfUD3a2U8ncIoTxaTrWg4Fn5F2rwN8t0ZoF18x0rVC
+         Jwh/Uvz9GYyge3GY576gAUX/KQPu2GN6lqDv9vLyA1LvaKw7k4W9VIMo9dvc78sKuNNT
+         IoLVK89+a55SgyYSFFo3OrKz8cOdy/1dZLb+x5SBMd3a4h3JO/6j7Pgr4ke2Mw/oOAIc
+         IRK0lAJnu4HWf9TjPP+pnRAI+VS8Pi18UW+VVgOBrOhykSCACLWosHa4ozUOXjVk2Pjq
+         Szt+L60wOxmL0QJ/rh+KQTr1TxKLVcU+LVwxxz9ANnjgnXxPIk7HUz/lNXDBzchO51Y6
+         THvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVb3s5EdrJS22gJqps+ze50ZqDanqfkH9//RmcJTQZnUitL5ZTDEuIohpIfXdp6rYbwvnx6tSjL3UJA4xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2JiP4P6cmgX/0UH7c/0JWF7QyW2xW2tHW/eJvDqn4LZoD9wV3
+	wItzCrJcRirfzQFHcWn2ipi0VE4pwEmQY1xnq4GJWbACPbcwzQYefq5Wdq/gLEjHuf1evpT4P6o
+	cB4INUUGXFSpzgJBjmc7x5BfDZmqv1jpggyuHilV4zR3241/B8D1+U2U=
+X-Google-Smtp-Source: AGHT+IEWPYyxD9EO0mGxxvRLOUDwes72Or4cilDb2il/HYQsAUdTOlHiEsM0UvEWTTS01yZOvxicABaMAOLEDxlFGCSKvhaKkODb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: hugetlb_dio: Fix test naming
-To: Mark Brown <broonie@kernel.org>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241127-kselftest-mm-hugetlb-dio-names-v1-1-22aab01bf550@kernel.org>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <20241127-kselftest-mm-hugetlb-dio-names-v1-1-22aab01bf550@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wosSQ4wwott07zOshz_l1TmyE3Ju3Ys1
-X-Proofpoint-ORIG-GUID: E2TCnRoXf8oDsq9DL7HtmSlWStGa_7tz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- malwarescore=0 mlxscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 adultscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411280038
+X-Received: by 2002:a05:6e02:1785:b0:3a7:8040:5962 with SMTP id
+ e9e14a558f8ab-3a7c5445eb6mr66056225ab.0.1732772243891; Wed, 27 Nov 2024
+ 21:37:23 -0800 (PST)
+Date: Wed, 27 Nov 2024 21:37:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67480193.050a0220.253251.0071.GAE@google.com>
+Subject: [syzbot] [ext4?] WARNING: locking bug in jbd2_alloc
+From: syzbot <syzbot+92b9109f47b38b1a6657@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11fe76e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
+dashboard link: https://syzkaller.appspot.com/bug?extid=92b9109f47b38b1a6657
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c9f905470542/disk-9f16d5e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5b4c9cc530ec/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e0f262e4c35e/bzImage-9f16d5e6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+92b9109f47b38b1a6657@syzkaller.appspotmail.com
+
+loop2: detected capacity change from 0 to 32768
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,2) on (node local, slot 0) with ordered data mode.
+------------[ cut here ]------------
+Looking for class "lock" with key init_kmem_cache_cpus.__key, but found a different class "&c->lock" with the same key
+WARNING: CPU: 1 PID: 6128 at kernel/locking/lockdep.c:939 look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
+Modules linked in:
+CPU: 1 UID: 0 PID: 6128 Comm: syz.2.25 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
+Code: 01 0f 85 8a 00 00 00 c6 05 68 74 47 04 01 90 49 8b 16 49 8b 76 18 48 8b 8b b8 00 00 00 48 c7 c7 00 fa 0a 8c e8 b5 9c 97 f5 90 <0f> 0b 90 90 eb 61 90 e8 58 cc ea f8 e8 53 f7 b6 f5 48 c7 c7 40 f9
+RSP: 0018:ffffc90004e25dd0 EFLAGS: 00010046
+RAX: e7d07740ab1e6700 RBX: ffffffff93c329a0 RCX: 0000000000080000
+RDX: ffffc9000c6f9000 RSI: 0000000000007ed7 RDI: 0000000000007ed8
+RBP: ffffc90004e25ee0 R08: ffffffff815687d2 R09: 1ffff110170e519a
+R10: dffffc0000000000 R11: ffffed10170e519b R12: ffffe8ffffd7fbf0
+R13: ffffe8ffffd7fbf0 R14: ffffe8ffffd7fbf0 R15: ffffffff9a41b310
+FS:  00007fe17797a6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3181fffc CR3: 000000005d318000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ register_lock_class+0x102/0x980 kernel/locking/lockdep.c:1290
+ __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5101
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ local_lock_acquire+0x20/0x80 include/linux/local_lock_internal.h:29
+ ___slab_alloc+0x11e2/0x14b0 mm/slub.c:3867
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4141
+ jbd2_alloc+0x155/0x1b0 fs/jbd2/journal.c:2787
+ jbd2_journal_get_undo_access+0x1d1/0x310 fs/jbd2/transaction.c:1395
+ __ocfs2_journal_access+0x4de/0x8a0 fs/ocfs2/journal.c:692
+ ocfs2_block_group_set_bits+0x29e/0x9a0 fs/ocfs2/suballoc.c:1387
+ ocfs2_search_chain+0x1b27/0x26d0 fs/ocfs2/suballoc.c:1900
+ ocfs2_claim_suballoc_bits+0x11ef/0x2570 fs/ocfs2/suballoc.c:1985
+ __ocfs2_claim_clusters+0x332/0xa40 fs/ocfs2/suballoc.c:2395
+ ocfs2_claim_clusters fs/ocfs2/suballoc.c:2432 [inline]
+ ocfs2_block_group_alloc_contig fs/ocfs2/suballoc.c:432 [inline]
+ ocfs2_block_group_alloc fs/ocfs2/suballoc.c:699 [inline]
+ ocfs2_reserve_suballoc_bits+0x1161/0x4eb0 fs/ocfs2/suballoc.c:832
+ ocfs2_reserve_new_metadata_blocks+0x41c/0x9c0 fs/ocfs2/suballoc.c:982
+ ocfs2_mknod+0x143a/0x2b40 fs/ocfs2/namei.c:345
+ ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+ lookup_open fs/namei.c:3649 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3984
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_open fs/open.c:1425 [inline]
+ __se_sys_open fs/open.c:1421 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1421
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe176b7e819
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe17797a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fe176d35fa0 RCX: 00007fe176b7e819
+RDX: 0000000000000000 RSI: 0000000000145142 RDI: 0000000020000240
+RBP: 00007fe176bf175e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fe176d35fa0 R15: 00007fff9fb5c5d8
+ </TASK>
 
 
-On 11/27/24 21:44, Mark Brown wrote:
-> The string logged when a test passes or fails is used by the selftest
-> framework to identify which test is being reported. The hugetlb_dio test
-> not only uses the same strings for every test that is run but it also uses
-> different strings for test passes and failures which means that test
-> automation is unable to follow what the test is doing at all.
->
-> Pull the existing duplicated logging of the number of free huge pages
-> before and after the test out of the conditional and replace that and the
-> logging of the result with a single ksft_print_result() which incorporates
-> the parameters passed into the test into the output.
->
-> Fixes: fae1980347bf ("selftests: hugetlb_dio: fixup check for initial conditions to skip in the start")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->   tools/testing/selftests/mm/hugetlb_dio.c | 14 +++++---------
->   1 file changed, 5 insertions(+), 9 deletions(-)
->
-> diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
-> index 432d5af15e66b7d6cac0273fb244d6696d7c9ddc..db63abe5ee5e85ff7795d3ea176c3ac47184bf4f 100644
-> --- a/tools/testing/selftests/mm/hugetlb_dio.c
-> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
-> @@ -76,19 +76,15 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
->   	/* Get the free huge pages after unmap*/
->   	free_hpage_a = get_free_hugepages();
->   
-> +	ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
-> +	ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
-> +
->   	/*
->   	 * If the no. of free hugepages before allocation and after unmap does
->   	 * not match - that means there could still be a page which is pinned.
->   	 */
-> -	if (free_hpage_a != free_hpage_b) {
-> -		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
-> -		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
-> -		ksft_test_result_fail(": Huge pages not freed!\n");
-> -	} else {
-> -		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
-> -		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
-> -		ksft_test_result_pass(": Huge pages freed successfully !\n");
-> -	}
-> +	ksft_test_result(free_hpage_a == free_hpage_b,
-> +			 "free huge pages from %u-%u\n", start_off, end_off);
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi Mark
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-This test allocates a hugetlb buffer and adjusts the start and end offsets of the buffer based
-on|start_off|  and|end_off|. The adjusted buffer is then used for Direct I/O (DIO). If I understand
-correctly,|start_off|  and|end_off|  are not free huge pages but rather DIO buffer offsets. Should we
-change this message to "Hugetlb DIO buffer offset"?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Thanks
-Donet
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->   }
->   
->   int main(void)
->
-> ---
-> base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
-> change-id: 20241127-kselftest-mm-hugetlb-dio-names-1ebccbe8183d
->
-> Best regards,
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
