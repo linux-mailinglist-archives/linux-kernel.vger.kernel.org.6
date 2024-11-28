@@ -1,180 +1,192 @@
-Return-Path: <linux-kernel+bounces-424888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C353A9DBAD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:47:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F71D9DBAD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:46:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26417B241D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93497164040
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92691BD9C1;
-	Thu, 28 Nov 2024 15:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuOo5FSw"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDDA1BD9D0;
+	Thu, 28 Nov 2024 15:46:23 +0000 (UTC)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581851BD9F4;
-	Thu, 28 Nov 2024 15:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B864204E;
+	Thu, 28 Nov 2024 15:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732808812; cv=none; b=uBru9DIR4o3F+f26oqyRgqYWAhKqdUEh/z67PVjzIz5Rj9w8JLKrrWrG0IwWqqCQAqyHCXjjmdYwCrwlWGKMfnqEpSmBeGmYpJSAb5ArRfqr8OnfB/xs/0orME07jnGWmxibnuHykm51ZdrfYW8h2mqujFcfYPap5ZhlM9qrQlg=
+	t=1732808782; cv=none; b=Y0/Ah28HzenDc9XX8O8Nm1iJUVtzWZWw8txVwc8AbWCbIm30A/T+40rVHO7Q+aasZbr2hX0XNQw7svf3hItZEgmeGBU+YIfvs4MbJxz5WWmzOC3qzbolUQzaHb6SLeCyV8+sZccNzwlHPkLHnI5xB3Kr41k/0m4npn1qEdLwEJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732808812; c=relaxed/simple;
-	bh=gO+1X2k+laXeuczPhixpw6KqT4OtV7bvBEPrPNDyaPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kRqFSJz5G6KIWnhl8AGdYjGXUU7LrsYOjb60xFunf0Q5hWUrPK+8sa8QiH54KVZa6rFs8trQvzh4Nd74EpGFmDypDTVcgoBiLato8wio63a8PSC+U3QSavuwgBCxc6f+jjoD6s8jAOkqGjLFYYb+zESnblZd6oP51PBiORKpxnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuOo5FSw; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1732808782; c=relaxed/simple;
+	bh=mD01r/aB7enLSRRFcLlOuUNHuLyHhKDmXn8q67mMQ2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ua2QoSjnPGP28l7wJFs2c0Kjq7aJPLSr5cexpFP/NPftathqPb0yYlGggnrovQdNwR3ED1WeREMfIExDzqE1Ipt/KalbWU9T1tBbZXAKjNvmm6l0bRjUGb42lbCfNTrZFGk2IUl+NI8uD1FRAx7/iLiyVvU1vCL0KbtgB4RKx+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa535eed875so134750366b.3;
-        Thu, 28 Nov 2024 07:46:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732808809; x=1733413609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gySyX3xb7lz2NAGHoDoeS8CCZN0aAJNXyyTJzm5Bn3o=;
-        b=YuOo5FSwovRP2rKrgDbq7Pot0QQHFfllfAd/JqMi/LIYg5kvshMEhgLlH9bVlB6FPW
-         ufaEk4HqRjhe00HuprmS0fAy5SJH5eKEoeNSE0YLSf8BDz+Jr8iqsmoRO/SnpfMPrski
-         j5IzKSAYqSlOG2EbQS5oVo/RAfizaJd+bHQm+bONZkXeK98HFGRWtazwoAVnqzb2Xmw+
-         q+omshMurSdxZKCRTujIoOk1yOeBtmEmP5keLYWeput3gqe2MoELpKeJzwjf6qcnUh6e
-         hIBoWqkpU3SwrKuVA7NPkO7MxP/J4v7mfsYfGBPxcn61+PzpjrlrZLiblcN10VJV/BX7
-         kPhQ==
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ee676b4e20so11557977b3.3;
+        Thu, 28 Nov 2024 07:46:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732808809; x=1733413609;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gySyX3xb7lz2NAGHoDoeS8CCZN0aAJNXyyTJzm5Bn3o=;
-        b=WdIhdMS+jtUliwy8IfA4nmrJP3asA5XO3dcCBCScWJLe7hdwbQj07jP9Y8g1wTAr/g
-         mhoZ6de4sQE62GFbW9/b7tFB4IMfOfUZIA2MKmdBJU5ChNhc/n9U9H9g651/ekF0LxAQ
-         ZNWrIqwcd8+ViW6RroMaMAilK9oaPwGS/DXfZFPEwneIIf/onoroywduePHRtnmSh+Yq
-         5ze4V9H758uE9e/9TtYHhMTVI/dAuSa3CE95kMnBdLgB8p2HqEkilbxMQUWniWJAC9Rq
-         qbHbnlvc6FexZihstKqowfQMZxaeJ/dz0SJnmJx1Le4jzcpmpucylXd1qjXb9Ka2nYJR
-         fRog==
-X-Forwarded-Encrypted: i=1; AJvYcCWSVjHjJNKbiO/+ePvMF0e3UekhzUHl1IC7V8cVW9e0jIzEN6AnuFGI0w6wz3VEOJYsuIheQJVwhvwq@vger.kernel.org, AJvYcCWnjV9k3dk8yr/iGNUbYddNUi9nPiQXTEz4oX380FrQdyaLZGQEQ2xI21AF9zUTdqOAcyWI3yh/iTILwi4S@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhefRdhLr4jGwHeCDuf3zvBAn5nAouQW0OdVFuczgJdVdK0D5m
-	j7a4JFvyus+5NAgXraSvUmmOC9B1P34z46uIvbi0d4xjykCpif9jioiDnB+T
-X-Gm-Gg: ASbGncuDDR39f68IxRJWhD7HNEKBeamAaundNuM2vuN0kErdPpQkiEfPb6zkRd+sKMa
-	6qOK4JQrHafYC28SPQ6s2utdCSd+T2s3M1DuDUU3hlZ622Xv0NSY3lZeBO9rPCfVcZo154QyiW/
-	sbpUumOAbj2wNBJslywBhwB79VUL7fYKM9U8/SgY3zkf9PG5kIH9itYVjpWJkTfXxM49Rv2SJUX
-	EzXIalU2zyXNhjAUvELuhCmmJij5wNDrmDdt4RMQdpxSAQ2PjZ1f2okC35y+UYURo6t5jZvYE4A
-	m1vzSbf0Orx4a42SyNGdWIEOoNWSTldCv9qqjZA=
-X-Google-Smtp-Source: AGHT+IGbYgbDaKacn6oy8Mz56jrQShpX/zaBxCgc1Y2PUaxFezDPqSG9ETGSHYc4z4+CFFxCm/VZhQ==
-X-Received: by 2002:a17:906:3109:b0:aa1:e60e:6fe7 with SMTP id a640c23a62f3a-aa580ef31e1mr547320866b.11.1732808808516;
-        Thu, 28 Nov 2024 07:46:48 -0800 (PST)
-Received: from localhost.localdomain (229.140-242-81.adsl-dyn.isp.belgacom.be. [81.242.140.229])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59991f215sm78390266b.158.2024.11.28.07.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 07:46:48 -0800 (PST)
-From: Philippe Simons <simons.philippe@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi SoC support),
-	linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi SoC support),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Philippe Simons <simons.philippe@gmail.com>
-Subject: [PATCH] Update H700 opp values
-Date: Thu, 28 Nov 2024 16:45:56 +0100
-Message-ID: <20241128154556.2743839-1-simons.philippe@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        d=1e100.net; s=20230601; t=1732808779; x=1733413579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wUf/S6ywNh8XAsdHlQGFt6ui0KSpcttBMmgIqMsNTKY=;
+        b=q38Ao2adXnIzXW8zuPIl1sjGT+GQV02PUXrmOuJ/HwDqBaveP8nJK2XWgW6+gP0xVi
+         MSisozWqBC8eLIqfL7IanN3MMsSK/PH836NWQpp4yYLuly0BrbGiu6r9szlww48QPfc7
+         gTwrc8IwMd5ea99lOtpdqz9o24jr1yf5F57a5rJ6CeyDLMTwOf1OQMYZz/kDle+613kK
+         NaRRL3hG2itYYdckr86Mj6rsVAFPeBHzNKIy2wtfDdApYvHusqeLIYzxxM6VLqCV2K10
+         n5Urw+7q1C0YRIe9FJUmEP9k98XquqwxnKiryfGNlLoU4RjR4RK36BshhrULYJH/eXbq
+         dm+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1cpDre1xeRvx/0qM4tXJ8w+3TLkyEE+eE+xcod+JVSJJwqkAUSHTtVST6bVS64GcQwTGdRdY5CymztgEv@vger.kernel.org, AJvYcCWLLLrkIZwYjjOqfU/nuzDPl7frZJxrVBAiljrS5AG/WebTOw3vcMRZNAecZJPENB3b2Ik9CbK3BhtzeCKHQJdHwO4=@vger.kernel.org, AJvYcCX0pXLlCe2cWGTyjWkh8tAbtuoZy9faNieshXfXlxLYNv8w+cN15V+mdMZlt8r36A5+zwB24oygKeMU@vger.kernel.org, AJvYcCXqSqZonsSnlropZwJjr/Q/kEww/3KuTmLcZBWzPr48LR/yp50+ERyDcovizl5d1kAa8ey8XBPNq5Ql@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBpfRVg/EAdb8JrOvoHUZdbLL/cGvXziLuG+1fViICVWHdqGA2
+	yO1FohAkTVgYU4DDEAwJUI3vMMifZyhz8sEemXU8aURUYsl2jxNtgfPepsJPZFQ=
+X-Gm-Gg: ASbGncsgxDpaR1t/25lnhXpfQiviouKthUm3eivvBeOdW3Ln5CNA4k8iG6CVfKgP45w
+	gqzBo3cM+z9KYxtAFavVgOrERrE/8IlgTVWdkD7iJeIllsHDfqaKX2xrkTu/oD7UW/qHJB3zD+V
+	SQ9pbggXStNJL7h7o4H2lhYSu4t7nz73kHH2pEoLr/dlVfxEbDH/8MeH0uqlMXzlhi/6ssTGSbA
+	8WMeyw0Xx5phd3my6V2McRlnKoMvq+G9nVjKZqSCE71lOYihUlV7sZebkx/8O2EyGtlMqpoBAGs
+	J2fjtTiJ04CTULzT
+X-Google-Smtp-Source: AGHT+IHIPj15bB88efUDPhIepuR9qA5LQ1W4xHde82s4MVua4bX2gKggZut31y+/x91vdjzjd5MNpw==
+X-Received: by 2002:a05:690c:a8b:b0:6ea:e967:81da with SMTP id 00721157ae682-6ef3720d0a7mr78206207b3.11.1732808779467;
+        Thu, 28 Nov 2024 07:46:19 -0800 (PST)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ef4dd77220sm3567897b3.74.2024.11.28.07.46.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 07:46:18 -0800 (PST)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e388503c0d7so733214276.0;
+        Thu, 28 Nov 2024 07:46:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU4OLCA0KJvcUdmCxV1aGvVXE5b6bf/ZFGJmqnhXlsumeFh0XuHOzcYtkBjIapKmsy5xtNL07gAICwN@vger.kernel.org, AJvYcCV/cGMf/QjlijXvzkh1U7fmS2jfm/pjGCtaO4AU+WuX9Tp2HItKmF39G07fiNUKIFYWKGMds8am1bVw@vger.kernel.org, AJvYcCWSvZh/Ei5g5q4v3MEc4lfJJb+MjRrQlbrVJsgAn8k0K8M0b2aZvAyw74jVkWQMK98pWAwkxUxbFXkyAjtZ@vger.kernel.org, AJvYcCWeVJhEex7qpHCBld21BcJDwJIUf2DDiex2x0QS0o+zowJfqy9EEMGPiA7uEyuW7EgqsC3Gyr1Z7+Q/6ProhSURhp0=@vger.kernel.org
+X-Received: by 2002:a05:6902:154b:b0:e33:14fa:2273 with SMTP id
+ 3f1490d57ef6-e395b887e90mr6783539276.5.1732808778278; Thu, 28 Nov 2024
+ 07:46:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 28 Nov 2024 16:46:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
+Message-ID: <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
+ Add #renesas,sysc-signal-cells
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
+	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
+	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-My H700 (RG35XX-H, RG40XX-V and RG CubeXX) devices are very unstable,
-especially with some OPPs.
-Crashes were fairly easy to reproduce with any dynamic cpufreq governor
-and some load on CPU, usually in matter of minutes.
-Crashes manifested randomly as simply hanging or various kernel oops
+Hi Claudiu,
 
-Manufacturer (Anbernic) is using more conservative mircrovolt values,
-so let's use these.
-While using performance gov seems stables at 1.5Ghz, it still crashes
-using a dynamic gov (even with Andre reparenting patch), so let's drop
-it for now, like manufacturer does.
+CC Ulf
 
-Signed-off-by: Philippe Simons <simons.philippe@gmail.com
----
- .../dts/allwinner/sun50i-h616-cpu-opp.dtsi    | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Thanks for your patch!
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616-cpu-opp.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h616-cpu-opp.dtsi
-index dd10aaf47..ac13fe169 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h616-cpu-opp.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h616-cpu-opp.dtsi
-@@ -50,24 +50,21 @@ opp-1008000000 {
- 			opp-microvolt-speed2 = <950000>;
- 			opp-microvolt-speed3 = <950000>;
- 			opp-microvolt-speed4 = <1020000>;
--			opp-microvolt-speed5 = <900000>;
-+			opp-microvolt-speed5 = <950000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 			opp-supported-hw = <0x3f>;
- 		};
- 
- 		opp-1032000000 {
- 			opp-hz = /bits/ 64 <1032000000>;
--			opp-microvolt = <900000>;
-+			opp-microvolt = <950000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 			opp-supported-hw = <0x20>;
- 		};
- 
- 		opp-1104000000 {
- 			opp-hz = /bits/ 64 <1104000000>;
--			opp-microvolt-speed0 = <1000000>;
--			opp-microvolt-speed2 = <1000000>;
--			opp-microvolt-speed3 = <1000000>;
--			opp-microvolt-speed5 = <950000>;
-+			opp-microvolt = <1000000>;			
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 			opp-supported-hw = <0x2d>;
- 		};
-@@ -79,7 +76,7 @@ opp-1200000000 {
- 			opp-microvolt-speed2 = <1050000>;
- 			opp-microvolt-speed3 = <1050000>;
- 			opp-microvolt-speed4 = <1100000>;
--			opp-microvolt-speed5 = <1020000>;
-+			opp-microvolt-speed5 = <1050000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 			opp-supported-hw = <0x3f>;
- 		};
-@@ -93,7 +90,10 @@ opp-1320000000 {
- 
- 		opp-1416000000 {
- 			opp-hz = /bits/ 64 <1416000000>;
--			opp-microvolt = <1100000>;
-+			opp-microvolt-speed0 = <1100000>;
-+			opp-microvolt-speed2 = <1100000>;
-+			opp-microvolt-speed3 = <1100000>;
-+			opp-microvolt-speed5 = <1160000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
- 			opp-supported-hw = <0x2d>;
- 		};
-@@ -102,9 +102,8 @@ opp-1512000000 {
- 			opp-hz = /bits/ 64 <1512000000>;
- 			opp-microvolt-speed1 = <1100000>;
- 			opp-microvolt-speed3 = <1100000>;
--			opp-microvolt-speed5 = <1160000>;
- 			clock-latency-ns = <244144>; /* 8 32k periods */
--			opp-supported-hw = <0x2a>;
-+			opp-supported-hw = <0x0a>;
- 		};
- 	};
- };
--- 
-2.46.1
+On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The RZ/G3S system controller (SYSC) has registers to control signals that
+> are routed to various IPs. These signals must be controlled during
+> configuration of the respective IPs. One such signal is the USB PWRRDY,
+> which connects the SYSC and the USB PHY. This signal must to be controlle=
+d
+> before and after the power to the USB PHY is turned off/on.
+>
+> Other similar signals include the following (according to the RZ/G3S
+> hardware manual):
+>
+> * PCIe:
+> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
+> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
+>   register
+> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
+>
+> * SPI:
+> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
+>   register
+>
+> * I2C/I3C:
+> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
+>   (x=3D0..3)
+> - af_bypass I3C signal controlled through SYS_I3C_CFG register
+>
+> * Ethernet:
+> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
+>   registers (x=3D0..1)
+>
+> Add #renesas,sysc-signal-cells DT property to allow different SYSC signal=
+s
+> consumers to manage these signals.
+>
+> The goal is to enable consumers to specify the required access data for
+> these signals (through device tree) and let their respective drivers
+> control these signals via the syscon regmap provided by the system
+> controller driver. For example, the USB PHY will describe this relation
+> using the following DT property:
+>
+> usb2_phy1: usb-phy@11e30200 {
+>         // ...
+>         renesas,sysc-signal =3D <&sysc 0xd70 0x1>;
+>         // ...
+> };
 
+IIUIC, the consumer driver will  appear to control the SYSC bits
+directly, but due to the use of custom validating regmap accessors
+and reference counting in the SYSC driver, this is safe?
+The extra safety requires duplicating the register bits in both DT
+and the SYSC driver.
+Both usb-phy nodes on RZG3S use the same renesas,sysc-signal, so the
+reference counting is indeed needed.  They are in different power
+domains, could that be an issue w.r.t. ordering?
+
+I am not a big fan of describing register bits in DT, but for the other
+SYSC users you list above, syscon+regmap seems to be a valid solution.
+For USB and PCIe control, the situation is different. I more liked the
+approach with "reset IDs" you had in v1, as it abstracts the DT
+description from the register bits, and the USB and PCIe reset bits use
+a different polarity (on RZ/G3S). If future SoC integration changes
+the polarity, you have to handle that in the consumer (USB or PCIe)
+driver, too.  Unfortunately such "reset IDs" are only suitable for
+use with the reset or pmdomain frameworks, which didn't survive the
+earlier discussions.
+
+One other option would be to let SYSC expose regulators?
+While that would work for USB and PCIe control, we would still need
+syscon+regmap for the other bits.
+
+So the more I think about it, the more I like your (clever) solution...
+
+> Along with it, add the syscon to the compatible list as it will be
+> requested by the consumer drivers. The syscon was added to the rest of
+> system controller variants as these are similar with RZ/G3S and can
+> benefit from the implementation proposed in this series.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
