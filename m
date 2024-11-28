@@ -1,110 +1,132 @@
-Return-Path: <linux-kernel+bounces-424606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101879DB6B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D912F9DB6E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99E7161BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A92161968
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D1F19ABCE;
-	Thu, 28 Nov 2024 11:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE3619ABAC;
+	Thu, 28 Nov 2024 11:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K3CnLGrC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oSiNpo8G"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF0C199385;
-	Thu, 28 Nov 2024 11:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322B6199FBF
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732794332; cv=none; b=Qb/UUKGbZz+BmvoPKOUw5gtK+44VMmKhhbaSPpcpVB9dAVk69H2e1o+bAzgc2ImZY10Q30g7nn7JCFnJFkeOfxlZ6X1I9e+1vnt9HgxwRc0GxJSqJpcnlCDQMPlNKFq3ReFFR9gLLcGqHAOAx+OATrGUMDbFhEdd9y042zWBF64=
+	t=1732794451; cv=none; b=MF45O7MNfu8K7XecmSELOYeG0hXt67ObNkKM/yX2YYEN+AAZGFHf9gWbUPxbj3O0ImzHdIeb6diaJnAqjbD8drAJ+FQzoLcxMZ7fvHb9pSodrQdnMVn6JwCaRddDU3DnohzkIM3XjdKsLbT08sSn+RpKyffNVxJ5Us5eUb0+Pk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732794332; c=relaxed/simple;
-	bh=UbFqEHszhOJc/zW99AyYdYtb9W7H15irjg6dg+DLI9A=;
+	s=arc-20240116; t=1732794451; c=relaxed/simple;
+	bh=kYZXpqSp5aEsEFi+rwsrxSSHWyOJLakHmZWsAJgoY/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bKU2dZHhyHPh2btjvGSqLjouipQmx5TvKUAAlSWI3N99a4tKxfnIFJjYbRAGFs+pF0e3mggTY38fEEoWspnOvKiLiXrNOLDhUpGnDMWhw392cxrA9fRATDEjO5nInD0a0xcu7r3hMLjJFqnmHXVTBmI8dugOk035xmiad49hJ00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K3CnLGrC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AD0C4CECE;
-	Thu, 28 Nov 2024 11:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732794332;
-	bh=UbFqEHszhOJc/zW99AyYdYtb9W7H15irjg6dg+DLI9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K3CnLGrCdAlpH/XW/GJUghKkohbwV9u4m9DtavnRfHf+DEDCQ1lv8MX/QDgnwMu9J
-	 YKVoxdfV2K+8CcXcv+GIPXfF6KkbvTCnxSyca235ywDfsBvYNNEWlRcg41bAbpwo6v
-	 wyQEttMOc4r+K4o7UblZIiMu0IknE7mkjJap0/YQ=
-Date: Thu, 28 Nov 2024 12:45:01 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: =?utf-8?B?5rGf5LiW5piK?= <sh.jiang@zju.edu.cn>
-Cc: security@kernel.org, wenjia@linux.ibm.com, jaka@linux.ibm.com,
-	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: Re: [bug report] smc: possible deadlock in smc_switch_to_fallback
-Message-ID: <2024112820-vehicular-unsocial-ccdf@gregkh>
-References: <4224f194.3c7a6.193720afd34.Coremail.sh.jiang@zju.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcCygiB8Ut3uzSVEY01rojYxlpe0r7LCFPqSBBlyfsdVpTC9JGmkbJFFjUwmLvHUCXu+8mqOFJz27UDUfDVV6c3qe7W16Y4pW3SQ4pnIZy8bYP2u1rw8/sGGnY/N2q468nCql1Rh5eEGhk6Ubx8jAfHiCFYkGnglJlZ4WoLq+C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oSiNpo8G; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IY3B/9shg3NyxBudWelrG6muIppzCwz8DTfsv1fv4VA=; b=oSiNpo8GfpBG80nVazO8Y5clFA
+	rAaL8TaDlQoKUsmq32ashFEQz9BTiTJCOwWrFRgfHd1k9AAlWlwy1xexA3tzn4mevF9tx+3sTgzJv
+	bWIR0UCOcMd/HpILWESvCJsMX9mt+qlObho9+Xzjde6fzgZUjnWxx9BfZz65/+iqFVtqL5SjehCv4
+	WahBxFTaLdMvBS0XIqVh+aFVRjNenBur87t8MYBP2BgQiLalnFgeF19T6aZFXKNlJIXmPfYCNGPZA
+	pWwSdxSgXqBActfOOp/I7oOiTWKYN5JWVtUcUNAPe6RwiGDUXDMUZEpX+TwNoBIke1vYIc40k9jll
+	uziJepeQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGczS-00000001b5M-3dUQ;
+	Thu, 28 Nov 2024 11:47:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 65756300271; Thu, 28 Nov 2024 12:47:22 +0100 (CET)
+Date: Thu, 28 Nov 2024 12:47:22 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Hao Jia <jiahao.kernel@gmail.com>
+Cc: mingo@redhat.com, mingo@kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>
+Subject: Re: [PATCH] sched/core: Do not migrate ineligible tasks in
+ sched_balance_rq()
+Message-ID: <20241128114722.GG24400@noisy.programming.kicks-ass.net>
+References: <20241128084858.25220-1-jiahao.kernel@gmail.com>
+ <20241128091929.GA35539@noisy.programming.kicks-ass.net>
+ <0d28126d-4324-ba19-fe12-4f7a0ec0192f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4224f194.3c7a6.193720afd34.Coremail.sh.jiang@zju.edu.cn>
+In-Reply-To: <0d28126d-4324-ba19-fe12-4f7a0ec0192f@gmail.com>
 
-On Thu, Nov 28, 2024 at 05:12:23PM +0800, 江世昊 wrote:
-> Hi developers:
+On Thu, Nov 28, 2024 at 07:30:37PM +0800, Hao Jia wrote:
 > 
-> We may found a bug in smc module which can lead to deadlock recently.
 > 
-> HEAD commit: 819837584309 6.12.0-rc5
-> git tree: upstream
-> kernel config: https://drive.google.com/file/d/1-9pltE-1CMgGgNFu9o5l0BlCHk3Rnzb_/view?usp=sharing
-> console output: https://drive.google.com/file/d/1uH0RDdftVIq_Boa6YWowLj3WujqVBuL7/view?usp=sharing
-> syz repro: https://drive.google.com/file/d/1WUjiYSMebSZ7fR0uxrGx-kDLrf1v_Nra/view?usp=sharing
-> C reproducer: https://drive.google.com/file/d/1_lB5_uacVnfDNE8VpuiY-NxEtDdzJ0Z8/view?usp=sharing
+> On 2024/11/28 17:19, Peter Zijlstra wrote:
+> > On Thu, Nov 28, 2024 at 04:48:58PM +0800, Hao Jia wrote:
+> > > From: Hao Jia <jiahao1@lixiang.com>
+> > > 
+> > > When the PLACE_LAG scheduling feature is enabled, if a task
+> > > is ineligible (lag < 0) on the source cpu runqueue, it will
+> > > also be ineligible when it is migrated to the destination
+> > > cpu runqueue.
+> > > 
+> > > Because we will keep the original equivalent lag of
+> > > the task in place_entity(). So if the task was ineligible
+> > > before, it will still be ineligible after migration.
+> > 
+> > This is not accurate, it will be eleigible, irrespective of lag, if
+> > there are no other tasks. I think your patch tries to do this, but I'm
+> > fairly sure it got it wrong.
 > 
-> Environment:
-> Ubuntu 22.04 on Linux 5.15
-> QEMU emulator version 6.2.0
-> qemu-system-x86_64 \
-> -m 2G \
-> -smp 2 \
-> -kernel /home/wd/bzImage \
-> -append "console=ttyS0 root=/dev/sda earlyprintk=serial net.ifnames=0" \
-> -drive file=/home/wd/bullseye.img,format=raw \
-> -net user,host=10.0.2.10,hostfwd=tcp:127.0.0.1:10021-:22 \
-> -net nic,model=e1000 \
-> -enable-kvm \
-> -nographic \
-> -pidfile vm.pid \
-> 2>&1 | tee vm.log
+> Thank you for your reply. The expression in my commit message is inaccurate,
+> and I will correct it in the patch v2. If I understand correctly, a task
+> meeting the following conditions:
 > 
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: Shihao Jiang<sh.jiang@zju.edu.cn>
+>  sched_feat(PLACE_LAG) && cfs_rq->nr_running && !entity_eligible(cfs_rq,
+> &p->se),
 > 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.12.0-rc5 #1 Tainted: G        W         
-> ------------------------------------------------------
-> syz-executor351/9413 is trying to acquire lock:
-> ffff88804bd68aa8 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_switch_to_fallback+0x2d/0xa00 net/smc/af_smc.c:902
+> will remain ineligible both before and after migration.
 > 
-> but task is already holding lock:
-> ffff88804bd68258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1611 [inline]
-> ffff88804bd68258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: smc_setsockopt+0x323/0xc10 net/smc/af_smc.c:3077
-> 
-> which lock already depends on the new lock.
+> If I am wrong, please correct me. Thank you!
 
-Please submit a fix for this issue as you have a test-case for it.  It's
-just a "normal" lockdep warning, not a "security" issue.
+Problem is you're checking the wrong nr_running. 
 
-thanks,
+> > > @@ -9358,13 +9358,14 @@ static inline int migrate_degrades_locality(struct task_struct *p,
+> > >   static
+> > >   int can_migrate_task(struct task_struct *p, struct lb_env *env)
+> > >   {
+> > > +	struct cfs_rq *cfs_rq = task_cfs_rq(p);
 
-greg k-h
+This is task's current cfs_rq. What you're interested in is destination
+cfs_rq. If the destination is empty, then lag is irrelevant.
+
+You want something like:
+
+#if CONFIG_FAIR_GROUP_SCHED
+	struct task_group *tg = task_group(p);
+	struct cfs_rq *dst_cfs_rq = tg->cfs_rq[env->dst_cpu];
+#else
+	struct cfs_rq = &env->dst_rq->cfs_rq;
+#endif
+
+
+Also, please add benchmark details that show this actually makes a
+difference.
+
+Notably we keep rq->cfs_tasks in MRU order; most recently ran task is
+head and balancing takes from the tail, the task longest not ran.
+
+The task longest not ran should have build up eligibility.
 
