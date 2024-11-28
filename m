@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-424825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D284F9DB9EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:52:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A279DB9F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471AD281D42
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB85DB21DDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4F01BD9CA;
-	Thu, 28 Nov 2024 14:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C3D1B6D00;
+	Thu, 28 Nov 2024 14:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="D+FnNRBW"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SfRGNbSx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Iwjf8d79"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032441BC065;
-	Thu, 28 Nov 2024 14:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74381B3940;
+	Thu, 28 Nov 2024 14:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732805493; cv=none; b=pWBNDBqPsWx+RTlYRSYPYiv/vmSr+iP1sbDsqUdJ1Gepr9bFKUPIUPZfEjAT0ds3H58BKgxIgjRWAw5KuFG8kexhnVxRB6+UFkTzuNRuOp9iOZG1s5CnKeGalFCnOU9HDWp3EGLKAV6kKhKsuOmjdFFIFGTCAJi1LrpvBbwdJj8=
+	t=1732805511; cv=none; b=iIteNFIv0JPptijXtPw3uDHaOXlv373u357hUiYV2jsXfIdx+X/XojbHfKZ8K98eESAEL/H6Q8x79ket9/kMxG4CUkK2xKbCQOnuS6oqAMY8QkY0mS/+GA0q9Uu8OO2MYYTY3fnKtw8Q9fEmP8L/dVed0gKHw+Pu9/MdWE6fY54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732805493; c=relaxed/simple;
-	bh=gykNvCSx5PNdnquYd1VHSOHJ/RJXek/+SRQGOnywt8g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rLD5Z+Sowf7iShHEmNWf1MuQa1u0QS2nqZaaFh1XB+XPfFSmIwutH9Ahm+tHXYF9VN2sECxAf1LoyRkl3esbFqi2bNTYE89ehe4Tdoikqm8UsX3AT6m5dMYoz6m5Eb0RfFBOivtEzV9+aglS/6tGqFXJ4Xjs2FrMAuIduOUHkz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=D+FnNRBW; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732805483; x=1733410283; i=w_armin@gmx.de;
-	bh=3FZ63viKN++1lQdM4gtxY4u7uvshhkYMJ8O/He4ViR8=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=D+FnNRBWHNXjzqzTBcEAfSQZTVXeC/iWgYCJ2S7SEsGtd2turGz8zSdeAw4yvPMj
-	 aZuW+TtFHsj/THpZsVmpLDQqfxQUgIo8yH3na9nDDkBakiYYh45F+CQatY6HKBmIa
-	 zImXZsCszXJkpChQI2JgaEfrn4VYAlXSHaEUHs4f/1ux1hVyIlCm64eSTo0/ykb0F
-	 mEvB5y6mlZmH19SjBS/oXp1DFVRVSiZ0uLCZhcoStl7+xBAcKP/ToZsgvawlEvXiM
-	 +tOLFqpQw1zT+LTUvEv1YkwAh7izE2imK0ODfLFGEDoD11i1Xt3ywyoi9wqykgfAG
-	 Q12f+qe8V7eLTQ2qHQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-inspiron.dip.tu-dresden.de ([141.76.179.133]) by
- mail.gmx.net (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1N4hvR-1tixqO0k4t-00wgD3; Thu, 28 Nov 2024 15:51:23 +0100
-From: Armin Wolf <W_Armin@gmx.de>
-To: jlee@suse.com,
-	farhan.anwar8@gmail.com,
-	rayanmargham4@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] platform/x86: acer-wmi: Ignore AC events
-Date: Thu, 28 Nov 2024 15:51:04 +0100
-Message-Id: <20241128145104.13538-6-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241128145104.13538-1-W_Armin@gmx.de>
-References: <20241128145104.13538-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1732805511; c=relaxed/simple;
+	bh=n8U2ayfWPgEeW+5Oau+MZHYURLe9sJhQQ6lBa6wBwT4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=oStiZvuD/xfGYsc8J5IyHd2Rd/AwLEMBky6jRZ0YvVItcB4QwbZCPUFEWtoqhOfDt4GJlSoiWVpyT8O9+jrJ/9to1KkZIusd6BuQcZbWLT/eDnMcIMsBVDzzSg9AtW+5mSYEsC4nn43H/II0Yaw9ONXBO6eyKDMd7yUsSK0imCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SfRGNbSx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Iwjf8d79; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id BF24425400A5;
+	Thu, 28 Nov 2024 09:51:48 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 28 Nov 2024 09:51:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732805508;
+	 x=1732891908; bh=Nvj5qGX5G2PMGXhss3Df4ipdWlAYJ5skJ78Vn1xtCpY=; b=
+	SfRGNbSxbf69WwlPPcdB+A1+NjxlMcy0lpC+SSd0ukpKdsJMirQRGMzJO0PBbgj6
+	HruG0UkuOekrq50Y0hniLn2OAy9BAcQlhgB+ZLDDmXdTWBW8b4g2/3IuZcNxQuiC
+	cnmWeELieUs9ftvYaaNUOcbGe1K2CsydwS0P9bmRHMJroNxWhVxJygo9yMwn1N0T
+	IC0nmf+4eT4zlhubQLACHOwiGD6Meq/gkT/Nd3bUIW0Ss1+gsFzqV1hZRZK5sU4A
+	ylRNuvq5n0oobNtYZQiME106Cp1uFqBpCqrvZ2XY6tzYizKyoeNIWp3bcpC8jX8m
+	99ThUYqk/92PswG0nXLuWw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732805508; x=
+	1732891908; bh=Nvj5qGX5G2PMGXhss3Df4ipdWlAYJ5skJ78Vn1xtCpY=; b=I
+	wjf8d798kFppIMUOEHDpaoZYD04jES73iokdsjAjBihZMPmgE4Q4rtszYHxcO+/y
+	U+d8afCiWqQXGroNxxQDPiwUsK8gXzz2DQFioMeLvkApMRoPcFLyGVsJA58S2pS7
+	/fY2rED59sjz7CGIi3s4JDz+ogsaHZRqcH3GNBGVxeOHz4IHcNBx7w8Rr877c1xu
+	WG94n0x7HDe/m7O1AbQ9x+GWmr5Rs76OtDoitqRFKiC3WnPTA/w6i+sTbAhuKJLx
+	hZaPBbkhB3OIylDKrxhFBIOshx08XGDiRkfz9JMlmQUZ35QH2Ujsm3WGGEUA8Yx1
+	PZQ6LQZoQhb+V89ZPzOOg==
+X-ME-Sender: <xms:hINIZwNXKTnPONIpMt50uNL7VqO-ITF1Gs-RdBHksp7jZbFoSmNLPw>
+    <xme:hINIZ2_agJMIGAZYiO4G-v3bIeiqTzg5Qte3HkBIRxN4JKESiQcLf0P18357_-LPD
+    BwaMOmx-QK2A6UtUZw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedugdeikecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeek
+    leffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhn
+    uggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehjsghruhhnvghtsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehkhhhi
+    lhhmrghnsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehmthhurhhquhgvthhtvg
+    essggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepmhgrrhhtihhnrdgslhhumhgvnhhs
+    thhinhhglhesghhoohhglhgvmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivg
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdgrmhhlohhgihgtsehlihhsthhsrdhinhhfrhgruggvrggu
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrd
+    hinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:hINIZ3QT0Sm-Bx4zfEyc_Z4ez2O-PnnwY5O8A3YC47TWeATbfKcaWQ>
+    <xmx:hINIZ4vsUnEo-YyUZwjxjhTihjtuGvk1V_pBHL2wCwVDsRVhqE5xQw>
+    <xmx:hINIZ4ddO5cu1zeBK71d0DcsvEazaW3Ku-eWSx4NOq_WebWWHf3Esw>
+    <xmx:hINIZ824qIVlj1SfqluJBHFknWbFjfOG3ulCfXkKzVBc7FmRvT1S2w>
+    <xmx:hINIZ5VfYG43sEXFIpDuk6K68328vo1UgBeR13LIUTptMxZ65LhvBHMq>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4AED42220072; Thu, 28 Nov 2024 09:51:48 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9JE+u2lwO4nazIYjTlKhrNT+5oryEjBXMWQ/cAzxt49Qx9C6Nlt
- inb7zXz/tCB+DVqMfigMiyjbAFwEITx/ftJd1Z1jxALdGkH8Kge1gaFqFXNe6LoVUzQfEhh
- 61z+7/znONM9JtC+FtW95I1yaBrk1jU4QIzLAArltGL70hFWOlEiOEC+EAz//jubjBQC/tm
- u85mzzGeaDkJ65aQkV2FQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pvv8qCmfjLI=;W8MP2m9MVtyZubtmPdQfYJC3RYK
- S4CC5VwnEkA+F81KVGALVFyEBY2XQbmAfLCfSTuChp1XD5NSx7UhP21ZT4P15uViHaiUSQt62
- Kr6pi7XdgifDRZJIsXbWcY2kcrMplFOwu89PN+BU6xt7w6KzAIIwq5FAykmblz/9yPUGG/plJ
- rdUMDjvdHeYUuxBqPENtcdOJd1rFZzpCQlD/nngwK1kQQc3hx9RJxkdwrpm4+Xa4Y05RPjL0Y
- K0Zn5RCQjpc6GMlEuEv7/utAjUMy9L8UTSY0tRNwNEgw/rCpyv5BWa4PXxUTOmgAM89GhE46r
- W21Y3DMlPqKviGDFdiCU2KXvO2EjyrdMrYZphbic03/h3XhqdbSxxpTBAQN1V6J7448dUjcNH
- QjriHUdqWR47Gd4uVAnVU/h1GjxQaKuEmu9RVyozUi2w9TM4h/KutMqRrxEJO7uQMKVIo9AOe
- roNUsOzcOlIC7TUFJKpqMDJNkhE/quxaiGjYgiBwQ0p8Gf3pF66eArphBqemYIJSX8a4XdNMW
- +r4VzT42p1mJNFutStOdR+bZFaezHQGdRBQlj5jkl+njDAilkIguWz1ejSNMaCXrtVENWvm9h
- eKnQDfCZiP7AqtiJUHl1JtgZ4u3lpAcDvuSfpDbk9tGJDrvmkbw/4H/2ikPov+e7W0aYEwno/
- NfaJFqZBvOLOMmVgd5nDSEJ+4daPnTgrEbew2WobwYVbvRdpD7WGujbBidPvF1N36ZjRszKpQ
- qkd7WCFWJrSOCWZVorscsZMJB53wPVmmGhJAGNUk9p/JT0vZk+0BwHetT7MsYx+TOSf4Pm+Pt
- 3mCcZT/bIHFJJny/9RGZrGooPkOQAEBalpsGVJfl3RVGQv2i1h/4yHRZvk9oP38No0R5FlWi2
- EGAoSYhceoqNZLNzNHoYNBcpyzgteajamoeCwhMA0dpMaa9PPQUnQkfz7rSdUImsoL/DzFj2l
- LGRKVSZsccU8MQJfPqdy/7lN6GK50zYlmBOuXHmlI8dVNeDseJkG8KHntLAV0N6SBKx/J08Rs
- XCBi/RapowDiZkC0ZhhUuQil2HojIjZ0t4XWoimdahHkpbE1Ezj/E2qrN4NDTFwzmKeULbFq6
- dgRbKaIxjxuXfpJnPSwFJQ2/gIPSgU
+Date: Thu, 28 Nov 2024 15:51:28 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jerome Brunet" <jbrunet@baylibre.com>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>
+Message-Id: <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
+In-Reply-To: <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+References: 
+ <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+ <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+ <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
+ <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
+ <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
+ <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
+ <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On the Acer Swift SFG14-41, the events 8 - 1 and 8 - 0 are printed on
-AC connect/disconnect. Ignore those events to avoid spamming the
-kernel log with error messages.
+On Thu, Nov 28, 2024, at 15:39, Jerome Brunet wrote:
+> On Thu 28 Nov 2024 at 15:11, "Arnd Bergmann" <arnd@arndb.de> wrote:
+>
+>>> All clk, pinctrl or regulator are used by other driver yes, this one as
+>>> well, sure.
+>>>
+>>> What special about this on is that it is an auxiliary bus driver.
+>>> It is directly instantiated by another driver. That's where
+>>> it differs. The axg-audio clock driver instantiate the auxiliary reset,
+>>> it does not use it, which is why it makes sense for it to select the
+>>> driver.
+>>
+>> Can you explain the logic behind this design? It seems that the
+>> entire problem here is the split into more drivers than it
+>> should be. It's common for clk drivers to also act as a
+>> reset driver, and my impression here is that you were trying
+>> too hard to split out the reset functionality into file
+>> in drivers/reset/ rather than to have it in drivers/clk/.
+>>
+>> Could you perhaps move the contents of
+>> drivers/reset/amlogic/reset-meson-aux.c into
+>> drivers/clk/meson/axg-audio.c, and change the exported
+>> symbol to a static function? This would still require
+>> a dependency on the exported meson_reset_toggle_ops,
+>> but that feels like a more natural interface here,
+>> since it's just a library module.
+>
+> That's what we originally had. Reset implemented in clock.
+> I was specically asked to move the reset part in reset using
+> aux drivers.
+>
+> https://lore.kernel.org/r/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+>
+> Eventually that will happen for the rest of the reset implemented
+> under drivers/clk/meson.
+>
+> It allows to make some code common between the platform reset
+> drivers and the aux ones. It also ease maintainance for both
+> Stephen and Philipp.
 
-Reported-by: Farhan Anwar <farhan.anwar8@gmail.com>
-Closes: https://lore.kernel.org/platform-driver-x86/2ffb529d-e7c8-4026-a3b=
-8-120c8e7afec8@gmail.com
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/acer-wmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I don't understand how this helps: the entire point of using
+an auxiliary device is to separate the lifetime rules of
+the different bits, but by doing the creation of the device
+in the same file as the implementation, you are not taking
+advantage of that at all, but instead get the complexity of
+a link-time dependency in addition to a lot of extra code
+for dealing with the additional device.
 
-diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
-mi.c
-index e2615ab3fd25..cbd1c473a45b 100644
-=2D-- a/drivers/platform/x86/acer-wmi.c
-+++ b/drivers/platform/x86/acer-wmi.c
-@@ -99,6 +99,7 @@ enum acer_wmi_event_ids {
- 	WMID_HOTKEY_EVENT =3D 0x1,
- 	WMID_ACCEL_OR_KBD_DOCK_EVENT =3D 0x5,
- 	WMID_GAMING_TURBO_KEY_EVENT =3D 0x7,
-+	WMID_AC_EVENT =3D 0x8,
- };
-
- enum acer_wmi_predator_v4_sys_info_command {
-@@ -2304,6 +2305,9 @@ static void acer_wmi_notify(union acpi_object *obj, =
-void *context)
- 		if (return_value.key_num =3D=3D 0x5 && has_cap(ACER_CAP_PLATFORM_PROFIL=
-E))
- 			acer_thermal_profile_change();
- 		break;
-+	case WMID_AC_EVENT:
-+		/* We ignore AC events here */
-+		break;
- 	default:
- 		pr_warn("Unknown function number - %d - %d\n",
- 			return_value.function, return_value.key_num);
-=2D-
-2.39.5
-
+     Arnd
 
