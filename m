@@ -1,277 +1,301 @@
-Return-Path: <linux-kernel+bounces-425056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2649F9DBCEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:35:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FCC9DBCEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:36:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477BDB21856
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D471648AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082491C2DA2;
-	Thu, 28 Nov 2024 20:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFB21C32E4;
+	Thu, 28 Nov 2024 20:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="GKzkVsxz"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XpmT6/Vw"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C245812C7FD
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D9012C7FD
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732826145; cv=none; b=KdvtntlU37rlAr7PL7hrlyMun6LW1rbkAQL5bepzofbnrkyGZE5z15HXw9SPhpJSdmLLZw47yJHwwsD/GA5t0Ua/I0Lh9hnRLgetZaawV+HpidlDs2hXZGFvf8Lpjrxowxf6bR3Nekzvow4MLidFEFj+YpdHfmzCJuNnbJSP0UE=
+	t=1732826183; cv=none; b=P7zntFDCytYx/rieE6ElX+y0KboJFwjmLUPordajKeVQhmyYN57EkpHWbmIJ1HtuhBAEulA39/BZtdObFYPAz9MvRrGT0geOwcLn6arrMxEeUu7MIAPBpcS4gph0ZbtBaFGEefB7IZVn2v1URvVI3OT4k5feZxQiLCrmCy9TPYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732826145; c=relaxed/simple;
-	bh=gSIx+pCpI5ZEUmzZQreRDyEk1tyWKE0ReEOQOlA3/h8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fZXlS0KUljIWMgX+mpNADU7/AWEwj4MDrp8kdKNYO8bllQy9U/m1eM5z2cDYhmVx1G7s80VOV4zpwqrL1WU9jPuHjigTiQoOq5KFt3Dhr70BThO4s0ArwWsZf5BZBve/slzT1jGuv0q3kqhsD9sIWVcYKprvI8r+lC8p9SwUMss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=GKzkVsxz; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id E59861770BE; Thu, 28 Nov 2024 20:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1732826142; bh=gSIx+pCpI5ZEUmzZQreRDyEk1tyWKE0ReEOQOlA3/h8=;
-	h=Date:From:To:Subject:From;
-	b=GKzkVsxzuGsGtyPSYSqeY6QR7xzo/mPMBrL3UA4Z7E4THLh0RVDStKoNPnwn8QfbQ
-	 meKtJqOSlEsTOo6gmHlCyXF2fRXOo/WkpuxBVPiXjNvLaVEllc4JbWB1c2AJUs7hnH
-	 QFAK2hXbuyCibwDqN/copc+iRRY9xCG2t5f2TZWiSIERrHgXQ4cHRCrAtjzoX1WvEF
-	 Dun32kRItywsGQYowdAc22rej6ZcIW42eHYjnohr4U9on5Dc5e2q1yhyjMhw0AuXDY
-	 7zyXfbcD+YtmZMaF7VYA00Tfkl7vUwVRixF9ugLLs6ZovN1gj82r1dYRgRmI2/39CA
-	 +UdGn10AR336g==
-Date: Thu, 28 Nov 2024 20:35:42 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: dianders@chromium.org, jason.wessel@windriver.com, danielt@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kdb: utilize more readable control characters macro in
- kdb io
-Message-ID: <20241128203542.GA370417@lichtman.org>
+	s=arc-20240116; t=1732826183; c=relaxed/simple;
+	bh=KnKDkO/LxGWDdjT+o3TpUORCbbUXaeZsLJF5S8hD0i0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jl+2p1xbPicNkU+uIvqiD3aqv1aof8jf0J9uE4L+znbcEK5qXg0qBQB23bj8z0chyH2xgTH5jDrkMl9y5FfS3c2a4IqRk1lnkycAVTWC8fhMuOZ+l1lTeHPpNVxLMgEkPO85WHymHF/RkQ1ev0iS2RlQ53TRPRsfeqbvMUytn4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XpmT6/Vw; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2128383b86eso10182045ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:36:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732826180; x=1733430980; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVBbCgwD2fV6O+Mi5PMdfn6J90+s+eCIZngth27HNHE=;
+        b=XpmT6/VwjBxU5cJqBb5jhhNSUba/Y5/mYMBkBYXjq0ezO3cFld+wt3mdNd8QPX4VhU
+         J2aTcSHqU+uqeIDrmywYdiTwomNarllPWnZc1tQsY83sL0eQ/zERUzR+vgd1Qbwjr6RE
+         PwVgjQHSBilUH3cfyp6ySLa5ZqAqlUmFxAbwE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732826180; x=1733430980;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SVBbCgwD2fV6O+Mi5PMdfn6J90+s+eCIZngth27HNHE=;
+        b=T+B/txSEBKTECFmovdTVf4ER6m6ph+vqI2a1d1DLCIerRSm1WNGFf9NUvscRX1VQPh
+         f8Mpg2DZ+3h4Tzy97su2vPPjKJ9QnQkVRnbWaO+fNpxjHD5JOc01isrEH1riyA2M/FdE
+         gEudsOrcZWblYBGi06EhmfFw6curMHTmusskqs38urhZnKOqih7TgbGgif6AeISPdwnR
+         CgTMU6EWxJKxrdXWqsQppbudTnTxMn76sVbuWaM88xanOO89JsMeaCXJ9fB92I2L34yA
+         iqGLrogQQM7zEo5SNLuKpL4OrCPr2lLxAS74Qv7OY8rz7aO2+8g40pCYHr/tuivqjH91
+         oPkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuj04QyzBxtVTq1r5nkWUCF9PvLoipVHlX4P2ls0hqg5a+aYHnq90R0A+73tjfR37Sb+GO7tyeD0Z/cys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAwgRRSwBwfmxuFDmAfGZCP4TeaafciwvE1T//GR8HFVFGz2sB
+	FFcv3XGGMVDVCL5/cNqmtA1trKjrjT3eOWAYAKRp0toJd2TiwVfWvZzW6sHXcBnR/zYQ+M6pHA8
+	=
+X-Gm-Gg: ASbGncu/B2kqPqFVid8JgkOSYYJw0mWk89CCTnU1g+15DLhbhXw12v1t9ZhuW+98zOs
+	xtDjloOEgb400QBEC/yEMT+tVmd8YZ/ShUOm8Gc7V7aUO563wdFvjf49EZUMrCmfqAfU0vCL+vg
+	I1L667ABW60LUeMQeeRwhr3kCRiWPRiGa9uas7ZiQaJqsa3+MSwsSDU08TtupgJixZnac1613G1
+	plBjnMBz5+5CoXg0plERm8Z7CLEszu/0v3HF/mPnH3bcMS1Ms2pOakvX2npjUiF/BORjSoAecf3
+	PwDCrLlAylwm
+X-Google-Smtp-Source: AGHT+IGgcc479jTU8zOl9CtcKoPcHgC0Lp86Tv94nB1ydJQw8CPoI/mv0j3KialL/d79MQ5ZppDULA==
+X-Received: by 2002:a17:902:cccc:b0:215:385e:921c with SMTP id d9443c01a7336-215385e976amr21973985ad.51.1732826180426;
+        Thu, 28 Nov 2024 12:36:20 -0800 (PST)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com. [209.85.216.45])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c2d4bc6sm1783238a12.9.2024.11.28.12.36.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 12:36:19 -0800 (PST)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2eacc4c9164so960115a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:36:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU5tXcEuQzrbtU0kWlwF44Tmz4p8fygHwK37E5aIb2o2PYfaWs8RsE67loYKifhqK2aHLBXR72Pi77KBGI=@vger.kernel.org
+X-Received: by 2002:a17:90b:1b47:b0:2ea:9bdc:8f96 with SMTP id
+ 98e67ed59e1d1-2ee097bb2aamr11057592a91.30.1732826179018; Thu, 28 Nov 2024
+ 12:36:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org>
+ <20241128202442.GC13852@pendragon.ideasonboard.com> <20241128203127.GD13852@pendragon.ideasonboard.com>
+In-Reply-To: <20241128203127.GD13852@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 28 Nov 2024 21:36:06 +0100
+X-Gmail-Original-Message-ID: <CANiDSCt69HXfRmWHKGELWoUE45bZeWUgVc3C7=aAvykUYZBUzQ@mail.gmail.com>
+Message-ID: <CANiDSCt69HXfRmWHKGELWoUE45bZeWUgVc3C7=aAvykUYZBUzQ@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: Remove duplicated cap/out code
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Continuing the previous refactor in kdb_keyboard.c of adding the CTRL
-macro, this patch moves the macro to a common header and utilizes this
-pattern in kdb_io.c as well, resulting in more readable code.
+On Thu, 28 Nov 2024 at 21:31, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Thu, Nov 28, 2024 at 10:24:42PM +0200, Laurent Pinchart wrote:
+> > Hi Ricardo,
+> >
+> > Thank you for the patch.
+> >
+> > On Wed, Nov 27, 2024 at 07:31:29AM +0000, Ricardo Ribalda wrote:
+> > > The *_vid_cap and *_vid_out helpers seem to be identical. Remove all the
+> > > duplicated code.
+> > >
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > > Unless I miss something, cap and out helpers are identical. So there is
+> > > no need to duplicate code
+> > > ---
+> > >  drivers/media/usb/uvc/uvc_v4l2.c | 112 ++++++++-------------------------------
+> > >  1 file changed, 22 insertions(+), 90 deletions(-)
+> > >
+> > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > index 97c5407f6603..11ccdaf0269f 100644
+> > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > @@ -361,9 +361,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+> > >     return ret;
+> > >  }
+> > >
+> > > -static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+> > > -   struct v4l2_format *fmt)
+> > > +static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> > > +                      struct v4l2_format *fmt)
+> > >  {
+> > > +   struct uvc_fh *handle = fh;
+> > > +   struct uvc_streaming *stream = handle->stream;
+> > >     const struct uvc_format *format;
+> > >     const struct uvc_frame *frame;
+> > >     int ret = 0;
+> > > @@ -395,9 +397,11 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+> > >     return ret;
+> > >  }
+> > >
+> > > -static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+> > > -   struct v4l2_format *fmt)
+> > > +static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> > > +                      struct v4l2_format *fmt)
+> > >  {
+> > > +   struct uvc_fh *handle = fh;
+> > > +   struct uvc_streaming *stream = handle->stream;
+> > >     struct uvc_streaming_control probe;
+> > >     const struct uvc_format *format;
+> > >     const struct uvc_frame *frame;
+> > > @@ -685,11 +689,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
+> > >     return 0;
+> > >  }
+> > >
+> > > -static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+> > > +static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
+> > >                           struct v4l2_fmtdesc *fmt)
+> > >  {
+> > > -   const struct uvc_format *format;
+> > > +   struct uvc_fh *handle = fh;
+> > > +   struct uvc_streaming *stream = handle->stream;
+> > >     enum v4l2_buf_type type = fmt->type;
+> > > +   const struct uvc_format *format;
+> > >     u32 index = fmt->index;
+> > >
+> > >     if (fmt->type != stream->type || fmt->index >= stream->nformats)
+> > > @@ -707,82 +713,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+> > >     return 0;
+> > >  }
+> > >
+> > > -static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
+> > > -                                 struct v4l2_fmtdesc *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -
+> > > -   return uvc_ioctl_enum_fmt(stream, fmt);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
+> > > -                                 struct v4l2_fmtdesc *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -
+> > > -   return uvc_ioctl_enum_fmt(stream, fmt);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
+> > > -                              struct v4l2_format *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -
+> > > -   return uvc_v4l2_get_format(stream, fmt);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
+> > > -                              struct v4l2_format *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -
+> > > -   return uvc_v4l2_get_format(stream, fmt);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
+> > > -                              struct v4l2_format *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -   int ret;
+> > > -
+> > > -   ret = uvc_acquire_privileges(handle);
+> > > -   if (ret < 0)
+> > > -           return ret;
+> >
+> > Has this now silently disappeared ?
+> >
+> > > -
+> > > -   return uvc_v4l2_set_format(stream, fmt);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
+> > > -                              struct v4l2_format *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -   int ret;
+> > > -
+> > > -   ret = uvc_acquire_privileges(handle);
+> > > -   if (ret < 0)
+> > > -           return ret;
+> > > -
+> > > -   return uvc_v4l2_set_format(stream, fmt);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
+> > > -                                struct v4l2_format *fmt)
+> > > -{
+> > > -   struct uvc_fh *handle = fh;
+> > > -   struct uvc_streaming *stream = handle->stream;
+> > > -   struct uvc_streaming_control probe;
+> > > -
+> > > -   return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
+> > > -}
+> > > -
+> > > -static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
+> > > -                                struct v4l2_format *fmt)
+> > > +static int uvc_ioctl_try_fmt(struct file *file, void *fh,
+> > > +                        struct v4l2_format *fmt)
+> > >  {
+> > >     struct uvc_fh *handle = fh;
+> > >     struct uvc_streaming *stream = handle->stream;
+> > > @@ -1544,14 +1476,14 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
+> > >
+> > >  const struct v4l2_ioctl_ops uvc_ioctl_ops = {
+> > >     .vidioc_querycap = uvc_ioctl_querycap,
+> > > -   .vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
+> > > -   .vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
+> > > -   .vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
+> > > -   .vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
+> > > -   .vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
+> > > -   .vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
+> > > -   .vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
+> > > -   .vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
+> > > +   .vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
+> > > +   .vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
+> > > +   .vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
+> > > +   .vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
+> > > +   .vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
+> > > +   .vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
+> > > +   .vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
+> > > +   .vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
+>
+> Also, if you're removing wrapper, let's do the same for
+> uvc_ioctl_g_parm() and uvc_ioctl_s_parm(). Furthermore, please try to
+> preserve the order of the function definitions, sorting them as in the
+> ioctl_ops structure.
 
-I have added the _KEY suffix to make the macro more clear, considering
-it is now common.
+ack.
 
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
+Do you want the reorder in a different patch to ease the review or in the same?
 
-v2: Refactor another line CTRL+I line I missed in v1 and remove CTRL+K/U
-I accidentaly included in v1.
+>
+> > >     .vidioc_reqbufs = uvc_ioctl_reqbufs,
+> > >     .vidioc_querybuf = uvc_ioctl_querybuf,
+> > >     .vidioc_qbuf = uvc_ioctl_qbuf,
+> > >
+> > > ---
+> > > base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+> > > change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
- kernel/debug/kdb/kdb_io.c       | 38 ++++++++++++++++-----------------
- kernel/debug/kdb/kdb_keyboard.c | 34 ++++++++++++++---------------
- kernel/debug/kdb/kdb_private.h  |  2 ++
- 3 files changed, 37 insertions(+), 37 deletions(-)
 
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index 6a77f1c779c4..5d69aa93652c 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -76,13 +76,13 @@ static int kdb_handle_escape(char *buf, size_t sz)
- 	case 3:
- 		switch (*lastkey) {
- 		case 'A': /* \e[A, up arrow */
--			return 16;
-+			return CTRL_KEY('P');
- 		case 'B': /* \e[B, down arrow */
--			return 14;
-+			return CTRL_KEY('N');
- 		case 'C': /* \e[C, right arrow */
--			return 6;
-+			return CTRL_KEY('F');
- 		case 'D': /* \e[D, left arrow */
--			return 2;
-+			return CTRL_KEY('B');
- 		case '1': /* \e[<1,3,4>], may be home, del, end */
- 		case '3':
- 		case '4':
-@@ -94,11 +94,11 @@ static int kdb_handle_escape(char *buf, size_t sz)
- 		if (*lastkey == '~') {
- 			switch (buf[2]) {
- 			case '1': /* \e[1~, home */
--				return 1;
-+				return CTRL_KEY('A');
- 			case '3': /* \e[3~, del */
--				return 4;
-+				return CTRL_KEY('D');
- 			case '4': /* \e[4~, end */
--				return 5;
-+				return CTRL_KEY('E');
- 			}
- 		}
- 		break;
-@@ -264,10 +264,10 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 	kdb_printf("%s", buffer);
- poll_again:
- 	key = kdb_getchar();
--	if (key != 9)
-+	if (key != CTRL_KEY('I'))
- 		tab = 0;
- 	switch (key) {
--	case 8: /* backspace */
-+	case CTRL_KEY('H'): /* backspace */
- 		if (cp > buffer) {
- 			memmove(cp-1, cp, lastchar - cp + 1);
- 			lastchar--;
-@@ -276,8 +276,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 			kdb_position_cursor(kdb_prompt_str, buffer, cp);
- 		}
- 		break;
--	case 10: /* linefeed */
--	case 13: /* carriage return */
-+	case CTRL_KEY('J'): /* linefeed */
-+	case CTRL_KEY('M'): /* carriage return */
- 		*lastchar++ = '\n';
- 		*lastchar++ = '\0';
- 		if (!KDB_STATE(KGDB_TRANS)) {
-@@ -286,7 +286,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 		}
- 		kdb_printf("\n");
- 		return buffer;
--	case 4: /* Del */
-+	case CTRL_KEY('D'): /* Del */
- 		if (cp < lastchar) {
- 			memmove(cp, cp+1, lastchar - cp);
- 			lastchar--;
-@@ -294,39 +294,39 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 			kdb_position_cursor(kdb_prompt_str, buffer, cp);
- 		}
- 		break;
--	case 1: /* Home */
-+	case CTRL_KEY('A'): /* Home */
- 		if (cp > buffer) {
- 			cp = buffer;
- 			kdb_position_cursor(kdb_prompt_str, buffer, cp);
- 		}
- 		break;
--	case 5: /* End */
-+	case CTRL_KEY('E'): /* End */
- 		if (cp < lastchar) {
- 			kdb_printf("%s", cp);
- 			cp = lastchar;
- 		}
- 		break;
--	case 2: /* Left */
-+	case CTRL_KEY('B'): /* Left */
- 		if (cp > buffer) {
- 			kdb_printf("\b");
- 			--cp;
- 		}
- 		break;
--	case 14: /* Down */
--	case 16: /* Up */
-+	case CTRL_KEY('N'): /* Down */
-+	case CTRL_KEY('P'): /* Up */
- 		kdb_printf("\r%*c\r",
- 			   (int)(strlen(kdb_prompt_str) + (lastchar - buffer)),
- 			   ' ');
- 		*lastchar = (char)key;
- 		*(lastchar+1) = '\0';
- 		return lastchar;
--	case 6: /* Right */
-+	case CTRL_KEY('F'): /* Right */
- 		if (cp < lastchar) {
- 			kdb_printf("%c", *cp);
- 			++cp;
- 		}
- 		break;
--	case 9: /* Tab */
-+	case CTRL_KEY('I'): /* Tab */
- 		if (tab < 2)
- 			++tab;
- 
-diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
-index 3a74604fdb8a..d6a55d1e0ef9 100644
---- a/kernel/debug/kdb/kdb_keyboard.c
-+++ b/kernel/debug/kdb/kdb_keyboard.c
-@@ -25,8 +25,6 @@
- #define KBD_STAT_OBF 		0x01	/* Keyboard output buffer full */
- #define KBD_STAT_MOUSE_OBF	0x20	/* Mouse output buffer full */
- 
--#define CTRL(c) ((c) - 64)
--
- static int kbd_exists;
- static int kbd_last_ret;
- 
-@@ -128,21 +126,21 @@ int kdb_get_kbd_char(void)
- 	/* Translate special keys to equivalent CTRL control characters */
- 	switch (scancode) {
- 	case 0xF: /* Tab */
--		return CTRL('I');
-+		return CTRL_KEY('I');
- 	case 0x53: /* Del */
--		return CTRL('D');
-+		return CTRL_KEY('D');
- 	case 0x47: /* Home */
--		return CTRL('A');
-+		return CTRL_KEY('A');
- 	case 0x4F: /* End */
--		return CTRL('E');
-+		return CTRL_KEY('E');
- 	case 0x4B: /* Left */
--		return CTRL('B');
-+		return CTRL_KEY('B');
- 	case 0x48: /* Up */
--		return CTRL('P');
-+		return CTRL_KEY('P');
- 	case 0x50: /* Down */
--		return CTRL('N');
-+		return CTRL_KEY('N');
- 	case 0x4D: /* Right */
--		return CTRL('F');
-+		return CTRL_KEY('F');
- 	}
- 
- 	if (scancode == 0xe0)
-@@ -176,14 +174,14 @@ int kdb_get_kbd_char(void)
- 	case KT_LATIN:
- 		switch (keychar) {
- 		/* non-printable supported control characters */
--		case CTRL('A'): /* Home */
--		case CTRL('B'): /* Left */
--		case CTRL('D'): /* Del */
--		case CTRL('E'): /* End */
--		case CTRL('F'): /* Right */
--		case CTRL('I'): /* Tab */
--		case CTRL('N'): /* Down */
--		case CTRL('P'): /* Up */
-+		case CTRL_KEY('A'): /* Home */
-+		case CTRL_KEY('B'): /* Left */
-+		case CTRL_KEY('D'): /* Del */
-+		case CTRL_KEY('E'): /* End */
-+		case CTRL_KEY('F'): /* Right */
-+		case CTRL_KEY('I'): /* Tab */
-+		case CTRL_KEY('N'): /* Down */
-+		case CTRL_KEY('P'): /* Up */
- 			return keychar;
- 		}
- 
-diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
-index d2520d72b1f5..1f29df5d89b8 100644
---- a/kernel/debug/kdb/kdb_private.h
-+++ b/kernel/debug/kdb/kdb_private.h
-@@ -227,6 +227,8 @@ extern char kdb_prompt_str[];
- 
- #define	KDB_WORD_SIZE	((int)sizeof(unsigned long))
- 
-+#define CTRL_KEY(c) ((c) - 64)
-+
- #endif /* CONFIG_KGDB_KDB */
- 
- #define kdb_func_printf(format, args...) \
+
 -- 
-2.39.2
-
+Ricardo Ribalda
 
