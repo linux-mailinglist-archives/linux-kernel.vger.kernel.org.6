@@ -1,244 +1,125 @@
-Return-Path: <linux-kernel+bounces-424398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8973B9DB3E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:39:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CA39DB3EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FBF282635
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5196281B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1282014F115;
-	Thu, 28 Nov 2024 08:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7FA14F115;
+	Thu, 28 Nov 2024 08:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AC7qpo50"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a/S6bdZg"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5588F14B945;
-	Thu, 28 Nov 2024 08:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D21814AD22
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783140; cv=none; b=Nh449VsxDqi/zftSVsC9UQLk3DRUiM4C6YmATeoBchI+0mFaSQNVZZ7CPLhyHnzK6mYrxNq8z4SdGFkeNyrZDbzL0J7h7MRaxRyGn5a4YnKwKHGoRNiBUPg9CEe9iQEvOcguSYGsNVB54B+5cj5OxE7mjQdJdYH8DgYCzVoS0+w=
+	t=1732783207; cv=none; b=apnNtGYBMJrXZ7wTmdlW/VW9UR0qaIap1wKm3Rqw7R08w2UTddpK7fa0WTlQLUakkMBG5quOInbzEMSFG+5jeW9f8wzMBHMM2U+o+4kExMVlyBLHrZdtzCwg4oerq1iNAMTbwg4ooMviCOuBxhDgO5HVDUbcUwxLHVlVJK48hzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783140; c=relaxed/simple;
-	bh=QHNUYOXfKmBqQs4XnAF2SqCz5YEJFGvdWeQ5oQ3T1X0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fojQIhEI4NRE7XY/0VyQHoWviufEeiKACOrNt5brzp7mYBJez1l9QRU/QsFsMJc8e/dXOqK8enGWKsRIUmjQEDZK+5+jhn1mVT+PstZVdH4S6ZT0nWkjkCmd+YCI66VKbtXD8YxTBiHbQcMaGrObZ/FdMJk7QQWr4wH7XYb+NRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AC7qpo50; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732783138; x=1764319138;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QHNUYOXfKmBqQs4XnAF2SqCz5YEJFGvdWeQ5oQ3T1X0=;
-  b=AC7qpo508b0VNyoOXwffNsS0n2Be03GnbpSdSrqQ+tIRmFit97V2pMtz
-   4Fvusvigs/6uPo9kw2nEpFeAZjqxMj8lx32QDhc7rZVBDuz0GhBEh/iJy
-   JmcnB5sKEJKoofocsGPK4quWaWemfT6ehDgSkeQvkMIN56gr2QZNB+AzI
-   1UnH78oGMQeVZ5o8UhPweffvNfQz00N4dhOUbHqgBAhur36WnF6b62geL
-   BY/Bwkm0Gw9RkBmpdimiau5hjhmXDWassHwVIbATrLoR022f4LZDfhUca
-   SE5B3bIDssERjg9KPiJpMpGtsaWwEgDiC1SzFleJbHZJGYnhq0sd0c740
-   w==;
-X-CSE-ConnectionGUID: 7Imu0u4PTziQJahBSYEp7Q==
-X-CSE-MsgGUID: Cfh3gLOyTta8036JCDKcUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43620703"
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="43620703"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 00:38:58 -0800
-X-CSE-ConnectionGUID: sNLpTX62QCunniYqJJCCnw==
-X-CSE-MsgGUID: P4/3DxJ+T32elzTSK64SYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="91989605"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 00:38:54 -0800
-Message-ID: <90577aad-552a-4cf8-a4a3-a4efcf997455@intel.com>
-Date: Thu, 28 Nov 2024 10:38:49 +0200
+	s=arc-20240116; t=1732783207; c=relaxed/simple;
+	bh=l8r4E+fAxvn95ykDQ3t+Nmyf8EYUz2dFT+lg2PPw2HI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RAkYx1A3cMt2sGv0Bh/iNM1RZikVQhBOWenRjMnDpjUSmRV3Qk7j6X2d4ihwMjGKY7pPnWReLfWLROZM15SFLxbFw1BIBq5LKnj1OjKba2kjr5t/XqGFJkaDeAP3zNcXvryppL6fGNTjgRAWFKEmpww0jnBm40PMmFJ879hGBiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a/S6bdZg; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3823e45339bso437045f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:40:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732783204; x=1733388004; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l8r4E+fAxvn95ykDQ3t+Nmyf8EYUz2dFT+lg2PPw2HI=;
+        b=a/S6bdZgISDO9ZAz2kcR92XlvcoculYKlo91vd/zFSU/Sw2kFgYepEZSJAfhGb0apL
+         UX5CgaJblqb9vJPKkyMxX3mqTari/FvD9vZoA9q8qYfICycwNN3QAzUioKRw4xgMlvKC
+         xWSZMA0ZcdymKsrVsJ5KcrIZxP6dZBfXxQM/3EXvNFlVM2cjbTChgBV6TMeFP+zVDOdj
+         NAi9nHvlE8mbue0940anXfAK4DBdYn5byMbJUEFqhAVeZciSQHpE6u8n3TpGJK9l0+GO
+         /UtjV6wkKU9nR9h5kZZPNSJn5eRKz9OhrhnqVY6NwM/e38j79n6QSq33k4yftpGgrFXx
+         GbfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732783204; x=1733388004;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l8r4E+fAxvn95ykDQ3t+Nmyf8EYUz2dFT+lg2PPw2HI=;
+        b=BNm9Z1Gue9Gyc5jgait09068ikkYM/50tQcNW11qnc+nzzlm47xei2b8j6bQH7363y
+         pPeJ5B1uNGueF5uAnDVPGWK1Vonf8iaIiNMaThLmX+7m75DVPCRYVx4zDchVqQOdQEDS
+         R8ewSx4B2nCto0y/r+lDh1rt2TjFvNGncewlvMnthx7QICyhztjl+G0XZFoAGSWvdgpl
+         leaWQ+AEdF7tGOfLbpddtmy4Magys1PB4uHw0ElEES2nHkA37s9n9dyfs92hOUxdB4Bs
+         +xsw1oiAOMZGMShriR3P/bKI+FRwP5G9VT4H+ZcAFqVaYtRVd++yO+m//NdWEMSS0+mZ
+         WbwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGhJlRJmIrU+z4/4WN/UduCuHb9lTU5MTRWmlBwwS55S7zy7bzTRMerYZ00YSEXRXKWIsFJJg0urvyVGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAvW/nI5hVo5w4IOdPAVYp4OWmsrFhLdGCMcU3V5LQvqQ3Tpva
+	2+l0C/y86YMianYb2uZsyRSmPtzHDKlM7vPwIRFjBCfgJ0BqugNGFIafMK9RtWw=
+X-Gm-Gg: ASbGnctwEJbU61oU6x3XG6En6xyy1zkJyWE1dgg2aanGrcXdkxBkbWdgH11FPPbN2bL
+	+UXKymFvQyy4DprN59Q45pb8Awz7f+qNCo1LxdpBKV5yROC6SXsJhMQ6wCx1IX1ccsX7Yxo3c00
+	rvAAiI5IMyfpuaiPj3+DrwJNUIQDlg2D2q4zhqlv4zapCqRVguiixch6iTFUyjT9ugCEjix5sos
+	HxDYAPBX1c63HIxWFsdLVvvnIMPV0B8SWAN6SaCGx3Rs1c1KG/w1jQ=
+X-Google-Smtp-Source: AGHT+IHLCVGEBiGpNB3pr06gJDHBvejAWzRugYtAncqUTz6NJIMOpbiyuWDq3lH6CC8FDjfooG1oIw==
+X-Received: by 2002:a05:6000:2d8a:b0:382:2f62:bd45 with SMTP id ffacd0b85a97d-385c6ec0980mr3638454f8f.29.1732783204673;
+        Thu, 28 Nov 2024 00:40:04 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccce7859sm1096280f8f.0.2024.11.28.00.40.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 00:40:04 -0800 (PST)
+Message-ID: <5d2a32a9bcc38f31beef56c04d07f6d53aa49e06.camel@linaro.org>
+Subject: Re: [PATCH 2/6] dt-bindings: usb: max33359: add max77759 flavor
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>,  Alim Akhtar
+ <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
+ kernel-team@android.com,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-samsung-soc@vger.kernel.org
+Date: Thu, 28 Nov 2024 08:40:03 +0000
+In-Reply-To: <8325415b-4af9-4bef-8310-39410b10aa84@kernel.org>
+References: 
+	<20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
+	 <20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org>
+	 <8325415b-4af9-4bef-8310-39410b10aa84@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] KVM: x86: Refactor __kvm_emulate_hypercall() into
- a macro
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu
- <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-7-seanjc@google.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241128004344.4072099-7-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 28/11/24 02:43, Sean Christopherson wrote:
-> Rework __kvm_emulate_hypercall() into a macro so that completion of
-> hypercalls that don't exit to userspace use direct function calls to the
-> completion helper, i.e. don't trigger a retpoline when RETPOLINE=y.
-> 
-> Opportunistically take the names of the input registers, as opposed to
-> taking the input values, to preemptively dedup more of the calling code
-> (TDX needs to use different registers).  Use the direct GPR accessors to
-> read values to avoid the pointless marking of the registers as available
-> (KVM requires GPRs to always be available).
+On Thu, 2024-11-28 at 09:17 +0100, Krzysztof Kozlowski wrote:
+> On 27/11/2024 12:01, Andr=C3=A9 Draszik wrote:
+> > On the surface, Maxim's max77759 appears identical to max33359. It
+> > should still have a dedicated compatible, though, as it is a different
+> > IC. This will allow for handling differences in case they are
+> > discovered in the future.
+> >=20
+> > max77759 is used on Google Pixel 6 and Pixel 6 Pro.
+> >=20
+> > Add a dedicated compatible to allow for potential differences in the
+> > future.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>=20
+> This should be sent separately to USB.
 
-For TDX, there is an RFC relating to using descriptively
-named parameters instead of register names for tdh_vp_enter():
+Sorry, it slipped through into this series somehow. Will do.
 
-	https://lore.kernel.org/all/fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com/
-
-Please do give some feedback on that approach.  Note we
-need both KVM and x86 maintainer approval for SEAMCALL
-wrappers like tdh_vp_enter().
-
-As proposed, that ends up with putting the values back into
-vcpu->arch.regs[] for __kvm_emulate_hypercall() which is not
-pretty:
-
- static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
- {
-+	struct vcpu_tdx *tdx = to_tdx(vcpu);
- 	int r;
- 
-+	kvm_r10_write(vcpu, tdx->vp_enter_args.tdcall.fn);
-+	kvm_r11_write(vcpu, tdx->vp_enter_args.tdcall.subfn);
-+	kvm_r12_write(vcpu, tdx->vp_enter_args.tdcall.vmcall.p2);
-+	kvm_r13_write(vcpu, tdx->vp_enter_args.tdcall.vmcall.p3);
-+	kvm_r14_write(vcpu, tdx->vp_enter_args.tdcall.vmcall.p4);
-+
- 	/*
- 	 * ABI for KVM tdvmcall argument:
- 	 * In Guest-Hypervisor Communication Interface(GHCI) specification,
-@@ -1092,13 +1042,12 @@ static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
- 	 * vendor-specific.  KVM uses this for KVM hypercall.  NOTE: KVM
- 	 * hypercall number starts from one.  Zero isn't used for KVM hypercall
- 	 * number.
--	 *
--	 * R10: KVM hypercall number
--	 * arguments: R11, R12, R13, R14.
- 	 */
- 	r = __kvm_emulate_hypercall(vcpu, r10, r11, r12, r13, r14, true, 0,
- 				    R10, complete_hypercall_exit);
- 
-+	tdvmcall_set_return_code(vcpu, kvm_r10_read(vcpu));
-+
- 	return r > 0;
- }
-
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/x86.c | 29 +++++++++--------------------
->  arch/x86/kvm/x86.h | 25 ++++++++++++++++++++-----
->  2 files changed, 29 insertions(+), 25 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 39be2a891ab4..fef8b4e63d25 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9982,11 +9982,11 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->  	return kvm_skip_emulated_instruction(vcpu);
->  }
->  
-> -int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -			    unsigned long a0, unsigned long a1,
-> -			    unsigned long a2, unsigned long a3,
-> -			    int op_64_bit, int cpl,
-> -			    int (*complete_hypercall)(struct kvm_vcpu *))
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl,
-> +			      int (*complete_hypercall)(struct kvm_vcpu *))
->  {
->  	unsigned long ret;
->  
-> @@ -10073,32 +10073,21 @@ int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->  
->  out:
->  	vcpu->run->hypercall.ret = ret;
-> -	complete_hypercall(vcpu);
->  	return 1;
->  }
-> -EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-> +EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
->  
->  int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->  {
-> -	unsigned long nr, a0, a1, a2, a3;
-> -	int op_64_bit;
-> -	int cpl;
-> -
->  	if (kvm_xen_hypercall_enabled(vcpu->kvm))
->  		return kvm_xen_hypercall(vcpu);
->  
->  	if (kvm_hv_hypercall_enabled(vcpu))
->  		return kvm_hv_hypercall(vcpu);
->  
-> -	nr = kvm_rax_read(vcpu);
-> -	a0 = kvm_rbx_read(vcpu);
-> -	a1 = kvm_rcx_read(vcpu);
-> -	a2 = kvm_rdx_read(vcpu);
-> -	a3 = kvm_rsi_read(vcpu);
-> -	op_64_bit = is_64_bit_hypercall(vcpu);
-> -	cpl = kvm_x86_call(get_cpl)(vcpu);
-> -
-> -	return __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl,
-> +	return __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-> +				       is_64_bit_hypercall(vcpu),
-> +				       kvm_x86_call(get_cpl)(vcpu),
->  				       complete_hypercall_exit);
->  }
->  EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 28adc8ea04bf..ad6fe6159dea 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -617,11 +617,26 @@ static inline bool user_exit_on_hypercall(struct kvm *kvm, unsigned long hc_nr)
->  	return kvm->arch.hypercall_exit_enabled & BIT(hc_nr);
->  }
->  
-> -int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -			    unsigned long a0, unsigned long a1,
-> -			    unsigned long a2, unsigned long a3,
-> -			    int op_64_bit, int cpl,
-> -			    int (*complete_hypercall)(struct kvm_vcpu *));
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl,
-> +			      int (*complete_hypercall)(struct kvm_vcpu *));
-> +
-> +#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, complete_hypercall)	\
-> +({												\
-> +	int __ret;										\
-> +												\
-> +	__ret = ____kvm_emulate_hypercall(_vcpu,						\
-> +					  kvm_##nr##_read(_vcpu), kvm_##a0##_read(_vcpu),	\
-> +					  kvm_##a1##_read(_vcpu), kvm_##a2##_read(_vcpu),	\
-> +					  kvm_##a3##_read(_vcpu), op_64_bit, cpl,		\
-> +					  complete_hypercall);					\
-> +												\
-> +	if (__ret > 0)										\
-> +		complete_hypercall(_vcpu);							\
-> +	__ret;											\
-> +})
->  
->  int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
->  
+Thanks
+Andre
 
 
