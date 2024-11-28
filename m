@@ -1,151 +1,177 @@
-Return-Path: <linux-kernel+bounces-424367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0209DB387
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:15:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1893162B47
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:15:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C58149C7B;
-	Thu, 28 Nov 2024 08:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="eClgEsKb"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494A89DB389
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:16:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D283CC1;
-	Thu, 28 Nov 2024 08:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732781720; cv=pass; b=kEwVw2xciVxnt54vrKUKwx0jSLbLO+JWu2MBfcjfTliJPZWqc29s8VQnbcHznZEefe6pq17Yvg4wXgljWtTVCLo9l/6aHx6DIX0Jig+QAGy9mzQvYjXymEEocc4mgWUk9BhmOtQfURaRWPCaPg8EeT/yhGHTHCMKpNGhOo19Si8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732781720; c=relaxed/simple;
-	bh=T5qMGD+wC79fbSNefHgwRIL3TmEmIGxLwLebXk4cZJw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hq+LPlav93Dwvo5UV4N7bS9sigb3Ym5C7QSZwjCp+BlYfYamCYHXra9xOgjMRJdaJkTQFINznEpIqC1/GMLfhSzvjPkDn2/Zw7x8/xMzHA1xu9ne71BLGFBOuNLm77K1gPGzyNzMS/KXw3HkEu3qk5O8b4nK+DjHjh3AlO41BCg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=eClgEsKb; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732781694; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IX5730+8nKj3sLJJvh7RomX2Bs+xolk30lhON7oLa00kJidON75pXFhsTmEGgcAW9b2qnIjoddSqWlEG0ut7tGzImbDmYZjCFgDfUNhl6/6t+7+EPzcPFhYgOrxs8JDejMJ04f7MRdujQsl7VzotuCRZXdML8iQneCaqdGpiBsQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732781694; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QjeMdtNt1+e4a2TwpMF2rrs8wuHFTMYgg8Pn0QLiQhM=; 
-	b=c0bO1NJUGND8z0Y4gLrSaYaGMfxAbPVQZVA1BZdg4iE6Pi3TqeuXPaphf7tAMGd952CUnr4ZswDBy/l6mZAxgZh/I2iGaYYwVL1LJOGzmHdTsP2B3oX/rWqKMsmBDXkBwuCUg3EhzCyKkaPhdMJVxbZ8aVdoOpnjb6T+wvmoHaQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732781694;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=QjeMdtNt1+e4a2TwpMF2rrs8wuHFTMYgg8Pn0QLiQhM=;
-	b=eClgEsKbSxmj5sTOLfyh5NKXzEfPT9e7i7v9Tl02dzQ6xGxjxaTk1hHxvZTtbnaZ
-	dQ73cjyu/pfAZJfTvOezFTgeELmmmwGEhg71PrNe72w6ACQZ7dh69Yq6MGFSHqVTDsE
-	ziYsaq6zsfdCO0SLThzs/u60o3OeJ2VKpcIMgeyE=
-Received: by mx.zohomail.com with SMTPS id 1732781693505946.223322327641;
-	Thu, 28 Nov 2024 00:14:53 -0800 (PST)
-Message-ID: <4431aa18-c518-4396-87e8-04176eabdd49@collabora.com>
-Date: Thu, 28 Nov 2024 13:14:50 +0500
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06E852823E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:16:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B171482E1;
+	Thu, 28 Nov 2024 08:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="I2rDVUSD"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD2283CC1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732781813; cv=none; b=lWGIu90pvwfEIib3Eps2fYXm9MXZUh6BsiLqWm1yWD7/pPXfvGpl2WWEdkkdRvAxdbgzDih5zBDjqaf8lUVou0vZ2BCs21oNofsIizTnT1OukPJr8BcxlBVE1douiQxXyoYa1iTtYEwB12/qvztCNwdyUAfNib0nuWxWbsh7bCM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732781813; c=relaxed/simple;
+	bh=b9lkoP3jfqcxHk1XeqJCNQqso0v9vbfkbEIBBFSTvgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QvkWOGpek0BhJW8rscp0eDmhUctz6hqzU2rteiz74gkbrB8rOBOQd78ECw9BQ/rQzZJmHjeWOxeCEHrDXFzmaIZ+dxmqmZajv+jJebxfrHY33W+90B99AkvhuZgefm1/NO1eDblbKtea/uZx50ckGcdrQ7TUKhzP3iC0O5i9GGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=I2rDVUSD; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a1639637so4735155e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1732781809; x=1733386609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XtkNb7ChcpZKeghQlkhwMDhrbK5ce/xMSti4wIKo4Vk=;
+        b=I2rDVUSD4imxCE9pmvNP0a8voiLRWGNrO7tnJGB5mAGCEWd/VAdZC9Ueufb+28DzQB
+         Y4g3ZXNVNOTvByLa5Fc/E6qOMmxYObJi1wq0WSyckpW1P24YP0rL63YOgI9512tDannT
+         pMk8YURgrx5jB+xX03jorO2nS3ZUX5Wbj34Ni8tVBKvIk6GKSH2yWucLkCgCj8iqPNB8
+         EdC9qlxebhsAPQ/vGPHEod6WsCGfWZ4T9zpoFpKbGmAwSmPHuzDUTWBNk6Dcz6uTVUwr
+         tx98snYGuvvyDDmeQXitWwsis8DvmzEKEcG8pzeN8XdxJMXQh6FLC4HyidnJs12aSLP8
+         OVJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732781809; x=1733386609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XtkNb7ChcpZKeghQlkhwMDhrbK5ce/xMSti4wIKo4Vk=;
+        b=Irw/QYQ9gfc7Fq7pRtmTiiJVf4RfJ1DUz3CUZC5fryqoAdsRCiOVoWnUjkUrP1P54Q
+         Y9CccFnXA7yla3S878xLlvKd09R7Wnm4d7xBAxSqvO860vXEl7hl+PxiRcN4UjL9vxkZ
+         IU5tuRrCcYfKBU/N9DigbjhDiRQPbdPVtobN+vApyRr+iT7cIFDlm0ey8ae2NsVHoq5T
+         bDIP43fckoT/n2gz0scFVB3L7KB9XSChFAEG5xJfknSI531erjXT7Bcw9FOjjK45RKcw
+         z4P9vQ0NsCPckzzzZqxFhacN6m2uhTNT7ix0HEkmACLAQCFBLLW0Z19TBCbRUKQu+hIQ
+         ZCqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjmqbenec9gQF2x5D/IDHYcKd2O1Nql3fdUxrqmFgNwvRSrGbkKgva0+g/DHlLXYnE1PjfMA2AVMrqvvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHfnXlPOF+fHVFOkeyRzdPM1Nkb+8f1u1axzjqKq4MXGPz2fnA
+	gmGnDdhust2XoYaNLK7dWVbgoZwLKS/EdAVOjP1dNPyjAkdhdY49MbEp7ctcZAo=
+X-Gm-Gg: ASbGncvbmdv1vaLj82JbE6DkgQG703kD9PBPKCExSn7BPvA7weVg61hifXAuitNfq0e
+	SKFvEAtlSgf93Cig3blVEX0oamf2gzsGMPkkXWJWRoQiD4k/NTA8dRJxPh6FnzvzgfsziTDffEt
+	XPS4aoyv2Ue5Y/m0UEJCVzD1A2MvV7Lub/L6qtQB63Tn85s1z2VwM8iUhJeBSxBGNr/ippE1+31
+	Fk2rnLyED7+p1Gn9Elmf9BM5J+SH59tcJMR6MS46yhARJk93Kw=
+X-Google-Smtp-Source: AGHT+IFa2GLouk/rGMVQjtmqkbmXBjVyAfkRwDjDgUh0FP24cjeR4S1FKi1Ih91BYGaVuzDe63g42A==
+X-Received: by 2002:a05:600c:5490:b0:434:a815:2b5d with SMTP id 5b1f17b1804b1-434a9de43cfmr51318225e9.24.1732781807910;
+        Thu, 28 Nov 2024 00:16:47 -0800 (PST)
+Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70cbfsm13945265e9.36.2024.11.28.00.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 00:16:47 -0800 (PST)
+From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Kai Zhang <zhangkai@iscas.ac.cn>,
+	Andrew Jones <ajones@ventanamicro.com>
+Subject: [PATCH v3] riscv: module: remove relocation_head rel_entry member allocation
+Date: Thu, 28 Nov 2024 09:16:34 +0100
+Message-ID: <20241128081636.3620468-1-cleger@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andrew Jones <ajones@ventanamicro.com>,
- James Houghton <jthoughton@google.com>
-Subject: Re: [PATCH v4 01/16] KVM: Move KVM_REG_SIZE() definition to common
- uAPI header
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <20241128005547.4077116-1-seanjc@google.com>
- <20241128005547.4077116-2-seanjc@google.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241128005547.4077116-2-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 11/28/24 5:55 AM, Sean Christopherson wrote:
-> Define KVM_REG_SIZE() in the common kvm.h header, and delete the arm64 and
-> RISC-V versions.  As evidenced by the surrounding definitions, all aspects
-> of the register size encoding are generic, i.e. RISC-V should have moved
-> arm64's definition to common code instead of copy+pasting.
-> 
-> Acked-by: Anup Patel <anup@brainfault.org>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+relocation_head's list_head member, rel_entry, doesn't need to be
+allocated, its storage can just be part of the allocated relocation_head.
+Remove the pointer which allows to get rid of the allocation as well as
+an existing memory leak found by Kai Zhang using kmemleak.
 
-> ---
->  arch/arm64/include/uapi/asm/kvm.h | 3 ---
->  arch/riscv/include/uapi/asm/kvm.h | 3 ---
->  include/uapi/linux/kvm.h          | 4 ++++
->  3 files changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-> index 66736ff04011..568bf858f319 100644
-> --- a/arch/arm64/include/uapi/asm/kvm.h
-> +++ b/arch/arm64/include/uapi/asm/kvm.h
-> @@ -43,9 +43,6 @@
->  #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
->  #define KVM_DIRTY_LOG_PAGE_OFFSET 64
->  
-> -#define KVM_REG_SIZE(id)						\
-> -	(1U << (((id) & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT))
-> -
->  struct kvm_regs {
->  	struct user_pt_regs regs;	/* sp = sp_el0 */
->  
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-> index 3482c9a73d1b..9f60d6185077 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -211,9 +211,6 @@ struct kvm_riscv_sbi_sta {
->  #define KVM_RISCV_TIMER_STATE_OFF	0
->  #define KVM_RISCV_TIMER_STATE_ON	1
->  
-> -#define KVM_REG_SIZE(id)		\
-> -	(1U << (((id) & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT))
-> -
->  /* If you need to interpret the index values, here is the key: */
->  #define KVM_REG_RISCV_TYPE_MASK		0x00000000FF000000
->  #define KVM_REG_RISCV_TYPE_SHIFT	24
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 502ea63b5d2e..343de0a51797 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -1070,6 +1070,10 @@ struct kvm_dirty_tlb {
->  
->  #define KVM_REG_SIZE_SHIFT	52
->  #define KVM_REG_SIZE_MASK	0x00f0000000000000ULL
-> +
-> +#define KVM_REG_SIZE(id)		\
-> +	(1U << (((id) & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT))
-> +
->  #define KVM_REG_SIZE_U8		0x0000000000000000ULL
->  #define KVM_REG_SIZE_U16	0x0010000000000000ULL
->  #define KVM_REG_SIZE_U32	0x0020000000000000ULL
+Fixes: 8fd6c5142395 ("riscv: Add remaining module relocations")
+Reported-by: Kai Zhang <zhangkai@iscas.ac.cn>
+Signed-off-by: Clément Léger <cleger@rivosinc.com>
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+V3:
+ - Fix Zhang name spelling.
+ - Reword commit title.
+ - Add a 'Fixes:' tag
 
+V2:
+ - Add Kai Zhang 'Reported-by:' tag
+ - Reword the commit description (Andrew)
 
+ arch/riscv/kernel/module.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+index 1cd461f3d872..47d0ebeec93c 100644
+--- a/arch/riscv/kernel/module.c
++++ b/arch/riscv/kernel/module.c
+@@ -23,7 +23,7 @@ struct used_bucket {
+ 
+ struct relocation_head {
+ 	struct hlist_node node;
+-	struct list_head *rel_entry;
++	struct list_head rel_entry;
+ 	void *location;
+ };
+ 
+@@ -634,7 +634,7 @@ process_accumulated_relocations(struct module *me,
+ 			location = rel_head_iter->location;
+ 			list_for_each_entry_safe(rel_entry_iter,
+ 						 rel_entry_iter_tmp,
+-						 rel_head_iter->rel_entry,
++						 &rel_head_iter->rel_entry,
+ 						 head) {
+ 				curr_type = rel_entry_iter->type;
+ 				reloc_handlers[curr_type].reloc_handler(
+@@ -704,16 +704,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+ 			return -ENOMEM;
+ 		}
+ 
+-		rel_head->rel_entry =
+-			kmalloc(sizeof(struct list_head), GFP_KERNEL);
+-
+-		if (!rel_head->rel_entry) {
+-			kfree(entry);
+-			kfree(rel_head);
+-			return -ENOMEM;
+-		}
+-
+-		INIT_LIST_HEAD(rel_head->rel_entry);
++		INIT_LIST_HEAD(&rel_head->rel_entry);
+ 		rel_head->location = location;
+ 		INIT_HLIST_NODE(&rel_head->node);
+ 		if (!current_head->first) {
+@@ -722,7 +713,6 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+ 
+ 			if (!bucket) {
+ 				kfree(entry);
+-				kfree(rel_head->rel_entry);
+ 				kfree(rel_head);
+ 				return -ENOMEM;
+ 			}
+@@ -735,7 +725,7 @@ static int add_relocation_to_accumulate(struct module *me, int type,
+ 	}
+ 
+ 	/* Add relocation to head of discovered rel_head */
+-	list_add_tail(&entry->head, rel_head->rel_entry);
++	list_add_tail(&entry->head, &rel_head->rel_entry);
+ 
+ 	return 0;
+ }
 -- 
-BR,
-Muhammad Usama Anjum
+2.45.2
+
 
