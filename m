@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-424190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4340F9DB176
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:27:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5F19DB179
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF4A3B20FD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44608282345
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E511481B1;
-	Thu, 28 Nov 2024 02:27:07 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC4718E25
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C90B77F10;
+	Thu, 28 Nov 2024 02:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1EwRWtG"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813BB7404E;
+	Thu, 28 Nov 2024 02:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732760826; cv=none; b=IHoXzrnH1SBD+aDEbZSjFzdpnuIFW+889AhPoEHOhCe5XkiN/mGTrj7FCtcdhICgYoV6cjAsF7UnsZ7CTcm0iehz2tXNdzyefOgohmClK9lTtqiQkSvaND+Jb546qA8eLMUCX76gA0FeQEsLx78swmL/sVdRQiJ5vjYwrx3+0sk=
+	t=1732760892; cv=none; b=ioEGVyDBW8oBF9nv7IFG4huWv52MLPnOmlCU3KEuYq8+wTy4E3uI4EJDtoknGioKSeld3HYwoT36fTE4q5JVcwAHJsdd0nlqOlA180W3+PJLjC95yEJPYmbM7AYgzMeMxx0VIiSAghrZTNCAiEGza7svW9e18ZcWBrO5I6VVunc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732760826; c=relaxed/simple;
-	bh=Y08tlddFy/El3HGlv8l0p48q8NKIA2t8QwgIRTgs4ME=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=p+a0MbBvLDYjEv0S8NbQVqb55JIsiW0aWan2cNBBwttShvdSJimesi4eMInxDvzEHsdXnf7KdwuA/+KC86M9qNBewiDUoNiCihN8O+gnGeyaKcsO2KlqMr/2FVN9GwgbfjMHllco6Gs9DXXtxIs1LeYION6bTFAkXmaYU4dai4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Dxfa_w1Edn2VVKAA--.55770S3;
-	Thu, 28 Nov 2024 10:26:56 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMAx7uDu1EdnntZqAA--.24565S3;
-	Thu, 28 Nov 2024 10:26:55 +0800 (CST)
-Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-2-yangtiezhu@loongson.cn>
- <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
- <75f6e90b-4d04-5627-395e-58982a84d7c1@loongson.cn>
- <20241127005208.luhtjy2qhk3bza7a@jpoimboe>
- <f1bcff28-dc9c-2878-10c7-6e653516e66d@loongson.cn>
- <20241127185303.q6okbtrkfdrlmcrn@jpoimboe>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <fd86460f-f595-e7c3-0962-aab3124b0375@loongson.cn>
-Date: Thu, 28 Nov 2024 10:26:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1732760892; c=relaxed/simple;
+	bh=KRLLvV0v/gAxyjccF9CRZFbxmNkYr22ARld5uyY9ePk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P4aSAG3RL/1dy1niz4nPG1Cijf313bpPTrFBsWPPO/CSj7+W3hYU7Pc3o/yi8gq/K8SMS3/tt5D/ulJ07yaJVR+OvTs6XqspfLQHCEIC76fWQwa74ki64MaPxhOPR6ypp9FrjIGSOpWEXjybiwJEGIubQ2LrqTRkm15OQc8lt6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1EwRWtG; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-432d86a3085so2581305e9.2;
+        Wed, 27 Nov 2024 18:28:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732760889; x=1733365689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KRLLvV0v/gAxyjccF9CRZFbxmNkYr22ARld5uyY9ePk=;
+        b=M1EwRWtGStLpa1gXHxfW6SMf/vjAs2IkDgQr21C9yowH9SoSLHW2zdpmJS3/jflAmM
+         DI9RURr2G8h0ZqJm0NrE247qGd/65xXuHOD0j6xjQ/aIqkGu/kbF7WddihJYapWx2nfR
+         AAlOB5SEE8fnITD7HLwyBkS94OobnN74Ns7quBB5fOYgKUQCdgOLuzxTeuqiHfN+ftTT
+         aHUGW9CRZYgkCiBkyNY9DhhLmGfZn60zteTpK4xI1Y/6RmZL73aEwoLL3GxHIqS0xVGw
+         lPy7WPrNCRpdk6Ivb32d6kRkEcGt79XhNW63tCl2K1yjmhP/gCnEGJxd06Ih1LZyLoqY
+         x31A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732760889; x=1733365689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KRLLvV0v/gAxyjccF9CRZFbxmNkYr22ARld5uyY9ePk=;
+        b=HRGcHCo+UwejkaGwQMvV2xMrzOpUsWJsnLrAUQDczSJCfIypE0zNtODgdO2xQEdQLW
+         D0V2uXtSVI5nkgqxvSn/JkNb4vuSBFjB3DzZsWrdZPwrYKCpUCgtfjspmV9Ze4YR54kc
+         pp6VgzymbXdvZ30S/C8BoRWRbHx+remJ7xaYb39Zqwx++xCdkohb48MrB/onQTR5YyWp
+         ZZf6PvlRKVE6vcgJJYj/QSp6RS2B9zpWfJ0uG4T/babNPj9a9Mnb/eVoOmrp24HauNiX
+         cZ4UeOgdCiwMZaxA73W7ZALN9qlTpZ9MLtmhl/noEZhQHCuXv43o72vlVUmj03JOiZ5h
+         1Maw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu3b709dPOntvOzoKv/vy4CI8QxnlUVcAkiUuzoDAs1J3n2f6cDxk00+gBDitizlTmru8B9H4XMJJsrbKx@vger.kernel.org, AJvYcCXlx4LueHfHB3O9ShF05xHDykGFUYIk5XDjGpy3VOQbQ7DC2/SNwqcQlot83J/AQ8IN0Bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyM1jrtYb7SFy9EYPM8epa2b3E9vh1Rj6bnFvbnFmWS+hffrQD
+	kkCgC25zQczEl3HJfXbSJTlZ14tp8FA5YRBydoQ/Gukd/5sqZ5eLXFFJTxX3OtzQSc7ypSFly69
+	eJoWhuh58F0l0NcqfCmyacnB2lvI=
+X-Gm-Gg: ASbGncsCS5oy1UHPb6B1dK2t1aYYAabxlNnkSlSt1VkcDfrcEBDL3vkjUMS5MOVFY6k
+	qp1W1VWCpYBp1QXQwIogEMViE/ziaXw==
+X-Google-Smtp-Source: AGHT+IE3I2cdv25wTRXMa1canTQ17M4o5QxQP/G4MUrnUMgHV1IiVi/bQ7Qp+5Qo4Tpt6RTy8RHXJe/O7iCiXx1ysGY=
+X-Received: by 2002:a05:600c:444f:b0:434:a378:51a8 with SMTP id
+ 5b1f17b1804b1-434a9df7bf1mr46000695e9.27.1732760888592; Wed, 27 Nov 2024
+ 18:28:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241127185303.q6okbtrkfdrlmcrn@jpoimboe>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMAx7uDu1EdnntZqAA--.24565S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Ww47uFy5tFWkCryruryrXwc_yoW8Aw4Upr
-	W3Aa15Jr4vyr17Crs2vwnYgrnYy3s7GFn5XrykKryrJr9F9r1Yqa9Ygr45Cas7Gr1SvF42
-	vrWFqa4fZr4UAagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
-	UUUUU
+References: <CAEf4BzYHeh_=iHOYL88pXXdHGZuAmQNM0jM+9iPUou+7+YLjjQ@mail.gmail.com>
+ <20241127230349.1619-1-hdanton@sina.com>
+In-Reply-To: <20241127230349.1619-1-hdanton@sina.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 27 Nov 2024 18:27:57 -0800
+Message-ID: <CAADnVQJ+eoczS6JK7aUZSWzUFggEyXW+w4oMiB4iY4F9FpMVRA@mail.gmail.com>
+Subject: Re: [BUG] possible deadlock in __schedule (with reproducer available)
+To: Hillf Danton <hdanton@sina.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ruan Bonan <bonan.ruan@u.nus.edu>, Steven Rostedt <rostedt@goodmis.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Aleksandr Nogikh <nogikh@google.com>, 
+	BPF <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/28/2024 02:53 AM, Josh Poimboeuf wrote:
-> On Wed, Nov 27, 2024 at 02:39:13PM +0800, Tiezhu Yang wrote:
->> On 11/27/2024 08:52 AM, Josh Poimboeuf wrote:
->>> On Tue, Nov 26, 2024 at 06:41:29PM +0800, Tiezhu Yang wrote:
->>>> On 11/26/2024 02:44 PM, Josh Poimboeuf wrote:
->>>>> On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
->>>>>> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
->>>>>
->>>>> 'prev_offset' needs to be updated as well.
->>>>
->>>> I am not sure I understand your comment correctly, I can not see
->>>> what should to do about 'prev_offset'.
->>>
->>> Further down the function there is
->>>
->>>   prev_offset = reloc_offset(reloc);
->>>
->>> which needs to be changed to
->>>
->>>   prev_offset = offset;
->>>
->>> as part of the patch.
->>
->> If I understand correctly, reloc_offset(reloc) is different with
->> reloc->sym->offset + reloc_addend(reloc), tested on x86 and readelf
->> shows that their values are different, reloc_offset(reloc) is the
->> first column of .rela.rodata, reloc->sym->offset is the second to
->> last column of .rela.rodata, reloc_addend(reloc) is the last column
->> of .rela.rodata.
->>
->> If do the above change as you suggested, there will be some objtool
->> warnings on x86. I think it should be:
->>
->>   prev_offset = reloc_offset(reloc);
->>
->> rather than:
->>
->>   prev_offset = offset;
->>
->> That is to say, no need to change "prev_offset".
->> Could you please check it again, please let me know if I am wrong.
+On Wed, Nov 27, 2024 at 3:04=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
+te:
 >
-> Sorry, I was confused by the fact there are two different meanings for
-> "offset": one for where the relocation is written, and one for the
-> symbol it refers to.
->
-> How about instead of 'offset', call it 'sym_offset'?
+> On Tue, 26 Nov 2024 13:15:48 -0800 Andrii Nakryiko <andrii.nakryiko@gmail=
+.com>
+> > On Mon, Nov 25, 2024 at 1:44=E2=80=AFAM Peter Zijlstra <peterz@infradea=
+d.org> wrote:
+> > > On Mon, Nov 25, 2024 at 05:24:05AM +0000, Ruan Bonan wrote:
+> > >
+> > > > From the discussion, it appears that the root cause might involve
+> > > > specific printk or BPF operations in the given context. To clarify =
+and
+> > > > possibly avoid similar issues in the future, are there guidelines o=
+r
+> > > > best practices for writing BPF programs/hooks that interact with
+> > > > tracepoints, especially those related to scheduler events, to preve=
+nt
+> > > > such deadlocks?
+> > >
+> > > The general guideline and recommendation for all tracepoints is to be
+> > > wait-free. Typically all tracer code should be.
+> > >
+> > > Now, BPF (users) (ab)uses tracepoints to do all sorts and takes certa=
+in
+> > > liberties with them, but it is very much at the discretion of the BPF
+> > > user.
+> >
+> > We do assume that tracepoints are just like kprobes and can run in
+> > NMI. And in this case BPF is just a vehicle to trigger a
+> > promised-to-be-wait-free strncpy_from_user_nofault(). That's as far as
+> > BPF involvement goes, we should stop discussing BPF in this context,
+> > it's misleading.
+> >
+> Given known issue, syzbot should run without bpf enabled before it is fix=
+ed
+> to avoid more useless discussing and misleading.
 
-OK, looks better, will modify it in the next version.
-
+If you cared to read the thread it would have been obvious
+that printk is the culprit. Tell syzbot to run without printk?
 
