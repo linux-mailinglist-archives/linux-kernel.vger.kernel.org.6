@@ -1,182 +1,189 @@
-Return-Path: <linux-kernel+bounces-424956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31149DBBC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:22:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728979DBBC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2EDB20E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F056B2818E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266311C07F3;
-	Thu, 28 Nov 2024 17:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jp52ll3G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ET/uR+w0"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD93211C;
-	Thu, 28 Nov 2024 17:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF67F1C07EA;
+	Thu, 28 Nov 2024 17:24:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D29211C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 17:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732814515; cv=none; b=SFg6Qe0DD9TY12Ng/jWBXiajD2NdBguVLpRJ827CChubYkizhj2cF6olQWno8teoR16Q2KWnFxV1w3tTzbed3+plILQ19ITOtI7IrEGFqAdIMrxuyVoOJQTThYkQ5Y9HwW1ipi3NtK+OS3Ckqr/V+Z2e9QYiuaMXPAL9MBCK1Ps=
+	t=1732814655; cv=none; b=PzULRZzEsGuRDboKxHN5B0iKyEGxMHopK1bQtIRqr3SBOiEJNIDTCZv76oGMXFGvbw1ghg8RJKLQgzUMixAOGOoqE5CxNlHvHGD/7wECv/knlQSVXHZa2NR1RwzDPkO+rbm6kmo6womv2MgSJcmvaKAtib07Vwy2rSsl73rzVb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732814515; c=relaxed/simple;
-	bh=pAX1jrffx7q9SDnrNtDT47lFFCez4oMl5YQVjpbvDwY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Qez6ke+RaO5Hl+kt9rAXrcpItOjz75383IwrG1XmokAzr413JqqPYCXbONJWKYA465v+i6IwOHh1dQmVpYPTr3AfJrYVmfycJ3jzukqkbzYflFeDijRL7Umq6uwGkLlgC5m7+Z2p3Evd4crUaiFPBZvgmDHrhOmc9o/zjwoLihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jp52ll3G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ET/uR+w0; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 0161111400F6;
-	Thu, 28 Nov 2024 12:21:50 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 28 Nov 2024 12:21:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732814510;
-	 x=1732900910; bh=D2JfyjmFw8hYMAoKDuRJj7W6G1enn12a5hgwxx1fj9c=; b=
-	Jp52ll3G22wzbfSDV7I46FNUZiHQdr86GldQCqs5UqIpEUxBFmEE/7YDd1+MP2+g
-	DMUPsWMGLsRrC9fQFbLc/rlJn/zozKI7zegq+O1JFOpYCz7LHrWQ0LKAeh6Aj4tO
-	Jx3ciVBFG4MePp3pP6qMDztvw2znEUiTQ/jifJmmNsciSswIQ1cVu1GTb0ru5Vlt
-	Tvb6pZNsr1YVr/h2T0oZU2nT9oxh7dBVQ/MQxr7Of7+7MdYRXYtmk5g9b22uDjRD
-	9jxHXWGgL7FbtkFUiS3z6Zu0slR11ZX4fHb0TCeyGUv1/S5HbAKUQnMyIlsY6uqF
-	kMQFa1qTi1NzUjpzhuX1/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732814510; x=
-	1732900910; bh=D2JfyjmFw8hYMAoKDuRJj7W6G1enn12a5hgwxx1fj9c=; b=E
-	T/uR+w0Xbs4pt0N4XKqdYg+927Ck7HzQJt8icOd0efcIy+9lTQPKjAFwoutY4spp
-	ZIMAQaycjwgbpYnAaeixrkhnHVKEsFFolCVFEJJ8d5ZWU4bHSk2Hy5tPnfnjWMwD
-	8dh6YLk01gHuq92wkjhVOEZvU07ek9htbOQ/E6YdK/o1GGCUgl1x1ls1BIXatGwJ
-	LAc8ZPo5Lu9UzCGafrNq61ABTletA/We+ukKOHCK/lCqNH0VrKQ+F3nWkvm7JDF+
-	IAAbpyjR8KB9kzTDh1GSoRz5iGNxuQSsFCENHnftXJDCX1SLRYb5LbhvIE24vCGJ
-	f0wkLHzQG7womcTEYbAkw==
-X-ME-Sender: <xms:rqZIZwLyhuhF6CKIUD-Wfx2c2y6Rz9SpBQyG46K2ZyLADpr5fjoQEA>
-    <xme:rqZIZwLzsFzvyTpdwRHJbPBvjBgtWr58hdgg4_mooghvnLXhzE6-NsmHwb9Ke4fK_
-    fxkPyDM1ODsUDw40uo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedugdelkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrh
-    gvrdgtohhmpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhr
-    tghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtth
-    hopehmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtgho
-    mhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghrmhhsthhr
-    ohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghmlhhoghhitg
-    eslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
-    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:rqZIZwuc4yptTvpwqKE3Ho5XTlP5fj5MReG5ufvl8Psmg1mUHRhVbw>
-    <xmx:rqZIZ9a-ImrpDo4YOtLQNRq4PEhuebl77Q2c63Fy8Lp6CFHZ5DJwKw>
-    <xmx:rqZIZ3ZJyyWzl4jzoFKzBd4IZHpNwIN3ABU3I1MJ4vo1DlfAyopxLg>
-    <xmx:rqZIZ5DnPEnprSrx7jCZE0SPlxI8YOCSuQWoY45lpCo860CCjaUqMQ>
-    <xmx:rqZIZ0QlD0mp5wU8TQVyBLfb7M_X6fL5Yx7rZ3FYPC96wKEXRhPg7oX7>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 46BB02220071; Thu, 28 Nov 2024 12:21:50 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732814655; c=relaxed/simple;
+	bh=okCLQ0V93a7z1yMeLJdZtF8YrIxrwSLlnDKGwwhDpxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pOdvwFmN6NHGH3q7Wn8uZ6gXQtnlPMoOg5lDfvG0bHI7g8EszcfLRqZbmafDzulRcJT0Bd0huSCuGWkMoOfXVnp9f2Ba+AIVWyUMQOHkba7q+VRSjMA6JjxYiOwMTSewt7NoemqxQUKe4Ewj1NOR/Hqz+ndDNdYsMdCCeZYkark=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9520A1474;
+	Thu, 28 Nov 2024 09:24:40 -0800 (PST)
+Received: from [10.57.60.40] (unknown [10.57.60.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0D743F66E;
+	Thu, 28 Nov 2024 09:24:08 -0800 (PST)
+Message-ID: <d690510c-c3c0-4551-bf18-e1b62269c8cc@arm.com>
+Date: Thu, 28 Nov 2024 17:24:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 28 Nov 2024 18:21:19 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jerome Brunet" <jbrunet@baylibre.com>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>
-Message-Id: <4206bf5d-a11e-4d0d-86b7-50c922e41119@app.fastmail.com>
-In-Reply-To: <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
-References: 
- <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
- <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
- <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
- <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
- <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
- <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
- <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
- <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
- <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
- <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
- <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] sched/fair: Rework EAS to handle more cases
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
+ linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Hongyan Xia <hongyan.xia2@arm.com>
+In-Reply-To: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 28, 2024, at 16:53, Jerome Brunet wrote:
-> On Thu 28 Nov 2024 at 16:34, "Arnd Bergmann" <arnd@arndb.de> wrote:
->> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
->>> We are deviating a bit from the initial regression reported by Mark.
->>> Is Ok with you to proceed with that fix and then continue this discussion
->>> ?
->>
->> I really don't want to see those stray 'select' statements
->> in there, as that leave very little incentive for anyone to
->> fix it properly.
->>
->> It sounds like Stephen gave you bad advice for how it should
->> be structured, so my best suggestion would be to move the
->> the problem (and the reset driver) back into his subsystem
->> and leave only a simple 'select RESET_CONTROLLER'.
->
-> Okay, though I don't really understand why that select is okay and not
-> the the proposed one. There is apparently a subtility I'm missing I'd
-> like to avoid repeating that.
+Hi Vincent,
 
-The thing with 'select' is that it really has to be used very
-selectively. The 'select RESET_CONTROLLER' is fine as an
-exception because there are already tons of clk drivers
-that do this consistently so they can register themselves
-as a reset controller.
+On 30/08/2024 14:03, Vincent Guittot wrote:
+> The current Energy Aware Scheduler has some known limitations which have
+> became more and more visible with features like uclamp as an example. This
+> serie tries to fix some of those issues:
+> - tasks stacked on the same CPU of a PD
+> - tasks stuck on the wrong CPU.
+> 
+> Patch 1 fixes the case where a CPU is wrongly classified as overloaded
+> whereas it is capped to a lower compute capacity. This wrong classification
+> can prevent periodic load balancer to select a group_misfit_task CPU
+> because group_overloaded has higher priority.
+> 
+> 
+> Patch 2 creates a new EM interface that will be used by Patch 3
+> 
+> 
+> Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
+> others might be a better choice. feec() looks for the CPU with the highest
+> spare capacity in a PD assuming that it will be the best CPU from a energy
+> efficiency PoV because it will require the smallest increase of OPP.
+> This is often but not always true, this policy filters some others CPUs
+> which would be as efficients because of using the same OPP but with less
+> running tasks as an example.
+> In fact, we only care about the cost of the new OPP that will be
+> selected to handle the waking task. In many cases, several CPUs will end
+> up selecting the same OPP and as a result having the same energy cost. In
+> such cases, we can use other metrics to select the best CPU with the same
+> energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
+> and then the most performant CPU between CPUs.
+> 
+> perf sched pipe on a dragonboard rb5 has been used to compare the overhead
+> of the new feec() vs current implementation.
+> sidenote: delayed dequeue has been disable for all tests.
+> 
+> 9 iterations of perf bench sched pipe -T -l 80000
+>                  ops/sec  stdev
+> tip/sched/core  13490    (+/- 1.7%)
+> + patches 1-3   14095    (+/- 1.7%)  +4.5%
+> 
+> 
+> When overutilized, the scheduler stops looking for an energy efficient CPU
+> and fallback to the default performance mode. Although this is the best
+> choice when a system is fully overutilized, it also breaks the energy
+> efficiency when one CPU becomes overutilized for a short time because of
+> kworker and/or background activity as an example.
+> Patch 4 calls feec() everytime instead of skipping it when overutlized,
+> and fallback to default performance mode only when feec() can't find a
+> suitable CPU. The main advantage is that the task placement remains more
+> stable especially when there is a short and transient overutilized state.
+> The drawback is that the overhead can be significant for some CPU intensive
+> use cases.
+> 
+> The overhead of patch 4 has been stressed with hackbench on dragonboard rb5
+> 
+>                                 tip/sched/core        + patches 1-4
+> 			       Time    stdev         Time    stdev
+> hackbench -l 5120 -g 1         0.724   +/-1.3%       0.765   +/-3.0% (-5.7%)
+> hackbench -l 1280 -g 4         0.740   +/-1.1%       0.768   +/-1.8% (-3.8%)
+> hackbench -l 640  -g 8         0.792   +/-1.3%       0.812   +/-1.6% (-2.6%)
+> hackbench -l 320  -g 16        0.847   +/-1.4%       0.852   +/-1.8% (-0.6%)
+> 
+> hackbench -p -l 5120 -g 1      0.878   +/-1.9%       1.115   +/-3.0% (-27%)
+> hackbench -p -l 1280 -g 4      0.789   +/-2.6%       0.862   +/-5.0% (-9.2%)
+> hackbench -p -l 640  -g 8      0.732   +/-1.9%       0.801   +/-4.3% (-9.4%)
+> hackbench -p -l 320  -g 16     0.710   +/-4.7%       0.767   +/-4.9% (-8.1%)
+> 
+> hackbench -T -l 5120 -g 1      0.756   +/-3.9%       0.772   +/-1.63 (-2.0%)
+> hackbench -T -l 1280 -g 4      0.725   +/-1.4%       0.737   +/-2.0% (-1.3%)
+> hackbench -T -l 640  -g 8      0.767   +/-1.5%       0.809   +/-2.6% (-5.5%)
+> hackbench -T -l 320  -g 16     0.812   +/-1.2%       0.823   +/-2.2% (-1.4%)
+> 
+> hackbench -T -p -l 5120 -g 1   0.941   +/-2.5%       1.190   +/-1.6% (-26%)
+> hackbench -T -p -l 1280 -g 4   0.869   +/-2.5%       0.931   +/-4.9% (-7.2%)
+> hackbench -T -p -l 640  -g 8   0.819   +/-2.4%       0.895   +/-4.6% (-9.3%)
+> hackbench -T -p -l 320  -g 16  0.763   +/-2.6%       0.863   +/-5.0% (-13%)
+> 
+> Side note: Both new feec() and current feec() give similar overheads with
+> patch 4.
+> 
+> Although the highest reachable CPU throughput is not the only target of EAS,
+> the overhead can be significant in some cases as shown in hackbech results
+> above. That being said I still think it's worth the benefit for the stability
+> of tasks placement and a better control of the power.
+> 
+> 
+> Patch 5 solves another problem with tasks being stuck on a CPU forever
+> because it doesn't sleep anymore and as a result never wakeup and call
+> feec(). Such task can be detected by comparing util_avg or runnable_avg
+> with the compute capacity of the CPU. Once detected, we can call feec() to
+> check if there is a better CPU for the stuck task. The call can be done in
+> 2 places:
+> - When the task is put back in the runnnable list after its running slice
+>    with the balance callback mecanism similarly to the rt/dl push callback.
+> - During cfs tick when there is only 1 running task stuck on the CPU in
+>    which case the balance callback can't be used.
+> 
+> This push callback doesn't replace the current misfit task mecanism which
+> is already implemented but this could be considered as a follow up serie.
+> 
+> 
+> This push callback mecanism with the new feec() algorithm ensures that
+> tasks always get a chance to migrate on the best suitable CPU and don't
+> stay stuck on a CPU which is no more the most suitable one. As examples:
+> - A task waking on a big CPU with a uclamp max preventing it to sleep and
+>    wake up, can migrate on a smaller CPU once it's more power efficient.
+> - The tasks are spread on CPUs in the PD when they target the same OPP.
+> 
+> This series implements some of the topics discussed at OSPM [1]. Other
+> topics will be part of an other serie
+> 
+> [1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+> 
+> Vincent Guittot (5):
+>    sched/fair: Filter false overloaded_group case for EAS
+>    energy model: Add a get previous state function
+>    sched/fair: Rework feec() to use cost instead of spare capacity
+>    sched/fair: Use EAS also when overutilized
+>    sched/fair: Add push task callback for EAS
+> 
+>   include/linux/energy_model.h |  18 +
+>   kernel/sched/fair.c          | 693 +++++++++++++++++++++++------------
+>   kernel/sched/sched.h         |   2 +
+>   3 files changed, 488 insertions(+), 225 deletions(-)
+> 
 
-A driver selecting a driver from another subsystem is pretty
-much always a mistake. A single one may not cause much harm,
-but the problems are frequent enough that we need to have
-fewer of them rather than more.
-
->> From the message you cited, I think Stephen had the right
->> intentions ("so that the clk and reset drivers are decoupled"),
->> but the end result did not actually do what he intended
->> even if you did what he asked for.
->>
->> Stephen, can you please take a look here and see if you
->> have a better idea for either decoupling the two drivers
->> enough to avoid the link time dependency, or to reintegrate
->> the reset controller code into the clk driver and avoid
->> the complexity?
->
-> If I may,
->
-> * short term fix: revert both your fix and the initial clock
->   change that needed fixing. That will essentially bring back the reset
->   implementation in clock.
->
-> * after that: remove the creation part from driver/reset and bring back
->   something similar to what was proposed in the initial RFC for the
->   creation and finally switch the clock driver back to it.
->   That should provide the proper decoupling your are requesting I think.
-
-Works for me as well, though Mark's suggestion would be simpler.
-
-     Arnd
+On second look, I do wonder if this series should be split into 
+individual patches or mini-series. Some of the ideas, like 
+overloaded_groups or calling EAS at more locations rather than just 
+wake-up events, might be easier to review and merge if they are independent.
 
