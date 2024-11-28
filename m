@@ -1,120 +1,180 @@
-Return-Path: <linux-kernel+bounces-425133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DFA9DBDD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:02:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E128A9DBDD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:05:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71D0FB21ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88618164040
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347751C4608;
-	Thu, 28 Nov 2024 23:02:39 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F6A1C3F1F;
+	Thu, 28 Nov 2024 23:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXt0Ot6O"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD8D14D6ED;
-	Thu, 28 Nov 2024 23:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E104A14D6ED;
+	Thu, 28 Nov 2024 23:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732834958; cv=none; b=S9Wjd6dIEGvBqvzeM0fv1QQpMDI8EB4rvJ1dCM1+g714kV2ea9gGFG7qUZ8MKbreC++UoIMBvUmt5Ib+wsJJbUzQ1ipi7AAXxZiNNuG4JOiBD5icp1R8IcH3E9bKljH+KlJxN1oBV2C4OdR3C5051Xfv0C9Cg/bFJNiBweCEY3A=
+	t=1732835096; cv=none; b=MmojPboEGV24iXvWEIuk1YGRUQX6BsRzBnW28/pjQ+dLMhVc9vQmrhFG2unFgS2okPyjSaNVz01woQbtXGqMH/+tae+j++r47lqxs+6EnfF+P7N6X49VkEU1zM3hkDqjJyRFDhkkzjn6thEFYPJBQLVoy+nSNV2vhnFNnQJnDrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732834958; c=relaxed/simple;
-	bh=uWjIpIEOgElQIMv1XFirw5baSTrsZqB12pjmk7cD6bY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nxe+puo/QpOb4GbmQ1Oy5Yfg/qurl7sqgszz03juKfvRLxaZFTSRnAsPIPC4nJCDyVy9yV6wb4iFhifWoBzKv08i9Ab8UcDBaLTIO5wLfPhXhP3gECeC+2Qub5uHMG+We26L0LOSSxq7txfRWGI3G8yTFhPptbqYD1WzvZgdJhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.2] (ip5f5af40d.dynamic.kabel-deutschland.de [95.90.244.13])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 33CAF61E5FE05;
-	Fri, 29 Nov 2024 00:01:56 +0100 (CET)
-Message-ID: <5c9bf757-a035-499c-a1ef-ac33c1c6e75b@molgen.mpg.de>
-Date: Fri, 29 Nov 2024 00:01:55 +0100
+	s=arc-20240116; t=1732835096; c=relaxed/simple;
+	bh=DzvCttm81qDVNPRzjk7KQALjH8dZtc2K3VkH6rbQ1JU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=js0Jxq7Sv5l6/OBi5dv3lvUZmCIAk1VQRRbGtWXCHsG5r5xKO0umNFE9x/bWl8hm68FQ/0/CIgCG3wrwclUahllZvRCQBjp2ICg13R4daSjwbzNW4DirIpD+FbP2bfP6lyZ159WaAy/TOzJWQ+azF8u2aB++E9XnDWgRQc5A4tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXt0Ot6O; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fc99fc2b16so716573a12.3;
+        Thu, 28 Nov 2024 15:04:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732835094; x=1733439894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=++cYjW+HqKSG3g8/MqoKxfKR3xnA0x2KXfB3k0N6Lsw=;
+        b=AXt0Ot6O0qrECBKHYBPZRdaNt06iDWIrZyg9YwL/IDeIVJFvfHd227Fz32Bs7BVy5d
+         dsETUESR/tUIWO6YlyamV6P/OyH77P9966yrTFsqk/0HnABxFads//Q3DVDeGW1M+j87
+         l2Wf/G98VF8b3cE5vjnhAjnWtTQXfX/MGMti6ikwOEmYmsbhhdXhmWO1x4mTOHzlUlWH
+         IKjePzkOQ7m6+ri0lxNYURHUgDi0jyAXFbgsdmu6aY9Z/iVoGxjc1j+VWsr3PkI8CrA7
+         Ya0WME0x+Y2Dc8+UlDuPXFUHrjcc3EG8ECf88q98pefMeUw/+IvVVOMTy4SlTq/HLgbk
+         aTEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732835094; x=1733439894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++cYjW+HqKSG3g8/MqoKxfKR3xnA0x2KXfB3k0N6Lsw=;
+        b=b2dqzEKYNlDECdru7gAWfCDU2jtKanIx2/i28Zo5aGNma29PmYhJcBhQC5LmOoIpJr
+         yCC8OBvC1TS0YJ51WiDsdV3/UCq+kM8pqky1Yk/g52JKWNUHxW82pHiIDT2oxE/QdeAB
+         io6kcprHtHZzFYrr6iyEPrOoEuwIKaDwu0y7A3IHF0rXBv6G/Bj7nnhhFqXQnDzZMxVs
+         GBFqed4G8nPZGeMRvLEFRktBj8y5z/ZTw91ipz3PDe1TfHo/A0uqV4sZa2PyfEg2IXyn
+         9Ofssch7X32Wt0HNoMyVZV1DElULduFKROxmlvs1HH8IsAz0ZnYlSmvPeqdex1pBHpsy
+         mXXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8ouC8AA53czlqlrPdWKnuHqLe0Z4Fvbz/3ea655LKj69eXilPkxFNPDFojrDRqexFZ2VMjs2ZlL3f@vger.kernel.org, AJvYcCWccHQUfU8zBjuMHDesg/fDjEXrRzn5CVnJam7nbxKSVx8mx57rsdwX8Guy6hSqh1xalOmwJjGbUHijRsPE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJP0K9+mjEy2fLeLDMCZOtIhMwbb1QQFnchTSNZQjFlazs+iwz
+	chd4+9SI6kIbAD4GmkHnz3B4/sNRapRDfJNY7JLuxdmfKMGB4koI
+X-Gm-Gg: ASbGncsdUAGvEa6owyZX9Sm5a1P0zaEAKtHemQHRYcUO05xDBMKHZRuBo5qy5yMYZOl
+	ocXZYm62xK5mk7ziqkSpMqtiTVgPZY2yYNt7/yS7/kZdqjR9chuGCNTEpP/tdit9/EnUGvd3/yY
+	OSefEnPlgz1sM+RwVfg1RxouohE6b7Uv1Q89M51sR+fANf7EL5xeyBDnYHQFZ1qI2GNa8NF27Em
+	hMif3mnsP52otFe6w4O7SQzrxLDP19Nop/7ImAqycVpA4RoXg==
+X-Google-Smtp-Source: AGHT+IE/aMZFGoNf0AnuLBoYsI4ZXZxfQV+WbNAJxb1A7vGSAkaUGS+6VHhxuOyc6Kz7vhvZ9x1t+Q==
+X-Received: by 2002:a05:6a20:9185:b0:1e0:d618:1fe3 with SMTP id adf61e73a8af0-1e0e0b249a3mr12363438637.26.1732835094007;
+        Thu, 28 Nov 2024 15:04:54 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:bb0d:3829:251:d17e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541761500sm2201884b3a.29.2024.11.28.15.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 15:04:53 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:04:50 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] device property: do not leak child nodes when using
+ NULL/error pointers
+Message-ID: <Z0j3EtRmYBmGFApu@google.com>
+References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
+ <Z0hsbNqXSkQjsR1v@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: WARNING: drivers/net/wireless/ath/ath10k/mac.c:8750
- ath10k_mac_update_vif_chan+0x237/0x2e0 [ath10k_core]
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- LKML <linux-kernel@vger.kernel.org>, regressions@lists.linux.dev
-References: <637c5bb4-5278-44be-9ac3-9c0ef9297162@molgen.mpg.de>
- <8734jcx60e.fsf@kernel.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <8734jcx60e.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0hsbNqXSkQjsR1v@smile.fi.intel.com>
 
-Dear Kalle,
-
-
-Thank you for your reply.
-
-
-Am 27.11.24 um 12:36 schrieb Kalle Valo:
-> Paul Menzel writes:
+On Thu, Nov 28, 2024 at 03:13:16PM +0200, Andy Shevchenko wrote:
+> On Wed, Nov 27, 2024 at 09:39:34PM -0800, Dmitry Torokhov wrote:
+> > The documentation to various API calls that locate children for a given
+> > fwnode (such as fwnode_get_next_available_child_node() or
+> > device_get_next_child_node()) states that the reference to the node
+> > passed in "child" argument is dropped unconditionally, however the
+> > change that added checks for the main node to be NULL or error pointer
+> > broke this promise.
 > 
->> On the Dell XPS 13 9360 with Linux 6.12.0-08446-g228a1157fb9f, I
->> noticed the trace below:
+> This commit message doesn't explain a use case. Hence it might be just
+> a documentation issue, please elaborate.
+
+I do not have a specific use case in mind, however the implementation
+behavior does not match the stated one, and so it makes sense to get it
+fixed. Otherwise callers would have to add checks to conditionally drop
+the reference to "child" argument in certain cases, which will
+complicate caller's code.
+
 > 
-> For others, commit 228a1157fb9f is from current merge window so the
-> first release will be in v6.13-rc1.
+> > Add missing fwnode_handle_put() calls to restore the documented
+> > behavior.
 > 
->> [16805.002289] ------------[ cut here ]------------
->> [16805.002296] WARNING: CPU: 3 PID: 65835 at drivers/net/wireless/ath/ath10k/mac.c:8750 ath10k_mac_update_vif_chan+0x237/0x2e0 [ath10k_core]
+> ...
 > 
-> [...]
+> While at it, please fix the kernel-doc (missing Return section).
+
+OK.
+
 > 
->> I do not see such a message in the logs since September 19th, so I
->> believe it’s a regression.
+> >  {
+> > +	if (IS_ERR_OR_NULL(fwnode) ||
 > 
-> Have you seen it only this one time or multiple times?
+> Unneeded check as fwnode_has_op() has it already.
 
-I have seen it only this one time.
+Yes, it has, but that is not obvious nor it is a documented behavior of
+fwnode_has_op(). It also different semantics: it checks whether a fwnode
+implements a given operation, not whether fwnode is valid. That check is
+incidental in fwnode_has_op().
 
-> What kernels have you been testing prior? I'm trying to pinpoint what
-> versions kernel version work and what have this warning.
-Before I ran 6.12.0-07749-g28eb75e178d3 without seeing this. As it only 
-occurred once, that does not give any pointer though.
+They all are macros so compiler should collapse duplicate checks, but if
+you feel really strongly about it I can drop IS_ERR_OR_NULL() check.
 
+> 
+> > +	    !fwnode_has_op(fwnode, get_next_child_node)) {
+> > +		fwnode_handle_put(child);
+> > +		return NULL;
+> > +	}
+> 
+> >  	return fwnode_call_ptr_op(fwnode, get_next_child_node, child);
+> 
+> Now it's useless to call the macro, you can simply take the direct call.
 
-Kind regards,
+OK, will change to a direct call.
 
-Paul
+> 
+> >  }
+> 
+> ...
+> 
+> > @@ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+> >  	const struct fwnode_handle *fwnode = dev_fwnode(dev);
+> >  	struct fwnode_handle *next;
+> 
+> > -	if (IS_ERR_OR_NULL(fwnode))
+> > +	if (IS_ERR_OR_NULL(fwnode)) {
+> > +		fwnode_handle_put(child);
+> >  		return NULL;
+> > +	}
+> 
+> >  	/* Try to find a child in primary fwnode */
+> >  	next = fwnode_get_next_child_node(fwnode, child);
+> 
+> So, why not just moving the original check (w/o dropping the reference) here?
+> Wouldn't it have the same effect w/o explicit call to the fwnode_handle_put()?
 
+Because if you rely on check in fwnode_get_next_child_node() you would
+not know if it returned NULL because there are no more children or
+because the node is invalid. In the latter case you can't dereference
+fwnode->secondary.
 
-PS:
+Thanks.
 
-$ last reboot
-reboot   system boot  6.12.0-10296-gaa Thu Nov 28 22:42 - still running
-reboot   system boot  6.12-rc6-amd64   Wed Nov 27 14:04 - 22:42 (1+08:37)
-reboot   system boot  6.12.0-10296-gaa Wed Nov 27 13:21 - 14:02  (00:40)
-reboot   system boot  6.12.0-09568-g2f Tue Nov 26 18:41 - crash
-reboot   system boot  6.12.0-08446-g22 Sat Nov 23 12:27 - 18:40 (3+06:13)
-reboot   system boot  6.12.0-07749-g28 Fri Nov 22 10:14 - 10:24 (1+00:09)
-reboot   system boot  6.12.0           Wed Nov 20 09:24 - crash
-reboot   system boot  6.12.0-rc7       Wed Nov 20 09:22 - 09:23  (00:01)
-reboot   system boot  6.12.0-rc7       Tue Nov 12 08:19 - 23:27 (7+15:08)
-reboot   system boot  6.12.0-rc7       Mon Nov 11 21:54 - 00:16  (02:21)
-reboot   system boot  6.11-amd64       Mon Nov 11 21:52 - crash
-reboot   system boot  6.12.0-rc7       Mon Nov 11 20:43 - 21:52  (01:08)
-reboot   system boot  6.12.0-rc7       Mon Nov 11 17:51 - 17:52  (00:01)
-reboot   system boot  6.12.0-rc6-00077 Fri Nov  8 08:39 - 17:50 (3+09:11)
-reboot   system boot  6.12.0-rc6-00077 Thu Nov  7 07:26 - 23:24  (15:58)
-reboot   system boot  6.12.0-rc5-00047 Mon Nov  4 08:26 - crash
-reboot   system boot  6.12.0-rc5-00047 Mon Nov  4 05:42 - 05:43  (00:00)
-reboot   system boot  6.12.0-rc5-00047 Sun Nov  3 06:54 - 22:10  (15:15)
-reboot   system boot  6.12.0-rc5-00047 Sat Nov  2 07:34 - 22:05  (14:31)
+-- 
+Dmitry
 
