@@ -1,81 +1,170 @@
-Return-Path: <linux-kernel+bounces-424517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4CC9DB535
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:04:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFAF9DB541
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:07:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E71282833
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82574167C17
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5253C191F79;
-	Thu, 28 Nov 2024 10:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o66XLKFs"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F30194A54;
+	Thu, 28 Nov 2024 10:07:17 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5979C84E1C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13ED192D82;
+	Thu, 28 Nov 2024 10:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732788239; cv=none; b=CpRp5LX7yJpCZ2H9PZxrcjvc5oOU16yn4tFSfWTUBtUnz12ktlSI3+zhW2gBD+iVogt5cdvgZSfNCYYyyDiFbxWszuvr7qUzbuR8VK7bxjyh+n4oFDJ+lqJXBkb9bK3RDMIn2LVUU1KbHXP3vUCXyw1uXfZz5QoAM2RKDA43Gcw=
+	t=1732788437; cv=none; b=Y0mwtCJOXyctAx6z3FT5UqelT7IhrDbnbp5KJQf6u4oMfMnd3/J0UOdhuNB+2gx0CqlAYRAzS3sopL4JjOdsuBu1fAxN9lYweCgxF+ymse3lIqmVd1vvEQOHR7Bylj4g6M2yRqjAMLdbe05dqyRbda0Uxt+PQH4vrEFFFXlYxJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732788239; c=relaxed/simple;
-	bh=i3zKEdcNdnHsGuXqihiHbAd8ZLpjA3IgVI//cbeoNww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxsAFRVwjf0Rpt4OqFH5U8lGcKbitOoSLmI/HgiAQa6XO23MkUSv/pdIpbK5F8PD8yCJ2rkfoZmRqyLkMmvjX4+63aSfbImulBvgc5aBX7G2gNsQYcoEHblekBJLAKOVcATLhPOHYpbHWCPjFsez68SwLLWl2ngtbrMR383VipU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o66XLKFs; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cAWH7TJ/SE/rLcXm/WyYVMkfcOhFnCWGLIUAwZRnL8Y=; b=o66XLKFs66yKZ4oy4dJdiGrZ/V
-	IyHzp3aH9cCMk7q7yfH2bivOykNdb9XEDgOUdCQvDN5xOMcINTskv31m3hnmhlJAMAHUaU2FkiFq8
-	kG4yLIaLtrTRkAwCMggJZQIxIw4Pz21rf94hDczxH6kiySh1BlgbgqqZeSjStisR4vjwPHka5psd7
-	6PDRDYb6hJn/kgl3I5vPwRSCjZAHUf6of3KQru4yqKiyqTZiQYJbF+7InaburFNC/3SM/mIOZDgfu
-	PkVTJIkbw4gls2E6halFpvWimxuD8FUFSDwWvZa0DwmOei5wOuvjuhZllL7kAz7lu4cgVToUGbRcP
-	dxxawcOg==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGbNF-00000001aIk-0Pmo;
-	Thu, 28 Nov 2024 10:03:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 75010300271; Thu, 28 Nov 2024 11:03:48 +0100 (CET)
-Date: Thu, 28 Nov 2024 11:03:48 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, pauld@redhat.com, efault@gmx.de,
-	luis.machado@arm.com
-Subject: Re: [PATCH 6/9] sched/fair: Removed unsued cfs_rq.h_nr_delayed
-Message-ID: <20241128100348.GC24400@noisy.programming.kicks-ass.net>
-References: <20241128092750.2541735-1-vincent.guittot@linaro.org>
- <20241128092750.2541735-7-vincent.guittot@linaro.org>
+	s=arc-20240116; t=1732788437; c=relaxed/simple;
+	bh=wswVD2zp4CCUaT6ZSlru+V4x0SVt/us+3geDqb0tYP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wr1VnfI3vZ1D9FsO+xi0ABgdMXILCrKqaW2CVoDg8YXjoFS9A0cXAqFe043Lz9UHGSC+LghhaPfpsNUrQfkS07f131kh/JdAkHmkrkXwys623W1xUN/KWpndvEyDRygwRcQWKjLPgILhgl41ef8n9q9wtjkffe8DCq4ZGW7Yxxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XzWf05XKhz9v7Vp;
+	Thu, 28 Nov 2024 17:46:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 5103F140535;
+	Thu, 28 Nov 2024 18:06:58 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAnj365QEhn6eNzAg--.15234S2;
+	Thu, 28 Nov 2024 11:06:57 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 0/7] ima: Remove unnecessary inode locks
+Date: Thu, 28 Nov 2024 11:06:13 +0100
+Message-ID: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.47.0.118.gfd3785337b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128092750.2541735-7-vincent.guittot@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAnj365QEhn6eNzAg--.15234S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWfKr1fKF4DXFy3tw4fKrg_yoWrCw1kpa
+	9Yg3W5Gr1DAryxurZaka13uaySkayrW3yUWwsxJw1UZF98ZF10qr4rCr1UuryxKr95C3Wq
+	qr1agrn8u3WqyrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
+	0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
+	F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
+	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7Cj
+	xVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+	6r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2
+	IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUxGNtDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGdH1TUCmAAAse
 
-On Thu, Nov 28, 2024 at 10:27:47AM +0100, Vincent Guittot wrote:
-> h_nr_delayed is not used anymore. We now have
-> - h_nr_running which tracks tasks ready to run
-> - h_nr_enqueued which tracks enqueued tasks either ready to run or delayed
->   dequeue
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Oh, now I see where you're going.
+A recent syzbot report [1] showed a possible lock inversion between the
+mmap lock and the inode lock. Paul Moore suggested to remove the inode lock
+in IMA as a possible solution. A first patch set was made [2] to fulfill
+that request, although incomplete due to not removing the inode lock around
+the ima_appraise_measurement() call.
 
-Let me read the lot again, because this sure as hell was a confusing
-swizzle.
+While the original report was fixed in a different way, by calling the
+security_mmap_file() hook outside the mmap lock critical region in the
+remap_file_pages() system call [3], the IMA patch set has benefits on its
+own, since it merges two critical sections in one in process_measurement(),
+and make the latter and __ima_inode_hash() compete for the same lock.
+
+Remove the inode lock in three phases (except from ima_update_xattr(), when
+setting security.ima).
+
+First, remove the S_IMA inode flag and the IS_IMA() macro, since S_IMA
+needs to be set under the inode lock, and it is going to be removed. There
+is no performance penalty in doing that, since the pointer of the inode
+integrity metadata has been moved to the inode security blob when IMA was
+made as a regular LSM [4], and retrieving such metadata can be done in
+constant time (patch 1).
+
+Second, move the mutex from the inode integrity metadata to the inode
+security blob, so that the lock can be taken regardless of whether or not
+the inode integrity metadata was allocated for that inode (patch 2).
+
+Consequently, remove the inode lock just after the policy evaluation and
+extend the critical region previously guarded by the integrity inode
+metadata mutex to where the inode lock was.
+
+Also, make sure that ima_inode_get() is called with the new mutex lock
+held, to avoid non-atomic check/assignment of the integrity metadata in the
+inode security blob (patch 3), and mark the pointer of inode integrity
+metadata as a shared resource with READ_ONCE() and WRITE_ONCE() (patch 4).
+
+Second, remove the inode lock around ima_appraise_measurement() by
+postponing setting security.ima when IMA-Appraisal is in fix mode, to when
+the file is closed (patch 5).
+
+While testing the new functionality, two bugs were found and corrected.
+Discard in IMA files opened with the O_PATH open flags, since no data are
+accessed (the file descriptor is used for different purposes). Otherwise,
+IMA ended up trying to read the files anyway, causing a kernel warning to
+be printed in the kernel log (patch 6).
+
+Do not reset the IMA_NEW_FILE flag as a result of setting inode attributes,
+as it was before the patch to reintroduce the inode integrity metadata
+mutex. By resetting the flag, IMA was not able to appraise new files with
+modified metadata before security.ima was written to the disk (patch 7).
+
+[1] https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.46d20.0036.GAE@google.com/
+[2] https://lore.kernel.org/linux-security-module/20241008165732.2603647-1-roberto.sassu@huaweicloud.com/
+[3] https://lore.kernel.org/linux-security-module/20241018161415.3845146-1-roberto.sassu@huaweicloud.com/
+[4] https://lore.kernel.org/linux-security-module/20240215103113.2369171-1-roberto.sassu@huaweicloud.com/
+
+v1:
+- New patches (1 suggested by Shu Han, 4-6)
+- Remove ima_inode_get_iint() and ima_inode_set_iint() and access inode
+  integrity metadata from the new ima_iint_cache_lock structure directly
+- Return immediately in ima_inode_get() if the inode does not have a
+  security blob (suggested by Paul Moore)
+
+Roberto Sassu (7):
+  fs: ima: Remove S_IMA and IS_IMA()
+  ima: Remove inode lock
+  ima: Ensure lock is held when setting iint pointer in inode security
+    blob
+  ima: Mark concurrent accesses to the iint pointer in the inode
+    security blob
+  ima: Set security.ima on file close when ima_appraise=fix
+  ima: Discard files opened with O_PATH
+  ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
+
+ include/linux/fs.h                    |  3 +-
+ security/integrity/ima/ima.h          | 33 ++++------
+ security/integrity/ima/ima_api.c      |  4 +-
+ security/integrity/ima/ima_appraise.c |  7 +-
+ security/integrity/ima/ima_iint.c     | 95 ++++++++++++++++++++++-----
+ security/integrity/ima/ima_main.c     | 81 +++++++++++++----------
+ 6 files changed, 146 insertions(+), 77 deletions(-)
+
+-- 
+2.47.0.118.gfd3785337b
+
 
