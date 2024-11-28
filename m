@@ -1,237 +1,129 @@
-Return-Path: <linux-kernel+bounces-424904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8679DBB03
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:08:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9D016130C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:08:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7671BD9DB;
-	Thu, 28 Nov 2024 16:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZHiQsPrE"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891F39DBB06
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:09:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39CD1BD9CB;
-	Thu, 28 Nov 2024 16:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732810093; cv=none; b=uA0Le7xl2GWpHeDY55hlbnZed3ZCicE+Hf2IxzQdyLnt6zzJxhGWKovcL5l+Xq2BydHwEXDCKVjGMVIbRFGVqlL4w0lMTLBddsymauAryC+s/Xe+hD8WtFAwXyi6mkF/l2ZU6CI3ofU3u5/cWXSGAU0yNLu4oZG4I5Ih4ngFLQg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732810093; c=relaxed/simple;
-	bh=EXr/Xa4IzkrMZ/1Uwppwz8/I/eKNWK/N7JTkg3JjU0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYXw6Xia9GVCqGkj0Ap7BX6sqsrexeGIv1737DdKTpFoHb77MYbpr0IRrgo/XFfWRlqizuJF+EzqdoBepJYF1++8zQ4eJ01KNBOoqYWEWuk6jbLZVWZ5HPfed1Q8M1S2Ts+0qOOiXZKsocN8+NN9wreXyWfuQAAn0VIMdG/vRX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZHiQsPrE; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1F7AD40E015E;
-	Thu, 28 Nov 2024 16:08:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JEf4IJx5ofLC; Thu, 28 Nov 2024 16:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732810083; bh=tBvIZsR8D+2ZYbu6rMifmZidC/N+3RXk90l43tBthoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZHiQsPrEmGchPW6AX34zhC0DXJifHmYraIbuw2eGIlUSIBdvs2x0Txyzcllihy0le
-	 O/ZcEuRB2/1I3BfoMe2Z6UDamwe+oRMBylPyoKQV+nZcUULKtfPjdVh0yY86ATetYf
-	 num6/FfOS7BwPqxtdAEQZS8ttdL+eXiIn0G+WaU25rUy/85kZR1tu4Lm3F9h9DUmlf
-	 VVvqIgON5qAq1899eUJKEDSEX2Sc3d3Tq1vH9ufEDLP2BwLwUhUsHHPA4/xWMJy/Qs
-	 VTbR7Soxca7BCmUQFtu9oSHkeoWC6XR3KXUqjqIx7wevdtdjBQunv3pLfmh/vqpdDE
-	 mU22AlQb8USSUWRFbbH15ZsbAe79YudL81DRhScjyLZCxG4dh0ML8PRZ2MPmH1u3Mq
-	 nW6ZdlRNN1C7V30cFMkOhYIclVZnQulD7rVFZgQ2M3rMTlS2nADnJK6NZUgIQ/Yu4u
-	 7bneZKZnezhTjAp+cTf93wlPE7iJVh4FoXkG4c8yrHWQo1Dei8r4TPfw2ESX4HqvB8
-	 LtcwNCbrCZs3B+U/8R2wvge5ZavvVuMNwe9Wrj3n3LEm+ewNz2nF4pB+8YbxDk7/z6
-	 xDUApg/qq3yO+lsH0B38ZLLhsBOwOsJ6eWh7J/cMlIJ5jos9vYNM7e4EuzS59tNKVO
-	 iQWU8ByhfllLt/Cj7lBQs/RE=
-Received: from zn.tnic (p200300ea9736A177329C23fffea6A903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a177:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0042820F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:08:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0D21BD9F2;
+	Thu, 28 Nov 2024 16:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UpSiXgor"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0AC240E0274;
-	Thu, 28 Nov 2024 16:07:49 +0000 (UTC)
-Date: Thu, 28 Nov 2024 17:07:42 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>, Joerg Roedel <jroedel@suse.de>,
-	Roy Hopkins <roy.hopkins@suse.com>
-Subject: Re: [RFC PATCH 1/7] KVM: SVM: Implement GET_AP_APIC_IDS NAE event
-Message-ID: <20241128160742.GAZ0iVTp1thcQA5jFM@fat_crate.local>
-References: <cover.1724795970.git.thomas.lendacky@amd.com>
- <e60f352abde6bfa9c989d63213d4fb04c3721c11.1724795971.git.thomas.lendacky@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844F81BBBFC;
+	Thu, 28 Nov 2024 16:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732810134; cv=none; b=HCTiXqsKWh+/gLxpZSPu/UjIyVBAMNOjR8EAMLtLRY5FgTUMa6OdTIP/17Q+eFWWLKHi0lNffVmcmjX1FG0IwVxvsawEFqnNi/Q33uuAry7LGDG5UEsDU6q1llvd82wMNhfM+oa16AcsfRj0R/GL/hMYXqEtgKXJKZCVpduFV1Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732810134; c=relaxed/simple;
+	bh=cHvhH9W6PIpl43TfXtdJRjy7sDy3NHgdYsKGq5MC2II=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I7G4d38nhqaYM7qB4ucGQ9o3B0zEXUVFLh5KonjQiYpbziAbw/qzs+r42vP+DSzdqJ1VWR5df/T26MTwFAbMTfy3/Ik8hlRR2mQRJSGaD+YyHuHBgAksY+vx/OaMEg9avlRDgy99VEaLf26ZL2xJN1uIqwEVpt6syuiyC0qQGM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UpSiXgor; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b1601e853eso72226985a.2;
+        Thu, 28 Nov 2024 08:08:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732810131; x=1733414931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cHvhH9W6PIpl43TfXtdJRjy7sDy3NHgdYsKGq5MC2II=;
+        b=UpSiXgorgHaNaVs/P85+FplCuD9q4LGTn+zI6Efld27yLBdbrMesMuEor4vuyBDsxQ
+         n458ated+C/jDuCLOmM1H/BdHR8rCOgExJv+HHvTefL81vENoAr0gg64HaYlOqpzwHyZ
+         syiNM+BjzxKqQHnk6w1CaqmEZDgeWthQDwvdEXYFE8xbevq2axkTY9oCOcjQkGjwq0EF
+         zGezBWUfOGkUGA/hTNPigYRQ9JGDn44LJeMrpYgGUSKdlo7BKxcb4qwPYpeenK+gKTx5
+         X+re77AfIU9eMJfVINFNPlZPZ22g7leZrsv32hnXrlnrKHpCPKdX1VmM1lFXxrz67LfS
+         YHdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732810131; x=1733414931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cHvhH9W6PIpl43TfXtdJRjy7sDy3NHgdYsKGq5MC2II=;
+        b=ZJiGRcvuw7zQz9JdaYW24IekknlhJYb971znu4MfA9iWPi/TDqwfxhbSACCqa0Ghn9
+         +tIuxJfZYQozMbsFWJ3OKux7xLF48TSYKlyIVB5AeZHA/uf7PGiUvDprCyahA4y/qRbq
+         a7WN/OCjn8VaJDHZafyxUzhJnviL05UjzPNvUJhBwJxHMdNnuKOODhDqUOedQj89BMlv
+         ulTOn2KYi8HE4WCWA7vmaO9JkSjjh1v9dQF/5GfhWGlSCiuThvOh8oV/tBWR6XzB0nam
+         Qp6mXuDw+pmE6RFnwc/9lg86VttHeenF+Uig3E7SqAWSZw1+Jn7SerxpVO9Swpc64X6N
+         9q2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUleVL7IDpXte2o81I+rEVBmOdMru/ccaf2lz+t4Kno8iZUcy9HMmPYObYp3d72giyyHquuB7jp@vger.kernel.org, AJvYcCXW13NJ2ngeaHJf2BXwgN3wPKi0FMdLrdDM2BVdL2B2yoYO+6QqVyX+jrlod68KwpVN195oiEgmx/G6Lyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc+kT957ibJPxS7q/57OdNU78lBeYeHxOxqi9fHZ6lgdKKVaEZ
+	z+LkA+H6Mgq7PZAF0saKEPBMYtGy1dUJnDFh4kqS/znVm+g5EgYwosvA6gwVM0APL+xC5ZRylGf
+	vVB7iByaYJ/1r7l14TAVNgGtg5ME=
+X-Gm-Gg: ASbGncuCRThB8KZhB6oDrD8D+KNaWMpCdGZzFzg/+Dzpz2hgTi/DJyz6p3crgcwlqj7
+	XUtPCrZZichRnGeV9D+uK+E5diOMEJcFNm8pxmFYcrW34uWE3oCHr7rCoF7+e+wk=
+X-Google-Smtp-Source: AGHT+IFDn0sg78d2K5Y8L/ks5X4Mv0VXCbUDL/EGaXlZiyLyMZaCnWCK645fWj82LBjriY2fbz0RV3sPH4HA0CftzNI=
+X-Received: by 2002:a05:620a:4508:b0:7b6:66d0:5ab6 with SMTP id
+ af79cd13be357-7b67c463addmr802630985a.51.1732810131251; Thu, 28 Nov 2024
+ 08:08:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e60f352abde6bfa9c989d63213d4fb04c3721c11.1724795971.git.thomas.lendacky@amd.com>
+References: <20240115232718.209642-1-sashal@kernel.org> <20240115232718.209642-11-sashal@kernel.org>
+ <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local> <Z0iRzPpGvpeYzA4H@sashalap>
+In-Reply-To: <Z0iRzPpGvpeYzA4H@sashalap>
+From: Erwan Velu <erwanaliasr1@gmail.com>
+Date: Thu, 28 Nov 2024 17:08:40 +0100
+Message-ID: <CAL2JzuzTnQkKGkVQ9HwCHsVAtCk9Z=iniXm0uMgi3ZnODyfC3A@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
+ accesses on AMD
+To: Sasha Levin <sashal@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, 
+	x86@kernel.org, puwen@hygon.cn, seanjc@google.com, kim.phillips@amd.com, 
+	jmattson@google.com, babu.moger@amd.com, peterz@infradead.org, 
+	rick.p.edgecombe@intel.com, brgerst@gmail.com, ashok.raj@intel.com, 
+	mjguzik@gmail.com, jpoimboe@kernel.org, nik.borisov@suse.com, aik@amd.com, 
+	vegard.nossum@oracle.com, daniel.sneddon@linux.intel.com, acdunlap@google.com, 
+	pavel@denx.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 04:59:25PM -0500, Tom Lendacky wrote:
-> @@ -4124,6 +4130,77 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
->  	return 1; /* resume guest */
->  }
->  
-> +struct sev_apic_id_desc {
-> +	u32	num_entries;
+But it was backported on 6.6 and the performance impact is pretty high
+on some workloads.
+As this patch is only providing a perf benefit and to keep consistency
+with other stable kernels, would it be possible to get it merged ?
 
-"count" - like in the spec. :-P
-
-> +	u32	apic_ids[];
-> +};
-> +
-> +static void sev_get_apic_ids(struct vcpu_svm *svm)
-> +{
-> +	struct ghcb *ghcb = svm->sev_es.ghcb;
-> +	struct kvm_vcpu *vcpu = &svm->vcpu, *loop_vcpu;
-> +	struct kvm *kvm = vcpu->kvm;
-> +	unsigned int id_desc_size;
-> +	struct sev_apic_id_desc *desc;
-> +	kvm_pfn_t pfn;
-> +	gpa_t gpa;
-> +	u64 pages;
-> +	unsigned long i;
-> +	int n;
-> +
-> +	pages = vcpu->arch.regs[VCPU_REGS_RAX];
-
-Probably should be "num_pages" and a comment should explain what it is:
-
-"State to Hypervisor: is the
-number of guest contiguous pages
-provided to hold the list of APIC
-IDs"
-
-Makes it much easier to follow the code.
-
-> +	/* Each APIC ID is 32-bits in size, so make sure there is room */
-> +	n = atomic_read(&kvm->online_vcpus);
-> +	/*TODO: is this possible? */
-> +	if (n < 0)
-> +		return;
-
-It doesn't look like it but if you wanna be real paranoid you can slap
-a WARN_ONCE() here or so to scream loudly.
-
-> +	id_desc_size = sizeof(*desc);
-> +	id_desc_size += n * sizeof(desc->apic_ids[0]);
-> +	if (id_desc_size > (pages * PAGE_SIZE)) {
-> +		vcpu->arch.regs[VCPU_REGS_RAX] = PFN_UP(id_desc_size);
-> +		return;
-> +	}
-> +
-> +	gpa = svm->vmcb->control.exit_info_1;
-> +
-> +	ghcb_set_sw_exit_info_1(ghcb, 2);
-> +	ghcb_set_sw_exit_info_2(ghcb, 5);
-
-Uuh, more magic numbers. I guess we need this:
-
-https://lore.kernel.org/r/20241113204425.889854-1-huibo.wang@amd.com
-
-and more.
-
-And can we write those only once at the end of the function?
-
-> +	if (!page_address_valid(vcpu, gpa))
-> +		return;
-> +
-> +	pfn = gfn_to_pfn(kvm, gpa_to_gfn(gpa));
-
-Looking at the tree, that gfn_to_pfn() thing is gone now and we're supposed to
-it this way.  Not tested ofc:
-
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 5af227ba15a3..47e1f72a574d 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4134,7 +4134,7 @@ static void sev_get_apic_ids(struct vcpu_svm *svm)
- 	struct kvm *kvm = vcpu->kvm;
- 	unsigned int id_desc_size;
- 	struct sev_apic_id_desc *desc;
--	kvm_pfn_t pfn;
-+	struct page *page;
- 	gpa_t gpa;
- 	u64 pages;
- 	unsigned long i;
-@@ -4163,8 +4163,8 @@ static void sev_get_apic_ids(struct vcpu_svm *svm)
- 	if (!page_address_valid(vcpu, gpa))
- 		return;
- 
--	pfn = gfn_to_pfn(kvm, gpa_to_gfn(gpa));
--	if (is_error_noslot_pfn(pfn))
-+	page = gfn_to_page(kvm, gpa_to_gfn(gpa));
-+	if (!page)
- 		return;
- 
- 	if (!pages)
-
-> +	if (is_error_noslot_pfn(pfn))
-> +		return;
-> +
-> +	if (!pages)
-> +		return;
-
-That test needs to go right under the assignment of "pages".
-
-> +	/* Allocate a buffer to hold the APIC IDs */
-> +	desc = kvzalloc(id_desc_size, GFP_KERNEL_ACCOUNT);
-> +	if (!desc)
-> +		return;
-> +
-> +	desc->num_entries = n;
-> +	kvm_for_each_vcpu(i, loop_vcpu, kvm) {
-> +		/*TODO: is this possible? */
-
-Well:
-
-#define kvm_for_each_vcpu(idx, vcpup, kvm)                 \
-        xa_for_each_range(&kvm->vcpu_array, idx, vcpup, 0, \
-                          (atomic_read(&kvm->online_vcpus) - 1))
-			   ^^^^^^^^^^^^^^
-
-but, what's stopping kvm_vm_ioctl_create_vcpu() from incrementing it?
-
-I'm guessing this would happen when you start the guest only but I haz no
-idea.
-
-> +		if (i > n)
-> +			break;
-> +
-> +		desc->apic_ids[i] = loop_vcpu->vcpu_id;
-> +	}
-> +
-> +	if (!kvm_write_guest(kvm, gpa, desc, id_desc_size)) {
-> +		/* IDs were successfully written */
-> +		ghcb_set_sw_exit_info_1(ghcb, 0);
-> +		ghcb_set_sw_exit_info_2(ghcb, 0);
-> +	}
-> +
-> +	kvfree(desc);
-> +}
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Le jeu. 28 nov. 2024 =C3=A0 16:52, Sasha Levin <sashal@kernel.org> a =C3=A9=
+crit :
+>
+> On Thu, Nov 28, 2024 at 12:59:24PM +0100, Borislav Petkov wrote:
+> >Hey folks,
+> >
+> >On Mon, Jan 15, 2024 at 06:26:56PM -0500, Sasha Levin wrote:
+> >> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+> >>
+> >> [ Upstream commit 04c3024560d3a14acd18d0a51a1d0a89d29b7eb5 ]
+> >>
+> >> AMD does not have the requirement for a synchronization barrier when
+> >> acccessing a certain group of MSRs. Do not incur that unnecessary
+> >> penalty there.
+> >
+> >Erwan just mentioned that this one is not in 6.1 and in 5.15. And I have=
+ mails
+> >about it getting picked up by AUTOSEL.
+> >
+> >Did the AI reconsider in the meantime?
+>
+> You've missed the 5.10 mail :)
+>
+> Pavel objected to it so I've dropped it: https://lore.kernel.org/all/Zbli=
+7QIGVFT8EtO4@sashalap/
+>
+> --
+> Thanks,
+> Sasha
 
