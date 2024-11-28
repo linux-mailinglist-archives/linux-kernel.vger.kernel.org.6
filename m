@@ -1,155 +1,140 @@
-Return-Path: <linux-kernel+bounces-424271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624BA9DB267
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA759DB253
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60375169106
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E37C167DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9650D14C5AA;
-	Thu, 28 Nov 2024 05:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GWFCXK1r"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EE913C690;
+	Thu, 28 Nov 2024 05:05:27 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8998914A0B7;
-	Thu, 28 Nov 2024 05:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A46E1FAA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732770345; cv=none; b=ZgKuunC9ft1b7qTo6iRaDlrre0AdBD0aqigrJEHphcVm/giEaJiZaiQJvSJ4tIhVu+Mm1/663cmfnY8kBsXKr/Kn43GD50QHxjmPywVAOlQQ+O1JmVLnZENYZeNSirvOSoHo/HfKa4McWWEb5owxSXxAgSjbu0fByLmNgtT03H4=
+	t=1732770326; cv=none; b=tZ6z1B4tm1+AWH+rnvFmgEvBPaGxTstKUJs6span8bd/4o5P8q+jMV9iumZfOMhg1fNRVKL7N7A08TY3mLH7JSzo96fvhc+iNe7dFvyhJ6MPZmzORCYJeHpJBGiK9HoyH4RvTEuPTDUZXXITVWD4x9saXvgh2KN9El8ceRjJAv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732770345; c=relaxed/simple;
-	bh=momNFG7HmrlvZT1BkDBQhwhSFM+A1S+Ius0MDXLSgYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=n78aBxScbPrYCssdxrbJ59bLS0iF+LjnOTsG8RurrrDix4Hvh0M4bP8jfzwasEWIcqHARU/Y3vFw0hO2qYs7KGblJvHKfXAdESd1aaDRhVEN4n6z8R149vVje9vAmc1bJg8F0JnSVQBKEWQTp0/7qVx6z9Nbud8f9uoaICBoy7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GWFCXK1r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARGQqFN029608;
-	Thu, 28 Nov 2024 05:05:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dwccvR0I8r73vh8lHYvXtH8o48ByEI6FWFPxtm9adwg=; b=GWFCXK1rLmso1+BL
-	UjjuHoET//5Q4dig1Xg6WQxtMG60sYQDjmWph3GihGixcaUe8wUKeSABNF83lnZk
-	UzYXog9pr254VaWogHtSw6tRpOTCgoEOGvLiaGMH4Fs80NZDMtO4tEmxxgOu2jqp
-	zKJtDmM1vQAnv7j9INSwzG9vpaBPqwJGH+l2LpRJqNElNTt8dtaS1re7mM0oXePq
-	bDqCsVSIiscsaxgsuCbFu5tHXWxI4+xXMzF5mov3aaasqYLaqer6EY9IHP6vHHki
-	QdLD5ZrGTkXlNtBq9UUXtC0sBAnkH7qPDgWEhDw0z4PVrfO1ZclcASObokx6zCZq
-	+9ONfA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xxhd1d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 05:05:38 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS55bX5013967
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 05:05:37 GMT
-Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 27 Nov 2024 21:05:33 -0800
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-Date: Thu, 28 Nov 2024 10:35:14 +0530
-Subject: [PATCH v2 4/4] media: venus: hfi: add a check to handle OOB in sfr
- region
+	s=arc-20240116; t=1732770326; c=relaxed/simple;
+	bh=vIKNpXEFyCj9f/ESQ5wYvvwDqyZOUL6pDkNlXFhBYsc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A0SESpsKQ+NaQ+NjV/Jlw3pgouq+c1onTOtUVCKE4B6mFGQyYinMGt6JQR0IwkDGFjcVzFj4L7LJzwYnV8daTGJJdvRBVpXhAYVMgbUheCxX8O0SOVRSXU9F+oXBlkIa3zeHUF/RIK6EgCV+mP6bX+sc6T2waPpr5NQPiP54nus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a76ee0008cso7780915ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:05:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732770324; x=1733375124;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VUe6L83DvzFZaE2UEQFYvXPculZx4n1ci65ASlI0ET4=;
+        b=HrV3InR6BPNG5GLkYE7vbRMHSjPTu3uOihdrQido6H7BHAHS3Y8N5diRFMW+KrO2FY
+         cYkvsbvKemF0otNuT8nDyuFDelVIrujulewLpEAnAWWLO46h4+lRuhXayxErGIrnyqAS
+         0vgCBgSfTVTYCCS+wb06nbE3NM+AHJB2UY2IWj8VZlJErUxb8QzJWpqOqn0V3H0YUMhW
+         q5HYL8d66CtbtojFpal5Yf/y1esxvaxRJ01qVralyg99qgDj5qByU/5hF8AIaZkrCKyb
+         rlbfm0ui254XE5f/e3cbOkO1AoiyQln9dkiG0pNcDxHZTZG01ueJhrf5QKI56zZvZBib
+         svaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXU84i81zCbb1vOVxe7/vurMBo8DFF4o0nW+5dfSGLI8bZsSVv4Vj5XbkDbQscRfPg9hKGBeUwVSUL7fxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTngLXEhymx7LJVghI3Y1L8bCj2g557TQDR/kL5b20gEdKLsqb
+	jtMyVZMz7G+hTPFgm6UwsuBZn5ZRol0XSKPU4/hGlkM88MUrVCGXjeUS5qcdEUGMW+gV5KD7uaE
+	UCfiWU8Guw6lOh0f1NLmHSeEUWMBOWCautxgfk+UF6LjQIvDmSqS0wxU=
+X-Google-Smtp-Source: AGHT+IGtDybW2RjYZtHam542Fnhm7O0KLFSXDIdGVo3EPmAEEikK0ut5WEseH0hXcciYHeUjPgmu5lo2cYbOVd3M6RGnIqkky6ns
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241128-venus_oob_2-v2-4-483ae0a464b8@quicinc.com>
-References: <20241128-venus_oob_2-v2-0-483ae0a464b8@quicinc.com>
-In-Reply-To: <20241128-venus_oob_2-v2-0-483ae0a464b8@quicinc.com>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-CC: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab+samsung@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>, <stable@vger.kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732770318; l=1564;
- i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
- bh=momNFG7HmrlvZT1BkDBQhwhSFM+A1S+Ius0MDXLSgYE=;
- b=o3cddvPifdHMpz/sY3bPYGoPg1oAz/6fk1tbBC4Vk5DnMT1IVGki7QvwC8D1vPBQX5TEreMRK
- 7UdlnLeqj74AcEz/1jwwc2/AQTQpK0xSwnHYAWAFdLlc7+D8z03DSCc
-X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bWmMskfo2w9Z3UX6TvkjcIl4Ygu_Qvje
-X-Proofpoint-ORIG-GUID: bWmMskfo2w9Z3UX6TvkjcIl4Ygu_Qvje
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 mlxlogscore=968 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411280039
+X-Received: by 2002:a05:6e02:1aaf:b0:3a6:b783:3c06 with SMTP id
+ e9e14a558f8ab-3a7c55d6a17mr59406245ab.19.1732770324491; Wed, 27 Nov 2024
+ 21:05:24 -0800 (PST)
+Date: Wed, 27 Nov 2024 21:05:24 -0800
+In-Reply-To: <66f8a5f8.050a0220.aab67.000d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6747fa14.050a0220.253251.0070.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING: locking bug in __task_rq_lock
+From: syzbot <syzbot+bb50a872bcd6dacdf184@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-sfr->buf_size is in shared memory and can be modified by malicious user.
-OOB write is possible when the size is made higher than actual sfr data
-buffer. Cap the size to allocated size for such cases.
+syzbot has found a reproducer for the following issue on:
 
-Cc: stable@vger.kernel.org
-Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+HEAD commit:    aaf20f870da0 Merge tag 'rpmsg-v6.13' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152e71e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=493f836b3188006b
+dashboard link: https://syzkaller.appspot.com/bug?extid=bb50a872bcd6dacdf184
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100f7530580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08102d213bca/disk-aaf20f87.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/80a985df7f54/vmlinux-aaf20f87.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2eccce18d2d9/bzImage-aaf20f87.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/87e2093dad2b/mount_20.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bb50a872bcd6dacdf184@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 0 PID: 5975 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 0 PID: 5975 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4850 [inline]
+WARNING: CPU: 0 PID: 5975 at kernel/locking/lockdep.c:232 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
+Modules linked in:
+CPU: 0 UID: 0 PID: 5975 Comm: syz-executor Not tainted 6.12.0-syzkaller-10296-gaaf20f870da0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4850 [inline]
+RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
+Code: 00 00 83 3d 41 69 ad 0e 00 75 23 90 48 c7 c7 40 d7 0a 8c 48 c7 c6 40 da 0a 8c e8 77 63 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
+RSP: 0018:ffffc90003aef890 EFLAGS: 00010046
+RAX: ebff77b2920c0b00 RBX: 00000000000010d8 RCX: ffff888026515a00
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00000000000c10d8 R08: ffffffff815688b2 R09: 1ffff110170c519a
+R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff8880265164c4
+R13: 0000000000000005 R14: 1ffff11004ca2ca5 R15: ffff888026516528
+FS:  000055555f6a9500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2be16756c0 CR3: 0000000032fe0000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
+ raw_spin_rq_lock kernel/sched/sched.h:1514 [inline]
+ __task_rq_lock+0xdf/0x3e0 kernel/sched/core.c:676
+ wake_up_new_task+0x513/0xc70 kernel/sched/core.c:4866
+ kernel_clone+0x4ee/0x8f0 kernel/fork.c:2818
+ __do_sys_clone kernel/fork.c:2930 [inline]
+ __se_sys_clone kernel/fork.c:2914 [inline]
+ __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2914
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2be0977053
+Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
+RSP: 002b:00007fffce1620e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2be0977053
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 000055555f6a97d0 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000003cb79 R14: 000000000003cb07 R15: 00007fffce162270
+ </TASK>
+
+
 ---
- drivers/media/platform/qcom/venus/hfi_venus.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 6b615270c5dae470c6fad408c9b5bc037883e56e..c3113420d266e61fcab44688580288d7408b50f4 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -1041,18 +1041,23 @@ static void venus_sfr_print(struct venus_hfi_device *hdev)
- {
- 	struct device *dev = hdev->core->dev;
- 	struct hfi_sfr *sfr = hdev->sfr.kva;
-+	u32 size;
- 	void *p;
- 
- 	if (!sfr)
- 		return;
- 
--	p = memchr(sfr->data, '\0', sfr->buf_size);
-+	size = sfr->buf_size;
-+	if (size > ALIGNED_SFR_SIZE)
-+		size = ALIGNED_SFR_SIZE;
-+
-+	p = memchr(sfr->data, '\0', size);
- 	/*
- 	 * SFR isn't guaranteed to be NULL terminated since SYS_ERROR indicates
- 	 * that Venus is in the process of crashing.
- 	 */
- 	if (!p)
--		sfr->data[sfr->buf_size - 1] = '\0';
-+		sfr->data[size - 1] = '\0';
- 
- 	dev_err_ratelimited(dev, "SFR message from FW: %s\n", sfr->data);
- }
-
--- 
-2.34.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
