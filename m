@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-424483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0A89DB4F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:44:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07C79DB500
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665A41678C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204501691B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DD61922FA;
-	Thu, 28 Nov 2024 09:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA4C157A67;
+	Thu, 28 Nov 2024 09:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gTFkEPMQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BgRX0cXB"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6092A156F55;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608D9156887;
 	Thu, 28 Nov 2024 09:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732787048; cv=none; b=a4W2eB5FyuHZatsRlTXX5r93q7D0f/bKeEmZFinMsdiKQZxWh7YK7yq105ViGz+PU7aC8dNlRAw96NO8kU7OPbabrm5GJplfai6ngL84CrLhbda9H2tHdij+NCUeymdbnZ91NpVCDUKocoMfjWktUeR85tg5mAtylJ0DWbtkdHg=
+	t=1732787050; cv=none; b=R26hvKg2F6SKtE3OL1tHM1E++hOcXkwkFk4tr0U8hg+N0H4uS1Kww7wu5LnOJ1JaGZyq6+uLc4KVjc2eD3YnKur44p7BT3SFyKyT2y/8zQXFaGExRQBe8KWbdG4cbmvuFbt8B+jYvrI0S4xHfuhQtZ0/WLEORA0BXtQjAsGSEt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732787048; c=relaxed/simple;
-	bh=QqoGUswWnCATEHYv3H6l0MFwT5RLbh6t4mujW8kXHsw=;
+	s=arc-20240116; t=1732787050; c=relaxed/simple;
+	bh=ITaR2GLJjD8N0qxqVx4qsccbDiOdUCBnuYv4gpCvXDs=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=mzttXnK2JCatfGDcv73dCmwspHCe/gg3g8fv5bsurFkI+9voyBjSpp3Vm19aj843e6WSHt0yaq7TBtEi4tD1P9Jw+/qTyDg0ZOUtI4cNKLHATuVEJ1KXBIVJBwIsX+JP096kWn5kRVDMiApU8k4wi1hxGk6GB2WL/45bqcJgxqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gTFkEPMQ; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=jdDUlaRMhEU02W4sRRkGAXOJJW+o2KJ2/xSuLn0sezy4aRcHyYbsDfh9ZmHs0s2TW0k1wg74Y4E6uTp6cxLIIVVF6a7lPmfmd/jzvvzK1MTEplP+RaJ8uAmIrpPJJXlfl05yEdCnt2GYkdzU4tH3DLGP6P6bNC4d7wq5MBuK4xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BgRX0cXB; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=FDckB11/j3OVAfIOhlTnymsn2RpaHfCKYThx7MpzQSQ=; b=gTFkEPMQ3LOpkRjIU3kXwsHG+J
-	/t6XIvFleqXxjnx3GbWbI8ttFinZXdN26R88TuPmgn/rzhcXEMzHJI/lge9Ag9Dme96jOIcK67z0x
-	Ai+ZyjtbC4jG7vXI/EB2d5dqWGSWCBQZkgdeYL9QJZCcZNIN3byvEQ6pqe9fi4r39Oc6o/ei8N0di
-	xjCvv3vSrNlUOjtzbUntPf2w1byj4UJGhQZ69+p5Qb3J6XA5ZKCS8d/82gjgWN2fAdIZbED8yaCW8
-	NdJPHyNXIuA65dyrzfmNeJ/KM8Bv3rbgHo6g34gdOLDUaCUnq8kobt5lPkndNCV4QpdyhyeyPfsWo
-	8FjrcZiA==;
+	bh=9kPdLx/gy38dNocF8o8UedzxUuCkNlflSHnB7A+iYrA=; b=BgRX0cXBHBbxPFd7Ao55X3L2La
+	h/c3xWMzOiplOTHPrwJRHpcXenq5rarJm3kSiDQqLAu55tidAOx26sFADkt/pBI1pdA+9M+o0WXYS
+	9hvRsatukXHQ0O4AC4ZPtYkVo9WW3mcDe2ptuYs2nmis3a0WwhE2WZ6kl9OHatxs0bFE31Viv4y4S
+	MXVXRMzAoWRw96+yJAKleyQDAa6q6SyxSSOg6FcisUHlApGiqKaRymIQIFTy0Fdsw4pZ+Yc01DL5F
+	NSOOjA6Q8kULBYXxAY254jRgQwyPPhh6duwWy4ksKwFJNlHiJiEsme8vqzi1Tts0JK6ax3MWHzdK3
+	Gb2RMdqQ==;
 Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGb47-00000002Tpt-0Rvh;
+	id 1tGb47-00000002Tpv-0VFZ;
 	Thu, 28 Nov 2024 09:44:04 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 1CCA0301171; Thu, 28 Nov 2024 10:44:03 +0100 (CET)
-Message-ID: <20241128094311.688871544@infradead.org>
+	id 2066A30119B; Thu, 28 Nov 2024 10:44:03 +0100 (CET)
+Message-ID: <20241128094311.786598147@infradead.org>
 User-Agent: quilt/0.66
-Date: Thu, 28 Nov 2024 10:38:59 +0100
+Date: Thu, 28 Nov 2024 10:39:00 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: jpoimboe@kernel.org
 Cc: chenhuacai@kernel.org,
@@ -56,8 +56,9 @@ Cc: chenhuacai@kernel.org,
  x86@kernel.org,
  peterz@infradead.org,
  loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/16] objtool: Collapse annotate sequences
+ linux-kernel@vger.kernel.org,
+ Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v2 09/16] objtool: Collect more annotations in objtool.h
 References: <20241128093851.469225872@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,152 +68,210 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Reduce read_annotate() runs by collapsing subsequent runs into a
-single call.
 
+Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- tools/objtool/check.c |   87 ++++++++++++++++++--------------------------------
- 1 file changed, 32 insertions(+), 55 deletions(-)
+ arch/x86/include/asm/alternative.h   |   12 -----
+ arch/x86/include/asm/nospec-branch.h |    9 ---
+ include/linux/instrumentation.h      |    4 -
+ include/linux/objtool.h              |   80 +++++++++++++++++++++++------------
+ 4 files changed, 55 insertions(+), 50 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2381,21 +2381,24 @@ static int read_annotate(struct objtool_
- 	return 0;
- }
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -56,12 +56,6 @@
+ #endif
  
--static int __annotate_ignore_alts(struct objtool_file *file, int type, struct instruction *insn)
-+static int __annotate_early(struct objtool_file *file, int type, struct instruction *insn)
- {
--	if (type != ANNOTYPE_IGNORE_ALTS)
--		return 0;
-+	switch (type) {
-+	case ANNOTYPE_IGNORE_ALTS:
-+		insn->ignore_alts = true;
-+		break;
- 
--	insn->ignore_alts = true;
--	return 0;
--}
-+	/*
-+	 * Must be before read_unwind_hints() since that needs insn->noendbr.
-+	 */
-+	case ANNOTYPE_NOENDBR:
-+		insn->noendbr = 1;
-+		break;
- 
--static int __annotate_noendbr(struct objtool_file *file, int type, struct instruction *insn)
--{
--	if (type != ANNOTYPE_NOENDBR)
--		return 0;
-+	default:
-+		break;
-+	}
- 
--	insn->noendbr = 1;
- 	return 0;
- }
- 
-@@ -2429,26 +2432,21 @@ static int __annotate_ifc(struct objtool
- 	return 0;
- }
- 
--static int __annotate_retpoline_safe(struct objtool_file *file, int type, struct instruction *insn)
-+static int __annotate_late(struct objtool_file *file, int type, struct instruction *insn)
- {
--	if (type != ANNOTYPE_RETPOLINE_SAFE)
--		return 0;
--
--	if (insn->type != INSN_JUMP_DYNAMIC &&
--	    insn->type != INSN_CALL_DYNAMIC &&
--	    insn->type != INSN_RETURN &&
--	    insn->type != INSN_NOP) {
--		WARN_INSN(insn, "retpoline_safe hint not an indirect jump/call/ret/nop");
--		return -1;
--	}
-+	switch (type) {
-+	case ANNOTYPE_RETPOLINE_SAFE:
-+		if (insn->type != INSN_JUMP_DYNAMIC &&
-+		    insn->type != INSN_CALL_DYNAMIC &&
-+		    insn->type != INSN_RETURN &&
-+		    insn->type != INSN_NOP) {
-+			WARN_INSN(insn, "retpoline_safe hint not an indirect jump/call/ret/nop");
-+			return -1;
-+		}
- 
--	insn->retpoline_safe = true;
--	return 0;
--}
-+		insn->retpoline_safe = true;
-+		break;
- 
--static int __annotate_instr(struct objtool_file *file, int type, struct instruction *insn)
--{
--	switch (type) {
- 	case ANNOTYPE_INSTR_BEGIN:
- 		insn->instr++;
- 		break;
-@@ -2457,6 +2455,10 @@ static int __annotate_instr(struct objto
- 		insn->instr--;
- 		break;
- 
-+	case ANNOTYPE_UNRET_BEGIN:
-+		insn->unret = 1;
-+		break;
-+
- 	default:
- 		break;
- 	}
-@@ -2464,16 +2466,6 @@ static int __annotate_instr(struct objto
- 	return 0;
- }
- 
--static int __annotate_unret(struct objtool_file *file, int type, struct instruction *insn)
--{
--	if (type != ANNOTYPE_UNRET_BEGIN)
--		return 0;
--
--	insn->unret = 1;
--	return 0;
--
--}
--
  /*
-  * Return true if name matches an instrumentation function, where calls to that
-  * function from noinstr code can safely be removed, but compilers won't do so.
-@@ -2583,14 +2575,7 @@ static int decode_sections(struct objtoo
- 	add_ignores(file);
- 	add_uaccess_safe(file);
- 
--	ret = read_annotate(file, __annotate_ignore_alts);
--	if (ret)
--		return ret;
+- * objtool annotation to ignore the alternatives and only consider the original
+- * instruction(s).
+- */
+-#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(ANNOTYPE_IGNORE_ALTS)
 -
--	/*
--	 * Must be before read_unwind_hints() since that needs insn->noendbr.
--	 */
--	ret = read_annotate(file, __annotate_noendbr);
-+	ret = read_annotate(file, __annotate_early);
- 	if (ret)
- 		return ret;
+-/*
+  * The patching flags are part of the upper bits of the @ft_flags parameter when
+  * specifying them. The split is currently like this:
+  *
+@@ -308,12 +302,6 @@ void nop_func(void);
+ #endif
  
-@@ -2636,15 +2621,7 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
--	ret = read_annotate(file, __annotate_retpoline_safe);
--	if (ret)
--		return ret;
+ /*
+- * objtool annotation to ignore the alternatives and only consider the original
+- * instruction(s).
+- */
+-#define ANNOTATE_IGNORE_ALTERNATIVE ANNOTATE type=ANNOTYPE_IGNORE_ALTS
 -
--	ret = read_annotate(file, __annotate_instr);
--	if (ret)
--		return ret;
--
--	ret = read_annotate(file, __annotate_unret);
-+	ret = read_annotate(file, __annotate_late);
- 	if (ret)
- 		return ret;
+-/*
+  * Issue one struct alt_instr descriptor entry (need to put it into
+  * the section .altinstructions, see below). This entry contains
+  * enough information for the alternatives patching code to patch an
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -180,13 +180,6 @@
+ #ifdef __ASSEMBLY__
  
+ /*
+- * This should be used immediately before an indirect jump/call. It tells
+- * objtool the subsequent indirect jump/call is vouched safe for retpoline
+- * builds.
+- */
+-#define ANNOTATE_RETPOLINE_SAFE	ANNOTATE type=ANNOTYPE_RETPOLINE_SAFE
+-
+-/*
+  * (ab)use RETPOLINE_SAFE on RET to annotate away 'bare' RET instructions
+  * vs RETBleed validation.
+  */
+@@ -345,8 +338,6 @@
+ 
+ #else /* __ASSEMBLY__ */
+ 
+-#define ANNOTATE_RETPOLINE_SAFE ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
+-
+ typedef u8 retpoline_thunk_t[RETPOLINE_THUNK_SIZE];
+ extern retpoline_thunk_t __x86_indirect_thunk_array[];
+ extern retpoline_thunk_t __x86_indirect_call_thunk_array[];
+--- a/include/linux/instrumentation.h
++++ b/include/linux/instrumentation.h
+@@ -10,7 +10,7 @@
+ /* Begin/end of an instrumentation safe region */
+ #define __instrumentation_begin(c) ({					\
+ 	asm volatile(__stringify(c) ": nop\n\t"				\
+-		     __ASM_ANNOTATE(__ASM_BREF(c), ANNOTYPE_INSTR_BEGIN)\
++		     ANNOTATE_INSTR_BEGIN(__ASM_BREF(c))		\
+ 		     : : "i" (c));					\
+ })
+ #define instrumentation_begin() __instrumentation_begin(__COUNTER__)
+@@ -48,7 +48,7 @@
+  */
+ #define __instrumentation_end(c) ({					\
+ 	asm volatile(__stringify(c) ": nop\n\t"				\
+-		     __ASM_ANNOTATE(__ASM_BREF(c), ANNOTYPE_INSTR_END)	\
++		     ANNOTATE_INSTR_END(__ASM_BREF(c))			\
+ 		     : : "i" (c));					\
+ })
+ #define instrumentation_end() __instrumentation_end(__COUNTER__)
+--- a/include/linux/objtool.h
++++ b/include/linux/objtool.h
+@@ -63,8 +63,6 @@
+ 	"911:\n\t"						\
+ 	__ASM_ANNOTATE(911b, type)
+ 
+-#define ANNOTATE_NOENDBR	ASM_ANNOTATE(ANNOTYPE_NOENDBR)
+-
+ #else /* __ASSEMBLY__ */
+ 
+ /*
+@@ -113,19 +111,6 @@
+ #endif
+ .endm
+ 
+-/*
+- * Use objtool to validate the entry requirement that all code paths do
+- * VALIDATE_UNRET_END before RET.
+- *
+- * NOTE: The macro must be used at the beginning of a global symbol, otherwise
+- * it will be ignored.
+- */
+-#if defined(CONFIG_NOINSTR_VALIDATION) && \
+-	(defined(CONFIG_MITIGATION_UNRET_ENTRY) || defined(CONFIG_MITIGATION_SRSO))
+-#define VALIDATE_UNRET_BEGIN	ANNOTATE type=ANNOTYPE_UNRET_BEGIN
+-#else
+-#define VALIDATE_UNRET_BEGIN
+-#endif
+ 
+ .macro REACHABLE
+ .Lhere_\@:
+@@ -142,14 +127,6 @@
+ 	.popsection
+ .endm
+ 
+-#define ANNOTATE_NOENDBR	ANNOTATE type=ANNOTYPE_NOENDBR
+-
+-/*
+- * This macro indicates that the following intra-function call is valid.
+- * Any non-annotated intra-function call will cause objtool to issue a warning.
+- */
+-#define ANNOTATE_INTRA_FUNCTION_CALL ANNOTATE type=ANNOTYPE_INTRA_FUNCTION_CALL
+-
+ #endif /* __ASSEMBLY__ */
+ 
+ #else /* !CONFIG_OBJTOOL */
+@@ -161,16 +138,12 @@
+ #define STACK_FRAME_NON_STANDARD_FP(func)
+ #define __ASM_ANNOTATE(label, type)
+ #define ASM_ANNOTATE(type)
+-#define ANNOTATE_NOENDBR
+ #define ASM_REACHABLE
+ #else
+-#define ANNOTATE_INTRA_FUNCTION_CALL
+ .macro UNWIND_HINT type:req sp_reg=0 sp_offset=0 signal=0
+ .endm
+ .macro STACK_FRAME_NON_STANDARD func:req
+ .endm
+-.macro ANNOTATE_NOENDBR
+-.endm
+ .macro REACHABLE
+ .endm
+ .macro ANNOTATE type:req
+@@ -179,4 +152,57 @@
+ 
+ #endif /* CONFIG_OBJTOOL */
+ 
++#ifndef __ASSEMBLY__
++/*
++ * Annotate away the various 'relocation to !ENDBR` complaints; knowing that
++ * these relocations will never be used for indirect calls.
++ */
++#define ANNOTATE_NOENDBR		ASM_ANNOTATE(ANNOTYPE_NOENDBR)
++/*
++ * This should be used immediately before an indirect jump/call. It tells
++ * objtool the subsequent indirect jump/call is vouched safe for retpoline
++ * builds.
++ */
++#define ANNOTATE_RETPOLINE_SAFE		ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
++/*
++ * See linux/instrumentation.h
++ */
++#define ANNOTATE_INSTR_BEGIN(label)	__ASM_ANNOTATE(label, ANNOTYPE_INSTR_BEGIN)
++#define ANNOTATE_INSTR_END(label)	__ASM_ANNOTATE(label, ANNOTYPE_INSTR_END)
++/*
++ * objtool annotation to ignore the alternatives and only consider the original
++ * instruction(s).
++ */
++#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(ANNOTYPE_IGNORE_ALTS)
++/*
++ * This macro indicates that the following intra-function call is valid.
++ * Any non-annotated intra-function call will cause objtool to issue a warning.
++ */
++#define ANNOTATE_INTRA_FUNCTION_CALL	ASM_ANNOTATE(ANNOTYPE_INTRA_FUNCTION_CALL)
++/*
++ * Use objtool to validate the entry requirement that all code paths do
++ * VALIDATE_UNRET_END before RET.
++ *
++ * NOTE: The macro must be used at the beginning of a global symbol, otherwise
++ * it will be ignored.
++ */
++#define ANNOTATE_UNRET_BEGIN		ASM_ANNOTATE(ANNOTYPE_UNRET_BEGIN)
++
++#else
++#define ANNOTATE_NOENDBR		ANNOTATE type=ANNOTYPE_NOENDBR
++#define ANNOTATE_RETPOLINE_SAFE		ANNOTATE type=ANNOTYPE_RETPOLINE_SAFE
++/*	ANNOTATE_INSTR_BEGIN		ANNOTATE type=ANNOTYPE_INSTR_BEGIN */
++/*	ANNOTATE_INSTR_END		ANNOTATE type=ANNOTYPE_INSTR_END */
++#define ANNOTATE_IGNORE_ALTERNATIVE	ANNOTATE type=ANNOTYPE_IGNORE_ALTS
++#define ANNOTATE_INTRA_FUNCTION_CALL	ANNOTATE type=ANNOTYPE_INTRA_FUNCTION_CALL
++#define ANNOTATE_UNRET_BEGIN		ANNOTATE type=ANNOTYPE_UNRET_BEGIN
++#endif
++
++#if defined(CONFIG_NOINSTR_VALIDATION) && \
++	(defined(CONFIG_MITIGATION_UNRET_ENTRY) || defined(CONFIG_MITIGATION_SRSO))
++#define VALIDATE_UNRET_BEGIN	ANNOTATE_UNRET_BEGIN
++#else
++#define VALIDATE_UNRET_BEGIN
++#endif
++
+ #endif /* _LINUX_OBJTOOL_H */
 
 
 
