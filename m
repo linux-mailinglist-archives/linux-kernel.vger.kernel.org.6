@@ -1,78 +1,84 @@
-Return-Path: <linux-kernel+bounces-424578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6C59DB63A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C249DB63E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DE72B25031
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:06:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F10CB261B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69938194C96;
-	Thu, 28 Nov 2024 11:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDE9195385;
+	Thu, 28 Nov 2024 11:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmObTLCw"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q6GhhOoj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84F1925B3;
-	Thu, 28 Nov 2024 11:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75C119342B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732791996; cv=none; b=IL3kkDrD49HnF3EC4tWDbBiSpJtKc78b8eScQbeMxva9AhynefrqDNRvwx+aC9q1GfWmy4yL3QdDkB9UwYs+HPRk99+Nk9HoJl/sZmLzYYEam05TwCPE46VyB04TV9+u49be8eBxtUa5t9wO9wi57o/uBzyHc5wg0aG7lZsLmw0=
+	t=1732792065; cv=none; b=tmn+d+ufhVBq3mHPKmrwt5RdQHLr1xZr73tiVagnjemJP88SEoGjR1JGtq+p8QFTD/rVyWTEQf1bvP+5fbpuM/4UbKAZ7qm1RpTfsZYw0spARnUEMii+ZW1wrpRTLM007H8V2VWBA+yQE5F77o9PU2u18sKoT75TDEiMpm76v6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732791996; c=relaxed/simple;
-	bh=6V422H3dv9Du3URUJSLpBRw4S2JgulSIk6Z4elejc8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MEz/PuD8HQVQxJB5KmM07PiPTf7xnR3L+scyHTCRXTmKkpizmp0ntQGyPFDbm5GBVRWTeDqcWz3zkTkZ+41NAS8kpJ4xlV2mr4KgFOOTXaz7DJELkJyIc+XtplxmvtZOeAZXAxXRynrSqDh6q+xsuLRcfYeJS063eRVVE5fcJ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmObTLCw; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfe5da1251so827343a12.1;
-        Thu, 28 Nov 2024 03:06:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732791992; x=1733396792; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9kV/k8UgkB5xu8Vp6e9vyAiETa22BHIqam0AP21cVfk=;
-        b=BmObTLCwgUCBKjsgevZpZCO+dq4aE+8t/quClI+fI+JAdR6LW0x5QWbO9Rn4kXoBz0
-         UQvWDFVN4viOxaBNduu7oyz1LsOqMSMz8Nt3cpINUJnrhAScEg/8+TF5JCD4WcdYDcm7
-         BYF0+26goR2Nt/RHeaks4FXYszGSLJZaN5p7Tow1d4yUk6uzrX16PEphphLZz/ic2XwU
-         OjCV5NCpFAOox1402sz7YniwAORrsYSP1LwhMzVRQL1Hfta7q71pjK3WyYLWWCHIC9Py
-         FmrTfg1CId24vgRDQVr13BC++N18iJZxDQDLUUVD7yAjbbAFf6g+ktXTSKZfi+54IkOH
-         +hFg==
+	s=arc-20240116; t=1732792065; c=relaxed/simple;
+	bh=dtEbl+eAxjNtqIHD/lA/11e457LY7bQDSZJVQdho3vc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UQEQw2zacLvWFkbcANN5S6EUt3oujn2hh25Rt6XJ920CZJUlqEKITLWQIz+FyUm/JGfSS0oE1xU2KJ1o/tIMP/hj4+m4P/WyMBih9mT73Gh2wDvHX8dVdc9w5EigLYwOrTQkqOH0JHa1KclxC1gbmn9nmkaqdXLJn4Po5qEfPW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q6GhhOoj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732792062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1YLK0mLTOGgTQPMKHKX0ABr1QZ2jKPpEqJQKsnJzJ90=;
+	b=Q6GhhOojHt37Ha8CIwT7qIGJ9Wegin62EiM2KL4MsUUNON2G1LAQOQlVwTJXtq9I5gRciW
+	rbnfkhlEC2PMNi+SKBfyQqN+tG9/1XxfPh7gjY4EQUFeqWwS+yWZY6DKVANLnI05ei5nYx
+	BNyeQiO+25COEGzuwzb+diJEkMahpME=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-awihWePcPumnccUz72PY-w-1; Thu, 28 Nov 2024 06:07:41 -0500
+X-MC-Unique: awihWePcPumnccUz72PY-w-1
+X-Mimecast-MFC-AGG-ID: awihWePcPumnccUz72PY-w
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-382308d07dfso384586f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:07:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732791992; x=1733396792;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732792060; x=1733396860;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kV/k8UgkB5xu8Vp6e9vyAiETa22BHIqam0AP21cVfk=;
-        b=V0Omrz47qTZoxVHe6iUycHBPID8aJX/hq/OjtgFHNKWW3GciX+9Z8PfnMBuPyFbeqp
-         IkVHpXJEnVUC02IGsw6hdrUBcuXocgyBnT5CMrzXzAR9NL0fEN4O++Ru3OYzBGyZE/FF
-         vULws5dea/IZsvwCzueojNNdY9OLr6LkC9RvQ1GOn0ltApQFuu3mlkvKre0IPA0qhAr2
-         KkEmW9L8KH38nqr41EyUVcRMnNUOTU02DSPwOZiJZAMXnmeHK93xFM27RVieEcrc1kY/
-         OBNTM5dLyHIg4BadtMpH94QP0xMaXDROeg6nki18pMZvRFbZxRbLxtzxtRqleK75a45J
-         LXEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdDEwSByIOEkTsSLId9qdnXXkyARrj+RWgbZK23hbSnRUSeADDCPFcuZXVWvrhW6hHD4oiFeNMY8HZ@vger.kernel.org, AJvYcCUprJexEf8kikfPhrHNawYEOjqJVeOrcWT237q+mssDfVgf0yleO3SyEaNRC76c/0S1yJLgidkPAzr+@vger.kernel.org, AJvYcCWUpf/bye3VdvFOoDQ5IiOm6zSRzSs7bRYuk9iSUJ8E8J3MPQxgyRgzKoMXUJSgIiJTBvbrcZ2zTY3DTMtY@vger.kernel.org
-X-Gm-Message-State: AOJu0YziNJVr+NuiQ1omIHoEn0GDjNVFX8lywjf4QUCwg7EsIjOYkcGz
-	A9yD6rZlCvi91kuPFNPoBS43LXF0mJdIzOIla87nbrrWY/c85Hc1
-X-Gm-Gg: ASbGncsE7lsVds/wbqDRwzsgwAWW5sO+k6qGCORYq1v6ZgH0a4n2OOkKOIO7zdnZe0I
-	IBzBHu2IY6c0dkODFamPa9wM72p4EqQOOqpBmW2I7Gjuq2fQ8H7MgytzIhcsnA3zjJuB5RFxOhd
-	sV1jdgyrvw3rx8O6z7f00fYTG/wX325kDPWt09WvDn8PZgunNNkWHgFvK5egeeLvvB7RAgURkIC
-	cKN8Q6qV3B8dSIr5++rvuMeQU4jtVRU1r0CFSHtfRd5B1hSg1wgT5P3ezXx+bdHp28ZFuRiiLXU
-	DuCO9XRgowtfrMlhgWYmsBv6Y+ZN
-X-Google-Smtp-Source: AGHT+IEt+yji9PcxnQ+E0O8I0V88q//kI+oMuOkt2imlBetGr6zJPVZjJVQM8OabiGmvpeJjBAnoLQ==
-X-Received: by 2002:a05:6402:2353:b0:5cf:f1fd:c687 with SMTP id 4fb4d7f45d1cf-5d080c97f34mr5911678a12.24.1732791991802;
-        Thu, 28 Nov 2024 03:06:31 -0800 (PST)
-Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d098330dd2sm604660a12.14.2024.11.28.03.06.29
+        bh=1YLK0mLTOGgTQPMKHKX0ABr1QZ2jKPpEqJQKsnJzJ90=;
+        b=SwUZAUXCtMf5uh2lOY+X2K2F9yxgpO32g7y+iBF6NjHnIe5Dbbf63GZyN+XtfH+rt9
+         hGFu/uaAHnmti44cpukifhFpNsMM5WJI5bioHFznUqja0TvD/P9Yh+1VkDcJorh+oHHm
+         LGH7fPlIjOSMgYBcglMyGC83YUFbCTc0d7+8vTjJE7+p3709q+EhBN2HnQ1MPU8z2WBo
+         jQVJaXsyoICBH4jZNy3sFgGy86TPGopDd8ZDFqa4lK4n56tlmWa7IPYWqE2fdApO4ZiW
+         lgsHHOmtqlzFsphOg5IdDW3Xe4D8T/iH5ZHeztOp6k8h1LCw00AbeinM03D7MYUwGZmH
+         SuZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFxca7bv5L7XtubpjT1QMYASieGUlDvbZZD5wt3kdaNpucFXgp9IqjZd2nNmkTTxOBatZRJ/xDqzJDf3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0y3SGz9xuTLSbRbutNVjOGRAOhtCJeGfnrPNoLFSVGPWLyeiv
+	VZruOPhjo1LTM0MTCW1fR0uCeRbBk8I+bzK7+HLs+AQejR4K70oJFTghYsbGjtRILNkOf7hJ/Iy
+	DVE4kMc4uT9LIi7Vmfe6fOYjrt/7wGXLlWQiecsl2q24FW+V81VDiBoIb89Mnzw==
+X-Gm-Gg: ASbGncurajQeFfJHOF21pwT41suBOeFfyjhNjk6j2Jw1X7FuONt3HwTF+0TGm9j3X/k
+	mqUPLU1eT8KOXF1u/HgAM9rkFhjRGZOJyQYpjNmew/3K2kxs0Wp+zarvBt4yQvy8kDeJkxAwEzQ
+	MgJb8zf/02iET4w2Hff1X/T0qap69iJEKYvXqKLej2fps/OQccVxVCHW0L/T8Vt96b55Mzr2Gp6
+	Gq5xSi6OdZe7fnhV3uUL4hQgNEY+9nla7FlkF9JtTdc2zGXIFALTPNay+oKiN1IGExXVoRAifiE
+X-Received: by 2002:a5d:6d0b:0:b0:382:450c:25ee with SMTP id ffacd0b85a97d-385c6ed74c9mr5453030f8f.40.1732792059858;
+        Thu, 28 Nov 2024 03:07:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHeEhbHAnt7UDcnIN9QSU5mCAPewp86pSwIsK84xm7VJfZBGKBADTHurkaCfScNk20JP2YEcQ==
+X-Received: by 2002:a5d:6d0b:0:b0:382:450c:25ee with SMTP id ffacd0b85a97d-385c6ed74c9mr5453014f8f.40.1732792059503;
+        Thu, 28 Nov 2024 03:07:39 -0800 (PST)
+Received: from [192.168.88.24] (146-241-35-20.dyn.eolo.it. [146.241.35.20])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd2dba8sm1393832f8f.1.2024.11.28.03.07.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 03:06:30 -0800 (PST)
-Message-ID: <c07b7375-327e-44bd-907a-73771e9f938e@gmail.com>
-Date: Thu, 28 Nov 2024 12:06:28 +0100
+        Thu, 28 Nov 2024 03:07:39 -0800 (PST)
+Message-ID: <d327579b-45de-478c-963d-fb3b093c2acb@redhat.com>
+Date: Thu, 28 Nov 2024 12:07:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,99 +86,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: light: add support for veml6031x00 ALS series
-To: kernel test robot <lkp@intel.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Rishi Gupta <gupt21@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241126-veml6031x00-v1-2-4affa62bfefd@gmail.com>
- <202411281741.xz7mD4E2-lkp@intel.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <202411281741.xz7mD4E2-lkp@intel.com>
+Subject: Re: Fix spelling mistake
+From: Paolo Abeni <pabeni@redhat.com>
+To: Vyshnav Ajith <puthen1977@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, horms@kernel.org, corbet@lwn.net
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241121221852.10754-1-puthen1977@gmail.com>
+ <fc0bb8a7-8c6e-49db-83ba-f56616ebc580@redhat.com>
+Content-Language: en-US
+In-Reply-To: <fc0bb8a7-8c6e-49db-83ba-f56616ebc580@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/11/2024 10:55, kernel test robot wrote:
-> Hi Javier,
+On 11/28/24 09:08, Paolo Abeni wrote:
+> On 11/21/24 23:18, Vyshnav Ajith wrote:
+>> Changed from reequires to require. A minute typo.
+>>
+>> Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
 > 
-> kernel test robot noticed the following build warnings:
+> ## Form letter - net-next-closed
 > 
-> [auto build test WARNING on a61ff7eac77e86de828fe28c4e42b8ae9ec2b195]
+> The merge window for v6.13 has begun and net-next is closed for new drivers,
+> features, code refactoring and optimizations. We are currently accepting
+> bug fixes only.
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Carrasco/dt-bindings-iio-light-veml6030-add-veml6031x00-ALS-series/20241128-104104
-> base:   a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
-> patch link:    https://lore.kernel.org/r/20241126-veml6031x00-v1-2-4affa62bfefd%40gmail.com
-> patch subject: [PATCH 2/2] iio: light: add support for veml6031x00 ALS series
-> config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241128/202411281741.xz7mD4E2-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411281741.xz7mD4E2-lkp@intel.com/reproduce)
+> Please repost when net-next reopens after Dec 2nd.
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411281741.xz7mD4E2-lkp@intel.com/
+> RFC patches sent for review only are welcome at any time.
 > 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/iio/light/veml6031x00.c: In function 'veml6031x00_set_scale':
->>> drivers/iio/light/veml6031x00.c:422:24: warning: variable 'gain_idx' set but not used [-Wunused-but-set-variable]
->      422 |         int new_scale, gain_idx;
->          |                        ^~~~~~~~
-> 
-> 
-> vim +/gain_idx +422 drivers/iio/light/veml6031x00.c
-> 
->    418	
->    419	static int veml6031x00_set_scale(struct iio_dev *iio, int val, int val2)
->    420	{
->    421		struct veml6031x00_data *data = iio_priv(iio);
->  > 422		int new_scale, gain_idx;
->    423	
->    424		if (val == 0 && val2 == 125000) {
->    425			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x03) |
->    426				VEML6031X00_CONF1_PD_D4;
->    427			gain_idx = 0;
->    428		} else if (val == 0 && val2 == 165000) {
->    429			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x02) |
->    430				VEML6031X00_CONF1_PD_D4;
->    431			gain_idx = 1;
->    432		} else if (val == 0 && val2 == 250000) {
->    433			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x00) |
->    434				VEML6031X00_CONF1_PD_D4;
->    435			gain_idx = 2;
->    436		} else if (val == 0 && val2 == 500000) {
->    437			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x03);
->    438			gain_idx = 3;
->    439		} else if (val == 0 && val2 == 660000) {
->    440			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x02);
->    441			gain_idx = 4;
->    442		} else if (val == 1 && val2 == 0) {
->    443			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x00);
->    444			gain_idx = 5;
->    445		} else if (val == 2 && val2 == 0) {
->    446			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x01);
->    447			gain_idx = 6;
->    448		} else {
->    449			return -EINVAL;
->    450		}
->    451	
->    452		return regmap_update_bits(data->regmap, VEML6031X00_REG_CONF1,
->    453					 VEML6031X00_CONF1_GAIN |
->    454					 VEML6031X00_CONF1_PD_D4,
->    455					 new_scale);
->    456	}
->    457	
-> 
+> See:
+> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
 
-The gain_idx variable is a leftover of a previous approach where
-processed values were also provided. But given that the conversion is
-linear (raw * scale), processed values were dropped. I will also drop
-this variable for v2 with the rest of the feedback I could get from this v1.
+Uhm... let me reconsider the above statement. This could land in the
+'net' tree as well. I'm applying it right now.
 
-Best regards,
-Javier Carrasco
+Thanks,
+
+Paolo
 
 
