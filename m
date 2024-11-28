@@ -1,183 +1,260 @@
-Return-Path: <linux-kernel+bounces-424454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492CB9DB4A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:12:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2359DB4A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85A9EB2112A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62087B211F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D63154BE2;
-	Thu, 28 Nov 2024 09:12:42 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD3152F88;
-	Thu, 28 Nov 2024 09:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3920E155743;
+	Thu, 28 Nov 2024 09:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UKFi0FUf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652D652F88;
+	Thu, 28 Nov 2024 09:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732785161; cv=none; b=kZehL2cRfHX6/pDzcb4+2cOFeWqGw93WeE/KxZWyjFN25K0WL0HI2yXcpDKNUI6cgMNeP9mKkqpmqXUACVqQcfEdFKq5Qv/MfWYfCl8Liwc+DEejmf7FPcI/bNAlSp2pMnU1sdHdhJw9YeVNgDUgxXveuaclXLgonZNB8jiFk5I=
+	t=1732785252; cv=none; b=n/bV7b1jYYa6BeG3aRtxV4mT5y5FSSmOE1fa9PGYr6WDVCMj1AB322tS34Sgn1HmqW1E/p+Cegc63em+m+En1SZbGFsjxKR1iKcKYGfhxcT8GtJWV0r+3ppMdZ6hPy56Tu2Ulq7wxA8qzwku0JCiAivKNGufWGggLXtE3yLn9RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732785161; c=relaxed/simple;
-	bh=1sVSn+wGEVJ9+/hESfNHaLKQDbFIyKtsyuXZieaZ6HQ=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=ueFV+Fhd+LgUDmP9833hRA9SnzmABPG5ETO5EsDEf7vtc5sClxl4PWVtWsHCSx4NFGMSm43GfzOVuHor/6DwANVcjBGa6qUYUzy8PzV3Ia9T0MnSEEQowdBJZ6V2QZCGMwKXgtHF53onSK+JxuPqD/EDgJxdxwT5LPuLvLvojRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from sh.jiang$zju.edu.cn ( [183.157.161.210] ) by
- ajax-webmail-mail-app2 (Coremail) ; Thu, 28 Nov 2024 17:12:23 +0800
- (GMT+08:00)
-Date: Thu, 28 Nov 2024 17:12:23 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5rGf5LiW5piK?= <sh.jiang@zju.edu.cn>
-To: security@kernel.org
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: [bug report] smc: possible deadlock in smc_switch_to_fallback
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240625(a75f206e) Copyright (c) 2002-2024 www.mailtech.cn zju.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1732785252; c=relaxed/simple;
+	bh=xw2wO2fUU8KQ8iSrqcL95ODU94SFi+VqIXlFh7Mb7T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=luxYn3s4HvLBdEIBFRxCY3/ernUYsnaC0wSViM3lM/e6nFK1dcBB10MRGerUcFPpM+wMgt07Bi7wwV8xgn2JC61XZO2vEf9uj4LIM0uoSWw6cco71wazMbd8pLuhFPzKodO/anLecciPmCcNCZNuG8VJnpkXgGbBzeLrqvILp5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UKFi0FUf; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732785250; x=1764321250;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xw2wO2fUU8KQ8iSrqcL95ODU94SFi+VqIXlFh7Mb7T0=;
+  b=UKFi0FUfTDx7s57mp537/9lJeVxZdVsuRNpYeUpzDIevRmgNeRVPQPDO
+   tleYI9odU6GT3W6fNS4j2sB3kcCpuw2tfRpnG2oCKJy6Z4q5yn3FEZVr2
+   XkrkDQMDkugLxl2wej7zSCFSTfI80wASagwP3h24fM/u98c9ka+Fwj33i
+   hZh3Ysii8vQ6k0D686YdHuBNR97FjqZDkqFtAaXMVP2FEb7OkQrIgs3j5
+   SLDgGDDJyBEjJi/YejLFFFqAyFVQ8AL3yC4NtZc5WArf5ww7AXauC32+u
+   0j50suW+LGPXMABu3BFxgt7FyXAqli38UB+afknJOBU1c8lqyBzHpFwUY
+   A==;
+X-CSE-ConnectionGUID: vCdBlUkxRCyKwVHAPNkYVA==
+X-CSE-MsgGUID: OtIpyU89Rcu+FVojJNhrqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="32946942"
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="scan'208";a="32946942"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 01:14:09 -0800
+X-CSE-ConnectionGUID: uqOmvXfmQWGhfoFoRafCKg==
+X-CSE-MsgGUID: qGqrPxt/RbKGmMsdYDmvEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="scan'208";a="96942880"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 28 Nov 2024 01:14:03 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tGab3-0009Nx-07;
+	Thu, 28 Nov 2024 09:14:01 +0000
+Date: Thu, 28 Nov 2024 17:13:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de,
+	sebastian.reichel@collabora.com, heiko@sntech.de,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dse@thaumatec.com, Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v4 2/2] phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+Message-ID: <202411281638.UyY41bPE-lkp@intel.com>
+References: <20241126131736.465111-3-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4224f194.3c7a6.193720afd34.Coremail.sh.jiang@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:by_KCgC3Pef3M0hnQ1NDAQ--.4865W
-X-CM-SenderInfo: qrsujiarxsq6lmxovvfxof0/1tbiAgATEWdHVCgdaAAAsp
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126131736.465111-3-heiko@sntech.de>
 
-SGkgZGV2ZWxvcGVyczoKCldlIG1heSBmb3VuZCBhIGJ1ZyBpbiBzbWMgbW9kdWxlIHdoaWNoIGNh
-biBsZWFkIHRvIGRlYWRsb2NrIHJlY2VudGx5LgoKSEVBRCBjb21taXQ6IDgxOTgzNzU4NDMwOSA2
-LjEyLjAtcmM1CmdpdCB0cmVlOiB1cHN0cmVhbQprZXJuZWwgY29uZmlnOiBodHRwczovL2RyaXZl
-Lmdvb2dsZS5jb20vZmlsZS9kLzEtOXBsdEUtMUNNZ0dnTkZ1OW81bDBCbENIazNSbnpiXy92aWV3
-P3VzcD1zaGFyaW5nCmNvbnNvbGUgb3V0cHV0OiBodHRwczovL2RyaXZlLmdvb2dsZS5jb20vZmls
-ZS9kLzF1SDBSRGRmdFZJcV9Cb2E2WVdvd0xqM1d1anFWQnVMNy92aWV3P3VzcD1zaGFyaW5nCnN5
-eiByZXBybzogaHR0cHM6Ly9kcml2ZS5nb29nbGUuY29tL2ZpbGUvZC8xV1VqaVlTTWViU1o3ZlIw
-dXhyR3gta0RMcmYxdl9OcmEvdmlldz91c3A9c2hhcmluZwpDIHJlcHJvZHVjZXI6IGh0dHBzOi8v
-ZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvMV9sQjVfdWFjVm5mRE5FOFZwdWlZLU54RXREZHpKMFo4
-L3ZpZXc/dXNwPXNoYXJpbmcKCkVudmlyb25tZW50OgpVYnVudHUgMjIuMDQgb24gTGludXggNS4x
-NQpRRU1VIGVtdWxhdG9yIHZlcnNpb24gNi4yLjAKcWVtdS1zeXN0ZW0teDg2XzY0IFwKLW0gMkcg
-XAotc21wIDIgXAota2VybmVsIC9ob21lL3dkL2J6SW1hZ2UgXAotYXBwZW5kICJjb25zb2xlPXR0
-eVMwIHJvb3Q9L2Rldi9zZGEgZWFybHlwcmludGs9c2VyaWFsIG5ldC5pZm5hbWVzPTAiIFwKLWRy
-aXZlIGZpbGU9L2hvbWUvd2QvYnVsbHNleWUuaW1nLGZvcm1hdD1yYXcgXAotbmV0IHVzZXIsaG9z
-dD0xMC4wLjIuMTAsaG9zdGZ3ZD10Y3A6MTI3LjAuMC4xOjEwMDIxLToyMiBcCi1uZXQgbmljLG1v
-ZGVsPWUxMDAwIFwKLWVuYWJsZS1rdm0gXAotbm9ncmFwaGljIFwKLXBpZGZpbGUgdm0ucGlkIFwK
-Mj4mMSB8IHRlZSB2bS5sb2cKCklmIHlvdSBmaXggdGhpcyBpc3N1ZSwgcGxlYXNlIGFkZCB0aGUg
-Zm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0OgpSZXBvcnRlZC1ieTogU2hpaGFvIEppYW5nPHNo
-LmppYW5nQHpqdS5lZHUuY24+Cgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT0KV0FSTklORzogcG9zc2libGUgY2lyY3VsYXIgbG9ja2luZyBkZXBl
-bmRlbmN5IGRldGVjdGVkCjYuMTIuMC1yYzUgIzEgVGFpbnRlZDogRyAgICAgICAgVyAgICAgICAg
-IAotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-c3l6LWV4ZWN1dG9yMzUxLzk0MTMgaXMgdHJ5aW5nIHRvIGFjcXVpcmUgbG9jazoKZmZmZjg4ODA0
-YmQ2OGFhOCAoJnNtYy0+Y2xjc29ja19yZWxlYXNlX2xvY2speysuKy59LXszOjN9LCBhdDogc21j
-X3N3aXRjaF90b19mYWxsYmFjaysweDJkLzB4YTAwIG5ldC9zbWMvYWZfc21jLmM6OTAyCgpidXQg
-dGFzayBpcyBhbHJlYWR5IGhvbGRpbmcgbG9jazoKZmZmZjg4ODA0YmQ2ODI1OCAoc2tfbG9jay1B
-Rl9JTkVUNil7Ky4rLn0tezA6MH0sIGF0OiBsb2NrX3NvY2sgaW5jbHVkZS9uZXQvc29jay5oOjE2
-MTEgW2lubGluZV0KZmZmZjg4ODA0YmQ2ODI1OCAoc2tfbG9jay1BRl9JTkVUNil7Ky4rLn0tezA6
-MH0sIGF0OiBzbWNfc2V0c29ja29wdCsweDMyMy8weGMxMCBuZXQvc21jL2FmX3NtYy5jOjMwNzcK
-CndoaWNoIGxvY2sgYWxyZWFkeSBkZXBlbmRzIG9uIHRoZSBuZXcgbG9jay4KCgp0aGUgZXhpc3Rp
-bmcgZGVwZW5kZW5jeSBjaGFpbiAoaW4gcmV2ZXJzZSBvcmRlcikgaXM6CgotPiAjMiAoc2tfbG9j
-ay1BRl9JTkVUNil7Ky4rLn0tezA6MH06CiAgICAgICBsb2NrX3NvY2tfbmVzdGVkKzB4M2EvMHhm
-MCBuZXQvY29yZS9zb2NrLmM6MzYxMQogICAgICAgbG9ja19zb2NrIGluY2x1ZGUvbmV0L3NvY2su
-aDoxNjExIFtpbmxpbmVdCiAgICAgICBzb2Nrb3B0X2xvY2tfc29jaysweDU0LzB4NzAgbmV0L2Nv
-cmUvc29jay5jOjExMjUKICAgICAgIGRvX2lwdjZfc2V0c29ja29wdCsweDI1MDkvMHg0OGIwIG5l
-dC9pcHY2L2lwdjZfc29ja2dsdWUuYzo1NjcKICAgICAgIGlwdjZfc2V0c29ja29wdCsweGNiLzB4
-MTcwIG5ldC9pcHY2L2lwdjZfc29ja2dsdWUuYzo5OTMKICAgICAgIHJhd3Y2X3NldHNvY2tvcHQr
-MHhkNy8weDcwMCBuZXQvaXB2Ni9yYXcuYzoxMDU0CiAgICAgICBkb19zb2NrX3NldHNvY2tvcHQr
-MHgyMjcvMHg0ODAgbmV0L3NvY2tldC5jOjIzMzQKICAgICAgIF9fc3lzX3NldHNvY2tvcHQrMHgx
-YTYvMHgyNzAgbmV0L3NvY2tldC5jOjIzNTcKICAgICAgIF9fZG9fc3lzX3NldHNvY2tvcHQgbmV0
-L3NvY2tldC5jOjIzNjYgW2lubGluZV0KICAgICAgIF9fc2Vfc3lzX3NldHNvY2tvcHQgbmV0L3Nv
-Y2tldC5jOjIzNjMgW2lubGluZV0KICAgICAgIF9feDY0X3N5c19zZXRzb2Nrb3B0KzB4YmQvMHgx
-NjAgbmV0L3NvY2tldC5jOjIzNjMKICAgICAgIGRvX3N5c2NhbGxfeDY0IGFyY2gveDg2L2VudHJ5
-L2NvbW1vbi5jOjUyIFtpbmxpbmVdCiAgICAgICBkb19zeXNjYWxsXzY0KzB4Y2IvMHgyNTAgYXJj
-aC94ODYvZW50cnkvY29tbW9uLmM6ODMKICAgICAgIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdm
-cmFtZSsweDc3LzB4N2YKCi0+ICMxIChydG5sX211dGV4KXsrLisufS17MzozfToKICAgICAgIF9f
-bXV0ZXhfbG9ja19jb21tb24ga2VybmVsL2xvY2tpbmcvbXV0ZXguYzo2MDggW2lubGluZV0KICAg
-ICAgIF9fbXV0ZXhfbG9jaysweDE0Ny8weDkzMCBrZXJuZWwvbG9ja2luZy9tdXRleC5jOjc1Mgog
-ICAgICAgZG9faXBfc2V0c29ja29wdCsweDE4YTEvMHgzNzgwIG5ldC9pcHY0L2lwX3NvY2tnbHVl
-LmM6MTA3NwogICAgICAgaXBfc2V0c29ja29wdCsweDU5LzB4ZjAgbmV0L2lwdjQvaXBfc29ja2ds
-dWUuYzoxNDE3CiAgICAgICB0Y3Bfc2V0c29ja29wdCsweGE5LzB4MTEwIG5ldC9pcHY0L3RjcC5j
-OjQwMjkKICAgICAgIHNtY19zZXRzb2Nrb3B0KzB4MWIxLzB4YzEwIG5ldC9zbWMvYWZfc21jLmM6
-MzA2NAogICAgICAgZG9fc29ja19zZXRzb2Nrb3B0KzB4MjI3LzB4NDgwIG5ldC9zb2NrZXQuYzoy
-MzM0CiAgICAgICBfX3N5c19zZXRzb2Nrb3B0KzB4MWE2LzB4MjcwIG5ldC9zb2NrZXQuYzoyMzU3
-CiAgICAgICBfX2RvX3N5c19zZXRzb2Nrb3B0IG5ldC9zb2NrZXQuYzoyMzY2IFtpbmxpbmVdCiAg
-ICAgICBfX3NlX3N5c19zZXRzb2Nrb3B0IG5ldC9zb2NrZXQuYzoyMzYzIFtpbmxpbmVdCiAgICAg
-ICBfX3g2NF9zeXNfc2V0c29ja29wdCsweGJkLzB4MTYwIG5ldC9zb2NrZXQuYzoyMzYzCiAgICAg
-ICBkb19zeXNjYWxsX3g2NCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzo1MiBbaW5saW5lXQogICAg
-ICAgZG9fc3lzY2FsbF82NCsweGNiLzB4MjUwIGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjgzCiAg
-ICAgICBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ny8weDdmCgotPiAjMCAoJnNt
-Yy0+Y2xjc29ja19yZWxlYXNlX2xvY2speysuKy59LXszOjN9OgogICAgICAgY2hlY2tfcHJldl9h
-ZGQga2VybmVsL2xvY2tpbmcvbG9ja2RlcC5jOjMxNjEgW2lubGluZV0KICAgICAgIGNoZWNrX3By
-ZXZzX2FkZCBrZXJuZWwvbG9ja2luZy9sb2NrZGVwLmM6MzI4MCBbaW5saW5lXQogICAgICAgdmFs
-aWRhdGVfY2hhaW4ga2VybmVsL2xvY2tpbmcvbG9ja2RlcC5jOjM5MDQgW2lubGluZV0KICAgICAg
-IF9fbG9ja19hY3F1aXJlKzB4MjQyNS8weDNiOTAga2VybmVsL2xvY2tpbmcvbG9ja2RlcC5jOjUy
-MDIKICAgICAgIGxvY2tfYWNxdWlyZS5wYXJ0LjArMHgxMWIvMHgzNzAga2VybmVsL2xvY2tpbmcv
-bG9ja2RlcC5jOjU4MjUKICAgICAgIF9fbXV0ZXhfbG9ja19jb21tb24ga2VybmVsL2xvY2tpbmcv
-bXV0ZXguYzo2MDggW2lubGluZV0KICAgICAgIF9fbXV0ZXhfbG9jaysweDE0Ny8weDkzMCBrZXJu
-ZWwvbG9ja2luZy9tdXRleC5jOjc1MgogICAgICAgc21jX3N3aXRjaF90b19mYWxsYmFjaysweDJk
-LzB4YTAwIG5ldC9zbWMvYWZfc21jLmM6OTAyCiAgICAgICBzbWNfc2V0c29ja29wdCsweDgwOS8w
-eGMxMCBuZXQvc21jL2FmX3NtYy5jOjMwODcKICAgICAgIGRvX3NvY2tfc2V0c29ja29wdCsweDIy
-Ny8weDQ4MCBuZXQvc29ja2V0LmM6MjMzNAogICAgICAgX19zeXNfc2V0c29ja29wdCsweDFhNi8w
-eDI3MCBuZXQvc29ja2V0LmM6MjM1NwogICAgICAgX19kb19zeXNfc2V0c29ja29wdCBuZXQvc29j
-a2V0LmM6MjM2NiBbaW5saW5lXQogICAgICAgX19zZV9zeXNfc2V0c29ja29wdCBuZXQvc29ja2V0
-LmM6MjM2MyBbaW5saW5lXQogICAgICAgX194NjRfc3lzX3NldHNvY2tvcHQrMHhiZC8weDE2MCBu
-ZXQvc29ja2V0LmM6MjM2MwogICAgICAgZG9fc3lzY2FsbF94NjQgYXJjaC94ODYvZW50cnkvY29t
-bW9uLmM6NTIgW2lubGluZV0KICAgICAgIGRvX3N5c2NhbGxfNjQrMHhjYi8weDI1MCBhcmNoL3g4
-Ni9lbnRyeS9jb21tb24uYzo4MwogICAgICAgZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1l
-KzB4NzcvMHg3ZgoKb3RoZXIgaW5mbyB0aGF0IG1pZ2h0IGhlbHAgdXMgZGVidWcgdGhpczoKCkNo
-YWluIGV4aXN0cyBvZjoKICAmc21jLT5jbGNzb2NrX3JlbGVhc2VfbG9jayAtLT4gcnRubF9tdXRl
-eCAtLT4gc2tfbG9jay1BRl9JTkVUNgoKIFBvc3NpYmxlIHVuc2FmZSBsb2NraW5nIHNjZW5hcmlv
-OgoKICAgICAgIENQVTAgICAgICAgICAgICAgICAgICAgIENQVTEKICAgICAgIC0tLS0gICAgICAg
-ICAgICAgICAgICAgIC0tLS0KICBsb2NrKHNrX2xvY2stQUZfSU5FVDYpOwogICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgbG9jayhydG5sX211dGV4KTsKICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIGxvY2soc2tfbG9jay1BRl9JTkVUNik7CiAgbG9jaygmc21jLT5jbGNzb2NrX3Jl
-bGVhc2VfbG9jayk7CgogKioqIERFQURMT0NLICoqKgoKMSBsb2NrIGhlbGQgYnkgc3l6LWV4ZWN1
-dG9yMzUxLzk0MTM6CiAjMDogZmZmZjg4ODA0YmQ2ODI1OCAoc2tfbG9jay1BRl9JTkVUNil7Ky4r
-Ln0tezA6MH0sIGF0OiBsb2NrX3NvY2sgaW5jbHVkZS9uZXQvc29jay5oOjE2MTEgW2lubGluZV0K
-ICMwOiBmZmZmODg4MDRiZDY4MjU4IChza19sb2NrLUFGX0lORVQ2KXsrLisufS17MDowfSwgYXQ6
-IHNtY19zZXRzb2Nrb3B0KzB4MzIzLzB4YzEwIG5ldC9zbWMvYWZfc21jLmM6MzA3NwoKc3RhY2sg
-YmFja3RyYWNlOgpDUFU6IDEgVUlEOiAwIFBJRDogOTQxMyBDb21tOiBzeXotZXhlY3V0b3IzNTEg
-VGFpbnRlZDogRyAgICAgICAgVyAgICAgICAgICA2LjEyLjAtcmM1ICMxClRhaW50ZWQ6IFtXXT1X
-QVJOCkhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYp
-LCBCSU9TIDEuMTUuMC0xIDA0LzAxLzIwMTQKQ2FsbCBUcmFjZToKIDxUQVNLPgogX19kdW1wX3N0
-YWNrIGxpYi9kdW1wX3N0YWNrLmM6OTQgW2lubGluZV0KIGR1bXBfc3RhY2tfbHZsKzB4MTE2LzB4
-MWIwIGxpYi9kdW1wX3N0YWNrLmM6MTIwCiBwcmludF9jaXJjdWxhcl9idWcrMHg0MDYvMHg1YzAg
-a2VybmVsL2xvY2tpbmcvbG9ja2RlcC5jOjIwNzQKIGNoZWNrX25vbmNpcmN1bGFyKzB4MmY3LzB4
-M2UwIGtlcm5lbC9sb2NraW5nL2xvY2tkZXAuYzoyMjA2CiBjaGVja19wcmV2X2FkZCBrZXJuZWwv
-bG9ja2luZy9sb2NrZGVwLmM6MzE2MSBbaW5saW5lXQogY2hlY2tfcHJldnNfYWRkIGtlcm5lbC9s
-b2NraW5nL2xvY2tkZXAuYzozMjgwIFtpbmxpbmVdCiB2YWxpZGF0ZV9jaGFpbiBrZXJuZWwvbG9j
-a2luZy9sb2NrZGVwLmM6MzkwNCBbaW5saW5lXQogX19sb2NrX2FjcXVpcmUrMHgyNDI1LzB4M2I5
-MCBrZXJuZWwvbG9ja2luZy9sb2NrZGVwLmM6NTIwMgogbG9ja19hY3F1aXJlLnBhcnQuMCsweDEx
-Yi8weDM3MCBrZXJuZWwvbG9ja2luZy9sb2NrZGVwLmM6NTgyNQogX19tdXRleF9sb2NrX2NvbW1v
-biBrZXJuZWwvbG9ja2luZy9tdXRleC5jOjYwOCBbaW5saW5lXQogX19tdXRleF9sb2NrKzB4MTQ3
-LzB4OTMwIGtlcm5lbC9sb2NraW5nL211dGV4LmM6NzUyCiBzbWNfc3dpdGNoX3RvX2ZhbGxiYWNr
-KzB4MmQvMHhhMDAgbmV0L3NtYy9hZl9zbWMuYzo5MDIKIHNtY19zZXRzb2Nrb3B0KzB4ODA5LzB4
-YzEwIG5ldC9zbWMvYWZfc21jLmM6MzA4NwogZG9fc29ja19zZXRzb2Nrb3B0KzB4MjI3LzB4NDgw
-IG5ldC9zb2NrZXQuYzoyMzM0CiBfX3N5c19zZXRzb2Nrb3B0KzB4MWE2LzB4MjcwIG5ldC9zb2Nr
-ZXQuYzoyMzU3CiBfX2RvX3N5c19zZXRzb2Nrb3B0IG5ldC9zb2NrZXQuYzoyMzY2IFtpbmxpbmVd
-CiBfX3NlX3N5c19zZXRzb2Nrb3B0IG5ldC9zb2NrZXQuYzoyMzYzIFtpbmxpbmVdCiBfX3g2NF9z
-eXNfc2V0c29ja29wdCsweGJkLzB4MTYwIG5ldC9zb2NrZXQuYzoyMzYzCiBkb19zeXNjYWxsX3g2
-NCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzo1MiBbaW5saW5lXQogZG9fc3lzY2FsbF82NCsweGNi
-LzB4MjUwIGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjgzCiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVy
-X2h3ZnJhbWUrMHg3Ny8weDdmClJJUDogMDAzMzoweDdmOGQ5NmZjMzA0ZApDb2RlOiAyOCBjMyBl
-OCA0NiAxZSAwMCAwMCA2NiAwZiAxZiA0NCAwMCAwMCBmMyAwZiAxZSBmYSA0OCA4OSBmOCA0OCA4
-OSBmNyA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBjMiA0ZCA4OSBjOCA0YyA4YiA0YyAyNCAwOCAw
-ZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IGM3IGMxIGI4IGZmIGZmIGZmIGY3
-IGQ4IDY0IDg5IDAxIDQ4ClJTUDogMDAyYjowMDAwN2ZmZWYzMGUwMjE4IEVGTEFHUzogMDAwMDAy
-NDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwMzYKUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDog
-MDAwMDdmZmVmMzBlMDQxOCBSQ1g6IDAwMDA3ZjhkOTZmYzMwNGQKUkRYOiAwMDAwMDAwMDAwMDAw
-MDE3IFJTSTogMDAwMDAwMDAwMDAwMDAyOSBSREk6IDAwMDAwMDAwMDAwMDAwMDUKUkJQOiAwMDAw
-MDAwMDAwMDAwMDAxIFIwODogMDAwMDAwMDAwMDAwMDAwNCBSMDk6IDAwMDA3ZmZlZjMwZTA0MTgK
-UjEwOiAwMDAwMDAwMDIwMDAwMGMwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAwMDAw
-MDAwMDAwMDEKUjEzOiAwMDAwN2ZmZWYzMGUwNDA4IFIxNDogMDAwMDdmOGQ5NzA0MDUzMCBSMTU6
-IDAwMDAwMDAwMDAwMDAwMDEKIDwvVEFTSz4KCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PQoKQmVzdCBSZWdhcmRzLCAKU2hpaGFv
+Hi Heiko,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on rockchip/for-next]
+[also build test ERROR on robh/for-next linus/master v6.12 next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Heiko-Stuebner/dt-bindings-phy-Add-Rockchip-MIPI-C-D-PHY-schema/20241128-100435
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20241126131736.465111-3-heiko%40sntech.de
+patch subject: [PATCH v4 2/2] phy: rockchip: Add Samsung MIPI D-/C-PHY driver
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241128/202411281638.UyY41bPE-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411281638.UyY41bPE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411281638.UyY41bPE-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:15:
+   In file included from include/linux/phy/phy.h:17:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:8:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:15:
+   In file included from include/linux/phy/phy.h:17:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:8:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:15:
+   In file included from include/linux/phy/phy.h:17:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:8:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:15:
+   In file included from include/linux/phy/phy.h:17:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:895:23: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     895 |                            I_MUX_SEL_MASK, I_MUX_SEL_400MV);
+         |                                            ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:33:26: note: expanded from macro 'I_MUX_SEL_400MV'
+      33 | #define I_MUX_SEL_400MV         I_MUX_SEL(0)
+         |                                 ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:32:23: note: expanded from macro 'I_MUX_SEL'
+      32 | #define I_MUX_SEL(x)            FIELD_PREP(I_MUX_SEL_MASK, x)
+         |                                 ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:900:50: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     900 |         regmap_write(samsung->regmap, DPHY_MC_GNR_CON1, T_PHY_READY(0x2000));
+         |                                                         ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:69:25: note: expanded from macro 'T_PHY_READY'
+      69 | #define T_PHY_READY(x)          FIELD_PREP(GENMASK(15, 0), x)
+         |                                 ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:945:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     945 |                            S(samsung->pll.scaler) | P(samsung->pll.prediv));
+         |                            ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:40:16: note: expanded from macro 'S'
+      40 | #define S(x)                    FIELD_PREP(S_MASK, x)
+         |                                 ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:1116:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1116 |         val = EDGE_CON(7) | EDGE_CON_DIR(0) | EDGE_CON_EN |
+         |               ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:71:22: note: expanded from macro 'EDGE_CON'
+      71 | #define EDGE_CON(x)             FIELD_PREP(GENMASK(14, 12), x)
+         |                                 ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:1170:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1170 |         val = EDGE_CON(7) | EDGE_CON_DIR(0) | EDGE_CON_EN |
+         |               ^
+   drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c:71:22: note: expanded from macro 'EDGE_CON'
+      71 | #define EDGE_CON(x)             FIELD_PREP(GENMASK(14, 12), x)
+         |                                 ^
+   7 warnings and 5 errors generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/FIELD_PREP +895 drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
+
+   881	
+   882	static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcphy *samsung)
+   883	{
+   884		u32 bias_con2 = 0x3223;
+   885	
+   886		regmap_write(samsung->regmap, BIAS_CON0, 0x0010);
+   887		regmap_write(samsung->regmap, BIAS_CON1, 0x0110);
+   888		regmap_write(samsung->regmap, BIAS_CON2, bias_con2);
+   889	
+   890		/* default output voltage select:
+   891		 * dphy: 400mv
+   892		 * cphy: 530mv
+   893		 */
+   894		regmap_update_bits(samsung->regmap, BIAS_CON4,
+ > 895				   I_MUX_SEL_MASK, I_MUX_SEL_400MV);
+   896	}
+   897	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
