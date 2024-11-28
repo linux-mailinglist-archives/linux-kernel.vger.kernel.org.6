@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-424685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5CCC9DB80A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:57:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275FA9DB816
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:58:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CDAB161A40
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:58:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11481494B0;
+	Thu, 28 Nov 2024 12:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="g7Llz4Vb"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6626AB21531
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:57:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD691154BEC;
-	Thu, 28 Nov 2024 12:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ymP1yL15"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A007A1494B0
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC0B154BEC;
+	Thu, 28 Nov 2024 12:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732798617; cv=none; b=PCciNIB3rS7VZa2GTlB4MTBqviWpW+9F/vtoVt2Qo/4YzUM45ZBtDvs9OF+iq877J9TaF26sgkk5uhixa93OsBSq/a6bEqrRwIyDI5k3X14RiErzCa1Xwi6vwXO0AFaGp+kG4imNxyKOk4x2ICWN0GAUEhmRzPt+8q3X6zTw44k=
+	t=1732798685; cv=none; b=JP4Z1RkoabjfPsOn1mJF+VerKeRMbCm0XISU4OPOVndAwMBqB0ehLdUiG8frdZjx1c0woc4praKWYPTr3TyY7S2HDVKy+l2XAS1WBDHwYb3Ouu1Xc/sLTlhGYVtg5yNsC3qHAC/knFzBjfqUzbJNvAHd880l0WGkHGrAuCmj3Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732798617; c=relaxed/simple;
-	bh=wIbCDeRCPipDEj0QLk3Kv6nua3hP/xB+LsLEnGR6CPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=la0MYVmsV3AKT4KDY0jSmlEC14NKWRfcfEqrWxIF0uHCo03KRS19AsQfdwoIjx3WkG3m2teB+JhyN/jfUwv2RckSib5aOb0zYQTcxcC7RNSQr8wlh7Lj+RUNo1hHGQRhc6Q/GmjkW3YQPjmU/Vp27bz1ajCSFLK1iWZzqI37yDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ymP1yL15; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df1e0641fso881949e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:56:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732798614; x=1733403414; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1FMqL0Vo9ZTV7oQ44UmQZuGKsEmW6qDjMP/0EBigxW8=;
-        b=ymP1yL15gIB03l+eI/nE9vgQYWmjOY4S+YsvbPVvO1Y3tGdbbxUlVjAqW9hHFdnDp+
-         jR0hKftPrSzYGv42+UEDgkNoPAGLoj7RR31qq64aLu5KbiI2CW4gks1KrddKMdb85dPu
-         hMcZ0pY0phGmHmWGaZ4Q4XACEwlXBRoqurypen/UQX5W8EsyTh73/TkuW1Y0EwiMN1sx
-         KOz9F4Q5D96A/i/GAJ4a5vH0OaGwMLPNnbg+vrAhSNmpUSZDzaBEttfMjVGguV1RVLUl
-         N48F5yy7sr+LN4JtbPgLhSLn1HXpk7uMtLsbe5GUd3cZEjA8uFPtWVOpq9QeODmE3rlU
-         or1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732798614; x=1733403414;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1FMqL0Vo9ZTV7oQ44UmQZuGKsEmW6qDjMP/0EBigxW8=;
-        b=vIguXpqigTizHhu15wOOoWB7CDjeV0utY2xnIy1lkhG47bfUzNdqh7YbxZs5URse0/
-         ERTDTPRW35zLhsPjdIqOPRtWUIVgthsHfecyccQs8lBvvfQawDXcqwN9GOWKU1PDOAJJ
-         SoAtXLA/YS5rh/C/wFYOf0kBJ3m5dAgmWt2d/5l45NuUehiK+0JX1XB4dNClw5nmwXZ4
-         ilLN2BWN/mRQSzXkZwJWUcxvlS8lHIwwiU9bPIeEK5xX5FhZXDYU0kK4/0kPQWXzVEBv
-         JjYzf6R7NQxASe6FehoD4Z2S7d+AEv7ND9skeYpMOlcHxjn/kR79PUYIKxZhH1ou762F
-         EDfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP6LyF/81Wvv7ulZMnQUtONL+pFkVHgazE2f6ddN/FBN3YuH4QqQm05mJvVQvjeZhSHMMZjLCr6RSiJjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKHSfI0mxwMgCZpQ4ZtBurr1YZNgy3iGnvadr+zo8HJHwMtvXx
-	6cW3aiE9lCy+YtBx4MzK5r600uMYGp7czqt+wsOYiD/TvJVfq2UJmJ/jFmFYrVU=
-X-Gm-Gg: ASbGncvDvz+kxJRFLSoDRSBOp0LrdKgLTD6rtRo2bPxx282i8lq5EsPxevARaw/iXNj
-	0eiJTj3owTtA+BsPMzNOhbpVCGK2Hzb7mvHGDpxQuaj0s/Rb9L0VTBRXxGYMe7OVTLW5w2dEgz9
-	mmsbGeH7Pn8aGjfYYaAAB0zGWsxQBh8PsUFSyQ1RqFHi3D5jWZLsZWvj4+QTADrHLGtx5biuZ/4
-	NNp8RF5coeaSQjMRd5w4odgyDyUSjm6dwpLrWG8jSCj248s0XM5ZW3zyBKpbSw1xIBOHkwfYKLx
-	XxmiaO5lycFrD6xdd3KCuvZWUsPsVQ==
-X-Google-Smtp-Source: AGHT+IHd39GNyqtnusbMRvZYgSGa/NnHGVoGq9VkP7PA/yhU8e6l86ZQ3O9anzd1w4QjK9hje9fIPg==
-X-Received: by 2002:a05:6512:3181:b0:53d:a4f9:6141 with SMTP id 2adb3069b0e04-53df00d1b1cmr3597761e87.14.1732798613900;
-        Thu, 28 Nov 2024 04:56:53 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f27fsm170090e87.157.2024.11.28.04.56.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 04:56:52 -0800 (PST)
-Date: Thu, 28 Nov 2024 14:56:51 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
-	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: qcs8300: Adds SPMI support
-Message-ID: <25gvmj5evftgb4bbu3gmaxcs2hvflhrwrzsnhn7pizop7dq7oh@drbk5vvcf7zt>
-References: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
- <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-1-001c0bed7c67@quicinc.com>
+	s=arc-20240116; t=1732798685; c=relaxed/simple;
+	bh=QMSrXLPmS8/rI15I1H6zoqnyGh2Mcn9fOeS/kWycmGc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FSaw/Qvx2yu3bkZDuGQ7pbEW2VWezFPYH/A6NGV1fbQOfJm6H/oUe9yfiqZPTSL6reOrSn5svIWaZ4LR00Nphb5dOdtLCMsjjD7YbYes7yCFrbtyHFZJigN3sppHSmPfzAaOqOoDgUjRE4JGFxy0naq9UdECysH1j//VwFxvpMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=g7Llz4Vb; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1732798684; x=1764334684;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QMSrXLPmS8/rI15I1H6zoqnyGh2Mcn9fOeS/kWycmGc=;
+  b=g7Llz4VbRm2ddrqnK7sSGp/RnkrIkxmraeRXskcQQ89ZjziS1AfTSXez
+   +0FXi1hfelzshLvweRIeA4LjlQwoOeq5Zo5gV0RGSdbqfWdyerkIJuegJ
+   Rf2XTJVOFakBbU2xVgVlX3b5DN/6EqwsOrpWXI7LCSRB1fuFD2Ous7fWH
+   A+Avu4mO6igxNzT6Ut2JFAzFsPOI2uGc0CJNTaOnhwSShFE+dd838OEJF
+   erqcZSUj70n0yEcK7rOwJ1E96EXDpJSm+7gb8s4/UPRzArrY687smdUuO
+   dgVGTBz7MDnc3H1PffNz//Atf81Cr9fNTyHKejeAJiT/+wA/vdaata0nJ
+   Q==;
+X-CSE-ConnectionGUID: /UvZogjDQyWxjx7e3ftesA==
+X-CSE-MsgGUID: Z3VVt8QuQ6eGvsYfIj+DcA==
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="asc'?scan'208";a="266085200"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Nov 2024 05:57:57 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 28 Nov 2024 05:57:26 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 28 Nov 2024 05:57:22 -0700
+Date: Thu, 28 Nov 2024 12:56:55 +0000
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+CC: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri
+	<parri.andrea@gmail.com>, Nathan Chancellor <nathan@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon
+	<will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng
+	<boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Leonardo Bras
+	<leobras@redhat.com>, Guo Ren <guoren@kernel.org>,
+	<linux-doc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v6 13/13] riscv: Add qspinlock support
+Message-ID: <20241128-whoever-wildfire-2a3110c5fd46@wendy>
+References: <20241103145153.105097-1-alexghiti@rivosinc.com>
+ <20241103145153.105097-14-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qajfT6S+474YA1dH"
+Content-Disposition: inline
+In-Reply-To: <20241103145153.105097-14-alexghiti@rivosinc.com>
+
+--qajfT6S+474YA1dH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-1-001c0bed7c67@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 05:40:16PM +0800, Tingguo Cheng wrote:
-> Add the SPMI bus arbiter(Version:5.2.0) node for QCS8300 SoC
-> which connected with PMICs on QCS8300 boards.
-> 
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+On Sun, Nov 03, 2024 at 03:51:53PM +0100, Alexandre Ghiti wrote:
+> In order to produce a generic kernel, a user can select
+> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+> spinlock implementation if Zabha or Ziccrse are not present.
+>=20
+> Note that we can't use alternatives here because the discovery of
+> extensions is done too late and we need to start with the qspinlock
+> implementation because the ticket spinlock implementation would pollute
+> the spinlock value, so let's use static keys.
+>=20
+> This is largely based on Guo's work and Leonardo reviews at [1].
+>=20
+> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren=
+@kernel.org/ [1]
+> Signed-off-by: Guo Ren <guoren@kernel.org>
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This patch (now commit ab83647fadae2 ("riscv: Add qspinlock support"))
+breaks boot on polarfire soc. It dies before outputting anything to the
+console. My .config has:
 
--- 
-With best wishes
-Dmitry
+# CONFIG_RISCV_TICKET_SPINLOCKS is not set
+# CONFIG_RISCV_QUEUED_SPINLOCKS is not set
+CONFIG_RISCV_COMBO_SPINLOCKS=3Dy
+
+--qajfT6S+474YA1dH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0holwAKCRB4tDGHoIJi
+0oxHAQDvlh0ZpqCtx7NHMgqYni9qnQMfa+yBnfL0GReiPZOY6gEAuG43y1PeVjrz
+9u1w7lL364g1nfGmc7VfESDSWYuheQA=
+=ZDec
+-----END PGP SIGNATURE-----
+
+--qajfT6S+474YA1dH--
 
