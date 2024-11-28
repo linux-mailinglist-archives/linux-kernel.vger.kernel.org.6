@@ -1,107 +1,199 @@
-Return-Path: <linux-kernel+bounces-424663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033F69DB7B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:33:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCFA9DB7BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:34:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BECCE2870DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5EA16346D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133E919DF4C;
-	Thu, 28 Nov 2024 12:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9185819F416;
+	Thu, 28 Nov 2024 12:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="bC94NoxQ"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H15v0y7j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6995E19CD1E;
-	Thu, 28 Nov 2024 12:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D766819DF99;
+	Thu, 28 Nov 2024 12:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732797192; cv=none; b=pW8E3xVpMYvj6ee1cL6O9MJaCgIGkWsdoLhODxKDknR5x7JJEodVJgrEIue57xw6bgDjp7HvvWcBqon1T3fZU2PfLimFxpd+nqUhbKJIHkTuuSrf/qRiNSUDTA/chd57aFWoRddkQriHJ3sokHbxUA3c3+5dshCMr2xpEmW/vMA=
+	t=1732797241; cv=none; b=WYeC3kxcGdEcR4cf0/OSBdeDjgVjvQKo3jiTtGjaD48NUnzIEyXseON/uM6iojidY1fYfE2YzZo7xYFz44E3ZlEvCVCO2j6tlaB3yTThUpPNH/VWzVvorb2hEWL+aEyOF+vuLtz1TWAoTTo80/TTkmospOfuxChjcW/6GD1/it8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732797192; c=relaxed/simple;
-	bh=4kN4p8GQ+2QmKeA/bnUvaeh9MyJCO4sslOgNjFrCxfA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=KCyB1E6v4CBVFxygsWBK15AbT8A5QbB7SngAJwHjQEuRXMLwc0QTClD17hxU87IYsPXv4WSdeh8XKEvFTobL0qZZq1ix0m5Iz61d1ajhwZOPkdT4Ful3iesFDSmGPLEU0s78Kv1Oq6hz3vnQMAMhGI26si2796DHDdxUWCMg/yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=bC94NoxQ; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4XzbLm3Jvzz1DHVZ;
-	Thu, 28 Nov 2024 13:33:04 +0100 (CET)
-Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4XzbLm1z61z1DHY1;
-	Thu, 28 Nov 2024 13:33:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1732797184;
-	bh=AMfTwH0iXzHF6t67vGYAsjXiFxhVy2J7CG3nlbvkp3U=;
-	h=Date:To:Cc:From:Subject;
-	b=bC94NoxQf1RSr3QiC+zGBU6QfCth0JI95JXGCsqTm9jR68sRB98myvCZ4W7C/IVKU
-	 0XGSAfjgy6oinEIZUyqZEnW2tXsqR8rW/Mh1RMfeipx/sAbEhYm5MQa/1xS5ZNi1dO
-	 //3tmTxwKv5FpntFlKUaaOjFhquN8xcJFFTANLr8=
-Message-ID: <a124b567-d9a1-48f5-beec-de1bacac2140@gaisler.com>
-Date: Thu, 28 Nov 2024 13:33:03 +0100
+	s=arc-20240116; t=1732797241; c=relaxed/simple;
+	bh=MFoiCellN60PnTExDzerfYG5XksVeX7MxYSpt1qtWT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jYF9uOC7Z2yt3clpL1+zHymEYDYYdBsXW1YMEI9vN2pqcPRybBhGPJFbj778sHz69Y7hLKypvHvUFy+QgS3ujngG7hg1lYLjzUcjmm+x0vKZUdTa9VQuiMV22m4X4odZbGpDYhEqr4s76eyIWPzmJiHPTZMRg2t7YM+eFTaK9MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H15v0y7j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0792EC4CED2;
+	Thu, 28 Nov 2024 12:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732797240;
+	bh=MFoiCellN60PnTExDzerfYG5XksVeX7MxYSpt1qtWT4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=H15v0y7jw74xDtEnHNikJYEpIKP3Yl2650HieT4Fjaj+530wSNfhgL6kfX8G6veDB
+	 Rbrh/GTOOeCYVwj+B2pDHqn4411mU9udMLL3yn5DOSXM0eloJtSuWtgLSPiImROHYZ
+	 rdTc9Y3sbRu+irijRCTNkc7Mp1o5lIc/AYJwoTqexupBRJoDfeqU7r6DIgip8THO5o
+	 JP/lspSfHzHjn2IuU2nlym/6kIeDr9dGmWtX/FpmOu7mKcCSK2vXajh+JwPpHt2gDw
+	 PrkVUAdl8JyCupgdmRLep2V1AT8MaWOy540ysre+AHY3q0GAmywpaa+KRI+v+03aHP
+	 gyXdMUa1RVcVQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Erin Shepherd <erin.shepherd@e43.eu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH RFC 0/2] pidfs: file handle preliminaries
+Date: Thu, 28 Nov 2024 13:33:36 +0100
+Message-ID: <20241128-work-pidfs-v1-0-80f267639d98@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241114-fragt-rohre-28b21496ecbc@brauner>
+References: <20241114-fragt-rohre-28b21496ecbc@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Andreas Larsson <andreas@gaisler.com>
-Subject: [GIT PULL] sparc updates for v6.13
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20241128-work-pidfs-2bd42c7ea772
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4075; i=brauner@kernel.org; h=from:subject:message-id; bh=MFoiCellN60PnTExDzerfYG5XksVeX7MxYSpt1qtWT4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR7JKtI1s5SC2pW0v3j/FBhSqCzWv9CTR9edfHcs7JeM Y+e10l0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATITZn+E3e+dvLpU2v4jQ7U6F SmfvvNwk5Vm3dElP88JFNgWuPi/9GBnWLS4yf3eR83jDk2/rj7m/UNFjeVnBHMtxseLNpo8Xna9 xAgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Hey,
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+This reworks the inode number allocation for pidfs in order to support
+file handles properly.
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+Recently we received a patchset that aims to enable file handle encoding
+and decoding via name_to_handle_at(2) and open_by_handle_at(2).
 
-are available in the Git repository at:
+A crucical step in the patch series is how to go from inode number to
+struct pid without leaking information into unprivileged contexts. The
+issue is that in order to find a struct pid the pid number in the
+initial pid namespace must be encoded into the file handle via
+name_to_handle_at(2). This can be used by containers using a separate
+pid namespace to learn what the pid number of a given process in the
+initial pid namespace is. While this is a weak information leak it could
+be used in various exploits and in general is an ugly wart in the
+design.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git tags/sparc-for-6.13-tag1
+To solve this problem a new way is needed to lookup a struct pid based
+on the inode number allocated for that struct pid. The other part is to
+remove the custom inode number allocation on 32bit systems that is also
+an ugly wart that should go away.
 
-for you to fetch changes up to b6370b338e71cf24c61e33880b8f1a0dd5ad0a44:
+So, a new scheme is used that I was discusssing with Tejun some time
+back. A cyclic ida is used for the lower 32 bits and a the high 32 bits
+are used for the generation number. This gives a 64 bit inode number
+that is unique on both 32 bit and 64 bit. The lower 32 bit number is
+recycled slowly and can be used to lookup struct pids.
 
-  sparc/vdso: Add helper function for 64-bit right shift on 32-bit target (2024-11-18 09:59:20 +0100)
+So after applying the pidfs file handle series at
+https://lore.kernel.org/r/20241101135452.19359-1-erin.shepherd@e43.eu on
+top of the patches here we should be able to simplify encoding and
+decoding to something like:
 
-----------------------------------------------------------------
-This includes the following changes related to sparc64 for v6.13:
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index e71294d3d607..a38b833a2d38 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -78,7 +78,7 @@ void pidfs_remove_pid(struct pid *pid)
+ }
+ 
+ /* Find a struct pid based on the inode number. */
+-static __maybe_unused struct pid *pidfs_ino_get_pid(u64 ino)
++static struct pid *pidfs_ino_get_pid(u64 ino)
+ {
+ 	ino_t pid_ino = pidfs_ino(ino);
+ 	u32 gen = pidfs_gen(ino);
+@@ -475,49 +475,37 @@ static const struct dentry_operations pidfs_dentry_operations = {
+ 	.d_prune	= stashed_dentry_prune,
+ };
+ 
+-#define PIDFD_FID_LEN 3
+-
+-struct pidfd_fid {
+-	u64 ino;
+-	s32 pid;
+-} __packed;
+-
+-static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
++static int pidfs_encode_fh(struct inode *inode, __u32 *fh, int *max_len,
+ 			   struct inode *parent)
+ {
+ 	struct pid *pid = inode->i_private;
+-	struct pidfd_fid *fid = (struct pidfd_fid *)fh;
+ 
+-	if (*max_len < PIDFD_FID_LEN) {
+-		*max_len = PIDFD_FID_LEN;
++	if (*max_len < 2) {
++		*max_len = 2;
+ 		return FILEID_INVALID;
+ 	}
+ 
+-	fid->ino = pid->ino;
+-	fid->pid = pid_nr(pid);
+-	*max_len = PIDFD_FID_LEN;
++	*max_len = 2;
++	*(u64 *)fh = pid->ino;
+ 	return FILEID_INO64_GEN;
+ }
+ 
+ static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+-					 struct fid *gen_fid,
++					 struct fid *fid,
+ 					 int fh_len, int fh_type)
+ {
+ 	int ret;
+ 	struct path path;
+-	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
+ 	struct pid *pid;
++	u64 pid_ino;
+ 
+-	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
++	if (fh_type != FILEID_INO64_GEN || fh_len < 2)
+ 		return NULL;
+ 
+-	scoped_guard(rcu) {
+-		pid = find_pid_ns(fid->pid, &init_pid_ns);
+-		if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0)
+-			return NULL;
+-
+-		pid = get_pid(pid);
+-	}
++	pid_ino = *(u64 *)fid;
++	pid = pidfs_ino_get_pid(pid_ino);
++	if (!pid)
++		return NULL;
+ 
+ 	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
+ 	if (ret < 0)
 
-- Make sparc64 compilable with clang
+Thanks!
+Christian
 
-- Replace one-element array with flexible array member
+---
+Christian Brauner (2):
+      pidfs: rework inode number allocation
+      pidfs: remove 32bit inode number handling
 
-----------------------------------------------------------------
-Koakuma (3):
-      sparc/build: Put usage of -fcall-used* flags behind cc-option
-      sparc/build: Add SPARC target flags for compiling with clang
-      sparc/vdso: Add helper function for 64-bit right shift on 32-bit target
+ fs/pidfs.c            | 138 +++++++++++++++++++++++++++++++++++---------------
+ include/linux/pidfs.h |   2 +
+ kernel/pid.c          |  11 ++--
+ 3 files changed, 103 insertions(+), 48 deletions(-)
+---
+base-commit: b86545e02e8c22fb89218f29d381fa8e8b91d815
+change-id: 20241128-work-pidfs-2bd42c7ea772
 
-Thorsten Blum (1):
-      sparc: Replace one-element array with flexible array member
-
- Documentation/kbuild/llvm.rst    |  3 +++
- arch/sparc/Makefile              |  4 ++--
- arch/sparc/include/asm/hvtramp.h |  2 +-
- arch/sparc/kernel/smp_64.c       |  4 +---
- arch/sparc/vdso/Makefile         |  2 +-
- arch/sparc/vdso/vclock_gettime.c | 28 ++++++++++++++++++++++++----
- scripts/Makefile.clang           |  1 +
- 7 files changed, 33 insertions(+), 11 deletions(-)
-
-Thanks,
-Andreas
 
