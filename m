@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-424826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BFE9DB9EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:52:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A29E164C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:52:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAF01B4F10;
-	Thu, 28 Nov 2024 14:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RL1yVVgq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7g8/gnqn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229CC9DB9F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:52:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C607E1B3F3D
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1982281508
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:52:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CE31BFE01;
+	Thu, 28 Nov 2024 14:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aH1k8Vg3"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FF91B3940
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732805510; cv=none; b=jaNFrTugIIP9p2d5ZqjRYq9BzfPv2OreK7TBmcHirmSo3UtVipNZM1AcmbExSPzV56xv04o3tIdkMkMwgOFhilfShcpQcOeiKxy5/vyIctwU+NzBY0d0jNOFXtKQ6TOZDV2KJf+kqOchl9k0ZbUd9udr7VLzTmWiIUwGC4TcYbo=
+	t=1732805518; cv=none; b=GcNoeuXAt1gVQcrrbWqMS+wz5ubdTwyy1GSf+3eHrpVe7j6s80QdN1T7KMTsL9uIMs3g2pWKcGJ11c/5ZnK7KTrSREMBTZ8OHYoLV30Pog2SmXZWc1QqJ5srmFf4JPH9CtsNZ5LZmxQzwnFsYD53+IhbA+tKz9ITOmYJuDpYXio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732805510; c=relaxed/simple;
-	bh=cO94tHvqgaICl04ZRxTb810L3Ym+y8yFDgU7H0ViUyQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tAe8fpa1VANBm0L3UcCsNGQ6KOjy9m3jVbfTiFYvt/0rUjNjKWA1ncelDMQAVqHWAk+J32zHhczwEQlODpVn5QylOQJw2EbZyDS/lVTt90nY8NM+h5QdAK4BlzELzIiW9Pilb7laL299X17s8DbRFkabrUctdgj3BNlxJDgOMok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RL1yVVgq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7g8/gnqn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732805501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYcDokw3hL3uBCkO0VJZW6TcchgM+Z6awwYJW0ch9c0=;
-	b=RL1yVVgqw5AigdPZk6ogg+UEWXZi60rgzPZmYlDE4rY54PQ/Xt1ByaR5FFVPRm5ZaT/xJn
-	i3rl59J5ZWCBk3pYTXX97vTCzKcvi/Ts3KbeGP5agj5KJ585tHoxmYkvOroPN1lEOpjFNC
-	guJV1+YRvDn1uYtearO5WP6c6ewUT5ljnuDdAV2kUwCInjHR3fAGFBbFWrLWZI+REmyM1l
-	m2L6sl3g6ozXig6CEAaCptVtJo98QrEXHoUeQJdNlaLpmBqrQ/kst/VpE5cCk1w3zaJbhF
-	6Wr2yrnOrsDxdQti17IelS+s9a3+Np3HLK7NeDVVljfvw7cZ2FJoCoKmP0mU1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732805501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYcDokw3hL3uBCkO0VJZW6TcchgM+Z6awwYJW0ch9c0=;
-	b=7g8/gnqnl4R95RfwTl3MF7Bap6pnJVLc5ozhXkbRL0bIMJsSqwvl++aQRtfGjs8onDJD6D
-	ZCALbIIL1rX+nPDQ==
-To: Guenter Roeck <linux@roeck-us.net>, John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch 2/2] timekeeping: Always check for negative motion
-In-Reply-To: <65b412ef-fc57-4988-bf92-3c924a1c74a5@roeck-us.net>
-References: <20241031115448.978498636@linutronix.de>
- <20241031120328.599430157@linutronix.de>
- <387b120b-d68a-45e8-b6ab-768cd95d11c2@roeck-us.net>
- <CANDhNCo1RtcfqUJsuAQ+HdS7E29+gByfek5-4KYiAk3Njk4M3Q@mail.gmail.com>
- <65b412ef-fc57-4988-bf92-3c924a1c74a5@roeck-us.net>
-Date: Thu, 28 Nov 2024 15:51:40 +0100
-Message-ID: <87cyifxvgj.ffs@tglx>
+	s=arc-20240116; t=1732805518; c=relaxed/simple;
+	bh=iONE0HKU0IqL9O9ShumEXpebGnA8RIwvd+IgFAfUlXs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kaf5bttR1sXeIq0S3BRmvGM6kyY7qssDV8pNL9YJ36BjRIhvbnP+Oyy0Cs8kgbiBBOE7M6AqZO89JB3afAXgB/t06s2MOt1hsqtxvwkPN3Pw4JJH881W9gk2plDwBkmRIsq46T12UC8VLncInGlNERvDrBC5zb6+KYXmk6tI8oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aH1k8Vg3; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7251ce598adso651982b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:51:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732805516; x=1733410316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/MXPQzhJ+NbcczEaxmCbcj8MjpwS3qOOhKqFULBuO8=;
+        b=aH1k8Vg3LzRPvjv+t4OKpUkxmLT3zHCy3vtqri31hXcXWxvwuJf/n5tFhXkpO1YIJI
+         dt0JtRorKg3ESrqVKNtm9RqY6zMG2ng/dcQoBP0Wr2YR4tydOdW5uPusd1O5Q8TZIAKB
+         8TwY2a+nVzR3Oovo1ugFcEL6cYcnKqLUC7BwAZwgdpLPmtC+fv8AyxeuiuzaUXj1Ots/
+         rNl1XMTyUL6H105H3hWu4NuKf6TK10wwhlAfz4kLLoKGJM5+UyLqHlRgfFp5OKrzjfoa
+         Y33lfUMpYsSElcJskMaejwReI+tMSAm7kFARrZK/HjiQhPoJ+r6QXzo3OlvZpFXX5mvh
+         gVYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732805516; x=1733410316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d/MXPQzhJ+NbcczEaxmCbcj8MjpwS3qOOhKqFULBuO8=;
+        b=rZvqKehAj89pKaa8oNT4Azxvp/SdFJEvWU6Bs0lTOLP/NHhl59ISvdl8484EIphdzY
+         Wsb7s0ONx8w1JwZsyLaqSyETUf9l5XxEBgG0RNIlmV+pDs5Z886yvpEj0SHPMYXTBSNi
+         Qzq0uICra+r2FOzFC2OevmMFd7EmcakxvWFOPtMOMI2seGxM+a33vc1Vpu+mHGoVW/oP
+         WRs+U2hFHYFaugJ+bUt9xfyyaAnNrZT1MyJw4x/R5PwowMrjIUJrxhrApYWC2xBe8lx6
+         id2RK6V2JWDdhzh+nnw/vVgbKNNXX0VMLO+hjDz32bGpaegVQhqEcVF1xgBVJqqAJpDi
+         BWnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVABVGZIpj2Jkjl6/p1lODL+IeVPiFOIlW1Ehqt0UnR9rC5ip6ilR9iS3UsVcOuDQyUxHUHaU2D1UC1LvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7gqcPReBvTeo7eNNfa85bjJfDPM6dIrHFFCVyfZ1seQZyZOuJ
+	eAm6+TgCUWzqd6b1Q3+k6ZUctoTG1XjXPqzJOfAuN8qzlAeGn33eGCgT/zWhSw==
+X-Gm-Gg: ASbGnctXiBUiqdoAJ734iqJBjTY67FDZ8/zxpn2DfEXc3aVT5NvGoZjs3pDNn3E74nY
+	xcJMt36EvtqtdzXHWYUqyTBPFtNQgCqevpPgmhARWlLOc7MvBrOpRcLmAK11zcaSUPCSq7Kp9ra
+	rWwMHb15yUx3yGJFsgQBqFRcV9j1h1XHUqDEeEuvPefmW1sVCVx2LZjr2ul+UY4MhVV00txI+AC
+	pnXWOVF2FhU+RSWEeUPOvBPniAiWVAjsBn03KDmLCxx3phkYeghVxApFnBOidlASkyNkrUKV4xg
+	Qw==
+X-Google-Smtp-Source: AGHT+IE94xRezL0R5MUb1CgWVQ85Hdjg7x8RVESl+SHCpYNTjmiYjyLuD+1yP71Qqn42MFKmXZk5NQ==
+X-Received: by 2002:a05:6a00:1c8d:b0:725:3bd4:9b54 with SMTP id d2e1a72fcca58-7253bd49c20mr7408782b3a.2.1732805515839;
+        Thu, 28 Nov 2024 06:51:55 -0800 (PST)
+Received: from localhost.localdomain ([117.213.97.61])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176f76dsm1660418b3a.68.2024.11.28.06.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 06:51:55 -0800 (PST)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sa8775p: Fix the size of 'addr_space' regions
+Date: Thu, 28 Nov 2024 20:21:47 +0530
+Message-Id: <20241128145147.145618-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27 2024 at 15:02, Guenter Roeck wrote:
-> On 11/27/24 14:08, John Stultz wrote:
-> An example log is at [1]. It says
->
-> clocksource: npcm7xx-timer1: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 597268854 ns
+For both the controller instances, size of the 'addr_space' region should
+be 0x1fe00000 as per the hardware memory layout.
 
-That's a 24bit counter. So negative motion happens when the readouts are
-more than (1 << 23) apart. AFAICT the counter runs with about 14MHz, but
-I'd like to have that confirmed.
+Otherwise, endpoint drivers cannot request even reasonable BAR size of 1MB.
 
-> clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-> ...
-> clocksource: Switched to clocksource npcm7xx-timer1
->
-> I don't know where exactly it stalls; sometime after handover to userspace.
-> I'll be happy to do some more debugging, but you'll nee to let me know what
-> to look for.
-
-On that platform max_idle_ns should correspond to 50% of the counter
-width. So if both CPUs go deep idle for max_idle_ns, then the next timer
-interrupt doing the timeeeping advancement sees a delta of > (1 << 23)
-and timekeeping stalls.
-
-If my ssumption is correct, then the below should fix it.
-
-Thanks,
-
-        tglx
+Cc: stable@vger.kernel.org # 6.11
+Fixes: c5f5de8434ec ("arm64: dts: qcom: sa8775p: Add ep pcie1 controller node")
+Fixes: 1924f5518224 ("arm64: dts: qcom: sa8775p: Add ep pcie0 controller node")
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2221,7 +2221,7 @@ static bool timekeeping_advance(enum tim
- 	struct timekeeper *real_tk = &tk_core.timekeeper;
- 	unsigned int clock_set = 0;
- 	int shift = 0, maxshift;
--	u64 offset;
-+	u64 offset, maxcyc;
- 
- 	guard(raw_spinlock_irqsave)(&tk_core.lock);
- 
-@@ -2229,8 +2229,13 @@ static bool timekeeping_advance(enum tim
- 	if (unlikely(timekeeping_suspended))
- 		return false;
- 
--	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
--				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
-+	offset = tk_clock_read(&tk->tkr_mono) - tk->tkr_mono.cycle_last;
-+	offset &= tk->tkr_mono.mask;
-+
-+	maxcyc = tk->tkr_mono.mask >>= 1;
-+	maxcyc += tk->tkr_mono.mask >>= 2;
-+	if (offset > maxcyc)
-+		offset = 0;
- 
- 	/* Check if there's really nothing to do */
- 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index e8dbc8d820a6..320a94dcac5c 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -5587,7 +5587,7 @@ pcie0_ep: pcie-ep@1c00000 {
+ 		      <0x0 0x40000000 0x0 0xf20>,
+ 		      <0x0 0x40000f20 0x0 0xa8>,
+ 		      <0x0 0x40001000 0x0 0x4000>,
+-		      <0x0 0x40200000 0x0 0x100000>,
++		      <0x0 0x40200000 0x0 0x1fe00000>,
+ 		      <0x0 0x01c03000 0x0 0x1000>,
+ 		      <0x0 0x40005000 0x0 0x2000>;
+ 		reg-names = "parf", "dbi", "elbi", "atu", "addr_space",
+@@ -5744,7 +5744,7 @@ pcie1_ep: pcie-ep@1c10000 {
+ 		      <0x0 0x60000000 0x0 0xf20>,
+ 		      <0x0 0x60000f20 0x0 0xa8>,
+ 		      <0x0 0x60001000 0x0 0x4000>,
+-		      <0x0 0x60200000 0x0 0x100000>,
++		      <0x0 0x60200000 0x0 0x1fe00000>,
+ 		      <0x0 0x01c13000 0x0 0x1000>,
+ 		      <0x0 0x60005000 0x0 0x2000>;
+ 		reg-names = "parf", "dbi", "elbi", "atu", "addr_space",
+-- 
+2.25.1
+
 
