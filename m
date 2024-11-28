@@ -1,208 +1,187 @@
-Return-Path: <linux-kernel+bounces-424718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51449DB873
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:22:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BDB9DB875
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:22:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36C51B227EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF87A1622A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B4E1A9B2E;
-	Thu, 28 Nov 2024 13:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628A81A2630;
+	Thu, 28 Nov 2024 13:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gRRg2Oug"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zyvz5NeP"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E191A0BC9
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120D51A0BFE
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732800136; cv=none; b=GSTGGLwGR9/Y2XL/8N6hHFPxZ3yISqHY4BarOyoh6iszWeA4JeWRHa4u+2mC8NmcSz7ASGhJ4N9Ohp3DHAvyYUhZTRGn4zV/AE7ZPqWAiN9WfAQ9KzuqruQ5hwAOCHc8Ga7UEskHA5929//E06+C5h5oGiUXe6OKJ70fCtj1aMo=
+	t=1732800156; cv=none; b=KZlzA3QQTyDSbenkJnXXt9VLJClWpoWbz7BdrZFrllrpymjbf1yXgsFJWxDbmt7IEWm1qGZnqwNPyPeoiViXBrliuS0issNW6fZzujycKnWhrARt6svmPWw27I+CpDvUwv0HALFZ0rN/n3nSbtF1gCeqm8YLtRAoQA8Ur/Au23I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732800136; c=relaxed/simple;
-	bh=81tpBEtit7Ep6iuYM1+ph8guSCdrW6Tkt4qnrcXpDdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MNZX0seKl5lfEWF9WIcCYWi3YSYnjKzZE2lqKbLAqliy/rSS8QY4cSwv1jNv3lo3ERMnDAv6sR+ONlUXufrw/5VveOLZ65M3U5eOnGqXsZIbmju/hFCE6xA52iFdrRTWzbqd4CWgA2EHt/5001Om5yJiunB6UjIuG2qptimGGCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gRRg2Oug; arc=none smtp.client-ip=209.85.208.175
+	s=arc-20240116; t=1732800156; c=relaxed/simple;
+	bh=Wrj6BNOJyB1/SD7ZTt8SzVwfNMLVUbl/Hb4ZD2t2L5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUcCRxspBDT9AdrThrKYZyMw9MCLT4HJjH2WT+5owdpxbl3zYc/8QF3DN/ODAoMDyDqlbn6eGHx8m/mvbsHXmcNHeqT+9iFljszQoP8R9iEY9kP8Z6nq1hHqLMEsfGk1XHibKjgsNQB496JO3IKkGz3x1BQyz1Revg7Y7BX3Oyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zyvz5NeP; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffd2026437so259741fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:22:14 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffdd9fc913so8674491fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:22:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732800133; x=1733404933; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pojne1pl7gaoCPh5iHdXGFj23NFwW6nEfTFrC9mxVn4=;
-        b=gRRg2Ougf6rJMOm9sT+rUQXVpskNOEAyHPwsep5ovJNohVfB3qdDzuy8KjV1rNjOlw
-         d+C/dc22RYOSGkY9FQXGhX460uFB0y1h+ChA0Ki7qBzdFhs14qwr8M95G38V8JI7p/x3
-         SUWXmH/RK+ZPz2R3Hm/rxyrZXcmwPQD9GWBPPlOB8e2XzRPp+Ji1TCBIcjKK8nhlACVa
-         ffLzrYG18cPzoZT9Kj98O7IbzMCltAj565HumjrYbOiL63dIcC4OcGnslO6+bc7ACXkX
-         dnQg2N55IJlwrkGvO52ZipXlpzQS3U5C9c5BTEn8g420kKpBD8K4LUXg/dmA6TJIGVnq
-         JZEA==
+        d=linaro.org; s=google; t=1732800153; x=1733404953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=34gZUZi5tu048lw280ahbLQ/y69l+6hlbhcpQA4G+Uk=;
+        b=Zyvz5NePljV5VJm3r8CgjUnqs0j9OUKtyt1Sf815hgdfIaPakxbhawX+6T4zHdnpfo
+         MQ9J0lBE57hTmql1sokUa/DeXW6biN/sEBV2O48EJDKcbhqouNzwDsorTl09X3py0Q9w
+         r/lO2XWlBxZd2sF6UYJUpNFq/dO5gX58XTjiBQdO8YgQyWcaPiybA1pdkQApflJSCwuI
+         /Q+fInJLDDtV9sLQrsTPlKyx7vP55F0U7ofRxb+tb8tWDcCp7fQ6LqNEGUPbFWF87ewS
+         /i8s42/jyTGrnfAxstI/pzX0LdKaOHg5D+jsSXKF9J6u4PoQMkqQtWNZsQIMUl/DLXOn
+         L8qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732800133; x=1733404933;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pojne1pl7gaoCPh5iHdXGFj23NFwW6nEfTFrC9mxVn4=;
-        b=BuU9h3QozG9JShForvQdBLH3I1rzY7dgBZ437BgG9xgKGX9FTfZpXn7K3BAl+1Uks2
-         aMtaijxZOlWLSmCysTi92b5qq6IDOJaXbGO1eWiKEsehunN5YVPMaV0GuWJ2uMrwu2ju
-         1G8Cdcsu7AODPnOpBkZryOxakq+jmRuyDuXr+WR2W6Nl1NYHqadj6/sbK46Fzy9hCDaO
-         ruBdw9iGWUBnZgpTxTHGKCUkapw9BpQOc+usYpH0zT4qCgC/mEE9+M37LGj7mz1G0HMR
-         rgqL2tjpncfip80w0IVxqIePbQDGLWqfcP+Fkrm+wTHsYNYb97TPujmvqtPJtxOgyAyJ
-         53ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWvi5ozsuC0Roj9iGDEE3o43mB8afW7ufHohU7JDPIv0KB5MFym/u+V9W7o0ePglp0WoCfa9dsKwXNDQFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTBFEStDRybAhMNwU4jJgqzH6cLTCHsXT76hnTLFwqXs8oSfQj
-	KG5Ki5QcqbUjGxlxoSI41PF91pZKU6SkJdrkKhfwTxJXLe8eh2KgtNrp1r8ZahY=
-X-Gm-Gg: ASbGncuV4DdUpmUG/E9yyLHh/BWmqbGogkusdM4CiliJunD5uiVtzsrIHfP8gEvk5lk
-	A94QUm7gvS7Ok2blE6GMP6zP89eKnCH00jyfDqExvw1XDowJmqbckA95BjkO1D7asrGT+3L6JTM
-	KeIqFh8XQv/gx3kpq9UtPBDEj80Er1mkXAJjqCynjC9XDSQAzOwOb2kpF9t6rgPFXs+Gxsmht6P
-	dVGWbRcnawwnryqMBmPwmCoesiN9Qpb7ajsfTmO0QNObFh+kgX+USqjZdnQLJ3j7YgDU6wl0cgj
-	0FFNS+m1VL0qbXxF+V+M0hZh+r8h
-X-Google-Smtp-Source: AGHT+IE2X7a62PWKPqNwWXSyxSfgCk3yAdTypq8MdbLX2c+CzDDESSw8T99K9wD6mD5EZ9FjV5qSVg==
-X-Received: by 2002:a2e:9e42:0:b0:2ff:e3f0:b483 with SMTP id 38308e7fff4ca-2ffe3f0b5fcmr1102251fa.6.1732800132870;
-        Thu, 28 Nov 2024 05:22:12 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc750e8sm1908901fa.79.2024.11.28.05.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 05:22:12 -0800 (PST)
-Message-ID: <38003f90-4b0b-4a7a-86f5-ec75e227777a@linaro.org>
-Date: Thu, 28 Nov 2024 15:22:10 +0200
+        d=1e100.net; s=20230601; t=1732800153; x=1733404953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=34gZUZi5tu048lw280ahbLQ/y69l+6hlbhcpQA4G+Uk=;
+        b=gt+bO/h7rj27fBTzxhGns9+IUk2Nbv90n55nVYvcowirKsGpxYaZLfCQIkVGhbUHlq
+         KNEEqNSUGBGLqqg5a2m/M1jTAu0kM2uy77Avm6m5cvBEmLq7Jcdo8smKR2uGlbsL5QxO
+         /ti+OsWFVqvF/o0voN/jtpTSrf0KkSXhfWPYLm6u8vpQc2Alz0DCDbkCkEoVVeb2SHqK
+         UvgPJ6TBoXBP8XZOcg9awNTfagQFpsRgui92X87PTugEvkO1MnLF11hJqmPykCRdnkUU
+         9/jrVmjDaP39pWH/P5oG315qoJTM/N8RWTvh3+yOmmJ40nr02Hz960zGO5Cef1IEELjB
+         2TdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXI8b4dfzB3h6BcLAhmsSF51ClQc5WdSl0VF3p2bxS/wkOQzXWXZm6QYDFcOFgQrHRYdC1BUVIpvHLWlk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDgC7ztQzVt0oiELZBUn4y7SFFk5ZURqmuJ8ljjJk163/84iu3
+	j95lVn6zB8bWlTOe/5J2/4SrIxlj0cwW/+QDoiY6jfFmONhsOAq3m3MvT5RoYHw=
+X-Gm-Gg: ASbGncv1poc8AA/+CmbGgzwCQOHhebkegZE6iUwGjB3Fz8Qy7ccHM6g8L5voSZY/y87
+	Qt3VP6htVBvTettwqQ19VMmzycnEiKunVKTSVLtjr6D5C8aUutPkKjBGzTHc7bw2ymRCDNDDlGB
+	vLsj2oA5V5J1tdfnwqKd847z7DWeDcKu7sZLKRttnBT6yf5G2SP9kg38Va6App0qPfY599ZrJb1
+	l8dMm21iDLd0rUdlzsmdafhNGOS+nAseq9CkyDToQif0StKIEJrvB3kAF0AnOr/JGqutfQZi4o0
+	4Yx5wsv4fbCZe9yF2gyqnA1tWmQIzA==
+X-Google-Smtp-Source: AGHT+IGvVPSZJFn7GQ36svvA57XZmhphOcMaYWe+5MpoDcJNDcG1XTTXDgvR+lt04+d/kuWcwV5Plw==
+X-Received: by 2002:a2e:bc22:0:b0:2fb:5035:7e4 with SMTP id 38308e7fff4ca-2ffd5fc81e9mr42772491fa.5.1732800152993;
+        Thu, 28 Nov 2024 05:22:32 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfbe5373sm1925311fa.26.2024.11.28.05.22.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 05:22:32 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:22:30 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+	andersson@kernel.org, konradybcio@kernel.org, quic_tsoni@quicinc.com, 
+	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, 
+	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 5/8] arm64: dts: qcom: qcs8300: enable pcie0 for
+ qcs8300 platform
+Message-ID: <v4s6vj25vzsywiptfy76urngwvfjxymzgrlocu3ewdzgbp5f5v@djn4f6ous7y7>
+References: <20241128081056.1361739-1-quic_ziyuzhan@quicinc.com>
+ <20241128081056.1361739-6-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: qcom: camss: fix VFE pm domain off
-Content-Language: en-US
-To: barnabas.czeman@mainlining.org
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <a0a41b77-ee63-4d55-8c91-baf667c25cba@protonmail.com>
- <acb6366a-aa6b-4c84-a3b2-cad03ae02ee7@linaro.org>
- <43be9872149cc60d2c5c21294cd69f07@mainlining.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <43be9872149cc60d2c5c21294cd69f07@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128081056.1361739-6-quic_ziyuzhan@quicinc.com>
 
-On 11/28/24 12:27, barnabas.czeman@mainlining.org wrote:
-> On 2024-11-28 10:10, Vladimir Zapolskiy wrote:
->> On 11/27/24 12:01, Yassine Oudjana wrote:
->>> On 22/11/2024 5:06 am, Barnabás Czémán wrote:
->>>> Fix NULL pointer check before device_link_del
->>>> is called.
->>
->> The intention is clear, but the context of the change is completely
->> lost.
->>
->>>> Fixes: eb73facec2c2 ("media: qcom: camss: Use common VFE
->>>> pm_domain_on/pm_domain_off where applicable")
->>
->> It's invalid, the change is not a fix.
-> I don't agree this patch is fixing NULL pointer dereference.
+On Thu, Nov 28, 2024 at 04:10:53PM +0800, Ziyue Zhang wrote:
+> Add configurations in devicetree for PCIe0, board related gpios,
+> PMIC regulators, etc.
 > 
-> [   92.989120] Unable to handle kernel NULL pointer dereference at
-> virtual address 000000000000032c
-> [   92.989170] Mem abort info:
-> [   92.989186]   ESR = 0x0000000096000004
-> [   92.989203]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [   92.989221]   SET = 0, FnV = 0
-> [   92.989237]   EA = 0, S1PTW = 0
-> [   92.989253]   FSC = 0x04: level 0 translation fault
-> [   92.989270] Data abort info:
-> [   92.989284]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [   92.989300]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [   92.989317]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [   92.989335] user pgtable: 4k pages, 48-bit VAs, pgdp=00000001218a8000
-> [   92.989354] [000000000000032c] pgd=0000000000000000,
-> p4d=0000000000000000
-> [   92.989389] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> [   92.989408] Modules linked in: q6afe_dai q6asm_dai q6routing q6adm
-> q6asm q6afe snd_q6dsp_common panel_lgphilips_sw43101 q6core venus_enc
-> venus_dec videobuf2_dma_contig imx318 ak7375 snd_soc_wcd9335
-> regmap_slimbus snd_soc_wcd_classh apr snd_soc_apq8096
-> snd_soc_qcom_common snd_soc_core qcom_camss msm v4l2_fwnode snd_compress
-> ath10k_pci v4l2_async ath10k_core snd_pcm nxp_nci_i2c drm_exec nxp_nci
-> venus_core videobuf2_dma_sg snd_timer ath v4l2_mem2mem videobuf2_memops
-> mac80211 drm_dp_aux_bus snd gpu_sched nci videobuf2_v4l2 libarc4
-> soundcore videodev nfc slim_qcom_ngd_ctrl drm_display_helper hci_uart
-> pdr_interface videobuf2_common btqca drm_kms_helper slimbus i2c_qcom_cci
-> bluetooth mc qcom_q6v5_pas qcom_q6v5_mss qcom_pil_info qcom_q6v5
-> qcom_sysmon qcom_common qmi_helpers mdt_loader socinfo rmtfs_mem
-> pwm_ir_tx cfg80211 rfkill zram zsmalloc atmel_mxt_ts drm
-> drm_panel_orientation_quirks dm_mod ip_tables
-> [   92.989981] CPU: 2 PID: 1365 Comm: pool-megapixels Not tainted
-> 6.9.0-rc3+ #10
-> [   92.990003] Hardware name: Xiaomi Mi Note 2 (DT)
-> [   92.990020] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS
-> BTYPE=--)
-> [   92.990042] pc : device_link_put_kref+0xc/0xb8
-> [   92.990071] lr : device_link_del+0x30/0x48
-> [   92.990089] sp : ffff80008a5db9d0
-> [   92.990105] x29: ffff80008a5db9d0 x28: 0000000000000001 x27:
-> 0000000000000000
-> [   92.990143] x26: 0000000000000000 x25: ffff0000e79d9100 x24:
-> ffff0000e79d9500
-> [   92.990180] x23: ffff0000943f8568 x22: 00000000ffffffff x21:
-> 0000000000000000
-> [   92.990217] x20: 0000000000000000 x19: ffff800081352498 x18:
-> 0000000000000000
-> [   92.990253] x17: 0000000000000000 x16: 0000000000000000 x15:
-> 0000000000000168
-> [   92.990288] x14: 0000000000000000 x13: 0000000000000191 x12:
-> ffff800081259d58
-> [   92.990324] x11: 0000000000000001 x10: 0000000000000a60 x9 :
-> ffff80008a5db7e0
-> [   92.990359] x8 : ffff0000e79d9bc0 x7 : 0000000000000004 x6 :
-> 0000000000000190
-> [   92.990396] x5 : 0000000000000057 x4 : 0000000000000000 x3 :
-> 0000000000000000
-> [   92.990430] x2 : ffff0000e79d9100 x1 : 0000000000000000 x0 :
-> 0000000000000000
-> [   92.990466] Call trace:
-> [   92.990482]  device_link_put_kref+0xc/0xb8
-> [   92.990503]  device_link_del+0x30/0x48
-> [   92.990522]  vfe_pm_domain_off+0x24/0x38 [qcom_camss]
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 44 ++++++++++++++++++++++-
+>  1 file changed, 43 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> index 7eed19a694c3..7f97f771c44a 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> @@ -213,7 +213,7 @@ vreg_l9c: ldo9 {
+>  &gcc {
+>  	clocks = <&rpmhcc RPMH_CXO_CLK>,
+>  		 <&sleep_clk>,
+> -		 <0>,
+> +		 <&pcie0_phy>,
 
-vfe_pm_domain_off() shall not be called before vfe_pm_domain_on() call.
+Review comment was ignored, NAK.
 
-If vfe_pm_domain_on() is called and returns failure, then a media pipeline
-shall not be started, and vfe_pm_domain_off() shall not be called.
+>  		 <0>,
+>  		 <0>,
+>  		 <0>,
+> @@ -223,6 +223,23 @@ &gcc {
+>  		 <0>;
+>  };
+>  
+> +&pcie0 {
+> +	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> +	wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
+> +
+> +	pinctrl-0 = <&pcie0_default_state>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +};
+> +
+> +&pcie0_phy {
+> +	vdda-phy-supply = <&vreg_l6a>;
+> +	vdda-pll-supply = <&vreg_l5a>;
+> +
+> +	status = "okay";
+> +};
+> +
+>  &qupv3_id_0 {
+>  	status = "okay";
+>  };
+> @@ -247,6 +264,31 @@ &rpmhcc {
+>  	clock-names = "xo";
+>  };
+>  
+> +&tlmm {
+> +	pcie0_default_state: pcie0-default-state {
+> +		clkreq-pins {
+> +			pins = "gpio1";
+> +			function = "pcie0_clkreq";
+> +			drive-strength = <2>;
+> +			bias-pull-up;
+> +		};
+> +
+> +		perst-pins {
+> +			pins = "gpio2";
+> +			function = "gpio";
+> +			drive-strength = <2>;
+> +			bias-pull-down;
+> +		};
+> +
+> +		wake-pins {
+> +			pins = "gpio0";
+> +			function = "gpio";
+> +			drive-strength = <2>;
+> +			bias-pull-up;
+> +		};
+> +	};
+> +};
+> +
+>  &uart7 {
+>  	status = "okay";
+>  };
+> -- 
+> 2.34.1
+> 
 
-If vfe_pm_domain_on() is called and returns success, then vfe->genpd_link
-is not NULL.
-
-Are there any perceptable flaws within the given above reasoning?
-
-Since you've encountered a bug and taking the reasoning from above as
-correct, I believe the bug is present somewhere else, and if so, it will
-remain unfixed by this change.
-
-> [   92.990566]  vfe_put+0x9c/0xd0 [qcom_camss]
-> [   92.990601]  vfe_set_power+0x48/0x58 [qcom_camss]
-> [   92.990636]  pipeline_pm_power_one+0x154/0x158 [videodev]
-> [   92.990683]  pipeline_pm_power+0x74/0xfc [videodev]
-> [   92.990720]  v4l2_pipeline_pm_use+0x54/0x90 [videodev]
-> [   92.990757]  v4l2_pipeline_pm_put+0x14/0x34 [videodev]
-> [   92.990793]  video_release+0x2c/0x44 [qcom_camss]
-> [   92.990828]  v4l2_release+0xe4/0xec [videodev]
-
-Please include the backtrace up to this point into the commit message.
-
---
-Best wishes,
-Vladimir
+-- 
+With best wishes
+Dmitry
 
