@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083029DB120
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:46:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682EE9DB123
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:47:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89440B26E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33AD6164D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A93B1C68A6;
-	Thu, 28 Nov 2024 01:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E90F1CC8AC;
+	Thu, 28 Nov 2024 01:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fy792BiM"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P2o6rFoB"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC651CBA04
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD4B1CC154
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757752; cv=none; b=jh+I8PO8Rm2kiOXgBJO6lyzyWEyHUJJhXuC2Hxp3xiAxRgTDefbSBTogxiafU7mOArjjYm3kw8zr1EysKan16DhsKEQHEpPvxiRJhTDqivBHdHFNm4qqGcIVoK0FY0SBQ8prMsmLk/AOaJ3QBK+JLiZGuPEJvMIrkAQnnF/Mn6s=
+	t=1732757754; cv=none; b=fVZ7u5rAwS5B4qB44jiWeqiQbCHxIVPQCeWgrsxVsordvuBlrhiPT2SWMkiDdy6Py1cf2zndVK7mboqyZrdyueCXKZI0V42pWxHfujm21u6EoLRZrEAQWXFmeb2qBOpq34sXjDU/bK3oqr+OV6UnBL1f82Psr+GGrghSSKWq2Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757752; c=relaxed/simple;
-	bh=h1o6xxhiRsATofWeY4XS6nAFlEHdA1rnXtEd6OclfKY=;
+	s=arc-20240116; t=1732757754; c=relaxed/simple;
+	bh=GusLaDboOc2Zwu/wHDpZ5mNIh6wjAzVVGs0J/ZdamGc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uo1oyyUsufDr4NyOzNycsmldlNpB/3Im4mqN9yuTuSQRHmz9MHCrSfHm1b412NKJiwHAgIEIKIbOLVikHL/KzVholuw+Z9nHeObDpJsKNlBZLsumSlzE/e6FzByqrrYSxabfLuWZHfTyBo5rRr/Ik18vh/v8LZrPWJE9nHgNrWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fy792BiM; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=nS21LkwbAorJrtOpuKmBIEjwbh6bdB352ihp6hHsZ/pCIYagXgBrwoyohJSo313+pQbV6cQMVBIKN8tdQgAWW3OoxS6V1ZKC/wCABRKzm1z6FyijsvoCnkaGmDUpWROuepl7kqpTE0aOtkB1CXSsq5Oj0GUm8b0V0fQ2ONwqu1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P2o6rFoB; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2edeef8a994so388399a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:35:51 -0800 (PST)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7ea8baba60dso361458a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:35:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757750; x=1733362550; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757752; x=1733362552; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=vAP/rVhh2wy/ZcCYWV8qgeX607Ed3+jPmDcr0A7awL4=;
-        b=Fy792BiMDJZMRmKcdsu0qJrDRwm/llELagsCUuiCMpTpyNN/ldQe9bVND59wtVoWPN
-         lSsuB/JV6S5D0N6YppCnutblHAXz2954bTN05ojcTSKHolRjOMHJpp6Lmf1cynRjGuh9
-         V13dHcyfulM/BVOD1wqLCfKNknBVhGnUWT7Gi1dBQoiW4KtKgEeLkciSad7FAJs7XBI4
-         ZWWU92rKEBxHNdy6FUBer13s16mqNQEKnQOOfhqMG+JzvzJIJXG6tPN+eUyzAqWSQLZf
-         dJ0foxooMOq9EwKxHiERutv6ZHwNWe3jsSG2lwWupDQ16rn3gM+MqCPwHz4Zw4kVBORO
-         olPg==
+        bh=TObQrL7LGuqxhzdSaJ7V+btqB2g4TzQqJQbV2qpDafg=;
+        b=P2o6rFoB2NaaBoyZ8UxbYfcE0Lh88bl7vxCnxYKLXZ+b6xPUlvve92aA5he+TznqTQ
+         OfVIUNUtCme7xKHIeZzD4yNpOKOKhsUnI4Ei7o3aP4D9MuB+Z/2B9gnWuMS8uau9jwaV
+         UhnROrTMyp6r1JKnyhMi5gRPChFK/JqHh9vY/jKsfdRIUIbgDKyrrzX8GyW114DyE6vI
+         Z59kAe5J/OCr7QA9IrkkEIsiU/mf83d4MmxAkHAQzJCQI2fWJ0gCYjru5TbWjTZKlAlm
+         nb5u5agf/AMxgPDpSIhUBG6Sz8J/JbCX/c0VC+FI69W4RbEEh6gR8g0cPimPRNCdsppm
+         mmlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757750; x=1733362550;
+        d=1e100.net; s=20230601; t=1732757752; x=1733362552;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vAP/rVhh2wy/ZcCYWV8qgeX607Ed3+jPmDcr0A7awL4=;
-        b=FIYmfLR1u6FC0SqqvRgIyyFiiwpHvWueQFHlr6+B6i84OsyRA7Yecje7iaVkqpziJZ
-         //yzM85shFmigQW+EehKn2EGKCgWrmMPm8V9nwBs04vvfZkAjOAeF3lEBQnyR2s8bZCu
-         EJJuX/aoX9/LT7yDGMff0peUCWD32S6HRqDRxrfX33w/xhq0UILO8W0NAh78XkS5CARF
-         b5SpjhU3g6eGBMyNXv/BjDCtw8Aoa/YQ0ZtQcmbxkOAAi3p2Tm/Xf7Xf9Hz5h+Bz8J4t
-         46Qflo97380qWz0WOjV6LM/H3YwBUcv+/3UE9h3RuhPyRS5uzKySsQ6kEx2mnpEqI40E
-         NSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuzg38ASLHLuBCm4Cj+Y966HQkzctt/pYKrP4UuDrwyCyn6AfNVVdO215U+USa8iY9sUXv7EOKGDSPYZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/o+dzpBAFJ4SBveT5H5ftlqNzrzyq8sPdblsiNONz84r2hLhW
-	Se3XcD8fNHtmMwGn19fpEsyAP5H2I2udqFYxTcfKMnVLBC05B+BzBvzUfRvEugh6ycGhqmmgp/o
-	P1g==
-X-Google-Smtp-Source: AGHT+IH4S299/Qme5T+EzZT4W2pDSlPNgfKHdrqsbTxhkEGzPyX9GiJRIR7nFXLTy67066kc1KKNhDPc3pM=
-X-Received: from pjuj11.prod.google.com ([2002:a17:90a:d00b:b0:2ea:7d73:294e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:380c:b0:2ea:c096:b738
- with SMTP id 98e67ed59e1d1-2ee097bafaemr5779058a91.28.1732757750554; Wed, 27
- Nov 2024 17:35:50 -0800 (PST)
+        bh=TObQrL7LGuqxhzdSaJ7V+btqB2g4TzQqJQbV2qpDafg=;
+        b=M1s6lEgf2bUZER1qcvMjKnrqh8fTy3PG0gI4NCfQ18pTgNUSBJbZliO1N7bNYh25be
+         jnVhQnkUOd8kub1cp+Nw9EElld5F07Wd+d9FCev5HTgL3LT3bSXoCGOU++aYm4WM9Osy
+         2QKAtepHXqkEVnXco51MN5iRnFoL7ELSAJFdcKRUZVMJOPd7KMqke0WjoEED7MMtvmUJ
+         dUiT7AfD50xAlTHyDj+s3G3S9f9swl3tTgN/Se6LmDl59u5Q6w8H139JhN+Cg+SoMpSM
+         WECldbleESmtRbTpLLvgwGTDt6gt6gXBvLr5Uv6yvPq4BNoizhubGOIiHeSQds0WwLZP
+         DdlA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4lhezBFzFZ5VrLe3j6KCagwVn1EeToIaxXPLhMO3Kck/n8C+IaGNV6iAQZwyh89FXNzqPB9q105Z4Y2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8iXiHK7Djkv9bg55WwK+DnFZomaOcekQtcpKLzD08McrV6KwV
+	bNkwF0EGjq3rhWmAAusHgfsMairYaDWGzDENozTDDV4xkQ0L3BHL9hqxqJeVPPKmGX9/Ii00cD1
+	0Aw==
+X-Google-Smtp-Source: AGHT+IFxVo5QhhnwvJ9ut/LfVQKAmUeRoyod7xZep582o0DXmEnoC8hsdWrEXWsjkKMXBel57MvjaXCxv1Y=
+X-Received: from pjbqj5.prod.google.com ([2002:a17:90b:28c5:b0:2ea:9f2f:2ad9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7349:b0:1e0:d1dc:753d
+ with SMTP id adf61e73a8af0-1e0e0b3fa1bmr8265692637.27.1732757752308; Wed, 27
+ Nov 2024 17:35:52 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:12 -0800
+Date: Wed, 27 Nov 2024 17:34:13 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-46-seanjc@google.com>
-Subject: [PATCH v3 45/57] KVM: x86: Avoid double CPUID lookup when updating
- MWAIT at runtime
+Message-ID: <20241128013424.4096668-47-seanjc@google.com>
+Subject: [PATCH v3 46/57] KVM: x86: Drop unnecessary check that
+ cpuid_entry2_find() returns right leaf
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -89,47 +89,33 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Move the handling of X86_FEATURE_MWAIT during CPUID runtime updates to
-utilize the lookup done for other CPUID.0x1 features.
+Drop an unnecessary check that kvm_find_cpuid_entry_index(), i.e.
+cpuid_entry2_find(), returns the correct leaf when getting CPUID.0x7.0x0
+to update X86_FEATURE_OSPKE.  cpuid_entry2_find() never returns an entry
+for the wrong function.  And not that it matters, but cpuid_entry2_find()
+will always return a precise match for CPUID.0x7.0x0 since the index is
+significant.
 
 No functional change intended.
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ arch/x86/kvm/cpuid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 8015d6b52a69..16cfa839e734 100644
+index 16cfa839e734..7481926a0291 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -283,6 +283,11 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
- 
- 		cpuid_entry_change(best, X86_FEATURE_APIC,
- 			   vcpu->arch.apic_base & MSR_IA32_APICBASE_ENABLE);
-+
-+		if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT))
-+			cpuid_entry_change(best, X86_FEATURE_MWAIT,
-+					   vcpu->arch.ia32_misc_enable_msr &
-+					   MSR_IA32_MISC_ENABLE_MWAIT);
+@@ -291,7 +291,7 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
  	}
  
  	best = kvm_find_cpuid_entry_index(vcpu, 7, 0);
-@@ -298,14 +303,6 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
- 	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
- 		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
- 		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
--
--	if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT)) {
--		best = kvm_find_cpuid_entry(vcpu, 0x1);
--		if (best)
--			cpuid_entry_change(best, X86_FEATURE_MWAIT,
--					   vcpu->arch.ia32_misc_enable_msr &
--					   MSR_IA32_MISC_ENABLE_MWAIT);
--	}
- }
- EXPORT_SYMBOL_GPL(kvm_update_cpuid_runtime);
+-	if (best && boot_cpu_has(X86_FEATURE_PKU) && best->function == 0x7)
++	if (best && boot_cpu_has(X86_FEATURE_PKU))
+ 		cpuid_entry_change(best, X86_FEATURE_OSPKE,
+ 				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
  
 -- 
 2.47.0.338.g60cca15819-goog
