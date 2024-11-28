@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-424055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A429DB022
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:57:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D8D9DB023
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91808281917
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 23:57:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E792B21825
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC391990D6;
-	Wed, 27 Nov 2024 23:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A25D13D893;
+	Thu, 28 Nov 2024 00:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QNuMQY9z"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uyhCEObj"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B1119538D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 23:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D33D40BF5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732751831; cv=none; b=HZrxZgLDcpC1iXYqnjJchE/RU6kM1Q8bmCzpEnKsQicOiE2TfhPxYETXbS+mtxxT6/GjL2dNGed1GlSHN16CXVhqEiaWaSyt0gib/S/U3q339q6s6Y7+kKhNgyleULDPXS0E75Zvf4quhw80kEeMBlDBjDiH5G1A7kHybkyWa8s=
+	t=1732752019; cv=none; b=ucjUAkSEev+l3clm3X4AaKF3jkTJMf6j2b89/hNUE7jP+aQmMqNATXTG0aGFzS+mB9C7SqLZN8M0Ob5Qk/qlMVj+4NbLFbA35UuuyP22d6MOnBRPo3hHNnObtfganCUG66bfMu8CRhCNu1CwJ/VCEAA8eWop2/q2nKcV1/5fDzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732751831; c=relaxed/simple;
-	bh=gThBsz3+hRwi0ezlPl0OHla0tdLsXvJYTiWleIRrU+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y4490kwH8stDTeWzNL3REApUa92L4LpLjtUtqYB+Og1+NvMTdwU1oM2ZMNDLVGLhJsXmFeZSMJl6OFL7tW5MKnKtsmES9bRrP+xhsDk0p6HJFVBBY9Hc76Ch0IJy7GTT37UMG83+nQQuB3tBaPGmTsQnNcNLz9WGQKEJhG4fq/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QNuMQY9z; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so42946266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:57:08 -0800 (PST)
+	s=arc-20240116; t=1732752019; c=relaxed/simple;
+	bh=JeeQkhVLwazNPCRejNXGNMdl03WAOaQXDbfEy3i796M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZQiWF8qGrurl0Up522BVKB53JNiAlxyiGb4PTRkwhd1spAlSKmXcqvUFWvjiG7zRYyVlXukpowtxp8hpDn6TzzTAnFWHsAbuiU6/cV642hNHqhq4VoldmOmkpEqr8yHXPzvh6EjHacoihZZux+OBao5nDj0Mppvp5uVuk8k7zws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uyhCEObj; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-72522df68a9so261352b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:00:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732751827; x=1733356627; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KPlRZAjURNuIqI+1cp/M1BdMXf3esRQ0x/UNttbDRTI=;
-        b=QNuMQY9zUDd/8X6HNJBPHD1/doD1M45u6tAU1rttGKLO7fZtL5qTuurayat5Ar8gdx
-         cpwYERxpewxyqX9enTlWzBZmKnIYT+Xggvyhd5YLOLjYwQ7YGUDN3tgwRTM9EkpvQxRE
-         N/3X6iytt/pYhxq2xOIicVA4GS75FyoGgBvd8=
+        d=google.com; s=20230601; t=1732752017; x=1733356817; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D1rHARWFvprU48rair2lVrKITld+pfqBEh2Nx1sP9VU=;
+        b=uyhCEObjKvf0iIvvS9IgJOMhrT9mSZAD/T5mxokRwWQRWkLdy3UnxmVPQZafRpC9iS
+         fywBYUWTJRdI0SBReiu99rLIZaAnN95nP5LNPR1k80qFkmn4pqAIynGFQ/EOvy9W5GO0
+         cB96pUx0trwVBOcinvczagMVapr+hyhe4rmlFpa/wUKtjtE9v/RE66f/zSi6Of+rv8k8
+         ErmlEKIG90Fj6tRhIIy933+pfvyfJlj6FG34sT0M5wSvFNJDA0utgmHCiHa1Tws6rdjy
+         nyRTMPUUwUYtJUqICvRzAXCXjHmtQMr2wd9BYXqNOF45ZgYQMY7Mh5zsDQvk4lvnUPbM
+         CjAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732751827; x=1733356627;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KPlRZAjURNuIqI+1cp/M1BdMXf3esRQ0x/UNttbDRTI=;
-        b=au0gP9lzTc5O/r60jYSCXvEKFiNOaqWsW7CGrC2n8/phOFZjkWkDZSo7aXqTFlYwc+
-         nSith8LJHAHEXCVq4v67Lou6xXw86otMwushfXriI5KNmS+IkQ9ldhsF9ejqCzapVUOf
-         F9O81h6xqfgZPmLleT8OGPyM7A9Kvk72SbUu/TBj57tDzMUVljYBsnwaVD35PPX4xRRv
-         CrzD+oFGYKRuXT6+l6TNI/z9xlvrKEhU2Kc21/iPLme4UDt/jqnEI8FKIPal8BRn3ny0
-         qTSq7HKVIfohmgXeGIYBP/meq1w6nHh7dhmWmw2SI1cAWlkXkbHo2+dJotO1KhW3XMeH
-         STiw==
-X-Forwarded-Encrypted: i=1; AJvYcCURVCzT5ZIfnHMyPc/GlEXz4kRul0aQltDcCGQM24W4+Kd8D91M6h7atsWsZLjLMq/TQAwn0Wl4tVFbugQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxArLR0fuN31sQGP93g9MC2eA3LBoZqKZseBbVUBbFid9eM86m
-	aARwBzuz+yMyvUbg7OzTM+cyzfLY17iiYCQQmnrS9UuYC0l8gGImj4WfQ6PI1M7OnnLA4PgN1UR
-	0QMQ=
-X-Gm-Gg: ASbGncvOxa9QlgI+uBGr1Gmhj3F3e66qcur/GTvIBfqxP/wTf7Tcr1co0+DvxCzNCgD
-	kyXJHguAms11kX4A+MgMW4f2rc5NPxi/1KnQWjgMnKYe+6DrlgCdweN0rVu9NrezjJsMPJpxwai
-	ur2EoLUGtDDgQa/ptY2extbexfgDr50t8NPik4Ip8CAt74zg8glmlRrMsx97fik1xUbsKWN6TxV
-	PQ+9C4d9wqszc+cHINPzLZ7wpFTogD4ndRsIVc9RX9bLStkokiujgT7HGPk4WltPzpPARLuP7KB
-	VpyqXzv8How8IoTSHApHtJHE
-X-Google-Smtp-Source: AGHT+IEgdm0Ew2q2KAeSg8fe9igKzeze15G6dYJokeS3mp6dMc7LHr33ow/K2ZlYlR+wGmWuzkggeg==
-X-Received: by 2002:a17:907:7802:b0:a9e:441c:f729 with SMTP id a640c23a62f3a-aa580b2e09dmr532305466b.0.1732751827379;
-        Wed, 27 Nov 2024 15:57:07 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59994064fsm5087766b.174.2024.11.27.15.57.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 15:57:05 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso39587466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 15:57:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVg1StTi029hh9esNJoL4aI6rGiSMEAsgYcOxYRExRBsxsLQSoFnRP4tr7VWDkJPvtial/YAxSvnY0WlAw=@vger.kernel.org
-X-Received: by 2002:a17:907:7754:b0:aa5:1da6:d4f2 with SMTP id
- a640c23a62f3a-aa580f22baamr487890266b.22.1732751824877; Wed, 27 Nov 2024
- 15:57:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732752017; x=1733356817;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D1rHARWFvprU48rair2lVrKITld+pfqBEh2Nx1sP9VU=;
+        b=jVuTbkI1+v6wll5IJjmZhsQjPuFoXO/jfTLlW4AzLoyYqbyPSk+cCmHxhljsAor66w
+         kGA/DdB+tU9jPAxQIAnLI1/q7/kSo7NWTSRpnR/Nd5xFxQCAJDXpQABQG+X7yV2nHE2U
+         bTUQ+yMT9nPpi2MIxQ8E/duhgUuqErPZ0QiZ+wR8QA2AtnuoGGcpnIGt5EgYmoKzKaoS
+         gsClYSy2E2eCJQYtmbeuloqiepMIr6nUIxmbp3LZqtCs59WG1SfX68/k72L6gZ6cVrQg
+         4Dz3Fkw4PIr2AEH+nqFfxDSnrJYCpvHvlDvab7VrrwEtLSj2AV9kwXdRo2QAa9ovMYbA
+         GWLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyeJyXDujOTN/1Eig/srtUGwV2P5b4QiBb9UqiQM2Dk904Eaa9WUoOi2Vz1JBEaMFpqme97eHk36YtzPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ozVIsHhWs5cO9zl7sRZZQ7kbaKFkjvvUdXrxAgliZUQr9RY3
+	oBRo2C93NTKPutbYWtjC3NJxlerbFc37PnrpkO5yXv1K1p2Ps/n4ljmG8aU8GC2ioExBgATG7Mp
+	+iw==
+X-Google-Smtp-Source: AGHT+IF3oxNpWWC0IELw0de5Uwrohdy5JIdxef496SC7Ot/M8YjazPh5NNQ41Km9tyZt+1V3W1kI3JbKWz4=
+X-Received: from pjbpt17.prod.google.com ([2002:a17:90b:3d11:b0:2ea:5be5:da6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1850:b0:2ea:3ab5:cb9d
+ with SMTP id 98e67ed59e1d1-2ee08e9928amr6628539a91.8.1732752017446; Wed, 27
+ Nov 2024 16:00:17 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 27 Nov 2024 16:00:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org> <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
- <Z0eeuCyUGcKgsc5h@bombadil.infradead.org> <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
-In-Reply-To: <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 27 Nov 2024 15:56:48 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
-Message-ID: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
-Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com, 
-	linux-modules@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, masahiroy@kernel.org, mmaurer@google.com, 
-	arnd@arndb.de, deller@gmx.de, song@kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241128000010.4051275-1-seanjc@google.com>
+Subject: [PATCH v2 0/2] KVM: nVMX: Fix an SVI update bug with passthrough APIC
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, 
+	"=?UTF-8?q?Markku=20Ahvenj=C3=A4rvi?=" <mankku@gmail.com>, Janne Karhunen <janne.karhunen@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 27 Nov 2024 at 15:26, Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Wed, Nov 27, 2024 at 02:35:36PM -0800, Luis Chamberlain wrote:
-> > Sorry about that, I'm on it.
->
-> OK here is a fix, goes double build tested and then run time tested.
+Defer updating SVI (i.e. the VMCS's highest ISR cache) when L2 is active,
+but L1 has not enabled virtual interrupt delivery for L2, as an EOI that
+is emulated _by KVM_ in such a case acts on L1's ISR, i.e. vmcs01 needs to
+reflect the updated ISR when L1 is next run.
 
-No, you misunderstand.
+Note, L1's ISR is also effectively L2's ISR in such a setup, but because
+virtual interrupt deliver is disable for L2, there's no need to update
+SVI in vmcs02, because it will never be used.
 
-I don't mind the tests being built. That's *good*.
+v2:
+ - WARN only if the vCPU is running to avoid false positives due to userspace
+   stuffing APIC state while L2 is active. [Chao]
+ - Grab Chao's Tested-by.
 
-I mind them being built *twice*. That means that there's some
-seriously broken lack of dependency logic.
+v1: https://lore.kernel.org/all/20241101192114.1810198-1-seanjc@google.com
+Chao Gao (1):
+  KVM: nVMX: Defer SVI update to vmcs01 on EOI when L2 is active w/o VID
 
-            Linus
+Sean Christopherson (1):
+  KVM: x86: Plumb in the vCPU to kvm_x86_ops.hwapic_isr_update()
+
+ arch/x86/include/asm/kvm_host.h |  2 +-
+ arch/x86/kvm/lapic.c            | 22 ++++++++++++++++------
+ arch/x86/kvm/lapic.h            |  1 +
+ arch/x86/kvm/vmx/nested.c       |  5 +++++
+ arch/x86/kvm/vmx/vmx.c          | 23 ++++++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.h          |  1 +
+ arch/x86/kvm/vmx/x86_ops.h      |  2 +-
+ 7 files changed, 47 insertions(+), 9 deletions(-)
+
+
+base-commit: 4d911c7abee56771b0219a9fbf0120d06bdc9c14
+-- 
+2.47.0.338.g60cca15819-goog
+
 
