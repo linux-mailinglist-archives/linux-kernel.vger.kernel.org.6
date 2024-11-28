@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-424322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEC69DB302
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:10:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB8A9DB307
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D62FB21E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622F12815FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E1C146A71;
-	Thu, 28 Nov 2024 07:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9421482E1;
+	Thu, 28 Nov 2024 07:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="pJgv80B1"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNFKXpMd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424B517C7C;
-	Thu, 28 Nov 2024 07:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B1817C7C;
+	Thu, 28 Nov 2024 07:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732777815; cv=none; b=Plw4dE+AYqw/SViybRr1mtRLKX3nm2p7SVDe1rqfpJf6ZioXFOlSnGE9MpODwWxR10v+7uVn/qGY/arWzg86bU7PpPO6wTyHL+NN6KJCH4UGq68iGQnWOfejSHVytljKp7hrEKss1E2DNgl5tohsAzCCECNDPdpWu3uGUzfD/BE=
+	t=1732777941; cv=none; b=rTvGLXV1rFJTJyWu+8Fem82FNNW8OacJgSDExCJdxu2LmkNEjWAKiZmXhD7WJ4uRXOTqI7cfe+KK7O/6JRA7BypT5baTPulpJ8Z1f5cSWTElbGOFcmpzqo1KLxIhLkb0xborB0cBoNK/0LPQ6Z2/5fugblqWnkAV8OOrmCq1FMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732777815; c=relaxed/simple;
-	bh=+vMSvgAlPz0Dt7EVrCTMdPwKWsGGb+DMacYVkh5D+Ic=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RrB1ZYk6HbSkr7j92ACKW75j6UM/R9FogXe5YKnxDYlvUbW7dr+j2adbS2FleDcTp9jTDbEWGTR8yQRL3gJ5epUJ0TLjtwJnuhryhjuU21YxZBuZ1/KAxRTJvkngrKcHGhDbtFLBOZGeBj4HzksyPVdI//mkVQuZL/oOu6yqG7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=pJgv80B1; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References; bh=KBenspJmXk1F7wu0PYrbmb2kmjahWDoMgvVyEsfUguw=; b=pJ
-	gv80B1oRzqHQ0MwY8bUu1CVxYBbFd+CUoBqOF+eryvcyPVCklAVpedHvixSPzyfvEWhc3owbamrVr
-	9mE+dnOm7XCcdJ9gUk04NjUVLlcDZGc4kS+rylcqZjOBDTebA9xrXfylnMcsGWMoOEfI+uS/iOYQG
-	hw0zlOe/7qjMRsBlxHnwCH9Cbeysnk1dxYQzjZXz1mZ+vpmHwAq+HKKnx3a5xu8Ik0wx6kiL9daZX
-	0MI8G6/48zf7ZXiT3mOtgZPxFT7+oi71cRmPpt1EK1Bdxty1Za3DhpYA8vX6hlemvYWU6MVPyWDws
-	jWmPz2Bg1+vbHiA7IWPFUott5j9eg8xg==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tGYf8-0001EG-Sc; Thu, 28 Nov 2024 08:10:06 +0100
-Received: from [185.17.218.86] (helo=zen.localdomain)
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tGYf8-000CjF-0Q;
-	Thu, 28 Nov 2024 08:10:06 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Thu, 28 Nov 2024 08:09:36 +0100
-Subject: [PATCH can-next v2] dt-bindings: can: tcan4x5x: add missing
- required clock-names
+	s=arc-20240116; t=1732777941; c=relaxed/simple;
+	bh=RXztPqWcga+lFf91NyCRDW4b0oQ6s7jySmyXx8o6G5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a15GJ4F+asPFUbrAP63tfW1lKMEWHj2u1yRuxTyULhgBonNruZ8lEvLWLUHyat7S1JvkvV+6Ish8+4EkImLjwCTeiCZlSZmreVj3cc0ksxf3KLsp5PRfQ7YZNTK8benJdpjVYww4zK5NUYYztKT7EdEg0ByErv8hzZv8VLK1shg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNFKXpMd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF01C4CECE;
+	Thu, 28 Nov 2024 07:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732777940;
+	bh=RXztPqWcga+lFf91NyCRDW4b0oQ6s7jySmyXx8o6G5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cNFKXpMdIRcHSTu+UGqT6Mzpd1ARVvK1MtQnUHDa+kEvsfZbxkreJFEQEHt+Ze5fo
+	 WF38+ZCYkPXpIDB2VM4ttbv7+cQ+78aAtzideMiY4acnLoeoyORO68IRaLu35+QoLE
+	 QLPTKYrmr8IEVDnAzCM+8spJ7QLdhctrQ6+MUTfI0UlQLUiijhvYZme96KDZmJ4/hZ
+	 dCP/N6hun2bpILdj9vizf0dO2EAiCbIAlh8BYJYTRJcPG2ZkC+OYHicpvTdBeDAHG1
+	 QDtfYxWdeLuvcyVsGlAG+ipi9nAiw4zDfu5R6MrSkYV5XcO7A4GrMAEd3jzHz6WYSL
+	 jmK7/Qm+WL2WQ==
+Date: Thu, 28 Nov 2024 08:12:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_mohamull@quicinc.com, 
+	quic_hbandi@quicinc.com, quic_anubhavg@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] regulator: dt-bindings: qcom,qca6390-pmu:
+ document WCN6750
+Message-ID: <725gjpoubhbexpah5uch7rgsozgeb4mjc662idf7rmoe2rish5@uar366jby3qm>
+References: <20241127115107.11549-1-quic_janathot@quicinc.com>
+ <20241127115107.11549-3-quic_janathot@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241128-tcancclk-v2-1-fbf07f1f1626@geanix.com>
-X-B4-Tracking: v=1; b=H4sIAC8XSGcC/2WNQQqDMBBFryKzbkomiRS76j2KCzOOOrSNkohYJ
- HdvcNvl4z/ePyBxFE5wrw6IvEmSORQwlwpo6sLISvrCYLRxiOamVuoC0fulCF1D2luvaw1FXyI
- Psp+pJxRJBd5XaMsySVrn+D0/Njz3/9yGClXtGtvbQdve42PkLsh+pfkDbc75BwUd2EerAAAA
-X-Change-ID: 20241127-tcancclk-c149c0b3b050
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
-X-Mailer: b4 0.14.2
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27470/Wed Nov 27 10:59:44 2024)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127115107.11549-3-quic_janathot@quicinc.com>
 
-tcan4x5x requires an external clock called cclk, add it here.
+On Wed, Nov 27, 2024 at 05:21:07PM +0530, Janaki Ramaiah Thota wrote:
+> Add description of the PMU node for the WCN6750 module.
+> 
+> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+> ---
+>  .../bindings/regulator/qcom,qca6390-pmu.yaml  | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
-Changes in v2:
-- added clock-names as a required property
-- Link to v1: https://lore.kernel.org/r/20241127-tcancclk-v1-1-5493d3f03db1@geanix.com
----
- Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-index ff18cf7393550d1b7107b1233d8302203026579d..384e15da27136c0bad39c4d9f6cc0456fb0d5b19 100644
---- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-+++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-@@ -29,6 +29,10 @@ properties:
-   clocks:
-     maxItems: 1
- 
-+  clock-names:
-+    items:
-+      - const: cclk
-+
-   reset-gpios:
-     description: Hardwired output GPIO. If not defined then software reset.
-     maxItems: 1
-@@ -138,6 +142,7 @@ required:
-   - reg
-   - interrupts
-   - clocks
-+  - clock-names
-   - bosch,mram-cfg
- 
- unevaluatedProperties: false
-@@ -155,6 +160,7 @@ examples:
-             compatible = "ti,tcan4x5x";
-             reg = <0>;
-             clocks = <&can0_osc>;
-+            clock-names = "cclk";
-             pinctrl-names = "default";
-             pinctrl-0 = <&can0_pins>;
-             spi-max-frequency = <10000000>;
-@@ -180,6 +186,7 @@ examples:
-             compatible = "ti,tcan4552", "ti,tcan4x5x";
-             reg = <0>;
-             clocks = <&can0_osc>;
-+            clock-names = "cclk";
-             pinctrl-names = "default";
-             pinctrl-0 = <&can0_pins>;
-             spi-max-frequency = <10000000>;
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
-base-commit: e0b741bc53c94f9ae25d4140202557a0aa51b5a0
-change-id: 20241127-tcancclk-c149c0b3b050
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
 Best regards,
--- 
-Sean Nyekjaer <sean@geanix.com>
+Krzysztof
 
 
