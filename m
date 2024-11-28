@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-424354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA7D9DB360
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:09:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EAE9DB35C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:08:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C03A167641
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A299282494
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDA2149C7B;
-	Thu, 28 Nov 2024 08:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FC5149DE8;
+	Thu, 28 Nov 2024 08:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AjKCfrD6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E3ITMr6e"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5ED14658C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CB61482E1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732781328; cv=none; b=uqiDqTDJ2X+ben9+Uoz7Y3vQXfOOVY5CBCHJAcqWqJFkmlp2uCrQz+NU31RshJV0YhTLbxsoKrRcjp97vPYGDs/7UyR2lJG/KqQxLdFkFigACJveLiDuuN0RyAK4CBps4WFY1nRwb6SERaa3qweppJJc1v5Ei1W9uSlj0lvtbxQ=
+	t=1732781314; cv=none; b=Rtg2fzXk2cqFTOP3DYuzv/8eBVEwKLI5Mh1/2M8CatmrRUxxy+6ywAFbSYYauSmlYMGxCx6xYJxi93kIGDOa2r9on18WHM+FUG6Yd+eHiEkYhqLpD4pzTcwMZMU2BX9cg8vdF7KM1Sh2h4bDNUndcT6PkQ4sRnOFP/7NBG8dP6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732781328; c=relaxed/simple;
-	bh=4srSRusTbIfBMVE+olmx0QPHrbQqHJUCthbkmng4gck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gas5YNeDLU5dzdKNdUMseHbTWzm3oD9hOphZkAcel1yjDJ9Lx3sZBfQGa8AwT/k1hLwg6ZOiFVBnPpLcJMNMGQGLz7T1Q9aWC7AjLu8n74d0cwE7VUHdBe7r5EDqheW3a6HfCXZJP5odkr5CrtkbcfFGH7ME7ZsRlDkvMepFx9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AjKCfrD6; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1732781314; c=relaxed/simple;
+	bh=LqKrHC5XDSttnyGGxHHcASvJVoryjRYX4TBifEno7Ck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pQ6HU+9B4qnNl41kE5qm1r/nAo5L+YdCDwnR4AVkEe86Ij9g99aV6byYLrqnFwuF1eiozLyr13Kt6cGl2Mc/2q2ZGu5jlVlUAapUzQnAKwWSUYlehFdHcYDiKky0l2NzVysVl8tmrs1HMf1j+C9ms4l7Jkvb0JRxRJjoASP/dSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E3ITMr6e; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732781326;
+	s=mimecast20190719; t=1732781312;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4srSRusTbIfBMVE+olmx0QPHrbQqHJUCthbkmng4gck=;
-	b=AjKCfrD6G6OhZNn5kuQXcLbotSiTRXmlYsVLLEVMF7TwrQdp/vh5Sn09VeR9ligY8vZHry
-	j6ZvvnGRtgWehO5Cczb1ZFdmnXWSVmESLytkFYBczROfo0QAAlbjihXQdMq/snbqH7hjZJ
-	5781IsHvRddQ7pSxsKSfqRrl9IHnZOk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-Xz53NpUnPR6VcAlAbiZ5hQ-1; Thu,
- 28 Nov 2024 03:08:39 -0500
-X-MC-Unique: Xz53NpUnPR6VcAlAbiZ5hQ-1
-X-Mimecast-MFC-AGG-ID: Xz53NpUnPR6VcAlAbiZ5hQ
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 946211955F3C;
-	Thu, 28 Nov 2024 08:08:37 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.112])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D1604300018D;
-	Thu, 28 Nov 2024 08:08:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 28 Nov 2024 09:08:16 +0100 (CET)
-Date: Thu, 28 Nov 2024 09:08:11 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Zhen Ni <zhen.ni@easystack.cn>, viro@zeniv.linux.org.uk,
-	catalin.marinas@arm.com, brauner@kernel.org, zev@bewilderbeest.net,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] kernel/sys: Optimize do_prlimit lock scope to reduce
- contention
-Message-ID: <20241128080811.GC10998@redhat.com>
-References: <20241120132156.207250-1-zhen.ni@easystack.cn>
- <20241127174536.752def18058e84487ab9ad65@linux-foundation.org>
- <20241128071351.GA10998@redhat.com>
- <20241128073911.GB10998@redhat.com>
+	bh=iB3fddQT4tuu1zwH8z5Ad5r52CJZWD+J8s/aw6uP5ZM=;
+	b=E3ITMr6eA6eg/SXZ6wJu7j/dGGTMRV+WKbtiSPhTfV2WRf6aaeFfMa0oX/dkVlusF3x06G
+	1p3kVmJ4wkVmp7dc0I8Wg6tRQRRvWtwOqO9r7tKEYH2rDWdqm+EA6YLUzXKS2f4zXE5cI/
+	JSJRPuSmiu40tDVDaggiL+B+djXSMZw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-126-rE0hqgNwOneEeXpidestyA-1; Thu, 28 Nov 2024 03:08:30 -0500
+X-MC-Unique: rE0hqgNwOneEeXpidestyA-1
+X-Mimecast-MFC-AGG-ID: rE0hqgNwOneEeXpidestyA
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a27c9044so2577425e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:08:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732781309; x=1733386109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iB3fddQT4tuu1zwH8z5Ad5r52CJZWD+J8s/aw6uP5ZM=;
+        b=hEAJ1yg52s9EnsdXtiXcZgpnWPkof8I091mrIGUOv5OTjm27iFrfcKYTHaY0Td1h+/
+         bb2YP8vsAj287DQJVsJ5kLpMX9/E0NmNRqV0C473zE4fcV5HpK3eSmbVSVFp6Fbr7g4r
+         42sL0F6wW75pxAAyuxNWKMU0j5MpnIECpqOHErjynxzb7QllyA78Sa1UvJBATKXZqieC
+         kyAToP38/EeRnwr939xUq/Kx7/nWmCFXYOAyG+OGpPg35NTEyEzO5B4FWliEg7K4gnur
+         7ZALJCcMKhh4mzK99+7DS3KS43JeUvDgzne8Eq3cbo3qz8ZDbjmav6luYnC7/AAgKE/y
+         8nCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHTm528JEcXjDdkmpZB3kQKJ8ff7cX0SqxGkQI17Xh2NgG7Eb3jMdhEFOoaf5IpCxYxfLly/Nw1CnFWt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzFv31mSHTeFgfk2zjHR5pgVdnaCgrURXSb2SjCgLKB4r4nnJR
+	gLYVgzLh05vVvMvec333bYtxkMG8+OTzhLNnpHLF5gmnN5LIdaBceugYycqIOBWYi6+vv9VDHIR
+	3g2DiTv2jvFXh6XFpZrT9USlDfOg+9q4Evy4G84tzEQw5PQ3oQvW9JZ9Pnynmfw==
+X-Gm-Gg: ASbGnct+2NcznpnEG6A7dKkJ3W9zdaof291N2gXBD2R6i+R8rZiktwV+wlQx1BWtgeZ
+	MBIE8NZj7pMsGbZVEHt+W8a0AAOQ6L4Ulz8S8Xd3rbh+59Td/jA3EzaI/8E219bvnZnfVEVA9xs
+	RMwDlPRSq3TZA4eAsQhPjCq3Yez+wx6Db8/v+GIiu99MhVbrETqEt9mK6jbgLQpxnyW5yB2Sg3o
+	9U5ZUtOJ+LzGkMUvEnoebHF2gnwZkoC0Gdx4c+hUquU3lQViuAsHzsEccxtqxK/LbBfSzwq0Z7H
+X-Received: by 2002:a05:600c:3ba6:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-434a9dbba7dmr54214915e9.7.1732781308908;
+        Thu, 28 Nov 2024 00:08:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGk+Ev0FiGTZ+5npTOH3uvSEBKkeXq267aYhyzXY/a73ITNd54dI3/rjALeAZ3U75RkmBZRsg==
+X-Received: by 2002:a05:600c:3ba6:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-434a9dbba7dmr54214665e9.7.1732781308551;
+        Thu, 28 Nov 2024 00:08:28 -0800 (PST)
+Received: from [192.168.88.24] (146-241-60-32.dyn.eolo.it. [146.241.60.32])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bee2sm13761925e9.1.2024.11.28.00.08.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 00:08:27 -0800 (PST)
+Message-ID: <fc0bb8a7-8c6e-49db-83ba-f56616ebc580@redhat.com>
+Date: Thu, 28 Nov 2024 09:08:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128073911.GB10998@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fix spelling mistake
+To: Vyshnav Ajith <puthen1977@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, horms@kernel.org, corbet@lwn.net
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241121221852.10754-1-puthen1977@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241121221852.10754-1-puthen1977@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/28, Oleg Nesterov wrote:
->
-> On 11/28, Oleg Nesterov wrote:
-> >
-> > The problem is that task_lock(tsk->group_leader) doesn't look right with or
-> > without this patch. I'll try to make a fix on weekend.
-> >
-> > If the caller is sys_prlimit64() and tsk != current, then ->group_leader is
-> > not stable, do_prlimit() can race with mt exec and take the wrong lock.
->
-> ... and task_unlock(tsk->group_leader) is simply unsafe.
->
-> perhaps something like below,
+On 11/21/24 23:18, Vyshnav Ajith wrote:
+> Changed from reequires to require. A minute typo.
+> 
+> Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
 
-No, this is wrong too,
+## Form letter - net-next-closed
 
-> I'll try to think more.
+The merge window for v6.13 has begun and net-next is closed for new drivers,
+features, code refactoring and optimizations. We are currently accepting
+bug fixes only.
 
-Yes...
+Please repost when net-next reopens after Dec 2nd.
 
-Oleg.
+RFC patches sent for review only are welcome at any time.
+
+See:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+-- 
+pw-bot: defer
 
 
