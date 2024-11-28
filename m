@@ -1,141 +1,155 @@
-Return-Path: <linux-kernel+bounces-424377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECE09DB3A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:21:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0539E9DB3B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:24:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75779B22D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95292162588
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADB914AD0E;
-	Thu, 28 Nov 2024 08:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shshQVck"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1689A14B96E;
+	Thu, 28 Nov 2024 08:24:49 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568C41482ED;
-	Thu, 28 Nov 2024 08:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC5613FD86;
+	Thu, 28 Nov 2024 08:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782102; cv=none; b=LCYjt6j1NRKL+2MFTNAeX4K3KVE3OMct8/5ex59vb8/X5ZqKiVb4gxVV9sU7ugx1Od3t5k+60M60hbv1v3o6huWKS2bUIVUQmJ+iZTForDqFoJiCVC+0/Ejv3czln5PVOi4SATFbggh23lgop1a/4wfLP7Utk9P0JDO2dwGyFw0=
+	t=1732782288; cv=none; b=KYonWhBE5ajGRGs5fAmmmI1e/z03O1UcZEvpUekBjpVM016HcfEbw+V7yHsGJSKSGPm+ULFYZYuMITJmB3ghSHERiHoVKMt/2pjivqPSRbbicogdcy+Yb1jKnvmxJ6QdtUwxFYyp9EIDLgGgjPdQcivLC8GpjG5zcrzsPwQjXr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782102; c=relaxed/simple;
-	bh=P+iLn9Udly00fFvNNh2eAr2zUMlIPlCNHTLWPW0BpxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EG7L+5j8eDgy7la1QN5KDyrRgLR1GwkgQNtlsQ6uXSY0vBMtildgpMAD8SEZ1+0IhvWRD8VkEu0ebR8abBjvXncp2qzzJd/JFgepuKtStoYymomdJfGwCA5rJSZ6We3KbxB32lXK0j/79LJw14Zcf2pZixgQUgt6HnHo3xD3GUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shshQVck; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA515C4CECE;
-	Thu, 28 Nov 2024 08:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732782101;
-	bh=P+iLn9Udly00fFvNNh2eAr2zUMlIPlCNHTLWPW0BpxQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=shshQVcklQRW7bAxpo3HtU1HcCxf3HoznZN4/YV4pH8P4LUFdnLOS8Autx2NvN4sL
-	 AsodiZ1ofUJiRFb4jd/WNsOkt2gPRAWgT9xxRRjv5NR9qwhAivEpHgIhs9pX14D5Hs
-	 DM2+CvoZW/HjZsU/oN3qWBoPdw4VFBmwOMOJhmkWZ0rj7pf/tdOduq9OUb0x9X83sD
-	 n3kYVMF1EY3Z6BMcqGJRXM4S7Yw+6jqIJXmXMbD60MH2+VEUDAhOHrglbtEO5goHhz
-	 qLtnmvzucokEVEextuReFT2ToY6CNVJcUQ9o0eJJUE3l1mK7C6xFSTZFkEc7J0pnmy
-	 Zx8araszwssuw==
-Message-ID: <7c013e0f-bb8a-45db-a5b5-71afc0ddefda@kernel.org>
-Date: Thu, 28 Nov 2024 09:21:33 +0100
+	s=arc-20240116; t=1732782288; c=relaxed/simple;
+	bh=SCu+ISsKCCcd6qkQaEWA3jNZcsdZonCDPyLTB8O/kyY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D+yO0gep3hvj7B3tQbmkJ4egKyv2UO4E5toEDOON7QGkcDoEqL6BEE4KGCMmVw+sD1b8tGGm0oZBBuuFRoH5FVlnm2GMs5tKYAEsxxkntMsLgALKvILt7wuJ4rSEL+OHd1fX0KvDdkLABEmBcuuL57WE/3YWM9Fz1r5oSTm8Iqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XzTDQ0Gx6z9v7JN;
+	Thu, 28 Nov 2024 15:57:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id B8230140762;
+	Thu, 28 Nov 2024 16:24:23 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDXNXWhKEhn28ZyAg--.30519S2;
+	Thu, 28 Nov 2024 09:24:22 +0100 (CET)
+Message-ID: <10c8fd4b53f946c2d7e933a35c6eb36557e8c592.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest
+ list parsers
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  corbet@lwn.net, petr.pavlu@suse.com,
+ samitolvanen@google.com, da.gomez@samsung.com,  akpm@linux-foundation.org,
+ paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com,
+ shuah@kernel.org, mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
+ linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
+ linux-modules@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,  wufan@linux.microsoft.com,
+ pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,  mjg59@srcf.ucam.org,
+ pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, 
+ jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, 
+ mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Thu, 28 Nov 2024 09:23:57 +0100
+In-Reply-To: <Z0d4vXuCqjTo_QW1@bombadil.infradead.org>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	 <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
+	 <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
+	 <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
+	 <Z0Ybvzy7ianR-Sx9@bombadil.infradead.org>
+	 <3dc25195b0362b3e5b6d6964df021ff4e7e1b226.camel@huaweicloud.com>
+	 <Z0d4vXuCqjTo_QW1@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: dts: exynos: gs101-oriole: add pd-disable and
- typec-power-opmode
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
- <20241127-gs101-phy-lanes-orientation-dts-v1-6-5222d8508b71@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-dts-v1-6-5222d8508b71@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDXNXWhKEhn28ZyAg--.30519S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw15XFyUGry5CF48Zr1DWrg_yoW8uF4xpF
+	WfK3ZIkr4kt3Wqkw4vyw47uFW0k393GrW5G3Z3Gr9ayr15KFya9FyIgw43WFZrKr4vgw4a
+	qr1rZ3sIvw1kZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07bhb18UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGdH1TUBdQAAsw
 
-On 27/11/2024 12:01, André Draszik wrote:
-> When the serial console is enabled, we need to disable power delivery
-> since serial uses the SBU1/2 pins and appears to confuse the TCPCI,
-> resulting in endless interrupts.
-> 
-> For now, change the DT such that the serial console continues working.
-> 
-> Note1: We can not have both typec-power-opmode and
-> new-source-frs-typec-current active at the same time, as otherwise DT
-> binding checks complain.
-> 
-> Note2: When using a downstream DT, the Pixel boot-loader will modify
-> the DT accordingly before boot, but for this upstream DT it doesn't
-> know where to find the TCPCI node. The intention is for this commit to
-> be reverted once an updated Pixel boot-loader becomes available.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+On Wed, 2024-11-27 at 11:53 -0800, Luis Chamberlain wrote:
+> On Wed, Nov 27, 2024 at 10:51:11AM +0100, Roberto Sassu wrote:
+> > For eBPF programs we are also in a need for a better way to
+> > measure/appraise them.
+>=20
+> I am confused now, I was under the impression this "Integrity Digest
+> Cache" is just a special thing for LSMs, and so I was under the
+> impression that kernel_read_file() lsm hook already would take care
+> of eBPF programs.
 
-This should be squashed to the previous patch, including also combining
-commit messages.
+Yes, the problem is that eBPF programs are transformed in user space
+before they are sent to the kernel:
 
-Best regards,
-Krzysztof
+https://lwn.net/Articles/977394/
+
+The Integrity Digest Cache can be used for the measurement/appraisal of
+the initial eBPF ELF file, when they are accessed from the filesystem,
+but the resulting blob sent to the kernel will be different.
+
+> > Now, I'm trying to follow you on the additional kernel_read_file()
+> > calls. I agree with you, if a parser tries to open again the file that
+> > is being verified it would cause a deadlock in IMA (since the inode
+> > mutex is already locked for verifying the original file).
+>=20
+> Just document this on the parser as a requirement.
+
+Ok, will do.
+
+> > > > Supporting kernel modules opened the road for new deadlocks, since =
+one
+> > > > can ask a digest list to verify a kernel module, but that digest li=
+st
+> > > > requires the same kernel module. That is why the in-kernel mechanis=
+m is
+> > > > 100% reliable,
+> > >=20
+> > > Are users of this infrastructure really in need of modules for these
+> > > parsers?
+> >=20
+> > I planned to postpone this to later, and introduced two parsers built-
+> > in (TLV and RPM). However, due to Linus's concern regarding the RPM
+> > parser, I moved it out in a kernel module.
+>=20
+> OK this should be part of the commit log, ie that it is not desirable to
+> have an rpm parser in-kernel for some users.
+
+I understand. Will add in the commit log.
+
+Just to clarify, we are not talking about the full blown librpm in the
+kernel, but a 243 LOC that I rewrote to obtain only the information I
+need. I also formally verified it with pseudo/totally random data with
+Frama-C:
+
+https://github.com/robertosassu/rpm-formal/blob/main/validate_rpm.c
+
+Thanks
+
+Roberto
+
 
