@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-424069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B1E9DB054
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:43:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890249DB055
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F281DB22657
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:43:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30A7B22990
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE61FEEDD;
-	Thu, 28 Nov 2024 00:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F321BDCF;
+	Thu, 28 Nov 2024 00:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MEZ3Crej"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v7XxW7Eo"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02AEC13C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F40EAD5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732754629; cv=none; b=jIcCubIFzjq8vUKQ0/x5UOwlMxjbbnfukCRfUOj3sheoLaPom20ba3QrFy8TCikZltOgdq25UnnBWA7nHuzp72+hxGQy1HahROQyZPGojQInhWuB/VaGJoKKbSTQcM8cRidkUXJixOIxIgekbCsQcm5zg8a6lFC2XXgGlrUUR/g=
+	t=1732754631; cv=none; b=aFXF4jVdxZXVJSoQZq3Sc63YKTyE5zR9ESTXLKcQB++sUHJQKhz/p+QUcEWo0q8/qjQKKb6Jpc4cBDQOWrX43Xej5Wpfm0PPQYuISWyHBUu98qNpTQRxDQHuqjwfqot2HeaM4geJZKaxJuH/NVb+byzQIOpBQYnk6mCWaG8eu8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732754629; c=relaxed/simple;
-	bh=B1y2jy7fnKaBm36j5gckhSpoywvnkFzo0gLuwHLp4EA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Vxp4tzYi6uCp/fJszW4M5QgcVd4QQYOpQfAA+6dHjYEtW1WZgrQ1kPLkQEPei6tyggoncsgofOcGCEFF/Jr0O6b/pP7mwQgrWSG+IachYxociaRAnIdW1IWXGocL8jSY8SiiwuDc4HO/K02X1TcRjlDcdm++thWDz7zi2zNEWD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MEZ3Crej; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1732754631; c=relaxed/simple;
+	bh=EACB2yPyU5Yw8+WwKYitNwB9tkKiB/UcMdmwylhn5ac=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=glqqbo59FRrZe0K7RPIjPwKPMZr33NEsKgsdxBB5dMwnHEhTSlKwbHRdZ1mtvB9r/4NVxxC/rOFARyW92jOImNrYkdtUE05cPUVCJoYB6CSunVm4hhtqtYXMC/BCeCp/OM5R3t+SVw7NaC4MuSKX5jBZjWfEM345n/0BvDh3s68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v7XxW7Eo; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea9d209e75so292467a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:43:47 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21147fea103so3437955ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:43:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732754627; x=1733359427; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g2pP/D5ApA8LvNrizEVSSnOUuGnFz5mUBn/5mc3cKq0=;
-        b=MEZ3Crej4gSZle4dM1vYBbUWmdBTQKrqdYQlqNhcOTABGoKHuoDYQohAyWp8f794YE
-         ec/MsEPdHt39JH2AmiCfDYn+tfr/2dKkcoJ1Ymo4g/jOSSXB3kR/Xu+kBTx/yBAmHDRf
-         f1ajz0nvc8W4PwKRNSV9TASvGIUJEFO6+0QclAAHu3HG0sgPzaSV+yGA4CZdyX9TgapW
-         YQoPiky0faTh7YKE0QQoUXfI1bPPaUIrW66vOttNBjs9dkmeF2LsSAWFfFs/8nhd1Bv0
-         4fbHPVADeyUpzIsn0KDe728FTuGzPWDgkDg4DjDlYflxSfmuEZK/ssbLDM8nijC7vOCV
-         lyzA==
+        d=google.com; s=20230601; t=1732754629; x=1733359429; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=H6v00VWPrFlV9G8PXjNGHz1lcbArd14LtnA+J13xoHI=;
+        b=v7XxW7EoO+ncriNDu2gIHvbXy3S5xYONjO+Tf0yNsXsxEn8y6N3rh5wETBW6Tkebqa
+         /RSErLXc8BX0QLx/r/i3LGRs4MJwvLuPUkvCxE8EQGrWfd2IM1FVHou0vWBKhB4qHfnR
+         DC626wTtM/z4pDK4dzZeBj3uzSy3Mv7fOWtdC/65d9bGU9oseiO0LmGVrUQQwnSExSCZ
+         SBpi/PSVK5jclZsl47hQHhddfM3q+PapNBtwbBWpJgqV4X+J7d+5jAYGYDr3OYfCJ+SV
+         Hhe1gqn/npwqYlC37ShZibIpIqaM6lA8kjTUVNHXtr0M0gSeI98t6iGOy+81tlouIU9S
+         Y9Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732754627; x=1733359427;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g2pP/D5ApA8LvNrizEVSSnOUuGnFz5mUBn/5mc3cKq0=;
-        b=U2skS1dUg+cVAbBa4/XC+1htM3hL/cxUd1dE1SStyT+Dg2ybtPlWpg1o4dlGncdcig
-         aSYEuKY8HXoOJLuh2GOCTb40XONRmwHzLMBOhGYrCkXuEmO8bLa1EV34TDN0Fe618bph
-         hBit76iizKnFhiIvn8fl9j+zWCO2na5xeYMwoqyJYu6zghd1xsXZNd7D5d2wmjYHhjKY
-         20KyYwKGxxxCTOLfxSmR+guiBE9hWUlqludeqyFWhDfgCl3M2V53HM4OtH1Q69vuVC23
-         RHQlXHhL2/0mUtXUhXtxJU72qqHGV6k9Bj50sZ8KsoDlYGvHjHkaiIlSmMVCAXqF2gF3
-         N14Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVs3EsaOx1OvEdJMOmSY30Nh7qed4u8RxVREAML976hkKVUiuiq3F96JlWPv9jB5V+BJc1Asp5F2VBz1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlgmj4pOI60I2iqHUTzdZmEfZM0zbQRGgyAb5evfVTbrVWmiLG
-	TR+DNPLVl1m2wFTKkGBReTu/HTp1+8xxff//jF4/5EzkBAMAZYhaJG2+GwUyse7BgQ2xPW/X3Z4
-	U1g==
-X-Google-Smtp-Source: AGHT+IEIlNfV6nIK9pFETYOL1YOv5NcXcskE+x3BT40ihhGFnMtC9QI/qUMEfEdkXLdG2ih3pFg6iRAbhzQ=
-X-Received: from pjbeu15.prod.google.com ([2002:a17:90a:f94f:b0:2e0:5d64:e34c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c4a:b0:2ea:4578:46de
- with SMTP id 98e67ed59e1d1-2ee08ecf99emr6668283a91.20.1732754627238; Wed, 27
- Nov 2024 16:43:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732754629; x=1733359429;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H6v00VWPrFlV9G8PXjNGHz1lcbArd14LtnA+J13xoHI=;
+        b=YXthap4BWmSbnbxauzyOJPmvX+UhKvnOeIq7sST+As7evW4elJaYeIqMLb/JOlFpBj
+         V5LL5NPiex39sw5aEL5vG7ChCarjiDU3bA5XVj4LlqAh//Pq5AFY9caeSfBuMfnUD1ja
+         R3OdgibRBcjA4M9LMETeBiqCXpvu4WvoQuZRlbCW0BCugyB9GdBpTLLAITdsU1toW8aV
+         WcdJEHtVFlXVoGXtscCVlTqFwk5N9Zj6spHlSUa3zCPa4ad1RqBlPuus4hU2DjOzfek1
+         HLtfR6nlhGGyPdqtxhUzqew8SYbuKXKFAxWcpYVfFfheh/U3i1UELTS+t6AZKNytbM4o
+         zpmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwlic9QMA26GuPqygiB6CjX2aaHcPhmPMmNB9Q9vu3+2nDoN+yiF6GQzxtNO/+KLaaosp13OPhuMBxRiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiUnooXaozHtGOpU95oxvzCVy039oTlGAWTQKh9zyiO5PECDMS
+	VstFvzmUPPSPuXmZ/e995gEKaYG0Fs+KESkRLwHmegDIfJ9eBoZeJ1zN5YMQdfItO1CsEtd5PbB
+	h3g==
+X-Google-Smtp-Source: AGHT+IEK9pbCeaFZWXX0PLadQxkBbAx1o35IfYFdtf0yqxaDLee26TJikEv6kZT/3lUfdcYbGJKEkLcA4Vc=
+X-Received: from pjbpd1.prod.google.com ([2002:a17:90b:1dc1:b0:2ea:448a:8cd1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d0d:b0:2ea:bf1c:1e3a
+ with SMTP id 98e67ed59e1d1-2ee08eb2ae0mr7730683a91.12.1732754629027; Wed, 27
+ Nov 2024 16:43:49 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 16:43:38 -0800
+Date: Wed, 27 Nov 2024 16:43:39 -0800
+In-Reply-To: <20241128004344.4072099-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241128004344.4072099-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128004344.4072099-1-seanjc@google.com>
-Subject: [PATCH v4 0/6] KVM: x86: Prep KVM hypercall handling for TDX
+Message-ID: <20241128004344.4072099-2-seanjc@google.com>
+Subject: [PATCH v4 1/6] KVM: x86: Play nice with protected guests in complete_hypercall_exit()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -81,45 +85,51 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Xiaoyao Li <xiaoyao.li@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Effectively v4 of Binbin's series to handle hypercall exits to userspace in
-a generic manner, so that TDX
+Use is_64_bit_hypercall() instead of is_64_bit_mode() to detect a 64-bit
+hypercall when completing said hypercall.  For guests with protected state,
+e.g. SEV-ES and SEV-SNP, KVM must assume the hypercall was made in 64-bit
+mode as the vCPU state needed to detect 64-bit mode is unavailable.
 
-Binbin and Kai, this is fairly different that what we last discussed.  While
-sorting through Binbin's latest patch, I stumbled on what I think/hope is an
-approach that will make life easier for TDX.  Rather than have common code
-set the return value, _and_ have TDX implement a callback to do the same for
-user return MSRs, just use the callback for all paths.
+Hacking the sev_smoke_test selftest to generate a KVM_HC_MAP_GPA_RANGE
+hypercall via VMGEXIT trips the WARN:
 
-As for abusing vcpu->run->hypercall.ret... It's obviously a bit gross, but
-I think it's a lesser evil than having multiple a one-line wrappers just to
-trampoline in the return code.
+  ------------[ cut here ]------------
+  WARNING: CPU: 273 PID: 326626 at arch/x86/kvm/x86.h:180 complete_hypercall_exit+0x44/0xe0 [kvm]
+  Modules linked in: kvm_amd kvm ... [last unloaded: kvm]
+  CPU: 273 UID: 0 PID: 326626 Comm: sev_smoke_test Not tainted 6.12.0-smp--392e932fa0f3-feat #470
+  Hardware name: Google Astoria/astoria, BIOS 0.20240617.0-0 06/17/2024
+  RIP: 0010:complete_hypercall_exit+0x44/0xe0 [kvm]
+  Call Trace:
+   <TASK>
+   kvm_arch_vcpu_ioctl_run+0x2400/0x2720 [kvm]
+   kvm_vcpu_ioctl+0x54f/0x630 [kvm]
+   __se_sys_ioctl+0x6b/0xc0
+   do_syscall_64+0x83/0x160
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+   </TASK>
+  ---[ end trace 0000000000000000 ]---
 
-v4:
- - Fix an SEV-* bug where KVM trips the WARN in is_64_bit_mode().
- - Add a pile of reworks to (hopefully) avoid as much duplicate code when
-   TDX comes along.
+Fixes: b5aead0064f3 ("KVM: x86: Assume a 64-bit hypercall for guests with protected state")
+Cc: stable@vger.kernel.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v3: https://lore.kernel.org/all/20240826022255.361406-1-binbin.wu@linux.intel.com
-
-Binbin Wu (1):
-  KVM: x86: Add a helper to check for user interception of KVM
-    hypercalls
-
-Sean Christopherson (5):
-  KVM: x86: Play nice with protected guests in complete_hypercall_exit()
-  KVM: x86: Move "emulate hypercall" function declarations to x86.h
-  KVM: x86: Bump hypercall stat prior to fully completing hypercall
-  KVM: x86: Always complete hypercall via function callback
-  KVM: x86: Refactor __kvm_emulate_hypercall() into a macro
-
- arch/x86/include/asm/kvm_host.h |  6 ----
- arch/x86/kvm/svm/sev.c          |  4 +--
- arch/x86/kvm/x86.c              | 50 +++++++++++----------------------
- arch/x86/kvm/x86.h              | 28 ++++++++++++++++++
- 4 files changed, 47 insertions(+), 41 deletions(-)
-
-
-base-commit: 4d911c7abee56771b0219a9fbf0120d06bdc9c14
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 2e713480933a..0b2fe4aa04a2 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9976,7 +9976,7 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
+ {
+ 	u64 ret = vcpu->run->hypercall.ret;
+ 
+-	if (!is_64_bit_mode(vcpu))
++	if (!is_64_bit_hypercall(vcpu))
+ 		ret = (u32)ret;
+ 	kvm_rax_write(vcpu, ret);
+ 	++vcpu->stat.hypercalls;
 -- 
 2.47.0.338.g60cca15819-goog
 
