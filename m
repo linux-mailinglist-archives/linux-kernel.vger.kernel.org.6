@@ -1,111 +1,237 @@
-Return-Path: <linux-kernel+bounces-424803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38A39DB99E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:29:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605AD9DB9B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD55D163EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BD2163F88
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F151B2EFB;
-	Thu, 28 Nov 2024 14:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052D71B0F28;
+	Thu, 28 Nov 2024 14:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fJySpkI3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GQEsLY3U"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D281B21A8;
-	Thu, 28 Nov 2024 14:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732804171; cv=none; b=b11vzASf/FyhaZldVHhIpeBYip8l+S0UQkipqXMlj4g2ATBLOGlIbHwWiwG25245UPVjmvlmfZw9IceMQlG8DXTbnkvTgmWpgiEn8642Moxd8Nt+jrc9FoTk23XFv/+UPsSWmzUiQa7CQF+UOSeXxaktyZ5A8sOxN9UqaQup/cI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732804171; c=relaxed/simple;
-	bh=ZMvMg8+Oa0TyJtTQnHUSVZzinBVvJE2xUaPMaeF+6c0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jgbRGWJnOvxms5rk3R+iuy0Z8Fg7oZfB+XnrSMV2wccsseY5kjMdsPZx3FfO2pDybOOJYe9ie9vxyMv2wi3PbhjKMqnXPOobLCaI7HZWnKvJum/LbH1XOnjdN8NczbbslbU1FB7bg9LAttgt7i6/wQDXiB7oV+vaLmwnMKPnRqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fJySpkI3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Q4Mp5RBOVSRX1FefyVEktnbia0u/FdO2PSScCAZRv9k=; b=fJySpkI3EGU7DeYIAn6vdllo6/
-	QBBwtoSs8fgdWb97RQYwTuJazBl51jrLSUqqJlm6K5VIMQsVXd5jUEGIKusXzAWGFzZgtWk6SI2a1
-	GwvgpTSsAz4Ie97jqknWxAWeSU5Ts8SP4NJOjBh9MT4O5TwQ3G9b2a3/fJ1cPcrKdtnU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tGfWC-00EiHp-UJ; Thu, 28 Nov 2024 15:29:20 +0100
-Date: Thu, 28 Nov 2024 15:29:20 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [RFC net-next v1 2/2] net. phy: dp83tg720: Add randomized
- polling intervals for unstable link detection
-Message-ID: <1f2c1169-076d-460f-9635-d6ca6c4d310d@lunn.ch>
-References: <20241127131011.92800-1-o.rempel@pengutronix.de>
- <20241127131011.92800-2-o.rempel@pengutronix.de>
- <43cceaf2-6540-4a45-95fa-4382ab2953ef@lunn.ch>
- <Z0gksn9nEKJOY5Ul@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7324192D77;
+	Thu, 28 Nov 2024 14:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732804468; cv=pass; b=hNIpFF/Od52TRf+XJeTxh1pkww4x+BGDgsC/GiCAr/4c9RIjq/95+Ozc6ID/8Qhnt69S9WbFtvwJjtrPLvlj0ZlRSl14yHLbAmQYyf8A39s3TdU9ltpjVRnwHvfuAGpV8h0jH+6mQdxLXcL9DwWB9WrtBe1rYZCAt/DFRQUMi5g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732804468; c=relaxed/simple;
+	bh=WNC1qk8g8s0XsYKiv3+GiPxXM/3aHNPx2AHsHYN26l4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lTCYlUUBNAKZrmrPb++DJvvvkxkakfbGzcKjT6J58EoLH7Ohz7P5b8TP0kzC4LjF32tnlmMz+/aS2Pz5AGHAHwI0t9mkXr/F9HgCyJEkQpmYki6BDMpSrgcVix/2Xu/9hzeBj0LUH/SUcgLuL0aXkhXSTysTrPVNDigdxkVadlA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GQEsLY3U; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732804335; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=g17js4q0Bg6i0NirWuDG7S/eGBqopayOzZ2liR7giYf8nnzJhZcygPnunQ7hAp9cEwc6C6JM1chpGrpdfw6yiSGfT6Hy7NL6uuFLTAFh/XaOFdK7Eu4vQOuCa89QYDre9BQQJ2uB0IPSfNQePfeYpy8ilHich+FSGqTPeah4eiQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732804335; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/Taw2CQT9QcMUAy17zboa+dBaCxiBOPrIgOOMmxKd7M=; 
+	b=g4B1gnKdPKe1OTuzk6mEzS+5Q7FvjkO+XXyq35hOftJZSwKXh63YjXZs7fl7g0UPP3MNXZvwWf+F3fI1cVBWB9zsZANqzEXz31HuA7U6qlgH19VbPSmW6zTkDHbqv+hRVbc/e95ta4itVnA5aD+OOsm99DUB3Rv6r66wv/CKrLI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732804335;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=/Taw2CQT9QcMUAy17zboa+dBaCxiBOPrIgOOMmxKd7M=;
+	b=GQEsLY3UFAJLxq35ZVM6FnYp4Q62S79c6wxTXEF7cd5OM3wiv1xQATwaH1d8Ub0m
+	BjODP2Ae4tqIZslKb9JGTG4Rs27HKKOjs8YnFflV2FyH0Baug2Yg3q24jh14H5MhJ90
+	G2f7wFORVTueKYU+LZzlHZHx90qHMqRdKsGJlBU4=
+Received: by mx.zohomail.com with SMTPS id 1732804334972328.15791998227326;
+	Thu, 28 Nov 2024 06:32:14 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0gksn9nEKJOY5Ul@pengutronix.de>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 29/35] rust: drm/kms: Add DriverCrtc::atomic_begin()
+ and atomic_flush()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-30-lyude@redhat.com>
+Date: Thu, 28 Nov 2024 11:31:57 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A58F7EA7-355A-4001-93EA-653989BE02C1@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-30-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Thu, Nov 28, 2024 at 09:07:14AM +0100, Oleksij Rempel wrote:
-> Hi Andrew,
-> 
-> On Wed, Nov 27, 2024 at 04:37:49PM +0100, Andrew Lunn wrote:
-> > On Wed, Nov 27, 2024 at 02:10:11PM +0100, Oleksij Rempel wrote:
-> > > Address the limitations of the DP83TG720 PHY, which cannot reliably detect or
-> > > report a stable link state. To handle this, the PHY must be periodically reset
-> > > when the link is down. However, synchronized reset intervals between the PHY
-> > > and its link partner can result in a deadlock, preventing the link from
-> > > re-establishing.
-> > > 
-> > > This change introduces a randomized polling interval when the link is down to
-> > > desynchronize resets between link partners.
-> > 
-> > Hi Oleksij
-> > 
-> > What other solutions did you try? I'm wondering if this is more
-> > complex than it needs to be. Could you add a random delay in
-> > dp83tg720_read_status() when it decides to do a reset?
-> 
-> Yes, this would be possible, but there are multiple reasons I decided to
-> go this way:
-> - in link down case, it is better to increase polling frequency, it
->   allows to reduce link up time.
-> - there are PHYs, for example an integrated to LAN9372 which supports
->   only link down interrupt. As long as link is down, it should be
->   polled.
-> - i'm working on generic PHY stats support and PHYs need to be polled,
->   even with IRQ support, just less frequently.
-> 
-> I can add it to the commit message.
+Hi Lyude,
 
-Yes, more justification would be good.
+> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> Optional trait methods for implementing the atomic_begin and =
+atomic_flush
+> callbacks for a CRTC.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/crtc.rs | 78 ++++++++++++++++++++++++++++++++++++-
+> 1 file changed, 76 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/rust/kernel/drm/kms/crtc.rs b/rust/kernel/drm/kms/crtc.rs
+> index ec9b58763dcca..a4e955364bd8c 100644
+> --- a/rust/kernel/drm/kms/crtc.rs
+> +++ b/rust/kernel/drm/kms/crtc.rs
+> @@ -90,8 +90,8 @@ pub trait DriverCrtc: Send + Sync + Sized {
+>             mode_set: None,
+>             mode_valid: None,
+>             mode_fixup: None,
+> -            atomic_begin: None,
+> -            atomic_flush: None,
+> +            atomic_begin: if Self::HAS_ATOMIC_BEGIN { =
+Some(atomic_begin_callback::<Self>) } else { None },
+> +            atomic_flush: if Self::HAS_ATOMIC_FLUSH { =
+Some(atomic_flush_callback::<Self>) } else { None },
+>             mode_set_nofb: None,
+>             mode_set_base: None,
+>             mode_set_base_atomic: None,
+> @@ -132,6 +132,36 @@ fn atomic_check(
+>     ) -> Result {
+>         build_error::build_error("This should not be reachable")
+>     }
+> +
+> +    /// The optional [`drm_crtc_helper_funcs.atomic_begin`] hook.
+> +    ///
+> +    /// This hook will be called before a set of [`Plane`] updates =
+are performed for the given
+> +    /// [`Crtc`].
+> +    ///
+> +    /// [`drm_crtc_helper_funcs.atomic_begin`]: =
+srctree/include/drm/drm_modeset_helper_vtables.h
+> +    fn atomic_begin(
+> +        crtc: &Crtc<Self>,
+> +        old_state: &CrtcState<Self::State>,
+> +        new_state: BorrowedCrtcState<'_, CrtcState<Self::State>>,
+> +        state: &AtomicStateMutator<Self::Driver>
+> +    ) {
+> +        build_error::build_error("This should not be reachable")
+> +    }
+> +
+> +    /// The optional [`drm_crtc_helper_funcs.atomic_flush`] hook.
+> +    ///
+> +    /// This hook will be called after a set of [`Plane`] updates are =
+performed for the given
+> +    /// [`Crtc`].
+> +    ///
+> +    /// [`drm_crtc_helper_funcs.atomic_flush`]: =
+srctree/include/drm/drm_modeset_helper_vtables.h
+> +    fn atomic_flush(
+> +        crtc: &Crtc<Self>,
+> +        old_state: &CrtcState<Self::State>,
+> +        new_state: BorrowedCrtcState<'_, CrtcState<Self::State>>,
+> +        state: &AtomicStateMutator<Self::Driver>
+> +    ) {
+> +        build_error::build_error("This should never be reachable")
+> +    }
+> }
 
-In general, we try to hide workarounds for broken devices in the
-driver, not expose it to all drivers. Variable rate polling, and
-polling even when interrupt are enabled does however sound
-useful. Cable testing might also be able to use it.
+Same comment here as in the previous patches, i.e.: if this is optional, =
+why do we have a
+default implementation with build_error?
 
-	Andrew
+>=20
+> /// The generated C vtable for a [`DriverCrtc`].
+> @@ -776,3 +806,47 @@ fn as_raw(&self) -> *mut bindings::drm_crtc_state =
+{
+>         Ok(0)
+>     })
+> }
+> +
+> +unsafe extern "C" fn atomic_begin_callback<T: DriverCrtc>(
+> +    crtc: *mut bindings::drm_crtc,
+> +    state: *mut bindings::drm_atomic_state,
+> +) {
+> +    // SAFETY:
+> +    // * We're guaranteed `crtc` is of type `Crtc<T>` via type =
+invariants.
+> +    // * We're guaranteed by DRM that `crtc` is pointing to a valid =
+initialized state.
+> +    let crtc =3D unsafe { Crtc::from_raw(crtc) };
+> +
+> +    // SAFETY: We're guaranteed by DRM that `state` points to a valid =
+instance of `drm_atomic_state`
+> +    let state =3D unsafe { =
+AtomicStateMutator::new(NonNull::new_unchecked(state)) };
+> +
+> +    // SAFETY: We're guaranteed by DRM that both the old and new =
+atomic state are present within
+> +    // this `drm_atomic_state`
+> +    let (old_state, new_state) =3D unsafe {(
+> +        state.get_old_crtc_state(crtc).unwrap_unchecked(),
+> +        state.get_new_crtc_state(crtc).unwrap_unchecked(),
+> +    )};
+> +
+> +    T::atomic_begin(crtc, old_state, new_state, &state);
+> +}
+> +
+> +unsafe extern "C" fn atomic_flush_callback<T: DriverCrtc>(
+> +    crtc: *mut bindings::drm_crtc,
+> +    state: *mut bindings::drm_atomic_state,
+> +) {
+> +    // SAFETY:
+> +    // * We're guaranteed `crtc` is of type `Crtc<T>` via type =
+invariants.
+> +    // * We're guaranteed by DRM that `crtc` is pointing to a valid =
+initialized state.
+> +    let crtc =3D unsafe { Crtc::from_raw(crtc) };
+> +
+> +    // SAFETY: We're guaranteed by DRM that `state` points to a valid =
+instance of `drm_atomic_state`
+> +    let state =3D unsafe { =
+AtomicStateMutator::new(NonNull::new_unchecked(state)) };
+> +
+> +    // SAFETY: We're in an atomic flush callback, so we know that =
+both the new and old state are
+> +    // present
+> +    let (old_state, new_state) =3D unsafe {(
+> +        state.get_old_crtc_state(crtc).unwrap_unchecked(),
+> +        state.get_new_crtc_state(crtc).unwrap_unchecked(),
+> +    )};
+> +
+> +    T::atomic_flush(crtc, old_state, new_state, &state);
+> +}
+> --=20
+> 2.46.1
+>=20
+>=20
+
+
+=E2=80=94 Daniel
+
 
