@@ -1,269 +1,194 @@
-Return-Path: <linux-kernel+bounces-424065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B539DB033
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D0D9DB04C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:31:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B5F281FE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9B8282108
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0EE17C8D;
-	Thu, 28 Nov 2024 00:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA0F9475;
+	Thu, 28 Nov 2024 00:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TM8rP/n+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LpBZKkVb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B848825
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320BC29CA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732752965; cv=none; b=oLDSo8WzcAkPRHiBoFNRu0ohtQSwWPqExzEAuBBttxi/6JC7x498lYN9rb8JmapwDfkF1vS7wAKv/5QSNzSPeRudDhzgPulIj98L03aUL9YKABoD+GmiZAPUKm3jZ+HzWHgha/cDCDJiNN3HHG5WdfvB+rFCiKP+sLmOt4NDKqA=
+	t=1732753899; cv=none; b=DQSBIt3QF0pTyJMKTkWHG7A2VaFKt36+Hu9mGNIjHn/Nz6tQTSSWewOvSihNP+GRCiE1VG/ykIMk0xnmrUqYWUrMYSF56Tvp7ZKVbYIZFzyu+gMk/esuPBDy4CA1r5y4HmMB1MmoQnbWksNOQqYV37g9W0/XaeS0xgfmLd+pWFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732752965; c=relaxed/simple;
-	bh=hQ0HlZAq9Tfv1Q5WYZ8FA3c9XcNnrLCaZhXVOK8p6DY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=pjuLfxc7/cMUn7WoKkQLjPxtQE8mrQL7jaYfP2bdpcUG6xUNALtOmeSkmg+Ylp8EUTp1829MCT+uv6XpYteiAinGH/6SbjFDtafWctxRRLO59abR8H1fIIMKz9wjhr39jJc+TEKilQ9EyPWaO1Hfqs6f71B8kyxUJZmpZi5DLJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TM8rP/n+; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732752962; x=1764288962;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=hQ0HlZAq9Tfv1Q5WYZ8FA3c9XcNnrLCaZhXVOK8p6DY=;
-  b=TM8rP/n+TS2G88plNLy2bCzZA9S+B/EXwje44d+jByCtcR51flMkZ6EZ
-   84rjn+s+sNUNH7zuFBFhR3UfWCmDMpQakJZbWi3XvOjKzZd1sY7Bk3WSd
-   aV7B/w51fuEpAEXeFzvQZp/CGgxOBfp3KfdHmFQSsPuDg9jvPIcLSzZtm
-   7d0T9TjXNOXWx0ENSwzfjGfus28wpWXRoXyCtirrl1PVI47wmjAUw6/Ri
-   U6icpUWm5ZFJAoerPIlAtBbqdF8q0N9uun1rW8l28U7CLJiRyeBIaaQ0y
-   A6+PeuvTnVn0tJaa5WYMAhqw+Q24UycEegyBhFal846y756pqQjv4OEFu
-   A==;
-X-CSE-ConnectionGUID: xO7l2kU9TBe2h9G8u6n1Tw==
-X-CSE-MsgGUID: Dr2/UZ15Th6BADXLCXi48Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43464079"
-X-IronPort-AV: E=Sophos;i="6.12,190,1728975600"; 
-   d="scan'208";a="43464079"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 16:16:00 -0800
-X-CSE-ConnectionGUID: vCctnbSUQ4GBJyl1ZI084g==
-X-CSE-MsgGUID: vM8yRuP+SsKrJIRr4iYCkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,190,1728975600"; 
-   d="scan'208";a="96173989"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa003.fm.intel.com with ESMTP; 27 Nov 2024 16:15:59 -0800
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: x86@kernel.org
-Cc: Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>,
-	Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 2/2] x86/cacheinfo: Delete global num_cache_leaves
-Date: Wed, 27 Nov 2024 16:22:47 -0800
-Message-Id: <20241128002247.26726-3-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
-References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1732753899; c=relaxed/simple;
+	bh=AoDIcArxj8ATSkVwXz8Zpe7AfDUM3odoWu8H6UoSl5M=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jh39L0eiFfjsN4Za712GxZxR3dnaGnevdNZa1uzAmyRrwpkYHThKq/d+i9BhfSTyNH3d7ljMJrTdEikhUFdtqV7i2JwalQeXAQE+B9nbGE1edXnLlafvu5cbqW9h+tlO+LSZREmm/XmEmxyRTD4s/Iud55zKDOrERSMAeOrt2Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LpBZKkVb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732753897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3ibAv9WDOQTixkDjvaqVvQ7a/S55WmxPj/4iL3m5MBQ=;
+	b=LpBZKkVbZmAub+dDlsY5PmQAoRbAi/FLLgHJ6/InoazhxVSGhU//xQlbkuuMExDdUQesaH
+	AxVodtG72zE4PGVn2qSNq2kcdhm7vnsGnKDM4Ox7S8niW8ZBC8A6/yoIJl9z51mwJ+0Cqd
+	1CadN/BYLDUAuCdn9dcAh5B4G35xRgM=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-1cIZwvpaN0eY8CwA_EY9gw-1; Wed, 27 Nov 2024 19:31:35 -0500
+X-MC-Unique: 1cIZwvpaN0eY8CwA_EY9gw-1
+X-Mimecast-MFC-AGG-ID: 1cIZwvpaN0eY8CwA_EY9gw
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4669be6c87aso3601961cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:31:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732753895; x=1733358695;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ibAv9WDOQTixkDjvaqVvQ7a/S55WmxPj/4iL3m5MBQ=;
+        b=XGfIi2gZAzZs7suIaIin8JkU15eFItlBRwPN991fezT8z2qOm78qyZQCVhHnMrME29
+         SNHd+1P9fJPv928Rsek8qXDf9FzaR/1H/YNo7dlYjFmJNtkmfDZ3Ud1hoVeSEtxp4OWf
+         2Je/KpjxGZ+rGxANWmbJ3fhHQMyDtMh235xuiyLX8GVhHyyORqJu9avoJiG0lOEcpSk+
+         +jWc55QOOg0/lOjhM5mxQLD+v9NW6DzyjE5B2t6DgMJW9Zhjv45KabEhyYBPPA/N1oQX
+         4VPkqAiHPoYr+XJyoJxPau4c2k73mO4pR90qGN94E8uzQV3deUwcHM6HSBXqdxtLHZNO
+         tinA==
+X-Forwarded-Encrypted: i=1; AJvYcCVX6AYQW0bwRIcq/h/oRFCLGEXfhZ46B3WosQOyUr+HO8BKcEbnoxKjgjtHHKoP1TpU5VuoS3veRQAovPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEF99bkANA4DGGgXOY/VdU2p7f/KOlq9Vu2VwQu3WqlEI5+2CK
+	IhhOeFSKLzVuXlUftD8E9KXAh8viyv6Rhvncf81K0mDfgHDF4Tw62vIeuRn565IvmxGR6v4Szj0
+	e7LDr44xqxzm2xoZ4pcZ3pYjjY7j3lx+2u1+9iCt4GN0yRplleZDh7AymvNCSuA==
+X-Gm-Gg: ASbGncskcxg3MxSLoWY71Huq2EGEhvRLEW1yciamwcUENRzB6CTDg3DA+I6NFm0BHsr
+	m+TXYwUWp1B5UHzFHn79+lignThP0sWvhXP7h8/LRlWSTDJArMxQsmyTZUF6QWyVEJBnpphFGZa
+	K1tgZ0chxorOS86eoB+4fDjYOwfT8+xoXdGaUzLIk09m69waHB+FMXciYAlb/g9QrTSl8Sj6rKa
+	q5syD8swfi9pDV7XiBtuJ984j9Drgza5ci6yET9M6RXQTghGSF1nZJm6FmCNb71z0Ul9nnhlYuq
+	xsugn/HQhv82/+Xpyv4m
+X-Received: by 2002:a05:622a:4c6:b0:461:263e:6ab3 with SMTP id d75a77b69052e-466b352850amr62815781cf.30.1732753895431;
+        Wed, 27 Nov 2024 16:31:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF/W+l9R6WzLCY1srU7yRdeSZ+03DxWX+0nFMWAkGHZPdrlg8bWU+gD1kjpnaQyMur/Z8EuAw==
+X-Received: by 2002:a05:622a:4c6:b0:461:263e:6ab3 with SMTP id d75a77b69052e-466b352850amr62815571cf.30.1732753895062;
+        Wed, 27 Nov 2024 16:31:35 -0800 (PST)
+Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466c40663a8sm1095201cf.23.2024.11.27.16.31.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 16:31:34 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <6279e38a-9a3c-46ba-9161-5bc61f62d6d2@redhat.com>
+Date: Wed, 27 Nov 2024 19:31:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+To: Guenter Roeck <linux@roeck-us.net>, Waiman Long <llong@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>
+References: <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+ <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+ <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
+ <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
+ <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
+ <20241126112000.UkTwR0Iv@linutronix.de>
+ <48b9d642-9739-4333-b4b9-319df8a85e2d@redhat.com>
+ <b698d599-ef4e-4966-92fb-1f84d7a0df75@gaisler.com>
+ <4eb7bb8e-c2aa-4ce5-9f15-3086fccf4e46@roeck-us.net>
+ <20241127165356.hnkqmgcc@linutronix.de>
+ <bf7bd668-974f-481d-9526-94964455a250@roeck-us.net>
+ <c029c2fd-8bac-4913-b98f-f09acd7d28e1@redhat.com>
+ <93c5b695-4c98-4b3d-99d7-592d949750be@roeck-us.net>
+Content-Language: en-US
+In-Reply-To: <93c5b695-4c98-4b3d-99d7-592d949750be@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Linux remembers cpu_cachinfo::num_leaves per CPU, but x86 initializes all
-CPUs from the same global "num_cache_leaves".
 
-This is erroneous on systems such as Meteor Lake, where each CPU has a
-distinct num_leaves value. Delete the global "num_cache_leaves" and
-initialize num_leaves on each CPU.
+On 11/27/24 7:08 PM, Guenter Roeck wrote:
+> On 11/27/24 15:47, Waiman Long wrote:
+>> On 11/27/24 12:44 PM, Guenter Roeck wrote:
+>>> On 11/27/24 08:53, Sebastian Andrzej Siewior wrote:
+>>>> On 2024-11-27 08:02:50 [-0800], Guenter Roeck wrote:
+>>>>> On 11/27/24 07:39, Andreas Larsson wrote:
+>>>>>> Even though this is for sparc64, there is work being done looking 
+>>>>>> into
+>>>>>> enabling RT for sparc32. If the amount of fixes needed to keep
+>>>>>> PROVE_RAW_LOCK_NESTING enabled is quite small at the moment I'd 
+>>>>>> rather
+>>>>>> see it enabled for sparc rather than risking it becoming worse in 
+>>>>>> the
+>>>>>> future.
+>>>>
+>>>> Okay. So you seem to be in favour of fixing the sparc64 splats Guenter
+>>>> reported?
+>>>>
+>>>>>> I don't know what the situation is for other architectures that 
+>>>>>> does not
+>>>>>> support RT.
+>>>>>>
+>>>>>
+>>>>> For my part I still don't understand why PROVE_RAW_LOCK_NESTING is 
+>>>>> no longer
+>>>>> a configurable option, or in other words why it is mandated even 
+>>>>> for architectures
+>>>>> not supporting RT. To me this means that I'll either have to 
+>>>>> disable PROVE_LOCKING
+>>>>> for sparc or live with endless warning backtraces. The latter 
+>>>>> obscures real
+>>>>> problems, so it is a no-go.
+>>>>
+>>>> It is documented in Documentation/locking/locktypes.rst how the locks
+>>>> should nest. It is just nobody enabled it on sparc64 and tested. The
+>>>> option was meant temporary until the big read blocks are cleared.
+>>>>
+>>>
+>>> That doesn't explain why PROVE_RAW_LOCK_NESTING is now mandatory if
+>>> PROVE_LOCKING is enabled, even on architectures where is was not 
+>>> tested.
+>>> I am all for testing, but that doesn't include making it mandatory
+>>> even where it is known to fail. Enabling it by default, sure, no 
+>>> problem.
+>>> Dropping the option entirely after it is proven to no longer needed,
+>>> also no problem. But force-enabling it even where untested or, worse,
+>>> known to fail, is two steps too far.
+>>
+>> The main reason for enforcing PROVE_RAW_LOCK_NESTING with 
+>> PROVE_LOCKING is due to the fact that PREEMPT_RT kernel is much less 
+>> tested than the non-RT kernel. I do agree that we shouldn't force 
+>> this on arches that don't support PREEMPT_RT. However, once an arch 
+>> decides to support PREEMPT_RT, they have to fix all these 
+>> raw_spinlock nesting problems.
+>>
+>
+> config PROVE_RAW_LOCK_NESTING
+> -       bool
+> +       bool "Enable raw_spinlock - spinlock nesting checks" if 
+> ARCH_SUPPORTS_RT=n
+>         depends on PROVE_LOCKING
+> -       default y
+> +       default y if ARCH_SUPPORTS_RT
+>
+> would have accomplished that while at the same time making it optional
+> for non-RT architectures.
 
-init_cache_level() no longer needs to set num_leaves. Also, it never had to
-set num_levels as it is unnecessary in x86. Keep checking for zero cache
-leaves. Such condition indicates a bug.
+I had actually thought about doing exactly that, but decide to keep the 
+current mode for forcing  PROVE_RAW_LOCK_NESTING for arches that support 
+PREEMPT_RT. I won't mind doing this alternative if others agree.
 
-Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
-Reviewed-by: Len Brown <len.brown@intel.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Tested-by: Andreas Herrmann <aherrmann@suse.de>
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
-Cc: Andreas Herrmann <aherrmann@suse.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Chen Yu <yu.c.chen@intel.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Radu Rendec <rrendec@redhat.com>
-Cc: Pierre Gondois <Pierre.Gondois@arm.com>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org # 6.3+
----
-After this change, all CPUs will traverse CPUID leaf 0x4 when booted for
-the first time. On systems with symmetric cache topologies this is
-useless work.
-
-Creating a list of processor models that have asymmetric cache topologies
-was considered. The burden of maintaining such list would outweigh the
-performance benefit of skipping this extra step.
----
-Changes since v7:
- * Removed an ugly linebreak. (Boris)
- * Folded patch 3/3 into 2/3 as both patches deal with init_cache_level().
-   (Boris)
- * Removed the [set,get]_num_cache_leaves() wrappers. Instead, use the
-   existing get_cpu_cacheinfo(). (Boris)
- * Future-proof init_cache_level() for cases in which cpu_cacheinfo::
-   num_leaves is still zero afer cache info initialization.
-
-Changes since v6:
- * None
-
-Changes since v5:
- * Reordered the arguments of set_num_cache_leaves() for readability.
-   (Nikolay)
- * Added Reviewed-by tag from Nikolay and Andreas. Thanks!
- * Added Tested-by tag from Andreas. Thanks!
-
-Changes since v4:
- * None
-
-Changes since v3:
- * Rebased on v6.7-rc5.
-
-Changes since v2:
- * None
-
-Changes since v1:
- * Do not make num_cache_leaves a per-CPU variable. Instead, reuse the
-   existing per-CPU ci_cpu_cacheinfo variable. (Dave Hansen)
----
- arch/x86/kernel/cpu/cacheinfo.c | 41 +++++++++++++++------------------
- 1 file changed, 18 insertions(+), 23 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 392d09c936d6..95e38ab98a72 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -178,8 +178,6 @@ struct _cpuid4_info_regs {
- 	struct amd_northbridge *nb;
- };
- 
--static unsigned short num_cache_leaves;
--
- /* AMD doesn't have CPUID4. Emulate it here to report the same
-    information to the user.  This makes some assumptions about the machine:
-    L2 not shared, no SMT etc. that is currently true on AMD CPUs.
-@@ -718,19 +716,21 @@ void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c)
- void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 
-+	unsigned int cpu = c->cpu_index;
-+
- 	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
--		num_cache_leaves = find_num_cache_leaves(c);
-+		get_cpu_cacheinfo(cpu)->num_leaves = find_num_cache_leaves(c);
- 	} else if (c->extended_cpuid_level >= 0x80000006) {
- 		if (cpuid_edx(0x80000006) & 0xf000)
--			num_cache_leaves = 4;
-+			get_cpu_cacheinfo(cpu)->num_leaves = 4;
- 		else
--			num_cache_leaves = 3;
-+			get_cpu_cacheinfo(cpu)->num_leaves = 3;
- 	}
- }
- 
- void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
- {
--	num_cache_leaves = find_num_cache_leaves(c);
-+	get_cpu_cacheinfo(c->cpu_index)->num_leaves = find_num_cache_leaves(c);
- }
- 
- void init_intel_cacheinfo(struct cpuinfo_x86 *c)
-@@ -742,19 +742,18 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 	unsigned int l2_id = 0, l3_id = 0, num_threads_sharing, index_msb;
- 
- 	if (c->cpuid_level > 3) {
--		static int is_initialized;
--
--		if (is_initialized == 0) {
--			/* Init num_cache_leaves from boot CPU */
--			num_cache_leaves = find_num_cache_leaves(c);
--			is_initialized++;
--		}
-+		/*
-+		 * There should be at least one leaf. A non-zero value means
-+		 * that the number of leaves has been initialized.
-+		 */
-+		if (!get_cpu_cacheinfo(c->cpu_index)->num_leaves)
-+			get_cpu_cacheinfo(c->cpu_index)->num_leaves = find_num_cache_leaves(c);
- 
- 		/*
- 		 * Whenever possible use cpuid(4), deterministic cache
- 		 * parameters cpuid leaf to find the cache details
- 		 */
--		for (i = 0; i < num_cache_leaves; i++) {
-+		for (i = 0; i < get_cpu_cacheinfo(c->cpu_index)->num_leaves; i++) {
- 			struct _cpuid4_info_regs this_leaf = {};
- 			int retval;
- 
-@@ -790,14 +789,14 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 	 * Don't use cpuid2 if cpuid4 is supported. For P4, we use cpuid2 for
- 	 * trace cache
- 	 */
--	if ((num_cache_leaves == 0 || c->x86 == 15) && c->cpuid_level > 1) {
-+	if ((!get_cpu_cacheinfo(c->cpu_index)->num_leaves || c->x86 == 15) && c->cpuid_level > 1) {
- 		/* supports eax=2  call */
- 		int j, n;
- 		unsigned int regs[4];
- 		unsigned char *dp = (unsigned char *)regs;
- 		int only_trace = 0;
- 
--		if (num_cache_leaves != 0 && c->x86 == 15)
-+		if (get_cpu_cacheinfo(c->cpu_index)->num_leaves && c->x86 == 15)
- 			only_trace = 1;
- 
- 		/* Number of times to iterate */
-@@ -991,14 +990,10 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
- 
- int init_cache_level(unsigned int cpu)
- {
--	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
--
--	if (!num_cache_leaves)
-+	/* There should be at least one leaf. */
-+	if (!get_cpu_cacheinfo(cpu)->num_leaves)
- 		return -ENOENT;
--	if (!this_cpu_ci)
--		return -EINVAL;
--	this_cpu_ci->num_levels = 3;
--	this_cpu_ci->num_leaves = num_cache_leaves;
-+
- 	return 0;
- }
- 
--- 
-2.34.1
+Cheers,
+Longman
 
 
