@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F5C9DB0DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:37:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 672489DB0DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:38:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C30164236
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21657164B28
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C69154BFE;
-	Thu, 28 Nov 2024 01:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549F156C63;
+	Thu, 28 Nov 2024 01:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4NkAnmkY"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2iYahZLx"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231BA55896
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC64F149C54
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757695; cv=none; b=SoWsZSD4Mj1gU+F7sRF/9PxcfqnzFgZVKqZrf0NfW7I9KgXMhgHKDHF7PdRWsSj3V+2ggX7WPjZ2tmy+i+EWLX5JtQNzX1hXDwDL0UEOVCYeiwYUxnihp+BhFkSlyD8e6Jiy3rkZLB4ydb/E8bRzgAN+eYiosl5K6BKTkUD7S9E=
+	t=1732757697; cv=none; b=s/qvZKU0yEZtN6ikMeROM1QZoSUrTH4kU4iDUERaYVSe5fOkYmqP2DFcjSxionRC24iKdCQK8du/GBYhcJnLqdsCHMSQi/+b2G9WlVf/QQ6/2tX+H6bsCMD4tVUBoNinvoQPDVJwgbNncsfdiyF1zPUXPPfgpK83XlbEjCMbfrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757695; c=relaxed/simple;
-	bh=H6TgfpwEYnmKjksfoxthDptm8C+FoPabrsagLKg9WI4=;
+	s=arc-20240116; t=1732757697; c=relaxed/simple;
+	bh=cCzjC4QslD/KqAdNK1lM8kydPh8drtJSilkfvomxB/8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L4ZisZazfxkQyRzsBc1DFj1Jf0TPdUw/h6hTkEARkhMWU4WnwO0i2m6OS0rPwRFkq4GIzLAhdJo6sEYD3ZUdn4t9i0nyF9fW+UTM46TgHqwKdmuuHNcefgQHDGuY8fItXa6+YhklUDGco84Dt+JuwlCPlhcgAy7AknlwCyCds1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4NkAnmkY; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=TLgIzBiwYaiYPtM4gOMBl22TVCVLWUpcekZisdJflVarHUjSh/+9NIdPAH5k4ih3gjguNJ1OJmct/jxBAcwZwV9aka49ibhMs+Fw22ug35iue3jGPZrIBnL7SFa7hv46E1QNJSnbRjusKkE2r+hBzmnEkvernALdTaUr7SrbPTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2iYahZLx; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-724e57da443so482080b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:34:53 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee237d13b4so523974a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:34:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757693; x=1733362493; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757695; x=1733362495; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=BuRB4e+BKWYqUslKZtGLdpJClrWdnWQipKEdNA7FnVs=;
-        b=4NkAnmkYCt7CUsa5AQP4QfLztlobNsS6EoqEVEL9nwBSULLFwQPIeTRqzkYgznE93W
-         yChG0T8U6Fk9tFkClsDni/lljHlzAlG10oGxopSAiHxlmEQ9kudBvnG+vKMJEBRybwRN
-         0y67J+MqNPN9BJgp/TrdjHFcSJDmg/3+VRtYuMPAGfDmRYOrPXyuEkkpGobOptW8Yiue
-         xwreUkKHXyksOOUHMcoMU0tjYFlQ8k1owSOc2o2WPBII2URPjs67i0cdokSJiYbKo1tW
-         DbyQsCltlx0TQln8kDXczVblTQ8LLidpuOV3bbpGYOxxhaHU1TV/xzEp8+InSX0X86LF
-         UQNQ==
+        bh=sp9eOls36k21Hyc+rIhk8dMf6G4N5uopLTx46a/Tt/Q=;
+        b=2iYahZLxGVrISXzfgvYlOjYNh12+C5zGT/ouXhYyV93ViL48KCf2d3k8KMjX/W/Ld0
+         yd0BhmAK849LMDWEKQ7xHGyu4iNmOS1UxIgkwaT0+3o5eTSMK6cyPtuQoVv5q63u2uXj
+         alAXvPA+KMn8+7tpAxsRzKmJS5uhPoemE0oG91qPg3/312C/NzyVFdITYHxCJkyLPusC
+         2vhOAE7mr6zYp5a6VNEbWm41dVTgNwBi19iUdv143Fo7dSasaeF83obhLbFMBY2ticTM
+         i3QeIhlvEQjxGLOXbNPW23C6UsWfL8R4GhafMjtDQRU5+dBq0+vHPRxbHB57witJNFhW
+         M6/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757693; x=1733362493;
+        d=1e100.net; s=20230601; t=1732757695; x=1733362495;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BuRB4e+BKWYqUslKZtGLdpJClrWdnWQipKEdNA7FnVs=;
-        b=YFMWxN8x5JfjYpTNi0t5vM3D9OjV174XxNOph4LdiGl9wAMN+A8vNaqa/Yt5TtkwaL
-         pmBh65Qbj4VjBKIM6vmcfbDa3QBMfuoxYnDnlZB4TDyEbC5je2HGBGhhpTa2f0m6/J9j
-         JZIA9stKbFDeg54xAqIWGAs9fD2FFKbecf1HrrS7FShC9stKB61p1K9HodZhGpcsPgNS
-         Uhu2rp3qHXrTW7arBeiCoNTiT+QMhED5RPffj5XXuH9ekeiLMtU8LWUUDKdFO/UQzYPe
-         NmwxF3PigJmjNdarCw58BVsii8R0ZhPpVosBWYpOtK+oj+0YWjpMuW1gEOFSsfhIAFKv
-         vo4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWIx0xYDfNDgjk/vgfrqQVZUZNou5P7DxSaiepPIBdSPPyZyspmoQ46HSuTxUVXbDkrT9QPPIPpjz/qJr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqG3hPG4E9NooiZGBxlz3UZ3ZcINlosRi6iC/adFYnTO0c6FfY
-	opyWXr40dY8DayLpOQgW1YPTh9QR4n4HvVXBO5PX7r1Jz0+JctC/8CxBcyOW6nUJYNx9SIGMFYh
-	sNA==
-X-Google-Smtp-Source: AGHT+IFqVKIMc2zms0SLeFnndp4IUez32dpv4m6eZYt8umTpWMW5ImU5nw07yWuaWXpp5oat3E/hS7dsII8=
-X-Received: from pfbjc41.prod.google.com ([2002:a05:6a00:6ca9:b0:724:eb96:cf5c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2d20:b0:71d:f4ef:6b3a
- with SMTP id d2e1a72fcca58-7253013e407mr7248277b3a.21.1732757693288; Wed, 27
- Nov 2024 17:34:53 -0800 (PST)
+        bh=sp9eOls36k21Hyc+rIhk8dMf6G4N5uopLTx46a/Tt/Q=;
+        b=UKxrpXi8JVJLyKUh6dns+y2HB2xolAdzdVT+96q2NGugVh95164gUZstFv9RsGPmpB
+         jpyXrPeT/5NmCCUzrNmwB/+uBPydqQHQHG7hQps+qaJbktcFHc6q1hCmv+N24FNbs1oQ
+         Wk5RJstQ1cjZcUZmXg+To6TmEEAz0p9P0qHk+i9/8rq8RXTPsyfw56vMABB1K9uyhkHr
+         Whye1GrVJ88G8tHiEjJOh3w/PHv01CBUZ3oiypL67Esy3Wbku0zZQxXHtHxi5ceFc2es
+         6culanxcabTYeFyKdMjeofmuPYoR95apsMsYTJJ0hFUiyD8/SHcGsqGeqDv/rHV9RC32
+         ModQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVScQ+yowEN3vcyxBgu2bRJSe+5/jdZjDbr9eTaGY8z9gFlQyyTauiX3c7EIGA0rxktvBr9JykZmwyuxFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEEhoRRXydJVAbOcT07ddYZCdogYe1xGKlJp8rgFkwCJMp7T2M
+	3EbZJrrNXJn+NZY77zo7HcjnEXtzcoNTiFV5s8fTZDxwTn5h9L0E0ROc6PX7n/rvEKHqCbF1Aqt
+	C/A==
+X-Google-Smtp-Source: AGHT+IGO9Q3kCgpJXKULD4MEqTnIQSGE8dD295rZZOUbRTv4NavzTlV2QtpqP0cKFjK70el4RN+9Yiup058=
+X-Received: from pjbmf12.prod.google.com ([2002:a17:90b:184c:b0:2d8:8d32:2ea3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:35c9:b0:2ea:4a6b:79d1
+ with SMTP id 98e67ed59e1d1-2ee08eb2bdfmr7008969a91.11.1732757695158; Wed, 27
+ Nov 2024 17:34:55 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:33:39 -0800
+Date: Wed, 27 Nov 2024 17:33:40 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-13-seanjc@google.com>
-Subject: [PATCH v3 12/57] KVM: x86: Drop now-redundant MAXPHYADDR and GPA rsvd
- bits from vCPU creation
+Message-ID: <20241128013424.4096668-14-seanjc@google.com>
+Subject: [PATCH v3 13/57] KVM: x86: Disallow KVM_CAP_X86_DISABLE_EXITS after
+ vCPU creation
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -89,34 +89,59 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Drop the manual initialization of maxphyaddr and reserved_gpa_bits during
-vCPU creation now that kvm_arch_vcpu_create() unconditionally invokes
-kvm_vcpu_after_set_cpuid(), which handles all such CPUID caching.
+Reject KVM_CAP_X86_DISABLE_EXITS if vCPUs have been created, as disabling
+PAUSE/MWAIT/HLT exits after vCPUs have been created is broken and useless,
+e.g. except for PAUSE on SVM, the relevant intercepts aren't updated after
+vCPU creation.  vCPUs may also end up with an inconsistent configuration
+if exits are disabled between creation of multiple vCPUs.
 
-None of the helpers between the existing code in kvm_arch_vcpu_create()
-and the call to kvm_vcpu_after_set_cpuid() consume maxphyaddr or
-reserved_gpa_bits (though auditing vmx_vcpu_create() and svm_vcpu_create()
-isn't exactly easy).
-
+Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
+Link: https://lore.kernel.org/all/9227068821b275ac547eb2ede09ec65d2281fe07.1680179693.git.houwenlong.hwl@antgroup.com
+Link: https://lore.kernel.org/all/20230121020738.2973-2-kechenl@nvidia.com
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/virt/kvm/api.rst | 1 +
+ arch/x86/kvm/x86.c             | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 454c2aaa155e..bbe445e6c113 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -7670,6 +7670,7 @@ branch to guests' 0x200 interrupt vector.
+ :Architectures: x86
+ :Parameters: args[0] defines which exits are disabled
+ :Returns: 0 on success, -EINVAL when args[0] contains invalid exits
++          or if any vCPUs have already been created
+ 
+ Valid bits in args[0] are::
+ 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5c6ade1f976e..d6a182d94c6f 100644
+index d6a182d94c6f..c517d26f2c5b 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -12258,9 +12258,6 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 		goto free_emulate_ctxt;
- 	}
+@@ -6531,6 +6531,10 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 		if (cap->args[0] & ~KVM_X86_DISABLE_VALID_EXITS)
+ 			break;
  
--	vcpu->arch.maxphyaddr = cpuid_query_maxphyaddr(vcpu);
--	vcpu->arch.reserved_gpa_bits = kvm_vcpu_reserved_gpa_bits_raw(vcpu);
--
- 	kvm_async_pf_hash_reset(vcpu);
++		mutex_lock(&kvm->lock);
++		if (kvm->created_vcpus)
++			goto disable_exits_unlock;
++
+ 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+ 			kvm->arch.pause_in_guest = true;
  
- 	if (kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_STUFF_FEATURE_MSRS)) {
+@@ -6552,6 +6556,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 		}
+ 
+ 		r = 0;
++disable_exits_unlock:
++		mutex_unlock(&kvm->lock);
+ 		break;
+ 	case KVM_CAP_MSR_PLATFORM_INFO:
+ 		kvm->arch.guest_can_read_msr_platform_info = cap->args[0];
 -- 
 2.47.0.338.g60cca15819-goog
 
