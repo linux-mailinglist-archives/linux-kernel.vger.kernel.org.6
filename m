@@ -1,116 +1,129 @@
-Return-Path: <linux-kernel+bounces-425109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539F59DBD92
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:29:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448FC9DBD96
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:30:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9989B21876
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEA0280719
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0BF1C760A;
-	Thu, 28 Nov 2024 22:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5F01C4A0A;
+	Thu, 28 Nov 2024 22:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRIDjeSq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q+M35+U4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jy6gEkUA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3981C2439;
-	Thu, 28 Nov 2024 22:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CFB1C07FC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 22:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732832963; cv=none; b=sXS5Nl4913AnUA6VfLpP7rC1ZeG67iK+FJk5QgX8L+XTd8LBnh+JC0qP+NUlU4oqnY730IwviGG7IzzM9NZ686eQ9VdDalVkURjdZOW0krON+h3RMJlKgWBgNsWOEdLDQ3S15p26IAHaNfw7aEuXAaFPV7Ert5ez3w2Y2UMpnLY=
+	t=1732833030; cv=none; b=b0ntSkFs7W9fWydbmLcnuCwD/y/1Q5HSoqLcAXipjbyemHDuW55E7FEK/9KD8gVUWxQw5N/uzOCUr7tw555fJEWOfnypCrFPWgjoM6nqWs4aN1klWqiCc61TigeUC0iErhbyYxXFV4fvpGF5CBgY0HH6QzClLIE/1PLoc3Mur0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732832963; c=relaxed/simple;
-	bh=4El0kQkrRlr/CEy5dm9S79SsYdqflPKE+Y43lCIJcaQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=s93V7nKR6h9wjhP48e8BGzXiyMIbcGF0amBe3U+v2FVVZKo+XM/8WLtE+I0p/GaJ614hm3kkyiQ6PfMql3SB7r4ZmCvwRTfds7zMuH8wdKrSWWy89bvb2yeNb5l8pKFWx2aUWSdIork/t8tRc+Y3mlq6r5CcjLm51PsLPDs8Khg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRIDjeSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8706C4CEDC;
-	Thu, 28 Nov 2024 22:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732832962;
-	bh=4El0kQkrRlr/CEy5dm9S79SsYdqflPKE+Y43lCIJcaQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RRIDjeSqA2rCKFF8mH1XnzXNys8U+yBHRLgIuRu+jIKe820DO8pVpWcGttpEBCgHM
-	 Q+9ftI8ucz+/8zdmrZ0305RnFusesU6uXg7LC3NKh+oMazYhsbwkQQs7Bhp9tWEK8W
-	 fX0Lbe8PEac3RX578fYgTQNkaSSbHTH86YU8R8T3OU2Jv4E31Kr6ajtr+AxnruoULc
-	 GLr1paPX2seHEHdqRbdNyfjKTzkcrjpQrn6OoYihrJ7a6lDyhez8fwPbyWjlMvumlw
-	 b9Z/HmyBbTlaSC5y/wILTDDUQdsSgBjmqk0hl53VBhh3CukRx+5MUMGH+ZSOVzzORP
-	 5dLW1fYntTNdQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECD9D70DFB;
-	Thu, 28 Nov 2024 22:29:22 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Thu, 28 Nov 2024 23:29:19 +0100
-Subject: [PATCH v2 4/4] MAINTAINERS: Add entries for Apple Z2 touchscreen
- driver
+	s=arc-20240116; t=1732833030; c=relaxed/simple;
+	bh=V5LqTFj3pTnrJIuI6CTxWEZLd4p1kHg5uq0pBG3OVDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YZ7U75U7IqFm/KCFqbR8bDVpUlfj1dm4fUd7GqRhN3gla0qDhvsT7pHKJPU3hYO2YQ+OvnKuBqoKkZMvESnklDZzKGic1R1YGYDwpeGkOYU9z8q6vk9YDlszc51DB8hEwPaIfndmo1tjwSqoW/DAmu9meDALUCPBBb/gffKtpzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q+M35+U4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jy6gEkUA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732833025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J3sbD5qeCce8Mp51X8QSS0RfPOqLlfs1BVizRklsytE=;
+	b=q+M35+U4IdwpJrvjBo6knTDN6ucuXHJLNCb5O9FNIrUt5e3nYdnJ8aXy53FkhR0Tf7qJTA
+	Q6BxwAi15VrzFFB/kuiPCTbqxeJhvdy4UPivukcQouapQUX7WK6Ynvf4PCDVLGMXhxfF+e
+	e54lVVFpXUFe6vQRGCCn9EcPLxloPj0EPQ7FzM+/A5A/j1KfwZc6Rnc5SKKdtYVk6xIVP1
+	5/dkUTn7oS848RE0jNOImO5eRj0mjEAnUnTB4q3BFMxb+phRUINI8UVDFDlzaUABkB1A0/
+	4RRWLe/H7pkqAoHBOExK5gy8wiaQ78YfLaDSBYRBAn3myVvnphfJYMf4XOlzFA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732833025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J3sbD5qeCce8Mp51X8QSS0RfPOqLlfs1BVizRklsytE=;
+	b=jy6gEkUAVpVHWpMiVVdV3JYtYwQxVHaD/cJA78dxhbNRhYD3ml9DaSxyTj3GKBSM8fzIiy
+	Bg0SQ1yD2d5h9IDg==
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v1 00/13] tools/x86/kcpuid: Update to x86-cpuid-db v2.0
+Date: Thu, 28 Nov 2024 23:29:35 +0100
+Message-ID: <20241128222948.579920-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241128-z2-v2-4-76cc59bbf117@gmail.com>
-References: <20241128-z2-v2-0-76cc59bbf117@gmail.com>
-In-Reply-To: <20241128-z2-v2-0-76cc59bbf117@gmail.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sasha Finkelstein <fnkl.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732832961; l=1218;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=5VgCgIUSJDHHHfv8AULS59dx+V2ZROTDT6FjcyDo/sU=;
- b=HtDNmYJVMl2VVv0e+byXazpK9k6qx67ciN7CUSgAAwxIp3haTuA0Y6Yf0JbC9Hk98uQ35misb
- PWbN/QuiEy+BH0TyAaNFcMfIGsJMBhjOMX5LATZvbi8PZ85csd4cXJ8
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Hi,
 
-Add the MAINTAINERS entries for the driver
+This series updates kcpuid's bitfields CSV file to version v2.0, as
+generated by the x86-cpuid-db project.
 
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Version 2.0 of the CSV file introduces new bitfields for leaves 0x7 and
+0x0x80000001.  It also introduces new leaves for Transmeta (0x3,
+0x80860000 => 0x80860007) and Centaur/Zhaoxin (0xc0000000 => 0xc0000001).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7f0170977013889ca7c39b17727ba36d32e92dc..9f75fff12fa1912b70251cade845d6b3d5e28c48 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2166,6 +2166,7 @@ F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
- F:	Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
- F:	Documentation/devicetree/bindings/dma/apple,admac.yaml
- F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
-+F:	Documentation/devicetree/bindings/input/touchscreen/apple,z2-multitouch.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
- F:	Documentation/devicetree/bindings/iommu/apple,dart.yaml
- F:	Documentation/devicetree/bindings/iommu/apple,sart.yaml
-@@ -2186,6 +2187,7 @@ F:	drivers/dma/apple-admac.c
- F:	drivers/pmdomain/apple/
- F:	drivers/i2c/busses/i2c-pasemi-core.c
- F:	drivers/i2c/busses/i2c-pasemi-platform.c
-+F:	drivers/input/touchscreen/apple_z2.c
- F:	drivers/iommu/apple-dart.c
- F:	drivers/iommu/io-pgtable-dart.c
- F:	drivers/irqchip/irq-apple-aic.c
+Summary:
 
--- 
-2.47.1
+* Patch 1 fixes spdxcheck failures by adding CC0-1.0 to LICENSES/.
 
+* Patch 3 is a generic kcpuid error handling bugfix, with patch 2 as its
+  prepraration.  Thanks to Remington Brasga for the bug report.
 
+* Patches 4-6 are preparatory kcpuid cleanups.
+
+* Patches 7-11 introduces rudimentary x86 vendor detection and filtering
+  to kcpuid, as the CSV file will be updated with indices that are
+  exclusive to certain vendors.
+
+* Patch 12 updates the CSV file to x86-cpuid-db v2.0.
+
+* Patch 13 puts the whole kcpuid tool under MAINTAINERS' X86 CPUID entry
+  since changes to the bitfields CSV may require updates to the kcpuid
+  code (as in this patch queue).  I would also like to have both myself
+  and the x86-cpuid mailing list CCed for future kcpuid patches.
+
+8<-------
+
+Ahmed S. Darwish (13):
+  LICENSES: Add Creative Commons Zero v1.0 Universal
+  tools/x86/kcpuid: Reorder header includes
+  tools/x86/kcpuid: Fix error handling
+  tools/x86/kcpuid: Remove unused local variable
+  tools/x86/kcpuid: Remove unused global variable
+  tools/x86/kcpuid: Simplify usage() handling
+  tools/x86/kcpuid: Prepare for more index ranges
+  tools/x86/kcpuid: Extend index mask macro
+  tools/x86/kcpuid: Add rudimentary vendors detection
+  tools/x86/kcpuid: Scan valid cpuid ranges only
+  tools/x86/kcpuid: Add Transmeta and Centaur ranges
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.0
+  MAINTAINERS: Include kcpuid under X86 CPUID entry
+
+ LICENSES/deprecated/CC0-1.0     | 129 +++++++
+ MAINTAINERS                     |   2 +-
+ tools/arch/x86/kcpuid/cpuid.csv | 648 +++++++++++++++++++-------------
+ tools/arch/x86/kcpuid/kcpuid.c  | 268 +++++++++----
+ 4 files changed, 697 insertions(+), 350 deletions(-)
+ create mode 100644 LICENSES/deprecated/CC0-1.0
+
+base-commit: adc218676eef25575469234709c2d87185ca223a
+--
+2.46.2
 
