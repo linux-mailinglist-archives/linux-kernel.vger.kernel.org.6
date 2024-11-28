@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-424467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5139DB4C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:28:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 753B69DB4C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2466282495
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:28:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0115B22A85
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D76194C6A;
-	Thu, 28 Nov 2024 09:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA681198845;
+	Thu, 28 Nov 2024 09:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mr7sntZF"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="roZPrRia"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A6819049B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E56192B94
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732786086; cv=none; b=bwZ0mmCRcGbvW62YNzzFp4BYklspW7lhw5W72Sse4sGwD1ZXXCjjO0gw2fUDUC/YJDbzWAxQK2XAllrBIWYYVqXCyX/JJ4Lx7BYx7EzMntZcJzHorLpa6UCcYmxgnE7l2x5XZLPdz+jfpevW822IKxcbu57NRSqqhep8c2cz0Wg=
+	t=1732786088; cv=none; b=QAmr9i079+PAHVi+NE3+7IBEBTDR3736KuvAfdZt1iNUSpzb8bguTS7jWu+rpgrsWX3uKwytZTJIWq81WVBcS4uSWXrFOuW8QhBr8XY+/GTv5YFirM17SgMXEvRgKEhZGE79pYSXAYC45DHrOHa3DaUpAaL1DYdlKy79ar7PHmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732786086; c=relaxed/simple;
-	bh=kMEX057xnOKxanvXKojIuYognrIC/ESd92hfo61DxoQ=;
+	s=arc-20240116; t=1732786088; c=relaxed/simple;
+	bh=dWnM/7fMGmDUt4fGQfcYcFzuYHJ6obAGrUXWMxvqB6s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=naPJsW1tuG4nt4byuL2a+94UmXSp/0KXHtm5i35vvQPgz/m+htuIvk53Xct0CNkq9dXhWHRCm260hQFgeaQvAQR9hFSsqtpv9hnB7aOzBZOb0Cfo2yJRYdIbJ+VZQr01B+p4CcLoIsB8VEDudA+otGjmHKHYMc924gE6PgpksQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mr7sntZF; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=MbnYOf3cbNuLB3itQjh89B10N9MWWkNwVnNUbColCXBEyuNUn+B+wOmo3v75Zq++FAZs/8Znof3QlZ/1NpkzQr7azLe8vp69ZbQ/XJ7hNH3UpNLpPQPD997fHph2TXwxXSMhLCm9cVam5MZ+TNBwbAJOGmVR5H1SQrTDJRfAcjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=roZPrRia; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a7ee3d60so9955085e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:28:03 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a752140eso5040495e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:28:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732786082; x=1733390882; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732786084; x=1733390884; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0RJnvdeirAoOPRQXdey1AZfjeU4m7OozAEH8LULGv+c=;
-        b=Mr7sntZFzTYuWmJlTx3GPATwLbfA7tkPVAx1VeHZ7jGbZ1VMwx2akeSa56Jh+y8IWR
-         6FG26S0WUZ3Dnp6Hbzh9pHYx/t99+IK15Psyq4qjKg+WgXVXI/gDhpCTwoECeaZVuprR
-         z/rM/vqiPw1WLPzdOmwTY9F2S7B6O80bjRyy/SBNjRfTvy0jkfhCFbhAmWgHbLoWC193
-         Y9mQ+fQ4u6VeMyQpxWZpRdRMvnoT0IZcaAKtgh/PgwDOoG/Ewp2pBQXIUkEEY9XYPEHt
-         sINvWgBjZ09Fe65cYEyGiL8KXxZHu91aIATuBdJbikZackOAdsWoXC0qipO8BbgZ9cBA
-         DaqA==
+        bh=1sCmgeQzfYei2G42vQ2RJNQKdvbxfWwnCrC/7TrOSpU=;
+        b=roZPrRiaWXfeuIq8NV+0/cdfuOkskilTg1ejYrgg0O9Fe3vkJjz7SSGWxHx37RmBFc
+         JhjzDWMATznZjydg7gzKgtOtqS3RVgdfjNiYQP4M0InMoDwk7IcHT4pZxXisY4dbIfZ0
+         yDUIR8S8X0ct4SCPUT2Uce8pXP9WXFvhFcgfskm5w6qe+rfGZf9HWxxndey3RF1Y1+fI
+         Z4X94ImJWAzU5hXQLSRAVdz4X+y6V9e5NwarKPHNNnS1ITZB9nvm5MvZMCInJb1mXwCg
+         +Ak6p2HH41RbOE+eaAmKh556Q/qM/rnXkh5GZQJaChn2GMrRPAzsHVazI9Yuu8kkjHJa
+         DYxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732786082; x=1733390882;
+        d=1e100.net; s=20230601; t=1732786084; x=1733390884;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0RJnvdeirAoOPRQXdey1AZfjeU4m7OozAEH8LULGv+c=;
-        b=CJX0rCzNr2RIEdSeazxNDZ9lX+29zUtyn5DGCWBSq+nwq/hfoOvdOX5LTJbaYIqlIQ
-         p4sf/mbseT4K55/LSS84HcBmTRW9uR993G7vg5n1dWR6DogO/eb01Qer59X0n4BMqpPK
-         TdyhtKTc7ZdeMaYZ+K7TUG8Rvmu0VcldrpXUnGkWLdhHAAs9ti50jTcubbh91XEXHPq8
-         9bo3M8Y3d/Bxt8RWAH4RO84YDMA2Y7zqG51c3Ab519y0YXPm8XK3tdzUalKE/zK5UK0u
-         PKuo6pBiqn7RMbG4f28uiTsQ3lmtQIltFurhauawd+gLihgOHLu+r8kLJit6WcoxJknd
-         QLDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZbN8xXfNd/5M35zXqrdE/QvBH8fhc2yuNCOr6r4U/tguHeXljeMvsg/XxOfFmHeCOWewn+rAnnSyjBWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIc6shxWIkuYKEpWQbUMR2T8DdhOQ6x5v8ds8GfJgnB3xnn2mI
-	9PE839IWxLQfQkLXsjAsQNxrvtuwXwTaS2RsLXroWB5Sc96Fp3i7pboNGtTyvFs=
-X-Gm-Gg: ASbGncu1qbjWvrCDb1VoKycavPGZ+iiStUG10pWZUb1pv1OL1T7cp1AYU182JDxc1NO
-	xcEz0FWZdSmAlwIwPZD377dhSF2s9HpsZVm0JzFDVrieo1MQAKdECcvu5nT1RN+lXBJiVfKFAav
-	f7p7HXJJ6fqEhbBaHgsQcmASJCgelbn5XB6t3Y5rfV9hKjUj5mdRq53GD8wphZZVBJbvpfpnxPC
-	tufF3bh1RnyXSJ8U9mH3zf+NKKuskpQRR3sVG9KGXrv4DZKYm6+ataHmf0=
-X-Google-Smtp-Source: AGHT+IG5x7UXSamlxr4tvQL+ndZOAUhaH5l1vZWFAEf6TvRbC1lb6JqxxLg43El4hkzXQjGt/O1h+Q==
-X-Received: by 2002:a05:600c:3589:b0:431:15f1:421d with SMTP id 5b1f17b1804b1-434afc44774mr20000965e9.16.1732786082532;
-        Thu, 28 Nov 2024 01:28:02 -0800 (PST)
+        bh=1sCmgeQzfYei2G42vQ2RJNQKdvbxfWwnCrC/7TrOSpU=;
+        b=AzZZvyUUeKLh74pPf0RCZ2ztvEInEYK0Vi9fOzDBeoOHGDrSoM8vz+Vy/EZAYQe/xP
+         oaRsWs83MERKL3/rJ1cfPVahmFiVfZLyQVgOgVyPbCyrt3jKZeKWYq6KnumoJZBbm0Vi
+         ITHhYnOyVNZdmF5l9zUS9MApBFYPhJMfBP60sUAP5owtxCijbbmVFFNV/7m+8Ziw72WQ
+         g7/0N7U1AWfNGBLIgpZNz2BL0HFmT9Zov8oScRjnoL5BPjEkdvO27R6+Gnly9JTWEsdJ
+         GY8A32t6nYTC7XXXeUxuGyvGbQthTXt1WPgc2+lp9RA36KGiR2EFi3dod6EgY3R7g9qV
+         VxcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVC+PBZv+3/oQl5qraM1CJHbfNDHhHm3O9QxFdK8fc9EeasV0ZChv5NHiQjk5z1dxoPXHKF7d4IdgExYR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxGlbQ/9pA/nGprKoRwZuWD85KJsO7+L1Ehvqk6lp6K0po3AT1
+	yNQT7nYhhmRE3+12ieovPPsh9bxyOUON5GgdDO/oeT7p5XpHcSiaroYUFhCb3RU=
+X-Gm-Gg: ASbGncsXAstWE8//Ivvo/OIAh051y+ZbfSTjwffnYQexB0LrnNgoXFEbTUiRqvW+fUR
+	0DGTvwI6M+Q24vGvGN+fWY737SunA2MuIaTL+L9FWQQA3QXaBxEjvuylW7Ll5N8eR83nkeikW7T
+	oO64E/HCarcwbjsJ0IU2337c4RnryHM7ZGnn1ZYwxQ0qdOZ4uKqFTtjDb8a2hCGT3PKDPxL0HyE
+	HDNgzmSVGU9DOoSIN8LNZJlwqFoBWXpncv0R/UcD2sSQ8HqPFACOmFKoUg=
+X-Google-Smtp-Source: AGHT+IGbAZ8sOAp9ERSWKNx1W3oZeGtODmDr/HyIMa7lWX9KL1Icz6v5ae0QqXM0gzN9crt1RckdQw==
+X-Received: by 2002:a05:600c:3ba6:b0:434:9e63:faff with SMTP id 5b1f17b1804b1-434a9dbc41bmr58648595e9.2.1732786084085;
+        Thu, 28 Nov 2024 01:28:04 -0800 (PST)
 Received: from vingu-cube.. ([2a01:e0a:f:6020:c0d5:15dc:1ec9:3f30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e4d42sm47078885e9.37.2024.11.28.01.28.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e4d42sm47078885e9.37.2024.11.28.01.28.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 01:28:01 -0800 (PST)
+        Thu, 28 Nov 2024 01:28:02 -0800 (PST)
 From: Vincent Guittot <vincent.guittot@linaro.org>
 To: mingo@redhat.com,
 	peterz@infradead.org,
@@ -85,9 +85,9 @@ Cc: kprateek.nayak@amd.com,
 	efault@gmx.de,
 	luis.machado@arm.com,
 	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 5/9] sched/fair: Rename cfs_rq.nr_running into nr_enqueued
-Date: Thu, 28 Nov 2024 10:27:46 +0100
-Message-ID: <20241128092750.2541735-6-vincent.guittot@linaro.org>
+Subject: [PATCH 6/9] sched/fair: Removed unsued cfs_rq.h_nr_delayed
+Date: Thu, 28 Nov 2024 10:27:47 +0100
+Message-ID: <20241128092750.2541735-7-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241128092750.2541735-1-vincent.guittot@linaro.org>
 References: <20241128092750.2541735-1-vincent.guittot@linaro.org>
@@ -99,240 +99,242 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename cfs_rq.nr_running into cfs_rq.nr_enqueued which better reflects the
-reality as the value includes both the ready to run tasks and the delayed
-dequeue tasks.
+h_nr_delayed is not used anymore. We now have
+- h_nr_running which tracks tasks ready to run
+- h_nr_enqueued which tracks enqueued tasks either ready to run or delayed
+  dequeue
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/core.c  |  2 +-
- kernel/sched/debug.c |  2 +-
- kernel/sched/fair.c  | 38 +++++++++++++++++++-------------------
- kernel/sched/sched.h |  4 ++--
- 4 files changed, 23 insertions(+), 23 deletions(-)
+ kernel/sched/debug.c |  1 -
+ kernel/sched/fair.c  | 41 ++++++++++++++---------------------------
+ kernel/sched/sched.h |  1 -
+ 3 files changed, 14 insertions(+), 29 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 425739bbdc63..daaa20f01ad4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1341,7 +1341,7 @@ bool sched_can_stop_tick(struct rq *rq)
- 	if (scx_enabled() && !scx_can_stop_tick(rq))
- 		return false;
- 
--	if (rq->cfs.nr_running > 1)
-+	if (rq->cfs.nr_enqueued > 1)
- 		return false;
- 
- 	/*
 diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 0c8e21f9039c..8f5273043c16 100644
+index 8f5273043c16..84f623b9d4af 100644
 --- a/kernel/sched/debug.c
 +++ b/kernel/sched/debug.c
-@@ -843,7 +843,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- 			SPLIT_NS(right_vruntime));
- 	spread = right_vruntime - left_vruntime;
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "spread", SPLIT_NS(spread));
--	SEQ_printf(m, "  .%-30s: %d\n", "nr_running", cfs_rq->nr_running);
-+	SEQ_printf(m, "  .%-30s: %d\n", "nr_enqueued", cfs_rq->nr_enqueued);
+@@ -846,7 +846,6 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
+ 	SEQ_printf(m, "  .%-30s: %d\n", "nr_enqueued", cfs_rq->nr_enqueued);
  	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_running", cfs_rq->h_nr_running);
  	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_enqueued", cfs_rq->h_nr_enqueued);
- 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_delayed", cfs_rq->h_nr_delayed);
+-	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_delayed", cfs_rq->h_nr_delayed);
+ 	SEQ_printf(m, "  .%-30s: %d\n", "h_nr_idle",
+ 			cfs_rq->h_nr_idle);
+ 	SEQ_printf(m, "  .%-30s: %ld\n", "load", cfs_rq->load.weight);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 65492399f200..a96a771d8e61 100644
+index a96a771d8e61..1b4f1b610543 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -915,7 +915,7 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
- 	 * We can safely skip eligibility check if there is only one entity
- 	 * in this cfs_rq, saving some cycles.
- 	 */
--	if (cfs_rq->nr_running == 1)
-+	if (cfs_rq->nr_enqueued == 1)
- 		return curr && curr->on_rq ? curr : se;
+@@ -5468,21 +5468,18 @@ static void set_delayed(struct sched_entity *se)
+ 		struct cfs_rq *cfs_rq = cfs_rq_of(se);
  
- 	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
-@@ -1247,7 +1247,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 
- 	account_cfs_rq_runtime(cfs_rq, delta_exec);
- 
--	if (cfs_rq->nr_running == 1)
-+	if (cfs_rq->nr_enqueued == 1)
- 		return;
- 
- 	if (resched || did_preempt_short(cfs_rq, curr)) {
-@@ -3673,7 +3673,7 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 		list_add(&se->group_node, &rq->cfs_tasks);
+ 		cfs_rq->h_nr_running--;
+-		cfs_rq->h_nr_delayed++;
+ 		if (cfs_rq_throttled(cfs_rq))
+ 			break;
  	}
- #endif
--	cfs_rq->nr_running++;
-+	cfs_rq->nr_enqueued++;
  }
  
- static void
-@@ -3686,7 +3686,7 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 		list_del_init(&se->group_node);
+-static void clear_delayed(struct sched_entity *se, bool running)
++static void clear_delayed(struct sched_entity *se)
+ {
+ 	se->sched_delayed = 0;
+ 	for_each_sched_entity(se) {
+ 		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 
+-		if (running)
+-			cfs_rq->h_nr_running++;
+-		cfs_rq->h_nr_delayed--;
++		cfs_rq->h_nr_running++;
+ 		if (cfs_rq_throttled(cfs_rq))
+ 			break;
  	}
- #endif
--	cfs_rq->nr_running--;
-+	cfs_rq->nr_enqueued--;
+@@ -5490,7 +5487,7 @@ static void clear_delayed(struct sched_entity *se, bool running)
+ 
+ static inline void finish_delayed_dequeue_entity(struct sched_entity *se)
+ {
+-	clear_delayed(se, false);
++	se->sched_delayed = 0;
+ 	if (sched_feat(DELAY_ZERO) && se->vlag > 0)
+ 		se->vlag = 0;
+ }
+@@ -5934,7 +5931,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct rq *rq = rq_of(cfs_rq);
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+ 	struct sched_entity *se;
+-	long running_delta, enqueued_delta, idle_delta, delayed_delta, dequeue = 1;
++	long running_delta, enqueued_delta, idle_delta, dequeue = 1;
+ 	long rq_h_nr_enqueued = rq->cfs.h_nr_enqueued;
+ 
+ 	raw_spin_lock(&cfs_b->lock);
+@@ -5968,7 +5965,6 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	running_delta = cfs_rq->h_nr_running;
+ 	enqueued_delta = cfs_rq->h_nr_enqueued;
+ 	idle_delta = cfs_rq->h_nr_idle;
+-	delayed_delta = cfs_rq->h_nr_delayed;
+ 	for_each_sched_entity(se) {
+ 		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+ 		int flags;
+@@ -5993,7 +5989,6 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		qcfs_rq->h_nr_running -= running_delta;
+ 		qcfs_rq->h_nr_enqueued -= enqueued_delta;
+ 		qcfs_rq->h_nr_idle -= idle_delta;
+-		qcfs_rq->h_nr_delayed -= delayed_delta;
+ 
+ 		if (qcfs_rq->load.weight) {
+ 			/* Avoid re-evaluating load for this entity: */
+@@ -6017,7 +6012,6 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		qcfs_rq->h_nr_running -= running_delta;
+ 		qcfs_rq->h_nr_enqueued -= enqueued_delta;
+ 		qcfs_rq->h_nr_idle -= idle_delta;
+-		qcfs_rq->h_nr_delayed -= delayed_delta;
+ 	}
+ 
+ 	/* At this point se is NULL and we are at root level*/
+@@ -6043,7 +6037,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct rq *rq = rq_of(cfs_rq);
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+ 	struct sched_entity *se;
+-	long running_delta, enqueued_delta, idle_delta, delayed_delta;
++	long running_delta, enqueued_delta, idle_delta;
+ 	long rq_h_nr_enqueued = rq->cfs.h_nr_enqueued;
+ 
+ 	se = cfs_rq->tg->se[cpu_of(rq)];
+@@ -6080,7 +6074,6 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	running_delta = cfs_rq->h_nr_running;
+ 	enqueued_delta = cfs_rq->h_nr_enqueued;
+ 	idle_delta = cfs_rq->h_nr_idle;
+-	delayed_delta = cfs_rq->h_nr_delayed;
+ 	for_each_sched_entity(se) {
+ 		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+ 
+@@ -6099,7 +6092,6 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		qcfs_rq->h_nr_running += running_delta;
+ 		qcfs_rq->h_nr_enqueued += enqueued_delta;
+ 		qcfs_rq->h_nr_idle += idle_delta;
+-		qcfs_rq->h_nr_delayed += delayed_delta;
+ 
+ 		/* end evaluation on encountering a throttled cfs_rq */
+ 		if (cfs_rq_throttled(qcfs_rq))
+@@ -6118,7 +6110,6 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		qcfs_rq->h_nr_running += running_delta;
+ 		qcfs_rq->h_nr_enqueued += enqueued_delta;
+ 		qcfs_rq->h_nr_idle += idle_delta;
+-		qcfs_rq->h_nr_delayed += delayed_delta;
+ 
+ 		/* end evaluation on encountering a throttled cfs_rq */
+ 		if (cfs_rq_throttled(qcfs_rq))
+@@ -6972,7 +6963,7 @@ requeue_delayed_entity(struct sched_entity *se)
+ 	}
+ 
+ 	update_load_avg(cfs_rq, se, 0);
+-	clear_delayed(se, true);
++	clear_delayed(se);
  }
  
  /*
-@@ -5220,7 +5220,7 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+@@ -6986,7 +6977,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	struct cfs_rq *cfs_rq;
+ 	struct sched_entity *se = &p->se;
+ 	int h_nr_idle = task_has_idle_policy(p);
+-	int h_nr_delayed = 0;
++	int se_delayed = 0;
+ 	int task_new = !(flags & ENQUEUE_WAKEUP);
+ 	int rq_h_nr_enqueued = rq->cfs.h_nr_enqueued;
+ 	u64 slice = 0;
+@@ -7014,7 +7005,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
  
- static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
- {
--	return !cfs_rq->nr_running;
-+	return !cfs_rq->nr_enqueued;
- }
+ 	if (task_new)
+-		h_nr_delayed = !!se->sched_delayed;
++		se_delayed = !!se->sched_delayed;
  
- #define UPDATE_TG	0x0
-@@ -5276,7 +5276,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 *
- 	 * EEVDF: placement strategy #1 / #2
- 	 */
--	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running && se->vlag) {
-+	if (sched_feat(PLACE_LAG) && cfs_rq->nr_enqueued && se->vlag) {
- 		struct sched_entity *curr = cfs_rq->curr;
- 		unsigned long load;
+ 	for_each_sched_entity(se) {
+ 		if (se->on_rq) {
+@@ -7036,11 +7027,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		enqueue_entity(cfs_rq, se, flags);
+ 		slice = cfs_rq_min_slice(cfs_rq);
  
-@@ -5425,7 +5425,7 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 		__enqueue_entity(cfs_rq, se);
- 	se->on_rq = 1;
+-		if (!h_nr_delayed)
++		if (!se_delayed)
+ 			cfs_rq->h_nr_running++;
+ 		cfs_rq->h_nr_enqueued++;
+ 		cfs_rq->h_nr_idle += h_nr_idle;
+-		cfs_rq->h_nr_delayed += h_nr_delayed;
  
--	if (cfs_rq->nr_running == 1) {
-+	if (cfs_rq->nr_enqueued == 1) {
- 		check_enqueue_throttle(cfs_rq);
- 		if (!throttled_hierarchy(cfs_rq)) {
- 			list_add_leaf_cfs_rq(cfs_rq);
-@@ -5573,7 +5573,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	if (flags & DEQUEUE_DELAYED)
- 		finish_delayed_dequeue_entity(se);
+ 		if (cfs_rq_is_idle(cfs_rq))
+ 			h_nr_idle = 1;
+@@ -7062,11 +7052,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		se->slice = slice;
+ 		slice = cfs_rq_min_slice(cfs_rq);
  
--	if (cfs_rq->nr_running == 0)
-+	if (cfs_rq->nr_enqueued == 0)
- 		update_idle_cfs_rq_clock_pelt(cfs_rq);
+-		if (!h_nr_delayed)
++		if (!se_delayed)
+ 			cfs_rq->h_nr_running++;
+ 		cfs_rq->h_nr_enqueued++;
+ 		cfs_rq->h_nr_idle += h_nr_idle;
+-		cfs_rq->h_nr_delayed += h_nr_delayed;
  
- 	return true;
-@@ -5921,7 +5921,7 @@ static int tg_throttle_down(struct task_group *tg, void *data)
- 		list_del_leaf_cfs_rq(cfs_rq);
+ 		if (cfs_rq_is_idle(cfs_rq))
+ 			h_nr_idle = 1;
+@@ -7129,7 +7118,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 	struct task_struct *p = NULL;
+ 	int h_nr_idle = 0;
+ 	int h_nr_running = 0;
+-	int h_nr_delayed = 0;
++	int se_delayed = 0;
+ 	struct cfs_rq *cfs_rq;
+ 	u64 slice = 0;
  
- 		SCHED_WARN_ON(cfs_rq->throttled_clock_self);
--		if (cfs_rq->nr_running)
-+		if (cfs_rq->nr_enqueued)
- 			cfs_rq->throttled_clock_self = rq_clock(rq);
- 	}
- 	cfs_rq->throttle_count++;
-@@ -6033,7 +6033,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 	 */
- 	cfs_rq->throttled = 1;
- 	SCHED_WARN_ON(cfs_rq->throttled_clock);
--	if (cfs_rq->nr_running)
-+	if (cfs_rq->nr_enqueued)
- 		cfs_rq->throttled_clock = rq_clock(rq);
- 	return true;
- }
-@@ -6136,7 +6136,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	assert_list_leaf_cfs_rq(rq);
- 
- 	/* Determine whether we need to wake up potentially idle CPU: */
--	if (rq->curr == rq->idle && rq->cfs.nr_running)
-+	if (rq->curr == rq->idle && rq->cfs.nr_enqueued)
- 		resched_curr(rq);
- }
- 
-@@ -6437,7 +6437,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	if (!cfs_bandwidth_used())
- 		return;
- 
--	if (!cfs_rq->runtime_enabled || cfs_rq->nr_running)
-+	if (!cfs_rq->runtime_enabled || cfs_rq->nr_enqueued)
- 		return;
- 
- 	__return_cfs_rq_runtime(cfs_rq);
-@@ -6960,14 +6960,14 @@ requeue_delayed_entity(struct sched_entity *se)
- 	if (sched_feat(DELAY_ZERO)) {
- 		update_entity_lag(cfs_rq, se);
- 		if (se->vlag > 0) {
--			cfs_rq->nr_running--;
-+			cfs_rq->nr_enqueued--;
- 			if (se != cfs_rq->curr)
- 				__dequeue_entity(cfs_rq, se);
- 			se->vlag = 0;
- 			place_entity(cfs_rq, se, 0);
- 			if (se != cfs_rq->curr)
- 				__enqueue_entity(cfs_rq, se);
--			cfs_rq->nr_running++;
-+			cfs_rq->nr_enqueued++;
+@@ -7138,7 +7127,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 		h_nr_running = 1;
+ 		h_nr_idle = task_has_idle_policy(p);
+ 		if (!task_sleep && !task_delayed)
+-			h_nr_delayed = !!se->sched_delayed;
++			se_delayed = !!se->sched_delayed;
+ 	} else {
+ 		cfs_rq = group_cfs_rq(se);
+ 		slice = cfs_rq_min_slice(cfs_rq);
+@@ -7154,11 +7143,10 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 			break;
  		}
- 	}
  
-@@ -8900,7 +8900,7 @@ static struct task_struct *pick_task_fair(struct rq *rq)
+-		if (!h_nr_delayed)
++		if (!se_delayed)
+ 			cfs_rq->h_nr_running -= h_nr_running;
+ 		cfs_rq->h_nr_enqueued -= h_nr_running;
+ 		cfs_rq->h_nr_idle -= h_nr_idle;
+-		cfs_rq->h_nr_delayed -= h_nr_delayed;
  
- again:
- 	cfs_rq = &rq->cfs;
--	if (!cfs_rq->nr_running)
-+	if (!cfs_rq->nr_enqueued)
- 		return NULL;
+ 		if (cfs_rq_is_idle(cfs_rq))
+ 			h_nr_idle = h_nr_running;
+@@ -7195,11 +7183,10 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 		se->slice = slice;
+ 		slice = cfs_rq_min_slice(cfs_rq);
  
- 	do {
-@@ -9017,7 +9017,7 @@ static struct task_struct *__pick_next_task_fair(struct rq *rq, struct task_stru
+-		if (!h_nr_delayed)
++		if (!se_delayed)
+ 			cfs_rq->h_nr_running -= h_nr_running;
+ 		cfs_rq->h_nr_enqueued -= h_nr_running;
+ 		cfs_rq->h_nr_idle -= h_nr_idle;
+-		cfs_rq->h_nr_delayed -= h_nr_delayed;
  
- static bool fair_server_has_tasks(struct sched_dl_entity *dl_se)
- {
--	return !!dl_se->rq->cfs.nr_running;
-+	return !!dl_se->rq->cfs.nr_enqueued;
- }
- 
- static struct task_struct *fair_server_pick_task(struct sched_dl_entity *dl_se)
-@@ -9807,7 +9807,7 @@ static bool __update_blocked_fair(struct rq *rq, bool *done)
- 		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq)) {
- 			update_tg_load_avg(cfs_rq);
- 
--			if (cfs_rq->nr_running == 0)
-+			if (cfs_rq->nr_enqueued == 0)
- 				update_idle_cfs_rq_clock_pelt(cfs_rq);
- 
- 			if (cfs_rq == &rq->cfs)
-@@ -12989,7 +12989,7 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
- 	 * MIN_NR_TASKS_DURING_FORCEIDLE - 1 tasks and use that to check
- 	 * if we need to give up the CPU.
- 	 */
--	if (rq->core->core_forceidle_count && rq->cfs.nr_running == 1 &&
-+	if (rq->core->core_forceidle_count && rq->cfs.nr_enqueued == 1 &&
- 	    __entity_slice_used(&curr->se, MIN_NR_TASKS_DURING_FORCEIDLE))
- 		resched_curr(rq);
- }
-@@ -13133,7 +13133,7 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
- 	if (!task_on_rq_queued(p))
- 		return;
- 
--	if (rq->cfs.nr_running == 1)
-+	if (rq->cfs.nr_enqueued == 1)
- 		return;
- 
- 	/*
+ 		if (cfs_rq_is_idle(cfs_rq))
+ 			h_nr_idle = h_nr_running;
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d795202a7174..7d99d18e8984 100644
+index 7d99d18e8984..0b297242eb5d 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -645,7 +645,7 @@ struct balance_callback {
- /* CFS-related fields in a runqueue */
- struct cfs_rq {
- 	struct load_weight	load;
--	unsigned int		nr_running;
-+	unsigned int		nr_enqueued;
+@@ -649,7 +649,6 @@ struct cfs_rq {
  	unsigned int		h_nr_running;      /* SCHED_{NORMAL,BATCH,IDLE} */
  	unsigned int		h_nr_enqueued;
  	unsigned int		h_nr_idle; /* SCHED_IDLE */
-@@ -2566,7 +2566,7 @@ static inline bool sched_rt_runnable(struct rq *rq)
+-	unsigned int		h_nr_delayed;
  
- static inline bool sched_fair_runnable(struct rq *rq)
- {
--	return rq->cfs.nr_running > 0;
-+	return rq->cfs.nr_enqueued > 0;
- }
- 
- extern struct task_struct *pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
+ 	s64			avg_vruntime;
+ 	u64			avg_load;
 -- 
 2.43.0
 
