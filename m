@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-424624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DD69DB71C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:07:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC389DB723
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:09:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179E61639FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81CC281D5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F7E192D77;
-	Thu, 28 Nov 2024 12:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2766719ADBF;
+	Thu, 28 Nov 2024 12:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L0eL6tqo"
-Received: from mail-lf1-f66.google.com (mail-lf1-f66.google.com [209.85.167.66])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g95C0Zm5"
+Received: from mail-lj1-f196.google.com (mail-lj1-f196.google.com [209.85.208.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0F82CCC0
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40CB2CCC0
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732795625; cv=none; b=phLXqKtwkmmmWCSJJlmaxhHb59HWauM43Nw4Wx+WACmOweRx2Tw+rQUVfo6oIVGRTPVnQakLj3aGA1/jE2gQU6tjWGHMRWCstjo03qacChKTIh96c5n8Y6t4yl6Y5bVhp0sWbg8oETAmhrFhQfInFycGxSAIlMFO0yPXQpFmgNo=
+	t=1732795756; cv=none; b=DNja4FD96UjsFcju8Z18MZWYofR7rW7KMQC2eJ0cq2ggHmAF1Oe5LjYArs6eYEhOSOg8jUs8ugrfbB5mn6X1boKGMw1yES3THrjmsrHDcduu+gXa4ShK37NyTFM1+Pc5JTt7uoc8aoxXbxrQcrfS4DG3eTfSiL6L61DzvrC9/AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732795625; c=relaxed/simple;
-	bh=fQqYngYQaBH4nRkWFH+2RCIgNp656eo5Cdwm61nRK/g=;
+	s=arc-20240116; t=1732795756; c=relaxed/simple;
+	bh=RW3VZirTHPIW66UyzCS45tHNq7eH8+C33ljA4Nll6ZA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g74d3PE4W27fQMStnaFJqj/8vOOYI2mZLvaulWMHKgllsVJLplig3PDODDwdlGxLkPf2m3kNxaNCmPSXqnuCoN8Gvfn2RIAE2FCRjymXXSSuHGY2381MOWKdOgalsSYrqqq1eGg6d6aRJJmkF0aT8+kPRkGeN4ui3K4WYaaMBkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L0eL6tqo; arc=none smtp.client-ip=209.85.167.66
+	 In-Reply-To:Content-Type; b=o7ujLjgMZkcvUKWJnXXTodQ2qw3r6neeOWBfwvE3bJ1xb2Fg874tHiKZ1Nn5s9Dpv+UylYYzAjl35L7dAI3Zl7GeQca4UUzXcSF82CnLCvpPEh1t7vcechaGbjnFDoM0EaPjTiT9MA8xkggXLGCtarT0XEeETJCkzt8WgSBQEvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g95C0Zm5; arc=none smtp.client-ip=209.85.208.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f66.google.com with SMTP id 2adb3069b0e04-53dce975a9cso98517e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:07:03 -0800 (PST)
+Received: by mail-lj1-f196.google.com with SMTP id 38308e7fff4ca-2ffc1009a9fso480261fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:09:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732795622; x=1733400422; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732795752; x=1733400552; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7SF5OHl6Q6ZggZKWiO6IZg02nSrf/YPTh7wLw9TpiFw=;
-        b=L0eL6tqoED56UuVeo8BUpvq1uVWouDW7OAGiMvAB7S3Qg/xg2bAEVQmwkXiVO6RUI7
-         lhqRpp3YSyldoEWXue9piEioO6lLycrzfJeIhXDku9wVclYckX9KfmfkCSfa/HWsgOqv
-         YbmDb/UJa8CAXKmrWBcDdOpmainzuDJXdQ2Hw1kKoaBpRUUWQpWcQGP1yBQsDcVm12Vw
-         UbVYcTE68LRE6fBp8XO2Im/iQQ9hx6bGjO1+uBHxgOMv2j/2bkfKfdlOl7QQfYYjxDbb
-         K+uwLg3QWfNRCIjIqoIt9xOhJAXLWCwCloZ1GUm7V77ZoUVC/Sub2Vsis9/P9XJ6AILR
-         mXZQ==
+        bh=fwTWwA6azgLnozBWQBgEU2aEg7DOq4OXVVpm7/SKa7w=;
+        b=g95C0Zm5icFPawGfuyhIa+KLv+MwhNzbFM1YSsW1F8Bf5DR5/yE3mNlX8xruokEXjc
+         9gM6/92l2s6pjxAr8GuUOlCAS47vO7DPTFpwvZzeDzwv5Q3rUams2cp2Zny4M1Yq5dS2
+         reuhGFhpyaa5e8ahzzmZgH8KTvQ642ViZCZEZwnX+bVtgURS4j2yW9GwVuSE1zBV0ffO
+         fiImHbCqwPGkNZhxYiTGTJpBul0xWAlaVtLcrdRvjZvKCtEN20DpEEJAYoeI50YE1tXW
+         YY2UDU9aT3V39nxaI1n5wx8ED/M9NdKK7++ucjdbmU7dtk+JFZAqrlpLwhpSciRtRkFx
+         C0yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732795622; x=1733400422;
+        d=1e100.net; s=20230601; t=1732795752; x=1733400552;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7SF5OHl6Q6ZggZKWiO6IZg02nSrf/YPTh7wLw9TpiFw=;
-        b=FYCLGi55eRUfWlz16S5i1+QqFKQ+icDwdejm3zykeSym+AZdn+OPBxRSwTMZf4PIKB
-         Rtp+7uOdiYKkyLNqjK5QKZmEvOPN3xLhL+rADkOPOXA1pqmERa1VKqKPOwjINi7KBMXJ
-         3x5xXwWHwh61yAkj5T6DgQy8yeIDhxtqETy6OWX5tlksTaGMQi1wuiCjkpQwk8kk/fz0
-         Z3KKA3VYx9HBWNMoCyRGchbWugPc2lmbZ5bxd37Gok6lGMmsI8tY+0y/TxrGjHyuzu0m
-         8QhHuUNCe6BKy/2bOnM9p4bHcufEzqrMjD8uXZzBmGhhkCSY+amsAWd2TWnUxLpBI1cB
-         gQNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYQfgyJA9MMbsJ+F5rcBQVKn+kEQP7wsX8BtGzPbv01fhnrMsdt1zRZxj8HVLdbKSUVwTOkqJc004m3Q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYFFttHQ4IRqlJYp1NzJA/kGS0VnVo/HQ1onI9ya89alSY0kOb
-	Y8AWMNU4jixFUs+H13IvvrEPaUd+2lYBJHFHnnjVaRui2I6t3D2nijHLx+/Mydc=
-X-Gm-Gg: ASbGncuJi7wrLLCG1hAUFVqPstodDtuaGPllRtwOHB0m+kM/DlN4ZJAF8EPJwCeXRnn
-	wuv80mZLkkHI43KTqk5lCBiq1ynP6PovHMHEnsf/3OpdJyIhMDGfqoLQhMOfHZUxygLaQCMdvjV
-	FG/9urpDELQXcOvc1mDFxF57TpnYyGJyKAC6Rpuupwi0XFTUCeF5gKDMjFzwHOxD9za8ZxIHwcJ
-	nuwKLaYJ6EAi4aTAEr45Xm+fgp2epFeihGMdfomKHq27WQ6LCxUabA4H40Im/QSOKwW4MvT0hSn
-	zL5hGBCF5gPCKWwVNggpyKqbYLXU
-X-Google-Smtp-Source: AGHT+IHsfbfQFGYieKwKAf8ZPiuL2mZxi4Zqttbg2UBokuZg6RjtXSHIhC857ys4GHZZnwz2KVhYng==
-X-Received: by 2002:a05:651c:b21:b0:2f7:5c23:98fb with SMTP id 38308e7fff4ca-2ffd60dbc52mr8337221fa.10.1732795621780;
-        Thu, 28 Nov 2024 04:07:01 -0800 (PST)
+        bh=fwTWwA6azgLnozBWQBgEU2aEg7DOq4OXVVpm7/SKa7w=;
+        b=BlQTS1TnqV6kFYIVR6qLgbdEBMBktgL1L7yhkj1wuRtW0uxfVSvUex7j5HptDxZwON
+         a3LZR647FPlrwTAPBhkrxXZOidaQahnAc+YAwHpUnb4JzFTTSA0B4DyRvGVoHTjfosbH
+         P8aEcsAPWI2W7fAG32GxlPmziwBci3y3wtW6Oa3NmNQoMpp/UYjnVoB5UM32sxvyKluH
+         5CPS8DA0O5A0FenLmTyeePEw7zljWwXwi1arihxp9b+VKH5FUS0rCkKt+JYTuZfERRJp
+         e9EEWmkPWCn+1QqUqCVgeMUUVgpfWouxnJmMOISaSEuRr4n12CntaRpmDZs1tKZKEcih
+         X1Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvZFf8sNbNuNstXzKd/kD1n7xK9R9D3HNVYllev1SO8O1Tb2vtWudFw6v+Sn5c9YZRx3UmBMEZU0Pt3mY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE8QueQQcEC8jaEjd9R5f0t50i/aIFu0Mqjb0VipgS1Mw1Tw7D
+	CtYJ0OJ8OpEX2p/wkQNnSI/xqSZh73PSWelTBCFTOSwhkVQD9VvdNnwR64CJvVs=
+X-Gm-Gg: ASbGncvQ+6oGeA6NvGKeoGtmLcJLJkiCiRZ9IinYf7JUbkRN2Zywy4ueXPujdp5ufpB
+	hWqc8RmZ2q6VhwitoosmMrRePmoDVu+cLQymliE2Ot6himVg6/453sIo9/Qpl5qgpAK+wWR1FnY
+	VSYVIbhu7cW4bXJwERUdMMHUAcouFJdYrhB5bQa2Crfoc2cVGNCnNu2RIXqzBfQUdzVHDCp48Vm
+	qMXl/1+FtSNal+idb572RaWhLEIT/8PZp+rKGhmnJ2giXDvqb88Ty0N3H5GXEMHR3tc/I7MXKWB
+	J1fiQ4DG7P7uQ1dRS5ZcMxHWa4Hk
+X-Google-Smtp-Source: AGHT+IGb+CquWGoLlCxlMN54dryp8DwwxL61NpjsPl9cVKA1OdiBA+RXxSDRUTTEFIMowEslwGRMSw==
+X-Received: by 2002:a2e:a583:0:b0:2ff:a97d:98f4 with SMTP id 38308e7fff4ca-2ffd60ab680mr9240231fa.9.1732795751941;
+        Thu, 28 Nov 2024 04:09:11 -0800 (PST)
 Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc097c3sm1756931fa.54.2024.11.28.04.07.01
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc9bd7asm1726121fa.94.2024.11.28.04.09.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:07:01 -0800 (PST)
-Message-ID: <8189fe4a-b6f5-43a6-9f7f-1abddc366ada@linaro.org>
-Date: Thu, 28 Nov 2024 14:07:00 +0200
+        Thu, 28 Nov 2024 04:09:10 -0800 (PST)
+Message-ID: <a73a3b5a-cd83-4f87-876d-ea99ef8bbd70@linaro.org>
+Date: Thu, 28 Nov 2024 14:09:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] clk: qcom: common: Add support for power-domain
+Subject: Re: [PATCH v4 2/3] clk: qcom: common: Add support for power-domain
  attachment
 Content-Language: en-US
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
@@ -89,16 +89,14 @@ To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org>
- <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-2-836dad33521a@linaro.org>
+References: <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org>
+ <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-2-4348d40cb635@linaro.org>
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-2-836dad33521a@linaro.org>
+In-Reply-To: <20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-2-4348d40cb635@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hello Bryan.
-
-On 11/27/24 01:44, Bryan O'Donoghue wrote:
+On 11/27/24 17:53, Bryan O'Donoghue wrote:
 > Right now we support one power-domain per clock controller.
 > These single power-domains are switched on by the driver platform logic.
 > 
@@ -110,16 +108,11 @@ On 11/27/24 01:44, Bryan O'Donoghue wrote:
 > power-domains in the dtsi for the clock-controller driver.
 > 
 > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   drivers/clk/qcom/common.c | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
-> 
 
-Is there any particular reason why my review comment was ignored?
+Please simplify this change, please do not ignore patch reviews, if you
+find it possible.
 
 https://lore.kernel.org/all/8a33c0ff-0c6d-4995-b239-023d2a2c2af5@linaro.org/
-
-There is no signs of the change improvement, unfortunately.
 
 --
 Best wishes,
