@@ -1,142 +1,224 @@
-Return-Path: <linux-kernel+bounces-424435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBD49DB458
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:54:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350BE9DB45D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:56:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5681620A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8359282049
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C41F1537A8;
-	Thu, 28 Nov 2024 08:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BAF153BFC;
+	Thu, 28 Nov 2024 08:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="mJpAY+BC"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQF/OHvS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AD41534FB
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5870213FD86;
+	Thu, 28 Nov 2024 08:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732784088; cv=none; b=QRLKfCnvhiqOHXRO3rJG8EaBmFGOqWg8sPcIINHx5LLpPpiebe0X7f0eaLGy+VzLMkfMjF2V1Bk6btSRHf1BqYb1wcoukWDuht6GhXTT90r84jqrsJ+OUW9bQ3wHycBiPVLyLRLC6flAUp/I0rDU+GX9Vyblz++kb3+NH+iZL4A=
+	t=1732784162; cv=none; b=dP7uUoJ0U/+g8nvR2up43u1C+tGu1nYjK8lgZUZqmIz3MFk9c28mkcPYfv7qEwsHShjvNzemudf0yRWm/toE1d0mAMPsQMCnhGznag60jpwPfsXV9sslVzwE/jeff/Y3acjlPCNKmbe+mEtsuApx9kFQDutLrS/m8DVueRhjWEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732784088; c=relaxed/simple;
-	bh=h9K4BWfaJ1EiWfgoH2ZK2XnoeiC9er1wzw7T6GcNN0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQZUHU8DN8T65oM6BiHxL3Bv02E89AcmB8gDM4KLxbdiWtxjwjwlXN1xQtjfH8KuADmIfU+rmEEmkbQh7L/gjs26G1zuGoF9Z1b0VtgDvdIJCoSHphuwcwI/Odrun7r74Q/cWBz0hNT5LLY7JkMWTS0nz8x1AvDLR0Iv9SaVhGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=mJpAY+BC; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4349f160d62so4888285e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:54:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732784085; x=1733388885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=taBVx576Mb1d9PyRzDmNA5pfsmrnP1DVnZEuUXxBBrg=;
-        b=mJpAY+BCgSK3XUoYZe270d21yJ768dmZQJ76qqTJmrIWYtoMg0bHhQcpv/TWC8Rztv
-         PmeHuCR6A6djRwnafXjhff6WLyUBTV0GjnAFRpfNTtRbPuB93mopg8ALrdCCkHFHay26
-         /qnN22M7496DV/1INCJdKT3+k7RS3m+zio6yNSTy2y9aWFYLWrCX98tYqIW6k9XYkUCF
-         C9TDk67GtSWgWVNfMG2CUwl7Wey9KgxHIbf/pZBj3XppcqLLJW30w/mUx4ZEnmhGDbqa
-         FHwmW/L1o4gSGYtKubiWmR87YokUcLgqS3csBVvljvBC+gEaOJTeK6CIv30DEL44cwTF
-         GQ/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732784085; x=1733388885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=taBVx576Mb1d9PyRzDmNA5pfsmrnP1DVnZEuUXxBBrg=;
-        b=VruZruxXTbWJywMkvrYPCEI1+ewCAnVX4vdBbICLyINoFepIAkbjLdSOAFUUDAMfNS
-         VvHIYfBTFlZlH5jQfQEHo11I2I9Ia7C57ccw16iyGJilFrRDhB5YdkRoAO0a7u5v5GoT
-         wCkplzbIeHhV0haFGWJQhR37IGHS8+VhEj8GT8Ke8qtekcz+P0eYUb/ztVKHvjzGOoPs
-         jZhrNsMfxAOvOX2ZdEaY46TXdR+AdOvHexBDvaLaIcPoT0IAuBlHdXpqh7cTilazT+cB
-         PLo9RXtmLogTHCRvO19Z/dsBx1LK92CvnHSMaCqMG5XVRRjf8KG0d2mWluw2dPmu3Mkk
-         dMww==
-X-Forwarded-Encrypted: i=1; AJvYcCWeHrBTBC3hWYuopSx/DQ0Yj895J07RyyRrIkKS62qIcc4hQ9VwpeB2UeNn6FkA5F3RGItBKLQZ4JSqpD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2TuY5hoqeOxH84hKMeYt2tXsvRAn50Amoyhc+8cWKfB/X1GK6
-	4wNFN6BsJQYPFVswi3jnEP4CU8jo+UKmCd8QYhTb3sFsafCPcbhX8N4mXzXcCh8=
-X-Gm-Gg: ASbGncsbU6cgPgcyfopnVwjalNTFp35od97sVOhaeD04ctXpZ31s9Uz7/e+pa4lJAe1
-	JHEjwTcO52dNkoCmKtI9OjGDHUSihq2cGboVI++1XIw3Ykt1WiVlsl2heZ6ccPUDioaWwsxwdT6
-	py0cfRn0ampsW+QrfWbvvlFVuRcAW4hceiebKPr5GqpKpF5zLfmw8Z8/i7sjt4PlFSkGbt63aTh
-	i7Uo/Yg7lCoKgD1XrpVEJ90Qzo129TRwvbiD/GH3Z1ugEu5XY9HQUbFl8TVp9Hpaqrg2plFoNOk
-	NZGO5pXktKxsHi18alheeT+AqY9/gQdy6sQ=
-X-Google-Smtp-Source: AGHT+IEntdOWnTKPyyviVSOvyKSQxfhN3cgjS0CqUnt2K/m/lFqUeDFCwz3Y0hrrEdviqAlNmfKsKg==
-X-Received: by 2002:a05:600c:314d:b0:434:a75b:5f6c with SMTP id 5b1f17b1804b1-434a9dbea45mr66592635e9.10.1732784085239;
-        Thu, 28 Nov 2024 00:54:45 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0dbfa2csm15280125e9.17.2024.11.28.00.54.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:54:44 -0800 (PST)
-Date: Thu, 28 Nov 2024 09:54:44 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: zhouquan@iscas.ac.cn
-Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-Subject: Re: [PATCH 3/4] RISC-V: KVM: Allow Ziccrse extension for Guest/VM
-Message-ID: <20241128-9f7234d55cedf2afd881f82a@orel>
-References: <cover.1732762121.git.zhouquan@iscas.ac.cn>
- <77198ab759eb01ca490f4c2199910e778b57d372.1732762121.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1732784162; c=relaxed/simple;
+	bh=YWa86xpU5GVMy0wLVUVGSqUpxiLDbWoXZJ2EvOhxffY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DPYqdLMHZOZkS5G6A8fNDgEy9NJpRtPigRtay0xIBkUpf+oKir6CDUX2QkP5m1Ne4tsBATh2uIgObcg9LKuUt62Km44XvPM5Gm0TVZgD4S9qMp1HO7hKuW7oeUaCoCf/jfwISjUShtIP9Du6L6bFWKH989pAUjad29+rsVOVN1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQF/OHvS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07701C4CECE;
+	Thu, 28 Nov 2024 08:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732784161;
+	bh=YWa86xpU5GVMy0wLVUVGSqUpxiLDbWoXZJ2EvOhxffY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sQF/OHvSHCEEOQaM3QM2NWPCDZjo1tZesMOhNWaXpBqv5mW3bd+BqKbS65R3TYa3k
+	 1tuUWq9aYhXntmlzTLWRXQYPIdiLM0kNqMWVZPkRmikA4CSGpBnhTAy5fbGZ3PGuho
+	 YjZiPA5k4l2Zth+vDmTsmWlePh1HJ9rGHhLH+bW55CwP7M718vGjXn8+WbGDglmZkW
+	 QczYopAbYD42DObDvoxUtz5dz60enHjLiD/jrYb5+EZkvmiXftPNSAezvveSSG3EqA
+	 Y2VvezGGNMzcHFE9kgo9SUrkTFHh39zJopMjxmI2E8UI4oshJNNg3QiAX8OsEuuymN
+	 4c6Ca4x2hGDQw==
+Message-ID: <057577e0-a0e6-453c-8e14-13fc078d99a6@kernel.org>
+Date: Thu, 28 Nov 2024 09:55:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77198ab759eb01ca490f4c2199910e778b57d372.1732762121.git.zhouquan@iscas.ac.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] power: supply: Add STC3117 fuel gauge unit driver
+To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>,
+ "sre@kernel.org" <sre@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241127151953.29550-1-bhavin.sharma@siliconsignals.io>
+ <20241127151953.29550-3-bhavin.sharma@siliconsignals.io>
+ <be00dec6-d598-4dea-b608-51ea67b37084@kernel.org>
+ <MA0P287MB1178B165FAFE680FDBD14301F2292@MA0P287MB1178.INDP287.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <MA0P287MB1178B165FAFE680FDBD14301F2292@MA0P287MB1178.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 28, 2024 at 11:22:07AM +0800, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
-> 
-> Extend the KVM ISA extension ONE_REG interface to allow KVM user space
-> to detect and enable Ziccrse extension for Guest/VM.
-> 
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->  arch/riscv/include/uapi/asm/kvm.h | 1 +
->  arch/riscv/kvm/vcpu_onereg.c      | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-> index 340618131249..f7afb4267148 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -179,6 +179,7 @@ enum KVM_RISCV_ISA_EXT_ID {
->  	KVM_RISCV_ISA_EXT_SSNPM,
->  	KVM_RISCV_ISA_EXT_SVVPTC,
->  	KVM_RISCV_ISA_EXT_ZABHA,
-> +	KVM_RISCV_ISA_EXT_ZICCRSE,
->  	KVM_RISCV_ISA_EXT_MAX,
->  };
->  
-> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-> index 9a30a98f30bc..ed8e17da1536 100644
-> --- a/arch/riscv/kvm/vcpu_onereg.c
-> +++ b/arch/riscv/kvm/vcpu_onereg.c
-> @@ -64,6 +64,7 @@ static const unsigned long kvm_isa_ext_arr[] = {
->  	KVM_ISA_EXT_ARR(ZFHMIN),
->  	KVM_ISA_EXT_ARR(ZICBOM),
->  	KVM_ISA_EXT_ARR(ZICBOZ),
-> +	KVM_ISA_EXT_ARR(ZICCRSE),
->  	KVM_ISA_EXT_ARR(ZICNTR),
->  	KVM_ISA_EXT_ARR(ZICOND),
->  	KVM_ISA_EXT_ARR(ZICSR),
-> @@ -157,6 +158,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsigned long ext)
->  	case KVM_RISCV_ISA_EXT_ZFA:
->  	case KVM_RISCV_ISA_EXT_ZFH:
->  	case KVM_RISCV_ISA_EXT_ZFHMIN:
-> +	case KVM_RISCV_ISA_EXT_ZICCRSE:
->  	case KVM_RISCV_ISA_EXT_ZICNTR:
->  	case KVM_RISCV_ISA_EXT_ZICOND:
->  	case KVM_RISCV_ISA_EXT_ZICSR:
-> -- 
-> 2.34.1
->
+On 28/11/2024 09:44, Bhavin Sharma wrote:
+> Hi Krzysztof,
+>  
+> Thank you for your review and feedback.
+>  
+>>> +struct stc3117_data {
+>>> +     struct i2c_client       *client;
+>>> +     struct regmap           *regmap;
+>>> +     struct delayed_work update_work;
+>>> +     struct power_supply     *battery;
+>>> +
+>>> +     u8 SOCValue[16];
+>>> +     int CC_cnf;
+>>> +     int VM_cnf;
+>>> +     int CC_adj;
+>>> +     int VM_adj;
+>>> +     int AvgCurrent;
+>>> +     int AvgVoltage;
+>>> +     int Current;
+>>> +     int Voltage;
+>>> +     int Temp;
+>>> +     int SOC;
+>>> +     int OCV;
+>>> +     int HRSOC;
+>>> +     int Presence;
+>>> +     int Battery_state;
+>>
+>> That's some Windows coding style... You need to clean up everything here
+>> to match Linux Coding style.
+>  
+> Could you clarify what specific changes are required here to align with the Linux
+> coding style?
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+
+Entire. Go one by one: "Breaking long lines and strings" - not
+implemented. "Naming" - not implemented. Then go with every point. You
+are making here some sort of shortcut - ignoring coding style, not
+reading it and insisting on me to provide you exact things to change.
+No, that's way too many things. You are supposed to read the coding style.
+
+>  
+> I am not sure what exactly needs to be changed here.
+>  
+>>> +     data->battery = devm_power_supply_register(&client->dev,
+>>> +                                                &stc3117_battery_desc, &psy_cfg);
+>>> +     if (IS_ERR(data->battery))
+>>> +             dev_err_probe(&client->dev, PTR_ERR(data->battery), "failed to register battery\n");
+>>> +
+>> You ignored (again!) received comments. In multiple places. Go back to
+>> previous email and carefully read commetns.
+>  
+> Sebastian suggested using dev_err_probe, while you mentioned using dev_err.
+> so what should i follow ?
+
+
+No. That's not true. Read comments again. I am not happy that after
+pointing out you still insist and force me to re-iterate the same.
+That's my last reply in this matter:
+
+comment was:
+"return dev_err_probe(dev, PTR_ERR(stc_sply), "failed to register
+battery\n");"
+
+Where do you have "return" statement?
+
+What about all my other comments? You are supposed to reply inline and
+acknowledge each of such comment. That's the only way I believe you will
+really do what we ask you to do.
+
+> 
+>> One more thing:
+>>  
+>> Please wrap code according to coding style (checkpatch is not a coding
+>> style description, but only a tool).
+>  
+> Could you recommend an example driver from the kernel source tree that 
+> follows the expected coding style? This would help me ensure compliance.
+
+
+`git log -- path` will tell give you the latest drivers..
+
+
+>  
+> Best Regards,
+> Bhavin
+>  
+
+
+Trim your replies and do not top-post. All this copied stuff below is
+making things just difficult to read.
+
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> ________________________________________
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Wednesday, November 27, 2024 11:54 PM
+> To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>; sre@kernel.org <sre@kernel.org>; krzk+dt@kernel.org <krzk+dt@kernel.org>; robh@kernel.org <robh@kernel.org>; conor+dt@kernel.org <conor+dt@kernel.org>
+> Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>; linux-pm@vger.kernel.org <linux-pm@vger.kernel.org>; devicetree@vger.kernel.org <devicetree@vger.kernel.org>; linux-
+
+
+All this must be removed.
+
+
+Best regards,
+Krzysztof
 
