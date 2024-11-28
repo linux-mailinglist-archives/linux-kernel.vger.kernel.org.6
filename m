@@ -1,106 +1,249 @@
-Return-Path: <linux-kernel+bounces-425136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69949DBDDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:06:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4C29DBD77
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:17:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72968B2216C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CB22822FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEDE1C727F;
-	Thu, 28 Nov 2024 23:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3781C460A;
+	Thu, 28 Nov 2024 22:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=petrovitsch.priv.at header.i=@petrovitsch.priv.at header.b="wTBYtbxu"
-Received: from esgaroth.petrovitsch.at (esgaroth.petrovitsch.at [78.47.184.11])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vbbC/nmJ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B0114D6ED;
-	Thu, 28 Nov 2024 23:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.184.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AF61509B4;
+	Thu, 28 Nov 2024 22:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732835146; cv=none; b=R0DPSAjQbn+FY0Wj75Xqy+Dm9ioRYBxHYoJIj+N4zCAVuETOSxmNUgkpiBHh4jjpqOQS6SGxCx6oqTiGkE7pNTBju1cLrzCf80WGrmrmfEzclwkzy4gf14aXHPO182dubjov5FOYDsuEQ8DplKs+IsMXD1JtC6vEsxlVwy9ri40=
+	t=1732832225; cv=none; b=aCDxvYeHCPinK+5qT6nqLo3iL3thwh59/+AK9ZtjDHORkm1TSI41AdlH7cXLbSFwhMzF0B64WLjmEJ1WjNe3amcJe9hpK5sWKqveWQ6/DBAy1rFg1ym8A92ICGbMKiTPtGlZk3HKAono4KIUa5nGYzaWD6of3Pjk7zh7vEeKU88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732835146; c=relaxed/simple;
-	bh=KV1kTdPXXjLjR3CJMO+XBokWZbSlYJ+qrQpoPDLuBDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kmj54WwAZ3NiA1Lw84mD2FqKXjcJxZC+xzZ/yrZJt0goGQ8G4EZ3/bpCl21NAGLrISk2IfdD21JJThwPaTs10/ZK+isBA3JivupcJqud0kPxPjnNqisJAorrxXzUp2t2hFJ17CCiEW2Dk/J2Yi4b84n5yLROesAMSHlceKRyAwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=petrovitsch.priv.at; spf=pass smtp.mailfrom=petrovitsch.priv.at; dkim=pass (1024-bit key) header.d=petrovitsch.priv.at header.i=@petrovitsch.priv.at header.b=wTBYtbxu; arc=none smtp.client-ip=78.47.184.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=petrovitsch.priv.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=petrovitsch.priv.at
-Received: from [172.16.0.14] (84-115-223-47.cable.dynamic.surfer.at [84.115.223.47])
-	(authenticated bits=0)
-	by esgaroth.petrovitsch.at (8.18.1/8.18.1) with ESMTPSA id 4ASMFXwZ2125882
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT);
-	Thu, 28 Nov 2024 23:15:34 +0100
-DKIM-Filter: OpenDKIM Filter v2.11.0 esgaroth.petrovitsch.at 4ASMFXwZ2125882
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=petrovitsch.priv.at;
-	s=default; t=1732832135;
-	bh=h2MqZpEynosisovvFZzTqVcgF9aHF8+XJH8KFujSEFo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wTBYtbxugHUHw8M9oUBxafHEcRrVl6DmC+bwh5NDRQXDAxZ99fGbIneDl8eRkAw5/
-	 MYnc0IS1lUBQuUlLN7Q5RxoeFQOrqNDmHllVgLT/+/ObTZTYz+bAg4GySsR+zCIKPj
-	 s1+ARFaVrouPt1VfQ40OmBIW0d+cbsIIk/r1FGjc=
-Message-ID: <4db72181-00f4-467e-9b18-f7b98bc103a3@petrovitsch.priv.at>
-Date: Thu, 28 Nov 2024 23:15:17 +0100
+	s=arc-20240116; t=1732832225; c=relaxed/simple;
+	bh=FTR/bmK0kwcRvHnwRljj1g9X29iuMKZoHvQiehuyMXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2Sw6G6Tp+Uyz5A9TJQJNFkYe7XGrKQxDBvoCf5FmDs3uMF23i9lZ5eikjV7RG3gCXWerfvg/OFZk4Amvik1mhLrZh8OUe/beyxblXzeHp+CFVD2uN+M7aqc8qJ7DU4cKg9bcWpC+H4j6nP5uykQEvayqX0hHmj3zsPZpQKyw/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vbbC/nmJ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 537CF526;
+	Thu, 28 Nov 2024 23:16:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732832195;
+	bh=FTR/bmK0kwcRvHnwRljj1g9X29iuMKZoHvQiehuyMXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vbbC/nmJOdLxXwnnhOoFVsQO3LEcuQkmQnZZwXR9O9c2LDZMIzkNYIlXlPVvABqEK
+	 IFYhHCsk5lXpGeJw+uR4yxFIq5HVURLIXXFP/mIb9rHMHpKr0XQXuj83R8cRDWs+nv
+	 X05AYBroUk18/AG6SJYW3KVYJJmYfQgGXAJ1LEsQ=
+Date: Fri, 29 Nov 2024 00:16:49 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] media: uvcvideo: Remove dangling pointers
+Message-ID: <20241128221649.GE25731@pendragon.ideasonboard.com>
+References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
+ <20241127-uvc-fix-async-v2-1-510aab9570dd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
- filesystem.
-To: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-Cc: Florian Westphal <fw@strlen.de>, kadlec@netfilter.org, davem@davemloft.net,
-        dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, horms@kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
-References: <20241111163634.1022-1-egyszeregy@freemail.hu>
- <20241111165606.GA21253@breakpoint.cc> <ZzJORY4eWl4xEiMG@calendula>
- <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
-From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Content-Language: en-US
-BIMI-Selector: v=BIMI1; s=default
-In-Reply-To: <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-DCC--Metrics: esgaroth.petrovitsch.priv.at 1102; Body=14 Fuz1=14 Fuz2=14
-X-Virus-Scanned: clamav-milter 1.0.7 at smtp.tuxoid.at
-X-Virus-Status: Clean
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-	*      envelope-from domain
-	* -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from author's
-	*       domain
-	* -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-	*  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-	*      valid
-	* -1.9 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-	*      [score: 0.0000]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127-uvc-fix-async-v2-1-510aab9570dd@chromium.org>
 
-Hi all!
+Hi Ricardo,
 
-On 11.11.24 21:28, Szőke Benjamin wrote:
-[...]
-> What is your detailed plans to solve it? 
+Thank you for the patch.
 
-Use a sane filesystem which is thus case-sensitive - case-insensitive
-filesystems are broken by design (e.g. think of upper case/lower case
-situation for non-ASCII-7bit clean languages like German which has
-lower case ä,ö,ü and the upper case equivalents Ä,Ö,Ü including different
-encodings - no you don't want more than 1 encoding on a computer but then
-reality kicks in - and that in a filesystem driver in a kernel ....).
+On Wed, Nov 27, 2024 at 12:14:49PM +0000, Ricardo Ribalda wrote:
+> When an async control is written, we copy a pointer to the file handle
+> that started the operation. That pointer will be used when the device is
+> done. Which could be anytime in the future.
+> 
+> If the user closes that file descriptor, its structure will be freed,
+> and there will be one dangling pointer per pending async control, that
+> the driver will try to use.
+> 
+> Clean all the dangling pointers during release().
+> 
+> To avoid adding a performance penalty in the most common case (no async
+> operation). A counter has been introduced with some logic to make sure
 
-Kind regards,
-	Bernd
+s/). A/), a/
+
+> that it is properly handled.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 38 ++++++++++++++++++++++++++++++++++++--
+>  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
+>  drivers/media/usb/uvc/uvcvideo.h |  8 +++++++-
+>  3 files changed, 45 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 4fe26e82e3d1..b6af4ff92cbd 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1589,7 +1589,12 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+
+How about adding
+
+static void uvc_ctrl_set_handle(struct uvc_control *ctrl, uvc_fh *handle)
+{
+	if (handle) {
+		if (!ctrl->handle)
+			handle->pending_async_ctrls++;
+		ctrl->handle = handle;
+	} else if (ctrl->handle) {
+		ctrl->handle = NULL;
+		if (!WARN_ON(!handle->pending_async_ctrls))
+			handle->pending_async_ctrls--;
+	}
+}
+
+>  	mutex_lock(&chain->ctrl_mutex);
+>  
+>  	handle = ctrl->handle;
+> -	ctrl->handle = NULL;
+> +	if (handle) {
+> +		ctrl->handle = NULL;
+> +		WARN_ON(!handle->pending_async_ctrls);
+> +		if (handle->pending_async_ctrls)
+> +			handle->pending_async_ctrls--;
+> +	}
+
+This would become
+
+	handle = ctrl->handle;
+	uvc_ctrl_set_handle(ctrl, NULL);
+
+>  
+>  	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+>  		s32 value = __uvc_ctrl_get_value(mapping, data);
+> @@ -2046,8 +2051,11 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  	mapping->set(mapping, value,
+>  		uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+>  
+> -	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> +	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
+> +		if (!ctrl->handle)
+> +			handle->pending_async_ctrls++;
+>  		ctrl->handle = handle;
+> +	}
+
+Here
+
+	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+		uvc_ctrl_set_handle(ctrl, handle);
+
+>  
+>  	ctrl->dirty = 1;
+>  	ctrl->modified = 1;
+> @@ -2770,6 +2778,32 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+>  	return 0;
+>  }
+>  
+> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+> +{
+> +	struct uvc_entity *entity;
+> +
+> +	guard(mutex)(&handle->chain->ctrl_mutex);
+> +
+> +	if (!handle->pending_async_ctrls)
+> +		return;
+> +
+> +	list_for_each_entry(entity, &handle->chain->dev->entities, list) {
+> +		for (unsigned int i = 0; i < entity->ncontrols; ++i) {
+> +			struct uvc_control *ctrl = &entity->controls[i];
+> +
+> +			if (ctrl->handle != handle)
+> +				continue;
+> +
+> +			ctrl->handle = NULL;
+> +			if (WARN_ON(!handle->pending_async_ctrls))
+> +				continue;
+> +			handle->pending_async_ctrls--;
+
+And here
+
+			uvc_ctrl_set_handle(ctrl, NULL);
+
+It seems less error-prone to centralize the logic. I'd add a
+lockdep_assert() in uvc_ctrl_set_handle(), but there's no easy access to
+the chain there.
+
+> +		}
+> +	}
+> +
+> +	WARN_ON(handle->pending_async_ctrls);
+> +}
+> +
+>  /*
+>   * Cleanup device controls.
+>   */
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 97c5407f6603..b425306a3b8c 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
+>  
+>  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+>  
+> +	uvc_ctrl_cleanup_fh(handle);
+> +
+>  	/* Only free resources if this is a privileged handle. */
+>  	if (uvc_has_privileges(handle))
+>  		uvc_queue_release(&stream->queue);
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 07f9921d83f2..c68659b70221 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -337,7 +337,10 @@ struct uvc_video_chain {
+>  	struct uvc_entity *processing;		/* Processing unit */
+>  	struct uvc_entity *selector;		/* Selector unit */
+>  
+> -	struct mutex ctrl_mutex;		/* Protects ctrl.info */
+> +	struct mutex ctrl_mutex;		/*
+> +						 * Protects ctrl.info and
+> +						 * uvc_fh.pending_async_ctrls
+> +						 */
+>  
+>  	struct v4l2_prio_state prio;		/* V4L2 priority state */
+>  	u32 caps;				/* V4L2 chain-wide caps */
+> @@ -612,6 +615,7 @@ struct uvc_fh {
+>  	struct uvc_video_chain *chain;
+>  	struct uvc_streaming *stream;
+>  	enum uvc_handle_state state;
+> +	unsigned int pending_async_ctrls;
+>  };
+>  
+>  struct uvc_driver {
+> @@ -797,6 +801,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+>  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+>  		      struct uvc_xu_control_query *xqry);
+>  
+> +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
+> +
+>  /* Utility functions */
+>  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
+>  					    u8 epaddr);
+
 -- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-      There is NO CLOUD, just other people's computers. - FSFE
-                      LUGA : http://www.luga.at
+Regards,
+
+Laurent Pinchart
 
