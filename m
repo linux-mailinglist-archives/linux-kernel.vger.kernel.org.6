@@ -1,243 +1,127 @@
-Return-Path: <linux-kernel+bounces-425033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DF69DBCB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:54:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9359DBCB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0333D281737
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:54:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB36B21700
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FBD1487C1;
-	Thu, 28 Nov 2024 19:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83931C1F14;
+	Thu, 28 Nov 2024 19:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JQgcXKwY"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W/+Qo14Q"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6897A13A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 19:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113A57A13A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 19:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732823689; cv=none; b=PuJKTIlFVNzuCBkwMy0ejAfTLUD8sPJilwmldQO+m3I/cRWOWPVkOYzwz52gAk8e34VessUJtKRFOJbHKlIUoSyqaPBXo1mCPg7Nt1M/xOQ4ZWLdi66j5HiM0fgfYyu1NTfLVoWiUqxI49jvhUaf8TuGlUPPqNSJbrrNNvdkKgw=
+	t=1732823758; cv=none; b=otCSTDhqoKSX2ywg1xo6aCvj1jn98uWwGDSQewwMkku1qjJv8Mmql34/jlPxmysveXOqLymjtw5SMN/VmhCceBNybq0hmE5nlP9DOXtVpGX04Ami8Vc2E5YIDqPT4pUwtot0S7G13rS5hmxl5b6/jLo0LLMzTJt8TnpLQzAWaPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732823689; c=relaxed/simple;
-	bh=dr8oW2zLaxLy4A7VaaQelxw7mcP+ZcRS6lp1MkoS7GI=;
+	s=arc-20240116; t=1732823758; c=relaxed/simple;
+	bh=B9P2ENiavm6q3s6Tk0/34QRTigY5JKurnCEpeKNL1x0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JdazLKo+GPBXvD3qsKWFpWJAeC+KVwayW8NG4+Yt29lw52S5YDFfSAU9UGHAfMpnh3OJabwY9Ns1BDYZpkbqqG1eMrgyid8OE+T/gAldEmlK4JBrGAca+qFJn18FpSKTxtP8KpMqZtfxTnj9sTO8f0DIKw1mAFmJ9LLquGs+c+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JQgcXKwY; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668caacfb2so255561cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:54:47 -0800 (PST)
+	 To:Cc:Content-Type; b=Kg4CwJ1FwKysvhOCdHJmBuqVx7lklS/lAumqJRgac6LxwoBDySaUUf5FpTqcBQlgFrqv5Sp9Wejapcim70SqHKPRl/V0RiD49wujXts2f5Q33j5/Q0qyhCO+upa1uW7aKmJ3QCFAHPBw7XVWFUSeeG3aWrJJzFGKjwBIcvwUzl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W/+Qo14Q; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso12543411fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:55:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732823686; x=1733428486; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XkB1StDYK9iY92SsO9AoNAo6Yqs2+cYt48DwANwoEkM=;
-        b=JQgcXKwYc58rV9ya7v13+YNEqq3PIqKw/x+/BEp3SVRj4/oDVpp8Lr+M17OS5WqS1O
-         9sVAOGMqxQAt37xclCm/W7n1KdwuVW/h/KYnAKERYCVfv8B5iSfcCeNWkNCCeCl6sMi0
-         wjvIVO9thaJ4TIidtNPehXVWjPSDGrrKW/44/V+bqJcMzt41UHO4qtThTGwDGDZegvWm
-         g8J5t7Pf9dJ+5zwYdSesfWcPYrDwJYALuw5UCnSiot0aZlZeVZkZi6RsnLagRQpY5LbM
-         zl/yf4rWQz6Tgptp8GbQA5V7xwComDD9akF4LOd6czgl8xgmCyiorDLUtyDTX/0z34Dy
-         1jhg==
+        d=linux-foundation.org; s=google; t=1732823754; x=1733428554; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYmYBYyArByRymcLIWmoSw8pIwozTi0i6w5/CUprJP4=;
+        b=W/+Qo14QTWqk3gWGeTaCyn6TIyJHubqSG1lvxBt/4bCSeJwutP94HmiB4U9PVXIOk9
+         D+A10nLuUo+yqdFAzNs6687ipcM86HzTOuVYfSr4rSH29wOcwr4K/190mKp/O5LPNAHF
+         qrQYSWA+GfmT6I7iqdziowVuo3xOumtyXtZGM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732823686; x=1733428486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XkB1StDYK9iY92SsO9AoNAo6Yqs2+cYt48DwANwoEkM=;
-        b=D4AQaNoFLFk19gdmaUoWtKJyfKw5WMaqAd29dbxsCGiVxx4vNbHMsTeUmlOsZoVzYM
-         0JUDteWtzVH7L3WvnBGrJBwd+qXkSNHN0OEnmmn9CAUJ2WK9PuOBSj7Ui4VS0IKD00ag
-         19v8QRUbPX5pQpNiVet4/loPIRm8v9dWrSGqVeCkQIc9mdTJWZ+LYdsDH3SJ1gVEe0l4
-         YEL94une/37S/7BTuvd/hYjNdhCIDMiTHK/h4MNtPcf+7WWGWDwdL89VMXV740aBwZOm
-         LZpmBzpCSulCbpXl7byjbjE/KsW6JOOd0VlM0Q9wKs9MeY6MGMrFE45WHTrtD1xoEqXY
-         EE7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXk2Ximx+ol6HzQYRBpaIkEg9MD8/W7PRgVHSxXEpu/UpgQ7haTW/vNQij7JyHM+Czsx1iBPdo5g2g4Z9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzhkWHokRYrcKLo86qpkr4J9kZd4OO6pLSh9lSDGGGQc5hl6op
-	hpBAdZ8qEJEKZeVF4sR30K4np14/3AKy/VklNADIalbyrr/+o7qUOYCAYvZCo88gL0ryKLlFgGo
-	jjbW07q/OWCJP2XBbTZFpHkECDlig5NMGsYZY
-X-Gm-Gg: ASbGnct1QckX/UMcDGIBL/n3KFSo2+1tR8dYmXmezoOaJGIP9M0qe/jyf4vCrF98k8k
-	056hBo6x3dhvArSNyKL44cpDrZtKOfhg=
-X-Google-Smtp-Source: AGHT+IF4L8W1t9sDuXxYjQ1a5Qpt2rW5pCRo4DikcQ7c7wcYJg7GEU+ozfymbegPPfYuWbi3iYRwtfXnpvHm8NHfYV0=
-X-Received: by 2002:a05:622a:40c6:b0:466:9003:aae6 with SMTP id
- d75a77b69052e-466c2936ad7mr4121011cf.2.1732823685972; Thu, 28 Nov 2024
- 11:54:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732823754; x=1733428554;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PYmYBYyArByRymcLIWmoSw8pIwozTi0i6w5/CUprJP4=;
+        b=w+cO8CxgLtduRCfUgImuA8D4l7ka95wVXBDMAMqfjDEnNVZyW1Ngsz4vi2hbMZQBEv
+         ov/H4617W4vt7bh2LeMNq93gqi8K7om36C0AG/qpyZ24II2ykull9TJ8lL2xkvGX8Qpt
+         M7Dgh+3YPTk58qYHV+IsKn++5kt01WAEJKij9/vsICJi5YhyF8txqqKDEb5s7dOU8Mr9
+         CLSa0Y5q0ChA6BxHwmhEkFAYxw7j4Sr+um7CrMPs1SYkWIg7f8nzJ0hm7K060bMLbiMC
+         lTJGZgRAbtZFoAf6iXZIcs402wtuPsyS2VUYTfI0bbuqBbP6PURRIS+fPDfH3Y3GPXDF
+         joXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuU4UcEnZE6STENP6jWSiXRPMtyf7K0KL2cIgtNOS0IZ8FVKggnEl0hx0YSYijB5Qlbo7KYSqPn7+XiDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM8iTzztwBCaEErgk8wXI1XkKF1ea8KSWoezuSN993ukDY8C8Y
+	Gk0PjnVfVLafNoepXlg4HiqvcuWQla04n7pR5WDl/7p0daAct/WqYSfiISkIsUk04n8msZ/MhTl
+	1WVMygw==
+X-Gm-Gg: ASbGncsMppd3/jwh6cCHZGibSayTRQG451zGvz20N4+QraG1bhTd5f8Vu+CZpB0urgC
+	IBAOFEXYJElqHaYPLVyBjfqYADdY7AhqOdYvFksSybRoKUl7lQ2+1XyR4kUi6Cv2EmSbbyBxa+7
+	sAiTadyGZLs6nR7gWGw8DsxBlOMTgPfEcL4l8Qe7tKu3INVHC6JX7zJifWOhhELy56BoKvqc4RA
+	DcNUeOkxh77y2UvUumdNzLxrKmKWSInnQ+Ih1FsJF4lyeK2AVVJPys0iI1n4E0O1Op51okgTET4
+	L4tpxeuOnpSgMIfpIqWuEBLK
+X-Google-Smtp-Source: AGHT+IHG3xUbMJcDGkpvjj2PGHLq/B4xfgTWqwwux2ckJHSb5N1akoySJZvGEWIBdHlWS1d7ELubZw==
+X-Received: by 2002:a05:6512:b8f:b0:53d:d443:1ab0 with SMTP id 2adb3069b0e04-53df010902fmr5534155e87.43.1732823753862;
+        Thu, 28 Nov 2024 11:55:53 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64974c0sm266378e87.222.2024.11.28.11.55.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 11:55:52 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ddb99e9dcso1150122e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:55:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU7mG3I5bK95jxS0l4w1BrDYxKzY8he3flPp5EWgyLRrOtok20oG74fezyCkMy+o1n5l4Mce/A3d8j/QUA=@vger.kernel.org
+X-Received: by 2002:a05:6512:3b25:b0:53d:d3f1:2f4a with SMTP id
+ 2adb3069b0e04-53df00c74d2mr5053239e87.1.1732823751174; Thu, 28 Nov 2024
+ 11:55:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128102619.707071-1-00107082@163.com> <CAJuCfpE0tJfq8juxD+jeStnhQ2PTUH6DqjL7AP_E+Pw++8L35w@mail.gmail.com>
-In-Reply-To: <CAJuCfpE0tJfq8juxD+jeStnhQ2PTUH6DqjL7AP_E+Pw++8L35w@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 28 Nov 2024 11:54:35 -0800
-Message-ID: <CAJuCfpEqHEOa9y4rTgkqLFOc2ueVe6Yz3aKtaM8hoJtrvO4UmA@mail.gmail.com>
-Subject: Re: [PATCH] mm/codetag: swap tags when migrate pages
-To: David Wang <00107082@163.com>
-Cc: kent.overstreet@linux.dev, yuzhao@google.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241127131941.3444fbd9@gandalf.local.home>
+In-Reply-To: <20241127131941.3444fbd9@gandalf.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 28 Nov 2024 11:55:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
+Message-ID: <CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
+Subject: Re: [GIT PULL] tracing: More updates for 6.13
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 11:53=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
-com> wrote:
+On Wed, 27 Nov 2024 at 10:18, Steven Rostedt <rostedt@goodmis.org> wrote:
 >
-> On Thu, Nov 28, 2024 at 2:26=E2=80=AFAM David Wang <00107082@163.com> wro=
-te:
-> >
-> > The initial solution for codetag adjustment during page migration
-> > uses three kinds of low level plumbings, those steps can be replaced
-> > by swapping tags, which only needs one kind of low level plumbing,
-> > and code is more clear.
->
-> This description does not explain the real issue. I would suggest
-> something like:
->
-> Current solution to adjust codetag references during page migration is
-> done in 3 steps:
-> 1. sets the codetag reference of the old page as empty (not pointing
-> to any codetag);
-> 2. subtracts counters of the new page to compensate for its own allocatio=
-n;
-> 3. sets codetag reference of the new page to point to the codetag of
-> the old page.
-> This does not work if CONFIG_MEM_ALLOC_PROFILING_DEBUG=3Dn because
-> set_codetag_empty() becomes NOOP. Instead, let's simply swap codetag
-> references so that the new page is referencing the old codetag and the
-> old page is referencing the new codetag. This way accounting stays
-> valid and the logic makes more sense.
->
-> Fixes: e0a955bf7f61 ("mm/codetag: add pgalloc_tag_copy()")
->
-> >
-> > Signed-off-by: David Wang <00107082@163.com>
-> > Link: https://lore.kernel.org/lkml/20241124074318.399027-1-00107082@163=
-.com/
->  This above Link: seems unusual. Maybe uses Closes instead like this:
->
-> Closed: https://lore.kernel.org/lkml/20241124074318.399027-1-00107082@163=
-.com/
+> [
+>   NOTE: The rust tracepoint code added hooks to the same macros that were
+>   modified in this pull request. The merge has non-trivial conflicts. I
+>   fixed it up in my "for-next" branch in the same repository. That branch
+>   was a merge of this branch into the commit where you pulled the rust
+>   tracepoint code.
 
-Sorry, fat fingered. Should have been:
+I checked my resolution against yours, and I don't think your
+resolution is right.
 
-This above Link: seems unusual. Maybe use Closes instead like this:
-Closes: https://lore.kernel.org/lkml/20241124074318.399027-1-00107082@163.c=
-om/
+You didn't check 'cond' on regular rust tracepoints, and you didn't do
+any locking on either kind.
 
->
-> > ---
-> >  include/linux/pgalloc_tag.h |  4 ++--
-> >  lib/alloc_tag.c             | 35 +++++++++++++++++++----------------
-> >  mm/migrate.c                |  2 +-
-> >  3 files changed, 22 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
-> > index 0e43ab653ab6..3469c4b20105 100644
-> > --- a/include/linux/pgalloc_tag.h
-> > +++ b/include/linux/pgalloc_tag.h
-> > @@ -231,7 +231,7 @@ static inline void pgalloc_tag_sub_pages(struct all=
-oc_tag *tag, unsigned int nr)
-> >  }
-> >
-> >  void pgalloc_tag_split(struct folio *folio, int old_order, int new_ord=
-er);
-> > -void pgalloc_tag_copy(struct folio *new, struct folio *old);
-> > +void pgalloc_tag_swap(struct folio *new, struct folio *old);
-> >
-> >  void __init alloc_tag_sec_init(void);
-> >
-> > @@ -245,7 +245,7 @@ static inline struct alloc_tag *pgalloc_tag_get(str=
-uct page *page) { return NULL
-> >  static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsign=
-ed int nr) {}
-> >  static inline void alloc_tag_sec_init(void) {}
-> >  static inline void pgalloc_tag_split(struct folio *folio, int old_orde=
-r, int new_order) {}
-> > -static inline void pgalloc_tag_copy(struct folio *new, struct folio *o=
-ld) {}
-> > +static inline void pgalloc_tag_swap(struct folio *new, struct folio *o=
-ld) {}
-> >
-> >  #endif /* CONFIG_MEM_ALLOC_PROFILING */
-> >
-> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> > index 2414a7ee7ec7..b45efde50c40 100644
-> > --- a/lib/alloc_tag.c
-> > +++ b/lib/alloc_tag.c
-> > @@ -189,26 +189,29 @@ void pgalloc_tag_split(struct folio *folio, int o=
-ld_order, int new_order)
-> >         }
-> >  }
-> >
-> > -void pgalloc_tag_copy(struct folio *new, struct folio *old)
-> > +void pgalloc_tag_swap(struct folio *new, struct folio *old)
-> >  {
-> > -       union pgtag_ref_handle handle;
-> > -       union codetag_ref ref;
-> > -       struct alloc_tag *tag;
-> > +       union pgtag_ref_handle handles[2];
-> > +       union codetag_ref refs[2];
-> > +       struct alloc_tag *tags[2];
-> > +       struct folio *folios[2] =3D {new, old};
-> > +       int i;
-> >
-> > -       tag =3D pgalloc_tag_get(&old->page);
-> > -       if (!tag)
-> > -               return;
-> > +       for (i =3D 0; i < 2; i++) {
-> > +               tags[i] =3D pgalloc_tag_get(&folios[i]->page);
-> > +               if (!tags[i])
-> > +                       return;
-> > +               if (!get_page_tag_ref(&folios[i]->page, &refs[i], &hand=
-les[i]))
-> > +                       return;
->
-> If any of the above getters fail on the second cycle, you will miss
-> calling put_page_tag_ref(handles[0]) and releasing the page_tag_ref
-> you obtained on the first cycle. It might be cleaner to drop the use
-> of arrays and use new/old.
->
-> > +       }
-> >
-> > -       if (!get_page_tag_ref(&new->page, &ref, &handle))
-> > -               return;
-> > +       swap(tags[0], tags[1]);
-> >
-> > -       /* Clear the old ref to the original allocation tag. */
-> > -       clear_page_tag_ref(&old->page);
-> > -       /* Decrement the counters of the tag on get_new_folio. */
-> > -       alloc_tag_sub(&ref, folio_size(new));
-> > -       __alloc_tag_ref_set(&ref, tag);
-> > -       update_page_tag_ref(handle, &ref);
-> > -       put_page_tag_ref(handle);
-> > +       for (i =3D 0; i < 2; i++) {
-> > +               __alloc_tag_ref_set(&refs[i], tags[i]);
-> > +               update_page_tag_ref(handles[i], &refs[i]);
-> > +               put_page_tag_ref(handles[i]);
-> > +       }
-> >  }
-> >
-> >  static void shutdown_mem_profiling(bool remove_file)
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index 2ce6b4b814df..cc68583c86f9 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -745,7 +745,7 @@ void folio_migrate_flags(struct folio *newfolio, st=
-ruct folio *folio)
-> >                 folio_set_readahead(newfolio);
-> >
-> >         folio_copy_owner(newfolio, folio);
-> > -       pgalloc_tag_copy(newfolio, folio);
-> > +       pgalloc_tag_swap(newfolio, folio);
-> >
-> >         mem_cgroup_migrate(folio, newfolio);
-> >  }
-> > --
-> > 2.39.2
-> >
+I've pushed out my resolution, and hopefully rust people can actually
+test it. I might just be full of it.
+
+That said, I also think that the "__rust_do_trace_##name" inline
+helper should just be renamed to "__trace_##name", and then the
+regular trace_##name() helper could use that inside the
+static_branch_unlikely() check. Because that seems to be the only real
+thing the "rust" version wants - avoiding the static branch
+infrastructure in favor of whatever rust infrastructure.
+
+But hey, I do basic sanity build testing of the rust code, I don't
+actually _know_ it. Again, I might be missing something.
+
+            Linus
 
