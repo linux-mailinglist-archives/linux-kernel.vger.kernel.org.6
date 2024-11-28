@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-424814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE409DB9CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:41:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180329DB9D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:41:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C447164848
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:41:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95A21B6D08;
+	Thu, 28 Nov 2024 14:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXFir5AK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04E6FB22631
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:41:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C3D1B2190;
-	Thu, 28 Nov 2024 14:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="27CrapXO"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293A81531E3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC811B394E;
+	Thu, 28 Nov 2024 14:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732804869; cv=none; b=sp6S+VxHfrAgUQdCFup0hH08x6RLQP+7Ckrmd6akL3IYJreTkZXeScD2D0qSk8PXRT4rM/RWbMuQu8H40ZXC4Xxx9oW9CastBlOE3OBgbwQZyDT+yiZTfdK21g0JB9PxTXcAcpALI8BfsgVv6MbF/AxP4mQIftzv7979dPW1lKg=
+	t=1732804872; cv=none; b=b7syxYxIRg959BHYeUTjaBMbD67n+8uA7rwj5JrQbhJaMhqpSJrGxdjA3kBrtHUrXyE7EFNYgWF0Am9QIzyvGYqEbeXQ9QzOaz+p10U4MBdw6Dmp7f/7pUIBk8rHKveFYwGoKwmxrLiuU0OUC1Qjq0EymBAsthx8qb9hlhScT94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732804869; c=relaxed/simple;
-	bh=tdMDYqpf3IuC59bE6nkIkaoxj2BSW7f0BxFAiJEyjlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+BM6rQ26x5QC3mAentTijgwI+9bl9KoGRjlbW9vh3TwwWbHdUGa1tkrBpcbdd5TaFAWCCVDu2OUC4Cg9gRUT9FAs7qk9iL9qvZa5iCNKHUDbiuUiOfHYSohyYuAx7jw4ursXLJJCuMzF7FRKti73v1OwG6Kkz61c4lS+iincfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=27CrapXO; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43497839b80so5600585e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:41:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732804866; x=1733409666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GwBwmc6DwE9wExuP36Thcn5CpMbyaudiqRqKVp5a+jc=;
-        b=27CrapXOqkaBfuZRrAu8l9NPup+xksoPBwUXWGSu60+bhJVeJF7U9MAx4tQE1k0pgU
-         5++puM0KW2kLGPU/djTnvQWPPvpTb8Qo2fz+q9aBTxe9hyJxdg9DwhZcJ8GH/H53C9j8
-         Uv4qtbLLHo1A7wtRlJ94Kjr2jEAuqTqT88kje4cj8XB1sa8uJ6qPQRBbXHyPTl0AWZFW
-         Y7mJ5hUnhgroeMwkaQGVFflM5Pna5++AOIBlwDQEJrTDqUYz7h9cM7OWMzAS74PUncWT
-         txQwtIKL8ydUhTeM/2+oIRU45ZYrEzRI8tLwPcDPp33rLdRTYXvcFvBz3a/l3ycOTg9H
-         dtMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732804866; x=1733409666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GwBwmc6DwE9wExuP36Thcn5CpMbyaudiqRqKVp5a+jc=;
-        b=OtBAX+O3af2O6EGRAiuDb+0Ic1oLwKeEx4tUwRIxgNb56IEzJU7AVJuGLQ5CTcqFnn
-         O5LBhNtrIV2p0y9NHfKpzCOkQV2dK37Oyv4wfpaDqImCo53MJFm+h85Yh1Hw00D4fN/5
-         /7SFj2aQd6xn3ES8s0WHGcsuultBkiyWWgylobEVWjDESAqLqmMIAyHPYTU9dWuom8uN
-         LS7SQBZzcX7AhsWUAhnBQLlUlxwZ7P4E1ef2KwIHfJiwJC/PZWY26tFZqR7ezV9+5wYt
-         yVcGtJO35ZZhcMee0J3ioCDq8y8NZSdQHQta9H9l0ah3Sg39RnRbRh8boT+pRpP+VBC8
-         VQnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwIF1WoUKRXo75ln8TpR/vtrUqlpXQa8Vk1AIRTj5pHd6JI0EuIYR364fFgBNDuyZur6c5jx4j5WUOp1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTmQs2cf0a/tz1dlftCevOqd4ytuItegw90hd5DFzc41BFl6+g
-	C6KGf86Ib/wlDl4Q2gPyNYiKQIXYWRshRDWtbKYOynmW9Bhbwsxmir74aJjmanavSb8ONbSxdrF
-	TYR4laaEE7fcNxElEC06xoS/9Y9HRIZ4wjGG6
-X-Gm-Gg: ASbGncvOEMZCxml12vIo/r4Ad6zWkwaHFyL3OtXWSSv35XP79CSBlZOHSMvZQQEQyaJ
-	pTrTWC4lET9VJdDtT6oBYo3vph+C/U5d44rX7AuRVVUEOqsbKnDRMO+uydzGN
-X-Google-Smtp-Source: AGHT+IGQuu3FpJRv1GRJAM93QH1pl0e2+J9DOMDr5xMd1RLfVGwI0OX1F/tLzRv0A5j1Ykw3kEo2peafOSkPqXsMNvw=
-X-Received: by 2002:a05:6000:389:b0:382:5016:fd0b with SMTP id
- ffacd0b85a97d-385c6ee2190mr6139158f8f.50.1732804866470; Thu, 28 Nov 2024
- 06:41:06 -0800 (PST)
+	s=arc-20240116; t=1732804872; c=relaxed/simple;
+	bh=gA8SVICHT6Ib0YVBS6U3853M8kxOK6nOFVJYK09QkVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ppGdZOxvjNmPzKHUfho7TdMpziIx437CNlHwN83J61Ajc7y36D0Ii+vmgv+PfqamGJK4JRuLYPQYlQPK0Qa3IyTeP6NGfgzLn299OTljsdnvZ0RZuAHTwzEAAUf2ReWNx5x0apXqGp4Sgu49wi1O90blJgu1QqDaBEGGnhOQXIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXFir5AK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870E4C4CECE;
+	Thu, 28 Nov 2024 14:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732804871;
+	bh=gA8SVICHT6Ib0YVBS6U3853M8kxOK6nOFVJYK09QkVM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cXFir5AKgg8hw8lnLu9WsralJh7g7IXfXXVNOWiGS66v+26bbP5nAhosg/yYJr3/b
+	 3nAepatUIMKtOzkQrzsdxYRuWft2f+mf051qT4QpkZhobF22hJSgPmqdssrdo+XCIl
+	 3BLfYmUeC+Ieo8mZboFEV1cFiM4Q/06lDseE1WXnktoNGlOMGho/GbORQgO8J/a/45
+	 c4p9+1uoeLLaWQWvmKnZ3L1k8I5C9uKhDInWQASUnnFqEaFo2XfQKnAFZMF0iscoj9
+	 /8YrJRgQhnwZWmkho1yuJ4A7Mi5bRTIqEBxRHJ76XZK4rV3GwDXoqmesP2wX4VzTFp
+	 kUDvHHMJ2zVGQ==
+Message-ID: <bd4cb046-f0c1-4044-897c-00f30c6e84d2@kernel.org>
+Date: Thu, 28 Nov 2024 15:41:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128141323.481033-1-pbonzini@redhat.com> <20241128141323.481033-2-pbonzini@redhat.com>
-In-Reply-To: <20241128141323.481033-2-pbonzini@redhat.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 28 Nov 2024 15:40:54 +0100
-Message-ID: <CAH5fLgjJbzAbf5CO3xjHxcThpqju3j0tNdo+QiGupARVmoThYw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: Zeroable: allow struct update syntax outside
- init macros
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	boqun.feng@gmail.com, ojeda@kernel.org, benno.lossin@proton.me, 
-	axboe@kernel.dk, tmgross@umich.edu, bjorn3_gh@protonmail.com, 
-	gary@garyguo.net, alex.gaynor@gmail.com, a.hindborg@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] dt-bindings: net: Add QCA6698 Bluetooth
+To: Cheng Jiang <quic_chejiang@quicinc.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+ Rocky Liao <quic_rjliao@quicinc.com>
+Cc: linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_bt@quicinc.com
+References: <20241128120922.3518582-1-quic_chejiang@quicinc.com>
+ <20241128120922.3518582-3-quic_chejiang@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241128120922.3518582-3-quic_chejiang@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 28, 2024 at 3:13=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com>=
- wrote:
->
-> The Zeroable trait is a marker trait, even though the various init macros
-> use a "fake" struct update syntax.  Sometimes, such a struct update
-> syntax can be useful even outside the init macros.  Add an associated
-> const that returns an all-zero instance of a Zeroable type.
->
-> The exact syntax used by the init macros cannot be reproduced without
-> forgoing the ability to use Zeroable::ZERO in const context.  However,
-> it might not be a good idea to add a fn zeroed() inside the
-> Zeroable trait, to avoid confusion with the init::zeroed() function
-> and because Zeroable::ZERO is unrelated to the Init and PinInit
-> traits.  In other words, let's treat this difference as a
-> feature rather than a bug.
->
-> The definition of the ZERO constant requires adding a Sized boundary, but
-> this is not a problem either because neither slices nor trait objects
-> are zeroable.
->
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+On 28/11/2024 13:09, Cheng Jiang wrote:
+> Add the compatible for the Bluetooth part of the Qualcomm QCA6698 chipset.
 
-Slices are zeroable. I know they don't implement the trait, but they
-could implement it, and this could be used to implement e.g.:
+<form letter>
+This is a friendly reminder during the review process.
 
-pub fn write_zero<T: Zeroed + ?Sized>(value: &mut T) {
-    memset(0, ...);
-}
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
 
-Alice
+Thank you.
+</form letter>
+
+Respond to the comment and then implement it.
+
+Also, version your patches correct and provide changelog. This is v2,
+not v1.
+
+Best regards,
+Krzysztof
 
