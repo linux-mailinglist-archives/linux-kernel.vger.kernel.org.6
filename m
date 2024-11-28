@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87CE9DB10D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:44:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D7D9DB10F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68CCD281E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E5E281918
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0BB1C1F09;
-	Thu, 28 Nov 2024 01:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD941C2333;
+	Thu, 28 Nov 2024 01:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nLM7Wh+4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNkKa1Qc"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07211C07E5
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D371C1AD0
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757736; cv=none; b=dWU2Gsg1/z4A7yJgfnov+mJzPpzZz4fcyycf3aHN2FOSiZ4I3mY2eNSiKq9DbeKgH/0vtdOj2cp7t2070XyJAAPiLNC6FrDN1ds3i/UC3vv5FsNq0lqKsMG5laUgpKXTh23dL6U8iycmPMT99EejKz2g6aVWTWJHpFT/Dt16RaU=
+	t=1732757738; cv=none; b=svRN7KtGmPcGCjXl4Gr3QRh/fX3OiousIZo6MUb2lFehPXkD4joVD+mOqo8nwu2ojJ/kV/RsHnMf9pDgvEttaYZe63CpdgBf+WWzHU+GRd3Z79ZdBMMin61k0r0LeV70i/HyCOJRZRqM//reLbNvamAvfnxZISzgfKe2F6pjMyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757736; c=relaxed/simple;
-	bh=jYievFQLmO0ZX/bL0PmetV/5+n0Jtb0BaFQ/3AUzG/M=;
+	s=arc-20240116; t=1732757738; c=relaxed/simple;
+	bh=Yzxh32zMC9cuwCoV0mcDRBR5LUTqIY74e9pZtQNtQIA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LbVhG4Md4sdkaEjdxwTxGJIXMSLqfpUraNf1We9m4gB/l008U/M3qmXHuX5hhH/e5nrcumdU/81Xg9mMuOU7YFY4QykcIDXjzmh6AVdiniMTh7kk8UOLu52NjL+wjbDcZlgqJXO9eSnDtlVnNR66xyA3PUJ3CeFMN8eYgQdBL0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nLM7Wh+4; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=aOr16h4Kpv/3Mv4ljFC/XGtpoGCwjiqPIZpJnWKRDIWRLvnutlu+/mwyEqzl0WQ5deYH45SoeRpY977PHmAa1AYtBthvnYnC84aBNz54IMvOAop470LIF6Oq5qkFciuTNF5QFJSCwj0RLQEt8tnrYZSOwTowBEwgDG3dCYyYOs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tNkKa1Qc; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea764112f8so513419a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:35:34 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea46465ce4so402896a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:35:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757734; x=1733362534; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757736; x=1733362536; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=zfhwkjabiK9i1U3++Dnns7vu53NPqBBvKZSCWfVqk6g=;
-        b=nLM7Wh+4qqTDlqTHNwEqc/wIVpKmw9xgagxwvsMZW6exXLiQq3X1whX1l5mt2RK26N
-         Li43kXIyp2+IgPSdnSXmZNJ6b4HXro0Ae+EDcrEZwE/9pCCd9vq/u2V5YXVfuHzP8hrU
-         GvN74u/h9WeVmVvwo2fcJBCBTbped0psJhS2yTEIwnWNTaUiDGY2VpRF7lkARhowW1cA
-         KGj1cdjPTyL0EsTo5pK2orX/+iAdjd2Bah3ca9aRCvx+pZCAH2J6IhGGz2HP97nXWe78
-         FqJ7RD9f4z33uTbRp4dUxUUduNVxHKBteIjHCpVuZ1Sj8scYRcYY78PxEgUnOsVifLRr
-         t41w==
+        bh=+r3YaJVI8SArru6YzRyxshHYF9vDpkxkSnZ/zCtA4vg=;
+        b=tNkKa1QcB36OvgQvQOGjE1vZqBes79dd/ZrAb2pBEU+9ldJwfoRpWo/yIeCGRBupoK
+         VflFvpYP0BYn6nXjS2hFypq4nueuV96i1oNAbtP3Bsiavr+dwJgVsE4JKfM+vk17pQWz
+         aIhSiRWUqvwqFwKiY6OPuQFwQDDitkerlbTaZ09lSFmjEJ5JfnFCgSUMV6KXZnKlkSb7
+         yt/lg8nvyvrR44D+q/YdIbqxE+r3yVTiB7wR7TT+IyXQwxeUYARW/p4FxslX1GZXa9fb
+         OQhCrrrito5qex4hyOfqHYSTfx/GVGkYfOoiH7QsKMaQoBjb9w7NDbdgKcw1YTQTMHJo
+         UYKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757734; x=1733362534;
+        d=1e100.net; s=20230601; t=1732757736; x=1733362536;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zfhwkjabiK9i1U3++Dnns7vu53NPqBBvKZSCWfVqk6g=;
-        b=wiVlDscmxBzdDGbQP5oo4Tlne38UQ/ZzIVMGVa/8x4sve8j4iCa7F05r+3LogQq54U
-         T84OIO2iVFqgjRFQflmczzTaquqvXyjWQnDkJk0t1oTdL/O9oUPAgHMN/Z6E6YIDgEJ3
-         W43KNqtzVt8KySqXDwAsiubTEFjSDF8oPDWOl1aSqb4XsGI8ge7AtNFYXj5R+oOLzvcX
-         x7CuZRzTohu6lg1jQTAA5jz0vSpY13AegahFAJ9SMTp85pPg9Y5xiC8bP4O1fdea23u3
-         aJG5jFwb0xd16wbdeYNXy8JNQbWkVdEmihyaPPMoVHa3I5fHiZ0B9TeIMZBptG5Gsyil
-         xOsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVnw+6Ng2WifM4eHzXZSA1kX3QoAMeBQC/11feS/MUi204iPJzdvc26Th4/TCkKuTsHcY/ijypomGTXD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQIYMFFp+TmqS/VvlGgH3cYNQU7s6RtgY8v9esHDSMxq62sEGs
-	wzrO1zt0Lhxy+CIa2kdU3pU7M3dYl45/926mCV5JuO3gH4GBPMIqr1JstnI+habqwoCm2fuuEB7
-	wUA==
-X-Google-Smtp-Source: AGHT+IFxxUsXqKXde7ZelUqTghKoxGn+dhYam6XzQdK6/qbfWvV5DM6aYxLSeMquxqy1kR2q1AUWR13riCk=
-X-Received: from pjbsj16.prod.google.com ([2002:a17:90b:2d90:b0:2ea:29de:af10])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b91:b0:2ea:4c8d:c7a2
- with SMTP id 98e67ed59e1d1-2ee097bf314mr7300159a91.24.1732757734557; Wed, 27
- Nov 2024 17:35:34 -0800 (PST)
+        bh=+r3YaJVI8SArru6YzRyxshHYF9vDpkxkSnZ/zCtA4vg=;
+        b=HBw+shO01BNN2l/ifYTsnKA5MtLxbogDLvMs8+HEwtX3M5SwyE8Nul2cPLnIga7obM
+         ize3szp6a9GfLe8e2ry/WWM4OQo1IURdIJ4zxz1hTgPDugJ2qtuDx79Ox1SRD2e2oGdT
+         OoSB0ODhk3jYU4w1UnEVvaEWviwgHw0MpQmB0vzMGREalkFiLps0jhNFAfzFYSsNzQYz
+         VbuxMa63wuz1Np65vNp1KDH8sDSg8vcTDTffuANBECDL9lYv/6faePqG+unW7LcIdAkd
+         wte9EltJYbwbhemmvBygxXjH2+6K6DO1N0z/RvX4Wkt4hls/icxxJ1KVvlXIhrQUImcz
+         1OXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJQT0oPyj2KoVvaWGMMDMKTj+2xofNORVi5ePOd3nL1dQfwgVpq3xvv2rsTylyW+m0+LhQ1BUV6aKpo0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsIgtZj9/RtnjTnGwWe6fKqLOeyumDWCE3zHNJwStY2A9UwjL4
+	ZcMEoSX65q7qANaEPtF39jRaQwpxq7bkRmJvzIECXnfVD+7rgXCzYUuW8AK6JvuX80oZku9Y8Il
+	faw==
+X-Google-Smtp-Source: AGHT+IHBjhGVoI3QpGx6LnIojWm/sC/X+Cwik3k+m9dhBlZ/JeQyiuq1m19KKA0Gh5+j9faOtyHPg9PbRso=
+X-Received: from pjbsy13.prod.google.com ([2002:a17:90b:2d0d:b0:2e2:8611:a2cb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b4f:b0:2ea:8aac:6aa9
+ with SMTP id 98e67ed59e1d1-2ee08eb7cb2mr6058336a91.21.1732757736300; Wed, 27
+ Nov 2024 17:35:36 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:34:03 -0800
+Date: Wed, 27 Nov 2024 17:34:04 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-37-seanjc@google.com>
-Subject: [PATCH v3 36/57] KVM: x86: Remove all direct usage of cpuid_entry2_find()
+Message-ID: <20241128013424.4096668-38-seanjc@google.com>
+Subject: [PATCH v3 37/57] KVM: x86: Advertise TSC_DEADLINE_TIMER in KVM_GET_SUPPORTED_CPUID
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -88,123 +88,66 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Convert all use of cpuid_entry2_find() to kvm_find_cpuid_entry{,index}()
-now that cpuid_entry2_find() operates on the vCPU state, i.e. now that
-there is no need to use cpuid_entry2_find() directly in order to pass in
-non-vCPU state.
+Unconditionally advertise TSC_DEADLINE_TIMER via KVM_GET_SUPPORTED_CPUID,
+as KVM always emulates deadline mode, *if* the VM has an in-kernel local
+APIC.  The odds of a VMM emulating the local APIC in userspace, not
+emulating the TSC deadline timer, _and_ reflecting
+KVM_GET_SUPPORTED_CPUID back into KVM_SET_CPUID2, i.e. the risk of
+over-advertising and breaking any setups, is extremely low.
 
-To help prevent unwanted usage of cpuid_entry2_find(), #undef
-KVM_CPUID_INDEX_NOT_SIGNIFICANT, i.e. force KVM to use
-kvm_find_cpuid_entry().
-
-No functional change intended.
+KVM has _unconditionally_ advertised X2APIC via CPUID since commit
+0d1de2d901f4 ("KVM: Always report x2apic as supported feature"), and it
+is completely impossible for userspace to emulate X2APIC as KVM doesn't
+support forwarding the MSR accesses to userspace.  I.e. KVM has relied on
+userspace VMMs to not misreport local APIC capabilities for nearly 13
+years.
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ Documentation/virt/kvm/api.rst | 9 ++++++---
+ arch/x86/kvm/cpuid.c           | 2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index bbe445e6c113..61bf1f693e2d 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -1825,15 +1825,18 @@ emulate them efficiently. The fields in each entry are defined as follows:
+          the values returned by the cpuid instruction for
+          this function/index combination
+ 
+-The TSC deadline timer feature (CPUID leaf 1, ecx[24]) is always returned
+-as false, since the feature depends on KVM_CREATE_IRQCHIP for local APIC
+-support.  Instead it is reported via::
++x2APIC (CPUID leaf 1, ecx[21) and TSC deadline timer (CPUID leaf 1, ecx[24])
++may be returned as true, but they depend on KVM_CREATE_IRQCHIP for in-kernel
++emulation of the local APIC.  TSC deadline timer support is also reported via::
+ 
+   ioctl(KVM_CHECK_EXTENSION, KVM_CAP_TSC_DEADLINE_TIMER)
+ 
+ if that returns true and you use KVM_CREATE_IRQCHIP, or if you emulate the
+ feature in userspace, then you can enable the feature for KVM_SET_CPUID2.
+ 
++Enabling x2APIC in KVM_SET_CPUID2 requires KVM_CREATE_IRQCHIP as KVM doesn't
++support forwarding x2APIC MSR accesses to userspace, i.e. KVM does not support
++emulating x2APIC in userspace.
+ 
+ 4.47 KVM_PPC_GET_PVINFO
+ -----------------------
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index fb9c105714e9..150d397345d5 100644
+index 150d397345d5..51792cf48cd7 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -135,6 +135,12 @@ struct kvm_cpuid_entry2 *kvm_find_cpuid_entry(struct kvm_vcpu *vcpu,
- }
- EXPORT_SYMBOL_GPL(kvm_find_cpuid_entry);
- 
-+/*
-+ * cpuid_entry2_find() and KVM_CPUID_INDEX_NOT_SIGNIFICANT should never be used
-+ * directly outside of kvm_find_cpuid_entry() and kvm_find_cpuid_entry_index().
-+ */
-+#undef KVM_CPUID_INDEX_NOT_SIGNIFICANT
-+
- static int kvm_check_cpuid(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_cpuid_entry2 *best;
-@@ -144,8 +150,7 @@ static int kvm_check_cpuid(struct kvm_vcpu *vcpu)
- 	 * The existing code assumes virtual address is 48-bit or 57-bit in the
- 	 * canonical address checks; exit if it is ever changed.
- 	 */
--	best = cpuid_entry2_find(vcpu, 0x80000008,
--				 KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-+	best = kvm_find_cpuid_entry(vcpu, 0x80000008);
- 	if (best) {
- 		int vaddr_bits = (best->eax & 0xff00) >> 8;
- 
-@@ -157,7 +162,7 @@ static int kvm_check_cpuid(struct kvm_vcpu *vcpu)
- 	 * Exposing dynamic xfeatures to the guest requires additional
- 	 * enabling in the FPU, e.g. to expand the guest XSAVE state size.
- 	 */
--	best = cpuid_entry2_find(vcpu, 0xd, 0);
-+	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 0);
- 	if (!best)
- 		return 0;
- 
-@@ -211,7 +216,7 @@ static struct kvm_hypervisor_cpuid kvm_get_hypervisor_cpuid(struct kvm_vcpu *vcp
- 	u32 base;
- 
- 	for_each_possible_hypervisor_cpuid_base(base) {
--		entry = cpuid_entry2_find(vcpu, base, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-+		entry = kvm_find_cpuid_entry(vcpu, base);
- 
- 		if (entry) {
- 			u32 signature[3];
-@@ -258,7 +263,7 @@ static u64 cpuid_get_supported_xcr0(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_cpuid_entry2 *best;
- 
--	best = cpuid_entry2_find(vcpu, 0xd, 0);
-+	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 0);
- 	if (!best)
- 		return 0;
- 
-@@ -269,7 +274,7 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_cpuid_entry2 *best;
- 
--	best = cpuid_entry2_find(vcpu, 1, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-+	best = kvm_find_cpuid_entry(vcpu, 1);
- 	if (best) {
- 		/* Update OSXSAVE bit */
- 		if (boot_cpu_has(X86_FEATURE_XSAVE))
-@@ -280,22 +285,22 @@ void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
- 			   vcpu->arch.apic_base & MSR_IA32_APICBASE_ENABLE);
- 	}
- 
--	best = cpuid_entry2_find(vcpu, 7, 0);
-+	best = kvm_find_cpuid_entry_index(vcpu, 7, 0);
- 	if (best && boot_cpu_has(X86_FEATURE_PKU) && best->function == 0x7)
- 		cpuid_entry_change(best, X86_FEATURE_OSPKE,
- 				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
- 
--	best = cpuid_entry2_find(vcpu, 0xD, 0);
-+	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 0);
- 	if (best)
- 		best->ebx = xstate_required_size(vcpu->arch.xcr0, false);
- 
--	best = cpuid_entry2_find(vcpu, 0xD, 1);
-+	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
- 	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
- 		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
- 		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
- 
- 	if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT)) {
--		best = cpuid_entry2_find(vcpu, 0x1, KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-+		best = kvm_find_cpuid_entry(vcpu, 0x1);
- 		if (best)
- 			cpuid_entry_change(best, X86_FEATURE_MWAIT,
- 					   vcpu->arch.ia32_misc_enable_msr &
-@@ -309,8 +314,7 @@ static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
- #ifdef CONFIG_KVM_HYPERV
- 	struct kvm_cpuid_entry2 *entry;
- 
--	entry = cpuid_entry2_find(vcpu, HYPERV_CPUID_INTERFACE,
--				  KVM_CPUID_INDEX_NOT_SIGNIFICANT);
-+	entry = kvm_find_cpuid_entry(vcpu, HYPERV_CPUID_INTERFACE);
- 	return entry && entry->eax == HYPERV_CPUID_SIGNATURE_EAX;
- #else
- 	return false;
+@@ -716,7 +716,7 @@ void kvm_set_cpu_caps(void)
+ 		EMULATED_F(X2APIC) |
+ 		F(MOVBE) |
+ 		F(POPCNT) |
+-		0 /* Reserved*/ |
++		EMULATED_F(TSC_DEADLINE_TIMER) |
+ 		F(AES) |
+ 		F(XSAVE) |
+ 		0 /* OSXSAVE */ |
 -- 
 2.47.0.338.g60cca15819-goog
 
