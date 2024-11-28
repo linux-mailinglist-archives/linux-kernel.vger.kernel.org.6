@@ -1,190 +1,102 @@
-Return-Path: <linux-kernel+bounces-424764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58DB9DB916
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:53:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A66D59DB917
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30FBDB20F90
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:53:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34512B22725
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD531AA1DA;
-	Thu, 28 Nov 2024 13:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB51AA1C5;
+	Thu, 28 Nov 2024 13:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nXru4PHy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A81YnyK4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D3A158527;
-	Thu, 28 Nov 2024 13:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C5219CC02;
+	Thu, 28 Nov 2024 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732801985; cv=none; b=em7Wh98ZWb+K/tTVlOYePU/rhi5DnR0GNZFsDPboHQQ+HR0DonMu2QLMlDWydwUBMbpa9KS9Am9IaNwIC3vvjR8LXDEfF+9iYfmQRmbYFJIhG0YSlEBbEfdKKmWl/H15OdaKU41uSlz40qdnNEt13aSB7KoGxiOMAi3HeXkbxGI=
+	t=1732802039; cv=none; b=Gkau4rJr5VojOUufU9JXx3FieS7Qt8uw/ayAgKYKQt74TpR6iIqKCmp6x4dqVMXDSvHw1072AgHoGBsWOKPWScjrKdCiQpHX59Y+tB7YJdBz7GI0cN2OtiKthFnbXvNQAwyFc8v+kBBXxbri86a04DAuxnqk2nKbGULgY5XqCd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732801985; c=relaxed/simple;
-	bh=UG+77VmKk7jPmYy+z4+sWVfveyZZmvMyCQvvHM+X7Gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPoeYoiONjHBeFNc94K42vYIJ9DiH0Jtdx/ZXapmMweZIGLeTf51abUDYIuSKfcutf0JXlwR5UruIzb3C/6aITbF9XD/qFp4WfB6iFfwomFKaUY1SPHL2hWu+QvaAkJZuCccd3m7kUJZ0Im6omlI/AZP3xlCmEUTmAf1M3w2bE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nXru4PHy; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1732802039; c=relaxed/simple;
+	bh=u8cq6VaEAOfX5CJPIwJdOu2Eb08xtEzuaQwDrTdYXGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uq4+gjzWSiuWH7TJAe1su3hsYYJck8R39uRNisNC3jAbt0m+Yv9nP16kgEFd6aFYTmBH/CKK905xhJ4LCGrtSgm0ewWpF+DsMFrCmcXNWOZPGIGDr/eDjwjy5ratcgS3BeZEO2OM9LyvBeyug1luD8mtp9ak3wuuUlFGzzhd390=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A81YnyK4; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732801983; x=1764337983;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UG+77VmKk7jPmYy+z4+sWVfveyZZmvMyCQvvHM+X7Gs=;
-  b=nXru4PHy8tKuVyt638fxhfaX7gC8I2gzvHVqZqEfHl0yxOIVrosxMVn1
-   MqvMNGjHa/DBleZuSV1j7mHuY+qAmh3mJaJ5Fsyi05sCoM7tLf9FHLLKw
-   +koHjdmUbSJzlxM4zNGWDADLHOxVXzLjhTWGelSC+rRP+z1Fg3EgS9L7i
-   RpWAdH6Om8BWFtHKwwbbbWPuxd3pczmSPkr0EP9PfgICjiWwSlnRBE6uF
-   A+s3LH1MHDgeA2fLjhQXUuoVRyydWzAZwIeQAzC0O+yy1PgyBJIDzN2R2
-   CoSJXM2boHcizQL6cYV7pO7bcKfUEQVcGHgel/GPZ+1PYbCyYXltKgh7F
-   A==;
-X-CSE-ConnectionGUID: KkCtx6B3QSCMoShgVjEZxw==
-X-CSE-MsgGUID: tgfDycWOT76zvNcVaDMwdA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="33279016"
+  t=1732802038; x=1764338038;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=u8cq6VaEAOfX5CJPIwJdOu2Eb08xtEzuaQwDrTdYXGk=;
+  b=A81YnyK4Wwc3vyJ86x48+566wuB/1X8HbHtmumDa1y/ygvv11lp719Pw
+   hNm7bQ8ue+uZVRXfjZdWH2y5W+nr9haBYX5KOT4hJllfNNQcqhnEBy9yV
+   3fN2STEf8J/DgG8bdjSlB8xJYW0ggHylATD+fOnYZjG6xAbuF1RkmHHY3
+   EAvGonn7wQheS/uU1TAPmPW905DmdQXLGfSN4c6WbfmN2ZNxqxl3MHnyB
+   E5f4ntp9POXQXfgu2nl4/sH7/opA3RQ2ly4FVvXd+tasxssks2LDj1mON
+   0pUm2T+l75qS6ZACGnZJ5RZ8IQHmYYomwoLvBmoKNhiusnXU1tlz3iZNn
+   Q==;
+X-CSE-ConnectionGUID: s61dgJxGQ4SKTXvgws9SCw==
+X-CSE-MsgGUID: Df30M++CSSmjCW9qhqy0aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="36965094"
 X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="33279016"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 05:53:02 -0800
-X-CSE-ConnectionGUID: bTMg1z2ETMCuv7KPMMZ99A==
-X-CSE-MsgGUID: ucUiTrj/RAaNx28VzoteOg==
+   d="scan'208";a="36965094"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 05:53:58 -0800
+X-CSE-ConnectionGUID: phXS6J0hTjqFQZ/45RO+Sg==
+X-CSE-MsgGUID: 7S0UJOIbT9aiCfUopCgQ0A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="97203444"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 28 Nov 2024 05:52:58 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGewx-0009dT-1q;
-	Thu, 28 Nov 2024 13:52:55 +0000
-Date: Thu, 28 Nov 2024 21:52:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, wenjia@linux.ibm.com,
-	jaka@linux.ibm.com, alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dust Li <dust.li@linux.alibaba.com>
-Subject: Re: [PATCH net-next 2/2] net/smc: support ipv4 mapped ipv6 addr
- client for smc-r v2
-Message-ID: <202411282154.DjX7ilwF-lkp@intel.com>
-References: <20241127094533.18459-3-guangguan.wang@linux.alibaba.com>
+   d="scan'208";a="96332303"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 05:53:53 -0800
+Message-ID: <0aecb442-ede7-44ce-824e-6fc0271207b7@intel.com>
+Date: Thu, 28 Nov 2024 15:53:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127094533.18459-3-guangguan.wang@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 00/12] perf record: Add event action support
+To: Yang Jihong <yangjihong@bytedance.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, kan.liang@linux.intel.com, james.clark@arm.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241128133553.823722-1-yangjihong@bytedance.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241128133553.823722-1-yangjihong@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Guangguan,
+On 28/11/24 15:35, Yang Jihong wrote:
+> In perf-record, when an event is triggered, default behavior is to
+> save sample data to perf.data. Sometimes, we may just want to do
+> some lightweight actions, such as printing a log.
 
-kernel test robot noticed the following build errors:
+Why not just pipe 'perf record' to 'perf script'?
 
-[auto build test ERROR on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Guangguan-Wang/net-smc-support-SMC-R-V2-for-rdma-devices-with-max_recv_sge-equals-to-1/20241128-111259
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241127094533.18459-3-guangguan.wang%40linux.alibaba.com
-patch subject: [PATCH net-next 2/2] net/smc: support ipv4 mapped ipv6 addr client for smc-r v2
-config: arm-randconfig-001-20241128 (https://download.01.org/0day-ci/archive/20241128/202411282154.DjX7ilwF-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411282154.DjX7ilwF-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411282154.DjX7ilwF-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from net/smc/af_smc.c:27:
-   In file included from include/linux/if_vlan.h:10:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/arm/include/asm/cacheflush.h:10:
-   In file included from include/linux/mm.h:2225:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> net/smc/af_smc.c:1120:46: error: no member named 'skc_v6_rcv_saddr' in 'struct sock_common'; did you mean 'skc_rcv_saddr'?
-    1120 |              !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
-         |                                                     ^
-   include/net/sock.h:376:37: note: expanded from macro 'sk_v6_rcv_saddr'
-     376 | #define sk_v6_rcv_saddr __sk_common.skc_v6_rcv_saddr
-         |                                     ^
-   include/net/sock.h:155:11: note: 'skc_rcv_saddr' declared here
-     155 |                         __be32  skc_rcv_saddr;
-         |                                 ^
-   1 warning and 1 error generated.
-
-
-vim +1120 net/smc/af_smc.c
-
-  1087	
-  1088	static int smc_find_proposal_devices(struct smc_sock *smc,
-  1089					     struct smc_init_info *ini)
-  1090	{
-  1091		int rc = 0;
-  1092	
-  1093		/* check if there is an ism device available */
-  1094		if (!(ini->smcd_version & SMC_V1) ||
-  1095		    smc_find_ism_device(smc, ini) ||
-  1096		    smc_connect_ism_vlan_setup(smc, ini))
-  1097			ini->smcd_version &= ~SMC_V1;
-  1098		/* else ISM V1 is supported for this connection */
-  1099	
-  1100		/* check if there is an rdma device available */
-  1101		if (!(ini->smcr_version & SMC_V1) ||
-  1102		    smc_find_rdma_device(smc, ini))
-  1103			ini->smcr_version &= ~SMC_V1;
-  1104		/* else RDMA is supported for this connection */
-  1105	
-  1106		ini->smc_type_v1 = smc_indicated_type(ini->smcd_version & SMC_V1,
-  1107						      ini->smcr_version & SMC_V1);
-  1108	
-  1109		/* check if there is an ism v2 device available */
-  1110		if (!(ini->smcd_version & SMC_V2) ||
-  1111		    !smc_ism_is_v2_capable() ||
-  1112		    smc_find_ism_v2_device_clnt(smc, ini))
-  1113			ini->smcd_version &= ~SMC_V2;
-  1114	
-  1115		/* check if there is an rdma v2 device available */
-  1116		ini->check_smcrv2 = true;
-  1117		ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
-  1118		if (!(ini->smcr_version & SMC_V2) ||
-  1119		    (smc->clcsock->sk->sk_family != AF_INET &&
-> 1120		     !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
-  1121		    !smc_clc_ueid_count() ||
-  1122		    smc_find_rdma_device(smc, ini))
-  1123			ini->smcr_version &= ~SMC_V2;
-  1124		ini->check_smcrv2 = false;
-  1125	
-  1126		ini->smc_type_v2 = smc_indicated_type(ini->smcd_version & SMC_V2,
-  1127						      ini->smcr_version & SMC_V2);
-  1128	
-  1129		/* if neither ISM nor RDMA are supported, fallback */
-  1130		if (ini->smc_type_v1 == SMC_TYPE_N && ini->smc_type_v2 == SMC_TYPE_N)
-  1131			rc = SMC_CLC_DECL_NOSMCDEV;
-  1132	
-  1133		return rc;
-  1134	}
-  1135	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+# perf record -e sched:sched_switch | perf script | head
+            perf  768231 [000] 2318380.474267: sched:sched_switch: perf:768231 [120] R ==> migration/0:18 [0]
+     migration/0      18 [000] 2318380.474294: sched:sched_switch: migration/0:18 [0] S ==> swapper/0:0 [120]
+            perf  768231 [001] 2318380.474353: sched:sched_switch: perf:768231 [120] R ==> migration/1:23 [0]
+     migration/1      23 [001] 2318380.474382: sched:sched_switch: migration/1:23 [0] S ==> swapper/1:0 [120]
+            perf  768231 [002] 2318380.474477: sched:sched_switch: perf:768231 [120] R ==> migration/2:29 [0]
+     migration/2      29 [002] 2318380.474503: sched:sched_switch: migration/2:29 [0] S ==> swapper/2:0 [120]
+            perf  768231 [003] 2318380.474513: sched:sched_switch: perf:768231 [120] R ==> migration/3:35 [0]
+     migration/3      35 [003] 2318380.474523: sched:sched_switch: migration/3:35 [0] S ==> swapper/3:0 [120]
+            perf  768231 [004] 2318380.474534: sched:sched_switch: perf:768231 [120] R ==> migration/4:41 [0]
+     migration/4      41 [004] 2318380.474541: sched:sched_switch: migration/4:41 [0] S ==> swapper/4:0 [120]
 
