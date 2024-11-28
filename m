@@ -1,154 +1,127 @@
-Return-Path: <linux-kernel+bounces-424535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAE49DB57D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:22:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A569DB581
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:24:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05C1166A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42DF3B25C99
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EBD18C939;
-	Thu, 28 Nov 2024 10:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B880119049B;
+	Thu, 28 Nov 2024 10:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1msiqzU"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ro35v9WG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDB113B7BC;
-	Thu, 28 Nov 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4013913B7BC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732789356; cv=none; b=emQ4W9usBnxCf3MeibJQMVXktzXZnf5p+plwO+eKYpx9THa4RoTsnO7U7Zy4wstP90vUypy8mvqLFdmsd+eXOj+cB7dki1t+QQTi7LyHa5mzlWHQyEDifEfZFZZmZ1IhufB8xa9Cck3S+IAb8/LFHQJrOLpuiXpXBKnxEV9sBnI=
+	t=1732789432; cv=none; b=L7EfJNPzk02O9si2OB8Ww29UXwciQF0R53ESLx43fDXM4YgyrXD3Aw5BDSIsQ1cr6AgeXOzOUl5y0mRMjEozz9OtMhDIhwXCTBVa1H7xa1E+KyRsc2RIrMBPcIYRi6wvh8qqmmKrHc/7ShOQZ47zrAlspf0ZI3hnCGgk7yVAtF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732789356; c=relaxed/simple;
-	bh=rM+W/r9fCVDAYM30UfVcCV/3Tgxqt7aRP7hQNLr6zUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpoyLdF7Av+7C/T5U5yx8Oi1hM0imtWc41QehJUeMJTRhJJyu8iExvs1UXZRlAhawkR2nIeCLCPFpEh4vWRiwfu9ynmQixCJbUtPVwEXjRvvR1OfP1r8v6DImS7NYm5Z9+ffzHNjoSsDzHhbQMVKF8T9kvCTSJqcEKVYrDFWQXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1msiqzU; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3691265e9.1;
-        Thu, 28 Nov 2024 02:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732789353; x=1733394153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
-        b=d1msiqzUyCSZZHX/C7VffSM9CZOVitAdcyiSKYCcX54LjO1nyO4guwSLVyDoH0zttw
-         eHOjS15WDWN3xZ7Gy9Ma+OYgrbbnhg8MUoqROzQIM5b5K3zMSplQM73lkeN/p6J9yDu9
-         zibyUm30/EYbyogwPD99yOyN+vWWamS2sIZ2ZJgzUOC74rhLwixfbmvLPMwZHFKqJTvk
-         qCCyVWLytiA5q7JGRgY0Hnzw7ureV8BUjaFUwufZxdA6auuhF0DN9sGaxc7tHplznUqH
-         w6cmSmnt74GHzMNYRg2gl9V8F7AAdXr5OwPKENCdoJRpqRT1TcjFRDl7/BAz3XanoKoq
-         os0w==
+	s=arc-20240116; t=1732789432; c=relaxed/simple;
+	bh=kC1H1HmO8U7oHxgMfVCQTUtV7ITRvNx3I31XfNRGICY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sW8ykoNIM4VUOs1cGrckTsTjWFl+oMRJEH2Yz1IprXG/rBYr7WBErSyseCwjAZzxeOXl9tWN30tLW6uxLwH198MTqCWFNUe4lNoCyITKWJRX2OeBh1b7xfSg36SOVlvCAK4JS6V+h++IS2HGW5XsU8dyfHJkvbtheFNrdKJIW08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ro35v9WG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732789429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qkmr2+feEdXbr/5zJeyhstbFoivj8FethD26ke+CuOo=;
+	b=Ro35v9WGCszzJp4SHsuCKT1vodeXePYgt5Y0kPV+rNcE6TLS/3g/68lZYnSGlLe3Wb3hn0
+	XCFMUv63GerGyODJ+rMrY6UJHxR9k8ZXQjyvZoxSyS72Ck25ysdsWanvoQ5s/eqdh3GG/c
+	DVkkodUbzogIb7dlWpfrj3FJFP4HYSY=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-MKXsThzlPgi02DCIzT_sJg-1; Thu, 28 Nov 2024 05:23:47 -0500
+X-MC-Unique: MKXsThzlPgi02DCIzT_sJg-1
+X-Mimecast-MFC-AGG-ID: MKXsThzlPgi02DCIzT_sJg
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-5151638fda1so1031119e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:23:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732789353; x=1733394153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
-        b=Z2Mxvn6r7sjEhPxr1VAwwarEhUwM07JpkOyI4JQdKLryAow7uCgR+1LSKtLHosHT1R
-         FxuU6oPfaL5QEGPzISN8XEtbOt2+nTaJ4UXkFcIrJqO0Y55Izoeue5j64yYztZZjn/5N
-         wFUrnr6cE0KfryUJTGbT+ox3vsoB6PcEFLjhcdeBhvvB2xYupTMuBcFJn/ZDvUsBoDu+
-         JsH2ZRsPbU/QLKclih+qCG2N5FWG2uAUyX8k0dKx+8PXR8EbGCBazdFkRo4JTy7s3yuW
-         1htpBM/blav9f9EJ1W58U+RAEVwimBJkZly/pUP58YKSaTwRqkmuAkc15CIc7r9f/Jxk
-         pnXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5h+kEEOEEPs9iz4WPcF8udO6hCwg2OsO2ow/Hxb2XcxJkTyxDikSHylqd364C9TH7LiNmDha/OQPkCzI=@vger.kernel.org, AJvYcCXoOeGk6j2DtECgibDaWGgAoSDRe25bcmqLeA3gPUJqO1m3S9c3qlrgQEy0FFxtLL6eZ4ovSETjwGZYRmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpIvzDGL6UzNC2apPOLoBJd8COp1+4H/BxlEXbPOjiaDOC6Eet
-	lOU5obK+mmHJXqDJpcewjI3vs+Z5EaC62FT76n/u9U34hZiE/wQlAwsKvQ==
-X-Gm-Gg: ASbGncuqKIr9mtsaVTFEfqhcJj2alRAkgFUyZW9Tj1Ts6/C2BuhpRnU8Flh3vfttUs0
-	Yv9mh08hsAh7tiUTBFUBxdgqLrNsQazPMrotXiVHXJ53BAVycOooXCOPIcAAK5Q8iLoAYUE329n
-	o6X2h1X83JIJIAgD9ZJzb0O2ENlr4mH/jZz7qDfE93LXYCN4Fvkq4SiMrZpNjD4gQ6/4khRNx22
-	l3KKjNf4MkLM0EfwatCsyx+C6fvtzOUe/mBAF5SIOzEBgliLyPFhvfhMPsDdvibQXHHsKJgdSM7
-	dTzf6kQupD2Vdsq0vkCriXfvWmV0msFx9PaA
-X-Google-Smtp-Source: AGHT+IFAVw0mZ2FXcVynKdgJ8vLzM8AQou1uG0b5nxDGGMyxL7xI+YmGC5tYXs+bd83uwE+en3eOCg==
-X-Received: by 2002:a05:600c:1d03:b0:434:a367:2bd9 with SMTP id 5b1f17b1804b1-434a9dc501bmr67566465e9.14.1732789353278;
-        Thu, 28 Nov 2024 02:22:33 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d91sm17261055e9.39.2024.11.28.02.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 02:22:32 -0800 (PST)
-Date: Thu, 28 Nov 2024 11:22:31 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
-Message-ID: <hofrxrz5qvxohlvxme4brhng6rrs7s6wwoqwnu3smjbbonhwh4@xajjliw474v6>
-References: <20241128085930.52571-1-kkartik@nvidia.com>
+        d=1e100.net; s=20230601; t=1732789427; x=1733394227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qkmr2+feEdXbr/5zJeyhstbFoivj8FethD26ke+CuOo=;
+        b=r6HZS/c/CzScUvt9NP2qu0kyKV/nf2339RjH7CWDy4Xcxg4NNLRkTj8k4RLOVAnU5t
+         YM3CPXR8Qo/ZLt3zbtxVBaVyM7/b/tP5OSlOtODkdpnyiJjVNXvKFizIT5SoUDBB/peD
+         QaqXayU3QtfZDHxnH4rY9QBaiK0Q8qV35JNRem7ch4oskjSFiYAd1TW1mcFM4PBNkMNk
+         zCdsNYS4Kj5nTcM9z6syv8QhE2i/wNrk2qeb3Nq5uT5oc14meHrDSR7kOLKfONMLQguM
+         aB4DDc+u/qIKcXk2c5WjyWMeiTwdMNpRP5mLMJI056uHMivtevCYZxW6Y+3jMi3FwbRk
+         Ob2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcs/SJBf99f0DtXno8038OXqibHMXdfWmcz/Mei5jBZEzfdus21AzIV6CdJpLVkShkw233Xo9RlLtkpPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4vUPZHGEWoKFbz2IGsdPSGJydDNHferlpC+YkyjSQhVGHzB4V
+	tkEBCec5PNSU2a9wtTJLLGES/HKmdsh12ZD78mnSNUY3zEPVPYvpKd4rw1Yq54UXZOjGcPMrQbe
+	lgb6BKUJpNR1ietfOz1jV8HfVH6VJf5DMjBIR2qIc6FX1jpPsBuuTc8P28j+Rr2kk9rUwrFVcIB
+	S+N0ejaul1x1meawMrRTJ+TlGNo8XVno3sMYtp
+X-Gm-Gg: ASbGncvXIRs5SzCXRusSvQrkm44cW1SAeCgxWDksKMBcgwdEmrBT+w9x5LEx0hOiKgC
+	LTmlY3QDAgMo9z3NJ0T6r2H0MT54HpTJh
+X-Received: by 2002:a05:6122:65a4:b0:50d:4b8d:6750 with SMTP id 71dfb90a1353d-5156a8309e6mr2727689e0c.1.1732789427221;
+        Thu, 28 Nov 2024 02:23:47 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHMk856e8hanKU5TDNtQvKVA2QWMrLrb8D8m1njaV381GFpzrIstv+PJq5rExSvXOUD77BVDObiKd74qmeLiII=
+X-Received: by 2002:a05:6122:65a4:b0:50d:4b8d:6750 with SMTP id
+ 71dfb90a1353d-5156a8309e6mr2727685e0c.1.1732789426967; Thu, 28 Nov 2024
+ 02:23:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="euopke2p2jba35ow"
-Content-Disposition: inline
-In-Reply-To: <20241128085930.52571-1-kkartik@nvidia.com>
-
-
---euopke2p2jba35ow
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241128170056565nPKSz2vsP8K8X2uk2iaDG@zte.com.cn>
+In-Reply-To: <20241128170056565nPKSz2vsP8K8X2uk2iaDG@zte.com.cn>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Thu, 28 Nov 2024 18:23:36 +0800
+Message-ID: <CAFj5m9LLPEfph+U-0n3p9YeXg8tOeBD2fdZe0HheYVFSsw68xg@mail.gmail.com>
+Subject: Re: [PATCH] brd: decrease the number of allocated pages which discarded
+To: long.yunjian@zte.com.cn
+Cc: axboe@kernel.dk, kbusch@kernel.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mou.yi@zte.com.cn, zhang.xianwei8@zte.com.cn, 
+	cai.qu@zte.com.cn, xu.lifeng1@zte.com.cn, jiang.xuexin@zte.com.cn, 
+	jiang.yong5@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
-MIME-Version: 1.0
 
-On Thu, Nov 28, 2024 at 02:29:30PM +0530, Kartik Rajput wrote:
-> From: Pekka Pessi <ppessi@nvidia.com>
->=20
-> Some clients depend on mailbox being empty before processing the
-> message. On RT kernel, the thread processing the message may be on
-> different CPU or running with higher priority than the interrupt
-> handler thread and they may act on the message before mailbox is
-> emptied.
->=20
-> Fixes: 8f585d14030d ("mailbox: tegra-hsp: Add tegra_hsp_sm_ops")
-> Fixes: 74c20dd0f892 ("mailbox: tegra-hsp: Add 128-bit shared mailbox supp=
-ort")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+On Thu, Nov 28, 2024 at 5:01=E2=80=AFPM <long.yunjian@zte.com.cn> wrote:
+>
+> From: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
+> The number of allocated pages which discarded will not decrease.
+> Fix it.
+>
+> Fixes: 9ead7efc6f3f ("brd: implement discard support")
+>
+> Signed-off-by: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
 > ---
-> v1 -> v2:
-> 	* Added "Fixes:" tag in the commit message.
-> 	* Made similar change for 128-bit shared mailboxes.
-> ---
->  drivers/mailbox/tegra-hsp.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/block/brd.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+> index 5a95671d8151..292f127cae0a 100644
+> --- a/drivers/block/brd.c
+> +++ b/drivers/block/brd.c
+> @@ -231,8 +231,10 @@ static void brd_do_discard(struct brd_device *brd, s=
+ector_t sector, u32 size)
+>         xa_lock(&brd->brd_pages);
+>         while (size >=3D PAGE_SIZE && aligned_sector < rd_size * 2) {
+>                 page =3D __xa_erase(&brd->brd_pages, aligned_sector >> PA=
+GE_SECTORS_SHIFT);
+> -               if (page)
+> +               if (page) {
+>                         __free_page(page);
+> +                       brd->brd_nr_pages--;
+> +               }
 
-Do we know what exactly "some clients" means? I know that TCU uses this
-shared mailbox and sometimes it does go into a weird state where it can
-loose characters, so I wonder if that's one case that would be fixed by
-this.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Not strictly a requirement, but it would be good if we can give a good
-description of a case where this helps.
-
-Thierry
-
---euopke2p2jba35ow
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdIRGcACgkQ3SOs138+
-s6HscBAAgmS95TwfRv7d/Av7oNT+xiv4gh9VMqqIpp+xHobPVjDYWxfrnitMBTS6
-Z00ws8zYCuAPw+DarFh3efy4EacZz7KSyWkfy4pnU/CLvpcsnDLG4K+eBjFzok1T
-VPpBA6Ors67BXu3HJa4g+41rFEU0Ba7CwgWSFTfzgAb6shCpspkcaWdZF0ESDwGA
-ZvpvLabSxmEw/blSNsNRNZNaaYV35yQ4lE8sshFNqlac8SM4euKvogQitZCPlc0K
-T69nH+xmDWUggHRU9S9eLvHZRlpZJIFHF/tQGECaYXSXOtUFgcHtE+YhosCmE5SM
-HKRUUzSW51CXp3HvVIxrs04JAMhhbqT7qdI+MoVbD3AMkBLhYw2SS8CWtrr8/6ND
-ReXGFBoDeyf22P4R3+l4lLgK3rTJjdPRtbZv5C2mqN8MqzI5siOEp9qcTGrZBWh7
-D6PuZH1lDgoPQPI262/JwJxlni78cPtYa7rpZHNwmbRecw67RSqffyF1VeKr7hdX
-pe2ePq0hsAE2LpSXKskT9MrH3UwA8jEVEcWfDdRTY0i6rFMw5rBJyc6G4MVKrhkd
-jT7uyV/ss8L6kJN5el+oPmbU+xv+DT76NUf37cFWJ+uJUEQN7Q6eG4tZdYLtm266
-b3SqNUBRbunexRsaSfvIqBKbXkmrBstgnTMe7u8OsZNkyDb6YAs=
-=KfZi
------END PGP SIGNATURE-----
-
---euopke2p2jba35ow--
 
