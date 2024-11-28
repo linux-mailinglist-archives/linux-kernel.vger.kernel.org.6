@@ -1,145 +1,182 @@
-Return-Path: <linux-kernel+bounces-424955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09039DBBC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E31149DBBC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B6A2B20A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:21:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2EDB20E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6790B1C07FC;
-	Thu, 28 Nov 2024 17:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266311C07F3;
+	Thu, 28 Nov 2024 17:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BC7rmni5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jp52ll3G";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ET/uR+w0"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112081BD9FF;
-	Thu, 28 Nov 2024 17:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD93211C;
+	Thu, 28 Nov 2024 17:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732814494; cv=none; b=rSeMa7qiRGXXMZdKTt1VIEGFcjdhKOiEjBT9LlJlK6FcYHCo+tDv3EtTN1+2aebt8RRcX60k8KOJqS5esBWni+J5RX8+NWPnUMC+aU9Ym5svvmvwCNgB7eQ0Oj5BcDa8aOVILzBkCcxywQhNNc0zCsjTDctdCeRW4T1TvgEbArQ=
+	t=1732814515; cv=none; b=SFg6Qe0DD9TY12Ng/jWBXiajD2NdBguVLpRJ827CChubYkizhj2cF6olQWno8teoR16Q2KWnFxV1w3tTzbed3+plILQ19ITOtI7IrEGFqAdIMrxuyVoOJQTThYkQ5Y9HwW1ipi3NtK+OS3Ckqr/V+Z2e9QYiuaMXPAL9MBCK1Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732814494; c=relaxed/simple;
-	bh=1ZD2besWwUxZjER27WGcmeYP9lCfnVzAZX9t8iALQ7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IomRmowd6UHVM23DVDzsqq76wJ1RgVm+l6t87DORGR+h7/aq7OSOQb2FtRAUzPhYFE81KS1pkJmWv0NFYYBeUkXvsHLzGbAp3RYQXK18cXD4bCJyFIt0bXWa6E8fWdVDa4ft9ZBplRgo+EPZMMwmJGSyuBbF01eeEb+nMY6TcyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BC7rmni5; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732814493; x=1764350493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1ZD2besWwUxZjER27WGcmeYP9lCfnVzAZX9t8iALQ7c=;
-  b=BC7rmni5a6GOq1N6iFGxfdXHBppcgqzp25NgJnY3M5heghIevALcL7Dd
-   gwnypbsCC2wuvZAllFPxISKA5ivMQ0Qd0m/XgegwgnRb9Wrobf7ygFLB6
-   8OK3tZH/4MtDwxZNoGU4AxDvPc0IJuP7twQaVAFk6Wi5CZ4OTkxXb31oM
-   Vk+48oR+KaZZ470zMdxqqAx3cFU+A2XrOEFjDRPfK4GQ2BgFP4asyHqG6
-   RuuYaz0e6c41tzxSZZ1YSHB9CpxG9MRBhlptkgwT87KzeFMhdXRdeTvt0
-   NEQofUY+E/4rmloaTne+KN2CL5Qp3py7spq89v37oZ1EFKn9ZfDy8Gz02
-   A==;
-X-CSE-ConnectionGUID: VCRaLZlmSwWdbMlelMFMdg==
-X-CSE-MsgGUID: VHbpu96wQwmA0wxqoQ5hbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="58462468"
-X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
-   d="scan'208";a="58462468"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 09:21:33 -0800
-X-CSE-ConnectionGUID: W0vd1o6lQneZpQxYbQgZmw==
-X-CSE-MsgGUID: UC0+7HevSHyI5HYansTOvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
-   d="scan'208";a="96717194"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 28 Nov 2024 09:21:30 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGiCl-0009rL-1K;
-	Thu, 28 Nov 2024 17:21:27 +0000
-Date: Fri, 29 Nov 2024 01:20:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] iio: accel: kx022a: align with subsystem way
-Message-ID: <202411290107.KXHPQXRf-lkp@intel.com>
-References: <9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1732814515; c=relaxed/simple;
+	bh=pAX1jrffx7q9SDnrNtDT47lFFCez4oMl5YQVjpbvDwY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Qez6ke+RaO5Hl+kt9rAXrcpItOjz75383IwrG1XmokAzr413JqqPYCXbONJWKYA465v+i6IwOHh1dQmVpYPTr3AfJrYVmfycJ3jzukqkbzYflFeDijRL7Umq6uwGkLlgC5m7+Z2p3Evd4crUaiFPBZvgmDHrhOmc9o/zjwoLihM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jp52ll3G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ET/uR+w0; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 0161111400F6;
+	Thu, 28 Nov 2024 12:21:50 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 28 Nov 2024 12:21:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732814510;
+	 x=1732900910; bh=D2JfyjmFw8hYMAoKDuRJj7W6G1enn12a5hgwxx1fj9c=; b=
+	Jp52ll3G22wzbfSDV7I46FNUZiHQdr86GldQCqs5UqIpEUxBFmEE/7YDd1+MP2+g
+	DMUPsWMGLsRrC9fQFbLc/rlJn/zozKI7zegq+O1JFOpYCz7LHrWQ0LKAeh6Aj4tO
+	Jx3ciVBFG4MePp3pP6qMDztvw2znEUiTQ/jifJmmNsciSswIQ1cVu1GTb0ru5Vlt
+	Tvb6pZNsr1YVr/h2T0oZU2nT9oxh7dBVQ/MQxr7Of7+7MdYRXYtmk5g9b22uDjRD
+	9jxHXWGgL7FbtkFUiS3z6Zu0slR11ZX4fHb0TCeyGUv1/S5HbAKUQnMyIlsY6uqF
+	kMQFa1qTi1NzUjpzhuX1/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732814510; x=
+	1732900910; bh=D2JfyjmFw8hYMAoKDuRJj7W6G1enn12a5hgwxx1fj9c=; b=E
+	T/uR+w0Xbs4pt0N4XKqdYg+927Ck7HzQJt8icOd0efcIy+9lTQPKjAFwoutY4spp
+	ZIMAQaycjwgbpYnAaeixrkhnHVKEsFFolCVFEJJ8d5ZWU4bHSk2Hy5tPnfnjWMwD
+	8dh6YLk01gHuq92wkjhVOEZvU07ek9htbOQ/E6YdK/o1GGCUgl1x1ls1BIXatGwJ
+	LAc8ZPo5Lu9UzCGafrNq61ABTletA/We+ukKOHCK/lCqNH0VrKQ+F3nWkvm7JDF+
+	IAAbpyjR8KB9kzTDh1GSoRz5iGNxuQSsFCENHnftXJDCX1SLRYb5LbhvIE24vCGJ
+	f0wkLHzQG7womcTEYbAkw==
+X-ME-Sender: <xms:rqZIZwLyhuhF6CKIUD-Wfx2c2y6Rz9SpBQyG46K2ZyLADpr5fjoQEA>
+    <xme:rqZIZwLzsFzvyTpdwRHJbPBvjBgtWr58hdgg4_mooghvnLXhzE6-NsmHwb9Ke4fK_
+    fxkPyDM1ODsUDw40uo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedugdelkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrh
+    gvrdgtohhmpdhrtghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhr
+    tghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtth
+    hopehmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtgho
+    mhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghilhdrrghrmhhsthhr
+    ohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghmlhhoghhitg
+    eslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
+    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
+X-ME-Proxy: <xmx:rqZIZwuc4yptTvpwqKE3Ho5XTlP5fj5MReG5ufvl8Psmg1mUHRhVbw>
+    <xmx:rqZIZ9a-ImrpDo4YOtLQNRq4PEhuebl77Q2c63Fy8Lp6CFHZ5DJwKw>
+    <xmx:rqZIZ3ZJyyWzl4jzoFKzBd4IZHpNwIN3ABU3I1MJ4vo1DlfAyopxLg>
+    <xmx:rqZIZ5DnPEnprSrx7jCZE0SPlxI8YOCSuQWoY45lpCo860CCjaUqMQ>
+    <xmx:rqZIZ0QlD0mp5wU8TQVyBLfb7M_X6fL5Yx7rZ3FYPC96wKEXRhPg7oX7>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 46BB02220071; Thu, 28 Nov 2024 12:21:50 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount@gmail.com>
+Date: Thu, 28 Nov 2024 18:21:19 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jerome Brunet" <jbrunet@baylibre.com>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Kevin Hilman" <khilman@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>
+Message-Id: <4206bf5d-a11e-4d0d-86b7-50c922e41119@app.fastmail.com>
+In-Reply-To: <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
+References: 
+ <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+ <12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+ <1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
+ <f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
+ <1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
+ <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
+ <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+ <c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
+ <1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
+ <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
+ <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Matti,
+On Thu, Nov 28, 2024, at 16:53, Jerome Brunet wrote:
+> On Thu 28 Nov 2024 at 16:34, "Arnd Bergmann" <arnd@arndb.de> wrote:
+>> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
+>>> We are deviating a bit from the initial regression reported by Mark.
+>>> Is Ok with you to proceed with that fix and then continue this discussion
+>>> ?
+>>
+>> I really don't want to see those stray 'select' statements
+>> in there, as that leave very little incentive for anyone to
+>> fix it properly.
+>>
+>> It sounds like Stephen gave you bad advice for how it should
+>> be structured, so my best suggestion would be to move the
+>> the problem (and the reset driver) back into his subsystem
+>> and leave only a simple 'select RESET_CONTROLLER'.
+>
+> Okay, though I don't really understand why that select is okay and not
+> the the proposed one. There is apparently a subtility I'm missing I'd
+> like to avoid repeating that.
 
-kernel test robot noticed the following build warnings:
+The thing with 'select' is that it really has to be used very
+selectively. The 'select RESET_CONTROLLER' is fine as an
+exception because there are already tons of clk drivers
+that do this consistently so they can register themselves
+as a reset controller.
 
-[auto build test WARNING on a61ff7eac77e86de828fe28c4e42b8ae9ec2b195]
+A driver selecting a driver from another subsystem is pretty
+much always a mistake. A single one may not cause much harm,
+but the problems are frequent enough that we need to have
+fewer of them rather than more.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/iio-accel-kx022a-Use-cleanup-h-helpers/20241128-170626
-base:   a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
-patch link:    https://lore.kernel.org/r/9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount%40gmail.com
-patch subject: [PATCH v3 7/7] iio: accel: kx022a: align with subsystem way
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241129/202411290107.KXHPQXRf-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411290107.KXHPQXRf-lkp@intel.com/reproduce)
+>> From the message you cited, I think Stephen had the right
+>> intentions ("so that the clk and reset drivers are decoupled"),
+>> but the end result did not actually do what he intended
+>> even if you did what he asked for.
+>>
+>> Stephen, can you please take a look here and see if you
+>> have a better idea for either decoupling the two drivers
+>> enough to avoid the link time dependency, or to reintegrate
+>> the reset controller code into the clk driver and avoid
+>> the complexity?
+>
+> If I may,
+>
+> * short term fix: revert both your fix and the initial clock
+>   change that needed fixing. That will essentially bring back the reset
+>   implementation in clock.
+>
+> * after that: remove the creation part from driver/reset and bring back
+>   something similar to what was proposed in the initial RFC for the
+>   creation and finally switch the clock driver back to it.
+>   That should provide the proper decoupling your are requesting I think.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411290107.KXHPQXRf-lkp@intel.com/
+Works for me as well, though Mark's suggestion would be simpler.
 
-All warnings (new ones prefixed by >>):
-
-   drivers/iio/accel/kionix-kx022a.c: In function 'kx022a_write_raw':
-   drivers/iio/accel/kionix-kx022a.c:507:9: error: implicit declaration of function 'if_not_cond_guard' [-Wimplicit-function-declaration]
-     507 |         if_not_cond_guard(iio_claim_direct_try, idev)
-         |         ^~~~~~~~~~~~~~~~~
-   drivers/iio/accel/kionix-kx022a.c:507:27: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
-     507 |         if_not_cond_guard(iio_claim_direct_try, idev)
-         |                           ^~~~~~~~~~~~~~~~~~~~
-         |                           class_iio_claim_direct_try_t
-   drivers/iio/accel/kionix-kx022a.c:507:27: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/iio/accel/kionix-kx022a.c:507:54: error: expected ';' before 'return'
-     507 |         if_not_cond_guard(iio_claim_direct_try, idev)
-         |                                                      ^
-         |                                                      ;
-     508 |                 return -EBUSY;
-         |                 ~~~~~~                                
-   In file included from drivers/iio/accel/kionix-kx022a.c:8:
->> include/linux/cleanup.h:308:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
-     308 |         for (CLASS(_name, scope)(args),                                 \
-         |         ^~~
-   drivers/iio/accel/kionix-kx022a.c:521:17: note: in expansion of macro 'scoped_guard'
-     521 |                 scoped_guard(mutex, &data->mutex) {
-         |                 ^~~~~~~~~~~~
-   drivers/iio/accel/kionix-kx022a.c:532:9: note: here
-     532 |         case IIO_CHAN_INFO_SCALE:
-         |         ^~~~
-
-
-vim +308 include/linux/cleanup.h
-
-e4ab322fbaaaf8 Peter Zijlstra 2023-09-17  306  
-54da6a0924311c Peter Zijlstra 2023-05-26  307  #define scoped_guard(_name, args...)					\
-54da6a0924311c Peter Zijlstra 2023-05-26 @308  	for (CLASS(_name, scope)(args),					\
-e4ab322fbaaaf8 Peter Zijlstra 2023-09-17  309  	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
-e4ab322fbaaaf8 Peter Zijlstra 2023-09-17  310  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+     Arnd
 
