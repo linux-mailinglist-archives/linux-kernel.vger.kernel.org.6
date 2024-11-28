@@ -1,176 +1,169 @@
-Return-Path: <linux-kernel+bounces-424173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0479E9DB145
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:53:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D253A9DB143
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D357B29565
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:50:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECEBBB29895
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BFE537F8;
-	Thu, 28 Nov 2024 01:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9C3126C08;
+	Thu, 28 Nov 2024 01:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sLXvSkg7"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O23o4aTn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8066853E23
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC34433B1;
+	Thu, 28 Nov 2024 01:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732758451; cv=none; b=jXTBAsxvZwQnrS8ZgZIy0/hz/ibi4gD2z4s3mv8CzEUQnTnKMDyhkUkiGh1eKlC6SpqQTgHwL5coQdm1NSYW0UEdEchY3RRd7QzCOJjvHGASG0dsRotq59WAIYp+CJJpJGiUiWrG9HkmbuDQo0m16iGC1YRktdip+V52kbx23wk=
+	t=1732758540; cv=none; b=L1bOSlUp8qP7q9gVAS8vvEDDTNx8y/D0XMo9aEfx9CSI+Gc1DJOn1ETRCvyjAJNWLoB/UIpV6lTeY94P6dN304aA5M8vMAydClaJcPJWwhQ1USHyrq8tb818bqrlwRQiGl1w6jEVhDQFFbMTtPWra/HkGLS5NECpkUap2KVca6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732758451; c=relaxed/simple;
-	bh=a2ANOdfmWaxFZ1FDkgIhRpyah2x2oQvukswllKt3SmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VY7q2Qrum9Lk1Tmn64wL5GtGzlZ745veJtj9yak4Bu38ecbs7fwTmTXM/4bCTMg6Iie2dn5XZvn7MTyxBGpUEJn6z355oPQZh2lyXQSqrw3bi1borDTNsqQboPG5QTr3YEXlhOpqQ3mxA61XifFyEJo8yWuE6F6DKVRXvfoGuAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sLXvSkg7; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so52857766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:47:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732758448; x=1733363248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CDYZxnvQSCUs7/URW7u5aFatw24C1MEYIz5QO3pahVo=;
-        b=sLXvSkg7sNLK4md1AeVgIgXFA83X0i9SxkDGVXqTYlBcBEnkLoWFz5VpbttKdghzPt
-         eWBxIGvg3MamUYUub1si6F5FdPi7Zp0TczIIJPK+zbL/kdvZx5kCHoV/NJEXssz1O4mg
-         125DjpALOycTLo3pXpg/C3OI8W6BPRw/XxtO7lWgZ1GOlw+NOXHBijfhmjaBTCopb7qa
-         yAfI+7BqSDusA2iKQxXF3sOVS55ryYxQb0jusOotFNpp0S+Vm/FCN07OI5AsZ9E6qnWJ
-         UnsboohkByUDAdjtCtt8eq4uKUEmyyOsbVfP2bFoSqZejCY0xT3ydxFuGxiUne2BoIDf
-         fJ9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732758448; x=1733363248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CDYZxnvQSCUs7/URW7u5aFatw24C1MEYIz5QO3pahVo=;
-        b=q91C88KbwcVHarCfyRJl5/fEeL9uUEedqtXDttOHqst/4cc+E6bf2cra0csJHXVCkX
-         OOEdnKaUI79iQPo65M9RAJPoi/WpwD3uGWjd0EOfXsqZFrrDBsTO2CMU+RW4q4rT5lGA
-         FyN2fDpd/5FOBVEWbMePYAvOuVFKbLhcrC4Iha4GkNjKSoDEUqo5gJ/K52tpXjngQUUl
-         OiqiOVSuR/LC0XWsfBCkncio8XPCiGlM7IzpV9H7wzM9TXNyWqXxiNrGnZiHb5LqeFUU
-         j+8eiknl7QBv/evfMeq+aVZqHpFFIq74m6++LQiuFw2eNeDfClYKy6F2PulV7oFnrJ05
-         fmcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnKPW0qAdgyhZNRvvU0PMwvga+vCRaKSKMupCwXB20jb48gLDOMpW1A9Qv+0/SqK6T8y1nocdWJVszwPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqn3XTxAG+D4JRufGmvdsdS/2FHIpsqskvNdNmlBZoFuJGxtlL
-	i5Soag/JIXSMrm03SbLCR3PR+l95YZP83+/JoUdsn8zlWh31K+OI59Z2tPLYLAJtBs0JR0vi/yb
-	yWi0wh8hS/CC+qww7VGrKAN+CLRGo2nBF0Lc=
-X-Gm-Gg: ASbGncu1MlFwDP4LPdZ9IKYTgOzCUHHJeHHeGybNhMNa4Z5bN/ieozBuzabEGZErn70
-	2eJy4ZyB1RPwDcuORRU+tJvbRYoFh5feEISkJQw56e9sNs8sD9esNMqMB7yB6
-X-Google-Smtp-Source: AGHT+IGSYlJ14Wcq/1LY00BqQ/ETFskHaspi5ZfN1q1HEHggR4TBAntDhsD0VFjxBva+v7FsMZmlprLmPi/C0GrZd2I=
-X-Received: by 2002:a17:907:2cc9:b0:aa5:49a4:9189 with SMTP id
- a640c23a62f3a-aa580f5753emr502352166b.33.1732758447564; Wed, 27 Nov 2024
- 17:47:27 -0800 (PST)
+	s=arc-20240116; t=1732758540; c=relaxed/simple;
+	bh=qFZqa2g3rtD1S5hvQK/QPN+lCmyx0GI7AyQs6+yhmXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jcZlHzgbBqcYvTB7+Yypj4fL31oG/VmkBq4y649yx1yria0kf2/nk75wjaSweVT0TWhr/RiNITsJxu45GVvyhhh8Kiz4zwi9uzHVYeK0atPLC0w3q6Iqri8xzs4/OjMBd4IsHU/Z6NfBD819VrGxqXKcwHORkOQSItN/2lp/ZoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=O23o4aTn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732758529;
+	bh=9/+4+DKi9l1YlnxE9Qi3fYjYigMG3SgGnOgTbOV9pcg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O23o4aTn6PHIINpU2F2bUasp5DeFudIEd0F9HKfQm1nNTLvW/RdLVc7OYdeZB6khr
+	 NLxi8c4zCBWwOF0swA8bjFhn3Qgk8zkHU8sfU9VoXs2comZRaq/vy1Exct02cLtOO2
+	 URGo6KRRU+775FsQf9u8Cm0gs4Sde4+UAZgQ1b9bXKDCgZ+DQsYXCm/4MJpsTZ5/ZY
+	 zjBjOMSR7SKos8XtOOR5aWCV8bk/81DdL7smwF2jZrfJg5kDh5Za8cGppG4UcWZBCm
+	 6SitKaJgm9qG+CYX3j2ne6UhYPoQ93LJZ3u+ePGnOtoyblRmJ6FSTBhQFf+BSHrCD1
+	 C/TKZRRVAlpyg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XzK3N2mj4z4wvd;
+	Thu, 28 Nov 2024 12:48:48 +1100 (AEDT)
+Date: Thu, 28 Nov 2024 12:48:04 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Gary Guo <gary@garyguo.net>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: linux-next: manual merge of the rust tree with the char-misc
+ tree
+Message-ID: <20241128124804.36680f92@canb.auug.org.au>
+In-Reply-To: <20241111173459.2646d4af@canb.auug.org.au>
+References: <20241111173459.2646d4af@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820163512.1096301-1-qyousef@layalina.io> <20240820163512.1096301-11-qyousef@layalina.io>
-In-Reply-To: <20240820163512.1096301-11-qyousef@layalina.io>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 27 Nov 2024 17:47:16 -0800
-Message-ID: <CANDhNCpdScf4g9se69t-qcidP-ac0S2=hnUSN76BvszqdmvWTA@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/16] sched/qos: Add a new sched-qos interface
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/RIPwlR01mbRmU=Lxh0=rOjg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/RIPwlR01mbRmU=Lxh0=rOjg
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 9:36=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
-rote:
->
-> The need to describe the conflicting demand of various workloads hasn't
-> been higher. Both hardware and software have moved rapidly in the past
-> decade and system usage is more diverse and the number of workloads
-> expected to run on the same machine whether on Mobile or Server markets
-> has created a big dilemma on how to better manage those requirements.
->
-> The problem is that we lack mechanisms to allow these workloads to
-> describe what they need, and then allow kernel to do best efforts to
-> manage those demands based on the hardware it is running on
-> transparently and current system state.
->
-> Example of conflicting requirements that come across frequently:
->
->         1. Improve wake up latency for SCHED_OTHER. Many tasks end up
->            using SCHED_FIFO/SCHED_RR to compensate for this shortcoming.
->            RT tasks lack power management and fairness and can be hard
->            and error prone to use correctly and portably.
->
->         2. Prefer spreading vs prefer packing on wake up for a group of
->            tasks. Geekbench-like workloads would benefit from
->            parallelising on different CPUs. hackbench type of workloads
->            can benefit from waking on up same CPUs or a CPU that is
->            closer in the cache hierarchy.
->
->         3. Nice values for SCHED_OTHER are system wide and require
->            privileges. Many workloads would like a way to set relative
->            nice value so they can preempt each others, but not be
->            impact or be impacted by other tasks belong to different
->            workloads on the system.
->
->         4. Provide a way to tag some tasks as 'background' to keep them
->            out of the way. SCHED_IDLE is too strong for some of these
->            tasks but yet they can be computationally heavy. Example
->            tasks are garbage collectors. Their work is both important
->            and not important.
->
->         5. Provide a way to improve DVFS/upmigration rampup time for
->            specific tasks that are bursty in nature and highly
->            interactive.
->
-> Whether any of these use cases warrants an additional QoS hint is
-> something to be discussed individually. But the main point is to
-> introduce an interface that can be extendable to cater for potentially
-> those requirements and more. rampup_multiplier to improve
-> DVFS/upmigration for bursty tasks will be the first user in later patch.
->
-> It is desired to have apps (and benchmarks!) directly use this interface
-> for optimal perf/watt. But in the absence of such support, it should be
-> possible to write a userspace daemon to monitor workloads and apply
-> these QoS hints on apps behalf based on analysis done by anyone
-> interested in improving the performance of those workloads.
->
-> Signed-off-by: Qais Yousef <qyousef@layalina.io>
-> ---
-...
-> diff --git a/tools/perf/trace/beauty/include/uapi/linux/sched.h b/tools/p=
-erf/trace/beauty/include/uapi/linux/sched.h
-> index 3bac0a8ceab2..67ef99f64ddc 100644
-> --- a/tools/perf/trace/beauty/include/uapi/linux/sched.h
-> +++ b/tools/perf/trace/beauty/include/uapi/linux/sched.h
-> @@ -102,6 +102,9 @@ struct clone_args {
->         __aligned_u64 set_tid_size;
->         __aligned_u64 cgroup;
->  };
-> +
-> +enum sched_qos_type {
-> +};
->  #endif
->
->  #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
-> @@ -132,6 +135,7 @@ struct clone_args {
->  #define SCHED_FLAG_KEEP_PARAMS         0x10
->  #define SCHED_FLAG_UTIL_CLAMP_MIN      0x20
->  #define SCHED_FLAG_UTIL_CLAMP_MAX      0x40
-> +#define SCHED_FLAG_QOS                 0x80
->
+Hi all,
 
-Hey Qais,
-  Just heads up, It seems this needs to be added to SCHED_FLAG_ALL for
-the code in later patches to be reachable.
+On Mon, 11 Nov 2024 17:34:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the rust tree got a conflict in:
+>=20
+>   rust/macros/module.rs
+>=20
+> between commit:
+>=20
+>   7f15c46a57c3 ("rust: introduce `InPlaceModule`")
+>=20
+> from the char-misc tree and commit:
+>=20
+>   d072acda4862 ("rust: use custom FFI integer types")
+>=20
+> from the rust tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc rust/macros/module.rs
+> index a03266a78cfb,e7a087b7e884..000000000000
+> --- a/rust/macros/module.rs
+> +++ b/rust/macros/module.rs
+> @@@ -332,15 -330,21 +332,15 @@@ pub(crate) fn module(ts: TokenStream) -
+>                       /// # Safety
+>                       ///
+>                       /// This function must only be called once.
+> -                     unsafe fn __init() -> core::ffi::c_int {{
+> +                     unsafe fn __init() -> kernel::ffi::c_int {{
+>  -                        match <{type_} as kernel::Module>::init(&super:=
+:super::THIS_MODULE) {{
+>  -                            Ok(m) =3D> {{
+>  -                                // SAFETY: No data race, since `__MOD` =
+can only be accessed by this
+>  -                                // module and there only `__init` and `=
+__exit` access it. These
+>  -                                // functions are only called once and `=
+__exit` cannot be called
+>  -                                // before or during `__init`.
+>  -                                unsafe {{
+>  -                                    __MOD =3D Some(m);
+>  -                                }}
+>  -                                return 0;
+>  -                            }}
+>  -                            Err(e) =3D> {{
+>  -                                return e.to_errno();
+>  -                            }}
+>  +                        let initer =3D
+>  +                            <{type_} as kernel::InPlaceModule>::init(&s=
+uper::super::THIS_MODULE);
+>  +                        // SAFETY: No data race, since `__MOD` can only=
+ be accessed by this module
+>  +                        // and there only `__init` and `__exit` access =
+it. These functions are only
+>  +                        // called once and `__exit` cannot be called be=
+fore or during `__init`.
+>  +                        match unsafe {{ initer.__pinned_init(__MOD.as_m=
+ut_ptr()) }} {{
+>  +                            Ok(m) =3D> 0,
+>  +                            Err(e) =3D> e.to_errno(),
+>                           }}
+>                       }}
+>  =20
 
-thanks
--john
+This is now  conflict between the char-misc tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/RIPwlR01mbRmU=Lxh0=rOjg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdHy9QACgkQAVBC80lX
+0GybnAgApSnxXZldWbPUVGDC6qWi6KWdatnuJigGEkpJKhxSR+hDuCxeUgSozXMW
+2D3KxDnaRQc8A3LizVhEjCVv1Zrg+Kcn3JmSmqv67/qh7RGcwkpTQQh5MrpO1Sl9
+lp4zw1SHpOiQN6R8I/gNo8hhUVvE7vd/EScfnBr+Mp8Nbm4xkPcsUOgMhekNXuGd
+EwXMhZK6Rrb0lEnUE9W1Lkcr7y/h2lzpZoITpaopzJxYtezHFbTZh9IhbH/N0Qxx
+borXcl6/0POTQRbzM5EV1JyawRjSxTQ9a+NVXCVlSRKzyOsEoKKQ6sdB/ScvuvnZ
+QRYgvA9rvShsKWO/aP7BTRFCJTe2Tg==
+=nDF3
+-----END PGP SIGNATURE-----
+
+--Sig_/RIPwlR01mbRmU=Lxh0=rOjg--
 
