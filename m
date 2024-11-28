@@ -1,127 +1,190 @@
-Return-Path: <linux-kernel+bounces-424319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50139DB2F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:02:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7B99DB2FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:03:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881B01647AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:02:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0184FB214ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A014658B;
-	Thu, 28 Nov 2024 07:02:36 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B60317C7C;
-	Thu, 28 Nov 2024 07:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B3D1465A1;
+	Thu, 28 Nov 2024 07:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfNQMgle"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2158B17C7C;
+	Thu, 28 Nov 2024 07:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732777355; cv=none; b=su/qDn9evslygnBj8pqIcDmEhctjobwa1xUmvBTZ3sWjSYrw1OLBEVvZ6tYBT8K8mxkBw/mPfEhlaYkbsC46lRQmPi+Qb4j8T1QUjNyFfeXcG0dsBSaPyeyZa8n4pbVsNzG6LCX6f7d03uvqwU7vOa2hJqiHJv9jm1HkGhi4gNg=
+	t=1732777427; cv=none; b=NVBmqcz33H8YRfNz048WQ2ja89Q0t1A5cXfDOhfH0Pvv4mMWHvex6EP42HVVdQPeBCnizMraeyloamRYqEGTN7FVUnv9BDFoUOluXHXlWR1c53ZJM2UHlKFz22Z/JJMsAmsafbXZmMztSl8KYUNWvMk8NOjv9RUybVjPrLOGtxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732777355; c=relaxed/simple;
-	bh=c+z1muBowvgFRpY9lxKS29aSkjJfUGmDMjemLPjY60Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZW34YNNm8YtPv7okhZEEusJJ1BS9gQZuien+MXsKeSb9BOuCGpcDxPrSHfSnIATGA9grJslEDPMaop4ueSt5EAlRZ6YJ73XWxvTaOR74oUnz8glVFlyMFN6N4sFJFkjYbhNX9iztPx1iTXV0jkr/EmHhVJqlrMN5nWyNXXQKz5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.180.135.20])
-	by gateway (Coremail) with SMTP id _____8AxQK2EFUhnaXdKAA--.40737S3;
-	Thu, 28 Nov 2024 15:02:28 +0800 (CST)
-Received: from ubuntu.. (unknown [10.180.135.20])
-	by front1 (Coremail) with SMTP id qMiowMCxLEeDFUhnvxtrAA--.46285S2;
-	Thu, 28 Nov 2024 15:02:27 +0800 (CST)
-From: Ming Wang <wangming01@loongson.cn>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	WANG Xuerui <git@xen0n.name>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	lixuefeng@loongson.cn,
-	gaojuxin@loongson.cn,
-	wangming01@loongson.cn
-Subject: [PATCH] rtc: loongson: clear TOY_MATCH0_REG in loongson_rtc_isr
-Date: Thu, 28 Nov 2024 15:02:27 +0800
-Message-ID: <20241128070227.1071352-1-wangming01@loongson.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732777427; c=relaxed/simple;
+	bh=zVt3J6zsdz9u4onm7Y0ur1KhRVayLOMICGxc6ZRc/5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jvhnnYr4zb/E7w3fnMwmhunmcHvtBQPBf/tvRwYean0cQvaJlzsUMnHGjp7+mgqm78zWctZSABPQ2Jm4oFv/Ca2uLY3WuRdmBpvnfVd6TKRANkEYGxpfpBO5ozLRMDwGN8u9Wj+seNSWz4ciUs9os52vc94y5aSyi2RsE9FMBYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfNQMgle; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FFFC4CECE;
+	Thu, 28 Nov 2024 07:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732777426;
+	bh=zVt3J6zsdz9u4onm7Y0ur1KhRVayLOMICGxc6ZRc/5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MfNQMgle/VKYacFO73pq1YdLajptRi+SkZ+GCF/RA00LveHNOcZKfMQapq/pyNKx3
+	 skN+Smt4i4qoGOD7HTDzJT/QKkDea/RBr5YV75eFyYbcUQKflWW7OFfoy7o3vH6qYO
+	 DwQWFn2+23h0PEooA2LjfsDsutRH8Xfmzf62RRUWysa0WCKlW8oCrS0mbZhqsthVsG
+	 QrO9rLFifYERUW6/lwuQzycumvB8k8NBJMQu/pbRztwZ8EeOSdH1wFbVkUZHDFJQFF
+	 0Waq+JUT05PVW08xeeEpJ9yWu29tJw31gOETw4dPVh+XeUKMDNjNHGipRdL3TlF0iB
+	 uHeF1ZpuxMbMw==
+Date: Thu, 28 Nov 2024 09:03:33 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] arch_numa: Restore nid checks before registering a
+ memblock with a node
+Message-ID: <Z0gVxWstZdKvhY6m@kernel.org>
+References: <20241127193000.3702637-1-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxLEeDFUhnvxtrAA--.46285S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAgEPEmdHp9IHDgABsD
-X-Coremail-Antispam: 1Uk129KBj93XoW7uF43CFWDCry3Zr1DJFy5Awc_yoW8AF1Dpr
-	W3Ca4DursYvr4UCas5Aay8WrWay3yfJr9xuFs7Kw4Y93Z8A34UXF4FgFyUtr4Dur95JFWY
-	q3y8KFW5u3WqkwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52
-	x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80
-	ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
-	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcO6pDUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241127193000.3702637-1-maz@kernel.org>
 
-The TOY_MATCH0_REG should be cleared to 0 in the RTC interrupt handler,
-otherwise the interrupt cannot be cleared, which will cause the
-loongson_rtc_isr to be triggered multiple times.
+Hi Marc,
 
-The previous code cleared TOY_MATCH0_REG in the loongson_rtc_handler,
-which is an ACPI interrupt. This did not prevent loongson_rtc_isr
-from being triggered multiple times.
+On Wed, Nov 27, 2024 at 07:30:00PM +0000, Marc Zyngier wrote:
+> Commit 767507654c22 ("arch_numa: switch over to numa_memblks")
+> significantly cleaned up the NUMA registration code, but also
+> dropped a significant check that was refusing to accept to
+> configure a memblock with an invalid nid.
+> 
+> On "quality hardware" such as my ThunderX machine, this results
+> in a kernel that dies immediately:
+> 
+> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x431f0a10]
+> [    0.000000] Linux version 6.12.0-00013-g8920d74cf8db (maz@valley-girl) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #3872 SMP PREEMPT Wed Nov 27 15:25:49 GMT 2024
+> [    0.000000] KASLR disabled due to lack of seed
+> [    0.000000] Machine model: Cavium ThunderX CN88XX board
+> [    0.000000] efi: EFI v2.4 by American Megatrends
+> [    0.000000] efi: ESRT=0xffce0ff18 SMBIOS 3.0=0xfffb0000 ACPI 2.0=0xffec60000 MEMRESERVE=0xffc905d98
+> [    0.000000] esrt: Reserving ESRT space from 0x0000000ffce0ff18 to 0x0000000ffce0ff50.
+> [    0.000000] earlycon: pl11 at MMIO 0x000087e024000000 (options '115200n8')
+> [    0.000000] printk: legacy bootconsole [pl11] enabled
+> [    0.000000] NODE_DATA(0) allocated [mem 0xff6754580-0xff67566bf]
+> [    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
+> [    0.000000] Mem abort info:
+> [    0.000000]   ESR = 0x0000000096000004
+> [    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    0.000000]   SET = 0, FnV = 0
+> [    0.000000]   EA = 0, S1PTW = 0
+> [    0.000000]   FSC = 0x04: level 0 translation fault
+> [    0.000000] Data abort info:
+> [    0.000000]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [    0.000000]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    0.000000]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    0.000000] [0000000000001d40] user address but active_mm is swapper
+> [    0.000000] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-00013-g8920d74cf8db #3872
+> [    0.000000] Hardware name: Cavium ThunderX CN88XX board (DT)
+> [    0.000000] pstate: a00000c5 (NzCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    0.000000] pc : sparse_init_nid+0x54/0x428
+> [    0.000000] lr : sparse_init+0x118/0x240
+> [    0.000000] sp : ffff800081da3cb0
+> [    0.000000] x29: ffff800081da3cb0 x28: 0000000fedbab10c x27: 0000000000000001
+> [    0.000000] x26: 0000000ffee250f8 x25: 0000000000000001 x24: ffff800082102cd0
+> [    0.000000] x23: 0000000000000001 x22: 0000000000000000 x21: 00000000001fffff
+> [    0.000000] x20: 0000000000000001 x19: 0000000000000000 x18: ffffffffffffffff
+> [    0.000000] x17: 0000000001b00000 x16: 0000000ffd130000 x15: 0000000000000000
+> [    0.000000] x14: 00000000003e0000 x13: 00000000000001c8 x12: 0000000000000014
+> [    0.000000] x11: ffff800081e82860 x10: ffff8000820fb2c8 x9 : ffff8000820fb490
+> [    0.000000] x8 : 0000000000ffed20 x7 : 0000000000000014 x6 : 00000000001fffff
+> [    0.000000] x5 : 00000000ffffffff x4 : 0000000000000000 x3 : 0000000000000000
+> [    0.000000] x2 : 0000000000000000 x1 : 0000000000000040 x0 : 0000000000000007
+> [    0.000000] Call trace:
+> [    0.000000]  sparse_init_nid+0x54/0x428
+> [    0.000000]  sparse_init+0x118/0x240
+> [    0.000000]  bootmem_init+0x70/0x1c8
+> [    0.000000]  setup_arch+0x184/0x270
+> [    0.000000]  start_kernel+0x74/0x670
+> [    0.000000]  __primary_switched+0x80/0x90
+> [    0.000000] Code: f865d804 d37df060 cb030000 d2800003 (b95d4084)
+> [    0.000000] ---[ end trace 0000000000000000 ]---
+> [    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+> [    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+> 
+> while previous kernel versions were able to recognise how brain-damaged
+> the machine is, and only build a fake node.
+> 
+> Restoring the check brings back some sanity and a "working" system.
+> 
+> Fixes: 767507654c22 ("arch_numa: switch over to numa_memblks")
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/base/arch_numa.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+> index e187016764265..5457248eb0811 100644
+> --- a/drivers/base/arch_numa.c
+> +++ b/drivers/base/arch_numa.c
+> @@ -207,7 +207,21 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+>  static int __init numa_register_nodes(void)
+>  {
+>  	int nid;
+> -
+> +	struct memblock_region *mblk;
+> +
+> +	/* Check that valid nid is set to memblks */
+> +	for_each_mem_region(mblk) {
+> +		int mblk_nid = memblock_get_region_node(mblk);
+> +		phys_addr_t start = mblk->base;
+> +		phys_addr_t end = mblk->base + mblk->size - 1;
+> +
+> +		if (mblk_nid == NUMA_NO_NODE || mblk_nid >= MAX_NUMNODES) {
+> +			pr_warn("Warning: invalid memblk node %d [mem %pap-%pap]\n",
+> +				mblk_nid, &start, &end);
+> +			return -EINVAL;
+> +		}
 
-This commit moves the clearing of TOY_MATCH0_REG to the loongson_rtc_isr
-to ensure that the interrupt is properly cleared.
+We have memblock_validate_numa_coverage() that checks that amount of memory
+with unset node id is less than a threshold. The loop here can be replaced
+with something like
 
-Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
-Signed-off-by: Ming Wang <wangming01@loongson.cn>
----
- drivers/rtc/rtc-loongson.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+	if (!memblock_validate_numa_coverage(0))
+		return -EINVAL;
 
-diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
-index e8ffc1ab90b0..0aa30095978b 100644
---- a/drivers/rtc/rtc-loongson.c
-+++ b/drivers/rtc/rtc-loongson.c
-@@ -114,6 +114,12 @@ static irqreturn_t loongson_rtc_isr(int irq, void *id)
- 	struct loongson_rtc_priv *priv = (struct loongson_rtc_priv *)id;
- 
- 	rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
-+
-+	/*
-+	 * The TOY_MATCH0_REG should be cleared 0 here,
-+	 * otherwise the interrupt cannot be cleared.
-+	 */
-+	regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
- 	return IRQ_HANDLED;
- }
- 
-@@ -131,11 +137,7 @@ static u32 loongson_rtc_handler(void *id)
- 	writel(RTC_STS, priv->pm_base + PM1_STS_REG);
- 	spin_unlock(&priv->lock);
- 
--	/*
--	 * The TOY_MATCH0_REG should be cleared 0 here,
--	 * otherwise the interrupt cannot be cleared.
--	 */
--	return regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
-+	return ACPI_INTERRUPT_HANDLED;
- }
- 
- static int loongson_rtc_set_enabled(struct device *dev)
+> +	}
+> + 
+>  	/* Finally register nodes. */
+>  	for_each_node_mask(nid, numa_nodes_parsed) {
+>  		unsigned long start_pfn, end_pfn;
+> -- 
+> 2.39.2
+> 
+
 -- 
-2.43.0
-
+Sincerely yours,
+Mike.
 
