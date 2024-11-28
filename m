@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-424076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACA69DB065
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:49:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612DA9DB067
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:51:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E662811DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1317E165830
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FA9D27E;
-	Thu, 28 Nov 2024 00:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26CAEEDD;
+	Thu, 28 Nov 2024 00:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vSnw2AD9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jn9ob28B"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7AF2581
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5443DDAB
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732754989; cv=none; b=IoMJLsrsdPf/kptsdOXM7yp2PGf9Hyoq9fgOzZ7hLH3tubfCpbv5BWGWfjiEj3jwEkWYmih0zl/5Jrg/5dZs5lAthoZGt8b+JtTEpuHeRlia5vHU1co119i0XY3/LT5rENnkZILndHsJLAKybB+RSn5kLo17uhLBlaP4Nh0aEps=
+	t=1732755089; cv=none; b=PSkx6LkxH1m91OVifGOTdtNvVl6J4Sj9DLhS9O6zth8qEst5U5qzdSl4yfS9Zl0FxY+9ghz6qRPCNA0P3IRJuiI+LT5NWkey6Ordva3gRPgCjMrlvIYWXLSWKzjr5egmxmNbTZw3mLbSOhWFAsymWbADz0njF9JYJAhi6gvg1Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732754989; c=relaxed/simple;
-	bh=pR9wREWB2fodb0/QPUlRVXlY0hvBsyu1VJhYzZ7hj/M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=szPHO8TAVlLBdUIZL7wiiktwmcBjmJwH6si/rmTPaPtDvHShFdDoQ73W82+c+hAEX7zbCNaHGU0ehREhqBqBs7ZmxzrPGjue6Wbr2T6S/miUnchXMzGt95jMnGT+Uv3/YyLEtnaDLONHT7e/OrIyZXTzcKmQlyK5mh2mp2d3krA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vSnw2AD9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3761C4CECC;
-	Thu, 28 Nov 2024 00:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732754989;
-	bh=pR9wREWB2fodb0/QPUlRVXlY0hvBsyu1VJhYzZ7hj/M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vSnw2AD9RnEFdjGtCyY9VWQVrSRb4jcfu48WtHrEy/XjlkdNqTTy/7Jt5ZLimmsEp
-	 8le2+rtce2WajrByNqD8e4vO+lqh9SDKqOqdiz1EYX2v82EXm4Rjn7aVtiVf1IjW+5
-	 VWNzXrsdiE3Td+3xvKl8yAPQfF6425yC6ZsRnw6o=
-Date: Wed, 27 Nov 2024 16:49:48 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Seiji Nishikawa <snishika@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Mel Gorman
- <mgorman@techsingularity.net>
-Subject: Re: [PATCH] mm: vmscan: ensure kswapd is woken up if the wait queue
- is active
-Message-Id: <20241127164948.74659f9400fd076760c2a670@linux-foundation.org>
-In-Reply-To: <20241126150612.114561-1-snishika@redhat.com>
-References: <20241126150612.114561-1-snishika@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732755089; c=relaxed/simple;
+	bh=ECzqOYYQAwVhTqlgToe4cHCya7AUIwCJKbeWDaNywYU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=us+zjEFOEUGORKG0wHYRXA1rgM6YRQ+N3omqi3nXuYxtr+lrvocJHr10OXVFm2grWdx8Cz8+luH/Cb3/431ZVPUU7C/fFLV7SvihycNI5/surU1KEluWVSIfgoQ03AS+z2A4bmDqKqNJONkXTyjv6aeaT/+QACBLaudiTIWMhYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jn9ob28B; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a762686909so17745ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:51:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732755087; x=1733359887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QLiTfyzcVcR229K1ikE+nUNAVjEsCa37tEiZKYXv2lw=;
+        b=jn9ob28B/xGdJmPVMpOPUoi2kBZyYoGvIVz1EU+IIxivCqeOATfkSyeKHAM0fhvFI9
+         7rwSMlifur9ymumtKTgxz8tUHDga86zXT9CWPvwgOYPs5OH2+B9CIhR/688Eaf+K02Je
+         KsG4lTmnxGyH0U/SKKBnznmxb9zG5OGzzxZ4Y2VXRSu5uboSFwTv0mhNBzU9Z8X7gfBO
+         yQtFd3SA1WKtJVMpju7cDB1If/nwE9JhDI7iAe3JTOU3QRpLQCERKMwqXfBMBN/IwsYr
+         qBdiZuXeodRiLkAhV7UlVs3FtqwjYZ2dR895DSFLy5Iul93SEUof5edIjM0aIV/bn+rv
+         YXWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732755087; x=1733359887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QLiTfyzcVcR229K1ikE+nUNAVjEsCa37tEiZKYXv2lw=;
+        b=VVtFK+Em9ytark2HN0rdp2CnMi06RmTlO+3htJA2Umrd6qsbZ1Oe+NaS0Epcf5uXq5
+         G1KEPHBLTmPJRgg85cPBH6YDgXvIF9D8b98goYXjxNLykyHPUZw6TWnjQgdbWrPvndKg
+         EWSWE000Zh/JMbnXZhuN+5vMC/OtPo7M825cS0BKOEsmGWSyHXIN8YiBhdpjp9/MpBkK
+         ylq2BJvAMt5OrBMR+lkLykW06jwcF5Nwva3ubNuaKHaez6EixKqvNwaHhAE6rElvReiZ
+         6QD2NOorkhQwjapm1sPUIxtqwF2mOgkTgHyFRVmxGI51G6LuxSkyu+YkIgQDU2RBp1vy
+         gDQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBI3re/D/IW9Za5CXO3IDpdjlaF81xhq9pAF1js+PDIO3v/OuK5HluN1WAJASR8QmGgLk2iWWOh7E2hmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiDOGplhs/+w4iSlKgZChhDs1Tg2at1Dgr3YalXJN8fG98jJKT
+	kSdWQ0JnXFY69/UFmA7icJ8uo67AxTLz+ezugvhyHZGz3Jq+iiCIcigpaSGo2zRAf5E3OxmZ8Zy
+	dEhfUZd21MYz1buwxsdGRWNo5fsJxdvGYyTQF5Ymph7nmW7aUBkz1
+X-Gm-Gg: ASbGncuxafMq6ZnGaGurHl8sR9CIyK6cJ10yBJ+E7vRgAelZIFoQTv96mzyePx4O4qq
+	fWAMNlDqfyUMwYYxu3CqGqYn9be2b53oY
+X-Google-Smtp-Source: AGHT+IFYYY/jzwMxbpREcw7kv5681JgWs2h1AcFGILJLSJy6Q8v7Vw6m81BiA57DXL5QIpwW2vXmFB1stsbHdmUFXMU=
+X-Received: by 2002:a05:6e02:3f88:b0:3a7:a468:69df with SMTP id
+ e9e14a558f8ab-3a7ccfc4ae4mr454235ab.3.1732755086493; Wed, 27 Nov 2024
+ 16:51:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241127212655.922196-1-namhyung@kernel.org>
+In-Reply-To: <20241127212655.922196-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 27 Nov 2024 16:51:15 -0800
+Message-ID: <CAP-5=fXtL-MFW5YW=5WsYNftCAj7MaXVwN8R3veuiODiC85bdg@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Avoid unaligned pointer operations
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 27 Nov 2024 00:06:12 +0900 Seiji Nishikawa <snishika@redhat.com> wrote:
+On Wed, Nov 27, 2024 at 1:26=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> The sample data is 64-bit aligned basically but raw data starts with
+> 32-bit length field and data follows.  In perf_event__synthesize_sample
+> it treats the sample data as a 64-bit array.  And it needs some trick
+> to update the raw data properly.
+>
+> But it seems some compilers are not happy with this and the program dies
+> siliently.  I found the sample parsing test failed without any messages
+> on affected systems.
+>
+> Let's update the code to use a 32-bit pointer directly and make sure the
+> result is 64-bit aligned again.  No functional changes intended.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-> Even after commit 501b26510ae3 ("vmstat: allow_direct_reclaim should use
-> zone_page_state_snapshot"), a task may remain indefinitely stuck in
-> throttle_direct_reclaim() while holding mm->rwsem.
-> 
-> __alloc_pages_nodemask
->  try_to_free_pages
->   throttle_direct_reclaim
-> 
-> This can cause numerous other tasks to wait on the same rwsem, leading
-> to severe system hangups:
-> 
-> [1088963.358712] INFO: task python3:1670971 blocked for more than 120 seconds.
-> [1088963.365653]       Tainted: G           OE     -------- -  - 4.18.0-553.el8_10.aarch64 #1
-> [1088963.373887] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [1088963.381862] task:python3         state:D stack:0     pid:1670971 ppid:1667117 flags:0x00800080
-> [1088963.381869] Call trace:
-> [1088963.381872]  __switch_to+0xd0/0x120
-> [1088963.381877]  __schedule+0x340/0xac8
-> [1088963.381881]  schedule+0x68/0x118
-> [1088963.381886]  rwsem_down_read_slowpath+0x2d4/0x4b8
-> 
-> The issue arises when allow_direct_reclaim(pgdat) returns false,
-> preventing progress even when the pgdat->pfmemalloc_wait wait queue is
-> empty. Despite the wait queue being empty, the condition,
-> allow_direct_reclaim(pgdat), may still be returning false, causing it to
-> continue looping.
-> 
-> In some cases, reclaimable pages exist (zone_reclaimable_pages() returns
->  > 0), but calculations of pfmemalloc_reserve and free_pages result in
-> wmark_ok being false.
-> 
-> And then, despite the pgdat->kswapd_wait queue being non-empty, kswapd
-> is not woken up, further exacerbating the problem:
-> 
-> crash> px ((struct pglist_data *) 0xffff00817fffe540)->kswapd_highest_zoneidx
-> $775 = __MAX_NR_ZONES
-> 
-> This patch modifies allow_direct_reclaim() to wake kswapd if the
-> pgdat->kswapd_wait queue is active, regardless of whether wmark_ok is
-> true or false. This change ensures kswapd does not miss wake-ups under
-> high memory pressure, reducing the risk of task stalls in the throttled
-> reclaim path.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-The code which is being altered is over 10 years old.  
+Thanks,
+Ian
 
-Is this misbehavior more recent?  If so, are we able to identify which
-commit caused this?
-
-Otherwise, can you suggest why it took so long for this to be
-discovered?  Your test case must be doing something unusual?
-
-Thanks.
-
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -6389,8 +6389,8 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
->  
->  	wmark_ok = free_pages > pfmemalloc_reserve / 2;
->  
-> -	/* kswapd must be awake if processes are being throttled */
-> -	if (!wmark_ok && waitqueue_active(&pgdat->kswapd_wait)) {
-> +	/* Always wake up kswapd if the wait queue is not empty */
-> +	if (waitqueue_active(&pgdat->kswapd_wait)) {
->  		if (READ_ONCE(pgdat->kswapd_highest_zoneidx) > ZONE_NORMAL)
->  			WRITE_ONCE(pgdat->kswapd_highest_zoneidx, ZONE_NORMAL);
->  
-
+> ---
+>  tools/perf/util/synthetic-events.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthet=
+ic-events.c
+> index a58444c4aed1f1ea..385383ef6cf1edaf 100644
+> --- a/tools/perf/util/synthetic-events.c
+> +++ b/tools/perf/util/synthetic-events.c
+> @@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_even=
+t *event, u64 type, u64 read_fo
+>         }
+>
+>         if (type & PERF_SAMPLE_RAW) {
+> -               u.val32[0] =3D sample->raw_size;
+> -               *array =3D u.val64;
+> -               array =3D (void *)array + sizeof(u32);
+> +               u32 *array32 =3D (void *)array;
+> +
+> +               *array32 =3D sample->raw_size;
+> +               array32++;
+> +
+> +               memcpy(array32, sample->raw_data, sample->raw_size);
+> +               array =3D (void *)(array32 + (sample->raw_size / sizeof(u=
+32)));
+>
+> -               memcpy(array, sample->raw_data, sample->raw_size);
+> -               array =3D (void *)array + sample->raw_size;
+> +               /* make sure the array is 64-bit aligned */
+> +               BUG_ON(((long)array) / sizeof(u64));
+>         }
+>
+>         if (type & PERF_SAMPLE_BRANCH_STACK) {
+> --
+> 2.47.0.338.g60cca15819-goog
+>
 
