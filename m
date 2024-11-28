@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-424705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960B29DB850
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:10:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0841B9DB854
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:11:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F4516302C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C0D282322
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC571A08B1;
-	Thu, 28 Nov 2024 13:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NPEVjmTS"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF981A0BFD;
+	Thu, 28 Nov 2024 13:10:59 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662C51A08B5
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BADE19EEB4;
+	Thu, 28 Nov 2024 13:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732799419; cv=none; b=a9DWvASPxY8JBhQdmsI0rzHlf+0qtiRTUj5xhlC0QJFz7xh5koAoLgEzk+v2fBpg6UbZcJZJ4+zuHbX6HKQQ1+p3Ssqu1MKqyUrKkxEZ2T1rxDVaKIpe+L/OPTPGF5RLCtycA8eNBmpbkmAo4veM2GkvRV7Yj5MsexIXz8SL3Ow=
+	t=1732799459; cv=none; b=DKECRmwQVGuCGosZYOhQXVXN3VLdh7vkCPrj4pzxyy6yzuiT2uMmG7mZYwyhHYIFghqMgCq0vL7vZ6u8VZKxCUYrqe85riiuL+sYEho2cEUdof/0hvskDPfp/dbCo4oQyuHYD7jZ+z4RU5htBYnrlw6TKGKE+398B9giw22fGq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732799419; c=relaxed/simple;
-	bh=zBLn2JOZfSzHc56+BeQX/NmVHS7xKilS78jdBA6NbSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXpJ2zNKU8jn0HTwp6JaY63y5tICdOmClgULAMs5HLXBS1dmsZxwK2tk8gijq4ABwgjBrZKxfZIxN9j/R2TvjbM84kKIOPbcRlab6u35xy3MhOAHziBWnzBbLTwtZoSqNB7yAa5SQYUWNEZ9NFui8zSfpDuE+6EFSD4VncNQKcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NPEVjmTS; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffa3e8e917so9452011fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:10:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732799415; x=1733404215; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvNTzzEU4BAq35zkQFeqCy12uHiqzI5kAmvUt7YoTww=;
-        b=NPEVjmTSxBL2zQIRXcJ5dmiDTggmF3xsg/lHnptCjNUU9FhOmKD8qFI817S7W4al9H
-         pGBfp8UOzrRaES+pDlWnQRgDzi43+tiV2bcGrxSLtlQCOMD7Nq97ShgNA01pWau894Do
-         vGY4xKFoF+7q/YeP0pgfjVT5CeKUMxYwssFQQaOy2wHkusP+YPC2PxCjX8iWu5+CDWd3
-         OEoQqilO27wwrhXtZTWfl6QHaPGP3NZICKBIEYXxUlD0ZaYkF5zoQvQQ/OAKE9/GKU34
-         ALolMvNcQ5srzLO4aAg7wF8oGwjAn1PH0yYX4IoTIO1YVX+ABN0+Ihra6/auQrVMGicI
-         qoTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732799415; x=1733404215;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kvNTzzEU4BAq35zkQFeqCy12uHiqzI5kAmvUt7YoTww=;
-        b=EwT4xBqPQy4vveu5NXTP8383rwXNh8fI/JOt8NZCkh6sNe93kjuNj7KHVrYn2GFGJJ
-         qzQfuTQZY9rjXwAy+5mbIyB/9n4+AUYDFBO9c1yCufq8RHjxL3OMIpe8pHJwLgB5cM5c
-         fjwFtMaCq8YuqND++NiWX3EngQMJqQBwICXflFDKRL8hiMr3a1Qtz1g85sy3nWfw29iH
-         nseOstPUpUOzDOZ53DTJYSu7zY88V2Z6DwtcjSVQ6REwagW6oT1asWsJoCXgT2kIZWdu
-         S0/4aRJR8va6sVn8ks3nzkRfOYFTqEei2lHlh8trihLJW4XXFkxR+CHxhnn8RSFFjz3q
-         Ivow==
-X-Forwarded-Encrypted: i=1; AJvYcCVn+fSnfMCJEeX/KVFBSystOGLqqry4JAWJ5jES9LUWWNr+669Izf0GTFg7K0M9ORmva0opXtZrGuMWNBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqgFqdBCsGDzYC0azXc8sTHc+6e+MVpdHmMEkB8s476eXOItJo
-	Tn4EjbwJIT8qFBafpne3sXERbIwzwSXetZq0ppzFjL6BzQwAwoNo5wPPVYEFKzI=
-X-Gm-Gg: ASbGnctxNaJm32kE5L3c3ZlmtIiXvTDXM7v46SUM5+BWHPNs0hvAhcnNTDWxehFINiA
-	GqRjXkDpIRgZ6pEQg5kgI/JsI2/PJ6wt/HRrlVBTc/KhWmcPaK+HrbQakkJg/BUDeR4uURowEHW
-	pYWJnQMxUKy3wl/uDMlH5tykLof/dbUuVbNhg67Smlpr38SJn7+6Klm9VehIvsSmJMbR0N+BleP
-	oGPmUTvyueQzZBfSCUuiUy/N4C8vuL14ljG5DLRmGqU81Sm6/a0QDVZeJoI6hOMRaKITwyMZjQj
-	dRPbCyDOLr2EwRWRh9qUPpXxhVuK0A==
-X-Google-Smtp-Source: AGHT+IGOYh91Xj2WHbsqMNmtrL4jcUstcbUPpfSyD4+4zap0RPFXLe4HzprRrtHMAghWKtNFtt8YIA==
-X-Received: by 2002:a05:6512:3502:b0:53d:eef4:8acf with SMTP id 2adb3069b0e04-53df00ff76fmr3871217e87.45.1732799415479;
-        Thu, 28 Nov 2024 05:10:15 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f15asm170927e87.138.2024.11.28.05.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 05:10:14 -0800 (PST)
-Date: Thu, 28 Nov 2024 15:10:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
-	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Adds SPMI bus, PMIC and peripherals for
- qcs8300-ride
-Message-ID: <sxbjxywwjbep5rlndxoi5k62hqs24biryslkwbcxtvz3ilypvl@qi4omifueyqu>
-References: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
+	s=arc-20240116; t=1732799459; c=relaxed/simple;
+	bh=9elU7BZr9bP1QgsHDVwfQ9JRpl3ecGTM3aErGIE8wFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hdSZ4t3IVjdS8ZGGf+5ndtWOgVSXNHpXz2babh7kayr4LYvXSuN+A6yUDO1TaMoxCfT/huy7Tn62ZHv2iFXHLug072PTCIUKa1ZkbwBj2P7y+r0rFiQ427TqiBvTvv0W6Mc1gO2UnTHTYxRmWqugKFFdLm7hXcL8qECQiNOynmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B3B1E60003;
+	Thu, 28 Nov 2024 13:10:53 +0000 (UTC)
+Message-ID: <77b7b44f-e05a-4845-8d45-0e0d831bb8e7@ghiti.fr>
+Date: Thu, 28 Nov 2024 14:10:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] drivers/perf: riscv: Fix Platform firmware event data
+Content-Language: en-US
+To: Atish Patra <atishp@rivosinc.com>, Anup Patel <anup@brainfault.org>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
+ <20241119-pmu_event_info-v1-2-a4f9691421f8@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20241119-pmu_event_info-v1-2-a4f9691421f8@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, Nov 28, 2024 at 05:40:15PM +0800, Tingguo Cheng wrote:
-> Enable SPMI bus, PMIC and PMIC peripherals for qcs8300-ride board. The 
-> qcs8300-ride use 2 pmics(pmm8620au:0,pmm8650au:1) on the board, which
-> are variants of pmm8654au used on sa8775p/qcs9100 -ride(4x pmics).
-> 
-> This patch series depends on the patch series:
-> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
-> 
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Hi Atish,
+
+On 19/11/2024 21:29, Atish Patra wrote:
+> Platform firmware event data field is allowed to be 62 bits for
+> Linux as uppper most two bits are reserved to indicate SBI fw or
+> platform specific firmware events.
+> However, the event data field is masked as per the hardware raw
+> event mask which is not correct.
+>
+> Fix the platform firmware event data field with proper mask.
+>
+> Fixes: f0c9363db2dd ("perf/riscv-sbi: Add platform specific firmware event handling")
+>
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
 > ---
-> Changes in v2:
-> - Fixed comments in community.
+>   arch/riscv/include/asm/sbi.h |  1 +
+>   drivers/perf/riscv_pmu_sbi.c | 12 +++++-------
+>   2 files changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 98f631b051db..9be38b05f4ad 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -158,6 +158,7 @@ struct riscv_pmu_snapshot_data {
+>   };
+>   
+>   #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
+> +#define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
+>   #define RISCV_PMU_RAW_EVENT_IDX 0x20000
+>   #define RISCV_PLAT_FW_EVENT	0xFFFF
+>   
+> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+> index cb98efa9b106..50cbdbf66bb7 100644
+> --- a/drivers/perf/riscv_pmu_sbi.c
+> +++ b/drivers/perf/riscv_pmu_sbi.c
+> @@ -508,7 +508,6 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+>   {
+>   	u32 type = event->attr.type;
+>   	u64 config = event->attr.config;
+> -	u64 raw_config_val;
+>   	int ret;
+>   
+>   	/*
+> @@ -529,21 +528,20 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+>   	case PERF_TYPE_RAW:
+>   		/*
+>   		 * As per SBI specification, the upper 16 bits must be unused
+> -		 * for a raw event.
+> +		 * for a hardware raw event.
+>   		 * Bits 63:62 are used to distinguish between raw events
+>   		 * 00 - Hardware raw event
+>   		 * 10 - SBI firmware events
+>   		 * 11 - Risc-V platform specific firmware event
+>   		 */
+> -		raw_config_val = config & RISCV_PMU_RAW_EVENT_MASK;
+> +
+>   		switch (config >> 62) {
+>   		case 0:
+>   			ret = RISCV_PMU_RAW_EVENT_IDX;
+> -			*econfig = raw_config_val;
+> +			*econfig = config & RISCV_PMU_RAW_EVENT_MASK;
+>   			break;
+>   		case 2:
+> -			ret = (raw_config_val & 0xFFFF) |
+> -				(SBI_PMU_EVENT_TYPE_FW << 16);
+> +			ret = (config & 0xFFFF) | (SBI_PMU_EVENT_TYPE_FW << 16);
+>   			break;
+>   		case 3:
+>   			/*
+> @@ -552,7 +550,7 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+>   			 * Event data - raw event encoding
+>   			 */
+>   			ret = SBI_PMU_EVENT_TYPE_FW << 16 | RISCV_PLAT_FW_EVENT;
+> -			*econfig = raw_config_val;
+> +			*econfig = config & RISCV_PMU_PLAT_FW_EVENT_MASK;
+>   			break;
+>   		}
+>   		break;
+>
 
-comments in community? What does that mean?
+It seems independent from the other patches, so I guess we should take 
+it for 6.13 rcX.
 
-> - Added arbiter version(5.2.0) in commit message.
-> - Link to v1: https://lore.kernel.org/r/20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-0-28af84cb86f8@quicinc.com
-> 
-> ---
-> Tingguo Cheng (2):
->       arm64: dts: qcom: qcs8300: Adds SPMI support
->       arm64: dts: qcom: qcs8300-ride: Enable PMIC peripherals
-> 
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 22 ++++++++++++++++++++++
->  2 files changed, 45 insertions(+)
-> ---
-> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-> change-id: 20241122-adds-spmi-pmic-peripherals-for-qcs8300-0a3c4458cf7e
-> prerequisite-change-id: 20240925-qcs8300_initial_dtsi-ea614fe45341:v2
-> prerequisite-patch-id: 73c78f31fa1d504124d4a82b578a6a14126cccd8
-> prerequisite-patch-id: 5a01283c8654ae7c696d9c69cb21505b71c5ca27
-> prerequisite-patch-id: dc633d5aaac790776a8a213ea2faa4890a3f665d
-> prerequisite-patch-id: 9ecf4cb8b5842ac64e51d6baa0e6c1fbe449ee66
-> 
-> Best regards,
-> -- 
-> Tingguo Cheng <quic_tingguoc@quicinc.com>
-> 
+Let me know if that's not the case.
 
--- 
-With best wishes
-Dmitry
+Thanks,
+
+Alex
+
 
