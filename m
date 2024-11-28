@@ -1,114 +1,101 @@
-Return-Path: <linux-kernel+bounces-424243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887649DB1FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:52:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7D39DB200
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A51A281936
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:52:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DAFFB225EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F05126C02;
-	Thu, 28 Nov 2024 03:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB751304AB;
+	Thu, 28 Nov 2024 03:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b2tPVMNT"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jj10VN1W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A652563;
-	Thu, 28 Nov 2024 03:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ADA2563;
+	Thu, 28 Nov 2024 03:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732765923; cv=none; b=WV5Zrc23kdFV36KyfdSRQLjUupNLRtlt+nrrjmb8fkO6AV7JKKbrNhmq4h0rkLtY8rp0Uxl8Brmy/EPpsgY2Wzwyy5/qd9ZzLu3pDgy4JJZgf/OSj/Ut6BpAnlE3m4zuvaGAlMsJYBDae2AgQFaruknEB4xiQqarj/ZJynhJhzQ=
+	t=1732766038; cv=none; b=a2ID6ODkSc2e2iZmFNDW5REXcd1Dg4dYd+uq30Wisbm9Rqea9x7/pqZtvrcluzgXlt9uKNYXihXfJsgpD8A8aWZHVhDO1Hq3r3k9H6sTcPmcSbMLCe935tfODxVsjp+G2va28yANTwoAWF10Is1Z/8rVZreR7N53LG0+q4jIceA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732765923; c=relaxed/simple;
-	bh=xB2G7h4IV/IFh/MZVy1ia3l1GQYnocTXi0O/lq8PUmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QVTkdDZ9csRGlgIvrLVcTQfNN424aoxD+Cx/BGhHG2XOnZW7vyRiTV6UAk6ejEJWv2iLWAzQaVDW/ikqBmigchxV0iGN7ao9fyJd4AFbJFGXiL0xt+Ey7j/6fQhPf8zCydWTcXAaUMaWQ/orfEd4nctVIhsirb99ZXjHhupa8jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b2tPVMNT; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=MNTqIGD2GF80NWjX3zh1dlo1C8KR10PgrqiT8AEoCIE=; b=b2tPVMNThwtvVv0BTFSGVgqZuC
-	ludOX+1vl5cdjGMpi91EUcg7VUODpRNdX2sFxn+dag1B1GVQutSpRXrloHLHSN4HmxDhXAsn0iL4B
-	0Qr5jmnZw+TMYpDORMVa0o6TPgwuZFAS6+TVxuuVtEf6EZHQ/UcBGRV7HT5VEduzX6U/T9a87Dwdy
-	YiQUeAnKcsw32Y0E9mLVSt8jiuhmmZqGFgYFPVvB/rJiJXqxuFC0fn7whvEcQJavPT3Wv35iVqEKE
-	02H6OvMYaiKuOHPD7cpWZVGdZOUnu7zRSBzgCGYnEPLoqkDoYMAhriztEsMbh3BejsMLQkhbbNBfA
-	PhN4nOpA==;
-Received: from [50.53.2.24] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGVZQ-0000000EdxG-0RCT;
-	Thu, 28 Nov 2024 03:52:00 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Eric Auger <eric.auger@redhat.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	iommu@lists.linux.dev
-Subject: [PATCH] iommufd: fix typos in kernel-doc comments
-Date: Wed, 27 Nov 2024 19:51:59 -0800
-Message-ID: <20241128035159.374624-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732766038; c=relaxed/simple;
+	bh=+cToueDn8bjtrGwZGh8yj967W9auYzQsQSUm/E8KU8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYwPPf5XyLHQDpHslOAOSxJKIiNvP82earJJkZOQlDlpykz+BpPzLUa5GoELkeRra5PMWSMTvkdRjEagU8YxOdMyH00twmMgMpqTO4xIEFU2b8Aspp4wNu6/uUAXm0BtRXtk/zw/abm0tmC4BNRKnLPvhu+rCDAR4kEsxfRucT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jj10VN1W; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732766036; x=1764302036;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+cToueDn8bjtrGwZGh8yj967W9auYzQsQSUm/E8KU8Q=;
+  b=jj10VN1Wn3r77oxxyL/eYp493mTCBwtLCDCNjRQbqCRy00thAuoVOj3/
+   rfiB2/9ETHo9i6dInK5YxS76+nXyXAsJu2IwVLdiG2iaJr0UUburvya5z
+   wtgHb1q24gRGXOBqjCHcDWiU72HVCnlyz1FqgYIE+rNTuqQFiQFFA+o6S
+   OQS3aR0WvZ8m/QST2bi9Lcx2LxtznS83bUYy9ca9sLBesX2wNb/MVhCsg
+   +Pd2gfMV0CMmaxP7ctJzE2wbqinAaWjNxW9sIvWcXQGYbWLhy8YIWmb3p
+   kBDV73TJexylWQovLEZhMROv4IAMGIZ1tjXTEklCgHHA9ipN1K/66BR6h
+   g==;
+X-CSE-ConnectionGUID: u8MjAK7+SnyhoVw5Iv6Sag==
+X-CSE-MsgGUID: bpAhs/PkSXq3gf7sVa+hAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43599462"
+X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
+   d="scan'208";a="43599462"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 19:53:55 -0800
+X-CSE-ConnectionGUID: 6rA7C1OxSAu4J4wIQ4ShCg==
+X-CSE-MsgGUID: lhZpvgLmTQiAAukqP2GH0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
+   d="scan'208";a="92958633"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 19:53:53 -0800
+Message-ID: <adf9d3a0-3134-425b-89e7-0a6881cdcc6c@intel.com>
+Date: Thu, 28 Nov 2024 11:53:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] KVM: nVMX: Defer SVI update to vmcs01 on EOI when
+ L2 is active w/o VID
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chao Gao <chao.gao@intel.com>, =?UTF-8?Q?Markku_Ahvenj=C3=A4rvi?=
+ <mankku@gmail.com>, Janne Karhunen <janne.karhunen@gmail.com>
+References: <20241128000010.4051275-1-seanjc@google.com>
+ <20241128000010.4051275-3-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20241128000010.4051275-3-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix typos/spellos in kernel-doc comments for readability.
+On 11/28/2024 8:00 AM, Sean Christopherson wrote:
+> +void kvm_apic_update_hwapic_isr(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm_lapic *apic = vcpu->arch.apic;
+> +
+> +	if (WARN_ON_ONCE(!lapic_in_kernel(vcpu)) || !apic->apicv_active)
+> +		return;
+> +
+> +	kvm_x86_call(hwapic_isr_update)(apic->vcpu, apic_find_highest_isr(apic));
 
-Fixes: aad37e71d5c4 ("iommufd: IOCTLs for the io_pagetable")
-Fixes: b7a0855eb95f ("iommu: Add new flag to explictly request PASID capable domain")
-Fixes: d68beb276ba2 ("iommu/arm-smmu-v3: Support IOMMU_HWPT_INVALIDATE using a VIOMMU object")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Eric Auger <eric.auger@redhat.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Vasant Hegde <vasant.hegde@amd.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: iommu@lists.linux.dev
----
- include/uapi/linux/iommufd.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Nit:
 
---- linux-next-20241125.orig/include/uapi/linux/iommufd.h
-+++ linux-next-20241125/include/uapi/linux/iommufd.h
-@@ -297,7 +297,7 @@ struct iommu_ioas_unmap {
-  *                       ioctl(IOMMU_OPTION_HUGE_PAGES)
-  * @IOMMU_OPTION_RLIMIT_MODE:
-  *    Change how RLIMIT_MEMLOCK accounting works. The caller must have privilege
-- *    to invoke this. Value 0 (default) is user based accouting, 1 uses process
-+ *    to invoke this. Value 0 (default) is user based accounting, 1 uses process
-  *    based accounting. Global option, object_id must be 0
-  * @IOMMU_OPTION_HUGE_PAGES:
-  *    Value 1 (default) allows contiguous pages to be combined when generating
-@@ -390,7 +390,7 @@ struct iommu_vfio_ioas {
-  * @IOMMU_HWPT_ALLOC_PASID: Requests a domain that can be used with PASID. The
-  *                          domain can be attached to any PASID on the device.
-  *                          Any domain attached to the non-PASID part of the
-- *                          device must also be flaged, otherwise attaching a
-+ *                          device must also be flagged, otherwise attaching a
-  *                          PASID will blocked.
-  *                          If IOMMU does not support PASID it will return
-  *                          error (-EOPNOTSUPP).
-@@ -766,7 +766,7 @@ struct iommu_hwpt_vtd_s1_invalidate {
- };
- 
- /**
-- * struct iommu_viommu_arm_smmuv3_invalidate - ARM SMMUv3 cahce invalidation
-+ * struct iommu_viommu_arm_smmuv3_invalidate - ARM SMMUv3 cache invalidation
-  *         (IOMMU_VIOMMU_INVALIDATE_DATA_ARM_SMMUV3)
-  * @cmd: 128-bit cache invalidation command that runs in SMMU CMDQ.
-  *       Must be little-endian.
+we have @vcpu already, no need to grab it from apic->vcpu.
+
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_apic_update_hwapic_isr);
+
 
