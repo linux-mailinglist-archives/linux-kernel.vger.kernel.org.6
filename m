@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-424600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A7B9DB69F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:37:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8F8616431F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:37:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0204198E6D;
-	Thu, 28 Nov 2024 11:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="F0J4u+ST"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501729DB6A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:38:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC1B13A865
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B795B210B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:38:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2001991A5;
+	Thu, 28 Nov 2024 11:38:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5701482F3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732793849; cv=none; b=DjsqmUKjsTrJQx/OKoyPRKibya5BaG+PTDxQHVq+W+oL1lgEE7h6Zk2o/2YbpetKHv2vhqMuAvwvxtbGartnZTY7wulWTgXslQBmZxVGJh/hMoN64IGgoF/qyr05b5hZG6wZ/Ugydbs3eRSXAHESi3R0m/jg/MBQuRmt4kHbykM=
+	t=1732793908; cv=none; b=EbmOMzBetqKbcXsmyo0oH9Kvt9Iqj8ZrYzwZQBgXT8dxWEaHFZaUTdkvihn+TwvculIaHgABZawy4+ElqBwVGK1g4JIWxWcYITVLO50CsoU/0h48xku3aGB+GeB5AD19fNWX74rkb7uwms+yPXQTOUejx4nBO0waRqNgudB5h5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732793849; c=relaxed/simple;
-	bh=Bk/q63YNO6vk8LPeNc5DF66JpN9+NjvjCiTy37BBpPw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rhCr6jWMAGC41u7Uiv9MeFjLKXGphe/5QVeHn1yZn6Smtqp5uSKNhlE9jAHusJXR1ed4krApIS71E3dnV63I9rL8dmHDnrBCrLrNHjC3C84s+NjO1y+L9pvbTYUVGt3Na63ZzX7XSNeHTHoHYpwMErY5w4m2dIM7pJPkCZtQJV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=F0J4u+ST; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
-	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
-	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Bk/q63YNO6vk8LPeNc5DF66JpN9+NjvjCiTy37BBpPw=; b=F0J4u+STQ1D9wRJ4krNs3k2YoU
-	s9oNNu73dHBvRa7VW1jZzndMjMD7d3JTYhAqPvVRyBzl6MPI4vKktWjyfrYywKDW3CejxAJfAeCmR
-	dIT+V0nLD+A70oiZUsLY/oGMmVLruoNjm4hJdDICAJOC4l/6HiYkXWqDDdWkIkdNs3xPcn3bIfka2
-	dzy7lp3CedwBk9+LtfE9NpylMRPsBpAFXOQ1/9ZI0OQdZDRqjw9WTZXCVLhUBk2Ped89d/UNp+sC+
-	ffJ6d1M0ripYwx8DPpubAiLsy1NAS8jZwLbBb42sdIGi8tEuO0uNVvyk+nGgmTSvSOlfFEjmzeE9p
-	bshqGjEg==;
-Received: from [167.98.27.226] (helo=[10.35.5.98])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1tGcpe-00CMKL-1f; Thu, 28 Nov 2024 11:37:14 +0000
-Message-ID: <4052c4e7ed0e02d11c2219915b08928677c88ab8.camel@codethink.co.uk>
-Subject: Re: [REGRESSION] Re: [PATCH 00/24] Complete EEVDF
-From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, 	vschneid@redhat.com, linux-kernel@vger.kernel.org,
- kprateek.nayak@amd.com, 	wuyun.abel@bytedance.com,
- youssefesmat@chromium.org, tglx@linutronix.de, 	efault@gmx.de
-Date: Thu, 28 Nov 2024 12:37:14 +0100
-In-Reply-To: <20241128105817.GC35539@noisy.programming.kicks-ass.net>
-References: <20240727102732.960974693@infradead.org>
-	 <16f96a109bec0b5849793c8fb90bd6b63a2eb62f.camel@codethink.co.uk>
-	 <20241128105817.GC35539@noisy.programming.kicks-ass.net>
-Organization: Codethink
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (by Flathub.org) 
+	s=arc-20240116; t=1732793908; c=relaxed/simple;
+	bh=OzZQ+sfy5qxKB7CoH7tnvfZgaDGKtxPai5a+x4iB1E4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FxxdHCYR0I0sud2skJmtruoTyxdsT/gaqDZGMNatL+ktTRA6gMPN1vwUaFh01uvkbnrOg1anXwsyuBhr7U+OhrSIC/aHuAUnWSN4qUG3qqLiDOZdCBxLu6YkcJMpd0jJWTTdK+4Pq4qmEmn3ouQ4AQJ8gDWpjMJ/PKw+938S2ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56ACE1474;
+	Thu, 28 Nov 2024 03:38:54 -0800 (PST)
+Received: from [10.1.26.37] (e122027.cambridge.arm.com [10.1.26.37])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 596E93F66E;
+	Thu, 28 Nov 2024 03:38:22 -0800 (PST)
+Message-ID: <f43e4057-8791-45a9-9aa0-5d2e979a9269@arm.com>
+Date: Thu, 28 Nov 2024 11:38:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: marcel.ziswiler@codethink.co.uk
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panfrost: Add GPU ID for MT8188 Mali-G57 MC3
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ boris.brezillon@collabora.com
+Cc: robh@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+References: <20241113112622.123044-1-angelogioacchino.delregno@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241113112622.123044-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-11-28 at 11:58 +0100, Peter Zijlstra wrote:
-> On Thu, Nov 28, 2024 at 11:32:10AM +0100, Marcel Ziswiler wrote:
->=20
-> > Resulting in the following crash dump (this is running v6.12.1):
+On 13/11/2024 11:26, AngeloGioacchino Del Regno wrote:
+> The MediaTek MT8188 SoC has a Mali-G57 MC3 GPU and, similarly to
+> MT8192, it has yet another special GPU ID.
+> 
+> Add the GPU ID to the list and treat it as a standard Mali-G57.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-[snip]
+Pushed to drm-misc-next
 
-> > It looks like it is trying to enqueue an already queued deadline task. =
-Full serial console log available
-> > [1].
->=20
-> Right, I've had a number of these reports, but so far we've not yet
-> managed to figure out how it's all happening.
->=20
-> > We are running the exact same scheduler stress test both on Intel NUCs
-> > as well as RADXA ROCK 5B board farms.=C2=A0 While so far we have not se=
-en
-> > this on amd64 it crashes consistently/reproducible on aarch64.
->=20
-> Oooh, that's something. So far the few reports have not been (easily)
-> reproducible. If this is readily reproducible on arm64 that would
-> help a lot. Juri, do you have access to an arm64 test box?
+Thanks,
+Steve
 
-As mentioned above, so far our scheduler stress test is not yet open source=
- but Codethink is eager to share
-anything which helps in resolving this.
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_gpu.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> index f5abde3866fb..174e190ba40f 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> @@ -236,6 +236,10 @@ static const struct panfrost_model gpu_models[] = {
+>  	 */
+>  	GPU_MODEL(g57, 0x9003,
+>  		GPU_REV(g57, 0, 0)),
+> +
+> +	/* MediaTek MT8188 Mali-G57 MC3 */
+> +	GPU_MODEL(g57, 0x9093,
+> +		GPU_REV(g57, 0, 0)),
+>  };
+>  
+>  static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
 
-> A very long shot:
->=20
-> =C2=A0https://lkml.kernel.org/r/20241127063740.8278-1-juri.lelli@redhat.c=
-om
->=20
-> doesn't help, does it?
-
-No, still the same with this on top of today's -next.
-
-Thanks!
-
-Cheers
-
-Marcel
 
