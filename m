@@ -1,428 +1,135 @@
-Return-Path: <linux-kernel+bounces-424256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB7C9DB226
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:25:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1749DB229
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:26:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E15282897
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7111A167C0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58F013AD26;
-	Thu, 28 Nov 2024 04:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83B513B780;
+	Thu, 28 Nov 2024 04:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Mkzucqzw"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CKJNNjGo"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D5F82C7E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A263D82C7E
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732767921; cv=none; b=VyjdcNzigNg8wMC28TiJuMO2o0hGa7At4NZLfYjaZ+8lxs8kXuQzrObxDoFcJ2uG7sK5q8Yr++JX3uSFBFPA75WawQAwNI/Nyzez5D9GuP1uGVc1b8offgGHI+kq6upJzT2uzRNTCo1VywrtCVnlJj0zJV261CdeS3R1EbWpP/s=
+	t=1732768000; cv=none; b=T+fTydHIyL7T+hhkM7S5avHCPcgfOxshflzAKqlw23IkkAAYGe8opPvOV8QyQKsJr01ufGqctUWAxAeE61rHw8f0GWJAx3AvlJnhcqV7uEOqyEl4QUqvIwe2IqebXtUubxOuByUExuZ3UNhYVBD1CcrRzB0EnW1UHihu12K3lEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732767921; c=relaxed/simple;
-	bh=rzVH4koIyk5tM8mP5+AmnpZjdHuCg8BC/gWdeSPR+jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m6/PxheT2tGeSfPZCQRoMSiLqIvo6eYegbvGOxHFJpuinJ0B4k9OcYkYb5h/sSB+RmiV1WzCVLgQ0wXExvIvvVFcNpBkFAOsqAY3TVjh3VeIK71Xd+/Jj/6xh2vGvB3g3i+3e3LVi8x0PbFWlSFHquyc12PIY4tj1BE/1rC4u/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Mkzucqzw; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6A90E40CE4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1732767916;
-	bh=Poen6o+0c+W+DydjrZXYdtWWX5rlb7xo+sZ28YnuaXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=MkzucqzwWRGfu76l+MbWNqVmSy+G3KWyk0wXk+efVnTH5/FxqfqpsPbqM3aBMu4RA
-	 IFEKuKCCDRUdiqukOto8JnJcCynUJXyMc5vKcsV9+Lt4BYw/iF1ACPFy5zLtqH1bZ7
-	 CkSsp5vMNMG/slnigYwlvYFbtJ4NuzVFKLTtFZCR+LGdOZ2M5iyRv1xJN1jaIUCT2I
-	 MFYHE/1wRg05EfnwLfMxFPsBsV+x+R4zdd2zdnTMFUSwkZ9tujzfKrtJkaQMZX5Fkq
-	 I06VD6BRe5hyLh9eJtIvW4nTGV38QpFp9uqZvopWG/7PnUB4/6ne7jPcFY1eqGIxaC
-	 dEuWUcN/5916A==
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-72524409ab8so500481b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:25:16 -0800 (PST)
+	s=arc-20240116; t=1732768000; c=relaxed/simple;
+	bh=SQ5HTme1SLECGbVCaGoPHfecPrbsN1EOEWv6CHUAVP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sAfQUGD/ENYpWvLLAhDGU+2o86HH4L21WCi9r+uu+TsWoxny4KKMPp30CV3beCU9BZC6SdzFpoGGoCD5Uj9PucTx1OJHxGOqWccWmFETlawfSuhuIeUs7lXiBSAPu3TLFIFAnwlb+9D9zo4WSIgV79r9IPHY9hG0We5sar+d9XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CKJNNjGo; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-724e113c821so448508b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:26:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732767998; x=1733372798; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yyk7Iou25uRg3TCJZa+tSFUnZozoGmQKQzSvVwcJ1m4=;
+        b=CKJNNjGoB9nwkV51z6xz+dTyhdEk8nnBvfC4B0VL+W608Iqw9i0VUSAj9R1JYjCwBm
+         BWyhJK189hq3Sg+DDo46Q/IkkxmhhUOLHGK/W+IfUNCjUDKqGSiFuo4riaROENZRoKo4
+         EGmNhP1t1xLCk/OAp5JHt8kILqThOL5Ee1noQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732767914; x=1733372714;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Poen6o+0c+W+DydjrZXYdtWWX5rlb7xo+sZ28YnuaXI=;
-        b=DuYCPbk2px+R/ZJLSMQ3QWMID2EEE7fwIilcShBdJB7CVBqQ9LQCdtWfFkTLseZkDh
-         Z+Rt3AsCAjMAS3S+ApLDVobgLHtgn5tQs4biSbJ4mxJauDEBkQdEPab8wAMJOeQFxTbb
-         7HwN4wUhRkq69aKT1gzKww0AdSdAwzcycTNc1ARp0o3xCQ/xzCaoo1oeWCc+vCQeMgyN
-         wp35GeGYKp6Qo+cgbd3Tckp1n+cYEplrTblepCKT5VbEWmdn2+vi9wY4D/yLK0V8ocZb
-         M2aUfeRS8jvB2zh8wlx7rt2RF4iU5vlMzRP8sZJ+WWe6um5/pXG0dHw6kS20OHLU1Yjx
-         Ex6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmNI8je2q8IWhTg6lLmBSOsCynafrlo+48oKnwx2CK+PQkqEIxURSeDURTr4zLLVtfEvkTmDZOdH+Ao3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0sc56Sqo8CCu3r8a1sv0s9RkdPWAqzDuo11jBTrfAqCiOUPBg
-	zZXAyJ6Bcc0WsJ7pXk6yL213oIZHb1TCicwVZq3fZNYUKkPPS02npz6yeQx9DsENZEPCeJ+D8zL
-	VQkaxItR6ZwiCoDSefBtyMwLW6PzG0tS2mvtmQC4lEID5O7luxxGlj7mAQL5SxmlFaxtOjiwVr7
-	s1tg==
-X-Gm-Gg: ASbGncuDWaq7FmEq9eEWIlvWyTSz95BEmGwNQdIXugci0/jhhkqXFk5355ZkqdoXzyL
-	Gzb226BqeEmUOEJQPjDkOFjCyAUUVh1OtuNumRng1kV5vfrF2kitowC6/FNZEN0bGbvNxUHLSVY
-	nFLjRau23Q/Vd1lmMVzoMf7pJ21ipEySBGQiE1KW8aajUSw4rk1h+kdRo/fuk+u9aQZj2ODk4D3
-	KvSdcmddmbmFooEZmQo50GoLLhy+CSskFTb5gUnYDyBv9GrEb5X
-X-Received: by 2002:a05:6a00:c8b:b0:71e:744a:3fbc with SMTP id d2e1a72fcca58-725301411b9mr7839230b3a.21.1732767914104;
-        Wed, 27 Nov 2024 20:25:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJ8OoLeBrHqOLLhbMcR/cX5Q6QF4wERBis0BPSAXHMwaZH1SI26BUIfdkpRdJ/Xsh0QMXFvQ==
-X-Received: by 2002:a05:6a00:c8b:b0:71e:744a:3fbc with SMTP id d2e1a72fcca58-725301411b9mr7839207b3a.21.1732767913613;
-        Wed, 27 Nov 2024 20:25:13 -0800 (PST)
-Received: from localhost ([240f:74:7be:1:f989:1f57:deda:d5ef])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254181473csm440786b3a.136.2024.11.27.20.25.12
+        d=1e100.net; s=20230601; t=1732767998; x=1733372798;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yyk7Iou25uRg3TCJZa+tSFUnZozoGmQKQzSvVwcJ1m4=;
+        b=tPliCbTXkPTXhKee0una7XBaNHs/GQ6+zcRQxi7+Z9HO0zX8bhlRLpBu9vP9G42gZG
+         mkkaoj4EZ1vKir6ni3RKKimuxbmaf26H5WG76wlEIAd4hzuLJK5pEX3Porh6xfGW48rk
+         9npDMmEDmMIi1rTMmGX0Lg1irnwcjPIWZ+wrpbhdl8fOpn/+055KxJEkcwyoOwwf6AV5
+         uKKqcl25WAztCXZff36ejfMWHlrv+sujWbqJhf7bwY6IN1g7r6rONNaASL+utFI7zRxS
+         +hdDt6KqZ/B+2RcJFecWNrhlSoNh8k4HOJAZZ9oQQUqU9+2Q8wkzVxb8BqPHcTVsVfrZ
+         4nxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9QYlWFOjiKft0mIzbzU+0ZDoyAW/ExbGImaTXSvVBbBKMThCQteDqtvCRmN79sxKlkfdDTNJnsK0j9z0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3klWJaSXUlWuX79gmzxNhJ7YihJr8Xc7FawuJXRrj09aSpwYz
+	SfpVV6DxidV+9hlsYLZ3gEadgdJLb6SslQZGrMwuq4dua+SaJb+eYe9kjfDc3Q==
+X-Gm-Gg: ASbGncs6KWEPXPm+4ORFe9ltJLx2MP4XR51hCGrAwqWZ3GQvpwHWsM0qFvHkodUu5N7
+	8jrgYmb+Hyb7xWS/qUT8xBQRZ2tIdIHKhDPF7zg92PG7MRXjphJltG9aXOFs/hCMnSSxLuahN1s
+	2pJSKbD78kQbvR02Akbr2dobeb7lP/tmN3rJxf9VXSq7e7oiO+MhGTP7e7hUZJ6cpTO1ni6Nc3c
+	PzXKgbbYimK4C+IgY0o+kyBVwE60vMbNZLEyCIiYclFjhHXPAjOaGC5yQJi/zJ++OZO
+X-Google-Smtp-Source: AGHT+IHeZNuSWgVtWvTDokMDlIw4ArRKKjwJZ33jbZfsR02Ur3asny/Ji3uLw2rlY2Y0R8BhHPJDpA==
+X-Received: by 2002:a05:6a00:3d0e:b0:725:14fd:f62c with SMTP id d2e1a72fcca58-72530078935mr6645836b3a.15.1732767997932;
+        Wed, 27 Nov 2024 20:26:37 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:2db5:507b:eafb:b616])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541849509sm439133b3a.197.2024.11.27.20.26.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 20:25:13 -0800 (PST)
-Date: Thu, 28 Nov 2024 13:25:11 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, 
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] virtio_net: drain unconsumed tx completions if any
- before dql_reset
-Message-ID: <judg4yj4adez5y3tm6lojouf6uh7ge3nice2npzzvwklpluj6t@oicfewgnwbll>
-References: <20241126024200.2371546-1-koichiro.den@canonical.com>
- <CACGkMEsJ1X-u=djO2=kJzZdpZH5SX560V9osdpDuySXtfBMpuw@mail.gmail.com>
- <6lkdqvbnlntx3cno5qi7c4nks2ub3bkaycsuq7p433c4vemcmf@fwnhqbo5ehaw>
- <CACGkMEvR4+_iRAFACkXLgX-hGwjfOgd3emiyquzxUHL9wC-b=g@mail.gmail.com>
- <uwpyhnvavs6gnagujf2etse3q4c7vgjtej5bi34546isuefmgk@ebkfjs3wagsp>
- <CACGkMEvmBEfMwko-wJJ_78w+1QhN=r1zJ4wbaCJ1L9TU1Uo1pQ@mail.gmail.com>
+        Wed, 27 Nov 2024 20:26:37 -0800 (PST)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Wolfram Sang <wsa@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] of: base: Document prefix argument for of_get_next_child_with_prefix()
+Date: Thu, 28 Nov 2024 12:26:30 +0800
+Message-ID: <20241128042632.231308-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEvmBEfMwko-wJJ_78w+1QhN=r1zJ4wbaCJ1L9TU1Uo1pQ@mail.gmail.com>
 
-On Thu, Nov 28, 2024 at 10:57:01AM +0800, Jason Wang wrote:
-> On Wed, Nov 27, 2024 at 12:08 PM Koichiro Den
-> <koichiro.den@canonical.com> wrote:
-> >
-> > On Wed, Nov 27, 2024 at 11:24:15AM +0800, Jason Wang wrote:
-> > > On Tue, Nov 26, 2024 at 12:44 PM Koichiro Den
-> > > <koichiro.den@canonical.com> wrote:
-> > > >
-> > > > On Tue, Nov 26, 2024 at 11:50:17AM +0800, Jason Wang wrote:
-> > > > > On Tue, Nov 26, 2024 at 10:42 AM Koichiro Den
-> > > > > <koichiro.den@canonical.com> wrote:
-> > > > > >
-> > > > > > When virtnet_close is followed by virtnet_open, there is a slight chance
-> > > > > > that some TX completions remain unconsumed. Those are handled during the
-> > > > > > first NAPI poll, but since dql_reset occurs just beforehand, it can lead
-> > > > > > to a crash [1].
-> > > > > >
-> > > > > > This issue can be reproduced by running: `while :; do ip l set DEV down;
-> > > > > > ip l set DEV up; done` under heavy network TX load from inside of the
-> > > > > > machine.
-> > > > > >
-> > > > > > To fix this, drain unconsumed TX completions if any before dql_reset,
-> > > > > > allowing BQL to start cleanly.
-> > > > > >
-> > > > > > ------------[ cut here ]------------
-> > > > > > kernel BUG at lib/dynamic_queue_limits.c:99!
-> > > > > > Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> > > > > > CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
-> > > > > > Tainted: [N]=TEST
-> > > > > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
-> > > > > > BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> > > > > > RIP: 0010:dql_completed+0x26b/0x290
-> > > > > > Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
-> > > > > > 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
-> > > > > > d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
-> > > > > > RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
-> > > > > > RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
-> > > > > > RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
-> > > > > > RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
-> > > > > > R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
-> > > > > > R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
-> > > > > > FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
-> > > > > > knlGS:0000000000000000
-> > > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > > CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
-> > > > > > PKRU: 55555554
-> > > > > > Call Trace:
-> > > > > >  <IRQ>
-> > > > > >  ? die+0x32/0x80
-> > > > > >  ? do_trap+0xd9/0x100
-> > > > > >  ? dql_completed+0x26b/0x290
-> > > > > >  ? dql_completed+0x26b/0x290
-> > > > > >  ? do_error_trap+0x6d/0xb0
-> > > > > >  ? dql_completed+0x26b/0x290
-> > > > > >  ? exc_invalid_op+0x4c/0x60
-> > > > > >  ? dql_completed+0x26b/0x290
-> > > > > >  ? asm_exc_invalid_op+0x16/0x20
-> > > > > >  ? dql_completed+0x26b/0x290
-> > > > > >  __free_old_xmit+0xff/0x170 [virtio_net]
-> > > > > >  free_old_xmit+0x54/0xc0 [virtio_net]
-> > > > > >  virtnet_poll+0xf4/0xe30 [virtio_net]
-> > > > > >  ? __update_load_avg_cfs_rq+0x264/0x2d0
-> > > > > >  ? update_curr+0x35/0x260
-> > > > > >  ? reweight_entity+0x1be/0x260
-> > > > > >  __napi_poll.constprop.0+0x28/0x1c0
-> > > > > >  net_rx_action+0x329/0x420
-> > > > > >  ? enqueue_hrtimer+0x35/0x90
-> > > > > >  ? trace_hardirqs_on+0x1d/0x80
-> > > > > >  ? kvm_sched_clock_read+0xd/0x20
-> > > > > >  ? sched_clock+0xc/0x30
-> > > > > >  ? kvm_sched_clock_read+0xd/0x20
-> > > > > >  ? sched_clock+0xc/0x30
-> > > > > >  ? sched_clock_cpu+0xd/0x1a0
-> > > > > >  handle_softirqs+0x138/0x3e0
-> > > > > >  do_softirq.part.0+0x89/0xc0
-> > > > > >  </IRQ>
-> > > > > >  <TASK>
-> > > > > >  __local_bh_enable_ip+0xa7/0xb0
-> > > > > >  virtnet_open+0xc8/0x310 [virtio_net]
-> > > > > >  __dev_open+0xfa/0x1b0
-> > > > > >  __dev_change_flags+0x1de/0x250
-> > > > > >  dev_change_flags+0x22/0x60
-> > > > > >  do_setlink.isra.0+0x2df/0x10b0
-> > > > > >  ? rtnetlink_rcv_msg+0x34f/0x3f0
-> > > > > >  ? netlink_rcv_skb+0x54/0x100
-> > > > > >  ? netlink_unicast+0x23e/0x390
-> > > > > >  ? netlink_sendmsg+0x21e/0x490
-> > > > > >  ? ____sys_sendmsg+0x31b/0x350
-> > > > > >  ? avc_has_perm_noaudit+0x67/0xf0
-> > > > > >  ? cred_has_capability.isra.0+0x75/0x110
-> > > > > >  ? __nla_validate_parse+0x5f/0xee0
-> > > > > >  ? __pfx___probestub_irq_enable+0x3/0x10
-> > > > > >  ? __create_object+0x5e/0x90
-> > > > > >  ? security_capable+0x3b/0x70
-> > > > > >  rtnl_newlink+0x784/0xaf0
-> > > > > >  ? avc_has_perm_noaudit+0x67/0xf0
-> > > > > >  ? cred_has_capability.isra.0+0x75/0x110
-> > > > > >  ? stack_depot_save_flags+0x24/0x6d0
-> > > > > >  ? __pfx_rtnl_newlink+0x10/0x10
-> > > > > >  rtnetlink_rcv_msg+0x34f/0x3f0
-> > > > > >  ? do_syscall_64+0x6c/0x180
-> > > > > >  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > > > >  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
-> > > > > >  netlink_rcv_skb+0x54/0x100
-> > > > > >  netlink_unicast+0x23e/0x390
-> > > > > >  netlink_sendmsg+0x21e/0x490
-> > > > > >  ____sys_sendmsg+0x31b/0x350
-> > > > > >  ? copy_msghdr_from_user+0x6d/0xa0
-> > > > > >  ___sys_sendmsg+0x86/0xd0
-> > > > > >  ? __pte_offset_map+0x17/0x160
-> > > > > >  ? preempt_count_add+0x69/0xa0
-> > > > > >  ? __call_rcu_common.constprop.0+0x147/0x610
-> > > > > >  ? preempt_count_add+0x69/0xa0
-> > > > > >  ? preempt_count_add+0x69/0xa0
-> > > > > >  ? _raw_spin_trylock+0x13/0x60
-> > > > > >  ? trace_hardirqs_on+0x1d/0x80
-> > > > > >  __sys_sendmsg+0x66/0xc0
-> > > > > >  do_syscall_64+0x6c/0x180
-> > > > > >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > > > > RIP: 0033:0x7f41defe5b34
-> > > > > > Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
-> > > > > > f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
-> > > > > > f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
-> > > > > > RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
-> > > > > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
-> > > > > > RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
-> > > > > > RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
-> > > > > > R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
-> > > > > > R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
-> > > > > >  </TASK>
-> > > > > > [...]
-> > > > > > ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-> > > > > >
-> > > > > > Fixes: c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits")
-> > > > > > Cc: <stable@vger.kernel.org> # v6.11+
-> > > > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> > > > > > ---
-> > > > > >  drivers/net/virtio_net.c | 37 +++++++++++++++++++++++++++++--------
-> > > > > >  1 file changed, 29 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > > > index 64c87bb48a41..3e36c0470600 100644
-> > > > > > --- a/drivers/net/virtio_net.c
-> > > > > > +++ b/drivers/net/virtio_net.c
-> > > > > > @@ -513,7 +513,7 @@ static struct sk_buff *virtnet_skb_append_frag(struct sk_buff *head_skb,
-> > > > > >                                                struct sk_buff *curr_skb,
-> > > > > >                                                struct page *page, void *buf,
-> > > > > >                                                int len, int truesize);
-> > > > > > -static void virtnet_xsk_completed(struct send_queue *sq, int num);
-> > > > > > +static void virtnet_xsk_completed(struct send_queue *sq, int num, bool drain);
-> > > > > >
-> > > > > >  enum virtnet_xmit_type {
-> > > > > >         VIRTNET_XMIT_TYPE_SKB,
-> > > > > > @@ -580,7 +580,8 @@ static void sg_fill_dma(struct scatterlist *sg, dma_addr_t addr, u32 len)
-> > > > > >  }
-> > > > > >
-> > > > > >  static void __free_old_xmit(struct send_queue *sq, struct netdev_queue *txq,
-> > > > > > -                           bool in_napi, struct virtnet_sq_free_stats *stats)
-> > > > > > +                           bool in_napi, struct virtnet_sq_free_stats *stats,
-> > > > > > +                           bool drain)
-> > > > > >  {
-> > > > > >         struct xdp_frame *frame;
-> > > > > >         struct sk_buff *skb;
-> > > > > > @@ -620,7 +621,8 @@ static void __free_old_xmit(struct send_queue *sq, struct netdev_queue *txq,
-> > > > > >                         break;
-> > > > > >                 }
-> > > > > >         }
-> > > > > > -       netdev_tx_completed_queue(txq, stats->napi_packets, stats->napi_bytes);
-> > > > > > +       if (!drain)
-> > > > > > +               netdev_tx_completed_queue(txq, stats->napi_packets, stats->napi_bytes);
-> > > > > >  }
-> > > > > >
-> > > > > >  static void virtnet_free_old_xmit(struct send_queue *sq,
-> > > > > > @@ -628,10 +630,21 @@ static void virtnet_free_old_xmit(struct send_queue *sq,
-> > > > > >                                   bool in_napi,
-> > > > > >                                   struct virtnet_sq_free_stats *stats)
-> > > > > >  {
-> > > > > > -       __free_old_xmit(sq, txq, in_napi, stats);
-> > > > > > +       __free_old_xmit(sq, txq, in_napi, stats, false);
-> > > > > >
-> > > > > >         if (stats->xsk)
-> > > > > > -               virtnet_xsk_completed(sq, stats->xsk);
-> > > > > > +               virtnet_xsk_completed(sq, stats->xsk, false);
-> > > > > > +}
-> > > > > > +
-> > > > > > +static void virtnet_drain_old_xmit(struct send_queue *sq,
-> > > > > > +                                  struct netdev_queue *txq)
-> > > > > > +{
-> > > > > > +       struct virtnet_sq_free_stats stats = {0};
-> > > > > > +
-> > > > > > +       __free_old_xmit(sq, txq, false, &stats, true);
-> > > > > > +
-> > > > > > +       if (stats.xsk)
-> > > > > > +               virtnet_xsk_completed(sq, stats.xsk, true);
-> > > > > >  }
-> > > > >
-> > > > > Are we sure this can drain the queue? Note that the device is not stopped.
-> > > >
-> > > > Thanks for reviewing. netif_tx_wake_queue can be invoked before the "drain"
-> > > > point I added e.g. via virtnet_config_changed_work, so it seems that I need
-> > > > to ensure it's stopped (DRV_XOFF) before the "drain" and wake it afterwards.
-> > > > Please let me know if I’m mistaken.
-> > >
-> > > Not sure I get you, but I meant we don't reset the device so it can
-> >
-> > I was wondering whether there would be a scenario where the tx queue is
-> > woken up and some new packets from the upper layer reach dql_queued()
-> > before the drain point, which also could cause the crash.
-> 
-> Ok.
-> 
-> >
-> > > keep raising tx interrupts:
-> > >
-> > > virtnet_drain_old_xmit()
-> > > netdev_tx_reset_queue()
-> > > skb_xmit_done()
-> > > napi_enable()
-> > > netdev_tx_completed_queue() // here we might still surprise the bql?
-> >
-> > Indeed, virtqueue_disable_cb() is needed before the drain point.
-> 
-> Two problems:
-> 
-> 1) device/virtqueue is not reset, it can still process the packets
-> after virtnet_drain_old_xmit()
-> 2) virtqueue_disable_cb() just does its best effort, it can't
-> guarantee no interrupt after that.
-> 
-> To drain TX, the only reliable seems to be:
-> 
-> 1) reset a virtqueue (or a device)
-> 2) drain by using free_old_xmit()
-> 3) netif_reset_tx_queue() // btw this seems to be better done in close not open
+When of_get_next_child_with_prefix() was added, the prefix argument was
+left undocumented. This caused a new warning to be generated during the
+kerneldoc build process:
 
-Thank you for the clarification.
-As for 1), I may be missing something but what if VIRTIO_F_RING_RESET is
-not supported. A device reset in this context feels a bit excessive to me
-(just my two cents though) if in virtnet_open, so as you said, it seems
-better done in close in that regard as well.
+ drivers/of/base.c:661: warning: Function parameter or struct member 'prefix'
+ 	not described in 'of_get_next_child_with_prefix'
 
-> 
-> Or I wonder if this can be easily fixed by just removing
-> netdev_tx_reset_queue()?
+Properly document the argument to fix this.
 
-Perhaps introducing a variant of dql_reset() that clears all stall history
-would suffice? To avoid excessively long stall_max to be possibly recorded.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411280010.KGSDBOUE-lkp@intel.com/
+Fixes: 1fcc67e3a354 ("of: base: Add for_each_child_of_node_with_prefix()")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+As requested. I assume Rob would give an ack for this to go through the
+I2C tree since the offending commit is there as well.
 
-Thanks
+I also put this patch on git.kernel.org hoping that it gets some bot
+coverage soon:
 
-> 
-> Thanks
-> 
-> >
-> > Thanks
-> >
-> > >
-> > > Thanks
-> > >
-> > > >
-> > > > >
-> > > > > >
-> > > > > >  /* Converting between virtqueue no. and kernel tx/rx queue no.
-> > > > > > @@ -1499,7 +1512,8 @@ static bool virtnet_xsk_xmit(struct send_queue *sq, struct xsk_buff_pool *pool,
-> > > > > >         /* Avoid to wakeup napi meanless, so call __free_old_xmit instead of
-> > > > > >          * free_old_xmit().
-> > > > > >          */
-> > > > > > -       __free_old_xmit(sq, netdev_get_tx_queue(dev, sq - vi->sq), true, &stats);
-> > > > > > +       __free_old_xmit(sq, netdev_get_tx_queue(dev, sq - vi->sq), true,
-> > > > > > +                       &stats, false);
-> > > > > >
-> > > > > >         if (stats.xsk)
-> > > > > >                 xsk_tx_completed(sq->xsk_pool, stats.xsk);
-> > > > > > @@ -1556,10 +1570,13 @@ static int virtnet_xsk_wakeup(struct net_device *dev, u32 qid, u32 flag)
-> > > > > >         return 0;
-> > > > > >  }
-> > > > > >
-> > > > > > -static void virtnet_xsk_completed(struct send_queue *sq, int num)
-> > > > > > +static void virtnet_xsk_completed(struct send_queue *sq, int num, bool drain)
-> > > > > >  {
-> > > > > >         xsk_tx_completed(sq->xsk_pool, num);
-> > > > > >
-> > > > > > +       if (drain)
-> > > > > > +               return;
-> > > > > > +
-> > > > > >         /* If this is called by rx poll, start_xmit and xdp xmit we should
-> > > > > >          * wakeup the tx napi to consume the xsk tx queue, because the tx
-> > > > > >          * interrupt may not be triggered.
-> > > > > > @@ -3041,6 +3058,7 @@ static void virtnet_disable_queue_pair(struct virtnet_info *vi, int qp_index)
-> > > > > >
-> > > > > >  static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp_index)
-> > > > > >  {
-> > > > > > +       struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, qp_index);
-> > > > > >         struct net_device *dev = vi->dev;
-> > > > > >         int err;
-> > > > > >
-> > > > > > @@ -3054,7 +3072,10 @@ static int virtnet_enable_queue_pair(struct virtnet_info *vi, int qp_index)
-> > > > > >         if (err < 0)
-> > > > > >                 goto err_xdp_reg_mem_model;
-> > > > > >
-> > > > > > -       netdev_tx_reset_queue(netdev_get_tx_queue(vi->dev, qp_index));
-> > > > > > +       /* Drain any unconsumed TX skbs transmitted before the last virtnet_close */
-> > > > > > +       virtnet_drain_old_xmit(&vi->sq[qp_index], txq);
-> > > > > > +
-> > > > > > +       netdev_tx_reset_queue(txq);
-> > > > > >         virtnet_napi_enable(vi->rq[qp_index].vq, &vi->rq[qp_index].napi);
-> > > > > >         virtnet_napi_tx_enable(vi, vi->sq[qp_index].vq, &vi->sq[qp_index].napi);
-> > > > > >
-> > > > > > --
-> > > > > > 2.43.0
-> > > > > >
-> > > > > >
-> > > > >
-> > > > > Thanks
-> > > > >
-> > > >
-> > >
-> >
-> 
+    http://git.kernel.org/wens/h/of_get_next_child_with_prefix-kdoc-fix
+
+I guess I should have put the original patches on a separate branch on
+git.kernel.org for bots to run earlier. I'm sorry for not catching this
+sooner.
+
+ drivers/of/base.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 4cba021c89d3..7dc394255a0a 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -648,6 +648,7 @@ EXPORT_SYMBOL(of_get_next_child);
+  * of_get_next_child_with_prefix - Find the next child node with prefix
+  * @node:	parent node
+  * @prev:	previous child of the parent node, or NULL to get first
++ * @prefix:	prefix that the node name should have
+  *
+  * This function is like of_get_next_child(), except that it automatically
+  * skips any nodes whose name doesn't have the given prefix.
+-- 
+2.47.0.338.g60cca15819-goog
+
 
