@@ -1,91 +1,100 @@
-Return-Path: <linux-kernel+bounces-424934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DFA9DBB7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E19DF9DBB80
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD09B2288F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B376B2218E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948B51BD9F2;
-	Thu, 28 Nov 2024 16:47:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD691BDAA0;
+	Thu, 28 Nov 2024 16:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LsMx96iW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3C51AA1E4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D234717993;
+	Thu, 28 Nov 2024 16:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732812424; cv=none; b=UrdJQOJn5eGeyqbVqwSV6bH1SJJOHfM+sJK8w4ImW1wHonx7gTcapY3qe+iPkwGR2sCAfnYA2akQ5bLl1VKqKmp49dHnOcoDv74W4fd+/ugbUpfW4ir7qmxLu5qAEGyYHg+L9d9PSBPi2qT2nYNq++WGW+PulqTMbvBV6fooQNI=
+	t=1732812596; cv=none; b=HGYVz4djRR5c0Mrsm38q4E5MMCissn07twpArf+xnfo4vz86fjJ9T3KNMYW8/zE6zK4qOiK31JBG8MwavAH8Fo8QMlLK53OIuB/S2UOHX20IWKApAw9xF+hLFw4VmJ+Ni/p4NZbuB0QLM4hMb/kqKNhsppggwyTbd/9dUipC7do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732812424; c=relaxed/simple;
-	bh=qN1BVZeLJUZjyfFPMYiLwnibmO0IeO2MVIckXI60Xak=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=R/kZ0ncVqw9C0TyJJBWDyxNGIyjHhbRwQZxw7JB2B7Y71feJ/N1TOiy+SaH0einLnltibNrqP/InoHCRBX/nSLBrlHKAnETsvOAHB6kBQZ9f8hcDOJjnLp/wgUh1l2Nz/xL3XdbjvbQt2NfS4vBFSsQOGsPkinJYt47+mfafvsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a76ee0008cso16117715ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:47:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732812422; x=1733417222;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iB6QKltZBqgTuIMurRDLD1EU9kWoXkGKf5mAkXTzeZA=;
-        b=B69OQ3MvcHt8iurON8emEBfLxnhIAWEUAx5s90i2pdFTM8Y7YGt2HH1/nI55ufbxL9
-         pcxdMrhe1UJTrTyRChPPPgsscIUhmCEFpg/lRcmLtJg6WESmBv0RDfimlEWx3SYYbu21
-         HufEVP0lNpFVBO2QAEOAR1y1MOL84Br0vBI/lNOo9KmwCuRgCYnZzsG2eXSJ50oKTvAV
-         eHA5pgcDccN1Vs5gTLAT+oYENpwob0dLuWOoKfa+04UHiY/vNEZICms+jcsSVnp7hqxj
-         pEbzO6PMPs7NrW/fYhBfsHaB+Jn3ulXH8j+Aj7I45jjkYdfkgm0ei9YyFNd3JOzuTo22
-         ABUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0cpHv8Jb/+Px1mampGsZDDsyil0vvPAZvl3fUxPyz6bFFSzvtW5lyCK04Bm/bX8cfoaSs7wWd0uSX1JM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb4feTEbpgH5qE86/BzzfZcTXW3ET7REjN8UglwCEpyp9R1wR4
-	0jAJzMUXY5m89aMMj+BAs9PAxKHtfACabAdyPFdHQBMNMpXnJQdlHCNs5NTSDK7Sg32bKIMfgxR
-	Dd8XepkoBWNskZl4nQbDAgugg3OWpMBF4gbG4XR3BMSkUsG7I5Y/NWLQ=
-X-Google-Smtp-Source: AGHT+IGy73L+vWVZwSdwyqjH0wowFE8DqdHmgCJRRlhDtScRZ/8AHk/G68GnqvDB47rZRjSRuLeAnzjjBbs5SrYs+07ze2mvwjsD
+	s=arc-20240116; t=1732812596; c=relaxed/simple;
+	bh=+f65cArbkad+RjYcrHk8XkXcpR5AKMSGfRrHUf09l8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNn1KayvAvb4m99iSCLhj6MGOfQFKeVavFcFGKl3pl6OHsMZEzNZKxabIq0tNr21WRVz9tfpeimGwd/HwW9jLLSlUkTsqQQUeaZn/rilqxteQ1fKAI6S6ju8NmB74jVCpPxI2G9vSXQZFTfemuVBVdpHUz0bHDmTdcYs8sjJ/yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LsMx96iW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YRg/7d6YJzOoez+QkfVBlbg77QpvQiIofJH2zZ3Hjtg=; b=LsMx96iWwDND2at+8Wjl7oCHaL
+	ocO4idUaabSGW+jJXM0iWz9v9g3jsiZcEvFNARD91lU3/R7tRERvjwy89136atw1HGSjnHqL0jDhk
+	5QtkfFAHTNemlNm+ddEmqUOwQoOSYLjhAN49Y0T19rRW3r02CY9NLpVxxJAq1L3GGQAM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tGhi9-00Einh-Od; Thu, 28 Nov 2024 17:49:49 +0100
+Date: Thu, 28 Nov 2024 17:49:49 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, quic_tengfan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: add base QCS8300 RIDE board
+Message-ID: <fe332b12-d62e-442d-906b-7f3a72165b85@lunn.ch>
+References: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
+ <20241128-qcs8300_initial_dtsi-v3-4-26aa8a164914@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178c:b0:3a7:8149:6aa with SMTP id
- e9e14a558f8ab-3a7c55fc480mr76935615ab.24.1732812422060; Thu, 28 Nov 2024
- 08:47:02 -0800 (PST)
-Date: Thu, 28 Nov 2024 08:47:02 -0800
-In-Reply-To: <67483ca4.050a0220.253251.007d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67489e86.050a0220.253251.008a.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_get_scanned_nodes
-From: syzbot <syzbot+64e6509c7f777aec3a24@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128-qcs8300_initial_dtsi-v3-4-26aa8a164914@quicinc.com>
 
-syzbot has bisected this issue to:
+On Thu, Nov 28, 2024 at 04:44:46PM +0800, Jingyi Wang wrote:
+> Add initial support for Qualcomm QCS8300 RIDE board which enables DSPs,
+> UFS and booting to shell with uart console.
+> 
+> Written with help from Tingguo Cheng (added rpmhpd nodes) and Xin Liu
+> (added ufs, adsp and gpdsp nodes).
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile         |   2 +-
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 267 ++++++++++++++++++++++++++++++
+>  2 files changed, 268 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 9bb8b191aeb5..d9545743606a 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -114,7 +114,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
 
-commit 50eecc37ec7c9caab87c938b912bb5c686316ea5
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Nov 27 05:29:52 2024 +0000
+It would be good to add a comment to the commit message about why you
+are removing qcs8550-aim300-aiot.dtb from the Makefile.
 
-    bcachefs: struct bkey_validate_context
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10a64f78580000
-start commit:   f486c8aa16b8 Add linux-next specific files for 20241128
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12a64f78580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a64f78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e348a4873516af92
-dashboard link: https://syzkaller.appspot.com/bug?extid=64e6509c7f777aec3a24
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1389ef5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164a8f78580000
-
-Reported-by: syzbot+64e6509c7f777aec3a24@syzkaller.appspotmail.com
-Fixes: 50eecc37ec7c ("bcachefs: struct bkey_validate_context")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+	Andrew
 
