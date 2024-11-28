@@ -1,130 +1,238 @@
-Return-Path: <linux-kernel+bounces-425027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC7E9DBCA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:40:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26CA216133A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:39:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD1A1C2439;
-	Thu, 28 Nov 2024 19:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="U7nV+5JW"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF0D9DBCAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:43:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB724AD4B;
-	Thu, 28 Nov 2024 19:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87F9281512
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:43:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00261C245C;
+	Thu, 28 Nov 2024 19:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAUsbA6H";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8UZO/2Lo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aU0deQYN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+9zgCbxh"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CB2AD4B;
+	Thu, 28 Nov 2024 19:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732822792; cv=none; b=t/C/vDUI5MJt5Brk/ds76ynRm7ZtmSW2zgDXWUlLEC/K8DOTMFq8dwZ3fLqCJYKx1g6+WcKj7lxMoCvR04rEicvMJ/Gx2hGw8q9FeNKVKhUx5n5CbAE6H7lpiLP/K82Hv0kRHQe+8RSw4Q5sz3LkMmnIJS7go3wjESc6+KeRA8U=
+	t=1732822979; cv=none; b=OyUJf5u/SEf/92xV6W7GIcvgQOQOa6FHpZsN4UpBN1WvohLwDzDiND39Eq/H0D0F9BhFV1/hEvyeRelCdD2LtQtGGMUvhCHPFqgeuqWFhMxSPhdb6B3a0D/+Z/siUxZe5OxNqWv6WFcOUf3EO9o9W1PTCi8WavDEg3RdTbY7zH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732822792; c=relaxed/simple;
-	bh=fo0QL5lRbW8+EcGku5BR4zfg9S5ssZnecDlbvwSvW9A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cqz2lrwr3cKGnBbquACxyOCQdqm3Wpiwhxw/EZK1kpOS/KJp4pYRa2SMe5IvlXQQUDOjWuZVeB4w4DSMhJIqnDVQrXl/uF4oRZbxJ0StC0b7E+l8NgyhKktfN//iUWyYddqAl9aMEsJRjC6u3kldSnopLtnqjaOTtC2Vy9AQFn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=U7nV+5JW; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.115.162] (254C15C0.nat.pool.telekom.hu [37.76.21.192])
-	by mail.mainlining.org (Postfix) with ESMTPSA id ECBE2E4804;
-	Thu, 28 Nov 2024 19:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1732822788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=udSxRHucipPKVvHUnssy5yglHd6VLYZkCL7xgS1KLhA=;
-	b=U7nV+5JWWvbd/7fEMHNfZ7Yl7OlxrL94tsD+ip3LhI33Fzn+YLO5h/0bF2Pn9NtP9yr44V
-	GNHLGMXt2FSDvq6hn0theeNwdy/TD1J+dDm5jK4BoJpwkHu9XVjsOnUnCWxfAxDMB7HAb3
-	N2M9mitvnatbMKFiG7NCh8uPwoz6KaNhPBQ7RIUoACZ7qk4DAgUaD1TF4s9FJs/JIwbtei
-	JHYvnL1RIa+Gth8uxacMsJks+2LOYiO8y+IQnQznt54yvnLuZU/2qKxoVDco+/GIE6YGdM
-	YykkbyR+1cNCXpEq4zTILt7c9rW2Hj7AOWva64XfpGxa3dUS+M0/zzKT7sZn+Q==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Thu, 28 Nov 2024 20:39:46 +0100
-Subject: [PATCH v2] media: qcom: camss: fix VFE pm domain off
+	s=arc-20240116; t=1732822979; c=relaxed/simple;
+	bh=XyroRPpAI4edVZZ1GDOxrNCE8LX/EuOXr66TVhTl3hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sqpYxmUHKbdsKM6mB7tClLUgCPaWd4DJz0rXI48aSX+TrBxw5PG5V7ScVANkbP3ckXSTvZ9uxgY0cB8wdqsSVOyjbk4xWRtzAlVqB/Yj9m1qKPYFUUxgCqKqqTwzNDzz3vORMCS1Xi3rQzAR4y4CRq2Ie1D4OOsDNjiO2weN4jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAUsbA6H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8UZO/2Lo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aU0deQYN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+9zgCbxh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from lion.mk-sys.cz (unknown [10.100.225.114])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 91E8B21190;
+	Thu, 28 Nov 2024 19:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732822974; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9QGgGdv77W2pOdQiAtUv+Iwdr6afjftqDVxt/e/CoM=;
+	b=eAUsbA6H44fzsfyPZVAkCfOY2dQVMh81CEEiZn1ASgrjy27e4E3fNbQDtacMzRI0AggFy0
+	i00+V0j/TymW0KKgRQ8FjRsQHsqjaGhfzx7PfLDsjjZzrT1XgGf4Y14/ZIU7Dg6WgkzhyQ
+	U1bcR57KCUzMXSyO2i1cFxo6bXeK24w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732822974;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9QGgGdv77W2pOdQiAtUv+Iwdr6afjftqDVxt/e/CoM=;
+	b=8UZO/2Lo+8a7sa07GlQNW0yJ4VFyXdh7IkNVDZbp4jI0atLqPulMdEnyUFn6rljxi6+MpG
+	yR3AkqCMjtlpCTCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732822973; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9QGgGdv77W2pOdQiAtUv+Iwdr6afjftqDVxt/e/CoM=;
+	b=aU0deQYNIvJKoHIaKI++tY1aKJshwSf10+LLBLKhI/zcgVAr9WnBuNXA57wEp7YiSJ7KsT
+	WijkJt09dd9VgtdQ1IJ46w4quJ2nGWwgSXLZLzGVFysi3sfs67YrOjzU+9n1lFAIWQW5g8
+	e76q88pSZsBnctFfFczAwdKUgFVb05U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732822973;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9QGgGdv77W2pOdQiAtUv+Iwdr6afjftqDVxt/e/CoM=;
+	b=+9zgCbxhh4S4CW4owkzqvtP8g7kHFSY7JD4fJHcV7e8UXHXlu6hN4MnfiaTVwsRJOJ8d3O
+	gRUdySmg52l/J2BA==
+Received: by lion.mk-sys.cz (Postfix, from userid 1000)
+	id 7CDE22012C; Thu, 28 Nov 2024 20:42:53 +0100 (CET)
+Date: Thu, 28 Nov 2024 20:42:53 +0100
+From: Michal Kubecek <mkubecek@suse.cz>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v9 1/6] misc: Add support for LAN966x PCI device
+Message-ID: <dywwnh7ns47ffndsttstpcsw44avxjvzcddmceha7xavqjdi77@cqdgmpdtywol>
+References: <20241010063611.788527-1-herve.codina@bootlin.com>
+ <20241010063611.788527-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241128-vfe_pm_domain_off-v2-1-0bcbbe7daaaf@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIAAHHSGcC/32NUQqDMBBEryL73RQ3NSr96j2KiJhNXKiJJCW0S
- O7e6AH6+WaYNztECkwR7tUOgRJH9q6AvFQwL5OzJFgXBlnLBlFKkQyN2zpqv07sRm+MmFVX1z2
- pBtsOym4LZPhzOp9D4YXj24fveZHwSP/ZEgoUPWrsjWpVe9OPo3qxY2evPlgYcs4/UCsWErcAA
- AA=
-X-Change-ID: 20241122-vfe_pm_domain_off-c57008e54167
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Yassine Oudjana <y.oudjana@protonmail.com>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732822787; l=1871;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=fo0QL5lRbW8+EcGku5BR4zfg9S5ssZnecDlbvwSvW9A=;
- b=9B6aF+iDemJKll545evaMgTTwP3sjNn4x+3AS2xS20ZtfTvvRlv7FF9gAlQZVk0JURj/+cC50
- BdMb3UdqL+5DmYldVGZYuo7p4N9ueAcJWJAOMe1TpEnsSCeohNxbRZQ
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="j7d5vatgnxlcdmpo"
+Content-Disposition: inline
+In-Reply-To: <20241010063611.788527-2-herve.codina@bootlin.com>
+X-Spam-Score: -4.40
+X-Spamd-Result: default: False [-4.40 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	TAGGED_RCPT(0.00)[dt];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	RCPT_COUNT_TWELVE(0.00)[33];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLojywjshxai19ykpmbjx9w3ts)];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-m68k.org,gmail.com,kernel.org,arndb.de,amd.com,linuxfoundation.org,google.com,pengutronix.de,microchip.com,davemloft.net,redhat.com,lunn.ch,vger.kernel.org,lists.infradead.org,bootlin.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lion.mk-sys.cz:helo,linuxfoundation.org:email,bootlin.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Fix NULL pointer check before device_link_del
-is called.
 
-Unable to handle kernel NULL pointer dereference at virtual address 000000000000032c
-Call trace:
- device_link_put_kref+0xc/0xb8
- device_link_del+0x30/0x48
- vfe_pm_domain_off+0x24/0x38 [qcom_camss]
- vfe_put+0x9c/0xd0 [qcom_camss]
- vfe_set_power+0x48/0x58 [qcom_camss]
- pipeline_pm_power_one+0x154/0x158 [videodev]
- pipeline_pm_power+0x74/0xfc [videodev]
- v4l2_pipeline_pm_use+0x54/0x90 [videodev]
- v4l2_pipeline_pm_put+0x14/0x34 [videodev]
- video_release+0x2c/0x44 [qcom_camss]
- v4l2_release+0xe4/0xec [videodev]
+--j7d5vatgnxlcdmpo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: eb73facec2c2 ("media: qcom: camss: Use common VFE pm_domain_on/pm_domain_off where applicable")
-Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
-Changes in v2:
-- Add backtrace to the commit message.
-- Link to v1: https://lore.kernel.org/r/20241122-vfe_pm_domain_off-v1-1-81d18f56563d@mainlining.org
----
- drivers/media/platform/qcom/camss/camss-vfe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Oct 10, 2024 at 08:36:01AM +0200, Herve Codina wrote:
+> Add a PCI driver that handles the LAN966x PCI device using a device-tree
+> overlay. This overlay is applied to the PCI device DT node and allows to
+> describe components that are present in the device.
+>=20
+> The memory from the device-tree is remapped to the BAR memory thanks to
+> "ranges" properties computed at runtime by the PCI core during the PCI
+> enumeration.
+>=20
+> The PCI device itself acts as an interrupt controller and is used as the
+> parent of the internal LAN966x interrupt controller to route the
+> interrupts to the assigned PCI INTx interrupt.
+>=20
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# quirks.c
+> ---
+>  drivers/misc/Kconfig          |  24 ++++
+>  drivers/misc/Makefile         |   3 +
+>  drivers/misc/lan966x_pci.c    | 215 ++++++++++++++++++++++++++++++++++
+>  drivers/misc/lan966x_pci.dtso | 167 ++++++++++++++++++++++++++
+>  drivers/pci/quirks.c          |   1 +
+>  5 files changed, 410 insertions(+)
+>  create mode 100644 drivers/misc/lan966x_pci.c
+>  create mode 100644 drivers/misc/lan966x_pci.dtso
+>=20
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 3fe7e2a9bd29..8e5b06ac9b6f 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -610,6 +610,30 @@ config MARVELL_CN10K_DPI
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called mrvl_cn10k_dpi.
+> =20
+> +config MCHP_LAN966X_PCI
+> +	tristate "Microchip LAN966x PCIe Support"
+> +	depends on PCI
+> +	select OF
+> +	select OF_OVERLAY
 
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 80a62ba11295042802cbaec617fb87c492ea6a55..1bf1473331f63b9ab106d21ea263c84d851c8a31 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -595,7 +595,7 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
-  */
- void vfe_pm_domain_off(struct vfe_device *vfe)
- {
--	if (!vfe->genpd)
-+	if (!vfe->genpd_link)
- 		return;
- 
- 	device_link_del(vfe->genpd_link);
+Are these "select" statements what we want? When configuring current
+mainline snapshot, I accidentally enabled this driver and ended up
+flooded with an enormous amount of new config options, most of which
+didn't make much sense on x86_64. It took quite long to investigate why.
 
----
-base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
-change-id: 20241122-vfe_pm_domain_off-c57008e54167
+Couldn't we rather use
 
-Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+	depends on PCI && OF && OF_OVERLAY
 
+like other drivers?
+
+Michal
+
+> +	select IRQ_DOMAIN
+> +	help
+> +	  This enables the support for the LAN966x PCIe device.
+> +	  This is used to drive the LAN966x PCIe device from the host system
+> +	  to which it is connected.
+> +
+> +	  This driver uses an overlay to load other drivers to support for
+> +	  LAN966x internal components.
+> +	  Even if this driver does not depend on these other drivers, in order
+> +	  to have a fully functional board, the following drivers are needed:
+> +	    - fixed-clock (COMMON_CLK)
+> +	    - lan966x-oic (LAN966X_OIC)
+> +	    - lan966x-cpu-syscon (MFD_SYSCON)
+> +	    - lan966x-switch-reset (RESET_MCHP_SPARX5)
+> +	    - lan966x-pinctrl (PINCTRL_OCELOT)
+> +	    - lan966x-serdes (PHY_LAN966X_SERDES)
+> +	    - lan966x-miim (MDIO_MSCC_MIIM)
+> +	    - lan966x-switch (LAN966X_SWITCH)
+> +
+>  source "drivers/misc/c2port/Kconfig"
+>  source "drivers/misc/eeprom/Kconfig"
+>  source "drivers/misc/cb710/Kconfig"
+[...]
+
+--j7d5vatgnxlcdmpo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEWN3j3bieVmp26mKO538sG/LRdpUFAmdIx7cACgkQ538sG/LR
+dpU7nAf/XBbO498856QKivFIfm7fBoDun6OltBIzDjQpOY3U424Hl6ZSYNW9Bovz
+KCS+Ca82RFcUPkWwtYkY1Wuu2xD2CZs2ChCPURibTrloed3inIAHnAIdplJJz1o1
+jzIFZhxvquaFI2GT+PS/Rn4EK/O00YA1YznI0w0EyCYUd4GPKiRvFDjihNvAjB0a
+BwFaqUpcXEMDBtwDJ7fSN2aKHllfQHfQGscAMuN6SwH9Fq1F8yEnPcOniequDyN2
+Vw68yNm2tVkouUWN9yaPX2LHS+0C0cqGjgu3GpNVkavhjFM9so07iJlXOQJxgSPJ
+UGMHSzZCvmGYJLZb39hHz9014QZU1g==
+=DdLR
+-----END PGP SIGNATURE-----
+
+--j7d5vatgnxlcdmpo--
 
