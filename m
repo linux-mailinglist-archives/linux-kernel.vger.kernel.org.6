@@ -1,194 +1,110 @@
-Return-Path: <linux-kernel+bounces-424758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4679DB8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B789DB900
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DFE283591
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD6D28193D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE751AC885;
-	Thu, 28 Nov 2024 13:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DE41A9B58;
+	Thu, 28 Nov 2024 13:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="e3XtsTit"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvrYHMs4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3901E529;
-	Thu, 28 Nov 2024 13:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732801166; cv=pass; b=jfIC+4MeTv+8IAR96T9OAgKhfncnhjl1XjFAIxNVYt3pkvTNyntwK8soBemQx7u69ECVKWo+05DldsSzH8/DFWTTnul4p8/FsJSMc7iiz9+ajyvxRCILnvhfUKkfW9REKsz+/S6p16jIiJj/xl46UG3NN0yNe8J8d9exUq9sX70=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732801166; c=relaxed/simple;
-	bh=lIiUZHLE0Dufdjl+xcqg2CzEWEYTvXTb+yzw7w600Gc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=irDfiAQFMuMZngFt3jaBWH2R7N21KP9/2fMS2ebKDvvpjPs8NQ6Eqwzu1basg/ARyBQqUH6Bgwo1zCbLxDQYLSZ3b6svdncLWacVwWAYsng0swT8+dcHDzeIP91NTRiDsKwtkHtXBDEySGOKt9SHYYd8mYF8DnB6txnSZieLjhQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=e3XtsTit; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732801133; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PIf59cW+Sas0TJFgqiA1Gqd4l01sMigk8oWrPjVwhJtE44Bhzak3qa6G3NeiBj4Qq/Xa8CogrJXcWYANts66SX5TifPEaiiCmHSYQ2zk48tICoORGzcrJNeZ7z3GUgjWZ23ONnKwjlLeek9QpYFIOsliYpdWfy3yE9yE6ZJCa1A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732801133; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EsxzMZa25WfDL+pgn4fFAhwPmv5kUt6UME3E/AmO0pc=; 
-	b=VaQVKGlZB2ApfrqBvIHeAijPQlGBmTJI7R7hbskrVSm9G/pWU6Mq6b2SMFNg57/U8DiyUJ2n6bqxCEchYJLXxEv0G58frknEGao08hIJ3BknN+ua21ssho6NpDKVb8fuzBvh2hWs0lFry6zKd/yskDPG1p+TObxMbvssxCxUiOY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732801133;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=EsxzMZa25WfDL+pgn4fFAhwPmv5kUt6UME3E/AmO0pc=;
-	b=e3XtsTit+wD3FqtPfGio/zA0Jz33pnuOzojOx40wQ0Kzj6Cp4OYT0JWy5iKs7AAf
-	WusFk1C+mFQalgugw1nC0SgO+txV698xz8SP8+g2n7K+EPCHjPLz77CnAUZV6tHCVL/
-	1Tb3fJvH7PD0n5g3efm+MYes8hBk5CiDpqZ+WV30=
-Received: by mx.zohomail.com with SMTPS id 17328011321711013.0878817486588;
-	Thu, 28 Nov 2024 05:38:52 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E311A29A;
+	Thu, 28 Nov 2024 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732801304; cv=none; b=it4jNJipbsx62zJbvtxJq4bIyOfltHEPaSZvXt5+Zh1l+cQi/fN2OwCNOnL7Ocm8NpChwhP2scH7xp4d2mrxP3j1ivVXkBOpJjVve7VzyhNORRkVqVFPEf2q4oMBNrCnk8CDRNsx1azenUdw0iKVuVJYre/xgA9Sp/gaX/BXazw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732801304; c=relaxed/simple;
+	bh=p96AQe+Xhw1n5/5NkrMy2qekMOxS7j8JyihhPQtfJds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ualkz/tfFWJCbfUY0Ze47FggLVYo73ldlV9enCj2CilTOPwkg5zeuw8TLiRvyuSf4uBjM0fxHM8xKVqJYklaF8JvK6HuWkj9jqOW9jHeQhZulEIORMhvLdvTJqRS2BO3ggAwwSPuJwOBPCqWUMiJmrOvVuU9VJF6EnHapmT9V04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvrYHMs4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8904EC4CECE;
+	Thu, 28 Nov 2024 13:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732801303;
+	bh=p96AQe+Xhw1n5/5NkrMy2qekMOxS7j8JyihhPQtfJds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DvrYHMs4qo/a/2no2Ds566OX/5t2baRXUWJogUEV887ngBAs+rlQot/G6epNCmBRZ
+	 8IT6Gm9OXnzmLGX8wybDoGBF9KCv2iyK6TPMXif0Ym4pX9+7tH8ipiRLk8wmPe4g3a
+	 jK+Lsw5j7U24lYR9xpesgz83wniRhqJWQ5COnuMKH9DFzm2PzA17NhDcN33D0Ike1u
+	 md+yON0gmvGLXcVlO9dBlJv6AzOIoKiHW472KbAdzzr5ovAw+gPdJwETy0pxcNzCpl
+	 8DMszSx7wT1I6/xJr/yBpD4D/Knt03/Km6j+/RojFv3YlBRTxeTD/FpukGdX0K6K6Z
+	 7+soo81/ammLg==
+Date: Thu, 28 Nov 2024 13:41:36 +0000
+From: Will Deacon <will@kernel.org>
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>,
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v6 13/13] riscv: Add qspinlock support
+Message-ID: <20241128134135.GA3460@willie-the-truck>
+References: <20241103145153.105097-1-alexghiti@rivosinc.com>
+ <20241103145153.105097-14-alexghiti@rivosinc.com>
+ <20241128-whoever-wildfire-2a3110c5fd46@wendy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 22/35] rust: drm/kms: Add
- DriverPlane::atomic_update()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-23-lyude@redhat.com>
-Date: Thu, 28 Nov 2024 10:38:36 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <65D59594-7E60-4407-835A-991B2D7C2203@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-23-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128-whoever-wildfire-2a3110c5fd46@wendy>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Lyude,
+On Thu, Nov 28, 2024 at 12:56:55PM +0000, Conor Dooley wrote:
+> On Sun, Nov 03, 2024 at 03:51:53PM +0100, Alexandre Ghiti wrote:
+> > In order to produce a generic kernel, a user can select
+> > CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+> > spinlock implementation if Zabha or Ziccrse are not present.
+> > 
+> > Note that we can't use alternatives here because the discovery of
+> > extensions is done too late and we need to start with the qspinlock
+> > implementation because the ticket spinlock implementation would pollute
+> > the spinlock value, so let's use static keys.
+> > 
+> > This is largely based on Guo's work and Leonardo reviews at [1].
+> > 
+> > Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
+> > Signed-off-by: Guo Ren <guoren@kernel.org>
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> 
+> This patch (now commit ab83647fadae2 ("riscv: Add qspinlock support"))
+> breaks boot on polarfire soc. It dies before outputting anything to the
+> console. My .config has:
+> 
+> # CONFIG_RISCV_TICKET_SPINLOCKS is not set
+> # CONFIG_RISCV_QUEUED_SPINLOCKS is not set
+> CONFIG_RISCV_COMBO_SPINLOCKS=y
 
-> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> A mandatory trait method used for implementing DRM's atomic plane =
-update
-> callback.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/kernel/drm/kms/plane.rs | 39 +++++++++++++++++++++++++++++++++++-
-> 1 file changed, 38 insertions(+), 1 deletion(-)
->=20
-> diff --git a/rust/kernel/drm/kms/plane.rs =
-b/rust/kernel/drm/kms/plane.rs
-> index d6e11a65cc101..506ed5ced1270 100644
-> --- a/rust/kernel/drm/kms/plane.rs
-> +++ b/rust/kernel/drm/kms/plane.rs
-> @@ -75,7 +75,7 @@ pub trait DriverPlane: Send + Sync + Sized {
->             begin_fb_access: None, // TODO: someday?
->             end_fb_access: None, // TODO: someday?
->             atomic_check: None,
-> -            atomic_update: None,
-> +            atomic_update: if Self::HAS_ATOMIC_UPDATE { =
-Some(atomic_update_callback::<Self>) } else { None },
->             atomic_enable: None, // TODO
->             atomic_disable: None, // TODO
->             atomic_async_check: None, // TODO
-> @@ -103,6 +103,21 @@ pub trait DriverPlane: Send + Sync + Sized {
->     ///
->     /// Drivers may use this to instantiate their [`DriverPlane`] =
-object.
->     fn new(device: &Device<Self::Driver>, args: Self::Args) -> impl =
-PinInit<Self, Error>;
-> +
-> +    /// The optional [`drm_plane_helper_funcs.atomic_update`] hook =
-for this plane.
-> +    ///
-> +    /// Drivers may use this to customize the atomic update phase of =
-their [`Plane`] objects. If not
-> +    /// specified, this function is a no-op.
-> +    ///
-> +    /// [`drm_plane_helper_funcs.atomic_update`]: =
-srctree/include/drm/drm_modeset_helper_vtables.h
-> +    fn atomic_update(
-> +        plane: &Plane<Self>,
-> +        new_state: BorrowedPlaneState<'_, PlaneState<Self::State>>,
-> +        old_state: &PlaneState<Self::State>,
-> +        state: &AtomicStateMutator<Self::Driver>
-> +    ) {
-> +        build_error::build_error("This should not be reachable")
-> +    }
+I pointed out some of the fragility during review:
 
-Same comment as the last patch.
+https://lore.kernel.org/all/20241111164259.GA20042@willie-the-truck/
 
-> }
->=20
-> /// The generated C vtable for a [`DriverPlane`].
-> @@ -757,3 +772,25 @@ fn deref_mut(&mut self) -> &mut Self::Target {
->     // - The cast to `drm_plane_state` is safe via `PlaneState`s type =
-invariants.
->     unsafe { bindings::__drm_atomic_helper_plane_reset(plane, =
-Box::into_raw(new).cast()) };
-> }
-> +
-> +unsafe extern "C" fn atomic_update_callback<T: DriverPlane>(
-> +    plane: *mut bindings::drm_plane,
-> +    state: *mut bindings::drm_atomic_state,
-> +) {
-> +    // SAFETY:
-> +    // * We're guaranteed `plane` is of type `Plane<T>` via type =
-invariants.
-> +    // * We're guaranteed by DRM that `plane` is pointing to a valid =
-initialized state.
-> +    let plane =3D unsafe { Plane::from_raw(plane) };
-> +
-> +    // SAFETY: DRM guarantees `state` points to a valid =
-`drm_atomic_state`
-> +    let state =3D unsafe { =
-AtomicStateMutator::new(NonNull::new_unchecked(state)) };
+so I'm kinda surprised it got merged tbh :/
 
-No ManuallyDrop here?
-
-> +
-> +    // SAFETY: Since we are in the atomic update callback, we're =
-guaranteed by DRM that both the old
-> +    // and new atomic state are present within `state`
-> +    let (old_state, new_state) =3D unsafe {(
-> +        state.get_old_plane_state(plane).unwrap_unchecked(),
-> +        state.get_new_plane_state(plane).unwrap_unchecked(),
-> +    )};
-> +
-> +    T::atomic_update(plane, new_state, old_state, &state);
-> +}
-> --=20
-> 2.46.1
->=20
-
-=E2=80=94 Daniel
-
+Will
 
