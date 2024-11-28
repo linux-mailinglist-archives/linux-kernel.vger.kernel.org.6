@@ -1,152 +1,246 @@
-Return-Path: <linux-kernel+bounces-425047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AC39DBCD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:23:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330039DBCDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1814281ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E93B2198F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8176E1C2450;
-	Thu, 28 Nov 2024 20:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAC71C245C;
+	Thu, 28 Nov 2024 20:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPUWs+Xa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AtGfwI2j"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5AE17BA5;
-	Thu, 28 Nov 2024 20:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64417BA5;
+	Thu, 28 Nov 2024 20:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732825405; cv=none; b=Zoq2VDj0iyT/DaCgDxxifd2Jefj7TjZS7qw1/clC1hxtx4v/K+HFeYDVF3HVVeNMeK7hKQw9WlaV2qRvVS0KyCDwuHSiNvn47H7nPUw1qbHeJjtdr2PZrARcl/M+hCj21ufZC35GQvT4pejdvQzs7DFzI3pLYnecteRD+IQH/9o=
+	t=1732825496; cv=none; b=MAvzdOljJYGiFXyONOQdqfaGlOJzZqbbs89HAuYF5sr0f/SMfhgvrkeGZRTNtcgnPwrl2cN0+OlmncJgOYWJXcIBgqzrROgzX4P36NH612SheV8/dDFx7sTfrs+wPoNoeL2SY0YXZb9GRJNt3EnaTQ+C75XLBxN+pYorngnbcpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732825405; c=relaxed/simple;
-	bh=mM64QnCJiC6n/sRiA3ZMl7Eg9eQMsjFpUlXOy9T5aoA=;
+	s=arc-20240116; t=1732825496; c=relaxed/simple;
+	bh=vIUfzivol3GP1W3IixUeRO8WQkjiWLAExaKWIH0WKrQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6prJswDnftAxysvX2X3kkVAaVqfWr3U5LAFVmrhI82L9GAUYCjruXu1B2JsyvA99Par9Qy2mcl+OpaWrO0Ia8nIfHg3t2jdcqeALxdkDRzmaYaJHBcs1dDjI/2iuEb38u6mSqyxqsnE34jhaYaxCo7IlTAtag545jvXPyxOjx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPUWs+Xa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98E9C4CECE;
-	Thu, 28 Nov 2024 20:23:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732825404;
-	bh=mM64QnCJiC6n/sRiA3ZMl7Eg9eQMsjFpUlXOy9T5aoA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=OgbWy6+5K51ckNDeW5tHekzeXVgsfEjDeX74q3VSdpPzlSMLGdiGJv9OEPlS2HPCiBKzt/LRQb7ATQOiWNIm7Vdw1YS/Wjvm0YPJSukgUUSZRaofRihhW22EedE1aSvDuypjr6P8wvI3yWWsCABwVbEWnZI1Xaz67eZtrIBSClA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AtGfwI2j; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A42559D;
+	Thu, 28 Nov 2024 21:24:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732825468;
+	bh=vIUfzivol3GP1W3IixUeRO8WQkjiWLAExaKWIH0WKrQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PPUWs+XaML/Wj/iyxm7w8JwcskM8Bu4bSKaKZFNZtcP0mKbfZpE73e4jrwWs148Dg
-	 PjepTjr5Ueud6QseOz0dd+5zKk+QW1W4LLdvr/HL54dqy6J2Fughg+mjkh3YDbtqHv
-	 exeHFYfgaOud8kvdggva0cK8RlTMzFe3tOFBFYHRuehVEWudXqi4Y6/w1psT1n4FUn
-	 wjdDqJa9RgXDCDk7uMKhaZQ3FaKLNgFHaUJ3eCyItORqgLtcAXil2npT2Mv1PFRyct
-	 K1LT/Fi+Qm30R8/xJK1aEm+E8LjQGS/MOxZSL8AAsLQdCAIy7UzhppclTazlqTIkn5
-	 PiIQXe1xi336A==
-Date: Thu, 28 Nov 2024 17:23:20 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Yang Jihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 02/12] perf event action: Add parsing const expr support
-Message-ID: <Z0jROJ7JPTjmeZly@x1>
-References: <20241128133553.823722-1-yangjihong@bytedance.com>
- <20241128133553.823722-3-yangjihong@bytedance.com>
+	b=AtGfwI2jaxDT9mloHFSaczXY0snozcLTq23zWMBE/cqGLT5n92qELPcaZwJaUWbLh
+	 LmuCyQ45VLtIXH3XEqZcIxOvKXXin/Vdudy4epbdEzg5rRKjqj9uvmDeLRYkpyywv5
+	 hTie0NKA5hVEemniCbYHFUW/aABRMB2wt27pqOT8=
+Date: Thu, 28 Nov 2024 22:24:42 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Remove duplicated cap/out code
+Message-ID: <20241128202442.GC13852@pendragon.ideasonboard.com>
+References: <20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241128133553.823722-3-yangjihong@bytedance.com>
+In-Reply-To: <20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org>
 
-On Thu, Nov 28, 2024 at 09:35:43PM +0800, Yang Jihong wrote:
-> Event action requires constant expression parsing support,
-> which include constant integer and constant string.
+Hi Ricardo,
+
+Thank you for the patch.
+
+On Wed, Nov 27, 2024 at 07:31:29AM +0000, Ricardo Ribalda wrote:
+> The *_vid_cap and *_vid_out helpers seem to be identical. Remove all the
+> duplicated code.
 > 
-> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
->  tools/perf/util/parse-action.c | 27 +++++++++++++++++++++++++++
->  tools/perf/util/parse-action.h |  5 +++++
->  2 files changed, 32 insertions(+)
+> Unless I miss something, cap and out helpers are identical. So there is
+> no need to duplicate code
+> ---
+>  drivers/media/usb/uvc/uvc_v4l2.c | 112 ++++++++-------------------------------
+>  1 file changed, 22 insertions(+), 90 deletions(-)
 > 
-> diff --git a/tools/perf/util/parse-action.c b/tools/perf/util/parse-action.c
-> index 01c8c7fdea59..391546bf3d73 100644
-> --- a/tools/perf/util/parse-action.c
-> +++ b/tools/perf/util/parse-action.c
-> @@ -4,6 +4,9 @@
->   * Actions are the programs that run when the sampling event is triggered.
->   * The action is a list of expressions separated by semicolons (;).
->   * Each action is an expression, added to actions_head node as list_head node.
-> + *
-> + * Supported expressions:
-> + *   - constant:
-
-This seems incomplete, what should come after the :?
-
-the patch description, at the beginning of this message has more details
-than here.
-
->   */
->  
->  #include "util/debug.h"
-> @@ -115,7 +118,31 @@ void event_actions__free(void)
->  	(void)event_actions__for_each_expr_safe(do_action_free, NULL, false);
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 97c5407f6603..11ccdaf0269f 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -361,9 +361,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+>  	return ret;
 >  }
 >  
-> +static struct evtact_expr_ops *expr_const_ops_list[EVTACT_EXPR_CONST_TYPE_MAX] = {
-> +};
-> +
-> +static int expr_const_set_ops(struct evtact_expr *expr, u32 opcode)
-> +{
-> +	if (opcode >= EVTACT_EXPR_CONST_TYPE_MAX) {
-> +		pr_err("expr_const opcode invalid: %u\n", opcode);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (expr_const_ops_list[opcode] == NULL) {
-> +		pr_err("expr_const opcode not supported: %u\n", opcode);
-> +		return -ENOTSUP;
-> +	}
+> -static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+> -	struct v4l2_format *fmt)
+> +static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> +			   struct v4l2_format *fmt)
+>  {
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	const struct uvc_format *format;
+>  	const struct uvc_frame *frame;
+>  	int ret = 0;
+> @@ -395,9 +397,11 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
+>  	return ret;
+>  }
+>  
+> -static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+> -	struct v4l2_format *fmt)
+> +static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> +			   struct v4l2_format *fmt)
+>  {
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	struct uvc_streaming_control probe;
+>  	const struct uvc_format *format;
+>  	const struct uvc_frame *frame;
+> @@ -685,11 +689,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
+>  	return 0;
+>  }
+>  
+> -static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+> +static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
+>  			      struct v4l2_fmtdesc *fmt)
+>  {
+> -	const struct uvc_format *format;
+> +	struct uvc_fh *handle = fh;
+> +	struct uvc_streaming *stream = handle->stream;
+>  	enum v4l2_buf_type type = fmt->type;
+> +	const struct uvc_format *format;
+>  	u32 index = fmt->index;
+>  
+>  	if (fmt->type != stream->type || fmt->index >= stream->nformats)
+> @@ -707,82 +713,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
+>  	return 0;
+>  }
+>  
+> -static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
+> -				      struct v4l2_fmtdesc *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_ioctl_enum_fmt(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
+> -				      struct v4l2_fmtdesc *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_ioctl_enum_fmt(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_v4l2_get_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -
+> -	return uvc_v4l2_get_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	int ret;
+> -
+> -	ret = uvc_acquire_privileges(handle);
+> -	if (ret < 0)
+> -		return ret;
 
-Since expr_const_ops_list[EVTACT_EXPR_TYPE_CONST] is NULL, this will
-always fail?
+Has this now silently disappeared ?
 
-> +
-> +	expr->ops = expr_const_ops_list[opcode];
-> +	return 0;
-> +}
-> +
-> +static struct evtact_expr_class expr_const = {
-> +	.set_ops = expr_const_set_ops,
-> +};
-> +
->  static struct evtact_expr_class *expr_class_list[EVTACT_EXPR_TYPE_MAX] = {
-> +	[EVTACT_EXPR_TYPE_CONST]   = &expr_const,
->  };
+> -
+> -	return uvc_v4l2_set_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
+> -				   struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	int ret;
+> -
+> -	ret = uvc_acquire_privileges(handle);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return uvc_v4l2_set_format(stream, fmt);
+> -}
+> -
+> -static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
+> -				     struct v4l2_format *fmt)
+> -{
+> -	struct uvc_fh *handle = fh;
+> -	struct uvc_streaming *stream = handle->stream;
+> -	struct uvc_streaming_control probe;
+> -
+> -	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
+> -}
+> -
+> -static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
+> -				     struct v4l2_format *fmt)
+> +static int uvc_ioctl_try_fmt(struct file *file, void *fh,
+> +			     struct v4l2_format *fmt)
+>  {
+>  	struct uvc_fh *handle = fh;
+>  	struct uvc_streaming *stream = handle->stream;
+> @@ -1544,14 +1476,14 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
 >  
->  int parse_action_expr__set_class(enum evtact_expr_type type,
-> diff --git a/tools/perf/util/parse-action.h b/tools/perf/util/parse-action.h
-> index 71a0a166959e..47bd75264dee 100644
-> --- a/tools/perf/util/parse-action.h
-> +++ b/tools/perf/util/parse-action.h
-> @@ -9,9 +9,14 @@
->  #include "evlist.h"
->  
->  enum evtact_expr_type {
-> +	EVTACT_EXPR_TYPE_CONST,
->  	EVTACT_EXPR_TYPE_MAX,
->  };
->  
-> +enum evtact_expr_const_type {
-> +	EVTACT_EXPR_CONST_TYPE_MAX,
-> +};
-> +
->  struct evtact_expr;
->  struct evtact_expr_ops {
->  	int (*new)(struct evtact_expr *expr, void *data, int size);
-> -- 
-> 2.25.1
+>  const struct v4l2_ioctl_ops uvc_ioctl_ops = {
+>  	.vidioc_querycap = uvc_ioctl_querycap,
+> -	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
+> -	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
+> -	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
+> -	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
+> -	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
+> -	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
+> -	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
+> -	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
+> +	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
+> +	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
+> +	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
+> +	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
+> +	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
+> +	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
+> +	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
+> +	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
+>  	.vidioc_reqbufs = uvc_ioctl_reqbufs,
+>  	.vidioc_querybuf = uvc_ioctl_querybuf,
+>  	.vidioc_qbuf = uvc_ioctl_qbuf,
+> 
+> ---
+> base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+> change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
+
+-- 
+Regards,
+
+Laurent Pinchart
 
