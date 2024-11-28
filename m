@@ -1,168 +1,268 @@
-Return-Path: <linux-kernel+bounces-424779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D7D9DB943
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC089DB94A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8762C282338
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:09:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CAE3281ADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFBC1B0F01;
-	Thu, 28 Nov 2024 14:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kIljuTQy"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401D61AC45F;
+	Thu, 28 Nov 2024 14:10:51 +0000 (UTC)
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A31ABEA6
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9692E145A0F;
+	Thu, 28 Nov 2024 14:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732802939; cv=none; b=jOFiaVb0xaJgyiH4D6ci+SnU/N6VSZFQt3wfvuISNqAQ8PeEAY5yR5QQMB3xCR6U1TLG91PTpjvPg8rUuVCV8WapyecmcEU/OseDFXPRFuDTAzpTZ1CfSal3AlKn9uj7eVIgQ9cwnoxzu6Z4Eat5EFMWOf6HHvWkqy0MDknANKY=
+	t=1732803050; cv=none; b=MfIo8drNPQNGdF2E7uf1jIEkDJYnFfPo/UDXgy8+1ImB/3FCPj8lY6QxF/2esvHw60tRgUSzsR7L04B9dyhfG7ZUQW0OXmZWeS5tfYY5QlBN6SbU3THU1PbePeJMj57bz6teLD6SQn+KAs4QN8xXqT5wPA06V3wYfAsT/sOTd9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732802939; c=relaxed/simple;
-	bh=0ok8mB09tYX0tSoZPdXmhZOOKBchACeZU+icH4cRTi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNkm2ybG3AUHebBkVSRW7wy9fJI5LFydNzBWgeuKOnnw5qH7511hP5AHqm0CqRYhSIWZ0Cqsyhu+XRlxbzgCPdEVsbcHLlkAwH9gdwxgGVTNtAFahoJyFAfZId4BoHV1MCrDYQ7JgU55e+zEVrb/0SClYXpUUc4uDiCiIkms1kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kIljuTQy; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53de5ec22adso985862e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:08:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732802935; x=1733407735; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Zh9F51dD8gEZdCPo/hL/t9nKqjeg/ui1S+RxuDwcDmI=;
-        b=kIljuTQy2Ot6PjGU3aQZNxTwfY+nkallUJ/bg9t53r/yD+gaFSeLl+ZjdPy/4s2QrU
-         X4Osj4LFPg7qJ6Oi7sq5QxBMvvrzq/TtPUDf/DJsyJm8BikpELCpWtH9F/wplkPW/4WN
-         e8P0H5GklokVqcr0HjgKsQdm6L6IZGP54mKoQqw+3UJ4dg1bWuqCn1BdgYZ09XV6vSz8
-         MuVrtnv2kcoRcZL0ptiSC6q6JXwdgI+7MC6TQ4dbvuvjiSwVyqB99aT7Rhqsct9xZoso
-         vZgVtp3kgZyIrtezMAacVsXpRowTP7ygGCWRt5IJx2bOi4XBr5D7vOzfdnsJHRR6+OHG
-         pBWw==
+	s=arc-20240116; t=1732803050; c=relaxed/simple;
+	bh=TPkj8f0whqyLQuQTvYnvccsf/vxHrPGNeb4NS+LUtcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uhnRn4l5+DbBTIELMVAU95AiyqrAJdvbJdYJvgmyjBHNVWvwrp7kiRbqWIT8ntVFv/xmJtqgZ6DHZAX65gvBuflBhGkKjU4LK6SQtJ0ii0yvyqnYimj+Hn/5zllQIcoGkfTiwvnZtvb53BKg9yDStQ75jwEoY0T2vA9RMY+8nUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d41dbf6cfbso7143806d6.3;
+        Thu, 28 Nov 2024 06:10:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732802935; x=1733407735;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zh9F51dD8gEZdCPo/hL/t9nKqjeg/ui1S+RxuDwcDmI=;
-        b=YJrRBwqPV4wz69JpKvqLtE3ztCaSmp1fG5B2dVjU2EtH/2sUgXlSTEAaF/nCJy6f/y
-         lYMFQDiT0kHgHLNc0dZBgO1S2IJC9eHKuoZJhRITIhApqStboM33R6m26IUEv7txZNUx
-         t97Aqw47N5jLMbYC48C+K1L1uu2W9GZHHoh5dYjaJXBSGp+LQNYTYaF6OCDZWd7u4wnd
-         t6Mnp8A5dnu20t0nU0NYrtY/ZkJPyPEF0u+dP68iWN3smgxQ+Ux25r7OL89BDLhz5T17
-         ixFeJBLrO9jC9W2SzsAh0ZwKpslMT36Qtf14d4CWZhpUnXVvVk3pIBPlgCdgknRJB4ZM
-         tjBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmwmB8REwcJkV1LHBzKi1ut48Qh1jvuyfcoqGqDGb1KAO2UchH4QcgQfAwbSY84aDqBrny9hRZjUFoo8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxIgIC2YS1Mpzw0a187mmGh3A1GwV5F2yTVIF7C6X+pTf0QAha
-	kAQvup6o3S4j0YR9JZ7fJwyWWJNTVb6RT0MpEGvVw+AQhQ+5kQWMyfXLfhAUIYA=
-X-Gm-Gg: ASbGnctxc5UOt79nncE27dXHitqb6VXSWV6LCCqVIEj2chet1d1r/3J9WmCmLFPjIGC
-	tAJ84UHPJht0yDfA4pijUTbgzs9svgim40pL01JWt4/+6XqJ9ge94ihIoSifmG5PUsdz/Li3zrT
-	UQwb/pAkTGaDEkpD4llIcQaZAY5BigWjlVUuRjjAihB7x1I2xAdEPih7qR0dBBKXXMFSDd/Z3nK
-	ag9LL2Yxy994jTllWqTE89N7+c8KUdxa2sdl0ALqD5Ab8WYZGPPg4ZsziS0oALI7I2pJCiAAJt2
-	PJ/rUnaESK12iRwk0dhdVY61UJx9HA==
-X-Google-Smtp-Source: AGHT+IH/26if+yOX03OUutYredIEh7TylL/FBWS++pNsdNgznWWW3vF4i3JX3Bycrw39QliL0CzCVQ==
-X-Received: by 2002:a19:f51a:0:b0:53d:f983:a57 with SMTP id 2adb3069b0e04-53df9830acdmr265530e87.3.1732802935168;
-        Thu, 28 Nov 2024 06:08:55 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649687csm182457e87.209.2024.11.28.06.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 06:08:53 -0800 (PST)
-Date: Thu, 28 Nov 2024 16:08:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: PCI: Add binding for qps615
-Message-ID: <dtr62oy4lcdqtyvh6ffr3c7rjz65h6bj4fkknf3rmgm65zhnpo@caqdpy7xi4ue>
-References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
- <20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com>
- <poruhxgxnkhvqij5q7z4toxzcsk2gvkyj6ewicsfxj6xl3i3un@msgyeeyb6hsf>
- <42425b92-6e0d-a77b-8733-e50614bcb3a8@quicinc.com>
- <b203d90d-91bc-437b-9b91-1085034ed716@kernel.org>
- <cce7507f-a2c4-6f96-f993-b9a7e9217ffa@quicinc.com>
- <c81b89ff-6eb5-4a01-af84-636aa2a02a34@kernel.org>
- <20241128132432.fxvmjeluagignbph@thinkpad>
+        d=1e100.net; s=20230601; t=1732803046; x=1733407846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BcNeZHrwbqkxcgrPCAgiwFwsNQS+3ExgxT8WA27fqnE=;
+        b=qFGdxPcgywZyHeyHn7wofjXjrVvN/VdOTx7ig6u+qfDfpBxz9KmkVZX36tGwBeRiNc
+         Ua+Nw4QSqrhP0npwLNgz+FvDKGb/cuBS1NpMMk0gRjyO3bmx6Zkem03smvClAMPyUROk
+         VA6agrWsBOsob+tcl7epGFzFnJn14CDeyYw+y6gR5RHkRU+OehoMVjtDLAY41qQQSmrG
+         BPrykluLfqEAEkBSB9Cu/9mRL+RioA4pJhpaI843rE20WDP8cAVC56YsEq7CBwsbfJ0P
+         L8ZaSqO1i6jQ7aEQ4BGlfKZh0ghP08eqd1fi93zbNYnDUXBeAO04yICO8wkXci+Pdx/2
+         ZZUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYTgEoSgXVlhXPWL6OGhLKd8r3ZvlM/SMGFa+8AZmmCeh6yjvvkERunmq9r75EodD1Df8LVhMmhHU0IYqG/g==@vger.kernel.org, AJvYcCUfjqx4DmTVaYBVN4WG3FoazpDVl1pRigbWMqCa/bpTL1B/0U5DlPq/mJEoLaIkHjd2yreG9mccl+ClN2UE@vger.kernel.org, AJvYcCWybBIlE4I6kflwtObW73QgxQNb6aOOEJOlM2HcekbXAfMxj/Ne0k+kj1MqPPt9OR7bkrXvQ19b4OdD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0vBaWnSgaLLuUnj7aDJZn/6U9hRYj2VSKm0yfpc2GKI7e/P1a
+	S7kFCjeSP6JoH0bvvmfG4jmnRhwcT09U2jKDQRofY8HWFPFCwbB91P4wwxdOVVg=
+X-Gm-Gg: ASbGncvp9U6DST190vi5+kC5CTrpSfiBckT1n0EQOeDxTgmYFUQsVXq+EgE7sdWQvE1
+	i+p5xg6qMjVZkIAdhe8RagFmaEZtJ/XBx4IiYD1qv0VjwWJpMZqcV1DxVy/Yfef7Zwctu24vjmU
+	C+NDR92FbDyiuDiAApYhDthHD20V8MhNYYdLevUu5BhBLuvU5ffAdpvhn7Zp0LkUcxYWi0uDKdM
+	VqWuRRKM2lnJV8tjaM7tUdlVZBhDf9z/UYO5LmyElSHjMalmvSy9F7r5yoUyUKxurkvVFNX/t7K
+	I5BgDt7MZnSYEVZ3
+X-Google-Smtp-Source: AGHT+IGvG2w9z0wELJhi1eSPfAZxIEDUfytCfcGHHrZl1keh+xOvpqvYA3ngSf9W5Faki32hbNC3WA==
+X-Received: by 2002:a05:6214:2123:b0:6d3:dcce:a2d3 with SMTP id 6a1803df08f44-6d864db33a3mr127644726d6.47.1732803046495;
+        Thu, 28 Nov 2024 06:10:46 -0800 (PST)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8752224d1sm6743966d6.98.2024.11.28.06.10.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 06:10:46 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4668486df76so8086101cf.3;
+        Thu, 28 Nov 2024 06:10:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUSuSrEaRSU4ffqDaZKGiN1i90V/z3qhV7HplqVxWQrujxaj+KZX7iokt7187L9KhpY0Hck1r3Nj1FSMsFtgw==@vger.kernel.org, AJvYcCXK/A0RhN5mbxKWqGTh6vj42MMaVovNAYx6kpAm9KYM77ExoCXmU6sk3nCMg4X3fYHZaXBWXPjjBGJhsA6X@vger.kernel.org, AJvYcCXlcroRLRVrTYOatJIkp+DHx019D8XhuK8RASu6fuWCCxAOcPPhQ2VHHeDrMU1OpGqwA65nehC9E4M8@vger.kernel.org
+X-Received: by 2002:a05:620a:2902:b0:7ac:c348:6a52 with SMTP id
+ af79cd13be357-7b67c30c5cfmr1013596985a.34.1732803045800; Thu, 28 Nov 2024
+ 06:10:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241128132432.fxvmjeluagignbph@thinkpad>
+References: <20241021193310.2014131-1-mcgrof@kernel.org>
+In-Reply-To: <20241021193310.2014131-1-mcgrof@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 28 Nov 2024 15:10:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVG3Z63BruhrnQtSadCnaKZ+hpwFDJDnitXST8fRNYoLQ@mail.gmail.com>
+Message-ID: <CAMuHMdVG3Z63BruhrnQtSadCnaKZ+hpwFDJDnitXST8fRNYoLQ@mail.gmail.com>
+Subject: Re: [PATCH v3] selftests: add new kallsyms selftests
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com, 
+	masahiroy@kernel.org, deller@gmx.de, linux-arch@vger.kernel.org, 
+	live-patching@vger.kernel.org, kris.van.hees@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 06:54:32PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Nov 26, 2024 at 07:58:16AM +0100, Krzysztof Kozlowski wrote:
-> > On 26/11/2024 07:50, Krishna Chaitanya Chundru wrote:
-> > > 
-> > > 
-> > > On 11/25/2024 1:10 PM, Krzysztof Kozlowski wrote:
-> > >> On 24/11/2024 02:41, Krishna Chaitanya Chundru wrote:
-> > >>>> ...
-> > >>>>
-> > >>>>> +  qps615,axi-clk-freq-hz:
-> > >>>>
-> > >>>> That's a downstream code you send us.
-> > >>>>
-> > >>>> Anyway, why assigned clock rates do not work for you? You are 
-> > >>>> re-implementing legacy property now under different name :/
-> > >>>>
-> > >>>> The assigned clock rates comes in to the picture when we are 
-> > >>>> using clock
-> > >>> framework to control the clocks. For this switch there are no 
-> > >>> clocks needs to be control, the moment we power on the switch 
-> > >>> clocks are enabled by default. This switch provides a mechanism to 
-> > >>> control the frequency using i2c. And switch supports only two 
-> > >>> frequencies i.e
-> > >>
-> > >>
-> > >> frequency of what, since there are no clocks?
-> > >>
-> > > The axi clock frequency internal to the switch, host can't control
-> > > the enablement of the clocks it can control only the frequency.
-> > > 
-> > > we already had a discussion on this on v2[1], and we taught you agreed
-> > > on this property.
-> > > 
-> > > [1] 
-> > > https://lore.kernel.org/netdev/d1af1eac-f9bd-7a8e-586b-5c2a76445145@codeaurora.org/T/#m3d5864c758f2e05fa15ba522aad6a37e3417bd9f
-> > > 
-> > 
-> > This points something else. I diged v2 and found many unanswered
-> > questions and unfinished discussion:
-> > 
-> 
-> The conversation is here:
-> https://lore.kernel.org/linux-arm-msm/20240823094028.7xul4eoiexey5xjm@thinkpad/
-> 
-> But there was no explicit agreement on the usage of 'qps615,axi-clk-freq-hz'.
-> 
-> If describing the PCI device's internal clock frequency is not applicable, then
-> I'd recommend to change the clock rate in the driver itself based on the number
-> of DSPs enabled (or based on other configuration).
+Hi Luis,
 
-Sounds like the best approach. Otherwise it's not obvious, what is the
-criteria for selecting this or that clock value.
+On Mon, Oct 21, 2024 at 9:33=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
+> We lack find_symbol() selftests, so add one. This let's us stress test
+> improvements easily on find_symbol() or optimizations. It also inherently
+> allows us to test the limits of kallsyms on Linux today.
+>
+> We test a pathalogical use case for kallsyms by introducing modules
+> which are automatically written for us with a larger number of symbols.
+> We have 4 kallsyms test modules:
+>
+> A: has KALLSYSMS_NUMSYMS exported symbols
+> B: uses one of A's symbols
+> C: adds KALLSYMS_SCALE_FACTOR * KALLSYSMS_NUMSYMS exported
+> D: adds 2 * the symbols than C
+>
+> By using anything much larger than KALLSYSMS_NUMSYMS as 10,000 and
+> KALLSYMS_SCALE_FACTOR of 8 we segfault today. So we're capped at
+> around 160000 symbols somehow today. We can inpsect that issue at
+> our leasure later, but for now the real value to this test is that
+> this will easily allow us to test improvements on find_symbol().
+>
+> We want to enable this test on allyesmodconfig builds so we can't
+> use this combination, so instead just use a safe value for now and
+> be informative on the Kconfig symbol documentation about where our
+> thresholds are for testers. We default then to KALLSYSMS_NUMSYMS of
+> just 100 and KALLSYMS_SCALE_FACTOR of 8.
+>
+> On x86_64 we can use perf, for other architectures we just use 'time'
+> and allow for customizations. For example a future enhancements could
+> be done for parisc to check for unaligned accesses which triggers a
+> special special exception handler assembler code inside the kernel.
+> The negative impact on performance is so large on parisc that it
+> keeps track of its accesses on /proc/cpuinfo as UAH:
+>
+> IRQ:       CPU0       CPU1
+> 3:       1332          0         SuperIO  ttyS0
+> 7:    1270013          0         SuperIO  pata_ns87415
+> 64:  320023012  320021431             CPU  timer
+> 65:   17080507   20624423             CPU  IPI
+> UAH:   10948640      58104   Unaligned access handler traps
+>
+> While at it, this tidies up lib/ test modules to allow us to have
+> a new directory for them. The amount of test modules under lib/
+> is insane.
+>
+> This should also hopefully showcase how to start doing basic
+> self module writing code, which may be more useful for more complex
+> cases later in the future.
+>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-> 
-> - Mani
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+Thanks for your patch, which is now commit 84b4a51fce4ccc66
+("selftests: add new kallsyms selftests") upstream.
 
--- 
-With best wishes
-Dmitry
+> @@ -2903,6 +2903,111 @@ config TEST_KMOD
+>
+>           If unsure, say N.
+>
+> +config TEST_RUNTIME
+> +       bool
+> +
+> +config TEST_RUNTIME_MODULE
+> +       bool
+> +
+> +config TEST_KALLSYMS
+> +       tristate "module kallsyms find_symbol() test"
+> +       depends on m
+> +       select TEST_RUNTIME
+> +       select TEST_RUNTIME_MODULE
+> +       select TEST_KALLSYMS_A
+> +       select TEST_KALLSYMS_B
+> +       select TEST_KALLSYMS_C
+> +       select TEST_KALLSYMS_D
+> +       help
+> +         This allows us to stress test find_symbol() through the kallsym=
+s
+> +         used to place symbols on the kernel ELF kallsyms and modules ka=
+llsyms
+> +         where we place kernel symbols such as exported symbols.
+> +
+> +         We have four test modules:
+> +
+> +         A: has KALLSYSMS_NUMSYMS exported symbols
+> +         B: uses one of A's symbols
+> +         C: adds KALLSYMS_SCALE_FACTOR * KALLSYSMS_NUMSYMS exported
+> +         D: adds 2 * the symbols than C
+> +
+> +         We stress test find_symbol() through two means:
+> +
+> +         1) Upon load of B it will trigger simplify_symbols() to look fo=
+r the
+> +         one symbol it uses from the module A with tons of symbols. This=
+ is an
+> +         indirect way for us to have B call resolve_symbol_wait() upon m=
+odule
+> +         load. This will eventually call find_symbol() which will eventu=
+ally
+> +         try to find the symbols used with find_exported_symbol_in_secti=
+on().
+> +         find_exported_symbol_in_section() uses bsearch() so a binary se=
+arch
+> +         for each symbol. Binary search will at worst be O(log(n)) so th=
+e
+> +         larger TEST_MODULE_KALLSYSMS the worse the search.
+> +
+> +         2) The selftests should load C first, before B. Upon B's load t=
+owards
+> +         the end right before we call module B's init routine we get
+> +         complete_formation() called on the module. That will first chec=
+k
+> +         for duplicate symbols with the call to verify_exported_symbols(=
+).
+> +         That is when we'll force iteration on module C's insane symbol =
+list.
+> +         Since it has 10 * KALLSYMS_NUMSYMS it means we can first test
+> +         just loading B without C. The amount of time it takes to load C=
+ Vs
+> +         B can give us an idea of the impact growth of the symbol space =
+and
+> +         give us projection. Module A only uses one symbol from B so to =
+allow
+> +         this scaling in module C to be proportional, if it used more sy=
+mbols
+> +         then the first test would be doing more and increasing just the
+> +         search space would be slightly different. The last module, modu=
+le D
+> +         will just increase the search space by twice the number of symb=
+ols in
+> +         C so to allow for full projects.
+> +
+> +         tools/testing/selftests/module/find_symbol.sh
+> +
+> +         The current defaults will incur a build delay of about 7 minute=
+s
+> +         on an x86_64 with only 8 cores. Enable this only if you want to
+> +         stress test find_symbol() with thousands of symbols. At the sam=
+e
+> +         time this is also useful to test building modules with thousand=
+s of
+> +         symbols, and if BTF is enabled this also stress tests adding BT=
+F
+> +         information for each module. Currently enabling many more symbo=
+ls
+> +         will segfault the build system.
+
+Despite the warning, I gave this a try on m68k (cross-compiled on i7 ;-).
+However, I didn't notice any extra-ordinary build times.
+
+Also, when running the test manually on ARAnyM, everything runs
+in the blink of an eye.  I didn't use the script, but ran all commands
+manually.  I tried insmodding a/b/c/d, c/a/b, a/c/d/b.
+
+Is this expected?
+Thanks!
+
+$ wc -l lib/tests/module/test_kallsyms_*.c
+   233 lib/tests/module/test_kallsyms_a.c
+    22 lib/tests/module/test_kallsyms_a.mod.c
+    35 lib/tests/module/test_kallsyms_b.c
+    21 lib/tests/module/test_kallsyms_b.mod.c
+  1633 lib/tests/module/test_kallsyms_c.c
+    21 lib/tests/module/test_kallsyms_c.mod.c
+  3233 lib/tests/module/test_kallsyms_d.c
+    21 lib/tests/module/test_kallsyms_d.mod.c
+  5219 total
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
