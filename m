@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-424279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A659DB28D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:41:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E22C9DB28E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8CC7B22094
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F2828270B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BC1145FFF;
-	Thu, 28 Nov 2024 05:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B917146D78;
+	Thu, 28 Nov 2024 05:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKOwXudE"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgboAPwB"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79C213DBB6;
-	Thu, 28 Nov 2024 05:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A6E143C7E;
+	Thu, 28 Nov 2024 05:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732772435; cv=none; b=FTNJf1CDuX7y/XxyJkoc9+DOAxDtttXqNr2h68y1iCXdI+UQyyYliVQdb+BpcjJ1ZsSvhIOBijdKPC5o47lXSbSg657fOp3vbBGbFdsiJck7klviY/aetynz6yzE7nVEDPx5Jn23O5gh5fAYlXq7DdgVxniWHEp8iyJ1bKgdkXs=
+	t=1732772436; cv=none; b=cVIUrUsY9Yim4SwNp3EWnQ/3p4w5dAaJ9CN1Q/0YcX/lFZqlNpP8BYpD+4mJ63ZvoGVH/YotcYbNW+CYcZWKchoA4wqxpbkANJGQQi/aFPTDI9LXZ7c7tn6wo9dvhTKl84esyuKRdQA6srSDar31y5ZfWxH9lf/wnhj08qaFvmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732772435; c=relaxed/simple;
-	bh=YN8n60PSDMwr7uU95ylj0vAul2eLak7aOtfQxBvzLIE=;
+	s=arc-20240116; t=1732772436; c=relaxed/simple;
+	bh=cuwL9VqarSJVGIwq+5/T9t9lJH8i9EKhmCPorLI0/mA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oOCNCELRY/6xWjsr/X0gxKYLaEMQehcX5VepjtBETANkTy8CTkbSS3GsrCBp/sLvkbAGV9Jf5jEOocVLhZ3wuhVu4y12DNM2AMia8fi7yIO3OhugRatwtcAWvvYza2jOF6KqsSh34onJLIBr4tRQn0p1Uws1ARkwGVg6w2ivgJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKOwXudE; arc=none smtp.client-ip=209.85.219.54
+	 MIME-Version; b=CeuiIcQQZijDkZ2usowHOES2oIzRm9DGD19dWyRFjdZujsZaVgaRl/l9Xrzl19TyMIK1FwpvwdrbD71pN/Z7N0Ru8KNX9qcBJBWvuXY4y+OD5cPFDFyvOPxjIR0qf+DBZn632bKDiJhTSlF8Mo38kS0MgWOcQMl7mbJ1VJaNSS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgboAPwB; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6d41f721047so3621056d6.1;
-        Wed, 27 Nov 2024 21:40:33 -0800 (PST)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46695dd02e8so4452191cf.2;
+        Wed, 27 Nov 2024 21:40:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732772432; x=1733377232; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732772434; x=1733377234; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=SJfkPspJ/qv6pFbs/gDVi3DrHQvIU8R6iPu/lyxW774=;
-        b=HKOwXudEnnZxPBu5YqItwaYcbtLl1yrWgM6mUE5utTcbWmnCNAcac398U2dSkPwnPB
-         zQpovjIN91c+r2AO9MB1rhUSCl+N20ecuz2v3Mr44ApA4ehLOqZhWA0qu/s6s9g3tHbi
-         hlBce8x7cTYQ108PjMV9B92gO68n5YsUdSqzCDgJFHlk5Az5zWLfxhjAmv7DrYkFpYpZ
-         1iWOQkVLyYTTr6VnWtiE6mNGMBQdJg1rbVsqFblUztZXJ2cbh3wdP9GS/oooILgewDWN
-         qv+FduccilmeOFtuT5/ed0u5NryaL4XEX104LmTtEhwPUBVRIbnR7EEl0xRCQTvcpmvI
-         8JNg==
+        bh=s9sC83tozDH958mCO8AjXOvSeVyc3KvU5CweJZKTNc4=;
+        b=CgboAPwBZna0vS7g3TyaM4JNNMtRZlePlmBboILtAt4nExgtiE+UJ19se8nAUx2ltM
+         9fWs1pUqdIpZ/YFuCbkHnGh4dupqeeG6a3iIdNu4QjyyVMG+NZTR0+ejXOBKYbALLOic
+         OP7RwTZlM7IEcMwcFfsGporp7F0d2M1pchmeMaNw3z14sCxMuKfKJindYmcRiFxk2YLe
+         JG5o0JZMqano+hds2zwG3E/ktMdGqcS3G6j0+gmQBt7BGH/LAGtWjaD7sQxYjLXyniu3
+         Gc7h85UbYaD8fMx0zgr0rw9RXlAW1XhYrYPJ/E9cZprjCJoOjnB7VYfKaz+g/biPpgfn
+         UadQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732772432; x=1733377232;
+        d=1e100.net; s=20230601; t=1732772434; x=1733377234;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=SJfkPspJ/qv6pFbs/gDVi3DrHQvIU8R6iPu/lyxW774=;
-        b=EBshqmtXOXazojrtHQO6Q7KSLSVZR2ecyA7rTF/5xOnEMh7RZJ0OmbvCPWA0baSjrg
-         a6fzeRL3Pf4goIGeMa/Ns6v5y9K+skmNuANDTkM42JE8JAiNpZPvSZsb4vL8YBL3Eiia
-         uYY68b6diCwTnf3hWLmGrSjc7qCsZO3ueIeHag4ft3CIJ06Gm/98FL2RTBWWHCfIwrd9
-         dXovSaaD/3xQYoZiUNr7qBUEW393L6Izg370lhZN/AsgmnbBrVvyg7Yy6pBQJe7wBwK2
-         NI167XGVyx/pq7ydhRX0K1qyM2hPNvCcpKb+l6tCnKiBmHvoH1+sbBOMRfT7L991qA2B
-         46KA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmlSHPinQ9rCrYJzb8Ha/6wTrqofrSwgy33Ss/jIT7PSVvcrKhrtbRsTjNghVw4pyiJ/1evZGPjHHgr3aIyy0=@vger.kernel.org, AJvYcCX82VEvwGQu7PXlIN4RbmI6qZg+ERw0p+EoxG1hrJ93Z/IaP8FPwV+ZNkaCmdiKILGVKTPSpRfbA8GVe/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7xWKcBZA2bbv5Y7PQcx70/YUl8WVDQxqQtR1e/+PNAFPFza5e
-	gI8Q+g3kADLPYl2EfEg0JoTWi/4rnKsguCERZSoPi2vyFlJB7GLz
-X-Gm-Gg: ASbGncvNFZV4gKcbXsow/vPOiPYMTCZexwGpvEWqWWCAsLlVIA9jFjcgemaMIAxjm38
-	RYo0T33imqpMknw49GVFTubD+Wk/sRkp2Yy7dRNCp36H9LpI4BPXA6zIvyO7jY4nuhduhdPqHNo
-	cH9IS7Kq347benw+5RzeCP257AS6+WXz3JzoCZzbIVA9axXXDQwKlGDpUN9ASH32LyKEs+4m/NT
-	rNGC+CuABBqTMzRt8ghDrS3eVAoApfTaSQnIj/3xilwR60eUmy4A7gLlA9UDjEeqJQnq4yJSE9i
-	m6FbAhn/SRkdEflg0nRQKXAwSPuFCxYS9QpUFalW
-X-Google-Smtp-Source: AGHT+IH+1jtP9enrnfOS30VjgW11fLVwljjSRsGYoMiA2+GdavbO0SE2rkj6DI0F3T2YSr7acDoATg==
-X-Received: by 2002:a05:6214:767:b0:6cb:3643:3370 with SMTP id 6a1803df08f44-6d864d78d27mr84817516d6.23.1732772432624;
-        Wed, 27 Nov 2024 21:40:32 -0800 (PST)
+        bh=s9sC83tozDH958mCO8AjXOvSeVyc3KvU5CweJZKTNc4=;
+        b=nPgz3K7ctQNZHoGVXJHxdfMw/5+x/mhUiwwE7160ON378vvIUWt37D3Op4snvft2pj
+         v6dKg9ynwVfzWF+87dWQWvHNHpxsKoppaePC/5EcnTN67eqeeGNKnul386D5tDcR+N4Z
+         VqyL+bI8pfATpo0/nrPufMNanED/9ZjS3EdvYiqAFb4Sd6VetlUUPoA1xHyV+3EmZVSb
+         8800gjS2gfz8uLyKIe2MDsu7lzyXj8jvGWGf5BWFYvLrMXv9o821NU/axNx4Dkb4wr9X
+         pzI3AHOwy350pifW8AHB/6da2E/ZVN9lJEOQ6odzf28uvvotgFkiID+iZuwDxjrI1x56
+         9i+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ9Jlb+YxuY6osai0OXp0AST7MWf6VhyzlF/tbA5jMtM+qcUdz0jc+GKxDdWlvwd7SDB+dmY2xDUZvX3g=@vger.kernel.org, AJvYcCWVx6jBTjWmQhswlVY45ozD9TE5MtDhI/tiSDtGeVWget8/qS8//85Y+o+7BWzRdYGF1d7JSrKpy5TFiGExy0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf0wts0FZo9kiD7NZxWHG4S62JUNXoClj8b9+vhSStTrGy6NjL
+	RFLEKOxd8nqJDovCkVDk6p8YEp5TCX3wxlIkYP0kwrt1G3Cxysg6
+X-Gm-Gg: ASbGnctL5tK8UKXK6m7weJc0hCPjQJJ4P2uZZ+tWDZ4kLL5Xaur4is9LsnRupe2QxbG
+	05FXvhkWyo+jTbMZfQVfl7mex94LPfbcdUiB3SHvYDqsTWj5GlzPsRqq+3x0zsP57eewoDdJyWC
+	qti6avpCBEjS6Mh09OJlVoICsSIc82nWPddCuDSBXN1L9Gyfih9FlRQOyeJl94BZvnJpbYxdVo8
+	sVpeHYRPX3zFz+RWhs2V7/DBiC7cXCZm6UqkKxZaLLaTgPJ0s7B4dOLjO/RDjzOPV+hS19trfVZ
+	iOVqAehU/OVwTjtEKNpimXkVZlrztOozlxqoz1tn
+X-Google-Smtp-Source: AGHT+IHgwZdR2+teOyM3YD+g4y+ADT+FCk0IgmuWoLP7jjC9Eq7T3FpxTEktQgwhBiSqurPBoEXGag==
+X-Received: by 2002:a05:622a:1bac:b0:466:b122:513e with SMTP id d75a77b69052e-466b359c947mr96108761cf.12.1732772434206;
+        Wed, 27 Nov 2024 21:40:34 -0800 (PST)
 Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d87516651esm3178996d6.17.2024.11.27.21.40.31
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466c421f832sm3107581cf.56.2024.11.27.21.40.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 21:40:32 -0800 (PST)
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id BB5DB1200077;
-	Thu, 28 Nov 2024 00:40:31 -0500 (EST)
+        Wed, 27 Nov 2024 21:40:33 -0800 (PST)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 3D3511200079;
+	Thu, 28 Nov 2024 00:40:33 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Thu, 28 Nov 2024 00:40:31 -0500
-X-ME-Sender: <xms:TwJIZ99UJ4XHXShVLECiLKdD8jA3Aojhn3Dl3XSydT4uHYZpuGQXHw>
-    <xme:TwJIZxuZie9MzDw1L-VSBE3f3D55IycyvpdLnbbmsdJOIATce-J1PkcrKeKs3RoLI
-    BYVrJj-qXGpLh7afA>
-X-ME-Received: <xmr:TwJIZ7DKaCPZCJp5ZueqFEJo9pON1dhBNO8m43SJhwNSf6txSR022TfH99Mc>
+  by phl-compute-02.internal (MEProxy); Thu, 28 Nov 2024 00:40:33 -0500
+X-ME-Sender: <xms:UQJIZ30RA3C60Cp6fRWsuO1Mu_rat1efZXcXaT4ZJ6kQPvj196_x0g>
+    <xme:UQJIZ2HcNkCmMDj-LnPjieVZH2qzWMY2BONwz_d_ryQDHzsPV_u4ke1-1fQE91f0b
+    2JVi02xMqE3GZ9CZA>
+X-ME-Received: <xmr:UQJIZ35TJ-AXmvmMcIwbI3A3vKVrH906J8r3UOUdwDMZ8y5EBYmcfvHiDhzj>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedtgdekhecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
     tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
     hsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecu
     hfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtg
-    homheqnecuggftrfgrthhtvghrnhepudekleehjedtudfgudejvedvveeiffevveeufeet
-    heeuteegjeefveelffeuteetnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorh
-    hgpdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhith
-    ihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgr
-    ihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudejpdhmohguvg
-    epshhmthhpohhuthdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgt
-    phhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehojh
-    gvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
-    eprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhies
-    ghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonh
-    hmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhn
-    rdhmvg
-X-ME-Proxy: <xmx:TwJIZxfZ2_gK1a-QzEhHmFoy5yx9xFG4Ry_882mfLU121T3dd7cRvA>
-    <xmx:TwJIZyPdHcrCfiRycIB4BrePFwm2mF7wvnh8QWCmbKaVM_IvJrkcCw>
-    <xmx:TwJIZzk2j5pa9zbiXth7eohIXzMIBHj-EO-qKHUMc3_TfP-e88iMpw>
-    <xmx:TwJIZ8vd2laC1bn_3MsNXioXDxkpUTIcOah0XvPmyg_n3NqXrQQwpg>
-    <xmx:TwJIZ0ueSSjA8804h1eTfzVpMtLkZD7KTOhJdBTc7RM8BcLhsZL318iP>
+    homheqnecuggftrfgrthhtvghrnhepgffhffevhffhvdfgjefgkedvlefgkeegveeuheel
+    hfeivdegffejgfetuefgheeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vgdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhr
+    rgguvggrugdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmhgr
+    nhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphht
+    thhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhope
+    gsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvg
+X-ME-Proxy: <xmx:UQJIZ80szUYRdczo3krf9V85ip3HVVntx0RBj-heYQuV16Uk9ekQjg>
+    <xmx:UQJIZ6EF3Mo0sD-8p85zSx9wp4LGh_-oqnYtJKdgR7cIJxZwdjIKxA>
+    <xmx:UQJIZ9-nD1wt6EsozG2naO4iw7Xyi-geM9sTAEBZpq3KP1d76JvCHw>
+    <xmx:UQJIZ3llrtlczHh40QrGS4bX5eSMxTc3pwwVlwAaFXPL59z6GyHkDw>
+    <xmx:UQJIZ2G3qOBVzby2ftwptk_SYQmEJuMqVPBV7Mk0kg31SZqJWDlREQaD>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Nov 2024 00:40:31 -0500 (EST)
+ 28 Nov 2024 00:40:32 -0500 (EST)
 From: Boqun Feng <boqun.feng@gmail.com>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
@@ -125,9 +124,9 @@ Cc: Will Deacon <will@kernel.org>,
 	Lyude Paul <lyude@redhat.com>,
 	Filipe Xavier <felipe_life@live.com>,
 	Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC 2/5] rust: sync: Add Lock::from_raw() for Lock<(), B>
-Date: Wed, 27 Nov 2024 21:40:19 -0800
-Message-Id: <20241128054022.19586-3-boqun.feng@gmail.com>
+Subject: [RFC 3/5] rust: sync: Make Guard::new() public
+Date: Wed, 27 Nov 2024 21:40:20 -0800
+Message-Id: <20241128054022.19586-4-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20241128054022.19586-1-boqun.feng@gmail.com>
 References: <20241128054022.19586-1-boqun.feng@gmail.com>
@@ -141,74 +140,37 @@ Content-Transfer-Encoding: 8bit
 
 From: Lyude Paul <lyude@redhat.com>
 
-The KMS bindings [1] have a few bindings that require manually acquiring
-specific locks before calling certain functions. At the moment though,
-the only way of acquiring these locks in bindings is to simply call the
-C locking functions directly - since said locks are not initialized on
-the Rust side of things.
+Since we added a `Lock::from_raw()` function previously, it makes sense
+to also introduce an interface for creating a `Guard` from a reference
+to a `Lock` for instances where we've derived the `Lock` from a raw
+pointer and know that the lock is already acquired, there are such
+usages in KMS API.
 
-However - if we add `#[repr(C)]` to `Lock<(), B>`, then given `()` is a
-ZST - `Lock<(), B>` becomes equivalent in data layout to its inner
-`B::State` type. Since locks in C don't have data explicitly associated
-with them anyway, we can take advantage of this to add a
-`Lock::from_raw()` function that can translate a raw pointer to
-`B::State` into its proper `Lock<(), B>` equivalent. This lets us simply
-acquire a reference to the lock in question and work with it like it was
-initialized on the Rust side of things, allowing us to use less unsafe
-code to implement bindings with lock requirements.
-
-[Boqun: Use "Link:" instead of a URL and format the commit log]
+[Boqun: Add backquotes to type names, reformat the commit log, reword a
+ bit on the usage of KMS API]
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Filipe Xavier <felipe_life@live.com>
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Link: https://patchwork.freedesktop.org/series/131522/ [1]
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://lore.kernel.org/r/20241119231146.2298971-2-lyude@redhat.com
+Link: https://lore.kernel.org/r/20241119231146.2298971-3-lyude@redhat.com
 ---
- rust/kernel/sync/lock.rs | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ rust/kernel/sync/lock.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index 41dcddac69e2..57dc2e90e504 100644
+index 57dc2e90e504..72dbf3fbb259 100644
 --- a/rust/kernel/sync/lock.rs
 +++ b/rust/kernel/sync/lock.rs
-@@ -96,6 +96,7 @@ unsafe fn relock(ptr: *mut Self::State, guard_state: &mut Self::GuardState) {
- ///
- /// Exposes one of the kernel locking primitives. Which one is exposed depends on the lock
- /// [`Backend`] specified as the generic parameter `B`.
-+#[repr(C)]
- #[pin_data]
- pub struct Lock<T: ?Sized, B: Backend> {
-     /// The kernel lock object.
-@@ -134,6 +135,28 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
-     }
- }
- 
-+impl<B: Backend> Lock<(), B> {
-+    /// Constructs a [`Lock`] from a raw pointer.
-+    ///
-+    /// This can be useful for interacting with a lock which was initialised outside of Rust.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller promises that `ptr` points to a valid initialised instance of [`State`] during
-+    /// the whole lifetime of `'a`.
-+    ///
-+    /// [`State`]: Backend::State
-+    pub unsafe fn from_raw<'a>(ptr: *mut B::State) -> &'a Self {
-+        // SAFETY:
-+        // - By the safety contract `ptr` must point to a valid initialised instance of `B::State`
-+        // - Since the lock data type is `()` which is a ZST, `state` is the only non-ZST member of
-+        //   the struct
-+        // - Combined with `#[repr(C)]`, this guarantees `Self` has an equivalent data layout to
-+        //   `B::State`.
-+        unsafe { &*ptr.cast() }
-+    }
-+}
-+
- impl<T: ?Sized, B: Backend> Lock<T, B> {
-     /// Acquires the lock and gives the caller access to the data protected by it.
-     pub fn lock(&self) -> Guard<'_, T, B> {
+@@ -234,7 +234,7 @@ impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
+     /// # Safety
+     ///
+     /// The caller must ensure that it owns the lock.
+-    pub(crate) unsafe fn new(lock: &'a Lock<T, B>, state: B::GuardState) -> Self {
++    pub unsafe fn new(lock: &'a Lock<T, B>, state: B::GuardState) -> Self {
+         Self {
+             lock,
+             state,
 -- 
 2.39.5 (Apple Git-154)
 
