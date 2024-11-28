@@ -1,127 +1,196 @@
-Return-Path: <linux-kernel+bounces-425034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9359DBCB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:56:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B469E9DBCB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:58:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB36B21700
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C9E1646DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83931C1F14;
-	Thu, 28 Nov 2024 19:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FAC1C1F34;
+	Thu, 28 Nov 2024 19:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W/+Qo14Q"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pqk7OzgJ"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113A57A13A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 19:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590137A13A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 19:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732823758; cv=none; b=otCSTDhqoKSX2ywg1xo6aCvj1jn98uWwGDSQewwMkku1qjJv8Mmql34/jlPxmysveXOqLymjtw5SMN/VmhCceBNybq0hmE5nlP9DOXtVpGX04Ami8Vc2E5YIDqPT4pUwtot0S7G13rS5hmxl5b6/jLo0LLMzTJt8TnpLQzAWaPk=
+	t=1732823917; cv=none; b=Izl2TmG+68xNxuh0jDkFK9MhdpFiY9awnlETMzVK2vu3CZfh3kLWZA9WAbRxK40sJX+LgMumLfExq5yVm7YDnpllQithVY0CDaW26nskzgBFHwQgH22qp1uAhcU1cbtTRRzME+tkLBSmf3l4XukboLOax5/oCk97DF7A0cwY63g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732823758; c=relaxed/simple;
-	bh=B9P2ENiavm6q3s6Tk0/34QRTigY5JKurnCEpeKNL1x0=;
+	s=arc-20240116; t=1732823917; c=relaxed/simple;
+	bh=jgBoTn9Q+70E1Te6Tg6d704cGOXnAGn27HePc7uiSwE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kg4CwJ1FwKysvhOCdHJmBuqVx7lklS/lAumqJRgac6LxwoBDySaUUf5FpTqcBQlgFrqv5Sp9Wejapcim70SqHKPRl/V0RiD49wujXts2f5Q33j5/Q0qyhCO+upa1uW7aKmJ3QCFAHPBw7XVWFUSeeG3aWrJJzFGKjwBIcvwUzl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W/+Qo14Q; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso12543411fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:55:55 -0800 (PST)
+	 To:Cc:Content-Type; b=Q9DawgAzxXQ4e7z9kvG1M+cMfrMtoQ+wuwjozJ7xLBpzqqVg7BG6XblCaGy/l8Ekv9XY/GdXYjkkxtGaL5dyfMDEj3oBzeKOlOwEvQiO807Wwqj7pp08wVuQfXUCf2KkeHPZd7YGIGSgwAPkefP7Zzsjp2BAWRWExXlBPgSY418=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pqk7OzgJ; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4668194603cso250191cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:58:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732823754; x=1733428554; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYmYBYyArByRymcLIWmoSw8pIwozTi0i6w5/CUprJP4=;
-        b=W/+Qo14QTWqk3gWGeTaCyn6TIyJHubqSG1lvxBt/4bCSeJwutP94HmiB4U9PVXIOk9
-         D+A10nLuUo+yqdFAzNs6687ipcM86HzTOuVYfSr4rSH29wOcwr4K/190mKp/O5LPNAHF
-         qrQYSWA+GfmT6I7iqdziowVuo3xOumtyXtZGM=
+        d=google.com; s=20230601; t=1732823915; x=1733428715; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TXtFVS4qQ8/3Xe8zXCwz7prkcbz5Oro8xRq567KrsEw=;
+        b=Pqk7OzgJtdcmS9gwwnSd49hdif8xT23hqyl2k6k5PqE8FfTGbcmk11KxlqWDIVvRSf
+         jLV2CQYkRyaEbsAhA+myJG8svJF8vBTi/IsRfu3TLDjdNwWrCQFp136agTEfLACE6vx9
+         ZGM8EQ7SnblnOS2mwO2tyqD7hS0NgCgqlPWdtM6roypXLrLzBSFHX/V1oJ49bd8hc6MS
+         woucawou/WNJ4yB92DxwTCmCBoAYKRjF9pAkK5KIFh9tXZ9g5VNOXXdaPiflhHyhEQsV
+         nIrWWd1OtapJW/46vJPbUBZ6YSG5z4KS0pkO2s29TQmyQr7KTxixEQMMrrLffMXsgesR
+         +DnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732823754; x=1733428554;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PYmYBYyArByRymcLIWmoSw8pIwozTi0i6w5/CUprJP4=;
-        b=w+cO8CxgLtduRCfUgImuA8D4l7ka95wVXBDMAMqfjDEnNVZyW1Ngsz4vi2hbMZQBEv
-         ov/H4617W4vt7bh2LeMNq93gqi8K7om36C0AG/qpyZ24II2ykull9TJ8lL2xkvGX8Qpt
-         M7Dgh+3YPTk58qYHV+IsKn++5kt01WAEJKij9/vsICJi5YhyF8txqqKDEb5s7dOU8Mr9
-         CLSa0Y5q0ChA6BxHwmhEkFAYxw7j4Sr+um7CrMPs1SYkWIg7f8nzJ0hm7K060bMLbiMC
-         lTJGZgRAbtZFoAf6iXZIcs402wtuPsyS2VUYTfI0bbuqBbP6PURRIS+fPDfH3Y3GPXDF
-         joXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuU4UcEnZE6STENP6jWSiXRPMtyf7K0KL2cIgtNOS0IZ8FVKggnEl0hx0YSYijB5Qlbo7KYSqPn7+XiDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM8iTzztwBCaEErgk8wXI1XkKF1ea8KSWoezuSN993ukDY8C8Y
-	Gk0PjnVfVLafNoepXlg4HiqvcuWQla04n7pR5WDl/7p0daAct/WqYSfiISkIsUk04n8msZ/MhTl
-	1WVMygw==
-X-Gm-Gg: ASbGncsMppd3/jwh6cCHZGibSayTRQG451zGvz20N4+QraG1bhTd5f8Vu+CZpB0urgC
-	IBAOFEXYJElqHaYPLVyBjfqYADdY7AhqOdYvFksSybRoKUl7lQ2+1XyR4kUi6Cv2EmSbbyBxa+7
-	sAiTadyGZLs6nR7gWGw8DsxBlOMTgPfEcL4l8Qe7tKu3INVHC6JX7zJifWOhhELy56BoKvqc4RA
-	DcNUeOkxh77y2UvUumdNzLxrKmKWSInnQ+Ih1FsJF4lyeK2AVVJPys0iI1n4E0O1Op51okgTET4
-	L4tpxeuOnpSgMIfpIqWuEBLK
-X-Google-Smtp-Source: AGHT+IHG3xUbMJcDGkpvjj2PGHLq/B4xfgTWqwwux2ckJHSb5N1akoySJZvGEWIBdHlWS1d7ELubZw==
-X-Received: by 2002:a05:6512:b8f:b0:53d:d443:1ab0 with SMTP id 2adb3069b0e04-53df010902fmr5534155e87.43.1732823753862;
-        Thu, 28 Nov 2024 11:55:53 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64974c0sm266378e87.222.2024.11.28.11.55.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 11:55:52 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ddb99e9dcso1150122e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:55:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7mG3I5bK95jxS0l4w1BrDYxKzY8he3flPp5EWgyLRrOtok20oG74fezyCkMy+o1n5l4Mce/A3d8j/QUA=@vger.kernel.org
-X-Received: by 2002:a05:6512:3b25:b0:53d:d3f1:2f4a with SMTP id
- 2adb3069b0e04-53df00c74d2mr5053239e87.1.1732823751174; Thu, 28 Nov 2024
- 11:55:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732823915; x=1733428715;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TXtFVS4qQ8/3Xe8zXCwz7prkcbz5Oro8xRq567KrsEw=;
+        b=t11OlncqImRNvh9l2d8BMsYcVcBTk1r+8xwpQwS2hCiKIGAtLcyaIuWOZgxl2TsHCq
+         tWE4j048C2gRdvY+4N9uUNaxIS4To+bpnXmSd5G5YZbJvFeDT+ihduxq/JpZuiPWGh9O
+         nohybtAy9hu/Z8yntavB5vkPPD0MbEUVDtL+UMDm8qiQ3g76AlsE3wIWMytC9nJW58jC
+         Yr5A1WLROAZhpylC/Vqc87K/1avimupOHcEgj7qj5lGu/kCoPNCuoZ9Fa6ptomF/BOUE
+         E9nXdtStyc34BEci3dTBrTpH5Fgvlvv1Fg9eQvn0eFlMtCGphwQx+4F4SnCcqwHsDRcf
+         gOCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeqq6KZGuAM8DQqMIsMZarYblTFybrDWGMSHOS861ZAocCCz5aOFGpiumBWJIEVG/UOsRhOLa4uZt1B3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkNM5jOGCcm2N7F2FPCoUuoT2uqNGbfONOwwXvpjVl+V0a01kP
+	0IL3jKYC2ZCCuL8hpzqiX2bRDWi0sErTTkUYLOIwgxi9dI1o5MJ4T1nQVnmzu2es02MU/TBWxoL
+	VHosnUPvxxCFdpFRS9dS+KQfZu3JgVEoXdRve
+X-Gm-Gg: ASbGncvhGDzP5YG3cipB7/ESA/C0Z6wNBtHfs8rd2UTr2v1xnDUR06PluiNNOPhiDlH
+	sxW99uP+lX8HEPpuNsUTeuT1QV4XIyxk=
+X-Google-Smtp-Source: AGHT+IFjKQXeYjlTEH+9gVqNsRWCWhVsjZTU5he7XsaMSS56d0RN/H8YNPhiTHyCErsrLnLjl9HJo3WTELT4tX96eZs=
+X-Received: by 2002:a05:622a:401b:b0:466:8c23:823a with SMTP id
+ d75a77b69052e-466c3f591damr2971661cf.17.1732823914940; Thu, 28 Nov 2024
+ 11:58:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127131941.3444fbd9@gandalf.local.home>
-In-Reply-To: <20241127131941.3444fbd9@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 28 Nov 2024 11:55:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
-Message-ID: <CAHk-=wgwQ5gDdHgN54n8hsm566x5bauNPsdZPXm6uOCFvPA1+Q@mail.gmail.com>
-Subject: Re: [GIT PULL] tracing: More updates for 6.13
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
+References: <20241124074318.399027-1-00107082@163.com> <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
+ <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com> <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
+ <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
+ <51c19b31.eaf.193660912f7.Coremail.00107082@163.com> <337c721a.70d1.1936753c377.Coremail.00107082@163.com>
+ <CAJuCfpHZhMwK8jOz_evvvD8CaNxxaaRQEx0Qv_yPp4ZA_DkXeg@mail.gmail.com>
+ <1801415b.a202.1936d01f953.Coremail.00107082@163.com> <6c49f606.8737.19371e80128.Coremail.00107082@163.com>
+ <CAJuCfpGVJtA9L=+6AuUuTM6SyiB_n3WEUYHDU4i1y50weBS3Hg@mail.gmail.com>
+In-Reply-To: <CAJuCfpGVJtA9L=+6AuUuTM6SyiB_n3WEUYHDU4i1y50weBS3Hg@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 28 Nov 2024 11:58:23 -0800
+Message-ID: <CAJuCfpGgranJLOgQjsEFV5Cy+xEOH9701bs9Nqavx9XWFus+JA@mail.gmail.com>
+Subject: Re: Abnormal values show up in /proc/allocinfo
+To: David Wang <00107082@163.com>
+Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, yuzhao@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 27 Nov 2024 at 10:18, Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Nov 28, 2024 at 10:46=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
 >
-> [
->   NOTE: The rust tracepoint code added hooks to the same macros that were
->   modified in this pull request. The merge has non-trivial conflicts. I
->   fixed it up in my "for-next" branch in the same repository. That branch
->   was a merge of this branch into the commit where you pulled the rust
->   tracepoint code.
+> On Thu, Nov 28, 2024 at 12:34=E2=80=AFAM David Wang <00107082@163.com> wr=
+ote:
+> >
+> > At 2024-11-27 17:44:26, "David Wang" <00107082@163.com> wrote:
+> > >
+> > >
+> > >
+> > >At 2024-11-27 01:10:23, "Suren Baghdasaryan" <surenb@google.com> wrote=
+:
+> > >
+> > >>
+> > >>Hi David,
+> > >>Thanks for the investigation. I think your suggestion should work fin=
+e
+> > >>and it's simpler than what we do now. It will swap not only counters
+> > >>but allocation locations as well, however I think we already do that
+> > >>when we call __alloc_tag_ref_set(). So, instead of clearing the
+> > >>original tag, decrementing the new tag's counter (to compensate for
+> > >>its own allocation) and reassigning the old tag to the new counter,
+> > >>you simply swap the tags. That seems fine to me.
+> >
+> > I will send a patch for this.
+>
+> Yes please. the more I look into it, the more it looks like the right app=
+roach.
+>
+> >
+> > >>However I think there is still a bug where some get_new_folio()
+> > >>callback does not increment the new folio's counters and that's why w=
+e
+> > >>get an underflow when calling alloc_tag_sub(). I'll try to reproduce
+> > >>on my side and see what's going on there.
+> > >
+> > >Agreed, the reason for underflow with current code should be clarified=
+.
+> > >Just update reproduce procedure:
+> > >1. fio --randrepeat=3D1 --ioengine=3Dlibaio --direct=3D1 --name=3Dtest=
+  --bs=3D4k --iodepth=3D64 --size=3D1G --readwrite=3Drandrw  --runtime=3D10=
+0 --numjobs=3D4 --time_based=3D1
+> > >2.  echo 1 >/proc/sys/vm/compact_memory
+> > >3.  echo 1 > /proc/sys/vm/drop_caches
+> > >(It is very strange, on my VM,  "echo 3 > /proc/sys/vm/drop_caches" wo=
+uld not trigger easily.
+> > >4 cat /proc/allocinfo | grep __filemap_get_folio
+> > >
+> > >
+> > >FYI
+> > >David
+> > >
+> > Finally find out why those underflow values on my system,
+> > clear_page_tag_ref() -> set_codetag_empty() only works when
+> > CONFIG_MEM_ALLOC_PROFILING_DEBUG is defined.....
+>
+> Ah, good catch! That's why my attempts to reproduce the issue were
+> unsuccessful. I always keep CONFIG_MEM_ALLOC_PROFILING_DEBUG enabled.
+>
+> > I guess you guys would have CONFIG_MEM_ALLOC_PROFILING_DEBUG=3Dy, but I=
+ don't
+> > think it would be the case for end users.
+>
+> Correct.
+>
+> >
+> > There are several references of clear_page_tag_ref()/set_codetag_empty(=
+):
+> >
+> > ./mm/mm_init.c: clear_page_tag_ref(page);
+> > ./mm/mm_init.c: clear_page_tag_ref(page);
+> > ./mm/page_alloc.c:              clear_page_tag_ref(page);
+> > ./mm/page_alloc.c:      clear_page_tag_ref(page)
+> > ./mm/slub.c:            set_codetag_empty(&slab_exts[offs].ref);
+> > ./mm/slub.c:                    set_codetag_empty(&vec[i].ref);
+> >
+> >
+> > Things may go off when CONFIG_MEM_ALLOC_PROFILING_DEBUG is not set.
+>
+> I'll go over all set_codetag_empty() uses and check if they are valid.
+> set_codetag_empty() should only be used when we have an object with no
+> valid tag reference and we mark it as empty to avoid warnings when we
+> free it. In clear_page_tag_ref() set_codetag_empty() is used to clear
+> a valid tag reference and that's not right. I'll think about how we
+> can avoid such misuse in the future.
 
-I checked my resolution against yours, and I don't think your
-resolution is right.
+I think the simplest way to ensure that set_codetag_empty() works for
+CONFIG_MEM_ALLOC_PROFILING_DEBUG=3Dn is to change it from NOOP to:
 
-You didn't check 'cond' on regular rust tracepoints, and you didn't do
-any locking on either kind.
+-static inline void set_codetag_empty(union codetag_ref *ref) {}
++static inline void set_codetag_empty(union codetag_ref *ref)
++{
++         if (ref)
++                 ref->ct =3D NULL;
++}
 
-I've pushed out my resolution, and hopefully rust people can actually
-test it. I might just be full of it.
-
-That said, I also think that the "__rust_do_trace_##name" inline
-helper should just be renamed to "__trace_##name", and then the
-regular trace_##name() helper could use that inside the
-static_branch_unlikely() check. Because that seems to be the only real
-thing the "rust" version wants - avoiding the static branch
-infrastructure in favor of whatever rust infrastructure.
-
-But hey, I do basic sanity build testing of the rust code, I don't
-actually _know_ it. Again, I might be missing something.
-
-            Linus
+> Thanks for the investigation, David. Looking forward to your patch.
+> Suren.
+>
+> >
+> >
+> > FYI
+> > David
+> >
 
