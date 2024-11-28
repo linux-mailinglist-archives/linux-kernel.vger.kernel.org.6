@@ -1,160 +1,118 @@
-Return-Path: <linux-kernel+bounces-424349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061DC9DB34F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:55:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0581164C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:55:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997681494C9;
-	Thu, 28 Nov 2024 07:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Jr7NOJCH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797D59DB353
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:58:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680C683CC1;
-	Thu, 28 Nov 2024 07:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E886282496
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:57:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1921E148FF0;
+	Thu, 28 Nov 2024 07:57:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163C883CC1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732780546; cv=none; b=LowbkiDnnXVQVc0kmo7neZWbf79bDpFe7rX84SZ2n/DhrJvwHOjXnC171C+8o4PHPX1FIPFWFVG2h7PjUsIqnaUYmjNzKeRbhjftIDpKrrpDkB4tBT7vNfzdJir1qRpnvH+C/qLrrNW/KSOBPEMWWYtxXTr+6o2YtXbTsal91EQ=
+	t=1732780674; cv=none; b=FOg/tl+yiolfJ1yXGS+plMVp4gExc1e3R/hWSy9+uWSQlZglXfywNgZ3LskhK5dVHe8PEj6WU+pqNAD29TIWdRQPeEFwUNSycDYNAvVktlmgHa9vkPdWZ45xji+GRJMOkgO1yX1h0arZXEapXHDmvAFrdxsTNcInsfJB0XSthW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732780546; c=relaxed/simple;
-	bh=dMwUHDT3HfUtPDzXFRr971v/a7XZjkNcxYoIsDVxqkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MhWqGTuyVlCHLNRRHRmhTi+v8qSkEqRT/p0F2wOEckhg6PBtmDDaHM+qWLYVlgryChzC4zwu5e3eF9z+Tg8KSkcHJ+6lnnbXS8HotCTEKwvDaDSx0VEBSJYLCuOMtEoCkqxtIZq7WRBUm8njGkW2sZ9peJSeFzfJy5HXLOaZkWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Jr7NOJCH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS3vCcZ000782;
-	Thu, 28 Nov 2024 07:55:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N2Bfq7NxtvWIyhWsTvIOk4uTSf47vxkSUcnABSvuLRE=; b=Jr7NOJCHTlGPfkhz
-	uxpnmWzriB/iJ/90BAt93l8GAXbcS/VBcE5Sn5yjIufZ6Uxr4miQt7CciuOFAYu1
-	c9lHiPrvB/dQbF3sbRLRkCRobnNFGi2GyQ/ukFK+5mbzDek1Mk4higDRh+VImEzW
-	Flbbq+YlXAab6t89SE3mEVhVW8a35Z6qJwAEvAgm0JJr4vzpp3+IcdmyOPZK72oX
-	oFZbt8Q43aIFWDOjCGUuKvCkCtxN1olFWX3WY5YlTbJ/+/81vAMY6EFCaHkMPAVi
-	Pa/AlX2AFDTBbQ9N3/oQQN6f0PRXF1lMR0ZCVNyUN+qQEaHonDzkDnV5vBprczbb
-	a6hqWQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 436h2mgg72-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 07:55:40 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS7tdRY002020
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 07:55:39 GMT
-Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 27 Nov
- 2024 23:55:33 -0800
-Message-ID: <624393e7-0681-41c3-9008-de50cdf997b5@quicinc.com>
-Date: Thu, 28 Nov 2024 15:55:31 +0800
+	s=arc-20240116; t=1732780674; c=relaxed/simple;
+	bh=hozTocJT2iKXBY9S5dg3BDzFJxp3Ezg8eYStAMLE8kI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gwup3gEk6Yz4MYQkjRUKV8+78NJRDs9Y3Rs7jFML3b3q9qGBpvZQ3rhvj1LChIkKoSJkGeVOOnoCQze1poxDPRa/kJTHCH2IuX1VQQhZwehAIJwwAr8CKDgeD7bYADwcnyD56chu7vk5CymM8qzbR3s5ilMWH4VJhM+KuaXqKEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tGZPB-0001O4-AJ; Thu, 28 Nov 2024 08:57:41 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tGZP8-000Zj0-2l;
+	Thu, 28 Nov 2024 08:57:39 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tGZP9-002pKH-1h;
+	Thu, 28 Nov 2024 08:57:39 +0100
+Date: Thu, 28 Nov 2024 08:57:39 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [RFC net-next v1 2/2] net. phy: dp83tg720: Add randomized
+ polling intervals for unstable link detection
+Message-ID: <Z0gic12YXSrnGuKl@pengutronix.de>
+References: <20241127131011.92800-1-o.rempel@pengutronix.de>
+ <20241127131011.92800-2-o.rempel@pengutronix.de>
+ <dabcacd6-6e51-489c-b8f1-bd104ac4186f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcs8300: Adds SPMI support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-0-28af84cb86f8@quicinc.com>
- <20241126-adds-spmi-pmic-peripherals-for-qcs8300-v1-1-28af84cb86f8@quicinc.com>
- <wtnsepmoulfhm5ydbu7udtsrexaogaiqjyt737g6a2bhf4drnv@jwmktibj2swd>
-Content-Language: en-US
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-In-Reply-To: <wtnsepmoulfhm5ydbu7udtsrexaogaiqjyt737g6a2bhf4drnv@jwmktibj2swd>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DqahfMbYaIQear_irqcOd0hml2VeNty9
-X-Proofpoint-ORIG-GUID: DqahfMbYaIQear_irqcOd0hml2VeNty9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 malwarescore=0 phishscore=0 suspectscore=0 adultscore=0
- spamscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- mlxlogscore=951 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411280061
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dabcacd6-6e51-489c-b8f1-bd104ac4186f@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Wed, Nov 27, 2024 at 06:33:03PM +0100, Heiner Kallweit wrote:
+> On 27.11.2024 14:10, Oleksij Rempel wrote:
+> > Address the limitations of the DP83TG720 PHY, which cannot reliably detect or
+> > report a stable link state. To handle this, the PHY must be periodically reset
+> > when the link is down. However, synchronized reset intervals between the PHY
+> > and its link partner can result in a deadlock, preventing the link from
+> > re-establishing.
+> > 
+> Out of curiosity: This PHY isn't normally quirky, but completely broken.
+> Why would anybody use it?
 
+Is it rhetorical question, or you are really curios? I can answer it, but it
+will not be a short one ¯\_(ツ)_/¯
 
-On 11/26/2024 7:50 PM, Dmitry Baryshkov wrote:
-> On Tue, Nov 26, 2024 at 05:35:05PM +0800, Tingguo Cheng wrote:
->> Add the SPMI bus arbiter node for QCS8300 SoC which connected
->> with PMICs on QCS8300 boards.
-> 
-> Could you please comment, what is the version of the SPMI controller /
-> arbiter?
-Sure, let me add the version information in the commit message.
-> 
->>
->> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 22 ++++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> index 2c35f96c3f289d5e2e57e0e30ef5e17cd1286188..03bf72d6ec5c9ec92f6f53df9253c8c5953e13c4 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> @@ -939,6 +939,28 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
->>   			#clock-cells = <0>;
->>   		};
->>   
->> +		spmi_bus: spmi@c440000 {
->> +			compatible = "qcom,spmi-pmic-arb";
->> +			reg = <0x0 0x0c440000 0x0 0x1100>,
->> +			      <0x0 0x0c600000 0x0 0x2000000>,
->> +			      <0x0 0x0e600000 0x0 0x100000>,
->> +			      <0x0 0x0e700000 0x0 0xa0000>,
->> +			      <0x0 0x0c40a000 0x0 0x26000>;
->> +			reg-names = "core",
->> +				    "chnls",
->> +				    "obsrvr",
->> +				    "intr",
->> +				    "cnfg";
->> +			qcom,channel = <0>;
->> +			qcom,ee = <0>;
->> +			interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "periph_irq";
->> +			interrupt-controller;
->> +			#interrupt-cells = <4>;
->> +			#address-cells = <2>;
->> +			#size-cells = <0>;
->> +		};
->> +
->>   		tlmm: pinctrl@f100000 {
->>   			compatible = "qcom,qcs8300-tlmm";
->>   			reg = <0x0 0x0f100000 0x0 0x300000>;
->>
->> -- 
->> 2.34.1
->>
-> 
+> >  /* MDIO_MMD_VEND2 registers */
+> > @@ -355,6 +374,11 @@ static int dp83tg720_read_status(struct phy_device *phydev)
+> >  		if (ret)
+> >  			return ret;
+> > 
+> > +		/* The sleep value is based on testing with the DP83TG720S-Q1
+> > +		 * PHY. The PHY needs some time to recover from a link loss.
+> > +		 */
+> What is the issue during this "time to recover"?
+> Is errata information available from the vendor?
 
+I didn't found errata documentation for this chip. But there is
+"DP83TC81x, DP83TG72x Software Implementation Guide" SNLA404, describing
+the need of reset each 100ms and PHY Reset + PHY Initialization
+sequences:
+https://www.ti.com/lit/an/snla404/snla404.pdf
+
+So far, i was not able to find any justification for this delay, except
+it helped to reduce amount of PHY resets. 
 -- 
-Thank you & BRs
-Tingguo
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
