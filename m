@@ -1,175 +1,103 @@
-Return-Path: <linux-kernel+bounces-424682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2929DB803
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:56:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7E09DB7F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:54:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89A86B212AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4334163D0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6F81AA1D9;
-	Thu, 28 Nov 2024 12:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A593619DF8B;
+	Thu, 28 Nov 2024 12:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L9aiU8iH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shQG5JeW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F81A9B51;
-	Thu, 28 Nov 2024 12:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ACF19ADB0
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732798523; cv=none; b=PrVckse01oP269LVV8RrfprhhLMX40gxiZreZDY/kLSA4B5He3gNV8RHVoCrsCG4SIlw0smAlgcTNPXb78y0zgVedxWvc4OpjsZwmtdzTQ2NF+6k7JcDnk8DZB53kXfBfxJp3GXbw3XRJBztbNJoJ7+q29lk3v/op2RPsNtcLg0=
+	t=1732798491; cv=none; b=WuK6ACIb/wTDCnFN03nYmDiSIoHLiZpseqrI0Fh4ObB5a3D3/6BQki9LxD0yOSlXj3742l9It9jz4vFZRDUbpCQnuRsyYcPgxgo+1H5w9E0qi+oePGb8dLptlPL53DZ8N6zIxqMrkhw6FGhDg0uISKMiHyLz0hPD0UkmpCFnVn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732798523; c=relaxed/simple;
-	bh=kmClH6K+ZKxbtSiVWiRLeiqkhHiTkiq5DgAxlIoY11I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IDjGHmI53Oi/kWHzZvFyf78pil05bdAd1kopUlOaHBPK2PeBU30sS7QkWnFgnAjAjQV8kmi/ZEoAyLp3eQrYZur2Cgd+FNd5lKKXhx139s7EF7F1VvjV3HWrVgSXZyR5yVGuvWDf04yPSydr7l4aaWzeBS8K/Fl7TDMRzyXIKdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L9aiU8iH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS8bMQB022932;
-	Thu, 28 Nov 2024 12:55:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2L0CerSr3kMsoq1YLCEchm17fKUPWuJk+2P/A5PgZiM=; b=L9aiU8iHm/t3jY7x
-	F4n+OWWdNaUOt++Cz23qQcqZIh62roE2DFFtlkMKzbdmwl7Gh3E/BhEZyRJK/jT6
-	DdKOdiDcM7O/2Mfzb0uiJNvQEv4DXBth9vaBCjsVlJPIfScP/udC5cU5mHSk58EB
-	bdNTumgSeRmyDpC/Ej5rRlMzlVtwRngketTvJMoF/51/+leiIsVhNteNhdflILXm
-	FvisVkLQFzpyXpewYHYwZZ3AEb6L++uv3d9SfvKUhycL/BMHK0nmDIRvvnLo2zbq
-	7OX7nchCLSe3v7lhpQZGWLcbJoTER+uYxHRWatvMyyGRiVFrjy1VHOA0/5/XzqmQ
-	GmwARQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xwjqpk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 12:55:04 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ASCt3id028923
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 12:55:03 GMT
-Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 28 Nov 2024 04:54:59 -0800
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <namhyung@kernel.org>, <mark.rutland@arm.com>,
-        <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-        <irogers@google.com>, <adrian.hunter@intel.com>,
-        <kan.liang@linux.intel.com>, <james.clark@linaro.org>,
-        <yangyicong@hisilicon.com>, <song@kernel.org>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <quic_zhonhan@quicinc.com>
-Subject: [PATCH 3/3] perf bpf: Fix two memory leakages when calling perf_env__insert_bpf_prog_info()
-Date: Thu, 28 Nov 2024 20:54:32 +0800
-Message-ID: <20241128125432.2748981-4-quic_zhonhan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
-References: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+	s=arc-20240116; t=1732798491; c=relaxed/simple;
+	bh=uTxcaGHyarht/eBbrB9eFSjtfp5FO0euprQVdFF/Jd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVTSpedXkC/di9HW9m+RZ7McI2G7CAy3DeZASvEY+hEq8l1rHUr+5tVzzMykrARlWlBIqSGG+MztrJahsCcb+Oyz2DT/5PbepDNP1StSCAiSZ0VAQ/bqCckm6PEIKFREsWAR9QhvwH7UAJLuJJdulopnN0z4dko5tU14nNEtOLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shQG5JeW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A708C4CECE;
+	Thu, 28 Nov 2024 12:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732798490;
+	bh=uTxcaGHyarht/eBbrB9eFSjtfp5FO0euprQVdFF/Jd4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=shQG5JeWb6bT7YY6AkYM3vxQou1HqPVqfoB9inPcwx+UrskEcg7bCXYtHGbmrvoUq
+	 i8IjvkeThxcXWEyHUXlag7WWVAsWXL+IeCQlP6RATWVEocCrUyLbBuAG5R6nTbdswo
+	 DAyelQdJAUF/foHb40vmJfBjppn3O5Ss5rfefDZgTpz7zrqJycoNFLS+xEUyteDOm2
+	 BCeY9om57A/RJOo1HVAAyB9cE1qqGATQcZg4jN04um8yzPtCjfJP3qX9a86br+Pm9+
+	 g6XMDnQGLDtpdeTw8kMvAPX/y7M7eZDqq9f9pquf2NntX2fYvtvH0U5UAtFQO8sZXs
+	 iDwbvYzQwnKSA==
+Date: Thu, 28 Nov 2024 12:54:46 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] regmap: detach regmap from dev on regmap_exit
+Message-ID: <91c85c92-573f-4ddd-9939-628b9619d733@sirena.org.uk>
+References: <20241127212233.330983-1-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: R1vVtqECV7v4n1oGNtvC-IJyQPzlTA0V
-X-Proofpoint-GUID: R1vVtqECV7v4n1oGNtvC-IJyQPzlTA0V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- adultscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
- mlxscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411280101
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZlEjmhEaKFy6qEmX"
+Content-Disposition: inline
+In-Reply-To: <20241127212233.330983-1-demonsingur@gmail.com>
+X-Cookie: Close cover before striking.
 
-If perf_env__insert_bpf_prog_info() returns false due to a duplicate bpf
-prog info node insertion, the temporary info_node and info_linear memory
-will leak. Add a check to ensure the memory is freed if the function
-returns false.
 
-Fixes: 9c51f8788b5d ("perf env: Avoid recursively taking env->bpf_progs.lock")
-Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
----
- tools/perf/util/bpf-event.c | 10 ++++++++--
- tools/perf/util/env.c       |  7 +++++--
- tools/perf/util/env.h       |  2 +-
- 3 files changed, 14 insertions(+), 5 deletions(-)
+--ZlEjmhEaKFy6qEmX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index 13608237c50e..c81444059ad0 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -289,7 +289,10 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
- 		}
- 
- 		info_node->info_linear = info_linear;
--		perf_env__insert_bpf_prog_info(env, info_node);
-+		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
-+			free(info_linear);
-+			free(info_node);
-+		}
- 		info_linear = NULL;
- 
- 		/*
-@@ -480,7 +483,10 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
- 	info_node = malloc(sizeof(struct bpf_prog_info_node));
- 	if (info_node) {
- 		info_node->info_linear = info_linear;
--		perf_env__insert_bpf_prog_info(env, info_node);
-+		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
-+			free(info_linear);
-+			free(info_node);
-+		}
- 	} else
- 		free(info_linear);
- 
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index d7865ae5f8f5..38401a289c24 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -24,12 +24,15 @@ struct perf_env perf_env;
- #include "bpf-utils.h"
- #include <bpf/libbpf.h>
- 
--void perf_env__insert_bpf_prog_info(struct perf_env *env,
-+bool perf_env__insert_bpf_prog_info(struct perf_env *env,
- 				    struct bpf_prog_info_node *info_node)
- {
-+	bool ret = true;
- 	down_write(&env->bpf_progs.lock);
--	__perf_env__insert_bpf_prog_info(env, info_node);
-+	if (!__perf_env__insert_bpf_prog_info(env, info_node))
-+		ret = false;
- 	up_write(&env->bpf_progs.lock);
-+	return ret;
- }
- 
- bool __perf_env__insert_bpf_prog_info(struct perf_env *env, struct bpf_prog_info_node *info_node)
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index 9db2e5a625ed..da11add761d0 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -178,7 +178,7 @@ int perf_env__nr_cpus_avail(struct perf_env *env);
- void perf_env__init(struct perf_env *env);
- bool __perf_env__insert_bpf_prog_info(struct perf_env *env,
- 				      struct bpf_prog_info_node *info_node);
--void perf_env__insert_bpf_prog_info(struct perf_env *env,
-+bool perf_env__insert_bpf_prog_info(struct perf_env *env,
- 				    struct bpf_prog_info_node *info_node);
- struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
- 							__u32 prog_id);
--- 
-2.25.1
+On Wed, Nov 27, 2024 at 11:22:31PM +0200, Cosmin Tanislav wrote:
+> At the end of __regmap_init(), if dev is not NULL, regmap_attach_dev()
+> is called, which adds a devres reference to the regmap, to be able to
+> retrieve a dev's regmap by name using dev_get_regmap().
+>=20
+> When calling regmap_exit, the opposite does not happen, and the
+> reference is kept until the dev is detached.
+>=20
+> Add a regmap_detach_dev() function, export it and call it in
+> regmap_exit(), to make sure that the devres reference is not kept.
+>=20
+> V2:
+>  * switch to static function
 
+As covered in submitting-patches.rst the inter version changelog should
+go after the --- so it is automatically discarded by tooling.
+
+--ZlEjmhEaKFy6qEmX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdIaBUACgkQJNaLcl1U
+h9Ch4wf/ZhzOWYLGZ1uocxQHT62zv3rv4rULD/wsAIyUfMjkd77nSZ1WtnzLJTCT
+V1aR4OYRrpM6StEL4lvjEyA7TkJDrSkuVKqDGkPwoktXBIKBgOSysj/evhXJJ1lj
+T5L7NwZqPr9NUtQ9TJ/m/H57MQC7lo/S1hJGn+DTBkKMNpYIX1VIdE161Ji0Uilk
+6b9lEADQ2CUM3m/jgC/jQ2Cu1lyfjR9kID5BraFub63J4dr9c9RXHjNRq+E6D4lf
+mh5s3ZbQFEuegtPqaXvDcPLsqrnc/3HukJQ/NmuGAtKNtDCMCqLptXDDzPJ2drwh
+qXOVJnAXf2cXhsNVjU9Kmyh6ceieLg==
+=J5rM
+-----END PGP SIGNATURE-----
+
+--ZlEjmhEaKFy6qEmX--
 
