@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-425138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206CA9DBDE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:09:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 238F69DBDE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:16:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75441648F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:09:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF82E161B07
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DECB1C5793;
-	Thu, 28 Nov 2024 23:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3091A1C727F;
+	Thu, 28 Nov 2024 23:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G43P13K9"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7m9hscT"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78DD15250F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 23:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27408157A67;
+	Thu, 28 Nov 2024 23:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732835342; cv=none; b=PjR71cqzbl/OvOu6UUikw0vSwiJQOJC4fXnRKK17qiD1ORs/nv+IZGwnnIFIa2mL4iE5Uxi7AngJibKxk8ybWdW48fj2ckKYc9teBubDIt8ttEzPVXsRL96JeuGtr9iukUobTtj1BzJ+12eECmw7O+piJrLXUChtOqKXXssWOX8=
+	t=1732835769; cv=none; b=nTCcNvnrb7DtALIyQ8tvBQPyN6d7qgsSUzaQg1PT+lb+nFPRdr8EhLQ1gva+IrwOuNgkYJZSzv0V2v7D4sv2lLQd8h4gk211PBqXzDilMsxdA5HRADrltnJe80MGG5NqrjxTEyStdlFrWvqfAvR8tv1CkcIuMvMMSinzOczEscM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732835342; c=relaxed/simple;
-	bh=Dbcv1JjOxDrAkccSNGF3uB1TyIf75kxPwnKq2nF90f8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ghmw66lneGdnJPQNzMeex9C12PXj0uokb9tNqwqECwbmpgkxA6sF3GsZ8zTxW7af4YWkrPSMDnb1v0QpruQ4cOjUsJ5JkWWiFY5Y3xAkypafEcY0hlJPMPD8fdHXKfrqaspwKTaaALeTDyuVWd6USJ8n8xpRkRuEmrDDJLaZ4mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G43P13K9; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1732835769; c=relaxed/simple;
+	bh=DC3MRS4obiq9akDBXw/+rZUOFRaPaxg02JSBq4jldGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWumR1+hWy8ZMY9yAFh5VD+jdExaJ9KaVLZjkM3pLAYnD7DrC/8WA05LFHsLuCZZ+JgkpGbe3eajzOhQzUOaKyQytYyHDfnLYJWY1iX6JMM/usOCkzDs8fKyOiDKt1/d40IJwWDBzU77Rqno6E5xswittwrNC1K42PikPbTekqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7m9hscT; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b667d2fb9dso71616285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:09:00 -0800 (PST)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724f383c5bfso1018936b3a.1;
+        Thu, 28 Nov 2024 15:16:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732835340; x=1733440140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=73AVzzP2v1m625wf6xJ/CbK4UaWJ5lWVRfV8EUqXnOk=;
-        b=G43P13K9idpuRHgGBHNuMuvAxIBlMjjSgBmYMnSj7VVYGjcImo3yhX0+f7ikdP7Lns
-         /qs54hPyapgfbxWjlZz8P8/mHC0mydJZnmaVUuYtBRb+FSP/513JygfnMxEBk6JrtgGc
-         FEfx471HBc8Tc0rrCMbdLKBfO+NFxGbfGUsOqEEMCYVOjvzCZr7JNwUGyUNbS1Q2szHG
-         fTRfxeASueK8WKes8woUBEeJs0f7boAF/vEiDN0KWX2E+apv6AEiWZD/tlsIWEmBejuI
-         7TMSb1QO5bbUK6iQ3MaoMAf++nRCilJjPGljZHToqHz0KhKvhf/1CYJyg7T3haY+EajV
-         iydw==
+        d=gmail.com; s=20230601; t=1732835767; x=1733440567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eeoVHhClbRHMNEOjFXigSnIp+fG4ZCi/q2qwDZwIfdU=;
+        b=m7m9hscTpgeAA0Ca1yoMk5VJBTHkELXecc/ue7kTkG3uqqTc4nPpRjFNgDb4TWg0Dv
+         pbZeOi8iAGf7LR7e0vhPtFx7xER4Wg0awo+2QTRHyOb8zfgRTa0z8YkSYZgzBWx1pIWY
+         64wDXnhDJwS/LhRsziVIJI9TxRB85oJVhipWCtjwWsLOeYissz3R6XN281zk9ORBhOKi
+         69mBH7xPfSJlmTMOgYJwPlAYdtYkQSuNiFaWIGk6PAEUf9bUEkGK45+Ij+bRJg8edl/U
+         mgodo6oc01X5QUAzLvZDYrz0SBCDMbTv2gYU+xVMY3PSVnYCyV17w6/Dvd51fgfPPPJG
+         TMjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732835340; x=1733440140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=73AVzzP2v1m625wf6xJ/CbK4UaWJ5lWVRfV8EUqXnOk=;
-        b=aylw5Bl77skdCIKMspABOrTsvcTpNEcPesTBtOW2TgmWgb+oMam7V14nPk2SN1WxnI
-         zj06A2WN2Kf4bb7ffJ9w95AYM2EyXtuLJFP2q+TsOZYRU6bh/fBYtKD00bSYHbKLlwYB
-         YC3CLL65Bsbtmq2T20GE22ImcC0Sweq56zZOqgtJ+HiSfPooiDGIz0vXNf4fQKkNPAdI
-         SjMyMb6c/v5S4q8PGCA+oU8245QG6jXUGuetSWts/OTs/kkmqfMjD82WY7e1WXuYwjwE
-         f8TU6rdNvCwBym+47mk6Z6kd+xeCQe4ab9AjJBSn7g16cu4wlmZROCZYQ3R3DsLeANyn
-         BYyA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0c3nnHlB5HckvZsIXOucMM9rFb8xZLmQZu3xwujep72H2YD4eoWHeiMV9io4Ea+B2lNtK8cLXmcKSWI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7ifxxGwPeiSQk/amItiaLLfH3+pcvS4Q5yQ1JAyB0+NBtsMds
-	g94fqHZykOa5Dlh/8FBWf+Z04c76XlpHbgQyvZv6wyhbhnAsVCpCkYvhzaUwqx88t1GrLDgIuVR
-	akKWfEiJeaGTMdJSfPB+YDVm0Ixk=
-X-Gm-Gg: ASbGncshfgmt7TfV1yPLpSk2CO0KIYr9wfP/XbqDmBepEaU3JhXJBYQIa1biYikhZwL
-	iS8Fn5CcUEuUTYmToTMT4SIAk/fp5gROQ5oIIDgX4CKOaWfn5n5lwOUWSy66vM+wFUQ==
-X-Google-Smtp-Source: AGHT+IEMgywl73xEWtsWe0pwsi0QHZeQHj2IfZ8pzf/4HpesUX2DC/FR25/TSrlLpjPifzadfwa23N2UrJho1ZIWbIY=
-X-Received: by 2002:a05:620a:1b98:b0:7b6:668a:5a7 with SMTP id
- af79cd13be357-7b67c4a3ab4mr1192641985a.62.1732835339756; Thu, 28 Nov 2024
- 15:08:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732835767; x=1733440567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eeoVHhClbRHMNEOjFXigSnIp+fG4ZCi/q2qwDZwIfdU=;
+        b=O7emJLZ0GS2Fx+Xx2WIYkMpt2/HVOM3KR43CU7+Yhp6E25DO6wo3DmsAEuJUudtlfQ
+         y8daT/WQ+SRoE7ZT7vZleJcrC2ZumkXaAOpradA1Pxo1Na2TijwFES7aTyImSbNsW0/T
+         N3I0KYaeienwLZJh6MEeuevtO0MuWnD6hLPJ4ko62w56X8U7Xo7qnnc7BOZrmuDHJ0Ft
+         dSIdlrRzUJluOBS+3SyYWAR01VS2BcluolE4e8z2DMoPqfw2GPUDn56mk8ZuFL2P1yWI
+         rJO7aWoFxvgIDdM1qqc+mNWiIIoClgkRfVy4C3pd36ZAnF0itZqC99ts7gCYmkyP5Hdw
+         x+QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUukp4gFE+G9G9cFDhxnRywr4SSNxdyu75m9TY6cCAkSULvAW37++WTr2KvwzJw0vzfNR8safPp1GfW@vger.kernel.org, AJvYcCVat555CM5gvgaq/m0GXqmG6yYnPcUIhy/WADq37iYGMCn5Rzd8R1snCt8SBM62MMeePts6aN+gcm3rRKpO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8zsXxqbmcwHGDZIqssYk1E9yDJT+o5uYZOw4xeK9iEsfAyk/C
+	3ruTBLa98p9end3ZVpSsjCuVYzCcDBSZ4OfWPz4xgLqZWXyYC/SG
+X-Gm-Gg: ASbGnctiEP8qwBc525wlOjBqM3Xc0BaWHTBdO/3Je4Xj+EICHuvrSNydJyBOTdWmOQE
+	3AjcxETEj1Ro2yYUVElcgAuTRdywch4xi9uPbPk/toscwpseWjBTGkic8OCOWvP8gb0Cr/03opq
+	1n/2+Kyn0dkZXHza/ifOQ7f2T7fuqIzoD+8MEFLQPtmRK4Hlx3Z5h6sIV3/k7WICUv88HBN0UbA
+	tbSmCVESinx9TVobZD/C/IegEU4Rs9hVukk42w1tMVHXTVMFw==
+X-Google-Smtp-Source: AGHT+IGP7i1wkE6RXGcp1WsztRZKiZigxuAV4HWiC3crop7SkPxPXAbFlRQNSzk1+A6RQV8L30sT9A==
+X-Received: by 2002:a17:90b:3ec9:b0:2ea:8565:65bc with SMTP id 98e67ed59e1d1-2ee097c59f0mr11320529a91.23.1732835767263;
+        Thu, 28 Nov 2024 15:16:07 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:bb0d:3829:251:d17e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f455fsm18965175ad.29.2024.11.28.15.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 15:16:06 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:16:04 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] device property: fix UAF in
+ device_get_next_child_node()
+Message-ID: <Z0j5tGF9ikgVR_0w@google.com>
+References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
+ <20241128053937.4076797-2-dmitry.torokhov@gmail.com>
+ <Z0huCS4Z7dkgpCQ8@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116091658.1983491-1-chenridong@huaweicloud.com>
- <20241116091658.1983491-2-chenridong@huaweicloud.com> <Zzq8jsAQNYgDKSGN@casper.infradead.org>
- <CAGsJ_4x0OrdhorQdz8PyLD84GOYVZJ7kLfGV_5yupLG_ZQ_B3w@mail.gmail.com>
- <ZzrA5nXldoE2PWx4@casper.infradead.org> <7e617fe7-388f-43a1-b0fa-e2998194b90c@huawei.com>
-In-Reply-To: <7e617fe7-388f-43a1-b0fa-e2998194b90c@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 29 Nov 2024 12:08:48 +1300
-Message-ID: <CAGsJ_4yA5graSSE3cBf_RB=cGc3hLpcB-3pR9ymVfzKx_dg3Zg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/1] mm/vmscan: move the written-back folios to the
- tail of LRU after shrinking
-To: chenridong <chenridong@huawei.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
-	Chen Ridong <chenridong@huaweicloud.com>, akpm@linux-foundation.org, mhocko@suse.com, 
-	hannes@cmpxchg.org, yosryahmed@google.com, yuzhao@google.com, 
-	david@redhat.com, ryan.roberts@arm.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, wangweiyang2@huawei.com, xieym_ict@hotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0huCS4Z7dkgpCQ8@smile.fi.intel.com>
 
-On Mon, Nov 25, 2024 at 2:19=E2=80=AFPM chenridong <chenridong@huawei.com> =
-wrote:
->
->
->
-> On 2024/11/18 12:21, Matthew Wilcox wrote:
-> > On Mon, Nov 18, 2024 at 05:14:14PM +1300, Barry Song wrote:
-> >> On Mon, Nov 18, 2024 at 5:03=E2=80=AFPM Matthew Wilcox <willy@infradea=
-d.org> wrote:
-> >>>
-> >>> On Sat, Nov 16, 2024 at 09:16:58AM +0000, Chen Ridong wrote:
-> >>>> 2. In shrink_page_list function, if folioN is THP(2M), it may be spl=
-ited
-> >>>>    and added to swap cache folio by folio. After adding to swap cach=
-e,
-> >>>>    it will submit io to writeback folio to swap, which is asynchrono=
-us.
-> >>>>    When shrink_page_list is finished, the isolated folios list will =
-be
-> >>>>    moved back to the head of inactive lru. The inactive lru may just=
- look
-> >>>>    like this, with 512 filioes have been move to the head of inactiv=
-e lru.
-> >>>
-> >>> I was hoping that we'd be able to stop splitting the folio when addin=
-g
-> >>> to the swap cache.  Ideally. we'd add the whole 2MB and write it back
-> >>> as a single unit.
-> >>
-> >> This is already the case: adding to the swapcache doesn=E2=80=99t requ=
-ire splitting
-> >> THPs, but failing to allocate 2MB of contiguous swap slots will.
-> >
-> > Agreed we need to understand why this is happening.  As I've said a few
-> > times now, we need to stop requiring contiguity.  Real filesystems don'=
-t
-> > need the contiguity (they become less efficient, but they can scatter a
-> > single 2MB folio to multiple places).
-> >
-> > Maybe Chris has a solution to this in the works?
-> >
->
-> Hi, Chris, do you have a better idea to solve this issue?
+On Thu, Nov 28, 2024 at 03:20:09PM +0200, Andy Shevchenko wrote:
+> On Wed, Nov 27, 2024 at 09:39:35PM -0800, Dmitry Torokhov wrote:
+> > fwnode_get_next_child_node() always drops reference to the node passed
+> > as the "child" argument,
+> 
+> As commented previously,it might be just a documentation bug. So, please
 
-Not Chris. As I read the code again, we have already the below code to fixu=
-p
-the issue "missed folio_rotate_reclaimable()" in evict_folios():
+No, absolutely not. Consider calling device_get_next_child_node() with
+"child" pointing to the last child of the primary fwnode.
+fwnode_get_next_child_node() will drop the reference to "child"
+rendering it unusable, and return NULL. The code will go and call
+fwnode_get_next_child_node(fwnode->secondary, child) with invalid child
+pointer, resulting in UAF condition.
 
-                /* retry folios that may have missed
-folio_rotate_reclaimable() */
-                list_move(&folio->lru, &clean);
+Also, consider what happens next. Let's say we did not crash and instead
+returned first child of the secondary node (let's assume primary is an
+OF node and secondary is a software node). On the next iteration of
+device_get_next_child_node() we will call
+fwnode_get_next_child_node(fwnode, child) which results in passing
+swnode child to of_fwnode_get_next_child_node() which may or may not
+work. It all is very fragile.
 
-It doesn't work for you?
+That is why it is best to check if the child argument is indeed a child
+to a given parent before calling fwnode_get_next_child_node() on them.
 
-commit 359a5e1416caaf9ce28396a65ed3e386cc5de663
-Author: Yu Zhao <yuzhao@google.com>
-Date:   Tue Nov 15 18:38:07 2022 -0700
-    mm: multi-gen LRU: retry folios written back while isolated
+> elaborate on the use case before this patch that leads to an issue.
+> 
+> > which makes "child" pointer no longer valid
+> > and we can not use it to scan the secondary node in case there are no
+> > more children in primary one.
+> > 
+> > Also, it is not obvious whether it is safe to pass children of the
+> > secondary node to fwnode_get_next_child_node() called on the primary
+> > node in subsequent calls to device_get_next_child_node().
+> > 
+> > Fix the issue by checking whether the child node passed in is indeed a
+> > child of primary or secondary node, and do not call
+> > fwnode_get_next_child_node() for the wrong parent node. Also set the
+> > "child" to NULL after unsuccessful call to fwnode_get_next_child_node()
+> > on primary node to make sure secondary node's children are scanned from
+> > the beginning.
+> 
+> To me it sounds over complicated. Why not just take reference to the child once
+> more and put it after we find next in either cases?
 
-    The page reclaim isolates a batch of folios from the tail of one of the
-    LRU lists and works on those folios one by one.  For a suitable
-    swap-backed folio, if the swap device is async, it queues that folio fo=
-r
-    writeback.  After the page reclaim finishes an entire batch, it puts ba=
-ck
-    the folios it queued for writeback to the head of the original LRU list=
-.
+You want to "reset" when switching from primary node over to secondary
+instead of hoping that passing child pointer which is not really a child
+to secondary node will somehow cause fwnode_get_next_child_node() to
+return first its child.
 
-    In the meantime, the page writeback flushes the queued folios also by
-    batches.  Its batching logic is independent from that of the page recla=
-im.
-    For each of the folios it writes back, the page writeback calls
-    folio_rotate_reclaimable() which tries to rotate a folio to the tail.
+> Current solution provides
+> a lot of duplication and makes function less understandable.
 
+The simplicity of the old version is deceiving. See the explanation
+above.
 
-    folio_rotate_reclaimable() only works for a folio after the page reclai=
-m
-    has put it back.  If an async swap device is fast enough, the page
-    writeback can finish with that folio while the page reclaim is still
-    working on the rest of the batch containing it.  In this case, that fol=
-io
-    will remain at the head and the page reclaim will not retry it before
-    reaching there.
+Thanks.
 
-    This patch adds a retry to evict_folios().  After evict_folios() has
-    finished an entire batch and before it puts back folios it cannot free
-    immediately, it retries those that may have missed the rotation.
-    Before this patch, ~60% of folios swapped to an Intel Optane missed
-    folio_rotate_reclaimable().  After this patch, ~99% of missed folios we=
-re
-    reclaimed upon retry.
-
-    This problem affects relatively slow async swap devices like Samsung 98=
-0
-    Pro much less and does not affect sync swap devices like zram or zswap =
-at
-    all.
-
->
-> Best regards,
-> Ridong
-
-Thanks
-Barry
+-- 
+Dmitry
 
