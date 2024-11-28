@@ -1,338 +1,208 @@
-Return-Path: <linux-kernel+bounces-424959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6ED9DBBC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:31:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E1B9DBBCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1864281C18
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A88281AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1004E1C07EE;
-	Thu, 28 Nov 2024 17:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDBD1C1746;
+	Thu, 28 Nov 2024 17:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dKSvrJhT"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TZzYK1Kr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275CC537F8
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 17:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E51C07EA;
+	Thu, 28 Nov 2024 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732815072; cv=none; b=FOuiU6QS5XTawE5By19dglXF6U0LPAHvxpl/pa34sqJ2Ean3z/wD7yjAGgoJgc2iu8sgKXH2oXKBSLTk5pQa01Zg/Pz33zEIr+bgbpvIMECfY/MWd3NbTYDzVeA6JI/td089diMoXkhS5OyVGdtIbZJCCie8rbYfHhn+YA+JdAQ=
+	t=1732815103; cv=none; b=YmNQys2Kkkb5u8XqYWoeOIRMMsgsspZYneNafoAIJyQK1htlHGfnnQecTVm6cCgZRQMDCyArgq7lyfstFhflt28kvxqIogyqp3IGDFRKm+o2t1YJrZ5Kg3IAXftLcm5bp2uvcrYkgDUfqI6eTxGncRAfsx++syT9H9MjN0M7/J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732815072; c=relaxed/simple;
-	bh=aLEeckbAOzstWQ8GqyUU0U1ON+1IQGvGuu+IScVtjTA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ekzd2u1dF5BqrlCH8ZNMmyKCsyfolgaBq6d0TAekoG0lAK+CU0L8099cB89kFxKZEYCnlK5IKgAr1dv+Cmks4RTOpjcWB2+FHsNfK26o0pbj8/POY+JzlpK5ePjt1HmNVQpPdy7trMIIwWPosCdTKCxQ3rQrhFmEDrMYtwcgL9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dKSvrJhT; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43494a20379so9549115e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:31:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732815066; x=1733419866; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+vhPQ5vvW/JkWuLOCWK7lUJrsyH8KFQdUBUxIro36iU=;
-        b=dKSvrJhT/1Jb8zociwB3MwdsiEqg3EDcrP3CYbnYMHRxu35tezQ3hNFJCNfETgycIK
-         PdpX5nqbB30RZT2pn31TadvlXd0gGhG1Y91fM31FDo1M7ERwrcVEnXMWWd6mCNsQfqCm
-         utB4kaOnQUzlEntO6p3dwR/0IhPKHHtq5taecNUz2RDp/GsXpp/6/QQ4KEi8/4FUXfXo
-         aLt2SQGLU48sFpk+37MuQizeu4doqTUoFbROHhN32KK1lgMv4yGfgTF6co6ECRRs1oRm
-         uzdbbBgfpy8VIVMoutGujT/wYrwxBVr8LzJRlGtgOuFDITsXj0CKj4/09q90r/EcuYot
-         Uiag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732815066; x=1733419866;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+vhPQ5vvW/JkWuLOCWK7lUJrsyH8KFQdUBUxIro36iU=;
-        b=KijJLY0W5E4JXNFWss1NlUQZl+cM3kVdVxSuRskth3AP/9XoRnj9rKQMdR7VN8BrBE
-         N58PevQryHbjToE8M1WHQV8wB9QuqBhO8pslbJlFzrQTLzqirfKnkZ9x1iTw3Ba3TwAD
-         kBf761dI0SFiEgPjQs6OLim0o2Z4GKP8iRpMxZlLTRea1zQYknksUSpAAIIvQn7/eRAM
-         lXeVDSZRZs0hWj+CgzWpsQ7bXHm67KLHTbHuauDuPWsewVLlxsQyqViWHsMHt4Cxq8t2
-         +q1DsB7zFruIURSZGfQ1fwEB4AnfZmZ7sn47pg4okoh/HVQyuQofvHcbek+VeUOTCoCJ
-         mLnw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2aKnrDWz3pLj576hsvjh8idb6UuzhnD2BdFuM8X148o9vwyocwn2y8vCVE8HCq+oMT5MK0/zB1L5+GRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/0WZTSlZe5yvjMBEBiJ7b7o62WNzhxaSd2qk5YfHCNsoFBtWZ
-	gAj2fJQ8l10Gz1FuMYg4WPHtTlOuqx+T4JOOu5WxZml4IG/qaeK7Bv6Mrt89wIBmTUI9+v+8YuQ
-	X
-X-Gm-Gg: ASbGncsdbN5VTlJUwF2n+la6UWluZ8ENiIs23aSQUZfnf14uxfP/r9ax7qINLKJCYAs
-	07eCESaHAEYRNeudlhEHBcYGb6PoRPN52MKBQoZ2Wv4jIcvmYmAPhC9iY2E3TRwia/SC/+fTuQu
-	t6NFltQQIYz1fx1KVtVERxgdrOOZdhVWxZFY3yc1pSCTYSf85WeC9znjWFyi7eSIu5QyZi8+TIy
-	2l5HDlc00xUIVaWr7h91GoWy/8j+dpUHSzuvGOXWfQrZkRHE80Rgo89RlDiJcqz
-X-Google-Smtp-Source: AGHT+IGy64r2d4BwPGWPUsFPOuC+QekB2FZvVFvv+nAYGDgwB8ne+RjEFxW/5fvDEMLff0SYAC5jYA==
-X-Received: by 2002:a05:600c:4447:b0:434:a5bc:70fc with SMTP id 5b1f17b1804b1-434a9dc3c8emr76193385e9.8.1732815066393;
-        Thu, 28 Nov 2024 09:31:06 -0800 (PST)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:b89d:29e9:7047:2d6f])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-434b0dc63f7sm27845545e9.23.2024.11.28.09.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 09:31:05 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 28 Nov 2024 18:30:42 +0100
-Subject: [PATCH v2] clk: amlogic: axg-audio: revert reset implementation
+	s=arc-20240116; t=1732815103; c=relaxed/simple;
+	bh=3AKUuiObs+e1uBCz93ES4BASLwZLDVbY+1tiCBDiXY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=coCiqUP180+WGRSQEn+aKZXU9mVhJkh0LcYeh6VJsKaH/WmZlrcq1BbV4bqpE7l98gaGlZa16NG/squOgDZw2GgdvF9EiJS+MT+CmRPlakITuX5S7IqxGszL9st04XYYQjp9sYskAtTycrTExscuGe0VJD7amzczvzMp6EeuJ7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TZzYK1Kr; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732815102; x=1764351102;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3AKUuiObs+e1uBCz93ES4BASLwZLDVbY+1tiCBDiXY4=;
+  b=TZzYK1KrNsJjJxEEz+eP1dz+FA3g24whzRPTMB1RmYK8xSQzIi9O4Ivh
+   a/yuCHMMDSNXeKBITJu2GxYYTmNO8oaufS68m5ZHrBBbyniRZ7KblbgvX
+   8Wx2xWBfNfKZFGuONSpNjNXGP9UA1Q7HT6NgaRn5bMBeZEwMLrlgNBOBM
+   aAXEmSZwZPXEFVWJ6+3lqHNF9ChtRQeUYXUeRMo9Dz4moQ28TVrF1M5vW
+   g0xrFVzwPPT7PtfEj79xge4OUg6x70aDJppYe65WH3gAMoXRcHGyoLwom
+   aNAAFzMg/Rly3CnVqeUOs/cHYRputSlOoEl0AQCjK2LFE0tuaoJXGiWYE
+   w==;
+X-CSE-ConnectionGUID: zioJRSkBQPiE2Ob9StZnPQ==
+X-CSE-MsgGUID: ek9Jk+ptQKCLqmqGz3vBOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="33199592"
+X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
+   d="scan'208";a="33199592"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 09:31:41 -0800
+X-CSE-ConnectionGUID: DI1xBrGCRJ+g+YmFKEnJ/A==
+X-CSE-MsgGUID: bPriJ3uZTti7iZm1sdUaHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
+   d="scan'208";a="92387059"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 28 Nov 2024 09:31:37 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tGiMZ-0009rn-1r;
+	Thu, 28 Nov 2024 17:31:35 +0000
+Date: Fri, 29 Nov 2024 01:31:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] iio: accel: kx022a: align with subsystem way
+Message-ID: <202411290140.7k2Z9JSi-lkp@intel.com>
+References: <9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241128-clk-audio-fix-rst-missing-v2-1-cf437d1a73da@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAMGoSGcC/42NTQ6CMBCFr0Jm7Zi2EqWuvIdh0T9gIlDSQSIh3
- N3KCVx+L+99bwMOiQLDvdgghYWY4phBnQpwnRnbgOQzgxKqlFLd0PUvNG9PERv6YOIZB2KmsUV
- hK3FVldeX0kLeTynkyuF+1pk74jmm9bha5C/9x7pIlKgb7YWxumpceFiz9mRTOLs4QL3v+xe+3
- Tq+xQAAAA==
-X-Change-ID: 20241127-clk-audio-fix-rst-missing-0b80628d934b
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6830; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=aLEeckbAOzstWQ8GqyUU0U1ON+1IQGvGuu+IScVtjTA=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnSKjY9lg4Iso/jCF+n+X/G+qgZmozzC246Ji7j
- N/NN1afzIuJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ0io2AAKCRDm/A8cN/La
- hTEHEACAjx33XZCOL9voJIHp6Y+XOVDEiu7pZdppFk0QxnXtDHuCuuxqVxPShihgKbOuHmiCGl2
- K9s7KWxhU654c4CmjJzt/pDl6CfY5D8ysjwzI3Fbq6n8xvjpjL5QlXJhos4trCJr+xaBSVx970w
- ZKFYj8UWvkqq7cE3pQJPbsYckndk4ZEcplo6mTtnP5ePX/i/HusZsAPr9CTAUjY8Gt9oG3Nv5OE
- +RMp7Sh/HoccpH2svTDo9gXD15zWyL6jU4BhJcWdpMRrFZ8xyA+hZ2/yt1W34CHd8mB6VYsbcov
- y0bcvlZmgTIMZeqtER6GfwcZL4NlEwEnAeP4Ew+I07I2XRVCyv2catmuDjFqREZXkyE/H2CG5hH
- ybO+q/yqTAmRJmWNcSQmw9gMOdw9EeafxIK13nZBZ/JtmjgwnEGQgE71VdqDcQyyBSz0FIker6/
- 9xmekeIlOFStPBc5ot1P8NrpT8nQz+DwyBwg1rVmL/tbxe6QeTosWqhUxZa3/JyeHWetCe1n0cz
- aZoY9bljfS3Emsj+fxew40Ru6LqCxAv8E01HUxQzgXE0MJFgDOU3u1ik7Vfhng7YkYeDP4QTS/c
- tgBbMV7lImQUEVlmG9CrjpsSVQaFRjl3LmReMhUdolJtBboYjIMEX/3J1HDgregJ1I4M8HHHAQo
- HLn79faeNBv+Ycw==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount@gmail.com>
 
-The audio subsystem of axg based platform is not probing anymore.
-This is due to the introduction of RESET_MESON_AUX and the config
-not being enabled with the default arm64 defconfig.
+Hi Matti,
 
-This brought another discussion around proper decoupling between
-the clock and reset part. While this discussion gets sorted out,
-revert back to the initial implementation.
+kernel test robot noticed the following build errors:
 
-This reverts
- * commit 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
- * commit 664988eb47dd ("clk: amlogic: axg-audio: use the auxiliary reset driver")
+[auto build test ERROR on a61ff7eac77e86de828fe28c4e42b8ae9ec2b195]
 
-Both are reverted with single change to avoid creating more compilation
-problems.
+url:    https://github.com/intel-lab-lkp/linux/commits/Matti-Vaittinen/iio-accel-kx022a-Use-cleanup-h-helpers/20241128-170626
+base:   a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
+patch link:    https://lore.kernel.org/r/9b63813ecf10b1cd0126cb950bc09514c4287b9a.1732783834.git.mazziesaccount%40gmail.com
+patch subject: [PATCH v3 7/7] iio: accel: kx022a: align with subsystem way
+config: i386-buildonly-randconfig-003-20241128 (https://download.01.org/0day-ci/archive/20241129/202411290140.7k2Z9JSi-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411290140.7k2Z9JSi-lkp@intel.com/reproduce)
 
-Fixes: 681ed497d676 ("clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX")
-Cc: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
-Changes in v2:
-- Drop symbol selection and revert to the previous implementation
-- Link to v1: https://lore.kernel.org/r/20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411290140.7k2Z9JSi-lkp@intel.com/
 
-Hello Stephen,
-This fixes a problem introduced in this merge window.
-Could you please take it directly ?
+All errors (new ones prefixed by >>):
 
-Thanks
----
+   In file included from drivers/iio/accel/kionix-kx022a.c:17:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iio/accel/kionix-kx022a.c:507:2: error: call to undeclared function 'if_not_cond_guard'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     507 |         if_not_cond_guard(iio_claim_direct_try, idev)
+         |         ^
+>> drivers/iio/accel/kionix-kx022a.c:507:47: error: expected ';' after expression
+     507 |         if_not_cond_guard(iio_claim_direct_try, idev)
+         |                                                      ^
+         |                                                      ;
+>> drivers/iio/accel/kionix-kx022a.c:507:20: error: use of undeclared identifier 'iio_claim_direct_try'
+     507 |         if_not_cond_guard(iio_claim_direct_try, idev)
+         |                           ^
+   1 warning and 3 errors generated.
 
----
- drivers/clk/meson/Kconfig     |   2 +-
- drivers/clk/meson/axg-audio.c | 109 ++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 101 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index febb5d7348ff07c2da0cb5fd41d2ad2607e5bd5d..be2e3a5f83363b07cdcec2601acf15780ff24892 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
- 	select COMMON_CLK_MESON_SCLK_DIV
- 	select COMMON_CLK_MESON_CLKC_UTILS
- 	select REGMAP_MMIO
--	depends on RESET_MESON_AUX
-+	select RESET_CONTROLLER
- 	help
- 	  Support for the audio clock controller on AmLogic A113D devices,
- 	  aka axg, Say Y if you want audio subsystem to work.
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 7714bde5ffc038a7a36d267a7149bc9f4e820be2..beda86349389990065954300369e5daa360856c9 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -15,8 +15,6 @@
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
--#include <soc/amlogic/reset-meson-aux.h>
--
- #include "meson-clkc-utils.h"
- #include "axg-audio.h"
- #include "clk-regmap.h"
-@@ -1680,6 +1678,84 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
- 	&sm1_earcrx_dmac_clk,
- };
- 
-+struct axg_audio_reset_data {
-+	struct reset_controller_dev rstc;
-+	struct regmap *map;
-+	unsigned int offset;
-+};
-+
-+static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
-+					unsigned long id,
-+					unsigned int *reg,
-+					unsigned int *bit)
-+{
-+	unsigned int stride = regmap_get_reg_stride(rst->map);
-+
-+	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
-+	*reg += rst->offset;
-+	*bit = id % (stride * BITS_PER_BYTE);
-+}
-+
-+static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct axg_audio_reset_data *rst =
-+		container_of(rcdev, struct axg_audio_reset_data, rstc);
-+	unsigned int offset, bit;
-+
-+	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-+
-+	regmap_update_bits(rst->map, offset, BIT(bit),
-+			assert ? BIT(bit) : 0);
-+
-+	return 0;
-+}
-+
-+static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct axg_audio_reset_data *rst =
-+		container_of(rcdev, struct axg_audio_reset_data, rstc);
-+	unsigned int val, offset, bit;
-+
-+	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-+
-+	regmap_read(rst->map, offset, &val);
-+
-+	return !!(val & BIT(bit));
-+}
-+
-+static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return axg_audio_reset_update(rcdev, id, true);
-+}
-+
-+static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return axg_audio_reset_update(rcdev, id, false);
-+}
-+
-+static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	int ret;
-+
-+	ret = axg_audio_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return axg_audio_reset_deassert(rcdev, id);
-+}
-+
-+static const struct reset_control_ops axg_audio_rstc_ops = {
-+	.assert = axg_audio_reset_assert,
-+	.deassert = axg_audio_reset_deassert,
-+	.reset = axg_audio_reset_toggle,
-+	.status = axg_audio_reset_status,
-+};
-+
- static struct regmap_config axg_audio_regmap_cfg = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -1690,14 +1766,16 @@ struct audioclk_data {
- 	struct clk_regmap *const *regmap_clks;
- 	unsigned int regmap_clk_num;
- 	struct meson_clk_hw_data hw_clks;
-+	unsigned int reset_offset;
-+	unsigned int reset_num;
- 	unsigned int max_register;
--	const char *rst_drvname;
- };
- 
- static int axg_audio_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct audioclk_data *data;
-+	struct axg_audio_reset_data *rst;
- 	struct regmap *map;
- 	void __iomem *regs;
- 	struct clk_hw *hw;
-@@ -1756,11 +1834,22 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	/* Register auxiliary reset driver when applicable */
--	if (data->rst_drvname)
--		ret = devm_meson_rst_aux_register(dev, map, data->rst_drvname);
-+	/* Stop here if there is no reset */
-+	if (!data->reset_num)
-+		return 0;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->map = map;
-+	rst->offset = data->reset_offset;
-+	rst->rstc.nr_resets = data->reset_num;
-+	rst->rstc.ops = &axg_audio_rstc_ops;
-+	rst->rstc.of_node = dev->of_node;
-+	rst->rstc.owner = THIS_MODULE;
- 
--	return ret;
-+	return devm_reset_controller_register(dev, &rst->rstc);
- }
- 
- static const struct audioclk_data axg_audioclk_data = {
-@@ -1780,8 +1869,9 @@ static const struct audioclk_data g12a_audioclk_data = {
- 		.hws = g12a_audio_hw_clks,
- 		.num = ARRAY_SIZE(g12a_audio_hw_clks),
- 	},
-+	.reset_offset = AUDIO_SW_RESET,
-+	.reset_num = 26,
- 	.max_register = AUDIO_CLK_SPDIFOUT_B_CTRL,
--	.rst_drvname = "rst-g12a",
- };
- 
- static const struct audioclk_data sm1_audioclk_data = {
-@@ -1791,8 +1881,9 @@ static const struct audioclk_data sm1_audioclk_data = {
- 		.hws = sm1_audio_hw_clks,
- 		.num = ARRAY_SIZE(sm1_audio_hw_clks),
- 	},
-+	.reset_offset = AUDIO_SM1_SW_RESET0,
-+	.reset_num = 39,
- 	.max_register = AUDIO_EARCRX_DMAC_CLK_CTRL,
--	.rst_drvname = "rst-sm1",
- };
- 
- static const struct of_device_id clkc_match_table[] = {
+vim +/if_not_cond_guard +507 drivers/iio/accel/kionix-kx022a.c
 
----
-base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
-change-id: 20241127-clk-audio-fix-rst-missing-0b80628d934b
+   490	
+   491	static int kx022a_write_raw(struct iio_dev *idev,
+   492				    struct iio_chan_spec const *chan,
+   493				    int val, int val2, long mask)
+   494	{
+   495		struct kx022a_data *data = iio_priv(idev);
+   496		int ret, n;
+   497	
+   498		/*
+   499		 * We should not allow changing scale or frequency when FIFO is running
+   500		 * as it will mess the timestamp/scale for samples existing in the
+   501		 * buffer. If this turns out to be an issue we can later change logic
+   502		 * to internally flush the fifo before reconfiguring so the samples in
+   503		 * fifo keep matching the freq/scale settings. (Such setup could cause
+   504		 * issues if users trust the watermark to be reached within known
+   505		 * time-limit).
+   506		 */
+ > 507		if_not_cond_guard(iio_claim_direct_try, idev)
+   508			return -EBUSY;
+   509	
+   510		switch (mask) {
+   511		case IIO_CHAN_INFO_SAMP_FREQ:
+   512			n = ARRAY_SIZE(kx022a_accel_samp_freq_table);
+   513	
+   514			while (n--)
+   515				if (val == kx022a_accel_samp_freq_table[n][0] &&
+   516				    val2 == kx022a_accel_samp_freq_table[n][1])
+   517					break;
+   518			if (n < 0)
+   519				return -EINVAL;
+   520	
+   521			scoped_guard(mutex, &data->mutex) {
+   522				ret = kx022a_turn_on_off(data, false);
+   523				if (ret)
+   524					return ret;
+   525	
+   526				ret = regmap_update_bits(data->regmap,
+   527							 data->chip_info->odcntl,
+   528							 KX022A_MASK_ODR, n);
+   529				data->odr_ns = kx022a_odrs[n];
+   530				return kx022a_turn_on_off(data, true);
+   531			}
+   532		case IIO_CHAN_INFO_SCALE:
+   533			n = data->chip_info->scale_table_size / 2;
+   534	
+   535			while (n-- > 0)
+   536				if (val == data->chip_info->scale_table[n][0] &&
+   537				    val2 == data->chip_info->scale_table[n][1])
+   538					break;
+   539			if (n < 0)
+   540				return -EINVAL;
+   541	
+   542			scoped_guard(mutex, &data->mutex) {
+   543				ret = kx022a_turn_on_off(data, false);
+   544				if (ret)
+   545					return ret;
+   546	
+   547				ret = regmap_update_bits(data->regmap,
+   548							 data->chip_info->cntl,
+   549							 KX022A_MASK_GSEL,
+   550							 n << KX022A_GSEL_SHIFT);
+   551				kx022a_turn_on_off(data, true);
+   552	
+   553				return ret;
+   554			}
+   555		default:
+   556			break;
+   557		}
+   558	
+   559		return -EINVAL;
+   560	}
+   561	
 
-Best regards,
 -- 
-Jerome
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
