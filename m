@@ -1,144 +1,81 @@
-Return-Path: <linux-kernel+bounces-424516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862AA9DB534
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:04:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4CC9DB535
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:04:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33885165B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E71282833
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981C215D5B7;
-	Thu, 28 Nov 2024 10:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5253C191F79;
+	Thu, 28 Nov 2024 10:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHhHdt8c"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o66XLKFs"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717AD15382E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5979C84E1C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732788238; cv=none; b=kBac8emYPg/xQ52Iq3wC69dAbM6kO56t796cXbXQ8XaHzgRd/Nv56F4M4yzy9d2ei9XqYAyeliKYvnsxVJLzkJEanFzO/Sb7q6C+PMkP59MBT+CmSNqFyVKh9AAq9/pPxilL++peSeoJVB8gQ0Pi4SCe+ZqMQ+XQHqVifHkNUn8=
+	t=1732788239; cv=none; b=CpRp5LX7yJpCZ2H9PZxrcjvc5oOU16yn4tFSfWTUBtUnz12ktlSI3+zhW2gBD+iVogt5cdvgZSfNCYYyyDiFbxWszuvr7qUzbuR8VK7bxjyh+n4oFDJ+lqJXBkb9bK3RDMIn2LVUU1KbHXP3vUCXyw1uXfZz5QoAM2RKDA43Gcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732788238; c=relaxed/simple;
-	bh=PDA5R35s0zvV72Sy/eNUbvRlmVXzkHmSGuguoNbGg+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KJVTG2dch1FWimaU4PeExtnVEgYYefyVj1MxWtPwbX80Awzs26+C6bDTdoKBBKDokEPSWrS9x16Ww6er5El7q+3F0r7K/sI/H62GBFSuDrzqC2Cnme4hg4VtYJceRBoS+hyQHxABTmC4BSStsp9w6gmHqubbM3n9QVnigb70Rjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FHhHdt8c; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso308896a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:03:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732788236; x=1733393036; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mht+KJSFu6XaPHWUj6vzB5N2enrC6dTa9TKsSc/XTM4=;
-        b=FHhHdt8csQV+Vvj5OdqMZJBtvKIU+KMwb1TvboM91Kmcm4hDC8n4qYVCQCObvus6+p
-         d6xa6GalSuVqqOM9BXQPCsizR/Fvycabm1iVg7CHrDOa5NrtZUL4lh5LCE1+dGtxjjq1
-         xsWo9dFQnu9a1yes0NmSEpuCDO+TGqSUhoGfXPxnfxdBjOyA8VtCc/Qv7tOEh5KlIpfR
-         muTFZz4NsQzseFnMkKcxN6C1G8KifkclVF6ApQAgNr+aLJQvN3j4ixO0Vog1SMHDSrMd
-         ZJs1OrNfXMSLC7sOvX3HrD1CMhjHcAJ+BmjS26O8aB+TTtqALkgktfw8mbXgaE03Bqpk
-         s83Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732788236; x=1733393036;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mht+KJSFu6XaPHWUj6vzB5N2enrC6dTa9TKsSc/XTM4=;
-        b=PIZDgsJLP3Fl+1LdYyAcVpL1iAxXVSTmbDFM2wnHwbgaXMAcdcuKJKGss/HdY4jvES
-         Wh1b/YqVxZOJownvtluufyIWaUFKvt/fCRbrnmVGul9aZZZ4HzM/qBeCmTt9HOdYEJKw
-         sqGuhgNrOZoDJFiI14hH8HZ8KZZuUvyTLWSV/tT7VAYWUlMp7+tN29Z33G/HJ9lvfBph
-         B7UMKKfcFr57ce/73yYAuDT7UV442YkBTCsT7+dLt7P1kSmeOoH16XOc6KK22E/pg5zu
-         UsqeGUizW81PrXFQNJiKOhtCfjaKxhPoQctpCRngONUF97FDRk4EKiiAivIt3svTBYGM
-         Wr1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUotcN9nWlnmKSPhC74L14e+NZ9zY8e1bD3P4xit2BSELwNsUsPTm642VBenl80aphNLWIK6rY8iLoKOT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdfePi9Qlhe0iNlEEnJ9OLF4Ib9BW1jBhLoxoX3p+5L76GSQiR
-	96A0fX5qV48ktuEDI189jQjMbSNMKvQoul/ZCyVVYf2VeaokktG4uRx0CFnjM3dcR7mSuNupNOD
-	3z8FxVeTmsXa9yumRcdZYBfto8MXf+cbo6GDS+g==
-X-Gm-Gg: ASbGnctWH8/yN7B30dr8gwyeNFAw7VeOQ80jy+CbJ0kRsC5UmWP1FcUxMF3sli40DaF
-	ysRQf8mvOljlu1IEt9ekTwFfRBe6bg66eVSKQh/xQ+xzrxUDA8rC1VBtPBKM=
-X-Google-Smtp-Source: AGHT+IEBEgMf3qspbRnpm7FC0WtLKK2owMjwbBKo9/vFX6cqkpDQX/rBdo1PKWgY9kCHFce17MIlDNFhx3B3BOw5Y+Y=
-X-Received: by 2002:a17:90b:4c8c:b0:2ea:6d7a:d6bc with SMTP id
- 98e67ed59e1d1-2ee08fc9f1emr9205017a91.19.1732788235696; Thu, 28 Nov 2024
- 02:03:55 -0800 (PST)
+	s=arc-20240116; t=1732788239; c=relaxed/simple;
+	bh=i3zKEdcNdnHsGuXqihiHbAd8ZLpjA3IgVI//cbeoNww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxsAFRVwjf0Rpt4OqFH5U8lGcKbitOoSLmI/HgiAQa6XO23MkUSv/pdIpbK5F8PD8yCJ2rkfoZmRqyLkMmvjX4+63aSfbImulBvgc5aBX7G2gNsQYcoEHblekBJLAKOVcATLhPOHYpbHWCPjFsez68SwLLWl2ngtbrMR383VipU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o66XLKFs; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cAWH7TJ/SE/rLcXm/WyYVMkfcOhFnCWGLIUAwZRnL8Y=; b=o66XLKFs66yKZ4oy4dJdiGrZ/V
+	IyHzp3aH9cCMk7q7yfH2bivOykNdb9XEDgOUdCQvDN5xOMcINTskv31m3hnmhlJAMAHUaU2FkiFq8
+	kG4yLIaLtrTRkAwCMggJZQIxIw4Pz21rf94hDczxH6kiySh1BlgbgqqZeSjStisR4vjwPHka5psd7
+	6PDRDYb6hJn/kgl3I5vPwRSCjZAHUf6of3KQru4yqKiyqTZiQYJbF+7InaburFNC/3SM/mIOZDgfu
+	PkVTJIkbw4gls2E6halFpvWimxuD8FUFSDwWvZa0DwmOei5wOuvjuhZllL7kAz7lu4cgVToUGbRcP
+	dxxawcOg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tGbNF-00000001aIk-0Pmo;
+	Thu, 28 Nov 2024 10:03:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 75010300271; Thu, 28 Nov 2024 11:03:48 +0100 (CET)
+Date: Thu, 28 Nov 2024 11:03:48 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, pauld@redhat.com, efault@gmx.de,
+	luis.machado@arm.com
+Subject: Re: [PATCH 6/9] sched/fair: Removed unsued cfs_rq.h_nr_delayed
+Message-ID: <20241128100348.GC24400@noisy.programming.kicks-ass.net>
+References: <20241128092750.2541735-1-vincent.guittot@linaro.org>
+ <20241128092750.2541735-7-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128092750.2541735-1-vincent.guittot@linaro.org>
- <20241128092750.2541735-8-vincent.guittot@linaro.org> <20241128094936.GA24400@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241128094936.GA24400@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 28 Nov 2024 11:03:44 +0100
-Message-ID: <CAKfTPtB5LaZf6joAEDePxudi8kU_4vxZ1Was9VZjF+t+btzaXg@mail.gmail.com>
-Subject: Re: [PATCH 7/9] sched/fair: Do not try to migrate delayed dequeue task
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, pauld@redhat.com, 
-	efault@gmx.de, luis.machado@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128092750.2541735-7-vincent.guittot@linaro.org>
 
-On Thu, 28 Nov 2024 at 10:49, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Nov 28, 2024 at 10:27:48AM +0100, Vincent Guittot wrote:
-> > Migrating a delayed dequeued task doesn't help in balancing the number
-> > of runnable tasks in the system.
->
-> But it can help balance the weight; furthermore, by moving them to a
-> lighter queue, they'll get picked sooner and disappear sooner.
+On Thu, Nov 28, 2024 at 10:27:47AM +0100, Vincent Guittot wrote:
+> h_nr_delayed is not used anymore. We now have
+> - h_nr_running which tracks tasks ready to run
+> - h_nr_enqueued which tracks enqueued tasks either ready to run or delayed
+>   dequeue
 
-When groups are not overloaded, we don't compare load but only running
-tasks t balance them across cpus
+Oh, now I see where you're going.
 
-It's only when both src and dst groups are overloaded that we look at
-the load and the weight
-
->
-> Perhaps make it: p->se.sched_delayed && !env->sd->nr_balance_failed ?
-
-So we could take into account which type of migration with
-env->migration_type == migrate_load
-
-In this case, migrating a delayed dequeue task would help
-
->
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 1b4f1b610543..9d80f3a61082 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -9405,11 +9405,15 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
-> >
-> >       /*
-> >        * We do not migrate tasks that are:
-> > -      * 1) throttled_lb_pair, or
-> > -      * 2) cannot be migrated to this CPU due to cpus_ptr, or
-> > -      * 3) running (obviously), or
-> > -      * 4) are cache-hot on their current CPU.
-> > +      * 1) delayed dequeued, or
-> > +      * 2) throttled_lb_pair, or
-> > +      * 3) cannot be migrated to this CPU due to cpus_ptr, or
-> > +      * 4) running (obviously), or
-> > +      * 5) are cache-hot on their current CPU.
-> >        */
-> > +     if (p->se.sched_delayed)
-> > +             return 0;
-> > +
-> >       if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
-> >               return 0;
-> >
-> > --
-> > 2.43.0
-> >
+Let me read the lot again, because this sure as hell was a confusing
+swizzle.
 
