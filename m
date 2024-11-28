@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-424344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6A39DB33D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:41:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34549DB33E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:41:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51402282088
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:41:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6E3164A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF7114D6F6;
-	Thu, 28 Nov 2024 07:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5071C14F115;
+	Thu, 28 Nov 2024 07:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BFfSP/Ew"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PiVUwI2x"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0182814C5A1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EB714B950
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732779668; cv=none; b=kyzWCP9QnMBpFitY+UlNeiYPP481Sr0vX1OWPtBJopjLkmn+nNFfpIPLS1Ae8OssCWVGCRjTYZpz/P5vmxK/Xgnbp9DxPKIo8pjwWrBJqsy3jnIVKSKLB47Ujxd5Iu/rguqRoTRTVPZ+kRNUn1fYc1dW0H2M8/RiTIt1lqz3NrQ=
+	t=1732779669; cv=none; b=ZCG8tfkLszDnTbL/8rP7ZUaAufc+wf12NHtwau6ESRvXSZ7HSqpO4/VJalFHEYDq2HYCwFLtyhzHoi9ZGA81sKXnkfWN/RfcLk51MhinKR7Rauni2PMHHjrdVO9zTCj85Ni+Sta7QGP/FyIQM6boHkR2avM0xfTXwngHMKXMgRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732779668; c=relaxed/simple;
-	bh=fmE+8kcWAfwmmwGyuEAamj+cnsMWh8q4bxMzmNti21o=;
+	s=arc-20240116; t=1732779669; c=relaxed/simple;
+	bh=chign36IwJlCS5OS5dHzGDa9thVIdz+Erw7BUtm8UhU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OrooJHjsRBCQ2u9Rnl23q8Hmki4eI6haA78M9w7pVGQrBaiKiYWooI/h32Izx3IkfoNm0AJVVdB8oNbuP7ZtgoDFaMn4PAvL7lELIK18Wak/sWp0Wna7yKh5Eme8nXthql34lkQbNf5WknlNPX0Ltj2koWyiK3Irjd6YuPEPs1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BFfSP/Ew; arc=none smtp.client-ip=115.124.30.110
+	 MIME-Version; b=oZ6GolmzsbQNYE42BWcNf6z8EmP7j1tdCJJ6JHpp68w1rdjYFLLdVSjv4bvQHUIxcZebD4vecoSZSW4pNSGjni1KXDXGYsMl32BQlgfFYfc8hh20E4bEhWfw1RZanEbGGwOFVr40NgLIbnkUJP/Z4jIUU7tXmfEeZUwvYa6PNi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PiVUwI2x; arc=none smtp.client-ip=115.124.30.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1732779658; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=6HM6mcd3kWqgluzVJQFUY15MBVLtFMN3usvJqqfXf8k=;
-	b=BFfSP/EweevsJSGKCfK0f/ZTFDpI3atJtKf6aSZPcTJEZIFmNM5s6rSTLqKfrP/ubsFdAu3mWKyem0m2PRMNyZfXbqUn2x3vfKl5XxIBJkd+c9oEoMAlOJUwtodqqqHYdextsfmjmca3jMPGttk39hbzgDBvaWsq0BmF4KduDc8=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WKP.Wk0_1732779655 cluster:ay36)
+	t=1732779659; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=iizzfiOOXmZS6eNQ3u5p12da/SLq6MpmcF9cZtSAll0=;
+	b=PiVUwI2x1EHv+5kgdnpTCSKIgLCEANdJ1WcPBIcCy4ATnQ9/P57p0LtFbVi7p3P4fT31fQdUK9RrEEhlDhC/wrHNHkSSQJAQwokQKrLPXkHIaeQDSkJthvQptjKv4lWoO7TkuxZYKrZeJcKEBoWR5r6IXrXHLdd5Cu4pbIPzJGE=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WKOx1q3_1732779656 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 28 Nov 2024 15:40:56 +0800
+          Thu, 28 Nov 2024 15:40:57 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -51,9 +51,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/6] mm: shmem: change shmem_huge_global_enabled() to return huge order bitmap
-Date: Thu, 28 Nov 2024 15:40:40 +0800
-Message-Id: <9dce1cfad3e9c1587cf1a0ea782ddbebd0e92984.1732779148.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH v3 3/6] mm: shmem: add large folio support for tmpfs
+Date: Thu, 28 Nov 2024 15:40:41 +0800
+Message-Id: <035bf55fbdebeff65f5cb2cdb9907b7d632c3228.1732779148.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
 References: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
@@ -65,123 +65,193 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change the shmem_huge_global_enabled() to return the suitable huge
-order bitmap, and return 0 if huge pages are not allowed. This is a
-preparation for supporting various huge orders allocation of tmpfs
-in the following patches.
+Add large folio support for tmpfs write and fallocate paths matching the
+same high order preference mechanism used in the iomap buffered IO path
+as used in __filemap_get_folio().
 
-No functional changes.
+Add shmem_mapping_size_orders() to get a hint for the orders of the folio
+based on the file size which takes care of the mapping requirements.
 
+Traditionally, tmpfs only supported PMD-sized large folios. However nowadays
+with other file systems supporting any sized large folios, and extending
+anonymous to support mTHP, we should not restrict tmpfs to allocating only
+PMD-sized large folios, making it more special. Instead, we should allow
+tmpfs can allocate any sized large folios.
+
+Considering that tmpfs already has the 'huge=' option to control the PMD-sized
+large folios allocation, we can extend the 'huge=' option to allow any sized
+large folios. The semantics of the 'huge=' mount option are:
+
+huge=never: no any sized large folios
+huge=always: any sized large folios
+huge=within_size: like 'always' but respect the i_size
+huge=advise: like 'always' if requested with madvise()
+
+Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
+allocate the PMD-sized huge folios if huge=always/within_size/advise is set.
+
+Moreover, the 'deny' and 'force' testing options controlled by
+'/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
+semantics. The 'deny' can disable any sized large folios for tmpfs, while
+the 'force' can enable PMD sized large folios for tmpfs.
+
+Co-developed-by: Daniel Gomez <da.gomez@samsung.com>
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Acked-by: David Hildenbrand <david@redhat.com>
 ---
- mm/shmem.c | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ mm/shmem.c | 99 ++++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 81 insertions(+), 18 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index ccb9629a0f70..7595c3db4c1c 100644
+index 7595c3db4c1c..54eaa724c153 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -554,37 +554,37 @@ static bool shmem_confirm_swap(struct address_space *mapping,
+@@ -554,34 +554,100 @@ static bool shmem_confirm_swap(struct address_space *mapping,
  
  static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
  
--static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
--				      loff_t write_end, bool shmem_huge_force,
--				      unsigned long vm_flags)
-+static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
-+					      loff_t write_end, bool shmem_huge_force,
-+					      unsigned long vm_flags)
++/**
++ * shmem_mapping_size_orders - Get allowable folio orders for the given file size.
++ * @mapping: Target address_space.
++ * @index: The page index.
++ * @write_end: end of a write, could extend inode size.
++ *
++ * This returns huge orders for folios (when supported) based on the file size
++ * which the mapping currently allows at the given index. The index is relevant
++ * due to alignment considerations the mapping might have. The returned order
++ * may be less than the size passed.
++ *
++ * Return: The orders.
++ */
++static inline unsigned int
++shmem_mapping_size_orders(struct address_space *mapping, pgoff_t index, loff_t write_end)
++{
++	unsigned int order;
++	size_t size;
++
++	if (!mapping_large_folio_support(mapping) || !write_end)
++		return 0;
++
++	/* Calculate the write size based on the write_end */
++	size = write_end - (index << PAGE_SHIFT);
++	order = filemap_get_order(size);
++	if (!order)
++		return 0;
++
++	/* If we're not aligned, allocate a smaller folio */
++	if (index & ((1UL << order) - 1))
++		order = __ffs(index);
++
++	order = min_t(size_t, order, MAX_PAGECACHE_ORDER);
++	return order > 0 ? BIT(order + 1) - 1 : 0;
++}
++
+ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+ 					      loff_t write_end, bool shmem_huge_force,
++					      struct vm_area_struct *vma,
+ 					      unsigned long vm_flags)
  {
++	unsigned int maybe_pmd_order = HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER ?
++		0 : BIT(HPAGE_PMD_ORDER);
++	unsigned long within_size_orders;
++	unsigned int order;
++	pgoff_t aligned_index;
  	loff_t i_size;
  
- 	if (HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER)
--		return false;
-+		return 0;
+-	if (HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER)
+-		return 0;
  	if (!S_ISREG(inode->i_mode))
--		return false;
-+		return 0;
+ 		return 0;
  	if (shmem_huge == SHMEM_HUGE_DENY)
--		return false;
-+		return 0;
+ 		return 0;
  	if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
--		return true;
-+		return BIT(HPAGE_PMD_ORDER);
+-		return BIT(HPAGE_PMD_ORDER);
++		return maybe_pmd_order;
  
++	/*
++	 * The huge order allocation for anon shmem is controlled through
++	 * the mTHP interface, so we still use PMD-sized huge order to
++	 * check whether global control is enabled.
++	 *
++	 * For tmpfs mmap()'s huge order, we still use PMD-sized order to
++	 * allocate huge pages due to lack of a write size hint.
++	 *
++	 * Otherwise, tmpfs will allow getting a highest order hint based on
++	 * the size of write and fallocate paths, then will try each allowable
++	 * huge orders.
++	 */
  	switch (SHMEM_SB(inode->i_sb)->huge) {
  	case SHMEM_HUGE_ALWAYS:
--		return true;
-+		return BIT(HPAGE_PMD_ORDER);
+-		return BIT(HPAGE_PMD_ORDER);
++		if (vma)
++			return maybe_pmd_order;
++
++		return shmem_mapping_size_orders(inode->i_mapping, index, write_end);
  	case SHMEM_HUGE_WITHIN_SIZE:
- 		index = round_up(index + 1, HPAGE_PMD_NR);
- 		i_size = max(write_end, i_size_read(inode));
- 		i_size = round_up(i_size, PAGE_SIZE);
- 		if (i_size >> PAGE_SHIFT >= index)
--			return true;
-+			return BIT(HPAGE_PMD_ORDER);
+-		index = round_up(index + 1, HPAGE_PMD_NR);
+-		i_size = max(write_end, i_size_read(inode));
+-		i_size = round_up(i_size, PAGE_SIZE);
+-		if (i_size >> PAGE_SHIFT >= index)
+-			return BIT(HPAGE_PMD_ORDER);
++		if (vma)
++			within_size_orders = maybe_pmd_order;
++		else
++			within_size_orders = shmem_mapping_size_orders(inode->i_mapping,
++								       index, write_end);
++
++		order = highest_order(within_size_orders);
++		while (within_size_orders) {
++			aligned_index = round_up(index + 1, 1 << order);
++			i_size = max(write_end, i_size_read(inode));
++			i_size = round_up(i_size, PAGE_SIZE);
++			if (i_size >> PAGE_SHIFT >= aligned_index)
++				return within_size_orders;
++
++			order = next_order(&within_size_orders, order);
++		}
  		fallthrough;
  	case SHMEM_HUGE_ADVISE:
  		if (vm_flags & VM_HUGEPAGE)
--			return true;
-+			return BIT(HPAGE_PMD_ORDER);
+-			return BIT(HPAGE_PMD_ORDER);
++			return maybe_pmd_order;
  		fallthrough;
  	default:
--		return false;
-+		return 0;
- 	}
- }
+ 		return 0;
+@@ -781,6 +847,7 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
  
-@@ -779,11 +779,11 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
- 	return 0;
- }
- 
--static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
--				      loff_t write_end, bool shmem_huge_force,
--				      unsigned long vm_flags)
-+static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
-+					      loff_t write_end, bool shmem_huge_force,
-+					      unsigned long vm_flags)
+ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+ 					      loff_t write_end, bool shmem_huge_force,
++					      struct vm_area_struct *vma,
+ 					      unsigned long vm_flags)
  {
--	return false;
-+	return 0;
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 	return 0;
+@@ -1176,7 +1243,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
+ 			STATX_ATTR_NODUMP);
+ 	generic_fillattr(idmap, request_mask, inode, stat);
  
-@@ -1685,21 +1685,21 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 	unsigned long mask = READ_ONCE(huge_shmem_orders_always);
- 	unsigned long within_size_orders = READ_ONCE(huge_shmem_orders_within_size);
- 	unsigned long vm_flags = vma ? vma->vm_flags : 0;
--	bool global_huge;
-+	unsigned int global_orders;
- 	loff_t i_size;
- 	int order;
+-	if (shmem_huge_global_enabled(inode, 0, 0, false, 0))
++	if (shmem_huge_global_enabled(inode, 0, 0, false, NULL, 0))
+ 		stat->blksize = HPAGE_PMD_SIZE;
  
- 	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags)))
+ 	if (request_mask & STATX_BTIME) {
+@@ -1693,14 +1760,10 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
  		return 0;
  
--	global_huge = shmem_huge_global_enabled(inode, index, write_end,
--						shmem_huge_force, vm_flags);
-+	global_orders = shmem_huge_global_enabled(inode, index, write_end,
-+						  shmem_huge_force, vm_flags);
- 	if (!vma || !vma_is_anon_shmem(vma)) {
- 		/*
- 		 * For tmpfs, we now only support PMD sized THP if huge page
- 		 * is enabled, otherwise fallback to order 0.
- 		 */
--		return global_huge ? BIT(HPAGE_PMD_ORDER) : 0;
-+		return global_orders;
- 	}
+ 	global_orders = shmem_huge_global_enabled(inode, index, write_end,
+-						  shmem_huge_force, vm_flags);
+-	if (!vma || !vma_is_anon_shmem(vma)) {
+-		/*
+-		 * For tmpfs, we now only support PMD sized THP if huge page
+-		 * is enabled, otherwise fallback to order 0.
+-		 */
++						  shmem_huge_force, vma, vm_flags);
++	/* Tmpfs huge pages allocation */
++	if (!vma || !vma_is_anon_shmem(vma))
+ 		return global_orders;
+-	}
  
  	/*
-@@ -1732,7 +1732,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 	if (vm_flags & VM_HUGEPAGE)
- 		mask |= READ_ONCE(huge_shmem_orders_madvise);
- 
--	if (global_huge)
-+	if (global_orders > 0)
- 		mask |= READ_ONCE(huge_shmem_orders_inherit);
- 
- 	return THP_ORDERS_ALL_FILE_DEFAULT & mask;
+ 	 * Following the 'deny' semantics of the top level, force the huge
 -- 
 2.39.3
 
