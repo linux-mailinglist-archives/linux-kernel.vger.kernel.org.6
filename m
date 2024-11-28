@@ -1,114 +1,146 @@
-Return-Path: <linux-kernel+bounces-424898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492819DBAF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:58:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910F59DBAF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:00:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C00A3B209A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21EC61644C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CC01BD9D8;
-	Thu, 28 Nov 2024 15:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02411BD9C1;
+	Thu, 28 Nov 2024 16:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="TSix07Kq"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VjrDBsu4"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779711AA1D5;
-	Thu, 28 Nov 2024 15:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD7B3232
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732809498; cv=none; b=sj4bCZ+s9IK0azmS5qhlpvAFg8xUn/bTLeyWPOr00WJuSXOAyelK22h5w/RGeQ3oAZ5HI/0TT92MTHdQpf5rY4iA0ZJfQDwt9FhP0pxW28p3hqaQAGpc0gjb/zqiCmiaEnGXKZHgwb6785eSdvUjPEHuy512nLr8ehFG/D7hW5s=
+	t=1732809627; cv=none; b=tVy8wqzojyA2CJHIHQxeXn9xGrTqyQoBhoq/NO/Q6snMebYibFZ0+v5g1gDC1PUO4oBDfgSmI0Wy/6OpMCFw8IHNHyKkTy4eP9zyDgZFrTLgtUB4pdfaVm8rGAa3/Adb9OCOIqth0bDtJlSGFOs2lD56U0PNfZ6HGTLSMliqAYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732809498; c=relaxed/simple;
-	bh=wzhPYq6ef+ZWDFaSZXznhUC64rBsiaZOuaBa3TgCewE=;
-	h=MIME-Version:Content-Type:Date:Message-ID:Subject:From:To:CC:
-	 References:In-Reply-To; b=hwrJ0rRQSE5wU1f8Pha+7ecgbmLSskhZtRtNjGHiE2PmrAc4cND1YmSmZNXQwSPWEJMXuDGHmcQhEYCqkSgjNPJIJ9NTxmlm94WrHInFvnT/5oF1eJ3FJ1/yVPGsKs6FyRSIJqk38E4DVZ/QGtL8FpLJLgg+8XuNqHNepl3Sk2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=TSix07Kq; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+	s=arc-20240116; t=1732809627; c=relaxed/simple;
+	bh=CEPCLyGcP+5TlVcrY9sskKx8WTDeCpweS8+NStxhbuw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BbAmXbrOY3k8F4qajelnlfpPgAjn6x+sXicqTC7cA/s30ZYN6DiPmQroIyIyOp3uKyy+S3odiBEA7hFXAOgdd1deynL9Z1dX9eqauy5EhEvYKWzcgf15mGLgBDWJ1L92C/pEzGB6qOc7YvgsZgXlC+lut0k55rsospBoS6qIIvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VjrDBsu4; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5cfdc574679so652763a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732809498; x=1764345498;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   subject:from:to:cc:references:in-reply-to;
-  bh=z2xmP1cZOfYevSvzD/k3N5akpqcpBaaiEKDmAcJtr6A=;
-  b=TSix07Kqv5QTzvpUjF/NtmQnTRHuTFTATf+YJ8GJhpNruxxtXoghIrPP
-   N7mK0bm1FxnOEveYVXNeHo0qMu3Zb+NpN/JSZ448MZlcOgtWhd0E5VZVx
-   o1ZEB56X3n5uTjshddimi83QNsKCw2TwofiFtB91wmPnzpuct6BrtZOyB
-   0=;
-X-IronPort-AV: E=Sophos;i="6.12,192,1728950400"; 
-   d="scan'208";a="389106589"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 15:58:11 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:12251]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.116:2525] with esmtp (Farcaster)
- id aa97e48e-099c-4014-b6d4-1285e8d7c9c0; Thu, 28 Nov 2024 15:58:10 +0000 (UTC)
-X-Farcaster-Flow-ID: aa97e48e-099c-4014-b6d4-1285e8d7c9c0
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 28 Nov 2024 15:58:10 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Thu, 28 Nov 2024
- 15:58:05 +0000
+        d=google.com; s=20230601; t=1732809624; x=1733414424; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HCg1Km73Sbp4/xSTNme8D+2Uw46vaSy0dpia+RIb3WE=;
+        b=VjrDBsu4UMXfwI2w7VJHCPDTNjl2Isq9XJYFX6K/ZOygu8fXUTkYwMSyIXdcAaqe5I
+         TXUxJGcDGxU/D08eatGJDMp0UxD29VHKDi4qBrNvfc97k76XEajBOTO8ENTRaQY3x9PO
+         LmbCybEVz8j6fe7wrC3V5uHgkLW0JcaWYUIyXDkRCOhkg1IDFxfZKD33Tc+KNKDMfJrx
+         6jFZZFAVuPDYk6BOuhR5fSmS3mdF4+92+XAJ/ES4SE86PLDW/7svqq0aGA04o2zW/GBv
+         NUKcY2yXx9z6JOU6EJYLjuBbUZ0fgW3c4daHfFfOHNwF6I4RbYDmgfJ2ut+Pz2n6LxP+
+         o5iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732809624; x=1733414424;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HCg1Km73Sbp4/xSTNme8D+2Uw46vaSy0dpia+RIb3WE=;
+        b=p0CtdjP+NBk92syW8Lgqd/3W+lBGialkmnZbENGq7CDdnEXNpzc2YxKq+c3EnImS1N
+         BoqXkK7oUcekp2gy1Z0cAW3uXe1z0GoLLZwv9ZxEyLgZIfb+oNdF2IngIAMpoXDWpTzc
+         YKOjlTQiuCrbuPI3sOpLUqkIJzen0udZTANjU/PIXO74PXPSo2a/MOijTyzPKeRlE0cI
+         +jYs8XQSakEbZFvzhVz++bYJ4KNGT7rdFyG8aysm0r9vTeQuLsl3LfHnIw3fnz6DUR2F
+         /MZVY/tq4qfKYyUjWpILRfJ+ZBwxGuXX8Z216J5KMIRqy7n29AxDXDRVNZ4VOipDtdNI
+         MqJQ==
+X-Gm-Message-State: AOJu0Yxo02lc52iT5l6IpMB9Kc5rpT+DRGPsFG0eAR5FW0ucZp6zGh3I
+	dtkHyy63uMJwf35ugYZUdDu9ZxU7TAe3lJq9VMESLHWJadGgMhVpJvsRBE/89Ir3t0zXfxOleMw
+	eZi9WZ46jrCTHRvclAcvaMYHC1XR+JFE9+BmbBdL6J6DM5tY50Z5qKxVSt14YLVWX1V86GLBbIf
+	HOx17ikUce0zln6eEl1rg6UYs/YKJuVN/PBI+0fwa2XmF5rS982DMmS6vy
+X-Google-Smtp-Source: AGHT+IH7O2F88sy1YkGak+ZTUuWwKlxn8SdhOmaY7RlKSth26WNlQQxcOCfxKgSD/+8oTPB23XqZRw9oivubtks=
+X-Received: from edal21.prod.google.com ([2002:a05:6402:2315:b0:5d0:83b1:b8ab])
+ (user=mmaslanka job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:1e93:b0:5d0:8f29:73b9 with SMTP id 4fb4d7f45d1cf-5d08f2974b0mr4346712a12.28.1732809624031;
+ Thu, 28 Nov 2024 08:00:24 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:59:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241128155926.1774625-1-mmaslanka@google.com>
+Subject: [PATCH v3] ASoC: Intel: avs: da7219: Remove suspend_pre() and resume_post()
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Cezary Rojewski <cezary.rojewski@intel.com>, 
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	"=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?=" <amadeuszx.slawinski@linux.intel.com>, alsa-devel@alsa-project.org, 
+	linux-sound@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 28 Nov 2024 15:58:02 +0000
-Message-ID: <D5XXP2PU3PUK.3HN27QB1GEW09@amazon.com>
-Subject: Re: [PATCH v2 2/2] x86/efi: Apply EFI Memory Attributes after kexec
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Dave Young <dyoung@redhat.com>
-CC: Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H . Peter Anvin"
-	<hpa@zytor.com>, Matt Fleming <matt@codeblueprint.co.uk>,
-	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stanspas@amazon.de>, <nh-open-source@amazon.com>, <stable@vger.kernel.org>,
-	<kexec@lists.infradead.org>
-X-Mailer: aerc 0.18.2-100-gc2048ef30452-dirty
-References: <20241112185217.48792-1-nsaenz@amazon.com>
- <20241112185217.48792-2-nsaenz@amazon.com>
- <CALu+AoTnrPPFkRZpYDpYxt1gAoQuo_O7YZeLvTZO4qztxgSXHw@mail.gmail.com>
-In-Reply-To: <CALu+AoTnrPPFkRZpYDpYxt1gAoQuo_O7YZeLvTZO4qztxgSXHw@mail.gmail.com>
-X-ClientProxiedBy: EX19D044UWB001.ant.amazon.com (10.13.139.171) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-Hi Dave,
+The presence of a plugged jack is not detected after resuming the device
+if the jack was plugged before the device was suspended. This problem is
+ caused by calling the
+ sound/soc/codecs/da7219-aad.c:da7219_aad_jack_det() function on resume,
+ which forces the jack insertion state to be unplugged.
 
-On Fri Nov 22, 2024 at 1:03 PM UTC, Dave Young wrote:
-> On Wed, 13 Nov 2024 at 02:53, Nicolas Saenz Julienne <nsaenz@amazon.com> =
-wrote:
->>
->> Kexec bypasses EFI's switch to virtual mode. In exchange, it has its own
->> routine, kexec_enter_virtual_mode(), which replays the mappings made by
->> the original kernel. Unfortunately, that function fails to reinstate
->> EFI's memory attributes, which would've otherwise been set after
->> entering virtual mode. Remediate this by calling
->> efi_runtime_update_mappings() within kexec's routine.
->
-> In the function __map_region(), there are playing with the flags
-> similar to the efi_runtime_update_mappings though it looks a little
-> different.  Is this extra callback really necessary?
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
+---
+Changes in v3:
+ - Fix line breaks in commit message
+ - Link to v2: https://lore.kernel.org/all/20241128151239.1666582-1-mmaslanka@google.com/
+Changes in v2:
+ - Rephrase commit title and message as suggested in v1
+ - Link to v1: https://lore.kernel.org/all/20241128122732.1205732-1-mmaslanka@google.com/
+---
+---
+ sound/soc/intel/avs/boards/da7219.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-EFI Memory attributes aren't tracked through
-`/sys/firmware/efi/runtime-map`, and as such, whatever happens in
-`__map_region()` after kexec will not honor them.
+diff --git a/sound/soc/intel/avs/boards/da7219.c b/sound/soc/intel/avs/boards/da7219.c
+index 80c0a1a956542..daf53ca490a14 100644
+--- a/sound/soc/intel/avs/boards/da7219.c
++++ b/sound/soc/intel/avs/boards/da7219.c
+@@ -211,21 +211,6 @@ static int avs_create_dai_link(struct device *dev, const char *platform_name, in
+ 	return 0;
+ }
+ 
+-static int avs_card_suspend_pre(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, DA7219_DAI_NAME);
+-
+-	return snd_soc_component_set_jack(codec_dai->component, NULL, NULL);
+-}
+-
+-static int avs_card_resume_post(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, DA7219_DAI_NAME);
+-	struct snd_soc_jack *jack = snd_soc_card_get_drvdata(card);
+-
+-	return snd_soc_component_set_jack(codec_dai->component, jack, NULL);
+-}
+-
+ static int avs_da7219_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_dai_link *dai_link;
+@@ -257,8 +242,6 @@ static int avs_da7219_probe(struct platform_device *pdev)
+ 	card->name = "avs_da7219";
+ 	card->dev = dev;
+ 	card->owner = THIS_MODULE;
+-	card->suspend_pre = avs_card_suspend_pre;
+-	card->resume_post = avs_card_resume_post;
+ 	card->dai_link = dai_link;
+ 	card->num_links = 1;
+ 	card->controls = card_controls;
+-- 
+2.47.0.338.g60cca15819-goog
 
-> Have you seen a real bug happened?
-
-If lowered security posture after kexec counts as a bug, yes. The system
-remains stable otherwise.
-
-Nicolas
 
