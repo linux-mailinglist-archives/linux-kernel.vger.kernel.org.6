@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-424509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806AD9DB526
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:58:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35A38168620
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:58:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C2E158527;
-	Thu, 28 Nov 2024 09:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="subYZv/q"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F2E9DB528
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:59:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C648152E0C;
-	Thu, 28 Nov 2024 09:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C918FB2624F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:59:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED71152E0C;
+	Thu, 28 Nov 2024 09:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGxRlGDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C0A157469;
+	Thu, 28 Nov 2024 09:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732787906; cv=none; b=qeqfbgJJNeIVVAbSrnr9tqiruBcSMHgU5piOFHFYV6Nw7/mchhfWPnFs540tegNPFHG8VNEeAu1itotZDoiLoQl49G19r2cQK2WvdWDVgKekv4w6B1qvLJ7lQmLEuAkYmoNKgLb3ngo807iZWobxi/Ftexmn9N/jHX8chy88tJ8=
+	t=1732787937; cv=none; b=cLzm8grRk7xAb19XTLaUntNajZ2GPPz7zZ58bus3Lp/myOamC1gPV6yH9Jl367loRBFoKT8HMtr3IoZ3MkTJeRP/7LZAXiMYY8Dz//6YC6Gfh3vC41W24KL/Y6wIIvp+yALcnmcRKgASi5yhAiTbX230YYUtfel0EBQ22FwFqvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732787906; c=relaxed/simple;
-	bh=0UnuoR0sx0jhOSSR0WO8rJAQUivimvP18NgQ33LMlb8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ak+5i11fGfGwK6hHZn2kB/q8Q3r4PSDtDYQfYtXWlblUlam2cOE3gKEjoJMhkTALdIlrUM1bVuYDZypblHyTvFcIJ1aPh6Fx7rzprDRuGnDS3TxJvk3jmg3FEJIRu6nu/MRmZ38+WtD/+F6do9x6QXzSNtAUrhLmQgU66zGpx3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=subYZv/q; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AS9wFd1733194
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 28 Nov 2024 03:58:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732787895;
-	bh=lzEelM7jIbS2O9RdoknMU1gIWK7OayEz8i4ohIB16uQ=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=subYZv/qrk2LUGil3IpxfTnfzEpgw5bG3kX+ZLh8QbiA9EsKKfSdnhYZ66yXkdHqL
-	 4A9j0ukm0FN82koccm6XExL2PUyg+8DbR2yXp2eI92sy1lUUqNfIfE30Qz8yDMlMhl
-	 mAildoxYj/KpL4hajhTajmYrdXF+2T4Sl3+5hJ7Y=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AS9wFFW030473;
-	Thu, 28 Nov 2024 03:58:15 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 28
- Nov 2024 03:58:15 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 28 Nov 2024 03:58:14 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AS9wDAi126610;
-	Thu, 28 Nov 2024 03:58:14 -0600
-Date: Thu, 28 Nov 2024 15:28:13 +0530
-From: s-vadapalli <s-vadapalli@ti.com>
-To: Enric Balletbo i Serra <eballetb@redhat.com>
-CC: s-vadapalli <s-vadapalli@ti.com>, Nishanth Menon <nm@ti.com>,
-        "Vignesh
- Raghavendra" <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dasnavis Sabiya
-	<sabiya.d@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
-Message-ID: <wbsg3fmco6rwjj7vtiqtqv7trfjor73j7rjx7efnlafo4pz4bc@awixm2iygd55>
-References: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
- <2nuncc5rscu6h74ylaiu6yozg34aoigaj5d4uzvdtolt5q7bmv@6hacpxyb2532>
- <CALE0LRtUN2N_Z05jH_BMSg7yvirSRob0pSErmQxTu8AatmODgw@mail.gmail.com>
- <CALE0LRu-Sx5oTVNY3hm+Msu-zb04a7_ZD+r3xF1eRfR_WtK0VA@mail.gmail.com>
+	s=arc-20240116; t=1732787937; c=relaxed/simple;
+	bh=RtFHV+7hsw/yZmKt2RkM3VWEnMq//B6X9xSdsYGDMD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fw1brgNd6gfKFPUsFz5aZ/ncxH8A4RfpT3jGk4Bp0qRKy4IVqmC6vM41toTs/TJCeVRIXvRt5wCICQFZ3uFIy8+ki06c4CDA6PlacV0/jC9Clt+0BimTdSVJ8bIaD6nlVmXNG1n6nOmipOdrAEUb1JvmrCq0FQ0mFKQUcdO2Seo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGxRlGDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56794C4CECE;
+	Thu, 28 Nov 2024 09:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732787936;
+	bh=RtFHV+7hsw/yZmKt2RkM3VWEnMq//B6X9xSdsYGDMD4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bGxRlGDBo5zObY3gsauAzj72o3ELJkRGbUhHyUlN1EUxw58SSpFdAb0kjjuZH61uG
+	 XpzZBJRbI/6FAzmcgf5+9mwPa9p0SZEEKob/Kh6plsjSzzcyCrc11aNwE/pWoKWDgw
+	 eU8yRczQxIl/tFLAm516YT3kSvFoJA092FInRV+brwXGP7XjOKHr7rRGGhcGHcpMD8
+	 Ve4WQV0+d70LoQNa8anJX4g2dFp9SYRryACbCfZdy9Ihh4HuvA2+Id64vpJYhEyYIw
+	 XZPHsd/NbA6v7b0VSdjfP5LHH8p2t/yAvHSLKLMmGmco5bw0vnqXoorIZzNQVhjsRf
+	 nPcXX7g3w5HNw==
+Message-ID: <0370e35c-a06b-40dd-90b4-50cc30db224c@kernel.org>
+Date: Thu, 28 Nov 2024 09:58:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CALE0LRu-Sx5oTVNY3hm+Msu-zb04a7_ZD+r3xF1eRfR_WtK0VA@mail.gmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/bpf: bpftool:Fix the wrong format specifier
+To: liujing <liujing@cmss.chinamobile.com>, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241128025551.2868-1-liujing@cmss.chinamobile.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20241128025551.2868-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 28, 2024 at 10:47:42AM +0100, Enric Balletbo i Serra wrote:
-> Hi,
+Please drop the "tools/bpf: " part of the prefix in your patch title,
+it's enough to keep "bpftool: ".
 
-[...]
 
-> So I changed the dr_mode to otg instead of host and tried to configure
-> a usb mass storage gadget but unfortunately didn't work, but this
-> could be a driver problem, I got the following error
+2024-11-28 10:55 UTC+0800 ~ liujing <liujing@cmss.chinamobile.com>
+> The output format of unsigned int should be %u, and the output
+> format of int should be %d, so fix it.
 > 
->   UDC core: g1: couldn't find an available UDC
+> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 > 
-> As the devicetree should describe the hardware, and as far as I can
-> see it should support the type-c port act as a gadget, I'm fine with
-> changing the dr_mode, unless anyone have more information about this,
-> the thing that makes me think a bit more is that, in the TI kernel
-> this is set to host, so I'm wondering if I'm missing something or is
-> just that was never tested.
+> diff --git a/tools/bpf/bpftool/netlink_dumper.c b/tools/bpf/bpftool/netlink_dumper.c
+> index 5f65140b003b..97e1e1dbc842 100644
+> --- a/tools/bpf/bpftool/netlink_dumper.c
+> +++ b/tools/bpf/bpftool/netlink_dumper.c
+> @@ -45,7 +45,7 @@ static int do_xdp_dump_one(struct nlattr *attr, unsigned int ifindex,
+>  	NET_START_OBJECT;
+>  	if (name)
+>  		NET_DUMP_STR("devname", "%s", name);
+> -	NET_DUMP_UINT("ifindex", "(%d)", ifindex);
+> +	NET_DUMP_UINT("ifindex", "(%u)", ifindex);
+>  
+>  	if (mode == XDP_ATTACHED_MULTI) {
+>  		if (json_output) {
+> @@ -168,7 +168,7 @@ int do_filter_dump(struct tcmsg *info, struct nlattr **tb, const char *kind,
+>  		NET_START_OBJECT;
+>  		if (devname[0] != '\0')
+>  			NET_DUMP_STR("devname", "%s", devname);
+> -		NET_DUMP_UINT("ifindex", "(%u)", ifindex);
+> +		NET_DUMP_UINT("ifindex", "(%d)", ifindex);
+>  		NET_DUMP_STR("kind", " %s", kind);
+>  		ret = do_bpf_filter_dump(tb[TCA_OPTIONS]);
+>  		NET_END_OBJECT_FINAL;
 
-Are all interfaces (Type-A and Type-C) functional as Host when the
-dr_mode is set to "otg"? (Do USB devices connected to the interfaces
-enumerate on AM69-SK?) If yes, then it could be a DIP Switch setting
-that is related to OTG mode of operation or a USB-C Mux that needs to be
-configured.
 
-Regards,
-Siddharth.
+Thanks for this. The second chunk is not enough to fix the format
+specifier cleanly, because NET_DUMP_UINT() may end up calling:
+
+	jsonw_printf(self, "%"PRIu64, num);
+
+So you probably need to add a NET_DUMP_INT() wrapper and call it here.
+
+There's also another occurrence of the macro called on a signed
+"ifindex" in net.c, in __show_dev_tc_bpf(), using "(%u)". Let's fix it
+in the same patch, please?
+
+Thanks,
+Quentin
 
