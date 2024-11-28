@@ -1,264 +1,113 @@
-Return-Path: <linux-kernel+bounces-424304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12959DB2CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:36:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4929DB2D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:39:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14EC5B21F80
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:36:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0119E16351B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3C71459F7;
-	Thu, 28 Nov 2024 06:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D36145A19;
+	Thu, 28 Nov 2024 06:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="I+2BytfU"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2050.outbound.protection.outlook.com [40.107.102.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/Q/5J2E"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5C841C94;
-	Thu, 28 Nov 2024 06:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732775766; cv=fail; b=NJdVcihcWfJb57ouY8AlH9NctawK4GUW8c3y9tEzfYNXei5NSYCwgBBsZAtI7COPtKwf42adxd4I3fMWGiVs078Vi7Ao4y1faGg3VJqXOczL1oV7JmCAd2MW35FwGFEJot/a+MfgkuE5W8dbFdhTdTNViNvzLThzprZg7K9epBQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732775766; c=relaxed/simple;
-	bh=ndScTRvBYErUKZLrvxtF1PeySRbhzz9Jvhd4Aed7KuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MjE1Wv0m/+CNffh2+12YHq3LH0DHISNdKkzLBqaZqoSRCG0BdqsA423X2HFGqA7oyrUTuSmS2hkOj/dN/3C8yWXttSFfWrHajuVi9fr/gXeIsGkuC/SXNHHsRKpr3oecYiofkeQPDmfQnntN9fajkjkqbNm83TnQ3ET/r+z9hW8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=I+2BytfU; arc=fail smtp.client-ip=40.107.102.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uRh/tuI6DzkDxQg3n8WQytmJlRCjXtmcI5Zffu9RvYHUfWh8hUEKN2a+xY6yHNtOAeOjX20h3AAOfKN8dWwKmKhcy4LU6ygJYyQzkaOgzvXsrr6GQM3R+aAX9KuWxxFSgwhOxtGaxqVSS3LRGdl1g65oYeRAt6FnEcYHa1IlAs/vE+gUyxINb8WRaXxbV/95IDsq2D/fvmfer9/KW7F7D0GSmjueyC2C2rZ+UGTDlBW7Eo5qOVs6XWbBV5s/OImtXXN7IDDfYp5oxJb0GQWDsXmKGdb/9jhOoJ5XhCvkAtAXuQJRl0JJGKvi6s7h+3jWuZWtFTP1AXuHbUcsNBlLyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=04JGOiJIKv1n2siOElgQBu80VFhGpTEzSrNDxKa+Z5o=;
- b=xsdu+b0lco/mGfFfoD9/RvV3AakmadxOtc1GD5ts9B/QdkI8MYUW3JM2CLv3+UYZDYA22pH0UGXnrB8hOFzbvehVDXU5fVP1RH/N7pu06AB8m8mYYhRDcNzVFcTvBKXfKQZf2b2HyxPVKTJycX/kQ6LY4HaLGpM/rsPp7z1+k+A44kqm1MkzzccFTZGdnRnB6TRjStlt1j8iBb6bIinlEkIrYh+nRkl3IkENtO6pXFlACbf13msQ3Tzuaf4z13j226gRK7Ca5enBhX5zcvZ/sTXsyHxxNtLoOL1VjYtrvO2omVc2SXr+/XbPti/WGj3/6pANwFWk9OBxIhZyBzm14g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=arm.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=04JGOiJIKv1n2siOElgQBu80VFhGpTEzSrNDxKa+Z5o=;
- b=I+2BytfUS+6ve9VYccYWBb2Zl3todZ0LVzKj9x8xlshKo+Df6RUcZdbKebNWt3G4h2ooP3YCtIDxQ9IbvQ0uwJOcGzwQb8PjSdu2oXshfwwJIbqfRi33nVxz8wt+nkncmRn+4B0QPgoABkhpoX96JwtEjwZZEs6FNWXsiCHVmfA=
-Received: from BYAPR01CA0041.prod.exchangelabs.com (2603:10b6:a03:94::18) by
- DS7PR12MB5910.namprd12.prod.outlook.com (2603:10b6:8:7b::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.13; Thu, 28 Nov 2024 06:36:00 +0000
-Received: from SJ1PEPF00002321.namprd03.prod.outlook.com
- (2603:10b6:a03:94:cafe::79) by BYAPR01CA0041.outlook.office365.com
- (2603:10b6:a03:94::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.13 via Frontend Transport; Thu,
- 28 Nov 2024 06:36:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002321.mail.protection.outlook.com (10.167.242.91) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8207.12 via Frontend Transport; Thu, 28 Nov 2024 06:35:59 +0000
-Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Nov
- 2024 00:35:56 -0600
-Message-ID: <531b4ea1-b2e2-4b48-a7cc-4ca63107aff6@amd.com>
-Date: Thu, 28 Nov 2024 12:05:53 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9667B41C94;
+	Thu, 28 Nov 2024 06:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732775969; cv=none; b=uhYkGg8tHjuCp5jse1+SCxTpBjmLtzfVCrbhsQpa8JUepBa6idHim4lOIdNI3Asp/idFSC398OpN4VBHSIhisz1f70+6x+SuDvxZNBrJ7rNd0+FXIxES74ijaoafuYdmVXW1G1p151ooCa5atwMhd5TQ9Izk3tsUDghl3QKcgys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732775969; c=relaxed/simple;
+	bh=qLCiZnEouRsFth6Uf2kQGBslsCb+JqNpQQwhDpLIyA8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mD0K2Tz+OjONWtkXfjcF/EWZ4GDQP1bKa4r/yRN1tSxcgiilVRC2TAOcK1hNG7IVNXHbKQpGuhvdTNQQTcOaMExsHu4G3L/zthNl4OIUWMrgnYOTPt7lZqWfNox3SrtZKyyUMTuEELejvxfAAmzQlXtIk/dZigZLc4k4UKE38IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/Q/5J2E; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21262a191a5so4163835ad.0;
+        Wed, 27 Nov 2024 22:39:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732775964; x=1733380764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JbLdkAOQCxenw8yI9+EWMK8lRQF1ebGSP0oQfGasbLU=;
+        b=Q/Q/5J2EI6UvTEC/uNtcWbSMkbZRnyhzKkEOeW/DuD9/b3A9mt1aSU9aJlcwj9oPud
+         S2Vr6AzsOexvY5CCzQBNSagUnc+666eFwc2PShhnRXPZN9M567E30MUrvvFG/TkfRt4h
+         uHPPXigg93mo8eRKYoIBphfsjeRTVBaPYoAqcM7EZ/8MWZdphfow+6J1CAM0B4724Abc
+         rd1/wTrXHAIqNpr9FORdrS6+YPPF0E+Gj7ZBHvxbLz0XyCZ9fMW/DDL1KUuAdgVeS+mX
+         k9vSwDX2FVQ9Cv79nBHHU/8ufM5R/f0c+3xrPpn8NsLmTuKgyprCx+u6F3EeUo90TZA7
+         i9cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732775964; x=1733380764;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JbLdkAOQCxenw8yI9+EWMK8lRQF1ebGSP0oQfGasbLU=;
+        b=qzS4fu/Hbk/4OTTDbNqiftT1txf41TUgWS3CaIawRa9WA3rhS9dqsrsCfHiVg0Y5r8
+         XlJgD20vQeTIVNyhrMckHM0Tr0pZXti1yVtp46bnMLEqtkoC/NkJ9fwCiWCZOaqT7SPh
+         INEpjChtW0UlhQFytLCWQzjVkeqnwXl7XFtxs3rgpORNNAnyzCpAGrWbdXHXb8jucZ94
+         0udyitTT2DD6+19as7FS1jhsGnVYU13tlUVwBCiReQhMqwqrJ7XVlqX1gZFi0b2d6HR7
+         52QqLKQHHgDQXV3SF4g8Dt4vgUDsY4z/+73YLjouDOh1W8j8N6r8jre5rnvjiJgqUzFU
+         Tfuw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5SlRX80Tl/578pXKZu8crtDwMXmOwH96eOsllw5HzHMUnmej0pXcFDSEl1YJkMYIUKL9XYkPc08U+ILE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjzFTwtOXQtmO4ysCV8D4XKD0JxXv0UFaelrvH6r5g0j5pLyh8
+	KTPowDxgwjckUpJkEdDiOCH83M+KMiU7Pxd30MdesnWlWFXOgOPd
+X-Gm-Gg: ASbGncvYTJLWm2gUs7UqkIEsJwNUiWpDaJ5Lqluj45u22/WnicKnh1bAyil12Fah0P9
+	3/VCEgspvjtiX6+KQg2NkfvbgVHoq8br9zxTnk2CEDBWnLxKJakMTVeu+iuMcTBLDs7zfGTSGRP
+	49twqwsEmkM0fWXRnoL8vOuEV7aM56rwG1tmRaotPdtzEmk6U8xcP2tCT1amQ1DWPerPl173B6J
+	baPWnbDPhPSsef+5ipAmP5fOsmjdCRCvboNcNhJwl1LNvJg/5DJGvp2w4Yy0t8Nvg==
+X-Google-Smtp-Source: AGHT+IGJKGp8KW53bYdyUvkeTvw0XG2tTj1XIqJtwXG18KSAshTARZJGCkC+72+jglSeMmstHALKXA==
+X-Received: by 2002:a17:902:d512:b0:211:ce94:866a with SMTP id d9443c01a7336-21501d58b11mr79120605ad.40.1732775963621;
+        Wed, 27 Nov 2024 22:39:23 -0800 (PST)
+Received: from localhost.localdomain ([49.206.118.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521967714sm6131575ad.140.2024.11.27.22.39.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 22:39:23 -0800 (PST)
+From: Saru2003 <sarvesh20123@gmail.com>
+To: bsingharora@gmail.com,
+	corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Saru2003 <sarvesh20123@gmail.com>
+Subject: [PATCH] Documentation: Fix typo in 'taskstats-struct.rst'
+Date: Thu, 28 Nov 2024 12:08:57 +0530
+Message-Id: <20241128063857.7377-1-sarvesh20123@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: sched/core] sched/eevdf: More PELT vs DELAYED_DEQUEUE
-To: Luis Machado <luis.machado@arm.com>, "Peter Zijlstra (Intel)"
-	<peterz@infradead.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>, Saravana
- Kannan <saravanak@google.com>, Samuel Wu <wusamuel@google.com>, Android
- Kernel Team <kernel-team@android.com>
-References: <20240906104525.GG4928@noisy.programming.kicks-ass.net>
- <172595576232.2215.18027704125134691219.tip-bot2@tip-bot2>
- <ee2feb3b-0a1f-4276-b6fd-f36014654cbf@amd.com>
- <30f13deb-7dda-4a17-ab88-f386377bc30b@arm.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <30f13deb-7dda-4a17-ab88-f386377bc30b@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002321:EE_|DS7PR12MB5910:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33c97295-9f5d-43be-6535-08dd0f76ec28
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dTcwbXJwR1o1aFZuUCtVN1JuZXJYZlYzbUtNZkNUZEVjQmZJY1NCcFJrTkFy?=
- =?utf-8?B?NkRXcXVTcSs3WEU3NTA4U2dMdFRDYnZ6cGtsZGFjcUhPQ0VzNTNBdWtEOEs3?=
- =?utf-8?B?K3g3Q1YrYUNLdU9LVGZkSkc2TzM5TVFYNGRZbjFYamNERUJlWjRtaDlreHRJ?=
- =?utf-8?B?UzZwSEVKSGxVRHVKU29CajVXKy94bzcySXBpOFNJeXQvTmQxQ0xhRldGakVD?=
- =?utf-8?B?TWF4SkZ2bm8xTDNrNFcxS2V4ZklkWTlYV1ZIRkJMeHNRWFlrV2Q4SCtZQXE1?=
- =?utf-8?B?ZDkzRzRtREtIVmlRY0RDVFZvUTFDaWFKdjhJemxJVTcwSlprdDd1eXRWcFcz?=
- =?utf-8?B?cC8yQllXbTRSSllGaXpLTERKUnRWVW8wZVk2bUFhelBlRG0rNTdkc1dPQ0xL?=
- =?utf-8?B?em1TVHJFOE5vL0JBOVV0eWxiTlZzWUlCK29YaW9ReUp6QXE3MzdKOTY3eFli?=
- =?utf-8?B?WDc4Q25oN05LeDZuM1dEREEvNWhVRnZwYkNMb0sxVlluM1o2QVcwSXRDdW84?=
- =?utf-8?B?VkhMN1J3ZWZ3ekJ0WHFpYnpKUkpUTTJwVjlTdUIvRWNTTHJOK29tenpHcHlQ?=
- =?utf-8?B?T01VdXpuMm8rZnMvdFBFNm5xRFgwc0dCTGNHV0lkcG9TWUFyRk9Wa0JOOEpa?=
- =?utf-8?B?Sk5NNGVyeUtUVVl6dk1UaWdjakdwWStGL1hMMFpNWlJNanZmVUJ3ZEhzN2Nv?=
- =?utf-8?B?QlZaSGorQ0VQVEpleXR2NG9qM0xZUUU0RDhuVWN1RFljdDBPbGl5Q1pMY2M2?=
- =?utf-8?B?UkxVQVF1RkpvSEl2R2djWlVFeUk1c0FJVlYwL09nVEJTR1g2bVJyNE04RDJM?=
- =?utf-8?B?U1ByZGlmc1MrYVJFazBKSmtlaFFwRXovQ3BwSVoyeVF0bGlzVDliOGROMDRh?=
- =?utf-8?B?U01QRjJIS083NmJ6Qkhtb0M0U1R1TERielJGci8rYzVBa3VDYUs2MkZsaTFi?=
- =?utf-8?B?czhRWG5NUExUQlo3N3k0UXJNOWE1bCtCZHI3MUcvaWZKaFlBYnlsVnhUaGJr?=
- =?utf-8?B?SW52blhQV1pVZWVGUUFFSFZoQTFiVE1BY3lIc2lXV0Z6MGw3ZitsQ3l4ZVBP?=
- =?utf-8?B?aFdvY2NtRm54cklpYXIwUE9LTTcwbTd3UUpYV05FTUl4YkNlQ1hBMWl0NjZD?=
- =?utf-8?B?S1hIUnF6eUg2dTR0cXMva2hWSDN4K1lsUGZWZ1A3ZXZWSlBpQ1hyVnZrRHJO?=
- =?utf-8?B?K2IvVDFFL0Y2Q3A1TkNxSC9Wd0hFZldVUEFzZE02V043bm0raE50aFBYTkIz?=
- =?utf-8?B?MktyUCtibTUwSVBSVGM1THhvMmN1QW9LdG91ejg2dEcwWE5Wd044SDlpcWt3?=
- =?utf-8?B?a1ZqNHU0K0s5UXd1VUR0K2hjaTVzWEx1YU5nQzUycXNXN1RqSWFwN3VYL3Jh?=
- =?utf-8?B?MVo3aWdYenlJMGxiZENIR1BoZnpyekk0YTRqME1KVGYwaXBsQTE0K3BwM3B4?=
- =?utf-8?B?VDBQVWtTL2lKVVcrejdPa21reGpHS1MrcS9KcE1Ea3pwZ0NPNmZCakxYc0pv?=
- =?utf-8?B?T05aQ0Znb0pLK3ZkRVJqM3AwenYxQjRnd0NuYUlVdWIvTDJ5Zkt0MU9QR3Ru?=
- =?utf-8?B?blZIZHhhSkx5aXNyNE55VTFMTzFDbmRmVVFFTUZaNkxIbUlKODBaaEJXNjdp?=
- =?utf-8?B?VGZWTi8xQUZVcUc3dTg0Y0VMYkdkdGFJNi9xcWhoWFpRWTRyVlBMMktQMkFT?=
- =?utf-8?B?UTlHZkpCQ3hZbGpySlljSHRja1MrMlBvbHdydnpibEJGbC9zRDVnWU9aNS81?=
- =?utf-8?B?eGRMcjJLZHBQNXNNRnlyQ1QzYVdxTDhFZTJ4Nk56VHJUbWVlUHpGUURYZkZG?=
- =?utf-8?B?WnRBOHpCanYwMlpSNWZWTEFPallreWdBMHN3SUJORmp6b20vblhzQ1k0RFpm?=
- =?utf-8?B?b2pUWkl1NHlqWkZab2pZR0dJTXNMQmJHcW55bVV5UTc4M0E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2024 06:35:59.7543
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33c97295-9f5d-43be-6535-08dd0f76ec28
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002321.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5910
 
-(+ Saravana, Samuel)
+Corrected a typo in the 'taskstats-struct.rst' documentation. The macro name 'TAKSTATS_VERSION' was mistakenly mentioned instead of the correct 'TASKSTATS_VERSION'. The corrected line now accurately references the macro 'TASKSTATS_VERSION', which is defined in '<linux/taskstats.h>'.
 
-Hello Luis,
+Signed-off-by: Sarveshwaar SS <sarvesh20123@gmail.com>
+Signed-off-by: Saru2003 <sarvesh20123@gmail.com>
+---
+ Documentation/accounting/taskstats-struct.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 11/27/2024 3:04 PM, Luis Machado wrote:
-> Hi,
-> 
-> On 11/27/24 04:17, K Prateek Nayak wrote:
->> Hello Peter,
->>
->> On 9/10/2024 1:39 PM, tip-bot2 for Peter Zijlstra wrote:
->>> The following commit has been merged into the sched/core branch of tip:
->>>
->>> Commit-ID:     2e05f6c71d36f8ae1410a1cf3f12848cc17916e9
->>> Gitweb:        https://git.kernel.org/tip/2e05f6c71d36f8ae1410a1cf3f12848cc17916e9
->>> Author:        Peter Zijlstra <peterz@infradead.org>
->>> AuthorDate:    Fri, 06 Sep 2024 12:45:25 +02:00
->>> Committer:     Peter Zijlstra <peterz@infradead.org>
->>> CommitterDate: Tue, 10 Sep 2024 09:51:15 +02:00
->>>
->>> sched/eevdf: More PELT vs DELAYED_DEQUEUE
->>>
->>> Vincent and Dietmar noted that while commit fc1892becd56 fixes the
->>> entity runnable stats, it does not adjust the cfs_rq runnable stats,
->>> which are based off of h_nr_running.
->>>
->>> Track h_nr_delayed such that we can discount those and adjust the
->>> signal.
->>>
->>> Fixes: fc1892becd56 ("sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE")
->>> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
->>> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
->>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>> Link: https://lkml.kernel.org/r/20240906104525.GG4928@noisy.programming.kicks-ass.net
->>
->> I've been testing this fix for a while now to see if it helps the
->> regressions reported around EEVDF complete. The issue with negative
->> "h_nr_delayed" reported by Luis previously seem to have been fixed as a
->> result of commit 75b6499024a6 ("sched/fair: Properly deactivate
->> sched_delayed task upon class change")
-> 
-> I recall having 75b6499024a6 in my testing tree and somehow still noticing
-> unbalanced accounting for h_nr_delayed, where it would be decremented
-> twice eventually, leading to negative numbers.
-> 
-> I might have to give it another go if we're considering including the change
-> as-is, just to make sure. Since our setups are slightly different, we could
-> be exercising some slightly different paths.
-
-That would be great! Thank you :)
-
-Now that I see, you did have Valentine's patches in your tree during
-testing
-https://lore.kernel.org/lkml/6df12fde-1e0d-445f-8f8a-736d11f9ee41@arm.com/
-Perhaps it could be the fixup commit 98442f0ccd82 ("sched: Fix
-delayed_dequeue vs switched_from_fair()") or the fact that my benchmark
-didn't stress this path enough to break you as you mentioned. I would
-have still expected it to hit that SCHED_WARN_ON() I had added in
-set_next_task_idle() if something went sideways.
-
-> 
-> Did this patch help with the regressions you noticed though?
-
-I believe it was Saravana who was seeing anomalies in PELT ramp-up with
-DELAY_DEQUEUE. My test setup is currently not equipped to catch it but
-Saravana was interested in these fixes being backported to v6.12 LTS in
-https://lore.kernel.org/lkml/CAGETcx_1pZCtWiBbDmUcxEw3abF5dr=XdFCkH9zXWK75g7457w@mail.gmail.com/
-
-I believe tracking h_nr_delayed and disregarding delayed tasks in
-certain places is a necessary fix. None of the benchmarks in my test
-setup seem to mind running without it but I'm also doing most of my
-testing with performance governor and the PELT anomalies seem to affect
-more from a PM perspective and not load balancing perspective.
-
-> 
->>
->> I've been running stress-ng for a while and haven't seen any cases of
->> negative "h_nr_delayed". I'd also added the following WARN_ON() to see
->> if there are any delayed tasks on the cfs_rq before switching to idle in
->> some of my previous experiments and I did not see any splat during my
->> benchmark runs.
->>
->> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
->> index 621696269584..c19a31fa46c9 100644
->> --- a/kernel/sched/idle.c
->> +++ b/kernel/sched/idle.c
->> @@ -457,6 +457,9 @@ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct t
->>   
->>   static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool first)
->>   {
->> +    /* All delayed tasks must be picked off before switching to idle */
->> +    SCHED_WARN_ON(rq->cfs.h_nr_delayed);
->> +
->>       update_idle_core(rq);
->>       scx_update_idle(rq, true);
->>       schedstat_inc(rq->sched_goidle);
->> -- 
->>
->> If you are including this back, feel free to add:
->>
->> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
->>
->>> [..snip..]
->>
-> 
-
+diff --git a/Documentation/accounting/taskstats-struct.rst b/Documentation/accounting/taskstats-struct.rst
+index ca90fd489c9a..acca51c34157 100644
+--- a/Documentation/accounting/taskstats-struct.rst
++++ b/Documentation/accounting/taskstats-struct.rst
+@@ -47,7 +47,7 @@ should not change the relative position of each field within the struct.
+ 1) Common and basic accounting fields::
+ 
+ 	/* The version number of this struct. This field is always set to
+-	 * TAKSTATS_VERSION, which is defined in <linux/taskstats.h>.
++	 * TASKSTATS_VERSION, which is defined in <linux/taskstats.h>.
+ 	 * Each time the struct is changed, the value should be incremented.
+ 	 */
+ 	__u16	version;
 -- 
-Thanks and Regards,
-Prateek
+2.34.1
 
 
