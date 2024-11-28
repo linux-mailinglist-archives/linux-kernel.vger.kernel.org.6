@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-424790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B919DB97A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:18:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48209DB97C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:20:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB561633C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:20:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2571AB533;
+	Thu, 28 Nov 2024 14:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnhZS14a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E32281B20
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:18:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFE71ADFF5;
-	Thu, 28 Nov 2024 14:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yQFereLR"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087F319CC2E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0906192D77
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732803515; cv=none; b=h1zSn+NAT39JBAumnUxKqIjBisD5yYxc/gJF7hicA2y1Vt8ngYMkySSMZDr+et//Iyv5Nh0dcfSRbWvnKjUFn3F4LfzYfPigsqY3pe+Ie809XWqSCdH6IAwROlEzrNeJRS5AhyJmxfo6t0eEeDJbXAajy6D10FsCp+Pea4ZNs7k=
+	t=1732803635; cv=none; b=tPsMY+gOjjZJFYNvccmYrKP0njo8bxKDIh5aTilvcI7RiPVwNf82Hsi4ZQiKb40MTzsnNy1vNno+q14qGKlZ330ssA2QHetOFe6XJ55GmoaqeuBv++7kpg4ky89+kjNUEXDYHxwkpZdigeM3QymWBWV6qeq2PmTQI5ZchgYWuEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732803515; c=relaxed/simple;
-	bh=dcwb9b33KIM/BSPqPVuj+rX/P95ylrOXU+LmT00E+2o=;
+	s=arc-20240116; t=1732803635; c=relaxed/simple;
+	bh=qLn7KCjfeNms18fyJ3R4Q7z/HaY/qcbgERgC7rBSsrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PiQnoXWZmvOXxApWP3tV8x4PrIX++c68asn7DHGIDMkjbfIdg2wlgUauI1oj5lquEGhe3wsQT3Cg+EqqyF3aAO2okReiYq25Y8WAz14VGydLiZV9Cjl4YYAO51nkWuj220drWzIhDFUl/8EDhAo50GedHsT1s45UnqUhihojKHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yQFereLR; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffe28c12bdso4997821fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:18:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732803512; x=1733408312; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xA8QccDB7jDinpTszrKQcVtNkmKlzXFjmJDa5bO0Mmg=;
-        b=yQFereLRqx3TUmAloybv5y6exMM6SDvOqnquGmqoBgI6GLSNyIV70fM1PKgfghZNYZ
-         0f0gkMjAsAtr1vGNXiQ6CnL9bAbrozgXcWP3sk8ixh/xlzeGkWHfqVxA7O01oWBUVZI1
-         euF6nW46XQwM/tH7jbqmWnwpzU2B06/Hu90rEuwurrveR92hZ7FQn9HvHeVfQ9zF+n0U
-         NA7zzAstEpkTl37uAz60DsN7joembZ5ey/v5OKVRrfa48kPwPvlnSN/fz1gVOb++GK4g
-         93dLOJySW4m5dJNTiS2Wvn1XtNiHjSBJiGiC58v2QbyCwJ3QWnptpwe/x4XXBWpXVzWZ
-         1p/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732803512; x=1733408312;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xA8QccDB7jDinpTszrKQcVtNkmKlzXFjmJDa5bO0Mmg=;
-        b=FAI9Bx7rTMTbUOgcyp4t3L2vSojlvbyCWcCOZfmUQBLQV4JTo5FIil4ges0vnTNduB
-         11h7MKNGhOOL8FqyDe21Y+cJPXxY1zdYWpptzjz6rx998AqnfX7fwZvHHhmgTVVmV3aw
-         oC4eB28lVwWi2LPLmrLA7s9Mh5A5qJtisQKTeQzu0fX7acX4kMhX6AyxHBW0hG94xzfc
-         0rWHXvH0ELQdVsGrhmpqFYPBywiA8rBJvlVCCFghr2GdbjmsUljHDK5ROcGqFD4XjFYz
-         +rzqAMSv02rU4oxlZ14uYz+ogiXxebkrHLhhDSHdsxFQ8aSscsfbh6vW/4XoWrXRuMq3
-         d4tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVetPY07eqf0JEduQ2aGJ2CyOoB/CiD36laOXKi0X4o1UMOJZaIVLq27Y7/osu0egOB6d+664xVJivsUQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz86ZnB182kRrYgmi0c29JBNfCbT6NmorKq8JGVOjY2hAPmn1HD
-	RxR0za4Ua4O9vUVo9frBQXW3u1ycgYImp8156FVWPYUpRfKDkpl69tneit0CcLY=
-X-Gm-Gg: ASbGncsQajYAx+sZVZswOD6BJdPC/OsMtGcUgsyacMPOhmJkBuHx18U/VxmZnyTrMOu
-	e/kZ5PAr2Z4tC8viIpwmBq1Zsue2nlVUsYuxtfLzlYxn0Qm1ZSncTHO/gjQtf67micEeKPuLrpT
-	VN13tXkL4TPGXeYPc0rL/MNqL6QkyAgEsE1bBtGFuIR4/gMD4hSaoxT0B5yTPers39v7+XQh/Ep
-	TXaetmQvFRkrflCydEtX0w+V9NLU9SEH/KR/mNoFLcoT+GLDEQ8h9Ai3+dacGeM87oZHcaDrIPw
-	TpC2ue4kytFkmKyy2JUBZlcdBofnUg==
-X-Google-Smtp-Source: AGHT+IEWrfuUcnXV1iqJHqdNEOSGIK8M6/LbygKUp+v7qqACcol4zNxR8qGEVUdI0pmwpuF4EUOzaA==
-X-Received: by 2002:a05:651c:887:b0:2fb:8920:99c6 with SMTP id 38308e7fff4ca-2ffd604fc7fmr46439611fa.23.1732803512212;
-        Thu, 28 Nov 2024 06:18:32 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc75452sm2022861fa.85.2024.11.28.06.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 06:18:30 -0800 (PST)
-Date: Thu, 28 Nov 2024 16:18:28 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, p.zabel@pengutronix.de, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, glx@linutronix.de, vkoul@kernel.org, kishon@kernel.org, 
-	aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com
-Subject: Re: [v4,09/19] drm/imx: Add i.MX8qxp Display Controller display
- engine
-Message-ID: <kixewphwyawbyrfu6pxtqx5fywqmq7ms2sa5j5pzogetmebcjz@ouhpohk7twbc>
-References: <20241125093316.2357162-10-victor.liu@nxp.com>
- <c4334c9b-833b-4923-8188-64d662231512@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzlGkgj+3/AMGUOVNsIaFAdP85kBQiFEjHsk4hq6OEBj/1mRMQ02pyIpbbywMxydDgimhnmyJkNZezcVAuec4gettyjwms2wQXYBgNv615RECpbj/+figr2YaqFp8AwyQNkaI7rwzkqZugsdJ9mbZ1K5q1J7r/b/rR07LLaRVsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnhZS14a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F6D3C4CECE;
+	Thu, 28 Nov 2024 14:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732803634;
+	bh=qLn7KCjfeNms18fyJ3R4Q7z/HaY/qcbgERgC7rBSsrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GnhZS14aE5CoghTDrv+dKiJwvpB9YXrZuVykroRSy9YysOGGCj0sGW1lbtqp5rxGE
+	 E2szlbIyPkxndDXy6WDDz+5pQIpCQxO2/ue+2b10hELPyifwRFA150KkZIj0sATc3e
+	 9LbIwSZI1OJDANcRomO7I2aF+owml7Lo9HMBg65LWXGfgfW2MI+6ckPLFeMMy7lkPn
+	 gJYAoLN4sscAXjMOHJBZ+Q1XCO3vfy7230pNkFexFrHUTNYXU1kGI80o7iiWkvTpCC
+	 Odt9M6KdWxJfgJ5hlw1WHKuetIRjZTyxsZmG2FXwt7ErUJe+YRQvSLTONY81VgCX9a
+	 O776BICHiG4GQ==
+Date: Thu, 28 Nov 2024 14:20:28 +0000
+From: Will Deacon <will@kernel.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nanyong Sun <sunnanyong@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 0/6] mm/arm64: re-enable HVO
+Message-ID: <20241128142028.GA3506@willie-the-truck>
+References: <20241107202033.2721681-1-yuzhao@google.com>
+ <20241125152203.GA954@willie-the-truck>
+ <CAOUHufYUMYcf=uF7=2zj-PsGXePCDdsRHJGa8t-e-k9VUvYyQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c4334c9b-833b-4923-8188-64d662231512@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOUHufYUMYcf=uF7=2zj-PsGXePCDdsRHJGa8t-e-k9VUvYyQQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Nov 28, 2024 at 04:46:53PM +0800, Sui Jingfeng wrote:
-> Hi,
+On Mon, Nov 25, 2024 at 03:22:47PM -0700, Yu Zhao wrote:
+> On Mon, Nov 25, 2024 at 8:22 AM Will Deacon <will@kernel.org> wrote:
+> > On Thu, Nov 07, 2024 at 01:20:27PM -0700, Yu Zhao wrote:
+> > > HVO was disabled by commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+> > > HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the following reason:
+> > >
+> > >   This is deemed UNPREDICTABLE by the Arm architecture without a
+> > >   break-before-make sequence (make the PTE invalid, TLBI, write the
+> > >   new valid PTE). However, such sequence is not possible since the
+> > >   vmemmap may be concurrently accessed by the kernel.
+> > >
+> > > This series presents one of the previously discussed approaches to
+> > > re-enable HugeTLB Vmemmap Optimization (HVO) on arm64.
+> >
+> > Before jumping into the new mechanisms here, I'd really like to
+> > understand how the current code is intended to work in the relatively
+> > simple case where the vmemmap is page-mapped to start with (i.e. when we
+> > don't need to worry about block-splitting).
+> >
+> > In that case, who are the concurrent users of the vmemmap that we need
+> > to worry about?
 > 
-> On 2024/11/25 17:33, Liu Ying wrote:
-> > i.MX8qxp Display Controller display engine consists of all processing
-> > units that operate in a display clock domain.  Add minimal feature
-> > support with FrameGen and TCon so that the engine can output display
-> > timings.  The display engine driver as a master binds FrameGen and
-> > TCon drivers as components.  While at it, the display engine driver
-> > is a component to be bound with the upcoming DRM driver.
-> > 
-> > Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> > ---
-> > v4:
-> > * Use regmap to define register map for all registers. (Dmitry)
-> > * Use regmap APIs to access registers. (Dmitry)
-> > * Inline some small functions. (Dmitry)
+> Any speculative PFN walkers who either only read `struct page[]` or
+> attempt to increment page->_refcount if it's not zero.
 > 
+> > Is it solely speculative references via
+> > page_ref_add_unless() or are there others?
 > 
-> Why?
+> page_ref_add_unless() needs to be successful before writes can follow;
+> speculative reads are always allowed.
 > 
-> Its seems that the switch to regmap APIs is not very necessary,
-> as ioremap/writel/readl are simple enough and easier to use.
+> > Looking at page_ref_add_unless(), what serialises that against
+> > __hugetlb_vmemmap_restore_folio()? I see there's a synchronize_rcu()
+> > call in the latter, but what prevents an RCU reader coming in
+> > immediately after that?
 > 
-> Isn't that this just introduce an intermediate layer? It's okay
-> for display bridges/panels that behind I2C bus or SPI bus. But
-> then, why drm/msm still haven't be converted to use the regmap
-> APIs ?
+> In page_ref_add_unless(), the condtion `!page_is_fake_head(page) &&
+> page_ref_count(page)` returns false before a PTE becomes RO.
 > 
-> Just a few questions, has no opinions to your patch.
+> For HVO, i.e., a PTE being switched from RW to RO, page_ref_count() is
+> frozen (remains zero), followed by synchronize_rcu(). After the
+> switch, page_is_fake_head() is true and it appears before
+> page_ref_count() is unfrozen (become non-zero), so the condition
+> remains false.
+> 
+> For de-HVO, i.e., a PTE being switched from RO to RW, page_ref_count()
+> again is frozen, followed by synchronize_rcu(). Only this time
+> page_is_fake_head() is false after the switch, and again it appears
+> before page_ref_count() is unfrozen. To answer your question, readers
+> coming in immediately after that won't be able to see non-zero
+> page_ref_count() before it sees page_is_fake_head() being false. IOW,
+> regarding whether it is RW, the condition can be false negative but
+> never false positive.
 
-Please respond to the original review comment. Then we might be able to
-discuss if the suggested change was logical or not. Discussing changelog
-doesn't make sense becasue there is no context here.
+Thanks, but I'm still not seeing how this works. When you say "appears
+before", I don't see any memory barriers in page_ref_add_unless() that
+enforce that e.g. the refcount and the flags are checked in order and
+I can't see how the synchronize_rcu() helps either as it's called really
+earlyi (I think that's just there for the static key).
 
--- 
-With best wishes
-Dmitry
+If page_is_fake_head() is reliable, then I'm thinking we could use that
+to steer page_ref_add_unless() away from the tail pages during the
+remapping operations and it would be fine to use a break-before-make
+sequence.
+
+Will
 
