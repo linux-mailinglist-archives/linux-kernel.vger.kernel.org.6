@@ -1,246 +1,143 @@
-Return-Path: <linux-kernel+bounces-425048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330039DBCDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:25:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB5F9DBCDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:25:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E93B2198F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C69164881
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAC71C245C;
-	Thu, 28 Nov 2024 20:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722D71C2457;
+	Thu, 28 Nov 2024 20:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AtGfwI2j"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jugbajX1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64417BA5;
-	Thu, 28 Nov 2024 20:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36EF142624
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732825496; cv=none; b=MAvzdOljJYGiFXyONOQdqfaGlOJzZqbbs89HAuYF5sr0f/SMfhgvrkeGZRTNtcgnPwrl2cN0+OlmncJgOYWJXcIBgqzrROgzX4P36NH612SheV8/dDFx7sTfrs+wPoNoeL2SY0YXZb9GRJNt3EnaTQ+C75XLBxN+pYorngnbcpU=
+	t=1732825532; cv=none; b=AgTtDxxLoKPG6Un/CRLcqKUbQD59VKCUnIbQEJfJvTxew8qq7hHLTqL/CAGo3MEl184/x/zr8c24oqnb6EUcdkIzmnpDrte7M2401lkoVi9K4g7+hxBnzS3BO+J3UpuMHychrHRNrtdgO1QC42ftpKsNsnKvbSBzkp+DNhKvlMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732825496; c=relaxed/simple;
-	bh=vIUfzivol3GP1W3IixUeRO8WQkjiWLAExaKWIH0WKrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OgbWy6+5K51ckNDeW5tHekzeXVgsfEjDeX74q3VSdpPzlSMLGdiGJv9OEPlS2HPCiBKzt/LRQb7ATQOiWNIm7Vdw1YS/Wjvm0YPJSukgUUSZRaofRihhW22EedE1aSvDuypjr6P8wvI3yWWsCABwVbEWnZI1Xaz67eZtrIBSClA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AtGfwI2j; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A42559D;
-	Thu, 28 Nov 2024 21:24:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732825468;
-	bh=vIUfzivol3GP1W3IixUeRO8WQkjiWLAExaKWIH0WKrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AtGfwI2jaxDT9mloHFSaczXY0snozcLTq23zWMBE/cqGLT5n92qELPcaZwJaUWbLh
-	 LmuCyQ45VLtIXH3XEqZcIxOvKXXin/Vdudy4epbdEzg5rRKjqj9uvmDeLRYkpyywv5
-	 hTie0NKA5hVEemniCbYHFUW/aABRMB2wt27pqOT8=
-Date: Thu, 28 Nov 2024 22:24:42 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Remove duplicated cap/out code
-Message-ID: <20241128202442.GC13852@pendragon.ideasonboard.com>
-References: <20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org>
+	s=arc-20240116; t=1732825532; c=relaxed/simple;
+	bh=ozTQLpJy8PhSwcTQDFUMnO/dPjCHluLZ/fr08jPDrko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SE/AFCIsU/701Fw2cuyeDwhEXlrtp4enAShh8/R7Y8wcEA6ZD0aCocmAiZk7Lolxn6GyhQn94lik+0egSe0bpxFsFY/mrrAkZV6emYOYMPxockNp38mFwly4qG4xr5WAOpq2gqlualqxazpwA2QLvrdMgx2dXs2FyvVI5tNpTx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jugbajX1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS9IDxB012280
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:25:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u+/C016dQKRw6wON/psnCJnEPdDDBTHE5HmTLOJ9gug=; b=jugbajX1B/2Jj3Ku
+	0QSOTutgliMrmFAi1B92tklKm6h3lFY+m1QSmTfUdPRy35wTvpVLHkQAI2q1y8mr
+	TFVPZHWVcpRBJO+Fn3rpcExMa1IwMaRtepVOlEfOf0bsSqrE5qEOKZabuOMV/QNZ
+	K/a+jCp0skVY1NswNrtwqrSjPY5bKYr/iLO4FXzd6T14nt81UDu+wy7mhfeoQTEW
+	sXKneeGaCjJ3QdmYCMaJNBdSToaHjb0YMRuRLAKRgM958k9I7fa8UbAmzaIM9x6b
+	kDZn0IwJ4PGZLMX6Ta0XDHmQ06zZhFVKUyhqKy0SiQwVQepbsKkmUwd64IbN8xIF
+	8vKs4A==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xy3mc3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:25:29 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4668a6d41a5so772931cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:25:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732825529; x=1733430329;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+/C016dQKRw6wON/psnCJnEPdDDBTHE5HmTLOJ9gug=;
+        b=hrIlxmi00fSxASoM43yUQIJEBMIGiDxHEI3o17mzNwmAxIS5rP2kpRhOKyoAGHNt57
+         A2xs0mDpHAt9yLXyEMvh5bZN4ZgWjlzUjaZu+jQ6eCTPHkV8jsSopC8sKJLhMBbEjAHg
+         mxM9Lb/ec+DSvNLV78YiORhHIT18+Ca7MkA/USrABBT/RjZ5jKv64tGQFQ/yfd1vOF3g
+         LzG+xTTbEEyPNVDDejydJkDFfVmV3AaLXifuzqq0qb091Do8EnWHkE9PYhirlFLciVGR
+         5SC3Outm3al46ZmjkMWxlWJ6+qjdBuNLUPsjiMGPcT7X2kGfz3YceOkM1SXwG4Xd33SA
+         3CXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJEWadd0ElRbLCbIr5cmXlmpH5vTQXbQCgLBKt42QtNkvGqXVWwPQRQlACV47CH+h809+OPxEth2yEN7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMBgz+q4nLjNw58vAqSxpu5uKKGRccNli4x6fpRpGV8lr3Wtx3
+	9/MWCD6PENiXsHVEJJNt4w0fB+CaXxoLtk1biluWflJO3OpqI820YC0YsQQ1VmNOoDnWliRMIp/
+	G3KZvbmDdYRIsNIX6AcO6GNbqW53BqulogmYuOiKJpnhJ3fd4/L+LMoI0MhZFEo8=
+X-Gm-Gg: ASbGncuyvhetJB4WInI/AGK/imwO8BIKG4gGITS7Qbit7xNytRAv7tRU7oNa54JAoIi
+	FIMtE4PKWmD2WoWNfqL3xmREooPqb3lnAxLPF5NEwRxsdsKAHkzkmfTgStziBE+d6AVlS+CMd0l
+	vp+HBUmUGW+NWUwpW3lZ0shu62AiZQKDsgMQNEw+2TIzeO876P+x4wRSrOmE1Z1BwxuotWI/l2n
+	NUspaEGSaZRHKcfJ5Dg+g783Zk1nZOtXER/lFYbs3tfgvri8k39cmenHVRn4y52pI3wnr+qjlIl
+	wkQHu92QeZ4E1qzrGZxFRC53kZtAAuc=
+X-Received: by 2002:a05:620a:4004:b0:7af:cb6d:69ec with SMTP id af79cd13be357-7b67c43f8b4mr453076885a.11.1732825528670;
+        Thu, 28 Nov 2024 12:25:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFeaf+9swg21gKgqEDGWSWEktchK+K+w8IqUCRHEdedVyVFvudM/0HRi3nCDHujYsn2pHSgrQ==
+X-Received: by 2002:a05:620a:4004:b0:7af:cb6d:69ec with SMTP id af79cd13be357-7b67c43f8b4mr453074385a.11.1732825528164;
+        Thu, 28 Nov 2024 12:25:28 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63b8sm99872266b.123.2024.11.28.12.25.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 12:25:27 -0800 (PST)
+Message-ID: <503df6db-8937-4e1c-9c0e-0cc093681a8b@oss.qualcomm.com>
+Date: Thu, 28 Nov 2024 21:25:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241127-uvc-dup-cap-out-v1-1-1bdcad2dabb0@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC/RFT 4/6] firmware: qcom: scm: Cleanup global '__scm'
+ on probe failures
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Mukesh Ojha
+ <quic_mojha@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Kuldeep Singh <quic_kuldsing@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>,
+        Andy Gross <andy.gross@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
+ <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-4-7056127007a7@linaro.org>
+ <3bfd6343-de4a-4cf5-a4b8-55a3531eb41e@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <3bfd6343-de4a-4cf5-a4b8-55a3531eb41e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: m1KIgHpH1BJdNtev5oWJ8_M7A06vHAq5
+X-Proofpoint-ORIG-GUID: m1KIgHpH1BJdNtev5oWJ8_M7A06vHAq5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280162
 
-Hi Ricardo,
+On 19.11.2024 8:37 PM, Krzysztof Kozlowski wrote:
+> On 19/11/2024 19:33, Krzysztof Kozlowski wrote:
+>>  	/*
+>>  	 * Initialize the QSEECOM interface.
+>> @@ -2094,6 +2104,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>>  	WARN(ret < 0, "failed to initialize qseecom: %d\n", ret);
+>>  
+>>  	return 0;
+>> +
+>> +err:
+>> +	/* Paired with smp_load_acquire() in qcom_scm_is_available(). */
+>> +	smp_store_release(&__scm, 0);
+> Heh, I should store there NULL, obviously.
 
-Thank you for the patch.
+Candidate for a new scoped __free, perhaps?
 
-On Wed, Nov 27, 2024 at 07:31:29AM +0000, Ricardo Ribalda wrote:
-> The *_vid_cap and *_vid_out helpers seem to be identical. Remove all the
-> duplicated code.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Unless I miss something, cap and out helpers are identical. So there is
-> no need to duplicate code
-> ---
->  drivers/media/usb/uvc/uvc_v4l2.c | 112 ++++++++-------------------------------
->  1 file changed, 22 insertions(+), 90 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index 97c5407f6603..11ccdaf0269f 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -361,9 +361,11 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
->  	return ret;
->  }
->  
-> -static int uvc_v4l2_get_format(struct uvc_streaming *stream,
-> -	struct v4l2_format *fmt)
-> +static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-> +			   struct v4l2_format *fmt)
->  {
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	const struct uvc_format *format;
->  	const struct uvc_frame *frame;
->  	int ret = 0;
-> @@ -395,9 +397,11 @@ static int uvc_v4l2_get_format(struct uvc_streaming *stream,
->  	return ret;
->  }
->  
-> -static int uvc_v4l2_set_format(struct uvc_streaming *stream,
-> -	struct v4l2_format *fmt)
-> +static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-> +			   struct v4l2_format *fmt)
->  {
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	struct uvc_streaming_control probe;
->  	const struct uvc_format *format;
->  	const struct uvc_frame *frame;
-> @@ -685,11 +689,13 @@ static int uvc_ioctl_querycap(struct file *file, void *fh,
->  	return 0;
->  }
->  
-> -static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
-> +static int uvc_ioctl_enum_fmt(struct file *file, void *fh,
->  			      struct v4l2_fmtdesc *fmt)
->  {
-> -	const struct uvc_format *format;
-> +	struct uvc_fh *handle = fh;
-> +	struct uvc_streaming *stream = handle->stream;
->  	enum v4l2_buf_type type = fmt->type;
-> +	const struct uvc_format *format;
->  	u32 index = fmt->index;
->  
->  	if (fmt->type != stream->type || fmt->index >= stream->nformats)
-> @@ -707,82 +713,8 @@ static int uvc_ioctl_enum_fmt(struct uvc_streaming *stream,
->  	return 0;
->  }
->  
-> -static int uvc_ioctl_enum_fmt_vid_cap(struct file *file, void *fh,
-> -				      struct v4l2_fmtdesc *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_ioctl_enum_fmt(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_enum_fmt_vid_out(struct file *file, void *fh,
-> -				      struct v4l2_fmtdesc *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_ioctl_enum_fmt(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_g_fmt_vid_cap(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_v4l2_get_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_g_fmt_vid_out(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -
-> -	return uvc_v4l2_get_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_s_fmt_vid_cap(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	int ret;
-> -
-> -	ret = uvc_acquire_privileges(handle);
-> -	if (ret < 0)
-> -		return ret;
-
-Has this now silently disappeared ?
-
-> -
-> -	return uvc_v4l2_set_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_s_fmt_vid_out(struct file *file, void *fh,
-> -				   struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	int ret;
-> -
-> -	ret = uvc_acquire_privileges(handle);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return uvc_v4l2_set_format(stream, fmt);
-> -}
-> -
-> -static int uvc_ioctl_try_fmt_vid_cap(struct file *file, void *fh,
-> -				     struct v4l2_format *fmt)
-> -{
-> -	struct uvc_fh *handle = fh;
-> -	struct uvc_streaming *stream = handle->stream;
-> -	struct uvc_streaming_control probe;
-> -
-> -	return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
-> -}
-> -
-> -static int uvc_ioctl_try_fmt_vid_out(struct file *file, void *fh,
-> -				     struct v4l2_format *fmt)
-> +static int uvc_ioctl_try_fmt(struct file *file, void *fh,
-> +			     struct v4l2_format *fmt)
->  {
->  	struct uvc_fh *handle = fh;
->  	struct uvc_streaming *stream = handle->stream;
-> @@ -1544,14 +1476,14 @@ static unsigned long uvc_v4l2_get_unmapped_area(struct file *file,
->  
->  const struct v4l2_ioctl_ops uvc_ioctl_ops = {
->  	.vidioc_querycap = uvc_ioctl_querycap,
-> -	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt_vid_cap,
-> -	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt_vid_out,
-> -	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt_vid_cap,
-> -	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt_vid_out,
-> -	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt_vid_cap,
-> -	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt_vid_out,
-> -	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt_vid_cap,
-> -	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt_vid_out,
-> +	.vidioc_enum_fmt_vid_cap = uvc_ioctl_enum_fmt,
-> +	.vidioc_enum_fmt_vid_out = uvc_ioctl_enum_fmt,
-> +	.vidioc_g_fmt_vid_cap = uvc_ioctl_g_fmt,
-> +	.vidioc_g_fmt_vid_out = uvc_ioctl_g_fmt,
-> +	.vidioc_s_fmt_vid_cap = uvc_ioctl_s_fmt,
-> +	.vidioc_s_fmt_vid_out = uvc_ioctl_s_fmt,
-> +	.vidioc_try_fmt_vid_cap = uvc_ioctl_try_fmt,
-> +	.vidioc_try_fmt_vid_out = uvc_ioctl_try_fmt,
->  	.vidioc_reqbufs = uvc_ioctl_reqbufs,
->  	.vidioc_querybuf = uvc_ioctl_querybuf,
->  	.vidioc_qbuf = uvc_ioctl_qbuf,
-> 
-> ---
-> base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
-> change-id: 20241127-uvc-dup-cap-out-6a03c01e30a3
-
--- 
-Regards,
-
-Laurent Pinchart
+Konrad
 
