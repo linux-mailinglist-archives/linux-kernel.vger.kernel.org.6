@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-424811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B209DB9C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF249DB9C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB546162C40
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59A1163EA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925DB1B219F;
-	Thu, 28 Nov 2024 14:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE7C1B3938;
+	Thu, 28 Nov 2024 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WgbJvPMX"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYlrrvSe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0451AF0A3;
-	Thu, 28 Nov 2024 14:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4391B0F0B;
+	Thu, 28 Nov 2024 14:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732804756; cv=none; b=i8IaXZ4mZ08i5S3ueCizoIjkgfTw+RA5lGtI6w1wglBPTSwmIu56wsOe8qkw6V/Uae3eKLX9fO1vwyew9hmni9tttbCAUBZ5Jp8D+DF/gojrCm7R7pmzN1j2EheStj4E7SV5utWwjIDuucejvr913EbIp4uWDIj2B99eZsmkMFg=
+	t=1732804767; cv=none; b=SNg8S6LC2wrbR9oifSUi0Yijat90SYPxl8sHrHWCacpNroyN7GarlyZkcBxeboSv+C92G76/MZXogNJOxZH7Pg+Oz1ZQfHGGp6zIiWazkSd4J/dBXXHJuCSl8/LqY5foDGkA52pLkX1L3zK6T/BwpsMg5hR313kKa1P1OsbZnUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732804756; c=relaxed/simple;
-	bh=lICUD5U4v1tYDpWpths86briaf8ss1zHzJxQmZLPJBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y2tTT7VY5UN5TYMmTdscCc4DwnFhWn5WiWmPvGoao8uBsMoHBbZUSwFfRVWiYrRCVwKVTae5GSpxUtap73j76guEcFUIFUXaFAZ2UXVYCsrSRORr8QR9CpRH5JSQ5F0/R0ww+l/9pQMdVky5Okkbv6kkg+1MsMioPnEBEdvwkx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WgbJvPMX; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 26666FF802;
-	Thu, 28 Nov 2024 14:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732804750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uVb9JEDc4YM1KllmCbqlKsdo3gFEbpEVba/VTnbtCyY=;
-	b=WgbJvPMXIPkDqIrVsF7QcTxZmwjN9VWhqe4FLAqKVLwKx/Jhmv7b721BTVlphPGAr8I/rh
-	DdgyAVP6wf4U8c9n8mcdi8+1M1efj/ia0mWI3+Q4UHmL4rhH/U8ix43cZgnqtD69pCSOa0
-	gwl1gfhNgcrh4RQaWPvsIOIvj/AD0UEPqW7d20nYy+mDnIBsfE6BogF78+Ik4xhPSuaN06
-	0OwS95oTGNyCgVxauy91MqnSNKf/gRD7NlBLHP6q159kNw+zzz7yzDYH0LLXPaMqkLLZ3H
-	OmcP4UHm67dmZpGvIO+folLZB0voWjUeE4lSMg0ZfYKY1T010Rp9ho4lsCwaIA==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Thu, 28 Nov 2024 15:38:43 +0100
-Subject: [PATCH bpf-next] selftests/bpf: ensure proper root namespace
- cleanup when test fail
+	s=arc-20240116; t=1732804767; c=relaxed/simple;
+	bh=Hu5gM7cflrERdLiUJj+sDvixPCRJWH9MxPu0yUhD6Ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hTZy+ekQxvAH4LLiESta7F2nVqWPnOsI45XZXvfUOcG6C6msQNrICqEwumT+14lb/oln/yp6XGaor72pOxm3JV/ijuJxPpnahVdnu6sP3oUNOX4AgEljjP0s96xGp+qfloA8S4YCTGSe0nC90dSh6tm0a0FkO8VVQ9brsLhCv48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYlrrvSe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC829C4CECE;
+	Thu, 28 Nov 2024 14:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732804766;
+	bh=Hu5gM7cflrERdLiUJj+sDvixPCRJWH9MxPu0yUhD6Ds=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HYlrrvSeYJSTjrypuqfOvm2+W1YXQJpoXU/Ve0lXiWUY96hMbaiG71B0Vn0LqSCcC
+	 CxsY4hdyxcS1fKo5uS/H+t/bWBgs+z5zWHKh3dm9qqlg/0a6T6ySEwaGOjI8BrjNQY
+	 rv4eXLWM+7KT0MN7EzdLKrppzt9UpgpgXrr4D5fvLPkchLU+Q4pT7D4bA1d4ng7qWd
+	 jhqHGfthcHypwEpKQMzTebP4MxPUBL592tIaCIYdxytUhZxRxjSsSvr2c6jjY7Aurh
+	 Rq/+BehycPaLT1wSGNoEHv/F/IKlcTMUd1GwLR8pvWHldUWbqqdX7ehbwteLttKvDI
+	 dFqWKfR7vd0Lw==
+Message-ID: <08c19ae1-b781-475a-8059-18bf9b708dfd@kernel.org>
+Date: Thu, 28 Nov 2024 15:39:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241128-small_flow_test_fix-v1-1-c12d45c98c59@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAHKASGcC/x2M0QqEIBAAfyX2OSHNi+hXIsTz1lowC1cqiP79p
- McZmLmBMREyDNUNCQ9i2mIBWVfgFhtnFPQrDKpRWkrVC15tCMaH7TQZORtPl2jcp+2Utq3TDkq
- 5Jyz6vY7w3b2IeGWYnucPp+oLoG8AAAA=
-X-Change-ID: 20241128-small_flow_test_fix-0c53624a3c4c
-To: Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: alexis.lothore@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] arm64: dts: qcom: sa8775p-ride: Change the BT node
+To: Cheng Jiang <quic_chejiang@quicinc.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+ Rocky Liao <quic_rjliao@quicinc.com>
+Cc: linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_bt@quicinc.com
+References: <20241128120922.3518582-1-quic_chejiang@quicinc.com>
+ <20241128120922.3518582-2-quic_chejiang@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241128120922.3518582-2-quic_chejiang@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-serial_test_flow_dissector_namespace manipulates both the root net
-namespace and a dedicated non-root net namespace. If for some reason a
-program attach on root namespace succeeds while it was expected to
-fail, the unexpected program will remain attached to the root namespace,
-possibly affecting other runs or even other tests in the same run.
+On 28/11/2024 13:09, Cheng Jiang wrote:
+> The SA8775P-Ride uses the QCA6698 chipset, which shares the same IP core
+> as the WCN6855. However, it has different RF components and RAM sizes,
+> so new firmware is needed.  This change allows driver to distinguish it
+> from the WCN6855 and load the specific firmware.
+> 
+> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> index 3fc62e123..f95e709bd 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> @@ -856,7 +856,7 @@ &uart17 {
+>  	status = "okay";
+>  
+>  	bluetooth {
+> -		compatible = "qcom,wcn6855-bt";
+> +		compatible = "qcom,qca6698-bt";
 
-Fix undesired test failure side effect by explicitly detaching programs
-on failing tests expecting attach to fail. As a side effect of this
-change, do not test errno value if the tested operation do not fail.
-
-Fixes: 284ed00a59dd ("selftests/bpf: migrate flow_dissector namespace exclusivity test")
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
-This small fix addresses an issue discovered while trying to add a new
-test in my recently merged work on flow_dissector migration. This new
-test is still only present in bpf-next, hence this fix does not target
-the bpf tree but the bpf-next tree.
----
- tools/testing/selftests/bpf/prog_tests/flow_dissector.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-index 8e6e483fead3f71f21e2223c707c6d4fb548a61e..08bae13248c4a8ab0bfa356a34b2738964d97f4c 100644
---- a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-+++ b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-@@ -525,11 +525,14 @@ void serial_test_flow_dissector_namespace(void)
- 	ns = open_netns(TEST_NS);
- 	if (!ASSERT_OK_PTR(ns, "enter non-root net namespace"))
- 		goto out_clean_ns;
--
- 	err = bpf_prog_attach(prog_fd, 0, BPF_FLOW_DISSECTOR, 0);
-+	if (!ASSERT_ERR(err,
-+			"refuse new flow dissector in non-root net namespace"))
-+		bpf_prog_detach2(prog_fd, 0, BPF_FLOW_DISSECTOR);
-+	else
-+		ASSERT_EQ(errno, EEXIST,
-+			  "refused because of already attached prog");
- 	close_netns(ns);
--	ASSERT_ERR(err, "refuse new flow dissector in non-root net namespace");
--	ASSERT_EQ(errno, EEXIST, "refused because of already attached prog");
- 
- 	/* If no flow dissector is attached to the root namespace, we must
- 	 * be able to attach one to a non-root net namespace
-@@ -545,8 +548,11 @@ void serial_test_flow_dissector_namespace(void)
- 	 * a flow dissector to root namespace must fail
- 	 */
- 	err = bpf_prog_attach(prog_fd, 0, BPF_FLOW_DISSECTOR, 0);
--	ASSERT_ERR(err, "refuse new flow dissector on root namespace");
--	ASSERT_EQ(errno, EEXIST, "refused because of already attached prog");
-+	if (!ASSERT_ERR(err, "refuse new flow dissector on root namespace"))
-+		bpf_prog_detach2(prog_fd, 0, BPF_FLOW_DISSECTOR);
-+	else
-+		ASSERT_EQ(errno, EEXIST,
-+			  "refused because of already attached prog");
- 
- 	ns = open_netns(TEST_NS);
- 	bpf_prog_detach2(prog_fd, 0, BPF_FLOW_DISSECTOR);
-
----
-base-commit: 04e7b00083a120d60511443d900a5cc10dbed263
-change-id: 20241128-small_flow_test_fix-0c53624a3c4c
+This breaks users without mentioning it, without really justifying the
+impact. Also it is not clear for me whether devices are or are not
+compatible.
 
 Best regards,
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Krzysztof
 
