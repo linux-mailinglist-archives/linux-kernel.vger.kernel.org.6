@@ -1,145 +1,113 @@
-Return-Path: <linux-kernel+bounces-424302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7B79DB2C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:26:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09A69DB2CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:32:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14869282913
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:26:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8F716551B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48AA145A19;
-	Thu, 28 Nov 2024 06:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NOii/i97"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1ED146000;
+	Thu, 28 Nov 2024 06:31:55 +0000 (UTC)
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0851FAA;
-	Thu, 28 Nov 2024 06:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E7985628;
+	Thu, 28 Nov 2024 06:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732775205; cv=none; b=q8IZldKvENdHNhuAG8T/LIu7gdTYXrhiTAOhA6URicdu2CReqR5sFq6XgkJmCjeCmMzFhad/qayZzTWUT8wAyB+a2peiLHXmEqw/uG9FtRrxRIckf0gzvIWy4i3JfN+txjDscOr7AEriknvimGo3Q+oYXLlv0i2axeWiqAxcb+A=
+	t=1732775515; cv=none; b=ka1eKFygYV/6/hV+fdwg8mCSKDcka33I3rD6hTmAgjpCIf68CuEP1Rovw9hGUK05JNBihQc+eLof3hNqXPbNLZ/BTEMoIHBi5/eHPE8YzOUkZdH63vWaqwV6XvMfgo7h5yXzyi+3ecSTIQSEQto4OUjULJJblo3mLuMrUZ2QwP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732775205; c=relaxed/simple;
-	bh=27BH3kTMnXkvncqDOFR5UON2No4G40nB9lU0s4Y1g3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o1ItQ1cO6d+kAaAjmGbZUk0+FrQrK7G8A9bDChSaL26irfaQPGi58jdze93YmHh+fIIpZxS3E/WqyNu3e3B3zk9LcGI2wWhgb5HNs4yyTuBVG0IMqO+PLYxqn1EkvyFuw11LTBSYqjSIRMgZ6JaRDOgf6nTsnuPSCHEtwTVznK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NOii/i97; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732775203; x=1764311203;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=27BH3kTMnXkvncqDOFR5UON2No4G40nB9lU0s4Y1g3I=;
-  b=NOii/i97syU0X3u348dGmAokbnItTjvxGJU31PkVqF1UVhWCbeconfpJ
-   cdL7Lw5QJCILq8m2Cz7HD/wh8vh/76rclHic+6dAGIwPLGzTXmkOWwthC
-   LfM3QYpqqMVnekgZKP/r8eDoFbdUhWMlV/t5aglMI3CzXn7Dt2KinROrJ
-   TSWNz2gJIvA1rMsHB3H6iGH9Jc/DVFzj7NEO5pKk3Q2icSDXq1Zfk4X7Q
-   pcVbGLmBi+BpNsQC6llFChcMPeNgGbaBegpVzZuKKC7JsluBM3Pmr2Zs2
-   utcAUBN0URiIaMpIllistdhwG8ZDaqwTYeVXcOlDLRa8D6Hi6GXBNigeU
-   A==;
-X-CSE-ConnectionGUID: UpuhkVzRQ+6Uo+rSgSOQBA==
-X-CSE-MsgGUID: nOSvH/QSSSuSqMY4xSkY2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="32931819"
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="32931819"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 22:26:41 -0800
-X-CSE-ConnectionGUID: 4xBOJ8xgSo2NIknwWKwx0w==
-X-CSE-MsgGUID: sHZ70yT6QpmUMBHt17+2EQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="91756519"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 22:26:36 -0800
-Message-ID: <3576c721-3ef2-40bd-8764-b50912df93a2@intel.com>
-Date: Thu, 28 Nov 2024 08:26:29 +0200
+	s=arc-20240116; t=1732775515; c=relaxed/simple;
+	bh=8MIb454F747QhCp+41gOydAJ0LMkRoVG4yoK6ZtJz6g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X12HyaZ5A77nvB+Jrnw7zudV6Hy8r/XUpAaNsIM5AKhXQh3s57CH7TkIUsAy78nTHeJ7eosVznWVhLBlAZxRSk2iaFom5L1D5cyCJTShDaZ2iXGZqj4iCT2UIAZuJY3bPzlQzyVcZapdvLRI9yIxq6ktSSGQ3SSYKSpcqqQp1qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 65B69C3EEACD;
+	Thu, 28 Nov 2024 07:31:48 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 65B69C3EEACD
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev <netdev@vger.kernel.org>,  Oliver Neukum <oneukum@suse.com>,
+  Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+  linux-usb@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jose Ignacio
+ Tornos Martinez <jtornosm@redhat.com>,  Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH] PHY: Fix no autoneg corner case
+In-Reply-To: <c57a8f12-744c-4855-bd18-2197a8caf2a2@lunn.ch> (Andrew Lunn's
+	message of "Wed, 27 Nov 2024 18:37:36 +0100")
+References: <m3plmhhx6d.fsf@t19.piap.pl>
+	<c57a8f12-744c-4855-bd18-2197a8caf2a2@lunn.ch>
+Sender: khalasa@piap.pl
+Date: Thu, 28 Nov 2024 07:31:48 +0100
+Message-ID: <m3wmgnhnsb.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] KVM: TDX: Implement TDX vcpu enter/exit path
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, reinette.chatre@intel.com,
- tony.lindgren@linux.intel.com, dmatlack@google.com,
- isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, chao.gao@intel.com,
- weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-3-adrian.hunter@intel.com>
- <2f22aeeb-7109-4d3f-bcb7-58ef7f8e0d4c@intel.com>
- <91eccab3-2740-4bb7-ac3f-35dea506a0de@linux.intel.com>
- <837bbbc7-e7f3-4362-a745-310fe369f43d@intel.com>
- <Z0gGBnTcFzY99/iG@yzhao56-desk.sh.intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <Z0gGBnTcFzY99/iG@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 28/11/24 07:56, Yan Zhao wrote:
-> On Fri, Nov 22, 2024 at 04:33:27PM +0200, Adrian Hunter wrote:
->> On 22/11/24 07:56, Binbin Wu wrote:
->>>
->>>
->>>
->>> On 11/22/2024 1:23 PM, Xiaoyao Li wrote:
->>> [...]
->>>>> +
->>>>> +fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->>>>> +{
->>>>> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
->>>>> +
->>>>> +    /* TDX exit handle takes care of this error case. */
->>>>> +    if (unlikely(tdx->state != VCPU_TD_STATE_INITIALIZED)) {
->>>>> +        /* Set to avoid collision with EXIT_REASON_EXCEPTION_NMI. */
->>>>
->>>> It seems the check fits better in tdx_vcpu_pre_run().
->>>
->>> Indeed, it's cleaner to move the check to vcpu_pre_run.
->>> Then no need to set the value to vp_enter_ret, and the comments are not
->>> needed.
->>
->> And we can take out the same check in tdx_handle_exit()
->> because it won't get there if ->vcpu_pre_run() fails.
-> 
-> And also check for TD_STATE_RUNNABLE in tdx_vcpu_pre_run()?
+Andrew,
 
-Yes, let's also do that.
+Andrew Lunn <andrew@lunn.ch> writes:
 
-> 
->>>
->>>>
->>>> And without the patch of how TDX handles Exit (i.e., how deal with vp_enter_ret), it's hard to review this comment.
->>>>
->>>>> +        tdx->vp_enter_ret = TDX_SW_ERROR;
->>>>> +        return EXIT_FASTPATH_NONE;
->>>>> +    }
->>>>> +
->>>>> +    trace_kvm_entry(vcpu, force_immediate_exit);
->>>>> +
->>>>> +    tdx_vcpu_enter_exit(vcpu);
->>>>> +
->>>>> +    vcpu->arch.regs_avail &= ~VMX_REGS_LAZY_LOAD_SET;
->>>>> +    trace_kvm_exit(vcpu, KVM_ISA_VMX);
->>>>> +
->>>>> +    return EXIT_FASTPATH_NONE;
->>>>> +}
->>>>> +
->>> [...]
->>
+>> Unfortunately it's initially set based on the supported capability
+>> rather than the actual hw setting.
+>
+> We need a clear definition of 'initially', and when does it actually
+> matter.
+>
+> Initially, things like speed, duplex and set to UNKNOWN. They don't
+> make any sense until the link is up. phydev->advertise is set to
+> phydev->supported, so that we advertise all the capabilities of the
+> PHY. However, at probe, this does not really matter, it is only when
+> phy_start() is called is the hardware actually configured with what it
+> should advertise, or even if it should do auto-neg or not.
+>
+> In the end, this might not matter.
 
+Nevertheless, it seems it does matter.
+
+>> While in most cases there is no
+>> difference (i.e., autoneg is supported and on by default), certain
+>> adapters (e.g. fiber optics) use fixed settings, configured in hardware.
+>
+> If the hardware is not capable of supporting autoneg, why is autoneg
+> in phydev->supported? To me, that is the real issue here.
+
+Well, autoneg *IS* supported by the PHY in this case.
+No autoneg in phydev->supported would mean I can't enable it if needed,
+wouldn't it?
+
+It is supported but initially disabled.
+
+With current code, PHY correctly connects to the other side, all the
+registers are valid etc., the PHY indicates, for example, a valid link
+with 100BASE-FX full duplex etc.
+
+Yet the Linux netdev, ethtool etc. indicate no valid link, autoneg on,
+and speed/duplex unknown. It's just completely inconsistent with the
+real hardware state.
+
+It seems the phy/phylink code assumes the PHY starts with autoneg
+enabled (if supported). This is simply an incorrect assumption.
+
+BTW if the code meant to enable autoneg, it would do exactly that -
+enable it by writing to PHY command register. Then the hw and sw state
+would be consistent again (though initial configuration would be
+ignored, not very nice). Now the code doesn't enable autoneg, it only
+*indicates* it's enabled and in reality it's not.
+--=20
+Krzysiek
+PAMI=C4=98TAJ: WR=C3=93G TE=C5=BB TO CZYTA
 
