@@ -1,177 +1,161 @@
-Return-Path: <linux-kernel+bounces-424893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F3B9DBAE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:53:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F659DBAE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A433281FDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913AC2820BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56491BD9CF;
-	Thu, 28 Nov 2024 15:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rPgJGwDS"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D41A1AA1D5
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3271BD9CF;
+	Thu, 28 Nov 2024 15:55:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDD01AA1D5;
+	Thu, 28 Nov 2024 15:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732809230; cv=none; b=Rkc8Two7lKzRVgPp7TKZAWuhQm+DuyLfF16SEgsNjvA7hv0CFRsONJiBI8TlFm5KO87XC3twUwjdeRWknE+GBlJMZejpSaAgJu5X7wYx75wzaudXdIdi4rog3EQYS2bmm6wCtaGuLkJiaALQ3aeU//8Pm2OTDiUbv+HB2jWLZJ0=
+	t=1732809347; cv=none; b=CLVzJDgs9zJ8MPtvvupUxdAopZo5qSzIOxtJHSVDwVlX9UK0ljbajssxM40OtA1lY/nRdSQ+HUEEZAgHt6aWPvjcWJC0fuPrzVY7+x1vI2ZoI/NqcWEOb1/eZYEVn39ZrZD0PGxwmtY6kXghQHYbypcLpajwYEoPyA81wRUiYo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732809230; c=relaxed/simple;
-	bh=W0nbNECqaoQgQy8wCcT3w89EsIp4bVSjckOvFyN+LiY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m9XmC50HbYINsqnFzYbudxHEBnzBrdXNOk0GlaL5T16BX81TEeQFHMyNdo2Nv660Sfwxpai6DlZWLXfocoQ22lUuwILfxHYWma/MTKhoD7SrdGab+jRS3Lt32jSHGmgVUb3LpwImiLzSZCzKUiSCs/fFT4qb/nkn6BQN3xF5zfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rPgJGwDS; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a9f2da82so8377465e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:53:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732809227; x=1733414027; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qJcLS7Y+TNZg8kTiOzR+IwHTehRXvL7IIhIVM5JxoUs=;
-        b=rPgJGwDSagSjg3rwMDWPAjXFUZGP4uXbrnvLSe5OPy/p0SFIHy9NPRJfYtQWwvWpAo
-         PuDsAxU+ZBomCoz4oIeqH6K2oTFmyczehToqlNFKQ5zM9HjptliYNRyjRPIplWx5NHkP
-         PRKtmAO9eFCEsbTmfxH41OBdj/t/dHpszPk+oBP5dlrF95oLxZtBz7pfcL6zUo0AS9Bf
-         eA0eaWZU/OtRjSGaHV7IlkviTWzplHqdCdypNJiXE3cek6wvbzpAgiXOK1fDKt3e60Kt
-         nlVdaef9EfIDelt0PyFLlK3CvCNPftFYPgNRabubC0CIIXXYgICTcRjdBBjmmwxedANL
-         XBiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732809227; x=1733414027;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qJcLS7Y+TNZg8kTiOzR+IwHTehRXvL7IIhIVM5JxoUs=;
-        b=ZfCsAqqY2q7cl82bSDwGXPH0k4Y8sf/aT1t076COBs0brOJjD6wh3XbsiNxtTAoZNN
-         P4hIRl306g8qpv+nBRTcE9LUXMVRdHTAbpEnfVoPFOPz9MiLohkSwKltteLQ69vNYClF
-         fAPSW+2UFXawW5A6tgiCd5xuyGtuP3UyiN0cgVyOmKgJ9Qsakk9ELWknP0JIQM7B0uox
-         35GQOg3a7DS6mx0qursyTkeEfnC24huqiRDk47YhVjdCvugHSKNPywTbqWIEqIqLIUed
-         YSMaTXXB4OTg8y5DUsuBo/6AHGCQVKcNnE9CLE57/yP2uvSagJM9ccLQP+lBzddM2FO2
-         GqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUE50GCjh+T2pQtxzjbItusopqEEWS9I/6DQR9ZWRIkmpuwjdL9qWSLtxF3WiDf0xumTp03l8GprcaeQZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySTs0EuOKfvzqy+Jh+NDqSYcvkFFKB86bocsVHFmMXuUUPMDcX
-	BN4VdpHnWIjgT2hFExdNmHnoi0IPBZZVUqoZoaVNKl3irzfqgQzFZtaVe8b1tH0=
-X-Gm-Gg: ASbGncvcRmghqHh/bMtjAzi1xe2o1V4l4TGkTHESSSIMEZWEvSiNd9cPyXlVxxkAEcc
-	yV9/ef+kgaKawn3nK0Fy1Fy0vAZAJctjNIyZGC1IbAX9cJp3eLd20KaU+Ofv9o+OttbXLjONNZC
-	CV0rHxLBYblQUw3qkVdSCCU252YeQ5JvkW6BR6wbDUE5zcq3bQqeF3ykRDebH6yAQ/6/Cl13Zf+
-	/R1kTnn/ElBotXx7fQrTMQ3Bm98wTGjA6B1wEfFGKV1c9v4kQ==
-X-Google-Smtp-Source: AGHT+IGniJq3jqV+EYYIMc2ZyU15P38lX7DI3pP8iwwIHzl+aDRDGlHZnT2XwseXds/67vDoiz4FKQ==
-X-Received: by 2002:a05:600c:4747:b0:434:a07d:b709 with SMTP id 5b1f17b1804b1-434a9dfc3d4mr61829395e9.29.1732809226700;
-        Thu, 28 Nov 2024 07:53:46 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b89d:29e9:7047:2d6f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa76b52bsm57165365e9.18.2024.11.28.07.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 07:53:46 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,  "Michael Turquette"
- <mturquette@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,  "Kevin
- Hilman" <khilman@baylibre.com>,  "Martin Blumenstingl"
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  "Mark Brown" <broonie@kernel.org>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-In-Reply-To: <ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com> (Arnd
-	Bergmann's message of "Thu, 28 Nov 2024 16:34:46 +0100")
-References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
-	<1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
-	<f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
-	<1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
-	<306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
-	<1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
-	<c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
-	<1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
-	<ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 28 Nov 2024 16:53:45 +0100
-Message-ID: <1jjzcn1hiu.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1732809347; c=relaxed/simple;
+	bh=EhiOHahtYnjzms+p/HIrLiSiirGSQXSMhBfzAjTUHJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MlrdjNXmV9NYtVoVri7ag+n9gRkr6tAVWnklpFQIFwBBZktOkUCd6U3/f21WBk37gWM/241A8wWzOcl0IMv4vHcus+cuNM27w6hgCT7xXy36nt1DV22de+zC3NyX4EnXcmt7E9gU4GqXVFP8jDw0gGH0GZtc3XxtQh0qvQKIvZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E91891474;
+	Thu, 28 Nov 2024 07:56:13 -0800 (PST)
+Received: from [10.57.30.199] (unknown [10.57.30.199])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F36473F5A1;
+	Thu, 28 Nov 2024 07:55:42 -0800 (PST)
+Message-ID: <e2d83e57-ad07-411b-99f6-a4fc3c4534fa@arm.com>
+Date: Thu, 28 Nov 2024 15:55:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: Fix invalid execution of clk_set_rate
+To: chuan.liu@amlogic.com
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+References: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+Content-Language: en-US
+From: Aishwarya TCV <aishwarya.tcv@arm.com>
+In-Reply-To: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 28 Nov 2024 at 16:34, "Arnd Bergmann" <arnd@arndb.de> wrote:
 
-> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
->> On Thu 28 Nov 2024 at 15:51, "Arnd Bergmann" <arnd@arndb.de> wrote:
->>> On Thu, Nov 28, 2024, at 15:39, Jerome Brunet wrote:
->>>> On Thu 28 Nov 2024 at 15:11, "Arnd Bergmann" <arnd@arndb.de> wrote:
->>>> Eventually that will happen for the rest of the reset implemented
->>>> under drivers/clk/meson.
->>>>
->>>> It allows to make some code common between the platform reset
->>>> drivers and the aux ones. It also ease maintainance for both
->>>> Stephen and Philipp.
->>>
->>> I don't understand how this helps: the entire point of using
->>> an auxiliary device is to separate the lifetime rules of
->>> the different bits, but by doing the creation of the device
->>> in the same file as the implementation, you are not taking
->>> advantage of that at all, but instead get the complexity of
->>> a link-time dependency in addition to a lot of extra code
->>> for dealing with the additional device.
->>
->> My initial rework had the creation in clock (note: that is why I
->> initially used 'imply', and forgot to update when the creation moved to
->> reset).
->>
->> I was asked to move the creation in reset:
->> https://lore.kernel.org/r/217a785212d7c1a5b504c6040b3636e6.sboyd@kernel.org
->>
->> We are deviating a bit from the initial regression reported by Mark.
->> Is Ok with you to proceed with that fix and then continue this discussion
->> ?
->
-> I really don't want to see those stray 'select' statements
-> in there, as that leave very little incentive for anyone to
-> fix it properly.
->
-> It sounds like Stephen gave you bad advice for how it should
-> be structured, so my best suggestion would be to move the
-> the problem (and the reset driver) back into his subsystem
-> and leave only a simple 'select RESET_CONTROLLER'.
 
-Okay, though I don't really understand why that select is okay and not
-the the proposed one. There is apparently a subtility I'm missing I'd
-like to avoid repeating that.
+On 10/09/2024 06:53, Chuan Liu via B4 Relay wrote:
+> From: Chuan Liu <chuan.liu@amlogic.com>
+> 
+> Some clocks have rates that can be changed elsewhere, so add a flag
+> CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+> the real-time rate is obtained.
+> 
+> When clk_set_rate is called, it is returned if the request to set rate
+> is consistent with the current rate. Getting the current rate in
+> clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+> does not take effect here.
+> 
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
 
->
-> From the message you cited, I think Stephen had the right
-> intentions ("so that the clk and reset drivers are decoupled"),
-> but the end result did not actually do what he intended
-> even if you did what he asked for.
->
-> Stephen, can you please take a look here and see if you
-> have a better idea for either decoupling the two drivers
-> enough to avoid the link time dependency, or to reintegrate
-> the reset controller code into the clk driver and avoid
-> the complexity?
+Hi Chaun,
 
-If I may,
+Currently, when booting the kernel against next-master (next-20241128)
+with Arm64 on the Qualcomm RB5 board, the following logs are printed
+repeatedly. This issue does not cause a failure.
 
-* short term fix: revert both your fix and the initial clock
-  change that needed fixing. That will essentially bring back the reset
-  implementation in clock.
+A bisect (full log provided below) identified this patch as the source
+of the log prints. The bisect was performed on the tag "next-20241118"
+in the repository located at
+"https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
 
-* after that: remove the creation part from driver/reset and bring back
-  something similar to what was proposed in the initial RFC for the
-  creation and finally switch the clock driver back to it.
-  That should provide the proper decoupling your are requesting I think.
+This works fine on Linux 6.12
 
->
->       Arnd
 
--- 
-Jerome
+Sample log from run on RB5:
+------
+<3>[   17.159611] cpu cpu7: _opp_config_clk_single: failed to set clock
+rate: -22
+<3>[   17.165534] cpu cpu4: _opp_config_clk_single: failed to set clock
+rate: -22
+<3>[   17.169338] cpu cpu0: _opp_config_clk_single: failed to set clock
+rate: -22
+<3>[   17.171850] cpu cpu7: _opp_config_clk_single: failed to set clock
+rate: -22
+<3>[   17.171913] cpu cpu0: _opp_config_clk_single: failed to set clock
+rate: -22
+<3>[   17.196804] cpu cpu4: _opp_config_clk_single: failed to set clock
+rate: -22
+
+------
+
+
+Bisect log:
+------
+git bisect start
+# good: [adc218676eef25575469234709c2d87185ca223a] Linux 6.12
+git bisect good adc218676eef25575469234709c2d87185ca223a
+# bad: [ae58226b89ac0cffa05ba7357733776542e40216] Add linux-next
+specific files for 20241118
+git bisect bad ae58226b89ac0cffa05ba7357733776542e40216
+# bad: [864039014c6a549c57796b83f99cc7fe25bf1afe] Merge branch 'main' of
+git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect bad 864039014c6a549c57796b83f99cc7fe25bf1afe
+# bad: [50c7979120c4cff994ea6eaf14747bb0c01a0cd0] Merge branch
+'xtensa-for-next' of git://github.com/jcmvbkbc/linux-xtensa.git
+git bisect bad 50c7979120c4cff994ea6eaf14747bb0c01a0cd0
+# good: [daa20223dee942ebea45bc72b517480af226c370] soc: document merges
+git bisect good daa20223dee942ebea45bc72b517480af226c370
+# good: [5cc2c18659e40c5d2f93d429d2a4a38234184767] Merge branch
+'for-next/core' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux
+git bisect good 5cc2c18659e40c5d2f93d429d2a4a38234184767
+# bad: [618a651f965804164b2f8c446d729197a5fdfd3e] Merge branch
+'linux-next' of git://github.com/c-sky/csky-linux.git
+git bisect bad 618a651f965804164b2f8c446d729197a5fdfd3e
+# good: [d3faed6e9d54a50ad2c505df7e9455752405888c] Merge branch
+'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+git bisect good d3faed6e9d54a50ad2c505df7e9455752405888c
+# good: [44ea50e086eb287f923460c0119b95d263ec76de] Merge branch
+'clk-imx' into clk-next
+git bisect good 44ea50e086eb287f923460c0119b95d263ec76de
+# good: [ae7a050d03ca95e8e57bc709af8c5a56d1c1b216] Merge branch
+'clk-mediatek' into clk-next
+git bisect good ae7a050d03ca95e8e57bc709af8c5a56d1c1b216
+# bad: [d6c3666ba425fc5a1a4c938591e89279203a25e1] Merge branch
+'clk-cleanup' into clk-next
+git bisect bad d6c3666ba425fc5a1a4c938591e89279203a25e1
+# good: [7b51444e86d11a346c338a03e96d142fc82b95ac] Merge branch
+'clk-adi' into clk-next
+git bisect good 7b51444e86d11a346c338a03e96d142fc82b95ac
+# good: [5e01124a2c0a42dc6b587b0b09b204a5389f8d7b] clk: eyeq: add EyeQ5
+fixed factor clocks
+git bisect good 5e01124a2c0a42dc6b587b0b09b204a5389f8d7b
+# good: [caabff73ef137ff183e4f6626332eb6b0a886522] Merge branch
+'clk-mobileye' into clk-next
+git bisect good caabff73ef137ff183e4f6626332eb6b0a886522
+# bad: [eb70c83178b25e8d7934c51ba6f1b04da2867265] clk: Fix invalid
+execution of clk_set_rate
+git bisect bad eb70c83178b25e8d7934c51ba6f1b04da2867265
+# good: [ac678a1810665f9820934b89157094afd0975a80] clk: clk-loongson2:
+Fix memory corruption bug in struct loongson2_clk_provider
+git bisect good ac678a1810665f9820934b89157094afd0975a80
+# first bad commit: [eb70c83178b25e8d7934c51ba6f1b04da2867265] clk: Fix
+invalid execution of clk_set_rate
+------
+
+Thanks,
+Aishwarya
 
