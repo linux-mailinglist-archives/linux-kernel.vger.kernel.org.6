@@ -1,140 +1,177 @@
-Return-Path: <linux-kernel+bounces-424266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA759DB253
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:05:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90939DB272
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:17:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E37C167DA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:05:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB962B227DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EE913C690;
-	Thu, 28 Nov 2024 05:05:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3EB13B792;
+	Thu, 28 Nov 2024 05:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SG1bhClx"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A46E1FAA
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F3BAD4B;
+	Thu, 28 Nov 2024 05:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732770326; cv=none; b=tZ6z1B4tm1+AWH+rnvFmgEvBPaGxTstKUJs6span8bd/4o5P8q+jMV9iumZfOMhg1fNRVKL7N7A08TY3mLH7JSzo96fvhc+iNe7dFvyhJ6MPZmzORCYJeHpJBGiK9HoyH4RvTEuPTDUZXXITVWD4x9saXvgh2KN9El8ceRjJAv4=
+	t=1732771041; cv=none; b=WgMReH+6KQxGLiUMsGUeshCUVWIDHO3cREHQ6ZrOf2KlXrw7rs2UX8YLLYwuzkJDldWepnSHatqIBQ6KB33Y3NHmyoH8z8J6Oufc0LS+y3KdD2fYXMGy7OmHgQZIKiG4Brx6v+cmg4Qschn/uk/QFd05chLg95x2YVQs9WEiaic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732770326; c=relaxed/simple;
-	bh=vIKNpXEFyCj9f/ESQ5wYvvwDqyZOUL6pDkNlXFhBYsc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=A0SESpsKQ+NaQ+NjV/Jlw3pgouq+c1onTOtUVCKE4B6mFGQyYinMGt6JQR0IwkDGFjcVzFj4L7LJzwYnV8daTGJJdvRBVpXhAYVMgbUheCxX8O0SOVRSXU9F+oXBlkIa3zeHUF/RIK6EgCV+mP6bX+sc6T2waPpr5NQPiP54nus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a76ee0008cso7780915ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:05:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732770324; x=1733375124;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VUe6L83DvzFZaE2UEQFYvXPculZx4n1ci65ASlI0ET4=;
-        b=HrV3InR6BPNG5GLkYE7vbRMHSjPTu3uOihdrQido6H7BHAHS3Y8N5diRFMW+KrO2FY
-         cYkvsbvKemF0otNuT8nDyuFDelVIrujulewLpEAnAWWLO46h4+lRuhXayxErGIrnyqAS
-         0vgCBgSfTVTYCCS+wb06nbE3NM+AHJB2UY2IWj8VZlJErUxb8QzJWpqOqn0V3H0YUMhW
-         q5HYL8d66CtbtojFpal5Yf/y1esxvaxRJ01qVralyg99qgDj5qByU/5hF8AIaZkrCKyb
-         rlbfm0ui254XE5f/e3cbOkO1AoiyQln9dkiG0pNcDxHZTZG01ueJhrf5QKI56zZvZBib
-         svaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXU84i81zCbb1vOVxe7/vurMBo8DFF4o0nW+5dfSGLI8bZsSVv4Vj5XbkDbQscRfPg9hKGBeUwVSUL7fxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTngLXEhymx7LJVghI3Y1L8bCj2g557TQDR/kL5b20gEdKLsqb
-	jtMyVZMz7G+hTPFgm6UwsuBZn5ZRol0XSKPU4/hGlkM88MUrVCGXjeUS5qcdEUGMW+gV5KD7uaE
-	UCfiWU8Guw6lOh0f1NLmHSeEUWMBOWCautxgfk+UF6LjQIvDmSqS0wxU=
-X-Google-Smtp-Source: AGHT+IGtDybW2RjYZtHam542Fnhm7O0KLFSXDIdGVo3EPmAEEikK0ut5WEseH0hXcciYHeUjPgmu5lo2cYbOVd3M6RGnIqkky6ns
+	s=arc-20240116; t=1732771041; c=relaxed/simple;
+	bh=axw8GZUDEJnuGgv5liNFiPSxzG9BMlaL8C/F0uNUl38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eiXNUd5DjEod7ljvDjw9V5eYBa452SAKRELXzOqsLuAjydcNW1DOJjg38RtN3nJQ6xAcBwsD+Z8aF9e+5bIM8Eowwy2Bp4P/QlWBNBoGsg0wRVfCNZ5XIXjbt7yZzeleft1hbopqfUmpvGb4sJMU9NoWEj8v7CTUOnJc/g1qDMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SG1bhClx; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARHY5vG023453;
+	Thu, 28 Nov 2024 05:17:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QEtc7N
+	tViimDoFDdgLXWudJ4k4WGhKfg8PoKOO7OHVk=; b=SG1bhClxyHpEOrPWMkDw6y
+	KlSb44pSJl349hzfFZulsyeWQGXRViKjDWwtzl+SOKPT7BB+aQtMyTG/fIV7ZIRl
+	MyeIGYTuCO7COmbNZYWMaXfuJkFDlv8bmVtMWSNBdoRsQhVpX3UoTap8H4GhN3w7
+	mZsDtJe5IoIQmV5Y3fARgyxNYMD2wE6w0/LTytEdamb/QBZf3gPHZT/xf3nc/xWI
+	KOIYznETM8f3+DfUEjlV/tOc5o9pL5AxJis87q/EzYIpltjc3n1uVAfnBnOTGWVO
+	6RaQ9+AVLomVRWu3JdMBwJYJSof6JRDj7grFC6a4Xp7XmSaopIAvz7zkeC9P7V7Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366ywjxk0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 05:17:04 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AS5H33A010314;
+	Thu, 28 Nov 2024 05:17:03 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366ywjxjw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 05:17:03 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS4iVna009796;
+	Thu, 28 Nov 2024 05:17:02 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43672f6cqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 05:17:02 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AS5H15K17891944
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 28 Nov 2024 05:17:01 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BAA2C58053;
+	Thu, 28 Nov 2024 05:17:01 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CCAC358043;
+	Thu, 28 Nov 2024 05:16:58 +0000 (GMT)
+Received: from [9.171.2.153] (unknown [9.171.2.153])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 28 Nov 2024 05:16:58 +0000 (GMT)
+Message-ID: <8174031c-b9b1-4e32-806e-28f1b2c1dee0@linux.ibm.com>
+Date: Thu, 28 Nov 2024 10:46:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aaf:b0:3a6:b783:3c06 with SMTP id
- e9e14a558f8ab-3a7c55d6a17mr59406245ab.19.1732770324491; Wed, 27 Nov 2024
- 21:05:24 -0800 (PST)
-Date: Wed, 27 Nov 2024 21:05:24 -0800
-In-Reply-To: <66f8a5f8.050a0220.aab67.000d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6747fa14.050a0220.253251.0070.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING: locking bug in __task_rq_lock
-From: syzbot <syzbot+bb50a872bcd6dacdf184@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    aaf20f870da0 Merge tag 'rpmsg-v6.13' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=152e71e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=493f836b3188006b
-dashboard link: https://syzkaller.appspot.com/bug?extid=bb50a872bcd6dacdf184
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=100f7530580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08102d213bca/disk-aaf20f87.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/80a985df7f54/vmlinux-aaf20f87.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2eccce18d2d9/bzImage-aaf20f87.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/87e2093dad2b/mount_20.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bb50a872bcd6dacdf184@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5975 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 0 PID: 5975 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4850 [inline]
-WARNING: CPU: 0 PID: 5975 at kernel/locking/lockdep.c:232 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Modules linked in:
-CPU: 0 UID: 0 PID: 5975 Comm: syz-executor Not tainted 6.12.0-syzkaller-10296-gaaf20f870da0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4850 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Code: 00 00 83 3d 41 69 ad 0e 00 75 23 90 48 c7 c7 40 d7 0a 8c 48 c7 c6 40 da 0a 8c e8 77 63 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc90003aef890 EFLAGS: 00010046
-RAX: ebff77b2920c0b00 RBX: 00000000000010d8 RCX: ffff888026515a00
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000000c10d8 R08: ffffffff815688b2 R09: 1ffff110170c519a
-R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff8880265164c4
-R13: 0000000000000005 R14: 1ffff11004ca2ca5 R15: ffff888026516528
-FS:  000055555f6a9500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2be16756c0 CR3: 0000000032fe0000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
- raw_spin_rq_lock kernel/sched/sched.h:1514 [inline]
- __task_rq_lock+0xdf/0x3e0 kernel/sched/core.c:676
- wake_up_new_task+0x513/0xc70 kernel/sched/core.c:4866
- kernel_clone+0x4ee/0x8f0 kernel/fork.c:2818
- __do_sys_clone kernel/fork.c:2930 [inline]
- __se_sys_clone kernel/fork.c:2914 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2914
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2be0977053
-Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
-RSP: 002b:00007fffce1620e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2be0977053
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 000055555f6a97d0 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000003cb79 R14: 000000000003cb07 R15: 00007fffce162270
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: hugetlb_dio: Fix test naming
+To: Mark Brown <broonie@kernel.org>,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241127-kselftest-mm-hugetlb-dio-names-v1-1-22aab01bf550@kernel.org>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20241127-kselftest-mm-hugetlb-dio-names-v1-1-22aab01bf550@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wosSQ4wwott07zOshz_l1TmyE3Ju3Ys1
+X-Proofpoint-ORIG-GUID: E2TCnRoXf8oDsq9DL7HtmSlWStGa_7tz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 mlxscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 adultscore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411280038
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+On 11/27/24 21:44, Mark Brown wrote:
+> The string logged when a test passes or fails is used by the selftest
+> framework to identify which test is being reported. The hugetlb_dio test
+> not only uses the same strings for every test that is run but it also uses
+> different strings for test passes and failures which means that test
+> automation is unable to follow what the test is doing at all.
+>
+> Pull the existing duplicated logging of the number of free huge pages
+> before and after the test out of the conditional and replace that and the
+> logging of the result with a single ksft_print_result() which incorporates
+> the parameters passed into the test into the output.
+>
+> Fixes: fae1980347bf ("selftests: hugetlb_dio: fixup check for initial conditions to skip in the start")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>   tools/testing/selftests/mm/hugetlb_dio.c | 14 +++++---------
+>   1 file changed, 5 insertions(+), 9 deletions(-)
+>
+> diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+> index 432d5af15e66b7d6cac0273fb244d6696d7c9ddc..db63abe5ee5e85ff7795d3ea176c3ac47184bf4f 100644
+> --- a/tools/testing/selftests/mm/hugetlb_dio.c
+> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
+> @@ -76,19 +76,15 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+>   	/* Get the free huge pages after unmap*/
+>   	free_hpage_a = get_free_hugepages();
+>   
+> +	ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
+> +	ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
+> +
+>   	/*
+>   	 * If the no. of free hugepages before allocation and after unmap does
+>   	 * not match - that means there could still be a page which is pinned.
+>   	 */
+> -	if (free_hpage_a != free_hpage_b) {
+> -		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
+> -		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
+> -		ksft_test_result_fail(": Huge pages not freed!\n");
+> -	} else {
+> -		ksft_print_msg("No. Free pages before allocation : %d\n", free_hpage_b);
+> -		ksft_print_msg("No. Free pages after munmap : %d\n", free_hpage_a);
+> -		ksft_test_result_pass(": Huge pages freed successfully !\n");
+> -	}
+> +	ksft_test_result(free_hpage_a == free_hpage_b,
+> +			 "free huge pages from %u-%u\n", start_off, end_off);
+
+Hi Mark
+
+This test allocates a hugetlb buffer and adjusts the start and end offsets of the buffer based
+on|start_off|  and|end_off|. The adjusted buffer is then used for Direct I/O (DIO). If I understand
+correctly,|start_off|  and|end_off|  are not free huge pages but rather DIO buffer offsets. Should we
+change this message to "Hugetlb DIO buffer offset"?
+
+Thanks
+Donet
+
+>   }
+>   
+>   int main(void)
+>
+> ---
+> base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+> change-id: 20241127-kselftest-mm-hugetlb-dio-names-1ebccbe8183d
+>
+> Best regards,
 
