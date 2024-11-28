@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-424653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DB99DB78B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:28:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DF19DB790
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:28:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D492BB23262
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72ECB1634C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB9319C54F;
-	Thu, 28 Nov 2024 12:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D90E19DF77;
+	Thu, 28 Nov 2024 12:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwRDFCNg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UR9H+rPB"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A025156661
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37647192D77
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796900; cv=none; b=Wuo+mh5wfSrqFIweYd1TpkLQjQPiL7kW0hKVAXJJBjFNG0uz3nmC/RJI65Jlc7VbkNJTYNCMwTdcg1VNi27z/tbY9FCcIsMnkuSDzUSyXEc4qfWKveR53mze1aYqcpVGVDJswRKC/KXiAzU1DSKvYGxHnFYf9/wq+m+Fo/+7Vgg=
+	t=1732796910; cv=none; b=iKqg8OeC9AHWq1IytrpVNL7lB4XoVsJ5cYZX+snsUWMnUveGcbg9Zh0gqengWWFpipIkBvasycPMxp7wVd/p9K5gOLnuvmBElJWgHPgVmt00YnFDB2YmPPWRqERZRGbrZy8emC27iGAMU39PIz79BFmJ4gnIX2Q26qvdfHUAp9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796900; c=relaxed/simple;
-	bh=bNrQTCZEcaUgo5FjBCbBrDG2yXY96CZgzMJbK9wmtmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYw5DNKdwTTtHr7kqD5Tz5fXuF/BVRUGuh0jakNaHoVUOdEYcPhIwRpcnVB7qBc/rGmgvrRQ8Y5va/j31IW2QNNNIhc48nyu1yI4Ur276dce/MLzB5cabBvdr0uvbn2aHwp1Gmn/ABYFA8VNgf42oWe/6eR/PI1EFDySlutQbJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwRDFCNg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A12C4CECE;
-	Thu, 28 Nov 2024 12:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732796899;
-	bh=bNrQTCZEcaUgo5FjBCbBrDG2yXY96CZgzMJbK9wmtmU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lwRDFCNg0cuGe7Oy1l1rZnHwuRrXt5uKq916ZD3W9qxOhp64Ak63kdNC1d3ceujht
-	 dHifWks7Sk6EieJCC9VggvD9wbV0or9zZOY37Lk5LU+l7YXm9LMyFqxDsd3tU6lIjB
-	 eartioY0loZFhGiHf/E0YKUEJ2rC64eQDJENShTvUD5eWCW3FJXyzrYxC4+V3Eill3
-	 VaEXmWyVWLJ+qNKBz2SVFxRCxjxGQ4jtIbUrFMiHd9Rxm9CzPpoYYSX1Pbl2LkJgiv
-	 rumjhHiS/ojB5jPjiJ7p2MSClI80DFopXhtb5KDM3tmoo2GYfNXNt3P2785Xh7pV33
-	 Sj8OJnlidnywg==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] x86/boot/compressed: Remove unused module.h include from kaslr.c
-Date: Thu, 28 Nov 2024 13:28:15 +0100
-Message-ID: <20241128122815.2943-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732796910; c=relaxed/simple;
+	bh=MOT2fR8awT9bMTqFJViZ1GmaBnBHbdhxmtDeJixFVwA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=srMQFXcp1oRSXabGlNM668T7x3TCth1tyjaT/UbGxPmekCMAnRWGCwimFmMq1DkrEZP8Ve0+ztb9nZiMBnZFPlsZYCWxlp9Isjsoc1mLAGPiAqDjPsmgJVk82F0w0u2lYyVEXHfiKHFQOetJ8S0c5VL5qDjaCs4AsgYiHFl+1Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UR9H+rPB; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df1e0641fso843144e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732796906; x=1733401706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MOT2fR8awT9bMTqFJViZ1GmaBnBHbdhxmtDeJixFVwA=;
+        b=UR9H+rPBh6ko11f0iuF0UYGbvVhOnxCUEDXWk6AbUJdZygdVCMzWHMn/cCKFy2vCiv
+         P+p6qdsSBN9QQ49bS5mR1ERfrPqSNkCSYFGRY3V9EtK9/07cLo0v4W3FIxgt10SK5H5m
+         fctJndO6IuOscqbXJs73egxSYMl0AtribQPg7/+pS23ZNKwhh/b6bo+dv61lnw20AbFQ
+         TF2R6IsQ9AFxuf+wNUwdMafcJwC2wSI9+5zgkHQ9mAn2mA0ScKNAeOjiLCdhmVitNijl
+         Q0KlwH9VKP9m4WJ4GJoL/RmT9bMiKeVTdbJOg/pMpVzeVxPeGSYwT+UzxhWkZTK32NYU
+         Kk2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732796906; x=1733401706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MOT2fR8awT9bMTqFJViZ1GmaBnBHbdhxmtDeJixFVwA=;
+        b=A9Udw60NOnkQsLdERNxXWJWIkQ9/6QECXkS6kG4scjvwHHOkkWzn9iVp3QSsA69U5u
+         OcxOd6MLIn04ycZylCVTKL580K8Hu/lpEL75LFDhB+GqQhwCTsFf/GxVupVsiyliLt4b
+         0DmVJ93qp1UWVCf2JvYAWdW2HaibBjSVAhBXGd+TyfBefhrJgV3yemd/4iUcrLMgcGfI
+         QXJQLwv+CXtGxAZvuKYZBWj56eKNaoBMCbrWaw06xHBSl0EVymvbv9HcIvXWfQhgWhoy
+         tslX6PbIH6im5NRHScmOe+NZ+XYzdd4hFuSBGq5UVh40rq/UTPwnd08eQ3+HM2af/FSK
+         fEHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTf7fgT42oLIEivTR8n7m69959rdfqg5FK1DUzYwLJW25omGtZE4KoBSBDI7NtqcbnZHm617WTJIiiObY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzEAnYwtCEgE2Nfe9yp4yG2AFKMNZwn9CFp41x20i//OHrUKjY
+	mVb6hdPb9+JzyJ15UPNE8vuEoa9vdhJR0YWLtkbFZbobr/bNnLvduYWQzFVTADuNv43Gd+PiPJy
+	Eg5FjfDvNZQFZ8BmoJ1WEjZ8k5GhiQBkyUgyuln3AP54sGBVeNfZCyg==
+X-Gm-Gg: ASbGnctThrrbsqiaCmjAu3IQ1j8U2Fvb/VP4c0zoCpyb8Homz2a1J8O8uhSShzdftDB
+	21Y/FytjJaJHUC8REqWOSO7UjhqAyEZX/VmBoJjYjpJmNeGnrxNyusa1IZRwv
+X-Google-Smtp-Source: AGHT+IEdrLtj9NaXXUfCeQxVjlSafuVoPdRfD2yexlIaCJux0eAYLUG/36jd9cMhQ1bPlx07fZHGswpMMleKK6+/fH0=
+X-Received: by 2002:a05:6512:3119:b0:53d:f1cb:6266 with SMTP id
+ 2adb3069b0e04-53df1cb62e3mr2782497e87.28.1732796906369; Thu, 28 Nov 2024
+ 04:28:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241127212027.2704515-1-max.kellermann@ionos.com> <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
+In-Reply-To: <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 28 Nov 2024 13:28:15 +0100
+Message-ID: <CAKPOu+-Xa37qO1oQQtmLbZ34-KHckMmOumpf9n4ewnHr6YyZoQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Thu, Nov 28, 2024 at 1:18=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
+wrote:
+> Pages are freed in `ceph_osdc_put_request`, trying to release them
+> this way will end badly.
 
-Nothing needs it.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/boot/compressed/kaslr.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index f4d82379bf44..1b0300366d79 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -25,7 +25,6 @@
- #include "efi.h"
- 
- #include <generated/compile.h>
--#include <linux/module.h>
- #include <linux/uts.h>
- #include <linux/utsname.h>
- #include <linux/ctype.h>
--- 
-2.43.0
-
+I don't get it. If this ends badly, why does the other
+ceph_release_page_vector() call after ceph_osdc_put_request() in that
+function not end badly?
 
