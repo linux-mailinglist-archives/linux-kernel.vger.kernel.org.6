@@ -1,135 +1,137 @@
-Return-Path: <linux-kernel+bounces-424258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1749DB229
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:26:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3FE9DB22B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7111A167C0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4F51673E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83B513B780;
-	Thu, 28 Nov 2024 04:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65751386BF;
+	Thu, 28 Nov 2024 04:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CKJNNjGo"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7cHF1HI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A263D82C7E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06A45025;
+	Thu, 28 Nov 2024 04:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732768000; cv=none; b=T+fTydHIyL7T+hhkM7S5avHCPcgfOxshflzAKqlw23IkkAAYGe8opPvOV8QyQKsJr01ufGqctUWAxAeE61rHw8f0GWJAx3AvlJnhcqV7uEOqyEl4QUqvIwe2IqebXtUubxOuByUExuZ3UNhYVBD1CcrRzB0EnW1UHihu12K3lEw=
+	t=1732768176; cv=none; b=bY82MMu18bwpqiMFAR6FaBw9GmfhmD+8WQBmqCD2w5nalkUxJmws2YJOIwM4gh+gtJK6dVrQFPQ/ZgdbahMCHWqQD4lUgJTnQ+LzNd4yV0EjhFqI/NXXzAixYMPHhcZHqXfkaiaWWmwxihf3enbJhCd1RLQBKqL3bn+d+fuUWoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732768000; c=relaxed/simple;
-	bh=SQ5HTme1SLECGbVCaGoPHfecPrbsN1EOEWv6CHUAVP0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sAfQUGD/ENYpWvLLAhDGU+2o86HH4L21WCi9r+uu+TsWoxny4KKMPp30CV3beCU9BZC6SdzFpoGGoCD5Uj9PucTx1OJHxGOqWccWmFETlawfSuhuIeUs7lXiBSAPu3TLFIFAnwlb+9D9zo4WSIgV79r9IPHY9hG0We5sar+d9XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CKJNNjGo; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-724e113c821so448508b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:26:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732767998; x=1733372798; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yyk7Iou25uRg3TCJZa+tSFUnZozoGmQKQzSvVwcJ1m4=;
-        b=CKJNNjGoB9nwkV51z6xz+dTyhdEk8nnBvfC4B0VL+W608Iqw9i0VUSAj9R1JYjCwBm
-         BWyhJK189hq3Sg+DDo46Q/IkkxmhhUOLHGK/W+IfUNCjUDKqGSiFuo4riaROENZRoKo4
-         EGmNhP1t1xLCk/OAp5JHt8kILqThOL5Ee1noQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732767998; x=1733372798;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yyk7Iou25uRg3TCJZa+tSFUnZozoGmQKQzSvVwcJ1m4=;
-        b=tPliCbTXkPTXhKee0una7XBaNHs/GQ6+zcRQxi7+Z9HO0zX8bhlRLpBu9vP9G42gZG
-         mkkaoj4EZ1vKir6ni3RKKimuxbmaf26H5WG76wlEIAd4hzuLJK5pEX3Porh6xfGW48rk
-         9npDMmEDmMIi1rTMmGX0Lg1irnwcjPIWZ+wrpbhdl8fOpn/+055KxJEkcwyoOwwf6AV5
-         uKKqcl25WAztCXZff36ejfMWHlrv+sujWbqJhf7bwY6IN1g7r6rONNaASL+utFI7zRxS
-         +hdDt6KqZ/B+2RcJFecWNrhlSoNh8k4HOJAZZ9oQQUqU9+2Q8wkzVxb8BqPHcTVsVfrZ
-         4nxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9QYlWFOjiKft0mIzbzU+0ZDoyAW/ExbGImaTXSvVBbBKMThCQteDqtvCRmN79sxKlkfdDTNJnsK0j9z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3klWJaSXUlWuX79gmzxNhJ7YihJr8Xc7FawuJXRrj09aSpwYz
-	SfpVV6DxidV+9hlsYLZ3gEadgdJLb6SslQZGrMwuq4dua+SaJb+eYe9kjfDc3Q==
-X-Gm-Gg: ASbGncs6KWEPXPm+4ORFe9ltJLx2MP4XR51hCGrAwqWZ3GQvpwHWsM0qFvHkodUu5N7
-	8jrgYmb+Hyb7xWS/qUT8xBQRZ2tIdIHKhDPF7zg92PG7MRXjphJltG9aXOFs/hCMnSSxLuahN1s
-	2pJSKbD78kQbvR02Akbr2dobeb7lP/tmN3rJxf9VXSq7e7oiO+MhGTP7e7hUZJ6cpTO1ni6Nc3c
-	PzXKgbbYimK4C+IgY0o+kyBVwE60vMbNZLEyCIiYclFjhHXPAjOaGC5yQJi/zJ++OZO
-X-Google-Smtp-Source: AGHT+IHeZNuSWgVtWvTDokMDlIw4ArRKKjwJZ33jbZfsR02Ur3asny/Ji3uLw2rlY2Y0R8BhHPJDpA==
-X-Received: by 2002:a05:6a00:3d0e:b0:725:14fd:f62c with SMTP id d2e1a72fcca58-72530078935mr6645836b3a.15.1732767997932;
-        Wed, 27 Nov 2024 20:26:37 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:2db5:507b:eafb:b616])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541849509sm439133b3a.197.2024.11.27.20.26.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 20:26:37 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Wolfram Sang <wsa@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] of: base: Document prefix argument for of_get_next_child_with_prefix()
-Date: Thu, 28 Nov 2024 12:26:30 +0800
-Message-ID: <20241128042632.231308-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1732768176; c=relaxed/simple;
+	bh=ZReHJ+Ws4lewYIGJ0xabxD2HSvCS9j48AAi0eHrSfDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuqaAE1qE4tYqa31Yz5VXcbisc2jkBqYrsJOnvXcEWVgA+qGkqUJEM+qyyik4aLZ3glHoLGAhscGbTUv0gSTR9PQ2nkB10PFs3pMmOc3ReRT/F7Bze4D/zp+UAbn+QYcVg4Rml+c/3+dRLu+cH5rvAmZTbmcxtU5nYgY6k+vcUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7cHF1HI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B450DC4CECE;
+	Thu, 28 Nov 2024 04:29:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732768175;
+	bh=ZReHJ+Ws4lewYIGJ0xabxD2HSvCS9j48AAi0eHrSfDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N7cHF1HIZ2+umIwzkBnR4sA/+gWTJbyLC0/Wj+0YkfH+xKZQIwo7MY9J4Wdy+WOOD
+	 vTc+YZ1mZkgdZLZl/rE2T/0AXOAn9yJ6I2B73drGixgVI4ZVkepNafdeo+Fx6Lp9Dn
+	 ZDa2e4GgyRjNfPtu/XcamXqdFtO3iVDJFdMxnceLfWCw5NhSLqyT6aKYNMJzHySvek
+	 Uw/Bo50v/nHvyrPw67v5fU9HFgiPGSmZRrBI3RxfOc17JFjZmiY1QK/A9Vc3Zkig2q
+	 19YVJbBs3pDoVB3rOHLMaktXUUZm80uWhR/uF1728TKO4IhXUuXjpjeihJV3mi8KWJ
+	 Vj2QNNTvTnrHw==
+Date: Thu, 28 Nov 2024 04:29:32 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Dawid Niedzwiecki <dawidn@google.com>
+Cc: Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org, chromeos-krk-upstreaming@google.com
+Subject: Re: [PATCH 1/2] platform/chrome: cros_ec: jump to RW before probing
+Message-ID: <Z0fxrDTuCIeCDTiV@google.com>
+References: <20241125184446.1040187-1-dawidn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125184446.1040187-1-dawidn@google.com>
 
-When of_get_next_child_with_prefix() was added, the prefix argument was
-left undocumented. This caused a new warning to be generated during the
-kerneldoc build process:
+On Mon, Nov 25, 2024 at 06:44:45PM +0000, Dawid Niedzwiecki wrote:
+> To avoid such problems, send the RWSIG continue command first, which
+> skips waiting for the jump to RW. Send the command more times, to make
+> sure EC is ready in RW before the start of the actual probing process. If
+> a EC device doesn't support the RWSIG, it will respond with invalid
+> command error code and probing will continue as usual.
 
- drivers/of/base.c:661: warning: Function parameter or struct member 'prefix'
- 	not described in 'of_get_next_child_with_prefix'
+I'm wondering should it only send RWSIG_ACTION_CONTINUE if EC_CMD_GET_VERSION
+shows the FW is still in RO.
 
-Properly document the argument to fix this.
+Curious about: who (in which use case) is responsible for sending
+RWSIG_ACTION_ABORT if it wants the EC stays in RO?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411280010.KGSDBOUE-lkp@intel.com/
-Fixes: 1fcc67e3a354 ("of: base: Add for_each_child_of_node_with_prefix()")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-As requested. I assume Rob would give an ack for this to go through the
-I2C tree since the offending commit is there as well.
+> diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+[...]
+> @@ -204,6 +204,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>  	mutex_init(&ec_dev->lock);
+>  	lockdep_set_class(&ec_dev->lock, &ec_dev->lockdep_key);
+>  
+> +	/* Send RWSIG continue to jump to RW for devices using RWSIG. */
+> +	err = cros_ec_rwsig_continue(ec_dev);
+> +	if (err)
+> +		dev_warn(dev, "Failed to continue RWSIG: %d\n", err);
 
-I also put this patch on git.kernel.org hoping that it gets some bot
-coverage soon:
+Too verbose, use dev_info() instead.
 
-    http://git.kernel.org/wens/h/of_get_next_child_with_prefix-kdoc-fix
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+[...]
+> +int cros_ec_rwsig_continue(struct cros_ec_device *ec_dev)
+> +{
+[...]
+> +	for (int i = 0; i < RWSIG_CONTINUE_RETRIES; i++) {
+> +		ret = cros_ec_send_command(ec_dev, msg);
+> +
+> +		if (ret < 0)
+> +			error_count++;
 
-I guess I should have put the original patches on a separate branch on
-git.kernel.org for bots to run earlier. I'm sorry for not catching this
-sooner.
+Should it just return the error if the transmission fails?
 
- drivers/of/base.c | 1 +
- 1 file changed, 1 insertion(+)
+> +		else if (msg->result == EC_RES_INVALID_COMMAND)
+> +			/*
+> +			 * If EC_RES_INVALID_COMMAND is retured, it means RWSIG
+> +			 * is not supported or EC is already in RW, so there is
+> +			 * nothing left to do.
+> +			 */
+> +			break;
+> +		else if (msg->result != EC_RES_SUCCESS)
+> +			/* Unexpected command error. */
+> +			error_count++;
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 4cba021c89d3..7dc394255a0a 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -648,6 +648,7 @@ EXPORT_SYMBOL(of_get_next_child);
-  * of_get_next_child_with_prefix - Find the next child node with prefix
-  * @node:	parent node
-  * @prev:	previous child of the parent node, or NULL to get first
-+ * @prefix:	prefix that the node name should have
-  *
-  * This function is like of_get_next_child(), except that it automatically
-  * skips any nodes whose name doesn't have the given prefix.
--- 
-2.47.0.338.g60cca15819-goog
+Same as `ret < 0`, should it just return if any unexpected errors?
 
+> +		else
+> +			/*
+> +			 * The EC_CMD_RWSIG_ACTION succeed. Send the command
+> +			 * more times, to make sure EC is in RW. A following
+> +			 * command can timeout, because EC may need some time to
+> +			 * initialize after jump to RW.
+> +			 */
+> +			error_count = 0;
+> +
+> +		if (error_count >= RWSIG_CONTINUE_MAX_ERRORS_IN_ROW)
+> +			break;
+
+It could return 0 if `error_count >= RWSIG_CONTINUE_MAX_ERRORS_IN_ROW`.
+
+> +
+> +		if (ret != -ETIMEDOUT)
+> +			usleep_range(90000, 100000);
+> +	}
+> +
+> +	kfree(msg);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(cros_ec_rwsig_continue);
 
