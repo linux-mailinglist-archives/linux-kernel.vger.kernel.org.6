@@ -1,140 +1,373 @@
-Return-Path: <linux-kernel+bounces-424384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFB89DB3C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:28:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637C29DB3C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97692825AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:28:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51AF2B20F66
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC1814EC62;
-	Thu, 28 Nov 2024 08:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE0114BF92;
+	Thu, 28 Nov 2024 08:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0Hlmanu"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Q16EhUsL"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6486614A614
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68461482ED;
+	Thu, 28 Nov 2024 08:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782521; cv=none; b=W7TqqyMEwY2cyeeapfSVFrhYbYKMEx1/nQCImQox0C2t1ngJa1NFFjyBBfWJ3gdWIXrAbep5sQk/C6ICO4pUM8HQTmVW5FEPwwmZBio0tNVEwKVSVn73xsm6SchHTYWdIeix09MikPhypsL9OYHN4KQHzB8WPc+gq180xHzqKiI=
+	t=1732782600; cv=none; b=DBAr6ZlVa8xDQ4H0UATZ+pv8dPR2RWAFG/MOK/wE0c/IqlF0zYdoJUJbYyyvMBFqtBW+fTu5J7kCci6Zn2xyHWkyNGo/botWOC5/gt7vMq+tY9QOBzOMt6bP/vWPT+Owv9nCKOmM5gJbOCNZ/i9nDBIulBPUR32qQ+UmSjjCVtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782521; c=relaxed/simple;
-	bh=iBgmMatgfTncbI6Xxv9fv7699qHKcsEyga04yyzHrVw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ASRY+F2/w4H4Pf3qlSRibYT+VJ1wG83m2w8DK01yaAQfE61XctTvBXPbCvhtjKnEQZAEN/Cd0EGfuqja0jY7wyXLP0uu3Ayahvdg0psUCpKBW7dE+8c6TRZco41f0xTkDckVAIZTJN0F9Njy2A2/duX+Xd3Jnx1CESrM8yiIVnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u0Hlmanu; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38245e072e8so476446f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:28:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732782518; x=1733387318; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8ce1Yw0qnP/hYgtuVuhHQzLquqkZiusD0COEs+h5WKU=;
-        b=u0HlmanuNzHOesnJQlDV/gVXgrXAn5OQZ7OcYvIFLKkmRVEd2tmn/zBUruPeKBPkNz
-         iJn4FWWx+N9uxFICCdS9azuW5uF8WBv6Kit9dclVvt0IoduESaPh7OJ16LPhvK8UeM8z
-         9Mq86MX+emhI4d+HbcoT/MpNw2Q/U+hTJ75SGZf3RB58aGWetDvrAS5wGhu9iF4Rfu4Y
-         Jm0Z7sApaUoJjdwhE4LUr2l8y6+fhdHwpldMgEhUqYQfrTpi8QNAwRHSCsDcZD2TeWCL
-         MKZhmnov7M1xFh1G0x2dOofK1Kbtd68SUXTPZJy2OAslDFs7xNFP14503MfwsR4jWf7G
-         Ch6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732782518; x=1733387318;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8ce1Yw0qnP/hYgtuVuhHQzLquqkZiusD0COEs+h5WKU=;
-        b=elc4ATOS6OWg09XmTvSxZeea4vkYqe1hPzKkhZFYkYzj51/jbnuVYDT1IxCIahR40C
-         P9B8wzrniVTloVwS7FpAlVjKsNuoXisWNmwgXAVVhA/nLu6Pl1XKlxlMqseg5ktEdjVN
-         jmOCPAO3owyd6/cLV4q2ZnlWOq3VIMBr2UPAbpU1YVSOoWc/rl9h9twxkykfwOXmuioy
-         zjOE3C6Q9/5+XyrkEXmApK0O7+UKevk367osKqZLWwlhF3ULyyfFv0dNs0o6WZPCWPnB
-         kbtU0dywPhJZWHNrLvtnaO4rkE5gnTGGrGEaJ/jq+Tq1hNryvsmSn3Ny4gpAZ26LhSwj
-         f28Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXoNwcLRp+7dv9kMupRt5oZjeGoEy0rAYiaf38Sttl5UdRP6WyujOtzAeWuYbxIXb7R4IEYuf4c+ST+6EI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQgeCukmAXUPY7E9UTvORl2LZ1az3BEPj9wOyJIH3V2aRB2yfa
-	MO4N8y6miu6cWuU7W5opxShVx4reFwe1+CX4Fa8kYlcEKWrb0egN4EUsuXbhrAs=
-X-Gm-Gg: ASbGncsml/TQN0a0SWpBKx7JQ0RTG7ARelqFkCanuXoNPwO6zZax6Oubsdbwlw5TzZm
-	XJyFpuBYSDD+K+cBgvJF/MKEp+kHX1r+KtNvzFDRijQn+dnk+e5bppAKs3WnQnEPDk4oVB0w96e
-	YwwFTQ9xojui1Qti4S17vDHA9/Dxon8QWhOMB/ZnDNDAvYTvTbXs4OCFf1J/rUqKdHGZa2ZMRxG
-	whYbIu/AHJWWLLOR/c9kcqAJNk1/TzHpUqW8eSQp1LOvhvkpootHZQ=
-X-Google-Smtp-Source: AGHT+IGTu0qgLLjoHLlWHxSoBIFSoj8XfsMG9AhcjE3+CF/PWBajZkgTxHHhlbUBKXo2AHNhIEwVew==
-X-Received: by 2002:a5d:6dad:0:b0:382:3959:f429 with SMTP id ffacd0b85a97d-385c6ccaeafmr6070314f8f.5.1732782517632;
-        Thu, 28 Nov 2024 00:28:37 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a54asm996072f8f.50.2024.11.28.00.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:28:37 -0800 (PST)
-Message-ID: <663f534cd88332ecf64e575ea0cfa1f40e303373.camel@linaro.org>
-Subject: Re: [PATCH 5/6] arm64: dts: exynos: gs101-oriole: enable Maxim
- max77759 TCPCi
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>,  Alim Akhtar
- <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-samsung-soc@vger.kernel.org
-Date: Thu, 28 Nov 2024 08:28:35 +0000
-In-Reply-To: <b0c5e443-79e2-4e53-8813-57044a627dea@kernel.org>
-References: 
-	<20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
-	 <20241127-gs101-phy-lanes-orientation-dts-v1-5-5222d8508b71@linaro.org>
-	 <b0c5e443-79e2-4e53-8813-57044a627dea@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1732782600; c=relaxed/simple;
+	bh=mnZC6D3e9eXE0FT1O/Njo7QrcDcs6lv/updLTU3qnrY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qy97EFUlVC8U38/J88E8ntWZ5HyHQEKIaA53JTDLhzYbWAR/G1IELNmEf6klCQOnOGS/Grtlq+lH+bgbBpcrtG7jRuhqhYXpb6mlZl+/fdeOvnYw9G4FQAfjygjD79ilIfPloGE5KUi1yR8h7JGyIlOCxrg3YFNhDWEBE+3YaeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Q16EhUsL; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=o46omSwcUFYZYLa980lnb8SFdjZHUuISDGute2OuHEc=; b=Q1
+	6EhUsLip0bc4pvcFxfQ12lmAH+r9ecNoGQPfGVx1TD0CJ9eCPILyUKLiwVGg9iC17pCAiUjqCPYUG
+	pZyvQFHcXU4QawhMY1JHVrDUWXKdqp3EseKGNPDfDN3vng+joZ0n7XAGyd1AwQsrug+0DMpmPU3m0
+	FpE07GH5BKxlnc9Gmu53H1+Sn7jd57vMzR30pMZ9S0bi/x6giplSVex48y4Q+/vCNY9pX5IlQBVeM
+	7LzXY1y8Pggd87tLRAmbcGrCQ55j6hX5iQqZ2cdVL4tnaFbMquzROrO5cFV8PsZhe4Xddyxc4TBet
+	vwIXZH/hhEhTTAwh7XVw6azsN945d5bQ==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tGZuM-000GRb-Gd; Thu, 28 Nov 2024 09:29:54 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tGZuL-000Cli-1l;
+	Thu, 28 Nov 2024 09:29:53 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Thu, 28 Nov 2024 09:29:21 +0100
+Subject: [PATCH can-next v3] dt-bindings: can: convert tcan4x5x.txt to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241128-convert-tcan-v3-1-bf2d8005bab5@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAOApSGcC/12OwQ7CIAyGX8X0LMta2JJ58j2Mhw3LxkEwQMjMs
+ ncXiQf10uTP3+9rN4gcLEc4HTYInG203pUgjwfQy+hmFvZWMlBLCrHthPYuc0gi6dEJNXXYK1K
+ sTQ8FeQQ2dq26C7wXHK8JrqVZbEw+POudjLX/KBVSJxU12A9YbAJF5NGd5zLs2mh/r3ymb+bvj
+ UyFUpOk1kijzTD80Pu+vwAvFvDS5wAAAA==
+X-Change-ID: 20241105-convert-tcan-4b516424ecf6
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27470/Wed Nov 27 10:59:44 2024)
 
-Hi Krzysztof,
+Convert binding doc tcan4x5x.txt to yaml.
 
-On Thu, 2024-11-28 at 09:19 +0100, Krzysztof Kozlowski wrote:
-> On 27/11/2024 12:01, Andr=C3=A9 Draszik wrote:
-> > ---
-> > =C2=A0arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 99
-> > ++++++++++++++++++++++
-> > =C2=A01 file changed, 99 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> > b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> > index 387fb779bd29..5f7be0cb7418 100644
-> > --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> > @@ -10,6 +10,7 @@
-> > =C2=A0
-> > =C2=A0#include <dt-bindings/gpio/gpio.h>
-> > =C2=A0#include <dt-bindings/input/input.h>
-> > +#include <dt-bindings/usb/pd.h>
-> > =C2=A0#include "gs101-pinctrl.h"
-> > =C2=A0#include "gs101.dtsi"
-> > =C2=A0
-> > @@ -90,6 +91,84 @@ eeprom: eeprom@50 {
-> > =C2=A0&hsi2c_12 {
-> > =C2=A0	status =3D "okay";
-> > =C2=A0	/* TODO: add the devices once drivers exist */
->=20
->=20
-> Is the TODO still valid?
+Added during conversion, required clock-names cclk.
 
-Yes, there are more devices on that bus.
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+Changes in v3:
+- Added cclk to clock-names list
+- Added clock-names to the required list
+- Link to v2: https://lore.kernel.org/r/20241105-convert-tcan-v2-1-4b320f3fcf99@geanix.com
 
-Cheers,
-Andre'
+Changes since rfc:
+- Tried to re-add ti,tcan4x5x wildcard
+- Removed xceiver and vdd supplies (copy paste error)
+- Corrected max SPI frequency
+- Copy pasted bosch,mram-cfg from bosch,m_can.yaml
+- device-state-gpios and device-wake-gpios only available for tcan4x5x
+
+Changes in v2:
+- Removed unneeded "|"
+- Reworked properties, compatible
+- Removed additionalProperties: false
+- Added unevaluatedProperties: false
+- Added missing space in examples
+- Link to v1: https://lore.kernel.org/r/20241104125342.1691516-1-sean@geanix.com
+---
+ .../devicetree/bindings/net/can/tcan4x5x.txt       |  48 ------
+ .../devicetree/bindings/net/can/ti,tcan4x5x.yaml   | 191 +++++++++++++++++++++
+ 2 files changed, 191 insertions(+), 48 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+deleted file mode 100644
+index 20c0572c9853424e1d104cbf75d02094a54836c3..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-Texas Instruments TCAN4x5x CAN Controller
+-================================================
+-
+-This file provides device node information for the TCAN4x5x interface contains.
+-
+-Required properties:
+-	- compatible:
+-		"ti,tcan4552", "ti,tcan4x5x"
+-		"ti,tcan4553", "ti,tcan4x5x" or
+-		"ti,tcan4x5x"
+-	- reg: 0
+-	- #address-cells: 1
+-	- #size-cells: 0
+-	- spi-max-frequency: Maximum frequency of the SPI bus the chip can
+-			     operate at should be less than or equal to 18 MHz.
+-	- interrupt-parent: the phandle to the interrupt controller which provides
+-                    the interrupt.
+-	- interrupts: interrupt specification for data-ready.
+-
+-See Documentation/devicetree/bindings/net/can/bosch,m_can.yaml for additional
+-required property details.
+-
+-Optional properties:
+-	- reset-gpios: Hardwired output GPIO. If not defined then software
+-		       reset.
+-	- device-state-gpios: Input GPIO that indicates if the device is in
+-			      a sleep state or if the device is active. Not
+-			      available with tcan4552/4553.
+-	- device-wake-gpios: Wake up GPIO to wake up the TCAN device. Not
+-			     available with tcan4552/4553.
+-	- wakeup-source: Leave the chip running when suspended, and configure
+-			 the RX interrupt to wake up the device.
+-
+-Example:
+-tcan4x5x: tcan4x5x@0 {
+-		compatible = "ti,tcan4x5x";
+-		reg = <0>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		spi-max-frequency = <10000000>;
+-		bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+-		device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+-		device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+-		wakeup-source;
+-};
+diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..afd9d315dea2ae4e2dcafd8fa98e1765af7ac2d3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+@@ -0,0 +1,191 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments TCAN4x5x CAN Controller
++
++maintainers:
++  - Marc Kleine-Budde <mkl@pengutronix.de>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - ti,tcan4552
++              - ti,tcan4553
++          - const: ti,tcan4x5x
++      - const: ti,tcan4x5x
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++    description: The GPIO parent interrupt.
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: cclk
++
++  reset-gpios:
++    description: Hardwired output GPIO. If not defined then software reset.
++    maxItems: 1
++
++  device-state-gpios:
++    description:
++      Input GPIO that indicates if the device is in a sleep state or if the
++      device is active. Not available with tcan4552/4553.
++    maxItems: 1
++
++  device-wake-gpios:
++    description:
++      Wake up GPIO to wake up the TCAN device.
++      Not available with tcan4552/4553.
++    maxItems: 1
++
++  bosch,mram-cfg:
++    description: |
++      Message RAM configuration data.
++      Multiple M_CAN instances can share the same Message RAM
++      and each element(e.g Rx FIFO or Tx Buffer and etc) number
++      in Message RAM is also configurable, so this property is
++      telling driver how the shared or private Message RAM are
++      used by this M_CAN controller.
++
++      The format should be as follows:
++      <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
++      The 'offset' is an address offset of the Message RAM where
++      the following elements start from. This is usually set to
++      0x0 if you're using a private Message RAM. The remain cells
++      are used to specify how many elements are used for each FIFO/Buffer.
++
++      M_CAN includes the following elements according to user manual:
++      11-bit Filter	0-128 elements / 0-128 words
++      29-bit Filter	0-64 elements / 0-128 words
++      Rx FIFO 0		0-64 elements / 0-1152 words
++      Rx FIFO 1		0-64 elements / 0-1152 words
++      Rx Buffers	0-64 elements / 0-1152 words
++      Tx Event FIFO	0-32 elements / 0-64 words
++      Tx Buffers	0-32 elements / 0-576 words
++
++      Please refer to 2.4.1 Message RAM Configuration in Bosch
++      M_CAN user manual for details.
++    $ref: /schemas/types.yaml#/definitions/int32-array
++    items:
++      - description: The 'offset' is an address offset of the Message RAM where
++          the following elements start from. This is usually set to 0x0 if
++          you're using a private Message RAM.
++        default: 0
++      - description: 11-bit Filter 0-128 elements / 0-128 words
++        minimum: 0
++        maximum: 128
++      - description: 29-bit Filter 0-64 elements / 0-128 words
++        minimum: 0
++        maximum: 64
++      - description: Rx FIFO 0 0-64 elements / 0-1152 words
++        minimum: 0
++        maximum: 64
++      - description: Rx FIFO 1 0-64 elements / 0-1152 words
++        minimum: 0
++        maximum: 64
++      - description: Rx Buffers 0-64 elements / 0-1152 words
++        minimum: 0
++        maximum: 64
++      - description: Tx Event FIFO 0-32 elements / 0-64 words
++        minimum: 0
++        maximum: 32
++      - description: Tx Buffers 0-32 elements / 0-576 words
++        minimum: 0
++        maximum: 32
++    minItems: 1
++
++  spi-max-frequency:
++    description:
++      Must be half or less of "clocks" frequency.
++    maximum: 18000000
++
++  wakeup-source:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Enable CAN remote wakeup.
++
++allOf:
++  - $ref: can-controller.yaml#
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - ti,tcan4552
++              - ti,tcan4553
++    then:
++      properties:
++        device-state-gpios: false
++        device-wake-gpios: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - bosch,mram-cfg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        can@0 {
++            compatible = "ti,tcan4x5x";
++            reg = <0>;
++            clocks = <&can0_osc>;
++            clock-names = "cclk";
++            pinctrl-names = "default";
++            pinctrl-0 = <&can0_pins>;
++            spi-max-frequency = <10000000>;
++            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
++            interrupt-parent = <&gpio1>;
++            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
++            device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
++            device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++            wakeup-source;
++        };
++    };
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        can@0 {
++            compatible = "ti,tcan4552", "ti,tcan4x5x";
++            reg = <0>;
++            clocks = <&can0_osc>;
++            clock-names = "cclk";
++            pinctrl-names = "default";
++            pinctrl-0 = <&can0_pins>;
++            spi-max-frequency = <10000000>;
++            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
++            interrupt-parent = <&gpio1>;
++            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
++            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++            wakeup-source;
++        };
++    };
+
+---
+base-commit: 2b2a9a08f8f0b904ea2bc61db3374421b0f944a6
+change-id: 20241105-convert-tcan-4b516424ecf6
+
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
 
 
