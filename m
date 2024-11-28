@@ -1,120 +1,77 @@
-Return-Path: <linux-kernel+bounces-424993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB35B9DBC2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:28:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD179DBC2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:35:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B614B2107F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2AE164219
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BFF1C1F00;
-	Thu, 28 Nov 2024 18:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyKX5sgC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69A61C1F04;
+	Thu, 28 Nov 2024 18:35:29 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B491BD9CF;
-	Thu, 28 Nov 2024 18:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A2313BC35;
+	Thu, 28 Nov 2024 18:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732818528; cv=none; b=HEdntxroR602pq4uX7iVefx+KymODWKObctvPQ8PmLeOphL805+reZ++OcXXPyDkn/lm0WM5oT3kWmaQRzpd7L3+R/aMFQjmIEh9KBw9Kft7tm3tzZIGqBogqQKXyFIS7AqLA4Mn+HdbuTkSB/BHCxfGb+j/fZ/0xSTk6tvrnPE=
+	t=1732818929; cv=none; b=Y91VwbxLGXXkVvK10ZpdeOTMNDNKGEemOTBSqrA15LKXMAENuymjJ1DPLYMYoicc1APmPTFkc17ECCFnGMVLWZq+2MJxDzcIFfguqka9grwaK/+BkZ53SxJNwca75I511EXv6vjYhMTxdggd/bVAW5iuSUMu447Vv7f1Xjcrh5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732818528; c=relaxed/simple;
-	bh=yvKWcaHcbhziU0+F7pVCG0MUAXOf4PB4eiRi2TsVvtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R8Cus3guSmkHjbZ+hmsAJfM2G2nDLHOo7bQOz8Tpj4MEUnQZXz1vo+S4ZjSogWatv06mEvXGy4oGK0UjRaE37hx7ZdWTdPj/Y3eC97VMJ0UDUEjSd9PvTZGFOzL2qiBm4vjXdC1nyvp2dU35NK21xEIiA2ZYb2AnS6SeoBE/YeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyKX5sgC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE02C4CECE;
-	Thu, 28 Nov 2024 18:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732818527;
-	bh=yvKWcaHcbhziU0+F7pVCG0MUAXOf4PB4eiRi2TsVvtA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TyKX5sgCx8wixT9H1IpTBHJ0ddsbi4ocIhSsPaxcgqpueh6x9DMyWZ8IVGMhmQoPA
-	 rXDhVQjCuWhTqxacjxdKMrwHUzomvFixISK6EtoYnISyoa66OOiYTLpXtLv4nwhC8q
-	 jDDUaHVRzf3p0aVU4XyQ/4d3RDjSAxTUXiGtS+3Vs08iKF/ASA3JO1sRjd2BY9VhnT
-	 69UWpV4n6Op8OEE3pD6wWQFI3fG4W45kdxP1QF2Xp4aYxxgjlOkNB2zt5aEhFlnZ9j
-	 sFxqf9zatNlq2dL/+Y4SWjOb/avi6nBEkX5vljJuozNpT02iASvkZAzXuDVSxhbokb
-	 a9Hn7sIbDesPA==
-Date: Thu, 28 Nov 2024 19:28:42 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>
-Subject: Re: [PATCH] docs: media: document media multi-committers rules and
- process
-Message-ID: <20241128192842.0ce29c88@foz.lan>
-In-Reply-To: <CAKMK7uFZsc+-Os+Pb9MHHbdt1K5Pj+D069d-+FvsDeeWgeZASw@mail.gmail.com>
-References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
-	<20241126151930.GA5493@pendragon.ideasonboard.com>
-	<20241127103948.501b5a05@foz.lan>
-	<20241127111901.GG31095@pendragon.ideasonboard.com>
-	<CAKMK7uFZsc+-Os+Pb9MHHbdt1K5Pj+D069d-+FvsDeeWgeZASw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732818929; c=relaxed/simple;
+	bh=qp4ptKu4Z1R6OdIBX52vCTipE1Gk0eORG5tI1Ia/tNE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aKB/uetvLw57mgHeby+aQagDLHhOqUhZMQwkWo7mwFL0erkEWrWFT0+eZ/XlPBAJLN+UIVHKiGNoPt6wNQomgPg0oJRz76sYy5xKhb3Kwxmp/RTQ4PJGXSC+nSZzoroAocg7/pP+mJyMDEFxhdIsVcXsn+F2YGuxfbrGN11aDMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 28 Nov
+ 2024 21:35:22 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 28 Nov
+ 2024 21:35:22 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin
+	<sashal@kernel.org>, <stable@vger.kernel.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Boris Pismenny
+	<borisp@nvidia.com>, John Fastabend <john.fastabend@gmail.com>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, Jakub Kicinski <kuba@kernel.org>, "David
+ S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH 5.4/5.10/5.15 0/1] Backport fix for CVE-2023-1075
+Date: Thu, 28 Nov 2024 10:35:08 -0800
+Message-ID: <20241128183509.23236-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-Em Wed, 27 Nov 2024 15:48:10 +0100
-Simona Vetter <simona.vetter@ffwll.ch> escreveu:
+This patch addresses an issue of type confusion in tls_is_tx_ready(),
+as a check for NULL of list_first_entry() return value is wrong.
+This issue has been given a CVE entry CVE-2023-1075 [1] and is still
+present in several stable branches.
 
-> Jumping in the middle here with some clarifications.
-> 
-> On Wed, 27 Nov 2024 at 12:19, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
-> > On Wed, Nov 27, 2024 at 10:39:48AM +0100, Mauro Carvalho Chehab wrote:  
-> > > It is somewhat similar to drm-intel and drm-xe, where reviews are part
-> > > of the acceptance criteria to become committers.  
-> >
-> > Those are corporate trees, so it's easier to set such rules.  
-> 
-> Imo it's the other way round, because it's corporate you need stricter
-> rules and spell them all out clearly - managers just love to apply
-> pressure on their engineers too much otherwise "because it's our own
-> tree". Totally forgetting that it's still part of the overall upstream,
-> and that they don't own upstream.
-> 
-> So that's why the corporate trees are stricter than drm-misc, but the
-> goals are still exactly the same:
-> 
-> - peer review is required in a tit-for-tat market, but not more.
-> 
-> - committers push their own stuff, that's all. Senior committers often
->   also push other people's work, like for smaller work they just reviewed
->   or of people they mentor, but it's not required at all.
-> 
-> - maintainership duties, like sending around pr, making sure patches dont
->   get lost and things like that, is separate from commit rights. In my
->   opinion, if you tie commit rights to maintainership you're doing
->   something else than drm and I'd more call it a group maintainership
->   model, not a commit rights model for landing patches.
+As the flawed function tls_is_tx_ready() is named is_tx_ready() and
+is situated in another file (specifically, include/net/tls.h) in older
+kernel versions, fix the error there instead. This adapted backport
+can be cleanly applied to 5.4, 5.10 and 5.15 branches.
 
-Right now, our focus is for driver maintainers to become committers,
-so they all have maintainership duties as well.
+[PATCH 5.4/5.10/5.15 1/1] net/tls: tls_is_tx_ready() checked list_entry
+Use list_first_entry_or_null() instead of list_entry() to properly
+check for empty lists.
+Fixes [1].
 
-The requirement we're adding is to ensure that they're doing a
-good work as committers/maintainers, reviewing patches from others,
-as otherwise nobody will do that.
-
-Now, once we start getting drivers with lots of developers working
-on them without maintainership status, we can start including
-them, but this is not our reality, as usually, there is usually
-only one or, at most a couple of developers per driver.
-
-> Anyway just figured I'll clarify what we do over at drm. I haven't looked
-> at all the details of this proposal here and the already lengthy
-> discussion, plus it's really not on me to chime in since I'm not involved.
-
-Thanks,
-Mauro
+[1] https://nvd.nist.gov/vuln/detail/cve-2023-1075
+[2] https://github.com/torvalds/linux/commit/ffe2a22562444720b05bdfeb999c03e810d84cbb
 
