@@ -1,141 +1,159 @@
-Return-Path: <linux-kernel+bounces-424816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719A09DB9D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:42:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F5B161AA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:41:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2AF1A0BC0;
-	Thu, 28 Nov 2024 14:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DA0ctx1i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6215C9DB9D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:43:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338B61B0F01;
-	Thu, 28 Nov 2024 14:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289392822A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:43:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8AD1B0F3C;
+	Thu, 28 Nov 2024 14:43:18 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A48814A08E
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732804911; cv=none; b=qjVL51ikWg2bOreFxrNPYuhk02La1OXDWYYmufgcB14Rfgbz59HIncz5pD/GFDJTaUU3g3IKD/wac/G37r73wq8o5Y9phTaCSyF2qnldnR2mybBcadc39WbONYfhHTYlukRx9JhSwHUKs9twNjmb4XkoACwsnlWkeJ2G/b9R3rc=
+	t=1732804998; cv=none; b=pwyKRAasvr3OSXhevzAzaWpIlRbd7lg9oFiVuI1s6zonbrh7Rn4z7JDMfATpYRy76hcRzXLXIJhmhQ6mhJu02gKde0ZfP0XV9auDJe28D/o/YrzaEqWZpgpnBgFr3a0Iwv6LkmRE3y1yUup0K7GfTgJ0wd+4aNBMGONnJ6q1vvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732804911; c=relaxed/simple;
-	bh=mkuzUyZmqYjsKsdY49gZh1VK/V/gOiJm37yPSJ5SrKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TSz5zz5g0slcQIh43Ea58dSHOou2beqHSN+oaE3p0HkZdtsD6ZaS8W30p7KZ7pzRbfJO0sd8VXz45EL58nEaQOcOT0mdKnBNl+cZLJJTnw8l8DnL4rVbnJ5hJLtjJauW0GJ8Gb6jUFA1/OM64HTMF/mLRzrK5NZ3reUU+X4my6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DA0ctx1i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A9CC4CECE;
-	Thu, 28 Nov 2024 14:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732804910;
-	bh=mkuzUyZmqYjsKsdY49gZh1VK/V/gOiJm37yPSJ5SrKQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=DA0ctx1i//e/oqrIuZLILMwkXBN35M2DbC7LU4dVND7TrA2EdgFndbeciepKcA1z5
-	 rWYfwGufw3gOLBLdtoMEg69BY/tH1wh70j/MjtIPp6fsX0QGzNiZOeXjGsQEwnubyi
-	 H8SwMC90VTs8fByJ99hQKmLgigs7C7hoechIpNZtTGCivK4iQgM8hujE+AliOEBHt2
-	 WCpz5xuU4Bah/szdVY4kQCyaS5HWPRVMKTts8rIMA4puMGpQFuBmr60PQoOJWCRYxD
-	 TgQ9V1K+TBuN/pih7849lPlqvYK55F4W/JAh7cCaueuLwfs7/oWSIYVd52kTyXNTUi
-	 oy3u6mRApTcZw==
-Message-ID: <ca1dbeee-c61f-4309-ae4e-a599b4c245d5@kernel.org>
-Date: Thu, 28 Nov 2024 15:41:45 +0100
+	s=arc-20240116; t=1732804998; c=relaxed/simple;
+	bh=eCZ7qD7tdOx4S5QX6C7tQxdsEvqFdbL4aIiWTCu0KTo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o83ABTM2eWNS/BmaW2qI/8G9BseL29aO4rpmbY3fszw2axBpxprzBr5Mia2P/U8G4+/C338kIm7KRaH6IQwKp/Gu0U/Ny8Mvy4pmzfQIk93y1iACpZU9MqFtweACNBBMIvcGLk6FPy6y4qExXRuWMRdpKZLHsYD1Fe5qZGsfEv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-841a4a82311so67795439f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:43:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732804996; x=1733409796;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GWsbEcKPr4HQtgLt6+gDXQK6Dga6p0X52a/k0+QpvOs=;
+        b=Sq5ywEWlrFTPM9+xbBgapcI6v+jsfwToVyCIfCgQMMKhb8CTpJJYqIazuwMIPdQSy/
+         zY8JRVhwlwVYbLdxHetPaK6FtDBT4i8h3Ymoy/d1A/lUYLpKiIBcztXYr+9wNTh3Rtkz
+         aJ7YZgvFQ1Z6l8AZ0cvUnYQqyHUyzcPyd1gaYa+5bvGuVctWxLKzPN3RjmJCALXlj/8r
+         FZ1SgAFzWXyFGr6iTrbo/Mfok9tqF7hVdD6OpjpGxFGqYLYI/dz5mzzdZNvMjKiZV7UK
+         W3PCuWyli1nXs1V2hfFpLdqJ710ltbUdfs3y1isPC5Tn0NNIh3b5QBvzQLwoGhBtmOqS
+         TShA==
+X-Gm-Message-State: AOJu0Yzd6ImKpzvuw7mgz10Rsnn2o0DjbzoYmt1/Cyb5TNE4AlhRgPE/
+	XYVbroGmvtmngWWV8EPnhd466PjaAVoiS/A+3208bSR9Eam73vqXDGSj9KiVxlBKMV2+Ump0Z7k
+	DfKP6Z36H0HsL1/HWAj1WZbgz+5rqc+n/MVd8cOKSJWlNzBg1OjC/Izy9aA==
+X-Google-Smtp-Source: AGHT+IGhc4JjKNn82XgRvePMk+0KTOcBHYYFG82dmLJRQ9i/O++Jk/xLRS3VAwJBwtqyfRW1AmrMq8an5OBiMN6oFTUin6GvJvYZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] dt-bindings: net: Add QCA6698 Bluetooth
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cheng Jiang <quic_chejiang@quicinc.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
- Rocky Liao <quic_rjliao@quicinc.com>
-Cc: linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_bt@quicinc.com
-References: <20241128120922.3518582-1-quic_chejiang@quicinc.com>
- <20241128120922.3518582-3-quic_chejiang@quicinc.com>
- <bd4cb046-f0c1-4044-897c-00f30c6e84d2@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <bd4cb046-f0c1-4044-897c-00f30c6e84d2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:17ca:b0:3a7:a738:d9c8 with SMTP id
+ e9e14a558f8ab-3a7c552308emr79946495ab.2.1732804996226; Thu, 28 Nov 2024
+ 06:43:16 -0800 (PST)
+Date: Thu, 28 Nov 2024 06:43:16 -0800
+In-Reply-To: <674773cd.050a0220.21d33d.0027.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67488184.050a0220.253251.0087.GAE@google.com>
+Subject: Re: [syzbot] Re: KMSAN: uninit-value in gfs2_quota_init()
+From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/11/2024 15:41, Krzysztof Kozlowski wrote:
-> On 28/11/2024 13:09, Cheng Jiang wrote:
->> Add the compatible for the Bluetooth part of the Qualcomm QCA6698 chipset.
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and
-> either implement all requested changes or keep discussing them.
-> 
-> Thank you.
-> </form letter>
-> 
-> Respond to the comment and then implement it.
-> 
-> Also, version your patches correct and provide changelog. This is v2,
-> not v1.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Wait, no, it's even v3 or v4. You just ask us to the same work twice,
-don't you?
+***
 
-Best regards,
-Krzysztof
+Subject: Re: KMSAN: uninit-value in gfs2_quota_init()
+Author: dmantipov@yandex.ru
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b86545e02e8c22fb89218f29d381fa8e8b91d815
+
+diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
+index dbf1aede744c..85736135bcf5 100644
+--- a/fs/gfs2/dir.c
++++ b/fs/gfs2/dir.c
+@@ -299,6 +299,10 @@ static int gfs2_dir_read_data(struct gfs2_inode *ip, __be64 *buf,
+ 				goto fail;
+ 			BUG_ON(extlen < 1);
+ 			bh = gfs2_meta_ra(ip->i_gl, dblock, extlen);
++			if (IS_ERR(bh)) {
++				error = PTR_ERR(bh);
++				goto fail;
++			}
+ 		} else {
+ 			error = gfs2_meta_read(ip->i_gl, dblock, DIO_WAIT, 0, &bh);
+ 			if (error)
+diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
+index fea3efcc2f93..789294f4bf6f 100644
+--- a/fs/gfs2/meta_io.c
++++ b/fs/gfs2/meta_io.c
+@@ -512,7 +512,7 @@ int gfs2_meta_buffer(struct gfs2_inode *ip, u32 mtype, u64 num,
+  * @dblock: the starting disk block
+  * @extlen: the number of blocks in the extent
+  *
+- * returns: the first buffer in the extent
++ * returns: the first buffer in the extent or error number
+  */
+ 
+ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+@@ -521,6 +521,7 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+ 	struct buffer_head *first_bh, *bh;
+ 	u32 max_ra = gfs2_tune_get(sdp, gt_max_readahead) >>
+ 			  sdp->sd_sb.sb_bsize_shift;
++	int ret;
+ 
+ 	BUG_ON(!extlen);
+ 
+@@ -530,10 +531,15 @@ struct buffer_head *gfs2_meta_ra(struct gfs2_glock *gl, u64 dblock, u32 extlen)
+ 		extlen = max_ra;
+ 
+ 	first_bh = gfs2_getbuf(gl, dblock, CREATE);
++	if (unlikely(!first_bh))
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (buffer_uptodate(first_bh))
+ 		goto out;
+-	bh_read_nowait(first_bh, REQ_META | REQ_PRIO);
++
++	ret = bh_read(first_bh, REQ_META | REQ_PRIO);
++	if (unlikely(ret < 0))
++		return ERR_PTR(ret);
+ 
+ 	dblock++;
+ 	extlen--;
+diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+index 72b48f6f5561..d919edfb8dda 100644
+--- a/fs/gfs2/quota.c
++++ b/fs/gfs2/quota.c
+@@ -1427,8 +1427,10 @@ int gfs2_quota_init(struct gfs2_sbd *sdp)
+ 		}
+ 		error = -EIO;
+ 		bh = gfs2_meta_ra(ip->i_gl, dblock, extlen);
+-		if (!bh)
++		if (IS_ERR(bh)) {
++			error = PTR_ERR(bh);
+ 			goto fail;
++		}
+ 		if (gfs2_metatype_check(sdp, bh, GFS2_METATYPE_QC))
+ 			goto fail_brelse;
+ 
+diff --git a/fs/gfs2/recovery.c b/fs/gfs2/recovery.c
+index f4fe7039f725..527353c36aa5 100644
+--- a/fs/gfs2/recovery.c
++++ b/fs/gfs2/recovery.c
+@@ -49,7 +49,7 @@ int gfs2_replay_read_block(struct gfs2_jdesc *jd, unsigned int blk,
+ 
+ 	*bh = gfs2_meta_ra(gl, dblock, extlen);
+ 
+-	return error;
++	return IS_ERR(*bh) ? PTR_ERR(*bh) : 0;
+ }
+ 
+ int gfs2_revoke_add(struct gfs2_jdesc *jd, u64 blkno, unsigned int where)
 
