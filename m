@@ -1,201 +1,145 @@
-Return-Path: <linux-kernel+bounces-424553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0029DB5C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:32:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478DD9DB5C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:33:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06C5281B4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33D00B2724E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC5017B402;
-	Thu, 28 Nov 2024 10:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63AE158874;
+	Thu, 28 Nov 2024 10:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pvs5GMYL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PQpAm0uw"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64691428E7;
-	Thu, 28 Nov 2024 10:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F153155A25
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732789945; cv=none; b=enEClOgRnLE6/YosM0zwf0r8Zv9yd90bbrwxsE+2pTuFbELY76OKMO/rN3U6sXVPDsl0wLF3mOjc6V6dgYYngg+ZlH5PKMHulyUjxeV/ppvvA+Uc+GO9/Z3wqHCkr9IEz4DvzvOrQdWls7jqarSXdZcw9crVYwkHIZQvDKuQ190=
+	t=1732789963; cv=none; b=KzXcSHTItU6R3kdR7aePE09QhexlJEskyIv/S0CwzvT7/RayGM1cx8EiTF7pK2s19P406qUjSYU+reM6Nw/hV/H89nb38WV0Py0wIzkAppd/USVPNOB9+2G8GnqWQDJbThA4V1ZvUlxL6O+F2PL7akY+BoN6om7krMYcFPfg3dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732789945; c=relaxed/simple;
-	bh=HrAXTZSCIcuftLL0ul3rClI7fugMpktKhWmYw6wLDok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=igdcKSfiIljqNtvpgfZH5WUC1ZRUwF9tF47JZWWk2rl0fClNjy6Yr+x1mpf/wHrleNT6QFGDViCPkAFTknolPDPnEpTq07z7t6Zd+pd9G33JMK3jtwcWiCS8TvRxIc6hLGpKDCR4cJt9ywTJTF5T90zDKjPVH96QA0CY4wqKky4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pvs5GMYL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732789935;
-	bh=HrAXTZSCIcuftLL0ul3rClI7fugMpktKhWmYw6wLDok=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Pvs5GMYLUfrPah0+EMJAeFXycEFxuIzy7qwIM5MEbgQGhXci8eG6uDooADcTA50zk
-	 UX7Mn+7kRhRPozOi72Nph0RHwurnhil01+QK4vRE9nW6EDG759tjQa2nxZXmyvKKz4
-	 sknbaqSiwV9/WYZaUoUKFFkOiblORDXlNj0RqkJnaWhjNeTOXbQhTkaDsw+YlmYTGh
-	 oO3k0cEcrvCrqxF95kO/Gw9ogDboWN/aXLoYxZJzp2nXoFqkAV5F1kKJe+ygxPKA7t
-	 eOHkr8JvwFJhQ+g2LEltlRi6uAoV0wK7MaN1ywVKNsCZn214O1UPxeZ7i0YxyhEwwI
-	 k1n2UX3wlueJQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00A9617E35F0;
-	Thu, 28 Nov 2024 11:32:14 +0100 (CET)
-Message-ID: <3d5f7106-6425-420c-abac-39feed11c95c@collabora.com>
-Date: Thu, 28 Nov 2024 11:32:13 +0100
+	s=arc-20240116; t=1732789963; c=relaxed/simple;
+	bh=k97Fljrat4fJca+lSRfnK8THalpUsT4kOzuH6apFu24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TjAYsxhgaBFDZJxNI1eJJawsfoe+epu/WsJAOCSvXxwkx4Ts0ndUr7jgdXMKca5Zhxq4giflb3MIdTRzuO0e7K1SFg3dD831+eFWFHmsMIntsnpZIcRXXFglL6BJCmjEqPl7PUP9FYDX9N54qB/BvKLJq7NotLI5Ej7IIA5ktis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PQpAm0uw; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ee153ec651so555756a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:32:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732789961; x=1733394761; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TYdaa/DIBuyQgC5GkVlGb3y6FcXP9nQSsNbG84HxtFk=;
+        b=PQpAm0uwbnC1fHKYGd0clxc//Iivqa/eAq7HgF9evobI1dgmInbTKrl0OYp+fSQlg4
+         eBqnnryY8TocokSVIaGVmbquzDJEzIeMS+tFjumbg7opOx1SgQJ0+xnanxK93kDgFDYu
+         9npsNYTAiUfLt+RcUSJ69Mx0pHeho+UiimepJ2yMSCQ3hwz+qNwVdKjVy2tTQi30Xyio
+         whxo35DFhFftmXmb6bQaDBREVmXA7YBftQmQ1IDzSfsngHhK1FVW9LIFZXC4Pf9EsvZo
+         4m9l0dPSfsRkUwTNhBvHQbBoNMp2JmRMJSN+p+1WZbGngbIh5YrEfDbIqAFe16PKYfBO
+         8KkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732789961; x=1733394761;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TYdaa/DIBuyQgC5GkVlGb3y6FcXP9nQSsNbG84HxtFk=;
+        b=vxrLnPBmthddvQSZuaqb7PeFxDuOnL+1BHLuHLAaSapJO5BbkiitE++aHBnu2jKuSs
+         ujPAT0BnqPKqSJX+llWsGZMITHCwDdedZPN1qkSilpcjuN8xFhqh3++nGkES/uNr+q0m
+         ipTxSY/yNbOD8kYOBVbx7WS+qg5rqe3LfzCWvRHgMg0NWQFBV1DsLK7bE7i4jyGSruAy
+         pY2RyEgIF+t7nE/tKe5mnNDXmq+8viOQDWI/DicT3CO0t2YEzQFHMFQrOoKCUwdx4Xo7
+         Oxblmt0/0jHv2b5/1Tq0123RpG2NbnNN5qy4ebA1q586SrQj87/YU28sYQRRt033FJd8
+         OxEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0S2lOlUJQweN9si9CldzJarKhI3INhJ/teWSnofN8+z8+Rc7PIJla8gLZDPff69fmJJk+WqaGy410ADU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfXMniO0jEmtP571LQ5bN/2DhLOLVzJtDYPh0kSqGzZkrSolsF
+	j4uZm8R19JQ8F9dzrfItBqemEpNnPdKabioqvI7UtDpkxePgtU47FeNVd+Dmd3cJu69JYqQqpfr
+	WSo8EsSpISEtNFcQpZ+X7ic3KeCC2B5uN93zAmg==
+X-Gm-Gg: ASbGncsFehGNhdYJO6kE+pQE6Zn2WY5+uYDelaWlyVH9Zw25Wk3Q9I3demOmRmbNP4F
+	ltF04ktqADxR1kofdztlEua3RDKNiG8ufYxt/jy85h0Y9bQI3shQiddAetgI=
+X-Google-Smtp-Source: AGHT+IGtRew9wNbW+qj4I4/4DKAWOAOllEr1d0Tgmr9ZbsOh6yJfqWq1WRpSYaYMJydxlyxw3eFcTW/Bs5s+yesUr9w=
+X-Received: by 2002:a17:90b:1810:b0:2ea:b2d7:4a3b with SMTP id
+ 98e67ed59e1d1-2ee08eb1c52mr9788003a91.12.1732789960956; Thu, 28 Nov 2024
+ 02:32:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/7] dt-bindings: display: mediatek: Add binding for
- MT8195 HDMI-TX v2
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-mediatek@lists.infradead.org"
- <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
- <mripard@kernel.org>, "kernel@collabora.com" <kernel@collabora.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>
-References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
- <20241120124512.134278-3-angelogioacchino.delregno@collabora.com>
- <721896498fe9a5ba5a942fe837deb90d461b5090.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <721896498fe9a5ba5a942fe837deb90d461b5090.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241128092750.2541735-1-vincent.guittot@linaro.org>
+ <20241128092750.2541735-7-vincent.guittot@linaro.org> <20241128100348.GC24400@noisy.programming.kicks-ass.net>
+ <20241128101517.GA12500@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241128101517.GA12500@noisy.programming.kicks-ass.net>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 28 Nov 2024 11:32:29 +0100
+Message-ID: <CAKfTPtAexBEDeG8vR2Hf_6fh_uiGCUooeBj6vCYRn8LGEVt+kg@mail.gmail.com>
+Subject: Re: [PATCH 6/9] sched/fair: Removed unsued cfs_rq.h_nr_delayed
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, pauld@redhat.com, 
+	efault@gmx.de, luis.machado@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Il 28/11/24 07:02, CK Hu (胡俊光) ha scritto:
-> Hi, Angelo:
-> 
-> On Wed, 2024-11-20 at 13:45 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until you have verified the sender or the content.
->>
->>
->> Add a binding for the HDMI TX v2 Encoder found in MediaTek MT8195
->> and MT8188 SoCs.
->>
->> This fully supports the HDMI Specification 2.0b, hence it provides
->> support for 3D-HDMI, Polarity inversion, up to 16 bits Deep Color,
->> color spaces including RGB444, YCBCR420/422/444 (ITU601/ITU709) and
->> xvYCC, with output resolutions up to 3840x2160p@60Hz.
->>
->> Moreover, it also supports HDCP 1.4 and 2.3, Variable Refresh Rate
->> (VRR) and Consumer Electronics Control (CEC).
->>
->> This IP also includes support for HDMI Audio, including IEC60958
->> and IEC61937 SPDIF, 8-channel PCM, DSD, and other lossless audio
->> according to HDMI 2.0.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../mediatek/mediatek,mt8195-hdmi.yaml        | 150 ++++++++++++++++++
->>   1 file changed, 150 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
->> new file mode 100644
->> index 000000000000..273a8871461e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
->> @@ -0,0 +1,150 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: https://urldefense.com/v3/__http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi.yaml*__;Iw!!CTRNKA9wMg0ARbw!lu0D_C3TwQ2-02jWYABnMIQ8vEoUwP0O4gbQndJnPUMpdi6wXdAHra9ivCfB7zoelDI7qsS20YdRlmP4bEKAABletXFX$
->> +$schema: https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!lu0D_C3TwQ2-02jWYABnMIQ8vEoUwP0O4gbQndJnPUMpdi6wXdAHra9ivCfB7zoelDI7qsS20YdRlmP4bEKAAFlnY-KY$
->> +
->> +title: MediaTek HDMI-TX v2 Encoder
->> +
->> +maintainers:
->> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> +  - CK Hu <ck.hu@mediatek.com>
->> +
->> +description: |
->> +  The MediaTek HDMI-TX v2 encoder can generate HDMI format data based on
->> +  the HDMI Specification 2.0b.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - mediatek,mt8188-hdmi-tx
->> +      - mediatek,mt8195-hdmi-tx
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: HDMI APB clock
->> +      - description: HDCP top clock
->> +      - description: HDCP reference clock
->> +      - description: VPP HDMI Split clock
-> 
-> I would like to know more about HDMI v2.
-> Would you map each v2 clock to v1 clock?
-> If one clock has no mapping, is it a new feature that v1 does not has?
-> 
+On Thu, 28 Nov 2024 at 11:15, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Nov 28, 2024 at 11:03:48AM +0100, Peter Zijlstra wrote:
+> > On Thu, Nov 28, 2024 at 10:27:47AM +0100, Vincent Guittot wrote:
+> > > h_nr_delayed is not used anymore. We now have
+> > > - h_nr_running which tracks tasks ready to run
+> > > - h_nr_enqueued which tracks enqueued tasks either ready to run or delayed
+> > >   dequeue
+> >
+> > Oh, now I see where you're going.
+> >
+> > Let me read the lot again, because this sure as hell was a confusing
+> > swizzle.
+>
+> So the first patch adds h_nr_delayed.
+>
+> Then confusion
 
-The HDMIv2 HW block seems to be almost completely different from the v1, and
-it is also interconnected in a different way compared to MT8173 (the path goes
-through VPP1, while the v1 is just direct to DPI/MMSYS).
+I started from your patch that adds h_nr_delayed and added on top the
+steps to move to h_nr_enqueued and h_nr_running to make it easier to
+understand the changes
 
-The v1 block had specific clocks for the audio (i2s, I believe) and for the SPDIF,
-and I have no idea how v1 does HDCP, but I don't see any specific clock for that.
+>
+> Then we end up with:
+>
+>  h_nr_enqueued = h_nr_running + h_nr_delayed
+>
+> Where h_nr_enqueued is part of rq->nr_running (and somewhere along the
+> way you rename and remove some idle numbers).
+>
+> Can't we structure it like:
+>
+>   - add h_nr_delayed
+>   - rename h_nr_running to h_nr_queued
+>   - add h_nr_runnable = h_nr_queued - h_nr_delayed
+>   - use h_hr_runnable
+>   - remove h_nr_delayed
+>
+>   - clean up idle muck
+>
 
-The v2 block is clocked from the HDCP clock, the (apb) bus has its own clock, and
-the video out needs the vpp split clock.
+I can reorder the patches following the above
 
-It's just different, and we can't shove the v2 binding inside of the v1 one, but
-even if we could, since the v2 block is *that much* different from v1, it'd be a
-mistake to do so.
-
-Since the binding describes hardware, and since this v2 HW is *very* different
-from v1, it needs a new binding document, that is true even if you find a way to
-get the clocks to match (which is not possible, anyway).
-
-Cheers,
-Angelo
-
-> Regards,
-> CK
-> 
->> +
->> +  clock-names:
->> +    items:
->> +      - const: bus
->> +      - const: hdcp
->> +      - const: hdcp24m
->> +      - const: hdmi-split
->> +
->>
->> --
->> 2.47.0
->>
-
-
+>
+> And I'm assuming this ordering is because people want h_nr_delayed
+> backported. Because the even more sensible order would be something
+> like:
+>
+>  - rename h_nr_running into h_nr_queued
+>  - add h_nr_runnable (being h_nr_queued - h_nr_delayed, without ever
+>    having had h_nr_delayed).
+>  - use h_nr_runnable
+>
+>  - clean up idle muck
+>
+>
 
