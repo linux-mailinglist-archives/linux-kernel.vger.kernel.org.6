@@ -1,79 +1,132 @@
-Return-Path: <linux-kernel+bounces-424940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D842A9DBB8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:51:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9E09DBB91
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9AC1608FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D7C161F3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E4B1BE87C;
-	Thu, 28 Nov 2024 16:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169321BE86A;
+	Thu, 28 Nov 2024 16:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jEB611r5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtRWRKHL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED48317993;
-	Thu, 28 Nov 2024 16:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745E217993;
+	Thu, 28 Nov 2024 16:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732812707; cv=none; b=oaK3TvJHoYdzEH2fDn8hdyiZFky5VrzeuKN5UKrFvKhJvBmDZLXyV/01jpWw4JQau40e3eZyL0cRDfab/YoH+cCxDMI7BQDlcXJH5IyHnIIo5CdpPyNEbqmmyzahjzw7O3qepWT3n6tzxS/Ziyv7alHLcE3vN/ZhwspSv3BfZ0c=
+	t=1732812739; cv=none; b=eW0MJ3D6khFrI427DTtRBoh277iaSH6kLvFeroBw7PijsAk9k1LiHyXIECKwsJ39UD08s0VFuRkj7IxCUi0ZPdaCd/2ml4D6Vs7ggaa7IwLXrpewywI/euMxp6yT32/sfpG3lIDWIfIl3wcZdwC3+F20eM4qGEe8LzBRO7H+kGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732812707; c=relaxed/simple;
-	bh=8FFXDfq4MyFfoAJt1YfCbBO3TnpDRK9YvJEgv6vwrUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMrVT7To75xBSv8ZBNh/m4sFwj0irr/24xtHfXfAgZKdNOBIdWyoF77XIRGPfYKi8pjhdXH61Yrk19ezk3ndQWD5FpIzu20wFvcF8fJ1Iw7e/uhZjZjA4EqcPUeSk9F+9C6yT+BN5IZsjO7Y1XKB8pp8Q1zbHY3ejkCLnxDScBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jEB611r5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E999C4CECE;
-	Thu, 28 Nov 2024 16:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732812706;
-	bh=8FFXDfq4MyFfoAJt1YfCbBO3TnpDRK9YvJEgv6vwrUw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jEB611r529uETQDgpNuokpGiBJdaZ4/oGAfUzJ/XYFpfThLEkXUQkeUeUABOS1/Lr
-	 g7fEyaRlsddlgk3MUq7lYagdXV8sTQY8t+kfnwecGHkn6ybIDpWHDiqOWQkZm1FYe2
-	 HG1mACpV2seJJ8MLjoEqQBrcgU9DUp898DaOFOUw=
-Date: Thu, 28 Nov 2024 17:51:43 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-53054: cgroup/bpf: use a dedicated workqueue for cgroup
- bpf destruction
-Message-ID: <2024112826-pond-battered-c61b@gregkh>
-References: <gl75dywfjz5qrxsc6k47445n5a3abwyeq4gssntt4ftl7ev5jj@zz2jshiohpsr>
+	s=arc-20240116; t=1732812739; c=relaxed/simple;
+	bh=dvQEqAMMVBetwcgzVYNkCxfdi2w/wGckBTs6rFErkds=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=py30dM4XhCMRNaUP6VdfnEHM8cTl8dtkrg03RIBBpeOzzku5keG3dlAzo6epWgK7aUPPsRGD0gu0fsdOEnvz4GTgpsOo0XjSa7imAJTupPnIVzwef7uelKuLLpQrbE+5Nsg6NZMINvR2827AE0DJBPjmL3K7ia39UQW/qWXrfOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtRWRKHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A34BC4CECE;
+	Thu, 28 Nov 2024 16:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732812739;
+	bh=dvQEqAMMVBetwcgzVYNkCxfdi2w/wGckBTs6rFErkds=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MtRWRKHLz5x+AsW9kqDHUTkNjsDiNO/Zx1wSlQ9XD8FUBKGTVo6ihqaVNyGNpdZc2
+	 wumjR408IYB9xBcUKSmUMtiXaCVCybzDT3r0u7v7cUijleLr1hpnqpmLCan+rC1ZhP
+	 hTzC2UwTsR2kCBSDXlEYSYltl1XTKZMgiexdnDuHeD6F3tYh1Ot4Q6iNfrN4Y3nkBn
+	 79tCU9PPwJF9v4ap87SAc8KSgyyoGyQvaahGSObY4poMSJearQ7Yz+ROjybpoqq5HT
+	 v73I2p+lUViZdACHR6X0ZNLbvC5LWmHPPDMr7CQgmwIO7zncoWcuxD+R3lCbaHtLBp
+	 b7xpzwpV/8rKQ==
+Received: from [37.171.122.54] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tGhkW-00GaEB-It;
+	Thu, 28 Nov 2024 16:52:16 +0000
+Date: Thu, 28 Nov 2024 16:52:14 +0000
+Message-ID: <87y113s3lt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arch_numa: Restore nid checks before registering a memblock with a node
+In-Reply-To: <Z0gVxWstZdKvhY6m@kernel.org>
+References: <20241127193000.3702637-1-maz@kernel.org>
+	<Z0gVxWstZdKvhY6m@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <gl75dywfjz5qrxsc6k47445n5a3abwyeq4gssntt4ftl7ev5jj@zz2jshiohpsr>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 37.171.122.54
+X-SA-Exim-Rcpt-To: rppt@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, ziy@nvidia.com, dan.j.williams@intel.com, david@redhat.com, akpm@linux-foundation.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Nov 27, 2024 at 06:37:57PM +0100, Michal Koutný wrote:
-> Hello.
-> 
-> On Sun, Sep 16, 2001 at 10:00:00PM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > This issue can be reproduced by the following pressuse test:
-> > 1. A large number of cpuset cgroups are deleted.
-> > 2. Set cpu on and off repeatly.
-> > 3. Set watchdog_thresh repeatly.
-> 
-> The lockup is triggered in this very specific stress testing scenario.
-> CPU offlining (write holding of cpu_hotplug_lock) is necessary to cause
-> _this_ lockup. Both 2 and 3 are privileged operations (in a tight loop
-> to hit the window).
-> 
-> I don't think this qualifies as vulnerability.
+Hi Mike,
 
-Thanks for the review, now revoked!
+On Thu, 28 Nov 2024 07:03:33 +0000,
+Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> Hi Marc,
+> 
+> > diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+> > index e187016764265..5457248eb0811 100644
+> > --- a/drivers/base/arch_numa.c
+> > +++ b/drivers/base/arch_numa.c
+> > @@ -207,7 +207,21 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+> >  static int __init numa_register_nodes(void)
+> >  {
+> >  	int nid;
+> > -
+> > +	struct memblock_region *mblk;
+> > +
+> > +	/* Check that valid nid is set to memblks */
+> > +	for_each_mem_region(mblk) {
+> > +		int mblk_nid = memblock_get_region_node(mblk);
+> > +		phys_addr_t start = mblk->base;
+> > +		phys_addr_t end = mblk->base + mblk->size - 1;
+> > +
+> > +		if (mblk_nid == NUMA_NO_NODE || mblk_nid >= MAX_NUMNODES) {
+> > +			pr_warn("Warning: invalid memblk node %d [mem %pap-%pap]\n",
+> > +				mblk_nid, &start, &end);
+> > +			return -EINVAL;
+> > +		}
+> 
+> We have memblock_validate_numa_coverage() that checks that amount of memory
+> with unset node id is less than a threshold. The loop here can be replaced
+> with something like
+> 
+> 	if (!memblock_validate_numa_coverage(0))
+> 		return -EINVAL;
 
-greg k-h
+Unfortunately, that doesn't seem to result in something that works
+(relevant extract only):
+
+[    0.000000] NUMA: no nodes coverage for 9MB of 65516MB RAM
+[    0.000000] NUMA: Faking a node at [mem 0x0000000000500000-0x0000000fff0fffff]
+[    0.000000] NUMA: no nodes coverage for 0MB of 65516MB RAM
+[    0.000000] Unable to handle kernel paging request at virtual address 0000000000001d40
+
+Any idea?
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
