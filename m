@@ -1,90 +1,45 @@
-Return-Path: <linux-kernel+bounces-424295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E353E9DB2B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:09:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EE69DB2B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:11:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73C5BB21550
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:09:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93845B2235E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D46144D1A;
-	Thu, 28 Nov 2024 06:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVYCFcgd"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A482A5A79B;
-	Thu, 28 Nov 2024 06:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9EF1459F7;
+	Thu, 28 Nov 2024 06:11:20 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DF13FD4;
+	Thu, 28 Nov 2024 06:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732774186; cv=none; b=kisRzzAoM1BtLZyo7vFI0HXvnuSE9PguypTrH/QebnUQJlwHONjQiwxTMYIEcaacPl0ApxtkJ3aOru7s7ppNUtZG4MtWTwbUxlM+HFYzws1k0cbCElzDnBRqzU4hmasAGCe6WK3mR08A0phphMvc9jQdBLgGpG/1kHBwGSH0Ikg=
+	t=1732774280; cv=none; b=vDGfiecLEUqOX/yd1mciFK8EpF/Q7CaFMmZ8ac+90o1IhR3YrfSfqL1SysuUlTsOI3cXWf8zSIWa6APUdpjGLUGt2KbO2tvAeqxuRVnnYENGHTGO9K4mGWLvZ/JWc5BNR62qJuGHup9tkgTV2jzvxOvfd8cFFi/6sunMN1trTo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732774186; c=relaxed/simple;
-	bh=FNFX5D6OzAkZN2wzTw875Y3hkNNVy9wZYzC+ym6hvSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=muLvEskLxJIH4xnYVJKLj6HZPN6zwS5DuSiqCrQEK95DomMP/uJtqLt5IWr/TZd10kgrD1S99cVYQ3J0LkFQDWvO+HAAZJTDLi5ZYxb4dJ4v6P6+eda7gl8azPVw5npKekENCtsaC+sOUwL91VmPEZ0tgtPMj1uGY67mpX3n69k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVYCFcgd; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso328590a12.1;
-        Wed, 27 Nov 2024 22:09:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732774184; x=1733378984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n2sl7DBRBj5Zmz6ctNu6EcUwAGJvkhaL3L7D0PuR0LU=;
-        b=JVYCFcgd+FzHGFVljUFGLBJTckFmzVR4VN/b5uJ/MQUdlpEWpHPUeK02eOtaAGkYsU
-         +kSj5OIJw3srFJeboQ5iuHrxJUX4nE8JRJ5Hq8GT9aL6ujnypUEJWk4UW34qTGfb8TgH
-         AuL/NGnLMI/i5DAAYfU5sYAqqm59Qye9CW6dT6PQfgJAK7FaK+42k8NBQgrLbJ0z9w69
-         LX6b+dEXRSUhH9g3/W36npTjAMkrsOgV/H47Uq9B75o9bz+a788hN61+fNv1hrj+mwWu
-         ZmvhHCT6dmrdgQzGk/HL4+7WxGAjHfJccay+cBj8A8wtTGe1+IebpfosVO+l5BkyQFxG
-         o0gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732774184; x=1733378984;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n2sl7DBRBj5Zmz6ctNu6EcUwAGJvkhaL3L7D0PuR0LU=;
-        b=T6iglUW+72v20H3WO9NOkNQ2roMllBcipatl0HgFHu8SKPvcZAJlzplpa5zLAJTQft
-         o1UbH2NwuQWvcUxdeQcSamb3Qps95ifHAxeQ3+tT5q7F1SrT0n+S/DEaTpiMTm9doG/M
-         3QDSrai5fgdPSZIxdzIR8KOoRPv/rMbxV6R5AU7WF5BAJskY4DODnwlDhv7O+5DSMdA3
-         M/3bVvkSdpNZldEr1fUQDuL1tqYfbWqB5LdoWvDZMK2/3RaL9Jqz0TiKESLj21+cJEAE
-         u4qc6gLYuzYjOYTSCwqfgMaGMkpdKXdeYHUMtNgITrvku23GNjCchbdKuNvnF8qNjozU
-         icCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6hPohhm1AElJ1WxSH6fIjijCyxBGdPA923GO9rof92Kww9Pd4FB9QBNmpUlugxpX+2UTmabpEbHBZW76dBJc=@vger.kernel.org, AJvYcCX8ZPYxhLCR6Km5gV+Tq1vK5xXn9ofKJEO2r0CiJk5RzxlQEUZs/PPZLXCOkV7gDnJs2exCzbijdRqm9WU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO4gXBBhjNN2yM734quxxYK5XhVoeoyrv6Om53HzzXg4KpOP7T
-	ufwduQSjT9mBEFzXG11WQG5Qnqu/iQYcqImf/3xzd4JIncforxO9
-X-Gm-Gg: ASbGncsYRoPhfjB5kag0MOOuzdDlGRdYapL76azPE/SgFWn5NltlBLH/kCTsGqotvMm
-	RbMjnozxWalPsKkHGP/+TZOMNTlfovk/oOK6cPCm4psVMzXiNO7Q2RHaQz43Gd5T88vw6QKWhXd
-	T2kpXSWxcnepAHw8usojp8K0TfR2frtISjSdgGsGu56vPkXo6M+1n43/2Lb0kvZ2TVq9rmEfuR8
-	yxEKBYTFe6zR0wT42SZrwLmjQcBGdjfpXpep4GYU7f5iEYIgGYbCjDwH6M=
-X-Google-Smtp-Source: AGHT+IFZPjyCmsQWAiAm+6M27f4qo+6s3Q2xz+nj6OTaaxFwdNlTWRqmmwWrbADa4Y/wOn9Ajf8AmA==
-X-Received: by 2002:a17:902:ebc4:b0:205:7007:84fa with SMTP id d9443c01a7336-2151d870174mr34999085ad.28.1732774183312;
-        Wed, 27 Nov 2024 22:09:43 -0800 (PST)
-Received: from LAPTOP-SQ5KB8RN.lan ([222.249.179.118])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f479asm5642875ad.41.2024.11.27.22.09.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 22:09:42 -0800 (PST)
-From: Baichuan Qi <zghbqbc@gmail.com>
-To: quic_vthiagar@quicinc.com
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	markus.elfring@web.de,
-	zghbqbc@gmail.com
-Subject: Re: Re: [PATCH v5] NAK
-Date: Thu, 28 Nov 2024 14:09:31 +0800
-Message-Id: <20241128060931.94100-1-zghbqbc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <f0077f4f-922d-56b1-a5b7-bb01e4462e87@quicinc.com>
-References: <f0077f4f-922d-56b1-a5b7-bb01e4462e87@quicinc.com>
+	s=arc-20240116; t=1732774280; c=relaxed/simple;
+	bh=I2CXWTjsvZTyCr81KW+aP5rn44bPx8jzUM9/VIJgLUA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dB8SOohdwSqLN0c1gWJIyvtHYwpUHEyI2Wuzqla+Q2rlNAPby5j0FhppFjaKuFx9tn3JpB6eqoABNpk6TVWu2l709YAv62nfbort/MOXPHIUK/crlorO9zI/j/FcYb1gdkmgvJtWspbxomGMfnzBKXeFJ1pB18+VUDjhmmHKy5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bx++GBCUhnSXFKAA--.13840S3;
+	Thu, 28 Nov 2024 14:11:13 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxfcJ_CUhnJw9rAA--.8752S2;
+	Thu, 28 Nov 2024 14:11:11 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: BPF: Adjust the parameter of emit_jirl()
+Date: Thu, 28 Nov 2024 14:11:10 +0800
+Message-ID: <20241128061110.5204-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,45 +47,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxfcJ_CUhnJw9rAA--.8752S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxZw4rGr18tF4fKrWxKFWDJrc_yoW5tw43pr
+	ZFyrs5GrW0gryfGFyDJrW5ur13Jan3GrWagasrArZ7Cr1Yq34Fq3WkKrnxWFs8Xan5XFsY
+	9F1Fyw12vF1UJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ36c02F40EFcxC0VAKzVAqx4xG6I80ewCIccxYrVCFb4Uv73VFW2AGmfu7
+	bjvjm3AaLaJ3UjIYCTnIWjp_UUUYw7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4
+	CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0
+	c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2
+	IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2
+	jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWU
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
+	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIccxYrV
+	CFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvE
+	c7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
+	v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x
+	07b2ID7UUUUU=
 
-Thanks for your reply
+The branch instructions beq, bne, blt, bge, bltu, bgeu and jirl belong
+to the format reg2i16, but the sequence of oprand is different for the
+instruction jirl, adjust the parameter of emit_jirl() to make it more
+readable correspond with the Instruction Set Architecture manual.
 
-The reason I submit this patch is that the current 
-`ath11k_ce_rx_post_pipe()` NULL pointer check does not ensure 
-that `dest_ring` is NON-NULL. And it is not clear to show the 
-filtering of tx ce pipes
+Here are the instruction formats:
 
-> This does not really fix any real issue. Please check ath11k_ce_alloc_pipe()
-> where initialization would fail if anyone of pipe->dest_ring and
-> pipe->status_ring allocation fails for ce pipe used for Rx.
+  beq     rj, rd, offs16
+  bne     rj, rd, offs16
+  blt     rj, rd, offs16
+  bge     rj, rd, offs16
+  bltu    rj, rd, offs16
+  bgeu    rj, rd, offs16
+  jirl    rd, rj, offs16
 
-When the driver is running normally, the results of the 
-following three are equal:
+Link: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#branch-instructions
+Suggested-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
-(pipe->dest_ring || pipe->status_ring) // current code
-(pipe->dest_ring && pipe->status_ring)
-(pipe->dest_ring)
----
-However, when some errors occur and `dest_ring` is abnormal,
-the OR operation cannot guarantee that the pointer is NON-NULL.
 
-> This will always fail as the caller loops through all the supported ce pipes
-> and ce pipes used for Tx will not have either dest_ring or status_ring.
-> Please ensure the patch is tested properly.
+This patch is based on the following commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=73c359d1d356
 
-I tested [PATCH v5] and indeed the wrong return value will lead 
-to wrong results when the pointer is null.
+ arch/loongarch/include/asm/inst.h | 12 +++++++++++-
+ arch/loongarch/kernel/inst.c      |  2 +-
+ arch/loongarch/net/bpf_jit.c      |  6 +++---
+ 3 files changed, 15 insertions(+), 5 deletions(-)
 
-Please refer to [PATCH v4].
-Link: https://lore.kernel.org/ath11k/20241127114310.26085-1-zghbqbc@gmail.com/
-Although it does not return an error code, it can ensure that 
-when an unknown error occurs and causes the status of 
-`dest_ring` and `status_ring` to be different, the subsequent 
-code will not access the null pointer, which will only 
-cause the driver to fall into loops.
+diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/asm/inst.h
+index 944482063f14..3089785ca97e 100644
+--- a/arch/loongarch/include/asm/inst.h
++++ b/arch/loongarch/include/asm/inst.h
+@@ -683,7 +683,17 @@ DEF_EMIT_REG2I16_FORMAT(blt, blt_op)
+ DEF_EMIT_REG2I16_FORMAT(bge, bge_op)
+ DEF_EMIT_REG2I16_FORMAT(bltu, bltu_op)
+ DEF_EMIT_REG2I16_FORMAT(bgeu, bgeu_op)
+-DEF_EMIT_REG2I16_FORMAT(jirl, jirl_op)
++
++static inline void emit_jirl(union loongarch_instruction *insn,
++			     enum loongarch_gpr rd,
++			     enum loongarch_gpr rj,
++			     int offset)
++{
++	insn->reg2i16_format.opcode = jirl_op;
++	insn->reg2i16_format.immediate = offset;
++	insn->reg2i16_format.rd = rd;
++	insn->reg2i16_format.rj = rj;
++}
+ 
+ #define DEF_EMIT_REG2BSTRD_FORMAT(NAME, OP)				\
+ static inline void emit_##NAME(union loongarch_instruction *insn,	\
+diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
+index 3050329556d1..14d7d700bcb9 100644
+--- a/arch/loongarch/kernel/inst.c
++++ b/arch/loongarch/kernel/inst.c
+@@ -332,7 +332,7 @@ u32 larch_insn_gen_jirl(enum loongarch_gpr rd, enum loongarch_gpr rj, int imm)
+ 		return INSN_BREAK;
+ 	}
+ 
+-	emit_jirl(&insn, rj, rd, imm >> 2);
++	emit_jirl(&insn, rd, rj, imm >> 2);
+ 
+ 	return insn.word;
+ }
+diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+index dd350cba1252..ea357a3edc09 100644
+--- a/arch/loongarch/net/bpf_jit.c
++++ b/arch/loongarch/net/bpf_jit.c
+@@ -181,13 +181,13 @@ static void __build_epilogue(struct jit_ctx *ctx, bool is_tail_call)
+ 		/* Set return value */
+ 		emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0], 0);
+ 		/* Return to the caller */
+-		emit_insn(ctx, jirl, LOONGARCH_GPR_RA, LOONGARCH_GPR_ZERO, 0);
++		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
+ 	} else {
+ 		/*
+ 		 * Call the next bpf prog and skip the first instruction
+ 		 * of TCC initialization.
+ 		 */
+-		emit_insn(ctx, jirl, LOONGARCH_GPR_T3, LOONGARCH_GPR_ZERO, 1);
++		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T3, 1);
+ 	}
+ }
+ 
+@@ -904,7 +904,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx, bool ext
+ 			return ret;
+ 
+ 		move_addr(ctx, t1, func_addr);
+-		emit_insn(ctx, jirl, t1, LOONGARCH_GPR_RA, 0);
++		emit_insn(ctx, jirl, LOONGARCH_GPR_RA, t1, 0);
+ 		move_reg(ctx, regmap[BPF_REG_0], LOONGARCH_GPR_A0);
+ 		break;
+ 
+-- 
+2.42.0
 
-Thanks for you read.
-
-Thanks
-Baichuan Qi
 
