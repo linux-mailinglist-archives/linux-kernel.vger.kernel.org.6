@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56E59DB0E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:38:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C829DB0E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED47165465
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7021643BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15549149C54;
-	Thu, 28 Nov 2024 01:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F5D1922EE;
+	Thu, 28 Nov 2024 01:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G5RgidBp"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y3ASrgPh"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8FC158531
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898A619049B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757700; cv=none; b=nzZW/FWuaXWqYoZ0M2n38DbYaAcmzajpu/T+wpojrK29DfkJrk2zY7AiZ/hRLR+3KFTPNMtWaA0uHmd9194cysrdutnzGfHqYYYuRPelhtmKr/w1XCIYhf4VFP8LEGcjuTI9HMuAlrdQqh6E7CAp8I8leynNAGU2hquW6GYBV+0=
+	t=1732757702; cv=none; b=E8RFvc0yd0bwKYHQoPWkbJWsw6cDmDVBZAVQ7ZJblPakfjp/onsj37n4f3gYI24hyymXPuJL90n5aGnuldUdjsv40OlvzcaWNszCa8XHjPaDLW/y2JPOqs4jZedOxlbigSjW+K1JBaUh38bYjVjpHa3ThxChFYkd0aH/d/xzJAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757700; c=relaxed/simple;
-	bh=Tc8LIiOIRM3QxaxI7g2HZv8WVUrEZKdFo0OMioOb8C0=;
+	s=arc-20240116; t=1732757702; c=relaxed/simple;
+	bh=cbbs+IW/NbNg8bOD1ExLdSHyieLi+4CBsRm7uNwsQy8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iVCZmX/Fmn6Ozgmduh6tmGeOM6E2kpBAMeopd+DoT2m7vGXKWy/O4OhXVzCyMqD2qFQRK5cXc5d81OIJ7YWN9Muj0w5giOod9SufZH9Rt6IW3UOk85NuXT37x1frA8jl842whqX5kdHs8s73CB1t0DyiDBDFAQJbmM0foL0nA9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G5RgidBp; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=d1MTqTED8HCZ/wJZrLN26heNvQL47FDpymYRGnn0QxZAXldubHCU1owVsFduDLJei1+oZ8Eoxf2xV1J+xZQYx3959GFcHQhNTReu+bzj/Wf8X/dhxnwh9VIKlsEUYNSnyReo5oOLlXwKZIL6+YhhoqXA8rVeGvpIpI3XW+2JoPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y3ASrgPh; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7f8af3950ecso259344a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:34:58 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea5447561bso337916a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:35:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757698; x=1733362498; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757700; x=1733362500; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=WU83/DfF7T0ds1+fthR3W+eEtQHUVkaSLt/xQXIjOoQ=;
-        b=G5RgidBp4Smax495yQK+ifwCBDsN4yrGOEC52Es0bufU/SUSSj6idwevrovN2a+c8u
-         8tTc0XRtNKM+SzIza2vSN3PvngS4Cy4KLigW29+DdjoLBG5pYXr9hABkvISLKKcrzrQy
-         ykTVmUEYVbAnGqyQ6CPr1jT989zDah7REOmF1ZEt3jQWwL19RZ5Ub5WAGVcCjgAj3Oz3
-         eB0Beef/GC5ebrUsgyzzAgaACrTg4vR/h1/lmxXWj0XwWbSGQLv8A04poAjxTnNHstrn
-         hdzepW+cgjccw155Phtdf/scMeADxJy+cOgR1p+NbGrFfw0eEJ32kJ8VdTjYFGd3tIB4
-         cIDw==
+        bh=tkIRJi9hWBp1lddY87MgHAVSYrJKfSqjaHK6jf7PQL8=;
+        b=y3ASrgPhyGBZqGT11pGYHcTavzPxvP/+RxcvCCpUZG5JSvIpBXrjy1llnSLzHnVx0k
+         8n4C/44pxBlSC3wr4jyrkeJWURApGJR+5dnDY3QopB49TRpnXIuK1H/UDDE73PFt0tXi
+         zbGCOPO55e9vhU705cF/BSy2o3+HHtMz4+aJYZWMAu5+7uw6uThP6PSWpgK8wwcTH/oU
+         AClydoJ95H4LCFYa6aaEGcKIg+CpXk35fvvhS5Bbaz+WcLdoUlWfYTmcRRUYgYb/URkd
+         FivY0ybGIl3VuuT/2gBhkWHK2h13tNjGtNNBoZp4ouWAKMi0ldomO4QUPglJsMLlFA1x
+         lrkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757698; x=1733362498;
+        d=1e100.net; s=20230601; t=1732757700; x=1733362500;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WU83/DfF7T0ds1+fthR3W+eEtQHUVkaSLt/xQXIjOoQ=;
-        b=Y/gwOVFpUxGn8NUZ/lVCv/D802snlN6wOOL1gHGamVdOesS+fCTCHoiv6ftipvIX0y
-         6jJobuuf7XgkCWR5t3h9r6IQBXrmXdNtNwqrcGegXWHIOJGi5zUiu2n4GpXafsP7i5+I
-         kdX6iVaZDYVMyL4gRN5i4ekYDP+W9aQtSJ+C31i1UXO5tJsYUtbK74taRswzcq40COzn
-         o3tnSwS2UOWnhJJa85bHiR1Z76WSDyWS3vPBet9w7nLtgWTkx85+HJeBXzZoKuXLSQ1T
-         z/DG0eRFB7+cey77oOeVEkJDlQSou+5K+4lFsEDepubvQPHyK78BMIsdS3RhXI0kAuAD
-         o7cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnVYKHCc87eosV3OXg7TOJbVh597clxaxtPyQYusHgyLAmjIaIqLWcMg6YeC0v8PBBdIy5CJTz2tBmcYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9OTAJzFzKF19sUzYZgamR3hQ70BoUxB1XXe16ARd9DGUTBYvk
-	bN/P10FOcSi2YKW2SBK+H3VW5PiHpkQ+DBD4si2CzpxNRSaIVFoA1YU8aIoN26Tut70+3aQlET8
-	9WA==
-X-Google-Smtp-Source: AGHT+IEJCs9N2XclscA1jtpo8yGvgCHz9DiT6omS7XIoj+KtuSKV1V8k6WtPz+JiSgyWErvjoDkzmWslk0Q=
-X-Received: from plblk8.prod.google.com ([2002:a17:903:8c8:b0:212:45f:e087])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a105:b0:1e0:c89c:1e04
- with SMTP id adf61e73a8af0-1e0e0c5cc36mr7869843637.43.1732757698381; Wed, 27
- Nov 2024 17:34:58 -0800 (PST)
+        bh=tkIRJi9hWBp1lddY87MgHAVSYrJKfSqjaHK6jf7PQL8=;
+        b=dJHMCH9Aqsn/nPSMzUtJxXVckkBob8UcbJSqrm3fLBMesO9gxOwUb9pKkq3430lPWg
+         AMe50/hU+HHHQ0VURKoW/pCqh3owe/Za/DtO4oTYwUvzUGnYp+5DlyEPgeyAeo3+ToYu
+         9zVUd+u3F0Q96a/pqZg5oZmkdk4FBewOUYiJdG1n1mhlphJE7FgJmyf17Zew+wNOvtiw
+         05dKt+4PKlxRHka/Xw6gnvfR7WLwqu1pk9+dOYDWEr6VW6gTseJoICg/Vw3TG9hLcvwG
+         HWoHjM7Qvrsb69fZnT5Kz+pTaocCKFmcSLA1BGiFKWINIo1BC/vsRbeBHauCvHdiVMK4
+         eyjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWijoBjsG8vLNVQD3FqdSgdqwY2q2MCxI6g8RdmQ3XWGNUjk0WFE7J1sSADkVG53o8hzXxHqhr3uFYGjw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfYkgr9JqqMTBz8tlhdcf/pc/a9PjfYt68GwXL/7naqA8/34Lx
+	hCECVnpIti/b8Qfro8JHYZLbsr4d9kPRbM0e3LtUGa7xqIaXXzs2JoEvrtAsHHNDmVpodbCJhJX
+	3Xg==
+X-Google-Smtp-Source: AGHT+IHj7bunZqsrMJqyJ0DOJh4l8WYWBGi8wZuUkIl5BQnppNnhNxCcsaMgndMNUNsLOrxgCJY9E8zR6MQ=
+X-Received: from pjbmf12.prod.google.com ([2002:a17:90b:184c:b0:2d8:8d32:2ea3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b91:b0:2ea:3d61:1848
+ with SMTP id 98e67ed59e1d1-2ee097e33d4mr5931840a91.34.1732757700100; Wed, 27
+ Nov 2024 17:35:00 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:33:42 -0800
+Date: Wed, 27 Nov 2024 17:33:43 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-16-seanjc@google.com>
-Subject: [PATCH v3 15/57] KVM: x86: Drop the now unused KVM_X86_DISABLE_VALID_EXITS
+Message-ID: <20241128013424.4096668-17-seanjc@google.com>
+Subject: [PATCH v3 16/57] KVM: selftests: Fix a bad TEST_REQUIRE() in x86's
+ KVM PV test
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -88,32 +89,39 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Drop the KVM_X86_DISABLE_VALID_EXITS definition, as it is misleading, and
-unused in KVM *because* it is misleading.  The set of exits that can be
-disabled is dynamic, i.e. userspace (and KVM) must check KVM's actual
-capabilities.
+Actually check for KVM support for disabling HLT-exiting instead of
+effectively checking that KVM_CAP_X86_DISABLE_EXITS is #defined to a
+non-zero value, and convert the TEST_REQUIRE() to a simple return so
+that only the sub-test is skipped if HLT-exiting is mandatory.
 
-Suggested-by: Xiaoyao Li <xiaoyao.li@intel.com>
+The goof has likely gone unnoticed because all x86 CPUs support disabling
+HLT-exiting, only systems with the opt-in mitigate_smt_rsb KVM module
+param disallow HLT-exiting.
+
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- include/uapi/linux/kvm.h | 4 ----
- 1 file changed, 4 deletions(-)
+ tools/testing/selftests/kvm/x86_64/kvm_pv_test.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 502ea63b5d2e..206e3e6a78c6 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -617,10 +617,6 @@ struct kvm_ioeventfd {
- #define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
- #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
- #define KVM_X86_DISABLE_EXITS_CSTATE         (1 << 3)
--#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
--                                              KVM_X86_DISABLE_EXITS_HLT | \
--                                              KVM_X86_DISABLE_EXITS_PAUSE | \
--                                              KVM_X86_DISABLE_EXITS_CSTATE)
+diff --git a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
+index 78878b3a2725..2aee93108a54 100644
+--- a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
++++ b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
+@@ -140,10 +140,11 @@ static void test_pv_unhalt(void)
+ 	struct kvm_cpuid_entry2 *ent;
+ 	u32 kvm_sig_old;
  
- /* for KVM_ENABLE_CAP */
- struct kvm_enable_cap {
++	if (!(kvm_check_cap(KVM_CAP_X86_DISABLE_EXITS) & KVM_X86_DISABLE_EXITS_HLT))
++		return;
++
+ 	pr_info("testing KVM_FEATURE_PV_UNHALT\n");
+ 
+-	TEST_REQUIRE(KVM_CAP_X86_DISABLE_EXITS);
+-
+ 	/* KVM_PV_UNHALT test */
+ 	vm = vm_create_with_one_vcpu(&vcpu, guest_main);
+ 	vcpu_set_cpuid_feature(vcpu, X86_FEATURE_KVM_PV_UNHALT);
 -- 
 2.47.0.338.g60cca15819-goog
 
