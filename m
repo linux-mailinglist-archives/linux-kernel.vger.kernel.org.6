@@ -1,194 +1,172 @@
-Return-Path: <linux-kernel+bounces-424186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C7B9DB16D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:22:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4984A9DB16F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:23:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51639B211BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:22:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2307165AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C02481B1;
-	Thu, 28 Nov 2024 02:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB2F51C5A;
+	Thu, 28 Nov 2024 02:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5ViQ4Kx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8HdnH8w"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDDA33DF;
-	Thu, 28 Nov 2024 02:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A234045005;
+	Thu, 28 Nov 2024 02:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732760549; cv=none; b=Sq1fdSbyLZ1gqDHvGhxSnLKJvjJROZTS02OXUDgVmuWn7kOLrcLmdwqjSwX4RR7QqI4Ms81JfM2X4YVEuiV4iq6peSKy6lAuKrt+oqZicR9epfZ7NwES0FyYS2nonYs8HBe1ZKw/DAapthyOYFu625wCYZk2bDcl64z6vuKhBQc=
+	t=1732760574; cv=none; b=hWF9Eny9Oz20w7G4V9JYR3IKvBNFerg7cKyVcLgpYBw0i3Cen4iJ0hrsRpE4lMA8tkAyTUtOVkYBOA7HyMSOSvx4+cYEzSGGVIMUgdFJmVtX+Ges0AcczqsJ/c8WmRorcYuaZ1aKxaYb7qkY9KJSGUYAJrAFDchrev6KwMhvIh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732760549; c=relaxed/simple;
-	bh=ZDz1m5wguyNknjgwK4RvPulZTP4oicLjox5MGdn0e3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6VCLgjj9Kj6i/Vu8KYMxtM9sXZITDuedpZFOmyWbMvAO2vUUPeXB2IG0r0K73MyfFrEX9C60mztE63DRIp0WN+veLKHMr8hCw1K0z2M6koIB6zH2UXyPB3PttAxdOIBJW2Aj7TbPMUSS7GVgDey4bycQkk8vvo4gkONFN/lPvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5ViQ4Kx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 229BBC4CECC;
-	Thu, 28 Nov 2024 02:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732760548;
-	bh=ZDz1m5wguyNknjgwK4RvPulZTP4oicLjox5MGdn0e3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B5ViQ4KxhUqTQh3Lq9jlEBMSKA5+va9iKMuuJ4e7xchSdalr2tLgvkA73USjSyt1r
-	 Hb+D4RWeWQ+FNyk9sTixhbHTZh6LGNRK2RdU5aggNsGCoGGQl5SmPACZ7GNo9sNp1O
-	 APHe2pwVby0etTzGY6QTbLzIueq8+BCsYbE+tC3p/4Jf8H4I70aZphLXHh4YRE+bOw
-	 dO5bvFqlPjSYqTQfcJF4sbyjMOvGM8N1s4m9QwZSSJ/pp0Vzn7xc37PTqP9ms4sbiG
-	 pymxihgEDWXMwPFlzjsnrVh3EpyS2qXwSEo/a1touX6M406DoALfzRVONjjZjhNDOH
-	 gCciNHUOIQXAg==
-Date: Wed, 27 Nov 2024 18:22:26 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com,
-	linux-modules@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, masahiroy@kernel.org,
-	mmaurer@google.com, arnd@arndb.de, deller@gmx.de, song@kernel.org
-Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
-Message-ID: <Z0fT4hC30NISjmi_@bombadil.infradead.org>
-References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
- <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
- <Z0eeuCyUGcKgsc5h@bombadil.infradead.org>
- <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
- <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+	s=arc-20240116; t=1732760574; c=relaxed/simple;
+	bh=+3yEbUpVJHErlhQVGitLUUwpUF07C/iOclEhx9DELeQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKevQhAfrn/DbCXKuRkz2DXuEkzCe4guo3cEEwDTsXqu/R5zE234mhiwgWhhohPGrRaAXCYBcb44vHuhNoIp5RVUq0JSOMt2Ljapxwy1quVWXskqH8SI1Mlpxh9GytazxiTGLEI+rmT2zCUOvLYkuUM4KRhS6u87Gp9F0FiROXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8HdnH8w; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ea752c0555so296934a91.3;
+        Wed, 27 Nov 2024 18:22:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732760572; x=1733365372; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E68xRyigClUvwUR6lCW/eJ34/F/SpAWPBL/RXhFR5TM=;
+        b=D8HdnH8wwPEUFcSYnKvg4VV6huzo2MwZpn0E+uHdcw+xKcHohe9BBVAfmVHlWh0Bnh
+         4pHl4xlF+EXKOSG/TUARhA6eygnHQp9n6YEICCO3nXILBIiLfZhl0TfnFzN/jqSy2M2G
+         9jtpGw+4eH6y+RQARsIiwyVUnTNGCLT9AivFnbtsMht2/C8cvKJRd/CqXcPqO5A8KaPs
+         /KKr0KiqEjwLlPbyw6FTpxmKA5HvEbpdnnAO7kpZkHzI18uo85nralSeKZHElONpceCh
+         M0OzEQsUg9mAaTom4nZ+E3tzld/aRca6FKGTUmYZYE0BfmoGaHaqUpQCtuuBFEwZ8aho
+         RjDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732760572; x=1733365372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E68xRyigClUvwUR6lCW/eJ34/F/SpAWPBL/RXhFR5TM=;
+        b=wEeQeKCpkHmvFe4WnpEhQGK5Q5IvyEL/QWd43uM5NX5g2bgbdC3kwydENkWCI9k6PZ
+         WzSFVJdPZP+s81Ar4rSPheb2T7lksOdZrW0sWeSlX246jMP7P4spynGd2ROMW27kO700
+         Ck12acCv7wEr21jx++agq0xzwmIW9awRtNJNh3Sn+cqiiibDHR1Q4DpARDsruB4BI1a1
+         mBrYQYpl/wqOJrjv948zIcJ3jpGH7f12AyvydT22IHmRMKJIXTnBZi+x3L2s2OjH1bE6
+         uhDbRP9Q8EnEZohye7nVqjlGAWZy8hyxmAS5QZXk8X465Q7kq/tPQxxo5IN8WZ2mFhyk
+         IXEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjj6gY7ygJ4vBI8xcmEcvx42Pe9S7lKgKeMNRZvFcruBaGlbeyuL9mkPlNqs1REb3ysHtSc4ZH+N1fhnw=@vger.kernel.org, AJvYcCX4SJgFCJD3fb1pda9rPra1EOpNosmuVmltQEKzkp9pJjHtkKgtCugQinpBy3QA1ATSDDASTSX1vLrp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGA+vroVLSljPIsPBX2QDp8Q9Gq4SF/PqjBzaQ7h2C8craXazz
+	T980K65Vl6XwR/IBjHZDlamUptWuHLGn5bmPdFd3VX7d812XQ0cP
+X-Gm-Gg: ASbGncuBDd1xHJQKYpyrQXnFSusDxJYhOavHz/7jtBPET9hhY4Vq8zTFBPb1QglJ+nZ
+	5J234VstDWn+PaiFr2742fZ1+b3mOWnP9WeBTFL7ogpSv/byjC6GzQBhbBMUTbDmJaU8J6LzMDS
+	QSFoHJxsXl/ro5VzvS3oRVUu3J686AiMHA/sWwmQRKvNF6ste4kbG0ZqFJo4s8H6g3HT5dXQ8EK
+	kJZHwMkTne+AzojJLzuOkpvQAEf9MXMrJ+RBEnqUCnKye8=
+X-Google-Smtp-Source: AGHT+IG04RJqmdp6NjPYOcNv/NdD0ONIDGFl3Te1sWDBBb68PsQb8kGuXxXHrggYkyOK57gtO4Nk2Q==
+X-Received: by 2002:a17:90b:2782:b0:2ea:b564:4b3a with SMTP id 98e67ed59e1d1-2ee08eaf00amr7329845a91.9.1732760571758;
+        Wed, 27 Nov 2024 18:22:51 -0800 (PST)
+Received: from localhost ([2402:7500:587:82b8:6566:ea7f:84f:75cf])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee2b007affsm310099a91.12.2024.11.27.18.22.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 18:22:51 -0800 (PST)
+From: wojackbb@gmail.com
+To: johan@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jack Wu <wojackbb@gmail.com>
+Subject: [PATCH] [v2]USB: serial: option: add MediaTek T7XX compositions Add the MediaTek T7XX compositions:
+Date: Thu, 28 Nov 2024 10:22:27 +0800
+Message-Id: <20241128022227.717101-1-wojackbb@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27, 2024 at 03:56:48PM -0800, Linus Torvalds wrote:
-> On Wed, 27 Nov 2024 at 15:26, Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Wed, Nov 27, 2024 at 02:35:36PM -0800, Luis Chamberlain wrote:
-> > > Sorry about that, I'm on it.
-> >
-> > OK here is a fix, goes double build tested and then run time tested.
-> 
-> No, you misunderstand.
-> 
-> I don't mind the tests being built. That's *good*.
-> 
-> I mind them being built *twice*. That means that there's some
-> seriously broken lack of dependency logic.
+From: Jack Wu <wojackbb@gmail.com>
 
-Ah, gobble gobble, got it. That was also fixed in the patch but it I
-also changed the default build to go fast, ok we'll revert back to the
-older defaults (TEST_KALLSYMS_LARGE now) now and just make it clear the
-double build was the issue being fixed.
+T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 74 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0e8d ProdID=7129 Rev= 0.01
+S:  Manufacturer=MediaTek Inc.
+S:  Product=USB DATA CARD
+S:  SerialNumber=004402459035402
+C:* #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=02(comm.) Sub=0e Prot=00
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=0e Prot=00 Driver=cdc_mbim
+E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+I:  If#= 1 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:* If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=8a(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-From f7da80262bd89a0d2c2c1a9e59f5a14b84e34f3f Mon Sep 17 00:00:00 2001
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Wed, 27 Nov 2024 14:10:57 -0800
-Subject: [PATCH v2] selftests: kallsyms: fix double build stupidity
+-------------------------------
+| If Number | Function        |
+-------------------------------
+| 2         | USB AP Log Port |
+-------------------------------
+| 3         | USB AP GNSS Port|
+-------------------------------
+| 4         | USB AP META Port|
+-------------------------------
+| 5         | ADB port        |
+-------------------------------
+| 6         | USB MD AT Port  |
+------------------------------
+| 7         | USB MD META Port|
+-------------------------------
+| 8         | USB NTZ Port    |
+-------------------------------
+| 9         | USB Debug port  |
+-------------------------------
 
-Fix the stupid FORCE so that re-builds will only trigger
-when really needed. While at it, document the sensible ranges
-supported and fix the script to accept these alternatives.
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Jack Wu <wojackbb@gmail.com>
+v2: add NCTRL and more description
 ---
- lib/Kconfig.debug                     | 32 ++++++++++++++++++++++++++-
- lib/tests/module/Makefile             |  2 +-
- lib/tests/module/gen_test_kallsyms.sh |  9 ++++++--
- 3 files changed, 39 insertions(+), 4 deletions(-)
+ drivers/usb/serial/option.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index b5929721fc63..da8c35bfaeaf 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2986,9 +2986,39 @@ config TEST_KALLSYMS_D
- 	tristate
- 	depends on m
- 
-+choice
-+	prompt "Kallsym test range"
-+	default TEST_KALLSYMS_LARGE
-+	help
-+	  Selecting something other than "Fast" will enable tests which slow
-+	  down the build and may crash your build.
-+
-+config TEST_KALLSYMS_FAST
-+	bool "Fast builds"
-+	help
-+	  You won't really be testing kallsysms, so this just helps fast builds
-+	  when allmodconfig is used..
-+
-+config TEST_KALLSYMS_LARGE
-+	bool "Enable testing kallsyms with large exports"
-+	help
-+	  This will enable larger number of symbols. Only enable this if you
-+	  are a modules developer. This will slow down your build considerbly.
-+
-+config TEST_KALLSYMS_MAX
-+	bool "Known kallsysms limits"
-+	help
-+	  This will enable exports to the point we know we'll start crashing
-+	  builds.
-+
-+endchoice
-+
- config TEST_KALLSYMS_NUMSYMS
- 	int "test kallsyms number of symbols"
--	default 100
-+	range 2 10000
-+	default 2 if TEST_KALLSYMS_FAST
-+	default 100 if TEST_KALLSYMS_LARGE
-+	default 10000 if TEST_KALLSYMS_MAX
- 	help
- 	  The number of symbols to create on TEST_KALLSYMS_A, only one of which
- 	  module TEST_KALLSYMS_B will use. This also will be used
-diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
-index af5c27b996cb..5436386d7aa0 100644
---- a/lib/tests/module/Makefile
-+++ b/lib/tests/module/Makefile
-@@ -3,7 +3,7 @@ obj-$(CONFIG_TEST_KALLSYMS_B) += test_kallsyms_b.o
- obj-$(CONFIG_TEST_KALLSYMS_C) += test_kallsyms_c.o
- obj-$(CONFIG_TEST_KALLSYMS_D) += test_kallsyms_d.o
- 
--$(obj)/%.c: FORCE
-+$(obj)/%.c: $(srctree)/lib/tests/module/gen_test_kallsyms.sh $(KCONFIG_CONFIG)
- 	@$(kecho) "  GEN     $@"
- 	$(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
- 		$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
-diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
-index 3f2c626350ad..561dcac0f359 100755
---- a/lib/tests/module/gen_test_kallsyms.sh
-+++ b/lib/tests/module/gen_test_kallsyms.sh
-@@ -7,6 +7,11 @@ NUM_SYMS=$2
- SCALE_FACTOR=$3
- TEST_TYPE=$(echo $TARGET | sed -e 's|lib/tests/module/test_kallsyms_||g')
- TEST_TYPE=$(echo $TEST_TYPE | sed -e 's|.c||g')
-+FIRST_B_LOOKUP=1
-+
-+if [[ $NUM_SYMS -gt 2 ]]; then
-+	FIRST_B_LOOKUP=$((NUM_SYMS/2))
-+fi
- 
- gen_template_module_header()
- {
-@@ -52,10 +57,10 @@ ____END_MODULE
- 
- gen_template_module_data_b()
- {
--	printf "\nextern int auto_test_a_%010d;\n\n" 28
-+	printf "\nextern int auto_test_a_%010d;\n\n" $FIRST_B_LOOKUP
- 	echo "static int auto_runtime_test(void)"
- 	echo "{"
--	printf "\nreturn auto_test_a_%010d;\n" 28
-+	printf "\nreturn auto_test_a_%010d;\n" $FIRST_B_LOOKUP
- 	echo "}"
- }
- 
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 4f18f189f309..1b798244b675 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2244,6 +2244,8 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = NCTRL(2) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff, 0x00, 0x00),
+ 	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7129, 0xff, 0x00, 0x00),        /* MediaTek T7XX  */
++	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
+ 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
+ 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
+ 	  .driver_info = RSVD(1) | RSVD(4) },
 -- 
-2.45.2
+2.34.1
 
 
