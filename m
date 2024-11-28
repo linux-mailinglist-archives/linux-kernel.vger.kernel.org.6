@@ -1,118 +1,241 @@
-Return-Path: <linux-kernel+bounces-424289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD1E9DB29E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:53:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CBB9DB2A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:55:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97791164C32
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:53:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A211B22FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8C813D61B;
-	Thu, 28 Nov 2024 05:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uak4QW4o"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11231422B8;
+	Thu, 28 Nov 2024 05:55:29 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B3A13DB9F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD96913D61B;
+	Thu, 28 Nov 2024 05:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732773204; cv=none; b=F3gKliM0EQZayxaWPZhyQnpgEX2IK/MUxftEnqrVl5/ZHEH2lbiaQiJ4uu3daXYBFJU/iLkU1EFoQyjXAfpZP+Qh9O/KC4Pk/crmWd6LIF6WpbJxJHjVMQ1j6rseMc5wznVKA8etPogTWaQW2yeSa41zWO4B/KksDaZQndF+w3Y=
+	t=1732773329; cv=none; b=tuPYJpTkBf9eVohcYn7zqQayY0IQlK9H8rvae+Flpc9PU7mMoJweWg6gfjItctFORKFv+6WuL0lvloaA+pf/3muLMDMbLd0WM5EaHiVzPdBj7aybULgl//yS/HQii5A9m8HURvGNDDnsBCEN+EyjBZrigddv3wGwqw+ZEYR+viE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732773204; c=relaxed/simple;
-	bh=CigLghzeFNvhCkft/ugL35ygrYZxds6r/kbd3dqmIUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HI2TlGqxkvSQ84UVlyaMkZSdwudEPbm/m/ag6zUt9duiluTuERHs0wDDruPyOs5zJ4ESHhP9cWOxcYCI7MeU5iHtMGM3JgmiiMsxiq/ZGGUvAEsjagV+scIm6h3oxan4jTTe5OtnJwq4m7hcONy2lWpXFtUGmLH96GoLC3PGLIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uak4QW4o; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a781e908a7so56675ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 21:53:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732773202; x=1733378002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y9jJe4aAwUIUkAd7lzdX2fV+tre1lnRm9MMRnXeyM0w=;
-        b=uak4QW4oZJYJrfLDb9KGAUps8MDgtImAoSvi9JQC/A4L3tgo648fxEWywKrN8RnzbJ
-         lzg9RCcx7ztiMWuuGyRtrlPzl+lbZdQrVSyH8A+3BVwqeYKZBausYLfq/JrJN5f80AL8
-         B5S9EHHWRuWsHDbGfx4XkHh+S0X6ekFiup3F4OXaTlbJKwIqa6PkxyoYrlmdhauEEwZD
-         xtr5zz2AIXU0m/btI9Bf2P9VcTsmoKqGxAEepHJe9C70LQgDmbc5OUdG1rUtuWclB1Wz
-         K4aLBBvD5hUZiRR1g+jROaDD21pNxzsherNLJPtrXgORxmYyrERjnHW1rHHQUThd3pOM
-         Dikg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732773202; x=1733378002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y9jJe4aAwUIUkAd7lzdX2fV+tre1lnRm9MMRnXeyM0w=;
-        b=jElXO5LwXOZvHWF8AzjtCQ9pRKGddH4oCxzDxeDB5ooDLEQWUrVnM7XKuGrfIcJrgI
-         hXp2txz2Pn5OVdm+fa9A0eHNtv+OUGHNhl3KHCDlPgDIz06Mwwl42OJzpHZH0nC+OyWt
-         eKK0k5PdK0GcByq34qBswry28s63KteCnKD25UkW3e9Er0LzZYu2np04n8oCU4kKzcXu
-         zqyHAE2+E08HVqyMue/FjcMbzhklxMfBwyl1ToqOnDUoQDk5EK5+HMFG/xwL6IjpsNa0
-         c78I2cUmIgfCr8VguECAKAitiORWivcI/AkHgnn/l09XfbzRD7w7gpkoOJb+61pvhzqZ
-         J3Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9WZ1DqZ1nhzOeiqbPy8+hiPjptQMs2jBv0vpX00eVRw65DpTLtvpuX0mbobMHvt2DpjjB3UJYwxDQ4mM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT9CWHAd553YzBKeCrWiD9XNH7CsM+LFlUgvsVwpHXJdYSWCCG
-	/wPigxAeogFewUvawAfJ3Mxdd/VV0bLbEstKXD11xAGAYVeko/bIUwQb60NhKw4J1Zw/3JAcfFS
-	fhR2aoQeHwqJ6fpc9uj3pW93EjQ5jtckyOUH3
-X-Gm-Gg: ASbGncthB7yZJ+Op5NM617IvyF7oRIcXxHtmOr0tfqziP1xw4GXINbH1w+m5d50r3n4
-	IkekxyaTazVs1EdHUGRqNCObt7KWQQIjv
-X-Google-Smtp-Source: AGHT+IFvYUjJNyjZWFekd14GLP/s+DIjnjuLrclm8XY0JQ6x14JWKwl04yKcgVwfz/w4sbDoidYcVaCp33ULyhKOcSk=
-X-Received: by 2002:a05:6e02:441a:20b0:3a7:cd62:7a7c with SMTP id
- e9e14a558f8ab-3a7cd627adamr540585ab.26.1732773202115; Wed, 27 Nov 2024
- 21:53:22 -0800 (PST)
+	s=arc-20240116; t=1732773329; c=relaxed/simple;
+	bh=kkNJait5I2LB/hBvCpklFsI0uKskiOctwkK67l/pNFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ju4uVlDd7SnsjCMJb5FXwGMY2NzrRbmCV7TxhEhV9PuSp7tfRQmL/8caVVXEYKWSPLRCYJPh00QT89C4v0bJPomtGnkW9Xs/qEUfCnxiP8Nl3nuEsMRnIyFjyCiuOEAkX8viFSU8HmefheKBRnfQG4/BFPBxL9f12V1nqzMTYf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.224] (ip5f5aeb13.dynamic.kabel-deutschland.de [95.90.235.19])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D2B3461E5FE05;
+	Thu, 28 Nov 2024 06:55:06 +0100 (CET)
+Message-ID: <ce455385-2000-4da3-aaa1-a3b292220130@molgen.mpg.de>
+Date: Thu, 28 Nov 2024 06:55:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125071653.1350621-1-namhyung@kernel.org> <CAHk-=whQ_yeRDh_zZjhz-4q8G=vu5Ypb-Y3f=efHQSwd5Kas3w@mail.gmail.com>
- <Z0ZhDHXxHKoE2Nrl@google.com> <Z0ZvAB0vcL-D-a6f@x1> <Z0aRFFW9xMh3mqKB@google.com>
- <CAHk-=widREwanfzcQ3YUvqQ42xLmQHjK_asCFN2jTBM2OHY-Ow@mail.gmail.com> <Z0dkpqogjSCnJQec@google.com>
-In-Reply-To: <Z0dkpqogjSCnJQec@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 27 Nov 2024 21:53:10 -0800
-Message-ID: <CAP-5=fV4A-FKxv7Ovq5d44C-ght3_y3YuaevR12ptL1YyAWLSw@mail.gmail.com>
-Subject: Re: [GIT PULL] perf-tools changes for v6.13
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: btusb: avoid NULL pointer defereference in
+ skb_dequeue()
+To: En-Wei Wu <en-wei.wu@canonical.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ anthony.wong@canonical.com, kuan-ying.lee@canonical.com,
+ Tim Jiang <quic_tjiang@quicinc.com>
+References: <20241128030807.270581-1-en-wei.wu@canonical.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241128030807.270581-1-en-wei.wu@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 10:27=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Wed, Nov 27, 2024 at 08:02:42AM -0800, Linus Torvalds wrote:
-> > On Tue, 26 Nov 2024 at 19:25, Namhyung Kim <namhyung@kernel.org> wrote:
-> > >
-> > > I think it's a bug in perf record since v6.12.  I found the build-id
-> > > event in the header area is broken.  Can you verify if this works?
-> >
-> > Ahh. And the reason I thought it was new to this release was simply
-> > because I was traveling during the 6.12 merge window and didn't do the
-> > tools build that I usually do, so I hadn't realized it was actually
-> > pre-existing.
-> >
-> > Your patch indeed seems to fix it for me. Not hugely urgent (I just
-> > installed the fixed perf binaries and clearly nobody else has even hit
-> > the issue), so I'll leave this alone until the next perf tools fixes
-> > pull and we'll get it fixed then.
->
-> Good to hear it worked.  I'll add it to the perf-tools tree.
+[Cc: +Tim]
 
-Apologies, for the breakage. Have my:
-Reviewed-by: Ian Rogers <irogers@google.com>
-and it'd be useful for a Fixes tag for a 6.12 backport.
+Dear En-Wei,
 
-Thanks,
-Ian
+
+Thank you for the patch. There is a typo in the summary/title/subject:
+
+dereference
+
+Am 28.11.24 um 04:08 schrieb En-Wei Wu:
+> The WCN7851 (0489:e0f3) Bluetooth controller supports firmware crash dump
+> collection through devcoredump. During this process, the crash dump data
+> is queued to a dump queue as skb for further processing.
+> 
+> A NULL pointer dereference occurs in skb_dequeue() when processing the
+> dump queue due to improper return value handling:
+> 
+> [ 93.672166] Bluetooth: hci0: ACL memdump size(589824)
+> 
+> [ 93.672475] BUG: kernel NULL pointer dereference, address: 0000000000000008
+> [ 93.672517] Workqueue: hci0 hci_devcd_rx [bluetooth]
+> [ 93.672598] RIP: 0010:skb_dequeue+0x50/0x80
+> 
+> The issue stems from handle_dump_pkt_qca() returning the wrong value on
+> success. It currently returns the value from hci_devcd_init() (0 on success),
+> but callers expect > 0 to indicate successful dump handling. This causes
+> hci_recv_frame() to free the skb while it's still queued for dump
+> processing, leading to the NULL pointer dereference when hci_devcd_rx()
+> tries to dequeue it.
+> 
+> Fix this by:
+> 
+> 1. Extracting dump packet detection into new is_dump_pkt_qca() function
+> 2. Making handle_dump_pkt_qca() return 0 on success and negative errno
+>     on failure, consistent with other kernel interfaces
+> 
+> This prevents premature skb freeing by ensuring proper handling of dump packets.
+
+Re-flow this line for 75/72 characters per line?
+
+How can I force the the firmware crash dump selection?
+
+> Fixes: 20981ce2d5a5 ("Bluetooth: btusb: Add WCN6855 devcoredump support")
+> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> ---
+>   drivers/bluetooth/btusb.c | 75 ++++++++++++++++++++++++---------------
+>   1 file changed, 47 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 279fe6c115fa..8926f8f60e5c 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -2930,22 +2930,16 @@ static void btusb_coredump_qca(struct hci_dev *hdev)
+>   		bt_dev_err(hdev, "%s: triggle crash failed (%d)", __func__, err);
+>   }
+>   
+> -/*
+> - * ==0: not a dump pkt.
+> - * < 0: fails to handle a dump pkt
+> - * > 0: otherwise.
+> - */
+> +/* Return: 0 on success, negative errno on failure. */
+>   static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+>   {
+> -	int ret = 1;
+> +	int ret = 0;
+>   	u8 pkt_type;
+>   	u8 *sk_ptr;
+>   	unsigned int sk_len;
+>   	u16 seqno;
+>   	u32 dump_size;
+>   
+> -	struct hci_event_hdr *event_hdr;
+> -	struct hci_acl_hdr *acl_hdr;
+>   	struct qca_dump_hdr *dump_hdr;
+>   	struct btusb_data *btdata = hci_get_drvdata(hdev);
+>   	struct usb_device *udev = btdata->udev;
+> @@ -2955,30 +2949,14 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+>   	sk_len = skb->len;
+>   
+>   	if (pkt_type == HCI_ACLDATA_PKT) {
+> -		acl_hdr = hci_acl_hdr(skb);
+> -		if (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE)
+> -			return 0;
+>   		sk_ptr += HCI_ACL_HDR_SIZE;
+>   		sk_len -= HCI_ACL_HDR_SIZE;
+> -		event_hdr = (struct hci_event_hdr *)sk_ptr;
+> -	} else {
+> -		event_hdr = hci_event_hdr(skb);
+>   	}
+>   
+> -	if ((event_hdr->evt != HCI_VENDOR_PKT)
+> -		|| (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
+> -		return 0;
+> -
+>   	sk_ptr += HCI_EVENT_HDR_SIZE;
+>   	sk_len -= HCI_EVENT_HDR_SIZE;
+>   
+>   	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
+> -	if ((sk_len < offsetof(struct qca_dump_hdr, data))
+> -		|| (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS)
+> -	    || (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
+> -		return 0;
+> -
+> -	/*it is dump pkt now*/
+>   	seqno = le16_to_cpu(dump_hdr->seqno);
+>   	if (seqno == 0) {
+>   		set_bit(BTUSB_HW_SSR_ACTIVE, &btdata->flags);
+> @@ -3052,17 +3030,58 @@ static int handle_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+>   	return ret;
+>   }
+>   
+> +/* Return: true if packet is a dump packet, false otherwise. */
+> +static bool is_dump_pkt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+> +{
+> +	u8 pkt_type;
+> +	u8 *sk_ptr;
+> +	unsigned int sk_len;
+> +
+> +	struct hci_event_hdr *event_hdr;
+> +	struct hci_acl_hdr *acl_hdr;
+> +	struct qca_dump_hdr *dump_hdr;
+> +
+> +	pkt_type = hci_skb_pkt_type(skb);
+> +	sk_ptr = skb->data;
+> +	sk_len = skb->len;
+> +
+> +	if (pkt_type == HCI_ACLDATA_PKT) {
+> +		acl_hdr = hci_acl_hdr(skb);
+> +		if (le16_to_cpu(acl_hdr->handle) != QCA_MEMDUMP_ACL_HANDLE)
+> +			return false;
+> +		sk_ptr += HCI_ACL_HDR_SIZE;
+> +		sk_len -= HCI_ACL_HDR_SIZE;
+> +		event_hdr = (struct hci_event_hdr *)sk_ptr;
+> +	} else {
+> +		event_hdr = hci_event_hdr(skb);
+> +	}
+> +
+> +	if ((event_hdr->evt != HCI_VENDOR_PKT)
+> +		|| (event_hdr->plen != (sk_len - HCI_EVENT_HDR_SIZE)))
+> +		return false;
+> +
+> +	sk_ptr += HCI_EVENT_HDR_SIZE;
+> +	sk_len -= HCI_EVENT_HDR_SIZE;
+> +
+> +	dump_hdr = (struct qca_dump_hdr *)sk_ptr;
+> +	if ((sk_len < offsetof(struct qca_dump_hdr, data))
+> +		|| (dump_hdr->vse_class != QCA_MEMDUMP_VSE_CLASS)
+> +	    || (dump_hdr->msg_type != QCA_MEMDUMP_MSG_TYPE))
+> +		return false;
+> +
+> +	return true;
+> +}
+
+Add a blank line here?
+
+>   static int btusb_recv_acl_qca(struct hci_dev *hdev, struct sk_buff *skb)
+>   {
+> -	if (handle_dump_pkt_qca(hdev, skb))
+> -		return 0;
+> +	if (is_dump_pkt_qca(hdev, skb))
+> +		return handle_dump_pkt_qca(hdev, skb);
+>   	return hci_recv_frame(hdev, skb);
+>   }
+>   
+>   static int btusb_recv_evt_qca(struct hci_dev *hdev, struct sk_buff *skb)
+>   {
+> -	if (handle_dump_pkt_qca(hdev, skb))
+> -		return 0;
+> +	if (is_dump_pkt_qca(hdev, skb))
+> +		return handle_dump_pkt_qca(hdev, skb);
+>   	return hci_recv_frame(hdev, skb);
+>   }
+
+The rest looks good.
+
+
+Kind regards,
+
+Paul
 
