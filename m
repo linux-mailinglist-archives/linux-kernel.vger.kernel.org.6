@@ -1,116 +1,104 @@
-Return-Path: <linux-kernel+bounces-424570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FE09DB613
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:55:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CA59DB615
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:55:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338D6163655
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:54:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC332816BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBEE193435;
-	Thu, 28 Nov 2024 10:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9C5197A7A;
+	Thu, 28 Nov 2024 10:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Agrfig/C"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W94x4K+0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I9aoYZW3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A9D192B79
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628C7194C96
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732791295; cv=none; b=p4IMd+1fkCUA8NViikJEXl9Z+YvAYOHIuuCu8DFC4/H4NscTyA7mky/6QrV1Ev8gU7LpywXp9iHOHDcQf+uH4b0Le1QaHsbLEkA5w4s9ew6B6ar2BThjKi8syQpsSythVggBt71RWC4I7EGud7apcWQGTPjQzKP3x66EYrsxZBQ=
+	t=1732791298; cv=none; b=pkNHtpkP/k9jDvFkjoqgcnPqj8ryRycnYRvVBsB4PwFLlzQHjz5FLF6vNQQ1gi0C35yJIfrYLluRF5EFlXAJ4pkpXy9HzYOfnbdCAD16iE421/okesXlYi5RjoY1h0dN7CZe9RhQAER2F5kWQVLPWCNfUMc8akFT2DSW4FCdWw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732791295; c=relaxed/simple;
-	bh=6ehekiZACHQTnSExEqnoLJzOhJU4i7ihd93wvSZd3eI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZMhGb7J8HGTAARWIVKfLtmKZsE7tNfrq+XkeB8LPMHPJTQmVpPHL1v5T/ga1Lrq9vwhLNEHT8gE2UsaRtFJhY5FJk1RkXSm1zX50Ir8nH4TzZAUJtKZ4A5CNdDRk95ZAhx7Jd5NPkDNtPqkOnZ6gn8uIm+4ix2in4gG5Nq+mTPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Agrfig/C; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5ee9dbf1b47so838153eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:54:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732791292; x=1733396092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ehekiZACHQTnSExEqnoLJzOhJU4i7ihd93wvSZd3eI=;
-        b=Agrfig/COAZKwKEpAzJ8A3kEYwB7jFHnyeZmd6CZWIQt3mhJNeuuuVJSH+dmEEzK75
-         VScVeGWi7SJsqWVB05WVZorGxZiAta1cz0aEllVEGSsFvXvn91tn4EbrwGdBC+y1Tydd
-         MGO8kBmuU1uX+1znlbJ+t3qA7Ejpsf7WSRjMqAfAnioZFk0HhwOOZdTqTpJU7uSmW3zj
-         7dPVULrS2zlcUwclPhU6Kxagn0GpRu/PhlxTMKfKxOEJftlvCflBLaocbb7V3X/pMRF2
-         K2O1Xk9llIFftNqa/w/TaZzBDwhDxfBmGLgxP/rFFVYY5w7s2dxSjDFNJh7WImuL7S0L
-         /qGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732791292; x=1733396092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ehekiZACHQTnSExEqnoLJzOhJU4i7ihd93wvSZd3eI=;
-        b=dqyI5MkZHe7MTjyFTaYmq88q/H2GLf/lJb8Kw97hwWFzsUR+ribS56+FAngCg+WHdv
-         SqVwGNVRHQ95VsY4a+txRNmzinqjq5oOQ8NHOOJAw0Sw724rrkeK7kwAzU+fZQmVoxpT
-         WSGGBKzYbE5+VaaDg0M7l+8RsyWF4JE9+aV8F0ZtW0zGdkkqqUyJ1xr08wk5hbuUx49f
-         45g0b5j4LBopJP1chWN1JigNNMiIGTdsCEWBau+1RRX9scmN+OWE4F/V2lxPE1ykAGs2
-         FPNXukhd6FplG1/QLepWk+TA0tGzambR9dQ1UyVMaTq5olYNq36rCwPjQsEuT5l66yCo
-         BhKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRiQtxk8rXnG/dmX7i7YKBWbs17gHg+FCDFVKQv3OUqQI+IF5Tsgm0wMGX9PODX+16bnGdtjo4QbtLrgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzI2+AcJG+6XVWZkSV/sGnNRodNuuP347L/WhDYSC2e/40IK2n
-	2XUX73GjwezsNHONUwLlqlaJhSH5Sz4nxttrUgzpRKSXGS+fojBI3sS71lj0iOuod9MTxBoLH2R
-	yKbYrrWg9M05iHncux0Hax34PSs9z60ioHNGx+A==
-X-Gm-Gg: ASbGncvCq9Fj/AI8GUC/V/81tl9J02Qs6wmEOMZsH8fbNF/Igd1igSFezMyaiWecaH7
-	KaQWJau5IkmdA0pKf5omAHWcZAJuQsVmS
-X-Google-Smtp-Source: AGHT+IFRspzNKnz4//d6oD1niqAfNdEx+VyAphVEPqsddVm2R+EgqYzGwfP+qAkW+vpL9icCdahFMF+IE7WYtI+pC5c=
-X-Received: by 2002:a05:6820:50e:b0:5f1:dc89:fa85 with SMTP id
- 006d021491bc7-5f2179fa1eemr1438491eaf.3.1732791292366; Thu, 28 Nov 2024
- 02:54:52 -0800 (PST)
+	s=arc-20240116; t=1732791298; c=relaxed/simple;
+	bh=viK4i2GchOONZO7PtKbBJDVtUbWwqLbwxOOc12W0b0o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NTSSKnN4xeMQGfbbP8+tVke0cFvyYF9MIkEqDnHmjPjq0Fwkysnnyp888ZXs57unsDnGIEV534N8cwLIvtydB8XUDFbrMb2/LawR4ra4pmOfx2ozi/8Khk8qveChNGXn+ieFK4TSrURf5+Tbq9mHUwcKVClKzQdCgrD5TjUmbLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W94x4K+0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I9aoYZW3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732791295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0Zm09wCCx+6S1qQF+CTECMolfgOWU3ldUEZ0/vhHyw=;
+	b=W94x4K+059Q83GOIiHQBagSXl4mxtOotc2OS7VHq0v9ctPfuXbS2w6RfuG4tgyRZvTmjLm
+	8TP5V7k3FMnN8oswrWX25iQXJDyHHeHbPEf8XpFRdsT1ArF61Gr0aRwreNX96mJB4eppNM
+	fmcmPpnVLQI6Ucbf/gs4/YYU9KHN94QN1ZrqC3+Q4fESS/Fi/b8Gj6E4erAPtPmK/OSOxc
+	zDbs5ccezjwYqixAuJL5NeikDeaiV5awwrj6+azPSiFiAp4pGauPUbbk9VX93xKuZZFGtI
+	mvRhTC34qTp38DRgE5pfOchO45A4SeW0ScQshvUVlwiGbEWxQEPm66gcIhDHkQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732791295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0Zm09wCCx+6S1qQF+CTECMolfgOWU3ldUEZ0/vhHyw=;
+	b=I9aoYZW3Y/U9g2wCJhkAL1Jn5jTyhOAXbrOPCHQHBIgH+BaLAWPWkgDNWWVBH/9GyBIuPv
+	uz1BRi+zQYgP4OCw==
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: "Dalmas, Marcelo (GE Vernova)" <marcelo.dalmas@ge.com>,
+ "jstultz@google.com" <jstultz@google.com>, "sboyd@kernel.org"
+ <sboyd@kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ntp: fix bug in adjtimex reading time offset
+In-Reply-To: <87r06wy3sf.ffs@tglx>
+References: <SJ0P101MB03687BF7D5A10FD3C49C51E5F42E2@SJ0P101MB0368.NAMP101.PROD.OUTLOOK.COM>
+ <87zflkydgp.ffs@tglx> <Z0dDOje96uI_t9sd@hoboy.vegasvil.org>
+ <87ttbsy3zd.ffs@tglx> <87r06wy3sf.ffs@tglx>
+Date: Thu, 28 Nov 2024 11:54:55 +0100
+Message-ID: <87iks7y6f4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org>
- <20241127-gs101-phy-lanes-orientation-phy-v1-3-1b7fce24960b@linaro.org>
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-phy-v1-3-1b7fce24960b@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 28 Nov 2024 10:54:41 +0000
-Message-ID: <CADrjBPqWh6z=1+9svYw8H=DZSpo+93rhO123LwFOAMOHMraLkA@mail.gmail.com>
-Subject: Re: [PATCH 3/9] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
- require Type-C properties
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	Roy Luo <royluo@google.com>, kernel-team@android.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Andr=C3=A9,
-
-On Wed, 27 Nov 2024 at 10:58, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
+On Wed, Nov 27 2024 at 18:39, Thomas Gleixner wrote:
+> On Wed, Nov 27 2024 at 18:35, Thomas Gleixner wrote:
+>> On Wed, Nov 27 2024 at 08:05, Richard Cochran wrote:
+>>> On Wed, Nov 27, 2024 at 03:10:30PM +0100, Thomas Gleixner wrote:
+>>>     The patch was generated by the following coccinelle script:
+>>>
+>>>     ...
+>>>
+>>> So I guess combining random other manual fixes into a patch that
+>>> claims to be generated is a bad idea?
+>>
+>> Indeed. I just figured out why the cast is there. txc::time_offset is of
+>> type 'long long', so the division triggers a build fail on 32-bit.
+>>
+>> It want's to be:
+>>
+>>    txc->time_offset = div_s64(txc->time_offset, NSEC_PER_USEC);
 >
-> The USB PHY on gs101 needs to be configured based on the orientation of
-> the connector. For that the DTS needs a link between the phy's port and
-> a TCPCi, and we'll need to inform the phy driver that it should handle
-> the orientation (register a handler).
->
-> Update the schema to enforce that by requiring the orientation-switch
-> and port properties (on gs101 only).
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
+> Or simpler by using a (s32) cast instead, which is sufficient as
+> time_offset must be in the range of [INT_MIN ... INT_MAX] because
+> NTP_SCALE_SHIFT is 32.
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+But that requires a comment while div_s64() is self explaining and it
+does not matter performance wise as the 32bit implementations reduce it
+to a 32bit/32bit division.
 
-regards,
+Thanks,
 
-Peter
+        tglx
+
 
