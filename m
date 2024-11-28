@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274519DB073
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:56:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3876F9DB074
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:57:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C6167B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:56:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74C89B20EC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FD654673;
-	Thu, 28 Nov 2024 00:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C40D83CD2;
+	Thu, 28 Nov 2024 00:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RLmFgQLO"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IAY2caXQ"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB51F2E628
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CC04CDEC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732755359; cv=none; b=GMVXYP2AxqHUUWcbwPFyCUAZ1vt1lIPhuvCMTFM4kkj7HxoYk8FY35DojSb8Eexug1oz0oBoPExIUtNuLhR6giKvwO74rk6Va4OUVuZOTOPl2Vp4s61ACMC3U0wMdNVoG93Yeod77rAfR/jHBr2y9+PgJNLDR6FA7vn3Zkt6jn4=
+	t=1732755360; cv=none; b=RhMP4c1tkNgGZrOCM934LS4+Vbn2xGyt3IUMRfaAdEOsqpDP2XOMF84m3nA8WUWm0cR99Egy+DScgh1XxNV8k2viX6gyAm0aRcyPL3dD0y90QXRhhGOTZeIWmwvnTSm2PQYsbXiblQ3nN3M79LcWrsqUVAkXPBx+cWSIw+Lx/vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732755359; c=relaxed/simple;
-	bh=WNgn4lu1ApV1cGqCgEdQ8UELTIdxvWrpSXPjrrKh+zU=;
+	s=arc-20240116; t=1732755360; c=relaxed/simple;
+	bh=6/wTQsGJs8irAo/psByDX9+eFhZ+LD4ILASalomr9Cw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BLXoD7vF5BWLQRdFkuJDzd3drgPEgioahmwqzLG+zj3sqiee77mlvCrwLJJQqUr3r2pqY42GHsQ/56WhkJng/7ffzuFPcBTwr/bxXKeJQFsERwhHAVnZI+BLf2J94mursg9ABlpQvnGdYVlXN2b/EMlQojPiiyZnmxsVOBTwaP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RLmFgQLO; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=t9rnTGhJlMkBUV+FRgbC4HFjqM+pju3VPrrh4r8kZcLQbaTLxqPzltgtVlSrk7k0ybpRuAjHt91uIqgO/lZFKo1gyIXYXcmHM4orgkSFCwj5Keu7TuVDVsTppxmnapFQhv9dFZgEJmfb0KptASe464wzvXLrPMxvZtEJ9kH9qnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IAY2caXQ; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea4291c177so273536a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:55:57 -0800 (PST)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-724fc3f60c1so413444b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:55:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732755357; x=1733360157; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732755359; x=1733360159; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=VnpBHLYkUch4fOHU4hkMVn/ClZoihkAVUxnB9ZaI9Pw=;
-        b=RLmFgQLOx1T+u6XwqgMuR4WV6xZYBL7N1RNTWPkNLK6+3EK9CbRxbQnQ7h/GbLX/g+
-         DFjgd+VE/Uaf/2C+DEXgI9HniueFRX0267E+uP+5Ny+WHCnzCalSu//K7PjYzSc70nE+
-         t6l+1SS9FiX36Xt/4JaIpcrdfEkI3LxiT4SjCDIGt4/kBSdAPuwK3n9fzQX6BzQnn+DI
-         zZhW1oKDTepUIrAurkqLmtChy8l1M1LnFaLkvAFs0Efm1LjACQTzRNAW3+k0kmBH64Il
-         hi4OVR6L5am0FmrYMhDiu74ILHrqjxllrxnTojspjHXxsvNdYVPq7SnL4fmqo9Ad0pis
-         j5bA==
+        bh=Qp0x5jmf6wCt1OmSFixie+OQOct6OMtePnY0hHC3FqE=;
+        b=IAY2caXQY2aOj41whTKMWqYPhfetl6lY7LeQQOWuJtul7PCFYaT6r2l9DRvZnDG1n0
+         0oHEEatyuoK0VXCyyYDaMGTGohJsin6k3ZlvJqMi3DXxX7OXwMy+JPsdZYt+rsZVtSjV
+         2fbLZm2l1RRAzvvrcJA+kFjGGQHW+D1iEziBMhGOCsQxfPUGkk5Lstip3A8IwL8MtZcS
+         SeWOmeGYjpzq6po3Le20nXfaDMM6LcIwIClCQmIvC3N9u2TgCrKHf5P7JroYQY0nidYo
+         lNbcqsWSLK3aQSVyJZ4UeuSDbfF6OHVhBCqW5WyaK+E1x9LX56Mlrf8qXhYHq8UDISbK
+         2l2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732755357; x=1733360157;
+        d=1e100.net; s=20230601; t=1732755359; x=1733360159;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VnpBHLYkUch4fOHU4hkMVn/ClZoihkAVUxnB9ZaI9Pw=;
-        b=fu2RCEO42JOQ+SW1Nb/h1kWOmrd0SkMRqegeoFw+9KRkqhLHAZJarFNyQtB4GGUzAq
-         HKgGzBi78eKlm/B4N/0GT8Eanf2szLqbSlMCNQ8QH/XR1FvldzS1JlTsKwxGhmfiq7Hn
-         9fBo4lTmOM6zOz/hB0rQ8kOPdS5A/UQ5efUnOquNby8RJO+AR0WxPqDGKJF60fGlwYEp
-         wo2Qb+ha2/Lw7dZTcWjrdnkNg5cfLbvaJ3Mxqi/An+3lP2pJxnAnosWmVS/woq/x5sOa
-         4bZulhFxrsVxrIz2hA2WOoY0rS7mZMGIsgVQTEfXZJwJp39Qv9czuzQheRAFuvqCK5mA
-         jk7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJJx/Jp0XrQeFMviXjZOAQsvjUEKx5KPWlNTIrMUGGNeoF6fiOTtmtKB36pNrVg+RniQAfq4NTci+r1/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztBhI1ixMy4sYRd3TMux+p7uSpBr0AAAKjcJH0uW2z2/gUcKQq
-	GhX/AH4vUaKPWJbEuTIEs0wcKzxwAvDnnBxJ4Nkx7mGRk7806lXLkdLerS9KtBL+K50wCM3Afp8
-	erA==
-X-Google-Smtp-Source: AGHT+IGNjVu9IbM8M8x4FgAf0ptLY31wfGw0nWSewj8xLv7iHu7ExU2Pbfe7utzxkDM6gVPdI3CzS8OquPA=
-X-Received: from pjbsc10.prod.google.com ([2002:a17:90b:510a:b0:2ea:d2de:f7ca])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fe06:b0:2ea:83a0:4798
- with SMTP id 98e67ed59e1d1-2ee08e9f0f7mr7211038a91.3.1732755357079; Wed, 27
- Nov 2024 16:55:57 -0800 (PST)
+        bh=Qp0x5jmf6wCt1OmSFixie+OQOct6OMtePnY0hHC3FqE=;
+        b=qjlHoayGvdI8NfVOm/k+9ntL4nQmYKHs1si/3Jb7xcigc0GjHmfzHXDHmG9ZUCf/CL
+         EbVmCENUY+lPjBXFJhKM5UME6YWj0BR1kxm1FnRJogVUqrMiypcuWggC/POna0iDXuqk
+         MgNlDvql9HSHd1JiTJFKqvKe+9KA3PZFaSh1sx8PZe0z7yK9bayJ2wUpSa0vpDg3rFSt
+         qeNxMZRjHRmkX1MqRdKyZF1bNXlbWp9WYmtOc40i3MSuwAhsCxJcvSqm8HS0SvPlnFoo
+         yT+VAs7oE7MK4et7w2UVjvvsayigqe+cGwBhbiDuRRDwoopz1sf2qwiar2GwFf2DpXKU
+         BsIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtvZY9dHb4zPe67PN50FxmCZN0ZLxe9MkUyqKDiPC2RfRW/a4P7NmjUqsTnXg9E5qzwbwQ2l/1lODMJaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcmOLXdELihpwNxlL6LK2qwWpZzvcs0NVUJUHb9MrADO30je8e
+	YBYwqWztFz0lq5l9F4SlfkCBgFaocqzQGpOTS3RQwG6SZU46n5wlpxcYZyKD1ameM/Sxq4+RZm9
+	WHA==
+X-Google-Smtp-Source: AGHT+IHRct+tg9si6FXkj3XDfvATucfZZx/pmM1rsyJ2yuaIieXkck617uTZGF3kPo5jFFwMAZ2X8QIv/Kc=
+X-Received: from pfbjo14.prod.google.com ([2002:a05:6a00:908e:b0:725:325e:59d5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1492:b0:724:f404:7101
+ with SMTP id d2e1a72fcca58-7252ffcbf80mr6785726b3a.1.1732755358707; Wed, 27
+ Nov 2024 16:55:58 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 16:55:35 -0800
+Date: Wed, 27 Nov 2024 16:55:36 -0800
 In-Reply-To: <20241128005547.4077116-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128005547.4077116-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128005547.4077116-5-seanjc@google.com>
-Subject: [PATCH v4 04/16] KVM: selftests: Check for a potential unhandled
- exception iff KVM_RUN succeeded
+Message-ID: <20241128005547.4077116-6-seanjc@google.com>
+Subject: [PATCH v4 05/16] KVM: selftests: Rename max_guest_memory_test to mmu_stress_test
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
@@ -92,33 +91,37 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Muhammad Usama Anjum <usama.anjum@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Don't check for an unhandled exception if KVM_RUN failed, e.g. if it
-returned errno=EFAULT, as reporting unhandled exceptions is done via a
-ucall, i.e. requires KVM_RUN to exit cleanly.  Theoretically, checking
-for a ucall on a failed KVM_RUN could get a false positive, e.g. if there
-were stale data in vcpu->run from a previous exit.
+Rename max_guest_memory_test to mmu_stress_test so that the name isn't
+horribly misleading when future changes extend the test to verify things
+like mprotect() interactions, and because the test is useful even when its
+configured to populate far less than the maximum amount of guest memory.
 
 Reviewed-by: James Houghton <jthoughton@google.com>
 Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/lib/kvm_util.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kvm/Makefile                            | 2 +-
+ .../kvm/{max_guest_memory_test.c => mmu_stress_test.c}          | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename tools/testing/selftests/kvm/{max_guest_memory_test.c => mmu_stress_test.c} (100%)
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 480e3a40d197..33fefeb3ca44 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -1648,7 +1648,8 @@ int _vcpu_run(struct kvm_vcpu *vcpu)
- 		rc = __vcpu_run(vcpu);
- 	} while (rc == -1 && errno == EINTR);
- 
--	assert_on_unhandled_exception(vcpu);
-+	if (!rc)
-+		assert_on_unhandled_exception(vcpu);
- 
- 	return rc;
- }
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 41593d2e7de9..4384e5f45c36 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -140,7 +140,7 @@ TEST_GEN_PROGS_x86_64 += guest_print_test
+ TEST_GEN_PROGS_x86_64 += hardware_disable_test
+ TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
+ TEST_GEN_PROGS_x86_64 += kvm_page_table_test
+-TEST_GEN_PROGS_x86_64 += max_guest_memory_test
++TEST_GEN_PROGS_x86_64 += mmu_stress_test
+ TEST_GEN_PROGS_x86_64 += memslot_modification_stress_test
+ TEST_GEN_PROGS_x86_64 += memslot_perf_test
+ TEST_GEN_PROGS_x86_64 += rseq_test
+diff --git a/tools/testing/selftests/kvm/max_guest_memory_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
+similarity index 100%
+rename from tools/testing/selftests/kvm/max_guest_memory_test.c
+rename to tools/testing/selftests/kvm/mmu_stress_test.c
 -- 
 2.47.0.338.g60cca15819-goog
 
