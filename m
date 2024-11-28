@@ -1,264 +1,260 @@
-Return-Path: <linux-kernel+bounces-424947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75939DBBA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:10:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D299DBBAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:12:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60DF41643A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:12:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CB71C07E6;
+	Thu, 28 Nov 2024 17:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/fFVA9e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1A82809E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:10:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3007B1C07F3;
-	Thu, 28 Nov 2024 17:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNT7+kf+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LmQcOHXA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rNT7+kf+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LmQcOHXA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3113C9463;
-	Thu, 28 Nov 2024 17:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4669463;
+	Thu, 28 Nov 2024 17:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732813810; cv=none; b=s6Qb9bkDiK6TjX7Y5rCQy3v074mbdM+5fybZ/P7hCjS8H3t4o6oakiZeBCYUJuzHWmypk9g/9feW4hAG3EwuC2QOdw55ZRVhOq4WpIm2TV0SafDWvd9ZcZ8fmLVrQdQQx3XrNCt3XHbpJrmwp1x2rbXIE24j+ybsqAjpS78TuFw=
+	t=1732813965; cv=none; b=WjhVmMTeC1KGKqNsL0pHm4qnj+6jNjskfNu+r/u1BzSKpftI4wZ+s8DsFffDOJyMWV9Bs9wBNi2iCgOLCTOFDhcc06SUAvN9HUru1eIjvl5+UxG4ZG5dIva0y29onun2VU8GoBk9twbRPDQLaz1G+HTJk0VK/0CJlsQsQA6uMuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732813810; c=relaxed/simple;
-	bh=KUzfRDAw+eKIdbSDnrFEicUiHLYpy+wYbsQCTwmp2Vw=;
+	s=arc-20240116; t=1732813965; c=relaxed/simple;
+	bh=obu6+yPQWfPFqgWAIwUui4SC29PIZhtWgr/lVg2Zhbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ch4mYjcnuPu3sUK6NdIFqqO4rrC4AFt92izkIHv+jv8+7+hvRQbPXJeBPKZObKWfloMMPSqmQqAcPYu/2SazofYsxO2ngifySJLUro4BCz1h92Pm55TytH9tg0jiErptxLi7EklmqtKXifNghXv/ABFaA5DAd3cbtURmW/ghJSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNT7+kf+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LmQcOHXA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rNT7+kf+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LmQcOHXA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E9F31F79F;
-	Thu, 28 Nov 2024 17:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732813806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
-	b=rNT7+kf+c4whS7Ersp6pzCq5sH1bNKadavpZ7JcdPSX/T2nGBrfakfdd/36moybua5Mc8t
-	nlQx64ILVXBAx37kGDgvmoH469kyjWI24Z5smG7Wo6iS5BTUfn8DYR64uROJ7JCDadlOmD
-	unfkT+mOQyfKnHrrfxx9kdvL+RjJc60=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732813806;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
-	b=LmQcOHXAEYLMJR6vdXY3s14HZb+8txfTm7o4gPaUnHVf1nz1LUghV5dKbECIA20tvb4MMw
-	oFmG6J8CKf4nIfBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732813806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
-	b=rNT7+kf+c4whS7Ersp6pzCq5sH1bNKadavpZ7JcdPSX/T2nGBrfakfdd/36moybua5Mc8t
-	nlQx64ILVXBAx37kGDgvmoH469kyjWI24Z5smG7Wo6iS5BTUfn8DYR64uROJ7JCDadlOmD
-	unfkT+mOQyfKnHrrfxx9kdvL+RjJc60=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732813806;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eumxKd+aZ1ilHfhhp/xj0zyfdCtmWTUoslPwSRI+7lk=;
-	b=LmQcOHXAEYLMJR6vdXY3s14HZb+8txfTm7o4gPaUnHVf1nz1LUghV5dKbECIA20tvb4MMw
-	oFmG6J8CKf4nIfBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3AC1C13690;
-	Thu, 28 Nov 2024 17:10:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TcNNDu6jSGc2SgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 28 Nov 2024 17:10:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DFCCDA075D; Thu, 28 Nov 2024 18:10:01 +0100 (CET)
-Date: Thu, 28 Nov 2024 18:10:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <songliubraving@meta.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Amir Goldstein <amir73il@gmail.com>, Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	LSM List <linux-security-module@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	"repnop@google.com" <repnop@google.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	"gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify
- fiter
-Message-ID: <20241128171001.xamzdpqlumqdqdkl@quack3>
-References: <20241122225958.1775625-1-song@kernel.org>
- <20241122225958.1775625-3-song@kernel.org>
- <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
- <CAADnVQK-6MFdwD_0j-3x2-t8VUjbNJUuGrTXEWJ0ttdpHvtLOA@mail.gmail.com>
- <21A94434-5519-4659-83FA-3AB782F064E2@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZ7A1c4qI2jFNjss8IJOF0KXmZBJQnq2EZY6UNDUPcoggVqihzJK2yVGnS7g382vIiqk2ymT6/A68d0/JVeymGbADf3hB7Cov46tZRRJF/MrG7HV+ISdKFoJrdl71W2D4utgv8Wk550jyNip9dgoyp8hmcQ1FbbOYB6fNr1NyWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/fFVA9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB30C4CECE;
+	Thu, 28 Nov 2024 17:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732813964;
+	bh=obu6+yPQWfPFqgWAIwUui4SC29PIZhtWgr/lVg2Zhbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/fFVA9eMCnu3Xa4i9HhBIUQxPQ7SgMF5jW6ERMZNQ3Y0w0gjudJHVykRPGz/1Xd9
+	 YOYru5yRVoiniaGqqJMH6jifXSP4le+0uCvQpL+Mf9dRVpyxYXX1x20NwDY6Pb2Tp3
+	 gVubJJMBhXDTKndDt0mwNOj2Qf1Ka56F2Ggz6+nSL5qgSq0GifFvjJi3xve3+JEhKE
+	 8KBCSa++Fnx/lnJpNSOa7BVeJCQFd7L7sJnwNEmCPLWh/3FoV5DsK56irgFQXOrG0l
+	 UA+EYDgwJ7o/kRQP5iQ9buodrqRfYS5Gb5Dkx9+qNoQyKrrRMy9eGlPMsxPEbdCx8P
+	 5fzMFjAVxKf5g==
+Date: Thu, 28 Nov 2024 17:12:40 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,sm8550-dispcc: Add SM8750
+ DISPCC
+Message-ID: <20241128-serotonin-carwash-62ad0fb09c3a@spud>
+References: <20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org>
+ <20241128-sm8750-dispcc-v1-1-120705a4015c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bY94c2bZOlNH/+X1"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <21A94434-5519-4659-83FA-3AB782F064E2@fb.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,vger.kernel.org,meta.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,toxicpanda.com,digikod.net];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241128-sm8750-dispcc-v1-1-120705a4015c@linaro.org>
 
-On Wed 27-11-24 02:16:09, Song Liu wrote:
-> > On Nov 26, 2024, at 4:50 PM, Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> > 
-> 
-> [...]
-> 
-> >>> +
-> >>> +static void sample_filter_free(struct fanotify_filter_hook *filter_hook)
-> >>> +{
-> >>> +       struct fan_filter_sample_data *data = filter_hook->data;
-> >>> +
-> >>> +       path_put(&data->subtree_path);
-> >>> +       kfree(data);
-> >>> +}
-> >>> +
-> >> 
-> >> Hi Song,
-> >> 
-> >> This example looks fine but it raises a question.
-> >> This filter will keep the mount of subtree_path busy until the group is closed
-> >> or the filter is detached.
-> >> This is probably fine for many services that keep the mount busy anyway.
-> >> 
-> >> But what if this wasn't the intention?
-> >> What if an Anti-malware engine that watches all mounts wanted to use that
-> >> for configuring some ignore/block subtree filters?
-> >> 
-> >> One way would be to use a is_subtree() variant that looks for a
-> >> subtree root inode
-> >> number and then verifies it with a subtree root fid.
-> >> A production subtree filter will need to use a variant of is_subtree()
-> >> anyway that
-> >> looks for a set of subtree root inodes, because doing a loop of is_subtree() for
-> >> multiple paths is a no go.
-> >> 
-> >> Don't need to change anything in the example, unless other people
-> >> think that we do need to set a better example to begin with...
-> > 
-> > I think we have to treat this patch as a real filter and not as an example
-> > to make sure that the whole approach is workable end to end.
-> > The point about not holding path/dentry is very valid.
-> > The algorithm needs to support that.
-> 
-> Hmm.. I am not sure whether we cannot hold a refcount. If that is a 
-> requirement, the algorithm will be more complex. 
 
-Well, for production use that would certainly be a requirement. Many years
-ago dnotify (the first fs notification subsystem) was preventing
-filesystems from being unmounted because it required open file and it was a
-pain.
+--bY94c2bZOlNH/+X1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> IIUC, fsnotify_mark on a inode does not hold a refcount to inode. 
+On Thu, Nov 28, 2024 at 04:07:59PM +0100, Krzysztof Kozlowski wrote:
+> Add bindings for the Qualcomm SM8750 Display Clock Controller (DISPCC).
+> Bindings are similar to existing SM8550 and SM8650 (same clock inputs),
+> but the clock hierarchy is quite different and these are not compatible
+> devices.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm8550-dispcc.yaml         |   4 +-
+>  include/dt-bindings/clock/qcom,sm8750-dispcc.h     | 112 +++++++++++++++=
+++++++
+>  2 files changed, 115 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.y=
+aml b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> index c57d55a9293c214c4c101902cdd9603074e2243d..30e4b46315752b93754ab2f94=
+6c684e13b06ab93 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-dispcc.yaml
+> @@ -12,11 +12,12 @@ maintainers:
+> =20
+>  description: |
+>    Qualcomm display clock control module provides the clocks, resets and =
+power
+> -  domains on SM8550.
+> +  domains on SM8550, SM8650, SM8750 and few other platforms.
+> =20
+>    See also:
+>    - include/dt-bindings/clock/qcom,sm8550-dispcc.h
+>    - include/dt-bindings/clock/qcom,sm8650-dispcc.h
+> +  - include/dt-bindings/clock/qcom,sm8750-dispcc.h
+>    - include/dt-bindings/clock/qcom,x1e80100-dispcc.h
+> =20
+>  properties:
+> @@ -25,6 +26,7 @@ properties:
+>        - qcom,sar2130p-dispcc
+>        - qcom,sm8550-dispcc
+>        - qcom,sm8650-dispcc
+> +      - qcom,sm8750-dispcc
+>        - qcom,x1e80100-dispcc
+> =20
+>    clocks:
+> diff --git a/include/dt-bindings/clock/qcom,sm8750-dispcc.h b/include/dt-=
+bindings/clock/qcom,sm8750-dispcc.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..dafb5069c96a0c3f83c15f3c6=
+1978e138baa886c
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm8750-dispcc.h
+> @@ -0,0 +1,112 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
 
-The connector (head of the mark list) does hold inode reference. But we
-have a hook in the unmount path (fsnotify_unmount_inodes()) which drops all
-the marks and connectors for the filesystem.
+This looks pretty questionable, how does something that was apparently
+announced last month have a 2022 copyright from the Linux Foundation?
 
-> And when the inode is evicted, the mark is freed. I guess this 
-> requires the user space, the AntiVirus scanner for example, to 
-> hold a reference to the inode? If this is the case, I think it 
-> is OK for the filter, either bpf or kernel module, to hold a 
-> reference to the subtree root.
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reser=
+ved.
+> + * Copyright (c) 2024, Linaro Ltd.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_SM8750_DISP_CC_H
+> +#define _DT_BINDINGS_CLK_QCOM_SM8750_DISP_CC_H
+> +
+> +/* DISP_CC clocks */
+> +#define DISP_CC_ESYNC0_CLK					0
+> +#define DISP_CC_ESYNC0_CLK_SRC					1
+> +#define DISP_CC_ESYNC1_CLK					2
+> +#define DISP_CC_ESYNC1_CLK_SRC					3
+> +#define DISP_CC_MDSS_ACCU_SHIFT_CLK				4
+> +#define DISP_CC_MDSS_AHB1_CLK					5
+> +#define DISP_CC_MDSS_AHB_CLK					6
+> +#define DISP_CC_MDSS_AHB_CLK_SRC				7
+> +#define DISP_CC_MDSS_BYTE0_CLK					8
+> +#define DISP_CC_MDSS_BYTE0_CLK_SRC				9
+> +#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				10
+> +#define DISP_CC_MDSS_BYTE0_INTF_CLK				11
+> +#define DISP_CC_MDSS_BYTE1_CLK					12
+> +#define DISP_CC_MDSS_BYTE1_CLK_SRC				13
+> +#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				14
+> +#define DISP_CC_MDSS_BYTE1_INTF_CLK				15
+> +#define DISP_CC_MDSS_DPTX0_AUX_CLK				16
+> +#define DISP_CC_MDSS_DPTX0_AUX_CLK_SRC				17
+> +#define DISP_CC_MDSS_DPTX0_CRYPTO_CLK				18
+> +#define DISP_CC_MDSS_DPTX0_LINK_CLK				19
+> +#define DISP_CC_MDSS_DPTX0_LINK_CLK_SRC				20
+> +#define DISP_CC_MDSS_DPTX0_LINK_DIV_CLK_SRC			21
+> +#define DISP_CC_MDSS_DPTX0_LINK_INTF_CLK			22
+> +#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK				23
+> +#define DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC			24
+> +#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK				25
+> +#define DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC			26
+> +#define DISP_CC_MDSS_DPTX0_USB_ROUTER_LINK_INTF_CLK		27
+> +#define DISP_CC_MDSS_DPTX1_AUX_CLK				28
+> +#define DISP_CC_MDSS_DPTX1_AUX_CLK_SRC				29
+> +#define DISP_CC_MDSS_DPTX1_CRYPTO_CLK				30
+> +#define DISP_CC_MDSS_DPTX1_LINK_CLK				31
+> +#define DISP_CC_MDSS_DPTX1_LINK_CLK_SRC				32
+> +#define DISP_CC_MDSS_DPTX1_LINK_DIV_CLK_SRC			33
+> +#define DISP_CC_MDSS_DPTX1_LINK_INTF_CLK			34
+> +#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK				35
+> +#define DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC			36
+> +#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK				37
+> +#define DISP_CC_MDSS_DPTX1_PIXEL1_CLK_SRC			38
+> +#define DISP_CC_MDSS_DPTX1_USB_ROUTER_LINK_INTF_CLK		39
+> +#define DISP_CC_MDSS_DPTX2_AUX_CLK				40
+> +#define DISP_CC_MDSS_DPTX2_AUX_CLK_SRC				41
+> +#define DISP_CC_MDSS_DPTX2_CRYPTO_CLK				42
+> +#define DISP_CC_MDSS_DPTX2_LINK_CLK				43
+> +#define DISP_CC_MDSS_DPTX2_LINK_CLK_SRC				44
+> +#define DISP_CC_MDSS_DPTX2_LINK_DIV_CLK_SRC			45
+> +#define DISP_CC_MDSS_DPTX2_LINK_INTF_CLK			46
+> +#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK				47
+> +#define DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC			48
+> +#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK				49
+> +#define DISP_CC_MDSS_DPTX2_PIXEL1_CLK_SRC			50
+> +#define DISP_CC_MDSS_DPTX3_AUX_CLK				51
+> +#define DISP_CC_MDSS_DPTX3_AUX_CLK_SRC				52
+> +#define DISP_CC_MDSS_DPTX3_CRYPTO_CLK				53
+> +#define DISP_CC_MDSS_DPTX3_LINK_CLK				54
+> +#define DISP_CC_MDSS_DPTX3_LINK_CLK_SRC				55
+> +#define DISP_CC_MDSS_DPTX3_LINK_DIV_CLK_SRC			56
+> +#define DISP_CC_MDSS_DPTX3_LINK_INTF_CLK			57
+> +#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK				58
+> +#define DISP_CC_MDSS_DPTX3_PIXEL0_CLK_SRC			59
+> +#define DISP_CC_MDSS_ESC0_CLK					60
+> +#define DISP_CC_MDSS_ESC0_CLK_SRC				61
+> +#define DISP_CC_MDSS_ESC1_CLK					62
+> +#define DISP_CC_MDSS_ESC1_CLK_SRC				63
+> +#define DISP_CC_MDSS_MDP1_CLK					64
+> +#define DISP_CC_MDSS_MDP_CLK					65
+> +#define DISP_CC_MDSS_MDP_CLK_SRC				66
+> +#define DISP_CC_MDSS_MDP_LUT1_CLK				67
+> +#define DISP_CC_MDSS_MDP_LUT_CLK				68
+> +#define DISP_CC_MDSS_NON_GDSC_AHB_CLK				69
+> +#define DISP_CC_MDSS_PCLK0_CLK					70
+> +#define DISP_CC_MDSS_PCLK0_CLK_SRC				71
+> +#define DISP_CC_MDSS_PCLK1_CLK					72
+> +#define DISP_CC_MDSS_PCLK1_CLK_SRC				73
+> +#define DISP_CC_MDSS_PCLK2_CLK					74
+> +#define DISP_CC_MDSS_PCLK2_CLK_SRC				75
+> +#define DISP_CC_MDSS_RSCC_AHB_CLK				76
+> +#define DISP_CC_MDSS_RSCC_VSYNC_CLK				77
+> +#define DISP_CC_MDSS_VSYNC1_CLK					78
+> +#define DISP_CC_MDSS_VSYNC_CLK					79
+> +#define DISP_CC_MDSS_VSYNC_CLK_SRC				80
+> +#define DISP_CC_OSC_CLK						81
+> +#define DISP_CC_OSC_CLK_SRC					82
+> +#define DISP_CC_PLL0						83
+> +#define DISP_CC_PLL1						84
+> +#define DISP_CC_PLL2						85
+> +#define DISP_CC_SLEEP_CLK					86
+> +#define DISP_CC_SLEEP_CLK_SRC					87
+> +#define DISP_CC_XO_CLK						88
+> +#define DISP_CC_XO_CLK_SRC					89
+> +
+> +/* DISP_CC resets */
+> +#define DISP_CC_MDSS_CORE_BCR					0
+> +#define DISP_CC_MDSS_CORE_INT2_BCR				1
+> +#define DISP_CC_MDSS_RSCC_BCR					2
+> +
+> +/* DISP_CC GDSCR */
+> +#define MDSS_GDSC						0
+> +#define MDSS_INT2_GDSC						1
+> +
+> +#endif
+>=20
+> --=20
+> 2.43.0
+>=20
 
-No, fsnotify pins the inodes in memory (which if fine) but releases them
-when unmount should happen. Userspace doesn't need to pin anything.
+--bY94c2bZOlNH/+X1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > It may very well turn out that the logic of handling many filters
-> > without a loop and not grabbing a path refcnt is too complex for bpf.
-> > Then this subtree filtering would have to stay as a kernel module
-> > or extra flag/feature for fanotify.
-> 
-> Handling multiple subtrees is indeed an issue. Since we rely on 
-> the mark in the SB, multiple subtrees under the same SB will share
-> that mark. Unless we use some cache, accessing a file will 
-> trigger multiple is_subdir() calls. 
-> 
-> One possible solution is that have a new helper that checks
-> is_subdir() for a list of parent subtrees with a single series
-> of dentry walk. IOW, something like:
-> 
-> bool is_subdir_of_any(struct dentry *new_dentry, 
->                       struct list_head *list_of_dentry).
-> 
-> For BPF, one possible solution is to walk the dentry tree 
-> up to the root, under bpf_rcu_read_lock().
+-----BEGIN PGP SIGNATURE-----
 
-I can see two possible issues with this. Firstly, you don't have list_head
-in a dentry you could easily use to pass dentries to a function like this.
-Probably you'll need an external array with dentry pointers or something
-like that.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0ikiAAKCRB4tDGHoIJi
+0hhOAQD8VomtMHxksZJO1DjfXQ69y1VOcE6aJIcdiBPGBt30AwD+MEiXu/CuD/Fi
+0yxtbCKF9hLbcAQvPpoWNuTWLc6J1gg=
+=1sJ8
+-----END PGP SIGNATURE-----
 
-Second issue is more inherent in the BPF filter approach - if there would
-be more notification groups each watching for some subtree (like users
-watching their home dirs, apps watching their subtrees with data etc.), then
-we'd still end up traversing the directory tree for each such notification
-group. That seems suboptimal but I have to think how much we care how we
-could possibly avoid that.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--bY94c2bZOlNH/+X1--
 
