@@ -1,51 +1,55 @@
-Return-Path: <linux-kernel+bounces-424611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097D89DB6E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:49:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6949DB6E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C60EB215D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5EE281C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA75119AD86;
-	Thu, 28 Nov 2024 11:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFC319AD89;
+	Thu, 28 Nov 2024 11:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SZrJCL5F"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vcViEFYB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A0519ABAB
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0C3199385;
+	Thu, 28 Nov 2024 11:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732794553; cv=none; b=jAF3ynsdV+ZvM9P8mW2BZwKyC8v8/g+EXSr71COJHZXf8k2o9Gf2SUKM+OHoAFeTYL+n964NusNjhcmFnbw86U1uQOC53wHqG7QW4ExL2s0BfjDFnxWZkuace8wJX+9UP2oa+eWW34ONkpwaqOeJPZVYPbjj+461iwTR4gnC7tE=
+	t=1732794595; cv=none; b=KOczwO5m9eGY7UfAXFL0D2RN1YCYSwlnZ2Kueb3Fpz5W5122023eMreZoiX0qe+ssv4+GTVrgaNRxCjXdgXiXGkU4t98zlgewv7x0czkQP54ihYp+r9knK5VAAUKPUjQRdw97HzB3bno3D6Bx3ZVy6dsnmRf2BBH0bDzN+4W7sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732794553; c=relaxed/simple;
-	bh=xFTGAQNd2QNHX1aT0+0FLZUVjbxhqrzUoeXxqONmRA4=;
+	s=arc-20240116; t=1732794595; c=relaxed/simple;
+	bh=ZhFuMBHlq3QonHvTwWvCentjuDWHk4WmEzIyakRZtuU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrFtOL0BufUs56+f+y0n6xXhqFlHID5vDc/XgbXRAv1rXiqr1dxzW/h7I9triWkODpCyBiCxHuYEjdK7d9JR7JwMnmXwb6o9pHOY6K7176c4FdnZSOSU5/5akzsOfa7URoXPYcPBBxjFQ9dEt4znIFW0UQm4pkk7JHXvBLO4xrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SZrJCL5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38691C4CECE;
-	Thu, 28 Nov 2024 11:49:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=l48sj9GIXH9zNy/+8lltnsr1VFmDBuCGhPJv8OEyKuDk0GF3eKP5moslp6yf7jVzY7eCWhQVOgZLZ81Zc5Ykt8lxJujhrk2zIbwxnalBS5tjKhE2FEZ/H/H72ijXlViAH0gb359aAepti/UkzdrAryfvq0LljOfglyM5bBcMsg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vcViEFYB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B20C4CED2;
+	Thu, 28 Nov 2024 11:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732794552;
-	bh=xFTGAQNd2QNHX1aT0+0FLZUVjbxhqrzUoeXxqONmRA4=;
+	s=korg; t=1732794594;
+	bh=ZhFuMBHlq3QonHvTwWvCentjuDWHk4WmEzIyakRZtuU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SZrJCL5F/gIfZIjaCdEt5/0qx7RDOxHtqjCpJUZd5SjjHnwE7+ulXTUkYvjG51mQf
-	 dno5NMnSf10NfRvzv/7eiTQwaVtMT60jRIiKayLje0FmBI8KLUPuXrdCpSoZ3hkb/F
-	 r9wTyGzmPQKnGykU4LZ393VfMzhsNcCQOCZxtrQA=
-Date: Thu, 28 Nov 2024 12:48:41 +0100
+	b=vcViEFYBmCWOqalvl+ViIlBYyPFZvRbQiAjdxt3FqajCD/6JtRbc3smczdcenD7Ft
+	 0l+O8na5wO01KSjkaOwqKjlSxFFcuvcVdP3Cxr+Bn1xlIvWJi1JBg/O7roU1MM1mPr
+	 Q3gDdk2XvWpEgkd6+mdQ/Xf3t+Tf2n5fVA535haI=
+Date: Thu, 28 Nov 2024 12:49:23 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] regmap: detach regmap from dev on regmap_exit
-Message-ID: <2024112820-freeway-uncorrupt-8291@gregkh>
-References: <20241127212233.330983-1-demonsingur@gmail.com>
+Subject: Re: [PATCH 1/2] device property: do not leak child nodes when using
+ NULL/error pointers
+Message-ID: <2024112810-drudge-factor-9bc7@gregkh>
+References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,60 +58,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241127212233.330983-1-demonsingur@gmail.com>
+In-Reply-To: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
 
-On Wed, Nov 27, 2024 at 11:22:31PM +0200, Cosmin Tanislav wrote:
-> At the end of __regmap_init(), if dev is not NULL, regmap_attach_dev()
-> is called, which adds a devres reference to the regmap, to be able to
-> retrieve a dev's regmap by name using dev_get_regmap().
+On Wed, Nov 27, 2024 at 09:39:34PM -0800, Dmitry Torokhov wrote:
+> The documentation to various API calls that locate children for a given
+> fwnode (such as fwnode_get_next_available_child_node() or
+> device_get_next_child_node()) states that the reference to the node
+> passed in "child" argument is dropped unconditionally, however the
+> change that added checks for the main node to be NULL or error pointer
+> broke this promise.
 > 
-> When calling regmap_exit, the opposite does not happen, and the
-> reference is kept until the dev is detached.
+> Add missing fwnode_handle_put() calls to restore the documented
+> behavior.
 > 
-> Add a regmap_detach_dev() function, export it and call it in
-> regmap_exit(), to make sure that the devres reference is not kept.
-> 
-> V2:
->  * switch to static function
-> 
-> Fixes: 72b39f6f2b5a ("regmap: Implement dev_get_regmap()")
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> Fixes: 002752af7b89 ("device property: Allow error pointer to be passed to fwnode APIs")
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > ---
->  drivers/base/regmap/regmap.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  drivers/base/property.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-> index 53131a7ede0a6..e3e2afc2c83c6 100644
-> --- a/drivers/base/regmap/regmap.c
-> +++ b/drivers/base/regmap/regmap.c
-> @@ -598,6 +598,17 @@ int regmap_attach_dev(struct device *dev, struct regmap *map,
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index 837d77e3af2b..696ba43b8e8a 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -759,6 +759,12 @@ struct fwnode_handle *
+>  fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
+>  			   struct fwnode_handle *child)
+>  {
+> +	if (IS_ERR_OR_NULL(fwnode) ||
+> +	    !fwnode_has_op(fwnode, get_next_child_node)) {
+> +		fwnode_handle_put(child);
+> +		return NULL;
+> +	}
+> +
+>  	return fwnode_call_ptr_op(fwnode, get_next_child_node, child);
 >  }
->  EXPORT_SYMBOL_GPL(regmap_attach_dev);
->  
-> +static int dev_get_regmap_match(struct device *dev, void *res, void *data);
-> +
-> +static int regmap_detach_dev(struct device *dev, struct regmap *map)
-> +{
-> +	if (!dev)
-> +		return 0;
-> +
-> +	return devres_release(dev, dev_get_regmap_release,
-> +			      dev_get_regmap_match, (void *)map->name);
-> +}
-> +
->  static enum regmap_endian regmap_get_reg_endian(const struct regmap_bus *bus,
->  					const struct regmap_config *config)
+>  EXPORT_SYMBOL_GPL(fwnode_get_next_child_node);
+> @@ -778,9 +784,6 @@ fwnode_get_next_available_child_node(const struct fwnode_handle *fwnode,
 >  {
-> @@ -1445,6 +1456,7 @@ void regmap_exit(struct regmap *map)
->  {
->  	struct regmap_async *async;
+>  	struct fwnode_handle *next_child = child;
 >  
-> +	regmap_detach_dev(map->dev, map);
->  	regcache_exit(map);
+> -	if (IS_ERR_OR_NULL(fwnode))
+> -		return NULL;
+> -
+>  	do {
+>  		next_child = fwnode_get_next_child_node(fwnode, next_child);
+>  		if (!next_child)
+> @@ -806,8 +809,10 @@ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+>  	const struct fwnode_handle *fwnode = dev_fwnode(dev);
+>  	struct fwnode_handle *next;
 >  
->  	regmap_debugfs_exit(map);
+> -	if (IS_ERR_OR_NULL(fwnode))
+> +	if (IS_ERR_OR_NULL(fwnode)) {
+> +		fwnode_handle_put(child);
+>  		return NULL;
+> +	}
+>  
+>  	/* Try to find a child in primary fwnode */
+>  	next = fwnode_get_next_child_node(fwnode, child);
 > -- 
-> 2.47.0
+> 2.47.0.338.g60cca15819-goog
 > 
 
 Hi,
