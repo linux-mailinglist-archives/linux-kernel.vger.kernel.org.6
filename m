@@ -1,152 +1,179 @@
-Return-Path: <linux-kernel+bounces-424588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206DD9DB657
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:15:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083189DB665
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:19:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1BA2816BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA0D1654B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EC5197A7A;
-	Thu, 28 Nov 2024 11:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3E119882B;
+	Thu, 28 Nov 2024 11:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p1sHVd2n";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CYR8n5Xj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="gSatPmu+"
+Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F7684E1C;
-	Thu, 28 Nov 2024 11:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4649284E1C;
+	Thu, 28 Nov 2024 11:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732792524; cv=none; b=pb5AyF5ogPk5pfSq84337yuC+7VT08W2ULOx9/Dc4Z3bxu9GbofynXkOAoNy/wtg2zdLfEalrK3xcPKcEB40UCRLXmC+C/QpMP+Pm9Oic/vjDoaPIMc8NesuHGh+xKd4jFfwxP8o7wwwUT3Mjg7FWyxxHHcLW7duV4GmyMCMyGY=
+	t=1732792752; cv=none; b=X/MR4R458++ZpSs48efFYzpW3dOMaLz/WWjqUcgBxWU4gubuYL0WsTz/leez02XwTMnEHNO1QJTjubO2Is4Z+Jow0QDAHYWtz7qCiCOS+mGudmGQ6R2Zd7CVSNMwQMgnaR/gWcD9+RFmhMJd35YwdKNdpRfiWX4Ruf4EE6YeNEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732792524; c=relaxed/simple;
-	bh=hc2eW85zH30ycpF7jG93e4JqdOgrxxqEdvi+gUlfo6k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pmC3aU6BMzEnw4nwdeoRBfXd3fJg6u8/0UoqaOlkeuSHHuEif/K+dirCn0WcI5vW9Zq34xSyMwYTbskxiAis6+zo8s5lfHUzF5M+wPMGjiCS9Ko2DZdgBX/+1ri8HlxU07/H1gxwNQTCi3wO8gxMNVlO1Ir92q8rusWyrv8JlBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p1sHVd2n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CYR8n5Xj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732792520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BepIv+zsVxwnGd+vRGJKobT/i3K2E0sdG4yWASd1NkE=;
-	b=p1sHVd2nF4+Wcf895ouKTQQoSekm/Z0/pHKLqMXZfyVoZtPx8ito7bNXqvpFFTTrgsBGir
-	z2WPrTjtm0R+7d4vtevK5z8bJb/Ic16GEiXqO0c2ssuAqKxgxC/+nTMGgX5EGx8eHVvEoQ
-	1JnFUDIuFcG4BarV6+JuDFjT+9lmHDBA3++qPXTgD3L+zDK62nsydQfuF+FA0CM16Pob+S
-	g6WljcbwJljkAvWZHAjAPwTnytNkqNEDAxaLlcGiAkNbZDS/dZMPL1RxbR7KBCAGBhPWJ2
-	ZNZAHvN4yWTGwIlyiyYK1p26sLaYMeM/YRaoszgZLqIR4lg0ozZLDS0ZsIabAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732792520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BepIv+zsVxwnGd+vRGJKobT/i3K2E0sdG4yWASd1NkE=;
-	b=CYR8n5Xj31ApiPOAIzYejnuG5cbHitE/iV/uP91bN59JLrhalJuYwg4IpOGHOFgzhEcEJu
-	BIP3cMUELs1sUDDg==
-To: Jason Gunthorpe <jgg@nvidia.com>, Eric Auger <eric.auger@redhat.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Alex Williamson
- <alex.williamson@redhat.com>, Nicolin Chen <nicolinc@nvidia.com>,
- maz@kernel.org, bhelgaas@google.com, leonro@nvidia.com,
- shameerali.kolothum.thodi@huawei.com, dlemoal@kernel.org,
- kevin.tian@intel.com, smostafa@google.com,
- andriy.shevchenko@linux.intel.com, reinette.chatre@intel.com,
- ddutile@redhat.com, yebin10@huawei.com, brauner@kernel.org,
- apatel@ventanamicro.com, shivamurthy.shastri@linutronix.de,
- anna-maria@linutronix.de, nipun.gupta@amd.com,
- marek.vasut+renesas@mailbox.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- kvm@vger.kernel.org
-Subject: Re: [PATCH RFCv1 0/7] vfio: Allow userspace to specify the address
- for each MSI vector
-In-Reply-To: <20241120140337.GA772273@nvidia.com>
-References: <cover.1731130093.git.nicolinc@nvidia.com>
- <a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
- <ZzPOsrbkmztWZ4U/@Asurada-Nvidia> <20241113013430.GC35230@nvidia.com>
- <20241113141122.2518c55a.alex.williamson@redhat.com>
- <2621385c-6fcf-4035-a5a0-5427a08045c8@arm.com>
- <66977090-d707-4585-b0c5-8b48f663827e@redhat.com>
- <20241120140337.GA772273@nvidia.com>
-Date: Thu, 28 Nov 2024 12:15:20 +0100
-Message-ID: <87frnby5h3.ffs@tglx>
+	s=arc-20240116; t=1732792752; c=relaxed/simple;
+	bh=UeZaCJrPRNOMMCTBxSYlt5tB19qDO3+mBAS1XVsGV0A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mexfi/zlez6bCxOhhsyNPTsRRHg3JPLbwR3AG8Ht4qLzoBJr+7ECCllaikw76BJpAKcjL8W+526W8EX9aMteaYuavBNi4X9CRl7q/HT2EMEJOSChJ81YV6mJPi+RRfKbjLYkBY1CFVHER0MA1i8d1/0bt/7UOiAvrQTYFfirIl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=gSatPmu+; arc=none smtp.client-ip=193.238.174.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mg.ssi.bg (localhost [127.0.0.1])
+	by mg.ssi.bg (Proxmox) with ESMTP id 1CA7481300;
+	Thu, 28 Nov 2024 13:19:02 +0200 (EET)
+Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
+	by mg.ssi.bg (Proxmox) with ESMTPS;
+	Thu, 28 Nov 2024 13:19:00 +0200 (EET)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by ink.ssi.bg (Postfix) with ESMTPSA id DF85A302E72;
+	Thu, 28 Nov 2024 13:18:49 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
+	t=1732792731; bh=UeZaCJrPRNOMMCTBxSYlt5tB19qDO3+mBAS1XVsGV0A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References;
+	b=gSatPmu+YkuDPMzVzD08d01eTowkOx6BFD8bNfsIC9QiGnfTQeawdi4B87JHBAzs3
+	 gIUbq85ZKcI0aJbVdQlEBaCNR/gkcDYK9Bru178+Nafv7zVYm+wnVcyY7SSiNWq9QC
+	 ylYe0bSzxW9reJ7b67ZyY3wVGRk28GgZ24gcNItg=
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4ASBIdhE024472;
+	Thu, 28 Nov 2024 13:18:39 +0200
+Date: Thu, 28 Nov 2024 13:18:39 +0200 (EET)
+From: Julian Anastasov <ja@ssi.bg>
+To: Paolo Abeni <pabeni@redhat.com>
+cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
+        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        "David S. Miller" <davem@davemloft.net>,
+        kernel test robot <lkp@intel.com>, Ruowen Qin <ruqin@redhat.com>,
+        Jinghao Jia <jinghao7@illinois.edu>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v3 net] ipvs: fix UB due to uninitialized stack access
+ in ip_vs_protocol_init()
+In-Reply-To: <70cd1035-07d8-4356-a53e-020d93c2515e@redhat.com>
+Message-ID: <87fca918-403d-2fd5-576a-dfa730483fc2@ssi.bg>
+References: <20241123094256.28887-1-jinghao7@illinois.edu> <70cd1035-07d8-4356-a53e-020d93c2515e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Nov 20 2024 at 10:03, Jason Gunthorpe wrote:
-> On Wed, Nov 20, 2024 at 02:17:46PM +0100, Eric Auger wrote:
->> > Yeah, I wasn't really suggesting to literally hook into this exact
->> > case; it was more just a general observation that if VFIO already has
->> > one justification for tinkering with pci_write_msi_msg() directly
->> > without going through the msi_domain layer, then adding another
->> > (wherever it fits best) can't be *entirely* unreasonable.
->
-> I'm not sure that we can assume VFIO is the only thing touching the
-> interrupt programming.
 
-Correct.
+	Hello,
 
-> I think there is a KVM path, and also the /proc/ path that will change
-> the MSI affinity on the fly for a VFIO created IRQ. If the platform
-> requires a MSI update to do this (ie encoding affinity in the
-> add/data, not using IRQ remapping HW) then we still need to ensure the
-> correct MSI address is hooked in.
+On Thu, 28 Nov 2024, Paolo Abeni wrote:
 
-Yes.
+> On 11/23/24 10:42, Jinghao Jia wrote:
+> > Under certain kernel configurations when building with Clang/LLVM, the
+> > compiler does not generate a return or jump as the terminator
+> > instruction for ip_vs_protocol_init(), triggering the following objtool
+> > warning during build time:
+> > 
+> >   vmlinux.o: warning: objtool: ip_vs_protocol_init() falls through to next function __initstub__kmod_ip_vs_rr__935_123_ip_vs_rr_init6()
+> > 
+> > At runtime, this either causes an oops when trying to load the ipvs
+> > module or a boot-time panic if ipvs is built-in. This same issue has
+> > been reported by the Intel kernel test robot previously.
+> > 
+> > Digging deeper into both LLVM and the kernel code reveals this to be a
+> > undefined behavior problem. ip_vs_protocol_init() uses a on-stack buffer
+> > of 64 chars to store the registered protocol names and leaves it
+> > uninitialized after definition. The function calls strnlen() when
+> > concatenating protocol names into the buffer. With CONFIG_FORTIFY_SOURCE
+> > strnlen() performs an extra step to check whether the last byte of the
+> > input char buffer is a null character (commit 3009f891bb9f ("fortify:
+> > Allow strlen() and strnlen() to pass compile-time known lengths")).
+> > This, together with possibly other configurations, cause the following
+> > IR to be generated:
+> > 
+> >   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #5 section ".init.text" align 16 !kcfi_type !29 {
+> >     %1 = alloca [64 x i8], align 16
+> >     ...
+> > 
+> >   14:                                               ; preds = %11
+> >     %15 = getelementptr inbounds i8, ptr %1, i64 63
+> >     %16 = load i8, ptr %15, align 1
+> >     %17 = tail call i1 @llvm.is.constant.i8(i8 %16)
+> >     %18 = icmp eq i8 %16, 0
+> >     %19 = select i1 %17, i1 %18, i1 false
+> >     br i1 %19, label %20, label %23
+> > 
+> >   20:                                               ; preds = %14
+> >     %21 = call i64 @strlen(ptr noundef nonnull dereferenceable(1) %1) #23
+> >     ...
+> > 
+> >   23:                                               ; preds = %14, %11, %20
+> >     %24 = call i64 @strnlen(ptr noundef nonnull dereferenceable(1) %1, i64 noundef 64) #24
+> >     ...
+> >   }
+> > 
+> > The above code calculates the address of the last char in the buffer
+> > (value %15) and then loads from it (value %16). Because the buffer is
+> > never initialized, the LLVM GVN pass marks value %16 as undefined:
+> > 
+> >   %13 = getelementptr inbounds i8, ptr %1, i64 63
+> >   br i1 undef, label %14, label %17
+> > 
+> > This gives later passes (SCCP, in particular) more DCE opportunities by
+> > propagating the undef value further, and eventually removes everything
+> > after the load on the uninitialized stack location:
+> > 
+> >   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #0 section ".init.text" align 16 !kcfi_type !11 {
+> >     %1 = alloca [64 x i8], align 16
+> >     ...
+> > 
+> >   12:                                               ; preds = %11
+> >     %13 = getelementptr inbounds i8, ptr %1, i64 63
+> >     unreachable
+> >   }
+> > 
+> > In this way, the generated native code will just fall through to the
+> > next function, as LLVM does not generate any code for the unreachable IR
+> > instruction and leaves the function without a terminator.
+> > 
+> > Zero the on-stack buffer to avoid this possible UB.
+> > 
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202402100205.PWXIz1ZK-lkp@intel.com/
+> > Co-developed-by: Ruowen Qin <ruqin@redhat.com>
+> > Signed-off-by: Ruowen Qin <ruqin@redhat.com>
+> > Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
+> 
+> @Pablo, @Simon, @Julian: recent ipvs patches landed either on the
+> net(-next) trees or the netfiler trees according to a random (?) pattern.
+> 
+> What is your preference here? Should such patches go via netfilter or
+> net? Or something else. FTR, I *think* netfilter should be the
+> preferable target, but I'm open to other options.
 
->> >> Is it possible to do this with the existing write_msi_msg callback on
->> >> the msi descriptor?=C2=A0 For instance we could simply translate the =
-msg
->> >> address and call pci_write_msi_msg() (while avoiding an infinite
->> >> recursion).=C2=A0 Or maybe there should be an xlate_msi_msg callback =
-we can
->> >> register.=C2=A0 Or I suppose there might be a way to insert an irqchi=
-p that
->> >> does the translation on write.=C2=A0 Thanks,
->> >
->> > I'm far from keen on the idea, but if there really is an appetite for
->> > more indirection, then I guess the least-worst option would be yet
->> > another type of iommu_dma_cookie to work via the existing
->> > iommu_dma_compose_msi_msg() flow,=20
->
-> For this direction I think I would turn iommu_dma_compose_msi_msg()
-> into a function pointer stored in the iommu_domain and have
-> vfio/iommufd provide its own implementation. The thing that is in
-> control of the domain's translation should be providing the msi_msg.
+	IPVS patches should go always via Netfilter trees.
+It is my fault to tell people to use the 'net' tag, I'll
+recommend the proper nf tree the next time. Sorry for the
+confusion.
 
-Yes. The resulting cached message should be writeable as is.
+Regards
 
->> > update per-device addresses direcitly. But then it's still going to
->> > need some kind of "layering violation" for VFIO to poke the IRQ layer
->> > into re-composing and re-writing a message whenever userspace feels
->> > like changing an address
->
-> I think we'd need to get into the affinity update path and force a MSI
-> write as well, even if the platform isn't changing the MSI for
-> affinity. Processing a vMSI entry update would be two steps where we
-> update the MSI addr in VFIO and then set the affinity.
+--
+Julian Anastasov <ja@ssi.bg>
 
-The affinity callback of the domain/chip can return IRQ_SET_MASK_OK_DONE
-which prevents recomposing and writing the message.
-
-So you want a explicit update/write of the message similar to what
-msi_domain_activate() does.
-
-Thanks,
-
-        tglx
 
