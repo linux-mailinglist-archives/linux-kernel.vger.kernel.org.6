@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-424674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B8B9DB7E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:49:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE7B163B6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:49:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E6319E810;
-	Thu, 28 Nov 2024 12:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqXaYon0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7198F9DB7E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:49:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C05113D8B4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6537B20C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:49:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAFE19D8A7;
+	Thu, 28 Nov 2024 12:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="mAV0GvUq"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA1F13D8B4;
+	Thu, 28 Nov 2024 12:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732798141; cv=none; b=abQ/sGKOjHHnK3pXsYP4FZGHI5K5OYhGy3a1ou7VFDJ5qJtIke0BasVknUilcG3HEF5J2lc9i7RJHQ7yOvlqM40ZtzimWEjeS3c+ULAsMo7MmfMTeq6vwxuhSrt997t6VOz3e3nlexm5wPuckM8smWoy+IOC04KGx5P2wpRyd1E=
+	t=1732798191; cv=none; b=dWlkDAb47Sz7zL772zT84qxHkZ9ecdNUX+/M1PZdGfEEUJvTI79OdQSkC6u+7EQ+T0QPQU3Z7NAmYCo39oXnfiAOyRqwYHqsrsByDAONbwi4u9qzs8tTV2JF1GUaV6seQoibH3m1JJo41zTZiODLOZ0Ew/wOIEjCMYtVubVibj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732798141; c=relaxed/simple;
-	bh=pVn4CwQnElFAMNTHPQNx+FLhkcukHMnJjjj6xdSW2os=;
+	s=arc-20240116; t=1732798191; c=relaxed/simple;
+	bh=BqSvddOO7uzl+51J37esKBdrOTlw1w5GUalne+Zm4xQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uYLQbMtJLOQXoMVkQFahNt81E0/jRdQ+bYkNEPwUaKLcGn265hmob+ARvEBewl8gg6hGwMBOddLA2nc3iWt8lhuFYgac/xrKADoBnQfJYCtmuTtccNvwtWJWD7V/6KhQqNbTX29/mrrMTTuysb6WOSVPek9NxfnUnS6MfEu4FHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqXaYon0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732798138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rfAvR7YYk+y9zWk1qVDAVIqs1aRRRfyOj2S8utkBWMg=;
-	b=dqXaYon0BF2rXfsIK7xnE6rJswXtYSviPJSuoDJwW31Y9t3NRxjwJnJNU8vbKiPOE2q8WY
-	g4gE5X1ANGEFc8cfPv770TXG/WKm3wV8hkKQvIeHjuyPpgsax58kmFPHPQxBZX7G5HgSZS
-	9U9F+WRdmv2sGehJ/49YFVqS2nbeEFA=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-572-cD0cxTFiOp6x01uylFY_FQ-1; Thu, 28 Nov 2024 07:48:57 -0500
-X-MC-Unique: cD0cxTFiOp6x01uylFY_FQ-1
-X-Mimecast-MFC-AGG-ID: cD0cxTFiOp6x01uylFY_FQ
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5cfca4c0096so427784a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:48:56 -0800 (PST)
+	 To:Cc:Content-Type; b=WbGQLUkvlNhIRJsU8AsCQ+oixoYOT5O7EOl+eSZQ58DI5buN+AP5B+Ml/Hx/2LnzNcBMmFtevYObbwDNtItbZ3wXvDQQhvh253qmykzcGUXlht33mbUdQUy0qi1P7MF4h+0F9Z5oidPZ8d8WT/GMKqvDuPhFRvNwus2EcLj5o9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=mAV0GvUq; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e387afcb162so782123276.1;
+        Thu, 28 Nov 2024 04:49:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1732798188; x=1733402988; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k8enuKRoYuGx+UMyN4wbQkK8SaUw8qYySH+tZSLJzqc=;
+        b=mAV0GvUqFLP7VhvKQw+5PvB+lVdLvdQzkij7fwbAvK+FVOjN5NwhD8zevhHqvPhkgg
+         vy1NYv4THwvmUCxUnMY2fMnNbGh0WUCi//oqZI5JJdWk7iSYcn3D/4hBV67jhyUZHOlU
+         zL+/k6CFQ/MPCAHABB3v7x9B6pyHpBd/2sBXkeFvQWxVl8DXkhQ1oyVBSbyugvpksnMG
+         OTBEfpFFev+gtNfe8vYi50/5VVoluR49I24Mnfu50ce44wozHOVvAMRF50WLmv9Lbwm5
+         6PxVpV+ZDqDffO1ghkfRaiE4lER5ZWrqDnQuhF2e18ogbG1QxDA55qKvu88MDWDNYa4Y
+         bcTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732798136; x=1733402936;
+        d=1e100.net; s=20230601; t=1732798188; x=1733402988;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rfAvR7YYk+y9zWk1qVDAVIqs1aRRRfyOj2S8utkBWMg=;
-        b=Uf/VaR8gjuFwMkxUn1hZY4nh7Zp2TuHnGCXoD4DGuMgu7lKAEp6ucHfGpmE8HaUFP1
-         lReWlcrVG1x+PhdIHh9w9kRqstpsYbLnHAIG+A1lYy75Bp+cLaDli01nFllvx+v9fLSN
-         TJ86Q4t5RoVmbxrY5IGlkFmooG2k4OBkQhEYVGBo6i+yWM43qGng+3qe4VdD/Jx3tOfT
-         2hiAnXWYQOBeaHBl1ltaYtipOCbegZ92WsIbNr08PkKO6oujSkcTldCS9vwn8jr7DqrW
-         9kwhaoZkiIMNC+mmb2SiLFGeapySuoky5UDBoddDm+xF+wb6ZBeuBHyfU9rFk1/CpUP0
-         Xg2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXMi4At5KRBIOpSAPRpJZ/Xh/cslXtEQeWQXOQOmtcq5QnqY9XzejQEIH2rkv+7TSpaCCx7vXRwobY+I/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweSoS/RJM4ocv0gviRA8nSdttSU9ovAk2RuIqy5pthn/TNQ1pG
-	Rz+7jr5voYwrK66hiprARlkxH8JsYbZTfV7AHZSFOjNrpeLkJL/vIzjHJyq+8bQ2xAEm9UZJ9jX
-	6b6M5NUjSU1wiUk3cVuSgkCTZtSb7mOv0JKW5m/7BKM5JYBVCYIlBvabPWK70ZT47DfIpDJ4C5O
-	RQf7IzdIs454S5+dpA1b7+gASlfvGy6VrVPT5M
-X-Gm-Gg: ASbGncu5r21i+VO/L3gyoGSxuX1Aw6gw0VPiaXp93uqwerOuensWmVae0b1Vq4FP8Lb
-	GIU8suTkB2I3hHRrdFwC/Vm0e5h30JwI=
-X-Received: by 2002:a05:6402:2807:b0:5cf:dcd4:1277 with SMTP id 4fb4d7f45d1cf-5d080b7fb27mr7644585a12.7.1732798135983;
-        Thu, 28 Nov 2024 04:48:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHqespB5pnh6QZG6jUOEA2sxMetiq8Ns1u68KUXRR85sdhHWac+b1nfQFhGDLXamN5ZkQk50Wl3uPRkyzJg04Q=
-X-Received: by 2002:a05:6402:2807:b0:5cf:dcd4:1277 with SMTP id
- 4fb4d7f45d1cf-5d080b7fb27mr7644431a12.7.1732798134201; Thu, 28 Nov 2024
- 04:48:54 -0800 (PST)
+        bh=k8enuKRoYuGx+UMyN4wbQkK8SaUw8qYySH+tZSLJzqc=;
+        b=ZKmR5WFjAuGpNzz4KoRGmUNh1J4/1O8jWI5gU4JIFxeFfDJkI2lz7akXouHSSnc8Js
+         fGKr0vHhcQ2LiPK66zcv4AqV/9djEHGsZuTAAm3pEcZURz0EJV1sV+NpZdahS9I3KCc/
+         D8flFK/gAR9HUZ8hkIH6rYzkoOMcCETgCtQ9kg56s0hRZNw7FC+i2y5Gub4GWvClNZIc
+         lbZ59M3cAVWEaZL75zVAT7y9/sgmr8rjBKbcMnwTGuBnTOfprRAtga0g7n47nvbU6z5a
+         /aYQQni3U9yfiZlqJPMgCiGtuA8+Hn3FwD/9lPN5hq3nUW3Pa0WXKsn/STGYCm19JWn9
+         5KGg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2ofQh3MHZTNPy2A2XeNXT0ftiZiuAFrl8IhTyjg0Bw46j30oSlYACwaBC6AIkfbCVyX2ODn0vFgRZljE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuLeTlVhqGaH8r7YzabzwexoH7S28Ez9ImQhpgvdWNByrM2cHo
+	L6UFwQDDFIvg4K9daOzXXkZ4T/FIBzAKp3veEyqlhvhD1tqe7bEfHazzJgXg+eXXDizpsfKImel
+	fTnE8R2puOEzEZSD5HLx7uGWGyhM=
+X-Gm-Gg: ASbGncu/oxC3U7b1SdfdOl53r2HjsJkEf/mWm+UHbSWI5lp24FefvmlSkwV6QxGYfO6
+	CRr/bGZKqlPeZGTZQsIK2oqqDSHCQ
+X-Google-Smtp-Source: AGHT+IHBo3KFH8jkIO5SbMSbUey4I9GnEZpMOVORzkoe2iFn3uMqC81/CgEeGD1vVAPrpQqe1U+NlyQKRj5OYiNbdZ0=
+X-Received: by 2002:a05:6902:2784:b0:e38:b3e0:5006 with SMTP id
+ 3f1490d57ef6-e395b89c79fmr6453581276.15.1732798188333; Thu, 28 Nov 2024
+ 04:49:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127212027.2704515-1-max.kellermann@ionos.com>
- <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
- <CAKPOu+-Xa37qO1oQQtmLbZ34-KHckMmOumpf9n4ewnHr6YyZoQ@mail.gmail.com> <CAKPOu+9H+NGa44_p4DDw3H=kWfi-zANN_wb3OtsQScjDGmecyQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+9H+NGa44_p4DDw3H=kWfi-zANN_wb3OtsQScjDGmecyQ@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 28 Nov 2024 14:48:43 +0200
-Message-ID: <CAO8a2Sh6wJ++BQE_6WjK0H5ySNer8i2GqqW=BY3uAgK-6Wbj=g@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240405161042.260113-1-cgoettsche@seltendoof.de>
+ <20241023152719.24118-1-cgoettsche@seltendoof.de> <CAHC9VhQ+SmaYB-1zz2q9j1XJeAFaY+emn_KoNiXxqJDt6wjT0w@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ+SmaYB-1zz2q9j1XJeAFaY+emn_KoNiXxqJDt6wjT0w@mail.gmail.com>
+From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date: Thu, 28 Nov 2024 13:49:37 +0100
+Message-ID: <CAJ2a_DcHZMkGuwPm69xD1VGnJe2Qjjucn8qRNJ65aqNS1VBAYw@mail.gmail.com>
+Subject: Re: [PATCH v2] selinux: add support for xperms in conditional policies
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	=?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
+	Jacob Satterfield <jsatterfield.linux@gmail.com>, Eric Suen <ericsu@linux.microsoft.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
+	Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The ergonomics and error handling on this function seem awkward. I'll
-take a closer look on how to arrange it better.
-
-On Thu, Nov 28, 2024 at 2:31=E2=80=AFPM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
+On Thu, 31 Oct 2024 at 23:20, Paul Moore <paul@paul-moore.com> wrote:
 >
-> On Thu, Nov 28, 2024 at 1:28=E2=80=AFPM Max Kellermann <max.kellermann@io=
-nos.com> wrote:
+> On Wed, Oct 23, 2024 at 11:27=E2=80=AFAM Christian G=C3=B6ttsche
+> <cgoettsche@seltendoof.de> wrote:
 > >
-> > On Thu, Nov 28, 2024 at 1:18=E2=80=AFPM Alex Markuze <amarkuze@redhat.c=
-om> wrote:
-> > > Pages are freed in `ceph_osdc_put_request`, trying to release them
-> > > this way will end badly.
+> > From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
 > >
-> > I don't get it. If this ends badly, why does the other
-> > ceph_release_page_vector() call after ceph_osdc_put_request() in that
-> > function not end badly?
+> > Add support for extended permission rules in conditional policies.
+> > Currently the kernel accepts such rules already, but evaluating a
+> > security decision will hit a BUG() in
+> > services_compute_xperms_decision().  Thus reject extended permission
+> > rules in conditional policies for current policy versions.
+> >
+> > Add a new policy version for this feature.
+> >
+> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > ---
+> > v2:
+> >   rebased onto the netlink xperm patch
+> > ---
+> >  security/selinux/include/security.h |  3 ++-
+> >  security/selinux/ss/avtab.c         | 11 +++++++++--
+> >  security/selinux/ss/avtab.h         |  2 +-
+> >  security/selinux/ss/conditional.c   |  2 +-
+> >  security/selinux/ss/policydb.c      |  5 +++++
+> >  security/selinux/ss/services.c      | 12 ++++++++----
+> >  6 files changed, 26 insertions(+), 9 deletions(-)
 >
-> Look at this piece:
->
->         osd_req_op_extent_osd_data_pages(req, 0, pages, read_len,
->                          offset_in_page(read_off),
->                          false, false);
->
-> The last parameter is "own_pages". Ownership of these pages is NOT
-> transferred to the osdc request, therefore ceph_osdc_put_request()
-> will NOT free them, and this is really a leak bug and my patch fixes
-> it.
->
-> I just saw this piece of code for the first time, I have no idea. What
-> am I missing?
->
+> This looks fine to me, but I believe there are some outstanding
+> userspace issues that need to be resolved?
 
+Hi,
+
+I know it's very late in the development cycle, but I wanted to ask if
+there is a chance this could be merged for 6.13?
+The userspace patches are merged and currently part of 3.8-rc1, and
+these kernel changes are quite simple, since most of the needed
+functionality was already in place.
+I created a testsuite patch over at
+https://github.com/SELinuxProject/selinux-testsuite/pull/98.
+
+>
+> --
+> paul-moore.com
 
