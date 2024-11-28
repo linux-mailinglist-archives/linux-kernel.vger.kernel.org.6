@@ -1,209 +1,206 @@
-Return-Path: <linux-kernel+bounces-424650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CCB9DB785
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DF79DB788
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E34A1633C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A0B2830FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C01519CC1F;
-	Thu, 28 Nov 2024 12:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E1119CC1F;
+	Thu, 28 Nov 2024 12:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7wA5sLc"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yHmpf2z"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06384F20C;
-	Thu, 28 Nov 2024 12:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDD819ADA2
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796817; cv=none; b=BRTx27mkpitVHabu59vhhlXD8t2h0djP1mQUrGSadUQzsjG6xTe5YybGDhHv2k1sUR71uX2pkvW5K9taZnGL9c8F0vEJ8s9zVW/8PM41Q/1ZErfFoBB9fXPeZ+17zn3cKKX0Y9/5eMCh38iJ54dCQJDKtjVkT17Zx1S/5AgUBWQ=
+	t=1732796838; cv=none; b=SrXyoEJO1Or9EtBDem1666wyU1rtQLVp8ReipAxPaIo2ztskkH6r4GDxWf59M3SigX3gxrJ/u2WVnMwzS7JzDMvQtkFD2rLERRkqSBu+rmnpY4oCyE6mzH8KYa1bquPzn7FyXpvJ9Zb16SqdcZ8XwUYJDozi5af3ZusTiqj7hjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796817; c=relaxed/simple;
-	bh=cdJQSF24okpmJp3OTyRFJYSdiudOmESvovIU9KWMCfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxRTWAV1JcvxVSuewYQOEkaVNzYHC6+/4lEz5nOMwZa6Busm1KVDonGn8QQQWWc8rbCwxINGY1QaTkfkOSFD0/GY1n5fq6LrIh2AsUbt1/t0TPdTtiuX9TFNoH+gxX/a7gMf/D4G1iZJCXDzdawHPZTZmAwiALYofAQDmi8is5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7wA5sLc; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa560a65fd6so143331966b.0;
-        Thu, 28 Nov 2024 04:26:55 -0800 (PST)
+	s=arc-20240116; t=1732796838; c=relaxed/simple;
+	bh=6XDxPEty34eTGMSNtMJUSsKWzjr3QkiT/ZY1/OxWTew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sBkhoB5gopaox7fQH6vQkkhPoiI9PnNvnrf1/BASEIJlj1G5nTHFOQdArRJAn+B52kfg3ZnDhB5y7xmo71I+lR34Y8Ky5v/IeiZnpPebB7OUvfMzEQAreFFkmr9U5bCU4in+qq5iGLGsS3Js7wqj0y6Shgl2X8ZzbACgvDcix4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yHmpf2z; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a752140eso6619395e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:27:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732796814; x=1733401614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VZ9WNpBlKtazde7jfmSDXXstDaTslJye7caY08L0qq8=;
-        b=M7wA5sLchjbkyH0UIW/N1pqITW6Y4T/9GkzMo2EZM/VUPay+MYRcjOUlb9Tt+dHNml
-         3tl5vg2Lhk4TphMXhp2qa8i5utLhoWQ/3RmAyWvqqLPPvxU7KCV2Bv4We6zphB6kWMUA
-         vC9DfPg8+zrybxyiGVw4qN+u6vxqlfgw/onWEliaUcREG+vI19b9sL67iI2UQPXnWKa8
-         kHSRlgifG/FOrhY5Rd37L4O7Igz8sZ7an23xHE7VBMk0aqJG8VuIj7K3M5zCUNMj5qXQ
-         iKY2O+W6J71z5HHx10ZvAsJfVVtd0BkCHBD1nPCJxgMl3z26TEjtKhmQCoDeD5OvLVH9
-         gb1w==
+        d=google.com; s=20230601; t=1732796835; x=1733401635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kARs3OMR7SZwBtW0TWcyLkFWqc6w0sy3+x2iKM9UqcY=;
+        b=3yHmpf2zqpiF+3ZU53B47pyKB9nvk+d4ekgQeHvyS5EOvY8znz8JC6RIZ7PgSoJurH
+         JUEntzlWwg9/fKKk7WRNdo+f6MT4kE9ghVcpmUslMkYe/ea6waxUiJufdJws66pg3hD+
+         dv5b79kz9iYSqRfImaLIRynHckdJLiNa7y4QKoGIS/BoNARfDSMwyK+JzkJuO4UglTyv
+         l8adfPgm6QVauRaYFwtt7ORSqVBtEK+Q6EJgi0nCpyhe11Dt6wY452tSV9DBVFKYg7jt
+         j2EO9UYFgOx1q7RONnsaA6ZAbn7g52IrGS7OdqyFzlZnK3gto+tCH9/BVGH1v+1UUY07
+         ePKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732796814; x=1733401614;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VZ9WNpBlKtazde7jfmSDXXstDaTslJye7caY08L0qq8=;
-        b=YXjw7hVCNgmydQd5VAOZl3z7LeMmxT+KWqse2G4QHlz68YK3VZcQn85dOMxuFQkV+y
-         0xAs10t2oaQo3PSP260TrkYyDq9H15h2tlfoGf9ssrrUJRffif0Fpxnuv6wdTF3+hGxs
-         Xqk1EIEP1ua82oKGJj/Xr30L8PmfACssl6VjpVJWmjzOuOS9Ic2f+lOVvEDQfJIbrhhk
-         GZcXdCZTIKPYRaj0EGlqxkKFsH7o6hO1uXvUeHqvEtUi30cV98LCnAjTTTLZ71GBCPa6
-         kr9/IU1HiDqbrtETFDzC6b1twftsQl9uZ6U/6JjOOJxRknUWDzTXsxOQp/2ebYLPLLXH
-         mh2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXhqgrLH+ufqCC3o4O/YVAF0oI0aFNE7SqQXuNS7M3AibfislMnk1GwrE7+DNoy887Lp3gc4agTdjLA@vger.kernel.org, AJvYcCXmtUQEEl1jygtMpWHZsxnjWb699KmLDhb0pX3rNWzp9ZVTZJ874kr3Rcyi/nW/ejEkYc3HZA8DGNcf4f7s@vger.kernel.org, AJvYcCXnmICxd2+bGxitR/ymPn+LjzR1NnLR5V7aFstmL5RP7im4xbXvvevzkeyFlAPyA7nGerhc8KaF7/ZU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH3AF0IXWcEudmqg+VOoceif/80KyQJ09twMCZRFBNIKaUMbUQ
-	BEFnzPvBoyXimV+U/ZyCyKUnpNIAw8hEPjqYEbpx86WUxnW6o7T2
-X-Gm-Gg: ASbGnctSPLBMJMCorygbyN8h7zsvoGmoSRanVwxnnvE12dzBpfCtAg2zbeoDQDFwMmG
-	M1cPTKEv8IeFwYYVMAFA3U+mYMND+JeNSHhAjH8HisfyXJtWfGFO1c33wvqJ8oL8y7AWz09O3B5
-	3HFnyhn1fh45ykApx8TNMM4K4UhwHhILWxRjxAdZZY90pYX9Y7yHtv1JxXWA4ioFJWsgLLevpcq
-	USoMRfP01UA025dKxrkV8zYNUObE4a08KMX3zrE4l+uRQF/kL4GBimZjlXSVftdLwUlS+WqsH3X
-	rHRK6pwamOUpwBKIl4dbGgNylc4C
-X-Google-Smtp-Source: AGHT+IEBNEkepuyx2gsAoW/fXLnYQtrcq4HcBEGgeWPuDBUzCkSPR2feCwkXcaZgIXT3GzltKWwEtQ==
-X-Received: by 2002:a17:907:1c8c:b0:a9a:e0b8:5bac with SMTP id a640c23a62f3a-aa594708919mr210265566b.23.1732796813521;
-        Thu, 28 Nov 2024 04:26:53 -0800 (PST)
-Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5999731d5sm60837966b.200.2024.11.28.04.26.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:26:52 -0800 (PST)
-Message-ID: <3af77b51-d254-4c97-8faf-1dea29a4f9b1@gmail.com>
-Date: Thu, 28 Nov 2024 13:26:51 +0100
+        d=1e100.net; s=20230601; t=1732796835; x=1733401635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kARs3OMR7SZwBtW0TWcyLkFWqc6w0sy3+x2iKM9UqcY=;
+        b=MlNEHpihrniAg9Ro3bgHuipVGzHkYPUi7sDxvLH6Pn99jfKsWouL48jgIxdJhMpdxL
+         cz0J9L2FTPhbB0EJbTn36mnxcOZmilFEJzpLC9ScmhPtrt7JF14yuMZYfNcG1rqx7xaa
+         tFajqdCMs+v+21fxHVylwYAnVOw07tGEvzwGvKD70IlUDkQjr5reHdZEeXJoljhVVbuj
+         UEDXUUIggeRyyEKqvR/NgXUZ2ly2CI5sVbataVWWo3IWhbiBk77lPRlB03D3nc6iA3Kp
+         ri0Sr5vwn/uE7/JnES8cDCOkQXRwaOt6LIpmCi+Tf9WWl/Bpf/yrAV2YX0OJOzqOqhdl
+         wPWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGN+6Eb51FO/8peaU8MjM2IdJOnjhbtpjg3WgTiM1rGc/MbmDmps9J1rSHvYLc3ncPmCa2N9hUVLX4gLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqV8jMEaVt/GEoEYaczDG1pSIaIcJsfuKCfmyYu2GGWhmgPrIJ
+	e/m/mBV5O67tjHjtdf9kV7sUnY8Vvu6drd6eu4FgX7NgbyN7Uwxl7nZXBumPY5GTZB5QnE7l/ps
+	Leyn7kIUHNkQzSIS0TK9MrYKyfLaietdR4MkB
+X-Gm-Gg: ASbGncvhrZqQVysCRnWLFTLnlbJKH8P9RAERQY96VNy4oYNgT1/F/XGpTMpg7CZYEp/
+	Ew9t4qQxHuJJ6xtKaq5NJpDMMcb6HkBzjus94+R6KDJwWviiBB4PFH/vJpypM
+X-Google-Smtp-Source: AGHT+IEkERCIeGBJ8BGltoa6+wRnWijLPp8bL9sP35PNF9jXvEWnjvqtbJxvc4qLxkfCVrgrzjnipQiAdSGpxRUopa4=
+X-Received: by 2002:a05:600c:1988:b0:434:a239:d2fe with SMTP id
+ 5b1f17b1804b1-434a9df7dadmr50709745e9.28.1732796834639; Thu, 28 Nov 2024
+ 04:27:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] iio: light: add support for veml3235
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241020-veml3235-v2-0-4bc7cfad7e0b@gmail.com>
- <20241020-veml3235-v2-2-4bc7cfad7e0b@gmail.com>
- <20241021193933.59c2d2b6@jic23-huawei>
- <7323ca4f-2f79-4478-b2b0-2cfc350af7f8@gmail.com>
- <20241022192807.2f83dfa1@jic23-huawei>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241022192807.2f83dfa1@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAH5fLghFWi=xbTgaG7oFNJo_7B7zoMRLCzeJLXd_U5ODVGaAUA@mail.gmail.com>
+ <Z0eXrllVhRI9Ag5b@dread.disaster.area>
+In-Reply-To: <Z0eXrllVhRI9Ag5b@dread.disaster.area>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 28 Nov 2024 13:27:03 +0100
+Message-ID: <CAH5fLggKrb4LZk6JL5A0jJODA1zJs+94AU5NMmyV9ksraigF7A@mail.gmail.com>
+Subject: Re: [QUESTION] What memcg lifetime is required by list_lru_add?
+To: Dave Chinner <david@fromorbit.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Linux Memory Management List <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, cgroups@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/10/2024 20:28, Jonathan Cameron wrote:
-> On Mon, 21 Oct 2024 22:21:22 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> 
->> On 21/10/2024 20:39, Jonathan Cameron wrote:
->>> On Sun, 20 Oct 2024 21:12:17 +0200
->>> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
->>>   
->>>> The Vishay veml3235 is a low-power ambient light sensor with I2C
->>>> interface. It provides a minimum detectable intensity of
->>>> 0.0021 lx/cnt, configurable integration time and gain, and an additional
->>>> white channel to distinguish between different light sources.
->>>>
->>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
->>> Hi Javier,
->>>
->>> I missed one thing on previous review...
->>> There is no obvious reason this driver needs to provide raw and processed
->>> values.  Unless I'm missing something, just provide raw and let userspace
->>> do the maths for us.
->>>
->>> Jonathan
->>>   
->> Sure, I will drop that for v3. I added it because this driver took the
->> veml6030 as a reference, and that driver provides the processed value. I
->> guess that the veml6030 should have not provided processed values
->> either, but it's late to remove them after the driver was released.
->>
->> Now that we are at it, what is the rule (of thumb?) to provide processed
->> values? Those that can't be obtained from the raw data and simple
->> operations with the scale/offset/integration time/whatever userspace can
->> see?
-> 
-> Yes. If the conversion is linear, then leave it to userspace (with scale
-> and offset provided). If it's not linear then in kernel because currently
-> we have no other choice.
-> 
-> There are some historical quirks where a processed only interface got in
-> then we had to add raw later (typically when we added buffered output
-> where scale and offset are important because processed values normally
-> don't pack well).
-> 
-> Jonathan
-> 
-> 
-
-
-Hi Jonathan, I am bringing this back because I am not sure if dropping
-the processed values was the right approach here. I would like to
-clarify before propagating some approach that might not be accurate.
-
-This sensor is linear, and the processed value can be obtained by simple
-multiplications, but not just raw * scale as documented in the ABI.
-
-This driver is based on the veml6030, whose processed value is obtained
-as raw * resolution, where the resolution is completely linear and is
-obtained as sensor_resolution * integration_time / scale.
-
-That means that the scale is actually a gain, and the user needs to know
-the sensor resolution provided in the datasheet (see cur_resolution in
-veml6030.c) to get the processed value. There is a sensor resolution for
-every pair { gain, integration_time } in the datasheet, so there is no
-need to calculate anything, yet the resolution is not provided by the
-driver.
-
-Nevertheless, your comment on this matter was the following:
-
-> Why both raw + scale and processed?
+On Wed, Nov 27, 2024 at 11:05=E2=80=AFPM Dave Chinner <david@fromorbit.com>=
+ wrote:
 >
-> We normally only provide raw and processed for light sensors if:
-> 1) The conversion is non linear and hard to reverse.
-> 2) There are events that are thresholds on the raw value.
+> On Wed, Nov 27, 2024 at 10:04:51PM +0100, Alice Ryhl wrote:
+> > Dear SHRINKER and MEMCG experts,
+> >
+> > When using list_lru_add() and list_lru_del(), it seems to be required
+> > that you pass the same value of nid and memcg to both calls, since
+> > list_lru_del() might otherwise try to delete it from the wrong list /
+> > delete it while holding the wrong spinlock. I'm trying to understand
+> > the implications of this requirement on the lifetime of the memcg.
+> >
+> > Now, looking at list_lru_add_obj() I noticed that it uses rcu locking
+> > to keep the memcg object alive for the duration of list_lru_add().
+> > That rcu locking is used here seems to imply that without it, the
+> > memcg could be deallocated during the list_lru_add() call, which is of
+> > course bad. But rcu is not enough on its own to keep the memcg alive
+> > all the way until the list_lru_del_obj() call, so how does it ensure
+> > that the memcg stays valid for that long?
 >
-> Here it is linear so just provide _RAW.
+> We don't care if the memcg goes away whilst there are objects on the
+> LRU. memcg destruction will reparent the objects to a different
+> memcg via memcg_reparent_list_lrus() before the memcg is torn down.
+> New objects should not be added to the memcg LRUs once the memcg
+> teardown process starts, so there should never be add vs reparent
+> races during teardown.
+>
+> Hence all the list_lru_add_obj() function needs to do is ensure that
+> the locking/lifecycle rules for the memcg object that
+> mem_cgroup_from_slab_obj() returns are obeyed.
+>
+> > And if there is a mechanism
+> > to keep the memcg alive for the entire duration between add and del,
+>
+> It's enforced by the -complex- state machine used to tear down
+> control groups.
+>
+> tl;dr: If the memcg gets torn down, it will reparent the objects on
+> the LRU to it's parent memcg during the teardown process.
+>
+> This reparenting happens in the cgroup ->css_offline() method, which
+> only happens after the cgroup reference count goes to zero and is
+> waited on via:
+>
+> kill_css
+>   percpu_ref_kill_and_confirm(css_killed_ref_fn)
+>     <wait>
+>     css_killed_ref_fn
+>       offline_css
+>         mem_cgroup_css_offline
+>           memcg_offline_kmem
+>             {
+>             .....
+>             memcg_reparent_objcgs(memcg, parent);
+>
+>         /*
+>          * After we have finished memcg_reparent_objcgs(), all list_lrus
+>          * corresponding to this cgroup are guaranteed to remain empty.
+>          * The ordering is imposed by list_lru_node->lock taken by
+>          * memcg_reparent_list_lrus().
+>          */
+>             memcg_reparent_list_lrus(memcg, parent)
+>             }
+>
+> Then the cgroup teardown control code then schedules the freeing
+> of the memcg container via a RCU work callback when the reference
+> count is globally visible as killed and the reference count has gone
+> to zero.
+>
+> Hence the cgroup infrastructure requires RCU protection for the
+> duration of unreferenced cgroup object accesses. This allows for
+> subsystems to perform operations on the cgroup object without
+> needing to holding cgroup references for every access. The complex,
+> multi-stage teardown process allows for cgroup objects to release
+> objects that it tracks hence avoiding the need for every object the
+> cgroup tracks to hold a reference count on the cgroup.
+>
+> See the comment above css_free_rwork_fn() for more details about the
+> teardown process:
+>
+> /*
+>  * css destruction is four-stage process.
+>  *
+>  * 1. Destruction starts.  Killing of the percpu_ref is initiated.
+>  *    Implemented in kill_css().
+>  *
+>  * 2. When the percpu_ref is confirmed to be visible as killed on all CPU=
+s
+>  *    and thus css_tryget_online() is guaranteed to fail, the css can be
+>  *    offlined by invoking offline_css().  After offlining, the base ref =
+is
+>  *    put.  Implemented in css_killed_work_fn().
+>  *
+>  * 3. When the percpu_ref reaches zero, the only possible remaining
+>  *    accessors are inside RCU read sections.  css_release() schedules th=
+e
+>  *    RCU callback.
+>  *
+>  * 4. After the grace period, the css can be freed.  Implemented in
+>  *    css_free_rwork_fn().
+>  *
+>  * It is actually hairier because both step 2 and 4 require process conte=
+xt
+>  * and thus involve punting to css->destroy_work adding two additional
+>  * steps to the already complex sequence.
+>  */
 
-That is still true in this case, because it is a linear, easy to reverse
-conversion. Nevertheless, the user needs to look for the sensor
-resolution in the datasheet and then use the given integration_time and
-scale.
+Thanks a lot Dave, this clears it up for me.
 
-Is that ok and desired for light sensors? I think that a more accurate
-approach would have been treating the gain as a HARDWAREGAIN, which
-would have been used to calculate the scale i.e. resolution to directly
-apply to the raw value. In its current form, the processed value is not
-what you get if you do raw * scale. But as you specifically mentioned
-light sensors in your comment, that might not apply here. Moreover,
-there are only two drivers (si1133.c and vl6180.c) that use HARDWAREGAIN
-for IIO_LIGHT, which makes me think I am over-complicating thing here.
+I sent a patch containing some additional docs for list_lru:
+https://lore.kernel.org/all/20241128-list_lru_memcg_docs-v1-1-7e4568978f4e@=
+google.com/
 
-By the way, in_illuminance_hardwaregain is not documented in the ABI,
-only out_voltageY and in_intensity. But that is another topic.
-
-The veml6030 has been around for some time and there is no way around
-without breaking ABI, and the veml3235 has been only applied to your
-tree and maybe it could wait to be released.
-
-If everything is ok as it is, then that's the end of the story, but if
-the processed = raw * scale operation should apply, the veml3235 could
-still be fixed. And when it is too late for that one too, then I could
-follow a different approach for the veml6031x00 I recently sent to avoid
-propagating the issue.
-
-Thanks and best regards,
-Javier Carrasco
-
-
-
-
+Alice
 
