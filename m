@@ -1,217 +1,138 @@
-Return-Path: <linux-kernel+bounces-424219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48599DB1BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:10:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACC19DB1BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:12:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E795EB21FF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B066164D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C8A85626;
-	Thu, 28 Nov 2024 03:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFAF84D29;
+	Thu, 28 Nov 2024 03:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phb73X4e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JtcHRSMD"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AAF83CC7;
-	Thu, 28 Nov 2024 03:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB5F6F2F2
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732763409; cv=none; b=kQbX0ZjucaqcU43pPu4EGxu5+j17tNJsrnOuouHITwCl4YtEV1CzA2/iGZ6uPCL4Vb8zh71EXGLAGA06jNBFFs/+2qPlA2o9tShQN+XwQpUHaNigafPUKVE04qmkO6yiP5U0veQIFrxVZVVn9axjjgE+iIbE/EsghlNHsO5QvCU=
+	t=1732763527; cv=none; b=tkjZjt/54bBb9gp8YSDJKaCARgEfnNp0XkzzrT8oY3kXM/P6FkSdiy/pfkZoPzuz+pbDG77a+KQsuuC8nPkaz4XB+0d62kfbs9aXOUCljr+AsbW8I030o+GdQQgKhDJtfnw8Fz525TaRPlMGncfYLJi9RnmjtfB09O68AEKAOIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732763409; c=relaxed/simple;
-	bh=qIK1SvnQUxdoZe8eJG9ukh6hA1OfmlyLSzxG5Dma0mM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6fF/x4TmZieZVZRZo3BPcS3xPQ5CtgUDKF4XnU1aF6gLlvLCyDoCXJJlTYBNlH/6htsLrU3f0Sc+AJsbPsUbtVNP3FI8OPwlqXeZdnX3823GTe240so72mgV1jGiZ61laq7PeZgHspsreMk/tzTCXZuWowcu+tJ28pLo06C8mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phb73X4e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74910C4CECC;
-	Thu, 28 Nov 2024 03:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732763408;
-	bh=qIK1SvnQUxdoZe8eJG9ukh6hA1OfmlyLSzxG5Dma0mM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=phb73X4e2znCne8425GbrRHvae4q9X1GIBuzrmreaW8Q5AIU5KibJzZ9ECXm8MikN
-	 84qKbUIBS+jgPcZ9CbxQYe6JOD0fJZneIOs4NLo8UlulixrAjsTcABQCgc1BiYhVbg
-	 xkLk/XdW52KI8Ix14crdfIMX2BZUHt0sdYhEd6WvQrOaXWBvfgQ4Eo+PQ30XHPsEz+
-	 VwoHXTE6qy2gFSXaj92a/vopyTQRFqtn3aT3P/6/Mz6mm+TeEZmHNmGZqcMi6Mn2kn
-	 ccRcpbrztn/S7emKURI+G4NavetAse2zhh7HVKPDF9SJvmyhDYDhLSMaca8YBjHMIA
-	 yCnvx7H6Clbig==
-Date: Wed, 27 Nov 2024 19:10:07 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, samitolvanen@google.com,
-	petr.pavlu@suse.com, da.gomez@samsung.com,
-	linux-modules@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, mmaurer@google.com, arnd@arndb.de,
-	deller@gmx.de, song@kernel.org
-Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
-Message-ID: <Z0ffD62YLuVVrCGR@bombadil.infradead.org>
-References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
- <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
- <Z0eeuCyUGcKgsc5h@bombadil.infradead.org>
- <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
- <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
- <Z0fT4hC30NISjmi_@bombadil.infradead.org>
- <Z0fYqZutUzDdxTGf@bombadil.infradead.org>
- <CAK7LNARDwBmvKY4fDmr5K=WLEvWLhFgg50ibu7etJykiRxohOA@mail.gmail.com>
- <Z0fdX6i3inNVJf-e@bombadil.infradead.org>
+	s=arc-20240116; t=1732763527; c=relaxed/simple;
+	bh=g8JJAJlUvP8YzoIEcLORQPdsG+CbSntTqAdUb6tYJIE=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=ZNDlob65ov/3OyKkMXYhiY+doOHNsNRwWHy8yw7dRGTWPhiqchz4XEh6nkpe8PQqAielOOydT8pgyew3rfYLM0sHlr4hNOsXqWIuPJ2MGBmsgppmgn0RhsgF0ag/eMOjWoOb8PadWAPjeBf0ecsd2BfLvhCi4qu1peaEC672GEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JtcHRSMD; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732763517; h=Message-ID:Subject:Date:From:To;
+	bh=tmeqebB5HPloXn2Zv0PoMaJ6A6Q7GYB/buoOXLLVkx8=;
+	b=JtcHRSMDQEgWTSV0za6PwzjcV7oerb+KFiSNIK1m4XupiiTom8yL/HE1BF7xE9BbsrvXUxFYQfEEro9t8+UCGFthKpLbbo21I3DM01cTbWIm+3iu7wDikar7EowNyKNCzWGUXg5acku7dxpCjq2MGF7fN+tRqrqq9XOEUpT1iRs=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WKO3-e9_1732763516 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 28 Nov 2024 11:11:56 +0800
+Message-ID: <1732763459.0668714-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: drivers/virtio/virtio_ring.c:1162:11: error: 'struct vring_virtqueue' has no member named 'premapped'
+Date: Thu, 28 Nov 2024 11:10:59 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>,
+ eperezma@redhat.com,
+ Sasha Levin <sashal@kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ virtualization@lists.linux.dev,
+ open list <linux-kernel@vger.kernel.org>,
+ lkft-triage@lists.linaro.org,
+ Linux Regressions <regressions@lists.linux.dev>
+References: <CA+G9fYsF3x+ZXURQmgA1yQj-eiobr378HbodpJf4ncng7QYXmg@mail.gmail.com>
+In-Reply-To: <CA+G9fYsF3x+ZXURQmgA1yQj-eiobr378HbodpJf4ncng7QYXmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0fdX6i3inNVJf-e@bombadil.infradead.org>
 
-On Wed, Nov 27, 2024 at 07:02:55PM -0800, Luis Chamberlain wrote:
-> I did. Multiple times.
+On Wed, 27 Nov 2024 13:30:59 +0530, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> The following build errors were noticed for arm64, arm, x86_64 and riscv.
+>
+> First seen on Sasha Linus-next 441d2975754ad94f3ce2e29f672824bc2dc5120c.
+>   Good: 07e98e730a08081b6d0b5c3a173b0487c36ed27f
+>   Bad:  441d2975754ad94f3ce2e29f672824bc2dc5120c
 
-I've split this up now in 2 parts, one with your fixes and then the
-other boundary fixes which are not related.
+There maybe one conflict between net-next and vhost, how did you handle it?
 
-From 8e4c903fa3079e1c05c9585f78c57e8067024d99 Mon Sep 17 00:00:00 2001
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Wed, 27 Nov 2024 14:10:57 -0800
-Subject: [PATCH 1/2] selftests: kallsyms: fix double build stupidity
-
-The current arrangement will have the test modules rebuilt on
-any make without having the script or code actually change.
-Take Masahiro Yamada's suggested fix and cleanups on the Makefile
-to fix this.
-
-Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- lib/tests/module/Makefile | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
-index af5c27b996cb..2f3e1a772c2c 100644
---- a/lib/tests/module/Makefile
-+++ b/lib/tests/module/Makefile
-@@ -3,13 +3,12 @@ obj-$(CONFIG_TEST_KALLSYMS_B) += test_kallsyms_b.o
- obj-$(CONFIG_TEST_KALLSYMS_C) += test_kallsyms_c.o
- obj-$(CONFIG_TEST_KALLSYMS_D) += test_kallsyms_d.o
- 
--$(obj)/%.c: FORCE
--	@$(kecho) "  GEN     $@"
--	$(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
--		$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
--		$(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
-+quiet_cmd_gen_test_kallsyms = GEN     $@
-+	cmd_gen_test_kallsyms = $< $@ \
-+	$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
-+	$(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
- 
--clean-files += test_kallsyms_a.c
--clean-files += test_kallsyms_b.c
--clean-files += test_kallsyms_c.c
--clean-files += test_kallsyms_d.c
-+$(obj)/%.c: $(src)/gen_test_kallsyms.sh FORCE
-+	$(call if_changed,gen_test_kallsyms)
-+
-+targets += $(foreach x, a b c d, test_kallsyms_$(x).c)
--- 
-2.45.2
+Thanks
 
 
-From e76c869f4f37eff4d91c749572104e2eb0953986 Mon Sep 17 00:00:00 2001
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Wed, 27 Nov 2024 19:06:03 -0800
-Subject: [PATCH 2/2] selftests: kallsyms: fix and clarify current test
- boundaries
-
-Provide and clarify the existing ranges and what you should expect.
-Fix the gen_test_kallsyms.sh script to accept different ranges.
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- lib/Kconfig.debug                     | 32 ++++++++++++++++++++++++++-
- lib/tests/module/gen_test_kallsyms.sh |  9 ++++++--
- 2 files changed, 38 insertions(+), 3 deletions(-)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index b5929721fc63..88fc93f4b142 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2986,9 +2986,39 @@ config TEST_KALLSYMS_D
- 	tristate
- 	depends on m
- 
-+choice
-+	prompt "Kallsym test range"
-+	default TEST_KALLSYMS_LARGE
-+	help
-+	  Selecting something other than "Fast" will enable tests which slow
-+	  down the build and may crash your build.
-+
-+config TEST_KALLSYMS_FAST
-+	bool "Fast builds"
-+	help
-+	  You won't really be testing kallsysms, so this just helps fast builds
-+	  when allmodconfig is used..
-+
-+config TEST_KALLSYMS_LARGE
-+	bool "Enable testing kallsyms with large exports"
-+	help
-+	  This will enable larger number of symbols. This will slow down
-+	  your build considerably.
-+
-+config TEST_KALLSYMS_MAX
-+	bool "Known kallsysms limits"
-+	help
-+	  This will enable exports to the point we know we'll start crashing
-+	  builds.
-+
-+endchoice
-+
- config TEST_KALLSYMS_NUMSYMS
- 	int "test kallsyms number of symbols"
--	default 100
-+	range 2 10000
-+	default 2 if TEST_KALLSYMS_FAST
-+	default 100 if TEST_KALLSYMS_LARGE
-+	default 10000 if TEST_KALLSYMS_MAX
- 	help
- 	  The number of symbols to create on TEST_KALLSYMS_A, only one of which
- 	  module TEST_KALLSYMS_B will use. This also will be used
-diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
-index 3f2c626350ad..561dcac0f359 100755
---- a/lib/tests/module/gen_test_kallsyms.sh
-+++ b/lib/tests/module/gen_test_kallsyms.sh
-@@ -7,6 +7,11 @@ NUM_SYMS=$2
- SCALE_FACTOR=$3
- TEST_TYPE=$(echo $TARGET | sed -e 's|lib/tests/module/test_kallsyms_||g')
- TEST_TYPE=$(echo $TEST_TYPE | sed -e 's|.c||g')
-+FIRST_B_LOOKUP=1
-+
-+if [[ $NUM_SYMS -gt 2 ]]; then
-+	FIRST_B_LOOKUP=$((NUM_SYMS/2))
-+fi
- 
- gen_template_module_header()
- {
-@@ -52,10 +57,10 @@ ____END_MODULE
- 
- gen_template_module_data_b()
- {
--	printf "\nextern int auto_test_a_%010d;\n\n" 28
-+	printf "\nextern int auto_test_a_%010d;\n\n" $FIRST_B_LOOKUP
- 	echo "static int auto_runtime_test(void)"
- 	echo "{"
--	printf "\nreturn auto_test_a_%010d;\n" 28
-+	printf "\nreturn auto_test_a_%010d;\n" $FIRST_B_LOOKUP
- 	echo "}"
- }
- 
--- 
-2.45.2
-
+>
+> arm64, arm, riscv and x86_64:
+>   build:
+>     * clang-19-defconfig
+>     * gcc-13-defconfig
+>     * clang-19-lkftconfig
+>     * gcc-13-lkftconfig
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Build error:
+> ---------
+> drivers/virtio/virtio_ring.c: In function '__vring_new_virtqueue_split':
+> drivers/virtio/virtio_ring.c:1162:11: error: 'struct vring_virtqueue'
+> has no member named 'premapped'
+>  1162 |         vq->premapped = false;
+>       |           ^~
+> drivers/virtio/virtio_ring.c:1163:11: error: 'struct vring_virtqueue'
+> has no member named 'do_unmap'
+>  1163 |         vq->do_unmap = vq->use_dma_api;
+>       |           ^~
+> make[5]: *** [scripts/Makefile.build:229: drivers/virtio/virtio_ring.o] Error 1
+>
+> Build image:
+> -----------
+> - https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-25212-gbe03d2e1a06f/testrun/26081256/suite/build/test/gcc-13-lkftconfig-rcutorture/log
+> - https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-25212-gbe03d2e1a06f/testrun/26081256/suite/build/test/gcc-13-lkftconfig-rcutorture/history/
+> - https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-25212-gbe03d2e1a06f/testrun/26081256/suite/build/test/gcc-13-defconfig/history/
+> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/
+>
+> $ git log --oneline
+> 07e98e730a08081b6d0b5c3a173b0487c36ed27f..441d2975754ad94f3ce2e29f672824bc2dc5120c
+>  -- drivers/virtio/virtio_ring.c
+>    441d2975754ad Merge tag 'for_linus' of
+> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost into
+> linus-next
+>    a49c26f761d2b virtio: Make vring_new_virtqueue support packed vring
+>
+> Steps to reproduce:
+> ------------
+> - tuxsuite build \
+>     --git-repo https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
+> \
+>     --git-sha be03d2e1a06f7bd4be131c48f1c5555e83470a4d \
+>     --target-arch arm64 \
+>     --toolchain gcc-13 \
+>     --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/config
+>
+> metadata:
+> ----
+>   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
+>   git sha: ed9a4ad6e5bd3a443e81446476718abebee47e82
+>   kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/config
+>   build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pPghaTDWgXtaR5FXfFS4Ay3d4C/
+>   toolchain: gcc-13, clang-19 and clang-nightly
+>   config: defconfig, lkftconfig
+>   arch: arm64, arm, x86_64 and riscv
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
