@@ -1,103 +1,153 @@
-Return-Path: <linux-kernel+bounces-424182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E229A9DB158
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:08:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D7F9DB15B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 719A6B214B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:08:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238A82822AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C3F537F8;
-	Thu, 28 Nov 2024 02:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAD045C1C;
+	Thu, 28 Nov 2024 02:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rzQPhH8U"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6HMrNGb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46A338FA6;
-	Thu, 28 Nov 2024 02:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C26535D8;
+	Thu, 28 Nov 2024 02:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732759677; cv=none; b=Gv48f5an1YBeVbdbyDuj+k8ayzCknBlZWKRkx9tyml4LQGPP+O0DIaA9lx+cihpihK8mWjDpbsko8Fr00TQaK2Mo2QiBSbN0crHC4QMpIZ6Bg3xMeDrPrinqn9HbMp4SqaFGq0FF0XJhwJoGLlSl3mf2Vu/H2C5XDWgp1y/IQuY=
+	t=1732759822; cv=none; b=u7OA23Qf7o7EBOT1B5o6yQR3WmJ4Ql2Q/gpCtUgQddbAGSJ4o8zyWJh7dSmiHFWbPQrIGeMizeHM/RUhcMYNlf5GR6AZSOKwrK8pVqdQUclCt1OYFkNJaFF/lCLzja6FQGgurvcyr+F1AVaGIt+E6V7OzIrOwPWnparQZL6QhAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732759677; c=relaxed/simple;
-	bh=CLOY1BbFg2H3t/bxeRQjxH7u7t8eQoc7YTKi+CBEZrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tL2vlmelZCurCpWXp+VOdVqBCyAFQS0o/E0XSTLoAdD5y10k1gnmiqdNsVWcCdeLLsiXtpXrM2xL4Xx+HjIn+tCv37+0BZhgDV75tAZmarxaqCKyrdh6UTpmGNy1RfP5yHNDpULSWULMPqcI5y/fuQQYIJakuwcOWbT3vHYPRN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rzQPhH8U; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732759668;
-	bh=DWk4vOZsOOl0KqDwkTpOCE+klrxgnn/rijVdA7PjzHo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rzQPhH8UHL+2IoN+oYpuxwkBo4d6/iV7T5Wc4llhNK/2NW6f9RqMjINS2PmGlsSzt
-	 Gz+YTQoZ3vMqVD2MNvrmVoC78Jqq57X4CMBz1N+Mi9fi3EG7SiDIlZ8/gD5rT5q5dK
-	 BTiGV+yE/Ih5uL0kqGYAR/4YDTTeaK6SJeNvfl4PUMZeAxVIZB3ukVi5gZ6chsjNzh
-	 L+AM8WMhz0fL5iHj7oaZMy3UkqRKH2GmR6IKJr2upm3pstru7qgkfMQiVOZDSExE0s
-	 UYa9mNgEUul38bgTG9FPfE8vGN8wEW90/ealT76LChHOdQul8OYRgFc5TRlCTvyU2O
-	 FUFJ1WJXaCSfA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XzKTG5hxCz4xcY;
-	Thu, 28 Nov 2024 13:07:45 +1100 (AEDT)
-Date: Thu, 28 Nov 2024 13:07:48 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the i2c tree
-Message-ID: <20241128130748.3949c5eb@canb.auug.org.au>
+	s=arc-20240116; t=1732759822; c=relaxed/simple;
+	bh=YX1D5e/FRew05/8KQ3wt7LTC+rcwVLOoX6FnMCmCyhk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cc0no36rfK36Gl3pHuukZeYkIndvZ7hgBCbP8Ig+l8zKUuyYeTbe59WnulWgLqgw3dLvWErEay2DM6kkvKvqam3m09fOLuu+absY34ap+DyTgmoXg8zYts40iQmOmd1PMghKewZx+u+9OPdYp+LOeKv8rr7RTSyYwlft3NJPhP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6HMrNGb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FE9C4CED7;
+	Thu, 28 Nov 2024 02:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732759821;
+	bh=YX1D5e/FRew05/8KQ3wt7LTC+rcwVLOoX6FnMCmCyhk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f6HMrNGbGl1EZWUn0dSe9HN+UC+j8gLdEDk5HrRDDuRmbB7MdMp/IgFbfWj41Cl2y
+	 ayRpWLf3hatk58Va6nnNiI6yU85h9VFMz6trtKd6mGqHfktnwETPWz1Tarm5S5e64K
+	 4EKoB9fKyKg1ItD5Up4c8aNKxw34aOUJ+GDHZYb/5E5G9/V9syWeAKvH8AY3B7qauS
+	 WVeuNisw1fKRQqthZCHuOBgvoYphMD+EES97yg2b7qpcwgsT3miMnOgIM3kM4tg86C
+	 0taG89cHcuTaxGvEueJAGO0jlOxE+U7Hp+TJTcBI++VxOzQAWlS1I9NOsOgoixqGc5
+	 eyLfpoES5C+jA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso309598e87.0;
+        Wed, 27 Nov 2024 18:10:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX/41V+P1tb9Kfk75K0qaZSNM4v8K5LLl6gT4X5LP4tlq2FZKFg78cEBLFzoxAU0zSasdwbiRt7XAWF38g=@vger.kernel.org, AJvYcCXvO5WnChtjgqAmBGD8nJhM+ai9FovVhfNaZDWxAcNjvFnoBpaePJBiVPl8phsJjw36KAHFjo7OtEBLKbB92w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+ZXXuEHC1uk5xAZy8/EwnrUQgQdapKg1jyUdjGx3CF9crMKhd
+	7Jmvdi9UPjJcWQu15nOCFSGkgeWPgY81hxTrosfJNdhnSIVfCO82f7vI7le8Q7j6zQLhHZU9cSo
+	cB6Y+g/jah6AxyhrYnfRsm0sJZJA=
+X-Google-Smtp-Source: AGHT+IGJl1MVVpustJ2ts2Pio5dLzBKWLqVoYYvsx3ccT201+1nWm8YVMnCydOOQg35CI1c8yA12VrmouApP27aeKhc=
+X-Received: by 2002:a05:6512:3d89:b0:539:f9b9:e6d2 with SMTP id
+ 2adb3069b0e04-53df00ff7c6mr3300348e87.35.1732759820389; Wed, 27 Nov 2024
+ 18:10:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0iF0Imprz/ACLWF+n+mgHiT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/0iF0Imprz/ACLWF+n+mgHiT
-Content-Type: text/plain; charset=US-ASCII
+References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org> <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
+ <Z0eeuCyUGcKgsc5h@bombadil.infradead.org> <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
+ <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+In-Reply-To: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 28 Nov 2024 11:09:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQyhxPZfpK3hVPtYvCYjad4pTUim5jVsEsuXqefY8KhWQ@mail.gmail.com>
+Message-ID: <CAK7LNAQyhxPZfpK3hVPtYvCYjad4pTUim5jVsEsuXqefY8KhWQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>
+Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com, 
+	linux-modules@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, mmaurer@google.com, arnd@arndb.de, 
+	deller@gmx.de, song@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Linus and Luis,
 
-After merging the i2c tree, today's linux-next build (htmldocs) produced
-this warning:
 
-drivers/of/base.c:661: warning: Function parameter or struct member 'prefix=
-' not described in 'of_get_next_child_with_prefix'
+On Thu, Nov 28, 2024 at 8:57=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, 27 Nov 2024 at 15:26, Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Wed, Nov 27, 2024 at 02:35:36PM -0800, Luis Chamberlain wrote:
+> > > Sorry about that, I'm on it.
+> >
+> > OK here is a fix, goes double build tested and then run time tested.
+>
+> No, you misunderstand.
+>
+> I don't mind the tests being built. That's *good*.
+>
+> I mind them being built *twice*. That means that there's some
+> seriously broken lack of dependency logic.
+>
+>             Linus
 
-Introduced by commit
 
-  1fcc67e3a354 ("of: base: Add for_each_child_of_node_with_prefix()")
+Right.
+
+The lib/tests/module/test_kallsyms_*.c files
+are always regenerated due to the 'FORCE'.
+
+lib/tests/module/Makefile:
+
+$(obj)/%.c: FORCE
+
+
+
+
+The following diff will fix the issue.
+(I used 'foreach' to factor out similar lines, but it is just a bonus clean=
+-up).
+
+
+diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
+index af5c27b996cb..8cfc4ae600a9 100644
+--- a/lib/tests/module/Makefile
++++ b/lib/tests/module/Makefile
+@@ -3,13 +3,12 @@ obj-$(CONFIG_TEST_KALLSYMS_B) +=3D test_kallsyms_b.o
+ obj-$(CONFIG_TEST_KALLSYMS_C) +=3D test_kallsyms_c.o
+ obj-$(CONFIG_TEST_KALLSYMS_D) +=3D test_kallsyms_d.o
+
+-$(obj)/%.c: FORCE
+-       @$(kecho) "  GEN     $@"
+-       $(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
+-               $(CONFIG_TEST_KALLSYMS_NUMSYMS) \
+-               $(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
++quiet_cmd_gen_test_kallsyms =3D GEN     $@
++      cmd_gen_test_kallsyms =3D $< $@ \
++       $(CONFIG_TEST_KALLSYMS_NUMSYMS) \
++       $(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
+
+-clean-files +=3D test_kallsyms_a.c
+-clean-files +=3D test_kallsyms_b.c
+-clean-files +=3D test_kallsyms_c.c
+-clean-files +=3D test_kallsyms_d.c
++$(obj)/%.c: $(src)/gen_test_kallsyms.sh FORCE
++       $(call if_changed,gen_test_kallsyms)
++
++targets +=3D $(foreach x, a b c d, test_kallsyms_$(x).c)
+
+
+
+
+
+
+
 
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0iF0Imprz/ACLWF+n+mgHiT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdH0HQACgkQAVBC80lX
-0GwGbwf/aWekuWqbdNVMB60HTyizDYOB2EBhr6dKMNQ/beGshJT12TdJp3r4zPJh
-1rcmsBc/SLuaRx6yfSBG1gCUM40mK6yfFyEApD3g6bs92xGvSlEvrqu3acCwRgSG
-blvIylUAKC7MPKN105OKo4Xc0RgzBzqFWLej3mTV2XsO5G3FvlgRYveUPtvo3uix
-46yifavyLZncnh+KTJWyMqx8B63dtpQUdQq+FaO5jNFSYHRDN55BPQq1T9B4q1i3
-vfFSSY4i1ma7Ah7X8tUz+axwoXPgxUNk1htzLPKLZXhGuJ+BcO+iaFhP0uUapx4u
-x8zFCgOBICKFbMVbnPnjJVZEXsjTRg==
-=K1hG
------END PGP SIGNATURE-----
-
---Sig_/0iF0Imprz/ACLWF+n+mgHiT--
+Best Regards
+Masahiro Yamada
 
