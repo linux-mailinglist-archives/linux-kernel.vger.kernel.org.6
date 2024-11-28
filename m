@@ -1,189 +1,142 @@
-Return-Path: <linux-kernel+bounces-425000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF929DBC44
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:48:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E769DBC46
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E044B21BEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:48:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 362C2B21A5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF2D1C1F15;
-	Thu, 28 Nov 2024 18:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BF11C1F06;
+	Thu, 28 Nov 2024 18:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYo/h7jt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xxp6Frrc"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAFE17BA5;
-	Thu, 28 Nov 2024 18:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA71917BA5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 18:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732819683; cv=none; b=aobuZTV0A8y2V2VGDQ6i6kUv8wVqXQFVchaTzFrtEb++X6kLtc2aNIeu+2RydGQRe2xKvVslMOLynZgh/VB0RDKai7wbCtFRsQL9M+QxYk8YEqHcxT0blA+xYwqeh8BskTfN+7ACZpmmZSr1c7Gof88aC06uUUw+DEZWbKfCla8=
+	t=1732819979; cv=none; b=RXO/qqiSesYS3GqL09eeDPlhd1E7kT+UpZn48lD0lMxRtn0Xaw5OwWOO4jidV/JgQNBuaA5sWamO6vo1vA7uYesYnToeGWwj7OhedpKr60XA62cJa91D/sJ1/LFu64/K2ZguetowRcgPQZZI1cMRTCSCLigOx9ONwtlj/mLYkDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732819683; c=relaxed/simple;
-	bh=M60yQ7WFpyB3zuCo3SDMJf3A+WWuW11FSKk7keSRpAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FPGb2Q/6T88lT822VloSlxnHw8TjzJ8lzqtPG9LLwFwVXJ5b7+JvFJo5nGR1nlHguP7tRg7JfEvDAfBtDhqQ9lsZgJKx0zS7+atsLuHlEthbUGL5nWcDS0U/3AULXpmFm1rghkY985t5n5B/B+TR2+QUMlw+O21IvZKlYJsHBoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYo/h7jt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39280C4CECE;
-	Thu, 28 Nov 2024 18:48:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732819683;
-	bh=M60yQ7WFpyB3zuCo3SDMJf3A+WWuW11FSKk7keSRpAM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BYo/h7jt/jLafjNAiiUvGJTmFZVecd0QWc5j707MgPm/Het2/poFECqTvlB7yaKT/
-	 w4WCQDd0adnJW2zzqmtH9Zvlx4/r3N/BlsHpbHTo/srdrBa44V22irekgiav3YkvKP
-	 qKxcue28MjWmWOC/84DRmFIKBkxDuGneaPZgziUVCgSZAEtRlufmMPXdw7iO4jUoK2
-	 WVq6cMnX7DbFLibwajLs4ilEWDByLBAIUVmk6fWj1bcU+caW7GE/0qt4MKDYJOIipg
-	 +kBbX99LLuaceYP3eqCPNN7xByWasid7Z6SSQVi+GoOtOKtxsrRDcjDLB3sOiKhR3H
-	 CtKGkwg7AJaag==
-Date: Thu, 28 Nov 2024 19:47:58 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, workflows@vger.kernel.org, Hans Verkuil
- <hverkuil@xs4ll.nl>
-Subject: Re: [PATCH] docs: media: document media multi-committers rules and
- process
-Message-ID: <20241128194758.7d2e7656@foz.lan>
-In-Reply-To: <87iks7wqi3.fsf@intel.com>
-References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
-	<20241126151930.GA5493@pendragon.ideasonboard.com>
-	<20241127103948.501b5a05@foz.lan>
-	<20241127111901.GG31095@pendragon.ideasonboard.com>
-	<CAKMK7uFZsc+-Os+Pb9MHHbdt1K5Pj+D069d-+FvsDeeWgeZASw@mail.gmail.com>
-	<87iks7wqi3.fsf@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732819979; c=relaxed/simple;
+	bh=bxhU+2R6fKMNp8QczFnE1XT/oKlNnt7oabQLskWLBeY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jUb5SkiwTfSyuW3/b6gNc1b3yoXsnYRdTGwkR+rPz75Bn580MAS0fU4eLlOexBtcYrarurUXGZvpGIQ5EZ8edOfgbY8zi1jiY3wF1RkrRQbu3t/kxmkZoNgFch3UR98ay01pnPfQsWiHviAurE3CEVXiebinK9ZUvQYyuXz1qkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xxp6Frrc; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732819974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gv3YNayreJui3brbt7+Hve2t+AzYfQ9bh9cAAPetcn4=;
+	b=Xxp6FrrceyJTjdDN3m+S/IsSGu/HG1Ppbl1u3Ziiy3Xv3rnr4dtNaCCAeChL/bLp4+37UW
+	LLmyk5NJtwz6L3ftu+/cxYejszbjwfxZoFNToTUezjm5VSOWs7CiESAhGfWEAl7JB/PqvZ
+	tQnabmOQQ6dJqzNIqYQiPcZs1j/Y334=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>,  Xiubo Li <xiubli@redhat.com>,
+  Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
+ doing a file read
+In-Reply-To: <CAO8a2SjHq0hi22QdmaTH2E_c1vP2qHvy7JWE3E1+y3VhEWbDaw@mail.gmail.com>
+	(Alex Markuze's message of "Thu, 28 Nov 2024 20:19:31 +0200")
+References: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
+	<87ldxvuwp9.fsf@linux.dev>
+	<CAO8a2SjWXbVxDy4kcKF6JSesB=_QEfb=ZfPbwXpiY_GUuwA8zQ@mail.gmail.com>
+	<87mshj8dbg.fsf@orpheu.olymp>
+	<CAO8a2SjHq0hi22QdmaTH2E_c1vP2qHvy7JWE3E1+y3VhEWbDaw@mail.gmail.com>
+Date: Thu, 28 Nov 2024 18:52:45 +0000
+Message-ID: <87zflj6via.fsf@orpheu.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-Em Thu, 28 Nov 2024 13:24:04 +0200
-Jani Nikula <jani.nikula@intel.com> escreveu:
+Hi!
 
-> On Wed, 27 Nov 2024, Simona Vetter <simona.vetter@ffwll.ch> wrote:
-> > Jumping in the middle here with some clarifications.
-> >
-> > On Wed, 27 Nov 2024 at 12:19, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:  
-> >> On Wed, Nov 27, 2024 at 10:39:48AM +0100, Mauro Carvalho Chehab wrote:  
-> >> > It is somewhat similar to drm-intel and drm-xe, where reviews are part
-> >> > of the acceptance criteria to become committers.  
-> >>
-> >> Those are corporate trees, so it's easier to set such rules.  
-> >
-> > Imo it's the other way round, because it's corporate you need stricter
-> > rules and spell them all out clearly - managers just love to apply
-> > pressure on their engineers too much otherwise "because it's our own
-> > tree". Totally forgetting that it's still part of the overall upstream,
-> > and that they don't own upstream.  
-> 
-> The required commits and reviews to become a committer may sound
-> somewhat artificial and arbitrary, but it's a sort of compromise. The
-> goal is to have a relatively low bar for entry, while ensuring the
-> committers have just enough experience to judge whether a patch passes
-> merge criteria (more on that below). It's also the same for everyone,
-> and something to strive for.
+On Thu, Nov 28 2024, Alex Markuze wrote:
+> On Thu, Nov 28, 2024 at 7:43=E2=80=AFPM Luis Henriques <luis.henriques@li=
+nux.dev> wrote:
+>>
+>> Hi Alex,
+>>
+>> [ Thank you for looking into this. ]
+>>
+>> On Wed, Nov 27 2024, Alex Markuze wrote:
+>>
+>> > Hi, Folks.
+>> > AFAIK there is no side effect that can affect MDS with this fix.
+>> > This crash happens following this patch
+>> > "1065da21e5df9d843d2c5165d5d576be000142a6" "ceph: stop copying to iter
+>> > at EOF on sync reads".
+>> >
+>> > Per your fix Luis, it seems to address only the cases when i_size goes
+>> > to zero but can happen anytime the `i_size` goes below  `off`.
+>> > I propose fixing it this way:
+>>
+>> Hmm... you're probably right.  I didn't see this happening, but I guess =
+it
+>> could indeed happen.
+>>
+>> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> > index 4b8d59ebda00..19b084212fee 100644
+>> > --- a/fs/ceph/file.c
+>> > +++ b/fs/ceph/file.c
+>> > @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
+>> > loff_t *ki_pos,
+>> >         if (ceph_inode_is_shutdown(inode))
+>> >                 return -EIO;
+>> >
+>> > -       if (!len)
+>> > +       if (!len || !i_size)
+>> >                 return 0;
+>> >         /*
+>> >          * flush any page cache pages in this range.  this
+>> > @@ -1200,12 +1200,11 @@ ssize_t __ceph_sync_read(struct inode *inode,
+>> > loff_t *ki_pos,
+>> >                 }
+>> >
+>> >                 idx =3D 0;
+>> > -               if (ret <=3D 0)
+>> > -                       left =3D 0;
+>>
+>> Right now I don't have any means for testing this patch.  However, I don=
+'t
+>> think this is completely correct.  By removing the above condition you're
+>> discarding cases where an error has occurred (i.e. where ret is negative=
+).
+>
+> I didn't discard it though :).
+> I folded it into the `if` statement. I find the if else construct
+> overly verbose and cumbersome.
+>
+> +                       left =3D (ret > 0) ? ret : 0;
+>
 
-We used to have a low bar for entry on our past multi-committers
-model (back in 2005-2007). It was a disaster, as one of the
-committer did very evil things. He was blocked, but that didn't
-prevent some of us to be threatened with physical violence - and 
-some people even reported death threats.
+Right, but with your patch, if 'ret < 0', we could still hit the first
+branch instead of that one:
 
-So, let's start slow to ensure that things like that won't ever
-happen again.
+		if (off + ret > i_size)
+			left =3D (i_size > off) ? i_size - off : 0;
+		else
+			left =3D (ret > 0) ? ret : 0;
 
-> Frankly, I'm not fond of the invite-only model. You need to be careful
-> to not lose transparency.
-
-The intent is to be as transparent as possible without violating regulations
-like GPDR.
-
-> It can be scary to have a lot of committers. You put a lot of trust in
-> them. But at the same time, you do monitor what's going on, and can
-> revert commits - and commit rights, if needed.
-
-The scariest part is to receive threats like what happened in the past.
-Some were publicly documented; others happened via private talks and
-e-mails.
-
-> > So that's why the corporate trees are stricter than drm-misc, but the
-> > goals are still exactly the same:
-> >
-> > - peer review is required in a tit-for-tat market, but not more.
-> >
-> > - committers push their own stuff, that's all. Senior committers often
-> >   also push other people's work, like for smaller work they just reviewed
-> >   or of people they mentor, but it's not required at all.  
-> 
-> I think it's also important to define merge criteria. A set of rules by
-> which a committer can commit. And it's not really about technical
-> checkboxes. For example, in drm it really boils down to two things: at
-> least two people have been involved, and there are no open issues.
-
-That's the same criteria we're aiming for. We'll start without
-two people reviewing, as there won't be enough committers at the
-beginning for that, but maintainers may revert/rebase the tree in
-case they don't agree with changes.
-
-> (And have those people recorded in git trailers with Sob/Rb/Ab, with
-> tooling to ensure that's the case. There are very few commis in
-> drm-misc/drm-intel without either 2xSob, Sob+Rb, or Sob+Ab.)
-
-We added a CI engine to check this and other issues. If CI fails,
-commit will be automatically be blocked.
-
-> > - maintainership duties, like sending around pr, making sure patches dont
-> >   get lost and things like that, is separate from commit rights. In my
-> >   opinion, if you tie commit rights to maintainership you're doing
-> >   something else than drm and I'd more call it a group maintainership
-> >   model, not a commit rights model for landing patches.  
-> 
-> Agreed. Personally, I like the committer/maintainer model, because it's
-> a low barrier to entry, with limited responsibilities. Not everyone
-> wants to become even a committer, and the more loaded it becomes, even
-> less so. Yet the committers help maintainers immensely, and you grow a
-> pool of people who can become maintainers.
-
-Currently, for most of the drivers, the number of committers per driver
-is equal to the number of maintainers for the same driver.
-
-So, on this stage, we're aiming on get maintainers commit rights,
-starting with the ones that are long time contributors and regularly
-participate at the media summits.
-
-Once the "slow start" phase finishes, we can review the process and
-start thinking on getting more developers and committers.
-
-> > Anyway just figured I'll clarify what we do over at drm. I haven't looked
-> > at all the details of this proposal here and the already lengthy
-> > discussion, plus it's really not on me to chime in since I'm not involved.  
-> 
-> To be honest, IMO the length is one of the shortcomings of the
-> proposal. Lots of up front process, which will inevitably have to be
-> ironed out as you gain experience. You just won't be able to figure it
-> all out in advance.
-
-Agreed.
-
-> All that said, I commend all efforts to move towards shared
-> maintainership models, whether it's group maintainership or
-> committer/maintainer model or something in between. Just offering my
-> views here, which you're obviously free to completely ignore to your
-> benefit or detriment. ;)
-
-Thank you for you valuable feedback!
-
-Best regards,
-Mauro
+Cheers,
+--=20
+Lu=C3=ADs
 
