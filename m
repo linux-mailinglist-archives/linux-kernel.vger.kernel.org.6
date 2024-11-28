@@ -1,176 +1,630 @@
-Return-Path: <linux-kernel+bounces-424670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE009DB7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:40:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2381F9DB7DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:44:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74266B2220A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB62163AEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E29619DFA5;
-	Thu, 28 Nov 2024 12:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB0A19DF8B;
+	Thu, 28 Nov 2024 12:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIUxmkIL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VRZ4STF8"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B47195385;
-	Thu, 28 Nov 2024 12:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B82119AD87
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732797599; cv=none; b=Haw9urE2H4QtI9/h60KW9HAu6Fyup9G5AG5HixWBQnYNd/RDCHdwPxWNwFZQkbqkWUZJKbCjPfp1kzvZvCSt/oXjYB7kDAzasBFqWp3TCOaxc/ZpFMg9Fuun7blavjTx3pPZErLPBPJQKcLeTK2gPx6eRRGwRr0r+gyagSVsW0w=
+	t=1732797877; cv=none; b=MFW+Q4cLisZE15T4ldLDQ4Hh7ugPOLK7upL00LRynZ2+W7pzB5iMFYYlrEBhmPEvih/bM+vL0kQrvDT4vJtT6Ojc7VzWQPyQdyp9X/KgZdYqlSmYvhLeBU6d744ZKuQbQkHHlrhKKDecLaDaWHSP+upafVhfNHeBwVPqQNDx71Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732797599; c=relaxed/simple;
-	bh=Wod3CyOOWw+gjQSUcCKB60gjUHYWb+9QAENBYzuhgTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E0OpoWzFWJ179Rc4JcL5FHxxSLWV2p1/PhJWjdVx6Xd/vOzOj8UU6wp2t4iW38qEJ69ieMVFQsovZdCz0vZPC2RbaSHkEI0o85X+YLrkc8SBHpzJDuuZF8wU0eEfrdCl5qTe2D+8o64gClTGqysKBMiNv7y2CdCQauAhWThziMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIUxmkIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D2AC4CECE;
-	Thu, 28 Nov 2024 12:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732797599;
-	bh=Wod3CyOOWw+gjQSUcCKB60gjUHYWb+9QAENBYzuhgTw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IIUxmkILCiF3hTCaQN1uPQ46f5sngEDkjvWcGMeNZE2WO8fd5Ssb+dJkqovMiQeae
-	 u4sLpq7sZhu6jK+EcavRl8svy2ecumogdEU3MaC5lcEV4IvFT3f2IH0yR2yqDWXgJe
-	 eoFfWuHWmLs3omsoNf7HhS1QUmfEBdOjpZmitqYoRRcipcbXhajsrNLFzxzztVrxY1
-	 XuId8P6WOawhBwOTD9I/nbm6bzNUAp6JtaHhIg3A4Ay5W1LeljbG57TSxyedqo66kL
-	 GrhTh/Nku9mI8w8EuPgWAxQ+MJx7Ga/3W54xu3q4TnXYijTUtCu1+OP92F2i6ELx5V
-	 wtX40PGy0Ce8w==
-Message-ID: <cada130f-bd1f-4844-8842-89dda70e240b@kernel.org>
-Date: Thu, 28 Nov 2024 14:39:53 +0200
+	s=arc-20240116; t=1732797877; c=relaxed/simple;
+	bh=QG2Bw0CFsK65sf2F3mX/5WYEx1edRTdDsngwfiShnA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IbmHijSYLtLrBRhHlfG/GUdCaxndgAh2DFQe6Kd5xqjRzYZknPe+iqQMoHmAwQNV9qVG2fEPYIoZbiUDzSjJEop6Z0fJqay+4zPC7IVDx1asgz6Gn7CNqduFUp126taIfW+W9RQxXBtByvR70yNfCGdGRgkK2wyOI//Ddb3L9AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VRZ4STF8; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5f1e365469eso332819eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:44:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732797874; x=1733402674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bSqMTXkTPUZd0zWVWYJL3/d+zJ1ZhIGUcZSiIB4A9bo=;
+        b=VRZ4STF88RNNBpQtuIZAENpE0XJ8OiX+T4jEaoNM9PzQCoQAxTcxQVIyfZjLqL/0Wz
+         3oGHpvl8vRy3grepMZPJg3U9cpqeCCC/gt+d+iu4fZrRfVxHuHl0Lbj2ryznnHeyicmK
+         Kl5jBMMl5z4HzGMrllBzX6g30/TSaPTpz3is4mzjx9SnVgAggUA4H2Eqzw+7TAbTQFhq
+         PEI2isi0lsBz6Vx7jj2+qRWMPP1svjfL+FhApu+25lzKfGXsS9c/X6mRtEUTLhQIPM3Q
+         fpsU2s1MdiO3GfX9iCE/p6Vwn8sEl3xm/AxAtCkDUO7UoKMpvw6zIGt4r3HuDL0aA0X7
+         zaMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732797874; x=1733402674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bSqMTXkTPUZd0zWVWYJL3/d+zJ1ZhIGUcZSiIB4A9bo=;
+        b=g36o2Ybwi6KbymAedf+kdLMEEJc5RgCUyBPt3wqnjK0Q5a2S1/zGcInItztFQmRclA
+         nD24LcC5s2lVSRUCLTfKM8sj4aH+fazGpjPzj1pSCSCgfYpIjyF4OeR2trJMXSNLXjcx
+         /2Vix5YBIuWZGG2JnKXkL92V6tKxGnuGE8yIxZ3rW2u5AAnXMxgToF1xun9U0rHLPjuG
+         qfvxBMmtcEULXXNGPbd5co5HyIFekrGEmktkjH5t2vHLeLErLMlGskmBj0+aADzCPHl9
+         U/uQ8cxeK97HgamUqPwTsYsmk8J7OZK2qSMIrtMlhcNYBWjnKS1bqfJlIemYgf5U9mbw
+         5w3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUM4NkNXby97JJD/p96W5xi4d1h3AKXzPMVe9Hfqibt7ZoVhjx768yEuKH+xRK8TTnP9h+JW5/vd0LT7qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEcdIdGAs/jCpkJfI77v9LZFpx1TLw2j6DgA8T0g9uO6tXPJCN
+	nqU+o7r4bJHXP+gIOeHQKGsWKrjl7/fl1TpBRnHMBGTxkFA2wAaS2Qxx4ozxArYxt3FneYtFER9
+	racSXIr34SdaqNDdA/RM+0dnCN9+3UFjVb0hDLg==
+X-Gm-Gg: ASbGnctw7NxBNh5oH3hhP29QI6AZK5BpsFtEcoQ9n0AFETiegUlf5Y7O5U328774chT
+	E3xeGz0FQXoWXgyKclg8RtGcRbN25jIxu
+X-Google-Smtp-Source: AGHT+IE2l9PphZ2+GBX3aj5xPOUxJGGkNhIC+fc9r9Hj6e6EOjs7epigTJIu+c9v376v1jpRZSc/qApOst/qPlTw+4k=
+X-Received: by 2002:a05:6358:703:b0:1ca:9839:5d0b with SMTP id
+ e5c5f4694b2df-1cab15f7c2cmr432068055d.15.1732797873561; Thu, 28 Nov 2024
+ 04:44:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: ti/omap: gta04: fix pm issues caused by spi
- module
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Tony Lindgren <tony@atomide.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, hns@goldelico.com, linux-omap@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- aaro.koskinen@iki.fi, khilman@baylibre.com, stable@vger.kernel.org
-References: <20241107225100.1803943-1-andreas@kemnade.info>
- <b26c1fa8-b3b7-4aa9-bc78-793ddfa3bc6b@kernel.org>
- <20241108184118.5ee8114c@akair> <20241111150953.GA23206@atomide.com>
- <20241111193117.5a5f5ecb@akair> <20241111234604.66a9691b@akair>
- <20241116212734.30f5d35b@akair>
- <d1679678-8996-4484-bcf4-d4eaa6f009a4@kernel.org>
- <20241127235858.44e1ce01@akair>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241127235858.44e1ce01@akair>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241120-fix-tee_shm-refcount-upstream-v1-0-5da97f584fcd@quicinc.com>
+ <20241120-fix-tee_shm-refcount-upstream-v1-3-5da97f584fcd@quicinc.com>
+ <CAHUa44Eoxa+NfRF-XCuV-O5uVgtC3UMT0utCLrUZ4rCBREp=pQ@mail.gmail.com>
+ <3ab115bf-7ac6-452f-b760-0d631b6e75dd@quicinc.com> <CAFA6WYNBsZ5V6N676yfDgTL4jMeXtEB0xGm5zSq3BFeeCpz9Nw@mail.gmail.com>
+ <a4e474c2-80b7-45db-b1a0-37950168edf0@quicinc.com> <CAFA6WYOvMnvdhLvgOzLMyugRLPc62pHdJEGAhhwDJHRrVxCs1Q@mail.gmail.com>
+ <CAHUa44HZbODOx7N4+WiNjQwrjwo7T=bQfZ5N-EjoMmXnfC4-Lg@mail.gmail.com>
+ <CAFA6WYNbvxs-KRBkBxdD7M0Z=qLkT0ODDo-4_H5ZbZxqK4va7g@mail.gmail.com>
+ <1a9269cb-204a-472d-b495-ac44f36cf131@quicinc.com> <CAHUa44EZ2r=QRcsWfFs-ZqnTYEOpB4Ou4qpk4Y49NEPh-TTCeg@mail.gmail.com>
+ <CAFA6WYPUZN752aT7+ejoiYYoLs_XNV7w9wT7kBrE=vvEJO+8_g@mail.gmail.com>
+ <CAHUa44F7_yGQFJq6BsoCv6AfB_TjuiGP84YaQ-kz=_e1ni+xyA@mail.gmail.com>
+ <CAFA6WYORjTjfA-QTcyuvqpBOr9uoS+KVikA2mhyfdMmh5K0tiA@mail.gmail.com> <89599f39-9e95-49df-ac70-0827559653f6@quicinc.com>
+In-Reply-To: <89599f39-9e95-49df-ac70-0827559653f6@quicinc.com>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Thu, 28 Nov 2024 18:14:22 +0530
+Message-ID: <CAFA6WYMrOt=u7VNrhPRsLkQq95rgkMXd-inuSg2hLHQDjtP8=Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/3] tee: introduce orphan tee_shm and default context
+To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 28 Nov 2024 at 02:29, Amirreza Zarrabi
+<quic_azarrabi@quicinc.com> wrote:
+>
+>
+>
+> On 11/27/2024 5:01 PM, Sumit Garg wrote:
+> > On Tue, 26 Nov 2024 at 20:52, Jens Wiklander <jens.wiklander@linaro.org=
+> wrote:
+> >>
+> >> On Tue, Nov 26, 2024 at 1:27=E2=80=AFPM Sumit Garg <sumit.garg@linaro.=
+org> wrote:
+> >>>
+> >>> On Tue, 26 Nov 2024 at 14:03, Jens Wiklander <jens.wiklander@linaro.o=
+rg> wrote:
+> >>>>
+> >>>> On Mon, Nov 25, 2024 at 9:55=E2=80=AFPM Amirreza Zarrabi
+> >>>> <quic_azarrabi@quicinc.com> wrote:
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>> On 11/25/2024 6:51 PM, Sumit Garg wrote:
+> >>>>>> On Mon, 25 Nov 2024 at 12:53, Jens Wiklander <jens.wiklander@linar=
+o.org> wrote:
+> >>>>>>>
+> >>>>>>> On Mon, Nov 25, 2024 at 7:14=E2=80=AFAM Sumit Garg <sumit.garg@li=
+naro.org> wrote:
+> >>>>>>>>
+> >>>>>>>> On Mon, 25 Nov 2024 at 03:00, Amirreza Zarrabi
+> >>>>>>>> <quic_azarrabi@quicinc.com> wrote:
+> >>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Hi Sumit,
+> >>>>>>>>>
+> >>>>>>>>> Thank you so much for the comemnts :).
+> >>>>>>>>>
+> >>>>>>>>> On 11/23/2024 9:32 PM, Sumit Garg wrote:
+> >>>>>>>>>> Hi Amirreza,
+> >>>>>>>>>>
+> >>>>>>>>>> Thanks for proposing this.
+> >>>>>>>>>>
+> >>>>>>>>>> On Fri, 22 Nov 2024 at 06:38, Amirreza Zarrabi
+> >>>>>>>>>> <quic_azarrabi@quicinc.com> wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> On 11/21/2024 11:08 PM, Jens Wiklander wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>> Hi Jens,
+> >>>>>>>>>>>
+> >>>>>>>>>>>> Hi Amirreza,
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> On Thu, Nov 21, 2024 at 2:37=E2=80=AFAM Amirreza Zarrabi
+> >>>>>>>>>>>> <quic_azarrabi@quicinc.com> wrote:
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> The default context has a lifespan similar to the tee_devic=
+e.
+> >>>>>>>>>>
+> >>>>>>>>>> Since it's associated with tee_device context, let's call it o=
+bvious
+> >>>>>>>>>> via renaming it as device context instead (s/def_ctx/dev_ctx/ =
+in this
+> >>>>>>>>>> patch).
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Make sense, I'll rename it.
+> >>>>>>>>>
+> >>>>>>>>>>>>> It is used as a context for shared memory if the context to=
+ which the
+> >>>>>>>>>>>>> shared memory belongs is released, making the tee_shm an or=
+phan.
+> >>>>>>>>>>>>> This allows the driver implementing shm_unregister to safel=
+y make
+> >>>>>>>>>>>>> subsequent calls, such as to a supplicant if needed.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> It also enables users to free the shared memory while the d=
+river is
+> >>>>>>>>>>>>> blocked on unregister_tee_device safely.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Preferably, this should be used for all driver internal use=
+s, using
+> >>>>>>>>>>>>> teedev_get_def_context rather than calling teedev_open.
+> >>>>>>>>>>
+> >>>>>>>>>> Makes sense to me.
+> >>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+> >>>>>>>>>>>>> ---
+> >>>>>>>>>>>>>  drivers/tee/optee/core.c    |  2 +-
+> >>>>>>>>>>>>>  drivers/tee/optee/ffa_abi.c |  2 +-
+> >>>>>>>>>>>>>  drivers/tee/optee/smc_abi.c |  2 +-
+> >>>>>>>>>>>>>  drivers/tee/tee_core.c      | 83 +++++++++++++++++++++++++=
+++++----------------
+> >>>>>>>>>>>>>  drivers/tee/tee_private.h   |  3 --
+> >>>>>>>>>>>>>  drivers/tee/tee_shm.c       | 18 ++--------
+> >>>>>>>>>>>>>  include/linux/tee_core.h    | 15 ++++++++
+> >>>>>>>>>>>>>  include/linux/tee_drv.h     |  7 ----
+> >>>>>>>>>>>>>  8 files changed, 73 insertions(+), 59 deletions(-)
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/c=
+ore.c
+> >>>>>>>>>>>>> index c75fddc83576..78d43d0c8014 100644
+> >>>>>>>>>>>>> --- a/drivers/tee/optee/core.c
+> >>>>>>>>>>>>> +++ b/drivers/tee/optee/core.c
+> >>>>>>>>>>>>> @@ -173,7 +173,7 @@ void optee_remove_common(struct optee *=
+optee)
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>         optee_notif_uninit(optee);
+> >>>>>>>>>>>>>         optee_shm_arg_cache_uninit(optee);
+> >>>>>>>>>>>>> -       teedev_close_context(optee->ctx);
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>         /*
+> >>>>>>>>>>>>>          * The two devices have to be unregistered before w=
+e can free the
+> >>>>>>>>>>>>>          * other resources.
+> >>>>>>>>>>>>> diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/opte=
+e/ffa_abi.c
+> >>>>>>>>>>>>> index f3af5666bb11..6ad94f0788ad 100644
+> >>>>>>>>>>>>> --- a/drivers/tee/optee/ffa_abi.c
+> >>>>>>>>>>>>> +++ b/drivers/tee/optee/ffa_abi.c
+> >>>>>>>>>>>>> @@ -949,7 +949,7 @@ static int optee_ffa_probe(struct ffa_d=
+evice *ffa_dev)
+> >>>>>>>>>>>>>         optee_shm_arg_cache_init(optee, arg_cache_flags);
+> >>>>>>>>>>>>>         mutex_init(&optee->rpmb_dev_mutex);
+> >>>>>>>>>>>>>         ffa_dev_set_drvdata(ffa_dev, optee);
+> >>>>>>>>>>>>> -       ctx =3D teedev_open(optee->teedev);
+> >>>>>>>>>>>>> +       ctx =3D teedev_get_def_context(optee->teedev);
+> >>>>>>>>>>>>>         if (IS_ERR(ctx)) {
+> >>>>>>>>>>>>>                 rc =3D PTR_ERR(ctx);
+> >>>>>>>>>>>>>                 goto err_rhashtable_free;
+> >>>>>>>>>>>>> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/opte=
+e/smc_abi.c
+> >>>>>>>>>>>>> index e9456e3e74cc..c77a3e631d04 100644
+> >>>>>>>>>>>>> --- a/drivers/tee/optee/smc_abi.c
+> >>>>>>>>>>>>> +++ b/drivers/tee/optee/smc_abi.c
+> >>>>>>>>>>>>> @@ -1722,7 +1722,7 @@ static int optee_probe(struct platfor=
+m_device *pdev)
+> >>>>>>>>>>>>>         mutex_init(&optee->rpmb_dev_mutex);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>         platform_set_drvdata(pdev, optee);
+> >>>>>>>>>>>>> -       ctx =3D teedev_open(optee->teedev);
+> >>>>>>>>>>>>> +       ctx =3D teedev_get_def_context(optee->teedev);
+> >>>>>>>>>>>>>         if (IS_ERR(ctx)) {
+> >>>>>>>>>>>>>                 rc =3D PTR_ERR(ctx);
+> >>>>>>>>>>>>>                 goto err_supp_uninit;
+> >>>>>>>>>>>>> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.=
+c
+> >>>>>>>>>>>>> index 93f3b330aec8..805e1336089d 100644
+> >>>>>>>>>>>>> --- a/drivers/tee/tee_core.c
+> >>>>>>>>>>>>> +++ b/drivers/tee/tee_core.c
+> >>>>>>>>>>>>> @@ -57,7 +57,6 @@ struct tee_context *teedev_open(struct te=
+e_device *teedev)
+> >>>>>>>>>>>>>                 goto err;
+> >>>>>>>>>>>>>         }
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -       kref_init(&ctx->refcount);
+> >>>>>>>>>>>>>         ctx->teedev =3D teedev;
+> >>>>>>>>>>>>>         INIT_LIST_HEAD(&ctx->list_shm);
+> >>>>>>>>>>>>>         rc =3D teedev->desc->ops->open(ctx);
+> >>>>>>>>>>>>> @@ -73,36 +72,43 @@ struct tee_context *teedev_open(struct =
+tee_device *teedev)
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>>  EXPORT_SYMBOL_GPL(teedev_open);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -void teedev_ctx_get(struct tee_context *ctx)
+> >>>>>>>>>>>>> +struct tee_context *teedev_get_def_context(struct tee_devi=
+ce *teedev)
+> >>>>>>>>>>>>>  {
+> >>>>>>>>>>>>> -       if (ctx->releasing)
+> >>>>>>>>>>>>> -               return;
+> >>>>>>>>>>>>> +       int rc;
+> >>>>>>>>>>>>> +       struct tee_context *ctx =3D &teedev->def_ctx;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -       kref_get(&ctx->refcount);
+> >>>>>>>>>>>>> -}
+> >>>>>>>>>>>>> +       ctx->teedev =3D teedev;
+> >>>>>>>>>>>>> +       INIT_LIST_HEAD(&ctx->list_shm);
+> >>>>>>>>>>>>> +       rc =3D teedev->desc->ops->open(ctx);
+> >>>>>>>>>>>>> +       if (rc)
+> >>>>>>>>>>>>> +               return ERR_PTR(rc);
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> I think ctx->teedev and ctx->list_shm must always be initial=
+ized or
+> >>>>>>>>>>>> &teedev->def_ctx can't be used in teedev_close_context().
+> >>>>>>>>>>>
+> >>>>>>>>>>> True, but &teedev->def_ctx is never used in teedev_close_cont=
+ext().
+> >>>>>>>>>>> The closing of the &teedev->def_ctx simply ignored. So once o=
+pened,
+> >>>>>>>>>>> &teedev->def_ctx will always remain open until the tee_device=
+ is alive.
+> >>>>>>>>>>>
+> >>>>>>>>>>>> We could initialize teedev->def_ctx on the first call to tee=
+dev_open()
+> >>>>>>>>>>>> on that tee_device. We need a way to tell the
+> >>>>>>>>>>>> teedev->desc->ops->open() to the backed driver that it's ini=
+tializing
+> >>>>>>>>>>>> the default context though, or optee_open() can't handle the
+> >>>>>>>>>>>> tee-supplicant case properly.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> That's a good point. This way, it is guaranteed that there is=
+ one def_ctx
+> >>>>>>>>>>> per teedev. There should be a way to tell the open() callback=
+ that it is
+> >>>>>>>>>>> a def_ctx, so it is not registered as a supplicant context.
+> >>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>>> Should we allow this function to be called more than once fo=
+r each teedev?
+> >>>>>>>>>>>
+> >>>>>>>>>>> Yes, moving to teedev_open() will fix the issue.
+> >>>>>>>>>>>
+> >>>>>>>>>>>> Do we need serialization in this function if it's called aft=
+er the
+> >>>>>>>>>>>> driver is probed?
+> >>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> True. I'll make sure there is no race.
+> >>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -static void teedev_ctx_release(struct kref *ref)
+> >>>>>>>>>>>>> -{
+> >>>>>>>>>>>>> -       struct tee_context *ctx =3D container_of(ref, struc=
+t tee_context,
+> >>>>>>>>>>>>> -                                              refcount);
+> >>>>>>>>>>>>> -       ctx->releasing =3D true;
+> >>>>>>>>>>>>> -       ctx->teedev->desc->ops->release(ctx);
+> >>>>>>>>>>>>> -       kfree(ctx);
+> >>>>>>>>>>>>> +       return ctx;
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>> +EXPORT_SYMBOL_GPL(teedev_get_def_context);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -void teedev_ctx_put(struct tee_context *ctx)
+> >>>>>>>>>>>>> +void teedev_close_context(struct tee_context *ctx)
+> >>>>>>>>>>>>>  {
+> >>>>>>>>>>>>> -       if (ctx->releasing)
+> >>>>>>>>>>>>> +       struct tee_device *teedev =3D ctx->teedev;
+> >>>>>>>>>>>>> +       struct tee_shm *shm;
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +       if (ctx =3D=3D &teedev->def_ctx)
+> >>>>>>>>>>>>>                 return;
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -       kref_put(&ctx->refcount, teedev_ctx_release);
+> >>>>>>>>>>>>> -}
+> >>>>>>>>>>>>> +       teedev->desc->ops->release(ctx);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -void teedev_close_context(struct tee_context *ctx)
+> >>>>>>>>>>>>> -{
+> >>>>>>>>>>>>> -       struct tee_device *teedev =3D ctx->teedev;
+> >>>>>>>>>>>>> +       mutex_lock(&teedev->mutex);
+> >>>>>>>>>>>>> +       list_for_each_entry(shm, &ctx->list_shm, link) {
+> >>>>>>>>>>>>> +               /* Context released. However, shm still hol=
+ding a teedev reference.
+> >>>>>>>>>>>>> +                * Replace shm->ctx with the default contex=
+t so that tee_shm_get_from_id()
+> >>>>>>>>>>>>> +                * fails (i.e. it is not accessible from us=
+erspace) but shm still
+> >>>>>>>>>>>>> +                * holds a valid context for further clean =
+up, e.g. shm_unregister().
+> >>>>>>>>>>>>> +                */
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> /*
+> >>>>>>>>>>>>  * Please format
+> >>>>>>>>>>>>  * multiline comments
+> >>>>>>>>>>>>  * like this. Please
+> >>>>>>>>>>>>  * keep the lines at
+> >>>>>>>>>>>>  * max 80 columns
+> >>>>>>>>>>>>  * here and at other
+> >>>>>>>>>>>>  * places in the patch-
+> >>>>>>>>>>>>  * set.
+> >>>>>>>>>>>>  */
+> >>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> Ack.
+> >>>>>>>>>>>
+> >>>>>>>>>>>>> +               shm->ctx =3D &teedev->def_ctx;
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> shm->ctx will always point to a valid context, even if it is=
+ the
+> >>>>>>>>>>>> default context. It seems that we can always get hold of the=
+ correct
+> >>>>>>>>>>>> teedev via shm->ctx->teedev. Do we need "tee: revert removal=
+ of
+> >>>>>>>>>>>> redundant teedev in struct tee_shm"?
+> >>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> It was there in case we wanted to use NULL, but with def_ctx,=
+ it is not
+> >>>>>>>>>>> necessary. I am withdrawing that commit. :).
+> >>>>>>>>>>>
+> >>>>>>>>>>>> Shouldn't the shm be removed from the ctx->list_shm and be m=
+oved to
+> >>>>>>>>>>>> teedev->def_ctx.list_shm?
+> >>>>>>>>>>
+> >>>>>>>>>> +1
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Ack.
+> >>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> Not really. If we put shm in the teedev->def_ctx.list_shm, by=
+ the time
+> >>>>>>>>>>> we are closing the def_ctx, the list is guaranteed to be empt=
+y.
+> >>>>>>>>>>>
+> >>>>>>>>>>> However, I understand it is cleaner and more consistent to do=
+ that rather
+> >>>>>>>>>>> than making changes to tee_shm_put().
+> >>>>>>>>>>>
+> >>>>>>>>>>> I'll do it.
+> >>>>>>>>>>>
+> >>>>>>>>>>>>> +       }
+> >>>>>>>>>>>>> +       mutex_unlock(&teedev->mutex);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> -       teedev_ctx_put(ctx);
+> >>>>>>>>>>>>> +       kfree(ctx);
+> >>>>>>>>>>>>>         tee_device_put(teedev);
+> >>>>>>>>>>>>>  }
+> >>>>>>>>>>>>>  EXPORT_SYMBOL_GPL(teedev_close_context);
+> >>>>>>>>>>>>> @@ -946,6 +952,8 @@ struct tee_device *tee_device_alloc(con=
+st struct tee_desc *teedesc,
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>         teedev->desc =3D teedesc;
+> >>>>>>>>>>>>>         teedev->pool =3D pool;
+> >>>>>>>>>>>>> +       /* Only open default context when teedev_get_def_co=
+ntext() called. */
+> >>>>>>>>>>>>> +       teedev->def_ctx.teedev =3D NULL;
+> >>>>>>>>>>
+> >>>>>>>>>> Why don't you open the device context here only? This will ass=
+ociate
+> >>>>>>>>>> it automatically with teedev lifespan and then
+> >>>>>>>>>> teedev_get_def_context() will just return a reference to that.
+> >>>>>>>>>>
+> >>>>>>>>>> -Sumit
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> So my assumption is that the tee_devic_alloc() is called as par=
+t of
+> >>>>>>>>> the driver initialization; there is no guarantee that at this t=
+ime the
+> >>>>>>>>> driver is actually ready to accept any open() callback.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> The drivers should be able to handle open() callback since we al=
+ready
+> >>>>>>>> check for !teedesc->ops->open in the beginning of tee_devic_allo=
+c().
+> >>>>>>>> Also, we need to open a device context for !TEE_DESC_PRIVILEGED =
+such
+> >>>>>>>> that we don't open a supplicant device context there.
+> >>>>>>>
+> >>>>>>> It would be nice to have the device context fully initialized whe=
+n the
+> >>>>>>> probe function returns. How about adding a "bool is_dev_ctx" to s=
+truct
+> >>>>>>> tee_context so the open() callback can tell that this is a specia=
+l
+> >>>>>>> tee_contex?
+> >>>>>>
+> >>>>>> Sure, that will be useful to distinguish the device context from
+> >>>>>> normal client context.
+> >>>>>>
+> >>>>>> -Sumit
+> >>>>>>
+> >>>>>
+> >>>>> So, as far as the open() callback, I do not believe checking if it =
+is not null
+> >>>>> is reasonable for calling it here. Most drivers allocate resources =
+and then
+> >>>>> initialize them. So, assume these steps for a TEE driver:
+> >>>>>  (1) allocate internal data structures,
+> >>>>>  (2) allocate the device,
+> >>>>>  (3) initialize the internal data structurse and then
+> >>>>>  (4) register the device.
+> >>>>>
+> >>>>> Having these steps for a backend driver means that if you call open=
+() at
+> >>>>> step (2), the internal data structures are not ready.
+> >>>
+> >>> As part of tee_device_alloc(), every driver has to pass "const struct
+> >>> tee_desc *teedesc" fully initialized. Which internal data structures
+> >>> are you referring too? Is there any upstream example?
+> >>
+> >> It's reasonable to wait with the open() callback until step 4 above,
+> >> which should correspond with the tee_device_register() call. Data
+> >> written only once doesn't need serialized access if the fields are
+> >> only accessed after they have been fully initialized.
+> >
+> > Fair enough, I can live with the device context opened after registerin=
+g it.
+> >
+> >>
+> >>>
+> >>>>>
+> >>>>> I was originally thinking of going with Jens' suggestion to open de=
+v_ctx in
+> >>>>> the teedev_open(), and use a flag to distinguish the type of contex=
+t for
+> >>>>> the open() callback
+> >>>>>
+> >>>>> What about this:
+> >>>>> Open the dev_ctx in the tee_device_register(), at the last step bef=
+ore
+> >>>>> setting the TEE_DEVICE_FLAG_REGISTERED flag. Then the open() callba=
+ck can
+> >>>>> check for this flag to determine if it is a normal context or dev_c=
+tx.
+> >>>>> If the open() is called while the device has not been registered, i=
+t should
+> >>>>> handle it differently
+> >>>>
+> >>>> That makes sense, the driver should be prepared to handle open() cal=
+ls
+> >>>> after tee_device_register() anyway.
+> >>>> However, there is no serialization of the flags field in struct
+> >>>> tee_device. Hmm, would it be too hacky for the open() callback to
+> >>>> check if &ctx->teedev.dev_ctx =3D=3D ctx? We could add a helper func=
+tion
+> >>>> to wrap that check.
+> >>>>
+> >>>
+> >>> Your suggested change requires every driver to update open() callback
+> >>> and later other callbacks may have to support it too. IMHO, only
+> >>> teedev_get_dev_ctx() should be able to return a reference to device
+> >>> context for usage within the TEE and the implementation driver.
+> >>
+> >> Yes, but it's only the OP-TEE driver that needs anything special. It
+> >> looks like the others can be left unchanged.
+> >
+> > I suppose it's most likely the upcoming QTEE driver requiring it.
+> >
+>
+> I don't believe this is correct. This requirement is implicitly imposed
+> by the TEE subsystem API. If calling open() is acceptable in
+> tee_device_alloc(), then I could argue that tee_device_register() and
+> tee_device_alloc() should be merged into a single function. If a driver
+> is ready to handle requests, why delay its exposure by postponing the
+> registration?
 
+You can't mix in device alloc/init with device registration. As soon
+as you register a device, it's available for user-space to issue
+IOCTLs. So if there is any race between device init and it's usage
+then it's going to cause hard to debug issues.
 
-On 28/11/2024 00:58, Andreas Kemnade wrote:
-> Am Mon, 18 Nov 2024 15:08:48 +0200
-> schrieb Roger Quadros <rogerq@kernel.org>:
-> 
->> On 16/11/2024 22:27, Andreas Kemnade wrote:
->>> Am Mon, 11 Nov 2024 23:46:04 +0100
->>> schrieb Andreas Kemnade <andreas@kemnade.info>:
->>>   
->>>> Am Mon, 11 Nov 2024 19:31:17 +0100
->>>> schrieb Andreas Kemnade <andreas@kemnade.info>:
->>>>  
->>>>> Am Mon, 11 Nov 2024 17:09:53 +0200
->>>>> schrieb Tony Lindgren <tony@atomide.com>:
->>>>>     
->>>>>> * Andreas Kemnade <andreas@kemnade.info> [241108 17:41]:      
->>>>>>> They are not used, if they are just disabled, kernel does not touch
->>>>>>> them, so if it is there, the kernel can handle
->>>>>>> pm. At least as long as it is not under ti,sysc.
->>>>>>>
->>>>>>> There are probably cleaner solutions for this, but for a CC: stable I
->>>>>>> would prefer something less invasive.        
->>>>>>
->>>>>> For unused devices, it's best to configure things to use ti-sysc, and
->>>>>> then set status disabled (or reserved) for the child devices only. This
->>>>>> way the parent interconnect target module is PM runtime managed by
->>>>>> Linux, and it's power domain gets properly idled for the unused devices
->>>>>> too.
->>>>>>       
->>>>> Hmm, we also have omap_hwmod_setup_all() which is still called if
->>>>> without device nodes being available.
->>>>>
->>>>> Converting mcspi to ti-sysc is more than 100 lines. So it does not
->>>>> qualify for stable.
->>>>>     
->>>>>>> I can try a ti-sysc based fix in parallel.        
->>>>>>
->>>>>> Yeah that should be trivial hopefully :)
->>>>>>       
->>>>> I played around, got pm issues too, tried to force-enable things (via
->>>>> power/control),
->>>>> watched CM_IDLEST1_CORE and CM_FCLKEN1_CORE, they behave. Bits are set
->>>>> or reset.
->>>>>
->>>>> but not CM_IDLEST_CKGEN, it is 0x209 instead of 0x1.
->>>>>
->>>>> I test from initramfs, so no mmc activity involved
->>>>>
->>>>> removing status = "disabled" from mcspi3 solves things.
->>>>> With and without ti-sysc conversion. removing status = "disabled" from
->>>>> mcspi4 seems not to help.
->>>>>
->>>>> That all cannot be... I will retry tomorrow.
->>>>>     
->>>> well, I tried a bit further:
->>>> I build the omap spi driver as module.
->>>> and booted With mcspi3 not disabled and no module autoload.
->>>>
->>>> without module loaded: pm bad, same as with mcspi3 disabled
->>>> with module loaded: core pm ok
->>>> with module loaded and unloaded: core pm ok.
->>>>
->>>> so at least a trace.
->>>>  
->>> ok, I am a bit further.
->>> mcspi is per default in slave mode, setting it to master solves issues.
->>> And that happens when the driver is probed because its default is
->>> master.
->>> Having the pins muxed as mode 7 also helps or selecting a pulldown for
->>> cs. (cs is active high per default!)
->>> switching to pullup does not harm once the spi module is off, but having
->>> active cs seems to prevent idling despite CM_IDLEST1_CORE
->>> not showing it.
->>>
->>> History: u-boot muxes McSPI3, because it can be available on an
->>> optionally fitted pin header. But there is no user known (would need
->>> a dtb overlay anyways). So I will rather mux to mode 7.  
->>
->> I'm sorry I didn't fully understand the problem.
->>
->> So, u-boot configures pinmux for McSPI3 and enables McSPI3 as well
->> but fails to disable it properly?
-> 
-> At least it sets Pinmux.
->  
->> And because McSPI3 is in slave mode and CS is active it fails to
->> transition to idle in Linux?
-> 
-> yes, slave mode is default.
->>
->> So isn't this a u-boot issue?
->>
-> Just telling u-boot to not mux McSPI3 helps. So, yes u-boot should not
-> set it. But. I have no clear idea how bitrot the u-boot update process
-> is. I would prefer setting the pinmux also in kernel back to the
-> default.
-> 
-That would be fine.
+There can be an argument that dev_ctx being a member of "struct
+tee_device" so it should get initialized alongside other bits in
+tee_device_alloc() (we can rename
+s/tee_device_alloc()/tee_device_init()/ if that makes it obvious). But
+I can live with the device context getting initialized as the first
+thing in tee_device_register() avoiding the race window mentioned
+above.
 
--- 
-cheers,
--roger
+>
+> By calling open() in tee_device_alloc(), you indirectly impose an unspoke=
+n
+> requirement on developers regarding how they should write their drivers,
+> such as the steps they should take to probe the device.
 
+Still not sure why it isn't an explicit requirement when you are
+already passing an initialized ops structure to tee_device_alloc().
+
+-Sumit
+
+>
+> Regards,
+> Amir
+>
+> >>
+> >>>
+> >>> I am still not able to understand why the following won't work with a
+> >>> clear lifetime for the device context?
+> >>>
+> >>> tee_device_alloc()
+> >>>   -> if (!(teedesc->flags & TEE_DESC_PRIVILEGED))
+> >>> desc->ops->open(&teedev->dev_ctx);
+> >>
+> >> We must also have a fully initialized dev_ctx for the supplicant
+> >> device.
+> >
+> > Currently I only see following for OP-TEE driver:
+> >
+> > ctx =3D teedev_open(optee->teedev);
+> >
+> > And I can't see anything like below:
+> >
+> > ctx =3D teedev_open(optee->supp_teedev);
+> >
+> > Where do you think that the dev_ctx is required for a supplicant
+> > device? AFAICS, currently opening a context with the supplicant device
+> > means that the supplicant daemon is available to handle RPCs which
+> > won't be possible during OP-TEE driver probe. Am I missing something?
+> >
+> >> I'd rather delay the open() callback until
+> >> tee_device_register() since the dev_ctx is guaranteed not to be needed
+> >> before that.
+> >
+> > Okay, the updated call chain can look like:
+> >
+> > tee_device_register()
+> >   -> if (!(teedev->desc->flags & TEE_DESC_PRIVILEGED))
+> >          desc->ops->open(&teedev->dev_ctx);
+> >>
+> >>>
+> >>> tee_device_put()
+> >>>   -> if (teedev->dev_ctx) desc->ops->release(&teedev->dev_ctx);
+> >>
+> >> teedev->dev_ctx is supposed to be embedded in struct tee_device, so
+> >> the if isn't needed.
+> >
+> > I added "if" to cover the case when dev_ctx is not initialized for the
+> > supplicant device.
+> >
+> > -Sumit
+> >
+> >>
+> >> Cheers,
+> >> Jens
+> >>
+> >>>
+> >>> -Sumit
+> >>>
+> >>>> Cheers,
+> >>>> Jens
+> >>>>
+> >>>>>
+> >>>>> - Amir
+> >>>>>
+> >>>>>>>
+> >>>>>>> Cheers,
+> >>>>>>> Jens
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> -Sumit
 
