@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-424525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2109DB55B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:09:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D262169A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:09:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A27199FC1;
-	Thu, 28 Nov 2024 10:07:58 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3DE9DB560
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:09:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71BF1922FA;
-	Thu, 28 Nov 2024 10:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37E3283893
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:09:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28DE19AD8B;
+	Thu, 28 Nov 2024 10:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NkDWXMtE"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255071925A2
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732788477; cv=none; b=M17pRloEyiQmdywkm+lWC2vRvavYCtKmD9mo9fvqoBakHmbSWg02BHL0JCF7bjNoBYcVxJMbTus0FWPgVCiocxcIQClZ/pnhxIjEYoJLzbsQGiqRsta6lJkrQG1i2HDqfv2Uf5R5ITXuR18F7x/Ocmj7twcPAkSrAeBl/5PSBaA=
+	t=1732788487; cv=none; b=NO+S5GkLZNJWcBR4PPQf05XTlKkYW+BVVtCrcO+MTpLlzqlX1PwIO8ILq7v2oMnqE9k//pntaNmkj6Rz8G1Y6XmhbOJOcjQTKREAHmkUfWufpAOt/ZUVmgvvZ/y/Gzu6/VBky0soRA16zpP/zBHRc+w+j5oO1l9ScpFJaolVrMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732788477; c=relaxed/simple;
-	bh=F/+paQrCzgnUEe9H/qWGDdTSwyqz6J+WBIAfJTb6Gt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=arffmYJLi3gLmyuQPcp/VzcoLGWHBsb3VQ6UmSBZGBIY0R1h1vVg66mAanGlGRQQrRZy9KJtPQTsV7qLkQFuW3MexdRcEvw1V7xLwKTdGaLmUyfmnzOJ6UJF4ZZm8IgS59WVKHQJ1/0HQwnLQdbz1GTXnzKfWrd/A09N55lEt8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XzWWZ24zQz9v7JQ;
-	Thu, 28 Nov 2024 17:40:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id E92AE1402C4;
-	Thu, 28 Nov 2024 18:07:52 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAnj365QEhn6eNzAg--.15234S9;
-	Thu, 28 Nov 2024 11:07:52 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 7/7] ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
-Date: Thu, 28 Nov 2024 11:06:20 +0100
-Message-ID: <20241128100621.461743-8-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.47.0.118.gfd3785337b
-In-Reply-To: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1732788487; c=relaxed/simple;
+	bh=8skcluPb5KySGbl1QWIwfG/p2EUmL9ffmC8AK029src=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NmhNbRH4BRqPz5PRSL7wxb09QgFD/bKTXeap4k7quYbpM7UFfrXN/xidzHpQr75Z5YXXhJQFOFu+toEaDVDUznxku0QeFabgdf9krkOWGE/ZTM0TcEnBZoX/TDk1SvBG9hrqhylCH89+ood0KksK8akx5a9H1lL/8xdfuz73FIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NkDWXMtE; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-382411ea5eeso372639f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732788484; x=1733393284; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ng5DukXBHLhyQt4qj69S1LcwJvUdoL890VdhX9vWftk=;
+        b=NkDWXMtEiEgkdf2nyciQK+m929XqkDiGznG4NGaDR0d0lXIYdFrSAu5MRnKpJE13tC
+         mgeRc2IQtYfZoTg69wx/rXysL0mgd7IRNYJXKOPq0/4Tp0AZrIXrshg+Wjaa2l8vxtpQ
+         U5AAYFgCiHdBk2XyPJN+M7hyg3unBiHbmymq0cYoUn/IxmxUty7s5qvuSrTuKjh7EyNl
+         +phzP61SUbrXVMrwycmaMsdPoPxGsRg6c2gC8ljJHkx0p6izNXByFy+NMcwn/TNN/qAU
+         gVQe0xEuVhRF4ad6by/kCbHNp3bJHu/0wF++bAl6wEuVyOCsUB0bhc1qxmD55+/VtyKm
+         EE7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732788484; x=1733393284;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ng5DukXBHLhyQt4qj69S1LcwJvUdoL890VdhX9vWftk=;
+        b=XEEEuD1dQaZxSdYBr3nwtDzgzTEJNyd1b2pxleo2zpHXyGJoYxhqRMRQLl/+5PTkpg
+         T06W4l/n3Ki/KN5dKs/GJV8RPoGcaY8gx2/WqCcCMPBzitSp432aV6HMCBiTvGgnnR3G
+         dUJ5BlyfLxb1Ml8UovhiNIuOGpYUJDC4lOFbM2z450iqwhOTP3IFozfauI104Dp0Oh/Z
+         5tRIkFXSsCLHzXI4W2zTDQQl7LZsfmVlE81QQQjFCZLRC3uErWHpXiFMSZlJF/6g7Gw/
+         krVwvZBbtPv+em402a1aet8t8xznW5ScuvEQcoTRVDSpedRNE9cgZ2VIILhcFOyyUM/g
+         SuLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvnw26MXR5AWIUbR0siyJIRnPCfwwVd81f3v2m/1lUyZ6lsGm2LmuWKmBkGh4MG9IwMBN6xMo7wzNI9LU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOv9dFJyXMliTylnxx7en14CC/Hb+qiciASiW0GEOcl9/rZZYx
+	AtHPqOl6Fg8E2sOe+zIJitVXYihVHAWQNv5ywPCUfxikdWa3BIp5S52cSSxYBKg48j9iDwwCduO
+	Y7nQ=
+X-Gm-Gg: ASbGncsxrukCEQ3dMi3ihFtoGedmY4EqRhQW2YOuDRxuxqU1KiKoxUgu259IqwhSkgG
+	WEhtHxyWTUY9/AjCUKqbzBfqpl9rAVWkWMscvQYMbIE1WOZpMn8BgGZLGFLih+dZXJAnPvXbubA
+	QEfPMIf2J3yrxt1cKZkL5hH8PI+JRQIACrLvqg/c5lndpo3IuVlLpCzEb1ndqUKD9x5Ges/iFun
+	Z0HOdjUG7ZvgXhbcyKdTHheQ4EcElK2d+uJOqbn/tpR+o4KNuLnbFLBe97zYf81yZR3LH8=
+X-Google-Smtp-Source: AGHT+IFKf4bquwdhlK5RF968lsp14oLZ3x72nv57uo5+eQdppr+kvS8nrDbYelTP65RSzlcf0ARkng==
+X-Received: by 2002:a05:6000:156b:b0:382:4a94:af0a with SMTP id ffacd0b85a97d-385cbd80afamr1624339f8f.20.1732788484536;
+        Thu, 28 Nov 2024 02:08:04 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a56fsm1230335f8f.62.2024.11.28.02.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 02:08:04 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/2] OPP: fix buffer overflow in indexed freq and bandwidth
+ reads
+Date: Thu, 28 Nov 2024 11:07:53 +0100
+Message-Id: <20241128-topic-opp-fix-assert-index-check-v1-0-cb8bd4c0370e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwAnj365QEhn6eNzAg--.15234S9
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zry8Zw1xXF4xGw18Ary7ZFb_yoW5Jr17pa
-	9a9FyUGr40qFyIkrn3JF1aka48K3y29FWUXa15Cw1vyFsxXr1UZFyDtr17CF98Wr1SkFy2
-	qF9Iq34Yva1qyaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-	C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-	7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-	kKe7AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
-	0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvE
-	c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-	pf9x07jhXo7UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBGdH1XMCrAABsu
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPlASGcC/x2NSwqEMBAFryK9ngYTv3iVYRax7WgjJCGRQRDvb
+ uOy4NWrCwpn4QJTdUHmvxSJQcF8KqDNhZVRFmWwtW2NsSMeMQlhTAm9nOiK+gdKWPhE2ph29G3
+ vuaOGhtmB3qTMunwT3999P6bbqBZyAAAA
+X-Change-ID: 20241128-topic-opp-fix-assert-index-check-f46fe5c3c7ba
+To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=882;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=8skcluPb5KySGbl1QWIwfG/p2EUmL9ffmC8AK029src=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnSEECgem8wGWvZixDER6uQxG0aoieHbOCD2lak4Ku
+ 4W8PvaSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ0hBAgAKCRB33NvayMhJ0d7IEA
+ CM5+s+4EId7Zw8Ltfzi3AtYBAj0B0f5Sulbl77DwW+tCeIAKgBJb085B1kLM9wmGHqMq7t8w1h2zLi
+ /TxHWmZ092rTpCpgMuXwxuFExhpSP8zhOQWGHS2SYtBevFxMvapQfGCDxyCarVjmK7hxs8+QXJQvJ1
+ xen+UBbzNMkP1KNFeS0FBZ8XDB8xZMULtwmOf5kuFBNbavVc6+64NbCJWPXI/vsJi9RghDoocb7JgW
+ vCXiEBjM1Y0adPsLsr8oPJwNr8zp3cq8VX1CETunnxbGN5twd3gBs2GB9pXUYSuttiEemnZUsH8PrJ
+ FsGKrWzAshiiSNTElkaf2vkG8v6CWiMhBR4aozEtO1m5LuSRz9p76FPaTQNcr69AtJHztuCngvJLHK
+ tAMNa2s1g2NXYxWP7kb41qNZHpsyFrCHoE/n235CFNIr4wxrlxHqcRM3Qy3bDB1SlNexOWbTe9MOAf
+ Qoa03iozVAym5uweW4SYrVix06ZOoCxBqYdggEZCBQi/yDpMQE2DRBBncY2v3Xuirr/fqGlVzBGq5Z
+ T2GedGzAx++0oh9xsh+/FlP4ziAWvaU42I1JOUTWycr5OHH734W/e4MTqdxorltrImo++/aqb+s5xk
+ k8w8qIHvv7FfrWeJ7BpRee3HMPBc6H9kk8R5GILhd9t4yRXtu89dEVMFNzJQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+While fixing a crash when calling dev_pm_opp_find_bw_ceil()
+because the bandwdith table wasn't initialized, it happens
+the index is not checked aswell for indexed freq finds.
 
-Commit 11c60f23ed13 ("integrity: Remove unused macro
-IMA_ACTION_RULE_FLAGS") removed the IMA_ACTION_RULE_FLAGS mask, due to it
-not being used after commit 0d73a55208e9 ("ima: re-introduce own integrity
-cache lock").
+In order to properly fix that, pass the index to the assert
+function and add a specialized assert function for freq
+and bandwidth.
 
-However, it seems that the latter commit mistakenly used the wrong mask
-when moving the code from ima_inode_post_setattr() to
-process_measurement(). There is no mention in the commit message about this
-change and it looks quite important, since changing from IMA_ACTIONS_FLAGS
-(later renamed to IMA_NONACTION_FLAGS) to IMA_ACTION_RULE_FLAGS was done by
-commit 42a4c603198f0 ("ima: fix ima_inode_post_setattr").
-
-Restore the original change, but with new mask 0xfb000000 since the
-policy-specific flags changed meanwhile, and rename IMA_ACTION_RULE_FLAGS
-to IMA_NONACTION_RULE_FLAGS, to be consistent with IMA_NONACTION_FLAGS.
-
-Cc: stable@vger.kernel.org # v4.16.x
-Fixes: 11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAGS")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- security/integrity/ima/ima.h      | 1 +
- security/integrity/ima/ima_main.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Neil Armstrong (2):
+      OPP: add index check to assert to avoid buffer overflow in _read_freq()
+      OPP: fix dev_pm_opp_find_bw_*() when bandwidth table not initialized
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 22c3b87cfcac..32ffef2cc92a 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -141,6 +141,7 @@ struct ima_kexec_hdr {
- 
- /* IMA iint policy rule cache flags */
- #define IMA_NONACTION_FLAGS	0xff000000
-+#define IMA_NONACTION_RULE_FLAGS	0xfb000000
- #define IMA_DIGSIG_REQUIRED	0x01000000
- #define IMA_PERMIT_DIRECTIO	0x02000000
- #define IMA_NEW_FILE		0x04000000
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 712c3a522e6c..83e467ad18d4 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -277,7 +277,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 		/* reset appraisal flags if ima_inode_post_setattr was called */
- 		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
--				 IMA_NONACTION_FLAGS);
-+				 IMA_NONACTION_RULE_FLAGS);
- 
- 	/*
- 	 * Re-evaulate the file if either the xattr has changed or the
+ drivers/opp/core.c | 52 ++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 36 insertions(+), 16 deletions(-)
+---
+base-commit: 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0
+change-id: 20241128-topic-opp-fix-assert-index-check-f46fe5c3c7ba
+
+Best regards,
 -- 
-2.47.0.118.gfd3785337b
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
