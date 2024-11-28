@@ -1,93 +1,136 @@
-Return-Path: <linux-kernel+bounces-424901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149D89DBAFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:02:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE94C9DBAFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A8FBB20B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:02:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E19EB20D2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EA51BD9CB;
-	Thu, 28 Nov 2024 16:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BD01B85C2;
+	Thu, 28 Nov 2024 16:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="OLB+vq8o"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dvfMj4CR"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F153232;
-	Thu, 28 Nov 2024 16:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC9E3232
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732809755; cv=none; b=XzJxQ0Z8Yi9coDIIpvFhzjrRncBy87pci+1SJeHzwtN3dmwcNYYxUj+Vl1KzUJOVXyooWlA7id+d6iuyKC9TYjLxOMuv6Cdjaw7wQAtWWA46gcLiJY9y/3geYAq4opHpBqdwbuFxML5Uynlx/pftZ3nwx2yOXpSqi0NfbrzhhbU=
+	t=1732809774; cv=none; b=I6yEY5wJB39QvDL0qh1yw75lz3XvD5e72u3WLQnEa2Ey3o8bhKpyXI7G964jNcPdxdscORiSt0l0tRx1q7igwCW4PSzdywubYSnhLbRVoyEg4ggMJOP2LGfpSBIMZe+MxZvIUkfkWPbbMzU9K8aObRDuNtVUaivFrFFZnocXVD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732809755; c=relaxed/simple;
-	bh=uzgU4YVVYxzE6NQbwjvNbfIBTA3s/xWzLl1dj6lPkS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eJlx9lzNuW5/pULHuC8iNzvN7rbYhN8PK+ew46SGztZCN3jIqXK/HptrYtTfu+Lp+ys2a34jKobgyzxTsNISjLu0oKC4QcbIPCh4lOXLh3TzHr3T8TWXBbf3XePECLQIqqO0cTnJhQoNJjoPkN55ueVOyjqkWRFEH0kc7ze5QU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=OLB+vq8o; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1732809751;
-	bh=uzgU4YVVYxzE6NQbwjvNbfIBTA3s/xWzLl1dj6lPkS8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OLB+vq8oo2L6MUxfD72JdtT091Vr7Nta2+chT8Dy6Ce8Kl7F7Sz1czKxzk9650wYb
-	 l4SuQdfUnYzCKtjdLElmlbjkqjIiBlVJC6kWh4fjdFMWlba2Bc+H5uitg33yPPVPnF
-	 3enK9HnEc4QeYjGfB6aJD9krVPwUwum5Waoro/B/t3dyI44tGrUFMJHf4hgfYmeAtt
-	 r1p+aAc+7SiPoJ7VnXC2vFnQfvMTsUG30kUcDSHUwv014i5MbPE/t0LFiUJ0fXeabH
-	 UfNSL6PPe8vnviSSK48GZbh8amyMHXIAHA+73wzgcR98uhpDmVAeAaShHOS6kzXW6B
-	 e92BKVlkMzs5Q==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Xzh0R63rpzkFK;
-	Thu, 28 Nov 2024 11:02:31 -0500 (EST)
-Message-ID: <67b5a0d7-95a2-46d2-bb4a-69a4368abe3d@efficios.com>
-Date: Thu, 28 Nov 2024 11:02:31 -0500
+	s=arc-20240116; t=1732809774; c=relaxed/simple;
+	bh=BUgI6q4HJb2tfnAV79BpnK2T+75hJlvnbgr/WBvkzZ0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pf2lARwqO1v+9Z1ZIEg1kFysk9u3FgXDsL98wtKKe/3ejM01UrrHPkhtOWVv4U0kEh3pBwn3//nmeeY2sWWiHnrRfBHbdzuy2AFkW+Wu/dqqbRgCvBOuTkWcEBQOZ+LIb5B2jPc8owlixpE6nzc4QMecGgCwyrslhX+utr+TJd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dvfMj4CR; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434ab938e37so6332495e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:02:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732809771; x=1733414571; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cd3HIAbz5teig6mZhMhVwVj28VKONXEVKeEO3RfXUec=;
+        b=dvfMj4CR9Jngq/FAyB8FITuAKiuxerDbor06NvIatyMm/ss+jLV0Q7+lmB1VgS38pg
+         2d91w0HVwZapLiRJiX+Lqy4Z2PFyhFQByejMsixceR/BWQBhLZQVuHfJkAVp5cGL/zgx
+         BtGlDgYrKVSFV7rfv/c6RlSLg8B0wGGLs92QmlZsNord3SYo2wSOCVg0taeRjwL1ijKD
+         bb7M3ypZg30tcgIpN9lu1LAmNaloHPgNJCipd03WpjtvolVPmpj7Tm3F4/tQHv/pO8wN
+         a+3LeBOYLvbPhtwv6157f8pnfrk2U80YY/CUpCoHTETX5RInGBsU2rvyZAvqNfYJPhSl
+         /zJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732809771; x=1733414571;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cd3HIAbz5teig6mZhMhVwVj28VKONXEVKeEO3RfXUec=;
+        b=H3jaSh113WiMUwrmAedevkDhIWxoyZd67Gy9SLRMqwsoTYy+df77JYI5TmsNy2XrV4
+         XRI83SSohmj6kQzT4vsoZHDU7FgEqEr9e88gu8mlhSSjigqplTxfMlPT099eWmTWj8/K
+         cC9Gw3UK/TNUy3cy8taoRXtmveXN0mOdN7pZTPa8rX/DZF+0i3jrsMn7Dqm5Lwbse5eg
+         2C2qu/g5kiBT7gWu2GEJj7roPR5cNgwroS/4PY4U5PHDLqnKtQAzJCayySOEX1gMs9fy
+         /9cmxLXwAiWid/4V0g2uY/UP8LvcbbbKQbMsonRuCLXlt/QllW64a/LfvCamUooGOqV8
+         jNiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHfO7akmkNDqw/jmi124ztgaP/rutYfImU+tDGaLkrAoJu2XMnDkqtE86wykpFqlbKchLNziq+zFKj3xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcxyr7QzgIwNIiPGzjLcj8vJanmTtlKFbc8ILWfQx7hcofHHyL
+	XAdNHapnWy9DWxgYaCvJkc80D6ob8NKWqaa5ThDlO0HLKf+tWgg7JH0dXZ3edHo=
+X-Gm-Gg: ASbGncvCjN47TOJrEjMG75C17I/REtwJ4+Vu97RctOV3GT0W3XuINMVUT7AO9dZCAlO
+	5Yd9/j8G/KaRDlRqEhTCa0r3iUDjTu6gLQem5/B8X2r53LNIwR1vCn4OlA5dEJ2OfINtME4/ipv
+	ouo8j+CYtqEwsQ1nrlERnuFy17ROtuOLZNZ5elmsOMt0dBfOcpmoHtpCWVlFTTFKSbD16JHYFLZ
+	d+StwhYBSi9oceHSWP3mhcyIHZ0JU1PCpvZIismsxZbRYB/JA==
+X-Google-Smtp-Source: AGHT+IF8jksfRql7w6do+0ni/UEA23LaMmjUdkNNHCmXy6TaBrSlXrzm1NoY8e4VxzZ9r/opidqFLg==
+X-Received: by 2002:a05:600c:1e24:b0:434:a1d3:a30f with SMTP id 5b1f17b1804b1-434a9dbb946mr72027945e9.6.1732809769260;
+        Thu, 28 Nov 2024 08:02:49 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b89d:29e9:7047:2d6f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e5285sm57355845e9.40.2024.11.28.08.02.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 08:02:48 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Mark Brown" <broonie@kernel.org>,  "Neil Armstrong"
+ <neil.armstrong@linaro.org>,  "Michael Turquette"
+ <mturquette@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,  "Kevin
+ Hilman" <khilman@baylibre.com>,  "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
+In-Reply-To: <22f0ec0b-889f-4588-91fe-764a45870f25@app.fastmail.com> (Arnd
+	Bergmann's message of "Thu, 28 Nov 2024 16:57:05 +0100")
+References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
+	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
+	<1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
+	<f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
+	<1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
+	<306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
+	<1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+	<c06317c6-b2b2-4b6d-96e4-0c2cfc6846de@app.fastmail.com>
+	<1jplmf1jqa.fsf@starbuckisacylon.baylibre.com>
+	<ce67e512-a15b-4482-8194-b917096f4eeb@app.fastmail.com>
+	<30cd9a80-e9d8-4387-ad28-451f7f95637d@sirena.org.uk>
+	<22f0ec0b-889f-4588-91fe-764a45870f25@app.fastmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 28 Nov 2024 17:02:48 +0100
+Message-ID: <1jbjxz1h3r.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: Add WARN_ON_ONCE for syscall_nr check
-To: Steven Rostedt <rostedt@goodmis.org>, Tao Chen <chen.dylane@gmail.com>
-Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20241128115319.305523-1-chen.dylane@gmail.com>
- <20241128074623.063bf253@rorschach.local.home>
- <8d4796dc-ef5b-43d8-8ec0-3891b7994428@gmail.com>
- <20241128100324.05bc4c32@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241128100324.05bc4c32@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 2024-11-28 10:03, Steven Rostedt wrote:
-> On Thu, 28 Nov 2024 21:15:31 +0800
-> Tao Chen <chen.dylane@gmail.com> wrote:
-> 
->> Hi, Steve, thank you for your reply, as you say, so what about
->> pr_warn_once api just to print something ?
-> 
-> A better solution is for there to be a return code or something where the
-> tracers (perf or ftrace) can record in the trace that the system call is
-> not supported.
+On Thu 28 Nov 2024 at 16:57, "Arnd Bergmann" <arnd@arndb.de> wrote:
 
-Just be careful not to spam the traces uselessly. E.g. if only the
-openat syscall is enabled, you'd only want to be made aware of the
-ia32 openat, not all ia32 syscalls.
+> On Thu, Nov 28, 2024, at 16:52, Mark Brown wrote:
+>> On Thu, Nov 28, 2024 at 04:34:46PM +0100, Arnd Bergmann wrote:
+>>> On Thu, Nov 28, 2024, at 16:06, Jerome Brunet wrote:
+>>> > We are deviating a bit from the initial regression reported by Mark.
+>>> > Is Ok with you to proceed with that fix and then continue this discussion
+>>> > ?
+>>
+>>> I really don't want to see those stray 'select' statements
+>>> in there, as that leave very little incentive for anyone to
+>>> fix it properly.
+>>
+>> One option would be to get a change in defconfig for -rc1 and then deal
+>> with moving things about later.  I would very much like to have these
+>
+> That sounds ok to me.
 
-Thanks,
+With a change in the defconfig, the reset aux driver that needs fixing will
+start being used, whereas it won't be if a revert is applied
 
-Mathieu
+Fixing the driver will be a lot simpler if it is not used yet.
+
+
+>
+>        Arnd
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Jerome
 
