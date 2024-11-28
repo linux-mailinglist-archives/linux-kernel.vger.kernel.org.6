@@ -1,89 +1,169 @@
-Return-Path: <linux-kernel+bounces-425021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5223D9DBC8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:34:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D08E9DBC90
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A1EB21C94
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20E8281A9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638C31C2304;
-	Thu, 28 Nov 2024 19:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992511C2309;
+	Thu, 28 Nov 2024 19:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9W5VNT7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZXUZ7tm"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5DFAD4B;
-	Thu, 28 Nov 2024 19:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4954FAD4B;
+	Thu, 28 Nov 2024 19:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732822448; cv=none; b=lW76/d2wKm35+WAsiPprn51nNQcn+3nHVZYUroTXCJekLRMZAJqUtpM9ppaCH7PGCGBAmOyQ8mGwiiJtJsYMVqzq879rMrJ3Nj1a5UCn2HSpduori0gNgrybW3e7vrC89yTH+K89cGsVz57LVY3zK6Td8OJOg0d7ZWIZyzxllaY=
+	t=1732822508; cv=none; b=iR6dgJIrpsKVz225WH/nVaqVe8Nm2zLiB8jR1aTtYMAOr7NkXpy9l4MqO/ucrs/vwuo0xkxnfxO4aeeoBfBE4RQFmLXMXR9TS+2udcyvJAnWJPwr8xzQEyIWxM76WFME7I9aRad5SJvxG4QQJw844ZsFV8HfVSh3EAUOSzlpqZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732822448; c=relaxed/simple;
-	bh=gseeCWqiEmclO5yM18nYwsG024dsDV4mFg8cAeAR2sU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFpEFM+PDc16Zf7ComUAuglrfd6Z247SZK2gXUpHkn1ZwYSOLR/i77zvHotQ17s9vYwP6vPx7ObtBYsc83/n3jdcDUQt5OGK5LotFHa6OZxpRDSare6hNDah9MEhYl10Nvo+8jg0j1/SzFWoRjEmkWuAbXK+jzk6ygeiCl7SEMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9W5VNT7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D21A5C4CECE;
-	Thu, 28 Nov 2024 19:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732822448;
-	bh=gseeCWqiEmclO5yM18nYwsG024dsDV4mFg8cAeAR2sU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O9W5VNT7lC8p4Hi3gt79K5IovXmLguJOnCMwKxo52CcOVghHfSNHcLXOC4ibPgUt0
-	 5DrDKxIZIHVSDHIqjCws199DcUUfiJrSlAbxayZBFVqrprGMwD7fPOaQvwhg1YVHBE
-	 QBE38G7/T9zeNR1zuZz9WxUeJ0ZJZwLT4yncG4niW+J4KV1pyNajMuV8dVrdGeREhJ
-	 +ADIv762rtwMTRcpwzF/UisWkkYKMny3r48wLIn85I1CwJlopzUOUIljZbBHUGj7Ia
-	 tkir2vw0jOsutipdE5enupTzfwxsgjU320fYnNvUPOqcE1LSyjLQcsnz7eCvqQJJxn
-	 PTe0vPBtlnI2g==
-Date: Thu, 28 Nov 2024 11:34:06 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com,
-	masahiroy@kernel.org, deller@gmx.de, linux-arch@vger.kernel.org,
-	live-patching@vger.kernel.org, kris.van.hees@oracle.com
-Subject: Re: [PATCH v3] selftests: add new kallsyms selftests
-Message-ID: <Z0jFruPWqtieVLtH@bombadil.infradead.org>
-References: <20241021193310.2014131-1-mcgrof@kernel.org>
- <CAMuHMdVG3Z63BruhrnQtSadCnaKZ+hpwFDJDnitXST8fRNYoLQ@mail.gmail.com>
+	s=arc-20240116; t=1732822508; c=relaxed/simple;
+	bh=vJODEIaZ2Tk0TcMVGftBiRx4K5pn/fhJg/Vb9eMsC3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lKvG5PeEv98y5PQImgvmpyrmxtucGZyu21HqZFblVNRbP8vXR67/Tpt4vrqcnbTp1CAdkte0mNeo4kYRLd8TLYjOzg5D407uBkzr/w4LZUbWJp+jIgG5KX9oV7oPjW8QUh3CTadFTeTLhyQs2NW2O4ZNI2jID9gxEUnqYCBT70w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZXUZ7tm; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df67d6659so1811820e87.3;
+        Thu, 28 Nov 2024 11:35:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732822504; x=1733427304; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eiuBkltoshHqmQZQ6j9L1A2DeubyGCxNG0ntjnAqc2s=;
+        b=QZXUZ7tm3FZrAxqMAzDDIEMHLxCr3GdFWstaN5c2p9JwX35MJZ/r3P9DZJH+4tDBw0
+         lNwB6fFYfQo7NIKR5y0J18bVZN9x+n4RGPgHwKjADVa/e1Biea4HJQuzY9D2bI050hKV
+         s3LPM/KDdrqTJrkVlQzgiXcQB0Wr/QdPnrDu96GGmgY/GyrpsESkVWLKzQUD6IW57gM9
+         JNS4YXKs8cTBd0K9vchEuGMvAarClX5yC2XoM1sU/3mIF5kfniCrNdltovygjKwIbRmO
+         YjHV6bJXnPpU2kbdlx86MLlO5bbnZmr26d9o+K9OB7284Gv/wB5H7XwttibcM1vXuSRD
+         J9kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732822504; x=1733427304;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eiuBkltoshHqmQZQ6j9L1A2DeubyGCxNG0ntjnAqc2s=;
+        b=D770VdzYK09snhyc3VEk82EqArmOyz1fYS66IFVJMOKULdkBgAfbsJ63RGtiPlmvUs
+         rmShlYbDZ0Xgd/XN+n4DBXnEYu+QK0QNvrev7h11Ub8JIWwchZFK8A1WZ2cac6vmRVr3
+         2DYoqAi/EuTMI1Qjjt5sNOGi8Hy8u5j8cjQ5fh+Ai1vZ2EipSLZ8fqE5OQEQBOyNN08V
+         z6+vFFctePPIVHR3Gia5KPNiwDpoXZBVJNAGVMfJJmJKcfkJ9e81eDGFoQieFzAgS24U
+         R1gh3s4zNXlCQRlTzewskzTXP7mAFrJzBTp/ndXWFUw6gy9fwuO1/rasQVMPkHFkGM2R
+         ymqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTO+q73zyNXTIcWUfw/WNaBsFr25spK5l5X7eBl+QPjOCoUErkbRSOYxyQnW8q8Svbbujeahrq3FWp@vger.kernel.org, AJvYcCVmQ+kdbsa2r49enBbZEqifOt22SM4ot9jg2swEXa2fHH0RhN6NJbYd6aDjauTWovoa+cODi8rDdQdl7Y5M@vger.kernel.org, AJvYcCWFeYLuWGhtGCIH5WEFY7LX8WOIWURNGFBR5OD5egI1eOn7oIYYaKeucYIUtpitqf0u1iSx6lJcf562@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzly4K0DZiHYtjvtz6DS54UIVos+Tiwxx6uUvMzMKAV45S1iANo
+	Aku31B0fz9yEHslJrreY/fHoEmw1aWkbQ95gpZ38ecY3fN5F0kKJ
+X-Gm-Gg: ASbGncscwSSIJLtjtI1qnteay48ht1AZ3SH7Clt8HnSoAjIGW6toxkNb+oe0x8Jb8x4
+	K1ZeX41KtHtIdubWhNkmuByIrmhDzFzxxkt6HejSdsrTTM8Z87230KNZEXX1+3uJRw9YHcQzN+N
+	1xTtS2s+CaXSCj/fakzfe0T6rPoWsIcOeyr8edHUdVYhdxlym2AYvkwgds8v3BE/UTPLNCuipv2
+	CZcLWnZB8qk1tSoy4S2LmeEm5SLm93QHUe/f6CdYKsrI3/vqXmPZdQL
+X-Google-Smtp-Source: AGHT+IGYLoHGWkQJXnAzeKrdRDS0vmOTvQPRKIanLd5PWhAbFb0S2vmelRt0CIpv/ocrMS8a6iOggw==
+X-Received: by 2002:a05:6512:3985:b0:53d:ed76:4607 with SMTP id 2adb3069b0e04-53df00d031amr7271570e87.22.1732822503919;
+        Thu, 28 Nov 2024 11:35:03 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df64433a7sm264469e87.89.2024.11.28.11.34.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 11:35:01 -0800 (PST)
+Date: Thu, 28 Nov 2024 21:34:54 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	0001-iio-light-Drop-BU27008-and-BU27010.patch@mva-rohm.smtp.subspace.kernel.org,
+	0002-dt-bindings-iio-light-Drop-BU27008-and-BU27010.patch@mva-rohm.smtp.subspace.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>, Marek Vasut <marex@denx.de>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Drop BU27008 and BU27010
+Message-ID: <cover.1732819203.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="o2ZuBoV+n69sWCAY"
+Content-Disposition: inline
+
+
+--o2ZuBoV+n69sWCAY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVG3Z63BruhrnQtSadCnaKZ+hpwFDJDnitXST8fRNYoLQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 03:10:34PM +0100, Geert Uytterhoeven wrote:
-> Despite the warning, I gave this a try on m68k (cross-compiled on i7 ;-).
-> However, I didn't notice any extra-ordinary build times.
+Drop the support for ROHM BD72008 and BD72010 RGB sensors
 
-I had some large values before this got merged and due to this
-slowing down builds 2x I reduced the defaults. The current defaults
-are no known as TEST_KALLSYMS_LARGE.
+I accidentally hit a BU27008 data-sheet which had a big red text saying
+"Obsolete". After a few queries I received a word that the ROHM BU27008
+and BU27010 RGB sensors were cancelled and never entered mass production.
+Supporting not existing hardware makes no sense, so it's probably best
+to drop the drivers and dt-bindings.
 
-> Also, when running the test manually on ARAnyM, everything runs
-> in the blink of an eye.  I didn't use the script, but ran all commands
-> manually.  I tried insmodding a/b/c/d, c/a/b, a/c/d/b.
-> 
-> Is this expected?
+There is still a RGB sensor from ROHM called BU27006.
+https://www.rohm.com/products/sensors-mems/color-sensor-ics/bu27006muc-z-pr=
+oduct
+Based on a quick glance this should be very similar to the BU27010. If
+someone wants to create a driver for this, then the bu27008.c might be
+worth looking at.
 
-I tried to clarify the ranges known we can use to mess with this test
-a bit more in the recent fixes on modules-next [0] so since you want
-to see some things blow up try TEST_KALLSYMS_MAX, on some systems this
-is reported to crash the build.
+As writing of this I don't have the BU27006 at my hands, and when I
+asked about creating a driver for this IC from the HQ ... I got an
+impression that at the moment ROHM rather pays me for doing something
+else. So, currently I have no plan to add support for the BD27006.
+We can always dig the bu27008.c from the depths of the git, if it later
+appears such a driver would be a good idea.
 
-It is why I had reduced the original values a bit...
+Matti Vaittinen (2):
+  iio: light: Drop BU27008 and BU27010
+  dt-bindings: iio: light: Drop BU27008 and BU27010
 
-[0] git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git modules-next
+ .../bindings/iio/light/rohm,bu27008.yaml      |   49 -
+ .../bindings/iio/light/rohm,bu27010.yaml      |   50 -
+ MAINTAINERS                                   |    1 -
+ drivers/iio/light/Kconfig                     |   16 -
+ drivers/iio/light/Makefile                    |    1 -
+ drivers/iio/light/rohm-bu27008.c              | 1635 -----------------
+ 6 files changed, 1752 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bu2700=
+8.yaml
+ delete mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bu2701=
+0.yaml
+ delete mode 100644 drivers/iio/light/rohm-bu27008.c
 
-  Luis
 
+base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
+--=20
+2.47.0
+
+
+--o2ZuBoV+n69sWCAY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdIxdkACgkQeFA3/03a
+ocULKQf+L8iz9xnbZfAUoNrlOioNgQ/gUbdDHuxJTkAtW7H/VXE3mjRjLL9hzdW8
+sRRh1zvnIEwcFH8dULwI5WHdnWE4VTtqySmO70KUNBG5mMj5EZAWU0I65JG9oLqW
+1Vf8JSM1dhKDVmTFWzSZ7BAUBQmOuiVzTJrAlr5dbI9HSoPisw7ep5dE2QJEveyf
+BHi1SZjIQbNqUEBwLOVakn/1YBFC+SleADhRtLAxGYhDMiNtHm2Qe7YbEkYpUINx
+f88JyqVHJRwGtcUVDbiwMaqayWURlvHixfUuC/Zr7oezQQ+08h4ztiGVvIYr/N3W
+ET4Gqj/W/Qa4mWv3eSbF8mpDaK/AKQ==
+=V+y8
+-----END PGP SIGNATURE-----
+
+--o2ZuBoV+n69sWCAY--
 
