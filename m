@@ -1,172 +1,129 @@
-Return-Path: <linux-kernel+bounces-424187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4984A9DB16F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:23:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD609DB175
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:24:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2307165AD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:22:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DB8B21421
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB2F51C5A;
-	Thu, 28 Nov 2024 02:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6FD433B1;
+	Thu, 28 Nov 2024 02:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8HdnH8w"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EYsunvdg"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A234045005;
-	Thu, 28 Nov 2024 02:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A747B18E25
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732760574; cv=none; b=hWF9Eny9Oz20w7G4V9JYR3IKvBNFerg7cKyVcLgpYBw0i3Cen4iJ0hrsRpE4lMA8tkAyTUtOVkYBOA7HyMSOSvx4+cYEzSGGVIMUgdFJmVtX+Ges0AcczqsJ/c8WmRorcYuaZ1aKxaYb7qkY9KJSGUYAJrAFDchrev6KwMhvIh0=
+	t=1732760688; cv=none; b=kXSoxtXyAiwWbCYa+P1cfYXUC/YCscQWYObE6E564SUtkeNSeEwaS+IKLvg5MZGf/rhCn66qn5DkUVHQxINRbavoFIU32LUjoRiVvLw8Huz7ij1IjOlJWqlop2BhIrU/LSA7MqGkREbSa/Sh0Vw0jRGeDGs8qqyjsSQq1FHAqwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732760574; c=relaxed/simple;
-	bh=+3yEbUpVJHErlhQVGitLUUwpUF07C/iOclEhx9DELeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKevQhAfrn/DbCXKuRkz2DXuEkzCe4guo3cEEwDTsXqu/R5zE234mhiwgWhhohPGrRaAXCYBcb44vHuhNoIp5RVUq0JSOMt2Ljapxwy1quVWXskqH8SI1Mlpxh9GytazxiTGLEI+rmT2zCUOvLYkuUM4KRhS6u87Gp9F0FiROXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8HdnH8w; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ea752c0555so296934a91.3;
-        Wed, 27 Nov 2024 18:22:52 -0800 (PST)
+	s=arc-20240116; t=1732760688; c=relaxed/simple;
+	bh=N0W3okzumZz4TO8+qDmG24KUaroSYe2aOImwtPOd8/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d9q8GPQiy1SeTPPef/hmiFRAAUBgM8SdrEsVapcA1nUV8tvpGH8JpLXDtOS5XOaHx5htfMuXdRqGFkoTcIpylycj9zo8EsLl0IgsDj/g4fM7fvKPaE44MKtuq7SJ5kN9Pp6nz9tByl5JWBQ9Hehq9t5mEb+/btzeIIqKdEs/8gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EYsunvdg; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfa90e04c2so377111a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:24:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732760572; x=1733365372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E68xRyigClUvwUR6lCW/eJ34/F/SpAWPBL/RXhFR5TM=;
-        b=D8HdnH8wwPEUFcSYnKvg4VV6huzo2MwZpn0E+uHdcw+xKcHohe9BBVAfmVHlWh0Bnh
-         4pHl4xlF+EXKOSG/TUARhA6eygnHQp9n6YEICCO3nXILBIiLfZhl0TfnFzN/jqSy2M2G
-         9jtpGw+4eH6y+RQARsIiwyVUnTNGCLT9AivFnbtsMht2/C8cvKJRd/CqXcPqO5A8KaPs
-         /KKr0KiqEjwLlPbyw6FTpxmKA5HvEbpdnnAO7kpZkHzI18uo85nralSeKZHElONpceCh
-         M0OzEQsUg9mAaTom4nZ+E3tzld/aRca6FKGTUmYZYE0BfmoGaHaqUpQCtuuBFEwZ8aho
-         RjDg==
+        d=linux-foundation.org; s=google; t=1732760685; x=1733365485; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9Ph7RhIXjSqmMGkNKkbJMg6kBOtyd1H90lMnAwSrow=;
+        b=EYsunvdgP8u/1VjrFlfJFEMDaVGnJVadtV8eDYGgmA6OigVI+1RpW3C/kmrGoAdrnP
+         jDFeXebyujiYHygdBh9ZoJo3KdkAJIzQvcvJNKK6nUOft0Vy3SPQv6jGHHAV5amutcC1
+         YR2d5BJSvZDBI1b1wV9zi1TX2psz7257DcDn4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732760572; x=1733365372;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732760685; x=1733365485;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=E68xRyigClUvwUR6lCW/eJ34/F/SpAWPBL/RXhFR5TM=;
-        b=wEeQeKCpkHmvFe4WnpEhQGK5Q5IvyEL/QWd43uM5NX5g2bgbdC3kwydENkWCI9k6PZ
-         WzSFVJdPZP+s81Ar4rSPheb2T7lksOdZrW0sWeSlX246jMP7P4spynGd2ROMW27kO700
-         Ck12acCv7wEr21jx++agq0xzwmIW9awRtNJNh3Sn+cqiiibDHR1Q4DpARDsruB4BI1a1
-         mBrYQYpl/wqOJrjv948zIcJ3jpGH7f12AyvydT22IHmRMKJIXTnBZi+x3L2s2OjH1bE6
-         uhDbRP9Q8EnEZohye7nVqjlGAWZy8hyxmAS5QZXk8X465Q7kq/tPQxxo5IN8WZ2mFhyk
-         IXEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjj6gY7ygJ4vBI8xcmEcvx42Pe9S7lKgKeMNRZvFcruBaGlbeyuL9mkPlNqs1REb3ysHtSc4ZH+N1fhnw=@vger.kernel.org, AJvYcCX4SJgFCJD3fb1pda9rPra1EOpNosmuVmltQEKzkp9pJjHtkKgtCugQinpBy3QA1ATSDDASTSX1vLrp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGA+vroVLSljPIsPBX2QDp8Q9Gq4SF/PqjBzaQ7h2C8craXazz
-	T980K65Vl6XwR/IBjHZDlamUptWuHLGn5bmPdFd3VX7d812XQ0cP
-X-Gm-Gg: ASbGncuBDd1xHJQKYpyrQXnFSusDxJYhOavHz/7jtBPET9hhY4Vq8zTFBPb1QglJ+nZ
-	5J234VstDWn+PaiFr2742fZ1+b3mOWnP9WeBTFL7ogpSv/byjC6GzQBhbBMUTbDmJaU8J6LzMDS
-	QSFoHJxsXl/ro5VzvS3oRVUu3J686AiMHA/sWwmQRKvNF6ste4kbG0ZqFJo4s8H6g3HT5dXQ8EK
-	kJZHwMkTne+AzojJLzuOkpvQAEf9MXMrJ+RBEnqUCnKye8=
-X-Google-Smtp-Source: AGHT+IG04RJqmdp6NjPYOcNv/NdD0ONIDGFl3Te1sWDBBb68PsQb8kGuXxXHrggYkyOK57gtO4Nk2Q==
-X-Received: by 2002:a17:90b:2782:b0:2ea:b564:4b3a with SMTP id 98e67ed59e1d1-2ee08eaf00amr7329845a91.9.1732760571758;
-        Wed, 27 Nov 2024 18:22:51 -0800 (PST)
-Received: from localhost ([2402:7500:587:82b8:6566:ea7f:84f:75cf])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee2b007affsm310099a91.12.2024.11.27.18.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 18:22:51 -0800 (PST)
-From: wojackbb@gmail.com
-To: johan@kernel.org
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jack Wu <wojackbb@gmail.com>
-Subject: [PATCH] [v2]USB: serial: option: add MediaTek T7XX compositions Add the MediaTek T7XX compositions:
-Date: Thu, 28 Nov 2024 10:22:27 +0800
-Message-Id: <20241128022227.717101-1-wojackbb@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=Z9Ph7RhIXjSqmMGkNKkbJMg6kBOtyd1H90lMnAwSrow=;
+        b=X2qBlccPQuyMXslTDthCsZUfBUlyy6VvTYN+unxlPwsWMnxqQy4dP28GZ5+lggyj4z
+         FVNaKg94Uyh6nCl5gNG63ZyMfper2VDf9wEOKvAX7g7Z2/LSmag/FITT5gVSqIQfFhdV
+         KsGOB1OfFlw9UaF83ok3IXaw/Q2G1mmGUOHd6vY5CKg+3ZamCYQ9xb89kVpHJNA7pbVd
+         NuA0YQRtzwNuYRnsn2trot5g5BY4T723HV2nfjZT3jAefbhdi/LwLlVZDOBRG4astu55
+         cGK63jCEtpAoq/KNj1jtkKX1kj629akvOw8FsPoJvuUGo0l2je1JAuX3xu8XLuF8gNMp
+         XqhA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+EezGaWzAef3JwCV08ZvJSlzsJKtHpkXQjPIa6qFHslbmzLQbyego+bU4XiIT2BnP16AZwAPtFU4wdEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0UW6S9sbN+6PyTo5trfUgb3iAt2b12LdiNqlNkPQsFA+68/Dr
+	pbWCAGy8FHNaAAePqClMh50wFLOUNwRj7S+WfV0p/wK19hw+BrCivtuXcB7yaRkPl34Dbk6cgKW
+	Pkvg=
+X-Gm-Gg: ASbGncvy665oupuQPw6A11umkqIAuHQnyS/ri2tYXDEuVv5FCTSxAHIo+ACGei4mqa3
+	ALANTULAfhAPPQNKnvR7uV0aBJexWdxvnH3qoOpGr85QmHnZ+o3qTR4neMfSOftqIpVtMPpJj3m
+	BgftFrQ0uzzUpIB3G+c2MQXAjBo7XxB0p2+3HzqKPGaESYeSih8CwmZi76mAes7oCIoc9rZuMI9
+	SnwiK8QbUta/OU9LrTf704qs5OTIfg9JqoyyGPoD74UXnL5U9gXFuxcA1BMcPLtzH9BtwYFd6tc
+	+SJh4bS8KkZ35do5Rw6moKwR
+X-Google-Smtp-Source: AGHT+IHqSYikF7mbhPmhp9nqAZMug7ve4FlTNfbj/9RuSYuBkLnhtCdDKggUY4saG5apqtOkSEBOvw==
+X-Received: by 2002:a05:6402:2710:b0:5c9:62c3:e7fd with SMTP id 4fb4d7f45d1cf-5d080bcd250mr4765912a12.16.1732760684702;
+        Wed, 27 Nov 2024 18:24:44 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097dafd48sm237886a12.22.2024.11.27.18.24.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 18:24:44 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa5302a0901so34561866b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:24:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXccj8Gap5Ed+LCuQGpDT67axqzUUHx3wy1nXEK+Hzgmfq9RDeOJpgHSUgm2rEvcujEZ6F/ncRjVxu0YB0=@vger.kernel.org
+X-Received: by 2002:a17:906:1bb1:b0:aa5:2e85:3b04 with SMTP id
+ a640c23a62f3a-aa5810739e7mr351910566b.50.1732760683133; Wed, 27 Nov 2024
+ 18:24:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <202411210651.CD8B5A3B98@keescook> <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
+ <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org> <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
+ <202411271645.04C3508@keescook> <CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
+ <20241128020558.GF3387508@ZenIV>
+In-Reply-To: <20241128020558.GF3387508@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 27 Nov 2024 18:24:27 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whb+V5UC0kuJkBByeEkeRGyLhTupBvpF-z57Hvmn7kszA@mail.gmail.com>
+Message-ID: <CAHk-=whb+V5UC0kuJkBByeEkeRGyLhTupBvpF-z57Hvmn7kszA@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jack Wu <wojackbb@gmail.com>
+On Wed, 27 Nov 2024 at 18:06, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> > So if pathname exists and isn't empty, AT_EMPTY_PATH does nothing.
+>
+> ... so let's tie that to pathname _being_ empty - it's not as if it
+> had been hard to check.
 
-T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 74 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0e8d ProdID=7129 Rev= 0.01
-S:  Manufacturer=MediaTek Inc.
-S:  Product=USB DATA CARD
-S:  SerialNumber=004402459035402
-C:* #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=02(comm.) Sub=0e Prot=00
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-I:* If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=8a(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+This is not some kind of new system call, and AT_EMPTY_PATH isn't some
+Linux-only thing.
 
--------------------------------
-| If Number | Function        |
--------------------------------
-| 2         | USB AP Log Port |
--------------------------------
-| 3         | USB AP GNSS Port|
--------------------------------
-| 4         | USB AP META Port|
--------------------------------
-| 5         | ADB port        |
--------------------------------
-| 6         | USB MD AT Port  |
-------------------------------
-| 7         | USB MD META Port|
--------------------------------
-| 8         | USB NTZ Port    |
--------------------------------
-| 9         | USB Debug port  |
--------------------------------
+It has well-defined and documented semantics:
 
-Signed-off-by: Jack Wu <wojackbb@gmail.com>
-v2: add NCTRL and more description
----
- drivers/usb/serial/option.c | 2 ++
- 1 file changed, 2 insertions(+)
+  AT_EMPTY_PATH
+     If this flag is specified, oldname can be an empty string.
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index 4f18f189f309..1b798244b675 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2244,6 +2244,8 @@ static const struct usb_device_id option_ids[] = {
- 	  .driver_info = NCTRL(2) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff, 0x00, 0x00),
- 	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7129, 0xff, 0x00, 0x00),        /* MediaTek T7XX  */
-+	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
- 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
- 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
- 	  .driver_info = RSVD(1) | RSVD(4) },
--- 
-2.34.1
+Note the "can be". Not "will/must be".
 
+> What's more, let's allow userland pointer to be NULL - use getname_maybe_null()
+> and treat NULL returned by it as "we have an empty pathname".
+
+Now, that's separate, and I agree with that extension.  That just
+suppresses another "empty string" error case.
+
+But no, I do not accept changing well-documented behaviour of
+AT_EMPTY_PATH, much less the insanity of making "execveat()" have
+completely different semantics for AT_EMPTY_PATH than a plain openat.
+
+             Linus
 
