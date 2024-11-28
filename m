@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-424265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B9C9DB24E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:59:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E641E9DB24C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:57:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D52F2822FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:59:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99698167C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F358713B792;
-	Thu, 28 Nov 2024 04:58:59 +0000 (UTC)
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21581386BF
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211CC13C8F3;
+	Thu, 28 Nov 2024 04:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MnRha1rq"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036A313AD26
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732769939; cv=none; b=e2OBY0HaYnTVu/GxiauWH/QZlmvlxMgQqMIlD8E2K8SGMjt3svMswhY17Wyurk9kOmq1JzuXNjS4ng+PcOZ4u6U4yQsu6GwahPjomlJyULTjoRhr0xOVRs/QkSRTI8PCISZx6x3SYR407BBR2r2VKMIN6iSfnAn/tZkG60pL6PQ=
+	t=1732769844; cv=none; b=nrBKLCtekI0L8xVl9KafDnQy6nWfm28XJfyF5XjTrgz1/bOQ8Wu0wc1z2W49Ve6dF5xKEet0lhbCStyDBwQzPppKWEgD5Oqp1e5IxiFR2VfcTUHLrE4wfgBrADEwto8uIaigeI8jt8G28FzK+J6FoJ5+prIPECF5SCPF/tRUIC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732769939; c=relaxed/simple;
-	bh=Ryv4w/6G7uoxku/s5JSSG7XQcBb9trOUiZQ+gLpW6sA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dhAkZF+xRMseRJl5lE9lTR6N53sjly0jIxrF/zU9rnjEIZUYAzqp2DqrjT/YsbaJxdfis8Teo4ZvkG0Ga/v2OrVUR5llbqS7U2W0U8EsCPoqCEEkZdb+0FagUA5ZfX3SPixu2/0drUKGeNVfN8iOjf3lEyWB3sy89aC5CMWI6MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id 9B9122055FA0;
-	Thu, 28 Nov 2024 13:52:26 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AS4qPVY207012
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 13:52:26 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AS4qPjJ1192305
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 13:52:25 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4AS4qO5t1192304;
-	Thu, 28 Nov 2024 13:52:24 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Wang Jianjian <wangjianjian3@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <wangjianjian0@foxmail.com>
-Subject: Re: [PATCH] fat: use nls_tolower simplify code
-In-Reply-To: <20241128031234.3668274-1-wangjianjian3@huawei.com> (Wang
-	Jianjian's message of "Thu, 28 Nov 2024 11:12:34 +0800")
-References: <20241128031234.3668274-1-wangjianjian3@huawei.com>
-Date: Thu, 28 Nov 2024 13:52:24 +0900
-Message-ID: <87plmg9czb.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1732769844; c=relaxed/simple;
+	bh=9gNdiwWZ1MbH1bVKN1QAiVS5Fv7sTB11zjZfTxLD7cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=qnngsqDvrzFaN1y26k1ACg5wBQQgCeSlz4pexpADY/u2XmPjA60lsuiDWFMkQMh2+1nigiHpvKeO5twkWYjTdx/d2sTgfNDICZPAbzqGl/BFArPTlMQsAOCYDynYlAI2IMxMs8rs1SD/cKQaSHOy2KZbzpBppBMAYkNNl9kVQFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MnRha1rq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de5ec22adso394187e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 20:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732769841; x=1733374641; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gNdiwWZ1MbH1bVKN1QAiVS5Fv7sTB11zjZfTxLD7cA=;
+        b=MnRha1rqwe9Qo12ksrkSlyOH208sj7TIddzIN0Fm3PrYrsvbBpikOlhD/L66VqvJiU
+         ilhUzMDYCX6Fyx19HKelSA5UOWzwRgsehnM49nbd9kshNr6BPGrJMvEaXf9x2GWKXmFT
+         5FZtphIJJ64izl0iePBVagXfVvHBn4A/LSIEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732769841; x=1733374641;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9gNdiwWZ1MbH1bVKN1QAiVS5Fv7sTB11zjZfTxLD7cA=;
+        b=SIiqV+y3ujlDDWHVCilyhu3fENfgIKscUpomImEAoWNptkzps/GQYqVy/da5gx0Pr9
+         MJl2oGique5tBzkH/ejs1QH2P7D8h2cVc2EtIKYyOCb+VczLxynHmb1YxYJ8JNjM9EeW
+         7/xBy3AR4aETGPenE6ZEIoIwFf9WRt2jTNym2rTsJFOVVWNYxi81ciCnhHI/I0j2+QmK
+         sSTHNASCsI4U7Pnd+Fa5dK4S5cFZFD+8aCbodlTxd5n57JLzYYlWFny4hO8CQMLRcNFx
+         yv8wu+6ga1OwjZ1Dr/2wVvw/KfKMkg9CCQUTg7TtKSWFAXfXSaaYhALYHrlZgxRnglAV
+         qCFg==
+X-Forwarded-Encrypted: i=1; AJvYcCULQOqtNHrUIGO/owd4XndAABBDBDDAN6/lSTMEUp2LD03hZoPZ0jPGf9I0rFzLEuN5M0ZF3DUAVev0ASg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwP3LumQYQbzV/V48fAcJk2m5QWsMHEzgmT9xD14e3LLR4cQe+
+	IYwTsITGJP1vw7pFmrJBWDiVXerwDSUCtO0Wpu/1DL9ENAtZyAihOLa/qGEpRzV77ZmuaOkCwlN
+	4WMeIdMpGUvzy6o01sn4B/aIBc+Fd1FGXCXSa
+X-Gm-Gg: ASbGnctrv9vI916f+VZ6tkf9IPC08lENf2Acs9eaEqDSDuDNqmnSxxw4GF8ggwuO8L8
+	o8q+QFGti4NhmlQEvS6s0mTfpX93+xj1R2+9lDIDg3ZOFew880pn84xIu1GQ=
+X-Google-Smtp-Source: AGHT+IG7n8N4nAMz6o9K2XahUaKaMVFWZxqJsiGFCbLs2B2ko1EorvcGfAfKGctbegSVwAcOe4uRUizxkULBFWIPM2Q=
+X-Received: by 2002:a05:6512:23aa:b0:539:ea7a:7688 with SMTP id
+ 2adb3069b0e04-53df00a9f35mr3140014e87.1.1732769841115; Wed, 27 Nov 2024
+ 20:57:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241106093335.1582205-1-wenst@chromium.org> <CAGXv+5Fzrz9sBvE=FpV6URpcZtxvchxfY9WE4k4s+S3BzMWw2g@mail.gmail.com>
+ <Z0b_f0gg9KgSozPH@shikoro>
+In-Reply-To: <Z0b_f0gg9KgSozPH@shikoro>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 28 Nov 2024 12:57:09 +0800
+Message-ID: <CAGXv+5GUGwqEGpyJptAUc7aqdGAeFP=-um4=EfUNzxkahiXB9A@mail.gmail.com>
+Subject: Re: [PATCH v11 0/7] platform/chrome: Introduce DT hardware prober
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Wolfram Sang <wsa@kernel.org>, chrome-platform@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Wang Jianjian <wangjianjian3@huawei.com> writes:
-
-> Signed-off-by: Wang Jianjian <wangjianjian3@huawei.com>
-
-Looks good. Thanks.
-
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-
-> ---
->  fs/fat/dir.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+On Wed, Nov 27, 2024 at 7:16=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index acbec5bdd521..88bf16204aab 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -214,10 +214,7 @@ fat_short2lower_uni(struct nls_table *t, unsigned char *c,
->  		*uni = 0x003f;	/* a question mark */
->  		charlen = 1;
->  	} else if (charlen <= 1) {
-> -		unsigned char nc = t->charset2lower[*c];
-> -
-> -		if (!nc)
-> -			nc = *c;
-> +		unsigned char nc = nls_tolower(t, *c);
->  
->  		charlen = t->char2uni(&nc, 1, uni);
->  		if (charlen < 0) {
+>
+> > Just checking in. I just wanted to make sure that this is still on
+> > track for v6.13-rc1.
+>
+> Eeeks, not only Andi was so busy that he lost track of patches. Please
+> accept my apologies, I was under the impression that this series was
+> still under discussion. I sadly missed that it was ready for prime time.
+>
+> That being said, I applied it now and will send it to Linus by the end
+> of the week. Sadly, this series was not exposed to -next before, so I
+> hope a few days of -next will work for him.
+>
+> But I will surely try. Sorry again!
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Thanks! Fingers crossed! Hopefully Linus sees that all the stuff is
+just new symbols and pretty isolated.
+
+
+ChenYu
 
