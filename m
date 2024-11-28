@@ -1,113 +1,176 @@
-Return-Path: <linux-kernel+bounces-424172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB78B9DB147
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0479E9DB145
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50681B24C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:50:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D357B29565
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CBE6F06A;
-	Thu, 28 Nov 2024 01:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BFE537F8;
+	Thu, 28 Nov 2024 01:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uOISfUnd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sLXvSkg7"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DFF4C7C;
-	Thu, 28 Nov 2024 01:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8066853E23
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732758338; cv=none; b=bz2Z2FMNN7XgUc9AZM8rvvJlsjfkQiWMvDZ0cLeReveMg0U+XSVEY5mo9wU1J3Dly8QVEx/1Gn7aASI2Pm6+Pr9ezt1tP4ndjGdJeK7Qryu+Fj3gk+idvHgDOltv0OGd4LVraRabKblwUx5PDFOsPo3iCXdXXmprmw32mu0+/WI=
+	t=1732758451; cv=none; b=jXTBAsxvZwQnrS8ZgZIy0/hz/ibi4gD2z4s3mv8CzEUQnTnKMDyhkUkiGh1eKlC6SpqQTgHwL5coQdm1NSYW0UEdEchY3RRd7QzCOJjvHGASG0dsRotq59WAIYp+CJJpJGiUiWrG9HkmbuDQo0m16iGC1YRktdip+V52kbx23wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732758338; c=relaxed/simple;
-	bh=yuC/DqKdSJpZMyxKYTTgBUuGxFyWG0qpYNLRxxo2mUU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TZdIglCQJsUS3LcxWo8/DBHuf14a+kBWnVA4Dr7C1O3LkK7/krPWfFj4wyjKDd1PTTRQbbzcW8Y/p4amnilfAHpzaTm9mP7gVKoGq6gbX3TZw/0zwKIM5/uSo9NzwFgJb0zIq49TZkL6zFXeOMKZGYp+NX3+H0LpiC9ruTpEMNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uOISfUnd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2B2C4CECC;
-	Thu, 28 Nov 2024 01:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732758337;
-	bh=yuC/DqKdSJpZMyxKYTTgBUuGxFyWG0qpYNLRxxo2mUU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uOISfUndAcjBTDGd0M+QePGbr78g096PjKpfjXSTe0gAacr6HPJtmfUyZFkNvGG3d
-	 UA7O1AJ/qsBkhTSkgmR5ygBR2g1Xb/7z5TK4LXndWRzBffkOueNQlqFOQ62xWrj7HL
-	 SDMixjbPCbPFW55c/128Cv61TVGxMtaMg/JdtNx4=
-Date: Wed, 27 Nov 2024 17:45:36 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Zhen Ni <zhen.ni@easystack.cn>
-Cc: viro@zeniv.linux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
- brauner@kernel.org, zev@bewilderbeest.net, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] kernel/sys: Optimize do_prlimit lock scope to reduce
- contention
-Message-Id: <20241127174536.752def18058e84487ab9ad65@linux-foundation.org>
-In-Reply-To: <20241120132156.207250-1-zhen.ni@easystack.cn>
-References: <20241120132156.207250-1-zhen.ni@easystack.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732758451; c=relaxed/simple;
+	bh=a2ANOdfmWaxFZ1FDkgIhRpyah2x2oQvukswllKt3SmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VY7q2Qrum9Lk1Tmn64wL5GtGzlZ745veJtj9yak4Bu38ecbs7fwTmTXM/4bCTMg6Iie2dn5XZvn7MTyxBGpUEJn6z355oPQZh2lyXQSqrw3bi1borDTNsqQboPG5QTr3YEXlhOpqQ3mxA61XifFyEJo8yWuE6F6DKVRXvfoGuAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sLXvSkg7; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so52857766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:47:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732758448; x=1733363248; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CDYZxnvQSCUs7/URW7u5aFatw24C1MEYIz5QO3pahVo=;
+        b=sLXvSkg7sNLK4md1AeVgIgXFA83X0i9SxkDGVXqTYlBcBEnkLoWFz5VpbttKdghzPt
+         eWBxIGvg3MamUYUub1si6F5FdPi7Zp0TczIIJPK+zbL/kdvZx5kCHoV/NJEXssz1O4mg
+         125DjpALOycTLo3pXpg/C3OI8W6BPRw/XxtO7lWgZ1GOlw+NOXHBijfhmjaBTCopb7qa
+         yAfI+7BqSDusA2iKQxXF3sOVS55ryYxQb0jusOotFNpp0S+Vm/FCN07OI5AsZ9E6qnWJ
+         UnsboohkByUDAdjtCtt8eq4uKUEmyyOsbVfP2bFoSqZejCY0xT3ydxFuGxiUne2BoIDf
+         fJ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732758448; x=1733363248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CDYZxnvQSCUs7/URW7u5aFatw24C1MEYIz5QO3pahVo=;
+        b=q91C88KbwcVHarCfyRJl5/fEeL9uUEedqtXDttOHqst/4cc+E6bf2cra0csJHXVCkX
+         OOEdnKaUI79iQPo65M9RAJPoi/WpwD3uGWjd0EOfXsqZFrrDBsTO2CMU+RW4q4rT5lGA
+         FyN2fDpd/5FOBVEWbMePYAvOuVFKbLhcrC4Iha4GkNjKSoDEUqo5gJ/K52tpXjngQUUl
+         OiqiOVSuR/LC0XWsfBCkncio8XPCiGlM7IzpV9H7wzM9TXNyWqXxiNrGnZiHb5LqeFUU
+         j+8eiknl7QBv/evfMeq+aVZqHpFFIq74m6++LQiuFw2eNeDfClYKy6F2PulV7oFnrJ05
+         fmcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnKPW0qAdgyhZNRvvU0PMwvga+vCRaKSKMupCwXB20jb48gLDOMpW1A9Qv+0/SqK6T8y1nocdWJVszwPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqn3XTxAG+D4JRufGmvdsdS/2FHIpsqskvNdNmlBZoFuJGxtlL
+	i5Soag/JIXSMrm03SbLCR3PR+l95YZP83+/JoUdsn8zlWh31K+OI59Z2tPLYLAJtBs0JR0vi/yb
+	yWi0wh8hS/CC+qww7VGrKAN+CLRGo2nBF0Lc=
+X-Gm-Gg: ASbGncu1MlFwDP4LPdZ9IKYTgOzCUHHJeHHeGybNhMNa4Z5bN/ieozBuzabEGZErn70
+	2eJy4ZyB1RPwDcuORRU+tJvbRYoFh5feEISkJQw56e9sNs8sD9esNMqMB7yB6
+X-Google-Smtp-Source: AGHT+IGSYlJ14Wcq/1LY00BqQ/ETFskHaspi5ZfN1q1HEHggR4TBAntDhsD0VFjxBva+v7FsMZmlprLmPi/C0GrZd2I=
+X-Received: by 2002:a17:907:2cc9:b0:aa5:49a4:9189 with SMTP id
+ a640c23a62f3a-aa580f5753emr502352166b.33.1732758447564; Wed, 27 Nov 2024
+ 17:47:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240820163512.1096301-1-qyousef@layalina.io> <20240820163512.1096301-11-qyousef@layalina.io>
+In-Reply-To: <20240820163512.1096301-11-qyousef@layalina.io>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 27 Nov 2024 17:47:16 -0800
+Message-ID: <CANDhNCpdScf4g9se69t-qcidP-ac0S2=hnUSN76BvszqdmvWTA@mail.gmail.com>
+Subject: Re: [RFC PATCH 10/16] sched/qos: Add a new sched-qos interface
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 20 Nov 2024 21:21:56 +0800 Zhen Ni <zhen.ni@easystack.cn> wrote:
-
-> Refines the lock scope in the do_prlimit function to reduce
-> contention on task_lock(tsk->group_leader). The lock now protects only
-> sections that access or modify shared resources (rlim). Permission
-> checks (capable) and security validations (security_task_setrlimit)
-> are placed outside the lock, as they do not modify rlim and are
-> independent of shared data protection.
-
-Let's cc linux-security-module@vger.kernel.org, as we're proposing
-altering their locking environment!
-
-> The security_task_setrlimit function is a Linux Security Module (LSM)
-> hook that evaluates resource limit changes based on security policies.
-> It does not alter the rlim data structure, as confirmed by existing
-> LSM implementations (e.g., SELinux and AppArmor). Thus, this function
-> does not require locking, ensuring correctness while improving
-> concurrency.
-
-Seems sane.
-
-Does any code call do_prlimit() frequently enough for this to matter?
-
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -1481,18 +1481,20 @@ static int do_prlimit(struct task_struct *tsk, unsigned int resource,
->  
->  	/* Holding a refcount on tsk protects tsk->signal from disappearing. */
->  	rlim = tsk->signal->rlim + resource;
-> -	task_lock(tsk->group_leader);
->  	if (new_rlim) {
->  		/*
->  		 * Keep the capable check against init_user_ns until cgroups can
->  		 * contain all limits.
->  		 */
->  		if (new_rlim->rlim_max > rlim->rlim_max &&
-> -				!capable(CAP_SYS_RESOURCE))
-> -			retval = -EPERM;
-> -		if (!retval)
-> -			retval = security_task_setrlimit(tsk, resource, new_rlim);
-> +		    !capable(CAP_SYS_RESOURCE))
-> +			return -EPERM;
-> +		retval = security_task_setrlimit(tsk, resource, new_rlim);
-> +		if (retval)
-> +			return retval;
->  	}
+On Tue, Aug 20, 2024 at 9:36=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
+rote:
+>
+> The need to describe the conflicting demand of various workloads hasn't
+> been higher. Both hardware and software have moved rapidly in the past
+> decade and system usage is more diverse and the number of workloads
+> expected to run on the same machine whether on Mobile or Server markets
+> has created a big dilemma on how to better manage those requirements.
+>
+> The problem is that we lack mechanisms to allow these workloads to
+> describe what they need, and then allow kernel to do best efforts to
+> manage those demands based on the hardware it is running on
+> transparently and current system state.
+>
+> Example of conflicting requirements that come across frequently:
+>
+>         1. Improve wake up latency for SCHED_OTHER. Many tasks end up
+>            using SCHED_FIFO/SCHED_RR to compensate for this shortcoming.
+>            RT tasks lack power management and fairness and can be hard
+>            and error prone to use correctly and portably.
+>
+>         2. Prefer spreading vs prefer packing on wake up for a group of
+>            tasks. Geekbench-like workloads would benefit from
+>            parallelising on different CPUs. hackbench type of workloads
+>            can benefit from waking on up same CPUs or a CPU that is
+>            closer in the cache hierarchy.
+>
+>         3. Nice values for SCHED_OTHER are system wide and require
+>            privileges. Many workloads would like a way to set relative
+>            nice value so they can preempt each others, but not be
+>            impact or be impacted by other tasks belong to different
+>            workloads on the system.
+>
+>         4. Provide a way to tag some tasks as 'background' to keep them
+>            out of the way. SCHED_IDLE is too strong for some of these
+>            tasks but yet they can be computationally heavy. Example
+>            tasks are garbage collectors. Their work is both important
+>            and not important.
+>
+>         5. Provide a way to improve DVFS/upmigration rampup time for
+>            specific tasks that are bursty in nature and highly
+>            interactive.
+>
+> Whether any of these use cases warrants an additional QoS hint is
+> something to be discussed individually. But the main point is to
+> introduce an interface that can be extendable to cater for potentially
+> those requirements and more. rampup_multiplier to improve
+> DVFS/upmigration for bursty tasks will be the first user in later patch.
+>
+> It is desired to have apps (and benchmarks!) directly use this interface
+> for optimal perf/watt. But in the absence of such support, it should be
+> possible to write a userspace daemon to monitor workloads and apply
+> these QoS hints on apps behalf based on analysis done by anyone
+> interested in improving the performance of those workloads.
+>
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+...
+> diff --git a/tools/perf/trace/beauty/include/uapi/linux/sched.h b/tools/p=
+erf/trace/beauty/include/uapi/linux/sched.h
+> index 3bac0a8ceab2..67ef99f64ddc 100644
+> --- a/tools/perf/trace/beauty/include/uapi/linux/sched.h
+> +++ b/tools/perf/trace/beauty/include/uapi/linux/sched.h
+> @@ -102,6 +102,9 @@ struct clone_args {
+>         __aligned_u64 set_tid_size;
+>         __aligned_u64 cgroup;
+>  };
 > +
-> +	task_lock(tsk->group_leader);
->  	if (!retval) {
->  		if (old_rlim)
->  			*old_rlim = *rlim;
+> +enum sched_qos_type {
+> +};
+>  #endif
+>
+>  #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
+> @@ -132,6 +135,7 @@ struct clone_args {
+>  #define SCHED_FLAG_KEEP_PARAMS         0x10
+>  #define SCHED_FLAG_UTIL_CLAMP_MIN      0x20
+>  #define SCHED_FLAG_UTIL_CLAMP_MAX      0x40
+> +#define SCHED_FLAG_QOS                 0x80
+>
 
+Hey Qais,
+  Just heads up, It seems this needs to be added to SCHED_FLAG_ALL for
+the code in later patches to be reachable.
+
+thanks
+-john
 
