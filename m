@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-424181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE259DB154
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:06:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E229A9DB158
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:08:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 053A0B21523
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:06:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 719A6B214B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AD542065;
-	Thu, 28 Nov 2024 02:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C3F537F8;
+	Thu, 28 Nov 2024 02:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aoBob2J/"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rzQPhH8U"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6475C4C7C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46A338FA6;
+	Thu, 28 Nov 2024 02:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732759568; cv=none; b=n5jfN8FJ45kXDlkgsD3OhUE3V7LpZkS9a9XQ80Q6ZDlUrG6iZAAPM3T/0vHifj3+Niz+34TDPCUzPm0xJeHWmEIDFhmksHwo66E8cJpVK1ZSFdG3S2bZ32cBuIeJyBl5aMCC6F/BoQ3we3eEcJFH90wjyXlemMrAmC05S+PR+qA=
+	t=1732759677; cv=none; b=Gv48f5an1YBeVbdbyDuj+k8ayzCknBlZWKRkx9tyml4LQGPP+O0DIaA9lx+cihpihK8mWjDpbsko8Fr00TQaK2Mo2QiBSbN0crHC4QMpIZ6Bg3xMeDrPrinqn9HbMp4SqaFGq0FF0XJhwJoGLlSl3mf2Vu/H2C5XDWgp1y/IQuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732759568; c=relaxed/simple;
-	bh=2n3j+cIsiRjP48Dex1vslD2KXhUxBICu/vlYHrSfTwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rAbEuypiVj/y0dN+EO78Uuy52n1JtPV9SqtLazoBwctLlRHRmuGWwQGmIQgGFjtUyIj1zC1RGhvIfbdlldcmcyHooJp/d9I/e+NJDs7kWVMf4F3w1SaHdnFwGGsSO4d/VGonSU0hZw9vrRComCWnjKMn+juJXotCsyGUm6OWHXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aoBob2J/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+msx6rh+p0ATbHpULJ+OcIyHAGEaXjpT5WO/tynvHl0=; b=aoBob2J/0MyERUw2He0RHL5XTk
-	nQceSUKjBOK6b/MMoMmFigz2prrZUEUhNXSsuscsCmoO8FVFyWgOQQMuLXQyepYzScVbEIpnnLMnM
-	DkONkOMi4is0RH+zg5agmxZAqxrf9MgcuRPCvIf/+VHKpKplAxnbzfizyto/+XWHlHn/miKlaWa+w
-	IUQStqlFFnXHCkqkk1EpBifYYVA5MFAhwbgtn2Q+179b/jisYj6InTB5UJ/upRd3hh42/46Ztk47w
-	fOLcsx1JgnKzdd13glbuhsT+rVe3meyfSS15UKtjT3tjzndr3CMpDBo6aHIRljTafpAib/kBpwGsb
-	zKOWyJ+w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGTuo-00000002aVG-0OVn;
-	Thu, 28 Nov 2024 02:05:58 +0000
-Date: Thu, 28 Nov 2024 02:05:58 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Nir Lichtman <nir@lichtman.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
-Message-ID: <20241128020558.GF3387508@ZenIV>
-References: <202411210651.CD8B5A3B98@keescook>
- <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
- <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
- <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
- <202411271645.04C3508@keescook>
- <CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
+	s=arc-20240116; t=1732759677; c=relaxed/simple;
+	bh=CLOY1BbFg2H3t/bxeRQjxH7u7t8eQoc7YTKi+CBEZrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tL2vlmelZCurCpWXp+VOdVqBCyAFQS0o/E0XSTLoAdD5y10k1gnmiqdNsVWcCdeLLsiXtpXrM2xL4Xx+HjIn+tCv37+0BZhgDV75tAZmarxaqCKyrdh6UTpmGNy1RfP5yHNDpULSWULMPqcI5y/fuQQYIJakuwcOWbT3vHYPRN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rzQPhH8U; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732759668;
+	bh=DWk4vOZsOOl0KqDwkTpOCE+klrxgnn/rijVdA7PjzHo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rzQPhH8UHL+2IoN+oYpuxwkBo4d6/iV7T5Wc4llhNK/2NW6f9RqMjINS2PmGlsSzt
+	 Gz+YTQoZ3vMqVD2MNvrmVoC78Jqq57X4CMBz1N+Mi9fi3EG7SiDIlZ8/gD5rT5q5dK
+	 BTiGV+yE/Ih5uL0kqGYAR/4YDTTeaK6SJeNvfl4PUMZeAxVIZB3ukVi5gZ6chsjNzh
+	 L+AM8WMhz0fL5iHj7oaZMy3UkqRKH2GmR6IKJr2upm3pstru7qgkfMQiVOZDSExE0s
+	 UYa9mNgEUul38bgTG9FPfE8vGN8wEW90/ealT76LChHOdQul8OYRgFc5TRlCTvyU2O
+	 FUFJ1WJXaCSfA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XzKTG5hxCz4xcY;
+	Thu, 28 Nov 2024 13:07:45 +1100 (AEDT)
+Date: Thu, 28 Nov 2024 13:07:48 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the i2c tree
+Message-ID: <20241128130748.3949c5eb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: multipart/signed; boundary="Sig_/0iF0Imprz/ACLWF+n+mgHiT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Nov 27, 2024 at 05:59:53PM -0800, Linus Torvalds wrote:
-> On Wed, 27 Nov 2024 at 16:53, Kees Cook <kees@kernel.org> wrote:
-> >
-> > On a related note, what do you think of using execveat's "pathname"
-> > argument as "comm" if AT_EMPTY_PATH is set? That'll give process
-> > launchers control over comm (which is what they want), and we can keep
-> > the dentry name fallback as proposed too?
-> 
-> That's not actually how AT_EMPTY_PATH works.
-> 
-> Yes, it's how AT_EMPTY_PATH *should* work, but despite the name,
-> AT_EMPTYH_PATH does not mean "path is empty".
-> 
-> It means "path *may* be empty - but if path isn't empty, it's a regular path".
-> 
-> IOW, what is going on is that POSIX required that an empty path be an
-> error. And AT_EMPTY_PATH is basically a "don't error out on an empty
-> path" flag, not a "path *is* empty" flag.
-> 
-> So if pathname exists and isn't empty, AT_EMPTY_PATH does nothing.
+--Sig_/0iF0Imprz/ACLWF+n+mgHiT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-... so let's tie that to pathname _being_ empty - it's not as if it
-had been hard to check.
+Hi all,
 
-What's more, let's allow userland pointer to be NULL - use getname_maybe_null()
-and treat NULL returned by it as "we have an empty pathname".
+After merging the i2c tree, today's linux-next build (htmldocs) produced
+this warning:
+
+drivers/of/base.c:661: warning: Function parameter or struct member 'prefix=
+' not described in 'of_get_next_child_with_prefix'
+
+Introduced by commit
+
+  1fcc67e3a354 ("of: base: Add for_each_child_of_node_with_prefix()")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0iF0Imprz/ACLWF+n+mgHiT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdH0HQACgkQAVBC80lX
+0GwGbwf/aWekuWqbdNVMB60HTyizDYOB2EBhr6dKMNQ/beGshJT12TdJp3r4zPJh
+1rcmsBc/SLuaRx6yfSBG1gCUM40mK6yfFyEApD3g6bs92xGvSlEvrqu3acCwRgSG
+blvIylUAKC7MPKN105OKo4Xc0RgzBzqFWLej3mTV2XsO5G3FvlgRYveUPtvo3uix
+46yifavyLZncnh+KTJWyMqx8B63dtpQUdQq+FaO5jNFSYHRDN55BPQq1T9B4q1i3
+vfFSSY4i1ma7Ah7X8tUz+axwoXPgxUNk1htzLPKLZXhGuJ+BcO+iaFhP0uUapx4u
+x8zFCgOBICKFbMVbnPnjJVZEXsjTRg==
+=K1hG
+-----END PGP SIGNATURE-----
+
+--Sig_/0iF0Imprz/ACLWF+n+mgHiT--
 
