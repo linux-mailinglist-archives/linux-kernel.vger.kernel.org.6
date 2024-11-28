@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-424390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CB49DB3D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:33:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102459DB3E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE86EB21159
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DD12823B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C9C14C59B;
-	Thu, 28 Nov 2024 08:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AD414D444;
+	Thu, 28 Nov 2024 08:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxKBzZjt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fig4u3tG"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B932149C7B;
-	Thu, 28 Nov 2024 08:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A2C13FD86;
+	Thu, 28 Nov 2024 08:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782795; cv=none; b=YBv4tMbpF+go6C2aO/g4c4y1v85ynVotyDH/oSwTP8driMBwQcjcl8l+BktXSkutjJkTgi8gvPunrvWi1W1gdFrSKet5VmN83Klj/+DZmnBEjZOMiKNY4d/pwUysjKLoYJuYGmihK2Htks8WOD3zY9D9D8bEnO+3ZZ6goQ5JnC0=
+	t=1732783108; cv=none; b=mHhj7/qj2zbyH2aW29MKL4rH/4jPg/Btq3Y1PfKZID9qNaTqEUB4xLV+GHSmqDiEvlF5tv3zPWIHkoK6P1W+7codRoYBPCPDLyDeBf6wvyt5QhMOUmSEgS1jwJ16uvgPrRVv8oVwyDd9KvnZR30pgn+gQW6L6pt6x4VKVFzVVAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782795; c=relaxed/simple;
-	bh=k6wDS0Aya7nSOBHzHqz6oo4Mn4rCQ1bBs4S8sYU4RzI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WP5DKhsG8HdUMB+vR+KDJgZZy0Ynwc4REE3Byp5yt+f2IZwDPRxxLWdh24uTwXznaqkP0yg2GglodCUw9U2vHEAf1GqW2suIF/TwbmGjLCW5wvJ/WMLUtlewCwgwHy+SMQqfz5qbp9FL4iGskznubR7YjkYMfFShjSVbJDgv9LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxKBzZjt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D869EC4CED3;
-	Thu, 28 Nov 2024 08:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732782795;
-	bh=k6wDS0Aya7nSOBHzHqz6oo4Mn4rCQ1bBs4S8sYU4RzI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=MxKBzZjtVh5yTH0CA8ItcZaZW1n1kgQ8uJ7bqRYblEsEV6OO2uZyDnMG4SrU4anU+
-	 k/OmsCVTW3ITa2/POXKZLnzW6iRI0HQRP4lFFdfbuaM90aGCTOgeOwTbHxbchqs7KF
-	 tXITBH0r6cvQoUl+uEAh3C8amaCpOh+QQjrRDHaoKDbAMzbINYncpyeoeg8LEpenBJ
-	 xCdjXp4/CYsNru6gPXKXw+aCceaHkDOga7fQH9F1tV1GnZ9ZPSbHkT1xHT/xUPOUrB
-	 nJwc3cJy/b5qkCdW6m1rr4i5Km7IOUDxpb0fyN+r4+XU9cAPKtHk58GU5rH+tkYBQ3
-	 WD7YEPqN54UBw==
-Message-ID: <68e7f5cf-ff62-4184-8bf1-6338dc44fd2d@kernel.org>
-Date: Thu, 28 Nov 2024 09:33:09 +0100
+	s=arc-20240116; t=1732783108; c=relaxed/simple;
+	bh=ZhOoTD65cO9G5cot9yrds4u/ScS9iWVgFSa6sr5zrXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AB2ROnrGIWfl21+HY+fxL0iMZSqCqXmqCOFBchNMxFrLlfSlaDORTTRZ/GL79VUew4uKJaCKDzu7tcy/fhYS1upV8YkJxQhynXiBs62PwP/NQVF5yI/Q8YB4ggzM0bAXqIeASES/IHZRMpaxhLXARm7lAkSfX72gV2B9Iy89stA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fig4u3tG; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-382433611d0so517691f8f.3;
+        Thu, 28 Nov 2024 00:38:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732783105; x=1733387905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=xZOFn9eZsgpVjHqMRK72WMVAC06nVMZ/Hgtle1iP9/E=;
+        b=fig4u3tGlCXvgdP39Z2wE496q/4BfeyBN9nTF/UWzcQg67kfWRYa6W6v/Dko/X8g4E
+         xnUMN1iCeo3Vk18cvOQFKCASkoZZNIn55AlbVQMub3HSf9m73o9pt+6Yt6EADzu742wh
+         hdXhzKjdlUwLCmjW3vyYTVc525dI/fr7/oFJgwom0VQPHn03X5ecveS4ge3Ve2VeCd/s
+         5XLaU2ZcelytqXojoit384PCX9YEzcifMef8f48HFXpVFOae0+NuYtLSFzlJFUPj3bQK
+         M9tJtYpgSDEIe7VpN9Gwo/jK9688/eiHQkvGmg24LbLW+SGLZynZXOTpoyq7tmeUwfOC
+         CZtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732783105; x=1733387905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xZOFn9eZsgpVjHqMRK72WMVAC06nVMZ/Hgtle1iP9/E=;
+        b=KOruaqr7XMrSlRvUz1zF1lPxDC8pnGm+AdvDqAKnExZnB/4gzBMLb0LPWAcTdhmlMG
+         /eWwWCZ3Kn0qceKTCFrwSRKO27LPeJnslFhzoCR9HAyXXEeeBG+8iLhl8PTUDdwxL1oC
+         QiOPrhbWCZPxZSjt1mCfFeD5KRSs7hV2gNWM7T7ErxOM6xjYtLTMDlNOjLrcTRiScsVv
+         6/QD6QTJ++jvsF/xATteMzZtIPqb88k0iStRvbJFgdCXpmLSHs32vcTBfbiQc9GZ1oZ/
+         dcwe+xxuWufOF+Rbleyv4mRpBPkzkikcepOuVYWD1YwP5pS1Msc7DBTEoQP/8vP38p+n
+         qlhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLeiE3bjOnEmUY500hWB+7QWPyMG/UB46TDkqYO5pVYA8MHqvSgrZLw6CyTJCCaj5qadet4Dg3Lczp7ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQqpNRJrFM0TeHnaoiQLBhTzd+HxEKuzKeqo+A3s8HS+WpPIyW
+	oTgIzymd4cusJOd61qMEJ5soTu0rJxr7r82kjrtmOdVjBIgRkVk=
+X-Gm-Gg: ASbGncucGs3HTf7dFk3ikW7v9JXAc8ewo9NssWxkH4XGjMT1mRQW+6io/d+K0q4ouT3
+	Xg0AzWTmw1/aG1x6YJ3fmDX031DdwBdN0F0MWoNkXcG4bCllgmoFwQxP++6WZOls5h862hD+cqc
+	ZGW5re+10hGvLZI9Ve10tY/Uo2j7EFE115NNSQMvxO3CxQSuIivpxWMI/UtSKH0p1QvmANCdhiY
+	5xBNY9dU6NkfoHf6do8cQiMp/okr4KrBg3o+s3xTxMMr6g7H+N5Zc/vcX11RAG30Sz6W2n6WxOt
+	DkM=
+X-Google-Smtp-Source: AGHT+IG+2lUxaTLwUsoey3yYvit6KwJzncqkwP9hrUQJ3lMjs2mR9DUk6V9wbAYXt/KZnD/gSPC2WQ==
+X-Received: by 2002:a05:6000:1acc:b0:382:4b9a:f51f with SMTP id ffacd0b85a97d-385c6edb878mr5242924f8f.47.1732783104657;
+        Thu, 28 Nov 2024 00:38:24 -0800 (PST)
+Received: from LINUX-DQNM303.production.priv (10.124.218.46.rev.sfr.net. [46.218.124.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd36d85sm1023714f8f.28.2024.11.28.00.38.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 00:38:24 -0800 (PST)
+Sender: Louis Leseur <louisleseur@gmail.com>
+From: Louis Leseur <louis.leseur@gmail.com>
+To: Manish Chopra <manishc@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Louis Leseur <louis.leseur@gmail.com>,
+	Florian Forestier <florian@forestier.re>
+Subject: [PATCH net v2] net/qed: allow old cards not supporting "num_images" to work
+Date: Thu, 28 Nov 2024 09:33:58 +0100
+Message-ID: <20241128083633.26431-1-louis.leseur@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: power: supply: Add STC3117 Fuel Gauge
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>, sre@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241127151953.29550-1-bhavin.sharma@siliconsignals.io>
- <20241127151953.29550-2-bhavin.sharma@siliconsignals.io>
- <3eb06a70-cafb-4d89-aa68-524ec91e3850@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3eb06a70-cafb-4d89-aa68-524ec91e3850@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/11/2024 19:22, Krzysztof Kozlowski wrote:
-> On 27/11/2024 16:19, Bhavin Sharma wrote:
->> +
->> +allOf:
->> +  - $ref: power-supply.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - st,stc3117
->> +
->> +  reg:
->> +    maxItems: 1
-> 
-> I asked you some questions on v2, then on v3 and no responses.
-> 
-> You implemented some changes but still did not answer my question. I am
-> not going to ask again, obviously expecting different result on the same
-> makes little sense.
-> 
-> No ack from me.
-> 
+Commit 43645ce03e00 ("qed: Populate nvm image attribute shadow.")
+added support for populating flash image attributes, notably
+"num_images". However, some cards were not able to return this
+information. In such cases, the driver would return EINVAL, causing the
+driver to exit.
 
-You responded privately - I am not going to do any talks under NDA. I
-also do not provide some sort of personal support service. Keep *ALL*
-discussions public.
+Add check to return EOPNOTSUPP instead of EINVAL when the card is not
+able to return these information. The caller function already handles
+EOPNOTSUPP without error.
 
-Explaining what you asked:
+Fixes: 43645ce03e00 ("qed: Populate nvm image attribute shadow.")
+Co-developed-by: Florian Forestier <florian@forestier.re>
+Signed-off-by: Florian Forestier <florian@forestier.re>
+Signed-off-by: Louis Leseur <louis.leseur@gmail.com>
+---
+Changes in v2:
+- Fix commit message (reference to 43645ce03e00, add Fixes tag, change
+  phrasing)
+- Link to v1: https://lore.kernel.org/r/20241121172821.24003-1-louis.leseur@gmail.com
+---
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Some of these are from monitored-battery. Sense resistor should be
-separate property. But different question is about missing resources,
-like supplies (VCC) and interrupts. Just look at datasheet.
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+index 16e6bd466143..6218d9c26855 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -3314,7 +3314,9 @@ int qed_mcp_bist_nvm_get_num_images(struct qed_hwfn *p_hwfn,
+ 	if (rc)
+ 		return rc;
+ 
+-	if (((rsp & FW_MSG_CODE_MASK) != FW_MSG_CODE_OK))
++	if (((rsp & FW_MSG_CODE_MASK) == FW_MSG_CODE_UNSUPPORTED))
++		rc = -EOPNOTSUPP;
++	else if (((rsp & FW_MSG_CODE_MASK) != FW_MSG_CODE_OK))
+ 		rc = -EINVAL;
+ 
+ 	return rc;
+-- 
+2.45.2
 
-Best regards,
-Krzysztof
 
