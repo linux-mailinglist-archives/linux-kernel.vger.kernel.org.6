@@ -1,741 +1,268 @@
-Return-Path: <linux-kernel+bounces-425046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4B59DBCD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:19:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F7A9DBCE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A64B281A80
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF4D281AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA031C1F37;
-	Thu, 28 Nov 2024 20:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E158B1C3025;
+	Thu, 28 Nov 2024 20:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EG1W74Kl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vcx5dUIn"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD902629F;
-	Thu, 28 Nov 2024 20:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A83C1B3933
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732825184; cv=none; b=SGvvPjo2WXk1s8dt6yaTQ9q+PghV4MaMCDiMGCUXeabXWlSy2C8EXFFHPmFQFGM/eWOaceInjldhH6eskfCv5+Ihj8s6er6X95Vx/27VIhbMEL7MMvRV7YajSPsrZ+ZjKjkkFBYFAeQkQFHuZ1BSgLzDLl+SF4KGDXP0OGJJCDY=
+	t=1732825763; cv=none; b=CsnHo6tpE7MF5sEpRalBR0S9E84aeCvgg6yBljPiH2tSn89lXoD2QgosU7jCXitpUmhjElRzuKaSwjNQ/pOGRMKQV92aXfmkNqWOrk58ZPURFcv+oKTHeF7fwROZNyCjFed44tlIO06u8hG3SHAyMhBrZIPN1+9jHkM5ToPrQx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732825184; c=relaxed/simple;
-	bh=6yC8IGOeUJMYJ/gtXOcEHEsVBanPHh5UwjgY0159Zx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKZHOLiR6kiMTJZHLA1usRvI9kEdGh+3GAzyWFNDvZ9JFdi+CYbYiibg3Tyd75CgMOh1Ih5C/BNgqUsGKfnNzhuTysgVUsC+kP6EiGhDYys84vuJdknEyH87BU0SWYkPkmDbMkiQhBVf2jgAt/JSIATMsropFYRXpfFBsctVB4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EG1W74Kl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920E1C4CECE;
-	Thu, 28 Nov 2024 20:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732825184;
-	bh=6yC8IGOeUJMYJ/gtXOcEHEsVBanPHh5UwjgY0159Zx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EG1W74Klj1igNB0vvKkUYBTpGkwuA21NpC5j5Dy03B8PyN6PijgcVj0seV3wbOuJX
-	 bntDAbUZrUPEgd5vGVTSEqe6vokwaTmpcs0HLccf4NtemGPeDA7InwwAuaH1vw26JZ
-	 lrXTfq1W6fC9KC029Vj1XbiLnIygOXaBt/R4QtAbZICSQFpMVmfkouOWFOaFNvJh6d
-	 WFgWmBAfHh9oE7JnZ98A4TUK5xPkiwHSJmmyADjpX0rH6PXrwRONKMFI69uOv9Njmn
-	 5AU/zHgp4JqaTYpbv4cfVSzl8cz+7mpCr8rX+1upkKI9JmM7Cus6ajuGJf+qNCcELt
-	 3UWdxWWVKoL/g==
-Date: Thu, 28 Nov 2024 17:19:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Yang Jihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 01/12] perf record: Add event action support
-Message-ID: <Z0jQXPF-tLXRh-Mt@x1>
-References: <20241128133553.823722-1-yangjihong@bytedance.com>
- <20241128133553.823722-2-yangjihong@bytedance.com>
+	s=arc-20240116; t=1732825763; c=relaxed/simple;
+	bh=gSbN/bGOz/QLTMl5qB+s9KsvDP66smZaJ+2jmyaP17M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:From:In-Reply-To:
+	 Content-Type:References; b=nkqChybUV23xqDGWWELjARUrAILXWBLkVeBh20rQIdrUXGqQAEovx7bApmTqgt0kPZrqmO66Lcq2krd2YuEOusD38A+xmp2gwYaZ9fauY9Tu995UEIR7Io7FYeDt3j9U90FXm+lFb+MRzDkCTmS4LyMFqCo9aE9Owk+GxqWM3ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vcx5dUIn; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241128202305euoutp02be6bb9fc546eab309db83951b4a5d64d~MO4HkOu3X0266702667euoutp02T
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:23:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241128202305euoutp02be6bb9fc546eab309db83951b4a5d64d~MO4HkOu3X0266702667euoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1732825385;
+	bh=y+q10bkOL9w4FuK6p31KnJ0WGqmE1h9vwYqr1VZyChc=;
+	h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+	b=vcx5dUInnW+lwEJNOU4nmYtbVVAD4TOVOMCxmmiw3zdBz5b7xr3cgjOSiCy2rk4Z4
+	 MxVGq/1RoiwQkUKKAArrqsDmvdG+OlRZQEAjUXKluW0ZaeWe+xoGgNnRXH/S6eF1KM
+	 wyun3h4hxAWYWg9vUXE30MLHNTHqs3Z6IUQdG5tQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241128202305eucas1p1d72e8f91e61ccb92579bb0de7c17c9ad~MO4HTfjIL2152821528eucas1p1c;
+	Thu, 28 Nov 2024 20:23:05 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 96.DD.20409.921D8476; Thu, 28
+	Nov 2024 20:23:05 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241128202305eucas1p2f46fc99c486bb277bc8017b046a5e229~MO4HCkMII0190401904eucas1p2G;
+	Thu, 28 Nov 2024 20:23:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241128202305eusmtrp2a01bc2ee3dbdb30a9c314df170530d82~MO4HB-c6Q2184221842eusmtrp2H;
+	Thu, 28 Nov 2024 20:23:05 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-f1-6748d1295a32
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id D8.B5.19920.921D8476; Thu, 28
+	Nov 2024 20:23:05 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241128202304eusmtip1e29a44739c2f828953b8d85f95484767~MO4G3Q2Nu1175611756eusmtip1s;
+	Thu, 28 Nov 2024 20:23:04 +0000 (GMT)
+Received: from [106.110.32.87] (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 28 Nov 2024 20:23:04 +0000
+Message-ID: <9734d93d-73c8-464e-8f32-6117c6f6c952@samsung.com>
+Date: Thu, 28 Nov 2024 21:23:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128133553.823722-2-yangjihong@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
+ ro_after_init section RO failed
+Content-Language: en-GB
+To: Petr Pavlu <petr.pavlu@suse.com>
+CC: Christophe Leroy <christophe.leroy@csgroup.eu>, Luis Chamberlain
+	<mcgrof@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, Kees Cook
+	<kees@kernel.org>, <linux-modules@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+From: Daniel Gomez <da.gomez@samsung.com>
+In-Reply-To: <7fdcf601-524b-4530-861d-e4b0f8c1023b@suse.com>
+Content-Type: text/plain; charset="UTF-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djP87qaFz3SDZ7fF7G4M+k5u8W6t+dZ
+	LS7vmsNm0TD7O6vFjQlPGS2WfnnHbLF0xVtWi82bpjI7cHh8vXmOyWPBplKPTas62TzenTvH
+	7rF+y1UWj8+b5ALYorhsUlJzMstSi/TtErgyzh89zVJw1ahi36W0Bsat6l2MHBwSAiYSHU8Y
+	uxg5OYQEVjBK3PvK38XIBWR/YZR48WkRG4TzmVHixP6XrCBVIA03L9xngUgsZ5SYPG8eC1zV
+	ss3f2SBm7WSUmD41A2QFr4CdRMPcfJAwi4CqxK/GM2CDeAUEJU7OfMICYosKyEvcvzWDHcQW
+	FsiVaLv2DCzOLCAu0fRlJSvIGBEBFYlLjxxBVjELdDNJ7Dy8GKyeTUBTYt/JTWA2p4CNxP1t
+	/xhB6pkFrCSmn/CEGCMv0bx1NjPE/YoSMyauZIGwayVObbnFBDJTQmA6p8St+1Ohilwk+k++
+	YISwhSVeHd/CDmHLSPzfOZ8Jwk6XWLJuFtSgAok9t2exQkLUWqLvTA5E2FHi7ufNUGE+iRtv
+	BSHO4ZOYtG068wRG1VlIATELycOzEB6YheSBBYwsqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS
+	83M3MQKT0el/x7/sYFz+6qPeIUYmDsZDjBIczEoivFcWe6QL8aYkVlalFuXHF5XmpBYfYpTm
+	YFES51VNkU8VEkhPLEnNTk0tSC2CyTJxcEo1MDVZdtqYB6u1XHCe1rD+6f8PpbvykypnTNZK
+	5b70VuDkLo4bR8UyGqzD/c1bXDU+FMluP5e9sLAg8KK7u4i3j/THQs5Fe7vK78iZvFryru4e
+	d1TRfwkN9V9/1wUvym1bGOh3sV7m0ds99e1+RgyGSnOzBOuKmo4evyzvwWvg5mN15+G2pFm3
+	bPe66r7kd/UwWX10e5vdcV3hP3ltdmZJ+Qsn9VxQlOrePm0Lw5/wX4rH/nZFzJtwadPS5nfi
+	TK9MCrb+XpNWMYVF51vPU+8b+YEyS9azvYtwuqfwVfrwcRdvj/C7K535+X2usSsy3g4qYdbO
+	9r26OWj5I12j7WYi25OzuY/PyDTdeufoX7v/SizFGYmGWsxFxYkAb7eIZrUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xu7qaFz3SDX4fZba4M+k5u8W6t+dZ
+	LS7vmsNm0TD7O6vFjQlPGS2WfnnHbLF0xVtWi82bpjI7cHh8vXmOyWPBplKPTas62TzenTvH
+	7rF+y1UWj8+b5ALYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJz
+	MstSi/TtEvQyzh89zVJw1ahi36W0Bsat6l2MnBwSAiYSNy/cZ+li5OIQEljKKPF46gVWiISM
+	xMYvV6FsYYk/17rYIIo+MkpsunmSCcLZyShx4/I39i5GDg5eATuJhrn5IA0sAqoSvxrPgDXz
+	CghKnJz5hAXEFhWQl7h/awY7iC0skCvRdu0ZWJxZQFyi6ctKVpAxIgIqEpceOYKMZxboZpLY
+	eXgxO8Suk8wSTyZfYQNpYBPQlNh3chPYIE4BG4n72/4xQgyykFj85iA7hC0v0bx1NjPEB4oS
+	MyauZIGwayU+/33GOIFRdBaS+2YhuWMWklGzkIxawMiyilEktbQ4Nz232FCvODG3uDQvXS85
+	P3cTIzCetx37uXkH47xXH/UOMTJxMB5ilOBgVhLhvbLYI12INyWxsiq1KD++qDQntfgQoykw
+	kCYyS4km5wMTSl5JvKGZgamhiZmlgamlmbGSOK/b5fNpQgLpiSWp2ampBalFMH1MHJxSDUxb
+	V72P/v2N8dj657v9LzZ8Ursbmv5O98gVxS/V04+GfYrxFClW3N4WuJ7l6yf3DzxNW1Ut3WKL
+	lq9ae9+1bffRtMD/64+8rT3yKX+N7/cm5sXHr3/dnH6oo9Lw2tcLpgGc+Uszf+bVRLvHbgyM
+	T1v1uaTl8UnGGBPPCXYz793zc7UIXnrq28obB42kr8woe7xC2O33945nu/7Zblsy9ybb4+kd
+	h9a5XTpva/Y37t1Wfqe999jXRkycXy24r8Tv/L0PXv8sHkV+rZ+Vqi06dbfXfOZVOZ/7krgu
+	+h04ldvwv/rlyimfy86b13NVKt19nSBVqtEYe7Fu5oKdKbu8czYmnSpurfggke1ot+iT7rav
+	/UosxRmJhlrMRcWJAN6BLH5wAwAA
+X-CMS-MailID: 20241128202305eucas1p2f46fc99c486bb277bc8017b046a5e229
+X-Msg-Generator: CA
+X-RootMTR: 20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+	<CGME20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be@eucas1p1.samsung.com>
+	<164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
+	<D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
+	<b74f0845-4916-47eb-945b-eb91ae05fc91@csgroup.eu>
+	<D5K3PNXEIKYK.11GZ8BMY02OA4@samsung.com>
+	<7fdcf601-524b-4530-861d-e4b0f8c1023b@suse.com>
 
-On Thu, Nov 28, 2024 at 09:35:42PM +0800, Yang Jihong wrote:
-> In perf-record, when an event is triggered, default behavior is to
-> save sample data to perf.data. Sometimes, we may just want to do
-> some lightweight actions, such as printing a log.
+On 11/12/2024 3:35 PM, Petr Pavlu wrote:
+> On 11/12/24 10:43, Daniel Gomez wrote:
+>> On Mon Nov 11, 2024 at 7:53 PM CET, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 09/11/2024 à 23:17, Daniel Gomez a écrit :
+>>>> On Sat Nov 9, 2024 at 11:35 AM CET, Christophe Leroy wrote:
+>>>>> Once module init has succeded it is too late to cancel loading.
+>>>>> If setting ro_after_init data section to read-only fails, all we
+>>>>> can do is to inform the user through a warning.
+>>>>>
+>>>>> Reported-by: Thomas Gleixner <tglx@linutronix.de>
+>>>>> Closes: https://protect2.fireeye.com/v1/url?k=d3deb284-b2a35ac3-d3df39cb-74fe485fff30-288375d7d91e4ad9&q=1&e=701066ca-634d-4525-a77d-1a44451f897a&u=https%3A%2F%2Feur01.safelinks.protection.outlook.com%2F%3Furl%3Dhttps%253A%252F%252Flore.kernel.org%252Fall%252F20230915082126.4187913-1-ruanjinjie%2540huawei.com%252F%26data%3D05%257C02%257Cchristophe.leroy%2540csgroup.eu%257C26b5ca7363e54210439b08dd010c4865%257C8b87af7d86474dc78df45f69a2011bb5%257C0%257C0%257C638667874457200373%257CUnknown%257CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%253D%253D%257C0%257C%257C%257C%26sdata%3DZeJ%252F3%252B2Nx%252FBf%252FWLFEkhxKlDhZk8LNkz0fs%252Fg2xMcOjY%253D%26reserved%3D0
+>>>>> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()")
+>>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>>>> ---
+>>>>>    kernel/module/main.c | 6 +++---
+>>>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/kernel/module/main.c b/kernel/module/main.c
+>>>>> index 2de4ad7af335..1bf4b0db291b 100644
+>>>>> --- a/kernel/module/main.c
+>>>>> +++ b/kernel/module/main.c
+>>>>> @@ -2583,7 +2583,9 @@ static noinline int do_init_module(struct module *mod)
+>>>>>    #endif
+>>>>>    	ret = module_enable_rodata_ro_after_init(mod);
+>>>>>    	if (ret)
+>>>>> -		goto fail_mutex_unlock;
+>>>>> +		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
+>>>>> +			mod->name, __func__, ret);
+>>>>> +
+>>>>>    	mod_tree_remove_init(mod);
+>>>>>    	module_arch_freeing_init(mod);
+>>>>>    	for_class_mod_mem_type(type, init) {
+>>>>> @@ -2622,8 +2624,6 @@ static noinline int do_init_module(struct module *mod)
+>>>>>    
+>>>>>    	return 0;
+>>>>
+>>>> I think it would make sense to propagate the error. But that would
+>>>> require changing modprobe.c. What kind of error can we expect when this
+>>>> happens?
+>>>
+>>> AFAIK, on powerpc it fails with EINVAL when
+>>> - The area is a vmalloc or module area and is a hugepage area
+>>> - The area is not vmalloc or io register and MMU is not powerpc radix MMU
+>>>
+>>> Otherwise it propagates the error from apply_to_existing_page_range().
+>>> IIUC it will return EINVAL when it hits a leaf PTE in upper directories.
+>>
+>> Looking at that path I see we can also fail at __apply_to_page_range()
+>> -> apply_to_p4d_range() and return with -ENOMEM.
+>>
+>> My proposal was to do something like the change below in modprobe:
+>>
+>> diff --git a/tools/modprobe.c b/tools/modprobe.c
+>> index ec66e6f..8876e27 100644
+>> --- a/tools/modprobe.c
+>> +++ b/tools/modprobe.c
+>> @@ -572,6 +572,11 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
+>>                  err = 0;
+>>          else {
+>>                  switch (err) {
+>> +               case -EINVAL:
+>> +                       ERR("module '%s'inserted: ro_after_init data might"
+>> +                           "still be writable (see dmesg)\n",
+>> +                           kmod_module_get_name(mod));
+>> +                       break;
+>>                  case -EEXIST:
+>>                          ERR("could not insert '%s': Module already in kernel\n",
+>>                              kmod_module_get_name(mod));
+>>
+>> But I think these error codes may be also be reported in other parts
+>> such as simplify_symbols() so may not be a good idea after all.
 > 
-> Based on this requirement, add the --action option to the event to
-> specify the behavior when the event occurs.
+> It isn't really possible to make a sensible use of the return code from
+> init_module(), besides some basic check for -EEXIST. The problem is that
+> any error code from a module's init function is also propagated as
+> a result from the syscall.
 > 
-> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
-> ---
->  tools/perf/Documentation/perf-record.txt |   8 +
->  tools/perf/builtin-record.c              |  31 +++
->  tools/perf/util/Build                    |  18 ++
->  tools/perf/util/parse-action.c           | 230 +++++++++++++++++++++++
->  tools/perf/util/parse-action.h           |  75 ++++++++
->  tools/perf/util/parse-action.l           |  40 ++++
->  tools/perf/util/parse-action.y           |  82 ++++++++
->  tools/perf/util/record_action.c          |  15 ++
->  tools/perf/util/record_action.h          |  24 +++
->  9 files changed, 523 insertions(+)
->  create mode 100644 tools/perf/util/parse-action.c
->  create mode 100644 tools/perf/util/parse-action.h
->  create mode 100644 tools/perf/util/parse-action.l
->  create mode 100644 tools/perf/util/parse-action.y
->  create mode 100644 tools/perf/util/record_action.c
->  create mode 100644 tools/perf/util/record_action.h
+>>
+>> Maybe we just need to change the default/catch all error message in
+>> modprobe.c and to indicate/include this case:
+>>
+>> diff --git a/tools/modprobe.c b/tools/modprobe.c
+>> index ec66e6f..3647d37 100644
+>> --- a/tools/modprobe.c
+>> +++ b/tools/modprobe.c
+>> @@ -582,7 +582,8 @@ static int insmod_insert(struct kmod_module *mod, int flags, const char *extra_o
+>>                              kmod_module_get_name(mod));
+>>                          break;
+>>                  default:
+>> -                       ERR("could not insert '%s': %s\n", kmod_module_get_name(mod),
+>> +                       ERR("could not insert '%s' or inserted with error %s, "
+>> +                           "(see dmesg)\n", kmod_module_get_name(mod),
+>>                              strerror(-err));
+>>                          break;
+>>                  }
+>>
+>>
+>>>
+>>> On other architectures it can be different, I know some architecture try
+>>> to split the pages when they hit hugepages and that can fail.
+>>
+>> Is it worth it adding an error code for this case in case we want to
+>> report it back?
 > 
-> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> index 242223240a08..d0d9e0f69f3d 100644
-> --- a/tools/perf/Documentation/perf-record.txt
-> +++ b/tools/perf/Documentation/perf-record.txt
-> @@ -833,6 +833,14 @@ filtered through the mask provided by -C option.
->  	Prepare BPF filter to be used by regular users.  The action should be
->  	either "pin" or "unpin".  The filter can be used after it's pinned.
->  
-> +--action=<action>::
-> +	Actions are the programs that run when the sampling event is triggered.
-> +	The action is a list of expressions separated by semicolons (;).
-> +	The sample data is saved by bpf prog attached by the event.
-> +	The call currently supported is print(); some commonly used built-in special
-> +	variables are also supported
-> +	For example:
-> +	  # perf record -e sched:sched_switch --action 'print("[%llu]comm=%s, cpu=%d, pid=%d, tid=%d\n", time, comm, cpu, pid, tid)' true
+> I feel that the proposed kernel warning about this situation is
+> sufficient and the loader should then return 0 to indicate that the
+> module got loaded. It would be more confusing to return an error but
+> with the module actually remaining inserted.
+> 
+> A module loaded without having its RO-after-init section changed
+> properly to RO is still fully functional. In practice, if this final
+> set_memory_ro() call fails, the system is already in such a state where
+> the additional warning is the least of the issues?
+> 
 
-But at this point in the series this isn't available, right? 
+__ro_after_init is used for kernel self protection. We are loading 
+"successfully" the module yes, but variables with this attribute are 
+marked read-only to reduce the attack surface [1]. Since we have 
+considered this stage already too late to unload the module, IMHO we 
+should at least indicate that there was an error during the module 
+initialization and propagate that to the loader, so it can decide the 
+best action for their particular case. Warning once in the kernel log 
+system, does not seem sufficient to me.
 
-I.e. when testing this specific patch I can't follow what the
-documentation above says and expect anything, right? It will just fail?
+[1] Documentation/security/self-protection.rst
 
->  include::intel-hybrid.txt[]
->  
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index f83252472921..108d98706873 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -51,6 +51,10 @@
->  #include "util/clockid.h"
->  #include "util/off_cpu.h"
->  #include "util/bpf-filter.h"
-> +#ifdef HAVE_BPF_SKEL
-> +#include "util/parse-action.h"
-> +#include "util/record_action.h"
-> +#endif
->  #include "asm/bug.h"
->  #include "perf.h"
->  #include "cputopo.h"
-> @@ -182,6 +186,7 @@ struct record {
->  	struct pollfd_index_map	*index_map;
->  	size_t			index_map_sz;
->  	size_t			index_map_cnt;
-> +	bool			custom_action;
->  };
->  
->  static volatile int done;
-> @@ -3316,6 +3321,23 @@ static int parse_record_synth_option(const struct option *opt,
->  	return 0;
->  }
->  
-> +#ifdef HAVE_BPF_SKEL
-> +static int parse_record_action_option(const struct option *opt,
-> +				      const char *str,
-> +				      int unset __maybe_unused)
-> +{
-> +	int ret;
-> +	struct record *rec = (struct record *)opt->value;
 
-There should be no need for casting above, opt->value is void *.
-
-> +
-> +	ret = parse_record_action(rec->evlist, str);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rec->custom_action = true;
-> +	return 0;
-> +}
-> +#endif
-> +
->  /*
->   * XXX Ideally would be local to cmd_record() and passed to a record__new
->   * because we need to have access to it in record__exit, that is called
-> @@ -3564,6 +3586,9 @@ static struct option __record_options[] = {
->  	OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analysis"),
->  	OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
->  		   "BPF filter action"),
-> +#ifdef HAVE_BPF_SKEL
-> +	OPT_CALLBACK(0, "action", &record, "action", "event action", parse_record_action_option),
-> +#endif
->  	OPT_END()
->  };
->  
-> @@ -4001,6 +4026,12 @@ int cmd_record(int argc, const char **argv)
->  	if (quiet)
->  		perf_quiet_option();
->  
-> +#ifdef HAVE_BPF_SKEL
-> +	/* Currently, event actions only supported using bpf prog. */
-> +	if (rec->custom_action)
-> +		return bpf_perf_record(rec->evlist, argc, argv);
-> +#endif
-> +
->  	err = symbol__validate_sym_arguments();
->  	if (err)
->  		return err;
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index c06d2ee9024c..db4c4cabc5f8 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -249,6 +249,12 @@ perf-util-$(CONFIG_LIBBPF) += bpf-utils.o
->  
->  perf-util-$(CONFIG_LIBPFM4) += pfm.o
->  
-> +# perf record event action
-> +perf-util-$(CONFIG_PERF_BPF_SKEL) += parse-action.o
-> +perf-util-$(CONFIG_PERF_BPF_SKEL) += parse-action-flex.o
-> +perf-util-$(CONFIG_PERF_BPF_SKEL) += parse-action-bison.o
-> +perf-util-$(CONFIG_PERF_BPF_SKEL) += record_action.o
-> +
->  CFLAGS_config.o   += -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
->  
->  # avoid compiler warnings in 32-bit mode
-> @@ -294,6 +300,16 @@ $(OUTPUT)util/bpf-filter-bison.c $(OUTPUT)util/bpf-filter-bison.h: util/bpf-filt
->  	$(Q)$(call echo-cmd,bison)$(BISON) -v $< -d $(PARSER_DEBUG_BISON) $(BISON_FILE_PREFIX_MAP) \
->  		-o $(OUTPUT)util/bpf-filter-bison.c -p perf_bpf_filter_
->  
-> +$(OUTPUT)util/parse-action-flex.c $(OUTPUT)util/parse-action-flex.h: util/parse-action.l $(OUTPUT)util/parse-action-bison.c util/parse-action.h
-> +	$(call rule_mkdir)
-> +	$(Q)$(call echo-cmd,flex)$(FLEX) -o $(OUTPUT)util/parse-action-flex.c \
-> +		--header-file=$(OUTPUT)util/parse-action-flex.h $(PARSER_DEBUG_FLEX) $<
-> +
-> +$(OUTPUT)util/parse-action.c $(OUTPUT)util/parse-action-bison.h: util/parse-action.y util/parse-action.h
-> +	$(call rule_mkdir)
-> +	$(Q)$(call echo-cmd,bison)$(BISON) -v $< -d $(PARSER_DEBUG_BISON) $(BISON_FILE_PREFIX_MAP) \
-> +		-o $(OUTPUT)util/parse-action-bison.c -p parse_action_
-> +
->  FLEX_VERSION := $(shell $(FLEX) --version | cut -d' ' -f2)
->  
->  FLEX_GE_260 := $(call version-ge3,$(FLEX_VERSION),2.6.0)
-> @@ -345,11 +361,13 @@ CFLAGS_parse-events-flex.o  += $(flex_flags) -Wno-unused-label
->  CFLAGS_pmu-flex.o           += $(flex_flags)
->  CFLAGS_expr-flex.o          += $(flex_flags)
->  CFLAGS_bpf-filter-flex.o    += $(flex_flags)
-> +CFLAGS_parse-action-flex.o  += $(flex_flags)
->  
->  CFLAGS_parse-events-bison.o += $(bison_flags)
->  CFLAGS_pmu-bison.o          += -DYYLTYPE_IS_TRIVIAL=0 $(bison_flags)
->  CFLAGS_expr-bison.o         += -DYYLTYPE_IS_TRIVIAL=0 $(bison_flags)
->  CFLAGS_bpf-filter-bison.o   += -DYYLTYPE_IS_TRIVIAL=0 $(bison_flags)
-> +CFLAGS_parse-action-bison.o += -DYYLTYPE_IS_TRIVIAL=0 $(bison_flags)
->  
->  $(OUTPUT)util/parse-events.o: $(OUTPUT)util/parse-events-flex.c $(OUTPUT)util/parse-events-bison.c
->  $(OUTPUT)util/pmu.o: $(OUTPUT)util/pmu-flex.c $(OUTPUT)util/pmu-bison.c
-> diff --git a/tools/perf/util/parse-action.c b/tools/perf/util/parse-action.c
-> new file mode 100644
-> index 000000000000..01c8c7fdea59
-> --- /dev/null
-> +++ b/tools/perf/util/parse-action.c
-> @@ -0,0 +1,230 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/**
-> + * Generic actions for sampling events
-> + * Actions are the programs that run when the sampling event is triggered.
-> + * The action is a list of expressions separated by semicolons (;).
-> + * Each action is an expression, added to actions_head node as list_head node.
-> + */
-> +
-> +#include "util/debug.h"
-> +#include "util/parse-action.h"
-> +#include "util/parse-action-flex.h"
-> +#include "util/parse-action-bison.h"
-> +
-> +static struct list_head actions_head = LIST_HEAD_INIT(actions_head);
-> +
-> +int event_actions__for_each_expr(int (*func)(struct evtact_expr *, void *arg),
-> +				 void *arg, bool recursive)
-> +{
-> +	int ret;
-> +	struct evtact_expr *expr, *opnd;
-> +
-> +	if (list_empty(&actions_head))
-> +		return (*func)(NULL, arg);
-> +
-> +	list_for_each_entry(expr, &actions_head, list) {
-> +		ret = (*func)(expr, arg);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (recursive && !list_empty(&expr->opnds)) {
-> +			list_for_each_entry(opnd, &expr->opnds, list) {
-> +				ret = (*func)(opnd, arg);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int event_actions__for_each_expr_safe(int (*func)(struct evtact_expr *, void *arg),
-> +				      void *arg, bool recursive)
-> +{
-> +	int ret;
-> +	struct evtact_expr *expr, *tmp;
-> +	struct evtact_expr *opnd, *opnd_tmp;
-> +
-> +	if (list_empty(&actions_head))
-> +		return (*func)(NULL, arg);
-> +
-> +	list_for_each_entry_safe(expr, tmp, &actions_head, list) {
-> +		ret = (*func)(expr, arg);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (recursive && !list_empty(&expr->opnds)) {
-> +			list_for_each_entry_safe(opnd, opnd_tmp, &expr->opnds, list) {
-> +				ret = (*func)(opnd, arg);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int parse_action_option(const char *str)
-> +{
-> +	int ret;
-> +	YY_BUFFER_STATE buffer;
-> +
-> +	buffer = parse_action__scan_string(str);
-> +	ret = parse_action_parse(&actions_head);
-> +
-> +	parse_action__flush_buffer(buffer);
-> +	parse_action__delete_buffer(buffer);
-> +	parse_action_lex_destroy();
-> +
-> +	return ret;
-> +}
-> +
-> +int parse_record_action(struct evlist *evlist, const char *str)
-> +{
-> +	int ret;
-> +
-> +	if (evlist == NULL) {
-> +		pr_err("--action option should follow a tracer option\n");
-> +		return -1;
-> +	}
-> +
-> +	ret = parse_action_option(str);
-> +	if (ret) {
-> +		event_actions__free();
-> +		pr_err("parse action option failed\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int do_action_free(struct evtact_expr *action, void *data __maybe_unused)
-> +{
-> +	if (action == NULL)
-> +		return 0;
-> +
-> +	list_del(&action->list);
-> +	parse_action_expr__free(action);
-> +	return 0;
-> +}
-> +
-> +void event_actions__free(void)
-> +{
-> +	(void)event_actions__for_each_expr_safe(do_action_free, NULL, false);
-> +}
-> +
-> +static struct evtact_expr_class *expr_class_list[EVTACT_EXPR_TYPE_MAX] = {
-> +};
-> +
-> +int parse_action_expr__set_class(enum evtact_expr_type type,
-> +				 struct evtact_expr_class *class)
-> +{
-> +	if (type >= EVTACT_EXPR_TYPE_MAX) {
-> +		pr_err("action expr set class ops type invalid\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (expr_class_list[type] != NULL) {
-> +		pr_err("action expr set class ops type already exists\n");
-> +		return -EEXIST;
-> +	}
-> +
-> +	expr_class_list[type] = class;
-> +	return 0;
-> +}
-> +
-> +static int expr_set_type(struct evtact_expr *expr)
-> +{
-> +	u64 id;
-> +	int ret;
-> +	u32 type, opcode;
-> +	struct evtact_expr_class *class;
-> +
-> +	id = expr->id;
-> +	evtact_expr_id_decode(id, &type, &opcode);
-> +
-> +	if (type >= EVTACT_EXPR_TYPE_MAX) {
-> +		pr_err("parse_action_expr type invalid: %u\n", type);
-> +		return -EINVAL;
-> +	}
-> +
-> +	class = expr_class_list[type];
-> +	if (class == NULL) {
-> +		pr_err("parse_action_expr class not supported: %u\n", type);
-> +		return -ENOTSUP;
-> +	}
-> +
-> +	if (class->set_ops != NULL) {
-> +		ret = class->set_ops(expr, opcode);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +struct evtact_expr *parse_action_expr__new(u64 id, struct list_head *opnds,
-> +					   void *data, int size)
-> +{
-> +	int ret;
-> +	struct evtact_expr *expr;
-> +
-> +	expr = malloc(sizeof(*expr));
-> +	if (expr == NULL) {
-> +		pr_err("parse_action_expr malloc failed\n");
-> +		goto out_free_opnds;
-> +	}
-> +	expr->id = id;
-> +
-> +	if (opnds != NULL)
-> +		list_add_tail(&expr->opnds, opnds);
-> +	else
-> +		INIT_LIST_HEAD(&expr->opnds);
-> +
-> +	ret = expr_set_type(expr);
-> +	if (ret)
-> +		goto out_list_del_opnds;
-> +
-> +	if (expr->ops->new != NULL) {
-> +		ret = expr->ops->new(expr, data, size);
-> +		if (ret)
-> +			goto out_free_expr;
-> +	}
-> +
-> +	return expr;
-> +
-> +out_free_expr:
-> +	free(expr);
-> +out_list_del_opnds:
-> +	list_del(&expr->opnds);
-> +out_free_opnds:
-> +	parse_action_expr__free_opnds(opnds);
-> +
-> +	return NULL;
-> +}
-> +
-> +void parse_action_expr__free_opnds(struct list_head *opnds)
-> +{
-> +	struct evtact_expr *opnd, *tmp;
-> +
-> +	if (opnds != NULL && !list_empty(opnds)) {
-> +		list_for_each_entry_safe(opnd, tmp, opnds, list) {
-> +			list_del(&opnd->list);
-> +			parse_action_expr__free(opnd);
-> +		}
-> +	}
-> +}
-> +
-> +void parse_action_expr__free(struct evtact_expr *expr)
-> +{
-> +	if (expr == NULL)
-> +		return;
-> +
-> +	if (expr->ops->free != NULL)
-> +		expr->ops->free(expr);
-> +
-> +	parse_action_expr__free_opnds(&expr->opnds);
-> +	free(expr);
-> +}
-> diff --git a/tools/perf/util/parse-action.h b/tools/perf/util/parse-action.h
-> new file mode 100644
-> index 000000000000..71a0a166959e
-> --- /dev/null
-> +++ b/tools/perf/util/parse-action.h
-> @@ -0,0 +1,75 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __PERF_UTIL_PARSE_ACTION_H_
-> +#define __PERF_UTIL_PARSE_ACTION_H_
-> +
-> +#include <linux/types.h>
-> +
-> +#include <subcmd/parse-options.h>
-> +
-> +#include "evlist.h"
-> +
-> +enum evtact_expr_type {
-> +	EVTACT_EXPR_TYPE_MAX,
-> +};
-> +
-> +struct evtact_expr;
-> +struct evtact_expr_ops {
-> +	int (*new)(struct evtact_expr *expr, void *data, int size);
-> +	int (*eval)(struct evtact_expr *expr,
-> +		    void *in, int in_size, void **out, int *out_size);
-> +	void (*free)(struct evtact_expr *expr);
-> +};
-> +
-> +struct evtact_expr_class {
-> +	int (*set_ops)(struct evtact_expr *expr, u32 opcode);
-> +};
-> +
-> +struct evtact_expr {
-> +	struct list_head list;
-> +	u64 id;
-> +	struct evtact_expr_ops *ops;
-> +	struct list_head opnds;
-> +	void *priv;
-> +};
-> +
-> +/*
-> + * The expr id contains two fileds:
-> + * |--------------|----------------|
-> + * |     type     |     opcode     |
-> + * |--------------|----------------|
-> + *      32-bit           32-bit
-> + */
-> +#define EVTACT_EXPR_ID_TYPE_BITS_SHIFT 32
-> +static inline u64 evtact_expr_id_encode(u32 type, u32 opcode)
-> +{
-> +	return (u64)type << EVTACT_EXPR_ID_TYPE_BITS_SHIFT | opcode;
-> +}
-> +
-> +static inline void evtact_expr_id_decode(u64 id, u32 *type, u32 *opcode)
-> +{
-> +	if (type != NULL)
-> +		*type = id >> EVTACT_EXPR_ID_TYPE_BITS_SHIFT;
-> +
-> +	if (opcode != NULL)
-> +		*opcode = id & GENMASK(EVTACT_EXPR_ID_TYPE_BITS_SHIFT, 0);
-> +}
-> +
-> +int parse_record_action(struct evlist *evlist, const char *str);
-> +void event_actions__free(void);
-> +
-> +int event_actions__for_each_expr(int (*func)(struct evtact_expr *, void *arg),
-> +				 void *arg, bool recursive);
-> +
-> +int event_actions__for_each_expr_safe(int (*func)(struct evtact_expr *, void *arg),
-> +				      void *arg, bool recursive);
-> +
-> +struct evtact_expr *parse_action_expr__new(u64 id, struct list_head *opnds,
-> +					   void *data, int size);
-> +
-> +void parse_action_expr__free_opnds(struct list_head *opnds);
-> +void parse_action_expr__free(struct evtact_expr *expr);
-> +
-> +int parse_action_expr__set_class(enum evtact_expr_type type,
-> +				 struct evtact_expr_class *ops);
-> +
-> +#endif /* __PERF_UTIL_PARSE_ACTION_H_ */
-> diff --git a/tools/perf/util/parse-action.l b/tools/perf/util/parse-action.l
-> new file mode 100644
-> index 000000000000..3cb72de50372
-> --- /dev/null
-> +++ b/tools/perf/util/parse-action.l
-> @@ -0,0 +1,40 @@
-> +%option prefix="parse_action_"
-> +%option noyywrap
-> +%option stack
-> +
-> +%{
-> +
-> +#include <errno.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +
-> +#include "util/debug.h"
-> +
-> +#include "parse-action.h"
-> +#include "parse-action-bison.h"
-> +
-> +%}
-> +
-> +space		[ \t]
-> +ident		[_a-zA-Z][_a-zA-Z0-9]*
-> +
-> +%%
-> +
-> +{space}		{ }
-> +
-> +";"		{ return SEMI; }
-> +
-> +{ident}		{
-> +			parse_action_lval.str = strdup(parse_action_text);
-> +			if (parse_action_lval.str == NULL) {
-> +				pr_err("parse_action malloc ident string failed\n");
-> +				return ERROR;
-> +			}
-> +			return IDENT;
-> +		}
-> +.		{
-> +			pr_err("invalid character: '%s'\n", parse_action_text);
-> +			return ERROR;
-> +		}
-> +
-> +%%
-> diff --git a/tools/perf/util/parse-action.y b/tools/perf/util/parse-action.y
-> new file mode 100644
-> index 000000000000..fade9d093d4a
-> --- /dev/null
-> +++ b/tools/perf/util/parse-action.y
-> @@ -0,0 +1,82 @@
-> +%parse-param {struct list_head *actions_head}
-> +%define parse.error verbose
-> +
-> +%{
-> +
-> +#ifndef NDEBUG
-> +#define YYDEBUG 1
-> +#endif
-> +
-> +#include <errno.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +
-> +#include <linux/compiler.h>
-> +#include <linux/list.h>
-> +
-> +#include "util/debug.h"
-> +#include "util/parse-action.h"
-> +
-> +int parse_action_lex(void);
-> +
-> +static void parse_action_error(struct list_head *expr __maybe_unused,
-> +			       char const *msg)
-> +{
-> +	pr_err("parse_action: %s\n", msg);
-> +}
-> +
-> +%}
-> +
-> +%union
-> +{
-> +	char *str;
-> +	struct evtact_expr *expr;
-> +	struct list_head *list;
-> +}
-> +
-> +%token IDENT ERROR
-> +%token SEMI
-> +%type <expr> action_term expr_term
-> +%destructor { parse_action_expr__free($$); } <expr>
-> +%type <str> IDENT
-> +
-> +%%
-> +
-> +actions:
-> +action_term SEMI actions
-> +{
-> +	list_add(&$1->list, actions_head);
-> +}
-> +|
-> +action_term SEMI
-> +{
-> +	list_add(&$1->list, actions_head);
-> +}
-> +|
-> +action_term
-> +{
-> +	list_add(&$1->list, actions_head);
-> +}
-> +
-> +action_term:
-> +expr_term
-> +{
-> +	$$ = $1;
-> +}
-> +
-> +expr_term:
-> +IDENT
-> +{
-> +	$$ = NULL;
-> +	pr_err("unsupported ident: '%s'\n", $1);
-> +	free($1);
-> +	YYERROR;
-> +}
-> +|
-> +ERROR
-> +{
-> +	$$ = NULL;
-> +	YYERROR;
-> +}
-> +
-> +%%
-> diff --git a/tools/perf/util/record_action.c b/tools/perf/util/record_action.c
-> new file mode 100644
-> index 000000000000..44789e0d4678
-> --- /dev/null
-> +++ b/tools/perf/util/record_action.c
-> @@ -0,0 +1,15 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/**
-> + * Read event sample data and execute the specified actions.
-> + */
-> +
-> +#include "util/debug.h"
-> +#include "util/parse-action.h"
-> +#include "util/record_action.h"
-> +
-> +int bpf_perf_record(struct evlist *evlist __maybe_unused,
-> +		    int argc __maybe_unused, const char **argv __maybe_unused)
-> +{
-> +	event_actions__free();
-> +	return 0;
-> +}
-> diff --git a/tools/perf/util/record_action.h b/tools/perf/util/record_action.h
-> new file mode 100644
-> index 000000000000..289be4befa97
-> --- /dev/null
-> +++ b/tools/perf/util/record_action.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __PERF_UTIL_RECORD_ACTION_H_
-> +#define __PERF_UTIL_RECORD_ACTION_H_
-> +
-> +#include <errno.h>
-> +#include "evlist.h"
-> +
-> +#ifdef HAVE_BPF_SKEL
-> +
-> +int bpf_perf_record(struct evlist *evlist, int argc, const char **argv);
-> +
-> +
-> +#else /* !HAVE_BPF_SKEL */
-> +
-> +static inline int bpf_perf_record(struct evlist *evlist __maybe_unused,
-> +				  int argc __maybe_unused,
-> +				  const char **argv __maybe_unused)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +#endif /* !HAVE_BPF_SKEL */
-> +
-> +#endif /* __PERF_UTIL_RECORD_ACTION_H_ */
-> -- 
-> 2.25.1
 
