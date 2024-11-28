@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912209DB0C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:34:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0269DB0C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11A2CB22713
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9B6281EAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462045C14;
-	Thu, 28 Nov 2024 01:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691217DA9F;
+	Thu, 28 Nov 2024 01:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4C3zKq/e"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dHZGYmXU"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCCF29406
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2878022619
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757676; cv=none; b=W9keFsxz9QXjpRrV5uN5uED4Tk0qf0TBO4Ifrs+vMK2feUgGei2675CzcaK12xgUhOIT7zAbLNzJwDPe6HEC/AgGPB3VfXv1Ro5mu8ppuvolYjdtGKA3XgIShaB+v20QZlc58eynw6g0+vwE0fouKkGtaUSscgidXCxaWQRstWU=
+	t=1732757677; cv=none; b=Si9jXFlPP5tgdj+YEkkFniClBk0Bju2g/nKPa4Sd5PMUuUq5hMAyFizsv2K9fS8TcMBDC0k5IPzgekxvfvcFWy5+aCNZBQgyaG+aGUijRMfWq62+WM8hrKXcd0kTEXBNPDt3eAKDaY/0XGhtprmDUFhuajWrXZcMKMV086nKCS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757676; c=relaxed/simple;
-	bh=qUOOQRdxqzW0iWtWBhZyxD40r+KxBbQyVzxJr0TNPM8=;
+	s=arc-20240116; t=1732757677; c=relaxed/simple;
+	bh=hYeQH0cnFNph4gq4o9bmGO4zv0NeN0pKqksbk4WKQVo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GS7bUgHid/CFXH550ffFcQlmy+6RW5nyHKMG/Bb4bMgMjOQUdMZ/+p2nM2QS7kNpMWJTmwxYDBCdhC5S8GQEcOd5/VS7Z3D6FAOIjU9VdO+INyxoiQXKKNJ0D6SFHOCONjqArrnm2DkSR50Ekvb2ep21kAgJzQypvbCZggm9/Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4C3zKq/e; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=NoGHEmwMiFXJt7fKM9vX9uiLzr37crsZ5AQT3EZ39cH5zSlUBuLn2iyLzA8jC7D5Y4NVK7ftBZyEj2Ivga5GHkyXSuUBWCN38B8c1WbrUvpUz174N4NZajUAlYQbawgJIzeFXyTSYAufB2kjJkTD+R+5TciXFB/RJsj5prlQ9xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dHZGYmXU; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2eaf1a11078so452773a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:34:34 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2edeef8a994so387284a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:34:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732757674; x=1733362474; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732757675; x=1733362475; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=8PwmW/45ueQJahzHJJm7h5RjQBp4aZ3CpfBvMjYYokI=;
-        b=4C3zKq/eL8aNPiGlFpon+1a7IxPxMNZtRN5E4LhXA/A99YMJU50nPSeh+Zy+CUsIMB
-         8/GTHMcPH/DCcKPbCcbE/V6vYwMSXTnUD+5vZlu5+E1Y9X3KfLVudNXZl0pf/rgrEEGe
-         FJ5PDtV7Y690RD66ezgHlhOK+PFRKJZeMRK3P6hk/3sw8npIYlVvI3c5RZyvk4qMEpN3
-         3XbPfiMxfqlV2OIBjc1ZyEBYgrfQ7L1W6oz+LSgaFVJDpK3PO/Iar/FiohsDh4fsOjh6
-         GvVj0ZKdM06n67tF/ahUpGGnXJN7bXqMf+qZLlcPBWdxGA0OGryUdFzWAzsbndjkgX/t
-         eznA==
+        bh=w0T1o7JOZFfzGvrXyxDf48T55kuY+CtU7N9pEQ+8xFU=;
+        b=dHZGYmXUlg17fuDqtOqfMeqBcLMCsR5867e80+2csvlmUkPjiYleH3LPes5F669Lii
+         bwE/D4Ya3ZMxruRs0GirjmWamMUT9hjU4la/uQNi/fI0I3U6kaQz66FEyhvRWJnyfyg/
+         Pxmvyfi5j8Yq6QGofaLKWm4xmAWta5iuyaTbGAtjuuwV5VyWI8cU4i5/zts4ar3Xf4/U
+         v+6Qh7abV4P1vQK6n9f0Q7ME+qkVy2EZ9HQX54bmPIVoWbEv9uERs3dbhxQHToEBRPDM
+         UfGdclGccaybePtKcBqpFRaOrvukus2mug45gfxxIXx7kGUHs/RtoMnaP6jimsBstbAr
+         F3bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732757674; x=1733362474;
+        d=1e100.net; s=20230601; t=1732757675; x=1733362475;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8PwmW/45ueQJahzHJJm7h5RjQBp4aZ3CpfBvMjYYokI=;
-        b=KZvpdGNG/oThlFtnLDJ2R5XOMSLZxtRIRm5Rw3qoAI02oCqjivJ8/lmEeaajTWt6Nh
-         ql4Y2ABHP551GpShoKgH9WeBvF97DtDAKNbjHQMeAAzsUoqhQawSdyL9FbEdR0XnW4QS
-         8FTtE0P8ojKRKVka41JPZMMaV41jqHFOJ6VBA6gtgmLiPA23KnIFC6bjP17B4zKIyxrS
-         mFZwkV59i89YPlKzWEjtPBoSVGCalgvD6/bL1pjS7Jt9QcWH/JVNr1nPOibhfggBU0hQ
-         DsgPRm34G+8rjrK6fwnBoGKRx3hjQOI+51dN0L+ztYg5oLC5sskFcLjqJsum3HdntYva
-         WsJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNWivYqZG3zGAomv2eD+7GmBr/EezSBKgX6y6NLuT00kpod9Kk0vaXJO+moA94eLjVfZN4SHPcptAR6Tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX6fw+PBpjGfiChFRT7yr4eMx8Os+rn/sOvTtVcUZewaDEYwRr
-	dX6exnxL4faVys/ybweEyH27NYzFp8T+NMDZGYxAYRRhj/NGQGr04XYqaFvwT4C9kz1B2C2l4Of
-	uzA==
-X-Google-Smtp-Source: AGHT+IHpXO85otaKd+k0LVF4CVKFisDTeercgU4ixevU+UUIJ0Tx7jcVkyEwl+8jlB2oryYpavN1dvJ2J/A=
-X-Received: from pjbqj4.prod.google.com ([2002:a17:90b:28c4:b0:2ea:839b:bb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:35c9:b0:2ea:77d9:6345
- with SMTP id 98e67ed59e1d1-2ee08ed4430mr5846693a91.22.1732757673761; Wed, 27
- Nov 2024 17:34:33 -0800 (PST)
+        bh=w0T1o7JOZFfzGvrXyxDf48T55kuY+CtU7N9pEQ+8xFU=;
+        b=pABpezD/xzlZugJA3M3BFwdEF7+xuAD0DjzMwKl+Rx9YfrqcwQjJskXmgSJwhvVlHM
+         y7mI+OPsHssujTJXAZI84vq/rr+82rLodZ75qLH0EgEjVypslbRxQa6GOhOn33Xn68X3
+         BJALRIHf1ixIYuRwMm2oZGExg6TgVjdPz8k/x/aIT5vJhtR4Qd4HjptlSWcnIMbX5RKY
+         4Cd8peRqhDwPkoKkEwZs7OEnpxTKJ/x/Qrx5KIvBHueveUExdIZOWpXiAIEmPc0/YXG1
+         yyyxq19i3fWzmc0jB3vIIdmXYN3ewXg16F6OwzhNWutHNnb3P5iM0NKJ3jtjUYriOHDJ
+         hTkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJd7mb7RofcM5GASvVL1j2FROeFcyObffGAtK5ZwXTOKT6d958FbxGrerQZspqWFynT0NsoLMyL6BEnmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbLXWPX2q1tcrQdqCP1c4Ubrth8V7sQAwILVVE56zfHH5670B5
+	jKP+wbGWXLnonQQHcNtx4dCPHZ9BAmUDmGMIRnLWS1grC4bfkQCor+QBNxcCK4CuMi9P/2SyAtX
+	yzQ==
+X-Google-Smtp-Source: AGHT+IHDd5pGSMVrB0JSh8VsrZ6k2engOzJtEji7Z7aPSZjMqbRPkWEXgFxjpCwpDi/5EAV05cqaqCdDPHU=
+X-Received: from pjbst14.prod.google.com ([2002:a17:90b:1fce:b0:2ea:9d23:79a0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:164a:b0:2ea:9309:7594
+ with SMTP id 98e67ed59e1d1-2ee08e997e9mr6634363a91.4.1732757675429; Wed, 27
+ Nov 2024 17:34:35 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 17:33:28 -0800
+Date: Wed, 27 Nov 2024 17:33:29 -0800
 In-Reply-To: <20241128013424.4096668-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128013424.4096668-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128013424.4096668-2-seanjc@google.com>
-Subject: [PATCH v3 01/57] KVM: x86: Use feature_bit() to clear CONSTANT_TSC
- when emulating CPUID
+Message-ID: <20241128013424.4096668-3-seanjc@google.com>
+Subject: [PATCH v3 02/57] KVM: x86: Limit use of F() and SF() to kvm_cpu_cap_{mask,init_kvm_defined}()
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
@@ -89,35 +88,115 @@ Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
 	Robert Hoo <robert.hoo.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When clearing CONSTANT_TSC during CPUID emulation due to a Hyper-V quirk,
-use feature_bit() instead of SF() to ensure the bit is actually cleared.
-SF() evaluates to zero if the _host_ doesn't support the feature.  I.e.
-KVM could keep the bit set if userspace advertised CONSTANT_TSC despite
-it not being supported in hardware.
+Define and undefine the F() and SF() macros precisely around
+kvm_set_cpu_caps() to make it all but impossible to use the macros outside
+of kvm_cpu_cap_{mask,init_kvm_defined}().  Currently, F() is a simple
+passthrough, but SF() is actively dangerous as it checks that the scattered
+feature is supported by the host kernel.
 
-Note, translating from a scattered feature to a the hardware version is
-done by __feature_translate(), not SF().  The sole purpose of SF() is to
-check kernel support for the scattered feature, *before* translation.
+And usage outside of the aforementioned helpers will run afoul of future
+changes to harden KVM's CPUID management.
 
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Opportunistically switch to feature_bit() when stuffing LA57 based on raw
+hardware support.
+
+No functional change intended.
+
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/cpuid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/cpuid.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 097bdc022d0f..776f24408fa3 100644
+index 776f24408fa3..eb4b32bcfa56 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -1630,7 +1630,7 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
- 				*ebx &= ~(F(RTM) | F(HLE));
+@@ -61,15 +61,6 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+ 	return ret;
+ }
+ 
+-#define F feature_bit
+-
+-/* Scattered Flag - For features that are scattered by cpufeatures.h. */
+-#define SF(name)						\
+-({								\
+-	BUILD_BUG_ON(X86_FEATURE_##name >= MAX_CPU_FEATURES);	\
+-	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
+-})
+-
+ /*
+  * Magic value used by KVM when querying userspace-provided CPUID entries and
+  * doesn't care about the CPIUD index because the index of the function in
+@@ -604,6 +595,15 @@ static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+ 	__kvm_cpu_cap_mask(leaf);
+ }
+ 
++#define F feature_bit
++
++/* Scattered Flag - For features that are scattered by cpufeatures.h. */
++#define SF(name)						\
++({								\
++	BUILD_BUG_ON(X86_FEATURE_##name >= MAX_CPU_FEATURES);	\
++	(boot_cpu_has(X86_FEATURE_##name) ? F(name) : 0);	\
++})
++
+ void kvm_set_cpu_caps(void)
+ {
+ #ifdef CONFIG_X86_64
+@@ -668,7 +668,7 @@ void kvm_set_cpu_caps(void)
+ 		F(SGX_LC) | F(BUS_LOCK_DETECT)
+ 	);
+ 	/* Set LA57 based on hardware capability. */
+-	if (cpuid_ecx(7) & F(LA57))
++	if (cpuid_ecx(7) & feature_bit(LA57))
+ 		kvm_cpu_cap_set(X86_FEATURE_LA57);
+ 
+ 	/*
+@@ -850,6 +850,9 @@ void kvm_set_cpu_caps(void)
+ }
+ EXPORT_SYMBOL_GPL(kvm_set_cpu_caps);
+ 
++#undef F
++#undef SF
++
+ struct kvm_cpuid_array {
+ 	struct kvm_cpuid_entry2 *entries;
+ 	int maxnent;
+@@ -925,14 +928,14 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
+ 		++array->nent;
+ 		break;
+ 	case 1:
+-		entry->ecx = F(MOVBE);
++		entry->ecx = feature_bit(MOVBE);
+ 		++array->nent;
+ 		break;
+ 	case 7:
+ 		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
+ 		entry->eax = 0;
+ 		if (kvm_cpu_cap_has(X86_FEATURE_RDTSCP))
+-			entry->ecx = F(RDPID);
++			entry->ecx = feature_bit(RDPID);
+ 		++array->nent;
+ 		break;
+ 	default:
+@@ -1082,7 +1085,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 			goto out;
+ 
+ 		cpuid_entry_override(entry, CPUID_D_1_EAX);
+-		if (entry->eax & (F(XSAVES)|F(XSAVEC)))
++		if (entry->eax & (feature_bit(XSAVES) | feature_bit(XSAVEC)))
+ 			entry->ebx = xstate_required_size(permitted_xcr0 | permitted_xss,
+ 							  true);
+ 		else {
+@@ -1627,7 +1630,7 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+ 			u64 data;
+ 		        if (!__kvm_get_msr(vcpu, MSR_IA32_TSX_CTRL, &data, true) &&
+ 			    (data & TSX_CTRL_CPUID_CLEAR))
+-				*ebx &= ~(F(RTM) | F(HLE));
++				*ebx &= ~(feature_bit(RTM) | feature_bit(HLE));
  		} else if (function == 0x80000007) {
  			if (kvm_hv_invtsc_suppressed(vcpu))
--				*edx &= ~SF(CONSTANT_TSC);
-+				*edx &= ~feature_bit(CONSTANT_TSC);
- 		}
- 	} else {
- 		*eax = *ebx = *ecx = *edx = 0;
+ 				*edx &= ~feature_bit(CONSTANT_TSC);
 -- 
 2.47.0.338.g60cca15819-goog
 
