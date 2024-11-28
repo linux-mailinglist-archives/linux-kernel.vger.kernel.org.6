@@ -1,198 +1,124 @@
-Return-Path: <linux-kernel+bounces-424598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB789DB686
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:30:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82ABA9DB6AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:42:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9294164291
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:30:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D6F0B21891
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DF9197A92;
-	Thu, 28 Nov 2024 11:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE861991B8;
+	Thu, 28 Nov 2024 11:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8NhVWw7"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="dLAqs+XF";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="VDnqac7T"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33890190468
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78761146D59;
+	Thu, 28 Nov 2024 11:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732793446; cv=none; b=Xr4oxwodAehLNqxUskzqXaq7w9w+JSB4gt9prS8KAg6UDnqKezd1V3utZ2XBLiyngZ+USuj1F4GmuIFPLTpUyDEEDic473qmAgpaFKl7SZXpGrIlolOi3Yoj58Q8KCoVQ7cGn90OKf3TRNFYHk1Ekc/e0JEl1WVufWbBrqtLzYY=
+	t=1732794112; cv=none; b=VN7i6ANDjP+8df6Qre1VIXGpfX26yetTdBcIP0OWxVfTati0hIf8IjsKRk0+V/f9l8y4Y5Ss7nBO+wVgSPd2zMldf9IHdiGt/uRh8jsd4rZILZmdb//cYGB6Y6qcFkadmggrA6IdUxw/qvEuYzrwdyZcJoWRlMqO4go5RtbaIIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732793446; c=relaxed/simple;
-	bh=d8v9r+oBH4sHr4d822UtL7n7GNzq2i/4M7noKksPepQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z0xMOAxzEhCEatcUx+BkUBx8RQ06Oew/SH0LOslJUBS7ikp+DKWv523MOzjlEIDK9IB2rbvZUrJmEqgrkzTBHiJWfmSiarodC0O/m8SQ8yb3pqydOPO0NlntJc8a2FP8akvojYSXUg29RL8B0ZM3PnkcuRKU/i57mgj0Yeq2YmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8NhVWw7; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724f0f6300aso845256b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:30:44 -0800 (PST)
+	s=arc-20240116; t=1732794112; c=relaxed/simple;
+	bh=tmX7xoY3LX01MewSUUympU6UrXICAWr6yUSpwT8AOB4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sFmY1UsoO4SeHRmnpPaVvRqJF4iZnnqkPeVDwcCtUQAGJ0RUZ8Pr5HGDaneu+sKNxTbgkp+zImHbmccyQ01X0Zbg38bCiFobMCc7xdEka5avm3Er6KXlT1K+wx7ti2x7iIUc14Qn6EBINUMK0F9kBq2AI9lWQGULgN1yijQGxRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=dLAqs+XF; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=VDnqac7T; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id AFF352305;
+	Thu, 28 Nov 2024 11:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732793444; x=1733398244; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nc07jtJ0RIHyeJegeBd/bTxNMBc/5zboOnYaN0hUYgg=;
-        b=F8NhVWw7KGZMYT2ZDIf5/wv9IPAsICW58ajoI8ZGIZANYm5ovSfMeyYXHHrZxHPPdc
-         /Y8ADACK4/m+SsGQg80BPVGuWmgkt3u8/abWd88Ds1AsRyClhv76w+YncidqwyLZjsW6
-         tToAjGIsc+FEPVPceodqTEluXsO11oV/Zbwfq5JM74bpklnPITQS8tsCm+19nYoo/uNu
-         6J+qGQYbYq30runxWClfnMsXKUqUKJOZmDYIgeDxulQGenMTIgXfk0nsNfMlloXtj7A2
-         4Mt2EOsNcUre7/zx3TQEpBjSU4RziKWJN1I/+bJ6nBhnERU+FZNP7MfMMs7xrQaAO0zB
-         xYZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732793444; x=1733398244;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nc07jtJ0RIHyeJegeBd/bTxNMBc/5zboOnYaN0hUYgg=;
-        b=m7C3IGN13HrJ64VpKr0ICHi/dD5v2QN/vXGSHt/qQQ4q92rDWSLQKETNXs0uXxGJsH
-         xS4FiUa1kkhLkHr/IqSgHkscQB9kwfW0KDR4eIZ1dGY1CeKMKlwJPzToQ5Qd0y9Lfcag
-         3f8Qg4JalKP9+Ex7MIjsdJFBRQIPdUwwyz7plktld/7nVs7OpDd+0J8YwVaiA17drVhx
-         ANx1jsqDaGLUHWy2d4R4G/ARe3Iy+TF1Zs35YKj2f7+lSxmAYbadPdS5GXpfF/DjN65w
-         Dnq35F6i72l3A0QPtlVEmL2/b85H0C2CeF9b1ZO2Bg9/RL29MJG98RrwrYND2mtIu5Xi
-         ouBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSuoQ4AxydLKjy7xF0UQA8cqFt6JCFPAuNYPIq39bG37e1qnJWs2cAEJCWrr4XsFAo7blclYfhQ+q+0lQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsYmbHAuNz71Hi0BgDzor3/2hbCwQmPtC9yzz8AdMF5XMlvmhq
-	yMVYXdjmI2emqRbE5CaUyltWLxjVfeU4eq7HKp/k4Ynbt838n7CW
-X-Gm-Gg: ASbGnct4oW6TKxPOW+e7g3AFAJI6952o/iELYBJ9iBarOmjm1G+GO1bVE6jAtZy4MRS
-	sBcgHiPwl65mKGwzPH26kEpN4veBmej2nYZ3fwPv7DS6L+9GszwTkpWeiEsqvIBeaCy8I4clql3
-	xn4m9dxwDHfwI1sIDibrahyjWKcJqEmvS4b6y8gljIcIZ2ohikbhL5wlsirAwHRKjeriK0KkkRk
-	vTM17dMU+lIldVtXC61a5oa03rI9yQbmuNs6kZbsFIer0UzvRL6iWNQhcKi/moDkZplFHqkT2qI
-	h/qS6gNoWmFdPF/NZ7MHpjiRqt7k
-X-Google-Smtp-Source: AGHT+IG7Hqn7AgQZO0w2GF/10fzkTUN05dczXmv+a2ta7UH+V8NOAXHWkl57XNzUirGOQxS1GtHbww==
-X-Received: by 2002:a05:6a00:3c89:b0:724:eac3:576a with SMTP id d2e1a72fcca58-725301a5b92mr8616167b3a.25.1732793444215;
-        Thu, 28 Nov 2024 03:30:44 -0800 (PST)
-Received: from [10.125.112.12] (014136220210.static.ctinets.com. [14.136.220.210])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254180fbbasm1287202b3a.135.2024.11.28.03.30.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 03:30:43 -0800 (PST)
-Message-ID: <0d28126d-4324-ba19-fe12-4f7a0ec0192f@gmail.com>
-Date: Thu, 28 Nov 2024 19:30:37 +0800
+	d=paragon-software.com; s=mail; t=1732793255;
+	bh=NqIAAeMDOoiqx41SDJtqResr0fd/wauc47erVyXIRo8=;
+	h=From:To:CC:Subject:Date;
+	b=dLAqs+XFvU6d1m6sSnMojhXikiNGL0Pvl32PURkr1VeKtOk3ZzhUhAYbPxogU1M1h
+	 8lv3kQyzUfdHxtP57050wFl+n9opeRQH+zNtvtWdZ5LVaM7yAVn1aGXtnXrXtphwGC
+	 ZWXa24ON3zuLPxZA/4tKfpr2k3wB47gX+ooWCw5k=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 3E528F7;
+	Thu, 28 Nov 2024 11:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1732793738;
+	bh=NqIAAeMDOoiqx41SDJtqResr0fd/wauc47erVyXIRo8=;
+	h=From:To:CC:Subject:Date;
+	b=VDnqac7TagIho2HX6XSrmwjK+Q3bdwudAwC0/nMrb9bCLflQleOAPb5Uqb3fUOs9c
+	 YsRCvnzDUI7dEdNSDRLCPGHtvpO4SYcKG967nqF1dRo14TXXWJ0qud3UL7q7NBQuP6
+	 huDGDyLpmYQ6Q/5U+tWv/5ecQRRzs5JxUlmlaUGU=
+Received: from ntfs3vm.paragon-software.com (192.168.211.21) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 28 Nov 2024 14:35:37 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <torvalds@linux-foundation.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ntfs3: bugfixes for 6.13
+Date: Thu, 28 Nov 2024 14:35:05 +0300
+Message-ID: <20241128113505.44406-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH] sched/core: Do not migrate ineligible tasks in
- sched_balance_rq()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, mingo@kernel.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, linux-kernel@vger.kernel.org,
- Hao Jia <jiahao1@lixiang.com>
-References: <20241128084858.25220-1-jiahao.kernel@gmail.com>
- <20241128091929.GA35539@noisy.programming.kicks-ass.net>
-From: Hao Jia <jiahao.kernel@gmail.com>
-In-Reply-To: <20241128091929.GA35539@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
+Please pull this branch containing ntfs3 code for 6.13.
 
+All changed code was in linux-next branch at 2 weeks.
 
-On 2024/11/28 17:19, Peter Zijlstra wrote:
-> On Thu, Nov 28, 2024 at 04:48:58PM +0800, Hao Jia wrote:
->> From: Hao Jia <jiahao1@lixiang.com>
->>
->> When the PLACE_LAG scheduling feature is enabled, if a task
->> is ineligible (lag < 0) on the source cpu runqueue, it will
->> also be ineligible when it is migrated to the destination
->> cpu runqueue.
->>
->> Because we will keep the original equivalent lag of
->> the task in place_entity(). So if the task was ineligible
->> before, it will still be ineligible after migration.
-> 
-> This is not accurate, it will be eleigible, irrespective of lag, if
-> there are no other tasks. I think your patch tries to do this, but I'm
-> fairly sure it got it wrong.
+Regards,
+Konstantin
 
+----------------------------------------------------------------
 
-Thank you for your reply. The expression in my commit message is 
-inaccurate, and I will correct it in the patch v2. If I understand 
-correctly, a task meeting the following conditions:
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
 
-  sched_feat(PLACE_LAG) && cfs_rq->nr_running && 
-!entity_eligible(cfs_rq, &p->se),
+  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
 
-will remain ineligible both before and after migration.
+are available in the Git repository at:
 
-If I am wrong, please correct me. Thank you!
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.13
 
+for you to fetch changes up to bac89bb33d91cdd75092e15cf59fe6be34571142:
 
+  fs/ntfs3: Accumulated refactoring changes (2024-11-01 11:19:53 +0300)
 
-> 
->> Therefore, we should skip the migration of ineligible tasks
->> to reduce ineffective task migrations, just like the task
->> throttled by cfs_bandwidth, until they become eligible.
-> 
-> And this misses an important case too -- load-balancing will try very
-> hard to balance load. If you disallow migrating tasks it might fail to
-> reach this goal. Since this is not a hard contraint it should eventually
-> give in and migrate it anyway.
-> 
-> That is, I would suggest allowing it when nr_balance_failed is non-zero.
-> 
+----------------------------------------------------------------
+Changes for 6.13-rc1
 
-Thank you for your suggestion, I will do it in the patch v2.
+Fixed:
+	additional checks have been added to address issues identified by syzbot.
+Refactored:
+	continuation of the transition from 'page' to 'folio'.
 
-Thanks,
-Hao
+----------------------------------------------------------------
+Konstantin Komarov (7):
+      fs/ntfs3: Fix warning in ni_fiemap
+      fs/ntfs3: Fix case when unmarked clusters intersect with zone
+      fs/ntfs3: Equivalent transition from page to folio
+      fs/ntfs3: Add more checks in mi_enum_attr (part 2)
+      fs/ntfs3: Add check in ntfs_extend_initialized_size
+      fs/ntfs3: Switch to folio to release resources
+      fs/ntfs3: Accumulated refactoring changes
 
->> Signed-off-by: Hao Jia <jiahao1@lixiang.com>
->> ---
->>   kernel/sched/fair.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index fbdca89c677f..5564e16b6fdb 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -9358,13 +9358,14 @@ static inline int migrate_degrades_locality(struct task_struct *p,
->>   static
->>   int can_migrate_task(struct task_struct *p, struct lb_env *env)
->>   {
->> +	struct cfs_rq *cfs_rq = task_cfs_rq(p);
->>   	int tsk_cache_hot;
->>   
->>   	lockdep_assert_rq_held(env->src_rq);
->>   
->>   	/*
->>   	 * We do not migrate tasks that are:
->> -	 * 1) throttled_lb_pair, or
->> +	 * 1) throttled_lb_pair, or task ineligible, or
->>   	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
->>   	 * 3) running (obviously), or
->>   	 * 4) are cache-hot on their current CPU.
->> @@ -9372,6 +9373,10 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
->>   	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
->>   		return 0;
->>   
->> +	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running &&
->> +			!entity_eligible(cfs_rq, &p->se))
-> 
-> Your indenting it wrong, please use: cino=(0:0
-
-I will do it in the patch v2.
-
-Thanks,
-Hao
-
-> 
->> +		return 0;
->> +
->>   	/* Disregard percpu kthreads; they are where they need to be. */
->>   	if (kthread_is_per_cpu(p))
->>   		return 0;
->> -- 
->> 2.34.1
->>
+ fs/ntfs3/attrib.c  |   9 +++--
+ fs/ntfs3/bitmap.c  |  62 +++++++++-----------------------
+ fs/ntfs3/file.c    |  34 +++++++++++-------
+ fs/ntfs3/frecord.c | 104 ++++++++---------------------------------------------
+ fs/ntfs3/fsntfs.c  |   2 +-
+ fs/ntfs3/ntfs_fs.h |   3 +-
+ fs/ntfs3/record.c  |  16 +++++++--
+ fs/ntfs3/run.c     |  40 +++++++++++++++------
+ 8 files changed, 103 insertions(+), 167 deletions(-)
 
