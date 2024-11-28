@@ -1,124 +1,76 @@
-Return-Path: <linux-kernel+bounces-424233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831F69DB1D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:24:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD129DB1CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 131AAB229E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BC52820E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F52312EBE9;
-	Thu, 28 Nov 2024 03:23:53 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97EE84D29;
+	Thu, 28 Nov 2024 03:22:00 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEE66F2F2;
-	Thu, 28 Nov 2024 03:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C17256D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732764233; cv=none; b=FXdWic5Lwkm9wbNlSymUti6xugeJ0h6FIfh+nqSJMe5Dg54KQ/9f5o2ewIjdZiWOadC8wMvXvkrOwDCRVm2R+gFHkEw6eNF3IpaHms+5q9Jr5pXYNKH42HWDXn9NxlHeX3YCNE5k9fx9qCErsBmSaw0ygcRV2Z2mHUyyszzX8yU=
+	t=1732764120; cv=none; b=LkZtGAVWJwZqq6SEEbWUrRIb/g7aeqrr8MeW5PDtKgrLf9+pqDp7wM+xUDmEjvtUGq+mDpiG4BqtEHwjB/Kxy3S8uZLfqPmpU7+vVZXglWBTCpOiq6nWj1kWcTgaA0oUTCVXOyFjE3ogRaVepjGZr1/KUHsUqenl/YAVbOT4kQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732764233; c=relaxed/simple;
-	bh=xsBeb9mewrhSoflXLO5VEph9GGAtP2S37JmLMFH434E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tcySS7c8LXlF+ut/BFob3kRTHzb5WhtlrRpNRazh2+FAuDF4qJp4l63zfnC1cbqSKTrwgW1/kiqDHqLrk9cBV85O7inFuzAth5KsFolHurcubtE/HiYCx0yuGpslNcgehWBloDvqPIdRMA1YMRpcKq28xFWwHGIqrYoCRU5QVho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from zq-Legion-Y7000.. (unknown [180.111.103.148])
-	by APP-05 (Coremail) with SMTP id zQCowACXf7o94kdnyFkcBg--.780S2;
-	Thu, 28 Nov 2024 11:23:41 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: anup@brainfault.org,
-	ajones@ventanamicro.com,
-	atishp@atishpatra.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: [PATCH 2/4] RISC-V: KVM: Allow Zabha extension for Guest/VM
-Date: Thu, 28 Nov 2024 11:21:26 +0800
-Message-Id: <ea2918b299348aca0f5a45630b7b7c9889f47fa6.1732762121.git.zhouquan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1732762121.git.zhouquan@iscas.ac.cn>
-References: <cover.1732762121.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1732764120; c=relaxed/simple;
+	bh=hb2PBBvwufkpWR9fveOWwse8C73X3fPGYWIm3h+Z4Zw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RJkEy+9EoLeQAlK7DD2A6SCEJ16oSXdh1eGsyuqAJhR0F11aPOVLAOMMM/QkGAUYwy/LB8/Q2PDEw37YTU4epMbI9+bAABVQ85xKCK4ub6URwfw//sVcKGAe+cNaKB9tnwh7IYVmeSLjky6cuO7jA1+XdXRhXoDAlq4GnWWI1K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a79088e7abso3355125ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:21:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732764118; x=1733368918;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x5OfYs7iW05qw4f6R/a4MpnNi731f3XkcedW7Ckf6N0=;
+        b=EyoGEL725+jD/kMrL55DNgoYgnKABuxTxQvpT8NYUerKN5eiHX7ZtKhZZGNCNxWCoe
+         ZZExfRES99ExPwjbia5felr5p0vUGSSSUIRpYqlVxOYmkyMkbRodD/TUMu47MFxz+o+V
+         VfFLNFMyQeom+T7bOirtILrKV7MjOczeK8C8V7iXTKiOZz7jO429vDOmkQmUZ5iTOkPy
+         NcrrCbMiPHK1L7kgjh3vPNFVNkFV8vvaz+L9VYLfasZfbV1kzy1aUXzyZE/QxvRN+Os2
+         dkZoPixSu3V9o8MXGdDYaefelTuL4EKspj4MqeBQ9uIp0Wdr6LHrVpvK/RK3bQj5yWWz
+         p0HA==
+X-Gm-Message-State: AOJu0Yy3/pGKAtx+ItKVEGDrl4xOFs18jMWMjaUt10hSX9PUmp1+o/Ds
+	hE96N1tNI7kUrcdCYD5XvK2kCezvNjPsBqcZ54XCWWkizjg4pGxjXyspDETCJYP5dpVlbRZnnJC
+	rZ3Kzk71WhbTC3D/t+GGwjSAgYjsRGNYZOlbrXSUFGjb8NzXtpbsovTE=
+X-Google-Smtp-Source: AGHT+IHs1QA3DqVHOpJXt5mgaKfpOAHNiNITljU7KmkCUiIXy9MqiV+oEffb1x/Z86c+L3uIfF7JMLB0ltCgLRMpjQwt1oE8lH0M
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACXf7o94kdnyFkcBg--.780S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw47AF18uF43Kry5WrykZrb_yoW8Wr45pF
-	s5CFZ3Cr4rC3s3uws2yr98ur18Wws8Wws0kw47ur4rJryjkry8JF1qya43GF1DJay0vrn2
-	9F1fWr1Fva1Yyr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
-	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
-	Yx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7
-	v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
-	7I0E8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUCYLPUUUUU=
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBwsPBmdHkkDjAAAAsU
+X-Received: by 2002:a92:ca0e:0:b0:3a7:635e:d365 with SMTP id
+ e9e14a558f8ab-3a7c5540e9cmr73238835ab.6.1732764118352; Wed, 27 Nov 2024
+ 19:21:58 -0800 (PST)
+Date: Wed, 27 Nov 2024 19:21:58 -0800
+In-Reply-To: <671fb289.050a0220.21b2f.0005.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6747e1d6.050a0220.253251.0069.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+4aff7bdaa254c1d9f008@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Extend the KVM ISA extension ONE_REG interface to allow KVM user space
-to detect and enable Zabha extension for Guest/VM.
+***
 
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
----
- arch/riscv/include/uapi/asm/kvm.h | 1 +
- arch/riscv/kvm/vcpu_onereg.c      | 2 ++
- 2 files changed, 3 insertions(+)
+Subject: 
+Author: kent.overstreet@linux.dev
 
-diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-index 9db33f52f56e..340618131249 100644
---- a/arch/riscv/include/uapi/asm/kvm.h
-+++ b/arch/riscv/include/uapi/asm/kvm.h
-@@ -178,6 +178,7 @@ enum KVM_RISCV_ISA_EXT_ID {
- 	KVM_RISCV_ISA_EXT_SMNPM,
- 	KVM_RISCV_ISA_EXT_SSNPM,
- 	KVM_RISCV_ISA_EXT_SVVPTC,
-+	KVM_RISCV_ISA_EXT_ZABHA,
- 	KVM_RISCV_ISA_EXT_MAX,
- };
- 
-diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-index 67965feb5b74..9a30a98f30bc 100644
---- a/arch/riscv/kvm/vcpu_onereg.c
-+++ b/arch/riscv/kvm/vcpu_onereg.c
-@@ -44,6 +44,7 @@ static const unsigned long kvm_isa_ext_arr[] = {
- 	KVM_ISA_EXT_ARR(SVVPTC),
- 	KVM_ISA_EXT_ARR(SVNAPOT),
- 	KVM_ISA_EXT_ARR(SVPBMT),
-+	KVM_ISA_EXT_ARR(ZABHA),
- 	KVM_ISA_EXT_ARR(ZACAS),
- 	KVM_ISA_EXT_ARR(ZAWRS),
- 	KVM_ISA_EXT_ARR(ZBA),
-@@ -138,6 +139,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsigned long ext)
- 	case KVM_RISCV_ISA_EXT_SVINVAL:
- 	case KVM_RISCV_ISA_EXT_SVVPTC:
- 	case KVM_RISCV_ISA_EXT_SVNAPOT:
-+	case KVM_RISCV_ISA_EXT_ZABHA:
- 	case KVM_RISCV_ISA_EXT_ZACAS:
- 	case KVM_RISCV_ISA_EXT_ZAWRS:
- 	case KVM_RISCV_ISA_EXT_ZBA:
--- 
-2.34.1
-
+#syz fix: bcachefs: Guard against journal seq overflow
 
