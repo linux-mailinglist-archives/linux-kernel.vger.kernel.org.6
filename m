@@ -1,148 +1,87 @@
-Return-Path: <linux-kernel+bounces-424713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061EC9DB866
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:17:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D8A9DB868
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:18:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C491631F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:16:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5903FB22608
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84781A2630;
-	Thu, 28 Nov 2024 13:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLdO+qDt"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E441A0BFE;
+	Thu, 28 Nov 2024 13:18:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5C1E511;
-	Thu, 28 Nov 2024 13:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FF719E99F
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732799814; cv=none; b=fLslQ6HQhdPKRyb8LUAOM2wjjbtjF1EqSkjvSR9GeVs+O7YisC91on/zTwB3VIj3cZAamYxJqCmVfDywOJQcrP+jQLtFlZOLufk7PKjPi2ecBbBVNnH9ljUb5WBKe9O//8f7XTVDzyAucIXmLse+Rlx6MkE1og1Re7pZ/Lx70Cs=
+	t=1732799884; cv=none; b=tmDtgBuiGLGMp9VEshoXoHqNXKVXzoZ/reL7IAwpTWmS3JDJLELaaHrEMM/9acjZJXFr/XtYcpr5pCNRqMJH+slzwF5030Q8FU0JgQVxcy1mjwQcU+d7ek1dBmlVpE7JBkJRA6C//mtgw1UCNHb+Ubh7+pF/4CFkcPd8C6QWlk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732799814; c=relaxed/simple;
-	bh=UZX5u4fwD+xpcDrxlMP8vRYCAGGhe7D0cW70VSaEFNM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dXG9ab0TcbgBXG/wY0O2naVLpZ6SPhJPehpEqPUJ9Zxy1HXwo1MlFY+oD9LlRmQRQpCV3RrtwPbniTmlyqw/1DCRTH/u75d8SKcAbMtEMLaL0Zr0358/0Bb+MLQQ8AnOTJov+7dVJY07kN8TaUqsOQdMAWQJgFkP9mH9scUaqxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLdO+qDt; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38231e9d518so578502f8f.0;
-        Thu, 28 Nov 2024 05:16:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732799811; x=1733404611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hy0wdfdN1jd5UNqlJbWVX/r8spHPQ5eT41DKOXK/aqQ=;
-        b=cLdO+qDtbbIrtjm9ATDv3ZKuKsGzqyE1cMP3//W6fV9Tv6rooTSL1vj17xuczOgN5n
-         M0KncF9ximRgFf8LKkCvi3mDXctWfCu9eQJ66OPi8FpltwE5YMBm2vqX4GsIWrOoViM6
-         9kP7ZAWKh4/6mUcSutzj5iXgNZTiOO0/9R+a9x+lGVf4a8GM8GYNho8EDnRmchTjTF5A
-         738JchqlloZnfsUS/WOV9bBoUnR2VMr11TXuHzjOJnsbFN3gs+pvRYBNc/bqqhXGz5gE
-         mASV4e5/EcqUM90EE7av70ey/UxlxCc/Q0GWoxvj8kFAqu6Pa+iM2iNqP2duC7jZ9SN8
-         MO0Q==
+	s=arc-20240116; t=1732799884; c=relaxed/simple;
+	bh=JQK0VN3JluinxjpBcFRZHImvV1QppJI2DGwMzd5J8jw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o5pf/yDOZuT5nxW/OCXdeyxcB0F9DX28h363FSjHm6PnPskLpa+Hq0+2DjicRNC3kioTMtWXc9PVMnjLu9aFp0LYkyvqjVg25gxaaLy3uDtIgh8X5ep+eYRkn+3znwMZvP7KPMBvtYMwj2zGjBHtFA4O9H9Tb7CStAzuisYtF2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso139638739f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:18:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732799811; x=1733404611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hy0wdfdN1jd5UNqlJbWVX/r8spHPQ5eT41DKOXK/aqQ=;
-        b=E6BRZTSPT4Iri6PsXAMWLHM1p1dNnuBmby/ofHdDDzO3cA1NK0Hfyz3AEzk8WyKioD
-         uOqWhYPMlad606WIxUbIZodZOdLrVy85Nmgj/BnyfrY691ThMUAIwDYIM5ZgD4pVg2Lm
-         QJnCnThwwaIDevLdRcJzQdWbu5Qwjg6du/0JzHYeyPOh1EyL5lwslGKZJMgHcKATpjwB
-         q8q8MvD18giCbUOhvUtM48gN0HMhsRiFtxfUfhxF26PzYpl4uABiqvMJqZgNStiqYmSi
-         uaVtxW0zdJhRe8Kw46IpM2YCQEoj6x5aCrkJ4nzYzqlxs/el5nLJ3h7IMYVG1+A3PHq3
-         M/ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ3fqK03bpTYLWEXrmpNH2mPYQOum9skXzFjf3OiM0vD2tq2FVHzQov0Z6g8zfdTw69ZwYK6DnwS8Q6V0=@vger.kernel.org, AJvYcCVbn0EUwsSSVm6z+gcQSMYXW8wkKXos8NvZ2xnp0PcJOoX6Fkou46AtPLH5py80/e0Dcv8sX+yB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbg3OlKUtQ70zTu8JO7sxlVkiKCgvaXp/icRYVSic+9xKCkShJ
-	LaM1YxB7AEYwVrcZzmwpqBOG6KhMRgGGCxwCQXkz0KZ15+GGFFDy0iKmHA==
-X-Gm-Gg: ASbGnctKIX9nrHiOStcTNnzCTgxGSn6s9IMbs04qlCatKf8PaXZfL1IMO0QeA/hV5Wa
-	f3HzVz7GpYVQV3MoZPJEnal2hxd974g/PW28l5Jb3milFWwZWLaZEgelMRfqMJq1PYmv9+9MGv+
-	6uq75/YYPuZo7rEhgI28q9FPype99kb5UOlCx58UW8hm03tXWsl6AVd1Oeuas+gXt1QKtbtHZHZ
-	Vch050vtioumsY/FeFH/DvwKGzFYBs4PWG/X5GnC+lYzmjyvX+KLNJosWNPV80=
-X-Google-Smtp-Source: AGHT+IFoJTgX6ndR1ryln1cP9C0fnM5/j9ec7yYwBmYmGcPFZnn4Ep0SwA7OaKIBoE/NCTSR8wjoEQ==
-X-Received: by 2002:a5d:5f85:0:b0:382:49b3:17b2 with SMTP id ffacd0b85a97d-385c6ebf0a4mr5465928f8f.33.1732799810730;
-        Thu, 28 Nov 2024 05:16:50 -0800 (PST)
-Received: from demon-pc.localdomain ([188.27.128.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a482sm1643720f8f.47.2024.11.28.05.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 05:16:50 -0800 (PST)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v4] regmap: detach regmap from dev on regmap_exit
-Date: Thu, 28 Nov 2024 15:16:23 +0200
-Message-ID: <20241128131625.363835-1-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1732799882; x=1733404682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zmEsidu2CXOf4h9+VW3wI1mkudivi3naDlgMD4CUsMo=;
+        b=iLycDjBMXP4FIMn1+1a/bAMuaJHoOQlj5I0pegiBCY9C3p0331HSsW/i26Qy5z/24R
+         LEXpBOLqnK9YICw/xbdXizL5R4ROQm7CAt+JetctA/lT5MWQN6YUMvt+FC40hfyClnFr
+         8WJH3N13tOBNbkbi5PQYqTMrnoLYS1pILaM3yeDWninFrYuzJBE4HiJE0mWqVRh56Rt5
+         Vi2K26BRk23z6u+5JL4qq5KEO95qz2Ar7wqfgw0DzWaDuwY1rA3wUWoHlrgJ9Q3qKgL1
+         3OyPBO4KgfuieO95+7ks2OKvrqyhMfttwKUhdLWaIZz6dCeRf0tP80gHJfzCxjBuApCM
+         EfqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHnthLiyHo0mv2BjY93+4fWb/ulV+LBMCvOEV/DQeze6ZdmSuzHkqt9X/CBPkOYqQ6tDbI3kyAiKIfnIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdFn1GijX/kgS9rQFcFoS29QerSR4aFNOuQMCJ0s2rGR3MsVJA
+	CNLucmpFiyFj7AgEs6uZoqwHp1nb7tEjzyXxsfvnpNW9LLAWQIeyGLSEtNoUUzS8KNuz1U3ReXa
+	1AlZXYCRHbdT1MWPoUfPYS6cUQ5V6RIv1xWVrxWeV6nZjy6uMJXyDwRQ=
+X-Google-Smtp-Source: AGHT+IGiIMRfRZLM4G4wgiSP/kYQE7e/PvX9SGx/SAu4YzTSPrhIUwlQNu3OaZZoaEAL+EkrPH3OFJ1VNXhm4hb7MqrC9EyDY+Pn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b43:b0:3a7:a58b:557e with SMTP id
+ e9e14a558f8ab-3a7cbd2fbd5mr22988135ab.12.1732799882108; Thu, 28 Nov 2024
+ 05:18:02 -0800 (PST)
+Date: Thu, 28 Nov 2024 05:18:02 -0800
+In-Reply-To: <57f0859b-4c30-4c72-9796-e8e6f836e509@redhat.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67486d8a.050a0220.253251.0085.GAE@google.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in const_folio_flags (2)
+From: syzbot <syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, david@redhat.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-At the end of __regmap_init(), if dev is not NULL, regmap_attach_dev()
-is called, which adds a devres reference to the regmap, to be able to
-retrieve a dev's regmap by name using dev_get_regmap().
+Hello,
 
-When calling regmap_exit, the opposite does not happen, and the
-reference is kept until the dev is detached.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Add a regmap_detach_dev() function and call it in regmap_exit() to make
-sure that the devres reference is not kept.
+Reported-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
+Tested-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
 
-Cc: stable@vger.kernel.org
-Fixes: 72b39f6f2b5a ("regmap: Implement dev_get_regmap()")
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
----
+Tested on:
 
-V2:
- * switch to static function
+commit:         fc0a5b9f mm/filemap: don't call folio_test_locked() wi..
+git tree:       https://github.com/davidhildenbrand/linux.git filemap_test_locked
+console output: https://syzkaller.appspot.com/x/log.txt?x=132f200f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e3a5fdacfe3dee51
+dashboard link: https://syzkaller.appspot.com/bug?extid=9f9a7f73fb079b2387a6
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-V3:
- * move inter-version changelog after ---
-
-V4:
- * remove mention of exporting the regmap_detach_dev() function
-
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 53131a7ede0a6..e3e2afc2c83c6 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -598,6 +598,17 @@ int regmap_attach_dev(struct device *dev, struct regmap *map,
- }
- EXPORT_SYMBOL_GPL(regmap_attach_dev);
- 
-+static int dev_get_regmap_match(struct device *dev, void *res, void *data);
-+
-+static int regmap_detach_dev(struct device *dev, struct regmap *map)
-+{
-+	if (!dev)
-+		return 0;
-+
-+	return devres_release(dev, dev_get_regmap_release,
-+			      dev_get_regmap_match, (void *)map->name);
-+}
-+
- static enum regmap_endian regmap_get_reg_endian(const struct regmap_bus *bus,
- 					const struct regmap_config *config)
- {
-@@ -1445,6 +1456,7 @@ void regmap_exit(struct regmap *map)
- {
- 	struct regmap_async *async;
- 
-+	regmap_detach_dev(map->dev, map);
- 	regcache_exit(map);
- 
- 	regmap_debugfs_exit(map);
--- 
-2.47.0
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
