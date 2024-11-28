@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-424097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82B09DB091
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:00:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F9A9DB094
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:01:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757F328242E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24B301678E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A757E18E25;
-	Thu, 28 Nov 2024 00:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4293B125D5;
+	Thu, 28 Nov 2024 01:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="jajX3pYp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxBb9Fru"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C27A17557;
-	Thu, 28 Nov 2024 00:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D4017BA3;
+	Thu, 28 Nov 2024 01:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732755530; cv=none; b=Lez2whGuNoaFVXc77+kZX6h6TCmS786osofz8acja8sI0j8Z3wn1s1GW1/xkE1ollgiAdJfwhqoqoGwpRl7r3zF/Tt4ov24GlWnZGVO9LeByEvv3Xkh8YVljK0IX7ITeqCAQnKkcLof7pIGLh/+IR88/hP1O6r8FeH7DWYB8KLk=
+	t=1732755636; cv=none; b=EZyF1PqbMcODSKy9ENnVvmnX9vXlyI5BFMggXmpk/MWK7llg73omPOs8IGqha6vIQRcIeolYvbZHYZ87xUPKuYH4pFG4HyG7u58ef8fO1MlgMQu+m24AYljYiStNXurcEIv6L17+b4ZeZWWoa9yizeXkcr9LZg+c+ZSUyceeKC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732755530; c=relaxed/simple;
-	bh=5blE1A9Kn8XUlBJJA6u9dHT6buJUrLbL9a6/uglDLck=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=G6OFqVIuchsVJeOgfwhyl/wWglteZXXuAns/H56xhd0bWlVt9vggLkUOQIsXwSVmrDuEkIu6pxBxI1xnuyO3QBSNR7aevlxombocQ2AN+hfgtkpmWGN/Qhzjb2fGS6tPZn6mOQwU0lEu1t+q9utKZ2xfQ4ELNZYkgmuh8knP7Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=jajX3pYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D15C4CECC;
-	Thu, 28 Nov 2024 00:58:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732755529;
-	bh=5blE1A9Kn8XUlBJJA6u9dHT6buJUrLbL9a6/uglDLck=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jajX3pYpHhvhgkUyS7vzFqML3k+ESkZV3Q8FbcrvyGGSSKQPGNlz49SwkcslHtxXH
-	 YTg5kW24bgXFCSN8WLP29fCWimuhQJCvJCZzBKbqpP+PamiJN5ZKRagXpiDudrAvw7
-	 sXJsqRytxQ7yZaz/F3vuKzivvrGpfGvIrIsMytG8=
-Date: Wed, 27 Nov 2024 16:58:48 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-mm@kvack.org, urezki@gmail.com, hch@infradead.org, vbabka@suse.cz,
- dakr@kernel.org, mhocko@suse.com, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, ast@kernel.org
-Subject: Re: [PATCH mm/stable] mm: fix vrealloc()'s KASAN poisoning logic
-Message-Id: <20241127165848.42331fd7078565c0f4e0a7e9@linux-foundation.org>
-In-Reply-To: <20241126005206.3457974-1-andrii@kernel.org>
-References: <20241126005206.3457974-1-andrii@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732755636; c=relaxed/simple;
+	bh=Z4UNfWg3zs+XouI51oSz59rP5PZwpgvoJs2Lh3iBN1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJkNunpBv4UxJaKQm2kF8JQ+sA5BZKBB3H30M5N9llWN8ikT2VK8neXKAuGXlWxcs87rNn4HeborL+RoODrExSmWhQ2ak53QyALy7017tBphDgarBNyB7T/bzvQea3xVgIO7OBws0xALL1qQ0DJZ7eAeZ2Kr911HqaGfd4hHVUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxBb9Fru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E021EC4CECC;
+	Thu, 28 Nov 2024 01:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732755636;
+	bh=Z4UNfWg3zs+XouI51oSz59rP5PZwpgvoJs2Lh3iBN1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kxBb9Fruj+TXYYv7dQFepie0vWCe1bmjuK1SSI/shMe7eXwOLB5OHH6TNYC2syydg
+	 OFnfEhjSrMXMzos6U5shcZjDZ3o20xxMrLGbnM+j8ZSajH+hJA2W2gZJ9k8K7UxJOX
+	 fIqV1OJa1dWan6fRziCJnqxldYh0WFZVmHOfsEQ4onRuQN+TZpw/ZmVLD/0o9aD9M6
+	 tdllv1mB0/str7k5TqvDyHhYdBCC31MpGgL3HdJ8lZMlCy1OAU5dBjAEIQQU34axTb
+	 RrSCqdYsuY6VPT2mE4Jf7DwiRMqmtnDskFb/AnujurllqlCWxUx0p5osltfS3+mpnX
+	 4DcJO/08jg5DA==
+Date: Wed, 27 Nov 2024 17:00:34 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/10] objtool: Handle unsorted table offset of rodata
+Message-ID: <20241128010034.u3b7gkh4wqgb7d2s@jpoimboe>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-7-yangtiezhu@loongson.cn>
+ <8cb35ab7-56d0-8e8d-5e18-1bc2b94aeeeb@loongson.cn>
+ <20241127012042.by4g34m4twlfmove@jpoimboe>
+ <53677c5f-2ea5-a227-66f7-b27c27665f6b@loongson.cn>
+ <20241128001011.sjedpn2zhrhy6y6i@jpoimboe>
+ <20241128001627.5czdlst5rd76qwsd@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241128001627.5czdlst5rd76qwsd@jpoimboe>
 
-On Mon, 25 Nov 2024 16:52:06 -0800 Andrii Nakryiko <andrii@kernel.org> wrote:
-
-> When vrealloc() reuses already allocated vmap_area, we need to
-> re-annotate poisoned and unpoisoned portions of underlying memory
-> according to the new size.
-
-What are the consequences of this oversight?
-
-When fixing a flaw, please always remember to describe the visible
-effects of that flaw.
-
-> Note, hard-coding KASAN_VMALLOC_PROT_NORMAL might not be exactly
-> correct, but KASAN flag logic is pretty involved and spread out
-> throughout __vmalloc_node_range_noprof(), so I'm using the bare minimum
-> flag here and leaving the rest to mm people to refactor this logic and
-> reuse it here.
+On Wed, Nov 27, 2024 at 04:16:29PM -0800, Josh Poimboeuf wrote:
+> On Wed, Nov 27, 2024 at 04:10:18PM -0800, Josh Poimboeuf wrote:
+> > On Wed, Nov 27, 2024 at 03:01:33PM +0800, Tiezhu Yang wrote:
+> > > 
+> > > 
+> > > On 11/27/2024 09:20 AM, Josh Poimboeuf wrote:
+> > > > On Tue, Nov 26, 2024 at 09:28:19PM +0800, Tiezhu Yang wrote:
+> > > > > > +		/* Handle the special cases compiled with Clang on LoongArch */
+> > > > > > +		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
+> > > > > > +		    reloc->sym->type == STT_SECTION && reloc != table &&
+> > > > > > +		    reloc_offset(reloc) == reloc_offset(table) + rodata_table_size)
+> > > > > > +			break;
+> > > > > 
+> > > > > I think it can be generic, like this:
+> > > > > 
+> > > > >                 /* Check for the end of the table: */
+> > > > >                 if (reloc != table && reloc == next_table)
+> > > > >                         break;
+> > > > > 
+> > > > >                 if (reloc != table &&
+> > > > >                     reloc_offset(reloc) == reloc_offset(table) +
+> > > > > rodata_table_size)
+> > > > >                         break;
+> > > > > 
+> > > > > What do you think?
+> > > > 
+> > > > I'm not sure, this patch is hard to review because it uses
+> > > > insn->table_size which doesn't get set until the next patch.
+> > > > 
+> > > > Maybe this patch should come after patches 7 & 8, or maybe they should
+> > > > be squashed?
+> > > 
+> > > OK, I will squash the changes into patch #7.
+> > 
+> > I remembered Ard already solved a similar problem when he prototyped x86
+> > jump table annotation.  Can you pull this patch into your series:
+> > 
+> > https://lore.kernel.org/20241011170847.334429-12-ardb+git@google.com
 > 
-> Fixes: 3ddc2fefe6f3 ("mm: vmalloc: implement vrealloc()")
+> Actually, I think I'm going to merge patches 2-5 from Ard's series as
+> they're a nice cleanup.  Let me do that and then you can base your next
+> version off tip/objtool/core once it gets updated with Ard's and Peter's
+> patches.
 
-Because a cc:stable might be appropriate here.  But without knowing the
-effects, it's hard to determine this.
+Still talking to myself here, I think we'll only merge the above patch,
+since we don't know what the generic annotations are going to look like
+yet.
 
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -4093,7 +4093,8 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
->  		/* Zero out spare memory. */
->  		if (want_init_on_alloc(flags))
->  			memset((void *)p + size, 0, old_size - size);
-> -
-> +		kasan_poison_vmalloc(p + size, old_size - size);
-> +		kasan_unpoison_vmalloc(p, size, KASAN_VMALLOC_PROT_NORMAL);
->  		return (void *)p;
->  	}
->  
-
+-- 
+Josh
 
