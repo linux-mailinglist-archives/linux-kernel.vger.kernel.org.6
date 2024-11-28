@@ -1,219 +1,156 @@
-Return-Path: <linux-kernel+bounces-424175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFF59DB149
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:55:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0531163170
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:55:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC3D38FA6;
-	Thu, 28 Nov 2024 01:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A/ycsrXY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E339DB14B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:57:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2F88467
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56249281CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:57:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8946238FA6;
+	Thu, 28 Nov 2024 01:57:26 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC298467
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732758935; cv=none; b=rO2cHwqo2ykQIcE6vM2k/gd9zvxlnbcGLyhdpXXY2WTqC7oY1qp7hyPSygp3izSGU+X3RDAXJDDBK5dG+da0ebW4DV0n2ZxpOFJwjAeaMBObakbrM1TIsnLG8/qdKpPTaFRHVq6VLtfYsd/uGazUl41Rb7YX7hCP9tY0uELTZOc=
+	t=1732759046; cv=none; b=AV5cCbp+rpdfKsOr6yFgCcNUElGXlzY1MrR/3ULhTkX3AVAsnEk4nzx9WccrxANYToCOacQIkoyR55Ey6PT24jDgXv8lkbAHk1Qe1zjjgGqkazMG4iOyUUmeVkZDXeLoL18zSmpuALmcabmB97JykVyGJD2i1jdejw+CI/aJU5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732758935; c=relaxed/simple;
-	bh=+lMbtx1tFi7sfzPnTRMaKCnwCdvjvH9av+TEvheS3wk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PK0Ud/zxno0EP/RnlZg4AzlZHyowfU81MEr75Y7wHVUOlZZ20r8LrWGxdG4I7+bw1qWIu3/FN0s9OF3S8rmJNLAQD7Ba3+jXgLyjwXK4dxjE/lnBHf/eSs53AGYdyEjDLVXIC31+3Y+cKiZqx/O26i0+UfP3Z+1QwjhawlAIF0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A/ycsrXY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732758928;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pt1xoTsh4Jb2fg+vNFVLxj4Xr1q9iTUZq5l4MXLHBNI=;
-	b=A/ycsrXYOV+Y1tYOelF1jMGZGxl3dPdxskAhXfIW9U1dRzjCe1jWBxJss+p89DZpB8lOzX
-	EvKhCMqBvu1gEuyywGDRapRr2brOZSZBsjuYFBdn/OWoiotsDEuJK6I5Pb76L77qyLVaKw
-	AjVpLMginVLeylXj1/A9p+ytNCFwHoE=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-224-DHV4vAJgMfy26lE3f_QN1A-1; Wed, 27 Nov 2024 20:55:26 -0500
-X-MC-Unique: DHV4vAJgMfy26lE3f_QN1A-1
-X-Mimecast-MFC-AGG-ID: DHV4vAJgMfy26lE3f_QN1A
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b66f8fb697so47187785a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:55:25 -0800 (PST)
+	s=arc-20240116; t=1732759046; c=relaxed/simple;
+	bh=iAVrcQgAlTOajMXaaIIxmLEDamZVUcxxpJuLvgCQUGE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OaqSMJQmGR99xc1qzQG1DyF8SKALOJbIHhnnJ88AhazJ8rwh5HE8It9HDD0zE+Aj4vN1PQoLj4RXMu/vpHD09gn3L6GpaQRD2VeYDwFloEOoMDwW+CSJi9a8W9oMupmieEW251XAqblcyqnlUlo7uYSBqNQJ3nfQXMmIsx57+IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-841843a9970so25112239f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 17:57:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732758924; x=1733363724;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pt1xoTsh4Jb2fg+vNFVLxj4Xr1q9iTUZq5l4MXLHBNI=;
-        b=S9F4iNfLjYTCrFyGs0i6pqHzWWnB8p3eA8ccQFLp7DGutCaWEs8k8z1C+cpbqIcrJ4
-         RZeDYhjKgQcKT7tDZai/4uP2MNwsj0Jp24Q5QHxFRzELFBDEVPailDMycAqSHO+h4K+y
-         5bz57ZMeM82Rhnrt2PO5JnTsPBvb6+JhMPPAy15tI8dDw/RQMSai/3yuYRHZom0ydsJx
-         KjrYn13ip7kJsQycqSbwiXAuKm+UMhzLZDVeL1O+nAZcLhVh0kCA02p2y2w39P5Qi7nh
-         wNVYxPn7lJHAAfBonZSoAgdQzECxUTvZrjK2qYOYvB0bbBEdpz3AjrPOjeSeFGEEwu0y
-         D/jA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3wZCXecDdk4guR6u18mwMYGtWb5k+0MjRJ281+PCqq7E14deT2GphzgUlwA4Luauv5kBYzjek8uqH7YQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5IUVtpaEoU+htsQmqnnmD/cH93iiQHTe3kh9fZFSqo2hoGkiq
-	+pgwDOl2fshXWbRgyGhXUF5a1NJnfXaI/CfbxKxBUXEvEMDE6PUozLhro8aDbDCtplJlkeVrpxV
-	zeqKfDxEJN3mqlf49p62AQ2tNwfj2S+OMceoRwZQWzaf/p2wCR6WzBOkUpyLLDITdf1QfXQ==
-X-Gm-Gg: ASbGncua8HuTq3N7xBN/vS6RCpXa0IBxNDNxY8yOGFWRggRcPSpj9R29wkMKMt5MjNs
-	q+KBGseYxGSZU5kSUDaNswT7JYOY9IuNe68yzAUOh1ZkkyBMGYdVwoVIonuFJqgfGQSYSpF40Cf
-	6QsgwLtElnu6Kd1XmIuxTxzDjEelt1HPyNYlnh1UTv1sYZ9vuXWOeLJSL7ZCBKVA6o8hKw0upcI
-	Q6u/NqlwHPbCsxfzwxXHyAS2eKZCJ30llZRff2Ew1gKR+KlMAAQF0MJPAz9LW+r+8HBg7qzayk7
-	2Pv3jGCXPi+wJhDBc/WE
-X-Received: by 2002:a05:620a:178d:b0:7b6:7653:ee07 with SMTP id af79cd13be357-7b67c2ceca3mr707435085a.30.1732758924613;
-        Wed, 27 Nov 2024 17:55:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFx2LUdpqc02lSn2Y8MLvZ4OqE1eHnalk/fgIqtR9eVAjWVi6pHvscP1L3unwF4laM4geXhUw==
-X-Received: by 2002:a05:620a:178d:b0:7b6:7653:ee07 with SMTP id af79cd13be357-7b67c2ceca3mr707432685a.30.1732758924240;
-        Wed, 27 Nov 2024 17:55:24 -0800 (PST)
-Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849aad39sm16655585a.80.2024.11.27.17.55.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 17:55:23 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <f6667d73-231c-481a-9b55-b75ea845421e@redhat.com>
-Date: Wed, 27 Nov 2024 20:55:22 -0500
+        d=1e100.net; s=20230601; t=1732759043; x=1733363843;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p2tXCmLrmSCl0ksU+eJ38wLC5oY4F1eN4t+KpoR05IA=;
+        b=QOSKydrWNuIWClUJqiOWCNjJ36pHNXGekPaP2FprsRfMmmGxLG9TtPcFxZbf6kvEEZ
+         6u4bEVpaSwBV69zkBBHGz05yWg4efI11RG5nNmVmu78DifA2v+ytum7lZbV2IZQ2Pm0g
+         +HOhLJum+HPq1KucbIkISSjvHMKQD13UG66aw/0Xvigm96eAT5P5jYdulzjzLTDyOM2N
+         3rP3anW5JA1QvT8qQcp+ADJ9th+LQ6KJMLwXVl+togl0KNsAKIQwyHZh7adBzAhJVhD/
+         LW57alCI4ci9/v5CvYtIublOMInZLydcY1w9f2NGCJ5OEXKeWykwYy5MVjzF2ZDvLgFB
+         PR5w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1nlFZKuIShIoMAZCqAhfy4D3n+EI3JPgC+c8uh3Bb1MJUPoqS3SfUfwaXCJloN6y2dnV2iUWxFRDKjIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuZpaosQT73L9O9wmsvK9ySUbKHKtp7BlHyzCk/Dg7wWpM7gb4
+	IY6XAbcXiCcE7lXK+q44miL3+wXRFZbC7W+w2jEZm3ujly6+dqfZtIj50Nhe5PFPVONVVNQSdDh
+	lC5OjA911YFI4YyMIEI+UR173a1xQ+9ZW3usf4mYN2YPre7/zc7uRq14=
+X-Google-Smtp-Source: AGHT+IGDqw7WgnYdk5D6tAW7YT74xX5xbJYKqTnlenf9RIgpgPz/CivP9CUkLawfFX8nH2LkNar3hyAuMKdtYNOPZqaa0bKIXTGr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-To: Guenter Roeck <linux@roeck-us.net>, Waiman Long <llong@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
- "David S. Miller" <davem@davemloft.net>
-References: <20241125181231.XpOsxxHx@linutronix.de>
- <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
- <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
- <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
- <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
- <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
- <20241126112000.UkTwR0Iv@linutronix.de>
- <48b9d642-9739-4333-b4b9-319df8a85e2d@redhat.com>
- <b698d599-ef4e-4966-92fb-1f84d7a0df75@gaisler.com>
- <4eb7bb8e-c2aa-4ce5-9f15-3086fccf4e46@roeck-us.net>
- <20241127165356.hnkqmgcc@linutronix.de>
- <bf7bd668-974f-481d-9526-94964455a250@roeck-us.net>
- <c029c2fd-8bac-4913-b98f-f09acd7d28e1@redhat.com>
- <93c5b695-4c98-4b3d-99d7-592d949750be@roeck-us.net>
- <6279e38a-9a3c-46ba-9161-5bc61f62d6d2@redhat.com>
- <b59961b6-2026-4f7a-8b72-9b94adfff310@roeck-us.net>
-Content-Language: en-US
-In-Reply-To: <b59961b6-2026-4f7a-8b72-9b94adfff310@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12cc:b0:3a7:9736:501e with SMTP id
+ e9e14a558f8ab-3a7c557d3afmr44988425ab.14.1732759043538; Wed, 27 Nov 2024
+ 17:57:23 -0800 (PST)
+Date: Wed, 27 Nov 2024 17:57:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6747ce03.050a0220.253251.0066.GAE@google.com>
+Subject: [syzbot] [udf?] WARNING in udf_rmdir (2)
+From: syzbot <syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/27/24 8:17 PM, Guenter Roeck wrote:
-> On 11/27/24 16:31, Waiman Long wrote:
->>
->> On 11/27/24 7:08 PM, Guenter Roeck wrote:
->>> On 11/27/24 15:47, Waiman Long wrote:
->>>> On 11/27/24 12:44 PM, Guenter Roeck wrote:
->>>>> On 11/27/24 08:53, Sebastian Andrzej Siewior wrote:
->>>>>> On 2024-11-27 08:02:50 [-0800], Guenter Roeck wrote:
->>>>>>> On 11/27/24 07:39, Andreas Larsson wrote:
->>>>>>>> Even though this is for sparc64, there is work being done 
->>>>>>>> looking into
->>>>>>>> enabling RT for sparc32. If the amount of fixes needed to keep
->>>>>>>> PROVE_RAW_LOCK_NESTING enabled is quite small at the moment I'd 
->>>>>>>> rather
->>>>>>>> see it enabled for sparc rather than risking it becoming worse 
->>>>>>>> in the
->>>>>>>> future.
->>>>>>
->>>>>> Okay. So you seem to be in favour of fixing the sparc64 splats 
->>>>>> Guenter
->>>>>> reported?
->>>>>>
->>>>>>>> I don't know what the situation is for other architectures that 
->>>>>>>> does not
->>>>>>>> support RT.
->>>>>>>>
->>>>>>>
->>>>>>> For my part I still don't understand why PROVE_RAW_LOCK_NESTING 
->>>>>>> is no longer
->>>>>>> a configurable option, or in other words why it is mandated even 
->>>>>>> for architectures
->>>>>>> not supporting RT. To me this means that I'll either have to 
->>>>>>> disable PROVE_LOCKING
->>>>>>> for sparc or live with endless warning backtraces. The latter 
->>>>>>> obscures real
->>>>>>> problems, so it is a no-go.
->>>>>>
->>>>>> It is documented in Documentation/locking/locktypes.rst how the 
->>>>>> locks
->>>>>> should nest. It is just nobody enabled it on sparc64 and tested. The
->>>>>> option was meant temporary until the big read blocks are cleared.
->>>>>>
->>>>>
->>>>> That doesn't explain why PROVE_RAW_LOCK_NESTING is now mandatory if
->>>>> PROVE_LOCKING is enabled, even on architectures where is was not 
->>>>> tested.
->>>>> I am all for testing, but that doesn't include making it mandatory
->>>>> even where it is known to fail. Enabling it by default, sure, no 
->>>>> problem.
->>>>> Dropping the option entirely after it is proven to no longer needed,
->>>>> also no problem. But force-enabling it even where untested or, worse,
->>>>> known to fail, is two steps too far.
->>>>
->>>> The main reason for enforcing PROVE_RAW_LOCK_NESTING with 
->>>> PROVE_LOCKING is due to the fact that PREEMPT_RT kernel is much 
->>>> less tested than the non-RT kernel. I do agree that we shouldn't 
->>>> force this on arches that don't support PREEMPT_RT. However, once 
->>>> an arch decides to support PREEMPT_RT, they have to fix all these 
->>>> raw_spinlock nesting problems.
->>>>
->>>
->>> config PROVE_RAW_LOCK_NESTING
->>> -       bool
->>> +       bool "Enable raw_spinlock - spinlock nesting checks" if 
->>> ARCH_SUPPORTS_RT=n
->>>         depends on PROVE_LOCKING
->>> -       default y
->>> +       default y if ARCH_SUPPORTS_RT
->>>
->>> would have accomplished that while at the same time making it optional
->>> for non-RT architectures.
->>
->> I had actually thought about doing exactly that, but decide to keep 
->> the current mode for forcing  PROVE_RAW_LOCK_NESTING for arches that 
->> support PREEMPT_RT. I won't mind doing this alternative if others agree.
->>
->
-> Forcing PROVE_RAW_LOCK_NESTING for arches that support PREEMPT_RT is 
-> exactly
-> what the above does.
->
->     bool "Enable raw_spinlock - spinlock nesting checks" if 
-> ARCH_SUPPORTS_RT=n
->
-> makes the flag visible (only) if ARCH_SUPPORTS_RT=n, and
->
->     default y if ARCH_SUPPORTS_RT
->
-> (force-)enables it if ARCH_SUPPORTS_RT=y.
+Hello,
 
-OK, I missed the "if" part after the string. Yes, that do force 
-PREEMPT_RT supporting arches to set PROVE_RAW_LOCK_NESTING while 
-enabling arches that do not support PREEMPT_RT to optionally set it. I 
-will post a v2 patch with that change.
+syzbot found the following issue on:
 
-Thanks,
-Longman
+HEAD commit:    228a1157fb9f Merge tag '6.13-rc-part1-SMB3-client-fixes' o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=122c0778580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5df2d3fa14f2d3e49305
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b476e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162c0778580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d32a8e8c5aae/disk-228a1157.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/28d5c070092e/vmlinux-228a1157.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/45af4bfd9e8e/bzImage-228a1157.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b7209c2fe94f/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5df2d3fa14f2d3e49305@syzkaller.appspotmail.com
+
+UDF-fs: warning (device loop0): udf_rmdir: empty directory has nlink != 2 (0)
+UDF-fs: warning (device loop0): udf_rmdir: empty directory has nlink != 2 (0)
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5834 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
+Modules linked in:
+CPU: 1 UID: 0 PID: 5834 Comm: syz-executor338 Not tainted 6.12.0-syzkaller-08446-g228a1157fb9f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
+Code: bb 70 07 00 00 be 08 00 00 00 e8 27 d8 e5 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 40 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
+RSP: 0018:ffffc90003f47ad0 EFLAGS: 00010293
+RAX: ffffffff82170c43 RBX: 1ffff1100ed1c100 RCX: ffff88802d9c0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82170bc3 R09: 1ffff920007e8ed8
+R10: dffffc0000000000 R11: fffff520007e8ed9 R12: ffff8880768e0800
+R13: ffff8880768e07b8 R14: ffff8880768e07b8 R15: dffffc0000000000
+FS:  000055556e49b380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 000000003468a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inode_dec_link_count include/linux/fs.h:2521 [inline]
+ udf_rmdir+0x3b8/0x6f0 fs/udf/namei.c:520
+ vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
+ do_rmdir+0x3b5/0x580 fs/namei.c:4453
+ __do_sys_rmdir fs/namei.c:4472 [inline]
+ __se_sys_rmdir fs/namei.c:4470 [inline]
+ __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6beb678a39
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffba3588d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 000000000000003d RCX: 00007f6beb678a39
+RDX: 00007f6beb678a39 RSI: 00007f6beb678a39 RDI: 0000000020000000
+RBP: 00007f6beb6ec610 R08: 00007fffba358aa8 R09: 00007fffba358aa8
+R10: 00007fffba358aa8 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffba358a98 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
