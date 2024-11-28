@@ -1,161 +1,135 @@
-Return-Path: <linux-kernel+bounces-424726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2979DB894
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:27:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7799DB89E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:28:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB71283571
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81E1164CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BED71A9B51;
-	Thu, 28 Nov 2024 13:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1C71A9B35;
+	Thu, 28 Nov 2024 13:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4x8dQLJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6NziUs4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DA1A3BC0;
-	Thu, 28 Nov 2024 13:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C35E158527;
+	Thu, 28 Nov 2024 13:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732800442; cv=none; b=lfmB9qSxWrYicUCpG0mP4aJn/Z8f+0JQ7ykIw4zW7YvZ4BcEUeDA8jYYTMvBh0qPetDTuk1wQMZrYmoKrRlzg8+vDcAdSrzjgF0VZOHzJRwYyyJgThah0q/z3y5iGnXLWtM9UniKgE6MTi6yWIY3iHi5PXRfS8ivxFHZkP1SXg8=
+	t=1732800529; cv=none; b=tsF9XL4iw/KabA8+McbYO4Ag7+3MqXvVVUctW/SQPqVew5Njat0WMRcB2BdlogMAX2v3beHcTeoBG3t3DhOv8fTgsSHK979UALN6RVhITFScIVbekCzCjnFYXeAWxiL1hJwgLMj11x1FiMB88B+tKYCBNLcpw8PB4w7sGOenICg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732800442; c=relaxed/simple;
-	bh=s7ntmLyoK0Ige0yP54n7nzwN2qCmpmvx316Vpb4inks=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CXxoh26umEpvjPbSABpoEANAQ6Bkx0PoejZFN7QuSVZoCTpTf5sIQzJzemRpy/6QxPjYd/ze88J+jmVDgwneuCOVvObO+vCdO2uEhb1UNGaHYjMrkoPyMMDznSajBU4KrYFQ0L3pnKzW8BvGYlf7fGuo2AO8gXgWl9Ljk3N/aWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4x8dQLJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1117BC4CED3;
-	Thu, 28 Nov 2024 13:27:20 +0000 (UTC)
+	s=arc-20240116; t=1732800529; c=relaxed/simple;
+	bh=o87fqi8R6sY+SVCkOs0LGzGnlkNcJffWS0dFY3Lc8as=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=d4My5RcZtJtZXKj2UyCoIFhVJ69cs35f0DDHg1RlPtBkgqKaFkVDVsx4wfyG/pikx3CmN2gJfc4YvV8psl51zXv+QmnPDGRhG7UnIrl2mAbCm7u6vCCZRFbyM8lHN/mXFSUbZT9VTs/sNwBa7/KYNeUWYEnxg4vfv3I18ORWMEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6NziUs4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE28C4CECE;
+	Thu, 28 Nov 2024 13:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732800442;
-	bh=s7ntmLyoK0Ige0yP54n7nzwN2qCmpmvx316Vpb4inks=;
-	h=From:Date:Subject:To:Cc:From;
-	b=W4x8dQLJLyeKbmnDT2QjsgZfRNMP4shFyIT/3c8z4rXM1Q/HOOYiYE34+B0dse2ok
-	 1+ykhOG408CCgxPWHbaO+oPmaBISGvzv+9xC5qywv17Kn84nzFjhejrE3LevibFyiz
-	 GO8cD4fznOGsQyuRrH4UVUylijcfaxocejNrCdD/mA692bOAE2lI0Agnth1vGEFLSb
-	 pot7E1hZkYLaZuKVPp8IHfmFYxO/vpeP8tznGvRIUecQzi2j2/IHFLdozbuA1/SVK7
-	 bzziZ6k3yNig+NLDXsg1lTAIxAGJfGIl3R6wzsedWNepAfakRrLu1QkVr6Sgl0TbKZ
-	 PslcPSFNW+O7A==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Thu, 28 Nov 2024 14:27:16 +0100
-Subject: [PATCH HID] selftests/hid: fix kfunc inclusions with newer bpftool
+	s=k20201202; t=1732800529;
+	bh=o87fqi8R6sY+SVCkOs0LGzGnlkNcJffWS0dFY3Lc8as=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=K6NziUs4TSO5cu2ftHncNe2lxlNS62LUdh4fnlesjW5X8X2A9V2mzGWY7/qc+w+IS
+	 PRAea5G7I0EuhH4szdaftlIfJri7Q8o4h3AIJoWK8rvNLdjduF2V7cxn4/Ukd5RPlA
+	 xsv77s9CSZ4SyrzbipDcHLO+a4GI9t+Rncpdt+CKQrRPm9s1UgcuZGqNvTwylmW+24
+	 VvV1kvx9RC0Z08JEhhYyN1hDpot7MiHERpCvwXp4WtkjqPYW5qMukLZjemDd4ZTACq
+	 oGMbqnoYZC3MfMndQhbHd9q2P08gDAM1jbgQ6uS9lYhOevexXwsbTzMqXvx40y9ajx
+	 TyqWTCbHdCu7Q==
+From: Amit Shah <amit@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	x86@kernel.org,
+	linux-doc@vger.kernel.org
+Cc: amit.shah@amd.com,
+	thomas.lendacky@amd.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	pawan.kumar.gupta@linux.intel.com,
+	corbet@lwn.net,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	seanjc@google.com,
+	pbonzini@redhat.com,
+	daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com,
+	sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com,
+	Babu.Moger@amd.com,
+	david.kaplan@amd.com,
+	dwmw@amazon.co.uk,
+	andrew.cooper3@citrix.com,
+	Amit Shah <amit@kernel.org>
+Subject: [RFC PATCH v3 0/2] Add support for the ERAPS feature
+Date: Thu, 28 Nov 2024 14:28:32 +0100
+Message-ID: <20241128132834.15126-1-amit@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <cover.1732219175.git.jpoimboe@kernel.org>
+References: <cover.1732219175.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241128-fix-new-bpftool-v1-1-c9abdf94a719@kernel.org>
-X-B4-Tracking: v=1; b=H4sIALNvSGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyML3bTMCt281HLdpIK0kvz8HF1jw0TLNBPjxMS0pCQloK6ColSgErC
- J0Uoeni5KsbW1ADG4jtxmAAAA
-X-Change-ID: 20241128-fix-new-bpftool-31a9f43aafbb
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732800440; l=3659;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=s7ntmLyoK0Ige0yP54n7nzwN2qCmpmvx316Vpb4inks=;
- b=PREaqb+BXRq/tIkrsTWycjKGYBT+dINU4VsCFZL2/q0/YXm/vlTEaUZriVdHDTZk7HtnLrfUL
- /Lrw153FIwxDPxv8iyaIJ2+xt8XzW80dC/LigpAPfgDnrsD++kjCNvz
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Transfer-Encoding: 8bit
 
-bpftool now embeds the kfuncs definitions directly in the generated
-vmlinux.h
+Newer AMD CPUs (Zen5+) have the ERAPS feature bit that allows us to remove the
+RSB filling loops required during context switches and VM exits.
 
-This is great, but because the selftests dir might be compiled with
-HID_BPF disabled, we have no guarantees to be able to compile the
-sources with the generated kfuncs.
+This patchset implements the feature to:
+* remove the need for RSB filling on context switches and VMEXITs in host and
+  guests
+* allow KVM guests to use the full default RSB stack
 
-If we have the kfuncs, because we have the `__not_used` hack, the newly
-defined kfuncs do not match the ones from vmlinux.h and things go wrong.
+The feature isn't yet part of an APM update that details its working, so this
+is still tagged as RFC.  The notes at
 
-Prevent vmlinux.h to define its kfuncs and also add the missing `__weak`
-symbols for our custom kfuncs definitions
+https://amitshah.net/2024/11/eraps-reduces-software-tax-for-hardware-bugs/
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
-This was noticed while bumping the CI to fedora 41 which has an update
-of bpftool.
+may help follow along till the APM is public.
 
-I'll probably take this in for-6.13/upstream-fixes tomorrow if no bots
-comes back at me.
+v3:
+* rebase on top of Josh's RSB tweaks series
+  * with that rebase, only the non-AutoIBRS case needs special ERAPS support.
+    AutoIBRS is currently disabled when SEV-SNP is active (commit acaa4b5c4c8)
 
-Cheers,
-Benjamin
----
- tools/testing/selftests/hid/progs/hid_bpf_helpers.h | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+* remove comment about RSB_CLEAR_LOOPS and the size of the RSB -- it's not
+  necessary anymore with the rework
 
-diff --git a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-index e5db897586bbfe010d8799f6f52fc5c418344e6b..531228b849daebcf40d994abb8bf35e760b3cc4e 100644
---- a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-+++ b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-@@ -22,6 +22,9 @@
- #define HID_REQ_SET_IDLE         HID_REQ_SET_IDLE___not_used
- #define HID_REQ_SET_PROTOCOL     HID_REQ_SET_PROTOCOL___not_used
- 
-+/* do not define kfunc through vmlinux.h as this messes up our custom hack */
-+#define BPF_NO_KFUNC_PROTOTYPES
-+
- #include "vmlinux.h"
- 
- #undef hid_bpf_ctx
-@@ -91,31 +94,31 @@ struct hid_bpf_ops {
- /* following are kfuncs exported by HID for HID-BPF */
- extern __u8 *hid_bpf_get_data(struct hid_bpf_ctx *ctx,
- 			      unsigned int offset,
--			      const size_t __sz) __ksym;
--extern struct hid_bpf_ctx *hid_bpf_allocate_context(unsigned int hid_id) __ksym;
--extern void hid_bpf_release_context(struct hid_bpf_ctx *ctx) __ksym;
-+			      const size_t __sz) __weak __ksym;
-+extern struct hid_bpf_ctx *hid_bpf_allocate_context(unsigned int hid_id) __weak __ksym;
-+extern void hid_bpf_release_context(struct hid_bpf_ctx *ctx) __weak __ksym;
- extern int hid_bpf_hw_request(struct hid_bpf_ctx *ctx,
- 			      __u8 *data,
- 			      size_t buf__sz,
- 			      enum hid_report_type type,
--			      enum hid_class_request reqtype) __ksym;
-+			      enum hid_class_request reqtype) __weak __ksym;
- extern int hid_bpf_hw_output_report(struct hid_bpf_ctx *ctx,
--				    __u8 *buf, size_t buf__sz) __ksym;
-+				    __u8 *buf, size_t buf__sz) __weak __ksym;
- extern int hid_bpf_input_report(struct hid_bpf_ctx *ctx,
- 				enum hid_report_type type,
- 				__u8 *data,
--				size_t buf__sz) __ksym;
-+				size_t buf__sz) __weak __ksym;
- extern int hid_bpf_try_input_report(struct hid_bpf_ctx *ctx,
- 				    enum hid_report_type type,
- 				    __u8 *data,
--				    size_t buf__sz) __ksym;
-+				    size_t buf__sz) __weak __ksym;
- 
- /* bpf_wq implementation */
- extern int bpf_wq_init(struct bpf_wq *wq, void *p__map, unsigned int flags) __weak __ksym;
- extern int bpf_wq_start(struct bpf_wq *wq, unsigned int flags) __weak __ksym;
- extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
- 		int (callback_fn)(void *map, int *key, void *wq),
--		unsigned int flags__k, void *aux__ign) __ksym;
-+		unsigned int flags__k, void *aux__ign) __weak __ksym;
- #define bpf_wq_set_callback(timer, cb, flags) \
- 	bpf_wq_set_callback_impl(timer, cb, flags, NULL)
- 
+* remove comment from patch 2 in svm.c in favour of the commit message
 
----
-base-commit: 919464deeca24e5bf13b6c8efd0b1d25cc43866f
-change-id: 20241128-fix-new-bpftool-31a9f43aafbb
+v2:
+* reword comments to highlight context switch as the main trigger for RSB
+  flushes in hardware (Dave Hansen)
+* Split out outdated comment updates in (v1) patch1 to be a standalone
+  patch1 in this series, to reinforce RSB filling is only required for RSB
+  poisoning cases for AMD
+  * Remove mentions of BTC/BTC_NO (Andrew Cooper)
+* Add braces in case stmt (kernel test robot)
+* s/boot_cpu_has/cpu_feature_enabled (Boris Petkov)
 
-Best regards,
+Amit Shah (2):
+  x86: cpu/bugs: add AMD ERAPS support; hardware flushes RSB
+  x86: kvm: svm: advertise ERAPS (larger RSB) support to guests
+
+ Documentation/admin-guide/hw-vuln/spectre.rst |  5 ++--
+ arch/x86/include/asm/cpufeatures.h            |  1 +
+ arch/x86/include/asm/svm.h                    |  6 +++-
+ arch/x86/kernel/cpu/bugs.c                    |  6 +++-
+ arch/x86/kvm/cpuid.c                          | 18 ++++++++++--
+ arch/x86/kvm/svm/svm.c                        | 29 +++++++++++++++++++
+ arch/x86/kvm/svm/svm.h                        | 15 ++++++++++
+ 7 files changed, 74 insertions(+), 6 deletions(-)
+
 -- 
-Benjamin Tissoires <bentiss@kernel.org>
+2.47.0
 
 
