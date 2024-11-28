@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-424785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7216A9DB95B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:13:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412169DB95C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:14:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3244E281F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:13:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B715FB21E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0C21B0F38;
-	Thu, 28 Nov 2024 14:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8E41B3957;
+	Thu, 28 Nov 2024 14:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GrpFqaOo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T1frfGzq"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CE71AA786
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE1D1B0F0D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732803214; cv=none; b=LR4qqkMaUUFk3b/bqgo4WvC0lQmFRRLtDJmrgYa0VB/YdBt3izlmJfMnNhSH4GHvxgTynvp4vjJRZXPcQJiiRJ15x676bGjLUOkiXm+qaGy2mNuDRLkNAK2b/YPj3pyCW1U6I+3/8RdJuODRRpaHVhdBAcX26bNIYcRFQ51CGyg=
+	t=1732803216; cv=none; b=XlQeIXbQKZMy/M8eGBU0kRPGmuui8l8nwk+NjxHoJh6O+02sDZUfelHKbwjWShaZbVouVIvzz/lZladvQddYPQWfNmJspocYSIQuZ0CbGUfUzsBB2AOVoAml1z4C+ztF3s4AfgBuXM1RIGIFOuixDDSmFDcWl7EFPfHZ6s0KXo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732803214; c=relaxed/simple;
-	bh=SJh0Q+xP9tm3ci5BzCF7qILnNgyglrEBDytRma2l6/o=;
+	s=arc-20240116; t=1732803216; c=relaxed/simple;
+	bh=E3Ik4zpqBXaoUgm4o3J8sc3AWKSWWlS7ekn07azRmjM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uK37YcXyToNRG97X5+YUUBjluT9jvgyS4YiavYqf0bT9OcNhOmjAlAYfexuMQm0cNYthhKxIwibNbzZ3+j0R3+kbGwW7XWbetJEiG1NJgsLF7mRR5DkO5VPu0TaBI9we0B/rfX0fct9MXIvTzT/TwYB9mVgqEIsR6RtomhhU3l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GrpFqaOo; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=Rr0YakgvWr0BsuIvIhixTFL5/mf+HFU9eLL7ezOlahJGJfLlhJw/MNJxOsCmNTGukddTIpY4K6o/587ZxX0VYxl3KFCm6xGSzXAdjEZQWEYpoWoiB3lEKA0ODW/R2PXa53mqjetut1dq/eRBMvV9/WaWA3Bp1lFyXBP80RrdlxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T1frfGzq; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732803210;
+	s=mimecast20190719; t=1732803213;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=y+ivnks9eHKc2cnO5lo7WNGX+jATBqoLL3Di+tggXlE=;
-	b=GrpFqaOo/k8852V3ap++cE1vYjfUM4C+HS8KrrKV2TvPeScStov/K9n1joVGrDX/gdO8fe
-	J0oeDU4vZPeQqvu7oQvj8zSf6xt42urb8JWKKnBSnzv/qNRQhBz0aSsNfPolBad8F8sapd
-	InYC1t+9u1fFRqjWBSlcbjbXXDf+//o=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=+6SJAHP15rGarv2ZWYIDM7GIKVfkSq/CuvkJEM5Zlm4=;
+	b=T1frfGzqPtv5hDX067W5mLjRSDE9OaLYteQ9cKBy2AVlq7/MlcDOwTTBAeAIxhQAIKuP/l
+	CiTqDcw4gSTeLeUJkNdbWEQe6YAyL3XDQ2ruilKjSNMdCdvepmggQ3oruJg35k23YbmMUL
+	LPOXCxjdMJVozjiycQwamJtzD4Jd4uo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-59-Rr9OcyL4PLe5BNCDKPWoaA-1; Thu, 28 Nov 2024 09:13:29 -0500
-X-MC-Unique: Rr9OcyL4PLe5BNCDKPWoaA-1
-X-Mimecast-MFC-AGG-ID: Rr9OcyL4PLe5BNCDKPWoaA
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38249bf9e82so431187f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:13:29 -0800 (PST)
+ us-mta-533-PvefGdBBM66yJVHe6jVIrA-1; Thu, 28 Nov 2024 09:13:32 -0500
+X-MC-Unique: PvefGdBBM66yJVHe6jVIrA-1
+X-Mimecast-MFC-AGG-ID: PvefGdBBM66yJVHe6jVIrA
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a37a57dfso6595815e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:13:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732803208; x=1733408008;
+        d=1e100.net; s=20230601; t=1732803210; x=1733408010;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y+ivnks9eHKc2cnO5lo7WNGX+jATBqoLL3Di+tggXlE=;
-        b=ZPemR7Iz7yLifmATDlPQiZm0pyOokV4utOakoq9yY99LgCkAWah1nHxW0cvk5otFps
-         ccyBtKX8gBOhKFdbGz2ren0/I3DsGysTgINGIggPELNjMrq7S4XxX8giEGhsaHSPKOQg
-         eCf9BARNQmd4u09i1R8NO/sgf0vRyw5dd30v5I/WLO4hdXYVkgeoT4efeWldSQribECB
-         W8Evfn0Wm++Icxs6W8tGFqoLj64CiFk6o6HIv+LkzuqoLwTbZ+fCgpuvwqqOD9Y2BVZ6
-         vHOxYEowHDl5HJWJeEHj2ahjtj4N8KwVu/fFCdI0Eg7AR3CYMWp/kuIHduXsCL1qgWuB
-         Li8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4vgn68DbuTrrMfRxr+XaA2oFqxtpS5bBRIuyANe7RkVlnN8t19RpXKHs2jlsQkJJJv2Z0yVSsz6V3vMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0idp7TWYND+GZIwBeHO1Kcd16Oulc2k2zAgACN0dk/7lOOZF5
-	om7LR37jaBPi72CimKyqIjzEPbALyAI6TQmUjQoaM2egzXlB8KrywtQx2pGhzX6H5UX1rC11I+e
-	q65c8PrKQJYD9xG0b0tcc/dzx4CN5MoXiP2JYEUGXTEh8V5PSiJT4MkYmzHh6uQ==
-X-Gm-Gg: ASbGncvnHmgI/arZWurhkwX5ocgs+WDFpAuAYLAKL04oU+Ko4dlze8DcTE5DnYlGSM3
-	YTastkGUlzsxH8pXl9uZc8pp2Vn4IFXEW8aKwESr9YEMTB82ItfzyIFH//aWQatkmRRg2wPGDN/
-	OJirZ3WPa0MydqGANDcSVUY4pJap62dNgdpqPDKzyvWGUVca5iuIw+OQrG6yqOevILQjgexZrpR
-	jGyoUTQjZGI9JqL1FBLzdpvTEYSjV5CSxx+iq3NYngBB5RJHKKveg==
-X-Received: by 2002:a5d:6d05:0:b0:382:4b80:abdd with SMTP id ffacd0b85a97d-385c6eb6ce2mr6248554f8f.21.1732803208165;
-        Thu, 28 Nov 2024 06:13:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHzs9kOwW4KCqCU83SaXXdsgyGIxgmc5Rib/xImsEnns56tdvoTIASvpFVBrLhP206OdnyeGg==
-X-Received: by 2002:a5d:6d05:0:b0:382:4b80:abdd with SMTP id ffacd0b85a97d-385c6eb6ce2mr6248537f8f.21.1732803207812;
-        Thu, 28 Nov 2024 06:13:27 -0800 (PST)
+        bh=+6SJAHP15rGarv2ZWYIDM7GIKVfkSq/CuvkJEM5Zlm4=;
+        b=UHnXCOFjII1rYYAZB6Eyi0FEvKALQnZi7ECpDxrGAooVr0wiYx4gmJtB8fObqL39T8
+         j2EDcTNr/X+WJ+t7pVT3OdjFwk9TuAT/p4rMH6v0Ux/03ezckNbiXuoDkQZ2WmOat2HG
+         QTb5QSaKzJYR59ITZ/gHzNZhuUxFJBgV4WC4fxlw2qChWJpCEhHpymvQMqjIrjSX5WO5
+         N06mzDU3pCp1ELaO1kFm2GCbQ6IQxEGf55/1dDi976L6lKwNnh/ckVdP/iyYE85Hx6BF
+         VSHM2gfCNJm43VNf3F7NoMZR1RiFo0V1fPFTz11DGSAEzio+CCkWiGUwWuZs1P0AtzW8
+         dbag==
+X-Forwarded-Encrypted: i=1; AJvYcCWs78+E8OEKYrBIqTBn59UpmHbcpdMFuUP1lO4GHbUDJ5DucodEXGOjtRxuRF/RIo3YrL51TU4nt8Ylk+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+9Ml6Td2yXYdk4LMuNAsDhzxflYj7k7Hyf115Tu56kpiesZ3B
+	fcXSYxDJchbczFcX+RUf+mlUj3Zen7jYBZT8upfyTyjapdAvDPgDSRPQ9AfwGWl1/WT63KczkIu
+	RHMIWFW6UDUcebjTLxTA4ACc6k6aG0RNi1U5ot0U9SIUbxL1KI9txcCS9yzwpUEaknnVuPw==
+X-Gm-Gg: ASbGnctRs42cwlz3WyZcQIRgLQikT8QglHum5r3vzU8bV3k5F+hr2iqBbGHZ6l0XCy3
+	DwYgxrr9Im8pmGVY2k//tHB0/shxaW0HIJYrBn57YGPa4qmTXDhgdFx+HXSFTYg7IFsmCsihoS/
+	5PPEOrWbqtSruJUUSElt7k6rVXjalMnsv2wH2xJ/vAkXNYN0Mgp1jAela0docnBG9BCgOcHMlnr
+	h4V3j+7U5S1MqfqyLn1IEZFjye3kdPJ545i9YSCvGvfLozPtt9Zzg==
+X-Received: by 2002:a05:600c:5102:b0:434:a7b6:10ee with SMTP id 5b1f17b1804b1-434a9dcdeb4mr73655005e9.18.1732803210291;
+        Thu, 28 Nov 2024 06:13:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHzxzRKTj1hhxbgKbfI9iOKu3aqDxVuon8Cnx4/Dji1Z2q/mHAgXbf419s79zhA/kno8QYJYA==
+X-Received: by 2002:a05:600c:5102:b0:434:a7b6:10ee with SMTP id 5b1f17b1804b1-434a9dcdeb4mr73654785e9.18.1732803209917;
+        Thu, 28 Nov 2024 06:13:29 -0800 (PST)
 Received: from [192.168.10.3] ([151.49.236.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd92eabsm1714407f8f.111.2024.11.28.06.13.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e48edsm54409575e9.42.2024.11.28.06.13.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 06:13:27 -0800 (PST)
+        Thu, 28 Nov 2024 06:13:29 -0800 (PST)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -90,9 +90,9 @@ Cc: boqun.feng@gmail.com,
 	gary@garyguo.net,
 	alex.gaynor@gmail.com,
 	a.hindborg@kernel.org
-Subject: [PATCH 1/2] rust: Zeroable: allow struct update syntax outside init macros
-Date: Thu, 28 Nov 2024 15:13:22 +0100
-Message-ID: <20241128141323.481033-2-pbonzini@redhat.com>
+Subject: [PATCH 2/2] rust: block/mq: replace mem::zeroed() with Zeroable trait
+Date: Thu, 28 Nov 2024 15:13:23 +0100
+Message-ID: <20241128141323.481033-3-pbonzini@redhat.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241128141323.481033-1-pbonzini@redhat.com>
 References: <20241128141323.481033-1-pbonzini@redhat.com>
@@ -104,55 +104,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Zeroable trait is a marker trait, even though the various init macros
-use a "fake" struct update syntax.  Sometimes, such a struct update
-syntax can be useful even outside the init macros.  Add an associated
-const that returns an all-zero instance of a Zeroable type.
-
-The exact syntax used by the init macros cannot be reproduced without
-forgoing the ability to use Zeroable::ZERO in const context.  However,
-it might not be a good idea to add a fn zeroed() inside the
-Zeroable trait, to avoid confusion with the init::zeroed() function
-and because Zeroable::ZERO is unrelated to the Init and PinInit
-traits.  In other words, let's treat this difference as a
-feature rather than a bug.
-
-The definition of the ZERO constant requires adding a Sized boundary, but
-this is not a problem either because neither slices nor trait objects
-are zeroable.
+Isolate the unsafety in the declaration of the Zeroable trait, instead of having
+to use "unsafe" just to declare a struct.  This is more similar to how you would
+use "..Default::default()" (which is also a possibility here, but arguably
+less efficient).
 
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- rust/kernel/init.rs | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletion(-)
+ rust/kernel/block/mq/gen_disk.rs |  8 +++++---
+ rust/kernel/block/mq/tag_set.rs  | 10 ++++++----
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-index a17ac8762d8f..a00e7ff6a513 100644
---- a/rust/kernel/init.rs
-+++ b/rust/kernel/init.rs
-@@ -1392,7 +1392,12 @@ pub unsafe trait PinnedDrop: __internal::HasPinData {
- /// ```rust,ignore
- /// let val: Self = unsafe { core::mem::zeroed() };
- /// ```
--pub unsafe trait Zeroable {}
-+pub unsafe trait Zeroable: Sized {
-+    /// Return a value of Self whose memory representation consists of all zeroes.
-+    // SAFETY: the Zeroable trait itself is unsafe, and declaring it (whether
-+    // manually or via derivation) implies that this is not undefined behavior.
-+    const ZERO: Self = unsafe { core::mem::zeroed() };
-+}
+diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_disk.rs
+index 708125dce96a..65342d065296 100644
+--- a/rust/kernel/block/mq/gen_disk.rs
++++ b/rust/kernel/block/mq/gen_disk.rs
+@@ -6,7 +6,7 @@
+ //! C header: [`include/linux/blk_mq.h`](srctree/include/linux/blk_mq.h)
  
- /// Create a new zeroed T.
- ///
-@@ -1444,7 +1444,7 @@ macro_rules! impl_zeroable {
-     {<T>} Opaque<T>,
+ use crate::block::mq::{raw_writer::RawWriter, Operations, TagSet};
+-use crate::{bindings, error::from_err_ptr, error::Result, sync::Arc};
++use crate::{bindings, error::from_err_ptr, error::Result, init::Zeroable, sync::Arc};
+ use crate::{error, static_lock_class};
+ use core::fmt::{self, Write};
  
-     // SAFETY: `T: Zeroable` and `UnsafeCell` is `repr(transparent)`.
--    {<T: ?Sized + Zeroable>} UnsafeCell<T>,
-+    {<T: Zeroable>} UnsafeCell<T>,
+@@ -31,6 +31,9 @@ fn default() -> Self {
+     }
+ }
  
-     // SAFETY: All zeros is equivalent to `None` (option layout optimization guarantee).
-     Option<NonZeroU8>, Option<NonZeroU16>, Option<NonZeroU32>, Option<NonZeroU64>,
++// SAFETY: `bindings::queue_limits` contains only fields that are valid when zeroed.
++unsafe impl Zeroable for bindings::queue_limits {}
++
+ impl GenDiskBuilder {
+     /// Create a new instance.
+     pub fn new() -> Self {
+@@ -93,8 +96,7 @@ pub fn build<T: Operations>(
+         name: fmt::Arguments<'_>,
+         tagset: Arc<TagSet<T>>,
+     ) -> Result<GenDisk<T>> {
+-        // SAFETY: `bindings::queue_limits` contain only fields that are valid when zeroed.
+-        let mut lim: bindings::queue_limits = unsafe { core::mem::zeroed() };
++        let mut lim: bindings::queue_limits = Zeroable::ZERO;
+ 
+         lim.logical_block_size = self.logical_block_size;
+         lim.physical_block_size = self.physical_block_size;
+diff --git a/rust/kernel/block/mq/tag_set.rs b/rust/kernel/block/mq/tag_set.rs
+index f9a1ca655a35..1ff7366ca549 100644
+--- a/rust/kernel/block/mq/tag_set.rs
++++ b/rust/kernel/block/mq/tag_set.rs
+@@ -10,6 +10,7 @@
+     bindings,
+     block::mq::{operations::OperationsVTable, request::RequestDataWrapper, Operations},
+     error,
++    init::Zeroable,
+     prelude::PinInit,
+     try_pin_init,
+     types::Opaque,
+@@ -32,6 +33,10 @@ pub struct TagSet<T: Operations> {
+     _p: PhantomData<T>,
+ }
+ 
++// SAFETY: `blk_mq_tag_set` only contains integers and pointers, which
++// all are allowed to be 0.
++unsafe impl Zeroable for bindings::blk_mq_tag_set {}
++
+ impl<T: Operations> TagSet<T> {
+     /// Try to create a new tag set
+     pub fn new(
+@@ -39,9 +44,6 @@ pub fn new(
+         num_tags: u32,
+         num_maps: u32,
+     ) -> impl PinInit<Self, error::Error> {
+-        // SAFETY: `blk_mq_tag_set` only contains integers and pointers, which
+-        // all are allowed to be 0.
+-        let tag_set: bindings::blk_mq_tag_set = unsafe { core::mem::zeroed() };
+         let tag_set = core::mem::size_of::<RequestDataWrapper>()
+             .try_into()
+             .map(|cmd_size| {
+@@ -55,7 +57,7 @@ pub fn new(
+                     flags: bindings::BLK_MQ_F_SHOULD_MERGE,
+                     driver_data: core::ptr::null_mut::<core::ffi::c_void>(),
+                     nr_maps: num_maps,
+-                    ..tag_set
++                    ..Zeroable::ZERO
+                 }
+             });
+ 
 -- 
 2.47.0
 
