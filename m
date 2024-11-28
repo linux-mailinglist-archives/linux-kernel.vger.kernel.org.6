@@ -1,147 +1,96 @@
-Return-Path: <linux-kernel+bounces-424966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFF29DBBDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:40:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59ECA9DBBEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F0CB2156D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0540CB21596
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E861C1AB3;
-	Thu, 28 Nov 2024 17:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAvA1JFe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA2F1C1AB1;
+	Thu, 28 Nov 2024 17:46:44 +0000 (UTC)
+Received: from cygnus.enyo.de (cygnus.enyo.de [79.140.189.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCB1537F8;
-	Thu, 28 Nov 2024 17:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CA31BDAA2
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 17:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.140.189.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732815622; cv=none; b=Yq6tB+seZTixOtCcBgVpePlRdQdcHK6fH9Bu1xtdG0nFIsfxXKm0wsJWdA86PE0avWkoteFuuuEne3i4Ss/ZZA5+vqda6SEYaJcVPTf2W0auTRS/oLzkEbwGcyb32i4dOnlnANjUzc7z7L3gb/EA3jTsNSnv3AkgGX4vqVpuJ6M=
+	t=1732816004; cv=none; b=OzQL8eTeCr2mLoNs/CC88zO0NWGYCgCPT4rbk3FWXdZWZ3DJzMh0wDQtS812Q5iKyzFUUUCCBgM+g9z220kWxZppSY0fqgzwtqqNSefM2wfqGEQy/uS1SClVzyI01BoLMWeOGbxAO+0UZct5v6hj/9evhDxOy5q7CeFhfvInljg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732815622; c=relaxed/simple;
-	bh=KFL4/KdPWYKy7tPfDipXJxPv3vNWFuho/jtQSeo1XfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDif20JLKkhnvuQUiiKfxOnyUApn0NnRyN1O0jNmyFEvWOl35liEJmx/EVAAnWp3EXZ1+upyeRR32ZsXz9J1gM9m2C+tudcAG6pXKuSw8d7UGvzlHtmqxOYzKtTho1gFh0mSet6khm7wTHnNxHRjxSL6/B8hCVDvjBWw+kTfwgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAvA1JFe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE3AC4CECE;
-	Thu, 28 Nov 2024 17:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732815619;
-	bh=KFL4/KdPWYKy7tPfDipXJxPv3vNWFuho/jtQSeo1XfE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TAvA1JFet7rwjww4XTHqSJmT9U9gYyEGeTYCbJDej60B/X76fwcYtlBPGRvATfNw4
-	 i2kChXH6pxtx7FwqMP9UKV9oqAaysHCWRQID0ef+X9p0veIqZaxf1zbmzurWBKQGFq
-	 1K9fZD5mMh/+r8qnA+mhNMEYhj+AX7PdE73e1TVJQhH4Kh6vRZY47eTJsZkyACaLeK
-	 JP7InV0RlxBMYz142e7KYSEL24yWqt+rzSKZnnlBcIF/aZvS6KjYojduUjSmIrlI4U
-	 pF6yeFWzhcC2GQTz/l/7yCYkTD46plfYVB6a2VMtGDJAILuijEKnUuLfXyYy9LFn6d
-	 mDcAgxjHM+njQ==
-Message-ID: <e330ef8b-8cf9-4c7e-bea9-c9c240aa38f2@kernel.org>
-Date: Thu, 28 Nov 2024 18:40:13 +0100
+	s=arc-20240116; t=1732816004; c=relaxed/simple;
+	bh=RcTkVVYuS7oBf3n2H0uuVQNF42cLbfeTdefPuZ9ig3I=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=Zc0bH3d0k2O2CabDTd/n0BAXZBeDNqnxqq93glKND3LJvcJiNmrp2zA5J1TfyHSf4lrl/sTcs8AHOpxz5CS1pnXsjZww8IZGmQpBZEKyWVMGXr8p4/+2VBDhntxXycaEoq1QPeReqUs6dGLDhFhMw49X6924HMLi/kENRBwrFz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de; spf=pass smtp.mailfrom=deneb.enyo.de; arc=none smtp.client-ip=79.140.189.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deneb.enyo.de
+Received: from [172.17.203.2] (port=50781 helo=deneb.enyo.de)
+	by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	id 1tGiVu-008fTg-26;
+	Thu, 28 Nov 2024 17:41:14 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.96)
+	(envelope-from <fw@deneb.enyo.de>)
+	id 1tGiVu-000Jbd-1o;
+	Thu, 28 Nov 2024 18:41:14 +0100
+From: Florian Weimer <fw@deneb.enyo.de>
+To: Rui Ueyama <rui314@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Wislist for Linux from the mold linker's POV
+References: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
+Date: Thu, 28 Nov 2024 18:41:14 +0100
+In-Reply-To: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
+	(Rui Ueyama's message of "Thu, 28 Nov 2024 11:52:35 +0900")
+Message-ID: <87ttbrs1c5.fsf@mid.deneb.enyo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: add base QCS8300 RIDE board
-To: Andrew Lunn <andrew@lunn.ch>, Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, quic_tengfan@quicinc.com,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
- <20241128-qcs8300_initial_dtsi-v3-4-26aa8a164914@quicinc.com>
- <fe332b12-d62e-442d-906b-7f3a72165b85@lunn.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <fe332b12-d62e-442d-906b-7f3a72165b85@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 28/11/2024 17:49, Andrew Lunn wrote:
-> On Thu, Nov 28, 2024 at 04:44:46PM +0800, Jingyi Wang wrote:
->> Add initial support for Qualcomm QCS8300 RIDE board which enables DSPs,
->> UFS and booting to shell with uart console.
->>
->> Written with help from Tingguo Cheng (added rpmhpd nodes) and Xin Liu
->> (added ufs, adsp and gpdsp nodes).
->>
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile         |   2 +-
->>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 267 ++++++++++++++++++++++++++++++
->>  2 files changed, 268 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 9bb8b191aeb5..d9545743606a 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -114,7 +114,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
->> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
-> 
-> It would be good to add a comment to the commit message about why you
-> are removing qcs8550-aim300-aiot.dtb from the Makefile.
+* Rui Ueyama:
 
-Especially that it was not in v2 (which I reviewed) and nothing in the
-changelog explains this removal.
+> - exit(2) takes a few hundred milliseconds for a large process
+>
+> I believe this is because mold mmaps all input files and an output
+> file, and clearing/flushing memory-mapped data is fairly expensive. I
+> wondered if this could be improved. If it is unavoidable, could the
+> cleanup process be made asynchronous so that exit(2) takes effect
+> immediately?
 
-Best regards,
-Krzysztof
+It's definitely a two-edged sword.  For example, when running parallel
+make (or Ninja), it's essential that process exit is only signaled
+after all process-related resources have been released.  Otherwise,
+it's possible to see spurious failures because make respawns processes
+so quickly that some resource limit is exceeded.  This is already a
+problem today, and more lazy resource deallocation on exit would make
+it more prevalent.
+
+The situation is already bad enough that many developers have resorted
+to retry loops around fork/clone/pthread_create if an EAGAIN error is
+encountered, assuming  that it's related to this.
+
+  Bug 154011 - Task exit is signaled before task resource
+  deallocation, leading to bogus EAGAIN errors
+  <https://bugzilla.kernel.org/show_bug.cgi?id=154011>
+
+> - Writing to a fresh file is slower than writing to an existing file
+>
+> mold can link a 4 GiB LLVM/clang executable in ~1.8 seconds on my
+> machine if the linker reuses an existing file and overwrites it.
+> However, the speed decreases to ~2.8 seconds if the output file does
+> not exist and mold needs to create a fresh file. I tried using
+> fallocate(2) to preallocate disk blocks, but it didn't help. While 4
+> GiB is not small, should creating a file really take almost a second?
+
+Which file system is that?
+
+> - Lack of a safe system-wide semaphore
+
+Other toolchain components use the make jobserver protocol for that.
 
