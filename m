@@ -1,139 +1,185 @@
-Return-Path: <linux-kernel+bounces-424919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0869DBB42
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:25:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA0B1648A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:25:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880181BE86A;
-	Thu, 28 Nov 2024 16:25:45 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836F89DBB43
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:26:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937942744E;
-	Thu, 28 Nov 2024 16:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4292C28418E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:26:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D271BD9DB;
+	Thu, 28 Nov 2024 16:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4zTx64o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93D32744E
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732811145; cv=none; b=RUf217FGWBeTdrFbY0qWmN+AbxpfOZE3bG4yMXHFIaXztAfqM3FQleNH1bhzjFOjblAm9Byk4lyYmXL59ReYgoS3FUPiyIrxQDsHeTLGRbrx9Pp4nSwyaxZw3YpMP7355tLbE7ZurjjKMKLJRJXJ13VYoccoAV7KjmyDNT3CbU8=
+	t=1732811185; cv=none; b=hWPv9fukbkSv6IyG9q5xIsgo7kMpuZVhpHssEZ+k29QJhauWqO4ugNDlLkRYIvqg3mfnSZwwvIAvQxGFRWblr1bVfN+R1XEIR/q9wnYcYMMKo/x9JWtNDsHV8NOl3OmiSC7Bn51uIsxOaQ5daS93LiDF8ilMwcXmaerdkNosT9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732811145; c=relaxed/simple;
-	bh=cIcUqMLjWP354kYtE+Raag2eS84h1gxaXuZaR+YTpc8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gvr65VtL37l3odc8LJTQGhmD3c3ZvQb4UCSayAtJNzld5zlQPxWkYEYQcrYo1Qb/xGaoUV+9rXfyOUv1NmioPmIkPqDvjnU2DLLNlLWCM2VEFHOP0YrLr4Gw+e7ZeCq4cmNVPQ13A0FFx+66bc9UDhlBnuq4JwYdzVZvTZIUUf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xzh2l1Wysz9v7VJ;
-	Fri, 29 Nov 2024 00:04:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 68BD714035F;
-	Fri, 29 Nov 2024 00:25:36 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBHYYB1mUhnN_l3Ag--.45451S2;
-	Thu, 28 Nov 2024 17:25:35 +0100 (CET)
-Message-ID: <99408482e7f5002b2b3defb6d7b816b25e11cbbf.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 6/7] ima: Discard files opened with O_PATH
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, zohar@linux.ibm.com, 
- dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, paul@paul-moore.com, 
- jmorris@namei.org, serge@hallyn.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,  stable@vger.kernel.org
-Date: Thu, 28 Nov 2024 17:25:21 +0100
-In-Reply-To: <20241128-musikalisch-soweit-7feb366d2c7a@brauner>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-	 <20241128100621.461743-7-roberto.sassu@huaweicloud.com>
-	 <20241128-musikalisch-soweit-7feb366d2c7a@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732811185; c=relaxed/simple;
+	bh=YWuLHOQnHddATEwi4qhCNtm9Q5H6JmzVotpeUJcfm8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sa9anQT5oKulxjlJjc+4hUvyJgcVIPY4KPaCWc6E5fUQ5/Bfv80BVZ7bv+whduYDX8Lkg3wTGsnQ1F06jDfkQHNfQ25CwPQhsqjACvmsJaUOAh5XCT3WSmhlc+UEan4jRNULJ+ZaNyNuhkI3tpZK2ATgGMmJ7OGTMULPBLI9tmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4zTx64o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACF4C4CECE;
+	Thu, 28 Nov 2024 16:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732811184;
+	bh=YWuLHOQnHddATEwi4qhCNtm9Q5H6JmzVotpeUJcfm8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r4zTx64ondRlA/dVEhHjRrnKx3sw7SgbEpm7i74hAOYP7O9z70YWDHfiZtRoIOOMI
+	 /yNQK1sQCwvJWps/awTfNKgHUVQj/gplhQkJoEaIEsSXqGmpe6JsgTwmAeJKOSL71d
+	 5kyXwkRiKb55A5QQUJCEe5bvy/X6taFHFYfGX5WJiRQGsdkYYIzwk3G38RIiuZ8K0L
+	 MFO3alyX8Fabtz9KGytlidE6uJOK+aqpVyYZ9f4brOxMaZKGegjF47cS/xg6KEPHNE
+	 yIhcU78yjyq6oqvm2OiSaV606lVvhja6T6bGYxyxAk6Wima7aOxkyYp3mHgPxMprjl
+	 41yBHJNutDTkA==
+Date: Thu, 28 Nov 2024 16:26:19 +0000
+From: Will Deacon <will@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 11/21] arm64: Keep first mismatched 32bits el0 capable
+ CPU online through its callbacks
+Message-ID: <20241128162618.GA3653@willie-the-truck>
+References: <20241112142248.20503-1-frederic@kernel.org>
+ <20241112142248.20503-12-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwBHYYB1mUhnN_l3Ag--.45451S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1DKFyfXrWUKw4rKw4kWFg_yoW8AFWDpa
-	95Ga4FyF1DXryxCF4fGayayayrK3y2kr4UWws5X3WavFnxXF9Ygr1fJr15WFySyF1Yyr10
-	vr43Kryak3Wqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	UAwIDUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBGdH1XMGJAAAsj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112142248.20503-12-frederic@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, 2024-11-28 at 17:22 +0100, Christian Brauner wrote:
-> On Thu, Nov 28, 2024 at 11:06:19AM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > According to man open.2, files opened with O_PATH are not really opened=
-. The
-> > obtained file descriptor is used to indicate a location in the filesyst=
-em
-> > tree and to perform operations that act purely at the file descriptor
-> > level.
-> >=20
-> > Thus, ignore open() syscalls with O_PATH, since IMA cares about file da=
-ta.
-> >=20
-> > Cc: stable@vger.kernel.org # v2.6.39.x
-> > Fixes: 1abf0c718f15a ("New kind of open files - "location only".")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/ima/ima_main.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima=
-/ima_main.c
-> > index 50b37420ea2c..712c3a522e6c 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -202,7 +202,8 @@ static void ima_file_free(struct file *file)
-> >  	struct inode *inode =3D file_inode(file);
-> >  	struct ima_iint_cache *iint;
-> > =20
-> > -	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> > +	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-> > +	    (file->f_flags & O_PATH))
-> >  		return;
-> > =20
-> >  	iint =3D ima_iint_find(inode);
-> > @@ -232,7 +233,8 @@ static int process_measurement(struct file *file, c=
-onst struct cred *cred,
-> >  	enum hash_algo hash_algo;
-> >  	unsigned int allowed_algos =3D 0;
-> > =20
-> > -	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> > +	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-> > +	    (file->f_flags & O_PATH))
-> >  		return 0;
->=20
-> if (file->f_mode & FMODE_PATH)
->=20
-> please.
+Hi Frederic,
 
-Oh, ok.
+On Tue, Nov 12, 2024 at 03:22:35PM +0100, Frederic Weisbecker wrote:
+> The first mismatched 32bits el0 capable CPU is designated as the last
+> resort CPU for compat 32 bits tasks. As such this CPU is forbidden to
+> go offline.
+> 
+> However this restriction is applied to the device object of the CPU,
+> which is not easy to revert later if needed because other components may
+> have forbidden the target to be offline and they are not tracked.
+> 
+> But the task cpu possible mask is going to be made aware of housekeeping
+> CPUs. In that context, a better 32 bits el0 last resort CPU may be found
+> later on boot. When that happens, the old fallback can be made
+> offlineable again.
+> 
+> To make this possible and more flexible, drive the offlineable decision
+> from the cpuhotplug callbacks themselves.
 
-Thanks
+Sadly, I don't think this can work.
 
-Roberto
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 718728a85430..53ee8ce38d5b 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -3591,15 +3591,15 @@ void __init setup_user_features(void)
+>  	minsigstksz_setup();
+>  }
+>  
+> -static int enable_mismatched_32bit_el0(unsigned int cpu)
+> -{
+> -	/*
+> -	 * The first 32-bit-capable CPU we detected and so can no longer
+> -	 * be offlined by userspace. -1 indicates we haven't yet onlined
+> -	 * a 32-bit-capable CPU.
+> -	 */
+> -	static int lucky_winner = -1;
+> +/*
+> + * The first 32-bit-capable CPU we detected and so can no longer
+> + * be offlined by userspace. -1 indicates we haven't yet onlined
+> + * a 32-bit-capable CPU.
+> + */
+> +static int cpu_32bit_unofflineable = -1;
+>  
+> +static int mismatched_32bit_el0_online(unsigned int cpu)
+> +{
+>  	struct cpuinfo_arm64 *info = &per_cpu(cpu_data, cpu);
+>  	bool cpu_32bit = id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0);
+>  
+> @@ -3611,7 +3611,7 @@ static int enable_mismatched_32bit_el0(unsigned int cpu)
+>  	if (cpumask_test_cpu(0, cpu_32bit_el0_mask) == cpu_32bit)
+>  		return 0;
+>  
+> -	if (lucky_winner >= 0)
+> +	if (cpu_32bit_unofflineable < 0)
 
+nit: I think you meant '>=' here, but it doesn't matter. See below..
+
+> +static int mismatched_32bit_el0_offline(unsigned int cpu)
+> +{
+> +	return cpu == cpu_32bit_unofflineable ? -EBUSY : 0;
+> +}
+
+I think this is far too late. The reason we prevent hot-unplug of the
+last 32-bit CPU is because 32-bit tasks need somewhere to run. By the
+time our offline notifier runs, those tasks have already been migrated.
+
+On my setup, this explodes because that migration fails (as expected):
+
+
+[  125.954586] ------------[ cut here ]------------
+[  125.955661] kernel BUG at kernel/sched/core.c:3501!
+[  125.957585] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+[  125.959371] Modules linked in:
+[  125.961850] CPU: 2 UID: 0 PID: 27 Comm: migration/2 Not tainted 6.12.0-00001-ge7689036c862-dirty #10
+[  125.963711] Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/06/2015
+[  125.964859] Stopper: __balance_push_cpu_stop+0x0/0x134 <- balance_push+0x118/0x1ac
+[  125.968507] pstate: 614000c9 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+[  125.969648] pc : select_fallback_rq+0x2f4/0x2f8
+[  125.970477] lr : select_fallback_rq+0x198/0x2f8
+[  125.971273] sp : ffff800080153d20
+[  125.971897] x29: ffff800080153d30 x28: 0000000000000002 x27: ffffddbd31d79d30
+[  125.973416] x26: 0000000000000001 x25: ffffddbd31d79c70 x24: 0000000000000008
+[  125.974436] x23: ffffddbd31d79000 x22: ffffddbd31a77190 x21: 0000000000000004
+[  125.975452] x20: ffff0000c506a280 x19: 0000000000000000 x18: ffffddbd30fb1df0
+[  125.976467] x17: 0000000000000000 x16: 0000000000000001 x15: 000000000018132d
+[  125.977490] x14: 00000000ffffffe0 x13: 0000040000000000 x12: 00000c0000000000
+[  125.978499] x11: 000000002ae00002 x10: 000000000000000c x9 : 0000000000000040
+[  125.979507] x8 : 0000000000000000 x7 : 000000000000000c x6 : 000000000000000c
+[  125.980501] x5 : ffff0000c506a578 x4 : ffffddbd2fe53eb0 x3 : 0000000000000010
+[  125.981508] x2 : 0000000000000004 x1 : 0000000000000004 x0 : 0000000000000004
+[  125.982671] Call trace:
+[  125.983065]  select_fallback_rq+0x2f4/0x2f8
+[  125.983550]  __balance_push_cpu_stop+0x94/0x134
+[  125.983983]  cpu_stopper_thread+0xbc/0x174
+[  125.984352]  smpboot_thread_fn+0x1e4/0x24c
+[  125.984732]  kthread+0xfc/0x184
+[  125.985065]  ret_from_fork+0x10/0x20
+[  125.985741] Code: 9000d9c0 91306000 9441667a 17ffffef (d4210000) 
+[  125.986445] ---[ end trace 0000000000000000 ]---
+
+
+As I mentioned before, I think we need to turn this the other way around
+so that the non-unpluggable 32-bit core is forced to be a housekeeping]
+CPU. You said it was hard to revert CPUs from being treated as nohz_full,
+but I'm wondering whether we can prevent it from being added in the first
+place. The arch code has fingers in all the early boot pies.
+
+Yet another option (which I'm not hugely fond of, but may be ok) would
+be to treat 32-bit-capable nohz_full CPUs as being 64-bit-only when
+'allow_mismatched_32bit_el0' is enabled (and documenting this as a
+limitation).
+
+Will
 
