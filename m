@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-424388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EA99DB3CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:32:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D349DB3D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:32:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5831E281B4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:32:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96595B2101E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB7E149DFA;
-	Thu, 28 Nov 2024 08:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BF214AD3A;
+	Thu, 28 Nov 2024 08:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="fJyeNtHq"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="b1Bpx7z/"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB161863F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132F71863F;
+	Thu, 28 Nov 2024 08:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782744; cv=none; b=dWVgouMZAsmabovu13t4Ilytr/9+/z9/SdgUe/63gOmfGZjjCEH2PffM13hQSRpSjXeQSPmWl2tzlAmeWgsjMt1WFq2/SSKP1GJ93Sigi5s+z56EUb5WMwBo/0PT6YM7BzFag85FhjvRA3Wwb+0vTfL2vg4A9/zIsQdujKtCh1I=
+	t=1732782769; cv=none; b=sjXRVYu3m4HdFNfgXYMV6o3F8t9aSuNK7ZbE+ahuWnxpjzqjuMSxiLfy731R2nW7IaI80T4JjZDep876D1CZKNkRCbZ1NzvQGu5vfJK8QI5kDe8oeUYPsZj3hNUeGH1yp2WqqMCuVv4P/evPN1Qr3JWaLZyqB7aiRYZVWpoNW5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782744; c=relaxed/simple;
-	bh=KY/jdEFrXJ/ZzyFCYnRsBs/1dt9MG/KBUn9sInofpE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nz6ufIh5DHNzr4It1Iyn6T0qfYFxIvC0b/QtoSSkgnt25iay2OaIvwr+R+8/Ygz7GqEJZim32S4M2DKJfF/aW7w9qUny519WZF0nZceLbq1/ogX5zFxg3mPKMA2mpaKBuZZybZuMWOWIFX8CjkmMHSW39cTm7Bcwv1/qC5zRma0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=fJyeNtHq; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a742481aso4652935e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:32:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732782741; x=1733387541; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IkmUTsVLQMvFKC/acbiNHMDNlfrO4VJGSOdTD+kFhvk=;
-        b=fJyeNtHqRFxZ6Iwsv5lh/py4OSAQ96GUaMQHR+iahMXWfCCJyEuBEp9rugdfhE9S2r
-         FAVXdDnhvzglGSwcfmGWbzLNmxL45gEheHGf4Vq4ZWwdef7L+xbUTBDbhqXlKiuQnQa0
-         i2IYdRYK/vEKKTK5KW+lS0A8OEmDUCKsGxaIZxN1VDQx+9n1F9c3qWKqHMVnbmbbUhjH
-         2wvhaUAWBQRPiH+VhTa0zxxKn0mOzry5S0jdqypb+pDFz21Vdz35mEboFwVKNoSRH5Z/
-         T+wbTh8UEzQTlgdW2Y/ybZwkEhOoTdIJdTYAYrQfIteSBeieah932S3eyu6BAQpPwkVo
-         Y5dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732782741; x=1733387541;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkmUTsVLQMvFKC/acbiNHMDNlfrO4VJGSOdTD+kFhvk=;
-        b=HxVXMlKfAjDApiBA/pwBPy+iKfxoFHSwAGt/w3MwoiLKroz8sLcuXcfcPhveu+77rk
-         TQUjdpb3njIYPzA/IykElOmmV4Y7owBFaYWyXFb5+eb0O5G9FZTzcZSjsJ2/XSdNPROb
-         UeIEEZgbNmP3sC0dj/rd0DiX+Roxo1royUNJpQtGbHwsRRl+vdzo+AI96yVV7ZsvnFu9
-         BwxvQNxQKgRI2DDZLd9oL9fRZysOaVDdhLp0zkIvEC2dQYv5ChEZjFJBL/xd+r8ntdBU
-         Bs7lrX4++z20Nx/2OWe6OH3QsqOfETz8rtrs3IgIxo8LBJLaD1rIa8O0zaFTEqG0sBRw
-         bqFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTYl+3i4NRZLxosUxHHu7UeiCwYSmGt2UeeQrrJx5kVW61+fRNNh/7cBP6n3Ml3Vn3/NZuckPEPkr29oQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh68tuO6tn0567Xr88OvL72rsfetbnMgPYR3qJbeoTHHLUfKIk
-	3BLmk7JXx5/S0ZXQCvAi+34dB3UDqZb7aBgn2R/WHf5P3GXFOXXMRxnP2+wlPAs=
-X-Gm-Gg: ASbGnct2Gxoy/udHt1DGQwPsRhczTurWyJI6VijytapYWVlbBGl83eQZ/0tm9T/8xlD
-	HlW5jM8LVkXVSucJab5xqJg1mmWBdeLFEXxNjRZt3lY7rFpOXugIy+GDw0e+wMHlQ/TLoMJoQ9i
-	I6SxuyLxhxsAmtTnnnxz3AtYPjruhS+K0koIsDntGLTuUXaDcz3YUWAN4AmCQiCZfmHFlqaj+7V
-	UHmmtTS3P2v/YUfMb0IAbBb7AVf1AZ+SFkxOjaeRJ2Bo0wG82Nqa0QBA6jz9G3RRPiISnRw7K8Z
-	MIIWuI3R9Lq2vvivWs8C204cAhGKGE8NahA=
-X-Google-Smtp-Source: AGHT+IEwQd4MULG9+vfOa2qsE3UwH6o+SBFQmY81KWSmVFdtfK+f0e5Zt6kIK2SbhEhkH97nvavxlg==
-X-Received: by 2002:a05:600c:46c9:b0:434:a4a6:51ee with SMTP id 5b1f17b1804b1-434a9dd0060mr63116095e9.16.1732782740536;
-        Thu, 28 Nov 2024 00:32:20 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3729esm1033907f8f.44.2024.11.28.00.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:32:20 -0800 (PST)
-Date: Thu, 28 Nov 2024 09:32:19 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: laokz <zhangkai@iscas.ac.cn>
-Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Charlie Jenkins <charlie@rivosinc.com>
-Subject: Re: [PATCH v2] riscv: module: use a plain variable for list_head
- instead of a pointer
-Message-ID: <20241128-0e953467c518d79d12dbf202@orel>
-References: <20241127142519.3038691-1-cleger@rivosinc.com>
- <980b98978ab4ee912b37cb101ad43bce20b56dcb.camel@iscas.ac.cn>
+	s=arc-20240116; t=1732782769; c=relaxed/simple;
+	bh=nPJfzjw2IzYDyvBj2QMAjwMYpWx5zWBGijY92AGYwzg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r5x4AFnjoGtL+Ze2PlzNbhsTOYXcYs3Yr4slwZ2W8b7VcJkSEwJ+PbKSGOqTp26WRg+fbQrbp2aEjFpr+rcetVLaYKHHgsKh11CrmBUj0crV8yeh0yMeSTKpEnLv6hMGGUChPEJq0g8ge5Flvs4DKe8RucE3jFBhxH+WTiLF6e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=b1Bpx7z/; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=S0T/bJtNnZ8RVrU1SOk0n/9fkL9A+JwcK0Q5OqH8Ous=; b=b1
+	Bpx7z/fAeh0OwfahlSY744AEscveqmrEDlrtclz21z/n8nOLdm3nYjRKNFVeT5Q2tJtQvKFuTp0VS
+	+o5j7sWu8l5Cpx+FP9TxYm3G+4YHlqbDrfCvheceG4yKSyXj0e0E61ZqPKA/NhjM8+/IKuzwvri0h
+	kyBWomHbGUdzX+xToNep+ZOJdRhockDcT7oZpKy5sxDyUBvMPIGgOp46gGJEr/M406ntNpmdj7n6p
+	WTQ3O4Q6j44IqjIuvwdn6j02j6AF/RXFPEyLuZD3oznx6uBCoaVKiTl5meD4L5jjMKjQMJCQkeHSt
+	AcT3oXbRrbxN1wsxBxtgnYb+NYtCzhQA==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tGZx6-000H5u-Q0; Thu, 28 Nov 2024 09:32:44 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tGZx5-000Pzk-32;
+	Thu, 28 Nov 2024 09:32:44 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Thu, 28 Nov 2024 09:32:31 +0100
+Subject: [PATCH] can: tcan4x5x: get rid of false clock errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <980b98978ab4ee912b37cb101ad43bce20b56dcb.camel@iscas.ac.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241128-mcancclk-v1-1-a93aac64dbae@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAJ4qSGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyNz3dzkxLzk5JxsXXMTwxQjw8S05CQjSyWg8oKi1LTMCrBR0bG1tQD
+ oXgYYWgAAAA==
+X-Change-ID: 20241127-mcancclk-741d21afcb29
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27470/Wed Nov 27 10:59:44 2024)
 
-On Thu, Nov 28, 2024 at 09:01:52AM +0800, laokz wrote:
-> On Wed, 2024-11-27 at 15:25 +0100, Clément Léger wrote:
-> > rel_head's list_head member, rel_entry, doesn't need to be allocated,
-> > its storage can just be part of the allocated rel_head. Remove the
-> 
-> Oh my poor English. OK, it's more better than just add the lost kfree.
->
+tcan4x5x devices only requires one clock cclk, so call devm_clk_get()
+directly. This is done to avoid m_can_class_get_clocks() that checks for
+both hclk and cclk.
 
-It wasn't the English I was correcting. That was fine, but just saying
-the object could be "a plain variable" wasn't giving any justification
-for the change and, to me, even implied that rel_entry was locally
-scoped. So, when I first skimmed the patch and saw that it was getting
-appended to a list, I almost stated the patch was wrong. It was clear
-after looking closer, but it could have been clear the first time
-through if the commit message had better guided me.
+tcan4x5x spi0.0: no clock found
 
-Thanks,
-drew
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+ drivers/net/can/m_can/tcan4x5x-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
+index 7213d9894c82d079bf92f1ec62d4eebb500cdfa4..7463c40b909873b9c5bcc753f9db7009e9d66008 100644
+--- a/drivers/net/can/m_can/tcan4x5x-core.c
++++ b/drivers/net/can/m_can/tcan4x5x-core.c
+@@ -410,7 +410,7 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+ 		priv->power = NULL;
+ 	}
+ 
+-	m_can_class_get_clocks(mcan_class);
++	mcan_class->cclk = devm_clk_get(mcan_class->dev, "cclk");
+ 	if (IS_ERR(mcan_class->cclk)) {
+ 		dev_err(&spi->dev, "no CAN clock source defined\n");
+ 		freq = TCAN4X5X_EXT_CLK_DEF;
+
+---
+base-commit: e0b741bc53c94f9ae25d4140202557a0aa51b5a0
+change-id: 20241127-mcancclk-741d21afcb29
+
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
+
 
