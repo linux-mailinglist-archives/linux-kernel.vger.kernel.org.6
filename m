@@ -1,143 +1,250 @@
-Return-Path: <linux-kernel+bounces-425049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB5F9DBCDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:25:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC749DBCDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C69164881
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:25:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CBB16483D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722D71C2457;
-	Thu, 28 Nov 2024 20:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E0F146D6E;
+	Thu, 28 Nov 2024 20:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jugbajX1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbCXxZKc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36EF142624
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C5B142624;
+	Thu, 28 Nov 2024 20:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732825532; cv=none; b=AgTtDxxLoKPG6Un/CRLcqKUbQD59VKCUnIbQEJfJvTxew8qq7hHLTqL/CAGo3MEl184/x/zr8c24oqnb6EUcdkIzmnpDrte7M2401lkoVi9K4g7+hxBnzS3BO+J3UpuMHychrHRNrtdgO1QC42ftpKsNsnKvbSBzkp+DNhKvlMM=
+	t=1732825537; cv=none; b=HYDBUv2Va4zZhQBB4GuJQA3NkdwZ8y4mdBWHd1B7ixgMn6f0ap8T7sKmADQ4xi6D1B5FqdTUs8ufp5mUXcXYiv1m0jxQV8/IKpo6mmdvuXs5FkD8lYgtotgDWVEJY7aFR9hevgL15pBJZzU9BBgxsqxqybvoxonSdTsxmtGev4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732825532; c=relaxed/simple;
-	bh=ozTQLpJy8PhSwcTQDFUMnO/dPjCHluLZ/fr08jPDrko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SE/AFCIsU/701Fw2cuyeDwhEXlrtp4enAShh8/R7Y8wcEA6ZD0aCocmAiZk7Lolxn6GyhQn94lik+0egSe0bpxFsFY/mrrAkZV6emYOYMPxockNp38mFwly4qG4xr5WAOpq2gqlualqxazpwA2QLvrdMgx2dXs2FyvVI5tNpTx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jugbajX1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS9IDxB012280
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:25:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u+/C016dQKRw6wON/psnCJnEPdDDBTHE5HmTLOJ9gug=; b=jugbajX1B/2Jj3Ku
-	0QSOTutgliMrmFAi1B92tklKm6h3lFY+m1QSmTfUdPRy35wTvpVLHkQAI2q1y8mr
-	TFVPZHWVcpRBJO+Fn3rpcExMa1IwMaRtepVOlEfOf0bsSqrE5qEOKZabuOMV/QNZ
-	K/a+jCp0skVY1NswNrtwqrSjPY5bKYr/iLO4FXzd6T14nt81UDu+wy7mhfeoQTEW
-	sXKneeGaCjJ3QdmYCMaJNBdSToaHjb0YMRuRLAKRgM958k9I7fa8UbAmzaIM9x6b
-	kDZn0IwJ4PGZLMX6Ta0XDHmQ06zZhFVKUyhqKy0SiQwVQepbsKkmUwd64IbN8xIF
-	8vKs4A==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xy3mc3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:25:29 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4668a6d41a5so772931cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:25:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732825529; x=1733430329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u+/C016dQKRw6wON/psnCJnEPdDDBTHE5HmTLOJ9gug=;
-        b=hrIlxmi00fSxASoM43yUQIJEBMIGiDxHEI3o17mzNwmAxIS5rP2kpRhOKyoAGHNt57
-         A2xs0mDpHAt9yLXyEMvh5bZN4ZgWjlzUjaZu+jQ6eCTPHkV8jsSopC8sKJLhMBbEjAHg
-         mxM9Lb/ec+DSvNLV78YiORhHIT18+Ca7MkA/USrABBT/RjZ5jKv64tGQFQ/yfd1vOF3g
-         LzG+xTTbEEyPNVDDejydJkDFfVmV3AaLXifuzqq0qb091Do8EnWHkE9PYhirlFLciVGR
-         5SC3Outm3al46ZmjkMWxlWJ6+qjdBuNLUPsjiMGPcT7X2kGfz3YceOkM1SXwG4Xd33SA
-         3CXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJEWadd0ElRbLCbIr5cmXlmpH5vTQXbQCgLBKt42QtNkvGqXVWwPQRQlACV47CH+h809+OPxEth2yEN7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMBgz+q4nLjNw58vAqSxpu5uKKGRccNli4x6fpRpGV8lr3Wtx3
-	9/MWCD6PENiXsHVEJJNt4w0fB+CaXxoLtk1biluWflJO3OpqI820YC0YsQQ1VmNOoDnWliRMIp/
-	G3KZvbmDdYRIsNIX6AcO6GNbqW53BqulogmYuOiKJpnhJ3fd4/L+LMoI0MhZFEo8=
-X-Gm-Gg: ASbGncuyvhetJB4WInI/AGK/imwO8BIKG4gGITS7Qbit7xNytRAv7tRU7oNa54JAoIi
-	FIMtE4PKWmD2WoWNfqL3xmREooPqb3lnAxLPF5NEwRxsdsKAHkzkmfTgStziBE+d6AVlS+CMd0l
-	vp+HBUmUGW+NWUwpW3lZ0shu62AiZQKDsgMQNEw+2TIzeO876P+x4wRSrOmE1Z1BwxuotWI/l2n
-	NUspaEGSaZRHKcfJ5Dg+g783Zk1nZOtXER/lFYbs3tfgvri8k39cmenHVRn4y52pI3wnr+qjlIl
-	wkQHu92QeZ4E1qzrGZxFRC53kZtAAuc=
-X-Received: by 2002:a05:620a:4004:b0:7af:cb6d:69ec with SMTP id af79cd13be357-7b67c43f8b4mr453076885a.11.1732825528670;
-        Thu, 28 Nov 2024 12:25:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFeaf+9swg21gKgqEDGWSWEktchK+K+w8IqUCRHEdedVyVFvudM/0HRi3nCDHujYsn2pHSgrQ==
-X-Received: by 2002:a05:620a:4004:b0:7af:cb6d:69ec with SMTP id af79cd13be357-7b67c43f8b4mr453074385a.11.1732825528164;
-        Thu, 28 Nov 2024 12:25:28 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63b8sm99872266b.123.2024.11.28.12.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 12:25:27 -0800 (PST)
-Message-ID: <503df6db-8937-4e1c-9c0e-0cc093681a8b@oss.qualcomm.com>
-Date: Thu, 28 Nov 2024 21:25:25 +0100
+	s=arc-20240116; t=1732825537; c=relaxed/simple;
+	bh=wg2OdLiGxNOlS6DPM8bmGhpyvOvwSsmizKT6Gumf8jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIwWDVhHwRzzfdHR7MfBbWe/Sh8Dvf0QUkG1B2JtqK149QyiKQ29oRHl5ZckGodXGdjGayp20kXwsph9QduSwxt2Tp0IpV7S9HGUWx8nS6tuUHgBbZo5gnXPg2ftERWS5sWaslp9zjPsSwoOXQRg7BjDQ0tqVvQbV3G+J1Y/cpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbCXxZKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E6FBC4CECE;
+	Thu, 28 Nov 2024 20:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732825536;
+	bh=wg2OdLiGxNOlS6DPM8bmGhpyvOvwSsmizKT6Gumf8jc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gbCXxZKcEw7+HSPCd4WVnTUqnxyg58O0Lxa4yO8CvKusB2pFnCC/RQhQol+bG5gxJ
+	 a42PnXK6W8U6TRvz6Qi60enClLtCgg8/DnaLHKTL5tnZ1NAddhVLm2a+mzBNEFZHVF
+	 YQu7756Z61kZfILaPStkgVWHCFmv0+2BdInXFppayTRVltd8C5DWNwnlQbGytqlucn
+	 87H98heX+ognpcu+rNa2s5OiP2DEwfRrbYSZYqCTj6p14e+On4CTx7D5IaZUqh/JR+
+	 I/tUbFJSQBCLHQTrhAcFmZKwVXCtKhPpjXO+bC/XTfEKERgGB4Qu+C591qBffxmXEW
+	 B3pc+620VpBig==
+Date: Thu, 28 Nov 2024 17:25:33 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Yang Jihong <yangjihong@bytedance.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 03/12] perf event action: Add parsing const integer expr
+ support
+Message-ID: <Z0jRvSlEZveQFVh7@x1>
+References: <20241128133553.823722-1-yangjihong@bytedance.com>
+ <20241128133553.823722-4-yangjihong@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/RFT 4/6] firmware: qcom: scm: Cleanup global '__scm'
- on probe failures
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Mukesh Ojha
- <quic_mojha@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Kuldeep Singh <quic_kuldsing@quicinc.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>,
-        Andy Gross <andy.gross@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
- <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-4-7056127007a7@linaro.org>
- <3bfd6343-de4a-4cf5-a4b8-55a3531eb41e@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <3bfd6343-de4a-4cf5-a4b8-55a3531eb41e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: m1KIgHpH1BJdNtev5oWJ8_M7A06vHAq5
-X-Proofpoint-ORIG-GUID: m1KIgHpH1BJdNtev5oWJ8_M7A06vHAq5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411280162
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128133553.823722-4-yangjihong@bytedance.com>
 
-On 19.11.2024 8:37 PM, Krzysztof Kozlowski wrote:
-> On 19/11/2024 19:33, Krzysztof Kozlowski wrote:
->>  	/*
->>  	 * Initialize the QSEECOM interface.
->> @@ -2094,6 +2104,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
->>  	WARN(ret < 0, "failed to initialize qseecom: %d\n", ret);
->>  
->>  	return 0;
->> +
->> +err:
->> +	/* Paired with smp_load_acquire() in qcom_scm_is_available(). */
->> +	smp_store_release(&__scm, 0);
-> Heh, I should store there NULL, obviously.
+On Thu, Nov 28, 2024 at 09:35:44PM +0800, Yang Jihong wrote:
+> Support parsing of constant integer expression.
+> 
+> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
+> ---
+>  tools/perf/util/parse-action.c | 52 ++++++++++++++++++++++++++++++++++
+>  tools/perf/util/parse-action.h |  1 +
+>  tools/perf/util/parse-action.l | 19 +++++++++++++
+>  tools/perf/util/parse-action.y | 13 ++++++++-
+>  4 files changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/parse-action.c b/tools/perf/util/parse-action.c
+> index 391546bf3d73..3b10cf9f99b3 100644
+> --- a/tools/perf/util/parse-action.c
+> +++ b/tools/perf/util/parse-action.c
+> @@ -7,6 +7,7 @@
+>   *
+>   * Supported expressions:
+>   *   - constant:
+> + *     - integer
 
-Candidate for a new scoped __free, perhaps?
+And now there are alignment differences and no : ?
 
-Konrad
+>   */
+>  
+>  #include "util/debug.h"
+> @@ -118,7 +119,58 @@ void event_actions__free(void)
+>  	(void)event_actions__for_each_expr_safe(do_action_free, NULL, false);
+>  }
+>  
+> +static int expr_const_int_new(struct evtact_expr *expr, void *data, int size)
+> +{
+> +	if (data == NULL ||
+> +	    (size != sizeof(int)
+> +	     && size != sizeof(long) && size != sizeof(long long))) {
+
+&& should be at the end of the previous line, just like you did with the
+|| at the end of the first line
+
+> +		pr_err("expr_const_int size invalid: %d\n", size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	expr->priv = malloc(sizeof(long long));
+> +	if (expr->priv == NULL) {
+> +		pr_err("exp_ const_int malloc failed\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (size == sizeof(int))
+> +		*(unsigned long long *)(expr->priv) = *(unsigned int *)data;
+> +	else if (size == sizeof(long))
+> +		*(unsigned long long *)(expr->priv) = *(unsigned long *)data;
+> +	else if (size == sizeof(long long))
+> +		*(unsigned long long *)(expr->priv) = *(unsigned long long *)data;
+> +
+> +	INIT_LIST_HEAD(&expr->opnds);
+> +	return 0;
+> +}
+> +
+> +static void expr_const_int_free(struct evtact_expr *expr)
+> +{
+> +	zfree(&expr->priv);
+> +}
+> +
+> +static int expr_const_int_eval(struct evtact_expr *expr,
+> +			       void *in __maybe_unused, int in_size __maybe_unused,
+> +			       void **out, int *out_size)
+> +{
+> +	if (out != NULL)
+> +		*out = expr->priv;
+> +
+> +	if (out_size != NULL)
+> +		*out_size = sizeof(long long);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct evtact_expr_ops expr_const_int_ops = {
+> +	.new  = expr_const_int_new,
+> +	.free = expr_const_int_free,
+> +	.eval = expr_const_int_eval,
+> +};
+> +
+>  static struct evtact_expr_ops *expr_const_ops_list[EVTACT_EXPR_CONST_TYPE_MAX] = {
+> +	[EVTACT_EXPR_CONST_TYPE_INT] = &expr_const_int_ops,
+>  };
+>  
+>  static int expr_const_set_ops(struct evtact_expr *expr, u32 opcode)
+> diff --git a/tools/perf/util/parse-action.h b/tools/perf/util/parse-action.h
+> index 47bd75264dee..ac81278c590e 100644
+> --- a/tools/perf/util/parse-action.h
+> +++ b/tools/perf/util/parse-action.h
+> @@ -14,6 +14,7 @@ enum evtact_expr_type {
+>  };
+>  
+>  enum evtact_expr_const_type {
+> +	EVTACT_EXPR_CONST_TYPE_INT,
+>  	EVTACT_EXPR_CONST_TYPE_MAX,
+>  };
+>  
+> diff --git a/tools/perf/util/parse-action.l b/tools/perf/util/parse-action.l
+> index 3cb72de50372..9237399a11ac 100644
+> --- a/tools/perf/util/parse-action.l
+> +++ b/tools/perf/util/parse-action.l
+> @@ -13,13 +13,32 @@
+>  #include "parse-action.h"
+>  #include "parse-action-bison.h"
+>  
+> +static int value(int base)
+> +{
+> +	unsigned long long num;
+> +
+> +	errno = 0;
+> +	num = strtoul(parse_action_text, NULL, base);
+> +	if (errno) {
+> +		pr_err("parse_action malloc number failed\n");
+> +		return ERROR;
+> +	}
+> +
+> +	parse_action_lval.num = num;
+> +	return NUMBER;
+> +}
+> +
+>  %}
+>  
+> +num_dec		[0-9]+
+> +num_hex		0[xX][0-9a-fA-F]+
+>  space		[ \t]
+>  ident		[_a-zA-Z][_a-zA-Z0-9]*
+>  
+>  %%
+>  
+> +{num_dec}	{ return value(10); }
+> +{num_hex}	{ return value(16); }
+>  {space}		{ }
+>  
+>  ";"		{ return SEMI; }
+> diff --git a/tools/perf/util/parse-action.y b/tools/perf/util/parse-action.y
+> index fade9d093d4a..51e77e54f157 100644
+> --- a/tools/perf/util/parse-action.y
+> +++ b/tools/perf/util/parse-action.y
+> @@ -17,6 +17,8 @@
+>  #include "util/debug.h"
+>  #include "util/parse-action.h"
+>  
+> +#define expr_id(t, o) evtact_expr_id_encode(EVTACT_EXPR_TYPE_##t, EVTACT_EXPR_##t##_TYPE_##o)
+> +
+>  int parse_action_lex(void);
+>  
+>  static void parse_action_error(struct list_head *expr __maybe_unused,
+> @@ -32,13 +34,15 @@ static void parse_action_error(struct list_head *expr __maybe_unused,
+>  	char *str;
+>  	struct evtact_expr *expr;
+>  	struct list_head *list;
+> +	unsigned long long num;
+>  }
+>  
+> -%token IDENT ERROR
+> +%token IDENT ERROR NUMBER
+>  %token SEMI
+>  %type <expr> action_term expr_term
+>  %destructor { parse_action_expr__free($$); } <expr>
+>  %type <str> IDENT
+> +%type <num> NUMBER
+>  
+>  %%
+>  
+> @@ -65,6 +69,13 @@ expr_term
+>  }
+>  
+>  expr_term:
+> +NUMBER
+> +{
+> +	$$ = parse_action_expr__new(expr_id(CONST, INT), NULL, (void *)&$1, sizeof($1));
+> +	if ($$ == NULL)
+> +		YYERROR;
+> +}
+> +|
+>  IDENT
+>  {
+>  	$$ = NULL;
+> -- 
+> 2.25.1
 
