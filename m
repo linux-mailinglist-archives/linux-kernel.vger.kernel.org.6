@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-425014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A1E9DBC79
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:27:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6276E9DBC7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1447BB21156
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27657281822
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C031C1F2A;
-	Thu, 28 Nov 2024 19:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B372F1C1F2A;
+	Thu, 28 Nov 2024 19:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxJcZ1E0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptjbx+xY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799FA19882B;
-	Thu, 28 Nov 2024 19:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FA619882B;
+	Thu, 28 Nov 2024 19:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732822022; cv=none; b=lD5abIp/lsseXk/B2tO4OriYDT9Ld3dP9n1zIG/Nk/8UETTIVotta890cBD9iepJpo+8fUqubrDEIRH8lYxcGOU5x51A/lWEcn6qjLrt6+FHsMrvnsTJDKFsfRyxGmkZwEXg6aUBEu8uSMJpufwtVosQ361v9zKPr0luISIB66E=
+	t=1732822067; cv=none; b=Ypr3BLSzOOaUJbpv3D79a7C2E8BmQhciRv/xMFGlb/oQdW3yEZgYPE7jYZgJaBb3AOpGbFWAHiOHXEBiK3IXsUQudI7O9KN1+WmnCkGGBRflZpOSZqRFV/tHn3ccI2ZiLcpuyjwf+SOjwVwdQVuvi5YA73qBkOVgVxhrflUlmD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732822022; c=relaxed/simple;
-	bh=uhCpIRnB22gOek6/ItoKHE65ZGFfikpPq/Ra+s61V1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hloLtmXH0nnVWpwINUcs0kPVP1OUOlUlRN0hxx9x3JNg58xGCTexBh8xfQ6LRXJUfnfumIEce6jclK3HyEDOhC4pihzJ6NeEDHK44dHkab2YfbHDFmEHXkV+BhttexkKDpNg2zh59HFuhmJJYzzAQ6POpriW5RT3EV0vBBnhk/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxJcZ1E0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85FA9C4CED2;
-	Thu, 28 Nov 2024 19:27:01 +0000 (UTC)
+	s=arc-20240116; t=1732822067; c=relaxed/simple;
+	bh=Z4rRwWkzTWkeE89toBz8PfBiyMDM5wnQziMZm/GdS4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGnlze3RBjsmjuAFVdRaik3OsZgoMSKwqVgZN8W5BuZGTT/3YxNpk7nM/P5VDcvJksq48DBAY6LcC76LLNo8FDY2eOlFqQChP4lMg0oeyzOyup8/yWvJ83xvJbpm+iQs2Coa+WblgXdnZi8m4WuvKmErTi+GBCyPtamKE1U2U34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptjbx+xY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D051FC4CECE;
+	Thu, 28 Nov 2024 19:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732822021;
-	bh=uhCpIRnB22gOek6/ItoKHE65ZGFfikpPq/Ra+s61V1M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CxJcZ1E0uKkObjtme+VKhayhvIy0ZqUKrWUEuhHtHJdkEG6x3cP0cnlPeOlAX1GJT
-	 tyOf7vPjcGPucWYFc67KodYfVXDIgjkm65L2onsjmp6nTpSfuLBzBLGzWjjOWyXcjB
-	 yOW7dHIbi+8lSFJ0+968aOgi80I3HizmRmN+AlPSTCA0aCWU1NItm1gmSlnP+bFriJ
-	 uWlRWSrYGnyn31C0bxuPwlYfNur6pZVfJoS213vQCBtWjfGXHtqicf1S8SacLemuqT
-	 KDAhj+My0YSDeQkTWK/f5US4WNbWaq+DzFXgOyBx7G+jKG7EHFUD3rw8bXGYM2ktm3
-	 vSVwuekNAR/rA==
-Date: Thu, 28 Nov 2024 11:27:00 -0800
+	s=k20201202; t=1732822066;
+	bh=Z4rRwWkzTWkeE89toBz8PfBiyMDM5wnQziMZm/GdS4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ptjbx+xYnoUDC1/iPv6PCNuxqTr6lhiB1osfUuvZbR/6ZPX2H9xAT6z0gBL6O11bA
+	 Qz2jxsivuHnovkQLm3mBXSRjbW5OcA8i3cRraOhCU2zBxqto2V4LYCvMN5K4shbX//
+	 sxuwVbKiKJieeDFeZP/UaHrOeHsLjhYb3pdKiu9xCYGPr5PaMp+YfrPw/93vuuhUhB
+	 NVfB8dXWYpmY1VXghUWa5lcwn7Z5mqyLG4kOychSwkD0KaXbJNHZkNsUjg98b9Olsp
+	 8+9yfGKtF6yO8G1vsfbMiEl9udScJI0VP37EvvXBSL6L3pi2bOSCoOXcLxdvtmF/Wj
+	 EHOu5KBExvlHw==
+Date: Thu, 28 Nov 2024 11:27:45 -0800
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, samitolvanen@google.com,
-	petr.pavlu@suse.com, da.gomez@samsung.com,
-	linux-modules@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	geert@linux-m68k.org, masahiroy@kernel.org, mmaurer@google.com,
-	arnd@arndb.de, deller@gmx.de, song@kernel.org
-Subject: [GIT PULL] Modules fixes for v6.13-rc1
-Message-ID: <Z0jEBLLRoUKoBVPk@bombadil.infradead.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: find_symbol: Actually use load_mod() parameter
+Message-ID: <Z0jEMdis_1pyc1YK@bombadil.infradead.org>
+References: <a7f10d132c36f0e0c80a6bf377721e17732e120a.1732802636.git.geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,36 +56,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <a7f10d132c36f0e0c80a6bf377721e17732e120a.1732802636.git.geert@linux-m68k.org>
 
-The following changes since commit b86545e02e8c22fb89218f29d381fa8e8b91d815:
+On Thu, Nov 28, 2024 at 03:04:52PM +0100, Geert Uytterhoeven wrote:
+> The parameter passed to load_mod() is stored in $MOD, but never used.
+> Obviously it was intended to be used instead of the hardcoded
+> "test_kallsyms_b" module name.
+> 
+> Fixes: 84b4a51fce4ccc66 ("selftests: add new kallsyms selftests")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-  Merge tag 'acpi-6.13-rc1-2' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm (2024-11-27 14:50:31 -0800)
+Thanks, I queued this up and already sent it as part of a pull request
+to Linus as I head two other minor fixes as well.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/ tags/modules-6.13-rc1-v2
-
-for you to fetch changes up to c5efad88a94613cf60fed010b96dbc3044389316:
-
-  selftests: find_symbol: Actually use load_mod() parameter (2024-11-28 11:17:38 -0800)
-
-----------------------------------------------------------------
-Modules fixes for v6.13-rc1
-
-This consists of 3 fixes, the main one build that we build the kallsyms
-test modules all over again if we just run make twice.
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      selftests: find_symbol: Actually use load_mod() parameter
-
-Luis Chamberlain (2):
-      selftests: kallsyms: fix double build stupidity
-      selftests: kallsyms: fix and clarify current test boundaries
-
- lib/Kconfig.debug                             | 32 ++++++++++++++++++++++++++-
- lib/tests/module/Makefile                     | 17 +++++++-------
- lib/tests/module/gen_test_kallsyms.sh         |  9 ++++++--
- tools/testing/selftests/module/find_symbol.sh |  4 ++--
- 4 files changed, 48 insertions(+), 14 deletions(-)
+  Luis
 
