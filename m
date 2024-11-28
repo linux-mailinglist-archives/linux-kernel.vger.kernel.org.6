@@ -1,140 +1,225 @@
-Return-Path: <linux-kernel+bounces-424457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C179DB4AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:19:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E421F9DB4B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A018B212E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FEB281D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39327154C17;
-	Thu, 28 Nov 2024 09:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6904215535A;
+	Thu, 28 Nov 2024 09:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FDgrpQJ+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nE87CEye"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C936145A11
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE182154C17
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732785583; cv=none; b=i/s2LKMlxywMhl9UClp5j0/hZa8XUInOKI9OcXY7qdlqy5ojEU2DwsCKtVRGfvrMo1mZRxzSRZS/YeI1hqwBh7GentqC5gqitn5MnZQF4Hb0I/wYFt1hm1S5qO5+OfXDIjiDu+zl0BbGfhpbdSMhXb7oS7bd5KD+PoEc98+Pi1w=
+	t=1732785716; cv=none; b=Sqhg65CZCoOyjiHFqHhSdtxzTsVHlFas5S/vAgoVBNedfBMpFQbWdlX3C2nXxdI9aKii5RFkE4M49ofMnIW0+y9zHFrvNo5jKQ9NDL3itoxW3rOLl1ytqd6WxbTQh3HA2K5ev29G8LhV2Ecg+LIYdCRoPxEJJHze8zXXPiqGdLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732785583; c=relaxed/simple;
-	bh=s5W+v/C6cusXbgreQW0+ioRU/S8M+YoB0GPtA1wsWqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oGSnaBywOOebDUNNEArrwlAKmzOSIKlnHxXlIBCSD8pCXSyRnONPwjVWc6kag07i1hsy6NUHP/GNCOhVyS1nikxpfsIMQVqTtPS2CB7LiR5qwBYLXIQFDxWEIYDII0ujI0McVgWNC40TqO4f2obvrUld6GhzfFBzB2KlcumoG2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FDgrpQJ+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aR/WbrU3RjKXoJdoSEx3mnXcQvouWTeva8Zm8RcmJc0=; b=FDgrpQJ+nROnMoRohfCqAVuhp5
-	LMvSx/V+OCQOrPsXK8ZtcsnVfg2LZJ71L8q5I6q4+nE3kbe2FWd3CXWIJFyTBhlx/3Ow1ibLWc2iT
-	onAhd42dDmR4rnJj+53vhDVzrUTWMHisI8Q6Gsy5WfKcgM9F3FUyr782RCP9FePaIF8RvEGlbQFD8
-	TnlQH+6sPalBRkdpvTJ1owWfRTON5Sus2nSlMZpuEPofZmZMHT9H+qbF61nBGn7WSdcMA3gJmOYt+
-	Pr9RFqaFF634JOE2Mfa/FQanxYoTe9/dvSLjmdPLUalc/J9Q/kmvXVZewtXxLqXF8lTjHI+0/CG1q
-	d0mWQk5g==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGagK-00000002Ru6-3mu2;
-	Thu, 28 Nov 2024 09:19:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3160A300271; Thu, 28 Nov 2024 10:19:29 +0100 (CET)
-Date: Thu, 28 Nov 2024 10:19:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Hao Jia <jiahao.kernel@gmail.com>
-Cc: mingo@redhat.com, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>
-Subject: Re: [PATCH] sched/core: Do not migrate ineligible tasks in
- sched_balance_rq()
-Message-ID: <20241128091929.GA35539@noisy.programming.kicks-ass.net>
-References: <20241128084858.25220-1-jiahao.kernel@gmail.com>
+	s=arc-20240116; t=1732785716; c=relaxed/simple;
+	bh=jVZtcysbs8kE04CQUPOu97ung0XQ8T6kq9OrRJg8ocs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ax3ZGCmIIINfPG/csbD4c2pmB5P4/X/wwfhaEC4N3lUMyK8A4r/rr8lp77LeZiszNUwGHP4OMJh3HmqfWPqh/ZbraW7mEK37SbQJLeJHzIfATjMpGRYWaE69VdCz3d3JQjJCd2XEMdhpOoG5VIju8Bc1nfAaK0PIqO39S6S1Dy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nE87CEye; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de035ea13so548725e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:21:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732785713; x=1733390513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qKBe2f1d/nSE8/83S7fMxQ2H1MkATAfBQssY2mDkHqw=;
+        b=nE87CEyeuuxB100MzyNhvB1N3dpCT6VFzsKoqBLSCnvDBEwgF/q2x5JBtv5rnz5nbq
+         mEHU16JewWAoHchbXovkPiKUoLCk4U4DEpL/pR+KHWPXb1G/5bJTZq+pCfSrNexCJwgW
+         Of/3cqwHoDZYpI9U8/x3H+9UkTNiv2HkTu0tc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732785713; x=1733390513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qKBe2f1d/nSE8/83S7fMxQ2H1MkATAfBQssY2mDkHqw=;
+        b=h0nNmGixIsOEXhyyAfo7zz/LpHR2SQS9B94mBCMMbXOSYUUUPAO/+i33Jw4nHM25zA
+         DNFqoYEFtP/uld7ILXN2JScNvEcSZW80uRLnXLzsOcnI6sydqGyoP2BvcCMidPxCD1U8
+         0vobO0AUcKBK+lOSta2vo4IVqX36UYsfHOetboL7mbznWmO34zHLhhuTUZxm4d3tsQIK
+         W4t+4T5mhI3tuKrGxbkIklg5tdpFfkvXAcxTUn10M/DupIEgZCCffeAsDTstkKhNaeUl
+         exDYoYgANAD+1UoBfHp+8VhVl6x223YSY6GZzynhushgi+xxJ9Kw9iKFmnSbRDrx0yOd
+         i56w==
+X-Forwarded-Encrypted: i=1; AJvYcCWHkKsc8XUDuhdenFas49IWFKZMRwQubP1OudBmE+xfgL/Y5Mjbq7DmzH8OeK38+rXX0pcgbE6TxdJdHGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE1EQfLfR1YTbSezcQ04MNrEl5rDf229TnlTlnVnPElSThhvZU
+	8yw4ntM990GDBEaz3wivdQT2Ixd6cUh1av/I/nFXgID+f3ElRih6kCKm2hfM3U/JuGzj4NvRJwO
+	Nn8O4ry1HHCgjTWNgkcslJun7+gipIQP5U55y
+X-Gm-Gg: ASbGncuEHfv97fSindmPyUCd7W2mQEopCofX2BKrXoqcFzrNyHwPNwyN8HRBR5KrwP3
+	EQ4CK4ILMdgW8tEuvhrytk5t6ULqldpIViCX4TL1zDOG0qM7zQWbVS02ee/c=
+X-Google-Smtp-Source: AGHT+IGdj/tSc+Vg1n1HINo9pBj3OGBWaUozOoIytbHjWn8FVwKTt7H+aqMvtclp1yALw92qHHQSj6W/RYGN7E3g/EI=
+X-Received: by 2002:a05:6512:3e08:b0:53d:dbec:9fca with SMTP id
+ 2adb3069b0e04-53df001abb1mr3751297e87.0.1732785712733; Thu, 28 Nov 2024
+ 01:21:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128084858.25220-1-jiahao.kernel@gmail.com>
+References: <20241124085739.290556-1-fshao@chromium.org> <20241124085739.290556-3-fshao@chromium.org>
+In-Reply-To: <20241124085739.290556-3-fshao@chromium.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 28 Nov 2024 17:21:41 +0800
+Message-ID: <CAGXv+5GeoDK92Zj1vdjwbj-kaTdtmOof9AJySxNYW3EA0960VQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: mediatek: Introduce MT8188 Geralt
+ platform based Ciri
+To: Fei Shao <fshao@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 04:48:58PM +0800, Hao Jia wrote:
-> From: Hao Jia <jiahao1@lixiang.com>
-> 
-> When the PLACE_LAG scheduling feature is enabled, if a task
-> is ineligible (lag < 0) on the source cpu runqueue, it will
-> also be ineligible when it is migrated to the destination
-> cpu runqueue.
-> 
-> Because we will keep the original equivalent lag of
-> the task in place_entity(). So if the task was ineligible
-> before, it will still be ineligible after migration.
+On Sun, Nov 24, 2024 at 5:01=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
+:
+>
+> Introduce MT8188-based Chromebook Ciri, also known commercially as
+> Lenovo Chromebook Duet (11", 9).
+>
+> Ciri is a detachable device based on the Geralt design, where Geralt is
+> the codename for the MT8188 platform. Ciri offers 8 SKUs to accommodate
+> different combinations of second-source components, including:
+> - audio codecs (RT5682S and ES8326)
+> - speaker amps (TAS2563 and MAX98390)
+> - MIPI-DSI panels (BOE nv110wum-l60 and IVO t109nw41)
 
-This is not accurate, it will be eleigible, irrespective of lag, if
-there are no other tasks. I think your patch tries to do this, but I'm
-fairly sure it got it wrong.
+Of note, a couple things are not working:
 
-> Therefore, we should skip the migration of ineligible tasks
-> to reduce ineffective task migrations, just like the task
-> throttled by cfs_bandwidth, until they become eligible.
+- Touchscreen: missing driver for HiMax SPI HID
+- Trackpad on detachable base: missing driver support in CBAS and
+    associated device tree node
 
-And this misses an important case too -- load-balancing will try very
-hard to balance load. If you disallow migrating tasks it might fail to
-reach this goal. Since this is not a hard contraint it should eventually
-give in and migrate it anyway.
+A couple things below.
 
-That is, I would suggest allowing it when nr_balance_failed is non-zero.
-
-> Signed-off-by: Hao Jia <jiahao1@lixiang.com>
+> Signed-off-by: Fei Shao <fshao@chromium.org>
 > ---
->  kernel/sched/fair.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index fbdca89c677f..5564e16b6fdb 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9358,13 +9358,14 @@ static inline int migrate_degrades_locality(struct task_struct *p,
->  static
->  int can_migrate_task(struct task_struct *p, struct lb_env *env)
->  {
-> +	struct cfs_rq *cfs_rq = task_cfs_rq(p);
->  	int tsk_cache_hot;
->  
->  	lockdep_assert_rq_held(env->src_rq);
->  
->  	/*
->  	 * We do not migrate tasks that are:
-> -	 * 1) throttled_lb_pair, or
-> +	 * 1) throttled_lb_pair, or task ineligible, or
->  	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
->  	 * 3) running (obviously), or
->  	 * 4) are cache-hot on their current CPU.
-> @@ -9372,6 +9373,10 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
->  	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
->  		return 0;
->  
-> +	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running &&
-> +			!entity_eligible(cfs_rq, &p->se))
+>
+> Changes in v3:
+> - drop scp_mem, scp_pins and SCP declaration per discussion in v2
+> - drop unused (for now) dual-SCP reserved memory range
+> - drop unused touchscreen pinctrl
+> - drop unused HID-I2C touchscreen node in I2C-2
+> - drop unused AP-SAR sensor node in I2C-3
+> - drop trackpad node in I2C-4 (only work with downstream CBAS)
+> - drop mmc1 (unused in public product)
+> - drop eDP panel path (unused in public product)
+> - declare DSI panel compatibles in individual board .dts files
+> - declare CPU TDP target in -geralt.dtsi instead
+> - move spi1 default and sleep pinctrl to -geralt.dtsi
+> - leave memory@40000000 size empty (filled by bootloader)
+> - consolidate audio codec/amplifier, DAI link declaration and
+>   audio-routing property
+> - stop sourcing `arm/cros-ec-sbs.dtsi` in -geralt.dtsi, because all that
+>   does is to declare sbs-battery at address 0xb, which doesn't align
+>   with the final design at 0xf. This saves us a /delete-node/.
+> - minor format fix
+>
+> Changes in v2:
+> - remove invalid or undocumented properties
+>     e.g. mediatek,dai-link, maxim,dsm_param_name etc.
+> - remove touchscreen as the driver is not yet accepted in upstream
+> - update sound DAI link node name to match the binding
+> - add missing pinctrls in audio codec nodes
+>
+>  arch/arm64/boot/dts/mediatek/Makefile         |    8 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku0.dts  |   32 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku1.dts  |   59 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku2.dts  |   59 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku3.dts  |   32 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku4.dts  |   48 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku5.dts  |   72 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku6.dts  |   72 +
+>  .../dts/mediatek/mt8188-geralt-ciri-sku7.dts  |   48 +
+>  .../boot/dts/mediatek/mt8188-geralt-ciri.dtsi |  316 +++++
+>  .../boot/dts/mediatek/mt8188-geralt.dtsi      | 1156 +++++++++++++++++
+>  11 files changed, 1902 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.=
+dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri.dtsi
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
 
-Your indenting it wrong, please use: cino=(0:0
+[...]
 
-> +		return 0;
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi b/arch/arm64=
+/boot/dts/mediatek/mt8188-geralt.dtsi
+> new file mode 100644
+> index 000000000000..b6abecbcfa81
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
+> @@ -0,0 +1,1156 @@
+
+[...]
+
+Looking at the schematic, the following two are actually a TPS65132S
+on i2c3. It should be modeled as such. <&pio 3> is the enable GPIO
+for both positive and negative regulators, while <&pio 4> goes to
+the SYNC pin, which enables higher load on the negative side when
+driven high. The latter is not supported by the driver or binding.
+
+The TPS65132S has a different power sequence requirement compared
+to the other TPS65132 variants.
+
+> +       ppvar_mipi_disp_avdd: regulator-ppvar-mipi-disp-avdd {
+> +               compatible =3D "regulator-fixed";
+> +               regulator-name =3D "ppvar_mipi_disp_avdd";
+> +               enable-active-high;
+> +               gpio =3D <&pio 3 GPIO_ACTIVE_HIGH>;
+> +               pinctrl-names =3D "default";
+> +               pinctrl-0 =3D <&mipi_disp_avdd_en>;
+> +               vin-supply =3D <&pp5000_z1>;
+> +       };
 > +
->  	/* Disregard percpu kthreads; they are where they need to be. */
->  	if (kthread_is_per_cpu(p))
->  		return 0;
-> -- 
-> 2.34.1
-> 
+> +       ppvar_mipi_disp_avee: regulator-ppvar-mipi-disp-avee {
+> +               compatible =3D "regulator-fixed";
+> +               regulator-name =3D "ppvar_mipi_disp_avee";
+> +               regulator-enable-ramp-delay =3D <10000>;
+> +               enable-active-high;
+> +               gpio =3D <&pio 4 GPIO_ACTIVE_HIGH>;
+> +               pinctrl-names =3D "default";
+> +               pinctrl-0 =3D <&mipi_disp_avee_en>;
+> +               vin-supply =3D <&pp5000_z1>;
+> +       };
+> +
+
+[...]
+
+> +&i2c2 {
+> +       pinctrl-names =3D "default";
+> +       pinctrl-0 =3D <&i2c2_pins>;
+> +       clock-frequency =3D <400000>;
+> +       status =3D "okay";
+> +};
+
+&i2c2 on Ciri is completely unused. Please re-disable it there.
+
+
+ChenYu
 
