@@ -1,165 +1,101 @@
-Return-Path: <linux-kernel+bounces-425095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC439DBD64
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C749DBD65
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44C5164B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F208D16196A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA88F1C3F39;
-	Thu, 28 Nov 2024 21:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AC31C4608;
+	Thu, 28 Nov 2024 21:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAACs7yi"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BK8C7c8a"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F10D9463;
-	Thu, 28 Nov 2024 21:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D439463;
+	Thu, 28 Nov 2024 21:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732830673; cv=none; b=uYAIcZF/CMtdjQOv53M4GPjn/jYazAxWvmIpUPE5g/wLmEMx+y5VuwMtyCYojglXS5ZjdCj6depjphxa8AK+3CkHdH6VRxhciPij93I2rrkI5ajVMI7c5XHpjkFV8N1yBtUadvW3WMp2JtOM6HGvpAELWRrBcgq73v77bsgaWEI=
+	t=1732830706; cv=none; b=j7210yTmk+NLxi+bhFq09ek+75tOKgqYTDy5u7zRaKxwXTQuLJorivr0hEZq3j1NvebwZYTCjE/1tF2tcaq0ZmdatbWGpR+x/aO/n6YnfJVi36fQTYCYG796Cr6GR4G07I00Hr3tzGQEeOKqrjKbUK+3aFLmd64aP3DFk7NY2Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732830673; c=relaxed/simple;
-	bh=YQhwy3k6zFY7PS+Hb3mt3RsGwW4p9dQ1NWB5H6WET80=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OpfSoza8U05K9BnFGc8nD2Ce18U7gyqkSwXgNpW5JCa6EuBT1mJqm/QLo/Rnu2F1OTMdQ6iuwvkg3O7E3/K7wTOtM0mui+ytJLybIi8cY4+i/WuD3Qhar6c4VaLxXgXkrHQgG1RXScKF/pLItu4og2q4N/q40ErHn4iottm9FnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAACs7yi; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-46679337c24so8922611cf.3;
-        Thu, 28 Nov 2024 13:51:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732830670; x=1733435470; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=B/0P/kkOOn0Emox8f2ASqKm3nT6bT0ghGONfV88YlVA=;
-        b=hAACs7yiK5L1d+otwmJyavWVSd7E1nk4ZyKQXZGZANP/OhJRpnIrfO8MBT4qTXAhXa
-         tjqlOhQOxMTC88QvblU5njNjPK6h/WdO40BKZ/ltjCl6d6lPDs6DskSlZwzX/OuiQ0XL
-         Bl4WIz6CVWSCqMGdrnedyWhAN4uq4Ef5j2UE5e7cFpiu5/+WQfqLhE2GeOYarrSF2IaM
-         PpZAUYrfRH6dlFq2VJvlB1IC4JvEN5a6K2K5poBHwou0NNygcuBsXwS1S4+M20yz10S1
-         B1Ipnp879IViJ0T2a3USWB22fu1XX1Ok2ro+Xl0et6uqd+Pq18yTbk8PswJxSKTnP2Kf
-         bP2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732830670; x=1733435470;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B/0P/kkOOn0Emox8f2ASqKm3nT6bT0ghGONfV88YlVA=;
-        b=PbwrPEweaWw/pywHOjH54b97LERxy/a7/UmeCGeV8aFQD/5rnJFIB+9KLU/AeBV2fU
-         V9SRj+HMAc8I6IDHFdFDwbPf7aA9hV4a5syGYRDygiMxG5lT749A+d2f4uNarhJgQ4x1
-         xSYyHn7Kx9CQNnB1cAYSRzKi6aRxtHeZyDeEfCQn2VToJlKytBb7gTcV/av/g0G/qpwb
-         Hr5npk4TMQzi4N7nlHOTWvDjIKo1mB4Rfmj3V8nsXOvs+hwzlg8xNX0GQW3GyCnNj19t
-         oC8Y/pEv6oEVkVcUaiIyuaRg3Cm0pGBjZT0ioVejNdyPwk3T92PnnQuSkZldswFWDImS
-         3V8A==
-X-Gm-Message-State: AOJu0YxFe11KT6x5f1z3tLELtGtEtv7RpYzUkSNkCDak1lImYcXd+QR3
-	nqkb0G1PTo64aNSBl7jvY/IACHZxESmE9K7q6qTUbFwmicZpKYBYH8itr0rb
-X-Gm-Gg: ASbGncsNia1SMeBn15D0aNqa6WK+b3MAJtk36F2ateeQ0HXYm7wyblKyB9SUVHuJ1MW
-	odnUs7JLkvl6OESagQnMJqxUjipnKjpmHqgCeShMXosYO+096KjiJN4PYdeW0gUYjskVhuH3YOr
-	lHv41ouCPBUZBqnZSeQWLdX8coad1dMUIKAHfZbrZZbYIYQOFIUx4nmfHa3cm2wyoTQKKlpHnuu
-	8V7TKWUEAHBrm/r48xrgiUIvqmEiVVzQSO0qy21sG7ARh0=
-X-Google-Smtp-Source: AGHT+IHyUdObtxfjeGYjZO8kCr2GNZZXz83fSwks2FQsdK+NE9qPtvpw5zrKY8j9ruSeyyBLqGRTUw==
-X-Received: by 2002:a05:622a:341:b0:460:a82a:39a8 with SMTP id d75a77b69052e-466b35166c9mr134763141cf.13.1732830669693;
-        Thu, 28 Nov 2024 13:51:09 -0800 (PST)
-Received: from fionn.home ([142.189.102.234])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466c407cfdcsm10229741cf.45.2024.11.28.13.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 13:51:08 -0800 (PST)
-Sender: John Kacur <jkacur@gmail.com>
-From: John Kacur <jkacur@redhat.com>
-To: RT <linux-rt-users@vger.kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-	Clark Williams <williams@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Tan En De <ende.tan@starfivetech.com>,
-	"John B . Wyatt IV" <jwyatt@redhat.com>,
-	Anubhav Shelat <sanubhav1000@gmail.com>,
-	Eder Zulian <ezulian@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: [ANNOUNCE] rt-tests-2.8
-Date: Thu, 28 Nov 2024 16:50:59 -0500
-Message-ID: <20241128215059.40116-1-jkacur@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732830706; c=relaxed/simple;
+	bh=CocPaM2r3EMAfXo5wgp/lPK0N6jFIF6eF3jxk2rMOH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjwcVNlbfSScLrfLYZWz6CUm3rufKKZrWTW2JsulGEAWUOx92Ah41etsNM8QjCTGSQ6+VYGjyYvO05NCokknw6K99EuAwhzR7FM7fCAAZIGXwH7RXT03Wf+fElIAELtkaDID0GgkH62xBlJVNRI0P1JrQvqFzEplf+IQfWVqMSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BK8C7c8a; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E1895526;
+	Thu, 28 Nov 2024 22:51:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732830679;
+	bh=CocPaM2r3EMAfXo5wgp/lPK0N6jFIF6eF3jxk2rMOH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BK8C7c8aZgNKlZQtn+YlctWHHhmVldGQGC2ZUSljOHwN6PDczeg/nK+oKs0n24uGo
+	 X6PM+Rds4Xhk5zkUUIGhxlJNyAKBAUjWilc6ZD+dodreXqJfHVHKZXCKQEoSQfs+Ox
+	 gWTJ/gf3yEjzdzk3/5iBlwPuKQr+xSQwlvvojGIg=
+Date: Thu, 28 Nov 2024 23:51:30 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] media: uvcvideo: Annotate lock requirements for
+ uvc_ctrl_set
+Message-ID: <20241128215130.GF25839@pendragon.ideasonboard.com>
+References: <20241127-uvc-fix-async-v2-0-510aab9570dd@chromium.org>
+ <20241127-uvc-fix-async-v2-3-510aab9570dd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241127-uvc-fix-async-v2-3-510aab9570dd@chromium.org>
 
-We are pleased to announce rt-tests-2.8
+Hi Ricardo,
 
-To fetch:
+Thank you for the patch.
 
-Clone one of the following
-git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-https://kernel.googlesource.com/pub/scm/utils/rt-tests/rt-tests.git
+On Wed, Nov 27, 2024 at 12:14:51PM +0000, Ricardo Ribalda wrote:
+> Make it explicit that the function is always called with ctrl_mutex
+> being held.
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Branch: main
-Tag: v2.8
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Tarballs are available here:
-https://kernel.org/pub/linux/utils/rt-tests
-
-Older version tarballs are available here:
-https://kernel.org/pub/linux/utils/rt-tests/older
-
-Thank to everyone who contributed.
-patches, bug-reports are always welcome.
-
-John Kacur
-
-Anubhav Shelat (2):
-  rt-tests: hackbench: removed extra use of optind
-  rt-tests: hackbench: properly recognize when integer arguments are
-    negative
-
-Eder Zulian (1):
-  cyclictest: Fix help text for '-a' option
-
-John B. Wyatt IV (2):
-  rt-tests: pi_stress: Move unlock into if block with matching lock
-  rt-tests: Add console_commands.json to gitignore
-
-John Kacur (3):
-  rt-tests: cyclictest: Reformat help for 80 char screen
-  rt-tests: pi_stress: Refactor pi_stress creating a header file
-  rt-tests: Change to version v2.8
-
-Tan En De (2):
-  rt-tests: queuelat: Fix wraparound in __clock_gettime()
-  rt-tests: determine_maximum_mpps.sh: Get frequency from
-    timebase-frequency if cpuinfo fails
-
-Tomas Glozar (3):
-  rt-tests: Detect libcpupower presence
-  rt-tests: cyclictest: Support idle state disabling via libcpupower
-  rt-tests: cyclictest: Add --deepest-idle-state to manpage
-
- .gitignore                             |   1 +
- Makefile                               |  17 +-
- feature/Makefile                       |  12 +
- feature/test-feature.mak               |   5 +
- feature/test-libcpupower.c             |   8 +
- src/cyclictest/cyclictest.8            |   3 +
- src/cyclictest/cyclictest.c            | 219 +++++++++++++++++-
- src/hackbench/hackbench.c              |  12 +-
- src/include/pi_stress.h                | 133 +++++++++++
- src/pi_tests/pi_stress.c               | 298 ++++++++-----------------
- src/queuelat/determine_maximum_mpps.sh |  10 +-
- src/queuelat/queuelat.c                |   3 +-
- 12 files changed, 501 insertions(+), 220 deletions(-)
- create mode 100644 feature/Makefile
- create mode 100644 feature/test-feature.mak
- create mode 100644 feature/test-libcpupower.c
- create mode 100644 src/include/pi_stress.h
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 3f8ae35cb3bc..99ddc5e9dff8 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1946,6 +1946,8 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  	s32 max;
+>  	int ret;
+>  
+> +	lockdep_assert_held(&chain->ctrl_mutex);
+> +
+>  	if (__uvc_query_v4l2_class(chain, xctrl->id, 0) >= 0)
+>  		return -EACCES;
+>  
 
 -- 
-2.47.0
+Regards,
 
+Laurent Pinchart
 
