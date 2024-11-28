@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-424430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF609DB443
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:51:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340BA9DB44B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:52:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4248EB23B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08401672C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2223D15443C;
-	Thu, 28 Nov 2024 08:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEED91531EF;
+	Thu, 28 Nov 2024 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjU+7hgc"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="g3Y1U8D7"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E0F150981
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC5114BF92
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783892; cv=none; b=lXbRi0+lzgmp+0F5l6dspsb30qFqYj2kC/KnTTre0Nvko4QbUwDJfxMXCNKUwMU08NU8LfgTNzEYG9MAK+gbez6K/Qr0vONICyTwCaykSuDjUpUJPT46GPWRxuLFqmpx2siTObvTKLybpAE01QqTcx49ZaWPDGuYK1mHCL/imQ0=
+	t=1732783932; cv=none; b=ZyttvhAMBA1c3S9m7OBxtpDtB1o6x5uwhNS1lMN/3zns/m/Ju9bvAgN+tyIdPo9eG9O3pQWMavLyIwICaB6Ex28tbowt47Qo+lIwmkUSWPvmS35zcMsHHKVnb34RZw5DOW/IWBlrIYLBzyGucX/7U0R6wCFKdDqO+Sk/AN/zkzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783892; c=relaxed/simple;
-	bh=pekj7ECgVOlQRe4vr1N9uGVIr7LGMONNx11ziceMBM8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iQ068oSKvjQGigQ7Z6Da7rFK2Qc+UsLOi62RsapYHTjWecmLEAyA6C/TupqQu0k6JUbF8eUvRJNPdtlt2WW82uuZ/Iyy8/HcPkY8xxIRxmuhQs+fYJS4trJUwdLnfXQX9JO0ytE1ePrtu5ou1fsM6g0Ch9z/rsybZDe/x32scAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EjU+7hgc; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso71963166b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:51:30 -0800 (PST)
+	s=arc-20240116; t=1732783932; c=relaxed/simple;
+	bh=+LxI207fMZyRamK0oRS6I4x/Y6ZteYi0UVGdWJl3k/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTPsiN8u2Ub/PI5KkcJbsKJzfrA7UoUWaenMqhEa1OHhZBYURpLJC9jCgT/rAPML42V/lI5nOSQD7ii79iAgNpCSgGGjRJtABV1GfBpTLvPNAQ4jg1tn1prRypr3eZqsM6u5QqKYcihMxhh+QSGPXbv0xjFj/3Nf/xZk3PxQSnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=g3Y1U8D7; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so4995295e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:52:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732783889; x=1733388689; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=svMXb3youuDFGL6heC/yYUXnD+Ef4KL/6L2Ux/La5Xs=;
-        b=EjU+7hgcUKik0obu3+xJUnTxKZlHidGDoxF2c3OeaxuJ5/aUtAUgxuDecfMizRQNzA
-         MNyKyn1hn3N1NGMWC+9O0jHnBudKtc16i8fC11rPfehPmwnqys9qt5UTANMjZH8wir4X
-         PAX41xujNd0HG1gNnkfjBCsjzENUooP/wZBelnuF1kqgaLEEwNVeh/TCLfhuztNL9oEk
-         2apWfD0GlNBs+XUajemNq655a2cNBYEFKojzx1p6rltQcnbUceED7R9nwOYPQETc+Cdw
-         Na4WTjbLFfeLJzkbq3UmyHIbA6U3jNGQalmXpm6p62uvtnS9g7f3rMQt5lFYHrO/wO+n
-         6UxQ==
+        d=ventanamicro.com; s=google; t=1732783929; x=1733388729; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q2iPe56MayituZcdhfXf2NviKcI0B6w7DTgpAVLjkFQ=;
+        b=g3Y1U8D7PqfrC8XafvHXGCReHX/C4qcG7O6UhOZPOuF+3Gw99UGag8lDqKLQ4d8yFW
+         XHXz5fSIuqetnzPuAi1J0oET+Q9H3pRCp99Jlr0MEoK7m/TrIy5KZSWzp0MJJEhtvJKR
+         EhBmrc5pcHC564HtGuoOEyLcn+hzpbjdRVw2PGW2UBlcq3UMN2IihkfLGCzRijZSfqJl
+         FGBZ7kQOvBPogfellxlU+nVGat0ag/Yxrhk9pOIAkNwgTCPoXdGDb2rcL6KxVEv9E/dC
+         Dl0Aw5EYgSnR4OkWkoIiDzEFfccgmXKW/ABMUq8h+DbtVMD2RPyq9HuPjHIwu1XkOFzr
+         bVDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732783889; x=1733388689;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=svMXb3youuDFGL6heC/yYUXnD+Ef4KL/6L2Ux/La5Xs=;
-        b=f5FzqGevc4AaHvoZrwvRkCv4PKwQwU1KxKTl4/6XGNHD+B6UPMpEQlJL/kLBko9ChO
-         aVNJ0v3AVM6SzjmkqASSZ0XyvRRdnkgBHPAZ8LPDo2snPWjIFEBu7wsoFVcegucpjFJd
-         piudxVr+0B3YxwSXcmIHuXkCIfxzSXkYXKheLz0Rh7RmvQAgYujeIZVgeEDj/3VP32MZ
-         vwtjw+Q1XY+JBhsxri81X6H0n+JiFIFgMz8Y18qWeWVlTebHNd8R56mTEQ68VkfDYwkO
-         7+Tkgo3UkirVfXxCLHKsO9BnZM6hJbMdTY6wHXjGOMNlre2kwcPeepAl0ryfX4DYRMe1
-         HQ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQtF6gmjp8ZXDbuLzPFOqrWP/1POIiX4ruJ6z7nanb2kMsoZAFnIIKsH/FWfg5Ic+SMHzXDt2EggqcbO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyDblQaL1Rb1H1kQ/4lk41jkXXytvPVO+i3C+uKEvEs+OcLyDH
-	uL+fsG6Ai3w8C9kiMzLMif/VLgG9O2vfw29B+OziuYSuPPQclo30kXZwJzO8ffY=
-X-Gm-Gg: ASbGncsUM3baos6yXM2pSikSEc0MGlSb9NuKbbphzo2VXUNmH+8kuKwoJuKG7wRXdZv
-	unze2Ce4U8m/YRjbuVkFHSUwMPjYVnYloCdQ+W9UKMNek7Gmbh9ozb1cvpEyW/mNzcyPF0I96rO
-	P8SA/dczYTmHEoLJZkPn2AOtJrJc2FPqJlbAnZDZHMCxFrsal5NUX7sZtwPoaj6Yr1IWiFuFFFh
-	AWq+xNAjJ4jUMYTbJt8NpXqVJ9d8Lawvp9HXQs49rmDvW0wSj6S1zH3RLfB0lr2YTfVPTgW5p1z
-	J02SwOzqdF2+Vu3jBxNpNI/Z1DtlWofw0Q==
-X-Google-Smtp-Source: AGHT+IHx8LJTIGLe7CuREVHaEYs+SJeA2ZjAsRSIj3tP9WdyNMZcBvOS/lqhSV9U2pCag7lZx5Y7xQ==
-X-Received: by 2002:a17:907:775a:b0:a9e:b150:a99d with SMTP id a640c23a62f3a-aa580ecbf60mr506696766b.5.1732783888949;
-        Thu, 28 Nov 2024 00:51:28 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a7cesm42131566b.162.2024.11.28.00.51.28
+        d=1e100.net; s=20230601; t=1732783929; x=1733388729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q2iPe56MayituZcdhfXf2NviKcI0B6w7DTgpAVLjkFQ=;
+        b=txyjtnK7nKw9OC54+xooOK98xQhWwrvT2DghxHfUO/jCUmZCRfzn0IB4M5dV+lKQQM
+         S4U8t1bjqczCDnR5LVmW12F2vKdE/I7Miyxo1kDwYzTe6V2vnSUNjlBNU06Y9FP82qD0
+         amOQxY+RshwYjDNQgxmv7PQb2MdwZOM+Le7TJJZOdvlW6iH2805L5l4BRktgGryin6gU
+         gDXMXBmRFKuX8u96fgcQe+gzu58VOqSlsrEhBQQCeo/jFECdmA4MQXNvP/vibcsOhdCI
+         0EHc/VF3Hn9kB/6BdKMvipgncdS9nKhfJzeG/utgisg4LrQnadVeeDZ4r+9FXm8jYIvB
+         R1Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/htnqcB8hOvH6r38EcL84YFrjhvrLrm/QdX/dBXvw8Y1QH2zYZzX0QXDshD993QMh7+hfXObQ+mO2E5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypYi9koBPdXKl9FGsgZcHomCi2uSGJGhlba7qS4KtAl4A4yIkC
+	CCypIBOktmG6/teghAoDDp9bef+pWmbnlK/Jd5Qm2gwW7prUfG0JTghmKen0rNA=
+X-Gm-Gg: ASbGncu3HTnhXm/z3COey+DaCD0x0315RyDKJ2irrdviY/6atuwjrTXfRzMLKWxzjj5
+	p7/5LuPbxMLJzV/X4bNdqSlBajvvosfXBXHZO+sfBq+WcYeI2X54fpC1SiCz0WhO0XrHArQH4LE
+	VLiREbxbbsCRVEpnmAOPaZku+c6uLWL1ltEx32Td/rlFjsVhuOwI942AsQwL0wkigyPBpvZeE9r
+	KXuvOhB9U+/CUuHVOBn5wQ5D3avCqhqCafFmnNpPUCBtJE+kzJiLgGfQYn8Zj4OR+uOnVVcCL1B
+	zp01z66Fe1uBViB15HY8XiRsjOXKTgxLE40=
+X-Google-Smtp-Source: AGHT+IEQ7usI6WzT1Sy/dDzpS2PmYGgrjtEHrwwaKksPUcfWEtHLCN5lr8kos91EccHetXt6QvrFmA==
+X-Received: by 2002:a05:600c:3b16:b0:434:a4fe:cd6d with SMTP id 5b1f17b1804b1-434a9dc02c5mr57820965e9.12.1732783928908;
+        Thu, 28 Nov 2024 00:52:08 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f7dd78sm14832355e9.44.2024.11.28.00.52.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:51:28 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 28 Nov 2024 08:51:04 +0000
-Subject: [PATCH] dt-bindings: usb: max33359: add max77759 flavor
+        Thu, 28 Nov 2024 00:52:07 -0800 (PST)
+Date: Thu, 28 Nov 2024 09:52:06 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: zhouquan@iscas.ac.cn
+Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/4] RISC-V: KVM: Allow Zabha extension for Guest/VM
+Message-ID: <20241128-4d652d29ba99a3e8ffa8121a@orel>
+References: <cover.1732762121.git.zhouquan@iscas.ac.cn>
+ <ea2918b299348aca0f5a45630b7b7c9889f47fa6.1732762121.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241128-dtbinding-max77759-v1-1-733ce24c0802@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPcuSGcC/x3MQQ5AMBBA0avIrDXRKsVVxKI1g1koaUUk0rtrL
- N/i/xciBaYIQ/FCoJsjHz5DlgXMm/UrCcZsUJXSUqpO4OXYI/tV7PYxxjS9cDWiQ9XqRmvI4Rl
- o4eefjlNKH2C8F75kAAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea2918b299348aca0f5a45630b7b7c9889f47fa6.1732762121.git.zhouquan@iscas.ac.cn>
 
-On the surface, Maxim's max77759 appears identical to max33359. It
-should still have a dedicated compatible, though, as it is a different
-IC. This will allow for handling differences in case they are
-discovered in the future.
+On Thu, Nov 28, 2024 at 11:21:26AM +0800, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> Extend the KVM ISA extension ONE_REG interface to allow KVM user space
+> to detect and enable Zabha extension for Guest/VM.
+> 
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> ---
+>  arch/riscv/include/uapi/asm/kvm.h | 1 +
+>  arch/riscv/kvm/vcpu_onereg.c      | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
+> index 9db33f52f56e..340618131249 100644
+> --- a/arch/riscv/include/uapi/asm/kvm.h
+> +++ b/arch/riscv/include/uapi/asm/kvm.h
+> @@ -178,6 +178,7 @@ enum KVM_RISCV_ISA_EXT_ID {
+>  	KVM_RISCV_ISA_EXT_SMNPM,
+>  	KVM_RISCV_ISA_EXT_SSNPM,
+>  	KVM_RISCV_ISA_EXT_SVVPTC,
+> +	KVM_RISCV_ISA_EXT_ZABHA,
+>  	KVM_RISCV_ISA_EXT_MAX,
+>  };
+>  
+> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
+> index 67965feb5b74..9a30a98f30bc 100644
+> --- a/arch/riscv/kvm/vcpu_onereg.c
+> +++ b/arch/riscv/kvm/vcpu_onereg.c
+> @@ -44,6 +44,7 @@ static const unsigned long kvm_isa_ext_arr[] = {
+>  	KVM_ISA_EXT_ARR(SVVPTC),
+>  	KVM_ISA_EXT_ARR(SVNAPOT),
+>  	KVM_ISA_EXT_ARR(SVPBMT),
+> +	KVM_ISA_EXT_ARR(ZABHA),
+>  	KVM_ISA_EXT_ARR(ZACAS),
+>  	KVM_ISA_EXT_ARR(ZAWRS),
+>  	KVM_ISA_EXT_ARR(ZBA),
+> @@ -138,6 +139,7 @@ static bool kvm_riscv_vcpu_isa_disable_allowed(unsigned long ext)
+>  	case KVM_RISCV_ISA_EXT_SVINVAL:
+>  	case KVM_RISCV_ISA_EXT_SVVPTC:
+>  	case KVM_RISCV_ISA_EXT_SVNAPOT:
+> +	case KVM_RISCV_ISA_EXT_ZABHA:
+>  	case KVM_RISCV_ISA_EXT_ZACAS:
+>  	case KVM_RISCV_ISA_EXT_ZAWRS:
+>  	case KVM_RISCV_ISA_EXT_ZBA:
+> -- 
+> 2.34.1
+>
 
-max77759 is used on Google Pixel 6 and Pixel 6 Pro.
-
-Add a dedicated compatible to allow for potential differences in the
-future.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-v2:
-* collect tags
-* split out from original series (Krzysztof)
-* link to original series
-  https://lore.kernel.org/all/20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org/
----
- Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
-index 20b62228371b..e11ede3684d4 100644
---- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
-+++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
-@@ -13,8 +13,12 @@ description: Maxim TCPCI Type-C PD controller
- 
- properties:
-   compatible:
--    enum:
--      - maxim,max33359
-+    oneOf:
-+      - enum:
-+          - maxim,max33359
-+      - items:
-+          - const: maxim,max77759
-+          - const: maxim,max33359
- 
-   reg:
-     maxItems: 1
-
----
-base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
-change-id: 20241128-dtbinding-max77759-b3ddbd264544
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
