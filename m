@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-424649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1311B9DB781
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:24:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CCB9DB785
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10816163942
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:23:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E34A1633C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB83519CC02;
-	Thu, 28 Nov 2024 12:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C01519CC1F;
+	Thu, 28 Nov 2024 12:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fqNsuCYm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7wA5sLc"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF931993B1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06384F20C;
+	Thu, 28 Nov 2024 12:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796603; cv=none; b=AXWEINoCoSb9jnlu8DZd//MGVj21gmrZyBvC0St457Grm1KkQ1a4Q+qIGOFMeAXfybcZQmUjBdy9csdSu2m4BThEFHBhVO3GypubdQdRjqf0EeA6iiIaAcy40hrFrDAZgA0UKXWqf2GEKDebThbtRZi3YQvYidQeJTxCzjRHhz8=
+	t=1732796817; cv=none; b=BRTx27mkpitVHabu59vhhlXD8t2h0djP1mQUrGSadUQzsjG6xTe5YybGDhHv2k1sUR71uX2pkvW5K9taZnGL9c8F0vEJ8s9zVW/8PM41Q/1ZErfFoBB9fXPeZ+17zn3cKKX0Y9/5eMCh38iJ54dCQJDKtjVkT17Zx1S/5AgUBWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796603; c=relaxed/simple;
-	bh=PNzE9r8OFToMdKP7PyCbfnj3ZIyf9VwYOUJJwZmusyc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g4qn8pzD+ILnWOiIvH65Dg8gcJMRPR9Z8ylLxLtyRnzL/VGN+Q8guNJqzgFBIQ7vCMyKvrlR+y+uQZD0RDY3yA+f9/pZf7jiEEuUXc/RyunaOZXbtfwDRwfXXtllCZr5Q0YFuhSBmsKpcPnpd61e8vsCRA9kpaBL1k+euDGzQ0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fqNsuCYm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732796599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TE7UP7jSglcR/RvrFLPLuZmGZmeBAbx4PGJdf65WFDI=;
-	b=fqNsuCYm/taYdB6x01WwBHcpuGQmlLnOJQE2PKQrhxUGSx+JbrwjH65+Iw/5641zZnnuam
-	bHUv3ZADv4UNF2Dqpfch8qRCMTkDfuNsT7n9Ls1gaa5zXecV2ZxxZYFpd+rUiZ0gWTALXX
-	dBcVWjubV43Ef9HBMmm8ob9rg1o1jmM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-gJbeFdLdNaGmdbx-mui7PA-1; Thu, 28 Nov 2024 07:23:18 -0500
-X-MC-Unique: gJbeFdLdNaGmdbx-mui7PA-1
-X-Mimecast-MFC-AGG-ID: gJbeFdLdNaGmdbx-mui7PA
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-385d7611ad3so46368f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:23:18 -0800 (PST)
+	s=arc-20240116; t=1732796817; c=relaxed/simple;
+	bh=cdJQSF24okpmJp3OTyRFJYSdiudOmESvovIU9KWMCfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XxRTWAV1JcvxVSuewYQOEkaVNzYHC6+/4lEz5nOMwZa6Busm1KVDonGn8QQQWWc8rbCwxINGY1QaTkfkOSFD0/GY1n5fq6LrIh2AsUbt1/t0TPdTtiuX9TFNoH+gxX/a7gMf/D4G1iZJCXDzdawHPZTZmAwiALYofAQDmi8is5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7wA5sLc; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa560a65fd6so143331966b.0;
+        Thu, 28 Nov 2024 04:26:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732796814; x=1733401614; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VZ9WNpBlKtazde7jfmSDXXstDaTslJye7caY08L0qq8=;
+        b=M7wA5sLchjbkyH0UIW/N1pqITW6Y4T/9GkzMo2EZM/VUPay+MYRcjOUlb9Tt+dHNml
+         3tl5vg2Lhk4TphMXhp2qa8i5utLhoWQ/3RmAyWvqqLPPvxU7KCV2Bv4We6zphB6kWMUA
+         vC9DfPg8+zrybxyiGVw4qN+u6vxqlfgw/onWEliaUcREG+vI19b9sL67iI2UQPXnWKa8
+         kHSRlgifG/FOrhY5Rd37L4O7Igz8sZ7an23xHE7VBMk0aqJG8VuIj7K3M5zCUNMj5qXQ
+         iKY2O+W6J71z5HHx10ZvAsJfVVtd0BkCHBD1nPCJxgMl3z26TEjtKhmQCoDeD5OvLVH9
+         gb1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732796597; x=1733401397;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TE7UP7jSglcR/RvrFLPLuZmGZmeBAbx4PGJdf65WFDI=;
-        b=g9zPWWz67Do0Wq7ZLaRVw5HcBLsUH7eG/9W9CJxdPF5PJ9SrTUENdprFhs4+/o+x79
-         eBobczgXv9lLdc4Pw2SAFVqZvmmMZGGNi2IDF5+FsLtvAzQ8OYDMyB5t/EkxniyaGeL/
-         S4RUZ8bHmoJqi7K+cQXoWB+q1mYfcv5I3Rm6oskq1LUVhftSgPpYDYel8431UzfkBNis
-         woAEoQ+i/WUMLGW8pZEdcNKNjcBLydGmB//Qo7s6Q46uEnvmd1Kc2jVN/zgRRPOZl/+J
-         rHfqN2sLjGSwaZho5/s097q2ptigC+k7m2o6yNm+82dmv9kgqpUTFE0meDrshZ9cKQ8H
-         I/Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCX+XwINtZu7344w6f7ihOweV6YeHnCKpBIZ0XLedXGo4VsCmoWm5jFUcCcbE1CiFuyxnHOtoGlx1imY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe8AVnv6Z4hnlSxX8T8bnZV4Mxfrlkc12kWzTjsjtLYLu3wKT5
-	hkGxgyqWeWnk8r9DXRcUqKIrIK466QB9xWDoCFJ0oQWaSMMs9XPgUNFBqz0flk9gEGTaZ4bLxr4
-	8Nsxqv+8LSeLwmDLjt2tzWq9vg1WI74N4OZwwa3ENS30E8XkmSVmpp/kvGw/GkZzsYu4oKg==
-X-Gm-Gg: ASbGncvJsKxgYIS5UTvky51QF41HUEfrNO9FluaEvGhixkIvGsvEGoyrtwWV/BgP3qs
-	6lBj+65JV1JsSSjQUV7Bbot/+kGAIoy18Eq8qnZF2GfQ9DDQHnUlLfUPEw0NU9QHg50h4TJjz8p
-	qKwnng7T1xYshXWc0Gmbyv02PDmMH7jaG5KgqkC+faC1tGUctzX7C0wPEMSYRWBzNI8afGGM6/a
-	AxpWvi9h48as9yZQdPYkFXPDt1g2dw+cHJEgvUQQWJQjdU+ErIRdQGo+9n4H8jyZT3cVkZRWUm9
-	Hzm3uL5QM4SaOyVJiaj43x9xCzN+UKiNx1z8+FWzgZRHP1l94wBYuXoIopY98HDqSh7b3BmRSSE
-	=
-X-Received: by 2002:a5d:64ec:0:b0:382:2f62:bd4b with SMTP id ffacd0b85a97d-385c6ebe46bmr5587503f8f.33.1732796597004;
-        Thu, 28 Nov 2024 04:23:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFMP/aQZgUCh1OFPCYhgqbB1jG+uYDTFTh+ExRZZ/x5iaWy49rlV4uIBqY1sY/MLN3FlCHcPA==
-X-Received: by 2002:a5d:64ec:0:b0:382:2f62:bd4b with SMTP id ffacd0b85a97d-385c6ebe46bmr5587478f8f.33.1732796596592;
-        Thu, 28 Nov 2024 04:23:16 -0800 (PST)
-Received: from ?IPV6:2003:cb:c714:1600:f3b:67cc:3b88:620e? (p200300cbc71416000f3b67cc3b88620e.dip0.t-ipconnect.de. [2003:cb:c714:1600:f3b:67cc:3b88:620e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3729esm1532976f8f.44.2024.11.28.04.23.15
+        d=1e100.net; s=20230601; t=1732796814; x=1733401614;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VZ9WNpBlKtazde7jfmSDXXstDaTslJye7caY08L0qq8=;
+        b=YXjw7hVCNgmydQd5VAOZl3z7LeMmxT+KWqse2G4QHlz68YK3VZcQn85dOMxuFQkV+y
+         0xAs10t2oaQo3PSP260TrkYyDq9H15h2tlfoGf9ssrrUJRffif0Fpxnuv6wdTF3+hGxs
+         Xqk1EIEP1ua82oKGJj/Xr30L8PmfACssl6VjpVJWmjzOuOS9Ic2f+lOVvEDQfJIbrhhk
+         GZcXdCZTIKPYRaj0EGlqxkKFsH7o6hO1uXvUeHqvEtUi30cV98LCnAjTTTLZ71GBCPa6
+         kr9/IU1HiDqbrtETFDzC6b1twftsQl9uZ6U/6JjOOJxRknUWDzTXsxOQp/2ebYLPLLXH
+         mh2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXhqgrLH+ufqCC3o4O/YVAF0oI0aFNE7SqQXuNS7M3AibfislMnk1GwrE7+DNoy887Lp3gc4agTdjLA@vger.kernel.org, AJvYcCXmtUQEEl1jygtMpWHZsxnjWb699KmLDhb0pX3rNWzp9ZVTZJ874kr3Rcyi/nW/ejEkYc3HZA8DGNcf4f7s@vger.kernel.org, AJvYcCXnmICxd2+bGxitR/ymPn+LjzR1NnLR5V7aFstmL5RP7im4xbXvvevzkeyFlAPyA7nGerhc8KaF7/ZU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH3AF0IXWcEudmqg+VOoceif/80KyQJ09twMCZRFBNIKaUMbUQ
+	BEFnzPvBoyXimV+U/ZyCyKUnpNIAw8hEPjqYEbpx86WUxnW6o7T2
+X-Gm-Gg: ASbGnctSPLBMJMCorygbyN8h7zsvoGmoSRanVwxnnvE12dzBpfCtAg2zbeoDQDFwMmG
+	M1cPTKEv8IeFwYYVMAFA3U+mYMND+JeNSHhAjH8HisfyXJtWfGFO1c33wvqJ8oL8y7AWz09O3B5
+	3HFnyhn1fh45ykApx8TNMM4K4UhwHhILWxRjxAdZZY90pYX9Y7yHtv1JxXWA4ioFJWsgLLevpcq
+	USoMRfP01UA025dKxrkV8zYNUObE4a08KMX3zrE4l+uRQF/kL4GBimZjlXSVftdLwUlS+WqsH3X
+	rHRK6pwamOUpwBKIl4dbGgNylc4C
+X-Google-Smtp-Source: AGHT+IEBNEkepuyx2gsAoW/fXLnYQtrcq4HcBEGgeWPuDBUzCkSPR2feCwkXcaZgIXT3GzltKWwEtQ==
+X-Received: by 2002:a17:907:1c8c:b0:a9a:e0b8:5bac with SMTP id a640c23a62f3a-aa594708919mr210265566b.23.1732796813521;
+        Thu, 28 Nov 2024 04:26:53 -0800 (PST)
+Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5999731d5sm60837966b.200.2024.11.28.04.26.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:23:16 -0800 (PST)
-Message-ID: <27bc1008-dce1-4fad-9142-0b74069da4d9@redhat.com>
-Date: Thu, 28 Nov 2024 13:23:15 +0100
+        Thu, 28 Nov 2024 04:26:52 -0800 (PST)
+Message-ID: <3af77b51-d254-4c97-8faf-1dea29a4f9b1@gmail.com>
+Date: Thu, 28 Nov 2024 13:26:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,178 +80,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] kernel BUG in const_folio_flags (2)
-From: David Hildenbrand <david@redhat.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: syzbot <syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com, Matthew Wilcox <willy@infradead.org>
-References: <674184c9.050a0220.1cc393.0001.GAE@google.com>
- <20241128114249.1903-1-hdanton@sina.com>
- <1176656f-96a8-4e99-a4c2-7354b7cfd03c@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <1176656f-96a8-4e99-a4c2-7354b7cfd03c@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 2/2] iio: light: add support for veml3235
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241020-veml3235-v2-0-4bc7cfad7e0b@gmail.com>
+ <20241020-veml3235-v2-2-4bc7cfad7e0b@gmail.com>
+ <20241021193933.59c2d2b6@jic23-huawei>
+ <7323ca4f-2f79-4478-b2b0-2cfc350af7f8@gmail.com>
+ <20241022192807.2f83dfa1@jic23-huawei>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20241022192807.2f83dfa1@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28.11.24 13:02, David Hildenbrand wrote:
-> On 28.11.24 12:42, Hillf Danton wrote:
->> On Thu, 28 Nov 2024 11:52:42 +0100 David Hildenbrand <david@redhat.com>
->>> On 23.11.24 08:31, syzbot wrote:
->>>> Hello,
+On 22/10/2024 20:28, Jonathan Cameron wrote:
+> On Mon, 21 Oct 2024 22:21:22 +0200
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> 
+>> On 21/10/2024 20:39, Jonathan Cameron wrote:
+>>> On Sun, 20 Oct 2024 21:12:17 +0200
+>>> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+>>>   
+>>>> The Vishay veml3235 is a low-power ambient light sensor with I2C
+>>>> interface. It provides a minimum detectable intensity of
+>>>> 0.0021 lx/cnt, configurable integration time and gain, and an additional
+>>>> white channel to distinguish between different light sources.
 >>>>
->>>> syzbot found the following issue on:
->>>>
->>>> HEAD commit:    9fb2cfa4635a Merge tag 'pull-ufs' of git://git.kernel.org/..
->>>> git tree:       upstream
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=10042930580000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c4515f1b6a4e50b7
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=9f9a7f73fb079b2387a6
->>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=105ff2e8580000
->>>>
->>>> Downloadable assets:
->>>> disk image: https://storage.googleapis.com/syzbot-assets/7c0c61a15f60/disk-9fb2cfa4.raw.xz
->>>> vmlinux: https://storage.googleapis.com/syzbot-assets/3363d84eeb74/vmlinux-9fb2cfa4.xz
->>>> kernel image: https://storage.googleapis.com/syzbot-assets/2b1a270af550/bzImage-9fb2cfa4.xz
->>>>
->>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>> Reported-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
->>>>
+>>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+>>> Hi Javier,
 >>>
->>> Staring at the console output:
+>>> I missed one thing on previous review...
+>>> There is no obvious reason this driver needs to provide raw and processed
+>>> values.  Unless I'm missing something, just provide raw and let userspace
+>>> do the maths for us.
 >>>
->>> [  520.222112][ T7269] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x1403 pfn:0x125be
+>>> Jonathan
+>>>   
+>> Sure, I will drop that for v3. I added it because this driver took the
+>> veml6030 as a reference, and that driver provides the processed value. I
+>> guess that the veml6030 should have not provided processed values
+>> either, but it's late to remove them after the driver was released.
 >>
->> ->mapping is cleared for a order9 page
->   > >> [  520.362213][ T7269] head: order:9 mapcount:0 entire_mapcount:0
-> nr_pages_mapped:0 pincount:0
->>> [  520.411963][ T7269] memcg:ffff88807c73c000
->>> [  520.492069][ T7269] flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
->>> [  520.499844][ T7269] raw: 00fff00000000000 ffffea0000490001 dead000000000122 dead000000000400
->>> [  520.551982][ T7269] raw: 00000000000014d0 0000000000000000 00000000ffffffff 0000000000000000
->>> [  520.560912][ T7269] head: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
->>> [  520.672020][ T7269] head: 0000000000001245 0000000000000000 00000001ffffffff ffff88807c73c000
->>> [  520.735699][ T7269] head: 00fff00000000209 ffffea0000490001 ffffffffffffffff 0000000000000000
->>> [  520.901989][ T7269] head: 0000000000000200 0000000000000000 00000000ffffffff 0000000000000000
->>> [  520.991952][ T7269] page dumped because: VM_BUG_ON_PAGE(PageTail(page))
->>> [  521.086487][ T7269] page_owner tracks the page as allocated
->>> [  521.132208][ T7269] page last allocated via order 0, migratetype Movable, gfp_mask 0x3d24ca(GFP_TRANSHUGE|__GFP_NORETRY|
->>>
->>> ^order 0 looks wrong, but let;s not get distracted.
->>>
->>> __GFP_THISNODE), pid 7321, tgid 7321 (syz.1.194), ts 520201520231, free_ts 520193076092
->>> [  521.272012][ T7269]  post_alloc_hook+0x2d1/0x350
->>> [  521.276977][ T7269]  __alloc_pages_direct_compact+0x20e/0x590
->>> [  521.314428][ T7269]  __alloc_pages_noprof+0x182b/0x25a0
->>> [  521.319975][ T7269]  alloc_pages_mpol_noprof+0x282/0x610
->>> [  521.420092][ T7269]  folio_alloc_mpol_noprof+0x36/0xd0
->>> [  521.483167][ T7269]  vma_alloc_folio_noprof+0xee/0x1b0
->>> [  521.539677][ T7269]  do_huge_pmd_anonymous_page+0x258/0x2ae0
->>> ...
->>> [  521.851719][ T7269] page last free pid 7323 tgid 7321 stack trace:
->>> [  521.972611][ T7269]  free_unref_folios+0xa87/0x14f0
->>> [  521.977735][ T7269]  folios_put_refs+0x587/0x7b0
->>> [  522.072508][ T7269]  folio_batch_move_lru+0x2c4/0x3b0
->>> [  522.077794][ T7269]  __folio_batch_add_and_move+0x35b/0xc60
->>> [  522.191992][ T7269]  reclaim_folio_list+0x205/0x3a0
->>> [  522.197131][ T7269]  reclaim_pages+0x481/0x650
->>> [  522.201760][ T7269]  madvise_cold_or_pageout_pte_range+0x163b/0x20d0
->>> ...
->>>
->>>
->>> So we allocated a order-9 anonymous folio, but suddenly find it via shmem in the pagecache?
->>>
->>> Is this some crazy use-after-free / double-free, where we end up freeing a shmem folio
->>> that is still in the pagecache? Once freed, it gets merged in the buddy, and we then re-allocate
->>> it as part of a PMD THP; but shmem still finds it in the pagecache, and as the it's now suddenly
->>
->> It is not in the pagecache.
+>> Now that we are at it, what is the rule (of thumb?) to provide processed
+>> values? Those that can't be obtained from the raw data and simple
+>> operations with the scale/offset/integration time/whatever userspace can
+>> see?
 > 
-> next_uptodate_folio() finds it there? Which is .. via the pagecache
-> xas_next_entry()?
+> Yes. If the conversion is linear, then leave it to userspace (with scale
+> and offset provided). If it's not linear then in kernel because currently
+> we have no other choice.
 > 
-> But good point on the mapping. If we would have freed a folio while
-> still in the pagecache (before truncation), we'd likely have gotten an
-> error from free_page_is_bad().
+> There are some historical quirks where a processed only interface got in
+> then we had to add raw later (typically when we added buffered output
+> where scale and offset are important because processed values normally
+> don't pack well).
 > 
-> Well, unless check_pages_enabled() is false.
-
-Ah, now I get it; at the point int time we check it actually isn't in 
-the pagecache anymore. We perform a folio_test_locked() check before the 
-folio_try_get(), which is wrong as the folio can get freed+reallocated 
-in the meantime.
-
-The easy fix would be:
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 7c76a123ba18b..f61cf51c22389 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3501,10 +3501,10 @@ static struct folio *next_uptodate_folio(struct 
-xa_state *xas,
-                         continue;
-                 if (xa_is_value(folio))
-                         continue;
--               if (folio_test_locked(folio))
--                       continue;
-                 if (!folio_try_get(folio))
-                         continue;
-+               if (folio_test_locked(folio))
-+                       goto skip;
-                 /* Has the page moved or been split? */
-                 if (unlikely(folio != xas_reload(xas)))
-                         goto skip;
+> Jonathan
+> 
+> 
 
 
--- 
-Cheers,
+Hi Jonathan, I am bringing this back because I am not sure if dropping
+the processed values was the right approach here. I would like to
+clarify before propagating some approach that might not be accurate.
 
-David / dhildenb
+This sensor is linear, and the processed value can be obtained by simple
+multiplications, but not just raw * scale as documented in the ABI.
+
+This driver is based on the veml6030, whose processed value is obtained
+as raw * resolution, where the resolution is completely linear and is
+obtained as sensor_resolution * integration_time / scale.
+
+That means that the scale is actually a gain, and the user needs to know
+the sensor resolution provided in the datasheet (see cur_resolution in
+veml6030.c) to get the processed value. There is a sensor resolution for
+every pair { gain, integration_time } in the datasheet, so there is no
+need to calculate anything, yet the resolution is not provided by the
+driver.
+
+Nevertheless, your comment on this matter was the following:
+
+> Why both raw + scale and processed?
+>
+> We normally only provide raw and processed for light sensors if:
+> 1) The conversion is non linear and hard to reverse.
+> 2) There are events that are thresholds on the raw value.
+>
+> Here it is linear so just provide _RAW.
+
+That is still true in this case, because it is a linear, easy to reverse
+conversion. Nevertheless, the user needs to look for the sensor
+resolution in the datasheet and then use the given integration_time and
+scale.
+
+Is that ok and desired for light sensors? I think that a more accurate
+approach would have been treating the gain as a HARDWAREGAIN, which
+would have been used to calculate the scale i.e. resolution to directly
+apply to the raw value. In its current form, the processed value is not
+what you get if you do raw * scale. But as you specifically mentioned
+light sensors in your comment, that might not apply here. Moreover,
+there are only two drivers (si1133.c and vl6180.c) that use HARDWAREGAIN
+for IIO_LIGHT, which makes me think I am over-complicating thing here.
+
+By the way, in_illuminance_hardwaregain is not documented in the ABI,
+only out_voltageY and in_intensity. But that is another topic.
+
+The veml6030 has been around for some time and there is no way around
+without breaking ABI, and the veml3235 has been only applied to your
+tree and maybe it could wait to be released.
+
+If everything is ok as it is, then that's the end of the story, but if
+the processed = raw * scale operation should apply, the veml3235 could
+still be fixed. And when it is too late for that one too, then I could
+follow a different approach for the veml6031x00 I recently sent to avoid
+propagating the issue.
+
+Thanks and best regards,
+Javier Carrasco
+
+
+
 
 
