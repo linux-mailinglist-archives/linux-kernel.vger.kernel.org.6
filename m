@@ -1,94 +1,77 @@
-Return-Path: <linux-kernel+bounces-425075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983159DBD30
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B69A9DBD48
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0F4164A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:12:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04527164A4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C341C330C;
-	Thu, 28 Nov 2024 21:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9641C3F28;
+	Thu, 28 Nov 2024 21:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Wgr4rUYB"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbLAEJpG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AC214F135
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 21:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C00513DDB5;
+	Thu, 28 Nov 2024 21:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732828340; cv=none; b=ZNoB4vyZYUEgmRD7t9m25JLimKG40U5REXValk/MhMLfrmdNZbBEbMJsiJeKCNfxP/1Zt4MxkMqVdLtVhCyW1bYXAdwaCTTNHLBt24RfOC9Pgy6aJ6mw/dYMf0ka/ZN7XSvHQI7Y+desAdnHbRBi9W+I2y2hVYXdxC1SYQipFfs=
+	t=1732828712; cv=none; b=X5/4jxYCsUck1BCdQk9GjTSpNDTJOiz9fAamO1V05pLhscHnkhxcCRDEeVQrn3gHMSPvtJTIfRyzLU7t1c5Mo6h0qG0ejw/+GqixUuaQrx3eQ1JmhD9TLGFolZ87QHgdVlLavHLPsJhrA27NmfqXQ6RoyPdNET0FJ9wqO7QIp2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732828340; c=relaxed/simple;
-	bh=SNH6Vhy1Qsz73JYqfCuZ2bp8yHxqGV6IJ9piA+m/bZw=;
+	s=arc-20240116; t=1732828712; c=relaxed/simple;
+	bh=JR9HIv6Zf/V0Hie08szqxWG0je4RV0/U+w5I+NNf6Yk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJW4vtB1BsHyylsTAxmslr3gyX6AQEIPlkgHdVwykLLvDOurUfoAf259Xs8rVkGX256XUcBcCwzZhYKa2lRRgBE/go6ZNekXlFh1pUozZkpjuneEYvnIcswaixr4rfUEnsSpP5Sk5GKt9F/kuIdackeri3DD9P8RysOET89ZeVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Wgr4rUYB; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fbd9be84bdso846514a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:12:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732828337; x=1733433137; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gZQjgHCOdKGOLIMC8jx2ghuoSXfBYmvpjKyrW4dIslk=;
-        b=Wgr4rUYBuV/V9lT8TlgAYppw3jyi8xptn2CAfFNIu+7EEwzDQtMTGvKbIcuM3VKWrr
-         SG84y6AGJRIycUXDyVIuYRq37auNIPbudXiDe90vmIh0LfSC8w8eyar+23/AA2NBk08r
-         3VWrKV/wT4EwWIeGADnDN0++k8iD75Y9ankmydg2rd/bIO8rQ53OA8jjfxj03WEgu6Al
-         vCH5zt4CsDR/VGkU/31Hg9LUzmutU+gJxcNKntAenSYFYrk7K0Or2K5IVA/LBZdXYo01
-         F0IiaK68nW1Qw7SQ1w77cLvUqWUGn0Od7thMPK2Xci3evySpDvJym2DFmRb+1jsI9/g+
-         Exew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732828337; x=1733433137;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gZQjgHCOdKGOLIMC8jx2ghuoSXfBYmvpjKyrW4dIslk=;
-        b=L6TcPdgOBEvpoI9KMdKU0X1EzyULdWX+baBixYOUYKhS/3H/rNWqRPNUfEpak1GDrI
-         umseygcdPphfQWgjLwNmtczcP80Ko+LrILUYfWgSGjCVONNFiclfLaV+3Bmi53ZliRWu
-         FhA5xzgOOxPVCXkw/8J4frC+9o+qE4diqn4lPu1Q5fy4ro9CoHJdS4O4l1nOcWsHOTQ4
-         SLzI1UwaYJlZ/H5kBYIiALy1X2M7TWwgx7zRH46Gy6/mNVjwL2hrMO7SDYkFMzRD7+9L
-         qiKP87GWXmbiqNQBQ8UXovowcC/lr63OLA3bG5n+6OILMpZtV2/BfUxCOyIEwHYafm7i
-         SQRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaZ3rDC+VO6zs9gPYZ8vZnXn5ZHeKNUH9Bs+dtcc7mgDLjd25unLHtqXZrdtMEZT62p0Fvw8IqJml9BA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb3p1HpSomQ6diSTZPNm7XFTiu/VzivIkjUdSNyf6NPf7I9pzk
-	dOPTHMlMJcQtTUg4vhJ9UKa7kfU/exEdape6kjdM5RmFpEHM/xi035q2hn+GuWo=
-X-Gm-Gg: ASbGncsrUXM5qmZBSeFQLGXNbj7unDKBUqXgH+CLI51Ta8jQHQzp+T+LMTZkUhspyjN
-	PaC4TM9T4CnuKdHuNhbfxlE93G/XdOF8P/5ep9lCmpr7EhZ/yAhNaEAPQl691PjLkPUOuQj9p9a
-	I9VN29Fw/QL9rbh94UQHkqH4yf2nviuXVElkNpHRr+nSxX6qKe3xUkN252Z9pLSRDFaWHjLeoTn
-	b7Tv54NZI+ESsbqltVX749wCxzdnOXpbtnkpaAJOPrMAqb4xVvcO22JFF+4X6J9+DNp1bSIrO0b
-	obxqfma0cKOribY=
-X-Google-Smtp-Source: AGHT+IH6amO2slru4tjcta7Dz2nO85K3hdLLPHfnkg7IE2FAO0Bdpfqa+QOZGZFc1id6LQ57hv1jaA==
-X-Received: by 2002:a05:6a21:70cb:b0:1e0:c30a:6f22 with SMTP id adf61e73a8af0-1e0e0b8cdabmr12970905637.40.1732828336956;
-        Thu, 28 Nov 2024 13:12:16 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541761474sm2025702b3a.32.2024.11.28.13.12.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 13:12:16 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tGlo5-00000004Fmx-35VV;
-	Fri, 29 Nov 2024 08:12:13 +1100
-Date: Fri, 29 Nov 2024 08:12:13 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] list_lru: expand list_lru_add() docs with info about
- sublists
-Message-ID: <Z0jcrYt1iSKgQecY@dread.disaster.area>
-References: <20241128-list_lru_memcg_docs-v1-1-7e4568978f4e@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IOuSlUdOCk00tiYdR/zAeSlQqGqd9jAzOU76CqBpiaq4uqWixPA1H5AhXel2sJ3EhaL1HKwHSV+dQDPBFsXRELRY7fQsET4P2bY26Pj/MRU5UNziwkMo5DUU4+CTngSyzhKOggQNkHHnAkzld7bf5gsNlfZrnBXWms/5jfCbO7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbLAEJpG; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732828709; x=1764364709;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JR9HIv6Zf/V0Hie08szqxWG0je4RV0/U+w5I+NNf6Yk=;
+  b=lbLAEJpGS/saMPHmtSLJ1yHjIOxTApMW1o/GRkrUFZhZM7RQmBDq5PoQ
+   0FwQwU/CFdeIE/n3DzpdTnpWaP2NL0m79ReQUxovguIZyCqicptVhRYc6
+   F6TjrCVBQGwK9D5t4rXBmC44x7uJAqiihQl42NteApbLGxbvhrzsTvwu6
+   T1T+YGjxSHqdjqoE9WQzZVoFW6FhFpVdlzGEcrVLCPRd0DvAYSjvCNLdB
+   ICdU2uQ6GVsD4aqKLeSfG3GZdQ3SIqUzkPBLnTDlMRooVrT7xLYxTY9sn
+   0L+6/ultRsDTE0JLBh1yNNiK6ifTJ2w5auojV4x+vh5XfMlGiozZsWZea
+   A==;
+X-CSE-ConnectionGUID: KPM9uGOjT/KaExYAO7pMXw==
+X-CSE-MsgGUID: ZwFw3yHcT7Sn5pTSt9PXgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="36999180"
+X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
+   d="scan'208";a="36999180"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 13:18:28 -0800
+X-CSE-ConnectionGUID: 6CABNMLSR9inCOZZwNzSnQ==
+X-CSE-MsgGUID: W2DK+mzwT125fBiIjGFPfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
+   d="scan'208";a="129819821"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 28 Nov 2024 13:18:25 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tGlu3-000A3d-1M;
+	Thu, 28 Nov 2024 21:18:23 +0000
+Date: Fri, 29 Nov 2024 05:17:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com,
+	peterz@infradead.org, dave.hansen@linux.intel.com,
+	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com, patryk.wlazlyn@linux.intel.com
+Subject: Re: [PATCH v6 2/4] ACPI: processor_idle: Add FFH state handling
+Message-ID: <202411290550.AphAcYyW-lkp@intel.com>
+References: <20241127161518.432616-3-patryk.wlazlyn@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,31 +80,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241128-list_lru_memcg_docs-v1-1-7e4568978f4e@google.com>
+In-Reply-To: <20241127161518.432616-3-patryk.wlazlyn@linux.intel.com>
 
-On Thu, Nov 28, 2024 at 12:12:11PM +0000, Alice Ryhl wrote:
-> The documentation for list_lru_add() and list_lru_del() has not been
-> updated since lru lists were originally introduced by commit
-> a38e40824844 ("list: add a new LRU list type"). Back then, list_lru
-> stored all of the items in a single list, but the implementation has
-> since been expanded to use many sublists internally.
-> 
-> Thus, update the docs to mention that the requirements about not using
-> the item with several lists at the same time also applies not using
-> different sublists. Also mention that list_lru items are reparented when
-> the memcg is deleted as discussed on the LKML [1].
-> 
-> Link: https://lore.kernel.org/all/Z0eXrllVhRI9Ag5b@dread.disaster.area/ [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  include/linux/list_lru.h | 48 +++++++++++++++++++++++++++++++++++-------------
->  1 file changed, 35 insertions(+), 13 deletions(-)
+Hi Patryk,
 
-Looks fine to me.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.12 next-20241128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Patryk-Wlazlyn/x86-smp-Allow-calling-mwait_play_dead-with-an-arbitrary-hint/20241128-113851
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241127161518.432616-3-patryk.wlazlyn%40linux.intel.com
+patch subject: [PATCH v6 2/4] ACPI: processor_idle: Add FFH state handling
+config: x86_64-randconfig-074-20241128 (https://download.01.org/0day-ci/archive/20241129/202411290550.AphAcYyW-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411290550.AphAcYyW-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411290550.AphAcYyW-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0xb9: mwait_play_dead_with_hint() is missing a __noreturn annotation
 
 -- 
-Dave Chinner
-david@fromorbit.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
