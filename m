@@ -1,92 +1,72 @@
-Return-Path: <linux-kernel+bounces-424767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432169DB91C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:55:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF389DB924
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07222281E68
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:55:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA50B20FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05481AA1CD;
-	Thu, 28 Nov 2024 13:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLt/DtWm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC81AA1C1;
+	Thu, 28 Nov 2024 13:59:13 +0000 (UTC)
+Received: from inbox0.redstarhavacilik.info (unknown [79.141.163.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0436D19E99A;
-	Thu, 28 Nov 2024 13:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF101AA1D8
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.141.163.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732802112; cv=none; b=gbYUEAjhmdycsFLrr9TRXjpukDdDhz5CRlzdIQtff+uXhxvjH/XpW9lB6Z02Rx//kO8ODsNvyUajH1Ba9nZpnzl99XRLgh6nfSXcU4fULOUjSMggofLgLMUdYbWp6bumKZY33XhX5p7V0NzFrwOh+0M5g6BJ2VTMUu2HeQmxADY=
+	t=1732802353; cv=none; b=FcPCUt+AfoH/6WsqUKSffwwIf0U/onOrJrm6pGdLTnb62D4FPc/4fBTKK2X+BOPhREM9ma+dYcmdMh+KNHY1bQE2UK2eH1lj5kWSYWM1CHrudDXYWdqwZxXE0m6RxVKL5+o3bjbTxnwNlOglBquehyrwCO+g87bCN7O8lqZjq6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732802112; c=relaxed/simple;
-	bh=Ny/2x11Lom087+YOYttsy7MBje6S99SWUsnqp7zZUUg=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=q+07P28abgmMnnoxDLv08Me8EIVC61bsthDXmfNfLa5HJk5yJa98HW7pEfhRvVVK7GYVZSOpstHpPrBS7GESxMJrEC1GuurhalRR56Cj+07aaLaJp++WNSZaDfepQ2mNPpVWHACqIUS+ThfuLJ0+ZHv5G6SNw1QRczmbR94dwSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLt/DtWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE9C0C4CED2;
-	Thu, 28 Nov 2024 13:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732802111;
-	bh=Ny/2x11Lom087+YOYttsy7MBje6S99SWUsnqp7zZUUg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kLt/DtWmgimzR7XAoKN7xQ4IFFVbNp2vV6Tcs1jAFG3X81MbyyK6T2yTWvN+349hv
-	 FIZ/TlpHs67jeAqiDvY4pp1cuyZVdqvODyr4H5GkhPf0V8aaIVlsz/RuvUqv77rD/B
-	 eYALfZ81M+VLiK3NL3l08kULfhSKbM5efRcFjx8VsVUU3wt2dPA0VLZk69bkzBHA4I
-	 oPWF8+yLdUB5rq8js55Uj2r1B2538SUXrhXKqEIQgOCmz0QbaQ8ZQv53oJFSQPv4k9
-	 uBKhMnlhTr7EAWWe2YLQacuhrCeqPn8tSRv0RWHt4OLKRwd0JVo2a/9ZwTcc019qqK
-	 G5099b3U+P/RQ==
-Message-ID: <d3586482f22de4e1ccfca9139e4d30dd.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.13-merge-window
-Date: Thu, 28 Nov 2024 13:54:53 +0000
+	s=arc-20240116; t=1732802353; c=relaxed/simple;
+	bh=EOnrZLyXZHj4HOKgjKekgWX31znFRWBOurAKtPC8dGk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TnV2pbc/uu+sC1YMfuqAreFp2Bo9IWs15RJPkFqpxgsidP4FVy1iFo1NwkirIVB55T4CBQhe0tp7toMunxVZZxm9D+ijmLWtuRdzf0rBjpNNpdTrsyRfOQBjrxtdb/VtU9ADWm1zWRDB9AM2PYM6rZgeyhoXY7nl5u0OTqGOj3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rohanenterprises.info; spf=pass smtp.mailfrom=redstarhavacilik.info; arc=none smtp.client-ip=79.141.163.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rohanenterprises.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redstarhavacilik.info
+Reply-To: ethanallen094@zohomail.eu
+From: Ethan Allen <admln@rohanenterprises.info>
+To: linux-kernel@vger.kernel.org
+Subject: M&E- Consult-RQ387690
+Date: 28 Nov 2024 05:57:51 -0800
+Message-ID: <20241128055751.F9172589526C0820@rohanenterprises.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 26470a2e87a6fc40750f4bfe962519e9ae9a9e72:
+Good day Sir/Madam,
 
-  spi: imx: support word delay in ecspi (2024-11-14 11:43:39 +0000)
+I am Ethan Allen, Procurement Managerr at MACHINARY&EQUIPMENT Co.=20
+Inc. We have
+bulk order requirement for export to our customers in Spain and=20
+India.
 
-are available in the Git repository at:
+kindly confirm if you can supply to Spain and India.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.13-merge-window
+We would greatly appreciate any additional information you can
+provide, as well as digital copy of your products catalog (PDF or=20
+Online link),
+information on new or featured products, pricing and packaging=20
+details.
 
-for you to fetch changes up to d24cfee7f63d6b44d45a67c5662bd1cc48e8b3ca:
+I look forward to reviewing your catalog.
 
-  spi: Fix acpi deferred irq probe (2024-11-26 11:29:15 +0000)
+Regards, 
 
-----------------------------------------------------------------
-spi: Fixes for v6.13
+Ethan Allen
+Procurement Manager
+Northern California 3401 Bayshore Blvd, Brisbane, CA 94005
++1 415 467-3400
++1 909 599-3916
+www.machineryandequipment.com
 
-A few fairly minor driver specific fixes, plus one core fix for the
-handling of deferred probe on ACPI systems - we ignoring probe deferral
-and incorrectly treating it like a fatal error while parsing the generic
-ACPI bindings for SPI devices.
-
-----------------------------------------------------------------
-Antonio Quartulli (1):
-      spi-imx: prevent overflow when estimating transfer time
-
-Csókás, Bence (1):
-      spi: atmel-quadspi: Fix register name in verbose logging function
-
-Jon Lin (1):
-      spi: rockchip-sfc: Embedded DMA only support 4B aligned address
-
-Stanislaw Gruszka (1):
-      spi: Fix acpi deferred irq probe
-
- drivers/spi/atmel-quadspi.c    |  2 +-
- drivers/spi/spi-imx.c          |  2 +-
- drivers/spi/spi-rockchip-sfc.c |  2 +-
- drivers/spi/spi.c              | 13 ++++++++++---
- 4 files changed, 13 insertions(+), 6 deletions(-)
 
