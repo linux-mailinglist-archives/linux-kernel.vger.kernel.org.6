@@ -1,136 +1,225 @@
-Return-Path: <linux-kernel+bounces-424912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB5E9DBB24
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:21:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BEB9DBB25
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:22:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1465B21458
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:21:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C20163D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469161BD9E1;
-	Thu, 28 Nov 2024 16:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9E21BDAA2;
+	Thu, 28 Nov 2024 16:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AWVX07Vd"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xhzRgMOK"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC682192B74;
-	Thu, 28 Nov 2024 16:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8351BD9C1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732810897; cv=none; b=KQ5RDidIVX359dpDtC1JeWDLV0Vrys26WtAV9+Qtlhp/gUTCN54vl9iy5a+cm4zuONzXtO76GSbu2RrUheleoaPb03t9nGdorkmJbDX+6ODLiAVZFBPNK0KeZYiSK9SHuwNhDnfOtBJmWuF/j01mO1+yp//5vSM4KKBDQ+i0zvw=
+	t=1732810914; cv=none; b=RB7tKQJcxQcZWlTTD2qfDTA12y2lPtSdH3EUMCLqYIZcZEFnNxJmVUH5Gz5UT8+1WAP51Eb0Ks8T3zy7/+NEECzA0ctUnzjh59fWPrkpnaumtf6Mw75XEfW6wtH9NkryULdSpb+ZMShRdlle23deJthUobjF9avX/L4fHq4Sspg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732810897; c=relaxed/simple;
-	bh=Q+vYEVGc8WCG4y/Ymty9SbHR9XrHC963OI21gHFHHgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Puw/ToKaZEX9h/NfNp6he+5Pd3tsrqegMHKFyv4iyF1QomJRw6In2bc/ti5JkiOFkWcd3witc0Yon9dJdKSso65mpho8EDhXknht+XDJzu9jV/j1lxkGbww0apZAcJoqVsk3EdoUYyQzCutkIIQiVj+fEcVKmnJoqt28uDJjljo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AWVX07Vd; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AH+QWVp5IumyQjD1NJLyaerHrMXbLkOD0ucThVi1jNY=; b=AWVX07VdgFpgvt7mlPor6MbqPo
-	qui+RxZaXYgktjdTGMFstqn5NQ/ffB6JfogdA+9Wm1HegzgQoJiVZHlyWtzX0wwBTdWVXymBwJlBM
-	zQThbk8iL6uIZ9yIVw67LWKoNQZ9wTRHjOlR6/HYt/vdifM4tcrA5xjIinWKMIOz6e9M7JKFq5pqc
-	aoxFNz7rUtCguHhIENYjeTAOX/tGQ+TGDKK7CQ/Loeva0zTwdeC70bEJsQ7RoUaDnN+A9+8UawcPm
-	t8pg25LTTqig54iPbvbnW2APBaIilsTh6cf0sYQfhL+aceCDxnB8oFDfTcgHsRffMY7cI+8T3SZqh
-	qGs62ndg==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGhGi-00000002qKT-3jea;
-	Thu, 28 Nov 2024 16:21:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B67EF300271; Thu, 28 Nov 2024 17:21:28 +0100 (CET)
-Date: Thu, 28 Nov 2024 17:21:28 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mel Gorman <mgorman@suse.de>
-Subject: Re: [tip:x86/mm] [x86/mm/tlb]  209954cbc7:
-  will-it-scale.per_thread_ops 13.2% regression
-Message-ID: <20241128162128.GE35539@noisy.programming.kicks-ass.net>
-References: <202411282207.6bd28eae-lkp@intel.com>
+	s=arc-20240116; t=1732810914; c=relaxed/simple;
+	bh=W5d5TUpFqOmdQ0u+dAULQvpGp33jPqoJkFWD+JsjdlA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WITbjxy5tdvcrEqtLHRkIDY1s2STOHCIzJtpRrXDZwwIgbz+3mw7XZjY5zUAXU5QFA9yVBad4rrJsOrZpJdnuVKGkFsXjCSdS1doerb74KBRlZ5KMIA3X5LSYJtt9EVC4gf+22Rt6TBAi7HfubdaC9JvNqgI/vcWE9LOujQ9OCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xhzRgMOK; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a742481aso8817305e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:21:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732810911; x=1733415711; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4JksmRiBHUzeK7eouUGwkYQse3gctmWdRPpveYR3Cg=;
+        b=xhzRgMOKz4Xm/K8+gKmxVyYuLfR1dZYVqpdOKexxOMf1NAI/cFdERooy6D3EZsZMor
+         wh06/zbOlf30lfIf9PHI36LRxopaeXE/Kq4vklTcW6bWWRHzFxbuvRnljdZUBaIfg7yk
+         /ptN5VkpCSPMcsTsgBKdIoKJwbUGKru03Kx8ApeiO6mhfgRI1o5Q0ucwhGu2NHORiO4R
+         1EcEb6l3UVZNAeDNKnuuV5q+B7Ep+9he6o4nFG2QvvoSBNs1t8sfzYIAOcpDGUoN2kap
+         nSxkB8gKnv2cGEZ0WKCsfUDTXGpMM9WjGKYVBi04u2/gZq1zZFyn07dq/dth/NlIF92G
+         DmDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732810911; x=1733415711;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V4JksmRiBHUzeK7eouUGwkYQse3gctmWdRPpveYR3Cg=;
+        b=nvGZimq8uruKsAklcLD6inmaPsGuiUBjw9cQ6zd7BizytRRgZXoL/Y0fHei+vutv4S
+         65HZoEryiWe8TIjONpFJRD3NEYbKfVZoX4keCEGW2/+PsB6/LoBSOKvm132umMicWhT2
+         pHouhedc2dknTYltIp2trPSvYEa5vYV8nLAzsQjgzvmkHKnqpHRQkQJ1cZRsNMpieKk8
+         mROzs23+TVDmFIR/k+VkTLq+jb4rJSVoui8pdM/5dZArfjZcSE7vx+UmsVTaA46pUCIf
+         o9koEF558yrPQCedsH2q2dQsATQ2jDZtMlKkIb1LZoQkVROspusJf9T+A2DU7T9Qomcg
+         GKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ltpSgJ79+HW2d/4WM5V1lKbI8K5K+8K7z/cWF/p09kD0s3EJLFSspxZ175uGBaRIiXyf23kSqN3UbFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqdlyzrER/9bnx5P/KkawiqkVRjSYrK9mtmT9Ox/5TQf2QP5tB
+	shjrqZ9Tt+EJlcrqAsMMYvwu6o5Cvf6jYTvsfmk/GgwTvtAYCYucTyMj7r4yTDg=
+X-Gm-Gg: ASbGncu+ZZQtZNQe1VnEXwvAhoDB9LNQrPUfTkvVpKf+GmIx4Bfy4M71U8cyFtAx7E+
+	qvKXHqr5ub3VB9UghcBDw4BQ93gNaPAcIe4RhTAfmWERRX1WCjNiL9DGOjR8aQybjZ+08nH7f/3
+	PlJ3uQyypfCJQB+MIvrHhQs87PMGPBTwxLn65m4C4Pb4a72L8HX2/u7CwN8AET8yw5qeLz5nIsv
+	PWHnJUlXHBOPukc7DYw6PSagf3K1JK2uTTZOdLm668q2zvJ3AKDNwuGFOc=
+X-Google-Smtp-Source: AGHT+IGQOC9+zFe5o1o38nSa1dxkrznIvZG/sokSsDpDtTF6eLIRINi1P3TnTkxGCRJF0Xa4y6T07Q==
+X-Received: by 2002:a05:600c:458b:b0:434:a924:44e9 with SMTP id 5b1f17b1804b1-434a9dcfedfmr76860895e9.15.1732810910537;
+        Thu, 28 Nov 2024 08:21:50 -0800 (PST)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d9csm27004545e9.38.2024.11.28.08.21.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 08:21:50 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v4 0/3] media: venus: Provide support for selecting
+ encoder/decoder from in-driver
+Date: Thu, 28 Nov 2024 16:21:48 +0000
+Message-Id: <20241128-media-staging-24-11-25-rb3-hw-compat-string-v4-0-fd062b399374@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202411282207.6bd28eae-lkp@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJyYSGcC/6XNQW7DIBCF4atErDsRM2ASuuo9qiwwDDZSYyKw3
+ FSR716cXZRdsnwz0vffROWSuIrP3U0UXlJNeWpDf+yEH900MKTQtiBJGpEOcOaQHNTZDWkagDQ
+ gAnVQegXjL/h8vri5vcv2Zae8tVYdJaFo4qVwTNd77fvU9pjqnMvfPb7gdn2tsyBIsNajiWRMr
+ 83XT5pcyftcBrGFFnoDp4Z7iTIG3cVDjE+4egNXDedo+kAd22PoH/B1Xf8B3nAXcKEBAAA=
+X-Change-ID: 20241127-media-staging-24-11-25-rb3-hw-compat-string-ea3c99938021
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: quic_renjiang@quicinc.com, quic_vnagar@quicinc.com, 
+ quic_dikshita@quicinc.com, konradybcio@kernel.org, 
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
 
-On Thu, Nov 28, 2024 at 10:57:35PM +0800, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed a 13.2% regression of will-it-scale.per_thread_ops on:
-> 
-> 
-> commit: 209954cbc7d0ce1a190fc725d20ce303d74d2680 ("x86/mm/tlb: Update mm_cpumask lazily")
-> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git x86/mm
-> 
-> [test failed on linux-next/master 6f3d2b5299b0a8bcb8a9405a8d3fceb24f79c4f0]
-> 
-> testcase: will-it-scale
-> config: x86_64-rhel-9.4
-> compiler: gcc-12
-> test machine: 104 threads 2 sockets (Skylake) with 192G memory
-> parameters:
-> 
-> 	nr_task: 100%
-> 	mode: thread
-> 	test: tlb_flush2
-> 	cpufreq_governor: performance
-> 
-> 
-> In addition to that, the commit also has significant impact on the following tests:
-> 
-> +------------------+------------------------------------------------------------------------------------------------+
-> | testcase: change | vm-scalability: vm-scalability.throughput 40.7% regression                                     |
-> | test machine     | 128 threads 2 sockets Intel(R) Xeon(R) Platinum 8358 CPU @ 2.60GHz (Ice Lake) with 128G memory |
-> | test parameters  | cpufreq_governor=performance                                                                   |
-> |                  | nr_ssd=1                                                                                       |
-> |                  | nr_task=32                                                                                     |
-> |                  | priority=1                                                                                     |
-> |                  | runtime=300                                                                                    |
-> |                  | test=swap-w-seq-mt                                                                             |
-> |                  | thp_defrag=always                                                                              |
-> |                  | thp_enabled=never                                                                              |
-> +------------------+------------------------------------------------------------------------------------------------+
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202411282207.6bd28eae-lkp@intel.com
-> 
-> 
-> Details are as below:
-> -------------------------------------------------------------------------------------------------->
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20241128/202411282207.6bd28eae-lkp@intel.com
-> 
-> =========================================================================================
-> compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
->   gcc-12/performance/x86_64-rhel-9.4/thread/100%/debian-12-x86_64-20240206.cgz/lkp-skl-fpga01/tlb_flush2/will-it-scale
-> 
-> commit: 
->   7e33001b8b ("x86/mm/tlb: Put cpumask_test_cpu() check in switch_mm_irqs_off() under CONFIG_DEBUG_VM")
->   209954cbc7 ("x86/mm/tlb: Update mm_cpumask lazily")
+v4:
 
-I got a bit lost in the actual jobs descriptions. Are you running this
-test with or without affinity? AFAICT will-it-scale itself defaults to
-being affine (-n is No Affinity).
+- Adds some unavoidable conditional CONFIG_OF_DYNAMIC to fix media-ci testcase # Test build:OF x86_64
+- Added logic for of_changeset_revert() and of_changeset_destroy() on
+  error/remove paths - Bryan
+- Link to v3: https://lore.kernel.org/r/20241127-media-staging-24-11-25-rb3-hw-compat-string-v3-0-ef6bd25e98db@linaro.org
+
+v3:
+- Adds select OF_DYNAMIC to venus/Kconfig to ensure of_changeset_*() is
+  available. Instead of ifdefing and have the fix not work without
+  OF_DYNAMIC, select OF_DYANMIC with venus - linux-media-ci
+- Link to v2: https://lore.kernel.org/r/20241127-media-staging-24-11-25-rb3-hw-compat-string-v2-0-c010fd45f7ff@linaro.org
+
+v2:
+- Removes useless dev_info() leftover from debugging - Bryan
+  Link: https://lore.kernel.org/r/ce9ac473-2f73-4c7a-97b1-08be39f3adb4@linaro.org
+- Trivial newline change @ np = of_changeset_create_node(ocs, dev->of_node, node_name); - Bryan
+- Fixes a missing goto identified by smatch - Smatch/Bryan
+- Adds Krzysztof's RB to deprecated - Krzysztof
+- Link to v1: https://lore.kernel.org/r/20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-0-99c16f266b46@linaro.org
+
+v1:
+Various venus patches have been held up due to the misuse of DT to provide
+a configuration input to venus as to which mode a given transcoder should
+be in.
+
+Link: https://lore.kernel.org/linux-arm-msm/436145fd-d65f-44ec-b950-c434775187ca@kernel.org
+Link: https://lore.kernel.org/linux-media/ba40de82-b308-67b1-5751-bb2d95f2b8a5@linaro.org/
+
+This series provides support for static configuration of venus from the resource
+structure via:
+
+1. Adding two strings to the resource structure.
+   One string for the decoder one for the encoder.
+2. The string for each SoC has been matched to the existing in the
+   DT which currently specifies the mode as decoder or encoder.
+3. New logic in the driver parses the DTB looking for the node name
+   specified for the decoder and encoder .
+4. If the DTB contains the node name, then no new node is added as
+   we assume to be working with an "old" DTB.
+5. If the DTB does not contain the specified decoder/encoder string
+   then a new in-memory node is added which contains a compat string
+   consistent with upstream compat strings used to currently select
+   between the decoder and encoder respectively.
+6. In this way new venus driver entries may be added which respect
+   the requirement to move mode selection out of DTB and into driver.
+7. Simple instances of decoder/encoder nodes in the yaml schema have been
+   marked as deprecated.
+8. Since the proposed scheme here always defers to what the DTB says that
+   means it would be possible to remove decoder/encoder entries for the
+   deprecated schema should we choose to do so at a later date but,
+   that step is not taken in this series.
+9. Some of the upstream encoder/decoder nodes for example sdm630/sdm660
+   also contain clock and power-domain information and have not been
+   updated with the static configuration data or had the schema amended to
+   deprecate values. Because these nodes impart hardware specific
+   information and are already upstream this series proposes to leave
+   those as-is.
+
+However if this scheme is adopted it should allow for addition of venus for
+both qcs615[1] and sc8280xp[2].
+
+Other SoCs such as sm8550, sm8650 and beyond are expected to be supported
+by Iris.
+
+The sm8350 and sm8280xp in the second series would then be able to excise
+the offending compat = "video-encoder" | "video-decoder" in the schema and
+DT.
+
+I considered making this series an all singing all dancing method to select
+between encoder and decoder for all SoCs but, the objective here is not to
+add functionality but to provide support for configuration in-driver
+consistent with current usage and to do so with a minimal code
+intervention.
+
+So far I've tested on RB3 by removing:
+
+video-core0 {
+	compatible = "venus-decoder";
+};
+
+video-core1 {
+	compatible = "venus-encoder";
+};
+
+This works - the code adds the nodes into memory and the video
+encoder/decoder logic in the plaform code runs.
+
+Similarly if the nodes are left in-place then no new nodes are added by the
+code in this series and still both encoder and decoder probe.
+
+Thus proving the code works and will provide support for new platforms
+while also leaving open the option of dropping nodes from upstream.
+
+I've left the dropping step out for now, it can be implemented later.
+
+[1] https://lore.kernel.org/linux-arm-msm/20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com
+[2] https://lore.kernel.org/linux-media/20230731-topic-8280_venus-v1-0-8c8bbe1983a5@linaro.org/
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (3):
+      media: venus: Add support for static video encoder/decoder declarations
+      media: venus: Populate video encoder/decoder nodename entries
+      media: dt-bindings: qcom-venus: Deprecate video-decoder and video-encoder where applicable
+
+ .../bindings/media/qcom,msm8916-venus.yaml         |  12 +--
+ .../bindings/media/qcom,sc7180-venus.yaml          |  12 +--
+ .../bindings/media/qcom,sc7280-venus.yaml          |  12 +--
+ .../bindings/media/qcom,sdm845-venus-v2.yaml       |  12 +--
+ .../bindings/media/qcom,sm8250-venus.yaml          |  12 +--
+ drivers/media/platform/qcom/venus/Kconfig          |   1 +
+ drivers/media/platform/qcom/venus/core.c           | 100 +++++++++++++++++++++
+ drivers/media/platform/qcom/venus/core.h           |   4 +
+ 8 files changed, 115 insertions(+), 50 deletions(-)
+---
+base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+change-id: 20241127-media-staging-24-11-25-rb3-hw-compat-string-ea3c99938021
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
