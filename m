@@ -1,206 +1,138 @@
-Return-Path: <linux-kernel+bounces-424651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DF79DB788
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FC09DB789
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:27:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A0B2830FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5012E16345A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E1119CC1F;
-	Thu, 28 Nov 2024 12:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0499D19CC11;
+	Thu, 28 Nov 2024 12:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3yHmpf2z"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="00I8nUBl"
+Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDD819ADA2
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1DE156661
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796838; cv=none; b=SrXyoEJO1Or9EtBDem1666wyU1rtQLVp8ReipAxPaIo2ztskkH6r4GDxWf59M3SigX3gxrJ/u2WVnMwzS7JzDMvQtkFD2rLERRkqSBu+rmnpY4oCyE6mzH8KYa1bquPzn7FyXpvJ9Zb16SqdcZ8XwUYJDozi5af3ZusTiqj7hjg=
+	t=1732796861; cv=none; b=lap6CgrPiOtWFdzR4VTYXSsyg8BOg/OOvAIhYXJ3Togs66oAAnZ0YSfiln7GD/C94CFX8OCpRGkvOT1CdBOYLobbamqugLT3HiyWYMqhDro9QbogItzs2pS3ah8wDBSrL9e/20HfTr7DTQdazhWSpcjZ7cDwvoRzgfByDq0NWuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796838; c=relaxed/simple;
-	bh=6XDxPEty34eTGMSNtMJUSsKWzjr3QkiT/ZY1/OxWTew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sBkhoB5gopaox7fQH6vQkkhPoiI9PnNvnrf1/BASEIJlj1G5nTHFOQdArRJAn+B52kfg3ZnDhB5y7xmo71I+lR34Y8Ky5v/IeiZnpPebB7OUvfMzEQAreFFkmr9U5bCU4in+qq5iGLGsS3Js7wqj0y6Shgl2X8ZzbACgvDcix4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3yHmpf2z; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1732796861; c=relaxed/simple;
+	bh=rnOC0uH0wL+DXjz2H6rqda5uQT4oyuQ5UJk1N1XxOts=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tXi9O/pfzEWxF1TatkDdrrkeWIE/DTRKSN5gaso2kbSDZBK092xdJdkTGBAa8jNFWTAk9EFPAR9dwW1OVVjYecgsJP2MxJk4ckzbmuaYbQf8b9MycfjE9uoBEQUX5QpPpDNdpeS9buIP7UgkQSJoI5ClKiFefQgw2nEDlaxaI00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=00I8nUBl; arc=none smtp.client-ip=209.85.208.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a752140eso6619395e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:27:16 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-2ffc87a45cdso2626151fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:27:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732796835; x=1733401635; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kARs3OMR7SZwBtW0TWcyLkFWqc6w0sy3+x2iKM9UqcY=;
-        b=3yHmpf2zqpiF+3ZU53B47pyKB9nvk+d4ekgQeHvyS5EOvY8znz8JC6RIZ7PgSoJurH
-         JUEntzlWwg9/fKKk7WRNdo+f6MT4kE9ghVcpmUslMkYe/ea6waxUiJufdJws66pg3hD+
-         dv5b79kz9iYSqRfImaLIRynHckdJLiNa7y4QKoGIS/BoNARfDSMwyK+JzkJuO4UglTyv
-         l8adfPgm6QVauRaYFwtt7ORSqVBtEK+Q6EJgi0nCpyhe11Dt6wY452tSV9DBVFKYg7jt
-         j2EO9UYFgOx1q7RONnsaA6ZAbn7g52IrGS7OdqyFzlZnK3gto+tCH9/BVGH1v+1UUY07
-         ePKw==
+        d=google.com; s=20230601; t=1732796858; x=1733401658; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hHScKB5wW3lYyaHNo3U+czR+30FvC0SvhNqkl2ETsUM=;
+        b=00I8nUBlWoCUS7ZdgnWeqUs+/nrJcN5JIuFNuVuXLJGpsitE/38wQ1CWxv6Cs2yjly
+         XVhizOh5qVpxE86fDIipu8Sst+NwfpCukGKA7aNK6lcfYLZ1rADbY9/ve0MfadnTVSuu
+         0h45v8h6tr/UX4oHFvzrrZtZbRbFAw/E2RgEYXQgRA91hNw/SIXvE8/Z4r3kw8PYDiat
+         hWI8FmaoqLqqFWx5t9FAxH/o3XVt0vcUKYR8aeegvvqnpF13YHKj+Zsh15MZWStpkx3A
+         XPGM2RJsDYAtkCAX5zqY8d0IlGo+M3VL5CGqtUD2NKmSG8f29z7lBaevwLMNldtlnllm
+         5qMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732796835; x=1733401635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kARs3OMR7SZwBtW0TWcyLkFWqc6w0sy3+x2iKM9UqcY=;
-        b=MlNEHpihrniAg9Ro3bgHuipVGzHkYPUi7sDxvLH6Pn99jfKsWouL48jgIxdJhMpdxL
-         cz0J9L2FTPhbB0EJbTn36mnxcOZmilFEJzpLC9ScmhPtrt7JF14yuMZYfNcG1rqx7xaa
-         tFajqdCMs+v+21fxHVylwYAnVOw07tGEvzwGvKD70IlUDkQjr5reHdZEeXJoljhVVbuj
-         UEDXUUIggeRyyEKqvR/NgXUZ2ly2CI5sVbataVWWo3IWhbiBk77lPRlB03D3nc6iA3Kp
-         ri0Sr5vwn/uE7/JnES8cDCOkQXRwaOt6LIpmCi+Tf9WWl/Bpf/yrAV2YX0OJOzqOqhdl
-         wPWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGN+6Eb51FO/8peaU8MjM2IdJOnjhbtpjg3WgTiM1rGc/MbmDmps9J1rSHvYLc3ncPmCa2N9hUVLX4gLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqV8jMEaVt/GEoEYaczDG1pSIaIcJsfuKCfmyYu2GGWhmgPrIJ
-	e/m/mBV5O67tjHjtdf9kV7sUnY8Vvu6drd6eu4FgX7NgbyN7Uwxl7nZXBumPY5GTZB5QnE7l/ps
-	Leyn7kIUHNkQzSIS0TK9MrYKyfLaietdR4MkB
-X-Gm-Gg: ASbGncvhrZqQVysCRnWLFTLnlbJKH8P9RAERQY96VNy4oYNgT1/F/XGpTMpg7CZYEp/
-	Ew9t4qQxHuJJ6xtKaq5NJpDMMcb6HkBzjus94+R6KDJwWviiBB4PFH/vJpypM
-X-Google-Smtp-Source: AGHT+IEkERCIeGBJ8BGltoa6+wRnWijLPp8bL9sP35PNF9jXvEWnjvqtbJxvc4qLxkfCVrgrzjnipQiAdSGpxRUopa4=
-X-Received: by 2002:a05:600c:1988:b0:434:a239:d2fe with SMTP id
- 5b1f17b1804b1-434a9df7dadmr50709745e9.28.1732796834639; Thu, 28 Nov 2024
- 04:27:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732796858; x=1733401658;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hHScKB5wW3lYyaHNo3U+czR+30FvC0SvhNqkl2ETsUM=;
+        b=jgpyyyG5XH8nhwENH513XVYrEo5UhIXiWaSjlFRBAvf8oHmxghSS6U8pjpd0AIopOD
+         msvnVNgTR4L0bNXoh+FpEAd9dTk3pWFamDUT5kMNz2Ya/kuunzlTGwDRpPed+vTzlPrP
+         01RKysYVJiEX/UhnF8P5OP1LfV4kK9kMM1iVGkQCBXAn5A1fVdO4WARxQaYvpAJ3+9CT
+         2uzlTsnQ57Uxz9f3TRgUpw/R8uSzzy91/dh3yIewJ0wMDh7UwjudfhmB7yD8V4JIRDeZ
+         ArF719jEfR4F+GBy3MOibMmX+EatcmUVeI61/J5Faze5YP0s34nqEiLotNNCCYFnYMf7
+         BEVQ==
+X-Gm-Message-State: AOJu0Yyu5uC80cZlpp9SFqCcBge60pRGduIPT7hW66UibSfhzDtfV/Mm
+	E/bbf/nhd4XTzHef3k5eXK3ERN4Ns+x9TKpn3uCF3IxYwqhdmLOxmTsCIXsT7mG3ZykP1QXHgGQ
+	wVVy0CQDi2/oa+rBIYMa88UZIG+2xFeYpWKqOAVDw4WKEJsMLmNhOn4hxSF0kPB1HbMgt3i7hrN
+	n1nSDcgxtnq6/SWQL9+S3iuHA3sf6ghqAcxYc1pcjg01fS8J+i6Ulhdwju
+X-Google-Smtp-Source: AGHT+IG386o/8+zflhUeB+C04ILmkl0WNRST1JorMAgcHdNp8s7vWtrSpAiv3PMxUfmbfhdDnCwCZO5eIeiScQ4=
+X-Received: from ljqn20.prod.google.com ([2002:a2e:bd14:0:b0:2fb:48a0:ba68])
+ (user=mmaslanka job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a2e:bc22:0:b0:2f9:cc40:6afe with SMTP id 38308e7fff4ca-2ffd6043995mr41060741fa.14.1732796857921;
+ Thu, 28 Nov 2024 04:27:37 -0800 (PST)
+Date: Thu, 28 Nov 2024 12:27:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAH5fLghFWi=xbTgaG7oFNJo_7B7zoMRLCzeJLXd_U5ODVGaAUA@mail.gmail.com>
- <Z0eXrllVhRI9Ag5b@dread.disaster.area>
-In-Reply-To: <Z0eXrllVhRI9Ag5b@dread.disaster.area>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 28 Nov 2024 13:27:03 +0100
-Message-ID: <CAH5fLggKrb4LZk6JL5A0jJODA1zJs+94AU5NMmyV9ksraigF7A@mail.gmail.com>
-Subject: Re: [QUESTION] What memcg lifetime is required by list_lru_add?
-To: Dave Chinner <david@fromorbit.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Linux Memory Management List <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, cgroups@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241128122732.1205732-1-mmaslanka@google.com>
+Subject: [PATCH] ASoC: Intel: avs: Remove component->set_jack() on suspend/resume
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Cezary Rojewski <cezary.rojewski@intel.com>, 
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>, 
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	"=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?=" <amadeuszx.slawinski@linux.intel.com>, alsa-devel@alsa-project.org, 
+	linux-sound@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 27, 2024 at 11:05=E2=80=AFPM Dave Chinner <david@fromorbit.com>=
- wrote:
->
-> On Wed, Nov 27, 2024 at 10:04:51PM +0100, Alice Ryhl wrote:
-> > Dear SHRINKER and MEMCG experts,
-> >
-> > When using list_lru_add() and list_lru_del(), it seems to be required
-> > that you pass the same value of nid and memcg to both calls, since
-> > list_lru_del() might otherwise try to delete it from the wrong list /
-> > delete it while holding the wrong spinlock. I'm trying to understand
-> > the implications of this requirement on the lifetime of the memcg.
-> >
-> > Now, looking at list_lru_add_obj() I noticed that it uses rcu locking
-> > to keep the memcg object alive for the duration of list_lru_add().
-> > That rcu locking is used here seems to imply that without it, the
-> > memcg could be deallocated during the list_lru_add() call, which is of
-> > course bad. But rcu is not enough on its own to keep the memcg alive
-> > all the way until the list_lru_del_obj() call, so how does it ensure
-> > that the memcg stays valid for that long?
->
-> We don't care if the memcg goes away whilst there are objects on the
-> LRU. memcg destruction will reparent the objects to a different
-> memcg via memcg_reparent_list_lrus() before the memcg is torn down.
-> New objects should not be added to the memcg LRUs once the memcg
-> teardown process starts, so there should never be add vs reparent
-> races during teardown.
->
-> Hence all the list_lru_add_obj() function needs to do is ensure that
-> the locking/lifecycle rules for the memcg object that
-> mem_cgroup_from_slab_obj() returns are obeyed.
->
-> > And if there is a mechanism
-> > to keep the memcg alive for the entire duration between add and del,
->
-> It's enforced by the -complex- state machine used to tear down
-> control groups.
->
-> tl;dr: If the memcg gets torn down, it will reparent the objects on
-> the LRU to it's parent memcg during the teardown process.
->
-> This reparenting happens in the cgroup ->css_offline() method, which
-> only happens after the cgroup reference count goes to zero and is
-> waited on via:
->
-> kill_css
->   percpu_ref_kill_and_confirm(css_killed_ref_fn)
->     <wait>
->     css_killed_ref_fn
->       offline_css
->         mem_cgroup_css_offline
->           memcg_offline_kmem
->             {
->             .....
->             memcg_reparent_objcgs(memcg, parent);
->
->         /*
->          * After we have finished memcg_reparent_objcgs(), all list_lrus
->          * corresponding to this cgroup are guaranteed to remain empty.
->          * The ordering is imposed by list_lru_node->lock taken by
->          * memcg_reparent_list_lrus().
->          */
->             memcg_reparent_list_lrus(memcg, parent)
->             }
->
-> Then the cgroup teardown control code then schedules the freeing
-> of the memcg container via a RCU work callback when the reference
-> count is globally visible as killed and the reference count has gone
-> to zero.
->
-> Hence the cgroup infrastructure requires RCU protection for the
-> duration of unreferenced cgroup object accesses. This allows for
-> subsystems to perform operations on the cgroup object without
-> needing to holding cgroup references for every access. The complex,
-> multi-stage teardown process allows for cgroup objects to release
-> objects that it tracks hence avoiding the need for every object the
-> cgroup tracks to hold a reference count on the cgroup.
->
-> See the comment above css_free_rwork_fn() for more details about the
-> teardown process:
->
-> /*
->  * css destruction is four-stage process.
->  *
->  * 1. Destruction starts.  Killing of the percpu_ref is initiated.
->  *    Implemented in kill_css().
->  *
->  * 2. When the percpu_ref is confirmed to be visible as killed on all CPU=
-s
->  *    and thus css_tryget_online() is guaranteed to fail, the css can be
->  *    offlined by invoking offline_css().  After offlining, the base ref =
-is
->  *    put.  Implemented in css_killed_work_fn().
->  *
->  * 3. When the percpu_ref reaches zero, the only possible remaining
->  *    accessors are inside RCU read sections.  css_release() schedules th=
-e
->  *    RCU callback.
->  *
->  * 4. After the grace period, the css can be freed.  Implemented in
->  *    css_free_rwork_fn().
->  *
->  * It is actually hairier because both step 2 and 4 require process conte=
-xt
->  * and thus involve punting to css->destroy_work adding two additional
->  * steps to the already complex sequence.
->  */
+Removed calls to component->set_jack() during suspend/resume to fix an issue where an inserted jack
+is not detected after resuming from suspend if the jack was inserted before suspend. This problem is
+caused by calls to the sound/soc/codecs/da7219-aad.c:da7219_aad_jack_det() function during resume,
+which forces the jack insertion state to be unplugged.
 
-Thanks a lot Dave, this clears it up for me.
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
 
-I sent a patch containing some additional docs for list_lru:
-https://lore.kernel.org/all/20241128-list_lru_memcg_docs-v1-1-7e4568978f4e@=
-google.com/
+---
+ sound/soc/intel/avs/boards/da7219.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-Alice
+diff --git a/sound/soc/intel/avs/boards/da7219.c b/sound/soc/intel/avs/boards/da7219.c
+index 80c0a1a956542..daf53ca490a14 100644
+--- a/sound/soc/intel/avs/boards/da7219.c
++++ b/sound/soc/intel/avs/boards/da7219.c
+@@ -211,21 +211,6 @@ static int avs_create_dai_link(struct device *dev, const char *platform_name, in
+ 	return 0;
+ }
+ 
+-static int avs_card_suspend_pre(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, DA7219_DAI_NAME);
+-
+-	return snd_soc_component_set_jack(codec_dai->component, NULL, NULL);
+-}
+-
+-static int avs_card_resume_post(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai *codec_dai = snd_soc_card_get_codec_dai(card, DA7219_DAI_NAME);
+-	struct snd_soc_jack *jack = snd_soc_card_get_drvdata(card);
+-
+-	return snd_soc_component_set_jack(codec_dai->component, jack, NULL);
+-}
+-
+ static int avs_da7219_probe(struct platform_device *pdev)
+ {
+ 	struct snd_soc_dai_link *dai_link;
+@@ -257,8 +242,6 @@ static int avs_da7219_probe(struct platform_device *pdev)
+ 	card->name = "avs_da7219";
+ 	card->dev = dev;
+ 	card->owner = THIS_MODULE;
+-	card->suspend_pre = avs_card_suspend_pre;
+-	card->resume_post = avs_card_resume_post;
+ 	card->dai_link = dai_link;
+ 	card->num_links = 1;
+ 	card->controls = card_controls;
+-- 
+2.47.0.338.g60cca15819-goog
+
 
