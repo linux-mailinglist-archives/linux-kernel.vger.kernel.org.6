@@ -1,157 +1,152 @@
-Return-Path: <linux-kernel+bounces-425088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F29F9DBD51
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:27:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFE89DBD54
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0410FB216E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C9D281D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16FC1C460A;
-	Thu, 28 Nov 2024 21:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED291C5798;
+	Thu, 28 Nov 2024 21:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="V0lZpUJO"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FB7HtqZ2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD0813DDB5;
-	Thu, 28 Nov 2024 21:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593E01C4A09;
+	Thu, 28 Nov 2024 21:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732829243; cv=none; b=RZDhOJD6S9jPWXX0QKrDJRug321f0M+7qPM0Ch/nqU5j87uXYBdRi5BO+WQ44WkEj4LZ4Lv9mFnPZA9A14y32552GShXjxRcokHj1y+/duoeesxRxGFJvpH7FwXXTNLLvvf8RsKVneS+Lv6BYEprAzVLNObFRfkIh5wbVu5gYFo=
+	t=1732829246; cv=none; b=NmhNEMpZIR/gs7RhBMkl2WnZWuEVf9kxX2m5Dobk0HD+NtlICbjDQMKz2qv7pDFVLReyaOyptG34qHENsJem2aSzsH28DrXYEuzopZ3iumDoxWkPUl9/A8JGW7sfWpQFCsVzjMwJqd8op8Xz8g0NSEvVg61wLbp3EmsbJwCOlKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732829243; c=relaxed/simple;
-	bh=v9EUsJLLHo79C3P0udTAyW7GKcHxmJaDGMV+Ji7hr3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Gk+hlB3bpKDr1jJBuQxqNEQLSx+bA+5VpJa3PU2g7jaeGb7encbC6MAB6k4oiHOoTdrXzgmiz64y3sh1bHYRfnLa9FFzTpawNzJbcpRP0RHm5sawiE+UgYR6cEK5UnQOL09Jvc+hXiP7p5n0TpH8V+C0q/MBTejP9TA13XclnEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=V0lZpUJO; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1732829219; x=1733434019; i=quwenruo.btrfs@gmx.com;
-	bh=nmSVBXpOWNLnKUfu7fBmIxvhQ3j+xy+RWf9h1Hlt+dY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=V0lZpUJOUcDM+p7oHCyWmzdRBclXOAqo4Xhcey+4CGP10HnQwNLGb4+d7+rT1Ppa
-	 2yhP62K3JBr1MghjpRcG5S6NGTXck1G5TmHNJ21KZ4yQRvH9Bs2gUQT31bJQr2txF
-	 Alpx2O87z6qWR2dVPBNLq6NcnF3o+jCnCz2SKuKB2ZxkKWzSJf8x4V5JPqS16ynDn
-	 9VR9QSMLRFtHybfjzfcAzCMvTWf7gdVjWBe4xHHiDc45nZ9w+Zaae8R+7X0MYaqeR
-	 aANasvLuC7gKPqhP8r5TcqhlSQWhS/UhuY1zCUbyxYXLKbkAseDJW5lUutnFLL/2r
-	 iwWbXfe0g9MAWP0G1g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MlNtF-1txmxD3lKn-00Zqdu; Thu, 28
- Nov 2024 22:26:59 +0100
-Message-ID: <c6f218dc-60f2-47c5-b1ae-b84abbdfd2be@gmx.com>
-Date: Fri, 29 Nov 2024 07:56:52 +1030
+	s=arc-20240116; t=1732829246; c=relaxed/simple;
+	bh=s+VcTU5fuPZKU8olrgmoGGpranj3388WNP5HiwpP3Hk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cf7uAZ2W7lWFlVmK4iLx9WTGDpmYDvbkTL9taGikolVSDHBfRMQUkuyC0wSh71QkeaQMabtCh4X+5rV5ZAFuIsIBXtVZq0nmKkkJhgLVzfkWIFqPtTqaCywqMyWP4NzL2dAZWb1rmY96wRJeyxTtG9rNaT2HN+LP16R8KFZFeKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FB7HtqZ2; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732829244; x=1764365244;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=s+VcTU5fuPZKU8olrgmoGGpranj3388WNP5HiwpP3Hk=;
+  b=FB7HtqZ2xPRdDFCIXrJnFDzRKoB32m44xSt+dPDlVGKMP1/LYYH3NPGK
+   8psaF/irEVrIf9HhzuG9WwXGWOM1jVykqljIHeF9oTsw8M7mrnVGOhWJP
+   zINse0raVR5UKdafxXoYUH99aRRF3RCcxI/or9a9KZr5QA6YhgBH0b3pu
+   WqfFVN8dB5kMJqSQO5Fhf0j1likfBP7vOTcUh2xE/cPyypxiFL31SIdpl
+   fHzWUjxSOGJ+g5p1TXK2WIBI4mSdhaUILSX0711RDxDRJWjmWrFDlIzqN
+   NIzx15HlSIRAItEiwV1DxR1rYFgN3YytBuHZcUaCm0gdeISmvRju3YVmi
+   w==;
+X-CSE-ConnectionGUID: iGZ4Z6PGTseeQgnxnrFuXQ==
+X-CSE-MsgGUID: 9OYGOmyORGm9p7Vhwg3u/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="32929821"
+X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
+   d="scan'208";a="32929821"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 13:27:15 -0800
+X-CSE-ConnectionGUID: Ao3IuNX5SI+PJIXiwIkb7A==
+X-CSE-MsgGUID: V1Su/k2tRme7ZsCtGIrBig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
+   d="scan'208";a="97424569"
+Received: from mklonows-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.199])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 13:27:08 -0800
+From: Jani Nikula <jani.nikula@intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, Jonathan
+ Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, workflows@vger.kernel.org, Hans Verkuil
+ <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+In-Reply-To: <20241128194758.7d2e7656@foz.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+ <20241126151930.GA5493@pendragon.ideasonboard.com>
+ <20241127103948.501b5a05@foz.lan>
+ <20241127111901.GG31095@pendragon.ideasonboard.com>
+ <CAKMK7uFZsc+-Os+Pb9MHHbdt1K5Pj+D069d-+FvsDeeWgeZASw@mail.gmail.com>
+ <87iks7wqi3.fsf@intel.com> <20241128194758.7d2e7656@foz.lan>
+Date: Thu, 28 Nov 2024 23:27:04 +0200
+Message-ID: <87v7w76od3.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
-To: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
- josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, nogikh@google.com, syzkaller-bugs@googlegroups.com,
- willy@infradead.org, wqu@suse.com
-References: <6748bcc3.050a0220.253251.008c.GAE@google.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <6748bcc3.050a0220.253251.008c.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9tG/jfD+TLQPzLWdMpcNXJxJsQrE8D1mzhoW9oE2auLTt6Z9XaI
- c9jmUSnQeAFfWYHi45LeZeuRojYtCwxIsfbpbjfcffT+xTgyRuX1YwVXwZrzZoI+ga/9X7g
- k7I6hbI/4cmYw7BFnISy4nQ/17O3EcSKh2A8NQ6J01RNYgqkYNgcfS+oMI8LiSS/OvetjAO
- 0IDzkWn1guWnLMGrIOzNQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JJMo9rPL0pM=;DfO4/CedskYDXEBExa5mwG8H+DA
- QlXY+Vg49EtjvGaFms2HGIv3cpE6vIu8igtxRQGzZNtdMMAD/P2/IXh/J85KD7Bq2GKET10Ob
- Zbw8PQBrmnt/JYmlxiZJkOLmF3KIl586ReA9CmtKjNxmgljniyde4546UwjSizGK3K11EaO/A
- N/eQD0Vo6/uRp9sEu9qXqVuRPT4/TWxAR+wpeqojGP8z848x2nbH9m+CB82CRpS5NYs5WeO+v
- aPOtCk1EpY4h4s2Jjf3GEz5sSGM5FpGQnVduq0b6/PDvG5l6Svyn4aLgZ6UGd6JOyAa0iXcJM
- BJqWWu23cy4+E61d3pnAlSFt8BTSHbQV40rOD/axMl0GNaP8w7Wc64FiRupoqWUK+yDao/mAE
- mwxzkLykMUUyT4fw1ysVmtPWaAkXM9NNJ12EXL8ihmnJC3I4DbOdEdVAxCUhbNHs861b1zhZP
- doh+cJY2PXkDaWKPEhPm9lXn0HuH2UhqZboktV6Rc3VHT3VtXvfUFkiukL+B7hBxLpnu/Of/Q
- yBrd3kNjptsbchCqiwDRjTliNDH6+OfVECNojLNtSUB+Hdp3t3JpcbHwv66jBekax9ATJgMtV
- KdCl08sthq64I/TkuCv7wHHmGjfopNfi8++u4ipihNjiolBxmmNcU9150JJy+TziE4po3Tzo4
- 18iwRMBkbMAQMz8/B6qq4Dx0ntgQfmlSSiOF9B5m5fxNcasaanVxoK3ASpGUQQcj+M1Gi2Hxn
- ivtstQz1Xgyns/Oef5ubAAaXYbQ6SvDVb03O73hS7okshqZenkZW2uN/bL1us8BQ/pyYkTIqI
- svg2RFadOhNa4/K7SYJVr2tDSBiAjQMoD+SBWEQIhFj0ATpEbmPasN/71EgJTMgPDawyqhs5N
- TseEB6aetl1BN+Z6eD1prQA8cd1QwN0cZQpeGobYNEHFErk9uVA0bil8mfuGOW73XFN1tBe6I
- R4x9sAowmCNLpj86IqoVYNDVtIw/s9jdC47gHkvkxBtygAQpBzjhPyYGFi4l3WJ8dDWren5Xs
- wstGnlkciqQfL3F+czW3dr4w+h2zLMj3pXE36mrBVF2p0+aaqtniNObSQ+fUNNi5KPBuJUS9L
- QyA9wBkONeZaWyT1P6fIUd4QWPcLEr
+Content-Type: text/plain
 
-# syz test: https://github.com/adam900710/linux.git writeback_fix
+On Thu, 28 Nov 2024, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> We used to have a low bar for entry on our past multi-committers
+> model (back in 2005-2007). It was a disaster, as one of the
+> committer did very evil things. He was blocked, but that didn't
+> prevent some of us to be threatened with physical violence - and 
+> some people even reported death threats.
 
-=E5=9C=A8 2024/11/29 05:26, syzbot =E5=86=99=E9=81=93:
-> syzbot has bisected this issue to:
->
-> commit c87c299776e4d75bcc5559203ae2c37dc0396d80
-> Author: Qu Wenruo <wqu@suse.com>
-> Date:   Thu Oct 10 04:46:12 2024 +0000
->
->      btrfs: make buffered write to copy one page a time
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D165dd3c05=
-80000
-> start commit:   228a1157fb9f Merge tag '6.13-rc-part1-SMB3-client-fixes'=
- o..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D155dd3c05=
-80000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D115dd3c05800=
-00
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D402159daa216=
-c89d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Daac7bff85be224=
-de5156
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1384077858=
-0000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D178407785800=
-00
->
-> Reported-by: syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com
-> Fixes: c87c299776e4 ("btrfs: make buffered write to copy one page a time=
-")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisec=
-tion
->
+While I understand the hesitation, I don't think it's fair towards
+potential future collaborators to distrust them based on a bad actor
+from nearly 20 years ago.
 
+>> Frankly, I'm not fond of the invite-only model. You need to be careful
+>> to not lose transparency.
+>
+> The intent is to be as transparent as possible without violating regulations
+> like GPDR.
+
+I have no idea how GDPR would be relevant here. We don't collect data,
+other than what's in git.
+
+>> I think it's also important to define merge criteria. A set of rules by
+>> which a committer can commit. And it's not really about technical
+>> checkboxes. For example, in drm it really boils down to two things: at
+>> least two people have been involved, and there are no open issues.
+>
+> That's the same criteria we're aiming for. We'll start without
+> two people reviewing, as there won't be enough committers at the
+
+It's not two reviewers for us either; it's typically author+reviewer and
+either author or reviewer commits. Two sets of eyeballs in total.
+
+> beginning for that, but maintainers may revert/rebase the tree in
+> case they don't agree with changes.
+
+Not sure if you really mean it, but saying it like that doesn't really
+breed trust, IMO. Sure, there have been patches merged to i915 that I
+didn't "agree" with. But bad enough to warrant a revert? Very few and
+far between, and always for clear and concrete reasons rather than
+anything subjective.
+
+Side note, we don't do rebases in the development branches.
+
+> Currently, for most of the drivers, the number of committers per driver
+> is equal to the number of maintainers for the same driver.
+
+FWIW, I think that pretty much matches how it was for most drivers in
+drm before the committer model.
+
+> So, on this stage, we're aiming on get maintainers commit rights,
+> starting with the ones that are long time contributors and regularly
+> participate at the media summits.
+>
+> Once the "slow start" phase finishes, we can review the process and
+> start thinking on getting more developers and committers.
+
+Just saying, it's easier to convince people to become committers with no
+strings attached than (co-)maintainers with a bunch of responsibilities,
+such as review or travel obligations.
+
+
+BR,
+Jani.
+
+-- 
+Jani Nikula, Intel
 
