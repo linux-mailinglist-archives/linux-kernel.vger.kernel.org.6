@@ -1,247 +1,170 @@
-Return-Path: <linux-kernel+bounces-425067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071CC9DBD10
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:52:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6BB3164993
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:51:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970E81C4612;
-	Thu, 28 Nov 2024 20:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L1b1CFBL"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970A09DBD0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:51:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2335E1C3043;
-	Thu, 28 Nov 2024 20:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EC1281C4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:51:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7596D1C3F01;
+	Thu, 28 Nov 2024 20:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hCp0Y+Gz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410281C233C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732827104; cv=none; b=GQK26HCIX/aydIuuLDeouLBUs1wZgS5HP/sF9tzAudsnmF0AfK2/1Ge5gw2z6p6MGaOy3ief32Z1Jd9EZhgGxy5UXNPfVUTMO5AVtVrswSlIeL4O9wmdvjo+gOFk9yKCXnMZmhRYybPU9xMON7fTP2FG3IKu7JqTiNTDWJGbtYc=
+	t=1732827103; cv=none; b=YROMqvmzGigmP8ZDM4d+0c5JyCq6CRNI18vtPRvM5/aW/6rKST7WGigqlJ4KTp41+wGlRV3TNnzJuF3yeMlRznkFoZA8CKY1otwZG/vdyf7xzrmFyl7Fou5p8+u3s4hlY8BXIirPskJb/JIafbehzBO3hARqhcTqPpJfiYahNtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732827104; c=relaxed/simple;
-	bh=XYNdnQsuOuENwVuFCQPH8d/EawCzR1g6/sMu75B/Kkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LlMBczmR0D7bzWhJW+z6ur5IUIDXh8QDv5lAyYJDczhYg4Uq+n/KfWEnMcPYVsn0+eHnIxoshm5jXWeTuZVr6oamjrkS7PhdvQFrYwjx2GaeeDz9/ysppm5thxGYUrbhpRphwNZd2L+oMyTjdL7Vxcyde4FkpARZiw/0XyQ/Y7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L1b1CFBL; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 25BD859D;
-	Thu, 28 Nov 2024 21:51:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732827077;
-	bh=XYNdnQsuOuENwVuFCQPH8d/EawCzR1g6/sMu75B/Kkc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L1b1CFBLVQPZy6/NOYjesoREw1wx4pl/GxX/VOVfaKs8uPCSVhfTQvtC+L5+LKvvK
-	 3ZKhG961L6+7ljnOt1INPdPsHiG4HwwikiGtplnOLfVtqmg4CkYDPvor4wQEZDSpxO
-	 iW91L1o+5gEzG9Jty/PZvE40g1BuynFK8ALm6LP8=
-Date: Thu, 28 Nov 2024 22:51:30 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: uvcvideo: Remove dangling pointers
-Message-ID: <20241128205130.GC25731@pendragon.ideasonboard.com>
-References: <20241127-uvc-fix-async-v1-0-eb8722531b8c@chromium.org>
- <20241127-uvc-fix-async-v1-2-eb8722531b8c@chromium.org>
- <20241127093506.GE31095@pendragon.ideasonboard.com>
- <CANiDSCtAxfnKbfEBedaDMvMJX49axeENp=gYPF65pKtgt5_XcQ@mail.gmail.com>
+	s=arc-20240116; t=1732827103; c=relaxed/simple;
+	bh=S3fEwRzf+95GuuIf2gn1/bGkssvPOpxwgvp6Ntrq92s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WUucrteuaih0RhUElhNqOFHbDWyW3xADDpSkhZ1ucfyC783u6oiN80woheCQR910XZKBW1bmYrgqLyhDnZRRyNncOZp4HaJpJ9RqbYssnV9ULGWmdisqvGbOH74O38lCPDro8EOeRsgqhAHpHJFR8u+6B0p13dgkWX/cHSnzfFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hCp0Y+Gz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASKjoEg000694
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:51:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YO+63SqzNSZleOnphAI5CtW01nneSUZGJugsHP/1Bvo=; b=hCp0Y+Gzz44QIr0N
+	QiziuaCQsWhxAwno/LB3r7gcAPQpW1PSxocUKhVLLjpzg7UxwtRVlPBXzSMhzARN
+	ZFomkgJVxgcFLLMPTcQp4XouPBQGAYY4jPmoGtIhs4ZlaZwju2SCtdET0F0VBxwX
+	KP/rn4mBw16hQ0sXM2ZpR6JvRowMttZpejnxtyBxpxUYzu4cwT29g6AmljYGwWT5
+	pmPzxLoSFBACJslZERkXLHTxqoQPwHreX/+za4Dcy82qZ7+5n7DI3UUjHKeP2Rw3
+	Wr2wjpYjqe/lMSrn4F384523Ry+xKbrK+8zvbKqxA0jjW/HByjTPbrrrMVeVUXAa
+	+KmCBw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366y03mp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:51:40 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d8824c96cdso449296d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:51:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732827100; x=1733431900;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YO+63SqzNSZleOnphAI5CtW01nneSUZGJugsHP/1Bvo=;
+        b=rFsiJTOgAzNpbNNvY5ZV22eIR0/ny7UW9CLKxMIxn45Rqt2hwDvdnRK55DYH7x6cBF
+         JeHsvgfptYeXAjjQ1h9UNNv1R7fBSm2N5zWhQnozGI1NdNfDD0iq3E2aZGGsnY0VoJni
+         lBHFucOcDt4hlpoSlzYECfiMBzbkNBWVz4jbpB+W3OZJxSVPvTGcshB2zbA0bC5tHHhJ
+         JPY71PojP2Zb0BCARQEZf6uQJEk6L5r6/msJaLmKfOTULONd+Ecdjid25qNfs2dNJf0G
+         uvUBLHFhealKnPBZSPEgivHDq2UEYqhE3VXSPB7YkN1CQW1u3J2TW8hixji2r4e6DXlZ
+         6x8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVbEwXROGAk54WprpZ8q2rWyMPFTYuJGQzp+L63YquxviK/FoXqIJLD4n+Ewc0D/gp/mcPi9ZRrdPt0BtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr4Bpswz0WQzUdCLv3q0LVFKAonO3AXkDf6WDVgjid36BKQuwn
+	y/9qY2fUkdsYiUzPWsmAMeHsp4sYgdSwHrJMKqf9th592Su7fWItVOYwUESJaUJPTaZkaovcKtK
+	ZWYl1CS9XIXPQXvgDlE58Er9Uk/XTlJqnoi0TVjs1iBLaWLQujEElj8m2TMA5f6k=
+X-Gm-Gg: ASbGnctqDH59dcFNsttO0JJUErL49sAP8VjCvKGEsDlCUcD6uWn7IjFzoqQ+Nxm7nMR
+	lD7C559vLk1qNIWs0CdFROIenh2zQDBbrw7kcCw6trPazvGFXIU/NZGUePxVY62ZAV2CTRNHf2v
+	mjjWGPaQAMVCjvXEYdXKdg+ahY1x03cltfqBFiZIejoBeGAPzFg266I/beJ+wUFrF4zyi1yIOU6
+	gGfg7J9G2QkMVahYM0sXqZYbA3Yr+eQTCmAtap7BcHPcO3eW82l8YQqhufkI4yc2/xpUjBNrAM9
+	+GNhQXfUGHVV/z7ctXz/DS9wO9Gk3Q4=
+X-Received: by 2002:a05:620a:2447:b0:7b3:2107:2eef with SMTP id af79cd13be357-7b67c50621dmr474883085a.16.1732827100099;
+        Thu, 28 Nov 2024 12:51:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHi9dx1Pj9NkSNENKqt4G+dw9v2Xg+cie6fSEML8L/rZz+N+DT8Xtc+w9VR0C9Pn0Tjekm5gg==
+X-Received: by 2002:a05:620a:2447:b0:7b3:2107:2eef with SMTP id af79cd13be357-7b67c50621dmr474881385a.16.1732827099666;
+        Thu, 28 Nov 2024 12:51:39 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097eb9bdesm1054157a12.82.2024.11.28.12.51.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 12:51:39 -0800 (PST)
+Message-ID: <6deb55c7-78de-462a-bd15-6b1cdd4c731d@oss.qualcomm.com>
+Date: Thu, 28 Nov 2024 21:51:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCtAxfnKbfEBedaDMvMJX49axeENp=gYPF65pKtgt5_XcQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        bhupesh.sharma@linaro.org, andersson@kernel.org,
+        konradybcio@kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, quic_tingweiz@quicinc.com
+References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
+ <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
+ <7c0c1120-c2b2-40dd-8032-339cc4d4cda4@oss.qualcomm.com>
+ <frjnnd7bvrdn5frfo4xnz35rb5zxa33eayu3oc5wux7casay64@t2tfbsf5jrva>
+ <03b6f863-ccdd-4e07-9574-ee9dd7c20ab5@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <03b6f863-ccdd-4e07-9574-ee9dd7c20ab5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: ljHbtVw8S4EFBdDKfPU4-ji58OuFQ6IP
+X-Proofpoint-GUID: ljHbtVw8S4EFBdDKfPU4-ji58OuFQ6IP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280166
 
-On Wed, Nov 27, 2024 at 11:23:48AM +0100, Ricardo Ribalda wrote:
-> On Wed, 27 Nov 2024 at 10:35, Laurent Pinchart wrote:
-> > On Wed, Nov 27, 2024 at 07:46:11AM +0000, Ricardo Ribalda wrote:
-> > > When an async control is written, we copy a pointer to the file handle
-> > > that started the operation. That pointer will be used when the device is
-> > > done. Which could be anytime in the future.
-> > >
-> > > If the user closes that file descriptor, its structure will be freed,
-> > > and there will be one dangling pointer per pending async control, that
-> > > the driver will try to use.
-> > >
-> > > Clean all the dangling pointers during release().
-> > >
-> > > To avoid adding a performance penalty in the most common case (no async
-> > > operation). A counter has been introduced with some logic to make sure
-> > > that it is properly handled.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: e5225c820c05 ("media: uvcvideo: Send a control event when a Control Change interrupt arrives")
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_ctrl.c | 40 ++++++++++++++++++++++++++++++++++++++--
-> > >  drivers/media/usb/uvc/uvc_v4l2.c |  2 ++
-> > >  drivers/media/usb/uvc/uvcvideo.h |  3 +++
-> > >  3 files changed, 43 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > index 5d3a28edf7f0..51a53ad25e9c 100644
-> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > @@ -1589,7 +1589,12 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
-> > >       mutex_lock(&chain->ctrl_mutex);
-> > >
-> > >       handle = ctrl->handle;
-> > > -     ctrl->handle = NULL;
-> > > +     if (handle) {
-> > > +             ctrl->handle = NULL;
-> > > +             WARN_ON(!handle->pending_async_ctrls);
-> > > +             if (handle->pending_async_ctrls)
-> > > +                     handle->pending_async_ctrls--;
-> > > +     }
-> >
-> > There's at least one other location where ctrl->handle is reset to NULL.
-> 
-> That assignment is not needed. I added a patch to remove it in the next version.
-> 
-> > >
-> > >       list_for_each_entry(mapping, &ctrl->info.mappings, list) {
-> > >               s32 value = __uvc_ctrl_get_value(mapping, data);
-> > > @@ -2050,8 +2055,11 @@ int uvc_ctrl_set(struct uvc_fh *handle,
-> > >       mapping->set(mapping, value,
-> > >               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-> > >
-> > > -     if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-> > > +     if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS) {
-> > > +             if (!ctrl->handle)
-> > > +                     handle->pending_async_ctrls++;
-> > >               ctrl->handle = handle;
-> >
-> > Is this protected by ctrl_mutex ?
-> 
-> yes, uvc_ctrl_set is only called by uvc_ioctl_s_try_ext_ctrls that
-> calls uvc_ctrl_begin
+On 26.11.2024 10:26 AM, Krzysztof Kozlowski wrote:
+> On 26/11/2024 01:07, Dmitry Baryshkov wrote:
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>> index 590beb37f441..37c6ab217c96 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
+>>>>  			#size-cells = <1>;
+>>>>  		};
+>>>>  
+>>>> +		sdhc_1: mmc@7c4000 {
+>>>> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
+>>>> +			reg = <0x0 0x007c4000 0x0 0x1000>,
+>>>> +			      <0x0 0x007c5000 0x0 0x1000>;
+>>>> +			reg-names = "hc",
+>>>> +				    "cqhci";
+>>>
+>>> There's an "ice" region at 0x007c8000
+>>
+>> Shouldn't ice now be handled by a separate device?
+> It should and UFS bindings expect that. However I am not sure if MMC was
+> improved to support external ICE device.  Also for example on SM8550 the
+> ICE has entirely different (further) address space, so it also suggests
+> it is separate device. Here address space looks almost continuous.
 
-You're right. I think I figured out after writing this part of the
-review, and forgot to delete it. Sorry.
+Some SoCs have two ICEs (one for UFS and one for SDHCI) - seems to be
+mainly the case on platforms where there's "sdhc1" (intended for eMMC)
+*and* a UFS host.
 
-> I will send another patch to add an annotation to the function to make
-> it explicit.
-> 
-> > Please be careful about locking and race conditions, taking the time to
-> > double check will help getting your patches merged faster.
-> >
-> > > +     }
-> > >
-> > >       ctrl->dirty = 1;
-> > >       ctrl->modified = 1;
-> > > @@ -2774,6 +2782,34 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
-> > >       return 0;
-> > >  }
-> > >
-> > > +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
-> > > +{
-> > > +     struct uvc_entity *entity;
-> > > +
-> > > +     guard(mutex)(&handle->chain->ctrl_mutex);
-> > > +
-> > > +     if (!handle->pending_async_ctrls)
-> > > +             return;
-> > > +
-> > > +     list_for_each_entry(entity, &handle->chain->dev->entities, list) {
-> > > +             int i;
-> >
-> > unsigned int
-> >
-> > I wonder if these days you could event write
-> >
-> >                 for (unsigned int i = 0; i < entity->ncontrols; ++i) {
-> >
-> > > +
-> > > +             for (i = 0; i < entity->ncontrols; ++i) {
-> > > +                     struct uvc_control *ctrl = &entity->controls[i];
-> > > +
-> > > +                     if (!ctrl->handle || ctrl->handle != handle)
-> >
-> > Given that handle can't be null, you can write
-> >
-> >                         if (ctrl->handle != handle)
-> >
-> > > +                             continue;
-> > > +
-> > > +                     ctrl->handle = NULL;
-> > > +                     if (WARN_ON(!handle->pending_async_ctrls))
-> > > +                             continue;
-> >
-> > Is this needed ? If we find more controls for this handle than
-> > pending_async_ctrls, decrementing it below 0 will case the WARN_ON() at
-> > the end of this function to trigger, isn't that enough ?
-> 
-> I want to know if the warning is triggered because I have too many
-> pending_async_ctrls or too little.
+The commit message that introduced a separate driver says:
 
-You could also print the value of pending_async_ctrls at the end, it
-would give you that information, and tell you how many you're missing.
-Not a big deal, and I don't expect that warning to be triggered.
+"""
+The reason for this is because, staring with SM8550, the ICE IP block
+is shared between UFS and SDCC, which means we need to probe a dedicated
+device and share it between those two consumers.
+"""
 
-> > > +                     handle->pending_async_ctrls--;
-> > > +             }
-> > > +     }
-> > > +
-> > > +     WARN_ON(handle->pending_async_ctrls);
-> > > +}
-> > > +
-> > >  /*
-> > >   * Cleanup device controls.
-> > >   */
-> > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> > > index 97c5407f6603..b425306a3b8c 100644
-> > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> > > @@ -652,6 +652,8 @@ static int uvc_v4l2_release(struct file *file)
-> > >
-> > >       uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
-> > >
-> > > +     uvc_ctrl_cleanup_fh(handle);
-> > > +
-> > >       /* Only free resources if this is a privileged handle. */
-> > >       if (uvc_has_privileges(handle))
-> > >               uvc_queue_release(&stream->queue);
-> > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > index 07f9921d83f2..2f8a9c48e32a 100644
-> > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > @@ -612,6 +612,7 @@ struct uvc_fh {
-> > >       struct uvc_video_chain *chain;
-> > >       struct uvc_streaming *stream;
-> > >       enum uvc_handle_state state;
-> > > +     unsigned int pending_async_ctrls; /* Protected by ctrl_mutex. */
-> >
-> > The kernel does it the other way around, it lists in the documentation
-> > of the lock what data it protects.
-> >
-> > >  };
-> > >
-> > >  struct uvc_driver {
-> > > @@ -797,6 +798,8 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
-> > >  int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
-> > >                     struct uvc_xu_control_query *xqry);
-> > >
-> > > +void uvc_ctrl_cleanup_fh(struct uvc_fh *handle);
-> > > +
-> > >  /* Utility functions */
-> > >  struct usb_host_endpoint *uvc_find_endpoint(struct usb_host_interface *alts,
-> > >                                           u8 epaddr);
+but:
 
--- 
-Regards,
+* in sm8550.dtsi, only UFS has a qcom,ice reference (like other device
+   trees using that binding)
+* I can't find anything that would back this internally
 
-Laurent Pinchart
+I'm not sure how this is supposed to work, especially on SoCs with two
+instances
+
+Konrad
 
