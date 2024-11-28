@@ -1,144 +1,63 @@
-Return-Path: <linux-kernel+bounces-424832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B439DBA02
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:00:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470029DBA03
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:02:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E83AB2179F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3751636ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC741B3933;
-	Thu, 28 Nov 2024 14:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3IdE1Q9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3F51B21A8;
+	Thu, 28 Nov 2024 15:02:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97971B0F01;
-	Thu, 28 Nov 2024 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B0D143C7E;
+	Thu, 28 Nov 2024 15:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732805996; cv=none; b=m1aa8omR/os6Kj4Np8AF9rdeMNgILTTS7ADvSginhrmNtMOCfsrq3KGOAAtJaSwl62qGq9y1i/sA0Stjkj41npV+oEeORatGqlP/ZAlK2eCF+zqxPsPKmr1zTNVs0oKWWXEFn9tdAl/WbQgez98nSBWZZ2jK3ivhNV4W0MAHVs0=
+	t=1732806151; cv=none; b=bRRBvhzK5CPctrSrQ03Jbyq+ZO/7yCsy2ZkxfkSUoomxAw/pdFutgDPRukGA9pQEUu3f5uCBYOUcF6LKHEAy1NOJZR7h8KgdazukQ5PSccDyRf5baTBrw4ryxfctMnvtRvz/ERAB5Au15pyR8odCWDiesWw5fOushVTfsHW+xBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732805996; c=relaxed/simple;
-	bh=6f6MLMpau+B/8Ci0FW+Nc7bb32EL3D9jNH6aMfLE/X0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rJgSty+rGM+wUDFlcZ2vcuep6GuYJsvEmISGrb/zWwydFEg+WR8qk+Xf8pwz4boHdZIgd+IWZ1nXML86NPJLfP/TPArw2Ch4F6behCXZILYMyHBliTweQBtNUQNBWysFeREynznsOOUmHfIUB8ER1XuEy3LGYqeiyaS8yceWRtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3IdE1Q9; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732805995; x=1764341995;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6f6MLMpau+B/8Ci0FW+Nc7bb32EL3D9jNH6aMfLE/X0=;
-  b=T3IdE1Q9yK97Zhd8Fhq/y2D7bsYyL7AyhMK/NxI66G4B6a81Rq8AHrgP
-   mdrjr52JDtkRL35FQUT9RaEqYSuM61pV9goXQ5h64KXIwoKKjfGPD1C1w
-   xQSx+cRQUkvExxIoIcfcvO5AUU8FZvz9CxxXsXkphwChBVvKgCRwpx7s3
-   ZapOxzwcvOdh8UY3aV9YvgZW4xvdvNgDaDg3wREah2DbUDyoFb+B0rTCO
-   3nW+0CV+x2IDRwm4G4Dn0GX2q6XM7em7NAtbrllYFa1cIMFn0Hi3s04gR
-   cqa3cJs5vNjrJkMrS/J8oaZyWXZsvIcKEN7rmwD2bm9kr3pIm15qtQ7q9
-   w==;
-X-CSE-ConnectionGUID: lZxUBYxVRQyR9+34shixdw==
-X-CSE-MsgGUID: FOQikDf/RO+oeFDHgDZU1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="43530728"
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="43530728"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 06:59:54 -0800
-X-CSE-ConnectionGUID: HOXG+o28SF6UECOTsGN/Gw==
-X-CSE-MsgGUID: lKZo8xPgRq2k7se68ERlwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="97016246"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 06:59:54 -0800
-Received: from [10.246.136.4] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.4])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id C831F20B5705;
-	Thu, 28 Nov 2024 06:59:52 -0800 (PST)
-Message-ID: <d40c6d0e-3755-4cfa-bb9e-e2aa520edb0f@linux.intel.com>
-Date: Thu, 28 Nov 2024 09:59:51 -0500
+	s=arc-20240116; t=1732806151; c=relaxed/simple;
+	bh=fWxZKu2rHJi7xChURR07pZ5zYJJuYjv0XnJPPcCM9BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mK6qI2wai3dDswXEC6Ba+van41p2O1xFcQdiVTt5d3HP+a5l5NFOeaXN99Tv2FBRlB+bALr+Qi4fBgmKFg+T3NCe5ZWnVKe6Vo5yDgIy5WUWLCgfQPAgEv3fUdkD1kdogFXahQMkIkmVGvA9gVtHm5MjrOS1fkAkvmmeuo8uHRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83F14C4CECE;
+	Thu, 28 Nov 2024 15:02:30 +0000 (UTC)
+Date: Thu, 28 Nov 2024 10:03:24 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Add WARN_ON_ONCE for syscall_nr check
+Message-ID: <20241128100324.05bc4c32@gandalf.local.home>
+In-Reply-To: <8d4796dc-ef5b-43d8-8ec0-3891b7994428@gmail.com>
+References: <20241128115319.305523-1-chen.dylane@gmail.com>
+	<20241128074623.063bf253@rorschach.local.home>
+	<8d4796dc-ef5b-43d8-8ec0-3891b7994428@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf tools: Avoid unaligned pointer operations
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-References: <20241128010325.946897-1-namhyung@kernel.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241128010325.946897-1-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Thu, 28 Nov 2024 21:15:31 +0800
+Tao Chen <chen.dylane@gmail.com> wrote:
 
+> Hi, Steve, thank you for your reply, as you say, so what about 
+> pr_warn_once api just to print something ?
 
-On 2024-11-27 8:03 p.m., Namhyung Kim wrote:
-> The sample data is 64-bit aligned basically but raw data starts with
-> 32-bit length field and data follows.  In perf_event__synthesize_sample
-> it treats the sample data as a 64-bit array.  And it needs some trick
-> to update the raw data properly.
-> 
-> But it seems some compilers are not happy with this and the program dies
-> siliently.  I found the sample parsing test failed without any messages
-> on affected systems.
-> 
-> Let's update the code to use a 32-bit pointer directly and make sure the
-> result is 64-bit aligned again.  No functional changes intended.
-> 
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+A better solution is for there to be a return code or something where the
+tracers (perf or ftrace) can record in the trace that the system call is
+not supported.
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-
-Thanks,
-Kan
-
-> ---
-> v2) use '%' instead of '/' to check alignment
-> 
->  tools/perf/util/synthetic-events.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-> index a58444c4aed1f1ea..6923b0d5efede4a7 100644
-> --- a/tools/perf/util/synthetic-events.c
-> +++ b/tools/perf/util/synthetic-events.c
-> @@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
->  	}
->  
->  	if (type & PERF_SAMPLE_RAW) {
-> -		u.val32[0] = sample->raw_size;
-> -		*array = u.val64;
-> -		array = (void *)array + sizeof(u32);
-> +		u32 *array32 = (void *)array;
-> +
-> +		*array32 = sample->raw_size;
-> +		array32++;
-> +
-> +		memcpy(array32, sample->raw_data, sample->raw_size);
-> +		array = (void *)(array32 + (sample->raw_size / sizeof(u32)));
->  
-> -		memcpy(array, sample->raw_data, sample->raw_size);
-> -		array = (void *)array + sample->raw_size;
-> +		/* make sure the array is 64-bit aligned */
-> +		BUG_ON(((long)array) % sizeof(u64));
->  	}
->  
->  	if (type & PERF_SAMPLE_BRANCH_STACK) {
-
+-- Steve
 
