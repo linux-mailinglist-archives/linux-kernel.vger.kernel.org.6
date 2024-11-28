@@ -1,225 +1,338 @@
-Return-Path: <linux-kernel+bounces-424703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90ED79DB848
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E0B9DB84C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4D00B20E88
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:08:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D154B20D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCA61A0B00;
-	Thu, 28 Nov 2024 13:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51A11A0BFE;
+	Thu, 28 Nov 2024 13:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H53l8vXB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fqKwMc/4"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B688A1A08B1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052F819EEB4
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732799316; cv=none; b=P0DTCNwODe1bEiOlM83vHhZq7duPYpJVMFW9SQaKy8NZ/mD4OnX0LpW09TE8gSzPmKfy1HLED6EAaJU9msq3R28sAJnrfyfEpTn+f1/yyBSUf84VUgSisWshLRo04554vNOLRAlYzxde+dK0Vl4JUs1CWuXCaQxAbWyoYgM9LnE=
+	t=1732799372; cv=none; b=svgJ4XmXt4j0kVZ3KYr6n8wuFPFOc4XVGhzbSKE0nXu6ePpV46YynCnFwwo7OpaB/71tSNwIph32DlOh2KGw+mRAmBc7m4pBHKe4brPb1FEp1p2PwEbBMbPxaKdpkiVCyUHO5nHZA3a/WzQqboXG+hTIh7hVa6t/SamyjG9fVDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732799316; c=relaxed/simple;
-	bh=rnj6Sd9X9TxLIyhUGfzslyLH2XT3+uXRMDmSY7rfinE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EL6rpX29EtGcAY1mOY1LU4av10f66CwrwP8ljvduxOaJCTn1Si4Gm1MQlZLvmDI0+BI60SfaMdTIsVASW4M54WwHM1bUdxwgNXM40WLiauPw7Bh6lrgeTIAuZMHcinxaR8MkmuSI3fyneGb8mr0a/Cuv1YJuyaD44g85ouII1pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H53l8vXB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732799312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6WVLrMW4PgfFUurlgLPd9Tg1Y80e1mcQMpUaoH4fb9Y=;
-	b=H53l8vXByQ+1yXt8hsHpyipzc76ku/ZHmaB5kcSqY2+nIlWissDNwOoYbFdpQBnTTsqfdc
-	9tYakUpZmguWu3AQXada+iEhvYXp2RnuXYAcQt1bczSZXDwolaZaq/ZUDyxmoOFBk1rSUE
-	mXmGr79E8J3Ni3CWhvlG+Ndk5LsyKg4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-dGiARsz_P6SyHpat_adsIA-1; Thu, 28 Nov 2024 08:08:30 -0500
-X-MC-Unique: dGiARsz_P6SyHpat_adsIA-1
-X-Mimecast-MFC-AGG-ID: dGiARsz_P6SyHpat_adsIA
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4349fd2965fso7582865e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:08:30 -0800 (PST)
+	s=arc-20240116; t=1732799372; c=relaxed/simple;
+	bh=ApOFSGhe55GZ4QVWZoUZP1i/pea19qWRSGaCsmAqK8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JoQFIVZrdMvv/n/83xBkglZQMTQbi6Nep1APOsN3LtWpRK9+1w4Caxuh+34b7Z2ChP0qHqSF3ZuDW6fcaLgsFvEseIXsJXHhM1xzhWP2DyUHCMf92lQlRV2zPZINX0UDs7AYD+77N5rKlqVmM/OWxXra7adUeCdFIeL831w+A+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fqKwMc/4; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53de556ecdaso757619e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:09:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732799367; x=1733404167; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3pnBfiN/XYPpvgzOixVlWSYVVdbmqQBAJ8570i6TyiI=;
+        b=fqKwMc/4s+4aLGXpsbhkuT9wLbXo2BN3lX+MlaSk5BnvUi6SpLFRNf6ogCesVsHYPP
+         suQttkUxCpLnK3PLuTfl24vnCeSsV0AHTRn482601qIFNQChyLCT8uqbJrwBww0RzhPN
+         j9TR7wd1WVWP+7kfPNgaFf32fBFwy4BECFrCgKCOBn2LezWjU5MhqPcv7HAWAYj9BXMk
+         xG1IhW8pDVNoNv/qfnIxDw91/Jy4JyZVKqjvPkdiLohr7xYCTK5INZPKTGDvhOSfBeKy
+         MssG8WrsXl1P+JdNkyGb2ozUsXmYNE76zpe4VM2kMIifg7wmDZqCyZcsLUNhLvwNJZGB
+         KBJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732799309; x=1733404109;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6WVLrMW4PgfFUurlgLPd9Tg1Y80e1mcQMpUaoH4fb9Y=;
-        b=dQ1MqXLa3emCJpGDTubAbm5aw18ussUKlZyxEGnMx5/eS8eH3G6uveDbV+7t0HWSXQ
-         zPyazrne9lL+wnucj+/J7kC9MRsovLbwWh51Y1leunEDn5Nzgcn8aFXqF0RKPAHTdkUg
-         IjQcKqPWuW2u/7YN2vyzewQsYbvMaJCegCmfpl9vaLFvIYd9EJj/qZCZEcgrzcBprAIj
-         P3r7GpmLmnnOHSFC8x50h4V6Z9iQKmVx7anNox2cTcXv4d47ibIuW/0Uzp6/lZkYPdx3
-         4Lq6LJ2ohWIZV1NTuMUiWBDxM6fag6njx3gUMU41Z1b5/1D/t/v9aAwHmLV5SsX89cT+
-         1wRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTyDy482eYyL338WD73csDp1Sq7B4ysPfL4FnxSs+ckTIY9OX8IgWN8HEJSnBIWUa7hobjef1zp0zVbAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy2W5Q8+MW9OOV8zDJHLjB28brnkXSRrpJXmZbmtVqZb7gQ3J1
-	ayGWrfjiZU+DfTi13iumKs+pOe1uc+ivPI6KjW4aI2lBboeZvJ1z2uCSHGDK41W985ve2aIpbAc
-	x9WCYd2Yd19UY56Y4m/NXdgz+6wBO2qwpCWPjQKvOAAtRR8yEnwP3cj89EYfOyw==
-X-Gm-Gg: ASbGncsFiwqpIOQ4XEnKFSuetBNjCNLm+XQjer6GESlWhd8WwXmP/QHUg14VfG4FfY0
-	AtaCTnk7FnNwaV6b4mW/3qKCsFMEGlba3/K8/5EbmFFMOVqL09YscClTwF5YbT9t0TaAvaRXZ0d
-	XyX7PgomGXoR2HJEcBNmbjKwkEeb1RkcBORn7A8oWQIP3SWFQFFRflj5zO0F78+IJwiEBz1Y97s
-	cEi0lSv+C8Nu85VrUD1/rj+dVwiVD5Z58VxW0quaBam8J3qvNsavSi11F3tW58q6d0kziLT1vVR
-	58vxt6BhQvvRD/qNsIpcdsws0ig5SZDgUv+3w8YFJVDyztpFnMkt4sJrCy0XXnif5TNFxhR79ko
-	=
-X-Received: by 2002:a05:600c:4686:b0:434:a986:11cf with SMTP id 5b1f17b1804b1-434a9dc3030mr74568505e9.8.1732799309614;
-        Thu, 28 Nov 2024 05:08:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFYU2FIWFdBgjrp3Pqs3E01oigMpUF7ykjhtFFQMA7mQkYi/Kd3ajnsobPltJT21a/3mX9/Aw==
-X-Received: by 2002:a05:600c:4686:b0:434:a986:11cf with SMTP id 5b1f17b1804b1-434a9dc3030mr74568165e9.8.1732799309201;
-        Thu, 28 Nov 2024 05:08:29 -0800 (PST)
-Received: from ?IPV6:2003:cb:c714:1600:f3b:67cc:3b88:620e? (p200300cbc71416000f3b67cc3b88620e.dip0.t-ipconnect.de. [2003:cb:c714:1600:f3b:67cc:3b88:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74f1e6sm54103115e9.9.2024.11.28.05.08.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 05:08:28 -0800 (PST)
-Message-ID: <9f9fd840-6421-43b5-9a12-edfa96e067cc@redhat.com>
-Date: Thu, 28 Nov 2024 14:08:27 +0100
+        d=1e100.net; s=20230601; t=1732799367; x=1733404167;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3pnBfiN/XYPpvgzOixVlWSYVVdbmqQBAJ8570i6TyiI=;
+        b=VkUXJVXkPnjqFGpsWVBDa1B4eJBjZE1G1ZSO9JkZB8qrkNqpFhzhZyIB46bFf3fSku
+         JfUxhqnXOJyEoQxUitTH3feY+UmSdVfjYL+Mfe440FZmUimtYE6yN397lDLIfQDbhNMC
+         rNLu1EqAoQ1DBBJQ7YcE7YjiHLPIuxfJAN6cWg9G2yZ8wPKJCmqxv+SA6fzv1kdoHovE
+         gliRd5y2xUF5pRv/6UqPat8T/XRodfQY1QSACem5Ovx3M8rWn/gyrH00Tzdb1Yu8leH0
+         hBVcpLYv1potbtneK4AvrzmXSxOojZ/sZgDmKWiwgXPg0BOgtk3vxG8g4YdEfYNp2cJJ
+         zNQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwtDq8db2oK82e8e+5aP8kj9vbTtjePU/nccuzV5MU8FFjRyLMZMs4/3YT8BnINb0zQNz6KhvziV0G258=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLx8OSe8fAowfib9JRt+oq1P33JKpIwrNEYs+xAqcmGhy/2Wg2
+	0NqYx6aiKuzx9I5Z/84SGj6yupsEZq1knTHyh/eREbmPOT5G69StnB41Otws0zA=
+X-Gm-Gg: ASbGnctvbpRfL+QdKxpiHZkIqh+va/Tht8IOY+XI/k6hg4z5SbjqOJFHEX3zdcQPGIe
+	xtt/qQAPEPAN+M1NHxsOrpTbwjz+Ki6sNK7XDnUYqSkptCEAQ0K3Gky436oSe6GZz7aiK+ldi3O
+	NpNAypDE2rImBNkijsKBupyfdKPeiFksSuKfCP+sbTyoe/Ub7a4OO43RQV7boWHvmRc2JPa4j4f
+	PdjiO3SO82SfBEk1sN4f/abnDu5a7sRCpBct1UNKFg0o1zINE9kwP6nuQAaFCcntd4LjHTzsxnN
+	RuuMBQQK6tIO3pvaCMpbt9x+/LaHGg==
+X-Google-Smtp-Source: AGHT+IEiT8tbWGw0qja41b5xkk9iyirW1j/0Ief7lF46UoZHYslLEZ4Yj8zzr1ziZ4ihxMBHaTRbEA==
+X-Received: by 2002:a05:6512:2822:b0:53d:d0a5:aaa9 with SMTP id 2adb3069b0e04-53df00d1b43mr4100198e87.20.1732799367024;
+        Thu, 28 Nov 2024 05:09:27 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496e1fsm170952e87.218.2024.11.28.05.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 05:09:26 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:09:24 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
+	kernel@quicinc.com, quic_eberman@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: move pon reboot-modes from
+ pm8150.dtsi to board files
+Message-ID: <n3bqppo2upt64emlfljoin73a5ubgouztmdtitjbds522swgvi@s7re3z55eutw>
+References: <20241128-adds-spmi-pmic-peripherals-for-qcs615-v5-0-ae673596b71c@quicinc.com>
+ <20241128-adds-spmi-pmic-peripherals-for-qcs615-v5-3-ae673596b71c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: map pages in advance
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Matthew Wilcox <willy@infradead.org>
-References: <20241128113714.492474-1-lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241128113714.492474-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128-adds-spmi-pmic-peripherals-for-qcs615-v5-3-ae673596b71c@quicinc.com>
 
-On 28.11.24 12:37, Lorenzo Stoakes wrote:
-> We are current refactoring struct page to make it smaller, removing
-> unneeded fields that correctly belong to struct folio.
-> 
-> Two of those fields are page->index and page->mapping. Perf is currently
-> making use of both of these, so this patch removes this usage as it turns
-> out it is unnecessary.
-> 
-> Perf establishes its own internally controlled memory-mapped pages using
-> vm_ops hooks. The first page in the mapping is the read/write user control
-> page, and the rest of the mapping consists of read-only pages.
-> 
-> The VMA is backed by kernel memory either from the buddy allocator or
-> vmalloc depending on configuration. It is intended to be mapped read/write,
-> but because it has a page_mkwrite() hook, vma_wants_writenotify() indicaets
-> that it should be mapped read-only.
-> 
-> When a write fault occurs, the provided page_mkwrite() hook,
-> perf_mmap_fault() (doing double duty handing faults as well) uses the
-> vmf->pgoff field to determine if this is the first page, allowing for the
-> desired read/write first page, read-only rest mapping.
-> 
-> For this to work the implementation has to carefully work around faulting
-> logic. When a page is write-faulted, the fault() hook is called first, then
-> its page_mkwrite() hook is called (to allow for dirty tracking in file
-> systems).
-> 
-> On fault we set the folio's mapping in perf_mmap_fault(), this is because
-> when do_page_mkwrite() is subsequently invoked, it treats a missing mapping
-> as an indicator that the fault should be retried.
-> 
-> We also set the folio's index so, given the folio is being treated as faux
-> user memory, it correctly references its offset within the VMA.
-> 
-> This explains why the mapping and index fields are used - but it's not
-> necessary.
-> 
-> We preallocate pages when perf_mmap() is called for the first time via
-> rb_alloc(), and further allocate auxiliary pages via rb_aux_alloc() as
-> needed if the mapping requires it.
-> 
-> This allocation is done in the f_ops->mmap() hook provided in perf_mmap(),
-> and so we can instead simply map all the memory right away here - there's
-> no point in handling (read) page faults when we don't demand page nor need
-> to be notified about them (perf does not).
-> 
-> This patch therefore changes this logic to map everything when the mmap()
-> hook is called, establishing a PFN map. It implements vm_ops->pfn_mkwrite()
-> to provide the required read/write vs. read-only behaviour, which does not
-> require the previously implemented workarounds.
-> 
-> It makes sense semantically to establish a PFN map too - we are managing
-> the pages internally and so it is appropriate to mark this as a special
-> mapping.
+On Thu, Nov 28, 2024 at 07:55:27PM +0800, Tingguo Cheng wrote:
+> Reboot modes were originally managed by PMIC pon driver on mobile and
+> IoT platforms. But recently, some new platforms are going to adopt PSCI
+> to manage linux reboot modes, which involves firmwares to co-work with.
 
-It's rather sad seeing more PFNMAP users where PFNMAP is not really 
-required (-> this is struct page backed).
+Which platforms? Please be more exact. Also this patch needs to come
+before patch 2, enabling this PMIC on QCS615 board.
 
-Especially having to perform several independent remap_pfn_range() calls 
-rather looks like yet another workaround ...
-
-Would we be able to achieve something comparable with vm_insert_pages(), 
-to just map them in advance?
+> In this case, reboot-modes should be removed from pon dts node to avoid
+> conflicting. This implies that reboot modes go with devices rather than
+> PMICs as well.
+> 
+> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/pm8150.dtsi                      | 2 --
+>  arch/arm64/boot/dts/qcom/qdu1000-idp.dts                  | 5 +++++
+>  arch/arm64/boot/dts/qcom/qrb5165-rb5.dts                  | 5 +++++
+>  arch/arm64/boot/dts/qcom/qru1000-idp.dts                  | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8150-hdk.dts                   | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8150-mtp.dts                   | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8150-sony-xperia-kumano.dtsi   | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8250-hdk.dts                   | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8250-mtp.dts                   | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi      | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi  | 5 +++++
+>  arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts           | 5 +++++
+>  13 files changed, 60 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm8150.dtsi b/arch/arm64/boot/dts/qcom/pm8150.dtsi
+> index a74a7ff660d2b1be0df0dc26d79e1921a3935f14..d2568686a098cb4d78573000b34840d8f5f674aa 100644
+> --- a/arch/arm64/boot/dts/qcom/pm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm8150.dtsi
+> @@ -49,8 +49,6 @@ pm8150_0: pmic@0 {
+>  		pon: pon@800 {
+>  			compatible = "qcom,pm8998-pon";
+>  			reg = <0x0800>;
+> -			mode-bootloader = <0x2>;
+> -			mode-recovery = <0x1>;
+>  
+>  			pon_pwrkey: pwrkey {
+>  				compatible = "qcom,pm8941-pwrkey";
+> diff --git a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> index e65305f8136c886c076bd9603b48aadedf59730a..82f6b4a3e24aa2caba90715e12bca25b693a0d65 100644
+> --- a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> @@ -239,6 +239,11 @@ vreg_l18a_1p2: ldo18 {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &qup_i2c1_data_clk {
+>  	drive-strength = <2>;
+>  	bias-pull-up;
+> diff --git a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+> index 52eef88e882c356a62bf563fcd7ce3d54b5ea824..7afa5acac3fcf7cb6f8c5274acdc2e55192c1280 100644
+> --- a/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+> +++ b/arch/arm64/boot/dts/qcom/qrb5165-rb5.dts
+> @@ -964,6 +964,11 @@ led@3 {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/qru1000-idp.dts b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> index 1c781d9e24cf4d4f45380860c6d89c21e8df9925..fe0b782aa3ff5f4b73e921880fc3cd9908398705 100644
+> --- a/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> @@ -239,6 +239,11 @@ vreg_l18a_1p2: ldo18 {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &qup_i2c1_data_clk {
+>  	drive-strength = <2>;
+>  	bias-pull-up;
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> index bac08f00b303ff6e6d47697f1cd9bff53efaf27b..6ea883b1edfa6c511730550f4db0cb9c25fc633d 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> @@ -578,6 +578,11 @@ pm8150b_typec_sbu_out: endpoint {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts b/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts
+> index b039773c44653ae8cd5c2b9fdeccbd304ad2c9e5..fc11ef0373c6920e970886ce2eb2c4f20c75154a 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts
+> @@ -430,6 +430,11 @@ &i2c19 {
+>  	/* MAX34417 @ 0x1e */
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> index 256a1ba9494560b93dc324751ee8327f763aad90..2e1c7afe0aa7d4ad560dd8e5aab2ce835991cc9d 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> @@ -358,6 +358,11 @@ &gpu {
+>  	status = "okay";
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-sony-xperia-kumano.dtsi b/arch/arm64/boot/dts/qcom/sm8150-sony-xperia-kumano.dtsi
+> index ae0ca48b89a59f669e0f359e48632b335050a2eb..70fd6455518b9101ba25dda6e1fb5f87c1053a71 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-sony-xperia-kumano.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-sony-xperia-kumano.dtsi
+> @@ -601,6 +601,11 @@ main_cam_pwr_vmdr_en: main-cam-pwr-vmdr-en-state {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-hdk.dts b/arch/arm64/boot/dts/qcom/sm8250-hdk.dts
+> index 1bbb71e1a4fc0f1289663165e0a8f7ef88d9b429..f5c193c6c5f9b4bf007a17926bcce319f2608706 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-hdk.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-hdk.dts
+> @@ -373,6 +373,11 @@ &gpu {
+>  	status = "okay";
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-mtp.dts b/arch/arm64/boot/dts/qcom/sm8250-mtp.dts
+> index 21b2ca1def8363cbaf7857215f42ff8492a8f7fa..7f592bd3024868c6ab4c9c61051d3f2cf5707a1a 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-mtp.dts
+> @@ -627,6 +627,11 @@ channel@4f {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &qupv3_id_0 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+> index f6870d3f2886fc68aaf914caecdd3a22ba249c5a..d8289b2698f37bce0501ac20c356bd5ae017e1ab 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-sony-xperia-edo.dtsi
+> @@ -591,6 +591,11 @@ focus_n: focus-n-state {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> index 3596dd328c31d6f0430fed343c7e2307147d21f3..0bf3d6a826fcbad9c84303e6016c4657c5f89ef1 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+> @@ -673,6 +673,11 @@ &pm8150b_vbus {
+>  	status = "okay";
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
+> index 86e1f7fd1c2058202c9506d7e737fadabf476d5d..668078ea4f04a7ead052d28bf111be6daf25805f 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts
+> @@ -554,6 +554,11 @@ vol_up_n: vol-up-n-state {
+>  	};
+>  };
+>  
+> +&pon {
+> +	mode-bootloader = <0x2>;
+> +	mode-recovery = <0x1>;
+> +};
+> +
+>  &pon_pwrkey {
+>  	status = "okay";
+>  };
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-Cheers,
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
