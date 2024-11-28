@@ -1,144 +1,201 @@
-Return-Path: <linux-kernel+bounces-424413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32E39DB414
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:47:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40B49DB412
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:46:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97ADF162AA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4AF5280ECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDAE1509A0;
-	Thu, 28 Nov 2024 08:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WS2ncB3z"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD04C14F9D6;
+	Thu, 28 Nov 2024 08:46:40 +0000 (UTC)
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B3A7404E;
-	Thu, 28 Nov 2024 08:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B5B149DF7;
+	Thu, 28 Nov 2024 08:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783619; cv=none; b=KOGcIUyyGWIVPh+/GwO64wBfNMEtqYDKXialaCVhhPVbXU+Ry0P+H3rBM4VNlxrGCKuGKjUCEt6KhEvYBQzsPIEiChJpeH9KQJLw6DIXEV/MjRjn7BEVrt3q1eB/XrOpxCnrxd0d+DEJbjraOn4kwG0sLpk4yXQQK0mBBwpQgtI=
+	t=1732783600; cv=none; b=meTfcystuBgIJX5YAidrvAgbf5aRg4hWL99JyrNLhZKyi+iEy7PEOCTIUeO4Tw5cFuguuGE+g1RSsx5EM3KAJj/K+I5MVk72DIGbbYq2R6n6N7sPGd0qrpZh7H7df16MueGDuD+aqc8RpL0pYIJF1e1sTNthE+oODy4UjzcnmaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783619; c=relaxed/simple;
-	bh=frma48AJ0SUvSuy5UhykiEVuMb1wSYmkcDffGWoFnUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aoZJGhVYLygWJkYdLhfkXiZuVaGylB1EJpfWbAsn2DZGAPRjBKLZLXrSgQm6rOmKzORTwzASvwDV+CiWHxtarirM2uZHcUrFyVeFwWWkJ6H0sZ+NICQThTR3xLBLUwns+3Ii2ZV4jg8HOfPN9J0EHWgmdOzcGGvPieXnIl/8zqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WS2ncB3z; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53da6801c6dso449254e87.0;
-        Thu, 28 Nov 2024 00:46:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732783615; x=1733388415; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=azerENWgxXyHbhyynQt03n9Ftd/1tM45tjkSffbSXWU=;
-        b=WS2ncB3zKS22zk9NPs0KPbJkoUxZhzBXuw/ipSJhcJlNgDYiPWiLoo+s4j1UI5TeeB
-         PaUPlHX9+pQbXdLYRHbD2mQOfY8xrRJew5leTBV5+5GznXRYIv8UtzEcjNJO6/TKmNvt
-         51MajD/2EYv1BWcKUMTRKiwh1IU9LIg5tSKAD+PZKEbZP1LloTd7ofLsxDOCRWnivHvV
-         sQkuLTLyDKKv2mUVy3vL0XXfJzFRUWoUrxXbNF37+tpMfmIZRnxVBx0rOVDmMklt6OQ9
-         WPr7YGyFSMeNaKIog3jp1LreB3aOps8WJrrBrTDzPB4Avt0r57G8CpENXGtkjXZ71lzx
-         rrDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732783615; x=1733388415;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=azerENWgxXyHbhyynQt03n9Ftd/1tM45tjkSffbSXWU=;
-        b=EgavNYGr5a0GxfZMXDtI+tnNK7w/oHdbEFCheRpbn4v63ZJhxdRECTCllljK1ReuIr
-         1OQgg2maI1+7KCkaV0Q+KC4EUZNrlulDzqARpUyaotxDllP8Pfi3bzOn026gE+U1D+h8
-         nrv5kD6se6ysUUbQKl8DkFbKFTpRh4zGy1UYt5OZG6XP+TF6HLjKcPjfSZUnh0o7odKj
-         kwca9P4QE9qHHaXRwNJKC5jFQSoldVv+GRtFYlFKUiz5v4+JXv5gF+g3eggkikeIcGFE
-         mpIkuWgferJ0GV9UEs7PQI7WOYs3cfu5hx1GqjYH9QmAB1LjU+KLS4ncBN/ROKjPz8u3
-         yxZw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7BQEAV0/jSvTqX4LLExnNqZQVjB96yM+RTjEneiyCNkCs9adKngiJoaPdwCDzNLuym6qwKWtnnBoRyK5t@vger.kernel.org, AJvYcCXeP0YoINdDNbN76ZlyfT2R8UXPdNcI22aRNvpcdmXm0aLTL4m+irP6lAorxtnBpVJUtV8U/dwzSjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+/xSCev3CjZxOIQvlagEDgCquKChTGuVeSqQPly1feXSsK77
-	Ka3kTgB/kEq0vS7ZNS0WTqcbFLmCtysJiIAV7+T6/CG1bQTJdOT7
-X-Gm-Gg: ASbGncsysYfutDvtEkgZhmcDkzJirh/RWApDEkfUTmAOBLAfW+xiFso6EIrkLR8TU0a
-	/mxLGZzIO+IzSy2xf/lAoydoZ0MpKOF0qs4TsJph/PhOMF5oRZPaAYlA69pTT5f04AA9Xf3BK4T
-	//l2bQQrw+xQqcUmXgJoxwgnFXZg95u3MNk7HPhDMcw3GmRiCA3tPKotNITIT6BIPHCVqgwuR0K
-	S4Wa6M0KJQ2ZT/pAbppCyRT7D4ltY67PYCoIxhbkc0aQ7DXCGAi
-X-Google-Smtp-Source: AGHT+IGly3n2VGAAg92jcqRfWaeHa+991E2ZJC4divBuKY94dlI3idhatNRwSohA/ctMs3DGRntw7A==
-X-Received: by 2002:a05:6512:1115:b0:53d:ecce:361f with SMTP id 2adb3069b0e04-53df00d9e74mr3715791e87.30.1732783615140;
-        Thu, 28 Nov 2024 00:46:55 -0800 (PST)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6443235sm112125e87.81.2024.11.28.00.46.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:46:52 -0800 (PST)
-Date: Thu, 28 Nov 2024 10:46:29 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: test: Fix GTS test config
-Message-ID: <Z0gt5R86WdeK73u2@mva-rohm>
+	s=arc-20240116; t=1732783600; c=relaxed/simple;
+	bh=QrLzs/rcELysx/e/M3L4W/sjcPuvNI9J5sbyihVA6o4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ak9T2qWlmN5/ZQVzfdlG6mZ27zXHZcFxeSplnyT5Vvw9gagNKJg4zZxCXQmsHgyxwH0+KBYGl1tFP06ICk91ez2jF9BqXZlir+VEc1mTr5TCd6c9J6wd160cdkziamik2XtOoRLD+4sjHLiQBKjbXHExCOiZWI9z69a6ZLHbXh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+Received: from [89.212.21.243] (port=39042 helo=[192.168.69.52])
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <andrej.picej@norik.com>)
+	id 1tGaAW-00Btos-25;
+	Thu, 28 Nov 2024 09:46:36 +0100
+Message-ID: <3b5768e5-dcb6-436d-837c-418676e13b2e@norik.com>
+Date: Thu, 28 Nov 2024 09:46:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PfNbdR7eKkIJPpt3"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: drm/bridge: ti-sn65dsi83: Add optional
+ property ti,lvds-vcom
+To: Rob Herring <robh@kernel.org>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ marex@denx.de, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20241127103031.1007893-1-andrej.picej@norik.com>
+ <20241127103031.1007893-2-andrej.picej@norik.com>
+ <20241127151630.GA3515396-robh@kernel.org>
+Content-Language: en-US
+From: Andrej Picej <andrej.picej@norik.com>
+Autocrypt: addr=andrej.picej@norik.com; keydata=
+ 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
+ xtT/8OxBOVSHvA==
+In-Reply-To: <20241127151630.GA3515396-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
+X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
+Hi Rob,
 
---PfNbdR7eKkIJPpt3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 27. 11. 24 16:16, Rob Herring wrote:
+> On Wed, Nov 27, 2024 at 11:30:29AM +0100, Andrej Picej wrote:
+>> From: Janine Hagemann <j.hagemann@phytec.de>
+>>
+>> Add an optional property to change LVDS output voltage. This depends on
+>> the connected display specifications. With this property we directly set
+>> the LVDS_VCOM (0x19) register.
+>> Better register property mapping would be quite tricky. Please check
+>> bridge's datasheet for details on how register values set the LVDS
+>> data lines and LVDS clock output voltage.
+>>
+>> Signed-off-by: Janine Hagemann <j.hagemann@phytec.de>
+>> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+>> ---
+>>   .../bindings/display/bridge/ti,sn65dsi83.yaml      | 14 +++++++++++++-
+>>   1 file changed, 13 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+>> index 48a97bb3e2e0..5b2c0c281824 100644
+>> --- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+>> +++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+>> @@ -58,6 +58,12 @@ properties:
+>>                     - const: 2
+>>                     - const: 3
+>>                     - const: 4
+>> +              ti,lvds-vcom:
+>> +                $ref: /schemas/types.yaml#/definitions/uint32
+>> +                description: LVDS output voltage configuration. This defines
+>> +                  LVDS_VCOM (0x19) register value. Check bridge's datasheet for
+>> +                  details on how register values set the LVDS data lines and
+>> +                  LVDS clock output voltage.
+> 
+> Constraints? 0 - 2^32 are all valid values?
 
-The test config contained a copy-paste error. The IIO GTS helper test
-was errorneously titled as "Test IIO formatting functions" in the
-menuconfig.
+Not really, only first 6 bits, which also means that this can be uint8 
+then. Will fix with other issues.
 
-Change the title of the tests to reflect what is tested.
+> 
+>>   
+>>         port@1:
+>>           $ref: /schemas/graph.yaml#/$defs/port-base
+>> @@ -78,6 +84,12 @@ properties:
+>>                     - const: 2
+>>                     - const: 3
+>>                     - const: 4
+>> +              ti,lvds-vcom:
+>> +                $ref: /schemas/types.yaml#/definitions/uint32
+>> +                description: LVDS output voltage configuration. This defines
+>> +                  LVDS_VCOM (0x19) register value. Check bridge's datasheet for
+>> +                  details on how register values set the LVDS data lines and
+>> +                  LVDS clock output voltage.
+> 
+> Never good to just have 2 copies of the same thing. Move the whole port
+> schema to a $defs entry and add the property there. Then just $ref it:
+> 
+>    port@0:
+>      description: Video port for MIPI DSI Channel-A input
+>      $ref: '#/$defs/dsi-port'
+> 
+> 
+> $defs:
+>    dsi-port:
+>      $ref: /schemas/graph.yaml#/$defs/port-base
+>      unevaluatedProperties: false
+>      description: Video port for MIPI DSI inputs
+> 
+>      properties:
+>        endpoint:
+>          $ref: /schemas/media/video-interfaces.yaml#
+>          unevaluatedProperties: false
+> 
+>          properties:
+>            data-lanes:
+>              description: array of physical DSI data lane indexes.
+>              minItems: 1
+>              items:
+>                - const: 1
+>                - const: 2
+>                - const: 3
+>                - const: 4
+> 
 
-Fixes: cf996f039679 ("iio: test: test gain-time-scale helpers")
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
- drivers/iio/test/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok will do it like this + just noticed that we are adding this under 
+MIPI DSI port, and not LVDS output port for which these property is 
+meant for. Will move it there.
 
-diff --git a/drivers/iio/test/Kconfig b/drivers/iio/test/Kconfig
-index 33cca49c8058..7a181cac3cc9 100644
---- a/drivers/iio/test/Kconfig
-+++ b/drivers/iio/test/Kconfig
-@@ -5,7 +5,7 @@
-=20
- # Keep in alphabetical order
- config IIO_GTS_KUNIT_TEST
--	tristate "Test IIO formatting functions" if !KUNIT_ALL_TESTS
-+	tristate "Test IIO gain-time-scale helpers" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	select IIO_GTS_HELPER
- 	select TEST_KUNIT_DEVICE_HELPERS
-
-base-commit: a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
---=20
-2.47.0
-
-
---PfNbdR7eKkIJPpt3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdILeEACgkQeFA3/03a
-ocXwugf8CPPTOxi5p3X1hzyy3yUF3B+qyYEXH1RPkkakZvTb+zmdioElfSfxbq7k
-hcHIAW//5d9O71P5xEFXH8nj0MbdXPEnO+o0mZpMb3qfUrzTJ59sMAhQFF+k5LdA
-x/V8ertSb9XbXX4ymO5dZ9ezpijCwC2mGxHAsX+rQEXBO3aNUz0bvtgDC5oLvoP5
-0N4Rxa016RcUDOT4MBqNGyNC0tzsuUfbAAV6zuTLmykyd9ZkPbJAvvfrO1TnUvit
-hK/5zsf47cOa8HRjwuRITgtntnjFbs+XtGNwaVxRjBiFQIn+3G1FQ1McsjJf4oTL
-d6ZWaddsOs/0OJN6eXIK7RUG4CaaYw==
-=IUNn
------END PGP SIGNATURE-----
-
---PfNbdR7eKkIJPpt3--
+Thanks. Best regards,
+Andrej
 
