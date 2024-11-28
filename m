@@ -1,117 +1,177 @@
-Return-Path: <linux-kernel+bounces-424404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A639DB3F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:43:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41309DB409
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:45:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A6A166673
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C41FB218D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C26C1514DC;
-	Thu, 28 Nov 2024 08:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCC9155CBA;
+	Thu, 28 Nov 2024 08:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gpTO9RCM"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DNpappgn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB9314D444
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A04D15383E;
+	Thu, 28 Nov 2024 08:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783392; cv=none; b=umki1U4WMztJiPIJXmJqcdW0Ikw3Q3vOh9g/q2pHdAPBdzvuW02C9Z4oVsC5Wnuid1/PGq9tP0gQC0Rsw6bHSiAGnsAtZCQB6D9QW3xwr0E3Ouc/EtgXkU1kt+1rxGyPvLDEzpzF7X/wAUjqRjplKhcvUUoaESgDvZ5zBZSAaDE=
+	t=1732783521; cv=none; b=XXJMg/3dhRnFNqLJLIMJdkQe7P/8q3bIv/X677qdt1lFbN9iO0NIF/1QRgxMtCsgirPpNrFwiEnpLIFJNSsgHFK1O2+L5kP82KpShJQn7gityCG/k6dFzw/hLDLUitEooM9mv4vBa5jlVt3cCBSkWqcAozwDOe/yPy6w25IgSJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783392; c=relaxed/simple;
-	bh=eD0BKTile3avGYgb6esO7NcB7LFOjudhnPBYvOtuu6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/63Lo42EfmI9AWhVjOFmx38mC+mrvUkgSz/mB3+3VwrRheRHjXPF0rB9b2whGNArVYVmEhyu+qW6Q6IobLuUUFGYgXBHb0ZUO/EmM1VRc9msR+DSuQ3GI7Odht2nQT55KCLmgp/nB7iq1HlY0tAuORFjRjPcKQO7mLZ9JuULuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gpTO9RCM; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa532dcb470so31384766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732783389; x=1733388189; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMHb2Kr+9Gyds+XTGzQnx6NFjRgDvoBkrYDD0zxb/+k=;
-        b=gpTO9RCM87lRTmvEUOFaWOz57bO62fWTAqgf0Bw4ZEXrYqHHa34J3LKUURTedXEeh5
-         GAnrAmMAjn3lvlqVjXNOVZCkY4O8YIlalLkNu7frgvpOMPp+8NoG0xYnTQz9bMyNN7IJ
-         Oo2aVsrnft/1cMgoelpO+U4Zu0IlicHtNlQq+P5E+uLLED/aQaYPEldmxeYuhUSQbobQ
-         eTFYASwZBDCLrBPHUXuRUU4hAr0xZ1qqk+d+YSDEBVD4rzsWU2p2u17Ys9qMDfsdsckn
-         2Y2RlOHHdMuJHG2t/1UIjC4OTldpTq4qQPbcRjC5dFqVI1/YnBKotwBhaQi/JCt2XMnp
-         gNjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732783389; x=1733388189;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMHb2Kr+9Gyds+XTGzQnx6NFjRgDvoBkrYDD0zxb/+k=;
-        b=v2ZPsiZfSjU9VjJvTUbCiOVwgF9x/i0u6m9/NGQbtWtHvAitDmsFtmsvpqsBslQkd7
-         H+fU9ZRpz+lAb05qecOS03FnJEpTSN1luz6PAe+ZxJ4aPAM/crnNvZTrx6fXcQHhkLRT
-         IzaA98LW+lTumH48/PEtIwMSPr91ANma16FwSu0+509OE0wCBi6UxutFE8R/KXm6L+9S
-         yWiU2bsmkzZT3wApei+XApRuHLdtP+hLWZB+zn2Js6ZINGhe7YagsmTCAjI8jx2R7J6F
-         39iJTUmaA99QCWC9SvRs+dZfSladKynbPXrQi9p/CYrJN1bs5QB8+dfRWZ/clQ2ClZBx
-         kUXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVB02ZYtfaCppLsgXHjDEQEu3fOa05g5unAnUwqPtBSoEQ2EcYGJPZ9tfo5AkWESN5qYttqeKmD/Uzj8E8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCJ02Wfohjpe2PIZc5KHKw1yg38U2926370WhQ/7mQLzGVP2qT
-	s3snlNYDrK47rtO58BOAbXrqZMotUIhtTgJCLaApRavybpoPv08wW+CytNKtb4U=
-X-Gm-Gg: ASbGncvB4ZbqHXwQnz+j0OftANoYGK+rzozhMVkJDn6Vh2LVtaA+pX9wkiLFYLpYJdj
-	6gnxaZB40CoZjoxfnPaFvZCTbTquTayV5/HqBy8072bNN0EcCYO6Q0T06AYgzW0sFhcUOy1xTJJ
-	jfMSVQl3PfLYsmdHXnPtTCpQvwPDFyQtGPWxal1d8BpnH38Kp0W/8cZADCZLsQfHsvWW8wb6f6g
-	eY1dSnxQ1Mbxjw3UrSCrdxSyuM1KEIcOQ9Zwc4/Ky26n0XgwFoIZLrDNu1U+kHVbWsw/7hRK6pI
-	AcBjSlgOWUSkFGsmCqdob2ZQnaJf0LahxY4=
-X-Google-Smtp-Source: AGHT+IE91WdNXINf1ttfiGq0DeG9vnUXdI7yQdKbewyZQW5Jp/++7K5EDj28/C2AmS8X01ObB7bPuA==
-X-Received: by 2002:aa7:cfd4:0:b0:5d0:8225:aa19 with SMTP id 4fb4d7f45d1cf-5d08225aa9cmr4768526a12.2.1732783388739;
-        Thu, 28 Nov 2024 00:43:08 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097e8f649sm493828a12.59.2024.11.28.00.43.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 00:43:07 -0800 (PST)
-Date: Thu, 28 Nov 2024 09:43:06 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	James Houghton <jthoughton@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH v4 15/16] KVM: selftests: Use canonical $(ARCH) paths for
- KVM selftests directories
-Message-ID: <20241128-d7a5061ce8160000cd5260bd@orel>
-References: <20241128005547.4077116-1-seanjc@google.com>
- <20241128005547.4077116-16-seanjc@google.com>
+	s=arc-20240116; t=1732783521; c=relaxed/simple;
+	bh=HS0w8xY+qgqg3sWzMteEUnmkeL0f9VGuApguOioLhXE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=rNC+WY0fej1yCXkP13FvsAii0JxxXmNrk5x3wfYymFpPrNAraFzym9b/uDkgO19ki0IcIhGUF98mnJpMJBEwvr+A1CD2n8Hsim5R79gNYWoKp7WvA+3UBm8DtqQ52yJ0zxNvfD6OcG+C0MSZkBEIRGNgXzZNAsX6grgmAH0pc5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DNpappgn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS8eHh4028707;
+	Thu, 28 Nov 2024 08:45:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/wRuB2/opZ8soiATPqzoo/
+	6CpobmYIIfoTNiZWu7tUU=; b=DNpappgn9AursR47bg2rxH7suHuMXAu3GZxzAP
+	vg2xttS29nQVbYsMJxMCH+CvWRV+YEMyyaZUWR8EWl4sGJNfjE9JNuoVKl1nBpSF
+	TABAMmBdR7FnoUVkzU7IzHcDL7+jkMIA76roIqyBvQ8slscEhgywlTfp1pewGLxi
+	dh0OHmUwY0DfokKdPR/91T1gKN74Z/+penjI62403QjKHKY7eXG4aFGNfLtZdCi5
+	tHa107e+O9IYaax7oVvvc6t4oGv5UTgvrEzgfcZyBPROQzjAVNdU18/PTO8Hd+yT
+	2PUmNWcX2WstNVMRGzF5c9DEQkzprGnost7I81wrrKHZjErw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43671e9v2w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 08:45:05 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS8j40q004885
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 08:45:04 GMT
+Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 28 Nov 2024 00:45:01 -0800
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+Subject: [PATCH v3 0/4] Add initial support for QCS8300 SoC and QCS8300
+ RIDE board
+Date: Thu, 28 Nov 2024 16:44:42 +0800
+Message-ID: <20241128-qcs8300_initial_dtsi-v3-0-26aa8a164914@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128005547.4077116-16-seanjc@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHotSGcC/3XOTU4DMQwF4KuMsibI+WGSdMU9EKo8TkIt0Zk2C
+ SNQ1buTTjcgwfI9y599ETUVTlXshosoaeXKy9yDeRgEHXB+S5Jjz0KDtkppL89UvQHY88yN8X0
+ fW2WJ0WQVDCUVneirp5Iyf27sy2vPB65tKV/blVXd2g2EAPZvcFUSZISEAXMkAPd8/mDimR5pO
+ YobueofjH76h9GdscGShYwarf7NXO+vltTbyu3+r5iwJtnnR267IVs/kkdU4+SV03k0U4zkQKk
+ RgXxw6LLJoDt2/QbUhTBUTQEAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jingyi Wang
+	<quic_jingyw@quicinc.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732783501; l=2407;
+ i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
+ bh=HS0w8xY+qgqg3sWzMteEUnmkeL0f9VGuApguOioLhXE=;
+ b=ydMl5Ii4oCAf3+RcKLmIYUiB/pb14UaWkpeYUaRn8c5DQRR43NA+NG8nT4SBrwpcyYMiE6IbV
+ ORjRY6Dq6IQCMJhVFKi6KeJdDBrQV3qPlfpf/zAUwRqxoB7KUXlcaZc
+X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
+ pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JRKPUSoZKpnqHMZjoBzcLouGMhozeGLu
+X-Proofpoint-GUID: JRKPUSoZKpnqHMZjoBzcLouGMhozeGLu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ impostorscore=0 mlxscore=0 phishscore=0 priorityscore=1501 clxscore=1011
+ bulkscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280069
 
-On Wed, Nov 27, 2024 at 04:55:46PM -0800, Sean Christopherson wrote:
-> Use the kernel's canonical $(ARCH) paths instead of the raw target triple
-> for KVM selftests directories.  KVM selftests are quite nearly the only
-> place in the entire kernel that using the target triple for directories,
-> tools/testing/selftests/drivers/s390x being the lone holdout.
-> 
-> Using the kernel's preferred nomenclature eliminates the minor, but
-> annoying, friction of having to translate to KVM's selftests directories,
-> e.g. for pattern matching, opening files, running selftests, etc.
-> 
-> Opportunsitically delete file comments that reference the full path of the
-> file, as they are obviously prone to becoming stale, and serve no known
-> purpose.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
+Introduce the Device Tree for the QCS8300 platform.
 
-Acked-by: Andrew Jones <ajones@ventanamicro.com>
+Features added and enabled:
+- CPUs with PSCI idle states
+- Interrupt-controller with PDC wakeup support
+- Timers, TCSR Clock Controllers
+- Reserved Shared memory
+- GCC and RPMHCC
+- TLMM
+- Interconnect
+- QuP with uart
+- SMMU
+- QFPROM
+- Rpmhpd power controller
+- UFS
+- Inter-Processor Communication Controller
+- SRAM
+- Remoteprocs including ADSP,CDSP and GPDSP
+- BWMONs
+
+binding dependencies:
+- remoteproc: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com/ - Reviewed
+- qfprom: https://lore.kernel.org/all/20240911-qcs8300_qfprom_binding-v2-1-d39226887493@quicinc.com/ - Reviewed
+- pdc: https://lore.kernel.org/all/20240911-qcs8300_binding-v2-1-de8641b3eaa1@quicinc.com/ - Reviewed
+
+Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+---
+Changes in v3:
+- Update title and cleanup signed-off-by tag(Bjorn)
+- fix the INTID of EL2 non-secure physical timer(Cong)
+- add reviewed-by tag(except for the dtsi patch for the code change)
+- code rebase
+- Link to v2: https://lore.kernel.org/r/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com
+
+Changes in v2:
+- decoupled from the original series
+- Drop compatible for QCS8275
+- fix property order and add line breaks
+- move sleep_clk node to qcs8300-ride.dts
+- move l3-cache nodes out of l2-cache nodes and remove cluster1/cluster2
+- add BWMON nodes
+- commit-msg update
+- Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
+
+---
+Jingyi Wang (4):
+      dt-bindings: arm: qcom: document QCS8300 SoC and reference board
+      arm64: defconfig: enable clock controller, interconnect and pinctrl for QCS8300
+      arm64: dts: qcom: add QCS8300 platform
+      arm64: dts: qcom: add base QCS8300 RIDE board
+
+ Documentation/devicetree/bindings/arm/qcom.yaml |    6 +
+ arch/arm64/boot/dts/qcom/Makefile               |    2 +-
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts       |  267 +++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi           | 1375 +++++++++++++++++++++++
+ arch/arm64/configs/defconfig                    |    3 +
+ 5 files changed, 1652 insertions(+), 1 deletion(-)
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241128-qcs8300_initial_dtsi-ad3f193ce1d7
+
+Best regards,
+-- 
+Jingyi Wang <quic_jingyw@quicinc.com>
+
 
