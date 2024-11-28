@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-424189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD609DB175
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:24:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4340F9DB176
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:27:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DB8B21421
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:24:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF4A3B20FD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6FD433B1;
-	Thu, 28 Nov 2024 02:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EYsunvdg"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A747B18E25
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E511481B1;
+	Thu, 28 Nov 2024 02:27:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC4718E25
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732760688; cv=none; b=kXSoxtXyAiwWbCYa+P1cfYXUC/YCscQWYObE6E564SUtkeNSeEwaS+IKLvg5MZGf/rhCn66qn5DkUVHQxINRbavoFIU32LUjoRiVvLw8Huz7ij1IjOlJWqlop2BhIrU/LSA7MqGkREbSa/Sh0Vw0jRGeDGs8qqyjsSQq1FHAqwY=
+	t=1732760826; cv=none; b=IHoXzrnH1SBD+aDEbZSjFzdpnuIFW+889AhPoEHOhCe5XkiN/mGTrj7FCtcdhICgYoV6cjAsF7UnsZ7CTcm0iehz2tXNdzyefOgohmClK9lTtqiQkSvaND+Jb546qA8eLMUCX76gA0FeQEsLx78swmL/sVdRQiJ5vjYwrx3+0sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732760688; c=relaxed/simple;
-	bh=N0W3okzumZz4TO8+qDmG24KUaroSYe2aOImwtPOd8/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d9q8GPQiy1SeTPPef/hmiFRAAUBgM8SdrEsVapcA1nUV8tvpGH8JpLXDtOS5XOaHx5htfMuXdRqGFkoTcIpylycj9zo8EsLl0IgsDj/g4fM7fvKPaE44MKtuq7SJ5kN9Pp6nz9tByl5JWBQ9Hehq9t5mEb+/btzeIIqKdEs/8gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EYsunvdg; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfa90e04c2so377111a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:24:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732760685; x=1733365485; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9Ph7RhIXjSqmMGkNKkbJMg6kBOtyd1H90lMnAwSrow=;
-        b=EYsunvdgP8u/1VjrFlfJFEMDaVGnJVadtV8eDYGgmA6OigVI+1RpW3C/kmrGoAdrnP
-         jDFeXebyujiYHygdBh9ZoJo3KdkAJIzQvcvJNKK6nUOft0Vy3SPQv6jGHHAV5amutcC1
-         YR2d5BJSvZDBI1b1wV9zi1TX2psz7257DcDn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732760685; x=1733365485;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z9Ph7RhIXjSqmMGkNKkbJMg6kBOtyd1H90lMnAwSrow=;
-        b=X2qBlccPQuyMXslTDthCsZUfBUlyy6VvTYN+unxlPwsWMnxqQy4dP28GZ5+lggyj4z
-         FVNaKg94Uyh6nCl5gNG63ZyMfper2VDf9wEOKvAX7g7Z2/LSmag/FITT5gVSqIQfFhdV
-         KsGOB1OfFlw9UaF83ok3IXaw/Q2G1mmGUOHd6vY5CKg+3ZamCYQ9xb89kVpHJNA7pbVd
-         NuA0YQRtzwNuYRnsn2trot5g5BY4T723HV2nfjZT3jAefbhdi/LwLlVZDOBRG4astu55
-         cGK63jCEtpAoq/KNj1jtkKX1kj629akvOw8FsPoJvuUGo0l2je1JAuX3xu8XLuF8gNMp
-         XqhA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+EezGaWzAef3JwCV08ZvJSlzsJKtHpkXQjPIa6qFHslbmzLQbyego+bU4XiIT2BnP16AZwAPtFU4wdEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0UW6S9sbN+6PyTo5trfUgb3iAt2b12LdiNqlNkPQsFA+68/Dr
-	pbWCAGy8FHNaAAePqClMh50wFLOUNwRj7S+WfV0p/wK19hw+BrCivtuXcB7yaRkPl34Dbk6cgKW
-	Pkvg=
-X-Gm-Gg: ASbGncvy665oupuQPw6A11umkqIAuHQnyS/ri2tYXDEuVv5FCTSxAHIo+ACGei4mqa3
-	ALANTULAfhAPPQNKnvR7uV0aBJexWdxvnH3qoOpGr85QmHnZ+o3qTR4neMfSOftqIpVtMPpJj3m
-	BgftFrQ0uzzUpIB3G+c2MQXAjBo7XxB0p2+3HzqKPGaESYeSih8CwmZi76mAes7oCIoc9rZuMI9
-	SnwiK8QbUta/OU9LrTf704qs5OTIfg9JqoyyGPoD74UXnL5U9gXFuxcA1BMcPLtzH9BtwYFd6tc
-	+SJh4bS8KkZ35do5Rw6moKwR
-X-Google-Smtp-Source: AGHT+IHqSYikF7mbhPmhp9nqAZMug7ve4FlTNfbj/9RuSYuBkLnhtCdDKggUY4saG5apqtOkSEBOvw==
-X-Received: by 2002:a05:6402:2710:b0:5c9:62c3:e7fd with SMTP id 4fb4d7f45d1cf-5d080bcd250mr4765912a12.16.1732760684702;
-        Wed, 27 Nov 2024 18:24:44 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097dafd48sm237886a12.22.2024.11.27.18.24.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 18:24:44 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa5302a0901so34561866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 18:24:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXccj8Gap5Ed+LCuQGpDT67axqzUUHx3wy1nXEK+Hzgmfq9RDeOJpgHSUgm2rEvcujEZ6F/ncRjVxu0YB0=@vger.kernel.org
-X-Received: by 2002:a17:906:1bb1:b0:aa5:2e85:3b04 with SMTP id
- a640c23a62f3a-aa5810739e7mr351910566b.50.1732760683133; Wed, 27 Nov 2024
- 18:24:43 -0800 (PST)
+	s=arc-20240116; t=1732760826; c=relaxed/simple;
+	bh=Y08tlddFy/El3HGlv8l0p48q8NKIA2t8QwgIRTgs4ME=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=p+a0MbBvLDYjEv0S8NbQVqb55JIsiW0aWan2cNBBwttShvdSJimesi4eMInxDvzEHsdXnf7KdwuA/+KC86M9qNBewiDUoNiCihN8O+gnGeyaKcsO2KlqMr/2FVN9GwgbfjMHllco6Gs9DXXtxIs1LeYION6bTFAkXmaYU4dai4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Dxfa_w1Edn2VVKAA--.55770S3;
+	Thu, 28 Nov 2024 10:26:56 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMAx7uDu1EdnntZqAA--.24565S3;
+	Thu, 28 Nov 2024 10:26:55 +0800 (CST)
+Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-2-yangtiezhu@loongson.cn>
+ <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
+ <75f6e90b-4d04-5627-395e-58982a84d7c1@loongson.cn>
+ <20241127005208.luhtjy2qhk3bza7a@jpoimboe>
+ <f1bcff28-dc9c-2878-10c7-6e653516e66d@loongson.cn>
+ <20241127185303.q6okbtrkfdrlmcrn@jpoimboe>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <fd86460f-f595-e7c3-0962-aab3124b0375@loongson.cn>
+Date: Thu, 28 Nov 2024 10:26:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411210651.CD8B5A3B98@keescook> <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
- <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org> <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
- <202411271645.04C3508@keescook> <CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
- <20241128020558.GF3387508@ZenIV>
-In-Reply-To: <20241128020558.GF3387508@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 27 Nov 2024 18:24:27 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whb+V5UC0kuJkBByeEkeRGyLhTupBvpF-z57Hvmn7kszA@mail.gmail.com>
-Message-ID: <CAHk-=whb+V5UC0kuJkBByeEkeRGyLhTupBvpF-z57Hvmn7kszA@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20241127185303.q6okbtrkfdrlmcrn@jpoimboe>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMAx7uDu1EdnntZqAA--.24565S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Ww47uFy5tFWkCryruryrXwc_yoW8Aw4Upr
+	W3Aa15Jr4vyr17Crs2vwnYgrnYy3s7GFn5XrykKryrJr9F9r1Yqa9Ygr45Cas7Gr1SvF42
+	vrWFqa4fZr4UAagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
+	UUUUU
 
-On Wed, 27 Nov 2024 at 18:06, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On 11/28/2024 02:53 AM, Josh Poimboeuf wrote:
+> On Wed, Nov 27, 2024 at 02:39:13PM +0800, Tiezhu Yang wrote:
+>> On 11/27/2024 08:52 AM, Josh Poimboeuf wrote:
+>>> On Tue, Nov 26, 2024 at 06:41:29PM +0800, Tiezhu Yang wrote:
+>>>> On 11/26/2024 02:44 PM, Josh Poimboeuf wrote:
+>>>>> On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
+>>>>>> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>>>>>
+>>>>> 'prev_offset' needs to be updated as well.
+>>>>
+>>>> I am not sure I understand your comment correctly, I can not see
+>>>> what should to do about 'prev_offset'.
+>>>
+>>> Further down the function there is
+>>>
+>>>   prev_offset = reloc_offset(reloc);
+>>>
+>>> which needs to be changed to
+>>>
+>>>   prev_offset = offset;
+>>>
+>>> as part of the patch.
+>>
+>> If I understand correctly, reloc_offset(reloc) is different with
+>> reloc->sym->offset + reloc_addend(reloc), tested on x86 and readelf
+>> shows that their values are different, reloc_offset(reloc) is the
+>> first column of .rela.rodata, reloc->sym->offset is the second to
+>> last column of .rela.rodata, reloc_addend(reloc) is the last column
+>> of .rela.rodata.
+>>
+>> If do the above change as you suggested, there will be some objtool
+>> warnings on x86. I think it should be:
+>>
+>>   prev_offset = reloc_offset(reloc);
+>>
+>> rather than:
+>>
+>>   prev_offset = offset;
+>>
+>> That is to say, no need to change "prev_offset".
+>> Could you please check it again, please let me know if I am wrong.
 >
-> > So if pathname exists and isn't empty, AT_EMPTY_PATH does nothing.
+> Sorry, I was confused by the fact there are two different meanings for
+> "offset": one for where the relocation is written, and one for the
+> symbol it refers to.
 >
-> ... so let's tie that to pathname _being_ empty - it's not as if it
-> had been hard to check.
+> How about instead of 'offset', call it 'sym_offset'?
 
-This is not some kind of new system call, and AT_EMPTY_PATH isn't some
-Linux-only thing.
+OK, looks better, will modify it in the next version.
 
-It has well-defined and documented semantics:
-
-  AT_EMPTY_PATH
-     If this flag is specified, oldname can be an empty string.
-
-Note the "can be". Not "will/must be".
-
-> What's more, let's allow userland pointer to be NULL - use getname_maybe_null()
-> and treat NULL returned by it as "we have an empty pathname".
-
-Now, that's separate, and I agree with that extension.  That just
-suppresses another "empty string" error case.
-
-But no, I do not accept changing well-documented behaviour of
-AT_EMPTY_PATH, much less the insanity of making "execveat()" have
-completely different semantics for AT_EMPTY_PATH than a plain openat.
-
-             Linus
 
