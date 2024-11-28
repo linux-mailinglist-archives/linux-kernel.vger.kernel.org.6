@@ -1,176 +1,189 @@
-Return-Path: <linux-kernel+bounces-424999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D0C9DBC40
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:47:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF929DBC44
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC85E281E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:47:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E044B21BEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E2E1BFE0D;
-	Thu, 28 Nov 2024 18:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF2D1C1F15;
+	Thu, 28 Nov 2024 18:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rtn1KxQl"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYo/h7jt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8524C17BA5
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 18:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAFE17BA5;
+	Thu, 28 Nov 2024 18:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732819616; cv=none; b=JTM2rGUeHukbPtfP9QV6P0OVq8h3T1fA/2mmahc2bvmhRCinasur2F+RMmfrngjYHWnLoBS+Ga+4uWvxGyCC0G259iUs7SQSZrPsRTTfEeIgh2Nj4D1FvwyGbtzArBL48mTsw/OZqgrxXjabeTJuk8w5DtAC3wP3l1z4kkVxja4=
+	t=1732819683; cv=none; b=aobuZTV0A8y2V2VGDQ6i6kUv8wVqXQFVchaTzFrtEb++X6kLtc2aNIeu+2RydGQRe2xKvVslMOLynZgh/VB0RDKai7wbCtFRsQL9M+QxYk8YEqHcxT0blA+xYwqeh8BskTfN+7ACZpmmZSr1c7Gof88aC06uUUw+DEZWbKfCla8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732819616; c=relaxed/simple;
-	bh=cDwIisDUJoShbmTgj6pbH464/IBW/w9m3BxLxgMoQwA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ejd4aErVR61+ktvo+gYROKOgApIOHTQNR5UWgMlFw76JMOMlVRwWvJXXqbguJzwIY3gmbuxxgDRRB1D2E6VpfptMs8NYd0s3/PJ1CUTMwvjuC1u5CDjF2pPeUBhPQMJ1RjxsDWRD68FP4r0qyROaXvfG9Ev7PNmkHNq6yACFnPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rtn1KxQl; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4668194603cso241291cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732819613; x=1733424413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ZRhhNS9RAix/Bu1XiAacKl1HbOE7YMy6PRUju2a9e8=;
-        b=Rtn1KxQloDQcCaJLAs82vtve2YUaW8N2bSYoPkNodufIAu61fO/jNhPQ0TUTRDxTit
-         5BMSlB39oFXK5HJ6V3LljRci2RYNQv/Md78Tl3VarGfl5/K9SwtV9zQ+NelpQxH38a3l
-         KjPL1TT8f6NOMqfLK4XmlGviev0TKggkLeO8FTXEkl1zI9k4qZIF6kGaHtXf64qWjNQv
-         aVJ7peLB5+Eb/ufSeaLHRmw0iKD3xXoO1yQi1XCmi/KMB6Jx8aG3FSvqm3JF7uaf+Lsh
-         FDnxxFGOhVXFgitLY/GwpHDgwCZ7SV/W7Z9TffQHpVhCL/cvWmNQ8DmQemnUb1DrMed1
-         4S0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732819613; x=1733424413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1ZRhhNS9RAix/Bu1XiAacKl1HbOE7YMy6PRUju2a9e8=;
-        b=tCmsmUL6NzVLstl02OIFCRSxGx9ixnMT+OpbsXb86sILP3H6CKT9MknuCON2Rc/JtE
-         LJO6ChMTS86yVqclCY88wvpuO8ser/CFKlBiQPwDoR8e8SpD1izwxadFodxyMImYYvZx
-         T8nDLR3JCkd6nxPLtJqKoL/oJ3sjerucqAe9OPV7LQWlQuwURJImCxvJ9EP6hl5tKjGT
-         JTnn4QSMd+AfCjjyExAx2IFre4oZXk+BCSrNUpunxx8G+nN36UfBTElqUdPdZNsj1K43
-         kaIVe+wy0EPMyI1IY7FqcoV8w9qb6rxgBqA7mGSi+xZ/DJL4ATMlx7rx4+mN/8jvnjK5
-         Q9cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1nOyhG6Bk5kN+K63tNAnm5qo+R/fYv3sd5YZjNjbBvclB7X1bXBjitwTDS+WYy9sc2M5xDu3HeQ5DOzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW44k7hqf35MB0MxbKylg4KvVLr3Edb+M6Pr94H0nWV/Tt5+Lf
-	em+jS1vIJ6AKQgh/7ijiW5htqyYGolEaYDgXphBGsLa8K1+hK1yIZI6akwXWtZJIBKJ3WBNY/hT
-	JnadxxshhFNHcfqa1/RNbMVCyChx9boOaI4Yj
-X-Gm-Gg: ASbGncsmP6Z4KmzFceWNrCyFKpEvgOcoNr2mANGmEBGAOmbKp4NTLEuJYNWdUo56rpH
-	T1Y1ZoKUgbwhLRdNwYRMQb6fXQx1nYCI=
-X-Google-Smtp-Source: AGHT+IGsDBvW/IRVcHF9iDsH+gkUlQQijpsJ144dNRMOIpOBtkesir205os7IkGJG3mJOtobqhTcMzyHahEpJOaoArw=
-X-Received: by 2002:a05:622a:4c8f:b0:466:9660:18a2 with SMTP id
- d75a77b69052e-466c298592amr4128821cf.16.1732819613023; Thu, 28 Nov 2024
- 10:46:53 -0800 (PST)
+	s=arc-20240116; t=1732819683; c=relaxed/simple;
+	bh=M60yQ7WFpyB3zuCo3SDMJf3A+WWuW11FSKk7keSRpAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FPGb2Q/6T88lT822VloSlxnHw8TjzJ8lzqtPG9LLwFwVXJ5b7+JvFJo5nGR1nlHguP7tRg7JfEvDAfBtDhqQ9lsZgJKx0zS7+atsLuHlEthbUGL5nWcDS0U/3AULXpmFm1rghkY985t5n5B/B+TR2+QUMlw+O21IvZKlYJsHBoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYo/h7jt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39280C4CECE;
+	Thu, 28 Nov 2024 18:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732819683;
+	bh=M60yQ7WFpyB3zuCo3SDMJf3A+WWuW11FSKk7keSRpAM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BYo/h7jt/jLafjNAiiUvGJTmFZVecd0QWc5j707MgPm/Het2/poFECqTvlB7yaKT/
+	 w4WCQDd0adnJW2zzqmtH9Zvlx4/r3N/BlsHpbHTo/srdrBa44V22irekgiav3YkvKP
+	 qKxcue28MjWmWOC/84DRmFIKBkxDuGneaPZgziUVCgSZAEtRlufmMPXdw7iO4jUoK2
+	 WVq6cMnX7DbFLibwajLs4ilEWDByLBAIUVmk6fWj1bcU+caW7GE/0qt4MKDYJOIipg
+	 +kBbX99LLuaceYP3eqCPNN7xByWasid7Z6SSQVi+GoOtOKtxsrRDcjDLB3sOiKhR3H
+	 CtKGkwg7AJaag==
+Date: Thu, 28 Nov 2024 19:47:58 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, Jonathan
+ Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, workflows@vger.kernel.org, Hans Verkuil
+ <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241128194758.7d2e7656@foz.lan>
+In-Reply-To: <87iks7wqi3.fsf@intel.com>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+	<20241126151930.GA5493@pendragon.ideasonboard.com>
+	<20241127103948.501b5a05@foz.lan>
+	<20241127111901.GG31095@pendragon.ideasonboard.com>
+	<CAKMK7uFZsc+-Os+Pb9MHHbdt1K5Pj+D069d-+FvsDeeWgeZASw@mail.gmail.com>
+	<87iks7wqi3.fsf@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241124074318.399027-1-00107082@163.com> <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
- <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com> <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
- <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
- <51c19b31.eaf.193660912f7.Coremail.00107082@163.com> <337c721a.70d1.1936753c377.Coremail.00107082@163.com>
- <CAJuCfpHZhMwK8jOz_evvvD8CaNxxaaRQEx0Qv_yPp4ZA_DkXeg@mail.gmail.com>
- <1801415b.a202.1936d01f953.Coremail.00107082@163.com> <6c49f606.8737.19371e80128.Coremail.00107082@163.com>
-In-Reply-To: <6c49f606.8737.19371e80128.Coremail.00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 28 Nov 2024 10:46:42 -0800
-Message-ID: <CAJuCfpGVJtA9L=+6AuUuTM6SyiB_n3WEUYHDU4i1y50weBS3Hg@mail.gmail.com>
-Subject: Re: Abnormal values show up in /proc/allocinfo
-To: David Wang <00107082@163.com>
-Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 28, 2024 at 12:34=E2=80=AFAM David Wang <00107082@163.com> wrot=
-e:
->
-> At 2024-11-27 17:44:26, "David Wang" <00107082@163.com> wrote:
+Em Thu, 28 Nov 2024 13:24:04 +0200
+Jani Nikula <jani.nikula@intel.com> escreveu:
+
+> On Wed, 27 Nov 2024, Simona Vetter <simona.vetter@ffwll.ch> wrote:
+> > Jumping in the middle here with some clarifications.
 > >
-> >
-> >
-> >At 2024-11-27 01:10:23, "Suren Baghdasaryan" <surenb@google.com> wrote:
-> >
+> > On Wed, 27 Nov 2024 at 12:19, Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:  
+> >> On Wed, Nov 27, 2024 at 10:39:48AM +0100, Mauro Carvalho Chehab wrote:  
+> >> > It is somewhat similar to drm-intel and drm-xe, where reviews are part
+> >> > of the acceptance criteria to become committers.  
 > >>
-> >>Hi David,
-> >>Thanks for the investigation. I think your suggestion should work fine
-> >>and it's simpler than what we do now. It will swap not only counters
-> >>but allocation locations as well, however I think we already do that
-> >>when we call __alloc_tag_ref_set(). So, instead of clearing the
-> >>original tag, decrementing the new tag's counter (to compensate for
-> >>its own allocation) and reassigning the old tag to the new counter,
-> >>you simply swap the tags. That seems fine to me.
->
-> I will send a patch for this.
-
-Yes please. the more I look into it, the more it looks like the right appro=
-ach.
-
->
-> >>However I think there is still a bug where some get_new_folio()
-> >>callback does not increment the new folio's counters and that's why we
-> >>get an underflow when calling alloc_tag_sub(). I'll try to reproduce
-> >>on my side and see what's going on there.
+> >> Those are corporate trees, so it's easier to set such rules.  
 > >
-> >Agreed, the reason for underflow with current code should be clarified.
-> >Just update reproduce procedure:
-> >1. fio --randrepeat=3D1 --ioengine=3Dlibaio --direct=3D1 --name=3Dtest  =
---bs=3D4k --iodepth=3D64 --size=3D1G --readwrite=3Drandrw  --runtime=3D100 =
---numjobs=3D4 --time_based=3D1
-> >2.  echo 1 >/proc/sys/vm/compact_memory
-> >3.  echo 1 > /proc/sys/vm/drop_caches
-> >(It is very strange, on my VM,  "echo 3 > /proc/sys/vm/drop_caches" woul=
-d not trigger easily.
-> >4 cat /proc/allocinfo | grep __filemap_get_folio
+> > Imo it's the other way round, because it's corporate you need stricter
+> > rules and spell them all out clearly - managers just love to apply
+> > pressure on their engineers too much otherwise "because it's our own
+> > tree". Totally forgetting that it's still part of the overall upstream,
+> > and that they don't own upstream.  
+> 
+> The required commits and reviews to become a committer may sound
+> somewhat artificial and arbitrary, but it's a sort of compromise. The
+> goal is to have a relatively low bar for entry, while ensuring the
+> committers have just enough experience to judge whether a patch passes
+> merge criteria (more on that below). It's also the same for everyone,
+> and something to strive for.
+
+We used to have a low bar for entry on our past multi-committers
+model (back in 2005-2007). It was a disaster, as one of the
+committer did very evil things. He was blocked, but that didn't
+prevent some of us to be threatened with physical violence - and 
+some people even reported death threats.
+
+So, let's start slow to ensure that things like that won't ever
+happen again.
+
+> Frankly, I'm not fond of the invite-only model. You need to be careful
+> to not lose transparency.
+
+The intent is to be as transparent as possible without violating regulations
+like GPDR.
+
+> It can be scary to have a lot of committers. You put a lot of trust in
+> them. But at the same time, you do monitor what's going on, and can
+> revert commits - and commit rights, if needed.
+
+The scariest part is to receive threats like what happened in the past.
+Some were publicly documented; others happened via private talks and
+e-mails.
+
+> > So that's why the corporate trees are stricter than drm-misc, but the
+> > goals are still exactly the same:
 > >
+> > - peer review is required in a tit-for-tat market, but not more.
 > >
-> >FYI
-> >David
-> >
-> Finally find out why those underflow values on my system,
-> clear_page_tag_ref() -> set_codetag_empty() only works when
-> CONFIG_MEM_ALLOC_PROFILING_DEBUG is defined.....
+> > - committers push their own stuff, that's all. Senior committers often
+> >   also push other people's work, like for smaller work they just reviewed
+> >   or of people they mentor, but it's not required at all.  
+> 
+> I think it's also important to define merge criteria. A set of rules by
+> which a committer can commit. And it's not really about technical
+> checkboxes. For example, in drm it really boils down to two things: at
+> least two people have been involved, and there are no open issues.
 
-Ah, good catch! That's why my attempts to reproduce the issue were
-unsuccessful. I always keep CONFIG_MEM_ALLOC_PROFILING_DEBUG enabled.
+That's the same criteria we're aiming for. We'll start without
+two people reviewing, as there won't be enough committers at the
+beginning for that, but maintainers may revert/rebase the tree in
+case they don't agree with changes.
 
-> I guess you guys would have CONFIG_MEM_ALLOC_PROFILING_DEBUG=3Dy, but I d=
-on't
-> think it would be the case for end users.
+> (And have those people recorded in git trailers with Sob/Rb/Ab, with
+> tooling to ensure that's the case. There are very few commis in
+> drm-misc/drm-intel without either 2xSob, Sob+Rb, or Sob+Ab.)
 
-Correct.
+We added a CI engine to check this and other issues. If CI fails,
+commit will be automatically be blocked.
 
->
-> There are several references of clear_page_tag_ref()/set_codetag_empty():
->
-> ./mm/mm_init.c: clear_page_tag_ref(page);
-> ./mm/mm_init.c: clear_page_tag_ref(page);
-> ./mm/page_alloc.c:              clear_page_tag_ref(page);
-> ./mm/page_alloc.c:      clear_page_tag_ref(page)
-> ./mm/slub.c:            set_codetag_empty(&slab_exts[offs].ref);
-> ./mm/slub.c:                    set_codetag_empty(&vec[i].ref);
->
->
-> Things may go off when CONFIG_MEM_ALLOC_PROFILING_DEBUG is not set.
+> > - maintainership duties, like sending around pr, making sure patches dont
+> >   get lost and things like that, is separate from commit rights. In my
+> >   opinion, if you tie commit rights to maintainership you're doing
+> >   something else than drm and I'd more call it a group maintainership
+> >   model, not a commit rights model for landing patches.  
+> 
+> Agreed. Personally, I like the committer/maintainer model, because it's
+> a low barrier to entry, with limited responsibilities. Not everyone
+> wants to become even a committer, and the more loaded it becomes, even
+> less so. Yet the committers help maintainers immensely, and you grow a
+> pool of people who can become maintainers.
 
-I'll go over all set_codetag_empty() uses and check if they are valid.
-set_codetag_empty() should only be used when we have an object with no
-valid tag reference and we mark it as empty to avoid warnings when we
-free it. In clear_page_tag_ref() set_codetag_empty() is used to clear
-a valid tag reference and that's not right. I'll think about how we
-can avoid such misuse in the future.
-Thanks for the investigation, David. Looking forward to your patch.
-Suren.
+Currently, for most of the drivers, the number of committers per driver
+is equal to the number of maintainers for the same driver.
 
->
->
-> FYI
-> David
->
+So, on this stage, we're aiming on get maintainers commit rights,
+starting with the ones that are long time contributors and regularly
+participate at the media summits.
+
+Once the "slow start" phase finishes, we can review the process and
+start thinking on getting more developers and committers.
+
+> > Anyway just figured I'll clarify what we do over at drm. I haven't looked
+> > at all the details of this proposal here and the already lengthy
+> > discussion, plus it's really not on me to chime in since I'm not involved.  
+> 
+> To be honest, IMO the length is one of the shortcomings of the
+> proposal. Lots of up front process, which will inevitably have to be
+> ironed out as you gain experience. You just won't be able to figure it
+> all out in advance.
+
+Agreed.
+
+> All that said, I commend all efforts to move towards shared
+> maintainership models, whether it's group maintainership or
+> committer/maintainer model or something in between. Just offering my
+> views here, which you're obviously free to completely ignore to your
+> benefit or detriment. ;)
+
+Thank you for you valuable feedback!
+
+Best regards,
+Mauro
 
