@@ -1,92 +1,193 @@
-Return-Path: <linux-kernel+bounces-424198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4A89DB188
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:41:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54119DB18A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54C5282383
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:41:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B967FB2164A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C6E5A79B;
-	Thu, 28 Nov 2024 02:41:53 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C50C61FDF;
+	Thu, 28 Nov 2024 02:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQ4d2vmA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF3433B1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4947433B1;
+	Thu, 28 Nov 2024 02:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732761713; cv=none; b=OHnax5qd0kI4CuQXNjpX8nkjUANzeHn/rDNaeol5UHUwOLlqqmSFpyTPYqPqYQXDqRpoFVNGfLscE4biUx9Mqj0cWJtj+QFaTrA9XOhpE8tmmdBIbyJyWmsu7wVCemBtPdciTZ/AEEiaIbUmz7yRnzwdmI1+naIcN5aU1zHzK2Q=
+	t=1732761772; cv=none; b=UZsHBgnfs7G/kcB0Qem/znGthRygcpAaE0JbqQgaRFHT7hipAk+d7+dztnc4zdyOJMdrT9O5yDCn3/I7nd/+Qbh9i8ITcpAacrYGsQSB+lbfsfGnIlwc0FnxZB9OxLBRz/wILLiBeGUGm99m9j7ETl0B/NB53kgK5ISAkEiLAGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732761713; c=relaxed/simple;
-	bh=jyfqwyfB+B0TaWJtWfyYs8o23WNwLYhM5xw7upDqr0s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BYNawj3DvSHVyUAeUIBr1P0to7YUFIUS9LSlYElVf57NhrLh6fvslxgV/JDh8rjW3SaijFalI/0R2tbU6YkAvT1F4GMInyTWvUzrEljVkqi2k+0fCVGDtOZMIsUEYUDCHdyYnjapVVU7O9EVVIgZxC1cNVLCya88lH3729fLKSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from unicom146.biz-email.net
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id YDQ00128;
-        Thu, 28 Nov 2024 10:40:28 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201606.home.langchao.com (10.100.2.6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 28 Nov 2024 10:40:29 +0800
-Received: from localhost.localdomain (10.94.11.239) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 28 Nov 2024 10:40:28 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <myungjoo.ham@samsung.com>, <cw00.choi@samsung.com>,
-	<stanley_chang@realtek.com>
-CC: <linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] extcon: realtek: Add NULL pointer check in extcon_rtk_type_c_probe
-Date: Thu, 28 Nov 2024 10:40:26 +0800
-Message-ID: <20241128024026.21213-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1732761772; c=relaxed/simple;
+	bh=qEwTpfjVKTo4gJrLIBICGWx3kJtzTO2e+wI38ZqOdm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7+FUZi/XwMVMFE0/iFqf2pbrzDvM9AKb4obusvaM5SpU0wOvgOIt3TtPr+0cgPc7WvdzVQ220Q/DKaSNL9NWs9iVI5Oz6YA6PMPSmGdffGlf4XsLNJUYrx9P+pbtSfB/w849kDqmmNAapbaSnlMTKX8Yyom7+KacHlgqZsyUgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQ4d2vmA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 299A1C4CECC;
+	Thu, 28 Nov 2024 02:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732761771;
+	bh=qEwTpfjVKTo4gJrLIBICGWx3kJtzTO2e+wI38ZqOdm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iQ4d2vmAM7mpBhPRYGdPnnbxEyBMbGr54aewvPAeBmeOT3JLS3UJ5oA5j+GBUHcif
+	 6KjUR/A1B1puaALv9HTi/uQ4dhwbflNt98HCePXksj4XT+6i3DgjcMfuzamTFYt1dJ
+	 HbQAh6puXFwAVrRRpp4ewTTAWKKdMMUwEJuzBuCO0VApmt2dDPeJb+UpW3W0rWDxSv
+	 CBqohwirLQgtJz+jCM9R4MzeYxp5J2u/Jqdu71t623O5eNRmSEV2fHed2eldfyhYJn
+	 EaPZLZvO4VJud3Sx7s07MLGwRWIiuNxz4Tb897rWJOxX/jJlXksiZEMUaFitm5Tiik
+	 qnaV7Go/DPa1g==
+Date: Wed, 27 Nov 2024 18:42:49 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com,
+	linux-modules@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, masahiroy@kernel.org,
+	mmaurer@google.com, arnd@arndb.de, deller@gmx.de, song@kernel.org
+Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
+Message-ID: <Z0fYqZutUzDdxTGf@bombadil.infradead.org>
+References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
+ <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
+ <Z0eeuCyUGcKgsc5h@bombadil.infradead.org>
+ <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
+ <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
+ <Z0fT4hC30NISjmi_@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201614.home.langchao.com (10.100.2.14) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 20241128104028c90ede65137042cf8d5687703a52e855
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0fT4hC30NISjmi_@bombadil.infradead.org>
 
-devm_kzalloc() can return a NULL pointer on failure,but this
-returned value in extcon_rtk_type_c_probe() is not checked.
-Add NULL check in extcon_rtk_type_c_probe(), to handle kernel NULL
-pointer dereference error.
+Now with Masahiro's cleanups, in my testing we don't need the FORCE anymore.
 
-Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
+
+From 83497e0e83d81950df54d82461b1dae629842147 Mon Sep 17 00:00:00 2001
+From: Luis Chamberlain <mcgrof@kernel.org>
+Date: Wed, 27 Nov 2024 14:10:57 -0800
+Subject: [PATCH v3] selftests: kallsyms: fix double build stupidity
+
+Fix the stupid FORCE so that re-builds will only trigger
+when really needed. While at it, document the sensible ranges
+supported and fix the script to accept these alternatives.
+
+Also adopt Masahiro Yamada's suggested cleanups on the Makefile.
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/extcon/extcon-rtk-type-c.c | 2 ++
- 1 file changed, 2 insertions(+)
+ lib/Kconfig.debug                     | 32 ++++++++++++++++++++++++++-
+ lib/tests/module/Makefile             | 17 +++++++-------
+ lib/tests/module/gen_test_kallsyms.sh |  9 ++++++--
+ 3 files changed, 46 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-rtk-type-c.c
-index 19a01e663733..2820c7e82481 100644
---- a/drivers/extcon/extcon-rtk-type-c.c
-+++ b/drivers/extcon/extcon-rtk-type-c.c
-@@ -1369,6 +1369,8 @@ static int extcon_rtk_type_c_probe(struct platform_device *pdev)
- 	}
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index b5929721fc63..da8c35bfaeaf 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2986,9 +2986,39 @@ config TEST_KALLSYMS_D
+ 	tristate
+ 	depends on m
  
- 	type_c->type_c_cfg = devm_kzalloc(dev, sizeof(*type_c_cfg), GFP_KERNEL);
-+	if (!type_c->type_c_cfg)
-+		return -ENOMEM;
++choice
++	prompt "Kallsym test range"
++	default TEST_KALLSYMS_LARGE
++	help
++	  Selecting something other than "Fast" will enable tests which slow
++	  down the build and may crash your build.
++
++config TEST_KALLSYMS_FAST
++	bool "Fast builds"
++	help
++	  You won't really be testing kallsysms, so this just helps fast builds
++	  when allmodconfig is used..
++
++config TEST_KALLSYMS_LARGE
++	bool "Enable testing kallsyms with large exports"
++	help
++	  This will enable larger number of symbols. Only enable this if you
++	  are a modules developer. This will slow down your build considerbly.
++
++config TEST_KALLSYMS_MAX
++	bool "Known kallsysms limits"
++	help
++	  This will enable exports to the point we know we'll start crashing
++	  builds.
++
++endchoice
++
+ config TEST_KALLSYMS_NUMSYMS
+ 	int "test kallsyms number of symbols"
+-	default 100
++	range 2 10000
++	default 2 if TEST_KALLSYMS_FAST
++	default 100 if TEST_KALLSYMS_LARGE
++	default 10000 if TEST_KALLSYMS_MAX
+ 	help
+ 	  The number of symbols to create on TEST_KALLSYMS_A, only one of which
+ 	  module TEST_KALLSYMS_B will use. This also will be used
+diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
+index af5c27b996cb..86cc3e42e44a 100644
+--- a/lib/tests/module/Makefile
++++ b/lib/tests/module/Makefile
+@@ -3,13 +3,12 @@ obj-$(CONFIG_TEST_KALLSYMS_B) += test_kallsyms_b.o
+ obj-$(CONFIG_TEST_KALLSYMS_C) += test_kallsyms_c.o
+ obj-$(CONFIG_TEST_KALLSYMS_D) += test_kallsyms_d.o
  
- 	memcpy(type_c->type_c_cfg, type_c_cfg, sizeof(*type_c_cfg));
+-$(obj)/%.c: FORCE
+-	@$(kecho) "  GEN     $@"
+-	$(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
+-		$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
+-		$(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
++quiet_cmd_gen_test_kallsyms = GEN     $@
++	cmd_gen_test_kallsyms = $< $@ \
++	$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
++	$(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
+ 
+-clean-files += test_kallsyms_a.c
+-clean-files += test_kallsyms_b.c
+-clean-files += test_kallsyms_c.c
+-clean-files += test_kallsyms_d.c
++$(obj)/%.c: $(src)/gen_test_kallsyms.sh $(KCONFIG_CONFIG)
++	$(call if_changed,gen_test_kallsyms)
++
++targets += $(foreach x, a b c d, test_kallsyms_$(x).c)
+diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
+index 3f2c626350ad..561dcac0f359 100755
+--- a/lib/tests/module/gen_test_kallsyms.sh
++++ b/lib/tests/module/gen_test_kallsyms.sh
+@@ -7,6 +7,11 @@ NUM_SYMS=$2
+ SCALE_FACTOR=$3
+ TEST_TYPE=$(echo $TARGET | sed -e 's|lib/tests/module/test_kallsyms_||g')
+ TEST_TYPE=$(echo $TEST_TYPE | sed -e 's|.c||g')
++FIRST_B_LOOKUP=1
++
++if [[ $NUM_SYMS -gt 2 ]]; then
++	FIRST_B_LOOKUP=$((NUM_SYMS/2))
++fi
+ 
+ gen_template_module_header()
+ {
+@@ -52,10 +57,10 @@ ____END_MODULE
+ 
+ gen_template_module_data_b()
+ {
+-	printf "\nextern int auto_test_a_%010d;\n\n" 28
++	printf "\nextern int auto_test_a_%010d;\n\n" $FIRST_B_LOOKUP
+ 	echo "static int auto_runtime_test(void)"
+ 	echo "{"
+-	printf "\nreturn auto_test_a_%010d;\n" 28
++	printf "\nreturn auto_test_a_%010d;\n" $FIRST_B_LOOKUP
+ 	echo "}"
+ }
  
 -- 
-2.31.1
+2.45.2
 
 
