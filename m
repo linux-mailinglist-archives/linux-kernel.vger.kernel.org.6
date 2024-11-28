@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-424743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BC69DB8DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:36:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BE29DB8E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:38:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273CD282DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:36:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB99D165097
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F201AA1DA;
-	Thu, 28 Nov 2024 13:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171191B6CED;
+	Thu, 28 Nov 2024 13:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TXX+ir1x"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gKDL0JUj"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0E11AA1D7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB481B392C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732800992; cv=none; b=V6AbYUuIEogm5YyuroQpfV1zaGxR66Wr1++OEMyblRw72kl90nX292NCqH7qZhAhpvZxg+hWItCnAteJ/S53Qf4dgWu19eMMBKunSz6zqG4mgGVxXEDqwesaSEtkEqUUHeQcOBoV2TAScCpml/wFgad1sE28dfaV9M99nrct20A=
+	t=1732800998; cv=none; b=FyINmdCEtRM3rV4iIeixv/L5EX33bsSk+rRgJgZu7aP7e4kXQkw0WkRujx0znyPVipvldT7g9RDwtuj+b9TTK1ViT5vUb9jhO0auU6RhIHFQjJBp21PcVkZX02t/z995VWKn7lXU/Ie5FrKDVixTzgrKIg7vG0K57Y0aF8WT+dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732800992; c=relaxed/simple;
-	bh=ZXjUJiriPjm3Gh10NHh8Xm8mZQJMBBn+GOzohDYSH70=;
+	s=arc-20240116; t=1732800998; c=relaxed/simple;
+	bh=UF8YKzahIh+PwN3AwO6NZv3Y89s7Ox98ADCP/IHgSL4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LuwSL5VKAfZKUo1XkRIHbHv1zVSFh+jEjMtaQs4d3wbVZeILQ2AraOhb0dS7/tFr1j9rXVBk+jEuQJXHias1skiXy24xmXXAXbM2Y+hIK6ePKSBYQYM8ERZyzGEd/gVhGqoLo6Rd9x9oIdCc7Hg1psnu6HhL69gf7mT7qErqW2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TXX+ir1x; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=FeHsaU9VVNn6FrraVhdTGcGZ/9SvfgXzy17ZOZf/D1GkDmPc34Ttt9jRET0rVHKuDzShRMONz1wTPbbV/Y2kC+grdBd5yyNZl5FNz7iukSWMtQTCq+yBlsFZIV2IvyLquzrWlyDU8RXN3xo+QL4B6pMQRjw12uocCPUF0VTIFEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gKDL0JUj; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-212348d391cso6317825ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:36:30 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2124a86f4cbso6682255ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1732800990; x=1733405790; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1732800996; x=1733405796; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=58uF5FRygjmcuC+XqZTAPSHae1wNP7Gs/dWvt8/LZsA=;
-        b=TXX+ir1xl2vNxBGZ3Vj1q/ZBjBBCgu9rpaC6SQP0OVLmyspwBE+L5pDf4ttvTi8WLI
-         u5MmMBUrB9jj1MhIsI7KiNwS6vZ2eYU77CUH717SiBhc0rMqXL59SEaDvxvlgu5dcHFA
-         5LpRDN/wb8a8M0kgJjsz6R6eCuzUZjvJMCgq1fYlMlDlFhoOjfK7FT/tVm2JKxbWxxjs
-         LJ+z9HHP+AokumiwqLZ0acyZWmRg61MM+vnhmtwiKCiwWDuHEYd7RHQVR98YswUXlSNC
-         KEPU0gWgzBiiBubLZ4a9I7vwTkPX0Ydxn4MBDRn7p6fbRAsjHiDILKGi1N15YKxe4+Cg
-         NFgw==
+        bh=rQ0MaacFYTQJTLNs968qndbUwHA1XnYLHyx9b8Hlr5k=;
+        b=gKDL0JUjy/aOnvu/4+hmQ1AjfQYQF448GRvFWaiLl+hQEY3i8363TBEbg9xyl46Kl3
+         GuzsdTtzwKQmhjgpxScG8FEoNTBMpfjmvx9jR8O5nA3vIWxP7GyNpy3f4TmwtFhjHf8r
+         gDmNAtDpYY6s5/x7ZFLP0rhIbBNgptiETQ+qntWZtl/gFCTNTmscAzQ177qNU+lppDOD
+         GXlA2j05Yu+6mLOr/4E/3DVUkjTBOpEjPSt5FULeRkxojpa3p+axI4b7J4rtrq3J88nI
+         FIk/1h4UnUKtYyt2674VVSLFEbBh5JWNBR9AVWMbKveqcXxEHe1KB5xqjMeI44ruorJk
+         Aj2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732800990; x=1733405790;
+        d=1e100.net; s=20230601; t=1732800996; x=1733405796;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=58uF5FRygjmcuC+XqZTAPSHae1wNP7Gs/dWvt8/LZsA=;
-        b=wWCcJb6X5w0CLIUnYcZIigOuOHTueVqQkr8L5pvFtP216S27nmPEh8kFFiqeoV/Jk+
-         yLqDr9OV9cFqWVeo9M6o+7sHQVLUqRfbBdVCpctdpSRFpRdFjrEWdfg6VTkRX/XYnR5L
-         xELOT1BNrPu0KRQbEqTrP5FGDFXFauIv1DEIOFe6qdkNFplQzq18KWtdEsqMG0N8Jig4
-         PZPvlRvCtW+tK0r1eH80jZVE1KzuwF7x7ahHBC6U6AxmaX3Jn6ViPf0/Wxjz3UTVuPkZ
-         sL9ZqqtCfRoPnuuMOaIl94joxY7CjFVaAghxRYBORziMLkGGEuZtjTDujrmGo+f/OUe1
-         W5Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXN8gD02cS69OlZ833CUm6Byr06NV0CpLifGAjss8HHAiYrnRnxKvWPGRBwlSm7qeTGAvSAhXjT3l6suGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRAJGh26pQlJJ++92/WQ8lMMSsCZz/qO1HmNxvpcjQVfOUmPg8
-	g7AYEkhpKpv8km/iZXbxKH1NvJU9+np7P4vugIlXonjqXnI09dfu6V5ndKV3ldY=
-X-Gm-Gg: ASbGncsW9JoYTCjEQCayh/jFaLdbB/j3HTSB+HEFlhi5MZZiwR5NSMJUO6FoIyH5olO
-	y9AbvwMof8EsnJraCS4bke5JBuK/ZTT3Lr7Oy2EN5YZBB8PXcimaFe9pUhBtQB8ThABp60Hb0dc
-	oaOydMmEMRWsnibvaITGMIM/mXgClPVlCUZPahhtxTsQ+RAPCa03v04OeSFxxK1fyH7S+W0O5a/
-	EXGxLEZX9CRyta/PiOFLw5zOSXuC/476u61z8DKN0FINd61ZdS3arf4Zw==
-X-Google-Smtp-Source: AGHT+IGaa+4siSbSTtBvK2/ptco5CZWZSWnXqlWEx0fjKUf27R0HZxCGvl+sJ2wvI63J9r4eAkvZxQ==
-X-Received: by 2002:a17:903:2b0b:b0:211:f8c8:3730 with SMTP id d9443c01a7336-2150147a24bmr89630305ad.26.1732800990199;
-        Thu, 28 Nov 2024 05:36:30 -0800 (PST)
+        bh=rQ0MaacFYTQJTLNs968qndbUwHA1XnYLHyx9b8Hlr5k=;
+        b=ZyOQ1yWYdS9a5oHFahixSXxYFYSxic3vaMX47lGDRPv7zhxRYIA5ySpJmYlb+WfCQ8
+         3Zg3VsL9yEOilYRUDwiMaaGwDsEJlXDjic+Rx30HuzQ68RdE17G6B3aQSaTBhQPjFdiq
+         zOrs9OtrQpDBX7qCIjGQF/pGEjIoZQcmUMe9J9KmkRnUnas0pbhh1vFWbqAFgjtU/wM5
+         BenQ1LJFi4h1bxzZ0iifNSJXpfAqDRob9X1cx3H8suVO8ru1lfOfS5z59IgkMufPzEJy
+         TWQi2sR5vmurALfoMOwdGzPVhQ7TCkhE5pLXkzV8+U8FqrFeiRvqiHXBc4UL/CV/IhWY
+         KFgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEX/k+vet8TvzU+uxAFOZ0wbLWSl5pFcZsZYj2++dITcehrZcrneAyD6d4Ina70H4smPDdX08pJEJFZYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu4kxEt7jTobaK1W5GWMSs6UQWlZtNvFuiGOJ2vTefvvSXLyOx
+	kU8QwrRDCRusZlxW4xcKVHRUwNvxxNLxwiT/MIkC/SZEn9G+LOUQkEBTytzNXuE=
+X-Gm-Gg: ASbGncsABCfJB4y6qw/9e6mGSM7ZuYip37pm5bx1liWjQEO6y9HKx0Ewxl8VqMOI6ZS
+	AIhghn7cprwCsxqipRzKae3+M7Uo9LV6RirEvT9/coZeMxQi5URAR0eBJTCYf+qatjnpWS2BASP
+	BqIUOL9itRDlW6094JMlrOLot0+TUhQppyghMzz10Gjc2tL2+bxZjzJ0GjBkOlLtEWR/0+b9I7/
+	W2i/OyFALMuVQ36g/aqlYexLEjNE6rCfWkzaXb5uK0XM0lyNhfFiBQVTw==
+X-Google-Smtp-Source: AGHT+IEjDUsjrDGDGc5fQqIO+T+FruzKH27Usz7tqWm1DjvNhvcAFC7JN1TUKGdNBDbfARzHkP8zwQ==
+X-Received: by 2002:a17:902:c944:b0:20c:bffe:e1e5 with SMTP id d9443c01a7336-2150109a094mr79756385ad.19.1732800996021;
+        Thu, 28 Nov 2024 05:36:36 -0800 (PST)
 Received: from ubuntu20.04 ([139.177.225.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521985632sm12952975ad.206.2024.11.28.05.36.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521985632sm12952975ad.206.2024.11.28.05.36.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 05:36:29 -0800 (PST)
+        Thu, 28 Nov 2024 05:36:35 -0800 (PST)
 From: Yang Jihong <yangjihong@bytedance.com>
 To: peterz@infradead.org,
 	mingo@redhat.com,
@@ -85,9 +85,9 @@ To: peterz@infradead.org,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: yangjihong@bytedance.com
-Subject: [RFC 03/12] perf event action: Add parsing const integer expr support
-Date: Thu, 28 Nov 2024 21:35:44 +0800
-Message-Id: <20241128133553.823722-4-yangjihong@bytedance.com>
+Subject: [RFC 04/12] perf event action: Add parsing const string expr support
+Date: Thu, 28 Nov 2024 21:35:45 +0800
+Message-Id: <20241128133553.823722-5-yangjihong@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241128133553.823722-1-yangjihong@bytedance.com>
 References: <20241128133553.823722-1-yangjihong@bytedance.com>
@@ -99,64 +99,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Support parsing of constant integer expression.
+Support parsing of constant string expression.
 
 Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
 ---
- tools/perf/util/parse-action.c | 52 ++++++++++++++++++++++++++++++++++
- tools/perf/util/parse-action.h |  1 +
- tools/perf/util/parse-action.l | 19 +++++++++++++
- tools/perf/util/parse-action.y | 13 ++++++++-
- 4 files changed, 84 insertions(+), 1 deletion(-)
+ tools/perf/util/parse-action.c |  39 ++++++++++++
+ tools/perf/util/parse-action.h |   1 +
+ tools/perf/util/parse-action.l | 108 +++++++++++++++++++++++++++++++++
+ tools/perf/util/parse-action.y |  10 ++-
+ 4 files changed, 157 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/util/parse-action.c b/tools/perf/util/parse-action.c
-index 391546bf3d73..3b10cf9f99b3 100644
+index 3b10cf9f99b3..7e5ca889d5b9 100644
 --- a/tools/perf/util/parse-action.c
 +++ b/tools/perf/util/parse-action.c
-@@ -7,6 +7,7 @@
-  *
+@@ -8,6 +8,7 @@
   * Supported expressions:
   *   - constant:
-+ *     - integer
+  *     - integer
++ *     - string
   */
  
  #include "util/debug.h"
-@@ -118,7 +119,58 @@ void event_actions__free(void)
- 	(void)event_actions__for_each_expr_safe(do_action_free, NULL, false);
- }
+@@ -169,8 +170,46 @@ static struct evtact_expr_ops expr_const_int_ops = {
+ 	.eval = expr_const_int_eval,
+ };
  
-+static int expr_const_int_new(struct evtact_expr *expr, void *data, int size)
++static int expr_const_str_new(struct evtact_expr *expr,
++			      void *data, int size __maybe_unused)
 +{
-+	if (data == NULL ||
-+	    (size != sizeof(int)
-+	     && size != sizeof(long) && size != sizeof(long long))) {
-+		pr_err("expr_const_int size invalid: %d\n", size);
++	if (data == NULL) {
++		pr_err("exper const string is NULL\n");
 +		return -EINVAL;
 +	}
 +
-+	expr->priv = malloc(sizeof(long long));
-+	if (expr->priv == NULL) {
-+		pr_err("exp_ const_int malloc failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	if (size == sizeof(int))
-+		*(unsigned long long *)(expr->priv) = *(unsigned int *)data;
-+	else if (size == sizeof(long))
-+		*(unsigned long long *)(expr->priv) = *(unsigned long *)data;
-+	else if (size == sizeof(long long))
-+		*(unsigned long long *)(expr->priv) = *(unsigned long long *)data;
-+
++	expr->priv = data;
 +	INIT_LIST_HEAD(&expr->opnds);
 +	return 0;
 +}
 +
-+static void expr_const_int_free(struct evtact_expr *expr)
++static void expr_const_str_free(struct evtact_expr *expr)
 +{
 +	zfree(&expr->priv);
 +}
 +
-+static int expr_const_int_eval(struct evtact_expr *expr,
++static int expr_const_str_eval(struct evtact_expr *expr,
 +			       void *in __maybe_unused, int in_size __maybe_unused,
 +			       void **out, int *out_size)
 +{
@@ -164,108 +151,194 @@ index 391546bf3d73..3b10cf9f99b3 100644
 +		*out = expr->priv;
 +
 +	if (out_size != NULL)
-+		*out_size = sizeof(long long);
++		*out_size = strlen(expr->priv);
 +
 +	return 0;
 +}
 +
-+static struct evtact_expr_ops expr_const_int_ops = {
-+	.new  = expr_const_int_new,
-+	.free = expr_const_int_free,
-+	.eval = expr_const_int_eval,
++static struct evtact_expr_ops expr_const_str_ops = {
++	.new  = expr_const_str_new,
++	.free = expr_const_str_free,
++	.eval = expr_const_str_eval,
 +};
 +
  static struct evtact_expr_ops *expr_const_ops_list[EVTACT_EXPR_CONST_TYPE_MAX] = {
-+	[EVTACT_EXPR_CONST_TYPE_INT] = &expr_const_int_ops,
+ 	[EVTACT_EXPR_CONST_TYPE_INT] = &expr_const_int_ops,
++	[EVTACT_EXPR_CONST_TYPE_STR] = &expr_const_str_ops,
  };
  
  static int expr_const_set_ops(struct evtact_expr *expr, u32 opcode)
 diff --git a/tools/perf/util/parse-action.h b/tools/perf/util/parse-action.h
-index 47bd75264dee..ac81278c590e 100644
+index ac81278c590e..ec422f8a05a7 100644
 --- a/tools/perf/util/parse-action.h
 +++ b/tools/perf/util/parse-action.h
-@@ -14,6 +14,7 @@ enum evtact_expr_type {
- };
+@@ -15,6 +15,7 @@ enum evtact_expr_type {
  
  enum evtact_expr_const_type {
-+	EVTACT_EXPR_CONST_TYPE_INT,
+ 	EVTACT_EXPR_CONST_TYPE_INT,
++	EVTACT_EXPR_CONST_TYPE_STR,
  	EVTACT_EXPR_CONST_TYPE_MAX,
  };
  
 diff --git a/tools/perf/util/parse-action.l b/tools/perf/util/parse-action.l
-index 3cb72de50372..9237399a11ac 100644
+index 9237399a11ac..f76240276b61 100644
 --- a/tools/perf/util/parse-action.l
 +++ b/tools/perf/util/parse-action.l
-@@ -13,13 +13,32 @@
- #include "parse-action.h"
- #include "parse-action-bison.h"
+@@ -28,6 +28,54 @@ static int value(int base)
+ 	return NUMBER;
+ }
  
-+static int value(int base)
++static char *str_buf;
++static unsigned int str_buf_size = 64;
++static int str_begin(void)
 +{
-+	unsigned long long num;
++	if (str_buf == NULL) {
++		str_buf = malloc(str_buf_size);
++		if (str_buf == NULL) {
++			pr_err("parse_action malloc string buffer failed\n");
++			return ERROR;
++		}
++	}
 +
-+	errno = 0;
-+	num = strtoul(parse_action_text, NULL, base);
-+	if (errno) {
-+		pr_err("parse_action malloc number failed\n");
++	str_buf[0] = '\0';
++	return 0;
++}
++
++static int str_write(const char *s)
++{
++	char *new_buf;
++
++	if (strlen(str_buf) + strlen(s) >= str_buf_size) {
++		str_buf_size = strlen(str_buf) + strlen(s) + 1;
++		new_buf = realloc(str_buf, str_buf_size);
++		if (new_buf == NULL) {
++			free(str_buf);
++			str_buf = NULL;
++			pr_err("parse_action realloc string buffer failed\n");
++			return ERROR;
++                } else {
++			str_buf = new_buf;
++		}
++	}
++
++	strcat(str_buf, s);
++	return 0;
++}
++
++static int str_end(void)
++{
++	parse_action_lval.str = strdup(str_buf);
++	if (parse_action_lval.str == NULL) {
++		pr_err("parse_action strdup string buffer failed\n");
 +		return ERROR;
 +	}
 +
-+	parse_action_lval.num = num;
-+	return NUMBER;
++	return STRING;
 +}
 +
  %}
  
-+num_dec		[0-9]+
-+num_hex		0[xX][0-9a-fA-F]+
+ num_dec		[0-9]+
+@@ -35,6 +83,8 @@ num_hex		0[xX][0-9a-fA-F]+
  space		[ \t]
  ident		[_a-zA-Z][_a-zA-Z0-9]*
  
++%x STR_BEGIN
++
  %%
  
-+{num_dec}	{ return value(10); }
-+{num_hex}	{ return value(16); }
- {space}		{ }
+ {num_dec}	{ return value(10); }
+@@ -43,6 +93,64 @@ ident		[_a-zA-Z][_a-zA-Z0-9]*
  
  ";"		{ return SEMI; }
+ 
++\"		{
++			int ret;
++			yy_push_state(STR_BEGIN);
++			ret = str_begin();
++			if (ret) {
++				yy_pop_state();
++				return ret;
++			}
++		}
++<STR_BEGIN>{
++  \"		{
++			yy_pop_state();
++			return str_end();
++		}
++  [^\\\n\"]+	{
++			int ret;
++			ret = str_write((const char *)yytext);
++			if (ret) {
++				yy_pop_state();
++				return ret;
++			}
++		}
++  \\n		{
++			int ret;
++			ret = str_write("\n");
++			if (ret) {
++				yy_pop_state();
++				return ret;
++                        }
++                }
++  \\t           {
++			int ret;
++			ret = str_write("\t");
++			if (ret) {
++				yy_pop_state();
++				return ret;
++			}
++		}
++  \\\\		{
++			int ret;
++			ret = str_write("\\");
++			if (ret) {
++				yy_pop_state();
++				return ret;
++			}
++		}
++  \\.		{
++			yy_pop_state();
++			pr_err("parse_action invalid escape character: '%s'\n", parse_action_text);
++			return ERROR;
++		}
++  .		{
++			yy_pop_state();
++			pr_err("parse_action invalid character: '%s'\n", parse_action_text);
++			return ERROR;
++		}
++}
++
+ {ident}		{
+ 			parse_action_lval.str = strdup(parse_action_text);
+ 			if (parse_action_lval.str == NULL) {
 diff --git a/tools/perf/util/parse-action.y b/tools/perf/util/parse-action.y
-index fade9d093d4a..51e77e54f157 100644
+index 51e77e54f157..4922b2d94aee 100644
 --- a/tools/perf/util/parse-action.y
 +++ b/tools/perf/util/parse-action.y
-@@ -17,6 +17,8 @@
- #include "util/debug.h"
- #include "util/parse-action.h"
- 
-+#define expr_id(t, o) evtact_expr_id_encode(EVTACT_EXPR_TYPE_##t, EVTACT_EXPR_##t##_TYPE_##o)
-+
- int parse_action_lex(void);
- 
- static void parse_action_error(struct list_head *expr __maybe_unused,
-@@ -32,13 +34,15 @@ static void parse_action_error(struct list_head *expr __maybe_unused,
- 	char *str;
- 	struct evtact_expr *expr;
- 	struct list_head *list;
-+	unsigned long long num;
+@@ -37,12 +37,13 @@ static void parse_action_error(struct list_head *expr __maybe_unused,
+ 	unsigned long long num;
  }
  
--%token IDENT ERROR
-+%token IDENT ERROR NUMBER
+-%token IDENT ERROR NUMBER
++%token IDENT ERROR NUMBER STRING
  %token SEMI
  %type <expr> action_term expr_term
  %destructor { parse_action_expr__free($$); } <expr>
  %type <str> IDENT
-+%type <num> NUMBER
+ %type <num> NUMBER
++%type <str> STRING
  
  %%
  
-@@ -65,6 +69,13 @@ expr_term
+@@ -76,6 +77,13 @@ NUMBER
+ 		YYERROR;
  }
- 
- expr_term:
-+NUMBER
+ |
++STRING
 +{
-+	$$ = parse_action_expr__new(expr_id(CONST, INT), NULL, (void *)&$1, sizeof($1));
++	$$ = parse_action_expr__new(expr_id(CONST, STR), NULL, (void *)$1, strlen($1));
 +	if ($$ == NULL)
 +		YYERROR;
 +}
