@@ -1,230 +1,175 @@
-Return-Path: <linux-kernel+bounces-424223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AAF9DB1C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:15:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C319DB1C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:19:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5592825BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:15:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16EB167325
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2432C84D29;
-	Thu, 28 Nov 2024 03:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D60784D29;
+	Thu, 28 Nov 2024 03:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWXHJPd/"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeBha709"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9106635280;
-	Thu, 28 Nov 2024 03:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E043B19A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732763712; cv=none; b=WA2/nZgznbWNEobo5sAByKoI7wJbtucLb2z2ECC9AvUvXpz34ZiDFZJi6pNa8m3iluR/jhICgM/Lc84P8fru0meemOH0eAkhGsYa0k9KtEk7cvX65Orjx/UgwRNPXFQVDXQXQS0Tyl8ssNVsMxb/OfD+RnI1wZdbOPUIPjlPkaE=
+	t=1732763953; cv=none; b=WOwbWHvjaNs0BkJFLbe1baFp/98GvAN8aA+qs5gYWh+gdq7TN91v4v7EYGx/yxMgGOckUteq1M+QSAnCNUfbI3NaY5ukjWpBzJ/KuGZFgyzFDGSZKZp90oeDvJwCuVhkk/AD4UIy8hbqq0zMZ2p/ZHfnoGS9BCWBh6S4FQWd6c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732763712; c=relaxed/simple;
-	bh=1jQIM2nXWs3BdtTmsas8bahiSBQPrUTQ4/M/3eGJBGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPDnOK9PkNdbaUXu+Jg/kR/xLZuTSgaw0EDzQ0dnqMZWoAEg0n1uTcobb82YDhLopl3F3J7EmOFjq9mmoYVtZ9oIQ0lLvhBrjiluDnD5vVSxlPNjzDaJgEyWTOHiNREpieMSA61qZcXPJn40afA8d+723UF7qDLs7R3ySfkwtHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWXHJPd/; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1732763953; c=relaxed/simple;
+	bh=7+za8xzxMsGtpWPcp4SRnds4wLkxI3XXkrih6g2R8xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H8GY22Szj6/Uh9eEYeFlglJ++MLLE3vRXbqQTvj+W93dDyVdxGtdKWdoN8RkPA6LypsqodXYXO2EbyKS7NNzHgGjnWw3FRnKMXV6U5QcypCmeMgtNo8hwI32bkHXPGCvN9Gw7Or2XyHMwKxFOnxYA4Dki+TqD/vq8LxVZKuNHWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WeBha709; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434aa472617so2806155e9.3;
-        Wed, 27 Nov 2024 19:15:10 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2126408cf31so2312995ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:19:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732763709; x=1733368509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e/ahOUOuNw5MtYxYC/XX69Rc01WOSSe2BQA0kFM8RjI=;
-        b=YWXHJPd/zve6B7qa55AhazQeuCmD+DI4oljL5xKMpd02JwgVXLm2xGqlDpBqdwuwNp
-         thTsXYmIPhjHjBZze2QC5RR2MEOHHAZ6EqYD7k9yEffUVqYRciDkatC8UiC5FBCAKdhF
-         5R0ZR4LymvterN902WHG1QZC/PpoTxRug+EWoRfT/tHMmBffmufrGqB1RRMD6JI3Huy4
-         Ralj7WC62ni6zaudS6ib4pKnryk68XSg+miEIxhsQb+RLrvaEjiMuGZuptY5k+WJDZPE
-         CVKYXTv7cD6BCajRQGZQ/b4YCnFmMHLRkVuzYaQTEl7E4Q4maXriYlQWn43zT8l/bQ6Z
-         xjDA==
+        d=gmail.com; s=20230601; t=1732763951; x=1733368751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=kKvWVWVtQktSAu3SDXPAPMOPSe5VuHZ02dpFknlNf3I=;
+        b=WeBha709v6/A8Qdk/ipdfT3DLJF7KqDFSKWZeT1Nj7/mOaUXUvRwjw5r1I6L6WsGUY
+         KFULTUD2zXFfQIJH8AnKs3TUywhVMeuFA5JE6amC9f2hUII/mgEKeDIqVjjBBGlf5YAT
+         TUfwCQT+VbvfsPhKsxjkJlbJj+4QlJ51LYc668T3fbi7Y2pKV53AE8lQHjkDQaklkgT5
+         xBcxW36KacB3takY7oU16Jgwqk50dsKHpFL4/ZYFRdPY4lsSfDHerGiBs2zL856lf92J
+         w3NImP0zcVV9M9LaSfERkbKtU8fCI68vy/Hze76OyblpxXZiSGjTiBqK8HNMwb7lsFjy
+         G5GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732763709; x=1733368509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e/ahOUOuNw5MtYxYC/XX69Rc01WOSSe2BQA0kFM8RjI=;
-        b=VLms+m42N92UP5l4/+DXCfini861RR6oY0gxDZ7zNfcOjCpNstjDTn+S6IKLV3KnnS
-         7RngsUKZtLCWkoVT97MNP5oT5U7Fa3V4PMlxObjDozWwT5nucj7mcR8p4l7F45sigjDv
-         G4UesjRTw/4+ZERqM7rFf+6jmpW/DEDGQeXYcbVpjKoFFRZO45jl9Ua7EBGlb/K7hXxk
-         LVFddJNsManlLdtCLuycSPkQL0LKDJGrdesCA87fq2yDKu7/xX9EN8pyv/VCvGyQ73HK
-         kt+aYFoT2WSeCcoWjo6VZ4FBqguo2vS2bbmnChfvh55+Wky8LJ15Y+jQY+xogkv9Hi/7
-         DYkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3sk9cczi0qpx/eIG+FnmD3wy9vuO4alzC/nSzPyIlvun/KtPg0RCsbfFa0y5iGeSRCZE5LepszAQA@vger.kernel.org, AJvYcCXi3pPXhMOdqVH+j+c3E+ji9jNS2eNpKoEB/zJVelfjORMi5lpIp2Ix0YNp5ew5ojpbuGLfPDjyTFBE1R0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWUxxWXXH5G683PJXZQlxV+KM2oRWU3l/eWTO1+Q4u8bJ1INLD
-	iDWYSUEkIvUrburTVyycBahcVbgMOOBBi+MT/Az9IYhWSkmNUWKU3ViI0QQYMb/sT+WS0TEr3IT
-	CsWIydggrMexStbcTRKw6Ck+dqw==
-X-Gm-Gg: ASbGncuIxmzdsP/mOGfeTATI66+zn/Zc9rpeQoMCT2S9dWgZjLKlLKMNx/mtWMXiMj9
-	UqN2uPZMkZb+1l0FlmZRe9m4ufJ/4eIO3WKU5z8PvX02cw6S1p7c32r9doNYy9n4=
-X-Google-Smtp-Source: AGHT+IFuuGVEotf1Ti7bkQfT04nI/43gkqh1Cn8N/AaWO/pXxQA2en+Z5vVLGxX98pbyxDMe8KTdFx6rKx4+gVpP3pE=
-X-Received: by 2002:a5d:6c69:0:b0:37d:5282:1339 with SMTP id
- ffacd0b85a97d-385c6ebd7b1mr4060678f8f.22.1732763708544; Wed, 27 Nov 2024
- 19:15:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732763951; x=1733368751;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kKvWVWVtQktSAu3SDXPAPMOPSe5VuHZ02dpFknlNf3I=;
+        b=Scn21MtpNEQd5KEHKARmHQsk/1v6QfaPsGVR4NyGg3kzlEh6k4IApZKntjQ3sy+fAA
+         62/VlpDFX9A4y740T6hCl9cwKsSCGOf+JeWxdC82e5QdFsD6GoqaGPZClQYoHR+yt4pT
+         SAB/tx/tocmgA7a5TRAaWFXrB5Yvn62vzY0XgM7Lka9njU51p3i5UuDW6eMr1uFaq1bg
+         mqA/e59056dyfEjEk6ItHZ9jYLkNxGj0CYqYbN6PIrVxjupq3ynTXpZtEtXkohXJqJ/B
+         ILaHi7He8MLF52sdpuDVnrq7W5UXzEj5DYkLERdjLHKo8ONN4jyZeDS2eBuTip2pLWf6
+         9HOw==
+X-Gm-Message-State: AOJu0Yzv1PHTaBhLeuneum3anuoeG5EWWLm78UlE+8dBne4vX8abU7fo
+	zXmXsR0AtB6BqY3wNDAJsEfH84AKyXYs/FJrsXTI7VkyQ2wLtnos
+X-Gm-Gg: ASbGncur47LWDJv0XK9rl4gzkRachNWRL9DBNFgBmEE5BJDa4kXIbXjHHtCm6yL7hxs
+	4Hge0+Y3f5DH1M+d6qgWazmR+yuW8Ao4vleQFDRH6/zlw1KQLM6+fy2aAUwvdSjPio/Dn9WCVOA
+	NVhJXZ3VusDA3Vo20HiAdLjh/2n0fxOUD0aMQzla030Y0dLOkTb9qVDpX7W8tyB6N7KXoC9cO03
+	Tzg3rKSiY7pP/dohBrCkS1z6l75WLkBZX7Sa41qoS2/h3IgS9E5T/4dSPhk3ua1Stxu0qch68Yh
+	/Cg7MdNHqzxwYf+RptBxes0=
+X-Google-Smtp-Source: AGHT+IExgRmBZqtNYrrKFPX06x4TS4jaur2rFEZZbM051780x6VnZb14HV+HrZALrUaz21Lxa5TZpA==
+X-Received: by 2002:a17:903:2305:b0:212:6573:a275 with SMTP id d9443c01a7336-21501c59c1cmr71606845ad.46.1732763951103;
+        Wed, 27 Nov 2024 19:19:11 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f591csm3122435ad.8.2024.11.27.19.19.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2024 19:19:10 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6fc258b5-37b8-4739-8f6f-317f06fc6eab@roeck-us.net>
+Date: Wed, 27 Nov 2024 19:19:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107014705.2509463-1-lilingfeng@huaweicloud.com> <93fd0f1c-812f-4393-ad73-4d07ecebf979@huawei.com>
-In-Reply-To: <93fd0f1c-812f-4393-ad73-4d07ecebf979@huawei.com>
-From: Rick Macklem <rick.macklem@gmail.com>
-Date: Wed, 27 Nov 2024 19:14:57 -0800
-Message-ID: <CAM5tNy4rYLWSuO_KrgXJrHV+DPhOoZGZAdWLZsW35u3qWuMSvg@mail.gmail.com>
-Subject: Re: [PATCH] nfsd: set acl_access/acl_default after getting successful
-To: "zhangjian (CG)" <zhangjian496@huawei.com>
-Cc: Li Lingfeng <lilingfeng@huaweicloud.com>, chuck.lever@oracle.com, jlayton@kernel.org, 
-	neilb@suse.de, okorniev@redhat.com, kolga@netapp.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, Trond.Myklebust@netapp.com, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yukuai1@huaweicloud.com, houtao1@huawei.com, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, lilingfeng3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] locking/lockdep: Enforce PROVE_RAW_LOCK_NESTING only
+ if ARCH_SUPPORTS_RT
+To: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+ Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20241128020009.83347-1-longman@redhat.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241128020009.83347-1-longman@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 5:18=E2=80=AFPM zhangjian (CG) <zhangjian496@huawei=
-.com> wrote:
->
-> there is one case when disk error cause get_inode_acl(inode,
-> ACL_TYPE_DEFAULT) return EIO,
-> resp->acl_access will not be null. posix_acl_release(resp->acl_default)
-> will trigger this warning.
->
->
-> > If getting acl_default fails, acl_access and acl_default will be releas=
-ed
-> > simultaneously. However, acl_access will still retain a pointer pointin=
-g
-> > to the released posix_acl, which will trigger a WARNING in
-> > nfs3svc_release_getacl like this:
-> >
-> > ------------[ cut here ]------------
-> > refcount_t: underflow; use-after-free.
-> > WARNING: CPU: 26 PID: 3199 at lib/refcount.c:28
-> > refcount_warn_saturate+0xb5/0x170
-> > Modules linked in:
-> > CPU: 26 UID: 0 PID: 3199 Comm: nfsd Not tainted
-> > 6.12.0-rc6-00079-g04ae226af01f-dirty #8
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> > 1.16.1-2.fc37 04/01/2014
-> > RIP: 0010:refcount_warn_saturate+0xb5/0x170
-> > Code: cc cc 0f b6 1d b3 20 a5 03 80 fb 01 0f 87 65 48 d8 00 83 e3 01 75
-> > e4 48 c7 c7 c0 3b 9b 85 c6 05 97 20 a5 03 01 e8 fb 3e 30 ff <0f> 0b eb
-> > cd 0f b6 1d 8a3
-> > RSP: 0018:ffffc90008637cd8 EFLAGS: 00010282
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff83904fde
-> > RDX: dffffc0000000000 RSI: 0000000000000008 RDI: ffff88871ed36380
-> > RBP: ffff888158beeb40 R08: 0000000000000001 R09: fffff520010c6f56
-> > R10: ffffc90008637ab7 R11: 0000000000000001 R12: 0000000000000001
-> > R13: ffff888140e77400 R14: ffff888140e77408 R15: ffffffff858b42c0
-> > FS:  0000000000000000(0000) GS:ffff88871ed00000(0000)
-> > knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 0000562384d32158 CR3: 000000055cc6a000 CR4: 00000000000006f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >   <TASK>
-> >   ? refcount_warn_saturate+0xb5/0x170
-> >   ? __warn+0xa5/0x140
-> >   ? refcount_warn_saturate+0xb5/0x170
-> >   ? report_bug+0x1b1/0x1e0
-> >   ? handle_bug+0x53/0xa0
-> >   ? exc_invalid_op+0x17/0x40
-> >   ? asm_exc_invalid_op+0x1a/0x20
-> >   ? tick_nohz_tick_stopped+0x1e/0x40
-> >   ? refcount_warn_saturate+0xb5/0x170
-> >   ? refcount_warn_saturate+0xb5/0x170
-> >   nfs3svc_release_getacl+0xc9/0xe0
-> >   svc_process_common+0x5db/0xb60
-> >   ? __pfx_svc_process_common+0x10/0x10
-> >   ? __rcu_read_unlock+0x69/0xa0
-> >   ? __pfx_nfsd_dispatch+0x10/0x10
-> >   ? svc_xprt_received+0xa1/0x120
-> >   ? xdr_init_decode+0x11d/0x190
-> >   svc_process+0x2a7/0x330
-> >   svc_handle_xprt+0x69d/0x940
-> >   svc_recv+0x180/0x2d0
-> >   nfsd+0x168/0x200
-> >   ? __pfx_nfsd+0x10/0x10
-> >   kthread+0x1a2/0x1e0
-> >   ? kthread+0xf4/0x1e0
-> >   ? __pfx_kthread+0x10/0x10
-> >   ret_from_fork+0x34/0x60
-> >   ? __pfx_kthread+0x10/0x10
-> >   ret_from_fork_asm+0x1a/0x30
-> >   </TASK>
-> > Kernel panic - not syncing: kernel: panic_on_warn set ...
-> >
-> > Clear acl_access/acl_default first and set both of them only when both
-> > ACLs are successfully obtained.
-> >
-> > Fixes: a257cdd0e217 ("[PATCH] NFSD: Add server support for NFSv3 ACLs."=
-)
-> > Signed-off-by: Li Lingfeng <lilingfeng@huaweicloud.com>
-> > ---
-> >   fs/nfsd/nfs3acl.c | 14 ++++++++------
-> >   1 file changed, 8 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/nfsd/nfs3acl.c b/fs/nfsd/nfs3acl.c
-> > index 5e34e98db969..17579a032a5b 100644
-> > --- a/fs/nfsd/nfs3acl.c
-> > +++ b/fs/nfsd/nfs3acl.c
-> > @@ -29,10 +29,12 @@ static __be32 nfsd3_proc_getacl(struct svc_rqst *rq=
-stp)
-> >   {
-> >       struct nfsd3_getaclargs *argp =3D rqstp->rq_argp;
-> >       struct nfsd3_getaclres *resp =3D rqstp->rq_resp;
-> > -     struct posix_acl *acl;
-> > +     struct posix_acl *acl =3D NULL, *dacl =3D NULL;
-> >       struct inode *inode;
-> >       svc_fh *fh;
-> >
-> > +     resp->acl_access =3D NULL;
-> > +     resp->acl_default =3D NULL;
-(A) These two lines fix the bug, without other changes needed, I think...
-> >       fh =3D fh_copy(&resp->fh, &argp->fh);
-> >       resp->status =3D fh_verify(rqstp, &resp->fh, 0, NFSD_MAY_NOP);
-> >       if (resp->status !=3D nfs_ok)
-> > @@ -56,19 +58,19 @@ static __be32 nfsd3_proc_getacl(struct svc_rqst *rq=
-stp)
-> >                       resp->status =3D nfserrno(PTR_ERR(acl));
-> >                       goto fail;
-> >               }
-> > -             resp->acl_access =3D acl;
-Because you deleted this line...
-> >       }
-> >       if (resp->mask & (NFS_DFACL|NFS_DFACLCNT)) {
-> >               /* Check how Solaris handles requests for the Default ACL
-> >                  of a non-directory! */
-> > -             acl =3D get_inode_acl(inode, ACL_TYPE_DEFAULT);
-> > -             if (IS_ERR(acl)) {
-> > -                     resp->status =3D nfserrno(PTR_ERR(acl));
-> > +             dacl =3D get_inode_acl(inode, ACL_TYPE_DEFAULT);
-> > +             if (IS_ERR(dacl)) {
-> > +                     resp->status =3D nfserrno(PTR_ERR(dacl));
-> >                       goto fail;
-The goto fail here will not release the access acl, if I read the code
-correctly.
-> >               }
-> > -             resp->acl_default =3D acl;
-> >       }
-> >
-> > +     resp->acl_access =3D acl;
-> > +     resp->acl_default =3D dacl;
-> >       /* resp->acl_{access,default} are released in nfs3svc_release_get=
-acl. */
-> >   out:
-> >       return rpc_success;
->
-Actually, all that is needed to fix the bug is adding the two lines
-that initialize
-them both NUL, I think.. I marked that change (A) above.
+On 11/27/24 18:00, Waiman Long wrote:
+> Relax the rule to set PROVE_RAW_LOCK_NESTING by default only for arches
+> that supports PREEMPT_RT.  For arches that do not support PREEMPT_RT,
+> they will not be forced to address unimportant raw lock nesting issues
+> when they want to enable PROVE_LOCKING.  They do have the option
+> to enable it to look for these raw locking nesting problems if they
+> choose to.
+> 
+> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-rick
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>   lib/Kconfig.debug | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 1e37c62e8595..942b4cb138bd 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1397,9 +1397,9 @@ config PROVE_LOCKING
+>   	 For more details, see Documentation/locking/lockdep-design.rst.
+>   
+>   config PROVE_RAW_LOCK_NESTING
+> -	bool
+> +	bool "Enable raw_spinlock - spinlock nesting checks" if !ARCH_SUPPORTS_RT
+>   	depends on PROVE_LOCKING
+> -	default y
+> +	default y if ARCH_SUPPORTS_RT
+>   	help
+>   	 Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>   	 that the lock nesting rules for PREEMPT_RT enabled kernels are
+
 
