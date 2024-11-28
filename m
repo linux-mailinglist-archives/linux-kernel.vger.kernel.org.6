@@ -1,165 +1,144 @@
-Return-Path: <linux-kernel+bounces-425036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7BA9DBCB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:02:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD34164693
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:02:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776301C07F2;
-	Thu, 28 Nov 2024 20:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UvUiWNMK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655D79DBCBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 21:08:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD014431B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A80DBB21849
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:08:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07FC1C2450;
+	Thu, 28 Nov 2024 20:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="uBGz+W8Y"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DBB145323
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732824130; cv=none; b=IpWkfCV47+NPE85tbsmqd61OrvzOE+q7zeuta7iOtJOG7ZGRz2H3xhTyhEZcWlc/raYutI//W8eUtIGfcaY25PUFS2XXTm51RCMOH13khGZsQ0QBBKEYk+1dP1EzTpYXIvbnCo7hlod3gNaqc5Qwdo+l4jNyeblCB0H85m1lAOk=
+	t=1732824483; cv=none; b=q0n4Tds20RQiolHwJjnjEmoY9yEIYWD65QVnFD2CRC7lXpGNHoDqacMnifVW/Dsfpg6Pf63GQC+fSLauMjYvapSAjnNPf//tvbRNZ+nND8KR4mHULE0C1NQ+ak6PXq4TjCKMK1AwWr5Ik2OHEpsUtkzJqb2S5Pat+nT8leBD+8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732824130; c=relaxed/simple;
-	bh=qTIa5ewcdNKi4ufBLVG/FfPhgpbjosm13dgaf9cJ054=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lt1qpbUUTNAR28jzF04gs0Lc0v14vpyzHxG74+/dOjlpGC1gL6ONKVwULKQLgw4WoyMKnKuLiml/wwQxWOMup1HWEiH9WHjpbuxmDy35tqN/fhYUYZkYq5zSYfPdp8FeETYjxUUNqV9ND2ODFG167D8C8uCiapTJOZvT8vYeU9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UvUiWNMK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ASALqeY005786
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:02:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4ryxQrLv394JJ73iyw7kDdXCsPIHG185hp0I0Nvmu6c=; b=UvUiWNMKnpTDutQc
-	WV3kG2XZiNzbBtXjAZ829NKkce5K2CLccRZhnSLVk4Cbi2NxLiV5DMW7vhbD1O16
-	tTNRm11Y7hZkbQGPaeLW4kE1sMIzxnSHoMFNW14C55+CzGe59T86T5nZER7Vowma
-	xdloOROkBGn180TCqdQTAB0XK8q4ZOEQeiL3hSORHrsMc7J9Ds+Xai8UHOM0zyxG
-	mr70Tq67GMlXPNk9BUeUmgCqwAVRRZSpTlo6/uAyCCSQYcutwFTfu7SjgBfIyC5q
-	ChJkf2SsZhlWy6FPEKD6ZgEz8GLjAQGwHRGjXPIyZ+JfDNSgCbS+Ia64XYTgIH0m
-	FyLADw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43671ebj7b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 20:02:08 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d41894a35dso2868496d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:02:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732824127; x=1733428927;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ryxQrLv394JJ73iyw7kDdXCsPIHG185hp0I0Nvmu6c=;
-        b=YrpEQItlX5xMuGUzd+0KtUAicu3MlpQjVieF4/Qlr2xQw4tNlndlkJ4uDvnz/eFs8G
-         AM0by0QwdsEMPlJdOOB6tfsKgu15HHT01EKKy9iv6/xeY18qC87TsOuPYzrZDmZXiSFp
-         ed5fu/FK1N7bC7k5YiBNcoZD3kDbt+rp6WtBUjsbCqAnr+WwBEP6+wUzvXhzeAV+iief
-         I/MLvUkjjSuARBz7p/UwTi7PFq+TbE3B/lwSjLHe3eAUBc3rkfL9s73fKgY0NS+U+TvA
-         t3r6VeUfX+IhKNoBowSH0mpOPyDO6LyBKVpdMyq05a9rcF16eotlioGwyZCapzXATsaJ
-         iO8g==
-X-Forwarded-Encrypted: i=1; AJvYcCViM1nTHIdMgYY+o5xWVjVLNyIm8LoS+QFrnVZrYUTW4wmVzrV7BkwWRkhq1jNrs+qwWC4O5Zor1o9F7yc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwodipbnVs/Axdmwibk11XgLHt32oj+eak29pT82A9m1onhVkUq
-	hwUm9YZOOxAHnx15y6YnaCnB9URR8uJmzNr1xNPisQcMAHBaOmv8Lv6hmoLrxkcZrjym6ppZX4I
-	DEiQ7YwjveZNEhXgl2OHLwhcUVrF1Sb7p5XjAcHVkesZFKG96mJBmNd+i39pBH/8=
-X-Gm-Gg: ASbGncsiwgRlhFhwdLWjK79JUpd2Qs15AjbZTcKUFoJhYHkdTZLLkedQfYHgFRDfx79
-	RmINDxXTww875i7jp8odnYkM+sLfjUll8aMtXsrvBeLVyGobMfJt96IPFctCGITJzBz2ftbnSkS
-	WknLvx8wo2ziDZqcXSBrdSxk8WboreNKKyN7jgl8Hi/4OWcxkyPiulEJCAA8r0Qb5wZNWGXVllh
-	MFcaCDYm0fn5mk3MvaEqig72eeXZoUbMaBzs57TsbjU5tDUmPealf7Y9cKoZ4SVS7VMMIWg+dRP
-	1kAtbcB2GN88j+uYzFXKPP66aCykQmk=
-X-Received: by 2002:a05:622a:cf:b0:466:8033:7dd2 with SMTP id d75a77b69052e-466b365e8d0mr60111041cf.15.1732824127024;
-        Thu, 28 Nov 2024 12:02:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEe2yFrYKlH7GKamBIcOIr6tSYjrJg4Yf/IcqIpvGJ2yK7SICcuObbV3wRHzWvvMeRae6au7w==
-X-Received: by 2002:a05:622a:cf:b0:466:8033:7dd2 with SMTP id d75a77b69052e-466b365e8d0mr60110791cf.15.1732824126611;
-        Thu, 28 Nov 2024 12:02:06 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097e8dce0sm1031189a12.66.2024.11.28.12.02.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 12:02:05 -0800 (PST)
-Message-ID: <7d344377-f1cf-400e-a9c4-442123dcf4ab@oss.qualcomm.com>
-Date: Thu, 28 Nov 2024 21:02:01 +0100
+	s=arc-20240116; t=1732824483; c=relaxed/simple;
+	bh=BgCvXF9nE/Md0VPYMuBYdI6DN8IIFIVm9FDT/hEgzPc=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QFDSBFHgYLS6xb6JXnSb9n3aSaVC2zwRyy/VkXlSlvLkhkD1p7Ienv3ImiJ9ljN13zXFpDNWnJEthXL2U8CXHVXoEyyAIeln3gyFAZ9M24KV304j2063IjOeZLVKyuZizhqbm6bpAd7n3ILonhZO2AdT8exKy8gdsV1T/ea5eC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=uBGz+W8Y; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732824482; x=1764360482;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=OqkEOPg1Ntw5OzjoKV6qV13YxrudUL0x8D+JX5oOx/Q=;
+  b=uBGz+W8Ym016ImqJwd/9QWuOFasP8zm48RXXq39TdpuS59IvV9HH+4Ly
+   y/65smXn6MUrbEKjivgSxbqUJFa7eYOkOUGPsCi1/UbcYxrGthP8vFPsT
+   OpkFH8KTmSOcrxDhxvoAgTfAJRhKpqNPOW0uZhn9lsQICQcqIZ6TXiQOd
+   4=;
+X-IronPort-AV: E=Sophos;i="6.12,193,1728950400"; 
+   d="scan'208";a="699037645"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 20:07:59 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:44286]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.34.163:2525] with esmtp (Farcaster)
+ id 092245c2-527c-4203-87c5-e650bdd3ad53; Thu, 28 Nov 2024 20:07:58 +0000 (UTC)
+X-Farcaster-Flow-ID: 092245c2-527c-4203-87c5-e650bdd3ad53
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 28 Nov 2024 20:07:58 +0000
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 28 Nov 2024 20:07:58 +0000
+Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
+ EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
+ 15.02.1258.034; Thu, 28 Nov 2024 20:07:58 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Thomas Gleixner <tglx@linutronix.de>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>, "mpe@ellerman.id.au"
+	<mpe@ellerman.id.au>, "npiggin@gmail.com" <npiggin@gmail.com>,
+	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"naveen@kernel.org" <naveen@kernel.org>, "maddy@linux.ibm.com"
+	<maddy@linux.ibm.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "aou@eecs.berkeley.edu"
+	<aou@eecs.berkeley.edu>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "bhe@redhat.com" <bhe@redhat.com>,
+	"hbathini@linux.ibm.com" <hbathini@linux.ibm.com>, "adityag@linux.ibm.com"
+	<adityag@linux.ibm.com>, "songshuaishuai@tinylab.org"
+	<songshuaishuai@tinylab.org>, "takakura@valinux.co.jp"
+	<takakura@valinux.co.jp>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>
+CC: "Chocron, Jonathan" <jonnyc@amazon.com>
+Subject: RE: [PATCH v2] arm64: kexec: Check if IRQ is already masked before
+ masking
+Thread-Topic: [PATCH v2] arm64: kexec: Check if IRQ is already masked before
+ masking
+Thread-Index: AdtB0CLnH24qyvw6Ek+EUcflLj/BEA==
+Date: Thu, 28 Nov 2024 20:07:57 +0000
+Message-ID: <3a499ecdfa5042f8b6e8834c47cdb2d9@amazon.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: venus: Add support for static video
- encoder/decoder declarations
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: quic_renjiang@quicinc.com, quic_vnagar@quicinc.com,
-        quic_dikshita@quicinc.com, konradybcio@kernel.org,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        devicetree@vger.kernel.org
-References: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-0-99c16f266b46@linaro.org>
- <20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-1-99c16f266b46@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-1-99c16f266b46@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 3UBXJ8hYJ6TGD1zVKFECbvrJT3Js3r-k
-X-Proofpoint-GUID: 3UBXJ8hYJ6TGD1zVKFECbvrJT3Js3r-k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 mlxscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- bulkscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2411280159
 
-On 27.11.2024 2:34 AM, Bryan O'Donoghue wrote:
-> Add resource structure data and probe() logic to support static
-> declarations of encoder and decoder.
-> 
-> Right now we rely on video encoder/decoder selection happening in the dtb
-> but, this goes against the remit of device tree which is supposed to
-> describe hardware, not select functional logic in Linux drivers.
-> 
-> Provide two strings in the venus resource structure enc_nodename and
-> dec_nodename.
-> 
-> When set the venus driver will create an OF entry in-memory consistent
-> with:
-> 
-> dec_nodename {
->     compat = "video-decoder";
-> };
-> 
-> and/or
-> 
-> enc_nodename {
->     compat = "video-encoder";
-> };
-> 
-> This will allow us to reuse the existing driver scheme of relying on compat
-> names maintaining compatibility with old dtb files.
-> 
-> dec_nodename can be "video-decoder" or "video0"
-> enc_nodename can be "video-encoder" or "video1"
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
+On 11/28/2024 12:39 PM, Thomas Gleixner wrote:
+> This is just wrong. If the interrupt was torn down, then its state is dea=
+ctivated and it was masked already. So the EOI handling and the mask/disabl=
+e dance are neither required nor make sense.
+>
+> So this whole thing should be:
+>
+>                 chip =3D irq_desc_get_chip(desc);
+> -               if (!chip)
+> +               if (!chip || !irqd_is_started(&desc->irq_data))
+>                         continue;
+ACK. Will be done this way in V3.
 
-Bryan,
+> But what's worse is that we have 4 almost identical variants of the same =
+code.
+>
+> So instead of exposing core functionality and "fixing" up four variants, =
+can we please have a consolidated version of this function in the core
+> code:
+>                 struct irq_chip *chip;
+>                 int check_eoi =3D 1;
+>
+>                 chip =3D irq_desc_get_chip(desc);
+>                 if (!chip || !irqd_is_started(&desc->irq_data))
+>                         continue;
+>
+>                 if (IS_ENABLED(CONFIG_.....)) {
+>                         /*
+>                          * Add a sensible comment which explains this.
+>                          */
+>                         check_eoi =3D irq_set_irqchip_state(....);
+>                 }
+>
+>                 if (check_eoi && ....)
+>                         chip->irq_eoi(&desc->irq_data);
+>
+>                 irq_shutdown(desc);
+>
+> No?
+In V3 I will add a preliminary patch that will remove the four variants
+and instead add a common implementations to the kexec core.
 
-I'm still not sure if keeping the logic behind this makes sense at all.
-
-Could we not just call platform_device_register_data() with a static
-configuration of 1 core being enc and the other dec?
-
-Konrad
+Thanks, Eliav
 
