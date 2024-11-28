@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-424854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB209DBA51
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:17:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0051B9DBA55
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A90E281552
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:17:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA96128137F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0611BD9E3;
-	Thu, 28 Nov 2024 15:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245E519DF81;
+	Thu, 28 Nov 2024 15:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kr+b5UrZ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XJovoJqM"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16C41BBBD3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5F81BD004
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732807013; cv=none; b=VVk4z7SNXLexpPmdX70QhpNb0jq8vT7vjhJlZSk9vt8H5Z/6Ko+ngZ9xqAgX5Z+tJUTMQV5blMcgq3oVk3CyvnVwh/3DZiE1IlO41CblxyMJnVI8oelIAlPTFXyT6Ih7X/TmVZMlF0/D5itMgOCs8bttxKxoCCiEMjUY68CkXnc=
+	t=1732807014; cv=none; b=NhRoqC+zV/6QEk7ec5CFRPLsYuizg5I6z7shSGhRR3njITxfnJKLEHBLm03w6YyiAEg31PcmVDpD2l4mzqlnduCDcXuDrMPxIeIwdPUBEV6UDdmGDmmU8QErKWVXwaNQKsIVWYGKNr8esjGEUQ1tgbakGxVdTMTohM+irUs9y7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732807013; c=relaxed/simple;
-	bh=Ctm1v2XGG+ucVjPxKUudaikXrk6rMN3i6qsDbqS9Y/Q=;
+	s=arc-20240116; t=1732807014; c=relaxed/simple;
+	bh=KH6tn61/Aofb7L+ocHnF34SBttJAGs8D9xM5t0ckYwk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rPlCr+R2/AAWUUJGbjABkpeVBIsG0SgPfV6ltAEHJQ5PHjJfjCBcnZycBsyh21YW9HiXmFSq8yDv4PbVL9Y0tTG4iDz2VNm6sQVpo88A8tKqPqMMp/FlVZGV3+YWkMX6xD2jkrYa5N7+Qi5SSMJBJpeYAf11u4f8lBPfCPj/97o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kr+b5UrZ; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=N3aqIxdrLsLdQ6nSEyq59wZl3siG53BvfSJEItVfsHEMkcjU0+DpyoNa1gLs2kPj2BJX2ZOqEa4GiJUFLJLyPUnnQffAL4Ya5XHx/gFbQgtiM+5ScHUPjG2uw8QFp2vMB1D12ITaNva4mw2k03z+VWmgzmwN0AdSAlbKoBLjNSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XJovoJqM; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so8278405e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:16:51 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4349f160d62so8357405e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:16:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732807010; x=1733411810; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732807011; x=1733411811; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=S42PGEHBHY2kpBVY5qDRZG4XP5aA8pMSU6efiWvXnew=;
-        b=Kr+b5UrZF7Rhp/rc33wyaUvG7ia0ZdBIzsCOsslFHnavSjuAcOFy9/25RL4VSTjc3T
-         tStl7ckExVK06JBm03SN6DLzFTeCeo9s/4+2zAoR92RL0Hyr0VYTFTZfnaTqdyeufeQq
-         SmwJD7GKYwcp7BpPUG3ltzFMIuCp2YgNB/GZnhWNOUCQTNvX/5RQSM/tbEEpLqkPubJQ
-         R3xvDrWVodfLQnYzI3FWfFsrNHwtb+nh/YYjQzkUGfEypV7xqzs/fo9umXcqfPFOmx3O
-         w0sVHHgXx6RF2qJJNxvq4M55l02ajj1zNScughaXqjwGPmA0XEI8WzyZu0KxfXA0sPJF
-         NVTQ==
+        bh=S5Q6Qv7Q+7NO9XRjvZFVeABmFoVh33eCRfYHhRmvlpw=;
+        b=XJovoJqMCr0OOC5a7cmVFcs96NJJtNSPf1f28StK7+zWHsDkFihP3wPTiJz2tQ4Gj+
+         pzfYoTa+pF4Sg6xJeytNb1yEX4ioJ1QP2zeQmAHVBtTO5CN00f7DjGVsQUv8oPYIgo83
+         zoz0uM5eMnR3RvPHdrTXkwU2YbmGJL5bymAMwCCocOP/OeVITsIPON3zg99xK0Tf1HgH
+         1+JJ3Lg2NgdfqVg0LQQYm6edWgTo1k9/dQIbCH76k81fjOlK1VAjOfbtmSNNzTlq/Rew
+         xNrfBPM6U1xXDs8CJ2/ANgwQskKC7Goz6d4Oj5fR+xmn6Ce33MZVu0FOfcDZTIcQYvng
+         toHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732807010; x=1733411810;
+        d=1e100.net; s=20230601; t=1732807011; x=1733411811;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S42PGEHBHY2kpBVY5qDRZG4XP5aA8pMSU6efiWvXnew=;
-        b=RBvXOKDmA6VeWi61NCp/trrmZE046I1om6RCvOOie/6fUUVvVpG3fq8bxL5ij/Ux97
-         IfD5R/bajSNq0kg5ZNPdVmaTpKWcenlrSjxSyPa8rkGYrLVyEP2Nl+Y53MwTjlZjEv52
-         WzAA+1TYYH43JjmBK4nFJeOU7r8LFA4VaCxMvUWwrIJOhPMyK8syr/PJeckKlD3nBOaL
-         u8W27MGiC2KCmhznebnrDHg7KXWlcJeSxyKdceojb43Y72yRiUkr25Lv/iPCXoRThVCv
-         3X0Q/HD5vUndWxdOEFmLC6IWrirFeVzEn1TzZYGH/hf/p1/3ydgk7Kcv1BDeJBG0KpF3
-         IqLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOfSm9vjbIqjRVDz8DNHW70Xuuv5/2IVNiYp1FEJSiuP7DZs0UbiaCqUOJnJ/BPhTzvFzXcdbovSukNW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV2NotHStAJBgHfpA70S7GvKDWXxWIBa6wBtvvvvDtPmXGUD3R
-	H9MGg2gzYUDhKusoyRL5qUsqPk0IQ/XvNqMhn6MC6wiMFYf9ccvM8X+9/SPA1n8=
-X-Gm-Gg: ASbGnctjF9CDXdmIZfVX0PMKxTEtqPoNtFUzDq6yGY7t0ZRhPs7QCWceA/f9elP8jn6
-	bK96yTBE5ACNAizEVX+vbw50OV4vBPc8O/ubfejSKJiuhcmyFaDuIHS+PrJq+uEWngriOQw2u1b
-	kM6FP5QG5tPXA9IQa8aF+++liCDjVom65cDqo1/TCtlnpnIjWGxCOUYMBZ3Ki4XoHvPBPcworoW
-	azV/swpFqKEmgYTj/OxgC4C+YTAGHEdPXEzLXFdFra6csNMrnEMfPDlWrEm0ZVP9i6vCxw=
-X-Google-Smtp-Source: AGHT+IGXMYu48cPlDHDHNCoxhqcYpYyTwMeAPAwgUmvro+k2EYbKaSdnX+mDxj6JuEry5M6D4bK2CA==
-X-Received: by 2002:a05:600c:3146:b0:434:9fac:b158 with SMTP id 5b1f17b1804b1-434a9dbbc0bmr59715305e9.1.1732807010027;
+        bh=S5Q6Qv7Q+7NO9XRjvZFVeABmFoVh33eCRfYHhRmvlpw=;
+        b=dq60JLNy658gJh2jows+gesGUFVhNQZpXCW2RtUMHMgRv/4o1IIgfwsd3hnunROYNC
+         EhXqXPpdjidEJ5xtT/shn5WmC4HwxBqTQDW+D7Rz/1+B0X9iZimGxOVGE8QTy/scaMAl
+         UokQtr1l84zwckM3126vxXh5baW/YFKzuic2OTnFLhfbGBYyVX/iAAtYTMrx2zEZd5ZN
+         JPz9TXYGi61/dHo4gicgy+OHxkTGh9Z//4atTFhIikCrMW7jv2xNYPNDIHvztbyWXil4
+         WkoTHd52G6dLTrWNCm+W9+tigjKJTXdIFBUwNRmb4bk8JDLY0hNTXACYHlxEeOofx7E9
+         V+qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWF5Zn9UbDRG4XWXfuRLowSinheR97lM0PgpJkL2U/n/Faq+DRQDK4ORmBlKd5PjG481Gbw0Uc5XKsejx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX4FkTK4t8Vy6gG7CmZPNiyIp7Z6ltR3GPVJbdgB3f9jpo04Mp
+	Vy1jg5/3T0dXnbeX/zF04aZoKA5q/LHAKKMwhw5xBI8500dIBcEEsXBr9fynAAA=
+X-Gm-Gg: ASbGnctllPPcWZYkYEHg90Evo2stdDYLYrsEF89LxXGtCFvSGyi9nBMR5aGO8el0bcN
+	+ygT3Mhw1h2jTD6oYTENgDcliWVQy+l5QUdFvadQM4vPzlZb5oRZc8QcOVg314kfpNRKJVI9alY
+	HXu7MztcCgz2hdKzTM/sz7w9Uoy1L5K3Ex+OQEb0DPACMij0ieDugt0IBxEmAr43j0s/3QTa93Q
+	qtai5nhQoMWDgvoCiHBwN9Q44Wnjz5CVj56vlNhaprokUZ51Efyvaq35u+f/Rb3a4os/v0=
+X-Google-Smtp-Source: AGHT+IF0iJc1B5czbddvWTBnzzA/XHuEcHL2hR6LyPDDF8y2Tqjitcp7kVj8ES42GYzv1qAY3kVKlg==
+X-Received: by 2002:a05:600c:3b29:b0:431:57d2:d7b4 with SMTP id 5b1f17b1804b1-434a9de3be9mr60030445e9.26.1732807010910;
         Thu, 28 Nov 2024 07:16:50 -0800 (PST)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e4fe1sm55867025e9.38.2024.11.28.07.16.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa7e4fe1sm55867025e9.38.2024.11.28.07.16.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 07:16:49 -0800 (PST)
+        Thu, 28 Nov 2024 07:16:50 -0800 (PST)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 28 Nov 2024 16:16:43 +0100
-Subject: [PATCH v4 3/5] dt-bindings: mmc: controller: remove '|' when not
- needed
+Date: Thu, 28 Nov 2024 16:16:44 +0100
+Subject: [PATCH v4 4/5] dt-bindings: mmc: document mmc-slot
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241128-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v4-3-11d9f9200a59@linaro.org>
+Message-Id: <20241128-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v4-4-11d9f9200a59@linaro.org>
 References: <20241128-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v4-0-11d9f9200a59@linaro.org>
 In-Reply-To: <20241128-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v4-0-11d9f9200a59@linaro.org>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -95,76 +94,88 @@ Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2218;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1754;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=Ctm1v2XGG+ucVjPxKUudaikXrk6rMN3i6qsDbqS9Y/Q=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnSIlcJoLSEYYm5MQW4xLgZnBP3eyGyvSOl/0RZ/9K
- JJyjN+qJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ0iJXAAKCRB33NvayMhJ0TLaEA
- CH9I1Fa8qcZ3MWsgMhStJ0f/PPSyNF3vE8CX4dw/J/iF5BymCoCST2eaL3P3SsspJmCQBSU/GbYxRj
- osLZTWfI3J+EDSUOn+HdBdMXs2rYhYq5bHboXwtxFm1iEN7VTQNNOx7Fnaud9YZ3aGTIv6ION4fueg
- Sf4RzG6+sJwrAEIO40zuPr1buajpoO6hJtY4miAwwmjf7kW9B4u7GPv2X79yt3g0m8wFSRgaYn53aD
- lMAHw3kvclnOqYcB+YFbMUPKZee3WO00M04oIiFL7wYq124TUo5pL7o5rKjw2yMx9jHLLRdDTBs8Qe
- eXlNvggZc75XwfmnZNnnInKvrV3iEKqYdhQOqnnLgb87N7BT7GEsqHjQJAiEPecUnRGUtl5frhEhUe
- TPttFVP8KaD6wJ6uf2W0J8hPCLAhyMx3pH9ib6qY++XZHCSAThoxixtSMngbGEOuDuamG1jQqTv8jC
- evJPfaU7uk4kYkU6bjB8iZADcLJfHgz0zUxFLzcdJAPpJ6yWbYNf7X1DylnBjkhpr7+JythyuK3CSJ
- EhoVlvkReBXAuyz2dFzUEi3E3JBOYwzuXx3U0V0BljQ1s8EVBIz38l6P6ZjBL9bc/uZDnisOtFDRsY
- p4H3Llh0+QOUwqjyflnJvR+Sf3NdMV2cRWu4mjtqZKmE7QJ8n32BoU1vkuHQ==
+ bh=KH6tn61/Aofb7L+ocHnF34SBttJAGs8D9xM5t0ckYwk=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnSIlcZZ0QyhefaYAilsotWqcLqgfPkSKK9P1RiHTk
+ FklhojiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ0iJXAAKCRB33NvayMhJ0QNtD/
+ wJTQlrjKH0PY65pp1YvHE/K8ab0MOAghsuUJS/CYKI6D2Ee2EewIuUP5zLVsm1tq2+EUEOrJBqIlLM
+ xgxNnGjNR2QEnoZfWeNFEEACal3ui9bkPZi7c2/CSi4KUw5SAT9ycCwBaNCH2JVbX+ubMcQJo6XQW2
+ IoqziEgnTD32MkJP+gFanL4SoBxlVE0sGU3QiDu3scymKJ9CCFANE0EOsuBmNS5RIR0h4CEuFSsBPd
+ cKefbWZxv97HOPZPXeGrVt5CIkqZ1R+Ajel9T8zVeQ12NZ86wXD6ytuxe1LVXq0pNiQWZ7pvk/zH6m
+ SBIZe9BM6HH1ggbkmp77J6HTXaFZxP4C2HjNPXsWg5Mzx8X4jF8318t+BkiRcaBmDxWAc55M9FAS7h
+ B3I/6SO7VdKxmRjJc2HKqMDiMpk28uXgaManIKOkN8gzmJtp7QZgYgTTRuO4wasH3yifooaU7AEUpL
+ lo71weRzjMjo7d3Ev8mUidV+EvTIgqsbGxAMqmfoZvQROyUkcFMLMFvGmVWMznw35s+2k1yh4zxq8y
+ h5JdkysR9IUT/SlbHfkuFR70LYpUIEROx4wThdLGqLVbfKf/2Ci9iuiiWlMOtthQcz60C8+m+Kg5qs
+ OOD2zGlhE0zLGIpNpIlTBCYvq2DwHZlzV71aErT//1OaZGZHMJFbMGvvIomQ==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Adding "|" is used to keep the description format, remove it when
-not needed after the split into mmc-controller.yaml and
-mmc-controller-common.yaml files.
+Document the mmc-slot, which is a subnode of a multi-slot
+MMC controller, each slot is represented as a full MMC controller,
+the top node handling all the shared resources and slot mux.
 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml | 6 +++---
- Documentation/devicetree/bindings/mmc/mmc-controller.yaml        | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/mmc/mmc-slot.yaml          | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-index d8297af578049b2bf71cf6e06f45aac1e42bde56..9a72354397591d9648e80806c2f93797abdc70a0 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-@@ -9,14 +9,14 @@ title: MMC Controller & Slots Common Properties
- maintainers:
-   - Ulf Hansson <ulf.hansson@linaro.org>
- 
--description: |
+diff --git a/Documentation/devicetree/bindings/mmc/mmc-slot.yaml b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1f066782806341a9f72460edd8e6454ce22f4320
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/mmc-slot.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MMC slot properties
++
++maintainers:
++  - Ulf Hansson <ulf.hansson@linaro.org>
++
 +description:
-   These properties are common to multiple MMC host controllers and the
-   possible slots or ports for multi-slot controllers.
- 
- properties:
-   "#address-cells":
-     const: 1
--    description: |
++  These properties defines slot properties for MMC controlers that
++  have multiple slots or ports provided by the same controller and
++  sharing the same resources.
++
++$ref: mmc-controller-common.yaml#
++
++properties:
++  $nodename:
++    pattern: "^slot(@.*)?$"
++
++  compatible:
++    const: mmc-slot
++
++  reg:
 +    description:
-       The cell is the SDIO function number if a function subnode is used.
- 
-   "#size-cells":
-@@ -321,7 +321,7 @@ patternProperties:
- 
-     properties:
-       compatible:
--        description: |
-+        description:
-           Name of SDIO function following generic names recommended
-           practice
- 
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-index 99c01ce318d3e5aa914ed9b1b71e620538eef29b..9d7a1298c455434a0848dac32cbe77eb8f71c065 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-@@ -9,7 +9,7 @@ title: MMC Controller Common Properties
- maintainers:
-   - Ulf Hansson <ulf.hansson@linaro.org>
- 
--description: |
-+description:
-   These properties are common to multiple MMC host controllers. Any host
-   that requires the respective functionality should implement them using
-   these definitions.
++      the slot (or "port") ID
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    mmc {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      slot@0 {
++        compatible = "mmc-slot";
++        reg = <0>;
++        bus-width = <4>;
++      };
++    };
++
++...
 
 -- 
 2.34.1
