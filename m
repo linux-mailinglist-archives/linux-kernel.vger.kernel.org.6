@@ -1,160 +1,274 @@
-Return-Path: <linux-kernel+bounces-424480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D8E9DB4E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:41:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D86669DB503
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4DF1639A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C001516602C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5D9158527;
-	Thu, 28 Nov 2024 09:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MmLaaPm+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA8E1917E4;
+	Thu, 28 Nov 2024 09:44:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997D0155C83;
-	Thu, 28 Nov 2024 09:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB8C158527
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732786877; cv=none; b=Ro0GBqdOXYNX9XfsxrJuLx9jUTPvmbKFYcHCmWGweCU6qyXW2aXPVDQjLjplDEanMqoDpS2dUHHxZJTodVvkPNyvaHRv6IwFscSer6FXziYpOEMmVVvxeAg+9mgjkQNEDYAQFiOBlaa8g/mTNXHlq2cCswjzdcvxQMXcO5739NY=
+	t=1732787064; cv=none; b=WM3JyNCBPzXRplu5W838n+JMfYyVV8geJJ7yzQ35H+uklg5eIpgehF9OHp0U+TBwE0uloghQsJ6fW249j7T0V6bKvZc29MGT3Nof9TjL5p0f96r4tOxBn4u/hf+zBx8CU0/Nrn6PP8WVfQIr8LOxHt9TdW2SbJWyGJ9epWMc4B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732786877; c=relaxed/simple;
-	bh=k71kvRRoBDmVzGMd5DTUXIv9WgZ16WK1Rj5Cwxj2hpc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=OJGvtKFUVV2KYu3MoGGrtNbb/RWucXKKoAQFDull9r0R5kVkR+FT3WJzoixn96cUv9khqLzaIC5RSCCSF2J/OlXvdubGAr2NnBXeYaeZGzMgsKUwPuqxOuW0g+GwFx0gxerxfeQp6PCBcK8Q7B+dGPVPURHm4rFpw8+GC1y9H7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MmLaaPm+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS8TDTk025351;
-	Thu, 28 Nov 2024 09:41:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mkNPgDK7NHK5jnRClmZAvQu0Tyyth2yZXXa1RkYqaco=; b=MmLaaPm+VaEuF3Ea
-	Qy9u7An0ngImxxwHC0mKsmuFvf3QsMvV2dHSM4OsUWQi39QL21bEg73GqXyb1g2h
-	J53PMU/GiW1umCfKrnUgszsNNjqnpABbF1I9377fwDIK5NvGmkgGW37tTe/UeEA7
-	XG9uxBHdwR8WgAKcSRvYTSA9XIXFtaZcT9N6KGNGyjW8Yuu6/1nsCU5nhbgr7OIo
-	xv28CnQ6KVKc6GLC1tCDd079/T5pae+EJrHLOynY+1P1YT+/1aGswnnjpVO+DMjV
-	ZP2dfdtsBi8Gh2OqtpIlbeV4oS16nIhTTSiJRCenNZwuLj+j5rhTO81Rz8G4FmzX
-	F7ApDQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xw2322-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 09:41:13 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS9f5SL002995
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 09:41:05 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 28 Nov 2024 01:40:59 -0800
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Date: Thu, 28 Nov 2024 17:40:17 +0800
-Subject: [PATCH v2 2/2] arm64: dts: qcom: qcs8300-ride: Enable PMIC
- peripherals
+	s=arc-20240116; t=1732787064; c=relaxed/simple;
+	bh=Mzx7lBXglZpnjqm8JI51b2nRkbAhB+vlHrQFuUhWCtA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ud6kXKmtyGM5sQttr4EZZ7qVLjf6J5ebRpIUhmIrwGKuqJcHBIDL7+nLvy3ODZYvjwDYCsX7vnqMuSXLhzTv+2PCcea1uOi+NK1Z54ee7rAHd5iyh7wrnUMBMZjP5IACc5ff/p+RsCnLlGJnY6r3MH5f9qZSfWoyt5CmddxNXIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7776959fdso6013875ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:44:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732787061; x=1733391861;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=llL0BbO7X1MaDWARYJWLSps5jkKt7gspEfHo8uKEfLc=;
+        b=qZ3O6WIPXcvQdcxF8W/MmI0nax4jiMUd+rf5H4/k5tCYQbbrxAUXDdAbW8RqOPp9nV
+         RY/jKL/xvfHsMonwnogHjccreG7neEmPDIokC9Hk1Bo6q0mGFeJPQxvz5Zi6R9cg/sfY
+         S5hSqX43PwJNZZPNK0mdy0FKtQMofvA1gTsfe/Avz08sKOIAHiABgqaQPR+evBOumKP5
+         8LUoNYiSsmyQxXcHYZTMhNFzPlGtOHs6v9C2oBqVlliX06sy4OMdG25VyWcJUsCE5o3k
+         GVu2hl1C+runx31OR4zmdutnC74NodinkWAzFvVfMEAesaUkIOo5GIVXxTdmaFbfeSNe
+         +EhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgVoSFlTj7iITkDmx/1oxycUV3+XS1ElDqEWN1MkvKQri59LD5eO4MDgcOxUCjqhqayAe6hP+SopfUQNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMJT3yT0jZUq8tpmNshx14S2xfrym3TAS9xtWuYsalbKjViBCi
+	CB/r8su7IAH8WANxjHf7gWyjbXyxgbjV84TMMmvC51Weyvhk82rscSkW72KpocegMdpU3G6vmvv
+	/R9iMuslMt852YCl0rVsBM2IxqWT2OB3ODFeTU0WIFeXc2B06hyjDMZw=
+X-Google-Smtp-Source: AGHT+IGOtTtrRJqhtjzWWVPBKJ54ycG+gBfcBWkZt9l7FAd9zlSfTT8QYcYraSQxBia6Dp6JyViR4tWeNy4Yte44hF8v+1T5X0kM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-2-001c0bed7c67@quicinc.com>
-References: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
-In-Reply-To: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
-To: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732786852; l=1329;
- i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=k71kvRRoBDmVzGMd5DTUXIv9WgZ16WK1Rj5Cwxj2hpc=;
- b=BInAOxjgkGxlb99YAGyXO00Cm1qiOYKsBTT7csQJtdfuxAneZMKzP6cFfoqK0A0CTMflLaHnp
- nI/FXsUH0t+CB9pKIDQ5H/rLluAfZPr1rRhYgFKLUbKX6wS2McrUQWI
-X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
- pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4Te05hiFdcF2cLLZjr7pWh4ZDb24sXeK
-X-Proofpoint-ORIG-GUID: 4Te05hiFdcF2cLLZjr7pWh4ZDb24sXeK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 adultscore=0 suspectscore=0 mlxlogscore=934 mlxscore=0
- spamscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411280077
+X-Received: by 2002:a92:cdab:0:b0:3a7:c32f:be58 with SMTP id
+ e9e14a558f8ab-3a7c557c7d1mr75361355ab.13.1732787061675; Thu, 28 Nov 2024
+ 01:44:21 -0800 (PST)
+Date: Thu, 28 Nov 2024 01:44:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67483b75.050a0220.253251.007c.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KASAN: slab-out-of-bounds Read in ocfs2_dx_dir_lookup_rec
+From: syzbot <syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Enable PMIC and PMIC peripherals for qcs8300-ride board. The qcs8
-300-ride uses 2 pmics(pmm8620au:0,pmm8650au:1) on the board, which
-are variants of pmm8654au used on sa8775p/qcs9100 -ride(4x pmics).
+Hello,
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+syzbot found the following issue on:
+
+HEAD commit:    2f87d0916ce0 Merge tag 'trace-ringbuffer-v6.12-rc3' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ec545f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
+dashboard link: https://syzkaller.appspot.com/bug?extid=20282c1b2184a857ac4c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2f87d091.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2704ba6867a8/vmlinux-2f87d091.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9f7121fd532b/bzImage-2f87d091.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 32768 to 32767
+==================================================================
+BUG: KASAN: slab-out-of-bounds in ocfs2_dx_dir_lookup_rec+0x206/0x810 fs/ocfs2/dir.c:805
+Read of size 4 at addr ffff88801181b2c0 by task syz.0.0/5107
+
+CPU: 0 UID: 0 PID: 5107 Comm: syz.0.0 Not tainted 6.12.0-rc3-syzkaller-00044-g2f87d0916ce0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ ocfs2_dx_dir_lookup_rec+0x206/0x810 fs/ocfs2/dir.c:805
+ ocfs2_dx_dir_lookup+0x163/0x930 fs/ocfs2/dir.c:860
+ ocfs2_dx_dir_search fs/ocfs2/dir.c:920 [inline]
+ ocfs2_find_entry_dx fs/ocfs2/dir.c:1034 [inline]
+ ocfs2_find_entry+0x1338/0x2780 fs/ocfs2/dir.c:1070
+ ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1981
+ ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2003
+ ocfs2_lookup+0x292/0xa60 fs/ocfs2/namei.c:122
+ lookup_open fs/namei.c:3573 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x11a7/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fefd797dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fefd881f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fefd7b36058 RCX: 00007fefd797dff9
+RDX: 000000000000275a RSI: 0000000020000280 RDI: ffffffffffffff9c
+RBP: 00007fefd79f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fefd7b36058 R15: 00007ffe17f0ea68
+ </TASK>
+
+Allocated by task 5105:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
+ getname_flags+0xb7/0x540 fs/namei.c:139
+ getname fs/namei.c:225 [inline]
+ __do_sys_symlinkat fs/namei.c:4657 [inline]
+ __se_sys_symlinkat fs/namei.c:4654 [inline]
+ __x64_sys_symlinkat+0x87/0xb0 fs/namei.c:4654
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5105:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kmem_cache_free+0x1a2/0x420 mm/slub.c:4681
+ do_symlinkat+0x34c/0x3a0 fs/namei.c:4649
+ __do_sys_symlinkat fs/namei.c:4657 [inline]
+ __se_sys_symlinkat fs/namei.c:4654 [inline]
+ __x64_sys_symlinkat+0x95/0xb0 fs/namei.c:4654
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88801181a200
+ which belongs to the cache names_cache of size 4096
+The buggy address is located 192 bytes to the right of
+ allocated 4096-byte region [ffff88801181a200, ffff88801181b200)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11818
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff888030407780 ffffea000046a400 dead000000000002
+raw: 0000000000000000 0000000000070007 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff888030407780 ffffea000046a400 dead000000000002
+head: 0000000000000000 0000000000070007 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000460601 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5023, tgid 5023 (rm), ts 59547676990, free_ts 44085069973
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4141
+ getname_flags+0xb7/0x540 fs/namei.c:139
+ user_path_at+0x24/0x60 fs/namei.c:3015
+ user_statfs+0xd6/0x460 fs/statfs.c:103
+ __do_sys_statfs fs/statfs.c:195 [inline]
+ __se_sys_statfs fs/statfs.c:192 [inline]
+ __x64_sys_statfs+0xe8/0x1a0 fs/statfs.c:192
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 4795 tgid 4795 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ __slab_free+0x31b/0x3d0 mm/slub.c:4490
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x1a6/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ tomoyo_add_entry security/tomoyo/common.c:2023 [inline]
+ tomoyo_supervisor+0xe0d/0x11f0 security/tomoyo/common.c:2095
+ tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
+ tomoyo_path_permission+0x243/0x360 security/tomoyo/file.c:587
+ tomoyo_check_open_permission+0x2fb/0x500 security/tomoyo/file.c:777
+ security_bprm_check+0x86/0x250 security/security.c:1297
+ search_binary_handler fs/exec.c:1740 [inline]
+ exec_binprm fs/exec.c:1794 [inline]
+ bprm_execve+0xa56/0x1770 fs/exec.c:1845
+ do_execveat_common+0x55f/0x6f0 fs/exec.c:1952
+ do_execve fs/exec.c:2026 [inline]
+ __do_sys_execve fs/exec.c:2102 [inline]
+ __se_sys_execve fs/exec.c:2097 [inline]
+ __x64_sys_execve+0x92/0xb0 fs/exec.c:2097
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88801181b180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801181b200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88801181b280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                           ^
+ ffff88801181b300: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801181b380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 7eed19a694c39dbe791afb6a991db65acb37e597..56e7194521834a7a6f5c5597e0f28a27a18d90d3 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -9,6 +9,7 @@
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- 
- #include "qcs8300.dtsi"
-+#include "sa8775p-pmics.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS8300 Ride";
- 	compatible = "qcom,qcs8300-ride", "qcom,qcs8300";
-@@ -223,6 +224,28 @@ &gcc {
- 		 <0>;
- };
- 
-+&pmm8654au_0_pon_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
-+&pmm8654au_2 {
-+	status = "disabled";
-+};
-+
-+&pmm8654au_2_thermal {
-+	status = "disabled";
-+};
-+
-+&pmm8654au_3 {
-+	status = "disabled";
-+};
-+
-+&pmm8654au_3_thermal {
-+	status = "disabled";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.34.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
