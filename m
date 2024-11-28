@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-424343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3CF9DB33C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:41:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A86CC9DB33F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B701677CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37FB61676C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0C614B945;
-	Thu, 28 Nov 2024 07:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855A14F9D6;
+	Thu, 28 Nov 2024 07:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VZi5KW16"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aJpe0Hmg"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B23146A97
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC72D1482F3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732779664; cv=none; b=eSUmiC/dSG5WMWSstKBxjAdm90Okc3BQVh+9z+2pkEQhb6TpG8IuC/B9GnrbvftBbqPnG3ttW4f/EXUgjQnLJrHbRtR6t6oNI/M30m1vCzwfBLS2UYObl4kI66lNlBWOTfHQN3WcAXs61eE4aIhUsf+SCD/z9Yt7JRdBAL2Nr80=
+	t=1732779669; cv=none; b=G1PY/RwuWf8HzoiJei5Ba7oU36ijefuMGgklF+cAyQz3Xd0cCB3qZdJ/uKOKVdo3N+1OTkziipAHZs2yu+NwNRM6mQBk88sge4Ec8DUZn4xs7qozUwxEGhmwtYVVElNLnnEhJVyQ8e3o2QbRzPYbLiSiIa6cjTzMn8m0SlWSjzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732779664; c=relaxed/simple;
-	bh=KKs8n9SiIVFutlMptcdOlmFgvqAP2MvkuEKFRQEFfHs=;
+	s=arc-20240116; t=1732779669; c=relaxed/simple;
+	bh=1VTUoG2V0gyervSpFGg9a7iaCwc6rFfs5nzrk8u2P+U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kFp6D/FBspvLUIsLHhl/ZH3sZBn2PAWy2RPDIMVCVt4WIQBa/bWRU/sIHZcZJm/MyFkZy0E8BOD9oLrtoYDt/cYPnjuzURox8ALfHWFF3molMErJStPGdcMJdZV91TBWnlRQi/VQWYdRoIdlY5lL+UYK+1p9w9TQ9UG5t6EAxx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VZi5KW16; arc=none smtp.client-ip=115.124.30.124
+	 MIME-Version; b=EoclGHhq9BThDF7A/X4WILUX+3+YdsomI2SW9v8Y8b+PdkackN2ax4zkZotg47JejS1tAGnkZV3pAsGEzf+Dy3bTL8w1Yt6XnLHpmNKddPMjn8wSwiHeIX2nf/Z/REMy/L9fpTHI+yzbCjSnqq+qcv+cwXfRJgSu8tWZH8yq1nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aJpe0Hmg; arc=none smtp.client-ip=115.124.30.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1732779659; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=UjYAYqlkSGfPZJ/FlT3GkxA+JCX542ZQmJh945HHSHc=;
-	b=VZi5KW16nfnP/meeoupv4HZEf3oQKHma8eZykUmqdysyawBens3s5v63TdskS+LhxBPGFtcxTvGTby5ix/BifNVEqqJ9QgG+48xNbLwzIIX2aPCCV5vW14evxv8PF1qUo+e3Q5vAuJDfe6hUecH0mbu+thPiLO+HKDqVHuw39R8=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WKP.Wl-_1732779657 cluster:ay36)
+	t=1732779660; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=4geB5O7mEfI/X7677yTwrrvC9HQS1VjRPAOpYyMK/zg=;
+	b=aJpe0Hmg0o3VTImpuD6hAmY2tJNdzR4FocU5j+RovPSRXoJDhknGhgcBRlsvgFSc6u5i27C8sTopDd6mkSDV+ZhpumMfMnv1rqQYKev8MsC7JsaAVum044jpMxR+UgVsKNN9vfbwH+QHyZjlSdbGNTTkYc4/L4lNKpu5IklA2aI=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WKOx1qd_1732779658 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 28 Nov 2024 15:40:58 +0800
+          Thu, 28 Nov 2024 15:40:59 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -51,9 +51,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/6] mm: shmem: add a kernel command line to change the default huge policy for tmpfs
-Date: Thu, 28 Nov 2024 15:40:42 +0800
-Message-Id: <ff390b2656f0d39649547f8f2cbb30fcb7e7be2d.1732779148.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH v3 5/6] docs: tmpfs: update the large folios policy for tmpfs and shmem
+Date: Thu, 28 Nov 2024 15:40:43 +0800
+Message-Id: <9b7418af30e300d1eb05721b81d79074d0bb0ec9.1732779148.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
 References: <cover.1732779148.git.baolin.wang@linux.alibaba.com>
@@ -65,125 +65,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now the tmpfs can allow to allocate any sized large folios, and the default
-huge policy is still preferred to be 'never'. Due to tmpfs not behaving like
-other file systems in some cases as previously explained by David[1]:
-"
-I think I raised this in the past, but tmpfs/shmem is just like any
-other file system .. except it sometimes really isn't and behaves much
-more like (swappable) anonymous memory. (or mlocked files)
+From: David Hildenbrand <david@redhat.com>
 
-There are many systems out there that run without swap enabled, or with
-extremely minimal swap (IIRC until recently kubernetes was completely
-incompatible with swapping). Swap can even be disabled today for shmem
-using a mount option.
+Update the large folios policy for tmpfs and shmem.
 
-That's a big difference to all other file systems where you are
-guaranteed to have backend storage where you can simply evict under
-memory pressure (might temporarily fail, of course).
-
-I *think* that's the reason why we have the "huge=" parameter that also
-controls the THP allocations during page faults (IOW possible memory
-over-allocation). Maybe also because it was a new feature, and we only
-had a single THP size.
-"
-
-Thus adding a new command line to change the default huge policy will be
-helpful to use the large folios for tmpfs, which is similar to the
-'transparent_hugepage_shmem' cmdline for shmem.
-
-[1] https://lore.kernel.org/all/cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com/
-
+Signed-off-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  7 ++++++
- Documentation/admin-guide/mm/transhuge.rst    |  6 +++++
- mm/shmem.c                                    | 23 ++++++++++++++++++-
- 3 files changed, 35 insertions(+), 1 deletion(-)
+ Documentation/admin-guide/mm/transhuge.rst | 58 +++++++++++++++-------
+ 1 file changed, 41 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dc663c0ca670..e73383450240 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6987,6 +6987,13 @@
- 			See Documentation/admin-guide/mm/transhuge.rst
- 			for more details.
- 
-+	transparent_hugepage_tmpfs= [KNL]
-+			Format: [always|within_size|advise|never]
-+			Can be used to control the default hugepage allocation policy
-+			for the tmpfs mount.
-+			See Documentation/admin-guide/mm/transhuge.rst
-+			for more details.
-+
- 	trusted.source=	[KEYS]
- 			Format: <string>
- 			This parameter identifies the trust source as a backend
 diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 5034915f4e8e..9ae775eaacbe 100644
+index 9ae775eaacbe..ba6edff728ed 100644
 --- a/Documentation/admin-guide/mm/transhuge.rst
 +++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -332,6 +332,12 @@ allocation policy for the internal shmem mount by using the kernel parameter
- seven valid policies for shmem (``always``, ``within_size``, ``advise``,
- ``never``, ``deny``, and ``force``).
+@@ -358,8 +358,21 @@ default to ``never``.
+ Hugepages in tmpfs/shmem
+ ========================
  
-+Similarly to ``transparent_hugepage_shmem``, you can control the default
-+hugepage allocation policy for the tmpfs mount by using the kernel parameter
-+``transparent_hugepage_tmpfs=<policy>``, where ``<policy>`` is one of the
-+four valid policies for tmpfs (``always``, ``within_size``, ``advise``,
-+``never``). The tmpfs mount default policy is ``never``.
+-You can control hugepage allocation policy in tmpfs with mount option
+-``huge=``. It can have following values:
++Traditionally, tmpfs only supported a single huge page size ("PMD"). Today,
++it also supports smaller sizes just like anonymous memory, often referred
++to as "multi-size THP" (mTHP). Huge pages of any size are commonly
++represented in the kernel as "large folios".
 +
- In the same manner as ``thp_anon`` controls each supported anonymous THP
- size, ``thp_shmem`` controls each supported shmem THP size. ``thp_shmem``
- has the same format as ``thp_anon``, but also supports the policy
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 54eaa724c153..8a602fc61edb 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -553,6 +553,7 @@ static bool shmem_confirm_swap(struct address_space *mapping,
- /* ifdef here to avoid bloating shmem.o when not necessary */
- 
- static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
-+static int tmpfs_huge __read_mostly = SHMEM_HUGE_NEVER;
- 
- /**
-  * shmem_mapping_size_orders - Get allowable folio orders for the given file size.
-@@ -4951,7 +4952,12 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbinfo->gid = ctx->gid;
- 	sbinfo->full_inums = ctx->full_inums;
- 	sbinfo->mode = ctx->mode;
--	sbinfo->huge = ctx->huge;
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	if (ctx->seen & SHMEM_SEEN_HUGE)
-+		sbinfo->huge = ctx->huge;
-+	else
-+		sbinfo->huge = tmpfs_huge;
-+#endif
- 	sbinfo->mpol = ctx->mpol;
- 	ctx->mpol = NULL;
- 
-@@ -5502,6 +5508,21 @@ static int __init setup_transparent_hugepage_shmem(char *str)
- }
- __setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
- 
-+static int __init setup_transparent_hugepage_tmpfs(char *str)
-+{
-+	int huge;
++While there is fine control over the huge page sizes to use for the internal
++shmem mount (see below), ordinary tmpfs mounts will make use of all available
++huge page sizes without any control over the exact sizes, behaving more like
++other file systems.
 +
-+	huge = shmem_parse_huge(str);
-+	if (huge < 0) {
-+		pr_warn("transparent_hugepage_tmpfs= cannot parse, ignored\n");
-+		return huge;
-+	}
++tmpfs mounts
++------------
 +
-+	tmpfs_huge = huge;
-+	return 1;
-+}
-+__setup("transparent_hugepage_tmpfs=", setup_transparent_hugepage_tmpfs);
++The THP allocation policy for tmpfs mounts can be adjusted using the mount
++option: ``huge=``. It can have following values:
+ 
+ always
+     Attempt to allocate huge pages every time we need a new page;
+@@ -374,19 +387,19 @@ within_size
+ advise
+     Only allocate huge pages if requested with fadvise()/madvise();
+ 
+-The default policy is ``never``.
++Remember, that the kernel may use huge pages of all available sizes, and
++that no fine control as for the internal tmpfs mount is available.
 +
- static char str_dup[PAGE_SIZE] __initdata;
- static int __init setup_thp_shmem(char *str)
- {
++The default policy in the past was ``never``, but it can now be adjusted
++using the kernel parameter ``transparent_hugepage_tmpfs=<policy>``.
+ 
+ ``mount -o remount,huge= /mountpoint`` works fine after mount: remounting
+ ``huge=never`` will not attempt to break up huge pages at all, just stop more
+ from being allocated.
+ 
+-There's also sysfs knob to control hugepage allocation policy for internal
+-shmem mount: /sys/kernel/mm/transparent_hugepage/shmem_enabled. The mount
+-is used for SysV SHM, memfds, shared anonymous mmaps (of /dev/zero or
+-MAP_ANONYMOUS), GPU drivers' DRM objects, Ashmem.
+-
+-In addition to policies listed above, shmem_enabled allows two further
+-values:
++In addition to policies listed above, the sysfs knob
++/sys/kernel/mm/transparent_hugepage/shmem_enabled will affect the
++allocation policy of tmpfs mounts, when set to the following values:
+ 
+ deny
+     For use in emergencies, to force the huge option off from
+@@ -394,13 +407,24 @@ deny
+ force
+     Force the huge option on for all - very useful for testing;
+ 
+-Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to
+-control mTHP allocation:
+-'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
+-and its value for each mTHP is essentially consistent with the global
+-setting.  An 'inherit' option is added to ensure compatibility with these
+-global settings.  Conversely, the options 'force' and 'deny' are dropped,
+-which are rather testing artifacts from the old ages.
++shmem / internal tmpfs
++----------------------
++The mount internal tmpfs mount is used for SysV SHM, memfds, shared anonymous
++mmaps (of /dev/zero or MAP_ANONYMOUS), GPU drivers' DRM  objects, Ashmem.
++
++To control the THP allocation policy for this internal tmpfs mount, the
++sysfs knob /sys/kernel/mm/transparent_hugepage/shmem_enabled and the knobs
++per THP size in
++'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled'
++can be used.
++
++The global knob has the same semantics as the ``huge=`` mount options
++for tmpfs mounts, except that the different huge page sizes can be controlled
++individually, and will only use the setting of the global knob when the
++per-size knob is set to 'inherit'.
++
++The options 'force' and 'deny' are dropped for the individual sizes, which
++are rather testing artifacts from the old ages.
+ 
+ always
+     Attempt to allocate <size> huge pages every time we need a new page;
 -- 
 2.39.3
 
