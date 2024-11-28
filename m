@@ -1,109 +1,94 @@
-Return-Path: <linux-kernel+bounces-424926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8C69DBB65
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:42:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0369C9DBB68
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23B75280C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:42:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA9FB223B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1931BE86A;
-	Thu, 28 Nov 2024 16:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sB6Oydwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1071BE238;
+	Thu, 28 Nov 2024 16:42:51 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE41F3232;
-	Thu, 28 Nov 2024 16:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1EB1B415C;
+	Thu, 28 Nov 2024 16:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732812136; cv=none; b=TlLKwtAvmPO9jaogOuuamNkd0D7rtc0EjRDys7UkZ2JGNiiLfAkNtfwmoFMn2iGBr8LTTwIrmglyFrnVdrNpb2r1kbV/xjW29YMXISwXYtItaWt/45CUvBrCKtGNs8hk0Bp1TR12zqmcYBUScg1J7xh/D2ev0iyINMWF1tzBqLs=
+	t=1732812170; cv=none; b=sE6VuqHoOlFHzpiilDypEb/nQ/08V0gauKXwqXwDw8PgNIhCahRDgNbn24H/nvozwYmIW8g/y2mWtglpUnvX6kym88oNPRA+FP66xJbSwlfZ+WwiioFZ6wSCFbA9bRzCakgrg2rm3IqRuUG41kQLFzxYs7724Rkvc2Uuk7m5bHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732812136; c=relaxed/simple;
-	bh=reIHRCSYgXX7krbHbZuB1P5p2+PBEeLWCfrM4sq9TJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYfsYxC4fJhkcRJBS/wxH+5zesQe77uYso1W+nwiLysFrZ0sH4IqRPF/gM69eKkcmQ6Q1KC5hdIwT+bWmb0YChJHSJWQk6TvvdcjVRog9irdYsQ8JvlKqAhsIOokeLWl+76sip6FdpLCyphFbGcKJzlMhGWlcu2savG80YFo+XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sB6Oydwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 376B4C4CECE;
-	Thu, 28 Nov 2024 16:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732812136;
-	bh=reIHRCSYgXX7krbHbZuB1P5p2+PBEeLWCfrM4sq9TJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sB6OydwnQ05EJysfnXpEyDki/aft5Fhy2S8zT3N9qcBj+0GrhEzXv+45T1Z7Eys6t
-	 CRM5FMX2KcXn3S6qJaxS/fUqj2ipJFtG0nfaszdivOzZl5iNIYlb5VjdnpRcYar/6w
-	 qzkF+pRQM1F+OzIEg6csk4mM6ujMysj7DKFY/v4UCfhuOMpVtrjQabjLve2pt8RrHK
-	 5Y8YrYyedtxsZxUhiYADTN27O/L+LiE6BZ2Of3WCcNb3mMjoW96q6ZoYIWEqMbYHjn
-	 JPfUMzizNXIQFHLkghjYqAJifXkzphnSknMLSoEVwd+CXAgnWcRMv7jz4rgS65xBXs
-	 mCJYKj/KF8kqA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tGhai-0000000071O-2bJ5;
-	Thu, 28 Nov 2024 17:42:09 +0100
-Date: Thu, 28 Nov 2024 17:42:08 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Leif Lindholm <leif.lindholm@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Ricardo Salveti <ricardo@foundries.io>,
-	Marc Zyngier <maz@kernel.org>, linux-efi@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: UEFI EBS() failures on Lenovo T14s
-Message-ID: <Z0idYMTrsKXOA6a1@hovoldconsulting.com>
-References: <Z0gn1N3IsP8r3gTA@hovoldconsulting.com>
- <CAMj1kXGjiA1HydMaY82MQsYvkchpN7v7CMOB5i3NEdqcYGn19Q@mail.gmail.com>
- <Z0g_HL01eqXu4cwQ@hovoldconsulting.com>
- <CAMj1kXFtr7ejEjjSRj9dcRa7YbO0SR5OR3pm+K6OvbX2=RfhAQ@mail.gmail.com>
- <CAMj1kXHS_TY=jfBT=dqUQSXf2pBXbt12uaLsMw-FLX3uU_X6uA@mail.gmail.com>
- <Z0iCNJVWNzBzdq0C@hovoldconsulting.com>
- <CAMj1kXF0Mmr5CyyeKXO6-Ot+5cfSV6t2jPmn+TGVyjUsoYwGtw@mail.gmail.com>
+	s=arc-20240116; t=1732812170; c=relaxed/simple;
+	bh=z1HpxsZ9IxAztsDbasVgOqE3HQRkB957NqFrY+ASXak=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uBysMvE8pqa46F45vyPqb9DuAuRQKp0QM+ci94mG3sKuJUjLiHuz4ZiDFkrbNveXZtFGj7QkNLQETGUXFC6Z5tpu6IjID00a+LKihm7AuaVNpAICWeICyO1HB5fb8qgpqASM49/4iV4xd+yWK9jhj8/OL4kA/PFr1tbcbsRyRdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 28 Nov
+ 2024 19:42:44 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 28 Nov
+ 2024 19:42:43 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin
+	<sashal@kernel.org>, <stable@vger.kernel.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Harald Freudenberger
+	<freude@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+	<gor@linux.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, "Holger
+ Dengler" <dengler@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
+	<linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH 6.6 0/3] Backport fixes for CVE-2024-42155, CVE-2024-42156 and CVE-2024-42158
+Date: Thu, 28 Nov 2024 08:42:36 -0800
+Message-ID: <20241128164239.21136-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXF0Mmr5CyyeKXO6-Ot+5cfSV6t2jPmn+TGVyjUsoYwGtw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Thu, Nov 28, 2024 at 04:21:09PM +0100, Ard Biesheuvel wrote:
-> On Thu, 28 Nov 2024 at 15:46, Johan Hovold <johan@kernel.org> wrote:
-> >
-> > On Thu, Nov 28, 2024 at 12:05:09PM +0100, Ard Biesheuvel wrote:
-> >
-> > > If you're happy to experiment more, you could try and register a
-> > > notification for EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES using
-> > > CreateEventEx(), and see if it gets called when ExitBootServices() is
-> > > called. That would at least help narrow it down.
-> >
-> > Thanks for the suggestion.
-> >
-> > I see the notify function being called when I signal it as well as on
-> > each ExitBootServices().
-> 
-> Interesting. That means the EDK2 fork is fairly recent.
-> 
-> FYI https://github.com/tianocore/edk2/pull/6481
+This series addresses several s390 driver vulnerabilities related to
+improper handling of sensitive keys-related material and its lack
+of proper disposal in stable kernel branches. These issues have been
+announced as CVE-2024-42155 [1], CVE-2024-42156 [2] and
+CVE-2024-42158 [4] and fixed in upstream. Another problem named as
+CVE-2024-42157 [3] has already been successfully backported.
 
-Nice find.
+All patches have been cherry-picked and are ready to be cleanly
+applied to 6.6 stable branch. Backports for 5.10/5.15 [5] and 6.1 [6]
+have already been sent.
 
-> > With an efi_printk() in the callback ExitBootServices() fails as
-> > expected, but with an empty function the kernel seems to start every
-> > time.
-> >
-> > Interestingly, ExitBootServices() now succeeds also if I add back the
-> > CloseEvent() call. In fact, it works also if I never signal the event
-> > (i.e. if I just create and close the event).
-> 
-> Is it still invoked by the firmware if you closed the event before EBS()?
+[PATCH 6.6 1/3] s390/pkey: Use kfree_sensitive() to fix Coccinelle warnings
+Use kfree_sensitive() instead of kfree() and memzero_explicit().
+Fixes CVE-2024-42158.
 
-No, I just reconfirmed that then it is only called when I signal it
-before closing (or never if don't signal the event).
+[PATCH 6.6 2/3] s390/pkey: Wipe copies of clear-key structures on failure
+Properly wipe sensitive key material from stack for IOCTLs that
+deal with clear-key conversion.
+Fixes CVE-2024-42156.
+Note: this patch has already been sent separately by Bin Lan
+<bin.lan.cn@windriver.com>, see [7].
 
-Johan
+[PATCH 6.6 3/3] s390/pkey: Wipe copies of protected- and secure-keys
+Properly wipe key copies from stack for affected IOCTLs.
+Fixes CVE-2024-42155.
+
+[1] https://nvd.nist.gov/vuln/detail/CVE-2024-42155
+[2] https://nvd.nist.gov/vuln/detail/CVE-2024-42156
+[3] https://nvd.nist.gov/vuln/detail/CVE-2024-42157
+[4] https://nvd.nist.gov/vuln/detail/CVE-2024-42158
+[5] https://lore.kernel.org/all/20241128142245.18136-1-n.zhandarovich@fintech.ru/
+[6] https://lore.kernel.org/all/20241128153337.19666-1-n.zhandarovich@fintech.ru/
+[7] https://lore.kernel.org/all/20241121081222.3792207-1-bin.lan.cn@windriver.com/
 
