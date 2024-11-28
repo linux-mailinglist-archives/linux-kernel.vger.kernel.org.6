@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-424562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BAD9DB5E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 254CF9DB5E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:45:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02798B273AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:42:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8550B2779F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5691925B3;
-	Thu, 28 Nov 2024 10:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2CE191F8E;
+	Thu, 28 Nov 2024 10:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zz9shqQE"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4tOZDNQY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uR2GKpLq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21031917E7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C32152E0C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 10:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732790529; cv=none; b=Y2cJQwG6CYyJ2gHI1fy3+Q9OUbFtL4zmZiXSRDm3gk2JWsI7x9iYltw79kHg2UNIaaUrzB+pdOmff7LGy9HpXwsaGKc39A0+kEXLkymmR3BYQ3lv0dFAioAAPy/Aw8KTroR3L4u1njv5G5uUtT0aMNDnPHUclsuj/jatzCvAmVk=
+	t=1732790604; cv=none; b=rmRgcd+7P0ZHlgAgCAjRaqTz1VesPi6EdEgKW12EAeXfrQsuGGW0OEwzUTNtxY5k3GFhhpc8dm4nYtU5FB1FNiAVd7qB+/O2PA71AputzFrufbq9+0ibn0BoJdE+WUroYAHc6LktelrBDYu1w9aTUzdw/0i5fuW8twmZuSim25M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732790529; c=relaxed/simple;
-	bh=URzW0D1T4YCAHqwFAbMGzXvStCZjMwIdqDPWjFKc35A=;
-	h=From:References:In-Reply-To:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7MJKPdtSsRzv0xM8vkjKp2dmd7IJIm6aeibM7UJmXU0SwKWRu6CzagMYAf7BOdbMMS7XGnl3HVufiNP1YvI8JPSdKaG9waa8W+6XFMKXAi1KS5KqnAdD/eKalVjMWJZRzHYZ39SowqmdYSi5HWq2X1mOr1amYifLKKEyLjMnMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zz9shqQE; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3ea53011deaso358570b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:42:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732790526; x=1733395326; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
-         :user-agent:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCTa28UWr3bKUmEGMrJfC8+idvah0kxCG8UKsA432Vc=;
-        b=zz9shqQEb4QD4Og8d2z9lIaeg7XaSOn9tfS2aN7rRseqigKD/QUGBbx/yneEm7C7l0
-         R2Dgx0rUv8Z86h2XKQk7Q7m/rL6Fc/JLZa7rv7QVrLxxYSyLavu9RprgrwbTn5TbJI7g
-         qMfMI3NItnMPodID/hAUoukvwX13tmUyril5xwUsZ8Kx+v0PZw4BirJmUlFXzVv5mQzz
-         BLEjPTFav2l6xbQw+YWffE7gvYvLWf+cIrBnQOEx3mZDeg9xMiksZg1DTPQMLrI453gY
-         27LQVVaB4ax7z3IQK7om7+Wk/bxi6Et2/yx+Mvy081HRBn6g7Ij8Zk24fi0NBdVpD2yV
-         56Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732790526; x=1733395326;
-        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
-         :user-agent:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCTa28UWr3bKUmEGMrJfC8+idvah0kxCG8UKsA432Vc=;
-        b=aW6vYN5Tk+IMQfjsVCpywVGnBA+NADVA2Y7NURqTdV+FIMfcHLf2E/jOfUPx1tuMln
-         9BFdJ0Ov0mf8UlGwBqXM9aiPHdp5Z787N0HbbDKZ8HPJgLXIgCBCADmKJFEerjiEQpJi
-         6gac3W+5uEHxSwpM7JMFjxuIF2EMNKkL+qJ7BqUxlB7COsMfYCxe8oViGbvO5eLsxaXi
-         RGzI37YgvxSj/L3mZrqSSuLH2qUlpPLzf7FgW6Qt3VtpxmWO/DBqoDopAhlJF0xGTS0y
-         zif+cR52bxs72BJKF3g871iRjv9gjw6cyK38V6FIrY5h814RrWodhankHF9OJmSrlz/d
-         W6Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUap1kto39O9t/cHt8G2i/khxD41LTpazXBZQaSp+nGmFCqPFaar8QPc/129CXEbJR/996+EB9rq1HHX+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF9gkDtopF26DX4TIaSK5CAl3dkLgFHPBsiGfvYccAh4pw9iTF
-	LeI5BIZs6Z/2CoAXJo38FVD0ZZ2xdElFCjrc+9K3Dpk6ELU5hGhqhPlAmOCGD3ZKfTRPlncuAo7
-	SbPG2PBnwWAt7pYMWb4xWWSpGfOPrZCv66/8pZJxLfUyiJXPy
-X-Gm-Gg: ASbGnct/uTYsX/C0E9DUlTL2hSHalpTW8RNSL/FIZTvMadTPzJ+4Fm2RlAigXJvBf4x
-	weKBDGjdjfQ2AzapQY4NPr1vEOu9Fd4E=
-X-Google-Smtp-Source: AGHT+IFyEQh4NUzoOYOOTiC5We+UX7R49fWSXxajTJy5QSnvA1oWIMmwleC4M2iaK5XK/OpUfaPwvwcOTCWlpRLuPwE=
-X-Received: by 2002:a05:6808:3989:b0:3ea:519e:cc71 with SMTP id
- 5614622812f47-3ea6dd9fbf4mr5559828b6e.39.1732790526060; Thu, 28 Nov 2024
- 02:42:06 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 28 Nov 2024 04:42:05 -0600
-From: Guillaume Ranquet <granquet@baylibre.com>
-User-Agent: meli 0.8.7
-References: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-0-b6d7022b7466@baylibre.com>
-In-Reply-To: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-0-b6d7022b7466@baylibre.com>
+	s=arc-20240116; t=1732790604; c=relaxed/simple;
+	bh=qjcHevnBsyvpSIkwPOO9YYHISNmClvc8uPjmaxIktE8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B0fMWoBgGoiJ4Vv4v2euIceZ84EpDqWO7ObtThjtoGNZD9pCSShC3i3y6h1ejk6Xubqhrh5pzhm78czQEoQz48FHuW7TAFyCbI52HZAKNMgGfY4Z2YhsueUw32XqurctourENTlh3axFG1+H/O9Mr5o2jmacmyS94yXq7HIpWuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4tOZDNQY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uR2GKpLq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732790601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aCmQQl38KHm7OVYLjhjrypJsn1uxlFszVOYpGELlk8w=;
+	b=4tOZDNQYKL0+NvxpccStVP+xZdeNpJQWALcz+eLwBE8q/HKPqmfO1vItUcZEVjsS3b7FnC
+	SezSM2iPWaHhkAK3MH6I/rX++qP9Q9bg37VDOOvnf2iHEm5mQmnKgX8iJ4xoowq2s3HGhw
+	G2OlulGMOon2xHAYp0m0GcP6s+6bCtic/XZ1iL/RdyNmfo0KKg4S04gWzp19ijGzATxX1Z
+	gxKSrCqfMrO6lL/1hCNFDPF7uhjSNCZAQJJ0T+N1xxz/whh2eJw8+or0CNTrwoszVUWGyB
+	AAvRxgEQemBuntahOZl9sB7QB3GmD+T8/G7LpAobv5P89d4/rG0jVQT6BQBaCQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732790601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aCmQQl38KHm7OVYLjhjrypJsn1uxlFszVOYpGELlk8w=;
+	b=uR2GKpLqs0Qu7dVUcL5x5mdbnU24CUpxi/okbTdaQYsFjY/Eci0NPixDGyI35r4CFXBbty
+	GSlxQ5S9OBoqqxBQ==
+To: Eliav Farber <farbere@amazon.com>, linux@armlinux.org.uk,
+ catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
+ npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+ maddy@linux.ibm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, akpm@linux-foundation.org, bhe@redhat.com,
+ farbere@amazon.com, hbathini@linux.ibm.com, adityag@linux.ibm.com,
+ songshuaishuai@tinylab.org, takakura@valinux.co.jp,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Cc: jonnyc@amazon.com
+Subject: Re: [PATCH v2] arm64: kexec: Check if IRQ is already masked before
+ masking
+In-Reply-To: <20241127152236.26122-1-farbere@amazon.com>
+References: <20241127152236.26122-1-farbere@amazon.com>
+Date: Thu, 28 Nov 2024 11:43:20 +0100
+Message-ID: <87ldx3y6yf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 28 Nov 2024 04:42:05 -0600
-Message-ID: <CABnWg9uMDSQ+iNfXCrLKptOhMx0pjmLQ7JkaMUPu+d7FRWqjag@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] iio: adc: ad7173: fix non-const info struct
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Dumitru Ceclan <mitrutzceclan@gmail.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
-	Michael Walle <michael@walle.cc>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	=?UTF-8?B?VXdlIEtsZWluZS1Lw7Ygbmln?= <u.kleine-koenig@baylibre.com>, 
-	Guillaume Ranquet <granquet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Wed, 27 Nov 2024 21:01, David Lechner <dlechner@baylibre.com> wrote:
->While working ad7124, Uwe pointed out a bug in the ad7173 driver.
->static struct ad_sigma_delta_info ad7173_sigma_delta_info was not const
->and was being modified during driver probe, which could lead to race
->conditions if two instances of the driver were probed at the same time.
->
->The actual fix part is fairly trivial but I have only compile tested it.
->Guillaume has access to ad4111 hardware, so it would be good to get a
->Tested-by from him to make sure this doesn't break anything.
->
->---
->Changes in v2:
->- Fixed chip name in a few places.
->- Add new simpler patch for "fix" that gets backported.
->- Rebase other patches on this and incorporate feedback.
->- Link to v1: https://lore.kernel.org/r/20241122-iio-adc-ad7313-fix-non-const-info-struct-v1-0-d05c02324b73@baylibre.com
->
->---
->David Lechner (3):
->      iio: adc: ad7173: fix using shared static info struct
->      iio: adc: ad7173: remove special handling for irq number
->      iio: adc: ad7173: don't make copy of ad_sigma_delta_info struct
->
-> drivers/iio/adc/ad7173.c               | 474 +++++++++++++++++----------------
-> drivers/iio/adc/ad_sigma_delta.c       |   5 +-
-> include/linux/iio/adc/ad_sigma_delta.h |   2 -
-> 3 files changed, 249 insertions(+), 232 deletions(-)
->---
->base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
->change-id: 20241122-iio-adc-ad7313-fix-non-const-info-struct-92e59b91ee2e
->
->Best regards,
->--
->David Lechner <dlechner@baylibre.com>
+On Wed, Nov 27 2024 at 15:22, Eliav Farber wrote:
 
-Tested-by: Guillaume Ranquet <granquet@baylibre.com>
+As a related note. The subject line is not really matching what the
+patch does. It want's to be split into a core change and one patch per
+architecture.
+
+> This patch replaces the direct invocation of the irq_mask() and
+
+git grep 'This patch' Documentation/process/
+
+> irq_disable() hooks with simplified code that leverages the
+> irq_disable() kernel infrastructure. This higher-level function checks
+> the interrupt's state to prevent redundant operations. Additionally, the
+> IRQ_DISABLE_UNLAZY status flag is set to ensure that, for interrupt
+> chips lacking an irq_disable callback, the disable operation is handled
+> using the lazy approach.
+
+Not that it matters much anymore, but the last sentence does not make
+sense:
+
+  Set the UNLAZY flag so disable is handled using the LAZY approach ...
+
+Thanks,
+
+        tglx
 
