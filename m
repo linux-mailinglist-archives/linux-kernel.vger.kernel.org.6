@@ -1,207 +1,201 @@
-Return-Path: <linux-kernel+bounces-424605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328629DB6AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:44:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0029DB5C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:32:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 799FDB20E50
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:44:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06C5281B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00831990CF;
-	Thu, 28 Nov 2024 11:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC5017B402;
+	Thu, 28 Nov 2024 10:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="A+QJZyTL"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Pvs5GMYL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F93D146D59
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64691428E7;
+	Thu, 28 Nov 2024 10:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732794277; cv=none; b=jS8MIyya0wlCqdFcmAmtOXBSX2wIyUjxDUlpx1MBKhIzibqUWQ24z7stEUv3LQNcXbRFv+5P9IFKlcHLYLhaL+yjE/qpEvXrR5pEeP1K0DLX675/X3WyBw6jRFrGeGksJgVLuOzKYgpt/67BdWa9ueKIDE83Jayi439yYYdsYSA=
+	t=1732789945; cv=none; b=enEClOgRnLE6/YosM0zwf0r8Zv9yd90bbrwxsE+2pTuFbELY76OKMO/rN3U6sXVPDsl0wLF3mOjc6V6dgYYngg+ZlH5PKMHulyUjxeV/ppvvA+Uc+GO9/Z3wqHCkr9IEz4DvzvOrQdWls7jqarSXdZcw9crVYwkHIZQvDKuQ190=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732794277; c=relaxed/simple;
-	bh=qjKmMPtfy98oWo4nR0o+q7R+1F5bbmblW6k7A9OYa4k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UwoRnr44qHdLqjiWwotW/h/kyvdMHL8DRw9BvKGC6qNgEeWcgCB31adL8kWcefJYG8UW8cRwXKXTbQenaKhKa6kl6YLe0zk3T8esQNiUyD6ulwBOtTjxZw1K/DiAdIN3MH+1Qx0ocbCT6TWEbJZ788K6dN6q6tB8Ii6JxECg8I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=A+QJZyTL; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
-	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
-	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=toqNLSPYxjCtvh/SqqRz1pZJrvDmLIEZxUJXkZin7bg=; b=A+QJZyTLq+grXnjJyqRhWtYBoW
-	ngfsIvJgBOMuFSC9Fkt1sXVzHiv2Nj+kszNRUELqu73Lx1wF4qaEos9Rbz6n8lhOlkKQtbd+3EX1H
-	Y97Da7V+gowyldMP+PLzw8ddLNdFTuMhT6uk12Vp5w95wQMtd8G2tzHRFQ9Ni3F+3g9aboOh1PlSh
-	wSu2lT6TxZe7xHA2w8xDeqk+FPJdNB3lM/4KjUbAXXDL7YnzMI1lKVM01AD1CytZp00wjJWbSGF/t
-	R6XV8Fe36I7dAqruuhcUBBzp0LNkgWfpLnke2oBTK4WnGwgBJfApTWbbH7sHx26/slMAswZw03f3S
-	in8K0EMA==;
-Received: from [167.98.27.226] (helo=[10.35.5.98])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1tGbog-00CK8U-Gl; Thu, 28 Nov 2024 10:32:11 +0000
-Message-ID: <16f96a109bec0b5849793c8fb90bd6b63a2eb62f.camel@codethink.co.uk>
-Subject: [REGRESSION] Re: [PATCH 00/24] Complete EEVDF
-From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, 	rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, 	linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
- youssefesmat@chromium.org, 	tglx@linutronix.de, efault@gmx.de
-Date: Thu, 28 Nov 2024 11:32:10 +0100
-In-Reply-To: <20240727102732.960974693@infradead.org>
-References: <20240727102732.960974693@infradead.org>
-Organization: Codethink
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (by Flathub.org) 
+	s=arc-20240116; t=1732789945; c=relaxed/simple;
+	bh=HrAXTZSCIcuftLL0ul3rClI7fugMpktKhWmYw6wLDok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=igdcKSfiIljqNtvpgfZH5WUC1ZRUwF9tF47JZWWk2rl0fClNjy6Yr+x1mpf/wHrleNT6QFGDViCPkAFTknolPDPnEpTq07z7t6Zd+pd9G33JMK3jtwcWiCS8TvRxIc6hLGpKDCR4cJt9ywTJTF5T90zDKjPVH96QA0CY4wqKky4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Pvs5GMYL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732789935;
+	bh=HrAXTZSCIcuftLL0ul3rClI7fugMpktKhWmYw6wLDok=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pvs5GMYLUfrPah0+EMJAeFXycEFxuIzy7qwIM5MEbgQGhXci8eG6uDooADcTA50zk
+	 UX7Mn+7kRhRPozOi72Nph0RHwurnhil01+QK4vRE9nW6EDG759tjQa2nxZXmyvKKz4
+	 sknbaqSiwV9/WYZaUoUKFFkOiblORDXlNj0RqkJnaWhjNeTOXbQhTkaDsw+YlmYTGh
+	 oO3k0cEcrvCrqxF95kO/Gw9ogDboWN/aXLoYxZJzp2nXoFqkAV5F1kKJe+ygxPKA7t
+	 eOHkr8JvwFJhQ+g2LEltlRi6uAoV0wK7MaN1ywVKNsCZn214O1UPxeZ7i0YxyhEwwI
+	 k1n2UX3wlueJQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00A9617E35F0;
+	Thu, 28 Nov 2024 11:32:14 +0100 (CET)
+Message-ID: <3d5f7106-6425-420c-abac-39feed11c95c@collabora.com>
+Date: Thu, 28 Nov 2024 11:32:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: marcel.ziswiler@codethink.co.uk
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/7] dt-bindings: display: mediatek: Add binding for
+ MT8195 HDMI-TX v2
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "linux-mediatek@lists.infradead.org"
+ <linux-mediatek@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
+ <mripard@kernel.org>, "kernel@collabora.com" <kernel@collabora.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>
+References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
+ <20241120124512.134278-3-angelogioacchino.delregno@collabora.com>
+ <721896498fe9a5ba5a942fe837deb90d461b5090.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <721896498fe9a5ba5a942fe837deb90d461b5090.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+Il 28/11/24 07:02, CK Hu (胡俊光) ha scritto:
+> Hi, Angelo:
+> 
+> On Wed, 2024-11-20 at 13:45 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until you have verified the sender or the content.
+>>
+>>
+>> Add a binding for the HDMI TX v2 Encoder found in MediaTek MT8195
+>> and MT8188 SoCs.
+>>
+>> This fully supports the HDMI Specification 2.0b, hence it provides
+>> support for 3D-HDMI, Polarity inversion, up to 16 bits Deep Color,
+>> color spaces including RGB444, YCBCR420/422/444 (ITU601/ITU709) and
+>> xvYCC, with output resolutions up to 3840x2160p@60Hz.
+>>
+>> Moreover, it also supports HDCP 1.4 and 2.3, Variable Refresh Rate
+>> (VRR) and Consumer Electronics Control (CEC).
+>>
+>> This IP also includes support for HDMI Audio, including IEC60958
+>> and IEC61937 SPDIF, 8-channel PCM, DSD, and other lossless audio
+>> according to HDMI 2.0.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../mediatek/mediatek,mt8195-hdmi.yaml        | 150 ++++++++++++++++++
+>>   1 file changed, 150 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>> new file mode 100644
+>> index 000000000000..273a8871461e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>> @@ -0,0 +1,150 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: https://urldefense.com/v3/__http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi.yaml*__;Iw!!CTRNKA9wMg0ARbw!lu0D_C3TwQ2-02jWYABnMIQ8vEoUwP0O4gbQndJnPUMpdi6wXdAHra9ivCfB7zoelDI7qsS20YdRlmP4bEKAABletXFX$
+>> +$schema: https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!lu0D_C3TwQ2-02jWYABnMIQ8vEoUwP0O4gbQndJnPUMpdi6wXdAHra9ivCfB7zoelDI7qsS20YdRlmP4bEKAAFlnY-KY$
+>> +
+>> +title: MediaTek HDMI-TX v2 Encoder
+>> +
+>> +maintainers:
+>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> +  - CK Hu <ck.hu@mediatek.com>
+>> +
+>> +description: |
+>> +  The MediaTek HDMI-TX v2 encoder can generate HDMI format data based on
+>> +  the HDMI Specification 2.0b.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - mediatek,mt8188-hdmi-tx
+>> +      - mediatek,mt8195-hdmi-tx
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: HDMI APB clock
+>> +      - description: HDCP top clock
+>> +      - description: HDCP reference clock
+>> +      - description: VPP HDMI Split clock
+> 
+> I would like to know more about HDMI v2.
+> Would you map each v2 clock to v1 clock?
+> If one clock has no mapping, is it a new feature that v1 does not has?
+> 
 
-On Sat, 2024-07-27 at 12:27 +0200, Peter Zijlstra wrote:
-> Hi all,
->=20
-> So after much delay this is hopefully the final version of the EEVDF patc=
-hes.
-> They've been sitting in my git tree for ever it seems, and people have be=
-en
-> testing it and sending fixes.
->=20
-> I've spend the last two days testing and fixing cfs-bandwidth, and as far
-> as I know that was the very last issue holding it back.
->=20
-> These patches apply on top of queue.git sched/dl-server, which I plan on =
-merging
-> in tip/sched/core once -rc1 drops.
->=20
-> I'm hoping to then merge all this (+- the DVFS clock patch) right before =
--rc2.
->=20
->=20
-> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
->=20
-> =C2=A0- split up the huge delay-dequeue patch
-> =C2=A0- tested/fixed cfs-bandwidth
-> =C2=A0- PLACE_REL_DEADLINE -- preserve the relative deadline when migrati=
-ng
-> =C2=A0- SCHED_BATCH is equivalent to RESPECT_SLICE
-> =C2=A0- propagate min_slice up cgroups
-> =C2=A0- CLOCK_THREAD_DVFS_ID
+The HDMIv2 HW block seems to be almost completely different from the v1, and
+it is also interconnected in a different way compared to MT8173 (the path goes
+through VPP1, while the v1 is just direct to DPI/MMSYS).
 
-We found the following 7 commits from this patch set to crash in enqueue_dl=
-_entity():
+The v1 block had specific clocks for the audio (i2s, I believe) and for the SPDIF,
+and I have no idea how v1 does HDCP, but I don't see any specific clock for that.
 
-54a58a787791 sched/fair: Implement DELAY_ZERO
-152e11f6df29 sched/fair: Implement delayed dequeue
-e1459a50ba31 sched: Teach dequeue_task() about special task states
-a1c446611e31 sched,freezer: Mark TASK_FROZEN special
-781773e3b680 sched/fair: Implement ENQUEUE_DELAYED
-f12e148892ed sched/fair: Prepare pick_next_task() for delayed dequeue
-2e0199df252a sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+The v2 block is clocked from the HDCP clock, the (apb) bus has its own clock, and
+the video out needs the vpp split clock.
 
-Resulting in the following crash dump (this is running v6.12.1):
+It's just different, and we can't shove the v2 binding inside of the v1 one, but
+even if we could, since the v2 block is *that much* different from v1, it'd be a
+mistake to do so.
 
-[   14.652856] sched: DL replenish lagged too much
-[   16.572706] ------------[ cut here ]------------
-[   16.573115] WARNING: CPU: 5 PID: 912 at kernel/sched/deadline.c:1995 enq=
-ueue_dl_entity+0x46c/0x55c
-[   16.573900] Modules linked in: overlay crct10dif_ce rk805_pwrkey snd_soc=
-_es8316 pwm_fan
-phy_rockchip_naneng_combphy rockchip_saradc rtc_hym8563 industrialio_trigg
-ered_buffer kfifo_buf rockchip_thermal phy_rockchip_usbdp typec spi_rockchi=
-p_sfc snd_soc_rockchip_i2s_tdm
-hantro_vpu v4l2_vp9 v4l2_h264 v4l2_jpeg panthor v4l2_mem2me
-m rockchipdrm drm_gpuvm drm_exec drm_shmem_helper analogix_dp gpu_sched dw_=
-mipi_dsi dw_hdmi cec
-drm_display_helper snd_soc_audio_graph_card snd_soc_simple_card_utils
- drm_dma_helper drm_kms_helper cfg80211 rfkill pci_endpoint_test drm backli=
-ght dm_mod dax
-[   16.578350] CPU: 5 UID: 0 PID: 912 Comm: job10 Not tainted 6.12.1-dirty =
-#15
-[   16.578956] Hardware name: radxa Radxa ROCK 5B/Radxa ROCK 5B, BIOS 2024.=
-10-rc3 10/01/2024
-[   16.579667] pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[   16.580273] pc : enqueue_dl_entity+0x46c/0x55c
-[   16.580661] lr : dl_server_start+0x44/0x12c
-[   16.581028] sp : ffff80008002bc00
-[   16.581318] x29: ffff80008002bc00 x28: dead000000000122 x27: 00000000000=
-00000
-[   16.581941] x26: 0000000000000001 x25: 0000000000000000 x24: 00000000000=
-00009
-[   16.582563] x23: ffff33c976db0e40 x22: 0000000000000001 x21: 00000000002=
-dc6c0
-[   16.583186] x20: 0000000000000001 x19: ffff33c976db17a8 x18: 00000000000=
-00000
-[   16.583808] x17: ffff5dd9779ac000 x16: ffff800080028000 x15: 11c3485b851=
-e0698
-[   16.584430] x14: 11b4b257e4156000 x13: 0000000000000255 x12: 00000000000=
-00000
-[   16.585053] x11: ffff33c976db0ec0 x10: 0000000000000000 x9 : 00000000000=
-00009
-[   16.585674] x8 : 0000000000000005 x7 : ffff33c976db19a0 x6 : ffff33c7825=
-8b440
-[   16.586296] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 00000000000=
-00000
-[   16.586918] x2 : 0000000000000001 x1 : 0000000000000001 x0 : ffff33c798e=
-112f0
-[   16.587540] Call trace:
-[   16.587754]  enqueue_dl_entity+0x46c/0x55c
-[   16.588113]  dl_server_start+0x44/0x12c
-[   16.588449]  enqueue_task_fair+0x124/0x49c
-[   16.588807]  enqueue_task+0x3c/0xe0
-[   16.589113]  ttwu_do_activate.isra.0+0x6c/0x208
-[   16.589511]  try_to_wake_up+0x1d0/0x61c
-[   16.589847]  wake_up_process+0x18/0x24
-[   16.590175]  kick_pool+0x84/0x150
-[   16.590467]  __queue_work+0x2f4/0x544
-[   16.590788]  delayed_work_timer_fn+0x1c/0x28
-[   16.591161]  call_timer_fn+0x34/0x1ac
-[   16.591481]  __run_timer_base+0x20c/0x314
-[   16.591832]  run_timer_softirq+0x3c/0x78
-[   16.592176]  handle_softirqs+0x124/0x35c
-[   16.592520]  __do_softirq+0x14/0x20
-[   16.592827]  ____do_softirq+0x10/0x1c
-[   16.593148]  call_on_irq_stack+0x24/0x4c
-[   16.593490]  do_softirq_own_stack+0x1c/0x2c
-[   16.593857]  irq_exit_rcu+0x8c/0xc0
-[   16.594163]  el0_interrupt+0x48/0xbc
-[   16.594477]  __el0_irq_handler_common+0x18/0x24
-[   16.594874]  el0t_64_irq_handler+0x10/0x1c
-[   16.595232]  el0t_64_irq+0x190/0x194
-[   16.595545] ---[ end trace 0000000000000000 ]---
-[   16.595950] ------------[ cut here ]------------
+Since the binding describes hardware, and since this v2 HW is *very* different
+from v1, it needs a new binding document, that is true even if you find a way to
+get the clocks to match (which is not possible, anyway).
 
-It looks like it is trying to enqueue an already queued deadline task. Full=
- serial console log available [1].
+Cheers,
+Angelo
 
-We are running the exact same scheduler stress test both on Intel NUCs as w=
-ell as RADXA ROCK 5B board farms.
-While so far we have not seen this on amd64 it crashes consistently/reprodu=
-cible on aarch64.
+> Regards,
+> CK
+> 
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: bus
+>> +      - const: hdcp
+>> +      - const: hdcp24m
+>> +      - const: hdmi-split
+>> +
+>>
+>> --
+>> 2.47.0
+>>
 
-We haven't had time to do a non-proprietary reproduction case as of yet but=
- I wanted to report our current
-findings asking for any feedback/suggestions from the community.
 
-Thanks!
-
-Cheers
-
-Marcel
-
-[1] https://hastebin.skyra.pw/hoqesigaye.yaml
 
