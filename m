@@ -1,152 +1,165 @@
-Return-Path: <linux-kernel+bounces-424612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6949DB6E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:50:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C28A9DB6F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5EE281C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:50:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 188B3281DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFC319AD89;
-	Thu, 28 Nov 2024 11:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF92819AD87;
+	Thu, 28 Nov 2024 11:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vcViEFYB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhnqdpjw"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0C3199385;
-	Thu, 28 Nov 2024 11:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA422199385;
+	Thu, 28 Nov 2024 11:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732794595; cv=none; b=KOczwO5m9eGY7UfAXFL0D2RN1YCYSwlnZ2Kueb3Fpz5W5122023eMreZoiX0qe+ssv4+GTVrgaNRxCjXdgXiXGkU4t98zlgewv7x0czkQP54ihYp+r9knK5VAAUKPUjQRdw97HzB3bno3D6Bx3ZVy6dsnmRf2BBH0bDzN+4W7sk=
+	t=1732794807; cv=none; b=i1Psannum+mdlNMdRCWKO+OLLcViIrH3IzQP9/fO9K15RMmagmPJlCgEOfdWPjgRsC/MeX/RW0dUOlE6jpeGdDHMkXqbnPioCDk8p8wiuZaThfJ5SEsdKXhNLpCO9kAebboV1ujwValNVe1PcJ/Tr8LBl7S4PHZjcac94m4E3hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732794595; c=relaxed/simple;
-	bh=ZhFuMBHlq3QonHvTwWvCentjuDWHk4WmEzIyakRZtuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l48sj9GIXH9zNy/+8lltnsr1VFmDBuCGhPJv8OEyKuDk0GF3eKP5moslp6yf7jVzY7eCWhQVOgZLZ81Zc5Ykt8lxJujhrk2zIbwxnalBS5tjKhE2FEZ/H/H72ijXlViAH0gb359aAepti/UkzdrAryfvq0LljOfglyM5bBcMsg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vcViEFYB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B20C4CED2;
-	Thu, 28 Nov 2024 11:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732794594;
-	bh=ZhFuMBHlq3QonHvTwWvCentjuDWHk4WmEzIyakRZtuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vcViEFYBmCWOqalvl+ViIlBYyPFZvRbQiAjdxt3FqajCD/6JtRbc3smczdcenD7Ft
-	 0l+O8na5wO01KSjkaOwqKjlSxFFcuvcVdP3Cxr+Bn1xlIvWJi1JBg/O7roU1MM1mPr
-	 Q3gDdk2XvWpEgkd6+mdQ/Xf3t+Tf2n5fVA535haI=
-Date: Thu, 28 Nov 2024 12:49:23 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] device property: do not leak child nodes when using
- NULL/error pointers
-Message-ID: <2024112810-drudge-factor-9bc7@gregkh>
-References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1732794807; c=relaxed/simple;
+	bh=Q+5aXLju2qGji4g7hO+AvJweB4OhUwScEYcBQk7lGLU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iqoDOZ/1kRBi22s2YFBUXVbfkGC9525BWiHw8XGHabXU3aygACqFxPPO/yXd2QSwhJD8MCYmt8/gS/KiLPV0uC3U8kp4dgXOiUqbQnkTy18e/v+EheqYQs3u2/OGPHPG04NtGJgDLwt+CkV7YkyVyjggWQkx1BQ3irSAZPrGntc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhnqdpjw; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-214d1c6d724so6063575ad.3;
+        Thu, 28 Nov 2024 03:53:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732794805; x=1733399605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaqF1as5WDhovn3U6THZoOBRpS96MOnByr8G/+D/WuQ=;
+        b=jhnqdpjwjjOXO2q90IsBLE9Dj3l8IoanN9j3ek8TmUO3cbpWNz+ASkUC1SGsOPSSZC
+         QmJa1yaBKRKkG7cwqAOwkNGgQY4D+R1NkHmhiDpr4+e3CAaFPvx2onEhalGHdP5Vc8+A
+         KK0cvzgt787OdcAhSt4TjkDJCRHi6xzFm+ztrpF2kJ+atSI+UhVLoPvT16ajgb6nLqf0
+         GyZathJ8pgegkSmNFspNICMw81+Q1fjPw0GVAmMHanSB42Mhr3R7DV+rzZcYPUQbKKW9
+         S38Xiuc7C7AEo21r9prc5yVz11q9Ns8KygqA3yZQf5AEExNh2r1ULoTk54XPNz8muS9x
+         nZ1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732794805; x=1733399605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eaqF1as5WDhovn3U6THZoOBRpS96MOnByr8G/+D/WuQ=;
+        b=e5CCwKPehv1MLdIg/oiHiSttBxfmHwIxD7iuCCByTdt6lErEzAuzwrC6ME+s777O+W
+         Wp3cwRuyGixiCDtnjnSrp17wX5fpbWrrBD9udy3MvTXTiDZ2Nq9XWN9WW1WB0QRrFeTf
+         1pffrC92P8S9MWdLyDeEtLNmUAGW5Gpdldms1te5K2+ZUGD4/tdxiKnNQuBiiFlO4rF7
+         TFoYlvPEJDhFE3Wf4BDME99ivwmCwjBiaLEvJdqSfTcIesiCQZZuyZvu5l2qa3eo+L5O
+         Gcw85Y5wTILlrrpG7L1zFFzrOqwvwwCIDn8zi+FXl+R2wuWT9jTSdP3dlguUd+Fkltgt
+         VcIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Po/u2oxaAZjxRW6fE/13UMCcohgPZzgFmvn5Khnr/u0sBpH1dXmO2EYdrMtCdbwnayVszPjtH8cpXztG2REQdC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxfoWdFuTbdFMV/Dh+Z8QPF1OdbHoK1Oi+nR9Hwn1DXAejRP5R
+	GB4J5tiblCgJGfy9RlD7I9qbpAnGIsGf5ar2DGTqD9jIl+Ym6X/l
+X-Gm-Gg: ASbGncsdEGiwCpz2oPuGpvv7VpV13ECemRRxRFV+wlatJfH6BS/yjUQ4NyuN6w1Hshq
+	o2mOPkgTD3fS4ZWehiTKCCMHS4sLxG+lzVF0lI87+VZRdvEwFMlRxNQ7GgJz40bXA4ki+uaC9BU
+	KLabodLwlND+RidmnQYR+q1YFDDZankI7e58MFhRlEw+Q1nxbBdokn7f68hGSfmu96lmnMGLi7n
+	nbpCVYkSElRHHMMd57ayMg2gItTY0h1vcZ8zaTD/uJKFbv10w==
+X-Google-Smtp-Source: AGHT+IHRrXKX8nlMrAcW/oga2ynDRlgfR/zKtBUNbzMY9BA+HKjIHb6lhyDr0m+Ag03La2BxEGv39A==
+X-Received: by 2002:a17:903:244a:b0:20c:9ec9:9a77 with SMTP id d9443c01a7336-21501c5ff2cmr70779075ad.37.1732794804860;
+        Thu, 28 Nov 2024 03:53:24 -0800 (PST)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21530753d15sm4843125ad.52.2024.11.28.03.53.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 03:53:24 -0800 (PST)
+From: Tao Chen <chen.dylane@gmail.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	chen.dylane@gmail.com
+Subject: [PATCH] tracing: Add WARN_ON_ONCE for syscall_nr check
+Date: Thu, 28 Nov 2024 19:53:19 +0800
+Message-Id: <20241128115319.305523-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 27, 2024 at 09:39:34PM -0800, Dmitry Torokhov wrote:
-> The documentation to various API calls that locate children for a given
-> fwnode (such as fwnode_get_next_available_child_node() or
-> device_get_next_child_node()) states that the reference to the node
-> passed in "child" argument is dropped unconditionally, however the
-> change that added checks for the main node to be NULL or error pointer
-> broke this promise.
-> 
-> Add missing fwnode_handle_put() calls to restore the documented
-> behavior.
-> 
-> Fixes: 002752af7b89 ("device property: Allow error pointer to be passed to fwnode APIs")
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/base/property.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index 837d77e3af2b..696ba43b8e8a 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -759,6 +759,12 @@ struct fwnode_handle *
->  fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
->  			   struct fwnode_handle *child)
->  {
-> +	if (IS_ERR_OR_NULL(fwnode) ||
-> +	    !fwnode_has_op(fwnode, get_next_child_node)) {
-> +		fwnode_handle_put(child);
-> +		return NULL;
-> +	}
-> +
->  	return fwnode_call_ptr_op(fwnode, get_next_child_node, child);
->  }
->  EXPORT_SYMBOL_GPL(fwnode_get_next_child_node);
-> @@ -778,9 +784,6 @@ fwnode_get_next_available_child_node(const struct fwnode_handle *fwnode,
->  {
->  	struct fwnode_handle *next_child = child;
->  
-> -	if (IS_ERR_OR_NULL(fwnode))
-> -		return NULL;
-> -
->  	do {
->  		next_child = fwnode_get_next_child_node(fwnode, next_child);
->  		if (!next_child)
-> @@ -806,8 +809,10 @@ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
->  	const struct fwnode_handle *fwnode = dev_fwnode(dev);
->  	struct fwnode_handle *next;
->  
-> -	if (IS_ERR_OR_NULL(fwnode))
-> +	if (IS_ERR_OR_NULL(fwnode)) {
-> +		fwnode_handle_put(child);
->  		return NULL;
-> +	}
->  
->  	/* Try to find a child in primary fwnode */
->  	next = fwnode_get_next_child_node(fwnode, child);
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+Now, x86_64 kernel not support to trace syscall for ia32 syscall.
+As a result, there is no any trace output when tracing a ia32 task.
+Like unreg_event_syscall_enter, add a WARN_ON_ONCE judgment for
+syscall_nr in perf_syscall_enter and ftrace_syscall_enter to give
+some message.
 
-Hi,
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+ int main(void)
+ {
+	int ret = open("tmp.txt", 0);
+	return 0;
+ }
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+gcc -m32 open32 open.c
+echo 1 > /sys/kernel/debug/tracing/events/syscalls/sys_enter_open/enable
+./open32
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+[  109.214595] ------------[ cut here ]------------
+[  109.215625] WARNING: CPU: 0 PID: 170 at
+kernel/trace/trace_syscalls.c:304 ftrace_syscall_enter+0x55/0x1c0
+[  109.217111] Modules linked in:
+[  109.218190] CPU: 0 UID: 0 PID: 170 Comm: open32 Not tainted
+6.12.0-rc4-virtme #10]
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ kernel/trace/trace_syscalls.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-thanks,
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 785733245ead..19c3335e7d84 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -300,7 +300,7 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+ 	int size;
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+-	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
++	if (WARN_ON_ONCE(syscall_nr < 0 || syscall_nr >= NR_syscalls))
+ 		return;
+ 
+ 	/* Here we're inside tp handler's rcu_read_lock_sched (__DO_TRACE) */
+@@ -339,7 +339,7 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
+ 	int syscall_nr;
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+-	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
++	if (WARN_ON_ONCE(syscall_nr < 0 || syscall_nr >= NR_syscalls))
+ 		return;
+ 
+ 	/* Here we're inside tp handler's rcu_read_lock_sched (__DO_TRACE()) */
+@@ -585,7 +585,7 @@ static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
+ 	int size;
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+-	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
++	if (WARN_ON_ONCE(syscall_nr < 0 || syscall_nr >= NR_syscalls))
+ 		return;
+ 	if (!test_bit(syscall_nr, enabled_perf_enter_syscalls))
+ 		return;
+@@ -687,7 +687,7 @@ static void perf_syscall_exit(void *ignore, struct pt_regs *regs, long ret)
+ 	int size;
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+-	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
++	if (WARN_ON_ONCE(syscall_nr < 0 || syscall_nr >= NR_syscalls))
+ 		return;
+ 	if (!test_bit(syscall_nr, enabled_perf_exit_syscalls))
+ 		return;
+-- 
+2.43.0
 
-greg k-h's patch email bot
 
