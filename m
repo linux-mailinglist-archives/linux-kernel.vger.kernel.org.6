@@ -1,112 +1,196 @@
-Return-Path: <linux-kernel+bounces-424586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6D79DB652
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:13:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DC49DB654
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:13:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EDCD281072
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C767C165420
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F05194A74;
-	Thu, 28 Nov 2024 11:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B17197558;
+	Thu, 28 Nov 2024 11:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xEdZLEK6"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HBVmfXoq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F40B13A3F3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E92C1946C8;
+	Thu, 28 Nov 2024 11:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732792381; cv=none; b=nqRbdRvMHuXAzkkuhUiJ8Dgvxk2+uKhtQqVO6iQ2tt1ZUkP02E+iCpcnhM3qR3CiRIjQ0m1L0VcFxYDAHlnsOYpGHa9MDqqyOsTaQnfH3iUtewsFhVqKCFrnv//7rlM3oqjaOv1YkGLt5979n/ef5Ip31OqazdDfYqPweSYcPZM=
+	t=1732792407; cv=none; b=ms7RgsXIo+gQeiM1FIyapHR9WW51ixaUvmhRYYISMdb7/5hvXOIZGaD+NrbVKieeFrCYRmopFoWv/sg7qBnr6a2JwtCWMJUvU4cz45N4Tut8lEMcR/xadkzQp1yiW5klPX5thUSA1SEZOg88uMiGUxuBMgbJqAmRUR75pmpFbV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732792381; c=relaxed/simple;
-	bh=OoObH6wvD+y8f4IQZlNNL3LT0T39+wjdDoULtx4Ft5A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kyLrf4tPlhTvY//s8FIIVn2/o7NrJmVSDcvMh+gEI6JqeWiiAM55T3z6WcugMmc4Tf7sh1U+6ZTRENMDa/QXOziYA7ZhlNsBtglSB//pJNA1PrvQQxgRSIQaV5VYzwevI/cifVNUsskhqhC4gUiSSX8u3jyKYqa3/hhhxG3eoIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xEdZLEK6; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732792375; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=auSYmrP4H1sEfPgq0w8ztv2jUfFB1qQmrkLw05UiALw=;
-	b=xEdZLEK6E9JW/L56JG2LRKOzAVB1Ctd53a+cRqduZRJCmu+3KZMfoy4XixVlCEFDwjP829Rvb0oQbMwBG8k3IxKt7FqpkUWjpBKqEKAa6tWHjEaLcKSentWvmOZtJc2NX/h/8UI0QhhKinNzaghCvRTnlfCB+QdcvzBD6wT5Z04=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WKPndYG_1732792332 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 28 Nov 2024 19:12:54 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  nehagholkar@meta.com,  abhishekd@meta.com,  kernel-team@meta.com,
-  david@redhat.com,  ying.huang@intel.com,  nphamcs@gmail.com,
-  akpm@linux-foundation.org,  hannes@cmpxchg.org,  feng.tang@intel.com,
-  kbusch@meta.com
-Subject: Re: [PATCH 1/4] migrate: Allow migrate_misplaced_folio APIs without
- a VMA
-In-Reply-To: <20241127082201.1276-2-gourry@gourry.net> (Gregory Price's
-	message of "Wed, 27 Nov 2024 03:21:58 -0500")
-References: <20241127082201.1276-1-gourry@gourry.net>
-	<20241127082201.1276-2-gourry@gourry.net>
-Date: Thu, 28 Nov 2024 19:12:11 +0800
-Message-ID: <87plmfeho4.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1732792407; c=relaxed/simple;
+	bh=ivR3uh/oFQ81c6TBZDo1ukH/mLGSo3kuk7jrelkjKSg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dN8z5QigxZsL+DPU/v/0hgVe8Q11ByLIT7lVb3hwwrxzH0JJ8WV7MEJsgGs/naNmfFCQ38dUdEEvP1iUQLy/xB4c5bcyXvRKenwQ5KPPDU4+Z4Yf/dGPRSKDqYTDfzGwfrNFlaZY6tZMj1UlvW+yLKfGRyEzIDr5KNUd2gFJIsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HBVmfXoq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732792406; x=1764328406;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=ivR3uh/oFQ81c6TBZDo1ukH/mLGSo3kuk7jrelkjKSg=;
+  b=HBVmfXoqUYqiCZyjjvVwAePS+f9JqlQjYfiWTlKDFpwHn+7jftQ6gX13
+   Q8pu/hhW0koTW/xdvKyZ8+8afrnLTottmcFF3F6ubL0yrvcsf1cawCN4I
+   /6EpBAGTvkrzzwU/skiCVEVfqqELmLM+cXQ1BkVAzn84uDHYzjEBo1q3z
+   FXmAvq0SaKIOplpUwX+1IbG5jv4rwr+8gCpANs+BuODwiIQlW61aqig7n
+   J5TvgrD/i5432SBXX2bBnxl9K5duLEHNwIWP7X6j5K4ix4p3hxwn/64fE
+   tSiY95mGQ9Smy+hWjJyAS6gmtYlomzntq9PLFtfHi5Nj47JZfGhD0GK1h
+   A==;
+X-CSE-ConnectionGUID: LUArCCShSy2R5zU4WEC1Pg==
+X-CSE-MsgGUID: znjdMegtQhy3iT/NAe8dJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="32390356"
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="scan'208";a="32390356"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 03:13:25 -0800
+X-CSE-ConnectionGUID: lUrviTJCRQypdDFPLbFCSA==
+X-CSE-MsgGUID: I8VCk0EJT6uU2d6giKjWgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="scan'208";a="97170931"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 03:13:20 -0800
+Message-ID: <d1952eb7-8eb0-441b-85fc-3075c7b11cb9@intel.com>
+Date: Thu, 28 Nov 2024 13:13:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
+ TDX guest
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-2-adrian.hunter@intel.com>
+ <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
+ <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
+ <56db8257-6da2-400d-8306-6e21d9af81f8@intel.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <56db8257-6da2-400d-8306-6e21d9af81f8@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Gregory,
+On 25/11/24 15:40, Adrian Hunter wrote:
+> On 22/11/24 18:33, Dave Hansen wrote:
+>> On 11/22/24 03:10, Adrian Hunter wrote:
+>>> +struct tdh_vp_enter_tdcall {
+>>> +	u64	reg_mask	: 32,
+>>> +		vm_idx		:  2,
+>>> +		reserved_0	: 30;
+>>> +	u64	data[TDX_ERR_DATA_PART_2];
+>>> +	u64	fn;	/* Non-zero for hypercalls, zero otherwise */
+>>> +	u64	subfn;
+>>> +	union {
+>>> +		struct tdh_vp_enter_vmcall 		vmcall;
+>>> +		struct tdh_vp_enter_gettdvmcallinfo	gettdvmcallinfo;
+>>> +		struct tdh_vp_enter_mapgpa		mapgpa;
+>>> +		struct tdh_vp_enter_getquote		getquote;
+>>> +		struct tdh_vp_enter_reportfatalerror	reportfatalerror;
+>>> +		struct tdh_vp_enter_cpuid		cpuid;
+>>> +		struct tdh_vp_enter_mmio		mmio;
+>>> +		struct tdh_vp_enter_hlt			hlt;
+>>> +		struct tdh_vp_enter_io			io;
+>>> +		struct tdh_vp_enter_rd			rd;
+>>> +		struct tdh_vp_enter_wr			wr;
+>>> +	};
+>>> +};
+>>
+>> Let's say someone declares this:
+>>
+>> struct tdh_vp_enter_mmio {
+>> 	u64	size;
+>> 	u64	mmio_addr;
+>> 	u64	direction;
+>> 	u64	value;
+>> };
+>>
+>> How long is that going to take you to debug?
+> 
+> When adding a new hardware definition, it would be sensible
+> to check the hardware definition first before checking anything
+> else.
+> 
+> However, to stop existing members being accidentally moved,
+> could add:
+> 
+> #define CHECK_OFFSETS_EQ(reg, member) \
+> 	BUILD_BUG_ON(offsetof(struct tdx_module_args, reg) != offsetof(union tdh_vp_enter_args, member));
+> 
+> 	CHECK_OFFSETS_EQ(r12, tdcall.mmio.size);
+> 	CHECK_OFFSETS_EQ(r13, tdcall.mmio.direction);
+> 	CHECK_OFFSETS_EQ(r14, tdcall.mmio.mmio_addr);
+> 	CHECK_OFFSETS_EQ(r15, tdcall.mmio.value);
+> 
 
-Gregory Price <gourry@gourry.net> writes:
+Note, struct tdh_vp_enter_tdcall is an output format.  The tdcall
+arguments come directly from the guest with no validation by the
+TDX Module.  It could be rubbish, or even malicious rubbish.  The
+exit handlers validate the values before using them.
 
-> To migrate unmapped pagecache folios, migrate_misplaced_folio and
-> migrate_misplaced_folio_prepare must handle folios without VMAs.
+WRT the TDCALL input format (response by the host VMM), 'ret_code'
+and 'failed_gpa' could use types other than 'u64', but the other
+members are really 'u64'.
 
-IMHO, it's better to use migrate_misplaced_folio() instead of
-migrate_misplaced_folio for readability in patch title and description.
+/* TDH.VP.ENTER Input Format #2 : Following a previous TDCALL(TDG.VP.VMCALL) */
+struct tdh_vp_enter_in {
+	u64	__vcpu_handle_and_flags; /* Don't use. tdh_vp_enter() will take care of it */
+	u64	unused[3];
+	u64	ret_code;
+	union {
+		u64 gettdvmcallinfo[4];
+		struct {
+			u64	failed_gpa;
+		} mapgpa;
+		struct {
+			u64	unused;
+			u64	eax;
+			u64	ebx;
+			u64	ecx;
+			u64	edx;
+		} cpuid;
+		/* Value read for IO, MMIO or RDMSR */
+		struct {
+			u64	value;
+		} read;
+	};
+};
 
-> migrate_misplaced_folio_prepare checks VMA for exec bits, so allow
-> a NULL VMA when it does not have a mapping.
->
-> migrate_misplaced_folio must call migrate_pages with MIGRATE_SYNC
-> when in the pagecache path because it is a synchronous context.
+Another different alternative could be to use an opaque structure,
+not visible to KVM, and then all accesses to it become helper
+functions like:
 
-I don't find the corresponding implementation for this.  And, I don't
-think it's a good idea to change from MIGRATE_ASYNC to MIGRATE_SYNC.
-This may cause too long page access latency for page placement
-optimization.  The downside may offset the benefit.
+struct tdx_args;
 
-And, it appears that we can delete the "vma" parameter of
-migrate_misplaced_folio() because it's not used now.  This is a trivial
-code cleanup.
+int tdx_args_get_mmio(struct tdx_args *args,
+		      enum tdx_access_size *size,
+		      enum tdx_access_dir *direction,
+		      gpa_t *addr,
+		      u64 *value);
 
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> ---
->  mm/migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index dfb5eba3c522..3b0bd3f21ac3 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2632,7 +2632,7 @@ int migrate_misplaced_folio_prepare(struct folio *folio,
->  		 * See folio_likely_mapped_shared() on possible imprecision
->  		 * when we cannot easily detect if a folio is shared.
->  		 */
-> -		if ((vma->vm_flags & VM_EXEC) &&
-> +		if (vma && (vma->vm_flags & VM_EXEC) &&
->  		    folio_likely_mapped_shared(folio))
->  			return -EACCES;
+void tdx_args_set_failed_gpa(struct tdx_args *args, gpa_t gpa);
+void tdx_args_set_ret_code(struct tdx_args *args, enum tdx_ret_code ret_code);
+etc
 
----
-Best Regards,
-Huang, Ying
+For the 'get' functions, that would tend to imply the helpers
+would do some validation.
+
 
