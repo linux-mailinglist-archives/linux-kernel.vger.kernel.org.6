@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-424886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F71D9DBAD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:46:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0108D9DBAD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:46:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93497164040
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9AE1281EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDDA1BD9D0;
-	Thu, 28 Nov 2024 15:46:23 +0000 (UTC)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D091BD9D0;
+	Thu, 28 Nov 2024 15:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dIto+a1r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B864204E;
-	Thu, 28 Nov 2024 15:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE531AA1D5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732808782; cv=none; b=Y0/Ah28HzenDc9XX8O8Nm1iJUVtzWZWw8txVwc8AbWCbIm30A/T+40rVHO7Q+aasZbr2hX0XNQw7svf3hItZEgmeGBU+YIfvs4MbJxz5WWmzOC3qzbolUQzaHb6SLeCyV8+sZccNzwlHPkLHnI5xB3Kr41k/0m4npn1qEdLwEJY=
+	t=1732808808; cv=none; b=fNbYgdCfYvmbEAO4TRZBP2wDMmquynlpXInD1mMVmKuSPzjJ3LUBTFJ8AaEvbHyWqJTgDy8yaBkn/Rx7mDe8R6uiNlA3iBEdlcJnqmfLvZInqw991OGjvzTyV4qj81CfKm8Y8bKc58cSjj3EyPxfKXZqeFkwOO1hS7cFhIwnQTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732808782; c=relaxed/simple;
-	bh=mD01r/aB7enLSRRFcLlOuUNHuLyHhKDmXn8q67mMQ2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ua2QoSjnPGP28l7wJFs2c0Kjq7aJPLSr5cexpFP/NPftathqPb0yYlGggnrovQdNwR3ED1WeREMfIExDzqE1Ipt/KalbWU9T1tBbZXAKjNvmm6l0bRjUGb42lbCfNTrZFGk2IUl+NI8uD1FRAx7/iLiyVvU1vCL0KbtgB4RKx+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ee676b4e20so11557977b3.3;
-        Thu, 28 Nov 2024 07:46:20 -0800 (PST)
+	s=arc-20240116; t=1732808808; c=relaxed/simple;
+	bh=IgAPP2T4v/x2x7+u4RSaF3joaKBQGqbNvqAmRmHHEpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W0jkpqoiuobubdxjnHK4cRoyxjN2ycje7VGOceqHxb3KOkfJXe2nvnia2mI6Si+kyMIeaQDRrFLChjZBmCDbtD9o0uGir3FKZ1FHVF/On5F8LuG6mFcd8d3U+D3FSNzSHpg7UlbP/J7HSdl1Qds0XalV+XLa4/bLjMHECQThj64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dIto+a1r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732808805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w+66w8TngamzWwV7unzOZ9JBxy+mM6EsP9BBjxdAg1E=;
+	b=dIto+a1r3Xe9kql9yP1zh11IdYIqXZWsGYsHYbKWBJLWy9S23U8VozuQKtQZHkMwJ4QhM/
+	aXSB2CzfE7qNMgmUVgX3dUa1hxdK1GMohxLm/G1gSvtpoVt2TdIuy/gtbwUIGKFAI3cm2s
+	KDo44hf3zBY59Tzk8UIHVmArubRbErQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-_rsEdCw3OpKbbNqKglDTcQ-1; Thu, 28 Nov 2024 10:46:44 -0500
+X-MC-Unique: _rsEdCw3OpKbbNqKglDTcQ-1
+X-Mimecast-MFC-AGG-ID: _rsEdCw3OpKbbNqKglDTcQ
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434ad71268dso5777095e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:46:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732808779; x=1733413579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wUf/S6ywNh8XAsdHlQGFt6ui0KSpcttBMmgIqMsNTKY=;
-        b=q38Ao2adXnIzXW8zuPIl1sjGT+GQV02PUXrmOuJ/HwDqBaveP8nJK2XWgW6+gP0xVi
-         MSisozWqBC8eLIqfL7IanN3MMsSK/PH836NWQpp4yYLuly0BrbGiu6r9szlww48QPfc7
-         gTwrc8IwMd5ea99lOtpdqz9o24jr1yf5F57a5rJ6CeyDLMTwOf1OQMYZz/kDle+613kK
-         NaRRL3hG2itYYdckr86Mj6rsVAFPeBHzNKIy2wtfDdApYvHusqeLIYzxxM6VLqCV2K10
-         n5Urw+7q1C0YRIe9FJUmEP9k98XquqwxnKiryfGNlLoU4RjR4RK36BshhrULYJH/eXbq
-         dm+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1cpDre1xeRvx/0qM4tXJ8w+3TLkyEE+eE+xcod+JVSJJwqkAUSHTtVST6bVS64GcQwTGdRdY5CymztgEv@vger.kernel.org, AJvYcCWLLLrkIZwYjjOqfU/nuzDPl7frZJxrVBAiljrS5AG/WebTOw3vcMRZNAecZJPENB3b2Ik9CbK3BhtzeCKHQJdHwO4=@vger.kernel.org, AJvYcCX0pXLlCe2cWGTyjWkh8tAbtuoZy9faNieshXfXlxLYNv8w+cN15V+mdMZlt8r36A5+zwB24oygKeMU@vger.kernel.org, AJvYcCXqSqZonsSnlropZwJjr/Q/kEww/3KuTmLcZBWzPr48LR/yp50+ERyDcovizl5d1kAa8ey8XBPNq5Ql@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBpfRVg/EAdb8JrOvoHUZdbLL/cGvXziLuG+1fViICVWHdqGA2
-	yO1FohAkTVgYU4DDEAwJUI3vMMifZyhz8sEemXU8aURUYsl2jxNtgfPepsJPZFQ=
-X-Gm-Gg: ASbGncsgxDpaR1t/25lnhXpfQiviouKthUm3eivvBeOdW3Ln5CNA4k8iG6CVfKgP45w
-	gqzBo3cM+z9KYxtAFavVgOrERrE/8IlgTVWdkD7iJeIllsHDfqaKX2xrkTu/oD7UW/qHJB3zD+V
-	SQ9pbggXStNJL7h7o4H2lhYSu4t7nz73kHH2pEoLr/dlVfxEbDH/8MeH0uqlMXzlhi/6ssTGSbA
-	8WMeyw0Xx5phd3my6V2McRlnKoMvq+G9nVjKZqSCE71lOYihUlV7sZebkx/8O2EyGtlMqpoBAGs
-	J2fjtTiJ04CTULzT
-X-Google-Smtp-Source: AGHT+IHIPj15bB88efUDPhIepuR9qA5LQ1W4xHde82s4MVua4bX2gKggZut31y+/x91vdjzjd5MNpw==
-X-Received: by 2002:a05:690c:a8b:b0:6ea:e967:81da with SMTP id 00721157ae682-6ef3720d0a7mr78206207b3.11.1732808779467;
-        Thu, 28 Nov 2024 07:46:19 -0800 (PST)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ef4dd77220sm3567897b3.74.2024.11.28.07.46.18
+        d=1e100.net; s=20230601; t=1732808803; x=1733413603;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w+66w8TngamzWwV7unzOZ9JBxy+mM6EsP9BBjxdAg1E=;
+        b=lrqgNtEcr7mWpor4kSdGZlIkzho7wSaYM25fjW+Fo6y8Fkf4GZsVZDtVvzRApfCzJj
+         DMbhbSiGjTtlQAaAoZ+v/VOeCp5gT4rc/UzQGdUqIfHkXTEeZ8iq8DYTbpO6sw++p1hw
+         jjwqC4cF16dDNsaLmEzVpX5OVCF5DTDJ0Ntd6BdpHbVQRsbQYOkhmYfMnmZPhvpTIQb/
+         +RSKqcgVHU6BoVawdRqteeNx251/UpjYr3U2Hhth3Hk+SneaBCnYn9Bznsld6xa61K/c
+         8PoU7aAutFUvzWWma7D1LxyRJ35IT+0labg20H75QdslECNeUtDotk2hr+OMBtPPeDUg
+         x7Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXV7xAhc2ykSd+r9pJn3aHsMzhsov+XnyYdETfT49sGyBrEpjKjt9zj6eJT0wpUiybc+EIoU96aoI8PQ9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKG7rrSb9mQvx1Jx9whafCntMGX01X9jUCGoFS6md4zPUAgzX4
+	A80MRK/EHVyvVE6qjoUiiiZRskv/p85kny3rPgFuM6Sw40+FHYAvyBR5NRtD1DxJSn7qDlGXPaO
+	AjkCkZbK5Ok2v3Wc5GFXevl6Og1GC8RqxOhF+1CHqrQmwKEDqBZDNMkA3wRf80AriU5NuNQ==
+X-Gm-Gg: ASbGncs82kJVccAgAMBpAvr0npfLmd31X4eJnqQXbKRHuP4qwT7BlM4WVObRNpnvDPi
+	AP2b2tEt+oApFcnvLhCO4KW+0qLel0gZe8tPFroVcbJM37bx/RVMsxVa8B4+R4uRKUodMsBsviu
+	igGUODa1kNRCodgK/Tm/jtttK7EIraF6b7xPU5W7flg2i3/kh2C1Lel+5GKz/OPpx+z2YVaRNjf
+	uilsdD8gEg5tT09igoLOC90GiigCCs8pdeaMBcvdK7DxB1tIP3nsmuU3ne2fL4P501Q/fA/EVzj
+X-Received: by 2002:a05:600c:198e:b0:434:9cf6:a2a5 with SMTP id 5b1f17b1804b1-434afb9ecc7mr34497265e9.8.1732808803149;
+        Thu, 28 Nov 2024 07:46:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHsilRFv+hxO4Ile5ODeGANDmrF5PppVSkRD8XXRTbWBS5JxSKJdizZVWtAE5+xV9oUs75rew==
+X-Received: by 2002:a05:600c:198e:b0:434:9cf6:a2a5 with SMTP id 5b1f17b1804b1-434afb9ecc7mr34497055e9.8.1732808802852;
+        Thu, 28 Nov 2024 07:46:42 -0800 (PST)
+Received: from [192.168.88.24] (146-241-38-31.dyn.eolo.it. [146.241.38.31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa781200sm56915735e9.25.2024.11.28.07.46.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 07:46:18 -0800 (PST)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e388503c0d7so733214276.0;
-        Thu, 28 Nov 2024 07:46:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU4OLCA0KJvcUdmCxV1aGvVXE5b6bf/ZFGJmqnhXlsumeFh0XuHOzcYtkBjIapKmsy5xtNL07gAICwN@vger.kernel.org, AJvYcCV/cGMf/QjlijXvzkh1U7fmS2jfm/pjGCtaO4AU+WuX9Tp2HItKmF39G07fiNUKIFYWKGMds8am1bVw@vger.kernel.org, AJvYcCWSvZh/Ei5g5q4v3MEc4lfJJb+MjRrQlbrVJsgAn8k0K8M0b2aZvAyw74jVkWQMK98pWAwkxUxbFXkyAjtZ@vger.kernel.org, AJvYcCWeVJhEex7qpHCBld21BcJDwJIUf2DDiex2x0QS0o+zowJfqy9EEMGPiA7uEyuW7EgqsC3Gyr1Z7+Q/6ProhSURhp0=@vger.kernel.org
-X-Received: by 2002:a05:6902:154b:b0:e33:14fa:2273 with SMTP id
- 3f1490d57ef6-e395b887e90mr6783539276.5.1732808778278; Thu, 28 Nov 2024
- 07:46:18 -0800 (PST)
+        Thu, 28 Nov 2024 07:46:42 -0800 (PST)
+Message-ID: <a4213a79-dd00-4d29-9215-97eb69f75f39@redhat.com>
+Date: Thu, 28 Nov 2024 16:46:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241126092050.1825607-2-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 28 Nov 2024 16:46:05 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
-Message-ID: <CAMuHMdWjzR6vgbr_CfR7r-h1FqWxs1nY0hm274kxFmoHjCtRAA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/15] dt-bindings: soc: renesas: renesas,rzg2l-sysc:
- Add #renesas,sysc-signal-cells
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
-	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
-	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Networking for v6.13-rc1
+To: Sasha Levin <sashal@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241128142738.132961-1-pabeni@redhat.com>
+ <Z0iC2DuUf9boiq_L@sashalap>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <Z0iC2DuUf9boiq_L@sashalap>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Claudiu,
+On 11/28/24 15:48, Sasha Levin wrote:
+> On Thu, Nov 28, 2024 at 03:27:38PM +0100, Paolo Abeni wrote:
+>>      ipmr: add debug check for mr table cleanup
+> 
+> When merging this PR into linus-next, I've noticed it introduced build
+> errors:
+> 
+> /builds/linux/net/ipv4/ipmr.c:320:13: error: function 'ipmr_can_free_table' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+>    320 | static bool ipmr_can_free_table(struct net *net)
+>        |             ^~~~~~~~~~~~~~~~~~~
+> 1 error generated.
+> 
+> The commit in question isn't in linux-next and seems to be broken.
 
-CC Ulf
+My fault, I'm sorry.
 
-Thanks for your patch!
+I can't reproduce the issue here. Could you please share your kconfig
+and the compiler version? I'll try to address the issue and re-send the
+PR ASAP.
 
-On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The RZ/G3S system controller (SYSC) has registers to control signals that
-> are routed to various IPs. These signals must be controlled during
-> configuration of the respective IPs. One such signal is the USB PWRRDY,
-> which connects the SYSC and the USB PHY. This signal must to be controlle=
-d
-> before and after the power to the USB PHY is turned off/on.
->
-> Other similar signals include the following (according to the RZ/G3S
-> hardware manual):
->
-> * PCIe:
-> - ALLOW_ENTER_L1 signal controlled through the SYS_PCIE_CFG register
-> - PCIE_RST_RSM_B signal controlled through the SYS_PCIE_RST_RSM_B
->   register
-> - MODE_RXTERMINATION signal controlled through SYS_PCIE_PHY register
->
-> * SPI:
-> - SEL_SPI_OCTA signal controlled through SYS_IPCONT_SEL_SPI_OCTA
->   register
->
-> * I2C/I3C:
-> - af_bypass I2C signals controlled through SYS_I2Cx_CFG registers
->   (x=3D0..3)
-> - af_bypass I3C signal controlled through SYS_I3C_CFG register
->
-> * Ethernet:
-> - FEC_GIGA_ENABLE Ethernet signals controlled through SYS_GETHx_CFG
->   registers (x=3D0..1)
->
-> Add #renesas,sysc-signal-cells DT property to allow different SYSC signal=
-s
-> consumers to manage these signals.
->
-> The goal is to enable consumers to specify the required access data for
-> these signals (through device tree) and let their respective drivers
-> control these signals via the syscon regmap provided by the system
-> controller driver. For example, the USB PHY will describe this relation
-> using the following DT property:
->
-> usb2_phy1: usb-phy@11e30200 {
->         // ...
->         renesas,sysc-signal =3D <&sysc 0xd70 0x1>;
->         // ...
-> };
+Thanks,
 
-IIUIC, the consumer driver will  appear to control the SYSC bits
-directly, but due to the use of custom validating regmap accessors
-and reference counting in the SYSC driver, this is safe?
-The extra safety requires duplicating the register bits in both DT
-and the SYSC driver.
-Both usb-phy nodes on RZG3S use the same renesas,sysc-signal, so the
-reference counting is indeed needed.  They are in different power
-domains, could that be an issue w.r.t. ordering?
+Paolo
 
-I am not a big fan of describing register bits in DT, but for the other
-SYSC users you list above, syscon+regmap seems to be a valid solution.
-For USB and PCIe control, the situation is different. I more liked the
-approach with "reset IDs" you had in v1, as it abstracts the DT
-description from the register bits, and the USB and PCIe reset bits use
-a different polarity (on RZ/G3S). If future SoC integration changes
-the polarity, you have to handle that in the consumer (USB or PCIe)
-driver, too.  Unfortunately such "reset IDs" are only suitable for
-use with the reset or pmdomain frameworks, which didn't survive the
-earlier discussions.
-
-One other option would be to let SYSC expose regulators?
-While that would work for USB and PCIe control, we would still need
-syscon+regmap for the other bits.
-
-So the more I think about it, the more I like your (clever) solution...
-
-> Along with it, add the syscon to the compatible list as it will be
-> requested by the consumer drivers. The syscon was added to the rest of
-> system controller variants as these are similar with RZ/G3S and can
-> benefit from the implementation proposed in this series.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
