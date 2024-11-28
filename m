@@ -1,181 +1,151 @@
-Return-Path: <linux-kernel+bounces-424417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333FC9DB41D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 239BD9DB433
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4869164A87
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:47:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF6A1648BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8DB15383E;
-	Thu, 28 Nov 2024 08:47:25 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E460F1917E7;
+	Thu, 28 Nov 2024 08:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQ8IFgq1"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2BB14F9FA
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC46F15852F
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783645; cv=none; b=VXQ+NG0WYzixwDLoX89RJdGKRlKutipxN7aBI/q/wO741V+y4yrD8ta/2ykAwvYi5rG6konDW9ShlkSo2o6T4r3iCX590DvIw8HMml0MeSNUipHitXqpLuJCYCj6hpQ3toI7TB9VoGwMIICjcGUAkoPY5RGo5k4pKBbKJMoyn9U=
+	t=1732783762; cv=none; b=TuX8wqotEH7Hxsd3L5selffYjDUyjtJYb2jtHd01xEOumpSjQQ1/blWAeAb5tpyf1rF/rMSFT42UBN51XM3HJotyFZ2AorT0dmr6fd+QjcY2OljXzxo9uVg4WlHK0Kqdq9/hK2pnYU2JKlhZo3rafAjxoWZpYh05rgrazHKYzLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783645; c=relaxed/simple;
-	bh=5QCGGgNDq0aUhaO3Y8shi3DkZp4hYS2bJtiTif+a8Ok=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UVzToou7o9mlECElAZqCjZWPtGeaHcRZoyuuV5L1qDkhy7jontd/7OK2CZ8VVGTRNO452D+V55ZtsEZR4vem4M5wK7I6XCr7qa9xnPCXuUbKhZNOObfiEStyC0X9t5UGXeQjHOvERMZlNATiQrz6zae2p96uuvGOfXK/ZdlSgSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a78589df29so6182245ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:47:23 -0800 (PST)
+	s=arc-20240116; t=1732783762; c=relaxed/simple;
+	bh=F0lk0HLz5jf8q7dw3dV1FgtHodw9reKkMWFPmZhr+WA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R0CG2unyavc6Yfco2LsNaM4cTBQIDgs+2yb+hRyqTw9R4VCqAn/qTia6vC8scYBicFWIgJi9HSNIcYDsFxm8L2td0kYZkSFQ7xaUi49+llQd4srNNss6StSur4/WKAO68kzfatPdssVZvr9ucJ4Qex9IcdMp9TbStD6FLva27Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQ8IFgq1; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fc88476a02so487442a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:49:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732783760; x=1733388560; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=biTnDZFKhjt6ANlWd3ga/0C+ZkbKD1Beoc2zE39yreI=;
+        b=TQ8IFgq1gIzPfepfSS4bBeq/nI4ibcCXCRqHYRxnUa+jD1EY6XtHLvgF9G+V/NTcb3
+         UQD6cRW/+jLn2g5Q9a9//q0Ov93uzl4A+OjVtuoxC4eqqF7hIlm3mkIWNZhMhIq1tiII
+         b2A2+2e7xPCW2f7WV5+3k1o75dOWwOUk3RhXq898GrsYo+Xz11BBZMZcVcd1UM2QniFl
+         2Fwwgv5VoqxkMC/PZ6CK5Lrhj8C52qZavVYTFNh+tlHeqyXa6KRMutgtqIjvKKVc6Mep
+         QelVRAq0qkJiUJLgk8ehJ7IPrzh4/ZdhwLPEU8QszxN+FhvIMyKarVnR1dEgmvC2fT/y
+         MHtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732783642; x=1733388442;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GOJK1jGRDRI2t8rgFn96dBmI0Fc7yXAsftfXFPI8ueg=;
-        b=mL5mJ7l6FgJVuuNf2FTmHNeLydbbKs+BdcjFHOoGjuD0iw5cyuT3mR6+yw5lDdxGBO
-         qANR+wYnIhl9SmMRgoSZ13IFlutaDtZBmEVbOvuQrL9TqH5ZZulzI8eZefowAoNPvnrR
-         4oxV0chfs54BIShZtspjjeJmaU0Fl41T1S3ppkNQ4iAf5smU0wf+kdGxQasxmbLdsiUC
-         zAVr1PmK++nIMR1iSQftapOvI1qKBLD5DepbHu2c2k3wW/K5k18xBsf/IduvZ/V38/oy
-         NsDg33TG4ZnN40WlmExGwrY+1Wf/iBgcFC6auRnChGIEX4HCJfpvGexvdaU6Dh0O4vW2
-         9gTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVotMGA81Nxa9XxhTxDXmj7dUp2C+jDNnynRPxX/vAMj9PgoGRqT0U7uKMxtmtqWWeIgPkGjjli+1MQ3BI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVfTEtzCXcQ7ew1XvdxFb9vlQrMCbYSqqPZz6hkO3MKnd5tUYB
-	35GFZGwf5YPDotQZYT+UCHBWcp3jJhJlLyxRxyhyGfn9qmNDIr1JmwfBaOLWSQDhIrjbeB3RxqE
-	nz9t3SALRTC3AXGEGMouKwgfIY3Vlow7SIv2K00VffM/hdPOw700+LC8=
-X-Google-Smtp-Source: AGHT+IEfd8YGM9TsdEbw/1tCH8zTkvNnHnSwk402xn6ZNunlsDU9pD0fQGYnyHcXA3ipbQNe9gwZG/Rix21+OI3vIH0lsEcBiB4h
+        d=1e100.net; s=20230601; t=1732783760; x=1733388560;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=biTnDZFKhjt6ANlWd3ga/0C+ZkbKD1Beoc2zE39yreI=;
+        b=fKNd0OvQPORptqkSEfJH6LcYq9h3/zauaU6ZBOMb+061/bzB1WGzTGCS7rauEMaxhP
+         Khwr4yCuYekPqVUB5EuuXEKA62wOUBbdGB48j2J4GKBWzLN7r6nLERHNOOS634LNPi12
+         Yr9C1XHAv0XQJTDk/JAjQm6w13dSCn4rTUfuoix9TinNMJO8PbKljr0KEc6yoLpnhBW5
+         t0tvT/JBdcyXXzZMFYCx78F2H10g0TXa851MBuH9KXoIEsx3bSVH5ZPRbEa7eMqi/J82
+         pCXH0RG4RZ057i5uPd1qm8feBbTur/RfDx2DIgnfUxknRB0uwKP0EW+EkfOSefF0zh01
+         L7LQ==
+X-Gm-Message-State: AOJu0YyOuZyi5wD86NPS7ou8TM6IoM6FV9HBMt6FZUeq+SgDTnhhDVQg
+	UAbEkH3D1l7/lvF68Z1gBZlKHGuE1ta7hp4r6WNDaRY/xEOJdc83
+X-Gm-Gg: ASbGncuToK+rNhLNPzGiSfFZKe/srWcjTT97bqRGVMDBrUNMPdJFp2o3YWf2VgFBXqU
+	n59fahfP/8v0Ab/dVjUtJ79lmbnm+kK6V9NeZ0YZqBiMkOvcyHKGFLvYzqZap8aq6/8hO0zpetr
+	TvF7pqdSQO1DeMZF6w3BSY4u50KlQZCaPrYfVars7JhFWbIoC4opoB1w30G9k5yfb86ISy9+hTZ
+	MNxHA+NRYvnN/cOM55tS0APd2DL5WY5ZEHRp0p1rLBOfkpH3JPWvPtw+ttC55GnMcDB2rkhC7X+
+	cYi0HOTYa8zX7LN8tNtWyiov3x5s85aHs1P1
+X-Google-Smtp-Source: AGHT+IG7COHEp8iJJx9TF/+pKyS6xplvZQPOmN2zKWOES03VIlBT+HIpItQNSPXQVNrFZvZLusvf8Q==
+X-Received: by 2002:a05:6a20:a108:b0:1d9:2408:aa4c with SMTP id adf61e73a8af0-1e0e0af5cdcmr9562581637.23.1732783759859;
+        Thu, 28 Nov 2024 00:49:19 -0800 (PST)
+Received: from localhost.localdomain (014136220210.static.ctinets.com. [14.136.220.210])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541848277sm971924b3a.177.2024.11.28.00.49.15
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 28 Nov 2024 00:49:19 -0800 (PST)
+From: Hao Jia <jiahao.kernel@gmail.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	mingo@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	bristot@redhat.com,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	Hao Jia <jiahao1@lixiang.com>
+Subject: [PATCH] sched/core: Do not migrate ineligible tasks in sched_balance_rq()
+Date: Thu, 28 Nov 2024 16:48:58 +0800
+Message-Id: <20241128084858.25220-1-jiahao.kernel@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216a:b0:3a7:78bd:e486 with SMTP id
- e9e14a558f8ab-3a7c552405fmr67208125ab.5.1732783642405; Thu, 28 Nov 2024
- 00:47:22 -0800 (PST)
-Date: Thu, 28 Nov 2024 00:47:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67482e1a.050a0220.253251.0076.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING: refcount bug in device_move
-From: syzbot <syzbot+7e94d6c5abca98373aee@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Hao Jia <jiahao1@lixiang.com>
 
-syzbot found the following issue on:
+When the PLACE_LAG scheduling feature is enabled, if a task
+is ineligible (lag < 0) on the source cpu runqueue, it will
+also be ineligible when it is migrated to the destination
+cpu runqueue.
 
-HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d90778580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
-dashboard link: https://syzkaller.appspot.com/bug?extid=7e94d6c5abca98373aee
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Because we will keep the original equivalent lag of
+the task in place_entity(). So if the task was ineligible
+before, it will still be ineligible after migration.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Therefore, we should skip the migration of ineligible tasks
+to reduce ineffective task migrations, just like the task
+throttled by cfs_bandwidth, until they become eligible.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d1a9389ec33/disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/32610b045488/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/673211d6a429/bzImage-9f16d5e6.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7e94d6c5abca98373aee@syzkaller.appspotmail.com
-
-Bluetooth: hci1: Opcode 0x0406 failed: -4
-Bluetooth: hci1: Opcode 0x0406 failed: -4
-Bluetooth: hci2: Opcode 0x0c1a failed: -4
-Bluetooth: hci2: Opcode 0x0406 failed: -4
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 0 PID: 10541 at lib/refcount.c:28 refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Modules linked in:
-CPU: 0 UID: 0 PID: 10541 Comm: syz.2.1919 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Code: e0 64 5f 8c e8 17 33 a9 fc 90 0f 0b 90 90 eb 99 e8 8b 8d e8 fc c6 05 d6 15 59 0b 01 90 48 c7 c7 40 65 5f 8c e8 f7 32 a9 fc 90 <0f> 0b 90 90 e9 76 ff ff ff e8 68 8d e8 fc c6 05 b0 15 59 0b 01 90
-RSP: 0018:ffffc9000489ef38 EFLAGS: 00010246
-RAX: dbe0113176482a00 RBX: ffff88801cbab078 RCX: 0000000000080000
-RDX: ffffc9000bfea000 RSI: 000000000006023b RDI: 000000000006023c
-RBP: 0000000000000003 R08: ffffffff815687d2 R09: fffffbfff1cfa8a0
-R10: dffffc0000000000 R11: fffffbfff1cfa8a0 R12: ffff88801cbab060
-R13: ffffffff85ee3a30 R14: 1ffff1100397560c R15: ffff88801cbab060
-FS:  00007f4534f846c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe194e1ef7e CR3: 000000006ccf4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __refcount_sub_and_test include/linux/refcount.h:275 [inline]
- __refcount_dec_and_test include/linux/refcount.h:307 [inline]
- refcount_dec_and_test include/linux/refcount.h:325 [inline]
- kref_put include/linux/kref.h:64 [inline]
- klist_dec_and_del+0x3ec/0x3f0 lib/klist.c:206
- klist_put lib/klist.c:217 [inline]
- klist_del lib/klist.c:230 [inline]
- klist_remove+0x25e/0x480 lib/klist.c:249
- device_move+0x1b4/0x710 drivers/base/core.c:4643
- hci_conn_del_sysfs+0xac/0x160 net/bluetooth/hci_sysfs.c:75
- hci_conn_cleanup net/bluetooth/hci_conn.c:174 [inline]
- hci_conn_del+0x8c4/0xc40 net/bluetooth/hci_conn.c:1164
- hci_abort_conn_sync+0x583/0xe00 net/bluetooth/hci_sync.c:5603
- hci_disconnect_all_sync+0x264/0x460 net/bluetooth/hci_sync.c:5626
- hci_suspend_sync+0x41a/0xca0 net/bluetooth/hci_sync.c:6103
- hci_suspend_dev+0x203/0x3e0 net/bluetooth/hci_core.c:2832
- hci_suspend_notifier+0xf2/0x2b0 net/bluetooth/hci_core.c:2412
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- notifier_call_chain_robust kernel/notifier.c:128 [inline]
- blocking_notifier_call_chain_robust+0xe8/0x1e0 kernel/notifier.c:353
- pm_notifier_call_chain_robust+0x2c/0x60 kernel/power/main.c:102
- snapshot_open+0x19b/0x280 kernel/power/user.c:77
- misc_open+0x2cc/0x340 drivers/char/misc.c:165
- chrdev_open+0x521/0x600 fs/char_dev.c:414
- do_dentry_open+0xbe1/0x1b70 fs/open.c:945
- vfs_open+0x3e/0x330 fs/open.c:1075
- do_open fs/namei.c:3828 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3987
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f453417e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4534f84038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f4534335fa0 RCX: 00007f453417e819
-RDX: 0000000000004000 RSI: 00000000200002c0 RDI: ffffffffffffff9c
-RBP: 00007f45341f175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4534335fa0 R15: 00007ffc9eec0e38
- </TASK>
-
-
+Signed-off-by: Hao Jia <jiahao1@lixiang.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ kernel/sched/fair.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index fbdca89c677f..5564e16b6fdb 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9358,13 +9358,14 @@ static inline int migrate_degrades_locality(struct task_struct *p,
+ static
+ int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ {
++	struct cfs_rq *cfs_rq = task_cfs_rq(p);
+ 	int tsk_cache_hot;
+ 
+ 	lockdep_assert_rq_held(env->src_rq);
+ 
+ 	/*
+ 	 * We do not migrate tasks that are:
+-	 * 1) throttled_lb_pair, or
++	 * 1) throttled_lb_pair, or task ineligible, or
+ 	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
+ 	 * 3) running (obviously), or
+ 	 * 4) are cache-hot on their current CPU.
+@@ -9372,6 +9373,10 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ 	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
+ 		return 0;
+ 
++	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running &&
++			!entity_eligible(cfs_rq, &p->se))
++		return 0;
++
+ 	/* Disregard percpu kthreads; they are where they need to be. */
+ 	if (kthread_is_per_cpu(p))
+ 		return 0;
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
