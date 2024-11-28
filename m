@@ -1,193 +1,137 @@
-Return-Path: <linux-kernel+bounces-424199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54119DB18A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:43:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88749DB18E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:43:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B967FB2164A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10B201667F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C50C61FDF;
-	Thu, 28 Nov 2024 02:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF097C6E6;
+	Thu, 28 Nov 2024 02:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQ4d2vmA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BhlVeTAr"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4947433B1;
-	Thu, 28 Nov 2024 02:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB51433B1;
+	Thu, 28 Nov 2024 02:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732761772; cv=none; b=UZsHBgnfs7G/kcB0Qem/znGthRygcpAaE0JbqQgaRFHT7hipAk+d7+dztnc4zdyOJMdrT9O5yDCn3/I7nd/+Qbh9i8ITcpAacrYGsQSB+lbfsfGnIlwc0FnxZB9OxLBRz/wILLiBeGUGm99m9j7ETl0B/NB53kgK5ISAkEiLAGA=
+	t=1732761825; cv=none; b=fjP2FdgwdfFtBn32pNy77S7ctP2xHXnBjUf2VIMzErJHYanPIH14NbIQ9XPL6v67OtV3hFcyV9l6MP8zzjBeXCT0H+GwPBp4QZllYCfqcRPnek9c9jZCQ9gxZkSZMgxiqtVKr4f4guHCfiG/nCq0jUNobYDF1tTjdfTcSMN6k2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732761772; c=relaxed/simple;
-	bh=qEwTpfjVKTo4gJrLIBICGWx3kJtzTO2e+wI38ZqOdm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7+FUZi/XwMVMFE0/iFqf2pbrzDvM9AKb4obusvaM5SpU0wOvgOIt3TtPr+0cgPc7WvdzVQ220Q/DKaSNL9NWs9iVI5Oz6YA6PMPSmGdffGlf4XsLNJUYrx9P+pbtSfB/w849kDqmmNAapbaSnlMTKX8Yyom7+KacHlgqZsyUgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQ4d2vmA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 299A1C4CECC;
-	Thu, 28 Nov 2024 02:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732761771;
-	bh=qEwTpfjVKTo4gJrLIBICGWx3kJtzTO2e+wI38ZqOdm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iQ4d2vmAM7mpBhPRYGdPnnbxEyBMbGr54aewvPAeBmeOT3JLS3UJ5oA5j+GBUHcif
-	 6KjUR/A1B1puaALv9HTi/uQ4dhwbflNt98HCePXksj4XT+6i3DgjcMfuzamTFYt1dJ
-	 HbQAh6puXFwAVrRRpp4ewTTAWKKdMMUwEJuzBuCO0VApmt2dDPeJb+UpW3W0rWDxSv
-	 CBqohwirLQgtJz+jCM9R4MzeYxp5J2u/Jqdu71t623O5eNRmSEV2fHed2eldfyhYJn
-	 EaPZLZvO4VJud3Sx7s07MLGwRWIiuNxz4Tb897rWJOxX/jJlXksiZEMUaFitm5Tiik
-	 qnaV7Go/DPa1g==
-Date: Wed, 27 Nov 2024 18:42:49 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com,
-	linux-modules@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, masahiroy@kernel.org,
-	mmaurer@google.com, arnd@arndb.de, deller@gmx.de, song@kernel.org
-Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
-Message-ID: <Z0fYqZutUzDdxTGf@bombadil.infradead.org>
-References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org>
- <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
- <Z0eeuCyUGcKgsc5h@bombadil.infradead.org>
- <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
- <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
- <Z0fT4hC30NISjmi_@bombadil.infradead.org>
+	s=arc-20240116; t=1732761825; c=relaxed/simple;
+	bh=B2VUcb3Tmrx1La4HxceUCEyC1e9wB4j5rPnZnNSD+Iw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a3OrvNry0QRrwYTAb1J1GPeavWbI74SuoX4F/Hn210o18uIWe6hGFvYz4PhciQo+16GoxludU1X2ijoDdVObUdDm9VH5uwh+yfn7sk6+xU4JWD9NGqeI/ANws3xwFRDvV2n37xEPhNKJMICoJwA5G2xbrc9i+ofrVUzoEF47xRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BhlVeTAr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a099ba95so2885855e9.0;
+        Wed, 27 Nov 2024 18:43:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732761821; x=1733366621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Owa14ZCDoNgQ06uVhcHXrxie/5XbfMeHw34tNIT+blY=;
+        b=BhlVeTArOV4zXFRy+9hRR75YR5vNXRZosRRaHnPXFQJO0z1rvIY28lHzOydHT5HMYq
+         gfqXQxTf+HbyRtZV/+n7dc0iPKYUC5kUdjMjY4gx/N01SctDCrQ9rlW3JaZazT2H+jfc
+         Rd4EPK3mMzOFXKddpW+yngobn/Ld8s4PYvLiM+tzcg7ObHKRt+hGgW4OzLO5O4Xl2K6w
+         xbyx6zEyBO1AVB3kfw2OWhR5GK9EHfX2QawoayrkoBG22TU/uHoEh+T/AyrBxmLBbiCW
+         LW9IfTFWeHwTdPR9dGwHONRYGxFmDZV1efieyY4bIdFgq//8Mg46aYhecNwl1izCji0R
+         o4Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732761821; x=1733366621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Owa14ZCDoNgQ06uVhcHXrxie/5XbfMeHw34tNIT+blY=;
+        b=F9ArfOkYigotVYXxdVm9BY1S77Cha0ysaldfGSamTpDYivorJs+0fJOqB4e3ZcZIxv
+         Tmitq9oUVscP/8DTHhCUdjnYRY33NQxg+SM+MCGMVkgvZEuzU/108av66NEoYuJXV8A3
+         WYWijpPaa7qPUzDqrGB2JUowOxocX47JZZd66gTugsorlroTR67lVu6Ok1BuUCnjNvPE
+         9PtZCj/9GYoHdTUiS1tfOAh8pVtDtPzfoDRc1bWxLEHCW9GGGm4lOFEoNfPxRxFMv7eD
+         8Fb1D9r/jTlaJyqhc5en/oIauLiGWwt5/B/oKuDpLb6k8gejoqPZU4tzhRkpt8RqxzRO
+         w7UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU58KKYeLmODeNP9+wKujJFXef0UewaZ/x9p9oej8Bfg2MueuDuIdgBcHDy1h3O+BCEIZq18LuxJan+gM4@vger.kernel.org, AJvYcCUcqTvkqRwB07SMSdm6NxYhPi+8m+2HzxR17rJ7DuWUDKbo21phGExHH4GpiOqEMKi3H/mCSyth@vger.kernel.org, AJvYcCUoWBKPP7Op5ragXOGhIrhiWBeRH0SAoqM/Jzm42ueRXMP1fC1kRAFQ8U021Owh86l8o8Y=@vger.kernel.org, AJvYcCVxj0Y7CTBhLLC/KHkECfBgR5cdm/z2uX9wzMiEJz+F8qMFex8EFAUbS+Afq2+vfQbAGCYW2VIVsQ/H6aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXNLyYoLrCi5VvJprvSL1SWhN0iNfrXAToaa194oxpM8W+V0LP
+	BGuSr2aZDpPWFW8iiq1K3RWKJLStGBE3JQanzJAfEagn4vPMtP9lNWe01OGi5fyIcdGCzhI4/kg
+	RmQPJqEzhVz03MLemNGrmmqVa03Y=
+X-Gm-Gg: ASbGncuo5dzrTxi5cjclOUFNwp0GEVcMkzsWsem/QSRZfX4kiF3AUp5EXRYay+4HQXs
+	95WkdIPJftmq28wtuc2iNsPge7MSUhw==
+X-Google-Smtp-Source: AGHT+IGL7KlI85w+FpUF5vt3IezZ2f7SZDQWHC1gXz+5gsMJi6fPNdnBTHJG5WwEXnUVsABNq6hffhwecd6FoqZ0SRc=
+X-Received: by 2002:a05:6000:1ac9:b0:382:3527:a147 with SMTP id
+ ffacd0b85a97d-385c6eb6625mr4763206f8f.1.1732761820964; Wed, 27 Nov 2024
+ 18:43:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0fT4hC30NISjmi_@bombadil.infradead.org>
+References: <20241127-bpf-const-ops-v1-0-a698b8d58680@weissschuh.net> <20241127-bpf-const-ops-v1-2-a698b8d58680@weissschuh.net>
+In-Reply-To: <20241127-bpf-const-ops-v1-2-a698b8d58680@weissschuh.net>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 27 Nov 2024 18:43:30 -0800
+Message-ID: <CAADnVQ+yTZkfC=6Vw3+P9OA2iqzB02OhYTwWWCBGKLy_EfvQKA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/9] bpf: Move func_models from bpf_struct_ops to bpf_struct_ops_desc
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Kui-Feng Lee <thinker.li@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	David Vernet <void@manifault.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Network Development <netdev@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now with Masahiro's cleanups, in my testing we don't need the FORCE anymore.
+On Wed, Nov 27, 2024 at 11:20=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weiss=
+schuh.net> wrote:
+>
+> --- a/net/bpf/bpf_dummy_struct_ops.c
+> +++ b/net/bpf/bpf_dummy_struct_ops.c
+> @@ -129,7 +129,7 @@ extern const struct bpf_link_ops bpf_struct_ops_link_=
+lops;
+>  int bpf_struct_ops_test_run(struct bpf_prog *prog, const union bpf_attr =
+*kattr,
+>                             union bpf_attr __user *uattr)
+>  {
+> -       const struct bpf_struct_ops *st_ops =3D &bpf_bpf_dummy_ops;
+> +       static typeof_member(struct bpf_struct_ops_desc, func_models) fun=
+c_models;
+>         const struct btf_type *func_proto;
+>         struct bpf_dummy_ops_test_args *args;
+>         struct bpf_tramp_links *tlinks =3D NULL;
+> @@ -175,7 +175,7 @@ int bpf_struct_ops_test_run(struct bpf_prog *prog, co=
+nst union bpf_attr *kattr,
+>
+>         op_idx =3D prog->expected_attach_type;
+>         err =3D bpf_struct_ops_prepare_trampoline(tlinks, link,
+> -                                               &st_ops->func_models[op_i=
+dx],
+> +                                               &func_models[op_idx],
 
+This is sad. You didn't bother running the tests.
+Above is producing garbage.
+That's why so many BPF CI tests are failing.
 
-From 83497e0e83d81950df54d82461b1dae629842147 Mon Sep 17 00:00:00 2001
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Wed, 27 Nov 2024 14:10:57 -0800
-Subject: [PATCH v3] selftests: kallsyms: fix double build stupidity
+Overall I think it's a minimal positive value to constify struct_ops.
+Unless other bpf developers see a huge value
+I'd prefer to keep the code as-is.
 
-Fix the stupid FORCE so that re-builds will only trigger
-when really needed. While at it, document the sensible ranges
-supported and fix the script to accept these alternatives.
-
-Also adopt Masahiro Yamada's suggested cleanups on the Makefile.
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- lib/Kconfig.debug                     | 32 ++++++++++++++++++++++++++-
- lib/tests/module/Makefile             | 17 +++++++-------
- lib/tests/module/gen_test_kallsyms.sh |  9 ++++++--
- 3 files changed, 46 insertions(+), 12 deletions(-)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index b5929721fc63..da8c35bfaeaf 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2986,9 +2986,39 @@ config TEST_KALLSYMS_D
- 	tristate
- 	depends on m
- 
-+choice
-+	prompt "Kallsym test range"
-+	default TEST_KALLSYMS_LARGE
-+	help
-+	  Selecting something other than "Fast" will enable tests which slow
-+	  down the build and may crash your build.
-+
-+config TEST_KALLSYMS_FAST
-+	bool "Fast builds"
-+	help
-+	  You won't really be testing kallsysms, so this just helps fast builds
-+	  when allmodconfig is used..
-+
-+config TEST_KALLSYMS_LARGE
-+	bool "Enable testing kallsyms with large exports"
-+	help
-+	  This will enable larger number of symbols. Only enable this if you
-+	  are a modules developer. This will slow down your build considerbly.
-+
-+config TEST_KALLSYMS_MAX
-+	bool "Known kallsysms limits"
-+	help
-+	  This will enable exports to the point we know we'll start crashing
-+	  builds.
-+
-+endchoice
-+
- config TEST_KALLSYMS_NUMSYMS
- 	int "test kallsyms number of symbols"
--	default 100
-+	range 2 10000
-+	default 2 if TEST_KALLSYMS_FAST
-+	default 100 if TEST_KALLSYMS_LARGE
-+	default 10000 if TEST_KALLSYMS_MAX
- 	help
- 	  The number of symbols to create on TEST_KALLSYMS_A, only one of which
- 	  module TEST_KALLSYMS_B will use. This also will be used
-diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
-index af5c27b996cb..86cc3e42e44a 100644
---- a/lib/tests/module/Makefile
-+++ b/lib/tests/module/Makefile
-@@ -3,13 +3,12 @@ obj-$(CONFIG_TEST_KALLSYMS_B) += test_kallsyms_b.o
- obj-$(CONFIG_TEST_KALLSYMS_C) += test_kallsyms_c.o
- obj-$(CONFIG_TEST_KALLSYMS_D) += test_kallsyms_d.o
- 
--$(obj)/%.c: FORCE
--	@$(kecho) "  GEN     $@"
--	$(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
--		$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
--		$(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
-+quiet_cmd_gen_test_kallsyms = GEN     $@
-+	cmd_gen_test_kallsyms = $< $@ \
-+	$(CONFIG_TEST_KALLSYMS_NUMSYMS) \
-+	$(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
- 
--clean-files += test_kallsyms_a.c
--clean-files += test_kallsyms_b.c
--clean-files += test_kallsyms_c.c
--clean-files += test_kallsyms_d.c
-+$(obj)/%.c: $(src)/gen_test_kallsyms.sh $(KCONFIG_CONFIG)
-+	$(call if_changed,gen_test_kallsyms)
-+
-+targets += $(foreach x, a b c d, test_kallsyms_$(x).c)
-diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
-index 3f2c626350ad..561dcac0f359 100755
---- a/lib/tests/module/gen_test_kallsyms.sh
-+++ b/lib/tests/module/gen_test_kallsyms.sh
-@@ -7,6 +7,11 @@ NUM_SYMS=$2
- SCALE_FACTOR=$3
- TEST_TYPE=$(echo $TARGET | sed -e 's|lib/tests/module/test_kallsyms_||g')
- TEST_TYPE=$(echo $TEST_TYPE | sed -e 's|.c||g')
-+FIRST_B_LOOKUP=1
-+
-+if [[ $NUM_SYMS -gt 2 ]]; then
-+	FIRST_B_LOOKUP=$((NUM_SYMS/2))
-+fi
- 
- gen_template_module_header()
- {
-@@ -52,10 +57,10 @@ ____END_MODULE
- 
- gen_template_module_data_b()
- {
--	printf "\nextern int auto_test_a_%010d;\n\n" 28
-+	printf "\nextern int auto_test_a_%010d;\n\n" $FIRST_B_LOOKUP
- 	echo "static int auto_runtime_test(void)"
- 	echo "{"
--	printf "\nreturn auto_test_a_%010d;\n" 28
-+	printf "\nreturn auto_test_a_%010d;\n" $FIRST_B_LOOKUP
- 	echo "}"
- }
- 
--- 
-2.45.2
-
+pw-bot: cr
 
