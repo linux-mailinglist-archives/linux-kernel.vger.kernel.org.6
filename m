@@ -1,32 +1,32 @@
-Return-Path: <linux-kernel+bounces-424064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706F79DB032
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:16:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B539DB033
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9CD2B21D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B5F281FE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02902E57D;
-	Thu, 28 Nov 2024 00:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0EE17C8D;
+	Thu, 28 Nov 2024 00:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B13rcVRq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TM8rP/n+"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758E84A1C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B848825
 	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732752963; cv=none; b=T8yL6NE4SIEyy5MdqckxgnEtfabEcujuRJiHWHByFHiPB/am8Uv0OrbRICZSdP5BumEBqB22T0BgMFcI9Db/GqjAPQhGCp4aV1cy6wgEh/7VotFbOBOEQSZNu6F7jw3aJ2JS5dJNcGBuaP4bqqUqmroi86EhrFH80pwt6ep2Cjg=
+	t=1732752965; cv=none; b=oLDSo8WzcAkPRHiBoFNRu0ohtQSwWPqExzEAuBBttxi/6JC7x498lYN9rb8JmapwDfkF1vS7wAKv/5QSNzSPeRudDhzgPulIj98L03aUL9YKABoD+GmiZAPUKm3jZ+HzWHgha/cDCDJiNN3HHG5WdfvB+rFCiKP+sLmOt4NDKqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732752963; c=relaxed/simple;
-	bh=Mvf+3wNSV9bVer6v/tOurjmGhpoM7e0FZevsj3HIyoo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=XAlceFlAv1j4CgWe3rrxLfzpXWMPRFIWWGVpkahwbW8AA1D5cXaCmnI9kPE6Vus3wij2ruqqDYiNMs1yO8xVIKxj4FjHE5HKCie0uQ/ICjRk+Oa8uK9OOk+CCyeJW4N81xAkhcCnPX9HNgX3DqouDnBp1geU89nBS4Pq0T/orEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B13rcVRq; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1732752965; c=relaxed/simple;
+	bh=hQ0HlZAq9Tfv1Q5WYZ8FA3c9XcNnrLCaZhXVOK8p6DY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=pjuLfxc7/cMUn7WoKkQLjPxtQE8mrQL7jaYfP2bdpcUG6xUNALtOmeSkmg+Ylp8EUTp1829MCT+uv6XpYteiAinGH/6SbjFDtafWctxRRLO59abR8H1fIIMKz9wjhr39jJc+TEKilQ9EyPWaO1Hfqs6f71B8kyxUJZmpZi5DLJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TM8rP/n+; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -34,26 +34,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1732752962; x=1764288962;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=Mvf+3wNSV9bVer6v/tOurjmGhpoM7e0FZevsj3HIyoo=;
-  b=B13rcVRqBSLOcutMPhN0U2MXDnzb1jnVs9G7mZBxcfZJTkcN6up3qpfJ
-   oCHOknpZoXwCC53HwS7fkjdBTXa1bQ4SNLQajulfpoZh92IxUjIPY7kr5
-   zVZSQ4StThda3y3r/KdnSyn/0KYsh6tKvcU6kj7kUuN9e8B9jlaUQX5hW
-   wCFL4uonRKDl22s9vlriaz0s3zXc6Z+rPN/6ALsnoDu5G1c293YjqD8tx
-   YpUTLlsAadyfIhoSnt8/2NxjLJ6r6IjQVDt/cFLhwdZzoWGaGtkAOXxT/
-   mj+So8foM5HE0LVSMsTAK1WT1A/2lwret3DrUB6PmdRr48cRdvwywR5px
+  bh=hQ0HlZAq9Tfv1Q5WYZ8FA3c9XcNnrLCaZhXVOK8p6DY=;
+  b=TM8rP/n+TS2G88plNLy2bCzZA9S+B/EXwje44d+jByCtcR51flMkZ6EZ
+   84rjn+s+sNUNH7zuFBFhR3UfWCmDMpQakJZbWi3XvOjKzZd1sY7Bk3WSd
+   aV7B/w51fuEpAEXeFzvQZp/CGgxOBfp3KfdHmFQSsPuDg9jvPIcLSzZtm
+   7d0T9TjXNOXWx0ENSwzfjGfus28wpWXRoXyCtirrl1PVI47wmjAUw6/Ri
+   U6icpUWm5ZFJAoerPIlAtBbqdF8q0N9uun1rW8l28U7CLJiRyeBIaaQ0y
+   A6+PeuvTnVn0tJaa5WYMAhqw+Q24UycEegyBhFal846y756pqQjv4OEFu
    A==;
-X-CSE-ConnectionGUID: mY75CzZBSi+Zz8plzO5POA==
-X-CSE-MsgGUID: 5hyMdH64RGWmzvizKtcLUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43464073"
+X-CSE-ConnectionGUID: xO7l2kU9TBe2h9G8u6n1Tw==
+X-CSE-MsgGUID: Dr2/UZ15Th6BADXLCXi48Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43464079"
 X-IronPort-AV: E=Sophos;i="6.12,190,1728975600"; 
-   d="scan'208";a="43464073"
+   d="scan'208";a="43464079"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 16:15:59 -0800
-X-CSE-ConnectionGUID: dvLttEFRR0eD9k4NCjLVsg==
-X-CSE-MsgGUID: vBuXokJoR7uiv+YZioGbPA==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 16:16:00 -0800
+X-CSE-ConnectionGUID: vCctnbSUQ4GBJyl1ZI084g==
+X-CSE-MsgGUID: vM8yRuP+SsKrJIRr4iYCkQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,190,1728975600"; 
-   d="scan'208";a="96173986"
+   d="scan'208";a="96173989"
 Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
   by fmviesa003.fm.intel.com with ESMTP; 27 Nov 2024 16:15:59 -0800
 From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
@@ -74,9 +74,9 @@ Cc: Andreas Herrmann <aherrmann@suse.com>,
 	Huang Ying <ying.huang@intel.com>,
 	Ricardo Neri <ricardo.neri@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 1/2] cacheinfo: Allocate memory during CPU hotplug if not done from the primary CPU
-Date: Wed, 27 Nov 2024 16:22:46 -0800
-Message-Id: <20241128002247.26726-2-ricardo.neri-calderon@linux.intel.com>
+Subject: [PATCH v8 2/2] x86/cacheinfo: Delete global num_cache_leaves
+Date: Wed, 27 Nov 2024 16:22:47 -0800
+Message-Id: <20241128002247.26726-3-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
 References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
@@ -86,46 +86,21 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
-adds functionality that architectures can use to optionally allocate and
-build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
-arch specific early level initializer") lets secondary CPUs correct (and
-reallocate memory) cacheinfo data if needed.
+Linux remembers cpu_cachinfo::num_leaves per CPU, but x86 initializes all
+CPUs from the same global "num_cache_leaves".
 
-If the early build functionality is not used and cacheinfo does not need
-correction, memory for cacheinfo is never allocated. x86 does not use the
-early build functionality. Consequently, during the cacheinfo CPU hotplug
-callback, last_level_cache_is_valid() attempts to dereference a NULL
-pointer:
+This is erroneous on systems such as Meteor Lake, where each CPU has a
+distinct num_leaves value. Delete the global "num_cache_leaves" and
+initialize num_leaves on each CPU.
 
-     BUG: kernel NULL pointer dereference, address: 0000000000000100
-     #PF: supervisor read access in kernel mode
-     #PF: error_code(0x0000) - not present page
-     PGD 0 P4D 0
-     Oops: 0000 [#1] PREEPMT SMP NOPTI
-     CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc2 #1
-     RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
-
-Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback if
-not done earlier.
-
-Moreover, before determining the validity of the last-level cache info,
-ensure that it has been allocated. Simply checking for non-zero
-cache_leaves() is not sufficient, as some architectures (e.g., Intel
-processors) have non-zero cache_leaves() before allocation.
-
-Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size().
-This function iterates over all online CPUs. However, a CPU may have come
-online recently, but its cacheinfo may not have been allocated yet.
-
-While here, remove an unnecessary indentation in allocate_cache_info().
+init_cache_level() no longer needs to set num_leaves. Also, it never had to
+set num_levels as it is unnecessary in x86. Keep checking for zero cache
+leaves. Such condition indicates a bug.
 
 Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
+Reviewed-by: Len Brown <len.brown@intel.com>
 Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Reviewed-by: Radu Rendec <rrendec@redhat.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 Tested-by: Andreas Herrmann <aherrmann@suse.de>
-Fixes: 6539cffa9495 ("cacheinfo: Add arch specific early level initializer")
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
 Cc: Andreas Herrmann <aherrmann@suse.com>
@@ -145,85 +120,149 @@ Cc: Zhang Rui <rui.zhang@intel.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: stable@vger.kernel.org # 6.3+
 ---
-Change since v7:
- * None
+After this change, all CPUs will traverse CPUID leaf 0x4 when booted for
+the first time. On systems with symmetric cache topologies this is
+useless work.
+
+Creating a list of processor models that have asymmetric cache topologies
+was considered. The burden of maintaining such list would outweigh the
+performance benefit of skipping this extra step.
+---
+Changes since v7:
+ * Removed an ugly linebreak. (Boris)
+ * Folded patch 3/3 into 2/3 as both patches deal with init_cache_level().
+   (Boris)
+ * Removed the [set,get]_num_cache_leaves() wrappers. Instead, use the
+   existing get_cpu_cacheinfo(). (Boris)
+ * Future-proof init_cache_level() for cases in which cpu_cacheinfo::
+   num_leaves is still zero afer cache info initialization.
 
 Changes since v6:
- * Merged patches 1 and 2 of v6 into one. (Borislav)
- * Merged the history of patches 1 and 2ino this patch.
- * Kept the Reviewed-by and Tested-by tags from the two merged patches.
- * Fixed a formatting issue in allocate_cache_info(). (Borislav)
+ * None
 
 Changes since v5:
- * Fixed nonsensical subject (Nikolay).
- * Added Reviewed-by and Tested-by tags from Andreas. Thanks!
- * Added Reviewed-by tag from Nikolay. Thanks!
+ * Reordered the arguments of set_num_cache_leaves() for readability.
+   (Nikolay)
+ * Added Reviewed-by tag from Nikolay and Andreas. Thanks!
+ * Added Tested-by tag from Andreas. Thanks!
 
 Changes since v4:
- * Combined checks for per_cpu_cacheinfo() and cache_leaves() in a single
-   line. (Sudeep)
- * Added Reviewed-by tag from Sudeep. Thanks!
+ * None
 
 Changes since v3:
- * Added Reviewed-by tag from Radu and Sudeep. Thanks!
+ * Rebased on v6.7-rc5.
 
 Changes since v2:
- * Introduced this patch.
+ * None
 
 Changes since v1:
- * N/A
-
+ * Do not make num_cache_leaves a per-CPU variable. Instead, reuse the
+   existing per-CPU ci_cpu_cacheinfo variable. (Dave Hansen)
 ---
-The motivation for commit 5944ce092b97 was to prevent a BUG splat in
-PREEMPT_RT kernels during memory allocation. This splat is not observed on
-x86 because the memory allocation for cacheinfo happens in
-detect_cache_attributes() from the cacheinfo CPU hotplug callback.
+ arch/x86/kernel/cpu/cacheinfo.c | 41 +++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 23 deletions(-)
 
-The dereference of a NULL cacheinfo is not observed today because
-cache_leaves(cpu) is zero until after init_cache_level() is called
-(during the CPU hotplug callback). A subsequent changeset will set
-the number of cache leaves earlier and the NULL-pointer dereference
-will be observed.
----
- drivers/base/cacheinfo.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 7a7609298e18..a1afc478e0e8 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -58,7 +58,7 @@ bool last_level_cache_is_valid(unsigned int cpu)
- {
- 	struct cacheinfo *llc;
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index 392d09c936d6..95e38ab98a72 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -178,8 +178,6 @@ struct _cpuid4_info_regs {
+ 	struct amd_northbridge *nb;
+ };
  
--	if (!cache_leaves(cpu))
-+	if (!cache_leaves(cpu) || !per_cpu_cacheinfo(cpu))
- 		return false;
- 
- 	llc = per_cpu_cacheinfo_idx(cpu, cache_leaves(cpu) - 1);
-@@ -466,8 +466,7 @@ int __weak populate_cache_leaves(unsigned int cpu)
- static inline
- int allocate_cache_info(int cpu)
+-static unsigned short num_cache_leaves;
+-
+ /* AMD doesn't have CPUID4. Emulate it here to report the same
+    information to the user.  This makes some assumptions about the machine:
+    L2 not shared, no SMT etc. that is currently true on AMD CPUs.
+@@ -718,19 +716,21 @@ void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c)
+ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
  {
--	per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu),
--					 sizeof(struct cacheinfo), GFP_ATOMIC);
-+	per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu), sizeof(struct cacheinfo), GFP_ATOMIC);
- 	if (!per_cpu_cacheinfo(cpu)) {
- 		cache_leaves(cpu) = 0;
- 		return -ENOMEM;
-@@ -539,7 +538,11 @@ static inline int init_level_allocate_ci(unsigned int cpu)
+ 
++	unsigned int cpu = c->cpu_index;
++
+ 	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
+-		num_cache_leaves = find_num_cache_leaves(c);
++		get_cpu_cacheinfo(cpu)->num_leaves = find_num_cache_leaves(c);
+ 	} else if (c->extended_cpuid_level >= 0x80000006) {
+ 		if (cpuid_edx(0x80000006) & 0xf000)
+-			num_cache_leaves = 4;
++			get_cpu_cacheinfo(cpu)->num_leaves = 4;
+ 		else
+-			num_cache_leaves = 3;
++			get_cpu_cacheinfo(cpu)->num_leaves = 3;
+ 	}
+ }
+ 
+ void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
+ {
+-	num_cache_leaves = find_num_cache_leaves(c);
++	get_cpu_cacheinfo(c->cpu_index)->num_leaves = find_num_cache_leaves(c);
+ }
+ 
+ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+@@ -742,19 +742,18 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 	unsigned int l2_id = 0, l3_id = 0, num_threads_sharing, index_msb;
+ 
+ 	if (c->cpuid_level > 3) {
+-		static int is_initialized;
+-
+-		if (is_initialized == 0) {
+-			/* Init num_cache_leaves from boot CPU */
+-			num_cache_leaves = find_num_cache_leaves(c);
+-			is_initialized++;
+-		}
++		/*
++		 * There should be at least one leaf. A non-zero value means
++		 * that the number of leaves has been initialized.
++		 */
++		if (!get_cpu_cacheinfo(c->cpu_index)->num_leaves)
++			get_cpu_cacheinfo(c->cpu_index)->num_leaves = find_num_cache_leaves(c);
+ 
+ 		/*
+ 		 * Whenever possible use cpuid(4), deterministic cache
+ 		 * parameters cpuid leaf to find the cache details
+ 		 */
+-		for (i = 0; i < num_cache_leaves; i++) {
++		for (i = 0; i < get_cpu_cacheinfo(c->cpu_index)->num_leaves; i++) {
+ 			struct _cpuid4_info_regs this_leaf = {};
+ 			int retval;
+ 
+@@ -790,14 +789,14 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 	 * Don't use cpuid2 if cpuid4 is supported. For P4, we use cpuid2 for
+ 	 * trace cache
  	 */
- 	ci_cacheinfo(cpu)->early_ci_levels = false;
+-	if ((num_cache_leaves == 0 || c->x86 == 15) && c->cpuid_level > 1) {
++	if ((!get_cpu_cacheinfo(c->cpu_index)->num_leaves || c->x86 == 15) && c->cpuid_level > 1) {
+ 		/* supports eax=2  call */
+ 		int j, n;
+ 		unsigned int regs[4];
+ 		unsigned char *dp = (unsigned char *)regs;
+ 		int only_trace = 0;
  
--	if (cache_leaves(cpu) <= early_leaves)
-+	/*
-+	 * Some architectures (e.g., x86) do not use early initialization.
-+	 * Allocate memory now in such case.
-+	 */
-+	if (cache_leaves(cpu) <= early_leaves && per_cpu_cacheinfo(cpu))
- 		return 0;
+-		if (num_cache_leaves != 0 && c->x86 == 15)
++		if (get_cpu_cacheinfo(c->cpu_index)->num_leaves && c->x86 == 15)
+ 			only_trace = 1;
  
- 	kfree(per_cpu_cacheinfo(cpu));
+ 		/* Number of times to iterate */
+@@ -991,14 +990,10 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+ 
+ int init_cache_level(unsigned int cpu)
+ {
+-	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+-
+-	if (!num_cache_leaves)
++	/* There should be at least one leaf. */
++	if (!get_cpu_cacheinfo(cpu)->num_leaves)
+ 		return -ENOENT;
+-	if (!this_cpu_ci)
+-		return -EINVAL;
+-	this_cpu_ci->num_levels = 3;
+-	this_cpu_ci->num_leaves = num_cache_leaves;
++
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
 
