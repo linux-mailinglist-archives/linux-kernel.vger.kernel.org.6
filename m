@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-424813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269029DB9CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:40:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE409DB9CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BE87B21D5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04E6FB22631
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15211B0F28;
-	Thu, 28 Nov 2024 14:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C3D1B2190;
+	Thu, 28 Nov 2024 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w7AxO7S7"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="27CrapXO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EDD1B0F01
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293A81531E3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732804798; cv=none; b=sY6jQi03khHejjvSdjGWpBm9SGMVi+oUenL2ZJhOxKtRSKO+x2IrRtXH7I9nQmRGtB7FoKQHABtlACHzk80LxOTqs9ypBUwSODdRYmG5V9+YYaz3q0wN00+RNX8LEMv6u3qetDpiZxP+YDH1fEuWp8qng8j1pcwPxABbUOVmx+8=
+	t=1732804869; cv=none; b=sp6S+VxHfrAgUQdCFup0hH08x6RLQP+7Ckrmd6akL3IYJreTkZXeScD2D0qSk8PXRT4rM/RWbMuQu8H40ZXC4Xxx9oW9CastBlOE3OBgbwQZyDT+yiZTfdK21g0JB9PxTXcAcpALI8BfsgVv6MbF/AxP4mQIftzv7979dPW1lKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732804798; c=relaxed/simple;
-	bh=0/pq2JHTPBtY1nMwm3NEMavei1AJiDpMsWbM9c6UYws=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sfZZ3iMKW2YTR4Er1JHv/cg9q5f1A0vF+7rWHMNcSLUT5meCzvo2xCAlzQVwpRp4ewRpWskAI0xRiKZWTC/YzXJ6JlsHm/SMVmvxikgbcck5beNg+ClMfich8VTLBnerdVBSfCsipB00k5XBQhQJEzTYojQJkv+LGlXUcWXQYbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w7AxO7S7; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a1833367so5595345e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:39:55 -0800 (PST)
+	s=arc-20240116; t=1732804869; c=relaxed/simple;
+	bh=tdMDYqpf3IuC59bE6nkIkaoxj2BSW7f0BxFAiJEyjlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+BM6rQ26x5QC3mAentTijgwI+9bl9KoGRjlbW9vh3TwwWbHdUGa1tkrBpcbdd5TaFAWCCVDu2OUC4Cg9gRUT9FAs7qk9iL9qvZa5iCNKHUDbiuUiOfHYSohyYuAx7jw4ursXLJJCuMzF7FRKti73v1OwG6Kkz61c4lS+iincfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=27CrapXO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43497839b80so5600585e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:41:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732804794; x=1733409594; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J9T03i0gzxNbf0agsZ7Lvsc1uFwXMAZb0xxRBoFTc9Q=;
-        b=w7AxO7S7XPl9p2YMR+61++9iScAM6MGkUvNt9gDKPzRTF3dGNB5uB0KHibk0w4EsWz
-         B7wRJ44w/DWILRS8ik5dDa1eM8khfScTBxKyistzMfYHGO2enMUUIRMd9towz4QN10EH
-         0Hce2HXR7J+j9YGhYp8/IiS880yi0OL09dvXltJRfZzciOxKsZT+wimvsBY2bAYtmDkc
-         6w7KVKL9E2YNB3GsE3B8n9cRD6UI3HJbTCnW+fC4oAafFGFK+7CWK3pp1SsxKYRS86Hw
-         qXFlNp9/Vak48DxA6eaGtBOVe6TUakjVQ5QIMKafzkrWk1r9W4fdZ5dUQ8JAYB8EKI16
-         Zy+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732804794; x=1733409594;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732804866; x=1733409666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J9T03i0gzxNbf0agsZ7Lvsc1uFwXMAZb0xxRBoFTc9Q=;
-        b=sRS771qypvhc4QM257HlURSb9ZSKkTK0Ft7USsgOniGR9bxs8KW1GHpaBmHHPPnLs5
-         IYGeSvQ8R3BYyyCHlcRH8IgnBDc5hsyGsXWy8L7kQLm1ZaOCCFJ66Ap0T/Fryvu/Moep
-         c4mJxSmqC5bkGg7YabLnDXChIqUrip8aWsR5AnnG5r6r7kxMYNoNbKPXLrAXVJ39TtDC
-         1t+1Uk+gFc15R1oaOQZyw9x+QRUna7oZn0SWxjBBmAcMmxysii+isF7XsZesGIKlglQN
-         VPlv9wYgaVH0Vk4vS7kDp/YjfsV6hcq4WNTUCaqw4jRRSF+GH8js4Y2xuSXcv1R6Crok
-         1khA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQS1p6obnCnlNkHzoRjTlNC+gtWBxS1IptgvFv7fDZKvVPCmWcDU8rY0Zl82xD03TQO1gQRn2Snc7CFrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFdpKj/jDxDEe87f0j4TH9KjEJYdfmQJe2fdKDicQdC90O46ky
-	P1FCo6MmJI4xPcb9Qz6LrKkspFJRbfhk32vIZvQfJllWQq9J1ciLrTQ6YuHEX2A=
-X-Gm-Gg: ASbGncvPSGDGk68oyiPgZyMI6349D8BLlvIkg3369ge3t4sqDSAkYkMmso5z66+4VMx
-	VkLCYqo8GPdyOlmYd5syqVlB6MxT5v7pEvN0a5nJVWaIgtPvq7uhEMZfyTIE7CQkFu6EVB+kVzz
-	a2+W5EQBCjwkOXLtBJhEgwr42zPjnVzSgyq4W7uZO1uwPE2w/D6u1N0eoDSZ/MzGdZugJnPjRfN
-	O0tbP7plQhgq3xur/MaTVjMjLFjLnRNXvQJY30/KwwScQg88g==
-X-Google-Smtp-Source: AGHT+IEfrnXry/a2J249x05WOVDUYdJwm8BHrIV6ctpYLw6UOC+tPaq9w6TaP7uwmtjWNU3Zv+M13w==
-X-Received: by 2002:a05:600c:4fc9:b0:431:5226:1633 with SMTP id 5b1f17b1804b1-434afba0023mr30871715e9.6.1732804794064;
-        Thu, 28 Nov 2024 06:39:54 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b89d:29e9:7047:2d6f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd802e0sm1792177f8f.105.2024.11.28.06.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 06:39:53 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>,  "Michael Turquette"
- <mturquette@baylibre.com>,  "Stephen Boyd" <sboyd@kernel.org>,  "Kevin
- Hilman" <khilman@baylibre.com>,  "Martin Blumenstingl"
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  "Mark Brown" <broonie@kernel.org>
-Subject: Re: [PATCH] clk: amlogic: axg-audio: select RESET_MESON_AUX
-In-Reply-To: <306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com> (Arnd
-	Bergmann's message of "Thu, 28 Nov 2024 15:11:56 +0100")
-References: <20241127-clk-audio-fix-rst-missing-v1-1-9f9d0ab98fce@baylibre.com>
-	<12f29978-c8ce-4bee-a447-dcd086eb936d@app.fastmail.com>
-	<1ja5dk2y5l.fsf@starbuckisacylon.baylibre.com>
-	<f8de4a2a-776f-4c10-b75e-e845bcc38dde@app.fastmail.com>
-	<1j4j3r32ld.fsf@starbuckisacylon.baylibre.com>
-	<306b0b30-5a32-4c7c-86b4-57d50e2307e8@app.fastmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 28 Nov 2024 15:39:52 +0100
-Message-ID: <1jy1131kxz.fsf@starbuckisacylon.baylibre.com>
+        bh=GwBwmc6DwE9wExuP36Thcn5CpMbyaudiqRqKVp5a+jc=;
+        b=27CrapXOqkaBfuZRrAu8l9NPup+xksoPBwUXWGSu60+bhJVeJF7U9MAx4tQE1k0pgU
+         5++puM0KW2kLGPU/djTnvQWPPvpTb8Qo2fz+q9aBTxe9hyJxdg9DwhZcJ8GH/H53C9j8
+         Uv4qtbLLHo1A7wtRlJ94Kjr2jEAuqTqT88kje4cj8XB1sa8uJ6qPQRBbXHyPTl0AWZFW
+         Y7mJ5hUnhgroeMwkaQGVFflM5Pna5++AOIBlwDQEJrTDqUYz7h9cM7OWMzAS74PUncWT
+         txQwtIKL8ydUhTeM/2+oIRU45ZYrEzRI8tLwPcDPp33rLdRTYXvcFvBz3a/l3ycOTg9H
+         dtMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732804866; x=1733409666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GwBwmc6DwE9wExuP36Thcn5CpMbyaudiqRqKVp5a+jc=;
+        b=OtBAX+O3af2O6EGRAiuDb+0Ic1oLwKeEx4tUwRIxgNb56IEzJU7AVJuGLQ5CTcqFnn
+         O5LBhNtrIV2p0y9NHfKpzCOkQV2dK37Oyv4wfpaDqImCo53MJFm+h85Yh1Hw00D4fN/5
+         /7SFj2aQd6xn3ES8s0WHGcsuultBkiyWWgylobEVWjDESAqLqmMIAyHPYTU9dWuom8uN
+         LS7SQBZzcX7AhsWUAhnBQLlUlxwZ7P4E1ef2KwIHfJiwJC/PZWY26tFZqR7ezV9+5wYt
+         yVcGtJO35ZZhcMee0J3ioCDq8y8NZSdQHQta9H9l0ah3Sg39RnRbRh8boT+pRpP+VBC8
+         VQnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwIF1WoUKRXo75ln8TpR/vtrUqlpXQa8Vk1AIRTj5pHd6JI0EuIYR364fFgBNDuyZur6c5jx4j5WUOp1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTmQs2cf0a/tz1dlftCevOqd4ytuItegw90hd5DFzc41BFl6+g
+	C6KGf86Ib/wlDl4Q2gPyNYiKQIXYWRshRDWtbKYOynmW9Bhbwsxmir74aJjmanavSb8ONbSxdrF
+	TYR4laaEE7fcNxElEC06xoS/9Y9HRIZ4wjGG6
+X-Gm-Gg: ASbGncvOEMZCxml12vIo/r4Ad6zWkwaHFyL3OtXWSSv35XP79CSBlZOHSMvZQQEQyaJ
+	pTrTWC4lET9VJdDtT6oBYo3vph+C/U5d44rX7AuRVVUEOqsbKnDRMO+uydzGN
+X-Google-Smtp-Source: AGHT+IGQuu3FpJRv1GRJAM93QH1pl0e2+J9DOMDr5xMd1RLfVGwI0OX1F/tLzRv0A5j1Ykw3kEo2peafOSkPqXsMNvw=
+X-Received: by 2002:a05:6000:389:b0:382:5016:fd0b with SMTP id
+ ffacd0b85a97d-385c6ee2190mr6139158f8f.50.1732804866470; Thu, 28 Nov 2024
+ 06:41:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241128141323.481033-1-pbonzini@redhat.com> <20241128141323.481033-2-pbonzini@redhat.com>
+In-Reply-To: <20241128141323.481033-2-pbonzini@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 28 Nov 2024 15:40:54 +0100
+Message-ID: <CAH5fLgjJbzAbf5CO3xjHxcThpqju3j0tNdo+QiGupARVmoThYw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: Zeroable: allow struct update syntax outside
+ init macros
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	boqun.feng@gmail.com, ojeda@kernel.org, benno.lossin@proton.me, 
+	axboe@kernel.dk, tmgross@umich.edu, bjorn3_gh@protonmail.com, 
+	gary@garyguo.net, alex.gaynor@gmail.com, a.hindborg@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 28 Nov 2024 at 15:11, "Arnd Bergmann" <arnd@arndb.de> wrote:
-
->> All clk, pinctrl or regulator are used by other driver yes, this one as
->> well, sure.
->>
->> What special about this on is that it is an auxiliary bus driver.
->> It is directly instantiated by another driver. That's where
->> it differs. The axg-audio clock driver instantiate the auxiliary reset,
->> it does not use it, which is why it makes sense for it to select the
->> driver.
+On Thu, Nov 28, 2024 at 3:13=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com>=
+ wrote:
 >
-> Can you explain the logic behind this design? It seems that the
-> entire problem here is the split into more drivers than it
-> should be. It's common for clk drivers to also act as a
-> reset driver, and my impression here is that you were trying
-> too hard to split out the reset functionality into file
-> in drivers/reset/ rather than to have it in drivers/clk/.
+> The Zeroable trait is a marker trait, even though the various init macros
+> use a "fake" struct update syntax.  Sometimes, such a struct update
+> syntax can be useful even outside the init macros.  Add an associated
+> const that returns an all-zero instance of a Zeroable type.
 >
-> Could you perhaps move the contents of
-> drivers/reset/amlogic/reset-meson-aux.c into
-> drivers/clk/meson/axg-audio.c, and change the exported
-> symbol to a static function? This would still require
-> a dependency on the exported meson_reset_toggle_ops,
-> but that feels like a more natural interface here,
-> since it's just a library module.
-
-That's what we originally had. Reset implemented in clock.
-I was specically asked to move the reset part in reset using
-aux drivers.
-
-https://lore.kernel.org/r/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
-
-Eventually that will happen for the rest of the reset implemented
-under drivers/clk/meson.
-
-It allows to make some code common between the platform reset
-drivers and the aux ones. It also ease maintainance for both
-Stephen and Philipp.
-
+> The exact syntax used by the init macros cannot be reproduced without
+> forgoing the ability to use Zeroable::ZERO in const context.  However,
+> it might not be a good idea to add a fn zeroed() inside the
+> Zeroable trait, to avoid confusion with the init::zeroed() function
+> and because Zeroable::ZERO is unrelated to the Init and PinInit
+> traits.  In other words, let's treat this difference as a
+> feature rather than a bug.
 >
->      Arnd
+> The definition of the ZERO constant requires adding a Sized boundary, but
+> this is not a problem either because neither slices nor trait objects
+> are zeroable.
+>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
--- 
-Jerome
+Slices are zeroable. I know they don't implement the trait, but they
+could implement it, and this could be used to implement e.g.:
+
+pub fn write_zero<T: Zeroed + ?Sized>(value: &mut T) {
+    memset(0, ...);
+}
+
+Alice
 
