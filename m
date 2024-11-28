@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-424244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7D39DB200
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:54:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B659DB201
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DAFFB225EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA462827F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB751304AB;
-	Thu, 28 Nov 2024 03:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A514013211F;
+	Thu, 28 Nov 2024 03:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jj10VN1W"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ioA7tJAE"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ADA2563;
-	Thu, 28 Nov 2024 03:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B402563
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732766038; cv=none; b=a2ID6ODkSc2e2iZmFNDW5REXcd1Dg4dYd+uq30Wisbm9Rqea9x7/pqZtvrcluzgXlt9uKNYXihXfJsgpD8A8aWZHVhDO1Hq3r3k9H6sTcPmcSbMLCe935tfODxVsjp+G2va28yANTwoAWF10Is1Z/8rVZreR7N53LG0+q4jIceA=
+	t=1732766048; cv=none; b=MDz/N3/8ggKi0hcSXzlRPw1qpe1qP8ZPk3GuqrOVZ5aPtEdHuQGYkbWIfnpiVPf3TREH4VRh2/NLOXTAyqjGLi7udMrMUC1UhQk8FFAlsWShkTkFLAhxXsfKH7QlG7emEBjB4xCq3VGyHhlja+dmw2W0fvtqzR6VS4h41xSMcZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732766038; c=relaxed/simple;
-	bh=+cToueDn8bjtrGwZGh8yj967W9auYzQsQSUm/E8KU8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lYwPPf5XyLHQDpHslOAOSxJKIiNvP82earJJkZOQlDlpykz+BpPzLUa5GoELkeRra5PMWSMTvkdRjEagU8YxOdMyH00twmMgMpqTO4xIEFU2b8Aspp4wNu6/uUAXm0BtRXtk/zw/abm0tmC4BNRKnLPvhu+rCDAR4kEsxfRucT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jj10VN1W; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732766036; x=1764302036;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+cToueDn8bjtrGwZGh8yj967W9auYzQsQSUm/E8KU8Q=;
-  b=jj10VN1Wn3r77oxxyL/eYp493mTCBwtLCDCNjRQbqCRy00thAuoVOj3/
-   rfiB2/9ETHo9i6dInK5YxS76+nXyXAsJu2IwVLdiG2iaJr0UUburvya5z
-   wtgHb1q24gRGXOBqjCHcDWiU72HVCnlyz1FqgYIE+rNTuqQFiQFFA+o6S
-   OQS3aR0WvZ8m/QST2bi9Lcx2LxtznS83bUYy9ca9sLBesX2wNb/MVhCsg
-   +Pd2gfMV0CMmaxP7ctJzE2wbqinAaWjNxW9sIvWcXQGYbWLhy8YIWmb3p
-   kBDV73TJexylWQovLEZhMROv4IAMGIZ1tjXTEklCgHHA9ipN1K/66BR6h
-   g==;
-X-CSE-ConnectionGUID: u8MjAK7+SnyhoVw5Iv6Sag==
-X-CSE-MsgGUID: bpAhs/PkSXq3gf7sVa+hAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43599462"
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="43599462"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 19:53:55 -0800
-X-CSE-ConnectionGUID: 6rA7C1OxSAu4J4wIQ4ShCg==
-X-CSE-MsgGUID: lhZpvgLmTQiAAukqP2GH0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="92958633"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 19:53:53 -0800
-Message-ID: <adf9d3a0-3134-425b-89e7-0a6881cdcc6c@intel.com>
-Date: Thu, 28 Nov 2024 11:53:49 +0800
+	s=arc-20240116; t=1732766048; c=relaxed/simple;
+	bh=VmRHmqJGZNsVUqgTQtXEBy3bZGPIe6ah/oVVl+q2Fdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lYNY8cvEJBOw8rIWM1Ncg3iiCLXiTrrwn5mzPISRS+mpSHj/Jjpo63JTcXMx4kMqFZyDsCcpmTLzDbyGb0L44/9Du35+rb/bejRlRvyZvqto7iKT2Oz0Mkxws+5Q3Ii8gHb+McEEMtOExefjGlFhmiQSggCFJiIPH60I7SFpJRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ioA7tJAE; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-212581a0b33so3463835ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:54:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732766046; x=1733370846; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TF5il+e7Kq8fof0AwUQ4lkAD7fimdwuQEUr9/oLqqYc=;
+        b=ioA7tJAEMGkTKmaX/OlxNBWXupm9WeXYdyKObiWfLliaC2x129hzB78VRo7JhEju0d
+         S3o8Z1WokV0S07+M5L4KkZFvB3XUu0S07yj/shomHQpHE0kkejCHTcmTXDp7vcSARCCl
+         PdcpDIRPj3YDfJQ9cNVw5VkSi8fLlBOlhYGvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732766046; x=1733370846;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TF5il+e7Kq8fof0AwUQ4lkAD7fimdwuQEUr9/oLqqYc=;
+        b=vymGU3hOSbuI0tIZ1rHiPdP/46HvPIoRv78ycXI9CD2RxMDC6okCf/lVq5hTHPktJl
+         MRarHLKhW5WevB1GpGwepz0JxqmIA7859a5OZyvOp6V/Cat1/Fu3hQV+1eR5nda2F9QV
+         RizYBvj01lYnMKVHQuYPU8b30mWjEOJ8H3o9BDem/iAmTz7/013bEeNqjKzidPIQ0sxZ
+         MoQRxY5SK1Z6oJJ2gcKoLTtAtWW8SsvmzxZJG0Bq8qr9D98Uz268Lvoyyw6dcOxTYi/z
+         3m9GQ7ZgtERk28lGJR301buUtNruhQlzQ46IePJyffIBbh//ujmzynzcurO6vrr7eOox
+         EIEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ/CEn/dr/I/7GFPXogtz+AyVa5GpHPuvnYGMXHQrPF6OsQFQ1azi6G6ydeGlE+mgiY5FwlR2K0rYRzLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySjNqJHXVcLpfzAF99p+/pUBcgSGsL8eZ8K7oZ1D39MfSRLDJX
+	jdSVUgbVgAyJEAGy0VSjhAfO6glsyRuNKJI1qdY/jA3vnj5WobrWcTGHbyDq4g==
+X-Gm-Gg: ASbGncvjgRT6Sj2ivETL8salO9q/uT98EaLWTzsbr7sWJeTje1e148ONY+OniBAA5xZ
+	EjgOxKtKX/6tVsYHrVB05WFVo9pfLYT03PTXKSN4TfxGZBX0vouMLOUt4y34PdFAPcZ/lo1Csr2
+	SMMRNu3iDZK9JI1CvZG8KMj1ctFcd+OrHuKYV5WS47Ck7rf0RtS30Sn/egsdoxpydQCaaMsp+/U
+	B7Y16GY1BMpySCXbCwhxnXKXdxwwGVerzE2c32DDxqbDa7xBd8ZOA==
+X-Google-Smtp-Source: AGHT+IEnHytmJOdlEbxOpHUoUCVq72o0QdAQmffnOzCaX9vUp9WWUHEUK7ZrwamHbjp9SixH9iqliw==
+X-Received: by 2002:a17:902:d502:b0:212:6187:6a76 with SMTP id d9443c01a7336-215010960cfmr71640485ad.14.1732766045920;
+        Wed, 27 Nov 2024 19:54:05 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:4351:dff5:9f71:a969])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f22c2sm3512125ad.26.2024.11.27.19.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 19:54:05 -0800 (PST)
+Date: Thu, 28 Nov 2024 12:54:01 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Tomasz Figa <tfiga@chromium.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: fuse: fuse semantics wrt stalled requests
+Message-ID: <20241128035401.GA10431@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] KVM: nVMX: Defer SVI update to vmcs01 on EOI when
- L2 is active w/o VID
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chao Gao <chao.gao@intel.com>, =?UTF-8?Q?Markku_Ahvenj=C3=A4rvi?=
- <mankku@gmail.com>, Janne Karhunen <janne.karhunen@gmail.com>
-References: <20241128000010.4051275-1-seanjc@google.com>
- <20241128000010.4051275-3-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20241128000010.4051275-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 11/28/2024 8:00 AM, Sean Christopherson wrote:
-> +void kvm_apic_update_hwapic_isr(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_lapic *apic = vcpu->arch.apic;
-> +
-> +	if (WARN_ON_ONCE(!lapic_in_kernel(vcpu)) || !apic->apicv_active)
-> +		return;
-> +
-> +	kvm_x86_call(hwapic_isr_update)(apic->vcpu, apic_find_highest_isr(apic));
+Hello Miklos,
 
-Nit:
+A question: does fuse define any semantics for stalled requests handling?
 
-we have @vcpu already, no need to grab it from apic->vcpu.
+We are currently looking at a number of hung_task watchdog crashes with
+tasks waiting forever in d_wait_lookup() for dentries to lose PAR_LOOKUP
+state, and we suspect that those dentries are from fuse mount point
+(we also sometimes see hung_tasks in fuse_lookup()->fuse_simple_request()).
+Supposedly (a theory) some tasks are in request_wait_answer() under
+PAR_LOOKUP, and the rest of tasks are waiting for them to finish and clear
+PAR_LOOKUP bit.
 
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_apic_update_hwapic_isr);
+request_wait_answer() waits indefinitely, however, the interesting
+thing is that it uses wait_event_interruptible() (when we wait for
+!fc->no_interrupt request to be processed).  What is the idea behind
+interruptible wait?  Is this, may be, for stall requests handling?
+Does fuse expect user-space to watchdog or monitor its processes/threads
+that issue syscalls on fuse mount points and, e.g., SIGKILL stalled ones?
 
+To make things even more complex, in our particular case fuse mount
+point mounts a remote google driver, so it become a network fs in
+some sense, which adds a whole new dimension of possibilities for
+stalled/failed requests.  How those are expected to be handled?  Should
+fuse still wait indefinitely or would it make sense to add a timeout
+to request_wait_answer() and FR_INTERRUPTED timeout-ed requests?
 
