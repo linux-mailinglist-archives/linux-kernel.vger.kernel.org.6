@@ -1,134 +1,76 @@
-Return-Path: <linux-kernel+bounces-424235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA509DB1E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:24:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1081674F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:24:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7B12AAC6;
-	Thu, 28 Nov 2024 03:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MRbAd9Jv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910E89DB1EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:27:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4DE85628;
-	Thu, 28 Nov 2024 03:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2683DB2345C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:27:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB9F126F0A;
+	Thu, 28 Nov 2024 03:27:31 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60ED433B1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732764272; cv=none; b=Oy/Y5KSH9P5Fdl9m5sPWemZCrXWY+vK2trLtAYmBQ+t3A44LclYaPKNtR5cMcUYr2R6miJIYKV0vmLize4xodRWGCChvlg16LexYfvs2HnA7LVRNhV9X97ulkxUZXku32m7biRYiYHFlwZ0Fmu6JN+HfmY89GXaaXmUPUhf0zVI=
+	t=1732764451; cv=none; b=PlE6ueTYq61sBVQsBiPxw9GBWnn1/SD/jbEURpm9kINCV83bYZVGHm/CkD5f24F7+9M9rjUmGfI15TCZ91pIAweBsDsqhakKBO5xVNyY7UIUw5Vuk4svALY5BT9O+GSa8nLJF/kCQcv1uIZBS8fXph3L+pCyxntp/pVty76Lzfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732764272; c=relaxed/simple;
-	bh=t9I8gRbEtmPzkIACZOgvBgzSwFLwvZB2LITtZ23TNmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=neqqU1aVYi+/e5xIZfig8dhuGqck95O3zx7QvNstez47qU1/OmfCgnMVn2ceVSBvVwEZ0wJla/zxQUh4ahpDVPXowCVkUcT537M5JUEGmGyu74XYd7OOAOn0xpYLKH8SJTMx/g9gvCYZgj6kis+PxZ/gBax0MrFJuGTGi8kjV68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MRbAd9Jv; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732764270; x=1764300270;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=t9I8gRbEtmPzkIACZOgvBgzSwFLwvZB2LITtZ23TNmM=;
-  b=MRbAd9Jv+ZD/fo1ptlxfsQgXqoaJmlFpd2E3Pt5TP1RqBYXQ12h+1pS0
-   +yAp51CrPz09AoUaEbHvOmfUp1Mm1nXOd+3ehw0QOFHMlBAbl4DPwx4RK
-   Y8qx1vk99P97biO4yROQOzrMdNLt3y0Mzw96zqlEDzRK+E7ous4coZyza
-   76KLMtGw1x9RyTOOve5TROGhZ8MBcj4e6LPZXUZMJjhK/osFdD2YE+8G7
-   xuwuj02BgcBMdTpru2DiATQTVR2vO43YzKtd4RaoK2CrUDA5+BNzR2UJ/
-   HLOpqi1v99AxlX8P6/5NhmEHY/5k6/qpPrKG2exvu5nvtPJEvkP7WC5PZ
-   w==;
-X-CSE-ConnectionGUID: v+1RK5CbQW6HVJh90ro5ow==
-X-CSE-MsgGUID: /ymyfVwOQiWNWRGCl3t+ig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="43651954"
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="43651954"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 19:24:30 -0800
-X-CSE-ConnectionGUID: 77p0RRlCTN695A3JEMHkHw==
-X-CSE-MsgGUID: dQXiu69YQTavgAV7EPrb8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,191,1728975600"; 
-   d="scan'208";a="91927227"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2024 19:24:27 -0800
-Message-ID: <ad240077-ca7a-4306-a06f-6cf57b3ce4f2@intel.com>
-Date: Thu, 28 Nov 2024 11:24:25 +0800
+	s=arc-20240116; t=1732764451; c=relaxed/simple;
+	bh=g/aa+Wqnsf0vkv47cUXHStrg0sWW8ijiKl8VzPLsqJ4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tmCBmNfd1kfsWeX5c96w+LSBob8DaV3IahN6mY2ejKk06Z25Y3OV7R3Wau5nmF6WkHvlC+ZAOWGDtE0rHr6utTjjdcXU6TlfKMcFby7ZX4sYanTZUJJKSDFocbdUZRFUH3Ypx1du8IJlcg48+F1WpXy/h7nDmf3VEs8hf3eXZQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7bdd00353so4737805ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 19:27:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732764449; x=1733369249;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G4ncTcAVmefJQKmcp/zs9m+Ss395AC/WoxIBpHUe4bI=;
+        b=Bij7skkydIikslyMEAa5RSx4WVOHY09zXn5p4mfaNIHA1t/2E+qUv9ilBJDv+HqBk0
+         NvhYMed+0pFYs4RD4zIeSdyfzHBoMUCJmg3P4Cc7pVPDncwFxdWDzcUcm61pkxNa48Yc
+         ZWT3f5Bn0F3EmZZvfdvUoIOQrtGhBpd0Ufy4kZrQJa0ijejNMJYZXCfPfbg0Y5KjqYDi
+         ync5tGJ7tgX/Bo2oqFEtUcvD4uHreP5hoNoNWayuxpB6YGnX5AdLMvVplteqgY/AdQ7y
+         2N/5tCnqnYdZrVuv7alpsaxJORu9h16X3DGLSUmWVk2J0arC8cjhgf3q3/+xvWtefwFU
+         WTPQ==
+X-Gm-Message-State: AOJu0YyTbz6exke3kkC/jO7hKzvu2eNRst+tcTzKutj8ttWDZAxfiH3K
+	qwAhdLNQYJlvKMkGaenuDaHnmhXzd2vTTXFajyqChrvaJmWypcjNPQXS+xxLkF3oUliHY429LrH
+	+GYl4BGeuDM1vFLbBdLkX3xMbm5wddCa4GIEzxA+eE0Ddi5GjGqqoHws=
+X-Google-Smtp-Source: AGHT+IFXC/+8LSERerFSzZsFSkn2P44EdKONPb6a36sJ+e1gLF7AMEJ1ZCAg0V5H6lukPG7CUMJ5uJHnw8qGdRTWe+z1ZZVz6h4T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] KVM: x86: Bump hypercall stat prior to fully
- completing hypercall
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu
- <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Kai Huang <kai.huang@intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-5-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20241128004344.4072099-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1cad:b0:3a7:a69c:9692 with SMTP id
+ e9e14a558f8ab-3a7c55e2b67mr54348865ab.21.1732764448918; Wed, 27 Nov 2024
+ 19:27:28 -0800 (PST)
+Date: Wed, 27 Nov 2024 19:27:28 -0800
+In-Reply-To: <672b6e0d.050a0220.350062.024e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6747e320.050a0220.253251.006b.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+997f0573004dcb964555@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/28/2024 8:43 AM, Sean Christopherson wrote:
-> Increment the "hypercalls" stat for KVM hypercalls as soon as KVM knows
-> it will skip the guest instruction, i.e. once KVM is committed to emulating
-> the hypercall.  Waiting until completion adds no known value, and creates a
-> discrepancy where the stat will be bumped if KVM exits to userspace as a
-> result of trying to skip the instruction, but not if the hypercall itself
-> exits.
-> 
-> Handling the stat in common code will also avoid the need for another
-> helper to dedup code when TDX comes along (TDX needs a separate completion
-> path due to GPR usage differences).
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+***
 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/x86.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 13fe5d6eb8f3..11434752b467 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9979,7 +9979,6 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->   	if (!is_64_bit_hypercall(vcpu))
->   		ret = (u32)ret;
->   	kvm_rax_write(vcpu, ret);
-> -	++vcpu->stat.hypercalls;
->   	return kvm_skip_emulated_instruction(vcpu);
->   }
->   
-> @@ -9990,6 +9989,8 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->   {
->   	unsigned long ret;
->   
-> +	++vcpu->stat.hypercalls;
-> +
->   	trace_kvm_hypercall(nr, a0, a1, a2, a3);
->   
->   	if (!op_64_bit) {
-> @@ -10070,7 +10071,6 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->   	}
->   
->   out:
-> -	++vcpu->stat.hypercalls;
->   	return ret;
->   }
->   EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
+Subject: 
+Author: kent.overstreet@linux.dev
 
+#syz fix: bcachefs: Fix btree node scan when unknown btree IDs are present
 
