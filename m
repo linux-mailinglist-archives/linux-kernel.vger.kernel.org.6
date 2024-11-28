@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-425029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504919DBCAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4919DBCB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 165E1281542
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67DF281655
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4821C2432;
-	Thu, 28 Nov 2024 19:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE4B1B3921;
+	Thu, 28 Nov 2024 19:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ixxv/WY3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gyhy5hDX"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EB11C1F3C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 19:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8C87A13A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 19:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732822994; cv=none; b=ZDDnkA5RhZyg27zPBrG849RlUAiH5fnqxldf7XJIOVSQFdN7nGxoRsPQkEv+xJzf5jEv9TtEDzZCnR8n1DJ1nHzrM/TbJpAkzkD2l71fmnQEWAP4OiVizFV0XHcmasJl4KylKI+zHQ6/8qwEdbwimMiRvUWq6a3t5LesTQKbuCg=
+	t=1732823221; cv=none; b=ojYnotGSgIYhdwBufgyXrJfgAP1xiiUoobcfNpNL89VIVqAdj0t9P0fvzo4iekhK8i4VsdrEGFXzRvjQMRwXchxdP3hqt+RBg7Mjt+22MrvfAbeGJ645E+5gClyylZ/6SPSuOqweQGdLgcHQqKpVjpHeShGP5zcoyaqZgfHXSuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732822994; c=relaxed/simple;
-	bh=VaTHl5CWYXaEUg5GJy076IuF06Ppro6TIwGO5pxBuO0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jCj51TekgzKPNENXvYgcxh8EQZpc6WMOTbY1Q9+xlCTZoKTLZB+ZNh8tmr4xH6khNZtXV01EA6eTPErXD8W6XKyBogEDwaU+wtzCqI0fxiWdIEdC6D29K7AtZGDlFON482ez9sFgg6dRvc8mlvmr6IP1Ob406Jw4GhjS25+6cWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ixxv/WY3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732822992;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PGHdr5xe6OO2VfVdzoKzmBYzOtEMeKKpC50tlN0vOu0=;
-	b=ixxv/WY3uPas+H+R2Y1+fecCPVltlJTVbYC2ZVcabq05QQPWZscUJS966ucQydCHgdtCVV
-	gC2CrazTgKboE4uTKE+fWOpfZuRt7kKfVfQQahl0KHToFdyYhR6Hzo+kfo9w//riwbq+Bg
-	g+Q3jmqoqPMw15hcS/em7y5Xqr/3FLs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-312-pQL-K4C2OSu2dQbquJMVrw-1; Thu,
- 28 Nov 2024 14:43:10 -0500
-X-MC-Unique: pQL-K4C2OSu2dQbquJMVrw-1
-X-Mimecast-MFC-AGG-ID: pQL-K4C2OSu2dQbquJMVrw
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF1651954197;
-	Thu, 28 Nov 2024 19:43:04 +0000 (UTC)
-Received: from starship.lan (unknown [10.22.88.88])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7ECDB195605A;
-	Thu, 28 Nov 2024 19:43:01 +0000 (UTC)
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Eric Dumazet <edumazet@google.com>,
-	linux-hyperv@vger.kernel.org,
-	Long Li <longli@microsoft.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Leon Romanovsky <leon@kernel.org>,
-	netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: mana: Fix memory leak in mana_gd_setup_irqs
-Date: Thu, 28 Nov 2024 14:43:00 -0500
-Message-Id: <20241128194300.87605-1-mlevitsk@redhat.com>
+	s=arc-20240116; t=1732823221; c=relaxed/simple;
+	bh=2ELePXYEM3g2x27jUZk9MIdx9Ot+pCc2LJhc59w9m48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6E757NUrSMwku3eLXfdxr1FT6VX9dY//OAkvJCR04znJTW1JTYMfr/Saxya/x3TiaBR0R1/rpIrSYRmjarrlTPMvAs9L9PGMivHClHnn3ie5Fsonx7D9hiHruL6ZFIu1kWRmWd1mRp4s3pduaBvB0GocLxo1TfbEe+FnF/cWNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gyhy5hDX; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1732823218;
+	bh=2ELePXYEM3g2x27jUZk9MIdx9Ot+pCc2LJhc59w9m48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gyhy5hDXjDMnGrSLW8KjTYCg8BFsEwEdJf4GDepDN1rnr9qczkN1k44GIGziCx8hV
+	 dWFMF+jG721UI6S3cYMqrRug+MCgtzVZbQ1L4vtq3LHQ6V6kHprKu08r8/lzTbvDDZ
+	 LMJT7eLpCW12ThitnRxjQu+FFjYXVJrcY/QT3qZ5M3/Z5oxzAGIucZ54JUIMDlH/gG
+	 +bapxvRqUEfRKy67WY+X0z+DfNcmgiYR37g8ZYrWW5G2vPmaYwRuqdq1rC4nO4dAMe
+	 ThPxOPPcQHtwX72Tw1ujMeDtufzBoUwBKbh+Q7X6908f3z6fb1rN37EoE5nz+H+ieE
+	 cAINsJ/VenZmg==
+Received: from localhost.localdomain (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XzmzQ2bnTzly5;
+	Thu, 28 Nov 2024 14:46:58 -0500 (EST)
+Date: Thu, 28 Nov 2024 14:46:57 -0500
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>
+Subject: Re: [tip:x86/mm] [x86/mm/tlb]  209954cbc7:
+  will-it-scale.per_thread_ops 13.2% regression
+Message-ID: <Z0jIsYsuo_9w16tK@localhost.localdomain>
+References: <202411282207.6bd28eae-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202411282207.6bd28eae-lkp@intel.com>
 
-Commit 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
-added memory allocation in mana_gd_setup_irqs of 'irqs' but the code
-doesn't free this temporary array in the success path.
+On 28-Nov-2024 10:57:35 PM, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed a 13.2% regression of will-it-scale.per_thread_ops on:
+> 
+> 
+> commit: 209954cbc7d0ce1a190fc725d20ce303d74d2680 ("x86/mm/tlb: Update mm_cpumask lazily")
+> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git x86/mm
 
-This was caught by kmemleak.
+AFAIU, this commit changes the way TLB flushes are inhibited when
+context switching away from a mm. This means that one additional TLB
+flush is performed to a given CPU even after it has context switched
+away from the mm, and only then is the mm_cpumask cleared for that CPU.
 
-Fixes: 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
-Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
----
- drivers/net/ethernet/microsoft/mana/gdma_main.c | 1 +
- 1 file changed, 1 insertion(+)
+This could result in additional TLB flush IPI overhead in specific
+scenarios where the IPIs are typically triggered after a thread has
+context-switched out.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index e97af7ac2bb2..aba188f9f10f 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -1375,6 +1375,7 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
- 	gc->max_num_msix = nvec;
- 	gc->num_msix_usable = nvec;
- 	cpus_read_unlock();
-+	kfree(irqs);
- 	return 0;
- 
- free_irq:
+May I recommend looking into a scheme similar to rseq mm_cid for this ?
+We're already adding a per-mm per-cpu data:
+
+mm_struct:
+                /**
+                 * @pcpu_cid: Per-cpu current cid.
+                 *
+                 * Keep track of the currently allocated mm_cid for each cpu.
+                 * The per-cpu mm_cid values are serialized by their respective
+                 * runqueue locks.
+                 */
+                struct mm_cid __percpu *pcpu_cid;
+
+struct mm_cid {
+        u64 time;
+        int cid;
+        int recent_cid;
+};
+
+I suspect you could use a similar per-cpu data structure per-mm
+to keep track of the pending TLB flush mask, and update it simply with
+load/store to per-CPU data rather than have to cacheline-bounce all over
+the place due to frequent mm_cpumask atomic updates.
+
+Then you get all the benefits without introducing a window where useless
+TLB flush IPIs get triggered.
+
+Of course it's slightly less compact in terms of memory footprint than a
+cpumask, but you gain a lot by removing cache line bouncing on this
+frequent context switch code path.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
 -- 
-2.26.3
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
 
