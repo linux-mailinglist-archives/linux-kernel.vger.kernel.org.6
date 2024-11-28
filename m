@@ -1,139 +1,178 @@
-Return-Path: <linux-kernel+bounces-424646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642089DB76B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:18:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68399DB76C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E04284244
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0FF28465B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9C719CC11;
-	Thu, 28 Nov 2024 12:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01F81993B1;
+	Thu, 28 Nov 2024 12:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRGsSDQX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5lGGcmJ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A79156661
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B45144D1A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796291; cv=none; b=VxiyFRwV6clddfLrd3hdnM/PSiXFhzNLKQ0f7fkulJKUh8x84fW2A/XKc7tyek27BWu5y56QR/wdai7Bft0ooFgOiq3FxYfkPFotxdAHugXtN9twmfwYHpdXo1Ewk1O9vJs8eCt6WYsNzHV6DzBqrrHmdwzgG8+bk+erEgmu3vE=
+	t=1732796299; cv=none; b=RSH8hBaLGiQqdaLV6qKJmKsXMEdGE4S7TCZ2DKjcsraqjsrZSBcbe7RDTTsFGTXvU/kHNncYAYhQm35LBLR8/kA/Ako5Qap4eB+c2tcskeMsSlMSDfOHIukHvnBgRmhCGeb70F1GaNC3JybXONsj7xoG96yRG0D2H5lWuhpNxvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796291; c=relaxed/simple;
-	bh=942roQ/1+TfMOBDOWcXjD8zVhh/75iK+muTdlxjUtbc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VsKxyO3uay7mMowd0ACZQSGkZ2xKZpjMIKW0FecZNI1oEF6PodnQxIYeNjnHNil3vNIKsy09JZFcb4/1Mo6/FgrJdmgj6BYkJ+49no1vVQwJgUFY9kU6KtqUsd7D+mjJnjB+WNVSa4ZFj7E1x9PU6d3MqF8++4TywBDjsOHAxR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRGsSDQX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732796288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kGyj1e0U3ksoyTpdyLxwMT3YZEpvLvZfOMIvSoDLwpI=;
-	b=TRGsSDQXpUPr/NuURnFq+TVQoFIHN1Md2/tdVzeHCTOvQgSWiIJu/x8bNiJakBmBfFO2Zn
-	gbBgbUSNUQvN7gzeVbAqulYX4Pj4kM2U2/wBW+lauYcZqWL8GFVRnm3aTepLOnAa5gYehK
-	OcNRh9s8feeK1dlchfClO/pHpLHUS5o=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-602-YPikAxx0PCeaGNseKtPhLQ-1; Thu, 28 Nov 2024 07:18:07 -0500
-X-MC-Unique: YPikAxx0PCeaGNseKtPhLQ-1
-X-Mimecast-MFC-AGG-ID: YPikAxx0PCeaGNseKtPhLQ
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5cfcc48b20bso418987a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:18:07 -0800 (PST)
+	s=arc-20240116; t=1732796299; c=relaxed/simple;
+	bh=NnH9GyhWLdeazNa9bR6YDThCX6tojCB8eAUbzgRWlRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hrBC1ux4rAHQXV1LxyzGZxF9J/3oXJhnwtM4CXd5Z4uAIEcXbR2k7dG5rhSsuaoVlwAeLCucI/UuBftIHMZLJ38JIn6r5mPQvqjI7UicBh5BgMi8ekzSdPUNnJ/DPuHcYpIFLrywAmsGvNANbziNYBapmBbisRWejgp57KspbM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5lGGcmJ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2124a86f4cbso6116575ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:18:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732796297; x=1733401097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1WUqFXk0TRJjO6Uhse/7Dxkc25tvKDuBA948pFVisA=;
+        b=Y5lGGcmJ+qLjb0lTulRy37m9UVCPATik9E31ZOh/dBa+LRyRx4lNDe2GZYetBmTDqD
+         MJCFkiAdQWQzrMNhWlu0RZt52pymJ7dmVVgBf3hxiMHP9vcRZUq3OdY08PCw04+LjRlI
+         P5Yai7PbRTOBYb4WUDE7KwFfj0UBNP4shg7sCNYPkPkYGGRQmhZLApcugqjpoQ+ncySd
+         Uit50/keNHXKisK9FScFs81/Gif57vGaAtqtU38As8fnwe12uu1VQOoMMCMjOINZnQ9+
+         G+kny+94LTvFmtWPkMEyL/PFgAFHrr5Li0fgfqmNRLrcYmgEcvC0Vo7kwsfrtRHBUC9D
+         zksg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732796286; x=1733401086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kGyj1e0U3ksoyTpdyLxwMT3YZEpvLvZfOMIvSoDLwpI=;
-        b=T4vICvbyRj7P4JmHHtH+X5Hr/9SXdXK2bwseuNC/PfCkkfWLJOE6C2EmuzE2uvxiR4
-         pJLs/Xmb+iLGBtHDqhq8GvmjSkzJGv7uWxWUOVf6obrTzUX9fSJx38gOsWMh9Klb6iU7
-         uZglo27FoOA3gaLaffKLI/EQXg9IG3kBVE3Gozfzras36IducEHfJICLlKz3eJPym/rS
-         Pvqi0ZMfxKh+0E/afLnXQsbWSYpTKqAg3w6yYc5JiOQOqyNw5b5kUCqIOfxwDe2/E7kz
-         PTFM3GoXZHadfSO+lp8ezoxTWXpUesDb8KopPrYiTs4Ee3rYpIXFqBOeLD9bNQUw+r/Z
-         fxQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHrNEp/30cmypF2cSL4TO+DIYGWeZ8fAXVUIutO74XKxva4aPv2141jmzIQmJRo/NCrZkJ8A/B4HNMwzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu7jdPaq/icVxRqK1mdzvM//4k2d2oomLMBYNxrNLeBN6Tr+KU
-	iblS40khSBHvu5NB6eesp+ge7M/gMZDF4E4dIxRuUod4moxN3r1TxellzUH7YWB4Jtp5YYwnORN
-	Pb5iMzSW5mi/AZ3uiJL/zZgwCK1UT72g8WQOHl2VPgKmuCNdG3AX03bhe0VMAkt20m/AxVr8Ic1
-	ZDynHKw/1HR7Cq3IjwIrUa9KbcowvWUQ6ZsKFHiqiDu1MQayE=
-X-Gm-Gg: ASbGncuL5tyUk6bV06N8dXCPFaCfvqXvocnxi9s4MpnqHEXjzHKuvD0MtdCbQXOu9D4
-	aZuVUoZCMVLXBvQvqB6dZWsYqto3ZWJg=
-X-Received: by 2002:a05:6402:368:b0:5d0:819b:3ee8 with SMTP id 4fb4d7f45d1cf-5d0819b3f6bmr5339708a12.28.1732796285800;
-        Thu, 28 Nov 2024 04:18:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH9T9A68feUeCUZameufi69BcHELHrmj3OzoVEiBlnXaBDzr0EfsijSDW4O9CCtKZGec59PyJncSPWuL5/Z2ME=
-X-Received: by 2002:a05:6402:368:b0:5d0:819b:3ee8 with SMTP id
- 4fb4d7f45d1cf-5d0819b3f6bmr5339689a12.28.1732796285506; Thu, 28 Nov 2024
- 04:18:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732796297; x=1733401097;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g1WUqFXk0TRJjO6Uhse/7Dxkc25tvKDuBA948pFVisA=;
+        b=KEklc7pixNjxYPyGryw8ChlnznXt/wgUto5NMkpNi3U8q7RkTVQihHJmbbyKgq7C1N
+         h1/Lv0wvINPHX59p+B4J5oqszlUeIlOorxsaRYIASfa7geq+8edh3ZZ5YGd+wiZw3QRG
+         jyuU59LkbdC2s5nW4iFLv2j/bvlHVPt8/Wxv1bOMx28cksDLwfPd/Ju6DYB6y7OOnHqG
+         Lgjsm4AA6tU44yZx3pXN9DSgVC00EauoSU3m88vq6ngcRBsCpWn/Om/H6BM+9lqBkzg0
+         8usfIG4/73dsUYKOMicAcuW/1LNNbd+5UCh9RGAbIySqUh46ghm63gB2u0W5LIiiqtCm
+         YyJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAsHUtQygWJCqdQb6d+2wTC5JNmIuzotmtO0ko6dCaSrNwY1Xlca0Y3cz50hk2+FeHhwZXqBo3Q105ndk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2bwp/6fW3ILE9YcXw92c0IVvQc/skKqSFIy2/i0IRVxdAlAtv
+	aec3fA+gs+9YVzVvTZlnYMeYR0tX28fkh5O3Kv1ET/7g2yHYMKAG
+X-Gm-Gg: ASbGncu7m/vA6sQ2/acDcQjLMruQmjGnXTHyK7qDQJnrXR7ZI3KqdaBJuoGpDvzMJ1o
+	Wp6IKfqoool3h9Q2UiE8nx9oUqoO73V1dtqWC1r6Cn084wg9cGu/S50+4x2x5f4ub6nqJkxu5at
+	iRPJSUAcsRUvYCQIT7GK/tWLiw3iOCzsamzKbHn7+PKg4saUFI3jDLmS0FTm7MHKFSgPL2ORP+R
+	nbkD1ceOohrcwOE+oGwx2BzXuMNAjrRcW/FK4D9VV7xDCc9fBPlqVM9L7lqCY/Pwx4vazGZRyzP
+	mfUTQeDqw7K4L54DZlvoejOxqaUs
+X-Google-Smtp-Source: AGHT+IFI1l7n7D5h1Aiob7vF3L6/kLv1K7lTjOwvaE1tEKSlo06h5Ng74csWc4nMYM6Wp9Bp3WEK9g==
+X-Received: by 2002:a17:903:244d:b0:20b:b93f:300a with SMTP id d9443c01a7336-21501086e30mr80764025ad.7.1732796296750;
+        Thu, 28 Nov 2024 04:18:16 -0800 (PST)
+Received: from [10.125.112.12] (014136220210.static.ctinets.com. [14.136.220.210])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21521969ea0sm12203835ad.168.2024.11.28.04.18.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 04:18:16 -0800 (PST)
+Message-ID: <18533ecd-0000-47f7-df24-f4f7ed45862e@gmail.com>
+Date: Thu, 28 Nov 2024 20:18:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127212027.2704515-1-max.kellermann@ionos.com>
-In-Reply-To: <20241127212027.2704515-1-max.kellermann@ionos.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 28 Nov 2024 14:17:54 +0200
-Message-ID: <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH] sched/core: Do not migrate ineligible tasks in
+ sched_balance_rq()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, mingo@kernel.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+ vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ Hao Jia <jiahao1@lixiang.com>
+References: <20241128084858.25220-1-jiahao.kernel@gmail.com>
+ <20241128091929.GA35539@noisy.programming.kicks-ass.net>
+ <0d28126d-4324-ba19-fe12-4f7a0ec0192f@gmail.com>
+ <20241128114722.GG24400@noisy.programming.kicks-ass.net>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <20241128114722.GG24400@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Pages are freed in `ceph_osdc_put_request`, trying to release them
-this way will end badly.
 
-On Wed, Nov 27, 2024 at 11:20=E2=80=AFPM Max Kellermann
-<max.kellermann@ionos.com> wrote:
->
-> In two `break` statements, the call to ceph_release_page_vector() was
-> missing, leaking the allocation from ceph_alloc_page_vector().
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> ---
->  fs/ceph/file.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 4b8d59ebda00..24d0f1cc9aac 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1134,6 +1134,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
-t *ki_pos,
->                         extent_cnt =3D __ceph_sparse_read_ext_count(inode=
-, read_len);
->                         ret =3D ceph_alloc_sparse_ext_map(op, extent_cnt)=
-;
->                         if (ret) {
-> +                               ceph_release_page_vector(pages, num_pages=
-);
->                                 ceph_osdc_put_request(req);
->                                 break;
->                         }
-> @@ -1168,6 +1169,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
-t *ki_pos,
->                                         op->extent.sparse_ext_cnt);
->                         if (fret < 0) {
->                                 ret =3D fret;
-> +                               ceph_release_page_vector(pages, num_pages=
-);
->                                 ceph_osdc_put_request(req);
->                                 break;
->                         }
-> --
-> 2.45.2
->
 
+On 2024/11/28 19:47, Peter Zijlstra wrote:
+> On Thu, Nov 28, 2024 at 07:30:37PM +0800, Hao Jia wrote:
+>>
+>>
+>> On 2024/11/28 17:19, Peter Zijlstra wrote:
+>>> On Thu, Nov 28, 2024 at 04:48:58PM +0800, Hao Jia wrote:
+>>>> From: Hao Jia <jiahao1@lixiang.com>
+>>>>
+>>>> When the PLACE_LAG scheduling feature is enabled, if a task
+>>>> is ineligible (lag < 0) on the source cpu runqueue, it will
+>>>> also be ineligible when it is migrated to the destination
+>>>> cpu runqueue.
+>>>>
+>>>> Because we will keep the original equivalent lag of
+>>>> the task in place_entity(). So if the task was ineligible
+>>>> before, it will still be ineligible after migration.
+>>>
+>>> This is not accurate, it will be eleigible, irrespective of lag, if
+>>> there are no other tasks. I think your patch tries to do this, but I'm
+>>> fairly sure it got it wrong.
+>>
+>> Thank you for your reply. The expression in my commit message is inaccurate,
+>> and I will correct it in the patch v2. If I understand correctly, a task
+>> meeting the following conditions:
+>>
+>>   sched_feat(PLACE_LAG) && cfs_rq->nr_running && !entity_eligible(cfs_rq,
+>> &p->se),
+>>
+>> will remain ineligible both before and after migration.
+>>
+>> If I am wrong, please correct me. Thank you!
+> 
+> Problem is you're checking the wrong nr_running.
+
+Oops, that's my mistake. Thank you very much for pointing it out.
+
+I should be focusing on the nr_running of the destination cfs_rq.
+
+Thanks,
+Hao
+
+> 
+>>>> @@ -9358,13 +9358,14 @@ static inline int migrate_degrades_locality(struct task_struct *p,
+>>>>    static
+>>>>    int can_migrate_task(struct task_struct *p, struct lb_env *env)
+>>>>    {
+>>>> +	struct cfs_rq *cfs_rq = task_cfs_rq(p);
+> 
+> This is task's current cfs_rq. What you're interested in is destination
+> cfs_rq. If the destination is empty, then lag is irrelevant.
+> 
+> You want something like:
+> 
+> #if CONFIG_FAIR_GROUP_SCHED
+> 	struct task_group *tg = task_group(p);
+> 	struct cfs_rq *dst_cfs_rq = tg->cfs_rq[env->dst_cpu];
+> #else
+> 	struct cfs_rq = &env->dst_rq->cfs_rq;
+> #endif
+> 
+> 
+> Also, please add benchmark details that show this actually makes a
+> difference.
+> 
+> Notably we keep rq->cfs_tasks in MRU order; most recently ran task is
+> head and balancing takes from the tail, the task longest not ran.
+> 
+> The task longest not ran should have build up eligibility.
+
+Thank you for your suggestion. It might be as you said, that inefficient 
+task migrations are relatively rare in load balancing. I will use some 
+benchmarks from MMTests for testing.
+
+Thanks,
+Hao
 
