@@ -1,196 +1,158 @@
-Return-Path: <linux-kernel+bounces-424094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6021B9DB08C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:59:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5F79DB090
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:00:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040E916133C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:59:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88D67B2317A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67A515530C;
-	Thu, 28 Nov 2024 00:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C725238FA6;
+	Thu, 28 Nov 2024 00:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tsv2Z8/6"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e2BH+OQE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E473153BFC
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AA212B73
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732755380; cv=none; b=fPnDJWZfifBVBhqzYDZWMm7fJ9cScH6zOafjoG+wa16dnV4BlH92Cl1OkP0F7O5rBGfl5fOic49l7oCyPpCLpe8hsG1V6/7kHzt1jNLmls9FeQxktK3WC4nwtShMZDKH5kud2bcBzV6uZ2U80ZATsKiH/o6jhCdcbIzNLjbpWQY=
+	t=1732755422; cv=none; b=L05VP0B0uW6wGYhmO3vTMKpYbDOcASOa5Cpw4rZQbZVqQfhdqd2gSVL4W/C9xoscMuM7xeIEc/wBsqZcJmItWb+WYSX9D3kRCuTmQe9pV7IXkLTgvY4ZY+tVGCxlrR+QZYp7e1S86oC4kzdzGUTdYe979oYCNhmGD42T8CVCvm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732755380; c=relaxed/simple;
-	bh=vSRfrEytDpN8W4HCrYiZGYIvGxH/eHfJp4zZjiL/A9E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AIthwTQbJSI92HVifm+2hoF8Mv6KX6P0HNiki8xefwLYRM9ZiT7HYJNIGkFXL+55uQ7UFuBss/GStecNIPZKklHRZ+PGTvTl0CL6IiTvNRN6HnVOgpFzdRaaL01XzQM+YjIOYn69FN4yeAmy6mUo5/dm5u5P99N2YZZDnbZt/L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tsv2Z8/6; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7fc2bdd115cso247438a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:56:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732755378; x=1733360178; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=SIrOHFdLU07PpaXHI/YgxGMl42ASMs52y5wmlleZ1JI=;
-        b=tsv2Z8/68GsvgAC+sDcHM6nSzYGwFcJWaMD9KqfowUE5UXu7FtJTpbdsoNLPpYf3iF
-         F7kxzQgZdM48dYrWX4F803l9E3C7Az6Ny1hcWMu3wF91AV3u+9ipAgx7JVjS1qQe4kS1
-         ayIMomUFUjMgJuSRjo9rjrDrkyGYjhdUnsIZq2uH7KKozxTt1osFnBUY0OMqvq5FH0ys
-         wGn3Z971vdlFdWtrEtqldW63IuEIrX2dvpxUVomsppHc8fdt9FO+emEdw4NUUdA9VYth
-         X6ffGMMuCrme53m9ITbdgBCxBJLZ4EjPCdouDFRthkO5znzqWjbZHCMc0gjlnhornF5e
-         Hhng==
+	s=arc-20240116; t=1732755422; c=relaxed/simple;
+	bh=vs6YXMnxVt6ZuO2IeY6OKd6OXD6JflY5mqVHPDRj7lg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSU9reCloMMjOli+4MJw4gi3mMOpyI4YWrRn1s2TwYKpGd43wcidGVlXnzv9AByMAEveMz+jHwOikhecxx6C2gOEzDGVOWdQWR1CtAGPFLON1vcHUS8HZfUYyr5LwLtiwj9QkB7zjhdiuDlCd4xhk2fEd8bRjH/5PInR2EUT/JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e2BH+OQE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732755419;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3M5NXT5NgYcv7o/jCn6O1ltoqUkEXIHN0lrzxbItZPY=;
+	b=e2BH+OQELUCneetGpm7axEAv/6UEu6bFG+DlRePFRUj/lYpdIfuCvA8xDUpqVs+Eyb9i5R
+	UCw7trXsRTGxjLm4jssZNX/PphJtjM6ZTNtJ9uU3B6iaj9sPM5r58X3C2ZnMuu5Hryxb4Y
+	JHJpLG06BazYl5OtnQOgsC4736cIcs8=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-Ra25zobUNJmJdR_LQ2E24w-1; Wed, 27 Nov 2024 19:56:58 -0500
+X-MC-Unique: Ra25zobUNJmJdR_LQ2E24w-1
+X-Mimecast-MFC-AGG-ID: Ra25zobUNJmJdR_LQ2E24w
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7a1e95f19so3027575ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:56:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732755378; x=1733360178;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SIrOHFdLU07PpaXHI/YgxGMl42ASMs52y5wmlleZ1JI=;
-        b=nSOCD0uzSAUpMR6Fkv15vRj/wAwQPE6DmaadGmygwMkFLx1J8IhiEBWp8jeNPvrnVg
-         mjWWrnIfhyuQxTWdYYDSGQonP1PaLtPIri4K9Hl46aF0ExJCdab3e2do5jzW+AnIrFOZ
-         gLczp9JLIzGP8Sa7t9lS/GUhWuRykzQEapFcQTx7m2dMNHhsXhQzEq8XGGx8OdjhKZWD
-         JQ2UTK/5JRKjJjIssIZySEggfz4qhLZ4WI4GsuKwVLuYItufsbHfph8EJQayx+6nMP3P
-         MwWJ5K19waSqiH8cSymYktNBqDSgrOPYLysuxentZm/dDqTbngQvVLOxdlGOYON0dDbZ
-         TxJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhTMEtPOk0hP9Mvw3DmmpCVluLqwVeqDxrquSwl/81OfYiGIbfRnBn8L32AscNeDTT4Kj3yqdJnuxk1b4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwldI4AUWqBBpJy9M4za7+hdqjvaxlQOW7wAT6AOC9EKsjVGAxa
-	aBOD/JrDc19opRZjb+nbv3AJQiOaRgxQUTtlKSBn6Jbt4BJ9wQWQrjK5HyFwDZEAJI1vjRbvHv9
-	FPw==
-X-Google-Smtp-Source: AGHT+IEWNoqxkKJEuSCYYZMRl85uBIjfdRzypvum78dwg9LOBi3REl5p9HlxVwSIxD2wnWKazGYBZqWzZwk=
-X-Received: from pjbst14.prod.google.com ([2002:a17:90b:1fce:b0:2ea:9d23:79a0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:9f93:b0:2ea:5658:9ed6
- with SMTP id 98e67ed59e1d1-2ee25b38db4mr2121026a91.12.1732755377809; Wed, 27
- Nov 2024 16:56:17 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 16:55:47 -0800
-In-Reply-To: <20241128005547.4077116-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1732755417; x=1733360217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3M5NXT5NgYcv7o/jCn6O1ltoqUkEXIHN0lrzxbItZPY=;
+        b=VHxIpc73av1jbO7E89uali3YEpuCJ/kissha2ScErBHgdS5Jb++sRyzw6wFqwSef6R
+         U6oqF/8MzIAf1Qj+YgEWXFSuhMP6cLAjGu67ZG0GjE+Wo6hFUs6/RQQiJ4Dg+PuGSCRe
+         xS3x6Zg4ke43kJZ61TQwydD2k8Bhhd0B4oqDNWwST53zHoR8a/S6PL4kwNroNs9O/5KL
+         stJujmHuEoqLUzxrbcTaVnCFTTDiz6R/g95gDc4Bc9Ac/qJsv1xf3Lk6UNgch3pQpfzO
+         /ae6JpXlqzOni55B+9d7nwE6FZbHzSWD1H2CdcNRLH0wtTn0SHMALlXUCYfiEBYCqViM
+         fhWA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+s/ImlVq4nkI3u/PfxbztXGgkdrPtZ14FAJQgOqUgq5k1hxWwk8dhrsTqxZHvvKEUmlE7nZyIsFj/XjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKz2bwVJcPEaLezKRJUULhn1Z6EwZZnF9BFHCYPcazwLc/97ZG
+	Xfi4eQD1HkrSWTI5y7h5sSuqoBW/fh2ouRs8wGCTOzWxBXFdugLz27KrEoSlM6BVbPmBQrEZ1A6
+	ddWG8NiZYzstkDrwSfVTxTaiY68fLgbk6NySdFXVspvUz1Mm01uJS/yG8/U8CGw==
+X-Gm-Gg: ASbGnctbY0zT/lP4FkFCkA2IS0iwQTDL2JK4UksteMfSqmSq6vmBVZ2HI0geWB58Ul5
+	U6VtXmCN5BFjmwVXT9KGfxkvClNlj7Lto6AAyBj0v8kvlGa4704ETWnwydxBS7DC+jmwt3bBRSc
+	OUvXmdG8u5qhUaH32/fNEAs9h9bo9Lxd/jGb4kGeDy8qEzyMqScSLZ40YCDy/In+8R5GrYPbamE
+	XCP2Ymr5/aclyYKONvX9kZIQ1Hm
+X-Received: by 2002:a05:6e02:1689:b0:3a7:20d5:8157 with SMTP id e9e14a558f8ab-3a7c556318dmr49585465ab.11.1732755417411;
+        Wed, 27 Nov 2024 16:56:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH3OUPVfIS+/L/sPPeAdCxXP7P6uumIqlNzsg8OI4AY+2yONPmztCAgPhLuzEUCMU+Gnm5xTw==
+X-Received: by 2002:a05:6e02:1689:b0:3a7:20d5:8157 with SMTP id e9e14a558f8ab-3a7c556318dmr49585275ab.11.1732755417126;
+        Wed, 27 Nov 2024 16:56:57 -0800 (PST)
+Received: from jpoimboe ([2600:1700:6e32:6c00::1e])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e230e5f229sm54157173.82.2024.11.27.16.56.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Nov 2024 16:56:56 -0800 (PST)
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+X-Google-Original-From: Josh Poimboeuf <jpoimboe@kernel.org>
+Date: Wed, 27 Nov 2024 16:56:53 -0800
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org,
+	Jan Beulich <jbeulich@suse.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
+Subject: Re: annotating jump tables (Re: [PATCH v2 5/5] LoongArch: Enable
+ jump table with GCC for objtool)
+Message-ID: <20241128005653.st7xwkv2gry2chlc@jpoimboe>
+References: <20241105123906.26072-1-yangtiezhu@loongson.cn>
+ <20241105123906.26072-6-yangtiezhu@loongson.cn>
+ <20241105141530.GE10375@noisy.programming.kicks-ass.net>
+ <62df4c24-68ed-fbfc-ed98-2df796697d89@loongson.cn>
+ <9589c5b673f45f02e2b0fa9d9a96eff0f0df0920.camel@xry111.site>
+ <7e8adb0b-e681-72ae-40d8-740dc3f9480b@loongson.cn>
+ <20241113211119.lfwlxv2bjyqfqeh2@jpoimboe>
+ <CAKwvOdmE7zZN2x9echrje7dqunda=SywqurkyXyJaaUp3M0aEg@mail.gmail.com>
+ <CAMj1kXF=55+z6udToxO=CZdTK910-jxKdCXpryQGg580J9eXEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241128005547.4077116-1-seanjc@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128005547.4077116-17-seanjc@google.com>
-Subject: [PATCH v4 16/16] KVM: selftests: Override ARCH for x86_64 instead of
- using ARCH_DIR
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Sean Christopherson <seanjc@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXF=55+z6udToxO=CZdTK910-jxKdCXpryQGg580J9eXEA@mail.gmail.com>
 
-Now that KVM selftests uses the kernel's canonical arch paths, directly
-override ARCH to 'x86' when targeting x86_64 instead of defining ARCH_DIR
-to redirect to appropriate paths.  ARCH_DIR was originally added to deal
-with KVM selftests using the target triple ARCH for directories, e.g.
-s390x and aarch64; keeping it around just to deal with the one-off alias
-from x86_64=>x86 is unnecessary and confusing.
+On Thu, Nov 14, 2024 at 07:13:18PM +0100, Ard Biesheuvel wrote:
+> > Looks like this was added to clang in:
+> > https://github.com/llvm/llvm-project/pull/102411
+> >
+> > A comment in llvm/lib/Target/LoongArch/LoongArchAsmPrinter.cpp
+> > describes the scheme:
+> > +  // Emit an additional section to store the correlation info as pairs of
+> > +  // addresses, each pair contains the address of a jump instruction (jr) and
+> > +  // the address of the jump table.
+> >
+> > Ard had a prototype in:
+> > https://github.com/llvm/llvm-project/pull/112606
+> > which used relocations rather than a discardable section.
+> 
+> Thanks for the cc.
+> 
+> I haven't followed up yet because doing this generically is not
+> straight-forward. The main issue is that AArch64 jump tables could be
+> emitted into .text with scaled offsets, e.g.,
+> 
+> adr  x16, .Ljumptable
+> ldrb w17, [x16, xN] // xN is the lookup index
+> add  x16, x16, w17, sxtw #2  // x16 += 4 * x17
+> br   x16
+> 
+> .Ljumptable:
+> .byte (dest0 - .Ljumptable) >> 2
+> .byte (dest1 - .Ljumptable) >> 2
+> .byte (dest2 - .Ljumptable) >> 2
+> .byte (dest3 - .Ljumptable) >> 2
+> 
+> So just emitting a relocation at the call site and a symbol covering
+> the jump table might work for x86, but if we want some that works in
+> general, we'll have to come up with some format that describes in more
+> detail how to infer the potential destinations of an indirect call it
+> is known to be a limited set at compile time.
 
-Note, even when selftests are built from the top-level Makefile, ARCH is
-scoped to KVM's makefiles, i.e. overriding ARCH won't trip up some other
-selftests that (somehow) expects x86_64 and can't work with x86.
+Loongarch is emitting an array of (insn_ptr, jump_table_ptr) tuples
+in .discard.tablejump_annotate.  Would that work more generically?
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/Makefile     |  4 +---
- tools/testing/selftests/kvm/Makefile.kvm | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 13 deletions(-)
+Even better it would also emit the jump table size.
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 9bc2eba1af1c..20af35a91d6f 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -6,9 +6,7 @@ ARCH            ?= $(SUBARCH)
- ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
- # Top-level selftests allows ARCH=x86_64 :-(
- ifeq ($(ARCH),x86_64)
--	ARCH_DIR := x86
--else
--	ARCH_DIR := $(ARCH)
-+	ARCH := x86
- endif
- include Makefile.kvm
- else
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 9888dd6bb483..4277b983cace 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -207,10 +207,10 @@ TEST_GEN_PROGS_riscv += steal_time
- SPLIT_TESTS += arch_timer
- SPLIT_TESTS += get-reg-list
- 
--TEST_PROGS += $(TEST_PROGS_$(ARCH_DIR))
--TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(ARCH_DIR))
--TEST_GEN_PROGS_EXTENDED += $(TEST_GEN_PROGS_EXTENDED_$(ARCH_DIR))
--LIBKVM += $(LIBKVM_$(ARCH_DIR))
-+TEST_PROGS += $(TEST_PROGS_$(ARCH))
-+TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(ARCH))
-+TEST_GEN_PROGS_EXTENDED += $(TEST_GEN_PROGS_EXTENDED_$(ARCH))
-+LIBKVM += $(LIBKVM_$(ARCH))
- 
- OVERRIDE_TARGETS = 1
- 
-@@ -222,14 +222,14 @@ include ../lib.mk
- INSTALL_HDR_PATH = $(top_srcdir)/usr
- LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
- LINUX_TOOL_INCLUDE = $(top_srcdir)/tools/include
--LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH_DIR)/include
-+LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH)/include
- CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
- 	-Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT \
- 	-fno-builtin-memcmp -fno-builtin-memcpy \
- 	-fno-builtin-memset -fno-builtin-strnlen \
- 	-fno-stack-protector -fno-PIE -fno-strict-aliasing \
- 	-I$(LINUX_TOOL_INCLUDE) -I$(LINUX_TOOL_ARCH_INCLUDE) \
--	-I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -Iinclude/$(ARCH_DIR) \
-+	-I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -Iinclude/$(ARCH) \
- 	-I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
- ifeq ($(ARCH),s390)
- 	CFLAGS += -march=z10
-@@ -273,7 +273,7 @@ LIBKVM_S_OBJ := $(patsubst %.S, $(OUTPUT)/%.o, $(LIBKVM_S))
- LIBKVM_STRING_OBJ := $(patsubst %.c, $(OUTPUT)/%.o, $(LIBKVM_STRING))
- LIBKVM_OBJS = $(LIBKVM_C_OBJ) $(LIBKVM_S_OBJ) $(LIBKVM_STRING_OBJ)
- SPLIT_TEST_GEN_PROGS := $(patsubst %, $(OUTPUT)/%, $(SPLIT_TESTS))
--SPLIT_TEST_GEN_OBJ := $(patsubst %, $(OUTPUT)/$(ARCH_DIR)/%.o, $(SPLIT_TESTS))
-+SPLIT_TEST_GEN_OBJ := $(patsubst %, $(OUTPUT)/$(ARCH)/%.o, $(SPLIT_TESTS))
- 
- TEST_GEN_OBJ = $(patsubst %, %.o, $(TEST_GEN_PROGS))
- TEST_GEN_OBJ += $(patsubst %, %.o, $(TEST_GEN_PROGS_EXTENDED))
-@@ -282,7 +282,7 @@ TEST_DEP_FILES += $(patsubst %.o, %.d, $(LIBKVM_OBJS))
- TEST_DEP_FILES += $(patsubst %.o, %.d, $(SPLIT_TEST_GEN_OBJ))
- -include $(TEST_DEP_FILES)
- 
--$(shell mkdir -p $(sort $(OUTPUT)/$(ARCH_DIR) $(dir $(LIBKVM_C_OBJ) $(LIBKVM_S_OBJ))))
-+$(shell mkdir -p $(sort $(OUTPUT)/$(ARCH) $(dir $(LIBKVM_C_OBJ) $(LIBKVM_S_OBJ))))
- 
- $(filter-out $(SPLIT_TEST_GEN_PROGS), $(TEST_GEN_PROGS)) \
- $(TEST_GEN_PROGS_EXTENDED): %: %.o
-@@ -290,9 +290,9 @@ $(TEST_GEN_PROGS_EXTENDED): %: %.o
- $(TEST_GEN_OBJ): $(OUTPUT)/%.o: %.c
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
- 
--$(SPLIT_TEST_GEN_PROGS): $(OUTPUT)/%: $(OUTPUT)/%.o $(OUTPUT)/$(ARCH_DIR)/%.o
-+$(SPLIT_TEST_GEN_PROGS): $(OUTPUT)/%: $(OUTPUT)/%.o $(OUTPUT)/$(ARCH)/%.o
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH) $^ $(LDLIBS) -o $@
--$(SPLIT_TEST_GEN_OBJ): $(OUTPUT)/$(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
-+$(SPLIT_TEST_GEN_OBJ): $(OUTPUT)/$(ARCH)/%.o: $(ARCH)/%.c
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
- 
- EXTRA_CLEAN += $(GEN_HDRS) \
 -- 
-2.47.0.338.g60cca15819-goog
+Josh
 
 
