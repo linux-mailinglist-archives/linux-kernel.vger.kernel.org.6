@@ -1,170 +1,160 @@
-Return-Path: <linux-kernel+bounces-424505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A0B9DB51E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:54:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF449DB521
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:56:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB471167F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B32281EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E06155C83;
-	Thu, 28 Nov 2024 09:54:13 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26646146590
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2FC15854A;
+	Thu, 28 Nov 2024 09:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J9xfur6D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCFD156238;
+	Thu, 28 Nov 2024 09:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732787652; cv=none; b=BfaTqyDWcxMX41cqZ6XAwXtipfMFHsxuGCa1U7RwDi1X2SIZYO/rfG/yIy0fNVcQb2CVmDAIB0slwBNh8O7UtOYMJIJiO0ZHJsfRBSzfF+E4jonQir4d5PwMs8rf+xD2Mu3TMzhn3rOJatM9TCYCCVCes6JRMnRDWv+IQ+sVpGQ=
+	t=1732787759; cv=none; b=oDykgXFIqLjp9rhq+qZijByio8sh6upuPDd6HA5EioA6iCW5EbLZU/GP5VlYxbv6zoBVMA77gHBVYJnoM5vWSPucZL1MmkpJD7S+AbflOfqWiOa0UVh6oBkM0rr3WHCXWEWrsSkXgOYd4wTQFS1H7b/49ZKPoRHpW+aH6IYkSBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732787652; c=relaxed/simple;
-	bh=eQh2pWC0+7ytTEqQK2XrIe6JfItAAMbL1y2MxiKihmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IsQkd4QMx8MWgtXeg1lU8cZNBLTWGpMFkPSdfJLvU2iacL3uuVyUexiOZToS2FcgR8SkJDeV4WzYA8zjY/cOFx3gt83IcnviVc4/hC2wI12Cge8IM/dutSXR3uwpEIy90VBnkt/TkZ+EAJlQg6trufvv6cFZCK8nZLESpd8gzj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3c9ff7000001d7ae-17-67483db703ab
-From: Honggyu Kim <honggyu.kim@sk.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Yunjeong Mun <yunjeong.mun@sk.com>,
-	kernel_team@skhynix.com,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: Re: [RFC PATCH] mm/damon: explain "effective quota" on kernel-doc comment
-Date: Thu, 28 Nov 2024 18:53:55 +0900
-Message-ID: <20241128095357.1530-1-honggyu.kim@sk.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20241126194347.58155-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1732787759; c=relaxed/simple;
+	bh=+FHDG0XHJEgVnEqWKiJLK3AK3kcz3Kq7MaSKJ1PjwDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3qTqbYymj0DFSfyQo48+lIwNPanDEG2GAnRgkCIJlrH4sDFO0PgXlTl77bYX5ziHVgml/yo9QIdSRu3InHsfZNyUXvqH1ha8LThJT+VUXXko073oR6xqleQYanwz2/qP0qgELxRd87KgXctlRlY+GsfMYjPYDAciF5CG4xtbbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J9xfur6D; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732787757; x=1764323757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+FHDG0XHJEgVnEqWKiJLK3AK3kcz3Kq7MaSKJ1PjwDg=;
+  b=J9xfur6D4f3VZlIbAxSoT73L7jQbWAwPKRALy9+Uc5AEkB0QSde5ixR7
+   f+yed2NdeU6VU+3Kn5GOKPP70A8R2pwXpe/tN1SBQdWVwsfCHGu/Hr4kR
+   YgxxXCLVpXtYW+TDDB84N3uwItNIOECx1dY6CDb74dwiWHdPoyVzkVuJs
+   Asp2jlR6pBaX0mmZp8Lg5OvPweYhIlBcHuTEurNsxcLO9BYzUSAqmEtWc
+   NvS2GLfhSKTMqT+yMm2e8lsDuOEEuVhkxMxH92vgexXJ6V+mjNJAapdnf
+   2F8GsAYRfo1+dk25Z+QDGCe389Et1zBRMJH3wUXWBcGX2Ah9OnF6yd99Q
+   g==;
+X-CSE-ConnectionGUID: w2N/hKQzSaS73m+rbogC0Q==
+X-CSE-MsgGUID: m6lLKKCIRsiH+Ql+LAPurg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11269"; a="32874046"
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="scan'208";a="32874046"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 01:55:56 -0800
+X-CSE-ConnectionGUID: ex1k9ZOPSKClhaKQHSZ54Q==
+X-CSE-MsgGUID: t9/QEeeSQTmFOUoOjT6miQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
+   d="scan'208";a="97283692"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 28 Nov 2024 01:55:54 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tGbFW-0009RD-2t;
+	Thu, 28 Nov 2024 09:55:50 +0000
+Date: Thu, 28 Nov 2024 17:55:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: Re: [PATCH 2/2] iio: light: add support for veml6031x00 ALS series
+Message-ID: <202411281741.xz7mD4E2-lkp@intel.com>
+References: <20241126-veml6031x00-v1-2-4affa62bfefd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsXC9ZZnke4OW490g157iyf/f7NaXN41h83i
-	3pr/rBaHv75hcmDx2LSqk81j06dJ7B4vNs9k9Pi8SS6AJYrLJiU1J7MstUjfLoEro/lQVsEx
-	6Yr5k3YxNTDOFO1i5OSQEDCR+P1lLyOMffHdDSYQm01ATeLKy0lgtoiAosS5xxdZuxi5OJgF
-	tjBKdC/ZBJYQFgiSOHHjCAuIzSKgKvH96wQ2EJtXwExi6Z1XbBBDNSUeb//JDmJzChhL9E9c
-	wAxiCwnwSLzasJ8Rol5Q4uTMJ2BzmAXkJZq3zmYGWSYhMIFN4vj1L1DXSUocXHGDZQIj/ywk
-	PbOQ9CxgZFrFKJSZV5abmJljopdRmZdZoZecn7uJERiEy2r/RO9g/HQh+BCjAAejEg/vB2P3
-	dCHWxLLiytxDjBIczEoivAXcQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNT
-	UwtSi2CyTBycUg2M2pOuXT3rOLct4E7dDl2fA0oTQ0wXOV0ym+/hetFzrqeciFznlAS3RNuT
-	Dhfkf67U2rj+fPzuVeZbLa9eKn2kVbpqV3XZCsO7gc4WJTUCX320hVZZTlJdcMF4YUXRshVc
-	M5r8L62TWXrz3P7qgs5dbcwSAlf8Vvirtv9nOZPJvm/1Vamlv76ZKrEUZyQaajEXFScCAGGf
-	3rk+AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrILMWRmVeSWpSXmKPExsXCNUNLT3e7rUe6wfUNuhZP/v9mtfj87DWz
-	xeG5J1ktLu+aw2Zxb81/VovDX98wWfzetoLNgd1j06pONo9Nnyaxe7zYPJPR49ttD4/FLz4w
-	eXzeJBfAFsVlk5Kak1mWWqRvl8CV0Xwoq+CYdMX8SbuYGhhninYxcnJICJhIXHx3gwnEZhNQ
-	k7jychKYLSKgKHHu8UXWLkYuDmaBLYwS3Us2gSWEBYIkTtw4wgJiswioSnz/OoENxOYVMJNY
-	eucVG8RQTYnH23+yg9icAsYS/RMXMIPYQgI8Eq827GeEqBeUODnzCdgcZgF5ieats5knMPLM
-	QpKahSS1gJFpFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmDALav9M3EH45fL7ocYBTgYlXh4
-	Pxi7pwuxJpYVV+YeYpTgYFYS4S3gBgrxpiRWVqUW5ccXleakFh9ilOZgURLn9QpPTRASSE8s
-	Sc1OTS1ILYLJMnFwSjUwFuT/d/i66K/Eof33Mi/d/3RHvrScdaZa3voNabJ/X8x53PB2ohU3
-	70SzkM/NBs33SnS/h1zMUDny76QB12vO7Jmp1Q9nxh21/yzfteJx81SmtXPvnPvpoOuVybt9
-	fqaWaWN94d87zeejlPM2NC/f6Oi7xvT6nenqGaGvY85l3T9/RkjG+vf5D0osxRmJhlrMRcWJ
-	AMSt+Co0AgAA
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126-veml6031x00-v1-2-4affa62bfefd@gmail.com>
 
-On Tue, 26 Nov 2024 11:43:47 -0800 SeongJae Park <sj@kernel.org> wrote:
-> On Tue, 26 Nov 2024 17:24:33 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-> 
-> > Hi SeongJae,
-> > 
-> > Thanks very much for the quick response.
-> 
-> No problem, all owing to your kind report!
-> 
-> > I think it looks great but I
-> > have some minor comments so please see my inline comments below.
-> > 
-> > Thanks,
-> > Honggyu
-> > 
-> > On Mon, 25 Nov 2024 16:29:21 -0800 SeongJae Park <sj@kernel.org> wrote:
-> > > The kernel-doc comment for 'struct damos_quota' describes how "effective
-> > > quota" is calculated, but does not explain what it is.  Actually there
-> > > was an input[1] about it.  Add the explanation on the comment.
-> > > 
-> > > [1] https://github.com/damonitor/damo/issues/17#issuecomment-2497525043
-> > > 
-> > > Cc: Yunjeong Mun <yunjeong.mun@sk.com>
-> > > Cc: Honggyu Kim <honggyu.kim@sk.com>
-> > > Signed-off-by: SeongJae Park <sj@kernel.org>
-> > > ---
-> > >  include/linux/damon.h | 10 +++++++---
-> > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/include/linux/damon.h b/include/linux/damon.h
-> > > index a67f2c4940e9..a01bfe2ff616 100644
-> > > --- a/include/linux/damon.h
-> > > +++ b/include/linux/damon.h
-> > > @@ -193,9 +193,13 @@ struct damos_quota_goal {
-> > >   * size quota is set, DAMON tries to apply the action only up to &sz bytes
-> > >   * within &reset_interval.
-> > >   *
-> > > - * Internally, the time quota is transformed to a size quota using estimated
-> > > - * throughput of the scheme's action.  DAMON then compares it against &sz and
-> > > - * uses smaller one as the effective quota.
-> > > + * To convince the different types of quotas and goals, DAMON internally
-> > > + * converts those into one single size quota called "effective quota".  DAMON
-> > 
-> > Could we use "effective size quota" instead of "effective quota"?
-> > IMHO, it will better give an idea this is related to "esz" in the code,
-> > which means effective size.
-> 
-> The above sentence is saying it as one single "size" quota, so calling it
-> "effective size quota" here feels like unnecessary duplicates of the word
-> ("size") to me.  I'd like to keep this sentence as is if you don't really mind.
+Hi Javier,
 
-Since the time or other goals are eventually transformed into a size
-quota, I thought the "effective size quota" makes sense but I won't
-stick to my term here.
+kernel test robot noticed the following build warnings:
 
-We originally asked this question about the term "effective" itself as
-we didn't find an explanation what "effective" means actually in the
-doc.  It'd be better to have more explicit explanation as well.
+[auto build test WARNING on a61ff7eac77e86de828fe28c4e42b8ae9ec2b195]
 
-> > 
-> > > + * internally uses it as only one real quota.  The convert is made as follows.
-> > 
-> > (nit) "as only one" can be "as the only one".
-> > (another nit) "The convert is made" can be "The conversion is made".
-> 
-> Nice eyes!  I will fix those.
+url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Carrasco/dt-bindings-iio-light-veml6030-add-veml6031x00-ALS-series/20241128-104104
+base:   a61ff7eac77e86de828fe28c4e42b8ae9ec2b195
+patch link:    https://lore.kernel.org/r/20241126-veml6031x00-v1-2-4affa62bfefd%40gmail.com
+patch subject: [PATCH 2/2] iio: light: add support for veml6031x00 ALS series
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241128/202411281741.xz7mD4E2-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411281741.xz7mD4E2-lkp@intel.com/reproduce)
 
-Thanks, please do!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411281741.xz7mD4E2-lkp@intel.com/
 
-> > 
-> > > + *
-> > > + * The time quota is transformed to a size quota using estimated throughput of
-> > > + * the scheme's action.  DAMON then compares it against &sz and uses smaller
-> > > + * one as the effective quota.
-> > >   *
-> > >   * If @goals is not empt, DAMON calculates yet another size quota based on the
-> > 
-> > We better fix "empt" to "empty" together.
-> 
-> Nice catch!  I will fix so.
+All warnings (new ones prefixed by >>):
 
-Ditto.
+   drivers/iio/light/veml6031x00.c: In function 'veml6031x00_set_scale':
+>> drivers/iio/light/veml6031x00.c:422:24: warning: variable 'gain_idx' set but not used [-Wunused-but-set-variable]
+     422 |         int new_scale, gain_idx;
+         |                        ^~~~~~~~
 
-Thanks,
-Honggyu
 
-> > 
-> > >   * goals using its internal feedback loop algorithm, for every @reset_interval.
-> > > -- 
-> > > 2.39.5
-> > >
-> 
-> 
-> Thanks,
-> SJ
+vim +/gain_idx +422 drivers/iio/light/veml6031x00.c
+
+   418	
+   419	static int veml6031x00_set_scale(struct iio_dev *iio, int val, int val2)
+   420	{
+   421		struct veml6031x00_data *data = iio_priv(iio);
+ > 422		int new_scale, gain_idx;
+   423	
+   424		if (val == 0 && val2 == 125000) {
+   425			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x03) |
+   426				VEML6031X00_CONF1_PD_D4;
+   427			gain_idx = 0;
+   428		} else if (val == 0 && val2 == 165000) {
+   429			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x02) |
+   430				VEML6031X00_CONF1_PD_D4;
+   431			gain_idx = 1;
+   432		} else if (val == 0 && val2 == 250000) {
+   433			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x00) |
+   434				VEML6031X00_CONF1_PD_D4;
+   435			gain_idx = 2;
+   436		} else if (val == 0 && val2 == 500000) {
+   437			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x03);
+   438			gain_idx = 3;
+   439		} else if (val == 0 && val2 == 660000) {
+   440			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x02);
+   441			gain_idx = 4;
+   442		} else if (val == 1 && val2 == 0) {
+   443			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x00);
+   444			gain_idx = 5;
+   445		} else if (val == 2 && val2 == 0) {
+   446			new_scale = FIELD_PREP(VEML6031X00_CONF1_GAIN, 0x01);
+   447			gain_idx = 6;
+   448		} else {
+   449			return -EINVAL;
+   450		}
+   451	
+   452		return regmap_update_bits(data->regmap, VEML6031X00_REG_CONF1,
+   453					 VEML6031X00_CONF1_GAIN |
+   454					 VEML6031X00_CONF1_PD_D4,
+   455					 new_scale);
+   456	}
+   457	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
