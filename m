@@ -1,185 +1,237 @@
-Return-Path: <linux-kernel+bounces-424906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461C89DBB09
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:09:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8679DBB03
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:08:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 899D4B20C05
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:09:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9D016130C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376B51BE87C;
-	Thu, 28 Nov 2024 16:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7671BD9DB;
+	Thu, 28 Nov 2024 16:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nsavjth6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZHiQsPrE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8B03232;
-	Thu, 28 Nov 2024 16:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39CD1BD9CB;
+	Thu, 28 Nov 2024 16:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732810134; cv=none; b=P83FlyJT3Fo7to8gBqrWgvkceWPaZrmR6nh3zAEAq/hQwPHBGxc0Eq1VWkPeZIN6JV+OTU4jVgS/Is8FKSc35Q56vOpYZOagNTfoMTAQEoxLKoCbD7oFonCC6x4F7BnK07m4kHJGceSVHKNPBomiAAF7Mnc22dFCxzNoAdefalw=
+	t=1732810093; cv=none; b=uA0Le7xl2GWpHeDY55hlbnZed3ZCicE+Hf2IxzQdyLnt6zzJxhGWKovcL5l+Xq2BydHwEXDCKVjGMVIbRFGVqlL4w0lMTLBddsymauAryC+s/Xe+hD8WtFAwXyi6mkF/l2ZU6CI3ofU3u5/cWXSGAU0yNLu4oZG4I5Ih4ngFLQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732810134; c=relaxed/simple;
-	bh=zgR7POQipJr92V+u9Tt4pGs3gh2pe3hR7ESpRucymuM=;
+	s=arc-20240116; t=1732810093; c=relaxed/simple;
+	bh=EXr/Xa4IzkrMZ/1Uwppwz8/I/eKNWK/N7JTkg3JjU0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cth8vilh/vvOHYVvD2b2rTUKAlBnmD3bHbKZGzgnAR2W5eEMPK42KUY1tb7j0KUP0B30hSStks/W4FjPBxg1pqKX6ggHlVPDbtx9wTgfOAP3TtPzRRPqF0pxF06nxQS5OAAuJGUkFFIWRD2iF7KKSr9phLDb2YTdY/Ke3NpZL0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nsavjth6; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732810132; x=1764346132;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zgR7POQipJr92V+u9Tt4pGs3gh2pe3hR7ESpRucymuM=;
-  b=Nsavjth6yKwhCt9sKsOIMGQIIE9VyFBxCqy8fpstLI+Cr9EyTakqf89I
-   mhAvJnijlYwZHvM/Z8Px779mtLQEIWqaMYTNACVqDdoK4RTdIwFAnHXJV
-   LCxEMY+M1EQ+qoZ+7lENB1syB+S/namzICSRex/j2gFgfotv15B79w5mS
-   rNNTl0pckYu4M4dxpV97PiZAnjDvGciP9BEYzSPzk+jteD7/HIMK2yMp3
-   6p5F1vxZABGp3K0KYfA1kPLUwQP9BCc15MNjaFHlAgEgfJtcDDd9khqXN
-   KculTBaliv5kLtkqp7bTHjtY0KI8GyUW8WfGFULx5Yhe9BFeUAhGQxcRd
-   g==;
-X-CSE-ConnectionGUID: rSqTnKEvSD+2SKomZ/2ZcQ==
-X-CSE-MsgGUID: 1/Vz7g8nQzCjB+Tm5jFRog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="32417689"
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="32417689"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 08:07:44 -0800
-X-CSE-ConnectionGUID: SOiR0bVYTaKLPWXALnNw+Q==
-X-CSE-MsgGUID: Z27cMCa4QpyjNYwuD8SyGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,192,1728975600"; 
-   d="scan'208";a="92659227"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 28 Nov 2024 08:07:40 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGh3J-0009m6-2g;
-	Thu, 28 Nov 2024 16:07:37 +0000
-Date: Fri, 29 Nov 2024 00:07:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haylen Chu <heylenay@4d2.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Subject: Re: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <202411282305.iJ9x0lmj-lkp@intel.com>
-References: <20241126143125.9980-7-heylenay@4d2.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYXw6Xia9GVCqGkj0Ap7BX6sqsrexeGIv1737DdKTpFoHb77MYbpr0IRrgo/XFfWRlqizuJF+EzqdoBepJYF1++8zQ4eJ01KNBOoqYWEWuk6jbLZVWZ5HPfed1Q8M1S2Ts+0qOOiXZKsocN8+NN9wreXyWfuQAAn0VIMdG/vRX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZHiQsPrE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1F7AD40E015E;
+	Thu, 28 Nov 2024 16:08:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id JEf4IJx5ofLC; Thu, 28 Nov 2024 16:08:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732810083; bh=tBvIZsR8D+2ZYbu6rMifmZidC/N+3RXk90l43tBthoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZHiQsPrEmGchPW6AX34zhC0DXJifHmYraIbuw2eGIlUSIBdvs2x0Txyzcllihy0le
+	 O/ZcEuRB2/1I3BfoMe2Z6UDamwe+oRMBylPyoKQV+nZcUULKtfPjdVh0yY86ATetYf
+	 num6/FfOS7BwPqxtdAEQZS8ttdL+eXiIn0G+WaU25rUy/85kZR1tu4Lm3F9h9DUmlf
+	 VVvqIgON5qAq1899eUJKEDSEX2Sc3d3Tq1vH9ufEDLP2BwLwUhUsHHPA4/xWMJy/Qs
+	 VTbR7Soxca7BCmUQFtu9oSHkeoWC6XR3KXUqjqIx7wevdtdjBQunv3pLfmh/vqpdDE
+	 mU22AlQb8USSUWRFbbH15ZsbAe79YudL81DRhScjyLZCxG4dh0ML8PRZ2MPmH1u3Mq
+	 nW6ZdlRNN1C7V30cFMkOhYIclVZnQulD7rVFZgQ2M3rMTlS2nADnJK6NZUgIQ/Yu4u
+	 7bneZKZnezhTjAp+cTf93wlPE7iJVh4FoXkG4c8yrHWQo1Dei8r4TPfw2ESX4HqvB8
+	 LtcwNCbrCZs3B+U/8R2wvge5ZavvVuMNwe9Wrj3n3LEm+ewNz2nF4pB+8YbxDk7/z6
+	 xDUApg/qq3yO+lsH0B38ZLLhsBOwOsJ6eWh7J/cMlIJ5jos9vYNM7e4EuzS59tNKVO
+	 iQWU8ByhfllLt/Cj7lBQs/RE=
+Received: from zn.tnic (p200300ea9736A177329C23fffea6A903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a177:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0AC240E0274;
+	Thu, 28 Nov 2024 16:07:49 +0000 (UTC)
+Date: Thu, 28 Nov 2024 17:07:42 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>, Joerg Roedel <jroedel@suse.de>,
+	Roy Hopkins <roy.hopkins@suse.com>
+Subject: Re: [RFC PATCH 1/7] KVM: SVM: Implement GET_AP_APIC_IDS NAE event
+Message-ID: <20241128160742.GAZ0iVTp1thcQA5jFM@fat_crate.local>
+References: <cover.1724795970.git.thomas.lendacky@amd.com>
+ <e60f352abde6bfa9c989d63213d4fb04c3721c11.1724795971.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241126143125.9980-7-heylenay@4d2.org>
+In-Reply-To: <e60f352abde6bfa9c989d63213d4fb04c3721c11.1724795971.git.thomas.lendacky@amd.com>
 
-Hi Haylen,
+On Tue, Aug 27, 2024 at 04:59:25PM -0500, Tom Lendacky wrote:
+> @@ -4124,6 +4130,77 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
+>  	return 1; /* resume guest */
+>  }
+>  
+> +struct sev_apic_id_desc {
+> +	u32	num_entries;
 
-kernel test robot noticed the following build warnings:
+"count" - like in the spec. :-P
 
-[auto build test WARNING on 2d5404caa8c7bb5c4e0435f94b28834ae5456623]
+> +	u32	apic_ids[];
+> +};
+> +
+> +static void sev_get_apic_ids(struct vcpu_svm *svm)
+> +{
+> +	struct ghcb *ghcb = svm->sev_es.ghcb;
+> +	struct kvm_vcpu *vcpu = &svm->vcpu, *loop_vcpu;
+> +	struct kvm *kvm = vcpu->kvm;
+> +	unsigned int id_desc_size;
+> +	struct sev_apic_id_desc *desc;
+> +	kvm_pfn_t pfn;
+> +	gpa_t gpa;
+> +	u64 pages;
+> +	unsigned long i;
+> +	int n;
+> +
+> +	pages = vcpu->arch.regs[VCPU_REGS_RAX];
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-clock-spacemit-Add-clock-controllers-of-Spacemit-K1-SoC/20241128-101248
-base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
-patch link:    https://lore.kernel.org/r/20241126143125.9980-7-heylenay%404d2.org
-patch subject: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1 SoC
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241128/202411282305.iJ9x0lmj-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241128/202411282305.iJ9x0lmj-lkp@intel.com/reproduce)
+Probably should be "num_pages" and a comment should explain what it is:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411282305.iJ9x0lmj-lkp@intel.com/
+"State to Hypervisor: is the
+number of guest contiguous pages
+provided to hold the list of APIC
+IDs"
 
-All warnings (new ones prefixed by >>):
+Makes it much easier to follow the code.
 
-   drivers/clk/spacemit/ccu_pll.c: In function 'ccu_pll_set_rate':
->> drivers/clk/spacemit/ccu_pll.c:128:23: warning: variable 'old_rate' set but not used [-Wunused-but-set-variable]
-     128 |         unsigned long old_rate;
-         |                       ^~~~~~~~
---
-   drivers/clk/spacemit/ccu_mix.c: In function 'ccu_mix_set_rate':
->> drivers/clk/spacemit/ccu_mix.c:180:23: warning: variable 'best_rate' set but not used [-Wunused-but-set-variable]
-     180 |         unsigned long best_rate = 0;
-         |                       ^~~~~~~~~
---
-   drivers/clk/spacemit/ccu_ddn.c: In function 'clk_ddn_set_rate':
->> drivers/clk/spacemit/ccu_ddn.c:115:23: warning: variable 'prev_rate' set but not used [-Wunused-but-set-variable]
-     115 |         unsigned long prev_rate, rate = 0;
-         |                       ^~~~~~~~~
+> +	/* Each APIC ID is 32-bits in size, so make sure there is room */
+> +	n = atomic_read(&kvm->online_vcpus);
+> +	/*TODO: is this possible? */
+> +	if (n < 0)
+> +		return;
 
+It doesn't look like it but if you wanna be real paranoid you can slap
+a WARN_ONCE() here or so to scream loudly.
 
-vim +/old_rate +128 drivers/clk/spacemit/ccu_pll.c
+> +	id_desc_size = sizeof(*desc);
+> +	id_desc_size += n * sizeof(desc->apic_ids[0]);
+> +	if (id_desc_size > (pages * PAGE_SIZE)) {
+> +		vcpu->arch.regs[VCPU_REGS_RAX] = PFN_UP(id_desc_size);
+> +		return;
+> +	}
+> +
+> +	gpa = svm->vmcb->control.exit_info_1;
+> +
+> +	ghcb_set_sw_exit_info_1(ghcb, 2);
+> +	ghcb_set_sw_exit_info_2(ghcb, 5);
 
-   115	
-   116	/*
-   117	 * pll rate change requires sequence:
-   118	 * clock off -> change rate setting -> clock on
-   119	 * This function doesn't really change rate, but cache the config
-   120	 */
-   121	static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-   122				       unsigned long parent_rate)
-   123	{
-   124		struct ccu_pll *p = hw_to_ccu_pll(hw);
-   125		struct ccu_common *common = &p->common;
-   126		struct ccu_pll_config *params = &p->pll;
-   127		struct ccu_pll_rate_tbl *entry;
- > 128		unsigned long old_rate;
-   129		bool found = false;
-   130		u32 mask, val;
-   131		int i;
-   132	
-   133		if (ccu_pll_is_enabled(hw)) {
-   134			pr_err("%s %s is enabled, ignore the setrate!\n",
-   135			       __func__, __clk_get_name(hw->clk));
-   136			return 0;
-   137		}
-   138	
-   139		old_rate = __get_vco_freq(hw);
-   140	
-   141		for (i = 0; i < params->tbl_size; i++) {
-   142			if (rate == params->rate_tbl[i].rate) {
-   143				found = true;
-   144				entry = &params->rate_tbl[i];
-   145				break;
-   146			}
-   147		}
-   148		WARN_ON_ONCE(!found);
-   149	
-   150		mask = PLL_SWCR1_REG5_MASK | PLL_SWCR1_REG6_MASK;
-   151		mask |= PLL_SWCR1_REG7_MASK | PLL_SWCR1_REG8_MASK;
-   152		val |= entry->reg5 << PLL_SWCR1_REG5_OFF;
-   153		val |= entry->reg6 << PLL_SWCR1_REG6_OFF;
-   154		val |= entry->reg7 << PLL_SWCR1_REG7_OFF;
-   155		val |= entry->reg8 << PLL_SWCR1_REG8_OFF;
-   156		ccu_update(swcr1, common, mask, val);
-   157	
-   158		mask = PLL_SWCR3_DIV_INT_MASK | PLL_SWCR3_DIV_FRC_MASK;
-   159		val = entry->div_int << PLL_SWCR3_DIV_INT_OFF;
-   160		val |= entry->div_frac << PLL_SWCR3_DIV_FRC_OFF;
-   161		ccu_update(swcr3, common, mask, val);
-   162	
-   163		return 0;
-   164	}
-   165	
+Uuh, more magic numbers. I guess we need this:
+
+https://lore.kernel.org/r/20241113204425.889854-1-huibo.wang@amd.com
+
+and more.
+
+And can we write those only once at the end of the function?
+
+> +	if (!page_address_valid(vcpu, gpa))
+> +		return;
+> +
+> +	pfn = gfn_to_pfn(kvm, gpa_to_gfn(gpa));
+
+Looking at the tree, that gfn_to_pfn() thing is gone now and we're supposed to
+it this way.  Not tested ofc:
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 5af227ba15a3..47e1f72a574d 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -4134,7 +4134,7 @@ static void sev_get_apic_ids(struct vcpu_svm *svm)
+ 	struct kvm *kvm = vcpu->kvm;
+ 	unsigned int id_desc_size;
+ 	struct sev_apic_id_desc *desc;
+-	kvm_pfn_t pfn;
++	struct page *page;
+ 	gpa_t gpa;
+ 	u64 pages;
+ 	unsigned long i;
+@@ -4163,8 +4163,8 @@ static void sev_get_apic_ids(struct vcpu_svm *svm)
+ 	if (!page_address_valid(vcpu, gpa))
+ 		return;
+ 
+-	pfn = gfn_to_pfn(kvm, gpa_to_gfn(gpa));
+-	if (is_error_noslot_pfn(pfn))
++	page = gfn_to_page(kvm, gpa_to_gfn(gpa));
++	if (!page)
+ 		return;
+ 
+ 	if (!pages)
+
+> +	if (is_error_noslot_pfn(pfn))
+> +		return;
+> +
+> +	if (!pages)
+> +		return;
+
+That test needs to go right under the assignment of "pages".
+
+> +	/* Allocate a buffer to hold the APIC IDs */
+> +	desc = kvzalloc(id_desc_size, GFP_KERNEL_ACCOUNT);
+> +	if (!desc)
+> +		return;
+> +
+> +	desc->num_entries = n;
+> +	kvm_for_each_vcpu(i, loop_vcpu, kvm) {
+> +		/*TODO: is this possible? */
+
+Well:
+
+#define kvm_for_each_vcpu(idx, vcpup, kvm)                 \
+        xa_for_each_range(&kvm->vcpu_array, idx, vcpup, 0, \
+                          (atomic_read(&kvm->online_vcpus) - 1))
+			   ^^^^^^^^^^^^^^
+
+but, what's stopping kvm_vm_ioctl_create_vcpu() from incrementing it?
+
+I'm guessing this would happen when you start the guest only but I haz no
+idea.
+
+> +		if (i > n)
+> +			break;
+> +
+> +		desc->apic_ids[i] = loop_vcpu->vcpu_id;
+> +	}
+> +
+> +	if (!kvm_write_guest(kvm, gpa, desc, id_desc_size)) {
+> +		/* IDs were successfully written */
+> +		ghcb_set_sw_exit_info_1(ghcb, 0);
+> +		ghcb_set_sw_exit_info_2(ghcb, 0);
+> +	}
+> +
+> +	kvfree(desc);
+> +}
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
