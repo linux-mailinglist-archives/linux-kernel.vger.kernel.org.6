@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-424488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B469DB4F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:45:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0A89DB4F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:44:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 846FAB22D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:45:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665A41678C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D70155C83;
-	Thu, 28 Nov 2024 09:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DD61922FA;
+	Thu, 28 Nov 2024 09:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OL/kk3bE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gTFkEPMQ"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6088C156238;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6092A156F55;
 	Thu, 28 Nov 2024 09:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732787048; cv=none; b=chXAzIPamQXM66ftemQiu5k77lbe1+jdJDbtueQjKM8ngVE7WLdOaec/6NHIjTya1PUxHVC/FHu249sgzj8FZeuq//79n+OOjPbXCfAmwsBP3s13xh2aL+qVZxgse/aFWDr3uiRHtD9NkWnSP/SEEa436JRDM5qPp/R0reJOB2A=
+	t=1732787048; cv=none; b=a4W2eB5FyuHZatsRlTXX5r93q7D0f/bKeEmZFinMsdiKQZxWh7YK7yq105ViGz+PU7aC8dNlRAw96NO8kU7OPbabrm5GJplfai6ngL84CrLhbda9H2tHdij+NCUeymdbnZ91NpVCDUKocoMfjWktUeR85tg5mAtylJ0DWbtkdHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732787048; c=relaxed/simple;
-	bh=M/3PKtxHqMIvdFSOZXdtEiqGXLTIimd/Hh+R4+U7VII=;
+	bh=QqoGUswWnCATEHYv3H6l0MFwT5RLbh6t4mujW8kXHsw=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=dQC4F25UreSRC4BZEBrRYSu92E/TpwW++mHVTyGLqf3aCaE3ML062Q3boI4ExmKBkWpWPp5KpJKnJCdx8CZtAO9FAIT0KOtvXkdsJP8OHZ2glnmECtjKDTbBa8KeTjcmAJ8Tlh39dsGJxW26kULYdkAnr0Vt+2DcxWgu0FPiJDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OL/kk3bE; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=mzttXnK2JCatfGDcv73dCmwspHCe/gg3g8fv5bsurFkI+9voyBjSpp3Vm19aj843e6WSHt0yaq7TBtEi4tD1P9Jw+/qTyDg0ZOUtI4cNKLHATuVEJ1KXBIVJBwIsX+JP096kWn5kRVDMiApU8k4wi1hxGk6GB2WL/45bqcJgxqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gTFkEPMQ; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=dZAsfjEPMsf/wnZlid+qdNdjIwAXxCpxPExkT+a73rI=; b=OL/kk3bEJvK2aB4JIwvgcYrqBZ
-	yjPHrjm8qJX6BYqnOg52VlwgJb2MOF4CRLSNxH1ppdYj8vw1iMH6uOCw4VY7Kxrv1Xf9NffC9hdon
-	3FqMJyYWGS8Ak1KqoKixJSAhAGvSbtJX/cKQdaf3GrgtT/5TSPhtZbmkVYYEM0T5iQ5zoFl11h7hh
-	lbG2yuoxAOTCIlBvMIhgymu7P9xw8E/Pgs6mKQszWjOGkC4XcIrTnZMbsSDOeCkahIl0yjT1gZPhF
-	kBxRuuFOkE3Pfffvx1AWYNyPsqM0DppBu8riX8ORqP3CkzN0m13WfSzkl2N+7+8UfqvKVgFjy50tO
-	U7XD/3fg==;
+	bh=FDckB11/j3OVAfIOhlTnymsn2RpaHfCKYThx7MpzQSQ=; b=gTFkEPMQ3LOpkRjIU3kXwsHG+J
+	/t6XIvFleqXxjnx3GbWbI8ttFinZXdN26R88TuPmgn/rzhcXEMzHJI/lge9Ag9Dme96jOIcK67z0x
+	Ai+ZyjtbC4jG7vXI/EB2d5dqWGSWCBQZkgdeYL9QJZCcZNIN3byvEQ6pqe9fi4r39Oc6o/ei8N0di
+	xjCvv3vSrNlUOjtzbUntPf2w1byj4UJGhQZ69+p5Qb3J6XA5ZKCS8d/82gjgWN2fAdIZbED8yaCW8
+	NdJPHyNXIuA65dyrzfmNeJ/KM8Bv3rbgHo6g34gdOLDUaCUnq8kobt5lPkndNCV4QpdyhyeyPfsWo
+	8FjrcZiA==;
 Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tGb47-00000002Tpu-0TbD;
+	id 1tGb47-00000002Tpt-0Rvh;
 	Thu, 28 Nov 2024 09:44:04 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 1923430114C; Thu, 28 Nov 2024 10:44:03 +0100 (CET)
-Message-ID: <20241128094311.584892071@infradead.org>
+	id 1CCA0301171; Thu, 28 Nov 2024 10:44:03 +0100 (CET)
+Message-ID: <20241128094311.688871544@infradead.org>
 User-Agent: quilt/0.66
-Date: Thu, 28 Nov 2024 10:38:58 +0100
+Date: Thu, 28 Nov 2024 10:38:59 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: jpoimboe@kernel.org
 Cc: chenhuacai@kernel.org,
@@ -57,7 +57,7 @@ Cc: chenhuacai@kernel.org,
  peterz@infradead.org,
  loongarch@lists.linux.dev,
  linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/16] objtool: Convert ANNOTATE_INTRA_FUNCTION_CALL to ANNOTATE
+Subject: [PATCH v2 08/16] objtool: Collapse annotate sequences
 References: <20241128093851.469225872@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,223 +67,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
+Reduce read_annotate() runs by collapsing subsequent runs into a
+single call.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/objtool.h             |   16 ++----
- include/linux/objtool_types.h       |    1 
- tools/include/linux/objtool_types.h |    1 
- tools/objtool/check.c               |   96 ++++++++++++++----------------------
- 4 files changed, 47 insertions(+), 67 deletions(-)
+ tools/objtool/check.c |   87 ++++++++++++++++++--------------------------------
+ 1 file changed, 32 insertions(+), 55 deletions(-)
 
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -68,16 +68,6 @@
- #else /* __ASSEMBLY__ */
- 
- /*
-- * This macro indicates that the following intra-function call is valid.
-- * Any non-annotated intra-function call will cause objtool to issue a warning.
-- */
--#define ANNOTATE_INTRA_FUNCTION_CALL				\
--	999:							\
--	.pushsection .discard.intra_function_calls;		\
--	.long 999b;						\
--	.popsection;
--
--/*
-  * In asm, there are two kinds of code: normal C-type callable functions and
-  * the rest.  The normal callable functions can be called by other code, and
-  * don't do anything unusual with the stack.  Such normal callable functions
-@@ -154,6 +144,12 @@
- 
- #define ANNOTATE_NOENDBR	ANNOTATE type=ANNOTYPE_NOENDBR
- 
-+/*
-+ * This macro indicates that the following intra-function call is valid.
-+ * Any non-annotated intra-function call will cause objtool to issue a warning.
-+ */
-+#define ANNOTATE_INTRA_FUNCTION_CALL ANNOTATE type=ANNOTYPE_INTRA_FUNCTION_CALL
-+
- #endif /* __ASSEMBLY__ */
- 
- #else /* !CONFIG_OBJTOOL */
---- a/include/linux/objtool_types.h
-+++ b/include/linux/objtool_types.h
-@@ -63,5 +63,6 @@ struct unwind_hint {
- #define ANNOTYPE_INSTR_END		4
- #define ANNOTYPE_UNRET_BEGIN		5
- #define ANNOTYPE_IGNORE_ALTS		6
-+#define ANNOTYPE_INTRA_FUNCTION_CALL	7
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/include/linux/objtool_types.h
-+++ b/tools/include/linux/objtool_types.h
-@@ -63,5 +63,6 @@ struct unwind_hint {
- #define ANNOTYPE_INSTR_END		4
- #define ANNOTYPE_UNRET_BEGIN		5
- #define ANNOTYPE_IGNORE_ALTS		6
-+#define ANNOTYPE_INTRA_FUNCTION_CALL	7
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -2339,7 +2339,8 @@ static int read_unwind_hints(struct objt
+@@ -2381,21 +2381,24 @@ static int read_annotate(struct objtool_
  	return 0;
  }
  
--static int read_annotate(struct objtool_file *file, int (*func)(int type, struct instruction *insn))
-+static int read_annotate(struct objtool_file *file,
-+			 int (*func)(struct objtool_file *file, int type, struct instruction *insn))
+-static int __annotate_ignore_alts(struct objtool_file *file, int type, struct instruction *insn)
++static int __annotate_early(struct objtool_file *file, int type, struct instruction *insn)
  {
- 	struct section *sec;
- 	struct instruction *insn;
-@@ -2372,7 +2373,7 @@ static int read_annotate(struct objtool_
- 			return -1;
- 		}
+-	if (type != ANNOTYPE_IGNORE_ALTS)
+-		return 0;
++	switch (type) {
++	case ANNOTYPE_IGNORE_ALTS:
++		insn->ignore_alts = true;
++		break;
  
--		ret = func(type, insn);
-+		ret = func(file, type, insn);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -2380,7 +2381,7 @@ static int read_annotate(struct objtool_
- 	return 0;
- }
- 
--static int __annotate_ignore_alts(int type, struct instruction *insn)
-+static int __annotate_ignore_alts(struct objtool_file *file, int type, struct instruction *insn)
- {
- 	if (type != ANNOTYPE_IGNORE_ALTS)
- 		return 0;
-@@ -2389,7 +2390,7 @@ static int __annotate_ignore_alts(int ty
- 	return 0;
- }
- 
--static int __annotate_noendbr(int type, struct instruction *insn)
-+static int __annotate_noendbr(struct objtool_file *file, int type, struct instruction *insn)
- {
- 	if (type != ANNOTYPE_NOENDBR)
- 		return 0;
-@@ -2398,7 +2399,37 @@ static int __annotate_noendbr(int type,
- 	return 0;
- }
- 
--static int __annotate_retpoline_safe(int type, struct instruction *insn)
-+static int __annotate_ifc(struct objtool_file *file, int type, struct instruction *insn)
-+{
-+	unsigned long dest_off;
-+
-+	if (type != ANNOTYPE_INTRA_FUNCTION_CALL)
-+		return 0;
-+
-+	if (insn->type != INSN_CALL) {
-+		WARN_INSN(insn, "intra_function_call not a direct call");
-+		return -1;
-+	}
-+
+-	insn->ignore_alts = true;
+-	return 0;
+-}
 +	/*
-+	 * Treat intra-function CALLs as JMPs, but with a stack_op.
-+	 * See add_call_destinations(), which strips stack_ops from
-+	 * normal CALLs.
++	 * Must be before read_unwind_hints() since that needs insn->noendbr.
 +	 */
-+	insn->type = INSN_JUMP_UNCONDITIONAL;
-+
-+	dest_off = arch_jump_destination(insn);
-+	insn->jump_dest = find_insn(file, insn->sec, dest_off);
-+	if (!insn->jump_dest) {
-+		WARN_INSN(insn, "can't find call dest at %s+0x%lx",
-+			  insn->sec->name, dest_off);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __annotate_retpoline_safe(struct objtool_file *file, int type, struct instruction *insn)
- {
- 	if (type != ANNOTYPE_RETPOLINE_SAFE)
- 		return 0;
-@@ -2415,7 +2446,7 @@ static int __annotate_retpoline_safe(int
- 	return 0;
- }
++	case ANNOTYPE_NOENDBR:
++		insn->noendbr = 1;
++		break;
  
--static int __annotate_instr(int type, struct instruction *insn)
-+static int __annotate_instr(struct objtool_file *file, int type, struct instruction *insn)
- {
- 	switch (type) {
- 	case ANNOTYPE_INSTR_BEGIN:
-@@ -2433,7 +2464,7 @@ static int __annotate_instr(int type, st
- 	return 0;
- }
- 
--static int __annotate_unret(int type, struct instruction *insn)
-+static int __annotate_unret(struct objtool_file *file, int type, struct instruction *insn)
- {
- 	if (type != ANNOTYPE_UNRET_BEGIN)
- 		return 0;
-@@ -2443,55 +2474,6 @@ static int __annotate_unret(int type, st
- 
- }
- 
--static int read_intra_function_calls(struct objtool_file *file)
+-static int __annotate_noendbr(struct objtool_file *file, int type, struct instruction *insn)
 -{
--	struct instruction *insn;
--	struct section *rsec;
--	struct reloc *reloc;
--
--	rsec = find_section_by_name(file->elf, ".rela.discard.intra_function_calls");
--	if (!rsec)
+-	if (type != ANNOTYPE_NOENDBR)
+-		return 0;
++	default:
++		break;
++	}
+ 
+-	insn->noendbr = 1;
+ 	return 0;
+ }
+ 
+@@ -2429,26 +2432,21 @@ static int __annotate_ifc(struct objtool
+ 	return 0;
+ }
+ 
+-static int __annotate_retpoline_safe(struct objtool_file *file, int type, struct instruction *insn)
++static int __annotate_late(struct objtool_file *file, int type, struct instruction *insn)
+ {
+-	if (type != ANNOTYPE_RETPOLINE_SAFE)
 -		return 0;
 -
--	for_each_reloc(rsec, reloc) {
--		unsigned long dest_off;
--
--		if (reloc->sym->type != STT_SECTION) {
--			WARN("unexpected relocation symbol type in %s",
--			     rsec->name);
--			return -1;
--		}
--
--		insn = find_insn(file, reloc->sym->sec, reloc_addend(reloc));
--		if (!insn) {
--			WARN("bad .discard.intra_function_call entry");
--			return -1;
--		}
--
--		if (insn->type != INSN_CALL) {
--			WARN_INSN(insn, "intra_function_call not a direct call");
--			return -1;
--		}
--
--		/*
--		 * Treat intra-function CALLs as JMPs, but with a stack_op.
--		 * See add_call_destinations(), which strips stack_ops from
--		 * normal CALLs.
--		 */
--		insn->type = INSN_JUMP_UNCONDITIONAL;
--
--		dest_off = arch_jump_destination(insn);
--		insn->jump_dest = find_insn(file, insn->sec, dest_off);
--		if (!insn->jump_dest) {
--			WARN_INSN(insn, "can't find call dest at %s+0x%lx",
--				  insn->sec->name, dest_off);
--			return -1;
--		}
+-	if (insn->type != INSN_JUMP_DYNAMIC &&
+-	    insn->type != INSN_CALL_DYNAMIC &&
+-	    insn->type != INSN_RETURN &&
+-	    insn->type != INSN_NOP) {
+-		WARN_INSN(insn, "retpoline_safe hint not an indirect jump/call/ret/nop");
+-		return -1;
 -	}
--
++	switch (type) {
++	case ANNOTYPE_RETPOLINE_SAFE:
++		if (insn->type != INSN_JUMP_DYNAMIC &&
++		    insn->type != INSN_CALL_DYNAMIC &&
++		    insn->type != INSN_RETURN &&
++		    insn->type != INSN_NOP) {
++			WARN_INSN(insn, "retpoline_safe hint not an indirect jump/call/ret/nop");
++			return -1;
++		}
+ 
+-	insn->retpoline_safe = true;
 -	return 0;
+-}
++		insn->retpoline_safe = true;
++		break;
+ 
+-static int __annotate_instr(struct objtool_file *file, int type, struct instruction *insn)
+-{
+-	switch (type) {
+ 	case ANNOTYPE_INSTR_BEGIN:
+ 		insn->instr++;
+ 		break;
+@@ -2457,6 +2455,10 @@ static int __annotate_instr(struct objto
+ 		insn->instr--;
+ 		break;
+ 
++	case ANNOTYPE_UNRET_BEGIN:
++		insn->unret = 1;
++		break;
++
+ 	default:
+ 		break;
+ 	}
+@@ -2464,16 +2466,6 @@ static int __annotate_instr(struct objto
+ 	return 0;
+ }
+ 
+-static int __annotate_unret(struct objtool_file *file, int type, struct instruction *insn)
+-{
+-	if (type != ANNOTYPE_UNRET_BEGIN)
+-		return 0;
+-
+-	insn->unret = 1;
+-	return 0;
+-
 -}
 -
  /*
   * Return true if name matches an instrumentation function, where calls to that
   * function from noinstr code can safely be removed, but compilers won't do so.
-@@ -2630,7 +2612,7 @@ static int decode_sections(struct objtoo
- 	 * Must be before add_call_destination(); it changes INSN_CALL to
- 	 * INSN_JUMP.
- 	 */
--	ret = read_intra_function_calls(file);
-+	ret = read_annotate(file, __annotate_ifc);
+@@ -2583,14 +2575,7 @@ static int decode_sections(struct objtoo
+ 	add_ignores(file);
+ 	add_uaccess_safe(file);
+ 
+-	ret = read_annotate(file, __annotate_ignore_alts);
+-	if (ret)
+-		return ret;
+-
+-	/*
+-	 * Must be before read_unwind_hints() since that needs insn->noendbr.
+-	 */
+-	ret = read_annotate(file, __annotate_noendbr);
++	ret = read_annotate(file, __annotate_early);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2636,15 +2621,7 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = read_annotate(file, __annotate_retpoline_safe);
+-	if (ret)
+-		return ret;
+-
+-	ret = read_annotate(file, __annotate_instr);
+-	if (ret)
+-		return ret;
+-
+-	ret = read_annotate(file, __annotate_unret);
++	ret = read_annotate(file, __annotate_late);
  	if (ret)
  		return ret;
  
