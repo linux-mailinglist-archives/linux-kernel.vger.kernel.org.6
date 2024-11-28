@@ -1,162 +1,106 @@
-Return-Path: <linux-kernel+bounces-425100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5685C9DBD72
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:14:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69949DBDDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F8282256
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:14:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72968B2216C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB581C2439;
-	Thu, 28 Nov 2024 22:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEDE1C727F;
+	Thu, 28 Nov 2024 23:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ko3nAyOX"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=petrovitsch.priv.at header.i=@petrovitsch.priv.at header.b="wTBYtbxu"
+Received: from esgaroth.petrovitsch.at (esgaroth.petrovitsch.at [78.47.184.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7AB1C1F21
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 22:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B0114D6ED;
+	Thu, 28 Nov 2024 23:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.184.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732832063; cv=none; b=u+j1kaiIYiKr+e+qP+Xrx/uF7asbFLPO2v/bzv23krRfnzcK4JbCWFdpJ3zwgz2Tg1HWa4DH66lL/HNbrXHB7CuHvjHtcA5s+V8z/htTA+7fyT6skhd51XhPkDOtFncfyxoD4ywUHyDE1lckeAMT/R911e4Jw4MkbErnQhFOAY8=
+	t=1732835146; cv=none; b=R0DPSAjQbn+FY0Wj75Xqy+Dm9ioRYBxHYoJIj+N4zCAVuETOSxmNUgkpiBHh4jjpqOQS6SGxCx6oqTiGkE7pNTBju1cLrzCf80WGrmrmfEzclwkzy4gf14aXHPO182dubjov5FOYDsuEQ8DplKs+IsMXD1JtC6vEsxlVwy9ri40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732832063; c=relaxed/simple;
-	bh=T+B6uY2PCmsr5JVdleJdruuzSZy1XAQH0ge6L90EYiA=;
+	s=arc-20240116; t=1732835146; c=relaxed/simple;
+	bh=KV1kTdPXXjLjR3CJMO+XBokWZbSlYJ+qrQpoPDLuBDg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PBF48RTW17rSSfklPy8Y/K+uyqviKauspW4TCcvk+XAnxSWIJMLlciicp2Uhy79sQkx+78X96E1l7bQl0eIzpjStazsYy77DTojzGxf/53Gq3FZv4/Ug7HtQz+LKB7V0PhqruWNV32OhLryRtLaRYz1G21bKi4neH1ZqUDDsJhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ko3nAyOX; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43497839b80so7918285e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:14:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732832059; x=1733436859; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y0Rj4yaKZcalBf4ESSHlGCvsOhLHa8EIvVLhVHMQcPg=;
-        b=Ko3nAyOXVjVzR7uJsVG0VOeY25P/9yehPV3i+SCO6MO4TOs1jtZG6RNOE3LXoHB1Rb
-         xW9E0RX8JJU/nr8WyrjfaP9kbR27RyBWsYqxcoaNxljCHN2zQJZgsjcafnt1Y+Cj9PfK
-         AUl+D8uOSqFBf2sTej2IWCL3w29q1nqCVSFRUwxF+v3wLBxyLBho1gXVA7zFWtVPRowd
-         owAzqGkyeEe7pRl3W0b6bLcpb9R+FOCH6z5e6bVJ/4aLZ+iRXyEokrqCXHOs4VNCPyEv
-         /xVBowwIVmnWVpDfgTn4o9xhtVBG7Td7+oFfuUu3rDBLrJqSmxH08gffg7qglWLAkWkl
-         g7DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732832059; x=1733436859;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0Rj4yaKZcalBf4ESSHlGCvsOhLHa8EIvVLhVHMQcPg=;
-        b=PIOtKPr235iTNXVN9eH98Ki2zbKEqaf0ELS95FXUZmzk0ZBqvZklUuwRBU3wz/W5iJ
-         T+tkB3lmdP2+ae3EVkhuik6we08+JJSajBR6d/2l0Qd8DfBSw8cAJ8pWLj0jb2lO4MeL
-         NSTTAWpz+pxHfYL/h0z2aOYneiweqVLQyVseF6ieId/1ZTCX7Or4siAv3cKeud2iEKLG
-         Vyp/ALZ7+Piy0FNV2Y67Wbik7c5ejFn2x8S89lcPHqcTnk4FoAjyt8D+Vt0TpJW2U8i4
-         6L4ObhzZ4qAkEH9b+yj30n0AjAczifzVAJfKv2fk+gpSZ3pYENK0h3AGUmHzI5Aam3Rm
-         QWug==
-X-Forwarded-Encrypted: i=1; AJvYcCWo8i5Zj0h6RGVvNQFiAPmU4YcjZ1Rf2qenR8q+bUQHGW4uFseP9DuftAEcGsIhDX+z3FKcjoeuFmqSUxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/WWlmKJf7E7tcsmy81Q43h33lqAl6UoaZhnCRWrPmBaQz+s9r
-	HcTUiFIZeevM0/vf+MQosF4ofpXrlCUHoHAQpgQMCAk4rSlT2c20A4zYVVCcCUQ=
-X-Gm-Gg: ASbGncvCcghLYpG2fOYzu6w9cBHj1fGxhaOifg6i85EDjeWid+F2g7t29vHWPBO0lf8
-	RzMrMec/BBgeaETV5dTFbeZ6vQfli2ogdx9Djx9Gukwl6dM+pU5piZNkvPEpTPICv2pmzMQ+qug
-	G7OxKv6RfhUWpqepfYIe2ba90vhqwjXKefvv0JKFAjLYS2vtL6s/AhBvzTErEH3ttVLz9WMiKx9
-	19d+NCLz+0Jc0Q9l6gJ1izRZzw2YJPVspbj/UIEn1CwQq3rVeGoViVuk0nobNY=
-X-Google-Smtp-Source: AGHT+IGnT9xFBXQMj7QQ/kDQaVFpEopOT+eRP/0MhIxrqJS/I60adGLIkx9okGz4Lo8nrGR6ze66lQ==
-X-Received: by 2002:a05:600c:b8b:b0:434:9e17:18e5 with SMTP id 5b1f17b1804b1-434a9d4f7famr92200835e9.0.1732832059495;
-        Thu, 28 Nov 2024 14:14:19 -0800 (PST)
-Received: from [192.168.0.31] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385dc169d79sm762757f8f.92.2024.11.28.14.14.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 14:14:19 -0800 (PST)
-Message-ID: <95ec73c9-da38-4888-9e00-4458b5a7661c@linaro.org>
-Date: Thu, 28 Nov 2024 22:14:16 +0000
+	 In-Reply-To:Content-Type; b=Kmj54WwAZ3NiA1Lw84mD2FqKXjcJxZC+xzZ/yrZJt0goGQ8G4EZ3/bpCl21NAGLrISk2IfdD21JJThwPaTs10/ZK+isBA3JivupcJqud0kPxPjnNqisJAorrxXzUp2t2hFJ17CCiEW2Dk/J2Yi4b84n5yLROesAMSHlceKRyAwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=petrovitsch.priv.at; spf=pass smtp.mailfrom=petrovitsch.priv.at; dkim=pass (1024-bit key) header.d=petrovitsch.priv.at header.i=@petrovitsch.priv.at header.b=wTBYtbxu; arc=none smtp.client-ip=78.47.184.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=petrovitsch.priv.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=petrovitsch.priv.at
+Received: from [172.16.0.14] (84-115-223-47.cable.dynamic.surfer.at [84.115.223.47])
+	(authenticated bits=0)
+	by esgaroth.petrovitsch.at (8.18.1/8.18.1) with ESMTPSA id 4ASMFXwZ2125882
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT);
+	Thu, 28 Nov 2024 23:15:34 +0100
+DKIM-Filter: OpenDKIM Filter v2.11.0 esgaroth.petrovitsch.at 4ASMFXwZ2125882
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=petrovitsch.priv.at;
+	s=default; t=1732832135;
+	bh=h2MqZpEynosisovvFZzTqVcgF9aHF8+XJH8KFujSEFo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=wTBYtbxugHUHw8M9oUBxafHEcRrVl6DmC+bwh5NDRQXDAxZ99fGbIneDl8eRkAw5/
+	 MYnc0IS1lUBQuUlLN7Q5RxoeFQOrqNDmHllVgLT/+/ObTZTYz+bAg4GySsR+zCIKPj
+	 s1+ARFaVrouPt1VfQ40OmBIW0d+cbsIIk/r1FGjc=
+Message-ID: <4db72181-00f4-467e-9b18-f7b98bc103a3@petrovitsch.priv.at>
+Date: Thu, 28 Nov 2024 23:15:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] media: venus: Add support for static video
- encoder/decoder declarations
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: quic_renjiang@quicinc.com, quic_vnagar@quicinc.com,
- quic_dikshita@quicinc.com, konradybcio@kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>, devicetree@vger.kernel.org
-References: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-0-99c16f266b46@linaro.org>
- <20241127-media-staging-24-11-25-rb3-hw-compat-string-v1-1-99c16f266b46@linaro.org>
- <7d344377-f1cf-400e-a9c4-442123dcf4ab@oss.qualcomm.com>
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
+ filesystem.
+To: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
+Cc: Florian Westphal <fw@strlen.de>, kadlec@netfilter.org, davem@davemloft.net,
+        dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, horms@kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
+References: <20241111163634.1022-1-egyszeregy@freemail.hu>
+ <20241111165606.GA21253@breakpoint.cc> <ZzJORY4eWl4xEiMG@calendula>
+ <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
+From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <7d344377-f1cf-400e-a9c4-442123dcf4ab@oss.qualcomm.com>
+BIMI-Selector: v=BIMI1; s=default
+In-Reply-To: <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-DCC--Metrics: esgaroth.petrovitsch.priv.at 1102; Body=14 Fuz1=14 Fuz2=14
+X-Virus-Scanned: clamav-milter 1.0.7 at smtp.tuxoid.at
+X-Virus-Status: Clean
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+	*      envelope-from domain
+	* -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from author's
+	*       domain
+	* -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+	*  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+	*      valid
+	* -1.9 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+	*      [score: 0.0000]
 
-On 28/11/2024 20:02, Konrad Dybcio wrote:
-> On 27.11.2024 2:34 AM, Bryan O'Donoghue wrote:
->> Add resource structure data and probe() logic to support static
->> declarations of encoder and decoder.
->>
->> Right now we rely on video encoder/decoder selection happening in the dtb
->> but, this goes against the remit of device tree which is supposed to
->> describe hardware, not select functional logic in Linux drivers.
->>
->> Provide two strings in the venus resource structure enc_nodename and
->> dec_nodename.
->>
->> When set the venus driver will create an OF entry in-memory consistent
->> with:
->>
->> dec_nodename {
->>      compat = "video-decoder";
->> };
->>
->> and/or
->>
->> enc_nodename {
->>      compat = "video-encoder";
->> };
->>
->> This will allow us to reuse the existing driver scheme of relying on compat
->> names maintaining compatibility with old dtb files.
->>
->> dec_nodename can be "video-decoder" or "video0"
->> enc_nodename can be "video-encoder" or "video1"
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
-> 
-> Bryan,
-> 
-> I'm still not sure if keeping the logic behind this makes sense at all.
-> 
-> Could we not just call platform_device_register_data() with a static
-> configuration of 1 core being enc and the other dec?
+Hi all!
 
-That's another way to do this. One reason I wrote this series to 
-continue to rely on the existing compat= method though is it stuck in my 
-mind that we have some dependency ordering logic in at the moment.
+On 11.11.24 21:28, Szőke Benjamin wrote:
+[...]
+> What is your detailed plans to solve it? 
 
-For example:
+Use a sane filesystem which is thus case-sensitive - case-insensitive
+filesystems are broken by design (e.g. think of upper case/lower case
+situation for non-ASCII-7bit clean languages like German which has
+lower case ä,ö,ü and the upper case equivalents Ä,Ö,Ü including different
+encodings - no you don't want more than 1 encoding on a computer but then
+reality kicks in - and that in a filesystem driver in a kernel ....).
 
-commit 08b1cf474b7f72750adebe0f0a35f8e9a3eb75f6
-Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date:   Fri Feb 5 19:11:49 2021 +0100
-
-And the other reason is the prototype platform_device_register_* looks 
-like more surgery and ultimately more validation / potential for bugs.
-
-Since this driver is supposed to be moving to maintenance mode, I didn't 
-want to do a more major rewrite of the probe() and remove() paths.
-
----
-bod
+Kind regards,
+	Bernd
+-- 
+Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
+      There is NO CLOUD, just other people's computers. - FSFE
+                      LUGA : http://www.luga.at
 
