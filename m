@@ -1,107 +1,124 @@
-Return-Path: <linux-kernel+bounces-424475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B133D9DB4D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:31:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925C41674FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:31:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A4155C8A;
-	Thu, 28 Nov 2024 09:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SLTyLWuV"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5861A9DB4D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:32:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF94C2FD
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732786287; cv=none; b=rkpouUqJfNa0NbMZhMT3lnQ1iQhsluoy/uk1EoNiOfNCDMuelwczWaTfyvMZoQ96fHDsNUytQBRqZwmrSBOojv22QJIOzp9klLn3hAN7tFNoD2MR7PI7iPfFWG3AMFHSDBlukRvg44UCGwi5yrHBE+qQBYKkt53Yk/ugCsa1hdk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732786287; c=relaxed/simple;
-	bh=XYJmj2ZBJEqyCpXhcCfMly0PL5UW68XxSuLKkFe7GrQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Nyy/nOGPomk+Dm2t2KcnnlzOR9GmSCCMFf0tg4cfu/kwb2rIFJxYyM4al6bhyf0HPxwqqXGa5PfkQiGUa/M0+gW+rYc9+dx6V0JFT4kgbCGoEB0wmObn27Flk+kSjfuNrm2pTgdabjvuac0z/SYqcVCBV04274PMCZmvkSHfNQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SLTyLWuV; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 67AA440E021C;
-	Thu, 28 Nov 2024 09:31:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id z5oQadumwx87; Thu, 28 Nov 2024 09:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732786269; bh=s9Nyj0EEp8a7Jv8U0vwQ4By12yuoNaRSaB/Otd3NiXU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=SLTyLWuVVaTXXyr/hkeqcPpA3MYe0167t9sFY03Iq9TvKa8c0sjXXDSoj50H68o43
-	 SONz2t8FJowRjQAUkjCq+c2JWr3gN/ejxlOtNBZMQAC/KkKApzv/jeu8UO0aGUvMZc
-	 wSkfRs+303rkL6p6N1N0hUNAJaGf3J0KV2DUJQwIWBKq/cprzVYj4sYACryR2VheQp
-	 iuH9ceDPZ7e5hdOq8oQA6FBON+8aWrEghcAm1grhGP//2EGh2g/i0wTFVlmRm75mFJ
-	 7a/3etDCznznrBiyNiy30P9JjmeB8M00jy82CnKeE0lEm4SlYfCoLWhhiLtkLdt+ud
-	 /cTsDcRC5Ub3KCv9bHIaxuJawEShVuHyOfZFBdFmqK5sHAvx+BBumFxVzIkVSqERBV
-	 DviOxqOPJo+g/8DVvbxFEFJku9i5UwDMPJ/IQHZcibE1xCQx+Mi+tsn7ERjZMh9XIu
-	 AC83D1zpglrVlJXN1+UQw2eIqx4kf6Phc+hpIbksRTP8ky54jnYtidbDJN0q3MjJUC
-	 H3uq8PtdrFAuYfFEE3kFLUSVaXBHi5f4iYKFxZhgVsIl5LBN5gBWgBpOTXIx+FO4pE
-	 b2UhFxhL1T7wRB8T75mzdRq0DPZvSQlTFdBaKkAoSVn4/vDPCmgP2nKWgfQ2iQAy1H
-	 z46LsMYxmJwHqIhDoajGKISE=
-Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:207:9418:a901:6eac:9c56:4a8d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E880BB23409
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:32:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659F8157493;
+	Thu, 28 Nov 2024 09:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MbFKEriz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 13CCD40E01D6;
-	Thu, 28 Nov 2024 09:30:50 +0000 (UTC)
-Date: Thu, 28 Nov 2024 10:30:46 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, x86@kernel.org
-CC: Andreas Herrmann <aherrmann@suse.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Chen Yu <yu.c.chen@intel.com>,
- Len Brown <len.brown@intel.com>, Radu Rendec <rrendec@redhat.com>,
- Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>, Huang Ying <ying.huang@intel.com>,
- Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/2] x86/cacheinfo: Set the number of leaves per CPU
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
-References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
-Message-ID: <1C6C4601-9478-4020-B4A7-47017E9A57F2@alien8.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160DD61FDF;
+	Thu, 28 Nov 2024 09:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732786319; cv=none; b=fJeLCfEWXugKnXY0QkrOdnq82aVDeDEZjxvzC8Yktff5CMPynROeOQ0sPycGW4dXK7xLX72YjOVKL59twmWKOtOZEiP3v4VRZKsWiCBx5w+yojS5QBXxU6gWzR0TsK137g5wGqL5rzki+uVGuu5Y78XJZkHRoI4UfPtPK5piBUU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732786319; c=relaxed/simple;
+	bh=m4F+PXpK+WzT9jj1TvEqLh9lHUj4BfRz1YLAFlR68tM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNP8jaZgYVUr7VUWa2/JcVuGLxL00N6VKB7VY/MH4xTwsHxpcAEmFFV3K2Im+XqgQFFAFhtncGYXC8sZbbVWsTgfC1cHUbbjaYZvBf8+6iLwEuDbKZNy7cTW1HA0WQF99OTvpiBflmBwBnMVKvoD/ARtsrkKNK/qWTBPDsBZbYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MbFKEriz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7043359D;
+	Thu, 28 Nov 2024 10:31:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732786290;
+	bh=m4F+PXpK+WzT9jj1TvEqLh9lHUj4BfRz1YLAFlR68tM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MbFKErizLbIcJxW4ECYlQjf86hwh95M9J33xEcCyQWHCEz4GXEEqMBYmPna/Ckrp7
+	 Ijpw8YgEitjjILTGs7xE4Dl/9y3kME0aL5740PIhbQnOXlz68MdhTZRNcGFjX+csRZ
+	 FSt/pdqxfyCIZNUueC5ekC+qAWbnK6gUnn8Apm0s=
+Date: Thu, 28 Nov 2024 11:31:43 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241128093143.GB13800@pendragon.ideasonboard.com>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+ <20241126151930.GA5493@pendragon.ideasonboard.com>
+ <e0535e20-6e97-437f-8565-53fd257c7618@xs4all.nl>
+ <20241128091959.7ddeec08@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241128091959.7ddeec08@foz.lan>
 
-On November 28, 2024 1:22:45 AM GMT+01:00, Ricardo Neri <ricardo=2Eneri-cal=
-deron@linux=2Eintel=2Ecom> wrote:
->Changes since v7:
-> * Merged patches 2/3 into one=2E (Borislav)
-> * Dropped wrapper functions for ci_cpu_cacheinfo=2E (Borislav)
-> * Check for zero cache leaves in init_cache_level() for x86=2E
->   (Borislav)
-> * Removed an ugly line break=2E (Borislav)
->
->Changes since v6:
->  * Merged patches 1 and 2 into one=2E (Borislav)
->  * Fixed an formatting issue in allocate_cache_info()=2E (Borislav)
+On Thu, Nov 28, 2024 at 09:19:59AM +0100, Mauro Carvalho Chehab wrote:
+> Em Wed, 27 Nov 2024 12:59:58 +0100 Hans Verkuil escreveu:
+> 
+> > > I find the GPG signature requirement to be borderline ridiculous. The
+> > > first message you're giving to committers is that you distrust them so
+> > > much that you want them to sign an agreement with their blood
+> > > (figuratively speaking). I don't think it's a very good approach to
+> > > community building, nor does it bring any advantage to anyone.  
+> > 
+> > I kind of agree with Laurent here. Is the media-committers mailinglist
+> > publicly archived somewhere? I think it is sufficient if this is posted
+> > to a publicly archived mailinglist. That could be linux-media, I would be
+> > fine with that. But media-committers would be more appropriate, but only
+> > if it is archived somewhere.
+> > 
+> > If we want a GPG key, what would we do with it anyway?
+> 
+> Every time I send pull requests upstream, I sign the PR tag with my GPG 
+> key:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git/tag/?h=media/v6.13-2
+> 
+> This is a requirement from the top maintainer. Requiring it is pretty much 
+> standard at the Kernel community, and wasn't anything similar "to sign with 
+> my blood" (using your words).
+> 
+> It is not just a random GPG key: it is a trusted key as stated at this patch:
+> 
+> 	"a PGP key cross signed by other Kernel and media developers"
+> 	 ...
+> 	 For more details about PGP sign, please read 
+> 	 Documentation/process/maintainer-pgp-guide.rst and
+> 	 :ref:`kernel_org_trust_repository`."
+> 
+> If you see the last link, we're talking about a GPG signature inside
+> kernel.org web of trust.
+> 
+> Heh, all PRs we receive are signed with GPG keys that we trust, including
+> PRs from you. We need to keep doing it with the new workflow.
+> 
+> That reminds that there are still a gap there: the e-mail from the 
+> newcoming committer shall contain something like:
+> 
+> 	"I'll be using this username to commit patches at media-committers:
+> 	 https://gitlab.freedesktop.org/<username>"
+> 
+> I'll add it to the next version.
 
-I don't think you should keep the tags after those changes=2E=2E=2E
+I don't mind much either way, but as we're using gitlab for the shared
+tree, we could also do the same as drm-misc and handle this through a
+gitlab issue instead of an e-mail. That advantage is that we'll ensure
+the person has a gitlab account.
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+-- 
+Regards,
+
+Laurent Pinchart
 
