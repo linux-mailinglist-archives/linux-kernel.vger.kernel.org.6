@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-424867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB149DBA79
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:26:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32C09DBA7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:26:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D6E281BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:26:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A1D160F6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB8D1BD9D5;
-	Thu, 28 Nov 2024 15:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D001BD4F1;
+	Thu, 28 Nov 2024 15:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmWY0Zt+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXfCgYiM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9AF1BD9C1;
-	Thu, 28 Nov 2024 15:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A1F1B6CE1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732807565; cv=none; b=VDaakH4LX3n115xLOssb4iPVIXr9wt48GKuYpImnnY5d/8f6qI8U5ns1DJMfH6KvETRUFoktwLI/wfKitz/v4XTpF4KQF8GPIdsnY9j8S+NGbbFd2ima1DqNM9irReWZzHa2gNDuepwykoMbVloWAZSCi4g4CoUeVBBAw9fGosQ=
+	t=1732807563; cv=none; b=VNbIQuTh+WCNrohbKnGOk3H9TkP96wDrCJ7xLpfqJYUnfWAXCBHo9mZFSyZABPAIlhnV/+zMDk8NSbeiOivB1KMW1OwanoiBUYOhUHpYEM//fywT+xXT9BviVc9IscfINDQ5BXTncUo7mBO0UEdTAgyKOlx1VH0dx16EbQd8NFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732807565; c=relaxed/simple;
-	bh=g810kAl+76OQ/4YxppQXydRnBCHRq1jvESwrtTuhF6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IshvZHiUqBQjMFYHLEbmk08iJW7fqnwnBKja3zQhuvC0S9qJmgAAxe+rvJE7iXqDxewYj7omEZosgKNB1dlf8cGR56o80cXUlFtDgel1YpKPfZf6gXVbPWBXpXzmuLQKnbxkEuJVNUAT7tH/WDKEfphWPPmndzkvEV26VfogIDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmWY0Zt+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE71C4CED3;
-	Thu, 28 Nov 2024 15:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732807564;
-	bh=g810kAl+76OQ/4YxppQXydRnBCHRq1jvESwrtTuhF6I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hmWY0Zt+AHRBnOkCBzBNQSAP8i5XhfJvJWqTn6KhkHhw+W852QT1POwbL516InTRa
-	 x4p5ROfbEWlyCPd6qpg4ax9VeYkd8/PRudEFKB+eWrbFdrqLBTBJ4aGI0bFgLWtR1b
-	 sL9NZ50nkWF0q7+Ngk1XsUfjHNqPcap73qcINJp/1hGyWH8HDJWOQM4TSYUn+aXRSh
-	 VUGpRnZZepYLzn8Vp7UpxG1J6iRiKOGGIerJN9iYuq8KOWAIyx6uqx/CjKjQ1M48aI
-	 CwxPvee9vYyBbq54QwAWRk9FQP0hpB8FfJS0i9hcUxNtN0zh+jLZ/Y0aNtExqWQoTy
-	 dP4RgqGCTr5Vg==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH] arm64: dts: fvp: Update bus-range property
-Date: Thu, 28 Nov 2024 20:55:43 +0530
-Message-ID: <20241128152543.1821878-1-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732807563; c=relaxed/simple;
+	bh=MXd4l6+iQmQnfD3BLnMGFSdnuuNa/etFN+OYpi5oBN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mwz5Q74rGO2xN21appkuu2PmPI+9RsqYwMfDLj/VugJqFqOdloQIQoAyR8GkdF81L64HMDE1ce/hLJIQf0IHlcPpnPZr6sK4UDZO7cCMjPRCjij2NWOCsYSJh2WMo0cz4y3+pjEKa1+WGNXO2tRrP2I7LfbSgK9slYOk3AC7toE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bXfCgYiM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732807559;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MXd4l6+iQmQnfD3BLnMGFSdnuuNa/etFN+OYpi5oBN0=;
+	b=bXfCgYiMLKRSXxyWkWvDRfx6gFnf5RYEjnrUVQSPdzyqle9HHaJjK9qz3JG3W+4fPqlUCp
+	Mh5v1+UDISOJvgz6leK3QPx64x/sGqxKndR1SNRxvlUerpE72Gi2aifBfsvZrukXn+17UJ
+	pw7sTe+abW0+CsVZgTZapf96P2IdOl4=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-264-mG_pAbyhNdiqWOctp5gdFQ-1; Thu, 28 Nov 2024 10:25:57 -0500
+X-MC-Unique: mG_pAbyhNdiqWOctp5gdFQ-1
+X-Mimecast-MFC-AGG-ID: mG_pAbyhNdiqWOctp5gdFQ
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ffb0921706so7940511fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:25:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732807556; x=1733412356;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MXd4l6+iQmQnfD3BLnMGFSdnuuNa/etFN+OYpi5oBN0=;
+        b=lhBJ6DvgojLI5382WJJ6j/ZJeQSI2zYzvqt6jHXqXJCcSxonByEaDjsbcqrOa8dtd7
+         avmiVbpTcu9RmtVXFj/B5wdmNHpg/5U2h1K0BoQA1E/WGw+KmCaLFyb7OZe0SgkBJaqS
+         FVy0ICIWrBBLj6I6o77stHERMJiW9cslgTpI4dWZKtpfs2Cc0djFaxpHF8OCIEJmslWs
+         dOyzqrXKCdybCW88I8Za8Rt6uLREz78YcVWGndi6u3Wee2smBZ9YLBt66l5OcBhZqSyM
+         jhMVVlFojyXO3xYjct69A1+MTMWG9HmYm4Zyvcryx4AfzLwl+JYMSz4Vt0nXQxzAuG6t
+         xm3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMRUQgeKjs1hl2++cGK/+iqMrVW4wGFcZB8F0/EXQxML4i1raPbw+4T1lB2hA+jqY+KJfpd1QNRwX2WqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLHEMnx0DhDlhmcC6Sx+uwouPQoa3knIAqaoQEyqoiD1tji2Hh
+	nWG/7jLHXiF3wSzv7LXraw3/jqlId75MW7OKaRegfulQ6iaK480REYeFjCdybwep7g5kh89Rig9
+	Men1C5JhipK+WuRKPZYtcn4Gz11HukejvclV392ypQcN4qsVhdz3OObQaK5AY8B3VFKm5cTmAcg
+	W8R55+StM8RRkORASdyo6fBl4FXizo9IHFQMF6
+X-Gm-Gg: ASbGnctPsAJ9oxnWwN7dTEasCaN5CYb12PQQCpXa285DaIyXvZy5FivrStzIffeiet6
+	LeZycOpoe3Yo6Q17Ww/Epf13ZOlCiO6g=
+X-Received: by 2002:a05:6512:32c9:b0:53d:eef7:a017 with SMTP id 2adb3069b0e04-53df00cf65emr5725104e87.15.1732807556117;
+        Thu, 28 Nov 2024 07:25:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGUDRgJvQYM+JdFcJ++bS15Z0GZU2YBr+5bjatsFWQinG+yirtbrqloo2N19HWJZBdciblzJX3Lg8Gg/26Guhk=
+X-Received: by 2002:a05:6512:32c9:b0:53d:eef7:a017 with SMTP id
+ 2adb3069b0e04-53df00cf65emr5725087e87.15.1732807555727; Thu, 28 Nov 2024
+ 07:25:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org> <20241115102554.29232d34@gandalf.local.home>
+ <cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org> <20241115145502.631c9a2c@gandalf.local.home>
+ <2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+In-Reply-To: <2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Thu, 28 Nov 2024 16:25:45 +0100
+Message-ID: <CAP4=nvTjdZRfWtpvM+gThPv6SghW96i9YykA88vAFH5x39GZqw@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These days, the Fixed Virtual Platforms(FVP) Base RevC model supports
-more PCI devices. Update the max bus number so that Linux can enumerate
-them correctly. Without this, the kernel throws the below error while
-booting with the default hierarchy
+po 18. 11. 2024 v 11:13 odes=C3=ADlatel Jean-Michel Hautbois
+<jeanmichel.hautbois@yoseli.org> napsal:
+>
+> I had to modify the source code a bit, as it does not compile with my
+> uclibc toolchain:
+> ...
 
-pci_bus 0000:01: busn_res: [bus 01] end is updated to 01
-pci_bus 0000:02: busn_res: can not insert [bus 02-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
-pci_bus 0000:02: busn_res: [bus 02-01] end is updated to 02
-pci_bus 0000:02: busn_res: can not insert [bus 02] under [bus 00-01] (conflicts with (null) [bus 00-01])
-pci_bus 0000:03: busn_res: can not insert [bus 03-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
-pci_bus 0000:03: busn_res: [bus 03-01] end is updated to 03
-pci_bus 0000:03: busn_res: can not insert [bus 03] under [bus 00-01] (conflicts with (null) [bus 00-01])
-pci_bus 0000:04: busn_res: can not insert [bus 04-01] under [bus 00-01] (conflicts with (null) [bus 00-01])
-pci_bus 0000:04: busn_res: [bus 04-01] end is updated to 04
-pci_bus 0000:04: busn_res: can not insert [bus 04] under [bus 00-01] (conflicts with (null) [bus 00-01])
-pci 0000:00:01.0: BAR 14: assigned [mem 0x50000000-0x500fffff]
+glibc added a gettid() wrapper with version 2.30; earlier glibc and
+uclibc do not have it. That can be fixed by conditionally including
+the inline function if on glibc lower than 2.30 or another libc; for
+reference on how to detect that, see how kernel self tests do it [1].
 
-The change is using 0xff as max bus nr because the ECAM window is 256MB in size.
+As of the FOPTS changes: are those necessary for rtla to build, or
+were you just using them for easier debugging? AFAIK rtla shouldn't
+depend on unwind tables or stack protection for functionality.
 
-pci-host-generic 40000000.pci: ECAM at [mem 0x40000000-0x4fffffff] for [bus 00-01]
+>
+> But it is not enough, as executing rtla fails with a segfault.
+> I can dump a core, but I could not manage to build gdb for my board so I
+> can't debug it (I don't know how to debug a coredump without gdb !).
+>
+> JM
+>
 
-lspci output with and without the change
-without fix:
-00:00.0 Host bridge: ARM Device 00ba (rev 01)
-00:01.0 PCI bridge: ARM Device 0def
-00:02.0 PCI bridge: ARM Device 0def
-00:03.0 PCI bridge: ARM Device 0def
-00:04.0 PCI bridge: ARM Device 0def
-00:1e.0 Unassigned class [ff00]: ARM Device ff80
-00:1e.1 Unassigned class [ff00]: ARM Device ff80
-00:1f.0 SATA controller: Device 0abc:aced (rev 01)
-01:00.0 SATA controller: Device 0abc:aced (rev 01)
+I have seen a similar libtraceevent-related rtla segfault recently on
+ARM64, which was fixed by updating libtraceevent to a version that
+includes the fix. Such issues are caused by the files for kernel
+tracepoint tracefs having different contents on different
+architectures, exposing bugs. I see Steven has already fixed one of
+the issues on m68k [2].
 
-with fix:
-00:00.0 Host bridge: ARM Device 00ba (rev 01)
-00:01.0 PCI bridge: ARM Device 0def
-00:02.0 PCI bridge: ARM Device 0def
-00:03.0 PCI bridge: ARM Device 0def
-00:04.0 PCI bridge: ARM Device 0def
-00:1e.0 Unassigned class [ff00]: ARM Device ff80
-00:1e.1 Unassigned class [ff00]: ARM Device ff80
-00:1f.0 SATA controller: Device 0abc:aced (rev 01)
-01:00.0 SATA controller: Device 0abc:aced (rev 01)
-02:00.0 Unassigned class [ff00]: ARM Device ff80
-02:00.4 Unassigned class [ff00]: ARM Device ff80
-03:00.0 PCI bridge: ARM Device 0def
-04:00.0 PCI bridge: ARM Device 0def
-04:01.0 PCI bridge: ARM Device 0def
-04:02.0 PCI bridge: ARM Device 0def
-05:00.0 SATA controller: Device 0abc:aced (rev 01)
-06:00.0 Unassigned class [ff00]: ARM Device ff80
-06:00.7 Unassigned class [ff00]: ARM Device ff80
-07:00.0 Unassigned class [ff00]: ARM Device ff80
-07:00.3 Unassigned class [ff00]: ARM Device ff80
-08:00.0 Unassigned class [ff00]: ARM Device ff80
-08:00.1 Unassigned class [ff00]: ARM Device ff80
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/testing/selftests/nolibc/nolibc-test.c#n1008
+[2] https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/commit/?=
+id=3D45a9b0647c904b7bf1240da5a11fe3a1ffd1006d
 
-Cc: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
----
- arch/arm64/boot/dts/arm/fvp-base-revc.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/arm/fvp-base-revc.dts b/arch/arm64/boot/dts/arm/fvp-base-revc.dts
-index 289c5f9d1c8d..225a1ed8aa08 100644
---- a/arch/arm64/boot/dts/arm/fvp-base-revc.dts
-+++ b/arch/arm64/boot/dts/arm/fvp-base-revc.dts
-@@ -233,7 +233,7 @@ pci: pci@40000000 {
- 		#interrupt-cells = <0x1>;
- 		compatible = "pci-host-ecam-generic";
- 		device_type = "pci";
--		bus-range = <0x0 0x1>;
-+		bus-range = <0x0 0xff>;
- 		reg = <0x0 0x40000000 0x0 0x10000000>;
- 		ranges = <0x2000000 0x0 0x50000000 0x0 0x50000000 0x0 0x10000000>;
- 		interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.43.0
+Tomas
 
 
