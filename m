@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-425112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFDC29DBD97
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:30:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C849DBD98
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FD38B2205F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:30:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9AE7B22ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 22:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DB31C5793;
-	Thu, 28 Nov 2024 22:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74ADB1C6F71;
+	Thu, 28 Nov 2024 22:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vz5zQScp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dUv8NfVa"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2lMIaMKF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CtbKSJG9"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885DD1C1746
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 22:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEBE1C5798
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 22:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732833032; cv=none; b=CfaewnPdz2vxUYnUgJsuv/bf7qTK+HQ8Oelw1hu2AJbW1SX6h50q7b04lv6gozmqHxKA2N12QqNuvGfFb09rGzMAZbxc1SezW5YOH+1mus2tO3Sx/CUgeY/LEgs+D1NAmvP4OgdTJGdVXp9rfNxTgBFo+6LVm8m6eYz2U+MT14E=
+	t=1732833034; cv=none; b=XdohA2wv0H0bCdI4y5ZPty64sDpd9EslVCIkBQid/9TAR+lJxnf2md1HOD5eIdAVQj00Jpa4a4lg8XvM68R9qAgp7fLhBHuDe70h7FjiV0yiqCPU+Tt1o8mM0CqJc+cqLs7bsuVfB+wvsZNykck5cE1GHsvXwZlj4/sqnCSYvtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732833032; c=relaxed/simple;
-	bh=ev+7f3XqezzZNKejjurqPHs4oJqNYrv9TjsB57237Co=;
+	s=arc-20240116; t=1732833034; c=relaxed/simple;
+	bh=Avvur6Ex2NLJQvM8ykCnYKgqxHEL1a5onJOEaGF4BHo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HrCnFJwFrqk3ARMHTE9iO0IZyFCOA2BE0gEY6VccCE1OqPfJ54njVFHnZaJjT/yn4F8Znb0frW7Dd6fnx8RESoCF657vcBrY6ptP3LP0AfcgIG8UoFDsumAqWGHBfhUp3syr4GW1EVTfXTbnxHnVuCtR/HYKLkhI7rZatS4a6KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vz5zQScp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dUv8NfVa; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=NhxJzpdbuQgCN78BGG30+benlnG6iKsYyhEO7twraYKDZIWEXIBamJCU3E422iliKpKQjshqyQz8TIKmozegGI2MLjdpZyyXghSEQkJYoiw8DtMBiKBGGTXVV234W0ZsDGiCyMIR9/ELQuHPwogqfr1xnkh4w3/wgMU6b+fhCbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2lMIaMKF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CtbKSJG9; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732833028;
+	s=2020; t=1732833031;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BQg3CW3cGobDuKEgm5hZjcozrchV1/YXtgAXrFR82H4=;
-	b=Vz5zQScpk74mUyHiKg8mCQPAMb6IsXJ6jX9DRKCV+ftF9e6hkl55/qJa/vWN8AHRmfHatX
-	mcZC/NXio3OBeoYzwNuBClOxSqq6wZhTOm0q55EDky+EZloePAgdS3qTkPVlWB/IadbBce
-	V2LidWUaMtt7Fp743ty5xnKwLWhI6Y1eL0rU2fVM3vFekQOzP5liEffhBpqfSRaEUtKcb+
-	eX7x6qH2g9D8V8D7VxZaOkpQTrBDitzV0hz4SNC6gHxaahB0M8RxsV3YXuyXz5g/BGHcxD
-	yhAWYjLLYYwNUX5p2TD5rmjgHH0oUHEPU1tvBZ2Qnfzln/6UXWowTq5mCnF4/w==
+	bh=eBXjUsVkbzYkFgtSc46k/i7jvJ4SnHni3nR7hilZ96s=;
+	b=2lMIaMKFWBDRlXH4rlJ3DjjEP7GMf7yaRLVSVvFS5YbzYnakZbyvhDHsesoP0S4rBV45IW
+	sPCXaFtevGkYuZFCe9XQ7IXwrx/eT1HZSd1RX9NasW0ICJnFvqjdSsPH05z3R+pt8O9sJK
+	MEy1bPCyf/JDlYv1CQL6DYgg7YVuH44QTtgP3zsl5FKf5mE/VNFYdeK5YvpI9/MAENuSea
+	1QI2dyBOHId7Ywrt5uDovqcYzmh4Bl1ExF+HYiuDqOZAgevd0VjzUItT+jOfvl6YJZFPJB
+	587C/Gs0iniynRQu67KVEQEUlGnvU7A4G2U/l0P8cbsy3ZaJE1LhdIVADP1myQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732833028;
+	s=2020e; t=1732833031;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BQg3CW3cGobDuKEgm5hZjcozrchV1/YXtgAXrFR82H4=;
-	b=dUv8NfVamVikWRVN63mHxsE+1AsOfh3+e0RgKjqZszKWmxE3cDIH+EpX8vh9HZUReI90TO
-	PPUJ7apWW/0H4RDA==
+	bh=eBXjUsVkbzYkFgtSc46k/i7jvJ4SnHni3nR7hilZ96s=;
+	b=CtbKSJG9GgW1+DKPgxg7tXcWqufQSmefzdE/ksD04s6TyNxfbn48nhrV9/pAFvp6kn37W6
+	kQqBtxTYAMRumsBA==
 To: Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H. Peter Anvin" <hpa@zytor.com>
@@ -62,9 +62,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86@kernel.org,
 	x86-cpuid@lists.linux.dev,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 01/13] LICENSES: Add Creative Commons Zero v1.0 Universal
-Date: Thu, 28 Nov 2024 23:29:36 +0100
-Message-ID: <20241128222948.579920-2-darwi@linutronix.de>
+Subject: [PATCH v1 02/13] tools/x86/kcpuid: Reorder header includes
+Date: Thu, 28 Nov 2024 23:29:37 +0100
+Message-ID: <20241128222948.579920-3-darwi@linutronix.de>
 In-Reply-To: <20241128222948.579920-1-darwi@linutronix.de>
 References: <20241128222948.579920-1-darwi@linutronix.de>
 Precedence: bulk
@@ -75,167 +75,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A CSV file generated by the x86-cpuid-db project was recently merged to
-the kernel's kcpuid tool.  The SPDX license of that file is CC0-1.0,
-"Creative Commons Zero v1.0 Universal".
+In preparation for including more header files, reorder current kcpuid
+includes alphabetically.
 
-Fix spdxcheck failures by adding that license under LICENSES/deprecated.
-
-The license text is copied verbatim from:
-
-    git https://github.com/spdx/license-list-data/
-    archive: 2dc9a03a1b8df042c683924bbd6b703ade448a0d [v3.22]
-    file: text/CC0-1.0.txt
-    md5sum: 65d3616852dbf7b1a6d4b53b00626032
-
-The same text is available, in beautified form, at:
-
-    https://spdx.org/licenses/CC0-1.0.html#licenseText
-
-Fixes: cbbd847d107f ("tools/x86/kcpuid: Introduce a complete cpuid bitfields CSV file")
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-Link: https://fsfe.org/freesoftware/legal/faq.html#public-domain
-Link: https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/blob/v2.0/LICENSE.rst
 ---
- LICENSES/deprecated/CC0-1.0 | 129 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
- create mode 100644 LICENSES/deprecated/CC0-1.0
+ tools/arch/x86/kcpuid/kcpuid.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/LICENSES/deprecated/CC0-1.0 b/LICENSES/deprecated/CC0-1.0
-new file mode 100644
-index 000000000000..d337c154b0b7
---- /dev/null
-+++ b/LICENSES/deprecated/CC0-1.0
-@@ -0,0 +1,129 @@
-+Valid-License-Identifier: CC0-1.0
-+SPDX-URL: https://spdx.org/licenses/CC0-1.0.html
-+Usage-Guide:
-+  This license is used for imported code or data files from other
-+  projects; e.g. auto-generated code and data listings from the
-+  x86-cpuid-db project.  Such files have the SPDX license tag:
-+    SPDX-License-Identifier: CC0-1.0
-+License-Text:
-+Creative Commons Legal Code
-+
-+CC0 1.0 Universal
-+
-+    CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
-+    LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN
-+    ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
-+    INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
-+    REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS
-+    PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM
-+    THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED
-+    HEREUNDER.
-+
-+Statement of Purpose
-+
-+The laws of most jurisdictions throughout the world automatically confer
-+exclusive Copyright and Related Rights (defined below) upon the creator
-+and subsequent owner(s) (each and all, an "owner") of an original work of
-+authorship and/or a database (each, a "Work").
-+
-+Certain owners wish to permanently relinquish those rights to a Work for
-+the purpose of contributing to a commons of creative, cultural and
-+scientific works ("Commons") that the public can reliably and without fear
-+of later claims of infringement build upon, modify, incorporate in other
-+works, reuse and redistribute as freely as possible in any form whatsoever
-+and for any purposes, including without limitation commercial purposes.
-+These owners may contribute to the Commons to promote the ideal of a free
-+culture and the further production of creative, cultural and scientific
-+works, or to gain reputation or greater distribution for their Work in
-+part through the use and efforts of others.
-+
-+For these and/or other purposes and motivations, and without any
-+expectation of additional consideration or compensation, the person
-+associating CC0 with a Work (the "Affirmer"), to the extent that he or she
-+is an owner of Copyright and Related Rights in the Work, voluntarily
-+elects to apply CC0 to the Work and publicly distribute the Work under its
-+terms, with knowledge of his or her Copyright and Related Rights in the
-+Work and the meaning and intended legal effect of CC0 on those rights.
-+
-+1. Copyright and Related Rights. A Work made available under CC0 may be
-+protected by copyright and related or neighboring rights ("Copyright and
-+Related Rights"). Copyright and Related Rights include, but are not
-+limited to, the following:
-+
-+  i. the right to reproduce, adapt, distribute, perform, display,
-+     communicate, and translate a Work;
-+ ii. moral rights retained by the original author(s) and/or performer(s);
-+iii. publicity and privacy rights pertaining to a person's image or
-+     likeness depicted in a Work;
-+ iv. rights protecting against unfair competition in regards to a Work,
-+     subject to the limitations in paragraph 4(a), below;
-+  v. rights protecting the extraction, dissemination, use and reuse of data
-+     in a Work;
-+ vi. database rights (such as those arising under Directive 96/9/EC of the
-+     European Parliament and of the Council of 11 March 1996 on the legal
-+     protection of databases, and under any national implementation
-+     thereof, including any amended or successor version of such
-+     directive); and
-+vii. other similar, equivalent or corresponding rights throughout the
-+     world based on applicable law or treaty, and any national
-+     implementations thereof.
-+
-+2. Waiver. To the greatest extent permitted by, but not in contravention
-+of, applicable law, Affirmer hereby overtly, fully, permanently,
-+irrevocably and unconditionally waives, abandons, and surrenders all of
-+Affirmer's Copyright and Related Rights and associated claims and causes
-+of action, whether now known or unknown (including existing as well as
-+future claims and causes of action), in the Work (i) in all territories
-+worldwide, (ii) for the maximum duration provided by applicable law or
-+treaty (including future time extensions), (iii) in any current or future
-+medium and for any number of copies, and (iv) for any purpose whatsoever,
-+including without limitation commercial, advertising or promotional
-+purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each
-+member of the public at large and to the detriment of Affirmer's heirs and
-+successors, fully intending that such Waiver shall not be subject to
-+revocation, rescission, cancellation, termination, or any other legal or
-+equitable action to disrupt the quiet enjoyment of the Work by the public
-+as contemplated by Affirmer's express Statement of Purpose.
-+
-+3. Public License Fallback. Should any part of the Waiver for any reason
-+be judged legally invalid or ineffective under applicable law, then the
-+Waiver shall be preserved to the maximum extent permitted taking into
-+account Affirmer's express Statement of Purpose. In addition, to the
-+extent the Waiver is so judged Affirmer hereby grants to each affected
-+person a royalty-free, non transferable, non sublicensable, non exclusive,
-+irrevocable and unconditional license to exercise Affirmer's Copyright and
-+Related Rights in the Work (i) in all territories worldwide, (ii) for the
-+maximum duration provided by applicable law or treaty (including future
-+time extensions), (iii) in any current or future medium and for any number
-+of copies, and (iv) for any purpose whatsoever, including without
-+limitation commercial, advertising or promotional purposes (the
-+"License"). The License shall be deemed effective as of the date CC0 was
-+applied by Affirmer to the Work. Should any part of the License for any
-+reason be judged legally invalid or ineffective under applicable law, such
-+partial invalidity or ineffectiveness shall not invalidate the remainder
-+of the License, and in such case Affirmer hereby affirms that he or she
-+will not (i) exercise any of his or her remaining Copyright and Related
-+Rights in the Work or (ii) assert any associated claims and causes of
-+action with respect to the Work, in either case contrary to Affirmer's
-+express Statement of Purpose.
-+
-+4. Limitations and Disclaimers.
-+
-+ a. No trademark or patent rights held by Affirmer are waived, abandoned,
-+    surrendered, licensed or otherwise affected by this document.
-+ b. Affirmer offers the Work as-is and makes no representations or
-+    warranties of any kind concerning the Work, express, implied,
-+    statutory or otherwise, including without limitation warranties of
-+    title, merchantability, fitness for a particular purpose, non
-+    infringement, or the absence of latent or other defects, accuracy, or
-+    the present or absence of errors, whether or not discoverable, all to
-+    the greatest extent permissible under applicable law.
-+ c. Affirmer disclaims responsibility for clearing rights of other persons
-+    that may apply to the Work or any use thereof, including without
-+    limitation any person's Copyright and Related Rights in the Work.
-+    Further, Affirmer disclaims responsibility for obtaining any necessary
-+    consents, permissions or other rights required for any use of the
-+    Work.
-+ d. Affirmer understands and acknowledges that Creative Commons is not a
-+    party to this document and has no duty or obligation with respect to
-+    this CC0 or use of the Work.
+diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
+index 1b25c0a95d3f..62a77509a5b5 100644
+--- a/tools/arch/x86/kcpuid/kcpuid.c
++++ b/tools/arch/x86/kcpuid/kcpuid.c
+@@ -1,11 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #define _GNU_SOURCE
+ 
+-#include <stdio.h>
++#include <getopt.h>
+ #include <stdbool.h>
++#include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <getopt.h>
+ 
+ #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
+ #define min(a, b)	(((a) < (b)) ? (a) : (b))
 -- 
 2.46.2
 
