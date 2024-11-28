@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-424664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FEE9DB7BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:34:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ECA9DB7C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6970A163220
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CF2163A5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C90E19DF5F;
-	Thu, 28 Nov 2024 12:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555C219DF75;
+	Thu, 28 Nov 2024 12:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgR5gv3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NklKia1w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7519C1993B1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9C8195385
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732797239; cv=none; b=CNFGuuGP9vHBELSbKntB7RWKIhckfab3A/RnAtIjA5AzFXM+FIv7L97MeEkpCkIE5DPaJEW32YphS+iWcl500Vh821DtXbR0vqmUSOlGxwhLGeRIiF8XQbUgv3eh4Y4b/OKECjjmGyE7d4slBppdeHhvcBvPTVHwf0ECFX/S6TQ=
+	t=1732797481; cv=none; b=J/YVLN2JJ79nfZHtYXDcXAqvtJyxzKOdVjT4NsfKMD9n/6OoaiAfnT7zC3ojB0CcfS+TtvhbtCR3Ym1/OSCI4GI+L/w4RHwAyR0332S9gTk+AGePpqwrlBkTybH9wCyZ0zIK7U//dSkqWA2Q+u6gMiRrL5rF10RNXzpXwwkO6TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732797239; c=relaxed/simple;
-	bh=nA2viIAr08TTYpnPRNKlMblhcVcBLc4/CEX4cs4njlk=;
+	s=arc-20240116; t=1732797481; c=relaxed/simple;
+	bh=TSutSaRNJEIBKoioA2DpkpF+qSM8uwNP8QqKCmXyIZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYyKMvVV4IuM19Wyt+XTK85Pr9EHJMqvL+8ZLIWWlYv/sgWu8+kwe0n01A4xcRWTr3cZ/xL1YAsIx3X7Xo3d0Y0kV3U6vtlukeBzlWBgDRHyuJAoQsiJ6af6Ska8F5HoSDG4salbyoa/ykdF9A0ZRLuvyKfEgxzyTbAGz3KoCVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgR5gv3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8649DC4CED3;
-	Thu, 28 Nov 2024 12:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732797239;
-	bh=nA2viIAr08TTYpnPRNKlMblhcVcBLc4/CEX4cs4njlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mgR5gv3zcmx0FremblOF5p2cFrmMuPnkmyhpuivREfHMPyc8+hJ7XFK/ajKviOdNK
-	 Z2s+7U49BwhUI44MYQRYhhhOroR6g/sbDttz2se8Lr6jornDsxZTlDr3AESpbW+TGO
-	 Ppj/GsWBRKUQYSIkwekF32uR+RZLBZPIMo7/hsf42eiORrZniWClvzyaP1cOL7K1qt
-	 sH6uVZd9u1FAqxhlueb6bJBhHkBBlWfjad5yZ1z1ebcPtgJfPpMFlXzT1sv7l8qWYI
-	 iGiykkJgixcPxWeKFNTUiGiylTOiqZXEp5lyU5L9Apej0IgY+z0V4XiI6Td46GwXJf
-	 yAfKM5yly4+9w==
-Date: Thu, 28 Nov 2024 13:33:56 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
-Subject: Re: [PATCH v2 3/6] rcu: limit PREEMPT_RCU configurations
-Message-ID: <Z0hjNED_t_lqNFbG@localhost.localdomain>
-References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
- <20241106201758.428310-4-ankur.a.arora@oracle.com>
- <ZzTGQ_zTS8NrxjW9@localhost.localdomain>
- <87serfgffs.fsf@oracle.com>
- <Z0Xf37hJiyA7O0Ye@localhost.localdomain>
- <87zfllfddj.fsf@oracle.com>
- <87jzcpfbc6.fsf@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLUP7mFLfFdchQVqcqDQM/iw8OvCItY8DQsnjleMwM2Eq04/9qCyIXzZFxwe/M00rExct4c8zBhzGNozUys9NQvw5yagDEYQCqEusmGfu0tDde8rvMr2yHPM/7EM7onPqjhOAf3w8pf+4kuQyrvwZBEH/zQ9JbbjkATeQmGFCQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NklKia1w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732797478;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DTycFYp5qQtP06bfH9rKx4U2Ko4HpkiXHEvZHrmCX/U=;
+	b=NklKia1w3kJnRpX8fmnpI/ikbF9zG8hLK+nErV4sfhPD2FY5AUKPEkd+0fYODZjZevn2M+
+	nTfrFVLzCY23XG/IQZlHqfaIgAstW+2vbwh+EgCvqT/H3mStXv1ZWPNGMdpm2Lzrabhygt
+	6fm9nvP1s/dnY4l11h0LnsfSr9L7ujU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-mDCKoBzANvu39qpNG9G6pg-1; Thu,
+ 28 Nov 2024 07:37:53 -0500
+X-MC-Unique: mDCKoBzANvu39qpNG9G6pg-1
+X-Mimecast-MFC-AGG-ID: mDCKoBzANvu39qpNG9G6pg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03103195608C;
+	Thu, 28 Nov 2024 12:37:52 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.159])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D4D721955F41;
+	Thu, 28 Nov 2024 12:37:47 +0000 (UTC)
+Date: Thu, 28 Nov 2024 20:37:42 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: syzbot <syzbot+9b145229d11aa73e4571@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] possible deadlock in loop_set_status
+Message-ID: <Z0hkFoFsW5Xv8iKw@fedora>
+References: <6741e9d0.050a0220.1cc393.0014.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87jzcpfbc6.fsf@oracle.com>
+In-Reply-To: <6741e9d0.050a0220.1cc393.0014.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Le Tue, Nov 26, 2024 at 10:19:05PM -0800, Ankur Arora a écrit :
+On Sat, Nov 23, 2024 at 06:42:24AM -0800, syzbot wrote:
+> Hello,
 > 
-> Ankur Arora <ankur.a.arora@oracle.com> writes:
+> syzbot found the following issue on:
 > 
-> > Frederic Weisbecker <frederic@kernel.org> writes:
-> >
-> >> Le Mon, Nov 25, 2024 at 01:40:39PM -0800, Ankur Arora a écrit :
-> >>>
-> >>> Frederic Weisbecker <frederic@kernel.org> writes:
-> >>>
-> >>> > Le Wed, Nov 06, 2024 at 12:17:55PM -0800, Ankur Arora a écrit :
-> >>> >> PREEMPT_LAZY can be enabled stand-alone or alongside PREEMPT_DYNAMIC
-> >>> >> which allows for dynamic switching of preemption models.
-> >>> >>
-> >>> >> The choice of PREEMPT_RCU or not, however, is fixed at compile time.
-> >>> >>
-> >>> >> Given that PREEMPT_RCU makes some trade-offs to optimize for latency
-> >>> >> as opposed to throughput, configurations with limited preemption
-> >>> >> might prefer the stronger forward-progress guarantees of PREEMPT_RCU=n.
-> >>> >>
-> >>> >> Accordingly, explicitly limit PREEMPT_RCU=y to the latency oriented
-> >>> >> preemption models: PREEMPT, PREEMPT_RT, and the runtime configurable
-> >>> >> model PREEMPT_DYNAMIC.
-> >>> >>
-> >>> >> This means the throughput oriented models, PREEMPT_NONE,
-> >>> >> PREEMPT_VOLUNTARY and PREEMPT_LAZY will run with PREEMPT_RCU=n.
-> >>> >>
-> >>> >> Cc: Paul E. McKenney <paulmck@kernel.org>
-> >>> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >>> >> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> >>> >> ---
-> >>> >>  kernel/rcu/Kconfig | 2 +-
-> >>> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>> >>
-> >>> >> diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-> >>> >> index 5a7ff5e1cdcb..9d52f87fac27 100644
-> >>> >> --- a/kernel/rcu/Kconfig
-> >>> >> +++ b/kernel/rcu/Kconfig
-> >>> >> @@ -18,7 +18,7 @@ config TREE_RCU
-> >>> >>
-> >>> >>  config PREEMPT_RCU
-> >>> >>  	bool
-> >>> >> -	default y if PREEMPTION
-> >>> >> +	default y if (PREEMPT || PREEMPT_RT || PREEMPT_DYNAMIC)
-> >>> >>  	select TREE_RCU
-> >>> >>  	help
-> >>> >>  	  This option selects the RCU implementation that is
-> >>> >
-> >>> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> >>> >
-> >>> > But looking at !CONFIG_PREEMPT_RCU code on tree_plugin.h, I see
-> >>> > some issues now that the code can be preemptible. Well I think
-> >>> > it has always been preemptible but PREEMPTION && !PREEMPT_RCU
-> >>> > has seldom been exerciced (or was it even possible?).
-> >>> >
-> >>> > For example rcu_read_unlock_strict() can be called with preemption
-> >>> > enabled so we need the following otherwise the rdp is unstable, the
-> >>> > norm value becomes racy (though automagically fixed in rcu_report_qs_rdp())
-> >>> > and rcu_report_qs_rdp() might warn.
-> >>> >
-> >>> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> >>> > index 58d84c59f3dd..368f00267d4e 100644
-> >>> > --- a/include/linux/rcupdate.h
-> >>> > +++ b/include/linux/rcupdate.h
-> >>> > @@ -95,9 +95,9 @@ static inline void __rcu_read_lock(void)
-> >>> >
-> >>> >  static inline void __rcu_read_unlock(void)
-> >>> >  {
-> >>> > -	preempt_enable();
-> >>> >  	if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD))
-> >>> >  		rcu_read_unlock_strict();
-> >>> > +	preempt_enable();
-> >>> >  }
-> >>> >
-> >>> >  static inline int rcu_preempt_depth(void)
-> >>>
-> >>> Based on the discussion on the thread, how about keeping this and
-> >>> changing the preempt_count check in rcu_read_unlock_strict() instead?
-> >>>
-> >>> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> >>> index 1c7cbd145d5e..8fc67639d3a7 100644
-> >>> --- a/kernel/rcu/tree_plugin.h
-> >>> +++ b/kernel/rcu/tree_plugin.h
-> >>> @@ -831,8 +831,15 @@ dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
-> >>>  void rcu_read_unlock_strict(void)
-> >>>  {
-> >>>         struct rcu_data *rdp;
-> >>> +       int pc = ((preempt_count() & PREEMPT_MASK) >> PREEMPT_SHIFT);
-> >>
-> >> This should be in_atomic_preempt_off(), otherwise softirqs and IRQs are
-> >> spuriously accounted as quiescent states.
-> >
-> > Not sure I got that. Won't ((preempt_count() & PREEMPT_MASK) >> PREEMPT_SHIFT)
-> > give us task only preempt count?
+> HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=125a81c0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9b145229d11aa73e4571
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
-> Oh wait. I see your point now. My check is too narrow.
-> 
-> Great. This'll work:
-> 
-> -       if (irqs_disabled() || preempt_count() || !rcu_state.gp_kthread)
-> +       if (irqs_disabled() || in_atomic_preempt_off()|| !rcu_state.gp_kthread)
-> 
-> Thanks
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-Do you plan to integrate this in a further version of your set? Or should I send
-a patch?
+This one is supposed to be reproduced 100%, :-(
 
-Thanks.
+> 
+> -> #0 (fs_reclaim){+.+.}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+>        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        __fs_reclaim_acquire mm/page_alloc.c:3851 [inline]
+>        fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3865
+>        might_alloc include/linux/sched/mm.h:318 [inline]
+>        slab_pre_alloc_hook mm/slub.c:4036 [inline]
+>        slab_alloc_node mm/slub.c:4114 [inline]
+>        __kmalloc_cache_noprof+0x3d/0x2c0 mm/slub.c:4290
+>        kmalloc_noprof include/linux/slab.h:879 [inline]
+>        kzalloc_noprof include/linux/slab.h:1015 [inline]
+>        kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
+>        set_capacity_and_notify+0x206/0x240 block/genhd.c:95
+>        loop_set_size drivers/block/loop.c:232 [inline]
+>        loop_set_status+0x584/0x8f0 drivers/block/loop.c:1285
+>        lo_ioctl+0xcbc/0x1f50
+>        blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:906 [inline]
+>        __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Looks one real deadlock because bio_queue_enter() may be called from
+direct reclaim, which is under blk_mq_freeze_queue().
+
+
+thanks,
+Ming
+
 
