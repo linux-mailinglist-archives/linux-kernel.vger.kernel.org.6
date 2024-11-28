@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-424352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B9F9DB358
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:07:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA7D9DB360
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A090F165774
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C03A167641
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EE8148850;
-	Thu, 28 Nov 2024 08:07:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDA2149C7B;
+	Thu, 28 Nov 2024 08:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AjKCfrD6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887C145025
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5ED14658C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732781249; cv=none; b=qO7vHrbEUyp9BCXvXBN6A9z6MF3r20XTx1wP5bfzzhe75B0JwjMHJwOHlLRqFzTGyKrbu3pCFczEQC3fNZ8eqqSXTz1slHMYzAk1d1LEMbwH5ZkBB38fsRYb99ajcGvtOk2BGOKYwTCwAov9zkLt+UFJBGlz8mZzORm8r7EjCdI=
+	t=1732781328; cv=none; b=uqiDqTDJ2X+ben9+Uoz7Y3vQXfOOVY5CBCHJAcqWqJFkmlp2uCrQz+NU31RshJV0YhTLbxsoKrRcjp97vPYGDs/7UyR2lJG/KqQxLdFkFigACJveLiDuuN0RyAK4CBps4WFY1nRwb6SERaa3qweppJJc1v5Ei1W9uSlj0lvtbxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732781249; c=relaxed/simple;
-	bh=a+Ni+TpDy5nfatu94WsQaBicx+A7eGS/6y94H6QwwGY=;
+	s=arc-20240116; t=1732781328; c=relaxed/simple;
+	bh=4srSRusTbIfBMVE+olmx0QPHrbQqHJUCthbkmng4gck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wi+FYl/Q/612DQ2ku2MFv+7xOVDCZzOcYXKnzc3P1q/7GL/lx2rO1wpW6NeqU+p5Th+XgLFXRckB7izMoJkeK6TBL+32fhZmPJqh9LiEqVBpTt/nWsXlzE3HHvHEhoHh97Yd/uf3OXlpX94+f3/R6JON3k4N/DgDlkJxXNKP7Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tGZYR-00039l-4k; Thu, 28 Nov 2024 09:07:15 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tGZYP-000a0n-2t;
-	Thu, 28 Nov 2024 09:07:14 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tGZYQ-002pP3-1o;
-	Thu, 28 Nov 2024 09:07:14 +0100
-Date: Thu, 28 Nov 2024 09:07:14 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [RFC net-next v1 2/2] net. phy: dp83tg720: Add randomized
- polling intervals for unstable link detection
-Message-ID: <Z0gksn9nEKJOY5Ul@pengutronix.de>
-References: <20241127131011.92800-1-o.rempel@pengutronix.de>
- <20241127131011.92800-2-o.rempel@pengutronix.de>
- <43cceaf2-6540-4a45-95fa-4382ab2953ef@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gas5YNeDLU5dzdKNdUMseHbTWzm3oD9hOphZkAcel1yjDJ9Lx3sZBfQGa8AwT/k1hLwg6ZOiFVBnPpLcJMNMGQGLz7T1Q9aWC7AjLu8n74d0cwE7VUHdBe7r5EDqheW3a6HfCXZJP5odkr5CrtkbcfFGH7ME7ZsRlDkvMepFx9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AjKCfrD6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732781326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4srSRusTbIfBMVE+olmx0QPHrbQqHJUCthbkmng4gck=;
+	b=AjKCfrD6G6OhZNn5kuQXcLbotSiTRXmlYsVLLEVMF7TwrQdp/vh5Sn09VeR9ligY8vZHry
+	j6ZvvnGRtgWehO5Cczb1ZFdmnXWSVmESLytkFYBczROfo0QAAlbjihXQdMq/snbqH7hjZJ
+	5781IsHvRddQ7pSxsKSfqRrl9IHnZOk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-Xz53NpUnPR6VcAlAbiZ5hQ-1; Thu,
+ 28 Nov 2024 03:08:39 -0500
+X-MC-Unique: Xz53NpUnPR6VcAlAbiZ5hQ-1
+X-Mimecast-MFC-AGG-ID: Xz53NpUnPR6VcAlAbiZ5hQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 946211955F3C;
+	Thu, 28 Nov 2024 08:08:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.112])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D1604300018D;
+	Thu, 28 Nov 2024 08:08:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 28 Nov 2024 09:08:16 +0100 (CET)
+Date: Thu, 28 Nov 2024 09:08:11 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Zhen Ni <zhen.ni@easystack.cn>, viro@zeniv.linux.org.uk,
+	catalin.marinas@arm.com, brauner@kernel.org, zev@bewilderbeest.net,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] kernel/sys: Optimize do_prlimit lock scope to reduce
+ contention
+Message-ID: <20241128080811.GC10998@redhat.com>
+References: <20241120132156.207250-1-zhen.ni@easystack.cn>
+ <20241127174536.752def18058e84487ab9ad65@linux-foundation.org>
+ <20241128071351.GA10998@redhat.com>
+ <20241128073911.GB10998@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <43cceaf2-6540-4a45-95fa-4382ab2953ef@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241128073911.GB10998@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Andrew,
+On 11/28, Oleg Nesterov wrote:
+>
+> On 11/28, Oleg Nesterov wrote:
+> >
+> > The problem is that task_lock(tsk->group_leader) doesn't look right with or
+> > without this patch. I'll try to make a fix on weekend.
+> >
+> > If the caller is sys_prlimit64() and tsk != current, then ->group_leader is
+> > not stable, do_prlimit() can race with mt exec and take the wrong lock.
+>
+> ... and task_unlock(tsk->group_leader) is simply unsafe.
+>
+> perhaps something like below,
 
-On Wed, Nov 27, 2024 at 04:37:49PM +0100, Andrew Lunn wrote:
-> On Wed, Nov 27, 2024 at 02:10:11PM +0100, Oleksij Rempel wrote:
-> > Address the limitations of the DP83TG720 PHY, which cannot reliably detect or
-> > report a stable link state. To handle this, the PHY must be periodically reset
-> > when the link is down. However, synchronized reset intervals between the PHY
-> > and its link partner can result in a deadlock, preventing the link from
-> > re-establishing.
-> > 
-> > This change introduces a randomized polling interval when the link is down to
-> > desynchronize resets between link partners.
-> 
-> Hi Oleksij
-> 
-> What other solutions did you try? I'm wondering if this is more
-> complex than it needs to be. Could you add a random delay in
-> dp83tg720_read_status() when it decides to do a reset?
+No, this is wrong too,
 
-Yes, this would be possible, but there are multiple reasons I decided to
-go this way:
-- in link down case, it is better to increase polling frequency, it
-  allows to reduce link up time.
-- there are PHYs, for example an integrated to LAN9372 which supports
-  only link down interrupt. As long as link is down, it should be
-  polled.
-- i'm working on generic PHY stats support and PHYs need to be polled,
-  even with IRQ support, just less frequently.
+> I'll try to think more.
 
-I can add it to the commit message.
+Yes...
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Oleg.
+
 
