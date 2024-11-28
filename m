@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-425139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238F69DBDE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:16:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473D49DBE0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 00:22:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF82E161B07
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D00F5B2220E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 23:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3091A1C727F;
-	Thu, 28 Nov 2024 23:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7m9hscT"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A0F1C7608;
+	Thu, 28 Nov 2024 23:22:30 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27408157A67;
-	Thu, 28 Nov 2024 23:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CB61DA23
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 23:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732835769; cv=none; b=nTCcNvnrb7DtALIyQ8tvBQPyN6d7qgsSUzaQg1PT+lb+nFPRdr8EhLQ1gva+IrwOuNgkYJZSzv0V2v7D4sv2lLQd8h4gk211PBqXzDilMsxdA5HRADrltnJe80MGG5NqrjxTEyStdlFrWvqfAvR8tv1CkcIuMvMMSinzOczEscM=
+	t=1732836150; cv=none; b=iPQObKJMqRLGCRWcyfdiwpV1xNEMaDjrquYxlWuk4W1876Fvt6+P07ncPokG1ozJyt1bQwbq+hiyjMAajUSC5LW0/rW0E6s8T1Axb5/xC1AaZgyvL8AxvHX7REsSJsOY7J9KLLv8jzOIJNIwXoLmXwHU/zP4jSFuJocyqsfR32o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732835769; c=relaxed/simple;
-	bh=DC3MRS4obiq9akDBXw/+rZUOFRaPaxg02JSBq4jldGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWumR1+hWy8ZMY9yAFh5VD+jdExaJ9KaVLZjkM3pLAYnD7DrC/8WA05LFHsLuCZZ+JgkpGbe3eajzOhQzUOaKyQytYyHDfnLYJWY1iX6JMM/usOCkzDs8fKyOiDKt1/d40IJwWDBzU77Rqno6E5xswittwrNC1K42PikPbTekqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7m9hscT; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724f383c5bfso1018936b3a.1;
-        Thu, 28 Nov 2024 15:16:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732835767; x=1733440567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eeoVHhClbRHMNEOjFXigSnIp+fG4ZCi/q2qwDZwIfdU=;
-        b=m7m9hscTpgeAA0Ca1yoMk5VJBTHkELXecc/ue7kTkG3uqqTc4nPpRjFNgDb4TWg0Dv
-         pbZeOi8iAGf7LR7e0vhPtFx7xER4Wg0awo+2QTRHyOb8zfgRTa0z8YkSYZgzBWx1pIWY
-         64wDXnhDJwS/LhRsziVIJI9TxRB85oJVhipWCtjwWsLOeYissz3R6XN281zk9ORBhOKi
-         69mBH7xPfSJlmTMOgYJwPlAYdtYkQSuNiFaWIGk6PAEUf9bUEkGK45+Ij+bRJg8edl/U
-         mgodo6oc01X5QUAzLvZDYrz0SBCDMbTv2gYU+xVMY3PSVnYCyV17w6/Dvd51fgfPPPJG
-         TMjw==
+	s=arc-20240116; t=1732836150; c=relaxed/simple;
+	bh=Yl6jYkLbWltgLDUBo+ho99krs2N/q2VNhZz2Cc63558=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=scKu21ymgEU7t/xPKB0nLj7HVyfli3bPEqoLnlFkihZn8zhGIaT2iPBv+Hw/ytRuIbCHWKW9EzNVsRaV3OejWCudMDQZI0mAiEpFoOfBYGFbmEZit+qkC9eB5wo8ksqC4XkpWN1hhBt0ouXVZaj2GqJpUI0vfX0vedDUY+9Yho4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso167011439f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:22:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732835767; x=1733440567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eeoVHhClbRHMNEOjFXigSnIp+fG4ZCi/q2qwDZwIfdU=;
-        b=O7emJLZ0GS2Fx+Xx2WIYkMpt2/HVOM3KR43CU7+Yhp6E25DO6wo3DmsAEuJUudtlfQ
-         y8daT/WQ+SRoE7ZT7vZleJcrC2ZumkXaAOpradA1Pxo1Na2TijwFES7aTyImSbNsW0/T
-         N3I0KYaeienwLZJh6MEeuevtO0MuWnD6hLPJ4ko62w56X8U7Xo7qnnc7BOZrmuDHJ0Ft
-         dSIdlrRzUJluOBS+3SyYWAR01VS2BcluolE4e8z2DMoPqfw2GPUDn56mk8ZuFL2P1yWI
-         rJO7aWoFxvgIDdM1qqc+mNWiIIoClgkRfVy4C3pd36ZAnF0itZqC99ts7gCYmkyP5Hdw
-         x+QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUukp4gFE+G9G9cFDhxnRywr4SSNxdyu75m9TY6cCAkSULvAW37++WTr2KvwzJw0vzfNR8safPp1GfW@vger.kernel.org, AJvYcCVat555CM5gvgaq/m0GXqmG6yYnPcUIhy/WADq37iYGMCn5Rzd8R1snCt8SBM62MMeePts6aN+gcm3rRKpO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8zsXxqbmcwHGDZIqssYk1E9yDJT+o5uYZOw4xeK9iEsfAyk/C
-	3ruTBLa98p9end3ZVpSsjCuVYzCcDBSZ4OfWPz4xgLqZWXyYC/SG
-X-Gm-Gg: ASbGnctiEP8qwBc525wlOjBqM3Xc0BaWHTBdO/3Je4Xj+EICHuvrSNydJyBOTdWmOQE
-	3AjcxETEj1Ro2yYUVElcgAuTRdywch4xi9uPbPk/toscwpseWjBTGkic8OCOWvP8gb0Cr/03opq
-	1n/2+Kyn0dkZXHza/ifOQ7f2T7fuqIzoD+8MEFLQPtmRK4Hlx3Z5h6sIV3/k7WICUv88HBN0UbA
-	tbSmCVESinx9TVobZD/C/IegEU4Rs9hVukk42w1tMVHXTVMFw==
-X-Google-Smtp-Source: AGHT+IGP7i1wkE6RXGcp1WsztRZKiZigxuAV4HWiC3crop7SkPxPXAbFlRQNSzk1+A6RQV8L30sT9A==
-X-Received: by 2002:a17:90b:3ec9:b0:2ea:8565:65bc with SMTP id 98e67ed59e1d1-2ee097c59f0mr11320529a91.23.1732835767263;
-        Thu, 28 Nov 2024 15:16:07 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:bb0d:3829:251:d17e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215218f455fsm18965175ad.29.2024.11.28.15.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 15:16:06 -0800 (PST)
-Date: Thu, 28 Nov 2024 15:16:04 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] device property: fix UAF in
- device_get_next_child_node()
-Message-ID: <Z0j5tGF9ikgVR_0w@google.com>
-References: <20241128053937.4076797-1-dmitry.torokhov@gmail.com>
- <20241128053937.4076797-2-dmitry.torokhov@gmail.com>
- <Z0huCS4Z7dkgpCQ8@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1732836146; x=1733440946;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+iHQH29qnDNor/d3TsJ7a0m8YPCrMihPxJ1z2DF4/m0=;
+        b=cw2psB2S3g92dgMknspa85xHNjw8OC5oA0I/6J2blgt9fMeSvleFzMkwrKchA8suBF
+         iKhxi61Jnqb3rcFAlQHucUaEDjFFH8vPXvuIzZxUUfjJzmmWKftkWr1APQKZ3CfFWtXu
+         7ClZd3fYV7CvaSWf9p4pk/zO7H2rtgjTHN3ynzxOIOo3YwkYEc+UZ7NX1BsHKtv6rKbw
+         MHFK/9jQM6tgLIc+3sEaAq6P+CSO8OlF1n7/7ordPHRYwcja8a3Tz6hofPBdsU6/J6u6
+         QIFpaAf6xC3MS6P/nTG/YOmYMTsMDtGRlneQA+9Xrb9X/46AWJrESVVbj5zuv5F+3YqD
+         QJMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf34uxqNfSVblpYO4dm/awU/wV+BAXVfA2tvsm3K31Zoq0q/Y0CUY9ycTDG1SkkWeyFgPvwRlrBrh3c8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoZvyBKqkwpXWa8GcOFhRvhSmzeAwjONb4IQ9E1dfGJR3bANIX
+	PeO5eJzfdW8w5Rvz2+gR0o+nlL248uY3NnqrsOPxGL2XiJrExJ0kCEI59un7+HYw+dxGtPaz1be
+	jnBaTDSlREiJ2P3DCmA2rtc+g2RGlXg3IX0XXyCpKqPyk7O2obrqmpE0=
+X-Google-Smtp-Source: AGHT+IFA18niwwKr3q3fR199YkYJekpfqZSsBiBHpSLvQHodwdY6CjbShbhM++ML1UTbUGGQPR1KPLWnPs3s/1dYLaYVScRACvDk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0huCS4Z7dkgpCQ8@smile.fi.intel.com>
+X-Received: by 2002:a05:6e02:1c46:b0:3a7:cf61:ded7 with SMTP id
+ e9e14a558f8ab-3a7cf61e05cmr33336795ab.10.1732836146663; Thu, 28 Nov 2024
+ 15:22:26 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:22:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6748fb32.050a0220.253251.0098.GAE@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtSplitRoot (2)
+From: syzbot <syzbot+99491d74a9931659cf48@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 28, 2024 at 03:20:09PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 27, 2024 at 09:39:35PM -0800, Dmitry Torokhov wrote:
-> > fwnode_get_next_child_node() always drops reference to the node passed
-> > as the "child" argument,
-> 
-> As commented previously,it might be just a documentation bug. So, please
+Hello,
 
-No, absolutely not. Consider calling device_get_next_child_node() with
-"child" pointing to the last child of the primary fwnode.
-fwnode_get_next_child_node() will drop the reference to "child"
-rendering it unusable, and return NULL. The code will go and call
-fwnode_get_next_child_node(fwnode->secondary, child) with invalid child
-pointer, resulting in UAF condition.
+syzbot found the following issue on:
 
-Also, consider what happens next. Let's say we did not crash and instead
-returned first child of the secondary node (let's assume primary is an
-OF node and secondary is a software node). On the next iteration of
-device_get_next_child_node() we will call
-fwnode_get_next_child_node(fwnode, child) which results in passing
-swnode child to of_fwnode_get_next_child_node() which may or may not
-work. It all is very fragile.
+HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=139a59c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
+dashboard link: https://syzkaller.appspot.com/bug?extid=99491d74a9931659cf48
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fcc778580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=179a59c0580000
 
-That is why it is best to check if the child argument is indeed a child
-to a given parent before calling fwnode_get_next_child_node() on them.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c9f905470542/disk-9f16d5e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5b4c9cc530ec/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e0f262e4c35e/bzImage-9f16d5e6.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e27e1a7c25e2/mount_0.gz
 
-> elaborate on the use case before this patch that leads to an issue.
-> 
-> > which makes "child" pointer no longer valid
-> > and we can not use it to scan the secondary node in case there are no
-> > more children in primary one.
-> > 
-> > Also, it is not obvious whether it is safe to pass children of the
-> > secondary node to fwnode_get_next_child_node() called on the primary
-> > node in subsequent calls to device_get_next_child_node().
-> > 
-> > Fix the issue by checking whether the child node passed in is indeed a
-> > child of primary or secondary node, and do not call
-> > fwnode_get_next_child_node() for the wrong parent node. Also set the
-> > "child" to NULL after unsuccessful call to fwnode_get_next_child_node()
-> > on primary node to make sure secondary node's children are scanned from
-> > the beginning.
-> 
-> To me it sounds over complicated. Why not just take reference to the child once
-> more and put it after we find next in either cases?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+99491d74a9931659cf48@syzkaller.appspotmail.com
 
-You want to "reset" when switching from primary node over to secondary
-instead of hoping that passing child pointer which is not really a child
-to secondary node will somehow cause fwnode_get_next_child_node() to
-return first its child.
+ ... Log Wrap ... Log Wrap ... Log Wrap ...
+find_entry called with index >= next_index
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:1997:37
+index -128 is out of range for type 'struct dtslot[128]'
+CPU: 1 UID: 0 PID: 5842 Comm: syz-executor268 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dtSplitRoot+0xc9c/0x1930 fs/jfs/jfs_dtree.c:1997
+ dtSplitUp fs/jfs/jfs_dtree.c:992 [inline]
+ dtInsert+0x12cd/0x6c10 fs/jfs/jfs_dtree.c:870
+ jfs_symlink+0x827/0x10f0 fs/jfs/namei.c:1020
+ vfs_symlink+0x137/0x2e0 fs/namei.c:4669
+ do_symlinkat+0x222/0x3a0 fs/namei.c:4695
+ __do_sys_symlink fs/namei.c:4716 [inline]
+ __se_sys_symlink fs/namei.c:4714 [inline]
+ __x64_sys_symlink+0x7a/0x90 fs/namei.c:4714
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb144f8c6f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc1536c068 EFLAGS: 00000246 ORIG_RAX: 0000000000000058
+RAX: ffffffffffffffda RBX: 00007ffc1536c248 RCX: 00007fb144f8c6f9
+RDX: 00007fb144f8b791 RSI: 0000000020000180 RDI: 0000000020000700
+RBP: 00007fb145005610 R08: 000000000000620d R09: 0000000000000000
+R10: 00007ffc1536bf30 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc1536c238 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+---[ end trace ]---
 
-> Current solution provides
-> a lot of duplication and makes function less understandable.
 
-The simplicity of the old version is deceiving. See the explanation
-above.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Dmitry
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
