@@ -1,253 +1,160 @@
-Return-Path: <linux-kernel+bounces-424179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABA19DB150
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:01:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9A99DB153
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD78B281134
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C98281035
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED9845C1C;
-	Thu, 28 Nov 2024 02:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4ADB45038;
+	Thu, 28 Nov 2024 02:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DV5BPpTG"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RE7ElJK0"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C1CDDAD;
-	Thu, 28 Nov 2024 02:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732759262; cv=fail; b=b9jCgz8rM2gLMZjCV+VessNMvnXyDl9qxbpavM+88kZ7yayC/pzaJvHkWAHRLTJYPtjto0mO4WW6IFm7dm37gIeIhuBuaYAEjpC0F54DJgsCLjkK+cknmtg5yg+DpeeVoEqHR3RhfClsHWfCAy+anKrdrb4Qs1KwCcv8q6pR2+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732759262; c=relaxed/simple;
-	bh=eOk6Diiw4MFmoiZNNwdBURGcrorZt+kWwYAuQPUibhI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qoLY/75guWZfTrMW6odeHL3qktNdWUiRQccxOaftGhctiNTpm95bZnnTAZ3mzi11sHnv2bQt/CJjJJarYpdroTaw7vtLxFoJ1wGxQQK0ZCWzblZyHmhQWmgvULWdLkgpIRUabiBNOHQUIJSsgRIe2zYUZthSGqW4L5a340jkPUo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DV5BPpTG; arc=fail smtp.client-ip=40.107.21.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SWOmRukwvpGS/MOTNH+nB3qI1/b/Tab/y4LQGBMsTHfzw3tj6pU4Vy3uKQEu7VlbzylKDee1kWZ8k0UbA6rg2fzVhHK9rTrqE2FSlYvm4J4BiCKGa8frG433db5gnQWSh0ugCdfXLbfiE6vMmoelrephFhlYfGEPAayCFQuEsph5b5KjpPXqN+Jx0BET/gPaNKIpuwmeqSjOKgbUQN5K1l4qQ0Zs7SFqT1gCIyKdRg3l4dTXRJfeiiG3ej58lro8IlGUtev8HlFgDRcTNoj4c8OORM6GHhGrzL1ABHvfVwGBiorprCD9tzIVkbYphU50oHAU85Uwi4IXlEP1QxWLpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9HbYzv9+E5Xb+bR9vCC1HuF8NtSHKD3eFYNLGvFihl8=;
- b=nrHOz61zHd+AWf8udbl0HGTXBK1aLlEJWXg+ledHDaXytY23xq2Laetp7d3tGGSvALdltZAGK+OxWi5aS+UmTrC5pWOhI8nKQSPBrS0jyWMnlRuqmu3Iy/FSO3Tbz8I73ThY2/IG96NpC9PLMC0K1uth2rshJZwwIRdvkfqsmiCNCWgM/fctilYvbnYmpJGe6jFl0KgWmnR9KfB/NzjU0iMWrRzpvuQIfCEqS/z2MbX0jQMlV1w3JINjN1eA/4sXjmRWtaS3wuXIuuO0ecb0OXeFHqTrAlUjHr1d72DY3KRoKiOUzzGQd/B00IRirp0meEiiNFDYWNrnjYvsRt9S7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9HbYzv9+E5Xb+bR9vCC1HuF8NtSHKD3eFYNLGvFihl8=;
- b=DV5BPpTGLBdJb7C20lrDm+tk+pVJyrlPcmJijjbr5axkciHJoJoEopfUdcPqftvb+WQ2a37IEC6WnYRNJQkVU7O3sARW8UQ5UkHgSwWlODz7Wkk8G6LvjQNrKT3QHIZlvRITe9l+AB8weSZ78qkVA+zorgpm59RMUlVIFGtzPyJU6Oy9P7j4IbDpQ8XP+9U8Gffk0GFqH7rU3P/YPI0zLM0fyHPPV06NSZu8HNaWeEDdTci/UHSpHghEY+maf5ruaMhAFTdsV9BlHeXU9EUrjcMeDDmzEt45xU4PwfG0j3scm34tshfZfzx2Up+3DjtIUE/rJISTCu3WGIGIpp6uYA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
- by PAXPR04MB8391.eurprd04.prod.outlook.com (2603:10a6:102:1c4::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Thu, 28 Nov
- 2024 02:00:57 +0000
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334%5]) with mapi id 15.20.8182.018; Thu, 28 Nov 2024
- 02:00:57 +0000
-From: haibo.chen@nxp.com
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	marek.vasut@gmail.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH v2] gpio: pca953x: do not enable regmap cache when there is no regulator
-Date: Thu, 28 Nov 2024 10:00:42 +0800
-Message-Id: <20241128020042.3124957-1-haibo.chen@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0033.apcprd02.prod.outlook.com
- (2603:1096:4:195::20) To DU0PR04MB9496.eurprd04.prod.outlook.com
- (2603:10a6:10:32d::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C955C4C7C;
+	Thu, 28 Nov 2024 02:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732759422; cv=none; b=aFCKKL0qOnik3W7Hy1aVG6DGZQlC7xBR/+twtep2P5IqUPz49tu/kFgS793DbcH43L59k/8PtDwas0xdxlCFZRUCzBZk8mQZxuakaY1hzRm9az+mRklAv5eCbCGNjH8ocJYi54KbBlZESigvaYkTA7OBg41X4FoLmOt4dqr2O0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732759422; c=relaxed/simple;
+	bh=CG+sYXXeg4pD6aHHnRJzupQHusyACQgFUG5QBuBaRoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MHVPgJioTSQ+3/Z+O4HydDLKfWjIra8vq6wrUV+l3TUlhAWihr3q+IEzY6YI4gWdx6eU3DqEMubsycPooFzQ4KjhqLd5vx4Rf4j76s71p2UD0IWgIYxXx0D1enpNElcNcRbrni+TuU7XqF8rIqxtoiTdC6+JXQ3rbqvlHQv7RA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RE7ElJK0; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6eebae6f013so4296337b3.0;
+        Wed, 27 Nov 2024 18:03:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732759420; x=1733364220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9uZjwFI5LvDzGrWnQjcbHpB2HrlAS1jF0iAzI5JyLDo=;
+        b=RE7ElJK0jMOznDTYIqaKebX2eO42r/4O5kheOS5drQJA4sNhaA+H/hwFD6V3Lv7GYH
+         KlcVRjS3NxN968usX2GfzWXEkEI8NbruPq4O4BgBUvrNvCS0WCHak8UTDWbLOy2i53rB
+         OfybXP8CWIo5LzxU5Orlq/4vt2QXQ15CbNxercE6EA3+mjWPf0NR+nRHI8kcgAShq/6C
+         9EwSx6zGOty9AVONXrooEtPmrHEvgSqaVBYfvyZc4NZ1cZfB3jdTUZrZVmgv3M2cdo+P
+         L+2fJrrOSK8/ob0Ss/DkzLDwDjjFqnAz0+YGFICNWVTJEWwcqgQkgEeWh61+aLb/bUc+
+         Untw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732759420; x=1733364220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9uZjwFI5LvDzGrWnQjcbHpB2HrlAS1jF0iAzI5JyLDo=;
+        b=fCkjMIlVggXi3DGene3h6uzTvwfQbtjcKVNmd4kAz9aHy5vzwRYRBALOIGWsHvFJRM
+         JXiU9EZJIzJGX8sH4O5/j1Pj2U2707DCK5V6dEXXK+aAVQ/Fyix6D8ywdc49r/7uzgvy
+         mT3y41+tLbgJn/FaYtwEqnhDBjeRCGFsfYmyxtuYbn2yYOHz01sHrUEYBdV2sC5HIiZX
+         uMz8q2FTPi1WoprcDZ20xfSMjTXUOejOX3Aroz/bQtzFKOE1M2objND+raUyMUa9cQbQ
+         EUduy2OrLAtCrYtcFdsGRYmIwedqrG4zjXQdv2kThc743Hyym+/xnPoqsKGZsvP+4dJH
+         3I4A==
+X-Forwarded-Encrypted: i=1; AJvYcCW/yc/m52ezwpcsb3Ue7TRJh94ukZMAg1RmF3JEXxMAX8eyeb3Q4xYVkkxEQcOKpcoa1o0jvkpKqGnU@vger.kernel.org, AJvYcCW56PFAuj/npApEdVX4KDIxp2fT8g+VyxorKMFmnFCpJpUQSbGE4I9BE+NMtlwtlQp+KgVIzwaVR99MWGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ySBS2JCn8EgyiHBYIIgOvmBufxzTbdj264xTWcLIO9JvpT28
+	Kl6tXT0ARYrJWfvvmz3ufrgRTCwsiMXO2kKKIy7u56ajb6ZWTsXOhmm5RSCrOR+ooWVjOK2Pq+Z
+	BYKE3K63dEhQJpV8J2GVHtnAx/yiBQEMG
+X-Gm-Gg: ASbGncumDVZX3TRiyMunJbcwA0iHmXDsOGFR/Rj4mYOP6WwcbgfvMFn474aB+hUyWA3
+	+P5SyU4MIbc0gzy8HujzWhVyQ+El577fsaOgYFo7VZH82x1DI6Tl0r3yNiLvIbLo=
+X-Google-Smtp-Source: AGHT+IEf4e/3aGSKEqsiC8y3uIj4rbapu0Kz+c7lTmZIdsXxFgrR6OHz4CNqf9Ki0WIgytglUJgGq20b/+ll7XrLXdA=
+X-Received: by 2002:a05:690c:6d08:b0:6ee:66d2:e75a with SMTP id
+ 00721157ae682-6ef37282b96mr65431607b3.39.1732759419648; Wed, 27 Nov 2024
+ 18:03:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|PAXPR04MB8391:EE_
-X-MS-Office365-Filtering-Correlation-Id: a345cc9d-5dfe-4092-09f6-08dd0f507fd6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gduHQWDfAQv6BHCsvcgW+Hx4WkOYa3aLGgeX47WvLoxfsQp1KxHoL3+WMD3i?=
- =?us-ascii?Q?RCr74uxFTXLQ0gbpOX5PEvUe8LH/jfB6MWw7FztGqtGLkHY5noa8seT5ruCe?=
- =?us-ascii?Q?CBnBHE/RLSkuAai5xFmTOeWigBaeSBErNlxav8yK1OaRGNoAuqpm0UO5D5cp?=
- =?us-ascii?Q?5eDbD6Ewq5X50FfiDWrAalpOgCfViHqd+uTi6PvMRV6SaZdo1l5sTLYnog6e?=
- =?us-ascii?Q?kM/mQel54xkYGcP2ujCgr2nkoTA0LjJ1aSHAttyQrHknqen0aUac0voyPTyV?=
- =?us-ascii?Q?pLvmPCbKtrT/gOXhOY5/8MNimLEkAqOb9L7Om2g3RTETUZMhHkI8feEIu+G1?=
- =?us-ascii?Q?Kvjj8AGf6CV2nnnlZg2nu9ZB3K0VusTD+18Mi7i1mmhRpdarb/iqTWKk47oH?=
- =?us-ascii?Q?ftchi7/WvLkYyJ224ggz8J9ZeBLPtOWNpv1RDIhhlXww3fxPQzBvkOxXI00m?=
- =?us-ascii?Q?zouMF9ZyfbVw9HBLomcoXqDbOSXyvGitOWYcp57ce74gX9g6iyH3VmXHGxQC?=
- =?us-ascii?Q?h+oZsqqwm8om6lYvbKMNn1OT/y4isTut2zs8wdlrSLEn58fxhN7UoYzcAyt0?=
- =?us-ascii?Q?17kQUf3jk/oXUnRuYUkeKhr+lNyiIStP6N8hF2Ab0y4jttEg7kwJGp1c/TUU?=
- =?us-ascii?Q?zUgnCdD8tuAH0B2YO5Y0W8v/uMwj0TF/ERzfMLlZhFeQ1VOIgOSJleHlyWGU?=
- =?us-ascii?Q?pAjquDPbw7Pv1thJ4QcQ1m3biK3VcKXITYb5ojUeNQGx5v+i7CneXh12AO70?=
- =?us-ascii?Q?ATqWgxJCV84uZ6iTRoMBbER6w/2sQ/oIUJuyOPZtkDTK9C+v/NrY8IYWxl0E?=
- =?us-ascii?Q?nXNQ1pOjb4pP31Veb5RcC5cu63Hwk1BtphtuB2kJn/hvVX9e5L3UaDxEZ34j?=
- =?us-ascii?Q?LE/9Xnh0w/gcGihE4MzP/l3dk3/VHmCfUhmzc6OZe4b4h3UrFJp+2zuU5vFg?=
- =?us-ascii?Q?07xJu59gxFOFPW/R7mMNMJQy6i2dIDRZUg61Z2EHW/rkUxSEd7c9043Mnkol?=
- =?us-ascii?Q?naSvo/CExkvFX20h6WeLj+rf1cm2jHVHtkTlN6drjr5DRBWFl2glD0SW+sbx?=
- =?us-ascii?Q?NforIu3k4gQRRylh3tkyrEnchm0IwVZfem8H354wwPJwlB1BnlE/lhLukOVK?=
- =?us-ascii?Q?8l/RAAKmBxF6lqa8t3cJLz0locT7PX3xI8/KeBoELoyfQdwp+Amkp/WM0JHX?=
- =?us-ascii?Q?msRzXWliHCR7oPZgvva10i0dtPSDSt1kREJlTqr4DvxDg1JrBjDqMi9PwGYb?=
- =?us-ascii?Q?9h7X33k5JVCr1jq2RBopR+mXIpLDJPvpUBTYysm+UrURXc+SRbX/rePjSKzV?=
- =?us-ascii?Q?yPrHKleKLux7aD7GYHmgqi384ZnGnm3Hv/mM0BLFQVwWHI/69iu4WpNUxqtm?=
- =?us-ascii?Q?jlk2m8l4JHOCAzVhblIpl9Sehbl2Xeg+HnWUMdQUNaecS3yG7Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jxLIF2UGX78yNjp/6XXVkRBwP7Ka/njy3L/Tfc7n+Rwe4SfgpUIiKPZlRaZ8?=
- =?us-ascii?Q?FiQwk1a4MGuLdJcjg/93J4TjD0vKdc/EdpYtEcvfxvnF1S7WGkdPt1iMbHp6?=
- =?us-ascii?Q?rJOPFmKtgdrVrvJBJp1Tje3a2K4xXcDugIuwtVVYy21lpyPbC72U88DWDS5J?=
- =?us-ascii?Q?uv0yGHyu8qhx1RZLuzjKlSl/gB3xOmlSNBfhdfEUcfbjJDfKZjMQLBUYdabN?=
- =?us-ascii?Q?p18VifHJCHipShtjvFVsPugsyB++Q30QPw/KEFm1sK2Cg+giOELwAR0pQMVx?=
- =?us-ascii?Q?O9s74bvsqILo4HlRuvXeNTXXqxLAs3Ggleu3R8gaMQEv3OIpDEBstnsmu3ge?=
- =?us-ascii?Q?Y2z4dB1/w4+e1nN7XUJ6iOvjw+zklXixqlL6OCwoBkcyUrRuEfhJmPGocy/K?=
- =?us-ascii?Q?DVvkjGzTXx3ERTP4QJCrd+yoUDJNERqsLK//dHLN775J0QmWaOQe8s7sS/Fg?=
- =?us-ascii?Q?A/ftzAYZutuBJsoe0laI2kS4UZlkRW/lfDEtaBBUt388eMlINFs1NibhPhSS?=
- =?us-ascii?Q?TSThJj4eIXedoACj3dciORX9V4Lnvjp3X0Xxp8iGfGXgQWL9/Fo4O/IBhH+F?=
- =?us-ascii?Q?qSutAMfxpzVuo+4etgNk4yA3890/dQ1dGpvtQqP1RQ9Hx15zJdISlBVMWDxi?=
- =?us-ascii?Q?ys4rAZNHUrrruEx2kzR/e3IjRp8LOPnnLGYcTs4AdscME1V+g3jE0cLbAeL4?=
- =?us-ascii?Q?z+Wdp0D6V6y+R/wc3oDrLCHX4ddt7Nym0PznoLFm8uqldckhEE/SPvb3Cf/2?=
- =?us-ascii?Q?7EM+Ng/EbwRD3WP9COtrHw/m46Am4Xv4B9UsTZ15mXmdAkmyNib79ThFubG9?=
- =?us-ascii?Q?9RgK5QMGQjtOoIbiph0m4IAZf6Vyl5ABfG++quyEvrRnZdM3Rv1DPZ6+Okjn?=
- =?us-ascii?Q?uig6HI6jPaoyrlK2LTeiAMUtRjMcqCvcgVZh9+xnajZid8uJ67IuCNgmPy/F?=
- =?us-ascii?Q?xSeLY9NgMmfKD7gfGSrA0/8qR63JupMjX4teW8fgoZuBV091fe+Sfjl+ecQd?=
- =?us-ascii?Q?MnvXDd4mH7ubUFt0JKs8CUQIETEgumanw9MvAXb1hJKiI3GZcfrJY9uJi++A?=
- =?us-ascii?Q?NqAr3J9mPRZYag5frZewTkbHG41Ib/lSrMAH6YpJ2SEXzWx1XTRUjMzJKMNp?=
- =?us-ascii?Q?s69kMST4X7ISjCwE7hBffaSqUTkGGFVwEHu+DjrlJsxYHfKnXbJJhCSmCCtd?=
- =?us-ascii?Q?gUV626CD9+bXqy9q6agd0BJg+VOlxJf1BrEGRNwE2ReuTKPTg9qYapme34YA?=
- =?us-ascii?Q?VF77lzDrHSl0MzyKxPDegqiPtSV8vI8ynW2xTTOU41IUdgnDSHFIZtboVkSf?=
- =?us-ascii?Q?P4uH0HXWz2MzHXCSunsdobDVri52ruyOnpQ/pcsi6Se2fgS3SguConzO139s?=
- =?us-ascii?Q?saCy+hPoe5XH/tupcI5CXSgGz9q1pz+H+E1ruAdveBL4BzrdVkmfISZ5n90L?=
- =?us-ascii?Q?ovJNh4Fv5YNSkt4mONUptKJjnt7vw8xO353he6UY337kFTZuogNfJdPnBt8T?=
- =?us-ascii?Q?ZtDzoXVXv26FJxxOnJzLgXXhU7Y+Z02GXGmDHSy2TxvIeNqaoSuAHDfuuj8m?=
- =?us-ascii?Q?om+pFcUrIxE3z7FrarP4kKIvHZWBaaoQrd1bEtAX?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a345cc9d-5dfe-4092-09f6-08dd0f507fd6
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2024 02:00:57.4788
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mRmO61rPgLo9j+FI0w+UZ3Fj2mDzKBM+qDbRftGYFVp4jRu4V9yi2U3+2wAygn+tgcC6cf79oA5/8z9O+C/KWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8391
+References: <20241028080415.697793-1-wojackbb@gmail.com> <ZyDRIW0DIGn_FIsD@hovoldconsulting.com>
+ <CAAQ7Y6ZGrQt+rPBK9PzwJRC5ErbFgbc239X=iwjRboY3HU6O8g@mail.gmail.com> <Zyt4I2YFx5lm0cLi@hovoldconsulting.com>
+In-Reply-To: <Zyt4I2YFx5lm0cLi@hovoldconsulting.com>
+From: =?UTF-8?B?5ZCz6YC86YC8?= <wojackbb@gmail.com>
+Date: Thu, 28 Nov 2024 10:03:28 +0800
+Message-ID: <CAAQ7Y6b38C5Kg4d+YTgqa9BJeVGes=8qV0dCPGDFq+F6-DfVAg@mail.gmail.com>
+Subject: Re: [PATCH] USB: serial: option: add MediaTek T7XX compositions
+To: Johan Hovold <johan@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Haibo Chen <haibo.chen@nxp.com>
+1. I will upload a new change and it will contain this description
 
-Regmap cache mechanism is enabled in default. Thus, IO expander wouldn't
-handle GPIO set really before resuming back.
+2. Regarding NCTRL(), MTK tells us that it is the same as PID 0x7127
 
-But there are cases need to toggle gpio in NO_IRQ stage.
-e.g. To align with PCIe specification, PERST# signal connected on the IO
-expander must be toggled during PCIe RC's NO_IRQ_RESUME.
-
-Do not enable the regmap cache when IO expander doesn't have the regulator
-during system PM. That means the power of IO expander would be kept on,
-and the GPIOs of the IO expander can be toggled really during system PM.
-
-Fixes: b76574300504 ("gpio: pca953x: Restore registers after suspend/resume cycle")
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
----
-Changes for V2:
-  correct the commit head, and add fix tag
-  fix some typo in the code comment
-
----
- drivers/gpio/gpio-pca953x.c | 35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 272febc3230e..2ef1db58a6a1 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -1040,9 +1040,15 @@ static int pca953x_get_and_enable_regulator(struct pca953x_chip *chip)
- 	struct regulator *reg = chip->regulator;
- 	int ret;
- 
--	reg = devm_regulator_get(dev, "vcc");
--	if (IS_ERR(reg))
--		return dev_err_probe(dev, PTR_ERR(reg), "reg get err\n");
-+	reg = devm_regulator_get_optional(dev, "vcc");
-+	if (IS_ERR(reg)) {
-+		if (PTR_ERR(reg) == -ENODEV) {
-+			chip->regulator = NULL;
-+			return 0;
-+		} else {
-+			return dev_err_probe(dev, PTR_ERR(reg), "reg get err\n");
-+		}
-+	}
- 
- 	ret = regulator_enable(reg);
- 	if (ret)
-@@ -1240,11 +1246,20 @@ static int pca953x_suspend(struct device *dev)
- {
- 	struct pca953x_chip *chip = dev_get_drvdata(dev);
- 
--	pca953x_save_context(chip);
-+	/*
-+	 * Only save context when regulator is exist,
-+	 * if no regulator, power keeps on, can also
-+	 * handle gpio related operation.
-+	 * e.g. PCIe RC needs to toggle the RST pin in
-+	 * NOIRQ resume stage, so can't open regmap
-+	 * cache if there is no regulator.
-+	 */
-+	if (chip->regulator)
-+		pca953x_save_context(chip);
- 
- 	if (atomic_read(&chip->wakeup_path))
- 		device_set_wakeup_path(dev);
--	else
-+	else if (chip->regulator)
- 		regulator_disable(chip->regulator);
- 
- 	return 0;
-@@ -1255,7 +1270,7 @@ static int pca953x_resume(struct device *dev)
- 	struct pca953x_chip *chip = dev_get_drvdata(dev);
- 	int ret;
- 
--	if (!atomic_read(&chip->wakeup_path)) {
-+	if (!atomic_read(&chip->wakeup_path) && chip->regulator) {
- 		ret = regulator_enable(chip->regulator);
- 		if (ret) {
- 			dev_err(dev, "Failed to enable regulator: %d\n", ret);
-@@ -1263,9 +1278,11 @@ static int pca953x_resume(struct device *dev)
- 		}
- 	}
- 
--	ret = pca953x_restore_context(chip);
--	if (ret)
--		dev_err(dev, "Failed to restore register map: %d\n", ret);
-+	if (chip->regulator) {
-+		ret = pca953x_restore_context(chip);
-+		if (ret)
-+			dev_err(dev, "Failed to restore register map: %d\n", ret);
-+	}
- 
- 	return ret;
- }
--- 
-2.34.1
-
+Johan Hovold <johan@kernel.org> =E6=96=BC 2024=E5=B9=B411=E6=9C=886=E6=97=
+=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8810:07=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> [ Please avoid top-posting. ]
+>
+> On Wed, Nov 06, 2024 at 07:09:22PM +0800, =E5=90=B3=E9=80=BC=E9=80=BC wro=
+te:
+> > I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D83(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB AP Log Port.
+> >
+> > I:* If#=3D 3 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D84(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D03(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB AP GNSS Port.
+> >
+> > I:* If#=3D 4 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D85(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D04(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB AP META Port.
+> >
+> > I:* If#=3D 5 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D42 Prot=3D01 Driv=
+er=3D(none)
+> > E:  Ad=3D86(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D05(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is ADB port.
+> >
+> > I:* If#=3D 6 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D87(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D06(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB MD AT Port. User can use the port send AT command.
+> >
+> > I:* If#=3D 7 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D88(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D07(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB MD META Port.
+> >
+> > I:* If#=3D 8 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D89(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D08(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB NTZ Port. User can use the port send MIPC command.
+> > MIPC is an instruction set designed by MTK, similar to QCT's QMI
+> >
+> > I:* If#=3D 9 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driv=
+er=3Doption
+> > E:  Ad=3D8a(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > E:  Ad=3D09(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+> > It is USB Debug port.
+>
+> Thanks for this. Please include this in some form in the commit message
+> (e.g. a table listing the functions).
+>
+> > Sorry, I don't understand "not accepting modem control".
+> > Should I set the non-MD ports to true?
+> > for example: USB AP Log Port.
+>
+> I meant that you should mark the interfaces that reject modem-control
+> requests using the NCTRL() macro similar to what was done for the device
+> with PID 0x7127.
+>
+> Johan
 
