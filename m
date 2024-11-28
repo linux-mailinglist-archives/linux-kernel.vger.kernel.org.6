@@ -1,92 +1,149 @@
-Return-Path: <linux-kernel+bounces-424550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6E89DB5B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:28:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0979DB5B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:29:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB73281D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8BB7160E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4598A192D82;
-	Thu, 28 Nov 2024 10:28:38 +0000 (UTC)
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC78D13B7BC;
+	Thu, 28 Nov 2024 10:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLmuCLCj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3809A15383C;
-	Thu, 28 Nov 2024 10:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE2115383C;
+	Thu, 28 Nov 2024 10:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732789717; cv=none; b=GpAm572mUh/ZIOuqGpj13T56xn7s0vtOW/LCfhOmFTh8K07upLlLKqExyWHBEarxe/feQzKPmKrRt8teiPj+wC6SvAstQTP3BgQKs9Eh8nCpUCf0GGefxx8BXJriFVg5P72d2nivRVzFr+Y4L1KSdkY56PhJqsddmCPD83t9hCs=
+	t=1732789764; cv=none; b=fQGaZU9HByhSAid1tY/Ho6qtwy3Rv53hFqgHpAzXxn6bGm7iRWfEze0e0qeB5vjD//Hg0zY5eY2ZKIMrHM9zazQtVZ8iJ2mzlu3XlJR+bp09uQU0ockjT0pd+PWnDrXDJ+EpzXy45BvncIVeLYmAkTldgCoIXSw7qFYUSlWo2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732789717; c=relaxed/simple;
-	bh=A1fyuFy9gsngzEu0z1FTuhaQpjoqcTyIz5KAtOws9TY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DA/EB9JpkEA3hGGD7m0kQwbDBEkN9do4yGCudV5HF3CPoJwwOBf+B2vOjvdTyfc5dH4fTml1hBswJLSFQTJPqSaK2ewFbj5/5edKjYFO+DfJ3gzi/QTv4DqxLw2vlIfUx8+mBfAMvrLoZ4kuwSx9DINooq7hjxqgtNeYcR6J5VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id A52F21F9AF;
-	Thu, 28 Nov 2024 13:28:32 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Thu, 28 Nov 2024 13:28:32 +0300 (MSK)
-Received: from [10.198.18.73] (unknown [10.198.18.73])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XzXb15cJcz1gywG;
-	Thu, 28 Nov 2024 13:28:29 +0300 (MSK)
-Message-ID: <fd6c77ab-667f-4368-8be5-63e040c362ad@astralinux.ru>
-Date: Thu, 28 Nov 2024 13:28:21 +0300
+	s=arc-20240116; t=1732789764; c=relaxed/simple;
+	bh=UN9E/IslKJJ6kXg07JlJB5mwNZgSYgjjqJXv+tdg8to=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YAZPUR4dCzkw/JtKueI8fqDPgLojFlKut2gq8ij9FrLgdaWHMbhmNg/MTDSH99E9l4h127OS9xxjaRNdRtLCEBktAH/1gsoLTs6OHEN9ByfmYQy9RLLSZGhvGshU/hwvdlEMUFSzTpfo5fnXwGzaRJrimlnGwoe0FoyJa9evNkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLmuCLCj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C5CC4CECE;
+	Thu, 28 Nov 2024 10:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732789763;
+	bh=UN9E/IslKJJ6kXg07JlJB5mwNZgSYgjjqJXv+tdg8to=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vLmuCLCjnYq+kiQoVtx+OI6vriP/NyPLzBqvfhzYve/l4WNpbc1wYdDQssVor5zdt
+	 p5KtJ1sm9eTKXSYshjV2SkAmRd2LCrMJwq890kcxask80KqdRBvGJ7ABwVAP42ztkp
+	 kh0u1amEpZ7e+XlAmgQYbDL3QhpVrbm7sHWPw7dJAaVUEZc6Og232TsDsyV5Y2BBsJ
+	 T7lrV9F+V1tHkasuVo5nhpjqYgLc7V4P3enqP+dX4UXJwbqeb5uQZhUZ/Xmn7l8aWx
+	 1XsM9pjx8udc9EV2jBiSUdvch42d6NKcruq7zzYhGoMRw04jX4HlIjkWokSNcZTWQ8
+	 fB+i97A77k18w==
+Date: Thu, 28 Nov 2024 11:29:20 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Andrej Picej <andrej.picej@norik.com>
+Cc: Rob Herring <robh@kernel.org>, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] dt-bindings: drm/bridge: ti-sn65dsi83: Add optional
+ property ti,lvds-vcom
+Message-ID: <20241128-mottled-nostalgic-oriole-be31ce@houat>
+References: <20241127103031.1007893-1-andrej.picej@norik.com>
+ <20241127103031.1007893-2-andrej.picej@norik.com>
+ <20241127151630.GA3515396-robh@kernel.org>
+ <3b5768e5-dcb6-436d-837c-418676e13b2e@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 0/1] cpufreq: amd-pstate: add check for
- cpufreq_cpu_get's return value
-Content-Language: ru
-To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: lvc-project@linuxtesting.org, Huang Rui <ray.huang@amd.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241106182000.40167-1-abelova@astralinux.ru>
-From: Anastasia Belova <abelova@astralinux.ru>
-In-Reply-To: <20241106182000.40167-1-abelova@astralinux.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 42 0.3.42 bec10d90a7a48fa5da8c590feab6ebd7732fec6b, {Tracking_from_domain_doesnt_match_to}, new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 189476 [Nov 28 2024]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/11/28 08:54:00 #26904895
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="tvgn3pzm6x2sclac"
+Content-Disposition: inline
+In-Reply-To: <3b5768e5-dcb6-436d-837c-418676e13b2e@norik.com>
 
-Just a friendly reminder.
 
-On 11/6/24 9:19 PM, Anastasia Belova wrote:
-> NULL-dereference is possible in amd_pstate_adjust_perf in 6.6 stable
-> release.
->
-> The problem has been fixed by the following upstream patch that was adapted
-> to 6.6. The patch couldn't be applied clearly but the changes made are
-> minor.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+--tvgn3pzm6x2sclac
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/3] dt-bindings: drm/bridge: ti-sn65dsi83: Add optional
+ property ti,lvds-vcom
+MIME-Version: 1.0
+
+On Thu, Nov 28, 2024 at 09:46:33AM +0100, Andrej Picej wrote:
+> On 27. 11. 24 16:16, Rob Herring wrote:
+> > On Wed, Nov 27, 2024 at 11:30:29AM +0100, Andrej Picej wrote:
+> > > From: Janine Hagemann <j.hagemann@phytec.de>
+> > >=20
+> > > Add an optional property to change LVDS output voltage. This depends =
+on
+> > > the connected display specifications. With this property we directly =
+set
+> > > the LVDS_VCOM (0x19) register.
+> > > Better register property mapping would be quite tricky. Please check
+> > > bridge's datasheet for details on how register values set the LVDS
+> > > data lines and LVDS clock output voltage.
+> > >=20
+> > > Signed-off-by: Janine Hagemann <j.hagemann@phytec.de>
+> > > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> > > ---
+> > >   .../bindings/display/bridge/ti,sn65dsi83.yaml      | 14 +++++++++++=
+++-
+> > >   1 file changed, 13 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65=
+dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.=
+yaml
+> > > index 48a97bb3e2e0..5b2c0c281824 100644
+> > > --- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.y=
+aml
+> > > +++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.y=
+aml
+> > > @@ -58,6 +58,12 @@ properties:
+> > >                     - const: 2
+> > >                     - const: 3
+> > >                     - const: 4
+> > > +              ti,lvds-vcom:
+> > > +                $ref: /schemas/types.yaml#/definitions/uint32
+> > > +                description: LVDS output voltage configuration. This=
+ defines
+> > > +                  LVDS_VCOM (0x19) register value. Check bridge's da=
+tasheet for
+> > > +                  details on how register values set the LVDS data l=
+ines and
+> > > +                  LVDS clock output voltage.
+> >=20
+> > Constraints? 0 - 2^32 are all valid values?
+>=20
+> Not really, only first 6 bits, which also means that this can be uint8 th=
+en.
+> Will fix with other issues.
+
+Also, generally speaking directly using register values is really
+frowned upon, even more so when they match a value expressed in a
+standard unit.
+
+Maxime
+
+--tvgn3pzm6x2sclac
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0hF9wAKCRAnX84Zoj2+
+dhSoAX9Uu3UcKpopfFbkrgWp56OEJeL/hrbtsgKELqjxdDABI0ujjZDWXpMg1rM8
+FxDYFLkBgMOgSjdgLtFASjWYBF1ZOJauobTk1LyMFCHiK30f0SS5gjfI+r7wL/pr
+FqWXHi0wAw==
+=sZjc
+-----END PGP SIGNATURE-----
+
+--tvgn3pzm6x2sclac--
 
