@@ -1,84 +1,47 @@
-Return-Path: <linux-kernel+bounces-424353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EAE9DB35C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:08:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27D09DB364
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A299282494
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:08:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D52B6B220FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FC5149DE8;
-	Thu, 28 Nov 2024 08:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FB6149C7B;
+	Thu, 28 Nov 2024 08:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E3ITMr6e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjmHPRW5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CB61482E1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D3146018;
+	Thu, 28 Nov 2024 08:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732781314; cv=none; b=Rtg2fzXk2cqFTOP3DYuzv/8eBVEwKLI5Mh1/2M8CatmrRUxxy+6ywAFbSYYauSmlYMGxCx6xYJxi93kIGDOa2r9on18WHM+FUG6Yd+eHiEkYhqLpD4pzTcwMZMU2BX9cg8vdF7KM1Sh2h4bDNUndcT6PkQ4sRnOFP/7NBG8dP6A=
+	t=1732781351; cv=none; b=s0wOz39p8BeOBKBbwCTxNX55w7YJEIv4S02LJbQz0kKcgqbTBV8CUwxQRSXVahzwaEzEOVunUQER9jKZeUeOF6ctllIDgL0ZvymXNoAYLdUGbwttJapCLcY/E24Tl4kbSlNtVaYBBy0dFKQnH+ZOUnEtaWvrx0KvRsbYEAJiRjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732781314; c=relaxed/simple;
-	bh=LqKrHC5XDSttnyGGxHHcASvJVoryjRYX4TBifEno7Ck=;
+	s=arc-20240116; t=1732781351; c=relaxed/simple;
+	bh=DJGvh8ExhceGZ+loc+E/bF08f+lkklT3hOQZiqcuboc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQ6HU+9B4qnNl41kE5qm1r/nAo5L+YdCDwnR4AVkEe86Ij9g99aV6byYLrqnFwuF1eiozLyr13Kt6cGl2Mc/2q2ZGu5jlVlUAapUzQnAKwWSUYlehFdHcYDiKky0l2NzVysVl8tmrs1HMf1j+C9ms4l7Jkvb0JRxRJjoASP/dSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E3ITMr6e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732781312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iB3fddQT4tuu1zwH8z5Ad5r52CJZWD+J8s/aw6uP5ZM=;
-	b=E3ITMr6eA6eg/SXZ6wJu7j/dGGTMRV+WKbtiSPhTfV2WRf6aaeFfMa0oX/dkVlusF3x06G
-	1p3kVmJ4wkVmp7dc0I8Wg6tRQRRvWtwOqO9r7tKEYH2rDWdqm+EA6YLUzXKS2f4zXE5cI/
-	JSJRPuSmiu40tDVDaggiL+B+djXSMZw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-126-rE0hqgNwOneEeXpidestyA-1; Thu, 28 Nov 2024 03:08:30 -0500
-X-MC-Unique: rE0hqgNwOneEeXpidestyA-1
-X-Mimecast-MFC-AGG-ID: rE0hqgNwOneEeXpidestyA
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a27c9044so2577425e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:08:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732781309; x=1733386109;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iB3fddQT4tuu1zwH8z5Ad5r52CJZWD+J8s/aw6uP5ZM=;
-        b=hEAJ1yg52s9EnsdXtiXcZgpnWPkof8I091mrIGUOv5OTjm27iFrfcKYTHaY0Td1h+/
-         bb2YP8vsAj287DQJVsJ5kLpMX9/E0NmNRqV0C473zE4fcV5HpK3eSmbVSVFp6Fbr7g4r
-         42sL0F6wW75pxAAyuxNWKMU0j5MpnIECpqOHErjynxzb7QllyA78Sa1UvJBATKXZqieC
-         kyAToP38/EeRnwr939xUq/Kx7/nWmCFXYOAyG+OGpPg35NTEyEzO5B4FWliEg7K4gnur
-         7ZALJCcMKhh4mzK99+7DS3KS43JeUvDgzne8Eq3cbo3qz8ZDbjmav6luYnC7/AAgKE/y
-         8nCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHTm528JEcXjDdkmpZB3kQKJ8ff7cX0SqxGkQI17Xh2NgG7Eb3jMdhEFOoaf5IpCxYxfLly/Nw1CnFWt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzFv31mSHTeFgfk2zjHR5pgVdnaCgrURXSb2SjCgLKB4r4nnJR
-	gLYVgzLh05vVvMvec333bYtxkMG8+OTzhLNnpHLF5gmnN5LIdaBceugYycqIOBWYi6+vv9VDHIR
-	3g2DiTv2jvFXh6XFpZrT9USlDfOg+9q4Evy4G84tzEQw5PQ3oQvW9JZ9Pnynmfw==
-X-Gm-Gg: ASbGnct+2NcznpnEG6A7dKkJ3W9zdaof291N2gXBD2R6i+R8rZiktwV+wlQx1BWtgeZ
-	MBIE8NZj7pMsGbZVEHt+W8a0AAOQ6L4Ulz8S8Xd3rbh+59Td/jA3EzaI/8E219bvnZnfVEVA9xs
-	RMwDlPRSq3TZA4eAsQhPjCq3Yez+wx6Db8/v+GIiu99MhVbrETqEt9mK6jbgLQpxnyW5yB2Sg3o
-	9U5ZUtOJ+LzGkMUvEnoebHF2gnwZkoC0Gdx4c+hUquU3lQViuAsHzsEccxtqxK/LbBfSzwq0Z7H
-X-Received: by 2002:a05:600c:3ba6:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-434a9dbba7dmr54214915e9.7.1732781308908;
-        Thu, 28 Nov 2024 00:08:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGk+Ev0FiGTZ+5npTOH3uvSEBKkeXq267aYhyzXY/a73ITNd54dI3/rjALeAZ3U75RkmBZRsg==
-X-Received: by 2002:a05:600c:3ba6:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-434a9dbba7dmr54214665e9.7.1732781308551;
-        Thu, 28 Nov 2024 00:08:28 -0800 (PST)
-Received: from [192.168.88.24] (146-241-60-32.dyn.eolo.it. [146.241.60.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bee2sm13761925e9.1.2024.11.28.00.08.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 00:08:27 -0800 (PST)
-Message-ID: <fc0bb8a7-8c6e-49db-83ba-f56616ebc580@redhat.com>
-Date: Thu, 28 Nov 2024 09:08:26 +0100
+	 In-Reply-To:Content-Type; b=ua81/lvdgoHYaFXSBqpMFX/5LQo+bSEnJQvLIlHUU70bZCm+giFMt272zAeHtVzAoYdohnMokyqwDy0Vt15jHsqHnAKDkvn8aVyHOsIutRCjLF/GPcfKXmuc+VAXw26g84zYg3UepHuurWR8onwM77kBCfgemJwvIWQPgGb9qQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjmHPRW5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC336C4CECE;
+	Thu, 28 Nov 2024 08:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732781350;
+	bh=DJGvh8ExhceGZ+loc+E/bF08f+lkklT3hOQZiqcuboc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NjmHPRW5qFz33QsTlyKOt/vHurWzLzB9cZDwb/o3eHOB+Gug6iTv9wReRRVUqLD7u
+	 d13qZG5pFiuYnnDKhSS5OPSAsGsioVKWFffkSf5aidHtixW4XneeR9qRhsHzcUXoQM
+	 Yj19NmDiYvG4QFVSURdiFhwRL/uTENTyGK/XmfmMozDhbB1etzuCv/lnjl7vaR2lf7
+	 qPgO+U6kfwK0T9wgpOsqqAt8A8Vph4XJXRCb08s17EpaJRrOyxkl84+pCCKZ6+TuNG
+	 Ax+Fncdl8daIN2oc4UxpNSz71UraPUaxPWX2+VCjvwjUcn/nXK+RaP7j45iVkN0WnH
+	 zHADreh/RQfHg==
+Message-ID: <bfc49b65-4d14-4dd1-8dff-e200989a1805@kernel.org>
+Date: Thu, 28 Nov 2024 09:09:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,36 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Fix spelling mistake
-To: Vyshnav Ajith <puthen1977@gmail.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, horms@kernel.org, corbet@lwn.net
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241121221852.10754-1-puthen1977@gmail.com>
+Subject: Re: [PATCH can-next v2] dt-bindings: can: tcan4x5x: add missing
+ required clock-names
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241128-tcancclk-v2-1-fbf07f1f1626@geanix.com>
+ <87378b2f-80a0-4a35-9989-9b96910701e3@kernel.org>
+ <tmu6inhqzkecgdrnv3yip6fjoelcyby5b7ascby54afcn5iune@jd4lk4p5kplt>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241121221852.10754-1-puthen1977@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <tmu6inhqzkecgdrnv3yip6fjoelcyby5b7ascby54afcn5iune@jd4lk4p5kplt>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/21/24 23:18, Vyshnav Ajith wrote:
-> Changed from reequires to require. A minute typo.
+On 28/11/2024 08:49, Sean Nyekjaer wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
+> On Thu, Nov 28, 2024 at 08:31:41AM +0100, Krzysztof Kozlowski wrote:
+>> On 28/11/2024 08:09, Sean Nyekjaer wrote:
+>>> tcan4x5x requires an external clock called cclk, add it here.
+>>
+>> Nothing improved. Device already has this clock, so your rationale is
+>> not correct.
+> 
+> Please explain, yes the device has this clock, but not the name. The
+> driver depends on the name.
 
-## Form letter - net-next-closed
+You say that the device - tcan4x5x - requires an external clock. This is
+already satisfied.
 
-The merge window for v6.13 has begun and net-next is closed for new drivers,
-features, code refactoring and optimizations. We are currently accepting
-bug fixes only.
+> 
+>>
+>> Also, offending patch is not in the next for some reason, so it should
+>> be squashed there. Conversion which leads to incorrect binding is not a
+>> correct conversion.
+> 
+> "offending patch":
+> https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git/commit/?h=testing&id=77400284f54b9a1f6b6127c08cb935fc05e5c3d2
+> 
+> "dt-bindings: can: convert tcan4x5x.txt to DT schema" did the
+> conversion no more or less.
+> The original txt file fails to mention the clock required,
+> therefore IMHO this patch should be as a seperate patch :)
 
-Please repost when net-next reopens after Dec 2nd.
+Stop repeating the same as last time.
 
-RFC patches sent for review only are welcome at any time.
+No, I said it already multiple times in multiple threads, including
+guideline I gave some time ago:
+https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
 
-See:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
--- 
-pw-bot: defer
+You conversion is supposed to be complete and pass checks on existing
+DTS, which also implies matching driver.
 
+
+Best regards,
+Krzysztof
 
