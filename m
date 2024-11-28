@@ -1,179 +1,123 @@
-Return-Path: <linux-kernel+bounces-424590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083189DB665
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:19:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA0D1654B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:19:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3E119882B;
-	Thu, 28 Nov 2024 11:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="gSatPmu+"
-Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362169DB661
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:19:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4649284E1C;
-	Thu, 28 Nov 2024 11:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732792752; cv=none; b=X/MR4R458++ZpSs48efFYzpW3dOMaLz/WWjqUcgBxWU4gubuYL0WsTz/leez02XwTMnEHNO1QJTjubO2Is4Z+Jow0QDAHYWtz7qCiCOS+mGudmGQ6R2Zd7CVSNMwQMgnaR/gWcD9+RFmhMJd35YwdKNdpRfiWX4Ruf4EE6YeNEo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732792752; c=relaxed/simple;
-	bh=UeZaCJrPRNOMMCTBxSYlt5tB19qDO3+mBAS1XVsGV0A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mexfi/zlez6bCxOhhsyNPTsRRHg3JPLbwR3AG8Ht4qLzoBJr+7ECCllaikw76BJpAKcjL8W+526W8EX9aMteaYuavBNi4X9CRl7q/HT2EMEJOSChJ81YV6mJPi+RRfKbjLYkBY1CFVHER0MA1i8d1/0bt/7UOiAvrQTYFfirIl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=gSatPmu+; arc=none smtp.client-ip=193.238.174.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mg.ssi.bg (localhost [127.0.0.1])
-	by mg.ssi.bg (Proxmox) with ESMTP id 1CA7481300;
-	Thu, 28 Nov 2024 13:19:02 +0200 (EET)
-Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
-	by mg.ssi.bg (Proxmox) with ESMTPS;
-	Thu, 28 Nov 2024 13:19:00 +0200 (EET)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by ink.ssi.bg (Postfix) with ESMTPSA id DF85A302E72;
-	Thu, 28 Nov 2024 13:18:49 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
-	t=1732792731; bh=UeZaCJrPRNOMMCTBxSYlt5tB19qDO3+mBAS1XVsGV0A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=gSatPmu+YkuDPMzVzD08d01eTowkOx6BFD8bNfsIC9QiGnfTQeawdi4B87JHBAzs3
-	 gIUbq85ZKcI0aJbVdQlEBaCNR/gkcDYK9Bru178+Nafv7zVYm+wnVcyY7SSiNWq9QC
-	 ylYe0bSzxW9reJ7b67ZyY3wVGRk28GgZ24gcNItg=
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001122817DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4ASBIdhE024472;
-	Thu, 28 Nov 2024 13:18:39 +0200
-Date: Thu, 28 Nov 2024 13:18:39 +0200 (EET)
-From: Julian Anastasov <ja@ssi.bg>
-To: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        "David S. Miller" <davem@davemloft.net>,
-        kernel test robot <lkp@intel.com>, Ruowen Qin <ruqin@redhat.com>,
-        Jinghao Jia <jinghao7@illinois.edu>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v3 net] ipvs: fix UB due to uninitialized stack access
- in ip_vs_protocol_init()
-In-Reply-To: <70cd1035-07d8-4356-a53e-020d93c2515e@redhat.com>
-Message-ID: <87fca918-403d-2fd5-576a-dfa730483fc2@ssi.bg>
-References: <20241123094256.28887-1-jinghao7@illinois.edu> <70cd1035-07d8-4356-a53e-020d93c2515e@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94031482F3;
+	Thu, 28 Nov 2024 11:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DuA7I5Nc"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C8915E5CA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 11:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732792733; cv=none; b=L7G7RbPKMKhiOVkYBe7v3FoozBYjK/BU6JsmCycMAghZ1WsdB/Cz6CovJXMQS1aJ2Lsqda6YNHyAgfvgts/0HKNqiBH+DWru55C81wy6TDORF7gUCYly/+EoYJ1UuV0pfoRMRC7UhI6a2pCK207QrGhIRVdkTSNFtAW9+JuqE2c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732792733; c=relaxed/simple;
+	bh=1Dr/9wK0GiPUXbwSM3pXd7ht9BNkBZhC+a1phGPu4JA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TbApRXgKLy/jp5K6FT9Yy1VuESp3/jPP6SDznH1H9UDReGaeTO1Ffb882pE+QsPql9MKx16GUbxAUTQtmvHdNFg8ZTfm0rKRne96ZdOgjXGYh+MytTZpCvqPKqYvWUb4tTmRiYp2UrZKwbM/s49mf3soZrHx2JyR3PriORrMOBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DuA7I5Nc; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-724e1742d0dso620335b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 03:18:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732792731; x=1733397531; darn=vger.kernel.org;
+        h=content-disposition:mime-version:reply-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7g0EDzT90oSJRMdudNKevE+2bYFLsEd5Pd/+GTWI7E4=;
+        b=DuA7I5Nc/yBWzCzpYtAGYexy6CLXEgr0dTpwIAWbZTU73W4Q63fju9fXqqVRZZj29s
+         d3XJ972aZ9SLNRoq/EHZtdvrjZ0MDN41ydzxahJDvZSdrEJryUhagnLaWzx1/O9pWTWR
+         unifArbhbMMpQZ2WZH1/ob09VE4jbF3hqGDxg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732792731; x=1733397531;
+        h=content-disposition:mime-version:reply-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7g0EDzT90oSJRMdudNKevE+2bYFLsEd5Pd/+GTWI7E4=;
+        b=lxWWkssWF9LhqSajcZjExWrXwYb2cln9CIFtUTtpGG1HjHbqGyNev9hq7Q4lUZTwM4
+         joh8Fry6sd7BQwJHylgGVL6Cn8G7VOoDk34iemcRnjdJf2K7gXZvxyoYXfhWTYzd0oUY
+         sbGnEl8NRpEewNA0QmBP5Zie+QFlppPfEFZ40uSNPc4FbHtQcuJumYARRzteGE2VJ12S
+         25xd2/WKsM7dTKI2WsVYpoh3TQ4Txj+6siB5yXS4Wt10wQI5luN2pPoOx4Sj3+xa8AeI
+         23iwa2eqmgkZcMh0QzNxBigm5LOEE6Z5wOPPUSZUDICdvtQoQQReUfHnbG3DQmaq431P
+         ov7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXya3ql4ZUMo5A4AAaFJ2m/R9PT/tqeVz6jEunVHqtBXGRpuzxRYYqU2IxJMq4ELI867KfRoyjbtUPPUQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5q3oyTr/8Ts/H/mdxuKtqgZmME172+mf1mfsvFuU6wwsCgSlx
+	w1oyStN4yBrAO3sbLLq71E19VC80dWn37qj3tgiA+8WJieP97rJ7b2iUAfnahg==
+X-Gm-Gg: ASbGnctXEjpcud1qm+KSelLuV/yr4JHNUCHPDFnrqDOngwpSC7vkSD0rVPj8acJfWE2
+	PT1BoAPKAcRBKVYsRZDNHAt0rc+d12Minjzul66hNdqtVKrQs+7xZ0o1Bw+d2G8P1BTSaw+SPR1
+	eJ9fc617Q99N/lYGgSpHjPLpTYP9jMcADt3fsZihCglePf/lOlrU1f74Si9GchlZl7m/r/lOHsd
+	Fv/twek7EzSw+TI7XPz24jgA/ym23hW9063wOxTVWfkxqpG/4Qmwg==
+X-Google-Smtp-Source: AGHT+IEUKIyiy9WVkqcupbZQIOcf/4lQH7Ewcmkw42yxvQRWkwZbjCYyNcNqjlql/El2bpIiD4PCIA==
+X-Received: by 2002:a17:90b:4b88:b0:2ea:95ac:54d1 with SMTP id 98e67ed59e1d1-2ee08ec82c8mr8162430a91.19.1732792730979;
+        Thu, 28 Nov 2024 03:18:50 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:e87e:5233:193f:13e1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee0fa30fcesm3222262a91.8.2024.11.28.03.18.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 03:18:50 -0800 (PST)
+Date: Thu, 28 Nov 2024 20:18:44 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: hpa@zytor.com, peterz@infradead.org, thorsten.blum@toblux.com,
+	yuntao.wang@linux.dev, tony.luck@intel.com, len.brown@intel.com,
+	srinivas.pandruvada@intel.com, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com,
+	rafael.j.wysocki@intel.com, x86@kernel.org,
+	linux-pm@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: bisected: [PATCH V4] x86/apic: Always explicitly disarm TSC-deadline
+ timer
+Message-ID: <20241128111844.GE10431@google.com>
+Reply-To: 20241015061522.25288-1-rui.zhang@intel.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi folks,
+sorry if messed something up, this email has never been in my inbox.
+
+> Disable the TSC Deadline timer in lapic_timer_shutdown() by writing to
+> MSR_IA32_TSC_DEADLINE when in TSC-deadline mode. Also avoid writing
+> to the initial-count register (APIC_TMICT) which is ignored in
+> TSC-deadline mode.
+
+So this commit hit stable and we now see section mismatch errors:
+
+// stripped
+
+WARNING: vmlinux.o(__ex_table+0x447c): Section mismatch in reference from the (unknown reference) (unknown) to the (unknown reference) .irqentry.text:(unknown)
+The relocation at __ex_table+0x447c references
+section ".irqentry.text" which is not in the list of
+authorized sections.
+
+WARNING: vmlinux.o(__ex_table+0x4480): Section mismatch in reference from the (unknown reference) (unknown) to the (unknown reference) .irqentry.text:(unknown)
+The relocation at __ex_table+0x4480 references
+section ".irqentry.text" which is not in the list of
+authorized sections.
+
+FATAL: modpost: Section mismatches detected.
 
 
-	Hello,
+Specifically because of wrmsrl.
 
-On Thu, 28 Nov 2024, Paolo Abeni wrote:
-
-> On 11/23/24 10:42, Jinghao Jia wrote:
-> > Under certain kernel configurations when building with Clang/LLVM, the
-> > compiler does not generate a return or jump as the terminator
-> > instruction for ip_vs_protocol_init(), triggering the following objtool
-> > warning during build time:
-> > 
-> >   vmlinux.o: warning: objtool: ip_vs_protocol_init() falls through to next function __initstub__kmod_ip_vs_rr__935_123_ip_vs_rr_init6()
-> > 
-> > At runtime, this either causes an oops when trying to load the ipvs
-> > module or a boot-time panic if ipvs is built-in. This same issue has
-> > been reported by the Intel kernel test robot previously.
-> > 
-> > Digging deeper into both LLVM and the kernel code reveals this to be a
-> > undefined behavior problem. ip_vs_protocol_init() uses a on-stack buffer
-> > of 64 chars to store the registered protocol names and leaves it
-> > uninitialized after definition. The function calls strnlen() when
-> > concatenating protocol names into the buffer. With CONFIG_FORTIFY_SOURCE
-> > strnlen() performs an extra step to check whether the last byte of the
-> > input char buffer is a null character (commit 3009f891bb9f ("fortify:
-> > Allow strlen() and strnlen() to pass compile-time known lengths")).
-> > This, together with possibly other configurations, cause the following
-> > IR to be generated:
-> > 
-> >   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #5 section ".init.text" align 16 !kcfi_type !29 {
-> >     %1 = alloca [64 x i8], align 16
-> >     ...
-> > 
-> >   14:                                               ; preds = %11
-> >     %15 = getelementptr inbounds i8, ptr %1, i64 63
-> >     %16 = load i8, ptr %15, align 1
-> >     %17 = tail call i1 @llvm.is.constant.i8(i8 %16)
-> >     %18 = icmp eq i8 %16, 0
-> >     %19 = select i1 %17, i1 %18, i1 false
-> >     br i1 %19, label %20, label %23
-> > 
-> >   20:                                               ; preds = %14
-> >     %21 = call i64 @strlen(ptr noundef nonnull dereferenceable(1) %1) #23
-> >     ...
-> > 
-> >   23:                                               ; preds = %14, %11, %20
-> >     %24 = call i64 @strnlen(ptr noundef nonnull dereferenceable(1) %1, i64 noundef 64) #24
-> >     ...
-> >   }
-> > 
-> > The above code calculates the address of the last char in the buffer
-> > (value %15) and then loads from it (value %16). Because the buffer is
-> > never initialized, the LLVM GVN pass marks value %16 as undefined:
-> > 
-> >   %13 = getelementptr inbounds i8, ptr %1, i64 63
-> >   br i1 undef, label %14, label %17
-> > 
-> > This gives later passes (SCCP, in particular) more DCE opportunities by
-> > propagating the undef value further, and eventually removes everything
-> > after the load on the uninitialized stack location:
-> > 
-> >   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #0 section ".init.text" align 16 !kcfi_type !11 {
-> >     %1 = alloca [64 x i8], align 16
-> >     ...
-> > 
-> >   12:                                               ; preds = %11
-> >     %13 = getelementptr inbounds i8, ptr %1, i64 63
-> >     unreachable
-> >   }
-> > 
-> > In this way, the generated native code will just fall through to the
-> > next function, as LLVM does not generate any code for the unreachable IR
-> > instruction and leaves the function without a terminator.
-> > 
-> > Zero the on-stack buffer to avoid this possible UB.
-> > 
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202402100205.PWXIz1ZK-lkp@intel.com/
-> > Co-developed-by: Ruowen Qin <ruqin@redhat.com>
-> > Signed-off-by: Ruowen Qin <ruqin@redhat.com>
-> > Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
-> 
-> @Pablo, @Simon, @Julian: recent ipvs patches landed either on the
-> net(-next) trees or the netfiler trees according to a random (?) pattern.
-> 
-> What is your preference here? Should such patches go via netfilter or
-> net? Or something else. FTR, I *think* netfilter should be the
-> preferable target, but I'm open to other options.
-
-	IPVS patches should go always via Netfilter trees.
-It is my fault to tell people to use the 'net' tag, I'll
-recommend the proper nf tree the next time. Sorry for the
-confusion.
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
-
+I'm aware of the section mismatch errors on linux-5.4 (I know), not
+aware of any other stable versions (but I haven't checked).  Is this
+something specific to linux-5.4?
 
