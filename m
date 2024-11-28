@@ -1,134 +1,87 @@
-Return-Path: <linux-kernel+bounces-424858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692689DBA5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:18:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F97C9DBA5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D37281460
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:18:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0390B23418
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4E01BD03B;
-	Thu, 28 Nov 2024 15:17:22 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7F01A9B2F;
+	Thu, 28 Nov 2024 15:19:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0E51BBBC4;
-	Thu, 28 Nov 2024 15:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17DB199253
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 15:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732807041; cv=none; b=hIeGR4yuOHhn1pQK7QIciUNUeyPQAQYKqFZCLXIRW91AbeOmQ+V8Otmg+1zHCtRLmv9+zeVzxsPyrc9msZGmSU3rBrHbKZb6+El+FITo3PegEh6gjJifQ8hRiQnqpDKbgv4r7GpwG4vjmOpQxEvg1Tc0HP2qIrtwPSUFEkMU+F4=
+	t=1732807145; cv=none; b=DZucQdUoBgVOTV+0HdA4NHhJbQbA8pT4MrMWt/Lqp3Nfxlh9ErO4i0xTRnF1HPcUXTcAxvnKhc9fKo19lVlxfRNbax/2LSW6+GBCWpk/jIWQ1R0O82XVVJkbcfkRpczJIVrqXmI4qZRhtrB/sXqSm2IlNyLp22SeKyXmqn7T1hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732807041; c=relaxed/simple;
-	bh=uHVXp1lCi0mfmgi9kc+IJW5MLMJHm0E3czWl1oMlKoo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=njKxAGMy56l1pqorq2EgK0gtvS1FigrRPETZxJk98dlm9AyOjtVjOEWxWp1lPK22v01UesfAN9x4kttqRXFLiI8+SugPtBxmGY2P56FuZGQzbHuR0/TQoRvntSiDtYtFAtNxgGK7PMDY4WiPhCRqo/dKszMsRJUML9rSWELAWYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so1017153a12.2;
-        Thu, 28 Nov 2024 07:17:19 -0800 (PST)
+	s=arc-20240116; t=1732807145; c=relaxed/simple;
+	bh=Bg2AOzz6Q2ajwSSSOm+D8LiI76zEynE1xpkVqyC8LdE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mOTeD8AY8bd/guvBFCFsjTD0iYPyccEtUv/dre6dq1jiVxKP0DZrA9reLxREhPy4dq+lEN9P7KaMKBnR5dVMTJVzUXIco4i9w1/9vqc2MR3AbAKskf+FllnZVMB2Fc0l+vLDrGtNcVs5dy2PT11T+PRhI1I3efuzvZsYtZEAxkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8419aa81d6aso73885239f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 07:19:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732807036; x=1733411836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xpOqJtapJKr2nmzp6tbpwS+L3Zut8QyciQBvDh30p6c=;
-        b=hxU/d6Ex4bTJDfhM77hgxZZCnNxpQ6im8gTjMttWfO0v6cRYZvHec6m60uh3+7wlqo
-         BO4Wl/gIx0eHAwW5wdj5g/C0Sb5XFtmQUEY0nq+ZYUE77jG122oOl756D8y54cI2yr3i
-         ft9hyukLdwSI/c6Abm+W4P9N4sktnv+CE1S+tmcr4aMtdpLRNsjTCRfe0/wwPFWov797
-         tf3QgJCMs9/vRowUJv7mTN7nSUa95FEuvrwb0fSqnvOKeWW5LYG6MgZbE4GRq4onYfJd
-         sS7bjTYX0DhsSR2ty3WRSGXTcTZh0UHa8PN1zazXmN+58WXUXMoUq5ssUOrLH8udWOua
-         GEKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMkixmBEu6yjTkigebzWg5FBlT4FWT3pforLf5ulVmYvWnGbdTGWGJbu3YlK53YoT6DF/+b5YyC2Eu@vger.kernel.org, AJvYcCVi8XMvWO28aIhIMtfE59fqK5H01qSbJxACxzsa2sbQc8nxLDsMhO3uPZwnO/kfxbx/SfCf/Y18YL+4O13MkUkRoM8=@vger.kernel.org, AJvYcCWS0qIYNmIbkb3wfl6IH6QkRuVHKSmWao5KSGdY5KYwI3TToYv5nevkRmHPbw0I6RLysBOp4aa1Oult@vger.kernel.org, AJvYcCXHUntvJwXiZWeBLY8ofv7Eq4G7vQo/l4TVG4LTACB5tOtU5e6grdWpQu//Qk9IXiXQVUZ9Hvs+MVwI7N3y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmOQ/nO+mj7ElR7UdFnkhMoqFkoBjLnisXr7QVLHZkK6a1mhHz
-	Wo12Fs+SQgEYaRWMYHe0F+lEF9Ch17gjDjf5mQmdpjjTCSn5VQr3qy65wBYaItc=
-X-Gm-Gg: ASbGncuMdnLJagkIHZJQ5nFuJCfxpthpby7u9NKEyYtPq1/6R6OWPFZdrATqko2nN4r
-	QWY9r+HwwNBvqGkHzBAVCZKfGsBMX3AN3EXTS2VIFHfJQQxFlNtASWKSVIWxW8pz+3+uTDyksJq
-	f34cPLSY73ZD0vx0e8VsrkSDMkqWgFA/QDKEMuBiD4juD3aJmznY05DrjGCYZQgkq/mt/ygT5wX
-	Znjnr2L2vznPASzxxLNQ6/MksmeCVUL4jaFTlRHZCDFUhUw8CWBnqNcmfuJ20kqR3o/k5n6/Wtl
-	1SvlCzh/s0vL
-X-Google-Smtp-Source: AGHT+IHBfYwMZh6ZevmM/W7aEk/qprH29V2yB0NqtU8IU/9U7mGi2/GLJSOl6Ze1EWn/8+dY7yKDSQ==
-X-Received: by 2002:a17:906:314b:b0:aa5:3705:2dc with SMTP id a640c23a62f3a-aa58103c65emr546094466b.45.1732807036239;
-        Thu, 28 Nov 2024 07:17:16 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6345sm76845766b.109.2024.11.28.07.17.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 07:17:15 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa5366d3b47so131319966b.0;
-        Thu, 28 Nov 2024 07:17:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVCL/HaP7ifYuwSJeuH6gtXEjDiXCiNF0MXXiN8FQUQON6KVOXHNbd65tvsuH+4Ovb3PGw5DpVs9O5LKYxB@vger.kernel.org, AJvYcCVv/OF2MVVVY6PHsElvkJk5he3+J/jswrYvveQK9WR3/q/eTPdl5YicWUewXA3o62//zQA0GyPsVVA6IVMmySqrtyI=@vger.kernel.org, AJvYcCVw5iKR96Pr5l3W61Y9ylJsknoo31+Xw5HUbFfhvnT41UkDdW0wFLeL5IDzY14Oirwv1j22GbBxvvL7@vger.kernel.org, AJvYcCWo9lGCcVX/o6p0gxJ/SU0ZV28VAG/QFBqqaydf5Qyp9ktk+THY+4xA85FwnaCE79vJiaBOf3f+dPm4@vger.kernel.org
-X-Received: by 2002:a17:906:329b:b0:aa5:241a:dc75 with SMTP id
- a640c23a62f3a-aa58103b03amr618001666b.41.1732807035249; Thu, 28 Nov 2024
- 07:17:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732807143; x=1733411943;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=khP65dqifF17oRSR9jBugIaYZGtwT4nQ2geEa+vkDf4=;
+        b=EXLjCjeUPgc7caa7Nt2V/Q6CWMRPVfkcgshvVAconZhGjluz7lzQJzYLoeGdN1tkQi
+         XpytLIQtf4ScBA/T6uCK8hNFNIQQK8luFiMTp5PvtQ24/Nsrs7nnno8VGw4zr2t1K2Qz
+         elions9GnYKk+qF6kKiTIs7EeiKGu1IusaXgvbbV3ToRowkv/et0estDy//khzQ21Z88
+         rtJttqkAbDGvDyhhrIT5pAPzCJGkSS2h2OGjwv4/WUogliJULzFMMta4CeaYqBeBbNZe
+         Xt0arbYUCV3qqoFSJIQKetlZIA2Kn+WnLNbTmYsVWea4HfMLB4RPqNeFatmxNDF8hhf9
+         LFJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbwQNcMHvyV2BCte2G9P5bAhf8TDkU0E5HU8VBjA7Pa0q+HNLNnIXgcQo+KGfVd8Z+VL3Hmqz8iQTpRrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8TIYThwoJf8ds4iewXaz3FkYGwW0Ko/onTa0nLLn/gse0f50t
+	wbDRUa8EermcDa61JZFGvCspp1B/TYS9lbzZ/FJ2ukC9vGx/9zqnsydF4ZPpQ0wPwRVZ9VcHwPr
+	ftcIQQpzKUDFj4RtfjZn1Tt5DQ9UGrMPSUmfxMdOU3qDNEnilovROGuk=
+X-Google-Smtp-Source: AGHT+IHE+etgiWaFQHshnhqwlvmlD5lYei9zdL3Kj2TztZ3FFLbA7zNE91PmEDsfiPM2IKw4IbZQGnykvixPv4oFV72pEGCf5ccF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com> <20241126092050.1825607-13-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241126092050.1825607-13-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 28 Nov 2024 16:17:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWadox27_HYhijdOCdd==4P=-C0moFFAFUmCKupcSBjGA@mail.gmail.com>
-Message-ID: <CAMuHMdWadox27_HYhijdOCdd==4P=-C0moFFAFUmCKupcSBjGA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/15] arm64: dts: renesas: Add #renesas,sysc-signal-cells
- to system controller node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, 
-	yoshihiro.shimoda.uh@renesas.com, christophe.jaillet@wanadoo.fr, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-usb@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+X-Received: by 2002:a05:6e02:1caf:b0:3a7:8720:9de8 with SMTP id
+ e9e14a558f8ab-3a7c552677amr88926105ab.5.1732807143226; Thu, 28 Nov 2024
+ 07:19:03 -0800 (PST)
+Date: Thu, 28 Nov 2024 07:19:03 -0800
+In-Reply-To: <20241128144314.KVCl8%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674889e7.050a0220.253251.0089.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] KMSAN: uninit-value in gfs2_quota_init (2)
+From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+Hello,
 
-Thanks for your patch!
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Tue, Nov 26, 2024 at 10:21=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The system controller on RZ/G3S can provide control access to its signals=
-.
+Reported-by: syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com
+Tested-by: syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com
 
-Actually all SoCs from the "RZ/G2L" family...
+Tested on:
 
-> To enable this, add the #renesas,sysc-signal-cells DT property. Consumers
-> can use the renesas,sysc-signal DT property to reference the specific SYS=
-C
-> signal that needs to be controlled.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v2:
-> - none; this patch is new
->
->
->  arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 3 ++-
->  arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 3 ++-
->  arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 3 ++-
->  arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 3 ++-
+commit:         b86545e0 Merge tag 'acpi-6.13-rc1-2' of git://git.kern..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16544f78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4aa348d53e96cc1
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fb37b567267511a9e11
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=111463c0580000
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Note: testing is done by a robot and is best-effort only.
 
