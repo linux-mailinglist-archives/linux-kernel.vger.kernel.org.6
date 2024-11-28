@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-424474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC259DB4CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:30:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B133D9DB4D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:31:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 102BAB22A6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:30:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925C41674FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B814517C219;
-	Thu, 28 Nov 2024 09:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A4155C8A;
+	Thu, 28 Nov 2024 09:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFM5wIYj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SLTyLWuV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10596145B3E;
-	Thu, 28 Nov 2024 09:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF94C2FD
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732786222; cv=none; b=N0Whkz5xmeUo3yN2n+GEeU0+3Fi3y4FYJbvK3MRL3npM/WDKVgIv668Y9YUozKA7otc9Prsx7RBL/fNN/3uFjaOuh6YBOaa9ZbxEh8hpbgPx9zfzgXoMuj5X30ZN7LAZGb4IeoxvFsSRvMk9yK/LuTKWgwanjvhuP0vwiqeWzlg=
+	t=1732786287; cv=none; b=rkpouUqJfNa0NbMZhMT3lnQ1iQhsluoy/uk1EoNiOfNCDMuelwczWaTfyvMZoQ96fHDsNUytQBRqZwmrSBOojv22QJIOzp9klLn3hAN7tFNoD2MR7PI7iPfFWG3AMFHSDBlukRvg44UCGwi5yrHBE+qQBYKkt53Yk/ugCsa1hdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732786222; c=relaxed/simple;
-	bh=BHAS7wdFzoXKET3fu9FOUzRGSasESdSnjvqa51c3yAw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CuQEkk90LgANGMis5Y1vNzRTt+VN9Srp0HwQuBfNXvX3j1zRVwfVyVucEGKk1Rtuu5gqhU8H8bB4kxAp4q3I0PkZuoqogS4oT6os3AcjTL20RI00dziEZVmXWyVh5eOGJ2/2+r84K/TC27g6llNVBiJZx0gZFiVOnjOk9P9h2GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFM5wIYj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E6A5C4CED2;
-	Thu, 28 Nov 2024 09:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732786219;
-	bh=BHAS7wdFzoXKET3fu9FOUzRGSasESdSnjvqa51c3yAw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KFM5wIYjOhtQNHnHCLUT78fuuKjAhDIUbE7jSNmPGNvIV08TNh2xL8IKb0wpXwhnW
-	 9FkapxJEmAV1LogxRwH0T8PlIE7BDmUqm+cG4o3A7hfU9SOBsFG8E+GcX7SZzIyd7x
-	 D9ORL1+Ag6yVKkEcWyfRMbctCeT9FNC6DGmULLUL0Pk9zsUJ6jXuGsM1j0IOf3wM+w
-	 MqJ7dMIWRW/6J2iPLUmAkzthBLtQtLLCMujg5A3QYx0fNNA4CT62mqE13kR7htYJb5
-	 powv/u9Q5jUz/3AreA5UDbYwh7hZDy4vnd28xHo3XvB8Zp+U0VuS05FDGGyiK46926
-	 Y/NZTnh1js67w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2F0380A944;
-	Thu, 28 Nov 2024 09:30:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1732786287; c=relaxed/simple;
+	bh=XYJmj2ZBJEqyCpXhcCfMly0PL5UW68XxSuLKkFe7GrQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Nyy/nOGPomk+Dm2t2KcnnlzOR9GmSCCMFf0tg4cfu/kwb2rIFJxYyM4al6bhyf0HPxwqqXGa5PfkQiGUa/M0+gW+rYc9+dx6V0JFT4kgbCGoEB0wmObn27Flk+kSjfuNrm2pTgdabjvuac0z/SYqcVCBV04274PMCZmvkSHfNQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SLTyLWuV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 67AA440E021C;
+	Thu, 28 Nov 2024 09:31:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id z5oQadumwx87; Thu, 28 Nov 2024 09:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732786269; bh=s9Nyj0EEp8a7Jv8U0vwQ4By12yuoNaRSaB/Otd3NiXU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=SLTyLWuVVaTXXyr/hkeqcPpA3MYe0167t9sFY03Iq9TvKa8c0sjXXDSoj50H68o43
+	 SONz2t8FJowRjQAUkjCq+c2JWr3gN/ejxlOtNBZMQAC/KkKApzv/jeu8UO0aGUvMZc
+	 wSkfRs+303rkL6p6N1N0hUNAJaGf3J0KV2DUJQwIWBKq/cprzVYj4sYACryR2VheQp
+	 iuH9ceDPZ7e5hdOq8oQA6FBON+8aWrEghcAm1grhGP//2EGh2g/i0wTFVlmRm75mFJ
+	 7a/3etDCznznrBiyNiy30P9JjmeB8M00jy82CnKeE0lEm4SlYfCoLWhhiLtkLdt+ud
+	 /cTsDcRC5Ub3KCv9bHIaxuJawEShVuHyOfZFBdFmqK5sHAvx+BBumFxVzIkVSqERBV
+	 DviOxqOPJo+g/8DVvbxFEFJku9i5UwDMPJ/IQHZcibE1xCQx+Mi+tsn7ERjZMh9XIu
+	 AC83D1zpglrVlJXN1+UQw2eIqx4kf6Phc+hpIbksRTP8ky54jnYtidbDJN0q3MjJUC
+	 H3uq8PtdrFAuYfFEE3kFLUSVaXBHi5f4iYKFxZhgVsIl5LBN5gBWgBpOTXIx+FO4pE
+	 b2UhFxhL1T7wRB8T75mzdRq0DPZvSQlTFdBaKkAoSVn4/vDPCmgP2nKWgfQ2iQAy1H
+	 z46LsMYxmJwHqIhDoajGKISE=
+Received: from [IPv6:::1] (unknown [IPv6:2a02:3038:207:9418:a901:6eac:9c56:4a8d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 13CCD40E01D6;
+	Thu, 28 Nov 2024 09:30:50 +0000 (UTC)
+Date: Thu, 28 Nov 2024 10:30:46 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, x86@kernel.org
+CC: Andreas Herrmann <aherrmann@suse.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Chen Yu <yu.c.chen@intel.com>,
+ Len Brown <len.brown@intel.com>, Radu Rendec <rrendec@redhat.com>,
+ Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, Huang Ying <ying.huang@intel.com>,
+ Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/2] x86/cacheinfo: Set the number of leaves per CPU
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
+References: <20241128002247.26726-1-ricardo.neri-calderon@linux.intel.com>
+Message-ID: <1C6C4601-9478-4020-B4A7-47017E9A57F2@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] selftests: rds: move test.py to TEST_FILES
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173278623250.1676038.14465582848718256111.git-patchwork-notify@kernel.org>
-Date: Thu, 28 Nov 2024 09:30:32 +0000
-References: <20241124073243.847932-1-liuhangbin@gmail.com>
-In-Reply-To: <20241124073243.847932-1-liuhangbin@gmail.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, allison.henderson@oracle.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- shuah@kernel.org, vegard.nossum@oracle.com, chuck.lever@oracle.com,
- linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- mheyne@amazon.de
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On November 28, 2024 1:22:45 AM GMT+01:00, Ricardo Neri <ricardo=2Eneri-cal=
+deron@linux=2Eintel=2Ecom> wrote:
+>Changes since v7:
+> * Merged patches 2/3 into one=2E (Borislav)
+> * Dropped wrapper functions for ci_cpu_cacheinfo=2E (Borislav)
+> * Check for zero cache leaves in init_cache_level() for x86=2E
+>   (Borislav)
+> * Removed an ugly line break=2E (Borislav)
+>
+>Changes since v6:
+>  * Merged patches 1 and 2 into one=2E (Borislav)
+>  * Fixed an formatting issue in allocate_cache_info()=2E (Borislav)
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+I don't think you should keep the tags after those changes=2E=2E=2E
 
-On Sun, 24 Nov 2024 07:32:43 +0000 you wrote:
-> The test.py should not be run separately. It should be run via run.sh,
-> which will do some sanity checks first. Move the test.py from TEST_PROGS
-> to TEST_FILES.
-> 
-> Reported-by: Maximilian Heyne <mheyne@amazon.de>
-> Closes: https://lore.kernel.org/netdev/20241122150129.GB18887@dev-dsk-mheyne-1b-55676e6a.eu-west-1.amazon.com
-> Fixes: 3ade6ce1255e ("selftests: rds: add testing infrastructure")
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] selftests: rds: move test.py to TEST_FILES
-    https://git.kernel.org/netdev/net/c/663a91747553
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
