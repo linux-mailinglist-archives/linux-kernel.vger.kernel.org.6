@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-424283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D759DB292
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:43:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CCA71624F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:42:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E33913C836;
-	Thu, 28 Nov 2024 05:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="UKiIRcXo";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="sa9rMu8q";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="Jc4vdLq8"
-Received: from fallback20.i.mail.ru (fallback20.i.mail.ru [79.137.243.76])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E7F9DB256
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:05:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CA412C7FD;
-	Thu, 28 Nov 2024 05:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.76
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AB13B227EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:05:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50E2142E9F;
+	Thu, 28 Nov 2024 05:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DrdDbm78"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA7C1FAA;
+	Thu, 28 Nov 2024 05:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732772538; cv=none; b=hDiKLE0UqImeogumVfl2oKbRzP+2XkgbCCOsaziFzWuUep9zeH+Qj0fQzwkSl2gRcR6CRDH1J6P98gQBHIIq9zQQ0jo/5GcrNJOx2j2rE/DSuUwoHv1E09WuTBLhKF0QrhvLH+kyqa2rITmVVIIgtR5k9r5pBzTcZSzNEt94ySU=
+	t=1732770332; cv=none; b=apIHpoBk5QBSeLtcjutr898YSdrRObpPrPCrRgBkcHxzK+A7F0vloFiYAXh9Km8f/WnXLUoW6jWKhYZKCzFqZQVqHeZVZsZ67oY2PXAYionTbs5YQwm+JBA1OzNS4N+q2MbPZ+2/4yn45W83LvHTCjRg5xA7tRSxNcUO9lr5D8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732772538; c=relaxed/simple;
-	bh=g8a48EcM+AVuU9Vx36qEdEsD9fWzzqOPqTFCMFku50w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mLikBbmZ0A/2RoUUtecxEJgKHHcGn5AfBYSNgutkAWnDYTwrgZmo+GqQMrs/I0aUieLFhya1qlXSi+kQ7gwQ3rTVc9EvwS7n06EIObgFk+LkxVfR7KFNq4wqjEvvovYLkD/WvbSaicjr44kHv7y8zIJJGQTv6xgo21yVkpKEWJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru; spf=pass smtp.mailfrom=inbox.ru; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=UKiIRcXo; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=sa9rMu8q; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=Jc4vdLq8; arc=none smtp.client-ip=79.137.243.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inbox.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail4;
-	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=8000Jc4EcpgBD3+O+zLd4SjqEGa0myYfCDXx9OG36/o=;
-	t=1732772533;x=1732862533; 
-	b=UKiIRcXoTPvpLca7Vc8BqgsoimPeAx4rK5MX9hqkUR90L6gg+GG9TkFRhgyqAW9ereVcqLEeiP23zfFSJQ0rRrItMa7irfCi4Blz+MRpeD7mki4C4nVihtQRZIKM84VWOWV85MKgAF+cfIdNuM7vQROWyR9YO8W3KOwBqCgKY9k+64MlpWf27BwDELGmYJGyR8PyL1HAwCwaAkGK8d+dmLKBrD+fFiUf+ag7wi+bXy39N5p9mc4K2nriDH+T4OpkeRNOO7rJOr5RKwfalZtGuZTwTkgInP9wUVoR8O+1LWsu0bdBB15ud5BstHs39bGWzFBDOrLO6or2EZy6JS27DA==;
-Received: from [10.113.244.107] (port=56470 helo=send55.i.mail.ru)
-	by fallback20.i.mail.ru with esmtp (envelope-from <fido_max@inbox.ru>)
-	id 1tGWgd-007Wcm-3e; Thu, 28 Nov 2024 08:03:31 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
-	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
-	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive:X-Cloud-Ids;
-	bh=8000Jc4EcpgBD3+O+zLd4SjqEGa0myYfCDXx9OG36/o=; t=1732770211; x=1732860211; 
-	b=sa9rMu8qCjGkqyLFXep4UVTP2rJoCxh7EpGbGaH1JfpB187kivs8Z90eOymlDeCrA0hIZ4O4PkU
-	EYClE9SZ2sPEFavYu6DdKfU5u848fBDIiAYQKSnMb6eEuFkXy1nMfK3X8oCEJDGpRJbgJdd1pwgFI
-	nzLzsWJKX0fBrvYxspMijviCpJKxgRmbyKlT63KvIx3EEFmhdTzwiy5JwS/qOKTZEdDBvoPKVlcWF
-	i9N6oJ0qC2VvEdxaD5YCbHrzACSPi4jZcYf1PnIYgM9Vbrk+uUt1HeFzwmQ7j153Ed8oO1C6iktJt
-	prxm3b3qxB6dgSfRgfmk8k+Q0ro2bJnTMfyQ==;
-Received: from [10.113.87.111] (port=54244 helo=send103.i.mail.ru)
-	by exim-fallback-8c87c6976-nf69c with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(envelope-from <fido_max@inbox.ru>)
-	id 1tGWgU-00000000P0P-1Yx7; Thu, 28 Nov 2024 08:03:22 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
-	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
-	To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
-	X-Cloud-Ids:Disposition-Notification-To;
-	bh=8000Jc4EcpgBD3+O+zLd4SjqEGa0myYfCDXx9OG36/o=; t=1732770202; x=1732860202; 
-	b=Jc4vdLq8T23zNwF7QbIenByu0Vj5KxkJBAP6NIkY4ZMrVMLi6lNuKEV3feIoKz0X8+nTnDdnLM+
-	sUuFqzNP4TIUgoK2AheURs/49sfEotJEKdRwuwvWjY4mVGtMZ+XEwqZrAD/YUTjiRAQBQAb6za6Ow
-	Hyp45ifb8AJeUktpE4gV467iyRGUXTc9ibwRqEgW/v3/cXcvwVmx2Hs6rZ/ahPe34rRsGKfYVoPR3
-	STYDa59a6MmXBfutXwtSCPtIdDJa/F6P1An7zwtM8ZNrd6CLY+9F5/muEcvEyVL2nRGHxRP84dqEg
-	vh/n/DLDtAiLKm7JWPZx6PvG3WMawNQB5Wdw==;
-Received: by exim-smtp-78d78789c6-mlnkw with esmtpa (envelope-from <fido_max@inbox.ru>)
-	id 1tGWgE-000000003d6-0AzY; Thu, 28 Nov 2024 08:03:06 +0300
-From: Maxim Kochetkov <fido_max@inbox.ru>
-To: Eugeniy.Paltsev@synopsys.com,
-	vkoul@kernel.org,
-	pandith.n@intel.com,
-	dmaengine@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kris.pan@intel.com,
-	Maxim Kochetkov <fido_max@inbox.ru>
-Subject: [PATCH 1/1] dmaengine: dw-axi-dmac: fix snps,axi-max-burst-len settings
-Date: Thu, 28 Nov 2024 08:02:59 +0300
-Message-ID: <20241128050259.879263-1-fido_max@inbox.ru>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732770332; c=relaxed/simple;
+	bh=JoXdclOpAXCa9Tcg/xERw0jHha09R6d9Sfl9SLTUwtc=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QHbpeoT0ax4e0Uif7xBksSKu8XQwmekHYA7iCACzD6FTozYN4uEbhsSxzKhX1lt/wNctZewiJyqp6uyfF7P1p03rMFb4oadaYkiLSPlULrM4OM7sq0URrDgx5odHBK7x5WvHm+uWIQQJmQQn4OsUEiPPpTr84NYyw6GBv1yGgio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DrdDbm78; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARGRUOZ018966;
+	Thu, 28 Nov 2024 05:05:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=J1MjLHK1HnXfB9Qnhsid+s
+	8QoX2emh7DYyNGRwddJD8=; b=DrdDbm78tvtDJL93MGRsIHVTYfBlz0WoKW7eIJ
+	5qzeMsr0rnzXd/4Z3NZJz8qfUBFZG+OtQnk49/mGxaNH4SOvpZ/Z8d+DqxtpkHXV
+	un/3PVX0Ao9YZe787FhWkjQ05+yx1IBvSfQFjNSwSEw58XNo4F4wR6L/rqBA9TFO
+	6jmo3Qf9zI4pnq3G468Ih7LQMe1Hq1QLUR7hhIBKnuxGaZM8n/+ooaX2ucpWC4VW
+	AIqqCeN/G7sCOUmK8whdSz/XiG/oSdLgIuWZlHY3Q1hJ51kGynk9VbKG5emxztri
+	VRhTdGA8rjoDd8ZbWIqZo/2lSTeTLWKSZ2iY23C7FIdrzkRw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366y01cba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 05:05:23 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS55MiT023225
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 05:05:22 GMT
+Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 27 Nov 2024 21:05:18 -0800
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [PATCH v2 0/4] Venus driver fixes to avoid possible OOB accesses
+Date: Thu, 28 Nov 2024 10:35:10 +0530
+Message-ID: <20241128-venus_oob_2-v2-0-483ae0a464b8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-7564579A: 646B95376F6C166E
-X-77F55803: 4F1203BC0FB41BD97DF634AB044F3A907E3AE3D432875EDC98B7E504FBBB9CF100894C459B0CD1B9F2389BC223EBEECCA6D5EE0DB6E1EC8D778098BE51C57FFBC3FDFF10E9E3586C16B550D20AEFFB87
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE75909A206F8DB96D1EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637B323FE155BC226618638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8511CB73ECB8387D4A3C56C9BD60E2DA31729AB5A020325C720879F7C8C5043D14489FFFB0AA5F4BF176DF2183F8FC7C06FD1C55BDD38FC3FD2E47CDBA5A96583C09775C1D3CA48CF4964A708C60C975A117882F4460429724CE54428C33FAD30A8DF7F3B2552694AC26CFBAC0749D213D2E47CDBA5A9658378DA827A17800CE77A825AB47F0FC8649FA2833FD35BB23DF004C906525384302BEBFE083D3B9BA73A03B725D353964B0B7D0EA88DDEDAC722CA9DD8327EE4930A3850AC1BE2E735F43AACC0BCEB2632C4224003CC83647689D4C264860C145E
-X-C1DE0DAB: 0D63561A33F958A5AB0348031C4ABE225002B1117B3ED6968B3F5479DDFBFA7ACCE9A60C8CB01D7C823CB91A9FED034534781492E4B8EEADC0A73878EBD0941BC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF3C5E3F1247E737A5DFEA82B927694E7C9FCD021FC4F069547077FF5214860E40AE7801A017AB3E4ABDCC763D930D6EFA9E152F28BD9B98AF4BBC8D017325D0A05D9E2B9A2E7C2EC036DDF96CB8D31E6A913E6812662D5F2A17D6C1CDD2003EB8E03787203701020945C72C348FB7EED3
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojA97iaBGbkJ2BoKPW3HTZ9w==
-X-Mailru-Sender: 689FA8AB762F739381B31377CF4CA219D67F144E7FFDE5B54C17F37CF7F6C09E7AFCCA499703051D90DE4A6105A3658D481B2AED7BCCC0A49AE3A01A4DD0D55C6C99E19F044156F45FEEDEB644C299C0ED14614B50AE0675
-X-Mras: Ok
-X-Mailru-Src: fallback
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4935A4DD83856F5F2FB468968E2A111388496A54F7D82D744049FFFDB7839CE9EA045B0A3CAF751E280511A1B5114F691CAC4C43CF70E4315F756D43522314BB4C7E3406AFA4B58FF
-X-7FA49CB5: 0D63561A33F958A5DA64E6732EDB1ADE5002B1117B3ED6965AB0D2348C84F6E90CC8CF6E17EE77BC02ED4CEA229C1FA827C277FBC8AE2E8B54F520D093A0DF28
-X-87b9d050: 1
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u6NqYXWMR0/V85CnFjCYTu9APdQH0PvpnP5qz8aO2mjTJzjHGC4ogvVuzB3zfVUBtENeZ6b5av1fnCBE34JUDkWdM6QxE+Ga5d8voMtmXfSommBmn3M0hsgyxHfUpwjuv
-X-Mras: Ok
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4935A4DD83856F5F2FB468968E2A11138CD10D46885EE5561049FFFDB7839CE9EA045B0A3CAF751E2DE0FEEF2F7CB6B306D74EC5E8ECF97947E0E5435BEC6C054
-X-7FA49CB5: 0D63561A33F958A5FD4D3890BB6E8DE32D1DA6AD6FF8CF8BB1E2BE012B91DE2DCACD7DF95DA8FC8BD5E8D9A59859A8B6A096F61ED9298604
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u6NqYXWMR0/V85CnFjCYTu9APdQH0PvpnP5qz8aO2mjTJzjHGC4ogvVuzB3zfVUBtENeZ6b5av1fnCBE34JUDkWdM6QxE+Ga5d8voMtmXfSrdw9YFAmD7Q3vnsmttD4RG
-X-Mailru-MI: 20000000000000800
-X-Mras: Ok
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAb6R2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0NT3bLUvNLi+Pz8pHgjXSNDcwMLI2NLQ3OzRCWgjoKi1LTMCrBp0bG
+ 1tQAGYINgXQAAAA==
+X-Change-ID: 20241115-venus_oob_2-21708239176a
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+CC: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab+samsung@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>, <stable@vger.kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732770318; l=1450;
+ i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
+ bh=JoXdclOpAXCa9Tcg/xERw0jHha09R6d9Sfl9SLTUwtc=;
+ b=sFdYCl83UxXRjCCzr8TPcydHIQ4ULOY5Pm7+8h1xVBmrFm8jO6LLfU1zqjW0dYujbfIGAwMGv
+ uFBCsqxWFEWC/yv/u7HQgg+KQ7Y6aQO+UP7iSVBsaPqFjBbPcbSPcpp
+X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: K8dAgHXMKog_PffVuI1nX1AqmSclFPK4
+X-Proofpoint-GUID: K8dAgHXMKog_PffVuI1nX1AqmSclFPK4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ mlxlogscore=958 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280039
 
-axi_rw_burst_len allowed values range is 1..256. Then this value
-goes to ARLEN/AWLEN 8-bit fields of lli->ctl_hi. So writing 256
-leads to overflow and overwrites another fields in LLI. More over
-ARLEN/AWLEN are zero based (0 - 1, 256 - 255).
+v1 -> v2:
+- init_codec to always update with latest payload from firmware
+  (Dmitry/Bryan)
+- Rewrite the logic of packet parsing to consider payload size for 
+  different packet type (Bryan)
+- Consider reading sfr data till available space (Dmitry)
+- Add reviewed-by tags
 
-Fixes: c454d16a7d5a ("dmaengine: dw-axi-dmac: Burst length settings")
-Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+v1:
+https://lore.kernel.org/all/20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com/
+
+This series primarily adds check at relevant places in venus driver where there
+are possible OOB accesses due to unexpected payload from venus firmware. The
+patches describes the specific OOB possibility.
+
+Please review and share your feedback.
+
+Validated on sc7180(v4) and rb5(v6).
+
+Stan, please help to extend the test on db410c(v1).
+
+Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 ---
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Vikash Garodia (4):
+      media: venus: hfi_parser: add check to avoid out of bound access
+      media: venus: hfi_parser: avoid OOB access beyond payload word count
+      media: venus: hfi: add check to handle incorrect queue size
+      media: venus: hfi: add a check to handle OOB in sfr region
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index b23536645ff7..9aa79e9b49ca 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -1437,7 +1437,7 @@ static int parse_device_properties(struct axi_dma_chip *chip)
- 			return -EINVAL;
- 
- 		chip->dw->hdata->restrict_axi_burst_len = true;
--		chip->dw->hdata->axi_rw_burst_len = tmp;
-+		chip->dw->hdata->axi_rw_burst_len = tmp - 1;
- 	}
- 
- 	return 0;
-@@ -1550,7 +1550,7 @@ static int dw_probe(struct platform_device *pdev)
- 	dma_cap_set(DMA_CYCLIC, dw->dma.cap_mask);
- 
- 	/* DMA capabilities */
--	dw->dma.max_burst = hdata->axi_rw_burst_len;
-+	dw->dma.max_burst = hdata->axi_rw_burst_len + 1;
- 	dw->dma.src_addr_widths = AXI_DMA_BUSWIDTHS;
- 	dw->dma.dst_addr_widths = AXI_DMA_BUSWIDTHS;
- 	dw->dma.directions = BIT(DMA_MEM_TO_MEM);
+ drivers/media/platform/qcom/venus/hfi_parser.c | 58 +++++++++++++++++++++-----
+ drivers/media/platform/qcom/venus/hfi_venus.c  | 15 ++++++-
+ 2 files changed, 60 insertions(+), 13 deletions(-)
+---
+base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
+change-id: 20241115-venus_oob_2-21708239176a
+
+Best regards,
 -- 
-2.45.2
+Vikash Garodia <quic_vgarodia@quicinc.com>
 
 
