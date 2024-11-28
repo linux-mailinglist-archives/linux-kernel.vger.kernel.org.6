@@ -1,1252 +1,539 @@
-Return-Path: <linux-kernel+bounces-424970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA629DBBE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:44:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81F49DBBEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFA6283680
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:44:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D08283644
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E681C1AB1;
-	Thu, 28 Nov 2024 17:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6E71C1F04;
+	Thu, 28 Nov 2024 17:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="JipPFlzz"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPZZxauy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079F91C1F18;
-	Thu, 28 Nov 2024 17:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE251C173C;
+	Thu, 28 Nov 2024 17:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732815819; cv=none; b=UONNPskd3JAbODQzkSTxSnXJrijseZVZgw0CpGmM9y/Tc0STMcdi/sH6P90esMbdZs7j2BG7/0XS2DhSEdFKczTtMYn7GFkdVIriWldhLG4/uHiN/DKLjWRiqwVZeBSvJK5euMQPSdvaVFiEosdzyLs2UaeLqXa2IyEmZuS0btw=
+	t=1732815898; cv=none; b=cAodllRNHH9TP8a/8O7b+FbUbQNCc+OGxC0LmH/rYiRlIEIr0KLaXroVoymb9tzMK19nr6hn+HBdejnFnKlln3DEOI0xF66xHKbiEttXvtw0KUI1b0bdZUOmKPMKxO6cJAcCdYN4XhlYbeKguUcvn0EOT88drht/VbJIr/tjJi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732815819; c=relaxed/simple;
-	bh=sgkVaAipl364MDWth1Ng7Sm6HCEO8Toq99BZFykUEKY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kEn0Y2WcVXUjZqai/L+N78DwupRg+vT5qcda/+2WurNWiQbYSQ380VNSsAlrF7ezp9I5gqekbZWAaY+n0MRpMnp70hNSpuWgh+mC0kbkP8RfspwjvYcSw5OSBFEKU8jBDdPkuJ1tHmlxC8CX/Iel0v8uZF6TOnoV5uVi08FTgsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=JipPFlzz; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 07DACA0992;
-	Thu, 28 Nov 2024 18:43:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=mI3E1QbKsQ6zwFtR8gA2
-	xYeQ60WrnrvjMqTOqprzhfw=; b=JipPFlzztRbuM6TuJN04Mv7MC+m1WGcIjqOR
-	kVV8MNqjJZLu0ZcvvoLCdSHJlaCZ0ydyhVm+w8foopOEPliWFyn8tkmf4QsWmssU
-	1lVTQRlSu7RvTDd02K4OkbLDRSaxeANAfKSj+1BTsCYXgl8olnNZU3WpzLl9LxMd
-	8mZwe7rcMGadXbEgG7g86rPWKdAx5K1KgSkcpN7tv6AIAyB9+mI92DUuv2t0PO9U
-	ZWRDKW4r6rVyU9sb1Y4H72gMzWvUGUmBy5NNtKPzq4QOTIoG/VOibhD7ugRyfBQ/
-	FUIrztErMSbEH8ErAt1Zs8VIo4mSIXfRwGsFTqba4NAd4sCq1ql/lT+zZeyBcO1q
-	fYUTsqJdUjmnOVq0ZAGYMskzV+Z5nABB8KqeY16WWqt+SH2oWaYg1jlpmkByL80K
-	2WandxuYxGeay02JZwvl8Vap5BWrfNvPxelyXk4kVQFv0Er6ikiQAVjCZRNOMUvh
-	45YNispf8JiwMEKGhIXcHwLeuQJ9OeSos2i4dR2V41pQnb5NUfjI1ZsGVIwDV8aw
-	eFuTlZJMFQJUoKxvOqfbWVWE/kOWtoVHW60sySl2dToxRLAmlbKHmZjmL+z3ag9p
-	E2Ccnf5+a9uxjjuBrPGhLUSuL7cgD0q0u63wqOFca/KongWzsGESEyqZibEvGUTA
-	0qySlAo=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Tudor Ambarus <tudor.ambarus@microchip.com>, Varshini Rajendran
-	<varshini.rajendran@microchip.com>, =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?=
-	<csokas.bence@prolan.hu>, Mark Brown <broonie@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH v3 2/2] spi: atmel-quadspi: Add support for sama7g5 QSPI
-Date: Thu, 28 Nov 2024 18:43:15 +0100
-Message-ID: <20241128174316.3209354-3-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241128174316.3209354-1-csokas.bence@prolan.hu>
-References: <20241128174316.3209354-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1732815898; c=relaxed/simple;
+	bh=sztXzGj18yXYQJrKHkGVmls9A3MQNMp3Zn17tr6MkUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hdUv0e7bSsBFphRpnUGfzyAiuV4cD9o6wiEQ4j2RvKBtwxf1FE/VVDjlY1cyxWNMiOZHBXLMCnF2UxapegXzlmpQCrxwCG0ViI1Nnev5Q9Tm8SeRlVm6y2ik1mh8I8f//feP2YW4P95VWWKKQudiHCbqrh4pxLEstaEdBnghbh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPZZxauy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016B9C4CECE;
+	Thu, 28 Nov 2024 17:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732815897;
+	bh=sztXzGj18yXYQJrKHkGVmls9A3MQNMp3Zn17tr6MkUI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dPZZxauya/WDGZshA5B6EqcVoEA31LRfnevmh/VPMPiQxz5oH8XgqOVqsAZy1YwWa
+	 ZsftZdHRSvxSQVhzExGvGG/wvBlFq85xnkgKmce895BgztfS6NX+WdeSijS/qtLja0
+	 kB4cTDKSE7w99hmsk3Tvz7IGVrNcyvrT3GYAgCF+x0uj9TX6FihZXPiKxymca8RNzN
+	 ZMQTtoILzV8yr/U5Eq3EAHr/UkBXLPzBjAw4o6y0SOJvsIfy3j8hA0Fahni9MW9YG+
+	 +70ZuAJCgiii453dKFuGMKQm6fvq+9z7tdPRM+zRIdD59oR662Kos0fP+ecYoxOdto
+	 C2VyTknSOZiWg==
+Date: Thu, 28 Nov 2024 18:44:53 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-media@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ workflows@vger.kernel.org, Hans Verkuil <hverkuil@xs4ll.nl>
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241128184453.6cb1590b@foz.lan>
+In-Reply-To: <e0535e20-6e97-437f-8565-53fd257c7618@xs4all.nl>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+	<20241126151930.GA5493@pendragon.ideasonboard.com>
+	<e0535e20-6e97-437f-8565-53fd257c7618@xs4all.nl>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1732815803;VERSION=7982;MC=3704166096;ID=123206;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD94855637665
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+Em Wed, 27 Nov 2024 12:59:58 +0100
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-The sama7g5 QSPI controller uses dedicated clocks for the
-QSPI Controller Interface and the QSPI Controller Core, and
-requires synchronization before accessing registers or bit
-fields.
+> > If I were a new contributor I think I would have trouble understand this
+> > to be honest. I won't push hard for a rework of this section, as I
+> > expect it will change after the multi-committer tree becomes the main
+> > way to get patches merged. We can then update the documentation.  
+> 
+> I wonder if this shouldn't be rewritten completely, e.g. something like this:
+> 
+> 1) By default patches are against the ``next`` branch of that media.git tree.
+> 
+> 2) Patches that need to fix bugs in the -rcX kernel should preferably be
+>    against the latest -rc kernel.
+> 
+> Is there really anything else? These two cases are all I use in practice.
 
-QSPI_SR.SYNCBSY must be zero before accessing any of the bits:
-QSPI_CR.QSPIEN, QSPI_CR.QSPIDIS, QSPI_CR.SRFRSH, QSPI_CR.SWRST,
-QSPI_CR.UPDCFG, QSPI_CR.STTFR, QSPI_CR.RTOUT, QSPI_CR.LASTXFER.
+Yes, there are three situations: 
 
-Also, the QSPI controller core configuration can be updated by
-writing the QSPI_CR.UPDCFG bit to ‘1’. This is needed by the
-following registers: QSPI_MR, QSPI_SCR, QSPI_IAR, QSPI_WICR,
-QSPI_IFR, QSPI_RICR, QSPI_SMR, QSPI_SKR,QSPI_REFRESH, QSPI_WRACNT
-QSPI_PCALCFG.
+	- patches against released kernels;
+	- patches against next kernel (-rc1 being prefered, IMO, against a random -rc);
+	- new features.
 
-The Octal SPI supports frequencies up to 200 MHZ DDR. The need
-for output impedance calibration arises. To avoid the degradation
-of the signal quality, a PAD calibration cell is used to adjust
-the output impedance to the driven I/Os.
+I modified the text following Laurent's suggestion.
 
-The transmission flow requires different sequences for setting
-the configuration and for the actual transfer, than what is in
-the sama5d2 and sam9x60 versions of the IP. Different interrupts
-are handled. aq->ops->set_cfg() and aq->ops->transfer() are
-introduced to help differentiating the flows.
+> 
+> >   
+> >> +
+> >> +All patches with fixes shall have:
+> >> +   - a ``Fixes:`` tag pointing to the first commit that introduced the bug;
+> >> +   - a ``Cc: stable@vger.kernel.org``
+> >> +
+> >> +Patches that were fixing bugs reported by someone else shall have:
+> >> +  - a ``Reported-by`` tag immediately followed by a ``Closes`` tag.  
+> > 
+> > There's been a recent discussion about not including a Reported-by tag
+> > without asking permission from the reporter, due to privacy reasons (in
+> > particular for bugs reported to https://bugzilla.kernel.org/, as by
+> > default the e-mail address of the reporter is not public). As the
+> > Reported-by and Closes tags are not specific to the media tree, I would
+> > drop this paragraph, otherwise we will have to duplicate a relatively
+> > large amount of information related to privacy. You can link to the
+> > relevant documentation instead, but I wouldn't even do that as it's
+> > really not media-specific.  
+> 
+> I agree. Note that I tend to ask first for permission, unless I know the
+> reporter is a kernel contributor already, or is otherwise active in the open
+> source world and so the email is public already.
 
-Tested single and octal SPI mode with mx66lm1g45g.
+I'm opting to use this word on v2:
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Link: https://lore.kernel.org/r/20211214133404.121739-1-tudor.ambarus@microchip.com
-[varshini.rajendran@microchip.com: Fixed conflicts and ported to 6.1.4]
-Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-[ csokas.bence: Forward-port to master and address feedback ]
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/spi/atmel-quadspi.c | 816 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 798 insertions(+), 18 deletions(-)
+	Patches that were fixing bugs publicly reported by someone at the
+	linux-media@vger.kernel.org mailing list shall have:
+	  - a ``Reported-by:`` tag immediately followed by a ``Closes:`` tag.
 
-diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-index c84aefa03ae8..dfb8e36687e8 100644
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -11,11 +11,15 @@
-  * This driver is based on drivers/mtd/spi-nor/fsl-quadspi.c from Freescale.
-  */
+This makes clear that we expect to have Reported-by/Closes if someone publicly
+reports via e-mail to our development ML. This is a subset of the cases
+where permission is not required, and likely covers 99% of the cases where
+this is needed.
+
+> >> -The media maintainers that work on specific areas of the subsystem are:
+> >> -
+> >> -- Remote Controllers (infrared):
+> >> -    Sean Young <sean@mess.org>
+> >> -
+> >> -- HDMI CEC:
+> >> -    Hans Verkuil <hverkuil@xs4all.nl>
+> >> -
+> >> -- Media controller drivers:
+> >> -    Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >> -
+> >> -- ISP, v4l2-async, v4l2-fwnode, v4l2-flash-led-class and Sensor drivers:
+> >> -    Sakari Ailus <sakari.ailus@linux.intel.com>
+> >> -
+> >> -- V4L2 drivers and core V4L2 frameworks:
+> >> -    Hans Verkuil <hverkuil@xs4all.nl>  
+> > 
+> > We're losing that information, isn't it valuable ?  
+> 
+> That's a good point. I think we still want to keep this information. Although
+> this list should probably be moved to...
+
+As discussed at the other thread, things like that need to be at
+MAINTAINERS, as this will warrant that the right people will be c/c.
+
+While not explicitly stated at the document, when we mention
+MAINTAINERS there, it means that media committer records there
+need to be up-to-dated when changes happen, in special the
+status (S:) and mail fields (M:) need to reflect the committers
+responsibilities.
+
+So, for instance, let's suppose we have an entry like this:
+
+	RADIO GAGA MEDIA DRIVER
+	M:	My User <my@user.domain>
+	L:	linux-media@vger.kernel.org
+	S:	Odd Fixes
+	W:	https://linuxtv.org
+	T:	git git://linuxtv.org/media.git
+	F:	drivers/media/radio/radio-gaga*
+
+if a new committer decides to step up to maintain the driver,
+such entry will be changed to:
+
+	RADIO GAGA MEDIA DRIVER
+	M:	Queen Fanboy <fanboy@queen.fanclub>
+	L:	linux-media@vger.kernel.org
+	S:	Maintained
+	W:	https://linuxtv.org
+	T:	git git://linuxtv.org/media.git
+	F:	drivers/media/radio/radio-gaga*
+
+(either dropping "My User" if he has no time to maintain it anymore
+or adding a second M:)
+
+If, in the future, it decides to not maintain/commit patches for
+it anymore, because he has no time or interest to keep maintaining
+it, the status should be changed to:
+
+	RADIO GAGA MEDIA DRIVER
+	L:	linux-media@vger.kernel.org
+	S:	Orphan
+	W:	https://linuxtv.org
+	T:	git git://linuxtv.org/media.git
+	F:	drivers/media/radio/radio-gaga*
+
+If nobody steps in to keep maintaining it.
+
+That's not different from the current Kernel practices.
+
+> > I think this goes a bit backward, and mixes things up a bit. On the
+> > mixing side, the expectation of timely reviews comes from maintainer
+> > status. Having commit rights is orthogonal to that.
+> > 
+> > The goal of direct commit access is to speed up maintenance, to get
+> > patches reviewed and merged quicker. Are we saying here that if someone
+> > has commit rights they will lose them if they take too long to review
+> > code ? That would then slow down maintenance even more, which seems
+> > counterproductive.  
+> 
+> Someone with commit rights is also a maintainer, since that's how you
+> gain the trust to get those rights. If you do a poor job of reviewing
+> patches relevant for you as maintainer, then you loose that trust.
+>
+> And if you simply don't have the time anymore for that, then perhaps
+> you need to look for a co-maintainer or just stop being a maintainer for
+> that area. A good example of that is actually the uvc driver. In that case
+> the solution was adding a co-maintainer.
+> 
+> > Also, while one can be recognized as a maintainer for multiple drivers
+> > or parts of the kernel, there's a single committer status. You can't
+> > revoke committer status of a particular driver only.  
+> 
+> The committer status is a sign that you are trusted. Part of that is timely
+> patch review. Or admit that you won't have the time/resources to do that job
+> and look for a co-maintainer or even give up maintainership of some areas.
+
+Exactly.
+
  
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -34,6 +38,7 @@
- #define QSPI_IDR     0x0018  /* Interrupt Disable Register */
- #define QSPI_IMR     0x001c  /* Interrupt Mask Register */
- #define QSPI_SCR     0x0020  /* Serial Clock Register */
-+#define QSPI_SR2     0x0024  /* SAMA7G5 Status Register */
- 
- #define QSPI_IAR     0x0030  /* Instruction Address Register */
- #define QSPI_ICR     0x0034  /* Instruction Code Register */
-@@ -44,16 +49,32 @@
- #define QSPI_SMR     0x0040  /* Scrambling Mode Register */
- #define QSPI_SKR     0x0044  /* Scrambling Key Register */
- 
-+#define QSPI_REFRESH	0x0050	/* Refresh Register */
-+#define QSPI_WRACNT	0x0054	/* Write Access Counter Register */
-+#define QSPI_DLLCFG	0x0058	/* DLL Configuration Register */
-+#define QSPI_PCALCFG	0x005C	/* Pad Calibration Configuration Register */
-+#define QSPI_PCALBP	0x0060	/* Pad Calibration Bypass Register */
-+#define QSPI_TOUT	0x0064	/* Timeout Register */
-+
- #define QSPI_WPMR    0x00E4  /* Write Protection Mode Register */
- #define QSPI_WPSR    0x00E8  /* Write Protection Status Register */
- 
- #define QSPI_VERSION 0x00FC  /* Version Register */
- 
-+#define SAMA7G5_QSPI0_MAX_SPEED_HZ	200000000
-+#define SAMA7G5_QSPI1_SDR_MAX_SPEED_HZ	133000000
- 
- /* Bitfields in QSPI_CR (Control Register) */
- #define QSPI_CR_QSPIEN                  BIT(0)
- #define QSPI_CR_QSPIDIS                 BIT(1)
-+#define QSPI_CR_DLLON			BIT(2)
-+#define QSPI_CR_DLLOFF			BIT(3)
-+#define QSPI_CR_STPCAL			BIT(4)
-+#define QSPI_CR_SRFRSH			BIT(5)
- #define QSPI_CR_SWRST                   BIT(7)
-+#define QSPI_CR_UPDCFG			BIT(8)
-+#define QSPI_CR_STTFR			BIT(9)
-+#define QSPI_CR_RTOUT			BIT(10)
- #define QSPI_CR_LASTXFER                BIT(24)
- 
- /* Bitfields in QSPI_MR (Mode Register) */
-@@ -61,12 +82,14 @@
- #define QSPI_MR_LLB                     BIT(1)
- #define QSPI_MR_WDRBT                   BIT(2)
- #define QSPI_MR_SMRM                    BIT(3)
-+#define QSPI_MR_DQSDLYEN		BIT(3)
- #define QSPI_MR_CSMODE_MASK             GENMASK(5, 4)
- #define QSPI_MR_CSMODE_NOT_RELOADED     (0 << 4)
- #define QSPI_MR_CSMODE_LASTXFER         (1 << 4)
- #define QSPI_MR_CSMODE_SYSTEMATICALLY   (2 << 4)
- #define QSPI_MR_NBBITS_MASK             GENMASK(11, 8)
- #define QSPI_MR_NBBITS(n)               ((((n) - 8) << 8) & QSPI_MR_NBBITS_MASK)
-+#define QSPI_MR_OENSD			BIT(15)
- #define QSPI_MR_DLYBCT_MASK             GENMASK(23, 16)
- #define QSPI_MR_DLYBCT(n)               (((n) << 16) & QSPI_MR_DLYBCT_MASK)
- #define QSPI_MR_DLYCS_MASK              GENMASK(31, 24)
-@@ -80,6 +103,13 @@
- #define QSPI_SR_CSR                     BIT(8)
- #define QSPI_SR_CSS                     BIT(9)
- #define QSPI_SR_INSTRE                  BIT(10)
-+#define QSPI_SR_LWRA			BIT(11)
-+#define QSPI_SR_QITF			BIT(12)
-+#define QSPI_SR_QITR			BIT(13)
-+#define QSPI_SR_CSFA			BIT(14)
-+#define QSPI_SR_CSRA			BIT(15)
-+#define QSPI_SR_RFRSHD			BIT(16)
-+#define QSPI_SR_TOUT			BIT(17)
- #define QSPI_SR_QSPIENS                 BIT(24)
- 
- #define QSPI_SR_CMD_COMPLETED	(QSPI_SR_INSTRE | QSPI_SR_CSR)
-@@ -92,9 +122,22 @@
- #define QSPI_SCR_DLYBS_MASK             GENMASK(23, 16)
- #define QSPI_SCR_DLYBS(n)               (((n) << 16) & QSPI_SCR_DLYBS_MASK)
- 
-+/* Bitfields in QSPI_SR2 (SAMA7G5 Status Register) */
-+#define QSPI_SR2_SYNCBSY		BIT(0)
-+#define QSPI_SR2_QSPIENS		BIT(1)
-+#define QSPI_SR2_CSS			BIT(2)
-+#define QSPI_SR2_RBUSY			BIT(3)
-+#define QSPI_SR2_HIDLE			BIT(4)
-+#define QSPI_SR2_DLOCK			BIT(5)
-+#define QSPI_SR2_CALBSY			BIT(6)
-+
-+/* Bitfields in QSPI_IAR (Instruction Address Register) */
-+#define QSPI_IAR_ADDR			GENMASK(31, 0)
-+
- /* Bitfields in QSPI_ICR (Read/Write Instruction Code Register) */
- #define QSPI_ICR_INST_MASK              GENMASK(7, 0)
- #define QSPI_ICR_INST(inst)             (((inst) << 0) & QSPI_ICR_INST_MASK)
-+#define QSPI_ICR_INST_MASK_SAMA7G5	GENMASK(15, 0)
- #define QSPI_ICR_OPT_MASK               GENMASK(23, 16)
- #define QSPI_ICR_OPT(opt)               (((opt) << 16) & QSPI_ICR_OPT_MASK)
- 
-@@ -107,6 +150,9 @@
- #define QSPI_IFR_WIDTH_QUAD_IO          (4 << 0)
- #define QSPI_IFR_WIDTH_DUAL_CMD         (5 << 0)
- #define QSPI_IFR_WIDTH_QUAD_CMD         (6 << 0)
-+#define QSPI_IFR_WIDTH_OCT_OUTPUT	(7 << 0)
-+#define QSPI_IFR_WIDTH_OCT_IO		(8 << 0)
-+#define QSPI_IFR_WIDTH_OCT_CMD		(9 << 0)
- #define QSPI_IFR_INSTEN                 BIT(4)
- #define QSPI_IFR_ADDREN                 BIT(5)
- #define QSPI_IFR_OPTEN                  BIT(6)
-@@ -117,19 +163,60 @@
- #define QSPI_IFR_OPTL_4BIT              (2 << 8)
- #define QSPI_IFR_OPTL_8BIT              (3 << 8)
- #define QSPI_IFR_ADDRL                  BIT(10)
-+#define QSPI_IFR_ADDRL_SAMA7G5		GENMASK(11, 10)
- #define QSPI_IFR_TFRTYP_MEM		BIT(12)
- #define QSPI_IFR_SAMA5D2_WRITE_TRSFR	BIT(13)
- #define QSPI_IFR_CRM                    BIT(14)
-+#define QSPI_IFR_DDREN			BIT(15)
- #define QSPI_IFR_NBDUM_MASK             GENMASK(20, 16)
- #define QSPI_IFR_NBDUM(n)               (((n) << 16) & QSPI_IFR_NBDUM_MASK)
-+#define QSPI_IFR_END			BIT(22)
-+#define QSPI_IFR_SMRM			BIT(23)
- #define QSPI_IFR_APBTFRTYP_READ		BIT(24)	/* Defined in SAM9X60 */
-+#define QSPI_IFR_DQSEN			BIT(25)
-+#define QSPI_IFR_DDRCMDEN		BIT(26)
-+#define QSPI_IFR_HFWBEN			BIT(27)
-+#define QSPI_IFR_PROTTYP		GENMASK(29, 28)
-+#define QSPI_IFR_PROTTYP_STD_SPI	0
-+#define QSPI_IFR_PROTTYP_TWIN_QUAD	1
-+#define QSPI_IFR_PROTTYP_OCTAFLASH	2
-+#define QSPI_IFR_PROTTYP_HYPERFLASH	3
- 
- /* Bitfields in QSPI_SMR (Scrambling Mode Register) */
- #define QSPI_SMR_SCREN                  BIT(0)
- #define QSPI_SMR_RVDIS                  BIT(1)
-+#define QSPI_SMR_SCRKL                  BIT(2)
-+
-+/* Bitfields in QSPI_REFRESH (Refresh Register) */
-+#define QSPI_REFRESH_DELAY_COUNTER	GENMASK(31, 0)
-+
-+/* Bitfields in QSPI_WRACNT (Write Access Counter Register) */
-+#define QSPI_WRACNT_NBWRA		GENMASK(31, 0)
-+
-+/* Bitfields in QSPI_DLLCFG (DLL Configuration Register) */
-+#define QSPI_DLLCFG_RANGE		BIT(0)
-+
-+/* Bitfields in QSPI_PCALCFG (DLL Pad Calibration Configuration Register) */
-+#define QSPI_PCALCFG_AAON		BIT(0)
-+#define QSPI_PCALCFG_DAPCAL		BIT(1)
-+#define QSPI_PCALCFG_DIFFPM		BIT(2)
-+#define QSPI_PCALCFG_CLKDIV		GENMASK(6, 4)
-+#define QSPI_PCALCFG_CALCNT		GENMASK(16, 8)
-+#define QSPI_PCALCFG_CALP		GENMASK(27, 24)
-+#define QSPI_PCALCFG_CALN		GENMASK(31, 28)
-+
-+/* Bitfields in QSPI_PCALBP (DLL Pad Calibration Bypass Register) */
-+#define QSPI_PCALBP_BPEN		BIT(0)
-+#define QSPI_PCALBP_CALPBP		GENMASK(11, 8)
-+#define QSPI_PCALBP_CALNBP		GENMASK(19, 16)
-+
-+/* Bitfields in QSPI_TOUT (Timeout Register) */
-+#define QSPI_TOUT_TCNTM			GENMASK(15, 0)
- 
- /* Bitfields in QSPI_WPMR (Write Protection Mode Register) */
- #define QSPI_WPMR_WPEN                  BIT(0)
-+#define QSPI_WPMR_WPITEN		BIT(1)
-+#define QSPI_WPMR_WPCREN		BIT(2)
- #define QSPI_WPMR_WPKEY_MASK            GENMASK(31, 8)
- #define QSPI_WPMR_WPKEY(wpkey)          (((wpkey) << 8) & QSPI_WPMR_WPKEY_MASK)
- 
-@@ -139,10 +226,42 @@
- #define QSPI_WPSR_WPVSRC(src)           (((src) << 8) & QSPI_WPSR_WPVSRC)
- 
- #define ATMEL_QSPI_TIMEOUT		1000	/* ms */
-+#define ATMEL_QSPI_SYNC_TIMEOUT		300	/* ms */
-+#define QSPI_DLLCFG_THRESHOLD_FREQ	90000000U
-+#define QSPI_CALIB_TIME			2000	/* 2 us */
-+
-+/* Use PIO for small transfers. */
-+#define ATMEL_QSPI_DMA_MIN_BYTES	16
-+/**
-+ * struct atmel_qspi_pcal - Pad Calibration Clock Division
-+ * @pclk_rate: peripheral clock rate.
-+ * @pclkdiv: calibration clock division. The clock applied to the calibration
-+ *           cell is divided by pclkdiv + 1.
-+ */
-+struct atmel_qspi_pcal {
-+	u32 pclk_rate;
-+	u8 pclk_div;
-+};
-+
-+#define ATMEL_QSPI_PCAL_ARRAY_SIZE	8
-+static const struct atmel_qspi_pcal pcal[ATMEL_QSPI_PCAL_ARRAY_SIZE] = {
-+	{25000000, 0},
-+	{50000000, 1},
-+	{75000000, 2},
-+	{100000000, 3},
-+	{125000000, 4},
-+	{150000000, 5},
-+	{175000000, 6},
-+	{200000000, 7},
-+};
- 
- struct atmel_qspi_caps {
-+	u32 max_speed_hz;
- 	bool has_qspick;
-+	bool has_gclk;
- 	bool has_ricr;
-+	bool octal;
-+	bool has_dma;
- };
- 
- struct atmel_qspi_ops;
-@@ -152,6 +271,7 @@ struct atmel_qspi {
- 	void __iomem		*mem;
- 	struct clk		*pclk;
- 	struct clk		*qspick;
-+	struct clk		*gclk;
- 	struct platform_device	*pdev;
- 	const struct atmel_qspi_caps *caps;
- 	const struct atmel_qspi_ops *ops;
-@@ -160,7 +280,12 @@ struct atmel_qspi {
- 	u32			irq_mask;
- 	u32			mr;
- 	u32			scr;
-+	u32			slave_max_speed_hz;
- 	struct completion	cmd_completion;
-+	struct completion	dma_completion;
-+	dma_addr_t		mmap_phys_base;
-+	struct dma_chan		*rx_chan;
-+	struct dma_chan		*tx_chan;
- };
- 
- struct atmel_qspi_ops {
-@@ -187,6 +312,19 @@ static const struct atmel_qspi_mode atmel_qspi_modes[] = {
- 	{ 4, 4, 4, QSPI_IFR_WIDTH_QUAD_CMD },
- };
- 
-+static const struct atmel_qspi_mode atmel_qspi_sama7g5_modes[] = {
-+	{ 1, 1, 1, QSPI_IFR_WIDTH_SINGLE_BIT_SPI },
-+	{ 1, 1, 2, QSPI_IFR_WIDTH_DUAL_OUTPUT },
-+	{ 1, 1, 4, QSPI_IFR_WIDTH_QUAD_OUTPUT },
-+	{ 1, 2, 2, QSPI_IFR_WIDTH_DUAL_IO },
-+	{ 1, 4, 4, QSPI_IFR_WIDTH_QUAD_IO },
-+	{ 2, 2, 2, QSPI_IFR_WIDTH_DUAL_CMD },
-+	{ 4, 4, 4, QSPI_IFR_WIDTH_QUAD_CMD },
-+	{ 1, 1, 8, QSPI_IFR_WIDTH_OCT_OUTPUT },
-+	{ 1, 8, 8, QSPI_IFR_WIDTH_OCT_IO },
-+	{ 8, 8, 8, QSPI_IFR_WIDTH_OCT_CMD },
-+};
-+
- #ifdef VERBOSE_DEBUG
- static const char *atmel_qspi_reg_name(u32 offset, char *tmp, size_t sz)
- {
-@@ -209,6 +347,8 @@ static const char *atmel_qspi_reg_name(u32 offset, char *tmp, size_t sz)
- 		return "IMR";
- 	case QSPI_SCR:
- 		return "SCR";
-+	case QSPI_SR2:
-+		return "SR2";
- 	case QSPI_IAR:
- 		return "IAR";
- 	case QSPI_ICR:
-@@ -221,6 +361,18 @@ static const char *atmel_qspi_reg_name(u32 offset, char *tmp, size_t sz)
- 		return "SMR";
- 	case QSPI_SKR:
- 		return "SKR";
-+	case QSPI_REFRESH:
-+		return "REFRESH";
-+	case QSPI_WRACNT:
-+		return "WRACNT";
-+	case QSPI_DLLCFG:
-+		return "DLLCFG";
-+	case QSPI_PCALCFG:
-+		return "PCALCFG";
-+	case QSPI_PCALBP:
-+		return "PCALBP";
-+	case QSPI_TOUT:
-+		return "TOUT";
- 	case QSPI_WPMR:
- 		return "WPMR";
- 	case QSPI_WPSR:
-@@ -288,12 +440,31 @@ static int atmel_qspi_find_mode(const struct spi_mem_op *op)
- 	return -EOPNOTSUPP;
- }
- 
-+static int atmel_qspi_sama7g5_find_mode(const struct spi_mem_op *op)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < ARRAY_SIZE(atmel_qspi_sama7g5_modes); i++)
-+		if (atmel_qspi_is_compatible(op, &atmel_qspi_sama7g5_modes[i]))
-+			return i;
-+
-+	return -EOPNOTSUPP;
-+}
-+
- static bool atmel_qspi_supports_op(struct spi_mem *mem,
- 				   const struct spi_mem_op *op)
- {
-+	struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->controller);
- 	if (!spi_mem_default_supports_op(mem, op))
- 		return false;
- 
-+	if (aq->caps->octal) {
-+		if (atmel_qspi_sama7g5_find_mode(op) < 0)
-+			return false;
-+		else
-+			return true;
-+	}
-+
- 	if (atmel_qspi_find_mode(op) < 0)
- 		return false;
- 
-@@ -467,6 +638,296 @@ static int atmel_qspi_transfer(struct spi_mem *mem,
- 	return atmel_qspi_wait_for_completion(aq, QSPI_SR_CMD_COMPLETED);
- }
- 
-+static int atmel_qspi_reg_sync(struct atmel_qspi *aq)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				 !(val & QSPI_SR2_SYNCBSY), 40,
-+				 ATMEL_QSPI_SYNC_TIMEOUT);
-+	return ret;
-+}
-+
-+static int atmel_qspi_update_config(struct atmel_qspi *aq)
-+{
-+	int ret;
-+
-+	ret = atmel_qspi_reg_sync(aq);
-+	if (ret)
-+		return ret;
-+	atmel_qspi_write(QSPI_CR_UPDCFG, aq, QSPI_CR);
-+	return atmel_qspi_reg_sync(aq);
-+}
-+
-+static int atmel_qspi_sama7g5_set_cfg(struct atmel_qspi *aq,
-+				      const struct spi_mem_op *op, u32 *offset)
-+{
-+	u32 iar, icr, ifr;
-+	int mode, ret;
-+
-+	iar = 0;
-+	icr = FIELD_PREP(QSPI_ICR_INST_MASK_SAMA7G5, op->cmd.opcode);
-+	ifr = QSPI_IFR_INSTEN;
-+
-+	mode = atmel_qspi_sama7g5_find_mode(op);
-+	if (mode < 0)
-+		return mode;
-+	ifr |= atmel_qspi_sama7g5_modes[mode].config;
-+
-+	if (op->dummy.buswidth && op->dummy.nbytes) {
-+		if (op->addr.dtr && op->dummy.dtr && op->data.dtr)
-+			ifr |= QSPI_IFR_NBDUM(op->dummy.nbytes * 8 /
-+					      (2 * op->dummy.buswidth));
-+		else
-+			ifr |= QSPI_IFR_NBDUM(op->dummy.nbytes * 8 /
-+					      op->dummy.buswidth);
-+	}
-+
-+	if (op->addr.buswidth && op->addr.nbytes) {
-+		ifr |= FIELD_PREP(QSPI_IFR_ADDRL_SAMA7G5, op->addr.nbytes - 1) |
-+		       QSPI_IFR_ADDREN;
-+		iar = FIELD_PREP(QSPI_IAR_ADDR, op->addr.val);
-+	}
-+
-+	if (op->addr.dtr && op->dummy.dtr && op->data.dtr) {
-+		ifr |= QSPI_IFR_DDREN;
-+		if (op->cmd.dtr)
-+			ifr |= QSPI_IFR_DDRCMDEN;
-+
-+		ifr |= QSPI_IFR_DQSEN;
-+	}
-+
-+	if (op->cmd.buswidth == 8 || op->addr.buswidth == 8 ||
-+	    op->data.buswidth == 8)
-+		ifr |= FIELD_PREP(QSPI_IFR_PROTTYP, QSPI_IFR_PROTTYP_OCTAFLASH);
-+
-+	/* offset of the data access in the QSPI memory space */
-+	*offset = iar;
-+
-+	/* Set data enable */
-+	if (op->data.nbytes) {
-+		ifr |= QSPI_IFR_DATAEN;
-+
-+		if (op->addr.nbytes)
-+			ifr |= QSPI_IFR_TFRTYP_MEM;
-+	}
-+
-+	/*
-+	 * If the QSPI controller is set in regular SPI mode, set it in
-+	 * Serial Memory Mode (SMM).
-+	 */
-+	if (aq->mr != QSPI_MR_SMM) {
-+		atmel_qspi_write(QSPI_MR_SMM | QSPI_MR_DQSDLYEN, aq, QSPI_MR);
-+		aq->mr = QSPI_MR_SMM;
-+
-+		ret = atmel_qspi_update_config(aq);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Clear pending interrupts */
-+	(void)atmel_qspi_read(aq, QSPI_SR);
-+
-+	/* Set QSPI Instruction Frame registers */
-+	if (op->addr.nbytes && !op->data.nbytes)
-+		atmel_qspi_write(iar, aq, QSPI_IAR);
-+
-+	if (op->data.dir == SPI_MEM_DATA_IN) {
-+		atmel_qspi_write(icr, aq, QSPI_RICR);
-+	} else {
-+		atmel_qspi_write(icr, aq, QSPI_WICR);
-+		if (op->data.nbytes)
-+			atmel_qspi_write(FIELD_PREP(QSPI_WRACNT_NBWRA,
-+						    op->data.nbytes),
-+					 aq, QSPI_WRACNT);
-+	}
-+
-+	atmel_qspi_write(ifr, aq, QSPI_IFR);
-+
-+	return atmel_qspi_update_config(aq);
-+}
-+
-+static void atmel_qspi_dma_callback(void *param)
-+{
-+	struct atmel_qspi *aq = param;
-+
-+	complete(&aq->dma_completion);
-+}
-+
-+static int atmel_qspi_dma_xfer(struct atmel_qspi *aq, struct dma_chan *chan,
-+			       dma_addr_t dma_dst, dma_addr_t dma_src,
-+			       unsigned int len)
-+{
-+	struct dma_async_tx_descriptor *tx;
-+	dma_cookie_t cookie;
-+	int ret;
-+
-+	tx = dmaengine_prep_dma_memcpy(chan, dma_dst, dma_src, len,
-+				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!tx) {
-+		dev_err(&aq->pdev->dev, "device_prep_dma_memcpy error\n");
-+		return -EIO;
-+	}
-+
-+	reinit_completion(&aq->dma_completion);
-+	tx->callback = atmel_qspi_dma_callback;
-+	tx->callback_param = aq;
-+	cookie = tx->tx_submit(tx);
-+	ret = dma_submit_error(cookie);
-+	if (ret) {
-+		dev_err(&aq->pdev->dev, "dma_submit_error %d\n", cookie);
-+		return ret;
-+	}
-+
-+	dma_async_issue_pending(chan);
-+	ret = wait_for_completion_timeout(&aq->dma_completion,
-+					  msecs_to_jiffies(20 * ATMEL_QSPI_TIMEOUT));
-+	if (ret == 0) {
-+		dmaengine_terminate_sync(chan);
-+		dev_err(&aq->pdev->dev, "DMA wait_for_completion_timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int atmel_qspi_dma_rx_xfer(struct spi_mem *mem,
-+				  const struct spi_mem_op *op,
-+				  struct sg_table *sgt, loff_t loff)
-+{
-+	struct atmel_qspi *aq =
-+		spi_controller_get_devdata(mem->spi->controller);
-+	struct scatterlist *sg;
-+	dma_addr_t dma_src;
-+	unsigned int i, len;
-+	int ret;
-+
-+	dma_src = aq->mmap_phys_base + loff;
-+
-+	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
-+		len = sg_dma_len(sg);
-+		ret = atmel_qspi_dma_xfer(aq, aq->rx_chan, sg_dma_address(sg),
-+					  dma_src, len);
-+		if (ret)
-+			return ret;
-+		dma_src += len;
-+	}
-+
-+	return 0;
-+}
-+
-+static int atmel_qspi_dma_tx_xfer(struct spi_mem *mem,
-+				  const struct spi_mem_op *op,
-+				  struct sg_table *sgt, loff_t loff)
-+{
-+	struct atmel_qspi *aq =
-+		spi_controller_get_devdata(mem->spi->controller);
-+	struct scatterlist *sg;
-+	dma_addr_t dma_dst;
-+	unsigned int i, len;
-+	int ret;
-+
-+	dma_dst = aq->mmap_phys_base + loff;
-+
-+	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
-+		len = sg_dma_len(sg);
-+		ret = atmel_qspi_dma_xfer(aq, aq->tx_chan, dma_dst,
-+					  sg_dma_address(sg), len);
-+		if (ret)
-+			return ret;
-+		dma_dst += len;
-+	}
-+
-+	return 0;
-+}
-+
-+static int atmel_qspi_dma_transfer(struct spi_mem *mem,
-+				   const struct spi_mem_op *op, loff_t loff)
-+{
-+	struct sg_table sgt;
-+	int ret;
-+
-+	ret = spi_controller_dma_map_mem_op_data(mem->spi->controller, op,
-+						 &sgt);
-+	if (ret)
-+		return ret;
-+
-+	if (op->data.dir == SPI_MEM_DATA_IN)
-+		ret = atmel_qspi_dma_rx_xfer(mem, op, &sgt, loff);
-+	else
-+		ret = atmel_qspi_dma_tx_xfer(mem, op, &sgt, loff);
-+
-+	spi_controller_dma_unmap_mem_op_data(mem->spi->controller, op, &sgt);
-+
-+	return ret;
-+}
-+
-+static int atmel_qspi_sama7g5_transfer(struct spi_mem *mem,
-+				       const struct spi_mem_op *op, u32 offset)
-+{
-+	struct atmel_qspi *aq =
-+		spi_controller_get_devdata(mem->spi->controller);
-+	u32 val;
-+	int ret;
-+
-+	if (!op->data.nbytes) {
-+		/* Start the transfer. */
-+		ret = atmel_qspi_reg_sync(aq);
-+		if (ret)
-+			return ret;
-+		atmel_qspi_write(QSPI_CR_STTFR, aq, QSPI_CR);
-+
-+		return atmel_qspi_wait_for_completion(aq, QSPI_SR_CSRA);
-+	}
-+
-+	/* Send/Receive data. */
-+	if (op->data.dir == SPI_MEM_DATA_IN) {
-+		if (aq->rx_chan && op->addr.nbytes &&
-+		    op->data.nbytes > ATMEL_QSPI_DMA_MIN_BYTES) {
-+			ret = atmel_qspi_dma_transfer(mem, op, offset);
-+			if (ret)
-+				return ret;
-+		} else {
-+			memcpy_fromio(op->data.buf.in, aq->mem + offset,
-+				      op->data.nbytes);
-+		}
-+
-+		if (op->addr.nbytes) {
-+			ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+						 !(val & QSPI_SR2_RBUSY), 40,
-+						 ATMEL_QSPI_SYNC_TIMEOUT);
-+			if (ret)
-+				return ret;
-+		}
-+	} else {
-+		if (aq->tx_chan && op->addr.nbytes &&
-+		    op->data.nbytes > ATMEL_QSPI_DMA_MIN_BYTES) {
-+			ret = atmel_qspi_dma_transfer(mem, op, offset);
-+			if (ret)
-+				return ret;
-+		} else {
-+			memcpy_toio(aq->mem + offset, op->data.buf.out,
-+				    op->data.nbytes);
-+		}
-+
-+		ret = atmel_qspi_wait_for_completion(aq, QSPI_SR_LWRA);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Release the chip-select. */
-+	ret = atmel_qspi_reg_sync(aq);
-+	if (ret) {
-+		pm_runtime_mark_last_busy(&aq->pdev->dev);
-+		pm_runtime_put_autosuspend(&aq->pdev->dev);
-+		return ret;
-+	}
-+	atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
-+
-+	return atmel_qspi_wait_for_completion(aq, QSPI_SR_CSRA);
-+}
-+
- static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
- {
- 	struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->controller);
-@@ -511,6 +972,160 @@ static const struct spi_controller_mem_ops atmel_qspi_mem_ops = {
- 	.get_name = atmel_qspi_get_name
- };
- 
-+static int atmel_qspi_set_pad_calibration(struct atmel_qspi *aq)
-+{
-+	unsigned long pclk_rate;
-+	u32 status, val;
-+	int i, ret;
-+	u8 pclk_div = 0;
-+
-+	pclk_rate = clk_get_rate(aq->pclk);
-+	if (!pclk_rate)
-+		return -EINVAL;
-+
-+	for (i = 0; i < ATMEL_QSPI_PCAL_ARRAY_SIZE; i++) {
-+		if (pclk_rate <= pcal[i].pclk_rate) {
-+			pclk_div = pcal[i].pclk_div;
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * Use the biggest divider in case the peripheral clock exceeds
-+	 * 200MHZ.
-+	 */
-+	if (pclk_rate > pcal[ATMEL_QSPI_PCAL_ARRAY_SIZE - 1].pclk_rate)
-+		pclk_div = pcal[ATMEL_QSPI_PCAL_ARRAY_SIZE - 1].pclk_div;
-+
-+	/* Disable QSPI while configuring the pad calibration. */
-+	status = atmel_qspi_read(aq, QSPI_SR2);
-+	if (status & QSPI_SR2_QSPIENS) {
-+		ret = atmel_qspi_reg_sync(aq);
-+		if (ret)
-+			return ret;
-+		atmel_qspi_write(QSPI_CR_QSPIDIS, aq, QSPI_CR);
-+	}
-+
-+	/*
-+	 * The analog circuitry is not shut down at the end of the calibration
-+	 * and the start-up time is only required for the first calibration
-+	 * sequence, thus increasing performance. Set the delay between the Pad
-+	 * calibration analog circuitry and the calibration request to 2us.
-+	 */
-+	atmel_qspi_write(QSPI_PCALCFG_AAON |
-+			 FIELD_PREP(QSPI_PCALCFG_CLKDIV, pclk_div) |
-+			 FIELD_PREP(QSPI_PCALCFG_CALCNT,
-+				    2 * (pclk_rate / 1000000)),
-+			 aq, QSPI_PCALCFG);
-+
-+	/* DLL On + start calibration. */
-+	atmel_qspi_write(QSPI_CR_DLLON | QSPI_CR_STPCAL, aq, QSPI_CR);
-+
-+	/* Check synchronization status before updating configuration. */
-+	ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				  (val & QSPI_SR2_DLOCK) &&
-+				  !(val & QSPI_SR2_CALBSY), 40,
-+				  ATMEL_QSPI_TIMEOUT);
-+
-+	/* Refresh analogic blocks every 1 ms.*/
-+	atmel_qspi_write(FIELD_PREP(QSPI_REFRESH_DELAY_COUNTER,
-+				    aq->slave_max_speed_hz / 1000),
-+			 aq, QSPI_REFRESH);
-+
-+	return ret;
-+}
-+
-+static int atmel_qspi_set_gclk(struct atmel_qspi *aq)
-+{
-+	u32 status, val;
-+	int ret;
-+
-+	/* Disable DLL before setting GCLK */
-+	status = atmel_qspi_read(aq, QSPI_SR2);
-+	if (status & QSPI_SR2_DLOCK) {
-+		atmel_qspi_write(QSPI_CR_DLLOFF, aq, QSPI_CR);
-+
-+		ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+					 !(val & QSPI_SR2_DLOCK), 40,
-+					 ATMEL_QSPI_TIMEOUT);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (aq->slave_max_speed_hz > QSPI_DLLCFG_THRESHOLD_FREQ)
-+		atmel_qspi_write(QSPI_DLLCFG_RANGE, aq, QSPI_DLLCFG);
-+	else
-+		atmel_qspi_write(0, aq, QSPI_DLLCFG);
-+
-+	ret = clk_set_rate(aq->gclk, aq->slave_max_speed_hz);
-+	if (ret) {
-+		dev_err(&aq->pdev->dev, "Failed to set generic clock rate.\n");
-+		return ret;
-+	}
-+
-+	/* Enable the QSPI generic clock */
-+	ret = clk_prepare_enable(aq->gclk);
-+	if (ret)
-+		dev_err(&aq->pdev->dev, "Failed to enable generic clock.\n");
-+
-+	return ret;
-+}
-+
-+static int atmel_qspi_sama7g5_init(struct atmel_qspi *aq)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = atmel_qspi_set_gclk(aq);
-+	if (ret)
-+		return ret;
-+
-+	if (aq->caps->octal) {
-+		ret = atmel_qspi_set_pad_calibration(aq);
-+		if (ret)
-+			return ret;
-+	} else {
-+		atmel_qspi_write(QSPI_CR_DLLON, aq, QSPI_CR);
-+		ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+					  (val & QSPI_SR2_DLOCK), 40,
-+					  ATMEL_QSPI_TIMEOUT);
-+	}
-+
-+	/* Set the QSPI controller by default in Serial Memory Mode */
-+	atmel_qspi_write(QSPI_MR_SMM | QSPI_MR_DQSDLYEN, aq, QSPI_MR);
-+	aq->mr = QSPI_MR_SMM;
-+	ret = atmel_qspi_update_config(aq);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable the QSPI controller. */
-+	atmel_qspi_write(QSPI_CR_QSPIEN, aq, QSPI_CR);
-+	ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				 val & QSPI_SR2_QSPIENS, 40,
-+				 ATMEL_QSPI_SYNC_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	if (aq->caps->octal) {
-+		ret = readl_poll_timeout(aq->regs + QSPI_SR, val,
-+					 val & QSPI_SR_RFRSHD, 40,
-+					 ATMEL_QSPI_TIMEOUT);
-+	}
-+
-+	atmel_qspi_write(QSPI_TOUT_TCNTM, aq, QSPI_TOUT);
-+	return ret;
-+}
-+
-+static int atmel_qspi_sama7g5_setup(struct spi_device *spi)
-+{
-+	struct atmel_qspi *aq = spi_controller_get_devdata(spi->controller);
-+
-+	/* The controller can communicate with a single slave. */
-+	aq->slave_max_speed_hz = spi->max_speed_hz;
-+
-+	return atmel_qspi_sama7g5_init(aq);
-+}
-+
- static int atmel_qspi_setup(struct spi_device *spi)
- {
- 	struct spi_controller *ctrl = spi->controller;
-@@ -525,6 +1140,9 @@ static int atmel_qspi_setup(struct spi_device *spi)
- 	if (!spi->max_speed_hz)
- 		return -EINVAL;
- 
-+	if (aq->caps->has_gclk)
-+		return atmel_qspi_sama7g5_setup(spi);
-+
- 	src_rate = clk_get_rate(aq->pclk);
- 	if (!src_rate)
- 		return -EINVAL;
-@@ -610,8 +1228,18 @@ static int atmel_qspi_set_cs_timing(struct spi_device *spi)
- 	return 0;
- }
- 
--static void atmel_qspi_init(struct atmel_qspi *aq)
-+static int atmel_qspi_init(struct atmel_qspi *aq)
- {
-+	int ret;
-+
-+	if (aq->caps->has_gclk) {
-+		ret = atmel_qspi_reg_sync(aq);
-+		if (ret)
-+			return ret;
-+		atmel_qspi_write(QSPI_CR_SWRST, aq, QSPI_CR);
-+		return 0;
-+	}
-+
- 	/* Reset the QSPI controller */
- 	atmel_qspi_write(QSPI_CR_SWRST, aq, QSPI_CR);
- 
-@@ -621,6 +1249,7 @@ static void atmel_qspi_init(struct atmel_qspi *aq)
- 
- 	/* Enable the QSPI controller */
- 	atmel_qspi_write(QSPI_CR_QSPIEN, aq, QSPI_CR);
-+	return 0;
- }
- 
- static irqreturn_t atmel_qspi_interrupt(int irq, void *dev_id)
-@@ -642,11 +1271,59 @@ static irqreturn_t atmel_qspi_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static int atmel_qspi_dma_init(struct spi_controller *ctrl)
-+{
-+	struct atmel_qspi *aq = spi_controller_get_devdata(ctrl);
-+	int ret;
-+
-+	aq->rx_chan = dma_request_chan(&aq->pdev->dev, "rx");
-+	if (IS_ERR(aq->rx_chan)) {
-+		aq->rx_chan = NULL;
-+		return dev_err_probe(&aq->pdev->dev, PTR_ERR(aq->rx_chan),
-+				     "RX DMA channel is not available\n");
-+	}
-+
-+	aq->tx_chan = dma_request_chan(&aq->pdev->dev, "tx");
-+	if (IS_ERR(aq->tx_chan)) {
-+		ret = dev_err_probe(&aq->pdev->dev, PTR_ERR(aq->tx_chan),
-+				    "TX DMA channel is not available\n");
-+		goto release_rx_chan;
-+	}
-+
-+	ctrl->dma_rx = aq->rx_chan;
-+	ctrl->dma_tx = aq->tx_chan;
-+	init_completion(&aq->dma_completion);
-+
-+	dev_info(&aq->pdev->dev, "Using %s (tx) and %s (rx) for DMA transfers\n",
-+		 dma_chan_name(aq->tx_chan), dma_chan_name(aq->rx_chan));
-+
-+	return 0;
-+
-+release_rx_chan:
-+	dma_release_channel(aq->rx_chan);
-+	aq->rx_chan = NULL;
-+	aq->tx_chan = NULL;
-+	return ret;
-+}
-+
-+static void atmel_qspi_dma_release(struct atmel_qspi *aq)
-+{
-+	if (aq->rx_chan)
-+		dma_release_channel(aq->rx_chan);
-+	if (aq->tx_chan)
-+		dma_release_channel(aq->tx_chan);
-+}
-+
- static const struct atmel_qspi_ops atmel_qspi_ops = {
- 	.set_cfg = atmel_qspi_set_cfg,
- 	.transfer = atmel_qspi_transfer,
- };
- 
-+static const struct atmel_qspi_ops atmel_qspi_sama7g5_ops = {
-+	.set_cfg = atmel_qspi_sama7g5_set_cfg,
-+	.transfer = atmel_qspi_sama7g5_transfer,
-+};
-+
- static int atmel_qspi_probe(struct platform_device *pdev)
- {
- 	struct spi_controller *ctrl;
-@@ -658,7 +1335,27 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 	if (!ctrl)
- 		return -ENOMEM;
- 
-+	aq = spi_controller_get_devdata(ctrl);
-+
-+	aq->caps = of_device_get_match_data(&pdev->dev);
-+	if (!aq->caps) {
-+		dev_err(&pdev->dev, "Could not retrieve QSPI caps\n");
-+		return -EINVAL;
-+	}
-+
-+	init_completion(&aq->cmd_completion);
-+	aq->pdev = pdev;
-+
- 	ctrl->mode_bits = SPI_RX_DUAL | SPI_RX_QUAD | SPI_TX_DUAL | SPI_TX_QUAD;
-+	if (aq->caps->octal)
-+		ctrl->mode_bits |= SPI_RX_OCTAL | SPI_TX_OCTAL;
-+
-+	if (aq->caps->has_gclk)
-+		aq->ops = &atmel_qspi_sama7g5_ops;
-+	else
-+		aq->ops = &atmel_qspi_ops;
-+
-+	ctrl->max_speed_hz = aq->caps->max_speed_hz;
- 	ctrl->setup = atmel_qspi_setup;
- 	ctrl->set_cs_timing = atmel_qspi_set_cs_timing;
- 	ctrl->bus_num = -1;
-@@ -667,12 +1364,6 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 	ctrl->dev.of_node = pdev->dev.of_node;
- 	platform_set_drvdata(pdev, ctrl);
- 
--	aq = spi_controller_get_devdata(ctrl);
--
--	init_completion(&aq->cmd_completion);
--	aq->pdev = pdev;
--	aq->ops = &atmel_qspi_ops;
--
- 	/* Map the registers */
- 	aq->regs = devm_platform_ioremap_resource_byname(pdev, "qspi_base");
- 	if (IS_ERR(aq->regs))
-@@ -687,6 +1378,7 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 				     "missing AHB memory\n");
- 
- 	aq->mmap_size = resource_size(res);
-+	aq->mmap_phys_base = (dma_addr_t)res->start;
- 
- 	/* Get the peripheral clock */
- 	aq->pclk = devm_clk_get(&pdev->dev, "pclk");
-@@ -703,13 +1395,6 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, err,
- 				     "failed to enable the peripheral clock\n");
- 
--	aq->caps = of_device_get_match_data(&pdev->dev);
--	if (!aq->caps) {
--		dev_err(&pdev->dev, "Could not retrieve QSPI caps\n");
--		err = -EINVAL;
--		goto disable_pclk;
--	}
--
- 	if (aq->caps->has_qspick) {
- 		/* Get the QSPI system clock */
- 		aq->qspick = devm_clk_get(&pdev->dev, "qspick");
-@@ -726,18 +1411,32 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 				"failed to enable the QSPI system clock\n");
- 			goto disable_pclk;
- 		}
-+	} else if (aq->caps->has_gclk) {
-+		/* Get the QSPI generic clock */
-+		aq->gclk = devm_clk_get(&pdev->dev, "gclk");
-+		if (IS_ERR(aq->gclk)) {
-+			dev_err(&pdev->dev, "missing Generic clock\n");
-+			err = PTR_ERR(aq->gclk);
-+			goto disable_pclk;
-+		}
-+	}
-+
-+	if (aq->caps->has_dma) {
-+		err = atmel_qspi_dma_init(ctrl);
-+		if (err == -EPROBE_DEFER)
-+			goto disable_qspick;
- 	}
- 
- 	/* Request the IRQ */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		err = irq;
--		goto disable_qspick;
-+		goto dma_release;
- 	}
- 	err = devm_request_irq(&pdev->dev, irq, atmel_qspi_interrupt,
- 			       0, dev_name(&pdev->dev), aq);
- 	if (err)
--		goto disable_qspick;
-+		goto dma_release;
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
- 	pm_runtime_use_autosuspend(&pdev->dev);
-@@ -745,7 +1444,9 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_noresume(&pdev->dev);
- 
--	atmel_qspi_init(aq);
-+	err = atmel_qspi_init(aq);
-+	if (err)
-+		goto dma_release;
- 
- 	err = spi_register_controller(ctrl);
- 	if (err) {
-@@ -753,13 +1454,16 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 		pm_runtime_disable(&pdev->dev);
- 		pm_runtime_set_suspended(&pdev->dev);
- 		pm_runtime_dont_use_autosuspend(&pdev->dev);
--		goto disable_qspick;
-+		goto dma_release;
- 	}
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
- 	return 0;
- 
-+dma_release:
-+	if (aq->caps->has_dma)
-+		atmel_qspi_dma_release(aq);
- disable_qspick:
- 	clk_disable_unprepare(aq->qspick);
- disable_pclk:
-@@ -768,6 +1472,44 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static int atmel_qspi_sama7g5_suspend(struct atmel_qspi *aq)
-+{
-+	int ret;
-+	u32 val;
-+
-+	ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				 !(val & QSPI_SR2_RBUSY) &&
-+				 (val & QSPI_SR2_HIDLE), 40,
-+				 ATMEL_QSPI_SYNC_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	atmel_qspi_write(QSPI_CR_QSPIDIS, aq, QSPI_CR);
-+	ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				 !(val & QSPI_SR2_QSPIENS), 40,
-+				 ATMEL_QSPI_SYNC_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	clk_disable_unprepare(aq->gclk);
-+
-+	atmel_qspi_write(QSPI_CR_DLLOFF, aq, QSPI_CR);
-+	ret = readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				 !(val & QSPI_SR2_DLOCK), 40,
-+				 ATMEL_QSPI_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	ret =  readl_poll_timeout(aq->regs + QSPI_SR2, val,
-+				  !(val & QSPI_SR2_CALBSY), 40,
-+				  ATMEL_QSPI_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	clk_disable_unprepare(aq->pclk);
-+	return 0;
-+}
-+
- static void atmel_qspi_remove(struct platform_device *pdev)
- {
- 	struct spi_controller *ctrl = platform_get_drvdata(pdev);
-@@ -778,6 +1520,16 @@ static void atmel_qspi_remove(struct platform_device *pdev)
- 
- 	ret = pm_runtime_get_sync(&pdev->dev);
- 	if (ret >= 0) {
-+		if (aq->caps->has_dma)
-+			atmel_qspi_dma_release(aq);
-+
-+		if (aq->caps->has_gclk) {
-+			ret = atmel_qspi_sama7g5_suspend(aq);
-+			if (ret)
-+				dev_warn(&pdev->dev, "Failed to de-init device on remove: %d\n", ret);
-+			return;
-+		}
-+
- 		atmel_qspi_write(QSPI_CR_QSPIDIS, aq, QSPI_CR);
- 		clk_disable(aq->qspick);
- 		clk_disable(aq->pclk);
-@@ -808,6 +1560,9 @@ static int __maybe_unused atmel_qspi_suspend(struct device *dev)
- 	if (ret < 0)
- 		return ret;
- 
-+	if (aq->caps->has_gclk)
-+		return atmel_qspi_sama7g5_suspend(aq);
-+
- 	atmel_qspi_write(QSPI_CR_QSPIDIS, aq, QSPI_CR);
- 
- 	pm_runtime_mark_last_busy(dev);
-@@ -835,6 +1590,9 @@ static int __maybe_unused atmel_qspi_resume(struct device *dev)
- 		return ret;
- 	}
- 
-+	if (aq->caps->has_gclk)
-+		return atmel_qspi_sama7g5_init(aq);
-+
- 	ret = pm_runtime_force_resume(dev);
- 	if (ret < 0)
- 		return ret;
-@@ -890,6 +1648,19 @@ static const struct atmel_qspi_caps atmel_sam9x60_qspi_caps = {
- 	.has_ricr = true,
- };
- 
-+static const struct atmel_qspi_caps atmel_sama7g5_ospi_caps = {
-+	.max_speed_hz = SAMA7G5_QSPI0_MAX_SPEED_HZ,
-+	.has_gclk = true,
-+	.octal = true,
-+	.has_dma = true,
-+};
-+
-+static const struct atmel_qspi_caps atmel_sama7g5_qspi_caps = {
-+	.max_speed_hz = SAMA7G5_QSPI1_SDR_MAX_SPEED_HZ,
-+	.has_gclk = true,
-+	.has_dma = true,
-+};
-+
- static const struct of_device_id atmel_qspi_dt_ids[] = {
- 	{
- 		.compatible = "atmel,sama5d2-qspi",
-@@ -899,6 +1670,15 @@ static const struct of_device_id atmel_qspi_dt_ids[] = {
- 		.compatible = "microchip,sam9x60-qspi",
- 		.data = &atmel_sam9x60_qspi_caps,
- 	},
-+	{
-+		.compatible = "microchip,sama7g5-ospi",
-+		.data = &atmel_sama7g5_ospi_caps,
-+	},
-+	{
-+		.compatible = "microchip,sama7g5-qspi",
-+		.data = &atmel_sama7g5_qspi_caps,
-+	},
-+
- 	{ /* sentinel */ }
- };
- 
--- 
-2.34.1
+> That said, perhaps the text should change a bit:
+> 
+> "not waiting in patchwork as ``New`` for more than one Kernel merge cycle" ->
+> "ideally not waiting in patchwork as ``New`` for more than one Kernel merge cycle"
+> 
+> We all have patches in patchwork that are much older than that, for one reason
+> or another, but if this happens all the time, then you have a problem.
+
+I'll do the suggested changes.
+
+> >> +This privilege is granted with some expectation of responsibility:  
+> > 
+> > "Privilege" sounds a bit like lord and serf.  
+> 
+> How about 'These commit rights are granted'?
+
+Ok.
+
+> >> +committers are people who care about the Linux Kernel as a whole and
+> >> +about the Linux media subsystem and want to help its development. It
+> >> +is also based on a trust relationship between the rest of the committers,
+> >> +maintainers and the LinuxTV community.  
+> > 
+> > Who is "the LinuxTV community" ?  
+> 
+> "linux kernel media community"?
+
+I opted to add both.
+
+> >> +Becoming a media committer
+> >> +--------------------------
+> >> +
+> >> +The most important aspect of volunteering to be a committer is that you will
+> >> +be able to review and approve other people's changes, so we are looking for  
+> > 
+> > Everybody is able to review patches (rather, everybody is allowed to
+> > review patches, the ability is a different matter).
+> >   
+> >> +whether we think you will be good at doing that.  
+> > 
+> > I've been told that "whether" should also come with a "or" clause. You
+> > can write "whether or not we think ...".  
+> 
+> How about this:
+> 
+> "The most important aspect of volunteering to be a committer is that you have
+> demonstrated the ability to give good code reviews."
+
+Ok.
+
+> >> +It is also desirable that developers that intend to become committers
+> >> +make a best effort to attend the yearly Linux Media Summit, typically
+> >> +co-located with another Linux conference.  
+> > 
+> > I would say that "are encouraged to attend" instead of "make a best
+> > effort to attend". Also, how will this scale when we'll have a few
+> > dozen committers ? Typically the media summit is capped to 20 attendees
+> > or less.  
+> 
+> If we have that many committers, then we can afford a larger room and we
+> probably would have to start charging some contributions as well. But
+> that would be a luxury problem :-) It's a bridge we can cross when we
+> get there.
+
+Agreed.
+
+> Note that I am fine with "are encouraged to attend". I think that's a good
+> phrase.
+
+Ok.
+
+> >> +   I, John Doe, would like to change my status to: Committer
+> >> +
+> >> +   I intend to actively develop the XYZ driver, send fixes to drivers
+> >> +   that I can test, reviewing patches and merging trivial fixes
+> >> +   for the subsystem, ...  
+> > 
+> > "Merging trivial fixes for the subsystem" bothers me. I don't think it
+> > needs to be a requirement for committers. This is a maintainer's
+> > responsibility. If people want to help with that that's great, but
+> > making it a requirement isn't. Or did you mean this as an example ?
+> > 
+> > We shouldn't expect committers to handle a higher workload than what
+> > they do as driver maintainers who submit patches by e-mail or send pull
+> > requests. Giving commit rights will lower the effort to get patches in,
+> > and I think it's fair to ask for keeping patchwork up-to-date in return,
+> > but that's about it.  
+> 
+> The idea was to make it explicit that they can review and merge trivial
+> fixes for the subsystem as a whole (so outside the direct area that they
+> maintain), but that is certainly optional.
+> 
+> How about:
+> 
+> ", and optionally reviewing patches and merging trivial fixes in other
+> areas of the subsystem,"
+
+Sounds OK to me. Will use that.
+
+> > I find the GPG signature requirement to be borderline ridiculous. The
+> > first message you're giving to committers is that you distrust them so
+> > much that you want them to sign an agreement with their blood
+> > (figuratively speaking). I don't think it's a very good approach to
+> > community building, nor does it bring any advantage to anyone.  
+> 
+> I kind of agree with Laurent here. Is the media-committers mailinglist
+> publicly archived somewhere? I think it is sufficient if this is posted
+> to a publicly archived mailinglist. That could be linux-media, I would be
+> fine with that. But media-committers would be more appropriate, but only
+> if it is archived somewhere.
+> 
+> If we want a GPG key, what would we do with it anyway?
+
+With PRs, the authenticity was ensured by signed git tags. With MRs,
+we need to ensure when we're giving grants, which happens after the
+committer sends us an e-mail agreeing to be a committer.
+
+I'm adding to the declaration of intent a text with the username
+that will be used by the new committer:
+
+	   "I, John Doe, would like to change my status to: Committer
+
+	    I intend to actively develop the XYZ driver, send fixes to drivers
+	    that I can test, optionally reviewing patches and merging trivial
+	    fixes in other areas of the subsystem, ...
+
+	    For the purpose of committing patches to the media-committer's tree,
+	    I'll be using my user https://gitlab.freedesktop.org/users/<username>.
+
+I'm also replacing the part that mentions PGP with:
+
+	Such e-mail shall be signed with a PGP key cross signed by other Kernel and
+	media developers. As described at :ref:`media-developers-gpg`_, the PGP
+	signature, together with the gitlab user security are fundamental components
+	that ensure the authentity of the merge requests that will happen at the
+	media-committer.git tree.
+
+Finally, the reference there (media-developers-gpg) will be part of the
+media maintainer profile entry as:
+
+	Authentication for pull and merge requests
+	++++++++++++++++++++++++++++++++++++++++++
+
+	The authenticity of developers submitting pull requests and merge requests
+	shall be validated by using PGP sign, via the
+	:ref:`kernel_org_trust_repository`.
+
+	With the pull request workflow, pull requests shall use a GPG-signed tag.
+
+	With the committers' workflow, this is ensured at the time merge request
+	rights will be granted to the gitlab instance used by media-committers.git
+	tree, after receiving the e-mail documented at
+	:ref:`media-committer-agreement`.
+
+	For more details about PGP sign, please read
+	Documentation/process/maintainer-pgp-guide.rst.
+
+> > 
+> > This is problematic, as we can't expect people to check for changes in
+> > this file every time they push something. Changes to this file should be
+> > announced to all committers, with a reasonable review period.  
+> 
+> "Any changes to the kernel media development process will be announced in
+> the media-committers mailinglist with a reasonable review period. All
+> committers are automatically subscribed to that mailinglist."
+
+I added a variation of that:
+
+	In case the kernel development process changes, by merging new commits
+	in the
+	`media-committer tree <https://gitlab.freedesktop.org/linux-media/media-committers>`_,
+	the media committer implicitly declares their agreement with the latest
+	version of the documented process including the contents of this file.
+
+	.. note::
+
+	   1. Changes to the kernel media development process should be announced in
+	      the media-committers mailinglist with a reasonable review period. All
+	      committers are automatically subscribed to that mailinglist;
+	   2. Due to the distributed nature of the Kernel development, it is
+	      possible that kernel development process changes may end being
+	      reviewed/merged at the linux-docs mailing list, specially for the
+	      contents under Documentation/process and for trivial typo fixes.
+
+Since we're talking about the kernel development process as a whole,
+I added a notice that other parts of the process may change any time
+(like the recent changes to CoC), and such changes may not be c/c
+to linux-media.
+
+> > There are tools to ease updating the status of a patch, could you
+> > document or at least mention them ?  
+> 
+> I think that is out-of-scope. It certainly could be added as a follow-up
+> patch.
+
+I ended adding a link, as it doesn't hurt to have it there.
 
 
+> >> +In the unhappy event that a media committer continues to disregard good
+> >> +citizenship (or actively disrupts the project), we may need to revoke  
+> > 
+> > That's very, very vague, surprisingly vague even from someone who raised
+> > many concerns about the kernel code of conduct being vague.  
+> 
+> I suspect that this phrasing is copied from another project. Mauro, can you
+> confirm that?
+
+Yes: it came from Chromium.
+
+> I think it is extremely difficult to give explicit guidance here.
+
+Agreed.
+
+> >> +that person's status. In such cases, if someone suggests the revocation with
+> >> +a good reason, other developers may second the motion. The final decision
+> >> +is taken by the subsystem maintainers. As the decision to become a media  
+> > 
+> > What does "seconding the motion" bring, if the decision lies solely in
+> > maintainers ?  
+> 
+> I think the intent here is that, other than in extreme circumstances, it shouldn't
+> be a unilateral decision from the subsystem maintainers. Multiple media committers
+> should agree with it.
+> 
+> But perhaps it would be better to replace this with:
+> 
+> "In such cases, if someone suggests the revocation with a good reason, then after
+> discussing this among the media committers, the final decision is taken by the
+> subsystem maintainers."
+
+Changed.
+
+> I really hope we will never end up in a situation like this, since that's going
+> to be painful regardless of what procedure you choose.
+
+Yes. Things like that are painful and stressful.
+
+> >> +committer comes from a consensus between subsystem maintainers, a single
+> >> +subsystem maintainer not trusting the media committer anymore is enough to
+> >> +revoke committer's privileges.
+> >> +
+> >> +If a committer is inactive for more than a couple of Kernel cycles,
+> >> +maintainers will try to reach you via e-mail. If not possible, they may
+> >> +revoke your committer privileges and update MAINTAINERS file entries
+> >> +accordingly. If you wish to resume contributing later on, then contact
+> >> +the subsystem maintainers to ask if your rights can be restored.  
+> > 
+> > https://drm.pages.freedesktop.org/maintainer-tools/committer/commit-access.html#access-request:
+> > 
+> > "Committers are encouraged to request their commit rights get removed
+> > when they no longer contribute to the project. Commit rights may be
+> > automatically revoked after a year of inactivity (no commits or
+> > reviews). Commit rights will be reinstated when they come back to the
+> > project."  
+> 
+> Yes, that's better. I also realized that the mention of updating the MAINTAINERS
+> makes no sense since that does not contain media committer status.
+
+See my comments above (with regards to MAINTAINERS) and a separate thread.
+
+> >> +
+> >> +A previous committer that had his commit rights revoked can keep contributing  
+> > 
+> > s/his/their/
+> >   
+> >> +to the subsystem via the normal e-mail workflow as documented at the
+> >> +:ref:`Media development workflow`.
+> >> +
+> >> +References
+> >> +----------
+> >> +
+> >> +Much of this was inspired by/copied from the committer policies of:
+> >> +
+> >> +- `Chromium <https://chromium.googlesource.com/chromium/src/+/main/docs/contributing.md>`_;
+> >> +- `WebKit <http://www.google.com/url?q=http%3A%2F%2Fwebkit.org%2Fcoding%2Fcommit-review-policy.html&sa=D&sntz=1&usg=AFrqEze4W4Lvbhue4Bywqgbv-N5J66kQgA>`_;  
+> > 
+> > Google tracks us enough without using google URLs.
+> >   
+> >> +- `Mozilla <http://www.google.com/url?q=http%3A%2F%2Fwww.mozilla.org%2Fhacking%2Fcommitter%2F&sa=D&sntz=1&usg=AFrqEzecK7iiXqV30jKibNmmMtzHwtYRTg>`_.  
+> > 
+> > https://drm.pages.freedesktop.org/maintainer-tools/committer/commit-access.html
+> > would also have been a good source of inspiration. That's the only large
+> > multi-committer workflow today in the kernel, and it has proven its
+> > value. The explicit acceptance criteria in particular are very good.
+> > Quoting the document, it says
+> > 
+> > "Commit rights will be granted to anyone who requests them and fulfills
+> > the below criteria:"
+> > 
+> > That's how we build an inclusive community, it feels way more welcoming
+> > than saying that maintainers will discuss in private and grant
+> > privileges to underlings if it pleases them (even if the effect is the
+> > same in practice, it's still a maintainer decision).  
+> 
+> The main difference here is that in drm developers can ask for commit rights,
+> whereas for the media subsystem they are invited by existing media committers.
+> 
+> The drm model is absolutely more inclusive, and I hope we can end up there
+> eventually. But for now I think we need more work on both the procedures and
+> the media-ci workflow.
+>
+> Even with just two sub-maintainers committing patches it took quite a long time
+> to find and fix all the bugs/issues we encountered. At this point we are
+> definitely not ready to implement a drm model.
+> 
+> This document just starts this process, it will change and be improved over time,
+> but we need this in place before we can start adding more committers.
+
+Agreed.
+
+Thanks,
+Mauro
 
