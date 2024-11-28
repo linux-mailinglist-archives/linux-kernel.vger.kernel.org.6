@@ -1,190 +1,196 @@
-Return-Path: <linux-kernel+bounces-424282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B559DB290
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:41:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8389DB29C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:50:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C96282395
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86894164973
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56E514A639;
-	Thu, 28 Nov 2024 05:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0222A14265F;
+	Thu, 28 Nov 2024 05:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLchBLth"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZF5ATNJ7"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385CA13C836;
-	Thu, 28 Nov 2024 05:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1356134BD;
+	Thu, 28 Nov 2024 05:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732772439; cv=none; b=QXmLBcPa2yV3K0CiN0LQhNI83bGUF5UBmq1FM4llfbdgsSqIgIZc5SqiR3KlJKEpqwA1Z8tPqlzlNZIZHFTNED1qlwhvWcBTkGTaFh5RVmW+ZVI31a5fQsHxQgSlsqp6dDWakMOi+nqgFN0Ch0Jf+2OSxMbAYQrud0mzesrySTQ=
+	t=1732773036; cv=none; b=IbNhNxRY7hMTihUrv7BuNbiDsXHGf39UHpXa5rduJ5j7ynY5h6WhLuHz9arxNoz+xa3bGr3jvepl7oHihJqakCuuNgUZ8YqerFb5TLnKUDWi7EI36A9WLrSi6BHCUt9ZdCU7FAoj2hLPzAqKsGyjfrkZZCHfGowZ6Gc3ozE7fdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732772439; c=relaxed/simple;
-	bh=1irOa5iMMXRoDzCJXwveBV0OqpPr+P+ur0YtrHr68zY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rXruprDbZH5M3rDv7M/+09dK173zjcDLgPz6DU2ueRNdNfIsHn08/3ngXZN4ZiAcUfof+ynMxOOGHfBmtEdFzGgYDdbF0HWMPDQFKml4p2GvLVtQJuOiucu3tAuBxqUXHfkBMIOyR5gJTaepC3nm5ZaIiyAwwFvS56ZxMelhlHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLchBLth; arc=none smtp.client-ip=209.85.222.181
+	s=arc-20240116; t=1732773036; c=relaxed/simple;
+	bh=jy02W4fUSO/ynBhM1FmXmxBPyqudopqiVK8oLXZwHgY=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-version:Content-type; b=Uu16RnZ9wzWHSmfGjQpm2F06NOuXieJTcdAxW5+VeUyQh3kqzAUvvcdYOtPq2LL9kwKwBHTeNxPOjtF0VninVIJS2z0fJPp+iGq3sFwvb6fHrswK8uDDKECO6f5O833Xzm+MV7fZg48o4neeF//Id7PEnzggZhAbebgChjJPKR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZF5ATNJ7; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b666215645so22428585a.0;
-        Wed, 27 Nov 2024 21:40:37 -0800 (PST)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2eb1433958dso352003a91.2;
+        Wed, 27 Nov 2024 21:50:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732772437; x=1733377237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qe5bljGPbBbJFGGFe8TjhBQ9K3SXU61aSYWBPYS66OQ=;
-        b=WLchBLthFldz3EG2zc/VKR4/ReNkGJdcPCOHzRnPRj3CMQ+AJpITYDIZGJ8EwVssyK
-         Sq8gxa2cDiloOgCXeCbnCa/Bnkc4zwHmXEfK7+S0l9NhhjZSg1FCIdqeZ+OrfW9HHd5C
-         MEPm+nc1CRxN8iclSpED1cAqZGBcKYAyIPkOZBn+ycKMyMyhSnjflZgtWojh3iTiqzk+
-         RTWTA6dCi3VtwB0PfY1v7qce7/2KyeIjVvWCUofnjQKd5AiyKbfbYEUl47WupA6cgOAI
-         vtp5YVTbqZCmiN6dCkrpmwCrKxA+1kb7wCyAIISmwe+a3JG2iArRH2phW0EkK7FBko9z
-         Nc+w==
+        d=gmail.com; s=20230601; t=1732773034; x=1733377834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:message-id:date
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JLjeQx75L3lYmciLRB+c43uodhAABK8j/Hm5E1oeO90=;
+        b=ZF5ATNJ7vivdlYfQlTUkIEigKH4qkCiW7aoX1AVt6N28sFMqTwNzAwsrwPtTm3cR4F
+         0uv2olTsxREnCg5v9V30ptbMQybhrUXPr9K19lNbxa9EKm9xGXiswRbUsP4tK7N54ycv
+         5lf+QlxsMLBcBeMy/HqsdFy5dT2w+OYidO5qSy+AYrToGDOHZXSiTFRsxX6FZ5N4kFdp
+         XGNcVil/+XXLRYw5BR5KINCvMXBWH9DxxdWpvstgB27O4izcBLn/rXV8+SLHjXAAx7k2
+         +pKqgdjtFp5akFjIY+oY99PiQXXjRvZ6lc81G2KiUmjjWY/a5PRCfvzlAkoBVhfcF6Gg
+         Z5hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732772437; x=1733377237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qe5bljGPbBbJFGGFe8TjhBQ9K3SXU61aSYWBPYS66OQ=;
-        b=PdG5YhLX8By8DJM9VsDVZKfybHPcU333P3y5k/ghQ9s37bzFOuXEKkwH2ta3iGeAw8
-         if1UgUABifYWgSjBAdcRSBC8NtA+oWj6dATZpmZ4gpFfWIH5eVu+yuiTxBRPzUAEM2Sp
-         dBWqJSNrv2zwoS6+0n6vQiKacwdSpPeSNGaa2vGq/h19o5MBV08Jofc5N60iL7HizDSf
-         E76qgh4cqw6H1dBiJNIrv8n/ziEqupC/PvTyUXQmdXXr+9LdBumsA1+XU0IiEvvliCya
-         q2cw7FLzkjbfoPsicRVfS0FVgLMWrXn5aCPZHKQrvUco4yBbnl/9h4bVwuWhv8lhEqUj
-         CLQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0osCDmgI1bxvDCwgHg9LgjoVL47ruYB3B6XHB6GF+ZzSYvw4ohHeDL+fwFZCo0SVc+I/1RvXo+sYfjdFgOSU=@vger.kernel.org, AJvYcCUf51eDZkImZuutDzanZ9VlJrd6yCxmvrIxLyEvJ4hO4JfDHZYMj7q8SpK3U0R+ALGVez7CyGPgePCopMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXOksNEQElqVr1nw7r0h3tHyI9jL8FkMnMqnGf4gZrGbwRalBZ
-	6awQywZRtvXYqYRf+ZduK65aS5RE+9lI0A4o8v2u7DCDHqTiKTqf
-X-Gm-Gg: ASbGnctI0ofcNcZSsRCzegFlLNEH4pNd7Oo6Z2agDW9QxLt0bTZOqdCdgli9L3InvAH
-	Fxa0mpfjfPRi86uH94sZuY1URQAL7YgeAP1M4Ad/Pb64dn1d0nAdzBVoa7BlMoPNV8wng2lL4oF
-	8v5RMItsbE3mRrK4JMu7HsbjAmkuRur+xJ6y/gPVxchSsG8p0FwE3oPT+lXCNX1+pAqENzOt5el
-	EzSgzJt+eM+Po9ZzcFK56MDZsYeTsgNKVQoEOSdCNvrCKC0jEVoOpet0+PhU3+Kk0VuQ6CFmVnF
-	eaboWbvJNIFY2zZWF6wxY+WsK15QM4rIfRXY7Z8d
-X-Google-Smtp-Source: AGHT+IF9fs3kli7JcKoMj1NEFNyoAQcN9hkYTEd2oIPST/YfiSLfaOzVILdiwnWjDfqA1wxkx2G25A==
-X-Received: by 2002:a05:620a:260b:b0:7af:daa4:3564 with SMTP id af79cd13be357-7b67c460896mr893254585a.48.1732772437034;
-        Wed, 27 Nov 2024 21:40:37 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849b7280sm28985085a.102.2024.11.27.21.40.36
+        d=1e100.net; s=20230601; t=1732773034; x=1733377834;
+        h=content-transfer-encoding:mime-version:references:message-id:date
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JLjeQx75L3lYmciLRB+c43uodhAABK8j/Hm5E1oeO90=;
+        b=kFGdU+6v6b+ObHoQc6h9hQGbhCBC0dLolrAoRkLBG1WJzWW5+zsPkSjRY/ooninF7o
+         F22z/s0hIZN3PwPB32UIWBW8smxBYakREFfZdNsUmwG8zCVzeSK6mFlejycKMFNYmPh3
+         a+Rxo13FC3aVK/slJpBPJxnddp1ezdQNSIGD9USuihVcHIQzPtU1rjo9NLhZKoDLBz2G
+         dqOlNc6GY0dHZk2fYpUOPTkcEh3Kwcj/hkO8akzeNTcHaC6Ai2CYKgYnpHWOC2tBA26k
+         WhUcvP4xUK9GRdLOQiIfK4qMf+wIdZ5vigNCm1NsQgDEzVrVkB4P1eGZNYL+2mCtk/Wb
+         9uPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUD6GnKTwsC2ATMjK8JZGXScEn8EikyMspCw8pLyT1YfRB/akyxeFM0EUKAMzZuKz1A6BacEqg9CxXyPDMG@vger.kernel.org, AJvYcCUYYbupx0JUr+OHtT0V7lLwIIas0/4h4lwIIjfrKg47L/pJYS1a9Vt3KcKV4WBUkud+nAJKCLFRfCwISg==@vger.kernel.org, AJvYcCVU78qt0RIccRNDXBKd6/yw8PKYXlWqX4rb+Qf+z6hwXNCR5urku0SzeI7hq3eBSrMRuRSC6DVVdEg+Nyc2CA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh/0DraHbpDjQHVqeBFfZ/fssKGzxWLfeg9I8Z0mM6QRSzDzJd
+	Tcy9n7/tqEyOmdeXxCf4ds7avMP1sE63iFVeZkwpd1YfsN5pS6VD
+X-Gm-Gg: ASbGncsnE+V6uZw1DyMoLVzzy3tE0PW9Tx/CCH8Kynxn6Td80Y7T6WcGpPJe2fLUSqC
+	sONv2sq+esH1MyBpjD1FpYQFu5u/VIklxfgqwoNi4zk5UNS9QvVQ+1j7FuCJvRVTtlkSc0RP5Ze
+	JUYo4d9GZ6zTyDHP5mSUmXlqlPTtZsZHfrV17X68evV8cBKchRhSjaJwF9BNjIpPsT211QA5fPR
+	paG6M6XM80KBaaSUshjCKGFa7JAR4VlhvpR3LNZg0U=
+X-Google-Smtp-Source: AGHT+IGvcaRwwg7Z6lX7Dj/twWMoZA67eSUPjEvK6r1tl4fqPwjizLPoPiL2oxPD3RSEg5ww+ZcLUQ==
+X-Received: by 2002:a17:90b:4b82:b0:2ea:7329:46 with SMTP id 98e67ed59e1d1-2ee08e9f0c6mr8602080a91.5.1732773033915;
+        Wed, 27 Nov 2024 21:50:33 -0800 (PST)
+Received: from dw-tp ([171.76.82.126])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee2b22dd01sm588999a91.27.2024.11.27.21.50.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 21:40:36 -0800 (PST)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 316441200077;
-	Thu, 28 Nov 2024 00:40:36 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 28 Nov 2024 00:40:36 -0500
-X-ME-Sender: <xms:VAJIZzxJ4MH3XwaS7bcgWwx8IkjFRDb1tb2h3yMbwZqY2oWUbppjXg>
-    <xme:VAJIZ7QykeHZD0Ha-T81OO5DRM1LS02Z3rvny88NRh8dBvaCTCLq0BiEXPG4ajinH
-    J6wj_duY_XkmLPKVg>
-X-ME-Received: <xmr:VAJIZ9WmsEv6e4u__7w0ArILg5jlumsw62qU8xsdXx_Ph0rVKCMFnAxTJ4h5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedtgdekhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecu
-    hfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtg
-    homheqnecuggftrfgrthhtvghrnhepgffhffevhffhvdfgjefgkedvlefgkeegveeuheel
-    hfeivdegffejgfetuefgheeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
-    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
-    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
-    vgdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmhgr
-    nhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrg
-    hilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphht
-    thhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhope
-    gsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvg
-X-ME-Proxy: <xmx:VAJIZ9jSWbc6tGvYh2dv-BbO9t1daE688Va-ARMcqt3gMgq75yxXTg>
-    <xmx:VAJIZ1CaELDWRpguAry1jDFw3MElQYPuiL7th-qpD4FiyPANSdZ_7g>
-    <xmx:VAJIZ2IwXATDAhvrfiTft5VEjwwWB2KXXKPY2yjcSapb-E7RrP8Rjg>
-    <xmx:VAJIZ0A3rrfxSZ9Q6B-Uadm1hCCBHJqOQJJjOK_71S21LGowUJ32vw>
-    <xmx:VAJIZxzTgTKPD3WkufXXHpr8-Jxoy25e4vcouWgRydOiwZk_8h6ITJdu>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Nov 2024 00:40:35 -0500 (EST)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>
-Cc: Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lyude Paul <lyude@redhat.com>,
-	Filipe Xavier <felipe_life@live.com>,
-	Boqun Feng <boqun.feng@gmail.com>
-Subject: [RFC 5/5] rust: sync: Add SpinLockGuard type alias
-Date: Wed, 27 Nov 2024 21:40:22 -0800
-Message-Id: <20241128054022.19586-6-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241128054022.19586-1-boqun.feng@gmail.com>
-References: <20241128054022.19586-1-boqun.feng@gmail.com>
+        Wed, 27 Nov 2024 21:50:33 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: Bharata B Rao <bharata@amd.com>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, willy@infradead.org, vbabka@suse.cz, david@redhat.com, akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, clm@meta.com
+Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
+In-Reply-To: <20241127120235.ejpvpks3fosbzbkr@quack3>
+Date: Thu, 28 Nov 2024 11:10:35 +0530
+Message-ID: <87plmf3oh8.fsf@gmail.com>
+References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com> <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com> <20241127120235.ejpvpks3fosbzbkr@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
-From: Lyude Paul <lyude@redhat.com>
+Jan Kara <jack@suse.cz> writes:
 
-A simple helper alias for code that needs to deal with Guard types returned
-from SpinLocks.
+> On Wed 27-11-24 07:19:59, Mateusz Guzik wrote:
+>> On Wed, Nov 27, 2024 at 7:13 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+>> >
+>> > On Wed, Nov 27, 2024 at 6:48 AM Bharata B Rao <bharata@amd.com> wrote:
+>> > >
+>> > > Recently we discussed the scalability issues while running large
+>> > > instances of FIO with buffered IO option on NVME block devices here:
+>> > >
+>> > > https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
+>> > >
+>> > > One of the suggestions Chris Mason gave (during private discussions) was
+>> > > to enable large folios in block buffered IO path as that could
+>> > > improve the scalability problems and improve the lock contention
+>> > > scenarios.
+>> > >
+>> >
+>> > I have no basis to comment on the idea.
+>> >
+>> > However, it is pretty apparent whatever the situation it is being
+>> > heavily disfigured by lock contention in blkdev_llseek:
+>> >
+>> > > perf-lock contention output
+>> > > ---------------------------
+>> > > The lock contention data doesn't look all that conclusive but for 30% rwmixwrite
+>> > > mix it looks like this:
+>> > >
+>> > > perf-lock contention default
+>> > >  contended   total wait     max wait     avg wait         type   caller
+>> > >
+>> > > 1337359017     64.69 h     769.04 us    174.14 us     spinlock   rwsem_wake.isra.0+0x42
+>> > >                         0xffffffff903f60a3  native_queued_spin_lock_slowpath+0x1f3
+>> > >                         0xffffffff903f537c  _raw_spin_lock_irqsave+0x5c
+>> > >                         0xffffffff8f39e7d2  rwsem_wake.isra.0+0x42
+>> > >                         0xffffffff8f39e88f  up_write+0x4f
+>> > >                         0xffffffff8f9d598e  blkdev_llseek+0x4e
+>> > >                         0xffffffff8f703322  ksys_lseek+0x72
+>> > >                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>> > >                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>> > >    2665573     64.38 h       1.98 s      86.95 ms      rwsem:W   blkdev_llseek+0x31
+>> > >                         0xffffffff903f15bc  rwsem_down_write_slowpath+0x36c
+>> > >                         0xffffffff903f18fb  down_write+0x5b
+>> > >                         0xffffffff8f9d5971  blkdev_llseek+0x31
+>> > >                         0xffffffff8f703322  ksys_lseek+0x72
+>> > >                         0xffffffff8f7033a8  __x64_sys_lseek+0x18
+>> > >                         0xffffffff8f20b983  x64_sys_call+0x1fb3
+>> > >                         0xffffffff903dce5e  do_syscall_64+0x7e
+>> > >                         0xffffffff9040012b  entry_SYSCALL_64_after_hwframe+0x76
+>> >
+>> > Admittedly I'm not familiar with this code, but at a quick glance the
+>> > lock can be just straight up removed here?
+>> >
+>> >   534 static loff_t blkdev_llseek(struct file *file, loff_t offset, int whence)
+>> >   535 {
+>> >   536 │       struct inode *bd_inode = bdev_file_inode(file);
+>> >   537 │       loff_t retval;
+>> >   538 │
+>> >   539 │       inode_lock(bd_inode);
+>> >   540 │       retval = fixed_size_llseek(file, offset, whence,
+>> > i_size_read(bd_inode));
+>> >   541 │       inode_unlock(bd_inode);
+>> >   542 │       return retval;
+>> >   543 }
+>> >
+>> > At best it stabilizes the size for the duration of the call. Sounds
+>> > like it helps nothing since if the size can change, the file offset
+>> > will still be altered as if there was no locking?
+>> >
+>> > Suppose this cannot be avoided to grab the size for whatever reason.
+>> >
+>> > While the above fio invocation did not work for me, I ran some crapper
+>> > which I had in my shell history and according to strace:
+>> > [pid 271829] lseek(7, 0, SEEK_SET)      = 0
+>> > [pid 271829] lseek(7, 0, SEEK_SET)      = 0
+>> > [pid 271830] lseek(7, 0, SEEK_SET)      = 0
+>> >
+>> > ... the lseeks just rewind to the beginning, *definitely* not needing
+>> > to know the size. One would have to check but this is most likely the
+>> > case in your test as well.
+>> >
+>> > And for that there is 0 need to grab the size, and consequently the inode lock.
+>> 
+>> That is to say bare minimum this needs to be benchmarked before/after
+>> with the lock removed from the picture, like so:
+>
+> Yeah, I've noticed this in the locking profiles as well and I agree
+> bd_inode locking seems unnecessary here. Even some filesystems (e.g. ext4)
+> get away without using inode lock in their llseek handler...
+>
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://lore.kernel.org/r/20241120222742.2490495-3-lyude@redhat.com
----
- rust/kernel/sync.rs               | 2 +-
- rust/kernel/sync/lock/spinlock.rs | 8 ++++++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+Right, we don't need an inode_lock() for i_size_read(). i_size_write()
+still needs locking for serialization, mainly for 32bit SMP case, due
+to use of seqcounts.
+I guess it would be good to maybe add this in Documentation too rather
+than this info just hanging on top of i_size_write()?
 
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 2721b5c8deda..dffdaad972ce 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -17,7 +17,7 @@
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
- pub use lock::global::{global_lock, GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
- pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
--pub use lock::spinlock::{new_spinlock, SpinLock};
-+pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
- pub use locked_by::LockedBy;
- 
- /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
-diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-index 9f4d128bed98..081c0220013b 100644
---- a/rust/kernel/sync/lock/spinlock.rs
-+++ b/rust/kernel/sync/lock/spinlock.rs
-@@ -87,6 +87,14 @@ macro_rules! new_spinlock {
- /// A kernel `spinlock_t` lock backend.
- pub struct SpinLockBackend;
- 
-+/// A [`Guard`] acquired from locking a [`SpinLock`].
-+///
-+/// This is simply a type alias for a [`Guard`] returned from locking a [`SpinLock`]. It will unlock
-+/// the [`SpinLock`] upon being dropped.
-+///
-+/// [`Guard`]: super::Guard
-+pub type SpinLockGuard<'a, T> = super::Guard<'a, T, SpinLockBackend>;
-+
- // SAFETY: The underlying kernel `spinlock_t` object ensures mutual exclusion. `relock` uses the
- // default implementation that always calls the same locking method.
- unsafe impl super::Backend for SpinLockBackend {
--- 
-2.39.5 (Apple Git-154)
+References
+===========
+[1]:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/filesystems/locking.rst#n557
+[2]:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/fs.h#n932
+[3]: https://lore.kernel.org/all/20061016162729.176738000@szeredi.hu/
 
+-ritesh
 
