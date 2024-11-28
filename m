@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-424263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11E49DB24A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B9C9DB24E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:59:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57074282B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D52F2822FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDCA13B59A;
-	Thu, 28 Nov 2024 04:54:20 +0000 (UTC)
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9323360
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F358713B792;
+	Thu, 28 Nov 2024 04:58:59 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21581386BF
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732769660; cv=none; b=KNHZvT8tHWtbec+ed9sH/E/4NivBw+dNynjfBsxNEQ9lYOW+YPeDUVVcVR12St9hoAeUVLWscci98+KuxqRF6R6AfxBuLiRTBA87Ih04N2wIyTvWcc/r3BKhDyZx2Z4tjrf4BeFsBig3kUjvkiC0sYmfPu1aEhzufKQIkjbDa5E=
+	t=1732769939; cv=none; b=e2OBY0HaYnTVu/GxiauWH/QZlmvlxMgQqMIlD8E2K8SGMjt3svMswhY17Wyurk9kOmq1JzuXNjS4ng+PcOZ4u6U4yQsu6GwahPjomlJyULTjoRhr0xOVRs/QkSRTI8PCISZx6x3SYR407BBR2r2VKMIN6iSfnAn/tZkG60pL6PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732769660; c=relaxed/simple;
-	bh=lYovyC6bUDmK5k8H62++FJhBXcWWLQTq/0mw0zvZCDQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FCYd0h2Y7OTRKJ41jnrTVkRnM+n0COVnaxg0YHUAJfmbfu7/FGAlIjXz6Zt4VQjhnA2yrEFkuiN8EmN539mgiLMIfWkF2PGxiFOT4Aj7nfGuDkc1XlGg00Am9uJk1Yg9fudJn1/Orj25TiYDVyJZo7A20mVieIhJK6LQ3ypptxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.49])
-	by sina.com (10.185.250.24) with ESMTP
-	id 6747F62800003F5D; Thu, 28 Nov 2024 12:48:45 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 67710610748452
-X-SMAIL-UIID: 43821B7CE5254581A666726971154BD0-20241128-124845-1
-From: Hillf Danton <hdanton@sina.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ruan Bonan <bonan.ruan@u.nus.edu>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-	Aleksandr Nogikh <nogikh@google.com>,
-	BPF <bpf@vger.kernel.org>
-Subject: Re: [BUG] possible deadlock in __schedule (with reproducer available)
-Date: Thu, 28 Nov 2024 12:48:31 +0800
-Message-Id: <20241128044831.1672-1-hdanton@sina.com>
-In-Reply-To: <CAADnVQJ+eoczS6JK7aUZSWzUFggEyXW+w4oMiB4iY4F9FpMVRA@mail.gmail.com>
-References: <CAEf4BzYHeh_=iHOYL88pXXdHGZuAmQNM0jM+9iPUou+7+YLjjQ@mail.gmail.com> <20241127230349.1619-1-hdanton@sina.com>
+	s=arc-20240116; t=1732769939; c=relaxed/simple;
+	bh=Ryv4w/6G7uoxku/s5JSSG7XQcBb9trOUiZQ+gLpW6sA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dhAkZF+xRMseRJl5lE9lTR6N53sjly0jIxrF/zU9rnjEIZUYAzqp2DqrjT/YsbaJxdfis8Teo4ZvkG0Ga/v2OrVUR5llbqS7U2W0U8EsCPoqCEEkZdb+0FagUA5ZfX3SPixu2/0drUKGeNVfN8iOjf3lEyWB3sy89aC5CMWI6MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 9B9122055FA0;
+	Thu, 28 Nov 2024 13:52:26 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AS4qPVY207012
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 13:52:26 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AS4qPjJ1192305
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 13:52:25 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4AS4qO5t1192304;
+	Thu, 28 Nov 2024 13:52:24 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Wang Jianjian <wangjianjian3@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <wangjianjian0@foxmail.com>
+Subject: Re: [PATCH] fat: use nls_tolower simplify code
+In-Reply-To: <20241128031234.3668274-1-wangjianjian3@huawei.com> (Wang
+	Jianjian's message of "Thu, 28 Nov 2024 11:12:34 +0800")
+References: <20241128031234.3668274-1-wangjianjian3@huawei.com>
+Date: Thu, 28 Nov 2024 13:52:24 +0900
+Message-ID: <87plmg9czb.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 27 Nov 2024 18:27:57 -0800 Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> On Wed, Nov 27, 2024 at 3:04 PM Hillf Danton <hdanton@sina.com> wrote:
-> > On Tue, 26 Nov 2024 13:15:48 -0800 Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > On Mon, Nov 25, 2024 at 1:44 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > On Mon, Nov 25, 2024 at 05:24:05AM +0000, Ruan Bonan wrote:
-> > > >
-> > > > > From the discussion, it appears that the root cause might involve
-> > > > > specific printk or BPF operations in the given context. To clarify and
-> > > > > possibly avoid similar issues in the future, are there guidelines or
-> > > > > best practices for writing BPF programs/hooks that interact with
-> > > > > tracepoints, especially those related to scheduler events, to prevent
-> > > > > such deadlocks?
-> > > >
-> > > > The general guideline and recommendation for all tracepoints is to be
-> > > > wait-free. Typically all tracer code should be.
-> > > >
-> > > > Now, BPF (users) (ab)uses tracepoints to do all sorts and takes certain
-> > > > liberties with them, but it is very much at the discretion of the BPF
-> > > > user.
-> > >
-> > > We do assume that tracepoints are just like kprobes and can run in
-> > > NMI. And in this case BPF is just a vehicle to trigger a
-> > > promised-to-be-wait-free strncpy_from_user_nofault(). That's as far as
-> > > BPF involvement goes, we should stop discussing BPF in this context,
-> > > it's misleading.
-> > >
-> > Given known issue, syzbot should run without bpf enabled before it is fixed
-> > to avoid more useless discussing and misleading.
-> 
-> If you cared to read the thread it would have been obvious
-> that printk is the culprit. Tell syzbot to run without printk?
+Wang Jianjian <wangjianjian3@huawei.com> writes:
+
+> Signed-off-by: Wang Jianjian <wangjianjian3@huawei.com>
+
+Looks good. Thanks.
+
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+
+> ---
+>  fs/fat/dir.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 >
-Printk is innocent, and it makes no sense to put the gun vendor into
-jail simply because bpf shoot a sheriff in the cafeteira.
+> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+> index acbec5bdd521..88bf16204aab 100644
+> --- a/fs/fat/dir.c
+> +++ b/fs/fat/dir.c
+> @@ -214,10 +214,7 @@ fat_short2lower_uni(struct nls_table *t, unsigned char *c,
+>  		*uni = 0x003f;	/* a question mark */
+>  		charlen = 1;
+>  	} else if (charlen <= 1) {
+> -		unsigned char nc = t->charset2lower[*c];
+> -
+> -		if (!nc)
+> -			nc = *c;
+> +		unsigned char nc = nls_tolower(t, *c);
+>  
+>  		charlen = t->char2uni(&nc, 1, uni);
+>  		if (charlen < 0) {
+
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
