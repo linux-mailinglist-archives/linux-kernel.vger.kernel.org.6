@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-424821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752959DB9E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:51:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07AD9DB9E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:51:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E674CB21563
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA3AB16472C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BADC1B3924;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB4E1B3933;
 	Thu, 28 Nov 2024 14:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="N1BXHi+D"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="bGJsTKGj"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1703D25761;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4EB2233A;
 	Thu, 28 Nov 2024 14:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732805487; cv=none; b=c77Uj2Rb+m6CB1WfgI380ZO3gU0dIrO/kfY54oCTwmffS7CttLqK36106u42XU9D4zBZeTa8iw/8Upp65ZfJb2X4Otl6GcuBap2D33ow0kYbEJVxX4E0dJl3kT7vl+BpRyjx7YFI2ctdcDGEGFpaBVo77ktesmBgb1sX9VvVZtw=
+	t=1732805487; cv=none; b=OdwrU4+1ptOCTsMESsAFSF/7xi4nHGJr41mg6NaquhXwt4uiqPy9FSDczIVWo7PJ/mX3nxl2TadHHUq0DE70TXcrVUqrOhy0Kyp53eKvDhjIBziYGFNOLQUmb1dzSwuUoYc3pb/I0a7n5Jriqc1+c6QcRY2Uu82tM51SjqNph2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732805487; c=relaxed/simple;
-	bh=MZMoSSJ1PbHEqgRQl8hIFfL0mBNTdeMxkde36dIMf8s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mEIdPCPWL6b9QAmxSdjsPVMiv7Opz1lhi+CyDx1pgNSUT8DhW7hfNXNu68PdBSKa542c4t2n6gAlReJzsiagCzAo6yRfStUocv7RgQYa8MsZSGpSDcA1Phe4qKEZKZ+yq1GOTptdNh155t2FL/WwaCiTVX2rAH+It3U4UKjvnpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=N1BXHi+D; arc=none smtp.client-ip=212.227.15.19
+	bh=bvFbxc5P++9Gag+zgAYbv6WxVb4HNe8omEWI00cWw4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RoiQkghhzPE6NFeZrr+4dclg7Y6pcVlUy7Puh8nISxnwTBPcQt5glDr9jZr8XY9LEBKyA1EBSn6XtMCuz0XWB6rsQP9hLLMP6Nr0DbjgkNAXZT1pXk2hjA7J2S7z1PGwzp7e/IkWC54Nb1AItWagXJKPdmBMQt0vPP0Xt7Nolpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=bGJsTKGj; arc=none smtp.client-ip=212.227.15.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732805477; x=1733410277; i=w_armin@gmx.de;
-	bh=kv7Z67wkwWyBYt8nY7JYLzssXcyPWmD/VRunzVVYLRQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1732805478; x=1733410278; i=w_armin@gmx.de;
+	bh=LDc/EFycTFB282lPDii06kaNXf50E69nOVsxqUvjg/Y=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=N1BXHi+DU1Ppwpu36PxZJkofSkVcvNqwVXMD1UtRp3ch5CFDbszRQVVnfpFc1Wjx
-	 DrFHRQk15zN2fjsQAHvYcIk6Xa/yKjAFBMckZGsh9AqZvU1NbZMlDk3lnErF26cv1
-	 o7ar3q15Jqc1ICZy4ZjUysmFtQ+tNoMS7SXJ9IveKdg7SbaC+iwUIeoqib0a9RoQH
-	 Hd/r+W0PRYSfM/ZpCR0SXIkYjxAGJRwJs91r8j0U6sgdfwQOM6zlQROoL45Rbm/4N
-	 uq/b5ziiMQqtHGNBV0YVgBv9XsP/4WpF7ZUxdrVlLMXKyREBYgoWLEF5fBuTMqiKy
-	 sTJ/YfLCa5tS2Q78OQ==
+	b=bGJsTKGjmY+0kCOq+9kc5X+VxmXG5KhK/LfJ7TdHyMP94AMk+0F48LAhkJoEINum
+	 MLP6eIpGbmR+BQO0t5fxuHDpx5totaM+KdkoElin3XUNU1iBFjjH+bUktw1IZOE0n
+	 TuGL9L8RmDfyvf4UUIzvrQLSyQuhTR0zcA32r6myrrCjtOv5vITWTsLnJ849OoAyt
+	 w6h0BDJpJCKa9Jk92H8U+qzSmA922WH/6YcZ5hyyaw60tSPhoshpFsmIE8D/xWbzX
+	 zDLLr26QcttR/gXO2BbWA5LMCNKrjVsPMb+CXWTBElk6+8RPPf3md4Uc7vkejo3Gi
+	 BNwS7I5G2i3LKnMnfw==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-inspiron.dip.tu-dresden.de ([141.76.179.133]) by
  mail.gmx.net (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MiacH-1tw4tG002R-00nNvJ; Thu, 28 Nov 2024 15:51:17 +0100
+ 1MdNY2-1tpjd80Fwu-00jFSQ; Thu, 28 Nov 2024 15:51:18 +0100
 From: Armin Wolf <W_Armin@gmx.de>
 To: jlee@suse.com,
 	farhan.anwar8@gmail.com,
@@ -54,67 +55,90 @@ Cc: hdegoede@redhat.com,
 	ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] platform/x86: acer-wmi: Various improvements
-Date: Thu, 28 Nov 2024 15:50:59 +0100
-Message-Id: <20241128145104.13538-1-W_Armin@gmx.de>
+Subject: [PATCH v2 1/5] platform/x86: acer-wmi: Add support for Acer PH14-51
+Date: Thu, 28 Nov 2024 15:51:00 +0100
+Message-Id: <20241128145104.13538-2-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241128145104.13538-1-W_Armin@gmx.de>
+References: <20241128145104.13538-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TrLVEgAfJUKIFTlDW08K9iqt2FVUSYPufDLiNeFyMSZMQC3927L
- tnPc6GxWwBi49o0ZRKXyCbquPeyURUrYGTRIR4FP2Ftxp4RWRszgT1DwM6/OiKI9AtYbgrw
- aWzHufpg2WenZp7pRu3G4yMJ1GwbN7wkTwIpR50w5OL71ObVW4M+9ugW6xVgE7dyfLecaYs
- Zic7DehRQupxdh3C6XHcg==
+X-Provags-ID: V03:K1:MAxcacE9xM95uXVke8cyHuvbZxSPna3aU4UclLg9j4oOTNcc13o
+ wfz+KxYPvPAAddj3fN6k07Vus82wTwyX+qyau8y6BnpGErqygGuuhu1N4t8RVedADUrO7wO
+ ZmwZV5s6QWE3wH09FuI1a0sEM5rO8kq0tBXIgo2DmvOmcMaF8dFabl/zjf70IscmvEppX6N
+ auS2oDTardU8kicnSzhEg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3L7jl6KveDk=;ko8RxmSsdqNwFYKizIwNbsy4Stz
- GkKOE+e9m7QftM4BIWFWszj2G//JzQjrTICxUZrYb6dlMTIN1B7CV6qbo+qF/AvMBLSTuCSuT
- 7DA29FGNMx01as4/XKTUgWXqwl4rj+3SMNLZ+eAWPG+XMffOlwxI2mhUjQ/AtaaYlWsNHyAJP
- HTjuhb38BBiNIb3mT4S/hh8RF1hC6NNubZtQ0T1zITMHzNpKYNmoEpy8kA91UOQden9DNgLs/
- 44i6U7dVAxqyLM8vIlFpqlRsolr+2Nz3lqgr7NWTfoahybecnvh3zhRb1puA0gSpyiMH7B0RS
- kS5DBP+y89OmSehM7+FHYpd/u2FYsLE+Zfhe4KBOWhYkOjzxfHHfN1dS3Bg5eQDFMijvvCzSL
- yhSO9d39AwZ/eKaO0wCIpYINTM0U0X38vEYXmJbXaKOSvaDus+nTn8BdBZCH9HL6EpS9/+0dc
- 2hhfTBa0fhylnDrP5W6C5S9GdreaD7AAcOCDsx2FoYf3m03w8KifegJdnHmOHS8UNm/eP8RM3
- O9tZhXD31qS+P9iVfMenkVHvmP+w8KAG3yB2Wj2zaNF5MwiTtU/kMrB+/XMNCVe32LJYztjOC
- D/UE5zD/fqXNBGIgy5BItp5wAMM25gJOBauATU/KhwyaU0NBvLqDUKSapmddyhviOYKy2Aom4
- 330/QjhcXIOJWBdI5tKszujjlyr5/T1fj60WwcZQunCJD93zGUYo1C+1mDq6htY0jOIr0vwyi
- hH+6qNlgt9KIDwquoLSHWiAQVAbEI/GEwEHJKhjJ2oqLwslksI4f912Tgkzop0v8l2tpuyGFg
- L5c3jp2m+NFCLSgRGlICOPEkRt07hNn149jYqsxJTY/PQRyq0npwzBdeH4AKTblkDFqzhWpAB
- c0OyEkWJx1N0ZBhUQ7RHzMfGJPnmJSDr/Jq1BruSBMfb5NqzG7cYNtadSxayjMZiXtJhb+6gJ
- w/xpTuSqFpiYNndAY3+CFdwjzIvLIrUlaNe5TaSUwxRYJuUVT7vzJnWgVxwcPeeOzpG0zCFEg
- uqRlxEiJHw5/jlc1c2KQUW0khvnf5mbyKmNy42tkGe0+SfIVndUjEIxMLQDxCgwk53SvzML6c
- Rk/HvT46NBMB1CxE/o0cNRFr5FLT5I
+UI-OutboundReport: notjunk:1;M01:P0:rWrJipU/XM0=;QgfxeM1LDWcbTmBcjr+r0tgIGcg
+ 108n6GSeofJHxY1R2KtwbEJ9icADtSRl62XxHHIs2G8RfDKVK1+GbPjMBtoMIVwKIfpJ+/8/4
+ vXhmlfYIMzIDC8NcwwdSYMcAOztYHVzsJkdciYfTAInCidfWzwryp7WYZgaG0ovmYpWN1B5Lr
+ QhMpZ6LKok5RkHqEtvWlU40PEKc2ALUbDHGvBZfmISP5IbQaxalKWKTYzrYopRmq1ybYahGLx
+ U8nK2tp60f7KBERcUk9QMH0aMZK8iuQ/IEySVI373JaoZybpNMrs7L+7F2ktKV4vVTxXNZF/K
+ P6uszRlHFhbhbOeEFlE4JDi2b8rkCH0aMtZaBgGme4iYRcH6PfQDJGYY0vFdLk5b8un7htd8t
+ TfSm0GQJSTJnPFm5J8kKi2G+zcfHf+GG3RD5Qdy3mZmI9ffaOsXsN3guC6Tv5oOGOmcTl/rAW
+ ozzwB0ZhBufP5BFQ9LHflivyECBCOV8UQ1Nk9RmIcPBERriuDkmGNNhPZ9P2Zf/dDTMkLCMXa
+ 8Gmm0CwZ98PxVZERirNfIjSv7Io5i7n9D8eRtfFbXJHEKUc6rgTPmhRalaTJZVq6ixB9A5Yh5
+ Zk2plO03mTPUcT9wP0VrlAS9SeOV1eejRfTlAc3xk8aLSQP3w1X7FQLmxsJOBtN6SN2PPy9ZS
+ pNvYoQ+3MFhtcZ7B+z8eSGs+7QxJBifjtwGCL4laB1MNecjLRJmCe+BvVEO1SK6Wg3yYWYHts
+ 7TP2ENheU9C1SrznnDs3EkezDir74oAB9qLcuY8WIBCxH6VSXMzvOJv95R33UrDxA6cHxCn35
+ W8rEFySf+je2q/KHCQmp0xL/34IWdbJfy9tSlkiA6pIqObGIJT8IYaEaMb8ZdvUlRJyXIG/Z7
+ i4UeiCJExHBXNP/I3McVLMywRYzMLz8yHaXLqSswL9cTqS/Fgr/P01TnwZWqoxoL5suV/KjEh
+ JdWdqdOuCgvitVnDi1ndGnhuGUrzJT/KrU4TSaxcQNSFDoKnxuyqsrcUuhC+8+NylBn3TwXQU
+ sqRVqmXD2r6VAtQhAuFA/BSqGc1VL1mNqGPrZKsDHsF+t9WdbVSDh1H/7LCn7Erh3q4LXvSrk
+ qFARIqKKi4vqZO2oonpk14ER7xPQJs
 
-This patch series contains various improvements to the acer-wmi
-driver based on user reports:
+Add the Acer Predator PT14-51 to acer_quirks to provide support
+for the turbo button and predator_v4 hwmon interface.
 
-- adds support for the Acer PH14-51
-- improves hwmon support
-- ignores function 8 events
+Reported-by: Rayan Margham <rayanmargham4@gmail.com>
+Closes: https://lore.kernel.org/platform-driver-x86/CACzB=3D=3D6tUsCnr5mus=
+VMz-EymjTUCJfNtKzhMFYqMRU_h=3DkydXA@mail.gmail.com
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/platform/x86/acer-wmi.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-The changes are compile-tested only, so i would like to have them
-tested on a real machine.
+diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
+mi.c
+index d09baa3d3d90..5cff538ee67f 100644
+=2D-- a/drivers/platform/x86/acer-wmi.c
++++ b/drivers/platform/x86/acer-wmi.c
+@@ -393,6 +393,13 @@ static struct quirk_entry quirk_acer_predator_ph315_5=
+3 =3D {
+ 	.gpu_fans =3D 1,
+ };
 
-Changes since v1:
-- fix spelling issue in patch 2
-- rework patch 3 and 4
-- add Reviewed-by tag to patch 5
-
-Armin Wolf (5):
-  platform/x86: acer-wmi: Add support for Acer PH14-51
-  platform/x86: acer-wmi: Rename ACER_CAP_FAN_SPEED_READ
-  platform/x86: acer-wmi: Improve error handling when reading gaming
-    system information
-  platform/x86: acer-wmi: Implement proper hwmon support
-  platform/x86: acer-wmi: Ignore AC events
-
- drivers/platform/x86/acer-wmi.c | 166 ++++++++++++++++++++++++--------
- 1 file changed, 124 insertions(+), 42 deletions(-)
-
++static struct quirk_entry quirk_acer_predator_pt14_51 =3D {
++	.turbo =3D 1,
++	.cpu_fans =3D 1,
++	.gpu_fans =3D 1,
++	.predator_v4 =3D 1,
++};
++
+ static struct quirk_entry quirk_acer_predator_v4 =3D {
+ 	.predator_v4 =3D 1,
+ };
+@@ -600,6 +607,15 @@ static const struct dmi_system_id acer_quirks[] __ini=
+tconst =3D {
+ 		},
+ 		.driver_data =3D &quirk_acer_predator_v4,
+ 	},
++	{
++		.callback =3D dmi_matched,
++		.ident =3D "Acer Predator PT14-51",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Predator PT14-51"),
++		},
++		.driver_data =3D &quirk_acer_predator_pt14_51,
++	},
+ 	{
+ 		.callback =3D set_force_caps,
+ 		.ident =3D "Acer Aspire Switch 10E SW3-016",
 =2D-
 2.39.5
 
