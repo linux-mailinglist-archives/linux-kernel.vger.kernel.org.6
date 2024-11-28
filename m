@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-424534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BE39DB57A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAE49DB57D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 11:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 879D6166A34
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05C1166A74
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1396A1917E4;
-	Thu, 28 Nov 2024 10:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EBD18C939;
+	Thu, 28 Nov 2024 10:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8vqW9Jz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1msiqzU"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8FF13B7BC;
-	Thu, 28 Nov 2024 10:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDB113B7BC;
+	Thu, 28 Nov 2024 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732789307; cv=none; b=JwlIUg0FdTigvwPBZpz+v4UOVzXX/1P3ldRcX/ha3V9SiJlk/O4/X19KHhDal0e2bJ4UdgMgOGriynuGMMFzmW/PBNZ8voMavGbbSNOf3FBXKauBJ8Fjz42b4ym9n8VtYq0nrzygS7w/vNob4xcNNhRkpcpT1+wSpn2heeML+Kk=
+	t=1732789356; cv=none; b=emQ4W9usBnxCf3MeibJQMVXktzXZnf5p+plwO+eKYpx9THa4RoTsnO7U7Zy4wstP90vUypy8mvqLFdmsd+eXOj+cB7dki1t+QQTi7LyHa5mzlWHQyEDifEfZFZZmZ1IhufB8xa9Cck3S+IAb8/LFHQJrOLpuiXpXBKnxEV9sBnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732789307; c=relaxed/simple;
-	bh=4EfoEVsFJB6w0A5vmk7+CYyR0KI444JgV0GrVrP34IE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vk9R9/Tk6A7LKSZG9RsrNhX11KM8bAyyMwDu7bpV/+fRlynXAM7ss2SbKvFdcEUKnccX/LWS75FnG6nkGWPAF5XkalQ7rRln5xglA/waGwUE9yyNJ49KHVEhdHGvwdg8IvfopvdBrATrdPttqWMWJ06a2oUOHXDQrQry6SbC1Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8vqW9Jz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFC3C4CED3;
-	Thu, 28 Nov 2024 10:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732789307;
-	bh=4EfoEVsFJB6w0A5vmk7+CYyR0KI444JgV0GrVrP34IE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d8vqW9Jz4QF6Zfqg+EltY46lROgpZFxSLWVFeAkJURcwXn7MvL0FYgbr0ql8gNX54
-	 ou3OHBZOigMMxxsQJ9Zq+WHoy8iPFEITbBa9gvBdLNZszvq4LhQYQAEuNFsPLU0HKZ
-	 2KYZbzzuRunWlCB3YXi4wma+QF3zSj34lge9bY/0G87/ryqiJwDnFOy9ZgjdC9gNws
-	 NPwwraDZ9T9ByDa7C8QfZqXGi4BUMVVo/5MRtzHnPiX3ESnGqcxfJeU9yM92p14O4k
-	 RPI4ioh5Tva+hafDgUI/wiDKLyDzel3u2paukQVuNfl6NdFURaBNnymDPQvXVKtDqY
-	 AA00ThrOb0LjQ==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53df1e0641fso681302e87.1;
-        Thu, 28 Nov 2024 02:21:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUIkwzQUuCOsxzN1VRg2ZdIM9VPbH5pB2XzGInToo+ePAAAnO/Y1dUhTM8toreilhg0QLucSlcWmnMv8c61@vger.kernel.org, AJvYcCUkTGQMmOZzfeqO8/ctpFa/btnSTLuHJ3+Orf3jU3+ywIPWSCu+hc5xb4oVEy0hbEj9sY1n2TqO8Sd2@vger.kernel.org, AJvYcCVks/J5ImTnGNT9WokG7fggrnZ/dC6FGVoblkkKv5nxqATbjMSzMpofv6+tB3CK6VM/8YpUDqANHynfUW2/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5pKYLic7mnkzYOC23V/A6HrAKyq4hSX7by2E1XafyuODzkL96
-	wxMXTUNmxtpMieWHHUsIM7Np5GEwYfgDNEsR768IdO2eIQAwmjYu5hC4eDBc2f7/7LcqPb97EPe
-	dduPbjhmLvUEKG7uSMjONaSpkY+s=
-X-Google-Smtp-Source: AGHT+IEqWuy/9UWvck/9O/d4DrCd8DvPNnzq5hZHjay2oOo8vuufMsrqxHIFnEcr7UmaD2/pzX9Vmtxwy5hfgMu0K58=
-X-Received: by 2002:a05:6512:a94:b0:53d:d3ff:83c0 with SMTP id
- 2adb3069b0e04-53df00c607amr3606417e87.12.1732789305585; Thu, 28 Nov 2024
- 02:21:45 -0800 (PST)
+	s=arc-20240116; t=1732789356; c=relaxed/simple;
+	bh=rM+W/r9fCVDAYM30UfVcCV/3Tgxqt7aRP7hQNLr6zUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpoyLdF7Av+7C/T5U5yx8Oi1hM0imtWc41QehJUeMJTRhJJyu8iExvs1UXZRlAhawkR2nIeCLCPFpEh4vWRiwfu9ynmQixCJbUtPVwEXjRvvR1OfP1r8v6DImS7NYm5Z9+ffzHNjoSsDzHhbQMVKF8T9kvCTSJqcEKVYrDFWQXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1msiqzU; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3691265e9.1;
+        Thu, 28 Nov 2024 02:22:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732789353; x=1733394153; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
+        b=d1msiqzUyCSZZHX/C7VffSM9CZOVitAdcyiSKYCcX54LjO1nyO4guwSLVyDoH0zttw
+         eHOjS15WDWN3xZ7Gy9Ma+OYgrbbnhg8MUoqROzQIM5b5K3zMSplQM73lkeN/p6J9yDu9
+         zibyUm30/EYbyogwPD99yOyN+vWWamS2sIZ2ZJgzUOC74rhLwixfbmvLPMwZHFKqJTvk
+         qCCyVWLytiA5q7JGRgY0Hnzw7ureV8BUjaFUwufZxdA6auuhF0DN9sGaxc7tHplznUqH
+         w6cmSmnt74GHzMNYRg2gl9V8F7AAdXr5OwPKENCdoJRpqRT1TcjFRDl7/BAz3XanoKoq
+         os0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732789353; x=1733394153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
+        b=Z2Mxvn6r7sjEhPxr1VAwwarEhUwM07JpkOyI4JQdKLryAow7uCgR+1LSKtLHosHT1R
+         FxuU6oPfaL5QEGPzISN8XEtbOt2+nTaJ4UXkFcIrJqO0Y55Izoeue5j64yYztZZjn/5N
+         wFUrnr6cE0KfryUJTGbT+ox3vsoB6PcEFLjhcdeBhvvB2xYupTMuBcFJn/ZDvUsBoDu+
+         JsH2ZRsPbU/QLKclih+qCG2N5FWG2uAUyX8k0dKx+8PXR8EbGCBazdFkRo4JTy7s3yuW
+         1htpBM/blav9f9EJ1W58U+RAEVwimBJkZly/pUP58YKSaTwRqkmuAkc15CIc7r9f/Jxk
+         pnXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5h+kEEOEEPs9iz4WPcF8udO6hCwg2OsO2ow/Hxb2XcxJkTyxDikSHylqd364C9TH7LiNmDha/OQPkCzI=@vger.kernel.org, AJvYcCXoOeGk6j2DtECgibDaWGgAoSDRe25bcmqLeA3gPUJqO1m3S9c3qlrgQEy0FFxtLL6eZ4ovSETjwGZYRmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpIvzDGL6UzNC2apPOLoBJd8COp1+4H/BxlEXbPOjiaDOC6Eet
+	lOU5obK+mmHJXqDJpcewjI3vs+Z5EaC62FT76n/u9U34hZiE/wQlAwsKvQ==
+X-Gm-Gg: ASbGncuqKIr9mtsaVTFEfqhcJj2alRAkgFUyZW9Tj1Ts6/C2BuhpRnU8Flh3vfttUs0
+	Yv9mh08hsAh7tiUTBFUBxdgqLrNsQazPMrotXiVHXJ53BAVycOooXCOPIcAAK5Q8iLoAYUE329n
+	o6X2h1X83JIJIAgD9ZJzb0O2ENlr4mH/jZz7qDfE93LXYCN4Fvkq4SiMrZpNjD4gQ6/4khRNx22
+	l3KKjNf4MkLM0EfwatCsyx+C6fvtzOUe/mBAF5SIOzEBgliLyPFhvfhMPsDdvibQXHHsKJgdSM7
+	dTzf6kQupD2Vdsq0vkCriXfvWmV0msFx9PaA
+X-Google-Smtp-Source: AGHT+IFAVw0mZ2FXcVynKdgJ8vLzM8AQou1uG0b5nxDGGMyxL7xI+YmGC5tYXs+bd83uwE+en3eOCg==
+X-Received: by 2002:a05:600c:1d03:b0:434:a367:2bd9 with SMTP id 5b1f17b1804b1-434a9dc501bmr67566465e9.14.1732789353278;
+        Thu, 28 Nov 2024 02:22:33 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d91sm17261055e9.39.2024.11.28.02.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 02:22:32 -0800 (PST)
+Date: Thu, 28 Nov 2024 11:22:31 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
+Message-ID: <hofrxrz5qvxohlvxme4brhng6rrs7s6wwoqwnu3smjbbonhwh4@xajjliw474v6>
+References: <20241128085930.52571-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z0gn1N3IsP8r3gTA@hovoldconsulting.com> <CAMj1kXGjiA1HydMaY82MQsYvkchpN7v7CMOB5i3NEdqcYGn19Q@mail.gmail.com>
- <Z0g_HL01eqXu4cwQ@hovoldconsulting.com>
-In-Reply-To: <Z0g_HL01eqXu4cwQ@hovoldconsulting.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 28 Nov 2024 11:21:34 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFtr7ejEjjSRj9dcRa7YbO0SR5OR3pm+K6OvbX2=RfhAQ@mail.gmail.com>
-Message-ID: <CAMj1kXFtr7ejEjjSRj9dcRa7YbO0SR5OR3pm+K6OvbX2=RfhAQ@mail.gmail.com>
-Subject: Re: UEFI EBS() failures on Lenovo T14s
-To: Johan Hovold <johan@kernel.org>
-Cc: Leif Lindholm <leif.lindholm@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Ricardo Salveti <ricardo@foundries.io>, Marc Zyngier <maz@kernel.org>, linux-efi@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="euopke2p2jba35ow"
+Content-Disposition: inline
+In-Reply-To: <20241128085930.52571-1-kkartik@nvidia.com>
 
-On Thu, 28 Nov 2024 at 11:00, Johan Hovold <johan@kernel.org> wrote:
->
-> On Thu, Nov 28, 2024 at 09:52:33AM +0100, Ard Biesheuvel wrote:
->
-...
-> > In upstream EDK2, the map key is just a monotonic counter that gets
-> > incremented on every memory map update, so one experiment worth
-> > conducting is to repeat the second call to ExitBootServices() a couple
-> > of times, increasing the map key each time.
->
-> I had already tried repeating the second call (GMM + EBS) by running it
-> in a loop, and I do see the map_key increasing for each iteration (e.g.
-> by 0x1a).
->
-> > Or use GetMemoryMap() to
-> > just grab the map key without the actual memory map, and printing it
-> > to the console (although the timer is disabled on the first call so
-> > anything that relies on that will be shut down at this point)
->
-> I just tried adding another inner loop just calling GetMemoryMap() a few
-> times and I see the map_key increasing there too for each iteration
-> (e.g. by 0x6).
->
-> (The map size remains constant.)
->
-> I do get the feeling that efi_printk() contributes to the memory map
-> updates, and I can indeed get the reference design fw to similarly fail
-> if I try to print the map_key after each call to GetMemoryMap() in a
-> retry loop.
 
-Per the spec, the only thing you are permitted to call if
-ExitBootServices() fails is GetMemoryMap(), and so this is not a spec
-violation.
+--euopke2p2jba35ow
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
+MIME-Version: 1.0
 
-If GetMemoryMap() itself causes the map key to assume a different
-value than the one it returns, or if ExitBootServices() invokes event
-callbacks on the second call that may cause the map key to get updated
-before it manages to check it, there is obviously something wrong in
-the firmware implementation.
+On Thu, Nov 28, 2024 at 02:29:30PM +0530, Kartik Rajput wrote:
+> From: Pekka Pessi <ppessi@nvidia.com>
+>=20
+> Some clients depend on mailbox being empty before processing the
+> message. On RT kernel, the thread processing the message may be on
+> different CPU or running with higher priority than the interrupt
+> handler thread and they may act on the message before mailbox is
+> emptied.
+>=20
+> Fixes: 8f585d14030d ("mailbox: tegra-hsp: Add tegra_hsp_sm_ops")
+> Fixes: 74c20dd0f892 ("mailbox: tegra-hsp: Add 128-bit shared mailbox supp=
+ort")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> ---
+> v1 -> v2:
+> 	* Added "Fixes:" tag in the commit message.
+> 	* Made similar change for 128-bit shared mailboxes.
+> ---
+>  drivers/mailbox/tegra-hsp.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+
+Do we know what exactly "some clients" means? I know that TCU uses this
+shared mailbox and sometimes it does go into a weird state where it can
+loose characters, so I wonder if that's one case that would be fixed by
+this.
+
+Not strictly a requirement, but it would be good if we can give a good
+description of a case where this helps.
+
+Thierry
+
+--euopke2p2jba35ow
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdIRGcACgkQ3SOs138+
+s6HscBAAgmS95TwfRv7d/Av7oNT+xiv4gh9VMqqIpp+xHobPVjDYWxfrnitMBTS6
+Z00ws8zYCuAPw+DarFh3efy4EacZz7KSyWkfy4pnU/CLvpcsnDLG4K+eBjFzok1T
+VPpBA6Ors67BXu3HJa4g+41rFEU0Ba7CwgWSFTfzgAb6shCpspkcaWdZF0ESDwGA
+ZvpvLabSxmEw/blSNsNRNZNaaYV35yQ4lE8sshFNqlac8SM4euKvogQitZCPlc0K
+T69nH+xmDWUggHRU9S9eLvHZRlpZJIFHF/tQGECaYXSXOtUFgcHtE+YhosCmE5SM
+HKRUUzSW51CXp3HvVIxrs04JAMhhbqT7qdI+MoVbD3AMkBLhYw2SS8CWtrr8/6ND
+ReXGFBoDeyf22P4R3+l4lLgK3rTJjdPRtbZv5C2mqN8MqzI5siOEp9qcTGrZBWh7
+D6PuZH1lDgoPQPI262/JwJxlni78cPtYa7rpZHNwmbRecw67RSqffyF1VeKr7hdX
+pe2ePq0hsAE2LpSXKskT9MrH3UwA8jEVEcWfDdRTY0i6rFMw5rBJyc6G4MVKrhkd
+jT7uyV/ss8L6kJN5el+oPmbU+xv+DT76NUf37cFWJ+uJUEQN7Q6eG4tZdYLtm266
+b3SqNUBRbunexRsaSfvIqBKbXkmrBstgnTMe7u8OsZNkyDb6YAs=
+=KfZi
+-----END PGP SIGNATURE-----
+
+--euopke2p2jba35ow--
 
