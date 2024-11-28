@@ -1,114 +1,145 @@
-Return-Path: <linux-kernel+bounces-424389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D349DB3D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:32:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CB49DB3D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96595B2101E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:32:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE86EB21159
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BF214AD3A;
-	Thu, 28 Nov 2024 08:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C9C14C59B;
+	Thu, 28 Nov 2024 08:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="b1Bpx7z/"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxKBzZjt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132F71863F;
-	Thu, 28 Nov 2024 08:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B932149C7B;
+	Thu, 28 Nov 2024 08:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782769; cv=none; b=sjXRVYu3m4HdFNfgXYMV6o3F8t9aSuNK7ZbE+ahuWnxpjzqjuMSxiLfy731R2nW7IaI80T4JjZDep876D1CZKNkRCbZ1NzvQGu5vfJK8QI5kDe8oeUYPsZj3hNUeGH1yp2WqqMCuVv4P/evPN1Qr3JWaLZyqB7aiRYZVWpoNW5M=
+	t=1732782795; cv=none; b=YBv4tMbpF+go6C2aO/g4c4y1v85ynVotyDH/oSwTP8driMBwQcjcl8l+BktXSkutjJkTgi8gvPunrvWi1W1gdFrSKet5VmN83Klj/+DZmnBEjZOMiKNY4d/pwUysjKLoYJuYGmihK2Htks8WOD3zY9D9D8bEnO+3ZZ6goQ5JnC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782769; c=relaxed/simple;
-	bh=nPJfzjw2IzYDyvBj2QMAjwMYpWx5zWBGijY92AGYwzg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r5x4AFnjoGtL+Ze2PlzNbhsTOYXcYs3Yr4slwZ2W8b7VcJkSEwJ+PbKSGOqTp26WRg+fbQrbp2aEjFpr+rcetVLaYKHHgsKh11CrmBUj0crV8yeh0yMeSTKpEnLv6hMGGUChPEJq0g8ge5Flvs4DKe8RucE3jFBhxH+WTiLF6e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=b1Bpx7z/; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References; bh=S0T/bJtNnZ8RVrU1SOk0n/9fkL9A+JwcK0Q5OqH8Ous=; b=b1
-	Bpx7z/fAeh0OwfahlSY744AEscveqmrEDlrtclz21z/n8nOLdm3nYjRKNFVeT5Q2tJtQvKFuTp0VS
-	+o5j7sWu8l5Cpx+FP9TxYm3G+4YHlqbDrfCvheceG4yKSyXj0e0E61ZqPKA/NhjM8+/IKuzwvri0h
-	kyBWomHbGUdzX+xToNep+ZOJdRhockDcT7oZpKy5sxDyUBvMPIGgOp46gGJEr/M406ntNpmdj7n6p
-	WTQ3O4Q6j44IqjIuvwdn6j02j6AF/RXFPEyLuZD3oznx6uBCoaVKiTl5meD4L5jjMKjQMJCQkeHSt
-	AcT3oXbRrbxN1wsxBxtgnYb+NYtCzhQA==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tGZx6-000H5u-Q0; Thu, 28 Nov 2024 09:32:44 +0100
-Received: from [185.17.218.86] (helo=zen.localdomain)
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tGZx5-000Pzk-32;
-	Thu, 28 Nov 2024 09:32:44 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Thu, 28 Nov 2024 09:32:31 +0100
-Subject: [PATCH] can: tcan4x5x: get rid of false clock errors
+	s=arc-20240116; t=1732782795; c=relaxed/simple;
+	bh=k6wDS0Aya7nSOBHzHqz6oo4Mn4rCQ1bBs4S8sYU4RzI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WP5DKhsG8HdUMB+vR+KDJgZZy0Ynwc4REE3Byp5yt+f2IZwDPRxxLWdh24uTwXznaqkP0yg2GglodCUw9U2vHEAf1GqW2suIF/TwbmGjLCW5wvJ/WMLUtlewCwgwHy+SMQqfz5qbp9FL4iGskznubR7YjkYMfFShjSVbJDgv9LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxKBzZjt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D869EC4CED3;
+	Thu, 28 Nov 2024 08:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732782795;
+	bh=k6wDS0Aya7nSOBHzHqz6oo4Mn4rCQ1bBs4S8sYU4RzI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=MxKBzZjtVh5yTH0CA8ItcZaZW1n1kgQ8uJ7bqRYblEsEV6OO2uZyDnMG4SrU4anU+
+	 k/OmsCVTW3ITa2/POXKZLnzW6iRI0HQRP4lFFdfbuaM90aGCTOgeOwTbHxbchqs7KF
+	 tXITBH0r6cvQoUl+uEAh3C8amaCpOh+QQjrRDHaoKDbAMzbINYncpyeoeg8LEpenBJ
+	 xCdjXp4/CYsNru6gPXKXw+aCceaHkDOga7fQH9F1tV1GnZ9ZPSbHkT1xHT/xUPOUrB
+	 nJwc3cJy/b5qkCdW6m1rr4i5Km7IOUDxpb0fyN+r4+XU9cAPKtHk58GU5rH+tkYBQ3
+	 WD7YEPqN54UBw==
+Message-ID: <68e7f5cf-ff62-4184-8bf1-6338dc44fd2d@kernel.org>
+Date: Thu, 28 Nov 2024 09:33:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: power: supply: Add STC3117 Fuel Gauge
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>, sre@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
+Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241127151953.29550-1-bhavin.sharma@siliconsignals.io>
+ <20241127151953.29550-2-bhavin.sharma@siliconsignals.io>
+ <3eb06a70-cafb-4d89-aa68-524ec91e3850@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <3eb06a70-cafb-4d89-aa68-524ec91e3850@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241128-mcancclk-v1-1-a93aac64dbae@geanix.com>
-X-B4-Tracking: v=1; b=H4sIAJ4qSGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyNz3dzkxLzk5JxsXXMTwxQjw8S05CQjSyWg8oKi1LTMCrBR0bG1tQD
- oXgYYWgAAAA==
-X-Change-ID: 20241127-mcancclk-741d21afcb29
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sean Nyekjaer <sean@geanix.com>
-X-Mailer: b4 0.14.2
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27470/Wed Nov 27 10:59:44 2024)
 
-tcan4x5x devices only requires one clock cclk, so call devm_clk_get()
-directly. This is done to avoid m_can_class_get_clocks() that checks for
-both hclk and cclk.
+On 27/11/2024 19:22, Krzysztof Kozlowski wrote:
+> On 27/11/2024 16:19, Bhavin Sharma wrote:
+>> +
+>> +allOf:
+>> +  - $ref: power-supply.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - st,stc3117
+>> +
+>> +  reg:
+>> +    maxItems: 1
+> 
+> I asked you some questions on v2, then on v3 and no responses.
+> 
+> You implemented some changes but still did not answer my question. I am
+> not going to ask again, obviously expecting different result on the same
+> makes little sense.
+> 
+> No ack from me.
+> 
 
-tcan4x5x spi0.0: no clock found
+You responded privately - I am not going to do any talks under NDA. I
+also do not provide some sort of personal support service. Keep *ALL*
+discussions public.
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
- drivers/net/can/m_can/tcan4x5x-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Explaining what you asked:
 
-diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
-index 7213d9894c82d079bf92f1ec62d4eebb500cdfa4..7463c40b909873b9c5bcc753f9db7009e9d66008 100644
---- a/drivers/net/can/m_can/tcan4x5x-core.c
-+++ b/drivers/net/can/m_can/tcan4x5x-core.c
-@@ -410,7 +410,7 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
- 		priv->power = NULL;
- 	}
- 
--	m_can_class_get_clocks(mcan_class);
-+	mcan_class->cclk = devm_clk_get(mcan_class->dev, "cclk");
- 	if (IS_ERR(mcan_class->cclk)) {
- 		dev_err(&spi->dev, "no CAN clock source defined\n");
- 		freq = TCAN4X5X_EXT_CLK_DEF;
-
----
-base-commit: e0b741bc53c94f9ae25d4140202557a0aa51b5a0
-change-id: 20241127-mcancclk-741d21afcb29
+Some of these are from monitored-battery. Sense resistor should be
+separate property. But different question is about missing resources,
+like supplies (VCC) and interrupts. Just look at datasheet.
 
 Best regards,
--- 
-Sean Nyekjaer <sean@geanix.com>
-
+Krzysztof
 
