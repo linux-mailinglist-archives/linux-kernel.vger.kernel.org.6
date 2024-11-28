@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-424697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB4E9DB837
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D77009DB835
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3499A2842DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:03:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D591283DED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A33D1A705B;
-	Thu, 28 Nov 2024 13:02:58 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [20.231.56.155])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F7E147C71
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.231.56.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CBD1A0732;
+	Thu, 28 Nov 2024 13:02:54 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A3919D086;
+	Thu, 28 Nov 2024 13:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732798978; cv=none; b=LK9mx+FqIbzATi+xHDE83W5xOCzngwfIdruuL/GrUGL9RgfryiuafYm5+3BAVvgOj+K10u02doscBdG0OGE/6g07CfqCSMo+ov+N3ofL+xDdawlMAtm0FsGnG9vJ4/Og2FvZylnW1dzMommaBEkGpUBVCRCaiRM25KNHsnSHHgA=
+	t=1732798974; cv=none; b=B/SbrtGIctWW5xdiQzBG2VJsQTbzFz7QVLvcXKsn3+Ed/ME7RruQkzr/76JqxFSeoxQl9W4pHzV4QuDLXnCADgEFKstbsz/MnsPmr50EbdNfOR15BJTCSz3jXj+UOCbpGLPPHFv3AL1Vla+aGpnrAvEfSxbxsaxfOSZiYbqJuac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732798978; c=relaxed/simple;
-	bh=RwyjqG4LZ2LhFIdnZkRsMEeA2h3e3codKl+M/K8l9Gg=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=sXaVuWcogOPzQT5F4LMITVkLTl35bta4KSfXudMl7EVERelVn0rfl21yw81pYa7IJCPgP4wv7G9bScjD+LrINLPs2p+Sa/5s/JqRWX/CXdO+Hh36MvGqI/4YnX0xW4rRguWMdEnHrZr+gfM26dSC7fX0Fyl68v4qMz3w3Ko3IhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=20.231.56.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from sh.jiang$zju.edu.cn ( [183.157.161.210] ) by
- ajax-webmail-mail-app2 (Coremail) ; Thu, 28 Nov 2024 21:02:27 +0800
- (GMT+08:00)
-Date: Thu, 28 Nov 2024 21:02:27 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5rGf5LiW5piK?= <sh.jiang@zju.edu.cn>
-To: security@kernel.org
-Cc: almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev,
-	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-Subject: [bug report] ntfs3: kernel BUG in zero_user_segments
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240625(a75f206e) Copyright (c) 2002-2024 www.mailtech.cn zju.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1732798974; c=relaxed/simple;
+	bh=Il/N/uUF5Y+0yFcQQgIzjI4ycL9a4G812QxjL71vS3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ct8d/0UFWQTbQFhhPDT8XcpTlSTJD3T0MmEBNQGWG3l1tyd0Nn3tB7hH5j0FpMvO0MwvTo3CkoBUyFdZ3bb53hdtU96k8PSziB9XFbBW4NMhfF/Toc6vS72R5aAjYxGP6DVNgKmZwpF+ul47EetR9kNe9RpBR1ngomEeBkeyZqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E022660005;
+	Thu, 28 Nov 2024 13:02:40 +0000 (UTC)
+Message-ID: <7662be43-16e6-4695-9bc4-077e1dd3ba12@ghiti.fr>
+Date: Thu, 28 Nov 2024 14:02:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <51ef1f62.3cbae.19372dd9fb2.Coremail.sh.jiang@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:by_KCgCXb+njaUhntJVGAQ--.25220W
-X-CM-SenderInfo: qrsujiarxsq6lmxovvfxof0/1tbiAgETEWdHVCglsgABsL
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: kprobes: Fix incorrect address calculation
+Content-Language: en-US
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Samuel Holland <samuel.holland@sifive.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: John Ogness <john.ogness@linutronix.de>, stable@vger.kernel.org
+References: <20241119111056.2554419-1-namcao@linutronix.de>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20241119111056.2554419-1-namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-SGVsbG8gZGV2ZWxvcGVycywKCldlIGhpdCBhbiBpc3N1ZSBpbiBudGZzMyBmaWxlc3lzdGVtIG1v
-ZHVsZS4gQSBrZXJuZWwgQlVHIGlzIHRyaWdnZXJlZAp3aGVuIG1vdW50aW5nIGFuIGltYWdlLgoK
-SEVBRCBjb21taXQ6IDgxOTgzNzU4NDMwOSA2LjEyLjAtcmM1CmdpdCB0cmVlOiB1cHN0cmVhbQpr
-ZXJuZWwgY29uZmlnOiBodHRwczovL2RyaXZlLmdvb2dsZS5jb20vZmlsZS9kLzEtOXBsdEUtMUNN
-Z0dnTkZ1OW81bDBCbENIazNSbnpiXy92aWV3P3VzcD1zaGFyaW5nCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL2RyaXZlLmdvb2dsZS5jb20vZmlsZS9kLzFHVVN1Qnl2ckpWYTV0aHlBSFF2M2xLUjEw
-S3hCZnZiSi92aWV3P3VzcD1zaGFyaW5nCnN5eiByZXBybzogaHR0cHM6Ly9kcml2ZS5nb29nbGUu
-Y29tL2ZpbGUvZC8xdzRwX1JieE0xWEVVYjVNMmhkLXhSQnFkY3ZQQlRYNm8vdmlldz91c3A9c2hh
-cmluZwpDIHJlcHJvZHVjZXI6IGh0dHBzOi8vZHJpdmUuZ29vZ2xlLmNvbS9maWxlL2QvMVV1RUVU
-eVZDZlV4dHJBOXo2YXVCTWVaUFFvSU1FazVzL3ZpZXc/dXNwPXNoYXJpbmcKCkVudmlyb25tZW50
-OgpVYnVudHUgMjIuMDQgb24gTGludXggNS4xNQpRRU1VIGVtdWxhdG9yIHZlcnNpb24gNi4yLjAK
-cWVtdS1zeXN0ZW0teDg2XzY0IFwKLW0gMkcgXAotc21wIDIgXAota2VybmVsIC9ob21lL3dkL2J6
-SW1hZ2UgXAotYXBwZW5kICJjb25zb2xlPXR0eVMwIHJvb3Q9L2Rldi9zZGEgZWFybHlwcmludGs9
-c2VyaWFsIG5ldC5pZm5hbWVzPTAiIFwKLWRyaXZlIGZpbGU9L2hvbWUvd2QvYnVsbHNleWUuaW1n
-LGZvcm1hdD1yYXcgXAotbmV0IHVzZXIsaG9zdD0xMC4wLjIuMTAsaG9zdGZ3ZD10Y3A6MTI3LjAu
-MC4xOjEwMDIxLToyMiBcCi1uZXQgbmljLG1vZGVsPWUxMDAwIFwKLWVuYWJsZS1rdm0gXAotbm9n
-cmFwaGljIFwKLXBpZGZpbGUgdm0ucGlkIFwKMj4mMSB8IHRlZSB2bS5sb2cKCklmIHlvdSBmaXgg
-dGhpcyBpc3N1ZSwgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0OgpS
-ZXBvcnRlZC1ieTogU2hpaGFvIEppYW5nPHNoLmppYW5nQHpqdS5lZHUuY24+Cgo9PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KU3l6a2FsbGVyIGhp
-dCAna2VybmVsIEJVRyBpbiB6ZXJvX3VzZXJfc2VnbWVudHMnIGJ1Zy4KLS0tLS0tLS0tLS0tWyBj
-dXQgaGVyZSBdLS0tLS0tLS0tLS0tCmtlcm5lbCBCVUcgYXQgaW5jbHVkZS9saW51eC9oaWdobWVt
-Lmg6Mjc1IQpPb3BzOiBpbnZhbGlkIG9wY29kZTogMDAwMCBbIzFdIFBSRUVNUFQgU01QIEtBU0FO
-IFBUSQpDUFU6IDAgVUlEOiAwIFBJRDogOTQxNiBDb21tOiBzeXotZXhlY3V0b3I5MTEgVGFpbnRl
-ZDogRyAgICAgICAgVyAgICAgICAgICA2LjEyLjAtcmM1ICM3ClRhaW50ZWQ6IFtXXT1XQVJOCkhh
-cmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBCSU9T
-IDEuMTUuMC0xIDA0LzAxLzIwMTQKUklQOiAwMDEwOnplcm9fdXNlcl9zZWdtZW50cy5jb25zdHBy
-b3AuMCsweGQwLzB4MmMwIGluY2x1ZGUvbGludXgvaGlnaG1lbS5oOjI3NQpDb2RlOiA4OSBlZSBl
-OCAzMyAzYiBiYSBmZSA4NSBlZCAwZiA4NSAzZSA5MyAyNiAwOCBlOCBmNiAzNyBiYSBmZSA0YyA4
-OSBmZSA0YyA4OSBmNyBlOCA4YiAzYSBiYSBmZSA0ZCAzOSBmZSA3NiAwOCBlOCBlMSAzNyBiYSBm
-ZSA5MCA8MGY+IDBiIGU4IGQ5IDM3IGJhIGZlIGJlIDA4IDAwIDAwIDAwIDQ4IDg5IGRmIGU4IDlj
-IDM5IDFhIGZmIDQ4IDg5ClJTUDogMDAxODpmZmZmYzkwMDA3MDZmNzU4IEVGTEFHUzogMDAwMTAy
-OTMKUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZmVhMDAwMGFkMzE0MCBSQ1g6IGZmZmZm
-ZmZmODJkMTU4NDUKUkRYOiBmZmZmODg4MDQ1MGY4MDAwIFJTSTogZmZmZmZmZmY4MmQxNTg0ZiBS
-REk6IDAwMDAwMDAwMDAwMDAwMDYKUkJQOiAwMDAwMDAwMDAwMDAwMDAwIFIwODogMDAwMDAwMDAw
-MDAwMDAwMCBSMDk6IGZmZmZmOTQwMDAxNWE2MjgKUjEwOiAwMDAwMDAwMDAwMDAxMDAwIFIxMTog
-MWZmZmZmZmZmMWJiODQ2OSBSMTI6IDAwMDAwMDAwMDAwMDEwMGEKUjEzOiAwMDAwMDAwMDAwMDAw
-MDBhIFIxNDogMDAwMDAwMDAwMDAwMTAwYSBSMTU6IDAwMDAwMDAwMDAwMDEwMDAKRlM6ICAwMDAw
-NTU1NTVhZjQyM2MwKDAwMDApIEdTOmZmZmY4ODgwMmI4MDAwMDAoMDAwMCkga25sR1M6MDAwMDAw
-MDAwMDAwMDAwMApDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUw
-MDMzCkNSMjogMDAwMDdmMjZiN2YwNjhlOCBDUjM6IDAwMDAwMDAwNGJiNzIwMDAgQ1I0OiAwMDAw
-MDAwMDAwMzUyZWYwCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAg
-RFIyOiAwMDAwMDAwMDAwMDAwMDAwCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAw
-ZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwCkNhbGwgVHJhY2U6CiA8VEFTSz4KIGZvbGlv
-X3plcm9fcmFuZ2UgaW5jbHVkZS9saW51eC9oaWdobWVtLmg6NjQ3IFtpbmxpbmVdCiBudGZzX2V4
-dGVuZF9pbml0aWFsaXplZF9zaXplKzB4MzQ5LzB4NmQwIGZzL250ZnMzL2ZpbGUuYzoyMjUKIG50
-ZnNfZXh0ZW5kKzB4Nzc1LzB4YTEwIGZzL250ZnMzL2ZpbGUuYzo0MTMKIG50ZnNfZmlsZV93cml0
-ZV9pdGVyKzB4MmQ4LzB4MTljMCBmcy9udGZzMy9maWxlLmM6MTI1NAogZG9faXRlcl9yZWFkdl93
-cml0ZXYrMHg1MWYvMHg3ZTAgZnMvcmVhZF93cml0ZS5jOjgzNAogdmZzX3dyaXRldisweDMwZS8w
-eGQ3MCBmcy9yZWFkX3dyaXRlLmM6MTA2NAogZG9fcHdyaXRldisweDFiNy8weDI3MCBmcy9yZWFk
-X3dyaXRlLmM6MTE2NQogX19kb19zeXNfcHdyaXRldjIgZnMvcmVhZF93cml0ZS5jOjEyMjQgW2lu
-bGluZV0KIF9fc2Vfc3lzX3B3cml0ZXYyIGZzL3JlYWRfd3JpdGUuYzoxMjE1IFtpbmxpbmVdCiBf
-X3g2NF9zeXNfcHdyaXRldjIrMHhlZi8weDE2MCBmcy9yZWFkX3dyaXRlLmM6MTIxNQogZG9fc3lz
-Y2FsbF94NjQgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6NTIgW2lubGluZV0KIGRvX3N5c2NhbGxf
-NjQrMHhjYi8weDI1MCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzo4MwogZW50cnlfU1lTQ0FMTF82
-NF9hZnRlcl9od2ZyYW1lKzB4NzcvMHg3ZgpSSVA6IDAwMzM6MHg3ZmQxYmFiYzRiZmQKQ29kZTog
-YzMgZTggZDcgMjEgMDAgMDAgMGYgMWYgODAgMDAgMDAgMDAgMDAgZjMgMGYgMWUgZmEgNDggODkg
-ZjggNDggODkgZjcgNDggODkgZDYgNDggODkgY2EgNGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMg
-MjQgMDggMGYgMDUgPDQ4PiAzZCAwMSBmMCBmZiBmZiA3MyAwMSBjMyA0OCBjNyBjMSBiOCBmZiBm
-ZiBmZiBmNyBkOCA2NCA4OSAwMSA0OApSU1A6IDAwMmI6MDAwMDdmZmQ2ZTBjODExOCBFRkxBR1M6
-IDAwMDAwMjQ2IE9SSUdfUkFYOiAwMDAwMDAwMDAwMDAwMTQ4ClJBWDogZmZmZmZmZmZmZmZmZmZk
-YSBSQlg6IDAwMDA3ZmZkNmUwYzgzMjggUkNYOiAwMDAwN2ZkMWJhYmM0YmZkClJEWDogMDAwMDAw
-MDAwMDAwMDAwMSBSU0k6IDAwMDAwMDAwMjAwMDAyNDAgUkRJOiAwMDAwMDAwMDAwMDAwMDA0ClJC
-UDogMDAwMDAwMDAwMDAwMDAwMSBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiAwMDAwMDAwMDAw
-MDAwMDAwClIxMDogMDAwMDAwMDAwMDAwOWYwYSBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAw
-MDAwMDAwMDAwMDAwMDAwClIxMzogMDAwMDdmZmQ2ZTBjODMxOCBSMTQ6IDAwMDA3ZmQxYmFjNjI1
-MzAgUjE1OiAwMDAwMDAwMDAwMDAwMDAxCiA8L1RBU0s+Ck1vZHVsZXMgbGlua2VkIGluOgotLS1b
-IGVuZCB0cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0tLS0KUklQOiAwMDEwOnplcm9fdXNlcl9zZWdt
-ZW50cy5jb25zdHByb3AuMCsweGQwLzB4MmMwIGluY2x1ZGUvbGludXgvaGlnaG1lbS5oOjI3NQpD
-b2RlOiA4OSBlZSBlOCAzMyAzYiBiYSBmZSA4NSBlZCAwZiA4NSAzZSA5MyAyNiAwOCBlOCBmNiAz
-NyBiYSBmZSA0YyA4OSBmZSA0YyA4OSBmNyBlOCA4YiAzYSBiYSBmZSA0ZCAzOSBmZSA3NiAwOCBl
-OCBlMSAzNyBiYSBmZSA5MCA8MGY+IDBiIGU4IGQ5IDM3IGJhIGZlIGJlIDA4IDAwIDAwIDAwIDQ4
-IDg5IGRmIGU4IDljIDM5IDFhIGZmIDQ4IDg5ClJTUDogMDAxODpmZmZmYzkwMDA3MDZmNzU4IEVG
-TEFHUzogMDAwMTAyOTMKUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZmVhMDAwMGFkMzE0
-MCBSQ1g6IGZmZmZmZmZmODJkMTU4NDUKUkRYOiBmZmZmODg4MDQ1MGY4MDAwIFJTSTogZmZmZmZm
-ZmY4MmQxNTg0ZiBSREk6IDAwMDAwMDAwMDAwMDAwMDYKUkJQOiAwMDAwMDAwMDAwMDAwMDAwIFIw
-ODogMDAwMDAwMDAwMDAwMDAwMCBSMDk6IGZmZmZmOTQwMDAxNWE2MjgKUjEwOiAwMDAwMDAwMDAw
-MDAxMDAwIFIxMTogMWZmZmZmZmZmMWJiODQ2OSBSMTI6IDAwMDAwMDAwMDAwMDEwMGEKUjEzOiAw
-MDAwMDAwMDAwMDAwMDBhIFIxNDogMDAwMDAwMDAwMDAwMTAwYSBSMTU6IDAwMDAwMDAwMDAwMDEw
-MDAKRlM6ICAwMDAwNTU1NTVhZjQyM2MwKDAwMDApIEdTOmZmZmY4ODgwMmI4MDAwMDAoMDAwMCkg
-a25sR1M6MDAwMDAwMDAwMDAwMDAwMApDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAw
-MDAwMDAwMDgwMDUwMDMzCkNSMjogMDAwMDdmMjZiN2VkMDMzOCBDUjM6IDAwMDAwMDAwNGJiNzIw
-MDAgQ1I0OiAwMDAwMDAwMDAwMzUyZWYwCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAw
-MDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBE
-UjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwCj09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ==
+Hi Nam,
+
+On 19/11/2024 12:10, Nam Cao wrote:
+> p->ainsn.api.insn is a pointer to u32, therefore arithmetic operations are
+> multiplied by four. This is clearly undesirable for this case.
+>
+> Cast it to (void *) first before any calculation.
+>
+> Below is a sample before/after. The dumped memory is two kprobe slots, the
+> first slot has
+>
+>    - c.addiw a0, 0x1c (0x7125)
+>    - ebreak           (0x00100073)
+>
+> and the second slot has:
+>
+>    - c.addiw a0, -4   (0x7135)
+>    - ebreak           (0x00100073)
+>
+> Before this patch:
+>
+> (gdb) x/16xh 0xff20000000135000
+> 0xff20000000135000:	0x7125	0x0000	0x0000	0x0000	0x7135	0x0010	0x0000	0x0000
+> 0xff20000000135010:	0x0073	0x0010	0x0000	0x0000	0x0000	0x0000	0x0000	0x0000
+>
+> After this patch:
+>
+> (gdb) x/16xh 0xff20000000125000
+> 0xff20000000125000:	0x7125	0x0073	0x0010	0x0000	0x7135	0x0073	0x0010	0x0000
+> 0xff20000000125010:	0x0000	0x0000	0x0000	0x0000	0x0000	0x0000	0x0000	0x0000
+>
+> Fixes: b1756750a397 ("riscv: kprobes: Use patch_text_nosync() for insn slots")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
+> ---
+>   arch/riscv/kernel/probes/kprobes.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/probes/kprobes.c b/arch/riscv/kernel/probes/kprobes.c
+> index 474a65213657..d2dacea1aedd 100644
+> --- a/arch/riscv/kernel/probes/kprobes.c
+> +++ b/arch/riscv/kernel/probes/kprobes.c
+> @@ -30,7 +30,7 @@ static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+>   	p->ainsn.api.restore = (unsigned long)p->addr + len;
+>   
+>   	patch_text_nosync(p->ainsn.api.insn, &p->opcode, len);
+> -	patch_text_nosync(p->ainsn.api.insn + len, &insn, GET_INSN_LENGTH(insn));
+> +	patch_text_nosync((void *)p->ainsn.api.insn + len, &insn, GET_INSN_LENGTH(insn));
+>   }
+>   
+>   static void __kprobes arch_prepare_simulate(struct kprobe *p)
+
+This looks good to me, how did you find this issue?
+
+You can add:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
+
 
