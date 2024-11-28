@@ -1,201 +1,129 @@
-Return-Path: <linux-kernel+bounces-424075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66ACF9DB05F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:45:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACA69DB065
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:49:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4BA71656F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E662811DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69267136337;
-	Thu, 28 Nov 2024 00:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FA9D27E;
+	Thu, 28 Nov 2024 00:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dm4qnYCo"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vSnw2AD9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363BF83CC7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7AF2581
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732754639; cv=none; b=R7o+11QBObH/7BZtTfvsDtC0+PY8gX11RuPUZZOhCtclSo8awhT5oAaL6hkcuESPe6kEIH+Jp+6oY/TbQqSv00vy5ObjB4Jae9psPBkNxC77SuXPQ+NYd7qNJqJ2OKMWbo8vCxMb/4A3NCySv1VH8Gp9mZ39aF8Yen7GHahRD0Y=
+	t=1732754989; cv=none; b=IoMJLsrsdPf/kptsdOXM7yp2PGf9Hyoq9fgOzZ7hLH3tubfCpbv5BWGWfjiEj3jwEkWYmih0zl/5Jrg/5dZs5lAthoZGt8b+JtTEpuHeRlia5vHU1co119i0XY3/LT5rENnkZILndHsJLAKybB+RSn5kLo17uhLBlaP4Nh0aEps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732754639; c=relaxed/simple;
-	bh=iMEWMeSgtpX2vDiZAZHNPxwDcscsHshHwaR+WGYfMz8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ALFV+umhKMhrwwQjJDSovaNH16x3t568O/91h2Fib3zohnJl8TAj/q1SEV0AtjjRb7jRowHgbIbV01RICuDsAG37QlOj5FevjdnSq7Sk/SwsmGqUaXpnLk1aEaZohcsMGuRT4cb1oTriaQ6Dqb4DWkVg8UTH6xoibfsoRzpkI2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dm4qnYCo; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7ea69eeb659so196135a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:43:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732754637; x=1733359437; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb2dr0T5bp6rNnjcREbp+SqCdYs3HsUs4UOFpqH2Uio=;
-        b=Dm4qnYCoQ441Mvab8cdSfmnRZWVfohDjPcUmSdbu3CGH5T+rzr0H/TNYK8pfLsIyPn
-         9qyKQgNv1A28bdHGrAFS5t2DXlW6fkEKWu4fHfjf2Zr7rKQwFidhdpic+AB1cXVRiyS9
-         P+8G754SxNVhIkU0YICN9NuNpmTecZIaoNEzbQj1WoZ5tnJRzd74K7xu5wySExxuxDH3
-         kKXVYWRotgqYaO4rGcU7/wN328Reo7sMuIqT99csvMEH2+Ir7GmVaD1cj4M/Ws5ShoV3
-         XLJQ4WFY2Ua+9oB1ksyEJ8tUyQ6vBPzkL9hXcX3UkNIKuHep3D3CjxkmVz7IhMCEQnK2
-         6/5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732754637; x=1733359437;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kb2dr0T5bp6rNnjcREbp+SqCdYs3HsUs4UOFpqH2Uio=;
-        b=tZDbmDS8cIXeFuA5imbUQFLZ6Q17lAmhFtzwEkveT03GX6hU/O/NtwCXGMkb1wBU3l
-         SsKXdMDIf/w5tkxpQLCpBZ4gKKUhJg6zFAW5NpwVQK6AtxeECky7DGKLJhjiJQzw+x3f
-         4YvhCP4IiNR43g+I8Q47PlCYo9+w//5oluhWYB3yWxiQN6Dg1KYUgyfzY4KtPRgsrJ8K
-         XCCdKZumumcOV7FJiJIIsG2B1d3lcqxkcaxObDuk0dGpm5hw0dhPsDy1RP0vOZhd5S7J
-         d2wAPd5dQ/mDPzVHHsJaBE4+cXWn7YEG+OyeHobwX3YuTbjur4OaThRIQTDB2TMf7yaO
-         VjSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA7Dj0mrPAHqAz5kjvGinMUgXbDISR8gvZBhvTe5csl/lilrYIhgMBqPAaNvIeKIqS3aKVibNqxg6M8m8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLGA4kRZercsVCt4isyP18oJnI/aKz07dfigBRmU+yn+8UxbtC
-	noKWw0BwumPbvBhKST28RtXgjIQ8TR9Q+lDj8kdqXZ2Hq7NT3YcalUmHeqJytz8SPxiCEaoabcA
-	lTA==
-X-Google-Smtp-Source: AGHT+IFAR5YUseLMEmNyaxfAMVHlZLF3OQCHcVX3UaR+ESdLafctVjBieHniv07m1mzMJyd37ZzdGkN19OE=
-X-Received: from pjd6.prod.google.com ([2002:a17:90b:54c6:b0:2ea:7174:2101])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:734a:b0:1d9:4837:ada2
- with SMTP id adf61e73a8af0-1e0e0b7e3a4mr7225792637.35.1732754637627; Wed, 27
- Nov 2024 16:43:57 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 16:43:44 -0800
-In-Reply-To: <20241128004344.4072099-1-seanjc@google.com>
+	s=arc-20240116; t=1732754989; c=relaxed/simple;
+	bh=pR9wREWB2fodb0/QPUlRVXlY0hvBsyu1VJhYzZ7hj/M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=szPHO8TAVlLBdUIZL7wiiktwmcBjmJwH6si/rmTPaPtDvHShFdDoQ73W82+c+hAEX7zbCNaHGU0ehREhqBqBs7ZmxzrPGjue6Wbr2T6S/miUnchXMzGt95jMnGT+Uv3/YyLEtnaDLONHT7e/OrIyZXTzcKmQlyK5mh2mp2d3krA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vSnw2AD9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3761C4CECC;
+	Thu, 28 Nov 2024 00:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1732754989;
+	bh=pR9wREWB2fodb0/QPUlRVXlY0hvBsyu1VJhYzZ7hj/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vSnw2AD9RnEFdjGtCyY9VWQVrSRb4jcfu48WtHrEy/XjlkdNqTTy/7Jt5ZLimmsEp
+	 8le2+rtce2WajrByNqD8e4vO+lqh9SDKqOqdiz1EYX2v82EXm4Rjn7aVtiVf1IjW+5
+	 VWNzXrsdiE3Td+3xvKl8yAPQfF6425yC6ZsRnw6o=
+Date: Wed, 27 Nov 2024 16:49:48 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Seiji Nishikawa <snishika@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Mel Gorman
+ <mgorman@techsingularity.net>
+Subject: Re: [PATCH] mm: vmscan: ensure kswapd is woken up if the wait queue
+ is active
+Message-Id: <20241127164948.74659f9400fd076760c2a670@linux-foundation.org>
+In-Reply-To: <20241126150612.114561-1-snishika@redhat.com>
+References: <20241126150612.114561-1-snishika@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20241128004344.4072099-1-seanjc@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128004344.4072099-7-seanjc@google.com>
-Subject: [PATCH v4 6/6] KVM: x86: Refactor __kvm_emulate_hypercall() into a macro
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Rework __kvm_emulate_hypercall() into a macro so that completion of
-hypercalls that don't exit to userspace use direct function calls to the
-completion helper, i.e. don't trigger a retpoline when RETPOLINE=y.
+On Wed, 27 Nov 2024 00:06:12 +0900 Seiji Nishikawa <snishika@redhat.com> wrote:
 
-Opportunistically take the names of the input registers, as opposed to
-taking the input values, to preemptively dedup more of the calling code
-(TDX needs to use different registers).  Use the direct GPR accessors to
-read values to avoid the pointless marking of the registers as available
-(KVM requires GPRs to always be available).
+> Even after commit 501b26510ae3 ("vmstat: allow_direct_reclaim should use
+> zone_page_state_snapshot"), a task may remain indefinitely stuck in
+> throttle_direct_reclaim() while holding mm->rwsem.
+> 
+> __alloc_pages_nodemask
+>  try_to_free_pages
+>   throttle_direct_reclaim
+> 
+> This can cause numerous other tasks to wait on the same rwsem, leading
+> to severe system hangups:
+> 
+> [1088963.358712] INFO: task python3:1670971 blocked for more than 120 seconds.
+> [1088963.365653]       Tainted: G           OE     -------- -  - 4.18.0-553.el8_10.aarch64 #1
+> [1088963.373887] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [1088963.381862] task:python3         state:D stack:0     pid:1670971 ppid:1667117 flags:0x00800080
+> [1088963.381869] Call trace:
+> [1088963.381872]  __switch_to+0xd0/0x120
+> [1088963.381877]  __schedule+0x340/0xac8
+> [1088963.381881]  schedule+0x68/0x118
+> [1088963.381886]  rwsem_down_read_slowpath+0x2d4/0x4b8
+> 
+> The issue arises when allow_direct_reclaim(pgdat) returns false,
+> preventing progress even when the pgdat->pfmemalloc_wait wait queue is
+> empty. Despite the wait queue being empty, the condition,
+> allow_direct_reclaim(pgdat), may still be returning false, causing it to
+> continue looping.
+> 
+> In some cases, reclaimable pages exist (zone_reclaimable_pages() returns
+>  > 0), but calculations of pfmemalloc_reserve and free_pages result in
+> wmark_ok being false.
+> 
+> And then, despite the pgdat->kswapd_wait queue being non-empty, kswapd
+> is not woken up, further exacerbating the problem:
+> 
+> crash> px ((struct pglist_data *) 0xffff00817fffe540)->kswapd_highest_zoneidx
+> $775 = __MAX_NR_ZONES
+> 
+> This patch modifies allow_direct_reclaim() to wake kswapd if the
+> pgdat->kswapd_wait queue is active, regardless of whether wmark_ok is
+> true or false. This change ensures kswapd does not miss wake-ups under
+> high memory pressure, reducing the risk of task stalls in the throttled
+> reclaim path.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/x86.c | 29 +++++++++--------------------
- arch/x86/kvm/x86.h | 25 ++++++++++++++++++++-----
- 2 files changed, 29 insertions(+), 25 deletions(-)
+The code which is being altered is over 10 years old.  
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 39be2a891ab4..fef8b4e63d25 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9982,11 +9982,11 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
- 	return kvm_skip_emulated_instruction(vcpu);
- }
- 
--int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
--			    unsigned long a0, unsigned long a1,
--			    unsigned long a2, unsigned long a3,
--			    int op_64_bit, int cpl,
--			    int (*complete_hypercall)(struct kvm_vcpu *))
-+int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-+			      unsigned long a0, unsigned long a1,
-+			      unsigned long a2, unsigned long a3,
-+			      int op_64_bit, int cpl,
-+			      int (*complete_hypercall)(struct kvm_vcpu *))
- {
- 	unsigned long ret;
- 
-@@ -10073,32 +10073,21 @@ int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
- 
- out:
- 	vcpu->run->hypercall.ret = ret;
--	complete_hypercall(vcpu);
- 	return 1;
- }
--EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-+EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
- 
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- {
--	unsigned long nr, a0, a1, a2, a3;
--	int op_64_bit;
--	int cpl;
--
- 	if (kvm_xen_hypercall_enabled(vcpu->kvm))
- 		return kvm_xen_hypercall(vcpu);
- 
- 	if (kvm_hv_hypercall_enabled(vcpu))
- 		return kvm_hv_hypercall(vcpu);
- 
--	nr = kvm_rax_read(vcpu);
--	a0 = kvm_rbx_read(vcpu);
--	a1 = kvm_rcx_read(vcpu);
--	a2 = kvm_rdx_read(vcpu);
--	a3 = kvm_rsi_read(vcpu);
--	op_64_bit = is_64_bit_hypercall(vcpu);
--	cpl = kvm_x86_call(get_cpl)(vcpu);
--
--	return __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl,
-+	return __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-+				       is_64_bit_hypercall(vcpu),
-+				       kvm_x86_call(get_cpl)(vcpu),
- 				       complete_hypercall_exit);
- }
- EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index 28adc8ea04bf..ad6fe6159dea 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -617,11 +617,26 @@ static inline bool user_exit_on_hypercall(struct kvm *kvm, unsigned long hc_nr)
- 	return kvm->arch.hypercall_exit_enabled & BIT(hc_nr);
- }
- 
--int __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
--			    unsigned long a0, unsigned long a1,
--			    unsigned long a2, unsigned long a3,
--			    int op_64_bit, int cpl,
--			    int (*complete_hypercall)(struct kvm_vcpu *));
-+int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-+			      unsigned long a0, unsigned long a1,
-+			      unsigned long a2, unsigned long a3,
-+			      int op_64_bit, int cpl,
-+			      int (*complete_hypercall)(struct kvm_vcpu *));
-+
-+#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, complete_hypercall)	\
-+({												\
-+	int __ret;										\
-+												\
-+	__ret = ____kvm_emulate_hypercall(_vcpu,						\
-+					  kvm_##nr##_read(_vcpu), kvm_##a0##_read(_vcpu),	\
-+					  kvm_##a1##_read(_vcpu), kvm_##a2##_read(_vcpu),	\
-+					  kvm_##a3##_read(_vcpu), op_64_bit, cpl,		\
-+					  complete_hypercall);					\
-+												\
-+	if (__ret > 0)										\
-+		complete_hypercall(_vcpu);							\
-+	__ret;											\
-+})
- 
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
- 
--- 
-2.47.0.338.g60cca15819-goog
+Is this misbehavior more recent?  If so, are we able to identify which
+commit caused this?
+
+Otherwise, can you suggest why it took so long for this to be
+discovered?  Your test case must be doing something unusual?
+
+Thanks.
+
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -6389,8 +6389,8 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+>  
+>  	wmark_ok = free_pages > pfmemalloc_reserve / 2;
+>  
+> -	/* kswapd must be awake if processes are being throttled */
+> -	if (!wmark_ok && waitqueue_active(&pgdat->kswapd_wait)) {
+> +	/* Always wake up kswapd if the wait queue is not empty */
+> +	if (waitqueue_active(&pgdat->kswapd_wait)) {
+>  		if (READ_ONCE(pgdat->kswapd_highest_zoneidx) > ZONE_NORMAL)
+>  			WRITE_ONCE(pgdat->kswapd_highest_zoneidx, ZONE_NORMAL);
+>  
 
 
