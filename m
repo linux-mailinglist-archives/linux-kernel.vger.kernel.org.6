@@ -1,83 +1,113 @@
-Return-Path: <linux-kernel+bounces-424133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D199DB0EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:40:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB78B9DB147
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:54:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407AE166A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50681B24C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C889D19AD8B;
-	Thu, 28 Nov 2024 01:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CBE6F06A;
+	Thu, 28 Nov 2024 01:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DnluSisq"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uOISfUnd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3209C19ABB6
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DFF4C7C;
+	Thu, 28 Nov 2024 01:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732757710; cv=none; b=jWd5OH7FeiP7i49Sdf68EhU2+s52T7EobpUVWuxMZXHoq1tKGcOUIub3e8J/qIQhjKUsZ4ijblb8cuTK5iXRXcstzXskSnbleUA7CH+sWlpCQ3zyIqg08C6Silsgq4zz5Hzj/2M5PuufD/2IA0E6VVuwN9tTBWMTvYXgB5pg+fU=
+	t=1732758338; cv=none; b=bz2Z2FMNN7XgUc9AZM8rvvJlsjfkQiWMvDZ0cLeReveMg0U+XSVEY5mo9wU1J3Dly8QVEx/1Gn7aASI2Pm6+Pr9ezt1tP4ndjGdJeK7Qryu+Fj3gk+idvHgDOltv0OGd4LVraRabKblwUx5PDFOsPo3iCXdXXmprmw32mu0+/WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732757710; c=relaxed/simple;
-	bh=o/u0qx0BQAUn2N4usF/gKAkEE5x2De1zCCN/M4LTn/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTR9VeRUx8znC9yFZueHCDvCtGXYlXCSzETNQnamrGBMupEOqM/EAZV2h5nmgiBkNavZEAnAqxByHDJlOCCLCUfrPmD0IIqEnEE+PUHL3p+d+dNVH/9ZwC1tXhc8bLxgi8l2MvXv8awE6b18OuHgRhavCFi8kxjpLL/XmTsby0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DnluSisq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9B7C4CED2;
-	Thu, 28 Nov 2024 01:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732757709;
-	bh=o/u0qx0BQAUn2N4usF/gKAkEE5x2De1zCCN/M4LTn/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DnluSisqnyTwRZaYd0d8+u97lE+0JguWZIz500B3eHaDxeQ5OdWea6Hz7TstbDays
-	 ByNHXciia2ExfnPuODMyqKCjXWa6v3nqGutqcQiKHerO39S8UfQpzCnD98ZzD6U1Bf
-	 Ne/C4c88QIJtE8BGeb7+Cjcak70iIF4qxmc3neCCBzInInyqHGRQsei6wP6HOFxwlq
-	 T5BFz114HhyrNf7h2GKKd+5jNJ6/HpFBhCv6Gvg/jqPqQB0jITS2mLRPoLgeP0IA9w
-	 vtW/JFNdK8Jr2jvHfooTsTeDMkPzqOR27FrQifo5+v5MFT1Jg3SIYQaktiGGk01Ru8
-	 moQ8MWMxaIsGw==
-Date: Wed, 27 Nov 2024 17:35:07 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/3] objtool: noinstr validation for static
- branches/calls
-Message-ID: <20241128013507.6um4vkfz2ojqwnoz@jpoimboe>
-References: <cover.1732682344.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1732758338; c=relaxed/simple;
+	bh=yuC/DqKdSJpZMyxKYTTgBUuGxFyWG0qpYNLRxxo2mUU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TZdIglCQJsUS3LcxWo8/DBHuf14a+kBWnVA4Dr7C1O3LkK7/krPWfFj4wyjKDd1PTTRQbbzcW8Y/p4amnilfAHpzaTm9mP7gVKoGq6gbX3TZw/0zwKIM5/uSo9NzwFgJb0zIq49TZkL6zFXeOMKZGYp+NX3+H0LpiC9ruTpEMNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uOISfUnd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2B2C4CECC;
+	Thu, 28 Nov 2024 01:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1732758337;
+	bh=yuC/DqKdSJpZMyxKYTTgBUuGxFyWG0qpYNLRxxo2mUU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uOISfUndAcjBTDGd0M+QePGbr78g096PjKpfjXSTe0gAacr6HPJtmfUyZFkNvGG3d
+	 UA7O1AJ/qsBkhTSkgmR5ygBR2g1Xb/7z5TK4LXndWRzBffkOueNQlqFOQ62xWrj7HL
+	 SDMixjbPCbPFW55c/128Cv61TVGxMtaMg/JdtNx4=
+Date: Wed, 27 Nov 2024 17:45:36 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Zhen Ni <zhen.ni@easystack.cn>
+Cc: viro@zeniv.linux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
+ brauner@kernel.org, zev@bewilderbeest.net, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] kernel/sys: Optimize do_prlimit lock scope to reduce
+ contention
+Message-Id: <20241127174536.752def18058e84487ab9ad65@linux-foundation.org>
+In-Reply-To: <20241120132156.207250-1-zhen.ni@easystack.cn>
+References: <20241120132156.207250-1-zhen.ni@easystack.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1732682344.git.jpoimboe@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 08:47:39PM -0800, Josh Poimboeuf wrote:
-> v2:
-> - Add some fixes reported by kbuild.
-> 
-> 
-> FWIW, this reports the following static keys:
-> 
->   - sched_clock_running
->   - __sched_clock_stable
->   - mds_idle_clear
->   - vmx_l1d_flush_cond
->   - stack_erasing_bypass
+On Wed, 20 Nov 2024 21:21:56 +0800 Zhen Ni <zhen.ni@easystack.cn> wrote:
 
-    - perf_lopwr_cb
+> Refines the lock scope in the do_prlimit function to reduce
+> contention on task_lock(tsk->group_leader). The lock now protects only
+> sections that access or modify shared resources (rlim). Permission
+> checks (capable) and security validations (security_task_setrlimit)
+> are placed outside the lock, as they do not modify rlim and are
+> independent of shared data protection.
 
-> and the following static calls:
-> 
->   - pv_sched_clock
->   - x86_idle
+Let's cc linux-security-module@vger.kernel.org, as we're proposing
+altering their locking environment!
 
--- 
-Josh
+> The security_task_setrlimit function is a Linux Security Module (LSM)
+> hook that evaluates resource limit changes based on security policies.
+> It does not alter the rlim data structure, as confirmed by existing
+> LSM implementations (e.g., SELinux and AppArmor). Thus, this function
+> does not require locking, ensuring correctness while improving
+> concurrency.
+
+Seems sane.
+
+Does any code call do_prlimit() frequently enough for this to matter?
+
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -1481,18 +1481,20 @@ static int do_prlimit(struct task_struct *tsk, unsigned int resource,
+>  
+>  	/* Holding a refcount on tsk protects tsk->signal from disappearing. */
+>  	rlim = tsk->signal->rlim + resource;
+> -	task_lock(tsk->group_leader);
+>  	if (new_rlim) {
+>  		/*
+>  		 * Keep the capable check against init_user_ns until cgroups can
+>  		 * contain all limits.
+>  		 */
+>  		if (new_rlim->rlim_max > rlim->rlim_max &&
+> -				!capable(CAP_SYS_RESOURCE))
+> -			retval = -EPERM;
+> -		if (!retval)
+> -			retval = security_task_setrlimit(tsk, resource, new_rlim);
+> +		    !capable(CAP_SYS_RESOURCE))
+> +			return -EPERM;
+> +		retval = security_task_setrlimit(tsk, resource, new_rlim);
+> +		if (retval)
+> +			return retval;
+>  	}
+> +
+> +	task_lock(tsk->group_leader);
+>  	if (!retval) {
+>  		if (old_rlim)
+>  			*old_rlim = *rlim;
+
 
