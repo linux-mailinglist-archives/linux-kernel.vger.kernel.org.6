@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-424828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229CC9DB9F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E13D9DB9FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 15:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1982281508
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C897A2814A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CE31BFE01;
-	Thu, 28 Nov 2024 14:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D455F1B394E;
+	Thu, 28 Nov 2024 14:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aH1k8Vg3"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZEZXvS2j"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FF91B3940
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 14:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1CF25761;
+	Thu, 28 Nov 2024 14:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732805518; cv=none; b=GcNoeuXAt1gVQcrrbWqMS+wz5ubdTwyy1GSf+3eHrpVe7j6s80QdN1T7KMTsL9uIMs3g2pWKcGJ11c/5ZnK7KTrSREMBTZ8OHYoLV30Pog2SmXZWc1QqJ5srmFf4JPH9CtsNZ5LZmxQzwnFsYD53+IhbA+tKz9ITOmYJuDpYXio=
+	t=1732805701; cv=none; b=r8oqAt6JQKCTp03I2BRAyPoBxNFdl2oSbGUCbwSGdVgoD/kDipREYAdqj0/agkLQ0IYy5vTDaiBkoLTdHM+f81e/Py6dbvE9ctF9j7vybWSFAV62CtcD6dpDTgVq5OcJ/NCG2qFIKE/9pHA6J5SDltHgpAb4dqszla5nbCB5x/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732805518; c=relaxed/simple;
-	bh=iONE0HKU0IqL9O9ShumEXpebGnA8RIwvd+IgFAfUlXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kaf5bttR1sXeIq0S3BRmvGM6kyY7qssDV8pNL9YJ36BjRIhvbnP+Oyy0Cs8kgbiBBOE7M6AqZO89JB3afAXgB/t06s2MOt1hsqtxvwkPN3Pw4JJH881W9gk2plDwBkmRIsq46T12UC8VLncInGlNERvDrBC5zb6+KYXmk6tI8oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aH1k8Vg3; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7251ce598adso651982b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 06:51:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732805516; x=1733410316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/MXPQzhJ+NbcczEaxmCbcj8MjpwS3qOOhKqFULBuO8=;
-        b=aH1k8Vg3LzRPvjv+t4OKpUkxmLT3zHCy3vtqri31hXcXWxvwuJf/n5tFhXkpO1YIJI
-         dt0JtRorKg3ESrqVKNtm9RqY6zMG2ng/dcQoBP0Wr2YR4tydOdW5uPusd1O5Q8TZIAKB
-         8TwY2a+nVzR3Oovo1ugFcEL6cYcnKqLUC7BwAZwgdpLPmtC+fv8AyxeuiuzaUXj1Ots/
-         rNl1XMTyUL6H105H3hWu4NuKf6TK10wwhlAfz4kLLoKGJM5+UyLqHlRgfFp5OKrzjfoa
-         Y33lfUMpYsSElcJskMaejwReI+tMSAm7kFARrZK/HjiQhPoJ+r6QXzo3OlvZpFXX5mvh
-         gVYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732805516; x=1733410316;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d/MXPQzhJ+NbcczEaxmCbcj8MjpwS3qOOhKqFULBuO8=;
-        b=rZvqKehAj89pKaa8oNT4Azxvp/SdFJEvWU6Bs0lTOLP/NHhl59ISvdl8484EIphdzY
-         Wsb7s0ONx8w1JwZsyLaqSyETUf9l5XxEBgG0RNIlmV+pDs5Z886yvpEj0SHPMYXTBSNi
-         Qzq0uICra+r2FOzFC2OevmMFd7EmcakxvWFOPtMOMI2seGxM+a33vc1Vpu+mHGoVW/oP
-         WRs+U2hFHYFaugJ+bUt9xfyyaAnNrZT1MyJw4x/R5PwowMrjIUJrxhrApYWC2xBe8lx6
-         id2RK6V2JWDdhzh+nnw/vVgbKNNXX0VMLO+hjDz32bGpaegVQhqEcVF1xgBVJqqAJpDi
-         BWnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVABVGZIpj2Jkjl6/p1lODL+IeVPiFOIlW1Ehqt0UnR9rC5ip6ilR9iS3UsVcOuDQyUxHUHaU2D1UC1LvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7gqcPReBvTeo7eNNfa85bjJfDPM6dIrHFFCVyfZ1seQZyZOuJ
-	eAm6+TgCUWzqd6b1Q3+k6ZUctoTG1XjXPqzJOfAuN8qzlAeGn33eGCgT/zWhSw==
-X-Gm-Gg: ASbGnctXiBUiqdoAJ734iqJBjTY67FDZ8/zxpn2DfEXc3aVT5NvGoZjs3pDNn3E74nY
-	xcJMt36EvtqtdzXHWYUqyTBPFtNQgCqevpPgmhARWlLOc7MvBrOpRcLmAK11zcaSUPCSq7Kp9ra
-	rWwMHb15yUx3yGJFsgQBqFRcV9j1h1XHUqDEeEuvPefmW1sVCVx2LZjr2ul+UY4MhVV00txI+AC
-	pnXWOVF2FhU+RSWEeUPOvBPniAiWVAjsBn03KDmLCxx3phkYeghVxApFnBOidlASkyNkrUKV4xg
-	Qw==
-X-Google-Smtp-Source: AGHT+IE94xRezL0R5MUb1CgWVQ85Hdjg7x8RVESl+SHCpYNTjmiYjyLuD+1yP71Qqn42MFKmXZk5NQ==
-X-Received: by 2002:a05:6a00:1c8d:b0:725:3bd4:9b54 with SMTP id d2e1a72fcca58-7253bd49c20mr7408782b3a.2.1732805515839;
-        Thu, 28 Nov 2024 06:51:55 -0800 (PST)
-Received: from localhost.localdomain ([117.213.97.61])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254176f76dsm1660418b3a.68.2024.11.28.06.51.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 06:51:55 -0800 (PST)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: sa8775p: Fix the size of 'addr_space' regions
-Date: Thu, 28 Nov 2024 20:21:47 +0530
-Message-Id: <20241128145147.145618-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732805701; c=relaxed/simple;
+	bh=oK5/ZfLAfITjssEqahd/DRUlrl74PB/u3ZIoqPO5Xp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqAQoketzLZc1kjLaG+9xfpzT+p5j5Z3XpDfGSNgjkDqK2b7fhLAlCac40EyIR4t7i71DPQaCFiTfNDvsk/pxudhl8Y5AxV6gsgCh1H30JMrsbNA3Rgn56SpnS6vVsT5mCFgASGMudkPuNfSeta31nUwGYURxYuyQygQLo54DVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZEZXvS2j; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=07eZLac9ud6nmkcZrKjIbBNlfOQ1ZTo1Ed25V+4ovnY=; b=ZE
+	ZXvS2jS+V/aPeNgWSa1MnaQP91+4gTLqgBMyQ114EzGNLpCusrI83fLfgM7jV8N7ScMDi+DddoptI
+	hZ1G1484vxq/rmNjSHWCPRuUjR2+cdYW9zHf57r7ylMrr99HaAaRtOeK1K/CRNGnZ18iZXivUqQlk
+	Te7O75DKELfEFvo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tGfuu-00EiLw-Uk; Thu, 28 Nov 2024 15:54:52 +0100
+Date: Thu, 28 Nov 2024 15:54:52 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: netdev <netdev@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH] PHY: Fix no autoneg corner case
+Message-ID: <2428ec56-f2db-4769-aaca-ca09e57b8162@lunn.ch>
+References: <m3plmhhx6d.fsf@t19.piap.pl>
+ <c57a8f12-744c-4855-bd18-2197a8caf2a2@lunn.ch>
+ <m3wmgnhnsb.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <m3wmgnhnsb.fsf@t19.piap.pl>
 
-For both the controller instances, size of the 'addr_space' region should
-be 0x1fe00000 as per the hardware memory layout.
+On Thu, Nov 28, 2024 at 07:31:48AM +0100, Krzysztof Hałasa wrote:
+> Andrew,
+> 
+> Andrew Lunn <andrew@lunn.ch> writes:
+> 
+> >> Unfortunately it's initially set based on the supported capability
+> >> rather than the actual hw setting.
+> >
+> > We need a clear definition of 'initially', and when does it actually
+> > matter.
+> >
+> > Initially, things like speed, duplex and set to UNKNOWN. They don't
+> > make any sense until the link is up. phydev->advertise is set to
+> > phydev->supported, so that we advertise all the capabilities of the
+> > PHY. However, at probe, this does not really matter, it is only when
+> > phy_start() is called is the hardware actually configured with what it
+> > should advertise, or even if it should do auto-neg or not.
+> >
+> > In the end, this might not matter.
+> 
+> Nevertheless, it seems it does matter.
+> 
+> >> While in most cases there is no
+> >> difference (i.e., autoneg is supported and on by default), certain
+> >> adapters (e.g. fiber optics) use fixed settings, configured in hardware.
+> >
+> > If the hardware is not capable of supporting autoneg, why is autoneg
+> > in phydev->supported? To me, that is the real issue here.
+> 
+> Well, autoneg *IS* supported by the PHY in this case.
+> No autoneg in phydev->supported would mean I can't enable it if needed,
+> wouldn't it?
+> 
+> It is supported but initially disabled.
+> 
+> With current code, PHY correctly connects to the other side, all the
+> registers are valid etc., the PHY indicates, for example, a valid link
+> with 100BASE-FX full duplex etc.
+> 
+> Yet the Linux netdev, ethtool etc. indicate no valid link, autoneg on,
+> and speed/duplex unknown. It's just completely inconsistent with the
+> real hardware state.
+> 
+> It seems the phy/phylink code assumes the PHY starts with autoneg
+> enabled (if supported). This is simply an incorrect assumption.
 
-Otherwise, endpoint drivers cannot request even reasonable BAR size of 1MB.
+This is sounding like a driver bug. When phy_start() is called it
+kicks off the PHY state machine. That should result in
+phy_config_aneg() being called. That function is badly named, since it
+is used both for autoneg and forced setting. The purpose of that call
+is to configure the PHY to the configuration stored in
+phydev->advertise, etc. So if the PHY by hardware defaults has autoneg
+disabled, but the configuration in phydev says it should be enabled,
+calling phy_config_aneg() should actually enabled autoneg. It is
+possible there is a phylib bug here, because we try to not to kick off
+autoneg if it is not needed, because it is slow. I've not looked at
+the code, but it could be we see there is link, and skip calling
+phy_config_aneg()? Maybe try booting with the cable disconnected so
+there is no link?
 
-Cc: stable@vger.kernel.org # 6.11
-Fixes: c5f5de8434ec ("arm64: dts: qcom: sa8775p: Add ep pcie1 controller node")
-Fixes: 1924f5518224 ("arm64: dts: qcom: sa8775p: Add ep pcie0 controller node")
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> BTW if the code meant to enable autoneg, it would do exactly that -
+> enable it by writing to PHY command register.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index e8dbc8d820a6..320a94dcac5c 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -5587,7 +5587,7 @@ pcie0_ep: pcie-ep@1c00000 {
- 		      <0x0 0x40000000 0x0 0xf20>,
- 		      <0x0 0x40000f20 0x0 0xa8>,
- 		      <0x0 0x40001000 0x0 0x4000>,
--		      <0x0 0x40200000 0x0 0x100000>,
-+		      <0x0 0x40200000 0x0 0x1fe00000>,
- 		      <0x0 0x01c03000 0x0 0x1000>,
- 		      <0x0 0x40005000 0x0 0x2000>;
- 		reg-names = "parf", "dbi", "elbi", "atu", "addr_space",
-@@ -5744,7 +5744,7 @@ pcie1_ep: pcie-ep@1c10000 {
- 		      <0x0 0x60000000 0x0 0xf20>,
- 		      <0x0 0x60000f20 0x0 0xa8>,
- 		      <0x0 0x60001000 0x0 0x4000>,
--		      <0x0 0x60200000 0x0 0x100000>,
-+		      <0x0 0x60200000 0x0 0x1fe00000>,
- 		      <0x0 0x01c13000 0x0 0x1000>,
- 		      <0x0 0x60005000 0x0 0x2000>;
- 		reg-names = "parf", "dbi", "elbi", "atu", "addr_space",
--- 
-2.25.1
+Assuming bug free code.
 
+> Then the hw and sw state
+> would be consistent again (though initial configuration would be
+> ignored, not very nice). Now the code doesn't enable autoneg, it only
+> *indicates* it's enabled and in reality it's not.
+
+I would say there are two different issues here.
+
+1) It seems like we are not configuring the hardware to match phydev.
+2) We are overwriting how the bootloader etc configured the hardware.
+
+2) is always hard, because how do we know the PHY is not messed up
+from a previous boot/crash cycle etc. In general, a driver should try
+to put the hardware into a well known state. If we have a clear use
+case for this, we can consider how to implement it.
+
+	Andrew
 
