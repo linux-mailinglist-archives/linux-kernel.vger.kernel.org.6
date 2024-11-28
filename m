@@ -1,167 +1,106 @@
-Return-Path: <linux-kernel+bounces-424395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E459DB3E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:38:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8729DB3E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:38:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1374CB21196
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3208E1668B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC8814D44D;
-	Thu, 28 Nov 2024 08:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="fJMgSEF7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oJjmSH2U"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BE514C5AA;
+	Thu, 28 Nov 2024 08:38:36 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9216414AD0E;
-	Thu, 28 Nov 2024 08:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B691531D2;
+	Thu, 28 Nov 2024 08:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732783074; cv=none; b=KV2w57S6/t43fJQ9kXiITh9L9Sqk6vl+J/1SlLuT37rbnb56cSwolUjmn/Rh2d4CPu5uUc/J+nBtceuMKqY4HyW+H8aV2NZMxCk/LszJaj4ziCxWi8KZYDT+/Ua30cf8UkZUuLNqJZ+P/g08EiQX8QPBD37ohyJAs3geQ0+mZKU=
+	t=1732783115; cv=none; b=K5Y1H/X5c6POYIYcJhbOsem68vGn9zUWHdDxwk9vDV/U2Yl6wUUD5zhyxIM0+1NLNscb+Wh1vMwNbeIIpWxkH+A9sSbo2Zmw/xUTIK7Y+H/X6QNzLQWsmv3oAefBQzNpw4RdLofxFF5WudBYo/exkaFBogqqzvb/9TjW2oxTmik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732783074; c=relaxed/simple;
-	bh=EITsOYhGCkSl2HkBvSDK9NRXeGTI124s3/oQysoJO5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxbKrGt3uFfwqStpfcEE/jS9uU1C3ZOuLrC2d70Ynzd+8yVEsiugzUrFFVWkbzjZS1jaiBlQHNI4qzbB9duy5T03UIY9p8RMYIuLTCjn+Cxt0rkl2Z1VUyfboJKjs3tcT9aWtfH3nNNc92rf1BinwR8Od3W+iFK+0iwx1WkvQUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=fJMgSEF7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oJjmSH2U; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 52B491140214;
-	Thu, 28 Nov 2024 03:37:51 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Thu, 28 Nov 2024 03:37:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1732783071; x=1732869471; bh=46hNflVp2j
-	+I4D9so2RIss0CrD+H/bB82TUjb66XMME=; b=fJMgSEF7tmmQnNxlSxaZOszaRT
-	PH7uh/1HA61ACBFMh0IARR2U23wrxvRrVv+57Rwl5FMAF1BIVo4P2i1NUY+SmyNj
-	QT3DkH41ud++tpM4CD6Y7C/2+tyxxhN8hGrPCRA2eR6xu2Z0Aghqt55WGGxo68DH
-	Ju6NHQW6Vt8/6KoHDqIC0Bvuq48CSr8CBsICXvBdGFV9mv+/ExAjcFJJM6di/OnJ
-	OYsXDij0RAByyCtwqhL49wHpgTE3WdJZaxRHJpfkgBIv0nX+w7WKamFkQ+PRFNmu
-	/PKBeqbHhpsDbVWCUj8XDamxy4hTzccl57HLwK+jwx4vPE5x6x0XYAV7/nZQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732783071; x=1732869471; bh=46hNflVp2j+I4D9so2RIss0CrD+H/bB82TU
-	jb66XMME=; b=oJjmSH2Un/DuQ4yoQM2gdQ/taznaoqQV2n9hb5SJwDacVCV0/xt
-	eOFocC4CT2R4JmpZTP/l8ozqC2jhMaYNvFrsVtu2lRiu3N+nSaks+OF0Wqiz2E0y
-	Bk1BA7BYjFJuz6H0QOWSmCtTnTEbtwPKco2FhZkpwIXz3KTw1V17bhdw3+qHPqRO
-	f05wYmqDVqMpdI80AmsYjt6IVulsVN6KIo6nKBDrEIYci6ueZVhue/2Edh3yyKeP
-	MPpvFx5htKHsrxJp4ZAFkoMvOx/BM97AueRrcncxqhfA3kqWp+d/xJaTi699VNry
-	UZERJNL9t97Shx0OhJ/h8ulF7lJpWuXHUfQ==
-X-ME-Sender: <xms:3itIZz5jE6xs6QX7jOjfmK48yWSZfPKQMdKtR3Tei8s_fqNSw1tt8g>
-    <xme:3itIZ44RiTg-AdEFxy6llExy1XT4rsF9j2gpHILQOclL52WPyStnbsM1qt1f3Vcuw
-    wD7ifbJoBJbQijfApY>
-X-ME-Received: <xmr:3itIZ6dlaoJYmQHlKmuBXqpKrbidflFecV_uq9Cjf80L13ePEBb4z4RA8xD_anZhISYsyrHiM0uId1tMIxprY8jtCCBNC9aO4Gc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrhedtgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpefgudeuffelfeekgeeukedtheekjeettdfftddujefhvdehtefg
-    iefgledtueefjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvght
-    pdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmh
-    grrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtohepfhhnkhhlrdhkvghrnhgvlhes
-    ghhmrghilhdrtghomhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmh
-    grihhlrdgtohhmpdhrtghpthhtohepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhr
-    tghpthhtoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthhtoheprh
-    hosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprhihuggsvghrghessghithhmrghthhdrohhrgh
-X-ME-Proxy: <xmx:3itIZ0K-eOv218NaJNGxYnuqSmcQCJUhezhFW5krh1DlXXFEI_4jSw>
-    <xmx:3itIZ3ISdJqupmJlPmKR1ZTd10I9LhK2pFCpln2ep3cCmFKPMRgIzA>
-    <xmx:3itIZ9zi_Gm2jlYDMxY5vnIDLO3gKxkpgHv30gwtqhIfiacIDVo3xA>
-    <xmx:3itIZzLR67Gk9G1XNHj3CVU7-G0oI-4Us-x7llM7QZAOVpm9IjFIeA>
-    <xmx:3ytIZ46GeJhAVbkyyyA6OZK_oG0CbuZhByk6M_61ooitmTYADDPNRwA5>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Nov 2024 03:37:49 -0500 (EST)
-Date: Thu, 28 Nov 2024 09:37:48 +0100
-From: Janne Grunau <j@jannau.net>
-To: Hector Martin <marcan@marcan.st>
-Cc: Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/4] Driver for Apple Z2 touchscreens.
-Message-ID: <20241128083748.GC3782493@robin.jannau.net>
-References: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
- <Z0Z7Lrv3rBfzac_e@google.com>
- <CAMT+MTThJoYLYhtYAHwh6F3LTApid9Em+eP2AZYc3JChC2b9ig@mail.gmail.com>
- <9dcdea44-974e-416f-9d59-204d519774dd@marcan.st>
- <969b7440-5173-4ecc-af31-c3cd1f3f5acf@marcan.st>
+	s=arc-20240116; t=1732783115; c=relaxed/simple;
+	bh=PwygZ8xo/uom8hgwVTtJN5pxQqPEFNedvWHgkIpqUls=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hSyT2kVGmGt4yMf0+F1iqv3x8ifh97OGM67BeK8o2+VNQIextRxfp+++dWcJ4B31naI2NGckGjnjDtf5cxzY1GDyzgpwWJk4wnpt7/IkOjon+lgr933PvxakstmVVoPe0KcBKhQ5Nq/eDxRAqp5Ob0Jys113zEKnPVK3aJ4xx2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 208830a6ad6411efa216b1d71e6e1362-20241128
+X-CTIC-Tags:
+	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_RG_INFO, GTI_C_BU, AMN_GOOD
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:76ada111-3939-43ff-8cb2-48de6f12cf32,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:15
+X-CID-INFO: VERSION:1.1.38,REQID:76ada111-3939-43ff-8cb2-48de6f12cf32,IP:0,URL
+	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:15
+X-CID-META: VersionHash:82c5f88,CLOUDID:f36c0c66f0dfdb948bea5b9adc1895d9,BulkI
+	D:241128163824DH1BYHU8,BulkQuantity:0,Recheck:0,SF:17|19|66|102,TC:nil,Con
+	tent:0,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
+	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 208830a6ad6411efa216b1d71e6e1362-20241128
+X-User: xiaopei01@kylinos.cn
+Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 580643859; Thu, 28 Nov 2024 16:38:22 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: broonie@kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] spi: mpc52xx: Add cancel_work_sync before module remove
+Date: Thu, 28 Nov 2024 16:38:17 +0800
+Message-Id: <1f16f8ae0e50ca9adb1dc849bf2ac65a40c9ceb9.1732783000.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <969b7440-5173-4ecc-af31-c3cd1f3f5acf@marcan.st>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 28, 2024 at 01:20:09AM +0900, Hector Martin wrote:
-> 
-> 
-> On 2024/11/28 0:29, Hector Martin wrote:
-> > 
-> > 
-> > On 2024/11/27 17:29, Sasha Finkelstein wrote:
-> >> On Wed, 27 Nov 2024 at 02:51, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> >>> I believe this needs to be done at the SPI controller level. See
-> >>> "cs-gpiods" property in
-> >>> Documentation/devicetree/bindings/spi/spi-controller.yaml that, as far
-> >>> as I understand, allows overriding controller's native CS handling with
-> >>> a GPIO when needed.
-> >>
-> >> I have already tried doing that (adding the relevant gpio as cs-gpios
-> >> on the controller)
-> >> and for some reason none of my attempts worked. Since there is no hardware
-> >> documentation, I can't really tell why, could be possible that we need both
-> >> native CS and that gpio, could be memory barrier issues somewhere in
-> >> the driver core,
-> >> but the method above is the only one i could get to work.
-> > 
-> > Are you sure this isn't just a pinmux problem, i.e. the bootloader
-> > initializes the pinmux for hardware CS only on one device and not the other?
-> > 
-> > See spi3_pins in the DTS in our downstream tree (and the reference from
-> > the SPI controller). If the rest of the SPI pins are already working
-> > properly you can just try with the CS pin (same index as on the gpio
-> > spec). Ideally we'd list the 4 pins, but someone needs to reverse
-> > engineer the mapping with m1n1 gpiola since we don't know what it is.
-> > 
-> > If it really doesn't work with native CS and proper pinmux then cs-gpios
-> > on the controller should work. If it doesn't something weird is going on
-> > elsewhere. There's only one CS line, needing both makes no sense.
-> > 
-> 
-> Looked into this. The pins are 67=CLK, 68=MOSI, 69=MISO for spi0 on
-> t8103 (they should be added to pinctrl even though they are already
-> configured by iBoot, ping Janne).
+If we remove the module which will call mpc52xx_spi_remove
+it will free 'ms' through spi_unregister_controller.
+while the work ms->work will be used. The sequence of operations
+that may lead to a UAF bug.
 
-queued for the next revision of my "Add Apple SPI controller and spi-nor
-dt nodes" series [0] and imported in the downstream kernel.
+Fix it by ensuring that the work is canceled before proceeding with
+the cleanup in mpc52xx_spi_remove.
 
-thanks
-Janne
+Fixes: ca632f556697 ("spi: reorganize drivers")
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ drivers/spi/spi-mpc52xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[0] https://lore.kernel.org/asahi/20241127-asahi-spi-dt-v1-0-907c9447f623@jannau.net/
+diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
+index 036bfb7bf189..6d4dde15ac54 100644
+--- a/drivers/spi/spi-mpc52xx.c
++++ b/drivers/spi/spi-mpc52xx.c
+@@ -520,6 +520,7 @@ static void mpc52xx_spi_remove(struct platform_device *op)
+ 	struct mpc52xx_spi *ms = spi_controller_get_devdata(host);
+ 	int i;
+ 
++	cancel_work_sync(&ms->work);
+ 	free_irq(ms->irq0, ms);
+ 	free_irq(ms->irq1, ms);
+ 
+-- 
+2.34.1
+
 
