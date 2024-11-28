@@ -1,121 +1,225 @@
-Return-Path: <linux-kernel+bounces-425003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884D49DBC5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:05:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3269DBC61
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:07:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75BB163A25
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:07:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A07F1C1F22;
+	Thu, 28 Nov 2024 19:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rE2R1gY+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E73281818
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:05:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8467C1C1F14;
-	Thu, 28 Nov 2024 19:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hLTiLmCC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9262CAB;
-	Thu, 28 Nov 2024 19:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFA2CAB;
+	Thu, 28 Nov 2024 19:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732820727; cv=none; b=R59iTxXAegltICiH9VwzdW4GJRCyzqvYOdF4mMq0eIzDfhd+PEokVMD9pzarJacEPZv3kN8H8kVTDx4RHuokK2n1i7D2hNvYl+dNWyJagTAJaxw9gqOl6JT+VvQx82DXB7UQ+38AsyoJnS0Q/jml4mW+yh+ndTLO9Ecbush4EX8=
+	t=1732820843; cv=none; b=gJfP55Gv3Yt5mVGQ0b3Zt8bf0q5skzYftkGVqngQfRfvuY4kKgEXj25VNyQPk0G++F2IkIOsVmmAGWx7jIny+M2hq6D0ZDj7BwbhE13Nc62QiKHLqFzkBNQomtBr8WpoAgaHpE9hc8eqXsSq73xlsaQMo5wEKoijJxSRIZGYn2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732820727; c=relaxed/simple;
-	bh=TGz/gRp6g/hAX+W8VpDqafS+O5d3xzNQzd0Hcui57FY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ly6Rc7lrriFIzH/fxMnR6l3v2CTKBBs4ET2ITTW1NnRSddBuOLmWo5qdfXYLdfXy9fHHRkgdqfGVBtfwlcu30UqxzXlIjiJYd1dBZPWUgZPVldrsCSFK/LO53m2SJ0TAcimjxKX03piekDSz2usbmDn+3/rwpwn47oZnlRHs/u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hLTiLmCC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a099ba95so10304355e9.0;
-        Thu, 28 Nov 2024 11:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732820723; x=1733425523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x030wcXN3XejZGrsIlbUm8x1eM2wwwHskSKWwVcxZj0=;
-        b=hLTiLmCCP0H1gVVcLbJy3njRed63kGceF7fdo7VOyQadv/nOozBW/L12oa7dS33dua
-         itpC58wHzZMcPX4dz7qtVrmn/8vpZVeeHOPK0DVWlKm+bWQk0ew4Kk9XEFu+sX+uPBF1
-         M11wztaUqVN2lS2Lwv8+TQNjIbdqKPOiiL4Jmx9hkfb0KxqzBSmToQ+OqU+AbsKJ6cgj
-         opkc2GW5GGKsKic+qpzGvgeBEFfa6ElZFv682Q839FO2tMSInpg0ulik+ipRbZJSTE8C
-         f0Zo1PQ4ODPvkc7vvQZuBMd4aolN7l0FoXt4qh6MHGF5YBxrrMHzmtvoCQDw/bhfM1Zh
-         TWKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732820723; x=1733425523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x030wcXN3XejZGrsIlbUm8x1eM2wwwHskSKWwVcxZj0=;
-        b=UY4yWCIUk4SDnYmZ1Qc2GTl52DGKrTa3L+IvXuO442WArFN++6Dz7CB2HCn052jWQp
-         UVQ/fGkOyyoaBa7uIqMJzMPuidP9MQHSr1EjSFBB7Us7hD21UNuK/epGFjZh+whn0NF4
-         Iph5rkG8EmUAuvK2Jd1VL86w7y9q/BA1EW+TBAvd0YK40WRTRprPQ6JEK1TMlLxNj4Bs
-         oXNMomLk1DhlYqVIkY6Y/uR+rONWP3bqhj22M1sm1n3eXsSN9tnhkZ4EfwLStSbft/aB
-         mXTDz4kUin5lUdv25mwyjhBcpickGxKBylgaNBVSHzcOTAWFFtWIyLSoTkk4KODVqUz2
-         FZWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzDxfo0G+f4m5a1qubxBzYungsvbTwUFTkKzFHR6H/QYPBTc5YHyTuH6zWriGAqIveYw=@vger.kernel.org, AJvYcCVn6beULSkbe9EH5mVkdPKhzIc82OeushOMOpMO/srNCzCtEUFS/MAjhQhvE9SNivWeYFu+nU9LTqOPe6gOn4BQaLVI@vger.kernel.org, AJvYcCW4oImqA33TvprS6vyO4JIOBgNlplN/0VSgQhKZfSLoLJQ+ptBZ1viFWT/Pi0iirP11n9mIM3F6X0CD2k1i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyar2wBeNMjx0dLTs0+4KxVmkxlRi1jvgdEu+3AfnL6eY9nIbiv
-	/Od0WpZ5oj4HkAgIUIVUWlXQb2jqzGXb0m91vLACrbD5IKPQ2Wt/dd8WsTz3c7NpG/YoPyBBdla
-	uLqHlWkZPy2WP2UTmygw3anQ2Ikw=
-X-Gm-Gg: ASbGnctKrOvr+d/UN6Csdwop0VVhX7cj8+NS/B0XRG7ZD293E6gVUjbkxDTP+oixR26
-	aLgK1QbAo5D5c6xdG0FPk6UJshnPCkA==
-X-Google-Smtp-Source: AGHT+IH3fCX0e0rFd+HZh7RVQbxnXMzu7+VAlZVC6COpEQrXCJNtNJZ/3frl9kz/JjCu3qKF3LVnN61Q6eq9MFXzQ04=
-X-Received: by 2002:a05:600c:4f85:b0:426:647b:1bfc with SMTP id
- 5b1f17b1804b1-434a9df22c0mr88230425e9.30.1732820723418; Thu, 28 Nov 2024
- 11:05:23 -0800 (PST)
+	s=arc-20240116; t=1732820843; c=relaxed/simple;
+	bh=iPWl00cmy65aQXRSlQM/pa3s4vZBSf7ExQQPBg1K17I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t57gevoS9THM22wYTuYSF/+LuCo+6gMqugJ/YF/i1NZDOJ4KXMXkq9qWVbT4FkxIkrZO0PU1qvidzN0TQ7i5Qakw115luRx42JhGw32570o+ZPU1QvF6nshIWgvSzCn4H+jhvCqI3BhNxUT3P3+gePtClhgs8yTyL4WG3sgFyNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rE2R1gY+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id ACB6F526;
+	Thu, 28 Nov 2024 20:06:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732820814;
+	bh=iPWl00cmy65aQXRSlQM/pa3s4vZBSf7ExQQPBg1K17I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rE2R1gY+7FRoxlZpC+bhImNCX0tL2fhHgzg0pDVwenEF0/gnjDZ9+RI2J2XXDoLaT
+	 3aDwEN2baKLWvvBPL74ZygAG31MdhfrXTShxM2Y4y6ma+AyqyThRAbgWP1eDCIBqJs
+	 Vy98zMq4TytKVP0sFCZtv17rK8WjP//YGBGot6kg=
+Date: Thu, 28 Nov 2024 21:07:07 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, workflows@vger.kernel.org
+Subject: Re: [PATCH] docs: media: document media multi-committers rules and
+ process
+Message-ID: <20241128190707.GA13852@pendragon.ideasonboard.com>
+References: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+ <20241126151930.GA5493@pendragon.ideasonboard.com>
+ <e0535e20-6e97-437f-8565-53fd257c7618@xs4all.nl>
+ <20241127132515.GH31095@pendragon.ideasonboard.com>
+ <20241128191543.289f0d84@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127140958.1828012-1-elver@google.com> <20241127140958.1828012-2-elver@google.com>
- <CAADnVQL6yyRRUc1Xee4HOQ0QXEiqQ7M-xJ109w9aztYH4ZWHmA@mail.gmail.com> <Z0i4DFnqRxTPOUfJ@elver.google.com>
-In-Reply-To: <Z0i4DFnqRxTPOUfJ@elver.google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 28 Nov 2024 11:05:12 -0800
-Message-ID: <CAADnVQK0y_moywsFDsHLPsNZXnZQVJig7dN7J9khVv2gNq414g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 2/2] bpf: Refactor bpf_tracing_func_proto()
- and remove bpf_get_probe_write_proto()
-To: Marco Elver <elver@google.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Nikola Grcevski <nikola.grcevski@grafana.com>, 
-	bpf <bpf@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241128191543.289f0d84@foz.lan>
 
-On Thu, Nov 28, 2024 at 10:36=E2=80=AFAM Marco Elver <elver@google.com> wro=
-te:
->
-> On Thu, Nov 28, 2024 at 10:22AM -0800, Alexei Starovoitov wrote:
-> [..]
-> > Moving bpf_base_func_proto() all the way to the top was incorrect,
-> > but here we can move it just above this bpf_token_capable() check
-> > and remove extra indent like:
-> >
-> > func_proto =3D bpf_base_func_proto();
-> > if (func_proto)
-> >    return func_proto;
-> > if (!bpf_token_capable(prog->aux->token, CAP_SYS_ADMIN))
-> >    return NULL;
-> > switch (func_id) {
-> > case BPF_FUNC_probe_write_user:
-> >
-> > that will align it with the style of bpf_base_func_proto().
-> >
-> > pw-bot: cr
->
-> Ack, let me change that.
->
-> Below is preview of v4 for this bit.
+On Thu, Nov 28, 2024 at 07:15:43PM +0100, Mauro Carvalho Chehab wrote:
+> Em Wed, 27 Nov 2024 15:25:15 +0200 Laurent Pinchart escreveu:
+> 
+> > > > I think this goes a bit backward, and mixes things up a bit. On the
+> > > > mixing side, the expectation of timely reviews comes from maintainer
+> > > > status. Having commit rights is orthogonal to that.
+> > > > 
+> > > > The goal of direct commit access is to speed up maintenance, to get
+> > > > patches reviewed and merged quicker. Are we saying here that if someone
+> > > > has commit rights they will lose them if they take too long to review
+> > > > code ? That would then slow down maintenance even more, which seems
+> > > > counterproductive.  
+> > > 
+> > > Someone with commit rights is also a maintainer, since that's how you
+> > > gain the trust to get those rights. If you do a poor job of reviewing
+> > > patches relevant for you as maintainer, then you loose that trust.  
+> > 
+> > This is I think the point where our expectations are the least aligned.
+> > I'm considering "committer" based on what is done in drm-misc. A
+> > committer is essentially a developer who has demonstrated they can
+> > follow a documented process to push their own patches. They are given
+> > push access as a shortcut, which frees time for the subsystem
+> > maintainers who don't have to pick patches manually from the list (or
+> > handle pull requests). That's the official side of it. The barrier to
+> > entry is intentionally kept very low to ensure that committers won't
+> > decide to use the legacy workflow due to expectations of additional work
+> > load. Committers are not required or even asked to take any extra work.
+> > It's still a win-win situation: subsystem maintainers have less work,
+> > and committers can get their patches upstream more easily.
+> > 
+> > Then there's the other "secret" goal: through handing out committer
+> > rights, the maintainers hoped that a subset of the committers would
+> > become more involved, grow more knowledge about the subsystem, pick up
+> > third party patches, review or cross-review code, ... And that worked,
+> > DRM has grown an active community of developers who go beyond their
+> > personal needs and help with maintenance more broadly. Dave and Sima
+> > deliberately decided to favour the carrot over the stick, and I think
+> > the events that followed proved it was the right decision.
+> > 
+> > This is what I would like to see replicated in the media subsystem. Even
+> > if a committer only handles the single driver they're interested in and
+> > push their own patches, it's still a win for everybody involved. By
+> > making the barrier to entry low, we will make it possible for people who
+> > would have been scared of volunteering to become part of the community,
+> > and over time handle more responsibilities. Setting a higher barrier to
+> > entry will scare those people away. Even myself, if I'm expected to do
+> > more than what I do today to get commit rights, I won't request them.
+> > Everybody will lose, I will have to keep sending pull requests, and you
+> > will have to keep handling them. Both of us will lose time that we could
+> > otherwise use for reviews or other tasks beneficial to the subsystem.
+> > 
+> > More importantly than the exact wording, it's the core principle of the
+> > committers model that we need to agree on. If we don't have the same
+> > expectations it will clearly not work.
+> 
+> The reality on media is *very* different from DRM. With DRM, most
 
-lgtm
+We're designing a process for the future, it's up to us to design what
+we want to achieve.
+
+> drivers have multiple developers working on it, and the more important
+> drivers typically have dozens of committers. The vast majority of such
+
+There are a few corporate-backed drivers that have bigger teams, but
+apart from that, it's not as well staffed as you seem to imply.
+
+> committers aren't listed at MAINTAINERS file for the drm drivers they
+> commit patches.
+> 
+> On media, there's usually just one person that maintains the driver
+> who will become a committer if they want.
+> 
+> Right now, my expectation is that *all* committers will also be
+> a maintainer, e. g. they'll all be listed at MAINTAINERS file,
+> being responsible by one or more driver.
+> 
+> Besides that, the multi-committers will replace the current
+> sub-maintainers workflow.
+> 
+> We also need to do a slow start to ensure that media-ci, patchwork,
+> CI integration with patchwork, etc will work properly.
+> 
+> With that in mind, every committer has duties of reviewing other
+> developer's patches submitted for the drivers that they're listed as
+> a maintainer at the MAINTAINERS file entries.
+
+I'm sorry but that's not a multi-committer model, it's a co-maintenance
+model. If that's what you really want we can reopen the discussion and
+start anew, but I don't think it's a good idea.
+
+As I said before, if it increases my work load, I don't want commit
+rights. I'll keep sending pull requests, you'll have to keep processing
+them, and patches will be merged slower. It will be a lose-lose
+situation for everybody, you, me, contributors and users.
+
+Starting with a situation where we are understaffed and trying to solve
+it by putting more work on the few people who currently keep the
+subsystem alive doesn't sound like a winning strategy. 
+
+> > > >> +If you are doing such tasks and have become a valued developer, an
+> > > >> +existing committer can nominate you to the media subsystem maintainers.  
+> > > > 
+> > > > https://drm.pages.freedesktop.org/maintainer-tools/committer/commit-access.html#access-request:
+> > > > 
+> > > > "Maintainers and committers should encourage contributors to request
+> > > > commit rights, especially junior contributors tend to underestimate
+> > > > their skills."  
+> > > 
+> > > In drm is it the contributors that request commit rights? Or is it those
+> > > who already have commit rights that invite others? Currently the plan for
+> > > the media subsystem is the second method. Although that might change in the
+> > > future, of course.  
+> > 
+> > The process is documented in
+> > https://drm.pages.freedesktop.org/maintainer-tools/committer/commit-access.html#access-request.
+> > It requires explicit action from the candidate, as they have to create a
+> > gitlab.fdo account, and request commit access by fiing an issue in
+> > gitlab. You can see the issue template at
+> > https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/new?issue[title]=Request%20for%20Commit%20Rights&issuable_template=commit_access,
+> > which is roughly speaking the equivalent of the mail template in this
+> > document. In practice, as mentioned in the documentation, people often
+> > underestimate their skills and lack confidence to ask for committer
+> > access. That's why the documentation states that maintainers and
+> > committers should encourage contributors to request access.
+> > 
+> > I like that model because it requires an explicit action from the
+> > contributor to show that they have an interest, and it also makes it
+> > possible for people to request access without having been nominated. It
+> > doesn't mean that access will be automatically granted, there are still
+> > acceptance criteria, and it's a maintainer decision at the end of the
+> > day.
+> > 
+> > Stating as done in this patch that an existing committer can nominate
+> > someone implies that contributors have to wait until they get notified
+> > they can join The Chosen Few. It's not very welcoming, and given how
+> > busy everybody is, valuable contributors may need to wait for longer
+> > than they should before someone thinks about nominating them.
+> > 
+> > I wouldn't expect a change of wording to result in any practical change
+> > in the process, it is only about being more inclusive and welcoming in
+> > the document. If we want to create a vibrant community, people should
+> > feel not just welcome, but also desired and valued.
+> 
+> The model we're implementing is that the action of becoming a
+> committer will also have a step where the contributor will show
+> that they have an interest.
+> 
+> Yet, right now the goal is to implement the model starting with
+> active media maintainers.
+> 
+> Once we get there, and after a couple of kernel releases to test
+> that everything is working as expected, we may aim to carefully
+> expand it.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
