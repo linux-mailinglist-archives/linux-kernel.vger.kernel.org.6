@@ -1,237 +1,201 @@
-Return-Path: <linux-kernel+bounces-424248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D269DB209
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 344079DB20B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24F48165263
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3C2165532
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506EB1369AE;
-	Thu, 28 Nov 2024 04:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73543135A63;
+	Thu, 28 Nov 2024 04:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYK24fuT"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qY/hWeGS"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875DD134BD;
-	Thu, 28 Nov 2024 04:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732766680; cv=none; b=DKCmlgI2a87mWohFvNynICn0r9bfQoJRMywRo/3hB20p3JNo3Hw5QSOU4+iD0+wa2DFw/KEO3ge9IrnQqIZYh2ESiDd8yYJsgMfuZWgeAZ7z8XgTYuXlh81XTMRuacmCQkjfq/CQ8eniYSTlidaiG+mN0+FiLJxM/F10SENwFDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732766680; c=relaxed/simple;
-	bh=a/wQokmDWnAXvA0ciOFVwoUQHroroKOswWbDyoczoo8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Vat/qUO3sXLg3VI/8u2EAGp8XSGt7SHCROt2Hn6r/cALRL3UyeC9Q1mnxXfLbevVVPdLtX07rN7+hGkuRFmztcLedyFPi/+EmpKTFYh6jIJcs/r5Yss7LoFYq0W4+FA0JWOTia2KXhF5k0AjrQN+kbgvgZasX7Cfj99qSnsaMOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYK24fuT; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-212583bd467so3397775ad.3;
-        Wed, 27 Nov 2024 20:04:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732766677; x=1733371477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mdo8hi9A09XvCUMFQQtNlaibVX3RLcTHnaQ9Hl5QeFo=;
-        b=RYK24fuTqyPwY3rwn+S9RNpvwu1lbxWbYXYx/zzp84FsAKQrHmRE+ZBroN3+t1zNwy
-         DGhe7hzYoWeW46LinE7nPKAZh/bK62Xo+UH1bq1blmdgwEZGVYNTp1cvR39gw4n0wzl6
-         CAy5GsYJt/5R5rZsoh467AWeQQT1ier/djCDnTDghuGzSeSk1IPXQGor8kAeeq5LmkAG
-         QHXFNUDmffk8jrQ3wn2ejW3YCHMuxrUdo+YSdwUP+pZXJBSgxbiit0/tJcVtEHfkRwvQ
-         wrlKzRDnLXgkK35x2lVu1+RV4Ws2ytIqFk0ZzQO1uraY6WRGgMkQvWofvUfg9bGs/Wmg
-         dTvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732766677; x=1733371477;
-        h=content-transfer-encoding:cc:to:subject:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Mdo8hi9A09XvCUMFQQtNlaibVX3RLcTHnaQ9Hl5QeFo=;
-        b=F95ilOB7NaDnFoNqPXRqdK00op/EziJSRvTD5cTsy7jAZJbQaSkOG+bQBYvcGa5zrj
-         kfvBM9dna849lngAqhdd64MwkCIaFVgSqxvkG0vL6Er20+ErzTINb2l8FnY/ZgA/nRHM
-         n2/ZvIEet/yCB+7YJmueTyHqIY9kpeSlEbrnvuUn3MySdvfmt9y+1yFUTQFZhPG3tLyo
-         MYXyop0TP0H8qsUMvGZCpGbkKJcQwAbmXdqD36/0fkOeDVIiGhUILDi2b4vi02rORFM6
-         +kKYjJ15CQMnWy+ipAKjQEJ2YOu+u6WEHbsZZIZdzdLQdZ8aXtC5cAKIU9BQ0bZ3iPzA
-         oGRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPPKX4riqAfNANW9AG4I04FNPcong32Vhi0VQstv7ebsvtesuRle3l0tbF0aWdMV4mq5fmk31RP21xJ3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOnV0fRxyfkD0o4TPlJkTI0733PUYFi0yoPK6xmLQ3RaUxamcR
-	jLAV6nYgRXdWsrBsYlKPjQ5VeMR2A/7q0hs/dawdH1sKQVqXYWKMvJO9kAxNpNw=
-X-Gm-Gg: ASbGncschrd73O5ecRTuRl8PC0Is9fvPLnMtHBYeZo4qBOacnP7Et8TYkS50te+R6wT
-	kXhnY32Ap+8x9eBtomAD6YkiJpN/enmd9XpqAZTvKyCX4zUbPAJkRsz0tyUuvidwORi8oqSNaY/
-	9WSRPw/C+HUYZ5jIDaxxvRT9QvypoGgzGug2okyUShXZd8WGA2k/IFzeNUPAk6K4v7+5tpA8uqr
-	IuVruL/ORFXzSzkOEGGc4/A5MSRVB7+94IxR/c0YXja+0pkY93Isjb2r4mK9kS601Xsc87aTK8y
-	8g==
-X-Google-Smtp-Source: AGHT+IFC214M7/WZA/GJ3HXTq60altY0eM9aZSbzRNiMN6sJViY4KSvVqWu1p2spaItHM9Qe2r4LOQ==
-X-Received: by 2002:a17:903:40ca:b0:212:68c2:4e01 with SMTP id d9443c01a7336-215010909d3mr68884075ad.17.1732766676698;
-        Wed, 27 Nov 2024 20:04:36 -0800 (PST)
-Received: from [192.168.255.10] ([43.132.141.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215219672e7sm3583965ad.130.2024.11.27.20.04.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Nov 2024 20:04:36 -0800 (PST)
-Message-ID: <be26c9d6-ff51-4399-b47d-8a0d4413ce0d@gmail.com>
-Date: Thu, 28 Nov 2024 12:04:34 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2EA134BD
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732766732; cv=fail; b=E3BX454NTTiBCwyJ/xbRTQpA5mJFbAIzsBGzmeQlxOK3010VCYe/TIkVwsUKeU6Zk2Fi+wyFK1NUOKHSTFhvxXoDKn6W+at+NbMo7qjtpTsJububuePV/Pv8yFpF8eaXO3c5NsD0gWM7TYLav6WRvz27tmX2vzKpqTpSkegM4/w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732766732; c=relaxed/simple;
+	bh=f40S8r6wyjsUO9sPa7vuMJ3ZK7VbyS/eAn6VYiVTa1w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E5dngYeIjo5KyhvSypcVFDDdCXPVk1JGJR5Wxek9xR+x/XOQLehg+HHyYHcAxj61hnTem4Q6G95sCL/FZ0tUuKITlyoo/Yt0c5ZTS7qEfvssGKgIZo2fa6REpBDkB1pRoKJpSssJN/6nUrAxdknlfq2EKQAXRxCHvmPmmdHZkQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qY/hWeGS; arc=fail smtp.client-ip=40.107.223.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UAdVHODAFzsHp35MQB4DaMU5Q8evtXqWmiM3NCQHs2/iISUCZjcy6A2QMtsAccIdokfd7S63D8k4rsZanlRzv+lAjaIdeNzKpSLg6Kp9+LNdstPmiBgk9xstp3maBV1WWEUvd3WMemIaqAsGHwJq3Y1o8zSntZ9uEmWewQr3qr22rrR3xEOdNvsCt4/+n5QdS5XCzA7Bi9pX0oFAvmjdXcPeBb1h3T64FlSlXr6qUAEjW7VjXHl88KgLivR94U3YaftJizsF8SsOn6pC7BRFbrtmzG8W1oMO806vUKYbRgOAbzH9au8mQkhZE3wymd2qrvu+3S8aZ0Q0HeLNiEVnLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MQcC5AyGjZ0uWY4W3I9YwimZSpBZYyaoMGe4WI/HDqs=;
+ b=qCyRy27y9dnTzYBXJD6kSaNs8XOUqT1q4sESH9PvdqFAqd6UTAv/d4f+DmDXYZtVWJ2Tnp4EyO9AlVscigEGMAYqxGSG11pR7Eni1JAOojW4NudLP3/aTBChiDZ+mM66GTvTYDIjW2AALAFf/G0l6OnG04QtwpKZ7k0wJ3VnlwlBMG42nis6cey8UMHrtBjymXWUd3ISwoDXCPSyMIMPam0wTPVy4Y/4L5zi+Wrd9+1q55uUiPpaw7cfAVU09rE/j44xkX2xxqOliWa3+Rkg02lqsB+9t6YjqjJwX3lHrsMV7u5sfvfoRgtxQRBZ+XyV7ZZkiCC6sdMdiHAm3NyUMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=infradead.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MQcC5AyGjZ0uWY4W3I9YwimZSpBZYyaoMGe4WI/HDqs=;
+ b=qY/hWeGSvhfRUsjiuTiih8dRtWiI1iI+NG+Lt7k7aBjpwSs5NEkHCzRBgt/S+WqX+wvlCqKmydMW4mIY/q7KT3flEAVoHA6FjkW6d2KFWCz8B+yBFm0NEXw8byT2oUamAPWOCFqYdlovrip495+crW17P27vUwnM3rqkyK7tJxoRaDwoXTtiBK0qdfTyvYGV1FcpAvSJ75j3u1qMMFukPUjmxmdX37DYPwdAEoaoYUXnSX9/QootpHINlMZIMmjk8hAT/NVkAx36qNMcCntV7r7jVNmPlrK1xatxaRe6QwYdfeW9dJrHy5UJpx7eXszwJIdYaIdZleJXqVJ6xED6FA==
+Received: from CH0PR03CA0214.namprd03.prod.outlook.com (2603:10b6:610:e7::9)
+ by SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Thu, 28 Nov
+ 2024 04:05:27 +0000
+Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
+ (2603:10b6:610:e7:cafe::75) by CH0PR03CA0214.outlook.office365.com
+ (2603:10b6:610:e7::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.12 via Frontend Transport; Thu,
+ 28 Nov 2024 04:05:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.12 via Frontend Transport; Thu, 28 Nov 2024 04:05:26 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 27 Nov
+ 2024 20:05:11 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 27 Nov
+ 2024 20:05:11 -0800
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 27 Nov 2024 20:05:10 -0800
+Date: Wed, 27 Nov 2024 20:05:08 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Eric Auger <eric.auger@redhat.com>,
+	"Vasant Hegde" <vasant.hegde@amd.com>, Joerg Roedel <jroedel@suse.de>, Jason
+ Gunthorpe <jgg@nvidia.com>, Kevin Tian <kevin.tian@intel.com>,
+	<iommu@lists.linux.dev>
+Subject: Re: [PATCH] iommufd: fix typos in kernel-doc comments
+Message-ID: <Z0fr9LhAL9digKCl@Asurada-Nvidia>
+References: <20241128035159.374624-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: abushwang <abushwangs@gmail.com>
-Subject: [performance] fuse: No Significant Performance Improvement with
- Passthrough Enabled?
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241128035159.374624-1-rdunlap@infradead.org>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|SN7PR12MB8603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1852a0b8-b0bd-41c1-d79b-08dd0f61e3f1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9poN5tyGRO1YxoJmfAETSPsII1ukzHYNXkjyB+hxgbbGiAY7DUHcL8/rotfa?=
+ =?us-ascii?Q?MXY5+SU9v4Ld6FnjSIErJgrrnDRGsWiHbLy4y0/al0KDMiwptPozgIUoVCze?=
+ =?us-ascii?Q?2XKft4eMNqxncQco9QM2Wk/V3EHdlbZl5idOlCxEzWhz4Bn08i9eSKfEGUx7?=
+ =?us-ascii?Q?wrC4ZLDGx6l+IAU6HKrHetAX9aIiKZkpbNNM8CiFDrt/uPwSuVX+7lPQpJY/?=
+ =?us-ascii?Q?oiKWGtnu+30tTB6sTVh8Ar0aY8ExsdhfhFzbU95DYHNHaeEFY1Rf3mtRt9S4?=
+ =?us-ascii?Q?BbbpofQY8ni8vYpVxoSGKZ/0equBT3NgSThABJQOUbnNSeFBsxKLP+CbR8AN?=
+ =?us-ascii?Q?NJ99n9mGCr5oeSMeTFFHzt5ljfCyVSvhIFaLXjwxQXtZIEOp5Rd8RGT1B9ss?=
+ =?us-ascii?Q?5Oajwl666vGNJ8Rn3WzkwPrGAtA3YhUk5DDzwBPLHILujpaNujRJQhUxqhel?=
+ =?us-ascii?Q?a2GWW/t50hiUFOlFBc/44R5GylJ5gP5VESJfOKGRfUcnwKRsGpUiCfvrFt+C?=
+ =?us-ascii?Q?YCybsBkAUUUFhdoG6p9DFnRm5Bthqgkuy3NHSYc+LvjQKOA+3TgWrn18ammS?=
+ =?us-ascii?Q?D/GWJvX0/93YUS3qtyfG4Nd1FcQQAWdAKOtwfXppNaeQIIkXDbyim0RXZ864?=
+ =?us-ascii?Q?w5NhvKIz1WRt46sIfSpS6HP6bEtes4xFSVVcg+hHqmWNFqIu3yyLx9cPkr5I?=
+ =?us-ascii?Q?aeq/yMcbj22dK6/GI0Z60hvFSe6eG9y/+hz48QCap2x2RIWCAyVFwCjCXBJc?=
+ =?us-ascii?Q?fLqhnsAokpq+qNO0Fyb4AD/EGu/LO2yL03E23c9dGZdaFQSmLuWh9PE9J/PK?=
+ =?us-ascii?Q?AM4WyRKhoHKQfp+aaoUl0gyYDwbaYsubGmhvHAk5ZhoEyhBLqLMEL0kZSlRa?=
+ =?us-ascii?Q?F4S+eQGqAYxj2YSbR8wnSdHnauX5FKmh6jWA5i7ckboQbkvxxBcG+I00Mxwy?=
+ =?us-ascii?Q?lW66+OG5YnhlSEr7902dSj0v6q607GkYa1xwomf7ZRfHPFJILLpUab7apWJ/?=
+ =?us-ascii?Q?30BXBA2EaQs8KEtCHF84JLB9PAMr0yY8iJYyE6rtr+fA9APZc/pYN8EZzQ/z?=
+ =?us-ascii?Q?/n1ZTm1V+6OC2g0D4yufjw2y3kb/K6tnEieuJmoMRtyel7FF+JeYJTXRzgL8?=
+ =?us-ascii?Q?nCRcFaAzMp3RVFH0eNzmfdkaPj0b7GFY9i9n48fNmk+rP0AucHLnsqFF3RDF?=
+ =?us-ascii?Q?b8MCYQwC/KvRJL37UtN4Ao0dor3UzUiWyqI5pD8FOm0j/2zp23IVCytyaMrr?=
+ =?us-ascii?Q?OyfUIo1plUyeXazEeDulQRfv8ptIti1upq4EqiAQiCz620G2HxfZ/A7hfpD/?=
+ =?us-ascii?Q?xxi2RCDk+taUE6fsA2YfgCOmkrPsWKIzTRGwTpep2MqnntaIflXC0O4KVJFd?=
+ =?us-ascii?Q?dK1d39LEEgNNR29qMMltd918LNvs6tCuNWfpOPOp2jlU10Gtem3YdE9NaUQC?=
+ =?us-ascii?Q?89F5EmuqfHiRX9Jd1/+tYLhc5QVWO0Ii?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2024 04:05:26.5437
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1852a0b8-b0bd-41c1-d79b-08dd0f61e3f1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343A.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
 
-I recently learned that FUSE has introduced passthrough support, which 
-appears to significantly enhance performance, as discussed in this 
-article: [LWN.net](https://lwn.net/Articles/832430/).
+On Wed, Nov 27, 2024 at 07:51:59PM -0800, Randy Dunlap wrote:
+> Fix typos/spellos in kernel-doc comments for readability.
+> 
+> Fixes: aad37e71d5c4 ("iommufd: IOCTLs for the io_pagetable")
+> Fixes: b7a0855eb95f ("iommu: Add new flag to explictly request PASID capable domain")
+> Fixes: d68beb276ba2 ("iommu/arm-smmu-v3: Support IOMMU_HWPT_INVALIDATE using a VIOMMU object")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Eric Auger <eric.auger@redhat.com>
+> Cc: Nicolin Chen <nicolinc@nvidia.com>
 
-I plan to develop some upper-layer applications based on this feature. 
-However, during my testing, I found that the performance of passthrough 
-for reading small files seems to be worse than that without passthrough. 
-Below are the details of my test cases:
-https://github.com/wswsmao/fuse-performance/blob/main/file_access_test.c
+Acked-by: Nicolin Chen <nicolinc@nvidia.com>
 
-I generated files of sizes 1M, 500M, and 1000M using the aforementioned 
-use case for reading.
-https://github.com/wswsmao/fuse-performance/blob/main/generate_large_files.sh
+Thanks!
 
-### Test Environment Information:
-
-```
-$ uname -r
-6.11.5-200.fc40.x86_64
-```
-
-```
-$mount
-/dev/vda1 on / type ext4 (rw,noatime)
-...
-
-```
-
-### Testing Steps:
-
-I cloned the latest code from the libfuse upstream community and 
-compiled it to obtain passthrough_hp.
-
-The latest passthrough_hp supports passthrough by default. Therefore, 
-when testing with passthrough, I used the following command:
-
-```
-ls -lh source_dir/
-total 1.5G
--rw-r--r-- 1 root root  1.0M Nov 28 02:45 sequential_file_1
--rw-r--r-- 1 root root  500M Nov 28 02:45 sequential_file_2
--rw-r--r-- 1 root root 1000M Nov 28 02:45 sequential_file_3
-
-./lattest_passthrough_hp source_dir/ mount_point/
-```
-
-For testing without passthrough, I used the following command:
-
-```
-./lattest_passthrough_hp source_dir/ mount_point/ --nopassthrough
-```
-
-Then, I executed the test script on mount_point.
-
-
-During debugging, in a scenario with a 1M buffer set to 4K, I added 
-print statements in the FUSE daemon's read function. In the without 
-passthrough mode, I observed 11 print statements, with the maximum read 
-size being 131072. Additionally, I captured 11 fuse_readahead operations 
-using ftrace. However, in passthrough mode, even after increasing the 
-ext4 read-ahead size using the command `blockdev --setra $num 
-/dev/vda1`, the performance improvement was not significant.
-
-I would like to understand why, in this case, the performance of 
-passthrough seems to be inferior to that of without passthrough.
-
-Thank you for your assistance.
-
-Best regards,
-
-Abushwang
-
-Attached is my test report for your reference.
-
-## without passthrough
-
-### Size = 1.0M
-
-| Mode       | Buffer Size | Time (ms) | Read Calls |
-| ------------ | ------------- | ----------- | ------------ |
-| sequential | 4096        | 7.99      | 256        |
-| sequential | 131072      | 6.46      | 8          |
-| sequential | 262144      | 7.52      | 4          |
-| random     | 4096        | 51.40     | 256        |
-| random     | 131072      | 10.62     | 8          |
-| random     | 262144      | 8.69      | 4          |
-
-
-### Size = 500M
-
-| Mode       | Buffer Size | Time (ms) | Read Calls |
-| ------------ | ------------- | ----------- | ------------ |
-| sequential | 4096        | 3662.68   | 128000     |
-| sequential | 131072      | 3399.55   | 4000       |
-| sequential | 262144      | 3565.99   | 2000       |
-| random     | 4096        | 28444.48  | 128000     |
-| random     | 131072      | 5012.85   | 4000       |
-| random     | 262144      | 3636.87   | 2000       |
-
-### Size = 1000M
-
-| Mode       | Buffer Size | Time (ms) | Read Calls |
-| ------------ | ------------- | ----------- | ------------ |
-| sequential | 4096        | 8164.34   | 256000     |
-| sequential | 131072      | 7704.75   | 8000       |
-| sequential | 262144      | 7970.08   | 4000       |
-| random     | 4096        | 57275.82  | 256000     |
-| random     | 131072      | 10311.90  | 8000       |
-| random     | 262144      | 7839.20   | 4000       |
-
-
-## with passthrough
-
-### Size = 1.0M
-
-| Mode       | Buffer Size | Time (ms) | Read Calls |
-| ------------ | ------------- | ----------- | ------------ |
-| sequential | 4096        | 8.50      | 256        |
-| sequential | 131072      | 7.54      | 8          |
-| sequential | 262144      | 8.71      | 4          |
-| random     | 4096        | 52.16     | 256        |
-| random     | 131072      | 9.10      | 8          |
-| random     | 262144      | 9.54      | 4          |
-
-
-### Size = 500M
-
-| Mode       | Buffer Size | Time (ms) | Read Calls |
-| ------------ | ------------- | ----------- | ------------ |
-| sequential | 4096        | 3320.70   | 128000     |
-| sequential | 131072      | 3234.08   | 4000       |
-| sequential | 262144      | 2881.98   | 2000       |
-| random     | 4096        | 28457.52  | 128000     |
-| random     | 131072      | 4558.78   | 4000       |
-| random     | 262144      | 3476.05   | 2000       |
-
-
-### Size = 1000M
-
-| Mode       | Buffer Size | Time (ms) | Read Calls |
-| ------------ | ------------- | ----------- | ------------ |
-| sequential | 4096        | 6842.04   | 256000     |
-| sequential | 131072      | 6677.01   | 8000       |
-| sequential | 262144      | 6268.29   | 4000       |
-| random     | 4096        | 58478.65  | 256000     |
-| random     | 131072      | 9435.85   | 8000       |
-| random     | 262144      | 7031.16   | 4000       |
+> Cc: Vasant Hegde <vasant.hegde@amd.com>
+> Cc: Joerg Roedel <jroedel@suse.de>
+> Cc: Jason Gunthorpe <jgg@nvidia.com>
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: iommu@lists.linux.dev
+> ---
+>  include/uapi/linux/iommufd.h |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> --- linux-next-20241125.orig/include/uapi/linux/iommufd.h
+> +++ linux-next-20241125/include/uapi/linux/iommufd.h
+> @@ -297,7 +297,7 @@ struct iommu_ioas_unmap {
+>   *                       ioctl(IOMMU_OPTION_HUGE_PAGES)
+>   * @IOMMU_OPTION_RLIMIT_MODE:
+>   *    Change how RLIMIT_MEMLOCK accounting works. The caller must have privilege
+> - *    to invoke this. Value 0 (default) is user based accouting, 1 uses process
+> + *    to invoke this. Value 0 (default) is user based accounting, 1 uses process
+>   *    based accounting. Global option, object_id must be 0
+>   * @IOMMU_OPTION_HUGE_PAGES:
+>   *    Value 1 (default) allows contiguous pages to be combined when generating
+> @@ -390,7 +390,7 @@ struct iommu_vfio_ioas {
+>   * @IOMMU_HWPT_ALLOC_PASID: Requests a domain that can be used with PASID. The
+>   *                          domain can be attached to any PASID on the device.
+>   *                          Any domain attached to the non-PASID part of the
+> - *                          device must also be flaged, otherwise attaching a
+> + *                          device must also be flagged, otherwise attaching a
+>   *                          PASID will blocked.
+>   *                          If IOMMU does not support PASID it will return
+>   *                          error (-EOPNOTSUPP).
+> @@ -766,7 +766,7 @@ struct iommu_hwpt_vtd_s1_invalidate {
+>  };
+>  
+>  /**
+> - * struct iommu_viommu_arm_smmuv3_invalidate - ARM SMMUv3 cahce invalidation
+> + * struct iommu_viommu_arm_smmuv3_invalidate - ARM SMMUv3 cache invalidation
+>   *         (IOMMU_VIOMMU_INVALIDATE_DATA_ARM_SMMUV3)
+>   * @cmd: 128-bit cache invalidation command that runs in SMMU CMDQ.
+>   *       Must be little-endian.
 
