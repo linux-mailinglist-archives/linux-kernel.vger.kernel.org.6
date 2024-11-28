@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-424098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F9A9DB094
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:01:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24B301678E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:00:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4293B125D5;
-	Thu, 28 Nov 2024 01:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxBb9Fru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2FC9DB096
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:02:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D4017BA3;
-	Thu, 28 Nov 2024 01:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F29B210EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:02:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5E0EEDD;
+	Thu, 28 Nov 2024 01:02:16 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B94847B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732755636; cv=none; b=EZyF1PqbMcODSKy9ENnVvmnX9vXlyI5BFMggXmpk/MWK7llg73omPOs8IGqha6vIQRcIeolYvbZHYZ87xUPKuYH4pFG4HyG7u58ef8fO1MlgMQu+m24AYljYiStNXurcEIv6L17+b4ZeZWWoa9yizeXkcr9LZg+c+ZSUyceeKC4=
+	t=1732755735; cv=none; b=dwoyexmTyoZQ8e1NE7/UcfTU66sf7hw7XpNNKS1sOYp1J8TOchgiLYs0oVDWOLZAhg9l2Ok0lsOdX8DRdft8WLE3n0ls7ldCjRNAbFJ2+nkz6A9qS5uin3vm+M4y9Rm76kEcTK3067V6cU2kE69D+NySWWV+7C/qaRcFxOhxnK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732755636; c=relaxed/simple;
-	bh=Z4UNfWg3zs+XouI51oSz59rP5PZwpgvoJs2Lh3iBN1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJkNunpBv4UxJaKQm2kF8JQ+sA5BZKBB3H30M5N9llWN8ikT2VK8neXKAuGXlWxcs87rNn4HeborL+RoODrExSmWhQ2ak53QyALy7017tBphDgarBNyB7T/bzvQea3xVgIO7OBws0xALL1qQ0DJZ7eAeZ2Kr911HqaGfd4hHVUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxBb9Fru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E021EC4CECC;
-	Thu, 28 Nov 2024 01:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732755636;
-	bh=Z4UNfWg3zs+XouI51oSz59rP5PZwpgvoJs2Lh3iBN1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kxBb9Fruj+TXYYv7dQFepie0vWCe1bmjuK1SSI/shMe7eXwOLB5OHH6TNYC2syydg
-	 OFnfEhjSrMXMzos6U5shcZjDZ3o20xxMrLGbnM+j8ZSajH+hJA2W2gZJ9k8K7UxJOX
-	 fIqV1OJa1dWan6fRziCJnqxldYh0WFZVmHOfsEQ4onRuQN+TZpw/ZmVLD/0o9aD9M6
-	 tdllv1mB0/str7k5TqvDyHhYdBCC31MpGgL3HdJ8lZMlCy1OAU5dBjAEIQQU34axTb
-	 RrSCqdYsuY6VPT2mE4Jf7DwiRMqmtnDskFb/AnujurllqlCWxUx0p5osltfS3+mpnX
-	 4DcJO/08jg5DA==
-Date: Wed, 27 Nov 2024 17:00:34 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+	s=arc-20240116; t=1732755735; c=relaxed/simple;
+	bh=YMLlvWRb+rvWVZmqbs40Wus76fGlfxqUJWIZlpYk3jc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CsmF2nQBSy84jf3wG1vJnXb+NhqTKOQ6hhOmZtwlDABIgoVbmrlWc2AkZmOjjunazIKiXjpmdNXovs9H8sFVuKIsKSpdodIe4NOEcbSZf4Lsw3rXZy6RPnRfUTrUv9aKviN/R1zPjjNdnu4dIjI1MXB4JSy7VeXNfz8jhjbrPig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.2.4] (unknown [60.17.12.134])
+	by APP-03 (Coremail) with SMTP id rQCowACXduwAwUdnELH7BQ--.8969S2;
+	Thu, 28 Nov 2024 09:01:54 +0800 (CST)
+Message-ID: <980b98978ab4ee912b37cb101ad43bce20b56dcb.camel@iscas.ac.cn>
+Subject: Re: [PATCH v2] riscv: module: use a plain variable for list_head
+ instead of a pointer
+From: laokz <zhangkai@iscas.ac.cn>
+To: =?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>, Paul Walmsley
+	 <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	 <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/10] objtool: Handle unsorted table offset of rodata
-Message-ID: <20241128010034.u3b7gkh4wqgb7d2s@jpoimboe>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-7-yangtiezhu@loongson.cn>
- <8cb35ab7-56d0-8e8d-5e18-1bc2b94aeeeb@loongson.cn>
- <20241127012042.by4g34m4twlfmove@jpoimboe>
- <53677c5f-2ea5-a227-66f7-b27c27665f6b@loongson.cn>
- <20241128001011.sjedpn2zhrhy6y6i@jpoimboe>
- <20241128001627.5czdlst5rd76qwsd@jpoimboe>
+Cc: Charlie Jenkins <charlie@rivosinc.com>, Andrew Jones
+	 <ajones@ventanamicro.com>
+Date: Thu, 28 Nov 2024 09:01:52 +0800
+In-Reply-To: <20241127142519.3038691-1-cleger@rivosinc.com>
+References: <20241127142519.3038691-1-cleger@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241128001627.5czdlst5rd76qwsd@jpoimboe>
+X-CM-TRANSID:rQCowACXduwAwUdnELH7BQ--.8969S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw45ur1rAF4kAF13ur45Wrg_yoWruFWkpF
+	18Jr1UJryUJr1xJr1UJr1UXryUJr1UJw1UJr1UXF1UJr17Jr10qr1UXr1jgr1UJr48Jr1U
+	Jr1Utr1UZr1UJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBab7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFcxC0VAYjxAxZF0Ew4CEw7xC0wAC
+	Y4xI67k04243AVC20s07MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s
+	026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_
+	JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14
+	v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xva
+	j40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJV
+	W8JwCE64xvF2IEb7IF0Fy7YxBIdaVFxhVjvjDU0xZFpf9x07jYwZcUUUUU=
+X-CM-SenderInfo: x2kd0wxndlqxpvfd2hldfou0/
 
-On Wed, Nov 27, 2024 at 04:16:29PM -0800, Josh Poimboeuf wrote:
-> On Wed, Nov 27, 2024 at 04:10:18PM -0800, Josh Poimboeuf wrote:
-> > On Wed, Nov 27, 2024 at 03:01:33PM +0800, Tiezhu Yang wrote:
-> > > 
-> > > 
-> > > On 11/27/2024 09:20 AM, Josh Poimboeuf wrote:
-> > > > On Tue, Nov 26, 2024 at 09:28:19PM +0800, Tiezhu Yang wrote:
-> > > > > > +		/* Handle the special cases compiled with Clang on LoongArch */
-> > > > > > +		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
-> > > > > > +		    reloc->sym->type == STT_SECTION && reloc != table &&
-> > > > > > +		    reloc_offset(reloc) == reloc_offset(table) + rodata_table_size)
-> > > > > > +			break;
-> > > > > 
-> > > > > I think it can be generic, like this:
-> > > > > 
-> > > > >                 /* Check for the end of the table: */
-> > > > >                 if (reloc != table && reloc == next_table)
-> > > > >                         break;
-> > > > > 
-> > > > >                 if (reloc != table &&
-> > > > >                     reloc_offset(reloc) == reloc_offset(table) +
-> > > > > rodata_table_size)
-> > > > >                         break;
-> > > > > 
-> > > > > What do you think?
-> > > > 
-> > > > I'm not sure, this patch is hard to review because it uses
-> > > > insn->table_size which doesn't get set until the next patch.
-> > > > 
-> > > > Maybe this patch should come after patches 7 & 8, or maybe they should
-> > > > be squashed?
-> > > 
-> > > OK, I will squash the changes into patch #7.
-> > 
-> > I remembered Ard already solved a similar problem when he prototyped x86
-> > jump table annotation.  Can you pull this patch into your series:
-> > 
-> > https://lore.kernel.org/20241011170847.334429-12-ardb+git@google.com
-> 
-> Actually, I think I'm going to merge patches 2-5 from Ard's series as
-> they're a nice cleanup.  Let me do that and then you can base your next
-> version off tip/objtool/core once it gets updated with Ard's and Peter's
-> patches.
+T24gV2VkLCAyMDI0LTExLTI3IGF0IDE1OjI1ICswMTAwLCBDbMOpbWVudCBMw6lnZXIgd3JvdGU6
+Cj4gcmVsX2hlYWQncyBsaXN0X2hlYWQgbWVtYmVyLCByZWxfZW50cnksIGRvZXNuJ3QgbmVlZCB0
+byBiZSBhbGxvY2F0ZWQsCj4gaXRzIHN0b3JhZ2UgY2FuIGp1c3QgYmUgcGFydCBvZiB0aGUgYWxs
+b2NhdGVkIHJlbF9oZWFkLiBSZW1vdmUgdGhlCgpPaCBteSBwb29yIEVuZ2xpc2guIE9LLCBpdCdz
+IG1vcmUgYmV0dGVyIHRoYW4ganVzdCBhZGQgdGhlIGxvc3Qga2ZyZWUuCgo+IHBvaW50ZXIgd2hp
+Y2ggYWxsb3dzIHRvIGdldCByaWQgb2YgdGhlIGFsbG9jYXRpb24gYXMgd2VsbCBhcyBhbgo+IGV4
+aXN0aW5nCj4gbWVtb3J5IGxlYWsgZm91bmQgYnkgS2FpIFphbmcgdXNpbmcga21lbWxlYWsuCiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBeCiAgICAgICAgICAgICAgICAgICAgICAgICAgIFpo
+YW5nCgpCVFcuIERvZXNuJ3QgaXQgbmVlZCBhIGZpeGVzIHRhZyBsaWtlIHdoYXQgeW91IHN1Z2dl
+c3RlZD8gKFRoZSBidWcKbWlnaHQgY29tZSBmcm9tIDYuNykKCj4gCj4gUmVwb3J0ZWQtYnk6IEth
+aSBaaGFuZyA8emhhbmdrYWlAaXNjYXMuYWMuY24+Cj4gU2lnbmVkLW9mZi1ieTogQ2zDqW1lbnQg
+TMOpZ2VyIDxjbGVnZXJAcml2b3NpbmMuY29tPgo+IFJldmlld2VkLWJ5OiBBbmRyZXcgSm9uZXMg
+PGFqb25lc0B2ZW50YW5hbWljcm8uY29tPgo+IC0tLQo+IAo+IFYyOgo+IMKgLSBBZGQgS2FpIFJl
+cG9ydGVkLWJ5Cj4gwqAtIFJld29yZCB0aGUgY29tbWl0IGRlc2NyaXB0aW9uIChBbmRyZXcpCj4g
+Cj4gLS0tCj4gwqBhcmNoL3Jpc2N2L2tlcm5lbC9tb2R1bGUuYyB8IDE4ICsrKystLS0tLS0tLS0t
+LS0tLQo+IMKgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0p
+Cj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvcmlzY3Yva2VybmVsL21vZHVsZS5jIGIvYXJjaC9yaXNj
+di9rZXJuZWwvbW9kdWxlLmMKPiBpbmRleCAxY2Q0NjFmM2Q4NzIuLjQ3ZDBlYmVlYzkzYyAxMDA2
+NDQKPiAtLS0gYS9hcmNoL3Jpc2N2L2tlcm5lbC9tb2R1bGUuYwo+ICsrKyBiL2FyY2gvcmlzY3Yv
+a2VybmVsL21vZHVsZS5jCj4gQEAgLTIzLDcgKzIzLDcgQEAgc3RydWN0IHVzZWRfYnVja2V0IHsK
+PiDCoAo+IMKgc3RydWN0IHJlbG9jYXRpb25faGVhZCB7Cj4gwqDCoMKgwqDCoMKgwqDCoHN0cnVj
+dCBobGlzdF9ub2RlIG5vZGU7Cj4gLcKgwqDCoMKgwqDCoMKgc3RydWN0IGxpc3RfaGVhZCAqcmVs
+X2VudHJ5Owo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBsaXN0X2hlYWQgcmVsX2VudHJ5Owo+IMKg
+wqDCoMKgwqDCoMKgwqB2b2lkICpsb2NhdGlvbjsKPiDCoH07Cj4gwqAKPiBAQCAtNjM0LDcgKzYz
+NCw3IEBAIHByb2Nlc3NfYWNjdW11bGF0ZWRfcmVsb2NhdGlvbnMoc3RydWN0IG1vZHVsZQo+ICpt
+ZSwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBsb2Nh
+dGlvbiA9IHJlbF9oZWFkX2l0ZXItPmxvY2F0aW9uOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShyZWxfZW50
+cnlfaXRlciwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVsX2Vu
+dHJ5X2l0ZXJfdG1wLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJl
+bF9oZWFkX2l0ZXItCj4gPnJlbF9lbnRyeSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAmcmVsX2hlYWRfaXRlci0KPiA+cmVsX2VudHJ5LAo+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBoZWFkKSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGN1cnJfdHlwZSA9IHJl
+bF9lbnRyeV9pdGVyLT50eXBlOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWxvY19oYW5kbGVyc1tjdXJyX3R5cGVdLnJl
+bG9jX2hhbmRsCj4gZXIoCj4gQEAgLTcwNCwxNiArNzA0LDcgQEAgc3RhdGljIGludCBhZGRfcmVs
+b2NhdGlvbl90b19hY2N1bXVsYXRlKHN0cnVjdAo+IG1vZHVsZSAqbWUsIGludCB0eXBlLAo+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRU5P
+TUVNOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+IMKgCj4gLcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlbF9oZWFkLT5yZWxfZW50cnkgPQo+IC3CoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga21hbGxvYyhzaXplb2Yoc3RydWN0
+IGxpc3RfaGVhZCksCj4gR0ZQX0tFUk5FTCk7Cj4gLQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBpZiAoIXJlbF9oZWFkLT5yZWxfZW50cnkpIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtmcmVlKGVudHJ5KTsKPiAtwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtmcmVlKHJlbF9oZWFkKTsKPiAtwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRU5PTUVN
+Owo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gLQo+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqBJTklUX0xJU1RfSEVBRChyZWxfaGVhZC0+cmVsX2VudHJ5KTsKPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgSU5JVF9MSVNUX0hFQUQoJnJlbF9oZWFkLT5y
+ZWxfZW50cnkpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVsX2hlYWQtPmxv
+Y2F0aW9uID0gbG9jYXRpb247Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBJTklU
+X0hMSVNUX05PREUoJnJlbF9oZWFkLT5ub2RlKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGlmICghY3VycmVudF9oZWFkLT5maXJzdCkgewo+IEBAIC03MjIsNyArNzEzLDYgQEAg
+c3RhdGljIGludCBhZGRfcmVsb2NhdGlvbl90b19hY2N1bXVsYXRlKHN0cnVjdAo+IG1vZHVsZSAq
+bWUsIGludCB0eXBlLAo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgaWYgKCFidWNrZXQpIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga2ZyZWUoZW50cnkpOwo+IC3CoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oGtmcmVlKHJlbF9oZWFkLT5yZWxfZW50cnkpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBrZnJlZShyZWxfaGVhZCk7Cj4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHJldHVybiAtRU5PTUVNOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoH0KPiBAQCAtNzM1LDcgKzcyNSw3IEBAIHN0YXRpYyBpbnQgYWRkX3Jl
+bG9jYXRpb25fdG9fYWNjdW11bGF0ZShzdHJ1Y3QKPiBtb2R1bGUgKm1lLCBpbnQgdHlwZSwKPiDC
+oMKgwqDCoMKgwqDCoMKgfQo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoC8qIEFkZCByZWxvY2F0aW9u
+IHRvIGhlYWQgb2YgZGlzY292ZXJlZCByZWxfaGVhZCAqLwo+IC3CoMKgwqDCoMKgwqDCoGxpc3Rf
+YWRkX3RhaWwoJmVudHJ5LT5oZWFkLCByZWxfaGVhZC0+cmVsX2VudHJ5KTsKPiArwqDCoMKgwqDC
+oMKgwqBsaXN0X2FkZF90YWlsKCZlbnRyeS0+aGVhZCwgJnJlbF9oZWFkLT5yZWxfZW50cnkpOwo+
+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoHJldHVybiAwOwo+IMKgfQoK
 
-Still talking to myself here, I think we'll only merge the above patch,
-since we don't know what the generic annotations are going to look like
-yet.
-
--- 
-Josh
 
