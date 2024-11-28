@@ -1,176 +1,165 @@
-Return-Path: <linux-kernel+bounces-424381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F209DB3B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:26:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DE99DB3BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55522282610
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC5C281B2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9997C1482ED;
-	Thu, 28 Nov 2024 08:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D8314B092;
+	Thu, 28 Nov 2024 08:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qfJT/mqS"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ReHHuzBi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7446314A639;
-	Thu, 28 Nov 2024 08:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973AE1482ED;
+	Thu, 28 Nov 2024 08:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782381; cv=none; b=E9yR7C7ZGuem3LiqFwyZr/n/e+RT0gc0/1VkFA4uarGgpWZ1DO772CPsr6hwuPinmepWVcbb7T76rRHdVEI9kH0UFTT/UryjCjbXIRY/Fw5+41DqmtaqfwrC4DqB4QbOfPISTRy8w3rneAR/Ot2uX4ffOlpjltXVcidoQIkGf9w=
+	t=1732782432; cv=none; b=q4nw7rtRc3bIr6bvrAOp1FgRLiwh+EFLK+fluhyJYoYC759LwR1wNpm2nUInlHATuiYBraw/59UOyG6pd/bewfWWQ7MEgOL+l1mQOXHsRbGmtCfHWQBj7gOxgpG6JNt/czr4s+SRNkACvoSUTr6s7JztsBNau7HzoYIV8OBe9W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782381; c=relaxed/simple;
-	bh=SEOf9b59rsVAnvw0F0BMCgnxDQ08vBA2KkFh016Tq2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j1jnLtCvhKFazuZloe8p2y8UUGW+janSh2fx5NnyZa/3N0ca5yLPTf97i6Qid4w6q4eQptniZgCrN/WVJOND+g4ZBIMaVKo0qBHprVZu/P0+bmbBJsHH0bl5OoSsmGPY1oQEtChR7wiuaweY5mLMfz/Asbz1XyjmCLsvvlP7a5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qfJT/mqS; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS7oRRb014074;
-	Thu, 28 Nov 2024 08:25:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/Bh0GF
-	51mC3o/RxYgNmHcCehmfBpXZNARIu36UpCSGk=; b=qfJT/mqSqclkYS88OL1Z9u
-	OJfo4rI/sKiXoNlnPvAhWRx2co9rtgllLGb/dgYZlAMmeB3k85bbj345AmRSgOuG
-	Jezp8CFT/Ih7OWAGWv1Fc8Iy/z0pWNBsCVFWfYaz/Bn/MEY/mOYgFEBnw2EwYtpQ
-	IykaDWgV66XQVfdWszKxlrde+ThTHf0ISDftG9u+Vt4uSfW7tfT+Z1ZlIpAZTIyZ
-	nES0OtBNwkOiGexGjlKpgwFsJpZ5f6RRgaOd2yBjMiDDs+QX6ex+/tbgIHIDidst
-	9MDXsbcvTDafoRJyBc4XjFr6v6JfFAxox6kzbznGs6NNQgg+BZPduRUrmOA5GZug
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366yybgx4-1
+	s=arc-20240116; t=1732782432; c=relaxed/simple;
+	bh=z60GP//s2n3zdGQZS67JacUbXYhH68n2H4fz4fiRzws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FtiqYrrQZhyoSNjq34wUdGK/QhyNLeWT+8n6umSwgZaq7N+lFe98Dulo7rRGXJTxndNnXj9qQnI8j4DAWj0RrkD2XgwpqIcihZaDimAXgHbTtaSfFz0IQ5NwRwMcqWSYDhpCqT9SHmKq/ThPGupusW70XQfeHE3HGX+n7MC/rNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ReHHuzBi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARGQaCw028888;
+	Thu, 28 Nov 2024 08:27:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lFSpMM/1LZHGjcfYNl5o7E5Lgs4vzBhEEiU4tRaP+Yw=; b=ReHHuzBioMEX3OBI
+	OeFmjRGSQLFlMUt3EBxpuOs4BLcabEuC1YJHnT9NVHt1yQnndP0ikWDeQde1YBza
+	a8kZ5vhQPBg6op63YBb8AuEmnZwnnKP4B4Lg7Lakv6PAxGzUJCbdE3SZsItDKzuY
+	BHXyuvGRzU89DJGxQDSJ0yr3IrpbOJbPV33Wnn/Y6PxbcEU9WV8Rl0gDRUKRtO3+
+	Sz/Aih4cYOQkQFc7GHwtyizxgezYdX04JRVYqyiBXBoAKmlpnWoAZsnbl4XRNi09
+	oQXKaeHIzlUe28+sQ9zsDjYTpE8AAXAt3WJUlLvyoQp8G95RNoL/KfA7dfUjXWrw
+	x4neMw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xxhvf8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 08:25:53 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AS8LGMs028952;
-	Thu, 28 Nov 2024 08:25:53 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366yybgwx-1
+	Thu, 28 Nov 2024 08:26:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AS8Qw5b012341
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 08:25:53 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS8MrcJ009800;
-	Thu, 28 Nov 2024 08:25:52 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43672f7xsm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Nov 2024 08:25:52 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AS8PmOn21233924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 28 Nov 2024 08:25:48 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E3BA82005A;
-	Thu, 28 Nov 2024 08:25:47 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 937B22004F;
-	Thu, 28 Nov 2024 08:25:47 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 28 Nov 2024 08:25:47 +0000 (GMT)
-Date: Thu, 28 Nov 2024 09:25:46 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Andrew Jones
- <ajones@ventanamicro.com>,
-        James Houghton <jthoughton@google.com>,
-        Muhammad
- Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH v4 15/16] KVM: selftests: Use canonical $(ARCH) paths
- for KVM selftests directories
-Message-ID: <20241128092546.7a5b3f30@p-imbrenda>
-In-Reply-To: <20241128005547.4077116-16-seanjc@google.com>
-References: <20241128005547.4077116-1-seanjc@google.com>
-	<20241128005547.4077116-16-seanjc@google.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	Thu, 28 Nov 2024 08:26:58 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 28 Nov
+ 2024 00:26:54 -0800
+Message-ID: <c73dfff4-2945-401c-a292-9225a6bd415b@quicinc.com>
+Date: Thu, 28 Nov 2024 16:26:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add initial support for QCS8300 SoC and QCS8300
+ RIDE board
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+        Xin Liu
+	<quic_liuxin@quicinc.com>,
+        Kyle Deng <quic_chunkaid@quicinc.com>,
+        "Tingguo
+ Cheng" <quic_tingguoc@quicinc.com>,
+        Raviteja Laggyshetty
+	<quic_rlaggysh@quicinc.com>
+References: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
+ <5a4a80e7-b6dc-4c01-a16d-ed8ea1aefe44@kernel.org>
+ <766219f6-a535-4eaa-b1cc-768e0522d71c@kernel.org>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <766219f6-a535-4eaa-b1cc-768e0522d71c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Q7ii93V04uamfY0V88_h7z7HgwyWCuzA
-X-Proofpoint-ORIG-GUID: HGem8ab_9QMRCJIRWqhAFghUEX4Ggu5a
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iA9UYIi4wpziYCCT4S4fx7PYBmaNVJti
+X-Proofpoint-ORIG-GUID: iA9UYIi4wpziYCCT4S4fx7PYBmaNVJti
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 bulkscore=0
- malwarescore=0 adultscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411280063
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2411280066
 
-On Wed, 27 Nov 2024 16:55:46 -0800
-Sean Christopherson <seanjc@google.com> wrote:
 
-> Use the kernel's canonical $(ARCH) paths instead of the raw target triple
-> for KVM selftests directories.  KVM selftests are quite nearly the only
-> place in the entire kernel that using the target triple for directories,
-> tools/testing/selftests/drivers/s390x being the lone holdout.
+
+On 11/27/2024 5:40 PM, Krzysztof Kozlowski wrote:
+> On 25/09/2024 16:01, Krzysztof Kozlowski wrote:
+>> On 25/09/2024 12:43, Jingyi Wang wrote:
+>>> Introduce the Device Tree for the QCS8300 platform.
+>>>
+>>> Features added and enabled:
+>>> - CPUs with PSCI idle states
+>>> - Interrupt-controller with PDC wakeup support
+>>> - Timers, TCSR Clock Controllers
+>>> - Reserved Shared memory
+>>> - GCC and RPMHCC
+>>> - TLMM
+>>> - Interconnect
+>>> - QuP with uart
+>>> - SMMU
+>>> - QFPROM
+>>> - Rpmhpd power controller
+>>> - UFS
+>>> - Inter-Processor Communication Controller
+>>> - SRAM
+>>> - Remoteprocs including ADSP,CDSP and GPDSP
+>>> - BWMONs
+>>>
+>>> binding dependencies:
+>>> - remoteproc: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com/
+>>> - ufs-phy: https://lore.kernel.org/linux-arm-msm/20240925-qcs8300_ufs_phy_binding-v3-1-c1eb5c393b09@quicinc.com/
+>>> - ufs-controller: https://lore.kernel.org/all/20240911-qcs8300_ufs_binding-v2-1-68bb66d48730@quicinc.com/ - Reviewed
+>>> - smmu: https://lore.kernel.org/all/20240911-qcs8300_smmu_binding-v2-1-f53dd9c047ba@quicinc.com/ - Applied
+>>> - ipcc: https://lore.kernel.org/all/20240911-qcs8300_ipcc_binding-v2-1-ca15326c5d0f@quicinc.com/ - Applied
+>>> - qfprom: https://lore.kernel.org/all/20240911-qcs8300_qfprom_binding-v2-1-d39226887493@quicinc.com/ - Reviewed
+>>> - tcsr: https://lore.kernel.org/all/20240911-qcs8300_tcsr_binding-v2-1-66eb5336b8d1@quicinc.com/ - Reviewed
+>>> - rmphpd: https://lore.kernel.org/all/20240920-add_qcs8300_powerdomains_driver_support-v1-1-96a2a08841da@quicinc.com/ - Reviewed
+>>> - bwmon: https://lore.kernel.org/all/20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com/ - Reviewed
+>>> - others: https://lore.kernel.org/all/20240911-qcs8300_binding-v2-0-de8641b3eaa1@quicinc.com/ - Reviewed
+>>
+> This submission has bugs and instead of fixing it, some other people are
+> sending already patches on top.
 > 
-> Using the kernel's preferred nomenclature eliminates the minor, but
-> annoying, friction of having to translate to KVM's selftests directories,
-> e.g. for pattern matching, opening files, running selftests, etc.
+> No, fix this patchset instead.
 > 
-> Opportunsitically delete file comments that reference the full path of the
-> file, as they are obviously prone to becoming stale, and serve no known
-> purpose.
+> Best regards,
+> Krzysztof
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
+Had an internal discussion with Cong Zhang, will combine the fixup in the
+following up series.
 
-just one minor nit
+Thanks,
+Jingyi
 
-[...]
-
-> diff --git a/tools/testing/selftests/kvm/include/x86_64/svm_util.h b/tools/testing/selftests/kvm/include/x86/svm_util.h
-> similarity index 94%
-> rename from tools/testing/selftests/kvm/include/x86_64/svm_util.h
-> rename to tools/testing/selftests/kvm/include/x86/svm_util.h
-> index 044f0f872ba9..b74c6dcddcbd 100644
-> --- a/tools/testing/selftests/kvm/include/x86_64/svm_util.h
-> +++ b/tools/testing/selftests/kvm/include/x86/svm_util.h
-> @@ -1,8 +1,5 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  /*
-> - * tools/testing/selftests/kvm/include/x86_64/svm_utils.h
-
-this line clearly has to go ^
-
-> - * Header for nested SVM testing
-
-but I think this one can stay? ^
-
-
-regardless, for the s390 part:
-
-Acked-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-
-> - *
->   * Copyright (C) 2020, Red Hat, Inc.
->   */
->  
-
-[...]
 
