@@ -1,96 +1,238 @@
-Return-Path: <linux-kernel+bounces-424973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59ECA9DBBEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:46:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B334A9DBBE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 18:43:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0540CB21596
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494B72834D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA2F1C1AB1;
-	Thu, 28 Nov 2024 17:46:44 +0000 (UTC)
-Received: from cygnus.enyo.de (cygnus.enyo.de [79.140.189.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BF41C1AD1;
+	Thu, 28 Nov 2024 17:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rHIRLOjM"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CA31BDAA2
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 17:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.140.189.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBF31C173C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 17:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732816004; cv=none; b=OzQL8eTeCr2mLoNs/CC88zO0NWGYCgCPT4rbk3FWXdZWZ3DJzMh0wDQtS812Q5iKyzFUUUCCBgM+g9z220kWxZppSY0fqgzwtqqNSefM2wfqGEQy/uS1SClVzyI01BoLMWeOGbxAO+0UZct5v6hj/9evhDxOy5q7CeFhfvInljg=
+	t=1732815790; cv=none; b=WZ1yHUR/86wSfmr87uipsFa3FLAPitisBbMKBTLzOTdBPiot6RqHjmCe8sEvA/IOLTTV61lICH4R1BE9wbn/nDBWewAY3vmt6g3vG6akOaNQ1SUUoB2npwCvlQkfjm5sNMgirVMawG/+VmImZaipe9Brllyve31obEVoQRm5IUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732816004; c=relaxed/simple;
-	bh=RcTkVVYuS7oBf3n2H0uuVQNF42cLbfeTdefPuZ9ig3I=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=Zc0bH3d0k2O2CabDTd/n0BAXZBeDNqnxqq93glKND3LJvcJiNmrp2zA5J1TfyHSf4lrl/sTcs8AHOpxz5CS1pnXsjZww8IZGmQpBZEKyWVMGXr8p4/+2VBDhntxXycaEoq1QPeReqUs6dGLDhFhMw49X6924HMLi/kENRBwrFz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de; spf=pass smtp.mailfrom=deneb.enyo.de; arc=none smtp.client-ip=79.140.189.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deneb.enyo.de
-Received: from [172.17.203.2] (port=50781 helo=deneb.enyo.de)
-	by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	id 1tGiVu-008fTg-26;
-	Thu, 28 Nov 2024 17:41:14 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.96)
-	(envelope-from <fw@deneb.enyo.de>)
-	id 1tGiVu-000Jbd-1o;
-	Thu, 28 Nov 2024 18:41:14 +0100
-From: Florian Weimer <fw@deneb.enyo.de>
-To: Rui Ueyama <rui314@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Wislist for Linux from the mold linker's POV
-References: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
-Date: Thu, 28 Nov 2024 18:41:14 +0100
-In-Reply-To: <CACKH++baPUaoQQhL0+qcc_DzX7kGcmAOizgfaCQ8gG=oBKDDYw@mail.gmail.com>
-	(Rui Ueyama's message of "Thu, 28 Nov 2024 11:52:35 +0900")
-Message-ID: <87ttbrs1c5.fsf@mid.deneb.enyo.de>
+	s=arc-20240116; t=1732815790; c=relaxed/simple;
+	bh=RjReZj0QDzpFI7Q/vMsPmi2g8ogk0HU+HpzCZa4NdQ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=muIAkCj6bKVbZ3IDXDsF7BLVsYR7PWyWQ8dZORn88MQawKBNRR/n+NIu33LH++zlGFO9K4CHqdeajvzcxxaXHRZU7qonok0yHJTShN1h7MSwyYmYgU1XXO1N21qzPBO0i5qLNTs1rA7xRpIoWpcElaG+1Hqst1dggjppevmlLXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rHIRLOjM; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732815785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UTJusEyLcdkeaTqu07tNbbd+H/RHd4566STj5QW1iJE=;
+	b=rHIRLOjMokzLXIcWoYkQRZQAdNEhxX+svwO+8hBUAEc+JHJic39XNTIjjguYhIPP/hLHYw
+	Ycb/qKvZ7XzV/eVsO3eFIoCkrRR1RtKBCtjpNza7rqj/OTiLw1imLltN2XvnGsQYETP9Z1
+	8nhCy5k1PXkiRZKVVcZ3mRyKKIAmZdw=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Luis Henriques <luis.henriques@linux.dev>,  Goldwyn Rodrigues
+ <rgoldwyn@suse.de>,  Xiubo Li <xiubli@redhat.com>,  Ilya Dryomov
+ <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
+ doing a file read
+In-Reply-To: <CAO8a2SjWXbVxDy4kcKF6JSesB=_QEfb=ZfPbwXpiY_GUuwA8zQ@mail.gmail.com>
+	(Alex Markuze's message of "Wed, 27 Nov 2024 15:47:02 +0200")
+References: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
+	<87ldxvuwp9.fsf@linux.dev>
+	<CAO8a2SjWXbVxDy4kcKF6JSesB=_QEfb=ZfPbwXpiY_GUuwA8zQ@mail.gmail.com>
+Date: Thu, 28 Nov 2024 17:42:43 +0000
+Message-ID: <87mshj8dbg.fsf@orpheu.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-* Rui Ueyama:
+Hi Alex,
 
-> - exit(2) takes a few hundred milliseconds for a large process
+[ Thank you for looking into this. ]
+
+On Wed, Nov 27 2024, Alex Markuze wrote:
+
+> Hi, Folks.
+> AFAIK there is no side effect that can affect MDS with this fix.
+> This crash happens following this patch
+> "1065da21e5df9d843d2c5165d5d576be000142a6" "ceph: stop copying to iter
+> at EOF on sync reads".
 >
-> I believe this is because mold mmaps all input files and an output
-> file, and clearing/flushing memory-mapped data is fairly expensive. I
-> wondered if this could be improved. If it is unavoidable, could the
-> cleanup process be made asynchronous so that exit(2) takes effect
-> immediately?
+> Per your fix Luis, it seems to address only the cases when i_size goes
+> to zero but can happen anytime the `i_size` goes below  `off`.
+> I propose fixing it this way:
 
-It's definitely a two-edged sword.  For example, when running parallel
-make (or Ninja), it's essential that process exit is only signaled
-after all process-related resources have been released.  Otherwise,
-it's possible to see spurious failures because make respawns processes
-so quickly that some resource limit is exceeded.  This is already a
-problem today, and more lazy resource deallocation on exit would make
-it more prevalent.
+Hmm... you're probably right.  I didn't see this happening, but I guess it
+could indeed happen.
 
-The situation is already bad enough that many developers have resorted
-to retry loops around fork/clone/pthread_create if an EAGAIN error is
-encountered, assuming  that it's related to this.
-
-  Bug 154011 - Task exit is signaled before task resource
-  deallocation, leading to bogus EAGAIN errors
-  <https://bugzilla.kernel.org/show_bug.cgi?id=154011>
-
-> - Writing to a fresh file is slower than writing to an existing file
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 4b8d59ebda00..19b084212fee 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
+> loff_t *ki_pos,
+>         if (ceph_inode_is_shutdown(inode))
+>                 return -EIO;
 >
-> mold can link a 4 GiB LLVM/clang executable in ~1.8 seconds on my
-> machine if the linker reuses an existing file and overwrites it.
-> However, the speed decreases to ~2.8 seconds if the output file does
-> not exist and mold needs to create a fresh file. I tried using
-> fallocate(2) to preallocate disk blocks, but it didn't help. While 4
-> GiB is not small, should creating a file really take almost a second?
+> -       if (!len)
+> +       if (!len || !i_size)
+>                 return 0;
+>         /*
+>          * flush any page cache pages in this range.  this
+> @@ -1200,12 +1200,11 @@ ssize_t __ceph_sync_read(struct inode *inode,
+> loff_t *ki_pos,
+>                 }
+>
+>                 idx =3D 0;
+> -               if (ret <=3D 0)
+> -                       left =3D 0;
 
-Which file system is that?
+Right now I don't have any means for testing this patch.  However, I don't
+think this is completely correct.  By removing the above condition you're
+discarding cases where an error has occurred (i.e. where ret is negative).
 
-> - Lack of a safe system-wide semaphore
+Why not simply modify my patch and do:
 
-Other toolchain components use the make jobserver protocol for that.
+		if (i_size < off)
+			ret =3D 0;
+
+instead of:
+		if (i_size =3D=3D 0)
+			ret =3D 0;
+
+?
+
+(Again, totally untested!)
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> -               else if (off + ret > i_size)
+> -                       left =3D i_size - off;
+> +               if (off + ret > i_size)
+> +                       left =3D (i_size > off) ? i_size - off : 0;
+>                 else
+> -                       left =3D ret;
+> +                       left =3D (ret > 0) ? ret : 0;
+> +
+>                 while (left > 0) {
+>                         size_t plen, copied;
+>
+>
+> On Thu, Nov 7, 2024 at 1:09=E2=80=AFPM Luis Henriques <luis.henriques@lin=
+ux.dev> wrote:
+>>
+>> (CC'ing Alex)
+>>
+>> On Wed, Nov 06 2024, Goldwyn Rodrigues wrote:
+>>
+>> > Hi Xiubo,
+>> >
+>> >> BTW, so in the following code:
+>> >>
+>> >> 1202                 idx =3D 0;
+>> >> 1203                 if (ret <=3D 0)
+>> >> 1204                         left =3D 0;
+>> >> 1205                 else if (off + ret > i_size)
+>> >> 1206                         left =3D i_size - off;
+>> >> 1207                 else
+>> >> 1208                         left =3D ret;
+>> >>
+>> >> The 'ret' should be larger than '0', right ?
+>> >>
+>> >> If so we do not check anf fix it in the 'else if' branch instead?
+>> >>
+>> >> Because currently the read path code won't exit directly and keep
+>> >> retrying to read if it found that the real content length is longer t=
+han
+>> >> the local 'i_size'.
+>> >>
+>> >> Again I am afraid your current fix will break the MIX filelock semant=
+ic ?
+>> >
+>> > Do you think changing left to ssize_t instead of size_t will
+>> > fix the problem?
+>> >
+>> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> > index 4b8d59ebda00..f8955773bdd7 100644
+>> > --- a/fs/ceph/file.c
+>> > +++ b/fs/ceph/file.c
+>> > @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode, lo=
+ff_t *ki_pos,
+>> >       if (ceph_inode_is_shutdown(inode))
+>> >               return -EIO;
+>> >
+>> > -     if (!len)
+>> > +     if (!len || !i_size)
+>> >               return 0;
+>> >       /*
+>> >        * flush any page cache pages in this range.  this
+>> > @@ -1087,7 +1087,7 @@ ssize_t __ceph_sync_read(struct inode *inode, lo=
+ff_t *ki_pos,
+>> >               size_t page_off;
+>> >               bool more;
+>> >               int idx;
+>> > -             size_t left;
+>> > +             ssize_t left;
+>> >               struct ceph_osd_req_op *op;
+>> >               u64 read_off =3D off;
+>> >               u64 read_len =3D len;
+>> >
+>>
+>> I *think* (although I haven't tested it) that you're patch should work as
+>> well.  But I also think it's a bit more hacky: the overflow will still be
+>> there:
+>>
+>>                 if (ret <=3D 0)
+>>                         left =3D 0;
+>>                 else if (off + ret > i_size)
+>>                         left =3D i_size - off;
+>>                 else
+>>                         left =3D ret;
+>>                 while (left > 0) {
+>>                         // ...
+>>                 }
+>>
+>> If 'i_size' is '0', 'left' (which is now signed) will now have a negative
+>> value in the 'else if' branch and the loop that follows will not be
+>> executed.  My version will simply set 'ret' to '0' before this 'if'
+>> construct.
+>>
+>> So, in my opinion, what needs to be figured out is whether this will cau=
+se
+>> problems on the MDS side or not.  Because on the kernel client, it should
+>> be safe to ignore reads to an inode that has size set to '0', even if
+>> there's already data available to be read.  Eventually, the inode metada=
+ta
+>> will get updated and by then we can retry the read.
+>>
+>> Unfortunately, the MDS continues to be a huge black box for me and the
+>> locking code in particular is very tricky.  I'd rather defer this for
+>> anyone that is familiar with the code.
+>>
+>> Cheers,
+>> --
+>> Lu=C3=ADs
+>>
 
