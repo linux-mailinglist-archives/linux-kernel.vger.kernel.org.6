@@ -1,137 +1,198 @@
-Return-Path: <linux-kernel+bounces-424259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3FE9DB22B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:29:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4F51673E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:29:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65751386BF;
-	Thu, 28 Nov 2024 04:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7cHF1HI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC1809DB232
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 05:32:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06A45025;
-	Thu, 28 Nov 2024 04:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1E14B226EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 04:32:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BE713C690;
+	Thu, 28 Nov 2024 04:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fm54Osml"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849DD2745C;
+	Thu, 28 Nov 2024 04:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732768176; cv=none; b=bY82MMu18bwpqiMFAR6FaBw9GmfhmD+8WQBmqCD2w5nalkUxJmws2YJOIwM4gh+gtJK6dVrQFPQ/ZgdbahMCHWqQD4lUgJTnQ+LzNd4yV0EjhFqI/NXXzAixYMPHhcZHqXfkaiaWWmwxihf3enbJhCd1RLQBKqL3bn+d+fuUWoE=
+	t=1732768318; cv=none; b=kk1O/nLdKtIOCDQ7U+OTxOrkAYwEiqM7oAaKPMLimXQLqWiqbhGhnEjtzvccWkHYXFhCfAHZiVXBBtOx5cAab7rilNPPLpOAPcKeXrvwXhoHZOIvc3ZlznRLTgJpZUnz6YfuSl7iItjJHd9yvkvwjOA/U/r8m1bibe8vuC1UMAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732768176; c=relaxed/simple;
-	bh=ZReHJ+Ws4lewYIGJ0xabxD2HSvCS9j48AAi0eHrSfDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuqaAE1qE4tYqa31Yz5VXcbisc2jkBqYrsJOnvXcEWVgA+qGkqUJEM+qyyik4aLZ3glHoLGAhscGbTUv0gSTR9PQ2nkB10PFs3pMmOc3ReRT/F7Bze4D/zp+UAbn+QYcVg4Rml+c/3+dRLu+cH5rvAmZTbmcxtU5nYgY6k+vcUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7cHF1HI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B450DC4CECE;
-	Thu, 28 Nov 2024 04:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732768175;
-	bh=ZReHJ+Ws4lewYIGJ0xabxD2HSvCS9j48AAi0eHrSfDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N7cHF1HIZ2+umIwzkBnR4sA/+gWTJbyLC0/Wj+0YkfH+xKZQIwo7MY9J4Wdy+WOOD
-	 vTc+YZ1mZkgdZLZl/rE2T/0AXOAn9yJ6I2B73drGixgVI4ZVkepNafdeo+Fx6Lp9Dn
-	 ZDa2e4GgyRjNfPtu/XcamXqdFtO3iVDJFdMxnceLfWCw5NhSLqyT6aKYNMJzHySvek
-	 Uw/Bo50v/nHvyrPw67v5fU9HFgiPGSmZRrBI3RxfOc17JFjZmiY1QK/A9Vc3Zkig2q
-	 19YVJbBs3pDoVB3rOHLMaktXUUZm80uWhR/uF1728TKO4IhXUuXjpjeihJV3mi8KWJ
-	 Vj2QNNTvTnrHw==
-Date: Thu, 28 Nov 2024 04:29:32 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Dawid Niedzwiecki <dawidn@google.com>
-Cc: Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, chromeos-krk-upstreaming@google.com
-Subject: Re: [PATCH 1/2] platform/chrome: cros_ec: jump to RW before probing
-Message-ID: <Z0fxrDTuCIeCDTiV@google.com>
-References: <20241125184446.1040187-1-dawidn@google.com>
+	s=arc-20240116; t=1732768318; c=relaxed/simple;
+	bh=fTkERx+JjPmIFN/w44dTJSVeYLnAT/xEJR0xipGroac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UcOnBemlJY/fZBImH71uZHKALSsCxMkMmPEsk9ReT30VWwdeuez0pMKNXW3Fr7VbWsYk7OknGpY9o/8zKK2n6VoEV9totvYtIJCfUGcW0nkC78u/j/xJ7KdPSMY3vYbvgVk+V/afVUlO+eoZtyV8hVnLGk8qNZhMYnnBJl+0xqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fm54Osml; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2973b53ec02so289248fac.1;
+        Wed, 27 Nov 2024 20:31:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732768315; x=1733373115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vQOBj303MyI84w3jEX3/YH04HKTcbV31FWEqAcUemuQ=;
+        b=fm54Osml97098l6nBbeQplY2WTlkRbnxNbimfhZFdkVDXbcVEzqyEsvr3CFPtJh2Bs
+         GLBgzbnd0A8pZRxb2LTP5nQFV8QQZpR9dD2o+sp78A0+aMTbKONdPXtPnyvh8M/HTKEr
+         VndyoFeAJKodYJLX3iajV0poHD8pxoU1pwGo0hiAZJeSugRo/AdF8j/nSNvYsjddvHXv
+         szgmu/sSGvI34dunwXpUYmKutIlws71Kx1LOd74PJXgIAkT70p/Sv6AnWOsmoQX26+XY
+         qTuF8WFz6ll6nuq+gpPs/jHbbz9XJYV6Hfjfns0ojRmrEO9AShS8+G0saghVOtoEK7li
+         BSRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732768315; x=1733373115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vQOBj303MyI84w3jEX3/YH04HKTcbV31FWEqAcUemuQ=;
+        b=dhPq7fLhiCrosDP+/mXtCqoQiriB7qmSu4JuvlbYceIDS5TCcKa5Ncum/OiU8Ny/nF
+         XG8acQHIUmkmNWhMq+DDxSYTErgmPCDnO52JeY5+CADYb26pkE0qiu3+MX2ljWIy0vCt
+         jQDvF4URSX0Ii37B+FDZxekfUg8xZXTbfqVz1KV+uOe65cw7BqAghIb5AMn4mcZqC0d+
+         FSnsj1gP0l5qWA+eXE4B8DTDiZv1MRih4xbcZCVuzDCpd1+g5ZdKoTp0o9gxlp7KnBjp
+         NMmvPihSAo6/wpeeeBA9AgVYGKNmn7e/Az2g3sAHo3H/nDEzUGFbyliTlNEEdVRByZCL
+         5rHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXuJp72e2w/Of0eoZYgfy37D1Z7X31jYoNPZGOdbkKgx/CMAutJ8GDBsYPyERAdY3AFGx3Y3qI9R+RaGLQ@vger.kernel.org, AJvYcCVqjioEeFnIouybmRYjxHf70cwHzvKoOCHfwHdubmZ/HQumif83+laYlrsnN7udEgNtFPwOdZJKkOKnym15@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTDnL+Xh48a/JeWPpveyuo8DZCE6pUHAKHZUOrY1utgFt23oqL
+	NbIu6VuPii9pBGagp2CCUQZzGrZhLEbYIi9KoRSEqvjTNBahFCid0mAeUSXT0aliBc5/Kn0kLmG
+	/pIQSoIcOm5iytwNsIr19RgsFFK0=
+X-Gm-Gg: ASbGncur4I5tQ0MEsGXNipwE/otJwLG0YIttGF8YQHepbMY5gpxUyZuO43H3SvA0l3G
+	3r9akU80ZdETJsrDZPjckcmUnvNxaweE=
+X-Google-Smtp-Source: AGHT+IF27rLYNUlhOO/6DrQbNpdU53t77/FyRdU+wOPQuy8q1Ub04s6i5Cycrua3W/Y7gxUbSkME97EYOwBEpXdg1aA=
+X-Received: by 2002:a05:6871:a083:b0:297:28e3:db63 with SMTP id
+ 586e51a60fabf-29dc4181f75mr5143715fac.19.1732768315517; Wed, 27 Nov 2024
+ 20:31:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125184446.1040187-1-dawidn@google.com>
+References: <20241127054737.33351-1-bharata@amd.com> <CAGudoHGup2iLPUONz=ScsK1nQsBUHf_TrTrUcoStjvn3VoOr7Q@mail.gmail.com>
+ <CAGudoHEvrML100XBTT=sBDud5L2zeQ3ja5BmBCL2TTYYoEC55A@mail.gmail.com>
+ <3947869f-90d4-4912-a42f-197147fe64f0@amd.com> <CAGudoHEN-tOhBbdr5hymbLw3YK6OdaCSfsbOL6LjcQkNhR6_6A@mail.gmail.com>
+ <5a517b3a-51b2-45d6-bea3-4a64b75dfd30@amd.com> <CAGudoHHBu663RSjQUwi14_d+Ln6mw_ESvYCc6dTec-O0Wi1-Eg@mail.gmail.com>
+In-Reply-To: <CAGudoHHBu663RSjQUwi14_d+Ln6mw_ESvYCc6dTec-O0Wi1-Eg@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 28 Nov 2024 05:31:38 +0100
+Message-ID: <CAGudoHHo4sLNpoVw-WTGVCc-gL0xguYWfUWfV1CSsQo6-bGnFg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] Large folios in block buffered IO path
+To: Bharata B Rao <bharata@amd.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nikunj@amd.com, 
+	willy@infradead.org, vbabka@suse.cz, david@redhat.com, 
+	akpm@linux-foundation.org, yuzhao@google.com, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, joshdon@google.com, 
+	clm@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 06:44:45PM +0000, Dawid Niedzwiecki wrote:
-> To avoid such problems, send the RWSIG continue command first, which
-> skips waiting for the jump to RW. Send the command more times, to make
-> sure EC is ready in RW before the start of the actual probing process. If
-> a EC device doesn't support the RWSIG, it will respond with invalid
-> command error code and probing will continue as usual.
+On Thu, Nov 28, 2024 at 5:22=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> On Thu, Nov 28, 2024 at 5:02=E2=80=AFAM Bharata B Rao <bharata@amd.com> w=
+rote:
+> >
+> > The contention with inode_lock is gone after your above changes. The ne=
+w
+> > top 10 contention data looks like this now:
+> >
+> >   contended   total wait     max wait     avg wait         type   calle=
+r
+> >
+> > 2441494015    172.15 h       1.72 ms    253.83 us     spinlock
+> > folio_wait_bit_common+0xd5
+> >                          0xffffffffadbf60a3
+> > native_queued_spin_lock_slowpath+0x1f3
+> >                          0xffffffffadbf5d01  _raw_spin_lock_irq+0x51
+> >                          0xffffffffacdd1905  folio_wait_bit_common+0xd5
+> >                          0xffffffffacdd2d0a  filemap_get_pages+0x68a
+> >                          0xffffffffacdd2e73  filemap_read+0x103
+> >                          0xffffffffad1d67ba  blkdev_read_iter+0x6a
+> >                          0xffffffffacf06937  vfs_read+0x297
+> >                          0xffffffffacf07653  ksys_read+0x73
+> >    25269947      1.58 h       1.72 ms    225.44 us     spinlock
+> > folio_wake_bit+0x62
+> >                          0xffffffffadbf60a3
+> > native_queued_spin_lock_slowpath+0x1f3
+> >                          0xffffffffadbf537c  _raw_spin_lock_irqsave+0x5=
+c
+> >                          0xffffffffacdcf322  folio_wake_bit+0x62
+> >                          0xffffffffacdd2ca7  filemap_get_pages+0x627
+> >                          0xffffffffacdd2e73  filemap_read+0x103
+> >                          0xffffffffad1d67ba  blkdev_read_iter+0x6a
+> >                          0xffffffffacf06937  vfs_read+0x297
+> >                          0xffffffffacf07653  ksys_read+0x73
+> >    44757761      1.05 h       1.55 ms     84.41 us     spinlock
+> > folio_wake_bit+0x62
+> >                          0xffffffffadbf60a3
+> > native_queued_spin_lock_slowpath+0x1f3
+> >                          0xffffffffadbf537c  _raw_spin_lock_irqsave+0x5=
+c
+> >                          0xffffffffacdcf322  folio_wake_bit+0x62
+> >                          0xffffffffacdcf7bc  folio_end_read+0x2c
+> >                          0xffffffffacf6d4cf  mpage_read_end_io+0x6f
+> >                          0xffffffffad1d8abb  bio_endio+0x12b
+> >                          0xffffffffad1f07bd  blk_mq_end_request_batch+0=
+x12d
+> >                          0xffffffffc05e4e9b  nvme_pci_complete_batch+0x=
+bb
+> [snip]
+> > However a point of concern is that FIO bandwidth comes down drastically
+> > after the change.
+> >
+>
+> Nicely put :)
+>
+> >                 default                         inode_lock-fix
+> > rw=3D30%
+> > Instance 1      r=3D55.7GiB/s,w=3D23.9GiB/s         r=3D9616MiB/s,w=3D4=
+121MiB/s
+> > Instance 2      r=3D38.5GiB/s,w=3D16.5GiB/s         r=3D8482MiB/s,w=3D3=
+635MiB/s
+> > Instance 3      r=3D37.5GiB/s,w=3D16.1GiB/s         r=3D8609MiB/s,w=3D3=
+690MiB/s
+> > Instance 4      r=3D37.4GiB/s,w=3D16.0GiB/s         r=3D8486MiB/s,w=3D3=
+637MiB/s
+> >
+>
+> This means that the folio waiting stuff has poor scalability, but
+> without digging into it I have no idea what can be done. The easy way
+> out would be to speculatively spin before buggering off, but one would
+> have to check what happens in real workloads -- presumably the lock
+> owner can be off cpu for a long time (I presume there is no way to
+> store the owner).
+>
+> The now-removed lock uses rwsems which behave better when contested
+> and was pulling contention away from folios, artificially *helping*
+> performance by having the folio bottleneck be exercised less.
+>
+> The right thing to do in the long run is still to whack the llseek
+> lock acquire, but in the light of the above it can probably wait for
+> better times.
 
-I'm wondering should it only send RWSIG_ACTION_CONTINUE if EC_CMD_GET_VERSION
-shows the FW is still in RO.
+WIlly mentioned the folio wait queue hash table could be grown, you
+can find it in mm/filemap.c:
+  1062 #define PAGE_WAIT_TABLE_BITS 8
+  1063 #define PAGE_WAIT_TABLE_SIZE (1 << PAGE_WAIT_TABLE_BITS)
+  1064 static wait_queue_head_t folio_wait_table[PAGE_WAIT_TABLE_SIZE]
+__cacheline_aligned;
+  1065
+  1066 static wait_queue_head_t *folio_waitqueue(struct folio *folio)
+  1067 {
+  1068 =E2=94=82       return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_T=
+ABLE_BITS)];
+  1069 }
 
-Curious about: who (in which use case) is responsible for sending
-RWSIG_ACTION_ABORT if it wants the EC stays in RO?
+Can you collect off cpu time? offcputime-bpfcc -K > /tmp/out
 
-> diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
-[...]
-> @@ -204,6 +204,11 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->  	mutex_init(&ec_dev->lock);
->  	lockdep_set_class(&ec_dev->lock, &ec_dev->lockdep_key);
->  
-> +	/* Send RWSIG continue to jump to RW for devices using RWSIG. */
-> +	err = cros_ec_rwsig_continue(ec_dev);
-> +	if (err)
-> +		dev_warn(dev, "Failed to continue RWSIG: %d\n", err);
+On debian this ships with the bpfcc-tools package.
 
-Too verbose, use dev_info() instead.
 
-> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-[...]
-> +int cros_ec_rwsig_continue(struct cros_ec_device *ec_dev)
-> +{
-[...]
-> +	for (int i = 0; i < RWSIG_CONTINUE_RETRIES; i++) {
-> +		ret = cros_ec_send_command(ec_dev, msg);
-> +
-> +		if (ret < 0)
-> +			error_count++;
-
-Should it just return the error if the transmission fails?
-
-> +		else if (msg->result == EC_RES_INVALID_COMMAND)
-> +			/*
-> +			 * If EC_RES_INVALID_COMMAND is retured, it means RWSIG
-> +			 * is not supported or EC is already in RW, so there is
-> +			 * nothing left to do.
-> +			 */
-> +			break;
-> +		else if (msg->result != EC_RES_SUCCESS)
-> +			/* Unexpected command error. */
-> +			error_count++;
-
-Same as `ret < 0`, should it just return if any unexpected errors?
-
-> +		else
-> +			/*
-> +			 * The EC_CMD_RWSIG_ACTION succeed. Send the command
-> +			 * more times, to make sure EC is in RW. A following
-> +			 * command can timeout, because EC may need some time to
-> +			 * initialize after jump to RW.
-> +			 */
-> +			error_count = 0;
-> +
-> +		if (error_count >= RWSIG_CONTINUE_MAX_ERRORS_IN_ROW)
-> +			break;
-
-It could return 0 if `error_count >= RWSIG_CONTINUE_MAX_ERRORS_IN_ROW`.
-
-> +
-> +		if (ret != -ETIMEDOUT)
-> +			usleep_range(90000, 100000);
-> +	}
-> +
-> +	kfree(msg);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(cros_ec_rwsig_continue);
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
