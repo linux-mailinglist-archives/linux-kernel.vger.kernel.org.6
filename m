@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-424183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D7F9DB15B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:10:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A509DB166
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 03:12:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238A82822AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E5F165A7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAD045C1C;
-	Thu, 28 Nov 2024 02:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04D45005;
+	Thu, 28 Nov 2024 02:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6HMrNGb"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="m5pFuPWz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C26535D8;
-	Thu, 28 Nov 2024 02:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DDE38DFC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 02:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732759822; cv=none; b=u7OA23Qf7o7EBOT1B5o6yQR3WmJ4Ql2Q/gpCtUgQddbAGSJ4o8zyWJh7dSmiHFWbPQrIGeMizeHM/RUhcMYNlf5GR6AZSOKwrK8pVqdQUclCt1OYFkNJaFF/lCLzja6FQGgurvcyr+F1AVaGIt+E6V7OzIrOwPWnparQZL6QhAQ=
+	t=1732759957; cv=none; b=dV9EMz5X19aBsBlcDgzo393I2/xn4V9z6msCawx2CiAdva6JyFMaoV7n1ME3RjPKRSww6lHdCQwrhhjSf4ZAEPvx3TsmWpVAsK50X16ZhRU77+zO9e1BtQHKi9QOdn+klGcGigMeHvGVjsjxYvDkifykcDfACKrHnM7J0arLm+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732759822; c=relaxed/simple;
-	bh=YX1D5e/FRew05/8KQ3wt7LTC+rcwVLOoX6FnMCmCyhk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cc0no36rfK36Gl3pHuukZeYkIndvZ7hgBCbP8Ig+l8zKUuyYeTbe59WnulWgLqgw3dLvWErEay2DM6kkvKvqam3m09fOLuu+absY34ap+DyTgmoXg8zYts40iQmOmd1PMghKewZx+u+9OPdYp+LOeKv8rr7RTSyYwlft3NJPhP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6HMrNGb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5FE9C4CED7;
-	Thu, 28 Nov 2024 02:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732759821;
-	bh=YX1D5e/FRew05/8KQ3wt7LTC+rcwVLOoX6FnMCmCyhk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f6HMrNGbGl1EZWUn0dSe9HN+UC+j8gLdEDk5HrRDDuRmbB7MdMp/IgFbfWj41Cl2y
-	 ayRpWLf3hatk58Va6nnNiI6yU85h9VFMz6trtKd6mGqHfktnwETPWz1Tarm5S5e64K
-	 4EKoB9fKyKg1ItD5Up4c8aNKxw34aOUJ+GDHZYb/5E5G9/V9syWeAKvH8AY3B7qauS
-	 WVeuNisw1fKRQqthZCHuOBgvoYphMD+EES97yg2b7qpcwgsT3miMnOgIM3kM4tg86C
-	 0taG89cHcuTaxGvEueJAGO0jlOxE+U7Hp+TJTcBI++VxOzQAWlS1I9NOsOgoixqGc5
-	 eyLfpoES5C+jA==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso309598e87.0;
-        Wed, 27 Nov 2024 18:10:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX/41V+P1tb9Kfk75K0qaZSNM4v8K5LLl6gT4X5LP4tlq2FZKFg78cEBLFzoxAU0zSasdwbiRt7XAWF38g=@vger.kernel.org, AJvYcCXvO5WnChtjgqAmBGD8nJhM+ai9FovVhfNaZDWxAcNjvFnoBpaePJBiVPl8phsJjw36KAHFjo7OtEBLKbB92w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+ZXXuEHC1uk5xAZy8/EwnrUQgQdapKg1jyUdjGx3CF9crMKhd
-	7Jmvdi9UPjJcWQu15nOCFSGkgeWPgY81hxTrosfJNdhnSIVfCO82f7vI7le8Q7j6zQLhHZU9cSo
-	cB6Y+g/jah6AxyhrYnfRsm0sJZJA=
-X-Google-Smtp-Source: AGHT+IGJl1MVVpustJ2ts2Pio5dLzBKWLqVoYYvsx3ccT201+1nWm8YVMnCydOOQg35CI1c8yA12VrmouApP27aeKhc=
-X-Received: by 2002:a05:6512:3d89:b0:539:f9b9:e6d2 with SMTP id
- 2adb3069b0e04-53df00ff7c6mr3300348e87.35.1732759820389; Wed, 27 Nov 2024
- 18:10:20 -0800 (PST)
+	s=arc-20240116; t=1732759957; c=relaxed/simple;
+	bh=EFAkbkif0Gs/nkRjYXPe7137O1e2r9f1+s32iGQcAk8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fx6twSMffjPDnpI3+LgrfGG/CcRoKGdf04NHtLqWfXCbcRS717eDR5jlDbElNNyw8p+GBRxIScc9XLTWAYQr4QBIPxzv9bfv8k+Kg704TKrFgdVSNro1/l0Ym3dXtKFJ2FeJFTC0UUi3DLgt3Y1YuOkug8cH45RzNuvOXzKtnPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=m5pFuPWz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B164C4CECC;
+	Thu, 28 Nov 2024 02:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1732759956;
+	bh=EFAkbkif0Gs/nkRjYXPe7137O1e2r9f1+s32iGQcAk8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=m5pFuPWzaCXZfhX8m/IH+XI4GxSOyneAiLD0LI5PNLzm9pRR/Opifh2vz/66gr8nu
+	 ZGmOjqTVbc+PI26GAMau5BNfkzANW92gIXomr4G4DboHudZm4IQSXAmaTEcgQViUBZ
+	 0NeRFZuO4IUhCbgERWS2Zn4gvgDEbJvaA0lHOGf8=
+Date: Wed, 27 Nov 2024 18:12:35 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chris Goldsworthy <quic_cgoldswo@quicinc.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, Yann Collet <yann.collet.73@gmail.com>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: Question about extensions to lib/lz4
+Message-Id: <20241127181235.d4dbd5a17a42d3b26130fa5d@linux-foundation.org>
+In-Reply-To: <20241119235727.GA26223@hu-cgoldswo-lv.qualcomm.com>
+References: <20241119235727.GA26223@hu-cgoldswo-lv.qualcomm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <Z0ZxiLw9hauUynTS@bombadil.infradead.org> <CAHk-=wjCkJsdLageTx6C4n--aYFoO6gSRe0Rwcbk1jQdOdiPfg@mail.gmail.com>
- <Z0eeuCyUGcKgsc5h@bombadil.infradead.org> <Z0eqiayuv1w4a_dc@bombadil.infradead.org>
- <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
-In-Reply-To: <CAHk-=wj+imfGvW73XoYn60bAMzRtPfXFqwFTUqBoEq4=u5_oUg@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 28 Nov 2024 11:09:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQyhxPZfpK3hVPtYvCYjad4pTUim5jVsEsuXqefY8KhWQ@mail.gmail.com>
-Message-ID: <CAK7LNAQyhxPZfpK3hVPtYvCYjad4pTUim5jVsEsuXqefY8KhWQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Modules changes for v6.13-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>
-Cc: samitolvanen@google.com, petr.pavlu@suse.com, da.gomez@samsung.com, 
-	linux-modules@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, mmaurer@google.com, arnd@arndb.de, 
-	deller@gmx.de, song@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Linus and Luis,
+On Tue, 19 Nov 2024 15:58:39 -0800 Chris Goldsworthy <quic_cgoldswo@quicinc.com> wrote:
 
+> Hi Folks,
+> 
+> Qualcomm is designing a LZ4 compression / decompression engine, with the goal of
+> being able to do single-pass operations (i.e. we only read input from DDR once
+> for compression and decompression). This is achieved by using buffers internal
+> to the engine that store:
+>  - For compression, the running literal we've encountered, which is used as a
+>    search buffer
+>  - For decompression, the last part of the running decompressed output we've
+>    produced
+> 
+> The outcome of using internal (and obviously fixed-size) buffers for the above,
+> whilst not making any changes to the LZ4 format, are as follows:
+>  - For compression, if we fail to produce a match after running out of input
+>    buffer space, compression will fail.
+>  - For decompression, if the copy offset for a given block extends beyond
+>    what we're holding in our buffer, decompression will fail
+> 
+> We don't want to constrain our HW as such whilst maintaining compatibility with
+> SW, and allow it to compress and decompress streams of arbitrary lengths.
+> Focusing on decompression for now, we've proposed an extension to LZ4 that would
+> allow SW to decompress streams compressed by HW like ours, which is described in
+> more detail here [1] in a Github discussion on the lz4 repository owned by Yann
+> Collet. The changes we've proposed are as follows, though we would want to add
+> a static branch check as well to remove overhead for those who do not want to
+> use this extension:
+> 
+> diff -rupN "torvalds linux master lib-lz4/lz4_decompress.c" lib-lz4-patched/lz4_decompress.c
+> --- "torvalds linux master lib-lz4/lz4_decompress.c"  2024-08-11 09:51:42.000000000 -0700
+> +++ lib-lz4-patched/lz4_decompress.c  2024-08-12 06:26:33.986693000 -0700
+> @@ -166,6 +166,7 @@ static FORCE_INLINE int LZ4_decompress_g
+>       ip += 2;
+>       match = op - offset;
+>       assert(match <= op); /* check overflow */
+> +      if (unlikely(!offset)) continue; /* skip copy with zero offset */
+>  
+>       /* Do not deal with overlapping matches. */
+>       if ((length != ML_MASK) &&
+> @@ -289,6 +290,7 @@ static FORCE_INLINE int LZ4_decompress_g
+>     offset = LZ4_readLE16(ip);
+>     ip += 2;
+>     match = op - offset;
+> +    if (unlikely(!offset)) continue; /* skip copy with zero offset */
+>  
+>     /* get matchlength */
+>     length = token & ML_MASK;
+>  
+> Yann Collet has indicated that these changes could be acceptable and implemented as
+> part of a LZ4 v2 block format, which would include several other changes as well
+> that have been proposed over the years. The timeline for making / socializing
+> this would be on the order of years though, if it does go through [1].
+> 
+> So our question is as follows: as part of submitting our driver, would it be
+> acceptable to take the above changes?
 
-On Thu, Nov 28, 2024 at 8:57=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, 27 Nov 2024 at 15:26, Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Wed, Nov 27, 2024 at 02:35:36PM -0800, Luis Chamberlain wrote:
-> > > Sorry about that, I'm on it.
-> >
-> > OK here is a fix, goes double build tested and then run time tested.
->
-> No, you misunderstand.
->
-> I don't mind the tests being built. That's *good*.
->
-> I mind them being built *twice*. That means that there's some
-> seriously broken lack of dependency logic.
->
->             Linus
+It's unclear (to me) what are the expected effects upon existing users
+of this library code.  I'm assuming "none"?  If so, please send out a
+suitably changelogged standalone patch asap and I can add it to
+linux-next for some testing.
 
-
-Right.
-
-The lib/tests/module/test_kallsyms_*.c files
-are always regenerated due to the 'FORCE'.
-
-lib/tests/module/Makefile:
-
-$(obj)/%.c: FORCE
-
-
-
-
-The following diff will fix the issue.
-(I used 'foreach' to factor out similar lines, but it is just a bonus clean=
--up).
-
-
-diff --git a/lib/tests/module/Makefile b/lib/tests/module/Makefile
-index af5c27b996cb..8cfc4ae600a9 100644
---- a/lib/tests/module/Makefile
-+++ b/lib/tests/module/Makefile
-@@ -3,13 +3,12 @@ obj-$(CONFIG_TEST_KALLSYMS_B) +=3D test_kallsyms_b.o
- obj-$(CONFIG_TEST_KALLSYMS_C) +=3D test_kallsyms_c.o
- obj-$(CONFIG_TEST_KALLSYMS_D) +=3D test_kallsyms_d.o
-
--$(obj)/%.c: FORCE
--       @$(kecho) "  GEN     $@"
--       $(Q)$(srctree)/lib/tests/module/gen_test_kallsyms.sh $@\
--               $(CONFIG_TEST_KALLSYMS_NUMSYMS) \
--               $(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
-+quiet_cmd_gen_test_kallsyms =3D GEN     $@
-+      cmd_gen_test_kallsyms =3D $< $@ \
-+       $(CONFIG_TEST_KALLSYMS_NUMSYMS) \
-+       $(CONFIG_TEST_KALLSYMS_SCALE_FACTOR)
-
--clean-files +=3D test_kallsyms_a.c
--clean-files +=3D test_kallsyms_b.c
--clean-files +=3D test_kallsyms_c.c
--clean-files +=3D test_kallsyms_d.c
-+$(obj)/%.c: $(src)/gen_test_kallsyms.sh FORCE
-+       $(call if_changed,gen_test_kallsyms)
-+
-+targets +=3D $(foreach x, a b c d, test_kallsyms_$(x).c)
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+When are you expecting to send this new driver out for
+review/test/merge, btw?
 
