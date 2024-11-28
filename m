@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-424308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED3A9DB2D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:41:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8389DB2E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 07:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E020CB22B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03F0282818
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 06:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E824B145B39;
-	Thu, 28 Nov 2024 06:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2+dg07m"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B190341C94;
-	Thu, 28 Nov 2024 06:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FA2146000;
+	Thu, 28 Nov 2024 06:48:19 +0000 (UTC)
+Received: from pokefinder.org (pokefinder.org [135.181.139.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848F213C836;
+	Thu, 28 Nov 2024 06:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.181.139.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732776086; cv=none; b=PtVOM4PG6r5WH69RlihQp7VNrNlqZBJDO5wGWBotj784tDfyWVN+/5k27CUphgp8bUSVQG2Nno/KxlQeMiIhPgce/y2uv/SzftXsITd1mIDBjmSdXz/yPBzUxq/oaApx9ORync5HlhxlvyyOYJyQ61+b9HxFuYjtVLhsnuFEV7Y=
+	t=1732776499; cv=none; b=m1Om57vfvfYbLSuut0YMTU1nYU9Zjm+3TytrYBoHLHmnrv9TAbA9wpj9R/WFS/7N//DcMIwnY17p4wu0XWtNr/q8QfHCBikxyxnZffHwLwgJ+H62dJUbKkHPyrNXy/uEzpDNX+Ej2LtRB+aZ9m+jF+TnSCT//wq9CcMlXZoyEPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732776086; c=relaxed/simple;
-	bh=wXx7wCzo93AbKs5lA1ligLcJYJ2bbj24jDnIBcmiE8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YWgb1I7a3LqkTbyxT6eW0yxEBTNP055+0F6Si463sqg7/fUL6fNFhLDUDzzgMGamU+ltf0ct/phE17pWYT8dwPTlJvDFeKi2acE2+cxrRS9HEMxPfwIWN5g77swTcq9+sCQ9gjrv1ANtCWRGEnEurKuQhQGgak+zi/X3KCI9Oao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2+dg07m; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so7394841fa.0;
-        Wed, 27 Nov 2024 22:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732776083; x=1733380883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wXx7wCzo93AbKs5lA1ligLcJYJ2bbj24jDnIBcmiE8k=;
-        b=k2+dg07mBwwhHvLRxFCTQKJkfnK8KRclO7sRIMAHIqfCzc6rImS6y5/JlvY2UfSVoo
-         J9OwZgGxGAZiZFyWQntMoEcUnjUMw2Mxw34YIRypv53WklCCvVZEh0YMEXu5O2MNdCv4
-         QdUNZFTua+EZBs6K88zbQUPd7lVn7K95FGpxQ8V+WGwH8qmeYuGTad1M3txn/N75WOmJ
-         nvyH8FyzoCjkubNubXQ+lIbNmMN2c5d/GnJ6Um1jrHjD0A8AXBDh0fBkOR5s9K6fuycl
-         ekdeC0W9DSWx45ejOlVygLcRePgiMxd2UBRA7gojRPI1S/T/X2CB8vxqOX20FumnEIl0
-         viHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732776083; x=1733380883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXx7wCzo93AbKs5lA1ligLcJYJ2bbj24jDnIBcmiE8k=;
-        b=woDOIEwaQhHkIQ3N62s9bF16GItyK/oVaR6Q59Pc4O/VOXRPrxrHpItR4qVshBBW8E
-         trGRLfwNpG8IknDb0ljSB2XyINfoldhwmtQ9MbFpMSrCPWS6r7p2fW/gYEfjkgVvDJIB
-         OEa38aWKG4crZxXdZCTz//YMFOucwfcxyE4+Wx7OVeX0ihwuw4VcNgKs7qUZz0rssLi7
-         upJffsxDhVVHQAXmTjvMIPDT+Qu3Gd7o3JfLwTWUFJZMvKBn/XzhpAnAqYDlUdbGI31r
-         +JvvH/tJdWi6iIY8gLAOI+92EZ6T9A3qg54P2Xu7Nv0/AZZJdE4t8XcLnLYjrTsvseVz
-         HciQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCEfMbMh49PgqLf8210KyaLXBQg4tQeynMIgo306LwyK4ji+VNwEu+31y5zFMf4L8P9hqOIS5NXn0=@vger.kernel.org, AJvYcCWWEoYM4uxmJuw/PBOZiSLbBhTgakYv0aoUFubD7FitZjvfr7r0RSoXRpqMFjoqmEV2U2aa+yXKSTVMf1uR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqi4vmr5YLs3P9tlf4P3/HI1qXNVeAAxcPh328ekN8CpOEiLPs
-	uYyYk78SVzWjSRdVaJiIoYOE4kJCAuTLVz7hSODBQfHIAT7q1BGzG8wNq/+UdN/pYRswQTCToKF
-	6LjxDgdbWYG4ns7ykDaySoFB+zmQ=
-X-Gm-Gg: ASbGnct2XowtOVm+3UudCh1gAfNXrWXrxgyjDMdLf9bUM19Zbe19MFiANygx3TCx/j/
-	Ayn4ozdxiYBl94/a3pfJ3LVlSFZfsh5U=
-X-Google-Smtp-Source: AGHT+IFbPZNh7ZdWOCP3ANdplqGIg7uMiFS/QJd0iHm5fma5NVfgs6i53QvU9j1CV8wEkfb2gW3vsDzguTe8nxiJTFA=
-X-Received: by 2002:a05:651c:548:b0:2f0:27da:6864 with SMTP id
- 38308e7fff4ca-2ffd6025feemr42723701fa.17.1732776082364; Wed, 27 Nov 2024
- 22:41:22 -0800 (PST)
+	s=arc-20240116; t=1732776499; c=relaxed/simple;
+	bh=gW802znw7yCiNjhzCYoWX42m+OHGOt22YMnVketZuXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P6Mba/ixNQOZoJ0kbFytH0SPj289zA8JrhabSLiltd+mS8WFzqQVNfHwPHMOqw9yFbWfcRSMHLHPp4yWYhNlt/v3Ro4d+AgbPPMDtPygO9M2DkXGXTCLyOqP/Z/veFHcxDOWIrRkJWGgeO49ATkU2wg9h6TP6TOMOFyoI/vunxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de; spf=pass smtp.mailfrom=the-dreams.de; arc=none smtp.client-ip=135.181.139.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-dreams.de
+Received: from localhost (i5E861614.versanet.de [94.134.22.20])
+	by pokefinder.org (Postfix) with ESMTPSA id CF421A42CCF;
+	Thu, 28 Nov 2024 07:42:54 +0100 (CET)
+Date: Thu, 28 Nov 2024 07:42:53 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the i2c tree
+Message-ID: <Z0gQ7SOJZvSn2Osf@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241128130748.3949c5eb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-0-b6d7022b7466@baylibre.com>
- <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-3-b6d7022b7466@baylibre.com>
-In-Reply-To: <20241127-iio-adc-ad7313-fix-non-const-info-struct-v2-3-b6d7022b7466@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 28 Nov 2024 08:40:45 +0200
-Message-ID: <CAHp75VcTasNFyx99x4nPaRsjZtp8mEMBOw08e4RfFnsmXx-4SQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] iio: adc: ad7173: don't make copy of
- ad_sigma_delta_info struct
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
-	Michael Walle <michael@walle.cc>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Guillaume Ranquet <granquet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="B9sBARDz7sthjgRu"
+Content-Disposition: inline
+In-Reply-To: <20241128130748.3949c5eb@canb.auug.org.au>
 
-On Wed, Nov 27, 2024 at 10:02=E2=80=AFPM David Lechner <dlechner@baylibre.c=
-om> wrote:
->
-> Use two separate static const struct ad_sigma_delta_info instances
-> instead of making a copy for each driver instance.
->
-> Typically in the IIO subsystem, we use multiple static const instances
-> of the same struct when there are different variants of the same family
-> of devices as opposed to making a copy for each driver instance and
-> modifying it.
 
-...
+--B9sBARDz7sthjgRu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Whether this patch is an improvement or not is debatable. It makes
-> things a bit more verbose, but to me it seems more consistent with
-> how such cases are handled in the IIO subsystem. So take this one or
-> leave it.
 
-Constifications are always an improvement. This makes the related
-pieces of data to be moved to rodata sections and hence have proper
-page flag settings at runtime avoiding any modifications of the data
-which might be used for ROP gadgets or something like that in some
-cases.
+> drivers/of/base.c:661: warning: Function parameter or struct member 'prefix' not described in 'of_get_next_child_with_prefix'
 
---=20
-With Best Regards,
-Andy Shevchenko
+A fix is already on the list. Will apply it later today.
+
+Thanks!
+
+--B9sBARDz7sthjgRu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdIEOoACgkQFA3kzBSg
+KbYN/A//S7r02jFpJRsZzfJOa6Hu8oUlPPLIL3X1XwaVeI/y6uUAxJ/FuDlZbxGk
+QPqzzOG6RXgn9e3GCL0ulxr69dxbbcOuYsyX0e6vfrhlTRbfOoy9fvob2cMtAqkG
+C2gNOZ6vqlQp2VtRGz1LajlPefLFV6dFgV+w/hwdP+S9drX94onSozMV/Jt/7rSz
+/Pc9tBbL8Vd71KU395DeMXbNeRY9tKptUU3ON74nPrjR5dh+rHeqBAQPu9+oVSRE
+ZHvAwk21vAmfDSKllJREyGcOnR3ambpFEVy9iArX3uYrtAR0S70484FeI+EcMzt/
+5k0UCb8mFr7S6bOTxtBZmRFqz5f8aMOZ3E350bZ3ELZNjJ4VVlbIifM0THjrFVlE
+svvZ8TePRlgDhYPx5UppzHtBlEZJW2UVMNSw6JnIMUmn+nilwHjUrubEUqLJzU/C
+5kQoRuAMXzUtF9/Le3QEkTFpejoL2/Z7f/Dv/h0j1Sovrgf7lGtCbMcj6MQZWyT4
+tpuy1w6Pz0b6FTB7cH/emfHll0RdirXcJwGUoHvEvMsrFeoN9EOpaeEjNqDHWDUq
+rtrJnBTzviZ2HeHhnLp85vi7Fmm4mdEZMrGYqMJZ8RTnB5jiAtH5oEiV5Uy7jPNn
+FF9WcUf7W9avdc62iiTGUkdoXdzUxFYv5kG7L4gP5/WjVdEGqV8=
+=Xl4r
+-----END PGP SIGNATURE-----
+
+--B9sBARDz7sthjgRu--
 
