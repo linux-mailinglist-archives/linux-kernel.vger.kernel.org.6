@@ -1,137 +1,122 @@
-Return-Path: <linux-kernel+bounces-424675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7198F9DB7E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F4F9DB7F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6537B20C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:49:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 566F9B20993
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAFE19D8A7;
-	Thu, 28 Nov 2024 12:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9FE19E838;
+	Thu, 28 Nov 2024 12:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="mAV0GvUq"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOH6DmSI"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA1F13D8B4;
-	Thu, 28 Nov 2024 12:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913BF13D8B4;
+	Thu, 28 Nov 2024 12:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732798191; cv=none; b=dWlkDAb47Sz7zL772zT84qxHkZ9ecdNUX+/M1PZdGfEEUJvTI79OdQSkC6u+7EQ+T0QPQU3Z7NAmYCo39oXnfiAOyRqwYHqsrsByDAONbwi4u9qzs8tTV2JF1GUaV6seQoibH3m1JJo41zTZiODLOZ0Ew/wOIEjCMYtVubVibj0=
+	t=1732798339; cv=none; b=pKCaV70NK5op2rHP+P/2i5wLhdEBv81b0bw9OJQI4jGuUyhwHf013fIJHgxfoBaaqk7Q8TftuGCsZ70fqq1zBb2PYuI4gxpiOuRfOnCw115L3pef10Ext1mbJRR+U1oGHoHyTIPJSKxG3XhnUI6KSCq2pe+FHLiOmFrYsG+bCGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732798191; c=relaxed/simple;
-	bh=BqSvddOO7uzl+51J37esKBdrOTlw1w5GUalne+Zm4xQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WbGQLUkvlNhIRJsU8AsCQ+oixoYOT5O7EOl+eSZQ58DI5buN+AP5B+Ml/Hx/2LnzNcBMmFtevYObbwDNtItbZ3wXvDQQhvh253qmykzcGUXlht33mbUdQUy0qi1P7MF4h+0F9Z5oidPZ8d8WT/GMKqvDuPhFRvNwus2EcLj5o9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=mAV0GvUq; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e387afcb162so782123276.1;
-        Thu, 28 Nov 2024 04:49:49 -0800 (PST)
+	s=arc-20240116; t=1732798339; c=relaxed/simple;
+	bh=c0I1ebBoE0U20YC9Avj0dh3hMwsDJv34edqCQOxBSg8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TypnIBLgI4znCiIeOM3qEazGlsPiQeHwoMcjWovumQnr5vWizw2RVmRJBrt9aT+lbooKUiTf7La3kTjie1U+3Oilu8Y6b0qaXiMlnk4sZ9ZraBsJIiX6D/stqTl7LYq6luHMKHsCq4ZFYxIljB0VFW+tMv1QvmQWRgJGoX8lpJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOH6DmSI; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fb9b79ec6aso58618a12.3;
+        Thu, 28 Nov 2024 04:52:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1732798188; x=1733402988; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8enuKRoYuGx+UMyN4wbQkK8SaUw8qYySH+tZSLJzqc=;
-        b=mAV0GvUqFLP7VhvKQw+5PvB+lVdLvdQzkij7fwbAvK+FVOjN5NwhD8zevhHqvPhkgg
-         vy1NYv4THwvmUCxUnMY2fMnNbGh0WUCi//oqZI5JJdWk7iSYcn3D/4hBV67jhyUZHOlU
-         zL+/k6CFQ/MPCAHABB3v7x9B6pyHpBd/2sBXkeFvQWxVl8DXkhQ1oyVBSbyugvpksnMG
-         OTBEfpFFev+gtNfe8vYi50/5VVoluR49I24Mnfu50ce44wozHOVvAMRF50WLmv9Lbwm5
-         6PxVpV+ZDqDffO1ghkfRaiE4lER5ZWrqDnQuhF2e18ogbG1QxDA55qKvu88MDWDNYa4Y
-         bcTA==
+        d=gmail.com; s=20230601; t=1732798338; x=1733403138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qiFR6Ea/6okMG4DqQkGwh+G4hHAubOlQ92CrJDjCFBo=;
+        b=XOH6DmSIDJWsxahOg9LP+PLTh7LZ36PvLYyMXJZ3JQGg9SMf+cJfSOax/6/UjqeGs8
+         mxmQirDQscDI3K9aSAFE6nLcvk1kiLxjOaDO4GGYQ5w5+XBDBzjr//umAoQgW+7TwxEj
+         1nWCYr5gS4NWLMLRH6ZFJhINWcGcVBNAWCEj9aFUwTRcDQV7FziCT1xpkMuaLBiTD5Ih
+         tfOGH+jnNEf9tfP5W54y+k1w3x9AAbuWnA8Lh3JZfwXY5NJxu886GWIgEO+ss98zV9h4
+         tgPcBzxdLBegrfCIzLATiEHluF0zTYo8H5okq3ScZIod4r2UneAh9ffyRNj/NQZcgLJX
+         vLog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732798188; x=1733402988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k8enuKRoYuGx+UMyN4wbQkK8SaUw8qYySH+tZSLJzqc=;
-        b=ZKmR5WFjAuGpNzz4KoRGmUNh1J4/1O8jWI5gU4JIFxeFfDJkI2lz7akXouHSSnc8Js
-         fGKr0vHhcQ2LiPK66zcv4AqV/9djEHGsZuTAAm3pEcZURz0EJV1sV+NpZdahS9I3KCc/
-         D8flFK/gAR9HUZ8hkIH6rYzkoOMcCETgCtQ9kg56s0hRZNw7FC+i2y5Gub4GWvClNZIc
-         lbZ59M3cAVWEaZL75zVAT7y9/sgmr8rjBKbcMnwTGuBnTOfprRAtga0g7n47nvbU6z5a
-         /aYQQni3U9yfiZlqJPMgCiGtuA8+Hn3FwD/9lPN5hq3nUW3Pa0WXKsn/STGYCm19JWn9
-         5KGg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2ofQh3MHZTNPy2A2XeNXT0ftiZiuAFrl8IhTyjg0Bw46j30oSlYACwaBC6AIkfbCVyX2ODn0vFgRZljE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuLeTlVhqGaH8r7YzabzwexoH7S28Ez9ImQhpgvdWNByrM2cHo
-	L6UFwQDDFIvg4K9daOzXXkZ4T/FIBzAKp3veEyqlhvhD1tqe7bEfHazzJgXg+eXXDizpsfKImel
-	fTnE8R2puOEzEZSD5HLx7uGWGyhM=
-X-Gm-Gg: ASbGncu/oxC3U7b1SdfdOl53r2HjsJkEf/mWm+UHbSWI5lp24FefvmlSkwV6QxGYfO6
-	CRr/bGZKqlPeZGTZQsIK2oqqDSHCQ
-X-Google-Smtp-Source: AGHT+IHBo3KFH8jkIO5SbMSbUey4I9GnEZpMOVORzkoe2iFn3uMqC81/CgEeGD1vVAPrpQqe1U+NlyQKRj5OYiNbdZ0=
-X-Received: by 2002:a05:6902:2784:b0:e38:b3e0:5006 with SMTP id
- 3f1490d57ef6-e395b89c79fmr6453581276.15.1732798188333; Thu, 28 Nov 2024
- 04:49:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732798338; x=1733403138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qiFR6Ea/6okMG4DqQkGwh+G4hHAubOlQ92CrJDjCFBo=;
+        b=DN7nscOIflzDThlZ/7Dri5uz4LFenVgM+SHDzOH9JBJowPw3EOEZJ3cDV1HH94eK0S
+         dZuvjwIUvqUEGdjE7/gw6BmN9X6OWS4FE2ir//Z7HMWZlK39G27w1SSFMVSN+JiH33k9
+         E9vOURlmFy8EYR373xULQmipYy4VimAFY+fvvhU+fGaTJ+Z0N8c5VRfhvsDqGxH07clQ
+         qAYyp3SN2AWNF0sRQNi8wVIKWIVs1UjyPcMIxmtmdoaHuQ86HpyDzd5fpr0Lo1HiNjIY
+         fXkHG6uAsvlnjYMQmLO8pT+1DJPUAUGgwF/puOE1qmOz1bRJXazD4v4bvBgNkZeKYKuK
+         YlYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUt2tRSAzMzso0uDwb124TP9YaWO+m+ZMKLpE6I+voEixFraqdAA5s/fwiSYc215jNVFTvfuHYAWVzU9u4U4qAb@vger.kernel.org, AJvYcCVEVKRivWCjPtaIJ8rKxgtqLf57iFBztXrjbERmdPQZsW3OpIXLF8XeTNj1blH670ah1RRFcXarmzI5RGc=@vger.kernel.org, AJvYcCX6//InpzCYS81jFivkbcI7Xqivu4G1Zf78o9nzomVO5KI4HDNc7n/hHhx6YM/mlRScLijLwYAZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrVhvzhOJheosuFDQCJmNsorEjVlPlXHpdWupw3og+l8V8Gazs
+	Cnep69/nVF0n9kp7IXrChOgw3BijeqUH2iLSiKcvYz6xzFNwp6af
+X-Gm-Gg: ASbGncvLl+QKMmeF+872ZeEgGPze45ZN5rQUT2f7m0Ur6nZHcGytvy8uaXUCOm9T4qr
+	mnSRH536DCtjXWeTapUk2AYbmUvLu4w4anar0Mk3tvAv65z8W7rPuTQFyiexU3emcwcr9+b/sM6
+	0MSNyW7qqj/1vWkwRxt82PCeIAXGFloNVOS+IXLywYTdNtxveatk/+dfI1BWqjTYR5N3+howFnQ
+	lPU47kajeTzzj0ES4OoEhB2kmQ07ivOTXdfWiDDU5+97ghxp8fk9Ihw/9c211cuP6Nz9Kgc
+X-Google-Smtp-Source: AGHT+IED2AaMgfEZlqIfP/s69awQSqsvaDuPzDwYjk0OI8Nkd9zv7CnIn9fcoZ9J++uE5eVxfP4qCw==
+X-Received: by 2002:a05:6a20:3947:b0:1dc:77fc:1cd1 with SMTP id adf61e73a8af0-1e0e0ab441emr4995192637.3.1732798337804;
+        Thu, 28 Nov 2024 04:52:17 -0800 (PST)
+Received: from cavivies-mini.dev.lan ([103.127.243.132])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fc9c39f4b6sm1242793a12.70.2024.11.28.04.52.14
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 28 Nov 2024 04:52:17 -0800 (PST)
+From: "caivive (Weibiao Tu)" <cavivie@gmail.com>
+To: pablo@netfilter.org
+Cc: kadlec@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"caivive (Weibiao Tu)" <cavivie@gmail.com>
+Subject: [PATCH] NETFILTER: Fix typo in nf_conntrack_l4proto.h comment
+Date: Thu, 28 Nov 2024 20:52:04 +0800
+Message-Id: <20241128125204.73121-1-cavivie@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240405161042.260113-1-cgoettsche@seltendoof.de>
- <20241023152719.24118-1-cgoettsche@seltendoof.de> <CAHC9VhQ+SmaYB-1zz2q9j1XJeAFaY+emn_KoNiXxqJDt6wjT0w@mail.gmail.com>
-In-Reply-To: <CAHC9VhQ+SmaYB-1zz2q9j1XJeAFaY+emn_KoNiXxqJDt6wjT0w@mail.gmail.com>
-From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date: Thu, 28 Nov 2024 13:49:37 +0100
-Message-ID: <CAJ2a_DcHZMkGuwPm69xD1VGnJe2Qjjucn8qRNJ65aqNS1VBAYw@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: add support for xperms in conditional policies
-To: Paul Moore <paul@paul-moore.com>
-Cc: selinux@vger.kernel.org, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	=?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
-	Jacob Satterfield <jsatterfield.linux@gmail.com>, Eric Suen <ericsu@linux.microsoft.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Oct 2024 at 23:20, Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Oct 23, 2024 at 11:27=E2=80=AFAM Christian G=C3=B6ttsche
-> <cgoettsche@seltendoof.de> wrote:
-> >
-> > From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> >
-> > Add support for extended permission rules in conditional policies.
-> > Currently the kernel accepts such rules already, but evaluating a
-> > security decision will hit a BUG() in
-> > services_compute_xperms_decision().  Thus reject extended permission
-> > rules in conditional policies for current policy versions.
-> >
-> > Add a new policy version for this feature.
-> >
-> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > ---
-> > v2:
-> >   rebased onto the netlink xperm patch
-> > ---
-> >  security/selinux/include/security.h |  3 ++-
-> >  security/selinux/ss/avtab.c         | 11 +++++++++--
-> >  security/selinux/ss/avtab.h         |  2 +-
-> >  security/selinux/ss/conditional.c   |  2 +-
-> >  security/selinux/ss/policydb.c      |  5 +++++
-> >  security/selinux/ss/services.c      | 12 ++++++++----
-> >  6 files changed, 26 insertions(+), 9 deletions(-)
->
-> This looks fine to me, but I believe there are some outstanding
-> userspace issues that need to be resolved?
+In the comment for nf_conntrack_l4proto.h, the word "nfnetink" was
+incorrectly spelled. It has been corrected to "nfnetlink".
 
-Hi,
+Fixes a typo to enhance readability and ensure consistency.
 
-I know it's very late in the development cycle, but I wanted to ask if
-there is a chance this could be merged for 6.13?
-The userspace patches are merged and currently part of 3.8-rc1, and
-these kernel changes are quite simple, since most of the needed
-functionality was already in place.
-I created a testsuite patch over at
-https://github.com/SELinuxProject/selinux-testsuite/pull/98.
+Signed-off-by: caivive (Weibiao Tu) <cavivie@gmail.com>
+---
+ include/net/netfilter/nf_conntrack_l4proto.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> --
-> paul-moore.com
+diff --git a/include/net/netfilter/nf_conntrack_l4proto.h b/include/net/netfilter/nf_conntrack_l4proto.h
+index 1f47bef51..c49e02377 100644
+--- a/include/net/netfilter/nf_conntrack_l4proto.h
++++ b/include/net/netfilter/nf_conntrack_l4proto.h
+@@ -30,7 +30,7 @@ struct nf_conntrack_l4proto {
+ 	/* called by gc worker if table is full */
+ 	bool (*can_early_drop)(const struct nf_conn *ct);
+ 
+-	/* convert protoinfo to nfnetink attributes */
++	/* convert protoinfo to nfnetlink attributes */
+ 	int (*to_nlattr)(struct sk_buff *skb, struct nlattr *nla,
+ 			 struct nf_conn *ct, bool destroy);
+ 
+-- 
+2.39.5 (Apple Git-154)
+
 
