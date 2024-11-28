@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-424081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60F79DB070
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:56:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274519DB073
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:56:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C481281F39
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C6167B5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 00:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140873CF73;
-	Thu, 28 Nov 2024 00:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FD654673;
+	Thu, 28 Nov 2024 00:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UgCmZ9iZ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RLmFgQLO"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E851F1DFFB
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB51F2E628
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732755357; cv=none; b=UTRKqoyL59Ti8qLwy5xZ7gamr8+QwJa6QhN3L2iv8i37htT827DlZ+1ah5n1zJbIuysPXBSbYBJRynYWXEMA/Gm7J+C/aH3GB8OzNc59nCJec/LM0xhgA5AY2nOhsMnQ1vvizwsy8TcF4AwJDPUEe8JAUg2w1VW7ZSgKGCXpcso=
+	t=1732755359; cv=none; b=GMVXYP2AxqHUUWcbwPFyCUAZ1vt1lIPhuvCMTFM4kkj7HxoYk8FY35DojSb8Eexug1oz0oBoPExIUtNuLhR6giKvwO74rk6Va4OUVuZOTOPl2Vp4s61ACMC3U0wMdNVoG93Yeod77rAfR/jHBr2y9+PgJNLDR6FA7vn3Zkt6jn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732755357; c=relaxed/simple;
-	bh=/I1QDhTu7A4uX6aQjK9uL6OFtLwJ4Jmbm1md8fy4gPw=;
+	s=arc-20240116; t=1732755359; c=relaxed/simple;
+	bh=WNgn4lu1ApV1cGqCgEdQ8UELTIdxvWrpSXPjrrKh+zU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oSXWecEIBh/Y2AxJJlxPuSvb+sJrxBROb2qXGsTeGPEszAFiez7WhdY//CQWRUxHmbbTVBdvBd2NFX4YXDnyDLbgPCtEF9dN9B/oE2sqT9afMgZH0jl3W0zflq7ALai4j+GdkSbWSGq39nNc1gCeY43aRiJTbK4lmRJz/1ticww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UgCmZ9iZ; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=BLXoD7vF5BWLQRdFkuJDzd3drgPEgioahmwqzLG+zj3sqiee77mlvCrwLJJQqUr3r2pqY42GHsQ/56WhkJng/7ffzuFPcBTwr/bxXKeJQFsERwhHAVnZI+BLf2J94mursg9ABlpQvnGdYVlXN2b/EMlQojPiiyZnmxsVOBTwaP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RLmFgQLO; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ee0f8ecd88so333965a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:55:55 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea4291c177so273536a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 16:55:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732755355; x=1733360155; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732755357; x=1733360157; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVBMujG2OTqdwJQgPPGju5b8tNjOmRcixGV2iZuWWwY=;
-        b=UgCmZ9iZ4JA7nZC57i4q8YFvqd4pfMTFRWrZY5Smb0SfHVQOWhfGZHmJ8pxTdfmbmZ
-         qIr6bKBWxZiaz8iNZblUSLnJvOw88WQD6DSJG4mWkYlTIVQ35f5wMIakY0yclU1VTdkL
-         si3YDnSQ1C6qeDFTaS2vtiK7S45VaaJmVZUaJzEjdPytg7SP/l1mxYQUj1oxmC+UQsmh
-         jHr3bBkLC2akZbDN7w4uKKf5xvvHdC9AnZzrLYsNydKAXWlBpaySbstWwhAkn/s5yYRe
-         z6nPSQu4R012rvR/P8ICe2CLzXDc9LAhk61YMrwR4VYrWimvF623jQmG6mD5oSsDRXX2
-         W4Ew==
+        bh=VnpBHLYkUch4fOHU4hkMVn/ClZoihkAVUxnB9ZaI9Pw=;
+        b=RLmFgQLOx1T+u6XwqgMuR4WV6xZYBL7N1RNTWPkNLK6+3EK9CbRxbQnQ7h/GbLX/g+
+         DFjgd+VE/Uaf/2C+DEXgI9HniueFRX0267E+uP+5Ny+WHCnzCalSu//K7PjYzSc70nE+
+         t6l+1SS9FiX36Xt/4JaIpcrdfEkI3LxiT4SjCDIGt4/kBSdAPuwK3n9fzQX6BzQnn+DI
+         zZhW1oKDTepUIrAurkqLmtChy8l1M1LnFaLkvAFs0Efm1LjACQTzRNAW3+k0kmBH64Il
+         hi4OVR6L5am0FmrYMhDiu74ILHrqjxllrxnTojspjHXxsvNdYVPq7SnL4fmqo9Ad0pis
+         j5bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732755355; x=1733360155;
+        d=1e100.net; s=20230601; t=1732755357; x=1733360157;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qVBMujG2OTqdwJQgPPGju5b8tNjOmRcixGV2iZuWWwY=;
-        b=h2QbEaZula7THyQkuuGHeqNR3je2kRgk3nM/KAIxLVp9HsDla4fBpLp24wxDcWUJaW
-         v3ezvtZN6C1gNQI7xsR72c6kXopKtYhqdHP8bTc4T5NSFEAHJw0RAy6CTcxyeeK5Islw
-         eR9RW3ch6V/jTW0AREZ2oCYJW7lPvOiWVgPUrmPkWrly8xbXidCvYcVTxlJcfQODMGS4
-         2XvZaxIH1hDSIwHFp/vfBALk4PALEzgNIUvw13NsTc6+ko2HMPvuztOenOckngvQHm8E
-         CwF42V5FfMaz/KC3LELbHy8iE5nNBdN3Qap2BYGP5vN8Ef5wZLORT46MrVXc6ZE5ORKQ
-         RRKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEe6PtktUi54HemdhX94VX7JNE2QHMTKiV2SmbFsK0V0E68Wl7UCId2MHhCc7KOG8eCCbmt0uY9Q9Glx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOWQUhY6MNHhw7qsQXSvejrxnj8u2B/0OJHCSeEN/P+e3qRJ+h
-	wh7KEzhWKnpQ4tZcCrfuEqAi1C8EKGY+7w0HqknLJlYqMgfAKwNmpK+Qgg38x0zMESLg7SwOx7n
-	rSw==
-X-Google-Smtp-Source: AGHT+IH+xlYFxzyyjYgkHwbv9v8SXpOlp7wHMGVgiCiV61K5VskA6YHcas7fec5b54n5jx+SjDlTSzyBffA=
-X-Received: from pjbmf12.prod.google.com ([2002:a17:90b:184c:b0:2d8:8d32:2ea3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:388b:b0:2ea:7329:4d
- with SMTP id 98e67ed59e1d1-2ee097ca9damr5929096a91.34.1732755355263; Wed, 27
- Nov 2024 16:55:55 -0800 (PST)
+        bh=VnpBHLYkUch4fOHU4hkMVn/ClZoihkAVUxnB9ZaI9Pw=;
+        b=fu2RCEO42JOQ+SW1Nb/h1kWOmrd0SkMRqegeoFw+9KRkqhLHAZJarFNyQtB4GGUzAq
+         HKgGzBi78eKlm/B4N/0GT8Eanf2szLqbSlMCNQ8QH/XR1FvldzS1JlTsKwxGhmfiq7Hn
+         9fBo4lTmOM6zOz/hB0rQ8kOPdS5A/UQ5efUnOquNby8RJO+AR0WxPqDGKJF60fGlwYEp
+         wo2Qb+ha2/Lw7dZTcWjrdnkNg5cfLbvaJ3Mxqi/An+3lP2pJxnAnosWmVS/woq/x5sOa
+         4bZulhFxrsVxrIz2hA2WOoY0rS7mZMGIsgVQTEfXZJwJp39Qv9czuzQheRAFuvqCK5mA
+         jk7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJJx/Jp0XrQeFMviXjZOAQsvjUEKx5KPWlNTIrMUGGNeoF6fiOTtmtKB36pNrVg+RniQAfq4NTci+r1/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztBhI1ixMy4sYRd3TMux+p7uSpBr0AAAKjcJH0uW2z2/gUcKQq
+	GhX/AH4vUaKPWJbEuTIEs0wcKzxwAvDnnBxJ4Nkx7mGRk7806lXLkdLerS9KtBL+K50wCM3Afp8
+	erA==
+X-Google-Smtp-Source: AGHT+IGNjVu9IbM8M8x4FgAf0ptLY31wfGw0nWSewj8xLv7iHu7ExU2Pbfe7utzxkDM6gVPdI3CzS8OquPA=
+X-Received: from pjbsc10.prod.google.com ([2002:a17:90b:510a:b0:2ea:d2de:f7ca])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fe06:b0:2ea:83a0:4798
+ with SMTP id 98e67ed59e1d1-2ee08e9f0f7mr7211038a91.3.1732755357079; Wed, 27
+ Nov 2024 16:55:57 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Nov 2024 16:55:34 -0800
+Date: Wed, 27 Nov 2024 16:55:35 -0800
 In-Reply-To: <20241128005547.4077116-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241128005547.4077116-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241128005547.4077116-4-seanjc@google.com>
-Subject: [PATCH v4 03/16] KVM: selftests: Assert that vcpu_{g,s}et_reg() won't truncate
+Message-ID: <20241128005547.4077116-5-seanjc@google.com>
+Subject: [PATCH v4 04/16] KVM: selftests: Check for a potential unhandled
+ exception iff KVM_RUN succeeded
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
@@ -91,42 +92,33 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
 	Muhammad Usama Anjum <usama.anjum@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Assert that the register being read/written by vcpu_{g,s}et_reg() is no
-larger than a uint64_t, i.e. that a selftest isn't unintentionally
-truncating the value being read/written.
+Don't check for an unhandled exception if KVM_RUN failed, e.g. if it
+returned errno=EFAULT, as reporting unhandled exceptions is done via a
+ucall, i.e. requires KVM_RUN to exit cleanly.  Theoretically, checking
+for a ucall on a failed KVM_RUN could get a false positive, e.g. if there
+were stale data in vcpu->run from a previous exit.
 
-Ideally, the assert would be done at compile-time, but that would limit
-the checks to hardcoded accesses and/or require fancier compile-time
-assertion infrastructure to filter out dynamic usage.
-
+Reviewed-by: James Houghton <jthoughton@google.com>
 Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/include/kvm_util.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 287a3ec06df4..4c4e5a847f67 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -707,6 +707,8 @@ static inline uint64_t vcpu_get_reg(struct kvm_vcpu *vcpu, uint64_t id)
- 	uint64_t val;
- 	struct kvm_one_reg reg = { .id = id, .addr = (uint64_t)&val };
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 480e3a40d197..33fefeb3ca44 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -1648,7 +1648,8 @@ int _vcpu_run(struct kvm_vcpu *vcpu)
+ 		rc = __vcpu_run(vcpu);
+ 	} while (rc == -1 && errno == EINTR);
  
-+	TEST_ASSERT(KVM_REG_SIZE(id) <= sizeof(val), "Reg %lx too big", id);
-+
- 	vcpu_ioctl(vcpu, KVM_GET_ONE_REG, &reg);
- 	return val;
+-	assert_on_unhandled_exception(vcpu);
++	if (!rc)
++		assert_on_unhandled_exception(vcpu);
+ 
+ 	return rc;
  }
-@@ -714,6 +716,8 @@ static inline void vcpu_set_reg(struct kvm_vcpu *vcpu, uint64_t id, uint64_t val
- {
- 	struct kvm_one_reg reg = { .id = id, .addr = (uint64_t)&val };
- 
-+	TEST_ASSERT(KVM_REG_SIZE(id) <= sizeof(val), "Reg %lx too big", id);
-+
- 	vcpu_ioctl(vcpu, KVM_SET_ONE_REG, &reg);
- }
- 
 -- 
 2.47.0.338.g60cca15819-goog
 
