@@ -1,205 +1,140 @@
-Return-Path: <linux-kernel+bounces-424383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B109DB3BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:28:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFB89DB3C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61628B20E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97692825AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 08:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694AB14B945;
-	Thu, 28 Nov 2024 08:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC1814EC62;
+	Thu, 28 Nov 2024 08:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qOfSgclG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cc26DFz+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mFgd71lM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cb+Ohr9W"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0Hlmanu"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C131482ED;
-	Thu, 28 Nov 2024 08:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6486614A614
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782519; cv=none; b=Bn9S0Jhxw5iH25uHHlCKLsfU4fGzegAQs2GwyThnvp+wpRLU514Z7+upmLGaj/Y0znctwwafp2Em31qWOXgYCm0ZCm6hkN2HdKpeWOofJB2udR6UyH5C3vqfvRe/CeVToYcokX4AbUnnB/Y60jwxANcvmfc7oPxiBdNPKs41kZI=
+	t=1732782521; cv=none; b=W7TqqyMEwY2cyeeapfSVFrhYbYKMEx1/nQCImQox0C2t1ngJa1NFFjyBBfWJ3gdWIXrAbep5sQk/C6ICO4pUM8HQTmVW5FEPwwmZBio0tNVEwKVSVn73xsm6SchHTYWdIeix09MikPhypsL9OYHN4KQHzB8WPc+gq180xHzqKiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782519; c=relaxed/simple;
-	bh=ppOz57D5/QOHyWkP+XkuxOjZgzhGJyX5lCZfk7fzMU0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BsOPx7NF4P5gsyy7LcPDDGd7gIFQxAcbZm8d+H0TsGUUMcLfXwLPyGoXC4tTTUeOOV8oS0CgmI8I3J9Ub0pDn9eeZuhQky05vi+8Tk1KGXyOFFHRUb/tGeBPKLLe+IrHU7SDf04IekoxYTEajLtuY4R9dafEsLy/DfBlLCBoZoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qOfSgclG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cc26DFz+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mFgd71lM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cb+Ohr9W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DD12F1F79B;
-	Thu, 28 Nov 2024 08:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732782516; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAmLvEd3LAjcLACR2vxOVbz4VKip1PistZd7oHGkXaU=;
-	b=qOfSgclGYpNs0yNMHF2pcG09VFvFieiTcgXYMibWTPzRVTzrUuJaIqCeX1urMImPhf1LS/
-	duiDvSV1PpU3Njj4MkZxkTSiXU9scJMzzeaWSasBe6M1L0E5z4kbSPJY9H8sV5JwioVRBy
-	so1G+p+BMdZDbSs8kh31ikZd5H2Gro4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732782516;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAmLvEd3LAjcLACR2vxOVbz4VKip1PistZd7oHGkXaU=;
-	b=Cc26DFz+has3rNMsGN+35hNL5Pvaf4JdULNQNmlPRXViJkvmWjWjY2FUvNy85Hca6ksSlu
-	oWKhUp2e0nyVgWAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mFgd71lM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Cb+Ohr9W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732782515; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAmLvEd3LAjcLACR2vxOVbz4VKip1PistZd7oHGkXaU=;
-	b=mFgd71lM4m4QryJ2QwircMfrQld0K2evzfngfonakrQoiQuJ28hJWa4PFd7uiWl2+Tmoau
-	zbbdY7x8au82SJQ2qVkB/hotmgGnMxtnpEv9u5C4bSZlczAlHjp5DcDyW7ACDS8IH6aZD9
-	477bbOXRX9g8Z/EZW1bqEkwdxBARFX8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732782515;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAmLvEd3LAjcLACR2vxOVbz4VKip1PistZd7oHGkXaU=;
-	b=Cb+Ohr9WyhX5lkPZyfTiTpXnm8pyhFySQjoIhRmS/tM8E7ln6dLPO95ZQ2hrzhy8hmj1Uu
-	l80bFfW4GiLkQcCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A04F013974;
-	Thu, 28 Nov 2024 08:28:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Un4HJrMpSGcPJAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 28 Nov 2024 08:28:35 +0000
-Date: Thu, 28 Nov 2024 09:28:35 +0100
-Message-ID: <87wmgn4v9o.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: <bo.liu@senarytech.com>
-Cc: "'Takashi Iwai'" <tiwai@suse.de>,
-	<perex@perex.cz>,
-	<tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<feng.liu@senarytech.com>
-Subject: Re: =?GB2312?B?tPC4tDo=?= [PATCH V2] ALSA: hda/conexant: fix
- Z60MR100 startup pop issue
-In-Reply-To: <022d01db416f$116441c0$342cc540$@senarytech.com>
-References: <20241128060812.433362-1-bo.liu@senarytech.com>
-	<874j3r6db8.wl-tiwai@suse.de>
-	<022d01db416f$116441c0$342cc540$@senarytech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1732782521; c=relaxed/simple;
+	bh=iBgmMatgfTncbI6Xxv9fv7699qHKcsEyga04yyzHrVw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ASRY+F2/w4H4Pf3qlSRibYT+VJ1wG83m2w8DK01yaAQfE61XctTvBXPbCvhtjKnEQZAEN/Cd0EGfuqja0jY7wyXLP0uu3Ayahvdg0psUCpKBW7dE+8c6TRZco41f0xTkDckVAIZTJN0F9Njy2A2/duX+Xd3Jnx1CESrM8yiIVnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u0Hlmanu; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38245e072e8so476446f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 00:28:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732782518; x=1733387318; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8ce1Yw0qnP/hYgtuVuhHQzLquqkZiusD0COEs+h5WKU=;
+        b=u0HlmanuNzHOesnJQlDV/gVXgrXAn5OQZ7OcYvIFLKkmRVEd2tmn/zBUruPeKBPkNz
+         iJn4FWWx+N9uxFICCdS9azuW5uF8WBv6Kit9dclVvt0IoduESaPh7OJ16LPhvK8UeM8z
+         9Mq86MX+emhI4d+HbcoT/MpNw2Q/U+hTJ75SGZf3RB58aGWetDvrAS5wGhu9iF4Rfu4Y
+         Jm0Z7sApaUoJjdwhE4LUr2l8y6+fhdHwpldMgEhUqYQfrTpi8QNAwRHSCsDcZD2TeWCL
+         MKZhmnov7M1xFh1G0x2dOofK1Kbtd68SUXTPZJy2OAslDFs7xNFP14503MfwsR4jWf7G
+         Ch6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732782518; x=1733387318;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8ce1Yw0qnP/hYgtuVuhHQzLquqkZiusD0COEs+h5WKU=;
+        b=elc4ATOS6OWg09XmTvSxZeea4vkYqe1hPzKkhZFYkYzj51/jbnuVYDT1IxCIahR40C
+         P9B8wzrniVTloVwS7FpAlVjKsNuoXisWNmwgXAVVhA/nLu6Pl1XKlxlMqseg5ktEdjVN
+         jmOCPAO3owyd6/cLV4q2ZnlWOq3VIMBr2UPAbpU1YVSOoWc/rl9h9twxkykfwOXmuioy
+         zjOE3C6Q9/5+XyrkEXmApK0O7+UKevk367osKqZLWwlhF3ULyyfFv0dNs0o6WZPCWPnB
+         kbtU0dywPhJZWHNrLvtnaO4rkE5gnTGGrGEaJ/jq+Tq1hNryvsmSn3Ny4gpAZ26LhSwj
+         f28Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXoNwcLRp+7dv9kMupRt5oZjeGoEy0rAYiaf38Sttl5UdRP6WyujOtzAeWuYbxIXb7R4IEYuf4c+ST+6EI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQgeCukmAXUPY7E9UTvORl2LZ1az3BEPj9wOyJIH3V2aRB2yfa
+	MO4N8y6miu6cWuU7W5opxShVx4reFwe1+CX4Fa8kYlcEKWrb0egN4EUsuXbhrAs=
+X-Gm-Gg: ASbGncsml/TQN0a0SWpBKx7JQ0RTG7ARelqFkCanuXoNPwO6zZax6Oubsdbwlw5TzZm
+	XJyFpuBYSDD+K+cBgvJF/MKEp+kHX1r+KtNvzFDRijQn+dnk+e5bppAKs3WnQnEPDk4oVB0w96e
+	YwwFTQ9xojui1Qti4S17vDHA9/Dxon8QWhOMB/ZnDNDAvYTvTbXs4OCFf1J/rUqKdHGZa2ZMRxG
+	whYbIu/AHJWWLLOR/c9kcqAJNk1/TzHpUqW8eSQp1LOvhvkpootHZQ=
+X-Google-Smtp-Source: AGHT+IGTu0qgLLjoHLlWHxSoBIFSoj8XfsMG9AhcjE3+CF/PWBajZkgTxHHhlbUBKXo2AHNhIEwVew==
+X-Received: by 2002:a5d:6dad:0:b0:382:3959:f429 with SMTP id ffacd0b85a97d-385c6ccaeafmr6070314f8f.5.1732782517632;
+        Thu, 28 Nov 2024 00:28:37 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a54asm996072f8f.50.2024.11.28.00.28.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 00:28:37 -0800 (PST)
+Message-ID: <663f534cd88332ecf64e575ea0cfa1f40e303373.camel@linaro.org>
+Subject: Re: [PATCH 5/6] arm64: dts: exynos: gs101-oriole: enable Maxim
+ max77759 TCPCi
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>,  Alim Akhtar
+ <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
+ kernel-team@android.com,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-samsung-soc@vger.kernel.org
+Date: Thu, 28 Nov 2024 08:28:35 +0000
+In-Reply-To: <b0c5e443-79e2-4e53-8813-57044a627dea@kernel.org>
+References: 
+	<20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
+	 <20241127-gs101-phy-lanes-orientation-dts-v1-5-5222d8508b71@linaro.org>
+	 <b0c5e443-79e2-4e53-8813-57044a627dea@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: DD12F1F79B
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
 
-On Thu, 28 Nov 2024 09:25:22 +0100,
-<bo.liu@senarytech.com> wrote:
-> 
-> > On Thu, 28 Nov 2024 07:08:12 +0100,
-> > bo liu wrote:
-> > > 
-> > > When Z60MR100 startup, speaker will output a pop. To fix this issue, 
-> > > we mute codec by init verbs in bios when system startup, and set GPIO 
-> > > to low to unmute codec in codec driver when it loaded .
-> > > 
-> > > Signed-off-by: bo liu <bo.liu@senarytech.com>
-> > > ---
-> > >  sound/pci/hda/patch_conexant.c | 35 
-> > > ++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 35 insertions(+)
-> > > 
-> > > diff --git a/sound/pci/hda/patch_conexant.c 
-> > > b/sound/pci/hda/patch_conexant.c index e851785ff058..62c53e64bcad 
-> > > 100644
-> > > --- a/sound/pci/hda/patch_conexant.c
-> > > +++ b/sound/pci/hda/patch_conexant.c
-> > > @@ -42,6 +42,7 @@ struct conexant_spec {
-> > >  	unsigned int gpio_led;
-> > >  	unsigned int gpio_mute_led_mask;
-> > >  	unsigned int gpio_mic_led_mask;
-> > > +	unsigned int gpio_unmute_bit_mask;
-> > >  	bool is_cx8070_sn6140;
-> > >  };
-> > >  
-> > > @@ -308,6 +309,7 @@ enum {
-> > >  	CXT_FIXUP_HP_MIC_NO_PRESENCE,
-> > >  	CXT_PINCFG_SWS_JS201D,
-> > >  	CXT_PINCFG_TOP_SPEAKER,
-> > > +	CXT_FIXUP_HP_A_U,
-> > >  };
-> > >  
-> > >  /* for hda_fixup_thinkpad_acpi() */
-> > > @@ -762,6 +764,24 @@ static void cxt_setup_mute_led(struct hda_codec
-> *codec,
-> > >  	}
-> > >  }
-> > >  
-> > > +static void cxt_setup_mute_gpio_and_unmute(struct hda_codec *codec,
-> > > +				unsigned int gpio_mute_mask)
-> > > +{
-> > > +	struct conexant_spec *spec = codec->spec;
-> > > +
-> > > +	if (gpio_mute_mask) {
-> > > +		spec->gpio_unmute_bit_mask = gpio_mute_mask;
-> >
-> > Any reason to store this in spec?  As far as I see the code below, it's
-> used only locally here, so it doesn't have to be stored there.
-> 
-> The purpose of adding this is to differentiate the configuration of the
-> LED_MUTE GPIO and to retain debugging information. Of course, this field can
-> be removed if desired.
+Hi Krzysztof,
 
-Yes, please remove.
+On Thu, 2024-11-28 at 09:19 +0100, Krzysztof Kozlowski wrote:
+> On 27/11/2024 12:01, Andr=C3=A9 Draszik wrote:
+> > ---
+> > =C2=A0arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 99
+> > ++++++++++++++++++++++
+> > =C2=A01 file changed, 99 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > index 387fb779bd29..5f7be0cb7418 100644
+> > --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > @@ -10,6 +10,7 @@
+> > =C2=A0
+> > =C2=A0#include <dt-bindings/gpio/gpio.h>
+> > =C2=A0#include <dt-bindings/input/input.h>
+> > +#include <dt-bindings/usb/pd.h>
+> > =C2=A0#include "gs101-pinctrl.h"
+> > =C2=A0#include "gs101.dtsi"
+> > =C2=A0
+> > @@ -90,6 +91,84 @@ eeprom: eeprom@50 {
+> > =C2=A0&hsi2c_12 {
+> > =C2=A0	status =3D "okay";
+> > =C2=A0	/* TODO: add the devices once drivers exist */
+>=20
+>=20
+> Is the TODO still valid?
 
+Yes, there are more devices on that bus.
 
-Takashi
+Cheers,
+Andre'
+
 
