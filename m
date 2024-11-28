@@ -1,167 +1,170 @@
-Return-Path: <linux-kernel+bounces-424504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1CC9DB516
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A0B9DB51E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 10:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F381165B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB471167F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 09:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10100146590;
-	Thu, 28 Nov 2024 09:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RP6dXqr9"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57F288DB;
-	Thu, 28 Nov 2024 09:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E06155C83;
+	Thu, 28 Nov 2024 09:54:13 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26646146590
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 09:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732787454; cv=none; b=lsDb4zFcKJCfUazmLVV5WLLqWDC6SRaNJEeiR/FeIJZSUT3DYxvqjtRSzM23OMIxQqKfUJaYwa9+dHCpe7EfZS/marZClX4T2ki+Xsvf6rpuieilBIInmFGhjSj120EXQPTdj57CPN7+GImzvAaXSTdGotc3u7F+wNrVjT7usfs=
+	t=1732787652; cv=none; b=BfaTqyDWcxMX41cqZ6XAwXtipfMFHsxuGCa1U7RwDi1X2SIZYO/rfG/yIy0fNVcQb2CVmDAIB0slwBNh8O7UtOYMJIJiO0ZHJsfRBSzfF+E4jonQir4d5PwMs8rf+xD2Mu3TMzhn3rOJatM9TCYCCVCes6JRMnRDWv+IQ+sVpGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732787454; c=relaxed/simple;
-	bh=yhUJak+aiRwd+DuRnOGIixGNrFSkXjoy8lNGqwYmHck=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=lz/3wEzKEyC6gRV3hvyTm72eqcwkVuUFCAYkFnVC/DN2iS9kzG3gH3TNLLEcbG23k8rZ7x1TDTTCDjGV4PU1/HkyDykfOGkx2Nnf41o3rjT4yWyItRH9QBAqZzbBqzGW0PVIdQQjUnYdQNRGOKKWYKpj+p+A/Ag3ZAdfoJjjWtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RP6dXqr9; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732787446; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
-	bh=CLgZI6pExZXq1orTPdpeKWc5Bi0ajupm/DC0JUti5JA=;
-	b=RP6dXqr9BRtkikRd60GP4P1cU8VX5zcXLWFh0e8Xx2whwlba8CdMiSYvoVAmYWA6LeD/4YX+3YwXBQ9DeUbbrrhbfILD5olpq79sgpLxVgmBGcAbYn5m3cqNVqOM6KTZjf5vKuLX7g5ovj7oEvWrKkh8qrC82WaoLE2VbjUgit0=
-Received: from 30.221.97.4(mailfrom:herongguang@linux.alibaba.com fp:SMTPD_---0WKPZXAe_1732787445 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 28 Nov 2024 17:50:45 +0800
-Message-ID: <269b8bb2-85b5-4cc9-9354-a1270f2eed35@linux.alibaba.com>
-Date: Thu, 28 Nov 2024 17:50:45 +0800
+	s=arc-20240116; t=1732787652; c=relaxed/simple;
+	bh=eQh2pWC0+7ytTEqQK2XrIe6JfItAAMbL1y2MxiKihmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IsQkd4QMx8MWgtXeg1lU8cZNBLTWGpMFkPSdfJLvU2iacL3uuVyUexiOZToS2FcgR8SkJDeV4WzYA8zjY/cOFx3gt83IcnviVc4/hC2wI12Cge8IM/dutSXR3uwpEIy90VBnkt/TkZ+EAJlQg6trufvv6cFZCK8nZLESpd8gzj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-17-67483db703ab
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yunjeong Mun <yunjeong.mun@sk.com>,
+	kernel_team@skhynix.com,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: [RFC PATCH] mm/damon: explain "effective quota" on kernel-doc comment
+Date: Thu, 28 Nov 2024 18:53:55 +0900
+Message-ID: <20241128095357.1530-1-honggyu.kim@sk.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20241126194347.58155-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: He Rongguang <herongguang@linux.alibaba.com>
-Subject: [PATCH] cpupower: fix TSC MHz calculation for Mperf monitor
-To: trenn@suse.com, shuah@kernel.org, jwyatt@redhat.com, jkacur@redhat.com,
- wyes.karny@amd.com
-Cc: linux-kernel@vger.kernel.org, shannon.zhao@linux.alibaba.com,
- linux-pm@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsXC9ZZnke4OW490g157iyf/f7NaXN41h83i
+	3pr/rBaHv75hcmDx2LSqk81j06dJ7B4vNs9k9Pi8SS6AJYrLJiU1J7MstUjfLoEro/lQVsEx
+	6Yr5k3YxNTDOFO1i5OSQEDCR+P1lLyOMffHdDSYQm01ATeLKy0lgtoiAosS5xxdZuxi5OJgF
+	tjBKdC/ZBJYQFgiSOHHjCAuIzSKgKvH96wQ2EJtXwExi6Z1XbBBDNSUeb//JDmJzChhL9E9c
+	wAxiCwnwSLzasJ8Rol5Q4uTMJ2BzmAXkJZq3zmYGWSYhMIFN4vj1L1DXSUocXHGDZQIj/ywk
+	PbOQ9CxgZFrFKJSZV5abmJljopdRmZdZoZecn7uJERiEy2r/RO9g/HQh+BCjAAejEg/vB2P3
+	dCHWxLLiytxDjBIczEoivAXcQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNT
+	UwtSi2CyTBycUg2M2pOuXT3rOLct4E7dDl2fA0oTQ0wXOV0ym+/hetFzrqeciFznlAS3RNuT
+	Dhfkf67U2rj+fPzuVeZbLa9eKn2kVbpqV3XZCsO7gc4WJTUCX320hVZZTlJdcMF4YUXRshVc
+	M5r8L62TWXrz3P7qgs5dbcwSAlf8Vvirtv9nOZPJvm/1Vamlv76ZKrEUZyQaajEXFScCAGGf
+	3rk+AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrILMWRmVeSWpSXmKPExsXCNUNLT3e7rUe6wfUNuhZP/v9mtfj87DWz
+	xeG5J1ktLu+aw2Zxb81/VovDX98wWfzetoLNgd1j06pONo9Nnyaxe7zYPJPR49ttD4/FLz4w
+	eXzeJBfAFsVlk5Kak1mWWqRvl8CV0Xwoq+CYdMX8SbuYGhhninYxcnJICJhIXHx3gwnEZhNQ
+	k7jychKYLSKgKHHu8UXWLkYuDmaBLYwS3Us2gSWEBYIkTtw4wgJiswioSnz/OoENxOYVMJNY
+	eucVG8RQTYnH23+yg9icAsYS/RMXMIPYQgI8Eq827GeEqBeUODnzCdgcZgF5ieats5knMPLM
+	QpKahSS1gJFpFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmDALav9M3EH45fL7ocYBTgYlXh4
+	Pxi7pwuxJpYVV+YeYpTgYFYS4S3gBgrxpiRWVqUW5ccXleakFh9ilOZgURLn9QpPTRASSE8s
+	Sc1OTS1ILYLJMnFwSjUwFuT/d/i66K/Eof33Mi/d/3RHvrScdaZa3voNabJ/X8x53PB2ohU3
+	70SzkM/NBs33SnS/h1zMUDny76QB12vO7Jmp1Q9nxh21/yzfteJx81SmtXPvnPvpoOuVybt9
+	fqaWaWN94d87zeejlPM2NC/f6Oi7xvT6nenqGaGvY85l3T9/RkjG+vf5D0osxRmJhlrMRcWJ
+	AMSt+Co0AgAA
+X-CFilter-Loop: Reflected
 
-Commit 'cpupower: Make TSC read per CPU for Mperf monitor' (c2adb1877b7)
-changes TSC counter reads to per cpu, but left time diff global (from
-start of all cpus to end of all cpus), thus diff(time) is too large for
-a cpu's tsc counting, resulting in far less than acutal TSC_Mhz and thus
-`cpupower monitor` showing far less than actual cpu realtime frequency.
+On Tue, 26 Nov 2024 11:43:47 -0800 SeongJae Park <sj@kernel.org> wrote:
+> On Tue, 26 Nov 2024 17:24:33 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+> 
+> > Hi SeongJae,
+> > 
+> > Thanks very much for the quick response.
+> 
+> No problem, all owing to your kind report!
+> 
+> > I think it looks great but I
+> > have some minor comments so please see my inline comments below.
+> > 
+> > Thanks,
+> > Honggyu
+> > 
+> > On Mon, 25 Nov 2024 16:29:21 -0800 SeongJae Park <sj@kernel.org> wrote:
+> > > The kernel-doc comment for 'struct damos_quota' describes how "effective
+> > > quota" is calculated, but does not explain what it is.  Actually there
+> > > was an input[1] about it.  Add the explanation on the comment.
+> > > 
+> > > [1] https://github.com/damonitor/damo/issues/17#issuecomment-2497525043
+> > > 
+> > > Cc: Yunjeong Mun <yunjeong.mun@sk.com>
+> > > Cc: Honggyu Kim <honggyu.kim@sk.com>
+> > > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > > ---
+> > >  include/linux/damon.h | 10 +++++++---
+> > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/include/linux/damon.h b/include/linux/damon.h
+> > > index a67f2c4940e9..a01bfe2ff616 100644
+> > > --- a/include/linux/damon.h
+> > > +++ b/include/linux/damon.h
+> > > @@ -193,9 +193,13 @@ struct damos_quota_goal {
+> > >   * size quota is set, DAMON tries to apply the action only up to &sz bytes
+> > >   * within &reset_interval.
+> > >   *
+> > > - * Internally, the time quota is transformed to a size quota using estimated
+> > > - * throughput of the scheme's action.  DAMON then compares it against &sz and
+> > > - * uses smaller one as the effective quota.
+> > > + * To convince the different types of quotas and goals, DAMON internally
+> > > + * converts those into one single size quota called "effective quota".  DAMON
+> > 
+> > Could we use "effective size quota" instead of "effective quota"?
+> > IMHO, it will better give an idea this is related to "esz" in the code,
+> > which means effective size.
+> 
+> The above sentence is saying it as one single "size" quota, so calling it
+> "effective size quota" here feels like unnecessary duplicates of the word
+> ("size") to me.  I'd like to keep this sentence as is if you don't really mind.
 
-Fix this by making timediff also per cpu.
+Since the time or other goals are eventually transformed into a size
+quota, I thought the "effective size quota" makes sense but I won't
+stick to my term here.
 
-/proc/cpuinfo shows frequency:
-cat /proc/cpuinfo | egrep -e 'processor' -e 'MHz'
-...
-processor : 171
-cpu MHz   : 4108.498
-...
+We originally asked this question about the term "effective" itself as
+we didn't find an explanation what "effective" means actually in the
+doc.  It'd be better to have more explicit explanation as well.
 
-before fix (System 100% busy):
-    | Mperf              || Idle_Stats
- CPU| C0   | Cx   | Freq  || POLL | C1   | C2
- 171|  0.77| 99.23|  2279||  0.00|  0.00|  0.00
+> > 
+> > > + * internally uses it as only one real quota.  The convert is made as follows.
+> > 
+> > (nit) "as only one" can be "as the only one".
+> > (another nit) "The convert is made" can be "The conversion is made".
+> 
+> Nice eyes!  I will fix those.
 
-after fix (System 100% busy):
-    | Mperf              || Idle_Stats
- CPU| C0   | Cx   | Freq  || POLL | C1   | C2
- 171|  0.46| 99.54|  4095||  0.00|  0.00|  0.00
+Thanks, please do!
 
-Fixes: c2adb1877b76f ("cpupower: Make TSC read per CPU for Mperf monitor")
-Signed-off-by: He Rongguang <herongguang@linux.alibaba.com>
----
- .../cpupower/utils/idle_monitor/mperf_monitor.c   | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+> > 
+> > > + *
+> > > + * The time quota is transformed to a size quota using estimated throughput of
+> > > + * the scheme's action.  DAMON then compares it against &sz and uses smaller
+> > > + * one as the effective quota.
+> > >   *
+> > >   * If @goals is not empt, DAMON calculates yet another size quota based on the
+> > 
+> > We better fix "empt" to "empty" together.
+> 
+> Nice catch!  I will fix so.
 
-diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-index ae6af354a81d..08a399b0be28 100644
---- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-+++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-@@ -33,7 +33,7 @@ static int mperf_get_count_percent(unsigned int
-self_id, double *percent,
- 				   unsigned int cpu);
- static int mperf_get_count_freq(unsigned int id, unsigned long long *count,
- 				unsigned int cpu);
--static struct timespec time_start, time_end;
-+static struct timespec *time_start, *time_end;
+Ditto.
 
- static cstate_t mperf_cstates[MPERF_CSTATE_COUNT] = {
- 	{
-@@ -174,7 +174,7 @@ static int mperf_get_count_percent(unsigned int id,
-double *percent,
- 		dprint("%s: TSC Ref - mperf_diff: %llu, tsc_diff: %llu\n",
- 		       mperf_cstates[id].name, mperf_diff, tsc_diff);
- 	} else if (max_freq_mode == MAX_FREQ_SYSFS) {
--		timediff = max_frequency * timespec_diff_us(time_start, time_end);
-+		timediff = max_frequency * timespec_diff_us(time_start[cpu],
-time_end[cpu]);
- 		*percent = 100.0 * mperf_diff / timediff;
- 		dprint("%s: MAXFREQ - mperf_diff: %llu, time_diff: %llu\n",
- 		       mperf_cstates[id].name, mperf_diff, timediff);
-@@ -207,7 +207,7 @@ static int mperf_get_count_freq(unsigned int id,
-unsigned long long *count,
- 	if (max_freq_mode == MAX_FREQ_TSC_REF) {
- 		/* Calculate max_freq from TSC count */
- 		tsc_diff = tsc_at_measure_end[cpu] - tsc_at_measure_start[cpu];
--		time_diff = timespec_diff_us(time_start, time_end);
-+		time_diff = timespec_diff_us(time_start[cpu], time_end[cpu]);
- 		max_frequency = tsc_diff / time_diff;
- 	}
+Thanks,
+Honggyu
 
-@@ -226,9 +226,8 @@ static int mperf_start(void)
- {
- 	int cpu;
-
--	clock_gettime(CLOCK_REALTIME, &time_start);
--
- 	for (cpu = 0; cpu < cpu_count; cpu++) {
-+		clock_gettime(CLOCK_REALTIME, &time_start[cpu]);
- 		mperf_get_tsc(&tsc_at_measure_start[cpu]);
- 		mperf_init_stats(cpu);
- 	}
-@@ -243,9 +242,9 @@ static int mperf_stop(void)
- 	for (cpu = 0; cpu < cpu_count; cpu++) {
- 		mperf_measure_stats(cpu);
- 		mperf_get_tsc(&tsc_at_measure_end[cpu]);
-+		clock_gettime(CLOCK_REALTIME, &time_end[cpu]);
- 	}
-
--	clock_gettime(CLOCK_REALTIME, &time_end);
- 	return 0;
- }
-
-@@ -349,6 +348,8 @@ struct cpuidle_monitor *mperf_register(void)
- 	aperf_current_count = calloc(cpu_count, sizeof(unsigned long long));
- 	tsc_at_measure_start = calloc(cpu_count, sizeof(unsigned long long));
- 	tsc_at_measure_end = calloc(cpu_count, sizeof(unsigned long long));
-+	time_start = calloc(cpu_count, sizeof(struct timespec));
-+	time_end = calloc(cpu_count, sizeof(struct timespec));
- 	mperf_monitor.name_len = strlen(mperf_monitor.name);
- 	return &mperf_monitor;
- }
-@@ -361,6 +362,8 @@ void mperf_unregister(void)
- 	free(aperf_current_count);
- 	free(tsc_at_measure_start);
- 	free(tsc_at_measure_end);
-+	free(time_start);
-+	free(time_end);
- 	free(is_valid);
- }
-
--- 
-2.43.0
+> > 
+> > >   * goals using its internal feedback loop algorithm, for every @reset_interval.
+> > > -- 
+> > > 2.39.5
+> > >
+> 
+> 
+> Thanks,
+> SJ
 
