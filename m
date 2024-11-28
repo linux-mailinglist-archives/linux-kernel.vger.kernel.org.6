@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-424099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2FC9DB096
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:02:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF539DB097
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 02:03:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18AB165C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:03:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B0911CA0;
+	Thu, 28 Nov 2024 01:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cioKCThR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F29B210EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 01:02:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5E0EEDD;
-	Thu, 28 Nov 2024 01:02:16 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B94847B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 01:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C605847B;
+	Thu, 28 Nov 2024 01:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732755735; cv=none; b=dwoyexmTyoZQ8e1NE7/UcfTU66sf7hw7XpNNKS1sOYp1J8TOchgiLYs0oVDWOLZAhg9l2Ok0lsOdX8DRdft8WLE3n0ls7ldCjRNAbFJ2+nkz6A9qS5uin3vm+M4y9Rm76kEcTK3067V6cU2kE69D+NySWWV+7C/qaRcFxOhxnK8=
+	t=1732755806; cv=none; b=E0sexGRNeQJf2ebNG6qjhpUbP8TxPmhteEdo66i5SLlvoZ/9pQLw102+5s681hx7KFIQG4FxMG17AOhDHEJIOAepXgwZnmV78wOLpAU0/jB1uZIH7p9DVEOsjZmMRA80xZiS1nFvrzqjcJU7sJd2Z7pwUBZowQ6uG++AKIIfHaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732755735; c=relaxed/simple;
-	bh=YMLlvWRb+rvWVZmqbs40Wus76fGlfxqUJWIZlpYk3jc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CsmF2nQBSy84jf3wG1vJnXb+NhqTKOQ6hhOmZtwlDABIgoVbmrlWc2AkZmOjjunazIKiXjpmdNXovs9H8sFVuKIsKSpdodIe4NOEcbSZf4Lsw3rXZy6RPnRfUTrUv9aKviN/R1zPjjNdnu4dIjI1MXB4JSy7VeXNfz8jhjbrPig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.2.4] (unknown [60.17.12.134])
-	by APP-03 (Coremail) with SMTP id rQCowACXduwAwUdnELH7BQ--.8969S2;
-	Thu, 28 Nov 2024 09:01:54 +0800 (CST)
-Message-ID: <980b98978ab4ee912b37cb101ad43bce20b56dcb.camel@iscas.ac.cn>
-Subject: Re: [PATCH v2] riscv: module: use a plain variable for list_head
- instead of a pointer
-From: laokz <zhangkai@iscas.ac.cn>
-To: =?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>, Paul Walmsley
-	 <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	 <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Cc: Charlie Jenkins <charlie@rivosinc.com>, Andrew Jones
-	 <ajones@ventanamicro.com>
-Date: Thu, 28 Nov 2024 09:01:52 +0800
-In-Reply-To: <20241127142519.3038691-1-cleger@rivosinc.com>
-References: <20241127142519.3038691-1-cleger@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1732755806; c=relaxed/simple;
+	bh=k+4jUneAouhf8w7ycfvP0Gbm6jCVYSw81dtHzGqHtY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cV9R8OGb2UzG3+LH0yz51w6ZufaXG6nPwGLBrbzq5eJRI8PITz9DixkPELHPp7Wgt1geDVMBNeBO9KHCI/g0JC9Fg8CfXf4dI+ZtNCegrAWT45bxFmF9uOKVhBQqlZYQydvhHQc8x3RDW93YGj19TlN8K6NlPQp3A2QztfGyJb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cioKCThR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE01C4CECC;
+	Thu, 28 Nov 2024 01:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732755806;
+	bh=k+4jUneAouhf8w7ycfvP0Gbm6jCVYSw81dtHzGqHtY4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cioKCThRkflOqTpzusgvl8soPcXcI/rmTj65RQIVjQWY9ES6q7krgIS/imG7KIcFV
+	 Yu1dXUjONX6ddSZK4kI+Ee9e/QGtJkNloCA5R/VIs/CJezqYQOobiqk94kIbeILKPw
+	 4yOa9gmhvgup5rjKaSsSua+P4ijsfQOqXUlRPnI3lsAjzE6jYabpEm88dGmxpuPtxG
+	 NbzDgipsmhE0NSWOGfG8Mt0hvAOyOYBv3l6nd3lp3ynOg98mBuiwZptz/jasbuZr0D
+	 MVw88njNDFwtxqcnfJJOQfwUjP+Gpp7tdOVZSRy+NoJvhwMLSVlz7ZN7wuLK/4P3M/
+	 SlfWQp2EtK70w==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2] perf tools: Avoid unaligned pointer operations
+Date: Wed, 27 Nov 2024 17:03:25 -0800
+Message-ID: <20241128010325.946897-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:rQCowACXduwAwUdnELH7BQ--.8969S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw45ur1rAF4kAF13ur45Wrg_yoWruFWkpF
-	18Jr1UJryUJr1xJr1UJr1UXryUJr1UJw1UJr1UXF1UJr17Jr10qr1UXr1jgr1UJr48Jr1U
-	Jr1Utr1UZr1UJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBab7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFcxC0VAYjxAxZF0Ew4CEw7xC0wAC
-	Y4xI67k04243AVC20s07MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s
-	026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_
-	JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14
-	v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xva
-	j40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJV
-	W8JwCE64xvF2IEb7IF0Fy7YxBIdaVFxhVjvjDU0xZFpf9x07jYwZcUUUUU=
-X-CM-SenderInfo: x2kd0wxndlqxpvfd2hldfou0/
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI0LTExLTI3IGF0IDE1OjI1ICswMTAwLCBDbMOpbWVudCBMw6lnZXIgd3JvdGU6
-Cj4gcmVsX2hlYWQncyBsaXN0X2hlYWQgbWVtYmVyLCByZWxfZW50cnksIGRvZXNuJ3QgbmVlZCB0
-byBiZSBhbGxvY2F0ZWQsCj4gaXRzIHN0b3JhZ2UgY2FuIGp1c3QgYmUgcGFydCBvZiB0aGUgYWxs
-b2NhdGVkIHJlbF9oZWFkLiBSZW1vdmUgdGhlCgpPaCBteSBwb29yIEVuZ2xpc2guIE9LLCBpdCdz
-IG1vcmUgYmV0dGVyIHRoYW4ganVzdCBhZGQgdGhlIGxvc3Qga2ZyZWUuCgo+IHBvaW50ZXIgd2hp
-Y2ggYWxsb3dzIHRvIGdldCByaWQgb2YgdGhlIGFsbG9jYXRpb24gYXMgd2VsbCBhcyBhbgo+IGV4
-aXN0aW5nCj4gbWVtb3J5IGxlYWsgZm91bmQgYnkgS2FpIFphbmcgdXNpbmcga21lbWxlYWsuCiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBeCiAgICAgICAgICAgICAgICAgICAgICAgICAgIFpo
-YW5nCgpCVFcuIERvZXNuJ3QgaXQgbmVlZCBhIGZpeGVzIHRhZyBsaWtlIHdoYXQgeW91IHN1Z2dl
-c3RlZD8gKFRoZSBidWcKbWlnaHQgY29tZSBmcm9tIDYuNykKCj4gCj4gUmVwb3J0ZWQtYnk6IEth
-aSBaaGFuZyA8emhhbmdrYWlAaXNjYXMuYWMuY24+Cj4gU2lnbmVkLW9mZi1ieTogQ2zDqW1lbnQg
-TMOpZ2VyIDxjbGVnZXJAcml2b3NpbmMuY29tPgo+IFJldmlld2VkLWJ5OiBBbmRyZXcgSm9uZXMg
-PGFqb25lc0B2ZW50YW5hbWljcm8uY29tPgo+IC0tLQo+IAo+IFYyOgo+IMKgLSBBZGQgS2FpIFJl
-cG9ydGVkLWJ5Cj4gwqAtIFJld29yZCB0aGUgY29tbWl0IGRlc2NyaXB0aW9uIChBbmRyZXcpCj4g
-Cj4gLS0tCj4gwqBhcmNoL3Jpc2N2L2tlcm5lbC9tb2R1bGUuYyB8IDE4ICsrKystLS0tLS0tLS0t
-LS0tLQo+IMKgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0p
-Cj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvcmlzY3Yva2VybmVsL21vZHVsZS5jIGIvYXJjaC9yaXNj
-di9rZXJuZWwvbW9kdWxlLmMKPiBpbmRleCAxY2Q0NjFmM2Q4NzIuLjQ3ZDBlYmVlYzkzYyAxMDA2
-NDQKPiAtLS0gYS9hcmNoL3Jpc2N2L2tlcm5lbC9tb2R1bGUuYwo+ICsrKyBiL2FyY2gvcmlzY3Yv
-a2VybmVsL21vZHVsZS5jCj4gQEAgLTIzLDcgKzIzLDcgQEAgc3RydWN0IHVzZWRfYnVja2V0IHsK
-PiDCoAo+IMKgc3RydWN0IHJlbG9jYXRpb25faGVhZCB7Cj4gwqDCoMKgwqDCoMKgwqDCoHN0cnVj
-dCBobGlzdF9ub2RlIG5vZGU7Cj4gLcKgwqDCoMKgwqDCoMKgc3RydWN0IGxpc3RfaGVhZCAqcmVs
-X2VudHJ5Owo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBsaXN0X2hlYWQgcmVsX2VudHJ5Owo+IMKg
-wqDCoMKgwqDCoMKgwqB2b2lkICpsb2NhdGlvbjsKPiDCoH07Cj4gwqAKPiBAQCAtNjM0LDcgKzYz
-NCw3IEBAIHByb2Nlc3NfYWNjdW11bGF0ZWRfcmVsb2NhdGlvbnMoc3RydWN0IG1vZHVsZQo+ICpt
-ZSwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBsb2Nh
-dGlvbiA9IHJlbF9oZWFkX2l0ZXItPmxvY2F0aW9uOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShyZWxfZW50
-cnlfaXRlciwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVsX2Vu
-dHJ5X2l0ZXJfdG1wLAo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJl
-bF9oZWFkX2l0ZXItCj4gPnJlbF9lbnRyeSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAmcmVsX2hlYWRfaXRlci0KPiA+cmVsX2VudHJ5LAo+IMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBoZWFkKSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGN1cnJfdHlwZSA9IHJl
-bF9lbnRyeV9pdGVyLT50eXBlOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWxvY19oYW5kbGVyc1tjdXJyX3R5cGVdLnJl
-bG9jX2hhbmRsCj4gZXIoCj4gQEAgLTcwNCwxNiArNzA0LDcgQEAgc3RhdGljIGludCBhZGRfcmVs
-b2NhdGlvbl90b19hY2N1bXVsYXRlKHN0cnVjdAo+IG1vZHVsZSAqbWUsIGludCB0eXBlLAo+IMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRU5P
-TUVNOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+IMKgCj4gLcKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlbF9oZWFkLT5yZWxfZW50cnkgPQo+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga21hbGxvYyhzaXplb2Yoc3RydWN0
-IGxpc3RfaGVhZCksCj4gR0ZQX0tFUk5FTCk7Cj4gLQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBpZiAoIXJlbF9oZWFkLT5yZWxfZW50cnkpIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtmcmVlKGVudHJ5KTsKPiAtwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtmcmVlKHJlbF9oZWFkKTsKPiAtwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRU5PTUVN
-Owo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gLQo+IC3CoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqBJTklUX0xJU1RfSEVBRChyZWxfaGVhZC0+cmVsX2VudHJ5KTsKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgSU5JVF9MSVNUX0hFQUQoJnJlbF9oZWFkLT5y
-ZWxfZW50cnkpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmVsX2hlYWQtPmxv
-Y2F0aW9uID0gbG9jYXRpb247Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBJTklU
-X0hMSVNUX05PREUoJnJlbF9oZWFkLT5ub2RlKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGlmICghY3VycmVudF9oZWFkLT5maXJzdCkgewo+IEBAIC03MjIsNyArNzEzLDYgQEAg
-c3RhdGljIGludCBhZGRfcmVsb2NhdGlvbl90b19hY2N1bXVsYXRlKHN0cnVjdAo+IG1vZHVsZSAq
-bWUsIGludCB0eXBlLAo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgaWYgKCFidWNrZXQpIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga2ZyZWUoZW50cnkpOwo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oGtmcmVlKHJlbF9oZWFkLT5yZWxfZW50cnkpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBrZnJlZShyZWxfaGVhZCk7Cj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHJldHVybiAtRU5PTUVNOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoH0KPiBAQCAtNzM1LDcgKzcyNSw3IEBAIHN0YXRpYyBpbnQgYWRkX3Jl
-bG9jYXRpb25fdG9fYWNjdW11bGF0ZShzdHJ1Y3QKPiBtb2R1bGUgKm1lLCBpbnQgdHlwZSwKPiDC
-oMKgwqDCoMKgwqDCoMKgfQo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoC8qIEFkZCByZWxvY2F0aW9u
-IHRvIGhlYWQgb2YgZGlzY292ZXJlZCByZWxfaGVhZCAqLwo+IC3CoMKgwqDCoMKgwqDCoGxpc3Rf
-YWRkX3RhaWwoJmVudHJ5LT5oZWFkLCByZWxfaGVhZC0+cmVsX2VudHJ5KTsKPiArwqDCoMKgwqDC
-oMKgwqBsaXN0X2FkZF90YWlsKCZlbnRyeS0+aGVhZCwgJnJlbF9oZWFkLT5yZWxfZW50cnkpOwo+
-IMKgCj4gwqDCoMKgwqDCoMKgwqDCoHJldHVybiAwOwo+IMKgfQoK
+The sample data is 64-bit aligned basically but raw data starts with
+32-bit length field and data follows.  In perf_event__synthesize_sample
+it treats the sample data as a 64-bit array.  And it needs some trick
+to update the raw data properly.
+
+But it seems some compilers are not happy with this and the program dies
+siliently.  I found the sample parsing test failed without any messages
+on affected systems.
+
+Let's update the code to use a 32-bit pointer directly and make sure the
+result is 64-bit aligned again.  No functional changes intended.
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+v2) use '%' instead of '/' to check alignment
+
+ tools/perf/util/synthetic-events.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+index a58444c4aed1f1ea..6923b0d5efede4a7 100644
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
+ 	}
+ 
+ 	if (type & PERF_SAMPLE_RAW) {
+-		u.val32[0] = sample->raw_size;
+-		*array = u.val64;
+-		array = (void *)array + sizeof(u32);
++		u32 *array32 = (void *)array;
++
++		*array32 = sample->raw_size;
++		array32++;
++
++		memcpy(array32, sample->raw_data, sample->raw_size);
++		array = (void *)(array32 + (sample->raw_size / sizeof(u32)));
+ 
+-		memcpy(array, sample->raw_data, sample->raw_size);
+-		array = (void *)array + sample->raw_size;
++		/* make sure the array is 64-bit aligned */
++		BUG_ON(((long)array) % sizeof(u64));
+ 	}
+ 
+ 	if (type & PERF_SAMPLE_BRANCH_STACK) {
+-- 
+2.47.0.338.g60cca15819-goog
 
 
