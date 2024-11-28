@@ -1,113 +1,182 @@
-Return-Path: <linux-kernel+bounces-424933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3094D9DBB76
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:44:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442EA1641A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:44:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563CD1BFE10;
-	Thu, 28 Nov 2024 16:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bDT4CLgN"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504099DBB74
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 17:44:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BD01C173C;
-	Thu, 28 Nov 2024 16:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732812236; cv=none; b=q8AmEO/sKkdBZ6IVUN5osKzZeTZlco6epzN9GzhR0iwGd2thCYQmdCZ0JQ1UCEPjgFs9tO33Ewepo9UZlKoUQ9VtCKbrTO0qk8chYjgxY6M8OsX2B2Y7GZQuqpE4FNr4IytcB/+FF2uxukOt2Qmi0D1gezoYzfPdpcm7LpTFilQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732812236; c=relaxed/simple;
-	bh=WkKkP9VK19grXsdbi+La067oaeO0fCjhwxaKtyL/YiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yv91hlpBgUOabCUISwQ9kXZFFJwgGfpvp4dCcRmgP7GqdHNkpGUq/94tF+7rrE4IPs5B4rLiukhS2Ql3qQRXpnvWgqJI61calLxO6uyusvZa1QTI8qcyHDF2+YZHbBr9tjSq7XeABVRvUrRIdmrAPeBytdhe5b7DZcgCxt7PqPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bDT4CLgN; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EBAE440E0276;
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C87EB228D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 16:44:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEC71C07EE;
 	Thu, 28 Nov 2024 16:43:51 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TJXKOvBIsjJ9; Thu, 28 Nov 2024 16:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732812227; bh=t5VPGfRICgOVWK7ZjQmKkU7K5Wtzyspkwf97k0l8fok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bDT4CLgNF1K2X78JtO7EYwUhkiFgAwHWv70TYIiBuW/aY+vRgyGol1Am1FDqx9Q0K
-	 OdPKlxsZSfaDry0yz9ngd0oeAN7UDQaCMHoOhsWBK4XjNgG6c9WUb6K7eV3Fv0e7aR
-	 C7ajqIrDQpDcbqhcdJ72157TSjjWg0D25Rq5HfJuwSd1N5u378U5T0qigBNh1VU7Bl
-	 WDyVa6UpTXe8OdjvZU8wmy7MQihy2xT6L51PX9AlVPElquxQ8//e7Q6OnALyu7/5Ig
-	 OcILaX1f1WgRy6a5awJvQZSjOgHXHCYwc0Vkx67E0uB/FMHulb0uKOIgOWS/pzX3Lp
-	 syJ8fhBACjhQLjizU7ffcJteEvDlD61cSJn5icAthcakGj/dZvgvBdk3vPQ+ole/t7
-	 2/ey9ix45KTwKnMwfRGAGsTV2BW6YwYaFV/igR0bvM5hC4BzvE02j52sNp78GWISsj
-	 CZaDn6m6gkanJCZXxyq455JVwxd0+4VlbP5moqll5hndYWI2LqtPyKhOR62tLnRsMk
-	 Phpr/bb7Ff9GVGCclOi7zdNNu3Pv2tsdjwuOtSqdEQrU+51JSiv+qdZd6y7diwg1r+
-	 VUY+QJHrQw3U3tESKOVKBn1iRxphJYAmtBAX59ZjNfwJhqmH11uRmtSEFVpXIqm9sP
-	 L2ZW5nvXlAHXlVLcWVzom8WQ=
-Received: from zn.tnic (p200300ea9736a177329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a177:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F3Cf58N5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B0B5D40E0269;
-	Thu, 28 Nov 2024 16:43:21 +0000 (UTC)
-Date: Thu, 28 Nov 2024 17:43:10 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, puwen@hygon.cn, seanjc@google.com,
-	kim.phillips@amd.com, jmattson@google.com, babu.moger@amd.com,
-	peterz@infradead.org, rick.p.edgecombe@intel.com, brgerst@gmail.com,
-	ashok.raj@intel.com, mjguzik@gmail.com, jpoimboe@kernel.org,
-	nik.borisov@suse.com, aik@amd.com, vegard.nossum@oracle.com,
-	daniel.sneddon@linux.intel.com, acdunlap@google.com,
-	Erwan Velu <erwanaliasr1@gmail.com>, pavel@denx.de
-Subject: Re: [PATCH AUTOSEL 5.15 11/12] x86/barrier: Do not serialize MSR
- accesses on AMD
-Message-ID: <20241128164310.GCZ0idnhjpAV6wFWm6@fat_crate.local>
-References: <20240115232718.209642-1-sashal@kernel.org>
- <20240115232718.209642-11-sashal@kernel.org>
- <20241128115924.GAZ0hbHKsbtCixVqAe@fat_crate.local>
- <Z0iRzPpGvpeYzA4H@sashalap>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEC21BE86A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 16:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732812231; cv=none; b=Eps8DTLetHP1nZ3Mno8kNgZ4zlxrQH7csNvy4/PuV4IZxYjWjOUnbVRpqFKvg9OZe3yUduyabZ/pBNBpUwEeMmb/Bv+7NMVn8F0sRrv7Agyhj+Pa1GKibS/ZqfZ6MJ4g1EWeG9XwSmyTcn3OE4A78/f2krJt96acNrfWUrmQudA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732812231; c=relaxed/simple;
+	bh=R7Omu7J6X5LKJ16FM7yNx4t1+DrV5kkPvPh63I4qE54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KbHprDImmL1g+QDq8IQMLya65mD72tORR7CxMDQHtZsG8iZI/ha97/yhm71CgXu8HWJOzDQvE2eSqY1KnrHN2gL/pDqaurdr16sYIPOER9FICddOiNlOoKpL0jSoYhY/QWSBI/CkZ/9SbBLEcTqYR4lsXtYZt41xC8Xb0tE0gSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F3Cf58N5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732812228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=K+3dmbf6C9Y2rlj/QHY9nRJ9DkG1EoefJsooKwPlv10=;
+	b=F3Cf58N5ZhULG0EcMLR7WDcFjruynXIidJkayHdv0P3ayLk+EgjhNbJjM2xzY78p32JGMT
+	0Rexts1Xef3iKJNwEmlLFaFvaEvOADNiHwA7tNjfZOjA5kL3Z3H5qbldIr0qPMo+j3H5Ey
+	pIkMy1wWn3opVQmwo9fyNUHdTjLpyFM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-121-EbCRADrJOP-sPPaGrVxcwg-1; Thu, 28 Nov 2024 11:43:47 -0500
+X-MC-Unique: EbCRADrJOP-sPPaGrVxcwg-1
+X-Mimecast-MFC-AGG-ID: EbCRADrJOP-sPPaGrVxcwg
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38243a4ba5fso613585f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 08:43:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732812226; x=1733417026;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+3dmbf6C9Y2rlj/QHY9nRJ9DkG1EoefJsooKwPlv10=;
+        b=ZRWnbZ+JTeQbaac+hZsixQwD8ZLWqBBEhl1HlK/Ta6qTmrg1pJDJebw2HP+olUiDjT
+         0lefYfsBbi8c1+dt0MRcR0t0CF1vH4DBQMPHu4ULhH47J7wo9LzfOqh2gwVvcXlq3Kmo
+         hBitdqLgh83mEWqYHA8OkdWRDgyhhSXtAm3MrkMBsCYEE8G+yQqbC8tIjjXuTJtVrQSc
+         NyLXIeIsQBBvUcNFzQHZ0ZlPlWn0S2dOEH/hdfWqPS4pCgz8baaUJrdwVRPsZTb87D6N
+         4lDSG9BaicTwGn6QNGRwmFdzwtbdo5If/uB7A3yAHdjYh9yKc3bbjGgNHSxvUSaJ4uUW
+         U/0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmYXi7HyZmrLttx/IclpLduKuEsih6zKfRyjfWI7at2itgGXLFp47w5DjIWRtToHzlBKKtt7LWmAy1oyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOVxXPeB2wmBg1kSCy1eWrWjxNT/cABkIMm/fHsTfIR7T4iZ4M
+	bHsbQKPzCf4hJpBmmQEEJM4zZO7mZ8vsfcdSy37DV+t4ENeTuwobHVMdjxq4sw+kZtSZB2J3ZMM
+	N19k8k6c5LT1eZzWI78V/55E0jPi9XF69DnlUaYvAHV3EZV20AkvORxJCzGYh7g==
+X-Gm-Gg: ASbGncsqo9WiSt2OrSGjfCsvFCERLP+BZs8HwaW1pmqLa4i5r8XxcV4JXj21qh8wklQ
+	4vC205gTH+iUPzRhi7NYDmoiwAvrYfPlkln407ygnUQjeqRbkoulYb+WWA8qnmlDfCMOoivt9LH
+	GJoG7cfNW55Tw56WfTudx7fqU9KR4appjrJHsqFW6NX0nIQMAP5UfjFCQqFCq2mQfT2UIdhUrp8
+	+0Mq76KwN4intimmbyDf3oqhTvUSHya6G5ZNLBEo/fravvtBoRRLWQ=
+X-Received: by 2002:a5d:59af:0:b0:37d:4833:38f5 with SMTP id ffacd0b85a97d-385c6ebb8c7mr7364838f8f.30.1732812225941;
+        Thu, 28 Nov 2024 08:43:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFC4BYSXCVnEpYmCQy+9reJYshrH6n+hXcy3RvBypV2jgbG7ijT6BD4xz1XKqt0CRFoaWIVmA==
+X-Received: by 2002:a5d:59af:0:b0:37d:4833:38f5 with SMTP id ffacd0b85a97d-385c6ebb8c7mr7364811f8f.30.1732812225627;
+        Thu, 28 Nov 2024 08:43:45 -0800 (PST)
+Received: from [192.168.10.27] ([151.49.236.146])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-385ccd7fec1sm2031756f8f.97.2024.11.28.08.43.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Nov 2024 08:43:45 -0800 (PST)
+Message-ID: <d7f045c1-79df-4592-a116-01874f402de4@redhat.com>
+Date: Thu, 28 Nov 2024 17:43:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0iRzPpGvpeYzA4H@sashalap>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: Zeroable: allow struct update syntax outside
+ init macros
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ boqun.feng@gmail.com, ojeda@kernel.org, benno.lossin@proton.me,
+ axboe@kernel.dk, tmgross@umich.edu, bjorn3_gh@protonmail.com,
+ gary@garyguo.net, alex.gaynor@gmail.com, a.hindborg@kernel.org
+References: <20241128141323.481033-1-pbonzini@redhat.com>
+ <20241128141323.481033-2-pbonzini@redhat.com>
+ <CAH5fLgjJbzAbf5CO3xjHxcThpqju3j0tNdo+QiGupARVmoThYw@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <CAH5fLgjJbzAbf5CO3xjHxcThpqju3j0tNdo+QiGupARVmoThYw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 28, 2024 at 10:52:44AM -0500, Sasha Levin wrote:
-> You've missed the 5.10 mail :)
+On 11/28/24 15:40, Alice Ryhl wrote:
+>> The definition of the ZERO constant requires adding a Sized boundary, but
+>> this is not a problem either because neither slices nor trait objects
+>> are zeroable.
+>>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> 
+> Slices are zeroable. I know they don't implement the trait,
 
-You mean in the flood? ;-P
+Right, I should have used the uppercase "Zeroable" for clarity.
 
-> Pavel objected to it so I've dropped it: https://lore.kernel.org/all/Zbli7QIGVFT8EtO4@sashalap/
+> but they could implement it, and this could be used to implement e.g.:
+> 
+> pub fn write_zero<T: Zeroed + ?Sized>(value: &mut T) {
+>      memset(0, ...);
+> }
 
-So we're not backporting those anymore? But everything else? :-P
+Yeah, that would be I think
 
-And 5.15 has it already...
+     pub fn write_zero<T: Zeroable + ?Sized>(value: &mut T) {
+         unsafe {
+            ptr::write_bytes((value as *mut T).cast::<u8>(), 0,
+                             std::mem::size_of_val(value))
+         }
+     }
 
-Frankly, with the amount of stuff going into stable, I see no problem with
-backporting such patches. Especially if the people using stable kernels will
-end up backporting it themselves and thus multiply work. I.e., Erwan's case.
+?  And it works for both sized values and slices.  If Zeroable is 
+limited to sized types, I guess you could still do:
 
-Thx.
+     pub fn write_zero_slice<T: Zeroable>(value: &mut [T]) {
+         ptr::write_bytes(value.as_mut_ptr(), 0, value.len())
+     }
 
--- 
-Regards/Gruss,
-    Boris.
+So the question is whether the ZERO constant is worthwhile enough, to 
+justify the limitation of the Sized bound (e.g. having separate 
+write_zero and write_zero_slice in the future).
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+
+Paolo
+
 
