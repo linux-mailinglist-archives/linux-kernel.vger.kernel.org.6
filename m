@@ -1,78 +1,93 @@
-Return-Path: <linux-kernel+bounces-425013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37239DBC75
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:20:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A1E9DBC79
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 20:27:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707C5164B6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:20:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1447BB21156
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 19:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16EA1C3F26;
-	Thu, 28 Nov 2024 19:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C031C1F2A;
+	Thu, 28 Nov 2024 19:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAPT4ztj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxJcZ1E0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1BF1C4603;
-	Thu, 28 Nov 2024 19:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799FA19882B;
+	Thu, 28 Nov 2024 19:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732821588; cv=none; b=T9JPgELmD41HzbZis5CdgH8vGNNPBjWVBwFqp/QO5fvbOeUt9ZhVrtp1/0R9IP58yI+Wo9KI0Nc0EVc49wHywzI6jC/Ftda/NMllfq2hf72cQvsczg2yRzOKNcfbG+g56lYXmbvo7kg4ceuCbjHaN2I+qDYRYHRcwr6WNSb0qtc=
+	t=1732822022; cv=none; b=lD5abIp/lsseXk/B2tO4OriYDT9Ld3dP9n1zIG/Nk/8UETTIVotta890cBD9iepJpo+8fUqubrDEIRH8lYxcGOU5x51A/lWEcn6qjLrt6+FHsMrvnsTJDKFsfRyxGmkZwEXg6aUBEu8uSMJpufwtVosQ361v9zKPr0luISIB66E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732821588; c=relaxed/simple;
-	bh=0j9ucpnBKJDef/9ZNNllQJgNnEMRgnfJHvUic/Cl1hs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oxywJjZKVGZp3adcXs/CuEki61I3fYAnVzmVZtE3teBc+sluqApMWdzgEd3CxVclC3VCacmSE3hClRTd9Dns9fXBG9B/+7yY7Zt8sif5z9uOVZGWJKfwXwl2ybA/qoMFGLQ3ioLO6m8fS0Bb7l8yTEgOnCnjBOLzySaCeiA5ah0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAPT4ztj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3C6C4AF09;
-	Thu, 28 Nov 2024 19:19:47 +0000 (UTC)
+	s=arc-20240116; t=1732822022; c=relaxed/simple;
+	bh=uhCpIRnB22gOek6/ItoKHE65ZGFfikpPq/Ra+s61V1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hloLtmXH0nnVWpwINUcs0kPVP1OUOlUlRN0hxx9x3JNg58xGCTexBh8xfQ6LRXJUfnfumIEce6jclK3HyEDOhC4pihzJ6NeEDHK44dHkab2YfbHDFmEHXkV+BhttexkKDpNg2zh59HFuhmJJYzzAQ6POpriW5RT3EV0vBBnhk/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxJcZ1E0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85FA9C4CED2;
+	Thu, 28 Nov 2024 19:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732821587;
-	bh=0j9ucpnBKJDef/9ZNNllQJgNnEMRgnfJHvUic/Cl1hs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GAPT4ztjE4FE6r4BJS7ss1EgOL7Z6KrhrE3z+T2ROfas3MGh9Hx/cwqS3LFyeiQOp
-	 aQB/Eyr/TZ7j53CEY9ImK98jTU4okWWYbR1mhOIE9zJZMm6aCh+lSAy4d21nm5wMwn
-	 K33nnjovG7fedjuSVz1eeA4moByHS0bgftvaLmBscukP2A9e/oxsy4PlRsVRc5glei
-	 RaClhXo9pstsVSXVWhmZRxfVX0Pqbeg2jWn3rvpet0TiASAmF7j/U+6Loj6KJe2QOc
-	 e60UqC4MUNgcltlpnht2ELeh1vA40YPH08d5Pk8IzcgYfBh90UxHAIIgrqPCEHG/R9
-	 RJcwqQvNQqTkQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 2C32D380A944;
-	Thu, 28 Nov 2024 19:20:02 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.13-rc1 - attempt II
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241128172801.157135-1-pabeni@redhat.com>
-References: <20241128172801.157135-1-pabeni@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241128172801.157135-1-pabeni@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.13-rc1
-X-PR-Tracked-Commit-Id: f6d7695b5ae22092fa2cc42529bb7462f7e0c4ad
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 65ae975e97d5aab3ee9dc5ec701b12090572ed43
-Message-Id: <173282160082.1826869.11344770905252332008.pr-tracker-bot@kernel.org>
-Date: Thu, 28 Nov 2024 19:20:00 +0000
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, sashal@kernel.org
+	s=k20201202; t=1732822021;
+	bh=uhCpIRnB22gOek6/ItoKHE65ZGFfikpPq/Ra+s61V1M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CxJcZ1E0uKkObjtme+VKhayhvIy0ZqUKrWUEuhHtHJdkEG6x3cP0cnlPeOlAX1GJT
+	 tyOf7vPjcGPucWYFc67KodYfVXDIgjkm65L2onsjmp6nTpSfuLBzBLGzWjjOWyXcjB
+	 yOW7dHIbi+8lSFJ0+968aOgi80I3HizmRmN+AlPSTCA0aCWU1NItm1gmSlnP+bFriJ
+	 uWlRWSrYGnyn31C0bxuPwlYfNur6pZVfJoS213vQCBtWjfGXHtqicf1S8SacLemuqT
+	 KDAhj+My0YSDeQkTWK/f5US4WNbWaq+DzFXgOyBx7G+jKG7EHFUD3rw8bXGYM2ktm3
+	 vSVwuekNAR/rA==
+Date: Thu, 28 Nov 2024 11:27:00 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, samitolvanen@google.com,
+	petr.pavlu@suse.com, da.gomez@samsung.com,
+	linux-modules@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	geert@linux-m68k.org, masahiroy@kernel.org, mmaurer@google.com,
+	arnd@arndb.de, deller@gmx.de, song@kernel.org
+Subject: [GIT PULL] Modules fixes for v6.13-rc1
+Message-ID: <Z0jEBLLRoUKoBVPk@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The pull request you sent on Thu, 28 Nov 2024 18:28:01 +0100:
+The following changes since commit b86545e02e8c22fb89218f29d381fa8e8b91d815:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.13-rc1
+  Merge tag 'acpi-6.13-rc1-2' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm (2024-11-27 14:50:31 -0800)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/65ae975e97d5aab3ee9dc5ec701b12090572ed43
+are available in the Git repository at:
 
-Thank you!
+  git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/ tags/modules-6.13-rc1-v2
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+for you to fetch changes up to c5efad88a94613cf60fed010b96dbc3044389316:
+
+  selftests: find_symbol: Actually use load_mod() parameter (2024-11-28 11:17:38 -0800)
+
+----------------------------------------------------------------
+Modules fixes for v6.13-rc1
+
+This consists of 3 fixes, the main one build that we build the kallsyms
+test modules all over again if we just run make twice.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      selftests: find_symbol: Actually use load_mod() parameter
+
+Luis Chamberlain (2):
+      selftests: kallsyms: fix double build stupidity
+      selftests: kallsyms: fix and clarify current test boundaries
+
+ lib/Kconfig.debug                             | 32 ++++++++++++++++++++++++++-
+ lib/tests/module/Makefile                     | 17 +++++++-------
+ lib/tests/module/gen_test_kallsyms.sh         |  9 ++++++--
+ tools/testing/selftests/module/find_symbol.sh |  4 ++--
+ 4 files changed, 48 insertions(+), 14 deletions(-)
 
