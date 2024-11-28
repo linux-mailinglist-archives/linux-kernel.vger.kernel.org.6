@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-424677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16749DB7F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:54:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D879DB7FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:55:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF2E163DB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B274280A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6C419F135;
-	Thu, 28 Nov 2024 12:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7E61A38F9;
+	Thu, 28 Nov 2024 12:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vG/FNAVb"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Dy6cRDyk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C119CC1F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F3719ADB0;
+	Thu, 28 Nov 2024 12:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732798461; cv=none; b=miYqJsVeKMftxUqCIBu5M1CpCG5GJ9VLv5PQ4eN2hYO4mqUi9HfQN1ta2gWZsvWLWUp+kk8C9QpO/c9kqgQ2H09NJkOhAW53Xj13N/OtJNlOvY4mhVPzx+lWpq1QOYgbyJe83LqxrmT6MDBpWwu939Fx6GF9MR1lPqjtSWoXzAw=
+	t=1732798519; cv=none; b=CLz9IGe9JaE2UlDEOW0u+XYMzGzV+EacYqR9d8o9rL/bCnvYKBgh1C+coQK0H1vjAW4icsCNIpFxHqVR1B6iyVkCaep6SGnh562qWvKx6LRLpdOe+FI8PaT4hUaAa8jsiZ2KMNkJ1wp7duBbf5H4XB5D8euign+o9HlRNyPbR5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732798461; c=relaxed/simple;
-	bh=JbK666IvR99GAgHTs8lLb3xdOQ6oiiw7jTESJQOpgg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Czqi1sub+8RdS9IKY+E8u/QNjWzV/jERmyh7nCb45YAnjA/X+5RilhGWnzJ2cr7kgPJtKekDbPKH0JSRCEAIu5hI0l+eeAbJnZ+PwmsMLz0jmTdfv2sIVk9MRasPr+3qzEerfh4DTNtDvkK3RMVHPe1uesBecJ7rbPjvaxvaKkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vG/FNAVb; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38230ed9baeso578065f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:54:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732798458; x=1733403258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VNkrh/sDtdbdwO6uUAVnsS4BZrJy5eiLU2ygKncvgJ8=;
-        b=vG/FNAVbw8Sniz0ttdG9eZGHe17NTX7BHRDX+yVLt+HOoff2WBEvdPDWmqab2Kh6Qo
-         lESqtmTeimJbtQn7tqnUD7W7iDd7WtV1s/xWOltqW9Wi8rdsM8+5pwHK+o41AxpCQ1Bb
-         tzN9ez6B70laESS64J7/PqkLX3Qi5MUaKQCIFdH89Wo3g4oQTzD55lkauW4netO1ahv4
-         e8imtW6g3TwRX9AWq2POOkeVarBi6lAsZ6OmquRtXIjvLsV+as/uX+BAjwVr3ixWJoe8
-         LiHBk1EVS0sD88QTzHuiUbVk3DnSbcHXwDYN6uTlBAPVvc83ccRjcif2RizxShn+TpmA
-         xUlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732798458; x=1733403258;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VNkrh/sDtdbdwO6uUAVnsS4BZrJy5eiLU2ygKncvgJ8=;
-        b=P++CVmjsLSE9QCohf0U7hlcqmOHsMMKz0lumztFMvbOolvVkVTbCK+IIanEr6v96Ed
-         PS2mYKXvG7hV9jAzkRMDKvw7hrr352Cvflu/uvG1di4sxD86xH9NAMylAt85cDs2Lb+E
-         0NY1/96kRy64+jDcPmTKBZCBX2YVnwRpeECtG4l/4jp9gWpUXFA/WbBXzXoL9CTFp7YH
-         TomMl6FTc2YUZddg3C1DCVeFshxtmzcvv16zGbGFKqTasenjvnwAm+l5YhbhkLk3AvHq
-         Mu3seYWiZyK8RXO2cfmwmVn7UUyfkQrFrGhD3NTgPvVErnQUd+eOLqAyqziuknGhLdGy
-         IylQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7wubUi7LjXPWS1xlgH1Efyopb568ObY4mzQJ/InOmkV5IQukgf7WM0T1o10bYodJqh1VEDK3jthHPo0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBRigIk2V9KE5VO1xMHAy0wcn2d+LWFUVlEORev2v8iwIfV+e1
-	ErNjTDls8aUVx95yG1+xIcAkhRzpqLy56HzsVhvU4q+qm1DaxEqo0bgjwhlBeiY=
-X-Gm-Gg: ASbGncvL51lkBv9kMxnMe72b1FKYYGeBGaX3a/1kzeLN2bG2LAad55eXRRl7G3f3O5f
-	0smb6p3Dwj8hnF+sgw1BYILYN/E6ZI7j67g+fkfcWEza5Vosb7Mynz49ADYaNSO0dKyY+C/fVkp
-	m1pfMqv/ngqG11DdM0UkucSKH4+8WwzbcS5SckOyd7N775T2svKXlkWUZ1D4t+qaW8VvL2gHrI9
-	A3xksxkZIEYUmBEaKYBVCNEBCSxi9AIr5qkeDbGJiw5kckY3m09nymRwWYkrtw=
-X-Google-Smtp-Source: AGHT+IH/SWChFnFdYH46d0Zm8lHs8Z6HYuLx9vKVGjOt42Hf8xNwi4grsDUVNndAg0+gl115y3EyBw==
-X-Received: by 2002:a05:6000:1867:b0:382:50a7:beef with SMTP id ffacd0b85a97d-385c6ebda1emr6295771f8f.24.1732798457708;
-        Thu, 28 Nov 2024 04:54:17 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74ea95sm53021065e9.5.2024.11.28.04.54.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:54:17 -0800 (PST)
-Message-ID: <71dd9aec-e2b4-4323-aeb6-53f2491005b3@linaro.org>
-Date: Thu, 28 Nov 2024 12:54:16 +0000
+	s=arc-20240116; t=1732798519; c=relaxed/simple;
+	bh=yphBO8Yk9Oyg1aQgtCKogunVKU3IV7zxFKIng0h2dh0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fsEmh/SY8jbauFheIO1MbkiaswqusqB+RIQAGvV7MnQVn3mRf5Rye8rSMI6w7dUaxuE00Xk2AHQ7nMbkx7OaAOOBgIoP1ibGahyx7HZcifqB+qP89sdtic05Jfa5ug4xtEkD6/qWgeKJKlCdaN2l30Z+Tpa3D2+ldoHVQ2NhmhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Dy6cRDyk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AS8Taol006168;
+	Thu, 28 Nov 2024 12:54:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U8QH/Q0QCQ8tGuQIzzc/kO
+	445+yrjcSOtdYyjqlB5EU=; b=Dy6cRDykA0lQBlYAd1unH7au0MvsIzsMQAeqyq
+	MQ8Zvwakx/1HLxX3CwDapNI3yCQ8+n8S3adHdDiJ9UfryDeQxcK8fWDjNKfEKUMx
+	JXy+ds+V1dmA5bLvvebXaQpeaoWOUibrgrWrrSwzIV5sGM5tXE9ZhMRqnSoECkbJ
+	hCXYAraegDa+8SPlCG0DpUQ9nvjNZoFPUG6h3q/EWJz5W7s/i+hqXCMYuXEncUM+
+	3GydaqPPaEfTEQjzLta/73SONaeJOIjMEymKrR/AYkF0wFe5TSET37wtTORjPNdv
+	4450PxI538WtoKuJ4Aq02ugc5rIJfUcRGcCoHGrdl6AiRyjw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4366xvtrfa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 12:54:51 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ASCsoLW027893
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Nov 2024 12:54:50 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 28 Nov 2024 04:54:46 -0800
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <namhyung@kernel.org>, <mark.rutland@arm.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+        <irogers@google.com>, <adrian.hunter@intel.com>,
+        <kan.liang@linux.intel.com>, <james.clark@linaro.org>,
+        <yangyicong@hisilicon.com>, <song@kernel.org>
+CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bpf@vger.kernel.org>, <quic_zhonhan@quicinc.com>
+Subject: [PATCH 0/3] perf tool: Fix multiple memory leakages
+Date: Thu, 28 Nov 2024 20:54:29 +0800
+Message-ID: <20241128125432.2748981-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] media: venus: Add support for static video
- encoder/decoder declarations
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: quic_renjiang@quicinc.com, quic_vnagar@quicinc.com,
- quic_dikshita@quicinc.com, konradybcio@kernel.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>, devicetree@vger.kernel.org
-References: <20241127-media-staging-24-11-25-rb3-hw-compat-string-v2-0-c010fd45f7ff@linaro.org>
- <20241127-media-staging-24-11-25-rb3-hw-compat-string-v2-1-c010fd45f7ff@linaro.org>
- <ad906baa-a93f-42c4-bbe5-968fa939c653@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <ad906baa-a93f-42c4-bbe5-968fa939c653@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VFlgfqK0U-BVluYp3YmJs-r3hGYtgPnR
+X-Proofpoint-ORIG-GUID: VFlgfqK0U-BVluYp3YmJs-r3hGYtgPnR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
+ phishscore=0 suspectscore=0 clxscore=1011 impostorscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2411280101
 
-On 28/11/2024 09:02, Vladimir Zapolskiy wrote:
->> +    np = of_changeset_create_node(ocs, dev->of_node, node_name);
->> +    if (!np) {
->> +        dev_err(dev, "Unable to create new node\n");
->> +        return -ENODEV;
-> 
-> Leaked reference to np.
+Fix memory leakages when btf_node or bpf_prog_info_node is duplicated
+during insertion into perf_env.
 
-I don't believe that's a leak, because you only release np when it is 
-non-NULL.
-
->> +    }
->> +
->> +    ret = of_changeset_add_prop_string(ocs, np, "compatible", compat);
->> +    if (ret)
->> +        dev_err(dev, "unable to add %s\n", compat);
->> +
->> +    of_node_put(np); 
-
-Which we do here.
-
-However, I think I have missed a of_changeset_destroy(ocs); on the error 
-path.
-
-@ref drivers/pci/of.c::of_pci_make_dev_node()
-
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
 ---
-bod
+Zhongqiu Han (3):
+  perf header: Fix one memory leakage in process_bpf_btf()
+  perf header: Fix one memory leakage in process_bpf_prog_info()
+  perf bpf: Fix two memory leakages when calling
+    perf_env__insert_bpf_prog_info()
+
+ tools/perf/util/bpf-event.c | 10 ++++++++--
+ tools/perf/util/env.c       | 12 ++++++++----
+ tools/perf/util/env.h       |  4 ++--
+ tools/perf/util/header.c    |  8 ++++++--
+ 4 files changed, 24 insertions(+), 10 deletions(-)
+
+
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+-- 
+2.25.1
 
 
