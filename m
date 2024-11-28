@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-424706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0841B9DB854
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:11:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7219DB857
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:11:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C0D282322
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:11:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21FE3163A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF981A0BFD;
-	Thu, 28 Nov 2024 13:10:59 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29911A2C04;
+	Thu, 28 Nov 2024 13:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U3WAHrHm"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BADE19EEB4;
-	Thu, 28 Nov 2024 13:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B271A08B5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732799459; cv=none; b=DKECRmwQVGuCGosZYOhQXVXN3VLdh7vkCPrj4pzxyy6yzuiT2uMmG7mZYwyhHYIFghqMgCq0vL7vZ6u8VZKxCUYrqe85riiuL+sYEho2cEUdof/0hvskDPfp/dbCo4oQyuHYD7jZ+z4RU5htBYnrlw6TKGKE+398B9giw22fGq0=
+	t=1732799508; cv=none; b=Rsi2A4MIiWffU2xHSzeDHeEsr94VDILYoREfZRl7YJH2eWfveNwh8ItQunH/fUSsKK8XUwat2kRw308A91Vh3WhD144j2cn0hyXv0GyuIgupZkZCMzoHgd+zj6z06Tiyb0Tni1L/Nssx7ROaXXnJDSbDByjc/Aluid3E09ucZNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732799459; c=relaxed/simple;
-	bh=9elU7BZr9bP1QgsHDVwfQ9JRpl3ecGTM3aErGIE8wFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hdSZ4t3IVjdS8ZGGf+5ndtWOgVSXNHpXz2babh7kayr4LYvXSuN+A6yUDO1TaMoxCfT/huy7Tn62ZHv2iFXHLug072PTCIUKa1ZkbwBj2P7y+r0rFiQ427TqiBvTvv0W6Mc1gO2UnTHTYxRmWqugKFFdLm7hXcL8qECQiNOynmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B3B1E60003;
-	Thu, 28 Nov 2024 13:10:53 +0000 (UTC)
-Message-ID: <77b7b44f-e05a-4845-8d45-0e0d831bb8e7@ghiti.fr>
-Date: Thu, 28 Nov 2024 14:10:53 +0100
+	s=arc-20240116; t=1732799508; c=relaxed/simple;
+	bh=AwAAXcVxCiHLyktN94ldFA9g6gNEaV+e4+HKqMAxMog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUHrf6HOz7xJAUWBZh2KDyePpZEKUE8EevxVjW51iPwVIejBUx1i7yyptapTkaDGmLQdYdRoIPrWrIZWFdu6CfK4ovzT6NICmuL4x/AiRYmcENQAPQwL8uFhCcoehMoJ8pmjQnAWFWtu6/z+4tBwHajT8I12t+XcTiZ8g1CCBxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U3WAHrHm; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so13044821fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:11:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732799505; x=1733404305; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BPbk5rhV91aF3IvatwJOVn64gj4oSvW2resxKBeQMZk=;
+        b=U3WAHrHmLLLkFR9Io/cldCBrDNFauMtpU2xIlN6S27/QlSFHELCaaieq2X3lO1+T+u
+         k1OwGp4v46WzR+ailSIl96gZqHC82a+DjILMSebjQU1mDa/5WJKdgnYdiWdRkgGv/ang
+         wcyUTijqe4E+Z0hxT5KNGpDcvC8XHwTDS/kmeY4+yJdve0vUSmt8V7c3zFrwGr0j/8DW
+         jEXZvKv2vTZ2DxtoMxA/ODnuoPvY851C0eI+RcHfwI6VNWczY7CkHaZAMxfT7qZ2vkiK
+         LwKkUtwucszaGTS4lFQtsoKtCC4fLoZhcW8XYMgvK8q99x4EVNeFF8Nls6eXJMgeklnV
+         U+qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732799505; x=1733404305;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BPbk5rhV91aF3IvatwJOVn64gj4oSvW2resxKBeQMZk=;
+        b=kNXwTQyrdViXOK3T7nUIKduhHCbQIy3Wk/fjqjResUokEhMt/qU6CnJ9TFnOxT1exV
+         2WuEMc8qrQ0+fBhaIZm20wmhIION3Rr9QSowk4+JHKqrS5i1D0x0MYEmGJsNW6JWvaqK
+         5LzLO/ddpW8rxxdI3+xkhXTpzyfedZf6lmpEQbgI/YEPeZlQEFyaljF1DRdyBGRwIgVN
+         W2A3BYAwUJAfK2Chcxg3TK8XJFC6PffA323BI8xXBPxdNMVfu5+MgrKYsmvYQovS1vZT
+         DU2J2H/tXcYuHqnoP6YpSswuMxkMGUulAszYyUyt6iaJVtw5l5g/4m4gniUxxgoPZktt
+         69Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXe7qP9vs/05jLQbSQJta/aEoKsNa9TRaFOJyi2/4WAE99QL5/YD9/lVv2+TcgiSSHR6UshjL/8cXdv/MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjqDWUhuKbaHI9KzyWE4wer3u6bGyRv4NQ3DxI6A0/Uqc9sDCJ
+	MJivol4qWrLK1Ub6p+U6lqObQUmaaxPe+cOw/RQcJwKNz1Cpe5DYAJBLUl5se4s=
+X-Gm-Gg: ASbGncvHjMqH3M48bCduQ7GEBi0MuTnooAxVf2+1zCA1vkrbqLjJK09LFCpKoke0NaM
+	Xl/g76dzXe4w6R1hhGAnUqzZTwcC5CvdboT52Y5iA7N5yJIlcIa7/BuT98rI2sJCw0IpQ/gd59j
+	emEJnBstcRxaW1H3FhhfDQ5QW173+U1j+SqXFcJdOVSS0Y04fjS/j7jxLpV6/ekkbYmniVB0Muu
+	QO1xe9ofazh+fHa25cyg01b3j+di79SOUH70ZOf8By2bJFqRXRcp9Qom6LlffOpBg2IAt8XxbTB
+	FM7CnigpOvkhN9BhopmhbW/MRphpyA==
+X-Google-Smtp-Source: AGHT+IHZn+eHpkDk6+N7ur+GKoJQEReZTg7lVnI/e2QDxtl3PhOP/4nRD1I7pB/02VDWpNXcNMAVMA==
+X-Received: by 2002:a2e:ab0a:0:b0:2fb:3df8:6a8c with SMTP id 38308e7fff4ca-2ffd604aa06mr55308261fa.23.1732799504621;
+        Thu, 28 Nov 2024 05:11:44 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffe1daba82sm1270761fa.0.2024.11.28.05.11.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 05:11:44 -0800 (PST)
+Date: Thu, 28 Nov 2024 15:11:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
+	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs8300-ride: Enable PMIC
+ peripherals
+Message-ID: <qakds5f4xwoh7tu3u7ritxppdmxf7ppawsm3nfmn7sjetcxwos@7lext4qea6oq>
+References: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-0-001c0bed7c67@quicinc.com>
+ <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-2-001c0bed7c67@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] drivers/perf: riscv: Fix Platform firmware event data
-Content-Language: en-US
-To: Atish Patra <atishp@rivosinc.com>, Anup Patel <anup@brainfault.org>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
- <20241119-pmu_event_info-v1-2-a4f9691421f8@rivosinc.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20241119-pmu_event_info-v1-2-a4f9691421f8@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241128-adds-spmi-pmic-peripherals-for-qcs8300-v2-2-001c0bed7c67@quicinc.com>
 
-Hi Atish,
-
-On 19/11/2024 21:29, Atish Patra wrote:
-> Platform firmware event data field is allowed to be 62 bits for
-> Linux as uppper most two bits are reserved to indicate SBI fw or
-> platform specific firmware events.
-> However, the event data field is masked as per the hardware raw
-> event mask which is not correct.
->
-> Fix the platform firmware event data field with proper mask.
->
-> Fixes: f0c9363db2dd ("perf/riscv-sbi: Add platform specific firmware event handling")
->
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+On Thu, Nov 28, 2024 at 05:40:17PM +0800, Tingguo Cheng wrote:
+> Enable PMIC and PMIC peripherals for qcs8300-ride board. The qcs8
+> 300-ride uses 2 pmics(pmm8620au:0,pmm8650au:1) on the board, which
+> are variants of pmm8654au used on sa8775p/qcs9100 -ride(4x pmics).
+> 
+> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
 > ---
->   arch/riscv/include/asm/sbi.h |  1 +
->   drivers/perf/riscv_pmu_sbi.c | 12 +++++-------
->   2 files changed, 6 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 98f631b051db..9be38b05f4ad 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -158,6 +158,7 @@ struct riscv_pmu_snapshot_data {
->   };
->   
->   #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
-> +#define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
->   #define RISCV_PMU_RAW_EVENT_IDX 0x20000
->   #define RISCV_PLAT_FW_EVENT	0xFFFF
->   
-> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-> index cb98efa9b106..50cbdbf66bb7 100644
-> --- a/drivers/perf/riscv_pmu_sbi.c
-> +++ b/drivers/perf/riscv_pmu_sbi.c
-> @@ -508,7 +508,6 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
->   {
->   	u32 type = event->attr.type;
->   	u64 config = event->attr.config;
-> -	u64 raw_config_val;
->   	int ret;
->   
->   	/*
-> @@ -529,21 +528,20 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
->   	case PERF_TYPE_RAW:
->   		/*
->   		 * As per SBI specification, the upper 16 bits must be unused
-> -		 * for a raw event.
-> +		 * for a hardware raw event.
->   		 * Bits 63:62 are used to distinguish between raw events
->   		 * 00 - Hardware raw event
->   		 * 10 - SBI firmware events
->   		 * 11 - Risc-V platform specific firmware event
->   		 */
-> -		raw_config_val = config & RISCV_PMU_RAW_EVENT_MASK;
-> +
->   		switch (config >> 62) {
->   		case 0:
->   			ret = RISCV_PMU_RAW_EVENT_IDX;
-> -			*econfig = raw_config_val;
-> +			*econfig = config & RISCV_PMU_RAW_EVENT_MASK;
->   			break;
->   		case 2:
-> -			ret = (raw_config_val & 0xFFFF) |
-> -				(SBI_PMU_EVENT_TYPE_FW << 16);
-> +			ret = (config & 0xFFFF) | (SBI_PMU_EVENT_TYPE_FW << 16);
->   			break;
->   		case 3:
->   			/*
-> @@ -552,7 +550,7 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
->   			 * Event data - raw event encoding
->   			 */
->   			ret = SBI_PMU_EVENT_TYPE_FW << 16 | RISCV_PLAT_FW_EVENT;
-> -			*econfig = raw_config_val;
-> +			*econfig = config & RISCV_PMU_PLAT_FW_EVENT_MASK;
->   			break;
->   		}
->   		break;
->
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
 
-It seems independent from the other patches, so I guess we should take 
-it for 6.13 rcX.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Let me know if that's not the case.
-
-Thanks,
-
-Alex
-
+-- 
+With best wishes
+Dmitry
 
