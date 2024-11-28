@@ -1,143 +1,208 @@
-Return-Path: <linux-kernel+bounces-424631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1CB9DB738
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:12:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D17C9DB73B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8AB280C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:12:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C21A8B22B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 12:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172152CCC0;
-	Thu, 28 Nov 2024 12:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D0B19B5B4;
+	Thu, 28 Nov 2024 12:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tS3TCf9G"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ev7phKaB"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1F219004B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BF719004B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 12:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732795923; cv=none; b=ge//AMKTgNo7YZ6Oaf+sGHZw1XhvSYrQhfoanQeWBN2fyl4iZQZfSF8/ctl6s7Tsy7jVhyOWT7FG1qe8bfkKHSFz62ph2iZ/w4Bp9lyIHmtW3V2YxWKWtx/xG8T2VgNYuzf7SqV+fJSh42hpPYVp5nWoBsADjfLjjdbolh3u0zM=
+	t=1732795951; cv=none; b=KOQaJkDsoIidHQc++2/whGoFe17h5jRMOCVpai54JUjzgSq8Py4KctWOQYqxb7O92hHJ8ySHleP5UqyUDD2s7bJp9Wt70soT4V5RBfCECO3V75eID4dqosx8b7m/XUUkgAxuu480agB88uI9HNO0211ZT/OukPW0DTcgDZcaqi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732795923; c=relaxed/simple;
-	bh=0MeGc/7s/CWBQN05R+oTUtFBb/goOcovHE356j/Oszg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nVqwLgPmKnPr0sasoxN6USyGwkaxP7RR5BkdP5drhZh9qcdT4+LikHUecG2RSr1zwh2fYK3tI+qL7tRp2SfYCVwKeOgnn7MN5Q7SL/FVnYagDL8cG06SsghxZsugSrNIBkgZatAURoeyIBYZEW0iaMh5Wf/NpW46k6mwHZ2c+lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tS3TCf9G; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa535eed875so105363966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:12:01 -0800 (PST)
+	s=arc-20240116; t=1732795951; c=relaxed/simple;
+	bh=/LGrZOzJI+6kS93veQaIwzlwY/GP+eS2PE8NhODdl4Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZGqcvBYcXmKJsFjq/+RLTm5wNjQ3d/jLY9+pCDz7lkul39sMXYa/VQJVPMooUwwuNj/7O8uqYU8J0XCIYrjXILmUsemyITP0s3L4dBoi6ha6AXv8L9ucYfZRaN44523L+pwEp0iDnqiNaHdNwsxgzFLgshupKPfs4etPsrWXZPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ev7phKaB; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-385d7d51ac8so11676f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 04:12:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732795920; x=1733400720; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TlagLEJFtywwVUMe1dgXgwPpKrkSCr7O7E/5icGZLn4=;
-        b=tS3TCf9GbJVM54xegz7nf2GORR0cBMfxRDySJhFON77Ma0hMri69nqnIR9Ib9LtmaM
-         jMCE15QfBVHx2dugiNIfuFN8omGzdXEorwGSLZTj/u/XOZsVhm/+NDts3qOl5vam9XzP
-         psjleL5Fx/kke0pdY1a2UnMLbCSr3J3d/NVkNpRGOrLWdU3uxqDFVeRiZhrMq9FYjKdS
-         j67QErPvpwTUKPy2xjdTGlP4ho6AYsPXWd55rhYabuPGb4dSTuoQizgmnuqXZmCedjhW
-         +vVrJj/7/qSnZoQKRwVbX4/akOQVcgTU3P/U0Z670theUBZAidOyfpR3ZE4SChdjxck6
-         nofA==
+        d=google.com; s=20230601; t=1732795948; x=1733400748; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xv9Mnsqw0yP552va4yFfmGxxYoQFMLmXfy+o8MwyuvI=;
+        b=ev7phKaBLwqggggwB8mIZBHdin5kO0Ofu3E2OvrJ24o2zcNHDEFgkhkDgCeTMV/kct
+         Pl/47BRzs1kGusksJiW38tcMd838I+A9hEMsuxc6PaG8so/KeiraEuw/5XbCpiyN68Lg
+         vniW1b3nlk2JWbQMcIH5kM3WtLTeTldtBtXEBlWFY6n1cTlJL0o5R3uE0ZzVP1pDPvya
+         DVaDD92wFN+eiTAkBbLKAvp2f4TXGZUkyzriCCa6PlzBNWu2QirFatofq2Ws8hs73Db8
+         8beX7aQT0aFBnNU3oeFMYPphAiDDp6SxkmbjUNZLfz8lTwSytsN4nBdpYLNCzDoK/XV5
+         ptWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732795920; x=1733400720;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TlagLEJFtywwVUMe1dgXgwPpKrkSCr7O7E/5icGZLn4=;
-        b=wnPIfrrUS3Q99MeB7bT9e2wGbSnKFzWkCIjfCDfhiMf/tUv7EFBGSXnh5xr1QY3P/E
-         ER0CFcE25qbfjCra6LnZDw0HSsdfkneLX99I7neBH2ayNQmgA8g1w10oExxxSlwEwLvO
-         OHuQnTZHUJIMZG4/db+U+sr4vkHGQNat/reLD3/ogsKVua8rJz7dMS8RRCc1ivA35kdS
-         mYvtFZzSmKOv7P70/JMQQsGq+oZ/AbHMeaoLXh9DAE6jS2YYu1XONayaUsc60pyPBBPh
-         cuOWKYdLVuG0XSojxR5u2PXJthzfOm1XuOFTLw4SGnSlSSol/4m6AqradzaWEZXfgTSE
-         EkFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNbVFjvwWG4Sqi+tl8jqkr9BzxP6AB1hs1Aa1j0+uQS8suTEPOtN4hyB5QQXQZ2uQI+ZdhR4KcasCk1p4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG8ocPcRv4hL0dcfC2XDWTeyduBhLtVq/8iccLZI3d1Q65Wa9V
-	NMUZAkVP9JoF1YH9ESeKqvgbm8MedBTlRUzYk10vPtGbOpiCFwYCab6X0Xdxc1w=
-X-Gm-Gg: ASbGnct+rURVJX+M6x5SrruJHnCkdAF/btRkAHG2emNU13aEXO1PggcaydR8/y/syuk
-	opbuVvLOfvfbsQGHi0vQHhk5TtJms6HGjYOyKyRP22zqoi9ACjIyKK8o5IoPYTs2kaFT7qOR2II
-	TalVQqH2uBpPo8kkF1p0Wk4ELm7YxilGe1cW9+gtCovx/V3QVDvPBTJiDJwWMOJ8h0BjIrqmM9w
-	wiK9Q1VyhN1l2Usd4PL23t0OFBwjeEoKhtLGukUfADRxImCVJPUg72UNK1TytE=
-X-Google-Smtp-Source: AGHT+IHvAUIzZYTgmNUEdyRVWk60wm4MmFIPzbhwhInYSuwK9GJKfO8YoQIj0jmD405fTVDHMr0VFg==
-X-Received: by 2002:a17:906:b3a4:b0:aa5:aa3:8c45 with SMTP id a640c23a62f3a-aa581055163mr464111866b.48.1732795920072;
-        Thu, 28 Nov 2024 04:12:00 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e63a2sm59846366b.113.2024.11.28.04.11.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 04:11:59 -0800 (PST)
-Message-ID: <b76cea3a-b330-45b1-92a5-844aa081b0a3@linaro.org>
-Date: Thu, 28 Nov 2024 12:11:58 +0000
+        d=1e100.net; s=20230601; t=1732795948; x=1733400748;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xv9Mnsqw0yP552va4yFfmGxxYoQFMLmXfy+o8MwyuvI=;
+        b=ttuGnjrQ8Ni+suw+h+TBATOPhpZnLOjdgChv06iY22z0vD4gyGqmlTe7i4XU1pMeuj
+         0WsnhZIFlI4sbOVAS/59b83DeHUY0/yDIlgbH0gaHfcvdAUEnV/bfzjwDbJLr/ZHD5g0
+         /uLkECCsL2gmcPqkF8rJulc5HPshydF+IRpASf1WqhJN7NTg/Y/DHcxGeZ7QUzWR5ns6
+         VXBC77BeK9ymtd1Gl8/P2IFbhv5wIroG4gHHVR/a91h4UEMMVgrlSto0B7Lmr2r3mZfO
+         /krsTNN2TOB+G8vWFpGGhh0vkbFe7k+bw2N2dj6Cg0pJWYyEMSI4p9aLyZv9NNazzEBB
+         GeKw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6nV1EdZrkUB4mpgft4SK0WY40XE21wZGH8fu45tp82iMiBmE834k1gcPqIcCuL5PvIhBenzaycizGVQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiInq1q+nuNlWTdZb0ciZThjHnRlAKyI6mLqCSEicBYUGfYq2M
+	QeELkKskL2Dh+9U03Gh1oa7bmWRE3NUFlaByimVcG9COEA979eC9sbuOVMC7Z8ZTMc+SUja2yHl
+	s/ZLM+855Kykxxw==
+X-Google-Smtp-Source: AGHT+IE8+KYnkF58GMuTj0VAu4E6cZL1TCWj/R8Fz3NdRbDJvaqchxbrbwH7siNgqYgBqqkBkJUSkwuvPxhg4xI=
+X-Received: from wmpk41.prod.google.com ([2002:a05:600c:829:b0:434:a2fb:effe])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1543:b0:382:4f6e:a57a with SMTP id ffacd0b85a97d-385c6edc83emr6304046f8f.54.1732795948065;
+ Thu, 28 Nov 2024 04:12:28 -0800 (PST)
+Date: Thu, 28 Nov 2024 12:12:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] clk: qcom: common: Add support for power-domain
- attachment
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org>
- <20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-2-836dad33521a@linaro.org>
- <8189fe4a-b6f5-43a6-9f7f-1abddc366ada@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <8189fe4a-b6f5-43a6-9f7f-1abddc366ada@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIABpeSGcC/x3MSwqAMAwA0atI1hZMFSteRaRIG2vAH42KIN7d4
+ vItZh4QikwCbfZApIuFtzUB8wzcNKyBFPtk0IWuEHWjZpbDzvG0Cy0uWL85Ud6UNaFvcDAjpHK PNPL9X7v+fT/wu1jwZQAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5452; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=/LGrZOzJI+6kS93veQaIwzlwY/GP+eS2PE8NhODdl4Q=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnSF4idTCr3X7DVYiatk5PpMqpcyL1UCi/4Liig
+ TTZhVH50k6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ0heIgAKCRAEWL7uWMY5
+ RlfoEAC2nrOfgVrSgeKaMotPVEFfEs1t+E8RZVYdgNMXJlR9wKJeRs/IhzKbfMPKaJaxHkDfK6u
+ ZShkjb6U/pHHXN8N3ZnpC1xTj1rnlEhny0ocAfqDVNNZyygvGlc1ZcpxlKq6LCndOYQ0s/Dv1fB
+ KKOlQV0yB7p5k1wA7Phun42TnzLBPZwz664FT+92i04GYq5j6nMQJe0l8jDnO8PqYgVhBYbIeMz
+ pQKbJZeMhsYQ4T1iDlSPYIPgRZ/VBCAiBsNtQzEMmUjD14Rcia5uZszmKK/ogQXt+HYnAAWSlkb
+ D52cTuFqsvGsFzUG7wPgoXYs0SvOVCWNRsGHqXsFYM2a2ayv/KionikvwCQlhvAKB7bi2jMC/x5
+ QiYLRoQGPt/S4ih1zHj56BUc8Xa+jwgdtz5txJhQ6uUkFFcK15LkeOousMyWJQiWizccZpAnZTo
+ r96pEaZKPbSGOr/aPCDIpX0cyYxaW5iajzkYR1bBlDz4RD9Nb1FHcfjebYqJpFxZHKxRF6Ausax
+ iKQKah8XTF25idJ9cmT7TD3WzLTnI402VrO+2jYH2vgXAUHYup1R5FZBitPcShJLDfAj+QNTX4y
+ LezjQ7WkYc+mxHnTgAzNEcUR3PlEgpgsSpH8o5Vkpo9uld9MOjLkkpvZnHrfBE4msertzBYHWpa bPXky9OsM8tPadQ==
+X-Mailer: b4 0.13.0
+Message-ID: <20241128-list_lru_memcg_docs-v1-1-7e4568978f4e@google.com>
+Subject: [PATCH] list_lru: expand list_lru_add() docs with info about sublists
+From: Alice Ryhl <aliceryhl@google.com>
+To: Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 28/11/2024 12:07, Vladimir Zapolskiy wrote:
-> Hello Bryan.
-> 
-> On 11/27/24 01:44, Bryan O'Donoghue wrote:
->> Right now we support one power-domain per clock controller.
->> These single power-domains are switched on by the driver platform logic.
->>
->> However when we have multiple power-domains attached to a clock- 
->> controller
->> that list of power-domains must be handled outside of driver platform
->> logic.
->>
->> Use devm_pm_domain_attach_list() to automatically hook the list of given
->> power-domains in the dtsi for the clock-controller driver.
->>
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
->>   drivers/clk/qcom/common.c | 20 ++++++++++++++++++++
->>   1 file changed, 20 insertions(+)
->>
-> 
-> Is there any particular reason why my review comment was ignored?
-> 
-> https://lore.kernel.org/all/8a33c0ff-0c6d-4995- 
-> b239-023d2a2c2af5@linaro.org/
-> 
-> There is no signs of the change improvement, unfortunately.
-> 
-> -- 
-> Best wishes,
-> Vladimir
+The documentation for list_lru_add() and list_lru_del() has not been
+updated since lru lists were originally introduced by commit
+a38e40824844 ("list: add a new LRU list type"). Back then, list_lru
+stored all of the items in a single list, but the implementation has
+since been expanded to use many sublists internally.
 
-In the cover letter I cover what was done and not done and why.
+Thus, update the docs to mention that the requirements about not using
+the item with several lists at the same time also applies not using
+different sublists. Also mention that list_lru items are reparented when
+the memcg is deleted as discussed on the LKML [1].
 
-I made a new function because it "looks neater" to me that way.
+Link: https://lore.kernel.org/all/Z0eXrllVhRI9Ag5b@dread.disaster.area/ [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ include/linux/list_lru.h | 48 +++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 35 insertions(+), 13 deletions(-)
 
-I implemented your feedback on ret and -EEXIST.
-
-Passing NULL instead of &pd_data doesn't work unfortunately.
-
-Let me know what else you'd like covered or revised from the cover letter.
+diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
+index 05c166811f6b..d4fc967247ae 100644
+--- a/include/linux/list_lru.h
++++ b/include/linux/list_lru.h
+@@ -91,15 +91,26 @@ void memcg_reparent_list_lrus(struct mem_cgroup *memcg, struct mem_cgroup *paren
+  * @memcg: the cgroup of the sublist to add the item to.
+  *
+  * If the element is already part of a list, this function returns doing
+- * nothing. Therefore the caller does not need to keep state about whether or
+- * not the element already belongs in the list and is allowed to lazy update
+- * it. Note however that this is valid for *a* list, not *this* list. If
+- * the caller organize itself in a way that elements can be in more than
+- * one type of list, it is up to the caller to fully remove the item from
+- * the previous list (with list_lru_del() for instance) before moving it
+- * to @lru.
++ * nothing. This means that it is not necessary to keep state about whether or
++ * not the element already belongs in the list. That said, this logic only
++ * works if the item is in *this* list. If the item might be in some other
++ * list, then you cannot rely on this check and you must remove it from the
++ * other list before trying to insert it.
+  *
+- * Return: true if the list was updated, false otherwise
++ * The lru list consists of many sublists internally; the @nid and @memcg
++ * parameters are used to determine which sublist to insert the item into.
++ * It's important to use the right value of @nid and @memcg when deleting the
++ * item, since it might otherwise get deleted from the wrong sublist.
++ *
++ * This also applies when attempting to insert the item multiple times - if
++ * the item is currently in one sublist and you call list_lru_add() again, you
++ * must pass the right @nid and @memcg parameters so that the same sublist is
++ * used.
++ *
++ * You must ensure that the memcg is not freed during this call (e.g., with
++ * rcu or by taking a css refcnt).
++ *
++ * Return value: true if the item was added, false otherwise
+  */
+ bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
+ 		    struct mem_cgroup *memcg);
+@@ -113,7 +124,7 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
+  * memcg of the sublist is determined by @item list_head. This assumption is
+  * valid for slab objects LRU such as dentries, inodes, etc.
+  *
+- * Return value: true if the list was updated, false otherwise
++ * Return value: true if the item was added, false otherwise
+  */
+ bool list_lru_add_obj(struct list_lru *lru, struct list_head *item);
+ 
+@@ -125,10 +136,21 @@ bool list_lru_add_obj(struct list_lru *lru, struct list_head *item);
+  * @memcg: the cgroup of the sublist to delete the item from.
+  *
+  * This function works analogously as list_lru_add() in terms of list
+- * manipulation. The comments about an element already pertaining to
+- * a list are also valid for list_lru_del().
++ * manipulation.
++ *
++ * The comments in list_lru_add() about an element already being in a list are
++ * also valid for list_lru_del(), that is, you can delete an item that has
++ * already been removed or never been added. However, if the item is in a
++ * list, it must be in *this* list, and you must pass the right value of @nid
++ * and @memcg so that the right sublist is used.
++ *
++ * You must ensure that the memcg is not freed during this call (e.g., with
++ * rcu or by taking a css refcnt). When a memcg is deleted, list_lru entries
++ * are automatically moved to the parent memcg. This is done in a race-free
++ * way, so during deletion of an memcg both the old and new memcg will resolve
++ * to the same sublist internally.
+  *
+- * Return: true if the list was updated, false otherwise
++ * Return value: true if the item was removed, false otherwise
+  */
+ bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
+ 		    struct mem_cgroup *memcg);
+@@ -142,7 +164,7 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
+  * memcg of the sublist is determined by @item list_head. This assumption is
+  * valid for slab objects LRU such as dentries, inodes, etc.
+  *
+- * Return value: true if the list was updated, false otherwise.
++ * Return value: true if the item was removed, false otherwise.
+  */
+ bool list_lru_del_obj(struct list_lru *lru, struct list_head *item);
+ 
 
 ---
-bod
+base-commit: b86545e02e8c22fb89218f29d381fa8e8b91d815
+change-id: 20241128-list_lru_memcg_docs-d736e1d81a7f
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
