@@ -1,287 +1,194 @@
-Return-Path: <linux-kernel+bounces-424756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-424758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD579DB8EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:39:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4679DB8F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 14:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA23BB22F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DFE283591
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Nov 2024 13:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E4B1B4F1C;
-	Thu, 28 Nov 2024 13:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE751AC885;
+	Thu, 28 Nov 2024 13:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JgIGcj5o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="e3XtsTit"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669101B4F10
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 13:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732801046; cv=none; b=XgjEvtDx6SV8cdcR8fpNFoVy1ArDBLj05Qb0NG6oKyn9Ak37jU5gci+DYsFvKYhHZJRxMFYpX1oy92XgSfn0HH/0z3x1SGYFokEo4fWPEfiliwP7E31htq/SI9RN174f7hZuQU6U02wXL1wdPjy8Z1mEGnAy9hunDL4QklUeao8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732801046; c=relaxed/simple;
-	bh=CbxdvCP5a3QHudxkVW8mvBm1KjY5nLfxNMSlnwbzgI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ouJ8mxXJSs1VCgDs+6Bqeq/T06A4TgBoLluFlS/r8ZHBdgr18mdsgGrEAXgXoK1VRTxPDGpKf39FcaazHNIsomDSf+Vm2C8I6ZAJwS1tjT0xVs/EJ1UEka9Ntpfg4bJ+B+D/xlLuY4rcmMHqSd6U8wB9MLHNXcHafjPK/zUWxJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JgIGcj5o; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732801043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o04VFkr20/CH9z+kvj5lbsSa3s1hEKBLK1i56NNGrfg=;
-	b=JgIGcj5o5O7gtEGXfsybVxYrIBDkAuFMH81RsqJk80rZ12w517w4/HEJmQ8uAtHojYkR9K
-	ocealrJpkV8KdC//cFcaeDaFilM7Yk9JXhVS4qHJZN2/PCqcK1mUwVJ3yNipfa+z0RCuGM
-	RQrh0CmVzZKkD3JS1NArGe2JJsHmpak=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-YPHaPdPDNnefIddLripxiA-1; Thu, 28 Nov 2024 08:37:22 -0500
-X-MC-Unique: YPHaPdPDNnefIddLripxiA-1
-X-Mimecast-MFC-AGG-ID: YPHaPdPDNnefIddLripxiA
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ffe29df7afso3571291fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 05:37:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732801040; x=1733405840;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=o04VFkr20/CH9z+kvj5lbsSa3s1hEKBLK1i56NNGrfg=;
-        b=PDa1w31aXm/fhm+lvQ/9zjuSfRugESVbDi0+3dV/p7y4J95pUpuk1Jt+g/PiCxYCaU
-         TsGOIZRlJD+pFMBlGMAxIZ651iQd3fQ+OxdueSxmAJ41fVl5QrDeSJq5NU3MJKsyEC+g
-         qpkW+aZAAv10yW9t6LMGKheime6aY5z6Lfyhp/kvL+KYfckupMi5oLXGZMw5JyNefN5L
-         7b1a9fQrzBgFyV4/r3I1yoOvKRW2eNOBHWDVgzjCq7eYhEWTiSvRMQODrdovQPoM5Yp5
-         PwKKMduAOjLvPFaOqnjcbxOiwIsVRVb1uIeNFLRFufvzTM8l33R54pD+Ys1lbru3DUnZ
-         ZrlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCEo9BBcy+AJ1TQlTF2n1hzYGlkwA9HMXeByZ36MjcbQXMUndBEDZ794L916ZtyhKYRiu8KQ0YAN3Jm2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4BKRKz6+1XKSeETsJiwh3uqdikuWUfaF5P7TbJorTaYDLYexx
-	a5iHFsD8BVWSi6l0ag9dNO5Au1te0id+mpvlVkaOy4HVH6Ccsq+EIyMV232ooheSMEKPPTgC/ue
-	2cebC9kzzPxx98cWKiJDeeXgKg/bYiNpa1uNz7UCNjWGdSI7MoczCqaKXrFOQDgEsdunq/A==
-X-Gm-Gg: ASbGncvQbtDi2dtgBgoyb1QEU0LcRLAjsf4YOxLwW/FNbeoB06WdYylgoPSugro3L0E
-	58W1uwJOhHgAPuiBAKIpQooWfuZrQUH9dQMMTKOPixYP0aSnWkFFDdLQI3OUIaWrnc7dLWYWkds
-	IZdogNdyG3BM+ruI6z10XxItOromTibZvagxTG8Q/vI47S+KxZYBV7ZQJ0dJKUkY6LLWzZibPTw
-	Hw4dLjlKZ+YjT01dpme4a7YMXaj+WxqJSubWEfFrbWhDdgT6pA8fuuVj0Jq/5k90v4Wz4hBDhEF
-	pp2PsYE+3G9Z1OwrMYYDTVbjogKvTRsjfOSn007A2xyj7DWw7G3XhYqt+RGCjRWgOmmOxId0zFw
-	=
-X-Received: by 2002:a05:6512:3d19:b0:53d:de1b:f961 with SMTP id 2adb3069b0e04-53df00aa17dmr4595473e87.7.1732801040625;
-        Thu, 28 Nov 2024 05:37:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFlVggOKgnUUDhJhvbO+cgemu4YlM8B4APCzkh/YH3AlJBrHvwswzIp1g0/+LBPdEjMLJA7vg==
-X-Received: by 2002:a05:6512:3d19:b0:53d:de1b:f961 with SMTP id 2adb3069b0e04-53df00aa17dmr4595444e87.7.1732801040098;
-        Thu, 28 Nov 2024 05:37:20 -0800 (PST)
-Received: from ?IPV6:2003:cb:c714:1600:f3b:67cc:3b88:620e? (p200300cbc71416000f3b67cc3b88620e.dip0.t-ipconnect.de. [2003:cb:c714:1600:f3b:67cc:3b88:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bd06sm22776105e9.3.2024.11.28.05.37.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Nov 2024 05:37:18 -0800 (PST)
-Message-ID: <926b3829-784f-47b8-9903-ea7b9ad484ac@redhat.com>
-Date: Thu, 28 Nov 2024 14:37:17 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3901E529;
+	Thu, 28 Nov 2024 13:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732801166; cv=pass; b=jfIC+4MeTv+8IAR96T9OAgKhfncnhjl1XjFAIxNVYt3pkvTNyntwK8soBemQx7u69ECVKWo+05DldsSzH8/DFWTTnul4p8/FsJSMc7iiz9+ajyvxRCILnvhfUKkfW9REKsz+/S6p16jIiJj/xl46UG3NN0yNe8J8d9exUq9sX70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732801166; c=relaxed/simple;
+	bh=lIiUZHLE0Dufdjl+xcqg2CzEWEYTvXTb+yzw7w600Gc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=irDfiAQFMuMZngFt3jaBWH2R7N21KP9/2fMS2ebKDvvpjPs8NQ6Eqwzu1basg/ARyBQqUH6Bgwo1zCbLxDQYLSZ3b6svdncLWacVwWAYsng0swT8+dcHDzeIP91NTRiDsKwtkHtXBDEySGOKt9SHYYd8mYF8DnB6txnSZieLjhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=e3XtsTit; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732801133; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PIf59cW+Sas0TJFgqiA1Gqd4l01sMigk8oWrPjVwhJtE44Bhzak3qa6G3NeiBj4Qq/Xa8CogrJXcWYANts66SX5TifPEaiiCmHSYQ2zk48tICoORGzcrJNeZ7z3GUgjWZ23ONnKwjlLeek9QpYFIOsliYpdWfy3yE9yE6ZJCa1A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732801133; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EsxzMZa25WfDL+pgn4fFAhwPmv5kUt6UME3E/AmO0pc=; 
+	b=VaQVKGlZB2ApfrqBvIHeAijPQlGBmTJI7R7hbskrVSm9G/pWU6Mq6b2SMFNg57/U8DiyUJ2n6bqxCEchYJLXxEv0G58frknEGao08hIJ3BknN+ua21ssho6NpDKVb8fuzBvh2hWs0lFry6zKd/yskDPG1p+TObxMbvssxCxUiOY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732801133;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=EsxzMZa25WfDL+pgn4fFAhwPmv5kUt6UME3E/AmO0pc=;
+	b=e3XtsTit+wD3FqtPfGio/zA0Jz33pnuOzojOx40wQ0Kzj6Cp4OYT0JWy5iKs7AAf
+	WusFk1C+mFQalgugw1nC0SgO+txV698xz8SP8+g2n7K+EPCHjPLz77CnAUZV6tHCVL/
+	1Tb3fJvH7PD0n5g3efm+MYes8hBk5CiDpqZ+WV30=
+Received: by mx.zohomail.com with SMTPS id 17328011321711013.0878817486588;
+	Thu, 28 Nov 2024 05:38:52 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: map pages in advance
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Matthew Wilcox <willy@infradead.org>
-References: <20241128113714.492474-1-lorenzo.stoakes@oracle.com>
- <9f9fd840-6421-43b5-9a12-edfa96e067cc@redhat.com>
- <1af66528-0551-4735-87f3-d5feadadf33a@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <1af66528-0551-4735-87f3-d5feadadf33a@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [WIP RFC v2 22/35] rust: drm/kms: Add
+ DriverPlane::atomic_update()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20240930233257.1189730-23-lyude@redhat.com>
+Date: Thu, 28 Nov 2024 10:38:36 -0300
+Cc: dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina@asahilina.net>,
+ Danilo Krummrich <dakr@kernel.org>,
+ mcanal@igalia.com,
+ airlied@redhat.com,
+ zhiw@nvidia.com,
+ cjia@nvidia.com,
+ jhubbard@nvidia.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <65D59594-7E60-4407-835A-991B2D7C2203@collabora.com>
+References: <20240930233257.1189730-1-lyude@redhat.com>
+ <20240930233257.1189730-23-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On 28.11.24 14:20, Lorenzo Stoakes wrote:
-> On Thu, Nov 28, 2024 at 02:08:27PM +0100, David Hildenbrand wrote:
->> On 28.11.24 12:37, Lorenzo Stoakes wrote:
->>> We are current refactoring struct page to make it smaller, removing
->>> unneeded fields that correctly belong to struct folio.
->>>
->>> Two of those fields are page->index and page->mapping. Perf is currently
->>> making use of both of these, so this patch removes this usage as it turns
->>> out it is unnecessary.
->>>
->>> Perf establishes its own internally controlled memory-mapped pages using
->>> vm_ops hooks. The first page in the mapping is the read/write user control
->>> page, and the rest of the mapping consists of read-only pages.
->>>
->>> The VMA is backed by kernel memory either from the buddy allocator or
->>> vmalloc depending on configuration. It is intended to be mapped read/write,
->>> but because it has a page_mkwrite() hook, vma_wants_writenotify() indicaets
->>> that it should be mapped read-only.
->>>
->>> When a write fault occurs, the provided page_mkwrite() hook,
->>> perf_mmap_fault() (doing double duty handing faults as well) uses the
->>> vmf->pgoff field to determine if this is the first page, allowing for the
->>> desired read/write first page, read-only rest mapping.
->>>
->>> For this to work the implementation has to carefully work around faulting
->>> logic. When a page is write-faulted, the fault() hook is called first, then
->>> its page_mkwrite() hook is called (to allow for dirty tracking in file
->>> systems).
->>>
->>> On fault we set the folio's mapping in perf_mmap_fault(), this is because
->>> when do_page_mkwrite() is subsequently invoked, it treats a missing mapping
->>> as an indicator that the fault should be retried.
->>>
->>> We also set the folio's index so, given the folio is being treated as faux
->>> user memory, it correctly references its offset within the VMA.
->>>
->>> This explains why the mapping and index fields are used - but it's not
->>> necessary.
->>>
->>> We preallocate pages when perf_mmap() is called for the first time via
->>> rb_alloc(), and further allocate auxiliary pages via rb_aux_alloc() as
->>> needed if the mapping requires it.
->>>
->>> This allocation is done in the f_ops->mmap() hook provided in perf_mmap(),
->>> and so we can instead simply map all the memory right away here - there's
->>> no point in handling (read) page faults when we don't demand page nor need
->>> to be notified about them (perf does not).
->>>
->>> This patch therefore changes this logic to map everything when the mmap()
->>> hook is called, establishing a PFN map. It implements vm_ops->pfn_mkwrite()
->>> to provide the required read/write vs. read-only behaviour, which does not
->>> require the previously implemented workarounds.
->>>
->>> It makes sense semantically to establish a PFN map too - we are managing
->>> the pages internally and so it is appropriate to mark this as a special
->>> mapping.
->>
->> It's rather sad seeing more PFNMAP users where PFNMAP is not really required
->> (-> this is struct page backed).
->>
->> Especially having to perform several independent remap_pfn_range() calls
->> rather looks like yet another workaround ...
->>
->> Would we be able to achieve something comparable with vm_insert_pages(), to
->> just map them in advance?
-> 
-> Well, that's the thing, we can't use VM_MIXEDMAP as vm_insert_pages() and
-> friends all refer vma->vm_page_prot which is not yet _correctly_ established at
-> the point of the f_op->mmap() hook being invoked :)
+Hi Lyude,
 
-So all you want is a vm_insert_pages() variant where we can pass in the 
-vm_page_prot?
+> On 30 Sep 2024, at 20:10, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> A mandatory trait method used for implementing DRM's atomic plane =
+update
+> callback.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+> rust/kernel/drm/kms/plane.rs | 39 +++++++++++++++++++++++++++++++++++-
+> 1 file changed, 38 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/rust/kernel/drm/kms/plane.rs =
+b/rust/kernel/drm/kms/plane.rs
+> index d6e11a65cc101..506ed5ced1270 100644
+> --- a/rust/kernel/drm/kms/plane.rs
+> +++ b/rust/kernel/drm/kms/plane.rs
+> @@ -75,7 +75,7 @@ pub trait DriverPlane: Send + Sync + Sized {
+>             begin_fb_access: None, // TODO: someday?
+>             end_fb_access: None, // TODO: someday?
+>             atomic_check: None,
+> -            atomic_update: None,
+> +            atomic_update: if Self::HAS_ATOMIC_UPDATE { =
+Some(atomic_update_callback::<Self>) } else { None },
+>             atomic_enable: None, // TODO
+>             atomic_disable: None, // TODO
+>             atomic_async_check: None, // TODO
+> @@ -103,6 +103,21 @@ pub trait DriverPlane: Send + Sync + Sized {
+>     ///
+>     /// Drivers may use this to instantiate their [`DriverPlane`] =
+object.
+>     fn new(device: &Device<Self::Driver>, args: Self::Args) -> impl =
+PinInit<Self, Error>;
+> +
+> +    /// The optional [`drm_plane_helper_funcs.atomic_update`] hook =
+for this plane.
+> +    ///
+> +    /// Drivers may use this to customize the atomic update phase of =
+their [`Plane`] objects. If not
+> +    /// specified, this function is a no-op.
+> +    ///
+> +    /// [`drm_plane_helper_funcs.atomic_update`]: =
+srctree/include/drm/drm_modeset_helper_vtables.h
+> +    fn atomic_update(
+> +        plane: &Plane<Self>,
+> +        new_state: BorrowedPlaneState<'_, PlaneState<Self::State>>,
+> +        old_state: &PlaneState<Self::State>,
+> +        state: &AtomicStateMutator<Self::Driver>
+> +    ) {
+> +        build_error::build_error("This should not be reachable")
+> +    }
 
-Or a way detect internally that it is not setup yet and fallback to 
-vm_get_page_prot(vma->vm_flags & ~VM_SHARED)?
+Same comment as the last patch.
 
-Or a way to just remove write permissions?
+> }
+>=20
+> /// The generated C vtable for a [`DriverPlane`].
+> @@ -757,3 +772,25 @@ fn deref_mut(&mut self) -> &mut Self::Target {
+>     // - The cast to `drm_plane_state` is safe via `PlaneState`s type =
+invariants.
+>     unsafe { bindings::__drm_atomic_helper_plane_reset(plane, =
+Box::into_raw(new).cast()) };
+> }
+> +
+> +unsafe extern "C" fn atomic_update_callback<T: DriverPlane>(
+> +    plane: *mut bindings::drm_plane,
+> +    state: *mut bindings::drm_atomic_state,
+> +) {
+> +    // SAFETY:
+> +    // * We're guaranteed `plane` is of type `Plane<T>` via type =
+invariants.
+> +    // * We're guaranteed by DRM that `plane` is pointing to a valid =
+initialized state.
+> +    let plane =3D unsafe { Plane::from_raw(plane) };
+> +
+> +    // SAFETY: DRM guarantees `state` points to a valid =
+`drm_atomic_state`
+> +    let state =3D unsafe { =
+AtomicStateMutator::new(NonNull::new_unchecked(state)) };
 
-> 
-> We set the field in __mmap_new_vma(), _but_ importantly, we defer the
-> writenotify check to __mmap_complete() (set in vma_set_page_prot()) - so if we
-> were to try to map using VM_MIXEDMAP in the f_op->mmap() hook, we'd get
-> read/write mappings, which is emphatically not what we want - we want them
-> read-only mapped, and for vm_ops->pfn_mkwrite() to be called so we can make the
-> first page read/write and the rest read-only.
-> 
-> It's this requirement that means this is really the only way to do this as far
-> as I can tell.
-> 
-> It is appropriate and correct that this is either a VM_PFNMAP or VM_MIXEDMAP
-> mapping, as the pages reference kernel-allocated memory and are managed by perf,
-> not put on any LRU, etc.
-> 
-> It sucks to have to loop like this and it feels like a workaround, which makes
-> me wonder if we need a new interface to better allow this stuff on mmap...
-> 
-> In any case I think this is the most sensible solution currently available that
-> avoids the pre-existing situation of pretending the pages are folios but
-> somewhat abusing the interface to allow page_mkwrite() to work correctly by
-> setting page->index, mapping.
+No ManuallyDrop here?
 
-Yes, that page->index stuff is nasty.
+> +
+> +    // SAFETY: Since we are in the atomic update callback, we're =
+guaranteed by DRM that both the old
+> +    // and new atomic state are present within `state`
+> +    let (old_state, new_state) =3D unsafe {(
+> +        state.get_old_plane_state(plane).unwrap_unchecked(),
+> +        state.get_new_plane_state(plane).unwrap_unchecked(),
+> +    )};
+> +
+> +    T::atomic_update(plane, new_state, old_state, &state);
+> +}
+> --=20
+> 2.46.1
+>=20
 
-> 
-> The alternative to this would be to folio-fy, but these are emphatically _not_
-> folios, that is userland memory managed as userland memory, it's a mapping onto
-> kernel memory exposed to userspace.
-
-Yes, we should even move away from folios completely in the future for 
-vm_insert_page().
-
-> 
-> It feels like probably VM_MIXEDMAP is a better way of doing it, but you'd need
-> to expose an interface that doesn't assume the VMA is already fully set
-> up... but I think one for a future series perhaps.
-
-If the solution to your problem is as easy as making vm_insert_pages() 
-pass something else than vma->vm_page_prot to insert_pages(), then I 
-think we should go for that. Like ... vm_insert_pages_prot().
-
-Observe how we already have vmf_insert_pfn() vs. vmf_insert_pfn_prot(). 
-But yes, in an ideal world we'd avoid having temporarily messed up 
-vma->vm_page_prot. So we'd then document clearly how 
-vm_insert_pages_prot() may be used.
-
--- 
-Cheers,
-
-David / dhildenb
+=E2=80=94 Daniel
 
 
