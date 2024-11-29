@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-425216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD4B9DBEF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:14:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D899DBF1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 05:46:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5024BB219FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:14:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EFDC164AD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 04:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C721547E9;
-	Fri, 29 Nov 2024 04:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE4A155725;
+	Fri, 29 Nov 2024 04:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="f3ErCGcG"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="qY+3Gzxc"
+Received: from sonic305-1.consmr.mail.bf2.yahoo.com (sonic305-1.consmr.mail.bf2.yahoo.com [74.6.133.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B4D45C14
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E685D14B06A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 04:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.133.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732853662; cv=none; b=MlGsQEabhgBIdd3DxGrPjAXHmn4nR4VbmvSM9Xh/tXrVt6kTeDTN6eZ0kE9rfUqX5e/tkMXt6bRRSzRygevMxSkluoBIe1GpOPFnmZzPvz2SQgBUNajZN4SKtb3DLBONJpMRss4J3zjHVlaGyaP1Zq0Ugi24uGhICRP0VboYfAk=
+	t=1732855585; cv=none; b=soN5RXbKMfUMLerlLzSIgWAfXdAs3/K6YxMMYHtzf1Mrn9CwxRVsRUZunVcVFGkMiBTsx9eNy5DouZVBUrQxEjtVw5RhhUAlR0RXREtgi4gThVkALeEB2FpeNZ8DfWCWMpM1xC4MVPXLh/VMd/vjo3024znOHMAy13PXPMOnT/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732853662; c=relaxed/simple;
-	bh=7Q5uoccyOFHjDwzni9s1pvqhXs3JznPJtn8MoISASRU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EGsZfP+oDH2/Vu0X3K+Jz1S8o8xpQ3fSvFAPIooLYdqofYKZXNDrD6MuF3IdFDn2sqD+P+HAgWvq7a3XPjtw9bx/Eb2W89nBfryDm8EOtijaOYd3VRd4wfZnpqtkbfJEmvpUwfHtufI58kues02Jo9w3EvJCICn8WFxW+FtWxWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=f3ErCGcG; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id GCgktV7RNg2lzGsOQtBsjG; Fri, 29 Nov 2024 04:14:11 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id GsONtNZcHNWjnGsOOtKzmB; Fri, 29 Nov 2024 04:14:09 +0000
-X-Authority-Analysis: v=2.4 cv=dOagmvZb c=1 sm=1 tr=0 ts=67493f91
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=-pn6D5nKLtMA:10
- a=a9eFdPKkdgbxhWDV1dEA:9 a=QEXdDO2ut3YA:10 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7Q5uoccyOFHjDwzni9s1pvqhXs3JznPJtn8MoISASRU=; b=f3ErCGcGBfb1iyOQo+fcBv1t7e
-	6gIj1pftIjig6fL7tveuQjbhA03eV/QcD+R5rWTQe8Kn9b8yRm0dBILPJMeIAtcfUfaokPCf8bEQi
-	VnM7TkIpwvFLSw3xj9BQhyi6Gh69ZUuRR9boclxSbWyPKx5IifgE+g3dfVaP856rdqNtazS6Wz5YF
-	JpmSzV9RSZH3SLtqW7qKwH+Fxg2hykOB0b/Lml5yUanGNm9nRgIDBLwLO7zu4QpPtTIwTZsg6evED
-	zsR5Vc7+gG5Tkk1K8TlzyM6VmhDxfJBgYFDuuJLK0ncSsuEditRyf0gLS4IJzvUb11IMcRspqyPew
-	2Zwa/xSA==;
-Received: from [122.165.245.213] (port=53154 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1tGsOG-002aNG-2V;
-	Fri, 29 Nov 2024 09:44:00 +0530
-Message-ID: <fa7dbac4-592e-44f9-b468-834779fdbbc2@linumiz.com>
-Date: Fri, 29 Nov 2024 09:43:55 +0530
+	s=arc-20240116; t=1732855585; c=relaxed/simple;
+	bh=+/KmO3a3ZqPkpk88xYk2TASZx3w+zAIDLk4JhcnfO3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=rUPhuhk3rh7O9JI4dmSeRJzjfIajba1UFwlTYtJM55+LQJG7NydXYchNF2jG3b1x1k6S7KbK4lLRO64w40YtnsaEjQ5VQi7+rS+e00WmYptJQMqcZFlPwx8pZOUwWaVrQW/KyRHNLaEE7uLDyDXJHh5Oxv90giAgVScMJpqlAHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=qY+3Gzxc; arc=none smtp.client-ip=74.6.133.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1732855582; bh=GQSojATNMkj2XY8rz6LmsRqO9TSCVXvI4iHLwdFwzks=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=qY+3GzxcUPPcwbZkGTOwpwRu2KQisAkhKiucP8LwchPDpjBCp7wrPLbkppgZasPXMvUXkOqsKGq01leQE1IRP9lQpqgCgMKteFDgZeySOnFfFoyQ9xU6SSHsofIgCvWL56PA1wMZlFCVGbRliytpiXTOSYGxb6gPwXHdEQyjN6FpqzVRBmsEG3aqFyHEgT+CgswQooWjX66GecWxpJZdlA0oPiP/v/Y6uZX8IV93H3oy1FiLsuI8Btr5AB9rmrL+sXNtvSlargrkevG0zqjOQ48OSPJ5ezf8DDc3mYfkJx+a0r25feGBBQbjsxu3i73laNRf/mtFEu4vy/RUjA8BDw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732855582; bh=pKGlfdvHbyXxDgNmfBshnq6bZxxYqbKDFghHL5efTb9=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=e7nzM4/iOveBUzaElLvvCsI2pXUWoEJzFvLPiMgVLdmb+jBmbGe6GeXaHNAKVF6Gi9kPdWBbm6os7xLsJNc1vAEo01jDtnOOrA5eicMQxKExYvhK23EWfNomgEa8cOjyloV0oisR+IyhXRhJk4mW4WdM+taN80sHi7+1en0ltsCanpwTHILKkGgDLtZkTX6QII5i8yRYkkrUhCgXiBg+Xom+01miNGQUsctHD9YbvRYH9vw/+fSNOi9PxBQ+0j4ARBSbocODvjoba5OD/nRSO4JBZiN/eZnsZxAnR1XABvnXTHuXiDoGDZnhvZq7pBYjHAMjPXr/6EmtZvfTU7siPw==
+X-YMail-OSG: AMSU.RMVM1mb6bKRvoYirGQKxOZVMJWCgdDqu5v7FdoEhWK8eIccml0v4EFSHY1
+ JU5RphcaVbkv10w0R5D_JTx67NbJFP1zgo1dZfssY34mnvwAY3xHGuPTTNoQ9xJC98XZp3N9Kf.e
+ 3hPJoJvewqy69HIMKGVFyVWcPmSjEyiPJRTKpmLjuMUJQP9tqfm2Z7QW18.ejM1ToJqldGwXSFf7
+ 9bfi3pVlBFKf_K.xAxM2TsWjc.UkFA6ozUeruAl4WaTcMaDoBq5ps3sb8LHHFYqxX1vDzZ3hUFrp
+ 0GuXSmPzrb6dRsRtpi29VrZGIaGt1_3ISPuPSgnxz_3hZACJSkwOagx0VntM4IECaqSeRSIOBqlo
+ ax.9y6YA3.qX3q7hGF7_KHji4nI6Om6Ae4TCaoshiOdfsdAlqlaigNl9HchkdZFkHA7eIFiDKLQI
+ jjSzlQmOJ6ptipPS4zWcM76JHAaP5FLJMZoCrcZcs9zedbhhT8mjtkoef0hrxZ2_6Ik83XePo7FC
+ vZMIrVGtaeHFyOR7iIgOpS_li_riOTfsQlDpqFFlfUolP6EvYqM485dEXFX3oqegD8jG7ogNWQEt
+ OfxR2kHYIDGgtzF4.12AEgjlQNkXr9TgvHwc3RXK3nRcCKzYypscGesYW.KgoeV74qxS_BPiQ_DH
+ 2F3Wa2UhHaKMAWIC9SxFfO2zXKTH7pDkaaf57wPzzWYb.T6qFpErafTrAWJ4cVPtEJbr4qczudDW
+ YevbO2pxFdbP479PElYGWPeAGOR5tR6iFYdKsltyA4d9qQPsR1fLci0cU7PsNyeIIAR1N_.HdHhQ
+ mZ7SXkqjZ7diL5T.pns1.cegBjDWOGJRcLcr8qyyNW7xFCLAvIn_2PAOyIKu.g6aEqRYP9G1v19p
+ uSytSUubfFr.fWw1wt0i0_HXR250QIVCC.AVBYD4nup20m4Jdu6WIrkPcfWkDD5_iBG7x5RlIWml
+ ceYzM6NBIwGoTi3xFHuL4on1adsmfifarkhOFZZz2wMfvk3YJ.MnynMMpHKfBMrZ5j8VqCHb13vr
+ NG7qZCuGnxytJrP837fsfaMBtvVSSIZ3IL1wqtgTtxA2G8i_sCZ2y8Ur4UfLnU_OWHj.fHKAVmRs
+ BWpIhPr0dvuXYYU5lqvywS.MfAi2FlaeTgOdlMKiGOCqZScGc7UdzA2gkd0dS7edzD22_tZ4qTFw
+ w6DOSJsZZEhjOtNRuOuth9dr3RyM2jiIjBXyjpJ.OQF38mjQTGgsMoreJSQr4ZvRdueQI9qQmd9p
+ XsqNPX1qxA5t1HDZbLGyPnlY3GK1M0O2kVXnBF4j4AZ8Gx3H6jxRf2OA01jl7wujvo2RraPvTina
+ by_qwjx6lswZiv2YWhuHGz5BBny_0GO7..FOHaD25QjYKZsWyTTyYEYCDXfcozo_QO06DLHcxsQG
+ Om9ovVPBlRVuYRpj9s5HKVGA2JMwgcGMJfXUmcvaMPEr32tCo06v8occKdJdn4wOEnPhqyjoYoL2
+ ODoHtfITzvkkrIMtO000OpcD.jRm.pYp1yrfdwuvUDyf3vAP_fKgaNeRYp09oTu6nAZvIyrRYraY
+ ktkPKVfItlPhAgnMz7j6_q6HSKKdBXf85eWknX7rvk8wuXGiTLIaNPr86yemciv5ud50yfK8nsF2
+ SwPFb4d38wTOIvd9UPgLaQ0Nsn_6lo04khs9O7DzmIe2G0Cft3M4lqob6JNiw2jNeiFgPehLQIX4
+ uySRzYDwO4wgkfYtxx5CWWFhmWwoeEaT0_1SQRbe.ru8erdwbkpa5ui5UeUeTtRQmbrArEXpQVPI
+ lLaN1Mn.xIakdySoWc8MyouSnoGOc0Nj578WY93CTPQtXFTL.gi7ttX9OQRmFdkITdRRXXev25Eg
+ viWaZWmCWq49JanPLS7FXm5TaP5WAuF1H1bhrYP3buNUS5J48rI8B0i22R3mhgM.16JLzTQwtX1p
+ kd9MV_xf6mhmKPp0InuFPZHDNhKaUq7qgSTm88HJ1W89W51OgF58aINB6EwPf33Hiwaqz_EXQI0o
+ BJWORXxAlcA4aoyBdoqqEwRMaN.Suk6ZBmVPojXEO4gQlOluGfWApxlOaPIKp7Di5E1Ee1IJXixr
+ ThkEFHCiKihwaxHCNfTKF8.u_6hpBc_iC9Yh1rCDxhIA.Gcz.27VfiVyS5_71NB.RVJCAIMfxsXe
+ _KT83YdXKEBPJ9Xl.yMFzjjpMPN5gaoZHcpNu43KnOjfASTGuRQHmALJU_TfeL0ezmLCqrtNZoOo
+ qSmaNopED3kkD4BbubDcJ4EJ0EbKnNnDrnhU74be8z9Lbq_JplX9JnqEpLbpVQxCPBViZnhlb3L1
+ WU_dbo9zh8IMi
+X-Sonic-MF: <bluescreen_avenger@verizon.net>
+X-Sonic-ID: b678fd99-ae38-49d4-b635-e51f217fb12e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Fri, 29 Nov 2024 04:46:22 +0000
+Received: by hermes--production-bf1-66bb576cbb-h2pjb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID af1c0b40292d512b9d850181f2953147;
+          Fri, 29 Nov 2024 04:15:58 +0000 (UTC)
+From: n3rdopolis <bluescreen_avenger@verizon.net>
+To: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: n3rdopolis <bluescreen_avenger@verizon.net>
+Subject: [PATCH 0/2] Optionally allow ttynull to be selected as a default console
+Date: Thu, 28 Nov 2024 23:15:47 -0500
+Message-ID: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Samuel Holland <samuel@sholland.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
-To: John Watts <contact@jookia.org>
-References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
- <20241108115357.691b77b0@donnerap.manchester.arm.com>
- <Zy4SKCBwce3q0yj5@titan> <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
- <Zy4c9BFcrz2JVU6k@titan> <ZzNCsFiAiACFrQhE@titan>
- <f0d5b314-cfcc-4856-8d6e-09e437c075ec@linumiz.com> <ZzPluoI7xSTwhNcm@titan>
- <2ef6afa0-2756-493b-83a4-62e73a8e2af9@linumiz.com> <ZzRgP7-hHWE8JH8K@titan>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <ZzRgP7-hHWE8JH8K@titan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1tGsOG-002aNG-2V
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:53154
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 1
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLqsGSjw5egsgoGk+qB/UySeOkcTDBwWzCowcRvo79psmpCdHSLHXXDWxKlrgj+SJGgRBHzWhB0Ml/YQyRIkHrcg6lMepMoTRzI78wPxtrKvuTSSIFO9
- kpeSuep7QfX/bNYU8u2BeWz3/n/nl/N72H51OX48OEhsrUHmzDdFIRdEcKtToA9WoyoagydzBg4oAbNdFPVylSgcmvrSEpd5L6c=
+Content-Transfer-Encoding: 8bit
+References: <20241129041549.778959-1-bluescreen_avenger.ref@verizon.net>
 
-On 11/13/24 1:45 PM, John Watts wrote:
-> It really seems like the code means mixers here.
-True, I was wrong about my statement. But with A133, the case of independent DE
-is unique, which I couldn't test yet.
+When switching to a CONFIG_VT=n world, at least on x86 systems,
+/dev/console becomes /dev/ttyS0. This can cause some undesired effects.
+/dev/console's behavior is now tied to the physical /dev/ttyS0, which when
+disconnected can cause isatty() to fail when /dev/ttyS0 is disconnected,
+and users who upgrade to a theoretical vt-less kernel from their
+distribution who have a device such as a science instrument connected to
+their /dev/ttyS0 port will suddenly see it receive kernel log messages.
 
-> If my thoughts are correct, this would break use of mixer0 and mixer1 at the
-> same time.
-Agreed. But back to the original discussion about setting 0x20 to the port
-register, it work fine in my end without that changes for A133 display pipeline
-with LVDS. Not sure if the reason is independent DE.
+When the new CONFIG_NULL_TTY_CONSOLE option is turned on, this will allow
+the ttynull device to be leveraged as the default console. Distributions
+that had CONFIG_VT turned on before will be able to leverage this option
+to where /dev/console is still backed by a psuedo device, avoiding these
+issues, without needing to enable the entire VT subsystem.
 
-Thanks,
-Parthiban
+n3rdopolis (2):
+  ttynull: Add an option to allow ttynull to be used as a console device
+  tty: Change order of ttynull to be loaded sooner.
+
+ drivers/tty/Kconfig   | 18 +++++++++++++++++-
+ drivers/tty/Makefile  |  3 ++-
+ drivers/tty/ttynull.c | 16 +++++++++++++++-
+ 3 files changed, 34 insertions(+), 3 deletions(-)
+
+-- 
+2.45.2
+
 
