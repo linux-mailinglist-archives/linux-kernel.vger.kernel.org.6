@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-425645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D5A9DE859
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:20:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCB49DE85A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 15:22:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1559D16361D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:20:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23292B213FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 14:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC943208CA;
-	Fri, 29 Nov 2024 14:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB74208CA;
+	Fri, 29 Nov 2024 14:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZEPVvlf"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTIjrVgX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD8044360;
-	Fri, 29 Nov 2024 14:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEEE4C9D
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 14:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732890032; cv=none; b=kiG8CFsukU1sBeObtoQlBOAZjx457Z7/k7tHUYnbMrkmOrsUu3Gfw6or2PPK7HNRGcHN4w3NNjMeutQC21zDrPc0gwZUg+Ld2jx6mNXGRtj+RwRgcnGr8QKi7dCCLlB5yuXy3QUKqA02gBOpV7YS5d3ok69qlWVCfTq2kxCQ4LM=
+	t=1732890136; cv=none; b=q13uqIq3CRXq6bxMSTjvVCSOTdy3uNMRXuZ27gECEXqkF8/DN57EYtQL0p3TZWsUmS+L/GOeq1T3sG9lmktxIYtiScXzzGL/uEvl2HhAKNpsGDyw+igVhlxcD1AAoHosBTVkIS9hy10m7t/DJieweBF+MmyN1ml5tdVsBzeNHFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732890032; c=relaxed/simple;
-	bh=Cy/ZEnbIjBH6QcsuZHAvW2ybUF95XgUtkUzHpRfLIZc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnQAVuNV5zIQrQq8hgaHS+z1HDAldpjRrOnnCTRqe3dv5CN+4x8BTkPeL00tPUurY88W5bBButROiKDc92IS3TiPtysLTRB61MUAyQCNpSi9mGT+2cczVorj4//qZgxDV6wZWHxfaXOPMwQVGmQoNF6grDzjhr7vY2rRXY7sKiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZEPVvlf; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so23377561fa.0;
-        Fri, 29 Nov 2024 06:20:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732890028; x=1733494828; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ov12DWzgb/UPU3FhdyAKlLO1eWE/ZNSJ/oisuTw+9HY=;
-        b=lZEPVvlfL4D8fvM2WQMKB60KLU0HVFRSontxzAPyEMt/vl85p6S0poqiZV01oMsu+p
-         qGJk7n+XSMOqZUyjFD9FX64VgcEBf50A9laiT/zZirkwkBX1EH6ijnA5jV9Brup3nnNI
-         YhDLkdqj+yflN3CGpiiha5INTi/5Vhf0G98zej7z/BZL6JiVjpcAT9RZeEPPb2p8PZH2
-         Fom5U8sPF6PNshjAXiHwNmEt43C5Uaa5rcvtb4FBrtg/M4dYyLGMLvOKNYynKia4Vbb7
-         mJYwlbBXu7yUesiNz6KwtLC7WuoccdfvSrkQH5xWxP2fli0Vl7YKC2N1CMRyk85GvPRY
-         Cgjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732890028; x=1733494828;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ov12DWzgb/UPU3FhdyAKlLO1eWE/ZNSJ/oisuTw+9HY=;
-        b=Ip/CjX45wt/76QQqJ301mXxJSqc2ZgK/0FHAsfkbMzLqM47+1FWZyGTgdAuRgTAQLH
-         dILwsqNLiLbd4NbHpOBKCy0h+7aYFyWqdb/U1xpz8JjfmGasIIsB0bRHjKZF3SQZm4UD
-         JOk++A3igoqfHriFNNreIHRfzwfl6O3gRthaq9nvQEItRresORgAIlNg7SIpvj1Ojwzj
-         XPWPLv4rZoURcsH5yjbtbhaafacezSCUeP1rn59dC5tMFqn3JfmKsvEnoNCAYzNgbW0t
-         xLm0ctPYLxYSpbNMTop75XhRTcsFmOxH8GKBjrTB6U5eePFq/5TTaZm12lyhoSpGQpfQ
-         E3FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH6VnTj8X6V1v/qtmv49ynPjvxzlDIDLJ61V54PdtLq/e1boiuHCqOgJn1jKU9tOQ9O+DAXCfm2C6ykow=@vger.kernel.org, AJvYcCX/IyS5wPeJXKrI8b/SmwUUnApKjTeO6r+MbKanuRyZkhhJ7eiYRAzdc+cnLgLVfUoxSwSs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi7vX3Q7dc21Kd7MxiBEYA04selj8SR4YzZfv0pgbIfDdmFkCd
-	3jEZBVSndz1uoQJZbuJbSUGHjjxlVcGDn0b0e1eMEzfXJ3o3SjfC
-X-Gm-Gg: ASbGncs4RIZQL/AfOTVbpES1tEFy5G4cv258KogeLqd2fV3jmeVQAE/ejr2ssY+gsQi
-	zJD+c+tNkJ3LjgA4kNAJLGifIb3Semco+9iQKCceJ7t3yupjTPlEyJS94eK/5Io+Ly7Hj48NWyx
-	6xgh0CiO4HffEGxK7z+VCZlE5XqfZxiWseMd4uJUS0rB5PUMuKkR1300toFaum+3MaY0Rmqq+/T
-	cic4wanWAyL1RjqZk7Q4x8EJOPDTAX+iE9S1lTreAjDgf2L0RJuUXIRP9jx5oYumijzjzc5FgEb
-	9A==
-X-Google-Smtp-Source: AGHT+IGUT6CEclltd/WGp4YaLqNyRCPTqgq1ZAEUO7JQ+l/iucwpW5srMhSlkIsp2PzbWTTd/GILGw==
-X-Received: by 2002:a2e:bcc1:0:b0:2ff:cfeb:cabd with SMTP id 38308e7fff4ca-2ffd6110b09mr76415021fa.28.1732890028116;
-        Fri, 29 Nov 2024 06:20:28 -0800 (PST)
-Received: from pc636 (host-95-203-21-235.mobileonline.telia.com. [95.203.21.235])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffdfc74a65sm4677051fa.70.2024.11.29.06.20.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 06:20:27 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 29 Nov 2024 15:20:23 +0100
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@linux.com>,
-	David Rientjes <rientjes@google.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	maple-tree@lists.infradead.org
-Subject: Re: [PATCH RFC 2/6] mm/slub: add sheaf support for batching
- kfree_rcu() operations
-Message-ID: <Z0nNpyBoD5x2M4jn@pc636>
-References: <20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz>
- <20241112-slub-percpu-caches-v1-2-ddc0bdc27e05@suse.cz>
- <ZzYsBu_rJWSAcAYf@pc636>
- <cc7f24b8-4de5-4023-b40b-5f62287aafe8@suse.cz>
- <Zz3YDI4Bb04opI2d@pc636>
- <a4bd2aef-6402-49e0-9ad6-f353c5200ee7@suse.cz>
- <CA+KHdyXH5X=J2ontChFVUqFx15=VVng23H4gh_o-2Vzfo+mmjw@mail.gmail.com>
- <Z0iZOFAUSqN7cN5Z@pc636>
- <d16bef14-eaee-4917-8cb6-5571327220df@suse.cz>
+	s=arc-20240116; t=1732890136; c=relaxed/simple;
+	bh=L+79NtBaXOkU3W8AJSCPup/ZJ4h5o0GoneQ42SV9ZnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWR1dQ6Y5cH1RC7K5IWsW+P/REc1copMqpzIoeyw7wB9qlZomDxKk1/QLShHQomIW27rFBYaDEbszbHn960e9hQRoUYb4MA4zsvnH9+gsSl+kbqSM1ZoLUAAIPtrM3I0SJH07zh8QVEx89WJqVxSUZZi7/mJtLf1+Wvzrn1x8Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTIjrVgX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6871FC4CECF;
+	Fri, 29 Nov 2024 14:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732890135;
+	bh=L+79NtBaXOkU3W8AJSCPup/ZJ4h5o0GoneQ42SV9ZnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VTIjrVgXPH+ioB3hV89R2WiJSRueJBerz9ov+AJbCx4sQ1umWPpptsWHrz37u4bld
+	 eLxMlWwIw5cmetKqXSt5MI687SmZVsfxMSdr4aKtFqZvL1lUNvZn9yknrNMUbGynXb
+	 rKF016P2FJG0zZZgHKGAOnzk5X51KhDPspo/iYQc/oZJyiHgoZ1TpY0PdLQjoyY6X4
+	 HC1Egd5Ckq1N060Y0GcviWfx3Q5uKxbwkRoCfi6dJ8cNhJgWu5BH+9U5ZHxmMlHOPX
+	 621koB91P8EL1yBpodLU9T/5kuvopOe6aYtvZM40VfbPeaapgNs5mTpVfY1aGKUTIm
+	 OTsu+MUzpDTTw==
+Date: Fri, 29 Nov 2024 15:22:12 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
+	Daniel Bristot de Oliveira <bristot@kernel.org>
+Subject: Re: [PATCH v2 5/6] osnoise: handle quiescent states for
+ PREEMPT_RCU=n, PREEMPTION=y
+Message-ID: <Z0nOFDt_Y370pyew@localhost.localdomain>
+References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
+ <20241106201758.428310-6-ankur.a.arora@oracle.com>
+ <Z0h_KMzCCx2umo6h@localhost.localdomain>
+ <87seraeimb.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <d16bef14-eaee-4917-8cb6-5571327220df@suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87seraeimb.fsf@oracle.com>
 
-Hello!
-
-> On 11/28/24 5:24 PM, Uladzislau Rezki wrote:
-> > On Mon, Nov 25, 2024 at 12:18:19PM +0100, Uladzislau Rezki wrote:
-> >>> On 11/20/24 13:37, Uladzislau Rezki wrote:
-> >>>> Thank you. Let me try to start moving it into mm/. I am thinking to place
-> >>>> it to the slab_common.c file. I am not sure if it makes sense to have a
-> >>>> dedicated file name for this purpose.
-> >>>
-> >>> Yeah sounds good. slub.c is becoming rather large and this should not
-> >>> interact with SLUB internals heavily anyway, slab_common.c makes sense.
-> >>> Thanks!
-> >>>
-> >> Got it :)
+Le Thu, Nov 28, 2024 at 09:03:56PM -0800, Ankur Arora a écrit :
+> 
+> Frederic Weisbecker <frederic@kernel.org> writes:
+> 
+> > Le Wed, Nov 06, 2024 at 12:17:57PM -0800, Ankur Arora a écrit :
+> >> To reduce RCU noise for nohz_full configurations, osnoise depends
+> >> on cond_resched() providing quiescent states for PREEMPT_RCU=n
+> >> configurations. And, for PREEMPT_RCU=y configurations does this
+> >> by directly calling rcu_momentary_eqs().
 > >>
-> > There is one question. Do you think it works if i do a migration as one
-> > big commit? I am asking, because it is easier to go that way.
+> >> With PREEMPT_LAZY=y, however, we can have configurations with
+> >> (PREEMPTION=y, PREEMPT_RCU=n), which means neither of the above
+> >> can help.
+> >>
+> >> Handle that by fallback to the explicit quiescent states via
+> >> rcu_momentary_eqs().
+> >>
+> >> Cc: Paul E. McKenney <paulmck@kernel.org>
+> >> Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
+> >> Cc: Steven Rostedt <rostedt@goodmis.org>
+> >> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> >> Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
+> >> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> >> ---
+> >>  kernel/trace/trace_osnoise.c | 22 ++++++++++++----------
+> >>  1 file changed, 12 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+> >> index a50ed23bee77..15e9600d231d 100644
+> >> --- a/kernel/trace/trace_osnoise.c
+> >> +++ b/kernel/trace/trace_osnoise.c
+> >> @@ -1538,18 +1538,20 @@ static int run_osnoise(void)
+> >>  		/*
+> >>  		 * In some cases, notably when running on a nohz_full CPU with
+> >>  		 * a stopped tick PREEMPT_RCU has no way to account for QSs.
+> >> -		 * This will eventually cause unwarranted noise as PREEMPT_RCU
+> >> -		 * will force preemption as the means of ending the current
+> >> -		 * grace period. We avoid this problem by calling
+> >> -		 * rcu_momentary_eqs(), which performs a zero duration
+> >> -		 * EQS allowing PREEMPT_RCU to end the current grace period.
+> >> -		 * This call shouldn't be wrapped inside an RCU critical
+> >> -		 * section.
+> >> +		 * This will eventually cause unwarranted noise as RCU forces
+> >> +		 * preemption as the means of ending the current grace period.
+> >> +		 * We avoid this by calling rcu_momentary_eqs(), which performs
+> >> +		 * a zero duration EQS allowing RCU to end the current grace
+> >> +		 * period. This call shouldn't be wrapped inside an RCU
+> >> +		 * critical section.
+> >>  		 *
+> >> -		 * Note that in non PREEMPT_RCU kernels QSs are handled through
+> >> -		 * cond_resched()
+> >> +		 * For non-PREEMPT_RCU kernels with cond_resched() (non-
+> >> +		 * PREEMPT_LAZY configurations), QSs are handled through
+> >> +		 * cond_resched(). For PREEMPT_LAZY kernels, we fallback to
+> >> +		 * the zero duration QS via rcu_momentary_eqs().
+> >>  		 */
+> >> -		if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
+> >> +		if (IS_ENABLED(CONFIG_PREEMPT_RCU) ||
+> >> +		    (!IS_ENABLED(CONFIG_PREEMPT_RCU) && IS_ENABLED(CONFIG_PREEMPTION))) {
+> >>  			if (!disable_irq)
+> >>  				local_irq_disable();
+> >
+> > How about making this unconditional so it works everywhere and doesn't
+> > rely on cond_resched() Kconfig/preempt-dynamic mood?
 > 
-> Hi, I think one big move is fine. In case there are further adjustments,
-> those would be better in separate patches. That makes it easy to review
-> the move with git diff --color-moved.
-> 
-Sounds good and thank you!
+> I think it's a minor matter given that this isn't a hot path, but
+> we don't really need it for the !PREEMPT_RCU configuration.
 
---
-Uladzislau Rezki
+Well if you make it unconditional, cond_resched() / rcu_all_qs() won't do its
+own rcu_momentary_qs(), because rcu_data.rcu_urgent_qs should
+be false. So that essentially unify the behaviours for all configurations.
+
+Thanks.
+
+> 
+> Still, given that both of those clauses imply CONFIG_PREEMPTION, we
+> can just simplify this to (with an appropriately adjusted comment):
+> 
+> --- a/kernel/trace/trace_osnoise.c
+> +++ b/kernel/trace/trace_osnoise.c
+> @@ -1543,7 +1543,7 @@ static int run_osnoise(void)
+>                  * Note that in non PREEMPT_RCU kernels QSs are handled through
+>                  * cond_resched()
+>                  */
+> -               if (IS_ENABLED(CONFIG_PREEMPT_RCU)) {
+> +               if (IS_ENABLED(CONFIG_PREEMPTION)) {
+>                         if (!disable_irq)
+>                                 local_irq_disable();
+> 
+> --
+> ankur
 
