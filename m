@@ -1,91 +1,201 @@
-Return-Path: <linux-kernel+bounces-425266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F11C9DBFA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:08:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F989DBFA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 08:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B93AB219D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD884281FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF465158520;
-	Fri, 29 Nov 2024 07:08:19 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674AB1386DA;
-	Fri, 29 Nov 2024 07:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97135156F20;
+	Fri, 29 Nov 2024 07:10:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D331386DA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 07:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732864099; cv=none; b=KCPGJBdvBWRYdqW0DoO67+vdbeZTQC0qb7XNB0qsUIQT91+nUCSq93KYBOzzWG3vGRpwo6aBvpA9UmlNKiC3qoM5AAlxirmaPrhF/zvwx2jAtazbzi6zPIDBUPiGsJwnXnqlZzzqR/vSNZrEA0N91dlMmSI0/RUcLjzTb4DY2Hs=
+	t=1732864219; cv=none; b=s/qF7ACudsO11JWs8DcVyX+l2t4KzmtQjR3Xqk1lGmhcthbsJDNWc02+CXdp7s0pd4RAKgOAh4uR0zcI0gVZiBXGzN7ehS/queLTX+orB2OZdDpF7gr1mA6JtnsixEsUei6n5M0Av0AVNk0qkBDbhJLPSgfg9P3emf9xRWebftA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732864099; c=relaxed/simple;
-	bh=0W4gdl3LHtpXQqUcw6Hs+0eg26faz4Iu1fqKfJtsO1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHOO5e8KljSU9prUZ8DYm3rHAAMVuYeJLGzwx2bT7DtPFlX39BGex6CbmH+7HL/hyT3OS8gL9oDLhegEAeE7/mUM7Y0h/l2jfoWS5AAe8XN/zQdiLeJM9gwJWJmFtKvhv2Oxu7cQjA9vAAANknVX4unsffomgquHGmzwREKCwgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1tGv6j-0006q3-6S; Fri, 29 Nov 2024 08:08:05 +0100
-Date: Fri, 29 Nov 2024 08:08:05 +0100
-From: Florian Westphal <fw@strlen.de>
-To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Florian Westphal <fw@strlen.de>, kadlec@netfilter.org,
-	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
- filesystem.
-Message-ID: <20241129070805.GA26153@breakpoint.cc>
-References: <20241111163634.1022-1-egyszeregy@freemail.hu>
- <20241111165606.GA21253@breakpoint.cc>
- <ZzJORY4eWl4xEiMG@calendula>
- <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
+	s=arc-20240116; t=1732864219; c=relaxed/simple;
+	bh=xbfnZRcUuTOjNsQ4uI5/JZw4O0jKOmASQFKzJmjcrt0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JZRdZYkBgT6CDwm5PYBIOpgFFVBVJ51S6Tj6+7+XvF+K//gb10YMF5U6BcusqWtKXsq4/f/pGsXmQauVpeLVFw9vb8NuVPzXaTiUqblJWhe/cGol5MtLF8Hfcxjvi0OD8QPBYZDGufl4Kzzx1SDfxlj+58UIp0TVkp6ZLa8AAbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F24212FC;
+	Thu, 28 Nov 2024 23:10:44 -0800 (PST)
+Received: from [10.162.41.11] (K4MQJ0H1H2.blr.arm.com [10.162.41.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59CAA3F58B;
+	Thu, 28 Nov 2024 23:10:12 -0800 (PST)
+Message-ID: <66bb7496-a445-4ad7-8e56-4f2863465c54@arm.com>
+Date: Fri, 29 Nov 2024 12:40:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [QUESTION] mmap lock in khugepaged
+To: David Hildenbrand <david@redhat.com>, ryan.roberts@arm.com,
+ kirill.shutemov@linux.intel.com, willy@infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, ziy@nvidia.com
+References: <20241128062641.59096-1-dev.jain@arm.com>
+ <d8d29152-ce3f-406d-9e95-a0e8ea2eabbf@redhat.com>
+ <4cb26a06-d982-4ca3-a5f7-7c6a6c63428c@arm.com>
+ <3d4c57dd-0821-4684-9018-db8274c170ec@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <3d4c57dd-0821-4684-9018-db8274c170ec@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Szőke Benjamin <egyszeregy@freemail.hu> wrote:
-> and lower case *.h files can be merged to a common header files like
-> "xt_dscp_common.h" but what about the *.c sources? For example if xt_DSCP.c
-> removed and its content merged to xt_dscp.c before, what is the plan with
-> kernel config options of CONFIG_NETFILTER_XT_TARGET_DSCP which was made for
-> only xt_DSCP.c source to use in Makefile? Can we remove all of
-> CONFIG_NETFILTER_XT_TARGET* config in the future which will lost their *.c
-> source files?
 
-Sure.
++the list and Zi Yan.
 
-> obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
-> ...
+On 28/11/24 5:04 pm, David Hildenbrand wrote:
+>>
+>>
+>>> Maybe, we'd have to do the isolation+copy under the PMD lock. And
+>>> currently, we have to drop the PMD lock in order to have the
+>>> pte_offset_map_lock() work IIRC.
+>>>
+>>
+>> Is there a problem in holding two page table locks simultaneously?
+>
+> Depending on CONFIG_SPLIT_PTE_PTLOCKS, it might not even be two locks 
+> (I assume we could have such configs with khugepaged).
+>
+> Not sure if there could be an issue with lock inversion.
+>
+> So I suspect this no not be 100% trivial :)
+>
+>>
+>>
+>>>
+>>> Most importantly, the copy that currently runs under no spinlocks
+>>> would now run under spinlock. Up to 512 MiB on arm64 64K, not sure if
+>>> that can be a problem ... we currently seem to take care of that
+>>
+>> But we already are taking mmap_write_lock(), so that should not matter?
+>
+> We are dealing with a spinlock vs. a rwsem.
+>
+> We usually want to avoid holding spinlocks for an excessive amount of 
+> time, because all other CPUs waiting for that lock will ... spin with 
+> preemption disabled instead of rescheduling and doing something useful.
+>
 
-This line goes away.
+Ah okay.
 
-> obj-$(CONFIG_NETFILTER_XT_MATCH_DSCP) += xt_dscp.o
 
-This line is changed to
+>
+> Further, without CONFIG_SPLIT_PMD_PTLOCKS, in fact everybody who wnats 
+> to take a PMD lock in that process would be spinning on the same PMD 
+> lock :)
+>
+>
+>> I mean, if we can get rid of the mmap exclusive lock, then the copying
+>> would still be a bottleneck, and all fault handlers will back off, but
+>
+> I'm trying to digest it once again, but I'm afraid I don't see how 
+> fault handlers will back off.
+>
+> Won't they either see pmd_none(), to then either call pte_alloc_one() 
+> where they would spin on the PMD lock, or try allocating a PMD THP to 
+> insert it, and then spin on the PMD lock, to figure out later that it 
+> was all in vain?
 
-obj-$(CONFIG_NETFILTER_XT_DSCP) += xt_dscp.o
+Ya that's what I meant when I said "back off", sorry I wasn't clear, I 
+didn't mean VM_FAULT_FALLBACK/RETRY or something...yes, the work will be 
+in vain and the MMU will refault...
+>
+>
+> Thinking about it, I am also not sure if most other code can deal with 
+> temporary pmd_none(). These don't necessarily take the PMD lock, 
+> because "why would they" right now.
+>
+> See walk_pmd_range() as one example, if it spots pmd_none() it assumes 
+> "there really is nothing" without checking the PMD lock.
+>
+> As a more concrete example, assume someone calls MADV_DONTNEED and we 
+> end up in zap_pmd_range(). If we assume "pmd_none() == really nothing" 
+> we'll skip that entry without getting the PMD lock involved. That 
+> would mean that you would be breaking MADV_DONTNEED if you managed to 
+> collapse or not -- memory would not get discarded.
+>
+> This is a real problem with anonymous memory.
+>
+Yes, I thought of different locking fashions but the problem seems to be 
+that any pagetable walker will choose an action path according to the value
+it sees.
 
-Kconfig file NETFILTER_XT_TARGET/MATCH_DSCP are changed to
-select new NETFILTER_XT_MATCH_DSCP.
+>
+> Unless I am missing something it's all very tricky and there might be 
+> a lot of such code that assumes "if I hold a mmap lock / VMA lock in 
+> read mode, pmd_none() means there is nothing even without holding the 
+> PMD lock when checking".
 
-This has been done before, see e.g.
-28b949885f80 ("netfilter: xtables: merge xt_MARK into xt_mark")
+Yes, I was betting on the fact that, if the code assumes that pmd_none() 
+means there is nothing, eventually when it will take the PMD lock to 
+write to it, it will check whether
+the PMD changed, and back off. I wasn't aware of the MADV_DONTNEED 
+thingy, thanks.
+>
+>
+>> at least processes will be able to mmap() and do stuff with their VMAs,
+>> and I would guess that this is worth optimizing...
+>
+> It would certainly be interesting to get rid of the mmap lock in write 
+> mode here, but it's all rater tricky (and the code has rather nasty 
+> hidden implications).
+>
+>>>
+>>> pte = pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
+>>> if (pte) {
+>>>      ...
+>>>      spun_unlock(pte);
+>>> } ...
+>>>
+>>> result = __collapse_huge_page_copy(...);
+>>> pte_unmap(pte);
+>>>
+>>>
+>>> Deep in __collapse_huge_page_copy() we seem to re-rake the PTL lock.
+>>> No-split-spinlock confiogs might be problematic ...
+>>
+>> Could you elaborate a little? I haven't read about the older config...
+>
+> See above regarding CONFIG_SPLIT_PTE_PTLOCKS and friends.
+>
+>>>
+>>>
+>>> I recall that for shmem that's "easier", because we don't have to
+>>> reinstall a PMD immediately, we cna be sure that the page table is
+>>> kept empty/unmodified, ...
+>>>
+>>
 
-you can follow this almost 1:1.
+All in all, the general solution seems to be that, if I can take all 
+pagetable walkers into an invalid state and make them backoff, then I am 
+safe.
+For example, we do not zero out the PMD, we take the pte PTL, we do 
+stuff, then instead of setting the PTEs to zero, we set it to a universal
+invalid state upon which no pagetable walker can take an action; an 
+instance of that can be to set the PTE to a swap entry such that the fault
+handler ends up in do_swap_page() ->print_bad_pte(). So now we can take 
+the PMD lock (in fact we don't need it since any pagetable walking
+is rendered useless) and populate the PMD to resume the new pagetable 
+walking. Another *ridiculous* idea may be to remember the PGD we
+came from and nuke it (but I guess there is an alternate path for that 
+in walk_pgd_range() and so on?)
+
+
+>
+>
 
