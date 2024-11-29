@@ -1,162 +1,203 @@
-Return-Path: <linux-kernel+bounces-425790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307C59DEB0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:31:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890899DEB1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 17:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73050283675
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4403B25AC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 16:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62BD19EEC7;
-	Fri, 29 Nov 2024 16:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B87F1A0B12;
+	Fri, 29 Nov 2024 16:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WfDzfvLM"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="ehjKJAVu";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="hs/1gdVa"
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6841514F8
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4109114831E
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 16:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732897833; cv=none; b=Pq7z7rJD8ddJDCBMt30tZmANG3aTf4YrSN/WwnE+gCzQ93Y4kXvcSIzMf3jDIbmfK39k2MDLvnT+7KRS+mkDRu332d6NuFRq1hiPeqThMimA6EnvK+BZMvSzjlPcToB/vUmWAQ890VmWnumqFplhsPqO5jfmyfzSba+hsqjD5no=
+	t=1732898036; cv=none; b=pgLRJ5l3ZSdonZQUPflk9/uEdlqJXiXIMVj13Fu6GRrNvzjWULnh6rY0DHg1Zo/GYBbfZA7vBkPnAefPgsMA5OJccoWHWxs+6eUEW4vJmaIjhEzdNfZU62snT93xyn8YHswNCJ2BTI3oc7ruKi8baIgSPKXFWZ5k3qWQIkgkFkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732897833; c=relaxed/simple;
-	bh=4LUwpfrnHFkQR7mkasG/yVhtbXt53mi0rkc8s6chCjM=;
+	s=arc-20240116; t=1732898036; c=relaxed/simple;
+	bh=aGDvme90kra/854MU3oFLqBqzJ3x+zm28GSw+g1bjTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0+h6g3XqjsyzO5KyKpib8jqpVX+H3ujj89vx+KyzoKgetOjWLZQcVsJRONCpX06KjfugP2R0L4Lqn4IbTuVOnPylOy4WC3LFbg3DNywbhE+PJ52N3ojRBS4Nwfr00h5Z6iisjfQkEzoAQdJ/L/Tzngf/i7BUsSnXFKuJEPzsfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WfDzfvLM; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7252f48acf2so1473405b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 08:30:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732897831; x=1733502631; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QyeRJ0oZlkItp/9Z/e7gPKi87niWzmGMkQiYND8MHPw=;
-        b=WfDzfvLMod+EfZk3ofLK6Onxu8f1JIqIgCo4zuKhf1lmn4K35Ecx7IdTZ/kE4hUjgC
-         7QAt6BN7WIWPzD3A8rWGcv+oCk9AI1sZvx9ejQnzbee4z7UlXtHKxrOF80R31uKK8vc5
-         6Mn6HwBhCovQbPVizoIpYAcVL/5kF/TZSR0EU9Wgqk6/n6sewkCa6e66mpF+wPs+2SQr
-         DAx4LxXpkD1qI7q3q/cUkLAQOaEaSyTTLfJQtqZPLOm8BxNZYY5rw81FWZEVb6ObafPM
-         aT0M9Oz9gVFpeMCJtbm7/Cd1H4eR9BkeSpYc9791R8SRXwRkaUBBgYDh3CiaoOxRiBEB
-         uvZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732897831; x=1733502631;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QyeRJ0oZlkItp/9Z/e7gPKi87niWzmGMkQiYND8MHPw=;
-        b=Dk8kKaI6Bk9nNVQah9yT4lBrCPZtG78005fe/ao6TibGjBzDpvPK3slqNzQQnzj+tm
-         oSQ35CFpCufC5FyimglBoEaIrzp4CKMBvF6Hx6+TxIIQtbBct+IdePP4UGGx7m2qKiAw
-         gWFlqrSUYidvE/8/4aprAtrbKLkuQcEh3hfkskCrkeJ/56bVWZ9+egA6FKhrfPBMs3IX
-         69bHm2Qfe+6G+V7YG7MGkvsIrO4U7wRjjsy8QlzVHtPyYrdsbdcCS7yHcjXiqCKmKKX8
-         qb3dFaIEFyv3nmw9xzDIeADOuzDU4LtF5WE62lxmmtIsD3HZUjFIce2VgkTZyPaz74nB
-         Gg3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvVPDPkSuBJGlkbzY3Og9HiF5yTrbeMOe5yIV9NcFtkH1kP57tLiASKt9R4x/JV/Fv7KeeGi+j0a3EEkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtKkKXBBck+YK9Ju1yvqloYFKGHRpKPIRaB6rRLJ3ocN/m8xF8
-	jKd5F4EelxoS9Q5QfQp9/vqX/sUfi1NaqlEA1M6MXe9sY8csZ1xQHkgZW/qYNg==
-X-Gm-Gg: ASbGncuA0we63UDhlzz6OZ1bfPM/drUhRkTVLY0zKdIj1CoQZVDra4uifRL5HfSvx6y
-	fegY5YsBvXamuirhY6P8F7jsOuFc4YhUZdbbFvBcItTk29Mtng0Cy0+DbQCAHsaAjph6s3bwNnW
-	DPFnxuVJQT6yJYuLJPVBgkZXgFelYttjiXiqHipJ5ZmPaUFkgrvxxd8GedvmVOxw6ys4hTM5r/3
-	O6pbtSdhG21crTdefJ03IQehpVqHDPDpZ3xCJQ9tQUWDp1eYqI30yCDk5La
-X-Google-Smtp-Source: AGHT+IH/b79cT3F2/ZbtOtbSBA5CGpMCFdRTUFf0LguaqMw2cMJZe8pECNxkpAmdc42N2WE/pRPSOA==
-X-Received: by 2002:a05:6a00:b45:b0:725:7a8:6f7c with SMTP id d2e1a72fcca58-7253017ba1amr16472888b3a.26.1732897830504;
-        Fri, 29 Nov 2024 08:30:30 -0800 (PST)
-Received: from thinkpad ([120.60.57.102])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72541828c61sm3677043b3a.163.2024.11.29.08.30.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 08:30:30 -0800 (PST)
-Date: Fri, 29 Nov 2024 22:00:24 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
-	aman1.gupta@samsung.com, p.rajanbabu@samsung.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] misc: pci_endpoint_test: Fix the return value of
- IOCTL
-Message-ID: <20241129163024.dvz2ojldopeoyr6c@thinkpad>
-References: <20241129092415.29437-1-manivannan.sadhasivam@linaro.org>
- <20241129092415.29437-3-manivannan.sadhasivam@linaro.org>
- <ccd1587a-0368-4bde-9c72-4f10393c58b0@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4BJLFIyGtq5j9jOV7r/cZSpRXnzC9a2dzYg1BEItnodZlsLV1A/YpzK1FmSNXH9pRNb7/m0a8i6ns8AkUyXZOhD0nmcTzn+UzF2WQx4RLm0TE57kui3zy1tOUPl5r8r8t2HKjuekLV9jYG7WTVjSUaPkumBXaVV+N6BlQOQ1AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=ehjKJAVu reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=hs/1gdVa; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1732898933; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=+IctVdeL53Qnwh11oA+U96b5MaLBOX2K54knitT6yn0=; b=ehjKJAVu9qWIeigXTC1xj101Tq
+	KQD6bjP0xEt1n6dlOIEggaSuw1VUoTpWOikiooYnxNsJZFMYWPLWTjqm0u4hDRrWl/oWXhcjS24bb
+	xh+PlgRNOouPPQE9SV3s1mqA5ZFEUrEXoMVrlG6JwQmGGFjVsE9XY0PLa4LXfEdfVZ8s+iWWMFqT7
+	XLWcNovw394JSTCYX6O8x834uOcE5nmip9Gba1ROpVWAUvoLBUDsNo97CRBub2XI1j1Rx8R0Fe7y3
+	fVtHSVEkQziy2FeZfYbtkqE6N7HLdI54dMSQqsEYxpDAr+wAnIigeTg9JznoCDSoBZRI332ucuPIs
+	slZs/8Yw==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1732898033; h=from : subject
+ : to : message-id : date;
+ bh=+IctVdeL53Qnwh11oA+U96b5MaLBOX2K54knitT6yn0=;
+ b=hs/1gdVa8vaNbcXj32zZ85w2AtIAXa9ZplT0GKDm6ZiHXr7lEwy0wzbGKOsw9DWrHo7oU
+ 39EBVDCOTcnNfPbdnA2FWzZEgPrB1ZYSzQWj/poeZx8uI/HkxCNdAekK9RxiWz/XoUVykbh
+ HT4cexAZXBOme0cLfAPZ/ZPEJnyETZE6g7q59RdJQaXVqUxyIOZnHZoVcTct2tJaEdmmvHu
+ DK8R13h0xDZJoNEWZB10Gl+e0W8cFqr6Clw29sI2kcT5qdr8W2PPYVDWZFcgLC+zoNtfrG/
+ Pd0q3WMVgCNr56OBHaTUYHhbPjwK9t/mglnOC6yaugEGBbBZB2Y5C7m1cALQ==
+Received: from [10.176.58.103] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1tH3vp-TRjzld-Ag; Fri, 29 Nov 2024 16:33:25 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1tH3vp-4o5NDgrmzk3-oOOG; Fri, 29 Nov 2024 16:33:25 +0000
+Date: Fri, 29 Nov 2024 17:31:58 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: James Prestwood <prestwoj@gmail.com>
+Cc: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>,
+ Cedric Veilleux <veilleux.cedric@gmail.com>,
+ Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+Subject: Re: [RESEND PATCH v3 0/2] Improve ath10k flush queue mechanism
+Message-ID: <Z0nsfoiPOHiKIXvH@pilgrim>
+References: <cover.1732293922.git.repk@triplefau.lt>
+ <20215f63-e2e6-4f9a-bbbe-d7535c5ce9d2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ccd1587a-0368-4bde-9c72-4f10393c58b0@kernel.org>
+In-Reply-To: <20215f63-e2e6-4f9a-bbbe-d7535c5ce9d2@gmail.com>
+X-Smtpcorp-Track: JcTj8qdbsOCH.MtiIHSEqxKSW.1d7CRQcfFUq
+Feedback-ID: 510616m:510616apGKSTK:510616sMuY_9l13u
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On Fri, Nov 29, 2024 at 07:51:30PM +0900, Damien Le Moal wrote:
-> On 11/29/24 18:24, Manivannan Sadhasivam wrote:
-> > IOCTLs are supposed to return 0 for success and negative error codes for
-> > failure. Currently, this driver is returning 0 for failure and 1 for
-> > success, that's not correct. Hence, fix it!
+Hi James,
+
+On Tue, Nov 26, 2024 at 04:57:36AM -0800, James Prestwood wrote:
+> Hi Remi,
+> 
+> On 11/22/24 8:48 AM, Remi Pommarel wrote:
+> > It has been reported [0] that a 3-4 seconds (actually up to 5 sec) of
+> > radio silence could be observed followed by the error below on ath10k
+> > devices:
 > > 
-> > Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Closes: https://lore.kernel.org/all/YvzNg5ROnxEApDgS@kroah.com
-> > Fixes: 2c156ac71c6b ("misc: Add host side PCI driver for PCI test function device")
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >   ath10k_pci 0000:04:00.0: failed to flush transmit queue (skip 0 ar-state 1): 0
+> > 
+> > This is due to how the TX queues are flushed in ath10k. When a STA is
+> > removed, mac80211 need to flush queues [1], but because ath10k does not
+> > have a lightweight .flush_sta operation, ieee80211_flush_queues() is
+> > called instead effectively blocking the whole queue during the drain
+> > causing this radio silence. Also because ath10k_flush() waits for all
+> > queued to be emptied, not only the flushed ones it could more easily
+> > take up to 5 seconds to finish making the whole situation worst.
+> > 
+> > The first patch of this series adds a .flush_sta operation to flush only
+> > specific STA traffic avoiding the need to stop whole queues and should
+> > be enough in itself to fix the reported issue.
+> > 
+> > The second patch of this series is a proposal to improve ath10k_flush so
+> > that it will be less likely to timeout waiting for non related queues to
+> > drain.
+> > 
+> > The abose kernel warning could still be observed (e.g. flushing a dead
+> > STA) but should be now harmless.
+> > 
+> > [0]: https://lore.kernel.org/all/CA+Xfe4FjUmzM5mvPxGbpJsF3SvSdE5_wgxvgFJ0bsdrKODVXCQ@mail.gmail.com/
+> > [1]: commit 0b75a1b1e42e ("wifi: mac80211: flush queues on STA removal")
 > 
-> Looks OK to me.
+> I saw in the original report that it indicated it was only for AP mode but
+> after seeing this and checking some of our clients I saw that this is also
+> happening in station mode too. I only have clients on 6.2 and 6.8. I can
+> confirm its not occurring on 6.2, but is on 6.8. I also tried your set of
+> patches but did not notice any behavior difference with or without them.
+> When it happens, its always just after a roam scan, ~4 seconds go by and we
+> get the failure followed by a "Connection to AP <mac> lost". Oddly the MAC
+> address is all zeros.
 > 
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Nov 25 09:09:50 iwd[16256]: src/station.c:station_start_roam() Using cached
+> neighbor report for roam
+> Nov 25 09:09:54 kernel: ath10k_pci 0000:02:00.0: failed to flush transmit
+> queue (skip 0 ar-state 1): 0
+> Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME
+> notification Del Station(20)
+> Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_link_notify() event 16 on
+> ifindex 7
+> Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME
+> notification Deauthenticate(39)
+> Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_deauthenticate_event()
+> Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME
+> notification Disconnect(48)
+> Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_disconnect_event()
+> Nov 25 09:09:54 iwd[16256]: Received Deauthentication event, reason: 4,
+> from_ap: false
+> Nov 25 09:09:54 kernel: wlan0: Connection to AP 00:00:00:00:00:00 lost
 > 
-> One nit below.
+> Other times, the above logs are preceded by this:
 > 
-> [...]
+> Nov 26 00:25:25 kernel: ath10k_pci 0000:02:00.0: failed to flush sta txq
+> (sta ca:55:b8:7a:91:4b skip 0 ar-state 1): 0
 > 
-> >  static void pci_endpoint_test_remove(struct pci_dev *pdev)
-> > diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
-> > index 470258009ddc..545e04ad63a2 100644
-> > --- a/tools/pci/pcitest.c
-> > +++ b/tools/pci/pcitest.c
-> > @@ -16,7 +16,6 @@
-> >  
-> >  #include <linux/pcitest.h>
-> >  
-> > -static char *result[] = { "NOT OKAY", "OKAY" };
-> >  static char *irq[] = { "LEGACY", "MSI", "MSI-X" };
-> >  
-> >  struct pci_test {
-> > @@ -52,63 +51,65 @@ static int run_test(struct pci_test *test)
-> >  		ret = ioctl(fd, PCITEST_BAR, test->barnum);
-> >  		fprintf(stdout, "BAR%d:\t\t", test->barnum);
-> >  		if (ret < 0)
-> > -			fprintf(stdout, "TEST FAILED\n");
-> > +			fprintf(stdout, "NOT OKAY\n");
-> >  		else
-> > -			fprintf(stdout, "%s\n", result[ret]);
-> > +			fprintf(stdout, "OKAY\n");
-> 
-> Maybe replace all this "if (ret < 0) ... else ..." and all the ones below with
-> something a call to:
-> 
-> static void test_result(int ret)
-> {
-> 	fprintf(stdout, "%sOKAY\n", ret < 0 ? "NOT " : "");
-> }
-> 
-> or simply with the call:
-> 
-> 	fprintf(stdout, "%sOKAY\n", ret < 0 ? "NOT " : "");
-> 
-> to avoid all these repetition.
-> 
+> Note, the above logs are with your patches applied. Maybe this is a separate
+> issue? Or do you think its related?
 
-Sounds good to me. Will incorporate in next version, thanks!
+Thanks fot the test. Yes this patchset is here only to fix the issue for
+AP (this caused AP to stall all traffic for every STA connected to it).
+So while this issue is interesting it is not addressed by this patchset.
 
-- Mani
+Out of curiosity I tried to reproduce it currently trying to roam an
+ath10k sta back and forth two APs (same SSID/psk, different channels)
+and wasn't able to reproduce with wpa_supplicant, didn't try with iwd
+though. Or maybe the AP the sta is roaming away from has stopped
+responding, in that case I don't know what can be done here as it does
+not seem we want to drop pending frames (as we would prefer to deauth
+cleanly from AP in main case).
+
+In any case still I think this is a separate issue and it is also way
+less critical than the AP one (one STA can create ~4sec DOS to the
+entire BSS vs a STA took more time to roam away if AP crashed).
+
+Thanks,
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Remi
+
+> 
+> Thanks,
+> 
+> James
+> 
+> > 
+> > V3:
+> >    - Initialize empty to true to fix smatch error
+> > 
+> > V2:
+> >    - Add Closes tag
+> >    - Use atomic instead of spinlock for per sta pending frame counter
+> >    - Call ath10k_htt_tx_sta_dec_pending within rcu
+> >    - Rename pending_per_queue[] to num_pending_per_queue[]
+> > 
+> > Remi Pommarel (2):
+> >    wifi: ath10k: Implement ieee80211 flush_sta callback
+> >    wifi: ath10k: Flush only requested txq in ath10k_flush()
+> > 
+> >   drivers/net/wireless/ath/ath10k/core.h   |  2 +
+> >   drivers/net/wireless/ath/ath10k/htt.h    | 11 +++-
+> >   drivers/net/wireless/ath/ath10k/htt_tx.c | 49 +++++++++++++++-
+> >   drivers/net/wireless/ath/ath10k/mac.c    | 75 ++++++++++++++++++++----
+> >   drivers/net/wireless/ath/ath10k/txrx.c   | 11 ++--
+> >   5 files changed, 127 insertions(+), 21 deletions(-)
+> > 
 
