@@ -1,105 +1,87 @@
-Return-Path: <linux-kernel+bounces-425388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D3A9DC172
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:26:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B919DC114
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 10:10:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268F6162EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A8B22CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 09:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049E7177998;
-	Fri, 29 Nov 2024 09:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="CuwP0BZr"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4366214F135;
-	Fri, 29 Nov 2024 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ABE16E863;
+	Fri, 29 Nov 2024 09:10:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568FF143C40
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 09:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732872376; cv=none; b=N70XCe+x/EzL46OyVzrFywmpYJKMeo9OT39XCaEZDNANSuQwsxIvHm3dDHtSwnlF/vxY/8wijB3sCKkO+0NnF7UZyhmlUL0/gZEce469+mGwYE90b5IcsH1yFVLycJtypNEUE2mpWaJtfTb/EfWgAZzbaCclllMoHl6tf8vL34Y=
+	t=1732871405; cv=none; b=InfZ8tKoVWliUYyM95C2iGxUQgLNWuh7kfjVjt16uLfHTlc5Y2uUwmdcbTQwXS5Ql6GbmNlgxGWKomV6tTSthg5a2KScoYD4r551fmRM8lC5f6xtWE7sigPb9Hs+NozZ+X45JgcOTjLpCyi7tH2zYmq0nHfrIh+JxbGPjYxARak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732872376; c=relaxed/simple;
-	bh=+yuShxEOVmN7TG8kJ2CNcYyFkUOoWKElgUyirL+GhfY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V0n3DRlxXprwCbN89z6FHi3NrH1npHMaAy9oEoUoZBaOhrDuvuc7K3WhK2LjytmEgtAGygOqUIBqYg+rlwEHc5K/spDMNFqe4Tcj4q3DemeHcUEnGut2PP2JKt9PwZVq3vmNZ7nNeQUM2nirrALQPHGTOmHSpeR/NwVMqJjabpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=CuwP0BZr; arc=none smtp.client-ip=220.197.31.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=6GuQz
-	Xe2jI5FYysiuhEkePfzpCup693XR+LvZVdGDjY=; b=CuwP0BZrXmIf9pAo0TQzL
-	EFR57vNAZfVv3+R3jYsCybXavQxjQSjIRG/bIddT2CTK5fJMwD9iC82S9eyZATT+
-	zI8D99/haFuqTf5Iz57OcckkIkVZ+lx22rvdePfvkV6A1eFveO23I+lt0ir+e+xI
-	1IzLUqKJJFk/NY6kllCbEU=
-Received: from localhost.localdomain (unknown [111.204.182.99])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3vwjshElng6j+Bw--.51373S2;
-	Fri, 29 Nov 2024 17:10:06 +0800 (CST)
-From: Honglei Wang <jameshongleiwang@126.com>
-To: tj@kernel.org,
-	void@manifault.com
-Cc: nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	haoluo@google.com,
-	brho@google.com,
-	joshdon@google.com,
-	vishalc@linux.ibm.com,
-	hongyan.xia2@arm.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	llvm@lists.linux.dev,
-	jameshongleiwang@126.com
-Subject: [PATCH] sched_ext: Add __weak to fix the build errors
-Date: Fri, 29 Nov 2024 17:10:03 +0800
-Message-Id: <20241129091003.87716-1-jameshongleiwang@126.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+	s=arc-20240116; t=1732871405; c=relaxed/simple;
+	bh=HvfWtN8ovSVZLDaF0djhaWUwPTTRulGA5u2ywx+UVw0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Bffm2FLeByKejkQ4EnTvKZFkaoxzKbqXMEuge6ZGW48ilbfjdsBus2lTxu1LFNBlv4jj4DOdpfP4csbjh8CqUyZDIsKdqtasPotxKrtT4y3qkUJ/CdmFoOOFBcioHDIuHyN3YfMQREu9cH1qNUHOtuywI5TpFWqF5bDC4nA1r4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-84193bb7ed1so134904239f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 01:10:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732871403; x=1733476203;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EToBKhzt7IlOG/uSFwY/2vdJ+cXtPPsnLRADhuODpxQ=;
+        b=ZRyBSNMvYiIexWtZFXu7wQRCBeWGmWeg4vv8De3cLpqrbkdUdNVXIAd7vK4xaH6iCj
+         /ur6knufSJVxzs7Ze7+xE0contPuWTO4x4bPsxVnc5szmNCCgU/VO7YaphJZ4IN81/Aa
+         xj+DqGvfPKbv0hdsA2o7V27M2xmJO0ahrx5COuHxJ9q5rBPo94w04bgfBh8As03qNl7b
+         8gAgRAWM+GpF9MF90a92u2qr7PxdXcNuC29gWkE4BCvLR/iZ3SBbJrgCmjmtdpYv/XdC
+         Zyffg3qLxqMnL2NB4anqGPoTJy2zbxPOJY3IY6Lp83xpl4MTkl68SwRnEbiLqC+St6VD
+         ux8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dRbQC5GL7+T5D56+/FTaiwNz4vZfKpPde1Ez1giDw6tPb66NeoGqybcASTdhMFbOZhVhkXvv286Rshk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUwe4yBRgpEhIvckZaNkp9ncqbXdTPIpR0SqTO6/h1/n1jbveI
+	htcWSSzqr0J0wnRFE+YT0CrVVsaLyZ2V5+OWdw+0NVPKOTe7NE4b2AiL+mTLvuSfrWb0CZWJquf
+	u4u6U5ZX4qgQ/Wg0I02No/Ki9XugJP+7eZMfiSuWmGwpNFc9mXMQZwlM=
+X-Google-Smtp-Source: AGHT+IGMS7E56/u5abAaKAFggVP9bzNdZXMLLB4/oh4uWG9StDDyd/ITP9+I0RSXrIDU54aRrtVNTPuaY1is9co+z8xVueaVxY0j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3vwjshElng6j+Bw--.51373S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw18tF18Cr1UKryfXry3twb_yoW8CF4rpa
-	1rua4DCF4xJwsruryqya109ry3Wws5W3W7GrW8J34SkrWqqw1Utr1Yvr9FkFZxW3yqkwnI
-	9F1I93y3tr48Zw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zib18dUUUUU=
-X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiJAmmrWdJgU82bwAAsf
+X-Received: by 2002:a05:6e02:2143:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a7c555eef0mr106325195ab.10.1732871403606; Fri, 29 Nov 2024
+ 01:10:03 -0800 (PST)
+Date: Fri, 29 Nov 2024 01:10:03 -0800
+In-Reply-To: <20241129084122.3D4HV%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674984eb.050a0220.253251.00aa.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] KMSAN: uninit-value in gfs2_quota_init (2)
+From: syzbot <syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-commit 5cbb302880f5 ("sched_ext: Rename
-scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()")
-introduced several new functions which caused compilation errors when
-compiled with clang.
+Hello,
 
-Let's fix this by adding __weak markers.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
----
- tools/sched_ext/include/scx/common.bpf.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reported-by: syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com
+Tested-by: syzbot+9fb37b567267511a9e11@syzkaller.appspotmail.com
 
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index 2f36b7b6418d..625f5b046776 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -40,9 +40,9 @@ void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_fl
- void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
- u32 scx_bpf_dispatch_nr_slots(void) __ksym;
- void scx_bpf_dispatch_cancel(void) __ksym;
--bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym;
--void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym;
--void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym;
-+bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
-+void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
-+void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
- bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
- bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
- u32 scx_bpf_reenqueue_local(void) __ksym;
--- 
-2.45.2
+Tested on:
 
+commit:         7af08b57 Merge tag 'trace-v6.13-2' of git://git.kernel..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c849e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d66c9f9a88c492bd
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fb37b567267511a9e11
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=143b100f980000
+
+Note: testing is done by a robot and is best-effort only.
 
