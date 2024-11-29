@@ -1,143 +1,138 @@
-Return-Path: <linux-kernel+bounces-425877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC07F9DEC1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:28:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41FF9DEC1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 19:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59B18B23286
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:28:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 572DDB224FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 18:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CF41A0724;
-	Fri, 29 Nov 2024 18:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36C51A08A8;
+	Fri, 29 Nov 2024 18:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OHriYdHF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XyVbdnU3"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD7E19F419
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966F419F419
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 18:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732904891; cv=none; b=pb+RHKGmohXzRFpJcrIDkYqk4BeoGXzsMtthIi6ggFfMAvE1VR2nhm0L/xOpSu5HAdqGTOTqMZqlFg5M1gWbT6QsN3BpmtclzjAQ3rhW3xG1QSuYdyf4m3jYsFzVc9dn5rSdSmU/uQq/PcHZ21dtONEiCXMgW805svzBuTasnK4=
+	t=1732904990; cv=none; b=o7ICYOHqbT1CD6Jw9kKBFNuFTUp4Lw2Wz5eJwfSsEUbYGz+vx37fxR31aEQXPkj6TyUXlUmm+QwJSK+IBxTJBJHjncBhAsqeBq5poFoms+yuG+PirbfB0c9qvYphDe8l4dJdkP0PEAo9hVqZtkLIRk8qiWuRYToVq2YoFmyBM2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732904891; c=relaxed/simple;
-	bh=zRcV5bDSxF/M+5TaGh3ukz48FbdYXTj7Lm8A4GHlQ0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oL6oqz4HkcpYABPCb8HRpTqi/yMGOKY4DO9Ev9qfd6bvZ4fdXR3q8E46WJytGINX5dMzQAcAHvcs7YQcDauAa2Rq74DliJKEFes7ltHVJ9CQNStLSomP9PfptI0cwGLJxA8S5qqko2f+jKKzTYtUiJhkUxIwdf+UY/VL2P/51q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OHriYdHF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 25F8B40E0275;
-	Fri, 29 Nov 2024 18:28:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id LOcvsIyd_nIw; Fri, 29 Nov 2024 18:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732904882; bh=uvak+YnW0f/P6nUZMSTvl2AZMSmth6P3XsNSPppOVdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OHriYdHFn/O8bmepA4U3lvbLeLl9jJyOQc/q4lUVgEhH6nx2lYdswMNKiSb3siz1f
-	 v0kwckQe7oltZ0Nj7UGs70QIi7ye0O69ocx1+fmUYowcGuO5QiYsUKqL+VeaF1pUJ8
-	 sw28VEYYIV+W5eyK85FSxWTGkv0bAHprNX438ntVAubUNCLH1HZbUZ/NOghlkmuEDc
-	 camkZWqNiCVuSiAwwKEy74l3NHRy41o7Mr+WpJ1onL6rMtctmgE16PLZ5PU1e1k63w
-	 wi3/lEQhLnOOSH+mvV2+nGFJA9Puwo/VHaeliBLF+hFa9P+aS4j3htM2CNAj2yCIij
-	 4PLFVZfi+LCz9AP2G4upxF8wdK88HmrHdjxATek2ME651mS9R41dYDS37CyzWBdSj8
-	 gZGQrBadH5E16LyY7zxI3k64NQiONt3HtA/5kGtR+aG6EXGEf4xYS91NrRzzoFr4A6
-	 5oQibWNiaBwhYnt3CbeuaGqHCc64Fw25/pdTSaz9x5s/sGyQTkvNNqSDvg+suuvwqy
-	 CtzRY+Z2Tp1H27XDUs8MADdWNsJt9e+ErglGyLwInrveSHP0giNGJjwDsXmWrH89ne
-	 a+XY62dm/VtDNpaEQqv8+I4tF9BABEW2WT9N+fBD30+3sngvmznKbwp9wRGyFSRP0h
-	 ByuTaq8Hb3FaCXJmBkpZwjCY=
-Received: from zn.tnic (p200300Ea9736a103329C23fFfEa6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a103:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 082F140E0200;
-	Fri, 29 Nov 2024 18:27:54 +0000 (UTC)
-Date: Fri, 29 Nov 2024 19:27:47 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, tglx@linutronix.de, rafael@kernel.org,
-	lenb@kernel.org
-Subject: Re: [PATCH 11/11] x86/cpu: Make all all CPUID leaf names consistent
-Message-ID: <20241129182747.GEZ0oHo1eR0l7sREJY@fat_crate.local>
-References: <20241030213310.C4861EC0@davehans-spike.ostc.intel.com>
- <20241030213329.3253F5F3@davehans-spike.ostc.intel.com>
- <20241031101834.GGZyNZejzr5A9bNL8J@fat_crate.local>
- <4d606240-a8c8-40e5-80da-57c9b4d48179@intel.com>
+	s=arc-20240116; t=1732904990; c=relaxed/simple;
+	bh=7o3dPXXYzy/jqYfXlNc1DoLW36c00qph5d+kSyrAx2g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=l7nFUeqd1jALRJwQEAwADXogaN6b60fNk9EmxGj1VOwLtamyT7sLRZtufpZKBdxKnE4s/Bv9QjXAZvNZJiaVFXDQ1aBr+9frmJPWG7e+qtc50UC7LPFIeCSYJgasIvFSFbo5UZJOqs5DrckeU51mKpWsTO5m6beA1Mgr1DlGVfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XyVbdnU3; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46694ca7de5so22293901cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 10:29:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732904987; x=1733509787; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QsGkq0TgYPWhbtZ+yoEmD4Y+iHxFQMMwCwAQQxSHSG0=;
+        b=XyVbdnU3Q4B0B9JJ5msXueiLMgKg9kPC0cqhl48+Q0IwgtLhaZ0nsORkKl1qY0tUkS
+         02oDbNGtJicU28agiKzOTjQ/SRcg9uEWNrgxPOWPTNhIj2s3O1ZepGXhSbJYrLqF/Z9Q
+         cchFvoXv7wdObENPja5+KYV8rpjYKKhDUZuXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732904987; x=1733509787;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QsGkq0TgYPWhbtZ+yoEmD4Y+iHxFQMMwCwAQQxSHSG0=;
+        b=Q4n0q+IJtTq3ZyrSugRCoAtVIG+6/N/u2uB9bjLst/CBTSEzYwNhYXS8pV/7T/zsOt
+         jVbx17/FKaDi/6L2p/6e3MBpuz1BG2mnQmCVmhm6Gqp5KkE+ZFy+rXTKMkUOpkG76+nV
+         UIwHqlQS9+78gW+tx3U5CnBDoXC+neXdVQaTa+otgMIZiEQTIsAqyrk+6rMqnR14jrbB
+         scJl1U7wBbn69Avm+TvxrzfN/RdeHM/JT+qfPfBjRw2IgGwfq2po2kTr/tsyrEjOcrkw
+         hNN6YLbcKD7PwWVF5PxRJ10Rzy0JUl0ipdAoRad5WJPv7orku/TIEq7n4PdPrEwE3+7a
+         UXhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGTm04DZX9s9uUTJxX/Lpwmuw2MB4mX5Gqt4l9ZtoRqhVS38Z7eP76kmbsZkmrbiJvk+nYmZ1HWk8DwMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCoJniLcmgHKkQUHKBi1XNO/+UBT8VqMzCrz7LcZPqFAsMA0wt
+	n+Bw2uW5jYRdsMitYJhAqxPotONcF+eWEV0UI5LEwTLF3ta+to4+5strYE+V9Q==
+X-Gm-Gg: ASbGncs1jsa2fEjFkd1ZVGlEsWZf9Q+HjqpjFqTslWQMp4QGJcicja0u8PlhKSr/hrE
+	PXIzI7lLshh9cyyHhPH5PFEvMU3VpDFY+ZQj0jt0biQ3Znc5Jl85HtAg2nsET1H6/sThhgVzfaK
+	a9PuVrL7qkb5A+DV8XqdPkbWSWo5KGPB60s0wo7BevjaNC7Kg/c9BW6vweKeka2N0VXBZ/AW+qg
+	y+9EUrSbw8m12uNNurGCdCEtmJUZhfm8TbY6Furbg/Dhr70mXSfzoJx/JfweopV3NFfL3koII9w
+	7I+0IDSw6qMo/cM2pqRsR529
+X-Google-Smtp-Source: AGHT+IGUlm3S5aBJeVhw4npdkqy+q8slOMllM3yCxxu2APty0Zw3Rq2h/hxnY0IAhbTKexgxOjuKoA==
+X-Received: by 2002:a05:622a:1908:b0:466:8780:5b24 with SMTP id d75a77b69052e-466b3516861mr199090791cf.18.1732904987444;
+        Fri, 29 Nov 2024 10:29:47 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466c421f86dsm19329161cf.69.2024.11.29.10.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 10:29:46 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 29 Nov 2024 18:29:44 +0000
+Subject: [PATCH v2] misc: Kconfig: Make MCHP_LAN966X_PCI depend on
+ OF_OVERLAY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4d606240-a8c8-40e5-80da-57c9b4d48179@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241129-lan966x-depend-v2-1-72bb9397f421@chromium.org>
+X-B4-Tracking: v=1; b=H4sIABgISmcC/3XMQQ7CIBCF4as0sxZTkBJx5T1MFy0M7SQWGlBS0
+ 3B3sXuX/0vet0PCSJjg1uwQMVOi4GuIUwNmHvyEjGxtEK2QnAvNnoPXSm3M4oresutolB6l7iR
+ 2UE9rREfbAT762jOlV4ifw8/8t/6lMmecqfbijNRaGenuZo5hofdyDnGCvpTyBbj+5EGvAAAA
+To: Herve Codina <herve.codina@bootlin.com>, 
+ Derek Kiernan <derek.kiernan@amd.com>, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Thu, Oct 31, 2024 at 10:19:37AM -0700, Dave Hansen wrote:
-> >> -#define CPUID_MWAIT_LEAF	0x5
-> >> -#define CPUID_DCA_LEAF		0x9
-> >> -#define XSTATE_CPUID		0x0d
-> >> -#define CPUID_TSC_LEAF		0x15
-> >> -#define CPUID_FREQ_LEAF		0x16
-> >> -#define TILE_CPUID		0x1d
-> >> +#define CPUID_LEAF_MWAIT	0x5
-> >> +#define CPUID_LEAF_DCA		0x9
-> >> +#define CPUID_LEAF_XSTATE	0x0d
-> >> +#define CPUID_LEAF_TSC		0x15
-> >> +#define CPUID_LEAF_FREQ		0x16
-> >> +#define CPUID_LEAF_TILE		0x1d
-> > 
-> > ... and just to confuse things even more, there's enum cpuid_leafs too which
-> > start with the "CPUID_" prefix too.
-> > 
-> > Pfff.
-> 
-> Yeah, lovely.  'enum cpuid_leafs' does appear misnamed though.  It is a
-> list of *words*, not actual leaf numbers.  There's also very little
-> overlap between those leafs and the newly-renamed ones in this series.
-> I think that's because most of the leaves we dump into the CPU caps have
-> random feature bits that aren't logically grouped and resist naming.
-> 
-> The one exception to that is the CPUID_D_1_EAX aka. CPUID_LEAF_XSTATE.
-> We could do something like the attached patch, but I don't think it
-> really helps much.
-> 
-> > I'd like to unify them and I *think* kvm_cpu_cap_mask() should be able to
-> > stomach that (or fixed if not)...
-> 
-> Do you mean we could unify the CPUID_8000_0001_EDX enum values and the
-> CPUID_LEAF_* defines from this series?
+Drivers should depend on configurations that can be user-configurable
+instead of selecting them.
 
-Well, enum cpuid_leafs as it is now is the *indices* into the cap flags array:
+Without this patch, OF cannot be disabled this way:
+make allyesconfig
+scripts/config -d OF
+make olddefconfig
 
-struct cpuinfo_x86 {
+Which is a typical test in CI systems like media-ci.
 
-	...
+Now that we are at it, remove the dependency on OF, it will come
+automatically from OF_OVERLAY.
 
-	__u32           x86_capability[NCAPINTS + NBUGINTS];
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2:
+- Depend on OF_OVERLAY also
+- Link to v1: https://lore.kernel.org/r/20241129-lan966x-depend-v1-1-603fc4996c4f@chromium.org
+---
+ drivers/misc/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-And having a "CPUID_" prefixed thing and a "CPUID_LEAF_" prefixed other thing
-is going to cause confusion.
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 902c306bc972..d617105fbda7 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -613,8 +613,7 @@ config MARVELL_CN10K_DPI
+ config MCHP_LAN966X_PCI
+ 	tristate "Microchip LAN966x PCIe Support"
+ 	depends on PCI
+-	select OF
+-	select OF_OVERLAY
++	depends on OF_OVERLAY
+ 	select IRQ_DOMAIN
+ 	help
+ 	  This enables the support for the LAN966x PCIe device.
 
-And renaming enum cpuid_leafs is going to cause a massive churn...
+---
+base-commit: 7af08b57bcb9ebf78675c50069c54125c0a8b795
+change-id: 20241129-lan966x-depend-8bc69b4954e5
 
-IOW:
-
-[ Rock ]	<-- us --> 	[ Hard Place ]
-
-:-\
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Ricardo Ribalda <ribalda@chromium.org>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
