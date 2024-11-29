@@ -1,84 +1,159 @@
-Return-Path: <linux-kernel+bounces-425259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-425260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6F29DBF84
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:38:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DB09DBF87
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 07:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9AE6281EF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:38:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A228B211BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Nov 2024 06:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A753C156649;
-	Fri, 29 Nov 2024 06:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KQjEduJn"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15BA15666A;
+	Fri, 29 Nov 2024 06:42:31 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCA1BA4B;
-	Fri, 29 Nov 2024 06:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C099B14B08E
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Nov 2024 06:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732862319; cv=none; b=ut8bmtzIZCrfCMMOsk7Cl5RuiaWhvPdqlz7tAhn3ln7FbwLOS/tdSZiYbIT9/nE6n717D5qTOykRSjqnwsfr8bGBWsqVtAcCRPx0ChIxvFm1h0zyyXGJ/QMlEnH2fTDacQ74C7UitANaFOMSxwXmX4r9tLtOa36wlYr2b7QT3t8=
+	t=1732862551; cv=none; b=F5jvVEv2Ho2OPmadBmAMyZ9E2vlDoCuoFehl7DqiB6N+w1xFvkvJiHtVStcBOEpeaQtC4E+ra/ql8ndOA2ifYC2BBEVdgK/9xLYzjFGLSv363BsX7VNh++gEgdOSaYFUzTI3QkaiwZvHyrGgmXi++RvyGkiuvppPkWMhekWv/+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732862319; c=relaxed/simple;
-	bh=MMy8zuYaHfqc6MSJxstPlEkrkcaYa6q0NFCR50Ep+ro=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iQ0fcZI3dcCeFUt+HsQ7CKmPBMPfMlyfu1gppWCwxeoYhUXxk9a8NOnUMdT1VPMexcc+HA55Lq6amG5gJ9ey/T+1L5BB+GFLBaB8FAKt4hWkDPWVW4DZ64P88zKq3A0+WsRc38v5dxn1N1+Mo8RU7IYDFPey9zQd1I1uRWVWyH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KQjEduJn; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732862309; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=Un6Fs6jJoOLtd8RJ9PjCJ5MWsMneFpC7aGCo9uBzt7o=;
-	b=KQjEduJnnLXNAT3n7GeekKanmsK9iLLc/MHrpLjgll8qSzHfjx3o8Sn4dnSQZqZPUsocSKfS7XYcy9rvNQFAOfDiFbhrMfjnOCv+stq2cbh/i46JXLGh3y6QTXY3wVaQpfyjJUyjZuUgkAVwe46RZvZSMrpzVCPaB2XFuDvu25I=
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WKSwsSl_1732862308 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 29 Nov 2024 14:38:29 +0800
-From: Yang Li <yang.lee@linux.alibaba.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] bcache: Add missing parameter description to bch2_bucket_alloc_trans()
-Date: Fri, 29 Nov 2024 14:38:27 +0800
-Message-Id: <20241129063827.90340-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1732862551; c=relaxed/simple;
+	bh=tWfUNdPe5dPJrlkPG7M/Vf1isjT6Xw1COFMQ++6ZhZA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Lq+lMzgnvW5FO7b2aJ/1dPHXeq+Qb+lbufhuPrIAuK8itNhP8X16ElxPEUc/Ws458Imt9lgqoA66KMn5/ViSHUzp/+SJQHeTKTAbGRm88JoY4jJh29l3NJJBBTw5K1kMiV5+HGACpn0fTstLegV/VkLNsnM9uKvypsHWG6SJDuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7c729bfbaso15288485ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Nov 2024 22:42:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732862549; x=1733467349;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CD8x9KRAK1LCMpYyl25z1y0rxMD0DzxEj7pSOvbXZ4g=;
+        b=F/FaKF4Cp5PQYlMyFC9+XEeES51RlKhSmdFqfpuW0ALf45eQA7fI9XB0T6tZVintfi
+         xKdTjT8nAgIJsTjQaFG+Nt4k3Q8kJiNw3KCw3ucOSxE64aeGx3tPHWNa1vEI9g+sc8bZ
+         R7OxRyM5Sph4Mbibteunw0tlmfyDMh+7KUYZWf2VgeI2MrTB43+AKk0q22klxtTSiTIU
+         jAzG60Y/WSMc3BwKqdFJHt3NIct2sxZ1dnFvg14SDkazI/8pgQgqye+ZLp3h/aOn9nn1
+         msnIH01gU/j5BptewPSP/0frOmZ6XPu/wWVrMVk9gXlrklZ1NdSy5AQf8C1+uTSXLgEV
+         sSAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqbgg0z/tMlUEjAIQQruOdLi8QaIdgByl4RkN0T0kzlHcswBTa+lTSQKAYVIxg6Y8FTLVJgvZ30/LtnHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdtPRxP2xammMv+Nm+uvPVvcZdfcgwwqaQDCfojBL2wkqRoEMD
+	gBd6bnhe7Lv0MnS6LX15Op2J5Ta1wx42ZLzbFYAJyCo8OLTmTkpRRs7CJgz0EQjXXiqf29MGw2T
+	R6ldjJZfgaBPVUDyEPLLKCsT6+uMf9q73Pr0YhYidyGqJAV2NF0cgmz8=
+X-Google-Smtp-Source: AGHT+IG7fpQQp79dZOqBJMRjYItyfBBZddtwPIomhcAcPwVNtS2nnp0gh5eqa7p3DOuN0R+BVTpsxK7lgs1cNLCKthaWdGUouAxQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a03:b0:3a7:432d:912f with SMTP id
+ e9e14a558f8ab-3a7c5525801mr90116455ab.1.1732862548950; Thu, 28 Nov 2024
+ 22:42:28 -0800 (PST)
+Date: Thu, 28 Nov 2024 22:42:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67496254.050a0220.253251.00a3.GAE@google.com>
+Subject: [syzbot] [overlayfs?] WARNING in ovl_workdir_create (4)
+From: syzbot <syzbot+fbcf713b26e03b637adb@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The function bch2_bucket_alloc_trans() lacked a description for the
-nowait parameter in its documentation comment block. This patch adds the
-missing description to ensure all parameters are properly documented.
+Hello,
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=12179
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+syzbot found the following issue on:
+
+HEAD commit:    85a2dd7d7c81 Add linux-next specific files for 20241125
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=167f25c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
+dashboard link: https://syzkaller.appspot.com/bug?extid=fbcf713b26e03b637adb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5422dd6ada68/disk-85a2dd7d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3a382ed71d3a/vmlinux-85a2dd7d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9b4d03eb0da3/bzImage-85a2dd7d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fbcf713b26e03b637adb@syzkaller.appspotmail.com
+
+loop4: detected capacity change from 0 to 4096
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff88804e04a088, owner = 0x0, curr 0xffff888034fa3c00, list empty
+WARNING: CPU: 1 PID: 12660 at kernel/locking/rwsem.c:1368 __up_write kernel/locking/rwsem.c:1367 [inline]
+WARNING: CPU: 1 PID: 12660 at kernel/locking/rwsem.c:1368 up_write+0x502/0x590 kernel/locking/rwsem.c:1630
+Modules linked in:
+CPU: 1 UID: 0 PID: 12660 Comm: syz.4.2018 Not tainted 6.12.0-next-20241125-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__up_write kernel/locking/rwsem.c:1367 [inline]
+RIP: 0010:up_write+0x502/0x590 kernel/locking/rwsem.c:1630
+Code: c7 c7 60 8a 0a 8c 48 c7 c6 80 8c 0a 8c 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 53 e8 b3 27 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6a fd ff ff 48 c7 c1 c4 d8 18 90 80 e1 07 80 c1 03
+RSP: 0018:ffffc9000fdb74e0 EFLAGS: 00010292
+RAX: 1172aec84e22b600 RBX: ffffffff8c0a8b40 RCX: 0000000000080000
+RDX: ffffc90004be1000 RSI: 000000000000848e RDI: 000000000000848f
+RBP: ffffc9000fdb75b0 R08: ffffffff81601b32 R09: fffffbfff1cfa218
+R10: dffffc0000000000 R11: fffffbfff1cfa218 R12: 0000000000000000
+R13: ffff88804e04a088 R14: 1ffff92001fb6ea4 R15: dffffc0000000000
+FS:  00007f35e2a3a6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000005cc32000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:823 [inline]
+ ovl_workdir_create+0x8e1/0x980 fs/overlayfs/super.c:353
+ ovl_make_workdir fs/overlayfs/super.c:650 [inline]
+ ovl_get_workdir+0x311/0x1920 fs/overlayfs/super.c:808
+ ovl_fill_super+0x12a8/0x3560 fs/overlayfs/super.c:1376
+ vfs_get_super fs/super.c:1280 [inline]
+ get_tree_nodev+0xb7/0x140 fs/super.c:1299
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f35e1b7e819
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f35e2a3a038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f35e1d35fa0 RCX: 00007f35e1b7e819
+RDX: 0000000020000000 RSI: 0000000020000040 RDI: 0000000000000000
+RBP: 00007f35e1bf175e R08: 0000000020000100 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f35e1d35fa0 R15: 00007fffb14ff288
+ </TASK>
+
+
 ---
- fs/bcachefs/alloc_foreground.c | 1 +
- 1 file changed, 1 insertion(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/bcachefs/alloc_foreground.c b/fs/bcachefs/alloc_foreground.c
-index 4d1ff7f1f302..2f1ea718cc33 100644
---- a/fs/bcachefs/alloc_foreground.c
-+++ b/fs/bcachefs/alloc_foreground.c
-@@ -505,6 +505,7 @@ static noinline void trace_bucket_alloc2(struct bch_fs *c, struct bch_dev *ca,
-  * @watermark:	how important is this allocation?
-  * @data_type:	BCH_DATA_journal, btree, user...
-  * @cl:		if not NULL, closure to be used to wait if buckets not available
-+ * @nowait:	if true, do not wait for buckets to become available
-  * @usage:	for secondarily also returning the current device usage
-  *
-  * Returns:	an open_bucket on success, or an ERR_PTR() on failure.
--- 
-2.32.0.3.g01195cf9f
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
